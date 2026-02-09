@@ -386,39 +386,45 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.nfc.record_text
-    - sample.nfc.tnep_tag
-    - sample.nfc.system_off
+    - sample.bluetooth.central_dfu_smp
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.bluetooth.peripheral_ancs_client.build
   platforms:
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.nfc.writable_ndef_msg
-    - sample.nfc.launch_app
+    - sample.bluetooth.peripheral_ams_client.build
   platforms:
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.esb.prx.build
+    - sample.esb.ptx.build
+  platforms:
+    - nrf52833dk/nrf52833
     - nrf52840dk/nrf52840
+    - nrf52dk/nrf52810
+    - nrf52dk/nrf52832
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.peripheral.lpuart
+    - sample.peripheral.lpuart_int_driven
+    - sample.peripheral.lpuart_nrf52840_debug
+  platforms:
+    - nrf21540dk/nrf52840
+    - nrf52833dk/nrf52833
+    - nrf52840dk/nrf52840
+    - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.nfc.shell
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf5340dk/nrf5340/cpuapp/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.nfc.tag_reader
-  platforms:
-    - nrf52dk/nrf52832
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.nfc.tnep_poller
-  platforms:
-    - nrf52840dk/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
