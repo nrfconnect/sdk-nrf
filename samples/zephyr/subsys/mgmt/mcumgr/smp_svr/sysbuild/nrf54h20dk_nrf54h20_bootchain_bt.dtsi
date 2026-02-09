@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	bootchain {
+		b0_mcuboot {
+			compatible = "nordic,mcuboot";
+			uuid-vid-required;
+			uuid-cid-required;
+			partitions = <&cpuapp_boot_partition>;
+
+			images {
+				app {
+					compatible = "nordic,mcuboot-image";
+					image-index = <0>;
+					uuid-vid = "nordicsemi.com", "nordicsemi.com";
+					uuid-cid = "nRF54H20_sample_app", "nRF54H20_sample_app";
+					partitions = <&cpuapp_slot0_partition
+						      &cpuapp_slot1_partition>;
+				};
+
+				rad {
+					compatible = "nordic,mcuboot-image";
+					image-index = <1>;
+					uuid-vid = "nordicsemi.com", "nordicsemi.com";
+					uuid-cid = "nRF54H20_sample_rad", "nRF54H20_sample_rad";
+					partitions = <&cpurad_slot0_partition
+						      &cpurad_slot1_partition>;
+				};
+			};
+		};
+	};
+};
