@@ -36,13 +36,18 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 #define CAP_PROCED_SEM_WAIT_TIME_MS K_MSEC(500)
 K_SEM_DEFINE(sem_cap_procedure_proceed, 1, 1);
 
+static struct bt_cap_unicast_group_stream_pair_param
+	pair_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
+
 static struct bt_cap_unicast_group_param group_param;
+
+/* Populate the stream params arrays */
+static struct group_streams_populate_data data;
 
 enum cap_procedure_type {
 	CAP_PROCEDURE_START = 1,
 	CAP_PROCEDURE_UPDATE,
 	CAP_PROCEDURE_STOP,
-	CAP_PROCEDURE_RECONFIG,
 };
 
 K_MSGQ_DEFINE(cap_proc_q, sizeof(enum cap_procedure_type), 5, sizeof(void *));
@@ -99,26 +104,6 @@ static int stream_idx_get(struct bt_bap_stream *stream, struct stream_index *idx
 	return 0;
 }
 
-static void unicast_client_reconfig(uint8_t cig_index)
-{
-	int ret;
-
-	/* For now we only support a single group, so we can just check if the group has been
-	 * created or not. */
-	if (!unicast_group_created) {
-		LOG_ERR("Unicast group not created yet, cannot reconfigure");
-		return;
-	}
-
-	LOG_WRN("Req reconfig of uint cast group");
-
-	ret = bt_cap_unicast_group_reconfig(unicast_group, &group_param);
-	if (ret) {
-		LOG_ERR("Failed to reconfigure unicast group: %d", ret);
-		return;
-	}
-}
-
 /**
  * @brief	Check if there is any CAP procedure waiting, execute it if so.
  */
@@ -147,9 +132,6 @@ static void cap_proc_waiting_check(void)
 		break;
 	case CAP_PROCEDURE_STOP:
 		unicast_client_stop(0);
-		break;
-	case CAP_PROCEDURE_RECONFIG:
-		unicast_client_reconfig(0);
 		break;
 	default:
 		LOG_ERR("Unknown procedure: %d", proc);
@@ -231,6 +213,13 @@ static void unicast_group_create(void)
 {
 	int ret;
 
+	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT; i++) {
+		memset(pair_params, 0, sizeof(pair_params));
+	}
+
+	memset(&group_param, 0, sizeof(group_param));
+	memset(&data, 0, sizeof(data));
+
 	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
@@ -254,18 +243,12 @@ static void unicast_group_create(void)
 		return;
 	}
 
-	/* Populate the stream params arrays */
-	struct group_streams_populate_data data = {0};
-
 	ret = srv_store_foreach_server(unicast_group_populate, &data);
 	if (ret < 0) {
 		LOG_ERR("Failed to populate unicast group stream params: %d", ret);
 		srv_store_unlock();
 		return;
 	}
-
-	struct bt_cap_unicast_group_stream_pair_param
-		pair_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
 
 	int stream_iterator = 0;
 
@@ -1032,33 +1015,12 @@ static int all_streams_configured(void)
 
 	if (action != GROUP_ACTION_REQ_NONE) {
 
-		LOG_INF("Group action required: %d", action);
+		LOG_WRN("REconfigure group! action: %d", action);
 
-		/* first we need to cancel all operations, */
-		ret = bt_cap_initiator_unicast_audio_cancel();
+		ret = bt_cap_unicast_group_reconfig(unicast_group, &group_param);
 		if (ret) {
-			ERR_CHK_MSG(ret, "cancel returned %d");
-		}
-
-		enum cap_procedure_type proc_type;
-
-		proc_type = CAP_PROCEDURE_STOP;
-
-		ret = k_msgq_put(&cap_proc_q, &proc_type, K_NO_WAIT);
-		if (ret) {
-			LOG_WRN("Failed to put start procedure in queue: %d", ret);
-		}
-
-		proc_type = CAP_PROCEDURE_RECONFIG;
-		ret = k_msgq_put(&cap_proc_q, &proc_type, K_NO_WAIT);
-		if (ret) {
-			LOG_WRN("Failed to put start procedure in queue: %d", ret);
-		}
-
-		proc_type = CAP_PROCEDURE_START;
-		ret = k_msgq_put(&cap_proc_q, &proc_type, K_NO_WAIT);
-		if (ret) {
-			LOG_WRN("Failed to put start procedure in queue: %d", ret);
+			LOG_ERR("Failed to reconfigure unicast group: %d", ret);
+			return ret;
 		}
 	}
 
@@ -1125,72 +1087,6 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 			stream_pref->rtn, stream->qos->rtn);
 	}
 
-	/* Check the preferred max transport latency.
-	 * See 7.2.1 BAP. The entire MTL is on group level, so all existing streams with the same
-	 * direction shall have the same max transport latency within the group (CIG). Hence, one
-	 * MTL for sink within the group, and one MTL for source within the group.
-	 */
-
-	//----------------------------------------------------------------------
-
-	// uint16_t existing_max_trans_lat_ms = 0;
-	// uint16_t new_max_trans_lat_ms = 0;
-
-	// bool group_reconfig_needed_lat = false;
-	// LOG_INF("max trans lat find. Server pref lat: %d", stream_pref->latency);
-	// ret = srv_store_max_trans_lat_find(stream, stream_pref, &new_max_trans_lat_ms,
-	// 				   &existing_max_trans_lat_ms, &group_reconfig_needed_lat,
-	// 				   unicast_group);
-
-	// if (ret) {
-	// 	LOG_ERR("Cannot get a valid max transport latency");
-	// 	srv_store_unlock();
-	// 	return;
-	// }
-
-	// if (existing_max_trans_lat_ms != new_max_trans_lat_ms) {
-	// 	if (existing_max_trans_lat_ms != UINT16_MAX) {
-	// 		LOG_INF("Existing max trans lat: %d, new max transport latency %d",
-	// 			existing_max_trans_lat_ms, new_max_trans_lat_ms);
-	// 	} else {
-	// 		LOG_INF("Existing max trans lat: <none>, new max transport latency %d",
-	// 			new_max_trans_lat_ms);
-	// 	}
-	// }
-
-	// ret = srv_store_max_trans_lat_set(unicast_group, dir, new_max_trans_lat_ms);
-	// if (ret) {
-	// 	LOG_ERR("Cannot set new max transport latency");
-	// 	return;
-	// }
-
-	// bool group_reconfigure_needed_pd = false;
-	// uint32_t existing_pres_dly_us = 0;
-
-	// /* If a new stream appears, we have to reconfigure the CIG */
-	// ret = srv_store_pres_dly_find(stream, &new_pres_dly_us, &existing_pres_dly_us,
-	// stream_pref, 			      &group_reconfigure_needed_pd, unicast_group);
-	// if (ret) { 	LOG_ERR("Cannot get a valid presentation delay"); 	return;
-	// }
-
-	// if ((new_pres_dly_us != stream->qos->pd) || group_reconfigure_needed_pd) {
-	// 	LOG_INF("Stream QoS PD: %d, prev group PD: %d, new PD %d", stream->qos->pd,
-	// 		existing_pres_dly_us, new_pres_dly_us);
-	// 	bt_cap_unicast_group_foreach_stream(unicast_group, new_pres_dly_us_set,
-	// 					    &new_pres_dly_us);
-	// }
-
-	// if (group_reconfig_needed_lat || group_reconfigure_needed_pd) {
-	// 	LOG_WRN("CIG reconfig needed, due to: %s%s",
-	// 		group_reconfig_needed_lat ? "Latency " : "",
-	// 		group_reconfigure_needed_pd ? "Pres dly " : "");
-
-	// 	if (ret) {
-	// 		LOG_ERR("Failed to reconfigure unicast group: %d", ret);
-	// 		return;
-	// 	}
-	// }
-
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, all_streams_configured_check,
 						  NULL);
 
@@ -1201,6 +1097,7 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 		LOG_INF("All streams are configured");
 	} else {
 		LOG_ERR("Foreach error: %d", ret);
+		srv_store_unlock();
 		return;
 	}
 
@@ -1208,6 +1105,7 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 		ret = all_streams_configured();
 		if (ret) {
 			LOG_ERR("Failed to check all streams configured: %d", ret);
+			srv_store_unlock();
 			return;
 		}
 	}
@@ -1317,10 +1215,14 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 			return;
 		}
 
+		LOG_WRN("deleting unicast group");
+
 		ret = bt_cap_unicast_group_delete(unicast_group);
 		if (ret) {
 			LOG_ERR("Failed to delete unicast group: %d", ret);
 		}
+
+		unicast_group = NULL;
 
 		/* Create a new unicast group */
 		k_work_submit(&cap_start_work);
