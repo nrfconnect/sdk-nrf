@@ -530,6 +530,35 @@ static inline int sx_mod_exp(struct sx_pk_cnx *cnx, const sx_const_op *input, co
 	return status;
 }
 
+/** Synchronously compute modular exponentiation.
+ *
+ *    result = input ^ e mod m
+ *
+ * @param[in] pkreq Acquired acceleration request for this operation
+ * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
+ * startup
+ * @param[in] input Base operand
+ * @param[in] e Exponent operand
+ * @param[in] m Modulus operand
+ * @param[out] result Result operand
+ *
+ * @return ::SX_OK
+ * @return ::SX_ERR_INVALID_PARAM
+ * @return ::SX_ERR_UNKNOWN_ERROR
+ * @return ::SX_ERR_BUSY
+ * @return ::SX_ERR_NOT_IMPLEMENTED
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PLATFORM_ERROR
+ * @return ::SX_ERR_EXPIRED
+ * @return ::SX_ERR_PK_RETRY
+ */
+static inline int sx_sync_mod_exp(struct sx_pk_acq_req *pkreq, struct sx_pk_cnx *cnx,
+				  const sx_const_op *input, const sx_const_op *e,
+				  const sx_const_op *m, sx_op *result)
+{
+	return sx_sync_mod_primitive_cmd(pkreq, cnx, SX_PK_CMD_MOD_EXP, m, input, e, result);
+}
+
 /** @} */
 
 /**
