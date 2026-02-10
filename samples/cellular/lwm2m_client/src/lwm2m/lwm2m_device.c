@@ -13,7 +13,7 @@
 #include "pm_config.h"
 #include "lwm2m_app_utils.h"
 
-#ifdef CONFIG_SOC_SERIES_NRF91X
+#ifdef CONFIG_SOC_SERIES_NRF91
 #include <modem/modem_info.h>
 #endif
 
@@ -55,7 +55,7 @@ int lwm2m_app_init_device(char *serial_num)
 	const char *client_sw_ver = (strlen(CONFIG_APP_CUSTOM_VERSION) > 0) ?
 			      CONFIG_APP_CUSTOM_VERSION : NCS_VERSION_STRING;
 
-	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF91X)) {
+	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF91)) {
 		int err;
 		static char hw_buf[sizeof("nRF91__ ____ ___ ")];
 

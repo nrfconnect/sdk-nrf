@@ -82,3 +82,68 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.nrf54lm20.iot_devices:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-iot-devices.conf
+      - throughput_SHIELD=nrf7002eb2
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf54lm20.high_performance:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-high-performance.conf
+      - throughput_SHIELD=nrf7002eb2
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf54lm20.memory_optimized:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-memory-optimized.conf
+      - throughput_SHIELD=nrf7002eb2
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf54lm20.rx_prioritized:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-rx-prio.conf
+      - throughput_SHIELD=nrf7002eb2
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf54lm20.tx_prioritized:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-tx-prio.conf
+      - throughput_SHIELD=nrf7002eb2
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi

@@ -6,7 +6,7 @@
 
 config ETB_TRACE
 	bool "ETB trace [EXPERIMENTAL]"
-	depends on SOC_SERIES_NRF91X
+	depends on SOC_SERIES_NRF91
 	select EXPERIMENTAL
 	help
 	  Enable tracing using Coresight modules such as ETM, ITM and storing of traces to ETB.

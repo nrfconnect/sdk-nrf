@@ -102,7 +102,7 @@ struct transport_params_http {
 		/** Port */
 		uint16_t port;
 		/** Destination address storage */
-		struct sockaddr remote_addr;
+		struct net_sockaddr remote_addr;
 	} sock;
 
 	/** Request new data */
@@ -157,8 +157,8 @@ static int http_get_request_send(struct downloader *dl)
 	http->header.has_end = false;
 
 	/* nRF91 series has a limitation of decoding ~2k of data at once when using TLS */
-	tls_force_range = (http->sock.proto == IPPROTO_TLS_1_2 && !dl->host_cfg.set_native_tls &&
-			   IS_ENABLED(CONFIG_SOC_SERIES_NRF91X));
+	tls_force_range = (http->sock.proto == NET_IPPROTO_TLS_1_2 &&
+			   !dl->host_cfg.set_native_tls && IS_ENABLED(CONFIG_SOC_SERIES_NRF91));
 	if (tls_force_range) {
 		if (dl->host_cfg.range_override > TLS_RANGE_MAX) {
 			LOG_WRN("Range override > TLS max range, setting to TLS max range");
@@ -480,14 +480,14 @@ static int parse_protocol(struct downloader *dl, const char *url)
 	http = (struct transport_params_http *)dl->transport_internal;
 
 
-	http->sock.proto = IPPROTO_TCP;
-	http->sock.type = SOCK_STREAM;
+	http->sock.proto = NET_IPPROTO_TCP;
+	http->sock.type = NET_SOCK_STREAM;
 
 	if (strncmp(url, HTTPS, (sizeof(HTTPS) - 1)) == 0 ||
 	    (strncmp(url, HTTP, (sizeof(HTTP) - 1)) != 0 &&
 	     (dl->host_cfg.sec_tag_count != 0 && dl->host_cfg.sec_tag_list != NULL))) {
-		http->sock.proto = IPPROTO_TLS_1_2;
-		http->sock.type = SOCK_STREAM;
+		http->sock.proto = NET_IPPROTO_TLS_1_2;
+		http->sock.type = NET_SOCK_STREAM;
 
 		if (dl->host_cfg.sec_tag_list == NULL || dl->host_cfg.sec_tag_count == 0) {
 			LOG_WRN("No security tag provided for TLS/DTLS");
@@ -498,17 +498,17 @@ static int parse_protocol(struct downloader *dl, const char *url)
 	err = dl_parse_url_port(url, &http->sock.port);
 	if (err) {
 		switch (http->sock.proto) {
-		case IPPROTO_TLS_1_2:
+		case NET_IPPROTO_TLS_1_2:
 			http->sock.port = DEFAULT_PORT_TLS;
 			break;
-		case IPPROTO_TCP:
+		case NET_IPPROTO_TCP:
 			http->sock.port = DEFAULT_PORT_TCP;
 			break;
 		}
 		LOG_DBG("Port not specified, using default: %d", http->sock.port);
 	}
 
-	if (dl->host_cfg.set_native_tls) {
+	if (!IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl->host_cfg.set_native_tls) {
 		LOG_DBG("Enabled native TLS");
 		http->sock.type |= SOCK_NATIVE_TLS;
 	}

@@ -1,6 +1,6 @@
 sample:
-  description: Simple Management Protocol sample (with external QSPI XIP flash support)
-  name: ext xip smp svr
+  description: Simple Management Protocol sample (with external QSPI XIP flash support) for nRF5340
+  name: SMP Server with external XIP sample
 common:
   sysbuild: true
   harness: console

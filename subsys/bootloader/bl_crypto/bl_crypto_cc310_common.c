@@ -12,7 +12,7 @@
 #include <nrf_cc310_bl_init.h>
 #include <pm_config.h>
 
-#ifdef CONFIG_SOC_SERIES_NRF91X
+#ifdef CONFIG_SOC_SERIES_NRF91
 #define NRF_CRYPTOCELL NRF_CRYPTOCELL_S
 #endif
 

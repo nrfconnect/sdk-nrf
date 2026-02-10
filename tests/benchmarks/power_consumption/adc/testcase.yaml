@@ -15,11 +15,12 @@ tests:
     platform_allow: &pm_adc_platforms
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuppr
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
 
   benchmarks.power_consumption.adc_async:
     integration_platforms:
@@ -34,6 +35,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y

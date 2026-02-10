@@ -5,8 +5,7 @@
 #
 
 sample:
-  description: Single slot DFU sample application
-  name: single_slot
+  name: Single-slot DFU with MCUboot sample
 common:
   sysbuild: true
   harness: console

@@ -18,7 +18,7 @@
 #define TEST_BUFFER_SIZE	     512
 #define REQUEST_SERVING_WAIT_TIME_US 10000
 
-static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE, 0);
+static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE);
 const struct device *const fll16m_dev = DEVICE_DT_GET(DT_NODELABEL(fll16m));
 
 #define MEMORY_SECTION(node)                                                                       \

@@ -8,25 +8,7 @@
 
 / {
 	soc {
-		reserved-memory {
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			cpuflpr_code_partition: image@179800 {
-				reg = <0x179800 DT_SIZE_K(14)>;
-			};
-
-			sram_rx: memory@2003b800 {
-				reg = <0x2003b800 0x0800>;
-			};
-
-			sram_tx: memory@2003c000 {
-				reg = <0x2003c000 0x0800>;
-			};
-		};
-
-
-		cpuflpr_sram_code_data: memory@2003c800 {
+		cpuflpr_code_data_sram: memory@2003c800 {
 			compatible = "mmio-sram";
 			reg = <0x2003c800 DT_SIZE_K(14)>;
 			#address-cells = <1>;
@@ -47,10 +29,38 @@
 			status = "okay";
 		};
 	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		sram_rx: memory@2003b800 {
+			reg = <0x2003b800 0x0800>;
+		};
+
+		sram_tx: memory@2003c000 {
+			reg = <0x2003c000 0x0800>;
+		};
+	};
 };
 
 &cpuapp_rram {
 	reg = <0x0 DT_SIZE_K(1510)>;
+	ranges = <0x0 0x0 DT_SIZE_K(1510)>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+};
+
+&rram_controller {
+	cpuflpr_code_partition: rram@179800 {
+		compatible = "soc-nv-flash";
+		erase-block-size = <0x1000>;
+		write-block-size = <16>;
+		reg = <0x179800 DT_SIZE_K(14)>;
+		ranges = <0x0 0x179800 DT_SIZE_K(14)>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+	};
 };
 
 &cpuapp_sram {
@@ -59,7 +69,7 @@
 };
 
 &cpuflpr_vpr {
-	execution-memory = <&cpuflpr_sram_code_data>;
+	execution-memory = <&cpuflpr_code_data_sram>;
 	source-memory = <&cpuflpr_code_partition>;
 };
 

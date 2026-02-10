@@ -12,8 +12,12 @@
 	leds {
 		compatible = "gpio-leds";
 
+		/*
+		 * Lilium pulls GPIOs up during bootup, to adapt
+		 * to measurement methods, logic is inverted
+		 */
 		led1: led_1 {
-			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio9 1 GPIO_ACTIVE_LOW>;
 			label = "Green LED 1";
 		};
 	};

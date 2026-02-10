@@ -738,10 +738,25 @@ static uint16_t interval_to_sync_timeout(uint16_t interval)
 
 static int pa_sync_create(void)
 {
+	int err;
+	struct bt_le_local_features feature;
 	struct bt_le_per_adv_sync_param create_params = {0};
 
 	bt_addr_le_copy(&create_params.addr, &broadcaster_addr);
-	create_params.options = BT_LE_PER_ADV_SYNC_OPT_FILTER_DUPLICATE;
+
+	err = bt_le_get_local_features(&feature);
+	if (err < 0) {
+		LOG_WRN("Failed to get local le features (err %d)", err);
+		return err;
+	}
+
+	if (BT_FEAT_LE_PER_ADV_ADI_SUPP(feature.features)) {
+		create_params.options = BT_LE_PER_ADV_SYNC_OPT_FILTER_DUPLICATE;
+	} else {
+		create_params.options = BT_LE_PER_ADV_SYNC_OPT_NONE;
+		LOG_WRN("Not supported: LE Per Adv ADI");
+	}
+
 	create_params.sid = broadcaster_info.sid;
 	create_params.skip = PA_SYNC_SKIP;
 	create_params.timeout = interval_to_sync_timeout(broadcaster_info.interval);

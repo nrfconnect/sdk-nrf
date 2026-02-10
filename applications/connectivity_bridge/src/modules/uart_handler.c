@@ -182,14 +182,6 @@ static void uart_callback(const struct device *dev, struct uart_event *evt,
 		break;
 	case UART_RX_STOPPED:
 		LOG_WRN("UART_%d stop reason %d", dev_idx, evt->data.rx_stop.reason);
-
-		/* Retry automatically in case of unexpected stop.
-		 * Typically happens when the peer does not drive its TX GPIO,
-		 * or if there is a baud rate mismatch.
-		 */
-		if (IS_ENABLED(CONFIG_UART_NRFX_UARTE_LEGACY_SHIM)) {
-			enable_rx_retry[dev_idx] = true;
-		}
 		break;
 	default:
 		LOG_ERR("Unexpected event: %d", evt->type);

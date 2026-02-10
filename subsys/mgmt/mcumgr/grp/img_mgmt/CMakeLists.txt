@@ -1,11 +1,13 @@
 #
-# Copyright (c) 2025 Nordic Semiconductor ASA
+# Copyright (c) 2025 - 2026 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 if(CONFIG_MCUMGR_GRP_IMG_NRF)
-  zephyr_library_amend()
+  # Amend the image management group library
+  set(ZEPHYR_CURRENT_LIBRARY "mcumgr_grp_img_mgmt")
+
   zephyr_library_sources(
     src/img_mgmt.c
     src/img_mgmt_state.c

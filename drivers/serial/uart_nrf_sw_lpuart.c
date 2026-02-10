@@ -868,6 +868,8 @@ static void int_driven_evt_handler(const struct device *lpuart,
 	bool call_handler = false;
 
 	switch (evt->type) {
+	case UART_TX_ABORTED:
+		/* fallthrough */
 	case UART_TX_DONE:
 		data->int_driven.txlen = 0;
 		call_handler = true;

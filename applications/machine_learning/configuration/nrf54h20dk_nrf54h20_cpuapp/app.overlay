@@ -18,25 +18,26 @@
 		label = "ML State LED";
 
 		led0: led_0 {
-			gpios = < &gpio9 0 GPIO_ACTIVE_HIGH >;
+			gpios = <&gpio9 0 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 0";
 		};
 
 		led1: led_1 {
-			gpios = < &gpio9 1 GPIO_ACTIVE_HIGH >;
+			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 1";
 		};
 
 		led2: led_2 {
-			gpios = < &gpio9 2 GPIO_ACTIVE_HIGH >;
+			gpios = <&gpio9 2 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 2";
 		};
 	};
 
 	leds3 {
 		compatible = "gpio-leds";
+
 		led3: led_3 {
-			gpios = < &gpio9 3 GPIO_ACTIVE_HIGH >;
+			gpios = <&gpio9 3 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 3";
 		};
 	};
@@ -74,7 +75,6 @@ ipc1: &cpuapp_cpuppr_ipc {
 		};
 	};
 };
-
 
 /* Remove DTS nodes associated with the cpuflpr target as they refer to the
  * cpuflpr_code_partition label from the cpuapp_rx_partitions node. The label has

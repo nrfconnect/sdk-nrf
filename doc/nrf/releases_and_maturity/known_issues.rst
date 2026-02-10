@@ -199,6 +199,15 @@ Bluetooth LE
 
 .. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-99-cs2 v2-6-99-cs1 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2-dev1 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
+NCSDK-32763: Upgrading firmware may corrupt Bluetooth bonding keys
+  The Kconfig options :kconfig:option:`CONFIG_BT_SIGNING`, :kconfig:option:`CONFIG_BT_KEYS_OVERWRITE_OLDEST`, and (the absence of) :kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY` modify the size of the :c:struct:`bt_keys` struct.
+  Changing these options when reflashing a device with stored bonds may result in fields being overwritten with corrupted data when it is loaded from settings.
+
+  **Workaround:** Manually cherry-pick and apply the commit to ``sdk-zephyr`` (commit hash: ``f5f7bb44618f315d37e5c43b9061c1a6242f3e65`` from the `Zephyr repository`_).
+  This workaround will detect incompatible configuration changes between firmware upgrades.
+
+.. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-99-cs2 v2-6-99-cs1 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2-dev1 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
 NCSDK-35186: Host might not delete entry from Resolving List when unpairing
   If an application is deleting a bonding information of a peer by calling the :c:func:`bt_unpair` function while the Host is adding a new entry to Resolving List corresponding to the same peer, the entry in Resolving List might not be deleted.
   As a consequence, the Controller will keep resolving the peer address until device is rebooted.
@@ -4615,42 +4624,6 @@ Problems with RTT Viewer/Logger
 NFC
 ===
 
-.. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0
-
-KRKNWK-21227: An NFC application may fail to properly handle incoming frames with parity errors
-  Under specific and rare conditions, the NFC application might cause the device to hang or respond with an incorrect frame when receiving a frame containing a parity error.
-  Only Type 4 Tag (T4T) is affected.
-
-  Due to a hardware bug, the ``RXERROR`` event is unreliable.
-  It is only reported for parity errors on the last byte of RATS and is never reported for I-Block frames.
-  To reliably detect parity errors, always read RXSTATUS on the ``RXFRAMEEND`` event, regardless of whether ``RXERROR`` is triggered.
-
-  **Affected platforms:** nRF54L05, nRF54L10, nRF54L15, nRF54H20, nRF54LM20A
-
-  **Workaround:** Skip the condition check (``if (NRFX_NFCT_EVT_ACTIVE(RXERROR, evt_mask)))`` in the :file:`nrfx_nfct.c` file to enable this workaround.
-  This ensures that the RXSTATUS register is checked on every ``RXFRAMEEND`` event, providing reliable parity error detection even when the ``RXERROR`` event is not triggered.
-
-  Implement the workaround in the :file:`nrfx/drivers/src/nrfx_nfct.c` as follows:
-
-  .. code-block:: c
-
-     /* Take into account only the number of whole bytes. */
-     nfct_evt.params.rx_frameend.rx_status         = 0;
-     nfct_evt.params.rx_frameend.rx_data.p_data    = nrfy_nfct_rxtx_buffer_get(NRF_NFCT);
-     nfct_evt.params.rx_frameend.rx_data.data_size =
-         NRFX_NFCT_BITS_TO_BYTES(nrfy_nfct_rx_bits_get(NRF_NFCT, true));
-
-     // if (NRFX_NFCT_EVT_ACTIVE(RXERROR, evt_mask)) /* Skip this condition check. */
-     {
-         nfct_evt.params.rx_frameend.rx_status =
-             (nrfy_nfct_rx_frame_status_get(NRF_NFCT) & NRFX_NFCT_FRAME_STATUS_RX_ALL_MASK);
-
-         NRFX_LOG_DEBUG("Rx error (0x%x)", (unsigned int) nfct_evt.params.rx_frameend.rx_status);
-
-         /* Clear rx frame status */
-         nrfy_nfct_rx_frame_status_clear(NRF_NFCT, NRFX_NFCT_FRAME_STATUS_RX_ALL_MASK);
-     }
-
 .. rst-class:: v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0
 
 NCSDK-22799: Assert when requesting clock from the NFC interrupt context
@@ -6262,6 +6235,20 @@ nrfx_uart driver
 tx_buffer_length set incorrectly
   The nrfx_uart driver might incorrectly set the internal tx_buffer_length variable when high optimization level is set during compilation.
 
+nrfx_nfct driver
+================
+
+.. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0
+
+KRKNWK-21227: RXERROR event not detected during NFC frame reception
+  The ``RXERROR`` event is not properly detected when a parity error occurs during frame reception.
+  This can happen when the error occurs on any byte in the payload, including the last byte (for example, for I-Block frames).
+  Previously, ``RXERROR`` was handled as a separate interrupt.
+  When an error occurred, the ``RXERROR`` interrupt fired and the event was cleared by ``nrfy_nfct_events_process()``.
+  By the time ``RXFRAMEEND`` was processed, the ``RXERROR`` flag was already cleared, causing the error status not to be propagated to the NFC stack.
+
+  Fix for the issue is provided in the nrfx 4.1.0.
+
 Integrations
 ************
 
@@ -6642,6 +6629,14 @@ NCSDK-6832: SMP Server sample fails upon initialization
 
 Other issues
 ************
+
+.. rst-class:: v3-2-1 v3-2-0
+
+NCSDK-36679: FLPR is not given access to pins during UICR provisioning
+  During application build, FLPR is not granted access to the pins as part of the UICR provisioning step.
+  As a result, Soft Peripherals do not show any pin activity.
+
+  **Affected platforms:** nRF54H20
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0
 

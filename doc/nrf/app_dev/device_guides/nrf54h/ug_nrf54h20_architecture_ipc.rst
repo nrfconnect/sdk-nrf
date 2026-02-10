@@ -208,7 +208,6 @@ The System Controller exposes the following services to local cores (Application
    * MRAM latency management (related to power management)
    * CPU frequency management (using Dynamic Voltage and Frequency Scaling)
    * Die temperature service
-   * L2CACHE performance
    * Power output service
 
 Fast Lightweight Processor (FLPR)

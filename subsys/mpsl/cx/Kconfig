@@ -28,7 +28,7 @@ config MPSL_CX_SOFTWARE_SUPPORT
 config MPSL_CX
 	bool "Radio Coexistence interface support"
 	depends on MPSL_CX_ANY_SUPPORT
-	depends on !(BT_CTLR_PHY_CODED && MPSL_FEM && SOC_SERIES_NRF53X)
+	depends on !(BT_CTLR_PHY_CODED && MPSL_FEM && SOC_SERIES_NRF53)
 	help
 	  Controls if Radio Coexistence interface is to be configured and enabled
 	  when MPSL is initialized.
@@ -60,8 +60,8 @@ config MPSL_CX_NRF700X
 	depends on MPSL_CX_NRF70_SUPPORT
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
-	imply NRF_RPC if SOC_SERIES_NRF53X
-	imply NRF_RPC_CBOR if SOC_SERIES_NRF53X
+	imply NRF_RPC if SOC_SERIES_NRF53
+	imply NRF_RPC_CBOR if SOC_SERIES_NRF53
 	bool "nRF700x Radio Coexistence"
 	help
 	  Radio Coexistence supporting nRF700x interface.

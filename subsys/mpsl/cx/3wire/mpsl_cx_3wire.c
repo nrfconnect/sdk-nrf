@@ -38,13 +38,26 @@
 #error No enabled coex nodes registered in DTS.
 #endif
 
+#if !(DT_NODE_HAS_COMPAT(CX_NODE, generic_radio_coex_three_wire))
+#error Selected coex node is not compatible with generic-radio-coex-three-wire.
+#endif
+
 #if !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
 
 /* Value from chapter 7. Logic Timing from Thread Radio Coexistence */
 #define REQUEST_TO_GRANT_US 50U
 
-#define GRANT_PIN_PORT_NO  DT_PROP(DT_GPIO_CTLR(CX_NODE, grant_gpios), port)
-#define GRANT_PIN_PIN_NO   DT_GPIO_PIN(CX_NODE, grant_gpios)
+#define REQ_PIN_PORT_NO   DT_PROP(DT_GPIO_CTLR(CX_NODE, req_gpios), port)
+#define PRI_PIN_PORT_NO   DT_PROP(DT_GPIO_CTLR(CX_NODE, pri_dir_gpios), port)
+#define GRANT_PIN_PORT_NO DT_PROP(DT_GPIO_CTLR(CX_NODE, grant_gpios), port)
+#define GRANT_PIN_PIN_NO  DT_GPIO_PIN(CX_NODE, grant_gpios)
+
+#if defined(CONFIG_SOC_NRF54H20_CPURAD)
+#if (REQ_PIN_PORT_NO == 6) || (REQ_PIN_PORT_NO == 7) || (PRI_PIN_PORT_NO == 6) ||                  \
+	(PRI_PIN_PORT_NO == 7) || (GRANT_PIN_PORT_NO == 6) || (GRANT_PIN_PORT_NO == 7)
+#error "GPIO ports 6 and 7 cannot be used for coexistence pins"
+#endif
+#endif
 
 static nrfx_gpiote_t *gpiote =
 	&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(CX_NODE, grant_gpios));
@@ -53,12 +66,26 @@ static const struct gpio_dt_spec req_spec = GPIO_DT_SPEC_GET(CX_NODE, req_gpios)
 static const struct gpio_dt_spec pri_spec = GPIO_DT_SPEC_GET(CX_NODE, pri_dir_gpios);
 static const struct gpio_dt_spec gra_spec = GPIO_DT_SPEC_GET(CX_NODE, grant_gpios);
 
+#if !defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
+/* Direct register access pointers for ISR-safe GPIO control from DT */
+static NRF_GPIO_Type *req_port =
+	((NRF_GPIO_Type *)DT_REG_ADDR(DT_GPIO_CTLR(CX_NODE, req_gpios)));
+static NRF_GPIO_Type *pri_port =
+	((NRF_GPIO_Type *)DT_REG_ADDR(DT_GPIO_CTLR(CX_NODE, pri_dir_gpios)));
+static NRF_GPIO_Type *grant_port =
+	((NRF_GPIO_Type *)DT_REG_ADDR(DT_GPIO_CTLR(CX_NODE, grant_gpios)));
+static uint32_t req_pin_mask = BIT(DT_GPIO_PIN(CX_NODE, req_gpios));
+static uint32_t pri_pin_mask = BIT(DT_GPIO_PIN(CX_NODE, pri_dir_gpios));
+static uint32_t grant_pin_mask = BIT(DT_GPIO_PIN(CX_NODE, grant_gpios));
+#endif
+
 static mpsl_cx_cb_t callback;
 static struct gpio_callback grant_cb;
 static uint32_t grant_abs_pin;
 
 static int32_t grant_pin_is_asserted(bool *is_asserted)
 {
+#if defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
 	int ret = gpio_pin_get_dt(&gra_spec);
 
 	if (ret < 0) {
@@ -66,6 +93,12 @@ static int32_t grant_pin_is_asserted(bool *is_asserted)
 	}
 
 	*is_asserted = (bool)ret;
+#else
+	uint32_t port_in = nrf_gpio_port_in_read(grant_port);
+	bool raw_value = (bool)(port_in & grant_pin_mask);
+
+	*is_asserted = (gra_spec.dt_flags & GPIO_ACTIVE_LOW) ? !raw_value : raw_value;
+#endif
 	return 0;
 }
 
@@ -126,31 +159,56 @@ static void gpiote_irq_handler(const struct device *gpiob, struct gpio_callback 
 
 static int32_t request(const mpsl_cx_request_t *req_params)
 {
-	int ret;
-
 	if (req_params == NULL) {
 		return -NRF_EINVAL;
 	}
 
 	bool pri_active = req_params->prio > (UINT8_MAX / 2);
+	bool req_active = req_params->ops & (MPSL_CX_OP_RX | MPSL_CX_OP_TX);
+
+#if defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
+	int ret;
 
 	ret = gpio_pin_set_dt(&pri_spec, pri_active);
 	if (ret < 0) {
 		return -NRF_EPERM;
 	}
 
-	bool req_active = req_params->ops & (MPSL_CX_OP_RX | MPSL_CX_OP_TX);
-
 	ret = gpio_pin_set_dt(&req_spec, req_active);
 	if (ret < 0) {
 		return -NRF_EPERM;
 	}
+#else
+	bool pri_level = (pri_spec.dt_flags & GPIO_ACTIVE_LOW) ? !pri_active : pri_active;
+	bool req_level = (req_spec.dt_flags & GPIO_ACTIVE_LOW) ? !req_active : req_active;
+
+#if NRF_GPIO_HAS_RETENTION_SETCLEAR
+	nrf_gpio_port_retain_disable(pri_port, pri_pin_mask);
+	nrf_gpio_port_retain_disable(req_port, req_pin_mask);
+#endif
+	if (pri_level) {
+		nrf_gpio_port_out_set(pri_port, pri_pin_mask);
+	} else {
+		nrf_gpio_port_out_clear(pri_port, pri_pin_mask);
+	}
+
+	if (req_level) {
+		nrf_gpio_port_out_set(req_port, req_pin_mask);
+	} else {
+		nrf_gpio_port_out_clear(req_port, req_pin_mask);
+	}
+#if NRF_GPIO_HAS_RETENTION_SETCLEAR
+	nrf_gpio_port_retain_enable(pri_port, pri_pin_mask);
+	nrf_gpio_port_retain_enable(req_port, req_pin_mask);
+#endif
+#endif
 
 	return 0;
 }
 
 static int32_t release(void)
 {
+#if defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
 	int ret;
 
 	ret = gpio_pin_set_dt(&req_spec, 0);
@@ -162,6 +220,30 @@ static int32_t release(void)
 	if (ret < 0) {
 		return -NRF_EPERM;
 	}
+#else
+	bool req_level = (req_spec.dt_flags & GPIO_ACTIVE_LOW) ? true : false;
+	bool pri_level = (pri_spec.dt_flags & GPIO_ACTIVE_LOW) ? true : false;
+
+#if NRF_GPIO_HAS_RETENTION_SETCLEAR
+	nrf_gpio_port_retain_disable(req_port, req_pin_mask);
+	nrf_gpio_port_retain_disable(pri_port, pri_pin_mask);
+#endif
+	if (req_level) {
+		nrf_gpio_port_out_set(req_port, req_pin_mask);
+	} else {
+		nrf_gpio_port_out_clear(req_port, req_pin_mask);
+	}
+
+	if (pri_level) {
+		nrf_gpio_port_out_set(pri_port, pri_pin_mask);
+	} else {
+		nrf_gpio_port_out_clear(pri_port, pri_pin_mask);
+	}
+#if NRF_GPIO_HAS_RETENTION_SETCLEAR
+	nrf_gpio_port_retain_enable(req_port, req_pin_mask);
+	nrf_gpio_port_retain_enable(pri_port, pri_pin_mask);
+#endif
+#endif
 
 	return 0;
 }
@@ -218,6 +300,12 @@ static int mpsl_cx_init(void)
 	if (ret != 0) {
 		return ret;
 	}
+
+#if !defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
+	if (req_port == NULL || pri_port == NULL || grant_port == NULL) {
+		return -EINVAL;
+	}
+#endif
 
 	ret = gpio_pin_interrupt_configure_dt(&gra_spec,
 		GPIO_INT_ENABLE | GPIO_INT_EDGE | GPIO_INT_EDGE_BOTH);

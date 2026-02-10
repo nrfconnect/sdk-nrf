@@ -5,7 +5,6 @@
  */
 #include <stdlib.h>
 #include <ctype.h>
-#include <getopt.h>
 #include <unistd.h>
 
 #include <zephyr/shell/shell.h>
@@ -14,6 +13,7 @@
 #include <zephyr/bluetooth/conn.h>
 #include <bluetooth/services/nus.h>
 #include <bluetooth/services/nus_client.h>
+#include <zephyr/sys/sys_getopt.h>
 #include <bluetooth/gatt_dm.h>
 
 #include <zephyr/logging/log.h>
@@ -420,13 +420,14 @@ static int central_init(void)
 	return ret;
 }
 
-static struct option long_options[] = {{"acl_int_min", required_argument, NULL, 'n'},
-				       {"acl_int_max", required_argument, NULL, 'x'},
-				       {"acl_latency", required_argument, NULL, 's'},
-				       {"acl_timeout", required_argument, NULL, 't'},
-				       {"acl_send_int", required_argument, NULL, 'i'},
-				       {"acl_paylod_size", required_argument, NULL, 'p'},
-				       {0, 0, 0, 0}};
+static struct sys_getopt_option long_options[] = {
+	{"acl_int_min", sys_getopt_required_argument, NULL, 'n'},
+	{"acl_int_max", sys_getopt_required_argument, NULL, 'x'},
+	{"acl_latency", sys_getopt_required_argument, NULL, 's'},
+	{"acl_timeout", sys_getopt_required_argument, NULL, 't'},
+	{"acl_send_int", sys_getopt_required_argument, NULL, 'i'},
+	{"acl_paylod_size", sys_getopt_required_argument, NULL, 'p'},
+	{0, 0, 0, 0}};
 
 static const char short_options[] = "n:x:s:t:i:p";
 
@@ -464,10 +465,10 @@ static int param_set(const struct shell *shell, size_t argc, char **argv)
 		return -EPERM;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, &long_index)) !=
+	       -1) {
 		switch (opt) {
 		case 'n':
 			conn_param.interval_min = result;

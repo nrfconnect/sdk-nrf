@@ -6,7 +6,7 @@
 
 menuconfig ML_APP_EVENT_PROXY
 	bool "Event proxy module"
-	depends on SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF54H
 	depends on EVENT_MANAGER_PROXY
 	select APP_EVENT_MANAGER_POSTINIT_HOOK
 	help

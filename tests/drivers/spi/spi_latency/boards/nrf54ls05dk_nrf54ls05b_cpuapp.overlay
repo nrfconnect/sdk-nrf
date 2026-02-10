@@ -41,6 +41,7 @@
 	overrun-character = <0x00>;
 	zephyr,pm-device-runtime-auto;
 	cs-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+
 	dut_spi: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
 		reg = <0>;

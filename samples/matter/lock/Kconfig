@@ -64,6 +64,8 @@ if LOCK_ENABLE_DEBUG
 
 config LOCK_PRINT_STORAGE_STATUS
 	bool "Print storage status after each store call"
+	# This feature assumes that items are eventually stored in Zephyr settings subsystem
+	depends on LOCK_ACCESS_STORAGE_PERSISTENT_STORAGE || TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS
 	help
 	  Debug feature to print the debug-level log that contains information of the entry being stored
 	  to persistent storage and how many bytes are left to store the new entry. It can be used to verify
@@ -87,7 +89,7 @@ config STATE_LEDS
 
 config THREAD_WIFI_SWITCHING
 	bool "Switching between Thread and Wi-Fi"
-	depends on SOC_SERIES_NRF53X || SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF53 || SOC_SERIES_NRF54L
 	depends on NET_L2_OPENTHREAD
 	depends on CHIP_WIFI
 	depends on !CHIP_FACTORY_RESET_ERASE_SETTINGS
@@ -134,26 +136,30 @@ if BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EK || SHIELD_NRF7002EB2
 
 config CHIP_WIFI
 	default y
-	select DEPRECATED if SOC_SERIES_NRF53X
+	select DEPRECATED if SOC_SERIES_NRF53
 
 config NRF_WIFI_LOW_POWER
 	default y
 
 endif # BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EK || SHIELD_NRF7002EB2
 
-config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
-	default y
+choice LOCK_ACCESS_STORAGE_CHOICE
+	prompt "Access storage implementation"
+	default LOCK_ACCESS_STORAGE_PROTECTED_STORAGE
 
-# PSA SSF Crypto Client is not ready for the secure storage backend
-if !PSA_SSF_CRYPTO_CLIENT
+config LOCK_ACCESS_STORAGE_PERSISTENT_STORAGE
+	bool "Persistent storage interface"
+	select NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 
-config NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
-	default y if !CHIP_WIFI
+config LOCK_ACCESS_STORAGE_PROTECTED_STORAGE
+	bool "PSA Protected Storage"
+	# PSA SSF Crypto Client is not ready for PSA PS backend
+	depends on !CHIP_WIFI && !PSA_SSF_CRYPTO_CLIENT
+	# When building with TF-M, Protected Storage is enabled by default
+	select TRUSTED_STORAGE if !BUILD_WITH_TFM
+	select PSA_PROTECTED_STORAGE if !BUILD_WITH_TFM
 
-config NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND
-	default n if !CHIP_WIFI
-
-endif
+endchoice
 
 # Increase the storage capacity if the schedules are enabled with secure storage
 # This also implies increasing of the OT and Matter stacks because some operations
@@ -177,6 +183,14 @@ config MAIN_STACK_SIZE
 	default 7168
 
 endif
+
+if LOCK_ACCESS_STORAGE_PROTECTED_STORAGE
+
+config LOCK_ACCESS_STORAGE_PROTECTED_STORAGE_UID_OFFSET
+	int "Access storage PSA Protected Storage UID range start"
+	default 0
+
+endif # LOCK_ACCESS_STORAGE_PROTECTED_STORAGE
 
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.features"
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.defaults"

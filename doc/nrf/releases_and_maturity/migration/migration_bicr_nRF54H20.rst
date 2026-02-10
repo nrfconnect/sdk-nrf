@@ -376,6 +376,12 @@ The ``source`` option in JSON can be one of the following:
 
 This means that the device can use either ``LFRC`` or ``SYNTH`` as clock sources.
 
+.. note::
+   If you select ``LFXO`` as the low-frequency clock source, the SoC performs an automated LFXO calibration during startup when no calibration has been stored yet (for example, when ``LFOSC.LFXOCAL`` is set to ``0xFFFFFFFF`` after programming a new BICR configuration).
+   This calibration is fully automated and typically takes 3 to 3.5 seconds, during which the SoC must remain powered.
+   Until calibration is complete, the SoC uses the LFRC oscillator.
+   For more information, see :ref:`ug_nrf54h20_custom_pcb_bicr`.
+
 LFRC autocalibration configuration
 ==================================
 

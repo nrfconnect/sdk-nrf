@@ -4,10 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrfx.h>
-#include <errno.h>
-#include <zephyr/kernel.h>
-#include <zephyr/net/socket.h>
+#include <sys/socket.h>
 
 /** @brief Function for sending all data in a given buffer to a connected
  * socket.

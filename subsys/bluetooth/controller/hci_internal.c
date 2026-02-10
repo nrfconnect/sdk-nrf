@@ -432,12 +432,25 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 
 	cmds->hci_le_read_supported_states = 1;
 
-	/* NOTE: The DTM commands are *not* supported by the SoftDevice
-	 * controller. See doc/nrf/known_issues.rst.
-	 */
+#if defined(CONFIG_BT_CTLR_DTM_HCI)
 	cmds->hci_le_receiver_test_v1 = 1;
 	cmds->hci_le_transmitter_test_v1 = 1;
 	cmds->hci_le_test_end = 1;
+	cmds->hci_le_receiver_test_v2 = 1;
+	cmds->hci_le_transmitter_test_v2 = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_DTM_HCI_RX_V3)
+	cmds->hci_le_receiver_test_v3 = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_DTM_HCI_TX_V3)
+	cmds->hci_le_transmitter_test_v3 = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_DTM_HCI_TX_V4)
+	cmds->hci_le_transmitter_test_v4 = 1;
+#endif
 
 #if defined(CONFIG_BT_CTLR_LE_ENC) && defined(CONFIG_BT_CTLR_LE_PING)
 	cmds->hci_read_authenticated_payload_timeout = 1;
@@ -468,12 +481,6 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_default_phy = 1;
 	cmds->hci_le_set_phy = 1;
 #endif
-
-	/* NOTE: The DTM commands are *not* supported by the SoftDevice
-	 * controller. See doc/nrf/known_issues.rst.
-	 */
-	cmds->hci_le_receiver_test_v2 = 1;
-	cmds->hci_le_transmitter_test_v2 = 1;
 
 #if defined(CONFIG_BT_CTLR_ADV_EXT)
 #if defined(CONFIG_BT_BROADCASTER)
@@ -548,13 +555,6 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_connection_cte_transmit_parameters = 1;
 #endif
 
-#if defined(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) || defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
-	/* NOTE: The DTM commands are *not* supported by the SoftDevice
-	 * controller. See doc/nrf/known_issues.rst.
-	 */
-	cmds->hci_le_transmitter_test_v3 = 1;
-#endif
-
 #if defined(CONFIG_BT_CTLR_DF)
 	cmds->hci_le_read_antenna_information = 1;
 #endif
@@ -563,10 +563,6 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_enhanced_read_transmit_power_level = 1;
 	cmds->hci_le_read_remote_transmit_power_level = 1;
 	cmds->hci_le_set_transmit_power_reporting_enable = 1;
-	/* NOTE: The DTM commands are *not* supported by the SoftDevice
-	 * controller. See doc/nrf/known_issues.rst.
-	 */
-	cmds->hci_le_transmitter_test_v4 = 1;
 #endif
 
 #if defined(CONFIG_BT_CTLR_LE_PATH_LOSS_MONITORING)
@@ -1541,6 +1537,32 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		return status;
 	}
 #endif /* CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS */
+
+#if defined(CONFIG_BT_CTLR_DTM_HCI)
+	case SDC_HCI_OPCODE_CMD_LE_RECEIVER_TEST_V1:
+		return sdc_hci_cmd_le_receiver_test_v1((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_RECEIVER_TEST_V2:
+		return sdc_hci_cmd_le_receiver_test_v2((void *)cmd_params);
+#if defined(CONFIG_BT_CTLR_DTM_HCI_RX_V3)
+	case SDC_HCI_OPCODE_CMD_LE_RECEIVER_TEST_V3:
+		return sdc_hci_cmd_le_receiver_test_v3((void *)cmd_params);
+#endif /* CONFIG_BT_CTLR_DTM_HCI_RX_V3 */
+	case SDC_HCI_OPCODE_CMD_LE_TRANSMITTER_TEST_V1:
+		return sdc_hci_cmd_le_transmitter_test_v1((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_TRANSMITTER_TEST_V2:
+		return sdc_hci_cmd_le_transmitter_test_v2((void *)cmd_params);
+#if defined(CONFIG_BT_CTLR_DTM_HCI_TX_V3)
+	case SDC_HCI_OPCODE_CMD_LE_TRANSMITTER_TEST_V3:
+		return sdc_hci_cmd_le_transmitter_test_v3((void *)cmd_params);
+#endif /* CONFIG_BT_CTLR_DTM_HCI_TX_V3 */
+#if defined(CONFIG_BT_CTLR_DTM_HCI_TX_V4)
+	case SDC_HCI_OPCODE_CMD_LE_TRANSMITTER_TEST_V4:
+		return sdc_hci_cmd_le_transmitter_test_v4((void *)cmd_params);
+#endif /* CONFIG_BT_CTLR_DTM_HCI_TX_V4 */
+	case SDC_HCI_OPCODE_CMD_LE_TEST_END:
+		*param_length_out += sizeof(sdc_hci_cmd_le_test_end_return_t);
+		return sdc_hci_cmd_le_test_end((void *)event_out_params);
+#endif /* CONFIG_BT_CTLR_DTM_HCI */
 
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;

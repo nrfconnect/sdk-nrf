@@ -21,7 +21,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <time.h>
-#include <zephyr/net/socket.h>
+#include <sys/socket.h>
 #include <stdint.h>
 typedef uint8_t u_int8_t;
 typedef uint16_t u_int16_t;
@@ -247,7 +247,7 @@ static void loopback_server_timeout(void *eloop_ctx, void *timeout_ctx)
 	(void)timeout_ctx;
 
 	qt_eloop_unregister_read_sock(s);
-	close(s);
+	zsock_close(s);
 	loopback_socket = 0;
 	indigo_logger(LOG_LEVEL_INFO, "Loopback server stops");
 }
@@ -274,13 +274,13 @@ int loopback_server_start(char *local_ip, char *local_port, int timeout)
 
 	if (bind(s, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
 		indigo_logger(LOG_LEVEL_ERROR, "Failed to bind server socket");
-		close(s);
+		zsock_close(s);
 		return -1;
 	}
 
 	if (getsockname(s, (struct sockaddr *)&addr, &len) == -1) {
 		indigo_logger(LOG_LEVEL_INFO, "Failed to get socket port number");
-		close(s);
+		zsock_close(s);
 		return -1;
 	}
 
@@ -305,7 +305,7 @@ int loopback_server_stop(void)
 		qt_eloop_cancel_timeout(loopback_server_timeout,
 					(void *)(intptr_t)loopback_socket, NULL);
 		qt_eloop_unregister_read_sock(loopback_socket);
-		close(loopback_socket);
+		zsock_close(loopback_socket);
 		loopback_socket = 0;
 	}
 	return 0;
@@ -457,7 +457,7 @@ int stop_loopback_data(int *pkt_sent)
 	}
 
 	qt_eloop_cancel_timeout(send_continuous_loopback_packet, &loopback, NULL);
-	close(loopback.sock);
+	zsock_close(loopback.sock);
 	loopback.sock = 0;
 	if (pkt_sent) {
 		*pkt_sent = loopback.pkt_sent;
@@ -517,7 +517,7 @@ int send_udp_data(char *target_ip, int target_port, int packet_count, int packet
 
 	if (connect(s, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
 		indigo_logger(LOG_LEVEL_ERROR, "Connect failed. Error");
-		close(s);
+		zsock_close(s);
 		goto done;
 	}
 
@@ -571,7 +571,7 @@ int send_udp_data(char *target_ip, int target_port, int packet_count, int packet
 
 		indigo_logger(LOG_LEVEL_INFO, "Receive echo %d bytes data", recv_len);
 	}
-	close(s);
+	zsock_close(s);
 
 	return pkt_rcv;
 done:
@@ -694,7 +694,7 @@ int send_icmp_data(char *target_ip, int packet_count, int packet_size, double ra
 			usleep(rate * 1000000);
 	}
 
-	close(sock);
+	zsock_close(sock);
 	return pkt_rcv;
 done:
 	return -1;

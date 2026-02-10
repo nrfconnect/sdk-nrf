@@ -7,7 +7,7 @@
 zephyr_library()
 zephyr_library_sources(nrf_modem_lib.c)
 zephyr_library_sources(nrf_modem_os.c)
-zephyr_library_sources_ifdef(CONFIG_SOC_SERIES_NRF92X nrf_modem_os_rpc.c)
+zephyr_library_sources_ifdef(CONFIG_SOC_SERIES_NRF92 nrf_modem_os_rpc.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_MODEM_LIB_CFUN_HOOKS cfun_hooks.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_MODEM_LIB_MEM_DIAG diag.c)
 zephyr_library_sources_ifdef(CONFIG_NET_SOCKETS nrf9x_sockets.c)

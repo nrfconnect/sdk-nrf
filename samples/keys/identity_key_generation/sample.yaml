@@ -1,6 +1,6 @@
 sample:
   description: Generate and write identity key.
-  name: Identity Key Generate
+  name: Identity key generation sample
 common:
   tags:
     - keys

@@ -43,7 +43,7 @@ ZTEST(test_fprotect_positive, test_2_flash_read)
 	zassert_true(retval == 0, "flash_read failed");
 	for (size_t i = 0; i < ARRAY_SIZE(read_data_after); i++) {
 		zassert_equal(read_data_after[i], write_data[i],
-			      "Expected:'%c' got '%c' at positition %ld",
+			      "Expected:'%c' got '%c' at positition %zu",
 			      write_data[i], read_data_after[i], i);
 	}
 	retval = flash_read(flash_dev, control_read_addr, read_data_after,
@@ -51,7 +51,7 @@ ZTEST(test_fprotect_positive, test_2_flash_read)
 	zassert_true(retval == 0, "flash_read failed");
 	for (size_t i = 0; i < ARRAY_SIZE(read_data_after); i++) {
 		zassert_equal(read_data_after[i], read_data_before[i],
-			      "Expected:'%c' got '%c' at positition %ld",
+			      "Expected:'%c' got '%c' at positition %zu",
 			      read_data_before[i], read_data_after[i], i);
 	}
 }

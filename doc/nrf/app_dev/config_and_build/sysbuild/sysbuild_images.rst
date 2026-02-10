@@ -83,7 +83,7 @@ If the image selection is mandatory, the :file:`Kconfig.sysbuild` file can be om
 
         config MY_APP_IMAGE_ABC
             bool "Include ABC image"
-            depends on SOC_SERIES_NRF53X
+            depends on SOC_SERIES_NRF53
             default y if BOARD_NRF5340DK_NRF5340_CPUAPP
             help
               Will include the ABC image in the build, which will...
@@ -240,7 +240,7 @@ Kconfig.sysbuild:
 
     config MY_APP_IMAGE_ABC
         bool "Include ABC image"
-        depends on SOC_SERIES_NRF53X
+        depends on SOC_SERIES_NRF53
         default y if BOARD_NRF5340DK_NRF5340_CPUAPP
         help
           Will include the ABC image in the build, which will...

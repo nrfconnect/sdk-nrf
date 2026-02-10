@@ -288,6 +288,7 @@
 .. _`PSA functions for key management`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/management.html
 .. _`PSA_KEY_USAGE_EXPORT policy`: https://arm-software.github.io/psa-api/crypto/1.3/api/keys/policy.html#c.PSA_KEY_USAGE_EXPORT
 
+.. _`PSA Certified Crypto API 1.4.0`: https://arm-software.github.io/psa-api/crypto/1.4/
 .. _`PSA Certified Crypto API 1.3.1`: https://arm-software.github.io/psa-api/crypto/1.3/
 
 .. _`PSA Certified Secure Storage API`: https://arm-software.github.io/psa-api/storage/
@@ -1023,7 +1024,7 @@
 .. _`nrf5sdk-tools command overview`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-nrf5sdk-tools/guides/intro.html
 .. _`Generating DFU packages`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_generating_packages.html
 .. _`DFU over a serial USB connection`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_performing.html#dfu-over-a-serial-usb-connection
-.. _`Toolchain Manager command`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-toolchain-manager/nrfutil-toolchain-manager_0.14.1.html
+.. _`Toolchain Manager command`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-toolchain-manager/nrfutil-toolchain-manager.html
 .. _`sdk-manager command`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-sdk-manager/nrfutil-sdk-manager.html
 .. _`sdk-manager Configuration settings`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-sdk-manager/guides/sdk_manager_config_settings.html
 .. _`sdk-manager Starting and inspecting the toolchain environment`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-sdk-manager/guides/sdk_manager_env_launch.html
@@ -1113,6 +1114,8 @@
 .. _`How to use nRF Connect terminal profile`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/extension_nrfconnect_profile.html
 .. _`switch to the pre-release version of the extension`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/rel_notes_overview.html#switching-to-a-pre-release-version
 .. _`How to work with sysbuild domains`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_multi_domain.html
+
+.. _`Edge AI Add-on for nRF Connect SDK`: https://docs.nordicsemi.com/bundle/addon-edge-ai_latest/page/index.html
 
 .. ### Source: files.nordicsemi.com
 
@@ -1562,7 +1565,6 @@
 .. _`nRF Cloud Auto-onboarding`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#auto-onboarding
 .. _`nRF Cloud device claiming`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ClaimingDevices/ClaimingDeviceOwnershipPortal.html
 .. _`nRF Cloud Preconnect Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#preconnect-onboarding
-.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#jitp
 .. _`nRF Cloud Onboarding`:
 .. _`nRF Cloud Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ProvisioningOverview.html
 .. _`nRF Cloud FOTA`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTAOverview.html

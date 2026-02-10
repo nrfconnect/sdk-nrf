@@ -162,7 +162,7 @@ static void tc_cleanup(void *f)
 
 otError verify_sockaddr(otInstance *instance, const otSockAddr *sockaddr)
 {
-	struct in6_addr addr = {{{ ADDR_1 }}};
+	struct net_in6_addr addr = {{{ ADDR_1 }}};
 
 	zassert_mem_equal(&addr, &sockaddr->mAddress, OT_IP6_ADDRESS_SIZE);
 	zassert_equal(sockaddr->mPort, TEST_PORT);
@@ -372,9 +372,9 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientEnableAutoHostAddress)
 
 ZTEST(ot_rpc_srp_client, test_otSrpClientSetHostAddresses)
 {
-	struct in6_addr addr1;
-	struct in6_addr addr2;
-	struct in6_addr addr3;
+	struct net_in6_addr addr1;
+	struct net_in6_addr addr2;
+	struct net_in6_addr addr3;
 
 	const otIp6Address *addrs;
 

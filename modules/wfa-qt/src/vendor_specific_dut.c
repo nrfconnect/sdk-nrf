@@ -13,6 +13,7 @@
 #include "vendor_specific.h"
 #include "utils.h"
 #include <zephyr/net/dhcpv4_server.h>
+#include <zephyr/net/net_if.h>
 
 void interfaces_init(void)
 {

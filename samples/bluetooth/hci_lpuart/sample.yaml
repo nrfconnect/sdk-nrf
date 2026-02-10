@@ -1,6 +1,5 @@
 sample:
-  description: TBD
-  name: TBD
+  name: Bluetooth HCI low power UART sample
 tests:
   sample.bluetooth.hci_lpuart:
     sysbuild: true
@@ -11,3 +10,4 @@ tests:
       - uart
       - bluetooth
       - sysbuild
+      - ci_samples_bluetooth

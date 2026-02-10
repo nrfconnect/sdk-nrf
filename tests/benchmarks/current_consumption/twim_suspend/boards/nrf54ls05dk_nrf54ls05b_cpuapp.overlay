@@ -1,0 +1,8 @@
+/*
+ * Copyright (C) 2026 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c22 {
+	/delete-property/ zephyr,pm-device-runtime-auto;
+};

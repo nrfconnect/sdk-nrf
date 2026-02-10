@@ -11,7 +11,9 @@ config PSA_HAS_AEAD_SUPPORT
 	default y
 	depends on PSA_WANT_ALG_CCM || \
 		   PSA_WANT_ALG_GCM || \
-		   PSA_WANT_ALG_CHACHA20_POLY1305
+		   PSA_WANT_ALG_CHACHA20_POLY1305 || \
+		   PSA_WANT_ALG_XCHACHA20_POLY1305 || \
+		   PSA_WANT_ALG_ASCON_AEAD128
 	help
 	  Prompt-less configuration that states that AEAD is supported.
 
@@ -36,7 +38,12 @@ config PSA_HAS_ASYM_SIGN_SUPPORT
 		   PSA_WANT_ALG_RSA_PKCS1V15_SIGN	|| \
 		   PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW   || \
 		   PSA_WANT_ALG_RSA_PSS                 || \
-		   PSA_WANT_ALG_RSA_PSS_ANY_SALT
+		   PSA_WANT_ALG_RSA_PSS_ANY_SALT        || \
+		   PSA_WANT_ALG_HSS                     || \
+		   PSA_WANT_ALG_LMS                     || \
+		   PSA_WANT_ALG_XMSS                    || \
+		   PSA_WANT_ALG_XMSS_MT                 || \
+		   PSA_WANT_ALG_ML_DSA
 	help
 	  Prompt-less configuration that states that asymmetric signing
 	  is supported.
@@ -68,7 +75,12 @@ config PSA_HAS_HASH_SUPPORT
 		   PSA_WANT_ALG_SHA3_224	|| \
 		   PSA_WANT_ALG_SHA3_256	|| \
 		   PSA_WANT_ALG_SHA3_384	|| \
-		   PSA_WANT_ALG_SHA3_512
+		   PSA_WANT_ALG_SHA3_512    || \
+		   PSA_WANT_ALG_ASCON_HASH256 || \
+		   PSA_WANT_ALG_SHAKE128_256  || \
+		   PSA_WANT_ALG_SHAKE256_192  || \
+		   PSA_WANT_ALG_SHAKE256_256  || \
+		   PSA_WANT_ALG_SHAKE256_512
 	help
 	  Prompt-less configuration that states that hash is supported.
 
@@ -91,7 +103,9 @@ config PSA_HAS_KEY_DERIVATION
 		   PSA_WANT_ALG_TLS12_PSK_TO_MS		|| \
 		   PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS	|| \
 		   PSA_WANT_ALG_SP800_108_COUNTER_CMAC 	|| \
-		   PSA_WANT_ALG_SP800_108_COUNTER_HMAC
+		   PSA_WANT_ALG_SP800_108_COUNTER_HMAC  || \
+		   PSA_WANT_ALG_SRP_PASSWORD_HASH       || \
+		   PSA_WANT_ALG_WPA3_SAE_H2E
 	help
 	  Prompt-less configuration that states that key derivation is supported.
 
@@ -127,7 +141,26 @@ config PSA_HAS_KEY_SUPPORT
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE	|| \
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE	|| \
 		   PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY		|| \
-		   PSA_WANT_KEY_TYPE_WPA3_SAE_PT
+		   PSA_WANT_KEY_TYPE_WPA3_SAE                 || \
+		   PSA_WANT_KEY_TYPE_XCHACHA20                || \
+		   PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY           || \
+		   PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY           || \
+		   PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY          || \
+		   PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY       || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_BASIC    || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT   || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT   || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE   || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY        || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_BASIC    || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT   || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT   || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE   || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY        || \
+		   PSA_WANT_KEY_TYPE_ASCON
+
 	help
 	  Prompt-less configuration that states that key types are supported.
 
@@ -148,7 +181,8 @@ config PSA_HAS_PAKE_SUPPORT
 		   PSA_WANT_ALG_SPAKE2P_MATTER 		|| \
 		   PSA_WANT_ALG_SRP_6 			|| \
 		   PSA_WANT_ALG_SRP_PASSWORD_HASH	|| \
-		   PSA_WANT_ALG_WPA3_SAE
+		   PSA_WANT_ALG_WPA3_SAE_FIXED 		|| \
+		   PSA_WANT_ALG_WPA3_SAE_GDH
 	help
 	  Prompt-less configuration that states that PAKE is supported.
 
@@ -179,6 +213,18 @@ config PSA_WANT_ALG_LMS
 config PSA_WANT_ALG_ML_DSA
 	bool "PSA ML_DSA support [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_DETERMINISTIC_ML_DSA
+	bool "PSA ML_DSA deterministic support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_HASH_ML_DSA
+	bool "PSA ML_DSA hash support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA
+	bool "PSA ML_DSA deterministic hash support [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	select EXPERIMENTAL
 
 config PSA_WANT_ALG_XMSS
@@ -218,6 +264,10 @@ config PSA_WANT_ALG_SHA_512_224
 config PSA_WANT_ALG_SHA_512_256
 	bool "PSA SHA-512/256 support" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_ASCON_HASH256
+	bool "PSA ASCON HASH256 support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
 
 config PSA_WANT_ALG_SPAKE2P_HMAC
 	bool "PSA SPAKE2+ HMAC support" if !PSA_PROMPTLESS
@@ -288,19 +338,43 @@ config PSA_WANT_ALG_SHAKE256_512
 	default y if PSA_CRYPTO_ENABLE_ALL
 
 config PSA_WANT_ALG_AES_KW
-	bool "AES Key Wrap support (NIST-SP-800-38F and RFC3394) [EXPERIMENTAL]" if !MBEDTLS_PROMPTLESS
+	bool "AES Key Wrap support (NIST-SP-800-38F and RFC3394) [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	select EXPERIMENTAL
 
 config PSA_WANT_ALG_AES_KWP
-	bool "AES Key Wrap with padding support (NIST-SP-800-38F and RFC5649) [EXPERIMENTAL]" if !MBEDTLS_PROMPTLESS
+	bool "AES Key Wrap with padding support (NIST-SP-800-38F and RFC5649) [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	select EXPERIMENTAL
 
 config PSA_WANT_ALG_WPA3_SAE_H2E
 	bool "WPA3-SAE-H2E support [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	select EXPERIMENTAL
 
-config PSA_WANT_ALG_WPA3_SAE
-	bool "WPA3-SAE support [EXPERIMENTAL]" if !MBEDTLS_PROMPTLESS
+config PSA_WANT_ALG_WPA3_SAE_FIXED
+	bool "WPA3-SAE-FIXED support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_WPA3_SAE_GDH
+	bool "WPA3-SAE-GDH support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_SHAKE128
+	bool "SHAKE128 support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_SHAKE256
+	bool "SHAKE256 support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_ASCON_XOF128
+	bool "ASCON XOF128 support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_ASCON_CXOF128
+	bool "ASCON CXOF128 support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_ASCON_AEAD128
+	bool "ASCON AEAD128 support [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	select EXPERIMENTAL
 
 comment "Nordic added ECC curve types"
@@ -436,8 +510,8 @@ config PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 	help
 	  SRP public key support.
 
-config PSA_WANT_KEY_TYPE_WPA3_SAE_PT
-	bool "WPA3-SAE-PT key support" if !PSA_PROMPTLESS
+config PSA_WANT_KEY_TYPE_WPA3_SAE
+	bool "WPA3-SAE password token support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
 
 config PSA_WANT_KEY_TYPE_XCHACHA20
@@ -565,3 +639,8 @@ config PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY
 	bool "ML_KEM public key support" if !PSA_PROMPTLESS
 	help
 	  ML_KEM public key support.
+
+config PSA_WANT_KEY_TYPE_ASCON
+	bool "ASCON key support" if !PSA_PROMPTLESS
+	help
+	  ASCON key support.

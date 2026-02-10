@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 144ea2e0c027392a3b3fb32a596268f521099850
+      revision: 4a35150931b8639d20701f94d1300dcdaf3010d4
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -94,6 +94,7 @@ manifest:
           - hostap
           - liblc3
           - libmetal
+          - libsbc
           - littlefs
           - loramac-node
           - lvgl
@@ -119,7 +120,7 @@ manifest:
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
-      revision: d4bc010be69aa89290c5af6767702ff46c1829e5
+      revision: 63b3fa8bab483d021dd8c09a581887b039aa9e8a
       userdata:
         ncs:
           upstream-url: https://github.com/Wi-FiQuickTrack/Wi-FiQuickTrack-ControlAppC
@@ -127,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 73497f4919ed207d86fd284aef3a46e1cbba9c69
+      revision: 4e00d240273c6c327e700e33172216f7342bfbef
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -140,23 +141,23 @@ manifest:
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: ee0cdb000b9ce3c699193a15312058c62e5afa57
+      revision: fd1f2aa156d8beb78584dfbaf30df30bf8f6568f
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 1168eb365c353414aed4f5137213b890223a830d
+      revision: cd973eca82fb2e44cc58a150476454d3e5e0d7d5
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 5880bf3411c9f58b098ca25e1ad6bfd3f51ccd77
+      revision: 20d9399b341cf6a1b60139067805ab69a0f528e6
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
-      revision: 6e966dfeca5886ef576bf3f8613722169014e789
+      revision: ba0487c40eb2b57676676604b4c17526790dbc94
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: a1f66bf38a70efc1c44257969fcfc1726dd9b6ce
+      revision: 2927fd5e559ccb010157b090633c447951d52f18
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -182,7 +183,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 9be7463577079b459151f418d76357e9b97da335
+      revision: 0a8a4a444b67ad1aeb3a6592b0e2adfebf6b2dad
       groups:
         - dragoon
     - name: cjson
@@ -196,7 +197,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 64be52b5b3f68dc77936c5d2d4d1fa15f59c336a
+      revision: 1a10a0edfea93eba387c14ebc851d78082c18651
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -245,7 +246,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.32.0
+      revision: 1.34.0
       remote: memfault
     - name: bsim
       repo-path: bsim_west

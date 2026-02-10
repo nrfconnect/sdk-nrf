@@ -1,0 +1,4 @@
+&uart20 {
+	zephyr,pm-device-runtime-auto;
+	disable-rx;
+};

@@ -27,15 +27,15 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 #define STACKSIZE                    CONFIG_MAIN_STACK_SIZE
 #define THREAD_PRIORITY              K_LOWEST_APPLICATION_THREAD_PRIO
 
-#if defined(CONFIG_SOC_SERIES_NRF53X)
+#if defined(CONFIG_SOC_SERIES_NRF53)
 	#define LOG_OFFLOAD_IRQn SWI1_IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF52X)
+#elif defined(CONFIG_SOC_SERIES_NRF52)
 	#define LOG_OFFLOAD_IRQn SWI1_EGU1_IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 	#define LOG_OFFLOAD_IRQn EGU10_IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF54HX)
+#elif defined(CONFIG_SOC_SERIES_NRF54H)
 	#define LOG_OFFLOAD_IRQn EGU020_IRQn
-#endif /* CONFIG_SOC_SERIES_NRF53X */
+#endif /* CONFIG_SOC_SERIES_NRF53 */
 
 static bool request_in_cb = true;
 
@@ -46,11 +46,11 @@ enum mpsl_timeslot_call {
 	CLOSE_SESSION,
 };
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 	#define HFCLK_CFG MPSL_TIMESLOT_HFCLK_CFG_XTAL_GUARANTEED
 #else
 	#define HFCLK_CFG MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE
-#endif /* CONFIG_SOC_SERIES_NRF54HX */
+#endif /* CONFIG_SOC_SERIES_NRF54H */
 
 /* Timeslot requests */
 static mpsl_timeslot_request_t timeslot_request_earliest = {

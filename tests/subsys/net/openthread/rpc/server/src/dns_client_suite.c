@@ -84,7 +84,7 @@ extern uint64_t service_response_callback_encoder(uint32_t callback_slot, uint32
 
 static otDnsQueryConfig config;
 static otDnsQueryConfig *expected_config;
-static struct in6_addr dns_addr = {{{ DNS_IPV6_ADDR }}};
+static struct net_in6_addr dns_addr = {{{ DNS_IPV6_ADDR }}};
 static size_t service_info_txt_size;
 
 

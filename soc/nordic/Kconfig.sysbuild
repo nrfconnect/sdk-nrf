@@ -2,3 +2,5 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 rsource "common/vpr/Kconfig.sysbuild"
+
+rsource "*/Kconfig.sysbuild"

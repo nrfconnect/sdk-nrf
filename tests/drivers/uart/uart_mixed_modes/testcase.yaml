@@ -51,6 +51,8 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
@@ -66,6 +68,8 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
@@ -79,6 +83,8 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
@@ -87,3 +93,42 @@ tests:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
       - CONFIG_UART_21_INTERRUPT_DRIVEN=y
       - CONFIG_UART_22_INTERRUPT_DRIVEN=n
+
+  # nrf54lv10 has uarte30 (console) and uarte20/21 only
+  drivers.uart.async_int.nrf54lv10:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - CONFIG_ASYNC_AND_INT=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_20_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_20_ASYNC=y
+      - CONFIG_UART_21_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_21_ASYNC=n
+
+  drivers.uart.async_poll.nrf54lv10:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - CONFIG_ASYNC_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_20_ASYNC=y
+      - CONFIG_UART_21_ASYNC=n
+
+  drivers.uart.int_poll.nrf54lv10:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - CONFIG_INT_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=n
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_20_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_21_INTERRUPT_DRIVEN=n

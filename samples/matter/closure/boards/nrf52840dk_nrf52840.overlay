@@ -9,7 +9,7 @@
 		nordic,pm-ext-flash = &mx25r64;
 	};
 
-	aliases{
+	aliases {
 		pwm-led1 = &pwm_led1;
 	};
 

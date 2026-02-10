@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
+/ {
 	aliases {
 		button = &button1;
 		led = &led1;
 	};
- };
+};

@@ -1,5 +1,6 @@
 .. _nrf9160_gs_connect_to_cloud:
 .. _nrf9160_gs_connecting_dk_to_cloud:
+.. _nrf91_gs_connecting_dk_to_cloud:
 
 Connecting the nRF91 Series DK to nRF Cloud
 ###########################################
@@ -8,16 +9,22 @@ Connecting the nRF91 Series DK to nRF Cloud
    :local:
    :depth: 2
 
-.. |DK| replace:: nRF9160 DK
+.. |DK| replace:: nRF91 Series DK
 
 .. dk_nrf_cloud_start
 
-To transmit data from your nRF91 Series DK to nRF Cloud, you need an `nRF Cloud`_ account.
+To transmit data from your |DK| to nRF Cloud, you need an `nRF Cloud`_ account.
 nRF Cloud is Nordic Semiconductor's platform for connecting your IoT devices to the cloud, viewing and analyzing device message data, prototyping ideas that use Nordic Semiconductor's chips, and more.
 
-.. dk_nrf_cloud_end
+Once you have an account, activate your SIM card and add the device to your nRF Cloud account.
 
-If you used the :ref:`Quick Start app to get started <ug_nrf9160_gs>`, you have an account and can :ref:`add the nRF91 Series DK to nRF Cloud <nrf9160_gs_cloud_add_device>`.
+.. note::
+
+   The instructions assume you are activating an iBasis SIM card that came with your |DK|.
+
+   If you are using a SIM card from another provider, make sure you activate it through your network operator before adding the device to nRF Cloud.
+
+.. dk_nrf_cloud_end
 
 .. _creating_cloud_account:
 
@@ -42,89 +49,63 @@ After logging in, you are taken to the dashboard view that displays your device 
 
 .. nrf_cloud_account_end
 
-.. _nrf9160_gs_cloud_add_device:
+Activating the SIM card
+***********************
+
+.. nrf_cloud_activate_sim_start
+
+To activate the iBasis SIM card that comes shipped with the |DK|, complete the following steps in the `nRF Cloud`_ portal.
+Make sure you are logged in to the portal.
+
+1. Click :guilabel:`SIM Cards` under :guilabel:`Device Management` in the navigation pane on the left.
+
+   .. figure:: ../nrf91/images/nrfcloud_simcards.png
+      :alt: nRF Cloud - SIM Cards
+
+      nRF Cloud - SIM Cards
+
+#. Click :guilabel:`Add SIM`.
+
+   .. figure:: ../nrf91/images/nrfcloud_addsim.png
+      :alt: nRF Cloud - Add SIM
+
+      nRF Cloud - Add SIM
+
+   The **Add SIM** page opens in the **Verify SIM Card** view.
+
+#. Complete the following steps on the **Add SIM** page to activate your iBasis SIM card:
+
+   .. figure:: ../nrf91/images/nrfcloud_activating_sim.png
+      :alt: nRF Cloud - Add SIM page
+
+      nRF Cloud - Add SIM page
+
+   a. Enter the 18-digit :term:`Integrated Circuit Card Identifier (ICCID)` or the 19-digit :term:`eUICC Identifier (EID)` in the **SIM ICCID/EID** text box.
+
+      .. note::
+         The SIM cards can have either the EID, the ICCID, or neither printed on it.
+
+   #. Enter the :term:`Personal Unblocking Key (PUK)` in the **PUK** text box.
+
+      The PUK is printed on the SIM card.
+      Reveal the PUK by scratching off the area on the back of the SIM card.
+   #. Accept the Terms and the Privacy Policy.
+   #. Click the :guilabel:`Activate SIM` button.
+
+      The **Add SIM** page changes to the **Activate SIM Card** view.
+
+   #. Fill in the required information.
+   #. Click :guilabel:`Save` to complete the activation.
+
+After the SIM card is activated, you can add your |DK| to nRF Cloud.
+
+.. nrf_cloud_activate_sim_end
 
 Adding the nRF91 Series DK to nRF Cloud
 ***************************************
 
-  .. tabs::
+.. nrf_cloud_add_device_start
 
-     .. group-tab:: nRF91x1 DK
+To add your |DK| device to nRF Cloud, refer to the `Adding a device to your account`_ section of the nRF Cloud documentation.
 
-        To add the nRF91x1 DK to nRF Cloud, refer to the `Adding a device to your account`_ section of the nRF Cloud documentation.
-
-     .. group-tab:: nRF9160 DK
-
-        .. |led_cloud_association| replace:: the **LED3** double pulse blinks
-        .. |led_publishing_data| replace:: blinking of **LED3**
-
-        .. nrf_cloud_add_device_start
-
-        To add the |DK| to nRF Cloud, complete the following steps.
-        Make sure you are logged in to the `nRF Cloud`_ portal and have an activated SIM card in the SIM card slot of the |DK|.
-
-        1. Connect the |DK| to the computer with a USB cable and switch it on, or reset the device if it is already switched on.
-        #. Wait up to three minutes for the device to find the cellular network and connect to the nRF Cloud server.
-
-           At this stage, the |DK| is provisioned on nRF Cloud, but not yet associated with your nRF Cloud account.
-           When the device has connected, |led_cloud_association| to indicate that user association is required and you can move to the next step.
-
-        #. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
-
-           .. figure:: images/nrfcloud_devices.png
-              :alt: nRF Cloud - Devices
-
-              nRF Cloud - Devices
-
-        #. Click :guilabel:`Add Devices`.
-
-           .. figure:: images/nrfcloud_add_devices.png
-              :alt: nRF Cloud - Add Devices
-
-              nRF Cloud - Add Devices
-
-           The **Select Device Type** pop-up opens.
-
-        #. Click :guilabel:`LTE Device` in the **Select Device Type** pop-up.
-
-           .. figure:: images/nrfcloud_selectdevicetype.png
-              :alt: nRF Cloud - Select Device Type
-
-              nRF Cloud - Select Device Type
-
-        #. Enter your device ID and ownership code (**PIN/HWID**) on the **Add LTE Device** page.
-
-           .. figure:: images/nrfcloud_add_lte_device.png
-              :alt: nRF Cloud - Add LTE Device
-
-              nRF Cloud - Add LTE Device
-
-           * **Device ID:** The device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your |DK|.
-             For example, *nrf-123456789012345*.
-             It is case sensitive, so make sure all the letters are lower-case.
-           * **PIN/HWID:** The ownership code is the PIN or the hardware ID of your device, and it is found on the label of your |DK|.
-             This is not the PIN code for your SIM card.
-
-           If the label contains a PIN in addition to the IMEI number, enter this pin.
-           If it does not contain a PIN, enter the Hardware ID (HWID) HEX code, with or without colons.
-           For example, *AA:BB:CC:DD:EE:FF* or *AABBCCDDEEFF*.
-
-           .. note::
-              The ownership code serves as a password and proves that you own the specific |DK|.
-              Therefore, do not share it with anyone.
-
-        #. Click the :guilabel:`Add Device` button.
-
-           The **Do you need to activate an iBasis SIM?** pop-up opens.
-
-        #. Click :guilabel:`Continue` and wait for the device to reconnect to nRF Cloud.
-           It is normal for the device to disconnect and reconnect multiple times during device provisioning.
-
-           If you have not yet activated the iBasis SIM card that came with your |DK|, click :guilabel:`Activate iBasis SIM` instead, and follow the instructions.
-
-           The |DK| is now added to your nRF Cloud account.
-           This is indicated by the |led_publishing_data|, which shows that the device is publishing data.
-
-           On nRF Cloud, you can access the device by clicking :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
-
-        .. nrf_cloud_add_device_end
+.. nrf_cloud_add_device_end

@@ -12,6 +12,7 @@
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		/* Partitions belonging to the MRAM_10 memory block.
 		 * The start of the MRAM_10 memory is reserved for internal IronSide SE firmware.

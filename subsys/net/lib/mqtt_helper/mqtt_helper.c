@@ -29,7 +29,7 @@ BUILD_ASSERT((CONFIG_MQTT_HELPER_SEC_TAG != -1), "Security tag must be configure
 #endif
 
 MQTT_HELPER_STATIC struct mqtt_client mqtt_client;
-static struct sockaddr_storage broker;
+static struct net_sockaddr_storage broker;
 static char rx_buffer[CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE];
 static char tx_buffer[CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE];
 MQTT_HELPER_STATIC char payload_buf[CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN];
@@ -374,14 +374,14 @@ MQTT_HELPER_STATIC void mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 }
 
-static int broker_init(struct sockaddr_storage *broker,
+static int broker_init(struct net_sockaddr_storage *broker,
 		       struct mqtt_helper_conn_params *conn_params)
 {
 	int err;
 	struct zsock_addrinfo *result;
 	struct zsock_addrinfo *addr;
 	struct zsock_addrinfo hints = {
-		.ai_socktype = SOCK_STREAM
+		.ai_socktype = NET_SOCK_STREAM
 	};
 	char addr_str[NET_IPV6_ADDR_LEN];
 
@@ -402,26 +402,26 @@ static int broker_init(struct sockaddr_storage *broker,
 	addr = result;
 
 	while (addr != NULL) {
-		if (addr->ai_family == AF_INET6) {
-			struct sockaddr_in6 *broker6 = ((struct sockaddr_in6 *)broker);
+		if (addr->ai_family == NET_AF_INET6) {
+			struct net_sockaddr_in6 *broker6 = ((struct net_sockaddr_in6 *)broker);
 
 			net_ipaddr_copy(&broker6->sin6_addr,
-					&((struct sockaddr_in6 *)addr->ai_addr)->sin6_addr);
+					&((struct net_sockaddr_in6 *)addr->ai_addr)->sin6_addr);
 			broker6->sin6_family = addr->ai_family;
-			broker6->sin6_port = htons(CONFIG_MQTT_HELPER_PORT);
+			broker6->sin6_port = net_htons(CONFIG_MQTT_HELPER_PORT);
 
 			zsock_inet_ntop(addr->ai_family, &broker6->sin6_addr,
 					addr_str, sizeof(addr_str));
 			LOG_DBG("IPv6 Address found %s (%s)", addr_str,
 				net_family2str(addr->ai_family));
 			break;
-		} else if (addr->ai_family == AF_INET) {
-			struct sockaddr_in *broker4 = ((struct sockaddr_in *)broker);
+		} else if (addr->ai_family == NET_AF_INET) {
+			struct net_sockaddr_in *broker4 = ((struct net_sockaddr_in *)broker);
 
 			net_ipaddr_copy(&broker4->sin_addr,
-					&((struct sockaddr_in *)addr->ai_addr)->sin_addr);
+					&((struct net_sockaddr_in *)addr->ai_addr)->sin_addr);
 			broker4->sin_family = addr->ai_family;
-			broker4->sin_port = htons(CONFIG_MQTT_HELPER_PORT);
+			broker4->sin_port = net_htons(CONFIG_MQTT_HELPER_PORT);
 
 			zsock_inet_ntop(addr->ai_family, &broker4->sin_addr,
 					addr_str, sizeof(addr_str));
@@ -512,10 +512,10 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 		tls_cfg->sec_tag_list = kconfig_sec_tag_list;
 	}
 
-	tls_cfg->peer_verify = TLS_PEER_VERIFY_REQUIRED;
+	tls_cfg->peer_verify = ZSOCK_TLS_PEER_VERIFY_REQUIRED;
 	tls_cfg->cipher_count = 0;
 	tls_cfg->cipher_list = NULL; /* Use default */
-	tls_cfg->session_cache = TLS_SESSION_CACHE_DISABLED;
+	tls_cfg->session_cache = ZSOCK_TLS_SESSION_CACHE_DISABLED;
 	tls_cfg->hostname = conn_params->hostname.ptr;
 	tls_cfg->set_native_tls = IS_ENABLED(CONFIG_MQTT_HELPER_NATIVE_TLS);
 
@@ -551,7 +551,7 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 		int sock = mqtt_client.transport.tcp.sock;
 #endif /* CONFIG_MQTT_LIB_TLS */
 
-		err = zsock_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout,
+		err = zsock_setsockopt(sock, ZSOCK_SOL_SOCKET, ZSOCK_SO_SNDTIMEO, &timeout,
 				       sizeof(timeout));
 		if (err == -1) {
 			LOG_WRN("Failed to set timeout, errno: %d", errno);
@@ -800,24 +800,24 @@ MQTT_HELPER_STATIC void mqtt_helper_poll_loop(void)
 				 * disconnecting, as the socket will be closed
 				 * by the MQTT library and become invalid.
 				 */
-				LOG_DBG("POLLNVAL while disconnecting");
+				LOG_DBG("ZSOCK_POLLNVAL while disconnecting");
 			} else if (mqtt_state_verify(MQTT_STATE_DISCONNECTED)) {
-				LOG_DBG("POLLNVAL, no active connection");
+				LOG_DBG("ZSOCK_POLLNVAL, no active connection");
 			} else {
-				LOG_ERR("Socket error: POLLNVAL");
+				LOG_ERR("Socket error: ZSOCK_POLLNVAL");
 				LOG_ERR("The socket was unexpectedly closed");
 			}
 			break;
 		}
 
 		if ((fds[0].revents & ZSOCK_POLLHUP) == ZSOCK_POLLHUP) {
-			LOG_ERR("Socket error: POLLHUP");
+			LOG_ERR("Socket error: ZSOCK_POLLHUP");
 			LOG_ERR("Connection was unexpectedly closed");
 			break;
 		}
 
 		if ((fds[0].revents & ZSOCK_POLLERR) == ZSOCK_POLLERR) {
-			LOG_ERR("Socket error: POLLERR");
+			LOG_ERR("Socket error: ZSOCK_POLLERR");
 			LOG_ERR("Connection was unexpectedly closed");
 			break;
 		}

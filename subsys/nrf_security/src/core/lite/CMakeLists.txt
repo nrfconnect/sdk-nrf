@@ -21,6 +21,11 @@ target_link_libraries(psa_core
     psa_crypto_library_config
 )
 
+target_include_directories(psa_core
+  PRIVATE
+    ${NRF_SECURITY_ROOT}/src/drivers/cracen/cracenpsa/src
+)
+
 nrf_security_add_zephyr_options_library(psa_core)
 
 target_link_libraries(${mbedcrypto_target}

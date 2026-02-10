@@ -46,12 +46,13 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_EXTENDED_FEAT_SET_SUPPORT
 	select BT_CTLR_FRAME_SPACE_UPDATE_SUPPORT
 	select BT_CTLR_SHORTER_CONNECTION_INTERVALS_SUPPORT
+	select BT_CTLR_DTM_HCI_SUPPORT
 	select BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 	select MRAM_LATENCY if (SOC_NRF54H20_CPURAD && !MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 	select MRAM_LATENCY_AUTO_REQ if (SOC_NRF54H20_CPURAD && !MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 	select EXPERIMENTAL if SOC_SERIES_BSIM_NRFXX
-	depends on (SOC_SERIES_BSIM_NRFXX || SOC_SERIES_NRF52X || SOC_COMPATIBLE_NRF5340_CPUNET ||\
-			    SOC_NRF54H20_CPURAD || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X)
+	depends on (SOC_SERIES_BSIM_NRFXX || SOC_SERIES_NRF52 || SOC_COMPATIBLE_NRF5340_CPUNET ||\
+			    SOC_NRF54H20_CPURAD || SOC_SERIES_NRF54L || SOC_SERIES_NRF71)
 	depends on DT_HAS_NORDIC_BT_HCI_SDC_ENABLED
 	help
 	  Use SoftDevice Link Layer implementation.
@@ -81,9 +82,9 @@ config BT_RX_STACK_SIZE
 	default 512 if BT_HCI_RAW
 	default 2600 if BT_MESH
 	default 2200 if BT_SETTINGS
-	default 3200 if BT_SMP && SOC_SERIES_NRF54LX
+	default 3200 if BT_SMP && SOC_SERIES_NRF54L
 	default 1536 if BT_SMP
-	default 2048 if !BT_SMP && (SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX)
+	default 2048 if !BT_SMP && (SOC_SERIES_NRF54L || SOC_SERIES_NRF54H)
 	default 1024
 	range 512 65536 if BT_HCI_RAW
 	range 1100 65536 if BT_MESH
@@ -99,8 +100,8 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 config BT_CTLR_SDC_LLPM
 	bool "Low Latency Packet Mode support"
 	select BT_CONN_PARAM_ANY if !BT_HCI_RAW
-	depends on (SOC_SERIES_NRF52X || SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX || \
-		    SOC_SERIES_BSIM_NRF52X || SOC_SERIES_BSIM_NRF54LX || SOC_SERIES_NRF71X)
+	depends on (SOC_SERIES_NRF52 || SOC_SERIES_NRF54L || SOC_SERIES_NRF54H || \
+		    SOC_SERIES_BSIM_NRF52X || SOC_SERIES_BSIM_NRF54LX || SOC_SERIES_NRF71)
 	help
 	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
 	  which lets the application use connection intervals down to 1 ms.
@@ -316,7 +317,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_SHORTER_CONNECTION_INTERVALS || \
 						     SOC_COMPATIBLE_NRF5340_CPUNET || \
 						     (SOC_COMPATIBLE_NRF54LX && TRUSTED_EXECUTION_NONSECURE) || \
-						     SOC_SERIES_NRF71X)
+						     SOC_SERIES_NRF71)
 	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
 	default BT_LL_SOFTDEVICE_PERIPHERAL if BT_BROADCASTER
 	help
@@ -695,6 +696,21 @@ config BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT
 config BT_CTLR_LE_PATH_LOSS_MONITORING
 	select BT_CTLR_LE_POWER_CONTROL
 
+config BT_CTLR_SDC_CS_BOARD_DISTANCE_OFFSET
+	int "Board distance offset [cm]"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	default 0
+	help
+	  Set the distance offset in cm for the board. This can be used to compensate
+	  for delays on board which are causing an offset in distance estimates.
+	  The distance offset is a signed value in centimeters.
+	  The distance offset is applied as phase rotations to the PCT measurements taken on that board.
+
+	  When applying a distance offset the distance estimates are expected to be affected as follows:
+	  distance_estimate_with_offset = distance_estimate_without_offset - distance_offset
+
+	  Note: Currently the distance offset is not applied to RTT measurements.
+
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"
 	default y if BT_CTLR_TX_PWR_ANTENNA >= 10
@@ -712,6 +728,9 @@ config BT_CTLR_SDC_ENABLE_LOWEST_FRAME_SPACE
 	  possible frame spaces for ACLs.
 	  Note: This option forces ACL connections to always use the same
 	  TX and RX PHY.
+
+config BT_CTLR_DTM
+	select EXPERIMENTAL
 
 config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	int

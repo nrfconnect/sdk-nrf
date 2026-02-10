@@ -13,6 +13,7 @@
 #include "../hw/ba414/regs_addr.h"
 #include "../hw/ik/ikhardware.h"
 #include "../hw/ik/regs_addr.h"
+#include <silexpk/cmddefs/modmath.h>
 #include <silexpk/core.h>
 #include <silexpk/iomem.h>
 #include <cracen/interrupts.h>
@@ -232,6 +233,17 @@ int sx_pk_init(void)
 
 	cnx->instance.slot_sz = op_offset;
 
+	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_BASE)) {
+
+		struct sx_pk_acq_req pkreq;
+
+		/* Build a request and release it.
+		 * Running sx_pk_acquire_req will clear the memory as an automated operation
+		 */
+		pkreq = sx_pk_acquire_req(SX_PK_CMD_CLEAR_MEMORY);
+		sx_pk_release_req(pkreq.req);
+	}
+
 	return SX_OK;
 }
 
@@ -284,6 +296,12 @@ void *sx_pk_get_user_context(sx_pk_req *req)
 void sx_pk_release_req(sx_pk_req *req)
 {
 	nrf_cracen_int_disable(NRF_CRACEN, NRF_CRACEN_INT_PKE_IKG_MASK);
+
+	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_BASE)) {
+		/* Clear PK data memory */
+		(void)sx_pk_clear_memory(req);
+	}
+
 	cracen_release();
 	req->cmd = NULL;
 	req->userctxt = NULL;
@@ -303,4 +321,17 @@ struct sx_regs *sx_pk_get_regs(void)
 struct sx_pk_capabilities *sx_pk_get_caps(void)
 {
 	return &silex_pk_engine.caps;
+}
+
+int sx_pk_clear_memory(sx_pk_req *req)
+{
+	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_BASE)) {
+		sx_pk_set_cmd(req, SX_PK_CMD_CLEAR_MEMORY);
+
+		sx_pk_run(req);
+
+		return sx_pk_wait(req);
+	} else {
+		return SX_OK;
+	}
 }

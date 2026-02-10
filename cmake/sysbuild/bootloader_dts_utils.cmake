@@ -96,12 +96,12 @@ function(dt_partition_addr var)
                         "${arg_DT_PARTITION_PATH} in target: ${arg_DT_PARTITION_TARGET}")
   endif()
 
-  if(arg_DT_PARTITION_ABSOLUTE)
+  if(NOT arg_DT_PARTITION_ABSOLUTE)
     # A parent of the "fixed-partitions" node should be the memory controller.
     dt_get_parent(dt_partition_parent)
     # Add the memory controller base address to get an absolute address.
     dt_reg_addr(parent_addr PATH "${dt_partition_parent}" TARGET "${arg_DT_PARTITION_TARGET}")
-    math(EXPR dt_partition_offset "${dt_partition_offset} + ${parent_addr}" OUTPUT_FORMAT
+    math(EXPR dt_partition_offset "${dt_partition_offset} - ${parent_addr}" OUTPUT_FORMAT
       HEXADECIMAL)
   endif()
 

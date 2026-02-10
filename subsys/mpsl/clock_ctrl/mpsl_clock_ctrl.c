@@ -578,12 +578,12 @@ int32_t mpsl_clock_ctrl_init(void)
 		LOG_ERR("HFCLK startup time is too large: %d [us]", startup_time_us);
 		return -NRF_EFAULT;
 	}
-#if defined(CONFIG_SOC_SERIES_NRF54HX) && defined(CONFIG_MPSL_USE_ZEPHYR_PM)
+#if defined(CONFIG_SOC_SERIES_NRF54H) && defined(CONFIG_MPSL_USE_ZEPHYR_PM)
 	else if (startup_time_us < MPSL_PM_HFCLK_MINIMUM_ALLOWED_STARTUP_TIME_US) {
 		/* Override the startup time to the minimum allowed value. */
 		startup_time_us = MPSL_PM_HFCLK_MINIMUM_ALLOWED_STARTUP_TIME_US;
 	}
-#endif /* CONFIG_SOC_SERIES_NRF54HX && CONFIG_MPSL_USE_ZEPHYR_PM */
+#endif /* CONFIG_SOC_SERIES_NRF54H && CONFIG_MPSL_USE_ZEPHYR_PM */
 
 	m_nrf_hfclk_ctrl_data.startup_time_us = startup_time_us;
 #else

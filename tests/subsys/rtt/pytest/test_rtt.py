@@ -77,14 +77,15 @@ def test_rtt_logging(dut: DeviceAdapter):
         'nrf54lv10dk/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
         },
-        'nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp': {
-            'device': 'NRF54LV10A_M33',
-        },
         'nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns': {
             'device': 'NRF54LV10A_M33',
         },
         'nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
+        },
+        'nrf54h20dk@0.9.0/nrf54h20/cpuapp': {
+            'device': 'Cortex-M33',
+            'RTTSearchRanges': '0x22000000 32768',
         },
         # Using nRF54L15_M33 as the device because its RAM region closely matches nRF7120.
         # This enables automatic SEGGER RTT symbol detection by JLinkRTTLogger.
@@ -105,19 +106,25 @@ def test_rtt_logging(dut: DeviceAdapter):
     time.sleep(2)
 
     # use JLinkRTTLoggerExe to collect logs
-    cmd = f"JLinkRTTLoggerExe -USB {SEGGER_ID}"
-    cmd += f" -device {SWD_CONFIG[PLATFORM]['device']}"
-    cmd += " -If SWD -Speed 1000 -RTTChannel 0"
+    cmd = []
+    cmd.extend(f"JLinkRTTLoggerExe -USB {SEGGER_ID}".split())
+    cmd.extend(f"-device {SWD_CONFIG[PLATFORM]['device']}".split())
+    cmd.extend(["-If", "SWD", "-Speed", "1000", "-RTTChannel", "0"])
 
     if 'RTTAddress' in SWD_CONFIG[PLATFORM]:
-        cmd += f" -RTTAddress {SWD_CONFIG[PLATFORM]['RTTAddress']}"
+        cmd.extend(f"-RTTAddress {SWD_CONFIG[PLATFORM]['RTTAddress']}".split())
 
-    cmd += f" {log_filename}"
+    if 'RTTSearchRanges' in SWD_CONFIG[PLATFORM]:
+        cmd.append("-RTTSearchRanges")
+        cmd.append(f"{SWD_CONFIG[PLATFORM]['RTTSearchRanges']}")
+
+    cmd.append(f"{log_filename}")
 
     try:
-        logger.info(f"Executing:\n{cmd}")
+        cmd_str = " ".join(cmd)
+        logger.info(f"Executing:\n{cmd_str}")
         proc = subprocess.Popen(
-            cmd.split(),
+            cmd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -146,4 +153,4 @@ def test_rtt_logging(dut: DeviceAdapter):
 
     # Check if log file contains expected string
     expected_str = re.search(EXPECTED, log_file_content)
-    assert expected_str is not None, f"Failed to match {EXPECTED} in {log_filename}"
+    assert expected_str is not None, f"Failed to match {EXPECTED} in {log_file_content}"

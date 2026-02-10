@@ -570,7 +570,7 @@ SB_CONFIG_APP_DFU
    The sample sysbuild configuration option enables the Device Firmware Update (DFU) functionality.
    The value of this option is propagated to the application configuration option :ref:`CONFIG_APP_DFU <CONFIG_APP_DFU>`.
    On multi-core devices, it adds the Kconfig fragment to the network core image configuration which speeds up the DFU process.
-   This option is enabled by default if the MCUboot bootloader image is used (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`) or if the chosen board target is based on an nRF54H Series SoC  (:kconfig:option:`SB_CONFIG_SOC_SERIES_NRF54HX`).
+   This option is enabled by default if the MCUboot bootloader image is used (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`) or if the chosen board target is based on an nRF54H Series SoC  (:kconfig:option:`SB_CONFIG_SOC_SERIES_NRF54H`).
 
 .. _CONFIG_APP_DFU:
 

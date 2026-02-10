@@ -1,6 +1,6 @@
 sample:
   description: Generate and write random keys to the KMU.
-  name: Random HW Unique Key
+  name: Hardware unique key sample
 common:
   tags:
     - huk

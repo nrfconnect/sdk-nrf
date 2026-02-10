@@ -59,7 +59,7 @@ config CAF_BLE_STATE_EXCHANGE_MTU
 config CAF_BLE_USE_LLPM
 	bool "Low Latency Packet Mode (LLPM)"
 	depends on (BT_CTLR_SDC_LLPM || !HAS_BT_CTLR)
-	depends on !SOC_SERIES_NRF53X
+	depends on !SOC_SERIES_NRF53
 	default y if HAS_BT_CTLR
 	help
 	  LLPM is a proprietary Bluetooth extension from Nordic Semiconductor. It is designed for

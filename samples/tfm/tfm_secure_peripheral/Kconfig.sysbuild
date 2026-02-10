@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PARTITION_MANAGER
+	default n if !SOC_SERIES_NRF91 && !SOC_SERIES_NRF53
+
+source "share/sysbuild/Kconfig"

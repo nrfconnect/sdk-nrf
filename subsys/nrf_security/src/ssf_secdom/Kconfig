@@ -8,7 +8,7 @@ config PSA_SSF_CRYPTO_CLIENT
 	bool
 	prompt "PSA crypto provided through SSF"
 	default y
-	depends on SOC_NRF54H20 || SOC_SERIES_NRF92X
+	depends on SOC_NRF54H20 || SOC_SERIES_NRF92
 	select IRONSIDE_SE_CALL
 
 if PSA_SSF_CRYPTO_CLIENT

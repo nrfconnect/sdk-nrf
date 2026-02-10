@@ -6,6 +6,8 @@
 
 #include <stdint.h>
 #include <silexpk/iomem.h>
+#include <zephyr/toolchain.h>
+#include <zephyr/sys/util.h>
 
 #ifndef CONFIG_SOC_NRF54LM20A
 
@@ -81,7 +83,7 @@ static void write_incomplete_word(uint32_t *dst, const uint8_t *bytes,
 
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
 	printk("write_incomplete_word(%p, 0x%x, %zu, %zu): 0x%x to 0x%x\r\n",
-		dst, *(const uint32_t *)bytes, first_byte_pos, num_bytes, *dst, word);
+		dst, UNALIGNED_GET((const uint32_t *)bytes), first_byte_pos, num_bytes, *dst, word);
 #endif
 	if ((uintptr_t)dst % 4) {
 		SX_WARN_UNALIGNED_ADDR(dst);
@@ -138,14 +140,11 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz)
 		sz -= byte_count;
 	}
 
-	/* Use memcpy to read from src since it may be unaligned.
-	 * dst is guaranteed to be 4-byte aligned at this point.
+	/* dst is guaranteed to be 4-byte aligned at this point.
+	 * Use UNALIGNED_GET to read from src since it may be unaligned.
 	 */
 	for (size_t i = 0; i != sz / 4; ++i) {
-		uint32_t word;
-
-		memcpy(&word, (const uint8_t *)src + i * 4, sizeof(word));
-		((uint32_t *)dst)[i] = word;
+		((uint32_t *)dst)[i] = UNALIGNED_GET((uint32_t *)((const uint8_t *)src + i * 4));
 	}
 
 	if (sz % 4) {
@@ -163,6 +162,30 @@ void sx_wrpkmem_byte(void *dst, uint8_t input_byte)
 
 	((uint8_t *)&word)[byte_index] = input_byte;
 	*word_dst = word;
+}
+
+void sx_rdpkmem(void *dst, const void *src, size_t sz)
+{
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_rdpkmem(%p, %p, %zu)\r\n", dst, src, sz);
+#endif
+
+	uint8_t *d = dst;
+	uintptr_t s = (uintptr_t)src;
+
+	/* Always read aligned words from CRACEN, write bytes to dst */
+	while (sz > 0) {
+		uint32_t word = *(const uint32_t *)(s & ~3);
+		size_t offset = s % 4;
+		size_t count = MIN(4 - offset, sz);
+
+		for (size_t i = 0; i < count; ++i) {
+			d[i] = ((const uint8_t *)&word)[offset + i];
+		}
+		d += count;
+		s += count;
+		sz -= count;
+	}
 }
 
 #endif

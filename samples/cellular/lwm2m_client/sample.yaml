@@ -1,5 +1,5 @@
 sample:
-  name: nrf LwM2M Sample
+  name: Cellular LwM2M client sample
 tests:
   sample.cellular.lwm2m_client:
     sysbuild: true

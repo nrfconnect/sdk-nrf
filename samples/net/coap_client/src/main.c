@@ -100,13 +100,13 @@ static void wait_for_network(void)
 	k_mutex_unlock(&network_connected_lock);
 }
 
-static void response_cb(int16_t code, size_t offset, const uint8_t *payload,
-			size_t len, bool last_block, void *user_data)
+static void response_cb(const struct coap_client_response_data *data, void *user_data)
 {
-	if (code >= 0) {
-		LOG_INF("CoAP response: code: 0x%x, payload: %s", code, payload);
+	if (data->result_code >= 0) {
+		LOG_INF("CoAP response: code: 0x%x, payload: %s",
+			data->result_code, data->payload);
 	} else {
-		LOG_INF("Response received with error code: %d", code);
+		LOG_INF("Response received with error code: %d", data->result_code);
 	}
 }
 

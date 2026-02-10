@@ -4,13 +4,41 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <dt-bindings/regulator/npm13xx.h>
+#include <zephyr/dt-bindings/regulator/npm13xx.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 
-&npm1304_ek_ldo1 {
-	regulator-initial-mode = <NPM13XX_LDSW_MODE_LDSW>;
-};
+&i2c_npm13xx {
+	npm1304_ek_pmic: pmic@6b {
+		compatible = "nordic,npm1304";
+		reg = <0x6b>;
 
-&npm1304_ek_pmic {
-	host-int-gpios = <&gpio0 4 0>;
-	pmic-int-pin = <3>;
+		host-int-gpios = <&gpio0 4 0>;
+		pmic-int-pin = <3>;
+
+		npm1304_ek_regulators: regulators {
+			compatible = "nordic,npm1304-regulator";
+
+			npm1304_ek_ldo1: LDO1 {
+				regulator-initial-mode = <NPM13XX_LDSW_MODE_LDSW>;
+			};
+		};
+
+		npm1304_ek_charger: charger {
+			compatible = "nordic,npm1304-charger";
+			term-microvolt = <4150000>;
+			term-warm-microvolt = <4000000>;
+			current-microamp = <4000>;
+			vbus-limit-microamp = <500000>;
+			thermistor-ohms = <10000>;
+			thermistor-beta = <3380>;
+			charging-enable;
+		};
+
+		npm1304_ek_leds: leds {
+			compatible = "nordic,npm1304-led";
+			nordic,led0-mode = "error";
+			nordic,led1-mode = "charging";
+			nordic,led2-mode = "host";
+		};
+	};
 };

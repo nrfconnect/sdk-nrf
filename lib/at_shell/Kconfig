@@ -28,4 +28,47 @@ config AT_SHELL_UNESCAPE_LF
 	  The certificate must have been preprocessed to replace EOL sequences
 	  with a literal \ character followed by an n character.
 
+config AT_SHELL_CMD_MODE
+	bool "AT command mode (shell bypass)"
+	help
+	  AT command mode is an interactive "shell bypass" mode where raw input is forwarded as
+	  AT commands. Supports pipelining and echo handling.
+
+if AT_SHELL_CMD_MODE
+
+choice
+	prompt "AT cmd mode line termination"
+	default AT_SHELL_CMD_MODE_CR_TERMINATION
+
+config AT_SHELL_CMD_MODE_NULL_TERMINATION
+	bool "Null termination"
+
+config AT_SHELL_CMD_MODE_CR_TERMINATION
+	bool "CR termination"
+
+config AT_SHELL_CMD_MODE_LF_TERMINATION
+	bool "LF termination"
+
+config AT_SHELL_CMD_MODE_CR_LF_TERMINATION
+	bool "CR+LF termination"
+
+endchoice
+
+config AT_SHELL_CMD_MODE_TERMINATION
+	int
+	default 0 if AT_SHELL_CMD_MODE_NULL_TERMINATION
+	default 1 if AT_SHELL_CMD_MODE_CR_TERMINATION
+	default 2 if AT_SHELL_CMD_MODE_LF_TERMINATION
+	default 3 if AT_SHELL_CMD_MODE_CR_LF_TERMINATION
+	help
+	  Internal numeric representation of line termination mode.
+
+config AT_SHELL_CMD_MODE_ECHO_DEFAULT
+	bool "Local echo in AT command mode"
+	default y
+	help
+	  Enables local echo in AT command mode by default.
+
+endif # AT_SHELL_CMD_MODE
+
 endif # AT_SHELL

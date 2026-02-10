@@ -47,7 +47,6 @@
 /applications/nrf_desktop/**/*.rst        @nrfconnect/ncs-si-xcake-doc
 
 # Boards
-/boards/nordic/nrf7120dk/                 @nrfconnect/ncs-co-boards @rob-robinson-14 @Hi-Im-David
 /boards/nordic/nrf54l*/                   @nrfconnect/ncs-co-boards @kl-cruz
 /boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-xcake
 /boards/nordic/thingy91*/                 @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
@@ -119,6 +118,8 @@
 /doc/nrf/libraries/bluetooth/mesh/        @nrfconnect/ncs-paladin-doc
 /doc/nrf/libraries/bluetooth/adv_prov.rst @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/bluetooth/mesh.rst     @nrfconnect/ncs-paladin-doc
+/doc/nrf/libraries/bluetooth/services/ams_client.rst @nrfconnect/ncs-blenders-doc
+/doc/nrf/libraries/bluetooth/services/ancs_client.rst @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/bluetooth/services/fast_pair/ @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/bluetooth/services/wifi_prov_ble.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/caf/                   @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
@@ -276,10 +277,12 @@
 
 # Drivers
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
+/drivers/dect/                            @nrfconnect/ncs-dect-nr-plus
 /drivers/entropy/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/flash/                           @nrfconnect/ncs-co-drivers
 /drivers/gpio/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/hw_cc3xx/                        @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
+/drivers/kmu/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/mpsl/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/mspi/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/net/                             @nrfconnect/ncs-co-drivers @doki-nordic
@@ -312,6 +315,8 @@
 /include/bluetooth/gatt_pool.h            @nrfconnect/ncs-si-muffin
 /include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /include/bluetooth/scan.h                 @nrfconnect/ncs-blenders @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/ams_client.h  @nrfconnect/ncs-blenders
+/include/bluetooth/services/ancs_client.h @nrfconnect/ncs-blenders
 /include/bluetooth/services/bas_client.h  @nrfconnect/ncs-blenders
 /include/bluetooth/services/bms.h         @nrfconnect/ncs-blenders
 /include/bluetooth/services/cgms.h        @nrfconnect/ncs-blenders
@@ -344,6 +349,7 @@
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @nrfconnect/ncs-co-networking
 /include/net/azure_*                      @nrfconnect/ncs-cia
+/include/net/dect/                        @nrfconnect/ncs-dect-nr-plus
 /include/net/downloader*                  @nrfconnect/ncs-modem
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-radio-sw
@@ -431,8 +437,8 @@
 /samples/bluetooth/central_nfc_pairing/   @nrfconnect/ncs-blenders
 /samples/bluetooth/central_smp_client/    @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_uart/          @nrfconnect/ncs-blenders
-/samples/bluetooth/channel_sounding_ras_initiator/ @nrfconnect/ncs-dragoon
-/samples/bluetooth/channel_sounding_ras_reflector/ @nrfconnect/ncs-dragoon
+/samples/bluetooth/channel_sounding/ras_initiator/ @nrfconnect/ncs-dragoon
+/samples/bluetooth/channel_sounding/ras_reflector/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/conn_time_sync/        @nrfconnect/ncs-dragoon
 /samples/bluetooth/direction_finding_central/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/direction_finding_connectionless_rx/ @nrfconnect/ncs-dragoon
@@ -450,8 +456,8 @@
 /samples/bluetooth/multiple_adv_sets/     @nrfconnect/ncs-blenders
 /samples/bluetooth/nrf_dm/                @nrfconnect/ncs-blenders
 /samples/bluetooth/rssi_power_control/    @nrfconnect/ncs-dragoon
-/samples/bluetooth/peripheral_ams_client/ @leewkb4567
-/samples/bluetooth/peripheral_ancs_client/ @leewkb4567
+/samples/bluetooth/peripheral_ams_client/ @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_ancs_client/ @nrfconnect/ncs-blenders
 /samples/bluetooth/peripheral_bms/        @nrfconnect/ncs-blenders
 /samples/bluetooth/peripheral_cgms/       @nrfconnect/ncs-blenders
 /samples/bluetooth/peripheral_cts_client/ @nrfconnect/ncs-blenders
@@ -496,8 +502,9 @@
 /samples/crypto/                          @nrfconnect/ncs-aegir
 /samples/debug/memfault/                  @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
 /samples/debug/ppi_trace/                 @nordic-krch
-/samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-modem-tre
+/samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-dect-nr-plus
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
+/samples/dect/hello_dect/                 @nrfconnect/ncs-dect-nr-plus
 /samples/dfu/ab/                          @nrfconnect/ncs-eris
 /samples/dfu/ab_split/                    @nrfconnect/ncs-eris
 /samples/dfu/dfu_target/                  @nrfconnect/ncs-eris
@@ -571,8 +578,8 @@
 /samples/bluetooth/central_nfc_pairing/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/central_smp_client/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/central_uart/*.rst     @nrfconnect/ncs-blenders-doc
-/samples/bluetooth/channel_sounding_ras_initiator/*.rst @nrfconnect/ncs-dragoon-doc
-/samples/bluetooth/channel_sounding_ras_reflector/*.rst @nrfconnect/ncs-dragoon-doc
+/samples/bluetooth/channel_sounding/ras_initiator/*.rst @nrfconnect/ncs-dragoon-doc
+/samples/bluetooth/channel_sounding/ras_reflector/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/conn_time_sync/*.rst   @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/direction_finding_central/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/direction_finding_connectionless_rx/*.rst @nrfconnect/ncs-dragoon-doc
@@ -591,8 +598,8 @@
 /samples/bluetooth/nrf_dm/*.rst           @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/path_loss_monitoring/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/rssi_power_control/*.rst @nrfconnect/ncs-dragoon-doc
-/samples/bluetooth/peripheral_ams_client/*.rst @nrfconnect/ncs-si-muffin-doc
-/samples/bluetooth/peripheral_ancs_client/*.rst @nrfconnect/ncs-si-muffin-doc
+/samples/bluetooth/peripheral_ams_client/*.rst @nrfconnect/ncs-blenders-doc
+/samples/bluetooth/peripheral_ancs_client/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/peripheral_bms/*.rst   @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/peripheral_cgms/*.rst  @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/peripheral_cts_client/*.rst @nrfconnect/ncs-blenders-doc
@@ -631,6 +638,7 @@
 /samples/crypto/**/*.rst                  @nrfconnect/ncs-aegir-doc
 /samples/debug/memfault/*.rst             @nrfconnect/ncs-cia-doc
 /samples/debug/ppi_trace/*.rst            @nrfconnect/ncs-doc-leads
+/samples/dect/hello_dect/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/dect/dect_phy/dect_shell/*.rst   @nrfconnect/ncs-iot-positioning-doc
 /samples/dect/dect_phy/hello_dect/*.rst   @nrfconnect/ncs-modem-doc
 /samples/dfu/ab/*.rst                     @nrfconnect/ncs-eris-doc
@@ -672,9 +680,7 @@
 /samples/wifi/provisioning/softap/*.rst   @nrfconnect/ncs-cia-doc
 /samples/zephyr/basic/blinky/             @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /samples/zephyr/bluetooth/                @nrfconnect/ncs-low-level-test
-/samples/zephyr/boards/nordic/nrfx/       @nrfconnect/ncs-low-level-test
-/samples/zephyr/boards/nordic/spis_wakeup/ @nrfconnect/ncs-low-level-test
-/samples/zephyr/boards/nordic/system_off/ @nrfconnect/ncs-low-level-test
+/samples/zephyr/boards/nordic/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/adc/              @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/audio/dmic/       @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/counter/          @nrfconnect/ncs-low-level-test
@@ -768,7 +774,6 @@
 
 # SoC
 /soc/nordic/                              @nrfconnect/ncs-code-owners
-/soc/nordic/nrf71/                        @nrfconnect/ncs-code-owners @rob-robinson-14 @Hi-Im-David
 /soc/sercomm/                             @nrfconnect/ncs-code-owners @tokangas
 
 # These snippet entries must be below other snippet entries (excluding doc), do not move
@@ -789,6 +794,8 @@
 /subsys/bluetooth/host_extensions/        @nrfconnect/ncs-dragoon
 /subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
 /subsys/bluetooth/rpc/                    @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
+/subsys/bluetooth/services/ams_client.c   @nrfconnect/ncs-blenders
+/subsys/bluetooth/services/ancs_client.c  @nrfconnect/ncs-blenders
 /subsys/bluetooth/services/fast_pair/     @nrfconnect/ncs-si-bluebagel
 /subsys/bluetooth/services/ras/           @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
@@ -814,9 +821,11 @@
 /subsys/mpsl/cx/                          @nrfconnect/ncs-radio-sw
 /subsys/mpsl/fem/                         @nrfconnect/ncs-radio-sw
 /subsys/net/                              @nrfconnect/ncs-co-networking
+/subsys/net/l2_dect/                      @nrfconnect/ncs-dect-nr-plus
 /subsys/net/lib/mqtt_helper/              @nrfconnect/ncs-cia
 /subsys/net/lib/azure_*                   @nrfconnect/ncs-cia
 /subsys/net/lib/aws_*                     @nrfconnect/ncs-cia
+/subsys/net/lib/dect/                     @nrfconnect/ncs-dect-nr-plus
 /subsys/net/lib/downloader/               @nrfconnect/ncs-modem
 /subsys/net/lib/ftp_client/               @nrfconnect/ncs-iot-oulu
 /subsys/net/lib/hostap_crypto/            @krish2718 @jukkar
@@ -828,6 +837,7 @@
 /subsys/net/lib/zzhc/                     @junqingzou
 /subsys/net/lib/softap_wifi_provision/    @nrfconnect/ncs-cia
 /subsys/net/openthread/                   @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
+/subsys/net/openthread/otperf/            @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
 /subsys/net/openthread/rpc/               @nrfconnect/ncs-protocols-serialization
 /subsys/net_core_monitor/                 @nrfconnect/ncs-si-muffin
 /subsys/nfc/                              @nrfconnect/ncs-radio-sw
@@ -921,6 +931,7 @@
 /tests/nrf5340_audio/                     @nrfconnect/ncs-audio @nordic-auko
 /tests/psa_crypto/                        @nrfconnect/ncs-aegir
 /tests/subsys/app_event_manager/          @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
+/tests/subsys/app_protect/                @nrfconnect/ncs-low-level-test
 /tests/subsys/audio/audio_module_template/ @nrfconnect/ncs-audio
 /tests/subsys/audio_module/               @nrfconnect/ncs-audio
 /tests/subsys/bluetooth/controller/        @nrfconnect/ncs-dragoon
@@ -966,6 +977,7 @@
 /tests/subsys/west_flash/                 @nrfconnect/ncs-low-level-test
 /tests/tfm/                               @nrfconnect/ncs-aegir @magnev
 /tests/unity/                             @nordic-krch
+/tests/zephyr/arch/arm/                   @nrfconnect/ncs-low-level-test
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/audio/              @nrfconnect/ncs-low-level-test
@@ -997,8 +1009,8 @@
 /tests/benchmarks/multicore/idle_pwm_led/*.rst @nrfconnect/ncs-lowlevel-doc
 /tests/bluetooth/bsim/nrf_auraconfig/*.rst @nrfconnect/ncs-audio-doc
 
-/tests/samples/bluetooth/io_adapter/      @rafpelc @jema-nordic
-/tests/samples/bluetooth/samples_test_app/ @rafpelc
+/tests/samples/bluetooth/io_adapter/      @nrfconnect/ncs-blenders @jema-nordic
+/tests/samples/bluetooth/samples_test_app/ @nrfconnect/ncs-blenders @jema-nordic
 /tests/samples/bluetooth/samples_test_app/README.rst  @nrfconnect/ncs-doc-leads
 
 

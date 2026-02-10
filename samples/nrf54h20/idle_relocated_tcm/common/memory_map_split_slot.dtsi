@@ -25,6 +25,7 @@
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		cpuapp_boot_partition: boot_partition: partition@30000 {
 			label = "mcuboot";
@@ -37,8 +38,7 @@
 		};
 
 		/* Image 2, slot 0 (primary slot) - radio loader code for cpurad core. */
-		slot4_partition: cpurad_slot0_partition: cpurad_loader_partition:
-		partition@92000 {
+		slot4_partition: cpurad_slot0_partition: cpurad_loader_partition: partition@92000 {
 			label = "cpurad_loader_partition";
 			reg = <0x92000 DT_SIZE_K(16)>;
 			/* size: radio loader + 2KB trailer MCUboot
@@ -51,7 +51,7 @@
 		 */
 		slot2_partition: cpurad_slot2_partition: cpurad_loaded_fw: partition@96000 {
 			label = "cpurad_loaded_fw";
-			reg = <0x96000 (DT_SIZE_K(192))>;
+			reg = <0x96000 DT_SIZE_K(192)>;
 			/* size: application + 192B for s2ram + 2KB trailer MCUboot */
 		};
 
@@ -83,7 +83,7 @@
 		 */
 		slot3_partition: cpurad_slot3_partition: cpurad_loaded_fw_slot1: partition@156000 {
 			label = "cpurad_loaded_fw_slot1";
-			reg = <0x156000 (DT_SIZE_K(192))>;
+			reg = <0x156000 DT_SIZE_K(192)>;
 			/* size: application + 192B for s2ram + 2KB trailer MCUboot */
 		};
 

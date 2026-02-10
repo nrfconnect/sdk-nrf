@@ -2,13 +2,4 @@
 
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-config SOC_SERIES
-	default "nrf71" if SOC_SERIES_NRF71X
-
-config SOC_SERIES_NRF71X
-	bool
-	select SOC_FAMILY_NORDIC_NRF
-	help
-	  Nordic Semiconductor nRF71 series MCU
-
 rsource "*/Kconfig.soc"

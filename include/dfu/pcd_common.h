@@ -17,7 +17,7 @@
 #ifndef PCD_COMMON_H__
 #define PCD_COMMON_H__
 
-#ifndef CONFIG_SOC_SERIES_NRF53X
+#ifndef CONFIG_SOC_SERIES_NRF53
 #error "PCD is only supported on nRF53 series"
 #endif
 

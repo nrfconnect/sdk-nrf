@@ -251,12 +251,6 @@ Security toolbox
 
 Zephyr's Mesh security toolbox implementation uses third-party crypto library APIs (such as CMAC, AES-CCM, and HMAC-SHA-256) for implementing the encryption and authentication functionality.
 
-* The following options are available:
-
-  * :kconfig:option:`CONFIG_BT_MESH_USES_MBEDTLS_PSA` - Enables use of the `Mbed TLS`_ PSA API based security toolbox (default option).
-  * :kconfig:option:`CONFIG_BT_MESH_USES_TFM_PSA` - Enables use of the `Trusted Firmware M`_ PSA API based security toolbox (default option for platforms that support TF-M).
-    Zephyr's Mesh operates with open key values, including storing them in the persistent memory.
-
 .. note::
    For Bluetooth Mesh provisioning, authenticating with the BTM_ECDH_P256_CMAC_AES128_AES_CCM (0x00) algorithm does not provide protection against an active man-in-the-middle (MITM) attacker during the provisioning process if OOB public keys are not used.
 

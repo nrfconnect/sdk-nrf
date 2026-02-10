@@ -5,8 +5,7 @@
 #
 
 sample:
-  description: DFU target sample application
-  name: dfu_target sample
+  name: DFU target sample
 common:
   platform_allow:
     - nrf52840dk/nrf52840

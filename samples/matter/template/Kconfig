@@ -16,11 +16,22 @@ choice OPENTHREAD_DEVICE_TYPE
 	default OPENTHREAD_MTD
 endchoice
 
+# SED with 0 dBm Thread TX output power for nRF54L15 tag
+if BOARD_NRF54L15TAG
+
+config CHIP_ENABLE_ICD_SUPPORT
+	default y
+
+config OPENTHREAD_DEFAULT_TX_POWER
+	default 0
+
+endif
+
 endif # OPENTHREAD
 
 config CHIP_WIFI
 	default y if BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EB2
-	select DEPRECATED if SOC_SERIES_NRF53X
+	select DEPRECATED if SOC_SERIES_NRF53
 
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.features"
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.defaults"

@@ -382,9 +382,6 @@ Matter Cluster Editor app
 
 The Matter Cluster Editor app is a GUI tool for creating new manufacturer-specific clusters or creating an extensions to the existing clusters.
 
-.. note::
-   |matter_cluster_editor_preview|
-
 The tool is available in `nRF Connect for Desktop`_.
 For installation instructions and more information about the tool, see the `Matter Cluster Editor app`_ documentation.
 

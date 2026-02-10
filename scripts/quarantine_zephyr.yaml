@@ -195,7 +195,9 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33580"
 
 - scenarios:
+    - boards.nrf.rram_throttling
     - drivers.flash.common.disable_spi_nor
+    - drivers.flash.common.test_storage_partition
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
@@ -262,6 +264,20 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36532"
+
+- scenarios:
+    - flash.erase_blocks.build_only
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37573"
+
+- scenarios:
+    - flash.interface_test.build_only
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37574"
 
 # ---------------------------------   Won't fix section -----------------------------------
 
@@ -336,6 +352,7 @@
 
 - scenarios:
     - .*secure_storage.*
+    - benchmark.crypto.mbedtls
     - benchmark.kernel.core
     - cpp.libcxx.glibcxx.newlib
     - cpp.libcxx.glibcxx.newlib_nano
@@ -346,6 +363,7 @@
     - drivers.gpio.build
     - filesystem.lib_link
     - kernel.common
+    - kernel.common.lto.singlethreaded
     - kernel.common.minimallibc
     - kernel.common.misra
     - kernel.common.nano32
@@ -607,3 +625,49 @@
   platforms:
     - nrf52dk/nrf52832
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37196"
+
+- scenarios:
+    - boards.native_sim.reset_hw_info
+  platforms:
+    - native_sim/native
+  comment: "Expects zephyr boot banner, but there is NCS version printed"
+
+- scenarios:
+    - boards.nrf.rram_throttling
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+  comment: "Replaced with similar test in nrf without Partition Manager dependency"
+
+- scenarios:
+    - kernel.scheduler.simple_timeslicing
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "region RAM overflowed"
+
+- scenarios:
+    - buildsystem.sysbuild.merged.hex
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37417"
+
+- scenarios:
+    - sample.net.sockets.http_client.tls
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37415"
+
+- scenarios:
+    - sample.pmci.mctp.uart_endpoint
+    - sample.pmci.mctp.uart_host
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37416"
+
+- scenarios:
+    - flash.interface_test.build_only
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37556"

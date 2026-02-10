@@ -13,10 +13,10 @@
  * Use cpu<app|rad>_slot<0|1>_partition as zephyr,code-partition, so the
  * application and radio sizes are correctly reported.
  */
-/delete-node/&cpuapp_slot0_partition;
-/delete-node/&cpuapp_slot1_partition;
-/delete-node/&cpurad_slot0_partition;
-/delete-node/&cpurad_slot1_partition;
+/delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &cpuapp_slot1_partition;
+/delete-node/ &cpurad_slot0_partition;
+/delete-node/ &cpurad_slot1_partition;
 
 &mram1x {
 	partitions {

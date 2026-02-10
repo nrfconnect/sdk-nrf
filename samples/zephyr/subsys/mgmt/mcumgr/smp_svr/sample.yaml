@@ -47,6 +47,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -63,6 +64,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -318,6 +320,7 @@ tests:
       - OVERLAY_CONFIG="overlay-bt.conf"
       - FILE_SUFFIX=ext_flash
       - DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
+      - mcuboot_EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
       - SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK=y
       - SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
     platform_allow:

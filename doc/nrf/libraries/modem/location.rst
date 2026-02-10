@@ -192,7 +192,6 @@ nRF Cloud certificates
 ======================
 
 When using nRF Cloud for any location data, you must have the certificate provisioned.
-See :ref:`nrf9160_ug_updating_cloud_certificate` for more information.
 An nRF91 Series DK comes pre-provisioned with certificates for nRF Cloud.
 
 Location service accounts

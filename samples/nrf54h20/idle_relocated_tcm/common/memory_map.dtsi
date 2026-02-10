@@ -25,6 +25,7 @@
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		cpuapp_boot_partition: boot_partition: partition@30000 {
 			reg = <0x30000 0x10000>;
@@ -84,7 +85,6 @@
 			label = "cpurad_loader_partition_slot1";
 			reg = <0x152000 DT_SIZE_K(8)>;  /* 8 KB allocated (~4 KB actual) */
 		};
-
 
 		/* Radio core application code initially stored in MRAM that will be loaded to TCM
 		 * by radio loader for cpurad core.

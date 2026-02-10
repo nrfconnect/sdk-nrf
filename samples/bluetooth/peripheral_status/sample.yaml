@@ -15,6 +15,7 @@ common:
     - bluetooth
     - ci_build
     - sysbuild
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.peripheral_nsms:
     sysbuild: true

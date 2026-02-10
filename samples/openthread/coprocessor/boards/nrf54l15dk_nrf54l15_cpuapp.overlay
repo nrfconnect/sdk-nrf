@@ -4,15 +4,15 @@
  */
 
 &uart20 {
-    current-speed = <1000000>;
-    status = "okay";
-    hw-flow-control;
+	current-speed = <1000000>;
+	status = "okay";
+	hw-flow-control;
 };
 
- / {
-    chosen {
-        zephyr,ot-uart = &uart20;
-    };
+/ {
+	chosen {
+		zephyr,ot-uart = &uart20;
+	};
 };
 
 // restore full RRAM and SRAM space - by default some parts are dedicated to FLPR

@@ -7,8 +7,8 @@
 /* Enable uart135 for tracing. */
 &uart135 {
 	status = "okay";
-	current-speed = < 1000000 >;
-	memory-regions = < &modem_trace_dma_region >;
+	current-speed = <1000000>;
+	memory-regions = <&modem_trace_dma_region>;
 };
 
 / {
@@ -25,7 +25,7 @@
 			#memory-region-cells = <0>;
 			nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RW>;
 			zephyr,memory-region = "DMA_RAM3x_MODEM_TRACE";
-			zephyr,memory-attr = <( DT_MEM_DMA )>;
+			zephyr,memory-attr = <DT_MEM_DMA>;
 		};
 	};
 };
@@ -37,5 +37,5 @@
 
 /* Enable the trace signal on the application bellboard. */
 &cpuapp_bellboard {
-	nordic,interrupt-mapping = <0xE3042041 0>;
+	nordic,interrupt-mapping = <0xe3042041 0>;
 };

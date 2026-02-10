@@ -1,20 +1,22 @@
 sample:
   description: Bluetooth Low Energy Direct Test Mode sample
   name: Bluetooth LE Direct Test Mode
+common:
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.direct_test_mode:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf5340dk/nrf5340/cpunet
       - nrf21540dk/nrf52840
       - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf5340dk/nrf5340/cpunet
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpunet
       - nrf21540dk/nrf52840
@@ -24,31 +26,24 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.direct_test_mode.hci:
     sysbuild: true
     build_only: true
     extra_args: FILE_SUFFIX=hci
     integration_platforms:
-      - nrf5340dk/nrf5340/cpunet
       - nrf21540dk/nrf52840
       - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf5340dk/nrf5340/cpunet
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpunet
       - nrf21540dk/nrf52840
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.direct_test_mode.nrf5340_nrf21540:
     sysbuild: true
     build_only: true
@@ -56,10 +51,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.direct_test_mode.nrf5340_usb:
     sysbuild: true
     build_only: true
@@ -67,10 +58,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.direct_test_mode.nrf5340_nrf21540_usb:
     sysbuild: true
     build_only: true
@@ -80,10 +67,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.direct_test_mode.nrf5340_nrf21540.no_automatic_power:
     sysbuild: true
     build_only: true
@@ -93,10 +76,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.direct_test_mode.nrf5340_no_dfe:
     sysbuild: true
     build_only: true
@@ -104,10 +83,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.direct_test_mode.nrf2220:
     sysbuild: true
     build_only: true
@@ -118,10 +93,6 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpunet
       - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.direct_test_mode.nrf5340_nrf2220_usb:
     sysbuild: true
     build_only: true
@@ -131,10 +102,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.direct_test_mode.nrf54h20_usb:
     sysbuild: true
     build_only: true
@@ -142,7 +109,3 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow: nrf54h20dk/nrf54h20/cpurad
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild

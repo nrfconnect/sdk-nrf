@@ -1423,7 +1423,7 @@
  * Module:  library/psa_crypto.c
  * Requires: MBEDTLS_PSA_CRYPTO_C
  */
-#cmakedefine MBEDTLS_PSA_KEY_STORE_DYNAMIC
+//#define MBEDTLS_PSA_KEY_STORE_DYNAMIC
 
 /**
  * Uncomment to enable p256-m. This is an alternative implementation of
@@ -4171,7 +4171,7 @@ it is (2^48 - 1), our restriction is :  (int - 0xFFFF - 0xF).*/
  * in order to store larger objects (ex: raw keys), but please note that this
  * will increase RAM usage.
  */
-#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE @MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE@
+//#define MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE       256
 
 /* RSA OPTIONS */
 //#define MBEDTLS_RSA_GEN_KEY_MIN_BITS            1024 /**<  Minimum RSA key size that can be generated in bits (Minimum possible value is 128 bits) */

@@ -221,10 +221,14 @@ static void i2s_dir_both_transfer_long(struct i2s_config *i2s_cfg, uint32_t expe
 	TC_PRINT("LRCK edges: %u\n", pulses);
 #if defined(CONFIG_DT_HAS_NORDIC_NRF_TDM_ENABLED)
 	TC_PRINT("SCK divider is %u\n", p_reg->CONFIG.SCK.DIV);
-	zassert_equal(p_reg->CONFIG.SCK.DIV, expected_divider);
+	zassert_equal(p_reg->CONFIG.SCK.DIV, expected_divider,
+		"CONFIG.SCK.DIV = %u while expected is %u",
+		p_reg->CONFIG.SCK.DIV, expected_divider);
 #else
 	TC_PRINT("MCK divider is %u\n", p_reg->CONFIG.MCKFREQ);
-	zassert_equal(p_reg->CONFIG.MCKFREQ, expected_divider);
+	zassert_equal(p_reg->CONFIG.MCKFREQ, expected_divider,
+		"CONFIG.MCKFREQ = %u while expected is %u",
+		p_reg->CONFIG.MCKFREQ, expected_divider);
 #endif
 
 	zassert_within(pulses, expected_edges, delta, "got %u while expected is %u with delta %u",

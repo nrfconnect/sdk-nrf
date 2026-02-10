@@ -165,7 +165,6 @@ NRF = (
     ("device_guides/working_with_nrf/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
     ("device_guides/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
     ("device_guides/nrf91/nrf91_board_controllers", "app_dev/device_guides/nrf91/nrf91_board_controllers"), # Configuring board controller
-    ("device_guides/nrf91/nrf91_cloud_certificate", "app_dev/device_guides/nrf91/nrf91_cloud_certificate"), # Updating the nRF Cloud certificate
     ("device_guides/nrf91/nrf91_dk_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the firmware for nRF91 Series devices (landing)
     ("device_guides/nrf91/nrf91_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the DK firmware using Programmer
     ("device_guides/nrf91/nrf91_building", "app_dev/device_guides/nrf91/nrf91_building"), # Configuring and building with nRF91 Series
@@ -434,6 +433,8 @@ NRF = (
     ("samples/bluetooth/connection_event_trigger/README", "samples/bluetooth/event_trigger/README"),
     ("samples/bluetooth/broadcast_config_tool/README", "samples/bluetooth/nrf_auraconfig/README"),
     ("samples/bluetooth/central_and_peripheral_hr/README", "samples/bluetooth/central_and_peripheral_hrs/README"), # Renamed the folders to better match the sample names
+    ("samples/bluetooth/channel_sounding_ras_initiator/README", "samples/bluetooth/channel_sounding/ras_initiator/README"), # New folder structure for channel sounding samples
+    ("samples/bluetooth/channel_sounding_ras_reflector/README", "samples/bluetooth/channel_sounding/ras_reflector/README"), # New folder structure for channel sounding samples
     ("samples/cellular/ciphersuites/README","samples/cellular/tls_ciphersuites/README"),
     ("samples/cellular/nrf_provisioning/README", "samples/cellular/nrf_device_provisioning/README"),
     ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)

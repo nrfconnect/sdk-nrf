@@ -8,24 +8,6 @@
 
 / {
 	soc {
-		reserved-memory {
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			cpuflpr_code_partition: image@17a000 {
-				reg = <0x17a000 DT_SIZE_K(12)>;
-			};
-
-			sram_rx: memory@2003c000 {
-				reg = <0x2003c000 0x0800>;
-			};
-
-			sram_tx: memory@2003c800 {
-				reg = <0x2003c800 0x0800>;
-			};
-		};
-
-
 		cpuflpr_sram_code_data: memory@2003d000 {
 			compatible = "mmio-sram";
 			reg = <0x2003d000 DT_SIZE_K(12)>;
@@ -40,10 +22,38 @@
 		mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
 		mbox-names = "rx", "tx";
 	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		sram_rx: memory@2003c000 {
+			reg = <0x2003c000 0x0800>;
+		};
+
+		sram_tx: memory@2003c800 {
+			reg = <0x2003c800 0x0800>;
+		};
+	};
 };
 
 &cpuapp_rram {
 	reg = <0x0 DT_SIZE_K(1512)>;
+	ranges = <0x0 0x0 DT_SIZE_K(1512)>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+};
+
+&rram_controller {
+	cpuflpr_code_partition: rram@17a000 {
+		compatible = "soc-nv-flash";
+		erase-block-size = <0x1000>;
+		write-block-size = <16>;
+		reg = <0x17a000 DT_SIZE_K(12)>;
+		ranges = <0x0 0x17a000 DT_SIZE_K(12)>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+	};
 };
 
 &cpuapp_sram {

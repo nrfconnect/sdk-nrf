@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if(SB_CONFIG_SOC_SERIES_NRF52X)
+if(SB_CONFIG_SOC_SERIES_NRF52)
   if(NOT "bt-ll-sw-split" IN_LIST ${DEFAULT_IMAGE}_SNIPPET)
     list(APPEND ${DEFAULT_IMAGE}_SNIPPET ${SNIPPET})
     list(APPEND ${DEFAULT_IMAGE}_SNIPPET bt-ll-sw-split)

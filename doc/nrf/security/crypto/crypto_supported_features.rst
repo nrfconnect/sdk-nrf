@@ -362,6 +362,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - ASCON
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -592,6 +597,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
                  - Supported
+               * - ASCON
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
+                 - Experimental
 
    .. tab:: nRF54H Series
 
@@ -715,8 +723,8 @@ The options are grouped by Series and drivers available for the device Series, a
                * - ML-KEM Public Key
                  - ``PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY``
                  - --
-               * - WPA3-SAE PT key
-                 - ``PSA_WANT_KEY_TYPE_WPA3_SAE_PT``
+               * - WPA3-SAE key
+                 - ``PSA_WANT_KEY_TYPE_WPA3_SAE``
                  - --
 
 
@@ -980,8 +988,8 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
-              * - WPA3-SAE PT key
-                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`
+              * - WPA3-SAE key
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
                 - Experimental
                 - Experimental
                 - Experimental
@@ -1240,7 +1248,14 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                * - WPA3-SAE PT key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ASCON
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1686,6 +1701,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - ASCON
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
 Key management
 --------------
@@ -1864,7 +1885,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
 
          .. tab:: nrf_oberon
 
@@ -1908,7 +1929,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
 
    .. tab:: nRF91 Series
 
@@ -4096,6 +4117,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+               * - ASCON AEAD128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -4145,6 +4171,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - XChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+                 - Experimental
+               * - ASCON AEAD128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
                  - Experimental
 
    .. tab:: nRF54H Series
@@ -4221,7 +4250,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental (with exceptions, see note)
+                 - Experimental
                  - Experimental
                * - XChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
@@ -4238,10 +4267,6 @@ The options are grouped by Series and drivers available for the device Series, a
 
                   * 192-bit keys are not supported.
                     See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
-
-                  * ChaCha20-Poly1305 cipher mode:
-
-                    * Multi-part encrypt and decrypt APIs are not supported.
 
          .. tab:: nrf_oberon
 
@@ -4279,6 +4304,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - XChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ASCON AEAD128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -4360,6 +4392,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - XChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ASCON AEAD128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -4551,6 +4589,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
                  - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -4615,6 +4656,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
+                 - --
+                 - --
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -4660,6 +4706,21 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+               * - Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HASH_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - Deterministic ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - Deterministic Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -4690,6 +4751,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
+                 - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                  - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
@@ -4743,6 +4807,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
                  - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -4769,6 +4836,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - XMSS-MT
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS_MT`
+                 - Experimental
+               * - Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HASH_ML_DSA`
+                 - Experimental
+               * - Deterministic ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ML_DSA`
+                 - Experimental
+               * - Deterministic Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA`
                  - Experimental
 
             .. note::
@@ -4811,6 +4887,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - HashEdDSA Edwards25519
                  - ``PSA_WANT_ALG_ED25519PH``
                  - Supported
+               * - HashEdDSA Edwards448
+                 - ``PSA_WANT_ALG_ED448PH``
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - ``PSA_WANT_ALG_RSA_PKCS1V15_SIGN``
                  - --
@@ -4888,6 +4967,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Experimental
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                  - Supported
                  - Supported
                  - Supported
@@ -5005,6 +5091,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -5068,6 +5161,27 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+               * - Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HASH_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - Deterministic ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - Deterministic Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
             .. note::
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA` is limited to ECC curve types secp224r1, secp256r1, and secp384r1.
@@ -5118,6 +5232,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
+                 - --
+                 - --
+                 - --
+                 - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                  - --
                  - --
                  - --
@@ -5219,6 +5339,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
+                 - --
+                 - --
+                 - --
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -5269,6 +5395,24 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - XMSS-MT
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS_MT`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HASH_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - Deterministic ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - Deterministic Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -5400,6 +5544,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA_ANY`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
@@ -5881,6 +6026,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - --
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                  - Supported
@@ -5947,6 +6095,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                  - Supported
                  - Supported
                  - Supported
@@ -6029,6 +6182,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - --
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                  - Supported
@@ -6083,6 +6239,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                 - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                  - Supported
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
@@ -6153,6 +6312,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Curve25519 (X25519)
                  - ``PSA_WANT_ECC_MONTGOMERY_255``
                  - Supported
+               * - Curve448 (X448)
+                 - ``PSA_WANT_ECC_MONTGOMERY_448``
+                 - --
                * - Edwards25519 (Ed25519)
                  - ``PSA_WANT_ECC_TWISTED_EDWARDS_255``
                  - Supported
@@ -6237,6 +6399,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Experimental
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                  - Supported
                  - Supported
                  - Supported
@@ -6368,6 +6537,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - Edwards448 (Ed448)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                  - Supported
@@ -6479,6 +6655,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - --
+                 - --
+                 - --
+                 - --
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                  - Supported
@@ -6582,6 +6764,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                  - Supported
@@ -6680,6 +6868,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported ECC curve types
                * - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6721,6 +6910,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported ECC curve types
                * - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6748,6 +6938,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_384`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_512`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
@@ -6768,6 +6959,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported ECC curve types
                * - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6809,6 +7001,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported ECC curve types
                * - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -7408,6 +7601,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - ASCON HASH256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -7518,6 +7716,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - Supported
+               * - ASCON HASH256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
+                 - Experimental
 
    .. tab:: nRF54H Series
 
@@ -7811,6 +8012,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - ASCON HASH256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
    .. tab:: nRF91 Series
 
@@ -8011,6 +8219,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - ASCON HASH256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
 Hash driver
 -----------
@@ -8183,6 +8397,263 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
 
+.. _ug_crypto_supported_features_xof_algorithms:
+
+Extendable-Output Function (XOF) algorithms
+============================================
+
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring XOF algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported XOF algorithms.
+
+The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
+
+.. tabs::
+
+   .. tab:: nRF52 Series
+
+      The following table lists the supported XOF algorithms for nRF52 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: XOF algorithm support (nrf_oberon driver) - nRF52 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - XOF algorithm
+                 - Configuration option
+                 - nRF52832
+                 - nRF52833
+                 - nRF52840
+               * - SHAKE128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - SHAKE256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ASCON XOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ASCON CXOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
+   .. tab:: nRF53 Series
+
+      The following table lists the supported XOF algorithms for nRF53 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: XOF algorithm support (nrf_oberon driver) - nRF53 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - XOF algorithm
+                 - Configuration option
+                 - nRF5340
+               * - SHAKE128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                 - Experimental
+               * - SHAKE256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                 - Experimental
+               * - ASCON XOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                 - Experimental
+               * - ASCON CXOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+                 - Experimental
+
+   .. tab:: nRF54L Series
+
+      The following table lists the supported XOF algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: XOF algorithm support (nrf_oberon driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - XOF algorithm
+                 - Configuration option
+                 - nRF54L05
+                 - nRF54L10
+                 - nRF54L15
+                 - nRF54LM20A
+                 - nRF54LV10A
+               * - SHAKE128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - SHAKE256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ASCON XOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ASCON CXOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
+   .. tab:: nRF91 Series
+
+      The following table lists the supported XOF algorithms for nRF91 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: XOF algorithm support (nrf_oberon driver) - nRF91 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - XOF algorithm
+                 - Configuration option
+                 - nRF9131
+                 - nRF9151
+                 - nRF9160
+                 - nRF9161
+               * - SHAKE128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - SHAKE256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ASCON XOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - ASCON CXOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
+XOF driver
+----------
+
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported XOF algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
+
+.. tabs::
+
+   .. tab:: nRF52 Series
+
+      The following table lists the XOF driver support for nRF52 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: XOF driver support (nrf_oberon driver) - nRF52 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Kconfig option
+                 - Supported XOF algorithms
+               * - Configuration automatically generated based on the enabled XOF algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+
+   .. tab:: nRF53 Series
+
+      The following table lists the XOF driver support for nRF53 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: XOF driver support (nrf_oberon driver) - nRF53 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Kconfig option
+                 - Supported XOF algorithms
+               * - Configuration automatically generated based on the enabled XOF algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+
+   .. tab:: nRF54L Series
+
+      The following table lists the XOF driver support for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: XOF driver support (nrf_oberon driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Kconfig option
+                 - Supported XOF algorithms
+               * - Configuration automatically generated based on the enabled XOF algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+
+   .. tab:: nRF91 Series
+
+      The following table lists the XOF driver support for nRF91 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: XOF driver support (nrf_oberon driver) - nRF91 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Kconfig option
+                 - Supported XOF algorithms
+               * - Configuration automatically generated based on the enabled XOF algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+
 .. _ug_crypto_supported_features_pake_algorithms:
 
 PAKE algorithms
@@ -8315,8 +8786,11 @@ The options are grouped by Series and drivers available for the device Series, a
                * - SRP password hashing
                  - ``PSA_WANT_ALG_SRP_PASSWORD_HASH``
                  - --
-               * - WPA3-SAE
-                 - ``PSA_WANT_ALG_WPA3_SAE``
+               * - WPA3-SAE Fixed
+                 - ``PSA_WANT_ALG_WPA3_SAE_FIXED``
+                 - --
+               * - WPA3-SAE GDH
+                 - ``PSA_WANT_ALG_WPA3_SAE_GDH``
                  - --
                * - WPA3-SAE hash-to-element
                  - ``PSA_WANT_ALG_WPA3_SAE_H2E``
@@ -8384,8 +8858,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - --
                  - Experimental
-               * - WPA3-SAE
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE`
+               * - WPA3-SAE fixed
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - WPA3-SAE GDH
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -8455,7 +8936,14 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                * - WPA3-SAE
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE`
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - WPA3-SAE GDH
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -8597,7 +9085,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
 
          .. tab:: nrf_oberon
@@ -8615,7 +9104,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
 
    .. tab:: nRF91 Series

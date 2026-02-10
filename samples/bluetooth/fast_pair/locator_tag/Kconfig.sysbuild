@@ -15,11 +15,11 @@ config BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY
 config APP_DFU
 	bool "Enable MCUmgr OTA DFU over Bluetooth"
 	default y
-	depends on BOOTLOADER_MCUBOOT || SOC_SERIES_NRF54HX
+	depends on BOOTLOADER_MCUBOOT || SOC_SERIES_NRF54H
 	help
 	  This option enables the DFU functionality in this application.
 	  The DFU solution is supported for the MCUboot-based targets
 	  (BOOTLOADER_MCUBOOT Kconfig) and for the SUIT-based targets
-	  (SOC_SERIES_NRF54HX Kconfig).
+	  (SOC_SERIES_NRF54H Kconfig).
 
 source "share/sysbuild/Kconfig"

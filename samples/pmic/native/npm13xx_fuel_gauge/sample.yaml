@@ -1,8 +1,8 @@
 # Copyright (c) 2023 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 sample:
-  name: nPM13xx fuel gauge
-
+  name: Fuel gauge sample
+  description: Fuel gauge sample for nPM1300 and nPM1304
 common:
   integration_platforms:
     - nrf52dk/nrf52832
@@ -23,18 +23,15 @@ common:
   tags:
     - pmic
     - ci_samples_pmic
-    - shield
     - sysbuild
 tests:
   sample.npm1300_fuel_gauge_compile:
     sysbuild: true
     build_only: true
     extra_args:
-      - npm13xx_fuel_gauge_SHIELD=npm1300_ek
       - EXTRA_DTC_OVERLAY_FILE=npm1300.overlay
   sample.npm1304_fuel_gauge_compile:
     sysbuild: true
     build_only: true
     extra_args:
-      - npm13xx_fuel_gauge_SHIELD=npm1304_ek
       - EXTRA_DTC_OVERLAY_FILE=npm1304.overlay

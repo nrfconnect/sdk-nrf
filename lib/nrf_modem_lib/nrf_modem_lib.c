@@ -22,7 +22,7 @@ LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
 static void nrf_modem_lib_dfu_handler(uint32_t dfu_res);
 
-#ifdef CONFIG_SOC_SERIES_NRF91X
+#ifdef CONFIG_SOC_SERIES_NRF91
 #include <nrfx_ipc.h>
 #include <pm_config.h>
 
@@ -71,9 +71,9 @@ static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
 	.shmem.size = PM_NRF_MODEM_LIB_SRAM_SIZE,
 	.fault_handler = nrf_modem_fault_handler
 };
-#endif /* CONFIG_SOC_SERIES_NRF91X */
+#endif /* CONFIG_SOC_SERIES_NRF91 */
 
-#ifdef CONFIG_SOC_SERIES_NRF92X
+#ifdef CONFIG_SOC_SERIES_NRF92
 
 static const struct nrf_modem_init_params init_params = {
 	.shmem.ctrl = {
@@ -108,7 +108,7 @@ BUILD_ASSERT(
 		DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
 	"CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE exceeds 'cpuapp_cpucell_ipc_shm_ctrl' in devicetree");
 
-#endif /* CONFIG_SOC_SERIES_NRF92X */
+#endif /* CONFIG_SOC_SERIES_NRF92 */
 
 #if CONFIG_NRF_MODEM_LIB_TRACE
 extern void nrf_modem_lib_trace_init(void);
@@ -169,13 +169,13 @@ int nrf_modem_lib_init(void)
 {
 	int err;
 
-#ifdef CONFIG_SOC_SERIES_NRF91X
+#ifdef CONFIG_SOC_SERIES_NRF91
 	/* Setup the network IRQ used by the Modem library.
 	 * Note: No call to irq_enable() here, that is done through nrf_modem_init().
 	 */
 	IRQ_CONNECT(NRF_MODEM_IPC_IRQ, CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
 		    nrfx_isr, nrfx_ipc_irq_handler, 0);
-#endif /* CONFIG_SOC_SERIES_NRF91X */
+#endif /* CONFIG_SOC_SERIES_NRF91 */
 
 	err = nrf_modem_init(&init_params);
 	if (err) {
@@ -207,7 +207,7 @@ init_callbacks:
 
 int nrf_modem_lib_bootloader_init(void)
 {
-#ifdef CONFIG_SOC_SERIES_NRF91X
+#ifdef CONFIG_SOC_SERIES_NRF91
 	return nrf_modem_bootloader_init(&bootloader_init_params);
 #else
 	return -ENOSYS;

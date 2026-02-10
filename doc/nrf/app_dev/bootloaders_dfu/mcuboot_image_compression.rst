@@ -19,7 +19,6 @@ The system includes the following features and limitation:
 * Validates the compressed image during the update process before the main image is erased, ensuring the update does not lead to a bricked module due to un-loadable firmware.
 * Does not support image encryption.
 * Uses LZMA2 compression with ARM thumb filter for compressed images.
-* Requires a static :ref:`Partition Manager <partition_manager>` file.
 * Must use :ref:`configuration_system_overview_sysbuild`.
 
 Sample
@@ -35,38 +34,40 @@ Required setup
 
 You must meet the following configuration requirements for this feature to work.
 
-Static Partition Manager file for MCUboot
-=========================================
+Devicetree partitioning for MCUboot
+===================================
 
-The static Partition Manager file should include the following partitions:
+The devicetree NVM partitioning for the board file should include the following partitions:
 
   * ``boot_partition`` - Requires a minimum size of 48 KiB for a minimal build without logging.
+  * ``slot0_partition`` - Should be able to fit the largest image, including signing/imgtool overheads.
   * ``slot1_partition`` - Should be approximately 70% of the size of the slot ``0`` partition for optimal configuration, assuming that image savings will be 30%.
     The total compression depends on the data within the image.
 
-For more information about the static Partition Manager file, see :ref:`ug_pm_static` in the Partition Manager documentation.
+Example layout
+--------------
 
-Example of static Partition Manager layout
-------------------------------------------
-
-The following shows an example static Partition Manager layout for image compression:
+The following shows example partitioning for image compression:
 
 .. tabs::
 
     .. group-tab:: nRF52840
 
-        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/pm_static_nrf52840dk_nrf52840.yml
-             :language: yaml
+        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf52840dk_nrf52840.dts
+             :language: devicetree
+             :lines: 12-
 
     .. group-tab:: nRF5340
 
-        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/pm_static_nrf5340dk_nrf5340_cpuapp.yml
-             :language: yaml
+        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf5340dk_nrf5340_cpuapp.dts
+             :language: devicetree
+             :lines: 12-
 
     .. group-tab:: nRF54L15
 
-        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/pm_static_nrf54l15dk_nrf54l15_cpuapp.yml
-             :language: yaml
+        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf54l15dk_nrf54l15_cpuapp.dts
+             :language: devicetree
+             :lines: 12-
 
 Required sysbuild configuration options
 =======================================

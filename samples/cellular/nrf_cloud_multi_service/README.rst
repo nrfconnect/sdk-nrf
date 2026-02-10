@@ -1374,7 +1374,7 @@ Creating a self-signed CA certificate for device certificate signing
 ====================================================================
 
 Before a device can connect to nRF Cloud, it must have device credentials.
-Unless you are using `Just-in-Time provisioning <nRF Cloud Just-In-Time-Provisioning_>`_, you need to sign these credentials yourself using a CA certificate you create.
+You need to sign these credentials yourself using a CA certificate you create.
 This is referred to as your self-signed CA certificate.
 
 To create your self-signed CA certificate:

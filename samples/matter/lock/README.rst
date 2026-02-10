@@ -74,12 +74,11 @@ Door lock credentials
    By default, the application supports only PIN code credentials, but it is possible to implement support for other door lock credential types by using the ``AccessManager`` module.
    The credentials can be used to control remote access to the bolt lock.
    The PIN code assigned by the Matter controller is stored persistently, which means that it can survive a device reboot.
-   Depending on the IPv6 network technology in use, the following storage backends are supported by default to store the PIN code credential:
+   Depending on the IPv6 network technology in use, the following storage implementations are enabled by default to store credentials and other lock configuration data:
 
-   * Matter over Thread - secure storage backend (:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option enabled by default).
-   * Matter over Wi-Fi - non-secure storage backend (:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` Kconfig option enabled by default).
-
-   You can learn more about the |NCS| Matter persistent storage module and its configuration in the :ref:`ug_matter_persistent_storage` section of the :ref:`ug_matter_device_advanced_kconfigs` documentation.
+   * Matter over Thread - secure storage (:kconfig:option:`CONFIG_LOCK_ACCESS_STORAGE_PROTECTED_STORAGE` Kconfig option enabled by default).
+   * Matter over Wi-Fi - non-secure storage (:kconfig:option:`CONFIG_LOCK_ACCESS_STORAGE_PERSISTENT_STORAGE` and :option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` Kconfig options enabled by default).
+     For more details about the |NCS| Matter persistent storage module and its configuration, see the :ref:`ug_matter_persistent_storage` section of the :ref:`ug_matter_device_advanced_kconfigs` documentation.
 
    The application supports multiple door lock users and PIN code credentials.
    The following Kconfig options control the limits of the users and credentials that can be added to the door lock:

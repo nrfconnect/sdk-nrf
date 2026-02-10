@@ -12,6 +12,7 @@
 
 #include <bluetooth/services/fast_pair/fast_pair.h>
 #include <bluetooth/services/fast_pair/fmdn.h>
+#include <bluetooth/services/fast_pair/uuid.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fp_fmdn_beacon_actions, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
@@ -47,7 +48,6 @@ enum beacon_actions_att_err {
 
 struct ring_context {
 	struct bt_conn *conn;
-	const struct bt_gatt_attr *attr;
 	uint8_t random_nonce[BEACON_ACTIONS_RANDOM_NONCE_LEN];
 };
 
@@ -97,6 +97,26 @@ static bool eik_hash_compare(const uint8_t *eik_hash, const uint8_t *random_nonc
 	return !memcmp(eik_hash_local, eik_hash, EPHEMERAL_IDENTITY_KEY_REQ_EIK_HASH_LEN);
 }
 
+static const struct bt_gatt_attr *beacon_response_attr_get(void)
+{
+	static const struct bt_gatt_attr *beacon_actions_chrc_notify_attr;
+
+	if (!beacon_actions_chrc_notify_attr) {
+		const struct bt_uuid *beacon_actions_chrc_uuid = BT_FAST_PAIR_UUID_BEACON_ACTIONS;
+
+		beacon_actions_chrc_notify_attr = bt_gatt_find_by_uuid(NULL,
+								       0,
+								       beacon_actions_chrc_uuid);
+		if (!beacon_actions_chrc_notify_attr) {
+			LOG_ERR("Beacon Actions response: cannot find the Beacon Actions "
+				"characteristic handle");
+			return NULL;
+		}
+	}
+
+	return beacon_actions_chrc_notify_attr;
+}
+
 static int beacon_response_send(struct bt_conn *conn,
 				const struct bt_gatt_attr *attr,
 				const uint8_t *rsp,
@@ -105,6 +125,13 @@ static int beacon_response_send(struct bt_conn *conn,
 	int err;
 
 	LOG_HEXDUMP_DBG(rsp, rsp_len, "Beacon Actions response:");
+
+	if (!attr) {
+		attr = beacon_response_attr_get();
+		if (!attr) {
+			return -ENOENT;
+		}
+	}
 
 	err = bt_gatt_notify(conn, attr, rsp, rsp_len);
 	if (err) {
@@ -800,7 +827,6 @@ static ssize_t ring_handle(struct bt_conn *conn,
 		     sizeof(conn_contexts[bt_conn_index(conn)].random_nonce));
 
 	ring_context.conn = conn;
-	ring_context.attr = attr;
 	memcpy(ring_context.random_nonce,
 	       conn_contexts[bt_conn_index(conn)].random_nonce,
 	       sizeof(ring_context.random_nonce));
@@ -1185,7 +1211,7 @@ int bt_fast_pair_fmdn_ring_state_update(
 
 	/* Send a response notification. */
 	err = beacon_response_send(ring_context.conn,
-				   ring_context.attr,
+				   NULL,
 				   rsp_buf.data,
 				   rsp_buf.len);
 	if (err) {

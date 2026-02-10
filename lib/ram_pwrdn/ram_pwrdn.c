@@ -13,7 +13,7 @@
 #include <hal/nrf_power.h>
 #elif defined(CONFIG_SOC_NRF5340_CPUAPP)
 #include <hal/nrf_vmc.h>
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 #include <hal/nrf_memconf.h>
 #else
 #error "RAM power-down library is not supported on the current platform"
@@ -95,7 +95,7 @@ static void ram_bank_power_down(uint8_t bank_id, uint8_t first_section_id, uint8
 	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,
 				VMC_RAM_POWER_S0POWER_Pos + first_section_id);
 	nrf_vmc_ram_block_power_clear(NRF_VMC, bank_id, mask);
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 	uint32_t mask = GENMASK(MEMCONF_POWER_CONTROL_MEM0_Pos + last_section_id,
 				MEMCONF_POWER_CONTROL_MEM0_Pos + first_section_id);
 	nrf_memconf_ramblock_control_mask_enable_set(NRF_MEMCONF, bank_id, mask, false);
@@ -115,7 +115,7 @@ static void ram_bank_power_up(uint8_t bank_id, uint8_t first_section_id, uint8_t
 	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,
 				VMC_RAM_POWER_S0POWER_Pos + first_section_id);
 	nrf_vmc_ram_block_power_set(NRF_VMC, bank_id, mask);
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 	uint32_t mask = GENMASK(MEMCONF_POWER_CONTROL_MEM0_Pos + last_section_id,
 				MEMCONF_POWER_CONTROL_MEM0_Pos + first_section_id);
 	nrf_memconf_ramblock_control_mask_enable_set(NRF_MEMCONF, bank_id, mask, true);

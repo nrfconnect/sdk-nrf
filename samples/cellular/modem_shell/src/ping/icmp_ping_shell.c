@@ -11,7 +11,7 @@
 #ifdef CONFIG_POSIX_C_LIB_EXT
 #include <zephyr/posix/unistd.h>
 #endif
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 
 #include "link_api.h"
 #include "mosh_print.h"
@@ -37,16 +37,16 @@ static const char icmp_ping_shell_cmd_usage_str[] =
 	"  -h, --help,              Shows this help information";
 
 /* Specifying the expected options (both long and short) */
-static struct option long_options[] = {
-	{ "destination", required_argument, 0, 'd' },
-	{ "timeout", required_argument, 0, 't' },
-	{ "count", required_argument, 0, 'c' },
-	{ "interval", required_argument, 0, 'i' },
-	{ "length", required_argument, 0, 'l' },
-	{ "cid", required_argument, 0, 'I' },
-	{ "ipv6", no_argument, 0, '6' },
-	{ "rai", no_argument, 0, 'r' },
-	{ "help", no_argument, 0, 'h' },
+static struct sys_getopt_option long_options[] = {
+	{ "destination", sys_getopt_required_argument, 0, 'd' },
+	{ "timeout", sys_getopt_required_argument, 0, 't' },
+	{ "count", sys_getopt_required_argument, 0, 'c' },
+	{ "interval", sys_getopt_required_argument, 0, 'i' },
+	{ "length", sys_getopt_required_argument, 0, 'l' },
+	{ "cid", sys_getopt_required_argument, 0, 'I' },
+	{ "ipv6", sys_getopt_no_argument, 0, '6' },
+	{ "rai", sys_getopt_no_argument, 0, 'r' },
+	{ "help", sys_getopt_no_argument, 0, 'h' },
 	{ 0, 0, 0, 0 }
 };
 
@@ -81,23 +81,23 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 	}
 #endif
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "d:t:c:i:I:l:h6r", long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "d:t:c:i:I:l:h6r", long_options, NULL)) != -1) {
 
 		switch (opt) {
 		case 'd': /* destination */
-			dest_len = strlen(optarg);
+			dest_len = strlen(sys_getopt_optarg);
 			if (dest_len > ICMP_MAX_ADDR) {
 				ping_error(&ping_args, "too long destination name");
 				goto show_usage;
 			}
-			strcpy(ping_args.target_name, optarg);
+			strcpy(ping_args.target_name, sys_getopt_optarg);
 			break;
 		case 't': /* timeout */
-			ping_args.timeout = atoi(optarg);
+			ping_args.timeout = atoi(sys_getopt_optarg);
 			if (ping_args.timeout == 0) {
 				ping_warn(
 					&ping_args,
@@ -107,14 +107,14 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 			}
 			break;
 		case 'I': /* PDN CID */
-			ping_args.cid = atoi(optarg);
+			ping_args.cid = atoi(sys_getopt_optarg);
 			if (ping_args.cid == 0) {
 				ping_warn(&ping_args, "CID not an integer (> 0), default context used");
 				ping_args.cid = MOSH_ARG_NOT_SET;
 			}
 			break;
 		case 'c': /* count */
-			ping_args.count = atoi(optarg);
+			ping_args.count = atoi(sys_getopt_optarg);
 			if (ping_args.count == 0) {
 				ping_warn(
 					&ping_args,
@@ -124,7 +124,7 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 			}
 			break;
 		case 'i': /* interval */
-			ping_args.interval = atoi(optarg);
+			ping_args.interval = atoi(sys_getopt_optarg);
 			if (ping_args.interval == 0) {
 				ping_warn(
 					&ping_args,
@@ -134,7 +134,7 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 			}
 			break;
 		case 'l': /* payload length */
-			ping_args.len = atoi(optarg);
+			ping_args.len = atoi(sys_getopt_optarg);
 			if (ping_args.len > ICMP_IPV4_MAX_LEN) {
 				ping_error(
 					&ping_args,
@@ -169,12 +169,12 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}

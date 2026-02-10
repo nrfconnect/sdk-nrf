@@ -3,7 +3,7 @@
 # Copyright (c) 2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-if SOC_SERIES_NRF54LX
+if SOC_SERIES_NRF54L
 
 rsource "Kconfig.defconfig.nrf54l*"
 
@@ -29,4 +29,4 @@ config BUILD_OUTPUT_ADJUST_LMA
 
 endif # RISCV
 
-endif # SOC_SERIES_NRF54LX
+endif # SOC_SERIES_NRF54L

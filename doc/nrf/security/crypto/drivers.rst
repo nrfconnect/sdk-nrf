@@ -440,9 +440,25 @@ For configuration details, see the following pages:
 * :ref:`psa_crypto_support`
 * :ref:`nrf_security_legacy_backend_config` (nrf_oberon used as legacy backend)
 
+.. _crypto_drivers_api_documentation:
+
 API documentation
 *****************
 
 | Header files: :file:`subsys/nrf_security/include/psa/crypto_driver_contexts_*.h`
 
 .. doxygengroup:: nrf_security_api_structures
+
+CRACEN driver API
+=================
+
+| Header files: :file:`subsys/nrf_security/src/drivers/cracen/cracenpsa/include/`
+
+.. doxygengroup:: cracen_psa_driver_apis
+
+SX status codes
+===============
+
+| Header files: :file:`subsys/nrf_security/src/drivers/cracen/common/include/cracen/statuscodes.h`
+
+.. doxygengroup:: cracen_status_codes

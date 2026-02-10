@@ -44,7 +44,7 @@
 #    from sdk-mcuboot: bootloader/mcuboot etc.
 #    Paths should match location after checking out sdk-nrf (+ west update)
 
-bluetooth:
+ci_samples_bluetooth:
   files:
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
@@ -60,8 +60,6 @@ bluetooth:
     - nrf/subsys/nrf_rpc/
     - nrf/subsys/nrf_security/
     - nrf/sysbuild/
-    - nrf/tests/bluetooth/
-    - nrf/tests/subsys/bluetooth/
     - nrfxlib/crypto/
     - nrfxlib/mpsl/fem/include/
     - nrfxlib/mpsl/include/
@@ -321,9 +319,6 @@ ci_samples_nfc:
   files:
     - nrf/include/nfc/
     - nrf/lib/st25r3911b/
-    - nrf/samples/bluetooth/central_nfc_pairing/
-    - nrf/samples/bluetooth/peripheral_hids_keyboard/
-    - nrf/samples/bluetooth/peripheral_nfc_pairing/
     - nrf/samples/nfc/
     - nrf/subsys/nfc/
     - nrfxlib/nfc/
@@ -887,6 +882,51 @@ ci_samples_event_manager_proxy:
     - nrf/subsys/event_manager_proxy/
     - zephyr/subsys/ipc/ipc_service/
 
+ci_tests_samples_bluetooth:
+  files:
+    - nrf/include/bluetooth/
+    - nrf/subsys/bluetooth/
+    - nrf/tests/samples/bluetooth/
+    - zephyr/drivers/bluetooth/
+    - zephyr/include/zephyr/bluetooth/
+    - zephyr/samples/bluetooth/hci_ipc/
+    - zephyr/subsys/bluetooth/
+
+ci_samples_zephyr_bluetooth:
+  files:
+    - nrf/samples/zephyr/bluetooth/
+    - zephyr/samples/bluetooth/beacon/
+    - zephyr/samples/bluetooth/hci_uart/
+    - zephyr/samples/bluetooth/peripheral_hr/
+
+ci_samples_mcuboot:
+  files:
+    - nrf/include/bluetooth/
+    - nrf/samples/mcuboot/
+    - nrf/subsys/bluetooth/
+    - zephyr/drivers/bluetooth/
+    - zephyr/include/mgmt/mcumgr/
+    - zephyr/include/zephyr/bluetooth/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/mgmt/mcumgr/
+
+ci_tests_bluetooth_tester:
+  files:
+    - nrf/include/bluetooth/mesh/
+    - nrf/subsys/bluetooth/mesh/
+    - nrf/tests/bluetooth/tester/
+    - zephyr/include/zephyr/bluetooth/mesh/
+    - zephyr/subsys/bluetooth/mesh/
+
+ci_tests_bluetooth_iso:
+  files:
+    - nrf/include/bluetooth/
+    - nrf/subsys/bluetooth/
+    - nrf/tests/bluetooth/iso/
+    - zephyr/drivers/bluetooth/
+    - zephyr/include/zephyr/bluetooth/
+    - zephyr/subsys/bluetooth/
+
 ci_tests_subsys_audio_module:
   files:
     - nrf/subsys/audio_module/
@@ -894,6 +934,12 @@ ci_tests_subsys_audio_module:
     - nrf/subsys/audio/
     - nrf/tests/subsys/audio/
     - nrf/include/audio_defines.h
+
+ci_tests_subsys_bluetooth_fast_pair:
+  files:
+    - nrf/include/bluetooth/services/fast_pair/
+    - nrf/subsys/bluetooth/services/fast_pair/
+    - nrf/tests/subsys/bluetooth/fast_pair/
 
 ci_tests_subsys_bluetooth_controller:
   files:
@@ -904,6 +950,31 @@ ci_tests_subsys_bluetooth_cs_de:
   files:
     - nrf/subsys/bluetooth/cs_de/
     - nrf/tests/subsys/bluetooth/cs_de/
+
+ci_tests_subsys_bluetooth_enocean:
+  files:
+    - nrf/subsys/bluetooth/enocean.c
+    - nrf/tests/subsys/bluetooth/enocean/
+    - zephyr/subsys/bluetooth/common/addr.c
+    - zephyr/subsys/bluetooth/common/bt_str.c
+
+ci_tests_subsys_bluetooth_rpc_gatt_service:
+  files:
+    - nrf/tests/subsys/bluetooth/rpc_gatt_service/
+    - zephyr/subsys/bluetooth/rpc/common/
+
+ci_tests_subsys_bluetooth_gatt_dm:
+  files:
+    - nrf/subsys/bluetooth/gatt_dm.c
+    - nrf/tests/subsys/bluetooth/gatt_dm/
+
+ci_tests_subsys_bluetooth_mesh:
+  files:
+    - nrf/include/bluetooth/mesh/
+    - nrf/subsys/bluetooth/mesh/
+    - nrf/tests/subsys/bluetooth/mesh/
+    - zephyr/include/zephyr/bluetooth/mesh/
+    - zephyr/subsys/bluetooth/mesh/
 
 ci_tests_subsys_mpsl:
   files:
@@ -1407,6 +1478,7 @@ ci_tests_drivers_nrf_wifi:
     - nrf/boards/nordic/nrf7120dk/
     - nrf/soc/nordic/nrf71/
     - nrf/tests/drivers/nrf_wifi/
+    - zephyr/drivers/wifi/
     - zephyr/modules/nrf_wifi/
     - zephyr/subsys/net/
 
@@ -1614,6 +1686,11 @@ ci_samples_zephyr_drivers_regulator:
     - nrf/drivers/regulator/
     - nrf/samples/zephyr/drivers/regulator/
 
+ci_tests_zephyr_arch_arm_arm_irq_advanced_features:
+  files:
+    - nrf/tests/zephyr/arch/arm/arm_irq_advanced_features/
+    - zephyr/tests/arch/arm/arm_irq_advanced_features/
+
 ci_tests_zephyr_drivers_audio_dmic_api:
   files:
     - nrf/tests/zephyr/drivers/audio/dmic_api/
@@ -1648,6 +1725,11 @@ ci_samples_zephyr_drivers_mbox:
   files:
     - nrf/samples/zephyr/drivers/mbox/
     - zephyr/samples/drivers/mbox/
+
+ci_samples_zephyr_boards_nordic_nrf_sys_event:
+  files:
+    - nrf/samples/zephyr/boards/nordic/nrf_sys_event/
+    - zephyr/samples/boards/nordic/nrf_sys_event/
 
 ci_samples_zephyr_boards_nordic_nrfx:
   files:
@@ -1888,10 +1970,21 @@ ci_tests_subsys_west_debug:
   files:
     - nrf/tests/subsys/west_debug/
     - zephyr/boards/nordic/
-    - nrf/boards/nordic/54*
+    - nrf/boards/nordic/nrf54*
 
 ci_tests_subsys_west_flash:
   files:
     - nrf/tests/subsys/west_flash/
     - zephyr/boards/nordic/
-    - nrf/boards/nordic/54*
+    - nrf/boards/nordic/nrf54*
+
+ci_tests_subsys_app_protect:
+  files:
+    - nrf/tests/subsys/app_protect/
+    - zephyr/boards/nordic/
+    - nrf/boards/nordic/nrf54*
+
+ci_tests_zephyr_board_nrf_throttling:
+  files:
+    - nrf/tests/zephyr/boards/nrf/rram_throttling/
+    - zephyr/tests/boards/nrf/rram_throttling/

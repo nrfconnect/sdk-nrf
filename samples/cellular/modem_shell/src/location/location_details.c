@@ -12,7 +12,7 @@
 #include <date_time.h>
 #include <cJSON.h>
 #include <math.h>
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 #include <modem/lte_lc.h>
 #include <net/nrf_cloud.h>
 

@@ -14,6 +14,7 @@
 /* disable pmic_wifi */
 &pmic_wifi {
 	status = "disabled";
+
 	regulators {
 		status = "disabled";
 	};
@@ -32,12 +33,15 @@
 /* disable pmic_main */
 &pmic_main {
 	status = "disabled";
+
 	npm1300_gpios {
 		status = "disabled";
 	};
+
 	regulators {
 		status = "disabled";
 	};
+
 	charger {
 		status = "disabled";
 	};

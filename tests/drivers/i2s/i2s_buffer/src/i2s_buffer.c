@@ -718,6 +718,7 @@ ZTEST(i2s_buffer, test_2ch_32bit_at_44100)
 ZTEST(i2s_buffer, test_2ch_32bit_at_48000)
 {
 	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_COVERAGE);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;

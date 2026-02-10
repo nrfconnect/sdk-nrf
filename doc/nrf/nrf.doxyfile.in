@@ -963,6 +963,8 @@ INPUT                  = @DOCSET_SOURCE_BASE@/applications \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_key_derivation.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_primitives.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/nrf_security_api_structure.h \
+                         @DOCSET_SOURCE_BASE@/subsys/nrf_security/src/drivers/cracen/cracenpsa/include \
+                         @DOCSET_SOURCE_BASE@/subsys/nrf_security/src/drivers/cracen/common/include/cracen/statuscodes.h \
                          @DOCSET_SOURCE_BASE@/subsys/trusted_storage/include/psa \
 
 # This tag can be used to specify the character encoding of the source files
@@ -2445,7 +2447,7 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_BT_MESH_LIGHT_CTRL_SRV=y" \
                          "MODULE=" \
                          "RADIO_MODE_MODE_Nrf_250Kbit=y" \
-                         "CONFIG_SOC_SERIES_NRF52X=y" \
+                         "CONFIG_SOC_SERIES_NRF52=y" \
                          "CONFIG_LOCATION_SERVICE_EXTERNAL=y" \
                          "CONFIG_LOCATION_DATA_DETAILS=y" \
                          "CONFIG_LOCATION_METHOD_CELLULAR=y" \

@@ -107,30 +107,30 @@ static struct nrf_sock_ctx *find_ctx(int fd)
 	return NULL;
 }
 
-static void z_to_nrf_ipv4(const struct sockaddr *z_in,
+static void z_to_nrf_ipv4(const struct net_sockaddr *z_in,
 			  struct nrf_sockaddr_in *nrf_out)
 {
-	const struct sockaddr_in *ptr = (const struct sockaddr_in *)z_in;
+	const struct net_sockaddr_in *ptr = (const struct net_sockaddr_in *)z_in;
 
 	nrf_out->sin_port = ptr->sin_port;
 	nrf_out->sin_family = NRF_AF_INET;
 	nrf_out->sin_addr.s_addr = ptr->sin_addr.s_addr;
 }
 
-static void nrf_to_z_ipv4(struct sockaddr *z_out,
+static void nrf_to_z_ipv4(struct net_sockaddr *z_out,
 			  const struct nrf_sockaddr_in *nrf_in)
 {
-	struct sockaddr_in *ptr = (struct sockaddr_in *)z_out;
+	struct net_sockaddr_in *ptr = (struct net_sockaddr_in *)z_out;
 
 	ptr->sin_port = nrf_in->sin_port;
-	ptr->sin_family = AF_INET;
+	ptr->sin_family = NET_AF_INET;
 	ptr->sin_addr.s_addr = nrf_in->sin_addr.s_addr;
 }
 
-static void z_to_nrf_ipv6(const struct sockaddr *z_in,
+static void z_to_nrf_ipv6(const struct net_sockaddr *z_in,
 			  struct nrf_sockaddr_in6 *nrf_out)
 {
-	const struct sockaddr_in6 *ptr = (const struct sockaddr_in6 *)z_in;
+	const struct net_sockaddr_in6 *ptr = (const struct net_sockaddr_in6 *)z_in;
 
 	memset(nrf_out, 0, sizeof(*nrf_out));
 
@@ -138,20 +138,20 @@ static void z_to_nrf_ipv6(const struct sockaddr *z_in,
 	nrf_out->sin6_port = ptr->sin6_port;
 	nrf_out->sin6_family = NRF_AF_INET6;
 	memcpy(nrf_out->sin6_addr.s6_addr, ptr->sin6_addr.s6_addr,
-		sizeof(struct in6_addr));
+		sizeof(struct net_in6_addr));
 	nrf_out->sin6_scope_id = (uint32_t)ptr->sin6_scope_id;
 }
 
-static void nrf_to_z_ipv6(struct sockaddr *z_out,
+static void nrf_to_z_ipv6(struct net_sockaddr *z_out,
 			  const struct nrf_sockaddr_in6 *nrf_in)
 {
-	struct sockaddr_in6 *ptr = (struct sockaddr_in6 *)z_out;
+	struct net_sockaddr_in6 *ptr = (struct net_sockaddr_in6 *)z_out;
 
 	memset(ptr, 0, sizeof(*ptr));
 
 	/* nrf_sockaddr_in6 field .sin6_flowinfo not used */
 	ptr->sin6_port = nrf_in->sin6_port;
-	ptr->sin6_family = AF_INET6;
+	ptr->sin6_family = NET_AF_INET6;
 	memcpy(ptr->sin6_addr.s6_addr, nrf_in->sin6_addr.s6_addr,
 		sizeof(struct nrf_in6_addr));
 	ptr->sin6_scope_id = (uint8_t)nrf_in->sin6_scope_id;
@@ -163,39 +163,39 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 	int retval = 0;
 
 	switch (z_in_level) {
-	case SOL_TLS:
+	case ZSOCK_SOL_TLS:
 		switch (z_in_optname) {
-		case TLS_SEC_TAG_LIST:
+		case ZSOCK_TLS_SEC_TAG_LIST:
 			*nrf_out_optname = NRF_SO_SEC_TAG_LIST;
 			break;
-		case TLS_HOSTNAME:
+		case ZSOCK_TLS_HOSTNAME:
 			*nrf_out_optname = NRF_SO_SEC_HOSTNAME;
 			break;
-		case TLS_CIPHERSUITE_LIST:
+		case ZSOCK_TLS_CIPHERSUITE_LIST:
 			*nrf_out_optname = NRF_SO_SEC_CIPHERSUITE_LIST;
 			break;
-		case TLS_PEER_VERIFY:
+		case ZSOCK_TLS_PEER_VERIFY:
 			*nrf_out_optname = NRF_SO_SEC_PEER_VERIFY;
 			break;
-		case TLS_DTLS_ROLE:
+		case ZSOCK_TLS_DTLS_ROLE:
 			*nrf_out_optname = NRF_SO_SEC_ROLE;
 			break;
-		case TLS_SESSION_CACHE:
+		case ZSOCK_TLS_SESSION_CACHE:
 			*nrf_out_optname = NRF_SO_SEC_SESSION_CACHE;
 			break;
-		case TLS_SESSION_CACHE_PURGE:
+		case ZSOCK_TLS_SESSION_CACHE_PURGE:
 			*nrf_out_optname = NRF_SO_SEC_SESSION_CACHE_PURGE;
 			break;
 		case TLS_DTLS_HANDSHAKE_TIMEO:
 			*nrf_out_optname = NRF_SO_SEC_DTLS_HANDSHAKE_TIMEO;
 			break;
-		case TLS_CIPHERSUITE_USED:
+		case ZSOCK_TLS_CIPHERSUITE_USED:
 			*nrf_out_optname = NRF_SO_SEC_CIPHERSUITE_USED;
 			break;
-		case TLS_DTLS_CID:
+		case ZSOCK_TLS_DTLS_CID:
 			*nrf_out_optname = NRF_SO_SEC_DTLS_CID;
 			break;
-		case TLS_DTLS_CID_STATUS:
+		case ZSOCK_TLS_DTLS_CID_STATUS:
 			*nrf_out_optname = NRF_SO_SEC_DTLS_CID_STATUS;
 			break;
 		case TLS_DTLS_CONN_SAVE:
@@ -216,9 +216,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		}
 		break;
 
-	case SOL_SOCKET:
+	case ZSOCK_SOL_SOCKET:
 		switch (z_in_optname) {
-		case SO_ERROR:
+		case ZSOCK_SO_ERROR:
 			*nrf_out_optname = NRF_SO_ERROR;
 			break;
 		case SO_KEEPOPEN:
@@ -227,16 +227,16 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case SO_EXCEPTIONAL_DATA:
 			*nrf_out_optname = NRF_SO_EXCEPTIONAL_DATA;
 			break;
-		case SO_RCVTIMEO:
+		case ZSOCK_SO_RCVTIMEO:
 			*nrf_out_optname = NRF_SO_RCVTIMEO;
 			break;
-		case SO_SNDTIMEO:
+		case ZSOCK_SO_SNDTIMEO:
 			*nrf_out_optname = NRF_SO_SNDTIMEO;
 			break;
 		case SO_BINDTOPDN:
 			*nrf_out_optname = NRF_SO_BINDTOPDN;
 			break;
-		case SO_REUSEADDR:
+		case ZSOCK_SO_REUSEADDR:
 			*nrf_out_optname = NRF_SO_REUSEADDR;
 			break;
 		case SO_RAI:
@@ -251,7 +251,7 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		}
 		break;
 
-	case IPPROTO_IP:
+	case NET_IPPROTO_IP:
 		switch (z_in_optname) {
 		case SO_IP_ECHO_REPLY:
 			*nrf_out_optname = NRF_SO_IP_ECHO_REPLY;
@@ -262,7 +262,7 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		}
 		break;
 
-	case IPPROTO_IPV6:
+	case NET_IPPROTO_IPV6:
 		switch (z_in_optname) {
 		case SO_IPV6_ECHO_REPLY:
 			*nrf_out_optname = NRF_SO_IPV6_ECHO_REPLY;
@@ -276,7 +276,7 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		}
 		break;
 
-	case IPPROTO_TCP:
+	case NET_IPPROTO_TCP:
 		switch (z_in_optname) {
 		case SO_TCP_SRV_SESSTIMEO:
 			*nrf_out_optname = NRF_SO_TCP_SRV_SESSTIMEO;
@@ -333,19 +333,19 @@ static int nrf_to_z_addrinfo(struct zsock_addrinfo *z_out,
 	z_out->ai_protocol = nrf_in->ai_protocol;
 
 	if (nrf_in->ai_family == NRF_AF_INET) {
-		z_out->ai_addr = k_malloc(sizeof(struct sockaddr_in));
+		z_out->ai_addr = k_malloc(sizeof(struct net_sockaddr_in));
 		if (z_out->ai_addr == NULL) {
 			return -ENOMEM;
 		}
-		z_out->ai_addrlen  = sizeof(struct sockaddr_in);
+		z_out->ai_addrlen  = sizeof(struct net_sockaddr_in);
 		nrf_to_z_ipv4(z_out->ai_addr,
 			(const struct nrf_sockaddr_in *)nrf_in->ai_addr);
 	} else if (nrf_in->ai_family == NRF_AF_INET6) {
-		z_out->ai_addr = k_malloc(sizeof(struct sockaddr_in6));
+		z_out->ai_addr = k_malloc(sizeof(struct net_sockaddr_in6));
 		if (z_out->ai_addr == NULL) {
 			return -ENOMEM;
 		}
-		z_out->ai_addrlen  = sizeof(struct sockaddr_in6);
+		z_out->ai_addrlen  = sizeof(struct net_sockaddr_in6);
 		nrf_to_z_ipv6(z_out->ai_addr,
 			(const struct nrf_sockaddr_in6 *)nrf_in->ai_addr);
 	} else {
@@ -364,8 +364,8 @@ static int nrf9x_socket_offload_socket(int family, int type, int proto)
 	return retval;
 }
 
-static int nrf9x_socket_offload_accept(void *obj, struct sockaddr *addr,
-				       socklen_t *addrlen)
+static int nrf9x_socket_offload_accept(void *obj, struct net_sockaddr *addr,
+				       net_socklen_t *addrlen)
 {
 	int fd = zvfs_reserve_fd();
 	int sd = OBJ_TO_SD(obj);
@@ -390,7 +390,7 @@ static int nrf9x_socket_offload_accept(void *obj, struct sockaddr *addr,
 		 * expect `nrf_addrlen` to be exactly of
 		 * sizeof(struct nrf_sockaddr_in) size for IPv4
 		 */
-		if (*addrlen == sizeof(struct sockaddr_in)) {
+		if (*addrlen == sizeof(struct net_sockaddr_in)) {
 			nrf_addrlen = sizeof(struct nrf_sockaddr_in);
 		} else {
 			nrf_addrlen = sizeof(struct nrf_sockaddr_in6);
@@ -411,11 +411,11 @@ static int nrf9x_socket_offload_accept(void *obj, struct sockaddr *addr,
 
 	if ((addr != NULL) && (addrlen != NULL)) {
 		if (nrf_addr_ptr->sa_family == NRF_AF_INET) {
-			*addrlen = sizeof(struct sockaddr_in);
+			*addrlen = sizeof(struct net_sockaddr_in);
 			nrf_to_z_ipv4(
 			    addr, (const struct nrf_sockaddr_in *)&nrf_addr);
 		} else if (nrf_addr_ptr->sa_family == NRF_AF_INET6) {
-			*addrlen = sizeof(struct sockaddr_in6);
+			*addrlen = sizeof(struct net_sockaddr_in6);
 			nrf_to_z_ipv6(
 			    addr, (const struct nrf_sockaddr_in6 *)&nrf_addr);
 		} else {
@@ -442,19 +442,19 @@ error:
 	return -1;
 }
 
-static int nrf9x_socket_offload_bind(void *obj, const struct sockaddr *addr,
-				     socklen_t addrlen)
+static int nrf9x_socket_offload_bind(void *obj, const struct net_sockaddr *addr,
+				     net_socklen_t addrlen)
 {
 	int sd = OBJ_TO_SD(obj);
 	int retval;
 
-	if (addr->sa_family == AF_INET) {
+	if (addr->sa_family == NET_AF_INET) {
 		struct nrf_sockaddr_in ipv4;
 
 		z_to_nrf_ipv4(addr, &ipv4);
 		retval = nrf_bind(sd, (const struct nrf_sockaddr *)&ipv4,
 				  sizeof(struct nrf_sockaddr_in));
-	} else if (addr->sa_family == AF_INET6) {
+	} else if (addr->sa_family == NET_AF_INET6) {
 		struct nrf_sockaddr_in6 ipv6;
 
 		z_to_nrf_ipv6(addr, &ipv6);
@@ -475,19 +475,19 @@ static int nrf9x_socket_offload_listen(void *obj, int backlog)
 	return nrf_listen(sd, backlog);
 }
 
-static int nrf9x_socket_offload_connect(void *obj, const struct sockaddr *addr,
-					socklen_t addrlen)
+static int nrf9x_socket_offload_connect(void *obj, const struct net_sockaddr *addr,
+					net_socklen_t addrlen)
 {
 	int sd = OBJ_TO_SD(obj);
 	int retval;
 
-	if (addr->sa_family == AF_INET) {
+	if (addr->sa_family == NET_AF_INET) {
 		struct nrf_sockaddr_in ipv4;
 
 		z_to_nrf_ipv4(addr, &ipv4);
 		retval = nrf_connect(sd, (struct nrf_sockaddr *)&ipv4,
 				     sizeof(struct nrf_sockaddr_in));
-	} else if (addr->sa_family == AF_INET6) {
+	} else if (addr->sa_family == NET_AF_INET6) {
 		struct nrf_sockaddr_in6 ipv6;
 
 		z_to_nrf_ipv6(addr, &ipv6);
@@ -521,7 +521,7 @@ static void sendcb(const struct nrf_modem_sendcb_params *nrf_params)
 }
 
 static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
-					   const void *optval, socklen_t optlen)
+					   const void *optval, net_socklen_t optlen)
 {
 
 	struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
@@ -536,7 +536,7 @@ static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 		.callback = sendcb,
 	};
 
-	if ((level == SOL_SOCKET) && (optname == SO_BINDTODEVICE)) {
+	if ((level == ZSOCK_SOL_SOCKET) && (optname == ZSOCK_SO_BINDTODEVICE)) {
 		if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER)) {
 			/* This is used by socket dispatcher in zephyr and is forwarded to the
 			 * offloading layer afterwards. We don't have to do anything in this case.
@@ -553,17 +553,17 @@ static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 		return -1;
 	}
 
-	if ((level == SOL_SOCKET) && ((optname == SO_RCVTIMEO) ||
-				      (optname == SO_SNDTIMEO))) {
+	if ((level == ZSOCK_SOL_SOCKET) && ((optname == ZSOCK_SO_RCVTIMEO) ||
+				      (optname == ZSOCK_SO_SNDTIMEO))) {
 		if (optval != NULL) {
 			nrf_timeo.tv_sec = ((struct timeval *)optval)->tv_sec;
 			nrf_timeo.tv_usec = ((struct timeval *)optval)->tv_usec;
 			nrf_optval = &nrf_timeo;
 			nrf_optlen = sizeof(struct nrf_timeval);
 		}
-	} else if ((level == SOL_TLS) && (optname == TLS_SESSION_CACHE)) {
+	} else if ((level == ZSOCK_SOL_TLS) && (optname == ZSOCK_TLS_SESSION_CACHE)) {
 		nrf_optlen = sizeof(int);
-	} else if ((level == SOL_SOCKET) && (optname == SO_SENDCB)) {
+	} else if ((level == ZSOCK_SOL_SOCKET) && (optname == SO_SENDCB)) {
 		/* Register the user callback in the socket context. */
 		if (optval != NULL) {
 			ctx->sendcb = *(struct socket_ncs_sendcb *)optval;
@@ -581,7 +581,7 @@ static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 }
 
 static int nrf9x_socket_offload_getsockopt(void *obj, int level, int optname,
-					   void *optval, socklen_t *optlen)
+					   void *optval, net_socklen_t *optlen)
 {
 	int sd = OBJ_TO_SD(obj);
 	int retval;
@@ -597,8 +597,8 @@ static int nrf9x_socket_offload_getsockopt(void *obj, int level, int optname,
 		return -1;
 	}
 
-	if ((level == SOL_SOCKET) && ((optname == SO_RCVTIMEO) ||
-		(optname == SO_SNDTIMEO))) {
+	if ((level == ZSOCK_SOL_SOCKET) && ((optname == ZSOCK_SO_RCVTIMEO) ||
+		(optname == ZSOCK_SO_SNDTIMEO))) {
 		nrf_optval = &nrf_timeo;
 		nrf_optlen = &nrf_timeo_size;
 	}
@@ -611,8 +611,8 @@ static int nrf9x_socket_offload_getsockopt(void *obj, int level, int optname,
 	 * are not NULL, so we can dereference them.
 	 */
 	if (retval == 0) {
-		if (level == SOL_SOCKET) {
-			if (optname == SO_ERROR) {
+		if (level == ZSOCK_SOL_SOCKET) {
+			if (optname == ZSOCK_SO_ERROR) {
 				/* Use nrf_modem_os_errno_set() to translate from nRF
 				 * error to native error. If there is no error,
 				 * don't translate it.
@@ -621,8 +621,8 @@ static int nrf9x_socket_offload_getsockopt(void *obj, int level, int optname,
 					nrf_modem_os_errno_set(*(int *)optval);
 					*(int *)optval = errno;
 				}
-			} else if ((optname == SO_RCVTIMEO) ||
-				(optname == SO_SNDTIMEO)) {
+			} else if ((optname == ZSOCK_SO_RCVTIMEO) ||
+				(optname == ZSOCK_SO_SNDTIMEO)) {
 				struct timeval tv;
 				size_t tvlen = MIN(sizeof(struct timeval), *optlen);
 
@@ -638,8 +638,8 @@ static int nrf9x_socket_offload_getsockopt(void *obj, int level, int optname,
 }
 
 static ssize_t nrf9x_socket_offload_recvfrom(void *obj, void *buf, size_t len,
-					     int flags, struct sockaddr *from,
-					     socklen_t *fromlen)
+					     int flags, struct net_sockaddr *from,
+					     net_socklen_t *fromlen)
 {
 	struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
 	ssize_t retval;
@@ -664,11 +664,11 @@ static ssize_t nrf9x_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 		if (cliaddr->sa_family == NRF_AF_INET &&
 		    sock_len == sizeof(struct nrf_sockaddr_in)) {
 			nrf_to_z_ipv4(from, (struct nrf_sockaddr_in *)cliaddr);
-			*fromlen = sizeof(struct sockaddr_in);
+			*fromlen = sizeof(struct net_sockaddr_in);
 		} else if (cliaddr->sa_family == NRF_AF_INET6 &&
 			   sock_len == sizeof(struct nrf_sockaddr_in6)) {
 			nrf_to_z_ipv6(from, (struct nrf_sockaddr_in6 *)cliaddr);
-			*fromlen = sizeof(struct sockaddr_in6);
+			*fromlen = sizeof(struct net_sockaddr_in6);
 		}
 	}
 
@@ -685,8 +685,8 @@ exit:
 
 static ssize_t nrf9x_socket_offload_sendto(void *obj, const void *buf,
 					   size_t len, int flags,
-					   const struct sockaddr *to,
-					   socklen_t tolen)
+					   const struct net_sockaddr *to,
+					   net_socklen_t tolen)
 {
 	int sd = OBJ_TO_SD(obj);
 	struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
@@ -698,13 +698,13 @@ static ssize_t nrf9x_socket_offload_sendto(void *obj, const void *buf,
 
 	if (to == NULL) {
 		retval = nrf_sendto(sd, buf, len, flags, NULL, 0);
-	} else if (to->sa_family == AF_INET) {
+	} else if (to->sa_family == NET_AF_INET) {
 		struct nrf_sockaddr_in ipv4;
 		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in);
 
 		z_to_nrf_ipv4(to, &ipv4);
 		retval = nrf_sendto(sd, buf, len, flags, (struct nrf_sockaddr *)&ipv4, sock_len);
-	} else if (to->sa_family == AF_INET6) {
+	} else if (to->sa_family == NET_AF_INET6) {
 		struct nrf_sockaddr_in6 ipv6;
 		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in6);
 
@@ -725,7 +725,7 @@ static ssize_t nrf9x_socket_offload_sendto(void *obj, const void *buf,
 	return retval;
 }
 
-static ssize_t nrf9x_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
+static ssize_t nrf9x_socket_offload_sendmsg(void *obj, const struct net_msghdr *msg,
 					    int flags)
 {
 	ssize_t len = 0;
@@ -1081,13 +1081,13 @@ static const struct socket_op_vtable nrf9x_socket_fd_op_vtable = {
 
 static inline bool proto_is_secure(int proto)
 {
-	return (proto >= IPPROTO_TLS_1_0 && proto <= IPPROTO_TLS_1_2) ||
-	       (proto >= IPPROTO_DTLS_1_0 && proto <= IPPROTO_DTLS_1_2);
+	return (proto >= NET_IPPROTO_TLS_1_0 && proto <= NET_IPPROTO_TLS_1_2) ||
+	       (proto >= NET_IPPROTO_DTLS_1_0 && proto <= NET_IPPROTO_DTLS_1_2);
 }
 
 static inline bool af_is_supported(int family)
 {
-	return (family == AF_PACKET) || (family == AF_INET) || (family == AF_INET6);
+	return (family == NET_AF_PACKET) || (family == NET_AF_INET) || (family == NET_AF_INET6);
 }
 
 static bool nrf9x_socket_is_supported(int family, int type, int proto)
@@ -1159,7 +1159,7 @@ static int nrf9x_socket_create(int family, int type, int proto)
 
 #define NRF9X_SOCKET_PRIORITY 40
 
-NET_SOCKET_OFFLOAD_REGISTER(nrf9x_socket, NRF9X_SOCKET_PRIORITY, AF_UNSPEC,
+NET_SOCKET_OFFLOAD_REGISTER(nrf9x_socket, NRF9X_SOCKET_PRIORITY, NET_AF_UNSPEC,
 		    nrf9x_socket_is_supported, nrf9x_socket_create);
 
 /* Create a network interface for nRF9x */

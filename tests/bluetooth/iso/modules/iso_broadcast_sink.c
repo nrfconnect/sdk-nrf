@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <stdlib.h>
-#include <getopt.h>
 #include <ctype.h>
 #include <unistd.h>
 
@@ -15,6 +14,7 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/iso.h>
 #include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/sys_getopt.h>
 #include <zephyr/shell/shell.h>
 
 #include <zephyr/logging/log.h>
@@ -492,7 +492,8 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 	return arg_val;
 }
 
-static struct option long_options[] = {{"num_bis:", required_argument, NULL, 'n'}, {0, 0, 0, 0}};
+static struct sys_getopt_option long_options[] = {
+	{"num_bis:", sys_getopt_required_argument, NULL, 'n'}, {0, 0, 0, 0}};
 
 static const char short_options[] = "n:";
 
@@ -511,10 +512,10 @@ static int param_set(const struct shell *shell, size_t argc, char **argv)
 		return -EPERM;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, &long_index)) !=
+	       -1) {
 		switch (opt) {
 		case 'n':
 			big_sync_param.num_bis = result;

@@ -19,49 +19,6 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_REST));
 
 extern struct k_work_q mosh_common_work_q;
 
-static int cmd_cloud_rest_do_jitp(void)
-{
-	int ret = 0;
-
-	mosh_print("Performing JITP...");
-
-	ret = nrf_cloud_rest_jitp(CONFIG_NRF_CLOUD_SEC_TAG);
-	if (ret == 0) {
-		char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
-
-		ret = nrf_cloud_client_id_get(device_id, sizeof(device_id));
-		if (ret) {
-			mosh_warn("Failed to get device ID, error: %d", ret);
-			return ret;
-		}
-		mosh_print("Waiting 30s for cloud provisioning to complete...");
-		k_sleep(K_SECONDS(30));
-
-		mosh_print(
-			"You can now add the device to nRF Cloud as %s",
-			device_id);
-		k_sleep(K_SECONDS(5));
-	} else if (ret == 1) {
-		mosh_warn("Device has been already provisioned to nRF Cloud");
-		ret = 0;
-	} else {
-		mosh_error("JITP device provisioning failed: %d", ret);
-	}
-
-	return ret;
-}
-
-static int cmd_cloud_rest_jitp(const struct shell *shell, size_t argc, char **argv)
-{
-	int err = cmd_cloud_rest_do_jitp();
-
-	if (err) {
-		mosh_error("Failed to perform JITP, %d", err);
-		return err;
-	}
-	return 0;
-}
-
 static int cmd_cloud_rest_shadow_device_status_update(const struct shell *shell, size_t argc,
 						      char **argv)
 {
@@ -103,9 +60,6 @@ static int cmd_cloud_rest_shadow_device_status_update(const struct shell *shell,
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_cloud_rest,
-			       SHELL_CMD(jitp, NULL,
-					 "Perform Just-in-Time-Provisioning with nRF Cloud.",
-					 cmd_cloud_rest_jitp),
 			       SHELL_CMD(shadow_update, NULL,
 					 "Send device capabilities to nRF Cloud.",
 					 cmd_cloud_rest_shadow_device_status_update),

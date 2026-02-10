@@ -67,8 +67,8 @@ config APPCORE_IMAGE_NAME
 
 config APPCORE_IMAGE_PATH
 	string
-	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/nrf5340/empty_app_core" if APPCORE_EMPTY && SOC_SERIES_NRF53X
-	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/nrf5340/remote_shell" if APPCORE_REMOTE_SHELL && SOC_SERIES_NRF53X
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/nrf5340/empty_app_core" if APPCORE_EMPTY && SOC_SERIES_NRF53
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/nrf5340/remote_shell" if APPCORE_REMOTE_SHELL && SOC_SERIES_NRF53
 	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/nrf54h20/empty_app_core" if APPCORE_EMPTY && SOC_NRF54H20
 	help
 	  Source directory of appcore image.

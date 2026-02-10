@@ -17,6 +17,7 @@ This section lists the available |NCS| samples for the :ref:`Bluetooth® <ug_bt>
    :glob:
 
    ../../../samples/bluetooth/*/README
+   ../../../samples/bluetooth/channel_sounding/*/README
    ../../tests/bluetooth/bsim/nrf_auraconfig/README
    ../../tests/bluetooth/bsim/nrf_auraconfig/tester/README
    ../../tests/samples/bluetooth/*/README

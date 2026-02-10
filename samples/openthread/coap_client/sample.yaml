@@ -1,6 +1,6 @@
 sample:
   description: Test CoAP communication in Thread network
-  name: OpenThreadThread CoAP Client
+  name: OpenThread CoAP Client
 
 tests:
   sample.openthread.coap_client:

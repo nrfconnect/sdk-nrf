@@ -54,7 +54,7 @@
 };
 
 &cpuapp_dma_region {
-	status="okay";
+	status = "okay";
 };
 
 &dma_fast_region {

@@ -17,7 +17,7 @@
 #include <zephyr/sys/__assert.h>
 
 #include <cracen_psa_primitives.h>
-#include "../../../cracenpsa/src/common.h"
+#include <cracen/common.h>
 #include <cracen_sw_common.h>
 #include <cracen_sw_aead.h>
 #include <cracen_sw_aes_ccm.h>
@@ -38,29 +38,6 @@
 static bool is_nonce_length_valid(size_t nonce_length)
 {
 	return nonce_length >= CCM_NONCE_MIN_LEN && nonce_length <= CCM_NONCE_MAX_LEN;
-}
-
-static psa_status_t increment_counter(uint8_t *ctr, size_t counter_size)
-{
-	size_t start_pos = SX_BLKCIPHER_AES_BLK_SZ - counter_size;
-
-	for (size_t i = SX_BLKCIPHER_AES_BLK_SZ; i > start_pos; i--) {
-		if (++ctr[i - 1] != 0) {
-			return PSA_SUCCESS;
-		}
-	}
-
-	/* All counter bytes wrapped to zero which means it overflowed */
-	return PSA_ERROR_INVALID_ARGUMENT;
-}
-
-/* Encode value as big-endian, right-aligned in buffer */
-static void encode_big_endian_length(uint8_t *buffer, size_t buffer_size, size_t value,
-				     size_t value_size)
-{
-	for (size_t i = 0; i < value_size; i++) {
-		buffer[buffer_size - 1 - i] = value >> (i * 8);
-	}
 }
 
 static psa_status_t cbc_mac_update_block(struct sxblkcipher *cipher, const struct sxkeyref *keyref,
@@ -94,7 +71,7 @@ static void format_ccm_b0(uint8_t *b0, size_t nonce_length, const uint8_t *nonce
 	memset(b0, 0, SX_BLKCIPHER_AES_BLK_SZ);
 	b0[0] = flags;
 	memcpy(&b0[1], nonce, nonce_length);
-	encode_big_endian_length(b0, SX_BLKCIPHER_AES_BLK_SZ, plaintext_length, length_field_size);
+	cracen_sw_encode_value_be(b0, SX_BLKCIPHER_AES_BLK_SZ, plaintext_length, length_field_size);
 }
 
 /* Format CCM counter block: Flags | Nonce | Counter (RFC 3610) */
@@ -106,7 +83,7 @@ static void format_ccm_ctr_block(uint8_t *ctr, size_t nonce_length, const uint8_
 	memset(ctr, 0, SX_BLKCIPHER_AES_BLK_SZ);
 	ctr[0] = length_field_size - 1;
 	memcpy(&ctr[1], nonce, nonce_length);
-	encode_big_endian_length(ctr, SX_BLKCIPHER_AES_BLK_SZ, counter, length_field_size);
+	cracen_sw_encode_value_be(ctr, SX_BLKCIPHER_AES_BLK_SZ, counter, length_field_size);
 }
 
 /* Encode AAD length per RFC 3610: 0 bytes (none), 2 bytes (<65280), or 6 bytes (>=65280) */
@@ -117,13 +94,13 @@ static size_t encode_ccm_ad_length(uint8_t *output, size_t ad_length)
 	}
 
 	if (ad_length < CCM_AAD_SHORT_MAX) {
-		encode_big_endian_length(output, 2, ad_length, 2);
+		cracen_sw_encode_value_be(output, 2, ad_length, 2);
 		return 2;
 	}
 
 	output[0] = CCM_AAD_MARKER0;
 	output[1] = CCM_AAD_MARKER1;
-	encode_big_endian_length(output + 2, 4, ad_length, 4);
+	cracen_sw_encode_value_be(output + 2, 4, ad_length, 4);
 	return 6;
 }
 
@@ -382,11 +359,14 @@ static psa_status_t ctr_xor(cracen_aead_operation_t *operation, struct sxblkciph
 {
 	cracen_sw_ccm_context_t *ccm_ctx = &operation->sw_ccm_ctx;
 	psa_status_t status;
+	size_t counter_start_pos = SX_BLKCIPHER_AES_BLK_SZ - counter_size;
 
 	for (size_t i = 0; i < length; i++) {
 		/* Generate new keystream block when current one is exhausted */
 		if (ccm_ctx->keystream_offset >= SX_BLKCIPHER_AES_BLK_SZ) {
-			status = increment_counter(ccm_ctx->ctr_block, counter_size);
+			status = cracen_sw_increment_counter_be(ccm_ctx->ctr_block,
+								SX_BLKCIPHER_AES_BLK_SZ,
+								counter_start_pos);
 			if (status != PSA_SUCCESS) {
 				return status;
 			}

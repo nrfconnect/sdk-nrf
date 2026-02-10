@@ -6,7 +6,7 @@
 /* modified to use external flash */
 
 &flash_ext {
-        status = "okay";
+	status = "okay";
 };
 
 &spi3 {

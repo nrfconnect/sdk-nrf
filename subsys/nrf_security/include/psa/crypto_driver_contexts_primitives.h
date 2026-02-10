@@ -43,6 +43,9 @@
 #if defined(PSA_NEED_OBERON_HASH_DRIVER)
 #include "oberon_hash.h"
 #endif
+#if defined(PSA_NEED_OBERON_XOF_DRIVER)
+#include "oberon_xof.h"
+#endif
 
 /* Define the context to be used for an operation that is executed through the
  * PSA Driver wrapper layer as the union of all possible driver's contexts.
@@ -78,6 +81,13 @@ typedef union {
 #endif
 
 } psa_driver_cipher_context_t;
+
+typedef union {
+	unsigned int dummy; /* Make sure this union is always non-empty */
+#if defined(PSA_NEED_OBERON_XOF_DRIVER)
+	oberon_xof_operation_t oberon_xof_ctx;
+#endif
+} psa_driver_xof_context_t;
 
 #endif /* PSA_CRYPTO_DRIVER_CONTEXTS_PRIMITIVES_H */
 /* End of automatically generated file. */

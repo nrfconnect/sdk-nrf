@@ -105,7 +105,7 @@ if(CONFIG_TRUSTED_EXECUTION_NONSECURE OR CONFIG_TRUSTED_EXECUTION_SECURE)
     ncs_add_partition_manager_config(pm.yml.mcuboot)
   endif()
 
-  if(CONFIG_SOC_SERIES_NRF54LX)
+  if(CONFIG_SOC_SERIES_NRF54L)
     # If building with secure boot enabled (with or without MCUboot),
     # place B0 SRAM inside sram_secure region.
     #  - CONFIG_SECURE_BOOT is set only if B0 updates the main application.

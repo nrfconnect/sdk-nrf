@@ -18,7 +18,7 @@
 
 #include <openthread/dns_client.h>
 
-static struct in6_addr test_addr = {{{ DNS_IPV6_ADDR }}};
+static struct net_in6_addr test_addr = {{{ DNS_IPV6_ADDR }}};
 
 FAKE_VOID_FUNC(ot_dns_resolve_cb, otError, const otDnsAddressResponse *, void *);
 FAKE_VOID_FUNC(ot_dns_browse_cb, otError, const otDnsBrowseResponse *, void *);
@@ -69,7 +69,7 @@ static void tc_cleanup(void *f)
 
 static void set_default_config(otDnsQueryConfig *config)
 {
-	memcpy((struct in6_addr *)&config->mServerSockAddr.mAddress, &test_addr,
+	memcpy((struct net_in6_addr *)&config->mServerSockAddr.mAddress, &test_addr,
 	       OT_IP6_ADDRESS_SIZE);
 
 	config->mServerSockAddr.mPort = DNS_PORT;

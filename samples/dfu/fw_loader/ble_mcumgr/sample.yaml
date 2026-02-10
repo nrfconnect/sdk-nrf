@@ -1,6 +1,5 @@
 sample:
-  description: Minimal Bluetooth LE SMP firmware loader
-  name: ble_mcumgr
+  name: Minimal Bluetooth LE SMP firmware loader sample
 common:
   sysbuild: true
   build_only: true

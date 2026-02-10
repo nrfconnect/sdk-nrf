@@ -548,13 +548,16 @@ interrupt:
     - zephyr/tests/drivers/interrupt_controller/
     - zephyr/tests/drivers/build_all/interrupt_controller/
 
-ipc:
+ipc: &tag_ipc
   files:
     - zephyr/drivers/ipm/
-    - zephyr/samples/drivers/ipm/
     - zephyr/dts/bindings/ipm/
-    - zephyr/tests/drivers/ipm/
     - zephyr/include/zephyr/drivers/ipm.h
+    - zephyr/samples/drivers/ipm/
+    - zephyr/samples/subsys/ipc/
+    - zephyr/tests/drivers/ipm/
+
+ipm: *tag_ipc
 
 kscan:
   files:
@@ -963,6 +966,8 @@ modem_pipe: *tag_modem
 
 modem_ppp: *tag_modem
 
+modem: *tag_modem
+
 littlefs:
   files:
     - zephyr/subsys/fs/Kconfig.littlefs
@@ -1027,6 +1032,8 @@ pm: &tag_pm
     - zephyr/samples/boards/nordic/system_off
 
 power: *tag_pm
+
+power_domain: *tag_pm
 
 sensing:
   files:
@@ -1193,3 +1200,133 @@ arch:
     - zephyr/arch/common/
     - zephyr/include/zephyr/arch/common/
     - zephyr/tests/arch/common/
+
+data_structures:
+  files:
+    - zephyr/include/zephyr/sys/min_heap.h
+    - zephyr/lib/min_heap/
+    - zephyr/samples/data_structures/
+
+prometheus:
+  files:
+    - zephyr/include/zephyr/net/prometheus/
+    - zephyr/samples/net/prometheus/
+    - zephyr/subsys/net/lib/prometheus/
+    - zephyr/tests/net/lib/prometheus/
+
+net.socket:
+  files:
+    - zephyr/samples/net/sockets/
+    - zephyr/subsys/net/lib/sockets/
+    - zephyr/tests/net/socket/
+
+uuid:
+  files:
+    - zephyr/include/zephyr/sys/uuid.h
+    - zephyr/lib/uuid/
+    - zephyr/samples/subsys/uuid/
+    - zephyr/tests/lib/uuid/
+
+video:
+  files:
+    - zephyr/drivers/video/
+    - zephyr/dts/bindings/video/
+    - zephyr/include/zephyr/drivers/video-controls.h
+    - zephyr/include/zephyr/drivers/video.h
+    - zephyr/include/zephyr/dt-bindings/video/
+    - zephyr/samples/drivers/video/
+    - zephyr/tests/drivers/*/video/
+    - zephyr/tests/drivers/video/
+
+psa.secure_storage:
+  files:
+    - zephyr/include/zephyr/psa/
+    - zephyr/samples/psa/
+    - zephyr/subsys/secure_storage/
+    - zephyr/tests/subsys/secure_storage/
+
+mfd:
+  files:
+    - zephyr/drivers/mfd/
+    - zephyr/dts/bindings/mfd/
+    - zephyr/include/zephyr/drivers/mfd/
+    - zephyr/include/zephyr/dt-bindings/mfd/
+    - zephyr/tests/drivers/build_all/mfd/
+
+ieee802154:
+  files:
+    - zephyr/drivers/ieee802154/
+    - zephyr/include/zephyr/drivers/ieee802154/
+    - zephyr/include/zephyr/net/ieee802154_radio.h
+    - zephyr/tests/drivers/build_all/ieee802154/
+
+haptics:
+  files:
+    - zephyr/drivers/haptics/
+    - zephyr/dts/bindings/haptics/
+    - zephyr/include/zephyr/drivers/haptics.h
+    - zephyr/include/zephyr/drivers/haptics/
+    - zephyr/samples/drivers/haptics/
+    - zephyr/tests/drivers/build_all/haptics/
+
+audio:
+  files:
+    - zephyr/doc/hardware/peripherals/audio/
+    - zephyr/drivers/audio/
+    - zephyr/include/zephyr/audio/
+    - zephyr/samples/drivers/audio/
+    - zephyr/tests/drivers/audio/
+    - zephyr/tests/drivers/build_all/audio/
+
+cpu_freq:
+  files:
+    - zephyr/dts/bindings/p_state/
+    - zephyr/include/zephyr/cpu_freq/
+    - zephyr/subsys/cpu_freq/
+    - zephyr/tests/subsys/cpu_freq/
+
+crc:
+  files:
+    - zephyr/drivers/crc/
+    - zephyr/dts/bindings/crc/
+    - zephyr/include/zephyr/drivers/crc.h
+    - zephyr/include/zephyr/sys/crc.h
+    - zephyr/samples/drivers/crc/
+    - zephyr/subsys/crc/
+    - zephyr/tests/drivers/crc/
+    - zephyr/tests/subsys/crc/
+
+flash_circural_buffer:
+  files:
+    - zephyr/include/zephyr/fs/
+    - zephyr/subsys/fs/fcb/
+    - zephyr/tests/subsys/fs/fcb/
+
+nvmem:
+  files:
+    - zephyr/dts/bindings/nvmem/
+    - zephyr/include/zephyr/devicetree/nvmem.h
+    - zephyr/include/zephyr/nvmem.h
+    - zephyr/subsys/nvmem/
+    - zephyr/tests/subsys/nvmem/
+
+cpu_load:
+  files:
+    - zephyr/include/zephyr/debug/cpu_load.h
+    - zephyr/subsys/debug/cpu_load.c
+    - zephyr/tests/subsys/debug/cpu_load/
+
+auxdisplay:
+  files:
+    - zephyr/drivers/auxdisplay/*
+    - zephyr/dts/bindings/auxdisplay/*
+    - zephyr/include/zephyr/drivers/auxdisplay.h
+    - zephyr/samples/drivers/auxdisplay/
+    - zephyr/samples/drivers/auxdisplay_*/
+    - zephyr/tests/drivers/build_all/auxdisplay/
+
+codec:
+  files:
+    - zephyr/drivers/audio/
+    - zephyr/include/zephyr/audio/codec.h
+    - zephyr/samples/drivers/audio/codec/

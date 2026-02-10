@@ -4,17 +4,17 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config SOC_SERIES_NRF53X
+config SOC_SERIES_NRF53
 	select MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
 	select SECURE_BOOT_NETCORE
 	select NETCORE_APP_UPDATE
 
-if SOC_SERIES_NRF53X
+if SOC_SERIES_NRF53
 
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY
 endchoice
 
-endif # SOC_SERIES_NRF53X
+endif # SOC_SERIES_NRF53
 
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

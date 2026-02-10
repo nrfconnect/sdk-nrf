@@ -16,12 +16,17 @@ list(APPEND src_crypto_oberon
   ${drivers_path}/oberon_helpers.c
   ${drivers_path}/oberon_ecdh.c
   ${drivers_path}/oberon_ecdsa.c
+  ${drivers_path}/oberon_eddsa.c
   ${drivers_path}/oberon_ec_keys.c
   ${drivers_path}/oberon_jpake.c
   ${drivers_path}/oberon_spake2p.c
   ${drivers_path}/oberon_srp.c
   ${drivers_path}/oberon_rsa.c
   ${drivers_path}/oberon_wpa3_sae.c
+  ${drivers_path}/oberon_xmss.c
+  ${drivers_path}/oberon_lms.c
+  ${drivers_path}/oberon_ml_dsa.c
+  ${drivers_path}/oberon_ml_kem.c
 )
 
 append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER        src_crypto_oberon ${drivers_path} oberon_key_management.c)
@@ -37,6 +42,8 @@ append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_ASYMMETRIC_ENCRYPTION_DRIVER src
 append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_CTR_DRBG_DRIVER              src_crypto_oberon ${drivers_path} oberon_ctr_drbg.c)
 append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_HMAC_DRBG_DRIVER             src_crypto_oberon ${drivers_path} oberon_hmac_drbg.c)
 append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KEY_WRAP_DRIVER              src_crypto_oberon ${drivers_path} oberon_key_wrap.c)
+append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_XOF_DRIVER                   src_crypto_oberon ${drivers_path} oberon_xof.c)
+append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER     src_crypto_oberon ${drivers_path} oberon_key_encapsulation.c)
 
 add_library(oberon_psa_driver STATIC
   ${src_crypto_oberon}

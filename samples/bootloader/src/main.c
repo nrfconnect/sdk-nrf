@@ -12,7 +12,7 @@
 #if defined(CONFIG_FPROTECT)
 #include <fprotect.h>
 #else
-#ifndef CONFIG_SOC_SERIES_NRF54LX
+#ifndef CONFIG_SOC_SERIES_NRF54L
 #warning "FPROTECT not enabled, the bootloader will be unprotected."
 #endif
 #endif

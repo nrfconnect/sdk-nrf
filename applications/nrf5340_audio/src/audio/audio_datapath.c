@@ -100,10 +100,13 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* How often to print under-run warning */
 #define LOG_INTERVAL_BLKS 5000
 
-NET_BUF_POOL_FIXED_DEFINE(pool_i2s_rx, FIFO_NUM_BLKS, BLK_MULTI_CHAN_SIZE_OCTETS,
+NET_BUF_POOL_FIXED_DEFINE(pool_i2s_rx, FIFO_NUM_BLKS / CONFIG_FIFO_FRAME_SPLIT_NUM,
+			  (BLK_MULTI_CHAN_SIZE_OCTETS * CONFIG_FIFO_FRAME_SPLIT_NUM),
 			  sizeof(struct audio_metadata), NULL);
 NET_BUF_POOL_FIXED_DEFINE(audio_pcm_pool, FIFO_NUM_BUFS, PCM_NUM_BYTES_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
+
+static atomic_t drop_next_block;
 
 enum drift_comp_state {
 	DRIFT_STATE_INIT,   /* Waiting for data to be received */
@@ -668,6 +671,10 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 	int ret = 0;
 	static uint32_t num_calls;
 
+	/* Frame accumulation for 10ms frames */
+	static struct net_buf *i2s_current_frame;
+	static uint32_t i2s_blocks_in_current_frame;
+
 	num_calls++;
 
 	alt_buffer_free(tx_buf_released);
@@ -728,46 +735,89 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 	}
 
 	/********** I2S RX **********/
-	struct net_buf *rx_audio_block = NULL;
 	static uint32_t num_overruns;
 	static uint32_t num_overruns_last_printed;
 
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == GATEWAY)) {
-		if (rx_buf_released == NULL) {
+		if (unlikely(rx_buf_released == NULL)) {
 			ERR_CHK_MSG(-ENOMEM, "No RX data available");
 		}
 
-		if (k_msgq_num_free_get(ctrl_blk.in.audio_q) == 0 || pool_i2s_rx.avail_count == 0) {
-			/* If RX FIFO is filled up */
-			num_overruns++;
-			struct net_buf *stale_i2s_data;
-
-			ret = k_msgq_get(ctrl_blk.in.audio_q, (void *)&stale_i2s_data, K_NO_WAIT);
-			ERR_CHK(ret);
-			/* Discard data */
-			net_buf_unref(stale_i2s_data);
+		if (atomic_get(&drop_next_block)) {
+			/* Drop this block to align with just-in-time */
+			atomic_set(&drop_next_block, false);
+			goto i2s_rx_done;
 		}
 
+		/* Allocate new frame if we don't have one */
+		if (i2s_current_frame == NULL) {
+			/* Check space availability */
+			i2s_current_frame = net_buf_alloc(&pool_i2s_rx, K_NO_WAIT);
+			if (unlikely(i2s_current_frame == NULL)) {
+				LOG_DBG("Out of I2S RX buffers for frame");
+				if (unlikely((++num_overruns % 100) == 1)) {
+					LOG_WRN("I2S RX overrun count: %d", num_overruns);
+				}
+
+				goto i2s_rx_done;
+			}
+
+			/* Initialize metadata for the first block */
+			struct audio_metadata *meta = net_buf_user_data(i2s_current_frame);
+			*meta = i2s_meta;
+			meta->data_len_us = 0;
+			meta->bytes_per_location = 0;
+			i2s_blocks_in_current_frame = 0;
+		}
+
+		/* Add block data directly to current frame */
+		net_buf_add_mem(i2s_current_frame, rx_buf_released, BLK_MULTI_CHAN_SIZE_OCTETS);
+
+		/* Update metadata */
+		struct audio_metadata *meta = net_buf_user_data(i2s_current_frame);
+
+		meta->data_len_us += i2s_meta.data_len_us; /* Each block is 1ms */
+		meta->bytes_per_location += i2s_meta.bytes_per_location;
+		i2s_blocks_in_current_frame++;
+
+		/* Check if we have a complete 10ms frame */
+		if (i2s_blocks_in_current_frame >= CONFIG_FIFO_FRAME_SPLIT_NUM) {
+			if (unlikely(k_msgq_num_free_get(ctrl_blk.in.audio_q) == 0)) {
+				LOG_DBG("RX queue full, dropping I2S RX frame");
+				if (unlikely((++num_overruns % 100) == 1)) {
+					LOG_WRN("I2S RX overrun count: %d", num_overruns);
+				}
+
+				/* Remove latest block to delay frame completion until message
+				 * queue is ready
+				 */
+				net_buf_remove_mem(i2s_current_frame, BLK_MULTI_CHAN_SIZE_OCTETS);
+				meta->data_len_us -= i2s_meta.data_len_us; /* Each block is 1ms */
+				meta->bytes_per_location -= i2s_meta.bytes_per_location;
+				i2s_blocks_in_current_frame--;
+
+				goto i2s_rx_done;
+			}
+
+			/* Put complete frame into RX queue */
+			ret = k_msgq_put(ctrl_blk.in.audio_q, (void *)&i2s_current_frame,
+					 K_NO_WAIT);
+			if (ret) {
+				LOG_ERR("Unable to put I2S complete frame into queue");
+				net_buf_unref(i2s_current_frame);
+			}
+
+			/* Reset for next frame */
+			i2s_current_frame = NULL;
+			i2s_blocks_in_current_frame = 0;
+		}
+
+i2s_rx_done:
+		/* Print overrun stats periodically */
 		if ((num_calls % LOG_INTERVAL_BLKS == 0) &&
 		    (num_overruns != num_overruns_last_printed)) {
-			LOG_WRN("I2S RX overrun count: %d", num_overruns);
 			num_overruns_last_printed = num_overruns;
 		}
-
-		rx_audio_block = net_buf_alloc(&pool_i2s_rx, K_NO_WAIT);
-		if (rx_audio_block == NULL) {
-			ERR_CHK_MSG(-ENOMEM, "Out of RX buffers for I2S");
-		}
-
-		/* Store RX buffer in net_buf */
-		net_buf_add_mem(rx_audio_block, rx_buf_released, BLK_MULTI_CHAN_SIZE_OCTETS);
-
-		/* Store I2S related metadata */
-		struct audio_metadata *meta_rx = net_buf_user_data(rx_audio_block);
-		*meta_rx = i2s_meta;
-
-		ret = k_msgq_put(ctrl_blk.in.audio_q, (void *)&rx_audio_block, K_NO_WAIT);
-		ERR_CHK_MSG(ret, "Unable to put RX audio block into queue");
 	}
 
 	/*** Data exchange ***/
@@ -824,7 +874,6 @@ static void audio_datapath_i2s_stop(void)
 static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 							 uint32_t curr_ts_us)
 {
-	int ret;
 	static int32_t print_count;
 	int64_t diff;
 
@@ -853,11 +902,8 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 
 	if ((diff < (JUST_IN_TIME_TARGET_DLY_US - JUST_IN_TIME_BOUND_US)) ||
 	    (diff > (JUST_IN_TIME_TARGET_DLY_US + JUST_IN_TIME_BOUND_US))) {
-		ret = audio_system_fifo_rx_block_drop();
-		if (ret) {
-			LOG_WRN("Not able to drop FIFO RX block");
-			return;
-		}
+		/* Drop next block to help with just-in-time */
+		atomic_set(&drop_next_block, true);
 		LOG_DBG("Dropped block to align with connection interval");
 		print_count = 0;
 	}

@@ -19,7 +19,7 @@ LOG_MODULE_REGISTER(idle_spim);
 #define SPI_READ_COUNT		 50
 
 static struct spi_dt_spec spim_spec =
-	SPI_DT_SPEC_GET(DT_NODELABEL(bmi270), SPI_OP_MODE_MASTER | SPI_MODE, 0);
+	SPI_DT_SPEC_GET(DT_NODELABEL(bmi270), SPI_OP_MODE_MASTER | SPI_MODE);
 
 void spi_read_register(uint8_t register_address, uint8_t *register_value)
 {

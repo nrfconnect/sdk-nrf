@@ -13,14 +13,13 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
-#include <zephyr/net/socket.h>
+#include <zephyr/posix/sys/socket.h>
+#include <zephyr/posix/unistd.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/ethernet.h>
 
 #include <zephyr/ztest.h>
-
-#ifdef CONFIG_SOC_NRF7120_PREENG
-#include <soc.h>
-#endif /* CONFIG_SOC_NRF7120_PREENG */
 
 #define BEACON_PAYLOAD_LENGTH	     256
 #define CONTINUOUS_MODE_TRANSMISSION 0
@@ -339,9 +338,6 @@ ZTEST(nrf_wifi, test_single_raw_tx_rx)
 		LOG_INF("Packet filter set with buffer size %d", filter_info.buffer_size);
 	}
 	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt transmission failed");
-#ifdef CONFIG_SOC_NRF7120_PREENG
-	configure_playout_capture(0, 1, 0x7F, 0xCA60, 0);
-#endif /* CONFIG_SOC_NRF7120_PREENG */
 	k_thread_start(receiver_thread_id);
 	/* TODO: Wait for interface to be operationally UP */
 	k_sleep(K_MSEC(50));

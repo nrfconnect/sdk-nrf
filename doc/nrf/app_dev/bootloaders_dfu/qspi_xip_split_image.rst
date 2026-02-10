@@ -189,8 +189,8 @@ This can be used to relocate files and libraries.
 
       .. code-block:: cmake
 
-         zephyr_code_relocate(LIBRARY subsys__mgmt__mcumgr__mgmt LOCATION EXTFLASH_TEXT NOCOPY)
-         zephyr_code_relocate(LIBRARY subsys__mgmt__mcumgr__mgmt LOCATION RAM_DATA)
+         zephyr_code_relocate(LIBRARY mcumgr_mgmt LOCATION EXTFLASH_TEXT NOCOPY)
+         zephyr_code_relocate(LIBRARY mcumgr_mgmt LOCATION RAM_DATA)
 
       .. note::
           The library name comes from the Zephyr code.

@@ -1,12 +1,6 @@
 family:
   - name: nordic_nrf
     series:
-      - name: nrf71
-        socs:
-          - name: nrf7120
-            cpuclusters:
-              - name: cpuapp
-              - name: cpuflpr
       - name: nrf54l
         socs:
           - name: nrf54ls05b
@@ -40,13 +34,6 @@ runners:
           - qualifiers:
               - nrf54ls05b/cpuapp
     '--reset':
-      - runners:
-          - nrfutil_next
-        run: last
-        groups:
-          - qualifiers:
-              - nrf7120/cpuapp
-              - nrf7120/cpuflpr
       - runners:
           - nrfutil
         run: last

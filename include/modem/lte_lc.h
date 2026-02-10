@@ -27,7 +27,7 @@ extern "C" {
  */
 
 /**
- * Network registration status.
+ * @brief Network registration status.
  *
  * @note Maps directly to the registration status as returned by the AT command `AT+CEREG?`.
  */
@@ -39,8 +39,8 @@ enum lte_lc_nw_reg_status {
 	LTE_LC_NW_REG_REGISTERED_HOME			= 1,
 
 	/**
-	 * Not registered, but UE is currently trying to attach or searching for an operator to
-	 * register to.
+	 * Not registered, but UE is currently trying to attach or searching for an operator
+	 * to register to.
 	 */
 	LTE_LC_NW_REG_SEARCHING				= 2,
 
@@ -71,8 +71,8 @@ enum lte_lc_nw_reg_status {
 	LTE_LC_NW_REG_RX_ONLY_REGISTERED_HOME		= 51,
 
 	/**
-	 * Not registered, but UE is currently trying to attach or searching for an operator to
-	 * register to. Device in receive only mode.
+	 * Not registered, but UE is currently trying to attach or searching for an operator
+	 * to register to. Device in receive only mode.
 	 *
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
@@ -107,8 +107,8 @@ enum lte_lc_nw_reg_status {
 	LTE_LC_NW_REG_UICC_FAIL				= 90,
 
 	/**
-	 * The modem has completed searches, but no suitable cell for normal service was found.
-	 *
+	 * The modem has completed searches, but no suitable cell for normal service was
+	 * found.
 	 * This may be used as a trigger for changing the configured system mode.
 	 *
 	 * @note This is only supported by the following modem firmware:
@@ -117,7 +117,7 @@ enum lte_lc_nw_reg_status {
 	LTE_LC_NW_REG_NO_SUITABLE_CELL			= 91
 };
 
-/** System mode. */
+/** @brief System mode. */
 enum lte_lc_system_mode {
 	/** LTE-M only. */
 	LTE_LC_SYSTEM_MODE_LTEM = 1,
@@ -150,7 +150,7 @@ enum lte_lc_system_mode {
 };
 
 /**
- * LTE mode.
+ * @brief LTE mode.
  *
  * The values for LTE-M and NB-IoT correspond to the values for the access technology field in AT
  * commands.
@@ -164,7 +164,6 @@ enum lte_lc_lte_mode {
 
 	/** NB-IoT. */
 	LTE_LC_LTE_MODE_NBIOT		= 9,
-
 	/**
 	 * NTN NB-IoT.
 	 *
@@ -175,7 +174,7 @@ enum lte_lc_lte_mode {
 };
 
 /**
- * LTE mode preference.
+ * @brief LTE mode preference.
  *
  * If multiple LTE system modes are enabled, the modem can select the mode that best meets the
  * criteria set by this configuration. The LTE mode preference does not affect the way GNSS
@@ -221,7 +220,7 @@ enum lte_lc_system_mode_preference {
 };
 
 /**
- * Functional mode, used to control RF functionality in the modem.
+ * @brief Functional mode, used to control RF functionality in the modem.
  *
  * @note The values are mapped to modem functional modes as described in
  *       "nRF91 AT Commands - Command Reference Guide". Refer to the AT command guide to
@@ -319,7 +318,7 @@ enum lte_lc_func_mode {
 	LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON	= 46
 };
 
-/** Event type. */
+/** @brief Event type. */
 enum lte_lc_evt_type {
 #if defined(CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE)
 	/**
@@ -496,7 +495,7 @@ enum lte_lc_evt_type {
 #endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
 };
 
-/** RRC connection state. */
+/** @brief RRC connection state. */
 enum lte_lc_rrc_mode {
 	/** Idle. */
 	LTE_LC_RRC_MODE_IDLE		= 0,
@@ -505,99 +504,102 @@ enum lte_lc_rrc_mode {
 	LTE_LC_RRC_MODE_CONNECTED	= 1,
 };
 
-/** Power Saving Mode (PSM) configuration. */
+/** @brief Power Saving Mode (PSM) configuration. */
 struct lte_lc_psm_cfg {
-	/** Periodic Tracking Area Update interval in seconds. */
+	/** @brief Periodic Tracking Area Update interval in seconds. */
 	int tau;
 
-	/** Active-time (time from RRC idle to PSM) in seconds or @c -1 if PSM is deactivated. */
+	/**
+	 * @brief Active-time (time from RRC idle to PSM) in seconds or @c -1 if PSM is
+	 * deactivated.
+	 */
 	int active_time;
 };
 
-/** eDRX configuration. */
+/** @brief eDRX configuration. */
 struct lte_lc_edrx_cfg {
 	/**
-	 * LTE mode for which the configuration is valid.
+	 * @brief LTE mode for which the configuration is valid.
 	 *
 	 * If the mode is @ref LTE_LC_LTE_MODE_NONE, access technology is not using eDRX.
 	 */
 	enum lte_lc_lte_mode mode;
 
-	/** eDRX interval in seconds. */
+	/** @brief eDRX interval in seconds. */
 	float edrx;
 
-	/** Paging time window in seconds. */
+	/** @brief Paging time window in seconds. */
 	float ptw;
 };
 
-/** Maximum timing advance value. */
+/** @brief Maximum timing advance value. */
 #define LTE_LC_CELL_TIMING_ADVANCE_MAX		20512
-/** Invalid timing advance value. */
+/** @brief Invalid timing advance value. */
 #define LTE_LC_CELL_TIMING_ADVANCE_INVALID	65535
-/** Maximum EARFCN value. */
+/** @brief Maximum EARFCN value. */
 #define LTE_LC_CELL_EARFCN_MAX			262143
-/** Unknown or undetectable RSRP value. */
+/** @brief Unknown or undetectable RSRP value. */
 #define LTE_LC_CELL_RSRP_INVALID		255
-/** Unknown or undetectable RSRQ value. */
+/** @brief Unknown or undetectable RSRQ value. */
 #define LTE_LC_CELL_RSRQ_INVALID		255
-/** Cell ID value not valid. */
+/** @brief Cell ID value not valid. */
 #define LTE_LC_CELL_EUTRAN_ID_INVALID		UINT32_MAX
-/** Maximum cell ID value. */
+/** @brief Maximum cell ID value. */
 #define LTE_LC_CELL_EUTRAN_ID_MAX		268435455
-/** Tracking Area Code value not valid. */
+/** @brief Tracking Area Code value not valid. */
 #define LTE_LC_CELL_TAC_INVALID			UINT32_MAX
-/** Time difference not valid. */
+/** @brief Time difference not valid. */
 #define LTE_LC_CELL_TIME_DIFF_INVALID		0
 
-/** Neighbor cell information. */
+/** @brief Neighbor cell information. */
 struct lte_lc_ncell {
-	/** EARFCN per 3GPP TS 36.101. */
+	/** @brief EARFCN per 3GPP TS 36.101. */
 	uint32_t earfcn;
 
 	/**
-	 * Difference of current cell and neighbor cell measurement in milliseconds, in the range
-	 * -99999 ms < time_diff < 99999 ms. @ref LTE_LC_CELL_TIME_DIFF_INVALID if the value is not
-	 * valid.
+	 * @brief Difference of current cell and neighbor cell measurement in milliseconds,
+	 * in the range -99999 ms < time_diff < 99999 ms. @ref LTE_LC_CELL_TIME_DIFF_INVALID
+	 * if the value is not valid.
 	 */
 	int time_diff;
 
-	/** Physical cell ID. */
+	/** @brief Physical cell ID. */
 	uint16_t phys_cell_id;
 
 	/**
-	 * RSRP.
+	 * @brief RSRP.
 	 *
 	 * Format is the same as for @c lte_lc_cell.rsrp member.
 	 */
 	int16_t rsrp;
 
 	/**
-	 * RSRQ.
+	 * @brief RSRQ.
 	 *
 	 * Format is the same as for @c lte_lc_cell.rsrq member.
 	 */
 	int16_t rsrq;
 };
 
-/** Cell information. */
+/** @brief Cell information. */
 struct lte_lc_cell {
-	/** Mobile Country Code. */
+	/** @brief Mobile Country Code. */
 	int mcc;
 
-	/** Mobile Network Code. */
+	/** @brief Mobile Network Code. */
 	int mnc;
 
-	/** E-UTRAN cell ID, range 0 - @ref LTE_LC_CELL_EUTRAN_ID_MAX. */
+	/** @brief E-UTRAN cell ID, range 0 - @ref LTE_LC_CELL_EUTRAN_ID_MAX. */
 	uint32_t id;
 
-	/** Tracking area code. */
+	/** @brief Tracking area code. */
 	uint32_t tac;
 
-	/** EARFCN per 3GPP TS 36.101. */
+	/** @brief EARFCN per 3GPP TS 36.101. */
 	uint32_t earfcn;
 
 	/**
-	 * Timing advance decimal value in basic time units (Ts).
+	 * @brief Timing advance decimal value in basic time units (Ts).
 	 *
 	 * Ts = 1/(15000 x 2048) seconds (as specified in 3GPP TS 36.211).
 	 *
@@ -611,24 +613,24 @@ struct lte_lc_cell {
 	uint16_t timing_advance;
 
 	/**
-	 * Timing advance measurement time in milliseconds, calculated from modem boot time.
+	 * @brief Timing advance measurement time in milliseconds, calculated from modem boot time.
 	 *
 	 * Range 0 - 18 446 744 073 709 551 614 ms.
 	 */
 	uint64_t timing_advance_meas_time;
 
 	/**
-	 * Cell measurement time in milliseconds, calculated from modem boot time.
+	 * @brief Cell measurement time in milliseconds, calculated from modem boot time.
 	 *
 	 * Range 0 - 18 446 744 073 709 551 614 ms.
 	 */
 	uint64_t measurement_time;
 
-	/** Physical cell ID. */
+	/** @brief Physical cell ID. */
 	uint16_t phys_cell_id;
 
 	/**
-	 * RSRP.
+	 * @brief RSRP.
 	 *
 	 * Can be converted into dBm using @ref RSRP_IDX_TO_DBM macro.
 	 *
@@ -650,7 +652,7 @@ struct lte_lc_cell {
 	int16_t rsrp;
 
 	/**
-	 * RSRQ.
+	 * @brief RSRQ.
 	 *
 	 * Can be converted into dB using @ref RSRQ_IDX_TO_DB macro.
 	 *
@@ -677,35 +679,35 @@ struct lte_lc_cell {
 };
 
 
-/** Results of neighbor cell measurements. */
+/** @brief Results of neighbor cell measurements. */
 struct lte_lc_cells_info {
 	/**
-	 * The current cell information is valid if the current cell ID is not set to
+	 * @brief The current cell information is valid if the current cell ID is not set to
 	 * @ref LTE_LC_CELL_EUTRAN_ID_INVALID.
 	 */
 	struct lte_lc_cell current_cell;
 
 	/**
-	 * Indicates whether or not the @c neighbor_cells contains valid neighbor cell information.
-	 * If it is zero, no neighbor cells were found for the current cell.
+	 * @brief Indicates whether or not the @c neighbor_cells contains valid neighbor cell
+	 *  information. If it is zero, no neighbor cells were found for the current cell.
 	 */
 	uint8_t ncells_count;
 
-	/** Neighbor cells for the current cell. */
+	/** @brief Neighbor cells for the current cell. */
 	struct lte_lc_ncell *neighbor_cells;
 
 	/**
-	 * Indicates whether or not the @c gci_cells contains valid surrounding cell information
-	 * from GCI search types (@ref lte_lc_neighbor_search_type). If it is zero, no cells were
-	 * found.
+	 * @brief Indicates whether or not the @c gci_cells contains valid surrounding cell
+	 * information from GCI search types (@ref lte_lc_neighbor_search_type).
+	 * If it is zero, no cells were found.
 	 */
 	uint8_t gci_cells_count;
 
-	/** Surrounding cells found by the GCI search types. */
+	/** @brief Surrounding cells found by the GCI search types. */
 	struct lte_lc_cell *gci_cells;
 };
 
-/** Modem sleep type. */
+/** @brief Modem sleep type. */
 enum lte_lc_modem_sleep_type {
 	/** Power Saving Mode (PSM). */
 	LTE_LC_MODEM_SLEEP_PSM			= 1,
@@ -729,18 +731,19 @@ enum lte_lc_modem_sleep_type {
 	LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM	= 7,
 };
 
-/** Modem sleep information. */
+/** @brief Modem sleep information. */
 struct lte_lc_modem_sleep {
-	/** Sleep type. */
+	/** @brief Sleep type. */
 	enum lte_lc_modem_sleep_type type;
 
 	/**
-	 * Sleep time in milliseconds. If this value is set to -1, the sleep is considered infinite.
+	 * @brief Sleep time in milliseconds. If this value is set to -1,
+	 * the sleep is considered infinite.
 	 */
 	int64_t time;
 };
 
-/** Energy consumption estimate. */
+/** @brief Energy consumption estimate. */
 enum lte_lc_energy_estimate {
 	/**
 	 * Bad conditions.
@@ -780,7 +783,7 @@ enum lte_lc_energy_estimate {
 	LTE_LC_ENERGY_CONSUMPTION_EFFICIENT	= 9,
 };
 
-/** Cell in Tracking Area Identifier list. */
+/** @brief Cell in Tracking Area Identifier list. */
 enum lte_lc_tau_triggered {
 	/**
 	 * The evaluated cell is in the Tracking Area Identifier list.
@@ -800,7 +803,7 @@ enum lte_lc_tau_triggered {
 	LTE_LC_CELL_UNKNOWN		= UINT8_MAX
 };
 
-/** CE level. */
+/** @brief CE level. */
 enum lte_lc_ce_level {
 	/** No repetitions or a small number of repetitions. */
 	LTE_LC_CE_LEVEL_0	= 0,
@@ -818,7 +821,7 @@ enum lte_lc_ce_level {
 	LTE_LC_CE_LEVEL_UNKNOWN	= UINT8_MAX,
 };
 
-/** Modem domain event type. */
+/** @brief Modem domain event type. */
 enum lte_lc_modem_evt_type {
 	/**
 	 * Indicates that a light search has been performed.
@@ -908,7 +911,7 @@ enum lte_lc_modem_evt_type {
 	LTE_LC_MODEM_EVT_DETECTED_COUNTRY
 };
 
-/** Band configuration status. */
+/** @brief Band configuration status. */
 enum lte_lc_band_conf_status {
 	/** Usable bands available in system. */
 	LTE_LC_BAND_CONF_STATUS_OK = 0,
@@ -920,36 +923,36 @@ enum lte_lc_band_conf_status {
 	LTE_LC_BAND_CONF_STATUS_SYSTEM_NOT_SUPPORTED = 2
 };
 
-/** Detected conflicting band lock or operator restrictions. */
+/** @brief Detected conflicting band lock or operator restrictions. */
 struct lte_lc_invalid_band_conf {
-	/** LTE-M band configuration status. */
+	/** @brief LTE-M band configuration status. */
 	enum lte_lc_band_conf_status status_ltem;
 
-	/** NB-IoT band configuration status. */
+	/** @brief NB-IoT band configuration status. */
 	enum lte_lc_band_conf_status status_nbiot;
 
-	/** NTN NB-IoT band configuration status. */
+	/** @brief NTN NB-IoT band configuration status. */
 	enum lte_lc_band_conf_status status_ntn_nbiot;
 };
 
-/** Modem domain event.
+/** @brief Modem domain event.
  *
  * This structure is used as the payload for event @ref LTE_LC_EVT_MODEM_EVENT.
  */
 struct lte_lc_modem_evt {
-	/** Event type. */
+	/** @brief Event type. */
 	enum lte_lc_modem_evt_type type;
 
-	/** Payload for the event (optional). */
+	/** @brief Payload for the event (optional). */
 	union {
-		/** Payload for event @ref LTE_LC_MODEM_EVT_CE_LEVEL. */
+		/** @brief Payload for event @ref LTE_LC_MODEM_EVT_CE_LEVEL. */
 		enum lte_lc_ce_level ce_level;
 
-		/** Payload for event @ref LTE_LC_MODEM_EVT_INVALID_BAND_CONF. */
+		/** @brief Payload for event @ref LTE_LC_MODEM_EVT_INVALID_BAND_CONF. */
 		struct lte_lc_invalid_band_conf invalid_band_conf;
 
 		/**
-		 * Payload for event @ref LTE_LC_MODEM_EVT_DETECTED_COUNTRY.
+		 * @brief Payload for event @ref LTE_LC_MODEM_EVT_DETECTED_COUNTRY.
 		 *
 		 * Mobile Country Code (MCC) for the detected country.
 		 */
@@ -957,44 +960,44 @@ struct lte_lc_modem_evt {
 	};
 };
 
-/** RAI configuration. */
+/** @brief RAI configuration. */
 struct lte_lc_rai_cfg {
-	/** E-UTRAN cell ID. */
+	/** @brief E-UTRAN cell ID. */
 	uint32_t cell_id;
-	/** Mobile Country Code. */
+	/** @brief Mobile Country Code. */
 	int mcc;
-	/** Mobile Network Code. */
+	/** @brief Mobile Network Code. */
 	int mnc;
-	/** AS RAI support. */
+	/** @brief AS RAI support. */
 	bool as_rai;
-	/** CP RAI support. */
+	/** @brief CP RAI support. */
 	bool cp_rai;
 };
 
 /**
- * Connection evaluation parameters.
+ * @brief Connection evaluation parameters.
  *
  * @note For more information on the various connection evaluation parameters, refer to the
  *       "nRF91 AT Commands - Command Reference Guide".
  */
 struct lte_lc_conn_eval_params {
-	/** RRC connection state during measurements. */
+	/** @brief RRC connection state during measurements. */
 	enum lte_lc_rrc_mode rrc_state;
 
 	/**
-	 * Relative estimated energy consumption for data transmission compared to nominal
+	 * @brief Relative estimated energy consumption for data transmission compared to nominal
 	 * consumption.
 	 */
 	enum lte_lc_energy_estimate energy_estimate;
 
 	/**
-	 * Value that indicates if the evaluated cell is a part of the Tracking Area Identifier
-	 * list received from the network.
+	 * @brief Value that indicates if the evaluated cell is a part of the
+	 * Tracking Area Identifier list received from the network.
 	 */
 	enum lte_lc_tau_triggered tau_trig;
 
 	/**
-	 * Coverage Enhancement level for PRACH.
+	 * @brief Coverage Enhancement level for PRACH.
 	 *
 	 * If @c rrc_state is @ref LTE_LC_RRC_MODE_IDLE, the CE level is estimated based on RSRP and
 	 * network configuration.
@@ -1008,14 +1011,14 @@ struct lte_lc_conn_eval_params {
 	 */
 	enum lte_lc_ce_level ce_level;
 
-	/** EARFCN for given cell where EARFCN is per 3GPP TS 36.101. */
+	/** @brief EARFCN for given cell where EARFCN is per 3GPP TS 36.101. */
 	int earfcn;
 
-	/** Reduction in power density in dB. */
+	/** @brief Reduction in power density in dB. */
 	int16_t dl_pathloss;
 
 	/**
-	 * Current RSRP level at time of report.
+	 * @brief Current RSRP level at time of report.
 	 *
 	 * Can be converted into dBm using @ref RSRP_IDX_TO_DBM macro.
 	 *
@@ -1037,7 +1040,7 @@ struct lte_lc_conn_eval_params {
 	int16_t rsrp;
 
 	/**
-	 * Current RSRQ level at time of report.
+	 * @brief Current RSRQ level at time of report.
 	 *
 	 * Can be converted into dB using @ref RSRQ_IDX_TO_DB macro.
 	 *
@@ -1063,7 +1066,7 @@ struct lte_lc_conn_eval_params {
 	int16_t rsrq;
 
 	/**
-	 * Estimated TX repetitions.
+	 * @brief Estimated TX repetitions.
 	 *
 	 * If @c rrc_state is @ref LTE_LC_RRC_MODE_IDLE, this value is the initial preamble
 	 * repetition level in (N)PRACH based on CE level and network configuration.
@@ -1076,7 +1079,7 @@ struct lte_lc_conn_eval_params {
 	int16_t tx_rep;
 
 	/**
-	 * Estimated RX repetitions.
+	 * @brief Estimated RX repetitions.
 	 *
 	 * If @c rrc_state is @ref LTE_LC_RRC_MODE_IDLE, this value is the initial random access
 	 * control channel (M/NPDCCH) repetition level based on CE level and network configuration.
@@ -1088,11 +1091,11 @@ struct lte_lc_conn_eval_params {
 	 */
 	int16_t rx_rep;
 
-	/** Physical cell ID of evaluated cell. */
+	/** @brief Physical cell ID of evaluated cell. */
 	int16_t phy_cid;
 
 	/**
-	 * Current band information.
+	 * @brief Current band information.
 	 *
 	 * 0 when band information is not available.
 	 *
@@ -1101,7 +1104,7 @@ struct lte_lc_conn_eval_params {
 	int16_t band;
 
 	/**
-	 * Current signal-to-noise ratio at time of report.
+	 * @brief Current signal-to-noise ratio at time of report.
 	 *
 	 * * 0:   SNR < -24 dB
 	 * * 1:  -24 dB <= SNR < -23 dB
@@ -1115,7 +1118,7 @@ struct lte_lc_conn_eval_params {
 	int16_t snr;
 
 	/**
-	 * Estimated TX power in dBm.
+	 * @brief Estimated TX power in dBm.
 	 *
 	 * If @c rrc_state is @ref LTE_LC_RRC_MODE_IDLE, the value is for first preamble
 	 * transmission in (N)PRACH.
@@ -1127,19 +1130,19 @@ struct lte_lc_conn_eval_params {
 	 */
 	int16_t tx_power;
 
-	/** Mobile Country Code. */
+	/** @brief Mobile Country Code. */
 	int mcc;
 
-	/** Mobile Network Code. */
+	/** @brief Mobile Network Code. */
 	int mnc;
 
-	/** E-UTRAN cell ID. */
+	/** @brief E-UTRAN cell ID. */
 	uint32_t cell_id;
 };
 
 /**
- * Specifies which type of search the modem should perform when a neighbor cell measurement is
- * started.
+ * @brief Specifies which type of search the modem should perform when a
+ * neighbor cell measurement is started.
  *
  * When using search types up to @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE, the result
  * contains parameters from current/serving cell and optionally up to
@@ -1192,13 +1195,13 @@ enum lte_lc_neighbor_search_type {
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE = 6,
 };
 
-/** Neighbor cell measurement initiation parameters. */
+/** @brief Neighbor cell measurement initiation parameters. */
 struct lte_lc_ncellmeas_params {
-	/** Search type, @ref lte_lc_neighbor_search_type. */
+	/** @brief Search type, @ref lte_lc_neighbor_search_type. */
 	enum lte_lc_neighbor_search_type search_type;
 
 	/**
-	 * Maximum number of GCI cells to be searched. Integer, range: 2-15.
+	 * @brief Maximum number of GCI cells to be searched. Integer, range: 2-15.
 	 *
 	 * Current cell is counted as one cell. Mandatory with the GCI search types, ignored with
 	 * other search types.
@@ -1206,7 +1209,7 @@ struct lte_lc_ncellmeas_params {
 	uint8_t gci_count;
 };
 
-/** Environment evaluation type. */
+/** @brief Environment evaluation type. */
 enum lte_lc_env_eval_type {
 	/**
 	 * PLMN search is stopped after light search if any of the PLMNs to evaluate were found.
@@ -1214,43 +1217,46 @@ enum lte_lc_env_eval_type {
 	 */
 	LTE_LC_ENV_EVAL_TYPE_DYNAMIC = 0,
 
-	/** PLMN search is stopped after light search even if no PLMNs to evaluate were found. */
+	/**
+	 * PLMN search is stopped after light search even if no PLMNs to evaluate
+	 * were found.
+	 */
 	LTE_LC_ENV_EVAL_TYPE_LIGHT = 1,
 
 	/** PLMN search covers all channels in all supported frequency bands. */
 	LTE_LC_ENV_EVAL_TYPE_FULL = 2
 };
 
-/** PLMN to evaluate. */
+/** @brief PLMN to evaluate. */
 struct lte_lc_env_eval_plmn {
-	/** Mobile Country Code (MCC). */
+	/** @brief Mobile Country Code (MCC). */
 	int mcc;
 
-	/** Mobile Network Code (MNC). */
+	/** @brief Mobile Network Code (MNC). */
 	int mnc;
 };
 
-/** Environment evaluation parameters. */
+/** @brief Environment evaluation parameters. */
 struct lte_lc_env_eval_params {
 	/**
-	 * Environment evaluation type.
+	 * @brief Environment evaluation type.
 	 */
 	enum lte_lc_env_eval_type eval_type;
 
 	/**
-	 * Number of PLMNs to evaluate.
+	 * @brief Number of PLMNs to evaluate.
 	 *
 	 * Must be less than or equal to @c CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT.
 	 */
 	uint8_t plmn_count;
 
 	/**
-	 * Pointer to an array of PLMNs to evaluate.
+	 * @brief Pointer to an array of PLMNs to evaluate.
 	 */
 	struct lte_lc_env_eval_plmn *plmn_list;
 };
 
-/** Search pattern type. */
+/** @brief Search pattern type. */
 enum lte_lc_periodic_search_pattern_type {
 	/** Range search pattern. */
 	LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE = 0,
@@ -1259,24 +1265,24 @@ enum lte_lc_periodic_search_pattern_type {
 	LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE = 1,
 };
 
-/** Configuration for periodic search of type @ref LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE. */
+/** @brief Configuration for periodic search of type @ref LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE. */
 struct lte_lc_periodic_search_range_cfg {
 	/**
-	 * Sleep time between searches in the beginning of the range.
+	 * @brief Sleep time between searches in the beginning of the range.
 	 *
 	 * Allowed values: 0 - 65535 seconds.
 	 */
 	uint16_t initial_sleep;
 
 	/**
-	 * Sleep time between searches in the end of the range.
+	 * @brief Sleep time between searches in the end of the range.
 	 *
 	 * Allowed values: 0 - 65535 seconds.
 	 */
 	uint16_t final_sleep;
 
 	/**
-	 * Optional target time in minutes for achieving the @c final_sleep value.
+	 * @brief Optional target time in minutes for achieving the @c final_sleep value.
 	 *
 	 * This can be used to determine angle factor between the initial and final sleep times.
 	 * The timeline for the @c time_to_final_sleep starts from the beginning of the search
@@ -1292,7 +1298,7 @@ struct lte_lc_periodic_search_range_cfg {
 	int16_t time_to_final_sleep;
 
 	/**
-	 * Time that must elapse before entering the next search pattern.
+	 * @brief Time that must elapse before entering the next search pattern.
 	 *
 	 * The timeline for @c pattern_end_point starts from the beginning of the limited service
 	 * starting point, which is the moment when the first sleep period started.
@@ -1304,7 +1310,7 @@ struct lte_lc_periodic_search_range_cfg {
 };
 
 /**
- * Configuration for periodic search of type @ref LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE.
+ * @brief Configuration for periodic search of type @ref LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE.
  *
  * 1 to 5 sleep time values for sleep between searches can be configured. It is mandatory to provide
  * @c val_1, while the rest are optional. Unused values must be set to -1. After going through all
@@ -1316,18 +1322,18 @@ struct lte_lc_periodic_search_range_cfg {
  * * 0 - 65535 seconds.
  */
 struct lte_lc_periodic_search_table_cfg {
-	/** Mandatory sleep time. */
+	/** @brief Mandatory sleep time. */
 	int val_1;
 
 	/**
-	 * Optional sleep time.
+	 * @brief Optional sleep time.
 	 *
 	 * Must be set to -1 if not used.
 	 */
 	int val_2;
 
 	/**
-	 * Optional sleep time.
+	 * @brief Optional sleep time.
 	 *
 	 * @c val_2 must be configured for this parameter to take effect.
 	 *
@@ -1336,7 +1342,7 @@ struct lte_lc_periodic_search_table_cfg {
 	int val_3;
 
 	/**
-	 * Optional sleep time.
+	 * @brief Optional sleep time.
 	 *
 	 * @c val_3 must be configured for this parameter to take effect.
 	 *
@@ -1345,7 +1351,7 @@ struct lte_lc_periodic_search_table_cfg {
 	int val_4;
 
 	/**
-	 * Optional sleep time.
+	 * @brief Optional sleep time.
 	 *
 	 * @c val_4 must be configured for this parameter to take effect.
 	 *
@@ -1355,37 +1361,37 @@ struct lte_lc_periodic_search_table_cfg {
 };
 
 /**
- * Periodic search pattern.
+ * @brief Periodic search pattern.
  *
  * A search pattern may be of either 'range' or 'table' type.
  */
 struct lte_lc_periodic_search_pattern {
-	/** Search pattern type. */
+	/** @brief Search pattern type. */
 	enum lte_lc_periodic_search_pattern_type type;
 
 	union {
-		/** Configuration for periodic search of type 'range'. */
+		/** @brief Configuration for periodic search of type 'range'. */
 		struct lte_lc_periodic_search_range_cfg range;
 
-		/** Configuration for periodic search of type 'table'. */
+		/** @brief Configuration for periodic search of type 'table'. */
 		struct lte_lc_periodic_search_table_cfg table;
 	};
 };
 
-/** Periodic search configuration. */
+/** @brief Periodic search configuration. */
 struct lte_lc_periodic_search_cfg {
 	/**
-	 * Indicates if the last given pattern is looped from the beginning when the pattern has
-	 * ended.
+	 * @brief Indicates if the last given pattern is looped from the beginning
+	 * when the pattern has ended.
 	 *
 	 * If several patterns are configured, this impacts only the last pattern.
 	 */
 	bool loop;
 
 	/**
-	 * Indicates if the modem can return to a given search pattern with shorter sleeps, for
-	 * example, when radio conditions change and the given pattern index has already been
-	 * exceeded.
+	 * @brief Indicates if the modem can return to a given search pattern with
+	 * shorter sleeps, for example, when radio conditions change and the given
+	 * pattern index has already been exceeded.
 	 *
 	 * Allowed values:
 	 * * 0: No return pattern.
@@ -1394,7 +1400,7 @@ struct lte_lc_periodic_search_cfg {
 	uint16_t return_to_pattern;
 
 	/**
-	 * Indicates if band optimization shall be used.
+	 * @brief Indicates if band optimization shall be used.
 	 *
 	 * * 0: No optimization. Every periodic search shall be all band search.
 	 * * 1: Use default optimizations predefined by modem. Predefinition depends on
@@ -1404,10 +1410,10 @@ struct lte_lc_periodic_search_cfg {
 	 */
 	uint16_t band_optimization;
 
-	/** The number of valid patterns. Range 1 - 4. */
+	/** @brief The number of valid patterns. Range 1 - 4. */
 	size_t pattern_count;
 
-	/** Array of periodic search patterns. */
+	/** @brief Array of periodic search patterns. */
 	struct lte_lc_periodic_search_pattern patterns[4];
 };
 
@@ -1419,7 +1425,7 @@ struct lte_lc_periodic_search_cfg {
  */
 struct lte_lc_env_eval_result {
 	/**
-	 * Status for the environment evaluation.
+	 * @brief Status for the environment evaluation.
 	 *
 	 * 0 indicates successful completion of the evaluation.
 	 * 5 indicates that evaluation failed, aborted due to higher priority operation.
@@ -1428,14 +1434,14 @@ struct lte_lc_env_eval_result {
 	uint8_t status;
 
 	/**
-	 * Number of PLMN results available in the results array.
+	 * @brief Number of PLMN results available in the results array.
 	 *
 	 * Range: 0 to CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT
 	 */
 	uint8_t result_count;
 
 	/**
-	 * Pointer to an array of environment evaluation results for different PLMNs.
+	 * @brief Pointer to an array of environment evaluation results for different PLMNs.
 	 *
 	 * Each entry contains the evaluation result for a specific PLMN.
 	 */
@@ -1443,7 +1449,7 @@ struct lte_lc_env_eval_result {
 };
 #endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 
-/** Callback for modem functional mode changes. */
+/** @brief Callback for modem functional mode changes. */
 struct lte_lc_cfun_cb {
 	void (*callback)(enum lte_lc_func_mode, void *ctx);
 	void *context;
@@ -1553,16 +1559,16 @@ enum lte_lc_pdn_evt_type {
 	LTE_LC_EVT_PDN_ESM_ERROR,
 };
 
-/** PDN event payload. */
+/** @brief PDN event payload. */
 struct lte_lc_pdn_evt {
-	/** Event type. */
+	/** @brief Event type. */
 	enum lte_lc_pdn_evt_type type;
-	/** PDP context ID. */
+	/** @brief PDP context ID. */
 	uint8_t cid;
-	/** ESM error code. Only valid for @ref LTE_LC_EVT_PDN_ESM_ERROR event. */
+	/** @brief ESM error code. Only valid for @ref LTE_LC_EVT_PDN_ESM_ERROR event. */
 	int esm_err;
 	/**
-	 * Cellular profile ID.
+	 * @brief Cellular profile ID.
 	 *
 	 * Only valid for @ref LTE_LC_EVT_PDN_NETWORK_DETACH event when a
 	 * cellular profile ID is present in the notification from the modem.
@@ -1572,84 +1578,84 @@ struct lte_lc_pdn_evt {
 };
 
 struct lte_lc_cellular_profile_evt {
-	/** Cellular profile ID. */
+	/** @brief Cellular profile ID. */
 	int8_t profile_id;
 };
 
-/** LTE event. */
+/** @brief LTE event. */
 struct lte_lc_evt {
-	/** Event type. */
+	/** @brief Event type. */
 	enum lte_lc_evt_type type;
 
 	union {
-		/** Payload for event @ref LTE_LC_EVT_NW_REG_STATUS. */
+		/** @brief Payload for event @ref LTE_LC_EVT_NW_REG_STATUS. */
 		enum lte_lc_nw_reg_status nw_reg_status;
 
-		/** Payload for event @ref LTE_LC_EVT_RRC_UPDATE. */
+		/** @brief Payload for event @ref LTE_LC_EVT_RRC_UPDATE. */
 		enum lte_lc_rrc_mode rrc_mode;
 
 #if defined(CONFIG_LTE_LC_PSM_MODULE)
-		/** Payload for event @ref LTE_LC_EVT_PSM_UPDATE. */
+		/** @brief Payload for event @ref LTE_LC_EVT_PSM_UPDATE. */
 		struct lte_lc_psm_cfg psm_cfg;
 #endif /* CONFIG_LTE_LC_PSM_MODULE */
 
 #if defined(CONFIG_LTE_LC_EDRX_MODULE)
-		/** Payload for event @ref LTE_LC_EVT_EDRX_UPDATE. */
+		/** @brief Payload for event @ref LTE_LC_EVT_EDRX_UPDATE. */
 		struct lte_lc_edrx_cfg edrx_cfg;
 #endif /* CONFIG_LTE_LC_EDRX_MODULE */
 
-		/** Payload for event @ref LTE_LC_EVT_CELL_UPDATE. */
+		/** @brief Payload for event @ref LTE_LC_EVT_CELL_UPDATE. */
 		struct lte_lc_cell cell;
 
-		/** Payload for event @ref LTE_LC_EVT_LTE_MODE_UPDATE. */
+		/** @brief Payload for event @ref LTE_LC_EVT_LTE_MODE_UPDATE. */
 		enum lte_lc_lte_mode lte_mode;
 
 #if defined(CONFIG_LTE_LC_MODEM_SLEEP_MODULE)
 		/**
-		 * Payload for events @ref LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING,
+		 * @brief Payload for events @ref LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING,
 		 * @ref LTE_LC_EVT_MODEM_SLEEP_EXIT and @ref LTE_LC_EVT_MODEM_SLEEP_ENTER.
 		 */
 		struct lte_lc_modem_sleep modem_sleep;
 #endif /* CONFIG_LTE_LC_MODEM_SLEEP_MODULE */
 
-		/** Payload for event @ref LTE_LC_EVT_MODEM_EVENT. */
+		/** @brief Payload for event @ref LTE_LC_EVT_MODEM_EVENT. */
 		struct lte_lc_modem_evt modem_evt;
 
 		/**
-		 * Payload for event @ref LTE_LC_EVT_TAU_PRE_WARNING.
+		 * @brief Payload for event @ref LTE_LC_EVT_TAU_PRE_WARNING.
 		 *
 		 * Time until next Tracking Area Update in milliseconds.
 		 */
 		uint64_t time;
 
 #if defined(CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE)
-		/** Payload for event @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS. */
+		/** @brief Payload for event @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS. */
 		struct lte_lc_cells_info cells_info;
 #endif /* CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE */
 
 #if defined(CONFIG_LTE_LC_RAI_MODULE)
-		/** Payload for event @ref LTE_LC_EVT_RAI_UPDATE. */
+		/** @brief Payload for event @ref LTE_LC_EVT_RAI_UPDATE. */
 		struct lte_lc_rai_cfg rai_cfg;
 #endif /* CONFIG_LTE_LC_RAI_MODULE */
 
 #if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
-		/** Payload for event @ref LTE_LC_EVT_ENV_EVAL_RESULT. */
+		/** @brief Payload for event @ref LTE_LC_EVT_ENV_EVAL_RESULT. */
 		struct lte_lc_env_eval_result env_eval_result;
 #endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 
 #if defined(CONFIG_LTE_LC_PDN_MODULE)
-		/** Payload for event @ref LTE_LC_EVT_PDN. */
+		/** @brief Payload for event @ref LTE_LC_EVT_PDN. */
 		struct lte_lc_pdn_evt pdn;
 #endif /* CONFIG_LTE_LC_PDN_MODULE */
 
 #if defined(CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE)
-		/** Payload for event @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE. */
+		/** @brief Payload for event @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE. */
 		struct lte_lc_cellular_profile_evt cellular_profile;
 #endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
 	};
 };
 
-/** PDN address family. */
+/** @brief PDN address family. */
 enum lte_lc_pdn_family {
 	/** IPv4 */
 	LTE_LC_PDN_FAM_IPV4   = 0,
@@ -1661,17 +1667,17 @@ enum lte_lc_pdn_family {
 	LTE_LC_PDN_FAM_NONIP  = 3,
 };
 
-/** Additional Packet Data Protocol (PDP) context configuration options. */
+/** @brief Additional Packet Data Protocol (PDP) context configuration options. */
 struct lte_lc_pdn_pdp_context_opts {
 	/**
-	 * IPv4 address allocation.
+	 * @brief IPv4 address allocation.
 	 *
 	 * - 0: IPv4 address through Non-access Stratum (NAS) signaling (default)
 	 * - 1: IPv4 address through Dynamic Host Configuration Protocol (DHCP)
 	 */
 	uint8_t ip4_addr_alloc;
 	/**
-	 * NAS Signalling Low Priority Indication.
+	 * @brief NAS Signalling Low Priority Indication.
 	 *
 	 * - 0: Use Non-access Stratum (NAS) Signalling Low Priority Indication (NSLPI) value
 	 *      from configuration (default)
@@ -1679,7 +1685,7 @@ struct lte_lc_pdn_pdp_context_opts {
 	 */
 	uint8_t nslpi;
 	/**
-	 * Protected transmission of Protocol Configuration Options (PCO).
+	 * @brief Protected transmission of Protocol Configuration Options (PCO).
 	 *
 	 * - 0: Protected transmission of PCO is not requested (default)
 	 * - 1: Protected transmission of PCO is requested
@@ -1688,26 +1694,26 @@ struct lte_lc_pdn_pdp_context_opts {
 };
 
 /**
- * PDN connection dynamic information structure.
+ * @brief PDN connection dynamic information structure.
  *
  * This structure holds dynamic information about the PDN connection.
  */
 struct lte_lc_pdn_dynamic_info {
-	/** IPv4 Maximum Transmission Unit. */
+	/** @brief IPv4 Maximum Transmission Unit. */
 	uint32_t ipv4_mtu;
-	/** IPv6 Maximum Transmission Unit. */
+	/** @brief IPv6 Maximum Transmission Unit. */
 	uint32_t ipv6_mtu;
-	/** Primary IPv4 DNS address. */
-	struct in_addr dns_addr4_primary;
-	/** Secondary IPv4 DNS address. */
-	struct in_addr dns_addr4_secondary;
-	/** Primary IPv6 DNS address. */
-	struct in6_addr dns_addr6_primary;
-	/** Secondary IPv6 DNS address. */
-	struct in6_addr dns_addr6_secondary;
+	/** @brief Primary IPv4 DNS address. */
+	struct net_in_addr dns_addr4_primary;
+	/** @brief Secondary IPv4 DNS address. */
+	struct net_in_addr dns_addr4_secondary;
+	/** @brief Primary IPv6 DNS address. */
+	struct net_in6_addr dns_addr6_primary;
+	/** @brief Secondary IPv6 DNS address. */
+	struct net_in6_addr dns_addr6_secondary;
 };
 
-/** Authentication method. */
+/** @brief Authentication method. */
 enum lte_lc_pdn_auth {
 	/** No authentication. */
 	LTE_LC_PDN_AUTH_NONE = 0,
@@ -1757,37 +1763,37 @@ enum lte_lc_act {
  *	 is the first context in the range.
  */
 struct lte_lc_cellular_profile {
-	/** Cellular profile ID. Valid values are 0 and 1. */
+	/** @brief Cellular profile ID. Valid values are 0 and 1. */
 	uint8_t id;
 
 	/**
-	 * Access technology bitmap for the profile.
+	 * @brief Access technology bitmap for the profile.
 	 *
 	 * This is a combination of @ref lte_lc_act values.
 	 */
 	uint8_t act;
 
-	/** UICC configuration */
+	/** @brief UICC configuration */
 	enum lte_lc_uicc uicc;
 };
 
 
 /**
- * Handler for LTE events.
+ * @brief Handler for LTE events.
  *
  * @param[in] evt Event.
  */
 typedef void(*lte_lc_evt_handler_t)(const struct lte_lc_evt *const evt);
 
 /**
- * Register handler for LTE events.
+ * @brief Register handler for LTE events.
  *
  * @param[in] handler Event handler.
  */
 void lte_lc_register_handler(lte_lc_evt_handler_t handler);
 
 /**
- * De-register handler for LTE events.
+ * @brief De-register handler for LTE events.
  *
  * @param[in] handler Event handler.
  *
@@ -1798,14 +1804,14 @@ void lte_lc_register_handler(lte_lc_evt_handler_t handler);
 int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
 
 /**
- * Connect to LTE network.
+ * @brief Connect to LTE network.
  *
  * This function sets the modem to online mode using @ref lte_lc_normal.
  * The client does not need to do anything to re-connect if the connection is lost but
  * the modem will handle it automatically.
  *
- * @note After initialization, the system mode will be set to the default mode selected with Kconfig
- *       and LTE preference set to automatic selection.
+ * @note After initialization, the system mode and LTE preference are set to the
+ * default modes selected with Kconfig.
  *
  * @retval 0 if successful.
  * @retval -EFAULT if an AT command failed.
@@ -1816,7 +1822,7 @@ int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
 int lte_lc_connect(void);
 
 /**
- * Connect to LTE network.
+ * @brief Connect to LTE network.
  *
  * The function returns immediately.
  *
@@ -1834,7 +1840,10 @@ int lte_lc_connect(void);
 int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 
 /**
- * Set the modem to offline mode.
+ * @brief Set the modem to offline mode.
+ *
+ * Disables both transmit and receive RF circuits and deactivates LTE
+ * and GNSS services.
  *
  * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
  *
@@ -1844,7 +1853,7 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 int lte_lc_offline(void);
 
 /**
- * Set the modem to power off mode.
+ * @brief Set the modem to power off mode.
  *
  * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
  *
@@ -1854,7 +1863,7 @@ int lte_lc_offline(void);
 int lte_lc_power_off(void);
 
 /**
- * Set the modem to normal mode.
+ * @brief Set the modem to normal mode.
  *
  * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
  *
@@ -1864,7 +1873,7 @@ int lte_lc_power_off(void);
 int lte_lc_normal(void);
 
 /**
- * Set modem PSM parameters.
+ * @brief Set modem PSM parameters.
  *
  * Requested periodic TAU (RPTAU) and requested active time (RAT) are used when PSM mode is
  * subsequently enabled using lte_lc_psm_req(). These are the requested values and network
@@ -1920,7 +1929,7 @@ int lte_lc_normal(void);
 int lte_lc_psm_param_set(const char *rptau, const char *rat);
 
 /**
- * Set modem PSM parameters.
+ * @brief Set modem PSM parameters.
  *
  * Requested periodic TAU (RPTAU) and requested active time (RAT) are used when PSM mode is
  * subsequently enabled using lte_lc_psm_req(). These are the requested values and network
@@ -1966,7 +1975,7 @@ int lte_lc_psm_param_set(const char *rptau, const char *rat);
 int lte_lc_psm_param_set_seconds(int rptau, int rat);
 
 /**
- * Request modem to enable or disable Power Saving Mode (PSM).
+ * @brief Request modem to enable or disable Power Saving Mode (PSM).
  *
  * PSM parameters can be set using `CONFIG_LTE_PSM_REQ_FORMAT`,
  * `CONFIG_LTE_PSM_REQ_RPTAU`, `CONFIG_LTE_PSM_REQ_RAT`,
@@ -1989,7 +1998,7 @@ int lte_lc_psm_param_set_seconds(int rptau, int rat);
 int lte_lc_psm_req(bool enable);
 
 /**
- * Get the current PSM (Power Saving Mode) configuration.
+ * @brief Get the current PSM (Power Saving Mode) configuration.
  *
  * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.
  *
@@ -2006,7 +2015,7 @@ int lte_lc_psm_req(bool enable);
 int lte_lc_psm_get(int *tau, int *active_time);
 
 /**
- * Request modem to enable or disable
+ * @brief Request modem to enable or disable
  * [proprietary Power Saving Mode](https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/nw_service/feaconf_set.html).
  *
  * The purpose of the proprietary PSM feature is to perform a PSM-like sleep when network does not
@@ -2037,7 +2046,7 @@ int lte_lc_psm_get(int *tau, int *active_time);
 int lte_lc_proprietary_psm_req(bool enable);
 
 /**
- * Set the Paging Time Window (PTW) value to be used with eDRX.
+ * @brief Set the Paging Time Window (PTW) value to be used with eDRX.
  *
  * eDRX can be requested using lte_lc_edrx_req(). PTW is set individually for LTE-M, NB-IoT and
  * NTN NB-IoT.
@@ -2060,7 +2069,7 @@ int lte_lc_proprietary_psm_req(bool enable);
 int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
 
 /**
- * Set the requested eDRX value.
+ * @brief Set the requested eDRX value.
  *
  * eDRX can be requested using lte_lc_edrx_req(). eDRX value is set individually for LTE-M,
  * NB-IoT and NTN NB-IoT.
@@ -2079,7 +2088,7 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
 int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 
 /**
- * Request modem to enable or disable use of eDRX.
+ * @brief Request modem to enable or disable use of eDRX.
  *
  * eDRX parameters can be set using `CONFIG_LTE_EDRX_REQ_VALUE_LTE_M`,
  * `CONFIG_LTE_EDRX_REQ_VALUE_NBIOT`, `CONFIG_LTE_PTW_VALUE_LTE_M` and
@@ -2104,7 +2113,7 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 int lte_lc_edrx_req(bool enable);
 
 /**
- * Get the eDRX parameters currently provided by the network.
+ * @brief Get the eDRX parameters currently provided by the network.
  *
  * @param[out] edrx_cfg eDRX configuration.
  *
@@ -2118,7 +2127,7 @@ int lte_lc_edrx_req(bool enable);
 int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg);
 
 /**
- * Get the current network registration status.
+ * @brief Get the current network registration status.
  *
  * @param[out] status Network registration status.
  *
@@ -2129,7 +2138,7 @@ int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg);
 int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
 
 /**
- * Set the modem's system mode and LTE preference.
+ * @brief Set the modem's system mode and LTE preference.
  *
  * @param[in] mode System mode.
  * @param[in] preference System mode preference.
@@ -2144,7 +2153,7 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 			   enum lte_lc_system_mode_preference preference);
 
 /**
- * Get the modem's system mode and LTE preference.
+ * @brief Get the modem's system mode and LTE preference.
  *
  * @param[out] mode System mode.
  * @param[out] preference System mode preference. Can be @c NULL.
@@ -2159,7 +2168,7 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 			   enum lte_lc_system_mode_preference *preference);
 
 /**
- * Set the modem's functional mode.
+ * @brief Set the modem's functional mode.
  *
  * @param[in] mode Functional mode.
  *
@@ -2172,7 +2181,7 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
 
 /**
- * Get the modem's functional mode.
+ * @brief Get the modem's functional mode.
  *
  * @param[out] mode Functional mode.
  *
@@ -2185,7 +2194,7 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
 
 /**
- * Get the currently active LTE mode.
+ * @brief Get the currently active LTE mode.
  *
  * @param[out] mode LTE mode.
  *
@@ -2199,7 +2208,7 @@ int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
 
 /**
- * Initiate a neighbor cell measurement.
+ * @brief Initiate a neighbor cell measurement.
  *
  * The result of the measurement is reported back as an event of the type
  * @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS, meaning that an event handler must be registered to receive
@@ -2230,7 +2239,7 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
 int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params);
 
 /**
- * Cancel an ongoing neighbor cell measurement.
+ * @brief Cancel an ongoing neighbor cell measurement.
  *
  * @note Requires `CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` to be enabled.
  *
@@ -2240,7 +2249,7 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params);
 int lte_lc_neighbor_cell_measurement_cancel(void);
 
 /**
- * Get connection evaluation parameters.
+ * @brief Get connection evaluation parameters.
  *
  * Connection evaluation parameters can be used to determine the energy efficiency of data
  * transmission before the actual data transmission. Connection evaluation is based on collected
@@ -2275,7 +2284,7 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
 int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
 
 /**
- * Start environment evaluation.
+ * @brief Start environment evaluation.
  *
  * Perform evaluation for PLMN selection. Evaluates available PLMNs and provides information
  * of their estimated signalling conditions. Based on the evaluation results, the application
@@ -2305,7 +2314,7 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
 int lte_lc_env_eval(struct lte_lc_env_eval_params *params);
 
 /**
- * Cancel an ongoing environment evaluation.
+ * @brief Cancel an ongoing environment evaluation.
  *
  * If environment evaluation was in progress, an @ref LTE_LC_EVT_ENV_EVAL_RESULT event is received.
  *
@@ -2315,9 +2324,8 @@ int lte_lc_env_eval(struct lte_lc_env_eval_params *params);
  * @retval -EFAULT if AT command failed.
  */
 int lte_lc_env_eval_cancel(void);
-
 /**
- * Configure periodic searches.
+ * @brief Configure periodic searches.
  *
  * This configuration affects the periodic searches that the modem performs in limited service state
  * to obtain normal service. See @ref lte_lc_periodic_search_cfg and
@@ -2336,7 +2344,7 @@ int lte_lc_env_eval_cancel(void);
 int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cfg);
 
 /**
- * Get the configured periodic search parameters.
+ * @brief Get the configured periodic search parameters.
  *
  * @note Requires `CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` to be enabled.
  *
@@ -2352,7 +2360,7 @@ int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cf
 int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg);
 
 /**
- * Clear the configured periodic search parameters.
+ * @brief Clear the configured periodic search parameters.
  *
  * @note Requires `CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` to be enabled.
  *
@@ -2363,7 +2371,7 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg);
 int lte_lc_periodic_search_clear(void);
 
 /**
- * Request an extra search.
+ * @brief Request an extra search.
  *
  * This can be used for example when modem is in sleep state between periodic searches. The search
  * is performed only when the modem is in sleep state between periodic searches.
@@ -2376,7 +2384,7 @@ int lte_lc_periodic_search_clear(void);
 int lte_lc_periodic_search_request(void);
 
 /**
- * Create a PDP context.
+ * @brief Create a PDP context.
  *
  * In LTE terminology, this creates a PDP context (configuration) that can be activated
  * into a PDN connection. The context contains settings like APN, address family,
@@ -2394,7 +2402,7 @@ int lte_lc_periodic_search_request(void);
 int lte_lc_pdn_ctx_create(uint8_t *cid);
 
 /**
- * Configure a PDP context.
+ * @brief Configure a PDP context.
  *
  * The PDN connection must be inactive when the PDP context is configured.
  *
@@ -2412,7 +2420,7 @@ int lte_lc_pdn_ctx_configure(uint8_t cid, const char *apn, enum lte_lc_pdn_famil
 			     struct lte_lc_pdn_pdp_context_opts *opts);
 
 /**
- * Set PDP context authentication parameters.
+ * @brief Set PDP context authentication parameters.
  *
  * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
  *
@@ -2428,7 +2436,7 @@ int lte_lc_pdn_ctx_auth_set(uint8_t cid, enum lte_lc_pdn_auth method,
 				const char *user, const char *password);
 
 /**
- * Destroy a PDP context.
+ * @brief Destroy a PDP context.
  *
  * The PDN connection must be inactive when the PDP context is destroyed.
  *
@@ -2442,7 +2450,7 @@ int lte_lc_pdn_ctx_auth_set(uint8_t cid, enum lte_lc_pdn_auth method,
 int lte_lc_pdn_ctx_destroy(uint8_t cid);
 
 /**
- * Activate a PDN connection.
+ * @brief Activate a PDN connection.
  *
  * Activates the PDP context with the given CID, establishing a PDN connection.
  *
@@ -2461,7 +2469,7 @@ int lte_lc_pdn_ctx_destroy(uint8_t cid);
 int lte_lc_pdn_activate(uint8_t cid, int *esm, enum lte_lc_pdn_family *family);
 
 /**
- * Deactivate a PDN connection.
+ * @brief Deactivate a PDN connection.
  *
  * Deactivates the PDN connection associated with the given context ID.
  *
@@ -2475,7 +2483,7 @@ int lte_lc_pdn_activate(uint8_t cid, int *esm, enum lte_lc_pdn_family *family);
 int lte_lc_pdn_deactivate(uint8_t cid);
 
 /**
- * Retrieve the PDN ID for a given PDP context.
+ * @brief Retrieve the PDN ID for a given PDP context.
  *
  * The PDN ID can be used to route traffic through a PDN connection.
  * Multiple contexts (CIDs) may share the same PDN ID if they route through
@@ -2491,7 +2499,7 @@ int lte_lc_pdn_deactivate(uint8_t cid);
 int lte_lc_pdn_id_get(uint8_t cid);
 
 /**
- * Retrieve dynamic parameters of a given PDN connection.
+ * @brief Retrieve dynamic parameters of a given PDN connection.
  *
  * @param[in] cid The context ID.
  * @param[out] info PDN dynamic info.
@@ -2520,7 +2528,7 @@ int lte_lc_pdn_default_ctx_events_enable(void);
 int lte_lc_pdn_default_ctx_events_disable(void);
 
 /**
- * Retrieve the default Access Point Name (APN).
+ * @brief Retrieve the default Access Point Name (APN).
  *
  * The default APN is the APN of the default PDP context (zero).
  *
@@ -2537,7 +2545,7 @@ int lte_lc_pdn_default_ctx_apn_get(char *buf, size_t len);
 #if defined(CONFIG_LTE_LC_PDN_ESM_STRERROR)
 
 /**
- * Retrieve a statically allocated textual description for a given ESM error reason.
+ * @brief Retrieve a statically allocated textual description for a given ESM error reason.
  *
  * @note Requires `CONFIG_LTE_LC_PDN_ESM_STRERROR` to be enabled.
  *
@@ -2552,7 +2560,7 @@ const char *lte_lc_pdn_esm_strerror(int reason);
 #endif /* CONFIG_LTE_LC_PDN_ESM_STRERROR */
 
 /**
- * Configure a cellular profile.
+ * @brief Configure a cellular profile.
  *
  * The cellular profile to be used for a specific access technology is decided by the modem.
  * The active cellular profile is reported in the @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE
@@ -2570,7 +2578,7 @@ const char *lte_lc_pdn_esm_strerror(int reason);
 int lte_lc_cellular_profile_configure(struct lte_lc_cellular_profile *profile);
 
 /**
- * Remove a cellular profile.
+ * @brief Remove a cellular profile.
  *
  * This clears the configuration for the given cellular profile ID.
  *

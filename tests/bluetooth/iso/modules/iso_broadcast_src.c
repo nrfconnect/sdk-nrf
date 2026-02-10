@@ -6,13 +6,13 @@
 
 #include <stdlib.h>
 #include <ctype.h>
-#include <getopt.h>
 #include <unistd.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/iso.h>
 #include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/sys_getopt.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/drivers/gpio.h>
 
@@ -357,15 +357,16 @@ int iso_broadcast_src_init(void)
 	return 0;
 }
 
-static struct option long_options[] = {{"sdu_size", required_argument, NULL, 's'},
-				       {"phy", required_argument, NULL, 'p'},
-				       {"rtn", required_argument, NULL, 'r'},
-				       {"num_bis:", required_argument, NULL, 'n'},
-				       {"sdu_int_us", required_argument, NULL, 'S'},
-				       {"latency_ms", required_argument, NULL, 'l'},
-				       {"packing", required_argument, NULL, 'P'},
-				       {"framing", required_argument, NULL, 'f'},
-				       {0, 0, 0, 0}};
+static struct sys_getopt_option long_options[] = {
+	{"sdu_size", sys_getopt_required_argument, NULL, 's'},
+	{"phy", sys_getopt_required_argument, NULL, 'p'},
+	{"rtn", sys_getopt_required_argument, NULL, 'r'},
+	{"num_bis:", sys_getopt_required_argument, NULL, 'n'},
+	{"sdu_int_us", sys_getopt_required_argument, NULL, 'S'},
+	{"latency_ms", sys_getopt_required_argument, NULL, 'l'},
+	{"packing", sys_getopt_required_argument, NULL, 'P'},
+	{"framing", sys_getopt_required_argument, NULL, 'f'},
+	{0, 0, 0, 0}};
 
 static const char short_options[] = "s:p:r:n:S:l:P:f:";
 
@@ -384,10 +385,10 @@ static int param_set(const struct shell *shell, size_t argc, char **argv)
 		return -EPERM;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, &long_index)) !=
+	       -1) {
 		switch (opt) {
 		case 's':
 			iso_tx_qos.sdu = result;

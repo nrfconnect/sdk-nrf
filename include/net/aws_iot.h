@@ -274,6 +274,7 @@ struct aws_iot_config {
 	char *host_name;
 
 	/** Name of the interface that the AWS library should be bound to.
+	 *  The pointer should remain valid throughout connection lifetime.
 	 *  Leave as NULL if not specified.
 	 */
 	const char *if_name;

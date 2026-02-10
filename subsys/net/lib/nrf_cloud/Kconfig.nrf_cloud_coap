@@ -57,6 +57,12 @@ config NRF_CLOUD_COAP_MAX_RETRIES
 	  The maximum number of times a CoAP request will be retried before it is considered failed.
 	  A value of 0 means that no retries will be attempted.
 
+config NRF_CLOUD_COAP_MAX_USER_OPTIONS
+	int "Maximum number of custom CoAP options a user can add to requests"
+	default 0
+	help
+	  When > 0, user is expected to implement nrf_cloud_coap_get_user_options
+
 if WIFI
 
 config NRF_CLOUD_COAP_SEND_SSIDS
@@ -74,6 +80,10 @@ config NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST
 	help
 	  Enabling this option will ensure that the CoAP client is disconnected when a request
 	  fails to be sent. (Maximum retransmissions reached).
+
+# Increase the maximum path length to have enough room
+config COAP_CLIENT_MAX_PATH_LENGTH
+	default 128
 
 module = NRF_CLOUD_COAP
 module-str = nRF Cloud COAP

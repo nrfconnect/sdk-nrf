@@ -135,7 +135,7 @@ int downloader_cancel(struct downloader *client)
 }
 
 
-int z_impl_zsock_inet_pton(sa_family_t family, const char *src, void *dst)
+int z_impl_zsock_inet_pton(net_sa_family_t family, const char *src, void *dst)
 {
 	return 0;
 }

@@ -22,11 +22,11 @@
 #include <mpsl/mpsl_lib.h>
 #endif
 
-#if defined(CONFIG_SOC_SERIES_NRF52X)
+#if defined(CONFIG_SOC_SERIES_NRF52)
 	#define EMDS_DEV_IRQ SWI1_EGU1_IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF53X)
+#elif defined(CONFIG_SOC_SERIES_NRF53)
 	#define EMDS_DEV_IRQ EGU1_IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 	#define EMDS_DEV_IRQ SWI01_IRQn
 #endif
 
@@ -36,10 +36,6 @@
 
 static void button_handler_cb(uint32_t pressed, uint32_t changed)
 {
-	if (!bt_mesh_is_provisioned()) {
-		return;
-	}
-
 	if (pressed & changed & BIT(3)) {
 		NVIC_SetPendingIRQ(EMDS_DEV_IRQ);
 	}
@@ -72,6 +68,26 @@ static void isr_emds_cb(void *arg)
 #endif
 
 	emds_store();
+}
+#endif
+
+#ifdef CONFIG_EMDS
+static void node_reset_handler(void)
+{
+	printk("Node reset\n");
+
+	/* Upon node reset, clear the EMDS so that stale RPL data, if any, is removed.
+	 *
+	 * If you don't want to clear the EMDS data for application specific reasons, you must then
+	 * call emds_store() to save the current state of RPL (which is cleared internally by the
+	 * system) and that of application specific data, if any. See @ref emds_store() for more
+	 * details.
+	 */
+	int err = emds_clear();
+
+	if (err) {
+		printk("EMDS clear failed (err %d)\n", err);
+	}
 }
 #endif
 
@@ -108,6 +124,8 @@ static void bt_ready(int err)
 		printk("Initializing emds failed (err %d)\n", err);
 		return;
 	}
+
+	bt_mesh_dk_prov_node_reset_cb_set(node_reset_handler);
 #endif
 
 	err = bt_mesh_init(bt_mesh_dk_prov_init(), model_handler_init());

@@ -3282,15 +3282,11 @@ class OpenThreadTHCI(object):
         assert interface == 0, "non-BR must send UDP to Thread interface"
         self.__udpOpen(spiff_udp_ip, port)
         time.sleep(0.5)
-        cmd_ = "test tmforiginfilter disable"
-        self.__executeCommand(cmd_)
-        cmd = "udp send %s %s -x %s" % (destination, port, payload)
+        cmd = "udp send %s %d %s" % (destination, port, payload)
         if not return_result:
             result = self.__executeCommand(cmd)[-1] == "Done"
         else:
             result = self.__executeCommand(cmd)[0]
-        _cmd = "test tmforiginfilter enable"
-        self.__executeCommand(_cmd)
         return result
 
     def __udpOpen(self, spiff_udp_ip="", port=""):

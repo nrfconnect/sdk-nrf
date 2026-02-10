@@ -1,0 +1,708 @@
+.. _ncs_release_notes_3.3.0-preview1:
+
+Changelog for |NCS| v3.3.0-preview1
+###################################
+
+.. contents::
+   :local:
+   :depth: 2
+
+This changelog reflects the most relevant changes from the latest official release.
+
+.. HOWTO
+
+   When adding a new PR, decide whether it needs an entry in the changelog.
+   If it does, update this page.
+   Add the sections you need, as only a handful of sections are kept when the changelog is cleaned.
+   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and other components that implement or support protocol functionality.
+
+Known issues
+************
+
+Known issues are only tracked for the latest official release.
+See `known issues for nRF Connect SDK v3.2.0`_ for the list of issues valid for the latest release.
+
+Changelog
+*********
+
+The following sections provide detailed lists of changes by component.
+
+IDE, OS, and tool support
+=========================
+
+|no_changes_yet_note|
+
+Board support
+=============
+
+|no_changes_yet_note|
+
+Build and configuration system
+==============================
+
+|no_changes_yet_note|
+
+Bootloaders and DFU
+===================
+
+|no_changes_yet_note|
+
+Developing with nRF91 Series
+============================
+
+|no_changes_yet_note|
+
+Developing with nRF70 Series
+============================
+
+|no_changes_yet_note|
+
+Developing with nRF54L Series
+=============================
+
+|no_changes_yet_note|
+
+Developing with nRF54H Series
+=============================
+
+* Added:
+
+  * A document describing the merged slot update strategy for nRF54H20 devices, allowing simultaneous updates of both application cores (APP and RAD) in a single update operation.
+    For more information, see :ref:`ug_nrf54h20_partitioning_merged`.
+  * A document describing the manifest-based update strategy for nRF54H20 devices.
+    For more information, see :ref:`ug_nrf54h20_mcuboot_manifest`.
+  * The :ref:`ug_nrf54h20_mcuboot_requests` page describes bootloader requests for the nRF54H20 SoC.
+    It explains how you can pass information from the application to the bootloader.
+
+Developing with nRF53 Series
+============================
+
+|no_changes_yet_note|
+
+Developing with nRF52 Series
+============================
+
+|no_changes_yet_note|
+
+Developing with Thingy:91 X
+===========================
+
+|no_changes_yet_note|
+
+Developing with Thingy:91
+=========================
+
+|no_changes_yet_note|
+
+Developing with Thingy:53
+=========================
+
+|no_changes_yet_note|
+
+Developing with PMICs
+=====================
+
+|no_changes_yet_note|
+
+Developing with Front-End Modules
+=================================
+
+|no_changes_yet_note|
+
+Developing with custom boards
+=============================
+
+|no_changes_yet_note|
+
+Security
+========
+
+* Added:
+
+  * Support for the WPA3-SAE and WPA3-SAE-PT in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+  * Support for the HMAC KDF algorithm in the CRACEN driver.
+    The algorithm implementation is conformant to the NIST SP 800-108 Rev. 1 recommendation.
+  * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
+  * Support for AES-GCM AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>`.
+
+* Updated:
+
+  * The :ref:`API documentation section for the cryptographic drivers <crypto_drivers_api_documentation>` with links to the added API documentation for the CRACEN driver.
+  * The Oberon PSA Crypto to version 1.5.4 that introduces support for the following new features with the Oberon PSA driver:
+
+    * Support for PSA Certified Crypto API v1.4, PSA Crypto API v1.4 PQC Extension and PSA Crypto Driver Interface v1.0 alpha 1.
+    * Experimental support for Extendable-Output Function (XOF) algorithms SHAKE128, SHAKE256, ASCON XOF128 and ASCON CXOF128.
+    * Experimental support for hash ML-DSA and deterministic ML-DSA asymmetric signature algorithms.
+    * Experimental support for ASCON HASH256 hash algorithm.
+    * Experimental support for ASCON AEAD128 AEAD algorithm.
+    * Updated implementations of WPA3-SAE, ML-DSA and ML-KEM to support the PSA Crypto API v1.4.
+
+   The :ref:`ug_crypto_supported_features` page has been updated accordingly.
+
+* Removed:
+
+  * The ``CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`.
+  * The ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it by options :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
+
+Trusted Firmware-M (TF-M)
+-------------------------
+
+* Updated to version 2.2.2.
+
+Protocols
+=========
+
+This section provides detailed lists of changes by :ref:`protocol <protocols>`.
+See `Samples`_ for lists of changes for the protocol-related samples.
+
+Bluetooth® LE
+-------------
+
+|no_changes_yet_note|
+
+Bluetooth Mesh
+--------------
+
+|no_changes_yet_note|
+
+DECT NR+
+--------
+
+* Added DECT NR+ full stack support, including the following features:
+
+  * Connection Manager integration for enabling easy connect for the applications.
+  * Network management API for controlling DECT NR+ operations.
+  * L2 API implementation enabling IPv6 connectivity, including HAL definition.
+  * Enabling Internet connectivity through sink and BR (Border Router) support together with, for example, Serial Modem on a gateway nRF91 LTE device.
+  * nRF91x1 DECT modem driver implementing HAL API and interfacing with DECT NR+ modem firmware where the DECT NR+ MAC layer is running.
+
+Enhanced ShockBurst (ESB)
+-------------------------
+
+* Fixed invalid radio configuration for legacy ESB protocol.
+
+Gazell
+------
+
+|no_changes_yet_note|
+
+Matter
+------
+
+* Updated the :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
+
+Matter fork
++++++++++++
+
+|no_changes_yet_note|
+
+nRF IEEE 802.15.4 radio driver
+------------------------------
+
+|no_changes_yet_note|
+
+Thread
+------
+
+* Added a warning when using precompiled OpenThread libraries with modified Kconfig options related to the OpenThread stack.
+
+Wi-Fi®
+------
+
+|no_changes_yet_note|
+
+Applications
+============
+
+This section provides detailed lists of changes by :ref:`application <applications>`.
+
+Connectivity bridge
+-------------------
+
+|no_changes_yet_note|
+
+IPC radio firmware
+------------------
+
+|no_changes_yet_note|
+
+Matter bridge
+-------------
+
+|no_changes_yet_note|
+
+nRF5340 Audio
+-------------
+
+* Added:
+
+  * Dynamic configuration of the number of channels for the encoder based on the configured audio locations.
+    The number of channels is set during runtime using the :c:func:`audio_system_encoder_num_ch_set` function.
+    This allows configuring mono or stereo encoding depending on the configured audio locations, potentially saving CPU and memory resources.
+
+  * High CPU load callback using the Zephyr CPU load subsystem.
+    The callback uses a :c:func:`printk` function, as the logging subsystem is scheduled out if higher priority threads take all CPU time.
+    This makes debugging high CPU load situations easier in the application.
+    The threshold for high CPU load is set in :file:`peripherals.c` using :c:macro:`CPU_LOAD_HIGH_THRESHOLD_PERCENT`.
+
+  * :kconfig:option:`CONFIG_SPEED_OPTIMIZATIONS` to enable compiler speed optimizations for the application.
+
+* Updated:
+
+  * Switched to the new USB stack introduced in Zephyr 3.4.0.
+    For an end user, this change requires no action.
+    macOS will now work out of the box, fixing OCT-2154.
+
+  * Programming script.
+    Devices are now halted before programming.
+    Furthermore, the devices are kept halted until they are all programmed, and then started together
+    with the headsets starting first.
+    This eases sniffing of advertisement packets.
+
+  * With the latest release of |nRFVSC|, you can build and program the nRF5340 Audio application using the |nRFVSC| GUI.
+    Updated the :ref:`nrf53_audio_app_building` accordingly: the note about missing support in |nRFVSC| has been removed and the section about programming using standard methods now lists the steps for |nRFVSC| and the command line.
+
+  * Improved handling of I2S RX buffer overruns.
+    When an overrun occurs, the most recent block in the current frame is removed to make space for new incoming data.
+
+  * Optimized USB-to-encoder audio processing pipeline to reduce CPU usage.
+    Note that LC3-encoding of sinusoidal input demands more of the CPU than real-world audio input.
+
+  * The audio data path now accumulates 10 ms frames instead of processing 1 ms blocks individually, reducing message queue operations by 90% and improving overall system performance.
+    This optimization affects both USB audio input processing and the I2S audio datapath, resulting in more efficient encoder thread operation.
+
+  * Improved error handling with ``unlikely()`` macros for better branch prediction in performance-critical paths.
+
+nRF Desktop
+-----------
+
+* Added:
+
+  * A workaround for the USB next stack race issue where the application could try to submit HID reports while the USB is being disabled after USB cable has been unplugged, which results in an error.
+    The workaround is applied when the :option:`CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL` Kconfig option is enabled.
+  * Support for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` board target.
+
+* Updated:
+
+  * The :option:`CONFIG_DESKTOP_BT` Kconfig option to no longer select the deprecated :kconfig:option:`CONFIG_BT_SIGNING` Kconfig option.
+    The application relies on Bluetooth LE security mode 1 and security level of at least 2 to ensure data confidentiality through encryption.
+  * The memory map for RAM load configurations of nRF54LM20 target to increase KMU RAM section size to allow for secp384r1 key.
+  * The default log levels used by the legacy USB stack (:option:`CONFIG_DESKTOP_USB_STACK_LEGACY`) to enable error logs (:kconfig:option:`CONFIG_USB_DEVICE_LOG_LEVEL_ERR`, :kconfig:option:`CONFIG_USB_DRIVER_LOG_LEVEL_ERR`).
+    Previously, the legacy USB stack logs were turned off.
+    This change ensures visibility of runtime issues.
+
+nRF Machine Learning (Edge Impulse)
+-----------------------------------
+
+|no_changes_yet_note|
+
+Thingy:53: Matter weather station
+---------------------------------
+
+|no_changes_yet_note|
+
+Samples
+=======
+
+This section provides detailed lists of changes by :ref:`sample <samples>`.
+
+Bluetooth samples
+-----------------
+
+|no_changes_yet_note|
+
+Bluetooth Mesh samples
+----------------------
+
+|no_changes_yet_note|
+
+Bluetooth Fast Pair samples
+---------------------------
+
+|no_changes_yet_note|
+
+Cellular samples
+----------------
+
+* :ref:`nrf_cloud_mqtt_fota` and :ref:`nrf_cloud_mqtt_device_message` samples:
+
+  * Added support for JWT authentication by enabling the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option.
+    Enabling this option in the :file:`prj.conf` is necessary for using UUID as the device ID.
+
+* :ref:`location_sample`:
+
+  * Added support for onboarding with `nRF Cloud Utils`_ by using AT commands to set up the modem and device credentials.
+
+* :ref:`modem_shell_application` sample:
+
+  * Added support for JWT authentication by enabling the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option.
+    Enabling this option is necessary for using nRF Cloud Utils as an onboarding method.
+  * Removed JITP from the shell commands and references from the sample documentation.
+
+Cryptography samples
+--------------------
+
+* :ref:`crypto_aes_ccm` sample:
+
+  * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
+
+Debug samples
+-------------
+
+|no_changes_yet_note|
+
+DECT NR+ samples
+----------------
+
+* Added the :ref:`hello_dect` sample for demonstrating the use of the DECT NR+ stack with connection manager and IPv6 connectivity.
+
+* :ref:`dect_shell_application` sample:
+
+  * Updated:
+
+      * The ``dect rf_tool`` command - Major updates to improve usage for RX and TX testing.
+      * Scheduler - Dynamic flow control based on load tier to prevent modem out-of-memory errors.
+      * Settings - Continuous Wave (CW) support and possibility to disable Synchronization Training Field (STF) on TX and RX.
+
+Edge Impulse samples
+--------------------
+
+|no_changes_yet_note|
+
+Enhanced ShockBurst samples
+---------------------------
+
+|no_changes_yet_note|
+
+Gazell samples
+--------------
+
+|no_changes_yet_note|
+
+|ISE| samples
+-------------
+
+|no_changes_yet_note|
+
+Keys samples
+------------
+
+|no_changes_yet_note|
+
+Matter samples
+--------------
+
+* Refactored documentation for all Matter samples and applications to make it more consistent and easier to maintain and read.
+
+* :ref:`matter_manufacturer_specific_sample`:
+
+  * Added support for the ``NRF_MATTER_CLUSTER_INIT`` macro.
+
+* :ref:`matter_closure_sample`:
+
+  * Added support for the Closure Control cluster test event triggers.
+
+* :ref:`matter_lock_sample`:
+
+  * Added support for the :ref:`matter_lock_sample_wifi_thread_switching` in the nRF54LM20 DK with the nRF7002-EB II shield attached.
+
+* :ref:`matter_light_bulb_sample`:
+
+  * Added support for :ref:`matter_light_bulb_aws_iot_integration` in the nRF54LM20 DK with the nRF7002-EB II shield attached.
+
+Networking samples
+------------------
+
+|no_changes_yet_note|
+
+NFC samples
+-----------
+
+|no_changes_yet_note|
+
+nRF5340 samples
+---------------
+
+|no_changes_yet_note|
+
+Peripheral samples
+------------------
+
+|no_changes_yet_note|
+
+PMIC samples
+------------
+
+|no_changes_yet_note|
+
+Protocol serialization samples
+------------------------------
+
+|no_changes_yet_note|
+
+SDFW samples
+------------
+
+|no_changes_yet_note|
+
+Sensor samples
+--------------
+
+|no_changes_yet_note|
+
+SUIT samples
+------------
+
+|no_changes_yet_note|
+
+Trusted Firmware-M (TF-M) samples
+---------------------------------
+
+|no_changes_yet_note|
+
+Thread samples
+--------------
+
+* Added support for the nRF54L Series DKs in the following Thread sample documents:
+
+  * :ref:`coap_client_sample`
+  * :ref:`coap_server_sample`
+
+Wi-Fi samples
+-------------
+
+|no_changes_yet_note|
+
+Other samples
+-------------
+
+|no_changes_yet_note|
+
+Drivers
+=======
+
+This section provides detailed lists of changes by :ref:`driver <drivers>`.
+
+Wi-Fi drivers
+-------------
+
+|no_changes_yet_note|
+
+Flash drivers
+-------------
+
+|no_changes_yet_note|
+
+Libraries
+=========
+
+This section provides detailed lists of changes by :ref:`library <libraries>`.
+
+Binary libraries
+----------------
+
+|no_changes_yet_note|
+
+Bluetooth libraries and services
+--------------------------------
+
+|no_changes_yet_note|
+
+Common Application Framework
+----------------------------
+
+|no_changes_yet_note|
+
+Debug libraries
+---------------
+
+|no_changes_yet_note|
+
+DFU libraries
+-------------
+
+|no_changes_yet_note|
+
+Gazell libraries
+----------------
+
+|no_changes_yet_note|
+
+Security libraries
+------------------
+
+* :ref:`nrf_security` library:
+
+  * Updated the header files at :file:`subsys/nrf_security/src/drivers/cracen/cracenpsa/include/` with Doxygen documentation.
+
+Modem libraries
+---------------
+
+* :ref:`lte_lc_readme` library:
+
+  * Added:
+
+    * Support for new PDN events :c:enumerator:`LTE_LC_EVT_PDN_SUSPENDED` and :c:enumerator:`LTE_LC_EVT_PDN_RESUMED`.
+    * The :kconfig:option:`CONFIG_LTE_LOCK_BAND_LIST` Kconfig option to set bands for the LTE band lock using a comma-separated list of band numbers.
+
+  * Removed:
+
+    * The default value for the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` Kconfig option.
+    * The ``lte_lc_modem_events_enable()`` and ``lte_lc_modem_events_disable()`` functions.
+      Instead, use the :kconfig:option:`CONFIG_LTE_LC_MODEM_EVENTS_MODULE` Kconfig option to enable modem events.
+
+Multiprotocol Service Layer libraries
+-------------------------------------
+
+* Fixed:
+
+  * An issue with toggling of the **REQUEST** and **STATUS0** pins when using the nRF700x coexistence interface on the nRF54H20 device.
+  * An issue where coexistence pin GPIO polarity settings were ignored when using the nRF700x coexistence interface.
+
+Libraries for networking
+------------------------
+
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Updated the range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
+
+  * Fixed an issue where preemptive updates were not always performed when expected.
+
+  * Removed the ``CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD`` Kconfig choice and related options (``CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD_120_MIN`` and ``CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD_240_MIN``).
+
+Libraries for NFC
+-----------------
+
+|no_changes_yet_note|
+
+nRF RPC libraries
+-----------------
+
+|no_changes_yet_note|
+
+Other libraries
+---------------
+
+* :ref:`lib_hw_id` library:
+
+  * Updated by renaming the ``CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC`` Kconfig option to :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS`.
+
+Shell libraries
+---------------
+
+|no_changes_yet_note|
+
+sdk-nrfxlib
+-----------
+
+See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
+
+Scripts
+=======
+
+This section provides detailed lists of changes by :ref:`script <scripts>`.
+
+* Added the :ref:`matter_sample_checker` script to check the consistency of Matter samples in the |NCS|.
+
+Integrations
+============
+
+This section provides detailed lists of changes by :ref:`integration <integrations>`.
+
+Google Fast Pair integration
+----------------------------
+
+|no_changes_yet_note|
+
+Edge Impulse integration
+------------------------
+
+|no_changes_yet_note|
+
+Memfault integration
+--------------------
+
+* Added:
+
+  * The :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED` Kconfig option to control whether an initial heartbeat is sent when the device connects to a network
+    This shows the device status and initial metrics in the Memfault dashboard soon after boot.
+
+AVSystem integration
+--------------------
+
+|no_changes_yet_note|
+
+nRF Cloud integration
+---------------------
+
+* Updated by enabling a transform request for topic prefix and pairing during connection initialization to nRF Cloud in the MQTT finite state machine (FSM).
+
+CoreMark integration
+--------------------
+
+|no_changes_yet_note|
+
+DULT integration
+----------------
+
+|no_changes_yet_note|
+
+MCUboot
+=======
+
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``8d14eebfe0b7402ebdf77ce1b99ba1a3793670e9``, with some |NCS| specific additions.
+
+The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
+
+The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
+
+|no_changes_yet_note|
+
+Zephyr
+======
+
+.. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each nRF Connect SDK release.
+
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``93b5f19f994b9a9376985299c1427a1630f6950e``, with some |NCS| specific additions.
+
+For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
+
+.. code-block:: none
+
+   git log --oneline 93b5f19f99 ^911b3da139
+
+For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
+
+.. code-block:: none
+
+   git log --oneline manifest-rev ^93b5f19f99
+
+The current |NCS| main branch is based on revision ``93b5f19f99`` of Zephyr.
+
+.. note::
+   For possible breaking changes and changes between the latest Zephyr release and the current Zephyr version, refer to the :ref:`Zephyr release notes <zephyr_release_notes>`.
+
+Additions specific to |NCS|
+---------------------------
+
+|no_changes_yet_note|
+
+zcbor
+=====
+
+|no_changes_yet_note|
+
+Trusted Firmware-M
+==================
+
+|no_changes_yet_note|
+
+cJSON
+=====
+
+|no_changes_yet_note|
+
+Documentation
+=============
+
+* Removed references to JITP in different areas of the documentation.

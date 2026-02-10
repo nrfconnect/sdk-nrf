@@ -85,9 +85,9 @@ static int mqtt_readall_publish_payload_stub(struct mqtt_client *client, uint8_t
 	return 0;
 }
 
-static int poll_stub_pollin(struct pollfd *fds, int nfds, int timeout, int num_calls)
+static int poll_stub_pollin(struct zsock_pollfd *fds, int nfds, int timeout, int num_calls)
 {
-	fds[0].revents = fds[0].events & POLLIN;
+	fds[0].revents = fds[0].events & ZSOCK_POLLIN;
 
 	/* The stub should only return 1 the first time, and otherwise return
 	 * and error to let the calling function return.
@@ -96,23 +96,23 @@ static int poll_stub_pollin(struct pollfd *fds, int nfds, int timeout, int num_c
 	return num_calls == 0 ? 1 : -1;
 }
 
-static int poll_stub_pollnval(struct pollfd *fds, int nfds, int timeout, int num_calls)
+static int poll_stub_pollnval(struct zsock_pollfd *fds, int nfds, int timeout, int num_calls)
 {
-	fds[0].revents = POLLNVAL;
+	fds[0].revents = ZSOCK_POLLNVAL;
 
 	return num_calls == 0 ? 1 : -1;
 }
 
-static int poll_stub_pollhup(struct pollfd *fds, int nfds, int timeout, int num_calls)
+static int poll_stub_pollhup(struct zsock_pollfd *fds, int nfds, int timeout, int num_calls)
 {
-	fds[0].revents = POLLHUP;
+	fds[0].revents = ZSOCK_POLLHUP;
 
 	return num_calls == 0 ? 1 : -1;
 }
 
-static int poll_stub_pollerr(struct pollfd *fds, int nfds, int timeout, int num_calls)
+static int poll_stub_pollerr(struct zsock_pollfd *fds, int nfds, int timeout, int num_calls)
 {
-	fds[0].revents = POLLERR;
+	fds[0].revents = ZSOCK_POLLERR;
 
 	return num_calls == 0 ? 1 : -1;
 }
@@ -569,8 +569,8 @@ void test_mqtt_helper_poll_loop_timeout(void)
 }
 
 /* The test verifies that mqtt_helper_poll_loop sets the fd's events
- * mask to POLLIN and that mqtt_input is subsequently called when poll() returns
- * POLLIN in the revents.
+ * mask to ZSOCK_POLLIN and that mqtt_input is subsequently called when poll() returns
+ * ZSOCK_POLLIN in the revents.
  */
 void test_mqtt_helper_poll_loop_pollin(void)
 {
@@ -587,7 +587,7 @@ void test_mqtt_helper_poll_loop_pollin(void)
 }
 
 /* The test verifies that mqtt_helper_poll_loop sets the fd's events
- * mask to POLLNVAL and that no other calls are made to socket or MQTT APIs subsequently.
+ * mask to ZSOCK_POLLNVAL and that no other calls are made to socket or MQTT APIs subsequently.
  */
 void test_mqtt_helper_poll_loop_pollnval(void)
 {
@@ -601,7 +601,7 @@ void test_mqtt_helper_poll_loop_pollnval(void)
 }
 
 /* The test verifies that mqtt_helper_poll_loop sets the fd's events
- * mask to POLLHUP and that no other calls are made to socket or MQTT APIs subsequently.
+ * mask to ZSOCK_POLLHUP and that no other calls are made to socket or MQTT APIs subsequently.
  */
 void test_mqtt_helper_poll_loop_pollhup(void)
 {
@@ -615,7 +615,7 @@ void test_mqtt_helper_poll_loop_pollhup(void)
 }
 
 /* The test verifies that mqtt_helper_poll_loop sets the fd's events
- * mask to POLLERR and that no other calls are made to socket or MQTT APIs subsequently.
+ * mask to ZSOCK_POLLERR and that no other calls are made to socket or MQTT APIs subsequently.
  */
 void test_mqtt_helper_poll_loop_pollerr(void)
 {

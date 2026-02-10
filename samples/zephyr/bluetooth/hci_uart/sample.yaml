@@ -3,11 +3,12 @@ sample:
   description: Allows Zephyr to provide Bluetooth connectivity via UART
 tests:
   nrf.extended.sample.bluetooth.hci_uart:
-    tags: bluetooth
+    tags:
+      - bluetooth
+      - ci_samples_zephyr_bluetooth
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     build_only: true

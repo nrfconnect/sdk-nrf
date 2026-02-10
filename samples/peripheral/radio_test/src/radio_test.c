@@ -9,9 +9,9 @@
 #include <string.h>
 #include <inttypes.h>
 
-#if !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX))
+#if !(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L))
 #include <hal/nrf_power.h>
-#endif /* !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)) */
+#endif /* !(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L)) */
 
 #ifdef NRF53_SERIES
 #include <hal/nrf_vreqctrl.h>
@@ -49,7 +49,7 @@
 /* Frequency calculation for a given channel. */
 #define CHAN_TO_FREQ(_channel) (2400 + _channel)
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 	#define RADIO_TEST_EGU                     NRF_EGU020
 	#define RADIO_TEST_TIMER_INSTANCE          020
 	#define RADIO_TEST_TIMER_IRQn              TIMER020_IRQn
@@ -57,7 +57,7 @@
 	#define RADIO_TEST_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
 	#define RADIO_TEST_INT_END_MASK            NRF_RADIO_INT_PHYEND_MASK
 	#define RADIO_TEST_EVENT_END               NRF_RADIO_EVENT_PHYEND
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 	#define RADIO_TEST_EGU                     NRF_EGU10
 	#define RADIO_TEST_TIMER_INSTANCE          10
 	#define RADIO_TEST_TIMER_IRQn              TIMER10_IRQn
@@ -73,7 +73,7 @@
 	#define RADIO_TEST_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_END_DISABLE_MASK
 	#define RADIO_TEST_INT_END_MASK            NRF_RADIO_INT_END_MASK
 	#define RADIO_TEST_EVENT_END               NRF_RADIO_EVENT_END
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) */
 
 #define ENDPOINT_EGU_RADIO_TX    BIT(1)
 #define ENDPOINT_EGU_RADIO_RX    BIT(2)
@@ -560,11 +560,11 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 	nrf_radio_packet_conf_t packet_conf;
 
 	/* Set fast ramp-up time. */
-#if defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L)
 	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, true);
 #else
 	nrf_radio_modecnf0_set(NRF_RADIO, true, RADIO_MODECNF0_DTX_Center);
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L) */
 
 	/* Disable CRC. */
 	nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Disabled,

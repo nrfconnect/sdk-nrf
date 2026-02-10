@@ -1,0 +1,22 @@
+sample:
+  name: Hello DECT sample
+  description: Simple DECT NR+ sample application demonstrating connection manager usage
+common:
+  tags:
+    - ci_build
+    - sysbuild
+    - ci_samples_dect
+  sysbuild: true
+  build_only: true
+  integration_platforms:
+    - nrf9151dk/nrf9151/ns
+  platform_allow:
+    - nrf9151dk/nrf9151/ns
+tests:
+  sample.dect.hello_dect.ft_device_default: {}
+  sample.dect.hello_dect.ft_device:
+    extra_args: EXTRA_CONF_FILE="ft.conf"
+  sample.dect.hello_dect.ft_device_shell:
+    extra_args: EXTRA_CONF_FILE="ft.conf;shell.conf"
+  sample.dect.hello_dect.pt_device:
+    extra_args: EXTRA_CONF_FILE="pt.conf"

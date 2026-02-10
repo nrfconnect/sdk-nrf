@@ -6,7 +6,7 @@
 
 menuconfig RAM_POWER_DOWN_LIBRARY
 	bool "API for turning off unused RAM segments"
-	depends on SOC_NRF52840 || SOC_NRF52833 || SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54LX
+	depends on SOC_NRF52840 || SOC_NRF52833 || SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54L
 	# Powering down RAM blocks can only be done from the secure domain
 	# for security reasons. If necessary, this limitation could be
 	# addressed by a secure service in the future.

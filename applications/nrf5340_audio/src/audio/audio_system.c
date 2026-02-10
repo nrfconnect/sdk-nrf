@@ -138,64 +138,23 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 	uint32_t audio_q_num_used;
 	static uint32_t test_tone_finite_pos;
 	struct net_buf *audio_frame_out = NULL;
-	struct audio_metadata *meta_blk;
-	struct audio_metadata *meta_in;
 	int debug_trans_count = 0;
 
 	while (1) {
 		/* Don't start encoding until the stream needing it has started */
 		ret = k_poll(&encoder_evt, 1, K_FOREVER);
-		struct net_buf *audio_frame_in = net_buf_alloc(&audio_q_rx_pool, K_NO_WAIT);
+		ERR_CHK_MSG(ret, "Encoder poll failed");
 
-		if (audio_frame_in == NULL) {
-			LOG_ERR("Out of RX buffers");
-			continue;
-		}
+		/* Get complete PCM frame from USB */
+		struct net_buf *audio_frame_in;
 
-		/* Get PCM data from I2S */
-		/* Since one audio frame is divided into a number of
-		 * blocks, we need to fetch the pointers to all of these
-		 * blocks before copying it to a continuous area of memory
-		 * before sending it to the encoder
-		 */
-		struct net_buf *audio_block = NULL;
+		ret = k_msgq_get(&audio_q_rx, (void *)&audio_frame_in, K_FOREVER);
+		ERR_CHK_MSG(ret, "Failed to get complete audio frame from RX queue");
 
-		/* Wait for the first block to arrive */
-		ret = k_msgq_get(&audio_q_rx, (void *)&audio_block, K_FOREVER);
-		ERR_CHK_MSG(ret, "Failed to get audio block from RX queue");
-
-		/* Copy metadata from the first block */
-		ret = net_buf_user_data_copy(audio_frame_in, audio_block);
-		ERR_CHK_MSG(ret, "Failed to copy user data");
-
-		/* Extract the data from the block */
-		net_buf_add_mem(audio_frame_in, audio_block->data, audio_block->len);
-
-		meta_in = net_buf_user_data(audio_frame_in);
-
-		/* Free the block */
-		net_buf_unref(audio_block);
-
-		/* Loop until we have a full frame */
-		while (meta_in->data_len_us < CONFIG_AUDIO_FRAME_DURATION_US) {
-			ret = k_msgq_get(&audio_q_rx, (void *)&audio_block, K_FOREVER);
-			ERR_CHK_MSG(ret, "Failed to get audio block from RX queue");
-
-			meta_blk = net_buf_user_data(audio_block);
-
-			/* Extract the data from the block */
-			net_buf_add_mem(audio_frame_in, audio_block->data, audio_block->len);
-			meta_in->data_len_us += meta_blk->data_len_us;
-			meta_in->bytes_per_location += meta_blk->bytes_per_location;
-
-			/* Free the block */
-			net_buf_unref(audio_block);
-		}
-
-		if (sw_codec_cfg.encoder.enabled) {
+		if (likely(sw_codec_cfg.encoder.enabled)) {
 			audio_frame_out = net_buf_alloc(&audio_q_enc_pool, K_NO_WAIT);
 
-			if (audio_frame_out == NULL) {
+			if (unlikely(audio_frame_out == NULL)) {
 				LOG_WRN("Out of encoder buffers");
 				net_buf_unref(audio_frame_in);
 				continue;
@@ -203,8 +162,13 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 			/* Configure the meta data */
 			struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
+			struct audio_metadata *meta_in = net_buf_user_data(audio_frame_in);
 
-			net_buf_user_data_copy(audio_frame_out, audio_frame_in);
+			/* Bulk copy metadata for speed optimization, needs to be changed if
+			 * user_data changes to contain structs
+			 */
+			*meta_out = *meta_in;
+
 			meta_out->data_coding = LC3;
 			meta_out->sample_rate_hz = sw_codec_cfg.encoder.sample_rate_hz;
 			meta_out->bitrate_bps = sw_codec_cfg.encoder.bitrate;
@@ -213,7 +177,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			meta_out->interleaved = false;
 			meta_out->locations = sw_codec_cfg.encoder.audio_loc;
 
-			if (test_tone_size) {
+			if (unlikely(test_tone_size)) {
 				/* Test tone takes over audio stream */
 				uint32_t num_bytes = 0;
 				char tmp[FRAME_SIZE_BYTES / 2];
@@ -227,7 +191,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 						    audio_frame_in->data, &num_bytes);
 				ERR_CHK(ret);
 
-				if (audio_frame_in->len != num_bytes) {
+				if (unlikely(audio_frame_in->len != num_bytes)) {
 					LOG_ERR("Audio frame and tone length mismatch: %u != %u",
 						audio_frame_in->len, num_bytes);
 				}
@@ -235,24 +199,22 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 			ret = sw_codec_encode(audio_frame_in, audio_frame_out);
 			ERR_CHK_MSG(ret, "Encode failed");
-
-			net_buf_unref(audio_frame_in);
 		}
 
-		/* Print block usage */
-		if (debug_trans_count == DEBUG_INTERVAL_NUM) {
+		net_buf_unref(audio_frame_in);
+
+		/* Print block usage - reduced overhead */
+		if (unlikely(++debug_trans_count >= DEBUG_INTERVAL_NUM)) {
 			audio_q_num_used = k_msgq_num_used_get(&audio_q_rx);
-			ERR_CHK(ret);
 			LOG_DBG(COLOR_CYAN "RX filled: %d" COLOR_RESET, audio_q_num_used);
 			debug_trans_count = 0;
-		} else {
-			debug_trans_count++;
 		}
 
 		if (sw_codec_cfg.encoder.enabled) {
 			streamctrl_send(audio_frame_out);
 			net_buf_unref(audio_frame_out);
 		}
+
 		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}
 }
@@ -525,24 +487,6 @@ void audio_system_stop(void)
 	ret = sw_codec_uninit(sw_codec_cfg);
 	ERR_CHK_MSG(ret, "Failed to uninit codec");
 	sw_codec_cfg.initialized = false;
-}
-
-int audio_system_fifo_rx_block_drop(void)
-{
-	int ret;
-
-	struct net_buf *audio_block = NULL;
-
-	ret = k_msgq_get(&audio_q_rx, (void *)&audio_block, K_NO_WAIT);
-	if (ret) {
-		LOG_WRN("Failed to get last filled block");
-		return -ECANCELED;
-	}
-
-	net_buf_unref(audio_block);
-
-	LOG_DBG("Block dropped");
-	return 0;
 }
 
 int audio_system_decoder_num_ch_get(void)

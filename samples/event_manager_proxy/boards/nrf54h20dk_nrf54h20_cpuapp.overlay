@@ -12,7 +12,7 @@
  */
 
 &cpuppr_vevif {
-       status = "okay";
+	status = "okay";
 };
 
 ipc0: &cpuapp_cpuppr_ipc {

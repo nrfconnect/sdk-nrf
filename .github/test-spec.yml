@@ -231,7 +231,6 @@
 "CI-mesh-test":
   - "subsys/bluetooth/mesh/**/*"
   - "include/bluetooth/mesh/**/*"
-  - "tests/subsys/bluetooth/mesh/**/*"
   - "samples/bluetooth/mesh/**/*"
   - "scripts/requirements-fixed.txt"
 
@@ -257,10 +256,11 @@
   - "include/caf/**/*"
   - "include/event_manager.h"
   - "include/nrf_profiler.h"
+  - "samples/ipc/**/*"
   - "subsys/bluetooth/*"
   - "subsys/caf/**/*"
   - "subsys/partition_manager/**/*"
-  - "samples/ipc/**/*"
+  - "tests/samples/bluetooth/io_adapter/**/*"
 
 "CI-desktop-test":
   - "applications/nrf_desktop/**/*"

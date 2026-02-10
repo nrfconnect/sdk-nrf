@@ -16,7 +16,7 @@
 
 #include <softperipheral_regif.h>
 #include <nrf_sqspi.h>
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 #include <hal/nrf_memconf.h>
 #include <hal/nrf_oscillators.h>
 #include <hal/nrf_spu.h>
@@ -430,7 +430,7 @@ static int dev_pm_action_cb(const struct device *dev,
 		}
 
 		nrf_sqspi_activate(&dev_config->sqspi);
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 		nrf_memconf_ramblock_ret_enable_set(NRF_MEMCONF,
 			1, MEMCONF_POWER_RET_MEM0_Pos, false);
 #endif
@@ -454,7 +454,7 @@ static int dev_pm_action_cb(const struct device *dev,
 			return -EBUSY;
 		}
 
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 		nrf_memconf_ramblock_ret_enable_set(NRF_MEMCONF,
 			1, MEMCONF_POWER_RET_MEM0_Pos, true);
 #endif
@@ -497,7 +497,7 @@ static int dev_init(const struct device *dev)
 	dev_data->sqspi_dev_cfg.sample_sync = NRF_SQSPI_SAMPLE_SYNC_DELAY;
 	dev_data->sqspi_dev_cfg.sample_delay_cyc = 1;
 
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 	nrf_oscillators_pll_freq_set(NRF_OSCILLATORS,
 				     NRF_OSCILLATORS_PLL_FREQ_128M);
 #if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
@@ -505,7 +505,7 @@ static int dev_init(const struct device *dev)
 		nrf_address_slave_get(DT_REG_ADDR(DT_NODELABEL(cpuflpr_vpr))),
 		true);
 #endif
-#endif /* defined(CONFIG_SOC_SERIES_NRF54LX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54L) */
 
 	IRQ_CONNECT(DT_IRQN(VPR_NODE), DT_IRQ(VPR_NODE, priority),
 		    nrfx_isr, nrf_sqspi_irq_handler, 0);

@@ -60,7 +60,9 @@
     - secure_storage.psa.its.secure_storage.store.settings
     - secure_storage.psa.its.secure_storage.store.settings.64-bit_uids
   platforms:
+    - nrf54ls05dk/nrf54ls05b/cpuapp
     - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+    - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35676"
 
 - scenarios:
@@ -108,3 +110,40 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8621 GPPI changes also by NCS 3.2"
+
+- scenarios:
+    - sample.benchmark.coremark.flash_and_run.nrf7120
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "Upmerge regression - jira TBD."
+
+- scenarios:
+    - sample.nrf7120.raw_tx_rx_packet.tlm
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37299"
+
+- scenarios:
+    - nrf.extended.drivers.uart.uart_errors.int_driven
+    - nrf.extended.drivers.uart.uart_errors.async
+    - nrf.extended.drivers.uart.uart_mix_poll_fifo
+    - nrf.extended.drivers.uart.uart_mix_poll_async_api
+    - nrf.extended.drivers.uart.uart_mix_poll
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37390"
+
+- scenarios:
+    - lpuart.loopback.int_driven
+    - lpuart.loopback.nrf54l
+    - lpuart.loopback.nrf54l.busy_sim
+    - lpuart.user_specific_config
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37390"
+
+- scenarios:
+    - nrf.extended.sample.sysbuild.hello_world
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37414"

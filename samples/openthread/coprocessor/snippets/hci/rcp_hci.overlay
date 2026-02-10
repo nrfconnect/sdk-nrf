@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
+/ {
 	chosen {
 		zephyr,ot-uart = &cdc_acm_uart_rcp;
 		zephyr,bt-c2h-uart = &cdc_acm_uart_hci;
@@ -15,6 +15,7 @@
 	cdc_acm_uart_hci: cdc_acm_uart_hci {
 		compatible = "zephyr,cdc-acm-uart";
 	};
+
 	cdc_acm_uart_rcp: cdc_acm_uart_rcp {
 		compatible = "zephyr,cdc-acm-uart";
 	};

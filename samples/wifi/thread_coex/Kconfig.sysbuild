@@ -7,5 +7,5 @@
 source "share/sysbuild/Kconfig"
 
 config NRF_DEFAULT_IPC_RADIO
-	depends on SOC_SERIES_NRF53X || SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF53 || SOC_SERIES_NRF54H
 	default y

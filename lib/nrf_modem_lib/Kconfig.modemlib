@@ -13,13 +13,6 @@ config SUPPORTS_NRF_MODEM_LIB_TRACE
 	bool
 	default y if SOC_SERIES_NRF91 || SOC_SERIES_NRF92 || UNITY
 
-# Redefine this symbol here and give it a non-zero default value
-# so that the Zephyr system heap is enabled, the offloading layer
-# depends on it
-config HEAP_MEM_POOL_SIZE
-	int
-	default 512
-
 # The offloading layer cannot handle truncated block notifications.
 config COAP_CLIENT_TRUNCATE_MSGS
 	default n if NRF_MODEM_LIB
@@ -33,6 +26,13 @@ config NRF_MODEM_LIB_HEAP_SIZE
 	help
 	  Size of the library heap.
 	  This heap is allocated from the application's RAM region.
+
+config ZVFS_OPEN_ADD_SIZE_NRF_MODEM
+	int "Reserve file descriptors for offloaded modem sockets"
+	default 8
+	range 1 8
+	help
+	  Modem supports 8 sockets. By default reserve file descriptors for all of them.
 
 config HEAP_MEM_POOL_ADD_SIZE_NRF9X_SOCKETS_GETADDRINFO
 	int "Extra heap size for getaddrinfo"

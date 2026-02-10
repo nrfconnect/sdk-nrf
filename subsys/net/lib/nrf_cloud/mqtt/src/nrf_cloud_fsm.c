@@ -122,6 +122,17 @@ static bool c2d_topic_modified;
  */
 static bool add_shadow_info = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SHADOW_INFO);
 
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+/* Transform request for desired topic prefix and pairing. */
+static const char cc_req_transform_topic_pairing[] =
+	"{"
+	"\"t\": \"{ \\\"" NRF_CLOUD_JSON_KEY_TOPIC_PRFX "\\\": state.desired."
+	NRF_CLOUD_JSON_KEY_TOPIC_PRFX ", "
+	"\\\"" NRF_CLOUD_JSON_KEY_PAIRING "\\\": state.desired."
+	NRF_CLOUD_JSON_KEY_PAIRING " }\""
+	"}";
+#endif
+
 #if defined(CONFIG_NRF_CLOUD_LOCATION) && defined(CONFIG_NRF_CLOUD_MQTT)
 #if defined(CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST)
 static char anchor_list_buf[CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE];
@@ -318,7 +329,15 @@ static int cc_connection_handler(const struct nct_evt *nct_evt)
 	 * If status the connection, request state synchronization.
 	 */
 	const struct nct_cc_data get_request = {
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+		.opcode = NCT_CC_OPCODE_TRANSFORM,
+		.data = {
+			.ptr = cc_req_transform_topic_pairing,
+			.len = sizeof(cc_req_transform_topic_pairing) - 1,
+		},
+#else
 		.opcode = NCT_CC_OPCODE_GET_REQ,
+#endif
 		.message_id = NCT_MSG_ID_STATE_REQUEST,
 	};
 	int err;
@@ -355,6 +374,8 @@ static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input
 		desired_obj = &input->accepted->desired;
 	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
 		desired_obj = &input->delta->state;
+	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) {
+		desired_obj = &input->transform->result.obj;
 	} else {
 		return -ENOTSUP;
 	}
@@ -377,10 +398,6 @@ static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input
 
 static void shadow_control_process(struct nrf_cloud_obj_shadow_data *const input)
 {
-	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) {
-		return;
-	}
-
 	struct nct_cc_data msg = {.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
 				  .message_id = NCT_MSG_ID_STATE_REPORT};
 	int err = nrf_cloud_shadow_control_process(input, &msg.data);

@@ -6,10 +6,14 @@
 
 / {
 	/* Test requirements:
-	 * No other driver on out-gpios[n]
+	 * out-gpios[0] wire connected with in-gpios[0],
+	 * out-gpios[1] wire connected with in-gpios[1],
+	 * etc.
+	 * Output-input GPIO pair must have identical active level flag.
 	 */
 	zephyr,user {
-		out-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		out-gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>, <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio1 11 GPIO_ACTIVE_HIGH>;
 	};
 };
 

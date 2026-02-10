@@ -1426,6 +1426,6 @@ Documentation
     The part about connecting the prototyping platform to nRF Cloud is now a standalone :ref:`thingy91_connect_to_cloud` page in the :ref:`thingy91_ug_intro` section.
   * The standalone page for getting started with the nRF9160 DK.
     This page has been replaced by the `Quick Start app`_ that supports the nRF9160 DK.
-    The content about connecting the DK to nRF Cloud is now a standalone :ref:`nrf9160_gs_connecting_dk_to_cloud` page in the :ref:`ug_nrf9160` section.
+    The content about connecting the DK to nRF Cloud is now a standalone :ref:`nrf91_gs_connecting_dk_to_cloud` page in the :ref:`ug_nrf9160` section.
   * The guide about migrating from Secure Partition Manager to Trusted Firmware-M (Secure Partition manager was removed in the |NCS| v2.1.0 release).
     If you still need to migrate, see the `information in the nRF Connect SDK v2.0.0 documentation <Migrating from Secure Partition Manager to Trusted Firmware-M_>`_.

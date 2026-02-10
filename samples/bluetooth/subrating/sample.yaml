@@ -5,16 +5,10 @@ tests:
   sample.bluetooth.subrating:
     sysbuild: true
     integration_platforms:
-      - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
-      - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -25,13 +19,14 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     tags:
       - bluetooth
       - ci_build
       - sysbuild
+      - ci_samples_bluetooth
     harness: console
     harness_config:
       type: multi_line

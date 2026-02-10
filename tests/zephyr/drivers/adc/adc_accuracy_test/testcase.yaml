@@ -4,8 +4,8 @@ common:
     - ci_tests_zephyr_drivers_adc
 tests:
   nrf.extended.drivers.adc.accuracy.ref_volt:
-    # harness_config:
-    #   fixture: adc_ref_volt
+    harness_config:
+      fixture: adc_ref_volt
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
@@ -13,5 +13,4 @@ tests:
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns

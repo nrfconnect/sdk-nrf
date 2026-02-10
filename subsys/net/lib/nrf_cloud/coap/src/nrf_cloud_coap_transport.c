@@ -44,13 +44,13 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 
 /** @TODO: figure out whether to make this a Kconfig value or place in a header */
 #define CDDL_VERSION "1"
-#define MAX_COAP_PATH 256
 #define JWT_BUF_SZ 700
 #define VER_STRING_FMT "mver=%s&cver=%s&dver=%s"
 #define VER_STRING_FMT2 "cver=" CDDL_VERSION "&dver=" BUILD_VERSION_STR
 #define BUILD_VERSION_STR STRINGIFY(BUILD_VERSION)
 #define NON_RESP_WAIT_S 3
 #define MAX_XFERS (CONFIG_COAP_CLIENT_MAX_INSTANCES * CONFIG_COAP_CLIENT_MAX_REQUESTS)
+#define NRF_CLOUD_COAP_NUM_INTERNAL_OPTIONS 1
 
 #define NRF_CLOUD_COAP_AUTH_RSC "auth/jwt"
 
@@ -369,39 +369,38 @@ int nrf_cloud_coap_resume(void)
 	return err;
 }
 
-static void client_callback(int16_t result_code, size_t offset, const uint8_t *payload, size_t len,
-			    bool last_block, void *user_data)
+static void client_callback(const struct coap_client_response_data *data, void *user_data)
 {
 	__ASSERT_NO_MSG(user_data != NULL);
 
 	struct cc_xfer_data *xfer = (struct cc_xfer_data *)user_data;
 
-	if (result_code >= 0) {
-		LOG_CB_DBG(result_code, offset, len, last_block);
+	if (data->result_code >= 0) {
+		LOG_CB_DBG(data->result_code, data->offset, data->payload_len, data->last_block);
 	} else {
 		LOG_DBG("Error from CoAP client:%d, offset:0x%X, len:0x%X, last_block:%d",
-			result_code, offset, len, last_block);
+			data->result_code, data->offset, data->payload_len, data->last_block);
 	}
-	if (payload && len) {
-		LOG_HEXDUMP_DBG(payload, MIN(len, 96), "payload received");
+	if (data->payload && data->payload_len) {
+		LOG_HEXDUMP_DBG(data->payload, MIN(data->payload_len, 96), "payload received");
 	}
-	if (result_code == COAP_RESPONSE_CODE_UNAUTHORIZED) {
+	if (data->result_code == COAP_RESPONSE_CODE_UNAUTHORIZED) {
 		LOG_ERR("Device not authenticated; reconnection required.");
 		xfer->nrfc_cc->authenticated = false;
-	} else if ((result_code >= COAP_RESPONSE_CODE_BAD_REQUEST) && len) {
-		LOG_ERR("Unexpected response: %*s", len, payload);
+	} else if ((data->result_code >= COAP_RESPONSE_CODE_BAD_REQUEST) && data->payload_len) {
+		LOG_ERR("Unexpected response: %*s", data->payload_len, data->payload);
 	}
 	/* Sanitize the xfer struct to ensure callback is valid, in case transfer
 	 * was cancelled or timed out.
 	 */
 	if (atomic_test_bit(&xfer->used, 0)) {
-		xfer->result_code = result_code;
+		xfer->result_code = data->result_code;
 		if (xfer->cb) {
 			LOG_DBG("Calling user's callback %p", xfer->cb);
-			xfer->cb(result_code, offset, payload, len, last_block, xfer->user_data);
+			xfer->cb(data, xfer->user_data);
 		}
 	}
-	if (last_block || (result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
+	if (data->last_block || (data->result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
 		LOG_DBG("End of client transfer");
 		if (xfer->sem) {
 			k_sem_give(xfer->sem);
@@ -410,6 +409,8 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 }
 
 
+BUILD_ASSERT((NRF_CLOUD_COAP_NUM_INTERNAL_OPTIONS + CONFIG_NRF_CLOUD_COAP_MAX_USER_OPTIONS) <=
+		CONFIG_COAP_CLIENT_MAX_EXTRA_OPTIONS);
 static int client_transfer(enum coap_method method,
 			   const char *resource, const char *query,
 			   const uint8_t *buf, size_t buf_len,
@@ -426,16 +427,9 @@ static int client_transfer(enum coap_method method,
 
 	int err = 0;
 	int retry;
-	char path[MAX_COAP_PATH + 1];
-	struct coap_client_option options[1] = {{
-		.code = COAP_OPTION_ACCEPT,
-		.len = 1,
-		.value[0] = fmt_in
-	}};
 	struct coap_client_request request = {
 		.method = method,
 		.confirmable = reliable,
-		.path = path,
 		.fmt = fmt_out,
 		.payload = (uint8_t *)buf,
 		.len = buf_len,
@@ -444,21 +438,33 @@ static int client_transfer(enum coap_method method,
 	};
 	struct coap_client *const cc = &xfer->nrfc_cc->cc;
 
+	size_t num_internal_options = 0;
 	if (response_expected) {
-		request.options = options;
-		request.num_options = ARRAY_SIZE(options);
-	} else {
-		request.options = NULL;
-		request.num_options = 0;
+		num_internal_options += 1;
+		request.options[0] = (struct coap_client_option) {
+			.code = COAP_OPTION_ACCEPT,
+			.len = 1,
+			.value[0] = fmt_in
+		};
 	}
 
+	size_t num_user_options = CONFIG_NRF_CLOUD_COAP_MAX_USER_OPTIONS;
+#if (CONFIG_NRF_CLOUD_COAP_MAX_USER_OPTIONS > 0)
+	nrf_cloud_coap_get_user_options(&request.options[num_internal_options], &num_user_options,
+		resource, xfer->user_data);
+#endif
+	const size_t total_options = num_internal_options + num_user_options;
+
+	request.num_options = total_options;
+
 	if (!query) {
-		strncpy(path, resource, MAX_COAP_PATH);
-		path[MAX_COAP_PATH] = '\0';
+		strncpy(request.path, resource, MAX_PATH_SIZE);
+		request.path[MAX_PATH_SIZE - 1] = '\0';
 	} else {
-		err = snprintk(path, sizeof(path), "%s?%s", resource, query);
-		if ((err <= 0) || (err >= sizeof(path))) {
-			LOG_ERR("Could not format string");
+		err = snprintk(request.path, sizeof(request.path), "%s?%s", resource, query);
+		if ((err <= 0) || (err >= sizeof(request.path))) {
+			/* If we get here, CONFIG_COAP_CLIENT_MAX_PATH_LENGTH needs a bump */
+			LOG_ERR("Could not format string: %s?%s", resource, query);
 			err = -ETXTBSY;
 			goto transfer_end;
 		}
@@ -466,7 +472,7 @@ static int client_transfer(enum coap_method method,
 
 #if defined(CONFIG_NRF_CLOUD_COAP_LOG_LEVEL_DBG)
 	LOG_DBG("%s %s %s Content-Format:%s, %zd bytes out, Accept:%s", reliable ? "CON" : "NON",
-		METHOD_NAME(method), path, fmt_name(fmt_out), buf_len,
+		METHOD_NAME(method), request.path, fmt_name(fmt_out), buf_len,
 		response_expected ? fmt_name(fmt_in) : "none");
 #endif /* CONFIG_NRF_CLOUD_COAP_LOG_LEVEL_DBG */
 
@@ -636,13 +642,12 @@ int nrf_cloud_coap_patch(const char *resource, const char *query,
 	return err;
 }
 
-static void auth_cb(int16_t result_code, size_t offset, const uint8_t *payload, size_t len,
-		    bool last_block, void *user_data)
+static void auth_cb(const struct coap_client_response_data *data, void *user_data)
 {
 	struct nrf_cloud_coap_client *client = (struct nrf_cloud_coap_client *)user_data;
 
-	LOG_RESULT_CODE_INF("Authorization result_code:", result_code);
-	if (result_code == COAP_RESPONSE_CODE_CREATED) {
+	LOG_RESULT_CODE_INF("Authorization result_code:", data->result_code);
+	if (data->result_code == COAP_RESPONSE_CODE_CREATED) {
 		client->authenticated = true;
 	}
 }
@@ -836,7 +841,7 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
 	int err = 0;
 	char *jwt;
 
-#if defined(CONFIG_MODEM_INFO)
+#if defined(CONFIG_MODEM_INFO) && !defined(CONFIG_DECT)
 	char mfw_string[MODEM_INFO_FWVER_SIZE];
 	char ver_string[strlen(VER_STRING_FMT) +
 			MODEM_INFO_FWVER_SIZE +

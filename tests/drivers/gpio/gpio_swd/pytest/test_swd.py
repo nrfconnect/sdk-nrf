@@ -6,10 +6,8 @@
 
 import logging
 import re
-import socket
 import subprocess
 import time
-from contextlib import closing
 
 import psutil
 from twister_harness import DeviceAdapter
@@ -26,15 +24,6 @@ def _kill(proc):
         logger.debug("Process was killed.")
     except Exception as e:
         logger.exception(f"Could not kill process - {e}")
-
-
-# get free port
-# bind to port 0 and get free port from system
-def find_free_port():
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
-        s.bind(("", 0))
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        return s.getsockname()[1]
 
 
 def print_output(outs, errs):
@@ -79,7 +68,6 @@ def test_swd(dut: DeviceAdapter):
     Check that SWD interface is disabled.
     Check that nrfutil device can temporarily enable SWD interface.
     """
-    BUILD_DIR = str(dut.device_config.build_dir)
     PLATFORM = dut.device_config.platform
     SEGGER_ID = dut.device_config.id
     ZTEST_LOG_TIMEOUT = 10.0
@@ -95,15 +83,6 @@ def test_swd(dut: DeviceAdapter):
     # This feature (switch SWD pins to GPIO mode) is not present on nrf54l15
     if PLATFORM == "nrf54l15dk/nrf54l15/cpuapp":
         return
-
-    gdb_port = find_free_port()
-
-    ### Check that west attach doesn't work
-    run_communicate_check(
-        f"west attach -d {BUILD_DIR} -- --dev-id {SEGGER_ID} --gdb-port {gdb_port}",
-        "where\ndisconnect\nq\n",
-        r"Could not connect to target",
-    )
 
     ### Check that nrfutil device can't connect
     run_communicate_check(

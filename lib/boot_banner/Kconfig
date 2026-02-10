@@ -11,7 +11,8 @@ menuconfig NCS_BOOT_BANNER
 	select EARLY_CONSOLE
 	help
 	  This option provided an enhanced boot banner output that can include application name
-	  and version (if set), NCS version and underlying zephyr version.
+	  and version (if set), NCS version and underlying zephyr version. If this is enabled,
+	  then CONFIG_BOOT_BANNER should be disabled to prevent duplicate banners printing out.
 
 if NCS_BOOT_BANNER
 

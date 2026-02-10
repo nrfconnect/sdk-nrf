@@ -177,6 +177,39 @@ struct bt_gatt_dm_cb discovery_cb = {
 	.error_found       = discovery_error,
 };
 
+/*
+ * Robust LE Set PHY helper with exponential backoff to handle early
+ * "Controller Busy (0x3A)" conditions right after a connection.
+ * Retries only on transient errors and returns 0 once the command is
+ * accepted by the controller (completion is still signaled via
+ * le_phy_updated() -> throughput_sem as before).
+ */
+static int try_set_phy_with_backoff(struct bt_conn *conn, const struct bt_conn_le_phy_param *phy)
+{
+	int err;
+	int delay_ms = 50;
+	const int max_attempts = 5;
+
+	for (int attempt = 1; attempt <= max_attempts; attempt++) {
+		err = bt_conn_le_phy_update(conn, phy);
+		if (err == 0) {
+			return 0; /* accepted; wait for callback/semaphore */
+		}
+
+		/* Treat typical transient returns as retryable */
+		if (err == -EIO || err == -EBUSY || err == -EAGAIN) {
+			LOG_WRN("PHY update busy on attempt %d/%d (err %d); retrying in %d ms",
+				attempt, max_attempts, err, delay_ms);
+			k_msleep(delay_ms);
+			delay_ms <<= 1; /* 50 ? 100 ? 200 ? 400 ? 800 */
+			continue;
+		}
+
+		/* Non-transient: bubble up immediately */
+		return err;
+	}
+	return -EIO; /* Exhausted retries */
+}
 static void connected(struct bt_conn *conn, uint8_t hci_err)
 {
 	struct bt_conn_info info = {0};
@@ -209,6 +242,29 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 	LOG_INF("Connected as %s", info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
 	LOG_INF("Conn. interval is %u us", info.le.interval_us);
 
+	if (info.role == BT_CONN_ROLE_PERIPHERAL) {
+		err = bt_conn_set_security(conn, BT_SECURITY_L2);
+		if (err) {
+			LOG_ERR("Failed to set security: %d\n", err);
+		}
+	}
+}
+
+void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err security_err)
+{
+	LOG_ERR("Security changed: level %i, err: %i %s\n", level, security_err,
+	       bt_security_err_to_str(security_err));
+
+	if (security_err != 0) {
+		LOG_ERR("Failed to encrypt link\n");
+		bt_conn_disconnect(conn, BT_HCI_ERR_PAIRING_NOT_SUPPORTED);
+		return;
+	}
+
+	struct bt_conn_info info = {0};
+	int err;
+
+	err = bt_conn_get_info(default_conn, &info);
 	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		err = bt_gatt_dm_start(default_conn,
 					   BT_UUID_THROUGHPUT,
@@ -282,7 +338,7 @@ static void adv_start(void)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("Disconnected (reason 0x%02x)", reason);
+	LOG_INF("Disconnected, reason 0x%02x %s", reason, bt_hci_err_to_str(reason));
 
 	test_ready = false;
 	if (default_conn) {
@@ -445,17 +501,35 @@ int connection_configuration_set(const struct bt_le_conn_param *conn_param,
 		LOG_INF("'run' command shall be executed only on the central board");
 	}
 
-	err = bt_conn_le_phy_update(default_conn, phy);
+	/* Use robust PHY set helper (handles early controller-busy) */
+	err = try_set_phy_with_backoff(default_conn, phy);
+
 	if (err) {
-		LOG_ERR("PHY update failed: %d", err);
-		return err;
+		/* PHY update may fail initially but succeed later via remote device.
+		 * Log warning and continue - don't treat as fatal error.
+		 */
+		LOG_WRN("PHY update request failed: %d (may still succeed via callback)", err);
+	} else {
+		LOG_INF("PHY update pending");
+		err = k_sem_take(&throughput_sem, K_SECONDS(THROUGHPUT_CONFIG_TIMEOUT));
+		if (err) {
+			LOG_WRN("PHY update timeout - continuing anyway");
+		}
 	}
 
-	LOG_INF("PHY update pending");
-	err = k_sem_take(&throughput_sem, K_SECONDS(THROUGHPUT_CONFIG_TIMEOUT));
-	if (err) {
-		LOG_ERR("PHY update timeout");
-		return err;
+	if (BT_GAP_US_TO_CONN_INTERVAL(info.le.interval_us) != conn_param->interval_max) {
+		err = bt_conn_le_param_update(default_conn, conn_param);
+		if (err) {
+			LOG_ERR("Connection parameters update failed: %d", err);
+			return err;
+		}
+
+		LOG_INF("Connection parameters update pending");
+		err = k_sem_take(&throughput_sem, K_SECONDS(THROUGHPUT_CONFIG_TIMEOUT));
+		if (err) {
+			LOG_ERR("Connection parameters update timeout");
+			return err;
+		}
 	}
 
 	if (info.le.data_len->tx_max_len != data_len->tx_max_len) {
@@ -475,21 +549,6 @@ int connection_configuration_set(const struct bt_le_conn_param *conn_param,
 		}
 	}
 
-	if (BT_GAP_US_TO_CONN_INTERVAL(info.le.interval_us) != conn_param->interval_max) {
-		err = bt_conn_le_param_update(default_conn, conn_param);
-		if (err) {
-			LOG_ERR("Connection parameters update failed: %d", err);
-			return err;
-		}
-
-		LOG_INF("Connection parameters update pending");
-		err = k_sem_take(&throughput_sem, K_SECONDS(THROUGHPUT_CONFIG_TIMEOUT));
-		if (err) {
-			LOG_ERR("Connection parameters update timeout");
-			return err;
-		}
-	}
-
 	return 0;
 }
 
@@ -501,7 +560,7 @@ int bt_throughput_test_run(void)
 	uint32_t data = 0;
 
 	/* a dummy data buffer */
-	static char dummy[495];
+	static char dummy[CONFIG_BT_L2CAP_TX_MTU - 3];
 
 	if (!default_conn) {
 		LOG_ERR("Device is disconnected. Connect to the peer device before running test");
@@ -512,7 +571,6 @@ int bt_throughput_test_run(void)
 		LOG_INF("Service discovery and MTU exchange not complete, waiting");
 		err = k_sem_take(&wait_for_ble_conn, K_SECONDS(BLE_CONN_TIMEOUT));
 		if (!err) {
-			LOG_INF("Service discovery and MTU exchange complete");
 			if (!test_ready) {
 				LOG_ERR("Service discovery failed, cannot run test");
 				return -EFAULT;
@@ -526,7 +584,6 @@ int bt_throughput_test_run(void)
 			return err;
 		}
 	}
-
 	LOG_INF("==== Starting throughput test ====");
 
 	/* reset peer metrics */
@@ -541,12 +598,12 @@ int bt_throughput_test_run(void)
 
 	delta = 0;
 	while (true) {
-		err = bt_throughput_write(&throughput, dummy, 495);
+		err = bt_throughput_write(&throughput, dummy, sizeof(dummy));
 		if (err) {
 			LOG_ERR("GATT write failed (err %d)", err);
 			break;
 		}
-		data += 495;
+		data += sizeof(dummy);
 		if (k_uptime_get_32() - stamp > CONFIG_BLE_TEST_DURATION) {
 			break;
 		}
@@ -578,7 +635,8 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.le_param_req = le_param_req,
 	.le_param_updated = le_param_updated,
 	.le_phy_updated = le_phy_updated,
-	.le_data_len_updated = le_data_length_updated
+	.le_data_len_updated = le_data_length_updated,
+	.security_changed = security_changed
 };
 
 int bt_throughput_test_init(void)

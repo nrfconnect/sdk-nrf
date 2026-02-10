@@ -111,7 +111,9 @@ static const char *const job_status_strings[] = {
 #endif
 
 /* Define a string represention what connection method we are using. */
-#if defined(CONFIG_NRF_MODEM_LIB)
+#if defined(CONFIG_DECT)
+#define NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL NRF_CLOUD_JSON_VAL_METHOD_DECT
+#elif defined(CONFIG_NRF_MODEM_LIB)
 #define NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL NRF_CLOUD_JSON_VAL_METHOD_LTE
 #elif defined(CONFIG_WIFI)
 #define NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL NRF_CLOUD_JSON_VAL_METHOD_WIFI
@@ -384,6 +386,9 @@ int nrf_cloud_shadow_control_get(struct nrf_cloud_obj_shadow_data *const input,
 		return err;
 	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
 		return detach_item(&input->delta->state, NRF_CLOUD_JSON_KEY_CTRL, ctrl_obj);
+	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) {
+		return detach_item(&input->transform->result.obj, NRF_CLOUD_JSON_KEY_CTRL,
+				  ctrl_obj);
 	} else {
 		return -ENODATA;
 	}
@@ -956,7 +961,7 @@ static int encode_modem_info_device(struct device_param *device, cJSON *json_obj
 static int encode_modem_info_json_object(struct modem_param_info *modem, cJSON *root_obj,
 					 const char *const app_ver)
 {
-	int ret;
+	int ret = 0;
 
 	__ASSERT_NO_MSG(root_obj != NULL);
 	__ASSERT_NO_MSG(modem != NULL);
@@ -3516,11 +3521,18 @@ int nrf_cloud_obj_shadow_transform_decode(struct nrf_cloud_obj *const shadow_obj
 			return -ENOMSG;
 		}
 
+		LOG_ERR("Transform error %d : %s", tf->error.code, tf->error.msg);
+
 		/* Attach the error object since it contains the string data */
 		tf->error.err_obj = *shadow_obj;
 	} else {
 		/* Attach the result object */
-		tf->result.obj = *shadow_obj;
+		err = nrf_cloud_obj_object_detach(shadow_obj, NRF_CLOUD_TRANSFORM_RSP_TF_KEY,
+					      &tf->result.obj);
+		if (err) {
+			LOG_ERR("Failed to get transform response result object");
+			return -ENODATA;
+		}
 	}
 
 	nrf_cloud_obj_reset(shadow_obj);

@@ -1,0 +1,1 @@
+source "tests/drivers/adc/adc_error_cases/Kconfig"

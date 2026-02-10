@@ -68,6 +68,9 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.sample.sensor.accel_polling.nrf54l_coverage:
     filter: CONFIG_COVERAGE
@@ -83,6 +86,9 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.sample.sensor.accel_polling.nrf54l_cpuflpr:
     filter: not CONFIG_COVERAGE
@@ -102,3 +108,5 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuflpr
       - nrf54lm20dk/nrf54lm20a/cpuflpr
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuflpr
