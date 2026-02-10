@@ -13,7 +13,7 @@
  * Other IKG functions don't need workmem memory.
  */
 
-#include <internal/cracen_ikg_operations.h>
+#include <internal/ikg/cracen_ikg_operations.h>
 
 #include <stdint.h>
 #include <string.h>

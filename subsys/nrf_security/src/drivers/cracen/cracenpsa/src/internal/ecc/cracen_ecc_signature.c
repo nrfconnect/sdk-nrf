@@ -9,7 +9,7 @@
 #include <internal/ecc/cracen_ecc_keygen.h>
 #include <internal/ecc/cracen_ecdsa.h>
 #include <internal/ecc/cracen_eddsa.h>
-#include <internal/cracen_ikg_operations.h>
+#include <internal/ikg/cracen_ikg_operations.h>
 
 #include <cracen/common.h>
 #include <silexpk/ec_curves.h>

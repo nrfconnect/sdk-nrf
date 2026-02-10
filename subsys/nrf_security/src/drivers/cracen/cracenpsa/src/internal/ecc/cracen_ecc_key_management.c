@@ -9,7 +9,7 @@
 #include <internal/ecc/cracen_ecc_helpers.h>
 #include <internal/ecc/cracen_montgomery.h>
 #include <internal/ecc/cracen_eddsa.h>
-#include <internal/cracen_ikg_operations.h>
+#include <internal/ikg/cracen_ikg_operations.h>
 
 #include <string.h>
 #include <silexpk/core.h>

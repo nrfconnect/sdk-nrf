@@ -45,7 +45,7 @@ endif()
 
 if(CONFIG_CRACEN_IKG)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ikg_operations.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ikg/cracen_ikg_operations.c
   )
 endif()
 
