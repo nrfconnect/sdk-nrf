@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <internal/mac/cracen_mac_cmac.h>
+
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <string.h>
@@ -11,7 +13,6 @@
 #include <sxsymcrypt/keyref.h>
 #include <cracen/common.h>
 #include <cracen/mem_helpers.h>
-#include "cracen_mac_cmac.h"
 #include <cracen/statuscodes.h>
 
 #define AES_BLOCK_SIZE (16)

@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "cracen_rsa_common.h"
+#include <internal/rsa/cracen_rsa_common.h>
+#include <internal/rsa/cracen_rsa_key.h>
 
 #include <stddef.h>
 #include <cracen/statuscodes.h>
@@ -12,7 +13,6 @@
 #include <silexpk/sxbuf/sxbufop.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/cmddefs/rsa.h>
-#include "cracen_rsa_key.h"
 
 #define NOT_ENABLED_HASH_ALG (0)
 

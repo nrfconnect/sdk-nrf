@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <internal/mac/cracen_mac_hmac.h>
+
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <string.h>
@@ -13,7 +15,7 @@
 #include <cracen/common.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
-#include "cracen_psa_primitives.h"
+#include <cracen_psa_primitives.h>
 #include <cracen/cracen_hmac.h>
 
 psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,

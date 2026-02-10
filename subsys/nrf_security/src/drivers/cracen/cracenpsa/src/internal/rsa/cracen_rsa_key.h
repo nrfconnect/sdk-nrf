@@ -9,6 +9,7 @@
 
 #include <silexpk/iomem.h>
 #include <cracen_psa_primitives.h>
+#include <silexpk/core.h>
 #include <silexpk/sxbuf/sxbufop.h>
 
 /** Write the sizes of the elements of a RSA key. */

@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  */
+
+#include <internal/ecc/cracen_eddsa.h>
+
 #include <string.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <silexpk/core.h>
@@ -14,7 +17,6 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen/common.h>
-#include "cracen_eddsa.h"
 
 /* Define SHAKE 256, 64 bit Digest size*/
 #define SHAKE256_64_DGST 64

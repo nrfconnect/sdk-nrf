@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "cracen_rsa_key_management.h"
-#include "cracen_rsa_keygen.h"
+#include <internal/rsa/cracen_rsa_common.h>
+#include <internal/rsa/cracen_rsa_key_management.h>
+#include <internal/rsa/cracen_rsa_keygen.h>
 
 #include <string.h>
 #include <silexpk/core.h>
@@ -13,7 +14,6 @@
 #include <cracen_psa.h>
 #include <cracen/common.h>
 #include <zephyr/sys/byteorder.h>
-#include "cracen_rsa_common.h"
 
 static psa_status_t check_rsa_key_attributes(const psa_key_attributes_t *attributes,
 					     size_t key_bits)

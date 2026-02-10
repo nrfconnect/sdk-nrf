@@ -13,16 +13,17 @@
  * modular exponentiation, i.e. the encoded message.
  */
 
+#include <internal/rsa/cracen_rsa_common.h>
+#include <internal/rsa/cracen_rsa_key.h>
+#include <internal/rsa/cracen_rsa_signature_pkcs1v15.h>
+
 #include <string.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
-#include "cracen_rsa_signature_pkcs1v15.h"
 #include <cracen_psa_primitives.h>
-#include "cracen_rsa_common.h"
-#include "cracen_rsa_key.h"
 
 #define WORKMEM_SIZE	PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS)
 #define HEADER_BYTES	2

@@ -22,6 +22,11 @@
  *      512 bytes RSA modulus and SHA2-256: 548 bytes
  */
 
+
+#include <internal/rsa/cracen_rsa_common.h>
+#include <internal/rsa/cracen_rsa_mgf1xor.h>
+#include <internal/rsa/cracen_rsa_key.h>
+
 #include <string.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <sxsymcrypt/hash.h>
@@ -31,9 +36,6 @@
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
 #include <cracen_psa_primitives.h>
-#include "cracen_rsa_common.h"
-#include "cracen_rsa_mgf1xor.h"
-#include "cracen_rsa_key.h"
 
 #define WORKMEM_SIZE (PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + PSA_HASH_MAX_SIZE + 4)
 #define NUMBER_OF_SLOTS 6

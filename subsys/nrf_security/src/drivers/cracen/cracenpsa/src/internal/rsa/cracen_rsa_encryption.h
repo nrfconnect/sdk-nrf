@@ -18,7 +18,7 @@
 #ifndef CRACEN_RSA_ENCRYPTION_H
 #define CRACEN_RSA_ENCRYPTION_H
 
-#include "cracen_psa_primitives.h"
+#include <cracen_psa_primitives.h>
 
 /** @brief Encrypt data using RSA OAEP.
  *

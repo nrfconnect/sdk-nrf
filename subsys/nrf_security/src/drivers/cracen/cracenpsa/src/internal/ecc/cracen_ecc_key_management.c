@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "cracen_ecc_key_management.h"
-#include "cracen_ecc_keygen.h"
+#include <internal/ecc/cracen_ecc_key_management.h>
+#include <internal/ecc/cracen_ecc_keygen.h>
+#include <internal/ecc/cracen_ecc_helpers.h>
+#include <internal/ecc/cracen_montgomery.h>
+#include <internal/ecc/cracen_eddsa.h>
+#include <internal/cracen_ikg_operations.h>
 
 #include <string.h>
 #include <silexpk/core.h>
@@ -14,11 +18,6 @@
 #include <cracen_psa.h>
 #include <cracen/common.h>
 #include <cracen/ec_helpers.h>
-#include "cracen_ecc_helpers.h"
-#include "cracen_montgomery.h"
-#include "cracen_eddsa.h"
-
-#include <internal/cracen_ikg_operations.h>
 
 #define DEFAULT_KEY_SIZE(bits) (bits), PSA_BITS_TO_BYTES(bits), (1 + 2 * PSA_BITS_TO_BYTES(bits))
 static struct {

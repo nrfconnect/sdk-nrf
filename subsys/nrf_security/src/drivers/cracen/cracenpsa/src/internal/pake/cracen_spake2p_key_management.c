@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "cracen_spake2p_key_management.h"
+#include <internal/pake/cracen_spake2p_key_management.h>
+#include <internal/ecc/cracen_ecc_helpers.h>
+#include <internal/ecc/cracen_ecc_keygen.h>
 
 #include <string.h>
 #include <silexpk/core.h>
@@ -12,9 +14,6 @@
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen/common.h>
-
-#include <internal/ecc/cracen_ecc_helpers.h>
-#include <internal/ecc/cracen_ecc_keygen.h>
 
 psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, const uint8_t *data,
 				size_t data_length, uint8_t *key_buffer,
