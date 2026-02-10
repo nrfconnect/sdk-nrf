@@ -337,6 +337,13 @@ Bluetooth samples
 
   * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board targets.
 
+* :ref:`peripheral_hids_keyboard` sample:
+
+  * Added support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
+
+* :ref:`peripheral_hids_mouse` sample:
+
+  * Added support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
 
 Bluetooth Mesh samples
 ----------------------
