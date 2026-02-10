@@ -17,7 +17,7 @@
 	chosen {
 		zephyr,code-partition = &slot0_ns_partition;
 		zephyr,sram = &sram0_ns;
-		zephyr,bt-hci = &bt_hci_sdc;
+		zephyr,bt-hci = &bt_hci_controller;
 		zephyr,entropy = &psa_rng;
 	};
 
@@ -102,7 +102,7 @@
 	status = "disabled";
 };
 
-&bt_hci_sdc {
+&bt_hci_controller {
 	status = "okay";
 };
 

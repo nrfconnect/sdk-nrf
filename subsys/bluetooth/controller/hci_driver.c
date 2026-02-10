@@ -32,7 +32,7 @@
 #include "radio_nrf5_txp.h"
 #include "cs_antenna_switch.h"
 
-#define DT_DRV_COMPAT nordic_bt_hci_sdc
+#define DT_DRV_COMPAT zephyr_bt_hci_ll_sw_split
 
 #define LOG_LEVEL CONFIG_BT_HCI_DRIVER_LOG_LEVEL
 #include "zephyr/logging/log.h"
