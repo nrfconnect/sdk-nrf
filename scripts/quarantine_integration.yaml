@@ -192,28 +192,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.net.azure_iot_hub
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-    - nrf9160dk@0.14.0/nrf9160/ns
-    - nrf9161dk/nrf9161/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.net.azure_iot_hub.dps
-  platforms:
-    - nrf9160dk@0.14.0/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.net.coap_client
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp/ns
-    - nrf9160dk@0.14.0/nrf9160/ns
-    - thingy91/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - sample.matter.template.smp_dfu
   platforms:
     - nrf52840dk/nrf52840
@@ -235,12 +213,6 @@
     - nrf52840dk/nrf52840
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk@0.14.0/nrf9160
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.hw_id.device_id
-  platforms:
     - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -785,37 +757,6 @@
     - tfm.regression_sfn_lvl1
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.net.mqtt
-    - sample.net.http_server.lte
-    - sample.net.http_server.lte.tls
-    - sample.net.udp
-  platforms:
-    - nrf9161dk/nrf9161/ns
-    - thingy91/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.net.udp.emulation
-  platforms:
-    - qemu_x86
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.net.https_client
-    - sample.net.https_client.lte.tfm-mbedtls
-    - sample.net.downloader
-    - sample.net.downloader.ci
-  platforms:
-    - nrf9161dk/nrf9161/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.net.aws_iot
-  platforms:
-    - thingy91/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
