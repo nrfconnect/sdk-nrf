@@ -1,0 +1,2 @@
+#include "../../../boards/nrf54lm20dk_nrf54lm20a_cpuapp.overlay"
+#include "../app.overlay"
