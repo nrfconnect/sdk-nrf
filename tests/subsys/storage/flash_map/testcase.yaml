@@ -1,0 +1,11 @@
+common:
+  tags: ci_tests_subsys_storage_partition_macros
+
+tests:
+  subsys.storage.partition_macros:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf52840dk/nrf52840
