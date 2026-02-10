@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: swap-uart-v1
+
+boards:
+  nrf54h20dk/nrf54h20/cpurad:
+    append:
+      EXTRA_CONF_FILE: swap_uart_v1.conf
+  nrf54h20dk/nrf54h20/cpuapp:
+    append:
+      EXTRA_CONF_FILE: swap_uart_v1.conf
