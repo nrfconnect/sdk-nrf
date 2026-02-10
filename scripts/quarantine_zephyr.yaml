@@ -272,6 +272,13 @@
     - nrf9160dk@0.14.0/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37573"
 
+- scenarios:
+    - flash.interface_test.build_only
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37574"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
