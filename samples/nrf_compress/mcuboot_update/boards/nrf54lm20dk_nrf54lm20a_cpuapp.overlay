@@ -22,17 +22,17 @@
 
 		slot0_partition: partition@10000 {
 			label = "image-0";
-			reg = <0x00010000 0x00133000>;
+			reg = <0x00010000 0x00123000>;
 		};
 
-		slot1_partition: partition@143000 {
+		slot1_partition: partition@133000 {
 			label = "image-1";
-			reg = <0x00143000 0x000aa000>;
+			reg = <0x00133000 0x000a2000>;
 		};
 
-		storage_partition: partition@1ed000 {
+		storage_partition: partition@1d5000 {
 			label = "storage";
-			reg = <0x001ed000 0x00010000>;
+			reg = <0x001d5000 0x00010000>;
 		};
 	};
 };
