@@ -957,10 +957,8 @@ static bool all_streams_configured_check(struct bt_cap_stream *stream, void *use
 {
 	ARG_UNUSED(user_data);
 
-	// TODO: This may be wrong, as some strams may have come furhter in the state machine
-
-	if (!le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_CODEC_CONFIGURED)) {
-		LOG_DBG("stream %p is not configured", stream);
+	if (stream->bap_stream.ep == NULL) {
+		LOG_DBG("stream %p is not configured, no endpoint", stream);
 		return true;
 	}
 
@@ -1034,6 +1032,8 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 	enum bt_audio_dir dir;
 	bool this_is_the_last_stream = false;
 
+	LOG_WRN("codec config cb");
+
 	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
@@ -1091,10 +1091,10 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 						  NULL);
 
 	if (ret == -ECANCELED) {
-		LOG_DBG("Not all streams are configured, cannot reconfigure group now");
+		LOG_WRN("Not all streams are configured, cannot reconfigure group now");
 	} else if (ret == 0) {
 		this_is_the_last_stream = true;
-		LOG_INF("All streams are configured");
+		LOG_WRN("All streams are configured");
 	} else {
 		LOG_ERR("Foreach error: %d", ret);
 		srv_store_unlock();
@@ -1118,7 +1118,7 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 
 static void stream_qos_set_cb(struct bt_bap_stream *stream)
 {
-	LOG_INF("QoS set");
+	LOG_WRN("QoS set");
 	le_audio_print_qos_from_stream(stream);
 }
 
@@ -1335,10 +1335,12 @@ static void unicast_start_complete_cb(int err, struct bt_conn *conn)
 	int ret;
 
 	if (err) {
-		LOG_WRN("Failed start_complete for conn: %p, err: %d", (void *)conn, err);
+		LOG_WRN("Failed unicast_start_complete for conn: %p, err: %d", (void *)conn, err);
+	} else {
+		LOG_INF("Successful unicast_start_complete for conn: %p, err: %d", (void *)conn,
+			err);
 	}
 
-	LOG_WRN("Unicast start complete cb");
 	ret = le_audio_print_cig(unicast_group);
 	if (ret) {
 		LOG_ERR("Failed to print CIG info: %d", ret);
@@ -1640,9 +1642,11 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 
 		ret = le_audio_ep_state_get(server->snk.eps[j], &state);
 		if (state == BT_BAP_EP_STATE_STREAMING || ret) {
-			LOG_DBG("Sink endpoint is already streaming, skipping start");
+			LOG_INF("Sink endpoint is already streaming, skipping start");
 			continue;
 		}
+
+		LOG_INF("Adding stream with ep %p to start params", (void *)server->snk.eps[j]);
 
 		param->stream_params[param->count].member.member = server->conn;
 		param->stream_params[param->count].stream = &server->snk.cap_streams[j];
@@ -1657,9 +1661,11 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 
 		ret = le_audio_ep_state_get(server->src.eps[j], &state);
 		if (state == BT_BAP_EP_STATE_STREAMING || ret) {
-			LOG_DBG("Source endpoint is already streaming, skipping start");
+			LOG_INF("Source endpoint is already streaming, skipping start");
 			continue;
 		}
+
+		LOG_INF("Adding stream with ep %p to start params", (void *)server->src.eps[j]);
 
 		param->stream_params[param->count].member.member = server->conn;
 		param->stream_params[param->count].stream = &server->src.cap_streams[j];
@@ -1695,6 +1701,7 @@ int unicast_client_start(uint8_t cig_index)
 
 	if (unicast_group == NULL) {
 		k_sem_give(&sem_cap_procedure_proceed);
+		LOG_WRN("No unicast group to start");
 		return -EIO;
 	}
 
@@ -1724,12 +1731,13 @@ int unicast_client_start(uint8_t cig_index)
 	}
 
 	if (param.count == 0) {
-		LOG_DBG("No streams to start");
+		LOG_INF("No streams to start");
 		k_sem_give(&sem_cap_procedure_proceed);
 		srv_store_unlock();
 		return -EIO;
 	}
 
+	LOG_WRN("Calling unicast client start");
 	ret = bt_cap_initiator_unicast_audio_start(&param);
 	if (ret) {
 		LOG_ERR("Failed to start unicast sink audio: %d", ret);
