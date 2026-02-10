@@ -13,7 +13,6 @@ tests:
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     tags:
@@ -56,7 +55,6 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-      - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     extra_args: EXTRA_CONF_FILE="overlay_coap.conf"
     tags:
@@ -119,7 +117,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
