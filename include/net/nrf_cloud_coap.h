@@ -111,6 +111,28 @@ int nrf_cloud_coap_pause(void);
  */
 int nrf_cloud_coap_resume(void);
 
+/**
+ * @brief Update the device's shadow with current network information.
+ *
+ * This function sends updated network information to nRF Cloud. It can be
+ * called at any time to refresh the shadow with current network conditions
+ * (e.g., after a cell tower handoff, network mode change, or reconnection
+ * after network loss).
+ *
+ * The network information includes: current band, area code, cell ID,
+ * IP address, network mode (LTE-M/NB-IoT), and operator.
+ *
+ * Requires CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK to be enabled.
+ *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
+ * @retval -ENODEV Network info sending is not enabled in Kconfig.
+ * @return 0 If successful, nonzero if failed.
+ *           Negative values are device-side errors defined in errno.h.
+ *           Positive values are cloud-side errors (CoAP result codes)
+ *           defined in zephyr/net/coap.h.
+ */
+int nrf_cloud_coap_shadow_network_info_update(void);
+
 /**@brief Check if you can pause and resume safely.
  *
  * Check if the device can avoid performing a full handshake after a temporary network outage ends.
