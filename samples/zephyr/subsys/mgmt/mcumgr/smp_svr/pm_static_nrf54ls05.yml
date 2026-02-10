@@ -18,13 +18,6 @@ mcuboot_primary:
   region: flash_primary
   size: 0x37800
   span: *id001
-mcuboot_primary_app:
-  address: 0x10800
-  orig_span: &id002
-  - app
-  region: flash_primary
-  size: 0x37000
-  span: *id002
 mcuboot_secondary_pad:
   region: flash_primary
   address: 0x47800
