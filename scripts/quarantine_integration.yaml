@@ -751,10 +751,3 @@
   platforms:
     - thingy53/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - applications.machine_learning.zdebug
-    - applications.machine_learning.zrelease
-  platforms:
-    - thingy53/nrf5340/cpuapp/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
