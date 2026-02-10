@@ -4,17 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "cracen_rsa_signature.h"
+#include <internal/rsa/cracen_rsa_signature.h>
+#include <internal/rsa/cracen_rsa_common.h>
+#include <internal/rsa/cracen_rsa_signature_pss.h>
+#include <internal/rsa/cracen_rsa_signature_pkcs1v15.h>
 
 #include <cracen/common.h>
 
 #include <sxsymcrypt/hashdefs.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/trng.h>
-
-#include "cracen_rsa_common.h"
-#include "cracen_rsa_signature_pss.h"
-#include "cracen_rsa_signature_pkcs1v15.h"
 
 #if PSA_MAX_RSA_KEY_BITS > 0
 static int cracen_signature_set_hashalgo(const struct sxhashalg **hashalg, psa_algorithm_t alg)

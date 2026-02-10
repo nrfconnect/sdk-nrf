@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "cracen_aes_ecb.h"
+#include <internal/aes/cracen_aes_ecb.h>
 
 #include <string.h>
 #include <stdbool.h>

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "cracen_srp_key_management.h"
+#include <internal/pake/cracen_srp_key_management.h>
 
 #include <string.h>
 #include <silexpk/core.h>

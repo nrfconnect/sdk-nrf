@@ -26,6 +26,9 @@
  *         this area. Then the secret scalar s is computed in place in the first
  *         32 bytes of this area.
  */
+
+#include <internal/ecc/cracen_eddsa.h>
+
 #include <string.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <silexpk/core.h>
@@ -36,7 +39,6 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen/common.h>
-#include "cracen_eddsa.h"
 
 #define AREA2_MEM_OFFSET 32
 #define AREA4_MEM_OFFSET 96

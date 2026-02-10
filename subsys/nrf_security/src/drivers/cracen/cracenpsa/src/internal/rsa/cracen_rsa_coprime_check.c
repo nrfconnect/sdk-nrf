@@ -31,13 +31,15 @@
  * Requesting that workmem size be equal to min(asz, bsz) works in any case.
  */
 
+
+#include <internal/rsa/cracen_rsa_coprime_check.h>
+
 #include <stddef.h>
 #include <silexpk/iomem.h>
 #include <silexpk/core.h>
 #include <silexpk/cmddefs/modmath.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa_primitives.h>
-#include "cracen_rsa_coprime_check.h"
 
 /* Perform modular inversion of a, using b as the modulo. */
 static int modular_inversion_run(sx_pk_req *req, struct cracen_coprimecheck *coprimecheck)

@@ -9,7 +9,7 @@
 
 #include <psa/crypto.h>
 #include <cracen/common.h>
-#include "cracen_psa_primitives.h"
+#include <cracen_psa_primitives.h>
 
 /**
  * @brief Set up an HMAC operation.

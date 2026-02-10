@@ -13,6 +13,8 @@
  * Other IKG functions don't need workmem memory.
  */
 
+#include <internal/cracen_ikg_operations.h>
+
 #include <stdint.h>
 #include <string.h>
 #include <silexpk/core.h>
@@ -22,7 +24,6 @@
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
 #include <cracen/statuscodes.h>
-#include "cracen_ikg_operations.h"
 #include <cracen_psa_primitives.h>
 #include <cracen/common.h>
 

@@ -7,7 +7,7 @@
 #ifndef CRACEN_RSA_SIGNATURE_H
 #define CRACEN_RSA_SIGNATURE_H
 
-#include "cracen_psa.h"
+#include <cracen_psa.h>
 
 psa_status_t cracen_signature_rsa_sign(bool is_message,
 				       const psa_key_attributes_t *attributes,

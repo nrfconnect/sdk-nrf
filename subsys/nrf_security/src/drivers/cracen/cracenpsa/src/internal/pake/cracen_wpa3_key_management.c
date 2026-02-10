@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "cracen_wpa3_key_management.h"
+#include <internal/pake/cracen_wpa3_key_management.h>
+#include <internal/ecc/cracen_ecc_helpers.h>
 
 #include <string.h>
 #include <silexpk/core.h>
@@ -15,8 +16,6 @@
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen/common.h>
-
-#include <internal/ecc/cracen_ecc_helpers.h>
 
 static psa_status_t cracen_hkdf_sha256_hmac(const uint8_t *seed,
 					    const uint8_t *label,

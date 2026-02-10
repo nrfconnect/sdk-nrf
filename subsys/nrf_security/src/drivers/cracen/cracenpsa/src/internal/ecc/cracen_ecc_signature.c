@@ -4,7 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "cracen_ecc_signature.h"
+#include <internal/ecc/cracen_ecc_signature.h>
+#include <internal/ecc/cracen_ecc_helpers.h>
+#include <internal/ecc/cracen_ecc_keygen.h>
+#include <internal/ecc/cracen_ecdsa.h>
+#include <internal/ecc/cracen_eddsa.h>
+#include <internal/cracen_ikg_operations.h>
 
 #include <cracen/common.h>
 #include <silexpk/ec_curves.h>
@@ -14,12 +19,6 @@
 #include <sxsymcrypt/hashdefs.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/trng.h>
-
-#include "cracen_ecc_helpers.h"
-#include "cracen_ecdsa.h"
-#include "cracen_eddsa.h"
-#include "cracen_ecc_keygen.h"
-#include <internal/cracen_ikg_operations.h>
 
 static psa_status_t handle_eddsa_sign(bool is_message, const psa_key_attributes_t *attributes,
 				      const uint8_t *key_buffer, psa_algorithm_t alg,
