@@ -318,6 +318,17 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     harness_config: *bt_harness_config
 
+  sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts:
+    extra_args:
+      - OVERLAY_CONFIG="overlay-bt.conf"
+      - FILE_SUFFIX=ext_flash_pure_dts
+      - SB_CONFIG_PARTITION_MANAGER=n
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config: *bt_harness_config
+
   sample.dfu.smp_svr.bt.nrf54h20dk:
     sysbuild: true
     extra_args:
