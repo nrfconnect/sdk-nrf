@@ -15,6 +15,7 @@
 #include "macros_common.h"
 #include "sw_codec_select.h"
 #include "audio_datapath.h"
+#include "audio_clock.h"
 #include "audio_i2s.h"
 #include "hw_codec.h"
 #include "audio_usb.h"
@@ -524,6 +525,12 @@ int audio_system_encoder_num_ch_set(uint32_t locations)
 int audio_system_init(void)
 {
 	int ret;
+
+	ret = audio_clock_init();
+	if (ret) {
+		LOG_ERR("Failed to initialize audio clock: %d", ret);
+		return ret;
+	}
 
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
 	bool host_in = IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL);

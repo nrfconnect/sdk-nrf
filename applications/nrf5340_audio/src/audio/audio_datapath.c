@@ -12,7 +12,6 @@
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
-#include <nrfx_clock.h>
 #include <contin_array.h>
 #include <tone.h>
 #include <pcm_mix.h>
@@ -26,6 +25,7 @@
 #include "audio_system.h"
 #include "streamctrl.h"
 #include "sd_card_playback.h"
+#include "audio_clock.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
@@ -78,10 +78,6 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define CONSECUTIVE_TS_LIMIT_US                                                                    \
 	(CONFIG_AUDIO_FRAME_DURATION_US + (CONFIG_AUDIO_FRAME_DURATION_US / 2))
 
-/* Audio clock - nRF5340 Analog Phase-Locked Loop (APLL) */
-#define APLL_FREQ_MIN	 HFCLKAUDIO_12_165_MHZ
-#define APLL_FREQ_CENTER HFCLKAUDIO_12_288_MHZ
-#define APLL_FREQ_MAX	 HFCLKAUDIO_12_411_MHZ
 /* Use nanoseconds to reduce rounding errors */
 /* clang-format off */
 #define APLL_FREQ_ADJ(t) (-((t)*1000) / 331)
@@ -254,16 +250,6 @@ static int32_t err_us_calculate(uint32_t sdu_ref_us, uint32_t frame_start_ts_us)
 	return err_us;
 }
 
-static void hfclkaudio_set(uint16_t freq_value)
-{
-	uint16_t freq_val = freq_value;
-
-	freq_val = MIN(freq_val, APLL_FREQ_MAX);
-	freq_val = MAX(freq_val, APLL_FREQ_MIN);
-
-	nrfx_clock_hfclkaudio_config_set(freq_val);
-}
-
 static void drift_comp_state_set(enum drift_comp_state new_state)
 {
 	if (new_state == ctrl_blk.drift_comp.state) {
@@ -284,6 +270,8 @@ static void drift_comp_state_set(enum drift_comp_state new_state)
  */
 static inline void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
 {
+	int ret;
+
 	if (CONFIG_AUDIO_DEV == HEADSET) {
 		/** For headsets we do not use the timestamp gotten from hci_tx_sync_get to
 		 * adjust for drift
@@ -323,7 +311,11 @@ static inline void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
 			return;
 		}
 
-		hfclkaudio_set(ctrl_blk.drift_comp.center_freq);
+		ret = audio_clock_set(ctrl_blk.drift_comp.center_freq);
+		if (ret) {
+			LOG_ERR("Failed to set audio clock frequency");
+			return;
+		}
 
 		drift_comp_state_set(DRIFT_STATE_OFFSET);
 
@@ -343,7 +335,11 @@ static inline void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
 		err_us /= DRIFT_REGULATOR_DIV_FACTOR;
 		int32_t freq_adj = APLL_FREQ_ADJ(err_us);
 
-		hfclkaudio_set(ctrl_blk.drift_comp.center_freq + freq_adj);
+		ret = audio_clock_set(ctrl_blk.drift_comp.center_freq + freq_adj);
+		if (ret) {
+			LOG_ERR("Failed to set audio clock frequency");
+			return;
+		}
 
 		if ((err_us < DRIFT_ERR_THRESH_LOCK) && (err_us > -DRIFT_ERR_THRESH_LOCK)) {
 			drift_comp_state_set(DRIFT_STATE_LOCKED);
@@ -365,7 +361,11 @@ static inline void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
 		err_us /= DRIFT_REGULATOR_DIV_FACTOR;
 		int32_t freq_adj = APLL_FREQ_ADJ(err_us);
 
-		hfclkaudio_set(ctrl_blk.drift_comp.center_freq + freq_adj);
+		ret = audio_clock_set(ctrl_blk.drift_comp.center_freq + freq_adj);
+		if (ret) {
+			LOG_ERR("Failed to set audio clock frequency");
+			return;
+		}
 
 		if ((err_us > DRIFT_ERR_THRESH_UNLOCK) || (err_us < -DRIFT_ERR_THRESH_UNLOCK)) {
 			drift_comp_state_set(DRIFT_STATE_INIT);
