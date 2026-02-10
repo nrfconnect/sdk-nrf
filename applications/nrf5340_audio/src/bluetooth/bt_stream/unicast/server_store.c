@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
+#include <../subsys/bluetooth/audio/cap_internal.h>
 
 #include "server_store.h"
 #include "macros_common.h"
@@ -2200,7 +2201,6 @@ int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
 }
 
 struct foreach_trans_latency_set {
-	enum group_action_req action;
 	uint16_t new_max_trans_lat_snk_ms;
 	uint8_t streams_set_snk;
 	uint16_t new_max_trans_lat_src_ms;
@@ -2228,7 +2228,7 @@ static bool foreach_stream_transp_latency_set(struct bt_cap_stream *existing_str
 		}
 
 		if (existing_stream->bap_stream.qos->latency != ctx->new_max_trans_lat_snk_ms) {
-			group_action_set(&ctx->action, GROUP_ACTION_REQ_RESTART);
+
 			existing_stream->bap_stream.qos->latency = ctx->new_max_trans_lat_snk_ms;
 		}
 
@@ -2241,7 +2241,6 @@ static bool foreach_stream_transp_latency_set(struct bt_cap_stream *existing_str
 		}
 
 		if (existing_stream->bap_stream.qos->latency != ctx->new_max_trans_lat_src_ms) {
-			group_action_set(&ctx->action, GROUP_ACTION_REQ_RESTART);
 			existing_stream->bap_stream.qos->latency = ctx->new_max_trans_lat_src_ms;
 		}
 
@@ -2270,7 +2269,6 @@ int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
 	int ret;
 
 	struct foreach_trans_latency_set stream_trans_lat_set = {
-		.action = GROUP_ACTION_REQ_NONE,
 		.new_max_trans_lat_snk_ms = new_max_trans_lat_snk_ms,
 		.streams_set_snk = 0,
 		.new_max_trans_lat_src_ms = new_max_trans_lat_src_ms,
@@ -2288,14 +2286,20 @@ int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
 	if (new_max_trans_lat_snk_ms != UINT16_MAX) {
 		LOG_INF("Max transport latency %d ms selected for %d sink streams",
 			new_max_trans_lat_snk_ms, stream_trans_lat_set.streams_set_snk);
+		if (unicast_group->bap_unicast_group->cig_param.c_to_p_latency !=
+		    new_max_trans_lat_snk_ms) {
+			*group_action_needed = GROUP_ACTION_REQ_RESTART;
+		}
 	}
 
 	if (new_max_trans_lat_src_ms != UINT16_MAX) {
 		LOG_INF("Max transport latency %d ms selected for %d source streams",
 			new_max_trans_lat_src_ms, stream_trans_lat_set.streams_set_src);
+		if (unicast_group->bap_unicast_group->cig_param.p_to_c_latency !=
+		    new_max_trans_lat_src_ms) {
+			*group_action_needed = GROUP_ACTION_REQ_RESTART;
+		}
 	}
-
-	*group_action_needed = stream_trans_lat_set.action;
 
 	return 0;
 }
