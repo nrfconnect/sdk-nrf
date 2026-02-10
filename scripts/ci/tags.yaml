@@ -1583,6 +1583,13 @@ ci_tests_subsys_kmu:
     - nrf/subsys/nrf_security/
     - nrf/tests/subsys/kmu/
 
+ci_tests_subsys_storage:
+  files:
+    - zephyr/subsys/storage/
+    - zephyr/include/zephyr/storage/
+    - zephyr/tests/subsys/storage/
+    - nrf/tests/subsys/storage/
+
 ci_applications_protocols_serialization:
   files:
     - modules/crypto/
