@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-add_subdirectory_ifdef(CONFIG_GETOPT_LIB freebsd-getopt)
 add_subdirectory_ifdef(CONFIG_NRF_IPERF3 iperf3)
 add_subdirectory_ifdef(CONFIG_NRF_CURL curl)
 
