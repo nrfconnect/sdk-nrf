@@ -289,6 +289,10 @@ nRF5340 Audio
   * Removed the Bluetooth controller watchdog from the application.
     The watchdog was not providing value and the removal allows for easier porting to other platforms that do not have a multi-core architecture.
 
+  * Separated the audio clock configuration into a dedicated module.
+    This allows for better organization and potential reuse of the audio clock configuration code between different SoCs that might not have the high-frequency audio clock (HFCLKAUDIO) feature.
+    The new module provides an initialization function for setting up the audio clock and a function for configuring the audio clock frequency.
+
 nRF Desktop
 -----------
 
