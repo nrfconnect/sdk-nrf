@@ -549,6 +549,8 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
+* Added the :ref:`uart_driver` documentation.
+
 Wi-Fi drivers
 -------------
 
