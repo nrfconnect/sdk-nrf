@@ -1,0 +1,24 @@
+common:
+  sysbuild: true
+  tags:
+    - ci_tests_subsys_bootloader
+tests:
+  # Objective of these scenarios are verification of bootloader(s)
+  # left publish/subscribe register clean for the application.
+  bootloader.ppi_config_leftovers.mcuboot:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+  bootloader.ppi_config_leftovers.nsib:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
