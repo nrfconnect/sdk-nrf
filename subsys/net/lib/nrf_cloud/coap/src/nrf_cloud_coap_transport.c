@@ -275,6 +275,70 @@ static int update_configured_info_sections(const char * const app_ver)
 	return 0;
 }
 
+static int update_network_info_section(void)
+{
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK)) {
+		return -ENODEV;
+	}
+
+	/* Create a JSON object to contain only the network info section */
+	NRF_CLOUD_OBJ_JSON_DEFINE(info_obj);
+	int err = nrf_cloud_obj_init(&info_obj);
+
+	if (err) {
+		LOG_ERR("Failed to initialize object: %d", err);
+		return err;
+	}
+
+	/* Set up modem info to encode only network section */
+	struct nrf_cloud_modem_info mdm_inf = {
+		.device = NRF_CLOUD_INFO_NO_CHANGE,
+		.network = NRF_CLOUD_INFO_SET,
+		.sim = NRF_CLOUD_INFO_NO_CHANGE,
+		.application_version = NULL,
+#if defined(CONFIG_MODEM_INFO)
+		.mpi = NULL,
+#endif
+	};
+
+	/* Add device object to contain modem info */
+	cJSON *device_obj = cJSON_AddObjectToObjectCS(info_obj.json, NRF_CLOUD_JSON_KEY_DEVICE);
+
+	if (!device_obj) {
+		(void)nrf_cloud_obj_free(&info_obj);
+		return -ENOMEM;
+	}
+
+	err = nrf_cloud_modem_info_json_encode(&mdm_inf, device_obj);
+	if (err) {
+		(void)nrf_cloud_obj_free(&info_obj);
+		LOG_ERR("Error encoding network info: %d", err);
+		return err;
+	}
+
+	/* Encode the object for the cloud */
+	err = nrf_cloud_obj_cloud_encode(&info_obj);
+	/* Free the JSON object; the encoded data remains */
+	(void)nrf_cloud_obj_free(&info_obj);
+
+	if (err) {
+		LOG_ERR("Error encoding data for the cloud: %d", err);
+		return err;
+	}
+
+	/* Send the shadow update */
+	err = nrf_cloud_coap_shadow_state_update((const char *)info_obj.encoded_data.ptr);
+	/* Free the encoded data */
+	nrf_cloud_obj_cloud_encoded_free(&info_obj);
+
+	if (err) {
+		LOG_ERR("Failed to update network info in shadow, error: %d", err);
+		return -EIO;
+	}
+
+	return 0;
+}
+
 static void update_control_section(void)
 {
 	static bool updated;
@@ -364,6 +428,21 @@ int nrf_cloud_coap_resume(void)
 
 	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 	err = nrf_cloud_coap_transport_resume(&internal_cc);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
+}
+
+int nrf_cloud_coap_shadow_network_info_update(void)
+{
+	int err = 0;
+
+	if (!nrf_cloud_coap_is_connected()) {
+		return -EACCES;
+	}
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
+	err = update_network_info_section();
 	k_mutex_unlock(&internal_transfer_mut);
 
 	return err;

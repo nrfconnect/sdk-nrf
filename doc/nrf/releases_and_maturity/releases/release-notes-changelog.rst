@@ -642,6 +642,10 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
+* :ref:`lib_nrf_cloud` library:
+
+  * Added the :c:func:`nrf_cloud_coap_shadow_network_info_update` function to update the network information section in the device shadow over CoAP.
+
 * :ref:`lib_nrf_cloud_pgps` library:
 
   * Updated the range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
