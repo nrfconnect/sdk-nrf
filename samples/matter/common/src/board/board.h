@@ -127,13 +127,12 @@ private:
 	k_timer mFunctionTimer;
 	DeviceState mState = DeviceState::DeviceDisconnected;
 	LedStateHandler mLedStateHandler = UpdateStatusLED;
-#if NUMBER_OF_LEDS == 3
+#if NUMBER_OF_LEDS >= 3
 	Nrf::LEDWidget mLED3;
 	bool mLED3SavedState;
-#elif NUMBER_OF_LEDS == 4
-	Nrf::LEDWidget mLED3;
+#endif
+#if NUMBER_OF_LEDS >= 4
 	Nrf::LEDWidget mLED4;
-	bool mLED3SavedState;
 	bool mLED4SavedState;
 #endif
 
