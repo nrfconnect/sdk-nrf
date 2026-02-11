@@ -300,7 +300,6 @@
 
 # External
 /ext/curl/                                @nrfconnect/ncs-code-owners @nrfconnect/ncs-modem-tre
-/ext/freebsd-getopt/                      @nrfconnect/ncs-code-owners
 /ext/iperf3/                              @nrfconnect/ncs-code-owners @nrfconnect/ncs-modem-tre
 
 # Include
@@ -890,6 +889,7 @@
 /tests/drivers/sensor/multicore_temp/     @nrfconnect/ncs-low-level-test
 /tests/drivers/spi/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/timer/grtc_timer_lfrc/     @nrfconnect/ncs-low-level-test
+/tests/drivers/timer/grtc_multiple_access/ @nrfconnect/ncs-low-level-test
 /tests/drivers/uart/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/watchdog/                  @nrfconnect/ncs-low-level-test
 /tests/drivers/adc/                       @nrfconnect/ncs-low-level-test

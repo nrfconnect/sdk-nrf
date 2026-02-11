@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice RRAMC_LOW_LATENCY_METHOD
+	prompt "Select method that sets RRAMC low latency"
+	default RRAMC_POWER_MODE
+
+config RRAMC_POWER_MODE
+	bool "RRAMC mode is set to low penalty/high current consumption"
+
+config RRAMC_PPI_WAKEUP
+	bool "RRAMC is waken up just before registered event"
+
+endchoice
+
+source "Kconfig.zephyr"

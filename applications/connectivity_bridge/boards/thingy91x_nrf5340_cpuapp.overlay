@@ -34,12 +34,24 @@
 	};
 };
 
+/* Timer used by UARTE0 for byte counting. */
+&timer1 {
+	status = "reserved";
+};
+
+/* Timer used by UARTE1 for byte counting. */
+&timer2 {
+	status = "reserved";
+};
+
 &uart0 {
 	status = "okay";
+	timer = <&timer1>;
 };
 
 &uart1 {
 	status = "okay";
+	timer = <&timer2>;
 };
 
 &zephyr_udc0 {
