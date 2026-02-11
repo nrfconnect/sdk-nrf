@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+description: |
+    The PPI sequencer using SPI to perform periodic transfers with CPU
+    interrupt only when requested batch of transfers is completed.
+
+compatible: "nordic,ppi-seq-spi"
+
+include: ["nordic,nrf-spim.yaml", "nordic,ppi-seq-i2c-spi-common.yaml"]
+
+properties:
+  frequency:
+    type: int
+    required: true
+    description: Clock frequency of device's SPI interface in Hz
+  spi-cpol:
+    type: boolean
+    description: |
+      SPI clock polarity which indicates the clock idle state.
+      If it is used, the clock idle state is logic high; otherwise, low.
+  spi-cpha:
+    type: boolean
+    description: |
+      SPI clock phase that indicates on which edge data is sampled.
+      If it is used, data is sampled on the second edge; otherwise, on the first edge.
+  spi-lsb-first:
+    type: boolean
+    description: The device requires least significant bit first data mode.
+  spi-cs-high:
+    type: boolean
+    description: The device requires the chip select to be active high.
+  spi-cs-setup-delay-ns:
+    type: int
+    default: 1000
+    description: |
+      Delay in nanoseconds to be introduced by the controller after CS is asserted.
+      Also known as enable lead time.

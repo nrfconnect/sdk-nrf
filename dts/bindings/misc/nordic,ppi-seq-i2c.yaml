@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+description: |
+    The PPI sequencer using I2C to perform periodic transfers with CPU
+    interrupt only when requested batch of transfers is completed.
+
+compatible: "nordic,ppi-seq-i2c"
+
+include: ["nordic,ppi-seq-i2c-spi-common.yaml", "nordic,nrf-twim.yaml"]
