@@ -662,7 +662,6 @@
     - sample.nrf7002.shell
     - sample.nrf7002.shell.disable_adv_features
     - sample.nrf7002.shell.otbr
-    - sample.nrf7002.shell.posix_names
     - sample.nrf7002.shell.scan_only_7002
     - sample.nrf7002.shell.wpa_cli
     - sample.nrf7002.shell.zperf
@@ -685,7 +684,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.nrf7001_eks.scan
     - sample.nrf7002_eks.raw_scan
     - sample.nrf7002_eks.scan
   platforms:
@@ -709,8 +707,6 @@
 - scenarios:
     - sample.nrf7001_eks.radio_test
     - sample.nrf7001_eks.sta
-    - sample.nrf7001_eks.scan
-    - sample.nrf7001_eks.provisioning
   platforms:
     - nrf5340dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
