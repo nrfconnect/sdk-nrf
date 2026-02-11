@@ -1,8 +1,0 @@
-tests:
-  nrf.extended.drivers.audio.dmic_api:
-    tags:
-      - dmic
-      - ci_tests_zephyr_drivers_audio_dmic_api
-    harness: ztest
-    depends_on:
-      - future_target

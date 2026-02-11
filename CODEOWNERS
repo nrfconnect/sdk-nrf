@@ -679,9 +679,7 @@
 /samples/wifi/provisioning/softap/*.rst   @nrfconnect/ncs-cia-doc
 /samples/zephyr/basic/blinky/             @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /samples/zephyr/bluetooth/                @nrfconnect/ncs-low-level-test
-/samples/zephyr/boards/nordic/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/adc/              @nrfconnect/ncs-low-level-test
-/samples/zephyr/drivers/audio/dmic/       @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/counter/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/i2c/rtio_loopback/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/jesd216/          @nrfconnect/ncs-low-level-test
@@ -980,7 +978,6 @@
 /tests/zephyr/arch/arm/                   @nrfconnect/ncs-low-level-test
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
-/tests/zephyr/drivers/audio/              @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/clock_control/      @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/counter/            @nrfconnect/ncs-low-level-test
