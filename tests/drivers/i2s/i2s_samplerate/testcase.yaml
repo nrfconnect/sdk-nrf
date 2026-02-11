@@ -9,7 +9,7 @@ common:
   harness: ztest
 
 tests:
-  drivers.i2s.samplerate:
+  drivers.i2s.samplerate.rc:
     harness_config:
       fixture: gpio_loopback
     platform_allow:
@@ -18,8 +18,27 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-  # divider set with enum instead of formula
-  drivers.i2s.samplerate.nrf52840:
+  # Samplerate has higher accuracy when HFXO is started
+  drivers.i2s.samplerate.hfxo:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_START_HFXO=y
+      - CONFIG_I2S_TEST_8000_TOLERANCE=10
+      - CONFIG_I2S_TEST_16000_TOLERANCE=10
+      - CONFIG_I2S_TEST_32000_TOLERANCE=10
+      - CONFIG_I2S_TEST_44100_TOLERANCE=10
+      - CONFIG_I2S_TEST_48000_TOLERANCE=10
+      - CONFIG_I2S_TEST_88200_TOLERANCE=15
+      - CONFIG_I2S_TEST_96000_TOLERANCE=15
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  # nrf52840 has divider set with enum instead of formula
+  drivers.i2s.samplerate.nrf52840.rc:
     harness_config:
       fixture: gpio_loopback
     extra_args:
@@ -34,8 +53,32 @@ tests:
       - nrf52840dk/nrf52840
     integration_platforms:
       - nrf52840dk/nrf52840
+  # Samplerate has higher accuracy when HFXO is started
+  drivers.i2s.samplerate.nrf52840.hfxo:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_START_HFXO=y
+      - CONFIG_I2S_TEST_8000_TOLERANCE=10
+      - CONFIG_I2S_TEST_16000_TOLERANCE=10
+      - CONFIG_I2S_TEST_32000_TOLERANCE=10
+      - CONFIG_I2S_TEST_44100_TOLERANCE=10
+      - CONFIG_I2S_TEST_48000_TOLERANCE=10
+      - CONFIG_I2S_TEST_88200_TOLERANCE=15
+      - CONFIG_I2S_TEST_96000_TOLERANCE=15
+      - CONFIG_I2S_TEST_8000_DIVIDER=34340864
+      - CONFIG_I2S_TEST_16000_DIVIDER=68157440
+      - CONFIG_I2S_TEST_32000_DIVIDER=138412032
+      - CONFIG_I2S_TEST_44100_DIVIDER=184549376
+      - CONFIG_I2S_TEST_48000_DIVIDER=201326592
+      - CONFIG_I2S_TEST_88200_DIVIDER=369098752
+      - CONFIG_I2S_TEST_96000_DIVIDER=402653184
+    platform_allow:
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - nrf52840dk/nrf52840
   # nrf54lm20: PCLK32 and internal RC
-  drivers.i2s.samplerate.nrf54lm20:
+  drivers.i2s.samplerate.nrf54lm20.pclk32m.rc:
     harness_config:
       fixture: gpio_loopback
     extra_args:
@@ -51,7 +94,7 @@ tests:
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # nrf54lm20: PCLK32 and HFXO
-  drivers.i2s.samplerate.nrf54lm20.hfxo:
+  drivers.i2s.samplerate.nrf54lm20.pclk32m.hfxo:
     harness_config:
       fixture: gpio_loopback
     extra_args:
@@ -67,8 +110,40 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  # nrf54lm20: ACLK and internal RC is not possible. Selecting ACLK automatically starts HFXO.
+  # Highter tolerance (than nrf54lm20.aclk.hfxo) results from waiting for HFXO ready.
+  drivers.i2s.samplerate.nrf54lm20.aclk.implicit_hfxo:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_8000_EXPECTED=7978
+      - CONFIG_I2S_TEST_16000_EXPECTED=15957
+      - CONFIG_I2S_TEST_32000_EXPECTED=32608
+      - CONFIG_I2S_TEST_44100_EXPECTED=44117
+      - CONFIG_I2S_TEST_48000_EXPECTED=46875
+      - CONFIG_I2S_TEST_88200_EXPECTED=83333
+      - CONFIG_I2S_TEST_96000_EXPECTED=93750
+      - CONFIG_I2S_TEST_8000_TOLERANCE=10
+      - CONFIG_I2S_TEST_16000_TOLERANCE=10
+      - CONFIG_I2S_TEST_32000_TOLERANCE=10
+      - CONFIG_I2S_TEST_44100_TOLERANCE=15
+      - CONFIG_I2S_TEST_48000_TOLERANCE=20
+      - CONFIG_I2S_TEST_88200_TOLERANCE=30
+      - CONFIG_I2S_TEST_96000_TOLERANCE=40
+      - CONFIG_I2S_TEST_8000_DIVIDER=45568000
+      - CONFIG_I2S_TEST_16000_DIVIDER=90656768
+      - CONFIG_I2S_TEST_32000_DIVIDER=179421184
+      - CONFIG_I2S_TEST_44100_DIVIDER=245329920
+      - CONFIG_I2S_TEST_48000_DIVIDER=266350592
+      - CONFIG_I2S_TEST_88200_DIVIDER=477036544
+      - CONFIG_I2S_TEST_96000_DIVIDER=516685824
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   # nrf54lm20: ACLK and HFXO
-  drivers.i2s.samplerate.nrf54lm20.hfxo.aclk:
+  drivers.i2s.samplerate.nrf54lm20.aclk.hfxo:
     harness_config:
       fixture: gpio_loopback
     extra_args:
@@ -101,7 +176,9 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # ACLK allows to obtain more accurate actual samplerate
   # ACLK instead of PCLK results in different divider and expected
-  drivers.i2s.samplerate.aclk:
+  # Selecting ACLK automatically starts HFXO.
+  # Highter tolerance (than nrf5340.aclk.hfxo) results from waiting for HFXO ready.
+  drivers.i2s.samplerate.nrf5340.aclk.implicit_hfxo:
     harness_config:
       fixture: gpio_loopback
     extra_args:
@@ -113,6 +190,13 @@ tests:
       - CONFIG_I2S_TEST_48000_EXPECTED=50400
       - CONFIG_I2S_TEST_88200_EXPECTED=88200
       - CONFIG_I2S_TEST_96000_EXPECTED=88200
+      - CONFIG_I2S_TEST_8000_TOLERANCE=10
+      - CONFIG_I2S_TEST_16000_TOLERANCE=15
+      - CONFIG_I2S_TEST_32000_TOLERANCE=20
+      - CONFIG_I2S_TEST_44100_TOLERANCE=25
+      - CONFIG_I2S_TEST_48000_TOLERANCE=30
+      - CONFIG_I2S_TEST_88200_TOLERANCE=50
+      - CONFIG_I2S_TEST_96000_TOLERANCE=60
       - CONFIG_I2S_TEST_8000_DIVIDER=96296960
       - CONFIG_I2S_TEST_16000_DIVIDER=190464000
       - CONFIG_I2S_TEST_32000_DIVIDER=372662272
@@ -122,8 +206,42 @@ tests:
       - CONFIG_I2S_TEST_96000_DIVIDER=1028730880
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+  # HFXO started manually at the beginning of main
+  drivers.i2s.samplerate.nrf5340.aclk.hfxo:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_START_HFXO=y
+      - CONFIG_I2S_TEST_8000_EXPECTED=8018
+      - CONFIG_I2S_TEST_16000_EXPECTED=16036
+      - CONFIG_I2S_TEST_32000_EXPECTED=32072
+      - CONFIG_I2S_TEST_44100_EXPECTED=44100
+      - CONFIG_I2S_TEST_48000_EXPECTED=50400
+      - CONFIG_I2S_TEST_88200_EXPECTED=88200
+      - CONFIG_I2S_TEST_96000_EXPECTED=88200
+      - CONFIG_I2S_TEST_8000_TOLERANCE=10
+      - CONFIG_I2S_TEST_16000_TOLERANCE=10
+      - CONFIG_I2S_TEST_32000_TOLERANCE=10
+      - CONFIG_I2S_TEST_44100_TOLERANCE=10
+      - CONFIG_I2S_TEST_48000_TOLERANCE=10
+      - CONFIG_I2S_TEST_88200_TOLERANCE=15
+      - CONFIG_I2S_TEST_96000_TOLERANCE=15
+      - CONFIG_I2S_TEST_8000_DIVIDER=96296960
+      - CONFIG_I2S_TEST_16000_DIVIDER=190464000
+      - CONFIG_I2S_TEST_32000_DIVIDER=372662272
+      - CONFIG_I2S_TEST_44100_DIVIDER=505286656
+      - CONFIG_I2S_TEST_48000_DIVIDER=547127296
+      - CONFIG_I2S_TEST_88200_DIVIDER=954433536
+      - CONFIG_I2S_TEST_96000_DIVIDER=1028730880
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
   # PCLK is 16M instead of 32M -> different divider and expected values
-  drivers.i2s.samplerate.nrf54h:
+  drivers.i2s.samplerate.nrf54h.pclk16.rc:
     harness_config:
       fixture: i2s_loopback
     extra_args:
@@ -154,7 +272,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
   # ACLK allows to obtain more accurate actual samplerate
   # ACLK instead of PCLK results in different divider and expected
-  drivers.i2s.samplerate.nrf54h.aclk:
+  drivers.i2s.samplerate.nrf54h.aclk.implicit_hfxo:
     harness_config:
       fixture: i2s_loopback
     extra_args:
