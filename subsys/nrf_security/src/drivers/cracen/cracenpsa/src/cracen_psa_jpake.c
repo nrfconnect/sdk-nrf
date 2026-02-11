@@ -70,21 +70,29 @@ psa_status_t cracen_jpake_set_password_key(cracen_jpake_operation_t *operation,
 	 * order.
 	 */
 	const uint8_t *order = sx_pk_curve_order(operation->curve);
+	struct sx_pk_acq_req pkreq;
 
 	sx_const_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = order};
 	sx_const_op b = {.sz = password_length, .bytes = password};
 	sx_op result = {.sz = sizeof(operation->secret), .bytes = operation->secret};
 
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ODD_MOD_REDUCE);
+	if (pkreq.status != SX_OK) {
+		sx_pk_release_req(pkreq.req);
+		return silex_statuscodes_to_psa(pkreq.status);
+	}
+
 	/* The nistp256 curve order (n) is prime so we use the ODD variant of the reduce command. */
 	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_ODD_MOD_REDUCE;
-	int sx_status = sx_mod_single_op_cmd(cmd, &modulo, &b, &result);
+	int sx_status = sx_sync_mod_single_op_cmd(&pkreq, cmd, &modulo, &b, &result);
 
 	if (sx_status == SX_OK) {
 		if (constant_memcmp_is_zero(operation->secret, sizeof(operation->secret))) {
+			sx_pk_release_req(pkreq.req);
 			return PSA_ERROR_INVALID_HANDLE;
 		}
 	}
-
+	sx_pk_release_req(pkreq.req);
 	return silex_statuscodes_to_psa(sx_status);
 }
 
@@ -128,29 +136,28 @@ psa_status_t cracen_jpake_set_role(cracen_jpake_operation_t *operation, psa_pake
 /**
  * @brief Point multiplication of secret * G.
  *
+ * @param[in,out] pkreq  Operation context object.
  * @param[in,out] operation  Operation context object.
  * @param[out]    public_key Public key, result of operation.
  * @param[in]     G          Generator point. If NULL, base point of curve is used.
  * @param[in]     secret     Private key.
  * @return psa_status_t
  */
-static psa_status_t cracen_ecjpake_get_public_key(cracen_jpake_operation_t *operation,
+static psa_status_t cracen_ecjpake_get_public_key(struct sx_pk_acq_req *pkreq,
+						  cracen_jpake_operation_t *operation,
 						  uint8_t *public_key, const uint8_t *G,
 						  const uint8_t *secret)
 {
-	struct sx_pk_acq_req pkreq;
+	int sx_status;
 	struct sx_pk_inops_ecp_mult inputs;
 	int opsz;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECC_PTMUL);
-	if (pkreq.status) {
-		return PSA_ERROR_HARDWARE_FAILURE;
-	}
+	sx_pk_set_cmd(pkreq->req, SX_PK_CMD_ECC_PTMUL);
 
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, operation->curve, 0,
+	sx_status = sx_pk_list_ecc_inslots(pkreq->req, operation->curve, 0,
 					      (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return PSA_ERROR_HARDWARE_FAILURE;
+	if (sx_status != SX_OK) {
+		goto exit;
 	}
 
 	opsz = sx_pk_curve_opsize(operation->curve);
@@ -159,26 +166,26 @@ static psa_status_t cracen_ecjpake_get_public_key(cracen_jpake_operation_t *oper
 	sx_wrpkmem(inputs.k.addr, secret, opsz);
 
 	if (G == NULL) {
-		sx_pk_write_curve_gen(pkreq.req, operation->curve, inputs.px, inputs.py);
+		sx_pk_write_curve_gen(pkreq->req, operation->curve, inputs.px, inputs.py);
 	} else {
 		sx_wrpkmem(inputs.px.addr, G, CRACEN_P256_KEY_SIZE);
 		sx_wrpkmem(inputs.py.addr, G + CRACEN_P256_KEY_SIZE, CRACEN_P256_KEY_SIZE);
 	}
 
-	sx_pk_run(pkreq.req);
-	int status = sx_pk_wait(pkreq.req);
+	sx_pk_run(pkreq->req);
+	sx_status = sx_pk_wait(pkreq->req);
 
-	if (status) {
-		return silex_statuscodes_to_psa(status);
+	if (sx_status != SX_OK) {
+		goto exit;
 	}
 
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq.req);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
 
 	sx_rdpkmem(&public_key[0], outputs[0], opsz);
 	sx_rdpkmem(&public_key[32], outputs[1], opsz);
-	sx_pk_release_req(pkreq.req);
 
-	return PSA_SUCCESS;
+exit:
+	return silex_statuscodes_to_psa(sx_status);
 }
 
 /**
@@ -290,9 +297,16 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 	uint8_t generator[CRACEN_P256_POINT_SIZE];
 	size_t h_len;
 	int sx_status = 0;
+	struct sx_pk_acq_req pkreq;
 
 	if (output_size < sizeof(operation->X[idx]) + 1) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECJPAKE_GENERATE_ZKP);
+	if (pkreq.status != SX_OK) {
+		status = silex_statuscodes_to_psa(pkreq.status);
+		goto exit;
 	}
 
 	if (idx == 0 || idx == 1) {
@@ -308,13 +322,13 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 					     sx_pk_curve_order(operation->curve),
 					     RANDOM_RETRY_LIMIT);
 		if (status != PSA_SUCCESS) {
-			return status;
+			goto exit;
 		}
 
-		status = cracen_ecjpake_get_public_key(operation, operation->X[idx],
+		status = cracen_ecjpake_get_public_key(&pkreq, operation, operation->X[idx],
 						       SX_PT_CURVE_GENERATOR, operation->x[idx]);
 		if (status != PSA_SUCCESS) {
-			return status;
+			goto exit;
 		}
 
 		const uint8_t *curve_pt = sx_pk_generator_point(operation->curve);
@@ -332,34 +346,36 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 		sx_const_ecop s = {.bytes = operation->secret, .sz = CRACEN_P256_KEY_SIZE};
 		sx_ecop rx2s = {.bytes = operation->x[2], .sz = CRACEN_P256_KEY_SIZE};
 
-		sx_status = sx_ecjpake_gen_step_2(operation->curve, &G4, &G3, &G1, &x2s, &s, &a,
-						  &rx2s, &ga);
-		if (sx_status) {
-			return silex_statuscodes_to_psa(sx_status);
+		sx_status = sx_sync_ecjpake_gen_step_2(&pkreq, operation->curve, &G4, &G3,
+						  &G1, &x2s, &s, &a, &rx2s, &ga);
+		if (sx_status != SX_OK) {
+			status = silex_statuscodes_to_psa(sx_status);
+			goto exit;
 		}
 
 	} else {
-		return PSA_ERROR_BAD_STATE;
+		status = PSA_ERROR_BAD_STATE;
+		goto exit;
 	}
 
 	status = cracen_rnd_in_range(v, sizeof(v), sx_pk_curve_order(operation->curve),
 				     RANDOM_RETRY_LIMIT);
 
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
-	status = cracen_ecjpake_get_public_key(operation, operation->V,
+	status = cracen_ecjpake_get_public_key(&pkreq, operation, operation->V,
 					       idx == 2 ? generator : SX_PT_CURVE_GENERATOR, v);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	status = cracen_get_zkp_hash(operation->alg, operation->X[idx], operation->V, generator,
 				     operation->user_id, operation->user_id_length, h, sizeof(h),
 				     &h_len);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	sx_const_ecop sx_v = {.bytes = v, .sz = sizeof(v)};
@@ -367,18 +383,23 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 	sx_const_ecop sx_h = {.bytes = h, .sz = PSA_HASH_LENGTH(PSA_ALG_SHA_256)};
 	sx_ecop sx_r = {.bytes = operation->r, .sz = sizeof(operation->r)};
 
-	sx_status = sx_ecjpake_generate_zkp(operation->curve, &sx_v, &sx_x, &sx_h, &sx_r);
+	sx_status = sx_sync_ecjpake_generate_zkp(&pkreq, operation->curve, &sx_v, &sx_x,
+							&sx_h, &sx_r);
 
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+	status = silex_statuscodes_to_psa(sx_status);
+	if (status != PSA_SUCCESS) {
+		goto exit;
 	}
 
 	output[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 	memcpy(output + 1, operation->X[idx], sizeof(operation->X[idx]));
 	*output_length = sizeof(operation->X[idx]) + 1;
 
-	return PSA_SUCCESS;
+exit:
+	sx_pk_release_req(pkreq.req);
+	return status;
 }
+
 static psa_status_t cracen_write_zk_public(cracen_jpake_operation_t *operation, uint8_t *output,
 					   size_t output_size, size_t *output_length)
 {
@@ -459,6 +480,7 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 	uint8_t *rp = operation->r;
 	uint8_t h[PSA_HASH_MAX_SIZE];
 	size_t h_len;
+	struct sx_pk_acq_req pkreq;
 
 	if (input_length > sizeof(operation->r)) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -468,6 +490,12 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 		rp += sizeof(operation->r) - input_length;
 	}
 	memcpy(rp, input, input_length);
+
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECJPAKE_3PT_ADD);
+	if (pkreq.status != SX_OK) {
+		status = silex_statuscodes_to_psa(pkreq.status);
+		goto exit;
+	}
 
 	if (idx == 0 || idx == 1) {
 		/* Verify that user id != peer id */
@@ -481,7 +509,8 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 				}
 			}
 			if (equal) {
-				return PSA_ERROR_INVALID_ARGUMENT;
+				status = PSA_ERROR_INVALID_ARGUMENT;
+				goto exit;
 			}
 
 			const uint8_t *curve_pt = sx_pk_generator_point(operation->curve);
@@ -496,13 +525,17 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 		MAKE_SX_CONST_POINT(G3, operation->P[0], CRACEN_P256_POINT_SIZE);
 		MAKE_SX_POINT(g, generator, CRACEN_P256_POINT_SIZE);
 
-		int sx_status = sx_ecjpake_3pt_add(operation->curve, &G1, &G2, &G3, &g);
+		int sx_status = sx_sync_ecjpake_3pt_add(&pkreq, operation->curve, &G1, &G2,
+									&G3, &g);
 
 		if (sx_status) {
-			return silex_statuscodes_to_psa(sx_status);
+			status = silex_statuscodes_to_psa(sx_status);
+			goto exit;
 		}
+
 	} else {
-		return PSA_ERROR_BAD_STATE;
+		status = PSA_ERROR_BAD_STATE;
+		goto exit;
 	}
 
 	status = cracen_get_zkp_hash(operation->alg, operation->P[idx], operation->V, generator,
@@ -510,7 +543,7 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 				     &h_len);
 
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	MAKE_SX_CONST_POINT(sx_v, operation->V, CRACEN_P256_POINT_SIZE);
@@ -520,16 +553,19 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 	sx_const_ecop sx_r = {.bytes = operation->r, .sz = sizeof(operation->r)};
 	sx_const_ecop sx_h = {.bytes = h, .sz = h_len};
 
-	int sx_status = sx_ecjpake_verify_zkp(operation->curve, &sx_v, &sx_x, &sx_r, &sx_h,
-					      idx == 2 ? &sx_g : SX_PT_CURVE_GENERATOR);
+	int sx_status = sx_sync_ecjpake_verify_zkp(&pkreq, operation->curve, &sx_v, &sx_x, &sx_r,
+						  &sx_h, idx == 2 ? &sx_g : SX_PT_CURVE_GENERATOR);
 
-	if (sx_status) {
-		return silex_statuscodes_to_psa(sx_status);
+	status = silex_statuscodes_to_psa(sx_status);
+	if (status != PSA_SUCCESS) {
+		goto exit;
 	}
 
 	operation->rd_idx++;
 
-	return PSA_SUCCESS;
+exit:
+	sx_pk_release_req(pkreq.req);
+	return status;
 }
 
 psa_status_t cracen_jpake_input(cracen_jpake_operation_t *operation, psa_pake_step_t step,
@@ -552,6 +588,7 @@ psa_status_t cracen_jpake_get_shared_key(cracen_jpake_operation_t *operation,
 					 size_t output_size, size_t *output_length)
 {
 	int sx_status;
+	struct sx_pk_acq_req pkreq;
 
 	if (output_size <= CRACEN_P256_POINT_SIZE) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -565,13 +602,22 @@ psa_status_t cracen_jpake_get_shared_key(cracen_jpake_operation_t *operation,
 	sx_const_ecop x2s = {.bytes = operation->x[2], .sz = CRACEN_P256_KEY_SIZE};
 
 	MAKE_SX_POINT(t, output + 1, CRACEN_P256_POINT_SIZE);
-	sx_status = sx_ecjpake_gen_sess_key(operation->curve, &x4, &b, &x2, &x2s, &t);
 
-	if (sx_status) {
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECJPAKE_GEN_SESS_KEY);
+	if (pkreq.status != SX_OK) {
+		sx_pk_release_req(pkreq.req);
+		return silex_statuscodes_to_psa(pkreq.status);
+	}
+
+	sx_status = sx_sync_ecjpake_gen_sess_key(&pkreq, operation->curve, &x4, &b, &x2, &x2s, &t);
+
+	if (sx_status != SX_OK) {
+		sx_pk_release_req(pkreq.req);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	*output_length = 65;
+	sx_pk_release_req(pkreq.req);
 
 	return PSA_SUCCESS;
 }
