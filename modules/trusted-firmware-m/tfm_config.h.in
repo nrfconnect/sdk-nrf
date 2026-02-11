@@ -54,6 +54,9 @@
 /* Enable PSA Crypto PAKE module */
 #cmakedefine01 CRYPTO_PAKE_MODULE_ENABLED
 
+/* Enable PSA Crypto key wrapping module */
+#cmakedefine01 CRYPTO_KEY_WRAPPING_MODULE_ENABLED
+
 /* Enable PSA Crypto asymmetric key signature module */
 #cmakedefine01 CRYPTO_ASYM_SIGN_MODULE_ENABLED
 
