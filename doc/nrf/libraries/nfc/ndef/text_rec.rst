@@ -60,10 +60,10 @@ The following code example shows how to generate a raw text message that contain
 
       err = nfc_ndef_msg_encode(&NFC_NDEF_MSG(nfc_text_msg),
 				            buffer,
-				            len);
+				            &len);
       if (err < 0) {
 	      printk("Cannot encode message!\n");
-          return err;
+	      return err;
       }
 
 API documentation

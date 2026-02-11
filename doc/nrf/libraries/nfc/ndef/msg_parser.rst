@@ -29,12 +29,12 @@ The following code example shows how to parse an NDEF message, after you have us
    size_t desc_buf_len = sizeof(desc_buf);
 
    err = nfc_ndef_msg_parse(desc_buf,
-                            &desc_buf_len,
-			    ndef_msg_buff,
-			    &nfc_data_len);
+		             &desc_buf_len,
+		             ndef_msg_buff,
+		             &nfc_data_len);
 
    if (err) {
-        printk("Error during parsing an NDEF message, err: %d.\n", err);
+	      printk("Error during parsing an NDEF message, err: %d.\n", err);
    }
 
    nfc_ndef_msg_printout((struct nfc_ndef_msg_desc *) desc_buf);

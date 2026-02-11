@@ -36,16 +36,16 @@ The following code snippets show how to generate a Launch App message.
 
       int err;
 
-      err = nfc_launchapp_msg_encode(android_package_name,
-        			  sizeof(android_package_name),
-        			  universal_link,
-        			  sizeof(universal_link),
-        			  ndef_msg_buf,
-        			  &len);
+      err = nfc_launchapp_msg_encode(android_pkg_name,
+			            sizeof(android_pkg_name),
+			            universal_link,
+			            sizeof(universal_link),
+			            ndef_msg_buf,
+			            &len);
 
       if (err < 0) {
-           printk("Cannot encode message!\n");
-           return err;
+	      printk("Cannot encode message!\n");
+	      return err;
       }
 
    Provide the following parameters:
