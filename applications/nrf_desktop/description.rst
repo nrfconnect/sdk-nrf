@@ -974,6 +974,26 @@ The nRF Desktop application is built the same way to any other |NCS| application
 .. note::
    Information about the known issues in nRF Desktop can be found in |NCS|'s :ref:`release_notes` and on the :ref:`known_issues` page.
 
+Memory footprint usage
+======================
+
+You can display a detailed memory footprint report for either the main application image or for other sysbuild images that are built together with the main application image (for example, ``mcuboot`` or the ``b0`` bootloader).
+
+Memory footprint information is displayed separately per every sysbuild image.
+To get the memory footprint for a given image, run the following commands from the application directory (:file:`nrf/applications/nrf_desktop`):
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -d <build_dir>/<image_name> -t rom_report
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -d <build_dir>/<image_name> -t ram_report
+
+For more information, see the Zephyr's :ref:`optimization_tools` documentation.
+
 .. _nrf_desktop_selecting_build_types:
 
 Selecting a build type
