@@ -264,7 +264,7 @@ config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
 
 config MCUBOOT_LOAD_PERIPHCONF
 	bool "Initialize global peripherals from MCUboot [EXPERIMENTAL]"
-	depends on SOC_SERIES_NRF54H
+	depends on SOC_SERIES_NRF54HX
 	select EXPERIMENTAL
 	help
 	  If enabled, MCUboot loads a second global peripheral configuration (PERIPHCONF)
