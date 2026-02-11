@@ -102,7 +102,7 @@ int sx_pk_init(void);
 /** Encapsulated acquired acceleration request
  *
  * This structure is used by *_go() functions and by callers that use
- * sx_pk_acquire_hw() with the sync functions (e.g. sx_sync_ecp_ptmult).
+ * sx_pk_acquire_hw() with the sync functions (e.g. sx_ecp_ptmult).
  */
 struct sx_pk_acq_req {
 	/** The acquired acceleration request **/

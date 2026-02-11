@@ -109,6 +109,7 @@ psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uin
  * @brief Check if the value is a quadratic residue modulo p,
  *	  where p is an EC prime.
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve_prime EC prime.S
  * @param[in] value       Value to check.
  * @param[out] is_qr      Result of the check. This outputs true if the value
@@ -116,14 +117,15 @@ psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uin
  *
  * @return psa_status_t
  */
-psa_status_t cracen_ecc_is_quadratic_residue(const sx_const_op *curve_prime,
-					     const sx_const_op *value,
-					     bool *is_qr);
+psa_status_t cracen_ecc_is_quadratic_residue(sx_pk_req *req,
+						const sx_const_op *curve_prime,
+						const sx_const_op *value, bool *is_qr);
 
 /**
  * @brief Derive an element of an ECC group (point on the curve) from the given hash.
  *	  The function implements the SSWU algorithm, as described in the RFC 9380 document.
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve_family PSA curve family.
  * @param[in] curve_bits   Curve bits.
  * @param[in] u            Hash to use.
@@ -131,5 +133,5 @@ psa_status_t cracen_ecc_is_quadratic_residue(const sx_const_op *curve_prime,
  *
  * @return psa_status_t
  */
-psa_status_t cracen_ecc_h2e_sswu(psa_ecc_family_t curve_family, size_t curve_bits,
-				 const sx_const_op *u, const sx_op *result);
+psa_status_t cracen_ecc_h2e_sswu(sx_pk_req *req, psa_ecc_family_t curve_family,
+				size_t curve_bits, const sx_const_op *u, const sx_op *result);

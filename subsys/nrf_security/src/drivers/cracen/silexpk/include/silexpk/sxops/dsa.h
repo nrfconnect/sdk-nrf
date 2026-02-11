@@ -34,68 +34,6 @@ SX_PK_API_ASSERT_SRC_COMPATIBLE(2, 0, sxopsdsa);
 
 struct sx_pk_cmd_def;
 
-/**
- * @addtogroup SX_PK_SXOPS_DSA
- *
- * @{
- */
-
-/** Asynchronous (non-blocking) DSA signature generation
- *
- * Start an DSA signature generation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_finish_pair()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] p Prime modulus p
- * @param[in] q Prime divisor of p-1
- * @param[in] g Generator of order q mod p
- * @param[in] k Random value
- * @param[in] privkey Private key
- * @param[in] h Hash digest of message reduced by means of
- * Secure Hash Algorithm specified in FIPS 180-3
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- *
- * @see sx_dsa_sign() for a synchronous version
- */
-static inline int sx_async_dsa_sign_go(sx_pk_req *req, const sx_const_op *p, const sx_const_op *q,
-				       const sx_const_op *g, const sx_const_op *k,
-				       const sx_const_op *privkey, const sx_const_op *h)
-{
-	struct sx_pk_inops_dsa_sign inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_DSA_SIGN);
-
-	/* convert and transfer operands */
-	int sizes[] = {
-		sx_const_op_size(p), sx_const_op_size(q),	    sx_const_op_size(g),
-		sx_const_op_size(k), sx_const_op_size(privkey), sx_const_op_size(h),
-	};
-	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	sx_pk_op2vmem(p, inputs.p.addr);
-	sx_pk_op2vmem(q, inputs.q.addr);
-	sx_pk_op2vmem(g, inputs.g.addr);
-	sx_pk_op2vmem(k, inputs.k.addr);
-	sx_pk_op2vmem(privkey, inputs.privkey.addr);
-	sx_pk_op2vmem(h, inputs.h.addr);
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
 /** DSA signature generation
  *
  * Computes the following:
@@ -107,6 +45,7 @@ static inline int sx_async_dsa_sign_go(sx_pk_req *req, const sx_const_op *p, con
  *    6. if s == 0 then return ::SX_ERR_INVALID_SIGNATURE
  *    7. (r,s) is the signature
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
  * startup
  * @param[in] p Prime modulus p
@@ -131,84 +70,48 @@ static inline int sx_async_dsa_sign_go(sx_pk_req *req, const sx_const_op *p, con
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_dsa_sign_go() for an asynchronous version
  */
-int sx_dsa_sign(struct sx_pk_cnx *cnx, const sx_op *p, const sx_op *q, const sx_op *g,
-		const sx_op *k, const sx_op *privkey, const sx_op *h, sx_op *r, sx_op *s)
+int sx_dsa_sign(sx_pk_req *req, struct sx_pk_cnx *cnx, const sx_op *p,
+			const sx_op *q, const sx_op *g, const sx_op *k, const sx_op *privkey,
+			const sx_op *h, sx_op *r, sx_op *s)
 {
-	sx_pk_req req;
 	int status;
+	struct sx_pk_inops_dsa_sign inputs;
 
-	status = sx_async_dsa_sign_go(&req, p, q, g, k, privkey, h);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-
-	sx_async_finish_pair(&req, r, s);
-
-	return status;
-}
-
-/** Asynchronous (non-blocking) DSA signature verification
- *
- * Start an DSA signature verification on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_pk_release_req()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] p Prime modulus p
- * @param[in] q Prime divisor of p-1
- * @param[in] g Generator of order q mod p
- * @param[in] pubkey Public key
- * @param[in] h Hash digest of message reduced by means of
- * Secure Hash Algorithm specified in FIPS 180-3
- * @param[in] r First part of the signature to verify
- * @param[in] s Second part of the signature to verify
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- *
- * @see sx_dsa_ver() for a synchronous version
- */
-static inline int sx_async_dsa_ver_go(sx_pk_req *req, const sx_const_op *p, const sx_const_op *q,
-				      const sx_const_op *g, const sx_const_op *pubkey,
-				      const sx_const_op *h, const sx_const_op *r,
-				      const sx_const_op *s)
-{
-	struct sx_pk_inops_dsa_ver inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_DSA_VER);
+	sx_pk_set_cmd(req, SX_PK_CMD_DSA_SIGN);
 
 	/* convert and transfer operands */
 	int sizes[] = {
-		sx_const_op_size(p),	  sx_const_op_size(q), sx_const_op_size(g),
-		sx_const_op_size(pubkey), sx_const_op_size(h), sx_const_op_size(r),
-		sx_const_op_size(s),
+		sx_const_op_size(p), sx_const_op_size(q), sx_const_op_size(g),
+		sx_const_op_size(k), sx_const_op_size(rivkey), sx_const_op_size(h),
 	};
+
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 	sx_pk_op2vmem(p, inputs.p.addr);
 	sx_pk_op2vmem(q, inputs.q.addr);
 	sx_pk_op2vmem(g, inputs.g.addr);
-	sx_pk_op2vmem(pubkey, inputs.pubkey.addr);
+	sx_pk_op2vmem(k, inputs.k.addr);
+	sx_pk_op2vmem(privkey, inputs.privkey.addr);
 	sx_pk_op2vmem(h, inputs.h.addr);
-	sx_pk_op2vmem(r, inputs.r.addr);
-	sx_pk_op2vmem(s, inputs.s.addr);
 
 	sx_pk_run(req);
 
-	return SX_OK;
+	status = sx_pk_wait(req);
+
+	if (status != SX_OK) {
+		return status;
+	}
+
+	const uint8_t **outputs = sx_pk_get_output_ops(&);
+	const int opsz = sx_pk_get_opsize(req);
+
+	sx_pk_mem2op(outputs[0], opsz, r);
+	sx_pk_mem2op(outputs[1], opsz, s);
+
+	return status;
 }
 
 /** DSA signature verification
@@ -228,6 +131,7 @@ static inline int sx_async_dsa_ver_go(sx_pk_req *req, const sx_const_op *p, cons
  *    2. 2^159 < q < 2^160 \b or 2^223 < q < 2^224 \b or 2^255 < q < 2^256
  *    3. 1 < g < p
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
  * startup
  * @param[in] p Prime modulus p
@@ -252,22 +156,35 @@ static inline int sx_async_dsa_ver_go(sx_pk_req *req, const sx_const_op *p, cons
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_dsa_ver_go() for an asynchronous version
  */
-int sx_dsa_ver(struct sx_pk_cnx *cnx, const sx_op *p, const sx_op *q, const sx_op *g,
-	       const sx_op *pubkey, const sx_op *h, const sx_op *r, const sx_op *s)
+int sx_dsa_ver(sx_pk_req *req, struct sx_pk_cnx *cnx, const sx_op *p,
+		const sx_op *q, const sx_op *g, const sx_op *pubkey,
+		const sx_op *h, const sx_op *r, const sx_op *s)
 {
-	sx_pk_req req;
 	int status;
+	struct sx_pk_inops_dsa_ver inputs;
 
-	status = sx_async_dsa_ver_go(&req, p, q, g, pubkey, h, r, s);
-	if (status != SX_OK) {
-		return status;
-	}
+	sx_pk_set_cmd(req, SX_PK_CMD_DSA_VER);
 
-	status = sx_pk_wait(&req);
+	/* convert and transfer operands */
+	int sizes[] = {
+		sx_const_op_size(p), sx_const_op_size(q), sx_const_op_size(g),
+		sx_const_op_size(pubkey), sx_const_op_size(h), sx_const_op_size(r),
+		sx_const_op_size(s),
+	};
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
 
-	sx_pk_release_req(&req);
+	sx_pk_op2vmem(p, inputs.p.addr);
+	sx_pk_op2vmem(q, inputs.q.addr);
+	sx_pk_op2vmem(g, inputs.g.addr);
+	sx_pk_op2vmem(pubkey, inputs.pubkey.addr);
+	sx_pk_op2vmem(h, inputs.h.addr);
+	sx_pk_op2vmem(r, inputs.r.addr);
+	sx_pk_op2vmem(s, inputs.s.addr);
+
+	sx_pk_run(req);
+
+	status = sx_pk_wait(req);
 
 	return status;
 }

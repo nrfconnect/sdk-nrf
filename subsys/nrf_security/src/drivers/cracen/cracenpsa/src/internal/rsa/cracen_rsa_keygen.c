@@ -497,8 +497,8 @@ static int rsagenpq_get_random(sx_pk_req *req, uint8_t *workmem, struct cracen_r
  * and 2 of section B.3.3 of FIPS 186-4. The remaining steps of that section are
  * performed by the 'rsagenpq_get_random' function.
  */
-int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
-				struct cracen_rsa_key *privkey)
+int cracen_rsa_generate_privkey(sx_pk_req *req, uint8_t *pubexp, size_t pubexpsz,
+				size_t keysz, struct cracen_rsa_key *privkey)
 {
 	int sx_status;
 	/* The workmem size requirement is twice the key size. */
@@ -552,7 +552,6 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 		return SX_ERR_INVALID_ARG;
 	}
 	struct cracen_rsagenpq rsagenpq;
-	sx_pk_req req;
 	size_t primefactorsz = keysz >> 1;
 
 	rsagenpq.pubexp = pubexp;
@@ -562,8 +561,7 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 	rsagenpq.q = wmem + primefactorsz;
 	rsagenpq.qptr = NULL;
 
-	sx_pk_acquire_hw(&req);
-	sx_pk_set_cmd(&req, SX_PK_CMD_RSA_KEYGEN);
+	sx_pk_set_cmd(req, SX_PK_CMD_RSA_KEYGEN);
 
 	/* step 4.1 */
 	rsagenpq.attempts = 0;
@@ -573,16 +571,14 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 	rsagenpq.q = NULL;
 
 	do {
-		sx_status = rsagenpq_get_random(&req, workmem, &rsagenpq);
+		sx_status = rsagenpq_get_random(req, workmem, &rsagenpq);
 		if (sx_status == SX_ERR_COMPOSITE_VALUE || sx_status == SX_ERR_NOT_INVERTIBLE ||
 		    sx_status == SX_ERR_RSA_PQ_RANGE_CHECK_FAIL) {
 			rsagenpq.attempts++;
 			if (rsagenpq.attempts >= 5 * (primefactorsz << 3)) {
-				sx_pk_release_req(&req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 		} else if (sx_status != SX_OK) {
-			sx_pk_release_req(&req);
 			return sx_status;
 		} else {
 			/* For compliance */
@@ -594,16 +590,14 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 	rsagenpq.rndout = rsagenpq.q;	   /* feed the PRNG into q */
 
 	do {
-		sx_status = rsagenpq_get_random(&req, workmem, &rsagenpq);
+		sx_status = rsagenpq_get_random(req, workmem, &rsagenpq);
 		if (sx_status == SX_ERR_COMPOSITE_VALUE || sx_status == SX_ERR_NOT_INVERTIBLE ||
 		    sx_status == SX_ERR_RSA_PQ_RANGE_CHECK_FAIL) {
 			rsagenpq.attempts++;
 			if (rsagenpq.attempts >= 5 * (primefactorsz << 3)) {
-				sx_pk_release_req(&req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 		} else if (sx_status != SX_OK) {
-			sx_pk_release_req(&req);
 			return sx_status;
 		} else {
 			/* For compliance */
@@ -615,11 +609,10 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 		struct sx_pk_inops_rsa_keygen inputs;
 		int sizes[] = {primefactorsz, primefactorsz, pubexpsz};
 
-		sx_pk_set_cmd(&req, SX_PK_CMD_RSA_KEYGEN);
+		sx_pk_set_cmd(req, SX_PK_CMD_RSA_KEYGEN);
 
-		sx_status = sx_pk_list_gfp_inslots(&req, sizes, (struct sx_pk_slot *)&inputs);
+		sx_status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
 		if (sx_status != SX_OK) {
-			sx_pk_release_req(&req);
 			return sx_status;
 		}
 
@@ -627,26 +620,23 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 		sx_wrpkmem(inputs.q.addr, wmem + primefactorsz, primefactorsz);
 		sx_wrpkmem(inputs.e.addr, pubexp, pubexpsz);
 
-		sx_pk_run(&req);
-		sx_status = sx_pk_wait(&req);
+		sx_pk_run(req);
+		sx_status = sx_pk_wait(req);
 		if (sx_status != SX_OK) {
-			sx_pk_release_req(&req);
 			return sx_status;
 		}
 	}
 
 	/* Read private exponent d into workmem for CRT params computation */
-	const uint8_t **outputs = sx_pk_get_output_ops(&req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	sx_rdpkmem(workmem, outputs[2], keysz);
 
 	if (CRACEN_RSA_KEY_CRT(privkey)) {
-		sx_status = rsagenpriv_crt_finish(&req, keysz, workmem, privkey);
+		sx_status = rsagenpriv_crt_finish(req, keysz, workmem, privkey);
 	} else {
-		sx_status = rsagenpriv_finish(&req, privkey, keysz);
+		sx_status = rsagenpriv_finish(req, privkey, keysz);
 	}
-
-	sx_pk_release_req(&req);
 
 	return sx_status;
 }
