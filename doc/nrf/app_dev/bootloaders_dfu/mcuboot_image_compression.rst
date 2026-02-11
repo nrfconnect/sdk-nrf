@@ -53,19 +53,19 @@ The following shows example partitioning for image compression:
 
     .. group-tab:: nRF52840
 
-        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf52840dk_nrf52840.dts
+        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf52840dk_nrf52840.overlay
              :language: devicetree
              :lines: 12-
 
     .. group-tab:: nRF5340
 
-        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf5340dk_nrf5340_cpuapp.dts
+        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf5340dk_nrf5340_cpuapp.overlay
              :language: devicetree
              :lines: 12-
 
     .. group-tab:: nRF54L15
 
-        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf54l15dk_nrf54l15_cpuapp.dts
+        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf54l15dk_nrf54l15_cpuapp.overlay
              :language: devicetree
              :lines: 12-
 
