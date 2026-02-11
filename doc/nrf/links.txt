@@ -888,6 +888,7 @@
 .. _`Execute in place page in the nRF5340 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/qspi.html#d1789e363
 .. _`nRF5340 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf5340/page/COMP/nrf5340/nrf5340_comp_matrix.html
 .. _`nRF5340 Bluetooth DNs and QDIDs Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf5340/page/COMP/nrf5340/nrf5340_ble_qdid_qual_matrix.html
+.. _`nRF5340 Bluetooth LE Audio QDIDs`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf5340/page/COMP/nrf5340/nrf5340_audio_qdid.html
 
 .. _`nRF5340 Audio DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf5340_audio/page/UG/nrf5340_audio/intro.html
 .. _`Requirements for external flash memory DFU`: https://docs.nordicsemi.com/bundle/ug_nrf5340_audio/page/UG/nrf5340_audio/hw_external_memory.html
