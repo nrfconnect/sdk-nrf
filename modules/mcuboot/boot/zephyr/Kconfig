@@ -60,6 +60,25 @@ config MCUBOOT_NRF_CLEANUP_PERIPHERAL
 	depends on SOC_FAMILY_NORDIC_NRF
 	default y
 
+config MCUBOOT_NRF_LOAD_PERIPHCONF
+	bool "Load new peripheral configuration before jumping to the application"
+	select IRONSIDE_SE_CALL
+	depends on HAS_IRONSIDE_SE
+	help
+	  When enabled, MCUboot looks for a TLV pointing to a slot specific list of
+	  peripheral configurations (PERIPHCONF) to intialize peripherals with before
+	  booting that slot. The actual initialization happens via a IronSide IPC call.
+
+if MCUBOOT_NRF_LOAD_PERIPHCONF
+
+config MCUBOOT_NRF_LOAD_PERIPHCONF_MAX_BLOBS
+	int "Max PERIPHCONF blobs to load"
+	default 8
+	help
+	  The maximum number of PERIPHCONF blobs loaded by MCUboot for a slot.
+
+endif
+
 config BOOT_SIGNATURE_KEY_FILE
 	string "MCUBoot PEM key file"
 	help

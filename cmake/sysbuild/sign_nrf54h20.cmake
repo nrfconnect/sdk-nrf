@@ -43,13 +43,19 @@ function(check_merged_slot_boundaries merged_partition images)
   endforeach()
 endfunction()
 
-function(merge_images_nrf54h20 output_artifact images)
+function(merge_images_nrf54h20 output_artifact output_extra_imgtool_args prefix merged_partition images)
   find_program(MERGEHEX mergehex.py HINTS ${ZEPHYR_BASE}/scripts/build/ NAMES
     mergehex NAMES_PER_DIR)
   if(NOT DEFINED MERGEHEX)
     message(FATAL_ERROR "Can't merge images: can't find mergehex.py")
     return()
   endif()
+
+  set(extra_imgtool_args)
+  set(ironside_se_tlv_cmd)
+  set(ironside_se_tlv_args)
+  set(ironside_se_tlv_depends)
+  set(ironside_se_tlv_byproducts)
 
   foreach(image ${images})
     # Build a dependency list for the final (merged) artifact.
@@ -59,19 +65,65 @@ function(merge_images_nrf54h20 output_artifact images)
     cmake_path(APPEND BINARY_DIR "zephyr" ${BINARY_HEX_FILE} OUTPUT_VARIABLE
       app_binary)
     list(APPEND binaries_to_merge "${app_binary}")
+
+    if(SB_CONFIG_MCUBOOT_LOAD_PERIPHCONF)
+      set(image_has_periphconf)
+      sysbuild_get(image_has_periphconf IMAGE ${image} VAR CONFIG_NRF_PERIPHCONF_SECTION_KEEP KCONFIG)
+      if(image_has_periphconf)
+        set(image_elf)
+        sysbuild_get(image_elf IMAGE ${image} VAR BYPRODUCT_KERNEL_ELF_NAME CACHE)
+        list(APPEND ironside_se_tlv_args --elf ${image_elf})
+        list(APPEND ironside_se_tlv_depends ${image_elf})
+      endif()
+    endif()
   endforeach()
 
+  if(ironside_se_tlv_args)
+    set(periphconf_tlv_bin ${CMAKE_BINARY_DIR}/${prefix}_periphconf_tlv.bin)
+
+    # TODO: Refactor?
+    set(MCUBOOT_HEADER_SIZE 0x800)
+
+    # Fetch merged slot details from the mcuboot image.
+    dt_nodelabel(slot_path TARGET mcuboot NODELABEL "${merged_partition}" REQUIRED)
+    dt_partition_addr(slot_addr PATH "${slot_path}" TARGET mcuboot REQUIRED ABSOLUTE)
+    math(EXPR image_fw_base "${slot_addr} + ${MCUBOOT_HEADER_SIZE}" OUTPUT_FORMAT HEXADECIMAL)
+    list(APPEND ironside_se_tlv_args --image-fw-base ${image_fw_base})
+
+    # Get TLV IDs to use from the mcuboot image.
+    sysbuild_get(periphconf_tlv_id IMAGE mcuboot VAR CONFIG_MCUBOOT_NRF_PERIPHCONF_TLV_ID KCONFIG)
+
+    if(SB_CONFIG_MCUBOOT_LOAD_PERIPHCONF)
+      list(APPEND ironside_se_tlv_args --periphconf-tlv-out ${periphconf_tlv_bin})
+      list(APPEND ironside_se_tlv_byproducts "${periphconf_tlv_bin}")
+      list(APPEND extra_imgtool_args --custom-tlv-file ${periphconf_tlv_id} ${periphconf_tlv_bin})
+    endif()
+    set(ironside_se_tlv_cmd
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/ironside_se_tlv.py
+      ${ironside_se_tlv_args}
+    )
+  endif()
+
+  string(REPLACE ";" ", " image_names "${images}")
   get_filename_component(merge_target ${output_artifact} NAME_WE)
   add_custom_target(
     merged_${merge_target}
     ${PYTHON_EXECUTABLE} ${MERGEHEX}
       -o ${output_artifact} ${binaries_to_merge}
+    ${ironside_se_tlv_cmd}
     DEPENDS
     ${binaries_to_merge}
+    ${ironside_se_tlv_depends}
     BYPRODUCTS
     ${output_artifact}
-    COMMENT "Merge intermediate images"
+    ${ironside_se_tlv_byproducts}
+    COMMENT "Merge intermediate images: ${image_names}"
   )
+
+  string(STRIP "${extra_imgtool_args}" extra_imgtool_args)
+  set(${output_extra_imgtool_args} "${extra_imgtool_args}" PARENT_SCOPE)
 endfunction()
 
 function(disable_programming_nrf54h20 images)
@@ -80,7 +132,7 @@ function(disable_programming_nrf54h20 images)
   endforeach()
 endfunction()
 
-function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
+function(mcuboot_sign_merged_nrf54h20 merged_hex main_image extra_imgtool_args)
   find_program(IMGTOOL imgtool.py HINTS ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/
     NAMES imgtool NAMES_PER_DIR)
   find_program(HEX2BIN hex2bin.py NAMES hex2bin)
@@ -286,6 +338,8 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER OR SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY)
     set(imgtool_args --overwrite-only ${imgtool_args})
   endif()
+
+  list(APPEND imgtool_args ${extra_imgtool_args})
 
   # Basic 'imgtool sign' command with known image information.
   set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version

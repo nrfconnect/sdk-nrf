@@ -411,6 +411,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       else()
         set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_USING_ITS n)
       endif()
+      # TODO: don't force NO_LOCK?
+      if(SB_CONFIG_MCUBOOT_LOAD_PERIPHCONF)
+        set_config_bool(mcuboot CONFIG_MCUBOOT_NRF_LOAD_PERIPHCONF y)
+        set_config_bool(mcuboot CONFIG_NRF_PERIPHCONF_GENERATE_ENTRIES_NO_LOCK y)
+      else()
+        set_config_bool(mcuboot CONFIG_MCUBOOT_NRF_LOAD_PERIPHCONF n)
+        set_config_bool(mcuboot CONFIG_NRF_PERIPHCONF_GENERATE_ENTRIES_NO_LOCK n)
+      endif()
     endif()
 
     # A v1 board doesn't define board qualifiers, thus below test will just test the pure board
@@ -866,6 +874,25 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20.cmake"
          CACHE INTERNAL "MCUboot signing script" FORCE)
     endforeach()
+  endif()
+
+  if(SB_CONFIG_MCUBOOT_LOAD_PERIPHCONF)
+    UpdateableImage_Get(images ALL)
+    foreach(image ${images})
+      set_config_bool(${image} CONFIG_NRF_PERIPHCONF_SECTION_KEEP_BY_DEFAULT y)
+
+      # If a custom signing script has been set, wrap it.
+      if(${image}_SIGNING_SCRIPT)
+        set(${image}_WRAPPED_SIGNING_SCRIPT
+          "${${image}_SIGNING_SCRIPT}"
+          CACHE INTERNAL "MCUboot signing script" FORCE)
+      endif()
+      set(${image}_SIGNING_SCRIPT
+        "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_ironside_se_tlv_wrapper.cmake"
+         CACHE INTERNAL "MCUboot signing script (wrapper)" FORCE)
+    endforeach()
+
+    set_config_bool(uicr CONFIG_GEN_UICR_POLICY_PERIPHCONF_STAGE_INIT y)
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
