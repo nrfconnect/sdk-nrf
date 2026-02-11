@@ -186,6 +186,14 @@ config PSA_HAS_PAKE_SUPPORT
 	help
 	  Prompt-less configuration that states that PAKE is supported.
 
+config PSA_HAS_KEY_WRAP_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_AES_KW	|| \
+		   PSA_WANT_ALG_AES_KWP
+	help
+	  Prompt-less configuration that states that key wrapping is supported.
+
 comment "Nordic added alg types"
 
 config PSA_WANT_ALG_ECDSA_ANY
