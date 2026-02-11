@@ -4,23 +4,22 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
-
-if BUILD_WITH_TFM
-
-if TFM_PARTITION_CRYPTO
+if TFM_PARTITION_CRYPTO && (PSA_CRYPTO_DRIVER_OBERON || PSA_CRYPTO_DRIVER_CRACEN)
 
 config TFM_CRYPTO_PAKE_MODULE_ENABLED
 	bool "PAKE crypto module"
 	default y
 	depends on PSA_HAS_PAKE_SUPPORT
-	depends on NRF_SECURITY
-	depends on PSA_CRYPTO_DRIVER_OBERON || PSA_CRYPTO_DRIVER_CRACEN
 	help
-	  Enables the PAKE crypto module within the crypto partition.
-	  Unset this option if the functionality provided by 'crypto_pake.c'
-	  is not used.
+	  Enable the PAKE crypto module within the crypto partition.
 
-endif # TFM_PARTITION_CRYPTO
+config TFM_CRYPTO_KEY_WRAPPING_MODULE_ENABLED
+	bool "Key wrapping crypto module"
+	default y
+	depends on PSA_HAS_KEY_WRAP_SUPPORT
+	help
+	  Enable the key wrapping module within the crypto partition.
 
-endif # BUILD_WITH_TFM
+endif # TFM_PARTITION_CRYPTO && (PSA_CRYPTO_DRIVER_OBERON || PSA_CRYPTO_DRIVER_CRACEN)
+
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
