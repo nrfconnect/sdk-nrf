@@ -644,3 +644,6 @@ config PSA_WANT_KEY_TYPE_ASCON
 	bool "ASCON key support" if !PSA_PROMPTLESS
 	help
 	  ASCON key support.
+
+config ENTROPY_PSA_CRYPTO_RNG
+	select PSA_WANT_GENERATE_RANDOM
