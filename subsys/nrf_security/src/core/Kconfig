@@ -13,9 +13,6 @@ config PSA_CORE_DISABLED
 
 config PSA_CORE_OBERON
 	bool "PSA Core implementation - Oberon"
-	select PSA_WANT_AES_KEY_SIZE_128
-	select PSA_WANT_AES_KEY_SIZE_192
-	select PSA_WANT_AES_KEY_SIZE_256
 	depends on !DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED
 
 config PSA_CORE_LITE
