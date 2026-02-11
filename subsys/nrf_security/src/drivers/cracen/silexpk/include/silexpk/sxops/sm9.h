@@ -82,78 +82,12 @@ static const uint8_t sm9_t[32] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x
 static const uint8_t sm9_f[32] = "\x3f\x23\xea\x58\xe5\x72\x0b\xdb\x84\x3c\x6c\xfa\x9c\x08\x67\x49"
 				 "\x47\xc5\xc8\x6e\x0d\xdd\x04\xed\xa9\x1d\x83\x54\x37\x7b\x69\x8b";
 
-/** Asynchronous SM9 exponentiation
- *
- * Start an SM9 exponentiation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm9_exp_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] g Base
- * @param[in] h Exponent
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm9_exp_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-				      const struct sx_pk_ef_12 *g, const sx_const_ecop *h)
-{
-	struct sx_pk_inops_sm9_exp inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM9_EXP);
-
-	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
-
-	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
-	for (int i = 0; i < 12; i++) {
-		sx_pk_ecop2mem(g->coeffs[i], inputs.g[i].addr, opsz);
-	}
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
-/** Finish asynchronous (non-blocking) SM9 exponentiation.
- *
- * Get the output operands of the SM9 exponentiation
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r The resulting value
- */
-static inline void sx_async_sm9_exp_end(sx_pk_req *req, struct sx_pk_ef_12 *r)
-{
-	sx_async_finish_any(req, r->coeffs, 12);
-}
-
 /** Perform an SM9 exponentiation synchronously
  *
  * The exponentiation has the following steps:
  *   1. z = g^h
  *
+ * @param[in,out] req The acquired acceleration request for this operation
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] g Base
  * @param[in] h Exponent
@@ -172,91 +106,45 @@ static inline void sx_async_sm9_exp_end(sx_pk_req *req, struct sx_pk_ef_12 *r)
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_sm9_exp_go(), sx_async_sm9_exp_end() for
- * an asynchronous version
  */
-static inline int sx_sm9_exp(struct sx_pk_cnx *cnx, const struct sx_pk_ef_12 *g,
+static inline int sx_sm9_exp(sx_pk_req *req, struct sx_pk_cnx *cnx, const struct sx_pk_ef_12 *g,
 			     const sx_const_ecop *h, struct sx_pk_ef_12 *z)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_sm9_exp_go(&req, cnx, g, h);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-
-	sx_async_sm9_exp_end(&req, z);
-
-	return status;
-}
-
-/** Asynchronous SM9 point multiplication in G1
- *
- * Start an SM9 point multiplication in G1 on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_pmulg1_generate_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] p1 Point
- * @param[in] ke Multiplier (Scalar)
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm9_pmulg1_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-					 const struct sx_pk_point *p1, const sx_const_ecop *ke)
-{
-	struct sx_pk_inops_sm9_pmulg1 inputs;
+	struct sx_pk_inops_sm9_exp inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PMULG1);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM9_EXP);
 
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_ecop2mem(p1->x, inputs.p1x0.addr, opsz);
-	sx_pk_ecop2mem(p1->y, inputs.p1y0.addr, opsz);
-	sx_pk_ecop2mem(ke, inputs.ke.addr, opsz);
+	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
 	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
+	for (int i = 0; i < 12; i++) {
+		sx_pk_ecop2mem(g->coeffs[i], inputs.g[i].addr, opsz);
+	}
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
-/** Finish asynchronous (non-blocking) SM9 point multiplication in G1.
- *
- * Get the output operands of the SM9 point multiplication in G1
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r The resulting value
- */
-static inline void sx_async_sm9_pmulg1_end(sx_pk_req *req, struct sx_pk_point *r)
-{
-	sx_async_finish_ec_pair(req, r->x, r->y);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+	const int opsz = sx_pk_get_opsize(req);
+
+	for (int i = 0; i < count; i++) {
+		sx_pk_mem2op(outputs[i], opsz, z->coeffs[i]);
+	}
+
+	return status;
 }
 
 /** Perform SM9 point multiplication in G1
@@ -267,6 +155,7 @@ static inline void sx_async_sm9_pmulg1_end(sx_pk_req *req, struct sx_pk_point *r
  * In case ke is zero, ::SX_ERR_NOT_INVERTIBLE shall be
  * returned.
  *
+ * @param[in,out] req The acquired acceleration request for this operation
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] p1 Point multiplicand
  * @param[in] ke Multiplier (Scalar)
@@ -284,94 +173,44 @@ static inline void sx_async_sm9_pmulg1_end(sx_pk_req *req, struct sx_pk_point *r
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_sm9_pmulg1_go(), sx_async_sm9_pmulg1_end() for
- * an asynchronous version
+
  */
-static inline int sx_sm9_pmulg1(struct sx_pk_cnx *cnx, const struct sx_pk_point *p1,
+static inline int sx_sm9_pmulg1(sx_pk_req *req, struct sx_pk_cnx *cnx, const struct sx_pk_point *p1,
 				const sx_const_ecop *ke, struct sx_pk_point *ppube)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_sm9_pmulg1_go(&req, cnx, p1, ke);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-
-	sx_async_sm9_pmulg1_end(&req, ppube);
-
-	return status;
-}
-
-/** SM9 Point multiplication in G2
- *
- * Start a point multiplication in G2 on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm9_pmulg2_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] p2 Multiplicand
- * @param[in] ke Multiplier (Scalar)
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm9_pmulg2_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-					 const struct sx_pk_ef_4 *p2, const sx_const_ecop *ke)
-{
-	struct sx_pk_inops_sm9_pmulg2 inputs;
+	struct sx_pk_inops_sm9_pmulg1 inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PMULG2);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PMULG1);
 
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_ecop2mem(p2->x0, inputs.p2x0.addr, opsz);
-	sx_pk_ecop2mem(p2->x1, inputs.p2x1.addr, opsz);
-	sx_pk_ecop2mem(p2->y0, inputs.p2y0.addr, opsz);
-	sx_pk_ecop2mem(p2->y1, inputs.p2y1.addr, opsz);
-
+	sx_pk_ecop2mem(p1->x, inputs.p1x0.addr, opsz);
+	sx_pk_ecop2mem(p1->y, inputs.p1y0.addr, opsz);
 	sx_pk_ecop2mem(ke, inputs.ke.addr, opsz);
 	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
+
 	sx_pk_run(req);
 
-	return SX_OK;
-}
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
-/** Finish asynchronous (non-blocking) SM9 point
- *  multiplication in G2.
- *
- * Get the output operands of the SM9 point multiplication
- * in G2 and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r The resulting value
- */
-static inline void sx_async_sm9_pmulg2_end(sx_pk_req *req, struct sx_pk_ef_4 *r)
-{
-	sx_async_finish_quad(req, r->x0, r->x1, r->y0, r->y1);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+	const int opsz = sx_pk_get_opsize(req);
+
+	sx_pk_mem2ecop(outputs[0], opsz, ppube->x);
+	sx_pk_mem2ecop(outputs[1], opsz, ppube->y);
+
+	return status;
 }
 
 /** Perform an SM9 point multiplication in G2
@@ -382,6 +221,7 @@ static inline void sx_async_sm9_pmulg2_end(sx_pk_req *req, struct sx_pk_ef_4 *r)
  * In case ks is zero, ::SX_ERR_NOT_INVERTIBLE shall be
  * returned.
  *
+ * @param[in,out] req The acquired acceleration request for this operation
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] p2 Multiplicand
  * @param[in] ke Multiplier (Scalar)
@@ -399,95 +239,47 @@ static inline void sx_async_sm9_pmulg2_end(sx_pk_req *req, struct sx_pk_ef_4 *r)
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_sm9_pmulg2_go(), sx_async_sm9_pmulg2_end() for
- * an asynchronous version
  */
-static inline int sx_sm9_pmulg2(struct sx_pk_cnx *cnx, const struct sx_pk_ef_4 *p2,
+static inline int sx_sm9_pmulg2(sx_pk_req *req, struct sx_pk_cnx *cnx, const struct sx_pk_ef_4 *p2,
 				const sx_const_ecop *ke, struct sx_pk_ef_4 *ppubs)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_sm9_pmulg2_go(&req, cnx, p2, ke);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-
-	sx_async_sm9_pmulg2_end(&req, ppubs);
-
-	return status;
-}
-
-/** SM9 Asynchronous pairing
- *
- * Start a pairing operation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm9_pair_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] p P in G1
- * @param[in] q Q in G2
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm9_pair_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-				       const struct sx_pk_point *p, const struct sx_pk_ef_4 *q)
-{
-	struct sx_pk_inops_sm9_pair inputs;
+	struct sx_pk_inops_sm9_pmulg2 inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PAIR);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PMULG2);
 
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_ecop2mem(p->x, inputs.px0.addr, opsz);
-	sx_pk_ecop2mem(p->y, inputs.py0.addr, opsz);
-	sx_pk_ecop2mem(q->x0, inputs.qx0.addr, opsz);
-	sx_pk_ecop2mem(q->x1, inputs.qx1.addr, opsz);
-	sx_pk_ecop2mem(q->y0, inputs.qy0.addr, opsz);
-	sx_pk_ecop2mem(q->y1, inputs.qy1.addr, opsz);
-	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
-	sx_wrpkmem(inputs.f.addr, sm9_f, sizeof(sm9_f));
+	sx_pk_ecop2mem(p2->x0, inputs.p2x0.addr, opsz);
+	sx_pk_ecop2mem(p2->x1, inputs.p2x1.addr, opsz);
+	sx_pk_ecop2mem(p2->y0, inputs.p2y0.addr, opsz);
+	sx_pk_ecop2mem(p2->y1, inputs.p2y1.addr, opsz);
 
+	sx_pk_ecop2mem(ke, inputs.ke.addr, opsz);
+	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
 	sx_pk_run(req);
 
-	return SX_OK;
-}
 
-/** Finish asynchronous (non-blocking) SM9 pairing.
- *
- * Get the output operands of the SM9 pairing
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r The resulting value
- */
-static inline void sx_async_sm9_pair_end(sx_pk_req *req, struct sx_pk_ef_12 *r)
-{
-	sx_async_finish_any(req, r->coeffs, 12);
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2op(outputs[0], opsz, ppubs->x0);
+	sx_pk_mem2op(outputs[1], opsz, ppubs->x1);
+	sx_pk_mem2op(outputs[2], opsz, ppubs->y0);
+	sx_pk_mem2op(outputs[3], opsz, ppubs->y1);
+
+	return status;
 }
 
 /** Perform an SM9 pairing
@@ -496,6 +288,7 @@ static inline void sx_async_sm9_pair_end(sx_pk_req *req, struct sx_pk_ef_12 *r)
  *   1. r = e(P, Q) where e is the bilinear mapping from G1xG2 to GT.
  *      e is also called the R-ate pairing
  *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] p P in G1
  * @param[in] q Q in G2
@@ -512,97 +305,47 @@ static inline void sx_async_sm9_pair_end(sx_pk_req *req, struct sx_pk_ef_12 *r)
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_sm9_pair_go(), sx_async_sm9_pair_end() for
- * an asynchronous version
  */
-static inline int sx_sm9_pair(struct sx_pk_cnx *cnx, const struct sx_pk_point *p,
+static inline int sx_sm9_pair(sx_pk_req *req, struct sx_pk_cnx *cnx, const struct sx_pk_point *p,
 			      const struct sx_pk_ef_4 *q, struct sx_pk_ef_12 *r)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_sm9_pair_go(&req, cnx, p, q);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-
-	sx_async_sm9_pair_end(&req, r);
-
-	return status;
-}
-
-/** SM9 Signature private key generation
- *
- * Start a signature private key generation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm9_generate_signature_private_key_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] p1 p1 in G1
- * @param[in] h h in gf(q)
- * @param[in] ks ks in gf(q)
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm9_generate_signature_private_key_go(sx_pk_req *req,
-								 struct sx_pk_cnx *cnx,
-								 const struct sx_pk_point *p1,
-								 const sx_const_ecop *h,
-								 const sx_const_ecop *ks)
-{
-	struct sx_pk_inops_sm9_sigpkgen inputs;
+	struct sx_pk_inops_sm9_pair inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PRIVSIGKEYGEN);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PAIR);
 
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_ecop2mem(p1->x, inputs.p1x0.addr, opsz);
-	sx_pk_ecop2mem(p1->y, inputs.p1y0.addr, opsz);
-	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-	sx_pk_ecop2mem(ks, inputs.ks.addr, opsz);
+	sx_pk_ecop2mem(p->x, inputs.px0.addr, opsz);
+	sx_pk_ecop2mem(p->y, inputs.py0.addr, opsz);
+	sx_pk_ecop2mem(q->x0, inputs.qx0.addr, opsz);
+	sx_pk_ecop2mem(q->x1, inputs.qx1.addr, opsz);
+	sx_pk_ecop2mem(q->y0, inputs.qy0.addr, opsz);
+	sx_pk_ecop2mem(q->y1, inputs.qy1.addr, opsz);
 	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
+	sx_wrpkmem(inputs.f.addr, sm9_f, sizeof(sm9_f));
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
-/** Finish asynchronous (non-blocking) exponentiation.
- *
- * Get the output operands of the SM9 private key signing
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r The resulting value
- */
-static inline void sx_async_sm9_generate_signature_private_key_end(sx_pk_req *req,
-								   struct sx_pk_point *r)
-{
-	sx_async_finish_ec_pair(req, r->x, r->y);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	for (int i = 0; i < count; i++) {
+		sx_pk_mem2op(outputs[i], opsz, r->coeffs[i]);
+	}
+
+	return status;
 }
 
 /** Perform SM9 signature private key generation
@@ -616,6 +359,7 @@ static inline void sx_async_sm9_generate_signature_private_key_end(sx_pk_req *re
  * In case t1 is zero, ::SX_ERR_NOT_INVERTIBLE shall be
  * returned.
  *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] p1 p1 in G1
  * @param[in] h h in gf(q)
@@ -634,98 +378,45 @@ static inline void sx_async_sm9_generate_signature_private_key_end(sx_pk_req *re
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_sm9_generate_signature_private_key_go(),
- * sx_async_sm9_generate_signature_private_key_end() for
- * an asynchronous version
  */
-static inline int sx_sm9_generate_signature_private_key(struct sx_pk_cnx *cnx,
-							const struct sx_pk_point *p1,
-							const sx_const_ecop *h,
-							const sx_const_ecop *ks,
-							struct sx_pk_point *ds)
+static inline int sx_sm9_generate_signature_private_key(sx_pk_req req,
+					struct sx_pk_cnx *cnx, const struct sx_pk_point *p1,
+					const sx_const_ecop *h, const sx_const_ecop *ks,
+					struct sx_pk_point *ds)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_sm9_generate_signature_private_key_go(&req, cnx, p1, h, ks);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-
-	sx_async_sm9_generate_signature_private_key_end(&req, ds);
-
-	return status;
-}
-
-/** Perform an SM9 signing operation
- *
- * Start a signing operation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm9_sign_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] ds ds in G1
- * @param[in] h h in gf(q)
- * @param[in] r r in gf(q)
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm9_sign_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-				       const struct sx_pk_point *ds, const sx_const_ecop *h,
-				       const sx_const_ecop *r)
-{
-	struct sx_pk_inops_sm9_signaturegen inputs;
+	struct sx_pk_inops_sm9_sigpkgen inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM9_SIGNATUREGEN);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PRIVSIGKEYGEN);
 
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_ecop2mem(ds->x, inputs.dsx0.addr, opsz);
-	sx_pk_ecop2mem(ds->y, inputs.dsy0.addr, opsz);
+	sx_pk_ecop2mem(p1->x, inputs.p1x0.addr, opsz);
+	sx_pk_ecop2mem(p1->y, inputs.p1y0.addr, opsz);
 	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
+	sx_pk_ecop2mem(ks, inputs.ks.addr, opsz);
 	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
-/** Finish asynchronous (non-blocking) SM9 signing.
- *
- * Get the output operands of the SM9 signing operation
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] s The resulting signature
- */
-static inline void sx_async_sm9_sign_end(sx_pk_req *req, struct sx_pk_point *s)
-{
-	sx_async_finish_ec_pair(req, s->x, s->y);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2ecop(outputs[0], opsz, ds->x);
+	sx_pk_mem2ecop(outputs[1], opsz, ds->y);
+
+	return status;
 }
 
 /** Perform an SM9 signing operation
@@ -737,6 +428,7 @@ static inline void sx_async_sm9_sign_end(sx_pk_req *req, struct sx_pk_point *s)
  * In case l is zero, ::SX_ERR_NOT_INVERTIBLE shall be
  * returned.
  *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] ds ds in G1
  * @param[in] h h in gf(q)
@@ -755,37 +447,56 @@ static inline void sx_async_sm9_sign_end(sx_pk_req *req, struct sx_pk_point *s)
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_sm9_sign_go(), sx_async_sm9_sign_end() for
- * an asynchronous version
  */
-static inline int sx_sm9_sign(struct sx_pk_cnx *cnx, const struct sx_pk_point *ds,
+static inline int sx_sm9_sign(sx_pk_req *req, struct sx_pk_cnx *cnx, const struct sx_pk_point *ds,
 			      const sx_const_ecop *h, const sx_const_ecop *r,
 			      struct sx_pk_point *s)
 {
+	struct sx_pk_inops_sm9_signaturegen inputs;
 	int status;
-	sx_pk_req req;
 
-	status = sx_async_sm9_sign_go(&req, cnx, ds, h, r);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM9_SIGNATUREGEN);
+
+	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
+
+	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	status = sx_pk_wait(&req);
+	int opsz = sx_pk_get_opsize(req);
 
-	sx_async_sm9_sign_end(&req, s);
+	sx_pk_ecop2mem(ds->x, inputs.dsx0.addr, opsz);
+	sx_pk_ecop2mem(ds->y, inputs.dsy0.addr, opsz);
+	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
+	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
+	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
+
+	sx_pk_run(req);
+
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	sx_pk_mem2ecop(outputs[0], opsz, s->x);
+	sx_pk_mem2ecop(outputs[1], opsz, s->y);
 
 	return status;
 }
 
-/** Perform an SM9 signature verification
+/** Perform a SM9 signature verification synchronously
  *
- * Start a signature verification on the accelerator
- * and return immediately.
+ *  The signature verification operation has the following steps
+ *   1. t = gh
+ *   2. P = h1*P2 + Ppubs
+ *   3. u = e(S, P)
+ *   4. w = u*t
  *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm9_signature_verify_end()
+ *  In case h = 0 or h >= q, ::SX_ERR_OUT_OF_RANGE shall be
+ *  returned.
  *
- * @param[out] req The acquired acceleration request for this operation
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] h1 h1 in gf(q)
  * @param[in] p2 p2 in G2
@@ -793,33 +504,37 @@ static inline int sx_sm9_sign(struct sx_pk_cnx *cnx, const struct sx_pk_point *d
  * @param[in] s s in G1
  * @param[in] h h in gf(q)
  * @param[in] g g in g(12)
+ * @param[out] w w in g(12)
+ *
+ * @return ::SX_OK
+ * @return ::SX_ERR_OUT_OF_RANGE
+ * @return ::SX_ERR_POINT_NOT_ON_CURVE
+ * @return ::SX_ERR_UNKNOWN_ERROR
+ * @return ::SX_ERR_BUSY
+ * @return ::SX_ERR_NOT_IMPLEMENTED
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PLATFORM_ERROR
+ * @return ::SX_ERR_EXPIRED
+ * @return ::SX_ERR_PK_RETRY
  *
  * Truncation or padding should be done by user application
  *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
  */
-static inline int sx_async_sm9_signature_verify_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-						   const sx_const_ecop *h1,
-						   const struct sx_pk_ef_4 *p2,
-						   const struct sx_pk_ef_4 *ppubs,
-						   const struct sx_pk_point *s,
-						   const sx_const_ecop *h,
-						   const struct sx_pk_ef_12 *g)
+static inline int sx_sm9_signature_verify(sx_pk_req *req, struct sx_pk_cnx *cnx,
+					  const sx_const_ecop *h1, const struct sx_pk_ef_4 *p2,
+					  const struct sx_pk_ef_4 *ppubs,
+					  const struct sx_pk_point *s, const sx_const_ecop *h,
+					  const struct sx_pk_ef_12 *g, struct sx_pk_ef_12 *w)
 {
 	struct sx_pk_inops_sm9_signatureverify inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
 	sx_pk_set_cmd(req, SX_PK_CMD_SM9_SIGNATUREVERIFY);
 
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 
@@ -845,157 +560,18 @@ static inline int sx_async_sm9_signature_verify_go(sx_pk_req *req, struct sx_pk_
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
-
-/** Finish asynchronous SM9 signature verification
- *
- * Get the output operands of the SM9 signature verification
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r The resulting value
- */
-static inline void sx_async_sm9_signature_verify_end(sx_pk_req *req, struct sx_pk_ef_12 *r)
-{
-	sx_async_finish_any(req, r->coeffs, 12);
-}
-
-/** Perform a SM9 signature verification synchronously
- *
- *  The signature verification operation has the following steps
- *   1. t = gh
- *   2. P = h1*P2 + Ppubs
- *   3. u = e(S, P)
- *   4. w = u*t
- *
- *  In case h = 0 or h >= q, ::SX_ERR_OUT_OF_RANGE shall be
- *  returned.
- *
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] h1 h1 in gf(q)
- * @param[in] p2 p2 in G2
- * @param[in] ppubs ppubs in G2
- * @param[in] s s in G1
- * @param[in] h h in gf(q)
- * @param[in] g g in g(12)
- * @param[out] w w in g(12)
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OUT_OF_RANGE
- * @return ::SX_ERR_POINT_NOT_ON_CURVE
- * @return ::SX_ERR_UNKNOWN_ERROR
- * @return ::SX_ERR_BUSY
- * @return ::SX_ERR_NOT_IMPLEMENTED
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PLATFORM_ERROR
- * @return ::SX_ERR_EXPIRED
- * @return ::SX_ERR_PK_RETRY
- *
- * @see sx_async_sm9_signature_verify_go(), sx_async_sm9_signature_verify_end()
- * for an asynchronous version
- *
- * Truncation or padding should be done by user application
- *
- */
-static inline int sx_sm9_signature_verify(struct sx_pk_cnx *cnx, const sx_const_ecop *h1,
-					  const struct sx_pk_ef_4 *p2,
-					  const struct sx_pk_ef_4 *ppubs,
-					  const struct sx_pk_point *s, const sx_const_ecop *h,
-					  const struct sx_pk_ef_12 *g, struct sx_pk_ef_12 *w)
-{
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_sm9_signature_verify_go(&req, cnx, h1, p2, ppubs, s, h, g);
+	status = sx_pk_wait(req);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	status = sx_pk_wait(&req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
-	sx_async_sm9_signature_verify_end(&req, w);
+	for (int i = 0; i < count; i++) {
+		sx_pk_mem2op(outputs[i], opsz, w->coeffs[i]);
+	}
 
 	return status;
-}
-
-/** Perform SM9 encryption private key generation
- *
- * Start an encryption private key generation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_generate_encryption_private_key_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] p2 p2 in G2
- * @param[in] h h in gf(q)
- * @param[in] ke ke in gf(q)
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm9_generate_encryption_private_key_go(sx_pk_req *req,
-								  struct sx_pk_cnx *cnx,
-								  const struct sx_pk_ef_4 *p2,
-								  const sx_const_ecop *h,
-								  const sx_const_ecop *ke)
-{
-	struct sx_pk_inops_sm9_privencrkeygen inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PRIVENCRKEYGEN);
-
-	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
-
-	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_ecop2mem(p2->x0, inputs.p2x0.addr, opsz);
-	sx_pk_ecop2mem(p2->x1, inputs.p2x1.addr, opsz);
-	sx_pk_ecop2mem(p2->y0, inputs.p2y0.addr, opsz);
-	sx_pk_ecop2mem(p2->y1, inputs.p2y1.addr, opsz);
-	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-	sx_pk_ecop2mem(ke, inputs.ks.addr, opsz);
-	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
-/** Finish asynchronous (non-blocking) SM9 encryption private
- *  key generation.
- *
- * Get the output operands of the SM9 encryption private key
- * generation and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] dex The resulting value
- */
-static inline void sx_async_sm9_generate_encryption_private_key_end(sx_pk_req *req,
-								    struct sx_pk_ef_4 *dex)
-{
-	sx_async_finish_quad(req, dex->x0, dex->x1, dex->y0, dex->y1);
 }
 
 /** Perform SM9 encryption private key generation
@@ -1010,6 +586,7 @@ static inline void sx_async_sm9_generate_encryption_private_key_end(sx_pk_req *r
  * In case t1 is zero, ::SX_ERR_NOT_INVERTIBLE shall
  * be returned.
  *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] p2 p2 in G2
  * @param[in] h h in gf(q)
@@ -1028,102 +605,49 @@ static inline void sx_async_sm9_generate_encryption_private_key_end(sx_pk_req *r
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_sm9_generate_encryption_private_key_go(),
- * sx_async_sm9_generate_encryption_private_key_end() for
- * an asynchronous version
  */
-static inline int sx_sm9_generate_encryption_private_key(struct sx_pk_cnx *cnx,
-							 const struct sx_pk_ef_4 *p2,
-							 const sx_const_ecop *h,
-							 const sx_const_ecop *ke,
-							 struct sx_pk_ef_4 *de)
+static inline int sx_sm9_generate_encryption_private_key(sx_pk_req *req,
+					struct sx_pk_cnx *cnx, const struct sx_pk_ef_4 *p2,
+					const sx_const_ecop *h, const sx_const_ecop *ke,
+					struct sx_pk_ef_4 *de)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_sm9_generate_encryption_private_key_go(&req, cnx, p2, h, ke);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-
-	sx_async_sm9_generate_encryption_private_key_end(&req, de);
-
-	return status;
-}
-
-/** Perform an SM9 send key operation
- *
- * Start a send key operation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm9_send_key_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] p1 p1 in G1
- * @param[in] ppube ppube in G1
- * @param[in] h h in gf(q)
- * @param[in] r r in gf(q)
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm9_send_key_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-					   const struct sx_pk_point *p1,
-					   const struct sx_pk_point *ppube, const sx_const_ecop *h,
-					   const sx_const_ecop *r)
-{
-	struct sx_pk_inops_sm9_sendkey inputs;
+	struct sx_pk_inops_sm9_privencrkeygen inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM9_SENDKEY);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM9_PRIVENCRKEYGEN);
 
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_ecop2mem(p1->x, inputs.p1x0.addr, opsz);
-	sx_pk_ecop2mem(p1->y, inputs.p1y0.addr, opsz);
-	sx_pk_ecop2mem(ppube->x, inputs.ppubex0.addr, opsz);
-	sx_pk_ecop2mem(ppube->y, inputs.ppubey0.addr, opsz);
+	sx_pk_ecop2mem(p2->x0, inputs.p2x0.addr, opsz);
+	sx_pk_ecop2mem(p2->x1, inputs.p2x1.addr, opsz);
+	sx_pk_ecop2mem(p2->y0, inputs.p2y0.addr, opsz);
+	sx_pk_ecop2mem(p2->y1, inputs.p2y1.addr, opsz);
 	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
+	sx_pk_ecop2mem(ke, inputs.ks.addr, opsz);
 	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
-/** Finish asynchronous (non-blocking) SM9 exponentiation.
- *
- * Get the output operands of the SM9 private key signing
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r The resulting value
- */
-static inline void sx_async_sm9_send_key_end(sx_pk_req *req, struct sx_pk_point *r)
-{
-	sx_async_finish_ec_pair(req, r->x, r->y);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2op(outputs[0], opsz, de->x0);
+	sx_pk_mem2op(outputs[1], opsz, de->x1);
+	sx_pk_mem2op(outputs[2], opsz, de->y0);
+	sx_pk_mem2op(outputs[3], opsz, de->y1);
+
+	return status;
 }
 
 /** Perform an SM9 send key operation
@@ -1135,6 +659,7 @@ static inline void sx_async_sm9_send_key_end(sx_pk_req *req, struct sx_pk_point 
  * In case r is zero, ::SX_ERR_NOT_INVERTIBLE shall be
  * returned.
  *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] p1 p1 in G1
  * @param[in] ppube ppube in G1
@@ -1153,87 +678,47 @@ static inline void sx_async_sm9_send_key_end(sx_pk_req *req, struct sx_pk_point 
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_sm9_send_key_go(), sx_async_sm9_send_key_end() for
- * an asynchronous version
  */
-static inline int sx_sm9_send_key(struct sx_pk_cnx *cnx, const struct sx_pk_point *p1,
-				  const struct sx_pk_point *ppube, const sx_const_ecop *h,
-				  const sx_const_ecop *r, struct sx_pk_point *rx)
+static inline int sx_sm9_send_key(sx_pk_req *req, struct sx_pk_cnx *cnx,
+				  const struct sx_pk_point *p1, const struct sx_pk_point *ppube,
+				  const sx_const_ecop *h, const sx_const_ecop *r,
+				  struct sx_pk_point *rx)
 {
+	struct sx_pk_inops_sm9_sendkey inputs;
 	int status;
-	sx_pk_req req;
 
-	status = sx_async_sm9_send_key_go(&req, cnx, p1, ppube, h, r);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM9_SENDKEY);
+
+	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
+
+	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	status = sx_pk_wait(&req);
+	int opsz = sx_pk_get_opsize(req);
 
-	sx_async_sm9_send_key_end(&req, rx);
-
-	return status;
-}
-
-/** Perform an SM9 Reduce H operation
- *
- * Start a reduce h operation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm9_reduce_h_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] h h in gf(q)
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm9_reduce_h_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-					   const sx_const_op *h)
-{
-	struct sx_pk_inops_sm9_reduceh inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM9_REDUCEH);
-
-	int sizes[] = {sx_const_op_size(h), sizeof(sm9_t)};
-
-	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-
-	sx_pk_op2vmem(h, inputs.h.addr);
+	sx_pk_ecop2mem(p1->x, inputs.p1x0.addr, opsz);
+	sx_pk_ecop2mem(p1->y, inputs.p1y0.addr, opsz);
+	sx_pk_ecop2mem(ppube->x, inputs.ppubex0.addr, opsz);
+	sx_pk_ecop2mem(ppube->y, inputs.ppubey0.addr, opsz);
+	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
+	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
 	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
-/** Finish asynchronous (non-blocking) SM9 reduce h operation.
- *
- * Get the output operands of the SM9 private key signing
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] rh h in gf(q)
- */
-static inline void sx_async_sm9_reduce_h_end(sx_pk_req *req, sx_ecop *rh)
-{
-	sx_async_finish_single_ec(req, rh);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2ecop(outputs[0], opsz, r->x);
+	sx_pk_mem2ecop(outputs[1], opsz, r->y);
+
+	return status;
 }
 
 /** Perform an SM9 reduce h operation
@@ -1241,6 +726,7 @@ static inline void sx_async_sm9_reduce_h_end(sx_pk_req *req, sx_ecop *rh)
  * The reduce h operation has the following steps
  *   1. h = (h mod (n-1)) + 1
  *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] h integer
  * @param[out] rh h in gf(q)
@@ -1256,22 +742,38 @@ static inline void sx_async_sm9_reduce_h_end(sx_pk_req *req, sx_ecop *rh)
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_sm9_reduce_h_go(), sx_async_sm9_reduce_h_end() for
- * an asynchronous version
  */
-static inline int sx_sm9_reduce_h(struct sx_pk_cnx *cnx, const sx_const_ecop *h, sx_ecop *rh)
+static inline int sx_sm9_reduce_h(sx_pk_req *req, struct sx_pk_cnx *cnx,
+					const sx_const_ecop *h, sx_ecop *rh)
 {
+	struct sx_pk_inops_sm9_reduceh inputs;
 	int status;
-	sx_pk_req req;
 
-	status = sx_async_sm9_reduce_h_go(&req, cnx, h);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM9_REDUCEH);
+
+	int sizes[] = {sx_const_op_size(h), sizeof(sm9_t)};
+
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	status = sx_pk_wait(&req);
+	sx_pk_op2vmem(h, inputs.h.addr);
+	sx_wrpkmem(inputs.t.addr, sm9_t, sizeof(sm9_t));
 
-	sx_async_sm9_reduce_h_end(&req, rh);
+	sx_pk_run(req);
+
+
+	status = sx_pk_wait(req);
+
+	if (status != SX_OK) {
+		return status;
+	}
+
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+	const int opsz = sx_pk_get_opsize(req);
+
+	sx_pk_mem2ecop(outputs[0], opsz, rh);
 
 	return status;
 }

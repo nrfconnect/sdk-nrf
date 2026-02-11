@@ -158,9 +158,8 @@ exit:
 	return status;
 }
 
-static int cracen_ec_pt_calc_y_sqr(const struct sx_pk_ecurve *curve,
-				   const sx_const_op *x,
-				   sx_op *sqr_y)
+static int cracen_ec_pt_calc_y_sqr(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+				   const sx_const_op *x, sx_op *sqr_y)
 {
 	int sx_status = SX_ERR_CORRUPTION_DETECTED;
 	uint8_t tmp[CRACEN_P256_KEY_SIZE];
@@ -176,7 +175,7 @@ static int cracen_ec_pt_calc_y_sqr(const struct sx_pk_ecurve *curve,
 	/* x^2 */
 	sx_op x_sqr = {.sz = CRACEN_P256_KEY_SIZE, .bytes = tmp};
 
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, x, x, &x_sqr);
+	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, &modulo, x, x, &x_sqr);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -187,8 +186,7 @@ static int cracen_ec_pt_calc_y_sqr(const struct sx_pk_ecurve *curve,
 	sx_op xsqr_a = {.sz = CRACEN_P256_KEY_SIZE, .bytes = tmp_2};
 
 	sx_get_const_op(&x_sqr, &x_sqr_const);
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_add, &modulo, &x_sqr_const, &a, &xsqr_a);
-	sx_status = silex_statuscodes_to_psa(sx_status);
+	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_add, &modulo, &x_sqr_const, &a, &xsqr_a);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -198,7 +196,7 @@ static int cracen_ec_pt_calc_y_sqr(const struct sx_pk_ecurve *curve,
 	sx_op xsqr_a_x = {.sz = CRACEN_P256_KEY_SIZE, .bytes = tmp};
 
 	sx_get_const_op(&xsqr_a, &xsqr_a_const);
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &xsqr_a_const, x, &xsqr_a_x);
+	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, &modulo, &xsqr_a_const, x, &xsqr_a_x);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -208,8 +206,7 @@ static int cracen_ec_pt_calc_y_sqr(const struct sx_pk_ecurve *curve,
 	sx_const_op b = {.sz = sx_pk_curve_opsize(curve), .bytes = sx_pk_curve_param_b(curve)};
 
 	sx_get_const_op(&xsqr_a_x, &xsqr_a_x_const);
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_add, &modulo, &xsqr_a_x_const, &b, sqr_y);
-	sx_status = silex_statuscodes_to_psa(sx_status);
+	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_add, &modulo, &xsqr_a_x_const, &b, sqr_y);
 
 	return sx_status;
 }
@@ -234,6 +231,10 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 	int mask;
 	int found = 0;
 	const char *label = "SAE Hunting and Pecking";
+
+	sx_pk_req req;
+
+	sx_pk_acquire_hw(&req);
 
 	/* hunt and peck */
 	do {
@@ -268,8 +269,9 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 		sx_const_op x_cand_op = {.sz = CRACEN_P256_KEY_SIZE, .bytes = x_cand};
 		sx_op y_sqr_op = {.sz = CRACEN_P256_KEY_SIZE, .bytes = y_sqr};
 
-		sx_status = cracen_ec_pt_calc_y_sqr(op->curve, &x_cand_op, &y_sqr_op);
+		sx_status = cracen_ec_pt_calc_y_sqr(&req, op->curve, &x_cand_op, &y_sqr_op);
 		if (status != SX_OK) {
+			sx_pk_release_req(&req);
 			return silex_statuscodes_to_psa(sx_status);
 		}
 
@@ -284,7 +286,8 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 		const struct sx_pk_cmd_def *cmd = SX_PK_CMD_MOD_SQRT;
 
 		sx_get_const_op(&y_sqr_op, &y_sqr_cop);
-		sx_status = sx_mod_single_op_cmd(cmd, &modulo, &y_sqr_cop, &sqrt_y);
+
+		sx_status = sx_mod_single_op_cmd(&req, cmd, &modulo, &y_sqr_cop, &sqrt_y);
 
 		/** save if !found
 		 *
@@ -305,6 +308,8 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 			return PSA_ERROR_INSUFFICIENT_ENTROPY;
 		}
 	} while (counter <= CRACEN_WPA3_SAE_HNP_LOOP_LIMIT || !found);
+
+	sx_pk_release_req(&req);
 
 	/* y = sqrt(x^3 + ax + b) mod p
 	 * if LSB(save) == LSB(y): PWE = (x, y)
@@ -339,6 +344,8 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_h2e(cracen_wpa3_sae_operation_t *op
 	uint8_t val_reduced[PSA_HASH_MAX_SIZE];
 	uint8_t sub_curve_order[CRACEN_P256_KEY_SIZE];
 	size_t length;
+
+	sx_pk_req req;
 
 	/* val = H(0, addr1 | addr2) */
 	safe_memzero(val, op->hash_length);
@@ -376,11 +383,15 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_h2e(cracen_wpa3_sae_operation_t *op
 	sx_op result = {.sz = CRACEN_P256_KEY_SIZE, .bytes = val_reduced};
 
 	/* Note: Modular reduction for even number */
+
+	sx_pk_acquire_hw(&req);
 	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_EVEN_MOD_REDUCE;
 
-	sx_status = sx_mod_single_op_cmd(cmd, &modulo, &b, &result);
+	sx_status = sx_mod_single_op_cmd(&req, cmd, &modulo, &b, &result);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		sx_pk_release_req(&req);
+		status = silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	/* val_reduced = val_reduced + 1 */
@@ -391,11 +402,14 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_h2e(cracen_wpa3_sae_operation_t *op
 
 	MAKE_SX_CONST_POINT(pt_point, op->password, op->pw_length);
 	MAKE_SX_POINT(pwe_point, op->pwe, CRACEN_P256_POINT_SIZE);
-	status = sx_ecp_ptmult(op->curve, &k, &pt_point, &pwe_point);
-	if (status != PSA_SUCCESS) {
+	sx_status = sx_ecp_ptmult(&req, op->curve, &k, &pt_point, &pwe_point);
+	if (sx_status != SX_OK) {
+		status = silex_statuscodes_to_psa(sx_status);
+		sx_pk_release_req(&req);
 		goto exit;
 	}
 
+	sx_pk_release_req(&req);
 	return PSA_SUCCESS;
 
 exit:
@@ -419,8 +433,8 @@ static psa_status_t cracen_get_rnd_in_ext_range(const uint8_t *lower_limit,
 	return silex_statuscodes_to_psa(sx_status);
 }
 
-static psa_status_t cracen_wpa3_sae_inverse_key_op(const struct sx_pk_ecurve *curve,
-						   uint8_t *key)
+static psa_status_t cracen_wpa3_sae_inverse_key_op(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+							uint8_t *key)
 {
 	int sx_status = SX_ERR_CORRUPTION_DETECTED;
 	uint8_t zeroes[CRACEN_P256_KEY_SIZE] = {0};
@@ -431,7 +445,7 @@ static psa_status_t cracen_wpa3_sae_inverse_key_op(const struct sx_pk_ecurve *cu
 	sx_const_op b = {.sz = CRACEN_P256_KEY_SIZE, .bytes = key};
 	sx_op res = {.sz = CRACEN_P256_KEY_SIZE, .bytes = key};
 
-	sx_status = sx_mod_primitive_cmd(NULL, cmd, &modulo, &a, &b, &res);
+	sx_status = sx_mod_primitive_cmd(req, NULL, cmd, &modulo, &a, &b, &res);
 	return silex_statuscodes_to_psa(sx_status);
 }
 
@@ -457,6 +471,9 @@ static psa_status_t cracen_construct_commit_msg(cracen_wpa3_sae_operation_t *op)
 	uint8_t *commit_element = cracen_wpa3_sae_get_cmt_element(op->commit);
 	int scalar_g;
 
+	sx_pk_req req;
+
+	sx_pk_acquire_hw(&req);
 	do {
 		/**
 		 * Rand and mask values required to be in range (1; r)
@@ -464,13 +481,13 @@ static psa_status_t cracen_construct_commit_msg(cracen_wpa3_sae_operation_t *op)
 		status = cracen_get_rnd_in_ext_range(lower_rand_limit, order,
 						     sizeof(op->rand), op->rand);
 		if (status != PSA_SUCCESS) {
-			return status;
+			goto exit;
 		}
 
 		status = cracen_get_rnd_in_ext_range(lower_rand_limit, order,
 						     sizeof(mask), mask);
 		if (status != PSA_SUCCESS) {
-			return status;
+			goto exit;
 		}
 
 		/* (rand + mask) mod r > 1 */
@@ -480,10 +497,11 @@ static psa_status_t cracen_construct_commit_msg(cracen_wpa3_sae_operation_t *op)
 		sx_op result = {.sz = CRACEN_P256_KEY_SIZE, .bytes = scalar};
 		const struct sx_pk_cmd_def *cmd_add = SX_PK_CMD_MOD_ADD;
 
-		sx_status = sx_mod_primitive_cmd(NULL, cmd_add, &modulo,
+		sx_status = sx_mod_primitive_cmd(&req, NULL, cmd_add, &modulo,
 						 &rand_op, &mask_op, &result);
 		if (sx_status != SX_OK) {
-			return silex_statuscodes_to_psa(sx_status);
+			status = silex_statuscodes_to_psa(sx_status);
+			goto exit;
 		}
 
 		/* ((rand + mask) mod r) > 1 */
@@ -493,7 +511,8 @@ static psa_status_t cracen_construct_commit_msg(cracen_wpa3_sae_operation_t *op)
 	} while ((scalar_g <= 0) && rand_gen_loop_cntr <= CRACEN_WPA3_SAE_MAX_CMT_GEN_ATTEMPTS);
 
 	if (scalar_g <= 0) {
-		return PSA_ERROR_INSUFFICIENT_ENTROPY;
+		status = PSA_ERROR_INSUFFICIENT_ENTROPY;
+		goto exit;
 	}
 
 	/* commit_element calculation: COMMIT-ELEMENT = inverse-op(scalar-op(mask, PWE)) */
@@ -502,16 +521,21 @@ static psa_status_t cracen_construct_commit_msg(cracen_wpa3_sae_operation_t *op)
 
 	MAKE_SX_CONST_POINT(pwe_pt, op->pwe, CRACEN_P256_POINT_SIZE);
 	MAKE_SX_POINT(cmt_element_pt, commit_element, CRACEN_P256_POINT_SIZE);
-	sx_status = sx_ecp_ptmult(op->curve, &mask_scalar, &pwe_pt, &cmt_element_pt);
+	sx_status = sx_ecp_ptmult(&req, op->curve, &mask_scalar, &pwe_pt, &cmt_element_pt);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		status = silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	/** inverse-op(cmt_element_pt)
 	 *  The result of the operation is the second point on a curve so that
 	 *  (x; y) + (x; -y) = "point at infinity"
 	 */
-	status = cracen_wpa3_sae_inverse_key_op(op->curve, commit_element + CRACEN_P256_KEY_SIZE);
+	status = cracen_wpa3_sae_inverse_key_op(&req, op->curve,
+					commit_element + CRACEN_P256_KEY_SIZE);
+
+exit:
+	sx_pk_release_req(&req);
 	return status;
 }
 
@@ -553,7 +577,8 @@ static psa_status_t cracen_check_commit_msg(cracen_wpa3_sae_operation_t *op,
 	return status;
 }
 
-static psa_status_t cracen_wpa3_sae_calc_k(cracen_wpa3_sae_operation_t *op, uint8_t *k)
+static psa_status_t cracen_wpa3_sae_calc_k(sx_pk_req *req, cracen_wpa3_sae_operation_t *op,
+						uint8_t *k)
 {
 	int sx_status;
 	/* Buffers might be reused */
@@ -571,7 +596,8 @@ static psa_status_t cracen_wpa3_sae_calc_k(cracen_wpa3_sae_operation_t *op, uint
 	MAKE_SX_CONST_POINT(pwe_point, op->pwe, CRACEN_P256_POINT_SIZE);
 	MAKE_SX_POINT(ps_pwe, pnt_buf_1, CRACEN_P256_POINT_SIZE);
 
-	sx_status = sx_ecp_ptmult(op->curve, &peer_scalar, &pwe_point, &ps_pwe);
+
+	sx_status = sx_ecp_ptmult(req, op->curve, &peer_scalar, &pwe_point, &ps_pwe);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -583,7 +609,7 @@ static psa_status_t cracen_wpa3_sae_calc_k(cracen_wpa3_sae_operation_t *op, uint
 			    CRACEN_P256_POINT_SIZE);
 	MAKE_SX_POINT(ps_pwe_lmnt, pnt_buf_2, CRACEN_P256_POINT_SIZE);
 	sx_get_const_affine_point(&ps_pwe, &ps_pwe_const);
-	sx_status = sx_ecp_ptadd(op->curve, &ps_pwe_const, &pce, &ps_pwe_lmnt);
+	sx_status = sx_ecp_ptadd(req, op->curve, &ps_pwe_const, &pce, &ps_pwe_lmnt);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -594,7 +620,7 @@ static psa_status_t cracen_wpa3_sae_calc_k(cracen_wpa3_sae_operation_t *op, uint
 
 	MAKE_SX_POINT(K, pnt_buf_1, CRACEN_P256_POINT_SIZE);
 	sx_get_const_affine_point(&ps_pwe_lmnt, &ps_pwe_lmnt_const);
-	sx_status = sx_ecp_ptmult(op->curve, &rand_scalar, &ps_pwe_lmnt_const, &K);
+	sx_status = sx_ecp_ptmult(req, op->curve, &rand_scalar, &ps_pwe_lmnt_const, &K);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -604,7 +630,8 @@ static psa_status_t cracen_wpa3_sae_calc_k(cracen_wpa3_sae_operation_t *op, uint
 	 *  k = K.x;
 	 */
 	memcpy(k, pnt_buf_1, CRACEN_P256_KEY_SIZE);
-	return PSA_SUCCESS;
+
+	return silex_statuscodes_to_psa(sx_status);
 }
 
 static psa_status_t cracen_wpa3_sae_calc_keys(cracen_wpa3_sae_operation_t *op)
@@ -619,6 +646,8 @@ static psa_status_t cracen_wpa3_sae_calc_keys(cracen_wpa3_sae_operation_t *op)
 	int sx_status;
 	const char *label = "SAE KCK and PMK";
 
+	sx_pk_req req;
+
 	/* key already set */
 	if (op->keys_set) {
 		return PSA_SUCCESS;
@@ -630,8 +659,10 @@ static psa_status_t cracen_wpa3_sae_calc_keys(cracen_wpa3_sae_operation_t *op)
 	 *	 validation), yet now it is done similar to the Oberon implementation
 	 *	 so as to avoid possible issues with failing tests.
 	 */
-	status = cracen_wpa3_sae_calc_k(op, k);
+	sx_pk_acquire_hw(&req);
+	status = cracen_wpa3_sae_calc_k(&req, op, k);
 	if (status != PSA_SUCCESS) {
+		sx_pk_release_req(&req);
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -672,11 +703,13 @@ static psa_status_t cracen_wpa3_sae_calc_keys(cracen_wpa3_sae_operation_t *op)
 	sx_op result = {.sz = CRACEN_P256_KEY_SIZE, .bytes = ctx};
 	const struct sx_pk_cmd_def *cmd_add = SX_PK_CMD_MOD_ADD;
 
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_add, &modulo, &cmt_scalar,
+	sx_status = sx_mod_primitive_cmd(&req, NULL, cmd_add, &modulo, &cmt_scalar,
 					 &peer_cmt_scalar, &result);
 	if (sx_status != SX_OK) {
+		sx_pk_release_req(&req);
 		return silex_statuscodes_to_psa(sx_status);
 	}
+	sx_pk_release_req(&req);
 
 	/** KCK | PMK = KDF-Hash-Length(keyseed, "SAE KCK and PMK", context)
 	 *

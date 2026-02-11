@@ -80,7 +80,7 @@ psa_status_t cracen_jpake_set_password_key(cracen_jpake_operation_t *operation,
 
 	/* The nistp256 curve order (n) is prime so we use the ODD variant of the reduce command. */
 	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_ODD_MOD_REDUCE;
-	int sx_status = sx_sync_mod_single_op_cmd(&req, cmd, &modulo, &b, &result);
+	int sx_status = sx_mod_single_op_cmd(&req, cmd, &modulo, &b, &result);
 
 	if (sx_status == SX_OK) {
 		if (constant_memcmp_is_zero(operation->secret, sizeof(operation->secret))) {
@@ -336,7 +336,7 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 		sx_const_ecop s = {.bytes = operation->secret, .sz = CRACEN_P256_KEY_SIZE};
 		sx_ecop rx2s = {.bytes = operation->x[2], .sz = CRACEN_P256_KEY_SIZE};
 
-		sx_status = sx_sync_ecjpake_gen_step_2(&req, operation->curve, &G4, &G3,
+		sx_status = sx_ecjpake_gen_step_2(&req, operation->curve, &G4, &G3,
 						  &G1, &x2s, &s, &a, &rx2s, &ga);
 		if (sx_status != SX_OK) {
 			status = silex_statuscodes_to_psa(sx_status);
@@ -373,7 +373,7 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 	sx_const_ecop sx_h = {.bytes = h, .sz = PSA_HASH_LENGTH(PSA_ALG_SHA_256)};
 	sx_ecop sx_r = {.bytes = operation->r, .sz = sizeof(operation->r)};
 
-	sx_status = sx_sync_ecjpake_generate_zkp(&req, operation->curve, &sx_v, &sx_x,
+	sx_status = sx_ecjpake_generate_zkp(&req, operation->curve, &sx_v, &sx_x,
 							&sx_h, &sx_r);
 
 	status = silex_statuscodes_to_psa(sx_status);
@@ -511,7 +511,7 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 		MAKE_SX_CONST_POINT(G3, operation->P[0], CRACEN_P256_POINT_SIZE);
 		MAKE_SX_POINT(g, generator, CRACEN_P256_POINT_SIZE);
 
-		int sx_status = sx_sync_ecjpake_3pt_add(&req, operation->curve, &G1, &G2,
+		int sx_status = sx_ecjpake_3pt_add(&req, operation->curve, &G1, &G2,
 									&G3, &g);
 
 		if (sx_status != SX_OK) {
@@ -539,7 +539,7 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 	sx_const_ecop sx_r = {.bytes = operation->r, .sz = sizeof(operation->r)};
 	sx_const_ecop sx_h = {.bytes = h, .sz = h_len};
 
-	int sx_status = sx_sync_ecjpake_verify_zkp(&req, operation->curve, &sx_v, &sx_x, &sx_r,
+	int sx_status = sx_ecjpake_verify_zkp(&req, operation->curve, &sx_v, &sx_x, &sx_r,
 						  &sx_h, idx == 2 ? &sx_g : SX_PT_CURVE_GENERATOR);
 
 	status = silex_statuscodes_to_psa(sx_status);
@@ -590,7 +590,8 @@ psa_status_t cracen_jpake_get_shared_key(cracen_jpake_operation_t *operation,
 	MAKE_SX_POINT(t, output + 1, CRACEN_P256_POINT_SIZE);
 
 	sx_pk_acquire_hw(&req);
-	sx_status = sx_sync_ecjpake_gen_sess_key(&req, operation->curve, &x4, &b, &x2, &x2s, &t);
+
+	sx_status = sx_ecjpake_gen_sess_key(&req, operation->curve, &x4, &b, &x2, &x2s, &t);
 
 	if (sx_status != SX_OK) {
 		sx_pk_release_req(&req);

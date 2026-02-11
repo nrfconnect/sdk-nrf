@@ -46,6 +46,7 @@ struct sx_x448_op {
  * The operands are decoded and clamped as defined in specifications
  * for X25519 and X448.
  *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] k Scalar
  * @param[in] pt Point on the X25519 curve
  * @param[out] r Multiplication result of k and pt
@@ -60,49 +61,9 @@ struct sx_x448_op {
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_x25519_ptmult_go() and sx_async_x25519_ptmult_end()
- * for an asynchronous version
  */
-int sx_x25519_ptmult(const struct sx_x25519_op *k, const struct sx_x25519_op *pt,
-		     struct sx_x25519_op *r);
-
-/** Asynchronous Montgomery point multiplication (X25519)
- *
- * Start a montgomery point multiplication on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_x25519_ptmult_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] k Scalar
- * @param[in] pt Point on the X25519 curve
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- *
- * @see sx_async_x25519_ptmult_end() and sx_x25519_ptmult()
- */
-int sx_async_x25519_ptmult_go(sx_pk_req *req, const struct sx_x25519_op *k,
-			      const struct sx_x25519_op *pt);
-
-/** Collect the result of asynchronous Montgomery point multiplication (X25519)
- *
- * Get the output operand of the Montgomery point multiplication
- * and release accelerator.
- *
- * @remark The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r Multiplication result of k and pt
- *
- * @see sx_async_x25519_ptmult_go() and sx_async_x25519_ptmult()
- */
-void sx_async_x25519_ptmult_end(sx_pk_req *req, struct sx_x25519_op *r);
+int sx_x25519_ptmult(sx_pk_req *req, const struct sx_x25519_op *k,
+		const struct sx_x25519_op *pt, struct sx_x25519_op *r);
 
 /** Montgomery point multiplication (X448)
  *
@@ -111,6 +72,7 @@ void sx_async_x25519_ptmult_end(sx_pk_req *req, struct sx_x25519_op *r);
  * The operands are decoded and clamped as defined in specifications
  * for X25519 and X448.
  *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] k Scalar
  * @param[in] pt Point on the X448 curve
  * @param[out] r Multiplication result of k and pt
@@ -125,50 +87,9 @@ void sx_async_x25519_ptmult_end(sx_pk_req *req, struct sx_x25519_op *r);
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_x448_ptmult_go() and sx_async_x448_ptmult_end()
- * for an asynchronous version
  */
-int sx_x448_ptmult(const struct sx_x448_op *k, const struct sx_x448_op *pt, struct sx_x448_op *r);
-
-/** Asynchronous Montgomery point multiplication (X448)
- *
- * Start a montgomery point multiplication on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_x448_ptmult_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] k Scalar
- * @param[in] pt Point on the X448 curve
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- *
- * @see sx_async_x448_ptmult_end() and sx_x448_ptmult()
- */
-int sx_async_x448_ptmult_go(sx_pk_req *req, const struct sx_x448_op *k,
-			    const struct sx_x448_op *pt);
-
-/** Collect the result of asynchronous Montgomery point multiplication (X448)
- *
- * Get the output operand of the Montgomery point multiplication
- * and release the reserved resources.
- *
- * @remark The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r Multiplication result of k and pt
- *
- * @see sx_async_x448_ptmult_go() and sx_async_x448_ptmult()
- */
-void sx_async_x448_ptmult_end(sx_pk_req *req, struct sx_x448_op *r);
-
-/**  @} */
+int sx_x448_ptmult(sx_pk_req *req, const struct sx_x448_op *k,
+		const struct sx_x448_op *pt, struct sx_x448_op *r);
 
 #ifdef __cplusplus
 }

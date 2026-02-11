@@ -46,7 +46,7 @@ struct sx_pk_ecurve;
  * @{
  */
 
-/** Curve generator point for sx_ecp_ptmult() or sx_async_ecp_mult_go() */
+/** Curve generator point for sx_ecp_ptmult()*/
 #define SX_PTMULT_CURVE_GENERATOR NULL
 
 /**
@@ -54,77 +54,6 @@ struct sx_pk_ecurve;
  *
  * @{
  */
-
-/** Asynchronous ECDSA signature generation
- *
- * Start an ECDSA signature generation on the accelerator
- * and return immediately.
- *
- * This operation can be protected with blinding counter measures.
- * When used with counter measures, the operation can randomly
- * fail with SX_ERR_NOT_INVERTIBLE. If it happens, the operation
- * should be retried with a new blinding factor. See the user guide
- * 'countermeasures' section for more information.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_ecdsa_generate_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve on which to perform ECDSA signature
- * @param[in] d Private key
- * @param[in] k Non-zero random value smaller than the curve order
- * @param[in] h Formatted hash digest of message to be signed.
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_ecdsa_generate_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-					     const sx_const_op *d, const sx_const_op *k,
-					     const sx_const_op *h)
-{
-	struct sx_pk_inops_ecdsa_generate inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECDSA_GEN);
-
-	/* convert and transfer operands */
-	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
-	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
-	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
-/** Finish asynchronous (non-blocking) ECDSA generation.
- *
- * Get the output operands of the ECDSA signature generation
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r First part of signature
- * @param[out] s Second part of signature
- */
-static inline void sx_async_ecdsa_generate_end(sx_pk_req *req, sx_ecop *r, sx_ecop *s)
-{
-	sx_async_finish_ec_pair(req, r, s);
-}
 
 /** Generate an ECDSA signature on an elliptic curve
  *
@@ -138,6 +67,7 @@ static inline void sx_async_ecdsa_generate_end(sx_pk_req *req, sx_ecop *r, sx_ec
  *   7. signature is the r and s
  *
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve on which to perform ECDSA signature
  * @param[in] d Private key
  * @param[in] k Random value
@@ -159,24 +89,33 @@ static inline void sx_async_ecdsa_generate_end(sx_pk_req *req, sx_ecop *r, sx_ec
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_ecdsa_generate_go(), sx_async_ecdsa_generate_end() for
- * an asynchronous version
  */
-static inline int sx_ecdsa_generate(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
-				    const sx_const_ecop *k, const sx_const_ecop *h, sx_ecop *r,
-				    sx_ecop *s)
+static inline int sx_ecdsa_generate(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+					const sx_const_ecop *d, const sx_const_ecop *k,
+					const sx_const_ecop *h, sx_ecop *r, sx_ecop *s)
 {
+	struct sx_pk_inops_ecdsa_generate inputs;
 	int status;
-	sx_pk_req req;
+
+	sx_pk_set_cmd(req, SX_PK_CMD_ECDSA_GEN);
+
+	int opsz = sx_pk_get_opsize(req);
 
 	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
-		status = sx_async_ecdsa_generate_go(&req, curve, d, k, h);
+		/* convert and transfer operands */
+		status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 		if (status != SX_OK) {
 			return status;
 		}
-		status = sx_pk_wait(&req);
+
+		sx_pk_ecop2mem(d, inputs.d.addr, opsz);
+		sx_pk_ecop2mem(k, inputs.k.addr, opsz);
+		sx_pk_ecop2mem(h, inputs.h.addr, opsz);
+
+		sx_pk_run(req);
+
+		status = sx_pk_wait(req);
 		if (status == SX_ERR_NOT_INVERTIBLE) {
-			sx_pk_release_req(&req);
 		} else {
 			break;
 		}
@@ -184,59 +123,13 @@ static inline int sx_ecdsa_generate(const struct sx_pk_ecurve *curve, const sx_c
 	if (status == SX_ERR_NOT_INVERTIBLE) {
 		return status;
 	}
-	sx_async_ecdsa_generate_end(&req, r, s);
+
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2ecop(outputs[0], opsz, r);
+	sx_pk_mem2ecop(outputs[1], opsz, s);
 
 	return status;
-}
-
-/** Asynchronous (non-blocking) ECDSA verification.
- *
- * Start an ECDSA signature verification on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_pk_release_req()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve on which to perform ECDSA verification
- * @param[in] q The public key Q
- * @param[in] r First part of signature to verify
- * @param[in] s Second part of signature to verify
- * @param[in] h Digest of message to be signed
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_ecdsa_verify_go(sx_pk_req *req,
-					   const struct sx_pk_ecurve *curve,
-					   const sx_pk_const_affine_point *q,
-					   const sx_const_ecop *r, const sx_const_ecop *s,
-					   const sx_const_ecop *h)
-{
-	struct sx_pk_inops_ecdsa_verify inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECDSA_VER);
-
-	/* convert and transfer operands */
-	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
-	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
-	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
-	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-
-	sx_pk_run(req);
-
-	return SX_OK;
 }
 
 /** Verify ECDSA signature on an elliptic curve
@@ -253,7 +146,7 @@ static inline int sx_async_ecdsa_verify_go(sx_pk_req *req,
  *   9.  v = x1 mod n
  *   10. Accept signature if and only if v == r
  *
- *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve on which to perform ECDSA verification
  * @param[in] q The public key Q
  * @param[in] r First part of signature to verify
@@ -273,151 +166,31 @@ static inline int sx_async_ecdsa_verify_go(sx_pk_req *req,
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_ecdsa_verify_go() for an asynchronous version
  */
-static inline int sx_ecdsa_verify(const struct sx_pk_ecurve *curve,
+static inline int sx_ecdsa_verify(sx_pk_req *req, const struct sx_pk_ecurve *curve,
 				  const sx_pk_const_affine_point *q, const sx_const_ecop *r,
 				  const sx_const_ecop *s, const sx_const_ecop *h)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_ecdsa_verify_go(&req, curve, q, r, s, h);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-	sx_pk_release_req(&req);
-
-	return status;
-}
-
-/** @} */
-
-/**
- * @addtogroup SX_PK_SXOPS_ECOPS
- *
- * @{
- */
-
-/** Asynchronous EC point multiplication.
- *
- * Starts an EC point multiplication on the accelerator
- * and return immediately.
- *
- * This operation can be protected with blinding counter measures.
- * When used with counter measures, the operation can randomly
- * fail with SX_ERR_NOT_INVERTIBLE. If it happens, the operation
- * should be retried with a new blinding factor. See the user guide
- * 'countermeasures' section for more information.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_ecp_mult_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve used to perform point multiplication
- * @param[in] k Scalar that multiplies point P. It must be non zero and
- *             smaller than the curve order.
- * @param[in] p Point p
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_ecp_mult_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-				       const sx_const_ecop *k, const sx_pk_const_affine_point *p)
-{
-	struct sx_pk_inops_ecp_mult inputs;
+	struct sx_pk_inops_ecdsa_verify inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PTMUL);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECDSA_VER);
 
+	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
-	if (p == SX_PTMULT_CURVE_GENERATOR) {
-		sx_pk_write_curve_gen(req, curve, inputs.px, inputs.py);
-	} else {
-		sx_pk_affpt2mem(p, inputs.px.addr, inputs.py.addr, opsz);
-	}
+	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
+	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
+	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
+	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
-
-/** Finish asynchronous EC point multiplication.
- *
- * Get the output operands of the EC point multiplication
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r Affine point R
- */
-static inline void sx_async_ecp_mult_end(sx_pk_req *req, sx_pk_affine_point *r)
-{
-	sx_async_finish_affine_point(req, r);
-}
-
-/** Compute point multiplication on an elliptic curve
- *
- *  (Rx, Ry) = k * (Px, Py)
- *
- * @param[in] curve Elliptic curve used to perform point multiplication
- * @param[in] k Scalar that multiplies point P
- * @param[in] p Affine point P
- * @param[out] r Affine point R
- *
- * @return ::SX_OK
- * @return ::SX_ERR_NOT_INVERTIBLE
- * @return ::SX_ERR_OUT_OF_RANGE
- * @return ::SX_ERR_POINT_NOT_ON_CURVE
- * @return ::SX_ERR_INVALID_PARAM
- * @return ::SX_ERR_UNKNOWN_ERROR
- * @return ::SX_ERR_BUSY
- * @return ::SX_ERR_NOT_IMPLEMENTED
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PLATFORM_ERROR
- * @return ::SX_ERR_EXPIRED
- * @return ::SX_ERR_PK_RETRY
- *
- * @see sx_async_ecp_mult_go(), sx_async_ecp_mult_end()
- * for an asynchronous versions
- */
-static inline int sx_ecp_ptmult(const struct sx_pk_ecurve *curve, const sx_const_ecop *k,
-				const sx_pk_const_affine_point *p, sx_pk_affine_point *r)
-{
-	int status;
-	sx_pk_req req;
-
-	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
-		status = sx_async_ecp_mult_go(&req, curve, k, p);
-		if (status != SX_OK) {
-			return status;
-		}
-		status = sx_pk_wait(&req);
-		if (status == SX_ERR_NOT_INVERTIBLE) {
-			sx_pk_release_req(&req);
-		} else {
-			break;
-		}
-	}
-	if (status == SX_ERR_NOT_INVERTIBLE) {
-		return status;
-	}
-	sx_async_ecp_mult_end(&req, r);
+	status = sx_pk_wait(req);
 
 	return status;
 }
@@ -426,7 +199,7 @@ static inline int sx_ecp_ptmult(const struct sx_pk_ecurve *curve, const sx_const
  *
  *  (Rx, Ry) = k * (Px, Py)
  *
- * @param[in,out] pkreq Acquired acceleration request for this operation
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve used to perform point multiplication
  * @param[in] k Scalar that multiplies point P
  * @param[in] p Affine point P
@@ -445,7 +218,7 @@ static inline int sx_ecp_ptmult(const struct sx_pk_ecurve *curve, const sx_const
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_sync_ecp_ptmult(sx_pk_req *req,
+static inline int sx_ecp_ptmult(sx_pk_req *req,
 				const struct sx_pk_ecurve *curve, const sx_const_ecop *k,
 				const sx_pk_const_affine_point *p, sx_pk_affine_point *r)
 {
@@ -484,68 +257,11 @@ static inline int sx_sync_ecp_ptmult(sx_pk_req *req,
 	return status;
 }
 
-/** Asynchronous EC point doubling.
- *
- * Starts an EC point doubling on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_ecp_double_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve used to perform point doubling
- * @param[in] p Affine point P
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_ecp_double_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-					 const sx_pk_const_affine_point *p)
-{
-	struct sx_pk_inops_ecp_double inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PT_DOUBLE);
-
-	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_affpt2mem(p, inputs.px.addr, inputs.py.addr, opsz);
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
-/** Finish asynchronous EC point doubling.
- *
- * Get the output operands of the EC point doubling
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r Affine resulting point R
- */
-static inline void sx_async_ecp_double_end(sx_pk_req *req, sx_pk_affine_point *r)
-{
-	sx_async_finish_affine_point(req, r);
-}
-
 /** Compute point doubling on an elliptic curve
  *
  *  (Rx, Ry) = 2 * (Px, Py)
  *
- *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve used to perform point doubling
  * @param[in] p Affine point P
  * @param[out] r Affine resulting point R
@@ -563,55 +279,17 @@ static inline void sx_async_ecp_double_end(sx_pk_req *req, sx_pk_affine_point *r
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_ecp_double_go(), sx_async_ecp_double_end()
- * for an asynchronous verion
  */
-static inline int sx_ecp_double(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *p,
-				sx_pk_affine_point *r)
+static inline int sx_ecp_double(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+					const sx_pk_const_affine_point *p, sx_pk_affine_point *r)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_ecp_double_go(&req, curve, p);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-	sx_async_ecp_double_end(&req, r);
-
-	return status;
-}
-
-/** Asynchronous (non-blocking) EC point on curve check.
- *
- * Starts an EC point on curve check on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_pk_release_req()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve used to validate point
- * @param[in] p Point P
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_ec_ptoncurve_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-					   const sx_pk_const_affine_point *p)
-{
-	struct sx_pk_inops_ec_ptoncurve inputs;
+	struct sx_pk_inops_ecp_double inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PTONCURVE);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PT_DOUBLE);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 	int opsz = sx_pk_get_opsize(req);
@@ -620,7 +298,16 @@ static inline int sx_async_ec_ptoncurve_go(sx_pk_req *req, const struct sx_pk_ec
 
 	sx_pk_run(req);
 
-	return SX_OK;
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, r);
+
+	return status;
 }
 
 /** Check if the given point is on the given elliptic curve
@@ -636,6 +323,7 @@ static inline int sx_async_ec_ptoncurve_go(sx_pk_req *req, const struct sx_pk_ec
  *  3. py^2 + px * py ==  px^3 + a * px^2 + b mod q
  *
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve used to validate point
  * @param[in] p Affine point P
  *
@@ -652,80 +340,25 @@ static inline int sx_async_ec_ptoncurve_go(sx_pk_req *req, const struct sx_pk_ec
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_ec_ptoncurve(const struct sx_pk_ecurve *curve,
+static inline int sx_ec_ptoncurve(sx_pk_req *req, const struct sx_pk_ecurve *curve,
 				  const sx_pk_const_affine_point *p)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_ec_ptoncurve_go(&req, curve, p);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-	sx_pk_release_req(&req);
-
-	return status;
-}
-
-/** Asynchronous (non-blocking) EC point decompression.
- *
- * Starts an EC point decompression on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_ec_pt_decompression_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve used to validate point
- * @param[in] x x-coordinate of point to decompress
- * @param[in] y_lsb Least Significant Bit of y-coordinate
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_ec_pt_decompression_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-						  const sx_const_ecop *x, const int y_lsb)
-{
-	struct sx_pk_inops_ec_pt_decompression inputs;
+	struct sx_pk_inops_ec_ptoncurve inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PT_DECOMP);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PTONCURVE);
 
-	status = sx_pk_list_ecc_inslots(req, curve, ((y_lsb & 1) << 29),
-					(struct sx_pk_slot *)&inputs);
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_ecop2mem(x, inputs.x.addr, opsz);
+	sx_pk_affpt2mem(p, inputs.px.addr, inputs.py.addr, opsz);
 
 	sx_pk_run(req);
-
-	return SX_OK;
-}
-
-/** Finish asynchronous (non-blocking) EC point decompression.
- *
- * Get the output operand of the EC point decompression
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] y y-coordinate of decompressed point
- */
-static inline void sx_async_ec_pt_decompression_end(sx_pk_req *req, sx_ecop *y)
-{
-	sx_async_finish_single_ec(req, y);
+	status = sx_pk_wait(req);
+	return status;
 }
 
 /** ECC point decompression
@@ -739,6 +372,7 @@ static inline void sx_async_ec_pt_decompression_end(sx_pk_req *req, sx_ecop *y)
  *
  * @remark: Point decompression is supported for GF(p) only
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve used to validate point
  * @param[in] x x-coordinate of point to decompress
  * @param[in] y_lsb Least Significant Bit of y-coordinate
@@ -755,19 +389,33 @@ static inline void sx_async_ec_pt_decompression_end(sx_pk_req *req, sx_ecop *y)
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_ec_pt_decompression(const struct sx_pk_ecurve *curve, const sx_const_ecop *x,
-					 const int y_lsb, sx_ecop *y)
+static inline int sx_ec_pt_decompression(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+					 const sx_const_ecop *x, const int y_lsb, sx_ecop *y)
 {
+	struct sx_pk_inops_ec_pt_decompression inputs;
 	int status;
-	sx_pk_req req;
 
-	status = sx_async_ec_pt_decompression_go(&req, curve, x, y_lsb);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PT_DECOMP);
+
+	status = sx_pk_list_ecc_inslots(req, curve, ((y_lsb & 1) << 29),
+					(struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		return status;
+	}
+	int opsz = sx_pk_get_opsize(req);
+
+	sx_pk_ecop2mem(x, inputs.x.addr, opsz);
+
+	sx_pk_run(req);
+
+	status = sx_pk_wait(req);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	status = sx_pk_wait(&req);
-	sx_async_ec_pt_decompression_end(&req, y);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2ecop(outputs[0], opsz, y);
 
 	return status;
 }
@@ -780,78 +428,12 @@ static inline int sx_ec_pt_decompression(const struct sx_pk_ecurve *curve, const
  * @{
  */
 
-/** Asynchronous (non-blocking) EC-KCDSA pubkey generation.
- *
- * Start an EC-KCDSA pubkey generation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_eckcdsa_pubkey_generate_end()
- *
- * This operation can be protected with blinding counter measures.
- * When used with counter measures, the operation can randomly
- * fail with SX_ERR_NOT_INVERTIBLE. If it happens, the operation
- * should be retried with a new blinding factor. See the user guide
- * 'countermeasures' section for more information.
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve used to perform EC-KCDSA public
- * key generation
- * @param[in] d Private key (non zero and smaller than the curve order)
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_eckcdsa_pubkey_generate_go(sx_pk_req *req,
-						      const struct sx_pk_ecurve *curve,
-						      const sx_const_ecop *d)
-{
-	struct sx_pk_inops_eckcdsa_generate inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECKCDSA_PUBKEY_GEN);
-
-	/* convert and transfer operands */
-	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
-/** Finish asynchronous (non-blocking) EC-KCDSA pubkey generation.
- *
- * Get the output operands of the EC-KCDSA pubkey generation
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] q The Public key Q
- */
-static inline void sx_async_eckcdsa_pubkey_generate_end(sx_pk_req *req, sx_pk_affine_point *q)
-{
-	sx_async_finish_affine_point(req, q);
-}
-
 /** Generate an EC-KCDSA public key
  *
  *    Compute: Q = (1 / d) * G
  * If d & n are not coprime then SX_ERR_NOT_INVERTIBLE failure
  *
- *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve used to perform EC-KCDSA public
  * key generation
  * @param[in] d Private key
@@ -870,23 +452,29 @@ static inline void sx_async_eckcdsa_pubkey_generate_end(sx_pk_req *req, sx_pk_af
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_eckcdsa_pubkey_generate_go(),
- * sx_async_eckcdsa_pubkey_generate_end() for an asynchronous verion
  */
-static inline int sx_eckcdsa_pubkey_generate(const struct sx_pk_ecurve *curve,
+static inline int sx_eckcdsa_pubkey_generate(sx_pk_req *req, const struct sx_pk_ecurve *curve,
 					     const sx_const_ecop *d, sx_pk_affine_point *q)
 {
+	struct sx_pk_inops_eckcdsa_generate inputs;
 	int status;
-	sx_pk_req req;
+
+	sx_pk_set_cmd(req, SX_PK_CMD_ECKCDSA_PUBKEY_GEN);
+
+	int opsz = sx_pk_get_opsize(req);
 
 	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
-		status = sx_async_eckcdsa_pubkey_generate_go(&req, curve, d);
+		/* convert and transfer operands */
+		status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 		if (status != SX_OK) {
 			return status;
 		}
-		status = sx_pk_wait(&req);
+
+		sx_pk_ecop2mem(d, inputs.d.addr, opsz);
+
+		sx_pk_run(req);
+		status = sx_pk_wait(req);
 		if (status == SX_ERR_NOT_INVERTIBLE) {
-			sx_pk_release_req(&req);
 		} else {
 			break;
 		}
@@ -894,76 +482,12 @@ static inline int sx_eckcdsa_pubkey_generate(const struct sx_pk_ecurve *curve,
 	if (status == SX_ERR_NOT_INVERTIBLE) {
 		return status;
 	}
-	sx_async_eckcdsa_pubkey_generate_end(&req, q);
+
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, q);
 
 	return status;
-}
-
-/** Asynchronous (non-blocking) EC-KCDSA 2nd part signature generation.
- *
- * Start an EC-KCDSA signature generation operation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_eckcdsa_sign_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve used to perform EC-KCDSA signature generation
- * @param[in] d Private key
- * @param[in] h Digest of z concatenated to M (z || M). z is the hash of the
- * certification data. M is the message.
- * @param[in] k Random value. Value should not be bigger than n-parameter of
- * curve.
- * @param[in] r First part of the signature
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_eckcdsa_sign_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-					   const sx_const_ecop *d, const sx_const_ecop *k,
-					   const sx_const_ecop *h, const sx_const_ecop *r)
-{
-	struct sx_pk_inops_eckcdsa_sign inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECKCDSA_SIGN);
-
-	/* convert and transfer operands */
-	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
-	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
-	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
-	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
-/** Finish asynchronous (non-blocking) EC-KCDSA signature generation.
- *
- * Get the output operands of the EC-KCDSA signature generation
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] s Second part of the signature
- */
-static inline void sx_async_eckcdsa_sign_end(sx_pk_req *req, sx_ecop *s)
-{
-	sx_async_finish_single_ec(req, s);
 }
 
 /** Generate the 2nd part of an EC-KCDSA signature on an elliptic curve
@@ -973,7 +497,7 @@ static inline void sx_async_eckcdsa_sign_end(sx_pk_req *req, sx_ecop *s)
  *   2. s = d*(k-e) mod n
  *   3. if s == 0 then report SX_ERR_INVALID_SIGNATURE failure
  *
- *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve used to perform EC-KCDSA signature generation
  * @param[in] d Private key
  * @param[in] h Digest of z concatenated to M (z || M). z is the hash of the
@@ -997,92 +521,40 @@ static inline void sx_async_eckcdsa_sign_end(sx_pk_req *req, sx_ecop *s)
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_eckcdsa_sign_go(), sx_async_eckcdsa_sign_end()
- * for an asynchronous verion
  */
-static inline int sx_eckcdsa_sign(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
-				  const sx_const_ecop *k, const sx_const_ecop *h,
-				  const sx_const_ecop *r, sx_ecop *s)
+static inline int sx_eckcdsa_sign(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+				  const sx_const_ecop *d, const sx_const_ecop *k,
+				  const sx_const_ecop *h, const sx_const_ecop *r, sx_ecop *s)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_eckcdsa_sign_go(&req, curve, d, k, h, r);
-	if (status != SX_OK) {
-		return status;
-	}
-	status = sx_pk_wait(&req);
-	sx_async_eckcdsa_sign_end(&req, s);
-
-	return status;
-}
-
-/** Asynchronous EC-KCDSA verification.
- *
- * Start an EC-KCDSA verification on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_eckcdsa_verify_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve to perform EC-KCDSA verification
- * @param[in] q The public key Q
- * @param[in] r First part of signature
- * @param[in] s Second part of signature
- * @param[in] h Digest of z concatenated to M (z || M). z is the hash of the
- * certification data. M is the message.
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_eckcdsa_verify_go(sx_pk_req *req,
-					     const struct sx_pk_ecurve *curve,
-					     const sx_pk_const_affine_point *q,
-					     const sx_const_ecop *r, const sx_const_ecop *s,
-					     const sx_const_ecop *h)
-{
-	struct sx_pk_inops_ecdsa_verify inputs;
+	struct sx_pk_inops_eckcdsa_sign inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECKCDSA_VER);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECKCDSA_SIGN);
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
+	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
+	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
 	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
-	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
 	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
-/** Finish asynchronous (non-blocking) EC-KCDSA verification.
- *
- * Get the output operands of the EC-KCDSA verification
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] w Resulting Point W
- */
-static inline void sx_async_eckcdsa_verify_end(sx_pk_req *req, sx_pk_affine_point *w)
-{
-	sx_async_finish_affine_point(req, w);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2ecop(outputs[0], opsz, s);
+
+	return status;
 }
 
 /** Verify EC-KCDSA signature on an elliptic curve
@@ -1098,7 +570,7 @@ static inline void sx_async_eckcdsa_verify_end(sx_pk_req *req, sx_pk_affine_poin
  *  Accept the signature only if:
  *     hash(W) == r
  *
- *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve to perform EC-KCDSA verification
  * @param[in] q The public key Q
  * @param[in] r First part of signature
@@ -1120,137 +592,39 @@ static inline void sx_async_eckcdsa_verify_end(sx_pk_req *req, sx_pk_affine_poin
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_eckcdsa_verify_go(), sx_async_eckcdsa_verify_end()
- * for an asynchronous version
  */
-static inline int sx_eckcdsa_verify(const struct sx_pk_ecurve *curve,
+static inline int sx_eckcdsa_verify(sx_pk_req *req, const struct sx_pk_ecurve *curve,
 				    const sx_pk_const_affine_point *q, const sx_const_ecop *r,
 				    const sx_const_ecop *s, const sx_const_ecop *h,
 				    sx_pk_affine_point *w)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_eckcdsa_verify_go(&req, curve, q, r, s, h);
-	if (status != SX_OK) {
-		return status;
-	}
-	status = sx_pk_wait(&req);
-	sx_async_eckcdsa_verify_end(&req, w);
-
-	return status;
-}
-
-/** @} */
-
-/**  @addtogroup SX_PK_SXOPS_ECOPS
- *
- * @{
- */
-
-/** Asynchronous (non-blocking) EC point addition.
- *
- * Start an EC point addition on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_ecp_add_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve to perform EC point addition
- * @param[in] p1 First point
- * @param[in] p2 Second point
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_ecp_add_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-				      const sx_pk_const_affine_point *p1,
-				      const sx_pk_const_affine_point *p2)
-{
-	struct sx_pk_inops_ecp_add inputs;
+	struct sx_pk_inops_ecdsa_verify inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PT_ADD);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECKCDSA_VER);
 
+	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_affpt2mem(p1, inputs.p1x.addr, inputs.p1y.addr, opsz);
-	sx_pk_affpt2mem(p2, inputs.p2x.addr, inputs.p2y.addr, opsz);
+	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
+	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
+	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
+	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
-
-/** Finish asynchronous (non-blocking) EC point addition.
- *
- * Get the output operands of the EC point addition
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r The resulting point R
- */
-static inline void sx_async_ecp_add_end(sx_pk_req *req, sx_pk_affine_point *r)
-{
-	sx_async_finish_affine_point(req, r);
-}
-
-/** Compute point addition on an elliptic curve
- *
- *  (Rx, Ry) = P1 + P2
- *
- * If P1 == P2 returns an SX_ERR_NOT_INVERTIBLE error
- *
- * @remark Use point doubling operation for the addition of equal points
- *
- *
- * @param[in] curve Elliptic curve to do point addition
- * @param[in] p1 The first point
- * @param[in] p2 The second point
- * @param[out] r The resulting point R
- *
- * @return ::SX_OK
- * @return ::SX_ERR_NOT_INVERTIBLE
- * @return ::SX_ERR_OUT_OF_RANGE
- * @return ::SX_ERR_POINT_NOT_ON_CURVE
- * @return ::SX_ERR_INVALID_PARAM
- * @return ::SX_ERR_UNKNOWN_ERROR
- * @return ::SX_ERR_BUSY
- * @return ::SX_ERR_NOT_IMPLEMENTED
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PLATFORM_ERROR
- * @return ::SX_ERR_EXPIRED
- * @return ::SX_ERR_PK_RETRY
- *
- * @remark Use point doubling operation for the addition of equal points
- * @see sx_ecp_double()
- */
-static inline int sx_ecp_ptadd(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *p1,
-			       const sx_pk_const_affine_point *p2, sx_pk_affine_point *r)
-{
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_ecp_add_go(&req, curve, p1, p2);
+	status = sx_pk_wait(req);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	status = sx_pk_wait(&req);
-	sx_async_ecp_add_end(&req, r);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, w);
 
 	return status;
 }
@@ -1263,7 +637,7 @@ static inline int sx_ecp_ptadd(const struct sx_pk_ecurve *curve, const sx_pk_con
  *
  * @remark Use point doubling operation for the addition of equal points
  *
- * @param[in,out] pkreq Acquired acceleration request for this operation
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] curve Elliptic curve to do point addition
  * @param[in] p1 The first point
  * @param[in] p2 The second point
@@ -1285,8 +659,7 @@ static inline int sx_ecp_ptadd(const struct sx_pk_ecurve *curve, const sx_pk_con
  * @remark Use point doubling operation for the addition of equal points
  * @see sx_ecp_double()
  */
-static inline int sx_sync_ecp_ptadd(sx_pk_req *req,
-				   const struct sx_pk_ecurve *curve,
+static inline int sx_ecp_ptadd(sx_pk_req *req, const struct sx_pk_ecurve *curve,
 				   const sx_pk_const_affine_point *p1,
 				   const sx_pk_const_affine_point *p2, sx_pk_affine_point *r)
 {
@@ -1315,125 +688,7 @@ static inline int sx_sync_ecp_ptadd(sx_pk_req *req,
 	return status;
 }
 
-/** Asynchronous (non-blocking) EC point order check.
- *
- * Starts an EC point order check on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_pk_release_req()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve used to validate point
- * @param[in] p Affine point P
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_ecp_check_order_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-					      const sx_pk_const_affine_point *p)
-{
-	struct sx_pk_inops_ec_ptoncurve inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_ECC_CHECK_PT_ORDER);
-
-	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_affpt2mem(p, inputs.px.addr, inputs.py.addr, opsz);
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
 /** @} */
-
-/**
- * @addtogroup SX_PK_SXOPS_SM2
- *
- * @{
- */
-
-/** Asynchronous (non-blocking) SM2 signature generation.
- *
- * Start a SM2 signature generation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm2_generate_end()
- *
- * This operation can be protected with blinding counter measures.
- * When used with counter measures, the operation can randomly
- * fail with SX_ERR_NOT_INVERTIBLE. If it happens, the operation
- * should be retried with a new blinding factor. See the user guide
- * 'countermeasures' section for more information.
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve to perform SM2 signature
- * generation with
- * @param[in] d Private key
- * @param[in] k Random value. The value should be non-zero and smaller
- * than the n-parameter of the curve
- * @param[in] h 256-bit Hash digest of message M using SM3 hash functions
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm2_generate_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-					   const sx_const_ecop *d, const sx_const_ecop *k,
-					   const sx_const_ecop *h)
-{
-	struct sx_pk_inops_ecdsa_generate inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM2_GEN);
-
-	/* convert and transfer operands */
-	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
-	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
-	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
-/** Finish asynchronous (non-blocking) SM2 signature generation.
- *
- * Get the output operands of the SM2 signature generation and release
- * the accelerator.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] r First part of the signature
- * @param[out] s Second part of the signature
- */
-static inline void sx_async_sm2_generate_end(sx_pk_req *req, sx_ecop *r, sx_ecop *s)
-{
-	sx_async_finish_ec_pair(req, r, s);
-}
 
 /** Generate an SM2 signature
  *
@@ -1445,7 +700,7 @@ static inline void sx_async_sm2_generate_end(sx_pk_req *req, sx_ecop *r, sx_ecop
  *   5. If s == 0 then SX_ERR_INVALID_SIGNATURE failure
  *   6. Signature is (r, s)
  *
- *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] curve Elliptic curve to perform SM2 signature
  * generation with
  * @param[in] d Private key
@@ -1469,78 +724,43 @@ static inline void sx_async_sm2_generate_end(sx_pk_req *req, sx_ecop *r, sx_ecop
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_sm2_generate(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
-				  const sx_const_ecop *k, const sx_const_ecop *h, sx_ecop *r,
-				  sx_ecop *s)
+static inline int sx_sm2_generate(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+				  const sx_const_ecop *d, const sx_const_ecop *k,
+				  const sx_const_ecop *h, sx_ecop *r, sx_ecop *s)
 {
-	int status;
-	sx_pk_req req;
+	struct sx_pk_inops_ecdsa_generate inputs;
+	int status = SX_ERR_UNKNOWN_ERROR;
+
+	sx_pk_set_cmd(req, SX_PK_CMD_SM2_GEN);
+	int opsz = sx_pk_get_opsize(req);
 
 	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
-		status = sx_async_sm2_generate_go(&req, curve, d, k, h);
+		/* convert and transfer operands */
+		status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 		if (status != SX_OK) {
 			return status;
 		}
-		status = sx_pk_wait(&req);
+
+		sx_pk_ecop2mem(d, inputs.d.addr, opsz);
+		sx_pk_ecop2mem(k, inputs.k.addr, opsz);
+		sx_pk_ecop2mem(h, inputs.h.addr, opsz);
+
+		sx_pk_run(req);
+
+		status = sx_pk_wait(req);
 		if (status == SX_ERR_NOT_INVERTIBLE) {
-			sx_pk_release_req(&req);
+			return status;
 		} else {
 			break;
 		}
 	}
-	if (status == SX_ERR_NOT_INVERTIBLE) {
-		return status;
-	}
-	sx_async_sm2_generate_end(&req, r, s);
+
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2ecop(outputs[0], opsz, r);
+	sx_pk_mem2ecop(outputs[1], opsz, s);
 
 	return status;
-}
-
-/** Asynchronous (non-blocking) SM2 verification.
- *
- * Start a SM2 verification operation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_pk_release_req()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve to perform SM2 signature verification with
- * @param[in] q The public key Q
- * @param[in] r First part of signature
- * @param[in] s Second part of signature
- * @param[in] h 256-bit Hash digest of a message M using SM3 hash functions
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_sm2_verify_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
-					 const sx_pk_const_affine_point *q, const sx_const_ecop *r,
-					 const sx_const_ecop *s, const sx_const_ecop *h)
-{
-	struct sx_pk_inops_ecdsa_verify inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM2_VER);
-
-	/* convert and transfer operands */
-	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
-	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
-	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
-	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
-	sx_pk_run(req);
-
-	return SX_OK;
 }
 
 /** Verify SM2 signature on an elliptic curve
@@ -1554,7 +774,7 @@ static inline int sx_async_sm2_verify_go(sx_pk_req *req, const struct sx_pk_ecur
  *   6. if R != r then SX_ERR_INVALID_SIGNATURE failure
  *   7. else signature is valid
  *
- *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] curve Elliptic curve to perform SM2 signature verification with
  * @param[in] q The public key Q
  * @param[in] r First part of signature
@@ -1575,103 +795,31 @@ static inline int sx_async_sm2_verify_go(sx_pk_req *req, const struct sx_pk_ecur
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_sm2_verify(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *q,
-				const sx_const_ecop *r, const sx_const_ecop *s,
-				const sx_const_ecop *h)
+static inline int sx_sm2_verify(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+					const sx_pk_const_affine_point *q, const sx_const_ecop *r,
+					const sx_const_ecop *s, const sx_const_ecop *h)
 {
-	int status;
-	sx_pk_req req;
-
-	status = sx_async_sm2_verify_go(&req, curve, q, r, s, h);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_pk_wait(&req);
-	sx_pk_release_req(&req);
-
-	return status;
-}
-
-/** Asynchronous (non-blocking) SM2 key exchange.
- *
- * Start a SM2 key exchange operation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_sm2_exchange_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] curve Elliptic curve to perform SM2 key exchange with
- * @param[in] d Private key
- * @param[in] k Random value
- * @param[in] q The public key Q
- * @param[in] rb Random point of user b
- * @param[in] cof Cofactor \#E(Fp)/n, where n is the degree of a base point G
- * and \#E(Fp) the number of rational points of the curve
- * @param[in] rax x-coordinate of random point of user A
- * @param[in] exp2_w Value equal to 2^w with w = [ceil(ceil(log2(n)) / 2) - 1].
- * n is the degree of the base point of the selected curve.
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- *
- * @see sx_async_sm2_exchange_end()
- */
-static inline int sx_async_sm2_exchange_go(sx_pk_req *req,
-					   const struct sx_pk_ecurve *curve,
-					   const sx_const_ecop *d, const sx_const_ecop *k,
-					   const sx_pk_const_affine_point *q,
-					   const sx_pk_const_affine_point *rb,
-					   const sx_const_ecop *cof, const sx_const_ecop *rax,
-					   const sx_const_ecop *exp2_w)
-{
-	struct sx_pk_inops_sm2_exchange inputs;
+	struct sx_pk_inops_ecdsa_verify inputs;
 	int status;
 
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SM2_EXCH);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM2_VER);
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 	int opsz = sx_pk_get_opsize(req);
 
-	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
-	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
 	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
-	sx_pk_affpt2mem(rb, inputs.rbx.addr, inputs.rby.addr, opsz);
-	sx_pk_ecop2mem(cof, inputs.cof.addr, opsz);
-	sx_pk_ecop2mem(rax, inputs.rax.addr, opsz);
-	sx_pk_ecop2mem(exp2_w, inputs.w.addr, opsz);
-
+	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
+	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
+	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
 	sx_pk_run(req);
 
-	return SX_OK;
-}
+	status = sx_pk_wait(req);
 
-/** Finish asynchronous (non-blocking) SM2 key exchange.
- *
- * Get the output operands of the SM2 key exchange and release
- * the accelerator.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] u The shared secret U
- *
- * @see sx_async_sm2_exchange_go()
- */
-static inline void sx_async_sm2_exchange_end(sx_pk_req *req, sx_pk_affine_point *u)
-{
-	sx_async_finish_affine_point(req, u);
+	return status;
 }
 
 /** SM2 key exchange
@@ -1685,7 +833,7 @@ static inline void sx_async_sm2_exchange_end(sx_pk_req *req, sx_pk_affine_point 
  *    5. U = (cof * tA) * (Q + x2 * RB)
  *    6. if U == 0 (point at infinity) then SX_ERR_NOT_INVERTIBLE failure
  *
- *
+ * @param[in,out] req The previously acquired acceleration
  * @param[in] curve Elliptic curve to perform SM2 key exchange with
  * @param[in] d Private key
  * @param[in] k Random value
@@ -1711,26 +859,46 @@ static inline void sx_async_sm2_exchange_end(sx_pk_req *req, sx_pk_affine_point 
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_sm2_exchange(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
-				  const sx_const_ecop *k, const sx_pk_const_affine_point *q,
-				  const sx_pk_const_affine_point *rb, const sx_const_ecop *cof,
-				  const sx_const_ecop *rax, const sx_const_ecop *exp2_w,
-				  sx_pk_affine_point *u)
+static inline int sx_sm2_exchange(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+				  const sx_const_ecop *d, const sx_const_ecop *k,
+				  const sx_pk_const_affine_point *q,
+				  const sx_pk_const_affine_point *rb,
+				  const sx_const_ecop *cof, const sx_const_ecop *rax,
+				  const sx_const_ecop *exp2_w, sx_pk_affine_point *u)
 {
+	struct sx_pk_inops_sm2_exchange inputs;
 	int status;
-	sx_pk_req req;
 
-	status = sx_async_sm2_exchange_go(&req, curve, d, k, q, rb, cof, rax, exp2_w);
+	sx_pk_set_cmd(req, SX_PK_CMD_SM2_EXCH);
+
+	/* convert and transfer operands */
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
-	status = sx_pk_wait(&req);
-	sx_async_sm2_exchange_end(&req, u);
+	int opsz = sx_pk_get_opsize(req);
+
+	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
+	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
+	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
+	sx_pk_affpt2mem(rb, inputs.rbx.addr, inputs.rby.addr, opsz);
+	sx_pk_ecop2mem(cof, inputs.cof.addr, opsz);
+	sx_pk_ecop2mem(rax, inputs.rax.addr, opsz);
+	sx_pk_ecop2mem(exp2_w, inputs.w.addr, opsz);
+
+	sx_pk_run(req);
+
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+
+	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, u);
 
 	return status;
 }
-
-/** @} */
 
 /** @} */
 #ifdef __cplusplus

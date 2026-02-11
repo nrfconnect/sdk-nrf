@@ -65,8 +65,8 @@
  * @retval ::SX_ERR_PK_RETRY		         Hardware resources unavailable; retry later.
  * @retval Other SX status codes from @ref cracen_status_codes on internal errors.
  */
-int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
-				struct cracen_rsa_key *privkey);
+int cracen_rsa_generate_privkey(sx_pk_req *req, uint8_t *pubexp, size_t pubexpsz,
+				size_t keysz, struct cracen_rsa_key *privkey);
 
 /** @} */
 
