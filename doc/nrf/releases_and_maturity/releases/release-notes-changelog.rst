@@ -159,6 +159,7 @@ Security
 Trusted Firmware-M (TF-M)
 -------------------------
 
+* Added support for PSA Key Wrapping APIs from the PSA Certified Crypto API v1.4.0.
 * Updated to version 2.2.2.
 * The default TF-M profile is now :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` for all configurations except for Thingy:91 and Thingy:91 X, on which it is still :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL`.
 
