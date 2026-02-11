@@ -23,7 +23,10 @@ For an explanation of the maturity levels, see :ref:`Software maturity levels <s
 nRF5340 Audio DNs and QDIDs
 ***************************
 
-See `nRF5340 Bluetooth DNs and QDIDs Compatibility Matrix`_ for the Design Numbers (DNs) and Qualified Design IDs (QDIDs) for nRF5340 LE Audio applications.
+See the following pages for the Design Numbers (DNs) and Qualified Design IDs (QDIDs) for nRF5340 LE Audio applications:
+
+ * `Bluetooth DNs and QDIDs Compatibility Matrix <nRF5340 Bluetooth DNs and QDIDs Compatibility Matrix_>`_
+ * `Bluetooth LE Audio QDIDs <nRF5340 Bluetooth LE Audio QDIDs_>`_
 
 A full Audio product DN will typically require DNs and QDIDs for the Controller component, Host component, Profiles, and Services component and LC3 codec component.
 The exact DN/QDID numbers depend on the project configuration and the features used in the application.
