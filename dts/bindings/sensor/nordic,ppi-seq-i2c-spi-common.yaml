@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+properties:
+  timer:
+    type: phandle
+    description: |
+      TIMER instance used as the timing source. Using Timer is recommended for short periods
+      where performance matters. If not provided the other source is used.
+      If timer and rtc is not provided then GRTC channel with interval is used.
+
+  rtc:
+    type: phandle
+    description: |
+      RTC instance used as the timing source. Using RTC is recommended for lowest power consumption.
+      Compare to GRTC it consumes less power because GRTC needs additional time to synchronize
+      32 kHz clock with 1 MHz clock.
+      If timer and rtc is not provided then GRTC channel with interval is used.
+
+  timer_notifier:
+    type: phandle
+    description: |
+      TIMER instance used to count events and notify about the batch completion. If TIMER is
+      not provided then k_timer is used instead which is more power efficient than using the
+      TIMER (adds few uA). Using TIMER is only recommended for short periods where as it is more
+      accurate than k_timer.
+
+  extra_transfers:
+    type: array
+    description:
+      Array of offsets (in microseconds). For each item in the array an additional I2C/SPI transfer
+      is triggered. Offset is given from the start of each period. When property is provided then
+      it is required to use timer or rtc property. Maximum number of elements is limited. For TIMER,
+      it is number of compare channels - 1. For RTC, it is number of compare channels - 2.
