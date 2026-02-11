@@ -21,4 +21,12 @@ config PPI_SEQ_MAX_PPI_HANDLES
 	  Should not be touched unless RAM optimization is needed. For simpler use
 	  cases not all handles are used but each slot is just 4 bytes.
 
+config PPI_SEQ_I2C_SPI
+	bool "PPI Sequencer for I2C/SPI"
+	default y if $(dt_compat_enabled,$(DT_COMPAT_NORDIC_PPI_SEQ_I2C)) || \
+		$(dt_compat_enabled,$(DT_COMPAT_NORDIC_PPI_SEQ_SPI))
+	select NRFX_SPIM if $(dt_compat_enabled,$(DT_COMPAT_NORDIC_PPI_SEQ_SPI))
+	select NRFX_TWIM if $(dt_compat_enabled,$(DT_COMPAT_NORDIC_PPI_SEQ_I2C))
+	select PINCTRL
+
 endif
