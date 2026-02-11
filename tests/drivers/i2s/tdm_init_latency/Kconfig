@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config I2S_TEST_ALLOWED_DATA_OFFSET
+	int "Allowed offset in received data"
+	default 2 if DT_HAS_NORDIC_NRF_I2S_ENABLED || DT_HAS_NORDIC_NRF_TDM_ENABLED
+	default 0
+	help
+	  Maximum allowed offset between sent and received samples. Non-zero
+	  value of this option may be needed when GPIO loopback is used.
+
+config TEST_WITH_NRFX_DRIVER
+	bool "Test with nrfx driver instead of Zehyr driver"
+
+source "Kconfig.zephyr"
