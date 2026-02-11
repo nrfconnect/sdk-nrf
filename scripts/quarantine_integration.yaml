@@ -650,7 +650,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.nrf7001_eks.shell
     - sample.nrf7001_eks_cpunet.shell
     - sample.nrf7002_eks.shell
     - sample.nrf7002_eks_cpunet.shell
@@ -697,18 +696,10 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.nrf7002_eks.radio_test
     - sample.nrf7002_eks.sta
     - sample.nrf7002_eks.scan
   platforms:
     - nrf52840dk/nrf52840
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.nrf7001_eks.radio_test
-    - sample.nrf7001_eks.sta
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
