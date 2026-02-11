@@ -15,7 +15,7 @@ config PSA_HAS_AEAD_SUPPORT
 		   PSA_WANT_ALG_XCHACHA20_POLY1305 || \
 		   PSA_WANT_ALG_ASCON_AEAD128
 	help
-	  Prompt-less configuration that states that AEAD is supported.
+	  Promptless configuration stating that AEAD is supported.
 
 config PSA_HAS_ASYM_ENCRYPT_SUPPORT
 	bool
@@ -23,7 +23,7 @@ config PSA_HAS_ASYM_ENCRYPT_SUPPORT
 	depends on PSA_WANT_ALG_RSA_OAEP || \
 		   PSA_WANT_ALG_RSA_PKCS1V15_CRYPT
 	help
-	  Prompt-less configuration that states that asymmetric encryption
+	  Promptless configuration stating that asymmetric encryption
 	  is supported.
 
 config PSA_HAS_ASYM_SIGN_SUPPORT
@@ -45,7 +45,7 @@ config PSA_HAS_ASYM_SIGN_SUPPORT
 		   PSA_WANT_ALG_XMSS_MT                 || \
 		   PSA_WANT_ALG_ML_DSA
 	help
-	  Prompt-less configuration that states that asymmetric signing
+	  Promptless configuration stating that asymmetric signing
 	  is supported.
 
 config PSA_HAS_CIPHER_SUPPORT
@@ -59,7 +59,7 @@ config PSA_HAS_CIPHER_SUPPORT
 		   PSA_WANT_ALG_XTS			|| \
 		   PSA_WANT_ALG_STREAM_CIPHER
 	help
-	  Prompt-less configuration that states that cipher is supported.
+	  Promptless configuration stating that cipher is supported.
 
 config PSA_HAS_HASH_SUPPORT
 	bool
@@ -82,14 +82,14 @@ config PSA_HAS_HASH_SUPPORT
 		   PSA_WANT_ALG_SHAKE256_256  || \
 		   PSA_WANT_ALG_SHAKE256_512
 	help
-	  Prompt-less configuration that states that hash is supported.
+	  Promptless configuration stating that hash is supported.
 
 config PSA_HAS_KEY_AGREEMENT
 	bool
 	default y
 	depends on PSA_WANT_ALG_ECDH
 	help
-	  Promt-less configuration that states that key agreement is supported.
+	  Promptless configuration stating that key agreement is supported.
 
 config PSA_HAS_KEY_DERIVATION
 	bool
@@ -107,7 +107,7 @@ config PSA_HAS_KEY_DERIVATION
 		   PSA_WANT_ALG_SRP_PASSWORD_HASH       || \
 		   PSA_WANT_ALG_WPA3_SAE_H2E
 	help
-	  Prompt-less configuration that states that key derivation is supported.
+	  Promptless configuration stating that key derivation is supported.
 
 config PSA_HAS_KEY_SUPPORT
 	bool
@@ -162,7 +162,7 @@ config PSA_HAS_KEY_SUPPORT
 		   PSA_WANT_KEY_TYPE_ASCON
 
 	help
-	  Prompt-less configuration that states that key types are supported.
+	  Promptless configuration stating that key types are supported.
 
 config PSA_HAS_MAC_SUPPORT
 	bool
@@ -170,7 +170,7 @@ config PSA_HAS_MAC_SUPPORT
 	depends on PSA_WANT_ALG_CMAC	|| \
 		   PSA_WANT_ALG_HMAC
 	help
-	  Prompt-less configuration that states that MAC is supported.
+	  Promptless configuration stating that MAC is supported.
 
 config PSA_HAS_PAKE_SUPPORT
 	bool
@@ -184,7 +184,14 @@ config PSA_HAS_PAKE_SUPPORT
 		   PSA_WANT_ALG_WPA3_SAE_FIXED 		|| \
 		   PSA_WANT_ALG_WPA3_SAE_GDH
 	help
-	  Prompt-less configuration that states that PAKE is supported.
+	  Promptless configuration stating that PAKE is supported.
+
+config PSA_HAS_KEY_WRAP_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_AES_KW || PSA_WANT_ALG_AES_KWP
+	help
+	  Promptless configuration stating that key wrapping is supported.
 
 comment "Nordic added alg types"
 
