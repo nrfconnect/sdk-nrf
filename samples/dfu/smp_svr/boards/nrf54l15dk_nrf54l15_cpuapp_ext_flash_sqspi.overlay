@@ -1,0 +1,2 @@
+#include "../sysbuild/nrf54l15dk_nrf54l15_ext_flash_sqspi.dtsi"
+#include "../sysbuild/nrf54l15dk_nrf54l15_memory_map_ext_flash.dtsi"
