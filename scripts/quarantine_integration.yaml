@@ -205,18 +205,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.npm1300_fuel_gauge_compile
-    - sample.npm1304_fuel_gauge_compile
-    - sample.npm1300_one_button_compile
-    - sample.npm1304_one_button_compile
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf52dk/nrf52832
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk@0.14.0/nrf9160
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - sample.debug.memfault
     - sample.debug.memfault.etb
   platforms:
