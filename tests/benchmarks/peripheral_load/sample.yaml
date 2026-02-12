@@ -44,6 +44,9 @@ tests:
       - SHIELD=pca63566
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+      - ipc_radio_EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/peripheral_load/nrf54h20dk_unused_gpios.overlay
+      # adding an extra overlay file to ipc_radio is intended to indirectly check whether peripfconf
+      # is generated correctly (there are no conflicts between cpuapp and cpurad)
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
