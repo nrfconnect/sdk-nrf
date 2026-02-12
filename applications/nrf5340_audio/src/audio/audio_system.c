@@ -504,19 +504,9 @@ int audio_system_encoder_num_ch_set(uint32_t locations)
 
 	int num_ch = POPCOUNT(locations);
 
-	if (locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
-		num_ch = 1;
-	}
-
-	if (num_ch > CONFIG_AUDIO_ENCODE_CHANNELS_MAX) {
-		LOG_ERR("Invalid number of encoder channels: %d (max %d)", num_ch,
-			CONFIG_AUDIO_ENCODE_CHANNELS_MAX);
-		return -EINVAL;
-	}
-
 	LOG_DBG("Setting encoder channels to %d based on locations 0x%08x", num_ch, locations);
 
-	sw_codec_cfg.encoder.num_ch = num_ch;
+	sw_codec_cfg.encoder.num_ch = CONFIG_AUDIO_ENCODE_CHANNELS_MAX;
 	sw_codec_cfg.encoder.audio_loc = locations;
 
 	return 0;
