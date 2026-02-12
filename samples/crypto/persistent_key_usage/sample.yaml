@@ -10,6 +10,7 @@ common:
     - psa
     - sysbuild
     - ci_samples_crypto
+    - crypto
   harness: console
   harness_config:
     type: multi_line
