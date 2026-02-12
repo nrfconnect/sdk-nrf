@@ -68,6 +68,21 @@ config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 
 endif # BOARD_NRF54L15DK || BOARD_NRF54LM20DK
 
+# Internal flash only for nRF54L15 tag with compression
+if BOARD_NRF54L15TAG
+
+config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
+	default y
+
+choice MCUBOOT_MODE
+	default MCUBOOT_MODE_OVERWRITE_ONLY
+endchoice
+
+config MCUBOOT_COMPRESSED_IMAGE_SUPPORT
+	default y
+
+endif
+
 endif # BOOTLOADER_MCUBOOT
 
 #### Enable generating factory data
