@@ -16,34 +16,34 @@ See :c:enum:`nfc_ndef_uri_rec_id` for the available protocols.
 The :ref:`nfc_uri_record` module provides functions for creating the record, and the :ref:`nfc_uri_msg` module provides functions for creating and encoding the message.
 
 The following code snippets show how to generate a URI message.
-First, define the URI string and create a buffer for the message:
 
-.. code-block:: c
+1. Define the URI string and create a buffer for the message:
 
-   static const uint8_t m_url[] =
-       {'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'}; //URL "nordicsemi.com"
+   .. code-block:: c
 
-   uint8_t m_ndef_msg_buf[256];
+      static const uint8_t m_url[] =
+          {'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'}; //URL "nordicsemi.com"
 
-Then create the URI message with one URI record.
-As parameters, provide the URI identifier code (:c:enumerator:`NFC_URI_HTTP_WWW` in this example), the URI string, the length of the URI string, the message buffer, and the size of the available memory in the buffer:
+      uint8_t m_ndef_msg_buf[256];
+
+#. Create the URI message with one URI record.
+   As parameters, provide the URI identifier code (:c:enumerator:`NFC_URI_HTTP_WWW` in this example), the URI string, the length of the URI string, the message buffer, and the size of the available memory in the buffer:
 
 
-.. code-block:: c
+   .. code-block:: c
 
-   int err;
+      int err;
 
-   err = nfc_ndef_uri_msg_encode( NFC_URI_HTTP_WWW,
-                                   m_url,
-                                   sizeof(m_url),
-                                   m_ndef_msg_buf,
-                                   &len);
+      err = nfc_ndef_uri_msg_encode( NFC_URI_HTTP_WWW,
+                                      m_url,
+                                      sizeof(m_url),
+                                      m_ndef_msg_buf,
+                                      &len);
 
-   if (err < 0) {
-        printk("Cannot encode message!\n");
-	return err;
-   }
-
+      if (err < 0) {
+          printk("Cannot encode message!\n");
+	      return err;
+      }
 
 API documentation
 *****************
