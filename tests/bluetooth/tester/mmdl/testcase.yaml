@@ -1,5 +1,5 @@
 tests:
-  bluetooth.general.tester.build:
+  bluetooth.general.tester.mmdl.build:
     sysbuild: true
     build_only: true
     platform_allow:
