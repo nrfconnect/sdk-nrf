@@ -67,7 +67,7 @@ See the following table for an overview of the key types supported by each devic
     * - nRF54L Series
       - CRACEN
       - Yes
-      - KDR, MKEK, MEXT, IKG
+      - MKEK, MEXT, IKG
     * - nRF5340
       - CryptoCell CC312
       - Yes
