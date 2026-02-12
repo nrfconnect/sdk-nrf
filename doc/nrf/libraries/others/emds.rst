@@ -15,9 +15,30 @@ Implementation
 The :kconfig:option:`CONFIG_EMDS` Kconfig option enables the emergency data storage.
 
 The EMDS uses the persistent memory in form of storage partitions, which can be either flash or RRAM.
-The static partition manager file :file:`pm.yml.emds` is required for defining the storage partitions.
 You must align the storage partitions to the write block size, which is 4 bytes for flash and 16 bytes for RRAM.
 The EMDS mandates at least two storage partitions to allow restoring of the last known copy of data.
+Define the storage partitions in the devicetree file used for the application.
+The devicetree file must contain two partitions with names ``emds_partition_0`` and ``emds_partition_1`` with start offset and size specified.
+
+.. code-block:: devicetree
+
+	partitions {
+		emds_partition_0: partition@fe000 {
+			label = "emds-0";
+			reg = <0x000fe000 0x00001000>;
+		};
+
+		emds_partition_1: partition@ff000 {
+			label = "emds-1";
+			reg = <0x000ff000 0x00001000>;
+		};
+	};
+
+Place the partitions in the persistent memory area of the device.
+The exact location addresses depend on the specific device.
+The exact partition sizes depend on the amount of data that the application needs to store.
+It is recommended to have partitions with equal sizes.
+Partitions must stay on the same location and with the same size for all application versions that use EMDS, to ensure compatibility when updating the application.
 The application must initialize storage partitions by using the :c:func:`emds_init` function.
 
 The partition storage space for each partition must be larger than the combined data stored by the application.
@@ -192,7 +213,6 @@ Dependencies
 ************
 The emergency data storage is dependent on these Kconfig options:
 
-* :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED`
 * :kconfig:option:`CONFIG_FLASH_MAP`
 
 API documentation
