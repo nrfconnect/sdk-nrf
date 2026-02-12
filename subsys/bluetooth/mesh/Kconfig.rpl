@@ -6,6 +6,7 @@
 
 choice BT_MESH_RPL_STORAGE_MODE
 	prompt "Replay protection list storage mode"
+	default BT_MESH_RPL_STORAGE_MODE_EMDS if EMDS
 
 config BT_MESH_RPL_STORAGE_MODE_EMDS
 	bool "Persistent storage of RPL in Emergency Data Storage"
