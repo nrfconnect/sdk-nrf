@@ -198,7 +198,14 @@ FEM support
 Emergency data storage
 ======================
 
-To build this sample with support for :ref:`emds_readme` (EMDS), set :makevar:`EXTRA_CONF_FILE` to :file:`overlay-emds.conf` using the respective :ref:`CMake option <cmake_options>`.
+To build this sample with support for :ref:`emds_readme` (EMDS), set :makevar:`FILE_SUFFIX` to ``emds`` using the respective :ref:`CMake option <cmake_options>`.
+
+Build the sample using the following command:
+
+.. code-block:: console
+
+   west build -p -b *board_name* -- -DFILE_SUFFIX=emds
+
 This will save replay protection list (RPL) data and some of the :ref:`bt_mesh_lightness_srv_readme` data to the emergency data storage instead of to the :ref:`settings_api`.
 The EMDS storing data API is called from the interrupt service routine (:ref:`ISR <zephyr:interrupts_v2>`) with priority 0 to prevent pre-emption of the storing procedure.
 As a part of the interrupt routine, the Multiprotocol Service Layer (:ref:`MPSL <mpsl_lib>`) is uninitialized to ensure that no radio activity is ongoing during the EMDS storing procedure (only if radio is present as a peripheral module in the core running the EMDS).
@@ -328,6 +335,10 @@ External flash for settings partition
 =====================================
 
 .. include:: /includes/mesh_ext_flash_settings.txt
+
+.. note::
+   You can use only one :makevar:`FILE_SUFFIX` at a time.
+   The sample does not support both EMDS and settings partition storage on external flash simultaneously.
 
 Dependencies
 ************
