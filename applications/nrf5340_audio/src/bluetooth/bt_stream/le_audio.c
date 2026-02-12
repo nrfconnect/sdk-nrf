@@ -516,15 +516,15 @@ void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
 
 // These values will be updated after group create or reconfig.
 
-int le_audio_print_cig(struct bt_cap_unicast_group const *const unicast_group)
+int le_audio_print_unicast_group(struct bt_cap_unicast_group const *const unicast_group)
 {
 
 	if (unicast_group == NULL) {
-		LOG_WRN("Invalid parameters to print CIG");
+		LOG_WRN("Invalid parameters to print unicast group");
 		return -EINVAL;
 	}
 
-	LOG_INF("CIG Index: %d", unicast_group->bap_unicast_group->index);
+	LOG_INF("Unicast Group Index: %d", unicast_group->bap_unicast_group->index);
 
 	if (unicast_group->bap_unicast_group->sink_pd != BT_BAP_PD_UNSET) {
 		LOG_INF("\tSink PD: %u us", unicast_group->bap_unicast_group->sink_pd);

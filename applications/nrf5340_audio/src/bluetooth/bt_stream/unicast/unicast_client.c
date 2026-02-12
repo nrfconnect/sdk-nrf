@@ -973,15 +973,76 @@ static int all_streams_configured(void)
 
 	int ret;
 
-	enum group_action_req action = GROUP_ACTION_REQ_NONE;
+	enum action_req action = ACTION_REQ_NONE;
 	uint32_t pres_dly_snk_us = UINT32_MAX;
 	uint32_t pres_dly_src_us = UINT32_MAX;
 	uint16_t max_trasp_lat_snk_ms = UINT16_MAX;
 	uint16_t max_trasp_lat_src_ms = UINT16_MAX;
 
-	ret = srv_store_pres_delay_get(unicast_group, &pres_dly_snk_us, &pres_dly_src_us);
+	struct pd_struct common_pd_src;
+	struct pd_struct common_pd_snk;
+
+	ret = srv_store_pres_delay_get(unicast_group, &pres_dly_snk_us, &pres_dly_src_us,
+				       &common_pd_src, &common_pd_snk);
 	if (ret) {
 		LOG_ERR("Failed to get presentation delay: %d", ret);
+		srv_store_unlock();
+		return ret;
+	}
+
+	struct bt_cap_unicast_group_info cap_info;
+
+	ret = bt_cap_unicast_group_get_info(unicast_group, &cap_info);
+	if (ret) {
+		LOG_ERR("Failed to get unicast group info: %d", ret);
+		srv_store_unlock();
+		return ret;
+	}
+
+	struct bt_bap_unicast_group_info info;
+
+	ret = bt_bap_unicast_group_get_info(cap_info.unicast_group, &info);
+	if (ret) {
+		LOG_ERR("Failed to get unicast group info: %d", ret);
+		srv_store_unlock();
+		return ret;
+	}
+
+	/* Check if any stream is in a streaming state */
+	if (info.sink_pd != BT_BAP_PD_UNSET) {
+
+		// USe in range
+		if (info.sink_pd < common_pd_snk.pd_min || info.sink_pd > common_pd_snk.pd_max) {
+			/* The existing running PD is outside the common denominator.
+			 * Need to force the streams into the QoS configured state
+			 */
+			group_action_set(&action, GROUP_ACTION_REQ_RESTART);
+		} else {
+			/* The the existing pres delay is wihin the min and max, we
+			 * stay with the existing presentation delay
+			 */
+			pres_dly_snk_us = info.sink_pd;
+		}
+	}
+
+	if (info.source_pd != BT_BAP_PD_UNSET) {
+		if (info.source_pd < common_pd_src.pd_min ||
+		    info.source_pd > common_pd_src.pd_max) {
+			/* The existing running PD is outside the common denominator
+			 * Need to force the streams into the QoS configured state
+			 */
+			group_action_set(&action, GROUP_ACTION_REQ_RESTART);
+		} else {
+			/* The the existing pres delay is wihin the min and max, we
+			 * stay with the existing presentation delay
+			 */
+			pres_dly_src_us = info.source_pd;
+		}
+	}
+
+	ret = srv_store_pres_delay_set(unicast_group, pres_dly_snk_us, pres_dly_src_us, &action);
+	if (ret) {
+		LOG_ERR("Failed to set presentation delay: %d", ret);
 		srv_store_unlock();
 		return ret;
 	}
@@ -990,13 +1051,6 @@ static int all_streams_configured(void)
 					       &max_trasp_lat_src_ms);
 	if (ret) {
 		LOG_ERR("Failed to get max transport latency: %d", ret);
-		srv_store_unlock();
-		return ret;
-	}
-
-	ret = srv_store_pres_delay_set(unicast_group, pres_dly_snk_us, pres_dly_src_us, &action);
-	if (ret) {
-		LOG_ERR("Failed to set presentation delay: %d", ret);
 		srv_store_unlock();
 		return ret;
 	}
@@ -1010,10 +1064,9 @@ static int all_streams_configured(void)
 	}
 
 	/* Check if a group reconfiguration is required */
+	if (action != ACTION_REQ_NONE) {
 
-	if (action != GROUP_ACTION_REQ_NONE) {
-
-		LOG_WRN("REconfigure group! action: %d", action);
+		LOG_WRN("Reconfigure group! action: %d", action);
 
 		ret = bt_cap_unicast_group_reconfig(unicast_group, &group_param);
 		if (ret) {
@@ -1341,7 +1394,7 @@ static void unicast_start_complete_cb(int err, struct bt_conn *conn)
 			err);
 	}
 
-	ret = le_audio_print_cig(unicast_group);
+	ret = le_audio_print_unicast_group(unicast_group);
 	if (ret) {
 		LOG_ERR("Failed to print CIG info: %d", ret);
 	}
@@ -1362,7 +1415,7 @@ static void unicast_update_complete_cb(int err, struct bt_conn *conn)
 
 	LOG_WRN("Unicast group update complete cb");
 
-	ret = le_audio_print_cig(unicast_group);
+	ret = le_audio_print_unicast_group(unicast_group);
 	if (ret) {
 		LOG_ERR("Failed to print CIG info: %d", ret);
 	}

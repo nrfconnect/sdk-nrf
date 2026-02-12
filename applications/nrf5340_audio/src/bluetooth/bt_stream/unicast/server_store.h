@@ -67,10 +67,17 @@ struct client_supp_configs {
 	struct bt_audio_codec_octets_per_codec_frame oct_per_codec_frame;
 };
 
-enum group_action_req {
-	GROUP_ACTION_REQ_NONE = 0,
-	GROUP_ACTION_REQ_QOS_RECONFIG,
+enum action_req {
+	ACTION_REQ_NONE = 0,
+	STREAM_ACTION_QOS_RECONFIG,
 	GROUP_ACTION_REQ_RESTART,
+};
+
+struct pd_struct {
+	uint32_t pd_min;
+	uint32_t pref_pd_min;
+	uint32_t pref_pd_max;
+	uint32_t pd_max;
 };
 
 /**
@@ -141,30 +148,6 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 			    struct bt_bap_qos_cfg_pref const *server_qos_pref,
 			    bool *group_reconfig_needed,
 			    struct bt_cap_unicast_group *unicast_group);
-
-/**
- * @brief Find the lowest max_transport_latency for all streams in a given isochronous group (CIG)
- * @p unicast_group for the given direction.
- *
- * @note srv_store_lock() must be called before accessing this function.
- *
- * @param[in]	stream			Pointer to stream
- * @param[in]	server_qos_pref		Pointer to the preferred QoS configuration.
- * @param[out]	new_max_trans_lat_ms	The new calculated max transport latency for the given dir
- * @param[out]	existing_max_trans_lat_ms Existing max transport latency for the given direction.
- * This value will be set to UINT16_MAX if there was no existing value.
- * @param[out]	group_reconfig_needed	True if a group reconfiguration is needed.
- * @param[in]	unicast_group		Pointer to the unicast group to search within.
- *
- */
-int srv_store_max_trans_lat_find(struct bt_bap_stream const *const stream,
-				 struct bt_bap_qos_cfg_pref const *const server_qos_pref,
-				 uint16_t *new_max_trans_lat_ms,
-				 uint16_t *existing_max_trans_lat_ms, bool *group_reconfig_needed,
-				 struct bt_cap_unicast_group *unicast_group);
-
-int srv_store_max_trans_lat_set(struct bt_cap_unicast_group *unicast_group, enum bt_audio_dir dir,
-				uint16_t max_trans_lat_ms);
 
 /**
  * @brief	Set the valid locations of a unicast server.
@@ -474,21 +457,41 @@ int srv_store_init(void);
 
 // This needs to be called only once, after all streams have been through the configured cb
 int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_t *pres_dly_snk_us,
-			     uint32_t *pres_dly_src_us);
-
+			     uint32_t *pres_dly_src_us, struct pd_struct *common_pd_snk,
+			     struct pd_struct *common_pd_src);
+/**
+ * @note If the presentation delay is not the same as we are trying to set here,
+ *	we do not need to reconfigure the CIG as PD is not part of the CIG parameters.However,
+ *	if the presentation delay is not the same as what is currently set,
+ * 	we will need to configure the QoS again to update the PD values of all streams.
+ */
 int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_t pres_dly_snk_us,
-			     uint32_t pres_dly_src_us,
-			     enum group_action_req *group_action_required);
+			     uint32_t pres_dly_src_us, enum action_req *group_action_required);
 
 // This needs to be called only once, after all streams have been through the configured cb
 int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
 				     uint16_t *new_max_trans_lat_snk_ms,
 				     uint16_t *new_max_trans_lat_src_ms);
 
+/**
+ * @brief Set the max transport latency for a unicast group
+ *
+ * @note: The group action required is set based on if the existing CIG paraameters does not match
+ * what is supplied here. Depending on the group action required, the application may need
+ * reconfigure the unicast group.
+ *
+ * @note This call should be called in the codec_configured callback, after all streams
+ *  have reached this state or further in the ASE state machine.
+ *
+ * @param unicast_group
+ */
+
 int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
 				     uint16_t new_max_trans_lat_snk_ms,
 				     uint16_t new_max_trans_lat_src_ms,
-				     enum group_action_req *group_action_needed);
+				     enum action_req *group_action_needed);
+
+void group_action_set(enum action_req *action, enum action_req new_action);
 
 /**
  * @}
