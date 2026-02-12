@@ -523,12 +523,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.bluetooth.central_dfu_smp
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - sample.nfc.record_text
     - sample.nfc.tnep_tag
     - sample.nfc.system_off
