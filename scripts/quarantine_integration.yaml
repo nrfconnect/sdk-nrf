@@ -507,16 +507,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.gazell.gzp_dynamic_pairing.device.build
-    - sample.gazell.gzll_ack_payload.host.build
-    - sample.gazell.gzll_ack_payload.device.build
-    - sample.gazell.gzp_dynamic_pairing.host.build
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf52833dk/nrf52833
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - sample.bluetooth.peripheral_uart_minimal
   platforms:
     - nrf52833dk/nrf52820
