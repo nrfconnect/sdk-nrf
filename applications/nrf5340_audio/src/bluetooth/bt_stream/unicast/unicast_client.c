@@ -425,6 +425,7 @@ static void cap_start_worker(struct k_work *work)
 
 	/* Create a unicast group if it doesn't already exist */
 	if (unicast_group_created == false) {
+		LOG_DBG("Unicast group not created, creating unicast group");
 		unicast_group_create();
 		goto start_streams;
 	}
@@ -441,6 +442,7 @@ static void cap_start_worker(struct k_work *work)
 	group_length = sys_slist_len(&info.unicast_group->streams);
 	if (group_length >= CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT) {
 		/* The group is as full as it can get, start the relevant streams */
+		LOG_DBG("Unicast group is full, cannot add more streams");
 		goto start_streams;
 	}
 
@@ -458,10 +460,16 @@ static void cap_start_worker(struct k_work *work)
 	ret = srv_store_foreach_server(server_stream_in_unicast_group_check, NULL);
 	if (ret == -ECANCELED) {
 		/* A new group will be created after the released_cb has been called */
-		unicast_client_stop(0);
+		ret = unicast_client_stop(0);
 		unicast_group_created = false;
-		srv_store_unlock();
 
+		if (ret == -EALREADY) {
+			srv_store_unlock();
+			unicast_group_create();
+			goto start_streams;
+		}
+
+		srv_store_unlock();
 		return;
 	}
 
@@ -1513,10 +1521,42 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 	return 0;
 }
 
+static bool server_is_connected(struct server_store *server)
+{
+	int ret;
+
+	/* Check that the server is connected */
+	struct bt_conn_info info;
+
+	if (server->conn == NULL) {
+		LOG_DBG("Server %s has no connection, not connected", server->name);
+		return false;
+	}
+
+	ret = bt_conn_get_info(server->conn, &info);
+	if (ret) {
+		LOG_ERR("Failed to get connection info for server %s, conn %p: %d", server->name,
+			(void *)server->conn, ret);
+		return false;
+	}
+
+	if (info.state == BT_CONN_STATE_CONNECTED) {
+		LOG_DBG("Connection %p is connected", (void *)server->conn);
+		return true;
+	}
+
+	return false;
+}
+
 static bool add_to_start_params(struct server_store *server, void *user_data)
 {
 	int ret;
 	struct bt_cap_unicast_audio_start_param *param = user_data;
+
+	if (!server_is_connected(server)) {
+		LOG_DBG("Server %s is not connected, skipping", server->name);
+		return true;
+	}
 
 	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
 		uint8_t state;
@@ -1641,6 +1681,21 @@ static bool add_to_stop_params(struct bt_cap_stream *stream, void *user_data)
 	return false;
 }
 
+static bool server_connected_check(struct bt_cap_stream *stream, void *user_data)
+{
+	struct server_store *server = NULL;
+	bool *connected_server_found = (bool *)user_data;
+
+	srv_store_from_stream_get(&stream->bap_stream, &server);
+	if (server && server_is_connected(server)) {
+		*connected_server_found = true;
+		/* Found a connected server, will stop iterating */
+		return true;
+	}
+
+	return false;
+}
+
 int unicast_client_stop(uint8_t cig_index)
 {
 	int ret;
@@ -1661,6 +1716,7 @@ int unicast_client_stop(uint8_t cig_index)
 		}
 
 		return ret;
+
 	} else if (ret) {
 		LOG_ERR("Failed to take sem_cap_procedure_proceed: %d", ret);
 		return ret;
@@ -1692,6 +1748,28 @@ int unicast_client_stop(uint8_t cig_index)
 	if (param.count == 0) {
 		LOG_DBG("No streams to stop");
 		k_sem_give(&sem_cap_procedure_proceed);
+
+		/* No streams found. Check if devices are connected, if no, delete the group */
+		bool connected_server_found = false;
+
+		ret = bt_cap_unicast_group_foreach_stream(unicast_group, server_connected_check,
+							  &connected_server_found);
+		if (ret) {
+			LOG_ERR("Failed to check if servers are connected: %d", ret);
+			return ret;
+		}
+
+		if (!connected_server_found) {
+			LOG_DBG("No connected servers found, deleting unicast group");
+			ret = bt_cap_unicast_group_delete(unicast_group);
+			if (ret) {
+				LOG_ERR("Failed to delete unicast group: %d", ret);
+			}
+
+			unicast_group = NULL;
+			return -EALREADY;
+		}
+
 		return -EIO;
 	}
 
