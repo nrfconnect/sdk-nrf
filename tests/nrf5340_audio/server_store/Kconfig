@@ -1,10 +1,6 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: Apache-2.0
 
-#config BT
-#	bool
-#	default y
-
 config BT_CONN
 	bool
 	default y
@@ -25,6 +21,10 @@ config BT_MAX_PAIRED
 	int
 	default 5
 
+config BT_ISO_CENTRAL
+	bool
+	default y
+
 config BT_BAP_UNICAST
 	bool
 	default y
@@ -35,11 +35,11 @@ config BT_BAP_UNICAST_CLIENT
 
 config BT_AUDIO_CODEC_CAP_MAX_DATA_SIZE
 	int
-	default 512
+	default 255
 
 config BT_AUDIO_CODEC_CAP_MAX_METADATA_SIZE
 	int
-	default 512
+	default 255
 
 config BT_BUF_EVT_RX_COUNT
 	int
@@ -59,21 +59,29 @@ config BT_BUF_ACL_TX_COUNT
 
 config BT_AUDIO_CODEC_CFG_MAX_DATA_SIZE
 	int
-	default 512
+	default 255
 
 config BT_AUDIO_CODEC_CFG_MAX_METADATA_SIZE
 	int
-	default 512
+	default 255
 
 config BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT
 	int
 	default 4
 
-config BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT
+config BT_ISO_MAX_CIG
 	int
-	default 4
+	default 1
+
+config BT_ISO_MAX_CHAN
+	int
+	default 6
 
 config BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT
+	int
+	default 6
+
+config BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT
 	int
 	default 4
 
