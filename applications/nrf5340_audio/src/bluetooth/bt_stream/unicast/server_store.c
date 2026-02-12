@@ -1236,23 +1236,23 @@ static bool streams_calc_pres_dly(struct bt_cap_stream *stream, void *user_data)
 {
 	int ret;
 	struct foreach_stream_pres_dly *ctx = (struct foreach_stream_pres_dly *)user_data;
-	struct bt_cap_unicast_group_info info;
+	// struct bt_cap_unicast_group_info info;
 
-	ret = bt_cap_unicast_group_get_info(ctx->unicast_group, &info);
-	if (ret) {
-		LOG_ERR("Failed to get unicast group info: %d", ret);
-		ctx->ret = ret;
-		return true;
-	}
+	// ret = bt_cap_unicast_group_get_info(ctx->unicast_group, &info);
+	// if (ret) {
+	// 	LOG_ERR("Failed to get unicast group info: %d", ret);
+	// 	ctx->ret = ret;
+	// 	return true;
+	// }
 
-	if (stream->bap_stream.group != info.unicast_group) {
-		/* The existing stream is not in the same group as we are checking.
-		This is not an error as such, but the system for now supports a single group.*/
-		LOG_ERR("Existing stream group (%p) not same as incoming stream group (%p)",
-			(void *)info.unicast_group, stream->bap_stream.group);
-		ctx->ret = -EINVAL;
-		return true;
-	}
+	// if (stream->bap_stream.group != info.unicast_group) {
+	// 	/* The existing stream is not in the same group as we are checking.
+	// 	This is not an error as such, but the system for now supports a single group.*/
+	// 	LOG_ERR("Existing stream group (%p) not same as incoming stream group (%p)",
+	// 		(void *)info.unicast_group, stream->bap_stream.group);
+	// 	ctx->ret = -EINVAL;
+	// 	return true;
+	// }
 
 	if (stream->bap_stream.ep == NULL) {
 		LOG_ERR("Existing stream has no ep set yet.");
