@@ -59,7 +59,7 @@ tests:
       - SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
 
   mcuboot.external_flash.upgrade.netcore:
-    timeout: 800
+    timeout: 900
     tags:
       - netcore
     platform_allow:
@@ -75,7 +75,7 @@ tests:
       - b0n_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 
   nsib.mcuboot.external_flash.upgrade.netcore_and_mcuboot:
-    timeout: 800
+    timeout: 900
     tags:
       - netcore
       - nsib

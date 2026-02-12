@@ -97,3 +97,78 @@ def test_sw_downgrade_prevention_with_netcore(dut: DeviceAdapter, shell: Shell, 
     logger.info("Verify the initial APP is booted")
     tm.check_with_shell_command(tm.origin_mcuboot_version)
     logger.info("APP and NETCORE not downgraded")
+
+
+def test_upgrade_netcore_only(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
+    """Verify that only network core can be updated.
+
+    APP based on smp_svr, MCUboot is the primary bootloader.
+        Network core is enabled.
+    Upload the network core image with a higher version.
+    Verify that the network core image is updated and
+        application core remained is the same version.
+    """
+    tm = UpgradeTestWithMCUmgr(dut, shell, mcumgr)
+    tm.increase_version()
+
+    _, updated_netcore, _ = get_required_images_to_update(
+        dut,
+        sign_version=tm.get_current_sign_version(),
+        netcore_name=tm.build_params.net_core_name,
+        firmware_version=3,
+    )
+    tm.image_upload(updated_netcore, slot=1)
+
+    _, image1_slot1 = mcumgr.get_image_list()
+    mcumgr.image_confirm(image1_slot1.hash)
+
+    tm.reset_device()
+
+    tm.verify_after_reset(
+        lines=[
+            "Image index: 0, Swap type: none",
+            "Image index: 1, Swap type: perm",
+            "Image 1 copying the secondary slot",
+            "Image 1 upgrade secondary slot -> primary slot",
+            "Erasing the primary slot",
+            "Image 1 copying the secondary slot to the primary slot:",
+            "Image version: v1.1.1",
+        ],
+        no_lines=["insufficient version in secondary slot"],
+    )
+    logger.info("NETCORE upgraded successfully")
+
+
+def test_sw_downgrade_prevention_with_netcore_only(
+    dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
+):
+    """Verify that the network core are not downgraded.
+
+    APP based on smp_svr, MCUboot is the primary bootloader.
+        Network core is enabled.
+    Upload the network core image with a lower version.
+    Verify that the network core image is not downgraded.
+    """
+    tm = UpgradeTestWithMCUmgr(dut, shell, mcumgr)
+    tm.decrease_version()
+
+    _, updated_netcore, _ = get_required_images_to_update(
+        dut,
+        sign_version=tm.get_current_sign_version(),
+        firmware_version=1,
+        netcore_name=tm.build_params.net_core_name,
+    )
+
+    tm.image_upload(updated_netcore, slot=1)
+    _, image1_slot1 = mcumgr.get_image_list()
+    mcumgr.image_confirm(image1_slot1.hash)
+    tm.reset_device()
+    tm.verify_after_reset(
+        lines=[
+            "Image index: 0, Swap type: none",
+            "Image index: 1, Swap type: perm",
+            "insufficient version in secondary slot",
+        ],
+        no_lines=["copying the secondary slot"],
+    )
+    logger.info("NETCORE not downgraded")
