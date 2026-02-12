@@ -2,45 +2,13 @@
 # To use with "quarantine-list" twister argument.
 
 - scenarios:
-    - sample.matter.lock.release
-    - sample.matter.lock.debug
-    - sample.matter.lock.release.power_consumption
-    - sample.matter.light_switch.debug
-    - sample.matter.thermostat.debug
-    - sample.matter.light_switch.persistent_subscriptions
-    - sample.matter.light_bulb.debug
-    - sample.matter.light_bulb.release
     - sample.matter.light_switch.release
-    - sample.matter.thermostat.release
-    - sample.matter.window_cover.release
-    - sample.matter.window_cover.release.power_consumption
-    - sample.matter.thermostat.ext_temp
-    - sample.matter.light_bulb.memory_profiling
-    - sample.matter.smoke_co_alarm.release.power_consumption
-    - sample.matter.temperature_sensor.release
-    - sample.matter.contact_sensor.release
   platforms:
     - nrf52840dk/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.matter.lock.nus
-    - sample.matter.lock.debug
-    - sample.matter.lock.release.power_consumption
-    - sample.matter.window_cover.debug
-    - sample.matter.light_bulb.ffs
-    - sample.matter.light_switch.persistent_subscriptions
-    - sample.matter.light_bulb.debug
-    - sample.matter.light_bulb.release
     - sample.matter.light_switch.release
-    - sample.matter.thermostat.release
-    - sample.matter.window_cover.release
-    - sample.matter.window_cover.release.power_consumption
-    - sample.matter.smoke_co_alarm.release.power_consumption
-    - sample.matter.temperature_sensor.release
-    - sample.matter.contact_sensor.release
-    - sample.matter.thermostat.ext_temp
-    - sample.matter.light_bulb.memory_profiling
     - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.release
     - applications.matter_bridge.release.br_ble
@@ -56,15 +24,7 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.matter.lock.release
-    - sample.matter.lock.debug
-    - sample.matter.light_bulb.memory_profiling.persistent_subscriptions
-    - sample.matter.light_switch.persistent_subscriptions
-    - sample.matter.light_bulb.debug
-    - sample.matter.light_bulb.release
     - sample.matter.light_switch.release
-    - sample.matter.thermostat.release
-    - sample.matter.thermostat.ext_temp
     - applications.matter_bridge.release
     - applications.matter_bridge.release.br_ble
   platforms:
@@ -72,44 +32,10 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - applications.matter_bridge.smp_dfu.br_ble
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-  comment: "Configuration excluded due to a lack of free flash memory"
-
-- scenarios:
-    - sample.matter.lock.debug
-    - sample.matter.lock.release
-    - sample.matter.lock.smp_dfu
-    - sample.matter.lock.nus
-    - sample.matter.lock.release.power_consumption
-    - sample.matter.light_bulb.memory_profiling.persistent_subscriptions
-    - sample.matter.light_switch.persistent_subscriptions
-    - sample.matter.light_bulb.debug
-    - sample.matter.light_bulb.release
     - sample.matter.light_switch.release
-    - sample.matter.light_switch.debug
-    - sample.matter.thermostat.debug
-    - sample.matter.thermostat.release
-    - sample.matter.window_cover.release
-    - sample.matter.window_cover.debug
-    - sample.matter.window_cover.release.power_consumption
-    - sample.matter.smoke_co_alarm.release.power_consumption
-    - sample.matter.temperature_sensor.release
-    - sample.matter.contact_sensor.release
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.matter.template.debug
-    - sample.matter.light_bulb.debug
-    - sample.matter.light_switch.debug
-    - sample.matter.thermostat.debug
-    - sample.matter.window_cover.debug
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp/ns
-  comment: "Configurations excluded to limit resources usage in integration Matter ns builds"
 
 - scenarios:
     - sample.matter.light_bulb.nrf7002eb2.debug
@@ -119,7 +45,6 @@
     - sample.matter.lock.nrf7002eb2.debug
     - sample.matter.lock.nrf7002eb2.release
     - sample.matter.manufacturer_specific.nrf7002eb2.debug
-    - sample.matter.manufacturer_specific.nrf7002eb2.release
     - sample.matter.thermostat.nrf7002eb2.debug
     - sample.matter.thermostat.nrf7002eb2.release
     - applications.matter_bridge.br_ble.memory_profiling
@@ -189,19 +114,6 @@
     - sample.cellular.modem_callbacks
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.matter.template.smp_dfu
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf5340dk/nrf5340/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.matter.thermostat.debug
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
