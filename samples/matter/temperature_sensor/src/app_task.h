@@ -24,15 +24,7 @@ public:
 
 	/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of
 	 * 0.01 degC. */
-	void UpdateTemperatureMeasurement()
-	{
-		/* Linear temperature increase that is wrapped around to min value after reaching the max value. */
-		if (mCurrentTemperature < mTemperatureSensorMaxValue) {
-			mCurrentTemperature += kTemperatureMeasurementStep;
-		} else {
-			mCurrentTemperature = mTemperatureSensorMinValue;
-		}
-	}
+	void UpdateTemperatureMeasurement();
 
 	int16_t GetCurrentTemperature() const { return mCurrentTemperature; }
 
