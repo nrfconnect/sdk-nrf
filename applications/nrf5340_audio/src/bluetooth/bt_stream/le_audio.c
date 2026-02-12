@@ -373,7 +373,7 @@ void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_
 		LOG_INF("\tFrequency:\t %d Hz", freq_hz);
 		LOG_INF("\tDuration:\t %d us", dur_us);
 		LOG_INF("\tChan alloc:\t 0x%x", chan_allocation);
-		LOG_INF("\tOctets pr frame:\t %d (%d bps)", octets_per_sdu, bitrate);
+		LOG_INF("\tOct pr frame:\t %d (%d bps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames pr SDU:\t %d", frame_blks_per_sdu);
 	} else {
 		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
