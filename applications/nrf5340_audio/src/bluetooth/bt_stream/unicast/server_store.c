@@ -19,7 +19,7 @@
 #include "le_audio.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(server_store, CONFIG_SERVER_STORE_LOG_LEVEL);
+LOG_MODULE_REGISTER(srvstore, CONFIG_SERVER_STORE_LOG_LEVEL);
 
 static struct bt_bap_lc3_preset lc3_preset_48_4_1 = BT_BAP_LC3_UNICAST_PRESET_48_4_1(
 	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
@@ -1280,7 +1280,6 @@ static bool streams_calc_pres_dly(struct bt_cap_stream *stream, void *user_data)
 	if (ep_info.dir == BT_AUDIO_DIR_SINK) {
 		/* Sink stream */
 		ctx->streams_checked_snk++;
-		LOG_WRN("Checking sink %d", ctx->streams_checked_snk);
 		if (ctx->existing_pres_dly_us_snk == UINT32_MAX) {
 			ctx->existing_pres_dly_us_snk = stream->bap_stream.qos->pd;
 		}
@@ -1375,11 +1374,11 @@ static void pd_print(struct pd_struct const *const pref, uint32_t existing_pd_us
 		strcpy(calculated_pd_buf, "N/A");
 	}
 
-	LOG_INF("\tPD abs min: %u ", pref->pd_min);
-	LOG_INF("\tPD pref min: %u ", pref->pref_pd_min);
-	LOG_INF("\tPD pref max: %u ", pref->pref_pd_max);
-	LOG_INF("\tPD abs max: %u ", pref->pd_max);
-	LOG_INF("\tExisting PD: %s us, selected: %s us", existing_pd_buf, calculated_pd_buf);
+	LOG_INF("\tPD abs min:\t %u ", pref->pd_min);
+	LOG_INF("\tPD pref min:\t %u ", pref->pref_pd_min);
+	LOG_INF("\tPD pref max:\t %u ", pref->pref_pd_max);
+	LOG_INF("\tPD abs max:\t %u ", pref->pd_max);
+	LOG_INF("\tExisting PD:\t %s us, selected: %s us", existing_pd_buf, calculated_pd_buf);
 }
 
 // This needs to be called only once, after all streams have been through the configured cb
@@ -1729,7 +1728,7 @@ int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
 	}
 
 	if (new_max_trans_lat_snk_ms != UINT16_MAX) {
-		LOG_INF("Max transport latency %d ms selected for %d sink streams",
+		LOG_INF("Max transp latency %d ms selected for %d sink streams",
 			new_max_trans_lat_snk_ms, stream_trans_lat_set.streams_set_snk);
 		if (unicast_group->bap_unicast_group->cig_param.c_to_p_latency !=
 		    new_max_trans_lat_snk_ms) {
@@ -1738,7 +1737,7 @@ int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
 	}
 
 	if (new_max_trans_lat_src_ms != UINT16_MAX) {
-		LOG_INF("Max transport latency %d ms selected for %d source streams",
+		LOG_INF("Max transp latency %d ms selected for %d source streams",
 			new_max_trans_lat_src_ms, stream_trans_lat_set.streams_set_src);
 		if (unicast_group->bap_unicast_group->cig_param.p_to_c_latency !=
 		    new_max_trans_lat_src_ms) {

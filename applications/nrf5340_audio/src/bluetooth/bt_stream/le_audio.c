@@ -482,36 +482,39 @@ void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
 	}
 
 	LOG_INF("BAP stream (%p) QoS:", (void *)stream);
-	LOG_INF("\t Pres dly: %d us", stream->qos->pd);
+	LOG_INF("\tPres dly:\t %d us", stream->qos->pd);
 	if (stream->qos->framing == BT_BAP_QOS_CFG_FRAMING_UNFRAMED) {
-		LOG_INF("\t Framing: Unframed");
+		LOG_INF("\tFraming:\t Unframed");
 	} else if (stream->qos->framing == BT_BAP_QOS_CFG_FRAMING_FRAMED) {
-		LOG_INF("\t Framing: Framed");
+		LOG_INF("\tFraming:\t Framed");
 	} else {
-		LOG_ERR("\t Framing: Unknown (%d)", stream->qos->framing);
+		LOG_ERR("\tFraming:\t Unknown (%d)", stream->qos->framing);
 	}
 
 	if (stream->qos->phy == BT_BAP_QOS_CFG_1M) {
-		LOG_INF("\t PHY: 1M");
+		LOG_INF("\tRadio PHY:\t 1M");
 	} else if (stream->qos->phy == BT_BAP_QOS_CFG_2M) {
-		LOG_INF("\t PHY: 2M");
+		LOG_INF("\tRadio PHY:\t 2M");
 	} else if (stream->qos->phy == BT_BAP_QOS_CFG_CODED) {
-		LOG_INF("\t PHY: Coded");
+		LOG_INF("\tRadio PHY:\t Coded");
 	} else {
-		LOG_ERR("\t PHY: Unknown (%d)", stream->qos->phy);
+		LOG_ERR("\tRadio PHY:\t Unknown (%d)", stream->qos->phy);
 	}
 
-	LOG_INF("\t Recmd. ret.: %d", stream->qos->rtn);
-	LOG_INF("\t Max SDU size: %d", stream->qos->sdu);
+	LOG_INF("\tRecmd. ret.:\t %d", stream->qos->rtn);
+	LOG_INF("\tMax SDU size:\t %d", stream->qos->sdu);
 
 #if defined(CONFIG_BT_BAP_BROADCAST_SOURCE) || defined(CONFIG_BT_BAP_UNICAST)
-	LOG_INF("\t Max transport latency: %d ms", stream->qos->latency);
+	LOG_INF("\tMax trans lat:\t %d ms", stream->qos->latency);
 #endif /*  CONFIG_BT_BAP_BROADCAST_SOURCE || CONFIG_BT_BAP_UNICAST */
-	LOG_INF("\t SDU interval: %d us", stream->qos->interval);
+	<<<<<<< HEAD LOG_INF("\t SDU interval: %d us", stream->qos->interval);
 <<<<<<< HEAD
 };
 >>>>>>> 4af78bbab40 (Applications: nrf5340_audio: Added debug prints)
 =======
+=======
+LOG_INF("\tSDU interval:\t %d us", stream->qos->interval);
+>>>>>>> 8e069b00ec6 (Applications: nrf5340_audio: bidir and PD run)
 }
 
 // These values will be updated after group create or reconfig.
@@ -527,25 +530,48 @@ int le_audio_print_unicast_group(struct bt_cap_unicast_group const *const unicas
 	LOG_INF("Unicast Group Index: %d", unicast_group->bap_unicast_group->index);
 
 	if (unicast_group->bap_unicast_group->sink_pd != BT_BAP_PD_UNSET) {
-		LOG_INF("\tSink PD: %u us", unicast_group->bap_unicast_group->sink_pd);
+		LOG_INF("\tSink pres dly:\t %u us", unicast_group->bap_unicast_group->sink_pd);
 	} else {
-		LOG_INF("\tSink PD: Not set");
+		LOG_INF("\tSink pres dly:\t Not set");
 	}
 
 	if (unicast_group->bap_unicast_group->source_pd != BT_BAP_PD_UNSET) {
-		LOG_INF("\tSource PD: %u us", unicast_group->bap_unicast_group->source_pd);
+		LOG_INF("\t Src pres dly:\t %u us", unicast_group->bap_unicast_group->source_pd);
 	} else {
-		LOG_INF("\tSource PD: Not set");
+		LOG_INF("\t Src pres dly:\t Not set");
 	}
-	LOG_INF("\tC->P interval : %d us",
-		unicast_group->bap_unicast_group->cig_param.c_to_p_interval);
-	LOG_INF("\tC->P latency  : %d ms",
-		unicast_group->bap_unicast_group->cig_param.c_to_p_latency);
-	LOG_INF("\tP->C interval : %d us",
-		unicast_group->bap_unicast_group->cig_param.p_to_c_interval);
 
-	LOG_INF("\tP->C latency  : %d ms",
-		unicast_group->bap_unicast_group->cig_param.p_to_c_latency);
+	if (!unicast_group->bap_unicast_group->cig_param.c_to_p_interval) {
+		LOG_INF("\tC->P interval:\t Not set (%d)",
+			unicast_group->bap_unicast_group->cig_param.c_to_p_interval);
+	} else {
+		LOG_INF("\tC->P interval:\t %d us",
+			unicast_group->bap_unicast_group->cig_param.c_to_p_interval);
+	}
+
+	if (!unicast_group->bap_unicast_group->cig_param.c_to_p_latency) {
+		LOG_INF("\tC->P latency:\t Not set (%d)",
+			unicast_group->bap_unicast_group->cig_param.c_to_p_latency);
+	} else {
+		LOG_INF("\tC->P latency:\t %d ms",
+			unicast_group->bap_unicast_group->cig_param.c_to_p_latency);
+	}
+
+	if (!unicast_group->bap_unicast_group->cig_param.p_to_c_interval) {
+		LOG_INF("\tP->C interval:\t Not set (%d)",
+			unicast_group->bap_unicast_group->cig_param.p_to_c_interval);
+	} else {
+		LOG_INF("\tP->C interval:\t %d us",
+			unicast_group->bap_unicast_group->cig_param.p_to_c_interval);
+	}
+
+	if (!unicast_group->bap_unicast_group->cig_param.p_to_c_latency) {
+		LOG_INF("\tP->C latency:\t Not set (%d)",
+			unicast_group->bap_unicast_group->cig_param.p_to_c_latency);
+	} else {
+		LOG_INF("\tP->C latency:\t %d ms",
+			unicast_group->bap_unicast_group->cig_param.p_to_c_latency);
+	}
 
 	return 0;
 }

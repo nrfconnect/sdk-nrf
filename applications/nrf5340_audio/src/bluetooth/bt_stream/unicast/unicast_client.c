@@ -121,8 +121,6 @@ static void cap_proc_waiting_check(void)
 		return;
 	}
 
-	LOG_WRN("CAP procedure %d received from queue", proc);
-
 	switch (proc) {
 	case CAP_PROCEDURE_START:
 		unicast_client_start(0);
@@ -343,7 +341,7 @@ static void unicast_group_create(void)
 	if (ret) {
 		LOG_ERR("Failed to create unicast group: %d", ret);
 	} else {
-		LOG_WRN("- - - - Created unicast group - - - -");
+		LOG_DBG("Created unicast group");
 		unicast_group_created = true;
 	}
 
@@ -1066,7 +1064,7 @@ static int all_streams_configured(void)
 	/* Check if a group reconfiguration is required */
 	if (action != ACTION_REQ_NONE) {
 
-		LOG_WRN("Reconfigure group! action: %d", action);
+		LOG_INF("Unicast group reconfigure");
 
 		ret = bt_cap_unicast_group_reconfig(unicast_group, &group_param);
 		if (ret) {
@@ -1084,8 +1082,6 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 	int ret;
 	enum bt_audio_dir dir;
 	bool this_is_the_last_stream = false;
-
-	LOG_WRN("codec config cb");
 
 	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
 	if (ret < 0) {
@@ -1144,10 +1140,10 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 						  NULL);
 
 	if (ret == -ECANCELED) {
-		LOG_WRN("Not all streams are configured, cannot reconfigure group now");
+		LOG_DBG("Not all streams are configured yet");
 	} else if (ret == 0) {
 		this_is_the_last_stream = true;
-		LOG_WRN("All streams are configured");
+		LOG_DBG("All streams are configured");
 	} else {
 		LOG_ERR("Foreach error: %d", ret);
 		srv_store_unlock();
@@ -1171,7 +1167,6 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 
 static void stream_qos_set_cb(struct bt_bap_stream *stream)
 {
-	LOG_WRN("QoS set");
 	le_audio_print_qos_from_stream(stream);
 }
 
@@ -1268,7 +1263,7 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 			return;
 		}
 
-		LOG_WRN("deleting unicast group");
+		LOG_DBG("Deleting unicast group");
 
 		ret = bt_cap_unicast_group_delete(unicast_group);
 		if (ret) {
@@ -1431,7 +1426,7 @@ static void unicast_stop_complete_cb(int err, struct bt_conn *conn)
 		LOG_WRN("Failed stop_complete for conn: %p, err: %d", (void *)conn, err);
 	}
 
-	LOG_WRN("Unicast stop complete cb");
+	LOG_DBG("Unicast stop complete cb");
 	playing_state = false;
 
 	cap_proc_waiting_check();
@@ -1790,7 +1785,6 @@ int unicast_client_start(uint8_t cig_index)
 		return -EIO;
 	}
 
-	LOG_WRN("Calling unicast client start");
 	ret = bt_cap_initiator_unicast_audio_start(&param);
 	if (ret) {
 		LOG_ERR("Failed to start unicast sink audio: %d", ret);
