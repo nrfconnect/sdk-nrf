@@ -10,9 +10,21 @@
 #include <errno.h>
 #include <nrfx.h>
 #include <assert.h>
+
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
 #endif
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED) || USE_PARTITION_MANAGER
+#include <pm_config.h>
+/* Address of storage as seen in processor address space */
+#define BL_STORAGE_ADDRESS	PM_PROVISION_ADDRESS
+#else
+/* Address of storage as seen in processor address space */
+#define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
+#endif
+
+const volatile struct bl_storage_data *const BL_STORAGE =
+	(const volatile struct bl_storage_data *)(BL_STORAGE_ADDRESS);
 
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
 

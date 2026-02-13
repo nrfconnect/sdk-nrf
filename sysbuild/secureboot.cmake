@@ -38,51 +38,85 @@ if(SB_CONFIG_SECURE_BOOT)
     )
   endif()
 
-  if(SB_CONFIG_SECURE_BOOT_APPCORE)
-    set(secure_boot_source_dir ${ZEPHYR_NRF_MODULE_DIR}/samples/bootloader)
+   if(SB_CONFIG_SECURE_BOOT_APPCORE)
+    if(SB_CONFIG_PARTITION_MANAGER)
+      ExternalZephyrProject_Add(
+        APPLICATION b0
+        SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/bootloader_deprecated_pm
+        BUILD_ONLY true
+      )
 
-    ExternalZephyrProject_Add(
-      APPLICATION b0
-      SOURCE_DIR ${secure_boot_source_dir}
-      BUILD_ONLY true
-    )
-    set_target_properties(b0 PROPERTIES
-      IMAGE_CONF_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/image_configurations/b0_image_default.cmake
-    )
-
-    if(NOT "APP" IN_LIST PM_DOMAINS)
-      list(APPEND PM_DOMAINS APP)
-    endif()
-    set_property(GLOBAL APPEND PROPERTY
-        PM_APP_IMAGES
-        "b0"
-    )
-  endif()
-
-  if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-    set(image s1_image)
-
-    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-      ExternalZephyrVariantProject_Add(
-        APPLICATION ${image}
-        SOURCE_APP mcuboot
-        SNIPPET slot1-partition
-        BUILD_ONLY TRUE
+      if(NOT "APP" IN_LIST PM_DOMAINS)
+        list(APPEND PM_DOMAINS APP)
+      endif()
+      set_property(GLOBAL APPEND PROPERTY
+         PM_APP_IMAGES
+         "b0"
       )
     else()
-      ExternalZephyrVariantProject_Add(
-        APPLICATION ${image}
-        SOURCE_APP ${DEFAULT_IMAGE}
-        SNIPPET slot1-partition
-        BUILD_ONLY TRUE
+      ExternalZephyrProject_Add(
+        APPLICATION b0
+        SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/bootloader
       )
+
+      include(image_flasher.cmake)
+      add_image_flasher(NAME app_provision HEX_FILE "${CMAKE_BINARY_DIR}/app_provision.hex")
     endif()
 
-    set_property(GLOBAL APPEND PROPERTY
-        PM_APP_IMAGES
-        "${image}"
-    )
-  endif()
-endif()
+    set_target_properties(b0 PROPERTIES
+      IMAGE_CONF_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/image_configurations/b0_image_default.cmake
+     )
+   endif()
+
+   if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+    if(SB_CONFIG_PARTITION_MANAGER)
+      set(image s1_image)
+
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        ExternalZephyrVariantProject_Add(
+          APPLICATION ${image}
+          SOURCE_APP mcuboot
+          SNIPPET slot1-partition
+          BUILD_ONLY TRUE
+        )
+      else()
+        ExternalZephyrVariantProject_Add(
+          APPLICATION ${image}
+          SOURCE_APP ${DEFAULT_IMAGE}
+          SNIPPET slot1-partition
+          BUILD_ONLY TRUE
+        )
+      endif()
+
+      set_property(GLOBAL APPEND PROPERTY
+         PM_APP_IMAGES
+         "${image}"
+      )
+    else()
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        ExternalZephyrVariantProject_Add(
+          APPLICATION mcuboot_s1_variant
+          SOURCE_APP mcuboot
+          EXTRA_DTC_OVERLAY_FILE ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s1-partition.overlay
+        )
+
+        add_overlay_dts(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay)
+      else()
+        ExternalZephyrVariantProject_Add(
+          APPLICATION ${DEFAULT_IMAGE}_s1_variant
+          SOURCE_APP ${DEFAULT_IMAGE}
+          EXTRA_DTC_OVERLAY_FILE ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s1-partition.overlay
+        )
+
+        add_overlay_dts(${DEFAULT_IMAGE}
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay
+        )
+      endif()
+    endif()
+   endif()
+ endif()
 
 set_property(GLOBAL PROPERTY PM_DOMAINS ${PM_DOMAINS})
+if(SB_CONFIG_PARTITION_MANAGER)
+  set_property(GLOBAL PROPERTY PM_DOMAINS ${PM_DOMAINS})
+endif()
