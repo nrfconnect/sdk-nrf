@@ -34,4 +34,4 @@ static int nrf_rpc_sys_init(void)
 	return 0;
 }
 
-SYS_INIT(nrf_rpc_sys_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(nrf_rpc_sys_init, APPLICATION, CONFIG_NRF_RPC_INIT_PRIORITY);

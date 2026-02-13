@@ -177,6 +177,11 @@ config NRF_RPC_INIT
 	help
 	  Initialize nRF RPC library during the system startup.
 
+config NRF_RPC_INIT_PRIORITY
+	int "nRF RPC initialization priority"
+	depends on NRF_RPC_INIT
+	default 90
+
 module = NRF_RPC
 module-str = NRF_RPC
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
