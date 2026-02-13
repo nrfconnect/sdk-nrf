@@ -361,7 +361,7 @@ The driver implements the PSA Crypto driver API (``cracen_aead_set_nonce``) and 
 
 The hardware peripheral is available on the following devices:
 
-* nRF54L Series devices - See :ref:`ug_crypto_supported_features` for supported features and limitations for each device.
+* Most nRF54L Series devices - See :ref:`ug_crypto_supported_features` for supported features and limitations for each device.
   For more information, see the :ref:`ug_nrf54l_cryptography` page.
   For more information about the hardware peripheral, see the CRACEN hardware peripheral page in the device datasheets (for example, `nRF54L15 datasheet <nRF54L15 CRACEN_>`_).
 

@@ -2434,18 +2434,21 @@ Trusted Firmware-M support
               - nRF54L15
               - nRF54LM20A
               - nRF54LV10A
+              - nRF54LS05
             * - :ref:`Configurable <ug_tfm_supported_services_profiles_configurable>`
               - --
               - Experimental
               - Experimental
               - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
               - Experimental
+              - --
             * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
               - --
               - Experimental
               - Experimental
               - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
               - Experimental
+              - --
 
       .. tab:: nRF91 Series
 
@@ -2600,7 +2603,9 @@ The lists are organized by device Series and implementation.
               - nRF54L15
               - nRF54LM20A
               - nRF54LV10A
+              - nRF54LS05
             * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
               - --
               - --
               - --
@@ -2612,7 +2617,9 @@ The lists are organized by device Series and implementation.
               - Supported
               - Experimental
               - Experimental
+              - --
             * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
+              - Supported
               - Supported
               - Supported
               - Supported
@@ -2624,7 +2631,9 @@ The lists are organized by device Series and implementation.
               - Experimental
               - Experimental
               - Experimental
+              - --
             * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+              - --
               - --
               - --
               - --
@@ -2825,12 +2834,14 @@ Hardware Unique Key
              - nRF54L15
              - nRF54LM20A
              - nRF54LV10A
+             - nRF54LS05
            * - **Key Derivation from Hardware Unique Key**
              - Experimental
              - Experimental
              - Experimental
              - Experimental
              - Experimental
+             - --
 
       .. tab:: nRF91 Series
 
@@ -2915,12 +2926,14 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
               - nRF54L15
               - nRF54LM20A
               - nRF54LV10A
+              - nRF54LS05
             * - **Trusted storage**
               - Supported
               - Supported
               - Supported
               - Experimental
               - Supported
+              - --
 
       .. tab:: nRF91 Series
 
