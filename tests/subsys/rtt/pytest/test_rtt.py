@@ -129,6 +129,7 @@ def test_rtt_logging(dut: DeviceAdapter):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             encoding='UTF-8',
+            errors='replace',
         )
     except OSError as exc:
         logger.error(f"Unable to start JLinkRTTLoggerExe:\n{cmd=}\n{exc=}")

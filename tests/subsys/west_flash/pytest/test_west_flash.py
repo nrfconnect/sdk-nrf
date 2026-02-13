@@ -54,6 +54,7 @@ def run_communicate_check(cmd: str, input: str, expected: str):
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         encoding='UTF-8',
+        errors='replace',
         text=True,
     )
 
