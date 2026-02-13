@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_rram {
+	/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
+	reg = <0x0 DT_SIZE_K(1524)>;
+
+	/delete-node/ partitions;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(28)>;
+		};
+
+		slot0_partition: partition@7000 {
+			label = "image-0";
+			reg = <0x7000 DT_SIZE_K(736)>;
+		};
+
+		slot1_partition: partition@bf000 {
+			label = "image-1";
+			reg = <0xbf000 DT_SIZE_K(736)>;
+		};
+
+		bt_fast_pair_partition: partition@177000 {
+			label = "fast_pair";
+			reg = <0x177000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@178000 {
+			label = "storage";
+			reg = <0x178000 DT_SIZE_K(20)>;
+		};
+	};
+};
