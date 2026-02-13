@@ -69,7 +69,7 @@ You can use the following Kconfig options to configure the sample:
   To override it, adjust this option by setting a path to your custom encryption key file.
 * :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` - Use this option to set the application image version for software updates.
 
-To configure the sample to use KMU crypto storage, add ``-DSB_EXTRA_CONF_FILE=kmu.sysbuild.conf`` to the build command line.
+To configure the sample to use KMU crypto storage, add ``-DSB_EXTRA_CONF_FILE=sysbuild_kmu.conf`` to the build command line.
 This option brings in sysbuild configuration file that selects two additional options:
 
  * :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` - This option enables KMU support.
@@ -118,7 +118,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-By default, the sample builds without KMU support, and the encryption key is embedded within the MCUboot binary.
+By default, the sample builds with KMU support for the platform that supports it (nRF54LV10, nRF54L15 and nRF54LM20), otherwise without KMU the encryption key is embedded within the MCUboot binary.
 To see the encryption workflow, you must build two application images with different version numbers (for example, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option to ``1.0.0`` and ``2.0.0``), using separate build directories.
 
 Testing
