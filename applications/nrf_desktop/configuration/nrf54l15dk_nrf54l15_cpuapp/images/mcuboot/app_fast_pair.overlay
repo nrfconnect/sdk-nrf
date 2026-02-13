@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2024-2026 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../memory_map.dtsi"
+#include "../../memory_map_fast_pair.dtsi"
 
 /* The nRF54L15 DK defines memory map using DTS.
  * Assign the bootloader partition to MCUboot image.
