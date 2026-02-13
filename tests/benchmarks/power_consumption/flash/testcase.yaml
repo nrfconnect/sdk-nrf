@@ -27,3 +27,15 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+
+  benchmarks.power_consumption.flash.hpf_mspi:
+    sysbuild: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - SB_CONFIG_PARTITION_MANAGER=n
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y

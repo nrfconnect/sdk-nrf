@@ -8,6 +8,7 @@ menuconfig MSPI_HPF
 	bool "HPF MSPI driver"
 	default y
 	depends on DT_HAS_NORDIC_HPF_MSPI_CONTROLLER_ENABLED
+	select PINCTRL
 	select MBOX
 	select IPC_SERVICE
 	select IPC_SERVICE_BACKEND_ICMSG
