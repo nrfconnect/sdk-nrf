@@ -157,9 +157,3 @@
   platforms:
     - thingy53/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37637"
-
-- scenarios:
-    - sample.net.http_server.lte.tls
-  platforms:
-    - thingy91/nrf9160/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37637"
