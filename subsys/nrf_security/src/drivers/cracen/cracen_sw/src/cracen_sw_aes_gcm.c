@@ -118,7 +118,7 @@ static psa_status_t initialize_gcm_h(cracen_aead_operation_t *operation,
 	if (gcm_ctx->ghash_initialized) {
 		return PSA_SUCCESS;
 	}
-	status = cracen_aes_primitive(cipher, &operation->keyref, zero, h);
+	status = cracen_sw_aes_primitive(cipher, &operation->keyref, zero, h);
 
 	if (status == PSA_SUCCESS) {
 		gcm_ext_gen_table(h, gcm_ctx->h_table);
@@ -240,8 +240,8 @@ static psa_status_t ctr_xor(cracen_aead_operation_t *operation, struct sxblkciph
 			if (status != PSA_SUCCESS) {
 				return status;
 			}
-			status = cracen_aes_primitive(cipher, &operation->keyref,
-						      gcm_ctx->ctr_block, gcm_ctx->keystream);
+			status = cracen_sw_aes_primitive(cipher, &operation->keyref,
+							 gcm_ctx->ctr_block, gcm_ctx->keystream);
 			if (status != PSA_SUCCESS) {
 				return status;
 			}
@@ -283,8 +283,8 @@ static psa_status_t generate_tag(cracen_aead_operation_t *operation, uint8_t *ta
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	generate_gcm_j0(operation, pre_counter_block);
-	status = cracen_aes_primitive(cipher, &operation->keyref,
-				      pre_counter_block, s0);
+	status = cracen_sw_aes_primitive(cipher, &operation->keyref,
+					 pre_counter_block, s0);
 	if (status != PSA_SUCCESS) {
 		safe_memzero(s0, sizeof(s0));
 		return status;

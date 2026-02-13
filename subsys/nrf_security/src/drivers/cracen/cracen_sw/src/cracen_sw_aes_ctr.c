@@ -128,8 +128,8 @@ psa_status_t cracen_sw_aes_ctr_update(cracen_cipher_operation_t *operation, cons
 
 			memcpy(current_ctr, operation->iv, SX_BLKCIPHER_AES_BLK_SZ);
 
-			status = cracen_aes_primitive(&operation->cipher, &operation->keyref,
-						      current_ctr, keystream_block);
+			status = cracen_sw_aes_primitive(&operation->cipher, &operation->keyref,
+							 current_ctr, keystream_block);
 			if (status != PSA_SUCCESS) {
 				return status;
 			}

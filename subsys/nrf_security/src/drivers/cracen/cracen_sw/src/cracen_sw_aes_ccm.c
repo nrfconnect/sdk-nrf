@@ -48,7 +48,7 @@ static psa_status_t cbc_mac_update_block(struct sxblkcipher *cipher, const struc
 
 	memcpy(mac_input, mac_state, SX_BLKCIPHER_AES_BLK_SZ);
 	cracen_xorbytes(mac_input, block, SX_BLKCIPHER_AES_BLK_SZ);
-	status = cracen_aes_primitive(cipher, keyref, mac_input, mac_state);
+	status = cracen_sw_aes_primitive(cipher, keyref, mac_input, mac_state);
 
 	safe_memzero(mac_input, sizeof(mac_input));
 	return status;
@@ -178,7 +178,7 @@ static psa_status_t initialize_cbc_mac(cracen_aead_operation_t *operation,
 	}
 	format_ccm_b0(b0, operation->nonce_length, operation->nonce, operation->plaintext_length,
 		      operation->ad_length, operation->tag_size);
-	status = cracen_aes_primitive(cipher, &operation->keyref, b0, ccm_ctx->cbc_mac);
+	status = cracen_sw_aes_primitive(cipher, &operation->keyref, b0, ccm_ctx->cbc_mac);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -320,7 +320,7 @@ static psa_status_t generate_tag(cracen_aead_operation_t *operation, uint8_t *ta
 	psa_status_t status;
 
 	format_ccm_ctr_block(a0_block, operation->nonce_length, operation->nonce, 0);
-	status = cracen_aes_primitive(cipher, &operation->keyref, a0_block, s0);
+	status = cracen_sw_aes_primitive(cipher, &operation->keyref, a0_block, s0);
 	if (status != PSA_SUCCESS) {
 		safe_memzero(s0, sizeof(s0));
 		return status;
@@ -370,8 +370,8 @@ static psa_status_t ctr_xor(cracen_aead_operation_t *operation, struct sxblkciph
 			if (status != PSA_SUCCESS) {
 				return status;
 			}
-			status = cracen_aes_primitive(cipher, &operation->keyref,
-						      ccm_ctx->ctr_block, ccm_ctx->keystream);
+			status = cracen_sw_aes_primitive(cipher, &operation->keyref,
+							 ccm_ctx->ctr_block, ccm_ctx->keystream);
 			if (status != PSA_SUCCESS) {
 				return status;
 			}

@@ -70,8 +70,9 @@ psa_status_t cracen_cmac_derive_subkeys(cracen_mac_operation_t *operation, uint8
 {
 	uint8_t empty_block[SX_BLKCIPHER_AES_BLK_SZ] = {0};
 	uint8_t L[SX_BLKCIPHER_AES_BLK_SZ]; /* L is defined in RFC 4493 */
-	psa_status_t status = cracen_aes_primitive(&operation->cmac.cipher, &operation->cmac.keyref,
-						   empty_block, L);
+	psa_status_t status = cracen_sw_aes_primitive(&operation->cmac.cipher,
+						      &operation->cmac.keyref,
+						      empty_block, L);
 
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -115,7 +116,7 @@ psa_status_t cracen_sw_cmac_update(cracen_mac_operation_t *operation, const uint
 			cracen_xorbytes(operation->cmac.sw_ctx.mac_state,
 					operation->cmac.sw_ctx.partial_block,
 					SX_BLKCIPHER_AES_BLK_SZ);
-			psa_status = cracen_aes_primitive(
+			psa_status = cracen_sw_aes_primitive(
 				&operation->cmac.cipher, &operation->cmac.keyref,
 				operation->cmac.sw_ctx.mac_state, operation->cmac.sw_ctx.mac_state);
 			if (psa_status != PSA_SUCCESS) {
@@ -156,9 +157,9 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
 	/* Final MAC: encrypt (mac_state XOR last_block) */
 	cracen_xorbytes(operation->cmac.sw_ctx.mac_state, last_block, SX_BLKCIPHER_AES_BLK_SZ);
 
-	psa_status = cracen_aes_primitive(&operation->cmac.cipher, &operation->cmac.keyref,
-					  operation->cmac.sw_ctx.mac_state,
-					  operation->cmac.sw_ctx.mac_state);
+	psa_status = cracen_sw_aes_primitive(&operation->cmac.cipher, &operation->cmac.keyref,
+					     operation->cmac.sw_ctx.mac_state,
+					     operation->cmac.sw_ctx.mac_state);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}

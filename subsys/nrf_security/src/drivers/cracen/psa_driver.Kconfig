@@ -1860,4 +1860,23 @@ config PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS
 		   PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER && \
 		   PSA_NEED_CRACEN_KMU_DRIVER
 
+# CRACEN Key wrap driver
+
+config PSA_NEED_CRACEN_AES_KW
+	bool
+	default y
+	depends on PSA_WANT_ALG_AES_KW
+
+config PSA_NEED_CRACEN_AES_KWP
+	bool
+	default y
+	depends on PSA_WANT_ALG_AES_KWP
+
+config PSA_NEED_CRACEN_KEY_WRAP_DRIVER
+	bool
+	default y
+	depends on PSA_NEED_CRACEN_ECB_NO_PADDING_AES
+	depends on PSA_NEED_CRACEN_AES_KW || \
+		   PSA_NEED_CRACEN_AES_KWP
+
 endmenu

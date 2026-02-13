@@ -180,3 +180,13 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KEY_DER
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_derivation.c
   )
 endif()
+
+if(CONFIG_PSA_NEED_CRACEN_KEY_WRAP_DRIVER)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/aes/cracen_aes_ecb.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_wrap/cracen_key_wrap_common.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_wrap/cracen_key_wrap_kw.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_wrap/cracen_key_wrap_kwp.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_wrap.c
+  )
+endif()
