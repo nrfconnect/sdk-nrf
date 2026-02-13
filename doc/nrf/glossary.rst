@@ -195,7 +195,7 @@ Glossary
       In the |NCS|, this term is used in the context of `ARM TrustZone`_ and :ref:`app_boards_spe_nspe` (:term:`Non-Secure Processing Environment (NSPE)` and :term:`Secure Processing Environment (SPE)`).
 
    CRACEN
-      A hardware crypto accelerator within nRF54L Series devices, and the name of the :term:`cryptographic driver <Cryptographic driver>` in the |NCS|.
+      A hardware crypto accelerator within most of the nRF54L Series devices, and the name of the :term:`cryptographic driver <Cryptographic driver>` in the |NCS|.
       For more information, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` on the :ref:`ug_nrf54l_cryptography` page.
 
    Cryptographic driver

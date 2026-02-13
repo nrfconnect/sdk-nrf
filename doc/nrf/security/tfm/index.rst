@@ -14,7 +14,7 @@ Using a highly configurable set of software components, it creates the Secure Pr
 TF-M also provides a set of secure runtime services to the application, such as Protected Storage, Cryptography, and Attestation.
 Additionally, secure boot through MCUboot in TF-M ensures integrity of runtime software and supports firmware upgrade.
 
-`ARM TrustZone`_ technology included in Nordic Semiconductor's SoCs that implement the Armv8-M architecture (such as nRF5340, the nRF54L Series or the nRF91 Series) provides hardware-enforced separation of the Secure and Non-secure Processing Environments (SPE and NSPE, respectively) into Trusted and Non-Trusted worlds.
+`ARM TrustZone`_ technology included in Nordic Semiconductor's SoCs that implement the Armv8-M architecture (such as nRF5340, most of the nRF54L Series or the nRF91 Series) provides hardware-enforced separation of the Secure and Non-secure Processing Environments (SPE and NSPE, respectively) into Trusted and Non-Trusted worlds.
 
 The TF-M implementation in the |NCS| is demonstrated in the following samples:
 
