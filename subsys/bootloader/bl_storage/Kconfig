@@ -7,3 +7,26 @@
 config SECURE_BOOT_STORAGE
 	bool "Library for accessing the bootloader storage"
 	select NRFX_RRAMC if SOC_SERIES_NRF54L && !TRUSTED_EXECUTION_NONSECURE
+
+config SECURE_BOOT_STORAGE_ADDRESS
+	hex
+	depends on !PARTITION_MANAGER_ENABLED
+	default 0xffd500 if SOC_SERIES_NRF54L
+	default 0xff8108 if SOC_SERIES_NRF91
+	default 0xff8100 if SOC_NRF5340_CPUAPP
+	help
+	  Address of secure storage within processor address space.
+
+config SECURE_BOOT_STORAGE_SIZE
+	hex
+	depends on !PARTITION_MANAGER_ENABLED
+	default 0x280 if SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP # Stored in OTP region
+	# Monotonic counter slot takes 4 bytes on nRF54L Series
+	default 0x460 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
+	default 0x280 if SOC_NRF5340_CPUNET # Second instance stored in internal flash of NET
+	default FPROTECT_BLOCK_SIZE
+	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP || \
+							 SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || \
+							 SOC_NRF54L10_CPUAPP)
+	help
+	  Flash space set aside for the PROVISION partition.
