@@ -17,13 +17,13 @@ For full introduction to the bootloader and DFU solution, see :ref:`ug_bootloade
    |NSIB| is not supported on the nRF54H20 SoC.
 
 You must select a sample that supports DFU to ensure proper testing of its functionality.
-In the following sections, the SMP server sample variant in the :file:`samples/zephyr/subsys/mgmt/mcumgr/smp_svr` folder is used.
+In the following sections, the SMP server sample variant in the :file:`samples/dfu/smp_svr` folder is used.
 It extends the Zephyr's :zephyr:code-sample:`smp-svr` sample and adapts it for nRF54H20 platform.
 
 .. note::
    There are two variants of the SMP server sample:
 
-   * The new ``sdk-nrf`` sample supporting the nRF54H20 SoC, located in the :file:`samples/zephyr/subsys/mgmt/mcumgr/smp_svr` folder.
+   * The new ``sdk-nrf`` sample supporting the nRF54H20 SoC, located in the :file:`samples/dfu/smp_svr` folder.
    * The :zephyr:code-sample:`smp-svr`, located in the :file:`samples/subsys/mgmt/mcumgr/smp_svr` folder, is the Zephyr sample that supports MCUboot and DFU.
 
 Configuring MCUboot on the nRF54H20 DK
@@ -50,7 +50,7 @@ To configure the :zephyr:code-sample:`hello_world` sample for using MCUboot, fol
 
       west flash
 
-See the :zephyr:code-sample:`smp-svr` sample for a reference of how you can further configure your application with MCUboot.
+See the :ref:`nrf_smp_svr_sample` sample for a reference of how you can further configure your application with MCUboot.
 It demonstrates how to enable :ref:`dfu_tools_mcumgr_cli` commands in the application, allowing you to read information about images managed by MCUboot.
 
 Supported signatures
@@ -89,35 +89,37 @@ DFU configuration example
 MCUboot supports various methods for updating firmware images.
 On the nRF54H platform, you can use :ref:`swap and direct-xip modes<ug_bootloader_main_config>`.
 
-For more information, see the :file:`samples/zephyr/subsys/mgmt/mcumgr/smp_svr` sample.
+For more information, see the :file:`samples/dfu/smp_svr` sample.
 This sample demonstrates how to configure DFU feature in both MCUboot and user application in your project.
 It uses Simple Management Protocol for DFU and querying device information from the application.
 
 The following nRF54H20-specific build flavors are available:
 
-* ``sample.mcumgr.smp_svr.bt.nrf54h20dk`` - DFU over BLE using the default :ref:`ipc_radio` image and *Swap using move* MCUboot mode.
-* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrevert`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode.
-* ``sample.mcumgr.smp_svr.serial.nrf54h20dk.ecdsa`` - DFU over serial port with ECDSA P256 signature verification.
-* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrequests`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode and bootloader requests support.
-* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.ext_flash`` - DFU over BLE from external flash using *Swap using move* MCUboot mode.
+* ``sample.dfu.smp_svr.bt.nrf54h20dk`` - DFU over BLE using the default :ref:`ipc_radio` image and *Swap using move* MCUboot mode.
+* ``sample.dfu.smp_svr.bt.nrf54h20dk.direct_xip_withrevert`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode.
+* ``sample.dfu.smp_svr.serial.nrf54h20dk.ecdsa`` - DFU over serial port with ECDSA P256 signature verification.
+* ``sample.dfu.smp_svr.bt.nrf54h20dk.direct_xip_withrequests`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode and bootloader requests support.
+* ``sample.dfu.smp_svr.bt.nrf54h20dk.ext_flash`` - DFU over BLE from external flash using *Swap using move* MCUboot mode.
 
 The following additional build flavors are also available:
 
-* ``sample.mcumgr.smp_svr.encryption.ecdsa_p256`` - DFU using *Dual-bank swap with move* MCUboot mode with encryption support and ECDSA P256 signature verification.
-* ``sample.mcumgr.smp_svr.nrf_compress.basic`` - DFU using *Dual-bank overwrite* MCUboot mode with compression support.
-* ``sample.mcumgr.smp_svr.nrf_compress.encryption_ecdsa_p256`` - DFU using *Dual-bank overwrite* MCUboot mode with both compression and encryption support, and ECDSA P256 signature verification.
+* ``sample.dfu.smp_svr.encryption.ecdsa_p256`` - DFU using *Dual-bank swap with move* MCUboot mode with encryption support and ECDSA P256 signature verification.
+* ``sample.dfu.smp_svr.nrf_compress.basic`` - DFU using *Dual-bank overwrite* MCUboot mode with compression support.
+* ``sample.dfu.smp_svr.nrf_compress.encryption_ecdsa_p256`` - DFU using *Dual-bank overwrite* MCUboot mode with both compression and encryption support, and ECDSA P256 signature verification.
 
-You can build and flash the selected flavor of the :zephyr:code-sample:`smp-svr` sample with the following commands:
+You can build and flash the selected flavor of the :ref:`nrf_smp_svr_sample` sample with the following commands:
 
 .. code-block:: console
 
-    west build -b nrf54h20dk/nrf54h20/cpuapp -T ./sample.mcumgr.smp_svr.bt.nrf54h20dk
+    west build -b nrf54h20dk/nrf54h20/cpuapp -T ./sample.dfu.smp_svr.bt.nrf54h20dk
     west flash
+
+.. _ug_nrf54h_developing_ble_fota_steps_testing:
 
 Testing steps
 =============
 
-You can test the :zephyr:code-sample:`smp-svr` sample by performing a FOTA update.
+You can test the :ref:`nrf_smp_svr_sample` sample by performing a FOTA update.
 To do so, complete the following steps:
 
 1. Locate the :file:`dfu_application.zip` archive in the build directory of the build from the previous chapter.
