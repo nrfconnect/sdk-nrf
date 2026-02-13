@@ -128,12 +128,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37637"
 
 - scenarios:
-    - sample.net.http_server.lte.tls
-  platforms:
-    - thingy91/nrf9160/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37637"
-
-- scenarios:
     - sample.bluetooth.direct_test_mode
     - sample.peripheral.radio_test
   platforms:
