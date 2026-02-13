@@ -178,6 +178,7 @@ config MBEDTLS_DEBUG_LEVEL
 
 config MBEDTLS_MEMORY_DEBUG
 	bool "mbed TLS memory debug activation"
+	depends on MBEDTLS_MEMORY_BUFFER_ALLOC_C && MBEDTLS_ENABLE_HEAP
 	help
 	  Enable debugging of buffer allocator memory issues. Automatically
 	  prints (to stderr) all (fatal) messages on memory allocation
