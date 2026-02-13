@@ -45,7 +45,7 @@ enum asn1_tags {
  * \param[in]  key                 Buffer containing RSA key in ASN.1 format.
  * \param[in]  keylen              Length of buffer in bytes.
  * \param[out] modulus             Modulus (n) operand of n.
- * \param[out] exponent            Public or private exponent, depending on \ref extract_pubkey.
+ * \param[out] exponent            Public or private exponent, depending on \p extract_pubkey.
  *
  * \return sxsymcrypt status code.
  */
