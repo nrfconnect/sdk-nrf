@@ -10,6 +10,7 @@ config DM_MODULE_RPC
 	select NRF_RPC_CBOR
 	select EXPERIMENTAL
 	select SOC_NRF53_CPUNET_ENABLE if SOC_NRF5340_CPUAPP
+	imply NRF_RPC_INIT
 	depends on DM_MODULE
 	help
 	  Enables Distance Measurement serialization over RPC.
@@ -35,13 +36,6 @@ config DM_MODULE_RPC_CLIENT
 	  It is supposed to run on the application core.
 
 endchoice
-
-config DM_MODULE_RPC_INITIALIZE_NRF_RPC
-	bool "Automatically initialize nRF RPC library"
-	default y
-	help
-	  Initialize nRF RPC library during the system startup. Disabling this
-	  option allow user to initialize it in a different way.
 
 config DM_MODULE_RPC_IPC_SERVICE_INIT_PRIORITY
 	int "Initialization priority of IPC Service"
