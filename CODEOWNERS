@@ -517,7 +517,7 @@
 /samples/event_manager_proxy/             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /samples/gazell/                          @leewkb4567
 /samples/hw_id/                           @nrfconnect/ncs-cia
-/samples/ipc/ipc_service/                 @nrfconnect/ncs-si-muffin
+/samples/ipc/ipc_service/                 @anangl
 /samples/keys/                            @nrfconnect/ncs-aegir
 /samples/matter/                          @nrfconnect/ncs-matter
 /samples/mcuboot/                         @nrfconnect/ncs-eris
@@ -695,7 +695,7 @@
 /samples/zephyr/sensor/bme680/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
 /samples/zephyr/smp_svr_mini_boot/        @nrfconnect/ncs-eris
-/samples/zephyr/subsys/ipc/               @nrfconnect/ncs-low-level-test
+/samples/zephyr/subsys/ipc/               @nrfconnect/ncs-low-level-test @anangl
 /samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-eris
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
@@ -950,7 +950,7 @@
 /tests/subsys/emds/                       @balaklaka @nrfconnect/ncs-paladin
 /tests/subsys/event_manager_proxy/        @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/fw_info/                    @nrfconnect/ncs-eris
-/tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test
+/tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test @anangl
 /tests/subsys/kmu/                        @nrfconnect/ncs-eris
 /tests/subsys/mpsl/                       @nrfconnect/ncs-dragoon
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
