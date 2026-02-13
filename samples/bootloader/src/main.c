@@ -7,7 +7,9 @@
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#endif
 #include <fw_info.h>
 #if defined(CONFIG_FPROTECT)
 #include <fprotect.h>
@@ -124,7 +126,15 @@ int main(void)
 {
 
 #if defined(CONFIG_FPROTECT)
-	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+/* Invoked from B0, FPROTECT will only protect B0 partition */
+#if USE_PARTITION_MANAGER
+	const uint32_t b0_offset = PM_B0_ADDRESS;
+	const uint32_t b0_size = PM_B0_SIZE;
+#else
+	const uint32_t b0_offset = FIXED_PARTITION_OFFSET(b0_partittion);
+	const uint32_t b0_size = FIXED_PARTITION_SIZE(b0_partittion);
+#endif
+	int err = fprotect_area(b0_offset, b0_size);
 
 	if (err) {
 		printk("Failed to protect B0 flash, cancel startup.\r\n");

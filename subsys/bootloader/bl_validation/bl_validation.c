@@ -121,8 +121,38 @@ bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 #include <bl_crypto.h>
 #include "bl_validation_internal.h"
 
+/* We keep the S0/S1 nomenclature, regardless of core, but partition S0/S1
+ * targets differs. Below configuration, currently, addresses nRF5340
+ * network core.
+ */
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#if CONFIG_SOC_NRF5340_CPUNET
+/* When running on nRF5340 CPUNET, then S0 is actually application and
+ * there is no S1 slot.
+ */
+#define S0_SIZE		PM_APP_SIZE
+#else
+/* At this point the below covers anything that is not CONFIG_SOC_NRF5340_CPUNET
+ */
+#define S0_SIZE		PM_S0_SIZE
+#define S1_SIZE		PM_S1_SIZE
+#endif
+
+#else /* USE_PARTITION_MANAGER */
+/* DTS Partitions */
+#include <zephyr/storage/flash_map.h>
+#if CONFIG_SOC_NRF5340_CPUNET
+/* Same as described for PP, above, except that this time we use DTS partition labels */
+#define S0_SIZE		FIXED_PARTITION_SIZE(net_app)
+#else /* CONFIG_SOC_NRF5340_CPUNET */
+#define S0_SIZE		FIXED_PARTITION_SIZE(s0_slot)
+#define	S1_SIZE		FIXED_PARTITION_SIZE(s1_slot)
+#endif
+#endif
+
+#ifdef CONFIG_SB_VALIDATION_INFO_TOTAL_SIZE
+BUILD_ASSERT(S0_SIZE == S1_SIZE, "B0's slots aren't the same size.");
 #endif
 
 struct __packed fw_validation_info {
@@ -438,10 +468,8 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	}
 #endif /* CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION */
 
-#if defined(PM_S0_SIZE) && defined(PM_S1_SIZE)
-	BUILD_ASSERT(PM_S0_SIZE == PM_S1_SIZE,
-		"B0's slots aren't the same size. Check pm.yml.");
-	if ((fwinfo->size > (PM_S0_SIZE))
+#ifdef CONFIG_SB_VALIDATION_INFO_TOTAL_SIZE
+	if ((fwinfo->size > (S0_SIZE))
 		|| (fwinfo->total_size > fwinfo->size)) {
 		if (!external) {
 			LOG_ERR("Invalid size or total_size in firmware info.");

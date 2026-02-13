@@ -24,7 +24,7 @@ function(provision application prefix_name)
     set(otp_write_width 2) # OTP writes are in half-words (2 bytes)
   endif()
 
-  if(CONFIG_SECURE_BOOT)
+  if(CONFIG_SECURE_BOOT AND SB_CONFIG_PARTITION_MANAGER)
     if(SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER)
       set(monotonic_counter_arg
           --num-counter-slots-version ${SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS})
@@ -91,7 +91,7 @@ function(provision application prefix_name)
     set(psa_certificate_reference --psa-certificate-reference ${SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE})
   endif()
 
-  if(CONFIG_SECURE_BOOT)
+  if(CONFIG_SECURE_BOOT AND SB_CONFIG_PARTITION_MANAGER)
     add_custom_command(
       OUTPUT
       ${PROVISION_HEX}

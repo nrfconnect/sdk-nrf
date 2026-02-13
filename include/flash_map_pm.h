@@ -28,6 +28,8 @@
 #define slot5_partition mcuboot_secondary_2
 #define image_scratch mcuboot_scratch
 #define image_scratch mcuboot_scratch
+#define mcuboot_s0 s0_image
+#define mcuboot_s1 s1_image
 
 #if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS || defined(PM_SETTINGS_STORAGE_ID) ||\
 	CONFIG_SETTINGS_ZMS || CONFIG_SETTINGS_ZMS_LEGACY)
