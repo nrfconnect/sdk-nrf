@@ -42,29 +42,30 @@ BUILD_ASSERT((sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1) <= NRF_CLOUD_CLIENT_ID_MAX
  */
 #define NCT_SHDW_TPC_GET_REJECT "%s/shadow/get/rejected"
 
-/* nRF Cloud's custom delta update topic (device SUB).
+/* nRF Cloud's custom delta update topic limited to 1792 KB (device SUB).
  * Functionally identical to the AWS update/delta topic.
+ * Returns the delta with metadata.
+ * Otherwise, an error message is published to /shadow/update/delta/full/err
+ * Not currently used by the nrf_cloud library.
  */
 #define NCT_SHDW_TPC_DELTA_FULL "%s/shadow/update/delta/full"
 
-/* nRF Cloud's custom trimmed shadow request topic (device PUB).
- * Request only the shadow data needed (no metadata) for nrf_cloud library functionality.
- * Using the default AWS shadow topic to request the shadow can often result in the cloud
- * sending more data than the modem can receive (2kB for TLS). This is avoided by using
- * a custom trimmed shadow.
- */
-#define NCT_SHDW_TPC_GET_TRIM "%s/shadow/get/trim"
-
-/* nRF Cloud's custom trimmed shadow topic (device SUB).
- * Receives the trimmed shadow data.
- */
-#define NCT_SHDW_TPC_GET_ACCEPT_TRIM "%s/shadow/get/accepted/trim"
-
-/* nRF Cloud's custom trimmed delta topic (device SUB).
- * Returns the delta without the metadata.
+/* nRF Cloud's custom delta update topic error (device SUB).
+ * If the delta exceeds the 1792 KB limit, an error message is published to this topic.
  * Not currently used by the nrf_cloud library.
  */
+#define NCT_SHDW_TPC_DELTA_FULL_ERR "%s/shadow/update/delta/full/err"
+
+/* nRF Cloud's custom trimmed delta topic limited to 1792 KB (device SUB).
+ * Returns the delta without metadata.
+ * Otherwise, an error message is published to /shadow/update/delta/trim/err
+ */
 #define NCT_SHDW_TPC_DELTA_TRIM "%s/shadow/update/delta/trim"
+
+/* nRF Cloud's custom trimmed delta topic error (device SUB).
+ * If the delta exceeds the 1792 KB limit, an error message is published to this topic.
+ */
+#define NCT_SHDW_TPC_DELTA_TRIM_ERR "%s/shadow/update/delta/trim/err"
 
 /* nRF Cloud's custom shadow transform (JSONata expression) request topic (device PUB).
  * Request shadow data according to the provided transform.
@@ -111,18 +112,12 @@ static struct nct {
 	uint8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN + 1];
 } nct;
 
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 #define CC_RX_LIST_CNT 4
-#define CC_TX_LIST_CNT 3
-#else
-#define CC_RX_LIST_CNT 3
 #define CC_TX_LIST_CNT 2
-#endif
+
 static uint32_t const nct_cc_rx_opcode_map[CC_RX_LIST_CNT] = {
-	NCT_CC_OPCODE_UPDATE_ACCEPTED, NCT_CC_OPCODE_UPDATE_REJECTED, NCT_CC_OPCODE_UPDATE_DELTA,
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
-	NCT_CC_OPCODE_TRANSFORM
-#endif
+	NCT_CC_OPCODE_TRANSFORM, NCT_CC_OPCODE_UPDATE_REJECTED, NCT_CC_OPCODE_UPDATE_DELTA,
+	NCT_CC_OPCODE_UPDATE_DELTA_ERR
 };
 static struct mqtt_topic nct_cc_rx_list[CC_RX_LIST_CNT];
 
@@ -368,9 +363,9 @@ static void nct_topic_lists_populate(void)
 	/* Add RX (subscribe) topics, aligning with opcode list */
 	for (int idx = 0; idx < CC_RX_LIST_CNT; ++idx) {
 		switch (nct_cc_rx_opcode_map[idx]) {
-		case NCT_CC_OPCODE_UPDATE_ACCEPTED:
+		case NCT_CC_OPCODE_TRANSFORM:
 			nct_cc_rx_list[idx].qos = MQTT_QOS_1_AT_LEAST_ONCE;
-			nct_cc_rx_list[idx].topic = nct.cc.e[CC_RX_ACCEPT];
+			nct_cc_rx_list[idx].topic = nct.cc.e[CC_RX_ACCEPT_TF];
 			break;
 		case NCT_CC_OPCODE_UPDATE_REJECTED:
 			nct_cc_rx_list[idx].qos = MQTT_QOS_1_AT_LEAST_ONCE;
@@ -380,12 +375,10 @@ static void nct_topic_lists_populate(void)
 			nct_cc_rx_list[idx].qos = MQTT_QOS_1_AT_LEAST_ONCE;
 			nct_cc_rx_list[idx].topic = nct.cc.e[CC_RX_DELTA];
 			break;
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
-		case NCT_CC_OPCODE_TRANSFORM:
+		case NCT_CC_OPCODE_UPDATE_DELTA_ERR:
 			nct_cc_rx_list[idx].qos = MQTT_QOS_1_AT_LEAST_ONCE;
-			nct_cc_rx_list[idx].topic = nct.cc.e[CC_RX_ACCEPT_TF];
+			nct_cc_rx_list[idx].topic = nct.cc.e[CC_RX_DELTA_ERR];
 			break;
-#endif
 		default:
 			__ASSERT(false, "Op code not added to RX list");
 			break;
@@ -393,16 +386,11 @@ static void nct_topic_lists_populate(void)
 	}
 
 	/* Add TX topics */
-	nct_cc_tx_list[NCT_CC_OPCODE_GET_REQ].qos = MQTT_QOS_1_AT_LEAST_ONCE;
-	nct_cc_tx_list[NCT_CC_OPCODE_GET_REQ].topic = nct.cc.e[CC_TX_GET];
+	nct_cc_tx_list[NCT_CC_OPCODE_UPDATE].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	nct_cc_tx_list[NCT_CC_OPCODE_UPDATE].topic = nct.cc.e[CC_TX_UPDATE];
 
-	nct_cc_tx_list[NCT_CC_OPCODE_UPDATE_ACCEPTED].qos = MQTT_QOS_1_AT_LEAST_ONCE;
-	nct_cc_tx_list[NCT_CC_OPCODE_UPDATE_ACCEPTED].topic = nct.cc.e[CC_TX_UPDATE];
-
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 	nct_cc_tx_list[NCT_CC_OPCODE_TRANSFORM].qos = MQTT_QOS_1_AT_LEAST_ONCE;
 	nct_cc_tx_list[NCT_CC_OPCODE_TRANSFORM].topic = nct.cc.e[CC_TX_GET_TF];
-#endif
 }
 
 static int nct_topics_populate(void)
@@ -413,7 +401,7 @@ static int nct_topics_populate(void)
 
 	nct_reset_topics();
 
-	ret = allocate_and_format_topic(&nct.cc.e[CC_RX_ACCEPT], NCT_SHDW_TPC_GET_ACCEPT_TRIM);
+	ret = allocate_and_format_topic(&nct.cc.e[CC_RX_ACCEPT_TF], NCT_SHDW_TPC_GET_ACCEPT_TF);
 	if (ret) {
 		goto err_cleanup;
 	}
@@ -421,7 +409,11 @@ static int nct_topics_populate(void)
 	if (ret) {
 		goto err_cleanup;
 	}
-	ret = allocate_and_format_topic(&nct.cc.e[CC_RX_DELTA], NCT_SHDW_TPC_DELTA_FULL);
+	ret = allocate_and_format_topic(&nct.cc.e[CC_RX_DELTA], NCT_SHDW_TPC_DELTA_TRIM);
+	if (ret) {
+		goto err_cleanup;
+	}
+	ret = allocate_and_format_topic(&nct.cc.e[CC_RX_DELTA_ERR], NCT_SHDW_TPC_DELTA_TRIM_ERR);
 	if (ret) {
 		goto err_cleanup;
 	}
@@ -429,21 +421,10 @@ static int nct_topics_populate(void)
 	if (ret) {
 		goto err_cleanup;
 	}
-	ret = allocate_and_format_topic(&nct.cc.e[CC_TX_GET], NCT_SHDW_TPC_GET_TRIM);
-	if (ret) {
-		goto err_cleanup;
-	}
-
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 	ret = allocate_and_format_topic(&nct.cc.e[CC_TX_GET_TF], NCT_SHDW_TPC_GET_TF);
 	if (ret) {
 		goto err_cleanup;
 	}
-	ret = allocate_and_format_topic(&nct.cc.e[CC_RX_ACCEPT_TF], NCT_SHDW_TPC_GET_ACCEPT_TF);
-	if (ret) {
-		goto err_cleanup;
-	}
-#endif
 
 	LOG_DBG("CC topics:");
 	for (int cnt = 0; cnt < CC__COUNT; ++cnt) {

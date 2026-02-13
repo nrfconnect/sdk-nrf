@@ -397,6 +397,11 @@ Cellular samples
     Enabling this option is necessary for using nRF Cloud Utils as an onboarding method.
   * Removed JITP from the shell commands and references from the sample documentation.
 
+* :ref:`nrf_cloud_mqtt_device_message` and :ref:`nrf_cloud_multi_service` samples:
+
+  * Updated the shadow handling by removing Shadow type Accepted and added Transform request event handling.
+  * Delta events can now handle error cases by the introduction of ``/shadow/update/delta/trim/err`` and ``/shadow/update/delta/full/err`` topics in nRF Cloud.
+
 Cryptography samples
 --------------------
 
@@ -647,6 +652,10 @@ Libraries for networking
 * :ref:`lib_nrf_cloud` library:
 
   * Added the :c:func:`nrf_cloud_coap_shadow_network_info_update` function to update the network information section in the device shadow over CoAP.
+  * Removed the :kconfig:option:`NRF_CLOUD_MQTT_SHADOW_TRANSFORMS`, transform request are the default method to request AWS Shadows, replacing shadow Accepted type.
+  * Removed the usage of ``/shadow/get/accepted/trim``, ``/shadow/get/accepted`` and ``/shadow/get/trim``. Requesting shadow updates through them potentially caused the device to disconnect due a large shadow update, bigger than 2KB.
+  * Replaced ``/shadow/update/delta/full`` for ``/shadow/update/delta/trim``. Deltas are now trimmed by default to prioritize smaller shadows.
+  * Added handling of ``/shadow/update/delta/trim/err``. Errors will be logged to the application in case the delta shadow is bigger than 1792 bytes.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
