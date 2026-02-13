@@ -27,9 +27,9 @@
  *
  * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
  */
-psa_status_t cracen_aes_ecb_encrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
-				    const uint8_t *input, size_t input_length, uint8_t *output,
-				    size_t output_size, size_t *output_length);
+psa_status_t cracen_sw_aes_ecb_encrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+				       const uint8_t *input, size_t input_length, uint8_t *output,
+				       size_t output_size, size_t *output_length);
 
 /** @brief Decrypt a single AES block using ECB mode.
  *
@@ -46,9 +46,9 @@ psa_status_t cracen_aes_ecb_encrypt(struct sxblkcipher *blkciph, const struct sx
  *
  * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
  */
-psa_status_t cracen_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
-				    const uint8_t *input, size_t input_length, uint8_t *output,
-				    size_t output_size, size_t *output_length);
+psa_status_t cracen_sw_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+				       const uint8_t *input, size_t input_length, uint8_t *output,
+				       size_t output_size, size_t *output_length);
 
 /** @brief Perform a single AES block encryption operation.
  *
@@ -62,8 +62,8 @@ psa_status_t cracen_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct sx
  *
  * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
  */
-psa_status_t cracen_aes_primitive(struct sxblkcipher *blkciph, const struct sxkeyref *key,
-				  const uint8_t *input, uint8_t *output);
+psa_status_t cracen_sw_aes_primitive(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+				     const uint8_t *input, uint8_t *output);
 
 /** @brief Increment counter value stored as a big endian buffer.
  *

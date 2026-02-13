@@ -82,9 +82,9 @@ static psa_status_t cbc_encrypt_block(cracen_cipher_operation_t *operation, cons
 	cracen_xorbytes((char *)block_to_encrypt, (const char *)operation->iv,
 			SX_BLKCIPHER_AES_BLK_SZ);
 
-	status = cracen_aes_ecb_encrypt(&operation->cipher, &operation->keyref, block_to_encrypt,
-					SX_BLKCIPHER_AES_BLK_SZ, output, SX_BLKCIPHER_AES_BLK_SZ,
-					&output_len);
+	status = cracen_sw_aes_ecb_encrypt(&operation->cipher, &operation->keyref, block_to_encrypt,
+					   SX_BLKCIPHER_AES_BLK_SZ, output, SX_BLKCIPHER_AES_BLK_SZ,
+					   &output_len);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
@@ -110,9 +110,9 @@ static psa_status_t cbc_decrypt_block(cracen_cipher_operation_t *operation, cons
 	 * So the block is decrypted first and then XORed with the previous ciphertext block
 	 */
 	memcpy(next_iv, input, SX_BLKCIPHER_AES_BLK_SZ);
-	status = cracen_aes_ecb_decrypt(&operation->cipher, &operation->keyref, input,
-					SX_BLKCIPHER_AES_BLK_SZ, decrypted_block,
-					SX_BLKCIPHER_AES_BLK_SZ, &output_len);
+	status = cracen_sw_aes_ecb_decrypt(&operation->cipher, &operation->keyref, input,
+					   SX_BLKCIPHER_AES_BLK_SZ, decrypted_block,
+					   SX_BLKCIPHER_AES_BLK_SZ, &output_len);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
