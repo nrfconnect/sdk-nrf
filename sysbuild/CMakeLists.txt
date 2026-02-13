@@ -1048,6 +1048,21 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
+function(${SYSBUILD_CURRENT_MODULE_NAME}_post_image_cmake)
+  cmake_parse_arguments(POST_IMAGE_CMAKE "" "IMAGE" "IMAGES" ${ARGN})
+
+  if("${POST_IMAGE_CMAKE_IMAGE}" STREQUAL "${DEFAULT_IMAGE}")
+    foreach(image ${POST_IMAGE_CMAKE_IMAGES})
+      if(DEFINED ${image}_NCS_IMAGE_TYPE AND "${${image}_NCS_IMAGE_TYPE}" STREQUAL "image_flasher")
+        sysbuild_get(default_image_c_compiler IMAGE ${DEFAULT_IMAGE} VAR CMAKE_C_COMPILER CACHE)
+        sysbuild_get(default_image_cxx_compiler IMAGE ${DEFAULT_IMAGE} VAR CMAKE_CXX_COMPILER CACHE)
+        set(${image}_CMAKE_C_COMPILER "${default_image_c_compiler}" CACHE FILEPATH "" FORCE)
+        set(${image}_CMAKE_CXX_COMPILER "${default_image_cxx_compiler}" CACHE FILEPATH "" FORCE)
+      endif()
+    endforeach()
+  endif()
+endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_image_cmake)
+
 # Enable use of partition manager with sysbuild.
 # Consider if this shoulc come through Sysbuild Kconfig flag.
 set(NCS_SYSBUILD_PARTITION_MANAGER TRUE)
