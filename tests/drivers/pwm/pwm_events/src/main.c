@@ -24,7 +24,6 @@ struct pwm_events_fixture {
 	nrf_pwm_sequence_t *pwm_sequence;
 	nrfx_timer_t *test_timer;
 	uint32_t timer_task_address;
-	uint32_t domain_id;
 	nrfx_gppi_handle_t gppi_handle;
 };
 
@@ -56,16 +55,16 @@ static uint32_t configure_test_timer(nrfx_timer_t *timer)
 	return nrfx_timer_task_address_get(timer, NRF_TIMER_TASK_COUNT);
 }
 
-static void setup_dppi_connection(nrfx_gppi_handle_t *gppi_handle, uint32_t domain_id,
-				  uint32_t timer_task_address, uint32_t pwm_event_address)
+static void setup_dppi_connection(nrfx_gppi_handle_t *gppi_handle, uint32_t timer_task_address,
+				  uint32_t pwm_event_address)
 {
 	zassert_ok(nrfx_gppi_conn_alloc(pwm_event_address, timer_task_address, gppi_handle),
 		   "Failed to allocate DPPI connection\n");
 	nrfx_gppi_conn_enable(*gppi_handle);
 }
 
-static void clear_dppi_connection(nrfx_gppi_handle_t *gppi_handle, uint32_t domain_id,
-				  uint32_t timer_task_address, uint32_t pwm_event_address)
+static void clear_dppi_connection(nrfx_gppi_handle_t *gppi_handle, uint32_t timer_task_address,
+				  uint32_t pwm_event_address)
 {
 	nrfx_gppi_conn_disable(*gppi_handle);
 	nrfx_gppi_conn_free(pwm_event_address, timer_task_address, *gppi_handle);
@@ -83,8 +82,8 @@ static void run_pwm_event_test_case(struct pwm_events_fixture *fixture,
 #endif
 
 	pwm_event_address = nrf_pwm_event_address_get(fixture->pwm->p_reg, tested_pwm_event);
-	setup_dppi_connection(&fixture->gppi_handle, fixture->domain_id,
-			      fixture->timer_task_address, pwm_event_address);
+	setup_dppi_connection(&fixture->gppi_handle, fixture->timer_task_address,
+			      pwm_event_address);
 	nrf_pwm_event_clear(fixture->pwm->p_reg, tested_pwm_event);
 
 #if defined(CONFIG_PPI_TRACE)
@@ -98,7 +97,6 @@ static void run_pwm_event_test_case(struct pwm_events_fixture *fixture,
 	ppi_trace_enable(handle);
 #endif
 
-
 	timer_cc_before = nrfx_timer_capture(fixture->test_timer, NRF_TIMER_CC_CHANNEL0);
 	nrfx_pwm_simple_playback(fixture->pwm, fixture->pwm_sequence, 1, NRFX_PWM_FLAG_STOP);
 	k_msleep(SLEEP_TIME_MS);
@@ -109,8 +107,8 @@ static void run_pwm_event_test_case(struct pwm_events_fixture *fixture,
 		      "PWM %s event triggered count != %u\n", event_name, expected_triggers_count);
 
 	nrf_pwm_event_clear(fixture->pwm->p_reg, tested_pwm_event);
-	clear_dppi_connection(&fixture->gppi_handle, fixture->domain_id,
-			      fixture->timer_task_address, pwm_event_address);
+	clear_dppi_connection(&fixture->gppi_handle, fixture->timer_task_address,
+			      pwm_event_address);
 
 #if defined(CONFIG_PPI_TRACE)
 	ppi_trace_disable(handle);
@@ -149,6 +147,70 @@ ZTEST_F(pwm_events, test_pwm_comparematch_event)
 				fixture->pwm_sequence->length * 2, "COMPAREMATCH");
 }
 
+/*
+ * MLTPAN-115 related test
+ * PAN symptoms:
+ * EVENT_COMPAREMATCH toggles before EVENT_STARTED/SEQSTARTED
+ *
+ * This test case uses two GPPI routes:
+ * PWM COMPAREMATCH EVENT -> TIMER TASK_COUNT
+ * PWM SEQSTARTED EVENT -> TIMER TASK_STOP
+ *
+ * It is routed like this to count the PWM COMPAREMATCH events
+ * triggered before PWM SEQSTARTED event triggers
+ *
+ * PPI trace is not available for this test
+ */
+ZTEST_F(pwm_events, test_pwm_comparematch_and_seqstared_events)
+{
+	uint32_t comparematch_pwm_event_address, seqstared_pwm_event_address;
+	uint32_t timer_cc_before, timer_cc_after;
+	uint32_t timer_stop_task_address;
+	nrf_pwm_event_t comparematch_pwm_event = offsetof(NRF_PWM_Type, EVENTS_COMPAREMATCH[0]);
+	nrf_pwm_event_t seqstarted_pwm_event = NRF_PWM_EVENT_SEQSTARTED1;
+	nrfx_gppi_handle_t second_gppi_handle;
+
+	comparematch_pwm_event_address =
+		nrf_pwm_event_address_get(fixture->pwm->p_reg, comparematch_pwm_event);
+	setup_dppi_connection(&fixture->gppi_handle, fixture->timer_task_address,
+			      comparematch_pwm_event_address);
+	nrf_pwm_event_clear(fixture->pwm->p_reg, comparematch_pwm_event);
+
+	timer_stop_task_address =
+		nrfx_timer_task_address_get(fixture->test_timer, NRF_TIMER_TASK_STOP);
+	seqstared_pwm_event_address =
+		nrf_pwm_event_address_get(fixture->pwm->p_reg, seqstarted_pwm_event);
+	setup_dppi_connection(&second_gppi_handle, timer_stop_task_address,
+			      seqstared_pwm_event_address);
+	nrf_pwm_event_clear(fixture->pwm->p_reg, seqstarted_pwm_event);
+
+	timer_cc_before = nrfx_timer_capture(fixture->test_timer, NRF_TIMER_CC_CHANNEL0);
+	nrfx_pwm_simple_playback(fixture->pwm, fixture->pwm_sequence, 1, NRFX_PWM_FLAG_STOP);
+	k_msleep(SLEEP_TIME_MS);
+	timer_cc_after = nrfx_timer_capture(fixture->test_timer, NRF_TIMER_CC_CHANNEL0);
+
+	nrf_pwm_event_clear(fixture->pwm->p_reg, comparematch_pwm_event);
+	nrf_pwm_event_clear(fixture->pwm->p_reg, seqstarted_pwm_event);
+
+	clear_dppi_connection(&fixture->gppi_handle, fixture->timer_task_address,
+			      comparematch_pwm_event_address);
+	clear_dppi_connection(&second_gppi_handle, timer_stop_task_address,
+			      seqstared_pwm_event_address);
+
+	/*
+	 * restart timer
+	 * timer was disabled by the STOP_TASK through GPPI
+	 */
+	nrfx_timer_disable(fixture->test_timer);
+	nrfx_timer_enable(fixture->test_timer);
+
+	TC_PRINT(
+		"PWM EVENTS_COMPAREMATCH events count before NRF_PWM_EVENT_SEQSTARTED1 event: %d\n",
+		timer_cc_after - timer_cc_before);
+	zassert_equal(timer_cc_after - timer_cc_before, 0,
+		      "EVENTS_COMPAREMATCH should not trigger before NRF_PWM_EVENT_SEQSTARTED1");
+}
+
 static void *test_setup(void)
 {
 	static struct pwm_events_fixture fixture;
@@ -166,8 +228,6 @@ static void *test_setup(void)
 
 	fixture.test_timer = &test_timer;
 	fixture.timer_task_address = configure_test_timer(&test_timer);
-
-	fixture.domain_id = nrfx_gppi_domain_id_get((uint32_t)test_timer.p_reg);
 
 	return &fixture;
 }
