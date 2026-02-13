@@ -6,10 +6,4 @@
 
 #include "../sysbuild/nrf54h20dk_nrf54h20_memory_map_requests.dtsi"
 
-/ {
-	chosen {
-		zephyr,boot-mode = &boot_request;
-	};
-};
-
 secondary_app_partition: &cpuapp_slot1_partition {};
