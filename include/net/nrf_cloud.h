@@ -278,10 +278,8 @@ enum nrf_cloud_topic_type {
 	 *  should be included to distinguish this data from binary logging.
 	 */
 	NRF_CLOUD_TOPIC_BIN,
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 	/** Endpoint used to request device shadow data using a transform (JSONata expression). */
 	NRF_CLOUD_TOPIC_STATE_TF,
-#endif
 };
 
 /** @brief FOTA status reported to nRF Cloud and notified in @ref nrf_cloud_fota_poll_handler_t */
@@ -894,7 +892,6 @@ int nrf_cloud_obj_shadow_update(struct nrf_cloud_obj *const shadow_obj);
  *                         @ref NRF_CLOUD_TRANSFORM_MAX_RESPONSE_LEN.
  *
  * @retval 0        Request was sent successfully.
- * @retval -ENOTSUP Error; @kconfig{CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS} is not enabled.
  * @retval -EINVAL  Error; invalid parameter.
  * @return A negative value indicates an error.
  */

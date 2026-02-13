@@ -206,6 +206,8 @@
 #define NRF_CLOUD_JSON_VAL_PAIRED		"paired"
 #define NRF_CLOUD_JSON_KEY_SHADOW_VERSION	"version"
 #define NRF_CLOUD_JSON_KEY_SHADOW_TIMESTAMP	"timestamp"
+#define NRF_CLOUD_JSON_KEY_ERR			"err"
+#define NRF_CLOUD_JSON_KEY_ERR_MSG		"message"
 /* Current FOTA version string used in device shadow */
 #define NRF_CLOUD_FOTA_VER_STR			"fota_v" STRINGIFY(NRF_CLOUD_FOTA_VER)
 /* Max length of nRF Cloud's stage/environment name */
@@ -243,9 +245,7 @@
 #define NRF_CLOUD_TRANSFORM_REQ_LEN_KEY		"l"
 #define NRF_CLOUD_TRANSFORM_REQ_TF_KEY		"t"
 #define NRF_CLOUD_TRANSFORM_RSP_TF_KEY		"tf"
-#define NRF_CLOUD_TRANSFORM_RSP_ERR_KEY		"err"
 #define NRF_CLOUD_TRANSFORM_RSP_POS_KEY		"position"
-#define NRF_CLOUD_TRANSFORM_RSP_MSG_KEY		"message"
 
 /** @} */
 #endif /* NRF_CLOUD_DEFS_H__ */

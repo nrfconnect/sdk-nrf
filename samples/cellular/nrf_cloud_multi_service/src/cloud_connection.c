@@ -373,10 +373,22 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 	int err;
 
 	if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) && shadow->delta) {
-		LOG_DBG("Shadow: Delta - version: %d, timestamp: %lld",
-			shadow->delta->ver,
-			shadow->delta->ts);
+		/* If there is a pending delta event when the device establishes a cloud connection
+		 * it is possible that it will be received before the transform shadow data.
+		 * Do not process a delta event until the transform shadow data has been received.
+		 * This is only a concern for MQTT.
+		 */
+		if (shadow_transform_received() == false) {
+			LOG_DBG("Ignoring delta until transform shadow is received");
+			return;
+		}
 
+		if (shadow->delta->is_err) {
+			LOG_ERR("Shadow delta error received");
+			return;
+		}
+
+		LOG_INF("Shadow Delta received");
 		bool accept = true;
 
 		err = shadow_config_delta_process(&shadow->delta->state);
@@ -385,9 +397,6 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 			accept = false;
 		} else if (err == -ENOMEM) {
 			LOG_ERR("Error handling shadow delta");
-			return;
-		} else if (err == -EAGAIN) {
-			LOG_DBG("Ignoring delta until accepted shadow is received");
 			return;
 		}
 
@@ -401,14 +410,24 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 		if (err) {
 			LOG_ERR("Failed to send shadow response, error: %d", err);
 		}
+	} else if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) && shadow->transform) {
+		LOG_DBG("Shadow: Transform result");
 
-	} else if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) && shadow->accepted) {
-		LOG_DBG("Shadow: Accepted");
-		err = shadow_config_accepted_process(&shadow->accepted->config);
-		if (err) {
-			/* Send the config on an error */
-			(void)shadow_config_reported_send();
+		if (shadow->transform->is_err) {
+			LOG_ERR("Shadow transform error: code %d, pos %d, msg %s",
+				shadow->transform->error.code,
+				shadow->transform->error.pos,
+				shadow->transform->error.msg);
+		} else {
+			LOG_INF("Shadow transform result received");
+			err = shadow_config_transform_process(&shadow->transform->result.obj);
+			if (err) {
+				/* Send the config on an error */
+				(void)shadow_config_reported_send();
+			}
 		}
+	} else {
+		LOG_WRN("Shadow: Unrecognized shadow event");
 	}
 }
 

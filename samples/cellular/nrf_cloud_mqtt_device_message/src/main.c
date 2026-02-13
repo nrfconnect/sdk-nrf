@@ -208,6 +208,7 @@ static void send_message_on_button(void)
 	(void)send_message(&msg_obj);
 
 	(void)nrf_cloud_log_send(LOG_LEVEL_INF, "Button pressed %u times", ++count);
+	LOG_INF("Sent button press message with count: %u", count);
 }
 
 static int send_hello_world_msg(void)
@@ -520,6 +521,13 @@ int main(void)
 	err = send_hello_world_msg();
 	if (err) {
 		LOG_ERR("Sending Hello World message to nRF Cloud failed, stopping.");
+		return 0;
+	}
+
+	/* Report device's shadow configuration */
+	err = shadow_config_reported_send();
+	if (err) {
+		LOG_ERR("Sending initial shadow configuration failed, stopping.");
 		return 0;
 	}
 

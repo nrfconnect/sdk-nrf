@@ -375,9 +375,7 @@ int nrf_cloud_shadow_data_state_decode(const struct nrf_cloud_obj_shadow_data *c
 	cJSON *pairing_state_obj = NULL;
 	cJSON *topic_prefix_obj = NULL;
 
-	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
-		desired_obj = input->accepted->desired.json;
-	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
+	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
 		desired_obj = input->delta->state.json;
 	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) {
 		desired_obj = input->transform->result.obj.json;

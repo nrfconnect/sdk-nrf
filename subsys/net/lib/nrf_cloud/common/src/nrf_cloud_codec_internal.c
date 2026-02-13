@@ -372,19 +372,7 @@ int nrf_cloud_shadow_control_get(struct nrf_cloud_obj_shadow_data *const input,
 	__ASSERT_NO_MSG(input != NULL);
 	__ASSERT_NO_MSG(ctrl_obj != NULL);
 
-	int err;
-
-	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
-		/* First check desired, then reported */
-		err = detach_item(&input->accepted->desired, NRF_CLOUD_JSON_KEY_CTRL, ctrl_obj);
-
-		if (err) {
-			err = detach_item(&input->accepted->reported, NRF_CLOUD_JSON_KEY_CTRL,
-					  ctrl_obj);
-		}
-
-		return err;
-	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
+	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
 		return detach_item(&input->delta->state, NRF_CLOUD_JSON_KEY_CTRL, ctrl_obj);
 	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) {
 		return detach_item(&input->transform->result.obj, NRF_CLOUD_JSON_KEY_CTRL,
@@ -3376,11 +3364,13 @@ bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const inp
 {
 	__ASSERT_NO_MSG(input != NULL);
 
-	if ((input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) ||
-	    (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF)) {
-		/* Always send accepted shadow and transform results */
+	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) {
+		/* Always send transform results */
 		return true;
-	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
+	} else if ((input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) && input->delta->is_err) {
+		/* Check delta: if anything is in error, send to app */
+		return (cJSON_GetArraySize(input->delta->error.err_obj.json) > 0);
+	} else if ((input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) && !input->delta->is_err) {
 		/* Check delta: if anything is in state, send to app */
 		return (cJSON_GetArraySize(input->delta->state.json) > 0);
 	}
@@ -3388,57 +3378,18 @@ bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const inp
 	return false;
 }
 
-void nrf_cloud_obj_shadow_accepted_free(struct nrf_cloud_obj_shadow_accepted *const accepted)
-{
-	if (accepted) {
-		(void)nrf_cloud_obj_free(&accepted->desired);
-		(void)nrf_cloud_obj_free(&accepted->reported);
-		(void)nrf_cloud_obj_free(&accepted->config);
-	}
-}
-
 void nrf_cloud_obj_shadow_delta_free(struct nrf_cloud_obj_shadow_delta *const delta)
 {
-	if (delta) {
+	if (delta && !delta->is_err) {
 		(void)nrf_cloud_obj_free(&delta->state);
 	}
 }
 
 void nrf_cloud_obj_shadow_transform_free(struct nrf_cloud_obj_shadow_transform *const tf)
 {
-	if (tf) {
-		if (tf->is_err) {
-			(void)nrf_cloud_obj_free(&tf->error.err_obj);
-		} else {
-			(void)nrf_cloud_obj_free(&tf->result.obj);
-		}
+	if (tf && !tf->is_err) {
+		(void)nrf_cloud_obj_free(&tf->result.obj);
 	}
-}
-
-int nrf_cloud_obj_shadow_accepted_decode(struct nrf_cloud_obj *const shadow_obj,
-					 struct nrf_cloud_obj_shadow_accepted *const accepted)
-{
-	if (!accepted || !shadow_obj || !shadow_obj->json ||
-	    (shadow_obj->type != NRF_CLOUD_OBJ_TYPE_JSON)) {
-		return -EINVAL;
-	}
-
-	memset(accepted, 0, sizeof(*accepted));
-	accepted->desired.enc_src = NRF_CLOUD_ENC_SRC_NONE;
-	accepted->reported.enc_src = NRF_CLOUD_ENC_SRC_NONE;
-	accepted->config.enc_src = NRF_CLOUD_ENC_SRC_NONE;
-
-	/* Detach the objects from the input object */
-	int err = detach_item(shadow_obj, NRF_CLOUD_JSON_KEY_DES, &accepted->desired);
-
-	if (err) {
-		return -ENODEV;
-	}
-
-	(void)detach_item(shadow_obj, NRF_CLOUD_JSON_KEY_REP, &accepted->reported);
-	(void)detach_item(shadow_obj, NRF_CLOUD_JSON_KEY_CFG, &accepted->config);
-
-	return 0;
 }
 
 int nrf_cloud_obj_shadow_delta_decode(struct nrf_cloud_obj *const shadow_obj,
@@ -3451,34 +3402,56 @@ int nrf_cloud_obj_shadow_delta_decode(struct nrf_cloud_obj *const shadow_obj,
 
 	double ver;
 	double ts;
+	double num;
 	int err;
 
 	memset(delta, 0, sizeof(*delta));
-	delta->state.enc_src = NRF_CLOUD_ENC_SRC_NONE;
 
 	err = nrf_cloud_obj_num_get(shadow_obj, NRF_CLOUD_JSON_KEY_SHADOW_VERSION, &ver);
 	if (err) {
 		LOG_DBG("\"%s\" not found in shadow data, error: %d",
 			NRF_CLOUD_JSON_KEY_SHADOW_VERSION, err);
-		return -ENODEV;
 	}
 
 	err = nrf_cloud_obj_num_get(shadow_obj, NRF_CLOUD_JSON_KEY_SHADOW_TIMESTAMP, &ts);
 	if (err) {
 		LOG_DBG("\"%s\" not found in shadow data, error: %d",
 			NRF_CLOUD_JSON_KEY_SHADOW_TIMESTAMP, err);
-		return -ENODEV;
 	}
 
+	/* Set delta info */
+	delta->ver = (int)ver;
+	delta->ts = (int64_t)ts;
+
+	/* Check for an error code in the delta response */
+	err = nrf_cloud_obj_num_get(shadow_obj, NRF_CLOUD_JSON_KEY_ERR, &num);
+	if (err == 0) {
+		delta->is_err = true;
+		delta->error.code = (int)num;
+
+		err = nrf_cloud_obj_str_get(shadow_obj, NRF_CLOUD_JSON_KEY_ERR_MSG,
+			&delta->error.msg);
+		if (err) {
+			LOG_ERR("Failed to get shadow delta error message");
+		}
+
+		LOG_ERR("Shadow delta error %d : %s, ver %d, ts %lld",
+			delta->error.code, delta->error.msg, delta->ver, delta->ts);
+
+		/* Only store the JSON pointer without copying the entire structure.
+		 * This is just a reference to shadow_obj data, not owned by err_obj.
+		 */
+		delta->error.err_obj.json = shadow_obj->json;
+		/* Not returning a negative error so the application can be notified */
+		return 0;
+	}
+
+	delta->is_err = false;
 	/* Detach the state object from the input object */
 	err = detach_item(shadow_obj, NRF_CLOUD_JSON_KEY_STATE, &delta->state);
 	if (err) {
 		return -ENODEV;
 	}
-
-	/* Success, set delta info */
-	delta->ver = (int)ver;
-	delta->ts = (int64_t)ts;
 
 	return 0;
 }
@@ -3497,7 +3470,7 @@ int nrf_cloud_obj_shadow_transform_decode(struct nrf_cloud_obj *const shadow_obj
 	memset(tf, 0, sizeof(*tf));
 
 	/* Check for an error */
-	err = nrf_cloud_obj_num_get(shadow_obj, NRF_CLOUD_TRANSFORM_RSP_ERR_KEY, &num);
+	err = nrf_cloud_obj_num_get(shadow_obj, NRF_CLOUD_JSON_KEY_ERR, &num);
 	if (err == 0) {
 		tf->is_err = true;
 		tf->error.code = (int)num;
@@ -3514,7 +3487,7 @@ int nrf_cloud_obj_shadow_transform_decode(struct nrf_cloud_obj *const shadow_obj
 		tf->error.pos = (int)num;
 
 		/* Get the error message */
-		err = nrf_cloud_obj_str_get(shadow_obj, NRF_CLOUD_TRANSFORM_RSP_MSG_KEY,
+		err = nrf_cloud_obj_str_get(shadow_obj, NRF_CLOUD_JSON_KEY_ERR_MSG,
 					    &tf->error.msg);
 		if (err) {
 			LOG_ERR("Failed to get transform response error message");
@@ -3523,8 +3496,10 @@ int nrf_cloud_obj_shadow_transform_decode(struct nrf_cloud_obj *const shadow_obj
 
 		LOG_ERR("Transform error %d : %s", tf->error.code, tf->error.msg);
 
-		/* Attach the error object since it contains the string data */
-		tf->error.err_obj = *shadow_obj;
+		/* Only store the JSON pointer without copying the entire structure.
+		 * This is just a reference to shadow_obj data, not owned by err_obj.
+		 */
+		tf->error.err_obj.json = shadow_obj->json;
 	} else {
 		/* Attach the result object */
 		err = nrf_cloud_obj_object_detach(shadow_obj, NRF_CLOUD_TRANSFORM_RSP_TF_KEY,
