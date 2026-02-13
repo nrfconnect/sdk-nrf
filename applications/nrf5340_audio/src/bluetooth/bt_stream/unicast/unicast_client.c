@@ -212,7 +212,7 @@ static void unicast_group_create(void)
 	int ret;
 
 	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT; i++) {
-		memset(pair_params, 0, sizeof(pair_params));
+		memset(pair_params[i], 0, sizeof(pair_params));
 	}
 
 	memset(&group_param, 0, sizeof(group_param));

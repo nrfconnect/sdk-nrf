@@ -1430,7 +1430,7 @@ int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_
 		return foreach_data.ret;
 	}
 
-	/* All steams have been iterated over. Parse results */
+	/* All streams have been iterated over. Parse results */
 	if (foreach_data.streams_checked_snk == 0) {
 		/* No sink streams checked, we don't have a presentation delay computed */
 		*pres_dly_snk_us = UINT32_MAX;
@@ -1440,7 +1440,7 @@ int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_
 			LOG_ERR("Failed to parse common sink QoS for pres delay: %d", ret);
 			return ret;
 		}
-		LOG_INF("Source PD: (%d streams checked)", foreach_data.streams_checked_snk);
+		LOG_INF("Sink PD: (%d streams checked)", foreach_data.streams_checked_snk);
 		pd_print(common_pd_snk, foreach_data.existing_pres_dly_us_snk, *pres_dly_snk_us);
 	}
 
@@ -1453,7 +1453,7 @@ int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_
 			LOG_ERR("Failed to parse common source QoS for pres delay: %d", ret);
 			return ret;
 		}
-		LOG_INF("Sink PD: (%d streams checked)", foreach_data.streams_checked_src);
+		LOG_INF("Source PD: (%d streams checked)", foreach_data.streams_checked_src);
 		pd_print(common_pd_src, foreach_data.existing_pres_dly_us_src, *pres_dly_src_us);
 	}
 

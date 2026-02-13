@@ -1,9 +1,20 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#ifndef _BT_FAKES_H_
+#define _BT_FAKES_H_
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <zephyr/sys/slist.h>
+#include <zephyr/tc_util.h>
 
 /* This file contains functions for faking CAP and BAP behaviors as well as Bluetooth host calls
- *  For simpliclity, faking has been done on this level, i.e. including
+ *  For simplicity, faking has been done on this level, i.e. including
  * /src/bluetooth/bt_stream/le_audio.c as part of the tests.
  */
 
@@ -127,3 +138,5 @@ const bt_addr_le_t *bt_conn_get_dst_custom_fake(const struct bt_conn *conn)
 {
 	return &conn->le.dst;
 }
+
+#endif /* _BT_FAKES_H_ */
