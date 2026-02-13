@@ -176,7 +176,49 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KEY_DER
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecdh/cracen_ecdh_montgomery.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecdh/cracen_ecdh_weierstrass.c
-
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_derivation/cracen_kdf_common.c
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_derivation.c
   )
+
+  if(CONFIG_PSA_NEED_CRACEN_HKDF)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_derivation/cracen_hkdf.c
+    )
+  endif()
+
+  if(CONFIG_PSA_NEED_CRACEN_PBKDF2_HMAC)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_derivation/cracen_pbkdf2_hmac.c
+    )
+  endif()
+
+  if(CONFIG_PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_derivation/cracen_tls12_ecjpake_to_pms.c
+    )
+  endif()
+
+  if(CONFIG_PSA_NEED_CRACEN_TLS12_PRF OR PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_derivation/cracen_tls12.c
+    )
+  endif()
+
+  if(CONFIG_PSA_NEED_CRACEN_SRP_PASSWORD_HASH)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_derivation/cracen_srp_password_hash.c
+    )
+  endif()
+
+  if(CONFIG_PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC OR CONFIG_PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_derivation/cracen_sp800_108_ctr_mac.c
+    )
+  endif()
+
+  if(CONFIG_PSA_NEED_CRACEN_WPA3_SAE_H2E)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_derivation/cracen_wpa3_sae_h2e.c
+    )
+  endif()
 endif()
