@@ -9,8 +9,11 @@ nRF54L Series cryptography
 
 The cryptographic peripherals of the nRF54L Series are supported through a set of standard :ref:`PSA Crypto APIs <ug_psa_certified_api_overview_crypto>`, with some additional vendor-specific extensions.
 
+.. note::
+   The CRACEN hardware peripheral and the CRACEN driver are not available on nRF54LS05.
+
 The |NCS| offers a set of :ref:`nrf_security_drivers`.
-On nRF54L Series devices, the CRACEN cryptographic driver provides entropy and hardware-accelerated cryptography using the Crypto Accelerator Engine (CRACEN) hardware peripheral.
+On most nRF54L Series devices, the CRACEN cryptographic driver provides entropy and hardware-accelerated cryptography using the Crypto Accelerator Engine (CRACEN) hardware peripheral.
 The CRACEN driver supports the following features:
 
 * Executing :ref:`cryptographic operations <ug_crypto_supported_features>` using the CRACEN hardware peripheral.

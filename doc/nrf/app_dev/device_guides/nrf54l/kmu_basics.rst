@@ -7,7 +7,7 @@ Introduction to KMU key provisioning
    :local:
    :depth: 2
 
-The nRF54L devices are equipped with a Key Management Unit (KMU) that facilitates secure and confidential storage of keys in a dedicated region of RRAM (secure information configuration region, or SICR).
+Most nRF54L Series devices are equipped with a Key Management Unit (KMU) that facilitates secure and confidential storage of keys in a dedicated region of RRAM (secure information configuration region, or SICR).
 The process of storing a key and its metadata in a key slot in SICR is known as the KMU provisioning.
 
 This feature is crucial not only for private keys but also for public keys, as the :ref:`KMU can directly transfer a key to the CRACEN RAM<ug_nrf54l_crypto_kmu_cracen_peripherals>`.

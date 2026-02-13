@@ -142,7 +142,7 @@ This is a reference configuration that can be modified in the production firmwar
 nRF54L Key Management Unit (KMU)
 ================================
 
-nRF54L Series devices include :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` that can be used to store cryptographic keys in Matter.
+Most nRF54L Series devices include :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` that can be used to store cryptographic keys in Matter.
 In this solution, the keys are stored within the available slots in the :ref:`ug_nrf54l_crypto_kmu_slots` range that are not reserved for current and future |NCS| use cases.
 
 The default slots range used for Matter is from ``100`` to ``180``, excluding the DAC private key.
@@ -324,7 +324,7 @@ DAC in Trusted Storage library
 
 The Device Attestation Certificates private key can be stored in the Trusted Storage library.
 The key is encrypted with the AEAD key derived from the Hardware Unique Key (HUK) or a SHA-256 hash.
-This storage backend is selected by default for all platforms that support the PSA crypto API, except for the nRF54L Series, which uses Key Management Unit (KMU).
+This storage backend is selected by default for all platforms that support the PSA Crypto API, except for the nRF54L Series devices that use Key Management Unit (KMU).
 
 To enable storing the DAC private key in the Trusted Storage library, set the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_ITS` Kconfig option to ``y``.
 To select which encryption to use, set one of the following Kconfig options:
@@ -340,7 +340,7 @@ DAC in Key Management Unit (KMU)
 ================================
 
 The Key Management Unit (KMU) is a hardware peripheral that provides secure storage for cryptographic keys.
-It is available in the nRF54L Series SoCs and can be used to store the DAC private key.
+It is available in most of the nRF54L Series SoCs and can be used to store the DAC private key.
 This storage backend can be used with Trusted Firmware-M (TF-M).
 
 Storing the DAC private key in the KMU is controlled by the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU` Kconfig option and set to ``y`` by default.

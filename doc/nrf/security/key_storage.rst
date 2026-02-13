@@ -146,10 +146,10 @@ KMU is available on the following devices:
 
 * `nRF5340 <nRF5340 Key management unit_>`_
 * nRF91 Series devices, such as `nRF9160 <nRF9160 Key management unit_>`_ or `nRF9151 <nRF9151 Key management unit_>`_
-* nRF54L Series devices, such as `nRF54L15 <nRF54L15 Key management unit_>`_
+* Most nRF54L Series devices, such as `nRF54L15 <nRF54L15 Key management unit_>`_
 
   .. note::
-     nRF54L devices are equipped with a KMU that works with the CRACEN peripheral.
+     Most nRF54L devices are equipped with a KMU that works with the CRACEN peripheral.
      For more information, see :ref:`ug_nrf54l_developing_basics_kmu`.
 
 Key storage

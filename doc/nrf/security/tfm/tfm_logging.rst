@@ -18,7 +18,7 @@ By default, the logs from Nordic Semiconductor's Development Kits (DKs) arrive o
 The UART instances can vary by device family:
 
 * nRF5340 and nRF91 Series: The application typically uses the UART instance ``0`` (``uart0``), and TF-M uses the UART instance ``1`` (``uart1``) by default.
-* nRF54L Series: The application typically uses the UART instance ``20`` (``uart20``), and TF-M uses the UART instance ``30`` (``uart30``) by default.
+* nRF54L Series devices that support TF-M: The application typically uses the UART instance ``20`` (``uart20``), and TF-M uses the UART instance ``30`` (``uart30``) by default.
 
 For more information about the logging in the |NCS|, see :ref:`ug_logging`.
 

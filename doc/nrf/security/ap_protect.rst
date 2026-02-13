@@ -90,6 +90,11 @@ See the related hardware documentation for more information about which implemen
      - n/a
      - n/a
      - See :ref:`UICR.APPROTECT <ug_nrf54h20_ironside_se_uicr_approtect>`.
+   * - nRF54LS05
+     - n/a
+     - ✔
+     - *Documentation not yet available*
+     -
    * - nRF54LV10A
      - n/a
      - ✔
