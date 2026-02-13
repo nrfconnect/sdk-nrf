@@ -71,6 +71,7 @@ def west_tester(dut: DeviceAdapter, main_command: str, input_data: str, expected
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         encoding="UTF-8",
+        errors='replace',
         text=True,
     )
     time.sleep(2)

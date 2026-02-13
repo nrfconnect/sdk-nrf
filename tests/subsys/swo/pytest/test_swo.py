@@ -136,6 +136,7 @@ def test_swo_logging(dut: DeviceAdapter):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             encoding='UTF-8',
+            errors='replace',
         )
     except OSError as exc:
         logger.error(f"Unable to start JLinkSWOViewerCLExe:\n{cmd=}\n{exc=}")
