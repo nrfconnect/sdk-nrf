@@ -122,7 +122,6 @@ static bool c2d_topic_modified;
  */
 static bool add_shadow_info = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SHADOW_INFO);
 
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 /* Transform request for desired topic prefix and pairing. */
 static const char cc_req_transform_topic_pairing[] =
 	"{"
@@ -131,7 +130,6 @@ static const char cc_req_transform_topic_pairing[] =
 	"\\\"" NRF_CLOUD_JSON_KEY_PAIRING "\\\": state.desired."
 	NRF_CLOUD_JSON_KEY_PAIRING " }\""
 	"}";
-#endif
 
 #if defined(CONFIG_NRF_CLOUD_LOCATION) && defined(CONFIG_NRF_CLOUD_MQTT)
 #if defined(CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST)
@@ -176,7 +174,7 @@ static int state_ua_pin_wait(void)
 {
 	int err;
 	struct nct_cc_data msg = {
-		.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
+		.opcode = NCT_CC_OPCODE_TRANSFORM,
 		.message_id = NCT_MSG_ID_STATE_REPORT,
 	};
 
@@ -223,7 +221,7 @@ static int state_ua_pin_complete(void)
 {
 	int err;
 	struct nct_cc_data msg = {
-		.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
+		.opcode = NCT_CC_OPCODE_TRANSFORM,
 		.message_id = NCT_MSG_ID_PAIR_STATUS_REPORT,
 	};
 
@@ -329,15 +327,11 @@ static int cc_connection_handler(const struct nct_evt *nct_evt)
 	 * If status the connection, request state synchronization.
 	 */
 	const struct nct_cc_data get_request = {
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 		.opcode = NCT_CC_OPCODE_TRANSFORM,
 		.data = {
 			.ptr = cc_req_transform_topic_pairing,
 			.len = sizeof(cc_req_transform_topic_pairing) - 1,
 		},
-#else
-		.opcode = NCT_CC_OPCODE_GET_REQ,
-#endif
 		.message_id = NCT_MSG_ID_STATE_REQUEST,
 	};
 	int err;
@@ -370,9 +364,7 @@ static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input
 	struct nct_dc_endpoints eps;
 	struct nrf_cloud_obj *desired_obj = NULL;
 
-	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
-		desired_obj = &input->accepted->desired;
-	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
+	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
 		desired_obj = &input->delta->state;
 	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) {
 		desired_obj = &input->transform->result.obj;
@@ -398,7 +390,7 @@ static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input
 
 static void shadow_control_process(struct nrf_cloud_obj_shadow_data *const input)
 {
-	struct nct_cc_data msg = {.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
+	struct nct_cc_data msg = {.opcode = NCT_CC_OPCODE_TRANSFORM,
 				  .message_id = NCT_MSG_ID_STATE_REPORT};
 	int err = nrf_cloud_shadow_control_process(input, &msg.data);
 
@@ -408,7 +400,7 @@ static void shadow_control_process(struct nrf_cloud_obj_shadow_data *const input
 		LOG_DBG("No reply needed for device control shadow update");
 		return;
 	} else if (err) {
-		LOG_ERR("Failed to process device control shadow update, error: err");
+		LOG_ERR("Failed to process device control shadow update, error: %d", err);
 		return;
 	}
 
@@ -465,7 +457,6 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	bool discon = false;
 	enum nfsm_state new_state;
 	const enum nfsm_state current_state = nfsm_get_current_state();
-	struct nrf_cloud_obj_shadow_accepted shadow_accepted = {0};
 	struct nrf_cloud_obj_shadow_delta shadow_delta = {0};
 	struct nrf_cloud_obj_shadow_transform shadow_tf = {0};
 	struct nrf_cloud_obj_shadow_data shadow_data = {0};
@@ -477,11 +468,8 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 		(const char *)nct_evt->param.cc->data.ptr);
 
 	switch (nct_evt->param.cc->opcode) {
-	case NCT_CC_OPCODE_UPDATE_ACCEPTED:
 	case NCT_CC_OPCODE_UPDATE_DELTA:
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 	case NCT_CC_OPCODE_TRANSFORM:
-#endif
 		break;
 	case NCT_CC_OPCODE_UPDATE_REJECTED:
 		LOG_DBG("Rejected shadow: %s", (char *)nct_evt->param.cc->data.ptr);
@@ -499,21 +487,13 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	}
 
 	/* Decode data based on the topic */
-	if (nct_evt->param.cc->opcode == NCT_CC_OPCODE_UPDATE_ACCEPTED) {
-		err = nrf_cloud_obj_shadow_accepted_decode(&shadow_obj, &shadow_accepted);
-		if (!err) {
-			shadow_data.type = NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED;
-			shadow_data.accepted = &shadow_accepted;
-			LOG_DBG("Accepted shadow decoded");
-		}
-	} else if (nct_evt->param.cc->opcode == NCT_CC_OPCODE_UPDATE_DELTA) {
+	if (nct_evt->param.cc->opcode == NCT_CC_OPCODE_UPDATE_DELTA) {
 		err = nrf_cloud_obj_shadow_delta_decode(&shadow_obj, &shadow_delta);
 		if (!err) {
 			shadow_data.type = NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA;
 			shadow_data.delta = &shadow_delta;
 			LOG_DBG("Delta shadow decoded");
 		}
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 	} else if (nct_evt->param.cc->opcode == NCT_CC_OPCODE_TRANSFORM) {
 		err = nrf_cloud_obj_shadow_transform_decode(&shadow_obj, &shadow_tf);
 		if (!err) {
@@ -521,7 +501,6 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 			shadow_data.transform = &shadow_tf;
 			LOG_DBG("Transform result received");
 		}
-#endif
 	}
 
 	nrf_cloud_obj_free(&shadow_obj);
@@ -557,7 +536,6 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	}
 
 	/* Free the shadow objects */
-	nrf_cloud_obj_shadow_accepted_free(&shadow_accepted);
 	nrf_cloud_obj_shadow_delta_free(&shadow_delta);
 	nrf_cloud_obj_shadow_transform_free(&shadow_tf);
 
