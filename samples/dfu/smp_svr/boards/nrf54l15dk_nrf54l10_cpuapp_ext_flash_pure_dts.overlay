@@ -1,0 +1,5 @@
+#include "../sysbuild/nrf54l15dk_nrf54l10_memory_map_ext_flash.dtsi"
+
+&mx25r64 {
+	status = "okay";
+};

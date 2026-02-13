@@ -1,0 +1,11 @@
+#include "../../nrf54l15dk_nrf54l10_memory_map_ext_flash.dtsi"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+};
