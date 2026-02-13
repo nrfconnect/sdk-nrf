@@ -1,0 +1,15 @@
+/ {
+	chosen {
+		zephyr,code-partition = &b0_partition;
+	};
+};
+
+b0_partition: &boot_partition {};
+
+s0_partition: &slot0_partition {};
+
+s1_partition: &slot1_partition {};
+
+provision_partition: &storage_partition {};
+
+bl_storage: &provision_partition {};
