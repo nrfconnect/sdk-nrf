@@ -11,6 +11,9 @@
 #include <silexpk/core.h>
 
 /** Function to check if two integer numbers are coprime.
+ *
+ * @param[in] workmem      Temporary buffer used for intermediate computations.
+ * @param[in] workmemsz    Size of the workmem buffer in bytes.
  * @param[in] a            Unsigned integer stored as a big endian byte array.
  * @param[in] asz          Size in bytes of \p a.
  * @param[in] b            Unsigned integer stored as a big endian byte array.

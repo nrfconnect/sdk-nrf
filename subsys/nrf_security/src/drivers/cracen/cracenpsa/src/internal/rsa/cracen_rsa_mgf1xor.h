@@ -21,7 +21,7 @@
  * @param[in] hashalg     The hash algorithm on which MGF1 is based.
  * @param[in] seed        The input seed used for mask generation.
  * @param[in] digestsz    Size of the hash digest in bytes.
- * @param[in,out]  xorinout   Output buffer to which the mask is applied via xor.
+ * @param[in] out         Output buffer to which the mask is applied via xor.
  * @param[in] out_sz      Length of the output buffer in bytes.
  *
  * This function needs a workmem buffer with size:
