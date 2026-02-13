@@ -19,8 +19,6 @@
 #error "No NRFX storage technology supported backend selected"
 #endif
 #include <errno.h>
-#include <pm_config.h>
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -173,7 +171,7 @@ struct bl_storage_data {
 	 */
 };
 
-#define BL_STORAGE ((const volatile struct bl_storage_data *)(PM_PROVISION_ADDRESS))
+extern const volatile struct bl_storage_data *BL_STORAGE;
 
 /* This must be 32 bytes according to the IETF PSA token specification */
 #define BL_STORAGE_IMPLEMENTATION_ID_SIZE 32
