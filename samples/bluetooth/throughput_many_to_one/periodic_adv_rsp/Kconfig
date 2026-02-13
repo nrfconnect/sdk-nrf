@@ -1,0 +1,23 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "Throughput many-to-one Sample"
+
+config APP_THROUGHPUT_PAWR
+	bool "Throughput many-to-one Sample Settings"
+	default y
+	help
+	  Enable configuration options for throughput many-to-one sample using PAwR
+
+config APP_NUM_RSP_DEVICES
+	int "Number of PAwR scanner devices"
+	default 2
+	range 1 255
+	depends on APP_THROUGHPUT_PAWR
+	help
+	  Number of scanner devices that will participate in the PAwR communication.
+	  This affects timing calculations.
+
+endmenu
+
+source "Kconfig.zephyr"

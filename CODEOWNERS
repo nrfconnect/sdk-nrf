@@ -486,6 +486,7 @@
 /samples/bluetooth/shorter_conn_intervals/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/subrating/             @nrfconnect/ncs-dragoon
 /samples/bluetooth/throughput/            @nrfconnect/ncs-blenders
+/samples/bluetooth/throughput_many_to_one/ @nrfconnect/ncs-dragoon
 /samples/bootloader/                      @nrfconnect/ncs-eris
 /samples/caf/                             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /samples/caf_sensor_manager/              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin
@@ -622,6 +623,7 @@
 /samples/bluetooth/shorter_conn_intervals/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/subrating/*.rst        @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/throughput/*.rst       @nrfconnect/ncs-blenders-doc
+/samples/bluetooth/throughput_many_to_one/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bootloader/*.rst                 @nrfconnect/ncs-eris-doc
 /samples/caf/*.rst                        @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /samples/caf_sensor_manager/*.rst         @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc
