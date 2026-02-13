@@ -182,6 +182,7 @@
 #define NRF_CLOUD_JSON_KEY_REP			"reported"
 #define NRF_CLOUD_JSON_KEY_DES			"desired"
 #define NRF_CLOUD_JSON_KEY_DELTA		"delta"
+#define NRF_CLOUD_JSON_KEY_DELTA_ERR	"error"
 #define NRF_CLOUD_JSON_KEY_DEVICE		"device"
 #define NRF_CLOUD_JSON_KEY_SRVC_INFO		"serviceInfo"
 #define NRF_CLOUD_JSON_KEY_SRVC_INFO_UI		"ui"
@@ -223,7 +224,7 @@
 #define NRF_CLOUD_JSON_KEY_DEVICE_TO_CLOUD	"g2c"
 #define NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE	"c2g"
 #endif
-#define NRF_CLOUD_BULK_MSG_TOPIC		"/bulk"
+#define NRF_CLOUD_BULK_MSG_TOPIC			"/bulk"
 #define NRF_CLOUD_JSON_VAL_TOPIC_C2D		"/" NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE
 #define NRF_CLOUD_JSON_VAL_TOPIC_AGNSS		"/agnss"
 #define NRF_CLOUD_JSON_VAL_TOPIC_PGPS		"/pgps"

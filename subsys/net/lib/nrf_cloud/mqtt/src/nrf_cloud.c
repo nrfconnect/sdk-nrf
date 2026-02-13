@@ -343,19 +343,14 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		return -EINVAL;
 	}
 
-	/* Verify that the requested topic can be used in the current state */
-	if (msg->topic_type == NRF_CLOUD_TOPIC_STATE) {
-		/* State (shadow) updates need to have the control channel connected */
+	/* Verify that the requested topic can be used in the current state or to request device
+	 * shadow data using a transform
+	 */
+	if (msg->topic_type == NRF_CLOUD_TOPIC_STATE || 
+	    msg->topic_type == NRF_CLOUD_TOPIC_STATE_TF) {
 		if (current_state < STATE_CC_CONNECTED) {
 			return -EACCES;
 		}
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
-	} else if (msg->topic_type == NRF_CLOUD_TOPIC_STATE_TF) {
-		/* State (shadow) updates need to have the control channel connected */
-		if (current_state < STATE_CC_CONNECTED) {
-			return -EACCES;
-		}
-#endif
 	} else {
 		/* All other topics require device channel connected */
 		if (current_state != STATE_DC_CONNECTED) {
@@ -396,18 +391,12 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 	const struct nct_dc_data dc_data = {.data = send_data, .message_id = msg_id};
 
 	switch (msg->topic_type) {
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 	case NRF_CLOUD_TOPIC_STATE_TF:
-#endif
 	case NRF_CLOUD_TOPIC_STATE: {
 		const struct nct_cc_data shadow_data = {
 			.opcode =
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 				(msg->topic_type == NRF_CLOUD_TOPIC_STATE_TF)
-					? NCT_CC_OPCODE_TRANSFORM
-					:
-#endif
-					NCT_CC_OPCODE_UPDATE_ACCEPTED,
+					? NCT_CC_OPCODE_TRANSFORM : NCT_CC_OPCODE_UPDATE,
 			.data = send_data,
 			.message_id = msg_id};
 
@@ -479,7 +468,6 @@ int nrf_cloud_obj_shadow_update(struct nrf_cloud_obj *const shadow_obj)
 
 int nrf_cloud_shadow_transform_request(char const *const transform, const size_t max_response_len)
 {
-#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
 	if (!transform) {
 		return -EINVAL;
 	}
@@ -521,9 +509,6 @@ int nrf_cloud_shadow_transform_request(char const *const transform, const size_t
 cleanup:
 	nrf_cloud_obj_free(&req_obj);
 	return ret;
-#else
-	return -ENOTSUP;
-#endif
 }
 
 int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len)
