@@ -12,7 +12,6 @@ tests:
       - nrf9160dk/nrf9160/ns
     integration_platforms:
       - nrf52dk/nrf52832
-      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
     tags:
