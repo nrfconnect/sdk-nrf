@@ -109,15 +109,6 @@ int nrf_cloud_obj_endpoint_decode(const struct nrf_cloud_obj *const desired_obj,
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
 			   const bool add_info_sections, struct nrf_cloud_data *output);
 
-/** @brief Decode the accepted shadow data.
- * Decoded data should be freed with @ref nrf_cloud_obj_shadow_accepted_free.
- */
-int nrf_cloud_obj_shadow_accepted_decode(struct nrf_cloud_obj *const shadow_obj,
-					 struct nrf_cloud_obj_shadow_accepted *const accepted);
-
-/** @brief Free the accepted shadow data. */
-void nrf_cloud_obj_shadow_accepted_free(struct nrf_cloud_obj_shadow_accepted *const accepted);
-
 /** @brief Decode the delta shadow data.
  * Decoded data should be freed with @ref nrf_cloud_obj_shadow_delta_free.
  */
