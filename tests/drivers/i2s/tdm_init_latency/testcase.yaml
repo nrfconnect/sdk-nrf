@@ -1,0 +1,38 @@
+common:
+  tags:
+    - drivers
+    - ci_tests_zephyr_drivers_i2s
+  harness: pytest
+  harness_config:
+    pytest_dut_scope: session
+
+tests:
+  drivers.i2s.tdm_init_latency.zephyr_driver:
+    platform_allow: &default_platform_allow
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms: &defaukt_integration_platform
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  drivers.i2s.tdm_init_latency.zephyr_driver.lfrc:
+    platform_allow: &lfrc_platform_allow
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms: &lfrc_integration_platform
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+
+  drivers.i2s.tdm_init_latency.nrfx_driver:
+    platform_allow: *default_platform_allow
+    integration_platforms: *defaukt_integration_platform
+    extra_args:
+      - DCONF_FILE="nrfx_prj.conf"
+
+  drivers.i2s.tdm_init_latency.nrfx_driver.lfrc:
+    platform_allow: *lfrc_platform_allow
+    integration_platforms: *lfrc_integration_platform
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    extra_args:
+      - DCONF_FILE="nrfx_prj.conf"
+
