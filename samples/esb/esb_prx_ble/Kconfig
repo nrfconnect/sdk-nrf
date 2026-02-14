@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Enhanced ShockBurst: Receiver BLE"
+
+module = ESB_PRX_BLE
+module-str = "ESB_PRX_BLE"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endmenu
