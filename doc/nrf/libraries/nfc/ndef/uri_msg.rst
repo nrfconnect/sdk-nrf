@@ -35,13 +35,13 @@ The following code snippets show how to generate a URI message.
       int err;
 
       err = nfc_ndef_uri_msg_encode( NFC_URI_HTTP_WWW,
-                                      m_url,
-                                      sizeof(m_url),
-                                      m_ndef_msg_buf,
-                                      &len);
+				            m_url,
+				            sizeof(m_url),
+				            m_ndef_msg_buf,
+				            &len);
 
       if (err < 0) {
-          printk("Cannot encode message!\n");
+	      printk("Cannot encode message!\n");
 	      return err;
       }
 
