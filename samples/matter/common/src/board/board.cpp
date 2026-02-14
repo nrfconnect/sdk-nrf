@@ -39,10 +39,10 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
 	mLED1.Init(DK_LED1);
 	mLED2.Init(DK_LED2);
-#if NUMBER_OF_LEDS == 3
+#if NUMBER_OF_LEDS >= 3
 	mLED3.Init(DK_LED3);
-#elif NUMBER_OF_LEDS == 4
-	mLED3.Init(DK_LED3);
+#endif
+#if NUMBER_OF_LEDS >= 4
 	mLED4.Init(DK_LED4);
 #endif
 #endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
@@ -100,13 +100,12 @@ void Board::ResetAllLeds()
 	mLED2SavedState = mLED2.GetState();
 	mLED1.Set(false);
 	mLED2.Set(false);
-#if NUMBER_OF_LEDS == 3
+#if NUMBER_OF_LEDS >= 3
 	mLED3SavedState = mLED3.GetState();
 	mLED3.Set(false);
-#elif NUMBER_OF_LEDS == 4
-	mLED3SavedState = mLED3.GetState();
+#endif
+#if NUMBER_OF_LEDS >= 4
 	mLED4SavedState = mLED4.GetState();
-	mLED3.Set(false);
 	mLED4.Set(false);
 #endif
 }
@@ -115,10 +114,10 @@ void Board::RestoreAllLedsState()
 {
 	mLED1.Set(mLED1SavedState);
 	mLED2.Set(mLED2SavedState);
-#if NUMBER_OF_LEDS == 3
+#if NUMBER_OF_LEDS >= 3
 	mLED3.Set(mLED3SavedState);
-#elif NUMBER_OF_LEDS == 4
-	mLED3.Set(mLED3SavedState);
+#endif
+#if NUMBER_OF_LEDS >= 4
 	mLED4.Set(mLED4SavedState);
 #endif
 }
@@ -169,12 +168,11 @@ void Board::UpdateStatusLED()
 LEDWidget &Board::GetLED(DeviceLeds led)
 {
 	switch (led) {
-#if NUMBER_OF_LEDS == 3
+#if NUMBER_OF_LEDS >= 3
 	case DeviceLeds::LED3:
 		return mLED3;
-#elif NUMBER_OF_LEDS == 4
-	case DeviceLeds::LED3:
-		return mLED3;
+#endif
+#if NUMBER_OF_LEDS >= 4
 	case DeviceLeds::LED4:
 		return mLED4;
 #endif
@@ -219,10 +217,10 @@ void Board::FunctionTimerEventHandler()
 
 		sInstance.mLED1.Blink(LedConsts::kBlinkRate_ms);
 		sInstance.mLED2.Blink(LedConsts::kBlinkRate_ms);
-#if NUMBER_OF_LEDS == 3
+#if NUMBER_OF_LEDS >= 3
 		sInstance.mLED3.Blink(LedConsts::kBlinkRate_ms);
-#elif NUMBER_OF_LEDS == 4
-		sInstance.mLED3.Blink(LedConsts::kBlinkRate_ms);
+#endif
+#if NUMBER_OF_LEDS >= 4
 		sInstance.mLED4.Blink(LedConsts::kBlinkRate_ms);
 #endif
 	} else if (sInstance.mFunction == BoardFunctions::FactoryReset) {
