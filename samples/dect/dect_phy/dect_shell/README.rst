@@ -1,6 +1,6 @@
-.. _dect_shell_application:
+.. _dect_phy_shell_application:
 
-nRF91x1: DECT NR+ Shell
+nRF91x1: DECT NR+ PHY Shell
 ###########################
 
 .. contents::

@@ -44,6 +44,12 @@ config NRF_IPERF3_CLIENT_TEST_ENDING_TIMEOUT
 	help
 	  Time in seconds to wait in TEST_END state.
 
+config NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES
+	bool "Non-blocking socket changes"
+	default y
+	help
+	  Using non-blocking socket.
+
 # The name of this option is mandated by zephyr_interface_library_named cmake directive.
 config APP_LINK_WITH_IPERF3
 	bool "Link 'app' with IPERF3"
@@ -58,13 +64,9 @@ config NRF_IPERF3_INTEGRATION
 	bool
 	default y
 
-config NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES
-	bool
-	default y
-
 config NRF_IPERF3_MULTICONTEXT_SUPPORT
 	bool
-	default y
+	default y if !DECT
 	depends on NRF_IPERF3_INTEGRATION
 
 endmenu #NRF iperf3
