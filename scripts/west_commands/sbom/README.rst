@@ -132,6 +132,12 @@ You can also mix them, for example, to generate a report for the application and
      west ncs-sbom -d *build* -d *build/mcuboot*
 
   .. note::
+      If the build directory is a sysbuild root (contains :file:`domains.yaml`), the command automatically generates one report for each domain.
+      To adjust the output file names, append ``_<domain>`` before the extension (for example, :file:`sbom_report_with_mcuboot.html`).
+      To control where ``{domain}`` appears in the filename, include ``{domain}`` in ``--output-html`` or ``--output-spdx`` (for example, ``--output-spdx sbom_{domain}_sysbuild.spdx``).
+      In PS, escape the curly braces with backticks.
+
+  .. note::
       All files that are not dependencies of the :file:`zephyr/zephyr.elf` target are not taken as an input.
       If you modify the :file:`.elf` file after the linking, the modifications are not applied.
 

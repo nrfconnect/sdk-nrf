@@ -64,6 +64,38 @@ def get_sysbuild_default_domain(build_dir: Path) -> Path | None:
                         f'"{domains_yaml}".')
 
 
+def get_sysbuild_domains(build_dir: Path) -> list[tuple[str, Path]]:
+    '''
+    Returns list of (domain_name, domain_build_dir) for sysbuild, or empty list if not sysbuild.
+    '''
+    domains_yaml = build_dir / 'domains.yaml'
+    if not domains_yaml.is_file():
+        return []
+    try:
+        with open(domains_yaml, 'r') as fd:
+            domains = yaml.safe_load(fd)
+    except yaml.YAMLError as ex:
+        raise SbomException(f'Cannot parse "{domains_yaml}".') from ex
+    if not isinstance(domains, dict) or 'domains' not in domains:
+        raise SbomException(f'Invalid format of "{domains_yaml}".')
+    results: list[tuple[str, Path]] = []
+    for domain in domains.get('domains', []):
+        if not isinstance(domain, dict):
+            continue
+        name = domain.get('name')
+        domain_dir = Path(domain.get('build_dir', ''))
+        if not name or not domain_dir:
+            raise SbomException(f'Invalid sysbuild domain entry in "{domains_yaml}".')
+        if not domain_dir.is_absolute():
+            domain_dir = (build_dir / domain_dir).resolve()
+        if not domain_dir.exists():
+            raise SbomException(f'Detected sysbuild domain "{name}", but the build directory '
+                                f'"{domain_dir}" does not exist.')
+        results.append((name, domain_dir))
+    if len(results) == 0:
+        raise SbomException(f'No domains detected in "{domains_yaml}".')
+    return results
+
 def get_ninja_default_targets(build_dir: Path) -> list[str]:
     '''
     Returns default targets listed in build.ninja.
@@ -673,7 +705,6 @@ def generate_input(data: Data):
     Fill "data" with input files for application build directory specified in the script arguments.
     '''
     if args.build_dir is not None:
-        log.wrn('Fetching input files from a build directory is experimental for now.')
         resolved_build_dirs = []
         for build_dir, *targets in args.build_dir:
             resolved_build_dir = get_sysbuild_default_domain(Path(build_dir)) or Path(build_dir)
