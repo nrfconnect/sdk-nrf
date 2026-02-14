@@ -52,7 +52,7 @@ To run the |NCS| toolchain container to build and flash HEX files, run the follo
 
 .. code-block:: none
 
-    docker run -ti ghcr.io/nrfconnect/sdk-nrf-toolchain:<TAG> -v /dev:/dev -v /run/udev:/run/udev:ro --privileged -e ACCEPT_JLINK_LICENSE=1 bash
+    docker run -ti -v /dev:/dev -v /run/udev:/run/udev:ro --privileged -e ACCEPT_JLINK_LICENSE=1 ghcr.io/nrfconnect/sdk-nrf-toolchain:<TAG> bash
 
 .. tip::
 
