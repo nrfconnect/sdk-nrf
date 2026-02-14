@@ -55,8 +55,6 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 .. _peripheral_rscs_testing:
 
 Testing

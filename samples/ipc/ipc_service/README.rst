@@ -146,8 +146,6 @@ To build the sample to test IPC between the application and PPR core using the :
 
    west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg .
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 Testing
 =======
 

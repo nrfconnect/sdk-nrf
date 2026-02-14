@@ -53,11 +53,6 @@ Code requiring a lot of accesses to low-leakage peripherals in the Global Domain
 32 kB of local RAM, which is configured like a Tightly Coupled Memory (TCM) and is accessible single-cycle, is provided.
 This can be used by timing-sensitive code that cannot tolerate variable latency due to cache hits/misses when accessing memory.
 
-.. note::
-   During the initial limited sampling, the firmware to change DVFS settings will not be available, and all code will run at the maximum clock frequency.
-   Dynamic switching of voltage and frequency will be enabled at a later date.
-   In later versions, developers will be able to select an optimal clock frequency at run time, depending on the task at hand.
-
 Radio core
 **********
 

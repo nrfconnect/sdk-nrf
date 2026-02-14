@@ -113,8 +113,6 @@ The Monitor sample is located in the :file:`samples/esb/esb_monitor` folder in t
 
 See :ref:`building` and :ref:`programming` for information on how to build and program the application, respectively.
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 FEM support
 ===========
 
