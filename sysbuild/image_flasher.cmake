@@ -23,6 +23,7 @@ function(add_image_flasher)
   endif()
 
   set(${args_NAME}_HEX_FILE "${args_HEX_FILE}" CACHE FILEPATH "Hex file to flash" FORCE)
+  set(${args_NAME}_NCS_IMAGE_TYPE "image_flasher" CACHE STRING "Type of sysbuild image" FORCE)
   set(IMAGE_FLASHER_DEFAULT_IMAGE ${DEFAULT_IMAGE} CACHE STRING "Default image" FORCE)
 
   ExternalZephyrProject_Add(
