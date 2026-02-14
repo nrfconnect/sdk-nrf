@@ -247,16 +247,23 @@ int nrf_cloud_fota_fmfu_apply(void)
 
 	int err;
 
-	err = nrf_modem_lib_shutdown();
-	if (err != 0) {
-		LOG_ERR("nrf_modem_lib_shutdown() failed: %d", err);
-		return err;
+	for (size_t i = 0; i < 10; ++i){
+		err = nrf_modem_lib_shutdown();
+		if (err != 0) {
+			LOG_ERR("nrf_modem_lib_shutdown() failed: %d", err);
+			continue;
+		}
+
+		err = nrf_modem_lib_bootloader_init();
+		if (err != 0) {
+			LOG_ERR("nrf_modem_lib_bootloader_init() failed: %d", err);
+			continue;
+		}
+		break;
 	}
 
-	err = nrf_modem_lib_bootloader_init();
 	if (err != 0) {
-		LOG_ERR("nrf_modem_lib_bootloader_init() failed: %d", err);
-		(void)nrf_modem_lib_init();
+		LOG_ERR("Failed to enter modem bootloader mode");
 		return err;
 	}
 
