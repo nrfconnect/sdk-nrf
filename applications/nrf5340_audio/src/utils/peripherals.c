@@ -5,8 +5,6 @@
  */
 #include "peripherals.h"
 
-#include <nrfx_clock.h>
-
 #include "led_assignments.h"
 #include "led.h"
 #include "button_handler.h"
@@ -15,6 +13,7 @@
 #include "nrf5340_audio_dk_version.h"
 #include "device_location.h"
 #include "sd_card_playback.h"
+#include "audio_clock.h"
 
 #include <zephyr/debug/cpu_load.h>
 #include <zephyr/logging/log.h>
@@ -150,12 +149,6 @@ int peripherals_init(void)
 	ret = leds_set();
 	if (ret) {
 		LOG_ERR("Failed to set LEDs");
-		return ret;
-	}
-
-	/* Use this to turn on 128 MHz clock for cpu_app */
-	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
-	if (ret) {
 		return ret;
 	}
 

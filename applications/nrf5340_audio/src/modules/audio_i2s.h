@@ -19,18 +19,6 @@
 #include <zephyr/kernel.h>
 #include <stdint.h>
 
-/** @brief HFCLKAUDIO frequency value for 12.288-MHz output.
- *
- * This macro defines the frequency value for the High Frequency Clock Audio (HFCLKAUDIO)
- * to generate a 12.288-MHz output frequency. The value is calculated according to the formula
- * in the nRF5340 SoC documentation.
- */
-#define HFCLKAUDIO_12_288_MHZ 0x9BA6
-
-#define HFCLKAUDIO_12_165_MHZ 0x8FD8
-
-#define HFCLKAUDIO_12_411_MHZ 0xA774
-
 /**
  * @brief Calculate frame size in bytes based on audio configuration.
  *

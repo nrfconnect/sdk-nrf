@@ -10,7 +10,6 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/pinctrl.h>
 #include <nrfx_i2s.h>
-#include <nrfx_clock.h>
 
 #include "audio_sync_timer.h"
 
@@ -137,15 +136,6 @@ void audio_i2s_init(void)
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_UNINIT);
 
 	int ret;
-
-	nrfx_clock_hfclkaudio_config_set(HFCLKAUDIO_12_288_MHZ);
-
-	NRF_CLOCK->TASKS_HFCLKAUDIOSTART = 1;
-
-	/* Wait for ACLK to start */
-	while (!NRF_CLOCK_EVENT_HFCLKAUDIOSTARTED) {
-		k_sleep(K_MSEC(1));
-	}
 
 	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(I2S_NL), PINCTRL_STATE_DEFAULT);
 	__ASSERT_NO_MSG(ret == 0);
