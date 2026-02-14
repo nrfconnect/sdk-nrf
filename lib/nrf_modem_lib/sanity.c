@@ -6,9 +6,9 @@
 
 #include <zephyr/toolchain.h>
 #include <zephyr/sys/util.h>
-#ifdef CONFIG_SOC_SERIES_NRF91
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 #include <pm_config.h>
-#endif /* CONFIG_SOC_SERIES_NRF91 */
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 #include <errno.h>
 #include <nrf_errno.h>
 
@@ -117,6 +117,8 @@ BUILD_ASSERT(ETOOMANYREFS    == NRF_ETOOMANYREFS,    "Errno not aligned with nrf
 #define SHMEM_RANGE KB(128)
 #define SHMEM_END (SRAM_BASE + SHMEM_RANGE)
 
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+
 #define SHMEM_IN_USE \
 	(PM_NRF_MODEM_LIB_SRAM_ADDRESS + PM_NRF_MODEM_LIB_SRAM_SIZE)
 
@@ -134,6 +136,25 @@ BUILD_ASSERT(PM_NRF_MODEM_LIB_RX_ADDRESS % 4 == 0,
 BUILD_ASSERT(PM_NRF_MODEM_LIB_TRACE_ADDRESS % 4 == 0,
 	"libmodem Trace region base address must be word aligned");
 #endif
+
+#else /* !CONFIG_PARTITION_MANAGER_ENABLED (use Device Tree) */
+
+#define SHMEM_IN_USE \
+	(DT_REG_ADDR(DT_NODELABEL(sram0_ns_modem)) + DT_REG_SIZE(DT_NODELABEL(sram0_ns_modem)))
+
+BUILD_ASSERT(SHMEM_IN_USE <= SHMEM_END,
+	     "The libmodem shmem configuration exceeds the range of "
+	     "memory readable by the Modem core");
+
+BUILD_ASSERT(DT_REG_ADDR(DT_NODELABEL(sram0_ns_modem_ctrl)) % 4 == 0,
+	"libmodem CTRL region base address must be word aligned");
+BUILD_ASSERT(DT_REG_ADDR(DT_NODELABEL(sram0_ns_modem_tx)) % 4 == 0,
+	"libmodem TX region base address must be word aligned");
+BUILD_ASSERT(DT_REG_ADDR(DT_NODELABEL(sram0_ns_modem_rx)) % 4 == 0,
+	"libmodem RX region base address must be word aligned");
+
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
+
 #endif /* CONFIG_SOC_SERIES_NRF91 */
 
 /* Socket values sanity check */

@@ -1,0 +1,70 @@
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &storage_partition;
+/delete-node/ &sram0_s;
+/delete-node/ &sram0_ns;
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			label = "tfm-secure";
+			reg = <0x00000000 0x00008000>;
+		};
+
+		slot0_ns_partition: partition@8000 {
+			label = "app-nonsecure";
+			reg = <0x00008000 0x000f8000>;
+		};
+	};
+};
+
+&sram0 {
+	sram0_s: sram@0 {
+		/* Secure image memory */
+		reg = <0x0 0x8000>;
+	};
+
+	sram0_ns: sram@8000 {
+		/* Non-Secure image memory */
+		reg = <0x8000 0x38000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x8000 0x38000>;
+
+		sram0_ns_modem: sram0_ns@0 {
+			/* Modem (shared) memory */
+			reg = <0x0 0x4800>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x0 0x4800>;
+
+			sram0_ns_modem_ctrl: sram0_ns_modem@0 {
+				/* Modem IPC control */
+				reg = <0x0 0x4e8>;
+			};
+
+			sram0_ns_modem_tx: sram0_ns_modem@4e8 {
+				/* Modem IPC transmit */
+				reg = <0x4e8 0x2080>;
+			};
+
+			sram0_ns_modem_rx: sram0_ns_modem@2568 {
+				/* Modem IPC receive */
+				reg = <0x2568 0x2000>;
+			};
+		};
+
+		sram0_ns_app: sram0_ns@4800 {
+			/* Non-Secure application memory */
+			reg = <0x4800 0x33800>;
+		};
+	};
+};
