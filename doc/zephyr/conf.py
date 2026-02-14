@@ -37,6 +37,8 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 extensions.remove("sphinx_sitemap")
 extensions = ["sphinx.ext.intersphinx"] + extensions
 
+version = os.environ.get("DOCSET_VERSION")
+
 # Options for HTML output ------------------------------------------------------
 
 html_additional_pages = {}
