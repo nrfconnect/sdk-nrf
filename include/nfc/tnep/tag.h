@@ -16,9 +16,8 @@
 
 #include <nfc/tnep/base.h>
 #include <zephyr/kernel.h>
+#include <nfc/tnep/tag_signalling.h>
 
-/** NFC TNEP library event count. */
-#define NFC_TNEP_EVENTS_NUMBER 2
 
 /** Maximum Service Waiting Time. */
 #define NFC_TNEP_TAG_MAX_WAIT_TIME 63
@@ -185,6 +184,9 @@ typedef int (*initial_msg_encode_t)(struct nfc_ndef_msg_desc *msg);
 int nfc_tnep_tag_tx_msg_buffer_register(uint8_t *tx_buff,
 					uint8_t *tx_swap_buff,
 					size_t len);
+
+#if defined(CONFIG_NFC_TNEP_TAG_SIGNALLING_ZEPHYR)
+
 /**
  * @brief Start communication using TNEP.
  *
@@ -202,6 +204,7 @@ int nfc_tnep_tag_tx_msg_buffer_register(uint8_t *tx_buff,
 int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
 		      nfc_payload_set_t payload_set);
 
+#endif /* CONFIG_NFC_TNEP_TAG_SIGNALLING_ZEPHYR */
 /**
  * @brief Create the Initial TNEP NDEF message.
  *
@@ -322,6 +325,24 @@ void nfc_tnep_tag_on_selected(void);
  * @return TNEP Tag Service count.
  */
 size_t nfc_tnep_tag_svc_count_get(void);
+
+/**
+ * @brief Internal TNEP Tag initialization.
+ *
+ * This function is not intended to be used directly by the application.
+ * Use @c nfc_tnep_tag_init instead. This function is provided to allow
+ * custom implementations of @c nfc_tnep_tag_init with non-default signalling.
+ *
+ * @param[in] payload_set Function for setting NDEF data for NFC TNEP
+ *                        Tag Device. This library use it internally
+ *                        to set raw NDEF message to the Tag NDEF file.
+ *                        This function is called from atomic context, so
+ *                        sleeping or anyhow delaying is not allowed there.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nfc_tnep_tag_internal_init(nfc_payload_set_t payload_set);
 
 /**
  * @}
