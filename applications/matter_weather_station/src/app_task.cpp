@@ -7,7 +7,9 @@
 #include "app_task.h"
 
 #include "battery.h"
+#ifdef CONFIG_MATTER_WEATHER_STATION_BUZZER
 #include "buzzer.h"
+#endif
 
 #include "app/matter_init.h"
 #include "app/task_executor.h"
@@ -27,6 +29,12 @@
 
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
+
+#ifdef CONFIG_AVERAGE_CURRENT_CONSUMPTION
+#define IDENTIFY_TYPE Clusters::Identify::IdentifyTypeEnum::kLightOutput
+#else
+#define IDENTIFY_TYPE Clusters::Identify::IdentifyTypeEnum::kAudibleBeep
+#endif
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
@@ -84,9 +92,11 @@ public:
 	{
 		Nrf::PostTask([] {
 			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms);
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
 			k_timer_start(&sIdentifyTimer, K_MSEC(kIdentifyTimerIntervalMs),
 				      K_MSEC(kIdentifyTimerIntervalMs));
 			BuzzerSetState(true);
+#endif
 		});
 	}
 
@@ -94,8 +104,10 @@ public:
 	{
 		Nrf::PostTask([] {
 			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
 			k_timer_stop(&sIdentifyTimer);
 			BuzzerSetState(false);
+#endif
 		});
 	}
 
@@ -106,7 +118,9 @@ public:
 	 */
 	void OnTriggerEffect(chip::app::Clusters::IdentifyCluster &cluster) override
 	{
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
 		Nrf::PostTask([] { BuzzerToggleState(); });
+#endif
 	}
 
 	bool IsTriggerEffectEnabled() const override { return false; }
@@ -117,11 +131,11 @@ DefaultTimerDelegate sTimerDelegate;
 
 Nrf::Matter::IdentifyCluster sIdentifyTemperature(kTemperatureMeasurementEndpointId,
 						  sIdentifyDelegateImplWeatherStation, sTimerDelegate,
-						  Clusters::Identify::IdentifyTypeEnum::kAudibleBeep);
+						  IDENTIFY_TYPE);
 Nrf::Matter::IdentifyCluster sIdentifyHumidity(kHumidityMeasurementEndpointId, sIdentifyDelegateImplWeatherStation,
-					       sTimerDelegate, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep);
+					       sTimerDelegate, IDENTIFY_TYPE);
 Nrf::Matter::IdentifyCluster sIdentifyPressure(kPressureMeasurementEndpointId, sIdentifyDelegateImplWeatherStation,
-					       sTimerDelegate, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep);
+						sTimerDelegate, IDENTIFY_TYPE);
 
 } /* namespace */
 
@@ -132,7 +146,9 @@ void AppTask::MeasurementsTimerHandler()
 
 void AppTask::IdentifyTimerHandler()
 {
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
 	BuzzerToggleState();
+#endif
 }
 
 void AppTask::UpdateTemperatureClusterState()
@@ -385,29 +401,33 @@ CHIP_ERROR AppTask::Init()
 		return chip::System::MapErrorZephyr(-ENODEV);
 	}
 
-	int ret = BatteryMeasurementInit();
-	if (ret) {
+#if CONFIG_MATTER_WEATHER_STATION_BATTERY
+	int ret_battery = BatteryMeasurementInit();
+	if (ret_battery) {
 		LOG_ERR("Battery measurement init failed");
-		return chip::System::MapErrorZephyr(ret);
+		return chip::System::MapErrorZephyr(ret_battery);
 	}
 
-	ret = BatteryMeasurementEnable();
-	if (ret) {
+	ret_battery = BatteryMeasurementEnable();
+	if (ret_battery) {
 		LOG_ERR("Enabling battery measurement failed");
-		return chip::System::MapErrorZephyr(ret);
+		return chip::System::MapErrorZephyr(ret_battery);
 	}
 
-	ret = BatteryChargeControlInit();
-	if (ret) {
+	ret_battery = BatteryChargeControlInit();
+	if (ret_battery) {
 		LOG_ERR("Battery charge control init failed");
-		return chip::System::MapErrorZephyr(ret);
+		return chip::System::MapErrorZephyr(ret_battery);
 	}
+#endif
 
-	ret = BuzzerInit();
-	if (ret) {
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
+	int ret_buzzer = BuzzerInit();
+	if (ret_buzzer) {
 		LOG_ERR("Buzzer init failed");
-		return chip::System::MapErrorZephyr(ret);
+		return chip::System::MapErrorZephyr(ret_buzzer);
 	}
+#endif
 
 	ReturnErrorOnFailure(sIdentifyTemperature.Init());
 	ReturnErrorOnFailure(sIdentifyHumidity.Init());
