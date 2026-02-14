@@ -142,3 +142,38 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+  sample.bluetooth.peripheral_lbs.l15_tag:
+    sysbuild: true
+    integration_platforms:
+      - nrf54l15tag/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15tag/nrf54l15/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+    extra_configs:
+      - CONFIG_BOOTLOADER_MCUBOOT=y
+      - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+      - CONFIG_LOG_BACKEND_UART=n
+      - CONFIG_UART_CONSOLE=n
+      - CONFIG_USE_SEGGER_RTT=y
+      - CONFIG_LOG_BACKEND_RTT=y
+      - CONFIG_LOG_MODE_DEFERRED=y
+      - CONFIG_LOG_BACKEND_UART=n
+      - CONFIG_SEGGER_RTT_MAX_NUM_UP_BUFFERS=5
+      - CONFIG_SEGGER_RTT_MAX_NUM_DOWN_BUFFERS=5
+      - CONFIG_SEGGER_RTT_BUFFER_SIZE_UP=2048
+      - CONFIG_SEGGER_RTT_BUFFER_SIZE_DOWN=32
+      - CONFIG_SEGGER_RTT_PRINTF_BUFFER_SIZE=128
+    extra_args:
+      - mcuboot_CONFIG_LOG_BACKEND_UART=n
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_USE_SEGGER_RTT=y
+      - mcuboot_CONFIG_LOG_BACKEND_RTT=y
+      - mcuboot_CONFIG_LOG_MODE_IMMEDIATE=y
+      - mcuboot_CONFIG_LOG_BACKEND_UART=n
