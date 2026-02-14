@@ -1,0 +1,18 @@
+tests:
+  ppi_config_leftovers.simple:
+    sysbuild: true
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+  ppi_config_leftovers.mcuboot:
+    sysbuild: true
+    extra_configs:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+  ppi_config_leftovers.mcuboot_nsib:
+    sysbuild: true
+    extra_configs:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp

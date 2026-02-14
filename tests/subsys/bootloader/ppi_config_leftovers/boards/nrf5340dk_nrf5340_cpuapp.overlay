@@ -1,0 +1,179 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&comp {
+	status = "okay";
+};
+
+&dppic {
+	status = "okay";
+};
+
+&egu0 {
+	status = "okay";
+};
+
+&egu1 {
+	status = "okay";
+};
+
+&egu2 {
+	status = "okay";
+};
+
+&egu3 {
+	status = "okay";
+};
+
+&egu4 {
+	status = "okay";
+};
+
+&egu5 {
+	status = "okay";
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&ipc {
+	status = "okay";
+};
+
+&kmu {
+	status = "okay";
+};
+
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm_dummy>;
+	pinctrl-1 = <&pwm_dummy>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm1 {
+	status = "okay";
+	pinctrl-0 = <&pwm_dummy>;
+	pinctrl-1 = <&pwm_dummy>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm2 {
+	status = "okay";
+	pinctrl-0 = <&pwm_dummy>;
+	pinctrl-1 = <&pwm_dummy>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm3 {
+	status = "okay";
+	pinctrl-0 = <&pwm_dummy>;
+	pinctrl-1 = <&pwm_dummy>;
+	pinctrl-names = "default", "sleep";
+};
+
+&qdec0 {
+	status = "okay";
+	pinctrl-0 = <&qdec_dummy>;
+	pinctrl-1 = <&qdec_dummy>;
+	pinctrl-names = "default", "sleep";
+	steps = <127>;
+	led-pre = <500>;
+};
+
+&qdec1 {
+	status = "okay";
+	pinctrl-0 = <&qdec_dummy>;
+	pinctrl-1 = <&qdec_dummy>;
+	pinctrl-names = "default", "sleep";
+	steps = <127>;
+	led-pre = <500>;
+};
+
+&rtc0 {
+	status = "okay";
+};
+
+/* uart0 is used for console. */
+
+&spi1 {
+	status = "okay";
+	pinctrl-0 = <&spi_dummy>;
+	pinctrl-1 = <&spi_dummy>;
+	pinctrl-names = "default", "sleep";
+};
+
+&spi2 {
+	status = "okay";
+	pinctrl-0 = <&spi_dummy>;
+	pinctrl-1 = <&spi_dummy>;
+	pinctrl-names = "default", "sleep";
+};
+
+&spi3 {
+	status = "okay";
+	pinctrl-0 = <&spi_dummy>;
+	pinctrl-1 = <&spi_dummy>;
+	pinctrl-names = "default", "sleep";
+};
+
+
+&spi4 {
+	status = "okay";
+	pinctrl-0 = <&spi_dummy>;
+	pinctrl-1 = <&spi_dummy>;
+	pinctrl-names = "default", "sleep";
+};
+
+&timer0 {
+	status = "okay";
+};
+
+&timer1 {
+	status = "okay";
+};
+
+&timer2 {
+	status = "okay";
+};
+
+&usbd {
+	status = "okay";
+};
+
+&wdt0 {
+	status = "okay";
+};
+
+&wdt1 {
+	status = "okay";
+};
+
+&pinctrl {
+	spi_dummy: spi_dummy {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 0)>,
+				<NRF_PSEL(SPIM_MISO, 0, 0)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 0)>;
+		};
+	};
+
+	pwm_dummy: pwm_dummy {
+	group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 0)>,
+				<NRF_PSEL(PWM_OUT1, 0, 0)>,
+				<NRF_PSEL(PWM_OUT2, 0, 0)>;
+		};
+	};
+
+    qdec_dummy: qdec_dummy {
+		group1 {
+			psels = <NRF_PSEL(QDEC_A, 0, 0)>,   /* Arduino D0 */
+				<NRF_PSEL(QDEC_B, 0, 0)>;   /* Arduino D2 */
+		};
+	};
+};
