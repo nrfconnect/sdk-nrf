@@ -79,8 +79,14 @@ int cracen_ikg_sign_message(int identity_key_index, const struct sxhashalg *hash
 	int status;
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
+	struct sxhash ctx;
 
-	status = cracen_hash_input(message, message_length, hashalg, digest);
+	status = sx_hw_reserve(&ctx.dma, SX_HW_RESERVE_DEFAULT);
+	if (status != SX_OK) {
+		return status;
+	}
+	status = cracen_hash_input_with_context(&ctx, message, message_length, hashalg, digest);
+	sx_hw_release(&ctx.dma);
 	if (status != SX_OK) {
 		return status;
 	}

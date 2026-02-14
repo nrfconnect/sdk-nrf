@@ -13,22 +13,23 @@
 #include <internal/rsa/cracen_rsa_common.h>
 
 #include <sxsymcrypt/hash.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <cracen/statuscodes.h>
 #include <cracen/common.h>
 
 /* number of bytes used for the MGF1 internal counter */
 #define MGF1_COUNTER_SZ 4
 
-static int mgf1xor_hash(uint8_t *mgfctr, size_t workmemsz, const struct sxhashalg *hashalg,
-			uint8_t *seed, size_t digestsz)
+static int mgf1xor_hash(struct sxhash *ctx, uint8_t *mgfctr, size_t workmemsz,
+			const struct sxhashalg *hashalg, uint8_t *seed, size_t digestsz)
 {
 	uint8_t *mask_segment = mgfctr + MGF1_COUNTER_SZ;
 	uint8_t const *hash_array[] = {seed, mgfctr};
 	size_t hash_array_lengths[] = {digestsz, MGF1_COUNTER_SZ};
 	size_t input_count = 2;
 
-	return cracen_hash_all_inputs(hash_array, hash_array_lengths, input_count, hashalg,
-				      mask_segment);
+	return cracen_hash_all_inputs_with_context(ctx, hash_array, hash_array_lengths, input_count,
+						  hashalg, mask_segment);
 }
 
 int cracen_run_mgf1xor(uint8_t *workmem, size_t workmemsz, const struct sxhashalg *hashalg,
@@ -48,32 +49,44 @@ int cracen_run_mgf1xor(uint8_t *workmem, size_t workmemsz, const struct sxhashal
 	mgfctr[2] = 0;
 	mgfctr[3] = 0;
 
-	sx_status = mgf1xor_hash(workmem, workmemsz, hashalg, seed, digestsz);
-	if (sx_status != SX_OK) {
-		return sx_status;
-	}
+	{
+		struct sxhash ctx;
 
-	size_t toxor;
-	uint8_t *mask_segment = workmem + MGF1_COUNTER_SZ;
-
-	/* this function: (1) computes the xor of the mask segment that was just
-	 * produced with the bytes pointed by xorinout, (2) increments the MGF1 counter
-	 */
-
-	while (masksz > 0) {
-		toxor = (masksz > digestsz) ? digestsz : masksz;
-
-		cracen_xorbytes(xorinout, mask_segment, toxor);
-
-		xorinout += toxor;
-		/* masksz holds the number of remaining mask bytes to produce */
-		masksz -= toxor;
-
-		cracen_be_add(mgfctr, MGF1_COUNTER_SZ, 1);
-		sx_status = mgf1xor_hash(mgfctr, workmemsz, hashalg, seed, digestsz);
+		sx_status = sx_hw_reserve(&ctx.dma, SX_HW_RESERVE_DEFAULT);
 		if (sx_status != SX_OK) {
 			return sx_status;
 		}
+
+		sx_status = mgf1xor_hash(&ctx, workmem, workmemsz, hashalg, seed, digestsz);
+		if (sx_status != SX_OK) {
+			sx_hw_release(&ctx.dma);
+			return sx_status;
+		}
+
+		size_t toxor;
+		uint8_t *mask_segment = workmem + MGF1_COUNTER_SZ;
+
+		/* this function: (1) computes the xor of the mask segment that was just
+		 * produced with the bytes pointed by xorinout, (2) increments the MGF1 counter
+		 */
+
+		while (masksz > 0) {
+			toxor = (masksz > digestsz) ? digestsz : masksz;
+
+			cracen_xorbytes(xorinout, mask_segment, toxor);
+
+			xorinout += toxor;
+			/* masksz holds the number of remaining mask bytes to produce */
+			masksz -= toxor;
+
+			cracen_be_add(mgfctr, MGF1_COUNTER_SZ, 1);
+			sx_status = mgf1xor_hash(&ctx, mgfctr, workmemsz, hashalg, seed, digestsz);
+			if (sx_status != SX_OK) {
+				sx_hw_release(&ctx.dma);
+				return sx_status;
+			}
+		}
+		sx_hw_release(&ctx.dma);
 	}
 	return SX_OK;
 }
