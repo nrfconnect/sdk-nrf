@@ -13,6 +13,9 @@ target_sources(app
   PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/server_store.c
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/le_audio.c
+  ${ZEPHYR_BASE}/subsys/bluetooth/common/addr.c
+  ${ZEPHYR_BASE}/subsys/bluetooth/audio/codec.c
+  ${ZEPHYR_BASE}/subsys/bluetooth/audio/audio.c
   main.c
 )
 
@@ -20,17 +23,9 @@ target_include_directories(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/utils/macros/
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/
 )
 
 target_compile_options(app
   PRIVATE
-  -DCONFIG_CODEC_CAP_COUNT_MAX=5
-  -DCONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE=8
-  -DCONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE=8
-  -DCONFIG_AUDIO_SAMPLE_RATE_48000_HZ
-  -DCONFIG_SERVER_STORE_LOG_LEVEL=4
-  -DCONFIG_BLE_LOG_LEVEL=4
-  -DCONFIG_LC3_BITRATE_MIN=32000
-  -DCONFIG_LC3_BITRATE_MAX=124000
-  -DCONFIG_AUDIO_FRAME_DURATION_US=10000
   )

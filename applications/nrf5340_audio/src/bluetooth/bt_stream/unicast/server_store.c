@@ -4,21 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/sys/slist.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/addr.h>
+#include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 #include <zephyr/bluetooth/audio/cap.h>
 #include <string.h>
 #include <stdio.h>
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
+#include <../subsys/bluetooth/audio/cap_internal.h>
 
 #include "server_store.h"
 #include "macros_common.h"
 #include "le_audio.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(server_store, CONFIG_SERVER_STORE_LOG_LEVEL);
+LOG_MODULE_REGISTER(srvstore, CONFIG_SERVER_STORE_LOG_LEVEL);
 
 static struct bt_bap_lc3_preset lc3_preset_48_4_1 = BT_BAP_LC3_UNICAST_PRESET_48_4_1(
 	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
@@ -99,8 +100,7 @@ static int server_remove(struct server_store *server, bool force)
 }
 
 /* Find the smallest commonly acceptable set of presentation delays */
-static int pres_delay_compute(struct bt_bap_qos_cfg_pref *common,
-			      struct bt_bap_qos_cfg_pref const *const in)
+static int pres_delay_compute(struct pd_struct *common, struct bt_bap_qos_cfg_pref const *const in)
 {
 	if (in->pd_min) {
 		common->pd_min = MAX(in->pd_min, common->pd_min);
@@ -128,14 +128,16 @@ static int pres_delay_compute(struct bt_bap_qos_cfg_pref *common,
 }
 
 /* Populate a preset based on preferred sample rate */
-static int sample_rate_check(uint16_t lc3_freq_bit, struct bt_bap_lc3_preset *preset,
-			     uint8_t pref_sample_rate)
+static int preset_pop_on_sample_rate(uint16_t lc3_freq_bit, struct bt_bap_lc3_preset *preset,
+				     uint8_t pref_sample_rate)
 {
-	/* Try with preferred first */
+
 	switch (pref_sample_rate) {
 	case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
 		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
 			memcpy(preset, &lc3_preset_48_4_1, sizeof(struct bt_bap_lc3_preset));
+			/* SET RTN to 2 to reduce latency. */
+			preset->qos.rtn = 2;
 			return 0;
 		}
 
@@ -187,7 +189,7 @@ static bool pac_parse(struct bt_data *data, struct bt_bap_lc3_preset *preset,
 	case BT_AUDIO_CODEC_CAP_TYPE_FREQ:
 		uint16_t lc3_freq_bit = sys_get_le16(data->data);
 
-		ret = sample_rate_check(lc3_freq_bit, preset, pref_sample_rate);
+		ret = preset_pop_on_sample_rate(lc3_freq_bit, preset, pref_sample_rate);
 		if (ret) {
 			/* This PAC record from the server is not supported by the client.
 			 * Stop parsing this record.
@@ -226,7 +228,6 @@ static bool pac_parse(struct bt_data *data, struct bt_bap_lc3_preset *preset,
 			}
 		}
 		break;
-
 	default:
 		break;
 	}
@@ -353,81 +354,6 @@ static bool pac_record_print(struct bt_data *data, void *user_data)
 	return true;
 }
 
-static void stream_print(struct bt_bap_qos_cfg_pref const *const qos, bool evaluated,
-			 const char *usr_string)
-{
-	char buf[10] = {0};
-
-	if (evaluated) {
-		strcpy(buf, "(Eval)");
-	} else {
-		strcpy(buf, "(N/A) ");
-	}
-
-	LOG_DBG("%s%s\t abs min: %05u pref min: %05u pref max: %05u  abs max: "
-		"%05u ",
-		usr_string, buf, qos->pd_min, qos->pref_pd_min, qos->pref_pd_max, qos->pd_max);
-}
-
-static void done_print(uint8_t existing_streams_checked,
-		       struct bt_bap_qos_cfg_pref const *const common_qos,
-		       uint32_t computed_pres_dly_us, uint32_t existing_pres_dly_us)
-{
-	char buf[20] = {0};
-
-	if (computed_pres_dly_us != UINT32_MAX) {
-		snprintf(buf, sizeof(buf), "%u", computed_pres_dly_us);
-	} else {
-		strcpy(buf, "No common value");
-	}
-
-	LOG_DBG("Outcome \t\t abs min: %05u pref min: %05u pref max: %05u  abs max: %05u\r\n"
-		"\t selected: %s us, existing: %u us, 1 incoming + %d existing stream(s) "
-		"compared.",
-		common_qos->pd_min, common_qos->pref_pd_min, common_qos->pref_pd_max,
-		common_qos->pd_max, buf, existing_pres_dly_us, existing_streams_checked);
-}
-
-/* Check to see if the existing stream can be ignored when we try to find a valid presentation delay
- * when a new stream is added.
- */
-static bool pres_dly_stream_ignore(struct bt_bap_stream const *const existing_stream,
-				   struct bt_bap_stream const *const stream_in)
-{
-	if (existing_stream == NULL || stream_in == NULL) {
-		LOG_ERR("NULL parameter");
-		return true;
-	}
-
-	if (existing_stream->group == NULL) {
-		return true;
-	}
-
-	if (existing_stream == stream_in) {
-		/* The existing stream is the same as the incoming stream */
-		return true;
-	}
-
-	if (existing_stream->ep == NULL) {
-		return true;
-	}
-
-	/* Check if the existing stream has gotten into a codec configured, QoS configured,
-	 * enabling or streaming state.
-	 */
-	if (!le_audio_ep_state_check(existing_stream->ep, BT_BAP_EP_STATE_CODEC_CONFIGURED) &&
-	    !le_audio_ep_state_check(existing_stream->ep, BT_BAP_EP_STATE_QOS_CONFIGURED) &&
-	    !le_audio_ep_state_check(existing_stream->ep, BT_BAP_EP_STATE_ENABLING) &&
-	    !le_audio_ep_state_check(existing_stream->ep, BT_BAP_EP_STATE_STREAMING)) {
-		LOG_DBG("Existing stream not in codec configured, QoS configured, enabling or "
-			"streaming state");
-		return true;
-	}
-
-	stream_print(&existing_stream->ep->qos_pref, true, "Existing");
-	return false;
-}
-
 int srv_store_foreach_server(srv_store_foreach_func_t func, void *user_data)
 {
 	valid_entry_check(__func__);
@@ -540,234 +466,11 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg const *const new,
 	return false;
 }
 
-struct foreach_stream_data {
-	int ret;
-	struct bt_bap_ep_info *incoming_ep_info;
-	struct bt_bap_qos_cfg_pref *common_qos;
-	struct bt_bap_qos_cfg_pref const *incoming_qos;
-	struct bt_bap_stream *incoming_stream;
-	uint8_t *streams_checked;
-	uint32_t *existing_pres_dly_us;
-	uint32_t *computed_pres_dly_us;
-	uint32_t *existing_pres_dly_us_check;
-	bool *group_reconfig_needed;
-	bool existing_pres_dly_already_in_range;
+struct foreach_trans_lat_store {
+	enum bt_audio_dir dir;
+	uint16_t max_trans_lat_ms;
+	uint8_t streams_checked;
 };
-
-static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_data)
-{
-	struct foreach_stream_data *ctx = (struct foreach_stream_data *)user_data;
-
-	if (existing_stream->bap_stream.group != ctx->incoming_stream->group) {
-		/* The existing stream is not in the same group as the incoming stream */
-		LOG_ERR("Existing stream not in same group as incoming stream");
-		ctx->ret = -EINVAL;
-		return true;
-	}
-
-	if (pres_dly_stream_ignore(&(existing_stream->bap_stream), ctx->incoming_stream)) {
-		/* Do not consider this stream. Continue parsing */
-		LOG_DBG("Ignoring existing stream");
-		return false;
-	}
-
-	/* All already running streams in the same direction and in the
-	 * same group shall have the same presentation delay.
-	 */
-	*ctx->existing_pres_dly_us = existing_stream->bap_stream.qos->pd;
-
-	if (*ctx->existing_pres_dly_us_check == UINT32_MAX) {
-		ctx->existing_pres_dly_us_check = ctx->existing_pres_dly_us;
-	} else if (*ctx->existing_pres_dly_us_check != *ctx->existing_pres_dly_us) {
-		LOG_ERR("Illegal value. Pres delays do not match: %u != %u",
-			*ctx->existing_pres_dly_us_check, *ctx->existing_pres_dly_us);
-		ctx->ret = -EINVAL;
-		return true;
-	}
-
-	if (*ctx->existing_pres_dly_us == 0) {
-		LOG_ERR("Existing presentation delay is zero");
-		ctx->ret = -EINVAL;
-		return true;
-	}
-
-	if (IN_RANGE(*ctx->existing_pres_dly_us, ctx->incoming_qos->pd_min,
-		     ctx->incoming_qos->pd_max)) {
-		*ctx->computed_pres_dly_us = *ctx->existing_pres_dly_us;
-		LOG_INF("Existing pres delay is within the incoming stream QoS range");
-		ctx->existing_pres_dly_already_in_range = true;
-		return true;
-	}
-
-	*ctx->group_reconfig_needed = true;
-	(*ctx->streams_checked)++;
-
-	ctx->ret = pres_delay_compute(ctx->common_qos, &existing_stream->bap_stream.ep->qos_pref);
-	if (ctx->ret) {
-		return true;
-	}
-
-	/* Continue iteration */
-	return false;
-}
-
-/* Find the presentation delay. Needs to be the same within a CIG for a given direction */
-int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pres_dly_us,
-			    uint32_t *existing_pres_dly_us,
-			    struct bt_bap_qos_cfg_pref const *server_qos_pref,
-			    bool *group_reconfig_needed, struct bt_cap_unicast_group *unicast_group)
-{
-	valid_entry_check(__func__);
-
-	int ret;
-
-	if (stream == NULL || computed_pres_dly_us == NULL || existing_pres_dly_us == NULL ||
-	    server_qos_pref == NULL || group_reconfig_needed == NULL) {
-		LOG_ERR("NULL parameter");
-
-		return -EINVAL;
-	}
-
-	*existing_pres_dly_us = 0;
-	*group_reconfig_needed = false;
-	*computed_pres_dly_us = UINT32_MAX;
-	uint32_t existing_pres_dly_us_check = UINT32_MAX;
-	uint8_t existing_streams_checked = 0;
-
-	if (stream->group == NULL) {
-		LOG_ERR("The incoming stream %p has no group", (void *)stream);
-		*computed_pres_dly_us = UINT32_MAX;
-
-		return -EINVAL;
-	}
-
-	if (server_qos_pref->pd_min == 0 || server_qos_pref->pd_max == 0) {
-		LOG_ERR("Incoming pd_min or pd_max is zero");
-		*computed_pres_dly_us = UINT32_MAX;
-
-		return -EINVAL;
-	}
-
-	stream_print(server_qos_pref, true, "Incoming");
-
-	/* Common QoS with most permissive values */
-	struct bt_bap_qos_cfg_pref common_qos = {
-		.pd_min = 0,
-		.pref_pd_min = 0,
-		.pref_pd_max = UINT32_MAX,
-		.pd_max = UINT32_MAX,
-	};
-
-	ret = pres_delay_compute(&common_qos, server_qos_pref);
-	if (ret) {
-		LOG_ERR("Failed to find initial common presentation delay: %d", ret);
-		*computed_pres_dly_us = UINT32_MAX;
-
-		return ret;
-	}
-
-	struct bt_bap_ep_info ep_info;
-
-	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
-	if (ret) {
-		LOG_ERR("Failed to get ep info: %d", ret);
-		*computed_pres_dly_us = UINT32_MAX;
-
-		return ret;
-	}
-
-	struct foreach_stream_data foreach_data = {
-		.ret = 0,
-		.incoming_ep_info = &ep_info,
-		.incoming_qos = server_qos_pref,
-		.common_qos = &common_qos,
-		.incoming_stream = stream,
-		.streams_checked = &existing_streams_checked,
-		.group_reconfig_needed = group_reconfig_needed,
-		.existing_pres_dly_us = existing_pres_dly_us,
-		.existing_pres_dly_us_check = &existing_pres_dly_us_check,
-		.computed_pres_dly_us = computed_pres_dly_us,
-		.existing_pres_dly_already_in_range = false,
-	};
-
-	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_pd,
-						  (void *)&foreach_data);
-	if (foreach_data.ret) {
-		LOG_ERR("Failed to compute presentation delay");
-		*computed_pres_dly_us = UINT32_MAX;
-
-		return foreach_data.ret;
-	}
-
-	if (ret != 0 && ret != -ECANCELED) {
-		LOG_ERR("Failed to iterate streams in group: %d", ret);
-		*computed_pres_dly_us = UINT32_MAX;
-
-		return ret;
-	}
-
-	LOG_DBG("Checked %d stream(s) in the same group", existing_streams_checked);
-
-	if (foreach_data.existing_pres_dly_already_in_range) {
-		LOG_DBG("Existing pres delay already in range, no reconfig needed");
-
-		ret = 0;
-		goto print_and_return;
-	}
-
-	if (existing_streams_checked == 0) {
-		LOG_DBG("No other streams in the same group found");
-
-		/* No other streams in the same group found */
-		if (server_qos_pref->pref_pd_min == 0) {
-			*computed_pres_dly_us = common_qos.pd_min;
-		} else {
-			*computed_pres_dly_us = common_qos.pref_pd_min;
-		}
-
-		ret = 0;
-		goto print_and_return;
-	}
-
-	if (!group_reconfig_needed) {
-		ret = 0;
-		goto print_and_return;
-	}
-
-	if (common_qos.pd_min > common_qos.pd_max) {
-		LOG_ERR("No common ground for pd_min %u and pd_max %u", common_qos.pd_min,
-			common_qos.pd_max);
-		*computed_pres_dly_us = UINT32_MAX;
-
-		ret = -ESPIPE;
-		goto print_and_return;
-	}
-
-	/* No streams have a preferred min */
-	if (common_qos.pref_pd_min == 0) {
-		*computed_pres_dly_us = common_qos.pd_min;
-
-		ret = 0;
-		goto print_and_return;
-	}
-
-	if (common_qos.pref_pd_min < common_qos.pd_min) {
-		/* Preferred min is lower than min, use min */
-		LOG_ERR("pref PD min is lower than min. Using min");
-		*computed_pres_dly_us = common_qos.pd_min;
-	} else if (common_qos.pref_pd_min > common_qos.pd_min &&
-		   common_qos.pref_pd_min <= common_qos.pd_max) {
-		/* Preferred min is in range, use pref min */
-		*computed_pres_dly_us = common_qos.pref_pd_min;
-	} else {
-		*computed_pres_dly_us = common_qos.pd_min;
-	}
-
-print_and_return:
-	done_print(existing_streams_checked, &common_qos, *computed_pres_dly_us,
-		   *existing_pres_dly_us);
-	return ret;
-}
 
 int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir dir,
 			   enum bt_audio_location loc)
@@ -1270,7 +973,8 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 	/* Check if server already exists */
 	ret = srv_store_from_conn_get(conn, &temp_server);
 	if (ret == 0) {
-		/* Server already exists, no need to add again, but we update the conn pointer */
+		/* Server already exists, no need to add again, but we update the conn
+		 * pointer */
 		temp_server->conn = conn;
 		LOG_DBG("Server already exists for conn: %p", (void *)conn);
 		return -EALREADY;
@@ -1515,4 +1219,531 @@ int srv_store_init(void)
 	valid_entry_check(__func__);
 
 	return srv_store_remove_all(false);
+}
+
+struct foreach_stream_pres_dly {
+	int ret;
+	struct bt_cap_unicast_group *unicast_group;
+	struct pd_struct *common_pd_snk;
+	struct pd_struct *common_pd_src;
+	uint8_t streams_checked_snk;
+	uint8_t streams_checked_src;
+	uint32_t existing_pres_dly_us_snk;
+	uint32_t existing_pres_dly_us_src;
+};
+
+static bool streams_calc_pres_dly(struct bt_cap_stream *stream, void *user_data)
+{
+	int ret;
+	struct foreach_stream_pres_dly *ctx = (struct foreach_stream_pres_dly *)user_data;
+	// struct bt_cap_unicast_group_info info;
+
+	// ret = bt_cap_unicast_group_get_info(ctx->unicast_group, &info);
+	// if (ret) {
+	// 	LOG_ERR("Failed to get unicast group info: %d", ret);
+	// 	ctx->ret = ret;
+	// 	return true;
+	// }
+
+	// if (stream->bap_stream.group != info.unicast_group) {
+	// 	/* The existing stream is not in the same group as we are checking.
+	// 	This is not an error as such, but the system for now supports a single group.*/
+	// 	LOG_ERR("Existing stream group (%p) not same as incoming stream group (%p)",
+	// 		(void *)info.unicast_group, stream->bap_stream.group);
+	// 	ctx->ret = -EINVAL;
+	// 	return true;
+	// }
+
+	if (stream->bap_stream.ep == NULL) {
+		LOG_ERR("Existing stream has no ep set yet.");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	if (!le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_CODEC_CONFIGURED) &&
+	    !le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_QOS_CONFIGURED) &&
+	    !le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_ENABLING) &&
+	    !le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
+		LOG_DBG("Existing stream not in codec configured, QoS configured, enabling or "
+			"streaming state");
+		return true;
+	}
+
+	struct bt_bap_ep_info ep_info;
+
+	ret = bt_bap_ep_get_info(stream->bap_stream.ep, &ep_info);
+	if (ret != 0) {
+		LOG_ERR("Failed to get existing stream ep info: %d", ret);
+		return true;
+	}
+
+	if (ep_info.dir == BT_AUDIO_DIR_SINK) {
+		/* Sink stream */
+		ctx->streams_checked_snk++;
+		if (ctx->existing_pres_dly_us_snk == UINT32_MAX) {
+			ctx->existing_pres_dly_us_snk = stream->bap_stream.qos->pd;
+		}
+
+		if (ctx->existing_pres_dly_us_snk == 0) {
+			LOG_ERR("Existing presentation delay is zero");
+			ctx->ret = -EINVAL;
+			return true;
+		}
+
+		ctx->ret = pres_delay_compute(ctx->common_pd_snk, &stream->bap_stream.ep->qos_pref);
+		if (ctx->ret) {
+			return true;
+		}
+
+	} else if (ep_info.dir == BT_AUDIO_DIR_SOURCE) {
+		/* Source stream */
+		ctx->streams_checked_src++;
+		if (ctx->existing_pres_dly_us_src == UINT32_MAX) {
+			ctx->existing_pres_dly_us_src = stream->bap_stream.qos->pd;
+		}
+
+		if (ctx->existing_pres_dly_us_src == 0) {
+			LOG_ERR("Existing presentation delay is zero");
+			ctx->ret = -EINVAL;
+			return true;
+		}
+
+		ctx->ret = pres_delay_compute(ctx->common_pd_src, &stream->bap_stream.ep->qos_pref);
+		if (ctx->ret) {
+			return true;
+		}
+	} else {
+		LOG_ERR("Unknown stream direction");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	/* Continue iteration */
+	return false;
+}
+
+static int parse_common_qos_for_pres_dly(struct pd_struct *common_pd,
+					 uint32_t *computed_pres_dly_us)
+{
+
+	if (common_pd->pd_min > common_pd->pd_max) {
+		LOG_ERR("No common ground for pd_min %u and pd_max %u", common_pd->pd_min,
+			common_pd->pd_max);
+		*computed_pres_dly_us = UINT32_MAX;
+
+		return -ESPIPE;
+	}
+
+	/* No streams have a preferred min */
+	if (common_pd->pref_pd_min == 0) {
+		*computed_pres_dly_us = common_pd->pd_min;
+
+		return 0;
+	}
+
+	if (common_pd->pref_pd_min < common_pd->pd_min) {
+		/* Preferred min is lower than min, use min */
+		LOG_ERR("pref PD min is lower than min. Using min");
+		*computed_pres_dly_us = common_pd->pd_min;
+	} else if (common_pd->pref_pd_min > common_pd->pd_min &&
+		   common_pd->pref_pd_min <= common_pd->pd_max) {
+		/* Preferred min is in range, use pref min */
+		*computed_pres_dly_us = common_pd->pref_pd_min;
+	} else {
+		*computed_pres_dly_us = common_pd->pd_min;
+	}
+
+	return 0;
+}
+
+static void pd_print(struct pd_struct const *const pref, uint32_t existing_pd_us,
+		     uint32_t calculated_pd_us)
+{
+	char existing_pd_buf[20] = {0};
+	char calculated_pd_buf[20] = {0};
+
+	if (existing_pd_us != UINT32_MAX) {
+		snprintf(existing_pd_buf, sizeof(existing_pd_buf), "%u", existing_pd_us);
+	} else {
+		strcpy(existing_pd_buf, "N/A");
+	}
+
+	if (calculated_pd_us != UINT32_MAX) {
+		snprintf(calculated_pd_buf, sizeof(calculated_pd_buf), "%u", calculated_pd_us);
+	} else {
+		strcpy(calculated_pd_buf, "N/A");
+	}
+
+	LOG_INF("\tPD abs min:\t %u ", pref->pd_min);
+	LOG_INF("\tPD pref min:\t %u ", pref->pref_pd_min);
+	LOG_INF("\tPD pref max:\t %u ", pref->pref_pd_max);
+	LOG_INF("\tPD abs max:\t %u ", pref->pd_max);
+	LOG_INF("\tExisting PD:\t %s us, selected: %s us", existing_pd_buf, calculated_pd_buf);
+}
+
+// This needs to be called only once, after all streams have been through the configured cb
+
+/// We need to get the output of the source and sink QoS structs. Take the prints out of
+// this folder.
+int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_t *pres_dly_snk_us,
+			     uint32_t *pres_dly_src_us, struct pd_struct *common_pd_snk,
+			     struct pd_struct *common_pd_src)
+{
+	valid_entry_check(__func__);
+	int ret;
+
+	if (unicast_group == NULL || pres_dly_snk_us == NULL || pres_dly_src_us == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
+	common_pd_src->pd_min = 0;
+	common_pd_src->pref_pd_min = 0;
+	common_pd_src->pref_pd_max = UINT32_MAX;
+	common_pd_src->pd_max = UINT32_MAX;
+
+	common_pd_snk->pd_min = 0;
+	common_pd_snk->pref_pd_min = 0;
+	common_pd_snk->pref_pd_max = UINT32_MAX;
+	common_pd_snk->pd_max = UINT32_MAX;
+
+	struct foreach_stream_pres_dly foreach_data = {
+		.ret = 0,
+		.unicast_group = unicast_group,
+		.common_pd_snk = common_pd_snk,
+		.common_pd_src = common_pd_src,
+		.streams_checked_snk = 0,
+		.streams_checked_src = 0,
+		.existing_pres_dly_us_snk = UINT32_MAX,
+		.existing_pres_dly_us_src = UINT32_MAX,
+	};
+
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, streams_calc_pres_dly,
+						  (void *)&foreach_data);
+	if (ret) {
+		LOG_ERR("Failed to iterate streams in group: %d", ret);
+		return ret;
+	}
+
+	if (foreach_data.ret) {
+		LOG_ERR("Failed to compute presentation delay");
+		return foreach_data.ret;
+	}
+
+	/* All streams have been iterated over. Parse results */
+	if (foreach_data.streams_checked_snk == 0) {
+		/* No sink streams checked, we don't have a presentation delay computed */
+		*pres_dly_snk_us = UINT32_MAX;
+	} else {
+		ret = parse_common_qos_for_pres_dly(common_pd_snk, pres_dly_snk_us);
+		if (ret) {
+			LOG_ERR("Failed to parse common sink QoS for pres delay: %d", ret);
+			return ret;
+		}
+		LOG_INF("Sink PD: (%d streams checked)", foreach_data.streams_checked_snk);
+		pd_print(common_pd_snk, foreach_data.existing_pres_dly_us_snk, *pres_dly_snk_us);
+	}
+
+	if (foreach_data.streams_checked_src == 0) {
+		/* No source streams checked, we don't have a presentation delay computed */
+		*pres_dly_src_us = UINT32_MAX;
+	} else {
+		ret = parse_common_qos_for_pres_dly(common_pd_src, pres_dly_src_us);
+		if (ret) {
+			LOG_ERR("Failed to parse common source QoS for pres delay: %d", ret);
+			return ret;
+		}
+		LOG_INF("Source PD: (%d streams checked)", foreach_data.streams_checked_src);
+		pd_print(common_pd_src, foreach_data.existing_pres_dly_us_src, *pres_dly_src_us);
+	}
+
+	return 0;
+}
+
+struct new_pres_delays {
+	enum action_req action;
+	uint32_t snk_us;
+	uint32_t src_us;
+};
+
+/* Set the new action required. Only set if the new action is more severe */
+void group_action_set(enum action_req *action, enum action_req new_action)
+{
+	if (*action < new_action) {
+		*action = new_action;
+	}
+}
+
+static void stream_state_check(struct bt_cap_stream *stream,
+			       struct new_pres_delays *new_pres_delays)
+{
+
+	if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_IDLE) ||
+	    le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_RELEASING)) {
+		/* This should not be the case as all streams should be in Codec configured
+		or higher state at this point.*/
+		LOG_ERR("Stream in IDLE or RELEASING state");
+		/* Setting for safety */
+		group_action_set(&new_pres_delays->action, GROUP_ACTION_REQ_RESTART);
+	}
+
+	if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_QOS_CONFIGURED)) {
+		/* Stream needs to be QoS configured again to update the presentation delay */
+		group_action_set(&new_pres_delays->action, STREAM_ACTION_QOS_RECONFIG);
+	} else if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_ENABLING) ||
+		   le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
+		/* Streams must be restarted (go throught he QoS step again to update PD) */
+		group_action_set(&new_pres_delays->action, STREAM_ACTION_QOS_RECONFIG);
+	} else {
+		group_action_set(&new_pres_delays->action, ACTION_REQ_NONE);
+	}
+}
+
+static bool new_pres_dly_us_set(struct bt_cap_stream *stream, void *user_data)
+{
+	struct new_pres_delays *new_pres_delays = (struct new_pres_delays *)user_data;
+
+	if (stream->bap_stream.ep == NULL) {
+		LOG_ERR("Stream has no endpoint assigned yet");
+		return false;
+	}
+
+	if (new_pres_delays->snk_us != UINT32_MAX &&
+	    stream->bap_stream.ep->dir == BT_AUDIO_DIR_SINK) {
+		if (stream->bap_stream.qos->pd != new_pres_delays->snk_us) {
+			stream->bap_stream.qos->pd = new_pres_delays->snk_us;
+			stream_state_check(stream, new_pres_delays);
+		}
+
+	} else if (new_pres_delays->src_us != UINT32_MAX &&
+		   stream->bap_stream.ep->dir == BT_AUDIO_DIR_SOURCE) {
+		if (stream->bap_stream.qos->pd != new_pres_delays->src_us) {
+			stream->bap_stream.qos->pd = new_pres_delays->src_us;
+			stream_state_check(stream, new_pres_delays);
+		}
+	} else {
+		/* No update needed for this stream */
+		return false;
+	}
+	return false;
+}
+
+int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_t pres_dly_snk_us,
+			     uint32_t pres_dly_src_us, enum action_req *group_action_required)
+{
+
+	int ret;
+	struct new_pres_delays new_pres_delays = {
+		.action = ACTION_REQ_NONE,
+		.snk_us = pres_dly_snk_us,
+		.src_us = pres_dly_src_us,
+	};
+
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, new_pres_dly_us_set,
+						  &new_pres_delays);
+
+	*group_action_required = new_pres_delays.action;
+	return ret;
+}
+
+struct foreach_stream_mtl {
+	int ret;
+	struct bt_cap_unicast_group *unicast_group;
+	uint8_t streams_checked_snk;
+	uint8_t streams_checked_src;
+	uint16_t max_trans_lat_snk_ms;
+	uint16_t max_trans_lat_src_ms;
+};
+
+static bool stream_max_trans_lat_find(struct bt_cap_stream *stream, void *user_data)
+{
+	struct foreach_stream_mtl *ctx = (struct foreach_stream_mtl *)user_data;
+
+	if (stream->bap_stream.ep == NULL) {
+		LOG_ERR("Existing stream has no ep set yet");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	int dir = le_audio_stream_dir_get(&stream->bap_stream);
+
+	if (dir < 0) {
+		LOG_ERR("Failed to get stream direction");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	/* Need to find the smallest MTL in a given direction */
+	switch (dir) {
+	case BT_AUDIO_DIR_SINK:
+		ctx->streams_checked_snk++;
+		if (ctx->max_trans_lat_snk_ms > stream->bap_stream.ep->qos_pref.latency) {
+			ctx->max_trans_lat_snk_ms = stream->bap_stream.ep->qos_pref.latency;
+		}
+		break;
+	case BT_AUDIO_DIR_SOURCE:
+		ctx->streams_checked_src++;
+		if (ctx->max_trans_lat_src_ms > stream->bap_stream.ep->qos_pref.latency) {
+			ctx->max_trans_lat_src_ms = stream->bap_stream.ep->qos_pref.latency;
+		}
+		break;
+	default:
+		LOG_ERR("Unknown stream direction");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	return false;
+}
+
+// This needs to be called only once, after all streams have been through the configured cb
+int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
+				     uint16_t *max_trans_lat_snk_ms, uint16_t *max_trans_lat_src_ms)
+{
+	int ret;
+
+	valid_entry_check(__func__);
+
+	if (unicast_group == NULL || max_trans_lat_snk_ms == NULL || max_trans_lat_src_ms == NULL) {
+		LOG_ERR("NULL parameter!");
+		return -EINVAL;
+	}
+
+	/* All streams of a given direction within the CIG must have the same
+	 * transport latency. See BAP spec (BAP_v1.0.2 section 7.2.1)
+	 */
+
+	struct foreach_stream_mtl foreach_data = {
+		.ret = 0,
+		.unicast_group = unicast_group,
+		.streams_checked_snk = 0,
+		.streams_checked_src = 0,
+		.max_trans_lat_snk_ms = UINT16_MAX,
+		.max_trans_lat_src_ms = UINT16_MAX,
+	};
+
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_max_trans_lat_find,
+						  (void *)&foreach_data);
+	if (ret != 0 && ret != -ECANCELED) {
+		/* There shall already be at least one server added at this point */
+		LOG_ERR("Failed to iterate streams in group: %d", ret);
+		return ret;
+	}
+
+	if (foreach_data.ret) {
+		LOG_ERR("Failed to compute max transport latency");
+		return foreach_data.ret;
+	}
+
+	LOG_INF("Checked %d sink stream(s) and %d source stream(s) in the same group",
+		foreach_data.streams_checked_snk, foreach_data.streams_checked_src);
+
+	*max_trans_lat_snk_ms = foreach_data.max_trans_lat_snk_ms;
+	*max_trans_lat_src_ms = foreach_data.max_trans_lat_src_ms;
+
+	return 0;
+}
+
+struct foreach_trans_latency_set {
+	uint16_t new_max_trans_lat_snk_ms;
+	uint8_t streams_set_snk;
+	uint16_t new_max_trans_lat_src_ms;
+	uint8_t streams_set_src;
+};
+
+static bool foreach_stream_transp_latency_set(struct bt_cap_stream *existing_stream,
+					      void *user_data)
+{
+	struct foreach_trans_latency_set *ctx = (struct foreach_trans_latency_set *)user_data;
+
+	if (existing_stream->bap_stream.ep == NULL) {
+		LOG_ERR("Existing stream has no ep set yet.");
+		return true;
+	}
+
+	/* If the max transport latency must be changed, we need to tear down and re-establish the
+	 * stream in order for the controller to get the new information.
+	 */
+	int dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
+	switch (dir) {
+	case BT_AUDIO_DIR_SINK:
+		if (ctx->new_max_trans_lat_snk_ms == UINT16_MAX) {
+			return false;
+		}
+
+		if (existing_stream->bap_stream.qos->latency != ctx->new_max_trans_lat_snk_ms) {
+
+			existing_stream->bap_stream.qos->latency = ctx->new_max_trans_lat_snk_ms;
+		}
+
+		ctx->streams_set_snk++;
+		break;
+
+	case BT_AUDIO_DIR_SOURCE:
+		if (ctx->new_max_trans_lat_src_ms == UINT16_MAX) {
+			return false;
+		}
+
+		if (existing_stream->bap_stream.qos->latency != ctx->new_max_trans_lat_src_ms) {
+			existing_stream->bap_stream.qos->latency = ctx->new_max_trans_lat_src_ms;
+		}
+
+		ctx->streams_set_src++;
+		break;
+	default:
+		LOG_ERR("Failed stream direction set");
+		return true;
+	};
+
+	return false;
+}
+
+int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
+				     uint16_t new_max_trans_lat_snk_ms,
+				     uint16_t new_max_trans_lat_src_ms,
+				     enum action_req *group_action_needed)
+{
+	valid_entry_check(__func__);
+
+	if (unicast_group == NULL || group_action_needed == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
+	int ret;
+
+	struct foreach_trans_latency_set stream_trans_lat_set = {
+		.new_max_trans_lat_snk_ms = new_max_trans_lat_snk_ms,
+		.streams_set_snk = 0,
+		.new_max_trans_lat_src_ms = new_max_trans_lat_src_ms,
+		.streams_set_src = 0,
+	};
+
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, foreach_stream_transp_latency_set,
+						  (void *)&stream_trans_lat_set);
+
+	if (ret != 0 && ret != -ECANCELED) {
+		LOG_ERR("Failed to iterate streams in group: %d", ret);
+		return ret;
+	}
+
+	if (new_max_trans_lat_snk_ms != UINT16_MAX) {
+		LOG_INF("Max transp latency %d ms selected for %d sink streams",
+			new_max_trans_lat_snk_ms, stream_trans_lat_set.streams_set_snk);
+		if (unicast_group->bap_unicast_group->cig_param.c_to_p_latency !=
+		    new_max_trans_lat_snk_ms) {
+			*group_action_needed = GROUP_ACTION_REQ_RESTART;
+		}
+	}
+
+	if (new_max_trans_lat_src_ms != UINT16_MAX) {
+		LOG_INF("Max transp latency %d ms selected for %d source streams",
+			new_max_trans_lat_src_ms, stream_trans_lat_set.streams_set_src);
+		if (unicast_group->bap_unicast_group->cig_param.p_to_c_latency !=
+		    new_max_trans_lat_src_ms) {
+			*group_action_needed = GROUP_ACTION_REQ_RESTART;
+		}
+	}
+
+	return 0;
 }

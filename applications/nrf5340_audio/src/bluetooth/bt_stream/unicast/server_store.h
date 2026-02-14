@@ -67,6 +67,19 @@ struct client_supp_configs {
 	struct bt_audio_codec_octets_per_codec_frame oct_per_codec_frame;
 };
 
+enum action_req {
+	ACTION_REQ_NONE = 0,
+	STREAM_ACTION_QOS_RECONFIG,
+	GROUP_ACTION_REQ_RESTART,
+};
+
+struct pd_struct {
+	uint32_t pd_min;
+	uint32_t pref_pd_min;
+	uint32_t pref_pd_max;
+	uint32_t pd_max;
+};
+
 /**
  * @brief	Function for bt_bap_unicast_group_foreach_stream().
  *
@@ -107,34 +120,6 @@ int srv_store_foreach_server(srv_store_foreach_func_t func, void *user_data);
 bool srv_store_preset_validated(struct bt_audio_codec_cfg const *const new,
 				struct bt_audio_codec_cfg const *const existing,
 				uint8_t pref_sample_rate_value);
-
-/**
- * @brief Search for a common presentation delay across all server Audio Stream Endpoints (ASEs) in
- * a given @p unicast_group for the given direction.
- *
- * This function will try to satisfy the preferred presentation delay for all
- * ASEs. If that is not possible, it will try to satisfy the max and min values.
- *
- * @note srv_store_lock() must be called before accessing this function.
- *
- * @param[in]	stream			Pointer to a new stream to be started
- * @param[out]	computed_pres_dly_us	Pointer to store the computed presentation delay in
- *					microseconds.
- * @param[out]	existing_pres_dly_us	Pointer to store the existing presentation delay in
- *					microseconds.
- * @param[in]	server_qos_pref		Pointer to the preferred QoS configuration.
- * @param[out]	group_reconfig_needed	True if a group reconfiguration is needed.
- * @param[in]	unicast_group		Pointer to the unicast group to search within.
- *
- * @retval	0	Success, negative error code on failure.
- * @retval	-ESPIPE	There is no common presentation delay found.
- * @retval	-EINVAL	Illegal argument(s), or submitted streams are in different groups.
- */
-int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pres_dly_us,
-			    uint32_t *existing_pres_dly_us,
-			    struct bt_bap_qos_cfg_pref const *server_qos_pref,
-			    bool *group_reconfig_needed,
-			    struct bt_cap_unicast_group *unicast_group);
 
 /**
  * @brief	Set the valid locations of a unicast server.
@@ -439,6 +424,46 @@ void srv_store_unlock(void);
  * @retval	Negative error code on failure.
  */
 int srv_store_init(void);
+
+///////////////////////////////////////////////////////////////////////NEW
+
+// This needs to be called only once, after all streams have been through the configured cb
+int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_t *pres_dly_snk_us,
+			     uint32_t *pres_dly_src_us, struct pd_struct *common_pd_snk,
+			     struct pd_struct *common_pd_src);
+/**
+ * @note If the presentation delay is not the same as we are trying to set here,
+ *	we do not need to reconfigure the CIG as PD is not part of the CIG parameters.However,
+ *	if the presentation delay is not the same as what is currently set,
+ * 	we will need to configure the QoS again to update the PD values of all streams.
+ */
+int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_t pres_dly_snk_us,
+			     uint32_t pres_dly_src_us, enum action_req *group_action_required);
+
+// This needs to be called only once, after all streams have been through the configured cb
+int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
+				     uint16_t *new_max_trans_lat_snk_ms,
+				     uint16_t *new_max_trans_lat_src_ms);
+
+/**
+ * @brief Set the max transport latency for a unicast group
+ *
+ * @note: The group action required is set based on if the existing CIG paraameters does not match
+ * what is supplied here. Depending on the group action required, the application may need
+ * reconfigure the unicast group.
+ *
+ * @note This call should be called in the codec_configured callback, after all streams
+ *  have reached this state or further in the ASE state machine.
+ *
+ * @param unicast_group
+ */
+
+int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
+				     uint16_t new_max_trans_lat_snk_ms,
+				     uint16_t new_max_trans_lat_src_ms,
+				     enum action_req *group_action_needed);
+
+void group_action_set(enum action_req *action, enum action_req new_action);
 
 /**
  * @}
