@@ -351,6 +351,10 @@ void DoInitChipServer(intptr_t /* unused */)
 	sInitResult = PlatformMgr().AddEventHandler(sLocalInitData.mEventHandler, 0);
 	VerifyInitResultOrReturn(sInitResult, "Cannot register CHIP event handler");
 
+	/* Set DeviceInfoProvider before Server::Init() so all related clusters see a valid provider. */
+	if (sLocalInitData.mDeviceInfoProvider == nullptr) {
+		sLocalInitData.mDeviceInfoProvider = &Nrf::Matter::InitData::sDeviceInfoProviderDefault;
+	}
 	SetDeviceInfoProvider(sLocalInitData.mDeviceInfoProvider);
 
 	sLocalInitData.mServerInitParams->dataModelProvider =
