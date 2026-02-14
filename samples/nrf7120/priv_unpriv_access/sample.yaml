@@ -1,0 +1,18 @@
+sample:
+  description: Using zephyr to access different privileged level of peripherals
+  name: test privivilged unprivivileged access
+
+tests:
+  sample.nrf7120.test_priv_unpriv_access:
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    tags:
+      - ci_samples_nrf5340
+      - ci_build
+    harness: console
+    harness_config:
+      type: one_line
+      regex:
+        - "PROJECT EXECUTION SUCCESSFUL"
