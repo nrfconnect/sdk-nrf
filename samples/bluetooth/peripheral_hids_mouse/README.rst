@@ -148,6 +148,23 @@ To build the sample in the compatible configuration, use the following command:
 
       west build -b *board_target* -S nordic-bt-rpc -- -DFILE_SUFFIX=bt_rpc -DCONFIG_BT_DIRECTED_ADVERTISING=n -DCONFIG_BT_PRIVACY=n -Dipc_radio_CONFIG_BT_PRIVACY=n
 
+Memory footprint usage
+======================
+
+To get the memory footprint, run the following commands from the sample directory (:file:`nrf/samples/bluetooth/peripheral_hids_mouse`):
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -d <build_dir>/peripheral_hids_mouse -t rom_report
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -d <build_dir>/peripheral_hids_mouse -t ram_report
+
+For more information, see the Zephyr's :ref:`optimization_tools` documentation.
+
 Testing
 =======
 
