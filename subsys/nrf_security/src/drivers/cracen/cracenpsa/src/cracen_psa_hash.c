@@ -68,7 +68,7 @@ psa_status_t cracen_hash_setup(cracen_hash_operation_t *operation, psa_algorithm
 	int status;
 
 	status = hash_get_algo(alg, &operation->sx_hash_algo);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 	operation->is_first_block = true;

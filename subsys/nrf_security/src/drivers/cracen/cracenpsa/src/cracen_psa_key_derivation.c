@@ -940,7 +940,7 @@ cracen_key_derivation_mac_ctr_generate_block(cracen_key_derivation_operation_t *
 	}
 
 	status = cracen_key_derivation_mac_ctr_add_core_fixed_input(operation);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -985,7 +985,7 @@ cracen_key_derivation_cmac_ctr_generate_K_0(cracen_key_derivation_operation_t *o
 	}
 
 	status = cracen_key_derivation_mac_ctr_add_core_fixed_input(operation);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 

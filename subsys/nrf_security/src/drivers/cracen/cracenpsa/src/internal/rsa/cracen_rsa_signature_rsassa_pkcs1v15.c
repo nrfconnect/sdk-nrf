@@ -106,7 +106,7 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 				    const struct sxhashalg *hashalg, const uint8_t *digest,
 				    size_t digest_length)
 {
-	int sx_status;
+	int status;
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	size_t modulussz = CRACEN_RSA_KEY_OPSZ(rsa_key);
 	uint8_t workmem[WORKMEM_SIZE];
@@ -121,7 +121,7 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 	memcpy(workmem, digest, digestsz);
 
 	/* Complete message encoding and start the modular exponentiation. */
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	struct sx_pk_slot inputs[INPUT_SLOTS];
 	int input_sizes[INPUT_SLOTS] = {0};
 	size_t paddingstrsz;
@@ -140,17 +140,16 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
 	}
 
-	pkreq = sx_pk_acquire_req(rsa_key->cmd);
-	if (pkreq.status) {
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, rsa_key->cmd);
 
 	cracen_ffkey_write_sz(rsa_key, input_sizes);
 	CRACEN_FFKEY_REFER_INPUT(rsa_key, input_sizes) = modulussz;
 
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, input_sizes, inputs);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_pk_list_gfp_inslots(&req, input_sizes, inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(&req);
+		return status;
 	}
 
 	cracen_ffkey_write(rsa_key, inputs);
@@ -179,20 +178,21 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 	sx_wrpkmem(encmsg, workmem, digestsz);
 
 	/* start the modular exponentiation m^d mod n (RSASP1 sign primitive) */
-	sx_pk_run(pkreq.req);
-	sx_status = sx_pk_wait(pkreq.req);
-	if (sx_status != SX_OK) {
-		return sx_status;
+	sx_pk_run(&req);
+	status = sx_pk_wait(&req);
+	if (status != SX_OK) {
+		sx_pk_release_req(&req);
+		return status;
 	}
 
-	uint8_t **outputs = (uint8_t **)sx_pk_get_output_ops(pkreq.req);
+	uint8_t **outputs = (uint8_t **)sx_pk_get_output_ops(&req);
 
 	/* outputs[0] points to the signature, which we assume big endian */
 	sx_rdpkmem(signature->r, outputs[0], CRACEN_RSA_KEY_OPSZ(rsa_key));
 
 	signature->sz = CRACEN_RSA_KEY_OPSZ(rsa_key);
 
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	return SX_OK;
 }
@@ -219,7 +219,7 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 				      const struct sxhashalg *hashalg, const uint8_t *digest,
 				      size_t digest_length)
 {
-	int sx_status;
+	int status;
 	int r;
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	size_t modulussz = CRACEN_RSA_KEY_OPSZ(rsa_key);
@@ -244,19 +244,19 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 	/* Copy the message digest to workmem. */
 	memcpy(workmem, digest, digestsz);
 
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	struct sx_pk_slot inputs[6];
 	int input_sizes[INPUT_SLOTS] = {0};
 
-	pkreq = sx_pk_acquire_req(rsa_key->cmd);
-	if (pkreq.status) {
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, rsa_key->cmd);
+
 	cracen_ffkey_write_sz(rsa_key, input_sizes);
 	CRACEN_FFKEY_REFER_INPUT(rsa_key, input_sizes) = signature->sz;
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, input_sizes, inputs);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_pk_list_gfp_inslots(&req, input_sizes, inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(&req);
+		return status;
 	}
 
 	cracen_ffkey_write(rsa_key, inputs);
@@ -264,13 +264,14 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 
 	/* start the modular exponentiation s^e mod n (RSAVP1 verify primitive)
 	 */
-	sx_pk_run(pkreq.req);
-	sx_status = sx_pk_wait(pkreq.req);
-	if (sx_status != SX_OK) {
-		return sx_status;
+	sx_pk_run(&req);
+	status = sx_pk_wait(&req);
+	if (status != SX_OK) {
+		sx_pk_release_req(&req);
+		return status;
 	}
 
-	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
+	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
 	size_t paddingstrsz;
 	size_t dersz;
 
@@ -278,7 +279,7 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 	const uint8_t *refder = get_hash_der(hashalg, &dersz);
 
 	if (dersz == 0) {
-		sx_pk_release_req(pkreq.req);
+		sx_pk_release_req(&req);
 		return SX_ERR_UNSUPPORTED_HASH_ALG;
 	}
 
@@ -312,7 +313,7 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 	 * required by FIPS 186-4, section 5.5, point f.
 	 */
 	if (paddingstrsz != (modulussz - 3 - dersz - digestsz)) {
-		sx_pk_release_req(pkreq.req);
+		sx_pk_release_req(&req);
 		return SX_ERR_INVALID_SIGNATURE;
 	}
 
@@ -327,7 +328,7 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 	/* check the hash part of T: reference hash value is in workmem */
 	r |= constant_memcmp(encmsg, workmem, digestsz);
 
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	if (r == 0) {
 		return SX_OK;

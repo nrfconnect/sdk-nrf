@@ -182,18 +182,15 @@ int coprime_check_run(sx_pk_req *req, uint8_t *workmem, size_t workmemsz, const 
 int cracen_coprime_check(uint8_t *workmem, size_t workmemsz, const uint8_t *a, size_t asz,
 			 const uint8_t *b, size_t bsz)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ODD_MOD_INV);
-	if (pkreq.status) {
-		sx_pk_release_req(pkreq.req);
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, SX_PK_CMD_ODD_MOD_INV);
 
-	status = coprime_check_run(pkreq.req, workmem, workmemsz, a, asz, b, bsz);
+	status = coprime_check_run(&req, workmem, workmemsz, a, asz, b, bsz);
 
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	return status;
 }
