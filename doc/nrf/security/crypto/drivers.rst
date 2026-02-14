@@ -59,7 +59,7 @@ Hardware drivers take precedence over software drivers, which provide fallback o
      - Hardware
      - Open-source
      - nRF54L Series devices, nRF54H20
-     - | Security subsystem providing hardware acceleration for cryptographic operations through the CRACEN hardware peripheral. For more information, see the :ref:`ug_nrf54l_cryptography`.
+     - | Security subsystem providing hardware acceleration for cryptographic operations through the CRACEN hardware peripheral. For more information, see the :ref:`ug_kmu_guides_cracen_overview`.
        | On nRF54H20, the driver is used indirectly through the :ref:`ug_nrf54h20_ironside`.
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
      - Software
@@ -351,18 +351,19 @@ CRACEN driver
      - Driver type
      - Distribution
      - Supported hardware platforms
-   * - :ref:`CRACEN <ug_nrf54l_cryptography>`
+   * - :ref:`CRACEN <ug_kmu_guides_cracen_overview>`
      - Hardware
      - Open-source
      - nRF54L Series devices, nRF54H20
 
-The CRACEN driver provides entropy and hardware-accelerated cryptography using the Crypto Accelerator Engine (CRACEN) hardware peripheral.
-The driver implements the PSA Crypto driver API (``cracen_aead_set_nonce``) and then relies on :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards>` to implement the PSA API (``psa_aead_set_set_nonce``).
+The CRACEN driver implements driver-specific parts of the :ref:`PSA Crypto APIs <ug_psa_certified_api_overview_crypto>` (for example, :c:func:`cracen_aead_set_nonce`) and then relies on :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards>` to implement the PSA API (for example, ``psa_aead_set_set_nonce``).
+
+The driver provides entropy and hardware-accelerated cryptography using the Crypto Accelerator Engine (CRACEN) hardware peripheral.
 
 The hardware peripheral is available on the following devices:
 
 * nRF54L Series devices - See :ref:`ug_crypto_supported_features` for supported features and limitations for each device.
-  For more information, see the :ref:`ug_nrf54l_cryptography` page.
+  For more information, see the :ref:`ug_kmu_guides_cracen_overview` page.
   For more information about the hardware peripheral, see the CRACEN hardware peripheral page in the device datasheets (for example, `nRF54L15 datasheet <nRF54L15 CRACEN_>`_).
 
 * nRF54H20 - On this platform, the IronSide Secure Element relies on the CRACEN driver and implements a fixed set of features and algorithms that cannot be changed by the user.

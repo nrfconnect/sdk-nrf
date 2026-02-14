@@ -255,7 +255,7 @@ Developing with nRF54L Series
 
 * Added:
 
-  * HMAC SHA-256 with a 128-bit key type to KMU, as detailed in the :ref:`ug_nrf54l_crypto_kmu_supported_key_types` documentation section.
+  * HMAC SHA-256 with a 128-bit key type to KMU, as detailed in the :ref:`ug_kmu_guides_supported_key_types` documentation section.
   * A workaround for nRF54L15 Errata 30.
     Use ``CONFIG_CLOCK_CONTROL_NRF_HF_CALIBRATION=y`` to explicitly activate the workaround.
     A consequence of activating the workaround might be increased power consumption due to periodic CPU wake-up, so use it only if errata conditions are met.

@@ -125,7 +125,7 @@ Security
   * Support for the WPA3-SAE and WPA3-SAE-PT in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
   * Support for the HMAC KDF algorithm in the CRACEN driver.
     The algorithm implementation is conformant to the NIST SP 800-108 Rev. 1 recommendation.
-  * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
+  * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_supported_key_types>`.
   * Support for AES-GCM AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>` board.
   * Support for ChaCha20-Poly1305 AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>` board.
 
@@ -142,8 +142,11 @@ Security
     * Updated implementations of WPA3-SAE, ML-DSA and ML-KEM to support the PSA Crypto API v1.4.
 
     The :ref:`ug_crypto_supported_features` page has been updated accordingly.
+
   * The :ref:`ug_crypto_supported_features` page with information about support for the Curve448 (X448) elliptic curve under :ref:`ug_crypto_supported_features_signature_algorithms` and :ref:`ug_crypto_supported_features_ecc_curve_types`.
   * The :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` Kconfig option is now enabled by default whenever :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_BASIC` or :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY` is enabled and no other RSA key size is enabled.
+
+  * The :ref:`API documentation section for the cryptographic drivers <crypto_drivers_api_documentation>` with links to the added API documentation for the CRACEN driver.
 
 * Removed:
 

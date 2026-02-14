@@ -81,13 +81,10 @@ This self-paced course introduces the hardware architecture, functionality, capa
    :caption: Subpages:
 
    zms
-   cryptography
    vpr_flpr
    building_nrf54l
    nrf54l_signing_with_payload
    fota_update
-   kmu_basics
-   kmu_provision
    dfu_config
    ecies_x25519.rst
    otp_map_nrf54l
