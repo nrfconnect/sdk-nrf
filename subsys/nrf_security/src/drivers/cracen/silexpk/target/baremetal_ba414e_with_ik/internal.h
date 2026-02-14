@@ -35,6 +35,4 @@ struct sx_regs *sx_pk_get_regs(void);
 
 struct sx_pk_capabilities *sx_pk_get_caps(void);
 
-struct sx_pk_blinder **sx_pk_get_blinder(struct sx_pk_cnx *cnx);
-
 #endif
