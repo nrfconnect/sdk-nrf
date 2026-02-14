@@ -99,7 +99,7 @@ void safe_memzero(void *dest, const size_t dest_size)
 	volatile uint8_t *volatile byte_pnt = (volatile uint8_t *volatile)dest;
 	size_t i = (size_t)0U;
 
-	while (i < dest_size) {
-		byte_pnt[i++] = 0U;
+	for (; i < dest_size; i++) {
+		byte_pnt[i] = 0U;
 	}
 }

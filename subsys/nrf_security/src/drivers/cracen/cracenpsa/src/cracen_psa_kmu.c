@@ -615,8 +615,9 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 	psa_key_usage_t usage_flags = 0;
 
 	uint32_t metadata_usage_flags = metadata->usage_flags;
+	size_t i = 0;
 
-	for (size_t i = 0; metadata_usage_flags; i++) {
+	while (metadata_usage_flags) {
 		if (metadata_usage_flags & 1) {
 			if (i >= ARRAY_SIZE(metadata_usage_flags_mapping)) {
 				return PSA_ERROR_GENERIC_ERROR;
@@ -625,6 +626,7 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 		}
 
 		metadata_usage_flags >>= 1;
+		i++;
 	}
 
 	psa_set_key_usage_flags(key_attr, usage_flags);

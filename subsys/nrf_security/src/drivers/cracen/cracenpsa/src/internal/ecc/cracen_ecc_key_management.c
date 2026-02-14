@@ -91,17 +91,11 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 
 			if (*key_bits == 0 && valid_key_size == key_buffer_size) {
 				*key_bits = valid_keys[i].bits;
-
-				status = valid_keys[i].supported ? PSA_SUCCESS
-								 : PSA_ERROR_NOT_SUPPORTED;
-				break;
 			}
-
 			if (*key_bits == valid_keys[i].bits) {
 				if (valid_key_size != key_buffer_size) {
 					return PSA_ERROR_INVALID_ARGUMENT;
 				}
-
 				status = valid_keys[i].supported ? PSA_SUCCESS
 								 : PSA_ERROR_NOT_SUPPORTED;
 				break;
@@ -109,11 +103,10 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 		}
 	}
 
-	if (status == PSA_SUCCESS) {
-		if ((curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) && (key_alg != PSA_ALG_PURE_EDDSA &&
-			key_alg != PSA_ALG_ED25519PH && key_alg != PSA_ALG_ED448PH)) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
+	if (status == PSA_SUCCESS &&
+	    (curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) && (key_alg != PSA_ALG_PURE_EDDSA &&
+	    key_alg != PSA_ALG_ED25519PH && key_alg != PSA_ALG_ED448PH)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	return status;

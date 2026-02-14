@@ -295,6 +295,8 @@ cracen_key_derivation_input_bytes_hkdf(cracen_key_derivation_operation_t *operat
 			}
 		} else if (operation->state != CRACEN_KD_STATE_HKDF_STARTED) {
 			return PSA_ERROR_BAD_STATE;
+		} else {
+			/* For compliance */
 		}
 
 		status = cracen_mac_update(&operation->mac_op, data, data_length);
