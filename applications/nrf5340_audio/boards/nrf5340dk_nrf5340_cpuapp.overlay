@@ -45,9 +45,8 @@
 		uac_aclk: aclk {
 			compatible = "zephyr,uac2-clock-source";
 			clock-type = "internal-programmable";
-			frequency-control = "read-only";
+			frequency-control = "host-programmable";
 			sampling-frequencies = <48000>;
-			sof-synchronized;
 		};
 
 		out_terminal: out_terminal {
@@ -107,9 +106,8 @@
 		hp_uac_aclk: hp_aclk {
 			compatible = "zephyr,uac2-clock-source";
 			clock-type = "internal-programmable";
-			frequency-control = "read-only";
+			frequency-control = "host-programmable";
 			sampling-frequencies = <48000>;
-			sof-synchronized;
 		};
 
 		hp_out_terminal: out_terminal {
