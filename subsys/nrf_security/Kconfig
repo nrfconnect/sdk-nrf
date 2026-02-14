@@ -97,17 +97,28 @@ config MBEDTLS_ENABLE_HEAP
 	  in mbedtls. If this is enabled, then the Zephyr will, during the device
 	  startup, initialize the heap automatically.
 
+if MBEDTLS_ENABLE_HEAP
+
 config MBEDTLS_HEAP_SIZE
 	int "Heap size for mbed TLS"
 	default 15360 if OPENTHREAD_NRF_SECURITY
 	default 512
-	depends on MBEDTLS_ENABLE_HEAP
 	help
 	  Heap size for mbed TLS in bytes.
 	  For streaming communication with arbitrary (HTTPS) servers on the
 	  Internet, 32KB + overheads (up to another 20KB) may be needed.
 	  Ensure to adjust the heap size according to the need of the
 	  application.
+
+config MBEDTLS_MEMORY_DEBUG
+	bool "Mbed TLS memory debug"
+	depends on MBEDTLS_MEMORY_BUFFER_ALLOC_C
+	help
+	  Enable debugging of buffer allocator memory issues. Automatically
+	  prints (to stderr) all (fatal) messages on memory allocation
+	  issues. Enables function for 'debug output' of allocated memory.
+
+endif # MBEDTLS_ENABLE_HEAP
 
 config MBEDTLS_ENTROPY_POLL
 	bool

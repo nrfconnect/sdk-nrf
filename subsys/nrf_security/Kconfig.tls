@@ -89,7 +89,6 @@ menuconfig MBEDTLS_TLS_LIBRARY
 	select MBEDTLS_X509_LIBRARY
 	imply PSA_WANT_ALG_TLS12_PRF
 	imply PSA_WANT_ALG_TLS12_PSK_TO_MS
-	default y if MBEDTLS_PSA_CRYPTO_C && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
 	default y if NET_SOCKETS_SOCKOPT_TLS
 	help
 	  Create the mbed SSL/TLS library in addition to the mbed crypto
@@ -179,6 +178,7 @@ config MBEDTLS_DEBUG_LEVEL
 
 config MBEDTLS_MEMORY_DEBUG
 	bool "mbed TLS memory debug activation"
+	depends on MBEDTLS_MEMORY_BUFFER_ALLOC_C && MBEDTLS_ENABLE_HEAP
 	help
 	  Enable debugging of buffer allocator memory issues. Automatically
 	  prints (to stderr) all (fatal) messages on memory allocation
