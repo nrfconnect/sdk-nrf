@@ -49,8 +49,8 @@ config NET_L2_DECT_CONN_MGR_AUTO_CONNECT
 	  the option has a corresponding flag that can be set at run time by
 	  calling conn_mgr_if_set_flag().
 
-module = NET_L2_DECT_CONN_MGR
-module-str = Log level for DECT NR+ connection manager
+module=NET_L2_DECT_CONN_MGR
+module-str=DECT NR+ connection manager
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # NET_L2_DECT_CONN_MGR

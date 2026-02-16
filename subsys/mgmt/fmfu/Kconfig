@@ -15,7 +15,6 @@ config MGMT_FMFU
 if MGMT_FMFU
 
 module=MGMT_FMFU
-module-dep=LOG
 module-str=FMFU
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

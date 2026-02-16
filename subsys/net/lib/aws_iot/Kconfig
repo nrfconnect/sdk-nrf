@@ -57,7 +57,6 @@ config AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE
 	bool "Subscribe to delete rejected shadow topic, $aws/things/<thing-name>/shadow/delete/rejected"
 
 module = AWS_IOT
-module-dep = LOG
 module-str = AWS IoT
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

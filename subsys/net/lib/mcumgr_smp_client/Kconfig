@@ -28,7 +28,6 @@ config NRF_MCUMGR_SMP_CLIENT_SHELL
 	depends on SHELL
 
 module = NRF_MCUMGR_SMP_CLIENT
-module-dep = LOG
 module-str = NRF_MCUmgr_smp_client
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

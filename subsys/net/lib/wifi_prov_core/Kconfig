@@ -18,6 +18,5 @@ config WIFI_PROV_CORE
 	  and should be enabled when using Wi-Fi provisioning features.
 
 module = WIFI_PROV_CORE
-module-dep = LOG
-module-str = Log level for sample
+module-str = WiFi provisioning core library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

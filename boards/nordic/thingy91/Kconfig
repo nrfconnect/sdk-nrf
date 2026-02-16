@@ -59,6 +59,5 @@ endif # if BOARD_THINGY91_NRF9160_NS
 endif # BOARD_THINGY91_NRF9160 || BOARD_THINGY91_NRF9160_NS
 
 module=BOARD
-module-dep=LOG
-module-str=Log level for board
+module-str=board
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

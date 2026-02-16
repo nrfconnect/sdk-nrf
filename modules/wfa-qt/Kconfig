@@ -4,9 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-module = WFA_QT
-module-str = Log level for WFA Quick Track
-module-help = Sets log level for WFA Quick Track
+module=WFA_QT
+module-str=WFA Quick Track
 source "subsys/logging/Kconfig.template.log_config"
 
 config WFA_QT_CONTROL_APP

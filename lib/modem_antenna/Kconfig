@@ -78,7 +78,6 @@ config MODEM_ANTENNA_AT_MIPIRFFECTRL_PWROFF
 	  Leave empty if this command should not be sent.
 
 module=MODEM_ANTENNA
-module-dep=LOG
 module-str=Modem antenna
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

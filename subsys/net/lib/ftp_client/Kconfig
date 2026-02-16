@@ -24,7 +24,6 @@ config FTP_CLIENT_TLS
 	bool "Connection over TLS"
 
 module=FTP_CLIENT
-module-dep=LOG
 module-str=FTP client
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

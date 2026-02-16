@@ -167,8 +167,8 @@ config DECT_MDM_NET_IF_NO_AUTO_START
 	  immediately after initialization and instead call for net_if_up()
 	  manually.
 
-module = DECT_MDM
-module-str = Log level for DECT MDM driver
+module=DECT_MDM
+module-str=DECT MDM driver
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 # Include vendor specifics

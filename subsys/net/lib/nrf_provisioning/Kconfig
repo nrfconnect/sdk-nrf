@@ -122,9 +122,7 @@ rsource "Kconfig.nrf_provisioning_http"
 rsource "Kconfig.nrf_provisioning_coap"
 
 module=NRF_PROVISIONING
-module-dep=LOG
-module-str=Log level for nRF Provisioning
-module-help=Enables nRF Provisioning log messages.
+module-str=nRF Provisioning
 source "subsys/logging/Kconfig.template.log_config"
 
 endif

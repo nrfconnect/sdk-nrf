@@ -24,9 +24,7 @@ config AWS_FOTA_DOWNLOAD_SECURITY_TAG
 
 
 module=AWS_FOTA
-module-dep=LOG
-module-str=Log level for AWS Jobs FOTA
-module-help=Enables AWS Jobs FOTA log messages.
+module-str=AWS Jobs FOTA
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # AWS_FOTA

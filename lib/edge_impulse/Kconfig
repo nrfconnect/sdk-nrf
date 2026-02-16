@@ -98,7 +98,6 @@ config EI_WRAPPER_DEBUG_MODE
 	  Enables additional log information from Edge Impulse library.
 
 module=EI_WRAPPER
-module-dep=LOG
 module-str=Edge Impulse NCS wrapper
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
