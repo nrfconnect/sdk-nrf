@@ -374,7 +374,7 @@ You can enable and configure otperf using the following Kconfig options:
   * :kconfig:option:`CONFIG_OTPERF` - Enables the otperf tool.
   * :kconfig:option:`CONFIG_OTPERF_SHELL` (enabled by default) - Allows otperf to be used through the shell (requires :kconfig:option:`CONFIG_SHELL`).
   * :kconfig:option:`CONFIG_OTPERF_SERVER` (enabled by default) - Enables the ``otperf udp download`` (server) command.
-  * :kconfig:option:`CONFIG_OTPERF_MAX_PACKET_SIZE` - Specifies the maximum data packet size (default: 1064 bytes: 40 header + 1024 data).
+  * :kconfig:option:`CONFIG_OTPERF_MAX_PACKET_SIZE` - Specifies the maximum data packet size (default: 1232 bytes).
   * :kconfig:option:`CONFIG_OTPERF_MAX_SESSIONS` - Sets the maximum number of handled connections.
   * :kconfig:option:`CONFIG_OTPERF_UDP_REPORT_RETRANSMISSION_COUNT` - Defines how many times the client will attempt to request a UDP report.
   * :kconfig:option:`CONFIG_OTPERF_DEFAULT_PORT`, :kconfig:option:`CONFIG_OTPERF_DEFAULT_DURATION_S`, :kconfig:option:`CONFIG_OTPERF_DEFAULT_PACKET_SIZE`, :kconfig:option:`CONFIG_OTPERF_DEFAULT_RATE_KBPS` - Default values applied when not overridden by the user.
