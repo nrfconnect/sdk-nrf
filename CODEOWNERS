@@ -653,7 +653,7 @@
 /samples/gazell/**/*.rst                  @nrfconnect/ncs-si-xcake-doc
 /samples/hw_id/*.rst                      @nrfconnect/ncs-cia-doc
 /samples/ironside_se/**/*.rst             @nrfconnect/ncs-aurora-doc
-/samples/ipc/ipc_service/*.rst            @nrfconnect/ncs-si-muffin-doc
+/samples/ipc/ipc_service/*.rst            @nrfconnect/ncs-vestavind-doc
 /samples/keys/**/*.rst                    @nrfconnect/ncs-aegir-doc
 /samples/matter/**/*.rst                  @nrfconnect/ncs-matter-doc
 /samples/mpsl/**/*.rst                    @nrfconnect/ncs-dragoon-doc
