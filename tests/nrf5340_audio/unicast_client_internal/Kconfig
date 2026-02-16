@@ -1,0 +1,143 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+config BT_CONN
+	bool
+	default y
+
+config BT_SMP
+	bool
+	default y
+
+config BT_CENTRAL
+	bool
+	default y
+
+config BT_MAX_CONN
+	int
+	default 5
+
+config BT_MAX_PAIRED
+	int
+	default 5
+
+config BT_ISO_CENTRAL
+	bool
+	default y
+
+config BT_BAP_UNICAST
+	bool
+	default y
+
+config BT_BAP_UNICAST_CLIENT
+	bool
+	default y
+
+config BT_AUDIO_CODEC_CAP_MAX_DATA_SIZE
+	int
+	default 255
+
+config BT_AUDIO_CODEC_CAP_MAX_METADATA_SIZE
+	int
+	default 255
+
+config BT_BUF_EVT_RX_COUNT
+	int
+	default 10
+
+config BT_BUF_EVT_TX_COUNT
+	int
+	default 10
+
+config BT_BUF_ACL_RX_COUNT
+	int
+	default 4
+
+config BT_BUF_ACL_TX_COUNT
+	int
+	default 4
+
+config BT_AUDIO_CODEC_CFG_MAX_DATA_SIZE
+	int
+	default 255
+
+config BT_AUDIO_CODEC_CFG_MAX_METADATA_SIZE
+	int
+	default 255
+
+config BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT
+	int
+	default 4
+
+config BT_ISO_MAX_CIG
+	int
+	default 1
+
+config BT_ISO_MAX_CHAN
+	int
+	default 6
+
+config BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT
+	int
+	default 6
+
+config BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT
+	int
+	default 4
+
+config UNICAST_GROUP_STREAM_CNT
+	int
+	default 4
+
+config BT_AUDIO_CODEC_LOG_LEVEL
+	int
+	default 2
+
+config BT_AUDIO_LOG_LEVEL
+	int
+	default 2
+
+config CODEC_CAP_COUNT_MAX
+	int
+	default 5
+
+config BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE
+	int
+	default 8
+
+config BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE
+	int
+	default 8
+
+config AUDIO_SAMPLE_RATE_48000_HZ
+	bool
+	default y
+
+config SERVER_STORE_LOG_LEVEL
+	int
+	default 4
+
+config BLE_LOG_LEVEL
+	int
+	default 4
+
+config LC3_BITRATE_MIN
+	int
+	default 32000
+
+config LC3_BITRATE_MAX
+	int
+	default 124000
+
+config AUDIO_FRAME_DURATION_US
+	int
+	default 10000
+
+config UNICAST_CLIENT_LOG_LEVEL
+	int
+	default 4
+
+# Include Zephyr's Kconfig.
+source "Kconfig"
+source "subsys/bluetooth/audio/Kconfig"
+source "subsys/bluetooth/Kconfig.logging"

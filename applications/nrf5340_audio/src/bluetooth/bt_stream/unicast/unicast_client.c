@@ -26,6 +26,7 @@
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
 #include "server_store.h"
+#include "unicast_client_internal.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
@@ -212,7 +213,7 @@ static void unicast_group_create(void)
 	int ret;
 
 	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT; i++) {
-		memset(pair_params[i], 0, sizeof(pair_params));
+		memset(&pair_params[i], 0, sizeof(pair_params));
 	}
 
 	memset(&group_param, 0, sizeof(group_param));
@@ -980,8 +981,8 @@ static int all_streams_configured(void)
 	struct pd_struct common_pd_src;
 	struct pd_struct common_pd_snk;
 
-	ret = srv_store_pres_delay_get(unicast_group, &pres_dly_snk_us, &pres_dly_src_us,
-				       &common_pd_src, &common_pd_snk);
+	ret = unicast_client_internal_pres_dly_get(
+		unicast_group, &pres_dly_snk_us, &pres_dly_src_us, &common_pd_src, &common_pd_snk);
 	if (ret) {
 		LOG_ERR("Failed to get presentation delay: %d", ret);
 		srv_store_unlock();
@@ -1038,23 +1039,24 @@ static int all_streams_configured(void)
 		}
 	}
 
-	ret = srv_store_pres_delay_set(unicast_group, pres_dly_snk_us, pres_dly_src_us, &action);
+	ret = unicast_client_internal_pres_dly_set(unicast_group, pres_dly_snk_us, pres_dly_src_us,
+						   &action);
 	if (ret) {
 		LOG_ERR("Failed to set presentation delay: %d", ret);
 		srv_store_unlock();
 		return ret;
 	}
 
-	ret = srv_store_max_transp_latency_get(unicast_group, &max_trasp_lat_snk_ms,
-					       &max_trasp_lat_src_ms);
+	ret = unicast_client_internal_max_transp_latency_get(unicast_group, &max_trasp_lat_snk_ms,
+							     &max_trasp_lat_src_ms);
 	if (ret) {
 		LOG_ERR("Failed to get max transport latency: %d", ret);
 		srv_store_unlock();
 		return ret;
 	}
 
-	ret = srv_store_max_transp_latency_set(unicast_group, max_trasp_lat_snk_ms,
-					       max_trasp_lat_src_ms, &action);
+	ret = unicast_client_internal_max_transp_latency_set(unicast_group, max_trasp_lat_snk_ms,
+							     max_trasp_lat_src_ms, &action);
 	if (ret) {
 		LOG_ERR("Failed to set max transport latency: %d", ret);
 		srv_store_unlock();
