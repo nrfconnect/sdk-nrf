@@ -25,6 +25,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9160dk/nrf9160/ns
@@ -34,6 +35,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
@@ -53,6 +55,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
@@ -63,6 +66,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
   sample.persistent_key_usage.trusted_storage:
@@ -77,6 +81,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
@@ -87,5 +92,6 @@ tests:
       - nrf9151dk/nrf9151
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
