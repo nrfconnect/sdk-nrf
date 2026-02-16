@@ -10,8 +10,8 @@ Getting started with the nRF54H20 DK
 .. note::
    If you are migrating from an earlier version of the |NCS|, see :ref:`migration_guides`.
 
-This document will get you started with your new nRF54H20 Development Kit (DK) using the |NCS| for the first time.
-It will guide you through the following:
+This guide gets you started with your new nRF54H20 Development Kit (DK) using the |NCS| for the first time.
+It guides you through the following:
 
 1. Installing the |NCS| and other required software and tools.
 #. Preparing the nRF54H20 DK for first use:
@@ -162,7 +162,7 @@ To program the nRF54H20 IronSide SE binaries to the nRF54H20 DK, do the followin
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
 
-.. _ug_nrf54h20_gs_bringup_trasition:
+.. _ug_nrf54h20_gs_bringup_transition:
 
 .. rst-class:: numbered-step
 
@@ -172,7 +172,7 @@ Bring-up step: Transitioning the nRF54H20 SoC to RoT
 The current nRF54H20 DK comes with its lifecycle state (LCS) set to ``EMPTY``.
 To operate correctly, you must transition its lifecycle state to Root of Trust (``RoT``).
 
-.. note::
+.. caution::
    The forward transition to LCS ``RoT`` is permanent.
    After the transition, it is impossible to transition backward to LCS ``EMPTY``.
 

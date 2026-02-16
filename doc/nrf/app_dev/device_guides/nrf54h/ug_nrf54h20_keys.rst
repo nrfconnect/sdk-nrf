@@ -44,7 +44,7 @@ These are the standard persistent keys conforming to the :ref:`supported version
 * Minimum ID: ``0x00000001`` (``PSA_KEY_ID_USER_MIN``)
 * Maximum ID: ``0x3FFFFFFF`` (``PSA_KEY_ID_USER_MAX``)
 
-In order to successfully provision user keys, you must first configure cryptographic partitions in your :ref:`ug_nrf54h20_ironside_uicr_securestorage` configuration.
+To successfully provision user keys, you must first configure cryptographic partitions in your :ref:`ug_nrf54h20_ironside_uicr_securestorage` configuration.
 
 Revocable keys
 --------------
