@@ -1,4 +1,4 @@
-﻿.. _zms_memory_storage:
+.. _zms_memory_storage:
 
 Enabling Zephyr Memory Storage
 ##############################
@@ -7,6 +7,8 @@ Enabling Zephyr Memory Storage
    :local:
    :depth: 2
 
+.. 54h_section_intro_start
+
 For the nRF54L and nRF54H Series, use the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>`.
 ZMS utilizes a flexible data management system that reduces write and erase cycles, extending the lifespan of non-volatile memory.
 
@@ -14,8 +16,12 @@ ZMS utilizes a flexible data management system that reduces write and erase cycl
 
   If you are using the :ref:`Non-Volatile Storage (NVS) <zephyr:nvs_api>`, ensure to switch to the ZMS solution.
 
+.. 54h_section_intro_end
+
 Enabling the ZMS module
 ***********************
+
+.. 54h_section_enabling_start
 
 You can enable the ZMS module for your application in two ways - directly through ZMS or through the :ref:`Settings subsystem <zephyr:settings_api>`.
 Additionally, you can optimize the application performance using caching mechanism:
@@ -40,14 +46,22 @@ Additionally, you can optimize the application performance using caching mechani
         #. Set the lookup cache size in :kconfig:option:`CONFIG_ZMS_LOOKUP_CACHE_SIZE` depending on your application needs.
         #. Ensure the lookup cache is configured to support the Setting subsystem by enabling the :kconfig:option:`CONFIG_ZMS_LOOKUP_CACHE_FOR_SETTINGS` Kconfig option.
 
+.. 54h_section_enabling_end
+
 Optimizing ZMS in your application
 **********************************
+
+.. 54h_section_optimizing_intro_start
 
 When integrating ZMS through the Settings subsystem in your application, you might need to optimize its performance.
 The following sections include the best practices to enhance ZMS performance.
 
+.. 54h_section_optimizing_intro_end
+
 Sector size and count
 =====================
+
+.. 54h_section_sector_start
 
 To ensure optimal performance from ZMS, consider the following:
 
@@ -61,8 +75,12 @@ To ensure optimal performance from ZMS, consider the following:
 * Optimizing data storage - Storing small data directly in the ZMS entry headers can significantly enhance performance.
   For instance, in the Settings subsystem, using a path name of 8 bytes or less can speed up read and write operations.
 
+.. 54h_section_sector_end
+
 Dimensioning cache
 ==================
+
+.. 54h_section_cache_start
 
 Proper cache sizing is critical for maintaining high performance and efficient memory usage in ZMS:
 
@@ -74,3 +92,5 @@ Proper cache sizing is critical for maintaining high performance and efficient m
 
 * Settings subsystem specifics - When using ZMS through the Settings subsystem, remember that each entry translates into two ZMS entries.
   Consequently, the optimal cache size should be twice the number of Settings entries to accommodate this division effectively.
+
+.. 54h_section_cache_end
