@@ -196,12 +196,12 @@ static void check_timing(const struct gpio_dt_spec *gpio_dt, uint32_t baudrate)
 		 uart_dev->name, baudrate, symbol_diviation_mean, bit_diviation_mean);
 
 	if (start_index_count_zero == 0) {
-		zassert_true(symbol_diviation_mean <= (double)CONFIG_ALLOWED_DEVIATION,
+		zassert_true(symbol_diviation_mean <= (double)CONFIG_TEST_ALLOWED_DEVIATION,
 			     "Symbol diviation %0.f%%  higher than %d%%\n", symbol_diviation_mean,
-			     CONFIG_ALLOWED_DEVIATION);
-		zassert_true(bit_diviation_mean <= (double)CONFIG_ALLOWED_DEVIATION,
+			     CONFIG_TEST_ALLOWED_DEVIATION);
+		zassert_true(bit_diviation_mean <= (double)CONFIG_TEST_ALLOWED_DEVIATION,
 			     "Bit diviation %0.f%% higher than %d%%\n", bit_diviation_mean,
-			     CONFIG_ALLOWED_DEVIATION);
+			     CONFIG_TEST_ALLOWED_DEVIATION);
 	} else {
 		TC_PRINT("Not checking diviation due to lost start of start bit\n");
 	}
