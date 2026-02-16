@@ -124,6 +124,11 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_extra)
   endif()
 
+  get_property(extra_imgtool_args_prop GLOBAL PROPERTY mcuboot_extra_imgtool_args)
+  if(extra_imgtool_args_prop)
+    list(APPEND imgtool_extra ${extra_imgtool_args_prop})
+  endif()
+
   if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     set(imgtool_extra --security-counter ${CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE} ${imgtool_extra})
   endif()
