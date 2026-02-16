@@ -181,238 +181,227 @@ ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_get_o
 	zassert_equal(pres_dly_src_us, UINT32_MAX, "no common denominator");
 }
 
-// ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_set)
-// {
-// 	int ret;
+ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_set)
+{
+	int ret;
 
-// 	TEST_UNICAST_GROUP(cap_group);
+	TEST_UNICAST_GROUP(cap_group);
 
-// 	TEST_CONN(1);
+	struct bt_bap_ep ep_1 = {0};
 
-// 	struct server_store *retr_server = NULL;
-// 	ret = srv_store_add_by_conn(&test_1_conn);
-// 	zassert_equal(ret, 0);
+	ep_1.state = BT_BAP_EP_STATE_STREAMING;
+	ep_1.dir = BT_AUDIO_DIR_SINK;
 
-// 	ret = srv_store_from_conn_get(&test_1_conn, &retr_server);
-// 	zassert_equal(ret, 0);
+	struct bt_bap_ep ep_2 = {0};
 
-// 	struct bt_bap_ep ep_1 = {0};
-// 	ep_1.state = BT_BAP_EP_STATE_STREAMING;
-// 	ep_1.dir = BT_AUDIO_DIR_SINK;
+	ep_2.state = BT_BAP_EP_STATE_STREAMING;
+	ep_2.dir = BT_AUDIO_DIR_SINK;
 
-// 	struct bt_bap_ep ep_2 = {0};
-// 	ep_2.state = BT_BAP_EP_STATE_STREAMING;
-// 	ep_2.dir = BT_AUDIO_DIR_SINK;
+	struct bt_bap_ep ep_3 = {0};
 
-// 	struct bt_bap_ep ep_3 = {0};
-// 	ep_3.state = BT_BAP_EP_STATE_STREAMING;
-// 	ep_3.dir = BT_AUDIO_DIR_SOURCE;
+	ep_3.state = BT_BAP_EP_STATE_STREAMING;
+	ep_3.dir = BT_AUDIO_DIR_SOURCE;
 
-// 	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 5000, &cap_group, &ep_1,
-// 				       0);
-// 	zassert_equal(ret, 0);
+	struct server_store server_0 = {0};
 
-// 	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 5000, &cap_group, &ep_2,
-// 				       0);
-// 	zassert_equal(ret, 0);
+	ret = test_cap_stream_populate(&server_0, 0, BT_AUDIO_DIR_SINK, 5000, &cap_group, &ep_1, 0);
+	zassert_equal(ret, 0);
 
-// 	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SOURCE, 40000, &cap_group,
-// 				       &ep_3, 0);
-// 	zassert_equal(ret, 0);
+	ret = test_cap_stream_populate(&server_0, 1, BT_AUDIO_DIR_SINK, 5000, &cap_group, &ep_2, 0);
+	zassert_equal(ret, 0);
 
-// 	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
-// 	mock_add_stream_to_group(&retr_server->snk.cap_streams[1].bap_stream, &cap_group);
-// 	mock_add_stream_to_group(&retr_server->src.cap_streams[0].bap_stream, &cap_group);
+	ret = test_cap_stream_populate(&server_0, 0, BT_AUDIO_DIR_SOURCE, 40000, &cap_group, &ep_3,
+				       0);
+	zassert_equal(ret, 0);
 
-// 	enum action_req action;
-// 	action = ACTION_REQ_NONE;
+	mock_add_stream_to_group(&server_0.snk.cap_streams[0].bap_stream, &cap_group);
+	mock_add_stream_to_group(&server_0.snk.cap_streams[1].bap_stream, &cap_group);
+	mock_add_stream_to_group(&server_0.src.cap_streams[0].bap_stream, &cap_group);
 
-// 	ret = unicast_client_internal_pres_dly_set(&cap_group, 5000, UINT32_MAX, &action);
-// 	zassert_equal(ret, 0);
+	enum action_req action;
 
-// 	zassert_equal(action, ACTION_REQ_NONE);
+	action = ACTION_REQ_NONE;
 
-// 	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->pd, 5000);
-// 	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->pd, 5000);
-// 	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->pd, 40000);
+	ret = unicast_client_internal_pres_dly_set(&cap_group, 5000, UINT32_MAX, &action);
+	zassert_equal(ret, 0);
 
-// 	/* Put one stream in a QoS configured state*/
-// 	ep_1.state = BT_BAP_EP_STATE_QOS_CONFIGURED;
+	zassert_equal(action, ACTION_REQ_NONE);
 
-// 	/* No change in PD*/
-// 	ret = unicast_client_internal_pres_dly_set(&cap_group, 5000, UINT32_MAX, &action);
-// 	zassert_equal(ret, 0);
+	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->pd, 5000);
+	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->pd, 5000);
+	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->pd, 40000);
 
-// 	zassert_equal(action, ACTION_REQ_NONE);
+	/* Put one stream in a QoS configured state*/
+	ep_1.state = BT_BAP_EP_STATE_QOS_CONFIGURED;
 
-// 	/* Change PD with one stream in QoS configured state */
-// 	ret = unicast_client_internal_pres_dly_set(&cap_group, 4000, UINT32_MAX, &action);
-// 	zassert_equal(ret, 0);
+	/* No change in PD*/
+	ret = unicast_client_internal_pres_dly_set(&cap_group, 5000, UINT32_MAX, &action);
+	zassert_equal(ret, 0);
 
-// 	zassert_equal(action, STREAM_ACTION_QOS_RECONFIG);
-// 	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->pd, 4000);
-// 	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->pd, 4000);
-// 	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->pd, 40000);
+	zassert_equal(action, ACTION_REQ_NONE);
 
-// 	/* Put one stream in a streaming state*/
-// 	ep_1.state = BT_BAP_EP_STATE_STREAMING;
-// 	/* Change PD with one stream in QoS configured state */
-// 	ret = unicast_client_internal_pres_dly_set(&cap_group, 3000, UINT32_MAX, &action);
-// 	zassert_equal(ret, 0);
+	/* Change PD with one stream in QoS configured state */
+	ret = unicast_client_internal_pres_dly_set(&cap_group, 4000, UINT32_MAX, &action);
+	zassert_equal(ret, 0);
 
-// 	zassert_equal(action, STREAM_ACTION_QOS_RECONFIG);
-// 	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->pd, 3000);
-// 	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->pd, 3000);
-// 	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->pd, 40000);
+	zassert_equal(action, STREAM_ACTION_QOS_RECONFIG);
+	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->pd, 4000);
+	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->pd, 4000);
+	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->pd, 40000);
 
-// 	ret = unicast_client_internal_pres_dly_set(&cap_group, UINT32_MAX, 20000, &action);
-// 	zassert_equal(ret, 0);
+	/* Put one stream in a streaming state*/
+	ep_1.state = BT_BAP_EP_STATE_STREAMING;
+	/* Change PD with one stream in QoS configured state */
+	ret = unicast_client_internal_pres_dly_set(&cap_group, 3000, UINT32_MAX, &action);
+	zassert_equal(ret, 0);
 
-// 	zassert_equal(action, STREAM_ACTION_QOS_RECONFIG);
-// 	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->pd, 3000);
-// 	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->pd, 3000);
-// 	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->pd, 20000);
-// }
+	zassert_equal(action, STREAM_ACTION_QOS_RECONFIG);
+	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->pd, 3000);
+	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->pd, 3000);
+	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->pd, 40000);
 
-// ZTEST(suite_unicast_client_internal, test_srv_store_max_transp_lat_get)
-// {
-// 	int ret;
+	ret = unicast_client_internal_pres_dly_set(&cap_group, UINT32_MAX, 20000, &action);
+	zassert_equal(ret, 0);
 
-// 	TEST_UNICAST_GROUP(cap_group);
-// 	TEST_CONN(1);
+	zassert_equal(action, STREAM_ACTION_QOS_RECONFIG);
+	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->pd, 3000);
+	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->pd, 3000);
+	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->pd, 20000);
+}
 
-// 	ret = srv_store_add_by_conn(&test_1_conn);
-// 	zassert_equal(ret, 0);
+ZTEST(suite_unicast_client_internal, test_srv_store_max_transp_lat_get)
+{
+	int ret;
 
-// 	struct server_store *retr_server = NULL;
+	TEST_UNICAST_GROUP(cap_group);
 
-// 	ret = srv_store_from_conn_get(&test_1_conn, &retr_server);
-// 	zassert_equal(ret, 0);
+	TC_PRINT("the cap group is %p\n", &cap_group);
 
-// 	TC_PRINT("the cap group is %p\n", &cap_group);
+	struct server_store server_0 = {0};
 
-// 	/* Need to create endpoints in test as these are owned by the host */
-// 	struct bt_bap_ep ep_1 = {0};
-// 	ep_1.state = BT_BAP_EP_STATE_STREAMING;
-// 	ep_1.dir = BT_AUDIO_DIR_SINK;
-// 	ep_1.qos_pref.latency = 40;
+	/* Need to create endpoints in test as these are owned by the host */
+	struct bt_bap_ep ep_1 = {0};
 
-// 	struct bt_bap_ep ep_2 = {0};
-// 	ep_2.state = BT_BAP_EP_STATE_STREAMING;
-// 	ep_2.dir = BT_AUDIO_DIR_SINK;
-// 	ep_2.qos_pref.latency = 45;
+	ep_1.state = BT_BAP_EP_STATE_STREAMING;
+	ep_1.dir = BT_AUDIO_DIR_SINK;
+	ep_1.qos_pref.latency = 40;
 
-// 	struct bt_bap_ep ep_3 = {0};
-// 	ep_3.state = BT_BAP_EP_STATE_STREAMING;
-// 	ep_3.dir = BT_AUDIO_DIR_SOURCE;
-// 	ep_3.qos_pref.latency = 50;
+	struct bt_bap_ep ep_2 = {0};
 
-// 	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1,
-// 				       40);
-// 	zassert_equal(ret, 0);
+	ep_2.state = BT_BAP_EP_STATE_STREAMING;
+	ep_2.dir = BT_AUDIO_DIR_SINK;
+	ep_2.qos_pref.latency = 45;
 
-// 	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2,
-// 				       45);
-// 	zassert_equal(ret, 0);
+	struct bt_bap_ep ep_3 = {0};
 
-// 	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SOURCE, 40000, &cap_group,
-// 				       &ep_3, 50);
-// 	zassert_equal(ret, 0);
+	ep_3.state = BT_BAP_EP_STATE_STREAMING;
+	ep_3.dir = BT_AUDIO_DIR_SOURCE;
+	ep_3.qos_pref.latency = 50;
 
-// 	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
-// 	mock_add_stream_to_group(&retr_server->snk.cap_streams[1].bap_stream, &cap_group);
-// 	mock_add_stream_to_group(&retr_server->src.cap_streams[0].bap_stream, &cap_group);
+	ret = test_cap_stream_populate(&server_0, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1,
+				       40);
+	zassert_equal(ret, 0);
 
-// 	uint16_t max_transp_lat_snk_ms;
-// 	uint16_t max_transp_lat_src_ms;
-// 	ret = unicast_client_internal_max_transp_latency_get(&cap_group, &max_transp_lat_snk_ms,
-// 							     &max_transp_lat_src_ms);
-// 	zassert_equal(ret, 0);
-// 	TC_PRINT("Max transport latency for sink: %d ms, source: %d ms", max_transp_lat_snk_ms,
-// 		 max_transp_lat_src_ms);
-// 	TC_PRINT("max_transp_lat_snk_ms: %d, max_transp_lat_src_ms: %d", max_transp_lat_snk_ms,
-// 		 max_transp_lat_src_ms);
-// 	zassert_equal(max_transp_lat_snk_ms, 40, "Max transport latency for sink should be 40ms");
-// 	zassert_equal(max_transp_lat_src_ms, 50, "Max transport latency for source should be 50ms");
-// }
+	ret = test_cap_stream_populate(&server_0, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2,
+				       45);
+	zassert_equal(ret, 0);
 
-// ZTEST(suite_unicast_client_internal, test_srv_store_max_transp_lat_set)
-// {
-// 	int ret;
+	ret = test_cap_stream_populate(&server_0, 0, BT_AUDIO_DIR_SOURCE, 40000, &cap_group, &ep_3,
+				       50);
+	zassert_equal(ret, 0);
 
-// 	TEST_UNICAST_GROUP(cap_group);
-// 	TEST_CONN(1);
+	mock_add_stream_to_group(&server_0.snk.cap_streams[0].bap_stream, &cap_group);
+	mock_add_stream_to_group(&server_0.snk.cap_streams[1].bap_stream, &cap_group);
+	mock_add_stream_to_group(&server_0.src.cap_streams[0].bap_stream, &cap_group);
 
-// 	ret = srv_store_add_by_conn(&test_1_conn);
-// 	zassert_equal(ret, 0);
+	uint16_t max_transp_lat_snk_ms;
+	uint16_t max_transp_lat_src_ms;
 
-// 	struct server_store *retr_server = NULL;
+	ret = unicast_client_internal_max_transp_latency_get(&cap_group, &max_transp_lat_snk_ms,
+							     &max_transp_lat_src_ms);
+	zassert_equal(ret, 0);
+	TC_PRINT("Max transport latency for sink: %d ms, source: %d ms", max_transp_lat_snk_ms,
+		 max_transp_lat_src_ms);
+	TC_PRINT("max_transp_lat_snk_ms: %d, max_transp_lat_src_ms: %d", max_transp_lat_snk_ms,
+		 max_transp_lat_src_ms);
+	zassert_equal(max_transp_lat_snk_ms, 40, "Max transport latency for sink should be 40ms");
+	zassert_equal(max_transp_lat_src_ms, 50, "Max transport latency for source should be 50ms");
+}
 
-// 	ret = srv_store_from_conn_get(&test_1_conn, &retr_server);
-// 	zassert_equal(ret, 0);
+ZTEST(suite_unicast_client_internal, test_srv_store_max_transp_lat_set)
+{
+	int ret;
 
-// 	TC_PRINT("the cap group is %p\n", &cap_group);
+	TEST_UNICAST_GROUP(cap_group);
 
-// 	/* Need to create endpoints in test as these are owned by the host */
-// 	struct bt_bap_ep ep_1 = {0};
-// 	ep_1.state = BT_BAP_EP_STATE_STREAMING;
-// 	ep_1.dir = BT_AUDIO_DIR_SINK;
-// 	ep_1.qos_pref.latency = 10;
+	struct server_store server_0 = {0};
 
-// 	struct bt_bap_ep ep_2 = {0};
-// 	ep_2.state = BT_BAP_EP_STATE_STREAMING;
-// 	ep_2.dir = BT_AUDIO_DIR_SINK;
-// 	ep_2.qos_pref.latency = 20;
+	TC_PRINT("the cap group is %p\n", &cap_group);
 
-// 	struct bt_bap_ep ep_3 = {0};
-// 	ep_3.state = BT_BAP_EP_STATE_STREAMING;
-// 	ep_3.dir = BT_AUDIO_DIR_SOURCE;
-// 	ep_3.qos_pref.latency = 50;
+	/* Need to create endpoints in test as these are owned by the host */
+	struct bt_bap_ep ep_1 = {0};
 
-// 	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1,
-// 				       10);
-// 	zassert_equal(ret, 0);
+	ep_1.state = BT_BAP_EP_STATE_STREAMING;
+	ep_1.dir = BT_AUDIO_DIR_SINK;
+	ep_1.qos_pref.latency = 10;
 
-// 	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2,
-// 				       20);
-// 	zassert_equal(ret, 0);
+	struct bt_bap_ep ep_2 = {0};
 
-// 	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SOURCE, 40000, &cap_group,
-// 				       &ep_3, 50);
-// 	zassert_equal(ret, 0);
+	ep_2.state = BT_BAP_EP_STATE_STREAMING;
+	ep_2.dir = BT_AUDIO_DIR_SINK;
+	ep_2.qos_pref.latency = 20;
 
-// 	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
-// 	mock_add_stream_to_group(&retr_server->snk.cap_streams[1].bap_stream, &cap_group);
-// 	mock_add_stream_to_group(&retr_server->src.cap_streams[0].bap_stream, &cap_group);
+	struct bt_bap_ep ep_3 = {0};
 
-// 	enum action_req action;
-// 	action = ACTION_REQ_NONE;
+	ep_3.state = BT_BAP_EP_STATE_STREAMING;
+	ep_3.dir = BT_AUDIO_DIR_SOURCE;
+	ep_3.qos_pref.latency = 50;
 
-// 	/* No change */
-// 	ret = unicast_client_internal_max_transp_latency_set(&cap_group, UINT16_MAX, UINT16_MAX,
-// 							     &action);
-// 	zassert_equal(ret, 0);
-// 	zassert_equal(action, ACTION_REQ_NONE);
-// 	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->latency, 10);
-// 	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->latency, 20);
-// 	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->latency, 50);
+	ret = test_cap_stream_populate(&server_0, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1,
+				       10);
+	zassert_equal(ret, 0);
 
-// 	/* Change sinks */
-// 	ret = unicast_client_internal_max_transp_latency_set(&cap_group, 5, UINT16_MAX, &action);
-// 	zassert_equal(ret, 0);
-// 	zassert_equal(action, GROUP_ACTION_REQ_RESTART);
-// 	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->latency, 5);
-// 	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->latency, 5);
-// 	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->latency, 50);
+	ret = test_cap_stream_populate(&server_0, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2,
+				       20);
+	zassert_equal(ret, 0);
 
-// 	/* Change source */
-// 	ret = unicast_client_internal_max_transp_latency_set(&cap_group, UINT16_MAX, 33, &action);
-// 	zassert_equal(ret, 0);
-// 	zassert_equal(action, GROUP_ACTION_REQ_RESTART);
-// 	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->latency, 5);
-// 	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->latency, 5);
-// 	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->latency, 33);
-// }
+	ret = test_cap_stream_populate(&server_0, 0, BT_AUDIO_DIR_SOURCE, 40000, &cap_group, &ep_3,
+				       50);
+	zassert_equal(ret, 0);
+
+	mock_add_stream_to_group(&server_0.snk.cap_streams[0].bap_stream, &cap_group);
+	mock_add_stream_to_group(&server_0.snk.cap_streams[1].bap_stream, &cap_group);
+	mock_add_stream_to_group(&server_0.src.cap_streams[0].bap_stream, &cap_group);
+
+	enum action_req action;
+
+	action = ACTION_REQ_NONE;
+
+	/* No change */
+	ret = unicast_client_internal_max_transp_latency_set(&cap_group, UINT16_MAX, UINT16_MAX,
+							     &action);
+	zassert_equal(ret, 0);
+	zassert_equal(action, ACTION_REQ_NONE);
+	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->latency, 10);
+	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->latency, 20);
+	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->latency, 50);
+
+	/* Change sinks */
+	ret = unicast_client_internal_max_transp_latency_set(&cap_group, 5, UINT16_MAX, &action);
+	zassert_equal(ret, 0);
+	zassert_equal(action, GROUP_ACTION_REQ_RESTART);
+	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->latency, 5);
+	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->latency, 5);
+	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->latency, 50);
+
+	/* Change source */
+	ret = unicast_client_internal_max_transp_latency_set(&cap_group, UINT16_MAX, 33, &action);
+	zassert_equal(ret, 0);
+	zassert_equal(action, GROUP_ACTION_REQ_RESTART);
+	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->latency, 5);
+	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->latency, 5);
+	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->latency, 33);
+}
 
 void before_fn(void *dummy)
 {
