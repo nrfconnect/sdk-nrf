@@ -15,7 +15,7 @@
 #include <nrfx_gpiote.h>
 #include <gpiote_nrfx.h>
 
-#if defined(CONFIG_I2S_TEST_START_HFXO)
+#if defined(CONFIG_TEST_START_HFXO)
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #if NRF54L_ERRATA_20_PRESENT
@@ -64,7 +64,7 @@ static void clock_init(void)
 
 	printk("Clock has started\n");
 }
-#endif /* CONFIG_I2S_TEST_START_HFXO */
+#endif /* CONFIG_TEST_START_HFXO */
 
 #define I2S_DEV_NODE DT_ALIAS(i2s_node0)
 
@@ -291,86 +291,86 @@ static void i2s_dir_both_transfer_long(struct i2s_config *i2s_cfg, uint32_t expe
 
 ZTEST(i2s_samplerate, test_dir_both_at_08000_sps)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_8000_SKIP);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SKIP_8000_SPS);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 
 	i2s_cfg.frame_clk_freq = 8000;
 
-	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_I2S_TEST_8000_DIVIDER,
-				   CONFIG_I2S_TEST_8000_EXPECTED, CONFIG_I2S_TEST_8000_TOLERANCE);
+	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_TEST_8000_DIVIDER,
+				   CONFIG_TEST_8000_EXPECTED, CONFIG_TEST_8000_TOLERANCE);
 }
 
 ZTEST(i2s_samplerate, test_dir_both_at_16000_sps)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_16000_SKIP);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SKIP_16000_SPS);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 
 	i2s_cfg.frame_clk_freq = 16000;
 
-	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_I2S_TEST_16000_DIVIDER,
-				   CONFIG_I2S_TEST_16000_EXPECTED, CONFIG_I2S_TEST_16000_TOLERANCE);
+	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_TEST_16000_DIVIDER,
+				   CONFIG_TEST_16000_EXPECTED, CONFIG_TEST_16000_TOLERANCE);
 }
 
 ZTEST(i2s_samplerate, test_dir_both_at_32000_sps)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_32000_SKIP);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SKIP_32000_SPS);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 
 	i2s_cfg.frame_clk_freq = 32000;
 
-	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_I2S_TEST_32000_DIVIDER,
-				   CONFIG_I2S_TEST_32000_EXPECTED, CONFIG_I2S_TEST_32000_TOLERANCE);
+	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_TEST_32000_DIVIDER,
+				   CONFIG_TEST_32000_EXPECTED, CONFIG_TEST_32000_TOLERANCE);
 }
 
 ZTEST(i2s_samplerate, test_dir_both_at_44100_sps)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_44100_SKIP);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SKIP_44100_SPS);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 
 	i2s_cfg.frame_clk_freq = 44100;
 
-	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_I2S_TEST_44100_DIVIDER,
-				   CONFIG_I2S_TEST_44100_EXPECTED, CONFIG_I2S_TEST_44100_TOLERANCE);
+	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_TEST_44100_DIVIDER,
+				   CONFIG_TEST_44100_EXPECTED, CONFIG_TEST_44100_TOLERANCE);
 }
 
 ZTEST(i2s_samplerate, test_dir_both_at_48000_sps)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_48000_SKIP);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SKIP_48000_SPS);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 
 	i2s_cfg.frame_clk_freq = 48000;
 
-	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_I2S_TEST_48000_DIVIDER,
-				   CONFIG_I2S_TEST_48000_EXPECTED, CONFIG_I2S_TEST_48000_TOLERANCE);
+	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_TEST_48000_DIVIDER,
+				   CONFIG_TEST_48000_EXPECTED, CONFIG_TEST_48000_TOLERANCE);
 }
 
 ZTEST(i2s_samplerate, test_dir_both_at_88200_sps)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_88200_SKIP);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SKIP_88200_SPS);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 
 	i2s_cfg.frame_clk_freq = 88200;
 
-	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_I2S_TEST_88200_DIVIDER,
-				   CONFIG_I2S_TEST_88200_EXPECTED, CONFIG_I2S_TEST_88200_TOLERANCE);
+	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_TEST_88200_DIVIDER,
+				   CONFIG_TEST_88200_EXPECTED, CONFIG_TEST_88200_TOLERANCE);
 }
 
 ZTEST(i2s_samplerate, test_dir_both_at_96000_sps)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_96000_SKIP);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SKIP_96000_SPS);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 
 	i2s_cfg.frame_clk_freq = 96000;
 
-	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_I2S_TEST_96000_DIVIDER,
-				   CONFIG_I2S_TEST_96000_EXPECTED, CONFIG_I2S_TEST_96000_TOLERANCE);
+	i2s_dir_both_transfer_long(&i2s_cfg, CONFIG_TEST_96000_DIVIDER,
+				   CONFIG_TEST_96000_EXPECTED, CONFIG_TEST_96000_TOLERANCE);
 }
 
 static void *suite_setup(void)
@@ -380,27 +380,27 @@ static void *suite_setup(void)
 	TC_PRINT("I2S samplerate test on %s\n", CONFIG_BOARD_TARGET);
 	TC_PRINT("Testing I2S device %s\n", dev_i2s->name);
 	TC_PRINT("I2S device address is %p\n", p_reg);
-#if defined(CONFIG_I2S_TEST_START_HFXO)
+#if defined(CONFIG_TEST_START_HFXO)
 	TC_PRINT("HFXO is used\n");
 #endif
 	TC_PRINT("Target values are:\n");
-	TC_PRINT(" -  8000 Sps: %u +/- %u\n", CONFIG_I2S_TEST_8000_EXPECTED,
-		 CONFIG_I2S_TEST_8000_TOLERANCE);
-	TC_PRINT(" - 16000 Sps: %u +/- %u\n", CONFIG_I2S_TEST_16000_EXPECTED,
-		 CONFIG_I2S_TEST_16000_TOLERANCE);
-	TC_PRINT(" - 32000 Sps: %u +/- %u\n", CONFIG_I2S_TEST_32000_EXPECTED,
-		 CONFIG_I2S_TEST_32000_TOLERANCE);
-	TC_PRINT(" - 44100 Sps: %u +/- %u\n", CONFIG_I2S_TEST_44100_EXPECTED,
-		 CONFIG_I2S_TEST_44100_TOLERANCE);
-	TC_PRINT(" - 48000 Sps: %u +/- %u\n", CONFIG_I2S_TEST_48000_EXPECTED,
-		 CONFIG_I2S_TEST_48000_TOLERANCE);
-	TC_PRINT(" - 88200 Sps: %u +/- %u\n", CONFIG_I2S_TEST_88200_EXPECTED,
-		 CONFIG_I2S_TEST_88200_TOLERANCE);
-	TC_PRINT(" - 96000 Sps: %u +/- %u\n", CONFIG_I2S_TEST_96000_EXPECTED,
-		 CONFIG_I2S_TEST_96000_TOLERANCE);
+	TC_PRINT(" -  8000 Sps: %u +/- %u\n", CONFIG_TEST_8000_EXPECTED,
+		 CONFIG_TEST_8000_TOLERANCE);
+	TC_PRINT(" - 16000 Sps: %u +/- %u\n", CONFIG_TEST_16000_EXPECTED,
+		 CONFIG_TEST_16000_TOLERANCE);
+	TC_PRINT(" - 32000 Sps: %u +/- %u\n", CONFIG_TEST_32000_EXPECTED,
+		 CONFIG_TEST_32000_TOLERANCE);
+	TC_PRINT(" - 44100 Sps: %u +/- %u\n", CONFIG_TEST_44100_EXPECTED,
+		 CONFIG_TEST_44100_TOLERANCE);
+	TC_PRINT(" - 48000 Sps: %u +/- %u\n", CONFIG_TEST_48000_EXPECTED,
+		 CONFIG_TEST_48000_TOLERANCE);
+	TC_PRINT(" - 88200 Sps: %u +/- %u\n", CONFIG_TEST_88200_EXPECTED,
+		 CONFIG_TEST_88200_TOLERANCE);
+	TC_PRINT(" - 96000 Sps: %u +/- %u\n", CONFIG_TEST_96000_EXPECTED,
+		 CONFIG_TEST_96000_TOLERANCE);
 	TC_PRINT("===================================================================\n");
 
-#if defined(CONFIG_I2S_TEST_START_HFXO)
+#if defined(CONFIG_TEST_START_HFXO)
 	clock_init();
 #endif
 
