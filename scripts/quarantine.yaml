@@ -118,16 +118,6 @@
   comment: "Upmerge regression - jira TBD."
 
 - scenarios:
-    - sample.bluetooth.peripheral_lbs_no_security
-    - sample.bluetooth.peripheral_nsms_no_security
-    - sample.bluetooth.peripheral_uart.security_disabled
-    - sample.sensor.bme68x.polling
-    - sample.sensor.bme68x.i2c
-  platforms:
-    - thingy53/nrf5340/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37637"
-
-- scenarios:
     - sample.bluetooth.direct_test_mode
     - sample.peripheral.radio_test
   platforms:
