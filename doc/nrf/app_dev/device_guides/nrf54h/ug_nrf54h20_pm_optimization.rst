@@ -205,9 +205,12 @@ For applications running on either the application core or the radio core, set t
   * :kconfig:option:`CONFIG_PM` to ``y``
   * :kconfig:option:`CONFIG_POWEROFF` to ``y``
 
+These options automatically enable :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME`, which is required to manage the energy states of individual devices.
+
 Consider also the following recommendations:
 
-  * Disable all unused peripherals before entering sleep (Zephyr's API does this automatically when supported).
+  * Disable all unused peripherals before entering sleep.
+    When supported, Zephyr's API automatically handles this by using the PM device runtime.
   * Build and program an empty image on any unused core to release shared resources.
   * If one or more specific sleep states are not desired, disable them in the devicetree by setting their status to ``disabled``:
 
