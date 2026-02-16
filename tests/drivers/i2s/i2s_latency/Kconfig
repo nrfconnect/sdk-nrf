@@ -4,28 +4,28 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-choice I2S_SAMPLE_WIDTH_OPTION
+choice TEST_I2S_WORD_SIZE_IN_BITS
 	prompt "I2S sample width in bits"
-	default I2S_SAMPLE_WIDTH_OPTION_8
+	default TEST_I2S_WORD_SIZE_8_BIT
 
-config I2S_SAMPLE_WIDTH_OPTION_8
+config TEST_I2S_WORD_SIZE_8_BIT
 	bool "8 bit"
 
-config I2S_SAMPLE_WIDTH_OPTION_16
+config TEST_I2S_WORD_SIZE_16_BIT
 	bool "16 bit"
 
-config I2S_SAMPLE_WIDTH_OPTION_32
+config TEST_I2S_WORD_SIZE_32_BIT
 	bool "32 bit"
 
 endchoice
 
-config I2S_SAMPLE_WIDTH
+config TEST_I2S_WORD_SIZE
 	int
-	default 8 if I2S_SAMPLE_WIDTH_OPTION_8
-	default 16 if I2S_SAMPLE_WIDTH_OPTION_16
-	default 32 if I2S_SAMPLE_WIDTH_OPTION_32
+	default 8 if TEST_I2S_WORD_SIZE_8_BIT
+	default 16 if TEST_I2S_WORD_SIZE_16_BIT
+	default 32 if TEST_I2S_WORD_SIZE_32_BIT
 
-config I2S_TEST_ALLOWED_DATA_OFFSET
+config TEST_I2S_ALLOWED_DATA_OFFSET
 	int "Allowed offset in received data"
 	default 2 if DT_HAS_NORDIC_NRF_I2S_ENABLED || DT_HAS_NORDIC_NRF_TDM_ENABLED
 	default 0
