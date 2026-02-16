@@ -914,7 +914,7 @@ ci_tests_bluetooth_tester:
   files:
     - nrf/include/bluetooth/mesh/
     - nrf/subsys/bluetooth/mesh/
-    - nrf/tests/bluetooth/tester/
+    - nrf/tests/bluetooth/tester/mmdl/
     - zephyr/include/zephyr/bluetooth/mesh/
     - zephyr/subsys/bluetooth/mesh/
 
