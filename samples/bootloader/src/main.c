@@ -139,12 +139,18 @@ int main(void)
 	const struct fw_info *s0_info = fw_info_find(s0_addr);
 	const struct fw_info *s1_info = fw_info_find(s1_addr);
 
-	if (!s1_info || (s0_info->version >= s1_info->version)) {
+	if (s0_info && s1_info) {
+		if (s0_info->version >= s1_info->version) {
+			validate_and_boot(s0_info, BOOT_SLOT_0);
+			validate_and_boot(s1_info, BOOT_SLOT_1);
+		} else {
+			validate_and_boot(s1_info, BOOT_SLOT_1);
+			validate_and_boot(s0_info, BOOT_SLOT_0);
+		}
+	} else if (s0_info) {
 		validate_and_boot(s0_info, BOOT_SLOT_0);
+	} else if (s1_info) {
 		validate_and_boot(s1_info, BOOT_SLOT_1);
-	} else {
-		validate_and_boot(s1_info, BOOT_SLOT_1);
-		validate_and_boot(s0_info, BOOT_SLOT_0);
 	}
 
 	printk("No bootable image found. Aborting boot.\r\n");
