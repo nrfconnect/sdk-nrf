@@ -20,8 +20,7 @@ LOG_MODULE_REGISTER(otperf, CONFIG_OTPERF_LOG_LEVEL);
 #define OTPERF_RESULT_RESPONSE_TIMEOUT 500
 #define OTPERF_FULL_BUFFER_TIMEOUT     50
 
-static uint8_t sample_packet[sizeof(struct otperf_udp_datagram) +
-			     sizeof(struct otperf_client_hdr_v1) + CONFIG_OTPERF_MAX_PACKET_SIZE];
+static uint8_t sample_packet[CONFIG_OTPERF_MAX_PACKET_SIZE];
 
 struct otperf_results *curr_results;
 

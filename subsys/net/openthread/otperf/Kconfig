@@ -30,11 +30,12 @@ config OTPERF_SHELL
 
 config OTPERF_MAX_PACKET_SIZE
 	int "Maximum packet size"
-	range 40 65535
-	default 1064
+	range 40 1232
+	default 1232
 	help
-	  Upper size limit for packets sent by otperf. Default allows for a 1kB
-	  payload with the 40 byte iperf UDP client header.
+	  Upper size limit for packets sent by otperf. Default allows for a 1.2kB
+	  payload with the 40 byte iperf UDP client header. Note that the maximum
+	  packet size is limited by the maximum MTU size of the OpenThread network which is 1280 bytes.
 
 config OTPERF_SERVER
 	bool "otperf server support"
