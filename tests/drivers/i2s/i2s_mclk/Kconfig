@@ -6,7 +6,7 @@
 
 mainmenu "I2S MCLK Test"
 
-config I2S_TEST_USE_GPIO_LOOPBACK
+config TEST_USE_GPIO_LOOPBACK
 	bool "Use GPIO loopback"
 	default y if DT_HAS_NORDIC_NRF_I2S_ENABLED || DT_HAS_NORDIC_NRF_TDM_ENABLED
 	help
@@ -14,7 +14,7 @@ config I2S_TEST_USE_GPIO_LOOPBACK
 	  data. This option is intended to be used for devices that do not
 	  provide the internal loopback functionality.
 
-config I2S_TEST_ALLOWED_DATA_OFFSET
+config TEST_I2S_ALLOWED_DATA_OFFSET
 	int "Allowed offset in received data"
 	default 2 if DT_HAS_NORDIC_NRF_I2S_ENABLED || DT_HAS_NORDIC_NRF_TDM_ENABLED
 	default 0
@@ -22,20 +22,20 @@ config I2S_TEST_ALLOWED_DATA_OFFSET
 	  Maximum allowed offset between sent and received samples. Non-zero
 	  value of this option may be needed when GPIO loopback is used.
 
-config I2S_TEST_NUMBER_OF_CHANNELS
+config TEST_NUMBER_OF_I2S_CHANNELS
 	int "Number of audio channels"
 	default 2
 	help
 	  Select number of audio channels. This value affects number of edges
 	  observed on TDM_FSYNC_M signal.
 
-config I2S_TEST_SKIP_I2S_DIR_RX
+config TEST_SKIP_I2S_DIR_RX
 	bool "Skip testing when I2S direction is I2S_DIR_RX"
 	help
 	  When set to 'y', tests on I2S configured with I2S_DIR_RX
 	  will be skipped.
 
-config I2S_TEST_SKIP_I2S_DIR_TX
+config TEST_SKIP_I2S_DIR_TX
 	bool "Skip testing when I2S direction is I2S_DIR_TX"
 	help
 	  When set to 'y', tests on I2S configured with I2S_DIR_TX
