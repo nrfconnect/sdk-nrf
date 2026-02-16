@@ -26,7 +26,6 @@ config SMS_STATUS_REPORT
 	  setting <ds> field enabled in SMS registration with AT+CNMI.
 
 module=SMS
-module-dep=LOG
 module-str= SMS library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

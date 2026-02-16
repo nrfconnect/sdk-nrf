@@ -30,16 +30,16 @@ config NET_L2_DECT_BR
 	  or Ethernet based NET_L2_ETHERNET mode can be used as a border router.
 	  If MODEM_CELLULAR is selected, then BR has only one sink and vice versa.
 
-module = NET_L2_DECT_BR
-module-str = Log level for DECT NR+ L2 Border Router / Sink
+module=NET_L2_DECT_BR
+module-str=DECT NR+ L2 Border Router / Sink
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-module = NET_L2_DECT
-module-str = Log level for DECT NR+ L2
+module=NET_L2_DECT
+module-str=DECT NR+ L2
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-module = NET_L2_DECT_MGMT
-module-str = Log level for DECT NR+ L2 management
+module=NET_L2_DECT_MGMT
+module-str=DECT NR+ L2 management
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # NET_L2_DECT

@@ -49,7 +49,6 @@ config PCD_NET_CORE_APP_OFFSET
 	depends on PCD_USE_CONSTANTS
 
 module=PCD
-module-dep=LOG
 module-str=Peripheral Core DFU
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

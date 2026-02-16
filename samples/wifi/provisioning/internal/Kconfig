@@ -135,9 +135,8 @@ config WIFI_PROV_MAX_BASE64_SIZE
 	help
 	  Maximum size for base64 input string in bytes.
 
-module = WIFI_PROV_INTERNAL
-module-dep = LOG
-module-str = Log level for sample
+module=WIFI_PROV_INTERNAL
+module-str=WiFi provisioning internal
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 source "Kconfig.zephyr"

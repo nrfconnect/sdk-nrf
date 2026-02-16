@@ -17,9 +17,7 @@ config UPDATE_JOB_PAYLOAD_LEN
 	default 1350
 
 module=AWS_JOBS
-module-dep=LOG
-module-str=Log level for AWS Jobs
-module-help=Enables AWS Jobs log messages.
+module-str=AWS Jobs
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # AWS_JOBS

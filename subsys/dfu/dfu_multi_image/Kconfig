@@ -43,7 +43,6 @@ config DFU_MULTI_IMAGE_ALIGN
 endif # DFU_MULTI_IMAGE_SAVE_PROGRESS
 
 module=DFU_MULTI_IMAGE
-module-dep=LOG
 module-str=DFU Multi Image
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 

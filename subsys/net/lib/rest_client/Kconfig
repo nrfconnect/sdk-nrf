@@ -25,9 +25,7 @@ config REST_CLIENT_SCKT_TLS_SESSION_CACHE_IN_USE
 	  TLS session cache, disable or enable.
 
 module=REST_CLIENT
-module-dep=LOG
-module-str=Log level for REST Client lib
-module-help=Enables REST Client log messages.
+module-str=REST Client lib
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # REST_CLIENT

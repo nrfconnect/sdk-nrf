@@ -13,7 +13,7 @@ menuconfig OTPERF
 if OTPERF
 
 module = OTPERF
-module-str = Log level for otperf
+module-str = otperf
 source "subsys/logging/Kconfig.template.log_config"
 
 config OTPERF_SHELL

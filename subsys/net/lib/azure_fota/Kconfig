@@ -58,9 +58,7 @@ config AZURE_FOTA_DOWNLOAD_PORT
 	default 80
 
 module=AZURE_FOTA
-module-dep=LOG
-module-str=Log level for Azure FOTA
-module-help=Enables Azure FOTA log messages.
+module-str=Azure FOTA
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # AZURE_FOTA

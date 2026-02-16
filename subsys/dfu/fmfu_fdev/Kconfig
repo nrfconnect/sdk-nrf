@@ -12,7 +12,7 @@ menuconfig FMFU_FDEV
 	depends on MBEDTLS_SHA256_C
 
 
-if (FMFU_FDEV)
+if FMFU_FDEV
 
 config FMFU_CDDL_DECODER_GENERATE
 	bool "Regenerate FMFU CBOR code from cddl using zcbor, for internal use."
@@ -36,7 +36,6 @@ if FMFU_FDEV_SKIP_PREVALIDATION
 endif
 
 module=FMFU_FDEV
-module-dep=LOG
 module-str=FMFU FDEV
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

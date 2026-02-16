@@ -371,7 +371,6 @@ config LWM2M_CARRIER_SHELL
 	  Include LwM2M carrier shell
 
 module=LWM2M_CARRIER
-module-dep=LOG
 module-str=LwM2M carrier library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

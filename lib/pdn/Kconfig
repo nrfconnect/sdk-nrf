@@ -100,7 +100,6 @@ config PDN_ESM_STRERROR
 	  The table and function take about 2 KB of FLASH.
 
 module=PDN
-module-dep=LOG
 module-str=PDN library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

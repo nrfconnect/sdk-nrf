@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 module=BOARD
-module-dep=LOG
-module-str=Log level for board
+module-str=board
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 if BOARD_THINGY91X_NRF5340_CPUAPP || BOARD_THINGY91X_NRF5340_CPUAPP_NS

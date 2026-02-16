@@ -611,7 +611,6 @@ config LTE_LC_PDN_ESM_STRERROR
 endif # LTE_LC_PDN_MODULE
 
 module = LTE_LINK_CONTROL
-module-dep = LOG
 module-str = LTE link control library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

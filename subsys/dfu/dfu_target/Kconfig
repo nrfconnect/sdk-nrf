@@ -7,7 +7,7 @@
 menuconfig DFU_TARGET
 	bool "Device Firmware Upgrade target API"
 
-if (DFU_TARGET)
+if DFU_TARGET
 
 config DFU_TARGET_MCUBOOT
 	bool "MCUBoot update support"
@@ -128,7 +128,6 @@ config DFU_TARGET_CUSTOM
 	  Enable support for custom updates using DFU target
 
 module=DFU_TARGET
-module-dep=LOG
 module-str=Device Firmware Upgrade
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

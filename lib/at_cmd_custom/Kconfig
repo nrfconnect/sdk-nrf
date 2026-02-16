@@ -10,7 +10,6 @@ menuconfig AT_CMD_CUSTOM
 if AT_CMD_CUSTOM
 
 module=AT_CMD_CUSTOM
-module-dep=LOG
 module-str= AT custom command library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

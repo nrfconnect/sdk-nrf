@@ -295,7 +295,6 @@ choice MEMFAULT_HTTP_PERIODIC_UPLOAD_CONTEXT
 endchoice
 
 module = MEMFAULT_NCS
-module-dep = LOG
 module-str = Memfault NCS module
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

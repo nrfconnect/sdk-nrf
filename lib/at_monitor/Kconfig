@@ -18,7 +18,6 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 	default 1152 if (LTE_LINK_CONTROL && LOG)
 
 module=AT_MONITOR
-module-dep=LOG
 module-str= AT notification monitor library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

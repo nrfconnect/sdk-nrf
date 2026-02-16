@@ -61,7 +61,6 @@ config DOWNLOADER_SHELL_BUF_SIZE
 endif # DOWNLOADER_SHELL
 
 module=DOWNLOADER
-module-dep=LOG
 module-str=Download client
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 

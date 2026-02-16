@@ -187,9 +187,7 @@ config NRF_CLOUD_HTTPS_DOWNLOADS
 endchoice
 
 module=NRF_CLOUD
-module-dep=LOG
-module-str=Log level for nRF Cloud
-module-help=Enables nRF Cloud log messages.
+module-str=nRF Cloud
 source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # "nRF Cloud"
