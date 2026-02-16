@@ -12,7 +12,7 @@
 
 #define I2S_DEV_NODE DT_ALIAS(i2s_node0)
 
-#define BLOCK_SIZE			CONFIG_I2S_TEST_BUFFER_SIZE
+#define BLOCK_SIZE			CONFIG_TEST_I2S_BUFFER_SIZE
 
 #if defined(CONFIG_COVERAGE)
 #define NUM_BLOCKS 2
@@ -65,7 +65,7 @@ static const struct i2s_config default_i2s_cfg = {
 	.mem_slab = &tx_0_mem_slab,
 };
 
-#if (CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET > 0)
+#if (CONFIG_TEST_I2S_ALLOWED_DATA_OFFSET > 0)
 /* Data offset may differ from test to test if
  * number of audio channels or word size has changed.
  */
@@ -84,7 +84,7 @@ static int verify_buf(uint8_t *rx_block, uint8_t val, uint32_t offset_in_bytes)
 	int sample_no = BLOCK_SIZE;
 	bool data_match = true;
 
-#if (CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET > 0)
+#if (CONFIG_TEST_I2S_ALLOWED_DATA_OFFSET > 0)
 	/* Offset -1 means that offset has to be detected. */
 	if (offset < 0) {
 		do {
@@ -188,7 +188,7 @@ static void i2s_dir_both_transfer_long(struct i2s_config *i2s_cfg, uint32_t offs
 
 	/* Configure I2S Dir Both transfer. */
 	ret = configure_stream(dev_i2s, I2S_DIR_BOTH, i2s_cfg);
-#if defined(CONFIG_I2S_TEST_BLOCK_SIZE_8_UNSUPPORTED) && (CONFIG_I2S_TEST_BUFFER_SIZE == 8)
+#if defined(CONFIG_TEST_I2S_BLOCK_SIZE_8_UNSUPPORTED) && (CONFIG_TEST_I2S_BUFFER_SIZE == 8)
 	zassert_equal(ret, -EINVAL, "Unexpected result %d", ret);
 	TC_PRINT("No communication check due to unsupported buffer size.\n");
 	return;
@@ -256,11 +256,11 @@ static void i2s_dir_both_transfer_long(struct i2s_config *i2s_cfg, uint32_t offs
 static uint32_t check_test_configuration(struct i2s_config *i2s_cfg)
 {
 	/* Convert max allowed offset in audio samples to bytes of data. */
-	uint32_t offset_in_bytes = CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET * i2s_cfg->channels
+	uint32_t offset_in_bytes = CONFIG_TEST_I2S_ALLOWED_DATA_OFFSET * i2s_cfg->channels
 		* (i2s_cfg->word_size / 8);
 
 	/* Skip test if allowed offset is same or larger than the buffer. */
-	if (offset_in_bytes >= CONFIG_I2S_TEST_BUFFER_SIZE) {
+	if (offset_in_bytes >= CONFIG_TEST_I2S_BUFFER_SIZE) {
 		TC_PRINT("Allowed data offset is to big for this test.\n");
 		ztest_test_skip();
 	}
@@ -569,7 +569,7 @@ ZTEST(i2s_buffer, test_2ch_16bit_at_48000)
  */
 ZTEST(i2s_buffer, test_1ch_32bit_at_08000)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;
@@ -585,7 +585,7 @@ ZTEST(i2s_buffer, test_1ch_32bit_at_08000)
 
 ZTEST(i2s_buffer, test_1ch_32bit_at_16000)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;
@@ -601,7 +601,7 @@ ZTEST(i2s_buffer, test_1ch_32bit_at_16000)
 
 ZTEST(i2s_buffer, test_1ch_32bit_at_32000)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;
@@ -617,7 +617,7 @@ ZTEST(i2s_buffer, test_1ch_32bit_at_32000)
 
 ZTEST(i2s_buffer, test_1ch_32bit_at_44100)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;
@@ -633,7 +633,7 @@ ZTEST(i2s_buffer, test_1ch_32bit_at_44100)
 
 ZTEST(i2s_buffer, test_1ch_32bit_at_48000)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;
@@ -653,7 +653,7 @@ ZTEST(i2s_buffer, test_1ch_32bit_at_48000)
  */
 ZTEST(i2s_buffer, test_2ch_32bit_at_08000)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;
@@ -669,7 +669,7 @@ ZTEST(i2s_buffer, test_2ch_32bit_at_08000)
 
 ZTEST(i2s_buffer, test_2ch_32bit_at_16000)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;
@@ -685,7 +685,7 @@ ZTEST(i2s_buffer, test_2ch_32bit_at_16000)
 
 ZTEST(i2s_buffer, test_2ch_32bit_at_32000)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;
@@ -701,7 +701,7 @@ ZTEST(i2s_buffer, test_2ch_32bit_at_32000)
 
 ZTEST(i2s_buffer, test_2ch_32bit_at_44100)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
 	uint32_t offset_in_bytes;
@@ -717,7 +717,7 @@ ZTEST(i2s_buffer, test_2ch_32bit_at_44100)
 
 ZTEST(i2s_buffer, test_2ch_32bit_at_48000)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED);
 	Z_TEST_SKIP_IFDEF(CONFIG_COVERAGE);
 
 	struct i2s_config i2s_cfg = default_i2s_cfg;
@@ -737,7 +737,7 @@ static void *suite_setup(void)
 {
 	TC_PRINT("I2S buffer size test on %s\n", CONFIG_BOARD_TARGET);
 	TC_PRINT("Testing I2S device %s\n", dev_i2s->name);
-	TC_PRINT("BUFFER_SIZE = %d\n", CONFIG_I2S_TEST_BUFFER_SIZE);
+	TC_PRINT("BUFFER_SIZE = %d\n", CONFIG_TEST_I2S_BUFFER_SIZE);
 
 	/* Check I2S Device. */
 	zassert_not_null(dev_i2s, "I2S device not found");
@@ -752,7 +752,7 @@ static void before(void *not_used)
 {
 	ARG_UNUSED(not_used);
 
-#if (CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET > 0)
+#if (CONFIG_TEST_I2S_ALLOWED_DATA_OFFSET > 0)
 	/* Data offset may differ when test uses I2S
 	 * with different configuration.
 	 * Force offset callculation for every test.
