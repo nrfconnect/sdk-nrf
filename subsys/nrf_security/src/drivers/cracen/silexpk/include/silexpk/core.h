@@ -319,6 +319,7 @@ struct sx_pk_ecurve {
 	uint32_t curveflags;
 	int sz;
 	const uint8_t *params;
+	int params_total_sz;
 };
 
 /** @} */
