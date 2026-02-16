@@ -9,7 +9,7 @@
 #include <zephyr/ztest.h>
 #include <zephyr/drivers/counter.h>
 
-#define SAMPLE_WIDTH		       CONFIG_I2S_SAMPLE_WIDTH
+#define SAMPLE_WIDTH		       CONFIG_TEST_I2S_WORD_SIZE
 #define WORDS_COUNT		       16
 #define TIMEOUT_MS		       2000
 #define NUMBER_OF_BLOCKS	       1
@@ -88,13 +88,13 @@ static int verify_rx_buffer(int32_t *rx_block)
 	int last_word = WORDS_COUNT;
 
 /* Find offset. */
-#if (CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET > 0)
+#if (CONFIG_TEST_I2S_ALLOWED_DATA_OFFSET > 0)
 	static ZTEST_DMEM int offset = -1;
 
 	if (offset < 0) {
 		do {
 			++offset;
-			if (offset > CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET) {
+			if (offset > CONFIG_TEST_I2S_ALLOWED_DATA_OFFSET) {
 				TC_PRINT("Allowed data offset exceeded\n");
 				return -TC_FAIL;
 			}

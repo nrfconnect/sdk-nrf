@@ -16,7 +16,7 @@ tests:
     harness_config:
       fixture: gpio_loopback
     extra_configs:
-      - CONFIG_I2S_SAMPLE_WIDTH_OPTION_8=y
+      - CONFIG_TEST_I2S_WORD_SIZE_8_BIT=y
   drivers.i2s.i2s_latency.sample_width_16bit:
     platform_allow:
       - nrf52840dk/nrf52840
@@ -29,7 +29,7 @@ tests:
     harness_config:
       fixture: gpio_loopback
     extra_configs:
-      - CONFIG_I2S_SAMPLE_WIDTH_OPTION_16=y
+      - CONFIG_TEST_I2S_WORD_SIZE_16_BIT=y
   drivers.i2s.i2s_latency.sample_width_32bit:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
@@ -41,7 +41,7 @@ tests:
     harness_config:
       fixture: gpio_loopback
     extra_configs:
-      - CONFIG_I2S_SAMPLE_WIDTH_OPTION_32=y
+      - CONFIG_TEST_I2S_WORD_SIZE_32_BIT=y
   drivers.i2s.i2s_latency.sample_width_8bit.nrf54h:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -51,7 +51,7 @@ tests:
     harness_config:
       fixture: i2s_loopback
     extra_configs:
-      - CONFIG_I2S_SAMPLE_WIDTH_OPTION_8=y
+      - CONFIG_TEST_I2S_WORD_SIZE_8_BIT=y
   drivers.i2s.i2s_latency.sample_width_16bit.nrf54h:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -61,7 +61,7 @@ tests:
     harness_config:
       fixture: i2s_loopback
     extra_configs:
-      - CONFIG_I2S_SAMPLE_WIDTH_OPTION_16=y
+      - CONFIG_TEST_I2S_WORD_SIZE_16_BIT=y
   drivers.i2s.i2s_latency.sample_width_32bit.nrf54h:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -71,4 +71,4 @@ tests:
     harness_config:
       fixture: i2s_loopback
     extra_configs:
-      - CONFIG_I2S_SAMPLE_WIDTH_OPTION_32=y
+      - CONFIG_TEST_I2S_WORD_SIZE_32_BIT=y
