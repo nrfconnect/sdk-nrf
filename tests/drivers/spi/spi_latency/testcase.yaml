@@ -35,5 +35,5 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
-      - CONFIG_MEASUREMENT_REPEATS=200
+      - CONFIG_TEST_MEASUREMENT_REPEATS=200
       - CONFIG_SPI_NRFX_RAM_BUFFER_SIZE=512

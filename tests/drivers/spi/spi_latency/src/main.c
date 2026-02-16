@@ -14,7 +14,7 @@
 #include <math.h>
 
 #define TEST_TIMER_COUNT_TIME_LIMIT_MS 500
-#define MEASUREMENT_REPEATS	       CONFIG_MEASUREMENT_REPEATS
+#define MEASUREMENT_REPEATS	       CONFIG_TEST_MEASUREMENT_REPEATS
 
 #define SPI_MODE                                                                                   \
 	(SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB |              \
