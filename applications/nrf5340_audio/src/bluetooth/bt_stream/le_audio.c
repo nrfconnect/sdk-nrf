@@ -7,7 +7,11 @@
 #include "le_audio.h"
 
 #include <zephyr/bluetooth/audio/bap.h>
+#include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/bluetooth/audio/audio.h>
+#include <../subsys/bluetooth/audio/bap_endpoint.h>
+/* TODO: Can be removed when access is granted to internal structures */
+#include <../subsys/bluetooth/audio/cap_internal.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(le_audio, CONFIG_BLE_LOG_LEVEL);
@@ -220,10 +224,14 @@ int le_audio_stream_dir_get(struct bt_bap_stream const *const stream)
 	int ret;
 	struct bt_bap_ep_info ep_info;
 
-	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
+	if (unlikely(stream->ep == NULL)) {
+		LOG_ERR("Stream has no endpoint");
+		return -EINVAL;
+	}
 
+	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
 	if (ret) {
-		LOG_WRN("Failed to get ep_info");
+		LOG_ERR("Failed to get ep_info %d", ret);
 		return ret;
 	}
 
@@ -358,15 +366,109 @@ void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_
 		} else if (dir == BT_AUDIO_DIR_SOURCE) {
 			LOG_INF("LC3 codec config for source:");
 		} else {
-			LOG_INF("LC3 codec config for <unknown dir>:");
+			LOG_ERR("LC3 codec config for <unknown dir>:");
 		}
 
-		LOG_INF("\tFrequency: %d Hz", freq_hz);
-		LOG_INF("\tDuration: %d us", dur_us);
-		LOG_INF("\tChannel allocation: 0x%x", chan_allocation);
-		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
-		LOG_INF("\tFrames per SDU: %d", frame_blks_per_sdu);
+		LOG_INF("\tFrequency:\t %d Hz", freq_hz);
+		LOG_INF("\tDuration:\t %d us", dur_us);
+		LOG_INF("\tChan alloc:\t 0x%x", chan_allocation);
+		LOG_INF("\tOct pr frame:\t %d (%d bps)", octets_per_sdu, bitrate);
+		LOG_INF("\tFrames pr SDU:\t %d", frame_blks_per_sdu);
 	} else {
 		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
 	}
+}
+
+int le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
+{
+	if (stream == NULL || stream->qos == NULL) {
+		LOG_WRN("Invalid parameters to print QoS");
+		return -EINVAL;
+	}
+
+	LOG_INF("BAP stream (%p) QoS:", (void *)stream);
+	LOG_INF("\tPres dly:\t %d us", stream->qos->pd);
+	if (stream->qos->framing == BT_BAP_QOS_CFG_FRAMING_UNFRAMED) {
+		LOG_INF("\tFraming:\t Unframed");
+	} else if (stream->qos->framing == BT_BAP_QOS_CFG_FRAMING_FRAMED) {
+		LOG_INF("\tFraming:\t Framed");
+	} else {
+		LOG_ERR("\tFraming:\t Unknown (%d)", stream->qos->framing);
+	}
+
+	if (stream->qos->phy == BT_BAP_QOS_CFG_1M) {
+		LOG_INF("\tRadio PHY:\t 1M");
+	} else if (stream->qos->phy == BT_BAP_QOS_CFG_2M) {
+		LOG_INF("\tRadio PHY:\t 2M");
+	} else if (stream->qos->phy == BT_BAP_QOS_CFG_CODED) {
+		LOG_INF("\tRadio PHY:\t Coded");
+	} else {
+		LOG_ERR("\tRadio PHY:\t Unknown (%d)", stream->qos->phy);
+	}
+
+	LOG_INF("\tRecmd. ret.:\t %d", stream->qos->rtn);
+	LOG_INF("\tMax SDU size:\t %d", stream->qos->sdu);
+
+#if defined(CONFIG_BT_BAP_BROADCAST_SOURCE) || defined(CONFIG_BT_BAP_UNICAST)
+	LOG_INF("\tMax trans lat:\t %d ms", stream->qos->latency);
+#endif /*  CONFIG_BT_BAP_BROADCAST_SOURCE || CONFIG_BT_BAP_UNICAST */
+	LOG_INF("\tSDU interval:\t %d us", stream->qos->interval);
+
+	return 0;
+}
+
+int le_audio_print_unicast_group(struct bt_cap_unicast_group const *const unicast_group)
+{
+	if (unicast_group == NULL) {
+		LOG_WRN("Invalid parameters to print unicast group");
+		return -EINVAL;
+	}
+
+	LOG_INF("Unicast Group Index: %d", unicast_group->bap_unicast_group->index);
+
+	if (unicast_group->bap_unicast_group->sink_pd != BT_BAP_PD_UNSET) {
+		LOG_INF("\tSink pres dly:\t %u us", unicast_group->bap_unicast_group->sink_pd);
+	} else {
+		LOG_INF("\tSink pres dly:\t Not set");
+	}
+
+	if (unicast_group->bap_unicast_group->source_pd != BT_BAP_PD_UNSET) {
+		LOG_INF("\t Src pres dly:\t %u us", unicast_group->bap_unicast_group->source_pd);
+	} else {
+		LOG_INF("\t Src pres dly:\t Not set");
+	}
+
+	if (!unicast_group->bap_unicast_group->cig_param.c_to_p_interval) {
+		LOG_INF("\tC->P interval:\t Not set (%d)",
+			unicast_group->bap_unicast_group->cig_param.c_to_p_interval);
+	} else {
+		LOG_INF("\tC->P interval:\t %d us",
+			unicast_group->bap_unicast_group->cig_param.c_to_p_interval);
+	}
+
+	if (!unicast_group->bap_unicast_group->cig_param.c_to_p_latency) {
+		LOG_INF("\tC->P latency:\t Not set (%d)",
+			unicast_group->bap_unicast_group->cig_param.c_to_p_latency);
+	} else {
+		LOG_INF("\tC->P latency:\t %d ms",
+			unicast_group->bap_unicast_group->cig_param.c_to_p_latency);
+	}
+
+	if (!unicast_group->bap_unicast_group->cig_param.p_to_c_interval) {
+		LOG_INF("\tP->C interval:\t Not set (%d)",
+			unicast_group->bap_unicast_group->cig_param.p_to_c_interval);
+	} else {
+		LOG_INF("\tP->C interval:\t %d us",
+			unicast_group->bap_unicast_group->cig_param.p_to_c_interval);
+	}
+
+	if (!unicast_group->bap_unicast_group->cig_param.p_to_c_latency) {
+		LOG_INF("\tP->C latency:\t Not set (%d)",
+			unicast_group->bap_unicast_group->cig_param.p_to_c_latency);
+	} else {
+		LOG_INF("\tP->C latency:\t %d ms",
+			unicast_group->bap_unicast_group->cig_param.p_to_c_latency);
+	}
+
+	return 0;
 }
