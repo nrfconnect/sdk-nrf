@@ -13,7 +13,7 @@
 #define I2S_DEV_NODE DT_ALIAS(i2s_node0)
 
 #define WORD_SIZE 16U
-#define NUMBER_OF_CHANNELS CONFIG_I2S_TEST_NUMBER_OF_CHANNELS
+#define NUMBER_OF_CHANNELS CONFIG_TEST_NUMBER_OF_I2S_CHANNELS
 #define FRAME_CLK_FREQ 1000
 
 #define NUM_BLOCKS 2
@@ -114,13 +114,13 @@ static int verify_buf(int16_t *rx_block)
 	int last_word = WORDS_COUNT;
 
 /* Find offset. */
-#if (CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET > 0)
+#if (CONFIG_TEST_I2S_ALLOWED_DATA_OFFSET > 0)
 	static ZTEST_DMEM int offset = -1;
 
 	if (offset < 0) {
 		do {
 			++offset;
-			if (offset > CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET) {
+			if (offset > CONFIG_TEST_I2S_ALLOWED_DATA_OFFSET) {
 				TC_PRINT("Allowed data offset exceeded\n");
 				return -TC_FAIL;
 			}
@@ -174,7 +174,7 @@ static int configure_stream(const struct device *dev_i2s, enum i2s_dir dir)
 				| I2S_OPT_BIT_CLK_MASTER | I2S_OPT_BIT_CLK_GATED;
 	}
 
-	if (!IS_ENABLED(CONFIG_I2S_TEST_USE_GPIO_LOOPBACK)) {
+	if (!IS_ENABLED(CONFIG_TEST_USE_GPIO_LOOPBACK)) {
 		i2s_cfg.options |= I2S_OPT_LOOPBACK;
 	}
 
@@ -267,7 +267,7 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_RX)
 	size_t rx_size;
 	int ret;
 
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_SKIP_I2S_DIR_RX);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SKIP_I2S_DIR_RX);
 
 	/* Configure I2S Dir RX transfer. */
 	ret = configure_stream(dev_i2s, I2S_DIR_RX);
@@ -305,7 +305,7 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_TX)
 	void *tx_block;
 	int ret;
 
-	Z_TEST_SKIP_IFDEF(CONFIG_I2S_TEST_SKIP_I2S_DIR_TX);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SKIP_I2S_DIR_TX);
 
 	/* Configure I2S Dir TX transfer. */
 	ret = configure_stream(dev_i2s, I2S_DIR_TX);
@@ -374,7 +374,7 @@ static void *suite_setup(void)
 
 	TC_PRINT("WORD_SIZE: %u\n", WORD_SIZE);
 	TC_PRINT("NUMBER_OF_CHANNELS: %u\n", NUMBER_OF_CHANNELS);
-	TC_PRINT("I2S_TEST_ALLOWED_DATA_OFFSET: %u\n", CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET);
+	TC_PRINT("TEST_I2S_ALLOWED_DATA_OFFSET: %u\n", CONFIG_TEST_I2S_ALLOWED_DATA_OFFSET);
 	TC_PRINT("LRCK: at least %d falling edges are expected\n", expected_lrck);
 	TC_PRINT("MCLK: at least %d falling edges are expected\n", expected_mclk);
 	TC_PRINT("===================================================================\n");
