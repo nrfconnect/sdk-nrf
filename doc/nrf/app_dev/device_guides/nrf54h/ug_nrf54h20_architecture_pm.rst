@@ -28,7 +28,7 @@ The ARM Cortex CPUs of the nRF54H20 SoC currently support the following software
 Each CPU in the nRF54H20 SoC tries to preserve as much power as possible, independently from other CPUs.
 The power management subsystem, operating independently within each CPU, continuously selects the most optimal power state based on the current conditions of the CPU.
 
-The following sections describes the details of each of the software power states available on the nRF54H20 SoC.
+The following sections describe the details of each of the software power states available on the nRF54H20 SoC.
 
 Active
 ======

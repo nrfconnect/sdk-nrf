@@ -3,10 +3,6 @@
 Developing with nRF54H Series
 #############################
 
-.. note::
-
-   All software for the nRF54H20 SoC is experimental, and hardware availability is restricted to the participants in the customer sampling program.
-
 .. |nrf_series| replace:: devices of the nRF54H Series
 
 .. include:: /includes/guides_complementary_to_app_dev.txt
@@ -30,23 +26,52 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
 
 .. toctree::
    :maxdepth: 2
-   :caption: Subpages:
+   :caption: Get started with the nRF54H20 DK
 
    ug_nrf54h20_gs
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Understand the hardware
+
    ug_nrf54h20_architecture
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Configure the nRF54H20 SoC on your custom PCB
+
+   ug_nrf54h20_custom_pcb
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Develop and debug
+
    ug_nrf54h20_configuration
-   ug_nrf54h20_keys
    ug_nrf54h20_logging
    ug_nrf54h20_debugging
-   ug_nrf54h20_custom_pcb
-   ug_nrf54h20_ironside
    ug_nrf54h20_flpr
    ug_nrf54h20_ppr
    ug_nrf54h20_zms
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Secure your application
+
+   ug_nrf54h20_ironside
+   ug_nrf54h20_keys
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Configure bootloader for Device Firmware Update (DFU)
+
    ug_nrf54h20_mcuboot_dfu
    ug_nrf54h20_partitioning_merged
    ug_nrf54h20_mcuboot_manifest
    ug_nrf54h20_mcuboot_requests
    ug_nrf54h_ecies_x25519
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Optimize the power management of your application
+
    ug_nrf54h20_pm_optimization
-   ug_nrf54h20_architecture_pinmap
