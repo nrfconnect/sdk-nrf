@@ -121,7 +121,8 @@ class OptionsFromKconfig(SphinxDirective):
             lines.append(f'{text}\n')
             try:
                 help_ = sym.nodes[0].help
-                lines.append(f'{help_}\n')
+                if help_ is not None:
+                    lines.append(f'{help_}\n')
             except Exception:
                 pass
 
