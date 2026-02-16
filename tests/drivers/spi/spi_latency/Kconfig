@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config MEASUREMENT_REPEATS
+config TEST_MEASUREMENT_REPEATS
 	int "Number of latency measurements repeats"
 	default 100
 
