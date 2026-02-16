@@ -53,13 +53,6 @@ static struct server_store servers[MAX_SERVERS];
  */
 static struct server_store add_server;
 
-struct pd {
-	uint32_t min;
-	uint32_t pref_min;
-	uint32_t pref_max;
-	uint32_t max;
-};
-
 /* Add a new server */
 static int server_add(struct server_store *server)
 {
@@ -466,12 +459,6 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg const *const new,
 	return false;
 }
 
-struct foreach_trans_lat_store {
-	enum bt_audio_dir dir;
-	uint16_t max_trans_lat_ms;
-	uint8_t streams_checked;
-};
-
 int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir dir,
 			   enum bt_audio_location loc)
 {
@@ -835,11 +822,6 @@ int srv_store_codec_cap_set(struct bt_conn const *const conn, enum bt_audio_dir 
 		return ret;
 	}
 
-	if (codec->data_len > CONFIG_BT_AUDIO_CODEC_CAP_MAX_DATA_SIZE) {
-		LOG_ERR("Codec data length exceeds maximum size: %d", codec->data_len);
-		return -EINVAL;
-	}
-
 	if (dir == BT_AUDIO_DIR_SINK) {
 		/* num_codec_caps is an increasing index that starts at 0 */
 		if (server->snk.num_codec_caps >= ARRAY_SIZE(server->snk.codec_caps)) {
@@ -973,8 +955,7 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 	/* Check if server already exists */
 	ret = srv_store_from_conn_get(conn, &temp_server);
 	if (ret == 0) {
-		/* Server already exists, no need to add again, but we update the conn
-		 * pointer */
+		/* Server already exists, no need to add again, but we update the conn pointer*/
 		temp_server->conn = conn;
 		LOG_DBG("Server already exists for conn: %p", (void *)conn);
 		return -EALREADY;
@@ -1173,54 +1154,6 @@ int srv_store_remove_all(bool force)
 	return 0;
 }
 
-int _srv_store_lock(k_timeout_t timeout, const char *file, int line)
-{
-	int ret;
-
-	ret = k_sem_take(&sem, timeout);
-	if (ret) {
-
-#if CONFIG_DEBUG
-		LOG_ERR("Sem take error: %d. Owner: %s Line: %d", ret, owner_file, owner_line);
-#else
-		LOG_ERR("Sem take error: %d", ret);
-#endif
-		return ret;
-	}
-
-	atomic_ptr_set(&lock_owner, k_current_get());
-#if CONFIG_DEBUG
-	if (strlen(file) > ARRAY_SIZE(owner_file) - 1) {
-		strncpy(owner_file, file, ARRAY_SIZE(owner_file) - 1);
-	} else {
-		strcpy(owner_file, file);
-	}
-	owner_line = line;
-#endif
-	return 0;
-}
-
-void srv_store_unlock(void)
-{
-	valid_entry_check(__func__);
-
-	LOG_DBG("Unlocking srv_store");
-
-	atomic_ptr_set(&lock_owner, NULL);
-#if CONFIG_DEBUG
-	owner_line = -1;
-	owner_file[0] = '\0';
-#endif
-	k_sem_give(&sem);
-}
-
-int srv_store_init(void)
-{
-	valid_entry_check(__func__);
-
-	return srv_store_remove_all(false);
-}
-
 struct foreach_stream_pres_dly {
 	int ret;
 	struct bt_cap_unicast_group *unicast_group;
@@ -1232,27 +1165,10 @@ struct foreach_stream_pres_dly {
 	uint32_t existing_pres_dly_us_src;
 };
 
-static bool streams_calc_pres_dly(struct bt_cap_stream *stream, void *user_data)
+static bool foreach_stream_pres_dly_calc(struct bt_cap_stream *stream, void *user_data)
 {
 	int ret;
 	struct foreach_stream_pres_dly *ctx = (struct foreach_stream_pres_dly *)user_data;
-	// struct bt_cap_unicast_group_info info;
-
-	// ret = bt_cap_unicast_group_get_info(ctx->unicast_group, &info);
-	// if (ret) {
-	// 	LOG_ERR("Failed to get unicast group info: %d", ret);
-	// 	ctx->ret = ret;
-	// 	return true;
-	// }
-
-	// if (stream->bap_stream.group != info.unicast_group) {
-	// 	/* The existing stream is not in the same group as we are checking.
-	// 	This is not an error as such, but the system for now supports a single group.*/
-	// 	LOG_ERR("Existing stream group (%p) not same as incoming stream group (%p)",
-	// 		(void *)info.unicast_group, stream->bap_stream.group);
-	// 	ctx->ret = -EINVAL;
-	// 	return true;
-	// }
 
 	if (stream->bap_stream.ep == NULL) {
 		LOG_ERR("Existing stream has no ep set yet.");
@@ -1381,10 +1297,6 @@ static void pd_print(struct pd_struct const *const pref, uint32_t existing_pd_us
 	LOG_INF("\tExisting PD:\t %s us, selected: %s us", existing_pd_buf, calculated_pd_buf);
 }
 
-// This needs to be called only once, after all streams have been through the configured cb
-
-/// We need to get the output of the source and sink QoS structs. Take the prints out of
-// this folder.
 int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_t *pres_dly_snk_us,
 			     uint32_t *pres_dly_src_us, struct pd_struct *common_pd_snk,
 			     struct pd_struct *common_pd_src)
@@ -1418,7 +1330,7 @@ int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_
 		.existing_pres_dly_us_src = UINT32_MAX,
 	};
 
-	ret = bt_cap_unicast_group_foreach_stream(unicast_group, streams_calc_pres_dly,
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, foreach_stream_pres_dly_calc,
 						  (void *)&foreach_data);
 	if (ret) {
 		LOG_ERR("Failed to iterate streams in group: %d", ret);
@@ -1596,7 +1508,6 @@ static bool stream_max_trans_lat_find(struct bt_cap_stream *stream, void *user_d
 	return false;
 }
 
-// This needs to be called only once, after all streams have been through the configured cb
 int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
 				     uint16_t *max_trans_lat_snk_ms, uint16_t *max_trans_lat_src_ms)
 {
@@ -1608,10 +1519,6 @@ int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
 		LOG_ERR("NULL parameter!");
 		return -EINVAL;
 	}
-
-	/* All streams of a given direction within the CIG must have the same
-	 * transport latency. See BAP spec (BAP_v1.0.2 section 7.2.1)
-	 */
 
 	struct foreach_stream_mtl foreach_data = {
 		.ret = 0,
@@ -1746,4 +1653,52 @@ int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
 	}
 
 	return 0;
+}
+
+int _srv_store_lock(k_timeout_t timeout, const char *file, int line)
+{
+	int ret;
+
+	ret = k_sem_take(&sem, timeout);
+	if (ret) {
+
+#if CONFIG_DEBUG
+		LOG_ERR("Sem take error: %d. Owner: %s Line: %d", ret, owner_file, owner_line);
+#else
+		LOG_ERR("Sem take error: %d", ret);
+#endif
+		return ret;
+	}
+
+	atomic_ptr_set(&lock_owner, k_current_get());
+#if CONFIG_DEBUG
+	if (strlen(file) > ARRAY_SIZE(owner_file) - 1) {
+		strncpy(owner_file, file, ARRAY_SIZE(owner_file) - 1);
+	} else {
+		strcpy(owner_file, file);
+	}
+	owner_line = line;
+#endif
+	return 0;
+}
+
+void srv_store_unlock(void)
+{
+	valid_entry_check(__func__);
+
+	LOG_DBG("Unlocking srv_store");
+
+	atomic_ptr_set(&lock_owner, NULL);
+#if CONFIG_DEBUG
+	owner_line = -1;
+	owner_file[0] = '\0';
+#endif
+	k_sem_give(&sem);
+}
+
+int srv_store_init(void)
+{
+	valid_entry_check(__func__);
+
+	return srv_store_remove_all(false);
 }

@@ -379,7 +379,6 @@ void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_
 	}
 }
 
-<<<<<<< HEAD
 int le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
 {
 	if (stream == NULL || stream->qos == NULL) {
@@ -475,10 +474,13 @@ int le_audio_print_unicast_group(struct bt_cap_unicast_group const *const unicas
 }
 =======
 void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
+=======
+	int le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
+>>>>>>> 57af1113f30 (Applications: nrf5340_audio: Cleanup before review)
 {
 	if (stream == NULL || stream->qos == NULL) {
 		LOG_WRN("Invalid parameters to print QoS");
-		return;
+		return -EINVAL;
 	}
 
 	LOG_INF("BAP stream (%p) QoS:", (void *)stream);
@@ -507,7 +509,7 @@ void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
 #if defined(CONFIG_BT_BAP_BROADCAST_SOURCE) || defined(CONFIG_BT_BAP_UNICAST)
 	LOG_INF("\tMax trans lat:\t %d ms", stream->qos->latency);
 #endif /*  CONFIG_BT_BAP_BROADCAST_SOURCE || CONFIG_BT_BAP_UNICAST */
-	<<<<<<< HEAD LOG_INF("\t SDU interval: %d us", stream->qos->interval);
+	<<<<<<< HEAD < < < < < < < HEAD LOG_INF("\t SDU interval: %d us", stream->qos->interval);
 <<<<<<< HEAD
 };
 >>>>>>> 4af78bbab40 (Applications: nrf5340_audio: Added debug prints)
@@ -516,8 +518,12 @@ void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
 LOG_INF("\tSDU interval:\t %d us", stream->qos->interval);
 >>>>>>> 8e069b00ec6 (Applications: nrf5340_audio: bidir and PD run)
 }
+=======
+LOG_INF("\tSDU interval:\t %d us", stream->qos->interval);
+>>>>>>> 57af1113f30 (Applications: nrf5340_audio: Cleanup before review)
 
-// These values will be updated after group create or reconfig.
+return 0;
+}
 
 int le_audio_print_unicast_group(struct bt_cap_unicast_group const *const unicast_group)
 {
@@ -575,4 +581,7 @@ int le_audio_print_unicast_group(struct bt_cap_unicast_group const *const unicas
 
 	return 0;
 }
+<<<<<<< HEAD
 >>>>>>> 678af0a700b (Applications: nrf5340_audio: Added new functions pres MTL)
+=======
+>>>>>>> 57af1113f30 (Applications: nrf5340_audio: Cleanup before review)
