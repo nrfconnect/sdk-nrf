@@ -357,8 +357,10 @@ tests:
       - shell_SHIELD="nrf7002eb2"
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
