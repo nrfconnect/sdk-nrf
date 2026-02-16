@@ -687,6 +687,11 @@ Other libraries
 * Deprecated :ref:`ei_wrapper` library.
   Replaced by Edge Impulse SDK in `Edge AI Add-on for nRF Connect SDK`_.
 
+* :ref:`emds_readme` library:
+
+  * Removed strict dependency on the Partition Manager.
+    The Partition Manager can still be used with the library, but it is deprecated and not recommended for new designs.
+
 Shell libraries
 ---------------
 
@@ -808,3 +813,4 @@ Documentation
 =============
 
 * Removed references to JITP in different areas of the documentation.
+* Updated the :ref:`emds_readme` library documentation to use static device tree partitions instead of the Partition Manager.
