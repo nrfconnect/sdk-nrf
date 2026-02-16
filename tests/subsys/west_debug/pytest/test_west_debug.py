@@ -59,7 +59,7 @@ def west_tester(dut: DeviceAdapter, main_command: str, input_data: str, expected
     gdb_port = find_free_port()
     cmd = (
         f"west {main_command}"
-        f" -d {BUILD_DIR} --skip-rebuild --"
+        f" -d {BUILD_DIR} --no-rebuild --"
         f" --dev-id {SEGGER_ID}"
         f" --gdb-port {gdb_port}"
         f" --domain west_debug"
@@ -104,7 +104,7 @@ def test_west_debug(dut: DeviceAdapter):
     Start debug session by calling `west debug` command.
     Set brakepoint and check that breakpoint was hit.
     """
-    west_tester(dut, "debug", "b main.c:15\nc\ndisconnect\nq\n", r"15\s+counter\+\+;")
+    west_tester(dut, "debug", "b main.c:14\nc\ndisconnect\nq\n", r"14\s+counter\+\+;")
 
 
 def test_west_attach(dut: DeviceAdapter):
