@@ -20,7 +20,7 @@ Technical solution
 ******************
 
 A single Interprocessor Communication instance used in the nRF54H20 SoC allows full-duplex communication between two cores.
-It support only unicast messages.
+It supports only unicast messages.
 
 To communicate with multiple peers, a core requires multiple IPC instances, at least as many as the number of peers.
 It is possible to create multiple IPC instances towards a single peer to separate messages with different priority levels.
@@ -116,8 +116,8 @@ Each ICMsg library instance requires the following:
 
 The ICMsg library is designed to efficiently send short messages to a peer.
 Its buffer allocation is not optimized for bulk transfer of long messages and it does not provide a zero-copy model.
-To transfer bigger amount of data (like network packets) between two cores, ICMsg can be used as control plane.
-However, you must use as data plane memory allocation mechanisms optimized for bigger data and supporting flexible memory allocation and a zero-copy model (like Zephyr's :ref:`zephyr:net_buf_interface`).
+To transfer larger amounts of data (like network packets) between two cores, use ICMsg as the control plane.
+For the data plane, use a memory allocation mechanism that supports flexible allocation and a zero-copy model, such as Zephyr's :ref:`zephyr:net_buf_interface`.
 
 .. note::
    The memory allocation mechanism for the data plane is a single-core memory allocation working on shared memory buffers.
@@ -136,7 +136,7 @@ This library provides a unified API for IPC transports and it integrates specifi
 ICMsg is integrated as one of the available IPC service backends.
 The library is responsible for creating IPC instances based on the system configuration described in the devicetree.
 
-It is recommended to use the ipc_service API to perform inter-processor communication in the nRF54H20 SoC.
+Use the ipc_service API to perform interprocessor communication in the nRF54H20 SoC.
 
 For more information, consult the :ref:`IPC service <zephyr:ipc_service>` library documentation.
 

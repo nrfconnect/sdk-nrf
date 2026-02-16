@@ -76,7 +76,7 @@ The following is a description of the boot sequence steps:
 #. Each of the local domains is responsible to configure its local resources partitioning.
 
 .. note::
-   To better understand the boot process and how the |ISE| works, it is strongly suggested to read the entire :ref:`ug_nrf54h20_ironside` documentation page.
+   Read the entire :ref:`ug_nrf54h20_ironside` documentation page to better understand the boot process and how the |ISE| works.
 
 Boot sequence with MCUboot
 ==========================
