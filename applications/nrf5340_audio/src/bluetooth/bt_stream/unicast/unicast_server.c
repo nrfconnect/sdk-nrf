@@ -452,8 +452,13 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 
 static void stream_qos_configured_cb(struct bt_bap_stream *stream)
 {
+	int ret;
+
 	LOG_INF("QoS configured for stream %p", stream);
-	le_audio_print_qos_from_stream(stream);
+	ret = le_audio_print_qos_from_stream(stream);
+	if (ret) {
+		LOG_ERR("Failed to print QoS from stream: %d", ret);
+	}
 }
 
 static struct bt_bap_stream_ops stream_ops = {
