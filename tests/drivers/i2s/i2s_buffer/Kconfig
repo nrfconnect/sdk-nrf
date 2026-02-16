@@ -6,7 +6,7 @@
 
 mainmenu "I2S Buffer Test"
 
-config I2S_TEST_ALLOWED_DATA_OFFSET
+config TEST_I2S_ALLOWED_DATA_OFFSET
 	int "Allowed offset in received data"
 	default 2 if DT_HAS_NORDIC_NRF_I2S_ENABLED
 	default 0
@@ -21,18 +21,18 @@ config I2S_TEST_ALLOWED_DATA_OFFSET
 	  - 4 bytes for mono 32 bit word size.
 	  - 8 bytes for stereo 32 bit word size.
 
-config I2S_TEST_BUFFER_SIZE
+config TEST_I2S_BUFFER_SIZE
 	int "Number of bytes send in one transaction"
 	default 16
 	help
 	  Value has to be a multiple of 8 bytes. Test supports up to 32 bytes.
 
-config I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED
+config TEST_I2S_WORD_SIZE_32_BIT_UNSUPPORTED
 	bool "32 bit word size is not supported by the driver"
 	help
 	  When set to 'y' testing 32 bit word size is skipped.
 
-config I2S_TEST_BLOCK_SIZE_8_UNSUPPORTED
+config TEST_I2S_BLOCK_SIZE_8_UNSUPPORTED
 	bool "Block_size of 8 bytes is not supported by the driver"
 	default y if DT_HAS_NORDIC_NRF_TDM_ENABLED
 	help
