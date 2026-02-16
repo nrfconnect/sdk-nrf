@@ -102,7 +102,7 @@ static void *suite_setup(void)
 
 	}
 
-#if defined CONFIG_CHECK_PULLS
+#if defined CONFIG_TEST_CHECK_PULLS
 	for (i = 0; i < npairs; i++) {
 		rc = gpio_pin_configure_dt(&in_pins[i], GPIO_INPUT | GPIO_PULL_UP);
 		zassert_equal(rc, 0, "IN[%d] config failed", i);
