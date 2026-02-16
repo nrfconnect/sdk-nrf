@@ -42,7 +42,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    ug_nrf54h20_ironside
    ug_nrf54h20_flpr
    ug_nrf54h20_ppr
-   ../nrf54l/zms.rst
+   ug_nrf54h20_zms
    ug_nrf54h20_mcuboot_dfu
    ug_nrf54h20_partitioning_merged
    ug_nrf54h20_mcuboot_manifest
