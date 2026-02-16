@@ -6,11 +6,11 @@
 
 source "Kconfig.zephyr"
 
-config ASYNC_AND_INT
+config TEST_ASYNC_AND_INT
 	bool "Async and int mode uart transmission test"
 
-config ASYNC_AND_POLL
+config TEST_ASYNC_AND_POLL
 	bool "Async and poll mode uart transmission test"
 
-config INT_AND_POLL
+config TEST_INT_AND_POLL
 	bool "Int and poll mode uart transmission test"
