@@ -7,18 +7,18 @@ nRF54H20 domains
    :local:
    :depth: 2
 
-The nRF54H20 is partitioned into functional blocks, called *Domains*.
-The domains containing the user-programmable main CPUs and associated functions are called *Cores*.
+The nRF54H20 is partitioned into functional blocks, called *domains*.
+The domains containing the user-programmable main CPUs and associated functions are called *cores*.
 Most memory and peripherals can be flexibly allocated to cores at compile time.
 To make this possible, the memory and peripherals are located in a separate area called the Global Domain.
 Security functions are centralized into the Secure Domain.
 
 The following image shows the domains in the nRF54H20:
 
-.. figure:: images/nRF54H20_Domains.svg
-   :alt: nRF54H20 Domains
+.. figure:: images/nRF54H20_domains.svg
+   :alt: nRF54H20 domains
 
-   nRF54h20 Domains
+   nRF54H20 domains
 
 The CPU cores in the nRF54H20 are based on two types of CPU architectures:
 

@@ -34,7 +34,7 @@ There is also a large part of the RAM in the global domain to be shared between 
 Local RAM
 =========
 
-Local RAM is present in each of local domains
+Local RAM is present in each of the local domains
 
 Application core RAM
 --------------------

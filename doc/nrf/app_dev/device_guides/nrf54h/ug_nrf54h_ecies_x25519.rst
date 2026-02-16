@@ -18,7 +18,7 @@ Limitations
 
 The current implementation has the following limitations:
 
-* On the nRF54H20 SoC,ECIES-X25519 key exchange requires the ED25519 signature algorithm (default).
+* On the nRF54H20 SoC, ECIES-X25519 key exchange requires the ED25519 signature algorithm (default).
 * Encryption is not supported when using MCUboot in direct-xip mode.
 * HMAC and HKDF tools currently use the SHA-256 hash algorithm.
 

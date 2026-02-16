@@ -18,7 +18,7 @@ The bootloader requests module provides APIs for the following:
 
 * Confirm an image after a successful update.
 
-  This functionality is used to mark an updated image as valid from the bootloader context, allowing to set the whole application partition as non-updatable before executing.
+  This functionality marks an updated image as valid from the bootloader context, allowing you to set the whole application partition as non-updatable before executing.
   In such case, the application simply requests the bootloader to confirm the image during the next boot instead of modifying the active image partition directly.
   The bootloader handles these requests before entering the main boot logic, ensuring that the image selection and update logic acts as if the image was confirmed by the application itself.
   The bootloader always erases the confirm requests after processing them, ensuring that the image is confirmed only once.

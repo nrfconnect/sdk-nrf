@@ -14,7 +14,7 @@ Prepare your PCB
 
 First, you need to create your PCB for the nRF54H20 SoC.
 
-It is highly recommended to use the PCB layouts and component values provided by Nordic Semiconductor, especially for clock and power sources, considering the following limitations:
+Use the PCB layouts and component values provided by Nordic Semiconductor, especially for clock and power sources, considering the following limitations:
 
 * The DC/DC inductor must be present on the PCB for any of the supported power schemes.
   Use one of the following power supply options:

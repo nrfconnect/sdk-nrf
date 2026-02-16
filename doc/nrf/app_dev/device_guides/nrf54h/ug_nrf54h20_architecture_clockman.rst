@@ -107,7 +107,7 @@ Global HSFLL
 ============
 
 The firmware can request this clock to run at a lower frequency than its default of 320 MHz.
-It is recommended to leave this clock at its default frequency.
+Leave this clock at its default frequency.
 Note the following if the frequency is lowered:
 
 * The MRAM access latency will be increased, thus lowering overall CPU performance when running code from MRAM.
@@ -123,7 +123,7 @@ Local HSFLL
 ===========
 
 The firmware can request this clock to run at a lower frequency than its default.
-It is recommended to leave this clock at its default frequency.
+Leave this clock at its default frequency.
 If the frequency is lowered, the CPU performance will decrease.
 This results in the CPU running for longer, thus increasing power consumption.
 Furthermore, the ISR handling latency will be increased.
