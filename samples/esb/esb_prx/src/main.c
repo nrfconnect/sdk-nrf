@@ -16,7 +16,7 @@
 #include <zephyr/types.h>
 #include <zephyr/pm/device_runtime.h>
 #include <dk_buttons_and_leds.h>
-#if defined(CONFIG_CLOCK_CONTROL_NRF2)
+#if defined(CONFIG_CLOCK_CONTROL_NRFS)
 #include <hal/nrf_lrcconf.h>
 #endif
 #if NRF54L_ERRATA_20_PRESENT
@@ -74,13 +74,14 @@ void event_handler(struct esb_evt const *event)
 	}
 }
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
+#if defined(CONFIG_CLOCK_CONTROL_NRFX)
 int clocks_start(void)
 {
 	int err;
 	int res;
-	struct onoff_manager *clk_mgr;
 	struct onoff_client clk_cli;
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
+	struct onoff_manager *clk_mgr;
 
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	if (!clk_mgr) {
@@ -91,6 +92,20 @@ int clocks_start(void)
 	sys_notify_init_spinwait(&clk_cli.notify);
 
 	err = onoff_request(clk_mgr, &clk_cli);
+#else
+	const static struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+								(nordic_nrf_clock_hfclk),
+								(nordic_nrf_clock_xo)));
+
+	if (!dev) {
+		LOG_ERR("Unable to get the Clock device");
+		return -ENXIO;
+	}
+
+	sys_notify_init_spinwait(&clk_cli.notify);
+
+	err = nrf_clock_control_request(dev, NULL, &clk_cli);
+#endif
 	if (err < 0) {
 		LOG_ERR("Clock request failed: %d", err);
 		return err;
@@ -119,7 +134,7 @@ int clocks_start(void)
 	return 0;
 }
 
-#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+#elif defined(CONFIG_CLOCK_CONTROL_NRFS)
 
 int clocks_start(void)
 {
@@ -157,7 +172,7 @@ int clocks_start(void)
 
 #else
 BUILD_ASSERT(false, "No Clock Control driver");
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF2) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRFS) */
 
 int esb_initialize(void)
 {

@@ -12,7 +12,7 @@
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/shell/shell.h>
-#include <nrfx_clock.h>
+#include <nrfx_clock_hfclk.h>
 #include <audio_defines.h>
 
 #include "presets.h"
@@ -702,8 +702,7 @@ void nrf_auraconfig_main(void)
 
 	LOG_DBG("Main started");
 
-	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
-	ERR_CHK_MSG(ret, "Failed to set HFCLK divider");
+	nrfx_clock_hfclk_divider_set(NRF_CLOCK_HFCLK_DIV_1);
 
 	ret = led_init();
 	ERR_CHK_MSG(ret, "Failed to initialize LED module");
