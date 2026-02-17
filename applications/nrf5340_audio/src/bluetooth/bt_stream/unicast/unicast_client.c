@@ -72,6 +72,22 @@ static struct bt_cap_unicast_group *unicast_group;
 static bool unicast_group_created;
 static bool playing_state = true;
 
+static int group_data_reset(void)
+{
+	if (playing_state) {
+		return -EBUSY;
+	}
+
+	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT; i++) {
+		memset(&pair_params[i], 0, sizeof(pair_params));
+	}
+
+	memset(&group_param, 0, sizeof(group_param));
+	memset(&group_data, 0, sizeof(group_data));
+
+	return 0;
+}
+
 static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn *conn,
 				   struct bt_bap_stream *stream, enum bt_audio_dir dir)
 {
@@ -212,18 +228,12 @@ static void unicast_group_create(void)
 {
 	int ret;
 
-	if (unicast_group_created) {
-		LOG_ERR("Group already created");
+	/* Reset all group_data related to the unicast group */
+	ret = group_data_reset();
+	if (ret) {
+		LOG_ERR("Failed to reset group data: %d", ret);
 		return;
 	}
-
-	/* Reset all group_data related to the unicast group */
-	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT; i++) {
-		memset(&pair_params[i], 0, sizeof(pair_params));
-	}
-
-	memset(&group_param, 0, sizeof(group_param));
-	memset(&group_data, 0, sizeof(group_data));
 
 	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
 	if (ret < 0) {

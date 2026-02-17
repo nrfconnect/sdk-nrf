@@ -37,12 +37,10 @@ config BT_AUDIO_CODEC_CAP_MAX_DATA_SIZE
 	int
 	default 255
 
-# REMOVABLE: Not used by server_store.c (only CAP_MAX_DATA_SIZE is referenced)
 config BT_AUDIO_CODEC_CAP_MAX_METADATA_SIZE
 	int
 	default 255
 
-# REMOVABLE: Unit tests don't transfer actual Bluetooth data; runtime buffers unnecessary
 config BT_BUF_EVT_RX_COUNT
 	int
 	default 10
@@ -59,7 +57,6 @@ config BT_BUF_ACL_TX_COUNT
 	int
 	default 4
 
-# REMOVABLE: Not referenced in server_store.c (only _CAP_ variants are used)
 config BT_AUDIO_CODEC_CFG_MAX_DATA_SIZE
 	int
 	default 255
@@ -72,7 +69,6 @@ config BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT
 	int
 	default 4
 
-# REMOVABLE: Zephyr provides defaults; unnecessary for server_store unit tests
 config BT_ISO_MAX_CIG
 	int
 	default 1
@@ -89,11 +85,6 @@ config BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT
 	int
 	default 4
 
-config UNICAST_GROUP_STREAM_CNT
-	int
-	default 4
-
-# REMOVABLE: Zephyr provides defaults; not specific to server_store testing
 config BT_AUDIO_CODEC_LOG_LEVEL
 	int
 	default 2
@@ -133,10 +124,6 @@ config LC3_BITRATE_MIN
 config LC3_BITRATE_MAX
 	int
 	default 124000
-
-config AUDIO_FRAME_DURATION_US
-	int
-	default 10000
 
 # Include Zephyr's Kconfig.
 source "Kconfig"

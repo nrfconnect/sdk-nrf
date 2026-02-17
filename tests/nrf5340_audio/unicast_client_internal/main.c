@@ -102,6 +102,14 @@ ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_get_n
 	zassert_equal(ret, 0);
 	zassert_equal(pres_dly_snk_us, UINT32_MAX, "no streams");
 	zassert_equal(pres_dly_src_us, UINT32_MAX, "no streams");
+	zassert_equal(common_pd_snk.pd_min, 0);
+	zassert_equal(common_pd_snk.pref_pd_min, 0);
+	zassert_equal(common_pd_snk.pd_max, UINT32_MAX);
+	zassert_equal(common_pd_snk.pref_pd_max, UINT32_MAX);
+	zassert_equal(common_pd_src.pd_min, 0);
+	zassert_equal(common_pd_src.pref_pd_min, 0);
+	zassert_equal(common_pd_src.pd_max, UINT32_MAX);
+	zassert_equal(common_pd_src.pref_pd_max, UINT32_MAX);
 }
 
 ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_get_one)
@@ -139,6 +147,10 @@ ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_get_o
 
 	zassert_equal(pres_dly_snk_us, 2000, "Pref_min_selected");
 	zassert_equal(pres_dly_src_us, UINT32_MAX, "no streams");
+	zassert_equal(common_pd_snk.pd_min, 1000);
+	zassert_equal(common_pd_snk.pref_pd_min, 2000);
+	zassert_equal(common_pd_snk.pref_pd_max, 3000);
+	zassert_equal(common_pd_snk.pd_max, 4000);
 
 	ep_1.qos_pref.pref_pd_min = 0; /* Should select pd_min now, no pref */
 	ret = unicast_client_internal_pres_dly_get(&cap_group, &pres_dly_snk_us, &pres_dly_src_us,
@@ -170,6 +182,10 @@ ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_get_o
 	/* Only common ground is 4000*/
 	zassert_equal(pres_dly_snk_us, 4000, "Only common denominator is 4000");
 	zassert_equal(pres_dly_src_us, UINT32_MAX, "no streams");
+	zassert_equal(common_pd_snk.pd_min, 4000);
+	zassert_equal(common_pd_snk.pref_pd_min, 5000);
+	zassert_equal(common_pd_snk.pref_pd_max, 3000);
+	zassert_equal(common_pd_snk.pd_max, 4000);
 
 	/* No common denominator */
 	ep_2.qos_pref.pd_min = 4001;
