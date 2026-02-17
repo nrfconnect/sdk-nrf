@@ -95,7 +95,6 @@ static bool foreach_stream_pres_dly_calc(struct bt_cap_stream *stream, void *use
 	}
 
 	if (ep_info.dir == BT_AUDIO_DIR_SINK) {
-		/* Sink stream */
 		ctx->streams_checked_snk++;
 		if (ctx->existing_pres_dly_us_snk == UINT32_MAX) {
 			ctx->existing_pres_dly_us_snk = stream->bap_stream.qos->pd;
@@ -113,7 +112,6 @@ static bool foreach_stream_pres_dly_calc(struct bt_cap_stream *stream, void *use
 		}
 
 	} else if (ep_info.dir == BT_AUDIO_DIR_SOURCE) {
-		/* Source stream */
 		ctx->streams_checked_src++;
 		if (ctx->existing_pres_dly_us_src == UINT32_MAX) {
 			ctx->existing_pres_dly_us_src = stream->bap_stream.qos->pd;
@@ -205,7 +203,8 @@ int unicast_client_internal_pres_dly_get(struct bt_cap_unicast_group *unicast_gr
 {
 	int ret;
 
-	if (unicast_group == NULL || pres_dly_snk_us == NULL || pres_dly_src_us == NULL) {
+	if (unicast_group == NULL || pres_dly_snk_us == NULL || pres_dly_src_us == NULL ||
+	    common_pd_snk == NULL || common_pd_src == NULL) {
 		LOG_ERR("NULL parameter");
 		return -EINVAL;
 	}
@@ -297,16 +296,16 @@ static void stream_state_check(struct bt_cap_stream *stream,
 		or higher state at this point.*/
 		LOG_ERR("Stream in IDLE or RELEASING state");
 		/* Setting for safety */
-		group_action_set(&new_pres_delays->action, GROUP_ACTION_REQ_RESTART);
+		group_action_set(&new_pres_delays->action, ACTION_REQ_GROUP_RESTART);
 	}
 
 	if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_QOS_CONFIGURED)) {
 		/* Stream needs to be QoS configured again to update the presentation delay */
-		group_action_set(&new_pres_delays->action, STREAM_ACTION_QOS_RECONFIG);
+		group_action_set(&new_pres_delays->action, ACTION_REQ_STREAM_QOS_RECONFIG);
 	} else if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_ENABLING) ||
 		   le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
 		/* Streams must be restarted (go throught he QoS step again to update PD) */
-		group_action_set(&new_pres_delays->action, STREAM_ACTION_QOS_RECONFIG);
+		group_action_set(&new_pres_delays->action, ACTION_REQ_STREAM_QOS_RECONFIG);
 	} else {
 		group_action_set(&new_pres_delays->action, ACTION_REQ_NONE);
 	}
@@ -537,7 +536,7 @@ int unicast_client_internal_max_transp_latency_set(struct bt_cap_unicast_group *
 			new_max_trans_lat_snk_ms, stream_trans_lat_set.streams_set_snk);
 		if (unicast_group->bap_unicast_group->cig_param.c_to_p_latency !=
 		    new_max_trans_lat_snk_ms) {
-			*group_action_needed = GROUP_ACTION_REQ_RESTART;
+			*group_action_needed = ACTION_REQ_GROUP_RESTART;
 		}
 	}
 
@@ -546,7 +545,7 @@ int unicast_client_internal_max_transp_latency_set(struct bt_cap_unicast_group *
 			new_max_trans_lat_src_ms, stream_trans_lat_set.streams_set_src);
 		if (unicast_group->bap_unicast_group->cig_param.p_to_c_latency !=
 		    new_max_trans_lat_src_ms) {
-			*group_action_needed = GROUP_ACTION_REQ_RESTART;
+			*group_action_needed = ACTION_REQ_GROUP_RESTART;
 		}
 	}
 
