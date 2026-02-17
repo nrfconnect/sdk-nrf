@@ -1,7 +1,7 @@
 sample:
-  name: DECT NR+ Shell sample
+  name: DECT NR+ PHY Shell sample
 tests:
-  sample.dect.dect_shell:
+  sample.dect.dect_phy.dect_shell:
     sysbuild: true
     build_only: true
     integration_platforms:

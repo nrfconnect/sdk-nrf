@@ -509,6 +509,7 @@
 /samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-dect-nr-plus
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
 /samples/dect/hello_dect/                 @nrfconnect/ncs-dect-nr-plus
+/samples/dect/dect_shell/                 @nrfconnect/ncs-dect-nr-plus
 /samples/dfu/                             @nrfconnect/ncs-eris
 /samples/edge_impulse/                    @nrfconnect/ncs-si-muffin
 /samples/esb/                             @nrfconnect/ncs-si-xcake
@@ -637,6 +638,7 @@
 /samples/debug/memfault/*.rst             @nrfconnect/ncs-cia-doc
 /samples/debug/ppi_trace/*.rst            @nrfconnect/ncs-doc-leads
 /samples/dect/hello_dect/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
+/samples/dect/dect_shell/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/dect/dect_phy/dect_shell/*.rst   @nrfconnect/ncs-iot-positioning-doc
 /samples/dect/dect_phy/hello_dect/*.rst   @nrfconnect/ncs-modem-doc
 /samples/dfu/ab/*.rst                     @nrfconnect/ncs-eris-doc

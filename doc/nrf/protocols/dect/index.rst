@@ -121,15 +121,25 @@ A subset of the following |NCS| libraries are used for DECT NR+:
 
 * :ref:`lib_modem`
 
+The DECT NR+ full stack samples showcase the use of the DECT NR+ full stack with:
+
+* DECT NR+ :ref:`Connection Manager <zephyr:conn_mgr_overview>` and related APIs:
+
+  * .. doxygengroup:: dect_net_l2_mgmt
+  * .. doxygengroup:: dect_net_l2
+
 Applications and samples
 ========================
 
 The following samples use DECT NR+ physical layer modem firmware in the |NCS|:
 
 * :ref:`nrf_modem_dect_phy_hello`
-* :ref:`dect_shell_application`
+* :ref:`dect_phy_shell_application`
 
-The :ref:`hello_dect` sample uses the DECT NR+ full stack with IPv6 networking capabilities for nRF91x1 devices where the DECT NR+ MAC layer is running on the modem side.
+The following samples use the DECT NR+ full stack with IPv6 networking capabilities for nRF91x1 devices where the DECT NR+ MAC layer is running on the modem side:
+
+* :ref:`dect_shell_application`
+* :ref:`hello_dect`
 
 Power optimization
 ==================

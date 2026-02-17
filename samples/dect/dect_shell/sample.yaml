@@ -1,0 +1,25 @@
+sample:
+  name: DECT NR+ Shell Sample
+common:
+  tags:
+    - ci_build
+    - sysbuild
+    - ci_samples_dect
+  sysbuild: true
+  build_only: true
+  integration_platforms:
+    - nrf9151dk/nrf9151/ns
+  platform_allow:
+    - nrf9151dk/nrf9151/ns
+tests:
+  sample.dect.dect_shell: {}
+  sample.dect.dect_shell.ft_sink:
+    extra_args: FILE_SUFFIX=sm
+  sample.dect.dect_shell.iperf3_tx:
+    extra_args: EXTRA_CONF_FILE="iperf3-common.conf;iperf3-tx.conf"
+  sample.dect.dect_shell.iperf3_rx:
+    extra_args: EXTRA_CONF_FILE="iperf3-common.conf;iperf3-rx.conf"
+  sample.dect.dect_shell.nrf_cloud_mqtt:
+    extra_args: EXTRA_CONF_FILE="nrf_cloud_mqtt.conf"
+  sample.dect.dect_shell.nrf_cloud_coap:
+    extra_args: EXTRA_CONF_FILE="nrf_cloud_coap.conf"
