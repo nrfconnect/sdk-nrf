@@ -47,7 +47,8 @@ config SAMPLE_FILE_URL
 
 config SAMPLE_COMPUTE_HASH
 	bool "Compute sha256 hash"
-	select MBEDTLS
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_SHA_256
 
 config SAMPLE_COMPARE_HASH
 	bool "Compare hash"
