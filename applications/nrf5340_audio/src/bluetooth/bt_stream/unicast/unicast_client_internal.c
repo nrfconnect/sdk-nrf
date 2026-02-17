@@ -293,7 +293,8 @@ static void stream_state_check(struct bt_cap_stream *stream,
 	if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_IDLE) ||
 	    le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_RELEASING)) {
 		/* This should not be the case as all streams should be in Codec configured
-		or higher state at this point.*/
+		 * or higher state at this point.
+		 */
 		LOG_ERR("Stream in IDLE or RELEASING state");
 		/* Setting for safety */
 		group_action_set(&new_pres_delays->action, ACTION_REQ_GROUP_RESTART);
@@ -304,7 +305,7 @@ static void stream_state_check(struct bt_cap_stream *stream,
 		group_action_set(&new_pres_delays->action, ACTION_REQ_STREAM_QOS_RECONFIG);
 	} else if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_ENABLING) ||
 		   le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		/* Streams must be restarted (go throught he QoS step again to update PD) */
+		/* Streams must be restarted (go through he QoS step again to update PD) */
 		group_action_set(&new_pres_delays->action, ACTION_REQ_STREAM_QOS_RECONFIG);
 	} else {
 		group_action_set(&new_pres_delays->action, ACTION_REQ_NONE);
@@ -471,6 +472,11 @@ static bool foreach_stream_transp_latency_set(struct bt_cap_stream *existing_str
 	 * stream in order for the controller to get the new information.
 	 */
 	int dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
+	if (dir < 0) {
+		LOG_ERR("Failed to get stream direction");
+		return true;
+	}
+
 	switch (dir) {
 	case BT_AUDIO_DIR_SINK:
 		if (ctx->new_max_trans_lat_snk_ms == UINT16_MAX) {

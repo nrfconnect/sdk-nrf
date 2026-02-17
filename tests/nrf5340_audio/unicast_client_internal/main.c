@@ -83,7 +83,7 @@ static void mock_add_stream_to_group(struct bt_bap_stream *bap_stream,
 		ztest_test_fail();
 	}
 
-	TC_PRINT("sys list append stream %p to group \n", (void *)bap_stream);
+	TC_PRINT("sys list append stream %p to group\n", (void *)bap_stream);
 	sys_slist_append(&group->bap_unicast_group->streams, &bap_stream->_node);
 }
 
@@ -124,6 +124,7 @@ ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_get_o
 
 	/* Need to create endpoints in test as these are owned by the host */
 	struct bt_bap_ep ep_1 = {0};
+
 	ep_1.state = BT_BAP_EP_STATE_STREAMING;
 	ep_1.dir = BT_AUDIO_DIR_SINK;
 
@@ -161,6 +162,7 @@ ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_get_o
 	zassert_equal(pres_dly_src_us, UINT32_MAX, "no streams");
 
 	struct bt_bap_ep ep_2 = {0};
+
 	ep_2.state = BT_BAP_EP_STATE_STREAMING;
 	ep_2.dir = BT_AUDIO_DIR_SINK;
 
