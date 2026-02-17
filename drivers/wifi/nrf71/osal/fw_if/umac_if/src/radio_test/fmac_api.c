@@ -29,7 +29,7 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 	int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
 	unsigned int phy_calib,
-	enum op_band op_band,
+	unsigned char op_band,
 	bool beamforming,
 	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
 	struct nrf_wifi_board_params *board_params,
@@ -141,7 +141,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
 	unsigned int phy_calib,
-	enum op_band op_band,
+	unsigned char op_band,
 	bool beamforming,
 	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 	struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,

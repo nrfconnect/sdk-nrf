@@ -511,22 +511,28 @@ void reg_change_callbk_fn(void *vif_ctx,
 #endif /* !CONFIG_NRF71_RADIO_TEST */
 
 
-static enum op_band get_nrf_wifi_op_band(void)
+/**
+ * @brief Get operating band bitmap from Kconfig (see NRF_WIFI_OP_BAND_* in
+ * nrf71_wifi_ctrl.h / nrf71_wifi_common.h).
+ *
+ * @return Bitmap of bands (NRF_WIFI_OP_BAND_2GHZ, NRF_WIFI_OP_BAND_5GHZ,
+ *         NRF_WIFI_OP_BAND_6GHZ).
+ */
+static unsigned char get_nrf_wifi_op_band(void)
 {
 	if (IS_ENABLED(CONFIG_NRF_WIFI_2G_BAND)) {
-		return BAND_24G;
+		return NRF_WIFI_OP_BAND_2GHZ;
 	}
 	if (IS_ENABLED(CONFIG_NRF_WIFI_5G_BAND)) {
-		return BAND_5G;
+		return NRF_WIFI_OP_BAND_5GHZ;
 	}
-
 	if (IS_ENABLED(CONFIG_NRF_WIFI_6G_BAND)) {
-		return BAND_6G;
+		return NRF_WIFI_OP_BAND_6GHZ;
 	}
 	if (IS_ENABLED(CONFIG_NRF_WIFI_DUAL_BAND)) {
-		return BAND_DUAL;
+		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
 	}
-	return BAND_ALL;
+	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
 }
 
 enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
@@ -534,7 +540,7 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	void *rpu_ctx = NULL;
-	enum op_band op_band = get_nrf_wifi_op_band();
+	unsigned char op_band = get_nrf_wifi_op_band();
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	int sleep_type = -1;
 
