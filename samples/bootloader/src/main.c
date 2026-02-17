@@ -9,6 +9,8 @@
 #include <zephyr/sys/printk.h>
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#else
+#include <zephyr/storage/flash_map.h>
 #endif
 #include <fw_info.h>
 #if defined(CONFIG_FPROTECT)
@@ -33,15 +35,24 @@
 #include <zephyr/init.h>
 #include <hw_unique_key.h>
 
+/* huk_flag_addr is actually address in CPU address space, not offset within
+ * flash device.
+ */
+#if USE_PARTITION_MANAGER
+static const uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_FLAG_OFFSET;
+#else
+static const uint32_t huk_flag_addr = FIXED_PARTITION_ADDRESS(hw_unique_key_partition);
+#endif
+
 #define HUK_FLAG_OFFSET 0xFFC /* When this word is set, expect HUK to be written. */
 
 int load_huk(void)
 {
 	if (!hw_unique_key_is_written(HUK_KEYSLOT_KDR)) {
-		uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_FLAG_OFFSET;
-
+		/* Directly reading flag via CPU address space */
 		if (*(uint32_t *)huk_flag_addr == 0xFFFFFFFF) {
 			printk("First boot, expecting app to write HUK.\n");
+			/* Write done via NRFX API */
 #if defined(CONFIG_NRFX_NVMC)
 			nrfx_nvmc_word_write(huk_flag_addr, 0);
 #elif defined(CONFIG_NRFX_RRAMC)
