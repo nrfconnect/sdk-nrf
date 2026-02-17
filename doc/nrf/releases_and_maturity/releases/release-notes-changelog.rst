@@ -642,6 +642,10 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
+  * Added:
+
+    * The :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCAN_PARAMS_OVERRIDE` Kconfig option and related options :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCAN_DWELL_TIME_ACTIVE` and :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCAN_DWELL_TIME_PASSIVE` to configure Wi-Fi scan parameters.
+
   * Fixed a bug where GNSS was never stopped if the :c:func:`location_cloud_location_ext_result_set` function was called during GNSS method execution.
 
 Multiprotocol Service Layer libraries
