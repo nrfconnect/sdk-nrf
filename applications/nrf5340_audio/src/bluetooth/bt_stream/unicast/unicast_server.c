@@ -454,7 +454,7 @@ static void stream_qos_configured_cb(struct bt_bap_stream *stream)
 {
 	int ret;
 
-	LOG_INF("QoS configured for stream %p", stream);
+	LOG_DBG("QoS configured for stream %p", stream);
 	ret = le_audio_print_qos_from_stream(stream);
 	if (ret) {
 		LOG_ERR("Failed to print QoS from stream: %d", ret);

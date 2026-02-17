@@ -5,6 +5,7 @@
  */
 
 #include "unicast_client.h"
+#include "unicast_client_internal.h"
 
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
@@ -26,7 +27,6 @@
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
 #include "server_store.h"
-#include "unicast_client_internal.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
@@ -43,7 +43,7 @@ static struct bt_cap_unicast_group_stream_pair_param
 static struct bt_cap_unicast_group_param group_param;
 
 /* Populate the stream params arrays */
-static struct group_streams_populate_data data;
+static struct group_streams_populate_data group_data;
 
 enum cap_procedure_type {
 	CAP_PROCEDURE_START = 1,
@@ -51,7 +51,7 @@ enum cap_procedure_type {
 	CAP_PROCEDURE_STOP,
 };
 
-K_MSGQ_DEFINE(cap_proc_q, sizeof(enum cap_procedure_type), 5, sizeof(void *));
+K_MSGQ_DEFINE(cap_proc_q, sizeof(enum cap_procedure_type), CONFIG_BT_ISO_MAX_CHAN, sizeof(void *));
 
 /* For unicast (as opposed to broadcast) level 2/subgroup is not defined in the specification */
 #define LVL2 0
@@ -164,7 +164,8 @@ struct group_streams_populate_data {
 
 static bool unicast_group_populate(struct server_store *server, void *user_data)
 {
-	struct group_streams_populate_data *data = (struct group_streams_populate_data *)user_data;
+	struct group_streams_populate_data *group_data =
+		(struct group_streams_populate_data *)user_data;
 
 	if (server->snk.num_eps == 0 && server->src.num_eps == 0) {
 		LOG_DBG("Server %s has no valid sink or source EPs, skipping", server->name);
@@ -178,11 +179,11 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 			return true;
 		}
 
-		// Here we need to use the global qos group params
-		data->sink_stream_params[data->sink_iterator].qos_cfg =
+		group_data->sink_stream_params[group_data->sink_iterator].qos_cfg =
 			&server->snk.lc3_preset[j].qos;
-		data->sink_stream_params[data->sink_iterator].stream = &server->snk.cap_streams[j];
-		data->sink_iterator++;
+		group_data->sink_stream_params[group_data->sink_iterator].stream =
+			&server->snk.cap_streams[j];
+		group_data->sink_iterator++;
 	}
 
 	/* Add only the streams that has a valid preset set */
@@ -192,12 +193,11 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 			return true;
 		}
 
-		// Here we need to use the global qos group params
-		data->source_stream_params[data->source_iterator].qos_cfg =
+		group_data->source_stream_params[group_data->source_iterator].qos_cfg =
 			&server->src.lc3_preset[j].qos;
-		data->source_stream_params[data->source_iterator].stream =
+		group_data->source_stream_params[group_data->source_iterator].stream =
 			&server->src.cap_streams[j];
-		data->source_iterator++;
+		group_data->source_iterator++;
 	}
 
 	return true;
@@ -212,12 +212,18 @@ static void unicast_group_create(void)
 {
 	int ret;
 
+	if (unicast_group_created) {
+		LOG_ERR("Group already created");
+		return -EACCESS;
+	}
+
+	/* Reset all group_data related to the unicast group */
 	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT; i++) {
 		memset(&pair_params[i], 0, sizeof(pair_params));
 	}
 
 	memset(&group_param, 0, sizeof(group_param));
-	memset(&data, 0, sizeof(data));
+	memset(&group_data, 0, sizeof(group_data));
 
 	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
 	if (ret < 0) {
@@ -242,7 +248,7 @@ static void unicast_group_create(void)
 		return;
 	}
 
-	ret = srv_store_foreach_server(unicast_group_populate, &data);
+	ret = srv_store_foreach_server(unicast_group_populate, &group_data);
 	if (ret < 0) {
 		LOG_ERR("Failed to populate unicast group stream params: %d", ret);
 		srv_store_unlock();
@@ -255,38 +261,37 @@ static void unicast_group_create(void)
 	 * We pair in the order of sink to source because the sink stream will
 	 * always be created before the source stream
 	 */
-	for (int i = 0; i < data.sink_iterator; i++) {
-		pair_params[i].tx_param = &data.sink_stream_params[i];
+	for (int i = 0; i < group_data.sink_iterator; i++) {
+		pair_params[i].tx_param = &group_data.sink_stream_params[i];
 
 		/* Search streams for a matching source */
 		bool source_found = false;
 		struct server_store *sink_server = NULL;
 
-		ret = srv_store_from_stream_get(&data.sink_stream_params[i].stream->bap_stream,
-						&sink_server);
+		ret = srv_store_from_stream_get(
+			&group_data.sink_stream_params[i].stream->bap_stream, &sink_server);
 		if (ret < 0) {
 			LOG_ERR("Failed to get server from sink stream %p: %d",
-				(void *)&data.sink_stream_params[i].stream->bap_stream, ret);
+				(void *)&group_data.sink_stream_params[i].stream->bap_stream, ret);
 			srv_store_unlock();
 			return;
 		}
 
-		for (int j = stream_iterator; j < data.source_iterator; j++) {
+		for (int j = stream_iterator; j < group_data.source_iterator; j++) {
 			/* Check if the source stream belongs to the same device */
 			struct server_store *source_server = NULL;
 
 			ret = srv_store_from_stream_get(
-				&data.source_stream_params[j].stream->bap_stream, &source_server);
+				&group_data.source_stream_params[j].stream->bap_stream,
+				&source_server);
 			if (ret < 0) {
-				LOG_ERR("Failed to get server from source stream %p: %d",
-					(void *)&data.source_stream_params[j].stream->bap_stream,
-					ret);
+				LOG_ERR("Failed to get server from source stream %d", ret);
 				srv_store_unlock();
 				return;
 			}
 
 			if (sink_server == source_server) {
-				pair_params[i].rx_param = &data.source_stream_params[j];
+				pair_params[i].rx_param = &group_data.source_stream_params[j];
 				source_found = true;
 				stream_iterator++;
 				break;
@@ -301,12 +306,12 @@ static void unicast_group_create(void)
 	}
 
 	/* Check if there are unpaired source streams, if so; add them */
-	for (int i = 0; i < data.source_iterator; i++) {
+	for (int i = 0; i < group_data.source_iterator; i++) {
 		/* Check if the source has already been added */
 		bool source_already_added = false;
 
 		for (int j = 0; j < stream_iterator; j++) {
-			if (pair_params[j].rx_param == &data.source_stream_params[i]) {
+			if (pair_params[j].rx_param == &group_data.source_stream_params[i]) {
 				source_already_added = true;
 				break;
 			}
@@ -319,7 +324,7 @@ static void unicast_group_create(void)
 
 		LOG_DBG("Adding unpaired source EP %d", i);
 		pair_params[stream_iterator].tx_param = NULL;
-		pair_params[stream_iterator].rx_param = &data.source_stream_params[i];
+		pair_params[stream_iterator].rx_param = &group_data.source_stream_params[i];
 		stream_iterator++;
 	}
 
@@ -342,7 +347,7 @@ static void unicast_group_create(void)
 	if (ret) {
 		LOG_ERR("Failed to create unicast group: %d", ret);
 	} else {
-		LOG_DBG("Created unicast group");
+		LOG_INF("Created unicast group");
 		unicast_group_created = true;
 	}
 
@@ -353,7 +358,7 @@ static void unicast_group_create(void)
  * @brief	Function to check if a stream is already in the unicast group.
  *
  * @param[in] stream	Stream to check.
- * @param[in] user_data	User data, in this case a pointer to the server_store to
+ * @param[in] user_data	User group_data, in this case a pointer to the server_store to
  *			check against.
  *
  * @retval		False	The stream is in the group.
@@ -730,8 +735,7 @@ static void endpoint_cb(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_b
  *
  * @param[in]	conn	Connection pointer to the unicast_server where the discovery was done.
  * @param[in]	err	Error code, 0 if successful.
- * @param[in]	server	Server pointer to the server_store struct where the discovered data will be
- *			stored.
+ * @param[in]	server	Server pointer to where the discovered group_data will be stored.
  */
 static void discover_cb_sink(struct bt_conn *conn, int err, struct server_store *server)
 {
@@ -817,8 +821,7 @@ static void discover_cb_sink(struct bt_conn *conn, int err, struct server_store 
  *
  * @param[in]	conn	Connection pointer to the unicast_server where the discovery was done.
  * @param[in]	err	Error code, 0 if successful.
- * @param[in]	server	Server pointer to the server_store struct where the discovered data will be
- *			stored.
+ * @param[in]	server	Server pointer to where the discovered group_data will be stored.
  */
 static void discover_cb_source(struct bt_conn *conn, int err, struct server_store *server)
 {
@@ -900,8 +903,7 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 	}
 
 	srv_store_unlock();
-	k_work_submit(&cap_start_work); // Why do we submit here instead of putting it on the queue
-					// like the other procedures?
+	k_work_submit(&cap_start_work);
 }
 
 #if (CONFIG_BT_AUDIO_TX)
@@ -934,7 +936,7 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
  * @brief	Function to check if all streams in the unicast group have been released.
  *
  * @param[in]	stream		Stream to check.
- * @param[in]	user_data	User data, not used.
+ * @param[in]	user_data	User group_data, not used.
  *
  * @retval	true	A stream is found that is not yet released.
  * @retval	false	All streams are released.
@@ -944,7 +946,7 @@ static bool all_streams_released_check(struct bt_cap_stream *stream, void *user_
 	ARG_UNUSED(user_data);
 
 	if (stream->bap_stream.ep != NULL) {
-		LOG_DBG("stream %p is not released", stream);
+		LOG_DBG("Stream %p is not released", stream);
 		/* Found a stream that is not released, will stop iterating */
 		return true;
 	}
@@ -964,12 +966,14 @@ static bool all_streams_configured_check(struct bt_cap_stream *stream, void *use
 	return false;
 }
 
+/**
+ * @brief Functions to be run when all streams in a group have been configured.
+ *
+ * @note This is called regardless of direction.
+ * Hence, need to consider both sink and source direction here.
+ */
 static int all_streams_configured(void)
 {
-	/* This is called when ALL streams are configured regardless of dir. Hence,
-	 *  we need to consider both directions here
-	 */
-
 	int ret;
 
 	enum action_req action = ACTION_REQ_NONE;
@@ -981,6 +985,9 @@ static int all_streams_configured(void)
 	struct pd_struct common_pd_src;
 	struct pd_struct common_pd_snk;
 
+	struct bt_cap_unicast_group_info cap_info;
+	struct bt_bap_unicast_group_info info;
+
 	ret = unicast_client_internal_pres_dly_get(
 		unicast_group, &pres_dly_snk_us, &pres_dly_src_us, &common_pd_src, &common_pd_snk);
 	if (ret) {
@@ -989,16 +996,12 @@ static int all_streams_configured(void)
 		return ret;
 	}
 
-	struct bt_cap_unicast_group_info cap_info;
-
 	ret = bt_cap_unicast_group_get_info(unicast_group, &cap_info);
 	if (ret) {
 		LOG_ERR("Failed to get unicast group info: %d", ret);
 		srv_store_unlock();
 		return ret;
 	}
-
-	struct bt_bap_unicast_group_info info;
 
 	ret = bt_bap_unicast_group_get_info(cap_info.unicast_group, &info);
 	if (ret) {
@@ -1009,30 +1012,27 @@ static int all_streams_configured(void)
 
 	/* Check if any stream is in a streaming state */
 	if (info.sink_pd != BT_BAP_PD_UNSET) {
-
-		// USe in range
-		if (info.sink_pd < common_pd_snk.pd_min || info.sink_pd > common_pd_snk.pd_max) {
-			/* The existing running PD is outside the common denominator.
-			 * Need to force the streams into the QoS configured state
+		if (!IN_RANGE(info.sink_pd, common_pd_snk.pd_min, common_pd_snk.pd_max)) {
+			/* The existing running PD is outside the min-max.
+			 * Need to force the streams into the QoS configured state.
 			 */
-			group_action_set(&action, GROUP_ACTION_REQ_RESTART);
+			group_action_set(&action, ACTION_REQ_GROUP_RESTART);
 		} else {
-			/* The the existing pres delay is wihin the min and max, we
-			 * stay with the existing presentation delay
+			/* The existing pres delay is wihin the min and max,
+			 * stay with the existing presentation delay.
 			 */
 			pres_dly_snk_us = info.sink_pd;
 		}
 	}
 
 	if (info.source_pd != BT_BAP_PD_UNSET) {
-		if (info.source_pd < common_pd_src.pd_min ||
-		    info.source_pd > common_pd_src.pd_max) {
+		if (!IN_RANGE(info.source_pd, common_pd_src.pd_min, common_pd_src.pd_max)) {
 			/* The existing running PD is outside the common denominator
 			 * Need to force the streams into the QoS configured state
 			 */
-			group_action_set(&action, GROUP_ACTION_REQ_RESTART);
+			group_action_set(&action, ACTION_REQ_GROUP_RESTART);
 		} else {
-			/* The the existing pres delay is wihin the min and max, we
+			/* The existing pres delay is wihin the min and max, we
 			 * stay with the existing presentation delay
 			 */
 			pres_dly_src_us = info.source_pd;
@@ -1265,13 +1265,12 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 			return;
 		}
 
-		LOG_DBG("Deleting unicast group");
-
 		ret = bt_cap_unicast_group_delete(unicast_group);
 		if (ret) {
 			LOG_ERR("Failed to delete unicast group: %d", ret);
 		}
 
+		LOG_DBG("Deleted unicast group");
 		unicast_group = NULL;
 
 		/* Create a new unicast group */
@@ -1293,7 +1292,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 
 	ret = le_audio_metadata_populate(&meta, stream, info, audio_frame);
 	if (ret) {
-		LOG_ERR("Failed to populate meta data: %d", ret);
+		LOG_ERR("Failed to populate meta group_data: %d", ret);
 		return;
 	}
 
@@ -1410,7 +1409,7 @@ static void unicast_update_complete_cb(int err, struct bt_conn *conn)
 		LOG_WRN("Failed update_complete for conn: %p, err: %d", (void *)conn, err);
 	}
 
-	LOG_WRN("Unicast group update complete cb");
+	LOG_DBG("Unicast group update complete.");
 
 	ret = le_audio_print_unicast_group(unicast_group);
 	if (ret) {
@@ -1692,11 +1691,11 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 
 		ret = le_audio_ep_state_get(server->snk.eps[j], &state);
 		if (state == BT_BAP_EP_STATE_STREAMING || ret) {
-			LOG_INF("Sink endpoint is already streaming, skipping start");
+			LOG_DBG("Sink endpoint is already streaming, skipping start");
 			continue;
 		}
 
-		LOG_INF("Adding stream with ep %p to start params", (void *)server->snk.eps[j]);
+		LOG_DBG("Adding stream with ep %p to start params", (void *)server->snk.eps[j]);
 
 		param->stream_params[param->count].member.member = server->conn;
 		param->stream_params[param->count].stream = &server->snk.cap_streams[j];
@@ -1781,7 +1780,7 @@ int unicast_client_start(uint8_t cig_index)
 	}
 
 	if (param.count == 0) {
-		LOG_INF("No streams to start");
+		LOG_DBG("No streams to start");
 		k_sem_give(&sem_cap_procedure_proceed);
 		srv_store_unlock();
 		return -EIO;

@@ -12,8 +12,8 @@
 
 enum action_req {
 	ACTION_REQ_NONE = 0,
-	STREAM_ACTION_QOS_RECONFIG,
-	GROUP_ACTION_REQ_RESTART,
+	ACTION_REQ_STREAM_QOS_RECONFIG,
+	ACTION_REQ_GROUP_RESTART,
 };
 
 struct pd_struct {
@@ -26,10 +26,11 @@ struct pd_struct {
 /**
  * @brief	Get the common minimum presentation delay for a unicast group if possible.
  *
- * @note	This function should be called in the codec_configured callback,
+ * @note	This function must be called in the codec_configured callback,
  *		after all streams have reached this state or further in the ASE state machine.
  *
- * @note	The pres. delay is computed based on the preference of each steam in the group.
+ * @note	The presentation delay is computed based on the preference of each stream
+ *              in the group.
  *		The common presentation delay is the one that satisfies all streams in the group,
  *		but also takes into account the preference of each stream.
  *		Note that the presentation delay must be the same for all streams
@@ -47,7 +48,10 @@ struct pd_struct {
  *					source.
  *
  * @retval	0		Success.
- * @retval	Negative error code on failure.
+ * @retval	-EINVAL		If any parameter is NULL, or if pd_min/pd_max are zero, or
+ *				if stream endpoint is not set.
+ * @retval	-ESPIPE		If there is no common ground between pd_min and pd_max.
+ * @retval			Other negative error codes.
  */
 int unicast_client_internal_pres_dly_get(struct bt_cap_unicast_group *unicast_group,
 					 uint32_t *pres_dly_snk_us, uint32_t *pres_dly_src_us,
@@ -61,7 +65,7 @@ int unicast_client_internal_pres_dly_get(struct bt_cap_unicast_group *unicast_gr
  *		However, if the presentation delay is not the same as what is currently set, we will
  *		need to configure the QoS again to update the PD values of all streams.
  *
- * @note	This call should be called in the codec_configured callback, after all streams
+ * @note	This function must be called in the codec_configured callback, after all streams
  *		have reached this state or further in the ASE state machine.
  *
  * @param[in]	unicast_group		Pointer to the unicast group.
@@ -70,7 +74,8 @@ int unicast_client_internal_pres_dly_get(struct bt_cap_unicast_group *unicast_gr
  * @param[out]	group_action_required	Pointer to store the action required for the group.
  *
  * @retval	0		Success.
- * @retval	Negative error code on failure.
+ * @retval	-EINVAL		If unicast_group or group_action_required is NULL.
+ * @retval			Other negative error codes.
  */
 int unicast_client_internal_pres_dly_set(struct bt_cap_unicast_group *unicast_group,
 					 uint32_t pres_dly_snk_us, uint32_t pres_dly_src_us,
@@ -79,10 +84,10 @@ int unicast_client_internal_pres_dly_set(struct bt_cap_unicast_group *unicast_gr
 /**
  * @brief	Get the lowest maximum transport latency (MTL) for a unicast group.
  *
- * @note	This call should be called in the codec_configured callback,
+ * @note	This function must be called in the codec_configured callback,
  *		after all streams have reached this state or further in the ASE state machine.
  *		All streams of a given direction within the CIG must have the same
- *		transport latency. See BAP spec (BAP_v1.0.2 section 7.2.1)
+ *		transport latency. See BAP spec (BAP_v1.0.2 section 7.2.1).
  *
  * @param[in]	unicast_group			Pointer to the unicast group.
  * @param[out]	new_max_trans_lat_snk_ms	Pointer to store the maximum transport latency for
@@ -91,7 +96,8 @@ int unicast_client_internal_pres_dly_set(struct bt_cap_unicast_group *unicast_gr
  *						source in milliseconds.
  *
  * @retval	0		Success.
- * @retval	Negative error code on failure.
+ * @retval	-EINVAL		If any parameter is NULL or if stream endpoint is not set.
+ * @retval			Other negative error codes.
  */
 int unicast_client_internal_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
 						   uint16_t *new_max_trans_lat_snk_ms,
@@ -106,7 +112,7 @@ int unicast_client_internal_max_transp_latency_get(struct bt_cap_unicast_group *
  *		All streams of a given direction within the CIG must have the same
  *		transport latency. See BAP spec (BAP_v1.0.2 section 7.2.1).
  *
- * @note	This call should be called in the codec_configured callback, after all streams
+ * @note	This function must be called in the codec_configured callback, after all streams
  *		have reached this state or further in the ASE state machine.
  *
  * @param[in]	unicast_group			Pointer to the unicast group.
@@ -116,7 +122,8 @@ int unicast_client_internal_max_transp_latency_get(struct bt_cap_unicast_group *
  * @param[out]	group_action_needed		Pointer to store the action needed for the group.
  *
  * @retval	0		Success.
- * @retval	Negative error code on failure.
+ * @retval	-EINVAL		If unicast_group or group_action_needed is NULL.
+ * @retval			Other negative error codes.
  */
 int unicast_client_internal_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
 						   uint16_t new_max_trans_lat_snk_ms,

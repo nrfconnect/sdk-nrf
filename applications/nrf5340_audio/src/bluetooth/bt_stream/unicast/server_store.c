@@ -3,16 +3,15 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include "server_store.h"
 
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/addr.h>
-#include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 #include <zephyr/bluetooth/audio/cap.h>
 #include <string.h>
 #include <stdio.h>
 
-#include "server_store.h"
 #include "macros_common.h"
 #include "le_audio.h"
 

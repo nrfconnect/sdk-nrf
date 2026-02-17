@@ -244,7 +244,7 @@ ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_set)
 	ret = unicast_client_internal_pres_dly_set(&cap_group, 4000, UINT32_MAX, &action);
 	zassert_equal(ret, 0);
 
-	zassert_equal(action, STREAM_ACTION_QOS_RECONFIG);
+	zassert_equal(action, ACTION_REQ_STREAM_QOS_RECONFIG);
 	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->pd, 4000);
 	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->pd, 4000);
 	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->pd, 40000);
@@ -255,7 +255,7 @@ ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_set)
 	ret = unicast_client_internal_pres_dly_set(&cap_group, 3000, UINT32_MAX, &action);
 	zassert_equal(ret, 0);
 
-	zassert_equal(action, STREAM_ACTION_QOS_RECONFIG);
+	zassert_equal(action, ACTION_REQ_STREAM_QOS_RECONFIG);
 	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->pd, 3000);
 	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->pd, 3000);
 	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->pd, 40000);
@@ -263,7 +263,7 @@ ZTEST(suite_unicast_client_internal, test_unicast_client_internal_pres_dly_set)
 	ret = unicast_client_internal_pres_dly_set(&cap_group, UINT32_MAX, 20000, &action);
 	zassert_equal(ret, 0);
 
-	zassert_equal(action, STREAM_ACTION_QOS_RECONFIG);
+	zassert_equal(action, ACTION_REQ_STREAM_QOS_RECONFIG);
 	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->pd, 3000);
 	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->pd, 3000);
 	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->pd, 20000);
@@ -389,7 +389,7 @@ ZTEST(suite_unicast_client_internal, test_srv_store_max_transp_lat_set)
 	/* Change sinks */
 	ret = unicast_client_internal_max_transp_latency_set(&cap_group, 5, UINT16_MAX, &action);
 	zassert_equal(ret, 0);
-	zassert_equal(action, GROUP_ACTION_REQ_RESTART);
+	zassert_equal(action, ACTION_REQ_GROUP_RESTART);
 	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->latency, 5);
 	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->latency, 5);
 	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->latency, 50);
@@ -397,7 +397,7 @@ ZTEST(suite_unicast_client_internal, test_srv_store_max_transp_lat_set)
 	/* Change source */
 	ret = unicast_client_internal_max_transp_latency_set(&cap_group, UINT16_MAX, 33, &action);
 	zassert_equal(ret, 0);
-	zassert_equal(action, GROUP_ACTION_REQ_RESTART);
+	zassert_equal(action, ACTION_REQ_GROUP_RESTART);
 	zassert_equal(server_0.snk.cap_streams[0].bap_stream.qos->latency, 5);
 	zassert_equal(server_0.snk.cap_streams[1].bap_stream.qos->latency, 5);
 	zassert_equal(server_0.src.cap_streams[0].bap_stream.qos->latency, 33);
