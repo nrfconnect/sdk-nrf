@@ -1,0 +1,17 @@
+tests:
+  nrf.extended.bluetooth.tester.host.build:
+    sysbuild: true
+    build_only: true
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+      - ci_tests_bluetooth_tester
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
