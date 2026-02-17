@@ -17,4 +17,6 @@ common:
 tests:
   nrf.extended.drivers.clock.clock_control_nrf5: {}
   nrf.extended.drivers.clock.clock_control_nrf5_lfclk_rc:
-    extra_args: EXTRA_CONF_FILE="nrf_lfclk_rc.conf"
+    extra_args:
+      - EXTRA_CONF_FILE="nrf_lfclk_rc.conf"
+      - EXTRA_DTC_OVERLAY_FILE="nrf_lfclk_rc.overlay"
