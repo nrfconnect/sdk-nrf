@@ -512,7 +512,7 @@ config TFM_S_CODE_VECTOR_TABLE_SIZE
 	hex
 	default 0x144 if SOC_SERIES_NRF91
 	default 0x154 if SOC_NRF5340_CPUAPP
-	default 0x4cc if SOC_NRF54LM20A_CPUAPP
+	default 0x4cc if SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP
 	default 0x47c if SOC_SERIES_NRF54L
 	default 0x504 if SOC_SERIES_NRF71
 	default 0xffffffff # Invalid value to discover missing SOC support.
