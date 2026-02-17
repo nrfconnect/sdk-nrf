@@ -266,7 +266,7 @@
   - "applications/nrf_desktop/**/*"
   - "boards/nordic/*mouse/**/*"
   - "boards/nordic/*kbd/**/*"
-  - "boards/nordic/*dongle/**/*"
+  - "boards/nordic/nrf52*dongle/**/*"
   - "drivers/sensor/paw3212/**/*"
   - "drivers/sensor/pmw3360/**/*"
   - "dts/bindings/sensor/pixart*"
