@@ -393,6 +393,25 @@ static inline bool sx_aead_aesccm_nonce_size_is_valid(size_t noncesz)
  * @return sxsymcrypt status code.
  */
 int sx_blkcipher_free(struct sxblkcipher *c);
+
+/**
+ * @brief Reserve the hardware for a blkcipher operation.
+ *
+ * This function initializes and reserves the hardware for a blkcipher
+ * operation. In case of a multithreading application this reservation
+ * also includes locking a mutex.
+ *
+ * @param[in,out] cipher_ctx block cipher operation context
+ *
+ * Return:
+ * @return ::SX_OK
+ * @return ::SX_ERR_UNKNOWN_ERROR
+ * @return ::SX_ERR_DMA_FAILED
+ * @return ::SX_ERR_HW_PROCESSING
+ * @return ::SX_ERR_INVALID_KEYREF
+ * @return ::SX_ERR_PLATFORM_ERROR
+ */
+int sx_blkcipher_hw_reserve(struct sxblkcipher *cipher_ctx);
 #ifdef __cplusplus
 }
 #endif
