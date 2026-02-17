@@ -93,10 +93,15 @@ struct bt_throughput {
 #define BT_UUID_THROUGHPUT                                                     \
 	BT_UUID_DECLARE_128(BT_UUID_THROUGHPUT_VAL)
 
-/** @brief Initialize the GATT Throughput Service.
+/** @brief Initialize the GATT Throughput Service instance.
+ *
+ *  Initializes the instance with the given callbacks.
+
+ *  @note The GATT service is defined and registered statically at compile time.
  *
  *  @param[in] throughput Throughput Service instance.
- *  @param[in] cb Callbacks.
+ *  @param[in] cb Struct containing pointers to callback functions.
+ *                Can be NULL if no callbacks are defined.
  *
  *  @retval 0 If the operation was successful.
  *            Otherwise, a negative error code is returned.

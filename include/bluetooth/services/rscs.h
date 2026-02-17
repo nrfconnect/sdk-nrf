@@ -161,7 +161,7 @@ struct bt_rscs_measurement {
 	uint32_t total_distance;
 };
 
-/** @brief Function for sending Running Speed and Cadence measurement.
+/** @brief Sending Running Speed and Cadence measurement.
  *
  * The application calls this function after having performed a Running Speed and Cadence
  * measurement. If notification has been enabled, the measurement data is encoded
@@ -175,9 +175,13 @@ struct bt_rscs_measurement {
  */
 int bt_rscs_measurement_send(struct bt_conn *conn, const struct bt_rscs_measurement *measurement);
 
-/** @brief Function for initializing the Running Speed and Cadence Service.
+/** @brief Initialize the Running Speed and Cadence Service.
  *
- *  @param[in] init Initialization parameters.
+ *  Initializes the module with the given initialization parameters.
+ *
+ *  @note The GATT service is defined and registered statically at compile time.
+ *
+ *  @param[in] init Initialization parameters. Must not be NULL.
  *
  *  @retval 0 If the operation was successful.
  *          Otherwise, a negative error code is returned.

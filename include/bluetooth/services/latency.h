@@ -63,17 +63,20 @@ struct bt_latency {
 /** @brief UUID of the Latency Characteristic. **/
 #define BT_UUID_LATENCY_CHAR BT_UUID_DECLARE_128(BT_UUID_LATENCY_CHAR_VAL)
 
-/** @brief Initialize the GATT latency service.
+/** @brief Initialize the GATT Latency Service instance.
+ *
+ *  Marks the instance as initialized and stores the given callbacks.
+ *
+ *  @note The GATT service is defined and registered statically at compile time.
  *
  *  @param[in] latency Latency service instance.
- *  @param[in] cb Callbacks.
+ *  @param[in] cb Struct containing pointers to callback functions.
+ *                Can be NULL if no callbacks are defined.
  *
  *  @retval 0 If the operation was successful.
  *            Otherwise, a negative error code is returned.
- *  @retval (-EINVAL) Special error code used when the input
- *          parameters are invalid.
- *  @retval (-EALREADY) Special error code used when the latency
- *          service has been initialed.
+ *  @retval -EINVAL Input parameters are invalid.
+ *  @retval -EALREADY Latency service has already been initialized.
  */
 int bt_latency_init(struct bt_latency *latency,
 		    const struct bt_latency_cb *cb);
