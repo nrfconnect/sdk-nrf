@@ -250,7 +250,7 @@ static psa_status_t cracen_get_zkp_hash(psa_algorithm_t hash_alg,
 					size_t *hash_length)
 {
 	psa_status_t status;
-	psa_hash_operation_t hash_op = {0};
+	psa_hash_operation_t hash_op = PSA_HASH_OPERATION_INIT;
 
 	status = psa_driver_wrapper_hash_setup(&hash_op, hash_alg);
 	if (status != PSA_SUCCESS) {
