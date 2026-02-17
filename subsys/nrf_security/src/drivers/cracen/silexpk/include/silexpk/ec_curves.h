@@ -25,7 +25,6 @@ extern "C" {
  */
 
 /** Declarations for all the defined EC curves. */
-extern const struct sx_pk_ecurve sx_curve_brainpoolP192r1;
 extern const struct sx_pk_ecurve sx_curve_brainpoolP224r1;
 extern const struct sx_pk_ecurve sx_curve_brainpoolP256r1;
 extern const struct sx_pk_ecurve sx_curve_brainpoolP320r1;
@@ -33,12 +32,10 @@ extern const struct sx_pk_ecurve sx_curve_brainpoolP384r1;
 extern const struct sx_pk_ecurve sx_curve_brainpoolP512r1;
 extern const struct sx_pk_ecurve sx_curve_ed25519;
 extern const struct sx_pk_ecurve sx_curve_ed448;
-extern const struct sx_pk_ecurve sx_curve_nistp192;
 extern const struct sx_pk_ecurve sx_curve_nistp224;
 extern const struct sx_pk_ecurve sx_curve_nistp256;
 extern const struct sx_pk_ecurve sx_curve_nistp384;
 extern const struct sx_pk_ecurve sx_curve_nistp521;
-extern const struct sx_pk_ecurve sx_curve_secp192k1;
 extern const struct sx_pk_ecurve sx_curve_secp256k1;
 extern const struct sx_pk_ecurve sx_curve_x25519;
 extern const struct sx_pk_ecurve sx_curve_x448;

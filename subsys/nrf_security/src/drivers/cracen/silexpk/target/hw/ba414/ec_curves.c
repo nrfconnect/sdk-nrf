@@ -13,32 +13,6 @@
 
 #define SX_MAX(p, q) ((p >= q) ? p : q)
 
-static const uint8_t params_nistp192[] = {
-	/* q */
-	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	/* n */
-	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x99, 0xde, 0xf8,
-	0x36, 0x14, 0x6b, 0xc9, 0xb1, 0xb4, 0xd2, 0x28, 0x31,
-	/* gx */
-	0x18, 0x8d, 0xa8, 0x0e, 0xb0, 0x30, 0x90, 0xf6, 0x7c, 0xbf, 0x20, 0xeb, 0x43, 0xa1, 0x88,
-	0x00, 0xf4, 0xff, 0x0a, 0xfd, 0x82, 0xff, 0x10, 0x12,
-	/* gy */
-	0x07, 0x19, 0x2b, 0x95, 0xff, 0xc8, 0xda, 0x78, 0x63, 0x10, 0x11, 0xed, 0x6b, 0x24, 0xcd,
-	0xd5, 0x73, 0xf9, 0x77, 0xa1, 0x1e, 0x79, 0x48, 0x11,
-	/* a */
-	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfc,
-	/* b */
-	0x64, 0x21, 0x05, 0x19, 0xe5, 0x9c, 0x80, 0xe7, 0x0f, 0xa7, 0xe9, 0xab, 0x72, 0x24, 0x30,
-	0x49, 0xfe, 0xb8, 0xde, 0xec, 0xc1, 0x46, 0xb9, 0xb1};
-
-const struct sx_pk_ecurve sx_curve_nistp192 = {.curveflags =
-						       PK_OP_FLAGS_PRIME | PK_OP_FLAGS_SELCUR_P192,
-					       .sz = 24,
-					       .params = params_nistp192,
-					       .params_total_sz = sizeof(params_nistp192)};
-
 static const uint8_t params_nistp224[] = {
 	/* q */
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -259,31 +233,6 @@ static const uint8_t params_x448[] =
 const struct sx_pk_ecurve sx_curve_x448 = {
 	.curveflags = 0, .sz = 56, .params = params_x448, .params_total_sz = sizeof(params_x448)};
 
-static const uint8_t params_brainpoolP192r1[] =
-	/* q */
-	"\xc3\x02\xf4\x1d\x93\x2a\x36\xcd\xa7\xa3\x46\x30\x93\xd1\x8d\xb7\x8f"
-	"\xce\x47\x6d\xe1\xa8\x62\x97"
-	/* n */
-	"\xc3\x02\xf4\x1d\x93\x2a\x36\xcd\xa7\xa3\x46\x2f\x9e\x9e\x91\x6b\x5b"
-	"\xe8\xf1\x02\x9a\xc4\xac\xc1"
-	/* Gx */
-	"\xc0\xa0\x64\x7e\xaa\xb6\xa4\x87\x53\xb0\x33\xc5\x6c\xb0\xf0\x90\x0a"
-	"\x2f\x5c\x48\x53\x37\x5f\xd6"
-	/* Gy */
-	"\x14\xb6\x90\x86\x6a\xbd\x5b\xb8\x8b\x5f\x48\x28\xc1\x49\x00\x02\xe6"
-	"\x77\x3f\xa2\xfa\x29\x9b\x8f"
-	/* a */
-	"\x6a\x91\x17\x40\x76\xb1\xe0\xe1\x9c\x39\xc0\x31\xfe\x86\x85\xc1\xca"
-	"\xe0\x40\xe5\xc6\x9a\x28\xef"
-	/* b */
-	"\x46\x9a\x28\xef\x7c\x28\xcc\xa3\xdc\x72\x1d\x04\x4f\x44\x96\xbc\xca"
-	"\x7e\xf4\x14\x6f\xbf\x25\xc9";
-const struct sx_pk_ecurve sx_curve_brainpoolP192r1 = {.curveflags = PK_OP_FLAGS_PRIME,
-						      .sz = 24,
-						      .params = params_brainpoolP192r1,
-						      .params_total_sz =
-							      sizeof(params_brainpoolP192r1)};
-
 static const uint8_t params_brainpoolP224r1[] =
 	/* q */
 	"\xd7\xc1\x34\xaa\x26\x43\x66\x86\x2a\x18\x30\x25\x75\xd1\xd7\x87\xb0"
@@ -432,29 +381,6 @@ const struct sx_pk_ecurve sx_curve_brainpoolP512r1 = {.curveflags = PK_OP_FLAGS_
 						      .params = params_brainpoolP512r1,
 						      .params_total_sz =
 							      sizeof(params_brainpoolP512r1)};
-
-static const uint8_t params_secp192k1[] =
-	/* q */
-	"\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
-	"\xff\xff\xfe\xff\xff\xee\x37"
-	/* n */
-	"\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe&\xf2\xfc\x17\x0fiFjt\xde\xfd\x8d"
-	/* Gx */
-	"\xdb\x4f\xf1\x0e\xc0\x57\xe9\xae\x26\xb0\x7d\x02\x80\xb7\xf4\x34\x1d"
-	"\xa5\xd1\xb1\xea\xe0\x6c\x7d"
-	/* gy */
-	"\x9b\x2f\x2f\x6d\x9c\x56\x28\xa7\x84\x41\x63\xd0\x15\xbe\x86\x34\x40"
-	"\x82\xaa\x88\xd9\x5e\x2f\x9d"
-	/* a */
-	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-	"\x00\x00\x00\x00\x00\x00\x00\x00"
-	/* b */
-	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-	"\x00\x00\x00\x00\x00\x00\x00\x03";
-const struct sx_pk_ecurve sx_curve_secp192k1 = {.curveflags = PK_OP_FLAGS_PRIME,
-						.sz = 24,
-						.params = params_secp192k1,
-						.params_total_sz = sizeof(params_secp192k1)};
 
 static const uint8_t params_secp256k1[] =
 	/* q */
