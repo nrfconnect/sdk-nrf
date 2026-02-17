@@ -17,7 +17,7 @@
 
 #include "nrf71_wifi_rf.h"
 #include "common/pack_def.h"
-
+#include "nrf71_wifi_debug_stats.h"
 
 #define NRF_WIFI_RF_PARAMS_CONF_SIZE 42
 
@@ -147,26 +147,6 @@ enum rpu_op_mode {
 };
 
 /**
- *  @brief This enum defines various types of statistics.
- */
-enum rpu_stats_type {
-	/** All statistics includes PHY, LMAC & UMAC */
-	RPU_STATS_TYPE_ALL,
-	/** Host statistics */
-	RPU_STATS_TYPE_HOST,
-	/** UMAC statistics */
-	RPU_STATS_TYPE_UMAC,
-	/** LMAC statistics*/
-	RPU_STATS_TYPE_LMAC,
-	/** PHY statistics */
-	RPU_STATS_TYPE_PHY,
-	/** Offloaded Raw TX statistics */
-	RPU_STATS_TYPE_OFFLOADED_RAW_TX,
-	/** Highest statistics type number currently defined */
-	RPU_STATS_TYPE_MAX
-};
-
-/**
  * @brief- Throughput mode
  * Throughput mode to be used for transmitting the packet.
  */
@@ -204,6 +184,8 @@ enum nrf_wifi_sys_commands {
 	NRF_WIFI_CMD_GET_STATS,
 	/** command to clear statistics */
 	NRF_WIFI_CMD_CLEAR_STATS,
+	/** command to get debug statistics */
+	NRF_WIFI_CMD_DEBUG_STATS,
 	/** command to ENABLE/DISABLE receiving packets in radiotest mode */
 	NRF_WIFI_CMD_RX,
 	/** Command to measure battery voltage and RPU responds	with NRF_WIFI_EVENT_PWR_DATA */
@@ -246,6 +228,8 @@ enum nrf_wifi_sys_commands {
 	NRF_WIFI_UMAC_CMD_SQI_CONFIG,
 	/** Update XO value */
 	NRF_WIFI_CMD_UPDATE_XO,
+	/** Command to configure LMAC tuning parameters */
+	NRF_WIFI_CMD_LMAC_TUNING_PARAMS,
 };
 
 /**
@@ -259,6 +243,8 @@ enum nrf_wifi_sys_events {
 	NRF_WIFI_EVENT_INIT_DONE,
 	/** Response to NRF_WIFI_CMD_GET_STATS */
 	NRF_WIFI_EVENT_STATS,
+	/** Response to NRF_WIFI_CMD_GET_DEBUG_STATS */
+	NRF_WIFI_EVENT_DEBUG_STATS,
 	/** Response to NRF_WIFI_CMD_DEINIT */
 	NRF_WIFI_EVENT_DEINIT_DONE,
 	/** Response to NRF_WIFI_CMD_RF_TEST */
@@ -279,12 +265,14 @@ enum nrf_wifi_sys_events {
 	NRF_WIFI_EVENT_RAW_TX_DONE,
 	/** Command status events for offloaded raw tx commands */
 	NRF_WIFI_EVENT_OFFLOADED_RAWTX_STATUS,
+	/** Error status to Host*/
+	NRF_WIFI_EVENT_ERROR_STATS,
 };
 
 /**
  * @brief - Channel Bandwidth types.
  *
- **/
+ */
 enum rpu_ch_bw {
 	/** 20MHz bandwidth */
 	RPU_CH_BW_20,
@@ -299,8 +287,10 @@ enum rpu_ch_bw {
  *
  */
 struct chan_params {
-	/** Operating band see enum op_band */
-	unsigned int op_band;
+	/** Operating band bitmap values: NRF_WIFI_OP_BAND_2GHZ,
+	 * NRF_WIFI_OP_BAND_5GHZ, NRF_WIFI_OP_BAND_6GHZ
+	 */
+	unsigned char op_band;
 	/** Primary channel number */
 	unsigned int primary_num;
 	/** Channel bandwidth */
@@ -319,8 +309,6 @@ struct chan_params {
 struct rpu_conf_rx_radio_test_params {
 	/** Number of spatial streams supported. Currently unused. */
 	unsigned char nss;
-	/* Input to the RF for operation */
-	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	/** An array containing RF and baseband control params */
 	struct chan_params chan;
 	/** Copy OTP params to this memory */
@@ -331,433 +319,6 @@ struct rpu_conf_rx_radio_test_params {
 	/** Start Rx : 1, Stop Rx :0 */
 	unsigned char rx;
 } __NRF_WIFI_PKD;
-
-/**
- * @brief This structure specifies the UMAC (Upper MAC) RX (receive) debug parameters
- *  specifically designed for debugging purpose.
- *
- */
-
-struct umac_rx_dbg_params {
-	/** Total lmac events received to UMAC */
-	unsigned int lmac_events;
-	/** Total Rx events(LMAC_EVENT_RX) received in ISR */
-	unsigned int rx_events;
-	/** Received coalised events from LMAC */
-	unsigned int rx_coalesce_events;
-	/** Total Rx packets received from LMAC */
-	unsigned int total_rx_pkts_from_lmac;
-	/** Maximum RX packets buffered at any point of time in UMAC.*/
-	unsigned int max_refill_gap;
-	/** Difference between rx packets received from lmac and packets sent to host */
-	unsigned int current_refill_gap;
-	/** Number of Packets queued to reorder buffer due to out of order */
-	unsigned int out_of_order_mpdus;
-	/** Number of packets removed from reorder buffer */
-	unsigned int reorder_free_mpdus;
-	/** Number of Rx packets resubmitted to LMAC by UMAC */
-	unsigned int umac_consumed_pkts;
-	/** Number of Rx packets sent to Host for resubmiting */
-	unsigned int host_consumed_pkts;
-	/** Total events posted to UMAC RX thread from LMAC */
-	unsigned int rx_mbox_post;
-	/** Total events received to UMAC RX thread from LMAC */
-	unsigned int rx_mbox_receive;
-	/** Number of packets received in out of order */
-	unsigned int reordering_ampdu;
-	/** Messages posted  to TX mbox from timer ISR */
-	unsigned int timer_mbox_post;
-	/** Messages received from timer ISR */
-	unsigned int timer_mbox_rcv;
-	/** Messages posted to TX mbox from work scheduler */
-	unsigned int work_mbox_post;
-	/** Messages received from work scheduler */
-	unsigned int work_mbox_rcv;
-	/** Messages posted to TX mbox from tasklet function */
-	unsigned int tasklet_mbox_post;
-	/** Messages received from tasklet function */
-	unsigned int tasklet_mbox_rcv;
-	/** Management frames sent to userspace */
-	unsigned int userspace_offload_frames;
-	/** Number of times where requested buffer size is not available
-	 *  and allocated from next available memory buffer
-	 */
-	unsigned int alloc_buf_fail;
-	/** Total packets count in RX thread */
-	unsigned int rx_packet_total_count;
-	/** Number of data packets received */
-	unsigned int rx_packet_data_count;
-	/** Number of Qos data packets received */
-	unsigned int rx_packet_qos_data_count;
-	/** Number of protected data packets received */
-	unsigned int rx_packet_protected_data_count;
-	/** Number of management packets received */
-	unsigned int rx_packet_mgmt_count;
-	/** Number of beacon packets received */
-	unsigned int rx_packet_beacon_count;
-	/** Number of probe response packets received */
-	unsigned int rx_packet_probe_resp_count;
-	/** Number of authentication packets received */
-	unsigned int rx_packet_auth_count;
-	/** Number of deauthentication packets received */
-	unsigned int rx_packet_deauth_count;
-	/** Number of assoc response packets received */
-	unsigned int rx_packet_assoc_resp_count;
-	/** Number of disassociation packets received */
-	unsigned int rx_packet_disassoc_count;
-	/** Number of action frames received */
-	unsigned int rx_packet_action_count;
-	/** Number of probe request packets received */
-	unsigned int rx_packet_probe_req_count;
-	/** Other management packets received */
-	unsigned int rx_packet_other_mgmt_count;
-	/** Maximum coalised packets received from LMAC in any RX event */
-	signed char max_coalesce_pkts;
-	/** Packets received with null skb pointer from LMAC */
-	unsigned int null_skb_pointer_from_lmac;
-	/** Number of unexpected management packets received in coalesce event */
-	unsigned int unexpected_mgmt_pkt;
-	/** Number of packets flushed from reorder buffer before going to sleep */
-	unsigned int reorder_flush_pkt_count;
-	/** Unprotected error data frames received in security mode */
-	unsigned int unsecured_data_error;
-	/** Packets received with null skb pointer from LMAC in coalesce event */
-	unsigned int pkts_in_null_skb_pointer_event;
-} __NRF_WIFI_PKD;
-
-/**
- * @brief This structure specifies the UMAC TX (transmit) debug parameters used for
- *  debugging purposes.
- *
- */
-struct umac_tx_dbg_params {
-	/** Total number of tx commands received from host */
-	unsigned int tx_cmd;
-	/** Non coalesce packets received */
-	unsigned int tx_non_coalesce_pkts_rcvd_from_host;
-	/** coalesce packets received */
-	unsigned int tx_coalesce_pkts_rcvd_from_host;
-	/** Maximum number of coalesce packets received in any
-	 *  TX command coalesce packets received
-	 */
-	unsigned int tx_max_coalesce_pkts_rcvd_from_host;
-	/** Maximum Tx commands currently in process at any point of time in UMAC */
-	unsigned int tx_cmds_max_used;
-	/** Number of Tx commands that are currently in process in UMAC */
-	unsigned int tx_cmds_currently_in_use;
-	/** Number of tx done events sent to host */
-	unsigned int tx_done_events_send_to_host;
-	/** Number of tx done success packets sent to host */
-	unsigned int tx_done_success_pkts_to_host;
-	/** Number of tx done failure packets sent to host */
-	unsigned int tx_done_failure_pkts_to_host;
-	/** Number of packets received from host that needs to be encrypted */
-	unsigned int tx_cmds_with_crypto_pkts_rcvd_from_host;
-	/** Number of packets received from host that need not to be encrypted */
-	unsigned int tx_cmds_with_non_crypto_pkts_rcvd_from_host;
-	/** Number of broadcast	packets received from host */
-	unsigned int tx_cmds_with_broadcast_pkts_rcvd_from_host;
-	/** Number of multicast	packets received from host */
-	unsigned int tx_cmds_with_multicast_pkts_rcvd_from_host;
-	/** Number of unicast packets received from host */
-	unsigned int tx_cmds_with_unicast_pkts_rcvd_from_host;
-	/** UMAC internal count */
-	unsigned int xmit;
-	/** Number of addba requests sent */
-	unsigned int send_addba_req;
-	/** Total ADD BA responses received from host */
-	unsigned int addba_resp;
-	/** Total packets received in softmac tx function */
-	unsigned int softmac_tx;
-	/** Number of packets generated internally in UMAC */
-	unsigned int internal_pkts;
-	/** Number of packets Received from host */
-	unsigned int external_pkts;
-	/** Total tx commmands sent to lmac */
-	unsigned int tx_cmds_to_lmac;
-	/** Tx dones received from LMAC */
-	unsigned int tx_dones_from_lmac;
-	/** Total commands sent to lmac in UMAC hal */
-	unsigned int total_cmds_to_lmac;
-	/** Number of data packets sent */
-	unsigned int tx_packet_data_count;
-	/** Number of management packets sent */
-	unsigned int tx_packet_mgmt_count;
-	/** Number of beacon packets sent */
-	unsigned int tx_packet_beacon_count;
-	/** Number of probe request packets sent */
-	unsigned int tx_packet_probe_req_count;
-	/** Number of authentication packets sent */
-	unsigned int tx_packet_auth_count;
-	/** Number of deauthentication packets sent */
-	unsigned int tx_packet_deauth_count;
-	/** Number of association request packets sent */
-	unsigned int tx_packet_assoc_req_count;
-	/** Number of disassociation packets sent */
-	unsigned int tx_packet_disassoc_count;
-	/** Number of action packets sent */
-	unsigned int tx_packet_action_count;
-	/** Other management packets sent */
-	unsigned int tx_packet_other_mgmt_count;
-	/** Number of Non management packets sent */
-	unsigned int tx_packet_non_mgmt_data_count;
-
-} __NRF_WIFI_PKD;
-
-/**
- * @brief This structure specifies the UMAC command and event debug parameters used for
- *  debugging purpose.
- *
- */
-struct umac_cmd_evnt_dbg_params {
-	/** Number of command init received from host */
-	unsigned char cmd_init;
-	/** Number of init_done events sent to host */
-	unsigned char event_init_done;
-	/** Number of rf test command received from host */
-	unsigned char cmd_rf_test;
-	/** Number of connect command received from host */
-	unsigned char cmd_connect;
-	/** Number of get_stats command received from host */
-	unsigned int cmd_get_stats;
-	/** Number of power save state events sent to host */
-	unsigned int event_ps_state;
-	/** Unused*/
-	unsigned int cmd_set_reg;
-	/** Number of get regulatory commands received from host */
-	unsigned int cmd_get_reg;
-	/** Number of request set regulatory commands received from host */
-	unsigned int cmd_req_set_reg;
-	/** Number of trigger scan commands received from host */
-	unsigned int cmd_trigger_scan;
-	/** Number of scan done events sent to host */
-	unsigned int event_scan_done;
-	/** Number of get scan commands received from the host to get scan results */
-	unsigned int cmd_get_scan;
-	/** Number of scan commands sent to LMAC */
-	unsigned int umac_scan_req;
-	/** Number of scan complete events received from LMAC */
-	unsigned int umac_scan_complete;
-	/** Number of scan requests received from host when previous scan is in progress */
-	unsigned int umac_scan_busy;
-	/** Number of authentication requests received from host */
-	unsigned int cmd_auth;
-	/** Number of association requests received from host */
-	unsigned int cmd_assoc;
-	/** Number of deauthentication requests received from host */
-	unsigned int cmd_deauth;
-	/** Number of register frame commands received from host to register
-	 *  a management frame type which should be passed to host
-	 */
-	unsigned int cmd_register_frame;
-	/** Number of command frames from host which will be used for
-	 *  transmitting management frames
-	 */
-	unsigned int cmd_frame;
-	/** Number of delete key commands from host */
-	unsigned int cmd_del_key;
-	/** Number of new key commands received from host */
-	unsigned int cmd_new_key;
-	/** Number of set key commands received from host */
-	unsigned int cmd_set_key;
-	/** Number of get key commands received from host */
-	unsigned int cmd_get_key;
-	/** Number of beacon hint events sent to host */
-	unsigned int event_beacon_hint;
-	/** Number of regulatory change events sent to host when regulatory change command
-	 *  received from host such as in response to command NL80211_CMD_REG_CHANGE
-	 */
-	unsigned int event_reg_change;
-	/** Number of regulatory change events sent to host other than
-	 *  host request for regulatory change
-	 */
-	unsigned int event_wiphy_reg_change;
-	/** Number of set station commands received from host */
-	unsigned int cmd_set_station;
-	/** Number of new station commands received from host */
-	unsigned int cmd_new_station;
-	/** Number of del station commands received from host */
-	unsigned int cmd_del_station;
-	/** Number of new interface commands received from host */
-	unsigned int cmd_new_interface;
-	/** Number of set interface commands received from host */
-	unsigned int cmd_set_interface;
-	/** Number of get interface commands received from host */
-	unsigned int cmd_get_interface;
-	/** Number of set_ifflags commands received from host */
-	unsigned int cmd_set_ifflags;
-	/** Number of set_ifflags events sent to host */
-	unsigned int cmd_set_ifflags_done;
-	/** Number of set bss command received from host */
-	unsigned int cmd_set_bss;
-	/** Number of set wiphy command received from host */
-	unsigned int cmd_set_wiphy;
-	/** Number of start access point command received from host */
-	unsigned int cmd_start_ap;
-	/** Number of power save configuration commands sent to LMAC */
-	unsigned int LMAC_CMD_PS;
-	/** Current power save state configured to LMAC through LMAC_CMD_PS command */
-	unsigned int CURR_STATE;
-} __NRF_WIFI_PKD;
-
-/**
- * @brief This structure specifies the UMAC interface debug parameters used for debugging purpose.
- *
- */
-struct nrf_wifi_interface_stats {
-	/** Number of unicast packets sent */
-	unsigned int tx_unicast_pkt_count;
-	/** Number of multicast packets sent */
-	unsigned int tx_multicast_pkt_count;
-	/** Number of broadcast packets sent */
-	unsigned int tx_broadcast_pkt_count;
-	/** Number of tx data bytes sent */
-	unsigned int tx_bytes;
-	/** Number of unicast packets received */
-	unsigned int rx_unicast_pkt_count;
-	/** Number of multicast packets received */
-	unsigned int rx_multicast_pkt_count;
-	/** Number of broadcast packets received */
-	unsigned int rx_broadcast_pkt_count;
-	/** Number of beacon packets received */
-	unsigned int rx_beacon_success_count;
-	/** Number of beacon packets missed */
-	unsigned int rx_beacon_miss_count;
-	/** Number of rx data bytes received */
-	unsigned int rx_bytes;
-	/** Number of packets with checksum mismatch received */
-	unsigned int rx_checksum_error_count;
-	/** Number of duplicate packets received */
-	unsigned int replay_attack_drop_cnt;
-} __NRF_WIFI_PKD;
-
-/**
- * @brief This structure defines the UMAC debug statistics. It contains the necessary parameters
- *  and fields used to gather and present debugging statistics within the UMAC layer.
- *
- */
-struct rpu_umac_stats {
-	/** Transmit debug statistics @ref umac_tx_dbg_params */
-	struct umac_tx_dbg_params tx_dbg_params;
-	/** Receive debug statistics @ref umac_rx_dbg_params */
-	struct umac_rx_dbg_params rx_dbg_params;
-	/** Command Event debug statistics @ref umac_cmd_evnt_dbg_params */
-	struct umac_cmd_evnt_dbg_params cmd_evnt_dbg_params;
-	/** Interface debug parameters @ref nrf_wifi_interface_stats */
-	struct nrf_wifi_interface_stats interface_data_stats;
-} __NRF_WIFI_PKD;
-
-/**
- * @brief This structure defines the LMAC debug parameters.
- *
- */
-struct rpu_lmac_stats {
-	/** Number of reset command counts from UMAC */
-	unsigned int reset_cmd_cnt;
-	/** Number of reset complete events sent to UMAC */
-	unsigned int reset_complete_event_cnt;
-	/** Number of events unable to generate */
-	unsigned int unable_gen_event;
-	/** Number of channel program commands from UMAC */
-	unsigned int ch_prog_cmd_cnt;
-	/** Number of channel program done events to UMAC */
-	unsigned int channel_prog_done;
-	/** Number of Tx commands from UMAC */
-	unsigned int tx_pkt_cnt;
-	/** Number of Tx done events to UMAC */
-	unsigned int tx_pkt_done_cnt;
-	/** Unused */
-	unsigned int scan_pkt_cnt;
-	/** Number of internal Tx packets */
-	unsigned int internal_pkt_cnt;
-	/** Number of Tx dones for internal packets */
-	unsigned int internal_pkt_done_cnt;
-	/** Number of acknowledgment responses */
-	unsigned int ack_resp_cnt;
-	/** Number of transmit timeouts */
-	unsigned int tx_timeout;
-	/** Number of deaggregation ISRs */
-	unsigned int deagg_isr;
-	/** Number of deaggregation input descriptor empties */
-	unsigned int deagg_inptr_desc_empty;
-	/** Number of deaggregation circular buffer full events */
-	unsigned int deagg_circular_buffer_full;
-	/** Number of LMAC received ISRs */
-	unsigned int lmac_rxisr_cnt;
-	/** Number of received packets decrypted */
-	unsigned int rx_decryptcnt;
-	/** Number of packet decryption failures during processing */
-	unsigned int process_decrypt_fail;
-	/** Number of RX event preparation failures */
-	unsigned int prepa_rx_event_fail;
-	/** Number of RX core pool full counts */
-	unsigned int rx_core_pool_full_cnt;
-	/** Number of RX MPDU CRC successes */
-	unsigned int rx_mpdu_crc_success_cnt;
-	/** Number of RX MPDU CRC failures */
-	unsigned int rx_mpdu_crc_fail_cnt;
-	/** Number of RX OFDM CRC successes */
-	unsigned int rx_ofdm_crc_success_cnt;
-	/** Number of RX OFDM CRC failures */
-	unsigned int rx_ofdm_crc_fail_cnt;
-	/** Number of RX DSSS CRC successes */
-	unsigned int rxDSSSCrcSuccessCnt;
-	/** Number of RX DSSS CRC failures */
-	unsigned int rxDSSSCrcFailCnt;
-	/** Number of RX crypto start counts */
-	unsigned int rx_crypto_start_cnt;
-	/** Number of RX crypto done counts */
-	unsigned int rx_crypto_done_cnt;
-	/** Number of RX event buffer full counts */
-	unsigned int rx_event_buf_full;
-	/** Number of RX external RAM buffer full counts */
-	unsigned int rx_extram_buf_full;
-	/** Number of scan requests receive from UMAC */
-	unsigned int scan_req;
-	/** Number of scan complete events sent to UMAC */
-	unsigned int scan_complete;
-	/** Number of scan abort requests */
-	unsigned int scan_abort_req;
-	/** Number of scan abort complete events */
-	unsigned int scan_abort_complete;
-	/** Number of internal buffer pool null counts */
-	unsigned int internal_buf_pool_null;
-	/** RPU hardware lockup event detection count */
-	unsigned int rpu_hw_lockup_count;
-	/** RPU hardware lockup recovery completed count */
-	unsigned int rpu_hw_lockup_recovery_done;
-	/** Number of Signal quality threshold set commands from host  */
-	unsigned int  SQIThresholdCmdsCnt;
-	/** Number of Signal quality configuration commands from host  */
-	unsigned int  SQIConfigCmdsCnt;
-	/** Signal Quality Indication event from lmac   */
-	unsigned int  SQIEventsCnt;
-	/** Configured sleep type. */
-	unsigned int SleepType;
-	/** Number of warm boot /sleep cycles in RPU  */
-	unsigned int warmBootCnt;
-} __NRF_WIFI_PKD;
-
-
-/**
- * @brief This structure defines the PHY (Physical Layer) debug statistics.
- *
- */
-struct rpu_phy_stats {
-	/** Rssi average value received from LMAC */
-	signed char rssi_avg;
-	/** Unused */
-	unsigned char pdout_val;
-	/** Number of OFDM CRC Pass packets */
-	unsigned int ofdm_crc32_pass_cnt;
-	/** Number of OFDM CRC Fail packets */
-	unsigned int ofdm_crc32_fail_cnt;
-	/** Number of DSSS CRC Pass packets */
-	unsigned int dsss_crc32_pass_cnt;
-	/** Number of DSSS CRC Fail packets */
-	unsigned int dsss_crc32_fail_cnt;
-} __NRF_WIFI_PKD;
-
 
 /**
  * @brief The UMAC header structure for system commands and events defines the format
@@ -790,6 +351,33 @@ enum max_rx_ampdu_size {
 	/** 64KB AMPDU Size */
 	MAX_RX_AMPDU_SIZE_64KB
 };
+
+/**
+ * @brief This structure defines the parameters used to control the transmit (TX) power.
+ *
+ */
+struct nrf_wifi_tx_pwr_ctrl_params {
+	/** Antenna gain for 2.4 GHz band */
+	unsigned char ant_gain_2g;
+	/** Antenna gain for 5 GHz band (5150 MHz - 5350 MHz) */
+	unsigned char ant_gain_5g_band1;
+	/** Antenna gain for 5 GHz band (5470 MHz - 5730 MHz) */
+	unsigned char ant_gain_5g_band2;
+	/** Antenna gain for 5 GHz band (5730 MHz - 5895 MHz) */
+	unsigned char ant_gain_5g_band3;
+	/** Antenna gain for 6 GHz band (5935 MHz - 6015 MHz) */
+	unsigned char ant_gain_6g_band1;
+	/** Antenna gain for 6 GHz band (6035 MHz - 6115 MHz) */
+	unsigned char ant_gain_6g_band2;
+	/** Antenna gain for 6 GHz band (6135 MHz - 6215 MHz) */
+	unsigned char ant_gain_6g_band3;
+	/** Antenna gain for 6 GHz band (6235 MHz - 6315 MHz) */
+	unsigned char ant_gain_6g_band4;
+	/** Antenna gain for 6 GHz band (6335 MHz - 6415 MHz) */
+	unsigned char ant_gain_6g_band5;
+	/** Antenna gain for 6 GHz band (6435 MHz - 6475 MHz) */
+	unsigned char ant_gain_6g_band6;
+} __NRF_WIFI_PKD;
 
 /**
  * @brief This structure specifies the configuration parameters used for configuring
@@ -841,27 +429,12 @@ struct nrf_wifi_sys_params {
 	unsigned int phy_calib;
 	/** MAC address of the interface. Not applicable to Radio Test mode */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** VTF buffer address */
+	unsigned int vtf_buffer_addr;
 	/** An array containing RF & baseband control params */
-	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
-	/** Indicates whether the rf_params has a valid value */
-	unsigned char rf_params_valid;
-} __NRF_WIFI_PKD;
-
-
-/**
- * @brief This structure defines the parameters used to control the transmit (TX) power.
- *
- */
-
-struct nrf_wifi_tx_pwr_ctrl_params {
-	/** Antenna gain for 2.4 GHz band */
-	unsigned char ant_gain_2g;
-	/** Antenna gain for 5 GHz band (5150 MHz - 5350 MHz) */
-	unsigned char ant_gain_5g_band1;
-	/** Antenna gain for 5 GHz band (5470 MHz - 5730 MHz) */
-	unsigned char ant_gain_5g_band2;
-	/** Antenna gain for 5 GHz band (5730 MHz - 5895 MHz) */
-	unsigned char ant_gain_5g_band3;
+	unsigned int rf_params_addr[NUM_WIFI_PARAMS];
+	/** Transmit power control parameters */
+	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
 } __NRF_WIFI_PKD;
 
 /**
@@ -876,22 +449,12 @@ enum scan_type_6g {
 	/** Passive scan : Fast Initial Link Setup Frames */
 	FILS
 };
-/**
- * @brief This enum defines different types of operating bands.
- *
- */
-enum op_band {
-	/** All bands */
-	BAND_ALL,
-	/** 2.4Ghz band */
-	BAND_24G,
-	/** 5 GHz band */
-	BAND_5G,
-	/** 6 GHz band */
-	BAND_6G,
-	/** 2.4Ghz & 5GHz band */
-	BAND_DUAL
-};
+
+/** operating bands bitmap values */
+#define NRF_WIFI_OP_BAND_2GHZ	(1 << 0)
+#define NRF_WIFI_OP_BAND_5GHZ	(1 << 1)
+#define NRF_WIFI_OP_BAND_6GHZ	(1 << 2)
+
 
 /**
  * @brief This enum defines keep alive state
@@ -969,19 +532,20 @@ struct nrf_wifi_cmd_sys_init {
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
 	/** Data configuration params, @ref nrf_wifi_data_config_params */
 	struct nrf_wifi_data_config_params data_config_params;
-	/** Calibration trigger control info based on battery voltage and temperature changes.
-	 *  @ref temp_vbat_config from lmac_if_common.h
-	 */
+	/** Temperature and battery voltage calibration */
 	struct temp_vbat_config temp_vbat_config_params;
 	/** Country code to set */
 	unsigned char country_code[NRF_WIFI_COUNTRY_CODE_LEN];
-	/** Operating band see enum op_band */
-	unsigned int op_band;
+	/** Operating band bitmap values: NRF_WIFI_OP_BAND_2GHZ,
+	 * NRF_WIFI_OP_BAND_5GHZ, NRF_WIFI_OP_BAND_6GHZ
+	 */
+	unsigned char op_band;
 	/** Offload mgmt buffer refill to UMAC when enabled */
 	unsigned char mgmt_buff_offload;
 	/** Enable features from driver config */
 	unsigned int feature_flags;
-	/** To deactivate beamforming, By default the RPU enables the beamforming feature.
+	/** To deactivate beamforming,
+	 * By default the RPU enables the beamforming feature.
 	 *  If a user wishes to turn it off, they should set this parameter to 1.
 	 */
 	unsigned int disable_beamforming;
@@ -990,13 +554,13 @@ struct nrf_wifi_cmd_sys_init {
 	 */
 	unsigned int discon_timeout;
 	/** RPU uses QoS null frame or PS-Poll frame to retrieve buffered frames
-	 * from the AP in power save @ref ps_exit_strategy.
+	 * from the AP in power save
 	 */
 	unsigned char ps_exit_strategy;
 	/** The RPU uses this value to configure watchdog timer */
 	unsigned int watchdog_timer_val;
 	/** The RPU uses this value to decide whether keep alive
-	 *  feature is enabled or not see enum keep_alive_status
+	 *  feature is enabled or not.
 	 */
 	unsigned char keep_alive_enable;
 	/** The RPU uses this value(in seconds) for periodicity of the keep
@@ -1115,8 +679,6 @@ struct rpu_conf_params {
 	unsigned char nss;
 	/** Unused */
 	unsigned char antenna_sel;
-	/** An array containing RF & baseband control params */
-	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	/** Not required */
 	unsigned char tx_pkt_chnl_bw;
 	/** WLAN packet formats. 0->Legacy 1->HT 2->VHT 3->HE(SU) 4->HE(ERSU) and 5->HE(TB) */
@@ -1199,6 +761,22 @@ struct rpu_conf_params {
 	unsigned char country_code[NRF_WIFI_COUNTRY_CODE_LEN];
 	/** Contention window value to be configured */
 	unsigned int tx_pkt_cw;
+	unsigned int rx_bss_color;
+	unsigned int rx_station_id;
+	/** TX DCM enable. Valid values: 0 (disabled), 1 (enabled) */
+	unsigned char tx_dcm;
+	/** TX Doppler enable. Valid values: 0 (disabled), 1 (enabled) */
+	unsigned char tx_doppler;
+	/** TX midamble periodicity. Valid values: 10, 20 */
+	unsigned char tx_midamble_periodicity;
+	/** TX 106-tone RU enable. Valid values: 0 (disabled), 1 (enabled) */
+	unsigned char tx_106_tone;
+	/** TX legacy length field (in octets). Valid range: 0-4095 */
+	unsigned short tx_legacy_length;
+	/** TX FEC padding factor. Valid values: 1, 2, 3, 4 */
+	unsigned char tx_fec_padd_factor;
+	/** Informs number of HE-LTFs: 0->1x, 1->2x, 2->4x, 3->6x, 4->8x */
+	unsigned char tx_num_he_ltf;
 } __NRF_WIFI_PKD;
 
 /**
@@ -1226,13 +804,21 @@ struct nrf_wifi_cmd_mode_params {
  */
 struct nrf_wifi_radio_test_init_info {
 	/** An array containing RF & baseband control params */
-	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
+	unsigned int rf_params_addr[NUM_WIFI_PARAMS];
+	/** Transmit power control parameters */
+	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
+	/** VTF buffer address */
+	unsigned int vtf_buffer_addr;
 	/** Channel related info viz, channel, bandwidth, primary 20 offset */
 	struct chan_params chan;
 	/** Phy threshold value to be sent to LMAC in channel programming */
 	signed char phy_threshold;
 	/** Calibration bit map value. refer phy_rf_params.h NRF_WIFI_DEF_PHY_CALIB */
 	unsigned int phy_calib;
+	/** Receive BSS color value (1 to 63) */
+	unsigned char rx_bss_color;
+	/** Receive station ID value (1 to 2047) */
+	unsigned short rx_station_id;
 } __NRF_WIFI_PKD;
 
 /**
@@ -1270,6 +856,60 @@ struct nrf_wifi_cmd_get_stats {
 	signed int stats_type;
 	/** Production mode or FCM mode */
 	signed int op_mode;
+} __NRF_WIFI_PKD;
+
+
+/**
+ * @brief This structure defines the command used to retrieve statistics from the RPU.
+ *
+ */
+struct nrf_wifi_umac_cmd_debug_stats {
+	/** UMAC header, @ref nrf_wifi_sys_head*/
+	struct nrf_wifi_sys_head sys_head;
+
+	/** Statistics type &enum rpu_stats_type */
+	signed int stats_type;
+	/**
+	 * Control to enable/disable periodic stats
+	 * 0 - Periodic stats will be disabled
+	 * non zero - Number of times Periodic stats will be sent.
+	 */
+	unsigned int periodic_stats_enable;
+	unsigned int periodic_stats_interval; /* in seconds */
+	/**Stats control in Bitmap */
+	unsigned int stats_ctrl;
+	/**Stats GDRAM Address */
+	unsigned int stats_addr;
+} __NRF_WIFI_PKD;
+
+/**
+ * @brief This structure defines the event used to send statistics to the Host.
+ *
+ */
+struct nrf_wifi_umac_event_debug_stats {
+	/** UMAC header, @ref nrf_wifi_sys_head*/
+	struct nrf_wifi_sys_head sys_head;
+	/** Statistics type &enum rpu_stats_type */
+	signed int stats_type;
+	/**Stats GDRAM Address */
+	unsigned int stats_addr;
+	/**Copy struct lmac_debug_stats OR struct umac_debug_stats OR
+	 * struct phy_debug_stats to into struct nrf_wifi_rpu_debug_stats
+	 */
+	struct nrf_wifi_rpu_debug_stats stats;
+} __NRF_WIFI_PKD;
+
+/**
+ * @brief This structure defines the event used to send error statistics to the Host.
+ *
+ */
+struct nrf_wifi_umac_event_error_stats {
+	/** UMAC header, @ref nrf_wifi_sys_head*/
+	struct nrf_wifi_sys_head sys_head;
+	/** Statistics type &enum rpu_stats_type */
+	signed int stats_type;
+	/** @ref enum LMAC_ERROR_ID OR @ref enum UMAC_ERROR_ID*/
+	unsigned int status_code;
 } __NRF_WIFI_PKD;
 
 /**
@@ -1813,25 +1453,6 @@ struct nrf_wifi_event_init_done {
 } __NRF_WIFI_PKD;
 
 /**
- * @brief structure for UMAC memory pool information.
- *
- */
-struct pool_data_to_host {
-	/** Size of the memory buffer */
-	unsigned int buffer_size;
-	/** Number of pool items available for the above memory buffer */
-	unsigned char num_pool_items;
-	/** Maximum pools allocated at any point of time */
-	unsigned char items_num_max_allocated;
-	/** Currently allocated pools */
-	unsigned char items_num_cur_allocated;
-	/** Total number of pool allocated */
-	unsigned int items_num_total_allocated;
-	/** Number of times this memory pool is full */
-	unsigned int items_num_not_allocated;
-} __NRF_WIFI_PKD;
-
-/**
  * @brief This structure represents the event that provides UMAC (Upper MAC) internal
  *  memory statistics in response to the NRF_WIFI_CMD_UMAC_INT_STATS command.
  *
@@ -1958,10 +1579,19 @@ struct phy_prod_stats {
 	unsigned int dsss_crc32_fail_cnt;
 	char averageRSSI;
 };
+struct lmac_offload_raw_tx_stats {
+	unsigned int offLoad_raw_tx_state;
+	unsigned int offload_raw_tx_cnt;
+	unsigned int offload_raw_tx_complete_cnt;
+	unsigned int warm_boot_cnt;
+} __NRF_WIFI_PKD;
+
 
 union rpu_stats {
 	struct lmac_prod_stats lmac_stats;
 	struct phy_prod_stats  phy_stats;
+	struct lmac_offload_raw_tx_stats offload_raw_tx_stats;
+
 };
 
 
@@ -2084,13 +1714,22 @@ enum nrf_wifi_rf_test {
 	NRF_WIFI_SET_EDGE_CHANNEL_PARAMS,
 	NRF_WIFI_SET_EVM_AFFECTED_CHANNELS,
 	NRF_WIFI_SET_ANTENNA_GAIN_PARAMS,
-	NRF_WIFI_RF_TEST_GET_STATS = 64,
-	NRF_WIFI_RF_TEST_SET_REGS,
+	NRF_WIFI_SET_MULTIPATH_DET_PARAMS,
+	NRF_WIFI_RH_START,
+	NRF_WIFI_RH_STOP,
+	NRF_WIFI_RF_TEST_SET_REGS = 128,
 	NRF_WIFI_RF_TEST_READ_REGS,
 	NRF_WIFI_RF_TEST_SET_MEM,
 	NRF_WIFI_RF_TEST_READ_MEM,
-
+	NRF_WIFI_RF_PERFORM_CALIBRATION,
+	NRF_WIFI_RF_APPLY_COMPENSATION,
+	NRF_WIFI_RF_READ_COMP_RESULTS,
+	NRF_WIFI_RF_TEST_PATCH_SETTINGS,
+	NRF_WIFI_RF_TEST_ENABLE_VT_CALIB,
+	NRF_WIFI_RF_TEST_ENABLE_VT_COMP,
+	NRF_WIFI_RF_TEST_GET_STATS,
 	NRF_WIFI_RF_TEST_MAX,
+
 };
 
 enum nrf_wifi_rf_test_event {
@@ -2115,17 +1754,27 @@ enum nrf_wifi_rf_test_event {
 	NRF_WIFI_EVENT_SET_EDGE_CHANNEL_PARAMS,
 	NRF_WIFI_EVENT_SET_EVM_AFFECTED_CHANNELS,
 	NRF_WIFI_EVENT_SET_ANTENNA_GAIN_PARAMS,
-	NRF_WIFI_RF_TEST_EVENT_GET_STATS = 64,
-	NRF_WIFI_RF_TEST_EVENT_SET_REGS,
+	NRF_WIFI_EVENT_SET_MULTIPATH_DET_PARAMS,
+	NRF_WIFI_RH_TEST_EVENT_START,
+	NRF_WIFI_RH_TEST_EVENT_STOP,
+	NRF_WIFI_RF_TEST_EVENT_SET_REGS = 128,
 	NRF_WIFI_RF_TEST_EVENT_READ_REGS,
 	NRF_WIFI_RF_TEST_EVENT_SET_MEM,
 	NRF_WIFI_RF_TEST_EVENT_READ_MEM,
+	NRF_WIFI_RF_TEST_EVENT_PERFORM_CALIBRATION,
+	NRF_WIFI_RF_TEST_EVENT_APPLY_COMPENSATION,
+	NRF_WIFI_RF_TEST_EVENT_READ_COMP_RESULTS,
+	NRF_WIFI_RF_TEST_EVENT_PATCH_SETTINGS,
+	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_CALIB,
+	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_COMP,
+	NRF_WIFI_RF_TEST_EVENT_GET_STATS,
 	NRF_WIFI_RF_TEST_EVENT_MAX,
+
 };
 
 #define MAX_REGS_CONF 8
 #define MAX_MEM_CONF 8
-#define CAL_MEM_SIZE 500
+#define CAL_MEM_SIZE 2048
 
 /* Holds the RX capture related info */
 struct nrf_wifi_rf_test_capture_params {
@@ -2179,6 +1828,13 @@ struct nrf_wifi_rf_test_capture_meas {
 	unsigned int rms_Q;
 } __NRF_WIFI_PKD;
 
+/** Tone type for RF test TX tone: 0 = complex, 1 = real-only, 2 = imag-only. */
+enum nrf_wifi_rf_test_tone_type {
+	NRF_WIFI_RF_TEST_TONE_COMPLEX = 0,
+	NRF_WIFI_RF_TEST_TONE_REAL    = 1,
+	NRF_WIFI_RF_TEST_TONE_IMAG    = 2,
+};
+
 /* Holds the transmit related info */
 struct nrf_wifi_rf_test_tx_params {
 	unsigned char test;
@@ -2193,6 +1849,9 @@ struct nrf_wifi_rf_test_tx_params {
 
 	/* Set 1 for staring tone transmission. */
 	unsigned char enabled;
+
+	/** Tone type: complex, real-only, or imag-only. */
+	enum nrf_wifi_rf_test_tone_type tone_type;
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_rf_test_transmit_samples {
@@ -2206,6 +1865,13 @@ struct nrf_wifi_rf_test_dpd_params {
 	unsigned char enabled;
 
 } __NRF_WIFI_PKD;
+
+struct nrf_wifi_rf_test_multipath_params {
+	unsigned char test;
+	unsigned char enabled;
+} __NRF_WIFI_PKD;
+
+
 
 struct nrf_wifi_temperature_params {
 	unsigned char test;
@@ -2238,8 +1904,13 @@ struct nrf_wifi_rf_test_xo_calib {
 struct nrf_wifi_rf_get_xo_value {
 	unsigned char test;
 
-	/* Optimal XO value computed. */
-	unsigned char xo_value;
+	/* XO offset in PPM (Gen3B). */
+	signed int xo_offset;
+
+	/* Status: 0 = success, 1 = tone not detected, 2 = gain fail (high),
+	 * 3 = gain fail (low), 4 = gain fail (timeout)
+	 */
+	unsigned char status;
 } __NRF_WIFI_PKD;
 
 
@@ -2263,69 +1934,6 @@ struct nrf_wifi_bat_volt_params {
 	unsigned int cmd_status;
 } __NRF_WIFI_PKD;
 
-/**
- * @struct nrf_wifi_rf_get_rx_debug_stats
- * @brief Holds debug statistics related to the RX.
- */
-struct nrf_wifi_rf_get_rx_debug_stats {
-	unsigned char test;
-
-	/**
-	 * @todo Refactor the code to use the WLAN_PHY_RX_STATS_T structure.
-	 *
-	 * The current implementation uses individual structure members that are
-	 * already present in WLAN_PHY_RX_STATS_T. To improve maintainability
-	 * and reduce redundancy, consider replacing the individual members with
-	 * this unified structure.
-	 */
-
-	unsigned int edCnt;
-	unsigned int ofdmCrc32PassCnt;
-	unsigned int ofdmCrc32FailCnt;
-	unsigned int dsssCrc32PassCnt;
-	unsigned int dsssCrc32FailCnt;
-	unsigned int ofdmCorrPassCnt;
-	unsigned int dsssCorrPassCnt;
-	unsigned int ofdmLtfCorrFailCnt;
-	unsigned int ofdmLsigFailCnt;
-	unsigned int ofdmHtsigAFailCnt;
-	unsigned int ofdmVhtsigAFailCnt;
-	unsigned int ofdmVhtsigBFailCnt;
-	unsigned int ofdmHesigAFailCnt;
-	unsigned int ofdmHesigBFailCnt;
-	unsigned int ofdmUsigFailCnt;
-	unsigned int ofdmEhtsigFailCnt;
-	unsigned int ofdmzeroLenMpduCnt;
-	unsigned int ofdminvalidDelimiterCnt;
-	unsigned int dsssSyncFailCnt;
-	unsigned int dsssFsyncFailCnt;
-	unsigned int dsssSfdFailCnt;
-	unsigned int dsssHdrFailCnt;
-	unsigned int lgPktCnt;
-	unsigned int htPktCnt;
-	unsigned int vhtPktCnt;
-	unsigned int heSuPktCnt;
-	unsigned int heMuPktCnt;
-	unsigned int heErSuPktCnt;
-	unsigned int heTbPktCnt;
-	unsigned int ehtMuPktCnt;
-	unsigned int popCnt;
-	unsigned int midPacketCnt;
-	unsigned int lowEnergyEventCnt;
-	unsigned int unSupportedCnt;
-	unsigned int otherStaPktCnt;
-	unsigned int vhtNdpCnt;
-	unsigned int hesuNdpCnt;
-	unsigned int ehtNdpCnt;
-	unsigned int ofdmS2lTimeOutFailCnt;
-	unsigned int spatialReuseCnt;
-} __NRF_WIFI_PKD;
-
-/**
- * Enum for selecting operating mode of RF
- * rx_only_mode: Only RX is supported in this mode.
- * trx_normal_mode: Both RX and TX are supported by RF.
- */
 typedef enum {
 	rx_only_mode,
 	trx_normal_mode
@@ -2380,11 +1988,22 @@ struct nrf_wifi_rf_calib {
 	/** RF calibration bit map */
 	unsigned char calib_bitmap;
 
-	sys_oper_mode_e sys_operating_mode;
+	/** refer enum sys_oper_mode_e. */
+	unsigned char sys_operating_mode;
 
-	/** Result structure to store calibration results */
-	unsigned char rf_calib_results[CAL_MEM_SIZE];
+	/** Index of the calibration results to be used. */
+	unsigned char index;
+
+	/** Result structure to store calibration results
+	 * (pointer to buffer of size >= CAL_MEM_SIZE)
+	 */
+	unsigned char *rf_calib_results;
 } __NRF_WIFI_PKD;
+
+enum nrf_wifi_rf_get_calib_results_mode_e {
+	OPERATING_CHANNEL_RESULTS,
+	SCAN_CHANNEL_RESULTS,
+};
 
 /**
  * @struct nrf_wifi_rf_read_calib_results
@@ -2394,7 +2013,256 @@ struct nrf_wifi_rf_read_calib_results {
 	/** Test identifier */
 	unsigned char test;
 
-	unsigned char rf_calib_results[CAL_MEM_SIZE];
+	/** refer enum nrf_wifi_rf_get_calib_results_mode_e. */
+	unsigned char mode;
+
+	/** If mode is OPERATING_CHANNEL_RESULTS then
+	 * configure index as 0 or 1 based on which results are needed.
+	 */
+	unsigned char index;
+
+	/** Result structure to store calibration results
+	 * (pointer to buffer of size >= CAL_MEM_SIZE)
+	 */
+	unsigned char *rf_calib_results;
+} __NRF_WIFI_PKD;
+
+
+enum freq_hb_slice_e {
+	FREQHB_SLICE_PA_DA_TUNE,
+	FREQHB_SLICE_PA_PGA_TUNE,
+	FREQHB_SLICE_TXPA_TUNE,
+	FREQHB_SLICE_ICT_LO_HB_DRV,
+	FREQHB_SLICE_RXBIAS_LODIV,
+	FREQHB_SLICE_LOGEN_CAP,
+	FREQHB_SLICE_LOGEN_BIAS,
+	FREQHB_SLICE_LO_HB_DRV_CLOAD,
+	FREQHB_SLICE_ICT_TXRF_LODIV,
+	FREQHB_SLICE_LNA_CAP,
+	FREQHB_SLICE_PLACE_HOLDER1,
+	FREQHB_SLICE_PLACE_HOLDER2,
+};
+
+enum freq_lb_slice_e {
+	FREQLB_SLICE_LOGEN_CAP
+};
+
+enum temp_hb_slice_e {
+	TEMPHB_SLICE_PA_DABIAS,
+	TEMPHB_SLICE_PA_PGABIAS,
+	TEMPHB_SLICE_LOGEN_BIAS_CTRL,
+	TEMPHB_SLICE_ICT_TXRF_LODIV_CTRL,
+	TEMPHB_SLICE_PLACE_HOLDER1,
+	TEMPHB_SLICE_PLACE_HOLDER2,
+};
+
+enum temp_lb_slice_e {
+	TEMPLB_SLICE_PA_DABIAS,
+	TEMPLB_SLICE_PA_PGABIAS,
+	TEMPLB_SLICE_LOGEN_BIAS_CTRL,
+	TEMPLB_SLICE_ICT_TXRF_LODIV_CTRL,
+	TEMPLB_SLICE_PLACE_HOLDER1,
+	TEMPLB_SLICE_PLACE_HOLDER2,
+};
+
+enum optimized_settings_slice_e {
+	OPTIM_SETTINGS_SLICE_TRX_ADC_DAC,
+	OPTIM_SETTINGS_SLICE_TRX_RX_SX_PWR,
+	OPTIM_SETTINGS_SLICE_DTIM
+};
+
+enum tx_gain_table_slice_e {
+	TXGAIN_SLICE_PA,
+	TXGAIN_SLICE_DA,
+	TXGAIN_SLICE_PGA,
+	TXGAIN_SLICE_BB,
+	TXGAIN_SLICE_ALL
+};
+
+enum rx_bb_gain_table_slice_e {
+	RXBB_GAIN_SLICE_GAIN1,
+	RXBB_GAIN_SLICE_GAIN2,
+	RXBB_GAIN_SLICE_GAIN3,
+	RXBB_GAIN_SLICE_RXLB_DTIM_V2I_SLICE_EN,
+	RXBB_GAIN_SLICE_RXLB_MAIN_V2I_SLICE_EN,
+	RXBB_GAIN_SLICE_RXHB_DTIM_V2I_SLICE_EN,
+	RXBB_GAIN_SLICE_RXHB_MAIN_V2I_SLICE_EN,
+	RXBB_GAIN_SLICE_ALL
+};
+
+enum rx_lna_gain_table_slice_e {
+	RXLNA_GAIN_SLICE_LB_GAIN_CTRL,
+	RXLNA_GAIN_SLICE_LB_GAIN_FEEDBACKR_CTRL,
+	RXLNA_GAIN_SLICE_LB_ALL,
+	RXLNA_GAIN_SLICE_HB_GAIN_CTRL,
+	RXLNA_GAIN_SLICE_HB_GAIN_CASCODE_CTRL,
+	RXLNA_GAIN_SLICE_HB_ALL
+};
+
+enum wait_idx_e {
+	WAITIDX_Activate_TX2RX = 0,
+	WAITIDX_Activate_RX2TX,
+	WAITIDX_Deactivate_TXRX,
+	WAITIDX_Activate_RX_DCOC_INTERNAL_LOOP,
+	WAITIDX_Activate_TX_DCOC_INTERNAL_LOOP,
+	WAITIDX_Activate_WLPWR_TRX_ON,
+	WAITIDX_Activate_WLPWR_DTIM_ON,
+	WAITIDX_Activate_WLPWR_WUR_LB_ON,
+	WAITIDX_Activate_WLPWR_WUR_HB_ON,
+	WAITIDX_Activate_RXPWR_DTIM_ON,
+	WAITIDX_Activate_RXPWR_WUR_ON,
+	WAITIDX_Activate_SXLP_DTIM_LB_ON,
+	WAITIDX_Activate_SXLP_DTIM_HB_ON,
+	WAITIDX_Activate_WUR_DCOC_INTERNAL_LOOP,
+	WAITIDX_Activate_TRXPWR_LB_ALL,
+	WAITIDX_Activate_TRXPWR_HB_ALL,
+	WAITIDX_Activate_SXHP_ALLPWR,
+	/** Hardcoded 4us wait */
+	WAITIDX_WLPWR_PALDO_SOFTST,
+	/** Hardcoded 20us wait */
+	WAITIDX_PWR_BEACON2TRX_RFLDO,
+	/** Hardcoded 40us wait */
+	WAITIDX_PWR_BEACON2TRX_SXHP,
+	/** Must be last - used for array size */
+	WAITIDX_COUNT,
+};
+
+/**
+ * @brief Enum for SXHP ADPLL static setting indices
+ */
+enum sxhp_adpll_slice_e {
+	SXHPADPLL_SLICE_EST_KDTC_EN = 0,
+	SXHPADPLL_SLICE_FSM_ACQ_FIRST_GEAR,
+	SXHPADPLL_SLICE_FSM_ACQ_SECOND_GEAR,
+	SXHPADPLL_SLICE_FSM_ACQ_TOTAL_TIME,
+	SXHPADPLL_SLICE_FSM_TRK_FIRST_GEAR,
+	SXHPADPLL_SLICE_FSM_TRK_SECOND_GEAR,
+	SXHPADPLL_SLICE_FSM_TRK_THIRD_GEAR,
+	SXHPADPLL_SLICE_LOOP_FILTER_CFG,
+	SXHPADPLL_SLICE_TDC_LOCK_THRESHOLD,
+	SXHPADPLL_SLICE_SPARE1,
+	SXHPADPLL_SLICE_SPARE2,
+	SXHPADPLL_SLICE_SPARE3,
+};
+
+/**
+ * @brief Enum for SXLP ADPLL static setting indices
+ */
+enum sxlp_adpll_slice_e {
+	SXLPADPLL_SLICE_FSM_ACQ_FIRST_GEAR = 0,
+	SXLPADPLL_SLICE_FSM_ACQ_SECOND_GEAR,
+	SXLPADPLL_SLICE_FSM_ACQ_TOTAL_TIME,
+	SXLPADPLL_SLICE_FSM_TRK_FIRST_GEAR,
+	SXLPADPLL_SLICE_FSM_TRK_SECOND_GEAR,
+	SXLPADPLL_SLICE_FSM_TRK_THIRD_GEAR,
+	SXLPADPLL_SLICE_LOOP_FILTER_CFG,
+	SXLPADPLL_SLICE_TDC_LOCK_THRESHOLD,
+	SXLPADPLL_SLICE_SPARE1,
+	SXLPADPLL_SLICE_SPARE2,
+	SXLPADPLL_SLICE_SPARE3,
+};
+
+/**
+ * @brief Patch type selector. Interpretation of struct nrf_wifi_patch_settings
+ *        fields depends on this value.
+ */
+enum nrf_wifi_patch_settings_e {
+	PATCH_FREQ_SETTINGS_HB,
+	PATCH_FREQ_SETTINGS_LB,
+	PATCH_CONST_SETTINGS,
+	PATCH_TEMP_SETTINGS_HB,
+	PATCH_TEMP_SETTINGS_LB,
+	PATCH_OPTIMIZED_SETTINGS,
+	PATCH_TX_GAIN_TABLE,
+	PATCH_RX_BB_GAIN_TABLE,
+	PATCH_RX_LNA_GAIN_TABLE,
+	PATCH_WAIT_TIME,
+	PATCH_SXHP_ADPLL_STATIC,
+	PATCH_SXLP_ADPLL_STATIC,
+};
+
+/**
+ * @brief Generic structure for patching RF settings (shared layout for all patch types)
+ *
+ * All fields use only unsigned char or unsigned int. Interpretation depends on patch_type.
+ * Unused fields for a given patch_type should be zeroed.
+ *
+ * Field usage by patch_type:
+ *   - index:       channel/temp/table index (unsigned char). For PATCH_WAIT_TIME, unused.
+ *   - slice:       slice identifier (unsigned char); meaning depends on patch_type.
+ *   - band:        band identifier (unsigned char); only for PATCH_CONST_SETTINGS,
+ *                  PATCH_TX_GAIN_TABLE, PATCH_RX_LNA_GAIN_TABLE; otherwise 0.
+ *   - value:       unsigned int; use low 8 bits, low 16 bits, or full 32 bits per patch_type.
+ *   - is_new_setting: unsigned char; 1 = new setting, 0 = otherwise; only for
+ *                    PATCH_CONST_SETTINGS and PATCH_OPTIMIZED_SETTINGS; otherwise 0.
+ */
+struct nrf_wifi_patch_settings {
+	/** Test identifier */
+	unsigned char test_id;
+	/** Patch type; see enum nrf_wifi_patch_settings_e */
+	unsigned char patch_type;
+	/** Index (channel/temp/table); for PATCH_WAIT_TIME this field is unused */
+	unsigned char index;
+	/** Slice identifier; meaning depends on patch_type */
+	unsigned char slice;
+	/** Band identifier; used only for PATCH_CONST_SETTINGS, PATCH_TX_GAIN_TABLE,
+	 *  PATCH_RX_LNA_GAIN_TABLE; otherwise 0
+	 */
+	unsigned char band;
+	/** New-setting flag (0 or 1); only for PATCH_CONST_SETTINGS, PATCH_OPTIMIZED_SETTINGS;
+	 *  otherwise 0
+	 */
+	unsigned char is_new_setting;
+	/** Value; use low 8, low 16, or full 32 bits depending on patch_type */
+	unsigned int value;
+} __NRF_WIFI_PKD;
+
+/**
+ * @brief Structure to disable calibration.
+ *
+ * @param test_id: Test identifier.
+ * @param enable_calibration: Set 1 to enable calibration.
+ */
+struct nrf_wifi_rf_test_enable_vt_calibration {
+	unsigned char test_id;
+	unsigned char enable_calibration;
+} __NRF_WIFI_PKD;
+
+/**
+ * @brief Structure to disable compensation.
+ *
+ * @param test_id: Test identifier.
+ * @param enable_compensation: Set 1 to enable compensation.
+ */
+struct nrf_wifi_rf_test_enable_vt_compensation {
+	unsigned char test_id;
+	unsigned char enable_compensation;
+} __NRF_WIFI_PKD;
+
+/* Holds the transmit related info */
+struct nrf_wifi_rh_test_params {
+	unsigned char test;
+
+	/* Set 1 to enable rssi histogram. */
+	unsigned char rh_enable;
+
+	/* oneshot:0, Periodic:1. */
+	unsigned char mode;
+
+	/* unconditional:0, pkt_only:1, noise_only:2. */
+	unsigned char hist_type;
+
+	/* all:0, max:1, range:2. */
+	unsigned char stat_type;
+
+	/* Accumulation period in seconds. */
+	unsigned char period;
+
+	/* Starting rssi for histogram accumulation */
+	signed char range_start;
+
+	/* Ending rssi for histogram accumulation */
+	signed char range_end;
 } __NRF_WIFI_PKD;
 
 
@@ -2777,6 +2645,404 @@ struct nrf_wifi_cmd_sqi {
 	unsigned int nrf_wifi_signal_src;
 	/** Number of average samples count */
 	unsigned int nrf_wifi_avg_cnt;
+} __NRF_WIFI_PKD;
+
+
+
+/** Number of elements in SW priority range buffers (min, max, step). */
+#define NUM_ELEMENTS_IN_SW_PTI_RANGE        3U
+
+/** Number of elements in CCCONF priority range buffers. */
+#define NUM_ELEMENTS_IN_CCCONF_PTI_RANGE    3U
+
+/**
+ * Message IDs from Coexistence Driver to Coexistence Manager.
+ *
+ * IDs of different messages posted from Coexistence Driver (CD) to
+ * Coexistence Manager (CM) for command routing.
+ */
+enum cd2cm_msg_id_t {
+	/** To enable coexistence. */
+	CD2CM_ENABLE_COEXISTENCE = 0,
+	/** To allocate periodic priority windows to Wi-Fi and SR. */
+	CD2CM_ALLOCATE_PPW,
+	/** To set Wi-Fi (SW and HW) and SR SW priority ranges. */
+	CD2CM_SET_PRIORITY_RANGES,
+	/** To initialize coexistence user parameters. */
+	CD2CM_UPDATE_COEX_USER_PARAMS,
+	/** To initialize coexistence parameters. */
+	CD2CM_UPDATE_COEX_PARAMS,
+	/** To post a SW client request to protect Wi-Fi activity */
+	CD2CM_WIFI_SW_CLIENT_REQUEST,
+	/** To get all the CM stats. */
+	CD2CM_GET_STATS,
+	/** Total number of valid message IDs. */
+	CD2CM_MSG_ID_COUNT
+};
+
+/**
+ * PPW allocation control.
+ *
+ * Indicates if allocation of Periodic Priority Windows (PPWs) is to be
+ * started or stopped.
+ */
+enum start_stop_ppw_t {
+	/** To stop allocation of windows. */
+	STOP_ALLOC_WINDOWS = 0,
+	/** To start allocation of windows. */
+	START_ALLOC_WINDOWS
+};
+
+/**
+ * Radio selection for first priority window.
+ *
+ * Indicates to which radio the first priority window of PPWs to be allocated.
+ */
+enum coex_radios_t {
+	/** Allocate first window to Wi-Fi radio. */
+	WIFI_RADIO = 0,
+	/** Allocate first window to SR radio. */
+	SR_RADIO
+};
+
+/**
+ * Antenna allocation mode.
+ *
+ * Indicates the antenna allocation mode for the shared antenna.
+ */
+enum antenna_allocation_t {
+	/** Antenna allocation dynamic (as per default logic). */
+	ANT_ALLOC_DYNAMIC = 0,
+	/** Antenna allocation static (overrides default logic). Connect to Wi-Fi. */
+	ANT_ALLOC_STATIC_WIFI,
+	/** Antenna allocation static (overrides default logic). Connect to Short Range. */
+	ANT_ALLOC_STATIC_SR
+};
+
+/**
+ * COEX enable/disable control.
+ *
+ * Indicates COEX is to be enabled/disabled. This is used to configure
+ * the coexistence HW blocks accordingly.
+ */
+enum coex_en_or_dis_t {
+	/** To disable coexistence. */
+	COEX_DISABLE = 0,
+	/** To enable coexistence. */
+	COEX_ENABLE
+};
+
+/**
+ * Wi-Fi SW client request type.
+ *
+ * Indicates the type of SW client operation.
+ */
+enum coex_wifi_sw_client_req_type_t {
+	/** Indicates the SW client release. */
+	WIFI_SW_CLIENT_RELEASE = 0,
+	/** Indicates the SW client request. */
+	WIFI_SW_CLIENT_REQUEST = 1
+};
+
+/**
+ * Wi-Fi SW client request priority levels.
+ *
+ * Indicates the priority level of the SW client request.
+ */
+enum coex_wifi_sw_client_req_pti_level_t {
+	/** Low priority level. */
+	WIFI_SW_CLIENT_REQ_PTI_LOW = 0,
+	/** Medium priority level. */
+	WIFI_SW_CLIENT_REQ_PTI_MEDIUM,
+	/** High priority level. */
+	WIFI_SW_CLIENT_REQ_PTI_HIGH,
+	/** Highest priority level. */
+	WIFI_SW_CLIENT_REQ_PTI_HIGHEST,
+	/** Total number of priority levels. */
+	WIFI_SW_CLIENT_REQ_PTI_COUNT
+};
+
+/**
+ * Wi-Fi SW client types.
+ *
+ * Indicates different Wi-Fi SW clients that can request COEX resources.
+ */
+enum wifi_sw_client_t {
+	/** To protect beacon reception from SR interference. */
+	WIFI_BEACON_RECEPTION = 0,
+	/** To protect connection phase from SR interference. */
+	WIFI_CONNECTION,
+	/** To protect calibrations from SR interference. */
+	WIFI_CALIBRATIONS,
+	/** To protect scan from SR interference. */
+	WIFI_SCAN,
+	/** Total number of Wi-Fi SW client types. */
+	WIFI_SW_CLIENT_COUNT
+};
+
+/**
+ * Periodic priority windows generation parameters.
+ *
+ * This structure holds the parameters required for generating
+ * Periodic Priority Windows (PPWs) for Wi-Fi and SR radios.
+ * Embedded in cd2cm_genarate_ppw_t message.
+ */
+struct coex_ppw_parameters_t {
+	/** Start or stop priority windows. */
+	enum start_stop_ppw_t start_or_stop_ppw;
+	/** Radio to which first priority window to be allocated. */
+	enum coex_radios_t    first_window_to_wifi_or_sr;
+	/** Wi-Fi priority window duration in milliseconds. */
+	unsigned int         wifi_pti_window_duration;
+	/** SR priority window duration in milliseconds. */
+	unsigned int         sr_pti_window_duration;
+	/** Maximum time (in milliseconds) to wait for a corresponding "stop" command
+	 * after a "start" has been issued. If this timeout expires without receiving
+	 * the "stop" signal, the Coexistence Manager (CM) will automatically terminate
+	 * Priority Window (PPW) generation to prevent indefinite continuation.
+	 */
+	unsigned int        ppws_timeout;
+};
+
+/**
+ * Message to allocate PPWs to Wi-Fi and SR.
+ *
+ * Message from driver to CM to allocate Periodic Priority Windows
+ * to Wi-Fi and SR radios.
+ */
+struct cd2cm_genarate_ppw_t {
+	/** Message ID. Set to CD2CM_ALLOCATE_PPW. */
+	enum cd2cm_msg_id_t          message_id;
+	/** Parameters related to PPW generation. */
+	struct coex_ppw_parameters_t   ppw_parameters;
+};
+
+/**
+ * Wi-Fi SW and HW clients priority range values.
+ *
+ * Contains Wi-Fi SW and HW clients priority range values for
+ * coexistence configuration. Each range is defined as [min, max, step].
+ */
+struct coex_wifi_priority_range_t {
+	/** Wi-Fi SW request priority range */
+	unsigned char     sw_request_priority_range[NUM_ELEMENTS_IN_SW_PTI_RANGE];
+	/** Wi-Fi high priority Rx client CCCONF priority range. */
+	unsigned char     client0_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	/** Wi-Fi high priority Tx client CCCONF priority range. */
+	unsigned char     client1_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	/** Wi-Fi low priority Rx client CCCONF priority range. */
+	unsigned char     client2_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	/** Wi-Fi low priority Tx client CCCONF priority range. */
+	unsigned char     client3_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	/** Priority level used to choose the priority value. */
+	unsigned char     hw_client_priority_level;
+} __NRF_WIFI_PKD;
+
+/**
+ * SR clients priority range values.
+ *
+ * Contains SR clients priority range values for
+ * coexistence configuration. Each range is defined as [min, max, step].
+ */
+struct coex_sr_priority_range_t {
+	/** SR Rx client CCCONF priority range. */
+	unsigned char     client4_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	/** SR Tx client CCCONF priority range. */
+	unsigned char     client5_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	/** Priority level used to choose the priority value. */
+	unsigned char     client_priority_level;
+} __NRF_WIFI_PKD;
+
+/**
+ * Message to enable/disable the coexistence.
+ *
+ * Message from CD to CM to enable/disable the coexistence.
+ */
+struct cd2cm_enable_coexistence_t {
+	/** Message ID. Set to CD2CM_ENABLE_COEXISTENCE. */
+	enum cd2cm_msg_id_t      message_id;
+	/** Indicates if COEX is enabled or disabled. */
+	enum coex_en_or_dis_t    coex_en_or_dis;
+} __NRF_WIFI_PKD;
+
+/**
+ * Message to initialize Wi-Fi and SR priority ranges.
+ *
+ * Message from CD to CM to initialize Wi-Fi and SR priority ranges.
+ */
+struct cd2cm_set_priority_ranges_t {
+	/** Message ID. Set to CD2CM_SET_PRIORITY_RANGES. */
+	enum cd2cm_msg_id_t             message_id;
+	/** Wi-Fi priority range values. */
+	struct coex_wifi_priority_range_t wifi_pti_range;
+	/** SR priority range values. */
+	struct coex_sr_priority_range_t   sr_pti_range;
+} __NRF_WIFI_PKD;
+
+/**
+ * Message to get COEX statistics.
+ *
+ * Message from CD to CM to get the COEX statistics.
+ */
+struct cd2cm_get_coex_stats_t {
+	/** Message ID. Set to CD2CM_GET_STATS. */
+	enum cd2cm_msg_id_t  message_id;
+	/** Reserved field for future use. */
+	unsigned int        reserved;
+} __NRF_WIFI_PKD;
+
+/**
+ * Software client request parameters
+ *
+ * This structure holds the parameters required to post
+ * a SW client request ro request COEX resources.
+ */
+struct coex_sw_client_params_t {
+	/** Wi-Fi SW client request/release */
+	enum coex_wifi_sw_client_req_type_t sw_client_request;
+	/** SW client priority level */
+	enum coex_wifi_sw_client_req_pti_level_t sw_client_pti_level;
+	/** SW client type */
+	enum wifi_sw_client_t sw_client_type;
+	/** SW request timeout in milliseconds */
+	unsigned int request_timeout_in_ms;
+	/** Wi-Fi operating band */
+	unsigned int wifi_operating_band;
+} __NRF_WIFI_PKD;
+
+/**
+ * Message to post a SW client request.
+ *
+ * Message from CD to CM to request COEX resources.
+ */
+struct cd2cm_wifi_sw_client_request_t {
+	/** Message ID. Set to CD2CM_WIFI_SW_CLIENT_REQUEST. */
+	enum cd2cm_msg_id_t  message_id;
+	/** SW client request parameters */
+	struct coex_sw_client_params_t sw_client_parameters;
+} __NRF_WIFI_PKD;
+
+/**
+ * Wi-Fi scan puncture information.
+ *
+ * Contains information related to Wi-Fi scan puncturing based on
+ * overall system performance.
+ * For now, there is only one parameter. Add additional parameters based on design.
+ */
+struct wifi_scan_puncture_info_t {
+	/** Wi-Fi scan protection probability (0-100%). */
+	unsigned int    wifi_scan_prot_prob;
+} __NRF_WIFI_PKD;
+
+/**
+ * Coexistence parameters from user.
+ *
+ * Contains coexistence parameters configurable by the user.
+ */
+struct coex_user_params_t {
+	/** Message ID. Set to CD2CM_UPDATE_COEX_USER_PARAMS. */
+	enum cd2cm_msg_id_t  message_id;
+
+	/**
+	 * Percentage probability to protect SR Rx (PS: listen to inactive).
+	 *
+	 * Wi-Fi enter and exit powersave scenario (active <=> inactive).
+	 * Valid range: 0-100.
+	 */
+	unsigned int    listen2inactive_sr_rx_prot_prob_ps;
+
+	/**
+	 * Percentage probability to protect SR Rx (PS: inactive to listen).
+	 *
+	 * Wi-Fi enter and exit powersave scenario.
+	 * Valid range: 0-100.
+	 */
+	unsigned int    inactive2listen_sr_rx_prot_prob_ps;
+
+	/**
+	 * Percentage probability to protect SR Rx (calib: inactive to listen).
+	 *
+	 * Wi-Fi calibrations start and stop scenario.
+	 * Valid range: 0-100.
+	 */
+	unsigned int    inactive2listen_sr_rx_prot_prob_calib;
+
+	/**
+	 * Percentage probability to protect SR Rx (calib: listen to inactive).
+	 *
+	 * Wi-Fi calibrations start and stop scenario.
+	 * Valid range: 0-100.
+	 */
+	unsigned int    listen2inactive_sr_rx_prot_prob_calib;
+
+	/** Wi-Fi scan puncture information. */
+	struct wifi_scan_puncture_info_t wifi_scan_puncture_info;
+
+	/** Wi-Fi beacon protection percentage probability, Valid range: 0-100. */
+	unsigned int    wifi_beacon_prot_prob;
+	/** Wi-Fi connection protection percentage probability, Valid range: 0-100. */
+	unsigned int    wifi_conn_prot_prob;
+	/** Wi-Fi calibrations protection percentage probability, Valid range: 0-100. */
+	unsigned int    wifi_calib_prot_prob;
+
+	/** Force shared antenna allocation mode. */
+	enum antenna_allocation_t shared_ant_control;
+} __NRF_WIFI_PKD;
+
+/**
+ * Message to update the user parameters.
+ *
+ * Message from driver to CM to update user parameters.
+ */
+struct cd2cm_coex_user_params_t {
+	/** Message ID. Set to CD2CM_UPDATE_COEX_USER_PARAMS. */
+	enum cd2cm_msg_id_t  message_id;
+	/** Coexistence parameters configurable by the user */
+	struct coex_user_params_t   user_params;
+} __NRF_WIFI_PKD;
+
+struct lmac_tuning_params {
+	unsigned int ofdm_sifs_value;
+	unsigned int dsss_sifs_value;
+	unsigned int cfg_bet_enable;
+	unsigned int lp_rx_enable;
+	unsigned int ack_margin;
+	unsigned int data_path_watch_dog_timer; /* legacy name kept for compatibility */
+	unsigned int tsf_comp_for_ofsets; /* legacy field name */
+	unsigned int inactivity_timer;
+	unsigned int bcst_wait_period;
+	unsigned int inactivity_timer_after_rx;
+	unsigned int tsf_correction_enable;
+	unsigned int allowed_bcn_miss_before_wakeup;
+	unsigned int beacon_wait_time;
+	unsigned int wifi_priority_for_coldboot;
+	unsigned int wifi_priority_for_warmboot;
+	unsigned int wifi_priority_for_shdn;
+	unsigned int wifi_priority_for_chnlprog;
+	unsigned int scan_priority_for_pta;
+	unsigned int protect_beacon_period;
+	unsigned int beacon_coex_priority;
+	unsigned int protect_connection_period;
+	unsigned int coex_mgmt_priority;
+	unsigned int additional_retry_bk;
+	unsigned int additional_retry_be;
+	unsigned int additional_retry_vi;
+	unsigned int additional_retry_vo;
+	/* reserved for patching */
+	unsigned int reserved[16];
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_cmd_lmac_tuning_params {
+	/** UMAC header, @ref nrf_wifi_sys_head*/
+	struct nrf_wifi_sys_head sys_head;
+	/** LMAC tuning parameters */
+	struct lmac_tuning_params params;
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_vtf_params {
+	unsigned int voltage;
+	unsigned int temp;
+	unsigned int x0_freq;
 } __NRF_WIFI_PKD;
 
 /**
