@@ -114,7 +114,7 @@ static inline int sx_async_sm9_exp_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -182,7 +182,7 @@ static inline int sx_sm9_exp(struct sx_pk_cnx *cnx, const struct sx_pk_ef_12 *g,
 	sx_pk_req req;
 
 	status = sx_async_sm9_exp_go(&req, cnx, g, h);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -225,7 +225,7 @@ static inline int sx_async_sm9_pmulg1_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -294,7 +294,7 @@ static inline int sx_sm9_pmulg1(struct sx_pk_cnx *cnx, const struct sx_pk_point 
 	sx_pk_req req;
 
 	status = sx_async_sm9_pmulg1_go(&req, cnx, p1, ke);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -337,7 +337,7 @@ static inline int sx_async_sm9_pmulg2_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -409,7 +409,7 @@ static inline int sx_sm9_pmulg2(struct sx_pk_cnx *cnx, const struct sx_pk_ef_4 *
 	sx_pk_req req;
 
 	status = sx_async_sm9_pmulg2_go(&req, cnx, p2, ke);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -452,7 +452,7 @@ static inline int sx_async_sm9_pair_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -522,7 +522,7 @@ static inline int sx_sm9_pair(struct sx_pk_cnx *cnx, const struct sx_pk_point *p
 	sx_pk_req req;
 
 	status = sx_async_sm9_pair_go(&req, cnx, p, q);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -569,7 +569,7 @@ static inline int sx_async_sm9_generate_signature_private_key_go(sx_pk_req *req,
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -648,7 +648,7 @@ static inline int sx_sm9_generate_signature_private_key(struct sx_pk_cnx *cnx,
 	sx_pk_req req;
 
 	status = sx_async_sm9_generate_signature_private_key_go(&req, cnx, p1, h, ks);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -693,7 +693,7 @@ static inline int sx_async_sm9_sign_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -766,7 +766,7 @@ static inline int sx_sm9_sign(struct sx_pk_cnx *cnx, const struct sx_pk_point *d
 	sx_pk_req req;
 
 	status = sx_async_sm9_sign_go(&req, cnx, ds, h, r);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -818,7 +818,7 @@ static inline int sx_async_sm9_signature_verify_go(sx_pk_req *req, struct sx_pk_
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -912,7 +912,7 @@ static inline int sx_sm9_signature_verify(struct sx_pk_cnx *cnx, const sx_const_
 	sx_pk_req req;
 
 	status = sx_async_sm9_signature_verify_go(&req, cnx, h1, p2, ppubs, s, h, g);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -959,7 +959,7 @@ static inline int sx_async_sm9_generate_encryption_private_key_go(sx_pk_req *req
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1042,7 +1042,7 @@ static inline int sx_sm9_generate_encryption_private_key(struct sx_pk_cnx *cnx,
 	sx_pk_req req;
 
 	status = sx_async_sm9_generate_encryption_private_key_go(&req, cnx, p2, h, ke);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -1089,7 +1089,7 @@ static inline int sx_async_sm9_send_key_go(sx_pk_req *req, struct sx_pk_cnx *cnx
 	const struct sx_pk_ecurve curve = sx_pk_get_curve_sm9(cnx);
 
 	status = sx_pk_list_ecc_inslots(req, &curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1164,7 +1164,7 @@ static inline int sx_sm9_send_key(struct sx_pk_cnx *cnx, const struct sx_pk_poin
 	sx_pk_req req;
 
 	status = sx_async_sm9_send_key_go(&req, cnx, p1, ppube, h, r);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -1206,7 +1206,7 @@ static inline int sx_async_sm9_reduce_h_go(sx_pk_req *req, struct sx_pk_cnx *cnx
 	int sizes[] = {sx_const_op_size(h), sizeof(sm9_t)};
 
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1265,7 +1265,7 @@ static inline int sx_sm9_reduce_h(struct sx_pk_cnx *cnx, const sx_const_ecop *h,
 	sx_pk_req req;
 
 	status = sx_async_sm9_reduce_h_go(&req, cnx, h);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 

@@ -82,7 +82,7 @@ static inline int sx_async_srp_user_keygen_go(sx_pk_req *req, struct sx_pk_cnx *
 		       sx_const_op_size(b), sx_const_op_size(x), sx_const_op_size(k),
 		       sx_const_op_size(u)};
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -161,7 +161,7 @@ static inline int sx_srp_user_keygen(struct sx_pk_cnx *cnx, const sx_op *n, cons
 	int status;
 
 	status = sx_async_srp_user_keygen_go(&req, cnx, n, g, a, b, x, k, u);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -210,7 +210,7 @@ static inline int sx_async_srp_server_public_key_gen_go(sx_pk_req *req, struct s
 		       sx_const_op_size(v), sx_const_op_size(b)};
 
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -279,7 +279,7 @@ static inline int sx_srp_server_public_key_gen(struct sx_pk_cnx *cnx, const sx_o
 	sx_pk_req req;
 
 	status = sx_async_srp_server_public_key_gen_go(&req, cnx, n, g, k, v, b);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -328,7 +328,7 @@ static inline int sx_async_srp_server_session_key_gen_go(sx_pk_req *req, struct 
 		       sx_const_op_size(v), sx_const_op_size(b)};
 
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -397,7 +397,7 @@ static inline int sx_srp_server_session_key_gen(struct sx_pk_cnx *cnx, const sx_
 	sx_pk_req req;
 
 	status = sx_async_srp_server_session_key_gen_go(&req, cnx, n, a, u, v, b);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 

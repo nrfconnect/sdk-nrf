@@ -514,7 +514,7 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 		int sx_status = sx_sync_ecjpake_3pt_add(&req, operation->curve, &G1, &G2,
 									&G3, &g);
 
-		if (sx_status) {
+		if (sx_status != SX_OK) {
 			status = silex_statuscodes_to_psa(sx_status);
 			goto exit;
 		}

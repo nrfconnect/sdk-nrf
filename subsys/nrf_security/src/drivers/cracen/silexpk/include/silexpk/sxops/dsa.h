@@ -80,7 +80,7 @@ static inline int sx_async_dsa_sign_go(sx_pk_req *req, const sx_const_op *p, con
 		sx_const_op_size(k), sx_const_op_size(privkey), sx_const_op_size(h),
 	};
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -140,7 +140,7 @@ int sx_dsa_sign(struct sx_pk_cnx *cnx, const sx_op *p, const sx_op *q, const sx_
 	int status;
 
 	status = sx_async_dsa_sign_go(&req, p, q, g, k, privkey, h);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -194,7 +194,7 @@ static inline int sx_async_dsa_ver_go(sx_pk_req *req, const sx_const_op *p, cons
 		sx_const_op_size(s),
 	};
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -261,7 +261,7 @@ int sx_dsa_ver(struct sx_pk_cnx *cnx, const sx_op *p, const sx_op *q, const sx_o
 	int status;
 
 	status = sx_async_dsa_ver_go(&req, p, q, g, pubkey, h, r, s);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 

@@ -82,7 +82,7 @@ static inline int sx_ecjpake_generate_zkp_go(sx_pk_req *req, const struct sx_pk_
 	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_GENERATE_ZKP);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -151,7 +151,7 @@ static inline int sx_ecjpake_generate_zkp(const struct sx_pk_ecurve *curve, cons
 	sx_pk_req req;
 
 	status = sx_ecjpake_generate_zkp_go(&req, curve, v, x, h);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -264,7 +264,7 @@ static inline int sx_ecjpake_verify_zkp_go(sx_pk_req *req,
 	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_VERIFY_ZKP);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -352,7 +352,7 @@ static inline int sx_ecjpake_verify_zkp(const struct sx_pk_ecurve *curve,
 	sx_pk_req req;
 
 	status = sx_ecjpake_verify_zkp_go(&req, curve, v, x, r, h, g);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -472,7 +472,7 @@ static inline int sx_ecjpake_3pt_add_go(sx_pk_req *req, const struct sx_pk_ecurv
 	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_3PT_ADD);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -549,7 +549,7 @@ static inline int sx_ecjpake_3pt_add(const struct sx_pk_ecurve *curve,
 	sx_pk_req req;
 
 	status = sx_ecjpake_3pt_add_go(&req, curve, a, b, c);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -664,7 +664,7 @@ static inline int sx_ecjpake_gen_sess_key_go(sx_pk_req *req, const struct sx_pk_
 	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_GEN_SESS_KEY);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -744,7 +744,7 @@ static inline int sx_ecjpake_gen_sess_key(const struct sx_pk_ecurve *curve,
 	sx_pk_req req;
 
 	status = sx_ecjpake_gen_sess_key_go(&req, curve, x4, b, x2, x2s);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -865,7 +865,7 @@ static inline int sx_ecjpake_gen_step_2_go(sx_pk_req *req, const struct sx_pk_ec
 	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_GEN_STEP_2);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -958,7 +958,7 @@ static inline int sx_ecjpake_gen_step_2(const struct sx_pk_ecurve *curve,
 	sx_pk_req req;
 
 	status = sx_ecjpake_gen_step_2_go(&req, curve, x4, x3, x1, x2, s);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -1033,7 +1033,7 @@ static inline int sx_sync_ecjpake_gen_step_2(sx_pk_req *req,
 	sx_pk_run(req);
 
 	status = sx_pk_wait(req);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 

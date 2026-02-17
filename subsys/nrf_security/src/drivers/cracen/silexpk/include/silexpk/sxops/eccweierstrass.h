@@ -93,7 +93,7 @@ static inline int sx_async_ecdsa_generate_go(sx_pk_req *req, const struct sx_pk_
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -171,7 +171,7 @@ static inline int sx_ecdsa_generate(const struct sx_pk_ecurve *curve, const sx_c
 
 	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
 		status = sx_async_ecdsa_generate_go(&req, curve, d, k, h);
-		if (status) {
+		if (status != SX_OK) {
 			return status;
 		}
 		status = sx_pk_wait(&req);
@@ -223,7 +223,7 @@ static inline int sx_async_ecdsa_verify_go(sx_pk_req *req,
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -283,7 +283,7 @@ static inline int sx_ecdsa_verify(const struct sx_pk_ecurve *curve,
 	sx_pk_req req;
 
 	status = sx_async_ecdsa_verify_go(&req, curve, q, r, s, h);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -336,7 +336,7 @@ static inline int sx_async_ecp_mult_go(sx_pk_req *req, const struct sx_pk_ecurve
 	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PTMUL);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -404,7 +404,7 @@ static inline int sx_ecp_ptmult(const struct sx_pk_ecurve *curve, const sx_const
 
 	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
 		status = sx_async_ecp_mult_go(&req, curve, k, p);
-		if (status) {
+		if (status != SX_OK) {
 			return status;
 		}
 		status = sx_pk_wait(&req);
@@ -457,7 +457,7 @@ static inline int sx_sync_ecp_ptmult(sx_pk_req *req,
 	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
 		status = sx_pk_list_ecc_inslots(req, curve,
 								0, (struct sx_pk_slot *)&inputs);
-		if (status) {
+		if (status != SX_OK) {
 			return status;
 		}
 		int opsz = sx_pk_get_opsize(req);
@@ -472,7 +472,7 @@ static inline int sx_sync_ecp_ptmult(sx_pk_req *req,
 		sx_pk_run(req);
 
 		status = sx_pk_wait(req);
-		if (status) {
+		if (status != SX_OK) {
 			return status;
 		}
 	}
@@ -511,7 +511,7 @@ static inline int sx_async_ecp_double_go(sx_pk_req *req, const struct sx_pk_ecur
 	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PT_DOUBLE);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -573,7 +573,7 @@ static inline int sx_ecp_double(const struct sx_pk_ecurve *curve, const sx_pk_co
 	sx_pk_req req;
 
 	status = sx_async_ecp_double_go(&req, curve, p);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -610,7 +610,7 @@ static inline int sx_async_ec_ptoncurve_go(sx_pk_req *req, const struct sx_pk_ec
 	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PTONCURVE);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -659,7 +659,7 @@ static inline int sx_ec_ptoncurve(const struct sx_pk_ecurve *curve,
 	sx_pk_req req;
 
 	status = sx_async_ec_ptoncurve_go(&req, curve, p);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -698,7 +698,7 @@ static inline int sx_async_ec_pt_decompression_go(sx_pk_req *req, const struct s
 
 	status = sx_pk_list_ecc_inslots(req, curve, ((y_lsb & 1) << 29),
 					(struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -762,7 +762,7 @@ static inline int sx_ec_pt_decompression(const struct sx_pk_ecurve *curve, const
 	sx_pk_req req;
 
 	status = sx_async_ec_pt_decompression_go(&req, curve, x, y_lsb);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -816,7 +816,7 @@ static inline int sx_async_eckcdsa_pubkey_generate_go(sx_pk_req *req,
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -881,7 +881,7 @@ static inline int sx_eckcdsa_pubkey_generate(const struct sx_pk_ecurve *curve,
 
 	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
 		status = sx_async_eckcdsa_pubkey_generate_go(&req, curve, d);
-		if (status) {
+		if (status != SX_OK) {
 			return status;
 		}
 		status = sx_pk_wait(&req);
@@ -933,7 +933,7 @@ static inline int sx_async_eckcdsa_sign_go(sx_pk_req *req, const struct sx_pk_ec
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1008,7 +1008,7 @@ static inline int sx_eckcdsa_sign(const struct sx_pk_ecurve *curve, const sx_con
 	sx_pk_req req;
 
 	status = sx_async_eckcdsa_sign_go(&req, curve, d, k, h, r);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 	status = sx_pk_wait(&req);
@@ -1052,7 +1052,7 @@ static inline int sx_async_eckcdsa_verify_go(sx_pk_req *req,
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1132,7 +1132,7 @@ static inline int sx_eckcdsa_verify(const struct sx_pk_ecurve *curve,
 	sx_pk_req req;
 
 	status = sx_async_eckcdsa_verify_go(&req, curve, q, r, s, h);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 	status = sx_pk_wait(&req);
@@ -1177,7 +1177,7 @@ static inline int sx_async_ecp_add_go(sx_pk_req *req, const struct sx_pk_ecurve 
 	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PT_ADD);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1245,7 +1245,7 @@ static inline int sx_ecp_ptadd(const struct sx_pk_ecurve *curve, const sx_pk_con
 	sx_pk_req req;
 
 	status = sx_async_ecp_add_go(&req, curve, p1, p2);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -1296,7 +1296,7 @@ static inline int sx_sync_ecp_ptadd(sx_pk_req *req,
 	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PT_ADD);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 	const int opsz = sx_pk_get_opsize(req);
@@ -1342,7 +1342,7 @@ static inline int sx_async_ecp_check_order_go(sx_pk_req *req, const struct sx_pk
 	sx_pk_set_cmd(req, SX_PK_CMD_ECC_CHECK_PT_ORDER);
 
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1402,7 +1402,7 @@ static inline int sx_async_sm2_generate_go(sx_pk_req *req, const struct sx_pk_ec
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1478,7 +1478,7 @@ static inline int sx_sm2_generate(const struct sx_pk_ecurve *curve, const sx_con
 
 	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
 		status = sx_async_sm2_generate_go(&req, curve, d, k, h);
-		if (status) {
+		if (status != SX_OK) {
 			return status;
 		}
 		status = sx_pk_wait(&req);
@@ -1528,7 +1528,7 @@ static inline int sx_async_sm2_verify_go(sx_pk_req *req, const struct sx_pk_ecur
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1583,7 +1583,7 @@ static inline int sx_sm2_verify(const struct sx_pk_ecurve *curve, const sx_pk_co
 	sx_pk_req req;
 
 	status = sx_async_sm2_verify_go(&req, curve, q, r, s, h);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -1636,7 +1636,7 @@ static inline int sx_async_sm2_exchange_go(sx_pk_req *req,
 
 	/* convert and transfer operands */
 	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -1721,7 +1721,7 @@ static inline int sx_sm2_exchange(const struct sx_pk_ecurve *curve, const sx_con
 	sx_pk_req req;
 
 	status = sx_async_sm2_exchange_go(&req, curve, d, k, q, rb, cof, rax, exp2_w);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 	status = sx_pk_wait(&req);

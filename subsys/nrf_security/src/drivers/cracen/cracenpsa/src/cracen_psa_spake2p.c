@@ -144,7 +144,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 
 	/* w0 * N. */
 	status = sx_sync_ecp_ptmult(&req, operation->curve, &w0, &pt_NM, &pt_n_w0N);
-	if (status) {
+	if (status != SX_OK) {
 		goto exit;
 	}
 
@@ -160,7 +160,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	sx_op res = {.sz = CRACEN_P256_KEY_SIZE, .bytes = &w0N[CRACEN_P256_KEY_SIZE]};
 
 	status = sx_sync_mod_primitive_cmd(&req, NULL, cmd, &modulo, &a, &b, &res);
-	if (status) {
+	if (status != SX_OK) {
 		goto exit;
 	}
 
@@ -171,7 +171,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	sx_get_const_affine_point(&pt_n_w0N, &c_pt_n_w0N);
 
 	status = sx_sync_ecp_ptadd(&req, operation->curve, &pt_Y, &c_pt_n_w0N, &pt_n_w0N);
-	if (status) {
+	if (status != SX_OK) {
 		goto exit;
 	}
 
@@ -181,7 +181,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	sx_get_const_affine_point(&pt_n_w0N, &c_pt_n_w0N);
 	MAKE_SX_POINT(pt_Z, Z, CRACEN_P256_POINT_SIZE);
 	status = sx_sync_ecp_ptmult(&req, operation->curve, &x, &c_pt_n_w0N, &pt_Z);
-	if (status) {
+	if (status != SX_OK) {
 		goto exit;
 	}
 
@@ -196,7 +196,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	status = sx_sync_ecp_ptmult(&req, operation->curve, &k,
 			       operation->role == PSA_PAKE_ROLE_SERVER ? &pt_L
 								       : &c_pt_n_w0N, &pt_V);
-	if (status) {
+	if (status != SX_OK) {
 		goto exit;
 	}
 

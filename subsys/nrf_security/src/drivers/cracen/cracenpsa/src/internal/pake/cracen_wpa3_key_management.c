@@ -139,7 +139,7 @@ psa_status_t import_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
 
 		MAKE_SX_CONST_POINT(key_pt, data, CRACEN_P256_POINT_SIZE);
 		sx_status = sx_ec_ptoncurve(sx_curve, &key_pt);
-		if (sx_status) {
+		if (sx_status != SX_OK) {
 			return silex_statuscodes_to_psa(sx_status);
 		}
 
@@ -269,7 +269,7 @@ psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 		MAKE_SX_CONST_POINT(p2_pt, p2.bytes, CRACEN_P256_POINT_SIZE);
 		MAKE_SX_POINT(p_pt, key, key_size);
 		sx_status = sx_ecp_ptadd(sx_curve, &p1_pt, &p2_pt, &p_pt);
-		if (sx_status) {
+		if (sx_status != SX_OK) {
 			return silex_statuscodes_to_psa(sx_status);
 		}
 

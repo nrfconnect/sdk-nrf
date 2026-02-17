@@ -81,7 +81,7 @@ static inline int sx_async_mod_single_op_cmd_go(sx_pk_req *req, const struct sx_
 		sx_const_op_size(b),
 	};
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -134,7 +134,7 @@ static inline int sx_mod_single_op_cmd(const struct sx_pk_cmd_def *cmd, const sx
 	int status;
 
 	status = sx_async_mod_single_op_cmd_go(&req, cmd, modulo, b);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -192,7 +192,7 @@ static inline int sx_sync_mod_single_op_cmd(sx_pk_req *req,
 	};
 
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 	sx_pk_op2vmem(modulo, inputs.n.addr);
@@ -250,7 +250,7 @@ static inline int sx_async_mod_cmd_go(sx_pk_req *req, const struct sx_pk_cmd_def
 		sx_const_op_size(b),
 	};
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -312,7 +312,7 @@ static inline int sx_sync_mod_primitive_cmd(sx_pk_req *req,
 		sx_const_op_size(b),
 	};
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 	sx_pk_op2vmem(modulo, inputs.n.addr);
@@ -372,7 +372,7 @@ static inline int sx_mod_primitive_cmd(struct sx_pk_cnx *cnx, const struct sx_pk
 	int status;
 
 	status = sx_async_mod_cmd_go(&req, cmd, modulo, a, b);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -437,7 +437,7 @@ static inline int sx_mod_inv(struct sx_pk_cnx *cnx, const sx_const_op *modulo, c
 	int status;
 
 	status = sx_async_mod_inv_go(&req, modulo, b);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -524,7 +524,7 @@ static inline int sx_mod_exp(struct sx_pk_cnx *cnx, const sx_const_op *input, co
 	int status;
 
 	status = sx_async_mod_exp_go(&req, input, e, m);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -579,7 +579,7 @@ static inline int sx_async_crt_mod_exp_go(sx_pk_req *req, const sx_const_op *in,
 	int sizes[] = {sx_const_op_size(p),  sx_const_op_size(q),  sx_const_op_size(in),
 		       sx_const_op_size(dp), sx_const_op_size(dq), sx_const_op_size(qinv)};
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -654,7 +654,7 @@ static inline int sx_crt_mod_exp(struct sx_pk_cnx *cnx, const sx_const_op *in, c
 	int status;
 
 	status = sx_async_crt_mod_exp_go(&req, in, p, q, dp, dq, qinv);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 	status = sx_pk_wait(&req);
@@ -694,7 +694,7 @@ static inline int sx_async_rsa_keygen_go(sx_pk_req *req, const sx_const_op *p,
 	int sizes[] = {sx_const_op_size(p), sx_const_op_size(q), sx_const_op_size(public_expo)};
 
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -774,7 +774,7 @@ static inline int sx_rsa_keygen(const sx_const_op *p, const sx_const_op *q,
 	int status;
 
 	status = sx_async_rsa_keygen_go(&req, p, q, public_expo);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -818,7 +818,7 @@ static inline int sx_async_rsa_crt_keyparams_go(sx_pk_req *req, const sx_const_o
 	int sizes[] = {sx_const_op_size(p), sx_const_op_size(q), sx_const_op_size(privkey)};
 
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -898,7 +898,7 @@ static inline int sx_rsa_crt_keyparams(const sx_const_op *p, const sx_const_op *
 	int status;
 
 	status = sx_async_rsa_crt_keyparams_go(&req, p, q, privkey);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
@@ -949,7 +949,7 @@ static inline int sx_async_miller_rabin_go(sx_pk_req *req, const sx_const_op *n,
 	int sizes[] = {sx_const_op_size(n), sx_const_op_size(a)};
 
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	if (status != SX_OK) {
 		sx_pk_release_req(req);
 		return status;
 	}
@@ -993,7 +993,7 @@ static inline int sx_miller_rabin(const sx_const_op *n, const sx_const_op *a)
 	int status;
 
 	status = sx_async_miller_rabin_go(&req, n, a);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 
