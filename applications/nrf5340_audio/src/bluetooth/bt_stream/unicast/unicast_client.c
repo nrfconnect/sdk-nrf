@@ -42,6 +42,15 @@ static struct bt_cap_unicast_group_stream_pair_param
 
 static struct bt_cap_unicast_group_param group_param;
 
+struct group_streams_populate_data {
+	uint8_t sink_iterator;
+	uint8_t source_iterator;
+	struct bt_cap_unicast_group_stream_param
+		sink_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
+	struct bt_cap_unicast_group_stream_param
+		source_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
+};
+
 /* Populate the stream params arrays */
 static struct group_streams_populate_data group_data;
 
@@ -78,10 +87,7 @@ static int group_data_reset(void)
 		return -EBUSY;
 	}
 
-	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT; i++) {
-		memset(&pair_params[i], 0, sizeof(pair_params));
-	}
-
+	memset(pair_params, 0, sizeof(pair_params));
 	memset(&group_param, 0, sizeof(group_param));
 	memset(&group_data, 0, sizeof(group_data));
 
@@ -168,15 +174,6 @@ static bool num_eps_count(struct server_store *server, void *user_data)
 
 	return true;
 }
-
-struct group_streams_populate_data {
-	uint8_t sink_iterator;
-	uint8_t source_iterator;
-	struct bt_cap_unicast_group_stream_param
-		sink_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
-	struct bt_cap_unicast_group_stream_param
-		source_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
-};
 
 static bool unicast_group_populate(struct server_store *server, void *user_data)
 {
@@ -368,7 +365,7 @@ static void unicast_group_create(void)
  * @brief	Function to check if a stream is already in the unicast group.
  *
  * @param[in] stream	Stream to check.
- * @param[in] user_data	User group_data, in this case a pointer to the server_store to
+ * @param[in] user_data	User data, in this case a pointer to the server_store to
  *			check against.
  *
  * @retval		False	The stream is in the group.
@@ -989,8 +986,8 @@ static int all_streams_configured(void)
 	enum action_req action = ACTION_REQ_NONE;
 	uint32_t pres_dly_snk_us = UINT32_MAX;
 	uint32_t pres_dly_src_us = UINT32_MAX;
-	uint16_t max_trasp_lat_snk_ms = UINT16_MAX;
-	uint16_t max_trasp_lat_src_ms = UINT16_MAX;
+	uint16_t max_transp_lat_snk_ms = UINT16_MAX;
+	uint16_t max_transp_lat_src_ms = UINT16_MAX;
 
 	struct pd_struct common_pd_src;
 	struct pd_struct common_pd_snk;
@@ -1002,21 +999,18 @@ static int all_streams_configured(void)
 		unicast_group, &pres_dly_snk_us, &pres_dly_src_us, &common_pd_src, &common_pd_snk);
 	if (ret) {
 		LOG_ERR("Failed to get presentation delay: %d", ret);
-		srv_store_unlock();
 		return ret;
 	}
 
 	ret = bt_cap_unicast_group_get_info(unicast_group, &cap_info);
 	if (ret) {
 		LOG_ERR("Failed to get unicast group info: %d", ret);
-		srv_store_unlock();
 		return ret;
 	}
 
 	ret = bt_bap_unicast_group_get_info(cap_info.unicast_group, &info);
 	if (ret) {
 		LOG_ERR("Failed to get unicast group info: %d", ret);
-		srv_store_unlock();
 		return ret;
 	}
 
@@ -1028,7 +1022,7 @@ static int all_streams_configured(void)
 			 */
 			group_action_set(&action, ACTION_REQ_GROUP_RESTART);
 		} else {
-			/* The existing pres delay is wihin the min and max,
+			/* The existing pres delay is within the min and max,
 			 * stay with the existing presentation delay.
 			 */
 			pres_dly_snk_us = info.sink_pd;
@@ -1042,7 +1036,7 @@ static int all_streams_configured(void)
 			 */
 			group_action_set(&action, ACTION_REQ_GROUP_RESTART);
 		} else {
-			/* The existing pres delay is wihin the min and max, we
+			/* The existing pres delay is within the min and max, we
 			 * stay with the existing presentation delay
 			 */
 			pres_dly_src_us = info.source_pd;
@@ -1053,23 +1047,20 @@ static int all_streams_configured(void)
 						   &action);
 	if (ret) {
 		LOG_ERR("Failed to set presentation delay: %d", ret);
-		srv_store_unlock();
 		return ret;
 	}
 
-	ret = unicast_client_internal_max_transp_latency_get(unicast_group, &max_trasp_lat_snk_ms,
-							     &max_trasp_lat_src_ms);
+	ret = unicast_client_internal_max_transp_latency_get(unicast_group, &max_transp_lat_snk_ms,
+							     &max_transp_lat_src_ms);
 	if (ret) {
 		LOG_ERR("Failed to get max transport latency: %d", ret);
-		srv_store_unlock();
 		return ret;
 	}
 
-	ret = unicast_client_internal_max_transp_latency_set(unicast_group, max_trasp_lat_snk_ms,
-							     max_trasp_lat_src_ms, &action);
+	ret = unicast_client_internal_max_transp_latency_set(unicast_group, max_transp_lat_snk_ms,
+							     max_transp_lat_src_ms, &action);
 	if (ret) {
 		LOG_ERR("Failed to set max transport latency: %d", ret);
-		srv_store_unlock();
 		return ret;
 	}
 
@@ -1724,7 +1715,7 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 			continue;
 		}
 
-		LOG_INF("Adding stream with ep %p to start params", (void *)server->src.eps[j]);
+		LOG_DBG("Adding stream with ep %p to start params", (void *)server->src.eps[j]);
 
 		param->stream_params[param->count].member.member = server->conn;
 		param->stream_params[param->count].stream = &server->src.cap_streams[j];

@@ -924,7 +924,7 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 	/* Check if server already exists */
 	ret = srv_store_from_conn_get(conn, &temp_server);
 	if (ret == 0) {
-		/* Server already exists, no need to add again, but we update the conn pointer*/
+		/* Server already exists, no need to add again, but we update the conn pointer */
 		temp_server->conn = conn;
 		LOG_DBG("Server already exists for conn: %p", (void *)conn);
 		return -EALREADY;
