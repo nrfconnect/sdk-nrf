@@ -421,8 +421,9 @@ DECT NR+ samples
 ----------------
 
 * Added the :ref:`hello_dect` sample for demonstrating the use of the DECT NR+ stack with connection manager and IPv6 connectivity.
+* Added the :ref:`dect_shell_application` sample with the utilities for testing the DECT NR+ networking stack and modem features.
 
-* :ref:`dect_shell_application` sample:
+* :ref:`dect_phy_shell_application` sample:
 
   * Updated:
 

@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "DECT NR+ Shell config"
+
+config SAMPLE_DESH_PRINT_BUFFER_SIZE
+	int "Buffer size used when printing shell output"
+	default 1024
+	help
+	  If the printed string exceeds this buffer, an error message is printed
+	  first, and then the requested string is cut into the length of this buffer.
+
+config SAMPLE_DESH_COMMON_WORKQ_STACK_SIZE
+	int "Common workqueue stack size"
+	default 3072
+
+config SAMPLE_DESH_DECT_ICMP_PING
+	bool "ICMP ping support"
+	depends on NET_SOCKETS_INET_RAW
+	default y
+	help
+	  Support for ICMP ping.
+
+config SAMPLE_DESH_IPERF3
+	bool "iPerf3"
+	select NRF_IPERF3
+
+config SAMPLE_DESH_CLOUD_MQTT
+	bool "MQTT connection to nRF Cloud"
+	depends on NRF_CLOUD_MQTT
+	help
+	  MQTT connection to nRF Cloud.
+
+config SAMPLE_DESH_CLOUD_COAP
+	bool "CoAP connection to nRF Cloud"
+	depends on NRF_CLOUD_COAP
+	help
+	  CoAP connection to nRF Cloud.
+
+config SAMPLE_DESH_L2_SHELL
+	bool "DECT NR+ Shell for nRF91 Modem MAC"
+	default y
+	select DECT_L2_SHELL_LIB
+	help
+	  Enable support for DECT NR+ Net Management interface.
+	  This selects the DECT MAC L2 shell library.
+
+rsource "Kconfig.native_tls"
+
+endmenu # Nordic DECT NR+ Shell config
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
