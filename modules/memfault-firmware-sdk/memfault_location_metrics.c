@@ -14,6 +14,7 @@
 LOG_MODULE_DECLARE(memfault_ncs_metrics, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 
 static bool s_session_in_progress;
+static bool s_cloud_request_captured;
 
 /**
  * @brief Record location method results
@@ -124,6 +125,34 @@ static void prv_location_method_fallback_record(enum location_method method,
 }
 
 /**
+ * @brief Record cloud location request data
+ *
+ * @param request pointer to cloud location request data
+ */
+static void prv_cloud_location_request_record(const struct location_data_cloud *request)
+{
+	s_cloud_request_captured = true;
+
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
+	if (request->cell_data != NULL) {
+		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(
+			ncs_loc_lte_neighbor_cells_count, ncs_loc,
+			request->cell_data->ncells_count);
+		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(
+			ncs_loc_lte_gci_cells_count, ncs_loc,
+			request->cell_data->gci_cells_count);
+	}
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	if (request->wifi_data != NULL) {
+		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(
+			ncs_loc_wifi_ap_count, ncs_loc,
+			request->wifi_data->cnt);
+	}
+#endif
+}
+
+/**
  * @brief Start a location session.
  *
  */
@@ -135,6 +164,7 @@ static void prv_location_metrics_session_start(void)
 	}
 
 	s_session_in_progress = true;
+	s_cloud_request_captured = false;
 	LOG_DBG("Starting location session");
 	MEMFAULT_METRICS_SESSION_START(ncs_loc);
 	MEMFAULT_METRIC_ADD(ncs_loc_search_request_count, 1);
@@ -148,7 +178,7 @@ static void prv_location_metrics_session_start(void)
 static void prv_location_metrics_session_stop(const struct location_event_data *event_data)
 {
 	if (!s_session_in_progress) {
-		LOG_WRN("Location session already in progress, ignoring stop request");
+		LOG_WRN("No location session in progress, ignoring stop request");
 		return;
 	}
 
@@ -163,7 +193,17 @@ static void prv_location_metrics_session_stop(const struct location_event_data *
 		prv_location_method_results_record(event_data->method, event_data->id,
 						   &event_data->location.details,
 						   &event_data->location.accuracy);
+		break;
+	case LOCATION_EVT_CANCELLED:
+		if (s_cloud_request_captured) {
+			/* Cloud request captured before cancel - consider success as app
+			 * received Wi-Fi/cellular data for cloud location.
+			 */
 
+			MEMFAULT_METRIC_SESSION_SET_UNSIGNED(ncs_loc_search_success, ncs_loc, 1);
+		} else {
+			MEMFAULT_METRIC_SESSION_SET_UNSIGNED(ncs_loc_search_failure, ncs_loc, 1);
+		}
 		break;
 	case LOCATION_EVT_TIMEOUT:
 		/* Intentional fall through */
@@ -194,9 +234,12 @@ static void prv_location_event_handler(const struct location_event_data *event_d
 		prv_location_metrics_session_start();
 	} else if (event_data->id == LOCATION_EVT_FALLBACK) {
 		prv_location_method_fallback_record(event_data->method, &event_data->fallback);
+	} else if (event_data->id == LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST) {
+		prv_cloud_location_request_record(&event_data->cloud_location_request);
 	} else if (event_data->id == LOCATION_EVT_LOCATION ||
 		   event_data->id == LOCATION_EVT_TIMEOUT || event_data->id == LOCATION_EVT_ERROR ||
-		   event_data->id == LOCATION_EVT_RESULT_UNKNOWN) {
+		   event_data->id == LOCATION_EVT_RESULT_UNKNOWN ||
+		   event_data->id == LOCATION_EVT_CANCELLED) {
 		prv_location_metrics_session_stop(event_data);
 	}
 }
