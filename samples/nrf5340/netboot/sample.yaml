@@ -7,7 +7,10 @@ tests:
     build_only: true
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
-    platform_allow: nrf5340dk/nrf5340/cpunet
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
+    extra_args:
+      - DTC_OVERLAY_FILE="test.overlay"
     tags:
       - ci_build
       - sysbuild
@@ -15,10 +18,13 @@ tests:
   sample.nrf5340.netboot.minimal_size:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-minimal-size.conf
+    extra_args:
+      - DTC_OVERLAY_FILE="test.overlay"
+      - EXTRA_CONF_FILE="minimal-size.conf"
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
-    platform_allow: nrf5340dk/nrf5340/cpunet
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
     tags:
       - ci_build
       - sysbuild
