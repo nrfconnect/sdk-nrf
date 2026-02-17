@@ -50,6 +50,7 @@ config MBEDTLS_PSA_CRYPTO_SPM
 config MBEDTLS_PSA_CRYPTO_STORAGE_C
 	bool "PSA storage for persistent keys"
 	default y if BUILD_WITH_TFM
+	depends on TFM_PARTITION_INTERNAL_TRUSTED_STORAGE || !BUILD_WITH_TFM
 	help
 	  Corresponds to MBEDTLS_PSA_CRYPTO_STORAGE_C setting in mbed TLS config file.
 
