@@ -267,6 +267,10 @@
 | :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` |
 ``nrf54l15dk/nrf54l15/cpuflpr/xip`` |
 
+.. nrf54l15tag_nrf54l15_cpuapp
+
+| :ref:`nRF54L15 TAG <ug_nrf54l>` | PCA20072 | :zephyr:board:`nrf54l15tag <nrf54l15dk>` | ``nrf54l15tag/nrf54l15/cpuapp`` |
+
 .. nrf54lv10dk_nrf54lv10a_cpuapp
 
 | nRF54LV10 DK | PCA10188 | nrf54lv10dk | ``nrf54lv10dk/nrf54lv10a/cpuapp`` |
