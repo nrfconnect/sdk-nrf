@@ -1112,7 +1112,7 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 
 	if (server->src.waiting_for_disc) {
 		srv_store_unlock();
-		return; // Double check!!
+		return; /*TODO: Double check */
 	}
 
 	dir = le_audio_stream_dir_get(stream);
