@@ -531,10 +531,10 @@ struct lmac_common_stats {
 	unsigned int commad_ent_default;
 	unsigned int lmac_enable_cnt;
 	unsigned int lmac_disable_cnt;
-	unsigned int lmac_error_cnt ;
+	unsigned int lmac_error_cnt;
 	unsigned int unable_gen_event;
 	unsigned int mem_pool_full_cnt;
-	unsigned int ch_prog_cmd_cnt ;
+	unsigned int ch_prog_cmd_cnt;
 	unsigned int channel_prog_done;
 	unsigned int connect_lost_status;
 	unsigned int tx_core_pool_full_cnt;

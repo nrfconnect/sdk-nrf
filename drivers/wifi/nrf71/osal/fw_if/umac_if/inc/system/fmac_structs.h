@@ -112,7 +112,7 @@ struct nrf_wifi_fmac_callbk_fns {
 
 	/** Callback function to be called when a scan is done. */
 	void (*scan_done_callbk_fn)(void *os_vif_ctx,
-				    struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
+				    struct nrf_wifi_umac_event_scan_done *scan_done_event,
 				    unsigned int event_len);
 
 	/** Callback function to be called when a scan is aborted. */
@@ -128,7 +128,7 @@ struct nrf_wifi_fmac_callbk_fns {
 
 	/** Callback function to be called when a display scan result is received. */
 	void (*disp_scan_res_callbk_fn)(void *os_vif_ctx,
-				  struct nrf_wifi_umac_event_new_scan_display_results *scan_res,
+				  void *scan_res,
 				  unsigned int event_len,
 				  bool more_res);
 

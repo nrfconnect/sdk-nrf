@@ -566,7 +566,8 @@ if !NRF_WIFI_GLOBAL_HEAP
 
 config NRF_WIFI_CTRL_HEAP_SIZE
 	int "Dedicated memory pool for control plane"
-	default 20000
+	# for scan results, we need to icnrease by 15K (200 results)
+	default 35000
 
 config NRF_WIFI_DATA_HEAP_SIZE
 	int "Dedicated memory pool for data plane"
@@ -625,7 +626,7 @@ config WIFI_MGMT_SCAN_SSID_FILT_MAX
 
 config NRF_WIFI_SCAN_MAX_BSS_CNT
 	int "Maximum number of scan results to return."
-	default 0
+	default 200
 	range 0 65535
 	help
 	  Maximum number of scan results to return. 0 represents unlimited number of BSSes.

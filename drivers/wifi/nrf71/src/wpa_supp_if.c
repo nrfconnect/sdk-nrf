@@ -127,7 +127,7 @@ void nrf_wifi_wpa_supp_event_proc_scan_start(void *if_priv)
 }
 
 void nrf_wifi_wpa_supp_event_proc_scan_done(void *if_priv,
-					struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
+					struct nrf_wifi_umac_event_scan_done *scan_done_event,
 					unsigned int event_len,
 					int aborted)
 {
