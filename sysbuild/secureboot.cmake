@@ -16,11 +16,9 @@ if(SB_CONFIG_SECURE_BOOT)
     set(target_soc)
     set(target_cpucluster)
 
-    set(secure_boot_source_dir ${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/netboot)
-
     ExternalZephyrProject_Add(
       APPLICATION b0n
-      SOURCE_DIR ${secure_boot_source_dir}
+      SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/netboot_deprecated_pm
       BOARD ${board_target_netcore}
       BOARD_REVISION ${BOARD_REVISION}
       BUILD_ONLY true

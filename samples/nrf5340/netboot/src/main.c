@@ -6,7 +6,11 @@
 
 #include <zephyr/types.h>
 #include <zephyr/sys/printk.h>
+#if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#else
+#include <zephyr/storage/flash_map.h>
+#endif
 #include <fw_info.h>
 #include <fprotect.h>
 #include <bl_storage.h>
@@ -19,6 +23,31 @@
 #include <nrfx_nvmc.h>
 #endif
 
+#if USE_PARTITION_MANAGER
+#define B0N_ADDRESS	PM_B0N_CONTAINER_ADDRESS
+#define B0N_SIZE	PM_B0N_CONTAINER_SIZE
+#define S0_ADDRESS	PM_APP_ADDRESS
+#define S0_SIZE		PM_APP_SIZE
+/* The flash is locked at flash page granularity */
+BUILD_ASSERT((B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
+	"B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE was not 0. Check the B0_SIZE Kconfig.");
+#else
+#define B0N_ADDRESS FIXED_PARTITION_ADDRESS(b0n_partition)
+#define B0N_SIZE (FIXED_PARTITION_SIZE(b0n_partition) + FIXED_PARTITION_SIZE(provision_partition))
+#define S0_ADDRESS FIXED_PARTITION_ADDRESS(s0_partition)
+#define S0_SIZE FIXED_PARTITION_SIZE(s0_partition)
+
+BUILD_ASSERT(FIXED_PARTITION_ADDRESS(provision_partition) ==
+	     (FIXED_PARTITION_ADDRESS(b0n_partition) + FIXED_PARTITION_SIZE(b0n_partition)),
+	     "`provision` partition must be directly after `b0n` partition.");
+
+/* The flash is locked at flash page granularity */
+BUILD_ASSERT((B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
+	     "B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE was not 0. Check the `b0n` partition size.");
+BUILD_ASSERT((S0_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
+	     "S0_SIZE % CONFIG_FPROTECT_BLOCK_SIZE was not 0. Check the `s0` partition size.");
+#endif
+
 int main(void)
 {
 	int err;
@@ -29,12 +58,7 @@ int main(void)
 		return 0;
 	}
 
-	/* The flash is locked at flash page granularity */
-	BUILD_ASSERT(
-		(PM_B0N_CONTAINER_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
-		"PM_B0N_CONTAINER_SIZE % CONFIG_FPROTECT_BLOCK_SIZE was not 0. Check the B0_SIZE Kconfig.");
-
-	err = fprotect_area(PM_B0N_CONTAINER_ADDRESS, PM_B0N_CONTAINER_SIZE);
+	err = fprotect_area(B0N_ADDRESS, B0N_SIZE);
 	if (err) {
 		printk("Failed to protect b0n flash, cancel startup\n\r");
 		goto failure;
@@ -119,7 +143,7 @@ int main(void)
 		break;
 	}
 
-	err = fprotect_area(PM_APP_ADDRESS, PM_APP_SIZE);
+	err = fprotect_area(S0_ADDRESS, S0_SIZE);
 	if (err) {
 		printk("Failed to protect app flash: %d\n\r", err);
 		goto failure;
