@@ -249,39 +249,12 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - fast_pair.storage.factory_reset.default
-    - fast_pair.storage.factory_reset.ak_minimal_backend
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf54l15dk/nrf54l10/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - fast_pair.storage.account_key_storage.6keys
     - fast_pair.storage.account_key_storage.7keys
     - fast_pair.storage.account_key_storage.8keys
     - fast_pair.storage.account_key_storage.9keys
   platforms:
     - qemu_cortex_m3
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - fast_pair.storage.account_key_storage.default
-    - fast_pair.storage.account_key_storage.minimal
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf54l15dk/nrf54l10/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - fast_pair.crypto.oberon
-    - fast_pair.crypto.psa
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf54l15dk/nrf54l10/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -295,27 +268,6 @@
     - applications.nrf_desktop.zrelease_4llpmconn
   platforms:
     - nrf52840dongle/nrf52840
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.bluetooth.fast_pair.input_device
-  platforms:
-    - nrf54l15dk/nrf54l10/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.bluetooth.fast_pair.locator_tag
-  platforms:
-    - nrf54l15dk/nrf54l05/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.bluetooth.fast_pair.locator_tag.release
-  platforms:
-    - nrf54l15dk/nrf54l10/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
