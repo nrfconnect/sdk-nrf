@@ -18,4 +18,3 @@ The samples use :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` and
    :glob:
 
    ../../../samples/crypto/*/README
-   ../../tests/crypto/README
