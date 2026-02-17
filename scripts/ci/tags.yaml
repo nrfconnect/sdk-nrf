@@ -915,6 +915,7 @@ ci_tests_bluetooth_tester:
     - nrf/include/bluetooth/mesh/
     - nrf/subsys/bluetooth/mesh/
     - nrf/tests/bluetooth/tester/mmdl/
+    - nrf/tests/zephyr/bluetooth/tester/host/
     - zephyr/include/zephyr/bluetooth/mesh/
     - zephyr/subsys/bluetooth/mesh/
 
