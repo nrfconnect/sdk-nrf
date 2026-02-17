@@ -101,3 +101,11 @@
 &clock {
 	status = "okay";
 };
+
+&lfclk {
+	status = "okay";
+};
+
+&xo {
+	status = "okay";
+};
