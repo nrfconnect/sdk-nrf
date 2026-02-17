@@ -214,7 +214,7 @@ static void unicast_group_create(void)
 
 	if (unicast_group_created) {
 		LOG_ERR("Group already created");
-		return -EACCESS;
+		return -EALREADY;
 	}
 
 	/* Reset all group_data related to the unicast group */
