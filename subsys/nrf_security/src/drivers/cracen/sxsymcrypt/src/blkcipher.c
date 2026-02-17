@@ -88,7 +88,7 @@ int sx_blkcipher_free(struct sxblkcipher *cipher_ctx)
 	return sx_err;
 }
 
-static int sx_blkcipher_hw_reserve(struct sxblkcipher *cipher_ctx)
+int sx_blkcipher_hw_reserve(struct sxblkcipher *cipher_ctx)
 {
 	int err = SX_OK;
 

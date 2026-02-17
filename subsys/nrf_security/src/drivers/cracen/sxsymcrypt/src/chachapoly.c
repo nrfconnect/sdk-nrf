@@ -4,6 +4,7 @@
  *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "../include/sxsymcrypt/aes.h"
 #include "../include/sxsymcrypt/aead.h"
 #include "../include/sxsymcrypt/keyref.h"
 #include <cracen/statuscodes.h>
@@ -152,9 +153,10 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *cipher_ctx, struct s
 		return SX_ERR_INVALID_KEY_SZ;
 	}
 
-	sx_hw_reserve(&cipher_ctx->dma);
-	cipher_ctx->cfg = &ba417chacha20cfg;
 	cipher_ctx->key = key;
+	sx_blkcipher_hw_reserve(cipher_ctx);
+
+	cipher_ctx->cfg = &ba417chacha20cfg;
 
 	sx_cmdma_newcmd(&cipher_ctx->dma, cipher_ctx->descs, BA417_MODE_CHACHA20 | dir,
 			cipher_ctx->cfg->dmatags->cfg);
