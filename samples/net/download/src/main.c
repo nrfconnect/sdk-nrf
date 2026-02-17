@@ -74,8 +74,8 @@ static struct downloader_host_cfg host_dl_cfg = {
 };
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
-#include <mbedtls/sha256.h>
-static mbedtls_sha256_context sha256_ctx;
+#include <psa/crypto.h>
+static psa_hash_operation_t hash_ctx;
 #endif
 
 static int64_t ref_time;
@@ -215,7 +215,9 @@ static int callback(const struct downloader_evt *event)
 	static size_t file_size;
 	uint32_t speed;
 	int64_t ms_elapsed;
-
+#if CONFIG_SAMPLE_COMPUTE_HASH
+	psa_status_t status;
+#endif
 	if (downloaded == 0) {
 		downloader_file_size_get(&downloader, &file_size);
 		downloaded += STARTING_OFFSET;
@@ -231,8 +233,11 @@ static int callback(const struct downloader_evt *event)
 		}
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
-		mbedtls_sha256_update(&sha256_ctx,
-			event->fragment.buf, event->fragment.len);
+		status = psa_hash_update(&hash_ctx, event->fragment.buf, event->fragment.len);
+		if (status != PSA_SUCCESS) {
+			printk("Error during hash update: %d\n", status);
+			return status;
+		}
 #endif
 		return 0;
 
@@ -245,9 +250,13 @@ static int callback(const struct downloader_evt *event)
 #if CONFIG_SAMPLE_COMPUTE_HASH
 		uint8_t hash[32];
 		uint8_t hash_str[64 + 1];
+		size_t hash_length;
 
-		mbedtls_sha256_finish(&sha256_ctx, hash);
-		mbedtls_sha256_free(&sha256_ctx);
+		status = psa_hash_finish(&hash_ctx, hash, sizeof(hash), &hash_length);
+		if (status != PSA_SUCCESS) {
+			printk("Error during hash finish: %d\n", status);
+			return status;
+		}
 
 		bin2hex(hash, sizeof(hash), hash_str, sizeof(hash_str));
 
@@ -313,7 +322,14 @@ int main(void)
 		return 0;
 	}
 #endif
+#if CONFIG_SAMPLE_COMPUTE_HASH
+	psa_status_t status = psa_hash_setup(&hash_ctx, PSA_ALG_SHA_256);
 
+	if (status != PSA_SUCCESS) {
+		printk("psa_hash_setup, error: %d\n", status);
+		return status;
+	}
+#endif
 	printk("Connecting to network\n");
 
 	err = conn_mgr_all_if_connect(true);
@@ -342,10 +358,6 @@ int main(void)
 		return 0;
 	}
 
-#if CONFIG_SAMPLE_COMPUTE_HASH
-	mbedtls_sha256_init(&sha256_ctx);
-	mbedtls_sha256_starts(&sha256_ctx, false);
-#endif
 
 	ref_time = k_uptime_get();
 
