@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_nrf7002ek:
 
 Working with the nRF54H20 DK and the nRF7002 EK
