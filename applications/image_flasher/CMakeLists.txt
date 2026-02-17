@@ -11,7 +11,7 @@ find_package(Zephyr
   REQUIRED HINTS $ENV{ZEPHYR_BASE}
 )
 
-project(image_flasher)
+project(image_flasher LANGUAGES NONE)
 
 # Create the runners_yaml_props_target that flash system expects
 add_custom_target(runners_yaml_props_target)
