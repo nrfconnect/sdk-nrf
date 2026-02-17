@@ -8,7 +8,7 @@
 #include <zephyr/logging/log.h>
 #include <dfu/fmfu_fdev.h>
 #include <nrf_modem_bootloader.h>
-#include <mbedtls/sha256.h>
+#include <psa/crypto.h>
 #include <stdio.h>
 #include <modem_update_decode.h>
 
@@ -20,39 +20,41 @@ LOG_MODULE_REGISTER(fmfu_fdev, CONFIG_FMFU_FDEV_LOG_LEVEL);
 static uint8_t meta_buf[MAX_META_LEN];
 
 static int get_hash_from_flash(const struct device *fdev, size_t offset, size_t data_len,
-			       uint8_t *hash, uint8_t *buffer, size_t buffer_len)
+			       uint8_t hash[static 32], uint8_t *buffer, size_t buffer_len)
 {
 	int err;
-	mbedtls_sha256_context sha256_ctx;
+	psa_hash_operation_t operation = PSA_HASH_OPERATION_INIT;
+	psa_status_t status;
+	size_t hash_len;
 	size_t end = offset + data_len;
+	BUILD_ASSERT(PSA_SUCCESS == 0);
 
-	mbedtls_sha256_init(&sha256_ctx);
-
-	err = mbedtls_sha256_starts(&sha256_ctx, false);
-	if (err != 0) {
-		return err;
+	status = psa_hash_setup(&operation, PSA_ALG_SHA_256);
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
 
 	for (size_t tmp_offs = offset; tmp_offs < end; tmp_offs += buffer_len) {
 		size_t part_len = MIN(buffer_len, (end - tmp_offs));
-		int err = flash_read(fdev, tmp_offs, buffer, part_len);
 
+		err = flash_read(fdev, tmp_offs, buffer, part_len);
 		if (err != 0) {
+			psa_hash_abort(&operation);
 			return err;
 		}
 
-		err = mbedtls_sha256_update(&sha256_ctx, buffer, part_len);
-		if (err != 0) {
-			return err;
+		status = psa_hash_update(&operation, buffer, part_len);
+		if (status != PSA_SUCCESS) {
+			psa_hash_abort(&operation);
+			return status;
 		}
 	}
 
-	err = mbedtls_sha256_finish(&sha256_ctx, hash);
-	if (err != 0) {
-		return err;
+	status = psa_hash_finish(&operation, hash, 32, &hash_len);
+	if (status != PSA_SUCCESS) {
+		psa_hash_abort(&operation);
 	}
-
-	return 0;
+	return status;
 }
 
 static int write_chunk(uint8_t *buf, size_t buf_len, uint32_t address, bool is_bootloader)
