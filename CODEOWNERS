@@ -342,7 +342,7 @@
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
-/include/emds/                            @balaklaka @nrfconnect/ncs-paladin
+/include/emds/                            @nrfconnect/ncs-paladin
 /include/fem_al/                          @nrfconnect/ncs-dragoon
 /include/hpf/                             @nrfconnect/ncs-ll-ursus
 /include/logging/                         @nrfconnect/ncs-protocols-serialization
@@ -809,7 +809,7 @@
 /subsys/dfu/dfu_multi_image/              @Damian-Nordic @nrfconnect/ncs-eris
 /subsys/dm/                               @nrfconnect/ncs-blenders
 /subsys/dult/                             @nrfconnect/ncs-si-bluebagel
-/subsys/emds/                             @balaklaka @nrfconnect/ncs-paladin
+/subsys/emds/                             @nrfconnect/ncs-paladin
 /subsys/esb/                              @nrfconnect/ncs-si-xcake
 /subsys/event_manager_proxy/              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /subsys/fw_info/                          @nrfconnect/ncs-eris
@@ -947,7 +947,7 @@
 /tests/subsys/debug/cpu_load/             @nordic-krch
 /tests/subsys/dfu/                        @nrfconnect/ncs-eris
 /tests/subsys/dfu/dfu_multi_image/        @Damian-Nordic
-/tests/subsys/emds/                       @balaklaka @nrfconnect/ncs-paladin
+/tests/subsys/emds/                       @nrfconnect/ncs-paladin
 /tests/subsys/event_manager_proxy/        @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/fw_info/                    @nrfconnect/ncs-eris
 /tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test @anangl
