@@ -272,6 +272,12 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 		status = NRF_WIFI_STATUS_SUCCESS;
 		break;
 #endif /* NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX */
+	case NRF_WIFI_EVENT_DEBUG_STATS:
+		nrf_wifi_osal_log_dbg("%s: Debug stats received",
+				      __func__);
+		/* TODO: Process debug stats */
+		status = NRF_WIFI_STATUS_SUCCESS;
+		break;
 	default:
 		nrf_wifi_osal_log_err("%s: Unknown event recd: %d",
 				      __func__,
