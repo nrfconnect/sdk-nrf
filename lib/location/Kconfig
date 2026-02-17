@@ -110,6 +110,35 @@ config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
 	  Maximum number of Wi-Fi scanning results to use when creating HTTP request.
 	  Increasing the max number will increase the library's RAM usage.
 
+config LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
+	bool "Override Wi-Fi scan parameters"
+	help
+	  Enable this option to override the default Wi-Fi scan parameters.
+
+if LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
+
+config LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_ACTIVE
+	int "Active scan dwell time (ms)"
+	default 50
+	range 5 1000
+	help
+	  Time in milliseconds to dwell on each channel during active scanning.
+	  Increasing dwell time improves detection of distant APs but increases
+	  scan time and power consumption.
+
+config LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE
+	int "Passive scan dwell time (ms)"
+	default 260
+	range 10 1000
+	help
+	  Time in milliseconds to dwell on each channel during passive scanning.
+	  Increasing dwell time improves detection of distant APs but increases
+	  scan time and power consumption.
+	  Default value is set to 260ms to cover at least two beacon intervals,
+	  (102.4ms beacon interval + ~30 ms channel contention) * 2
+
+endif # LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
+
 endif # LOCATION_METHOD_WIFI
 
 # Cellular and Wi-Fi service configurations
