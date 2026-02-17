@@ -4,10 +4,13 @@ common:
     - drivers
     - mspi
   harness: ztest
+  harness_config:
+    fixture: external_flash
 
 tests:
   drivers.mspi.hpf_app_fault_timer:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp

@@ -7,10 +7,15 @@ common:
     - drivers
     - mspi
     - ci_tests_drivers_hpf
+    - flash
+  harness: ztest
+  harness_config:
+    fixture: external_flash
 tests:
-  nrf.extended.drivers.mspi.api.hpf:
+  nrf.extended.drivers.mspi.flash.hpf:
     platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/hpf_mspi.overlay"
