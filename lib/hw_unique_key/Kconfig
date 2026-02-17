@@ -17,6 +17,8 @@ config HW_UNIQUE_KEY_LOAD
 	depends on HAS_HW_NRF_ACL
 	depends on HAS_HW_NRF_CC310
 	depends on NRF_CC3XX_PLATFORM
+	depends on PARTITION_MANAGER_ENABLED || $(dt_nodelabel_exists,hw_unique_key_partition)
+
 	select FPROTECT
 	imply NRFX_NVMC if !CRACEN_KMU_HW_PRESENT
 	help
