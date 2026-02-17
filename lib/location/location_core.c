@@ -840,6 +840,16 @@ int location_core_cancel(void)
 		if (err == -EPERM) {
 			err = 0;
 		}
+
+		if (IS_ENABLED(CONFIG_LOCATION_DATA_DETAILS)) {
+			struct location_event_data event = {
+				.id = LOCATION_EVT_CANCELLED,
+				.method = current_method,
+			};
+
+			location_utils_event_dispatch(&event);
+		}
+
 	} else {
 		LOG_DBG("No location request pending so not cancelling anything");
 	}

@@ -1134,6 +1134,12 @@ void test_location_cellular_cancel_during_ncellmeas(void)
 	TEST_ASSERT_EQUAL(0, err);
 #endif
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_CANCELLED;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_CELLULAR;
+	location_cb_expected++;
+#endif
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", 0);
 
 	err = location_request_cancel();
