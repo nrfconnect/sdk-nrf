@@ -435,7 +435,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`ug_nfc` - added
 * :ref:`ug_bootloader` - added upgradeable bootloader
 * Cloud client - updated
-* :ref:`crypto_test` - added
+* Cryptography tests - added
 * :ref:`libraries` - improved the structure of the library documentation
 * :ref:`bt_mesh` (and subpages) - added
 * :ref:`nrf_bt_scan_readme` - updated

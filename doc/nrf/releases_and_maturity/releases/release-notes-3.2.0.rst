@@ -816,7 +816,7 @@ Cryptography samples
 
 * Added:
 
-  * Support for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` and ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` board targets to all samples (except :ref:`crypto_test`).
+  * Support for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` and ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` board targets to all samples (except Cryptography tests).
   * Support for the ``nrf54h20dk/nrf54h20/cpuapp`` board target to the :ref:`crypto_persistent_key` sample, demonstrating use of Internal Trusted Storage (ITS) on the nRF54H20 DK.
   * Support for the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board target in all supported cryptography samples.
   * Support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target in the following samples:

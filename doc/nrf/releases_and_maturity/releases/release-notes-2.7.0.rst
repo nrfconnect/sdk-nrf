@@ -746,7 +746,7 @@ Cryptography samples
     * Support for the nRF54L15 PDK board for all crypto samples.
     * Support for the :zephyr:board:`nrf54h20dk` board in all crypto samples, except :ref:`crypto_persistent_key` and :ref:`crypto_tls`.
     * Support for the :zephyr:board:`nrf9151dk` board for all crypto samples.
-    * Support for the :ref:`nRF9161 DK <ug_nrf9161>` board for the :ref:`crypto_test`.
+    * Support for the :ref:`nRF9161 DK <ug_nrf9161>` board for the Cryptography tests.
 
 Common samples
 --------------

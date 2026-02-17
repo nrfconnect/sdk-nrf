@@ -894,7 +894,6 @@
 /tests/bluetooth/bsim/nrf_auraconfig/     @nrfconnect/ncs-audio
 /tests/bluetooth/bsim/custom_ltk/         @nrfconnect/ncs-paladin
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
-/tests/crypto/                            @magnev
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
 /tests/drivers/can/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/dect/dect_mdm/integration/ @nrfconnect/ncs-dect-nr-plus
