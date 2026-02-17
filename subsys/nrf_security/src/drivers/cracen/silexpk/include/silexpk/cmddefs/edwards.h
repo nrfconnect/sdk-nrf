@@ -44,13 +44,6 @@ extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_SIGN;
  */
 extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_VER;
 
-/** Point multiplication on edwards curve of any point
- *
- * All operands for this command use a little endian representation.
- * This command is only suited for curve edwards25519 and edwards448.
- */
-extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDWARDS_PTMUL;
-
 /** @} */
 
 /** Input slots for ::SX_PK_CMD_EDDSA_SIGN */
@@ -71,13 +64,6 @@ struct sx_pk_inops_eddsa_ver {
 /** Input slots for ::SX_PK_CMD_EDDSA_PTMUL */
 struct sx_pk_inops_eddsa_ptmult {
 	struct sx_pk_dblslot r; /**< Scalar **/
-};
-
-/** Input slots for ::SX_PK_CMD_EDWARDS_PTMUL */
-struct sx_pk_inops_edwards_ptmult {
-	struct sx_pk_slot px;	/**< x-coordinate of custom point **/
-	struct sx_pk_slot py;	/**< y-coordinate of custom point **/
-	struct sx_pk_slot r; /**< Scalar **/
 };
 
 #ifdef __cplusplus
