@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_MCUBOOT_WATCHDOG
+	bool "Enable test watchdog"
+
+if TEST_MCUBOOT_WATCHDOG
+
+config TEST_MCUBOOT_WATCHDOG_MAX_WINDOW_MS
+	int "Maximum timeout window (e.g., 2000ms)"
+	default 2000
+
+config TEST_MCUBOOT_WATCHDOG_MIN_WINDOW_MS
+	int "Minimum timeout window"
+	default 0
+
+config TEST_MCUBOOT_WATCHDOG_USE_MCUBOOT_STARTUP_DELAYS
+	bool "Add a delay whenever MCUBoot status changes"
+	select MCUBOOT_ACTION_HOOKS
+	help
+	  This adds two delays - one, before MCUBoot starts, and one,
+	  when MCUBoot status changes to STARTUP.
+	  If CONFIG_BOOT_WATCHDOG_FEED is enabled,
+	  the watchdog should be fed in between these two delays.
+
+if TEST_MCUBOOT_WATCHDOG_USE_MCUBOOT_STARTUP_DELAYS
+
+config TEST_MCUBOOT_WATCHDOG_STARTUP_SINGLE_DELAY_TIME_MS
+	int "Single delay time when MCUBoot status changes"
+	default 1000
+
+endif # TEST_MCUBOOT_WATCHDOG_USE_MCUBOOT_STARTUP_DELAYS
+
+endif # TEST_MCUBOOT_WATCHDOG

@@ -928,8 +928,7 @@
 /tests/lib/app_jwt/                       @nrfconnect/ncs-modem
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
-/tests/modules/mcuboot/direct_xip/        @nrfconnect/ncs-eris
-/tests/modules/mcuboot/external_flash/    @nrfconnect/ncs-eris
+/tests/modules/mcuboot/                   @nrfconnect/ncs-eris
 /tests/nrf5340_audio/                     @nrfconnect/ncs-audio @nordic-auko
 /tests/psa_crypto/                        @nrfconnect/ncs-aegir
 /tests/subsys/app_event_manager/          @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
