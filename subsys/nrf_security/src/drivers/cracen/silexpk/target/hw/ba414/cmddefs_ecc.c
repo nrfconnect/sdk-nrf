@@ -107,15 +107,6 @@ static const struct sx_pk_cmd_def CMD_EDDSA_PTMUL = {
 };
 const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_PTMUL = &CMD_EDDSA_PTMUL;
 
-static const struct sx_pk_cmd_def CMD_EDWARDS_PTMUL = {
-	PK_OP_EDWARDS_PTMUL, (1 << OP_SLOT_EDDSA_PTMUL_RX) | (1 << OP_SLOT_EDDSA_PTMUL_RY),
-	(1 << OP_SLOT_EDDSA_PTMUL_R) | (3 << OP_SLOT_EDDSA_PTMUL_P), 0,
-#if defined(CONFIG_CRACEN_ENABLE_ECC_EXTENDED_COUNTERMEASURES)
-	SX_PK_OP_FLAGS_ECC_CM
-#endif
-};
-const struct sx_pk_cmd_def *const SX_PK_CMD_EDWARDS_PTMUL = &CMD_EDWARDS_PTMUL;
-
 static const struct sx_pk_cmd_def CMD_EDDSA_SIGN = {
 	PK_OP_EDDSA_SIGN, (1 << OP_SLOT_EDDSA_SIGN_SIG_S),
 	(3 << OP_SLOT_EDDSA_SIGN_K) | (3 << OP_SLOT_EDDSA_SIGN_R) | (1 << OP_SLOT_EDDSA_SIGN_S), 0};
