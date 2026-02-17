@@ -1005,6 +1005,7 @@
 /tests/zephyr/kernel/timer/timer_behavior/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/subsys/secure_storage/      @nrfconnect/ncs-aegir
 /tests/zephyr/subsys/settings/performance/ @nrfconnect/ncs-eris @rghaddab
+/tests/zephyr/bluetooth/tester/host/       @nrfconnect/ncs-paladin
 
 /tests/benchmarks/multicore/idle/*.rst    @nrfconnect/ncs-lowlevel-doc
 /tests/benchmarks/multicore/idle_gpio/*.rst @nrfconnect/ncs-lowlevel-doc
