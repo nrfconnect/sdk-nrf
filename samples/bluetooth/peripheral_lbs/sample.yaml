@@ -157,7 +157,6 @@ tests:
       - ci_build
       - sysbuild
     extra_configs:
-      - CONFIG_BOOTLOADER_MCUBOOT=y
       - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
       - CONFIG_LOG_BACKEND_UART=n
       - CONFIG_UART_CONSOLE=n
@@ -171,6 +170,7 @@ tests:
       - CONFIG_SEGGER_RTT_BUFFER_SIZE_DOWN=32
       - CONFIG_SEGGER_RTT_PRINTF_BUFFER_SIZE=128
     extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - mcuboot_CONFIG_LOG_BACKEND_UART=n
       - mcuboot_CONFIG_UART_CONSOLE=n
       - mcuboot_CONFIG_USE_SEGGER_RTT=y
