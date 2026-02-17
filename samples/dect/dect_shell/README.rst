@@ -676,7 +676,7 @@ LTE with `Serial Modem <ncs-serial-modem_>`_ running on external nRF9151 DK
      nrf/samples/dect/dect_shell:
      west build -p -b nrf9151dk/nrf9151/ns -- -DFILE_SUFFIX=sm
 
-* Wiring as in the DeSh :file:`nrf9151-sm.overlay` and `Serial Modem <ncs-serial-modem_>`_ :file:`ncs-serial-modem/app/overlay-external-mcu.overlay` files:
+* Wiring as in the DeSh :file:`boards/nrf9151dk_nrf9151_ns_sm.overlay` and `Serial Modem <ncs-serial-modem_>`_ :file:`ncs-serial-modem/app/overlay-external-mcu.overlay` files:
 
   .. table:: Wire the DKs together as shown.
 
