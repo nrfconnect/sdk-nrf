@@ -662,6 +662,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 	}
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	if (!sys_dev_ctx) {
+		nrf_wifi_osal_log_err("%s: Invalid device context",
+				      __func__);
+		goto out;
+	}
 
 	scan_cmd = nrf_wifi_osal_mem_zalloc((sizeof(*scan_cmd) + channel_info_len));
 
@@ -669,6 +674,19 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 		nrf_wifi_osal_log_err("%s: Unable to allocate memory",
 				      __func__);
 		goto out;
+	}
+
+	if (scan_info->scan_reason == SCAN_DISPLAY) {
+		nrf_wifi_osal_log_dbg("%s: scan_db_len = %d",
+				      __func__,
+				      scan_info->scan_db_len);
+		scan_info->scan_db_addr =
+			(unsigned int)nrf_wifi_osal_mem_zalloc(scan_info->scan_db_len);
+		if (!scan_info->scan_db_addr) {
+			nrf_wifi_osal_log_err("%s: Unable to allocate memory",
+					      __func__);
+			goto out;
+		}
 	}
 
 	scan_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_TRIGGER_SCAN;

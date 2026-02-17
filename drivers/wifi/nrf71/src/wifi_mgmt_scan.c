@@ -51,6 +51,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 	uint8_t k = 0;
 	uint16_t num_scan_channels = 0;
 	int ret = -1;
+	uint16_t max_bss_cnt = 0;
 
 	vif_ctx_zep = dev->data;
 
@@ -201,6 +202,10 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 	}
 
 	vif_ctx_zep->scan_res_cnt = 0;
+	max_bss_cnt = vif_ctx_zep->max_bss_cnt ? vif_ctx_zep->max_bss_cnt :
+		      CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT;
+	LOG_DBG("%s: max_bss_cnt = %d", __func__, max_bss_cnt);
+	scan_info->scan_db_len = max_bss_cnt * sizeof(struct umac_display_results);
 
 #ifdef CONFIG_NRF71_PASSIVE_SCAN_ONLY
 	scan_info->scan_params.passive_scan = 1;
@@ -226,38 +231,6 @@ out:
 	}
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
-}
-
-enum nrf_wifi_status nrf_wifi_disp_scan_res_get_zep(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
-
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
-		return NRF_WIFI_STATUS_FAIL;
-	}
-
-	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
-	if (!rpu_ctx_zep->rpu_ctx) {
-		LOG_DBG("%s: RPU context not initialized", __func__);
-		goto out;
-	}
-
-	status = nrf_wifi_sys_fmac_scan_res_get(rpu_ctx_zep->rpu_ctx,
-					    vif_ctx_zep->vif_idx,
-					    SCAN_DISPLAY);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_sys_fmac_scan failed", __func__);
-		goto out;
-	}
-
-	status = NRF_WIFI_STATUS_SUCCESS;
-out:
-	k_mutex_unlock(&vif_ctx_zep->vif_lock);
-	return status;
 }
 
 static inline enum wifi_mfp_options drv_to_wifi_mgmt_mfp(unsigned char mfp_flag)
@@ -301,30 +274,36 @@ static inline enum wifi_security_type drv_to_wifi_mgmt(int drv_security_type)
 }
 
 void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
-				struct nrf_wifi_umac_event_new_scan_display_results *scan_res,
-				unsigned int event_len,
-				bool more_res)
+				struct nrf_wifi_umac_event_scan_done *scan_done_event,
+				unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct umac_display_results *r = NULL;
+	struct umac_display_results *display_results = NULL;
 	struct wifi_scan_result res;
 	uint16_t max_bss_cnt = 0;
 	unsigned int i = 0;
 	scan_result_cb_t cb = NULL;
 
 	vif_ctx_zep = vif_ctx;
-
 	cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
 
 	/* Delayed event (after scan timeout) or rogue event after scan done */
 	if (!cb) {
+		LOG_ERR("%s: disp_scan_cb is NULL", __func__);
 		return;
 	}
 
 	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
 		vif_ctx_zep->max_bss_cnt : CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT;
 
-	for (i = 0; i < scan_res->event_bss_count; i++) {
+	/* The scan results pointer is passed via scan_done_event->scan_db_addr */
+	display_results = (struct umac_display_results *)(uintptr_t)scan_done_event->scan_db_addr;
+
+	LOG_DBG("%s: scan_results_cnt = %d", __func__,
+		scan_done_event->scan_results_cnt);
+	for (i = 0; i < scan_done_event->scan_results_cnt; i++) {
+		struct umac_display_results *r = &display_results[i];
+
 		/* Limit the scan results to the configured maximum */
 		if ((max_bss_cnt > 0) &&
 		    (vif_ctx_zep->scan_res_cnt >= max_bss_cnt)) {
@@ -333,23 +312,17 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 
 		memset(&res, 0x0, sizeof(res));
 
-		r = &scan_res->display_results[i];
-
 		res.ssid_length = MIN(sizeof(res.ssid), r->ssid.nrf_wifi_ssid_len);
-
 		res.band = r->nwk_band;
-
 		res.channel = r->nwk_channel;
-
 		res.security = drv_to_wifi_mgmt(r->security_type);
-
 		res.mfp = drv_to_wifi_mgmt_mfp(r->mfp_flag);
 
 		memcpy(res.ssid,
 		       r->ssid.nrf_wifi_ssid,
 		       res.ssid_length);
 
-		memcpy(res.mac,	r->mac_addr, NRF_WIFI_ETH_ADDR_LEN);
+		memcpy(res.mac, r->mac_addr, NRF_WIFI_ETH_ADDR_LEN);
 		res.mac_length = NRF_WIFI_ETH_ADDR_LEN;
 
 		if (r->signal.signal_type == NRF_WIFI_SIGNAL_TYPE_MBM) {
@@ -370,12 +343,13 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 		k_yield();
 	}
 
-	if (more_res == false) {
-		vif_ctx_zep->disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, 0, NULL);
-		vif_ctx_zep->scan_in_progress = false;
-		vif_ctx_zep->disp_scan_cb = NULL;
-		k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
-	}
+	/* All results delivered, call with NULL to indicate scan end */
+	vif_ctx_zep->disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, 0, NULL);
+	vif_ctx_zep->scan_in_progress = false;
+	vif_ctx_zep->disp_scan_cb = NULL;
+	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
+	nrf_wifi_osal_mem_free((void *)(uintptr_t)scan_done_event->scan_db_addr);
+	memset(&vif_ctx_zep->scan_done_event, 0, sizeof(vif_ctx_zep->scan_done_event));
 }
 
 

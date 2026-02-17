@@ -64,6 +64,9 @@ struct nrf_wifi_vif_ctx_zep {
 	enum nrf_wifi_fmac_if_op_state if_op_state;
 	bool set_if_event_received;
 	int set_if_status;
+#ifdef CONFIG_NET_L2_WIFI_MGMT
+	struct nrf_wifi_umac_event_scan_done scan_done_event;
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 #ifdef CONFIG_NET_STATISTICS_ETHERNET_VENDOR
 	struct net_stats_eth_vendor eth_stats_vendor_data[MAX_VENDOR_STATS];

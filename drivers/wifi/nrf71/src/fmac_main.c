@@ -158,7 +158,7 @@ void nrf_wifi_event_proc_scan_start_zep(void *if_priv,
 
 
 void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
-				       struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
+				       struct nrf_wifi_umac_event_scan_done *scan_done_event,
 				       unsigned int event_len)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -171,9 +171,12 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 		return;
 	}
 
+	LOG_DBG("%s: scan_done_event->scan_results_cnt = %d, scan_type = %d",
+		__func__, scan_done_event->scan_results_cnt, vif_ctx_zep->scan_type);
 	switch (vif_ctx_zep->scan_type) {
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 	case SCAN_DISPLAY:
+		memcpy(&vif_ctx_zep->scan_done_event, scan_done_event, event_len);
 		/* Schedule scan result processing in system workqueue to avoid deadlock */
 		k_work_submit(&vif_ctx_zep->disp_scan_res_work);
 		break;
@@ -245,7 +248,6 @@ void nrf_wifi_scan_timeout_work(struct k_work *work)
 void nrf_wifi_disp_scan_res_work_handler(struct k_work *work)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	vif_ctx_zep = CONTAINER_OF(work, struct nrf_wifi_vif_ctx_zep, disp_scan_res_work);
 
@@ -254,11 +256,9 @@ void nrf_wifi_disp_scan_res_work_handler(struct k_work *work)
 		return;
 	}
 
-	status = nrf_wifi_disp_scan_res_get_zep(vif_ctx_zep);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_disp_scan_res_get_zep failed", __func__);
-		return;
-	}
+	nrf_wifi_event_proc_disp_scan_res_zep(vif_ctx_zep,
+		&vif_ctx_zep->scan_done_event,
+		sizeof(vif_ctx_zep->scan_done_event));
 	vif_ctx_zep->scan_in_progress = false;
 }
 
@@ -725,9 +725,6 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	callbk_fns.scan_done_callbk_fn = nrf_wifi_event_proc_scan_done_zep;
 	callbk_fns.reg_change_callbk_fn = reg_change_callbk_fn;
 	callbk_fns.event_get_reg = nrf_wifi_event_get_reg_zep;
-#ifdef CONFIG_NET_L2_WIFI_MGMT
-	callbk_fns.disp_scan_res_callbk_fn = nrf_wifi_event_proc_disp_scan_res_zep;
-#endif /* CONFIG_NET_L2_WIFI_MGMT */
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 	callbk_fns.rx_bcn_prb_resp_callbk_fn = nrf_wifi_rx_bcn_prb_resp_frm;
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
