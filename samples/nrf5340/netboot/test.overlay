@@ -1,0 +1,29 @@
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0n_partition;
+	};
+};
+
+&flash1 {
+	partitions {
+		b0n_partition: partition@0 {
+			label = "b0n";
+			reg = <0x0 0x8580>;
+		};
+
+		bl_storage: provision_partition: partition@8580 {
+			label = "b0-provision-data";
+			reg = <0x8580 0x280>;
+		};
+
+		s0_partition: partition@8800 {
+			label = "image-0";
+			reg = <0x8800 0x37800>;
+		};
+	};
+};
