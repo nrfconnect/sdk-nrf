@@ -2953,6 +2953,15 @@ nRF Machine Learning
 
 The issues in this section are related to the :ref:`nrf_machine_learning_app` application.
 
+.. rst-class:: v3-2-0 v3-2-1 v3-2-2
+
+NCSDK-37049: The application asserts on the nRF54H20 in ``debug`` configurations (single-core and dual-core) due to a stack overflow in the main thread
+  The stack overflow occurs when the application starts.
+
+  **Affected platforms:** nRF54H20
+
+  **Workaround**: Increase the main thread's stack size using the :kconfig:option:`CONFIG_MAIN_STACK_SIZE` Kconfig option.
+
 .. rst-class:: v2-2-0
 
 NCSDK-18532: MCUboot bootloader does not swap images after OTA DFU on nRF5340 DK and Thingy:53
