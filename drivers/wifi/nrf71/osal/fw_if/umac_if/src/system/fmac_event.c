@@ -530,6 +530,16 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 	if_id = umac_hdr->ids.wdev_id;
 	event_num = umac_hdr->cmd_evnt;
 
+#ifdef NRF_WIFI_CMD_EVENT_LOG
+	nrf_wifi_osal_log_info("%s: Event %d received from UMAC",
+			      __func__,
+			      event_num);
+#else
+	nrf_wifi_osal_log_dbg("%s: Event %d received from UMAC",
+			      __func__,
+			      event_num);
+#endif /* NRF_WIFI_CMD_EVENT_LOG */
+
 	if (if_id >= MAX_NUM_VIFS) {
 		nrf_wifi_osal_log_err("%s: Invalid wdev_id recd from UMAC %d",
 				      __func__,
@@ -540,8 +550,9 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 
 	vif_ctx = sys_dev_ctx->vif_ctx[if_id];
 	if (!vif_ctx) {
-		nrf_wifi_osal_log_err("%s: Invalid vif_ctx",
-				      __func__);
+		nrf_wifi_osal_log_err("%s: Invalid vif_ctx: vif_id = %d",
+				      __func__,
+				      if_id);
 		goto out;
 	}
 	callbk_fns = &sys_fpriv->callbk_fns;
@@ -551,15 +562,6 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		goto out;
 	}
 
-#ifdef NRF_WIFI_CMD_EVENT_LOG
-	nrf_wifi_osal_log_info("%s: Event %d received from UMAC",
-			      __func__,
-			      event_num);
-#else
-	nrf_wifi_osal_log_dbg("%s: Event %d received from UMAC",
-			      __func__,
-			      event_num);
-#endif /* NRF_WIFI_CMD_EVENT_LOG */
 
 	switch (umac_hdr->cmd_evnt) {
 	case NRF_WIFI_UMAC_EVENT_GET_REG:
