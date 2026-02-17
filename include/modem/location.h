@@ -115,6 +115,13 @@ enum location_event_id {
 	 * @ref location_config.mode is @ref LOCATION_REQ_MODE_FALLBACK.
 	 */
 	LOCATION_EVT_FALLBACK,
+	/**
+	 * Location request has been cancelled.
+	 * Sent when location_request_cancel() is called while a location request is ongoing.
+	 *
+	 * This event is only sent if @kconfig{CONFIG_LOCATION_DATA_DETAILS} is set.
+	 */
+	LOCATION_EVT_CANCELLED,
 };
 
 /** Result of the external cloud location request. */
