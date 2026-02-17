@@ -116,10 +116,3 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "Upmerge regression - jira TBD."
-
-- scenarios:
-    - sample.bluetooth.direct_test_mode
-    - sample.peripheral.radio_test
-  platforms:
-    - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37666"
