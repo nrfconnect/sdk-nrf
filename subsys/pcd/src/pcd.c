@@ -18,16 +18,35 @@
 
 LOG_MODULE_REGISTER(pcd, CONFIG_PCD_LOG_LEVEL);
 
+#ifdef CONFIG_PCD_USE_CONSTANTS
+/* PCD command block location is static. */
+#define PCD_CMD_ADDRESS CONFIG_PCD_CMD_ADDRESS
+
+#else
+/* PCD command block location is configured with Partition Manager. */
+#include <pm_config.h>
+
+#ifdef PM_PCD_SRAM_ADDRESS
+/* PCD command block is in this domain, we are compiling for application core. */
+#define PCD_CMD_ADDRESS PM_PCD_SRAM_ADDRESS
+#else
+/* PCD command block is in a different domain, we are compiling for network core.
+ * Extra '_' since its in a different domain.
+ */
+#define PCD_CMD_ADDRESS PM__PCD_SRAM_ADDRESS
+#endif /* PM_PCD_SRAM_ADDRESS */
+
+#endif /* CONFIG_PCD_CMD_ADDRESS */
+
 #ifdef CONFIG_PCD_APP
 
 #include <hal/nrf_reset.h>
 #include <hal/nrf_spu.h>
 
 /** Offset which the application should be copied into */
-#ifdef CONFIG_PCD_NET_CORE_APP_OFFSET
+#ifdef CONFIG_PCD_USE_CONSTANTS
 #define PCD_NET_CORE_APP_OFFSET CONFIG_PCD_NET_CORE_APP_OFFSET
 #else
-#include <pm_config.h>
 #define PCD_NET_CORE_APP_OFFSET PM_CPUNET_B0N_CONTAINER_SIZE
 #endif
 
@@ -40,22 +59,22 @@ K_TIMER_DEFINE(network_core_finished_check_timer,
 
 #endif /* CONFIG_PCD_APP */
 
-static struct pcd_cmd *cmd = (struct pcd_cmd *)PCD_CMD_ADDRESS;
+volatile struct pcd_cmd *pcd_cmd_p = (struct pcd_cmd *)PCD_CMD_ADDRESS;
 
 void pcd_fw_copy_invalidate(void)
 {
-	cmd->magic = PCD_CMD_MAGIC_FAIL;
+	pcd_cmd_p->magic = PCD_CMD_MAGIC_FAIL;
 }
 
 enum pcd_status pcd_fw_copy_status_get(void)
 {
-	if (cmd->magic == PCD_CMD_MAGIC_COPY) {
+	if (pcd_cmd_p->magic == PCD_CMD_MAGIC_COPY) {
 		return PCD_STATUS_COPY;
-	} else if (cmd->magic == PCD_CMD_MAGIC_READ_VERSION) {
+	} else if (pcd_cmd_p->magic == PCD_CMD_MAGIC_READ_VERSION) {
 		return PCD_STATUS_READ_VERSION;
-	} else if (cmd->magic == PCD_CMD_MAGIC_DONE) {
+	} else if (pcd_cmd_p->magic == PCD_CMD_MAGIC_DONE) {
 		return PCD_STATUS_DONE;
-	} else if (cmd->magic == PCD_CMD_MAGIC_LOCK_DEBUG) {
+	} else if (pcd_cmd_p->magic == PCD_CMD_MAGIC_LOCK_DEBUG) {
 		return PCD_STATUS_LOCK_DEBUG;
 	}
 
@@ -64,7 +83,7 @@ enum pcd_status pcd_fw_copy_status_get(void)
 
 const void *pcd_cmd_data_ptr_get(void)
 {
-	return cmd->data;
+	return pcd_cmd_p->data;
 }
 
 #ifdef CONFIG_PCD_NET
@@ -73,15 +92,15 @@ int pcd_find_fw_version(void)
 {
 	const struct fw_info *firmware_info;
 
-	if (cmd->magic != PCD_CMD_MAGIC_READ_VERSION) {
+	if (pcd_cmd_p->magic != PCD_CMD_MAGIC_READ_VERSION) {
 		return -EFAULT;
 	}
 
 	firmware_info = fw_info_find(PM_APP_ADDRESS);
 
 	if (firmware_info != NULL) {
-		memcpy((void *)cmd->data, &firmware_info->version, cmd->len);
-		cmd->len = sizeof(firmware_info->version);
+		memcpy((void *)pcd_cdm_p->data, &firmware_info->version, pcd_cmd_p->len);
+		pcd_cmd_p->len = sizeof(firmware_info->version);
 		return 0;
 	}
 
@@ -95,19 +114,19 @@ int pcd_fw_copy(const struct device *fdev)
 	uint8_t buf[CONFIG_PCD_BUF_SIZE];
 	int rc;
 
-	if (cmd->magic != PCD_CMD_MAGIC_COPY) {
+	if (pcd_cmd_p->magic != PCD_CMD_MAGIC_COPY) {
 		return -EFAULT;
 	}
 
 	rc = stream_flash_init(&stream, fdev, buf, sizeof(buf),
-			       cmd->offset, PM_APP_SIZE, NULL);
+			       pcd_cmd_p->offset, PM_APP_SIZE, NULL);
 	if (rc != 0) {
 		LOG_ERR("stream_flash_init failed: %d", rc);
 		return rc;
 	}
 
-	rc = stream_flash_buffered_write(&stream, (uint8_t *)cmd->data,
-					 cmd->len, true);
+	rc = stream_flash_buffered_write(&stream, (uint8_t *)pcd_cmd_p->data,
+					 pcd_cmd_p->len, true);
 	if (rc != 0) {
 		LOG_ERR("stream_flash_buffered_write fail: %d", rc);
 		return rc;
@@ -121,7 +140,7 @@ int pcd_fw_copy(const struct device *fdev)
 void pcd_done(void)
 {
 	/* Signal complete by setting magic to DONE */
-	cmd->magic = PCD_CMD_MAGIC_DONE;
+	pcd_cmd_p->magic = PCD_CMD_MAGIC_DONE;
 }
 
 #endif /* CONFIG_PCD_NET */
@@ -162,10 +181,10 @@ static int pcd_cmd_write(uint32_t command, const void *data, size_t len, off_t o
 		return -EINVAL;
 	}
 
-	cmd->magic = command;
-	cmd->data = data;
-	cmd->len = len;
-	cmd->offset = offset;
+	pcd_cmd_p->magic = command;
+	pcd_cmd_p->data = data;
+	pcd_cmd_p->len = len;
+	pcd_cmd_p->offset = offset;
 
 	return 0;
 }
