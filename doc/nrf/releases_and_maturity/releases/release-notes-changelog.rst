@@ -151,6 +151,7 @@ Security
 
 * Updated:
 
+  * The :ref:`ug_kmu_provisioning_production_metadata` section to reflect bit-field size changes in the :c:struct:`kmu_metadata` structure.
   * The :ref:`API documentation section for the cryptographic drivers <crypto_drivers_api_documentation>` with links to the added API documentation for the CRACEN driver.
   * The Oberon PSA Crypto to version 1.5.4 that introduces support for the following new features with the Oberon PSA driver:
 
