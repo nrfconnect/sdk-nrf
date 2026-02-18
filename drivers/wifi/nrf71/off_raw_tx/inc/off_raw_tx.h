@@ -14,10 +14,14 @@
 #include "offload_raw_tx/fmac_structs.h"
 #include "osal_api.h"
 
+#define NUM_RF_PARAM_ADDRS_OFF_RAW_TX 22
+
 struct nrf_wifi_ctx_zep {
 	void *drv_priv_zep;
 	void *rpu_ctx;
 	uint8_t mac_addr[6];
+	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS_OFF_RAW_TX];
+	unsigned int vtf_buffer_start_address;
 };
 
 

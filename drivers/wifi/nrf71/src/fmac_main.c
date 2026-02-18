@@ -10,6 +10,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include <zephyr/kernel.h>
 #ifdef CONFIG_NET_L2_ETHERNET
@@ -38,6 +39,9 @@
 #endif /* CONFIG_NRF71_STA_MODE */
 
 #include <system/fmac_api.h>
+#ifndef CONFIG_NRF71_RADIO_TEST
+#include <nrf71_wifi_rf.h>
+#endif /* !CONFIG_NRF71_RADIO_TEST */
 #else
 #include <radio_test/fmac_api.h>
 #endif /* !CONFIG_NRF71_RADIO_TEST */
@@ -535,6 +539,97 @@ static unsigned char get_nrf_wifi_op_band(void)
 	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
 }
 
+#ifndef CONFIG_NRF71_RADIO_TEST
+struct rf_hex_param {
+	const char *hex_str;
+	uint8_t *bytes;
+	int bytes_len;
+};
+
+static struct rf_hex_param rf_params[NUM_WIFI_PARAMS] = {
+	{NRF_WIFI_PARAMS1, NULL, 0},  {NRF_WIFI_PARAMS2, NULL, 0},  {NRF_WIFI_PARAMS3, NULL, 0},
+	{NRF_WIFI_PARAMS4, NULL, 0},  {NRF_WIFI_PARAMS5, NULL, 0},  {NRF_WIFI_PARAMS6, NULL, 0},
+	{NRF_WIFI_PARAMS7, NULL, 0},  {NRF_WIFI_PARAMS8, NULL, 0},  {NRF_WIFI_PARAMS9, NULL, 0},
+	{NRF_WIFI_PARAMS10, NULL, 0}, {NRF_WIFI_PARAMS11, NULL, 0}, {NRF_WIFI_PARAMS12, NULL, 0},
+	{NRF_WIFI_PARAMS13, NULL, 0}, {NRF_WIFI_PARAMS14, NULL, 0}, {NRF_WIFI_PARAMS15, NULL, 0},
+	{NRF_WIFI_PARAMS16, NULL, 0}, {NRF_WIFI_PARAMS17, NULL, 0}, {NRF_WIFI_PARAMS18, NULL, 0},
+	{NRF_WIFI_PARAMS19, NULL, 0}, {NRF_WIFI_PARAMS20, NULL, 0}, {NRF_WIFI_PARAMS21, NULL, 0},
+	{NRF_WIFI_PARAMS22, NULL, 0},
+};
+
+enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int *rf_params_addr)
+{
+	int index;
+	int cleanup_idx;
+	size_t str_len;
+	int ret;
+
+	for (index = 0; index < NUM_WIFI_PARAMS; index++) {
+		if (!rf_params[index].hex_str) {
+			continue;
+		}
+		str_len = strlen(rf_params[index].hex_str);
+		rf_params[index].bytes = k_malloc(str_len);
+		if (!rf_params[index].bytes) {
+			LOG_ERR("%s: Unable to allocate %zu bytes", __func__, str_len);
+			goto cleanup;
+		}
+
+		ret = nrf_wifi_utils_hex_str_to_val(rf_params[index].bytes, (unsigned int)str_len,
+						    (unsigned char *)rf_params[index].hex_str);
+		if (ret < 0) {
+			LOG_ERR("%s: hex_str_to_val failed", __func__);
+			k_free(rf_params[index].bytes);
+			rf_params[index].bytes = NULL;
+			goto cleanup;
+		}
+
+		rf_params[index].bytes_len = ret;
+		rf_params_addr[index] = (unsigned int)rf_params[index].bytes;
+	}
+	return NRF_WIFI_STATUS_SUCCESS;
+
+cleanup:
+	for (cleanup_idx = 0; cleanup_idx < index; cleanup_idx++) {
+		if (rf_params[cleanup_idx].bytes) {
+			k_free(rf_params[cleanup_idx].bytes);
+			rf_params[cleanup_idx].bytes = NULL;
+		}
+	}
+	return NRF_WIFI_STATUS_FAIL;
+}
+
+struct nrf_wifi_vtf_params_host {
+	unsigned int voltage;
+	unsigned int temp;
+	unsigned int x0_freq;
+};
+
+enum nrf_wifi_status nrf_wifi_fmac_config_vtf_params(struct nrf_wifi_fmac_dev_ctx *dev_ctx,
+						     unsigned int voltage, unsigned int temp,
+						     unsigned int x0,
+						     unsigned int *vtf_buffer_start_address)
+{
+	struct nrf_wifi_vtf_params_host *vtf_buf;
+
+	if (!vtf_buffer_start_address) {
+		return NRF_WIFI_STATUS_FAIL;
+	}
+
+	vtf_buf = k_malloc(sizeof(*vtf_buf));
+	if (!vtf_buf) {
+		LOG_ERR("%s: k_malloc failed for VTF params", __func__);
+		return NRF_WIFI_STATUS_FAIL;
+	}
+
+	vtf_buf->voltage = voltage;
+	vtf_buf->temp = temp;
+	vtf_buf->x0_freq = x0;
+	*vtf_buffer_start_address = (unsigned int)vtf_buf;
+	return NRF_WIFI_STATUS_SUCCESS;
+}
+#endif /* CONFIG_NRF71_RADIO_TEST */
+
 enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -607,6 +702,21 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 	}
 #endif /* CONFIG_NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL  && CONFIG_NRF71_SYSTEM_MODE */
 
+	status = nrf_wifi_fmac_config_rf_params(rpu_ctx_zep->rpu_ctx,
+						rpu_ctx_zep->phy_rf_params_addr);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: Failed to configure RF params", __func__);
+		goto err;
+	}
+
+	/* TODO: Remove hardcodes once we hook in sensor readings */
+	status = nrf_wifi_fmac_config_vtf_params(rpu_ctx_zep->rpu_ctx, 243, 25, 0,
+						 &rpu_ctx_zep->vtf_buffer_start_address);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: Failed to configure VTF params", __func__);
+		goto err;
+	}
+
 #ifdef CONFIG_NRF71_RADIO_TEST
 	status = nrf_wifi_rt_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
@@ -620,17 +730,15 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 					&board_params,
 					STRINGIFY(CONFIG_NRF71_REG_DOMAIN));
 #else
-	status = nrf_wifi_sys_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_sys_fmac_dev_init(
+		rpu_ctx_zep->rpu_ctx,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-					sleep_type,
+		sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-					NRF_WIFI_DEF_PHY_CALIB,
-					op_band,
-					IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
-					&tx_pwr_ctrl_params,
-					&tx_pwr_ceil_params,
-					&board_params,
-					STRINGIFY(CONFIG_NRF71_REG_DOMAIN));
+		NRF_WIFI_DEF_PHY_CALIB, op_band, IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
+		&tx_pwr_ctrl_params, &tx_pwr_ceil_params, &board_params,
+		STRINGIFY(CONFIG_NRF71_REG_DOMAIN), rpu_ctx_zep->phy_rf_params_addr,
+			  rpu_ctx_zep->vtf_buffer_start_address);
 #endif /* CONFIG_NRF71_RADIO_TEST */
 
 
@@ -661,6 +769,12 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv
 
 	nrf_wifi_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
 
+	for (int i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
+		k_free((void *)rpu_ctx_zep->phy_rf_params_addr[i]);
+		rpu_ctx_zep->phy_rf_params_addr[i] = 0;
+	}
+	k_free((void *)rpu_ctx_zep->vtf_buffer_start_address);
+	rpu_ctx_zep->vtf_buffer_start_address = 0;
 	nrf_wifi_osal_mem_free(rpu_ctx_zep->extended_capa);
 	rpu_ctx_zep->extended_capa = NULL;
 	nrf_wifi_osal_mem_free(rpu_ctx_zep->extended_capa_mask);
