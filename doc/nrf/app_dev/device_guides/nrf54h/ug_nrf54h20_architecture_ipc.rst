@@ -1,7 +1,7 @@
 .. _ug_nrf54h20_architecture_ipc:
 
-Interprocessor communication in nRF54H20
-########################################
+nRF54H20 interprocessor communication
+#####################################
 
 .. contents::
    :local:

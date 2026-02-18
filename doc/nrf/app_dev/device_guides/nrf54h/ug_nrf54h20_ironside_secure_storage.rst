@@ -1,8 +1,8 @@
 .. _ug_nrf54h20_ironside_se_secure_storage:
 .. _ug_nrf54h20_ironside_secure_storage:
 
-Secure storage
-##############
+Configuring secure storage
+##########################
 
 .. contents::
    :local:

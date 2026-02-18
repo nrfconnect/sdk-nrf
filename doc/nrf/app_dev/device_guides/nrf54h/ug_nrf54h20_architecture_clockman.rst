@@ -35,7 +35,7 @@ The firmware can choose to keep each clock domains enabled even when all its sin
 
 Clock domain sources are selected by ``clock_control`` drivers based on the clock parameter requirements reported by the software modules using the ``clock_control`` functions.
 These requirements can include clock frequency, accuracy, or precision.
-Some clock domains are configured by ``clock_control`` drivers using ``LRCCONF`` peripherals, while others are configured with the assistance of the System Controller Firmware.
+Some clock domains are configured by ``clock_control`` drivers using ``LRCCONF`` peripherals, while others are configured with the assistance of the System Controller Firmware (SCFW).
 
 The application-facing APIs expose only the domain that directly clocks the component used by the application.
 The management of the clocks on which this domain depends is handled internally by the associated clock driver.

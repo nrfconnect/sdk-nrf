@@ -1,7 +1,7 @@
 .. _ug_nrf54h20_logging:
 
-nRF54H20 logging
-################
+Configuring logging on the nRF54H20
+###################################
 .. contents::
    :local:
    :depth: 2

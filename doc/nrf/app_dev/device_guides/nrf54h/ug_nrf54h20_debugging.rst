@@ -1,13 +1,13 @@
 .. _ug_nrf54h20_debugging:
 
-nRF54H20 debugging
-##################
+Debugging on the nRF54H20
+#########################
 
 .. contents::
    :local:
    :depth: 2
 
-The main recommended tool for debugging in the |NCS| for the limited sampling of the nRF54H20 DK is the `GNU Project Debugger`_ (GDB tool).
+The main recommended tool for debugging the nRF54H20 DK in the |NCS| is the `GNU Project Debugger`_ (GDB tool).
 
 When working from the command line, you can use west with the GDB tool.
 For details, read the :ref:`Debugging with west debug <zephyr:west-debugging>` section on the :ref:`zephyr:west-build-flash-debug` page in the Zephyr documentation.
@@ -94,9 +94,6 @@ To debug a specific core using ``JLinkExe`` do the following:
    If you connect just one DK to the machine, defining ``SEGGER-ID`` is not necessary.
 
    If you connect multiple DKs to the machine and have not defined ``SEGGER-ID``, a pop-up window appears where you can manually select the ID of the DK to run J-Link on.
-
-   .. note::
-      PPR core debugging is not functional in the initial limited sampling.
 
 #. Connect to the application core::
 

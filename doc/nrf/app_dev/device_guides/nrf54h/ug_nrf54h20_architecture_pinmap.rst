@@ -1,6 +1,6 @@
 .. _ug_nrf54h20_architecture_pinmap:
 
-nRF54H20 Pin mapping
+nRF54H20 pin mapping
 ####################
 
 .. contents::

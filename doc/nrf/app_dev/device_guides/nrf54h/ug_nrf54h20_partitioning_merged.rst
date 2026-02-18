@@ -1,7 +1,7 @@
 .. _ug_nrf54h20_partitioning_merged:
 
-Configuring nRF54H20 application for updates using a merged slot
-################################################################
+Configuring nRF54H20 applications for updates using a merged slot
+#################################################################
 
 .. contents::
    :local:
