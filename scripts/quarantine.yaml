@@ -85,6 +85,13 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36569"
 
 - scenarios:
+    - bootloader.ppi_config_leftovers.mcuboot
+    - bootloader.ppi_config_leftovers.nsib
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37702"
+
+- scenarios:
     - sample.debug.memfault
     - sample.debug.memfault.etb
   platforms:
