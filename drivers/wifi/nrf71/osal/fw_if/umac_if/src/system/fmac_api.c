@@ -187,19 +187,15 @@ out:
 	return status;
 }
 
-
-static enum nrf_wifi_status nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-						      struct nrf_wifi_phy_rf_params *rf_params,
-						      bool rf_params_valid,
+static enum nrf_wifi_status
+nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned int *rf_params_addr,
+			  unsigned int vtf_buffer_start_address,
 #ifdef NRF_WIFI_LOW_POWER
-						      int sleep_type,
+			  int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-						  unsigned int phy_calib,
-						  unsigned char op_band,
-						  bool beamforming,
-						  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
-						  struct nrf_wifi_board_params *board_params,
-						  unsigned char *country_code)
+			  unsigned int phy_calib, unsigned char op_band, bool beamforming,
+			  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
+			  struct nrf_wifi_board_params *board_params, unsigned char *country_code)
 {
 	unsigned long start_time_us = 0;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -233,19 +229,12 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_c
 		goto out;
 	}
 
-	status = umac_cmd_sys_init(fmac_dev_ctx,
-				   rf_params,
-				   rf_params_valid,
-				   &sys_fpriv->data_config,
+	status = umac_cmd_sys_init(
+		fmac_dev_ctx, rf_params_addr, vtf_buffer_start_address, &sys_fpriv->data_config,
 #ifdef NRF_WIFI_LOW_POWER
-				   sleep_type,
+		sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-				   phy_calib,
-				   op_band,
-				   beamforming,
-				   tx_pwr_ctrl,
-				   board_params,
-				   country_code);
+		phy_calib, op_band, beamforming, tx_pwr_ctrl, board_params, country_code);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		nrf_wifi_osal_log_err("%s: UMAC init failed",
@@ -410,21 +399,18 @@ out:
 	return fmac_dev_ctx;
 }
 
-
-enum nrf_wifi_status nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status
+nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #ifdef NRF_WIFI_LOW_POWER
-					    int sleep_type,
+			   int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-					    unsigned int phy_calib,
-					    unsigned char op_band,
-					    bool beamforming,
-					    struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
-					    struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
-					    struct nrf_wifi_board_params *board_params,
-					    unsigned char *country_code)
+			   unsigned int phy_calib, unsigned char op_band, bool beamforming,
+			   struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
+			   struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
+			   struct nrf_wifi_board_params *board_params, unsigned char *country_code,
+			   unsigned int *rf_params_addr, unsigned int vtf_buffer_start_address)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_phy_rf_params phy_rf_params;
 
 	if (!fmac_dev_ctx) {
 		nrf_wifi_osal_log_err("%s: Invalid device context",
@@ -446,19 +432,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fm
 		goto out;
 	}
 
-
-	status = nrf_wifi_sys_fmac_fw_init(fmac_dev_ctx,
-				       &phy_rf_params,
-				       true,
+	status = nrf_wifi_sys_fmac_fw_init(fmac_dev_ctx, rf_params_addr, vtf_buffer_start_address,
 #ifdef NRF_WIFI_LOW_POWER
-				       sleep_type,
+					   sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-				       phy_calib,
-				       op_band,
-				       beamforming,
-				       tx_pwr_ctrl_params,
-				       board_params,
-				       country_code);
+					   phy_calib, op_band, beamforming, tx_pwr_ctrl_params,
+					   board_params, country_code);
 
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		nrf_wifi_osal_log_err("%s: nrf_wifi_sys_fmac_fw_init failed",

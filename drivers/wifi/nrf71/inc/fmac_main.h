@@ -35,6 +35,8 @@
 
 #define NRF71_DRIVER_VERSION "1."KERNEL_VERSION_STRING
 
+#define NUM_RF_PARAM_ADDRS 22
+
 /* Calculate compile-time maximum for vendor stats */
 #ifdef CONFIG_NET_STATISTICS_ETHERNET_VENDOR
 #define MAX_VENDOR_STATS ((sizeof(struct rpu_sys_fw_stats) / sizeof(uint32_t)) + 1)
@@ -136,6 +138,8 @@ struct nrf_wifi_ctx_zep {
 	int wdt_irq_received;
 	int wdt_irq_ignored;
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS];
+	unsigned int vtf_buffer_start_address;
 };
 
 struct nrf_wifi_drv_priv_zep {

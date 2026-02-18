@@ -14,19 +14,15 @@
 #include "common/fmac_util.h"
 #include "common/hal_api_common.h"
 
-enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-				       struct nrf_wifi_phy_rf_params *rf_params,
-				       bool rf_params_valid,
-				       struct nrf_wifi_data_config_params *config,
+enum nrf_wifi_status
+umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned int *rf_params_addr,
+		  unsigned int vtf_buffer_start_address, struct nrf_wifi_data_config_params *config,
 #ifdef NRF_WIFI_LOW_POWER
-				       int sleep_type,
+		  int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-				       unsigned int phy_calib,
-				       unsigned char op_band,
-				       bool beamforming,
-				       struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
-				       struct nrf_wifi_board_params *board_params,
-				       unsigned char *country_code)
+		  unsigned int phy_calib, unsigned char op_band, bool beamforming,
+		  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
+		  struct nrf_wifi_board_params *board_params, unsigned char *country_code)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
@@ -52,16 +48,6 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_INIT;
 	umac_cmd_data->sys_head.len = len;
-
-
-	umac_cmd_data->sys_params.rf_params_valid = rf_params_valid;
-
-	if (rf_params_valid) {
-		nrf_wifi_osal_mem_cpy(umac_cmd_data->sys_params.rf_params,
-				      rf_params,
-				      NRF_WIFI_RF_PARAMS_SIZE);
-	}
-
 
 	umac_cmd_data->sys_params.phy_calib = phy_calib;
 	umac_cmd_data->sys_params.hw_bringup_time = HW_DELAY;
@@ -115,13 +101,16 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 
 	umac_cmd_data->op_band = op_band;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.rf_params[PCB_LOSS_BYTE_2G_OFST],
-			      &board_params->pcb_loss_2g,
-			      NUM_PCB_LOSS_OFFSET);
+	umac_cmd_data->sys_params.vtf_buffer_addr = vtf_buffer_start_address;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.rf_params[ANT_GAIN_2G_OFST],
-			      &tx_pwr_ctrl_params->ant_gain_2g,
-			      NUM_ANT_GAIN);
+	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.rf_params_addr, rf_params_addr,
+			      sizeof(umac_cmd_data->sys_params.rf_params_addr));
+
+	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params, tx_pwr_ctrl_params,
+			      sizeof(umac_cmd_data->sys_params.tx_pwr_ctrl_params));
+
+	(void)board_params;
+
 	nrf_wifi_osal_mem_cpy(umac_cmd_data->country_code,
 			      country_code,
 			      NRF_WIFI_COUNTRY_CODE_LEN);
