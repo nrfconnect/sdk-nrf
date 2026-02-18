@@ -148,6 +148,7 @@ Security
     The :ref:`Supported cryptographic operations in the nRF Connect SDK <ug_crypto_supported_features_key_wrap_algorithms>` page has been updated accordingly.
   * Doxygen API group hierarchy files for the CRACEN driver: :file:`cracen_api_structure.h` (top-level), :file:`cracen_sw/include/cracen_sw_api_structure.h` (software implementations), and :file:`common/include/cracen_common_api_structure.h` (common utilities).
     The :ref:`API documentation section for the cryptographic drivers <crypto_drivers_api_documentation>` has been updated accordingly.
+  * Support for storing AES Key Wrap (AES-KW) keys in the KMU.
 
 * Updated:
 
