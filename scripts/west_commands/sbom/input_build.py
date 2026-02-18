@@ -365,6 +365,7 @@ class InputBuild:
 
     data: Data | None
     build_dir: Path
+    seen_input_files: set[Path]
 
 
     def __init__(self, data: Data | None, build_dir: Path):
@@ -374,6 +375,7 @@ class InputBuild:
         '''
         self.data = data
         self.build_dir = Path(build_dir)
+        self.seen_input_files = set()
 
 
     def read_file_list_from_map(self, map_file: Path,
@@ -564,6 +566,9 @@ class InputBuild:
         Add output file information using given path.
         If file is empty and it is not a source code, ignore it.
         '''
+        if path in self.seen_input_files:
+            return
+        self.seen_input_files.add(path)
         if (path.stat().st_size > 0) or (path.suffix.lower() in SOURCE_CODE_SUFFIXES):
             file = FileInfo()
             file.file_path = path
