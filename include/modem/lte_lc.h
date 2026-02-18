@@ -454,7 +454,7 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_rai_cfg in the event.
 	 *
 	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1 >= v2.0.2
+	 *       - mfw_nrf91x1 v2.0.2 or later
 	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_EVT_RAI_UPDATE			= 12,
@@ -468,7 +468,7 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_env_eval_result in the event.
 	 *
 	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1 >= v2.0.3
+	 *       - mfw_nrf91x1 v2.0.3 or later
 	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_EVT_ENV_EVAL_RESULT		= 13,
@@ -1491,7 +1491,7 @@ enum lte_lc_pdn_evt_type {
 	 * PDN is suspended.
 	 *
 	 * PDNs can be suspended when cellular profiles are used. While suspended, the PDNs remain
-	 * active, but can not be used for data transmission. PDNs associated with a cellular
+	 * active, but cannot be used for data transmission. PDNs associated with a cellular
 	 * profile are suspended when the device is switched to flight mode using
 	 * @ref LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG or @ref LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON.
 	 * The PDNs remain suspended when switching to a different access technology. When the
@@ -2223,7 +2223,7 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  *
  * @note In @ref LTE_LC_FUNC_MODE_RX_ONLY functional mode, this is only supported by the following
  *       modem firmware:
- *       - mfw_nrf91x1 >= v2.0.3
+ *       - mfw_nrf91x1 v2.0.3 or later
  *       - mfw_nrf9151-ntn
  *
  * @note Requires `CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` to be enabled.
@@ -2299,7 +2299,7 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
  * not transmit anything during the evaluation.
  *
  * @note This is only supported by the following modem firmware:
- *       - mfw_nrf91x1 >= v2.0.3
+ *       - mfw_nrf91x1 v2.0.3 or later
  *       - mfw_nrf9151-ntn
  *
  * @note Requires `CONFIG_LTE_LC_ENV_EVAL_MODULE` to be enabled.
