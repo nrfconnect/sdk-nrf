@@ -73,7 +73,7 @@ For detailed information on ECIES-X25519 support, refer to the :ref:`ug_nrf54h_e
 
 .. warning::
    On the nRF54H20 SoC, private and public keys are currently stored in the image.
-   Embedding keys directly within the firmware image could pose a potential security risk.
+   Embedding keys directly within the firmware image is a security risk.
 
 Suspend to RAM (S2RAM) support
 ******************************

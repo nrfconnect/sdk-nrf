@@ -63,11 +63,8 @@ The following image shows the radio core:
 
    Radio core
 
-The radio core is intended to run the radio protocol stacks, such as Bluetooth® Low Energy, IEEE 802.15.4, Thread, Enhanced ShockBurst (ESB), or other proprietary protocols.
+The radio core is intended to run the radio protocol stacks, such as Bluetooth® Low Energy, Thread, Enhanced ShockBurst (ESB), or other proprietary protocols.
 It is also possible to implement a combination of protocols that use multiprotocol support.
-
-.. note::
-   IEEE 802.15.4 will not be supported for the initial limited sampling.
 
 Any remaining processing power of this core can be used for tasks other than the ones required by the radio protocol stacks.
 

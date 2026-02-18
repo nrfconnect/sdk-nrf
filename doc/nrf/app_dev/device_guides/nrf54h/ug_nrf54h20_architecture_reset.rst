@@ -56,9 +56,8 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
    * - ``RESET_VIA_SECDOM``
      - Uses the :ref:`IronSide SE DEBUGWAIT command <ug_nrf54h20_ironside_se_debugwait_command>` to reset the entire system and start the application core in a halted state.
 
-       You can start the application core manually using the following command:
-
-          ``nrfutil device go``
+       * To start the application core: ``nrfutil device go --core application``
+       * To start the radio core: ``nrfutil device go --core network``
 
        This approach is particularly useful for debugging the application from the reset handler.
 

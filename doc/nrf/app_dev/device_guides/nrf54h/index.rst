@@ -25,25 +25,25 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    For details on the compatibility between nRF54H20 IronSide SE binaries and |NCS| versions, see :ref:`abi_compatibility`.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Get started with the nRF54H20 DK
 
    ug_nrf54h20_gs
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Understand the hardware
 
    ug_nrf54h20_architecture
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Configure the nRF54H20 SoC on your custom PCB
 
    ug_nrf54h20_custom_pcb
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Develop and debug
 
    ug_nrf54h20_configuration
@@ -54,14 +54,14 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    ug_nrf54h20_zms
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Secure your application
 
    ug_nrf54h20_ironside
    ug_nrf54h20_keys
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Configure bootloader for Device Firmware Update (DFU)
 
    ug_nrf54h20_mcuboot_dfu
@@ -71,7 +71,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    ug_nrf54h_ecies_x25519
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Optimize the power management of your application
 
    ug_nrf54h20_pm_optimization

@@ -1,7 +1,7 @@
 .. _ug_nrf54h20_architecture:
 
-Architecture of nRF54H20
-########################
+nRF54H20 architecture
+#####################
 
 .. contents::
    :local:
