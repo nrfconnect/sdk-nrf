@@ -138,7 +138,6 @@ config NRF_WIFI_LOW_POWER
 # Internal option, not user-configurable
 config NRF71_TCP_IP_CHECKSUM_OFFLOAD
 	bool
-	default y
 
 config NRF71_REG_DOMAIN
 	string "The ISO/IEC alpha2"
