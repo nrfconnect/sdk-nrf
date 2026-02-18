@@ -402,7 +402,7 @@ The following example shows how the PSA key attribute values are converted when 
         - ``0``
         -
       * - ``algorithm``
-        - ``10``
+        - ``40``
         - Ed25519
       * - ``size``
         - ``3``
@@ -420,8 +420,8 @@ The following example shows how the PSA key attribute values are converted when 
 
       Bits  0-3:   metadata_version = 0        (0000)
       Bits  4-5:   key_usage_scheme = 3        (11)
-      Bits  6-15:  reserved = 0                (0000000000)
-      Bits 16-19:  algorithm = 10              (1010)
+      Bits  6-13:  reserved = 0                (00000000)
+      Bits 14-19:  algorithm = 40              (101000)
       Bits 20-22:  size = 3                    (011)        # Maps to the kmu_metadata_key_bits enum; does not indicate key slots
       Bits 23-24:  rpolicy = 3                 (11)
       Bits 25-31:  usage_flags = 8             (0001000)
