@@ -37,7 +37,11 @@
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 
-#if NRF54L_ERRATA_20_PRESENT
+/* TODO: DRGN-27733 Remove the alternative condition for nRF54LS05B
+ * when the errata has been applied to this chip and the errata
+ * check can be used instead.
+ */
+#if NRF54L_ERRATA_20_PRESENT || defined(NRF54LS05B_ENGA_XXAA)
 #include <hal/nrf_power.h>
 #endif /* NRF54L_ERRATA_20_PRESENT */
 
@@ -752,6 +756,11 @@ static int clock_init(void)
 	if (nrf54l_errata_20()) {
 		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
 	}
+	/* TODO: DRGN-27733 Remove the elif block for nRF54LS05B when the errata has
+	 * been applied to this chip and the errata check can be used instead.
+	 */
+#elif defined(NRF54LS05B_ENGA_XXAA)
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
 #endif /* NRF54L_ERRATA_20_PRESENT */
 
 #if defined(NRF54LM20A_XXAA)
