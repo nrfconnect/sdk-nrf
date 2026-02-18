@@ -36,18 +36,6 @@ config PCD_READ_NETCORE_APP_VERSION
 	bool "Include PCD command to read network core application version"
 	depends on FW_INFO || FW_INFO_API
 
-config PCD_USE_CONSTANTS
-	bool "Use KConfig constants rather than pm_config.h"
-	depends on !PCD_LOCK_NETCORE_DEBUG
-
-config PCD_CMD_ADDRESS
-	hex "PCD Command Address in RAM"
-	depends on PCD_USE_CONSTANTS
-
-config PCD_NET_CORE_APP_OFFSET
-	hex "Network Core Application Offset in Flash"
-	depends on PCD_USE_CONSTANTS
-
 module=PCD
 module-str=Peripheral Core DFU
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

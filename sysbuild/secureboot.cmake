@@ -42,6 +42,12 @@ if(SB_CONFIG_SECURE_BOOT)
         PM_CPUNET_IMAGES
         "b0n"
     )
+
+    if(SB_CONFIG_SOC_SERIES_NRF53 AND SB_CONFIG_BOARD_IS_NON_SECURE)
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_TFM_HAS_B0N y)
+    else()
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_TFM_HAS_B0N n)
+    endif()
   endif()
 
    if(SB_CONFIG_SECURE_BOOT_APPCORE)
