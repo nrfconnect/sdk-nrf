@@ -66,30 +66,38 @@ kmu_push_area[CRACEN_KMU_PUSH_AREA_SIZE] __attribute__((section(".nrf_kmu_reserv
 typedef struct kmu_metadata {
 	uint32_t metadata_version: 4;
 	uint32_t key_usage_scheme: 2;
-	uint32_t reserved: 10;
-	uint32_t algorithm: 4;
+	uint32_t reserved: 8;
+	uint32_t algorithm: 6;
 	uint32_t size: 3;
 	uint32_t rpolicy: 2;
 	uint32_t usage_flags: 7;
 } kmu_metadata;
 _Static_assert(sizeof(kmu_metadata) == 4, "KMU Metadata must be 32 bits.");
 
+/** The kmu_metadata_algorithm enumeration must contain integer constants that
+ *  are bit-compatible with previously provisioned KMU slots to ensure that
+ *  the implementation is backwards compatible.
+ *
+ *  For instance, if "algorithm" field of the kmu_metadata structure is increased
+ *  by two bits, the constants stored by this enumeration must be updated to contain
+ *  values left-shifted by two bits.
+ */
 enum kmu_metadata_algorithm {
-	METADATA_ALG_CHACHA20 = 1,
-	METADATA_ALG_CHACHA20_POLY1305 = 2,
-	METADATA_ALG_AES_GCM = 3,
-	METADATA_ALG_AES_CCM = 4,
-	METADATA_ALG_AES_ECB = 5,
-	METADATA_ALG_AES_CTR = 6,
-	METADATA_ALG_AES_CBC = 7,
-	METADATA_ALG_SP800_108_COUNTER_CMAC = 8,
-	METADATA_ALG_CMAC = 9,
-	METADATA_ALG_ED25519 = 10,
-	METADATA_ALG_ECDSA = 11,
-	METADATA_ALG_ED25519PH = 12,
-	METADATA_ALG_HMAC = 13,
-	METADATA_ALG_ECDH = 14,
-	METADATA_ALG_RESERVED5 = 15,
+	METADATA_ALG_CHACHA20 = 4,
+	METADATA_ALG_CHACHA20_POLY1305 = 8,
+	METADATA_ALG_AES_GCM = 12,
+	METADATA_ALG_AES_CCM = 16,
+	METADATA_ALG_AES_ECB = 20,
+	METADATA_ALG_AES_CTR = 24,
+	METADATA_ALG_AES_CBC = 28,
+	METADATA_ALG_SP800_108_COUNTER_CMAC = 32,
+	METADATA_ALG_CMAC = 36,
+	METADATA_ALG_ED25519 = 40,
+	METADATA_ALG_ECDSA = 44,
+	METADATA_ALG_ED25519PH = 48,
+	METADATA_ALG_HMAC = 52,
+	METADATA_ALG_ECDH = 56,
+	METADATA_ALG_RESERVED5 = 60,
 };
 
 static const psa_key_usage_t metadata_usage_flags_mapping[] = {
