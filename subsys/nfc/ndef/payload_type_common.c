@@ -8,10 +8,8 @@
 
 /* Record Payload Type for Bluetooth Carrier Configuration LE record */
 const uint8_t nfc_ndef_le_oob_rec_type_field[] = {
-	'a', 'p', 'p', 'l', 'i', 'c', 'a', 't', 'i', 'o', 'n', '/', 'v', 'n',
-	'd', '.', 'b', 'l', 'u', 'e', 't', 'o', 'o', 't', 'h', '.', 'l', 'e',
-	'.', 'o', 'o', 'b'
-};
+	'a', 'p', 'p', 'l', 'i', 'c', 'a', 't', 'i', 'o', 'n', '/', 'v', 'n', 'd', '.',
+	'b', 'l', 'u', 'e', 't', 'o', 'o', 't', 'h', '.', 'l', 'e', '.', 'o', 'o', 'b'};
 
 /* Handover Select Record type. */
 const uint8_t nfc_ndef_ch_hs_rec_type_field[] = {'H', 's'};

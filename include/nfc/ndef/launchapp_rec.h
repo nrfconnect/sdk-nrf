@@ -50,17 +50,10 @@ extern const uint8_t ndef_android_launchapp_rec_type[NFC_ANDROID_REC_TYPE_LENGTH
  * @param[in] package_name Pointer to the Android package name string.
  * @param[in] package_name_length Length of the Android package name.
  */
-#define NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC_DEF(name,			\
-						   package_name,		\
-						   package_name_length)		\
-	NFC_NDEF_RECORD_BIN_DATA_DEF(name,					\
-				     TNF_EXTERNAL_TYPE,				\
-				     NULL,					\
-				     0,						\
-				     ndef_android_launchapp_rec_type,		\
-				     sizeof(ndef_android_launchapp_rec_type),	\
-				     (package_name),				\
-				     (package_name_length))
+#define NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC_DEF(name, package_name, package_name_length)        \
+	NFC_NDEF_RECORD_BIN_DATA_DEF(                                                              \
+		name, TNF_EXTERNAL_TYPE, NULL, 0, ndef_android_launchapp_rec_type,                 \
+		sizeof(ndef_android_launchapp_rec_type), (package_name), (package_name_length))
 
 /**
  * @brief Macro for accessing the NFC NDEF Android Application Record descriptor

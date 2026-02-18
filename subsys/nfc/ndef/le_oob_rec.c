@@ -10,14 +10,13 @@
 #include <nfc/ndef/le_oob_rec.h>
 
 #define AD_TYPE_FIELD_SIZE 1UL
-#define AD_LEN_FIELD_SIZE 1UL
+#define AD_LEN_FIELD_SIZE  1UL
 
 #define LE_ROLE_PAYLOAD_SIZE 1UL
 
 static int bt_data_encode(struct bt_data *ad, uint8_t **buff, size_t *size)
 {
-	const size_t ad_len = ad->data_len + AD_LEN_FIELD_SIZE
-		+ AD_TYPE_FIELD_SIZE;
+	const size_t ad_len = ad->data_len + AD_LEN_FIELD_SIZE + AD_TYPE_FIELD_SIZE;
 
 	if (*size < ad_len) {
 		return -ENOMEM;
@@ -37,8 +36,7 @@ static int bt_data_encode(struct bt_data *ad, uint8_t **buff, size_t *size)
 	return 0;
 }
 
-static int ble_device_addr_encode(const bt_addr_le_t *dev_addr, uint8_t **buff,
-				  size_t *size)
+static int ble_device_addr_encode(const bt_addr_le_t *dev_addr, uint8_t **buff, size_t *size)
 {
 	int err;
 	struct bt_data dev_addr_ad;
@@ -53,7 +51,7 @@ static int ble_device_addr_encode(const bt_addr_le_t *dev_addr, uint8_t **buff,
 
 	dev_addr_ad.type = BT_DATA_LE_BT_DEVICE_ADDRESS;
 	dev_addr_ad.data_len = sizeof(dev_addr_buff);
-	dev_addr_ad.data = (const uint8_t *) dev_addr_buff;
+	dev_addr_ad.data = (const uint8_t *)dev_addr_buff;
 
 	err = bt_data_encode(&dev_addr_ad, buff, size);
 	if (err) {
@@ -63,8 +61,7 @@ static int ble_device_addr_encode(const bt_addr_le_t *dev_addr, uint8_t **buff,
 	return 0;
 }
 
-static int le_role_encode(enum nfc_ndef_le_oob_rec_le_role le_role, uint8_t **buff,
-			  size_t *size)
+static int le_role_encode(enum nfc_ndef_le_oob_rec_le_role le_role, uint8_t **buff, size_t *size)
 {
 	int err;
 	struct bt_data le_role_ad;
@@ -75,7 +72,7 @@ static int le_role_encode(enum nfc_ndef_le_oob_rec_le_role le_role, uint8_t **bu
 
 	le_role_ad.type = BT_DATA_LE_ROLE;
 	le_role_ad.data_len = LE_ROLE_PAYLOAD_SIZE;
-	le_role_ad.data = (const uint8_t *) &le_role;
+	le_role_ad.data = (const uint8_t *)&le_role;
 
 	err = bt_data_encode(&le_role_ad, buff, size);
 	if (err) {
@@ -86,8 +83,7 @@ static int le_role_encode(enum nfc_ndef_le_oob_rec_le_role le_role, uint8_t **bu
 }
 
 int nfc_ndef_le_oob_rec_payload_constructor(
-	const struct nfc_ndef_le_oob_rec_payload_desc *payload_desc, uint8_t *buff,
-	uint32_t *len)
+	const struct nfc_ndef_le_oob_rec_payload_desc *payload_desc, uint8_t *buff, uint32_t *len)
 {
 	int err;
 	size_t rem_size = *len;
@@ -123,8 +119,7 @@ int nfc_ndef_le_oob_rec_payload_constructor(
 		struct bt_data le_sc_ad;
 
 		le_sc_ad.type = BT_DATA_LE_SC_CONFIRM_VALUE;
-		le_sc_ad.data_len =
-			sizeof(payload_desc->le_sc_data->c);
+		le_sc_ad.data_len = sizeof(payload_desc->le_sc_data->c);
 		le_sc_ad.data = payload_desc->le_sc_data->c;
 
 		err = bt_data_encode(&le_sc_ad, &buff, &rem_size);
@@ -133,8 +128,7 @@ int nfc_ndef_le_oob_rec_payload_constructor(
 		}
 
 		le_sc_ad.type = BT_DATA_LE_SC_RANDOM_VALUE;
-		le_sc_ad.data_len =
-			sizeof(payload_desc->le_sc_data->r);
+		le_sc_ad.data_len = sizeof(payload_desc->le_sc_data->r);
 		le_sc_ad.data = payload_desc->le_sc_data->r;
 
 		err = bt_data_encode(&le_sc_ad, &buff, &rem_size);
@@ -147,7 +141,7 @@ int nfc_ndef_le_oob_rec_payload_constructor(
 		struct bt_data appearance_ad = {
 			.type = BT_DATA_GAP_APPEARANCE,
 			.data_len = sizeof(*payload_desc->appearance),
-			.data = (const uint8_t *) payload_desc->appearance,
+			.data = (const uint8_t *)payload_desc->appearance,
 		};
 
 		err = bt_data_encode(&appearance_ad, &buff, &rem_size);
