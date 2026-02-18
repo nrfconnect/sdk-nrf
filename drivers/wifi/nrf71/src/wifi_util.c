@@ -8,6 +8,7 @@
  * @brief NRF Wi-Fi util shell module
  */
 #include <stdlib.h>
+#include <string.h>
 #include <nrf71_wifi_ctrl.h>
 #include "common/fmac_util.h"
 #include "system/fmac_api.h"
@@ -590,17 +591,8 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  "reorder_free_mpdus: %u\n"
 				  "umac_consumed_pkts: %u\n"
 				  "host_consumed_pkts: %u\n"
-				  "rx_mbox_post: %u\n"
-				  "rx_mbox_receive: %u\n"
 				  "reordering_ampdu: %u\n"
-				  "timer_mbox_post: %u\n"
-				  "timer_mbox_rcv: %u\n"
-				  "work_mbox_post: %u\n"
-				  "work_mbox_rcv: %u\n"
-				  "tasklet_mbox_post: %u\n"
-				  "tasklet_mbox_rcv: %u\n"
 				  "userspace_offload_frames: %u\n"
-				  "alloc_buf_fail: %u\n"
 				  "rx_packet_total_count: %u\n"
 				  "rx_packet_data_count: %u\n"
 				  "rx_packet_qos_data_count: %u\n"
@@ -615,7 +607,7 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  "rx_packet_action_count: %u\n"
 				  "rx_packet_probe_req_count: %u\n"
 				  "rx_packet_other_mgmt_count: %u\n"
-				  "max_coalesce_pkts: %d\n"
+				  "max_coalesce_pkts: %u\n"
 				  "null_skb_pointer_from_lmac: %u\n"
 				  "unexpected_mgmt_pkt: %u\n\n",
 				  umac->rx_dbg_params.lmac_events,
@@ -628,17 +620,8 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  umac->rx_dbg_params.reorder_free_mpdus,
 				  umac->rx_dbg_params.umac_consumed_pkts,
 				  umac->rx_dbg_params.host_consumed_pkts,
-				  umac->rx_dbg_params.rx_mbox_post,
-				  umac->rx_dbg_params.rx_mbox_receive,
 				  umac->rx_dbg_params.reordering_ampdu,
-				  umac->rx_dbg_params.timer_mbox_post,
-				  umac->rx_dbg_params.timer_mbox_rcv,
-				  umac->rx_dbg_params.work_mbox_post,
-				  umac->rx_dbg_params.work_mbox_rcv,
-				  umac->rx_dbg_params.tasklet_mbox_post,
-				  umac->rx_dbg_params.tasklet_mbox_rcv,
 				  umac->rx_dbg_params.userspace_offload_frames,
-				  umac->rx_dbg_params.alloc_buf_fail,
 				  umac->rx_dbg_params.rx_packet_total_count,
 				  umac->rx_dbg_params.rx_packet_data_count,
 				  umac->rx_dbg_params.rx_packet_qos_data_count,
@@ -969,7 +952,297 @@ unlock:
 	k_mutex_unlock(&ctx->rpu_lock);
 	return ret;
 }
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* !CONFIG_NRF71_RADIO_TEST && !CONFIG_NRF71_OFFLOADED_RAW_TX */
+
+#if !defined(CONFIG_NRF71_RADIO_TEST) && !defined(CONFIG_NRF71_OFFLOADED_RAW_TX)
+static int nrf_wifi_util_clear_rpu_stats(const struct shell *sh,
+					 size_t argc,
+					 const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	enum rpu_stats_type stats_type = RPU_STATS_TYPE_ALL;
+	int ret = 0;
+
+	if (argc == 2) {
+		const char *type = argv[1];
+
+		if (!strcmp(type, "umac")) {
+			stats_type = RPU_STATS_TYPE_UMAC;
+		} else if (!strcmp(type, "lmac")) {
+			stats_type = RPU_STATS_TYPE_LMAC;
+		} else if (!strcmp(type, "phy")) {
+			stats_type = RPU_STATS_TYPE_PHY;
+		} else if (!strcmp(type, "all")) {
+			stats_type = RPU_STATS_TYPE_ALL;
+		} else {
+			shell_fprintf(sh, SHELL_ERROR, "Invalid stats type %s\n", type);
+			return -ENOEXEC;
+		}
+	}
+
+	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
+	if (!ctx->rpu_ctx) {
+		shell_fprintf(sh, SHELL_ERROR, "RPU context not initialized\n");
+		ret = -ENOEXEC;
+		goto unlock_clear;
+	}
+	fmac_dev_ctx = ctx->rpu_ctx;
+
+	status = umac_cmd_sys_clear_stats(fmac_dev_ctx, stats_type);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(sh, SHELL_ERROR, "Failed to clear RPU stats\n");
+		ret = -ENOEXEC;
+	} else {
+		shell_fprintf(sh, SHELL_INFO, "RPU stats cleared\n");
+	}
+unlock_clear:
+	k_mutex_unlock(&ctx->rpu_lock);
+	return ret;
+}
+
+static void dump_umac_rx_dbg_params(const struct shell *sh,
+				    const struct umac_rx_dbg_params *rx)
+{
+	shell_fprintf(sh, SHELL_INFO, "  lmac_events=%u rx_events=%u rx_coalesce_events=%u\n",
+		      rx->lmac_events, rx->rx_events, rx->rx_coalesce_events);
+	shell_fprintf(sh, SHELL_INFO, "  total_rx_pkts_from_lmac=%u max_refill_gap=%u\n",
+		      rx->total_rx_pkts_from_lmac, rx->max_refill_gap);
+	shell_fprintf(sh, SHELL_INFO, "  current_refill_gap=%u out_of_order_mpdus=%u\n",
+		      rx->current_refill_gap, rx->out_of_order_mpdus);
+	shell_fprintf(sh, SHELL_INFO, "  reorder_free_mpdus=%u umac_consumed_pkts=%u\n",
+		      rx->reorder_free_mpdus, rx->umac_consumed_pkts);
+	shell_fprintf(sh, SHELL_INFO, "  host_consumed_pkts=%u reordering_ampdu=%u\n",
+		      rx->host_consumed_pkts, rx->reordering_ampdu);
+	shell_fprintf(sh, SHELL_INFO, "  userspace_offload_frames=%u rx_packet_total_count=%u\n",
+		      rx->userspace_offload_frames, rx->rx_packet_total_count);
+	shell_fprintf(sh, SHELL_INFO, "  rx_packet_data_count=%u rx_packet_qos_data_count=%u\n",
+		      rx->rx_packet_data_count, rx->rx_packet_qos_data_count);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  rx_packet_protected_data_count=%u rx_packet_mgmt_count=%u\n",
+		      rx->rx_packet_protected_data_count, rx->rx_packet_mgmt_count);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  rx_packet_beacon_count=%u rx_packet_probe_resp_count=%u\n",
+		      rx->rx_packet_beacon_count, rx->rx_packet_probe_resp_count);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  rx_packet_auth_count=%u rx_packet_deauth_count=%u\n",
+		      rx->rx_packet_auth_count, rx->rx_packet_deauth_count);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  rx_packet_assoc_resp_count=%u rx_packet_disassoc_count=%u\n",
+		      rx->rx_packet_assoc_resp_count, rx->rx_packet_disassoc_count);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  rx_packet_action_count=%u rx_packet_probe_req_count=%u\n",
+		      rx->rx_packet_action_count, rx->rx_packet_probe_req_count);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  rx_packet_other_mgmt_count=%u max_coalesce_pkts=%u\n",
+		      rx->rx_packet_other_mgmt_count, rx->max_coalesce_pkts);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  null_skb_pointer_from_lmac=%u null_skb_pointer_from_host=%u\n",
+		      rx->null_skb_pointer_from_lmac, rx->null_skb_pointer_from_host);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  null_skb_pointer_resubmitted=%u unexpected_mgmt_pkt=%u\n",
+		      rx->null_skb_pointer_resubmitted, rx->unexpected_mgmt_pkt);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  reorder_flush_pkt_count=%u unsecured_data_error=%u\n",
+		      rx->reorder_flush_pkt_count, rx->unsecured_data_error);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  pkts_in_null_skb_pointer_event=%u rx_buffs_resubmit_cnt=%u\n",
+		      rx->pkts_in_null_skb_pointer_event, rx->rx_buffs_resubmit_cnt);
+	shell_fprintf(sh, SHELL_INFO, "  rx_packet_amsdu_cnt=%u rx_packet_mpdu_cnt=%u\n",
+		      rx->rx_packet_amsdu_cnt, rx->rx_packet_mpdu_cnt);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  rx_err_secondary_pkt=%u rx_err_invalid_pkt_info_type=%u\n",
+		      rx->rx_err_secondary_pkt, rx->rx_err_invalid_pkt_info_type);
+}
+
+static void dump_lmac_common_stats(const struct shell *sh,
+				   const struct lmac_common_stats *c)
+{
+	shell_fprintf(sh, SHELL_INFO,
+		      "  general_purpose_timer_isr_cnt=%u lmac_task_inprogress=%u\n",
+		      c->general_purpose_timer_isr_cnt, c->lmac_task_inprogress);
+	shell_fprintf(sh, SHELL_INFO, "  current_cmd=%u cmds_going_to_wait_list=%u\n",
+		      c->current_cmd, c->cmds_going_to_wait_list);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  unexpected_internal_cmd_during_umac_wait=%u\n",
+		      c->unexpected_internal_cmd_during_umac_wait);
+	shell_fprintf(sh, SHELL_INFO, "  lmac_rx_isr_inprogress=%u hw_timer_isr_inprogress=%u\n",
+		      c->lmac_rx_isr_inprogress, c->hw_timer_isr_inprogress);
+	shell_fprintf(sh, SHELL_INFO, "  deagg_isr_inprogress=%u tx_isr_inprogress=%u\n",
+		      c->deagg_isr_inprogress, c->tx_isr_inprogress);
+	shell_fprintf(sh, SHELL_INFO, "  channel_switch_inprogress=%u rpu_lockup_event=%u\n",
+		      c->channel_switch_inprogress, c->rpu_lockup_event);
+	shell_fprintf(sh, SHELL_INFO, "  rpu_lockup_cnt=%u rpu_lockup_recovery_done=%u\n",
+		      c->rpu_lockup_cnt, c->rpu_lockup_recovery_done);
+	shell_fprintf(sh, SHELL_INFO, "  reset_cmd_cnt=%u reset_complete_event_cnt=%u\n",
+		      c->reset_cmd_cnt, c->reset_complete_event_cnt);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  commad_ent_default=%u lmac_enable_cnt=%u lmac_disable_cnt=%u\n",
+		      c->commad_ent_default, c->lmac_enable_cnt, c->lmac_disable_cnt);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  lmac_error_cnt=%u unable_gen_event=%u mem_pool_full_cnt=%u\n",
+		      c->lmac_error_cnt, c->unable_gen_event, c->mem_pool_full_cnt);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  ch_prog_cmd_cnt=%u channel_prog_done=%u connect_lost_status=%u\n",
+		      c->ch_prog_cmd_cnt, c->channel_prog_done, c->connect_lost_status);
+	shell_fprintf(sh, SHELL_INFO, "  tx_core_pool_full_cnt=%u patch_debug_cnt=%u\n",
+		      c->tx_core_pool_full_cnt, c->patch_debug_cnt);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  fw_error_event_cnt=%u tx_deinit_cmd_cnt=%u tx_deinit_done_cnt=%u\n",
+		      c->fw_error_event_cnt, c->tx_deinit_cmd_cnt, c->tx_deinit_done_cnt);
+	shell_fprintf(sh, SHELL_INFO, "  internal_buf_pool_null=%u rx_buffer_cmd=%u\n",
+		      c->internal_buf_pool_null, c->rx_buffer_cmd);
+	shell_fprintf(sh, SHELL_INFO, "  wait_for_tx_done_loop=%u cca_busy=%u\n",
+		      c->wait_for_tx_done_loop, c->cca_busy);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  temp_measure_window_expired=%u temp_inter_pool_full=%u\n",
+		      c->temp_measure_window_expired, c->temp_inter_pool_full);
+	shell_fprintf(sh, SHELL_INFO,
+		      "  lmac_internal_cmd=%u measure_temp_vbat=%u fresh_calib_cnt=%u\n",
+		      c->lmac_internal_cmd, c->measure_temp_vbat, c->fresh_calib_cnt);
+	shell_fprintf(sh, SHELL_INFO, "  coex_event_cnt=%u coex_cmd_cnt=%u coex_isr_cnt=%u\n",
+		      c->coex_event_cnt, c->coex_cmd_cnt, c->coex_isr_cnt);
+	shell_fprintf(sh, SHELL_INFO, "  block_wlan_traffic_cnt=%u un_block_wlan_traffic_cnt=%u\n",
+		      c->block_wlan_traffic_cnt, c->un_block_wlan_traffic_cnt);
+	shell_fprintf(sh, SHELL_INFO, "  p2p_no_a_cnt=%u scan_timer_task_pending=%u\n",
+		      c->p2p_no_a_cnt, c->scan_timer_task_pending);
+	shell_fprintf(sh, SHELL_INFO, "  scan_timer_task_complete=%u coex_request_fail_cnt=%u\n",
+		      c->scan_timer_task_complete, c->coex_request_fail_cnt);
+}
+
+static void dump_phy_debug_stats(const struct shell *sh,
+				 const struct phy_debug_stats *phy)
+{
+	shell_fprintf(sh, SHELL_INFO, "  stats_category=%u\n", phy->stats_category);
+	for (unsigned int i = 0; i < 128; i++) {
+		shell_fprintf(sh, SHELL_INFO, "  phy_stats[%u]=%u\n",
+			      i, phy->phy_stats[i]);
+	}
+}
+
+static void dump_debug_stats_detailed(const struct shell *sh,
+				      const struct nrf_wifi_rpu_debug_stats *stats,
+				      enum rpu_stats_type stats_type)
+{
+	if (stats_type == RPU_STATS_TYPE_UMAC) {
+		shell_fprintf(sh, SHELL_INFO,
+			      "UMAC debug stats (category=%u) umac_rx_dbg_params:\n",
+			      stats->umac_stats.stats_category);
+		dump_umac_rx_dbg_params(sh, &stats->umac_stats.rx_dbg_params);
+	} else if (stats_type == RPU_STATS_TYPE_LMAC) {
+		struct lmac_common_stats c;
+
+		shell_fprintf(sh, SHELL_INFO, "LMAC debug stats (category=%u) lmac_common_stats:\n",
+			      stats->lmac_stats.stats_category);
+		memcpy(&c, (const char *)&stats->lmac_stats +
+		       offsetof(struct lmac_debug_stats, lmac_common_stats), sizeof(c));
+		dump_lmac_common_stats(sh, &c);
+	} else if (stats_type == RPU_STATS_TYPE_PHY) {
+		shell_fprintf(sh, SHELL_INFO, "PHY debug stats (full phy_debug_stats):\n");
+		dump_phy_debug_stats(sh, &stats->phy_stats);
+	}
+}
+
+static int nrf_wifi_util_debug_stats(const struct shell *sh,
+				     size_t argc,
+				     const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_rpu_debug_stats stats;
+	enum rpu_stats_type stats_type = RPU_STATS_TYPE_UMAC;
+	int ret = 0;
+
+	if (argc == 2) {
+		const char *type = argv[1];
+
+		if (!strcmp(type, "umac")) {
+			stats_type = RPU_STATS_TYPE_UMAC;
+		} else if (!strcmp(type, "lmac")) {
+			stats_type = RPU_STATS_TYPE_LMAC;
+		} else if (!strcmp(type, "phy")) {
+			stats_type = RPU_STATS_TYPE_PHY;
+		} else {
+			shell_fprintf(sh, SHELL_ERROR, "Invalid type %s (umac|lmac|phy)\n",
+				      type);
+			return -ENOEXEC;
+		}
+	}
+
+	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
+	if (!ctx->rpu_ctx) {
+		shell_fprintf(sh, SHELL_ERROR, "RPU context not initialized\n");
+		ret = -ENOEXEC;
+		goto unlock_dbg;
+	}
+	fmac_dev_ctx = ctx->rpu_ctx;
+
+	memset(&stats, 0, sizeof(stats));
+	status = nrf_wifi_sys_fmac_debug_stats_get(fmac_dev_ctx, stats_type, &stats);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(sh, SHELL_ERROR, "Failed to get debug stats (timeout or error)\n");
+		ret = -ENOEXEC;
+	} else {
+		shell_fprintf(sh, SHELL_INFO, "Debug stats received type=%d (%u bytes)\n",
+			     stats_type, (unsigned int)sizeof(stats));
+		dump_debug_stats_detailed(sh, &stats, stats_type);
+	}
+unlock_dbg:
+	k_mutex_unlock(&ctx->rpu_lock);
+	return ret;
+}
+
+static int nrf_wifi_util_umac_int_stats(const struct shell *sh,
+					size_t argc,
+					const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct umac_int_stats stats;
+	int ret = 0;
+	unsigned int i;
+
+	(void)argc;
+	(void)argv;
+
+	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
+	if (!ctx->rpu_ctx) {
+		shell_fprintf(sh, SHELL_ERROR, "RPU context not initialized\n");
+		ret = -ENOEXEC;
+		goto unlock_umac;
+	}
+	fmac_dev_ctx = ctx->rpu_ctx;
+
+	memset(&stats, 0, sizeof(stats));
+	status = nrf_wifi_sys_fmac_umac_int_stats_get(fmac_dev_ctx, &stats);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(sh, SHELL_ERROR,
+			      "Failed to get UMAC int stats (timeout or error)\n");
+		ret = -ENOEXEC;
+		goto unlock_umac;
+	}
+
+	shell_fprintf(sh, SHELL_INFO, "UMAC internal (memory) stats received\n");
+	shell_fprintf(sh, SHELL_INFO, "Scratch dynamic memory pools (first 8):\n");
+	for (i = 0; i < 8; i++) {
+		shell_fprintf(sh, SHELL_INFO, "  [%u] buffer_size=%u num_pool_items=%u\n",
+			      i,
+			      stats.scratch_dynamic_memory_info[i].buffer_size,
+			      stats.scratch_dynamic_memory_info[i].num_pool_items);
+	}
+	shell_fprintf(sh, SHELL_INFO, "Retention dynamic memory pools (first 8):\n");
+	for (i = 0; i < 8; i++) {
+		shell_fprintf(sh, SHELL_INFO, "  [%u] buffer_size=%u num_pool_items=%u\n",
+			      i,
+			      stats.retention_dynamic_memory_info[i].buffer_size,
+			      stats.retention_dynamic_memory_info[i].num_pool_items);
+	}
+unlock_umac:
+	k_mutex_unlock(&ctx->rpu_lock);
+	return ret;
+}
+
+#endif /* !CONFIG_NRF71_RADIO_TEST && !CONFIG_NRF71_OFFLOADED_RAW_TX */
 
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
@@ -1060,6 +1333,24 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_dump_rpu_stats,
 		      1,
 		      1),
+	SHELL_CMD_ARG(clear_rpu_stats,
+		      NULL,
+		      "Clear RPU stats. Parameters: umac|lmac|phy|all (default)",
+		      nrf_wifi_util_clear_rpu_stats,
+		      1,
+		      1),
+	SHELL_CMD_ARG(debug_stats,
+		      NULL,
+		      "Request debug stats from RPU. Parameters: umac|lmac|phy",
+		      nrf_wifi_util_debug_stats,
+		      1,
+		      1),
+	SHELL_CMD_ARG(umac_int_stats,
+		      NULL,
+		      "Request UMAC internal (memory pool) stats from RPU",
+		      nrf_wifi_util_umac_int_stats,
+		      1,
+		      0),
 #endif /* !CONFIG_NRF71_RADIO_TEST && !CONFIG_NRF71_OFFLOADED_RAW_TX*/
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	SHELL_CMD_ARG(rpu_recovery_test,
