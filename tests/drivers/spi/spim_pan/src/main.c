@@ -184,10 +184,10 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 		   "Failed to allocate DPPI connection\n");
 	nrfx_gppi_conn_enable(gppi_handle);
 
-	struct spi_buf tx_spi_buf = {.buf = tx_buffer, .len = TEST_BUFFER_SIZE / 2};
+	struct spi_buf tx_spi_buf = {.buf = tx_buffer, .len = TEST_BUFFER_SIZE};
 	struct spi_buf_set tx_spi_buf_set = {.buffers = &tx_spi_buf, .count = 1};
 
-	struct spi_buf rx_spi_buf = {.buf = rx_buffer, .len = TEST_BUFFER_SIZE / 2 + 1};
+	struct spi_buf rx_spi_buf = {.buf = rx_buffer, .len = TEST_BUFFER_SIZE};
 	struct spi_buf_set rx_spi_buf_set = {.buffers = &rx_spi_buf, .count = 1};
 
 	for (int i = 0; i < MAX_READ_REPEATS; i++) {
