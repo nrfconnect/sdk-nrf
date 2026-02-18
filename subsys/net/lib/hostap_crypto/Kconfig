@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2024 Nordic Semiconductor
+# Copyright (c) 2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -115,6 +115,7 @@ config HOSTAP_CRYPTO_WPA3_PSA
 	select PSA_WANT_ALG_WPA3_SAE_FIXED
 	select PSA_WANT_ALG_WPA3_SAE_H2E
 	select PSA_WANT_KEY_TYPE_WPA3_SAE
+	select PSA_WANT_ECC_SECP_R1_256
 endif
 
 endif
