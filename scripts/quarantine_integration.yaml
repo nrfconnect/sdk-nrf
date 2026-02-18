@@ -337,13 +337,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - test.find_my.crypto
-  platforms:
-    - nrf54l15dk/nrf54l10/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - sample.gazell.gzp_dynamic_pairing.device.build
     - sample.gazell.gzll_ack_payload.host.build
     - sample.gazell.gzll_ack_payload.device.build
