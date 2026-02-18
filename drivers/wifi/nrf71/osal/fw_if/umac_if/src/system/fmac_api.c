@@ -3632,9 +3632,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_get_host_rpu_ps_ctrl_state(void *dev_ctx,
 		goto out;
 	}
 
-	status = nrf_wifi_hal_get_rpu_ps_state(fmac_dev_ctx->hal_dev_ctx,
-					       rpu_ps_ctrl_state);
-
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		nrf_wifi_osal_log_err("%s: Fetching of RPU PS state failed",
 				      __func__);
@@ -3644,6 +3641,110 @@ out:
 	return status;
 }
 #endif /* NRF_WIFI_LOW_POWER */
+
+enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+						       enum rpu_stats_type stats_type,
+						       struct nrf_wifi_rpu_debug_stats *stats)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	unsigned char count = 0;
+
+	if (!fmac_dev_ctx || !stats) {
+		nrf_wifi_osal_log_err("%s: Invalid parameters", __func__);
+		goto out;
+	}
+
+	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
+		nrf_wifi_osal_log_err("%s: Invalid op mode", __func__);
+		goto out;
+	}
+
+	if (fmac_dev_ctx->debug_stats_req) {
+		nrf_wifi_osal_log_err("%s: Debug stats request already pending",
+				      __func__);
+		goto out;
+	}
+
+
+	fmac_dev_ctx->debug_stats_req = true;
+	fmac_dev_ctx->debug_stats = stats;
+
+	status = umac_cmd_sys_debug_stats_get(fmac_dev_ctx, stats_type);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		fmac_dev_ctx->debug_stats_req = false;
+		goto out;
+	}
+
+	do {
+		nrf_wifi_osal_sleep_ms(1);
+		count++;
+	} while ((fmac_dev_ctx->debug_stats_req == true) &&
+		 (count < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));
+
+	if (count == NRF_WIFI_FMAC_STATS_RECV_TIMEOUT) {
+		status = NRF_WIFI_STATUS_FAIL;
+		fmac_dev_ctx->debug_stats_req = false;
+		nrf_wifi_osal_log_err("%s: Timed out (%d ms)", __func__,
+				      NRF_WIFI_FMAC_STATS_RECV_TIMEOUT);
+		goto out;
+	}
+
+	status = NRF_WIFI_STATUS_SUCCESS;
+out:
+	return status;
+}
+
+enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	struct umac_int_stats *stats)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	unsigned char count = 0;
+
+	if (!fmac_dev_ctx || !stats) {
+		nrf_wifi_osal_log_err("%s: Invalid parameters", __func__);
+		goto out;
+	}
+
+	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
+		nrf_wifi_osal_log_err("%s: Invalid op mode", __func__);
+		goto out;
+	}
+
+	if (fmac_dev_ctx->umac_int_stats_req) {
+		nrf_wifi_osal_log_err("%s: UMAC int stats request already pending",
+				      __func__);
+		goto out;
+	}
+
+	fmac_dev_ctx->umac_int_stats_req = true;
+	fmac_dev_ctx->umac_int_stats = stats;
+
+	status = umac_cmd_sys_umac_int_stats_get(fmac_dev_ctx);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		fmac_dev_ctx->umac_int_stats_req = false;
+		goto out;
+	}
+
+	do {
+		nrf_wifi_osal_sleep_ms(1);
+		count++;
+	} while ((fmac_dev_ctx->umac_int_stats_req == true) &&
+		 (count < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));
+
+	if (count == NRF_WIFI_FMAC_STATS_RECV_TIMEOUT) {
+		status = NRF_WIFI_STATUS_FAIL;
+		fmac_dev_ctx->umac_int_stats_req = false;
+		nrf_wifi_osal_log_err("%s: Timed out (%d ms)", __func__,
+				      NRF_WIFI_FMAC_STATS_RECV_TIMEOUT);
+		goto out;
+	}
+
+	status = NRF_WIFI_STATUS_SUCCESS;
+out:
+	return status;
+}
+
 #endif /* NRF71_UTIL */
 
 

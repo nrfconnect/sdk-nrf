@@ -152,6 +152,14 @@ struct nrf_wifi_fmac_dev_ctx {
 	void *fw_stats;
 	/** Firmware statistics requested. */
 	bool stats_req;
+	/** Debug statistics requested. */
+	bool debug_stats_req;
+	/** Debug statistics destination. */
+	void *debug_stats;
+	/** UMAC internal (memory) stats requested. */
+	bool umac_int_stats_req;
+	/** UMAC internal stats destination. */
+	void *umac_int_stats;
 	/** Firmware boot done. */
 	bool fw_boot_done;
 	/** Firmware init done. */

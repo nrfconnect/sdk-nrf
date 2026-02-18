@@ -27,6 +27,14 @@ umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned int *rf_p
 enum nrf_wifi_status umac_cmd_sys_prog_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						  enum rpu_stats_type stats_type);
 
+enum nrf_wifi_status umac_cmd_sys_clear_stats(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+					      enum rpu_stats_type stats_type);
+
+enum nrf_wifi_status umac_cmd_sys_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+						  enum rpu_stats_type stats_type);
+
+enum nrf_wifi_status umac_cmd_sys_umac_int_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
+
 enum nrf_wifi_status umac_cmd_sys_he_ltf_gi(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					    unsigned char he_ltf,
 					    unsigned char he_gi,
