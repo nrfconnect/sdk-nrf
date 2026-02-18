@@ -10,6 +10,8 @@
 # Since this file is brought in via include(), we do the work in a
 # function to avoid polluting the top-level scope.
 
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+
 function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefix)
   find_program(IMGTOOL imgtool.py HINTS ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/ NAMES imgtool NAMES_PER_DIR)
   set(keyfile "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}")
@@ -25,8 +27,31 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   sysbuild_get(CONFIG_BUILD_OUTPUT_BIN IMAGE ${application} VAR CONFIG_BUILD_OUTPUT_BIN KCONFIG)
   sysbuild_get(CONFIG_BUILD_OUTPUT_HEX IMAGE ${application} VAR CONFIG_BUILD_OUTPUT_HEX KCONFIG)
 
-  string(TOUPPER "${application}" application_uppercase)
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE> --pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD})
+  set(slot_size)        # imgtool --slot-size
+  set(header_size)      # imgtool --header
+  if(SB_CONFIG_PARTITION_MANAGER)
+    string(TOUPPER "${application}" application_uppercase)
+    set(slot_size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE>)
+    set(header_size ${SB_CONFIG_PM_MCUBOOT_PAD})
+  else()
+    # With partition manager disabled we need to map applications to partitions by hand as there
+    # is no reflection in application name in partitions. This mapping should probably by done
+    # at application cmake level.
+    set(part_label)
+    if(application STREQUAL "mcuboot")
+      set(part_label "s0_slot")
+    elseif(application STREQUAL "s1_image")
+      set(part_label "s1_slot")
+    else()
+      message(FATAL_ERROR "No mapping for ${application}")
+    endif()
+
+    # Get the partition node and pick size from it.
+    dt_partition_size(slot_size LABEL "${part_label}" TARGET ${application} REQUIRED)
+    # Header size is picked from the image that is beeing signed.
+    sysbuild_get(header_size IMAGE mcuboot VAR CONFIG_NCS_MCUBOOT_IMAGE_HEADER_SIZE KCONFIG)
+  endif()
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size ${slot_size} --pad-header --header-size ${header_size})
 
   if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     set(imgtool_extra --security-counter ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
@@ -138,16 +163,38 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
 endfunction()
 
 if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-  if(SB_CONFIG_PARTITION_MANAGER AND SB_CONFIG_SECURE_BOOT_APPCORE)
+  if(SB_CONFIG_SECURE_BOOT_APPCORE)
     set(bin_files)
     set(signed_targets)
+    # extra_bin_data is used for generating zip file, and is set to information
+    # on variant S1 image, in case it is also added to a zip file.
     set(extra_bin_data)
 
     ncs_secure_boot_mcuboot_sign(mcuboot "${bin_files}" "${signed_targets}" "")
 
+    # Becuase S0/S1 images are build for slot they are designated for, we need
+    # slot addresses to be able to sign them for that specific slot.
+    # We also need slot, for signing sript.
+    set(s0_slot_address)
+    set(s0_slot_size)
+    set(s1_slot_address)
+    set(s1_slot_size)
+    if(SB_CONFIG_PARTITION_MANAGER)
+      set(s1_slot_address "$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>")
+      set(s0_slot_address "$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>")
+    else()
+      # The same DTS is used for all images, so the application selection does not
+      # matter here, so we just use the mcuboot
+      dt_partition_addr(s0_slot_address LABEL "s0_slot" TARGET mcuboot ABSOLUTE REQUIRED)
+      dt_partition_size(s0_slot_size LABEL "s0_slot" TARGET mcuboot REQUIRED)
+      dt_partition_addr(s1_slot_address LABEL "s1_slot" TARGET mcuboot ABSOLUTE REQUIRED)
+      dt_partition_size(s1_slot_size LABEL "s1_slot" TARGET mcuboot REQUIRED)
+    endif()
+
+    # Signing the MCUboot image, secondary stage bootloader, that will be running from S1 slot.
     if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
       ncs_secure_boot_mcuboot_sign(s1_image "${bin_files}" "${signed_targets}" "")
-      set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>;signed_by_mcuboot_and_b0_s1_image.binslot=1")
+      set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=${s1_slot_address};signed_by_mcuboot_and_b0_s1_image.binslot=1")
     endif()
 
     if(bin_files)
@@ -161,7 +208,7 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
         TYPE mcuboot
         IMAGE mcuboot
         SCRIPT_PARAMS
-        "signed_by_mcuboot_and_b0_mcuboot.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
+        "signed_by_mcuboot_and_b0_mcuboot.binload_address=${s0_slot_address}"
         ${extra_bin_data}
         "version_MCUBOOT=${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION}"
         "version_B0=${mcuboot_fw_info_firmware_version}"
