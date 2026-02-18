@@ -64,6 +64,18 @@ function(include_hpf)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/hpf.cmake)
 endfunction()
 
+function(b0_image_name var)
+  if(SB_CONFIG_PARTITION_MANAGER)
+    set(${var} s1_image PARENT_SCOPE)
+  else()
+    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+      set(${var} mcuboot_s1_variant PARENT_SCOPE)
+    else()
+      set(${var} ${DEFAULT_IMAGE}_s1_variant PARENT_SCOPE)
+    endif()
+  endif()
+endfunction()
+
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   cmake_parse_arguments(PRE_CMAKE "" "" "IMAGES" ${ARGN})
   restore_ncs_vars()
@@ -88,6 +100,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(${image} CONFIG_BUILD_OUTPUT_HEX n)
     endif()
   endforeach()
+
+  b0_image_name(s1_image_name)
 
   if(SB_CONFIG_BOOTLOADER_MCUBOOT)
     find_program(IMGTOOL imgtool.py HINTS ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/ NAMES imgtool NAMES_PER_DIR)
@@ -448,13 +462,15 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
        OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
        # Do not use the upstream mcuboot.cmake on new platforms.
        OR SB_CONFIG_SOC_SERIES_NRF54L
-       OR SB_CONFIG_SOC_SERIES_NRF54H)
+       OR SB_CONFIG_SOC_SERIES_NRF54H OR SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
       # Use NCS signing script with support for PM or direct XIP (NCS specific features)
       if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
         set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
 
-        if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+        if(SB_CONFIG_PARTITION_MANAGER AND SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
           set(mcuboot_secondary_app_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+        elseif(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
+          set(${DEFAULT_IMAGE}_slot1_variant_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
         endif()
 
         # Flash drivers are mandatory with QSPI XIP split image support
@@ -606,7 +622,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_target_properties(b0 PROPERTIES BOARD ${board_target_secure})
 
       if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-        set_target_properties(s1_image PROPERTIES BOARD ${board_target_secure})
+        set_target_properties(${s1_image_name} PROPERTIES BOARD ${board_target_secure})
       endif()
     endif()
 
@@ -642,7 +658,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
 
       if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-        set_config_bool(s1_image CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED y)
+        set_config_bool(${s1_image_name} CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED y)
       endif()
     else()
       set_config_bool(b0 CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION n)
@@ -654,7 +670,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
 
       if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-        set_config_bool(s1_image CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED n)
+        set_config_bool(${s1_image_name} CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED n)
       endif()
     endif()
 
@@ -721,15 +737,33 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       if(SB_CONFIG_NETCORE_APP_UPDATE)
         set_config_bool(mcuboot CONFIG_PCD_APP y)
 
-        add_overlay_dts(
-          mcuboot
-          ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim.overlay
-          )
-        if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+        if(SB_CONFIG_PARTITION_MANAGER)
           add_overlay_dts(
-            s1_image
-            ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim.overlay
+            mcuboot
+            ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim_mcuboot_pm.overlay
+          )
+
+          add_overlay_dts(
+            ${DEFAULT_IMAGE}
+            ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim_pm.overlay
+          )
+
+          if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+            add_overlay_dts(
+              ${s1_image_name}
+              ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim_mcuboot_pm.overlay
             )
+          endif()
+        else()
+          add_overlay_dts(
+            mcuboot
+            ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim_mcuboot.overlay
+          )
+
+          add_overlay_dts(
+            ${DEFAULT_IMAGE}
+            ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim.overlay
+          )
         endif()
       else()
         set_config_bool(mcuboot CONFIG_PCD_APP n)
@@ -1082,7 +1116,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   ExternalProject_Get_Property(${DEFAULT_IMAGE} BINARY_DIR)
   set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
 
-  if(NCS_SYSBUILD_PARTITION_MANAGER)
+  if(SB_CONFIG_PARTITION_MANAGER)
     if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE AND SB_CONFIG_BOOTLOADER_MCUBOOT)
       ExternalProject_Get_Property(mcuboot BINARY_DIR)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
@@ -1099,10 +1133,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     message(WARNING "nrf54ls05 needs to move away from partition manager, usage of PM is temporary")
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
-
-# Enable use of partition manager with sysbuild.
-# Consider if this shoulc come through Sysbuild Kconfig flag.
-set(NCS_SYSBUILD_PARTITION_MANAGER TRUE)
 
 list(APPEND CMAKE_MODULE_PATH ${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/modules)
 include(ncs_sysbuild_extensions)
