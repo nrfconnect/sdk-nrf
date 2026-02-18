@@ -3064,6 +3064,10 @@ psa_status_t psa_driver_wrapper_wrap_key(const psa_key_attributes_t *wrapping_ke
 {
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(wrapping_key_attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
+
 #ifdef PSA_NEED_CRACEN_KEY_WRAP_DRIVER
 		return cracen_wrap_key(wrapping_key_attributes, wrapping_key_data,
 				       wrapping_key_size, alg, key_attributes, key_data, key_size,
@@ -3103,6 +3107,10 @@ psa_status_t psa_driver_wrapper_unwrap_key(const psa_key_attributes_t *attribute
 {
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(wrapping_key_attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
+
 #ifdef PSA_NEED_CRACEN_KEY_WRAP_DRIVER
 		return cracen_unwrap_key(attributes, wrapping_key_attributes, wrapping_key_data,
 					 wrapping_key_size, alg, data, data_length, key, key_size,

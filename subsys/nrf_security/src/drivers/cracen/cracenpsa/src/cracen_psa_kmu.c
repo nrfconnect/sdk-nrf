@@ -83,6 +83,8 @@ _Static_assert(sizeof(kmu_metadata) == 4, "KMU Metadata must be 32 bits.");
  *  values left-shifted by two bits.
  */
 enum kmu_metadata_algorithm {
+	METADATA_ALG_KW = 1,
+	METADATA_ALG_KWP = 2,
 	METADATA_ALG_CHACHA20 = 4,
 	METADATA_ALG_CHACHA20_POLY1305 = 8,
 	METADATA_ALG_AES_GCM = 12,
@@ -101,8 +103,8 @@ enum kmu_metadata_algorithm {
 };
 
 static const psa_key_usage_t metadata_usage_flags_mapping[] = {
-	/* ENCRYPT */ PSA_KEY_USAGE_ENCRYPT,
-	/* DECRYPT */ PSA_KEY_USAGE_DECRYPT,
+	/* ENCRYPT */ PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_WRAP,
+	/* DECRYPT */ PSA_KEY_USAGE_DECRYPT | PSA_KEY_USAGE_UNWRAP,
 	/* SIGN */ PSA_KEY_USAGE_SIGN_HASH | PSA_KEY_USAGE_SIGN_MESSAGE,
 	/* VERIFY */ PSA_KEY_USAGE_VERIFY_HASH | PSA_KEY_USAGE_VERIFY_MESSAGE,
 	/* DERIVE */ PSA_KEY_USAGE_DERIVE,
@@ -633,6 +635,18 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 	psa_set_key_usage_flags(key_attr, usage_flags);
 
 	switch (metadata->algorithm) {
+#ifdef PSA_NEED_CRACEN_AES_KW
+	case METADATA_ALG_KW:
+		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
+		psa_set_key_algorithm(key_attr, PSA_ALG_KW);
+		break;
+#endif /* PSA_NEED_CRACEN_AES_KW */
+#ifdef PSA_NEED_CRACEN_AES_KWP
+	case METADATA_ALG_KWP:
+		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
+		psa_set_key_algorithm(key_attr, PSA_ALG_KWP);
+		break;
+#endif /* PSA_NEED_CRACEN_AES_KWP */
 #ifdef PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20
 	case METADATA_ALG_CHACHA20:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_CHACHA20);
@@ -808,6 +822,23 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 	}
 
 	switch (psa_get_key_algorithm(key_attr)) {
+#ifdef PSA_NEED_CRACEN_AES_KW
+	case PSA_ALG_KW:
+		metadata->algorithm = METADATA_ALG_KW;
+		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		break;
+#endif /* PSA_NEED_CRACEN_AES_KW */
+#ifdef PSA_NEED_CRACEN_AES_KWP
+	case PSA_ALG_KWP:
+		metadata->algorithm = METADATA_ALG_KWP;
+		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		break;
+#endif /* PSA_NEED_CRACEN_AES_KWP */
+
 #ifdef PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20
 	case PSA_ALG_STREAM_CIPHER:
 		metadata->algorithm = METADATA_ALG_CHACHA20;
