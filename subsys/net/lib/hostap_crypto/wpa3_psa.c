@@ -685,6 +685,7 @@ int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u
 	/* Set up PSA operation for the full SAE flow with PT */
 	/* When PT is used, H2E should be enabled (PT is derived using H2E KDF) */
 	op->h2e_enabled = true;
+	sae->h2e = 1; /* So SME accepts AP's WLAN_STATUS_SAE_HASH_TO_ELEMENT in commit */
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: PT mode - enabling H2E");
 
 	struct wpa3_psa_setup_params params = {
@@ -1234,49 +1235,23 @@ static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
 
 		psa_destroy_key(pw_key);
 
-		/* Output PT directly as key - use output_key instead of output_bytes */
-		/* Set up PT key attributes - matching test code pattern */
-		/* Test code uses same attributes variable, so usage flags are already set */
-		/* But for PT keys, we only need to set type and bits */
-		psa_set_key_type(&pt_attr, PSA_KEY_TYPE_WPA3_SAE_ECC_PT(PSA_ECC_FAMILY_SECP_R1));
+		/* PT for P-256: 32 bits from H2E KDF, Oberon derive_key expands to 64-byte PT.
+		 * Set algorithm so psa_pake_setup() policy check permits this key for PAKE.
+		 */
+		psa_set_key_type(&pt_attr, PSA_KEY_TYPE_WPA3_SAE_ECC(PSA_ECC_FAMILY_SECP_R1));
 		psa_set_key_bits(&pt_attr, 256);
-		/* Set usage flags to DERIVE (required for key derivation output) */
 		psa_set_key_usage_flags(&pt_attr, PSA_KEY_USAGE_DERIVE);
-		/* Note: PT keys don't need algorithm set - it's determined by the key type */
-		wpa_printf(MSG_DEBUG, "WPA3-PSA: Using PT key type for H2E (bits=256)");
-		wpa_printf(MSG_DEBUG,
-			   "WPA3-PSA: KDF algorithm: 0x%08x, expected hash: SHA-256 (0x%08x)",
-			   PSA_ALG_WPA3_SAE_H2E(op->hash_alg), PSA_ALG_SHA_256);
-
-		/* Verify KDF state before output */
-		wpa_printf(MSG_DEBUG,
-			   "WPA3-PSA: About to call output_key - KDF alg: 0x%08x, "
-			   "PT type: 0x%08x, bits: 256, hash_alg: 0x%08x",
-			   PSA_ALG_WPA3_SAE_H2E(op->hash_alg),
-			   PSA_KEY_TYPE_WPA3_SAE_ECC_PT(PSA_ECC_FAMILY_SECP_R1),
-			   op->hash_alg);
-		wpa_printf(MSG_DEBUG,
-			   "WPA3-PSA: Key type check - IS_WPA3_SAE_ECC_PT: %d, "
-			   "IS_WPA3_SAE_H2E: %d, GET_HASH: 0x%08x",
-			   PSA_KEY_TYPE_IS_WPA3_SAE_ECC_PT(PSA_KEY_TYPE_WPA3_SAE_ECC_PT(PSA_ECC_FAMILY_SECP_R1)),
-			   PSA_ALG_IS_WPA3_SAE_H2E(PSA_ALG_WPA3_SAE_H2E(op->hash_alg)),
-			   PSA_ALG_GET_HASH(PSA_ALG_WPA3_SAE_H2E(op->hash_alg)));
+		psa_set_key_algorithm(&pt_attr, pake_alg);
+		psa_set_key_lifetime(&pt_attr, PSA_KEY_LIFETIME_VOLATILE);
 
 		status = psa_key_derivation_output_key(&pt_attr, &kdf, &op->password_key);
+		psa_key_derivation_abort(&kdf);
 		if (status != PSA_SUCCESS) {
 			wpa_printf(MSG_ERROR,
-				   "WPA3-PSA: Failed to derive PT key: %d (KDF alg: 0x%08x, "
-				   "PT type: 0x%08x, bits: 256, hash_alg: 0x%08x, "
-				   "PSA_ALG_GET_HASH: 0x%08x)",
-				   status, PSA_ALG_WPA3_SAE_H2E(op->hash_alg),
-				   PSA_KEY_TYPE_WPA3_SAE_ECC_PT(PSA_ECC_FAMILY_SECP_R1),
-				   op->hash_alg,
-				   PSA_ALG_GET_HASH(PSA_ALG_WPA3_SAE_H2E(op->hash_alg)));
-			psa_key_derivation_abort(&kdf);
+				   "WPA3-PSA: Failed to derive PT key: %d (KDF alg: 0x%08x)",
+				   (int)status, PSA_ALG_WPA3_SAE_H2E(op->hash_alg));
 			return -1;
 		}
-
-		psa_key_derivation_abort(&kdf);
 		wpa_printf(MSG_DEBUG, "WPA3-PSA: PT key derived successfully for H2E");
 	} else {
 		/* For HnP, use raw password */
@@ -1300,16 +1275,20 @@ static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
 
 	status = psa_pake_setup(&op->pake_op, op->password_key, &op->cipher_suite);
 	if (status != PSA_SUCCESS) {
-		/* PSA_ERROR_NOT_SUPPORTED is -134 per PSA Crypto API */
-		const int not_supported = ((int)status == -134);
+		int s = (int)status;
 
-		wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to setup PAKE: %d (%s)",
-			   (int)status,
-			   not_supported ? "PSA_ERROR_NOT_SUPPORTED" : "see PSA status");
-		if (not_supported) {
+		wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to setup PAKE: %d (%s)", s,
+			   s == (int)PSA_ERROR_NOT_SUPPORTED ? "PSA_ERROR_NOT_SUPPORTED" :
+			   s == (int)PSA_ERROR_NOT_PERMITTED ? "PSA_ERROR_NOT_PERMITTED" :
+			   "see PSA status");
+		if (s == (int)PSA_ERROR_NOT_SUPPORTED) {
 			wpa_printf(MSG_ERROR,
 				   "WPA3-PSA: Crypto backend does not support PAKE; ensure "
 				   "CONFIG_PSA_NEED_OBERON_WPA3_SAE and WPA3-PSA are enabled.");
+		}
+		if (s == (int)PSA_ERROR_NOT_PERMITTED) {
+			wpa_printf(MSG_ERROR,
+				   "WPA3-PSA: Key policy does not permit PAKE (set key algorithm).");
 		}
 		psa_destroy_key(op->password_key);
 		return -1;
