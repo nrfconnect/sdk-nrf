@@ -553,4 +553,8 @@ config TFM_NRF_SYSTEM_OFF_SERVICE
 	  This service disables RAM retention for all RAM blocks
 	  before entering the System OFF mode.
 
+config TFM_HAS_B0N
+	bool "Network core bootloader present (informative only, do not change)"
+	depends on SOC_SERIES_NRF53
+
 endif # BUILD_WITH_TFM

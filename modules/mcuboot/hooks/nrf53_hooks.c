@@ -19,6 +19,8 @@
 #define NET_CORE_SECONDARY_IMAGE CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER
 /* MCUboot serial recovery slot number */
 #define NET_CORE_VIRTUAL_PRIMARY_SLOT (CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER * 2) + 1
+/* Matches up with the MCUboot image padding */
+#define NET_CORE_ROM_START_OFFSET 0x200
 
 #include <dfu/pcd.h>
 #if defined(CONFIG_PCD_APP) && defined(CONFIG_NRF53_MULTI_IMAGE_UPDATE) \
@@ -74,9 +76,15 @@ int boot_read_image_header_hook(int img_index, int slot, struct image_header *im
 {
 	if (img_index == NET_CORE_SECONDARY_IMAGE && slot == 0) {
 		img_head->ih_magic = IMAGE_MAGIC;
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 		img_head->ih_hdr_size = PM_MCUBOOT_PAD_SIZE;
 		img_head->ih_load_addr = PM_MCUBOOT_PRIMARY_1_ADDRESS;
 		img_head->ih_img_size = PM_CPUNET_APP_SIZE;
+#else
+		img_head->ih_hdr_size = NET_CORE_ROM_START_OFFSET;
+		img_head->ih_load_addr = DT_REG_ADDR(DT_NODELABEL(slot2_partition));
+		img_head->ih_img_size = PCD_NET_CORE_APP_SIZE;
+#endif
 		img_head->ih_flags = 0;
 		img_head->ih_ver.iv_major = 0;
 		img_head->ih_ver.iv_minor = 0;
@@ -132,7 +140,11 @@ int network_core_update(bool wait)
 	void *mock_flash;
 	size_t mock_size;
 
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 	mock_flash_dev = DEVICE_DT_GET(DT_NODELABEL(PM_MCUBOOT_PRIMARY_1_DEV));
+#else
+	mock_flash_dev = DEVICE_DT_GET(DT_NODELABEL(nordic_ram_flash_controller));
+#endif
 	if (!device_is_ready(mock_flash_dev)) {
 		return -ENODEV;
 	}
@@ -145,7 +157,11 @@ int network_core_update(bool wait)
 		uint32_t *vtable = (uint32_t *)(vtable_addr);
 		uint32_t reset_addr = vtable[1];
 
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 		if (reset_addr > PM_CPUNET_B0N_ADDRESS) {
+#else
+		if (reset_addr > PCD_NET_CORE_APP_ADDRESS) {
+#endif
 			if (wait) {
 				return pcd_network_core_update(vtable, fw_size);
 			} else {

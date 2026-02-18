@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <mem.h>
+
 /*
  * This file is used to enable a partition which is used through the flash API but which is in
  * reality stored in RAM. This is done to load data from external flash to the network core. Since
