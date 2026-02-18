@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,10 +7,12 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/device.h>
-#include <zephyr/drivers/gpio.h>
 #include <zephyr/devicetree.h>
 
 #include <bluetooth/services/fast_pair/fmdn.h>
+
+#include <accel_to_angle/accel_to_angle.h>
+#include <accel_to_angle/filter/ema.h>
 
 #include "app_motion_detector.h"
 #include "app_ui.h"
@@ -18,65 +20,212 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_INF);
 
-#define PI_CONSTANT 3.14159265358979323846
+/* Minimal motion detection thresholds for angle and axes to trigger motion detection. */
+#define ACCEL_TO_ANGLE_ANGLE_THR_DEG	10
+#define ACCEL_TO_ANGLE_AXIS_THR_NUM	2
 
-/* Minimum required rotation in degrees to consider device as moving */
-#define ROT_THR_DEG		10
+/* Configuration parameters for the EMA filter instance. */
+#define EMA_FILTER_ADXL362_ODR_HZ	25.0f
+#define EMA_FILTER_TAU_S		0.5f
 
-/* Minimum required rotation in degrees to consider device as moving */
-#define ROT_THR_RAD		(ROT_THR_DEG * PI_CONSTANT / 180)
+#define ACCEL_NODE    DT_ALIAS(motion_detector)
 
-#define AXIS_NUM_MAX		3
-#define AXIS_THR_NUM		2
+ACCEL_TO_ANGLE_FILTER_EMA_DEFINE(ema_filter, EMA_FILTER_ADXL362_ODR_HZ, EMA_FILTER_TAU_S);
+static ACCEL_TO_ANGLE_CTX_DEFINE(accel_to_angle_ctx, &ema_filter);
 
-/* Sampling rate (in samples per second) of the motion detection sensor (gyroscope). */
-#define GYRO_SAMPLING_FREQ	10
-
-#define GYRO_NODE	DT_ALIAS(gyro)
-#define GYRO_PWR_NODE	DT_ALIAS(gyro_pwr)
-
-#define GYRO_POLL_THREAD_STACK_SIZE	1024
-#define GYRO_POLL_THREAD_PRIORITY	0
-
-#define SENSOR_VALUE_SET(_var, _int, _frac) \
-	_var.val1 = _int; \
-	_var.val2 = _frac
-
-#define SENSOR_VALUE_SCALE_1000_DEG_PER_SEC_SET(_var)	SENSOR_VALUE_SET(_var, 1000, 0)
-
-#define SENSOR_VALUE_OVERSAMPLING_DISABLE(_var)		SENSOR_VALUE_SET(_var, 1, 0)
-
-/* The lowest sampling frequency available. */
-#define SENSOR_VALUE_SAMPLING_FREQ_25_HZ_SET(_var)	SENSOR_VALUE_SET(_var, 25, 0)
-
-static K_SEM_DEFINE(gyro_poll_sem, 0, 1);
-
+/** Motion detector state. */
 static struct motion_detector {
 	const struct device *dev;
+	struct accel_to_angle_ctx *accel_to_angle_ctx;
 	bool active;
-	/* Rotation in X, Y and Z axis respectively. */
-	double rot[AXIS_NUM_MAX];
-	struct k_spinlock lock;
+	bool continuous_detection;
+	bool motion_detected;
 } motion_detector = {
-	.dev = DEVICE_DT_GET(GYRO_NODE),
+	.dev = DEVICE_DT_GET(ACCEL_NODE),
+	.accel_to_angle_ctx = &accel_to_angle_ctx,
 };
 
-static bool motion_detected_check(void)
+BUILD_ASSERT(IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_25),
+	     "CONFIG_ADXL362_ACCEL_ODR_25 must be enabled");
+BUILD_ASSERT(EMA_FILTER_ADXL362_ODR_HZ == 25.0f,
+	     "EMA_FILTER_ADXL362_ODR_HZ must be set to 25.0f to match the actual "
+	     "ODR of the accelerometer");
+BUILD_ASSERT((CONFIG_ADXL362_INTERRUPT_MODE == 0),
+	     "CONFIG_ADXL362_INTERRUPT_MODE must be set to 0 (default mode)");
+BUILD_ASSERT((CONFIG_ADXL362_ABS_REF_MODE == 1),
+	     "CONFIG_ADXL362_ABS_REF_MODE must be set to 1 (referenced mode)");
+BUILD_ASSERT(ACCEL_TO_ANGLE_AXIS_THR_NUM <= 2,
+	     "ACCEL_TO_ANGLE_AXIS_THR_NUM must be less than or equal to 2 "
+	     "(only pitch and roll are supported)");
+
+static int inactivity_trigger_configure(bool enable);
+static int activity_trigger_configure(bool enable);
+static int data_ready_trigger_configure(bool enable);
+
+static void data_ready_trigger_handle(const struct device *dev, const struct sensor_trigger *trig)
 {
-	/* It is assumed that this function executes in the cooperative thread context. */
-	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	int err;
+	struct accel_to_angle_pr_data pr;
+	struct sensor_value val[ACCEL_TO_ANGLE_AXIS_NUM];
+	static struct accel_to_angle_pr_data thr_pr = {
+		ACCEL_TO_ANGLE_ANGLE_THR_DEG,
+		ACCEL_TO_ANGLE_ANGLE_THR_DEG
+	};
+
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
-	size_t motion_axis_count = 0;
-
-	for (size_t i = 0; i < ARRAY_SIZE(motion_detector.rot); i++) {
-		if (motion_detector.rot[i] >= ROT_THR_RAD ||
-		    motion_detector.rot[i] <= -ROT_THR_RAD) {
-			motion_axis_count++;
-		}
+	err = sensor_sample_fetch(motion_detector.dev);
+	if (err) {
+		LOG_ERR("Failed to fetch sensor sample: %d", err);
+		return;
 	}
 
-	return (motion_axis_count >= AXIS_THR_NUM);
+	err = sensor_channel_get(motion_detector.dev, SENSOR_CHAN_ACCEL_XYZ, val);
+	if (err) {
+		LOG_ERR("Failed to get sensor channel: %d", err);
+		return;
+	}
+
+	/* Lock the scheduler to prevent context switches while processing sensor data.
+	 * The FMDN API callbacks have higher priority than the sensor trigger handler,
+	 * which could lead to corruption of the motion detector state if a context switch
+	 * occurs in the middle of processing.
+	 */
+	k_sched_lock();
+
+	err = accel_to_angle_calc(motion_detector.accel_to_angle_ctx, val, &pr);
+	if (err) {
+		LOG_ERR("Failed to calculate rotation from accelerometer data: %d", err);
+
+		k_sched_unlock();
+		return;
+	}
+
+	LOG_DBG("Motion values: Pitch: %f deg, Roll: %f deg", (double)pr.pitch, (double)pr.roll);
+
+	if (accel_to_angle_diff_check(motion_detector.accel_to_angle_ctx,
+				      &pr,
+				      &thr_pr,
+				      ACCEL_TO_ANGLE_AXIS_THR_NUM)) {
+		LOG_INF("Motion detected");
+		motion_detector.motion_detected = true;
+	}
+
+	k_sched_unlock();
+}
+
+static int data_ready_trigger_configure(bool enable)
+{
+	int err;
+	struct sensor_trigger trig = {
+		.type = SENSOR_TRIG_DATA_READY,
+		.chan = SENSOR_CHAN_ACCEL_XYZ,
+	};
+
+	accel_to_angle_state_clean(motion_detector.accel_to_angle_ctx);
+
+	motion_detector.continuous_detection = enable;
+
+	err = sensor_trigger_set(motion_detector.dev,
+				 &trig,
+				 enable ? data_ready_trigger_handle : NULL);
+	if (err) {
+		LOG_ERR("Failed to set data ready trigger: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+static void activity_trigger_handle(const struct device *dev, const struct sensor_trigger *trig)
+{
+	__ASSERT_NO_MSG(!motion_detector.continuous_detection);
+
+	LOG_INF("Activity interrupt detected, switching to listen for inactivity "
+		"and data ready interrupts for proper motion detection");
+
+	data_ready_trigger_configure(true);
+	inactivity_trigger_configure(true);
+
+	activity_trigger_configure(false);
+}
+
+static int activity_trigger_configure(bool enable)
+{
+	int err;
+	struct sensor_trigger trig = {
+		.type = SENSOR_TRIG_MOTION,
+		.chan = SENSOR_CHAN_ACCEL_XYZ,
+	};
+
+	err = sensor_trigger_set(motion_detector.dev,
+				 &trig,
+				 enable ? activity_trigger_handle : NULL);
+	if (err) {
+		LOG_ERR("Failed to set activity trigger: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+static void inactivity_trigger_handle(const struct device *dev, const struct sensor_trigger *trig)
+{
+	__ASSERT_NO_MSG(motion_detector.continuous_detection);
+
+	LOG_INF("Inactivity interrupt detected, switching to listen for activity interrupt");
+
+	data_ready_trigger_configure(false);
+	inactivity_trigger_configure(false);
+
+	activity_trigger_configure(true);
+}
+
+static int inactivity_trigger_configure(bool enable)
+{
+	int err;
+	struct sensor_trigger trig = {
+		.type = SENSOR_TRIG_STATIONARY,
+		.chan = SENSOR_CHAN_ACCEL_XYZ,
+	};
+
+	err = sensor_trigger_set(motion_detector.dev,
+				 &trig,
+				 enable ? inactivity_trigger_handle : NULL);
+	if (err) {
+		LOG_ERR("Failed to set inactivity trigger: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+static void state_set(bool enable)
+{
+	if (motion_detector.active == enable) {
+		LOG_DBG("Motion detection already %sabled", enable ? "en" : "dis");
+		return;
+	}
+
+	motion_detector.motion_detected = false;
+	motion_detector.active = enable;
+
+	accel_to_angle_state_clean(motion_detector.accel_to_angle_ctx);
+
+	if (motion_detector.active) {
+		/* Start only on activity interrupt.
+		 * Inactivity and data ready interrupts will be enabled
+		 * once activity has been detected.
+		 */
+		activity_trigger_configure(true);
+	} else {
+		/* Disable all triggers. */
+		activity_trigger_configure(false);
+		inactivity_trigger_configure(false);
+		data_ready_trigger_configure(false);
+	}
+
+	LOG_INF("Motion detection: %sabled", motion_detector.active ? "en" : "dis");
 }
 
 static void fmdn_motion_detector_start(void)
@@ -87,26 +236,27 @@ static void fmdn_motion_detector_start(void)
 
 	__ASSERT_NO_MSG(!motion_detector.active);
 	LOG_INF("FMDN: motion detector started");
-	motion_detector.active = true;
-	k_sem_give(&gyro_poll_sem);
+
+	state_set(true);
 	app_ui_state_change_indicate(APP_UI_STATE_MOTION_DETECTOR_ACTIVE, motion_detector.active);
 }
 
 static bool fmdn_motion_detector_period_expired(void)
 {
-	bool is_motion_detected;
+	bool ret = motion_detector.motion_detected;
 
 	/* It is assumed that this function executes in the cooperative thread context. */
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
-	is_motion_detected = motion_detected_check();
-
 	__ASSERT_NO_MSG(motion_detector.active);
 	LOG_INF("FMDN: motion detector period expired. Reporting that the motion was %sdetected",
-		is_motion_detected ? "" : "not ");
-	memset(motion_detector.rot, 0, sizeof(motion_detector.rot));
-	return is_motion_detected;
+		ret ? "" : "not ");
+
+	motion_detector.motion_detected = false;
+	accel_to_angle_state_clean(motion_detector.accel_to_angle_ctx);
+
+	return ret;
 }
 
 static void fmdn_motion_detector_stop(void)
@@ -117,8 +267,8 @@ static void fmdn_motion_detector_stop(void)
 
 	__ASSERT_NO_MSG(motion_detector.active);
 	LOG_INF("FMDN: motion detector stopped");
-	motion_detector.active = false;
-	memset(motion_detector.rot, 0, sizeof(motion_detector.rot));
+
+	state_set(false);
 	app_ui_state_change_indicate(APP_UI_STATE_MOTION_DETECTOR_ACTIVE, motion_detector.active);
 }
 
@@ -128,97 +278,13 @@ static const struct bt_fast_pair_fmdn_motion_detector_cb fmdn_motion_detector_cb
 	.stop = fmdn_motion_detector_stop,
 };
 
-static int sensor_configure(const struct device *sensor)
-{
-	struct sensor_value scale;
-	struct sensor_value sampling_freq;
-	struct sensor_value oversampling;
-	int err;
-
-	SENSOR_VALUE_SCALE_1000_DEG_PER_SEC_SET(scale);
-	err = sensor_attr_set(sensor, SENSOR_CHAN_GYRO_XYZ, SENSOR_ATTR_FULL_SCALE, &scale);
-	if (err) {
-		return err;
-	}
-
-	SENSOR_VALUE_OVERSAMPLING_DISABLE(oversampling);
-	err = sensor_attr_set(sensor, SENSOR_CHAN_GYRO_XYZ, SENSOR_ATTR_OVERSAMPLING,
-			      &oversampling);
-	if (err) {
-		return err;
-	}
-
-	SENSOR_VALUE_SAMPLING_FREQ_25_HZ_SET(sampling_freq);
-	err = sensor_attr_set(sensor, SENSOR_CHAN_GYRO_XYZ,
-			      SENSOR_ATTR_SAMPLING_FREQUENCY,
-			      &sampling_freq);
-	if (err) {
-		return err;
-	}
-
-	return err;
-}
-
-static void gyro_poll_thread_fn(void *dummy0, void *dummy1, void *dummy2)
-{
-	ARG_UNUSED(dummy0);
-	ARG_UNUSED(dummy1);
-	ARG_UNUSED(dummy2);
-
-	while (true) {
-		k_spinlock_key_t key;
-		struct sensor_value val[ARRAY_SIZE(motion_detector.rot)];
-
-		k_sem_take(&gyro_poll_sem, K_FOREVER);
-
-		sensor_sample_fetch(motion_detector.dev);
-		sensor_channel_get(motion_detector.dev, SENSOR_CHAN_GYRO_XYZ, val);
-
-		key = k_spin_lock(&motion_detector.lock);
-		if (motion_detector.active) {
-			for (size_t i = 0; i < ARRAY_SIZE(motion_detector.rot); i++) {
-				/* Rotation = Angular velocity * Time = Angular velocity /
-				 *					Sampling frequency.
-				 */
-				motion_detector.rot[i] += sensor_value_to_double(&val[i]) /
-							  GYRO_SAMPLING_FREQ;
-			}
-			k_sem_give(&gyro_poll_sem);
-		}
-		k_spin_unlock(&motion_detector.lock, key);
-
-		k_msleep(MSEC_PER_SEC / GYRO_SAMPLING_FREQ);
-	}
-}
-
-K_THREAD_DEFINE(gyro_poll_thread, GYRO_POLL_THREAD_STACK_SIZE, gyro_poll_thread_fn,
-		NULL, NULL, NULL, GYRO_POLL_THREAD_PRIORITY, 0, 0);
-
 int app_motion_detector_init(void)
 {
-	const struct gpio_dt_spec pwr = GPIO_DT_SPEC_GET(GYRO_PWR_NODE, enable_gpios);
 	int err;
-
-	if (!device_is_ready(pwr.port)) {
-		LOG_ERR("GYRO_PWR_NODE is not ready");
-		return -EIO;
-	}
-
-	err = gpio_pin_configure_dt(&pwr, GPIO_OUTPUT_ACTIVE);
-	if (err) {
-		LOG_ERR("Error while configuring GYRO_PWR_NODE (err %d)", err);
-		return err;
-	}
 
 	if (!device_is_ready(motion_detector.dev)) {
 		LOG_ERR("Device %s is not ready.", motion_detector.dev->name);
 		return -EIO;
-	}
-
-	err = sensor_configure(motion_detector.dev);
-	if (err) {
-		LOG_ERR("Configuring gyroscope sensor failed (err %d)", err);
-		return err;
 	}
 
 	err = bt_fast_pair_fmdn_motion_detector_cb_register(&fmdn_motion_detector_cb);
