@@ -218,8 +218,11 @@ nRF5340 Audio
 -------------
 
 * Added the :kconfig:option:`CONFIG_BT_AUDIO_BROADCAST_BASE_PRINT` kconfig option to print the contents of the BASE when it is received.
-  This option is useful for debugging purposes.
+  This option is intended for debugging purposes.
   It is only valid for the :ref:`broadcast sink application <nrf53_audio_broadcast_sink_app>`.
+
+* Updated the call to :c:func:`hci_vs_sdc_iso_read_tx_timestamp` so that, when sending ISO data, it is performed at regular intervals instead of every SDU interval.
+  This change reduces the frequency of application-controller time synchronization, while significantly reducing processing overhead.
 
 nRF Desktop
 -----------

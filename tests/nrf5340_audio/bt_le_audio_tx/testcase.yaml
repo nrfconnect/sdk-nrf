@@ -1,0 +1,10 @@
+tests:
+  nrf5340_audio.bt_le_audio_tx:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - bt_le_audio_tx
+      - nrf5340_audio_unit_tests
+      - ci_tests_nrf5340_audio

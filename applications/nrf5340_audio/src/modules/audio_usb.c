@@ -50,6 +50,7 @@ static bool terminal_headset_in_enabled;
 static bool playing_state;
 static bool local_host_in;
 static bool local_host_out;
+static bool usb_sof_synchronized;
 
 /* The meta data for the USB and that required for the following audio system. */
 struct audio_metadata usb_in_meta = {.data_coding = PCM,
@@ -331,9 +332,11 @@ int audio_usb_init(bool host_in, bool host_out)
 
 	if (host_in && host_out) {
 		dev = DEVICE_DT_GET(DT_NODELABEL(uac2_headset));
+		usb_sof_synchronized = DT_PROP(DT_NODELABEL(uac_aclk), sof_synchronized);
 		LOG_INF("USB initialized as bidirectional (headset).");
 	} else if (host_out) {
 		dev = DEVICE_DT_GET(DT_NODELABEL(uac2_headphones));
+		usb_sof_synchronized = DT_PROP(DT_NODELABEL(hp_uac_aclk), sof_synchronized);
 		LOG_INF("USB initialized as unidirectional (headphones only).");
 	} else {
 		LOG_ERR("USB currently only supports output (host out) or bidirectional (host in "
@@ -359,7 +362,8 @@ int audio_usb_init(bool host_in, bool host_out)
 		return ret;
 	}
 
-	LOG_INF("Ready for USB host to send/receive.");
+	LOG_INF("Ready for USB host to send/receive: %s",
+		usb_sof_synchronized ? "No Sync (multi-clock) " : "Async (host-adjustable)");
 
 	return 0;
 }

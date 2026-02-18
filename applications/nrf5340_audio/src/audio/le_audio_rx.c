@@ -23,7 +23,9 @@ LOG_MODULE_REGISTER(le_audio_rx, CONFIG_LE_AUDIO_RX_LOG_LEVEL);
 
 struct rx_stats {
 	uint32_t recv_cnt;
+	uint32_t good_frame_cnt;
 	uint32_t bad_frame_cnt;
+	bool prev_bad_data;
 };
 
 static bool initialized;
@@ -115,6 +117,8 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	if (meta->bad_data) {
 		rx_stats[location_index].bad_frame_cnt++;
+	} else {
+		rx_stats[location_index].good_frame_cnt++;
 	}
 
 	if ((rx_stats[location_index].recv_cnt % 100) == 0 && rx_stats[location_index].recv_cnt) {
@@ -122,6 +126,16 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 		LOG_DBG("ISO RX SDUs: Loc: %d Total: %d Bad: %d", location_index,
 			rx_stats[location_index].recv_cnt, rx_stats[location_index].bad_frame_cnt);
 	}
+
+	if (meta->bad_data && !rx_stats[location_index].prev_bad_data) {
+		LOG_INF_RATELIMIT_RATE(1000,
+				       "Bad or 0 SDU: Loc: %u Total: %u Bad: %u. (Prints "
+				       "good->bad transition)",
+				       location_index, rx_stats[location_index].recv_cnt,
+				       rx_stats[location_index].bad_frame_cnt);
+	}
+
+	rx_stats[location_index].prev_bad_data = meta->bad_data;
 
 	if (stream_state_get() != STATE_STREAMING) {
 		/* Throw away data */
@@ -215,7 +229,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	audio_frame = net_buf_alloc(&ble_rx_pool, K_NO_WAIT);
 	if (audio_frame == NULL) {
-		LOG_WRN("Out of RX buffers");
+		LOG_WRN_RATELIMIT_RATE(1000, "Out of RX buffers");
 		return;
 	}
 

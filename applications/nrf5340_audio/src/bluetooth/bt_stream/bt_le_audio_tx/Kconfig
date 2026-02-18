@@ -1,0 +1,25 @@
+menu "BT LE Audio TX"
+
+config NRF_AUDIO_TX_TGT_LEAD_TIME_US
+	int
+	default 3000
+	help
+	  Do not change this value unless you know what you are doing.
+	  Target lead time to send data to controller before it sends the next SDU on air.
+	  Used to make sure that the data is sent to controller just in time for the next SDU,
+	  which can help with reducing the overall latency and power consumption.
+	  Setting this too low may lead to flushed data, and too high will increase latency.
+
+config NRF_AUDIO_TX_LEAD_TIME_DEVIATION_US
+	int
+	range 500 NRF_AUDIO_TX_TGT_LEAD_TIME_US
+	default 2500
+	help
+	  Do not change this value unless you know what you are doing.
+	  Max allowed deviation in microseconds from NRF_AUDIO_TX_TGT_LEAD_TIME_US
+	  This deviation may take into account audio processing jitter,
+	  which is caused by e.g. variable LC3 encoding time.
+	  Modules may use this value in different ways.
+
+
+endmenu # BT LE Audio TX

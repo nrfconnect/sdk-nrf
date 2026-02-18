@@ -21,6 +21,8 @@ if TRANSPORT_CIS
 rsource "bt_stream/unicast/Kconfig"
 endif # TRANSPORT_CIS
 
+rsource "bt_stream/bt_le_audio_tx/Kconfig"
+
 config BT_AUDIO_PACKING_INTERLEAVED
 	bool "Interleaved packing"
 	default n

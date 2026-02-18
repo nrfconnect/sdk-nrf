@@ -89,10 +89,6 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* To get smaller corrections */
 #define DRIFT_REGULATOR_DIV_FACTOR 2
 
-/* To allow BLE transmission and (host -> HCI -> controller) */
-#define JUST_IN_TIME_TARGET_DLY_US 3000
-#define JUST_IN_TIME_BOUND_US	   2500
-
 /* How often to print under-run warning */
 #define LOG_INTERVAL_BLKS 5000
 
@@ -895,13 +891,23 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	}
 
 	if (print_count % 100 == 0) {
-		LOG_DBG("JIT diff: %lld us. Target: %u +/- %u", diff, JUST_IN_TIME_TARGET_DLY_US,
-			JUST_IN_TIME_BOUND_US);
+		LOG_DBG("JIT diff: %lld us. Target: %d +/- %d", diff,
+			CONFIG_NRF_AUDIO_TX_TGT_LEAD_TIME_US,
+			CONFIG_NRF_AUDIO_TX_LEAD_TIME_DEVIATION_US);
 	}
 	print_count++;
 
-	if ((diff < (JUST_IN_TIME_TARGET_DLY_US - JUST_IN_TIME_BOUND_US)) ||
-	    (diff > (JUST_IN_TIME_TARGET_DLY_US + JUST_IN_TIME_BOUND_US))) {
+	/* If the data is sent too late/too slow, we don't copy in data. Instead,
+	 * blocks are dropped, which in turn will cause the controller to starve and
+	 * send a NULL PDU on air "gaining" an ISO interval of time. This means
+	 * we are again too fast, and drop blocks to come back to sync.
+	 */
+
+	if (!IN_RANGE(diff,
+		      CONFIG_NRF_AUDIO_TX_TGT_LEAD_TIME_US -
+			      CONFIG_NRF_AUDIO_TX_LEAD_TIME_DEVIATION_US,
+		      CONFIG_NRF_AUDIO_TX_TGT_LEAD_TIME_US +
+			      CONFIG_NRF_AUDIO_TX_LEAD_TIME_DEVIATION_US)) {
 		/* Drop next block to help with just-in-time */
 		atomic_set(&drop_next_block, true);
 		LOG_DBG("Dropped block to align with connection interval");
@@ -934,7 +940,7 @@ static void audio_datapath_sdu_ref_update(const struct zbus_channel *chan)
 		if (ctrl_blk.stream_started) {
 			ctrl_blk.prev_drift_sdu_ref_us = tx_sync_ts_us;
 
-			if (adjust && tx_sync_ts_us != 0) {
+			if (adjust) {
 				audio_datapath_just_in_time_check_and_adjust(tx_sync_ts_us,
 									     curr_ts_us);
 			}
