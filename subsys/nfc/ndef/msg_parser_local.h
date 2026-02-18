@@ -35,7 +35,6 @@ struct nfc_ndef_parser_memo_desc {
 	struct nfc_ndef_record_desc *rec_desc;
 };
 
-
 /** @brief Function for resolving data instances in the provided
  *         buffer according to requirements of the function
  *         @ref nfc_ndef_msg_parser_internal.
@@ -57,10 +56,8 @@ struct nfc_ndef_parser_memo_desc {
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_msg_parser_memo_resolve(uint8_t *result_buf,
-				     uint32_t *result_buf_len,
+int nfc_ndef_msg_parser_memo_resolve(uint8_t *result_buf, uint32_t *result_buf_len,
 				     struct nfc_ndef_parser_memo_desc *parser_memo_desc);
-
 
 /** @brief Parse NFC NDEF messages.
  *
@@ -80,8 +77,7 @@ int nfc_ndef_msg_parser_memo_resolve(uint8_t *result_buf,
  *            Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_msg_parser_internal(struct nfc_ndef_parser_memo_desc *parser_memo_desc,
-				 const uint8_t *nfc_data,
-				 uint32_t *nfc_data_len);
+				 const uint8_t *nfc_data, uint32_t *nfc_data_len);
 
 #ifdef __cplusplus
 }

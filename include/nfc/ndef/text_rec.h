@@ -30,7 +30,7 @@ extern "C" {
  */
 enum nfc_ndef_text_rec_utf {
 	/** Unicode Transformation Format 8. */
-	UTF_8  = 0,
+	UTF_8 = 0,
 	/** Unicode Transformation Format 16. */
 	UTF_16 = 1,
 };
@@ -63,10 +63,8 @@ struct nfc_ndef_text_rec_payload {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_text_rec_payload_encode(
-		struct nfc_ndef_text_rec_payload *nfc_rec_text_payload_desc,
-		uint8_t *buff,
-		uint32_t *len);
+int nfc_ndef_text_rec_payload_encode(struct nfc_ndef_text_rec_payload *nfc_rec_text_payload_desc,
+				     uint8_t *buff, uint32_t *len);
 
 /**
  * @brief External reference to the type field of the Text record, defined in
@@ -101,27 +99,18 @@ extern const uint8_t nfc_ndef_text_rec_type_field[];
  * @param data_arg Pointer to the user text.
  * @param data_len_arg Length of the user text.
  */
-#define NFC_NDEF_TEXT_RECORD_DESC_DEF(name,				      \
-				      utf_arg,				      \
-				      lang_code_arg,			      \
-				      lang_code_len_arg,		      \
-				      data_arg,				      \
-				      data_len_arg)			      \
-	struct nfc_ndef_text_rec_payload name##_nfc_ndef_text_rec_payload =   \
-	{								      \
-		.utf = utf_arg,						      \
-		.lang_code = lang_code_arg,				      \
-		.lang_code_len = lang_code_len_arg,			      \
-		.data = data_arg,					      \
-		.data_len = data_len_arg,				      \
-	};								      \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(name,				      \
-					 TNF_WELL_KNOWN,		      \
-					 0,				      \
-					 0,				      \
-					 nfc_ndef_text_rec_type_field,	      \
-					 NFC_NDEF_TEXT_REC_TYPE_LENGTH,	      \
-					 nfc_ndef_text_rec_payload_encode,    \
+#define NFC_NDEF_TEXT_RECORD_DESC_DEF(name, utf_arg, lang_code_arg, lang_code_len_arg, data_arg,   \
+				      data_len_arg)                                                \
+	struct nfc_ndef_text_rec_payload name##_nfc_ndef_text_rec_payload = {                      \
+		.utf = utf_arg,                                                                    \
+		.lang_code = lang_code_arg,                                                        \
+		.lang_code_len = lang_code_len_arg,                                                \
+		.data = data_arg,                                                                  \
+		.data_len = data_len_arg,                                                          \
+	};                                                                                         \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(name, TNF_WELL_KNOWN, 0, 0, nfc_ndef_text_rec_type_field, \
+					 NFC_NDEF_TEXT_REC_TYPE_LENGTH,                            \
+					 nfc_ndef_text_rec_payload_encode,                         \
 					 &(name##_nfc_ndef_text_rec_payload))
 
 /**

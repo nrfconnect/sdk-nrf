@@ -21,7 +21,6 @@ extern "C" {
  *  @brief Parser for NFC NDEF records.
  */
 
-
 /** @brief Parse NDEF records.
  *
  *  This parsing implementation uses the binary payload descriptor
@@ -43,8 +42,7 @@ extern "C" {
  */
 int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
 			  struct nfc_ndef_record_desc *rec_desc,
-			  enum nfc_ndef_record_location *record_location,
-			  const uint8_t *nfc_data,
+			  enum nfc_ndef_record_location *record_location, const uint8_t *nfc_data,
 			  uint32_t *nfc_data_len);
 
 /** @brief Print the parsed contents of the NDEF record.
@@ -54,8 +52,7 @@ int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
  *                      be printed.
  *
  */
-void nfc_ndef_record_printout(uint32_t num,
-			      const struct nfc_ndef_record_desc *rec_desc);
+void nfc_ndef_record_printout(uint32_t num, const struct nfc_ndef_record_desc *rec_desc);
 
 /**
  * @}

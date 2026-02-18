@@ -44,11 +44,8 @@ extern "C" {
  * @retval Other Other codes might be returned depending on the function
  * @ref nfc_ndef_msg_encode.
  */
-int nfc_ndef_uri_msg_encode(enum nfc_ndef_uri_rec_id uri_id_code,
-			    uint8_t const *const uri_data,
-			    uint16_t uri_data_len,
-			    uint8_t *buf,
-			    uint32_t *len);
+int nfc_ndef_uri_msg_encode(enum nfc_ndef_uri_rec_id uri_id_code, uint8_t const *const uri_data,
+			    uint16_t uri_data_len, uint8_t *buf, uint32_t *len);
 
 #ifdef __cplusplus
 }
