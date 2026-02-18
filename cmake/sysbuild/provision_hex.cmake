@@ -110,7 +110,6 @@ function(provision application prefix_name)
       # place such partition name in the DTS.
       dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET b0n ABSOLUTE REQUIRED)
       set(s0_arg --s0-addr ${s0_slot_address})
-      set(s1_arg)
     else()
       # We can pick all of these from MCUboot image, as DTS partitions come from common
       # DTS and image header size is the same for all images for a given platform.
