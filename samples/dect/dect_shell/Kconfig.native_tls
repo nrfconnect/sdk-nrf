@@ -4,12 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 config SAMPLE_DESH_NATIVE_TLS
-	bool "Custom AT%CMNG command to store credentials for native TLS"
+	bool "Custom ``AT%CMNG`` command to store credentials for native TLS"
 	default n
 	select AT_CMD_CUSTOM
 	help
-	  Enable the custom `AT%CMNG` command to store TLS credentials for native TLS usage.
-	  When enabled, you can use the AT%CMNG command to store TLS credentials
+	  Enable the custom ``AT%CMNG`` command to store TLS credentials for native TLS usage.
+	  When enabled, you can use the ``AT%CMNG`` command to store TLS credentials
 	  (CA certificate, client certificate, private key) in the secure storage or
 	  in settings with MQTT/TLS, from where native TLS (Mbed TLS) can load them when
 	  establishing a TLS connection.
@@ -20,17 +20,17 @@ config SAMPLE_DESH_NATIVE_TLS_CREDENTIAL_BUFFER_SIZE
 	int "Buffer space reserved for loading credentials"
 	default 4096
 	help
-	  Buffer space available for a single `sec_tag` when loading credentials for Mbed TLS.
+	  Buffer space available for a single ``sec_tag`` when loading credentials for Mbed TLS.
 
 config SAMPLE_DESH_NATIVE_TLS_CREDENTIAL_BUFFER_COUNT
 	int "Number of buffers for loading credentials"
 	default 1
 	range 1 2
 	help
-	  Number of buffers available for loading `sec_tag` credentials for Mbed TLS.
+	  Number of buffers available for loading ``sec_tag`` credentials for Mbed TLS.
 	  The TLS client needs the buffer only when connecting, whereas the TLS server needs
 	  the buffer as long as it is running.
 	  Increase the value if you need TLS client and server running simultaneously
-	  with different `sec_tags`.
+	  with different ``sec_tags``.
 
 endif

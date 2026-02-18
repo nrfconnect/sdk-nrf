@@ -116,7 +116,7 @@ int nrf_cloud_coap_resume(void);
  *
  * This function sends updated network information to nRF Cloud. It can be
  * called at any time to refresh the shadow with current network conditions
- * (e.g., after a cell tower handoff, network mode change, or reconnection
+ * (for example, after a cell tower handoff, network mode change, or reconnection
  * after network loss).
  *
  * The network information includes: current band, area code, cell ID,
