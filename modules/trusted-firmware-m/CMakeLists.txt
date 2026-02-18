@@ -4,6 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# This workaround is for long paths in TF-M under windows issues.
+if(WIN32 AND CMAKE_VERSION VERSION_GREATER_EQUAL "VERSION 4.2.1")
+    set(CMAKE_INTERMEDIATE_DIR_STRATEGY "SHORT"  CACHE STRING 
+        "Strategy for target intermediate directories.")
+endif()
+
 zephyr_library()
 zephyr_include_directories(.)
 zephyr_library_sources_ifdef(CONFIG_TFM_ALLOW_NON_SECURE_FAULT_HANDLING fault.c)
