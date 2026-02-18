@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+ #include <zephyr/kernel.h>
 #include <silexpk/ec_curves.h>
 #include "../../../src/regs_curves.h"
 #include "../../target/hw/ba414/regs_commands.h"
@@ -229,9 +230,21 @@ static const uint8_t params_x448[] =
 	"\xA6\x62\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-	"\x00\x00\x00\x00\x00\x00\x00\x00";
-const struct sx_pk_ecurve sx_curve_x448 = {
-	.curveflags = 0, .sz = 56, .params = params_x448, .params_total_sz = sizeof(params_x448)};
+	"\x00\x00\x00\x00\x00\x00\x00\x00"
+#if defined(CONFIG_CRACEN_ENABLE_ECC_EXTENDED_COUNTERMEASURES)
+	/* The n parameter has the value:
+	 * n = 2^446 − 0x8335dc163bb124b65129c96fde933d8d723a70aadc873d6d54a7bb0d
+	 */
+	"\xF3\x44\x58\xAB\x92\xC2\x78\x23\x55\x8F\xC5\x8D\x72\xC2\x6C\x21"
+	"\x90\x36\xD6\xAE\x49\xDB\x4E\xC4\xE9\x23\xCA\x7C\xFF\xFF\xFF\xFF"
+	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
+	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x3F"
+#endif
+	;
+const struct sx_pk_ecurve sx_curve_x448 = {.curveflags = PK_OP_FLAGS_EDWARDS_448,
+					   .sz = 56,
+					   .params = params_x448,
+					   .params_total_sz = sizeof(params_x448)};
 
 static const uint8_t params_brainpoolP224r1[] =
 	/* q */
