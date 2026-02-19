@@ -490,6 +490,15 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		ret = audio_system_encoder_num_ch_set(locations);
 		ERR_CHK(ret);
 
+		uint8_t num_filled = 0;
+
+		bt_mgmt_set_size_filled_get(&num_filled);
+
+		if (num_filled == 0) {
+			/* All devices in set disconnected, clear SIRK before scanning */
+			bt_mgmt_scan_sirk_set(NULL);
+		}
+
 		break;
 
 	case BT_MGMT_BOND_DELETED:

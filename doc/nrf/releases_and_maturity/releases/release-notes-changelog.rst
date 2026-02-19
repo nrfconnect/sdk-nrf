@@ -266,6 +266,9 @@ nRF5340 Audio
 
   * :kconfig:option:`CONFIG_SPEED_OPTIMIZATIONS` to enable compiler speed optimizations for the application.
 
+  * Support for multiple independent coordinated sets in :ref:`unicast client app<nrf53_audio_unicast_client_app>`.
+    When all the devices in a coordinated set are disconnected, the SIRK is cleared, allowing a new unicast group to be formed with a new SIRK without the need to restart the application.
+
 * Updated:
 
   * Switched to the new USB stack introduced in Zephyr 3.4.0.
