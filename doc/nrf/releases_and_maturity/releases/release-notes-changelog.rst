@@ -65,6 +65,8 @@ Bootloaders and DFU
 
 * Renamed the existing lifecycle state (LCS) type ``lcs`` to :c:enum:`bl_storage_lcs`.
 
+* Added a new lifecycle state (LCS) API designed for nRF54L Series devices.
+
 Developing with nRF91 Series
 ============================
 

@@ -195,6 +195,7 @@
 /doc/nrf/libraries/others/log_rpc.rst     @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/others/network_core_monitor.rst @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/others/nrf_compression.rst @nrfconnect/ncs-eris-doc
+/doc/nrf/libraries/others/nrf_lcs.rst     @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/others/nrf_profiler.rst @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/pcm_mix.rst     @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/pcm_stream_channel_modifier.rst @nrfconnect/ncs-audio-doc
@@ -333,6 +334,7 @@
 /include/bluetooth/services/nus.h         @nrfconnect/ncs-blenders
 /include/bluetooth/services/rscs.h        @nrfconnect/ncs-blenders
 /include/bluetooth/services/throughput.h  @nrfconnect/ncs-blenders
+/include/nrf_lcs/                         @nrfconnect/ncs-eris
 /include/caf/                             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /include/debug/                           @nrfconnect/ncs-co-drivers
 /include/debug/ppi_trace.h                @nrfconnect/ncs-co-drivers @nordic-krch
@@ -819,6 +821,7 @@
 /subsys/event_manager_proxy/              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /subsys/fw_info/                          @nrfconnect/ncs-eris
 /subsys/gazell/                           @leewkb4567
+/subsys/nrf_lcs/                          @nrfconnect/ncs-eris
 /subsys/logging/                          @nrfconnect/ncs-protocols-serialization
 /subsys/mcuboot/                          @nrfconnect/ncs-eris
 /subsys/mgmt/                             @nrfconnect/ncs-eris
