@@ -1,0 +1,6 @@
+.. include:: /includes/matter/configuration/basic_internal.txt
+
+.. note::
+
+    The nRF54L15 TAG does not have external flash.
+    Therefore, all configurations use internal flash only.
