@@ -185,6 +185,9 @@
 
 .. ### Other shortcuts
 
+.. |west_update_note| replace:: If you get an error message when running west, :ref:`update west <west_update>` to the latest version.
+   See :ref:`zephyr:west-troubleshooting` in the Zephyr documentation for more information.
+
 .. |ncs_oot_sample_note| replace:: Some samples in the |NCS| are currently not designed to work out-of-tree.
    You may need to manually configure your sample to work correctly in |nRFVSC|.
 

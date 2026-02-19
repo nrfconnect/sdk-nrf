@@ -46,6 +46,7 @@ linkcheck_ignore = [r"(\.\.(\\|/))+(kconfig|zephyr)"]
 
 exclude_patterns = [
   "platform/cypress/psoc64/security/keys/readme.rst"
+  "templates/cheat_sheet.rst"
   "index.rst"
 ]
 

@@ -324,14 +324,8 @@ Depending on your preferred development environment, complete the following step
          Initializing west with a specific revision of the :ref:`manifest file <zephyr:west-manifest-files>` does not lock your repositories to this version.
          Checking out a different branch or tag in the `sdk-nrf`_ repository and running ``west update`` changes the version of the |NCS| that you work with.
 
-         .. west-error-start
-
          .. note::
-
-            If you get an error message when running west, :ref:`update west <west_update>` to the latest version.
-            See :ref:`zephyr:west-troubleshooting` in the Zephyr documentation for more information.
-
-         .. west-error-end
+            |west_update_note|
 
       #. Enter the *nRFConnectSDK_revision* subdirectory and run the following command to clone the project repositories:
 

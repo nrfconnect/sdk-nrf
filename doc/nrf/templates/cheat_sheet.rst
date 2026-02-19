@@ -332,9 +332,9 @@ Include 1:
      :end-line: 27
 
 Include 2:
-  .. include:: ../installation/install_ncs.rst
-     :start-after: west-error-start
-     :end-before: west-error-end
+  .. include:: ../protocols/esb/index.rst
+     :start-after: esb_intro_start
+     :end-before: esb_intro_end
 
 To reuse text from another doc set:
 
@@ -351,14 +351,6 @@ Include 4:
      :auto-dedent:
      :start-after: Version 1.0*.
      :end-before: If you use the supplied library,
-
-You can also use ncs-include if you want to use the indentation options inside the nrf doc set:
-
-Include 5 (similar to include 2, but improved indentation):
-  .. ncs-include:: ../installation/install_ncs.rst
-     :start-after: west-error-start
-     :end-before: west-error-end
-     :auto-dedent:
 
 See https://github.com/nrfconnect/sdk-nrf/commit/fa5bd7330538f6a12e059c9d60fa2696e48fcf3a for implementation and usage.
 

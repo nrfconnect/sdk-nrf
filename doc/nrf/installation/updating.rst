@@ -106,9 +106,8 @@ Use the method corresponding to the way you installed the |NCS|, as described in
       * ``west update`` - To update the project repositories to the state specified in this manifest file.
         It is a good practice to run ``west update`` every time you change or modify the current working branch (for example, when you pull, rebase, or check out a different branch).
 
-      .. include:: install_ncs.rst
-         :start-after: west-error-start
-         :end-before: west-error-end
+      .. note::
+         |west_update_note|
 
       **Example: Switching to a release**
 
