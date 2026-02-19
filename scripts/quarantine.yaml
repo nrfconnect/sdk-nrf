@@ -116,3 +116,9 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "Upmerge regression - jira TBD."
+
+- scenarios:
+    - nrf.extended.sample.boards.nrf.nrfx
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9128"
