@@ -112,6 +112,11 @@ config BT_CTLR_SDC_QOS_CHANNEL_SURVEY
 	help
 	  Channel survey feature support
 
+config BT_CTLR_SDC_QOS_CONN_EVENT_REPORT
+	bool "QoS connection event report"
+	help
+	  Quality of Service connection event report feature support
+
 config BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING
 	bool "Allow scanning and initiating at the same time"
 	depends on BT_CENTRAL

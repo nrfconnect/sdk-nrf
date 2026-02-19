@@ -9,6 +9,7 @@ menuconfig DESKTOP_BLE_QOS_ENABLE
 	depends on BT_LL_SOFTDEVICE
 	depends on CPU_CORTEX_M4
 	select BT_HCI_VS_EVT_USER
+	select BT_CTLR_SDC_QOS_CONN_EVENT_REPORT
 	help
 	  Enable device to avoid congested RF channels.
 
