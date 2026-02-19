@@ -537,6 +537,13 @@ int nrf_cloud_agnss_process(const char *buf, size_t buf_len)
 		 * agnss_send_to_modem(), which expects this combined structure.
 		 */
 		if (element.type == NRF_CLOUD_AGNSS_GPS_TOWS) {
+			/* Validate sv_id is within valid range */
+			if (element.tow->sv_id == 0 ||
+			    element.tow->sv_id > NRF_CLOUD_AGNSS_MAX_SV_TOW) {
+				LOG_WRN("Invalid TOW sv_id: %u", element.tow->sv_id);
+				continue;
+			}
+
 			memcpy(&sys_time.sv_tow[element.tow->sv_id - 1], element.tow,
 			       sizeof(sys_time.sv_tow[0]));
 			if (element.tow->flags || element.tow->tlm) {
