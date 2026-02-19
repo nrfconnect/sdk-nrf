@@ -293,7 +293,7 @@ int is_monotonic_counter_update_possible(uint16_t counter_desc);
  *
  * The LCS can be only transitioned in the order they are defined here.
  */
-enum lcs {
+enum bl_storage_lcs {
 	BL_STORAGE_LCS_UNKNOWN = 0,
 	BL_STORAGE_LCS_ASSEMBLY = 1,
 	BL_STORAGE_LCS_PROVISIONING = 2,
@@ -309,7 +309,7 @@ enum lcs {
  * @retval 0            The LCS read was successful.
  * @retval -EREADLCS    Error on reading from OTP or invalid OTP content.
  */
-int read_life_cycle_state(enum lcs *lcs);
+int read_life_cycle_state(enum bl_storage_lcs *lcs);
 
 /**
  * @brief Update the life cycle state in OTP.
@@ -321,7 +321,7 @@ int read_life_cycle_state(enum lcs *lcs);
  * @retval -EREADLCS    Reading the current state failed.
  * @retval -EINVALIDLCS Invalid next state.
  */
-int update_life_cycle_state(enum lcs next_lcs);
+int update_life_cycle_state(enum bl_storage_lcs next_lcs);
 
 /**
  * Read the implementation ID from OTP and copy it into a given buffer.

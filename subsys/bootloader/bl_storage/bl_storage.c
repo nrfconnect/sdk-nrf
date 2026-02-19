@@ -430,7 +430,7 @@ static int bl_storage_lcs_set(uint32_t address, lcs_data_t state)
  * enforce the correct transitioning of LCS until a full erase of the
  * device.
  */
-int read_life_cycle_state(enum lcs *lcs)
+int read_life_cycle_state(enum bl_storage_lcs *lcs)
 {
 	if (lcs == NULL) {
 		return -EINVAL;
@@ -466,10 +466,10 @@ int read_life_cycle_state(enum lcs *lcs)
 	return 0;
 }
 
-int update_life_cycle_state(enum lcs next_lcs)
+int update_life_cycle_state(enum bl_storage_lcs next_lcs)
 {
 	int err;
-	enum lcs current_lcs = 0;
+	enum bl_storage_lcs current_lcs = 0;
 
 	if (next_lcs == BL_STORAGE_LCS_UNKNOWN) {
 		return -EINVALIDLCS;

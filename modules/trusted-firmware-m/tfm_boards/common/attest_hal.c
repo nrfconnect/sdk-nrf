@@ -29,7 +29,7 @@ static bool boot_seed_set;
 static uint8_t boot_seed[BOOT_SEED_SIZE];
 #endif
 
-static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs)
+static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum bl_storage_lcs lcs)
 {
 	switch (lcs) {
 	case BL_STORAGE_LCS_ASSEMBLY:
@@ -45,7 +45,7 @@ static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs)
 	}
 }
 
-static enum lcs map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs)
+static enum bl_storage_lcs map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs)
 {
 	switch (lcs) {
 	case TFM_SLC_ASSEMBLY_AND_TEST:
@@ -64,7 +64,7 @@ static enum lcs map_tfm_slc_to_bl_storage_lcs(enum tfm_security_lifecycle_t lcs)
 enum tfm_security_lifecycle_t tfm_attest_hal_get_security_lifecycle(void)
 {
 	int err;
-	enum lcs otp_lcs;
+	enum bl_storage_lcs otp_lcs;
 
 	err = read_life_cycle_state(&otp_lcs);
 	if (err != 0) {
@@ -76,7 +76,7 @@ enum tfm_security_lifecycle_t tfm_attest_hal_get_security_lifecycle(void)
 
 int tfm_attest_update_security_lifecycle_otp(enum tfm_security_lifecycle_t slc)
 {
-	enum lcs next_lcs;
+	enum bl_storage_lcs next_lcs;
 
 	next_lcs = map_tfm_slc_to_bl_storage_lcs(slc);
 
