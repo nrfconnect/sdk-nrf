@@ -3611,37 +3611,6 @@ out:
 	return status;
 }
 
-#ifdef NRF_WIFI_LOW_POWER
-enum nrf_wifi_status nrf_wifi_sys_fmac_get_host_rpu_ps_ctrl_state(void *dev_ctx,
-								  int *rpu_ps_ctrl_state)
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
-
-	fmac_dev_ctx = dev_ctx;
-
-	if (!fmac_dev_ctx || !rpu_ps_ctrl_state) {
-		nrf_wifi_osal_log_err("%s: Invalid parameters",
-				      __func__);
-		goto out;
-	}
-
-	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
-		nrf_wifi_osal_log_err("%s: Invalid op mode",
-				      __func__);
-		goto out;
-	}
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Fetching of RPU PS state failed",
-				      __func__);
-		goto out;
-	}
-out:
-	return status;
-}
-#endif /* NRF_WIFI_LOW_POWER */
-
 enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						       enum rpu_stats_type stats_type,
 						       struct nrf_wifi_rpu_debug_stats *stats)
@@ -3744,7 +3713,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 out:
 	return status;
 }
-
 #endif /* NRF71_UTIL */
 
 

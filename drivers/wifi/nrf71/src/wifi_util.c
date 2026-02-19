@@ -393,32 +393,6 @@ static int nrf_wifi_util_tx_rate(const struct shell *sh,
 }
 
 
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
-static int nrf_wifi_util_show_host_rpu_ps_ctrl_state(const struct shell *sh,
-						     size_t argc,
-						     const char *argv[])
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	int rpu_ps_state = -1;
-
-	status = nrf_wifi_sys_fmac_get_host_rpu_ps_ctrl_state(ctx->rpu_ctx,
-							      &rpu_ps_state);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		shell_fprintf(sh,
-			      SHELL_ERROR,
-			      "Failed to get PS state\n");
-		return -ENOEXEC;
-	}
-
-	shell_fprintf(sh,
-		      SHELL_INFO,
-		      "RPU sleep status = %s\n", rpu_ps_state ? "AWAKE" : "SLEEP");
-	return 0;
-}
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
-
-
 static int nrf_wifi_util_show_vers(const struct shell *sh,
 				  size_t argc,
 				  const char *argv[])
@@ -1311,14 +1285,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_tx_rate,
 		      2,
 		      1),
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
-	SHELL_CMD_ARG(sleep_state,
-		      NULL,
-		      "Display current sleep status",
-		      nrf_wifi_util_show_host_rpu_ps_ctrl_state,
-		      1,
-		      0),
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 	SHELL_CMD_ARG(show_vers,
 		      NULL,
 		      "Display the driver and the firmware versions",
