@@ -113,6 +113,13 @@ config NCS_SAMPLE_MATTER_CERTIFICATION
 	  It enables including software patches required for the Matter platform certification
 	  purposes. Currently it works only with the Matter template sample.
 
+config NCS_SAMPLE_MATTER_USE_DEFAULT_BUTTON_HANDLER
+	bool "Use deafault button handler alognside the application one"
+	default y
+	help
+	  When enabled, the button handler responsible for factory reset and DFU is used alongside application handler.
+	  In order to override this handler, disable this config.
+
 rsource "persistent_storage/Kconfig"
 rsource "watchdog/Kconfig"
 rsource "diagnostic/Kconfig"
