@@ -60,7 +60,14 @@ static struct bt_conn *current_conn;
 static struct bt_conn *auth_conn;
 static struct k_work adv_work;
 
-static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
+#if DT_HAS_CHOSEN(nordic_nus_uart)
+#define NUS_UART_NODE DT_CHOSEN(nordic_nus_uart)
+#elif DT_HAS_CHOSEN(zephyr_shell_uart)
+#define NUS_UART_NODE DT_CHOSEN(zephyr_shell_uart)
+#else
+#error "No NUS UART: add chosen 'nordic,nus-uart' to devicetree (e.g. in a board overlay)."
+#endif
+static const struct device *uart = DEVICE_DT_GET(NUS_UART_NODE);
 static struct k_work_delayable uart_work;
 
 struct uart_data_t {
