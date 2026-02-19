@@ -63,6 +63,8 @@ Bootloaders and DFU
 
   * Added support for the nRF54H20 SoC.
 
+* Renamed the existing lifecycle state (LCS) type ``lcs`` to :c:enum:`bl_storage_lcs`.
+
 Developing with nRF91 Series
 ============================
 
