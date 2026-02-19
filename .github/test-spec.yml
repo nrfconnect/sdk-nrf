@@ -163,6 +163,7 @@
   - "scripts/nrf_compress/**/*"
   - "scripts/west_commands/ncs*"
   - "subsys/bootloader/**/*"
+  - "subsys/dfu/**/*"
   - "subsys/partition_manager/*"
   - "subsys/fw_info/**/*"
   - "subsys/mgmt/**/*"
@@ -226,7 +227,6 @@
   - any:
       - "include/bluetooth/**/*"
       - "!include/bluetooth/mesh/**/*"
-
 
 "CI-mesh-test":
   - "subsys/bluetooth/mesh/**/*"
