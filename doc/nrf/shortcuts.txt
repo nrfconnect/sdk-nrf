@@ -2,11 +2,11 @@
 
 .. ### Versions
 
-.. |release| replace:: v3.2.2
-.. |release_tt| replace:: ``v3.2.2``
-.. |release_number_tt| replace:: ``3.2.2``
+.. |release| replace:: v3.2.3
+.. |release_tt| replace:: ``v3.2.3``
+.. |release_number_tt| replace:: ``3.2.3``
 
-.. |jlink_ver| replace:: v8.76
+.. |jlink_ver| replace:: v9.18
 
 .. |54H_nrfutil_device_ver| replace:: 2.15.2
 .. |54H_nrfutil_trace_ver| replace:: 4.4.0
