@@ -67,7 +67,7 @@ void test_cs_de_calc_bad_tone_quality(void)
 
 void test_cs_de_calc_with_ideal_iq_data(void)
 {
-	for (uint8_t n_ap = 1; n_ap <= CONFIG_BT_RAS_MAX_ANTENNA_PATHS; n_ap++) {
+	for (uint8_t n_ap = 1; n_ap <= CONFIG_BT_CS_DE_MAX_NUM_ANTENNA_PATHS; n_ap++) {
 		for (float distance = 0.0f; distance < 74.5f; distance += 0.1f) {
 			cs_de_report_t test_report;
 			cs_de_quality_t result;

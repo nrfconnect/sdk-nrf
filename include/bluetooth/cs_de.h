@@ -12,12 +12,6 @@
 
 #define CS_DE_NUM_CHANNELS (75)
 
-#if defined(CONFIG_BT_RAS)
-#define CS_DE_NUM_ANTENNA_PATHS CONFIG_BT_RAS_MAX_ANTENNA_PATHS
-#else
-#define CS_DE_NUM_ANTENNA_PATHS CONFIG_BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
-#endif
-
 /** @file
  *  @defgroup bt_cs_de Channel Sounding Distance Estimation API
  *  @{
@@ -84,13 +78,13 @@ typedef struct {
 	uint8_t n_ap;
 
 	/** IQ values for local and remote measured tones. */
-	cs_de_iq_tones_t iq_tones[CS_DE_NUM_ANTENNA_PATHS];
+	cs_de_iq_tones_t iq_tones[CONFIG_BT_CS_DE_MAX_NUM_ANTENNA_PATHS];
 
 	/** Tone quality indicators */
-	cs_de_tone_quality_t tone_quality[CS_DE_NUM_ANTENNA_PATHS];
+	cs_de_tone_quality_t tone_quality[CONFIG_BT_CS_DE_MAX_NUM_ANTENNA_PATHS];
 
 	/** Distance estimate results */
-	cs_de_dist_estimates_t distance_estimates[CS_DE_NUM_ANTENNA_PATHS];
+	cs_de_dist_estimates_t distance_estimates[CONFIG_BT_CS_DE_MAX_NUM_ANTENNA_PATHS];
 
 	/** Total time measured during RTT measurements */
 	int32_t rtt_accumulated_half_ns;
@@ -98,19 +92,6 @@ typedef struct {
 	/** Number of RTT measurements taken */
 	uint8_t rtt_count;
 } cs_de_report_t;
-
-#if defined(CONFIG_BT_RAS)
-/**
- * @brief Partially populate the report.
- * This populates the report but does not set the distance estimates and the quality.
- * @param[in] local_steps Buffer to the local step data to parse.
- * @param[in] peer_steps Buffer to the peer ranging data to parse.
- * @param[in] config CS config of the local controller.
- * @param[out] p_report Report populated with the raw data from the last ranging.
- */
-void cs_de_populate_report(struct net_buf_simple *local_steps, struct net_buf_simple *peer_steps,
-			   struct bt_conn_le_cs_config *config, cs_de_report_t *p_report);
-#endif
 
 /**
  * @brief Combine the local and remote IQ values in a cs_de_iq_tones_t to one array.

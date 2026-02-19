@@ -39,6 +39,9 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 	((BT_RAS_MAX_STEPS_PER_PROCEDURE * sizeof(struct bt_le_cs_subevent_step)) +                \
 	 (BT_RAS_MAX_STEPS_PER_PROCEDURE * BT_RAS_MAX_STEP_DATA_LEN))
 
+#define CHANNEL_INDEX_OFFSET (2)
+#define TONE_QI_OK_TONE_COUNT_THRESHOLD (15)
+
 static K_SEM_DEFINE(sem_remote_capabilities_obtained, 0, 1);
 static K_SEM_DEFINE(sem_config_created, 0, 1);
 static K_SEM_DEFINE(sem_cs_security_enabled, 0, 1);
@@ -63,6 +66,9 @@ static uint8_t buffer_index;
 static uint8_t buffer_num_valid;
 static cs_de_dist_estimates_t distance_estimate_buffer[MAX_AP][DE_SLIDING_WINDOW_SIZE];
 static struct bt_conn_le_cs_config cs_config;
+
+static uint16_t m_n_iqs[CONFIG_BT_RAS_MAX_ANTENNA_PATHS][CS_DE_NUM_CHANNELS];
+static cs_de_report_t m_cs_de_report;
 
 static void store_distance_estimates(cs_de_report_t *p_report)
 {
@@ -147,6 +153,148 @@ static cs_de_dist_estimates_t get_distance(uint8_t ap)
 	return averaged_result;
 }
 
+static bool m_is_tone_quality_ok(uint16_t num_iqs[CS_DE_NUM_CHANNELS], uint8_t channel_map[10])
+{
+	uint8_t ok_tones_count = 0;
+
+	for (uint8_t i = 0; i < CS_DE_NUM_CHANNELS; ++i) {
+		if (BT_LE_CS_CHANNEL_BIT_GET(channel_map, i + CHANNEL_INDEX_OFFSET) &&
+		    num_iqs[i] >= 1) {
+			ok_tones_count += 1;
+		}
+	}
+	return (ok_tones_count >= TONE_QI_OK_TONE_COUNT_THRESHOLD);
+}
+
+static void cumulate_mean(float *avg, float new_value, uint16_t *N)
+{
+	float a = 1.0f / (*N);
+	float b = 1.0f - a;
+	*avg = a * new_value + b * (*avg);
+}
+
+static void extract_pcts(cs_de_report_t *p_report, uint8_t channel_index,
+			 uint8_t antenna_permutation_index,
+			 struct bt_hci_le_cs_step_data_tone_info *local_tone_info,
+			 struct bt_hci_le_cs_step_data_tone_info *remote_tone_info)
+{
+
+	for (uint8_t tone_index = 0; tone_index < p_report->n_ap; tone_index++) {
+		int antenna_path = bt_le_cs_get_antenna_path(p_report->n_ap,
+							     antenna_permutation_index, tone_index);
+		if (antenna_path < 0) {
+			LOG_WRN("Invalid antenna path.");
+			return;
+		}
+
+		if (local_tone_info[tone_index].quality_indicator !=
+			    BT_HCI_LE_CS_TONE_QUALITY_HIGH ||
+		    remote_tone_info[tone_index].quality_indicator !=
+			    BT_HCI_LE_CS_TONE_QUALITY_HIGH) {
+			return;
+		}
+
+		struct bt_le_cs_iq_sample local_iq =
+			bt_le_cs_parse_pct(local_tone_info[tone_index].phase_correction_term);
+		struct bt_le_cs_iq_sample remote_iq =
+			bt_le_cs_parse_pct(remote_tone_info[tone_index].phase_correction_term);
+
+		m_n_iqs[antenna_path][channel_index]++;
+
+		if (m_n_iqs[antenna_path][channel_index] == 1) {
+			p_report->iq_tones[antenna_path].i_local[channel_index] = local_iq.i;
+			p_report->iq_tones[antenna_path].q_local[channel_index] = local_iq.q;
+			p_report->iq_tones[antenna_path].i_remote[channel_index] = remote_iq.i;
+			p_report->iq_tones[antenna_path].q_remote[channel_index] = remote_iq.q;
+		} else {
+			cumulate_mean(&p_report->iq_tones[antenna_path].i_local[channel_index],
+				      local_iq.i, &m_n_iqs[antenna_path][channel_index]);
+			cumulate_mean(&p_report->iq_tones[antenna_path].q_local[channel_index],
+				      local_iq.q, &m_n_iqs[antenna_path][channel_index]);
+			cumulate_mean(&p_report->iq_tones[antenna_path].i_remote[channel_index],
+				      remote_iq.i, &m_n_iqs[antenna_path][channel_index]);
+			cumulate_mean(&p_report->iq_tones[antenna_path].q_remote[channel_index],
+				      remote_iq.q, &m_n_iqs[antenna_path][channel_index]);
+		}
+	}
+}
+
+static void extract_rtt_timings(cs_de_report_t *p_report,
+				struct bt_hci_le_cs_step_data_mode_1 *local_rtt_data,
+				struct bt_hci_le_cs_step_data_mode_1 *peer_rtt_data)
+{
+	if (local_rtt_data->packet_quality_aa_check !=
+		    BT_HCI_LE_CS_PACKET_QUALITY_AA_CHECK_SUCCESSFUL ||
+	    local_rtt_data->packet_rssi == BT_HCI_LE_CS_PACKET_RSSI_NOT_AVAILABLE ||
+	    local_rtt_data->tod_toa_reflector == BT_HCI_LE_CS_TIME_DIFFERENCE_NOT_AVAILABLE ||
+	    peer_rtt_data->packet_quality_aa_check !=
+		    BT_HCI_LE_CS_PACKET_QUALITY_AA_CHECK_SUCCESSFUL ||
+	    peer_rtt_data->packet_rssi == BT_HCI_LE_CS_PACKET_RSSI_NOT_AVAILABLE ||
+	    peer_rtt_data->tod_toa_reflector == BT_HCI_LE_CS_TIME_DIFFERENCE_NOT_AVAILABLE) {
+		return;
+	}
+
+	if (p_report->role == BT_CONN_LE_CS_ROLE_INITIATOR) {
+		p_report->rtt_accumulated_half_ns +=
+			local_rtt_data->toa_tod_initiator - peer_rtt_data->tod_toa_reflector;
+	} else {
+		p_report->rtt_accumulated_half_ns +=
+			peer_rtt_data->toa_tod_initiator - local_rtt_data->tod_toa_reflector;
+	}
+
+	p_report->rtt_count++;
+}
+
+static bool process_ranging_header(struct ras_ranging_header *ranging_header, void *user_data)
+{
+	cs_de_report_t *p_report = (cs_de_report_t *)user_data;
+
+	p_report->n_ap = ((ranging_header->antenna_paths_mask & BIT(0)) +
+			  ((ranging_header->antenna_paths_mask & BIT(1)) >> 1) +
+			  ((ranging_header->antenna_paths_mask & BIT(2)) >> 2) +
+			  ((ranging_header->antenna_paths_mask & BIT(3)) >> 3));
+	return true;
+}
+
+static bool process_step_data(struct bt_le_cs_subevent_step *local_step,
+			      struct bt_le_cs_subevent_step *peer_step, void *user_data)
+{
+	cs_de_report_t *p_report = (cs_de_report_t *)user_data;
+
+	if (local_step->mode == BT_HCI_OP_LE_CS_MAIN_MODE_2) {
+		struct bt_hci_le_cs_step_data_mode_2 *local_step_data =
+			(struct bt_hci_le_cs_step_data_mode_2 *)local_step->data;
+		struct bt_hci_le_cs_step_data_mode_2 *peer_step_data =
+			(struct bt_hci_le_cs_step_data_mode_2 *)peer_step->data;
+
+		extract_pcts(p_report, local_step->channel - CHANNEL_INDEX_OFFSET,
+			     local_step_data->antenna_permutation_index, local_step_data->tone_info,
+			     peer_step_data->tone_info);
+	} else if (local_step->mode == BT_HCI_OP_LE_CS_MAIN_MODE_1) {
+		struct bt_hci_le_cs_step_data_mode_1 *local_step_data =
+			(struct bt_hci_le_cs_step_data_mode_1 *)local_step->data;
+		struct bt_hci_le_cs_step_data_mode_1 *peer_step_data =
+			(struct bt_hci_le_cs_step_data_mode_1 *)peer_step->data;
+
+		extract_rtt_timings(p_report, local_step_data, peer_step_data);
+	} else if (local_step->mode == BT_HCI_OP_LE_CS_MAIN_MODE_3) {
+		struct bt_hci_le_cs_step_data_mode_3 *local_step_data =
+			(struct bt_hci_le_cs_step_data_mode_3 *)local_step->data;
+		struct bt_hci_le_cs_step_data_mode_3 *peer_step_data =
+			(struct bt_hci_le_cs_step_data_mode_3 *)peer_step->data;
+
+		extract_pcts(p_report, local_step->channel - CHANNEL_INDEX_OFFSET,
+			     local_step_data->antenna_permutation_index, local_step_data->tone_info,
+			     peer_step_data->tone_info);
+
+		extract_rtt_timings(p_report,
+				    (struct bt_hci_le_cs_step_data_mode_1 *)local_step_data,
+				    (struct bt_hci_le_cs_step_data_mode_1 *)peer_step_data);
+	}
+
+	return true;
+}
+
 static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int err)
 {
 	ARG_UNUSED(conn);
@@ -180,10 +328,25 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 		return;
 	}
 
-	/* This struct is static to avoid putting it on the stack (it's very large) */
-	static cs_de_report_t cs_de_report;
+	memset(&m_cs_de_report, 0x0, sizeof(cs_de_report_t));
+	memset(m_n_iqs, 0, sizeof(m_n_iqs));
 
-	cs_de_populate_report(&latest_local_steps, &latest_peer_steps, &cs_config, &cs_de_report);
+	bt_ras_rreq_rd_subevent_data_parse(&latest_local_steps, &latest_peer_steps, cs_config.role,
+					   process_ranging_header, NULL, process_step_data,
+					   &m_cs_de_report);
+
+	for (uint8_t ap = 0; ap < m_cs_de_report.n_ap; ap++) {
+		m_cs_de_report.distance_estimates[ap].ifft = NAN;
+		m_cs_de_report.distance_estimates[ap].phase_slope = NAN;
+		m_cs_de_report.distance_estimates[ap].rtt = NAN;
+		m_cs_de_report.distance_estimates[ap].best = NAN;
+
+		if (m_is_tone_quality_ok(m_n_iqs[ap], cs_config.channel_map)) {
+			m_cs_de_report.tone_quality[ap] = CS_DE_TONE_QUALITY_OK;
+		} else {
+			m_cs_de_report.tone_quality[ap] = CS_DE_TONE_QUALITY_BAD;
+		}
+	}
 
 	net_buf_simple_reset(&latest_local_steps);
 
@@ -193,12 +356,12 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 
 	k_sem_give(&sem_local_steps);
 
-	cs_de_quality_t quality = cs_de_calc(&cs_de_report);
+	cs_de_quality_t quality = cs_de_calc(&m_cs_de_report);
 
 	if (quality == CS_DE_QUALITY_OK) {
-		for (uint8_t ap = 0; ap < cs_de_report.n_ap; ap++) {
-			if (cs_de_report.tone_quality[ap] == CS_DE_TONE_QUALITY_OK) {
-				store_distance_estimates(&cs_de_report);
+		for (uint8_t ap = 0; ap < m_cs_de_report.n_ap; ap++) {
+			if (m_cs_de_report.tone_quality[ap] == CS_DE_TONE_QUALITY_OK) {
+				store_distance_estimates(&m_cs_de_report);
 			}
 		}
 		k_sem_give(&sem_distance_estimate_updated);

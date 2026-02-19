@@ -44,4 +44,10 @@ config BT_CS_DE_NFFT_SIZE
 	help
 	  Internal config. Not intended for use.
 
+config BT_CS_DE_MAX_NUM_ANTENNA_PATHS
+	int "Max number of Channel Sounding antenna paths supported by the Distance Estimation library"
+	default 1
+	range 1 4
+	depends on BT_CS_DE
+
 endif # BT_CS_DE
