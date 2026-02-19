@@ -24,7 +24,7 @@ zephyr-sdk:
 doxygen:
   version: 1.12.0
 pip:
-  version: 24.2
+  version: 26.0.1
 nrfutil:
   version: 8.1.1
   subcommands:
