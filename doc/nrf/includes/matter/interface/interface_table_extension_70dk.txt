@@ -1,0 +1,9 @@
+   * - nRF70 DKs
+     - **LED 1**
+     - **LED 2**
+     - Not available
+     - Not available
+     - **Button 1**
+     - **Button 2**
+     - Not available
+     - Not available
