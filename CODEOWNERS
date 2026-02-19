@@ -333,6 +333,8 @@
 /include/bluetooth/services/nus.h         @nrfconnect/ncs-blenders
 /include/bluetooth/services/rscs.h        @nrfconnect/ncs-blenders
 /include/bluetooth/services/throughput.h  @nrfconnect/ncs-blenders
+/include/lcs.h                            @nrfconnect/ncs-eris
+/include/lcs_mem.h                        @nrfconnect/ncs-eris
 /include/caf/                             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /include/debug/                           @nrfconnect/ncs-co-drivers
 /include/debug/ppi_trace.h                @nrfconnect/ncs-co-drivers @nordic-krch

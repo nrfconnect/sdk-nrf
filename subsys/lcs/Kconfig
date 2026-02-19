@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LCS
+	bool "LCS handling"
+	help
+	  Enable device Life Cycle State subsystem.
+
+if LCS
+
+choice LCS_MEM
+	prompt "LCS memory storage backend"
+	default LCS_MEM_BL_STORAGE
+
+config LCS_MEM_BL_STORAGE
+	bool "BL Storage"
+	help
+	  Store Life Cycle State values in BL storage.
+
+endchoice # LCS_MEM
+
+module = LCS
+module-str = Life Cycle State
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # LCS
