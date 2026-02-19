@@ -12,6 +12,10 @@
 
 struct Identify;
 
+#ifndef CONFIG_NCS_SAMPLE_MATTER_USE_DEFAULT_BUTTON_HANDLER
+enum class ButtonState { None, SoftwareUpdate, UAT };
+#endif
+
 class AppTask {
 public:
 	static AppTask &Instance()

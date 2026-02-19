@@ -10,6 +10,7 @@
 #include "board/board_consts.h"
 #include "board/led_util.h"
 #include "board/led_widget.h"
+#include <functional>
 
 #include <platform/CHIPDeviceEvent.h>
 
@@ -39,7 +40,7 @@ public:
 	 * specific way.
 	 * The callback enters two arguments:
 	 * ButtonState as uint32_t which represents a button state (Pressed, Released)
-	 * ButtonMask as uint32_t which represents a bitmask that shows indicates whether the button has been changed
+	 * ButtonMask as uint32_t which represents a bitmask that indicates whether the button has been changed
 	 *
 	 * ledStateHandler: User can register a custom callback for status LED behaviour,
 	 * and handle the indications of the device states in the specific way.
@@ -55,7 +56,7 @@ public:
 	 * @brief Get the LED located on the board.
 	 *
 	 * @param led LEDWidget an enum value of the requested led.
-	 * @return LEDWidget& a reference of the choosen LED.
+	 * @return LEDWidget& a reference of the chosen LED.
 	 */
 	Nrf::LEDWidget &GetLED(DeviceLeds led);
 
@@ -108,6 +109,34 @@ public:
 	 */
 	static void DefaultMatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t data);
 
+	/**
+	 * @brief Resets all LEDs on the board
+	 *
+	 * This function turns off all the LEDs that are present on the board, preserving their state for later use.
+	 */
+	void ResetAllLeds();
+
+	/**
+	 * @brief Restores state of all LEDs
+	 *
+	 * This function restores the state of all LEDs prior to their reset
+	 */
+	void RestoreAllLedsState();
+
+	/**
+	 * @brief Runs a specific action on all LEDs
+	 *
+	 * This function can be used as a shortcut to execute a specific action on the LEDs.
+	 *
+	 * @param func function to be executed on each of the leds
+	 */
+	void ForEachLED(const std::function<void(Nrf::LEDWidget &)> &func);
+	/**
+	 * @brief Runs the LedStateHandler
+	 * This function restores the proper led state after overiding led usage for other purpose.
+	 */
+	void RunLedStateHandler() { mLedStateHandler(); };
+
 private:
 	Board() = default;
 	friend Board &GetBoard();
@@ -117,8 +146,6 @@ private:
 	static void UpdateStatusLED();
 	static void LEDStateUpdateHandler(Nrf::LEDWidget &ledWidget);
 	static void UpdateLedStateEventHandler(const LEDEvent &event);
-	void ResetAllLeds();
-	void RestoreAllLedsState();
 
 	Nrf::LEDWidget mLED1;
 	Nrf::LEDWidget mLED2;
