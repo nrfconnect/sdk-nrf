@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		/delete-property/ sw2;
+		/delete-property/ sw3;
+	};
+};
+
+/delete-node/ &button2;
+/delete-node/ &button3;
+
+/* Disable unused peripherals to reduce power consumption */
+&usbhs {
+	status = "disabled";
+};
+
+&canpll {
+	status = "disabled";
+};
+
+&can120 {
+	status = "disabled";
+};
+
+&adc {
+	status = "disabled";
+};
+
+&pwm130 {
+	status = "disabled";
+};
+
+&cpuapp_ieee802154 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};
+
+&uart120 {
+	status = "disabled";
+};
+
+&uart135 {
+	status = "disabled";
+};
+
+/* Enable PM runtime for uart136 (console UART) */
+&uart136 {
+	zephyr,pm-device-runtime-auto;
+};
