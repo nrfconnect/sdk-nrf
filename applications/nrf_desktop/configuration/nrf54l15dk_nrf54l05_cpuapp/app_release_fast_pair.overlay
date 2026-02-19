@@ -1,10 +1,13 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2025-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "memory_map_release_fast_pair.dtsi"
 #include "app_common.dtsi"
+
+secondary_app_partition: &slot1_partition {};
 
 /* For nRF54L, watchdog status is disabled by default. Needs to be enabled in DTS overlay. */
 &wdt31 {

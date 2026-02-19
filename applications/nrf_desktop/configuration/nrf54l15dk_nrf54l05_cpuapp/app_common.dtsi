@@ -1,13 +1,8 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2025-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
-&cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(500)>;
-};
 
 / {
 	/* Disable pwmleds and redefine them to align configuration with CAF LEDs requirements.
