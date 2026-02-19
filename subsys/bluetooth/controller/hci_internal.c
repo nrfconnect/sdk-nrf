@@ -1651,6 +1651,8 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 #ifdef CONFIG_BT_CENTRAL
 	case SDC_HCI_OPCODE_CMD_VS_CENTRAL_ACL_EVENT_SPACING_SET:
 		return sdc_hci_cmd_vs_central_acl_event_spacing_set((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_VS_COMPAT_MODE_WINDOW_OFFSET_SET:
+		return sdc_hci_cmd_vs_compat_mode_window_offset_set((void *)cmd_params);
 #endif
 #if defined(CONFIG_BT_CTLR_SDC_EVENT_TRIGGER)
 	case SDC_HCI_OPCODE_CMD_VS_SET_EVENT_START_TASK:
