@@ -327,11 +327,13 @@ The following table indicates the software maturity levels of the support for ea
            - nRF54L15
            - nRF54LM20A
            - nRF54LV10A
+           - nRF54LS05B
          * - **Bluetooth®**
            - Supported
            - Supported
            - Supported
            - Supported
+           - Experimental
            - Experimental
          * - **Bluetooth Mesh**
            - Supported
@@ -339,7 +341,9 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Supported
            - --
+           - --
          * - **DECT NR+ PHY**
+           - --
            - --
            - --
            - --
@@ -351,11 +355,13 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - --
+           - --
          * - **Matter**
            - --
            - Supported
            - Supported
            - Experimental
+           - --
            - --
          * - **NFC**
            - Supported
@@ -363,7 +369,9 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Experimental
            - --
+           - --
          * - **Amazon Sidewalk**
+           - --\ :sup:`4`
            - --\ :sup:`4`
            - --\ :sup:`4`
            - --\ :sup:`4`
@@ -375,13 +383,16 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Experimental
            - --
+           - --
          * - **Wi-Fi®**
            - --
            - --
            - Experimental\ :sup:`3`
            - Experimental\ :sup:`3`
            - --
+           - --
          * - **Zigbee**
+           - --\ :sup:`5`
            - --\ :sup:`5`
            - --\ :sup:`5`
            - --\ :sup:`5`
@@ -710,11 +721,13 @@ The following table indicates the software maturity levels of the support for ea
              - nRF54L15
              - nRF54LM20A
              - nRF54LV10A
+             - nRF54LS05B
            * - **2 Mbps PHY**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Experimental
            * - **Coded PHY (Long Range)**
              - Supported
@@ -722,11 +735,13 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
+             - Experimental
            * - **Concurrent Roles**\ :sup:`1`
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Experimental
            * - **Data Length Extensions**
              - Supported
@@ -734,11 +749,13 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
+             - Experimental
            * - **Advertising Extensions**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Experimental
            * - **Periodic Advertising with Responses**
              - Supported
@@ -746,11 +763,13 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
+             - Experimental
            * - **Periodic Advertising Sync Transfer**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Experimental
            * - **Isochronous Channels**
              - Supported
@@ -758,7 +777,9 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
+             - Experimental
            * - **Direction Finding**\ :sup:`3`
+             - Experimental
              - Experimental
              - Experimental
              - Experimental
@@ -770,11 +791,13 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
+             - Experimental
            * - **Connection Subrating**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Experimental
            * - **Channel Sounding**
              - Supported
@@ -782,11 +805,13 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
+             - Experimental
            * - **GATT Database Hash**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Experimental
            * - **Enhanced ATT**
              - Supported
@@ -794,11 +819,13 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
+             - Experimental
            * - **L2CAP Connection Oriented Channels**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Experimental
            * - **Shorter Connection Intervals**
              - Supported
@@ -806,17 +833,20 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
+             - Experimental
            * - **Frame Space Update**
              - Supported
              - Supported
              - Supported
              - Supported
              - Experimental
+             - Experimental
            * - **Extended Feature Set**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Experimental
 
   | [1]: Subject to RAM availability
@@ -929,11 +959,13 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L15
               - nRF54LM20A
               - nRF54LV10A
+              - nRF54LS05B
             * - **Low Latency Packet Mode**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Experimental
             * - **Multi-protocol Support**
               - Supported
@@ -941,11 +973,13 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Experimental
+              - Experimental
             * - **QoS Conn Event Reports**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Experimental
             * - **QoS Channel Survey**
               - Supported
@@ -953,11 +987,13 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Experimental
+              - Experimental
             * - **Radio Coexistence**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Experimental
 
 Thread features support
