@@ -7,4 +7,7 @@
 config NRF_DEFAULT_IPC_RADIO
 	default y
 
+config PARTITION_MANAGER
+	default n if !BOARD_NRF5340DK_NRF5340_CPUAPP_NS
+
 source "share/sysbuild/Kconfig"
