@@ -1286,7 +1286,6 @@ void test_recv_len3_number13(void)
  * Tests:
  * - 1 byte long user data
  * - 9 characters long number
- * - hexadecimal character in number is decoded into 1
  * - different number in AT command alpha parameter and SMS-DELIVER message
  *   TP-OA field.
  * - -NRF_EINPROGRESS return value and resending of AT+CNMA=1.
@@ -1295,7 +1294,6 @@ void test_recv_len1_number9(void)
 {
 	sms_reg_helper();
 
-	/* Number is "1234B67A9" but hexadecimal numbers are decoded with a warning log into 1 */
 	strcpy(test_sms_header.originating_address.address_str, "123416719");
 	test_sms_header.originating_address.length = 9;
 	test_sms_header.originating_address.type = 0x91;
@@ -1313,8 +1311,42 @@ void test_recv_len1_number9(void)
 		sms_ack_resp_handler, "AT+CNMA=1", -NRF_EINPROGRESS);
 	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
-	at_monitor_dispatch("+CMT: \"+1234B67A9\",20\r\n"
-		"079153487489432004099121436BA7F90000122090028543800131\r\n");
+	at_monitor_dispatch("+CMT: \"+111111111\",20\r\n"
+		"079153487489432004099121436117F90000122090028543800131\r\n");
+	k_sleep(K_MSEC(1100));
+	sms_ack_resp_handler("OK");
+
+	sms_unreg_helper();
+}
+
+/**
+ * Tests:
+ * - 20 characters long number with invalid BCD nibbles. Values above 10 are decoded into 0.
+ */
+void test_recv_invalid_number(void)
+{
+	sms_reg_helper();
+
+	/* Invalid BCD nibbles are decoded with a warning log into 0 */
+	strcpy(test_sms_header.originating_address.address_str, "00000000000000000000");
+	test_sms_header.originating_address.length = 20;
+	test_sms_header.originating_address.type = 0x91;
+	test_sms_data.payload_len = 5;
+	strcpy(test_sms_data.payload, "Hello");
+	test_sms_header.time.year = 27;
+	test_sms_header.time.month = 10;
+	test_sms_header.time.day = 10;
+	test_sms_header.time.hour = 00;
+	test_sms_header.time.minute = 00;
+	test_sms_header.time.second = 00;
+	test_sms_header.time.timezone = 0;
+
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(
+		sms_ack_resp_handler, "AT+CNMA=1", -NRF_EINPROGRESS);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
+	sms_callback_called_expected = true;
+	at_monitor_dispatch("+CMT: \"+00000000000000000000\",20\r\n"
+		"00041491BADCFEFFFFFFFFFFFFFF00007201010000000005C8329BFD06\r\n");
 	k_sleep(K_MSEC(1100));
 	sms_ack_resp_handler("OK");
 

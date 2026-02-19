@@ -157,9 +157,8 @@ static void convert_number_to_str(uint8_t *number, uint8_t number_length, char *
 		number_value = (number[i] & 0xF0) >> 4;
 
 		if (number_value >= 10) {
-			LOG_WRN("Single number in phone number is higher than 10: "
-				"index=%d, number_value=%d, higher semi-octet",
-				i, number_value);
+			LOG_WRN("Invalid BCD nibble %d at index %d", number_value, i);
+			number_value = 0;
 		}
 		sprintf(str_number + hex_str_index, "%d", number_value);
 
@@ -168,9 +167,8 @@ static void convert_number_to_str(uint8_t *number, uint8_t number_length, char *
 			number_value = number[i] & 0x0F;
 
 			if (number_value >= 10) {
-				LOG_WRN("Single number in phone number is higher than 10: "
-					"index=%d, number_value=%d, lower semi-octet",
-					i, number_value);
+				LOG_WRN("Invalid BCD nibble %d at index %d", number_value, i);
+				number_value = 0;
 			}
 			sprintf(str_number + hex_str_index + 1,	"%d", number_value);
 		}
