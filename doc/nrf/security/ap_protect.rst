@@ -95,7 +95,7 @@ See the related hardware documentation for more information about which implemen
      - ✔
      - `AP-Protect for nRF54LV10A`_
      - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
-   * - nRF54LM20A
+   * - nRF54LM20
      - n/a
      - ✔
      - `AP-Protect for nRF54LM20A`_
