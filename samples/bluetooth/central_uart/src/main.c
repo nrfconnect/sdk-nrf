@@ -45,7 +45,14 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define UART_WAIT_FOR_BUF_DELAY K_MSEC(50)
 #define UART_RX_TIMEOUT 50000 /* Wait for RX complete event time in microseconds. */
 
-static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
+#if DT_HAS_CHOSEN(nordic_nus_uart)
+#define NUS_UART_NODE DT_CHOSEN(nordic_nus_uart)
+#elif DT_HAS_CHOSEN(zephyr_shell_uart)
+#define NUS_UART_NODE DT_CHOSEN(zephyr_shell_uart)
+#else
+#error "No NUS UART: add chosen 'nordic,nus-uart' to devicetree (e.g. in a board overlay)."
+#endif
+static const struct device *uart = DEVICE_DT_GET(NUS_UART_NODE);
 static struct k_work_delayable uart_work;
 static struct k_work scan_work;
 

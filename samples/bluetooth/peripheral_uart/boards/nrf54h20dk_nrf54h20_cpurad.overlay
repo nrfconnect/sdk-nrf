@@ -6,7 +6,6 @@
 
 / {
 	chosen {
-		nordic,nus-uart = &uart135;
 		zephyr,settings_partition = &cpurad_storage_partition;
 	};
 
