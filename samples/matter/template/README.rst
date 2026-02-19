@@ -1,6 +1,6 @@
 .. |matter_name| replace:: Template
 .. |matter_type| replace:: sample
-.. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
+.. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15tag/nrf54l15/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
 .. |matter_dks_wifi| replace:: ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target with the ``nrf7002eb2`` shield attached
 .. |matter_dks_internal| replace:: nRF54LM20 DK and nRF54L15 DK
 .. |matter_dks_tfm| replace:: ``nrf54l15dk/nrf54l15/cpuapp`` board target
@@ -50,7 +50,7 @@ Configuration
 
 The |matter_type| supports the following build configurations:
 
-.. include:: /includes/matter/configuration/basic_internal.txt
+.. include:: /includes/matter/configuration/basic_internal_l15_tag.txt
 
 Advanced configuration options
 ==============================
@@ -67,6 +67,10 @@ User interface
 **************
 
 .. include:: /includes/matter/interface/intro.txt
+
+.. include:: /includes/matter/interface/interface_table_70dk_l15_tag.txt
+
+.. include:: /includes/matter/interface/interface.txt
 
 First LED:
    .. include:: /includes/matter/interface/state_led.txt

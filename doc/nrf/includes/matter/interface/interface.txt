@@ -1,0 +1,5 @@
+Development kit interface
+=========================
+
+This |matter_type| implements the following interface available on a development kit.
+While reading the names, refer to the `Buttons and LEDs map <#buttons-and-leds-map>`__.

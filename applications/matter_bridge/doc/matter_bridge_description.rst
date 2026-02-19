@@ -113,6 +113,10 @@ User interface
 
 .. include:: /includes/matter/interface/intro.txt
 
+.. include:: /includes/matter/interface/interface_table_70dk.txt
+
+.. include:: /includes/matter/interface/interface.txt
+
 First Button:
    .. include:: /includes/matter/interface/main_button.txt
 

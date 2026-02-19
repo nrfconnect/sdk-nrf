@@ -1,6 +1,6 @@
 .. |matter_name| replace:: Temperature Sensor
 .. |matter_type| replace:: sample
-.. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
+.. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15tag/nrf54l15/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
 .. |matter_dks_internal| replace:: nRF54LM20 DK
 .. |sample path| replace:: :file:`samples/matter/temperature_sensor`
 .. |matter_qr_code_payload| replace:: MT:K.K9042C00KA0648G00
@@ -36,8 +36,8 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample does not use a real temperature sensor due to hardware limitation.
-Instead, it simulates temperature measurement following the linearly increasing values from –20 to +20 Celsius degrees.
+The sample uses a real temperature measurement only on the nRF54L15 TAG due to hardware limitations.
+On other targets, it simulates temperature measurement following the linearly increasing values from –20 to +20 Celsius degrees.
 The measurement results are updated every 10 s and after reaching the maximum value, the temperature drops to the minimum and starts to increase from the beginning.
 
 You can test the device remotely over a Thread network, which requires more devices.
@@ -82,6 +82,10 @@ User interface
 
 .. include:: /includes/matter/interface/intro.txt
 
+.. include:: /includes/matter/interface/interface_table_l15_tag.txt
+
+.. include:: /includes/matter/interface/interface.txt
+
 First LED:
    .. include:: /includes/matter/interface/state_led.txt
 
@@ -89,15 +93,40 @@ Second LED:
    The LED starts blinking evenly (500 ms on/500 ms off) when the ``Identify`` command of the Identify cluster is received on the endpoint ``1``.
    You can use the command's argument to specify the duration of the effect.
 
-First Button:
-   .. include:: /includes/matter/interface/main_button.txt
+.. tabs::
 
-Third Button:
-   Functions as the User Active Mode Trigger (UAT) button.
-   For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
+      .. group-tab:: Default
 
-.. include:: /includes/matter/interface/segger_usb.txt
-.. include:: /includes/matter/interface/nfc.txt
+         First Button:
+            .. include:: /includes/matter/interface/main_button.txt
+
+         Third Button:
+            Functions as the User Active Mode Trigger (UAT) button.
+            For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
+
+         .. include:: /includes/matter/interface/segger_usb.txt
+         .. include:: /includes/matter/interface/nfc.txt
+
+      .. group-tab:: nRF54L15 TAG
+
+         First Button:
+            Depending on how long you press the button:
+
+            * If pressed for less than 1.5 seconds:
+
+               * If the device is not provisioned to the Matter network, it initiates the Simple Management Protocol (SMP) server and Bluetooth LE advertising for Matter commissioning.
+                 After that, the Device Firmware Update (DFU) over Bluetooth Low Energy can be started.
+                 Bluetooth LE advertising makes the device discoverable over Bluetooth LE for the predefined period of time (1 hour by default).
+
+               * If the device is already provisioned to the Matter network, it re-enables the SMP server.
+                 After that, the DFU over Bluetooth Low Energy can be started.
+
+            * If pressed for more than 1.5 seconds, but less than 3 seconds (indicated by rapidly blinking white LED), it functions as the User Active Mode Trigger (UAT) button.
+              For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
+
+            * If pressed for more than three seconds, it initiates the factory reset of the device.
+              Releasing the button within three seconds of the initiation cancels the factory reset procedure.
+
 
 Building and running
 ********************
