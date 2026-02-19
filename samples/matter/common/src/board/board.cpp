@@ -47,8 +47,12 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 #endif
 #endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
-	/* Initialize buttons */
+/* Initialize buttons */
+#ifdef CONFIG_NCS_SAMPLE_MATTER_USE_DEFAULT_BUTTON_HANDLER
 	int ret = dk_buttons_init(ButtonEventHandler);
+#else
+	int ret = dk_buttons_init(nullptr);
+#endif
 	if (ret) {
 		LOG_ERR("dk_buttons_init() failed");
 		return false;
@@ -94,20 +98,29 @@ void Board::UpdateDeviceState(DeviceState state)
 	}
 }
 
+void Board::ForEachLED(const std::function<void(Nrf::LEDWidget &)> &func)
+{
+	func(mLED1);
+	func(mLED2);
+#if NUMBER_OF_LEDS >= 3
+	func(mLED3);
+#endif
+#if NUMBER_OF_LEDS >= 4
+	func(mLED4);
+#endif
+}
+
 void Board::ResetAllLeds()
 {
 	mLED1SavedState = mLED1.GetState();
 	mLED2SavedState = mLED2.GetState();
-	mLED1.Set(false);
-	mLED2.Set(false);
 #if NUMBER_OF_LEDS >= 3
 	mLED3SavedState = mLED3.GetState();
-	mLED3.Set(false);
 #endif
 #if NUMBER_OF_LEDS >= 4
 	mLED4SavedState = mLED4.GetState();
-	mLED4.Set(false);
 #endif
+	ForEachLED([](Nrf::LEDWidget &led) { led.Set(false); });
 }
 
 void Board::RestoreAllLedsState()
@@ -214,15 +227,7 @@ void Board::FunctionTimerEventHandler()
 
 		/* Turn off all LEDs before starting blink to make sure blink is coordinated. */
 		sInstance.ResetAllLeds();
-
-		sInstance.mLED1.Blink(LedConsts::kBlinkRate_ms);
-		sInstance.mLED2.Blink(LedConsts::kBlinkRate_ms);
-#if NUMBER_OF_LEDS >= 3
-		sInstance.mLED3.Blink(LedConsts::kBlinkRate_ms);
-#endif
-#if NUMBER_OF_LEDS >= 4
-		sInstance.mLED4.Blink(LedConsts::kBlinkRate_ms);
-#endif
+		sInstance.ForEachLED([](Nrf::LEDWidget &led) { led.Blink(LedConsts::kBlinkRate_ms); });
 	} else if (sInstance.mFunction == BoardFunctions::FactoryReset) {
 		/* Actually trigger Factory Reset */
 		sInstance.mFunction = BoardFunctions::None;
@@ -240,7 +245,7 @@ void Board::ButtonEventHandler(ButtonState buttonState, ButtonMask hasChanged)
 
 	if (FUNCTION_BUTTON_MASK & hasChanged) {
 		ButtonAction action =
-			(BLUETOOTH_ADV_BUTTON_MASK & buttonState) ? ButtonAction::Pressed : ButtonAction::Released;
+			(FUNCTION_BUTTON_MASK & buttonState) ? ButtonAction::Pressed : ButtonAction::Released;
 		PostTask([action] { FunctionHandler(action); });
 	}
 }
