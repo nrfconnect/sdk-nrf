@@ -10,6 +10,7 @@ add_subdirectory_ifdef(CONFIG_IS_SECURE_BOOTLOADER bootloader)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO bootloader/bl_crypto)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT_VALIDATION bootloader/bl_validation)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT_STORAGE bootloader/bl_storage)
+add_subdirectory_ifdef(CONFIG_LCS bootloader/lcs)
 
 add_subdirectory_ifdef(CONFIG_NRF_SECURITY nrf_security)
 add_subdirectory_ifdef(CONFIG_TRUSTED_STORAGE trusted_storage)
