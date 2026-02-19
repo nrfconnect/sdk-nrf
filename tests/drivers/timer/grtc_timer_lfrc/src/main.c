@@ -210,7 +210,7 @@ int main(void)
 	ret = request_clock_spec(fll16m_dev, &fll16m_bypass_mode);
 #else
 	k_msleep(HFCLOCK_SETUP_TIME_MS);
-	ret = clock_control_on(hfclock, CLOCK_CONTROL_NRF_SUBSYS_HF);
+	ret = clock_control_on(hfclock, NULL);
 #endif /* CONFIG_SOC_NRF54H20 */
 	if (ret != 0) {
 		printk("Clock request failed: %d\n", ret);

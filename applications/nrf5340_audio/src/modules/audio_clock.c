@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/kernel.h>
+#include <nrfx_clock_hfclkaudio.h>
 
 int audio_clock_set(uint16_t freq_value)
 {

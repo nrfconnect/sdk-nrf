@@ -16,8 +16,9 @@
 LOG_MODULE_REGISTER(ble_coex, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <zephyr/kernel.h>
-#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-#include <nrfx_clock.h>
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
+	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#include <nrfx_clock_hfclk.h>
 #endif
 #include <zephyr/init.h>
 #include <zephyr/device.h>
@@ -361,8 +362,9 @@ int main(void)
 
 	net_mgmt_add_event_callback(&net_addr_mgmt_cb);
 
-#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-	nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
+	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+	nrfx_clock_hfclk_divider_set(NRF_CLOCK_HFCLK_DIV_1);
 #endif
 
 	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock/MHZ(1));
