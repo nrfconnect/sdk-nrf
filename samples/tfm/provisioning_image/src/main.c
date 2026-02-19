@@ -27,7 +27,7 @@ void provision_implementation_id(void)
 
 int main(void)
 {
-	enum lcs lcs;
+	enum bl_storage_lcs lcs;
 	int err;
 
 	err = read_life_cycle_state(&lcs);
