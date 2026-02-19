@@ -2,3 +2,7 @@
 	compatible = "nordic,nrf-spi";
 	status = "okay";
 };
+
+&lfclk {
+	k32src = "rc";
+};
