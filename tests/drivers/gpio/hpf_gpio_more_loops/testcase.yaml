@@ -7,19 +7,58 @@ common:
   depends_on: gpio
   min_flash: 64
   harness: ztest
-  harness_config:
-    fixture: five_gpio_loopbacks
-  platform_allow:
-    - nrf54l15dk/nrf54l15/cpuapp
-  integration_platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
 
 tests:
-  drivers.hpf.gpio.many_loops.icmsg:
+  drivers.hpf.gpio.many_loops.54l15.icmsg:
     extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y
+    harness_config:
+      fixture: five_gpio_loopbacks
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
-  drivers.hpf.gpio.many_loops.icbmsg:
+  drivers.hpf.gpio.many_loops.54l15.icbmsg:
     extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG=y
+    harness_config:
+      fixture: five_gpio_loopbacks
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
-  drivers.hpf.gpio.many_loops.mbox:
+  drivers.hpf.gpio.many_loops.54l15.mbox:
     extra_args: SB_CONFIG_HPF_GPIO_BACKEND_MBOX=y
+    harness_config:
+      fixture: five_gpio_loopbacks
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  drivers.hpf.gpio.many_loops.54lm20.icmsg:
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  drivers.hpf.gpio.many_loops.54lm20.icbmsg:
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG=y
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  drivers.hpf.gpio.many_loops.54lm20.mbox:
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_MBOX=y
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
