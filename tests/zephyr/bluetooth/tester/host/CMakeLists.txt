@@ -12,27 +12,26 @@ project(host_tester)
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/bluetooth/host)
 
 target_sources(app PRIVATE
-  ${ZEPHYR_BASE}/tests/bluetooth/tester/src/main.c
-  ${ZEPHYR_BASE}/tests/bluetooth/tester/src/btp.c
-  ${ZEPHYR_BASE}/tests/bluetooth/tester/src/btp_core.c
-  ${ZEPHYR_BASE}/tests/bluetooth/tester/src/btp_gap.c
-  ${ZEPHYR_BASE}/tests/bluetooth/tester/src/btp_gatt.c
-)
-
+    src/main.c
+    src/btp.c
+    src/btp_core.c
+    src/btp_gap.c
+    src/btp_gatt.c
+    )
 if(CONFIG_BT_L2CAP_DYNAMIC_CHANNEL)
-  target_sources(app PRIVATE ${ZEPHYR_BASE}/tests/bluetooth/tester/src/btp_l2cap.c)
+  target_sources(app PRIVATE src/btp_l2cap.c)
 endif()
 
 if(CONFIG_BT_IAS OR CONFIG_BT_IAS_CLIENT)
-  target_sources(app PRIVATE ${ZEPHYR_BASE}/tests/bluetooth/tester/src/btp_ias.c)
+  target_sources(app PRIVATE src/btp_ias.c)
 endif()
 
 if(CONFIG_BT_OTS)
-  target_sources(app PRIVATE ${ZEPHYR_BASE}/tests/bluetooth/tester/src/btp_ots.c)
+  target_sources(app PRIVATE src/btp_ots.c)
 endif()
 
 zephyr_include_directories(
-  ${ZEPHYR_BASE}/tests/bluetooth/tester/src
-  ${ZEPHYR_BASE}/tests/bluetooth/tester/src/btp
-  ${ZEPHYR_BASE}/tests/bluetooth/tester/src/audio/btp
+   src
+   src/btp
+   src/audio/btp
 )
