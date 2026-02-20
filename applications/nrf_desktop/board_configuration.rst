@@ -204,9 +204,9 @@ Sample mouse (``nrf54lv10dk/nrf54lv10a/cpuapp``)
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
         For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
 
-Sample mouse (``nrf54ls05dk/nrf54ls05b/cpuapp``)
+Sample mouse or keyboard (``nrf54ls05dk/nrf54ls05b/cpuapp``)
       * The configuration uses the nRF54LS05 DK.
-      * The build types allow to build the application as a mouse.
+      * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * Only Bluetooth LE transport is enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
