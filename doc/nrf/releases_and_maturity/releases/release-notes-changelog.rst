@@ -659,6 +659,10 @@ Modem libraries
 * Removed the deprecated PDN library.
   Use the PDN management functionality in the :ref:`lte_lc_readme` library instead.
 
+* :ref:`modem_info_readme` library:
+
+  * Fixed a bug where supplying a very large buffer would cause a buffer overflow internally due to incorrect format string usage.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
