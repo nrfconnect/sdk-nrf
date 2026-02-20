@@ -850,6 +850,17 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set_config_bool(${DEFAULT_IMAGE} CONFIG_CRACEN_LOAD_MICROCODE n)
   endif()
 
+  if((SB_CONFIG_MCUBOOT_MODE_SWAP_USING_OFFSET OR
+      SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE OR
+      SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE) AND SB_CONFIG_SOC_NRF54H20)
+    UpdateableImage_Get(images ALL)
+    foreach(image ${images})
+      set(${image}_SIGNING_SCRIPT
+        "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20_swap.cmake"
+         CACHE INTERNAL "MCUboot signing script" FORCE)
+    endforeach()
+  endif()
+
   if(SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY AND SB_CONFIG_SOC_NRF54H20)
     UpdateableImage_Get(images ALL)
     foreach(image ${images})

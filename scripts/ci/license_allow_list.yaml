@@ -65,6 +65,7 @@ Apache-2.0: |
   ^nrf/drivers/wifi/nrf71/
   ^nrf/samples/dfu/smp_svr/sysbuild/mcuboot/boards/nrf54h20dk_nrf54h20_cpuapp.overlay
   ^nrf/samples/dfu/smp_svr/CMakeLists.txt
+  ^nrf/cmake/sysbuild/image_signing_nrf54h20_swap.cmake
 curl: "^nrf/ext/"
 MIT: "^nrf/ext/"
 BSD-3-CLAUSE: |
