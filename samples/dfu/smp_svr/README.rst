@@ -134,6 +134,14 @@ The following table describes the available configurations.
      - Bluetooth LE
      - Swap
      - External flash
+   * - sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts
+     - Bluetooth LE
+     - Swap
+     - External flash (pure DTS, no partition manager)
+   * - sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.sqspi
+     - Bluetooth LE
+     - Swap
+     - External flash, communication through software QSPI on FLPR core
    * - sample.dfu.smp_svr.bt.nrf54h20dk
      - Bluetooth LE
      - Swap
@@ -154,6 +162,14 @@ The following table describes the available configurations.
      - Bluetooth LE
      - Swap
      - External flash
+   * - sample.dfu.smp_svr.ram_load
+     - UART
+     - Swap
+     - RAM load
+   * - sample.dfu.smp_svr.ram_load.kmu
+     - UART
+     - Swap
+     - RAM load with KMU-based signature (Ed25519)
 
 Building and running
 ********************
