@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PARTITION_MANAGER
+	default n
+
+config REMOTE_BOARD
+	string
+	default "nrf54lm20dk/nrf54lm20a/cpuflpr" if BOARD_NRF54LM20DK_NRF54LM20A_CPUAPP
+
+source "share/sysbuild/Kconfig"

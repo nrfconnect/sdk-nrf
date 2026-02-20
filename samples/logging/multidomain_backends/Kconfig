@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "Multi-domain backends sample"
+
+source "Kconfig.zephyr"
+
+menu "Sample configuration"
+
+config MULTIDOMAIN_BACKENDS_DICTIONARY_LOGGING
+	bool "Enable dictionary output on all enabled log backends"
+	default n
+	select LOG_DICTIONARY_SUPPORT
+	imply LOG_FMT_SECTION
+	imply LOG_FMT_SECTION_STRIP if !LOG_ALWAYS_RUNTIME
+	help
+	  Enables dictionary mode output for UART, BLE, and filesystem backends.
+	  This is useful when collecting compact log streams for host-side decoding.
+
+endmenu

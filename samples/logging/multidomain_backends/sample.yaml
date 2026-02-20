@@ -1,0 +1,20 @@
+sample:
+  description: Multi-domain logging sample with UART, BLE, and filesystem backends plus runtime filtering.
+  name: Multi-domain logging backends (nRF54LM20)
+
+common:
+  sysbuild: true
+  tags:
+    - logging
+    - bluetooth
+    - filesystem
+    - ipc
+
+tests:
+  sample.logging.multidomain_backends.nrf54lm20:
+    extra_args:
+      - multidomain_backends_SNIPPET=nordic-flpr
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
