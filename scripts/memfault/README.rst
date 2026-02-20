@@ -23,6 +23,10 @@ For more details about the Memfault, see `Memfault SDK`_ and :ref:`ug_memfault` 
 Requirements
 ************
 
+.. note::
+   This script depends on the ``pc_ble_driver_py`` Python package, which is no longer maintained.
+   As a result, only Python versions above or equal to 3.7 and below 3.11 are supported.
+
 The script source files are located in the :file:`scripts/memfault` directory.
 
 To install the script's requirements, run the following command in its directory:
@@ -50,7 +54,7 @@ The following help information describes the script arguments available:
 
 .. code-block:: console
 
-   Memfault BLE gateway
+   Memfault Bluetooth LE gateway
 
    optional arguments:
      -h, --help            show this help message and exit
