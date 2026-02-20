@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(host_tester)
 
-zephyr_include_directories(${ZEPHYR_BASE}/subsys/bluetooth/host)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/host)
 
 target_sources(app PRIVATE
     src/main.c
@@ -28,6 +28,10 @@ endif()
 
 if(CONFIG_BT_OTS)
   target_sources(app PRIVATE src/btp_ots.c)
+endif()
+
+if(CONFIG_BT_CLASSIC)
+  target_sources(app PRIVATE src/btp_sdp.c)
 endif()
 
 zephyr_include_directories(
