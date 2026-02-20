@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-zephyr_library_include_directories(${ZEPHYR_BASE}/subsys/bluetooth/audio)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/audio)
 
 if(CONFIG_BT_VCP_VOL_REND)
   target_sources(app PRIVATE btp_vcp.c)
