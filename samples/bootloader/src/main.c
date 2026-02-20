@@ -7,7 +7,11 @@
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#else
+#include <zephyr/storage/flash_map.h>
+#endif
 #include <fw_info.h>
 #if defined(CONFIG_FPROTECT)
 #include <fprotect.h>
@@ -31,15 +35,24 @@
 #include <zephyr/init.h>
 #include <hw_unique_key.h>
 
+/* huk_flag_addr is actually address in CPU address space, not offset within
+ * flash device.
+ */
+#if USE_PARTITION_MANAGER
+static const uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_FLAG_OFFSET;
+#else
+static const uint32_t huk_flag_addr = FIXED_PARTITION_ADDRESS(hw_unique_key_partition);
+#endif
+
 #define HUK_FLAG_OFFSET 0xFFC /* When this word is set, expect HUK to be written. */
 
 int load_huk(void)
 {
 	if (!hw_unique_key_is_written(HUK_KEYSLOT_KDR)) {
-		uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_FLAG_OFFSET;
-
+		/* Directly reading flag via CPU address space */
 		if (*(uint32_t *)huk_flag_addr == 0xFFFFFFFF) {
 			printk("First boot, expecting app to write HUK.\n");
+			/* Write done via NRFX API */
 #if defined(CONFIG_NRFX_NVMC)
 			nrfx_nvmc_word_write(huk_flag_addr, 0);
 #elif defined(CONFIG_NRFX_RRAMC)
@@ -124,7 +137,15 @@ int main(void)
 {
 
 #if defined(CONFIG_FPROTECT)
-	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+/* Invoked from B0, FPROTECT will only protect B0 partition */
+#if USE_PARTITION_MANAGER
+	const uint32_t b0_offset = PM_B0_ADDRESS;
+	const uint32_t b0_size = PM_B0_SIZE;
+#else
+	const uint32_t b0_offset = FIXED_PARTITION_OFFSET(b0_partittion);
+	const uint32_t b0_size = FIXED_PARTITION_SIZE(b0_partittion);
+#endif
+	int err = fprotect_area(b0_offset, b0_size);
 
 	if (err) {
 		printk("Failed to protect B0 flash, cancel startup.\r\n");

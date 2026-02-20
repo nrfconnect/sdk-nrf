@@ -62,14 +62,8 @@ function(provision application prefix_name)
 
     # Adjustment to be able to load into sysbuild
     if(CONFIG_SOC_NRF5340_CPUNET OR "${domain}" STREQUAL "CPUNET")
-      set(partition_manager_target partition_manager_CPUNET)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
-      set(s1_arg)
       set(cpunet_target y)
     else()
-      set(partition_manager_target partition_manager)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
-      set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
       set(cpunet_target n)
     endif()
 
@@ -78,7 +72,7 @@ function(provision application prefix_name)
     endif()
 
     b0_sign_image(${application} ${cpunet_target})
-    if(NOT (CONFIG_SOC_NRF5340_CPUNET OR "${domain}" STREQUAL "CPUNET") AND SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+    if(NOT cpunet_target AND SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
       b0_sign_image("s1_image" n)
     endif()
   endif()
@@ -91,6 +85,48 @@ function(provision application prefix_name)
     set(psa_certificate_reference --psa-certificate-reference ${SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE})
   endif()
 
+  set(provision_address)
+  if(SB_CONFIG_PARTITION_MANAGER)
+    set(provision_size ${CONFIG_PM_PARTITION_SIZE_PROVISION})
+    if(cpunet_target)
+      set(partition_manager_target partition_manager_CPUNET)
+      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
+      set(s1_arg)
+    else()
+      set(partition_manager_target partition_manager)
+      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
+      set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
+    endif()
+
+    if(CONFIG_SECURE_BOOT)
+      set(provision_address $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>)
+    else(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+      set(provision_address $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>)
+    endif()
+  else()
+    if(cpunet_target)
+      message(FATAL_ERROR "Still missing")
+      set(partition_manager_target partition_manager_CPUNET)
+      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
+      set(s1_arg)
+    else()
+      # We can pick all of these from MCUboot image, as DTS partitions come from common
+      # DTS and image header size is the same for all images for a given platform.
+      dt_partition_addr(s0_slot_address LABEL "s0_slot" TARGET mcuboot ABSOLUTE REQUIRED)
+      dt_partition_addr(s1_slot_address LABEL "s1_slot" TARGET mcuboot ABSOLUTE REQUIRED)
+      set(s0_arg --s0-addr ${s0_slot_address})
+      set(s1_arg --s1-addr ${s1_slot_address})
+    endif()
+
+    if(CONFIG_SECURE_BOOT)
+      # B0 is secure bootloader and we pick the address from its configuration.
+      sysbuild_get(provision_address IMAGE b0 VAR CONFIG_SECURE_BOOT_STORAGE_ADDRESS KCONFIG)
+    else(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+      # This is MCUboot downgrade prevention, so we pick the address from MCUboot config.
+      sysbuild_get(provision_address IMAGE mcuboot VAR CONFIG_SECURE_BOOT_STORAGE_ADDRESS KCONFIG)
+    endif()
+  endif()
+
   if(CONFIG_SECURE_BOOT)
     add_custom_command(
       OUTPUT
@@ -100,10 +136,10 @@ function(provision application prefix_name)
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
       ${s0_arg}
       ${s1_arg}
-      --provision-addr $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>
+      --provision-addr ${provision_address}
       ${public_keys_file_arg}
       --output ${PROVISION_HEX}
-      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+      --max-size ${provision_size}
       ${monotonic_counter_arg}
       ${no_verify_hashes_arg}
       ${mcuboot_counters_slots}
@@ -126,9 +162,9 @@ function(provision application prefix_name)
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
       --mcuboot-only
-      --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
+      --provision-addr ${provision_address}
       --output ${PROVISION_HEX}
-      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+      --max-size ${provision_size}
       ${mcuboot_counters_num}
       ${mcuboot_counters_slots}
       --otp-write-width ${otp_write_width}
