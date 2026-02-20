@@ -627,12 +627,14 @@ static void location_core_event_cb_fn(struct k_work *work)
 		/* Logging v1 doesn't support double and float logging. Logging v2 would support
 		 * but that's up to application to configure.
 		 */
-		sprintf(latitude_str, "%.06f", loc_req_info.current_event_data.location.latitude);
+		snprintf(latitude_str, sizeof(latitude_str), "%.06f",
+			 loc_req_info.current_event_data.location.latitude);
 		LOG_DBG("  latitude: %s", latitude_str);
-		sprintf(longitude_str, "%.06f", loc_req_info.current_event_data.location.longitude);
+		snprintf(longitude_str, sizeof(longitude_str), "%.06f",
+			 loc_req_info.current_event_data.location.longitude);
 		LOG_DBG("  longitude: %s", longitude_str);
-		sprintf(accuracy_str, "%.01f",
-			(double)loc_req_info.current_event_data.location.accuracy);
+		snprintf(accuracy_str, sizeof(accuracy_str), "%.01f",
+			 (double)loc_req_info.current_event_data.location.accuracy);
 		LOG_DBG("  accuracy: %s m", accuracy_str);
 		if (loc_req_info.current_event_data.location.datetime.valid) {
 			LOG_DBG("  date: %04d-%02d-%02d",
