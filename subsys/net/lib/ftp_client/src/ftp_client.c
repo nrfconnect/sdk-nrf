@@ -22,6 +22,13 @@ LOG_MODULE_REGISTER(ftp_client, CONFIG_FTP_CLIENT_LOG_LEVEL);
 
 #define FTP_CODE_ANY		0
 
+/* FTP parameter length limits */
+#define FTP_MAX_USERNAME	64   /* Unix/Linux username typical limit */
+#define FTP_MAX_PASSWORD	255  /* Allow longer passwords */
+#define FTP_MAX_FILENAME	255  /* Filename length limit */
+#define FTP_MAX_PATHNAME	255  /* Standard NAME_MAX */
+#define FTP_MAX_OPTIONS		32   /* FTP LIST options are typically short */
+
 #define FTP_STACK_SIZE		KB(2)
 #define FTP_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
 static K_THREAD_STACK_DEFINE(ftp_stack_area, FTP_STACK_SIZE);
@@ -51,13 +58,31 @@ enum data_task_type {
 static struct data_task {
 	struct k_work work;
 	enum data_task_type task;
-	char *ctrl_msg;		/* PSAV resposne */
+	char ctrl_msg[128];	/* PASV response copy */
 	uint8_t *data;		/* TX data */
 	uint16_t length;	/* TX length */
 } data_task_param;
 
 static bool ftp_inactivity;
 static atomic_t data_task_running;
+
+static int validate_ftp_param(const char *param, size_t max_len)
+{
+	if (param == NULL) {
+		return -EINVAL;
+	}
+
+	if (strlen(param) > max_len) {
+		return -EINVAL;
+	}
+
+	/* Check for FTP command injection - CR/LF can inject additional commands */
+	if (strchr(param, '\r') || strchr(param, '\n')) {
+		return -EINVAL;
+	}
+
+	return 0;
+}
 
 static int parse_return_code(const uint8_t *message, int success_code)
 {
@@ -92,7 +117,8 @@ static int parse_return_code(const uint8_t *message, int success_code)
 static int establish_data_channel(const char *pasv_msg)
 {
 	int ret;
-	char tmp[8];
+	char *endptr;
+	long port_byte;
 	char *tmp1, *tmp2;
 	uint16_t data_port;
 
@@ -109,19 +135,33 @@ static int establish_data_channel(const char *pasv_msg)
 	if (tmp2 == NULL) {
 		return -EINVAL;
 	}
-	memset(tmp, 0x00, sizeof(tmp));
-	strncpy(tmp, (const char *)(tmp2 + 1), (size_t)(tmp1 - tmp2 - 1));
-	data_port = atoi(tmp);
-	tmp1 = tmp2 - 1;
-	while (isdigit((int)(*tmp1))) {
-		tmp1--;
-	}
-	if (*tmp1 != ',') {
+	/* Validate that ')' appears after the last ',' */
+	if (tmp1 <= tmp2) {
 		return -EINVAL;
 	}
-	memset(tmp, 0x00, sizeof(tmp));
-	strncpy(tmp, (const char *)(tmp1 + 1), (size_t)(tmp2 - tmp1 - 1));
-	data_port += atoi(tmp) << 8;
+
+	/* Extract low byte of port (p2) */
+	port_byte = strtol(tmp2 + 1, &endptr, 10);
+	if (endptr != tmp1 || port_byte < 0 || port_byte > 255) {
+		return -EINVAL;
+	}
+	data_port = (uint16_t)port_byte;
+
+	/* Find previous comma for high byte */
+	tmp1 = tmp2 - 1;
+	while (tmp1 > pasv_msg && isdigit((int)(*tmp1))) {
+		tmp1--;
+	}
+	if (tmp1 <= pasv_msg || *tmp1 != ',') {
+		return -EINVAL;
+	}
+
+	/* Extract high byte of port (p1) */
+	port_byte = strtol(tmp1 + 1, &endptr, 10);
+	if (endptr != tmp2 || port_byte < 0 || port_byte > 255) {
+		return -EINVAL;
+	}
+	data_port += (uint16_t)(port_byte << 8);
 	LOG_DBG("data port: %d", data_port);
 
 	/* open data socket */
@@ -171,22 +211,25 @@ static void close_connection(int code, int error)
 	if (FTP_PROPRIETARY(code)) {
 		switch (code) {
 		case FTP_CODE_901:
-			sprintf(ctrl_buf, "901 Disconnected(%d).\r\n", error);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), "901 Disconnected(%d).\r\n", error);
 			break;
 		case FTP_CODE_902:
-			sprintf(ctrl_buf, "902 Connection aborted(%d).\r\n", error);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), "902 Connection aborted(%d).\r\n",
+				 error);
 			break;
 		case FTP_CODE_903:
-			sprintf(ctrl_buf, "903 Poll error(%d).\r\n", error);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), "903 Poll error(%d).\r\n", error);
 			break;
 		case FTP_CODE_904:
-			sprintf(ctrl_buf, "904 Unexpected poll event(%d).\r\n", error);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), "904 Unexpected poll event(%d).\r\n",
+				 error);
 			break;
 		case FTP_CODE_905:
-			sprintf(ctrl_buf, "905 Network down (%d).\r\n", error);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), "905 Network down (%d).\r\n", error);
 			break;
 		default:
-			sprintf(ctrl_buf, "900 Unknown error(%d).\r\n", -ENOEXEC);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), "900 Unknown error(%d).\r\n",
+				 -ENOEXEC);
 			break;
 		}
 		client.ctrl_callback(ctrl_buf, strlen(ctrl_buf));
@@ -507,7 +550,7 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 	}
 
 	/* Send UTF8 option */
-	sprintf(ctrl_buf, CMD_OPTS, "UTF8 ON");
+	snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_OPTS, "UTF8 ON");
 	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	if (ret) {
 		zsock_close(client.cmd_sock);
@@ -524,8 +567,18 @@ int ftp_login(const char *username, const char *password)
 	int ret;
 	int keepalive_time = CONFIG_FTP_CLIENT_KEEPALIVE_TIME;
 
+	/* Validate inputs */
+	ret = validate_ftp_param(username, FTP_MAX_USERNAME);
+	if (ret) {
+		return ret;
+	}
+	ret = validate_ftp_param(password, FTP_MAX_PASSWORD);
+	if (ret) {
+		return ret;
+	}
+
 	/* send username */
-	sprintf(ctrl_buf, CMD_USER, username);
+	snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_USER, username);
 	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	if (ret) {
 		return ret;
@@ -533,7 +586,7 @@ int ftp_login(const char *username, const char *password)
 	ret = do_ftp_recv_ctrl(true, FTP_CODE_331);
 	if (ret == FTP_CODE_331) {
 		/* send password if requested */
-		sprintf(ctrl_buf, CMD_PASS, password);
+		snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_PASS, password);
 		ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 		if (ret) {
 			return ret;
@@ -630,7 +683,16 @@ int ftp_pwd(void)
 int ftp_list(const char *options, const char *target)
 {
 	int ret;
-	char list_cmd[128];
+
+	/* Validate inputs */
+	ret = validate_ftp_param(options, FTP_MAX_OPTIONS);
+	if (ret) {
+		return ret;
+	}
+	ret = validate_ftp_param(target, FTP_MAX_PATHNAME);
+	if (ret) {
+		return ret;
+	}
 
 	/* Always set Passive mode to act as TCP client */
 	ret = do_ftp_send_ctrl(CMD_PASV, sizeof(CMD_PASV) - 1);
@@ -641,24 +703,25 @@ int ftp_list(const char *options, const char *target)
 	if (ret != FTP_CODE_227) {
 		return ret;
 	}
-	data_task_param.ctrl_msg = ctrl_buf;
+	strncpy(data_task_param.ctrl_msg, ctrl_buf, sizeof(data_task_param.ctrl_msg) - 1);
+	data_task_param.ctrl_msg[sizeof(data_task_param.ctrl_msg) - 1] = '\0';
 	data_task_param.task = TASK_RECEIVE;
 
 	/* Send LIST/NLST command in control channel */
 	if (strlen(options) != 0) {
 		if (strlen(target) != 0) {
-			sprintf(list_cmd, CMD_LIST_OPT_FILE, options, target);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_LIST_OPT_FILE, options, target);
 		} else {
-			sprintf(list_cmd, CMD_LIST_OPT, options);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_LIST_OPT, options);
 		}
 	} else {
 		if (strlen(target) != 0) {
-			sprintf(list_cmd, CMD_LIST_FILE, target);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_LIST_FILE, target);
 		} else {
-			strcpy(list_cmd, CMD_NLST);
+			snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_NLST);
 		}
 	}
-	ret = do_ftp_send_ctrl(list_cmd, strlen(list_cmd));
+	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 
 	return run_data_task();
 }
@@ -667,10 +730,16 @@ int ftp_cwd(const char *folder)
 {
 	int ret;
 
+	/* Validate input */
+	ret = validate_ftp_param(folder, FTP_MAX_PATHNAME);
+	if (ret) {
+		return ret;
+	}
+
 	if (strcmp(folder, "..") == 0) {
 		ret = do_ftp_send_ctrl(CMD_CDUP, sizeof(CMD_CDUP) - 1);
 	} else {
-		sprintf(ctrl_buf, CMD_CWD, folder);
+		snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_CWD, folder);
 		ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	}
 	if (ret == 0) {
@@ -684,7 +753,13 @@ int ftp_mkd(const char *folder)
 {
 	int ret;
 
-	sprintf(ctrl_buf, CMD_MKD, folder);
+	/* Validate input */
+	ret = validate_ftp_param(folder, FTP_MAX_PATHNAME);
+	if (ret) {
+		return ret;
+	}
+
+	snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_MKD, folder);
 	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	if (ret == 0) {
 		ret = do_ftp_recv_ctrl(true, FTP_CODE_257);
@@ -697,7 +772,13 @@ int ftp_rmd(const char *folder)
 {
 	int ret;
 
-	sprintf(ctrl_buf, CMD_RMD, folder);
+	/* Validate input */
+	ret = validate_ftp_param(folder, FTP_MAX_PATHNAME);
+	if (ret) {
+		return ret;
+	}
+
+	snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_RMD, folder);
 	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	if (ret == 0) {
 		ret = do_ftp_recv_ctrl(true, FTP_CODE_250);
@@ -710,7 +791,17 @@ int ftp_rename(const char *old_name, const char *new_name)
 {
 	int ret;
 
-	sprintf(ctrl_buf, CMD_RNFR, old_name);
+	/* Validate inputs */
+	ret = validate_ftp_param(old_name, FTP_MAX_PATHNAME);
+	if (ret) {
+		return ret;
+	}
+	ret = validate_ftp_param(new_name, FTP_MAX_PATHNAME);
+	if (ret) {
+		return ret;
+	}
+
+	snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_RNFR, old_name);
 	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	if (ret == 0) {
 		ret = do_ftp_recv_ctrl(true, FTP_CODE_350);
@@ -719,7 +810,7 @@ int ftp_rename(const char *old_name, const char *new_name)
 		return ret;
 	}
 
-	sprintf(ctrl_buf, CMD_RNTO, new_name);
+	snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_RNTO, new_name);
 	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	if (ret == 0) {
 		ret = do_ftp_recv_ctrl(true, FTP_CODE_250);
@@ -732,7 +823,13 @@ int ftp_delete(const char *file)
 {
 	int ret;
 
-	sprintf(ctrl_buf, CMD_DELE, file);
+	/* Validate input */
+	ret = validate_ftp_param(file, FTP_MAX_PATHNAME);
+	if (ret) {
+		return ret;
+	}
+
+	snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_DELE, file);
 	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	if (ret == 0) {
 		ret = do_ftp_recv_ctrl(true, FTP_CODE_250);
@@ -744,7 +841,12 @@ int ftp_delete(const char *file)
 int ftp_get(const char *file)
 {
 	int ret;
-	char get_cmd[128];
+
+	/* Validate input */
+	ret = validate_ftp_param(file, FTP_MAX_FILENAME);
+	if (ret) {
+		return ret;
+	}
 
 	/* Always set Passive mode to act as TCP client */
 	ret = do_ftp_send_ctrl(CMD_PASV, sizeof(CMD_PASV) - 1);
@@ -755,12 +857,13 @@ int ftp_get(const char *file)
 	if (ret != FTP_CODE_227) {
 		return ret;
 	}
-	data_task_param.ctrl_msg = ctrl_buf;
+	strncpy(data_task_param.ctrl_msg, ctrl_buf, sizeof(data_task_param.ctrl_msg) - 1);
+	data_task_param.ctrl_msg[sizeof(data_task_param.ctrl_msg) - 1] = '\0';
 	data_task_param.task = TASK_RECEIVE;
 
 	/* Send RETR command in control channel */
-	sprintf(get_cmd, CMD_RETR, file);
-	ret = do_ftp_send_ctrl(get_cmd, strlen(get_cmd));
+	snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_RETR, file);
+	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	if (ret) {
 		return -EIO;
 	}
@@ -771,7 +874,6 @@ int ftp_get(const char *file)
 int ftp_put(const char *file, const uint8_t *data, uint16_t length, int type)
 {
 	int ret;
-	char put_cmd[128];
 
 	if (type != FTP_PUT_NORMAL && type != FTP_PUT_UNIQUE && type != FTP_PUT_APPEND) {
 		return -EINVAL;
@@ -779,6 +881,14 @@ int ftp_put(const char *file, const uint8_t *data, uint16_t length, int type)
 	if ((type == FTP_PUT_NORMAL || type == FTP_PUT_APPEND) &&
 	   ((file == NULL) || data == NULL)) {
 		return -EINVAL;
+	}
+
+	/* Validate file parameter if provided */
+	if (file != NULL) {
+		ret = validate_ftp_param(file, FTP_MAX_FILENAME);
+		if (ret) {
+			return ret;
+		}
 	}
 
 	/** Typical sequence:
@@ -800,7 +910,8 @@ int ftp_put(const char *file, const uint8_t *data, uint16_t length, int type)
 		if (ret != FTP_CODE_227) {
 			return ret;
 		}
-		data_task_param.ctrl_msg = ctrl_buf;
+		strncpy(data_task_param.ctrl_msg, ctrl_buf, sizeof(data_task_param.ctrl_msg) - 1);
+		data_task_param.ctrl_msg[sizeof(data_task_param.ctrl_msg) - 1] = '\0';
 		data_task_param.task = TASK_SEND;
 		data_task_param.data = (uint8_t *)data;
 		data_task_param.length = length;
@@ -808,16 +919,16 @@ int ftp_put(const char *file, const uint8_t *data, uint16_t length, int type)
 
 	if (type == FTP_PUT_NORMAL) {
 		/* Send STOR command in control channel */
-		sprintf(put_cmd, CMD_STOR, file);
-		ret = do_ftp_send_ctrl(put_cmd, strlen(put_cmd));
+		snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_STOR, file);
+		ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	} else if (type == FTP_PUT_UNIQUE) {
 		/* Send STOU command in control channel */
-		sprintf(put_cmd, CMD_STOU);
-		ret = do_ftp_send_ctrl(put_cmd, strlen(put_cmd));
+		snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_STOU);
+		ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	} else {
 		/* Send APPE command in control channel */
-		sprintf(put_cmd, CMD_APPE, file);
-		ret = do_ftp_send_ctrl(put_cmd, strlen(put_cmd));
+		snprintf(ctrl_buf, sizeof(ctrl_buf), CMD_APPE, file);
+		ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	}
 	if (ret != 0) {
 		return ret;
