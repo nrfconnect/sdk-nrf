@@ -1,0 +1,143 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_rram {
+	/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
+	reg = <0x0 DT_SIZE_K(2036)>;
+
+	/* Redefine the "partitions" DTS node. */
+	/delete-node/ partitions;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Significantly increase the size of the MCUboot partition to make it fit
+		 * for the LLVM configuration variant.
+		 */
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x10000 DT_SIZE_K(481)>;
+		};
+
+		/* Gap from 88400 to 88800 to ensure 2kB alignment */
+
+		slot1_partition: partition@88800 {
+			label = "image-1";
+			reg = <0x8f800 DT_SIZE_K(481)>;
+		};
+
+		/*0x100C00 to 0x1F8000 - unused */
+
+		storage_partition: partition@1f8000 {
+			label = "storage";
+			reg = <0x1f8000 DT_SIZE_K(20)>;
+		};
+	};
+};
+
+/ {
+	soc {
+		/* Remove the DTS node with the "cpuapp_sram" label to redefine the RAM layout. */
+		/delete-node/ memory@20000000;
+
+		/* The KMU RAM section must be placed at the very beginning of the physical
+		 * RAM due to the dependency on the nrfutil device tool and its KMU
+		 * provisioning functionality. The section must also have size of 96 bytes.
+		 * Note: this is not needed if KMU is not used.
+		 */
+		nrf_kmu_reserved_push_area: memory@20000000 {
+			reg = <0x20000000 0x60>;
+			compatible = "zephyr,memory-region", "mmio-sram";
+			zephyr,memory-region = "nrf_kmu_reserved_push_area";
+			status = "okay";
+		};
+
+		/* SRAM region that is shared by both the MCUboot image and the application code.
+		 * Currently, it is used to share the image metadata between the bootloader and
+		 * the application. This region is retained across reboots only if the
+		 * CONFIG_RETAINED_MEM_NRF_RAM_CTRL Kconfig option is enabled.
+		 */
+		cpuapp_sram_retained_mem_region: memory@20000060 {
+			compatible = "zephyr,memory-region", "mmio-sram";
+			reg = <0x20000060 0x100>;
+			zephyr,memory-region = "RetainedMem";
+			status = "okay";
+
+			retainedmem {
+				compatible = "zephyr,retained-ram";
+				status = "okay";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				boot_info0: boot_info@0 {
+					compatible = "zephyr,retention";
+					status = "okay";
+					reg = <0x0 0x100>;
+				};
+			};
+		};
+
+		/* Redefine the "cpuapp_sram" DTS node and specify the necessary RAM subregions
+		 * that can be used to configure the MCUboot image. This DTS node must be assigned
+		 * to the application image as its chosen SRAM DTS node. Additionally, the start
+		 * address of this DTS node must be aligned with 0x800 bytes due to the Zephyr
+		 * build system requirements. The build system places the executable ROM section
+		 * (code) at the beginning of this region and the RAM section (data) right after
+		 * the ROM section.
+		 */
+		cpuapp_sram: memory@20000800 {
+			compatible = "mmio-sram";
+			reg = <0x20000800 DT_SIZE_K(509)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x20000800 DT_SIZE_K(509)>;
+
+			/* SRAM region for storing the ROM section (code) and RAM section (data) of
+			 * the application image. The RAM section of the application image may also
+			 * partially or fully fill the subsequent SRAM region called
+			 * "cpuapp_sram_mcuboot_ram_region", but its ROM section must never enter
+			 * this region. This ROM section defines the memory space where MCUboot
+			 * copies the application image. If this copied data overlaps with the
+			 * MCUboot RAM region, MCUboot may encounter runtime errors. It is
+			 * recommended to use this DTS node for configuration of the executable
+			 * SRAM region in the MCUboot image. This RAM region should be aligned with
+			 * the following Kconfig options in MCUboot:
+			 * - CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_START
+			 * - CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_SIZE
+			 */
+			cpuapp_sram_app_rxm_region: memory@0 {
+				compatible = "mmio-sram";
+				reg = <0x0 DT_SIZE_K(481)>;
+				#address-cells = <1>;
+				#size-cells = <1>;
+				ranges = <0x0 0x0 DT_SIZE_K(481)>;
+			};
+
+			/* SRAM region for storing the RAM section (data) of the MCUboot image. The
+			 * RAM section of the application image may also partially or fully fill
+			 * this region, but the ROM section of the application image must never
+			 * enter this region. This ROM section defines the memory space where
+			 * MCUboot copies the application image. If this copied data overlaps with
+			 * the MCUboot RAM region, MCUboot may encounter runtime errors. This DTS
+			 * node must be assigned to the MCUboot image as its chosen SRAM DTS node.
+			 */
+			cpuapp_sram_mcuboot_ram_region: memory@78400 {
+				compatible = "mmio-sram";
+				reg = <0x78400 DT_SIZE_K(28)>;
+				#address-cells = <1>;
+				#size-cells = <1>;
+				ranges = <0x0 0x78400 DT_SIZE_K(28)>;
+			};
+		};
+	};
+};
