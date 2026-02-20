@@ -16,6 +16,8 @@
 #include <zephyr/fs/fs.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/logging/log_backend.h>
 
 #include "fs_dump_ble.h"
 
@@ -25,6 +27,7 @@ LOG_MODULE_REGISTER(fs_dump_ble, LOG_LEVEL_INF);
 #define FS_DUMP_CMD_MAX_LEN 64
 #define FS_DUMP_PATH_MAX_LEN 96
 #define FS_DUMP_READ_CHUNK 8
+#define FS_DUMP_MAX_FILE_BYTES CONFIG_LOG_BACKEND_FS_FILE_SIZE
 
 #define BT_UUID_FS_DUMP_SERVICE_VAL \
 	BT_UUID_128_ENCODE(0x3a0b25f0, 0x8d4b, 0x4cde, 0x9f80, 0x7d3cf6f8a100)
@@ -48,6 +51,27 @@ static K_MUTEX_DEFINE(fs_dump_lock);
 static struct bt_conn *fs_dump_conn;
 static bool fs_dump_notify_enabled;
 static char fs_dump_cmd_buf[FS_DUMP_CMD_MAX_LEN + 1];
+static uint8_t fs_dump_file_buf[FS_DUMP_MAX_FILE_BYTES];
+K_THREAD_STACK_DEFINE(fs_dump_wq_stack, 2048);
+static struct k_work_q fs_dump_wq;
+
+static void fs_backend_pause(const struct log_backend **backend, bool *resume_needed)
+{
+	*backend = log_backend_get_by_name("log_backend_fs");
+	*resume_needed = false;
+
+	if ((*backend != NULL) && log_backend_is_active(*backend)) {
+		log_backend_deactivate(*backend);
+		*resume_needed = true;
+	}
+}
+
+static void fs_backend_resume(const struct log_backend *backend, bool resume_needed)
+{
+	if (resume_needed && (backend != NULL)) {
+		log_backend_activate(backend, backend->cb->ctx);
+	}
+}
 
 static void fs_dump_work_handler(struct k_work *work);
 static K_WORK_DEFINE(fs_dump_work, fs_dump_work_handler);
@@ -87,9 +111,11 @@ static int notify_text(struct bt_conn *conn, const char *text)
 				k_sleep(K_MSEC(10));
 				retries++;
 			}
-		} while (((err == -ENOMEM) || (err == -EAGAIN)) && (retries < 50));
+		} while (((err == -ENOMEM) || (err == -EAGAIN)) && (retries < 200));
 
 		if (err) {
+			LOG_ERR("notify failed err=%d pos=%u chunk=%u", err,
+				(unsigned int)pos, (unsigned int)chunk);
 			return err;
 		}
 
@@ -149,7 +175,7 @@ static ssize_t cmd_write(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 
 	k_mutex_unlock(&fs_dump_lock);
 
-	(void)k_work_submit(&fs_dump_work);
+	(void)k_work_submit_to_queue(&fs_dump_wq, &fs_dump_work);
 
 	return len;
 }
@@ -209,64 +235,105 @@ static bool invalid_filename(const char *name)
 
 static void handle_list(struct bt_conn *conn)
 {
-	int misses = 0;
+	const struct log_backend *fs_backend;
+	bool fs_resume_needed;
+	struct fs_dir_t dir;
+	struct fs_dirent ent;
+	size_t prefix_len = strlen(CONFIG_LOG_BACKEND_FS_FILE_PREFIX);
+	bool listed = false;
+	int rc;
 
-	(void)notify_text(conn, "OK LIST BEGIN\n");
+	/* Flush pending logs first so LIST reflects recent file creation/rotation. */
+	log_flush();
+	fs_backend_pause(&fs_backend, &fs_resume_needed);
 
-	for (int file_idx = 0; file_idx <= 9999; file_idx++) {
-		struct fs_dirent ent;
-		char file_name[20];
-		char path[FS_DUMP_PATH_MAX_LEN];
+	rc = notify_text(conn, "OK LIST BEGIN\n");
+	if (rc) {
+		goto out;
+	}
+
+	fs_dir_t_init(&dir);
+	rc = fs_opendir(&dir, CONFIG_LOG_BACKEND_FS_DIR);
+	if (rc != 0) {
+		notify_error_line(conn, "LIST opendir failed", rc);
+		goto out;
+	}
+
+	while (true) {
 		char line[64];
-		int err;
-		int path_len;
 
-		snprintk(file_name, sizeof(file_name), "%s%04d",
-			 CONFIG_LOG_BACKEND_FS_FILE_PREFIX, file_idx);
-		path_len = snprintk(path, sizeof(path), "%s/%s",
-				    CONFIG_LOG_BACKEND_FS_DIR, file_name);
-		if ((path_len <= 0) || (path_len >= (int)sizeof(path))) {
+		rc = fs_readdir(&dir, &ent);
+		if (rc != 0) {
 			break;
 		}
 
-		err = fs_stat(path, &ent);
-		if (err == 0) {
-			misses = 0;
-			snprintk(line, sizeof(line), "FILE %s\n", file_name);
-			(void)notify_text(conn, line);
+		if (ent.name[0] == '\0') {
+			break;
+		}
+
+		if (ent.type != FS_DIR_ENTRY_FILE) {
 			continue;
 		}
 
-		misses++;
-
-		/* Stop quickly after consecutive misses to keep LIST response short. */
-		if (misses >= 8) {
-			break;
+		if (strncmp(ent.name, CONFIG_LOG_BACKEND_FS_FILE_PREFIX, prefix_len) != 0) {
+			continue;
 		}
+
+		snprintk(line, sizeof(line), "FILE %.52s\n", ent.name);
+		rc = notify_text(conn, line);
+		if (rc) {
+			(void)fs_closedir(&dir);
+			goto out;
+		}
+
+		/* Keep LIST bounded and deterministic for demo and host tooling. */
+		listed = true;
+		break;
 	}
 
+	(void)fs_closedir(&dir);
+	if (!listed) {
+		(void)notify_text(conn, "FILE none\n");
+	}
 	(void)notify_text(conn, "OK LIST END\n");
+
+out:
+	fs_backend_resume(fs_backend, fs_resume_needed);
 }
 
 static void handle_dump(struct bt_conn *conn, const char *name)
 {
+	const struct log_backend *fs_backend;
+	bool fs_resume_needed;
 	struct fs_file_t file;
-	uint8_t read_buf[FS_DUMP_READ_CHUNK];
+	struct fs_dirent ent;
 	char path[FS_DUMP_PATH_MAX_LEN];
 	char chunk_line[2 + (FS_DUMP_READ_CHUNK * 2) + 2];
 	char control_line[64];
 	int path_len;
+	int total = 0;
 	int rd;
+	int rc;
+
+	/* Flush pending logs before reading files to avoid partial/trailing records. */
+	log_flush();
+	fs_backend_pause(&fs_backend, &fs_resume_needed);
 
 	if (invalid_filename(name)) {
 		notify_error_line(conn, "DUMP invalid filename", -EINVAL);
-		return;
+		goto out;
 	}
 
 	path_len = snprintk(path, sizeof(path), "%s/%s", CONFIG_LOG_BACKEND_FS_DIR, name);
 	if ((path_len <= 0) || (path_len >= (int)sizeof(path))) {
 		notify_error_line(conn, "DUMP filename too long", -ENAMETOOLONG);
-		return;
+		goto out;
+	}
+
+	rd = fs_stat(path, &ent);
+	if (rd != 0) {
+		notify_error_line(conn, "DUMP stat failed", rd);
+		goto out;
 	}
 
 	fs_file_t_init(&file);
@@ -274,39 +341,65 @@ static void handle_dump(struct bt_conn *conn, const char *name)
 	rd = fs_open(&file, path, FS_O_READ);
 	if (rd != 0) {
 		notify_error_line(conn, "DUMP open failed", rd);
-		return;
+		goto out;
 	}
 
 	snprintk(control_line, sizeof(control_line), "OK DUMP BEGIN %s\n", name);
-	(void)notify_text(conn, control_line);
+	rc = notify_text(conn, control_line);
+	if (rc) {
+		(void)fs_close(&file);
+		goto out;
+	}
 
-	while (true) {
-		rd = fs_read(&file, read_buf, sizeof(read_buf));
+	int file_size = ent.size;
+	if (file_size < 0) {
+		notify_error_line(conn, "DUMP invalid size", -EINVAL);
+		(void)fs_close(&file);
+		goto out;
+	}
+	if (file_size > FS_DUMP_MAX_FILE_BYTES) {
+		file_size = FS_DUMP_MAX_FILE_BYTES;
+	}
+
+	while (total < file_size) {
+		rd = fs_read(&file, &fs_dump_file_buf[total], file_size - total);
 		if (rd < 0) {
 			notify_error_line(conn, "DUMP read failed", rd);
-			break;
+			(void)fs_close(&file);
+			goto out;
 		}
-
 		if (rd == 0) {
 			break;
 		}
+		total += rd;
+	}
+
+	for (int pos = 0; pos < total; pos += FS_DUMP_READ_CHUNK) {
+		int chunk_len = MIN(FS_DUMP_READ_CHUNK, total - pos);
 
 		chunk_line[0] = 'D';
 		chunk_line[1] = ' ';
 
-		for (int i = 0; i < rd; i++) {
-			snprintk(&chunk_line[2 + (i * 2)], 3, "%02x", read_buf[i]);
+		for (int i = 0; i < chunk_len; i++) {
+			snprintk(&chunk_line[2 + (i * 2)], 3, "%02x", fs_dump_file_buf[pos + i]);
 		}
 
-		chunk_line[2 + (rd * 2)] = '\n';
-		chunk_line[2 + (rd * 2) + 1] = '\0';
-		(void)notify_text(conn, chunk_line);
+		chunk_line[2 + (chunk_len * 2)] = '\n';
+		chunk_line[2 + (chunk_len * 2) + 1] = '\0';
+		rc = notify_text(conn, chunk_line);
+		if (rc) {
+			(void)fs_close(&file);
+			goto out;
+		}
 	}
 
 	(void)fs_close(&file);
 
 	snprintk(control_line, sizeof(control_line), "OK DUMP END %s\n", name);
-	(void)notify_text(conn, control_line);
+	rc = notify_text(conn, control_line);
+
+out:
+	fs_backend_resume(fs_backend, fs_resume_needed);
 }
 
 static void fs_dump_work_handler(struct k_work *work)
@@ -319,8 +412,14 @@ static void fs_dump_work_handler(struct k_work *work)
 
 	k_mutex_lock(&fs_dump_lock, K_FOREVER);
 
-	if ((fs_dump_conn != NULL) && fs_dump_notify_enabled) {
-		conn = bt_conn_ref(fs_dump_conn);
+	if (fs_dump_conn != NULL) {
+		if (fs_dump_notify_enabled) {
+			conn = bt_conn_ref(fs_dump_conn);
+		}
+
+		/* Drop stored command reference; each write acquires a fresh one. */
+		bt_conn_unref(fs_dump_conn);
+		fs_dump_conn = NULL;
 	}
 
 	memcpy(cmd, fs_dump_cmd_buf, sizeof(cmd));
@@ -348,5 +447,8 @@ static void fs_dump_work_handler(struct k_work *work)
 
 void fs_dump_ble_init(void)
 {
+	k_work_queue_start(&fs_dump_wq, fs_dump_wq_stack,
+			   K_THREAD_STACK_SIZEOF(fs_dump_wq_stack),
+			   K_PRIO_PREEMPT(7), NULL);
 	LOG_INF("BLE FS dump service ready (commands: LIST, DUMP <file>)");
 }

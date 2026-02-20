@@ -56,6 +56,9 @@ static const struct log_backend *fs_backend;
 
 static bool ble_verbose_enabled;
 static uint8_t routed_domains;
+static void start_adv(void);
+static void adv_restart_handler(struct k_work *work);
+K_WORK_DELAYABLE_DEFINE(adv_restart_work, adv_restart_handler);
 
 static uint8_t active_domain_count(void)
 {
@@ -301,10 +304,46 @@ static void ble_notify_hook(bool status, void *ctx)
 	LOG_INF("BLE backend notifications %s", status ? "enabled" : "disabled");
 }
 
+static void connected(struct bt_conn *conn, uint8_t err)
+{
+	ARG_UNUSED(conn);
+
+	if (err) {
+		LOG_WRN("BLE connect failed (%u)", err);
+		return;
+	}
+
+	LOG_INF("BLE connected");
+}
+
+static void disconnected(struct bt_conn *conn, uint8_t reason)
+{
+	ARG_UNUSED(conn);
+
+	LOG_INF("BLE disconnected (reason 0x%02x), scheduling advertising restart", reason);
+	(void)k_work_reschedule(&adv_restart_work, K_MSEC(100));
+}
+
+BT_CONN_CB_DEFINE(multidomain_backends_conn_cb) = {
+	.connected = connected,
+	.disconnected = disconnected,
+};
+
 static void start_adv(void)
 {
 	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1,
 				  ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+
+	if (err == -EALREADY) {
+		LOG_INF("BLE advertising already active");
+		return;
+	}
+
+	if ((err == -ENOMEM) || (err == -EAGAIN) || (err == -EBUSY)) {
+		LOG_WRN("BLE advertising start busy (%d), retrying", err);
+		(void)k_work_reschedule(&adv_restart_work, K_MSEC(200));
+		return;
+	}
 
 	if (err) {
 		LOG_ERR("BLE advertising start failed (%d)", err);
@@ -312,6 +351,12 @@ static void start_adv(void)
 	}
 
 	LOG_INF("BLE advertising started");
+}
+
+static void adv_restart_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
+	start_adv();
 }
 
 static int setup_ble(void)

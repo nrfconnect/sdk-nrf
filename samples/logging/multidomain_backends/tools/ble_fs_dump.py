@@ -98,9 +98,6 @@ async def run_list(client: BleakClient, timeout: float) -> list[str]:
         while time.monotonic() < timeout_at:
             if state.done.is_set():
                 break
-            if state.list_started and state.files and state.last_rx_time > 0:
-                if (time.monotonic() - state.last_rx_time) > 1.5:
-                    break
             await asyncio.sleep(0.2)
         else:
             raise TimeoutError("LIST timed out")
@@ -125,9 +122,6 @@ async def run_dump(client: BleakClient, filename: str, timeout: float) -> bytes:
         while time.monotonic() < timeout_at:
             if state.done.is_set():
                 break
-            if state.in_dump and state.last_rx_time > 0:
-                if (time.monotonic() - state.last_rx_time) > 1.5:
-                    break
             await asyncio.sleep(0.2)
         else:
             raise TimeoutError("DUMP timed out")

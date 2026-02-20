@@ -42,6 +42,38 @@ Enable dictionary mode on all enabled backends with:
      nrf/samples/logging/multidomain_backends \
      -- -DCONFIG_MULTIDOMAIN_BACKENDS_DICTIONARY_LOGGING=y
 
+The build generates a dictionary database at:
+
+.. code-block:: console
+
+   <build-dir>/multidomain_backends/zephyr/log_dictionary.json
+
+Dictionary parsing helpers are provided in ``tools/dict_decode.py``.
+They can capture and decode dictionary logs from:
+
+* UART stream
+* BLE logger backend (NUS)
+* Filesystem backend files dumped over BLE
+
+Example commands:
+
+.. code-block:: console
+
+   # UART dictionary decode (use /dev/serial/by-id path)
+   python3 nrf/samples/logging/multidomain_backends/tools/dict_decode.py \
+     --db /tmp/build-md-backends/multidomain_backends/zephyr/log_dictionary.json \
+     uart --port /dev/serial/by-id/usb-SEGGER_J-Link_001051851773-if02 --duration 20
+
+   # BLE logger dictionary decode (NUS notifications)
+   python3 nrf/samples/logging/multidomain_backends/tools/dict_decode.py \
+     --db /tmp/build-md-backends/multidomain_backends/zephyr/log_dictionary.json \
+     ble --duration 20
+
+   # FS dictionary decode from file dumped over BLE custom service
+   python3 nrf/samples/logging/multidomain_backends/tools/dict_decode.py \
+     --db /tmp/build-md-backends/multidomain_backends/zephyr/log_dictionary.json \
+     fs --file err.0000
+
 Build and run
 *************
 
