@@ -420,3 +420,17 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     harness_config: *bt_harness_config
+
+  sample.dfu.smp_svr.ram_load:
+    extra_args:
+      - FILE_SUFFIX="ram_load"
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  sample.dfu.smp_svr.ram_load.kmu:
+    extra_args:
+      - FILE_SUFFIX="ram_load"
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
