@@ -128,7 +128,7 @@ if(${TFM_PARTITION_CRYPTO})
     )
   endif()
 
-  if(EXISTS platform_cc3xx)
+  if(TARGET platform_cc3xx)
     target_link_libraries(platform_s PRIVATE platform_cc3xx)
   endif()
 
