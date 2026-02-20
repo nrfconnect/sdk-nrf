@@ -155,7 +155,22 @@ void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 	}
 #endif /* defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN) */
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SCAN_PARAMS_OVERRIDE)
+	struct wifi_scan_params scan_params = {0};
+
+	scan_params.dwell_time_active = CONFIG_LOCATION_METHOD_WIFI_SCAN_DWELL_TIME_ACTIVE;
+	scan_params.dwell_time_passive = CONFIG_LOCATION_METHOD_WIFI_SCAN_DWELL_TIME_PASSIVE;
+	scan_params.max_bss_cnt = CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT;
+
+	LOG_DBG("Scan params: dwell_active=%d, dwell_passive=%d, max_bss_cnt=%d",
+		scan_params.dwell_time_active,
+		scan_params.dwell_time_passive,
+		scan_params.max_bss_cnt);
+
+	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, &scan_params, sizeof(scan_params));
+#else
 	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, NULL, 0);
+#endif /* CONFIG_LOCATION_METHOD_WIFI_SCAN_PARAMS_OVERRIDE */
 	if (ret) {
 		LOG_ERR("Failed to initiate Wi-Fi scanning: %d", ret);
 		ret = -EFAULT;

@@ -642,6 +642,11 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
+  * Added:
+
+    * The :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCAN_PARAMS_OVERRIDE` Kconfig option and related options :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCAN_DWELL_TIME_ACTIVE` and :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCAN_DWELL_TIME_PASSIVE` to configure Wi-Fi scan parameters.
+    * The :c:enumerator:`LOCATION_EVT_CANCELLED` event that notifies the application when a location request has been cancelled.
+
   * Fixed a bug where GNSS was never stopped if the :c:func:`location_cloud_location_ext_result_set` function was called during GNSS method execution.
 
 Multiprotocol Service Layer libraries
@@ -738,6 +743,7 @@ Memfault integration
 
   * The :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED` Kconfig option to control whether an initial heartbeat is sent when the device connects to a network
     This shows the device status and initial metrics in the Memfault dashboard soon after boot.
+  * Support for recording location metrics when using external cloud location services (:kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL`).
 
 AVSystem integration
 --------------------
