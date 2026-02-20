@@ -1232,16 +1232,13 @@
 .. _`Ranging Service Specification`: https://files.bluetooth.com/download/ras_v1-0/
 
 .. _`Bluetooth SIG's Qualification Process`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/
-.. _`Launch Studio`: https://qualification.bluetooth.com/
+.. _`Qualification Workspace`: https://qualification.bluetooth.com/
 .. _`Profile Tuning Suite (PTS)`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/qualification-test-tools/profile-tuning-suite/
-.. _`Bluetooth Qualification Listing`: https://launchstudio.bluetooth.com/Listings/Search/
-.. _`Qualification process with no required testing`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/qualification-process-with-no-required-testing/
-.. _`Qualification process with required testing`: https://www.bluetooth.com/bluetooth-qualification-process-quick-start-guide/
-.. _`Qualifications and listings`: https://support.bluetooth.com/hc/en-us/categories/360004202331-Qualifications-and-Listings/
-.. _`Bluetooth Qualification Consultants`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/qualification-consultants/
-.. _`Bluetooth product types`: https://support.bluetooth.com/hc/en-us/articles/360049018712/
-.. _`PRD and DPD`: https://www.bluetooth.com/download/prd_dpd_resolutions/
-.. _`Create a subset of a design`: https://qualification.support.bluetooth.com/hc/en-us/articles/27694580618637-Create-a-Subset-of-a-Design
+.. _`Manage Submitted Products`: https://qualification.bluetooth.com/MyProjects/CompletedProjects
+.. _`Qualification Quick Start Guide`: https://www.bluetooth.com/bluetooth-qualification-process-quick-start-guide/
+.. _`Qualifications and listings`: https://qualification.bluetooth.com/MyProjects/ListingsSearch
+.. _`Bluetooth Qualification Consultants`: https://www.bluetooth.com/develop-with-bluetooth/qualify/qualification-consultants/
+.. _`QPRD and DPD`: https://qualification.bluetooth.com/OnlineReferences
 
 .. _`Bluetooth Mesh model specification`: https://www.bluetooth.com/specifications/specs/mmdl-1-1/
 .. _`Bluetooth Mesh protocol specification`: https://www.bluetooth.com/specifications/specs/mshprt-1-1/
