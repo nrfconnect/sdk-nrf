@@ -570,6 +570,7 @@ static int ranging_data_notify_or_indicate(struct bt_conn *conn, struct net_buf_
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
 	__ASSERT_NO_MSG(rrsp);
+	ARG_UNUSED(rrsp);
 
 	attr = bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_REALTIME_RD);
 
