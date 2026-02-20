@@ -6,9 +6,14 @@ common:
 
 tests:
   b0.w:
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   b0.rwx:
     extra_args:
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
