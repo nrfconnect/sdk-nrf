@@ -162,6 +162,14 @@ function(zephyr_mcuboot_tasks)
 
   set(imgtool_args ${imgtool_extra})
 
+  # Check if there is a bootloader configuration in the main image devicetree.
+  dt_comp_path(mcuboot_configs COMPATIBLE "nordic,mcuboot")
+  if(mcuboot_configs)
+    cmake_path(APPEND APPLICATION_BINARY_DIR "zephyr" "edt.pickle" OUTPUT_VARIABLE edt_pickle)
+    message(STATUS "Passing DTS-based MCUboot configuration: ${mcuboot_configs}")
+    set(imgtool_args ${imgtool_args} --edt-config "${edt_pickle}")
+  endif()
+
   # Extensionless prefix of any output file.
   set(output ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.signed)
 

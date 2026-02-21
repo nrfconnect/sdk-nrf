@@ -315,6 +315,14 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
     cmake_path(APPEND sysbuild_build_dir "${BINARY_BIN_FILE}" OUTPUT_VARIABLE output)
   endif()
 
+  # Check if there is a bootloader configuration in the main image devicetree.
+  dt_comp_path(mcuboot_configs TARGET "${main_image}" COMPATIBLE "nordic,mcuboot")
+  if(mcuboot_configs)
+    cmake_path(APPEND BINARY_DIR "zephyr" "edt.pickle" OUTPUT_VARIABLE edt_pickle)
+    message(STATUS "Passing DTS-based MCUboot configuration: ${mcuboot_configs}")
+    set(imgtool_args ${imgtool_args} --edt-config "${edt_pickle}")
+  endif()
+
   # List of additional build byproducts.
   set(byproducts ${output}.merged.hex)
 

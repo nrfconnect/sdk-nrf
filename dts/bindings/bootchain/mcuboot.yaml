@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+description: MCUboot instance properties
+
+compatible: nordic,mcuboot
+
+properties:
+  uuid-vid-required:
+    type: boolean
+    description: |
+      Enable or disable checks for UUID Vendor IDs in images.
+      If enabled, image candidates without UUID VID TLV will be rejected.
+
+  uuid-cid-required:
+    type: boolean
+    description: |
+      Enable or disable checks for UUID Class IDs in images.
+      If enabled, image candidates without UUID CID TLV will be rejected.
+
+  partitions:
+    type: phandles
+    description: |
+      References to the partition nodes used by this MCUboot instance.
+      Specifies a single partition if immutable MCUboot is used,
+      or multiple partitions when MCUboot is updateable.
+
+child-binding:
+  child-binding:
+    description: |
+      Child nodes representing images managed by the MCUboot instance.
+    properties:
+      image-index:
+        type: int
+        required: true
+        description: |
+          Image index within the MCUboot images list.
