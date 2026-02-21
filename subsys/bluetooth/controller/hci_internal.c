@@ -1617,19 +1617,25 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 #if CONFIG_BT_CTLR_SDC_LLPM
 	case SDC_HCI_OPCODE_CMD_VS_LLPM_MODE_SET:
 		return sdc_hci_cmd_vs_llpm_mode_set((void *)cmd_params);
-#endif /* CONFIG_BT_CTLR_SDC_LLPM */
+#ifdef CONFIG_BT_CENTRAL
 	case SDC_HCI_OPCODE_CMD_VS_CONN_UPDATE:
 		return sdc_hci_cmd_vs_conn_update((void *)cmd_params);
+#endif /* CONFIG_BT_CENTRAL */
+#endif /* CONFIG_BT_CTLR_SDC_LLPM */
+#ifdef CONFIG_BT_CONN
 	case SDC_HCI_OPCODE_CMD_VS_CONN_EVENT_EXTEND:
 		return sdc_hci_cmd_vs_conn_event_extend((void *)cmd_params);
+#endif /* CONFIG_BT_CONN */
 	case SDC_HCI_OPCODE_CMD_VS_QOS_CONN_EVENT_REPORT_ENABLE:
 		return sdc_hci_cmd_vs_qos_conn_event_report_enable((void *)cmd_params);
 #ifdef CONFIG_BT_CTLR_SDC_QOS_CHANNEL_SURVEY
 	case SDC_HCI_OPCODE_CMD_VS_QOS_CHANNEL_SURVEY_ENABLE:
 		return sdc_hci_cmd_vs_qos_channel_survey_enable((void *)cmd_params);
 #endif
+#ifdef CONFIG_BT_CONN
 	case SDC_HCI_OPCODE_CMD_VS_EVENT_LENGTH_SET:
 		return sdc_hci_cmd_vs_event_length_set((void *)cmd_params);
+#endif /* CONFIG_BT_CONN */
 #ifdef CONFIG_BT_PERIPHERAL
 	case SDC_HCI_OPCODE_CMD_VS_PERIPHERAL_LATENCY_MODE_SET:
 		return sdc_hci_cmd_vs_peripheral_latency_mode_set((void *)cmd_params);
@@ -1651,6 +1657,8 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 #ifdef CONFIG_BT_CENTRAL
 	case SDC_HCI_OPCODE_CMD_VS_CENTRAL_ACL_EVENT_SPACING_SET:
 		return sdc_hci_cmd_vs_central_acl_event_spacing_set((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_VS_COMPAT_MODE_WINDOW_OFFSET_SET:
+		return sdc_hci_cmd_vs_compat_mode_window_offset_set((void *)cmd_params);
 #endif
 #if defined(CONFIG_BT_CTLR_SDC_EVENT_TRIGGER)
 	case SDC_HCI_OPCODE_CMD_VS_SET_EVENT_START_TASK:
@@ -1695,13 +1703,15 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 	case SDC_HCI_OPCODE_CMD_VS_SCAN_CHANNEL_MAP_SET:
 		return sdc_hci_cmd_vs_scan_channel_map_set(
 			(sdc_hci_cmd_vs_scan_channel_map_set_t const *)cmd_params);
+#if defined(CONFIG_BT_CTLR_ADV_EXT)
 	case SDC_HCI_OPCODE_CMD_VS_SCAN_ACCEPT_EXT_ADV_PACKETS_SET:
 		return sdc_hci_cmd_vs_scan_accept_ext_adv_packets_set(
 			(sdc_hci_cmd_vs_scan_accept_ext_adv_packets_set_t const *)cmd_params);
-#endif
 	case SDC_HCI_OPCODE_CMD_VS_SET_ROLE_PRIORITY:
 		return sdc_hci_cmd_vs_set_role_priority(
 			(sdc_hci_cmd_vs_set_role_priority_t const *) cmd_params);
+#endif /* CONFIG_BT_CTLR_ADV_EXT */
+#endif /* CONFIG_BT_OBSERVER */
 #if defined(CONFIG_BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT)
 	case SDC_HCI_OPCODE_CMD_VS_CONN_ANCHOR_POINT_UPDATE_EVENT_REPORT_ENABLE:
 		return sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable(
