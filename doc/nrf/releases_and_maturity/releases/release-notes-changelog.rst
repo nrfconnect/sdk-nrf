@@ -33,7 +33,7 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-|no_changes_yet_note|
+* Updated the required `SEGGER J-Link`_ version to v9.18.
 
 Board support
 =============
