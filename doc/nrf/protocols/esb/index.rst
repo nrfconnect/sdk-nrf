@@ -41,6 +41,7 @@ Features
  * Backward compatible with legacy nRF24Lxx Enhanced ShockBurst
  * Support for external front-end modules.
  * Monitor mode for protocol debugging purposes.
+ * Configurable support for concurrent operation with other protocols.
 
 .. _esb_config:
 
@@ -60,7 +61,7 @@ ESB requires exclusive access to all fixed and configured resources for the :ref
      - fixed
    * - Timer
      - NRF_TIMER2
-     - configurable
+     - configurable for non-concurrent operation
    * - DPPI/PPI channels
      - 6 channels (7 channels for nRF53 and nRF54 Series devices)
      - automatically allocated
@@ -139,6 +140,24 @@ ESB Monitor mode
 ESB Monitor mode feature allows you to capture both packets and ACKs sent by other ESB devices, which can be useful when analyzing or debugging the protocol.
 
 .. _esb_getting_started:
+
+Concurrent operation
+====================
+
+You can use the ESB protocol concurrently with other protocols using Nordic Semiconductor's :ref:`mpsl_timeslot` feature.
+To enable this experimental feature, use the :kconfig:option:`CONFIG_ESB_MPSL_TIMESLOT` Kconfig option.
+
+In the PTX mode, it introduces unspecified extra latency between starting transmission from the application and starting radio transmission, because it is performed in the nearest available timeslot.
+Similarly, retransmission of packet can be performed later than the value specified in the :c:member:`esb_config.retransmit_delay` field.
+
+In the PRX mode, ESB tries to use all available time provided by the MPSL timeslot.
+It must not be used with any other constantly listening protocol.
+When using concurrent operation in PRX mode, the packet delivery rate might be lower and require more retransmissions.
+This depends strongly on other systems using timeslots.
+
+All timeslots requested by ESB have a priority as specified in :c:enumerator:`MPSL_TIMESLOT_PRIORITY_NORMAL`.
+
+The ESB Monitor mode is not supported.
 
 Setting up an ESB application
 =============================
@@ -339,10 +358,12 @@ If you are sure that you do not require support for revision 2 chips, you may re
 Examples
 ========
 
-The |NCS| provides the following three samples that show how to use the ESB protocol:
+The |NCS| provides the following samples that show how to use the ESB protocol:
 
 * :ref:`esb_ptx`
+* :ref:`esb_ptx_ble`
 * :ref:`esb_prx`
+* :ref:`esb_prx_ble`
 * :ref:`esb_monitor`
 
 .. _esb_fast_ramp_up:

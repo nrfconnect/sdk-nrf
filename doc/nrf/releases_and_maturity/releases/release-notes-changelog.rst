@@ -191,6 +191,7 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
+* Added experimental support for concurrent operation of ESB with other radio protocols using the :ref:`mpsl_timeslot` feature.
 * Fixed invalid radio configuration for legacy ESB protocol.
 
 Gazell
@@ -442,7 +443,10 @@ Edge Impulse samples
 Enhanced ShockBurst samples
 ---------------------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The :ref:`esb_prx_ble` sample that demonstrates how to use the ESB protocol in PRX mode concurrently with the Bluetooth LE LBS service.
+  * The :ref:`esb_ptx_ble` sample that demonstrates how to use the ESB protocol in PTX mode concurrently with the Bluetooth LE LBS service.
 
 Gazell samples
 --------------

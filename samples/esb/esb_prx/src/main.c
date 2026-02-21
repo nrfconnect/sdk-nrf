@@ -71,6 +71,11 @@ void event_handler(struct esb_evt const *event)
 			LOG_ERR("Error while reading rx packet");
 		}
 		break;
+#if IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)
+	case ESB_EVENT_TIMESLOT_FAILED:
+		LOG_ERR("Error in Timeslot handling");
+		break;
+#endif
 	}
 }
 
