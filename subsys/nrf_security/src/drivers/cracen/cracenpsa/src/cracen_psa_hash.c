@@ -44,17 +44,17 @@ psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size
 	*hash_length = sx_hash_get_alg_digestsz(sx_hash_algo);
 
 	sx_status = sx_hash_create(&c, sx_hash_algo, sizeof(c));
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_hash_feed(&c, input, input_length);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_hash_digest(&c, hash);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -68,7 +68,7 @@ psa_status_t cracen_hash_setup(cracen_hash_operation_t *operation, psa_algorithm
 	int status;
 
 	status = hash_get_algo(alg, &operation->sx_hash_algo);
-	if (status) {
+	if (status != SX_OK) {
 		return status;
 	}
 	operation->is_first_block = true;
@@ -90,7 +90,7 @@ static int init_or_resume_context(cracen_hash_operation_t *operation)
 	if (operation->is_first_block == true) {
 		sx_status = sx_hash_create(&operation->sx_ctx, operation->sx_hash_algo,
 					   sizeof(operation->sx_ctx));
-		if (sx_status) {
+		if (sx_status != SX_OK) {
 			return sx_status;
 		}
 		operation->is_first_block = false;
@@ -98,7 +98,7 @@ static int init_or_resume_context(cracen_hash_operation_t *operation)
 	} else {
 		/* Get back the old state if previous operation had been done */
 		sx_status = sx_hash_resume_state(&operation->sx_ctx);
-		if (sx_status) {
+		if (sx_status != SX_OK) {
 			return sx_status;
 		}
 	}
@@ -138,7 +138,7 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 
 	/* Initialize or resume an already initialized context. */
 	sx_status = init_or_resume_context(operation);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -146,7 +146,7 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 	sx_status = sx_hash_feed(&operation->sx_ctx, operation->input_buffer,
 				 sx_hash_get_alg_blocksz(operation->sx_hash_algo) -
 					 operation->bytes_left_for_next_block);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -160,17 +160,17 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 
 	/* forward the data to the driver and process the data */
 	sx_status = sx_hash_feed(&operation->sx_ctx, input, input_chunk_length);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 	sx_status = sx_hash_save_state(&operation->sx_ctx);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* Wait until partial processing is done */
 	sx_status = sx_hash_wait(&operation->sx_ctx);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -201,23 +201,23 @@ psa_status_t cracen_hash_finish(cracen_hash_operation_t *operation, uint8_t *has
 	}
 
 	sx_status = init_or_resume_context(operation);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_hash_feed(&operation->sx_ctx, operation->input_buffer,
 				 sx_hash_get_alg_blocksz(operation->sx_hash_algo) -
 					 operation->bytes_left_for_next_block);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_hash_digest(&operation->sx_ctx, hash);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 	sx_status = sx_hash_wait(&operation->sx_ctx);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 

@@ -552,7 +552,7 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 		return SX_ERR_INVALID_ARG;
 	}
 	struct cracen_rsagenpq rsagenpq;
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	size_t primefactorsz = keysz >> 1;
 
 	rsagenpq.pubexp = pubexp;
@@ -562,11 +562,8 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 	rsagenpq.q = wmem + primefactorsz;
 	rsagenpq.qptr = NULL;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_RSA_KEYGEN);
-	if (pkreq.status) {
-		sx_pk_release_req(pkreq.req);
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, SX_PK_CMD_RSA_KEYGEN);
 
 	/* step 4.1 */
 	rsagenpq.attempts = 0;
@@ -576,16 +573,16 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 	rsagenpq.q = NULL;
 
 	do {
-		sx_status = rsagenpq_get_random(pkreq.req, workmem, &rsagenpq);
+		sx_status = rsagenpq_get_random(&req, workmem, &rsagenpq);
 		if (sx_status == SX_ERR_COMPOSITE_VALUE || sx_status == SX_ERR_NOT_INVERTIBLE ||
 		    sx_status == SX_ERR_RSA_PQ_RANGE_CHECK_FAIL) {
 			rsagenpq.attempts++;
 			if (rsagenpq.attempts >= 5 * (primefactorsz << 3)) {
-				sx_pk_release_req(pkreq.req);
+				sx_pk_release_req(&req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 		} else if (sx_status != SX_OK) {
-			sx_pk_release_req(pkreq.req);
+			sx_pk_release_req(&req);
 			return sx_status;
 		}
 	} while (sx_status != SX_OK);
@@ -595,16 +592,16 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 	rsagenpq.rndout = rsagenpq.q;	   /* feed the PRNG into q */
 
 	do {
-		sx_status = rsagenpq_get_random(pkreq.req, workmem, &rsagenpq);
+		sx_status = rsagenpq_get_random(&req, workmem, &rsagenpq);
 		if (sx_status == SX_ERR_COMPOSITE_VALUE || sx_status == SX_ERR_NOT_INVERTIBLE ||
 		    sx_status == SX_ERR_RSA_PQ_RANGE_CHECK_FAIL) {
 			rsagenpq.attempts++;
 			if (rsagenpq.attempts >= 5 * (primefactorsz << 3)) {
-				sx_pk_release_req(pkreq.req);
+				sx_pk_release_req(&req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 		} else if (sx_status != SX_OK) {
-			sx_pk_release_req(pkreq.req);
+			sx_pk_release_req(&req);
 			return sx_status;
 		}
 	} while (sx_status != SX_OK);
@@ -614,11 +611,11 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 		struct sx_pk_inops_rsa_keygen inputs;
 		int sizes[] = {primefactorsz, primefactorsz, pubexpsz};
 
-		sx_pk_set_cmd(pkreq.req, SX_PK_CMD_RSA_KEYGEN);
+		sx_pk_set_cmd(&req, SX_PK_CMD_RSA_KEYGEN);
 
-		sx_status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
+		sx_status = sx_pk_list_gfp_inslots(&req, sizes, (struct sx_pk_slot *)&inputs);
 		if (sx_status != SX_OK) {
-			sx_pk_release_req(pkreq.req);
+			sx_pk_release_req(&req);
 			return sx_status;
 		}
 
@@ -626,26 +623,26 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 		sx_wrpkmem(inputs.q.addr, wmem + primefactorsz, primefactorsz);
 		sx_wrpkmem(inputs.e.addr, pubexp, pubexpsz);
 
-		sx_pk_run(pkreq.req);
-		sx_status = sx_pk_wait(pkreq.req);
+		sx_pk_run(&req);
+		sx_status = sx_pk_wait(&req);
 		if (sx_status != SX_OK) {
-			sx_pk_release_req(pkreq.req);
+			sx_pk_release_req(&req);
 			return sx_status;
 		}
 	}
 
 	/* Read private exponent d into workmem for CRT params computation */
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq.req);
+	const uint8_t **outputs = sx_pk_get_output_ops(&req);
 
 	sx_rdpkmem(workmem, outputs[2], keysz);
 
 	if (CRACEN_RSA_KEY_CRT(privkey)) {
-		sx_status = rsagenpriv_crt_finish(pkreq.req, keysz, workmem, privkey);
+		sx_status = rsagenpriv_crt_finish(&req, keysz, workmem, privkey);
 	} else {
-		sx_status = rsagenpriv_finish(pkreq.req, privkey, keysz);
+		sx_status = rsagenpriv_finish(&req, privkey, keysz);
 	}
 
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	return sx_status;
 }

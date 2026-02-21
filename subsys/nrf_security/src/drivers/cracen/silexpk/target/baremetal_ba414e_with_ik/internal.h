@@ -8,24 +8,7 @@
 #define INTERNAL_HEADER_FILE
 
 #include <stdint.h>
-
-struct sx_pk_cmd_def;
-
-struct sx_regs {
-	uint8_t *base;
-};
-
-struct sx_pk_req {
-	struct sx_regs regs;
-	uint8_t *cryptoram;
-	int slot_sz;
-	int op_size;
-	const struct sx_pk_cmd_def *cmd;
-	struct sx_pk_cnx *cnx;
-	const uint8_t *outputops[12];
-	void *userctxt;
-	int ik_mode;
-};
+#include <silexpk/core.h>
 
 void sx_pk_wrreg(struct sx_regs *regs, uint32_t addr, uint32_t v);
 

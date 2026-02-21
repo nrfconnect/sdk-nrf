@@ -228,27 +228,26 @@ int sx_pk_init(void)
 	cnx->instance.slot_sz = op_offset;
 
 	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_BASE)) {
-
-		struct sx_pk_acq_req pkreq;
-
-		/* Build a request and release it.
-		 * Running sx_pk_acquire_req will clear the memory as an automated operation
-		 */
-		pkreq = sx_pk_acquire_req(SX_PK_CMD_CLEAR_MEMORY);
-		sx_pk_release_req(pkreq.req);
+		/* Clear PK data memory via acquire_hw/release_req. */
+		sx_pk_acquire_hw(&silex_pk_engine.instance);
+		(void)sx_pk_clear_memory(&silex_pk_engine.instance);
+		sx_pk_release_req(&silex_pk_engine.instance);
 	}
 
 	return SX_OK;
 }
 
-struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
+void sx_pk_acquire_hw(sx_pk_req *req)
 {
-	struct sx_pk_acq_req req = {NULL, SX_OK};
-
 	nrf_security_mutex_lock(cracen_mutex_asymmetric);
-	req.req = &silex_pk_engine.instance;
-	req.req->cmd = cmd;
-	req.req->cnx = &silex_pk_engine;
+
+	/* Copy hardware-related fields from the singleton */
+	req->regs = silex_pk_engine.instance.regs;
+	req->cryptoram = silex_pk_engine.instance.cryptoram;
+	req->slot_sz = silex_pk_engine.instance.slot_sz;
+	req->cmd = NULL;
+	req->cnx = &silex_pk_engine;
+	req->ik_mode = 0;
 
 	cracen_acquire();
 	if (!IS_ENABLED(CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND) &&
@@ -261,15 +260,13 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 	}
 
 	/* Wait until initialized. */
-	while (ba414ep_is_busy(req.req) || ik_is_busy(req.req)) {
+	while (ba414ep_is_busy(req) || ik_is_busy(req)) {
 		if (!IS_ENABLED(CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND) &&
 		    IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
 
 			cracen_wait_for_pke_interrupt();
 		}
 	}
-
-	return req;
 }
 
 sx_pk_req *sx_get_current_req(void)

@@ -70,7 +70,7 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	uint8_t *area_1 = workmem;
 	uint8_t *area_2 = workmem + AREA2_MEM_OFFSET;
 	uint8_t *area_4 = workmem + AREA4_MEM_OFFSET;
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 
 	/* Hash the private key, the digest is stored in the first 114 bytes of workmem*/
 	status = cracen_hash_input(priv_key, SX_ED448_SZ, &sxhashalg_shake256_114, area_1);
@@ -86,19 +86,16 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 		return status;
 	}
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_EDDSA_PTMUL);
-	if (pkreq.status) {
-		sx_pk_release_req(pkreq.req);
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, SX_PK_CMD_EDDSA_PTMUL);
 
 	/* Perform point multiplication R = [r]B. This is the encoded point R,
 	 * which is the first part of the signature.
 	 */
-	status = sx_ed448_ptmult(pkreq.req, (const struct sx_ed448_dgst *)area_4,
+	status = sx_ed448_ptmult(&req, (const struct sx_ed448_dgst *)area_4,
 				 (struct sx_ed448_pt *)pnt_r);
 	if (status != SX_OK) {
-		sx_pk_release_req(pkreq.req);
+		sx_pk_release_req(&req);
 		return status;
 	}
 
@@ -115,28 +112,28 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	/* Perform point multiplication A = [s]B,
 	 * to obtain the public key A. which is stored in workmem[57:113]
 	 */
-	status = sx_ed448_ptmult(pkreq.req, (const struct sx_ed448_dgst *)area_1,
+	status = sx_ed448_ptmult(&req, (const struct sx_ed448_dgst *)area_1,
 				 (struct sx_ed448_pt *)area_2);
 	if (status != SX_OK) {
-		sx_pk_release_req(pkreq.req);
+		sx_pk_release_req(&req);
 		return status;
 	}
 
 	status = ed448_calculate_k(area_2, pnt_r, message, message_length, prehash);
 	if (status != SX_OK) {
-		sx_pk_release_req(pkreq.req);
+		sx_pk_release_req(&req);
 		return status;
 	}
 
 	/* Compute (r + k * s) mod L. This gives the second part of the
 	 * signature, which is the encoded S which is stored in pnt_r.
 	 */
-	status = sx_ed448_sign(pkreq.req, (const struct sx_ed448_dgst *)area_2,
+	status = sx_ed448_sign(&req, (const struct sx_ed448_dgst *)area_2,
 			       (const struct sx_ed448_dgst *)area_4,
 			       (const struct sx_ed448_v *)area_1,
 			       (struct sx_ed448_v *)(pnt_r + SX_ED448_PT_SZ));
 
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	if (status != SX_OK) {
 		return status;
@@ -183,7 +180,7 @@ static int ed448_verify_internal(const uint8_t *pub_key, const uint8_t *message,
 	uint8_t digest[SX_ED448_DGST_SZ];
 	size_t ed448_sz = SX_ED448_SZ;
 	size_t input_count = 4;
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 
 	uint8_t const *hash_array[] = {dom4, signature, pub_key, message};
 	size_t hash_array_lengths[] = {sizeof(dom4), ed448_sz, ed448_sz, message_length};
@@ -194,18 +191,15 @@ static int ed448_verify_internal(const uint8_t *pub_key, const uint8_t *message,
 		return status;
 	}
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_EDDSA_VER);
-	if (pkreq.status) {
-		sx_pk_release_req(pkreq.req);
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, SX_PK_CMD_EDDSA_VER);
 
-	status = sx_ed448_verify(pkreq.req, (struct sx_ed448_dgst *)digest,
+	status = sx_ed448_verify(&req, (struct sx_ed448_dgst *)digest,
 				 (const struct sx_ed448_pt *)pub_key,
 				 (const struct sx_ed448_v *)(signature + SX_ED448_SZ),
 				 (const struct sx_ed448_pt *)signature);
 
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	return status;
 }
@@ -240,7 +234,7 @@ int cracen_ed448_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key)
 	int status;
 	uint8_t digest[SX_ED448_DGST_SZ];
 	uint8_t *pub_key_A = digest + SX_ED448_SZ;
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 
 	status = cracen_hash_input(priv_key, SX_ED448_SZ, &sxhashalg_shake256_114, digest);
 	if (status != SX_OK) {
@@ -256,17 +250,14 @@ int cracen_ed448_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key)
 	 */
 	safe_memzero(pub_key_A, SX_ED448_SZ);
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_EDDSA_PTMUL);
-	if (pkreq.status) {
-		sx_pk_release_req(pkreq.req);
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, SX_PK_CMD_EDDSA_PTMUL);
 
 	/* Perform point multiplication A = [s]B, to obtain the public key A. */
-	status = sx_ed448_ptmult(pkreq.req, (const struct sx_ed448_dgst *)digest,
+	status = sx_ed448_ptmult(&req, (const struct sx_ed448_dgst *)digest,
 				 (struct sx_ed448_pt *)pub_key_A);
 
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	if (status != SX_OK) {
 		return status;

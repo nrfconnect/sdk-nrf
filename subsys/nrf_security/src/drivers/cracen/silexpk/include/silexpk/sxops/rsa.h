@@ -25,6 +25,7 @@ extern "C" {
 
 #include "adapter.h"
 #include "impl.h"
+#include <cracen/statuscodes.h>
 #include <silexpk/cmddefs/modmath.h>
 #include <silexpk/cmddefs/rsa.h>
 #include <silexpk/cmddefs/modexp.h>
@@ -49,6 +50,7 @@ struct sx_pk_cmd_def;
  * @remark When the operation finishes on the accelerator,
  * call sx_async_finish_single()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] cmd Command definition. Should be a primitive modular
  * operation with 1 operands. For example:
  *    ::SX_PK_CMD_ODD_MOD_INV, ::SX_PK_CMD_ODD_MOD_REDUCE,
@@ -59,35 +61,36 @@ struct sx_pk_cmd_def;
  * commands
  * @param[in] b Operand of modular operation
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  */
-static inline struct sx_pk_acq_req sx_async_mod_single_op_cmd_go(const struct sx_pk_cmd_def *cmd,
-								 const sx_const_op *modulo,
-								 const sx_const_op *b)
+static inline int sx_async_mod_single_op_cmd_go(sx_pk_req *req, const struct sx_pk_cmd_def *cmd,
+						const sx_const_op *modulo, const sx_const_op *b)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_mod_single_op_cmd inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(cmd);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, cmd);
 
 	/* convert and transfer operands */
 	int sizes[] = {
 		sx_const_op_size(modulo),
 		sx_const_op_size(b),
 	};
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 	sx_pk_op2vmem(modulo, inputs.n.addr);
 	sx_pk_op2vmem(b, inputs.b.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Compute single operand modular operation
@@ -127,16 +130,16 @@ static inline struct sx_pk_acq_req sx_async_mod_single_op_cmd_go(const struct sx
 static inline int sx_mod_single_op_cmd(const struct sx_pk_cmd_def *cmd, const sx_const_op *modulo,
 				       const sx_const_op *b, sx_op *result)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_mod_single_op_cmd_go(cmd, modulo, b);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_mod_single_op_cmd_go(&req, cmd, modulo, b);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
-	sx_async_finish_single(pkreq.req, result);
+	status = sx_pk_wait(&req);
+	sx_async_finish_single(&req, result);
 
 	return status;
 }
@@ -172,7 +175,7 @@ static inline int sx_mod_single_op_cmd(const struct sx_pk_cmd_def *cmd, const sx
  * @remark It is up to the user to use the corresponding command w.r.t.
  * the parity of the modulus
  */
-static inline int sx_sync_mod_single_op_cmd(struct sx_pk_acq_req *pkreq,
+static inline int sx_sync_mod_single_op_cmd(sx_pk_req *req,
 					   const struct sx_pk_cmd_def *cmd,
 					   const sx_const_op *modulo, const sx_const_op *b,
 					   sx_op *result)
@@ -180,7 +183,7 @@ static inline int sx_sync_mod_single_op_cmd(struct sx_pk_acq_req *pkreq,
 	int status;
 	struct sx_pk_inops_mod_single_op_cmd inputs;
 
-	sx_pk_set_cmd(pkreq->req, cmd);
+	sx_pk_set_cmd(req, cmd);
 
 	/* convert and transfer operands */
 	int sizes[] = {
@@ -188,18 +191,18 @@ static inline int sx_sync_mod_single_op_cmd(struct sx_pk_acq_req *pkreq,
 		sx_const_op_size(b),
 	};
 
-	status = sx_pk_list_gfp_inslots(pkreq->req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status) {
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
 		return status;
 	}
 	sx_pk_op2vmem(modulo, inputs.n.addr);
 	sx_pk_op2vmem(b, inputs.b.addr);
 
-	sx_pk_run(pkreq->req);
+	sx_pk_run(req);
 
-	status = sx_pk_wait(pkreq->req);
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
-	const int opsz = sx_pk_get_opsize(pkreq->req);
+	status = sx_pk_wait(req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_mem2op(outputs[0], opsz, result);
 
@@ -214,8 +217,7 @@ static inline int sx_sync_mod_single_op_cmd(struct sx_pk_acq_req *pkreq,
  * @remark When the operation finishes on the accelerator,
  * call sx_async_finish_single()
  *
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- * startup
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] cmd Command definition. Should be a primitive modular
  * operation with 2 operands. For example:
  *    ::SX_PK_CMD_MOD_ADD, ::SX_PK_CMD_MOD_SUB,
@@ -224,22 +226,22 @@ static inline int sx_sync_mod_single_op_cmd(struct sx_pk_acq_req *pkreq,
  * @param[in] a First operand of modular operation
  * @param[in] b Second operand of modular operation
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_mod_primitive_cmd() for a synchronous version
  */
-static inline struct sx_pk_acq_req sx_async_mod_cmd_go(struct sx_pk_cnx *cnx,
-						       const struct sx_pk_cmd_def *cmd,
-						       const sx_const_op *modulo,
-						       const sx_const_op *a, const sx_const_op *b)
+static inline int sx_async_mod_cmd_go(sx_pk_req *req, const struct sx_pk_cmd_def *cmd,
+				      const sx_const_op *modulo, const sx_const_op *a,
+				      const sx_const_op *b)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_mod_cmd inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(cmd);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, cmd);
 
 	/* convert and transfer operands */
 	int sizes[] = {
@@ -247,17 +249,18 @@ static inline struct sx_pk_acq_req sx_async_mod_cmd_go(struct sx_pk_cnx *cnx,
 		sx_const_op_size(a),
 		sx_const_op_size(b),
 	};
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 	sx_pk_op2vmem(modulo, inputs.n.addr);
 	sx_pk_op2vmem(a, inputs.a.addr);
 	sx_pk_op2vmem(b, inputs.b.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Synchronous primitive modular operation with 2 operands
@@ -291,7 +294,7 @@ static inline struct sx_pk_acq_req sx_async_mod_cmd_go(struct sx_pk_cnx *cnx,
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_sync_mod_primitive_cmd(struct sx_pk_acq_req *pkreq,
+static inline int sx_sync_mod_primitive_cmd(sx_pk_req *req,
 					   struct sx_pk_cnx *cnx, const struct sx_pk_cmd_def *cmd,
 					   const sx_const_op *modulo, const sx_const_op *a,
 					   const sx_const_op *b, sx_op *result)
@@ -300,7 +303,7 @@ static inline int sx_sync_mod_primitive_cmd(struct sx_pk_acq_req *pkreq,
 	int status;
 	struct sx_pk_inops_mod_cmd inputs;
 
-	sx_pk_set_cmd(pkreq->req, cmd);
+	sx_pk_set_cmd(req, cmd);
 
 	/* convert and transfer operands */
 	int sizes[] = {
@@ -308,23 +311,20 @@ static inline int sx_sync_mod_primitive_cmd(struct sx_pk_acq_req *pkreq,
 		sx_const_op_size(a),
 		sx_const_op_size(b),
 	};
-	pkreq->status = sx_pk_list_gfp_inslots(pkreq->req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq->status) {
-		return pkreq->status;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		return status;
 	}
 	sx_pk_op2vmem(modulo, inputs.n.addr);
 	sx_pk_op2vmem(a, inputs.a.addr);
 	sx_pk_op2vmem(b, inputs.b.addr);
 
-	sx_pk_run(pkreq->req);
-	if (pkreq->status) {
-		return pkreq->status;
-	}
+	sx_pk_run(req);
 
-	status = sx_pk_wait(pkreq->req);
+	status = sx_pk_wait(req);
 
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
-	const int opsz = sx_pk_get_opsize(pkreq->req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_mem2op(outputs[0], opsz, result);
 
@@ -368,16 +368,16 @@ static inline int sx_mod_primitive_cmd(struct sx_pk_cnx *cnx, const struct sx_pk
 				       const sx_const_op *modulo, const sx_const_op *a,
 				       const sx_const_op *b, sx_op *result)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_mod_cmd_go(cnx, cmd, modulo, a, b);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_mod_cmd_go(&req, cmd, modulo, a, b);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
-	sx_async_finish_single(pkreq.req, result);
+	status = sx_pk_wait(&req);
+	sx_async_finish_single(&req, result);
 
 	return status;
 }
@@ -390,19 +390,21 @@ static inline int sx_mod_primitive_cmd(struct sx_pk_cnx *cnx, const struct sx_pk
  * @remark When the operation finishes on the accelerator,
  * call sx_async_finish_single()
  *
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- * startup
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] modulo Odd modulus operand
  * @param[in] b Operand to inverse
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_async_finish_single(), sx_mod_inv()
  */
-static inline struct sx_pk_acq_req
-sx_async_mod_inv_go(struct sx_pk_cnx *cnx, const sx_const_op *modulo, const sx_const_op *b)
+static inline int sx_async_mod_inv_go(sx_pk_req *req, const sx_const_op *modulo,
+				      const sx_const_op *b)
 {
-	return sx_async_mod_single_op_cmd_go(SX_PK_CMD_ODD_MOD_INV, modulo, b);
+	return sx_async_mod_single_op_cmd_go(req, SX_PK_CMD_ODD_MOD_INV, modulo, b);
 }
 
 /** Compute modular inversion with odd modulus
@@ -431,17 +433,17 @@ sx_async_mod_inv_go(struct sx_pk_cnx *cnx, const sx_const_op *modulo, const sx_c
 static inline int sx_mod_inv(struct sx_pk_cnx *cnx, const sx_const_op *modulo, const sx_const_op *b,
 			     sx_op *result)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_mod_inv_go(cnx, modulo, b);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_mod_inv_go(&req, modulo, b);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_async_finish_single(pkreq.req, result);
+	sx_async_finish_single(&req, result);
 
 	return status;
 }
@@ -454,21 +456,22 @@ static inline int sx_mod_inv(struct sx_pk_cnx *cnx, const sx_const_op *modulo, c
  * @remark When the operation finishes on the accelerator,
  * call sx_async_mod_exp_end()
  *
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- * startup
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] input Base operand for modular exponentiation
  * @param[in] e Exponent operand
  * @param[in] m Modulus operand
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_mod_exp() for the synchronous version
  */
-static inline struct sx_pk_acq_req sx_async_mod_exp_go(struct sx_pk_cnx *cnx,
-						       const sx_const_op *input,
-						       const sx_const_op *e, const sx_const_op *m)
+static inline int sx_async_mod_exp_go(sx_pk_req *req, const sx_const_op *input,
+				      const sx_const_op *e, const sx_const_op *m)
 {
-	return sx_async_mod_cmd_go(cnx, SX_PK_CMD_MOD_EXP, m, input, e);
+	return sx_async_mod_cmd_go(req, SX_PK_CMD_MOD_EXP, m, input, e);
 }
 
 /** Finish asynchronous (non-blocking) modular exponentiation.
@@ -517,16 +520,16 @@ static inline void sx_async_mod_exp_end(sx_pk_req *req, sx_op *result)
 static inline int sx_mod_exp(struct sx_pk_cnx *cnx, const sx_const_op *input, const sx_const_op *e,
 			     const sx_const_op *m, sx_op *result)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_mod_exp_go(cnx, input, e, m);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_mod_exp_go(&req, input, e, m);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
-	sx_async_mod_exp_end(pkreq.req, result);
+	status = sx_pk_wait(&req);
+	sx_async_mod_exp_end(&req, result);
 	return status;
 }
 
@@ -546,38 +549,39 @@ static inline int sx_mod_exp(struct sx_pk_cnx *cnx, const sx_const_op *input, co
  * @remark When the operation finishes on the accelerator,
  * call sx_async_crt_mod_exp_end()
  *
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- startup
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] in Input
  * @param[in] p Prime number p
  * @param[in] q Prime number q
  * @param[in] dp d mod (p-1), with d the private key
  * @param[in] dq d mod (q-1), with d the private key
  * @param[in] qinv q^(-1) mod p
-
- * @return Acquired acceleration request for this operation
+ *
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_async_crt_mod_exp_end()
  */
-static inline struct sx_pk_acq_req
-sx_async_crt_mod_exp_go(struct sx_pk_cnx *cnx, const sx_const_op *in, const sx_const_op *p,
-			const sx_const_op *q, const sx_const_op *dp, const sx_const_op *dq,
-			const sx_const_op *qinv)
+static inline int sx_async_crt_mod_exp_go(sx_pk_req *req, const sx_const_op *in,
+					  const sx_const_op *p, const sx_const_op *q,
+					  const sx_const_op *dp, const sx_const_op *dq,
+					  const sx_const_op *qinv)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_crt_mod_exp inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_MOD_EXP_CRT);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_MOD_EXP_CRT);
 
 	/* convert and transfer operands */
 	int sizes[] = {sx_const_op_size(p),  sx_const_op_size(q),  sx_const_op_size(in),
 		       sx_const_op_size(dp), sx_const_op_size(dq), sx_const_op_size(qinv)};
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 	sx_pk_op2vmem(in, inputs.in.addr);
 	sx_pk_op2vmem(p, inputs.p.addr);
@@ -586,9 +590,9 @@ sx_async_crt_mod_exp_go(struct sx_pk_cnx *cnx, const sx_const_op *in, const sx_c
 	sx_pk_op2vmem(dq, inputs.dq.addr);
 	sx_pk_op2vmem(qinv, inputs.qinv.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) modular exponentiation with CRT.
@@ -646,15 +650,15 @@ static inline int sx_crt_mod_exp(struct sx_pk_cnx *cnx, const sx_const_op *in, c
 				 const sx_const_op *q, const sx_const_op *dp, const sx_const_op *dq,
 				 const sx_const_op *qinv, sx_op *result)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_crt_mod_exp_go(cnx, in, p, q, dp, dq, qinv);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_crt_mod_exp_go(&req, in, p, q, dp, dq, qinv);
+	if (status != SX_OK) {
+		return status;
 	}
-	status = sx_pk_wait(pkreq.req);
-	sx_async_crt_mod_exp_end(pkreq.req, result);
+	status = sx_pk_wait(&req);
+	sx_async_crt_mod_exp_end(&req, result);
 
 	return status;
 }
@@ -667,38 +671,40 @@ static inline int sx_crt_mod_exp(struct sx_pk_cnx *cnx, const sx_const_op *in, c
  * @remark When the operation finishes on the accelerator,
  * call sx_async_rsa_keygen_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] p Prime value p
  * @param[in] q Prime value q
  * @param[in] public_expo Public exponent operand
-
- * @return Acquired acceleration request for this operation
+ *
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  */
-static inline struct sx_pk_acq_req sx_async_rsa_keygen_go(const sx_const_op *p,
-							  const sx_const_op *q,
-							  const sx_const_op *public_expo)
+static inline int sx_async_rsa_keygen_go(sx_pk_req *req, const sx_const_op *p,
+					 const sx_const_op *q, const sx_const_op *public_expo)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_rsa_keygen inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_RSA_KEYGEN);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_RSA_KEYGEN);
 
 	/* convert and transfer operands */
 	int sizes[] = {sx_const_op_size(p), sx_const_op_size(q), sx_const_op_size(public_expo)};
 
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 	sx_pk_op2vmem(p, inputs.p.addr);
 	sx_pk_op2vmem(q, inputs.q.addr);
 	sx_pk_op2vmem(public_expo, inputs.e.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) RSA private key generation.
@@ -764,17 +770,17 @@ static inline int sx_rsa_keygen(const sx_const_op *p, const sx_const_op *q,
 				const sx_const_op *public_expo, sx_op *n, sx_op *lambda_n,
 				sx_op *privkey)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_rsa_keygen_go(p, q, public_expo);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_rsa_keygen_go(&req, p, q, public_expo);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_async_rsa_keygen_end(pkreq.req, n, lambda_n, privkey);
+	sx_async_rsa_keygen_end(&req, n, lambda_n, privkey);
 
 	return status;
 }
@@ -787,40 +793,42 @@ static inline int sx_rsa_keygen(const sx_const_op *p, const sx_const_op *q,
  * @remark When the operation finishes on the accelerator,
  * call sx_async_rsa_crt_keyparams_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] p Prime operand p
  * @param[in] q Prime operand q
  * @param[in] privkey Private key
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_async_rsa_crt_keyparams_end() and sx_async_rsa_crt_keyparams()
  */
-static inline struct sx_pk_acq_req sx_async_rsa_crt_keyparams_go(const sx_const_op *p,
-								 const sx_const_op *q,
-								 const sx_const_op *privkey)
+static inline int sx_async_rsa_crt_keyparams_go(sx_pk_req *req, const sx_const_op *p,
+						const sx_const_op *q, const sx_const_op *privkey)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_rsa_crt_keyparams inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_RSA_CRT_KEYPARAMS);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_RSA_CRT_KEYPARAMS);
 
 	/* convert and transfer operands */
 	int sizes[] = {sx_const_op_size(p), sx_const_op_size(q), sx_const_op_size(privkey)};
 
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 	sx_pk_op2vmem(p, inputs.p.addr);
 	sx_pk_op2vmem(q, inputs.q.addr);
 	sx_pk_op2vmem(privkey, inputs.privkey.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) RSA CRT private key parameters.
@@ -886,17 +894,17 @@ static inline int sx_rsa_crt_keyparams(const sx_const_op *p, const sx_const_op *
 				       const sx_const_op *privkey, sx_op *dp, sx_op *dq,
 				       sx_op *qinv)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_rsa_crt_keyparams_go(p, q, privkey);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_rsa_crt_keyparams_go(&req, p, q, privkey);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_async_rsa_crt_keyparams_end(pkreq.req, dp, dq, qinv);
+	sx_async_rsa_crt_keyparams_end(&req, dp, dq, qinv);
 
 	return status;
 }
@@ -917,37 +925,40 @@ static inline int sx_rsa_crt_keyparams(const sx_const_op *p, const sx_const_op *
  * @remark When the operation finishes on the accelerator,
  * call sx_pk_release_req()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] n Number to test as prime value. Must be larger than 2
  * @param[in] a Random value in interval [2, n-2]
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_miller_rabin() for a synchronous version
  */
-static inline struct sx_pk_acq_req sx_async_miller_rabin_go(const sx_const_op *n,
-							    const sx_const_op *a)
+static inline int sx_async_miller_rabin_go(sx_pk_req *req, const sx_const_op *n,
+					   const sx_const_op *a)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_miller_rabin inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_MILLER_RABIN);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_MILLER_RABIN);
 
 	/* convert and transfer operands */
 	int sizes[] = {sx_const_op_size(n), sx_const_op_size(a)};
 
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 	sx_pk_op2vmem(n, inputs.n.addr);
 	sx_pk_op2vmem(a, inputs.a.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Run one round of the Miller Rabin primality test
@@ -978,16 +989,16 @@ static inline struct sx_pk_acq_req sx_async_miller_rabin_go(const sx_const_op *n
 
 static inline int sx_miller_rabin(const sx_const_op *n, const sx_const_op *a)
 {
-	struct sx_pk_acq_req pkreq;
-	uint32_t status;
+	sx_pk_req req;
+	int status;
 
-	pkreq = sx_async_miller_rabin_go(n, a);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_miller_rabin_go(&req, n, a);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
-	sx_pk_release_req(pkreq.req);
+	status = sx_pk_wait(&req);
+	sx_pk_release_req(&req);
 
 	return status;
 }

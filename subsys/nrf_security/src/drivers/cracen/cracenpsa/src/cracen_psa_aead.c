@@ -107,12 +107,12 @@ static psa_status_t process_on_hw(cracen_aead_operation_t *operation)
 {
 	int sx_status = sx_aead_save_state(&operation->ctx);
 
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_aead_wait(&operation->ctx);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 	operation->context_state = CRACEN_CONTEXT_INITIALIZED;
@@ -609,12 +609,12 @@ static psa_status_t finalize_aead_encryption(cracen_aead_operation_t *operation,
 	}
 
 	sx_status = sx_aead_produce_tag(&operation->ctx, tag);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_aead_wait(&operation->ctx);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -666,12 +666,12 @@ static psa_status_t finalize_aead_decryption(cracen_aead_operation_t *operation,
 	int sx_status;
 
 	sx_status = sx_aead_verify_tag(&operation->ctx, tag);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_aead_wait(&operation->ctx);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 

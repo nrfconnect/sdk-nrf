@@ -25,6 +25,7 @@ extern "C" {
 
 #include "adapter.h"
 #include "impl.h"
+#include <cracen/statuscodes.h>
 #include <silexpk/cmddefs/dsa.h>
 #include <silexpk/version.h>
 
@@ -47,8 +48,7 @@ struct sx_pk_cmd_def;
  * @remark When the operation finishes on the accelerator,
  * call sx_async_finish_pair()
  *
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- * startup
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] p Prime modulus p
  * @param[in] q Prime divisor of p-1
  * @param[in] g Generator of order q mod p
@@ -57,32 +57,32 @@ struct sx_pk_cmd_def;
  * @param[in] h Hash digest of message reduced by means of
  * Secure Hash Algorithm specified in FIPS 180-3
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_dsa_sign() for a synchronous version
  */
-static inline struct sx_pk_acq_req sx_async_dsa_sign_go(struct sx_pk_cnx *cnx, const sx_const_op *p,
-							const sx_const_op *q, const sx_const_op *g,
-							const sx_const_op *k,
-							const sx_const_op *privkey,
-							const sx_const_op *h)
+static inline int sx_async_dsa_sign_go(sx_pk_req *req, const sx_const_op *p, const sx_const_op *q,
+				       const sx_const_op *g, const sx_const_op *k,
+				       const sx_const_op *privkey, const sx_const_op *h)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_dsa_sign inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_DSA_SIGN);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_DSA_SIGN);
 
 	/* convert and transfer operands */
 	int sizes[] = {
 		sx_const_op_size(p), sx_const_op_size(q),	    sx_const_op_size(g),
 		sx_const_op_size(k), sx_const_op_size(privkey), sx_const_op_size(h),
 	};
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 	sx_pk_op2vmem(p, inputs.p.addr);
 	sx_pk_op2vmem(q, inputs.q.addr);
@@ -91,9 +91,9 @@ static inline struct sx_pk_acq_req sx_async_dsa_sign_go(struct sx_pk_cnx *cnx, c
 	sx_pk_op2vmem(privkey, inputs.privkey.addr);
 	sx_pk_op2vmem(h, inputs.h.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** DSA signature generation
@@ -136,17 +136,17 @@ static inline struct sx_pk_acq_req sx_async_dsa_sign_go(struct sx_pk_cnx *cnx, c
 int sx_dsa_sign(struct sx_pk_cnx *cnx, const sx_op *p, const sx_op *q, const sx_op *g,
 		const sx_op *k, const sx_op *privkey, const sx_op *h, sx_op *r, sx_op *s)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_dsa_sign_go(cnx, p, q, g, k, privkey, h);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_dsa_sign_go(&req, p, q, g, k, privkey, h);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_async_finish_pair(pkreq.req, r, s);
+	sx_async_finish_pair(&req, r, s);
 
 	return status;
 }
@@ -159,8 +159,7 @@ int sx_dsa_sign(struct sx_pk_cnx *cnx, const sx_op *p, const sx_op *q, const sx_
  * @remark When the operation finishes on the accelerator,
  * call sx_pk_release_req()
  *
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- * startup
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] p Prime modulus p
  * @param[in] q Prime divisor of p-1
  * @param[in] g Generator of order q mod p
@@ -170,23 +169,23 @@ int sx_dsa_sign(struct sx_pk_cnx *cnx, const sx_op *p, const sx_op *q, const sx_
  * @param[in] r First part of the signature to verify
  * @param[in] s Second part of the signature to verify
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_dsa_ver() for a synchronous version
  */
-static inline struct sx_pk_acq_req sx_async_dsa_ver_go(struct sx_pk_cnx *cnx, const sx_const_op *p,
-						       const sx_const_op *q, const sx_const_op *g,
-						       const sx_const_op *pubkey,
-						       const sx_const_op *h, const sx_const_op *r,
-						       const sx_const_op *s)
+static inline int sx_async_dsa_ver_go(sx_pk_req *req, const sx_const_op *p, const sx_const_op *q,
+				      const sx_const_op *g, const sx_const_op *pubkey,
+				      const sx_const_op *h, const sx_const_op *r,
+				      const sx_const_op *s)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_dsa_ver inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_DSA_VER);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_DSA_VER);
 
 	/* convert and transfer operands */
 	int sizes[] = {
@@ -194,9 +193,10 @@ static inline struct sx_pk_acq_req sx_async_dsa_ver_go(struct sx_pk_cnx *cnx, co
 		sx_const_op_size(pubkey), sx_const_op_size(h), sx_const_op_size(r),
 		sx_const_op_size(s),
 	};
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 	sx_pk_op2vmem(p, inputs.p.addr);
 	sx_pk_op2vmem(q, inputs.q.addr);
@@ -206,9 +206,9 @@ static inline struct sx_pk_acq_req sx_async_dsa_ver_go(struct sx_pk_cnx *cnx, co
 	sx_pk_op2vmem(r, inputs.r.addr);
 	sx_pk_op2vmem(s, inputs.s.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** DSA signature verification
@@ -257,17 +257,17 @@ static inline struct sx_pk_acq_req sx_async_dsa_ver_go(struct sx_pk_cnx *cnx, co
 int sx_dsa_ver(struct sx_pk_cnx *cnx, const sx_op *p, const sx_op *q, const sx_op *g,
 	       const sx_op *pubkey, const sx_op *h, const sx_op *r, const sx_op *s)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_dsa_ver_go(cnx, p, q, g, pubkey, h, r, s);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_dsa_ver_go(&req, p, q, g, pubkey, h, r, s);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	return status;
 }

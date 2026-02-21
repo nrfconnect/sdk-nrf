@@ -73,7 +73,8 @@ int cracen_signature_asn1_get_operand(const uint8_t **p, const uint8_t *end, str
  * base is greater than the modulus, SilexPK will return the SX_ERR_OUT_OF_RANGE
  * status code.
  */
-int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
+/** Caller must call sx_pk_acquire_hw(req) before and sx_pk_release_req(req) after. */
+int cracen_rsa_modexp(sx_pk_req *req, struct sx_pk_slot *inputs,
 		      struct cracen_rsa_key *rsa_key, const uint8_t *base, size_t basez,
 		      int *sizes);
 

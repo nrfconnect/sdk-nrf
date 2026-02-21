@@ -93,13 +93,13 @@ psa_status_t cracen_signature_rsa_sign(bool is_message,
 		sx_status = cracen_signature_set_hashalgo_from_digestsz(&hashalgpointer, alg,
 									input_length);
 	}
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = cracen_signature_get_rsa_key(&privkey, false, true, key_buffer, key_buffer_size,
 						 &modulus, &exponent);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -172,14 +172,14 @@ psa_status_t cracen_signature_rsa_verify(bool is_message,
 		sx_status = cracen_signature_set_hashalgo_from_digestsz(&hashalgpointer, alg,
 									input_length);
 	}
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = cracen_signature_get_rsa_key(
 		&privkey, true, CRACEN_PSA_IS_KEY_TYPE(PSA_KEY_TYPE_RSA_KEY_PAIR, attributes),
 		key_buffer, key_buffer_size, &modulus, &exponent);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 	if (signature_length !=

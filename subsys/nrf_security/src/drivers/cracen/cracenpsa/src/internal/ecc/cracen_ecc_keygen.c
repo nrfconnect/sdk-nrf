@@ -22,7 +22,7 @@
 int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_ecurve *curve)
 {
 	const uint8_t **outputs;
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	struct sx_pk_inops_ecp_mult inputs;
 	int opsz;
 	int status = SX_ERR_CORRUPTION_DETECTED;
@@ -31,49 +31,45 @@ int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_
 	opsz = sx_pk_curve_opsize(curve);
 
 	/* Acquire CRACEN once for all retry attempts */
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECC_PTMUL);
-	if (pkreq.status) {
-		sx_pk_release_req(pkreq.req);
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, SX_PK_CMD_ECC_PTMUL);
 
 	do {
 		if (attempts > 0) {
-			sx_pk_set_cmd(pkreq.req, SX_PK_CMD_ECC_PTMUL);
+			sx_pk_set_cmd(&req, SX_PK_CMD_ECC_PTMUL);
 		}
 
-		pkreq.status =
-			sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
-		if (pkreq.status) {
-			sx_pk_release_req(pkreq.req);
-			return pkreq.status;
+		status = sx_pk_list_ecc_inslots(&req, curve, 0, (struct sx_pk_slot *)&inputs);
+		if (status != SX_OK) {
+			sx_pk_release_req(&req);
+			return status;
 		}
 
 		/* Write the private key (random) into ba414ep device memory */
 		sx_wrpkmem(inputs.k.addr, priv_key, opsz);
-		sx_pk_write_curve_gen(pkreq.req, curve, inputs.px, inputs.py);
+		sx_pk_write_curve_gen(&req, curve, inputs.px, inputs.py);
 
-		sx_pk_run(pkreq.req);
+		sx_pk_run(&req);
 
-		status = sx_pk_wait(pkreq.req);
+		status = sx_pk_wait(&req);
 
 		/* When countermeasures are used, the operation may fail with error code
 		 * SX_ERR_NOT_INVERTIBLE. In this case we can try again.
 		 */
 		if (status == SX_ERR_NOT_INVERTIBLE) {
 			if (++attempts == MAX_ECC_ATTEMPTS) {
-				sx_pk_release_req(pkreq.req);
+				sx_pk_release_req(&req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 		}
 	} while (status == SX_ERR_NOT_INVERTIBLE);
 
 	if (status == SX_OK) {
-		outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
+		outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
 		sx_rdpkmem(pub_key, outputs[0], opsz);
 		sx_rdpkmem(pub_key + opsz, outputs[1], opsz);
 	}
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 	return status;
 }
 

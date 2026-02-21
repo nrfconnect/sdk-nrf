@@ -256,25 +256,23 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	return SX_OK;
 }
 
-int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
+int cracen_rsa_modexp(sx_pk_req *req, struct sx_pk_slot *inputs,
 		      struct cracen_rsa_key *rsa_key, const uint8_t *base, size_t basez, int *sizes)
 {
-	*pkreq = sx_pk_acquire_req(rsa_key->cmd);
-	if (pkreq->status != SX_OK) {
-		return pkreq->status;
-	}
+	int status;
 
+	sx_pk_set_cmd(req, rsa_key->cmd);
 	cracen_ffkey_write_sz(rsa_key, sizes);
 	CRACEN_FFKEY_REFER_INPUT(rsa_key, sizes) = basez;
-	pkreq->status = sx_pk_list_gfp_inslots(pkreq->req, sizes, inputs);
-	if (pkreq->status) {
-		return pkreq->status;
+	status = sx_pk_list_gfp_inslots(req, sizes, inputs);
+	if (status != SX_OK) {
+		return status;
 	}
 
 	/* copy modulus and exponent to device memory */
 	cracen_ffkey_write(rsa_key, inputs);
 	sx_wrpkmem(CRACEN_FFKEY_REFER_INPUT(rsa_key, inputs).addr, base, basez);
 
-	sx_pk_run(pkreq->req);
-	return sx_pk_wait(pkreq->req);
+	sx_pk_run(req);
+	return sx_pk_wait(req);
 }
