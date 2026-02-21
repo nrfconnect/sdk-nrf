@@ -269,6 +269,12 @@ The ``ncs-sbom`` command includes the following detectors:
     * It has an ``SPDX-License-Identifier`` tag.
     * It has one or several ``NCS-SBOM-Apply-To-File`` tags containing file paths or globs (as defined by the `Python's Path.glob`_).
       They are relative to the external file.
+      For ``nrfxlib`` modules, SBOM also adds unified archive globs to every external license file:
+
+      * ``./lib/**/*.a``
+      * ``./lib/**/*.lib``
+      * ``./**/lib/**/*.a``
+      * ``./**/lib/**/*.lib``
 
   If any of the ``NCS-SBOM-Apply-To-File`` tags matches the file under detection, the license from the SPDX tag is used, for example:
 

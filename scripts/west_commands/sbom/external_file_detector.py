@@ -9,6 +9,9 @@ The external file must:
  * be located in the same directory or any of the parent directories.
  * have a name containing "LICENSE", "LICENCE" or "COPYING".
  * contain one SPDX tag and one or more "NCS-SBOM-Apply-To-File" tags.
+   For nrfxlib modules, SBOM also adds unified archive globs to every external
+   license file: "./lib/**/*.a", "./lib/**/*.lib", "./**/lib/**/*.a",
+   and "./**/lib/**/*.lib".
 The "NCS-SBOM-Apply-To-File" tag value is a file path or a glob (see pathlib.Path.glob)
 relative directory where the external file is located. The value ends at the end of line,
 so don't use any comment closing characters or whitespaces at the end of the line.
@@ -40,6 +43,21 @@ detected_files = dict()
 dir_search_done = set()
 
 
+def add_nrfxlib_globs(file: Path, globs: 'list[str]') -> 'list[str]':
+    '''
+    Add globs for nrfxlib external license files.
+    '''
+    if all(part.lower() != 'nrfxlib' for part in file.parts):
+        return globs
+    nrfxlib_globs = [
+        './lib/**/*.a',
+        './lib/**/*.lib',
+        './**/lib/**/*.a',
+        './**/lib/**/*.lib',
+    ]
+    return list(dict.fromkeys(globs + nrfxlib_globs))
+
+
 def parse_license_file(file: Path):
     try:
         with open(file, encoding='8859') as fd:
@@ -65,6 +83,7 @@ def parse_license_file(file: Path):
         else:
             glob = m.group(2).strip()
         globs.append(glob)
+    globs = add_nrfxlib_globs(file, globs)
     return (licenses, globs)
 
 
