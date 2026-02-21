@@ -280,7 +280,7 @@ MCUboot bootloader features specific to nRF54L series
 The nRF54L devices support the use of the Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
 To use KMU in the MCUboot bootloader, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` sysbuild Kconfig option.
 You must also make sure to provision the public key to your target device before running the firmware.
-See the :ref:`ug_nrf54l_developing_provision_kmu` documentation for details.
+See the :ref:`ug_kmu_provisioning_overview` documentation for details.
 
 .. note::
     To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` sysbuild Kconfig option.

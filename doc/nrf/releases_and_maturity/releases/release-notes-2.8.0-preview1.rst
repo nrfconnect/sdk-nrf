@@ -137,7 +137,7 @@ Developing with nRF54L Series
 
   * nRF54L snippets to emulate these targets on an nRF54L15 DK.
     These are used only for development purposes.
-  * The :ref:`ug_nrf54l_cryptography` page that provides more information about the cryptographic peripherals of the nRF54L Series devices, programming model for referencing keys, and configuration.
+  * The :ref:`ug_kmu_guides` page that provides more information about the cryptographic peripherals of the nRF54L Series devices, programming model for referencing keys, and configuration.
 
 * Updated the name and the structure of the section, with :ref:`ug_nrf54l` as the landing page.
 * Removed the Getting started with the nRF54L15 PDK page, and instead included the information about the `Quick Start app`_ support.
@@ -1347,7 +1347,7 @@ Documentation
     Additionally, created a new bootloader :ref:`bootloader_quick_start`.
   * Separated the instructions about building from :ref:`configure_application` and moved it to a standalone :ref:`building` page.
   * Restructured the :ref:`ug_bt_mesh` documentation for clearer distinction between concepts or overview topics and how-to topics, thus moved some information from the Bluetooth Mesh library sections.
-  * The :ref:`nrf_security_drivers_cracen` section with a reference to the :ref:`ug_nrf54l_cryptography` page.
+  * The :ref:`nrf_security_drivers_cracen` section with a reference to the :ref:`ug_kmu_guides` page.
   * The :ref:`ug_tfm` page with the correct list of samples demonstrating TF-M.
   * The :ref:`app_approtect_ncs` section on the :ref:`app_approtect` page with details on setting the Kconfig options and register values to enable AP-Protect.
 

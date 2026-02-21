@@ -73,7 +73,7 @@ Developing with nRF70 Series
 Developing with nRF54L Series
 =============================
 
-* Added HMAC SHA-256 with a 128-bit key type to KMU, as detailed in the :ref:`ug_nrf54l_crypto_kmu_supported_key_types` documentation section.
+* Added HMAC SHA-256 with a 128-bit key type to KMU, as detailed in the :ref:`ug_kmu_guides_supported_key_types` documentation section.
 
 Developing with nRF54H Series
 =============================

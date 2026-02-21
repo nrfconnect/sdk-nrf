@@ -109,7 +109,7 @@ NSIB supports only the ed25519-pure signature, which is hardcoded.
 Signature keys
 **************
 
-The :ref:`Key Management Unit (KMU)<ug_nrf54l_developing_basics_kmu>` retains the keys necessary for image signature verification, which must be uploaded simultaneously with the application during the flashing process.
+The :ref:`Key Management Unit (KMU)<ug_kmu_guides_cracen_overview>` retains the keys necessary for image signature verification, which must be uploaded simultaneously with the application during the flashing process.
 Currently, encryption keys are not stored in the KMU.
 In the case of nRF54LM20A SoC, keys are compiled into the bootloader.
 

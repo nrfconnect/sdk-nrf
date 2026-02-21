@@ -17,7 +17,7 @@ For more information about introducing immutable MCUboot bootloader, refer to :r
 
 .. note::
    The nRF54L SoC's support hardware Key Management Unit (KMU), designed to provide authentication keys for DFU purposes.
-   Ensure you complete the :ref:`KMU provisioning<ug_nrf54l_developing_provision_kmu>` during your device's DFU setup with KMU enabled.
+   Ensure you complete the :ref:`KMU provisioning<ug_kmu_provisioning_overview>` during your device's DFU setup with KMU enabled.
    Failing to do so may prevent your application from booting properly.
 
 .. fota_upgrades_intro_end
@@ -194,8 +194,8 @@ Provisioning of keys for Hardware KMU
    The MCUboot bootloader does not yet support KMU for nRF54LM20.
 
 In case of FOTA implementations using the MCUboot bootloader, which includes hardware cryptography and KMU, you must complete key provisioning before booting any application.
-Otherwise, the bootloader :ref:`may not boot the firmware setup and might take unwanted actions<ug_nrf54l_developing_basics_kmu_provisioning_keys>`.
-Refer to :ref:`ug_nrf54l_developing_provision_kmu` for detailed description.
+Otherwise, the bootloader :ref:`might not boot the firmware setup and might take unwanted actions<ug_kmu_provisioning_bootloader_keys>`.
+Refer to :ref:`ug_kmu_provisioning_overview` for detailed description.
 
 .. _ug_nrf54l_developing_ble_fota_mcuboot_direct_xip_mode:
 

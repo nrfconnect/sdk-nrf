@@ -91,7 +91,7 @@ In this case, MCUboot can only use one signature key file compiled into the firm
 On devices that store keys in crypto storage, the number of stored keys depends on the specific device and may range from one to several.
 Typically, three slots are reserved for storing MCUboot signature keys.
 To use MCUboot with crypto storage, you must provision a set of keys to the device in addition to compiling in support for crypto storage.
-If you use KMU for signature key storage, follow the instructions in :ref:`ug_nrf54l_developing_provision_kmu` to provision the keys.
+If you use KMU for signature key storage, follow the instructions in :ref:`ug_kmu_provisioning_overview` to provision the keys.
 
 Security considerations
 ***********************

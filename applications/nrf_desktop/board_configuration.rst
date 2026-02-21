@@ -126,7 +126,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l05/cpuapp``)
         All of the ``release`` configurations enable hardware cryptography for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
-        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+        For more details about KMU, see :ref:`ug_kmu_guides`.
       * The board supports the ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse  (``release_fast_pair`` file suffix).
 
 Sample mouse or keyboard (``nrf54l15dk/nrf54l10/cpuapp``)
@@ -145,7 +145,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l10/cpuapp``)
         All of the configurations enable hardware cryptography for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
-        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+        For more details about KMU, see :ref:`ug_kmu_guides`.
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
@@ -165,7 +165,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
         All of the configurations enable hardware cryptography for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
-        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+        For more details about KMU, see :ref:`ug_kmu_guides`.
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
@@ -184,7 +184,7 @@ Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
         All of the configurations enable hardware cryptography for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
-        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+        For more details about KMU, see :ref:`ug_kmu_guides`.
       * The ``ram_load`` and ``release_ram_load`` configurations use the MCUboot bootloader built in the RAM load mode (``MCUBOOT``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
         Configurations in this bootloader mode use the same security features as direct-xip mode (``MCUBOOT+XIP``), including hardware cryptography, signature type, and public key storage.
         The application code is executed from the RAM in this mode to improve the HID report rate over USB.
@@ -202,7 +202,7 @@ Sample mouse (``nrf54lv10dk/nrf54lv10a/cpuapp``)
         All of the configurations enable hardware cryptography for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
-        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+        For more details about KMU, see :ref:`ug_kmu_guides`.
 
 Sample mouse (``nrf54ls05dk/nrf54ls05b/cpuapp``)
       * The configuration uses the nRF54LS05 DK.

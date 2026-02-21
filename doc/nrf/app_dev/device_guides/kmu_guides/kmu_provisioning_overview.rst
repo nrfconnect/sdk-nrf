@@ -1,4 +1,4 @@
-.. _ug_nrf54l_developing_provision_kmu:
+.. _ug_kmu_provisioning_overview:
 
 Performing KMU provisioning
 ###########################
@@ -7,18 +7,23 @@ Performing KMU provisioning
    :local:
    :depth: 2
 
-When you perform KMU provisioning, you store one of the key types supported by the KMU and its metadata in the dedicated :ref:`provisioning slot <ug_nrf54l_crypto_kmu_slots>` in RRAM.
+.. kmu_provisioning_overview_start
 
+When you perform KMU provisioning, you store one of the :ref:`key types supported by the KMU <ug_kmu_guides_supported_key_types>` and its metadata in the dedicated :ref:`provisioning slot <ug_kmu_slots>` of RRAM.
 You can use the keys stored in the KMU to perform cryptographic operations using the CRACEN PSA Crypto driver, either for bootloader or for application purposes.
 
-.. _ug_nrf54l_developing_provision_kmu_prerequisites:
+.. kmu_provisioning_overview_end
 
-Prerequisites
-*************
+.. _ug_kmu_provisioning_prerequisites:
 
-To be able to use the keys stored in the KMU using the CRACEN PSA Crypto driver, you must configure several elements of the KMU slots:
+KMU prerequisites
+*****************
 
-.. list-table:: Required SRC data struct fields for KMU provisioning
+.. kmu_metadata_fields_start
+
+If you want to use the keys stored in the KMU using the CRACEN PSA Crypto driver, and especially if you want to :ref:`handle KMU provisioning for production <ug_kmu_provisioning_production_tools>`, you can configure several elements of the KMU slots:
+
+.. list-table:: SRC data struct fields for KMU provisioning
    :widths: auto
    :header-rows: 1
 
@@ -32,16 +37,55 @@ To be able to use the keys stored in the KMU using the CRACEN PSA Crypto driver,
      - | For symmetric encryption/decryption keys, this is the CRACEN Protected RAM address.
        | For asymmetric keys, this is a different RAM location according to usage.
    * - METADATA
-     - Information about the key type and its usage.
+     - Information about the :ref:`key type <ug_kmu_guides_supported_key_types>` and its usage.
        It is required by the CRACEN driver for the verification of some properties of the key and its intended usage.
 
-The configuration must follow the device datasheet (for example, `KMU - Key management unit <nRF54L15 Key management unit_>`_ in the nRF54L15 datasheet) and the CRACEN driver's expectations.
+.. kmu_metadata_fields_end
+
+Make sure your configuration follows the device datasheet (for example, `KMU - Key management unit <nRF54L15 Key management unit_>`_ for nRF54L15) and the CRACEN driver's expectations.
 These expectations are different depending on the method you choose to provision keys to the KMU - see the following section.
 
-.. _ug_nrf54l_developing_provision_kmu_method_overview:
+.. _ug_kmu_app_prerequisites:
 
-Provisioning method overview
-============================
+Application prerequisites
+*************************
+
+To use keys stored in the KMU with the CRACEN hardware peripheral and the CRACEN driver, configure the application with the required Kconfig options.
+
+See :ref:`configuring_kconfig` for information on how to set the required configuration options temporarily or permanently.
+
+Complete the following steps to configure KMU and CRACEN support in your application:
+
+#. Enable the nRF Security library by setting the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option to ``y``.
+#. Enable the CRACEN driver by setting the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option to ``y``.
+#. Enable support for specific key usage schemes and cryptographic features.
+   See :ref:`ug_kmu_guides_supported_key_types` and :ref:`nrf_security_drivers_config_features` for more information.
+
+.. _ug_kmu_provisioning_bootloader_keys:
+
+Prerequisites for the bootloader
+================================
+
+The bootloader can use multiple key generations for image verification (up to three for nRF54L SoCs).
+To safeguard against unauthorized provisioning by attackers, you must provision all key generations onto the device.
+
+Make sure to provision the relevant key sets before running bootloaders, including the first boot.
+Failure to do so can lead to unwanted actions by the bootloader on your firmware setup.
+You might experience the following issues:
+
+  * The nRF Secure Immutable Bootloader (NSIB) might mark the image as permanently invalid without a key available for verification.
+  * In direct-xip mode, MCUboot might delete the image if no appropriate key is provisioned.
+  * The firmware might simply not boot, indicating a lack of proper key provisioning.
+
+By default, MCUboot uses a single key.
+You can configure the number of key generations that MCUboot uses for application verification with the MCUboot-specific ``CONFIG_BOOT_SIGNATURE_KMU_SLOTS`` Kconfig option.
+
+NSIB for nRF54L SoCs supports three key generations.
+
+.. _ug_kmu_provisioning_methods:
+
+KMU provisioning methods
+************************
 
 You can perform KMU provisioning using the following methods:
 
@@ -53,18 +97,18 @@ You can perform KMU provisioning using the following methods:
      - Provisioning method
      - CRACEN driver expectations for the KMU slots
    * - Development in the |NCS|
-     - :ref:`ug_nrf54l_developing_provision_kmu_development` (west or nRF Util)
+     - :ref:`ug_kmu_provisioning_development_tools` (west or nRF Util)
      - VALUE, RPOLICY, DEST, and METADATA are automatically calculated by software or tooling.
    * - Development or production
-     - :ref:`ug_nrf54l_developing_provision_kmu_psa_crypto_api`
+     - :ref:`ug_kmu_provisioning_psa_crypto_api`
      - VALUE, RPOLICY, DEST, and METADATA are automatically calculated by software or tooling.
    * - Production
-     - :ref:`ug_nrf54l_developing_provision_kmu_production` (tools for register-level programming)
-     - You must manually set VALUE, RPOLICY, DEST, and METADATA according to the table in :ref:`ug_nrf54l_developing_provision_kmu_production_metadata`.
+     - :ref:`ug_kmu_provisioning_production_tools` (tools for register-level programming)
+     - You must manually set VALUE, RPOLICY, DEST, and METADATA according to the table in :ref:`ug_kmu_provisioning_production_metadata`.
 
 See the following sections for more information about each of these methods.
 
-.. _ug_nrf54l_developing_provision_kmu_generate:
+.. _ug_kmu_provisioning_generate_keys:
 
 Generating keys
 ***************
@@ -83,7 +127,7 @@ See the following example for generating a private key:
 
    imgtool keygen -k my_ed25519_priv_key.pem -t ed25519
 
-.. _ug_nrf54l_developing_provision_kmu_development:
+.. _ug_kmu_provisioning_development_tools:
 
 Provisioning KMU with development tools
 ***************************************
@@ -97,7 +141,7 @@ Both methods allow to upload keys to the device through the Serial Write Debug (
 
 When you install the |NCS|, you get both the west command and the nRF Util tool with the ``nrfutil device`` command installed with the |NCS| toolchain bundle.
 
-.. _ug_nrf54l_developing_provision_kmu_provisioning:
+.. _ug_kmu_provisioning_provisioning_keys:
 
 Provisioning keys to the board
 ==============================
@@ -175,7 +219,7 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
       * BL_PUBKEY is the key name used by NSIB.
       * It utilizes tree keys, which is intended for use with key revocation.
       * Keys must be provisioned before any run of the bootloader.
-        For details, see :ref:`note<ug_nrf54l_developing_basics_kmu_provisioning_keys>`.
+        For details, see :ref:`ug_kmu_provisioning_bootloader_keys`.
 
       To provision one key to the board, run the following command:
 
@@ -186,7 +230,7 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
 
    .. tab:: nRF Util
 
-      You can use the :ref:`generate_psa_key_attributes_script`, :ref:`similarly to nRF54H20<ug_nrf54h20_keys_generating>`, to generate the JSON file and the metadata from the PEM file you :ref:`generated earlier <ug_nrf54l_developing_provision_kmu_generate>`.
+      You can use the :ref:`generate_psa_key_attributes_script`, :ref:`similarly to nRF54H20<ug_nrf54h20_keys_generating>`, to generate the JSON file and the metadata from the PEM file you :ref:`generated earlier <ug_kmu_provisioning_generate_keys>`.
 
       .. include:: ../../../../../scripts/generate_psa_key_attributes/generate_psa_key_attributes.rst
          :start-after: nrfutil_provision_keys_info_start
@@ -215,7 +259,7 @@ At the end of the described process, the :file:`keyfile.json` file is generated 
 This file allows key provisioning to occur simultaneously with the flashing process.
 Alternatively, you can bypass the mentioned Kconfig options and manually place a custom :file:`keyfile.json` in the build directory.
 
-.. _ug_nrf54l_developing_provision_kmu_psa_crypto_api:
+.. _ug_kmu_provisioning_psa_crypto_api:
 
 Provisioning KMU with PSA Crypto API
 ************************************
@@ -223,22 +267,22 @@ Provisioning KMU with PSA Crypto API
 You can use the PSA Crypto API to create a provisioning image that provisions keys to the device during development or production.
 
 Detailed steps for creating such a provisioning image for your application are beyond the scope of this guide.
-Use the guidelines in :ref:`ug_nrf54l_crypto_kmu_key_programming_model` and in the `nRF54L Series Production Programming`_ guide.
+Use the guidelines in :ref:`ug_crypto_kmu_psa_key_programming_model` and in the `nRF54L Series Production Programming`_ guide.
 
-.. _ug_nrf54l_developing_provision_kmu_production:
+.. _ug_kmu_provisioning_production_tools:
 
 Provisioning KMU with production tools
 **************************************
 
 For production, `provision the KMU data <Provisioning KMU data_>`_ as described in the `nRF54L Series Production Programming`_ guide.
 
-Nordic Semiconductor recommends using other tools than the ones used for :ref:`provisioning for development <ug_nrf54l_developing_provision_kmu_development>`.
+Nordic Semiconductor recommends using other tools than the ones used for :ref:`provisioning for development <ug_kmu_provisioning_development_tools>`.
 For example, you could use SEGGER J-Link or other debugging tools.
 
 Using other tools means that you need to manually make sure that the values stored in the KMU slot's METADATA field align with the CRACEN driver's :c:struct:`kmu_metadata` data structure's expectations for different key types.
 See the following section for more information.
 
-.. _ug_nrf54l_developing_provision_kmu_production_metadata:
+.. _ug_kmu_provisioning_production_metadata:
 
 Setting up KMU metadata and destination addresses for production
 ================================================================
@@ -259,7 +303,7 @@ Common KMU provisioning configuration ranges
 --------------------------------------------
 
 The following table shows common KMU provisioning configuration ranges for the nRF54L15 device.
-The values are provided for the :ref:`ug_nrf54l_developing_provision_kmu_prerequisites` (SRC data fields) mentioned at the beginning of this page.
+The values are provided for the :ref:`ug_kmu_provisioning_prerequisites` (SRC data fields) mentioned at the beginning of this page.
 The table includes multiple KMU slots that work together for keys larger than 128 bits.
 
 .. list-table:: Example KMU provisioning configurations for nRF54L15

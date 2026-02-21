@@ -79,13 +79,13 @@ CRACEN Key Management Unit
 CRACEN Key Management Unit (KMU) is a hardware-based key storage solution that can be used to store the Thread cryptographic materials.
 It is available on the nRF54L Series devices.
 It allows storing cryptographic materials in the non-volatile memory and provides a secure way to access them.
-To learn more about the CRACEN Key Management Unit (KMU) and its usage, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals`.
+To learn more about the CRACEN Key Management Unit (KMU) and its usage, see :ref:`ug_kmu_hardware_peripheral`.
 
-In this solution, the keys are stored within the available slots in the :ref:`ug_nrf54l_crypto_kmu_slots` range that are not reserved for current and future |NCS| use cases.
+In this solution, the keys are stored within the available slots in the :ref:`ug_kmu_slots` range that are not reserved for current and future |NCS| use cases.
 The default slots range used for Thread is from ``80`` to ``99``.
 To change the starting slot number, set the :kconfig:option:`CONFIG_OPENTHREAD_KMU_SLOT_START` Kconfig option to the desired slot.
 The end slot number is calculated as a sum of the starting slot number and the maximum number of keys that can be stored in the PSA ITS defined in the :kconfig:option:`CONFIG_OPENTHREAD_PSA_ITS_NVM_MAX_KEYS` Kconfig option.
-The Raw usage scheme defined in the :ref:`ug_nrf54l_crypto_kmu_key_usage_schemes` section is used for all Thread keys.
+The Raw usage scheme defined in the :ref:`ug_kmu_guides_key_usage_schemes` section is used for all Thread keys.
 
 Key management
 ==============

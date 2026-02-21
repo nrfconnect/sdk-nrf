@@ -196,7 +196,7 @@ Glossary
 
    CRACEN
       A hardware crypto accelerator within nRF54L Series devices, and the name of the :term:`cryptographic driver <Cryptographic driver>` in the |NCS|.
-      For more information, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` on the :ref:`ug_nrf54l_cryptography` page.
+      For more information, see :ref:`ug_kmu_guides_cracen_overview`.
 
    Cryptographic driver
       A specialized component that implements specific cryptographic algorithms or provides access to hardware accelerators.
