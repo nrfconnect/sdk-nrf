@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-#ifdef CONFIG_SOC_NRF54L15
+#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A)
 #define HPF_MSPI_PINS_MAX	 11
 #else
 #error "Unsupported SoC for HPF MSPI"
@@ -33,8 +33,8 @@ typedef enum {
 	HPF_MSPI_HPF_APP_HARD_FAULT,
 	HPF_MSPI_WRONG_OPCODE,
 	HPF_MSPI_OPCODES_COUNT = HPF_MSPI_WRONG_OPCODE,
-	/* This is to make sizeof(hpf_mspi_opcode_t)==32bit, for alignment purpouse. */
-	NREE_MSPI_OPCODES_MAX = 0xFFFFFFFFU,
+	/* This is to make sizeof(hpf_mspi_opcode_t)==32bit, for alignment purpose. */
+	HPF_MSPI_OPCODES_MAX = 0xFFFFFFFFU,
 } hpf_mspi_opcode_t;
 
 typedef struct {

@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&sram_rx {
+	reg = <0x20077000 0x07e0>;
+};
+
+&sram_tx {
+	reg = <0x200777e0 0x0800>;
+};
+
+&cpuflpr_error_code {
+	reg = <0x20077fe0 0x0020>; /* 32bytes */
+};
+
+&cpuflpr_sram_code_data {
+	reg = <0x20078000 DT_SIZE_K(31)>;
+	ranges = <0x0 0x20078000 DT_SIZE_K(31)>;
+	status = "reserved";
+};
+
+&cpuflpr_rram {
+	reg = <0x1f5000 DT_SIZE_K(31)>;
+	ranges = <0x0 0x1f5000 DT_SIZE_K(31)>;
+};
+
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(2004)>;
+	ranges = <0x0 0x0 DT_SIZE_K(2004)>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+};
+
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(476)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(476)>;
+};

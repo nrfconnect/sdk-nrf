@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -9,26 +9,26 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		sram_rx: memory@2003b400 {
-			reg = <0x2003b400 0x07f0>;
+		sram_rx: memory@2007a800 {
+			reg = <0x2007a800 0x0c00>;
 		};
 
-		sram_tx: memory@2003bbf0 {
-			reg = <0x2003bbf0 0x07f0>;
+		sram_tx: memory@2007b400 {
+			reg = <0x2007b400 0x0be0>;
 		};
 
-		cpuflpr_error_code: memory@2003c3e0 {
-			reg = <0x2003c3e0 0x0020>; /* 32bytes */
+		cpuflpr_error_code: memory@2007bfe0 {
+			reg = <0x2007bfe0 0x0020>; /* 32bytes */
 		};
 	};
 
 	soc {
-		cpuflpr_sram_code_data: memory@2003c400 {
+		cpuflpr_sram_code_data: memory@2007c000 {
 			compatible = "mmio-sram";
-			reg = <0x2003c400 DT_SIZE_K(15)>;
-			ranges = <0x0 0x2003c400 DT_SIZE_K(15)>;
+			reg = <0x2007c000 DT_SIZE_K(15)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
+			ranges = <0x0 0x2007c000 DT_SIZE_K(15)>;
 			status = "reserved";
 		};
 	};
@@ -36,6 +36,7 @@
 	ipc {
 		ipc0: ipc0 {
 			compatible = "zephyr,ipc-icmsg";
+			dcache-alignment = <32>;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
 			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
@@ -46,27 +47,27 @@
 };
 
 &rram_controller {
-	cpuflpr_rram: rram@179400 {
+	cpuflpr_rram: rram@1f9400 {
 		compatible = "soc-nv-flash";
-		reg = <0x179400 DT_SIZE_K(15)>;
-		ranges = <0x0 0x179400 DT_SIZE_K(15)>;
-		erase-block-size = <0x1000>;
-		write-block-size = <0x10>;
+		erase-block-size = <4096>;
+		write-block-size = <16>;
+		reg = <0x1f9400 DT_SIZE_K(15)>;
+		ranges = <0x0 0x1f9400 DT_SIZE_K(15)>;
 		#address-cells = <1>;
 		#size-cells = <1>;
 	};
 };
 
 &cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(1509)>;
-	ranges = <0x0 0x0 DT_SIZE_K(1509)>;
+	reg = <0x0 DT_SIZE_K(2017)>;
+	ranges = <0x0 0x0 DT_SIZE_K(2017)>;
 	#address-cells = <1>;
 	#size-cells = <1>;
 };
 
 &cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(237)>;
-	ranges = <0x0 0x20000000 0x3b400>;
+	reg = <0x20000000 DT_SIZE_K(494)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(494)>;
 };
 
 &cpuflpr_vpr {

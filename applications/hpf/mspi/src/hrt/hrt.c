@@ -21,6 +21,8 @@
 #define CLK_VIO		    0
 #define D0_VIO		    1
 #define D1_VIO		    2
+#define D2_VIO		    3
+#define D3_VIO		    4
 #define VIO_SINGLE_BUS_MASK 0x0004
 #define VIO_QUAD_BUS_MASK   0x001E
 
@@ -212,7 +214,7 @@ void hrt_write(volatile hrt_xfer_t *hrt_xfer_params)
 	uint16_t prev_out = 0;
 
 	/* Configure clock and pins */
-	nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
+	nrf_vpr_csr_vio_dir_set(hrt_xfer_params->used_pins_mask);
 
 	for (uint8_t i = 0; i < HRT_FE_MAX; i++) {
 
@@ -339,6 +341,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	uint32_t *data = (uint32_t *)hrt_xfer_params->xfer_data[HRT_FE_DATA].data;
 	uint32_t last_word;
 	uint16_t prev_out;
+	uint16_t rx_pin_mask = 0;
 
 	/* Workaround for hw issue: in modes 1-3 clock does 1 extra edge after being stopped.
 	 * To fix it, rx transfer is set up to do 1 clock cycle less and last clock edge is done,
@@ -361,7 +364,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	if ((hrt_xfer_params->xfer_data[HRT_FE_COMMAND].word_count != 0) ||
 	    (hrt_xfer_params->xfer_data[HRT_FE_ADDRESS].word_count != 0) ||
 	    (hrt_xfer_params->xfer_data[HRT_FE_DUMMY_CYCLES].word_count != 0)) {
-		/* Write only command, address and dummy cycles and keep CS active. */
+		/* Write command, address and/or dummy cycles and keep CS active. */
 		hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = 0;
 		hrt_xfer_params->ce_hold = true;
 		hrt_write(hrt_xfer_params);
@@ -371,15 +374,16 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = word_count;
 	hrt_xfer_params->ce_hold = hold;
 
-	/* Configure clock and pins */
-	if (hrt_xfer_params->bus_widths.data == 1) {
-		/* Set DQ1 as input */
-		WRITE_BIT(hrt_xfer_params->tx_direction_mask, SPI_INPUT_PIN_NUM,
-			  VPRCSR_NORDIC_DIR_INPUT);
-		nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
-	} else {
-		nrf_vpr_csr_vio_dir_set(hrt_xfer_params->rx_direction_mask);
+	/* Set all needed data pins as inputs */
+	WRITE_BIT(rx_pin_mask, D1_VIO, VPRCSR_NORDIC_PIN_USED);
+	if (hrt_xfer_params->bus_widths.data >= 2) {
+		WRITE_BIT(rx_pin_mask, D0_VIO, VPRCSR_NORDIC_PIN_USED);
+		if (hrt_xfer_params->bus_widths.data == 4) {
+			WRITE_BIT(rx_pin_mask, D2_VIO, VPRCSR_NORDIC_PIN_USED);
+			WRITE_BIT(rx_pin_mask, D3_VIO, VPRCSR_NORDIC_PIN_USED);
+		}
 	}
+	nrf_vpr_csr_vio_dir_set(nrf_vpr_csr_vio_dir_get() & ~rx_pin_mask);
 
 	/* Initial configuration */
 	nrf_vpr_csr_vio_mode_in_set(NRF_VPR_CSR_VIO_MODE_IN_SHIFT);
@@ -427,7 +431,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		 *    used because at higher frequencies shifting stops before it is called the
 		 *    first time.
 		 * Therefore the only solution that works is to wait for timer 0 to stop.
-		 * Here also the defaut way of doing that does not work,
+		 * Here also the default way of doing that does not work,
 		 * which is to use WAIT0 register, because at higher frequencies function
 		 * nrf_vpr_csr_vtim_simple_wait_set is called when CNT0 has already stopped,
 		 * making code wait indefinitely.
@@ -496,7 +500,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		 *    used because at higher frequencies shifting stops before it is called the
 		 *    first time.
 		 * Therefore the only solution that works is to wait for timer 0 to stop.
-		 * Here also the defaut way of doing that does not work,
+		 * Here also the default way of doing that does not work,
 		 * which is to use WAIT0 register, because at higher frequencies function
 		 * nrf_vpr_csr_vtim_simple_wait_set is called when CNT0 has already stopped,
 		 * making code wait indefinitely.
@@ -517,6 +521,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		 * done, by writing directly to out register and reading in register.
 		 */
 		if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_3) {
+			nrf_barrier_rw();
 			rx_end_procedure_mode_3(hrt_xfer_params);
 		} else {
 			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
@@ -544,12 +549,5 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		} else {
 			nrf_vpr_csr_vio_out_clear_set(BIT(hrt_xfer_params->ce_vio));
 		}
-	}
-
-	/* Set DQ1 back as output. */
-	if (hrt_xfer_params->bus_widths.data == 1) {
-		WRITE_BIT(hrt_xfer_params->tx_direction_mask, SPI_INPUT_PIN_NUM,
-			  VPRCSR_NORDIC_DIR_OUTPUT);
-		nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
 	}
 }
