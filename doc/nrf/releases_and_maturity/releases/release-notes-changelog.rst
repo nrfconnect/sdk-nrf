@@ -311,6 +311,7 @@ nRF Desktop
     These options are controlled through the newly introduced nRF Desktop application-specific Kconfig options.
     The application still uses SEGGER J-Link RTT as the default logging backend.
   * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
+  * Keyboard build type configurations (``keyboard`` and ``release_keyboard`` file suffixes) for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
 
 * Updated:
 
