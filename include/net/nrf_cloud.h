@@ -647,6 +647,10 @@ struct nrf_cloud_ctrl_data {
 	 *     1: only LOG_ERR (most urgent) is sent to the cloud.
 	 */
 	int log_level;
+	/** If true, Memfault's chunks will start uploading to nRF Cloud.
+	 *  If false, the upload is disabled.
+	 */
+	bool memfault_enabled;
 };
 
 /**
