@@ -186,6 +186,14 @@ config PSA_HAS_PAKE_SUPPORT
 	help
 	  Prompt-less configuration that states that PAKE is supported.
 
+config PSA_HAS_KEY_WRAP_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_AES_KW	|| \
+		   PSA_WANT_ALG_AES_KWP
+	help
+	  Prompt-less configuration that states that key wrapping is supported.
+
 comment "Nordic added alg types"
 
 config PSA_WANT_ALG_ECDSA_ANY
@@ -340,12 +348,10 @@ config PSA_WANT_ALG_SHAKE256_512
 config PSA_WANT_ALG_AES_KW
 	bool "AES Key Wrap support (NIST-SP-800-38F and RFC3394) [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	select EXPERIMENTAL
-	depends on !BUILD_WITH_TFM
 
 config PSA_WANT_ALG_AES_KWP
 	bool "AES Key Wrap with padding support (NIST-SP-800-38F and RFC5649) [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	select EXPERIMENTAL
-	depends on !BUILD_WITH_TFM
 
 config PSA_WANT_ALG_WPA3_SAE_H2E
 	bool "WPA3-SAE-H2E support [EXPERIMENTAL]" if !PSA_PROMPTLESS
