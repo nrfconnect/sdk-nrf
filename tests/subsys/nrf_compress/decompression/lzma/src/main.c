@@ -8,7 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/random/random.h>
 #include <nrf_compress/implementation.h>
-#include <mbedtls/sha256.h>
+#include <psa/crypto.h>
 
 #define REDUCED_BUFFER_SIZE 512
 #define SHA256_SIZE 32
@@ -157,6 +157,26 @@ ZTEST(nrf_compress_decompression, test_invalid_implementation)
 	zassert_equal(implementation, NULL, "Expected implementation to be NULL");
 }
 
+#if defined(CONFIG_BUILD_WITH_TFM)
+static psa_status_t hash_update(psa_hash_operation_t *operation,
+				const uint8_t *input, size_t input_length)
+{
+	psa_status_t status;
+
+	for (size_t index = 0; index < input_length; index += CONFIG_TFM_CRYPTO_IOVEC_BUFFER_SIZE) {
+		status = psa_hash_update(operation, input + index,
+					 MIN(input_length - index,
+					     CONFIG_TFM_CRYPTO_IOVEC_BUFFER_SIZE));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+	}
+	return PSA_SUCCESS;
+}
+#else
+#define hash_update psa_hash_update
+#endif
+
 ZTEST(nrf_compress_decompression, test_valid_data_decompression)
 {
 	int rc;
@@ -167,7 +187,9 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression)
 	uint32_t total_output_size = 0;
 	uint8_t output_sha[SHA256_SIZE] = { 0 };
 	struct nrf_compress_implementation *implementation = NULL;
-	mbedtls_sha256_context ctx;
+	psa_hash_operation_t operation = PSA_HASH_OPERATION_INIT;
+	psa_status_t status;
+	size_t hash_len;
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
 	void *inst = &lzma_inst;
 
@@ -176,9 +198,8 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression)
 	void *inst = NULL;
 #endif
 
-	mbedtls_sha256_init(&ctx);
-        rc = mbedtls_sha256_starts(&ctx, false);
-	zassert_ok(rc, "Expected mbedtls sha256 start to be successful");
+	status = psa_hash_setup(&operation, PSA_ALG_SHA_256);
+	zassert_equal(status, PSA_SUCCESS, "%d", status);
 
 	implementation = nrf_compress_implementation_find(NRF_COMPRESS_TYPE_LZMA);
 	zassert_not_equal(implementation, NULL, "Expected implementation to not be NULL");
@@ -216,11 +237,11 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression)
 
 		if (output_size > 0) {
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
-			rc = mbedtls_sha256_update(&ctx, local_dictionary, output_size);
+			status = hash_update(&operation, local_dictionary, output_size);
 #else
-			rc = mbedtls_sha256_update(&ctx, output, output_size);
+			status = hash_update(&operation, output, output_size);
 #endif
-			zassert_ok(rc, "Expected hash update to be successful");
+			zassert_equal(status, PSA_SUCCESS, "%d", status);
 		}
 
 		pos += offset;
@@ -232,9 +253,8 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression)
 	zassert_equal(total_output_size, dummy_data_output_size,
 		      "Expected decompressed data size to match");
 
-	rc = mbedtls_sha256_finish(&ctx, output_sha);
-	mbedtls_sha256_free(&ctx);
-	zassert_ok(rc, "Expected mbedtls sha256 finish to be successful");
+	status = psa_hash_finish(&operation, output_sha, sizeof(output_sha), &hash_len);
+	zassert_equal(status, PSA_SUCCESS, "%d", status);
 
 	zassert_mem_equal(output_sha, dummy_data_output_sha256, SHA256_SIZE,
 			  "Expected hash to match");
@@ -266,7 +286,9 @@ ZTEST(nrf_compress_decompression, test_valid_data_large_decompression)
 	uint32_t total_output_size = 0;
 	uint8_t output_sha[SHA256_SIZE] = { 0 };
 	struct nrf_compress_implementation *implementation;
-	mbedtls_sha256_context ctx;
+	psa_hash_operation_t operation = PSA_HASH_OPERATION_INIT;
+	psa_status_t status;
+	size_t hash_len;
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
 	void *inst = &lzma_inst;
 
@@ -275,9 +297,8 @@ ZTEST(nrf_compress_decompression, test_valid_data_large_decompression)
 	void *inst = NULL;
 #endif
 
-	mbedtls_sha256_init(&ctx);
-	rc = mbedtls_sha256_starts(&ctx, false);
-	zassert_ok(rc, "Expected mbedtls sha256 start to be successful");
+	status = psa_hash_setup(&operation, PSA_ALG_SHA_256);
+	zassert_equal(status, PSA_SUCCESS, "%d", status);
 
 	implementation = nrf_compress_implementation_find(NRF_COMPRESS_TYPE_LZMA);
 
@@ -319,11 +340,11 @@ ZTEST(nrf_compress_decompression, test_valid_data_large_decompression)
 
 		if (output_size > 0) {
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
-			rc = mbedtls_sha256_update(&ctx, local_dictionary, output_size);
+			status = hash_update(&operation, local_dictionary, output_size);
 #else
-			rc = mbedtls_sha256_update(&ctx, output, output_size);
+			status = hash_update(&operation, output, output_size);
 #endif
-			zassert_ok(rc, "Expected hash update to be successful");
+			zassert_equal(status, PSA_SUCCESS, "%d", status);
 		}
 
 		pos += offset;
@@ -335,9 +356,8 @@ ZTEST(nrf_compress_decompression, test_valid_data_large_decompression)
 	zassert_equal(total_output_size, dummy_data_large_output_size,
 		      "Expected decompressed data size to match");
 
-	rc = mbedtls_sha256_finish(&ctx, output_sha);
-	mbedtls_sha256_free(&ctx);
-	zassert_ok(rc, "Expected mbedtls sha256 finish to be successful");
+	status = psa_hash_finish(&operation, output_sha, sizeof(output_sha), &hash_len);
+	zassert_equal(status, PSA_SUCCESS, "%d", status);
 
 	zassert_mem_equal(output_sha, dummy_data_large_output_sha256, SHA256_SIZE,
 			  "Expected hash to match");
@@ -494,7 +514,9 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_random_sizes)
 		256
 	};
 
-	mbedtls_sha256_context ctx;
+	psa_hash_operation_t operation = PSA_HASH_OPERATION_INIT;
+	psa_status_t status;
+	size_t hash_len;
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
 	void *inst = &lzma_inst;
 
@@ -503,9 +525,8 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_random_sizes)
 	void *inst = NULL;
 #endif
 
-	mbedtls_sha256_init(&ctx);
-	rc = mbedtls_sha256_starts(&ctx, false);
-	zassert_ok(rc, "Expected mbedtls sha256 start to be successful");
+	status = psa_hash_setup(&operation, PSA_ALG_SHA_256);
+	zassert_equal(status, PSA_SUCCESS, "%d", status);
 
 	implementation = nrf_compress_implementation_find(NRF_COMPRESS_TYPE_LZMA);
 
@@ -541,11 +562,11 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_random_sizes)
 
 		if (output_size > 0) {
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
-			rc = mbedtls_sha256_update(&ctx, local_dictionary, output_size);
+			status = hash_update(&operation, local_dictionary, output_size);
 #else
-			rc = mbedtls_sha256_update(&ctx, output, output_size);
+			status = hash_update(&operation, output, output_size);
 #endif
-			zassert_ok(rc, "Expected hash update to be successful");
+			zassert_equal(status, PSA_SUCCESS, "%d", status);
 		}
 
 		pos += offset;
@@ -557,9 +578,8 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_random_sizes)
 	zassert_equal(total_output_size, dummy_data_output_size,
 		      "Expected decompressed data size to match");
 
-	rc = mbedtls_sha256_finish(&ctx, output_sha);
-	mbedtls_sha256_free(&ctx);
-	zassert_ok(rc, "Expected mbedtls sha256 finish to be successful");
+	status = psa_hash_finish(&operation, output_sha, sizeof(output_sha), &hash_len);
+	zassert_equal(status, PSA_SUCCESS, "%d", status);
 
 	zassert_mem_equal(output_sha, dummy_data_output_sha256, SHA256_SIZE,
 			  "Expected hash to match");
@@ -591,7 +611,9 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_reset)
 	uint32_t total_output_size = 0;
 	uint8_t output_sha[SHA256_SIZE] = { 0 };
 	struct nrf_compress_implementation *implementation;
-	mbedtls_sha256_context ctx;
+	psa_hash_operation_t operation = PSA_HASH_OPERATION_INIT;
+	psa_status_t status;
+	size_t hash_len;
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
 	void *inst = &lzma_inst;
 
@@ -600,9 +622,8 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_reset)
 	void *inst = NULL;
 #endif
 
-	mbedtls_sha256_init(&ctx);
-        rc = mbedtls_sha256_starts(&ctx, false);
-	zassert_ok(rc, "Expected mbedtls sha256 start to be successful");
+	status = psa_hash_setup(&operation, PSA_ALG_SHA_256);
+	zassert_equal(status, PSA_SUCCESS, "%d", status);
 
 	implementation = nrf_compress_implementation_find(NRF_COMPRESS_TYPE_LZMA);
 
@@ -659,11 +680,11 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_reset)
 
 		if (output_size > 0) {
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
-			rc = mbedtls_sha256_update(&ctx, local_dictionary, output_size);
+			status = hash_update(&operation, local_dictionary, output_size);
 #else
-			rc = mbedtls_sha256_update(&ctx, output, output_size);
+			status = hash_update(&operation, output, output_size);
 #endif
-			zassert_ok(rc, "Expected hash update to be successful");
+			zassert_equal(status, PSA_SUCCESS, "%d", status);
 		}
 
 		pos += offset;
@@ -675,9 +696,8 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_reset)
 	zassert_equal(total_output_size, dummy_data_output_size,
 		      "Expected decompressed data size to match");
 
-	rc = mbedtls_sha256_finish(&ctx, output_sha);
-	mbedtls_sha256_free(&ctx);
-	zassert_ok(rc, "Expected mbedtls sha256 finish to be successful");
+	status = psa_hash_finish(&operation, output_sha, sizeof(output_sha), &hash_len);
+	zassert_equal(status, PSA_SUCCESS, "%d", status);
 
 	zassert_mem_equal(output_sha, dummy_data_output_sha256, SHA256_SIZE,
 			  "Expected hash to match");
