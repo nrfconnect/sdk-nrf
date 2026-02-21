@@ -28,11 +28,5 @@ set(MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE ${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_
 set(PSA_CRYPTO_CONFIG_INTERFACE_PATH    ${CMAKE_BINARY_DIR}/generated/interface_nrf_security_psa CACHE STRING "Path used for generated PSA crypto configuratiosn for the interface")
 set(PSA_CRYPTO_CONFIG_LIBRARY_PATH      ${CMAKE_BINARY_DIR}/generated/library_nrf_security_psa CACHE STRING "Path used for generated PSA crypto for library builds")
 
-# Defines used by including external_core.cmake multiple times (to clean up for CMake trace)
-# This definitely needs to be reworked in upstream TF-M
-set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_API_NS False CACHE BOOL "Use to ensure we add links only once")
-set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_INTERFACE False CACHE BOOL "Use to ensure we add links only once")
-set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_CRYPTO_CONFIG False CACHE BOOL "Use to ensure we add links only once")
-set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_CRYPTO_LIBRARY_CONFIG False CACHE BOOL "Use to ensure we add links only once")
-set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_PSA_ROT_PARTITION_CRYPTO False CACHE BOOL "Use to ensure we add links only once")
-set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_SPRT False CACHE BOOL "Use to ensure we add links only once")
+# External core "add links only once" state is owned by external_core.cmake (Nordic overlay).
+# This file contains only path and toolchain variables so include order is less fragile.
