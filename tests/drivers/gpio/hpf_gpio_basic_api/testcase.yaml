@@ -7,34 +7,26 @@ common:
   harness: ztest
   harness_config:
     fixture: gpio_loopback
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  sysbuild: true
+
 
 tests:
   drivers.hpf.gpio.loopback.icmsg:
     min_flash: 64
     timeout: 30
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    sysbuild: true
     extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y
 
   drivers.hpf.gpio.loopback.icbmsg:
     min_flash: 64
     timeout: 80
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    sysbuild: true
     extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG=y
 
   drivers.hpf.gpio.loopback.mbox:
     min_flash: 64
     timeout: 30
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    sysbuild: true
     extra_args: SB_CONFIG_HPF_GPIO_BACKEND_MBOX=y

@@ -4,6 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Test requires GPIO loopback:
+ * - between P2.10 and P1.14,
+ * - between P2.09 and P1.13,
+ * - between P2.08 and P1.12,
+ * - between P2.07 and P1.11,
+ * - between P2.06 and P1.10.
+ */
+
 / {
 	/* Test requirements:
 	 * out-gpios[0] wire connected with in-gpios[0],

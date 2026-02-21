@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires GPIO loopback:
+ * - between P2.06 and P3.00,
+ * - between P2.09 and P3.01,
+ * - between P2.10 and P3.02.
+ */
+
+/ {
+	/* Test requirements:
+	 * out-gpios[0] wire connected with in-gpios[0],
+	 * out-gpios[1] wire connected with in-gpios[1],
+	 * etc.
+	 * Output-input GPIO pair must have identical active level flag.
+	 * All outputs must be on the same device.
+	 */
+	test_gpios {
+		compatible = "gpio-leds";
+
+		out_gpios: out_gpios {
+			gpios = <&hpf_gpio 6 GPIO_ACTIVE_HIGH>, <&hpf_gpio 9 GPIO_ACTIVE_HIGH>,
+				<&hpf_gpio 10 GPIO_ACTIVE_HIGH>;
+		};
+
+		in_gpios: in_gpios {
+			gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>, <&gpio3 1 GPIO_ACTIVE_HIGH>,
+				<&gpio3 2 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpio3 {
+	status = "okay";
+};
