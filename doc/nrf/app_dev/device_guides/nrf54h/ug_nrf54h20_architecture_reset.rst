@@ -54,16 +54,13 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
    * - ``RESET_PIN``
      - J-Link toggles the **RESET** pin using OBD.
    * - ``RESET_VIA_SECDOM``
-     - Uses the CTRL-AP mailbox to send a local domain reset request to the IronSide Secure Element (IronSide SE).
+     - Uses the :ref:`IronSide SE DEBUGWAIT command <ug_nrf54h20_ironside_se_debugwait_command>` to reset the entire system and start the application core in a halted state.
 
-       This command resets the entire system while keeping both the application core and the radio core in a halted state.
+       You can start the application core manually using the following command:
 
-       You can start each core individually using the following commands:
+          ``nrfutil device go``
 
-       * To start the Application core: ``nrfutil device go --core Application``
-       * To start the Network core: ``nrfutil device go --core Network``
-
-       This approach is particularly useful for debugging individual domains, starting from their reset handlers.
+       This approach is particularly useful for debugging the application from the reset handler.
 
    * - ``RESET_DEFAULT``
      - Selects ``RESET_HARD``.

@@ -36,8 +36,10 @@ This process generates the following :file:`zephyr.hex` images:
 * Application core application
 * PPR core application
 * Radio core firmware
+* User Information Configuration Registers (UICR) contents
 
-Additionally, the build process generates the User Information Configuration Registers (UICR) contents (:file:`uicr.hex`) to specify device-wide configuration.
+You can use the UICR to specify the device-wide configuration needed by the firmware.
+See :ref:`ug_nrf54h20_ironside_se_uicr_image` for a description of the UICR generation process.
 
 You must flash all the HEX files into the device.
 

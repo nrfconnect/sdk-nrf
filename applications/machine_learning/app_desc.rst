@@ -473,8 +473,6 @@ nRF54H20 DK
 
      west build -b nrf54h20dk/nrf54h20/cpuapp -T applications.machine_learning.sensor_hub.zdebug .
 
-  .. include:: /includes/nRF54H20_erase_UICR.txt
-
 Selecting a build type
 ======================
 
