@@ -94,7 +94,7 @@ if(${TFM_PARTITION_CRYPTO})
     # are included before any other PSA-related headers.
     if((NRF_SOC_VARIANT MATCHES "nrf54l1[05]") OR
        (NRF_SOC_VARIANT MATCHES "nrf54lv10a") OR
-       (NRF_SOC_VARIANT MATCHES "nrf54lm20a") OR
+       (NRF_SOC_VARIANT MATCHES "nrf54lm20[ab]") OR
        (NRF_SOC_VARIANT MATCHES "nrf7120"))
       target_link_libraries(platform_crypto_keys
         PRIVATE
@@ -226,7 +226,7 @@ file(COPY ${CMAKE_CURRENT_LIST_DIR}/common
 
 if((NRF_SOC_VARIANT MATCHES "nrf54l1[05]") OR
    (NRF_SOC_VARIANT MATCHES "nrf54lv10a") OR
-   (NRF_SOC_VARIANT MATCHES "nrf54lm20a") OR
+   (NRF_SOC_VARIANT MATCHES "nrf54lm20[ab]") OR
    (NRF_SOC_VARIANT MATCHES "nrf7120"))
   file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h
     DESTINATION ${INSTALL_INTERFACE_INC_DIR}

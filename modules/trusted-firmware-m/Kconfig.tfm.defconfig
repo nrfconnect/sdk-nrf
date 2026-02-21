@@ -14,6 +14,7 @@ config TFM_BOARD
 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54l10_cpuapp" if SOC_NRF54L10_CPUAPP
 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54lv10a_cpuapp" if SOC_NRF54LV10A_CPUAPP
 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54lm20a_cpuapp" if SOC_NRF54LM20A_CPUAPP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54lm20b_cpuapp" if SOC_NRF54LM20B_CPUAPP
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf7120_cpuapp" if SOC_NRF7120_ENGA_CPUAPP
 	depends on TRUSTED_EXECUTION_NONSECURE
 
