@@ -18,8 +18,8 @@ LOG_MODULE_REGISTER(shadow_config, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 #define TEST_COUNTER_EN	"counterEnable"
 
-/* Flag to indicate that the accepted shadow data has been received (MQTT only) */
-static bool accepted_rcvd;
+/* Flag to indicate that the transform shadow data has been received (MQTT only) */
+static bool transform_rcvd;
 
 static int add_cfg_data(struct nrf_cloud_obj *const cfg_obj)
 {
@@ -112,12 +112,12 @@ cleanup:
 
 void shadow_config_cloud_connected(void)
 {
-	accepted_rcvd = false;
+	transform_rcvd = false;
 }
 
 int shadow_config_reported_send(void)
 {
-	LOG_INF("Sending reported configuration");
+	LOG_INF("Sending shadow reported configuration");
 
 	int err = send_config();
 
@@ -140,11 +140,11 @@ int shadow_config_delta_process(struct nrf_cloud_obj *const delta_obj)
 	}
 
 	/* If there is a pending delta event when the device establishes a cloud connection
-	 * it is possible that it will be received before the accepted shadow data.
-	 * Do not process a delta event until the accepted shadow data has been received.
+	 * it is possible that it will be received before the transform shadow data.
+	 * Do not process a delta event until the transform shadow data has been received.
 	 * This is only a concern for MQTT.
 	 */
-	if (!accepted_rcvd && IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+	if (!transform_rcvd && IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
 		return -EAGAIN;
 	}
 
@@ -180,19 +180,19 @@ int shadow_config_delta_process(struct nrf_cloud_obj *const delta_obj)
 	return err;
 }
 
-int shadow_config_accepted_process(struct nrf_cloud_obj *const accepted_obj)
+int shadow_config_transform_process(struct nrf_cloud_obj *const transform_obj)
 {
-	if (!accepted_obj) {
+	if (!transform_obj) {
 		return -EINVAL;
 	}
 
-	/* The accepted shadow has been received */
-	accepted_rcvd = true;
+	/* The transform shadow has been received */
+	transform_rcvd = true;
 
-	if ((accepted_obj->type != NRF_CLOUD_OBJ_TYPE_JSON) || !accepted_obj->json) {
+	if ((transform_obj->type != NRF_CLOUD_OBJ_TYPE_JSON) || !transform_obj->json) {
 		/* No config JSON */
 		return -ENOMSG;
 	}
 
-	return process_cfg(accepted_obj);
+	return process_cfg(transform_obj);
 }

@@ -373,9 +373,16 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 	int err;
 
 	if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) && shadow->delta) {
-		LOG_DBG("Shadow: Delta - version: %d, timestamp: %lld",
-			shadow->delta->ver,
-			shadow->delta->ts);
+		LOG_DBG("Shadow: Delta");
+
+		if (shadow->delta->is_err) {
+			LOG_ERR("Shadow delta error code: %d, message: %s, ver: %d, ts: %lld",
+				shadow->delta->error.code,
+				shadow->delta->error.msg,
+				shadow->delta->ver,
+				shadow->delta->ts);
+			return;
+		}
 
 		bool accept = true;
 
@@ -401,14 +408,24 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 		if (err) {
 			LOG_ERR("Failed to send shadow response, error: %d", err);
 		}
+	} else if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) && shadow->transform) {
+		LOG_DBG("Shadow: Transform result");
 
-	} else if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) && shadow->accepted) {
-		LOG_DBG("Shadow: Accepted");
-		err = shadow_config_accepted_process(&shadow->accepted->config);
-		if (err) {
-			/* Send the config on an error */
-			(void)shadow_config_reported_send();
+		if (shadow->transform->is_err) {
+			LOG_ERR("Shadow transform error: code %d, pos %d, msg %s",
+				shadow->transform->error.code,
+				shadow->transform->error.pos,
+				shadow->transform->error.msg);
+		} else {
+			LOG_INF("Shadow transform result received");
+			err = shadow_config_transform_process(&shadow->transform->result.obj);
+			if (err) {
+				/* Send the config on an error */
+				(void)shadow_config_reported_send();
+			}
 		}
+	} else {
+		LOG_WRN("Shadow: Unrecognized shadow event");
 	}
 }
 

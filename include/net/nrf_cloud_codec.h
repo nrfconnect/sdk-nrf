@@ -99,32 +99,36 @@ struct nrf_cloud_obj {
 enum nrf_cloud_obj_shadow_type {
 	/* A shadow delta, when there is a mismatch between "desired" and "reported" sections. */
 	NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA,
-	/* The accepted shadow data. nRF Cloud provides a trimmed report to reduce overhead. */
-	NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED,
 	/* The shadow data received in response to a JSONata transform request. */
 	NRF_CLOUD_OBJ_SHADOW_TYPE_TF
 };
 
-/** @brief Object containing shadow delta data */
-struct nrf_cloud_obj_shadow_delta {
-	/** The shadow version number */
-	int ver;
-	/** Timestamp of the delta event */
-	int64_t ts;
-	/** The delta data in the "state" object */
-	struct nrf_cloud_obj state;
+/** @brief Object containing shadow delta error data */
+struct nrf_cloud_obj_shadow_delta_err {
+	/** The error code */
+	int code;
+	/** The error message */
+	char *msg;
+
+	/** The original transform error response object */
+	struct nrf_cloud_obj err_obj;
 };
 
-/** @brief Object containing the accepted shadow data */
-struct nrf_cloud_obj_shadow_accepted {
-	/** The "desired" shadow data */
-	struct nrf_cloud_obj desired;
-	/** The "reported" shadow data */
-	struct nrf_cloud_obj reported;
-	/** The reported "config" shadow data.
-	 * nRF Cloud separates this to allow for easier processing.
-	 */
-	struct nrf_cloud_obj config;
+/** @brief Object containing shadow delta data */
+struct nrf_cloud_obj_shadow_delta {
+	/** Timestamp of the delta event */
+	int64_t ts;
+	/** The shadow version number */
+	int ver;
+	/** Flag to indicate if the delta contains an error */
+	bool is_err;
+
+	union {
+		/** The delta data in the "state" object, valid if is_err = false */
+		struct nrf_cloud_obj state;
+		/** The error information, valid if is_err = true */
+		struct nrf_cloud_obj_shadow_delta_err error;
+	};
 };
 
 struct nrf_cloud_obj_shadow_transform_result {
@@ -148,7 +152,6 @@ struct nrf_cloud_obj_shadow_transform_error {
 	struct nrf_cloud_obj err_obj;
 };
 
-
 struct nrf_cloud_obj_shadow_transform {
 	/** Flag to indicate if the request resulted in an error */
 	bool is_err;
@@ -166,8 +169,6 @@ struct nrf_cloud_obj_shadow_data {
 	/** The type of shadow data provided in the union */
 	enum nrf_cloud_obj_shadow_type type;
 	union {
-		/** Accepted data; for type = NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED */
-		struct nrf_cloud_obj_shadow_accepted *accepted;
 		/** Delta data; for type = NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA */
 		struct nrf_cloud_obj_shadow_delta *delta;
 		/** Transform result; for type = NRF_CLOUD_OBJ_SHADOW_TYPE_TF */

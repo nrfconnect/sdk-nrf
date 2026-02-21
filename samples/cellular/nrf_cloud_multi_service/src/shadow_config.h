@@ -29,14 +29,14 @@ int shadow_config_reported_send(void);
  * @retval 0	   Success, accept the delta.
  * @retval -EBADF  Invalid config data, reject the delta.
  * @retval -ENOMSG The provided data did not contain JSON or a config section.
- * @retval -EAGAIN Ignore delta event until the accepted shadow is received. MQTT only.
+ * @retval -EAGAIN Ignore delta event until the transform shadow is received. MQTT only.
  * @retval -EINVAL Error; Invalid parameter.
  * @retval -ENOMEM Error; out of memory.
  */
 int shadow_config_delta_process(struct nrf_cloud_obj *const delta_obj);
 
 /**
- * @brief Process an incoming accepted shadow event.
+ * @brief Process an incoming transform shadow event.
  *
  * @retval 0	   Success.
  * @retval -EBADF  Invalid config data.
@@ -45,6 +45,6 @@ int shadow_config_delta_process(struct nrf_cloud_obj *const delta_obj);
  * @return A negative value indicates an error, the device should send its current config to
  *         the reported section of the shadow.
  */
-int shadow_config_accepted_process(struct nrf_cloud_obj *const accepted_obj);
+int shadow_config_transform_process(struct nrf_cloud_obj *const transform_obj);
 
 #endif /* _SHADOW_CONFIG_H_ */
