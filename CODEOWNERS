@@ -744,6 +744,7 @@
 /scripts/nrf_provision/fast_pair/*.rst    @nrfconnect/ncs-si-bluebagel-doc
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/generate_psa_key_attributes/*.rst @nrfconnect/ncs-aegir-doc
+/scripts/shell/*.rst                      @nrfconnect/ncs-blenders-doc
 /scripts/shell/ble_console/**/*.rst       @nrfconnect/ncs-doc-leads
 /scripts/west_commands/sbom/*.rst         @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /scripts/esb_sniffer/*.rst                @nrfconnect/ncs-si-xcake-doc
