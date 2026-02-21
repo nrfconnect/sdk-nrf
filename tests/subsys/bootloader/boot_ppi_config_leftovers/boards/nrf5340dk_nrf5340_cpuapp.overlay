@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	zephyr,user {
+		test-periphs = <&comp>,
+			       <&dppic>,
+			       <&egu0>, <&egu1>, <&egu2>, <&egu3>, <&egu4>, <&egu5>,
+			       <&gpiote>,
+			       <&ipc>,
+			       <&kmu>,
+			       <&pwm0>, <&pwm1>, <&pwm2>, <&pwm3>,
+			       <&qdec0>, <&qdec1>,
+			       <&rtc0>, <&rtc1>,
+			       <&spi0>, <&spi1>, <&spi2>, <&spi3>, <&spi4>,
+			       <&timer0>, <&timer1>, <&timer2>,
+			       <&usbd>,
+			       <&wdt0>,
+			       <&wdt1>;
+	};
+};
