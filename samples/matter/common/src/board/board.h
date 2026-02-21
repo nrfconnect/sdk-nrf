@@ -108,6 +108,26 @@ public:
 	 */
 	static void DefaultMatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t data);
 
+	/**
+	 * @brief Resets all LEDs on the board
+	 *
+	 * This function turns off all the LEDs that are present on the board, preserving their state for later use.
+	 */
+	void ResetAllLeds();
+
+	/**
+	 * @brief Restores state of all LEDs
+	 *
+	 * This function restores the state of all LEDs prior to their reset
+	 */
+	void RestoreAllLedsState();
+
+	/**
+	 * @brief Runs the LedStateHandler
+	 * This function restores the proper led state after overiding led usage for other purpose.
+	 */
+	void RunLedStateHandler() { mLedStateHandler(); };
+
 private:
 	Board() = default;
 	friend Board &GetBoard();
@@ -117,8 +137,6 @@ private:
 	static void UpdateStatusLED();
 	static void LEDStateUpdateHandler(Nrf::LEDWidget &ledWidget);
 	static void UpdateLedStateEventHandler(const LEDEvent &event);
-	void ResetAllLeds();
-	void RestoreAllLedsState();
 
 	Nrf::LEDWidget mLED1;
 	Nrf::LEDWidget mLED2;

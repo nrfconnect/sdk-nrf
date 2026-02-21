@@ -47,8 +47,12 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 #endif
 #endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
-	/* Initialize buttons */
+/* Initialize buttons */
+#ifdef NCS_SAMPLE_MATTER_USE_DEFAULT_BUTTON_HANDLER
 	int ret = dk_buttons_init(ButtonEventHandler);
+#else
+	int ret = dk_buttons_init(nullptr);
+#endif
 	if (ret) {
 		LOG_ERR("dk_buttons_init() failed");
 		return false;
@@ -240,7 +244,7 @@ void Board::ButtonEventHandler(ButtonState buttonState, ButtonMask hasChanged)
 
 	if (FUNCTION_BUTTON_MASK & hasChanged) {
 		ButtonAction action =
-			(BLUETOOTH_ADV_BUTTON_MASK & buttonState) ? ButtonAction::Pressed : ButtonAction::Released;
+			(FUNCTION_BUTTON_MASK & buttonState) ? ButtonAction::Pressed : ButtonAction::Released;
 		PostTask([action] { FunctionHandler(action); });
 	}
 }
