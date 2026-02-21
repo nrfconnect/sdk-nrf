@@ -1,0 +1,14 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+board:
+  name: nrf54lm20dongle
+  full_name: nRF54LM20 Dongle
+  vendor: nordic
+  socs:
+  - name: nrf54lm20b
+    variants:
+    - name: ns
+      cpucluster: cpuapp
+    - name: xip
+      cpucluster: cpuflpr
