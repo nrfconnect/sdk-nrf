@@ -1004,7 +1004,20 @@
 .. _`AP-Protect for nRF52805`: https://docs.nordicsemi.com/bundle/ps_nrf52805/page/dif.html#ariaid-title3
 
 .. _`nRF54L Series Production Programming`: https://docs.nordicsemi.com/bundle/nan_047/page/APP/nan_production_programming/intro.html
+.. _`Disabling AP-Protect on nRF54L`: https://docs.nordicsemi.com/bundle/nan_047/page/APP/nan_production_programming/nRF54L/nrf54l_disable_approtect.html
+.. _`Enabling device protection on nRF54L`: https://docs.nordicsemi.com/bundle/nan_047/page/APP/nan_production_programming/nRF54L/nrf54l_device_protection.html
+.. _`Checking AP-Protect status on nRF54L`: https://docs.nordicsemi.com/bundle/nan_047/page/APP/nan_production_programming/checking_approtect_status.html
 .. _`Provisioning KMU data`: https://docs.nordicsemi.com/bundle/nan_047/page/APP/nan_production_programming/nRF54L/nrf54l_provisioning_kmu_data.html
+
+.. _`nRF91 Series Production Programming`: https://docs.nordicsemi.com/bundle/nan_041/page/APP/nan_production_programming/intro.html
+.. _`Unlocking nRF91`: https://docs.nordicsemi.com/bundle/nan_041/page/APP/nan_production_programming/unlocking_nrf91.html
+.. _`Enabling device protection on nRF91`: https://docs.nordicsemi.com/bundle/nan_041/page/APP/nan_production_programming/device_protection.html
+.. _`Checking AP-Protect status on nRF91`: https://docs.nordicsemi.com/bundle/nan_041/page/APP/nan_production_programming/check_approtect_enabled.html
+
+.. _`nRF5340 Production Programming`: https://docs.nordicsemi.com/bundle/nan_042/page/APP/nan_production_programming/intro.html
+.. _`Disabling AP-Protect on nRF5340`: https://docs.nordicsemi.com/bundle/nan_042/page/APP/nan_production_programming/disable_approtect.html
+.. _`Enabling device protection on nRF5340`: https://docs.nordicsemi.com/bundle/nan_042/page/APP/nan_production_programming/device_protection.html
+.. _`AP-Protect and ERASEPROTECT troubleshooting for nRF5340`: https://docs.nordicsemi.com/bundle/nan_042/page/APP/nan_production_programming/approtect_eraseprotect_enabled.html
 
 .. _`nRF9160 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`nRF9161 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_operator_certifications.html
@@ -1033,11 +1046,11 @@
 .. _`sdk-manager command`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-sdk-manager/nrfutil-sdk-manager.html
 .. _`sdk-manager Configuration settings`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-sdk-manager/guides/sdk_manager_config_settings.html
 .. _`sdk-manager Starting and inspecting the toolchain environment`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-sdk-manager/guides/sdk_manager_env_launch.html
-.. _`Recovering the device`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_recovery.html
 .. _`nrfutil-trace`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/CHANGELOG.html
 .. _`Capturing LTE modem trace data`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/guides/tracing_lte.html
 .. _`Capturing STM trace data`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/guides/tracing_stm.html
 .. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
+.. _`Logging HCI packets`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/hci_logger.html
 .. _`Device command overview`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming.html
 .. _`Programming application firmware using MCUboot serial recovery`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_firmware_thingy91.html
 .. _`Programming modem firmware using MCUboot serial recovery`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_firmware_thingy91.html
@@ -1045,7 +1058,8 @@
 .. _`Upgrading modem firmware using J-Link`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_modem_9160.html
 .. _`Provisioning cryptographic keys`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/provisioning_keys.html
 .. _`Erasing the device`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_erasing.html
-.. _`Logging HCI packets`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/hci_logger.html
+.. _`Recovering the device`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_recovery.html
+.. _`Configuring readback protection`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_readback_protection.html
 
 .. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
