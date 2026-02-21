@@ -60,7 +60,6 @@ extern "C" {
  * @param _clean_request   Pointer to the data clean request callback function.
  */
 #define ACCEL_TO_ANGLE_FILTER_DEFINE(_instance_name, _ctx, _process_request, _clean_request)	\
-	BUILD_ASSERT(_process_request != NULL, "No process request callback provided");		\
 	struct accel_to_angle_filter _instance_name = {						\
 		.ctx = _ctx,									\
 		.data_process_request = _process_request,					\

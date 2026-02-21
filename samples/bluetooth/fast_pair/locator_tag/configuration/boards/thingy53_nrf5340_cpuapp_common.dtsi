@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,8 +7,7 @@
 / {
 	aliases {
 		pwm-spk = &pwm_spk0;
-		gyro-pwr = &sensor_pwr_ctrl;
-		gyro = &bmi270;
+		motion-detector = &adxl362;
 	};
 
 	pwmspk {
@@ -20,8 +19,6 @@
 	};
 };
 
-&spi3 {
-	bmi270: spi-dev-bmi270@1 {
-		status = "okay";
-	};
+&adxl362 {
+	status = "okay";
 };
