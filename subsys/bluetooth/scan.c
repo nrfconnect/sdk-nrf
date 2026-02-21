@@ -477,8 +477,11 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 {
 	int err;
 
-	/* Return if the automatic connection is disabled. */
 	if (!bt_scan.connect_if_match) {
+		return;
+	}
+
+	if (!control->connectable) {
 		return;
 	}
 

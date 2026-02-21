@@ -585,10 +585,14 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-:ref:`bt_mesh_dk_prov` module:
+* :ref:`bt_mesh_dk_prov` module:
 
   * Added support for node reset callback.
     Applications can now register a callback using the :c:func:`bt_mesh_dk_prov_node_reset_cb_set` function to perform cleanup operations when a node reset occurs.
+
+* :ref:`lib_nrf_bt_scan_readme` library:
+
+  * Fixed a bug where the central would attempt to connect to a non-connectable peripheral if the device had been matched by specified filters.
 
 Common Application Framework
 ----------------------------
