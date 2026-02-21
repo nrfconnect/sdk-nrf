@@ -19,9 +19,14 @@
 #include <zephyr/posix/sys/socket.h>
 #endif
 
+#include <modem/nrf_modem_lib.h>
+#include <modem/lte_lc.h>
+
 #if CONFIG_MODEM_KEY_MGMT
 #include <modem/modem_key_mgmt.h>
 #endif
+
+/* mbedTLS debug callback is built into Zephyr when CONFIG_MBEDTLS_DEBUG is enabled */
 
 #define HTTPS_PORT		"443"
 #define HTTP_HEAD		\
@@ -105,16 +110,20 @@ int cert_provision(void)
 		return err;
 	}
 #else /* CONFIG_MODEM_KEY_MGMT */
+	printk("Provisioning certificate to Zephyr TLS credentials store\n");
 	err = tls_credential_add(TLS_SEC_TAG,
 				 TLS_CREDENTIAL_CA_CERTIFICATE,
 				 cert,
 				 sizeof(cert));
 	if (err == -EEXIST) {
 		printk("CA certificate already exists, sec tag: %d\n", TLS_SEC_TAG);
-	} else if (err < 0) {
+		return 0;
+	}
+	if (err < 0) {
 		printk("Failed to register CA certificate: %d\n", err);
 		return err;
 	}
+	printk("CA certificate provisioned successfully, sec tag: %d\n", TLS_SEC_TAG);
 #endif /* !CONFIG_MODEM_KEY_MGMT */
 
 	return 0;
@@ -163,6 +172,19 @@ int tls_setup(int fd)
 		printk("Failed to setup TLS hostname, err %d\n", errno);
 		return err;
 	}
+
+	/* Set TLS cipher suite to TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 */
+	int cipher_list[] = { 0xC02B };
+
+	err = setsockopt(fd, SOL_TLS, TLS_CIPHERSUITE_LIST, cipher_list, sizeof(cipher_list));
+	if (err) {
+		printk("Failed to setup TLS cipher suite list, err %d\n", errno);
+
+		return err;
+	}
+
+	printk("TLS setup completed successfully\n");
+
 	return 0;
 }
 
@@ -230,15 +252,14 @@ static void send_http_request(void)
 		  INET6_ADDRSTRLEN);
 	printk("Resolved %s (%s)\n", peer_addr, net_family2str(res->ai_family));
 
-	if (IS_ENABLED(CONFIG_SAMPLE_TFM_MBEDTLS)) {
-		fd = socket(res->ai_family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-	} else {
-		fd = socket(res->ai_family, SOCK_STREAM, IPPROTO_TLS_1_2);
-	}
+	/* Use native Zephyr TLS (not modem-offloaded) */
+	fd = socket(res->ai_family, SOCK_STREAM, IPPROTO_TLS_1_2);
 	if (fd == -1) {
-		printk("Failed to open socket!\n");
+		printk("Failed to open socket! errno: %d\n", errno);
 		goto clean_up;
 	}
+
+	printk("Socket created: %d\n", fd);
 
 	/* Setup TLS socket options */
 	err = tls_setup(fd);
@@ -248,11 +269,13 @@ static void send_http_request(void)
 
 	printk("Connecting to %s:%d\n", CONFIG_HTTPS_HOSTNAME,
 	       ntohs(((struct sockaddr_in *)(res->ai_addr))->sin_port));
+	printk("Destination IP: %s\n", peer_addr);
 	err = connect(fd, res->ai_addr, res->ai_addrlen);
 	if (err) {
-		printk("connect() failed, err: %d\n", errno);
+		printk("connect() failed, err: %d (0x%x)\n", errno, -errno);
 		goto clean_up;
 	}
+	printk("TLS connection established\n");
 
 	off = 0;
 	do {
@@ -306,6 +329,15 @@ int main(void)
 
 	printk("HTTPS client sample started\n\r");
 
+	/* Initialize modem library first */
+	err = nrf_modem_lib_init();
+	if (err) {
+		printk("nrf_modem_lib_init failed: %d\n", err);
+		return err;
+	}
+
+	printk("Modem library initialized\n");
+
 	/* Setup handler for Zephyr NET Connection Manager events. */
 	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
 	net_mgmt_add_event_callback(&l4_cb);
@@ -332,6 +364,18 @@ int main(void)
 	}
 
 	printk("Connecting to the network\n");
+
+	/* Connect to LTE network */
+	err = lte_lc_connect();
+	if (err) {
+		printk("lte_lc_connect failed: %d\n", err);
+		return err;
+	}
+
+	printk("LTE connected, waiting for PDN activation\n");
+
+	/* Wait a bit for PDN activation to trigger socket creation in driver */
+	k_sleep(K_SECONDS(3));
 
 	err = conn_mgr_all_if_connect(true);
 	if (err) {
