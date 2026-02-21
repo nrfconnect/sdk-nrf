@@ -6590,11 +6590,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - secp192k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
                  - Supported
@@ -6604,11 +6604,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - secp192r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                  - Supported
