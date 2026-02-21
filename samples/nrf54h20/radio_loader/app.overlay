@@ -6,7 +6,7 @@
 
 /* Use existing node as source partition for demo purposes. */
 &cpuapp_slot0_partition {
-	reg = <0x92000 DT_SIZE_K(128)>;
+	reg = <0x52000 DT_SIZE_K(128)>;
 };
 
 /* Mock the node labels to satisfy the build */
