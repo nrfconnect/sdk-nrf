@@ -68,6 +68,8 @@ User interface
 
 .. include:: /includes/matter/interface/intro.txt
 
+.. include:: /includes/matter/interface/interface.txt
+
 First LED:
    .. include:: /includes/matter/interface/state_led.txt
 

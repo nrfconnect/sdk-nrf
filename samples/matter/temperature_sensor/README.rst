@@ -1,6 +1,6 @@
 .. |matter_name| replace:: Temperature Sensor
 .. |matter_type| replace:: sample
-.. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
+.. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15tag/nrf54l15/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
 .. |matter_dks_internal| replace:: nRF54LM20 DK
 .. |sample path| replace:: :file:`samples/matter/temperature_sensor`
 .. |matter_qr_code_payload| replace:: MT:K.K9042C00KA0648G00
@@ -36,8 +36,8 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample does not use a real temperature sensor due to hardware limitation.
-Instead, it simulates temperature measurement following the linearly increasing values from –20 to +20 Celsius degrees.
+The sample uses a real temperature measurement only on the nRF54L15 TAG due to hardware limitations.
+On other targets, it simulates temperature measurement following the linearly increasing values from –20 to +20 Celsius degrees.
 The measurement results are updated every 10 s and after reaching the maximum value, the temperature drops to the minimum and starts to increase from the beginning.
 
 You can test the device remotely over a Thread network, which requires more devices.
@@ -81,6 +81,9 @@ User interface
 **************
 
 .. include:: /includes/matter/interface/intro.txt
+.. include:: /includes/matter/interface/interface_table_extension_l15_tag.txt
+
+.. include:: /includes/matter/interface/interface.txt
 
 First LED:
    .. include:: /includes/matter/interface/state_led.txt
@@ -95,6 +98,10 @@ First Button:
 Third Button:
    Functions as the User Active Mode Trigger (UAT) button.
    For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
+
+.. note::
+   Since nRF54L15 TAG has only a single button, a short press (shorter than 1.5s) activates First Button short press.
+   A press between 1.5 and 3 seconds (indicated by a rapidly blinking white LED) activates Third Button functionality.
 
 .. include:: /includes/matter/interface/segger_usb.txt
 .. include:: /includes/matter/interface/nfc.txt

@@ -1,0 +1,9 @@
+   * - nRF54L15 TAG
+     - **Red LED**
+     - **Green LED**
+     - **Blue LED**
+     - Not available
+     - **Button 1**
+     - Not available
+     - Not available
+     - Not available
