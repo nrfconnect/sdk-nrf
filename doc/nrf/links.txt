@@ -1074,6 +1074,10 @@
 .. _`Errata 257`: https://docs.nordicsemi.com/bundle/errata_nRF52811_Rev2/page/ERR/nRF52811/Rev2/latest/config_811_257.html
 .. _`Errata 117`: https://docs.nordicsemi.com/bundle/errata_nRF5340_Rev1/page/ERR/nRF5340/Rev1/latest/anomaly_340_117.html
 
+.. _`nRF54L05 Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54L05_Rev2/page/ERR/nRF54L05/Rev2/latest/err_L05_new.html
+.. _`nRF54L10 Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54L10_Rev2/page/ERR/nRF54L10/Rev2/latest/err_L10_new.html
+.. _`nRF54L15 Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54L15_Rev2/page/ERR/nRF54L15/Rev2/latest/err_L15_new.html
+
 .. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://docs.nordicsemi.com/bundle/SA/resource/SA-2023-234-v1_1.pdf
 
 .. _`latest release notes for nRF Connect for Visual Studio Code`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/rel_notes_overview.html
