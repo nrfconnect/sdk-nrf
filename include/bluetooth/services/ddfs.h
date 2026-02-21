@@ -208,7 +208,7 @@ struct bt_ddfs_init_params {
 	const struct bt_ddfs_cb *cb;
 };
 
-/** @brief Function for sending Distance Measurement value.
+/** @brief Send Distance Measurement value.
  *
  *  The application calls this function after having performed a Distance Measurement.
  *  If notification has been enabled, the measurement data is encoded and sent to the client.
@@ -222,7 +222,7 @@ struct bt_ddfs_init_params {
 int bt_ddfs_distance_measurement_notify(struct bt_conn *conn,
 					const struct bt_ddfs_distance_measurement *measurement);
 
-/** @brief Function for sending Azimuth Measurement value.
+/** @brief Send Azimuth Measurement value.
  *
  *  The application calls this function after having performed an Azimuth Measurement.
  *  If notification has been enabled, the measurement data is encoded and sent to the client.
@@ -236,7 +236,7 @@ int bt_ddfs_distance_measurement_notify(struct bt_conn *conn,
 int bt_ddfs_azimuth_measurement_notify(struct bt_conn *conn,
 				       const struct bt_ddfs_azimuth_measurement *measurement);
 
-/** @brief Function for sending Elevation Measurement value.
+/** @brief Send Elevation Measurement value.
  *
  *  The application calls this function after having performed an Elevation Measurement.
  *  If notification has been enabled, the measurement data is encoded and sent to the client.
@@ -250,9 +250,13 @@ int bt_ddfs_azimuth_measurement_notify(struct bt_conn *conn,
 int bt_ddfs_elevation_measurement_notify(struct bt_conn *conn,
 					const struct bt_ddfs_elevation_measurement *measurement);
 
-/** @brief Function for initializing the Direction and Distance Finding Service.
+/** @brief Initialize the Direction and Distance Finding Service.
  *
- *  @param[in] init Initialization parameters.
+ *  Initializes the module with the given initialization parameters.
+ *
+ *  @note The GATT service is defined and registered statically at compile time.
+ *
+ *  @param[in] init Initialization parameters. Must not be NULL.
  *
  *  @retval 0 If the operation was successful.
  *          Otherwise, a negative error code is returned.

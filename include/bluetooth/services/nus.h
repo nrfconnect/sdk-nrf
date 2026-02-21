@@ -81,17 +81,17 @@ struct bt_nus_cb {
 
 };
 
-/**@brief Initialize the service.
+/**@brief Initialize the NUS Service.
  *
- * @details This function registers a GATT service with two characteristics,
- *          TX and RX. A remote device that is connected to this service
- *          can send data to the RX Characteristic. When the remote enables
- *          notifications, it is notified when data is sent to the TX
- *          Characteristic.
+ *  Initializes the module with the given callbacks, used when:
+ *  - The RX characteristic is written to by a remote device.
+ *  - The TX characteristic notification state changes.
+ *  - The notification has been sent to a remote device.
  *
- * @param[in] callbacks  Struct with function pointers to callbacks for service
- *                       events. If no callbacks are needed, this parameter can
- *                       be NULL.
+ *  @note The GATT service is defined and registered statically at compile time.
+ *
+ *  @param[in] callbacks Struct containing pointers to callback functions.
+ *                       Can be NULL if no callbacks are defined.
  *
  * @retval 0 If initialization is successful.
  *           Otherwise, a negative value is returned.

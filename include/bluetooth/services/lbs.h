@@ -52,20 +52,17 @@ struct bt_lbs_cb {
 
 /** @brief Initialize the LBS Service.
  *
- * This function registers a GATT service with two characteristics: Button
- * and LED.
- * Send notifications for the Button Characteristic to let connected peers know
- * when the button state changes.
- * Write to the LED Characteristic to change the state of the LED on the
- * board.
+ *  Initializes the module with the given callbacks, used when:
+ *  - The LED characteristic is written to by a remote device.
+ *  - The button characteristic is read by a remote device.
  *
- * @param[in] callbacks Struct containing pointers to callback functions
- *			used by the service. This pointer can be NULL
- *			if no callback functions are defined.
+ *  @note The GATT service is defined and registered statically at compile time.
  *
+ *  @param[in] callbacks Struct containing pointers to callback functions.
+ *                       Can be NULL if no callbacks are defined.
  *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
+ *  @retval 0 If the operation was successful.
+ *          Otherwise, a negative error code is returned.
  */
 int bt_lbs_init(struct bt_lbs_cb *callbacks);
 
