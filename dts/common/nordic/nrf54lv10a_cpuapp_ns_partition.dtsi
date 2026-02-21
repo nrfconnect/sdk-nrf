@@ -6,10 +6,10 @@
 
 /*
  * Default SRAM planning when building for nRF54LV10A with ARM TrustZone-M support
- * - Lowest 96 kB SRAM allocated to Secure image (sram0_s).
- * - Upper 92 kB SRAM allocated to Non-Secure image (sram0_ns).
+ * - Lowest 92 kB SRAM allocated to Secure image (sram0_s).
+ * - Upper 96 kB SRAM allocated to Non-Secure image (sram0_ns).
  *
- * nRF54LV10A has 192 kB of volatile memory (SRAM). 96 + 92 = 188 kB used;
+ * nRF54LV10A has 192 kB of volatile memory (SRAM). 92 + 96 = 188 kB used;
  * 4 kB at the top is left unused.
  * This static layout needs to be the same with the upstream TF-M layout in the
  * header flash_layout.h of the relevant platform. Any updates in the layout
@@ -21,16 +21,16 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 		/* Secure image memory */
-		reg = <0x0 DT_SIZE_K(96)>;
-		ranges = <0x0 0x0 DT_SIZE_K(96)>;
+		reg = <0x0 DT_SIZE_K(92)>;
+		ranges = <0x0 0x0 DT_SIZE_K(92)>;
 	};
 
-	sram0_ns: image_ns@18000 {
+	sram0_ns: image_ns@17000 {
 		#address-cells = <1>;
 		#size-cells = <1>;
 		/* Non-Secure image memory */
-		reg = <0x18000 DT_SIZE_K(92)>;
-		ranges = <0x0 0x18000 DT_SIZE_K(92)>;
+		reg = <0x17000 DT_SIZE_K(96)>;
+		ranges = <0x0 0x17000 DT_SIZE_K(96)>;
 	};
 };
 

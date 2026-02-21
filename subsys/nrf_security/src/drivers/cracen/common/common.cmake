@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# This directory contains C sources for the common functionality of the CRACEN crypto driver
+# This directory contains C sources for the common functionality of the CRACEN crypto driver.
 
 list(APPEND cracen_driver_include_dirs
   ${CMAKE_CURRENT_LIST_DIR}/include
