@@ -207,6 +207,72 @@ out:
 }
 
 
+#ifdef NRF71_UTIL
+static enum nrf_wifi_status umac_event_sys_debug_stats_process(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	void *event)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_umac_event_debug_stats *ev = event;
+	struct nrf_wifi_rpu_debug_stats *dst;
+
+	if (!event) {
+		nrf_wifi_osal_log_err("%s: Invalid parameters", __func__);
+		goto out;
+	}
+
+	if (!fmac_dev_ctx->debug_stats_req) {
+		nrf_wifi_osal_log_dbg("%s: Debug stats recd when req was not sent!",
+				      __func__);
+		status = NRF_WIFI_STATUS_SUCCESS;
+		goto out;
+	}
+
+	dst = (struct nrf_wifi_rpu_debug_stats *)fmac_dev_ctx->debug_stats;
+	if (dst) {
+		nrf_wifi_osal_mem_cpy(dst, &ev->stats, sizeof(ev->stats));
+	}
+	fmac_dev_ctx->debug_stats_req = false;
+	status = NRF_WIFI_STATUS_SUCCESS;
+
+out:
+	return status;
+}
+
+
+static enum nrf_wifi_status umac_event_sys_umac_int_stats_process(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	void *event)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct umac_int_stats *ev = event;
+	struct umac_int_stats *dst;
+
+	if (!event) {
+		nrf_wifi_osal_log_err("%s: Invalid parameters", __func__);
+		goto out;
+	}
+
+	if (!fmac_dev_ctx->umac_int_stats_req) {
+		nrf_wifi_osal_log_dbg("%s: UMAC int stats recd when req was not sent!",
+				      __func__);
+		status = NRF_WIFI_STATUS_SUCCESS;
+		goto out;
+	}
+
+	dst = (struct umac_int_stats *)fmac_dev_ctx->umac_int_stats;
+	if (dst) {
+		nrf_wifi_osal_mem_cpy(dst, ev, sizeof(*ev));
+	}
+	fmac_dev_ctx->umac_int_stats_req = false;
+	status = NRF_WIFI_STATUS_SUCCESS;
+
+out:
+	return status;
+}
+#endif /* NRF71_UTIL */
+
+
 static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						       struct host_rpu_msg *rpu_msg)
 {
@@ -272,6 +338,35 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 		status = NRF_WIFI_STATUS_SUCCESS;
 		break;
 #endif /* NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX */
+	case NRF_WIFI_EVENT_DEBUG_STATS:
+#ifdef NRF71_UTIL
+		status = umac_event_sys_debug_stats_process(fmac_dev_ctx,
+							    sys_head);
+#else
+		nrf_wifi_osal_log_dbg("%s: Debug stats received", __func__);
+		status = NRF_WIFI_STATUS_SUCCESS;
+#endif
+		break;
+	case NRF_WIFI_EVENT_INT_UMAC_STATS:
+#ifdef NRF71_UTIL
+		status = umac_event_sys_umac_int_stats_process(fmac_dev_ctx,
+							       sys_head);
+#else
+		nrf_wifi_osal_log_dbg("%s: UMAC int stats received", __func__);
+		status = NRF_WIFI_STATUS_SUCCESS;
+#endif
+		break;
+	case NRF_WIFI_EVENT_ERROR_STATS: {
+		struct nrf_wifi_umac_event_error_stats *err_ev =
+			(struct nrf_wifi_umac_event_error_stats *)sys_head;
+
+		nrf_wifi_osal_log_info("%s: Error stats event: stats_type=%d status_code=%u",
+				       __func__,
+				       err_ev->stats_type,
+				       err_ev->status_code);
+		status = NRF_WIFI_STATUS_SUCCESS;
+		break;
+	}
 	default:
 		nrf_wifi_osal_log_err("%s: Unknown event recd: %d",
 				      __func__,
@@ -530,6 +625,16 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 	if_id = umac_hdr->ids.wdev_id;
 	event_num = umac_hdr->cmd_evnt;
 
+#ifdef NRF_WIFI_CMD_EVENT_LOG
+	nrf_wifi_osal_log_info("%s: Event %d received from UMAC",
+			      __func__,
+			      event_num);
+#else
+	nrf_wifi_osal_log_dbg("%s: Event %d received from UMAC",
+			      __func__,
+			      event_num);
+#endif /* NRF_WIFI_CMD_EVENT_LOG */
+
 	if (if_id >= MAX_NUM_VIFS) {
 		nrf_wifi_osal_log_err("%s: Invalid wdev_id recd from UMAC %d",
 				      __func__,
@@ -540,8 +645,9 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 
 	vif_ctx = sys_dev_ctx->vif_ctx[if_id];
 	if (!vif_ctx) {
-		nrf_wifi_osal_log_err("%s: Invalid vif_ctx",
-				      __func__);
+		nrf_wifi_osal_log_err("%s: Invalid vif_ctx: vif_id = %d",
+				      __func__,
+				      if_id);
 		goto out;
 	}
 	callbk_fns = &sys_fpriv->callbk_fns;
@@ -551,15 +657,6 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		goto out;
 	}
 
-#ifdef NRF_WIFI_CMD_EVENT_LOG
-	nrf_wifi_osal_log_info("%s: Event %d received from UMAC",
-			      __func__,
-			      event_num);
-#else
-	nrf_wifi_osal_log_dbg("%s: Event %d received from UMAC",
-			      __func__,
-			      event_num);
-#endif /* NRF_WIFI_CMD_EVENT_LOG */
 
 	switch (umac_hdr->cmd_evnt) {
 	case NRF_WIFI_UMAC_EVENT_GET_REG:
@@ -611,22 +708,6 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 			callbk_fns->scan_abort_callbk_fn(vif_ctx->os_vif_ctx,
 							 event_data,
 							 event_len);
-		} else {
-			nrf_wifi_osal_log_err("%s: No callback registered for event %d",
-					      __func__,
-					      umac_hdr->cmd_evnt);
-		}
-		break;
-	case NRF_WIFI_UMAC_EVENT_SCAN_DISPLAY_RESULT:
-		if (umac_hdr->seq != 0) {
-			more_res = true;
-		}
-
-		if (callbk_fns->disp_scan_res_callbk_fn) {
-			callbk_fns->disp_scan_res_callbk_fn(vif_ctx->os_vif_ctx,
-							    event_data,
-							    event_len,
-							    more_res);
 		} else {
 			nrf_wifi_osal_log_err("%s: No callback registered for event %d",
 					      __func__,

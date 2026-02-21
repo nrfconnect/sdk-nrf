@@ -35,6 +35,8 @@
 
 #define NRF71_DRIVER_VERSION "1."KERNEL_VERSION_STRING
 
+#define NUM_RF_PARAM_ADDRS 22
+
 /* Calculate compile-time maximum for vendor stats */
 #ifdef CONFIG_NET_STATISTICS_ETHERNET_VENDOR
 #define MAX_VENDOR_STATS ((sizeof(struct rpu_sys_fw_stats) / sizeof(uint32_t)) + 1)
@@ -64,6 +66,9 @@ struct nrf_wifi_vif_ctx_zep {
 	enum nrf_wifi_fmac_if_op_state if_op_state;
 	bool set_if_event_received;
 	int set_if_status;
+#ifdef CONFIG_NET_L2_WIFI_MGMT
+	struct nrf_wifi_umac_event_scan_done scan_done_event;
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 #ifdef CONFIG_NET_STATISTICS_ETHERNET_VENDOR
 	struct net_stats_eth_vendor eth_stats_vendor_data[MAX_VENDOR_STATS];
@@ -133,6 +138,8 @@ struct nrf_wifi_ctx_zep {
 	int wdt_irq_received;
 	int wdt_irq_ignored;
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS];
+	unsigned int vtf_buffer_start_address;
 };
 
 struct nrf_wifi_drv_priv_zep {

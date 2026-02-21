@@ -187,19 +187,15 @@ out:
 	return status;
 }
 
-
-static enum nrf_wifi_status nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-						      struct nrf_wifi_phy_rf_params *rf_params,
-						      bool rf_params_valid,
+static enum nrf_wifi_status
+nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned int *rf_params_addr,
+			  unsigned int vtf_buffer_start_address,
 #ifdef NRF_WIFI_LOW_POWER
-						      int sleep_type,
+			  int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-						  unsigned int phy_calib,
-						  enum op_band op_band,
-						  bool beamforming,
-						  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
-						  struct nrf_wifi_board_params *board_params,
-						  unsigned char *country_code)
+			  unsigned int phy_calib, unsigned char op_band, bool beamforming,
+			  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
+			  struct nrf_wifi_board_params *board_params, unsigned char *country_code)
 {
 	unsigned long start_time_us = 0;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -233,19 +229,12 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_c
 		goto out;
 	}
 
-	status = umac_cmd_sys_init(fmac_dev_ctx,
-				   rf_params,
-				   rf_params_valid,
-				   &sys_fpriv->data_config,
+	status = umac_cmd_sys_init(
+		fmac_dev_ctx, rf_params_addr, vtf_buffer_start_address, &sys_fpriv->data_config,
 #ifdef NRF_WIFI_LOW_POWER
-				   sleep_type,
+		sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-				   phy_calib,
-				   op_band,
-				   beamforming,
-				   tx_pwr_ctrl,
-				   board_params,
-				   country_code);
+		phy_calib, op_band, beamforming, tx_pwr_ctrl, board_params, country_code);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		nrf_wifi_osal_log_err("%s: UMAC init failed",
@@ -410,21 +399,18 @@ out:
 	return fmac_dev_ctx;
 }
 
-
-enum nrf_wifi_status nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status
+nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #ifdef NRF_WIFI_LOW_POWER
-					    int sleep_type,
+			   int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-					    unsigned int phy_calib,
-					    enum op_band op_band,
-					    bool beamforming,
-					    struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
-					    struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
-					    struct nrf_wifi_board_params *board_params,
-					    unsigned char *country_code)
+			   unsigned int phy_calib, unsigned char op_band, bool beamforming,
+			   struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
+			   struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
+			   struct nrf_wifi_board_params *board_params, unsigned char *country_code,
+			   unsigned int *rf_params_addr, unsigned int vtf_buffer_start_address)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_phy_rf_params phy_rf_params;
 
 	if (!fmac_dev_ctx) {
 		nrf_wifi_osal_log_err("%s: Invalid device context",
@@ -446,19 +432,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fm
 		goto out;
 	}
 
-
-	status = nrf_wifi_sys_fmac_fw_init(fmac_dev_ctx,
-				       &phy_rf_params,
-				       true,
+	status = nrf_wifi_sys_fmac_fw_init(fmac_dev_ctx, rf_params_addr, vtf_buffer_start_address,
 #ifdef NRF_WIFI_LOW_POWER
-				       sleep_type,
+					   sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-				       phy_calib,
-				       op_band,
-				       beamforming,
-				       tx_pwr_ctrl_params,
-				       board_params,
-				       country_code);
+					   phy_calib, op_band, beamforming, tx_pwr_ctrl_params,
+					   board_params, country_code);
 
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		nrf_wifi_osal_log_err("%s: nrf_wifi_sys_fmac_fw_init failed",
@@ -662,6 +641,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 	}
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	if (!sys_dev_ctx) {
+		nrf_wifi_osal_log_err("%s: Invalid device context",
+				      __func__);
+		goto out;
+	}
 
 	scan_cmd = nrf_wifi_osal_mem_zalloc((sizeof(*scan_cmd) + channel_info_len));
 
@@ -669,6 +653,19 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 		nrf_wifi_osal_log_err("%s: Unable to allocate memory",
 				      __func__);
 		goto out;
+	}
+
+	if (scan_info->scan_reason == SCAN_DISPLAY) {
+		nrf_wifi_osal_log_dbg("%s: scan_db_len = %d",
+				      __func__,
+				      scan_info->scan_db_len);
+		scan_info->scan_db_addr =
+			(unsigned int)nrf_wifi_osal_mem_zalloc(scan_info->scan_db_len);
+		if (!scan_info->scan_db_addr) {
+			nrf_wifi_osal_log_err("%s: Unable to allocate memory",
+					      __func__);
+			goto out;
+		}
 	}
 
 	scan_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_TRIGGER_SCAN;
@@ -3614,39 +3611,108 @@ out:
 	return status;
 }
 
-#ifdef NRF_WIFI_LOW_POWER
-enum nrf_wifi_status nrf_wifi_sys_fmac_get_host_rpu_ps_ctrl_state(void *dev_ctx,
-								  int *rpu_ps_ctrl_state)
+enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+						       enum rpu_stats_type stats_type,
+						       struct nrf_wifi_rpu_debug_stats *stats)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	unsigned char count = 0;
 
-	fmac_dev_ctx = dev_ctx;
-
-	if (!fmac_dev_ctx || !rpu_ps_ctrl_state) {
-		nrf_wifi_osal_log_err("%s: Invalid parameters",
-				      __func__);
+	if (!fmac_dev_ctx || !stats) {
+		nrf_wifi_osal_log_err("%s: Invalid parameters", __func__);
 		goto out;
 	}
 
 	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
-		nrf_wifi_osal_log_err("%s: Invalid op mode",
+		nrf_wifi_osal_log_err("%s: Invalid op mode", __func__);
+		goto out;
+	}
+
+	if (fmac_dev_ctx->debug_stats_req) {
+		nrf_wifi_osal_log_err("%s: Debug stats request already pending",
 				      __func__);
 		goto out;
 	}
 
-	status = nrf_wifi_hal_get_rpu_ps_state(fmac_dev_ctx->hal_dev_ctx,
-					       rpu_ps_ctrl_state);
 
+	fmac_dev_ctx->debug_stats_req = true;
+	fmac_dev_ctx->debug_stats = stats;
+
+	status = umac_cmd_sys_debug_stats_get(fmac_dev_ctx, stats_type);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Fetching of RPU PS state failed",
-				      __func__);
+		fmac_dev_ctx->debug_stats_req = false;
 		goto out;
 	}
+
+	do {
+		nrf_wifi_osal_sleep_ms(1);
+		count++;
+	} while ((fmac_dev_ctx->debug_stats_req == true) &&
+		 (count < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));
+
+	if (count == NRF_WIFI_FMAC_STATS_RECV_TIMEOUT) {
+		status = NRF_WIFI_STATUS_FAIL;
+		fmac_dev_ctx->debug_stats_req = false;
+		nrf_wifi_osal_log_err("%s: Timed out (%d ms)", __func__,
+				      NRF_WIFI_FMAC_STATS_RECV_TIMEOUT);
+		goto out;
+	}
+
+	status = NRF_WIFI_STATUS_SUCCESS;
 out:
 	return status;
 }
-#endif /* NRF_WIFI_LOW_POWER */
+
+enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	struct umac_int_stats *stats)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	unsigned char count = 0;
+
+	if (!fmac_dev_ctx || !stats) {
+		nrf_wifi_osal_log_err("%s: Invalid parameters", __func__);
+		goto out;
+	}
+
+	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
+		nrf_wifi_osal_log_err("%s: Invalid op mode", __func__);
+		goto out;
+	}
+
+	if (fmac_dev_ctx->umac_int_stats_req) {
+		nrf_wifi_osal_log_err("%s: UMAC int stats request already pending",
+				      __func__);
+		goto out;
+	}
+
+	fmac_dev_ctx->umac_int_stats_req = true;
+	fmac_dev_ctx->umac_int_stats = stats;
+
+	status = umac_cmd_sys_umac_int_stats_get(fmac_dev_ctx);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		fmac_dev_ctx->umac_int_stats_req = false;
+		goto out;
+	}
+
+	do {
+		nrf_wifi_osal_sleep_ms(1);
+		count++;
+	} while ((fmac_dev_ctx->umac_int_stats_req == true) &&
+		 (count < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));
+
+	if (count == NRF_WIFI_FMAC_STATS_RECV_TIMEOUT) {
+		status = NRF_WIFI_STATUS_FAIL;
+		fmac_dev_ctx->umac_int_stats_req = false;
+		nrf_wifi_osal_log_err("%s: Timed out (%d ms)", __func__,
+				      NRF_WIFI_FMAC_STATS_RECV_TIMEOUT);
+		goto out;
+	}
+
+	status = NRF_WIFI_STATUS_SUCCESS;
+out:
+	return status;
+}
 #endif /* NRF71_UTIL */
 
 

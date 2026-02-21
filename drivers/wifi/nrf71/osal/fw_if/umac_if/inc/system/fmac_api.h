@@ -907,18 +907,16 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_sys_fmac_dev_add(struct nrf_wifi_fmac_pri
  * @retval	NRF_WIFI_STATUS_SUCCESS On success
  * @retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum nrf_wifi_status nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status
+nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #if defined(NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
-					    int sleep_type,
+			   int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-					    unsigned int phy_calib,
-					    enum op_band op_band,
-					    bool beamforming,
-					    struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
-					    struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
-					    struct nrf_wifi_board_params *board_params,
-					    unsigned char *country_code);
-
+			   unsigned int phy_calib, unsigned char op_band, bool beamforming,
+			   struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
+			   struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
+			   struct nrf_wifi_board_params *board_params, unsigned char *country_code,
+			   unsigned int *rf_params_addr, unsigned int vtf_buffer_start_address);
 
 /**
  * @brief De-initialize a RPU instance.
@@ -1109,21 +1107,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx,
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   unsigned char rate_flag,
 						   int data_rate);
-#if defined(NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
-/**
- * @brief Get the RPU power save status from host perspective.
- * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
- * @param rpu_ps_ctrl_state Pointer to the address where the current RPU power save state
- *			    from host perspective needs to be copied.
- *
- * This function is used to fetch the RPU power save status
- *	    from host perspective.
- *
- * @return Command execution status
- */
-enum nrf_wifi_status nrf_wifi_sys_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx,
-								  int *rpu_ps_ctrl_state);
-#endif /* NRF_WIFI_LOW_POWER */
 #endif /* NRF71_UTIL */
 
 /**
@@ -1159,6 +1142,31 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_conf_ltf_gi(struct nrf_wifi_fmac_dev_ctx 
 enum nrf_wifi_status nrf_wifi_sys_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						 enum rpu_stats_type stats_type,
 						 struct rpu_sys_op_stats *stats);
+
+#if defined(NRF71_UTIL) || defined(__DOXYGEN__)
+/**
+ * @brief Synchronously get debug stats from RPU (UMAC/LMAC/PHY).
+ * @param fmac_dev_ctx FMAC context.
+ * @param stats_type Type of stats (UMAC, LMAC, or PHY).
+ * @param stats Buffer to receive the stats (filled on NRF_WIFI_EVENT_DEBUG_STATS).
+ * @return Command execution status.
+ */
+enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	enum rpu_stats_type stats_type,
+	struct nrf_wifi_rpu_debug_stats *stats);
+
+/**
+ * @brief Synchronously get UMAC internal (memory) stats from RPU.
+ * @param fmac_dev_ctx FMAC context.
+ * @param stats Buffer to receive the stats (filled on NRF_WIFI_EVENT_INT_UMAC_STATS).
+ * @return Command execution status.
+ */
+enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	struct umac_int_stats *stats);
+#endif /* NRF71_UTIL */
+
 #ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 /**
  * @brief Send  Rx buffer details to firmware.
@@ -1175,6 +1183,13 @@ enum nrf_wifi_status nrf_wifi_fmac_prog_rx_buf_info(void *fmac_dev_ctx,
 					       struct nrf_wifi_rx_buf *rx_buf,
 					       unsigned int num_buffs);
 #endif /*NRF_WIFI_RX_BUFF_PROG_UMAC*/
+
+enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int *rf_params_addr);
+
+enum nrf_wifi_status nrf_wifi_fmac_config_vtf_params(struct nrf_wifi_fmac_dev_ctx *dev_ctx,
+						     unsigned int voltage, unsigned int temp,
+						     unsigned int x0,
+						     unsigned int *vtf_buffer_start_address);
 
 /**
  * @}

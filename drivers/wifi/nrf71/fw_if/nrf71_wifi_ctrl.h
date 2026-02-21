@@ -7,7 +7,7 @@
 
 /**
  * @file
- * @addtogroup nrf_wifi_fw_if Wi-Fi driver and firmware interface
+ * @addtogroup nrf71_wifi_fw_if Wi-Fi driver and firmware interface
  * @{
  * @brief Control interface between host and RPU
  */
@@ -475,6 +475,8 @@ enum nrf_wifi_security_type {
 	NRF_WIFI_WPA3_HNP,
 	/** WPA3-H2E */
 	NRF_WIFI_WPA3_H2E,
+	/** WPA3-FT-SAE */
+	NRF_WIFI_WPA3_FT_SAE,
 	/** 8021X SUITE-B SHA256 */
 	NRF_WIFI_EAP_SUITEB_SHA256,
 	/** 8021X SUITE-B SHA384 */
@@ -707,9 +709,6 @@ struct nrf_wifi_channel {
 #define NRF_WIFI_SCAN_MAX_NUM_FREQUENCIES 89
 #define MAX_NUM_CHANNELS 42
 
-#define NRF_WIFI_SCAN_BAND_2GHZ	(1 << 0)
-#define NRF_WIFI_SCAN_BAND_5GHZ	(1 << 1)
-#define NRF_WIFI_SCAN_BAND_6GHZ	(1 << 2)
 
 /**
  * @brief This structure provides details about the parameters required for a scan request.
@@ -724,7 +723,9 @@ struct nrf_wifi_scan_params {
 	struct nrf_wifi_ssid scan_ssids[NRF_WIFI_SCAN_MAX_NUM_SSIDS];
 	/** used to send probe requests at non CCK rate in 2GHz band */
 	unsigned char no_cck;
-	/**  Bitmap of bands to be scanned. Value Zero will scan both 2.4 and 5 GHZ */
+	/** Bitmap of bands to be scanned (NRF_WIFI_OP_BAND_2GHZ, NRF_WIFI_OP_BAND_5GHZ,
+	 *  NRF_WIFI_OP_BAND_6GHZ)
+	 */
 	unsigned char bands;
 	/** Information element(s) data nrf_wifi_ie*/
 	struct nrf_wifi_ie ie;
@@ -738,17 +739,19 @@ struct nrf_wifi_scan_params {
 	unsigned short num_scan_channels;
 	/** If true, skip local and IANA Unicast reserved MACs **/
 	unsigned char skip_local_admin_macs;
-	/** Maximum time (in milliseconds) the module can operate without a BT grant
-	 *  before requiring Bluetooth access.
-	 *  Minimum allowed value: 30 ms.
-	 *  Use 0 or 0xFFFFFFFF for infinite duration (Wi-Fi can use the medium
-	 *  for the entire scan without allocating grant to BT).
-	 *  This parameter applies only to scan operations in the 2.4 GHz band.
+	/**
+	 * Maximum time (in milliseconds) the module can operate without a BT grant
+	 * before requiring Bluetooth access.
+	 * Minimum allowed value: 30 ms.
+	 * Use 0 or 0xFFFFFFFF for infinite duration (Wi-Fi can use the medium for
+	 * the entire scan without allocating grant to BT).
+	 * This parameter applies only to scan operations in the 2.4 GHz band
 	 */
 	unsigned int bt_grant_tolerance_time;
-	/* Variable encodes the amount of time (in milliseconds) BT expects
-	 * between scan operations. BT coexistence logic will attempt to
-	 * allocate this amount of time while scanning between channels.
+	/**
+	 * Variable encodes the amount of time (in milliseconds) BT expects between
+	 * scan operations. BT coexistence logic will attempt to allocate this
+	 * amount of time while scanning between channels.
 	 */
 	unsigned int bt_grant_time;
 	/** specific channels to be scanned */
@@ -1174,6 +1177,10 @@ enum scan_reason {
 struct nrf_wifi_umac_scan_info {
 	/** scan type see &enum scan_reason */
 	signed int scan_reason;
+	/** scan_db address */
+	unsigned int scan_db_addr;
+	/** max scan results count */
+	unsigned int scan_db_len;
 	/** scan parameters nrf_wifi_scan_params */
 	struct nrf_wifi_scan_params scan_params;
 } __NRF_WIFI_PKD;
@@ -1225,6 +1232,12 @@ struct nrf_wifi_umac_event_scan_done {
 	signed int status;
 	/** scan type see &enum scan_reason */
 	unsigned int scan_type;
+	/** no of scan results */
+	unsigned int scan_results_cnt;
+	/** scan_db address. Each scan result is of type
+	 *  see &struct umac_display_results.
+	 */
+	unsigned int scan_db_addr;
 } __NRF_WIFI_PKD;
 
 
@@ -2770,22 +2783,6 @@ struct umac_display_results {
 
 #define DISPLAY_BSS_TOHOST_PEREVNT 8
 
-/**
- * @brief This structure serves as a response to the command NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS
- *  of display scan type. It contains a maximum of DISPLAY_BSS_TOHOST_PEREVENT scan results
- *  in each event. When umac_hdr->seq == 0, it indicates the last scan event.
- *
- */
-
-struct nrf_wifi_umac_event_new_scan_display_results {
-	/** Header nrf_wifi_umac_hdr */
-	struct nrf_wifi_umac_hdr umac_hdr;
-	/** Number of scan results in the current event */
-	unsigned char event_bss_count;
-	/** Display scan results info umac_display_results */
-	struct umac_display_results display_results[DISPLAY_BSS_TOHOST_PEREVNT];
-} __NRF_WIFI_PKD;
-
 #define NRF_WIFI_EVENT_MLME_FRAME_VALID (1 << 0)
 #define NRF_WIFI_EVENT_MLME_MAC_ADDR_VALID (1 << 1)
 #define NRF_WIFI_EVENT_MLME_FREQ_VALID (1 << 2)
@@ -3776,6 +3773,7 @@ struct nrf_wifi_umac_head {
 enum nrf_wifi_tx_flags {
 	NRF_WIFI_TX_FLAG_TWT_EMERGENCY_TX = (1 << 31),
 	NRF_WIFI_TX_FLAG_CHKSUM_AVAILABLE = (1 << 30),
+	NRF_WIFI_TX_FLAG_QOS_CTL_ACK_POLICY_NOACK = (1 << 29),
 };
 
 /**

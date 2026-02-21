@@ -23,7 +23,7 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 				      int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
 				      unsigned int phy_calib,
-				      enum op_band op_band,
+				      unsigned char op_band,
 				      bool beamforming,
 				      struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 				      struct nrf_wifi_board_params *board_params,
