@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# A menu is used to encapsulate application configuration togethers
+menu "Application configuration"
+
+osource "$(APPLICATION_SOURCE_DIR)/VERSION"
+
+config APP_SHOW_VERSION
+	bool "Show application version at boot time"
+	default y
+	depends on LOG && "$(VERSION_MAJOR)" != ""
+	help
+	  Will show the application version (from the VERSION file) upon booting the application.
+
+config APP_SHOW_BUILD_DATE
+	bool "Show build date at boot time"
+	depends on LOG
+	help
+	  Will show the time and date that the application was built upon booting the application.
+
+# Logging for the sample is included at the bottom of the application configuration
+module = APP
+module-str = Application
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+# After the application configuration section is the Zephyr configuration, which must be included
+source "Kconfig.zephyr"
