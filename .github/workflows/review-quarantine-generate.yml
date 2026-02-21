@@ -1,0 +1,176 @@
+name: Review Quarantine PR (Generate)
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - "scripts/quarantine*.yaml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quarantine-generate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    name: Generate quarantine comment artifacts
+    runs-on: ubuntu-24.04
+
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+
+    steps:
+      # Checkout PR head (fork) – read-only
+      - name: Checkout PR head
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ env.HEAD_SHA }}
+          path: pr
+          fetch-depth: 0
+
+      # Checkout the trusted base repo to run the notifier from trusted code
+      - name: Checkout base repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ env.BASE_SHA }}
+          path: base
+          fetch-depth: 1
+
+      # Python setup & deps
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml west
+
+
+      - name: Detect changed quarantine YAML files (base vs PR)
+        id: quarantine_changed_files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Build union list of quarantine yaml files by relative path
+          mapfile -t all_files < <(
+            {
+              find ./pr/scripts -type f -name 'quarantine*.yaml' -print
+            }
+            {
+              find ./base/scripts -type f -name 'quarantine*.yaml' -print
+            } | sed 's|^\./||' | sort -u
+          )
+
+          changed=()
+          for rel in "${all_files[@]}"; do
+            b="base/$rel"
+            p="pr/$rel"
+
+            # affected if content differs
+            if ! cmp -s "$b" "$p"; then
+              changed+=("$rel")
+            fi
+          done
+
+          echo "Changed quarantine files count: ${#changed[@]}"
+          if [[ ${#changed[@]} -gt 0 ]]; then
+            printf '%s\n' "${changed[@]}"
+          fi
+
+          # Expose as multiline output for next step
+          {
+            echo "files<<EOF"
+            printf '%s\n' "${changed[@]}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+
+      - name: Compare only affected quarantine YAMLs (base vs PR)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "west init -l ./base"
+          west init -l ./base
+          echo "west update"
+          west update --narrow
+          echo "ls"
+          ls
+          echo "ls .."
+          ls ..
+          echo "ls base"
+          ls base
+          echo "ls zephyr"
+          ls zephyr
+          export ZEPHYR_BASE="zephyr"
+          OUTDIR="quarantine-diff-results"
+          mkdir -p "$OUTDIR"
+
+          files="${{ steps.quarantine_changed_files.outputs.files }}"
+
+          while IFS= read -r rel; do
+            [[ -z "$rel" ]] && continue
+            echo "== Comparing affected quarantine file: $rel =="
+            python3 base/scripts/compare_quarantine.py "base/$rel" "pr/$rel" --outdir "$OUTDIR"
+          done <<< "$files"
+
+      - name: Upload quarantine scenario diff artifacts
+        if: steps.detect_quarantine.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarantine-scenario-diff
+          path: quarantine-diff-results/*.txt
+          if-no-files-found: warn
+
+      # Run notifier script from base repo
+      - name: Prepare comment body
+        working-directory: base
+        run: |
+          set -euo pipefail
+          export ZEPHYR_BASE="../zephyr"
+          python scripts/ci/quarantine_notifier.py \
+            --repo-root . \
+            --added-file "../quarantine-diff-results/configurations_added.txt" \
+            --removed-file "../quarantine-diff-results/configurations_removed.txt" \
+            --output quarantine_comment.md \
+            --audit-json quarantine_audit.json \
+            --inventory-json scenario_inventory.json \
+            --ref "${HEAD_SHA}" \
+            --strict-missing-codeowners \
+            --strict-flag-file strict_missing_codeowners.flag
+
+      # PR number is not accessible between workflows in a fork and a base context
+      - name: Store PR number for Publish (as artifact file)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "${{ github.event.pull_request.number }}" > pr_number.txt
+
+      # Upload artifacts for the publish workflow (includes PR number)
+      - name: Upload artifacts for publish workflow
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarantine-artifacts-pr${{ env.PR_NUMBER }}-sha${{ env.HEAD_SHA }}
+          path: |
+            ${{ runner.temp }}/diff_quarantine.txt
+            base/quarantine_comment.md
+            base/quarantine_audit.json
+            base/scenario_inventory.json
+            base/strict_missing_codeowners.flag
+            pr_number.txt
+          if-no-files-found: ignore
+          retention-days: 30
+
+      # Enforce strict mode on CODEOWNERS
+      - name: Fail if strict violation (missing CODEOWNERS)
+        shell: bash
+        run: |
+          if [[ -f base/strict_missing_codeowners.flag ]]; then
+            echo "Strict mode: Missing CODEOWNERS detected. Failing the job."
+            cat base/strict_missing_codeowners.flag
+            exit 1
+          else
+            echo "Strict mode: no violations."
+          fi
