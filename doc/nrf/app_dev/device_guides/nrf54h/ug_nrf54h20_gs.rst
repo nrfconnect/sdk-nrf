@@ -256,14 +256,14 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
       west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
 
-You can now program the sample.
-If you have multiple Nordic Semiconductor devices, ensure that only the nRF54H20 DK you want to program remains connected.
+#. Program the sample to the DK.
+   If you have multiple Nordic Semiconductor devices, ensure that only the nRF54H20 DK you want to program remains connected.
 
-.. code-block:: console
+   .. code-block:: console
 
-   west flash
+      west flash
 
-This command builds and programs the sample automatically on both the application core and the Peripheral Processor (PPR) of the nRF54H20 SoC.
+   This command programs both the application core and the Peripheral Processor (PPR) of the nRF54H20 SoC.
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 

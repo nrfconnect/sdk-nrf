@@ -60,8 +60,8 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
 
        You can start each core individually using the following commands:
 
-       * To start the Application core: ``nrfutil device go --core Application``
-       * To start the Network core: ``nrfutil device go --core Network``
+       * To start the application core: ``nrfutil device go --core application``
+       * To start the radio core: ``nrfutil device go --core network``
 
        This approach is particularly useful for debugging individual domains, starting from their reset handlers.
 
