@@ -767,7 +767,9 @@ int modem_info_get_fw_version(char *buf, size_t buf_size)
 		return -EINVAL;
 	}
 
-	sprintf(format, "%%%%SHORTSWVER: %%%d[^\r\n]", buf_size);
+	buf_size = MIN(99, buf_size);
+
+	snprintf(format, ARRAY_SIZE(format), "%%%%SHORTSWVER: %%%d[^\r\n]", buf_size);
 
 	ret = nrf_modem_at_scanf("AT%SHORTSWVER",
 				 format,
@@ -789,7 +791,9 @@ int modem_info_get_hw_version(char *buf, uint8_t buf_size)
 		return -EINVAL;
 	}
 
-	sprintf(format, HWVER_FMT_STR, buf_size);
+	buf_size = MIN(99, buf_size);
+
+	snprintf(format, ARRAY_SIZE(format), HWVER_FMT_STR, buf_size);
 
 	ret = nrf_modem_at_scanf("AT%" HWVER_CMD_STR, format, buf);
 
