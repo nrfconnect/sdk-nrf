@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2024 Nordic Semiconductor ASA
+# Copyright (c) 2024-2026 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -12,6 +12,8 @@ menuconfig BT_FAST_PAIR_FMDN
 	  Enable Find My Device Network (FMDN) extension for Fast Pair.
 
 if BT_FAST_PAIR_FMDN
+
+rsource "pf/Kconfig"
 
 config BT_FAST_PAIR_FMDN_TX_POWER
 	int "TX power set in Bluetooth LE controller [dBm]"

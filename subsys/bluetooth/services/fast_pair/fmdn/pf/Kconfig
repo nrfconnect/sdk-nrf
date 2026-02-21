@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR_FMDN_PF
+	bool "Precision Finding support for the Find My Device Network extension [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Enable the Precision Finding support in the Find My Device Network (FMDN)
+	  extension for Fast Pair.

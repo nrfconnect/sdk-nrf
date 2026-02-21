@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2024-2025 Nordic Semiconductor
+# Copyright (c) 2024-2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -21,6 +21,10 @@ zephyr_linker_sources(SECTIONS src/factory_reset_callbacks.ld)
 
 if(CONFIG_APP_DFU)
   target_sources(app PRIVATE src/dfu.c)
+endif()
+
+if(CONFIG_APP_RANGING)
+  target_sources(app PRIVATE src/ranging.c)
 endif()
 
 if(NOT CONFIG_BT_FAST_PAIR_FMDN_RING_COMP_NONE)
