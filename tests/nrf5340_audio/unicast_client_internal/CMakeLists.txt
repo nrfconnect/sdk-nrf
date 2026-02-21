@@ -7,11 +7,11 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(test_server_store)
+project(test_unicast_client_internal)
 
 target_sources(app
   PRIVATE
-  ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/server_store.c
+  ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/unicast_client_internal.c
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/le_audio.c
   ${ZEPHYR_BASE}/subsys/bluetooth/common/addr.c
   ${ZEPHYR_BASE}/subsys/bluetooth/audio/codec.c

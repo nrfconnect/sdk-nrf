@@ -45,42 +45,6 @@ config BT_BAP_UNICAST_48_4_1
 	  48kHz, 96kbps, 5 retransmits, 20ms transport latency, and 40ms presentation delay.
 endchoice
 
-choice	BT_AUDIO_PRES_DLY_SRCH
-	prompt "Default search mode for the presentation delay"
-	default BT_AUDIO_PRES_DELAY_SRCH_PREF_MIN
-	help
-	  Set the default search mode for the presentation delay.
-
-config BT_AUDIO_PRES_DELAY_SRCH_MIN
-	bool "Largest minimum delay over all audio receivers"
-	help
-	  Search for the largest minimum delay over all audio receivers.
-
-config BT_AUDIO_PRES_DELAY_SRCH_MAX
-	bool "Smallest maximum delay over all audio receivers"
-	help
-	  Search for the smallest maximum delay over all audio receivers.
-
-config BT_AUDIO_PRES_DELAY_SRCH_PREF_MIN
-	bool "Largest minimum preferred delay over all audio receivers"
-	help
-	  Search for the largest minimum preferred delay over all audio receivers.
-
-config BT_AUDIO_PRES_DELAY_SRCH_PREF_MAX
-	bool "Smallest maximum preferred delay over all audio receivers"
-	help
-	  Search for the smallest maximum preferred delay over all audio receivers.
-
-config BT_AUDIO_PRES_DELAY_SRCH_SOURCE
-	bool "Use the presentation delay of audio source or client"
-	help
-	  Use the presentation delay defined by the broadcast_source or unicast_client if it
-	  is within the range set by AUDIO_MIN_PRES_DLY_US and AUDIO_MAX_PRES_DLY_US. This will
-	  override the audio receiver presentation delay as long as it is in range of
-	  the max and min supported by the audio receivers. If it is outside this range,
-	  then it will revert to the closest supported value.
-endchoice
-
 config BT_AUDIO_PAC_REC_PRINT
 	bool "Print discovered Published Audio Capabilities"
 	help
