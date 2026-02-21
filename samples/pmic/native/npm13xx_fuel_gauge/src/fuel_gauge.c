@@ -162,10 +162,6 @@ int fuel_gauge_update(const struct device *charger, bool vbus_connected)
 		printk("Error: Could not read from charger device\n");
 		return ret;
 	}
-	/* Zephyr sensor API convention for Gauge current is negative=discharging,
-	 * while nrf_fuel_gauge lib expects the opposite negative=charging
-	 */
-	current = -current;
 
 	ret = nrf_fuel_gauge_ext_state_update(
 		vbus_connected ? NRF_FUEL_GAUGE_EXT_STATE_INFO_VBUS_CONNECTED
