@@ -284,26 +284,24 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255)) {
-		if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH) {
-			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
-				memcpy(pubkey_buffer, key_buffer, key_buffer_size);
-				return PSA_SUCCESS;
-			}
-			sx_status = cracen_ed25519_create_pubkey(key_buffer, pubkey_buffer);
-			return silex_statuscodes_to_psa(sx_status);
+	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255) &&
+	    (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH)) {
+		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
+			memcpy(pubkey_buffer, key_buffer, key_buffer_size);
+			return PSA_SUCCESS;
 		}
+		sx_status = cracen_ed25519_create_pubkey(key_buffer, pubkey_buffer);
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448)) {
-		if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED448PH) {
-			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
-				memcpy(pubkey_buffer, key_buffer, key_buffer_size);
-				return PSA_SUCCESS;
-			}
-			sx_status = cracen_ed448_create_pubkey(key_buffer, pubkey_buffer);
-			return silex_statuscodes_to_psa(sx_status);
+	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448) &&
+	    (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED448PH)) {
+		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
+			memcpy(pubkey_buffer, key_buffer, key_buffer_size);
+			return PSA_SUCCESS;
 		}
+		sx_status = cracen_ed448_create_pubkey(key_buffer, pubkey_buffer);
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||

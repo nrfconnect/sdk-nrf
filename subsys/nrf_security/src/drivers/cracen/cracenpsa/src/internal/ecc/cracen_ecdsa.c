@@ -420,6 +420,8 @@ static int run_deterministic_ecdsa_hmac_step(const struct sxhashalg *hashalg, si
 		memcpy(workmem + digestsz, T, opsz);
 		break;
 	}
+	default:
+		return SX_ERR_INVALID_PARAM;
 	}
 	hmac_op->step++;
 	return status;
