@@ -316,6 +316,17 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			curr_ts_us = audio_sync_timer_capture();
 			common_tx_sync_ts_us = tx_info->iso_tx_readback.ts;
 			ts_common_acquired = true;
+		} else {
+			/* Check that the timestamp is the same on all channels, if not, it likely
+			 * means that the application is sending data too late, hence,
+			 * the controller cannot place the data in the same interval which
+			 * can cause synchronization issues.
+			 */
+			if (tx_info->iso_tx_readback.ts != common_tx_sync_ts_us) {
+				LOG_WRN("Not all channels have the same timestamp, expected: %u, "
+					"actual: %u",
+					common_tx_sync_ts_us, tx_info->iso_tx_readback.ts);
+			}
 		}
 	}
 
