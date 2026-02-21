@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+source "samples/subsys/usb/common/Kconfig.sample_usbd"
 source "Kconfig.zephyr"
 
 menu "Nordic Wi-Fi Monitor mode sample"
