@@ -234,6 +234,8 @@ class UpgradeTestWithMCUmgr(UpgradeTestManager):
     @timer
     def image_upload(self, image: Path, slot: int | None = None):
         """Upload image to device using MCUmgr."""
+        if not image.exists():
+            raise FileNotFoundError(f"File does not exists: {image}")
         logger.info("Upload image with mcumgr{}".format(f" to slot {slot}" if slot else ""))
         image_with_slot = f"{image} -e -n {slot}" if slot is not None else image
         self.mcumgr.image_upload(image_with_slot)
