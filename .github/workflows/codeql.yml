@@ -22,8 +22,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - language: c-cpp
+            build-mode: none
           - language: python
             build-mode: none
+            config: ./github/codeql/codeql-c-config.yml
           - language: actions
             build-mode: none
             config: ./.github/codeql/codeql-actions-config.yml
@@ -41,12 +44,6 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
           queries: security-extended
           config-file: ${{ matrix.config }}
-
-      - if: matrix.build-mode == 'manual'
-        shell: bash
-        run: |
-          echo "nothing yet"
-          exit 0
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
