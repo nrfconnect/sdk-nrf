@@ -54,7 +54,7 @@ System OFF service
 The System OFF service is one of the TF-M platform services specific to the |NCS|.
 It allows the non-secure application to request the system to enter the System OFF mode using a secure service call.
 
-The System OFF mode is part of the power and clock management system and is available on selected Nordic Semiconductor devices, including the nRF54L Series.
+The System OFF mode is part of the power and clock management system and is available on selected Nordic Semiconductor devices, including the nRF54L Series devices that support TF-M.
 For more details about the System OFF mode, see the device datasheet, for example the `nRF54L15 Power and clock management`_ page.
 
 To enable the System OFF service in the |NCS|, enable the :kconfig:option:`CONFIG_TFM_NRF_SYSTEM_OFF_SERVICE` Kconfig option.

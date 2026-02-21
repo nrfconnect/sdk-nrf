@@ -126,7 +126,7 @@ MCUboot supports two methods for storing the public key used for image verificat
 
 * Embedded in the image - The public key is compiled in the MCUboot instance.
   For this method, no additional configuration is required.
-* Stored in the KMU - The public key is stored in the Key Management Unit (KMU) of the nRF54L devices.
+* Stored in the KMU - The public key is stored in the Key Management Unit (KMU) of the nRF54L devices that support this hardware peripheral.
   You can enable it using the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` sysbuild Kconfig option.
   This implementation supports up to three keys and includes a key revocation scheme.
   You can manage these features through the ``CONFIG_BOOT_SIGNATURE_KMU_SLOTS`` and ``CONFIG_BOOT_SIGNATURE_KMU_SLOTS`` MCUboot Kconfig options.
