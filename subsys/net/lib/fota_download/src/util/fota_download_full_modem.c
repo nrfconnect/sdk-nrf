@@ -24,15 +24,23 @@ int fota_download_full_modem_apply_update(void)
 
 	LOG_INF("Applying full modem firmware update from external flash");
 
-	ret = nrf_modem_lib_shutdown();
-	if (ret != 0) {
-		LOG_ERR("nrf_modem_lib_shutdown() failed: %d", ret);
-		return ret;
+	for (size_t i = 0; i < 10; ++i){
+		ret = nrf_modem_lib_shutdown();
+		if (ret != 0) {
+			LOG_ERR("nrf_modem_lib_shutdown() failed: %d", ret);
+			continue;
+		}
+
+		ret = nrf_modem_lib_bootloader_init();
+		if (ret != 0) {
+			LOG_ERR("nrf_modem_lib_bootloader_init() failed: %d", ret);
+			continue;
+		}
+		break;
 	}
 
-	ret = nrf_modem_lib_bootloader_init();
 	if (ret != 0) {
-		LOG_ERR("nrf_modem_lib_bootloader_init() failed: %d", ret);
+		LOG_ERR("Failed to enter modem bootloader mode");
 		return ret;
 	}
 
