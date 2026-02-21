@@ -75,16 +75,16 @@ struct nfc_ndef_ch_hc_rec {
  */
 enum nfc_ndef_ch_ac_rec_cps {
 	/** Alternative Carrier inactive. */
-	NFC_AC_CPS_INACTIVE     = 0x00,
+	NFC_AC_CPS_INACTIVE = 0x00,
 
 	/** Alternative Carrier active. */
-	NFC_AC_CPS_ACTIVE       = 0x01,
+	NFC_AC_CPS_ACTIVE = 0x01,
 
 	/** Alternative Carrier activating. */
-	NFC_AC_CPS_ACTIVATING   = 0x02,
+	NFC_AC_CPS_ACTIVATING = 0x02,
 
 	/** Alternative Carrier power status unknown. */
-	NFC_AC_CPS_UNKNOWN      = 0x03
+	NFC_AC_CPS_UNKNOWN = 0x03
 };
 
 /** Mask of Carrier Power State bits in a first ac record byte. */
@@ -163,8 +163,8 @@ struct nfc_ndef_ch_rec {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
-				   uint8_t *buf, uint32_t *len);
+int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec, uint8_t *buf,
+				   uint32_t *len);
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -187,25 +187,15 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  *                           Connection Handover specification.
  * @param[in] _max_records Maximum number of local records.
  */
-#define NFC_NDEF_CH_RECORD_DESC_DEF(_name,			         \
-				    _rec_type_field,		         \
-				    _major_version,		         \
-				    _minor_version,		         \
-				    _max_records)		         \
-	NFC_NDEF_MSG_DEF(_name, _max_records);				 \
-	struct nfc_ndef_ch_rec _name##_nfc_ch_rec = {			 \
-		.major_version = _major_version,			 \
-		.minor_version = _minor_version,			 \
-		.local_records = &NFC_NDEF_MSG(_name)			 \
-	};								 \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name,				 \
-					 TNF_WELL_KNOWN,		 \
-					 0,				 \
-					 0,				 \
-					 _rec_type_field,		 \
-					 NFC_NDEF_CH_REC_TYPE_LENGTH,	 \
-					 nfc_ndef_ch_rec_payload_encode, \
-					 &(_name##_nfc_ch_rec))
+#define NFC_NDEF_CH_RECORD_DESC_DEF(_name, _rec_type_field, _major_version, _minor_version,        \
+				    _max_records)                                                  \
+	NFC_NDEF_MSG_DEF(_name, _max_records);                                                     \
+	struct nfc_ndef_ch_rec _name##_nfc_ch_rec = {.major_version = _major_version,              \
+						     .minor_version = _minor_version,              \
+						     .local_records = &NFC_NDEF_MSG(_name)};       \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name, TNF_WELL_KNOWN, 0, 0, _rec_type_field,             \
+					 NFC_NDEF_CH_REC_TYPE_LENGTH,                              \
+					 nfc_ndef_ch_rec_payload_encode, &(_name##_nfc_ch_rec))
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -227,15 +217,9 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  * @param[in] _max_records Maximum number of local records
  *                      struct  (ac records plus optional err record).
  */
-#define NFC_NDEF_CH_HS_RECORD_DESC_DEF(_name,			   \
-				       _major_version,		   \
-				       _minor_version,		   \
-				       _max_records)		   \
-	NFC_NDEF_CH_RECORD_DESC_DEF(_name,			   \
-				    nfc_ndef_ch_hs_rec_type_field, \
-				    _major_version,		   \
-				    _minor_version,		   \
-				    _max_records)
+#define NFC_NDEF_CH_HS_RECORD_DESC_DEF(_name, _major_version, _minor_version, _max_records)        \
+	NFC_NDEF_CH_RECORD_DESC_DEF(_name, nfc_ndef_ch_hs_rec_type_field, _major_version,          \
+				    _minor_version, _max_records)
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -257,15 +241,9 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  * @param[in] _max_records Maximum number of local records
  *                        (cr record plus ac records).
  */
-#define NFC_NDEF_CH_HR_RECORD_DESC_DEF(_name,			   \
-				       _major_version,		   \
-				       _minor_version,		   \
-				       _max_records)		   \
-	NFC_NDEF_CH_RECORD_DESC_DEF(_name,			   \
-				    nfc_ndef_ch_hr_rec_type_field, \
-				    _major_version,		   \
-				    _minor_version,		   \
-				    _max_records)
+#define NFC_NDEF_CH_HR_RECORD_DESC_DEF(_name, _major_version, _minor_version, _max_records)        \
+	NFC_NDEF_CH_RECORD_DESC_DEF(_name, nfc_ndef_ch_hr_rec_type_field, _major_version,          \
+				    _minor_version, _max_records)
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -287,15 +265,9 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  * @param[in] _max_records Maximum number of local records
  *                        (ac records).
  */
-#define NFC_NDEF_CH_HM_RECORD_DESC_DEF(_name,                      \
-				       _major_version,		   \
-				       _minor_version,		   \
-				       _max_records)		   \
-	NFC_NDEF_CH_RECORD_DESC_DEF(_name,			   \
-				    nfc_ndef_ch_hm_rec_type_field, \
-				    _major_version,		   \
-				    _minor_version,		   \
-				    _max_records)
+#define NFC_NDEF_CH_HM_RECORD_DESC_DEF(_name, _major_version, _minor_version, _max_records)        \
+	NFC_NDEF_CH_RECORD_DESC_DEF(_name, nfc_ndef_ch_hm_rec_type_field, _major_version,          \
+				    _minor_version, _max_records)
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -314,15 +286,9 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  *                           Connection Handover specification.
  * @param[in] _max_records Maximum number of local records (ac records).
  */
-#define NFC_NDEF_CH_HI_RECORD_DESC_DEF(_name,			   \
-				       _major_version,		   \
-				       _minor_version,		   \
-				       _max_records)		   \
-	NFC_NDEF_CH_RECORD_DESC_DEF(_name,			   \
-				    nfc_ndef_ch_hi_rec_type_field, \
-				    _major_version,		   \
-				    _minor_version,		   \
-				    _max_records)
+#define NFC_NDEF_CH_HI_RECORD_DESC_DEF(_name, _major_version, _minor_version, _max_records)        \
+	NFC_NDEF_CH_RECORD_DESC_DEF(_name, nfc_ndef_ch_hi_rec_type_field, _major_version,          \
+				    _minor_version, _max_records)
 
 /**
  * @brief Macro for accessing the NFC NDEF Handover Select record descriptor
@@ -367,8 +333,8 @@ int nfc_ndef_ch_rec_local_record_add(struct nfc_ndef_record_desc *ch_rec,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec,
-				      uint8_t *buf, uint32_t *len);
+int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec, uint8_t *buf,
+				      uint32_t *len);
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -387,19 +353,12 @@ int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec,
  * @param[in] _payload_id_length Length of the payload.
  * @param[in] _payload_desc Description of the payload.
  */
-#define NFC_NDEF_CH_HC_RECORD_DESC_DEF(_name,				    \
-				       _payload_id,			    \
-				       _payload_id_length,		    \
-				       _payload_desc)			    \
-									    \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name,				    \
-					 TNF_WELL_KNOWN,                    \
-					 _payload_id,                       \
-					 _payload_id_length,                \
-					 nfc_ndef_ch_hc_rec_type_field,     \
-					 NFC_NDEF_CH_REC_TYPE_LENGTH,	    \
-					 nfc_ndef_ch_hc_rec_payload_encode, \
-					 (_payload_desc))
+#define NFC_NDEF_CH_HC_RECORD_DESC_DEF(_name, _payload_id, _payload_id_length, _payload_desc)      \
+                                                                                                   \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name, TNF_WELL_KNOWN, _payload_id, _payload_id_length,   \
+					 nfc_ndef_ch_hc_rec_type_field,                            \
+					 NFC_NDEF_CH_REC_TYPE_LENGTH,                              \
+					 nfc_ndef_ch_hc_rec_payload_encode, (_payload_desc))
 
 /**
  * @brief Macro for accessing the NFC NDEF Handover Carrier record descriptor
@@ -421,8 +380,8 @@ int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec,
  * @retval 0 If the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_ac_rec_payload_encode(const struct nfc_ndef_ch_ac_rec *nfc_rec_ac,
-				      uint8_t *buf, uint32_t *len);
+int nfc_ndef_ch_ac_rec_payload_encode(const struct nfc_ndef_ch_ac_rec *nfc_rec_ac, uint8_t *buf,
+				      uint32_t *len);
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -443,29 +402,19 @@ int nfc_ndef_ch_ac_rec_payload_encode(const struct nfc_ndef_ch_ac_rec *nfc_rec_a
  * @param[in] _max_aux_data_ref_cnt Maximum number of Auxiliary Data Reference
  *                                  fields.
  */
-#define NFC_NDEF_CH_AC_RECORD_DESC_DEF(_name,				    \
-				       _cps,				    \
-				       _carr_data_ref_len,		    \
-				       _carr_data_ref,			    \
-				       _max_aux_data_ref_cnt)		    \
-	struct nfc_ndef_ch_ac_rec_ref					    \
-		_name##nfc_ndef_ch_ac_rec_ref[_max_aux_data_ref_cnt];	    \
-	struct nfc_ndef_ch_ac_rec				            \
-		_name##_nfc_ac_rec = {					    \
-		.cps = _cps,						    \
-		.carrier_data_ref = { _carr_data_ref_len, _carr_data_ref }, \
-		.max_aux_data_ref_cnt = _max_aux_data_ref_cnt,		    \
-		.aux_data_ref_cnt = 0,					    \
-		.aux_data_ref = _name##nfc_ndef_ch_ac_rec_ref		    \
-	};								    \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name,				    \
-					 TNF_WELL_KNOWN,		    \
-					 0,				    \
-					 0,				    \
-					 nfc_ndef_ch_ac_rec_type_field,     \
-					 NFC_NDEF_CH_REC_TYPE_LENGTH,       \
-					 nfc_ndef_ch_ac_rec_payload_encode, \
-					 &(_name##_nfc_ac_rec))
+#define NFC_NDEF_CH_AC_RECORD_DESC_DEF(_name, _cps, _carr_data_ref_len, _carr_data_ref,            \
+				       _max_aux_data_ref_cnt)                                      \
+	struct nfc_ndef_ch_ac_rec_ref _name##nfc_ndef_ch_ac_rec_ref[_max_aux_data_ref_cnt];        \
+	struct nfc_ndef_ch_ac_rec _name##_nfc_ac_rec = {                                           \
+		.cps = _cps,                                                                       \
+		.carrier_data_ref = {_carr_data_ref_len, _carr_data_ref},                          \
+		.max_aux_data_ref_cnt = _max_aux_data_ref_cnt,                                     \
+		.aux_data_ref_cnt = 0,                                                             \
+		.aux_data_ref = _name##nfc_ndef_ch_ac_rec_ref};                                    \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name, TNF_WELL_KNOWN, 0, 0,                              \
+					 nfc_ndef_ch_ac_rec_type_field,                            \
+					 NFC_NDEF_CH_REC_TYPE_LENGTH,                              \
+					 nfc_ndef_ch_ac_rec_payload_encode, &(_name##_nfc_ac_rec))
 
 /**
  * @brief Macro for accessing the NFC NDEF Alternative Carrier record descriptor
@@ -496,8 +445,7 @@ void nfc_ndef_ch_ac_rec_auxiliary_data_ref_clear(struct nfc_ndef_record_desc *ac
  *         Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_ch_ac_rec_auxiliary_data_ref_add(struct nfc_ndef_record_desc *ac_rec,
-					      const uint8_t *aux_data,
-					      uint8_t aux_length);
+					      const uint8_t *aux_data, uint8_t aux_length);
 
 /**
  * @brief Constructor for an NFC NDEF Collision Resolution record payload.
@@ -513,8 +461,8 @@ int nfc_ndef_ch_ac_rec_auxiliary_data_ref_add(struct nfc_ndef_record_desc *ac_re
  * @retval 0 If the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_cr_rec_payload_encode(const struct nfc_ndef_ch_cr_rec *nfc_rec_cr,
-				      uint8_t *buf, uint32_t *len);
+int nfc_ndef_ch_cr_rec_payload_encode(const struct nfc_ndef_ch_cr_rec *nfc_rec_cr, uint8_t *buf,
+				      uint32_t *len);
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -532,20 +480,14 @@ int nfc_ndef_ch_cr_rec_payload_encode(const struct nfc_ndef_ch_cr_rec *nfc_rec_c
  * @param[in] _random_number Generated random number required to
  *                           resolve a collision.
  */
-#define NFC_NDEF_CH_CR_RECORD_DESC_DEF(_name,				    \
-				       _random_number)			    \
-	struct nfc_ndef_ch_cr_rec					    \
-		_name##_nfc_cr_rec = {					    \
-		.random = _random_number,				    \
-	};								    \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name,				    \
-					 TNF_WELL_KNOWN,		    \
-					 0,				    \
-					 0,				    \
-					 nfc_ndef_ch_cr_rec_type_field,	    \
-					 NFC_NDEF_CH_REC_TYPE_LENGTH,	    \
-					 nfc_ndef_ch_cr_rec_payload_encode, \
-					 &(_name##_nfc_cr_rec))
+#define NFC_NDEF_CH_CR_RECORD_DESC_DEF(_name, _random_number)                                      \
+	struct nfc_ndef_ch_cr_rec _name##_nfc_cr_rec = {                                           \
+		.random = _random_number,                                                          \
+	};                                                                                         \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name, TNF_WELL_KNOWN, 0, 0,                              \
+					 nfc_ndef_ch_cr_rec_type_field,                            \
+					 NFC_NDEF_CH_REC_TYPE_LENGTH,                              \
+					 nfc_ndef_ch_cr_rec_payload_encode, &(_name##_nfc_cr_rec))
 
 /** @brief Macro for accessing the NFC NDEF Alternative Carrier record
  * descriptor instance that was created with

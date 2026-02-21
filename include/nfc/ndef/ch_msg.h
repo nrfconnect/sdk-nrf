@@ -25,7 +25,6 @@
 extern "C" {
 #endif
 
-
 #define NFC_NDEF_CH_MSG_MAJOR_VER CONFIG_NFC_NDEF_CH_MAJOR_VERSION
 #define NFC_NDEF_CH_MSG_MINOR_VER CONFIG_NFC_NDEF_CH_MINOR_VERSION
 
@@ -58,8 +57,8 @@ struct nfc_ndef_ch_msg_records {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_msg_le_oob_encode(const struct nfc_ndef_le_oob_rec_payload_desc *oob,
-				  uint8_t *buf, size_t *len);
+int nfc_ndef_ch_msg_le_oob_encode(const struct nfc_ndef_le_oob_rec_payload_desc *oob, uint8_t *buf,
+				  size_t *len);
 
 /**
  * @brief Create an NFC NDEF Handover Select message.
@@ -81,8 +80,7 @@ int nfc_ndef_ch_msg_le_oob_encode(const struct nfc_ndef_le_oob_rec_payload_desc 
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_msg_hs_create(struct nfc_ndef_msg_desc *msg,
-			      struct nfc_ndef_record_desc *hs_rec,
+int nfc_ndef_ch_msg_hs_create(struct nfc_ndef_msg_desc *msg, struct nfc_ndef_record_desc *hs_rec,
 			      const struct nfc_ndef_ch_msg_records *records);
 
 /**
@@ -106,8 +104,7 @@ int nfc_ndef_ch_msg_hs_create(struct nfc_ndef_msg_desc *msg,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_msg_hr_create(struct nfc_ndef_msg_desc *msg,
-			      struct nfc_ndef_record_desc *hr_rec,
+int nfc_ndef_ch_msg_hr_create(struct nfc_ndef_msg_desc *msg, struct nfc_ndef_record_desc *hr_rec,
 			      const struct nfc_ndef_record_desc *cr_rec,
 			      const struct nfc_ndef_ch_msg_records *records);
 
@@ -131,8 +128,7 @@ int nfc_ndef_ch_msg_hr_create(struct nfc_ndef_msg_desc *msg,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_msg_hm_create(struct nfc_ndef_msg_desc *msg,
-			      struct nfc_ndef_record_desc *hm_rec,
+int nfc_ndef_ch_msg_hm_create(struct nfc_ndef_msg_desc *msg, struct nfc_ndef_record_desc *hm_rec,
 			      const struct nfc_ndef_ch_msg_records *records);
 
 /**
@@ -155,8 +151,7 @@ int nfc_ndef_ch_msg_hm_create(struct nfc_ndef_msg_desc *msg,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_msg_hi_create(struct nfc_ndef_msg_desc *msg,
-			      struct nfc_ndef_record_desc *hi_rec,
+int nfc_ndef_ch_msg_hi_create(struct nfc_ndef_msg_desc *msg, struct nfc_ndef_record_desc *hi_rec,
 			      const struct nfc_ndef_ch_msg_records *records);
 
 #ifdef _cplusplus

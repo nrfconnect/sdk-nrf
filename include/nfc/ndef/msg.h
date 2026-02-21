@@ -52,8 +52,7 @@ struct nfc_ndef_msg_desc {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
-			uint8_t *msg_buffer,
+int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc, uint8_t *msg_buffer,
 			uint32_t *msg_len);
 
 /**
@@ -94,15 +93,12 @@ int nfc_ndef_msg_record_add(struct nfc_ndef_msg_desc *msg,
  * @param name Name of the related instance.
  * @param max_record_cnt Maximal count of records in the message.
  */
-#define NFC_NDEF_MSG_DEF(name, max_record_cnt)				    \
-	struct nfc_ndef_record_desc const				    \
-		*name##_nfc_ndef_record_desc_array[max_record_cnt];	    \
-	struct nfc_ndef_msg_desc name##_nfc_ndef_msg_desc =		    \
-	{								    \
-		.record = name##_nfc_ndef_record_desc_array,		    \
-		.max_record_count = max_record_cnt,			    \
-		.record_count = 0					    \
-	}
+#define NFC_NDEF_MSG_DEF(name, max_record_cnt)                                                     \
+	struct nfc_ndef_record_desc const *name##_nfc_ndef_record_desc_array[max_record_cnt];      \
+	struct nfc_ndef_msg_desc name##_nfc_ndef_msg_desc = {                                      \
+		.record = name##_nfc_ndef_record_desc_array,                                       \
+		.max_record_count = max_record_cnt,                                                \
+		.record_count = 0}
 
 /** @brief Macro for accessing the NFC NDEF message descriptor instance
  *  that you created with @ref NFC_NDEF_MSG_DEF.
@@ -132,24 +128,16 @@ int nfc_ndef_msg_record_add(struct nfc_ndef_msg_desc *msg,
  * @param nested_message Pointer to the message descriptor to encapsulate
  * as the record's payload.
  */
-#define NFC_NDEF_NESTED_NDEF_MSG_RECORD_DEF(name,			\
-					    tnf_arg,			\
-					    id_arg,			\
-					    id_len,			\
-					    type_arg,			\
-					    type_len,			\
-					    nested_message)		\
-	struct nfc_ndef_record_desc name##_ndef_record_nested_desc =	\
-	{								\
-		.tnf = tnf_arg,						\
-		.id_length = id_len,					\
-		.id =  id_arg,						\
-		.type_length = type_len,				\
-		.type = type_arg,					\
-		.payload_constructor =					\
-			(payload_constructor_t)(nfc_ndef_msg_encode),	\
-		.payload_descriptor = (void *) (nested_message)		\
-	}
+#define NFC_NDEF_NESTED_NDEF_MSG_RECORD_DEF(name, tnf_arg, id_arg, id_len, type_arg, type_len,     \
+					    nested_message)                                        \
+	struct nfc_ndef_record_desc name##_ndef_record_nested_desc = {                             \
+		.tnf = tnf_arg,                                                                    \
+		.id_length = id_len,                                                               \
+		.id = id_arg,                                                                      \
+		.type_length = type_len,                                                           \
+		.type = type_arg,                                                                  \
+		.payload_constructor = (payload_constructor_t)(nfc_ndef_msg_encode),               \
+		.payload_descriptor = (void *)(nested_message)}
 
 /** @brief Macro for accessing the NFC NDEF record descriptor instance
  *  that you created with @ref NFC_NDEF_NESTED_NDEF_MSG_RECORD_DEF.

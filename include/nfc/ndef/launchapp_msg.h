@@ -22,7 +22,6 @@
 extern "C" {
 #endif
 
-
 /** @brief Function for encoding an NFC NDEF launch app message.
  *
  * This function encodes an NFC NDEF message into a buffer.
@@ -43,12 +42,9 @@ extern "C" {
  * @retval Other codes might be returned depending on the functions @ref nfc_ndef_msg_encode
  * and @ref nfc_ndef_msg_record_add
  */
-int nfc_launchapp_msg_encode(uint8_t  const *android_package_name,
-			     uint32_t android_package_name_len,
-			     uint8_t  const *universal_link,
-			     uint32_t universal_link_len,
-			     uint8_t  *buf,
-			     size_t   *len);
+int nfc_launchapp_msg_encode(uint8_t const *android_package_name, uint32_t android_package_name_len,
+			     uint8_t const *universal_link, uint32_t universal_link_len,
+			     uint8_t *buf, size_t *len);
 
 #ifdef __cplusplus
 }
@@ -58,4 +54,4 @@ int nfc_launchapp_msg_encode(uint8_t  const *android_package_name,
  * @}
  */
 
- #endif // NFC_LAUNCHAPP_MSG_H__
+#endif /* NFC_LAUNCHAPP_MSG_H__ */

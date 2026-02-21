@@ -12,8 +12,7 @@
 /* Resolve the value of record location flags of the NFC NDEF record
  * within an NFC NDEF message.
  */
-static enum nfc_ndef_record_location record_location_get(uint32_t index,
-							 uint32_t record_count)
+static enum nfc_ndef_record_location record_location_get(uint32_t index, uint32_t record_count)
 {
 	enum nfc_ndef_record_location record_location;
 
@@ -32,8 +31,7 @@ static enum nfc_ndef_record_location record_location_get(uint32_t index,
 	return record_location;
 }
 
-int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
-			uint8_t *msg_buffer,
+int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc, uint8_t *msg_buffer,
 			uint32_t *msg_len)
 {
 	uint32_t sum_of_len = 0;
@@ -42,8 +40,7 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 		return -EINVAL;
 	}
 
-	struct nfc_ndef_record_desc const **pp_record_rec_desc =
-						ndef_msg_desc->record;
+	struct nfc_ndef_record_desc const **pp_record_rec_desc = ndef_msg_desc->record;
 
 	if (!ndef_msg_desc->record) {
 		return -EINVAL;
@@ -54,15 +51,12 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 		uint32_t temp_len;
 		int err;
 
-		record_location =
-			 record_location_get(i, ndef_msg_desc->record_count);
+		record_location = record_location_get(i, ndef_msg_desc->record_count);
 
 		temp_len = *msg_len - sum_of_len;
 
-		err = nfc_ndef_record_encode(*pp_record_rec_desc,
-					     record_location,
-					     msg_buffer ?
-						&msg_buffer[sum_of_len] : NULL,
+		err = nfc_ndef_record_encode(*pp_record_rec_desc, record_location,
+					     msg_buffer ? &msg_buffer[sum_of_len] : NULL,
 					     &temp_len);
 		if (err) {
 			return err;
