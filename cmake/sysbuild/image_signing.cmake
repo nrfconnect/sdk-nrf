@@ -11,6 +11,7 @@
 # function to avoid polluting the top-level scope.
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/ironside_se_tlv.cmake)
 
 function(zephyr_runner_file type path)
   # Property magic which makes west flash choose the signed build
@@ -158,6 +159,11 @@ function(zephyr_mcuboot_tasks)
       endif()
     endif()
     set(imgtool_extra ${imgtool_extra} --manifest "${manifest_path}")
+  endif()
+
+  if(CONFIG_HAS_IRONSIDE_SE)
+    generate_ironside_se_tlvs(imgtool_extra_tlv)
+    list(APPEND imgtool_extra ${imgtool_extra_tlv})
   endif()
 
   set(imgtool_args ${imgtool_extra})
