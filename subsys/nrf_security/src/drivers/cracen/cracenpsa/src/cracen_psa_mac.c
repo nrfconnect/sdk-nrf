@@ -34,17 +34,11 @@ static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attri
 	operation->mac_size =
 		PSA_MAC_LENGTH(psa_get_key_type(attributes), psa_get_key_bits(attributes), alg);
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC)) {
-		if (PSA_ALG_IS_HMAC(alg)) {
-			return cracen_hmac_setup(operation, attributes, key_buffer, key_buffer_size,
-						 alg);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC) && PSA_ALG_IS_HMAC(alg)) {
+		return cracen_hmac_setup(operation, attributes, key_buffer, key_buffer_size, alg);
 	}
-	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
-		if (PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
-			return cracen_cmac_setup(operation, attributes, key_buffer,
-						 key_buffer_size);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) && PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
+		return cracen_cmac_setup(operation, attributes, key_buffer, key_buffer_size);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -78,16 +72,12 @@ psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t 
 		return PSA_SUCCESS;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC)) {
-		if (PSA_ALG_IS_HMAC(operation->alg)) {
-			return cracen_hmac_update(operation, input, input_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC) && PSA_ALG_IS_HMAC(operation->alg)) {
+		return cracen_hmac_update(operation, input, input_length);
 	}
-
-	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
-		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
-			return cracen_cmac_update(operation, input, input_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
+		return cracen_cmac_update(operation, input, input_length);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -110,15 +100,12 @@ psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC)) {
-		if (PSA_ALG_IS_HMAC(operation->alg)) {
-			status = cracen_hmac_finish(operation);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC) && PSA_ALG_IS_HMAC(operation->alg)) {
+		status = cracen_hmac_finish(operation);
 	}
-	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
-		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
-			status = cracen_cmac_finish(operation);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
+		status = cracen_cmac_finish(operation);
 	}
 	if (status != PSA_SUCCESS) {
 		*mac_length = 0;
@@ -154,15 +141,12 @@ psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const u
 		return PSA_ERROR_INVALID_SIGNATURE;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC)) {
-		if (PSA_ALG_IS_HMAC(operation->alg)) {
-			status = cracen_hmac_finish(operation);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC) && PSA_ALG_IS_HMAC(operation->alg)) {
+		status = cracen_hmac_finish(operation);
 	}
-	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
-		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
-			status = cracen_cmac_finish(operation);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
+		status = cracen_cmac_finish(operation);
 	}
 
 	if (status != PSA_SUCCESS) {
