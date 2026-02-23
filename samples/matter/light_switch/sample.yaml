@@ -69,7 +69,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - light_switch_SNIPPET=lit_icd
+      - DEXTRA_CONF_FILE=lit_icd.conf
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp

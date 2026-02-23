@@ -478,7 +478,7 @@ Configuring the number of Bluetooth LE bridged devices
                .. parsed-literal::
                   :class: highlight
 
-                  west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek
+                  west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek
 
             .. group-tab:: Matter bridge over Thread
 
@@ -502,7 +502,7 @@ Configuring the number of Bluetooth LE bridged devices
                .. parsed-literal::
                   :class: highlight
 
-                  west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
+                  west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf"
 
       .. group-tab:: nRF54LM20 DKs
 
@@ -518,7 +518,7 @@ Configuring the number of Bluetooth LE bridged devices
                .. parsed-literal::
                   :class: highlight
 
-                  west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dmatter_bridge_SHIELD=nrf7002eb2 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf"
+                  west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dmatter_bridge_SHIELD=nrf7002eb2 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
 
             .. group-tab:: Matter bridge over Thread
 
@@ -528,7 +528,7 @@ Configuring the number of Bluetooth LE bridged devices
                .. parsed-literal::
                   :class: highlight
 
-                  west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf"
+                  west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
 
 Configuring Bluetooth LE connection and scan parameters
 -------------------------------------------------------
@@ -606,7 +606,7 @@ Matter smart plug functionality
    .. parsed-literal::
       :class: highlight
 
-      west build -b *board_target* -p -- -Dmatter_bridge_SNIPPET=onoff_plug
+      west build -b *board_target* -p -- -DEXTRA_CONF_FILE=onoff_plug.conf
 
 .. _matter_bridge_testing:
 

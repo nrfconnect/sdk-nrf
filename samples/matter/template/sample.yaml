@@ -183,7 +183,7 @@ tests:
     extra_args:
       - CONFIG_NCS_SAMPLE_MATTER_CERTIFICATION=y
       - OVERLAY_CONFIG="../common/src/certification/thread_platform/overlay-thread_platform.conf"
-      - template_SNIPPET="diagnostic-logs;matter-debug"
+      - template_SNIPPET="matter-diagnostic-logs;matter-debug"
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp

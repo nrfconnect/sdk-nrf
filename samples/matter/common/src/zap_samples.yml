@@ -11,7 +11,7 @@
 - name: matter_bridge
   zap_file: applications/matter_bridge/src/default_zap/bridge.zap
 - name: matter_bridge_on_off_plug
-  zap_file: applications/matter_bridge/snippets/onoff_plug/bridge.zap
+  zap_file: applications/matter_bridge/src/onoff_plug_zap/bridge.zap
 - name: matter_weather_station
   zap_file: applications/matter_weather_station/src/default_zap/weather-station.zap
 
@@ -23,7 +23,7 @@
 - name: light_switch
   zap_file: samples/matter/light_switch/src/default_zap/light_switch.zap
 - name: light_switch_lit_icd
-  zap_file: samples/matter/light_switch/snippets/lit_icd/light_switch.zap
+  zap_file: samples/matter/light_switch/src/lit_icd_zap/light_switch.zap
 
 # template
 - name: template
@@ -35,7 +35,7 @@
 - name: lock
   zap_file: samples/matter/lock/src/default_zap/lock.zap
 - name: lock
-  zap_file: samples/matter/lock/snippets/schedules/lock.zap
+  zap_file: samples/matter/lock/src/schedules_zap/lock.zap
 
 # Smoke CO Alarm
 - name: smoke_co_alarm

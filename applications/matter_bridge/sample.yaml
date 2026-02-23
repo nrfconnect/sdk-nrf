@@ -190,7 +190,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - matter_bridge_SNIPPET=onoff_plug
+      - EXTRA_CONF_FILE=onoff_plug.conf
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
