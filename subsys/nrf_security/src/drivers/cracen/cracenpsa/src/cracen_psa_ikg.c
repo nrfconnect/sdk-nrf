@@ -28,6 +28,8 @@ static void cracen_set_ikg_key_buffer(psa_key_attributes_t *attributes,
 	case CRACEN_BUILTIN_MEXT_ID:
 		ikg_key->slot_number = CRACEN_INTERNAL_HW_KEY2_ID;
 		break;
+	default:
+		break;
 	}
 
 	ikg_key->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));

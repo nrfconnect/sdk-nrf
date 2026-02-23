@@ -23,17 +23,17 @@ static psa_status_t cracen_get_ikg_opaque_key_size(const psa_key_attributes_t *a
 			*key_size = sizeof(ikg_opaque_key);
 			return PSA_SUCCESS;
 		}
-		break;
+		return PSA_ERROR_INVALID_ARGUMENT;
 	case CRACEN_BUILTIN_MEXT_ID:
 	case CRACEN_BUILTIN_MKEK_ID:
 		if (psa_get_key_type(attributes) == PSA_KEY_TYPE_AES) {
 			*key_size = sizeof(ikg_opaque_key);
 			return PSA_SUCCESS;
 		}
-		break;
+		return PSA_ERROR_INVALID_ARGUMENT;
+	default:
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
-
-	return PSA_ERROR_INVALID_ARGUMENT;
 }
 
 psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size_t *key_size)
