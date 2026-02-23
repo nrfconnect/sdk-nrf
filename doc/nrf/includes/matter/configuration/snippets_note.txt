@@ -1,4 +1,0 @@
-  .. note::
-    This snippet requires a custom ZAP configuration, located in the |snippet_dir| directory.
-    If you need a custom data model, you must configure and generate the correct ZAP files.
-    To do this, run the ``west zap-generate`` command and choose the |snippet_zap_file| file.

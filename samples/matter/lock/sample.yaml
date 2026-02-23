@@ -137,7 +137,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - lock_SNIPPET=schedules
+      - DEXTRA_CONF_FILE=schedules.conf
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow:

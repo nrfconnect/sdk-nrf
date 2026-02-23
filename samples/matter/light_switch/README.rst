@@ -98,23 +98,19 @@ Advanced configuration options
 .. include:: /includes/matter/configuration/advanced/custom_board.txt
 .. include:: /includes/matter/configuration/advanced/internal_memory.txt
 
-.. _matter_light_switch_snippets:
+.. _matter_light_switch_sample_lit_icd:
 
-Snippets
-========
+LIT ICD support
+---------------
 
-.. |snippet| replace:: :makevar:`light_switch_SNIPPET`
+.. toggle::
 
-.. include:: /includes/sample_snippets.txt
+   To enable the :ref:`Long Idle Time (LIT)<ug_matter_device_low_power_icd_sit_lit>` support, run the following command with *board_target* replaced with the board target name:
 
-The following snippet is available:
+   .. parsed-literal::
+      :class: highlight
 
-* ``lit_icd`` - Enables experimental LIT ICD support.
-
-  .. |snippet_zap_file| replace:: :file:`snippets/lit_icd/light_switch.zap`
-  .. |snippet_dir| replace:: :file:`snippets/lit_icd`
-
-.. include:: /includes/matter/configuration/snippets_note.txt
+      west build -b *board_target* -p -- -DEXTRA_CONF_FILE=icd_lit.conf
 
 .. _matter_light_switch_sample_ui:
 
@@ -139,14 +135,14 @@ Second Button:
 
    * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
    * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
-      The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as the |Second Button| is pressed.
+     The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as the |Second Button| is pressed.
 
 Third Button:
    Functions as the User Active Mode Trigger (UAT) button.
    For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
 
    .. note::
-      To enable this functionality, :ref:`activate the lit_icd snippet <matter_light_switch_snippets>`.
+      To use this functionality, :ref:`enable the LIT ICD support <matter_light_switch_sample_lit_icd>`.
       ICD and UAT functionality is currently supported only for Matter over Thread.
 
 .. include:: /includes/matter/interface/segger_usb.txt

@@ -62,7 +62,7 @@ The door lock sample implements the following features:
 * `Door lock credentials`_ - Support for door lock credentials and users.
 * `Thread and Wi-Fi switching`_ - Support for switching between Matter over Thread and Matter over Wi-Fi.
 * `Matter Bluetooth LE with Nordic UART Service`_ - Support for Matter Bluetooth LE with Nordic UART Service.
-* `Scheduled timed access`_ - Support for scheduled timed access.
+* :ref:`matter_lock_sample_schedules` - Support for scheduled timed access.
 
 Use the ``click to show`` toggle to expand the content.
 
@@ -167,8 +167,7 @@ Scheduled timed access
       - ``Passage`` - The lock can be operated without providing a PIN.
          This option can be used, for example, for employees during working hours.
 
-   To enable the scheduled timed access feature, use the ``schedules`` snippet.
-   See the :ref:`matter_lock_snippets` section of this sample to learn how to enable the snippet.
+   To use the scheduled timed access feature, :ref:`enable the Schedules support <matter_lock_sample_schedules>`.
 
    See the :ref:`matter_lock_sample_schedule_testing` section of this sample for more information about testing the scheduled timed access feature.
 
@@ -247,23 +246,19 @@ Enabling Matter Bluetooth LE with Nordic UART Service
 
     See the `Testing Bluetooth LE with Nordic UART Service`_ section for more information about how to test this feature.
 
-.. _matter_lock_snippets:
+.. _matter_lock_sample_schedules:
 
-Snippets
-========
+Scheduled timed access
+----------------------
 
-.. |snippet| replace:: :makevar:`lock_SNIPPET`
+.. toggle::
 
-.. include:: /includes/sample_snippets.txt
+   To enable the scheduled timed access feature, run the following command with *board_target* replaced with the board target name:
 
-The following snippet is available:
+   .. parsed-literal::
+      :class: highlight
 
-* ``schedules`` - Enables schedule timed access features.
-
-  .. |snippet_zap_file| replace:: :file:`snippets/schedules/lock.zap`
-  .. |snippet_dir| replace:: :file:`snippets/schedules`
-
-.. include:: /includes/matter/configuration/snippets_note.txt
+      west build -b *board_target* -p -- -DEXTRA_CONF_FILE=schedules.conf
 
 User interface
 **************

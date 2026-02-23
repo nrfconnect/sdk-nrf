@@ -1,4 +1,4 @@
-name: diagnostic-logs
+name: matter-diagnostic-logs
 append:
   EXTRA_CONF_FILE: diagnostic_logs.conf
 
