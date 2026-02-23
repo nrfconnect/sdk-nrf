@@ -90,4 +90,31 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+Google Fast Pair
+----------------
+
+.. toggle::
+
+   For applications and samples using the :ref:`bt_fast_pair_readme` library:
+
+   * The Fast Pair public headers have been relocated from :file:`include/bluetooth/services/fast_pair/` to :file:`include/bluetooth/fast_pair/`.
+     The Fast Pair implementation has been relocated from :file:`subsys/bluetooth/services/fast_pair/` to :file:`subsys/bluetooth/fast_pair/`.
+
+     The old header paths still work through deprecated forwarding headers, but they will emit a compiler warning.
+     To avoid these warnings, update all Fast Pair includes in your application from the old paths to the new paths:
+
+     .. code-block:: c
+
+        /* Old (deprecated) */
+        #include <bluetooth/services/fast_pair/fast_pair.h>
+        #include <bluetooth/services/fast_pair/fmdn.h>
+        #include <bluetooth/services/fast_pair/uuid.h>
+        #include <bluetooth/services/fast_pair/adv_manager.h>
+
+        /* New */
+        #include <bluetooth/fast_pair/fast_pair.h>
+        #include <bluetooth/fast_pair/fmdn.h>
+        #include <bluetooth/fast_pair/uuid.h>
+        #include <bluetooth/fast_pair/adv_manager.h>
+
+   * If your project references the Fast Pair source directory directly (for example, in test CMakeLists.txt files), update the path from :file:`subsys/bluetooth/services/fast_pair` to :file:`subsys/bluetooth/fast_pair`.

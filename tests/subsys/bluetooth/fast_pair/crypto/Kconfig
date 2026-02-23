@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022 Nordic Semiconductor
+# Copyright (c) 2022-2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -20,7 +20,7 @@ endchoice
 endif # TEST_BT_FAST_PAIR_CRYPTO_PSA
 
 menu "Test configuration"
-source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/bluetooth/services/fast_pair/fp_crypto/Kconfig.fp_crypto"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/bluetooth/fast_pair/fp_crypto/Kconfig.fp_crypto"
 endmenu
 
 menu "Zephyr"

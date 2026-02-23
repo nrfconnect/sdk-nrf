@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,7 +10,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/adc.h>
 
-#include <bluetooth/services/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fmdn.h>
 
 #include "app_battery.h"
 #include "app_battery_priv.h"

@@ -9,7 +9,7 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 
-#include <bluetooth/services/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fmdn.h>
 
 #include <accel_to_angle/accel_to_angle.h>
 #include <accel_to_angle/filter/ema.h>

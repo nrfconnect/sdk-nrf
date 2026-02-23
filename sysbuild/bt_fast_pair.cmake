@@ -8,6 +8,6 @@ if(SB_CONFIG_BT_FAST_PAIR_PROV_DATA AND NOT SB_CONFIG_PARTITION_MANAGER)
   include(image_flasher.cmake)
 
   add_image_flasher(NAME bt_fast_pair HEX_FILE
-    "${CMAKE_BINARY_DIR}/modules/nrf/subsys/bluetooth/services/fast_pair/fp_provisioning_data.hex"
+    "${CMAKE_BINARY_DIR}/modules/nrf/subsys/bluetooth/fast_pair/fp_provisioning_data.hex"
   )
 endif()

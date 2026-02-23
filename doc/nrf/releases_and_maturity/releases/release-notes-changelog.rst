@@ -389,6 +389,8 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
+* Updated all Fast Pair samples to use the new ``<bluetooth/fast_pair/...>`` include paths.
+
 * :ref:`fast_pair_locator_tag` sample:
 
   * Updated the motion detector sensor on Thingy:53 target from gyroscope to accelerometer.
@@ -594,6 +596,12 @@ Binary libraries
 
 Bluetooth libraries and services
 --------------------------------
+
+* :ref:`bt_fast_pair_readme` library:
+
+  * Updated the location of the Fast Pair headers and implementation out of the :file:`services` subdirectory.
+    The headers moved from :file:`include/bluetooth/services/fast_pair/` to :file:`include/bluetooth/fast_pair/` and the implementation moved from :file:`subsys/bluetooth/services/fast_pair/` to :file:`subsys/bluetooth/fast_pair/`.
+    The deprecated forwarding headers remain at the old paths to provide backward compatibility.
 
 * :ref:`bt_mesh_dk_prov` module:
 

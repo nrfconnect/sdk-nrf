@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018-2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -53,6 +53,7 @@ comment "BLE Libraries"
 rsource "Kconfig.pool"
 rsource "Kconfig.discovery"
 rsource "adv_prov/Kconfig"
+rsource "fast_pair/Kconfig.fast_pair"
 rsource "Kconfig.scan"
 rsource "Kconfig.link"
 rsource "Kconfig.enocean"

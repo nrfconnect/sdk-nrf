@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -11,9 +11,9 @@
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/uuid.h>
 
-#include <bluetooth/services/fast_pair/adv_manager.h>
-#include <bluetooth/services/fast_pair/fast_pair.h>
-#include <bluetooth/services/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/adv_manager.h>
+#include <bluetooth/fast_pair/fast_pair.h>
+#include <bluetooth/fast_pair/fmdn.h>
 
 #include "app_battery.h"
 #include "app_dfu.h"

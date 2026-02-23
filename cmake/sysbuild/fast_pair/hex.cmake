@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022-2025 Nordic Semiconductor
+# Copyright (c) 2022-2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -24,7 +24,7 @@ function(fast_pair_hex_pm)
 
   set(
     fp_provisioning_data_hex
-    ${CMAKE_BINARY_DIR}/modules/nrf/subsys/bluetooth/services/fast_pair/fp_provisioning_data.hex
+    ${CMAKE_BINARY_DIR}/modules/nrf/subsys/bluetooth/fast_pair/fp_provisioning_data.hex
     )
 
   set(fp_provisioning_data_address $<TARGET_PROPERTY:partition_manager,PM_BT_FAST_PAIR_ADDRESS>)
@@ -92,7 +92,7 @@ function(fast_pair_hex_dts)
 
   set(
     fp_provisioning_data_hex
-    ${CMAKE_BINARY_DIR}/modules/nrf/subsys/bluetooth/services/fast_pair/fp_provisioning_data.hex
+    ${CMAKE_BINARY_DIR}/modules/nrf/subsys/bluetooth/fast_pair/fp_provisioning_data.hex
     )
 
   add_custom_command(

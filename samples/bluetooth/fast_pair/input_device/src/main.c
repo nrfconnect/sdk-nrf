@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2022-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,7 +10,7 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/settings/settings.h>
-#include <bluetooth/services/fast_pair/fast_pair.h>
+#include <bluetooth/fast_pair/fast_pair.h>
 #include <bluetooth/adv_prov/fast_pair.h>
 
 #include <dk_buttons_and_leds.h>

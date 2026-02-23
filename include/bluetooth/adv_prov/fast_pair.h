@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2022-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,7 +7,7 @@
 #ifndef BT_ADV_PROV_FAST_PAIR_H_
 #define BT_ADV_PROV_FAST_PAIR_H_
 
-#include <bluetooth/services/fast_pair/fast_pair.h>
+#include <bluetooth/fast_pair/fast_pair.h>
 
 /**
  * @defgroup bt_le_adv_prov_fast_pair Fast Pair advertising data provider API

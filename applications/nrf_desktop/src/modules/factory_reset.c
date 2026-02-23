@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2023-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr/bluetooth/conn.h>
-#include <bluetooth/services/fast_pair/fast_pair.h>
+#include <bluetooth/fast_pair/fast_pair.h>
 #include <zephyr/sys/reboot.h>
 
 #define MODULE factory_reset

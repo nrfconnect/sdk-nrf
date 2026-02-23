@@ -121,7 +121,7 @@
 /doc/nrf/libraries/bluetooth/mesh.rst     @nrfconnect/ncs-paladin-doc
 /doc/nrf/libraries/bluetooth/services/ams_client.rst @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/bluetooth/services/ancs_client.rst @nrfconnect/ncs-blenders-doc
-/doc/nrf/libraries/bluetooth/services/fast_pair/ @nrfconnect/ncs-si-bluebagel-doc
+/doc/nrf/libraries/bluetooth/fast_pair/ @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/bluetooth/services/wifi_prov_ble.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/caf/                   @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/debug/cpu_load.rst     @nrfconnect/ncs-doc-leads
@@ -323,6 +323,7 @@
 /include/bluetooth/services/bms.h         @nrfconnect/ncs-blenders
 /include/bluetooth/services/cgms.h        @nrfconnect/ncs-blenders
 /include/bluetooth/services/ddfs.h        @nrfconnect/ncs-blenders
+/include/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/services/hids.h        @nrfconnect/ncs-si-xcake
 /include/bluetooth/services/hrs_client.h  @nrfconnect/ncs-blenders
@@ -800,7 +801,7 @@
 /subsys/bluetooth/rpc/                    @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
 /subsys/bluetooth/services/ams_client.c   @nrfconnect/ncs-blenders
 /subsys/bluetooth/services/ancs_client.c  @nrfconnect/ncs-blenders
-/subsys/bluetooth/services/fast_pair/     @nrfconnect/ncs-si-bluebagel
+/subsys/bluetooth/fast_pair/              @nrfconnect/ncs-si-bluebagel
 /subsys/bluetooth/services/ras/           @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
 /subsys/bluetooth/services/hids.c         @nrfconnect/ncs-si-xcake
