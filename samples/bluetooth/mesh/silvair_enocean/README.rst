@@ -160,10 +160,34 @@ Provisioning the device
 
 .. include:: /includes/mesh_device_provisioning.txt
 
-Configuring the EnOcean switch
-------------------------------
+Commissioning
+-------------
 
-See :ref:`bt_enocean_commissioning` for details on how to configure the EnOcean switch.
+The devices must be commissioned so that the :ref:`bt_enocean_readme` library can process sensor or button messages from nearby EnOcean devices.
+By default, you can trigger the commissioning by interacting with the devices, as explained in the following sections.
+
+Commissioning wall switches
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To set the EnOcean Easyfit wall switches into the commissioning mode, complete the following sequence:
+
+1. Press and hold one of the buttons for more than seven seconds before releasing it.
+#. Quickly press and release the same button (hold for less than two seconds).
+#. Press and hold the same button again for more than seven seconds before releasing it.
+
+The switch transmits its security key, and the library picks up and stores the key.
+
+To exit the commissioning mode on a wall switch device, press any of the other buttons on the switch.
+The library will now be reporting button presses.
+
+Commissioning sensor units
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To have the EnOcean Easyfit sensor unit modules publish their security key, short-press the front button of the device.
+The library registers the security key and stores it.
+
+The sensor unit never enters the commissioning mode.
+After publishing its security key, the sensor unit automatically goes back to reporting sensor readings at periodic intervals.
 
 Configuring models
 ------------------
