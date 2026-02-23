@@ -14,6 +14,17 @@ config SOC_NRF54LV10A_CPUAPP
 config SOC_NRF54LV10A_CPUFLPR
 	select RISCV_CORE_NORDIC_VPR
 
+config SOC_NRF54LS05A_CPUAPP
+	select SOC_NRF54L_CPUAPP_COMMON
+	select CPU_HAS_ARM_MPU
+
 config SOC_NRF54LS05B_CPUAPP
 	select SOC_NRF54L_CPUAPP_COMMON
 	select CPU_HAS_ARM_MPU
+
+config SOC_NRF54LS05A_DEVELOP_IN_NRF54LS05B
+	bool
+	help
+	  The nrf54ls05dk board can be used to develop the nRF54LS05A or nRF54LS05B SoCs
+	  onto the nRF54LS05B DK. This symbol needs to be considered by certain system
+	  initialization functionality residing in SoC erratas.
