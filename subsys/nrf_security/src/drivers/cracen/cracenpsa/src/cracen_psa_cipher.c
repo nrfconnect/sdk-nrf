@@ -474,7 +474,9 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 	/* Clamp processed data to multiple of block size */
 	size_t block_bytes = input_length & ~((uint32_t)operation->blk_size - 1);
 
-	if (operation->dir == CRACEN_DECRYPT && operation->alg == PSA_ALG_CBC_PKCS7) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) &&
+	    operation->alg == PSA_ALG_CBC_PKCS7 &&
+	    operation->dir == CRACEN_DECRYPT) {
 		/* The last block contains padding. The block containing padding
 		 * must be handled in finish operation. If input data is block
 		 * aligned we must postpone processing of the last block.
@@ -491,32 +493,30 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 		 * independent from the previous one we just encrypt the so far available full
 		 * blocks.
 		 */
-		if (operation->alg == PSA_ALG_ECB_NO_PADDING) {
-			if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
-
-				if (operation->unprocessed_input_bytes) {
-					__ASSERT_NO_MSG(operation->unprocessed_input_bytes ==
-							operation->blk_size);
-					psa_status = crypt_ecb(
-						&operation->cipher, &operation->keyref,
-						operation->unprocessed_input,
-						operation->unprocessed_input_bytes, output,
-						output_size, output_length, operation->dir);
-					if (psa_status != PSA_SUCCESS) {
-						return psa_status;
-					}
-					output += (uint32_t)operation->unprocessed_input_bytes;
-					operation->unprocessed_input_bytes = 0;
+		if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) &&
+		    operation->alg == PSA_ALG_ECB_NO_PADDING) {
+			if (operation->unprocessed_input_bytes) {
+				__ASSERT_NO_MSG(operation->unprocessed_input_bytes ==
+						operation->blk_size);
+				psa_status = crypt_ecb(
+					&operation->cipher, &operation->keyref,
+					operation->unprocessed_input,
+					operation->unprocessed_input_bytes, output,
+					output_size, output_length, operation->dir);
+				if (psa_status != PSA_SUCCESS) {
+					return psa_status;
 				}
+				output += (uint32_t)operation->unprocessed_input_bytes;
+				operation->unprocessed_input_bytes = 0;
+			}
 
-				if (block_bytes) {
-					psa_status =
-						crypt_ecb(&operation->cipher, &operation->keyref,
-							  input, block_bytes, output, output_size,
-							  output_length, operation->dir);
-					if (psa_status != PSA_SUCCESS) {
-						return psa_status;
-					}
+			if (block_bytes) {
+				psa_status =
+					crypt_ecb(&operation->cipher, &operation->keyref,
+							input, block_bytes, output, output_size,
+							output_length, operation->dir);
+				if (psa_status != PSA_SUCCESS) {
+					return psa_status;
 				}
 			}
 
@@ -708,7 +708,8 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	if (operation->alg == PSA_ALG_CBC_NO_PADDING &&
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES) &&
+	    operation->alg == PSA_ALG_CBC_NO_PADDING &&
 	    (operation->unprocessed_input_bytes % SX_BLKCIPHER_AES_BLK_SZ) != 0) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}

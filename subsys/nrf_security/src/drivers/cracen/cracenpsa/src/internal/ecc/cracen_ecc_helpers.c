@@ -26,6 +26,7 @@
 
 #define NOT_ENABLED_CURVE	(0)
 
+#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)
 static psa_status_t get_sx_brainpool_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -62,7 +63,9 @@ static psa_status_t get_sx_brainpool_curve(size_t curve_bits, const struct sx_pk
 	*sicurve = selected_curve;
 	return PSA_SUCCESS;
 }
+#endif /* PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1 */
 
+#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)
 static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -95,7 +98,9 @@ static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_e
 	*sicurve = selected_curve;
 	return PSA_SUCCESS;
 }
+#endif /* PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1 */
 
+#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1)
 static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -116,7 +121,9 @@ static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_e
 	*sicurve = selected_curve;
 	return PSA_SUCCESS;
 }
+#endif /* PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1 */
 
+#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY)
 static psa_status_t get_sx_montgomery_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -141,7 +148,9 @@ static psa_status_t get_sx_montgomery_curve(size_t curve_bits, const struct sx_p
 	*sicurve = selected_curve;
 	return PSA_SUCCESS;
 }
+#endif /* PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY */
 
+#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)
 static psa_status_t get_sx_edwards_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -166,6 +175,7 @@ static psa_status_t get_sx_edwards_curve(size_t curve_bits, const struct sx_pk_e
 	*sicurve = selected_curve;
 	return PSA_SUCCESS;
 }
+#endif /* PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS */
 
 psa_status_t cracen_ecc_get_ecurve_from_psa(psa_ecc_family_t curve_family, size_t curve_bits,
 					    const struct sx_pk_ecurve **sicurve)
@@ -173,15 +183,25 @@ psa_status_t cracen_ecc_get_ecurve_from_psa(psa_ecc_family_t curve_family, size_
 {
 	switch (curve_family) {
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
-		return get_sx_brainpool_curve(curve_bits, sicurve);
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1,
+			   (return get_sx_brainpool_curve(curve_bits, sicurve)));
+		break;
 	case PSA_ECC_FAMILY_SECP_R1:
-		return get_sx_secp_r1_curve(curve_bits, sicurve);
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1,
+			   (return get_sx_secp_r1_curve(curve_bits, sicurve)));
+		break;
 	case PSA_ECC_FAMILY_MONTGOMERY:
-		return get_sx_montgomery_curve(curve_bits, sicurve);
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY,
+			   (return get_sx_montgomery_curve(curve_bits, sicurve)));
+		break;
 	case PSA_ECC_FAMILY_TWISTED_EDWARDS:
-		return get_sx_edwards_curve(curve_bits, sicurve);
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS,
+			   (return get_sx_edwards_curve(curve_bits, sicurve)));
+		break;
 	case PSA_ECC_FAMILY_SECP_K1:
-		return get_sx_secp_k1_curve(curve_bits, sicurve);
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1,
+			   (return get_sx_secp_k1_curve(curve_bits, sicurve)));
+		break;
 	case PSA_ECC_FAMILY_SECP_R2:
 	case PSA_ECC_FAMILY_SECT_K1:
 	case PSA_ECC_FAMILY_SECT_R1:
@@ -190,6 +210,8 @@ psa_status_t cracen_ecc_get_ecurve_from_psa(psa_ecc_family_t curve_family, size_
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
+
+	return PSA_ERROR_NOT_SUPPORTED;
 }
 
 bool cracen_ecc_curve_is_weierstrass(psa_ecc_family_t curve)
@@ -280,7 +302,6 @@ psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
 	 * See DLT-3834 for more information.
 	 */
 
-	safe_memzero(scratch_pnt.x.bytes, scratch_pnt.x.sz);
 	safe_memzero(scratch_pnt.x.bytes, scratch_pnt.x.sz);
 
 	return PSA_SUCCESS;
