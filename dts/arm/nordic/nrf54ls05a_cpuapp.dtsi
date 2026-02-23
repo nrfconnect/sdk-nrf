@@ -1,0 +1,8 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <nordic/nrf54ls05a.dtsi>
+#include "nrf54ls05_a_b_cpuapp.dtsi"
