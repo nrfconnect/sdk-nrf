@@ -13,6 +13,8 @@
     #include "templates/nrfx_config_nrf7120_enga_application.h"
 #elif (defined(NRF7120_ENGA_XXAA)) && defined(NRF_FLPR)
     #include"templates/nrfx_config_nrf7120_enga_flpr.h"
+#elif (defined(NRF54LS05A_XXAA)) && defined(NRF_APPLICATION)
+    #include"templates/nrfx_config_nrf54ls05a_application.h"
 #elif (defined(NRF54LS05B_XXAA)) && defined(NRF_APPLICATION)
     #include"templates/nrfx_config_nrf54ls05b_application.h"
 #else
