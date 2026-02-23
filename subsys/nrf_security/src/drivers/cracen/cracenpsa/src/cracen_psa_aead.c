@@ -207,15 +207,13 @@ static psa_status_t initialize_or_resume_context(cracen_aead_operation_t *operat
 
 static void cracen_writebe(uint8_t *out, uint64_t data, uint16_t targetsz)
 {
-	uint_fast16_t i;
-
-	for (i = 0; i < targetsz; i++) {
-		out[(targetsz - 1) - i] = (data >> (i * 8)) & 0xFF;
+	for (uint_fast16_t i = 0; i < targetsz; i++) {
+		out[(targetsz - 1) - i] = (data >> (i * 8)) & 0xFFU;
 	}
 }
 
 static void create_aead_ccmheader(cracen_aead_operation_t *operation,
-				  uint8_t header[static CCM_HEADER_MAX_LENGTH],
+				  uint8_t header[CCM_HEADER_MAX_LENGTH],
 				  size_t *header_length)
 {
 	uint8_t flags;
@@ -247,7 +245,7 @@ static void create_aead_ccmheader(cracen_aead_operation_t *operation,
 	flags |= ((l - 1) & 0x7);
 	header[0] = flags;
 
-	memcpy(&header[1], (void *)operation->nonce, operation->nonce_length);
+	memcpy(&header[1], operation->nonce, operation->nonce_length);
 
 	cracen_writebe(&(header[1 + operation->nonce_length]), operation->plaintext_length, l);
 
