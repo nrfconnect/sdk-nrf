@@ -20,7 +20,7 @@ However, it customizes Zephyr's sample to fulfill the |NCS| requirements (for ex
 * Thread 1.4 features, including support for Thread 1.3 and Thread 1.2.
 
 This sample supports optional :ref:`logging extension <ot_coprocessor_sample_logging>`, which can be turned on or off independently.
-See :ref:`ot_coprocessor_sample_activating_variants` for details.
+To enable logging extension, use the ``ot-debug`` snippet.
 
 Requirements
 ************
@@ -63,7 +63,13 @@ Moreover, using the Spinel logging backend (by setting :kconfig:option:`CONFIG_L
 
 By default, the log levels for all modules are set to critical to not engage the microprocessor in unnecessary activities.
 To make the solution flexible, you can change independently the log levels for your modules, for the whole Zephyr system, and for OpenThread.
-Use the :file:`logging.conf` configuration file located in the :file:`snippets/logging/` directory as reference for this purpose.
+Use the ``ot-debug`` snippet as reference for this purpose.
+
+For example:
+
+.. code-block:: none
+
+   west build -b nrf54l15dk_nrf54l15_cpuapp -p -- -Dcoprocessor_SNIPPET=ot-debug
 
 User interface
 **************
@@ -101,29 +107,6 @@ Check and configure the following library option that is used by the sample:
 
 * :kconfig:option:`CONFIG_OPENTHREAD_COPROCESSOR_RCP` - Selects the RCP architecture for the sample.
 
-.. _ot_coprocessor_sample_activating_variants:
-
-Snippets
-========
-
-.. |snippet| replace:: :makevar:`coprocessor_SNIPPET`
-
-.. include:: /includes/sample_snippets.txt
-
-The following snippets are available:
-
-* ``debug`` - Enables debugging the Thread sample by enabling :c:func:`__ASSERT()` statements globally.
-* ``logging`` - Enables logging using RTT.
-  For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
-* ``usb`` - Enables emulating a serial port over USB for Spinel communication with the host.
-
-  .. note::
-     The ``usb`` snippet does not support the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
-
-* ``hci`` - Enables support for the Bluetooth HCI interface parallel to :ref:`Thread RCP <thread_architectures_designs_cp_rcp>`.
-
-FEM support
-===========
 
 .. include:: /includes/sample_fem_support.txt
 
@@ -144,6 +127,25 @@ HCI support
 Currently, HCI is only supported using the nRF USB interface.
 The device will show two virtual UART ports.
 Usually the first port will be associated with the HCI interface, and the second one with the Thread co-processor.
+
+To enable HCI support, use the following command with *board_target* replaced with the board target name:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=overlays/rcp_hci.conf -DEXTRA_DTC_OVERLAY_FILE=overlays/rcp_hci.overlay
+
+Vendor hooks
+============
+
+The sample supports vendor hooks for co-processor architecture allowing you to extend handled properties by your own, customized functionalities.
+
+To enable vendor hooks, set the :kconfig:option:`CONFIG_OPENTHREAD_COPROCESSOR_VENDOR_HOOK_SOURCE` Kconfig option to the path of the vendor hook source file and run the following command with *board_target* replaced with the board target name:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -p -- -DCONFIG_OPENTHREAD_COPROCESSOR_VENDOR_HOOK_SOURCE="/src/user_vendor_hook.cpp"
 
 Testing
 =======

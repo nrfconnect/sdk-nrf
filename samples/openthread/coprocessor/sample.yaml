@@ -47,7 +47,8 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
     extra_args: >
-      coprocessor_SNIPPET="ci;logging;vendor_hook"
+      coprocessor_SNIPPET="ot-ci;ot-logging"
+      CONFIG_OPENTHREAD_COPROCESSOR_VENDOR_HOOK_SOURCE="/src/user_vendor_hook.cpp"
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
@@ -69,7 +70,7 @@ tests:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
     extra_args: >
-      coprocessor_SNIPPET="ci;usb"
+      coprocessor_SNIPPET="ot-ci;ot-usb"
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
@@ -82,7 +83,9 @@ tests:
       - sysbuild
       - ci_samples_openthread
     extra_args: >
-      coprocessor_SNIPPET="ci;hci"
+      coprocessor_SNIPPET="ot-ci"
+      EXTRA_CONF_FILE=extra_conf/rcp_hci.conf
+      EXTRA_DTC_OVERLAY_FILE=extra_conf/rcp_hci.overlay
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840

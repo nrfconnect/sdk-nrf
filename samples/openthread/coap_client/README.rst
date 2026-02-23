@@ -129,6 +129,36 @@ Configuration
 
 |config|
 
+Multiprotocol
+=============
+
+The multiprotocol feature enables the Thread CoAP Client sample to support both Thread and Bluetooth® LE functionality simultaneously.
+This allows the device to advertise and operate as a Bluetooth LE peripheral in addition to running a Thread network, enabling use cases such as Thread/Bluetooth firmware upgrades or Thread/Bluetooth device commissioning.
+
+To enable the multiprotocol feature, use the following command with *board_target* replaced with the board target name:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=overlays/multiprotocol_ble.conf
+
+Minimal Thread Device
+=====================
+
+The Minimal Thread Device feature enables the Thread CoAP Client sample to operate as a Minimal Thread Device (MTD).
+This allows the device to operate in low power mode when not actively participating in the Thread network.
+To enable the Minimal Thread Device feature, use the following command with *board_target* replaced with the board target name:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=overlays/mtd.conf
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
 .. _coap_client_sample_activating_variants:
 
 Snippets
@@ -137,23 +167,6 @@ Snippets
 .. |snippet| replace:: :makevar:`coap_client_SNIPPET`
 
 .. include:: /includes/sample_snippets.txt
-
-The following snippets are available:
-
-* ``debug`` - Enables debugging the Thread sample by enabling :c:func:`__ASSERT()` statements globally.
-* ``mtd`` - Enables the Minimal Thread Device variant.
-* ``logging`` - Enables logging using RTT.
-  For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
-* ``multiprotocol_ble`` - Enables the Multiprotocol Bluetooth LE extension.
-
-  .. note::
-    When building with the ``multiprotocol_ble`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the additional :makevar:`FILE_SUFFIX` CMake option to ``ble``.
-    See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
-
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
 
 
 Building and running

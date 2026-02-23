@@ -82,6 +82,11 @@ Configuration
 
 |config|
 
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
 .. _coap_server_sample_activating_variants:
 
 Snippets
@@ -90,19 +95,6 @@ Snippets
 .. |snippet| replace:: :makevar:`coap_server_SNIPPET`
 
 .. include:: /includes/sample_snippets.txt
-
-The following snippets are available:
-
-* ``debug`` - Enables debugging the Thread sample by enabling :c:func:`__ASSERT()` statements globally.
-* ``logging`` - Enables logging using RTT.
-  For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
-* ``l2`` - Enables the Zephyr networking layer.
-* ``logging_l2`` - Enables logging from the Zephyr networking layer.
-
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************
