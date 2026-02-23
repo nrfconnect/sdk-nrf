@@ -338,15 +338,10 @@ int cracen_kmu_clean_key(const uint8_t *user_data)
 {
 	const kmu_opaque_key_buffer *key = (const kmu_opaque_key_buffer *)user_data;
 
-	switch (key->key_usage_scheme) {
-	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
+	if (key->key_usage_scheme == CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED) {
 		if (cracen_push_prot_ram_inv_slots() != PSA_SUCCESS) {
 			return SX_ERR_UNKNOWN_ERROR;
 		}
-
-		break;
-	default:
-		break;
 	}
 
 	safe_memzero(kmu_push_area, sizeof(kmu_push_area));
@@ -753,8 +748,7 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 		return PSA_ERROR_DATA_INVALID;
 	}
 
-	switch (metadata->key_usage_scheme) {
-	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
+	if (metadata->key_usage_scheme == CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED) {
 		/* Only AES keys are supported. */
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_CORRUPTION_DETECTED;
@@ -767,7 +761,6 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 		if (usage_flags & PSA_KEY_USAGE_COPY) {
 			return PSA_ERROR_CORRUPTION_DETECTED;
 		}
-		break;
 	}
 
 	return PSA_SUCCESS;
