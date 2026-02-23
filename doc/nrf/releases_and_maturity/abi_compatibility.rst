@@ -46,6 +46,20 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Element (IronSide SE) v23.3.0+26
+=================================================
+
+Added
+-----
+
+* Added the PERIPHCONF service, which offers APIs for reading from and writing to the peripheral registers that are managed through UICR.PERIPHCONF.
+  The service APIs can be used to load a new PERIPHCONF binary after boot and enable dynamic runtime management of the PPIB, IPCMAP, IRQMAP, and GPIO pin CTRLSEL configuration. (NCSDK-34192)
+
+Fixed
+-----
+
+* ``psa_hash_compare``, ``psa_verify_message``, and ``psa_mac_verify`` now support overlapping buffers as mandated by the PSA Crypto API specification. (NCSDK-34253)
+
 IronSide Secure Element (IronSide SE) v23.2.1+25
 ================================================
 
