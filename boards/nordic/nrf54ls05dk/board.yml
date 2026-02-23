@@ -3,6 +3,7 @@ board:
   full_name: nRF54LS05B DK
   vendor: nordic
   socs:
+  - name: nrf54ls05a
   - name: nrf54ls05b
   revision:
     format: major.minor.patch
