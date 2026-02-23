@@ -252,10 +252,11 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 				size_t key_buffer_size, struct sxkeyref *k)
 {
 	safe_memzero(k, sizeof(*k));
+	psa_key_location_t key_location =
+		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
-	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
-	    PSA_KEY_LOCATION_CRACEN_KMU) {
+	if (key_location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		kmu_opaque_key_buffer *key = (kmu_opaque_key_buffer *)key_buffer;
 		enum cracen_kmu_metadata_key_usage_scheme key_usage_scheme = key->key_usage_scheme;
 
@@ -281,8 +282,7 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 		}
 	}
 #endif
-	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
-	    PSA_KEY_LOCATION_CRACEN) {
+	if (key_location == PSA_KEY_LOCATION_CRACEN) {
 
 		if (cracen_is_ikg_key(attributes)) {
 			if (IS_ENABLED(CONFIG_CRACEN_IKG)) {

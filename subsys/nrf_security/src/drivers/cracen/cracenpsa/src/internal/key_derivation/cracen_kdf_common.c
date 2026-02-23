@@ -62,8 +62,7 @@ psa_status_t cracen_kdf_generate_output_bytes(cracen_key_derivation_operation_t 
 			/* Copy out buffered output. This may be a partial
 			 * block.
 			 */
-			unsigned int out =
-				MIN(output_length, operation->output_block_available_bytes);
+			size_t out = MIN(output_length, operation->output_block_available_bytes);
 
 			memcpy(output, operation->output_block, out);
 

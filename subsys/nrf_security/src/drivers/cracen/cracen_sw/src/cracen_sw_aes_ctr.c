@@ -22,17 +22,7 @@
 #include <cracen_sw_aes_ctr.h>
 
 /* AES CTR mode counter field is the entire 16-byte block */
-#define AES_BLOCK_LAST_BYTE_INDEX  (SX_BLKCIPHER_AES_BLK_SZ - 1)
 #define AES_CTR_COUNTER_START_BYTE 0
-
-static void increment_counter(uint8_t *ctr)
-{
-	for (int i = AES_BLOCK_LAST_BYTE_INDEX; i >= AES_CTR_COUNTER_START_BYTE; i--) {
-		if (++ctr[i] != 0) {
-			break;
-		}
-	}
-}
 
 psa_status_t cracen_sw_aes_ctr_setup(cracen_cipher_operation_t *operation,
 				     const psa_key_attributes_t *attributes,
@@ -153,7 +143,9 @@ psa_status_t cracen_sw_aes_ctr_update(cracen_cipher_operation_t *operation, cons
 		/* If the keystream block was fully consumed, bump counter for next block */
 		if (keystream_used == SX_BLKCIPHER_AES_BLK_SZ) {
 			keystream_used = 0;
-			increment_counter(operation->iv);
+			cracen_sw_increment_counter_be(operation->iv,
+						       SX_BLKCIPHER_AES_BLK_SZ,
+						       AES_CTR_COUNTER_START_BYTE);
 		}
 	}
 

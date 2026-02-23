@@ -1038,7 +1038,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	}
 	psa_status = convert_from_psa_attributes(key_attr, &metadata);
 
-	if (psa_status) {
+	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
 
@@ -1115,8 +1115,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 
 	for (size_t i = 0; i < num_slots; i++) {
 		if (!lib_kmu_is_slot_empty(slot_id + i)) {
-			psa_status = PSA_ERROR_ALREADY_EXISTS;
-			goto exit;
+			return PSA_ERROR_ALREADY_EXISTS;
 		}
 	}
 
@@ -1157,7 +1156,6 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		psa_status = end_provisioning(slot_id, num_slots);
 	}
 
-exit:
 	return psa_status;
 }
 
