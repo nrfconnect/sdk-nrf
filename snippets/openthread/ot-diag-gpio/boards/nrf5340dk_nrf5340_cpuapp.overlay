@@ -1,0 +1,18 @@
+/* Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	openthread_config: openthread {
+		compatible = "openthread,config";
+		diag-gpios = <&gpio0 28 GPIO_ACTIVE_LOW>,		    // LED 1
+			     <&gpio0 29 GPIO_ACTIVE_LOW>,		    // LED 2
+			     <&gpio0 30 GPIO_ACTIVE_LOW>,		    // LED 3
+			     <&gpio0 31 GPIO_ACTIVE_LOW>,		    // LED 4
+			     <&gpio0 23 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,  // Button 1
+			     <&gpio0 24 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,  // Button 2
+			     <&gpio0 8 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,   // Button 3
+			     <&gpio0 9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;   // Button 4
+	};
+};

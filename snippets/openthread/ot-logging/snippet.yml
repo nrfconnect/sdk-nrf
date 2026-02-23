@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: ot-logging
+append:
+  EXTRA_CONF_FILE: ot-logging.conf
+
+boards:
+  nrf52840dongle/nrf52840:
+    append:
+      EXTRA_CONF_FILE: boards/nrf52840dongle_nrf52840.config

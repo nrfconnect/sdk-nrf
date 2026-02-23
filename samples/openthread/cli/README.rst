@@ -50,7 +50,7 @@ The sample supports two application architecture options depending on if you are
 To learn more about the differences between the two architectures, see the :ref:`openthread_stack_architecture` page.
 To learn how to switch between the two architectures, see the :ref:`ug_thread_configuring_basic` user guide.
 
-Additionally, you can use the ``l2`` snippet to switch between the two architectures.
+Additionally, you can use the ``ot-zephyr-l2`` snippet to switch between the two architectures.
 See the :ref:`ot_cli_sample_activating_variants` section for details.
 
 .. ot_cli_sample_architecture_options_end
@@ -103,47 +103,60 @@ Configuration
 
 |config|
 
-.. _ot_cli_sample_activating_variants:
+Multiprotocol
+=============
 
-Snippets
-========
+The multiprotocol feature enables the Thread CLI sample to support both Thread and Bluetooth® LE functionality simultaneously.
+This allows the device to advertise and operate as a Bluetooth LE peripheral in addition to running a Thread network, enabling use cases such as Thread/Bluetooth firmware upgrades or Thread/Bluetooth device commissioning.
 
-.. |snippet| replace:: :makevar:`cli_SNIPPET`
+To enable the multiprotocol feature, use the following command with *board_target* replaced with the board target name:
 
-.. include:: /includes/sample_snippets.txt
+.. parsed-literal::
+   :class: highlight
 
-The following snippets are available:
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/multiprotocol.conf
 
-* ``usb`` - Enables USB transport support.
+Low power mode
+==============
 
-  .. note::
-     The ``usb`` snippet does not support the ``nrf54l15dk/nrf54l15/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets.
+The low power mode feature enables the Thread CLI sample to enter low power mode when the device is not actively participating in the Thread network.
 
-* ``logging`` - Enables logging using RTT.
-  For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
-* ``debug`` - Enables debugging the Thread sample with GDB thread awareness.
-* ``diag_gpio`` - Configures DK's Buttons and LEDs for diagnostic GPIO commands.
-  For more information, see `OpenThread Factory Diagnostics Module Reference`_.
-* ``ci`` - Disables boot banner and shell prompt.
-* ``multiprotocol`` - Enables Bluetooth LE support in this sample.
-  Not compatible with the ``tcat`` snippet.
+To enable low power mode in this sample, use the following command with *board_target* replaced with the board target name:
 
-  .. note::
-    When building with the ``multiprotocol`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the :makevar:`FILE_SUFFIX` CMake option to ``ble``.
-    See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
+.. parsed-literal::
+   :class: highlight
 
-* ``tcat`` - Enables support for Thread commissioning over authenticated TLS.
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/low_power.conf
 
-  .. note::
-    When building with the ``tcat`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the :makevar:`FILE_SUFFIX` CMake option to ``ble``.
-    See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
+TCP support
+===========
 
-  Not compatible with the ``multiprotocol`` snippet.
-  For using TCAT, refer to the :ref:`thread_tcat` page.
-* ``tcp`` - Enables experimental TCP support in this sample.
-* ``low_power`` - Enables low power consumption mode in this sample.
-* ``l2`` - Enables the Zephyr networking layer.
-* ``logging_l2`` - Enables logging from the Zephyr networking layer.
+The TCP support feature enables the Thread CLI sample to support TCP functionality.
+
+To enable the TCP support feature, use the following command with *board_target* replaced with the board target name:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/tcp.conf
+
+
+TCAT support
+============
+
+The TCAT support feature enables the Thread CLI sample to support Thread commissioning over authenticated TLS.
+
+To enable the TCAT support feature, use the following command with *board_target* replaced with the board target name:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/tcat.conf
+
+
+.. note::
+   When building with the ``tcat`` feature for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the :makevar:`FILE_SUFFIX` CMake option to ``ble``.
+   See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
 
 FEM support
 ===========
@@ -162,7 +175,15 @@ Serial transport
 
 The Thread CLI sample supports UART and USB CDC ACM as serial transports.
 By default, it uses USB CDC ACM transport for ``nrf52840dongle/nrf52840``, and UART transport for other board targets.
-To switch to USB transport on targets that use UART by default, :ref:`activate the USB snippet <ot_cli_sample_activating_variants>`.
+
+.. _ot_cli_sample_activating_variants:
+
+Snippets
+========
+
+.. |snippet| replace:: :makevar:`cli_SNIPPET`
+
+.. include:: /includes/sample_snippets.txt
 
 Building and running
 ********************

@@ -36,7 +36,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: >
-      coap_client_SNIPPET="ci;logging"
+      coap_client_SNIPPET="ot-ci;ot-logging"
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
@@ -57,7 +57,8 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: >
-      coap_client_SNIPPET="ci;logging;mtd"
+      coap_client_SNIPPET="ot-ci;ot-logging"
+      EXTRA_CONF_FILE=extra_conf/mtd.conf
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
@@ -78,7 +79,8 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
-      - coap_client_SNIPPET="ci;logging;mtd;multiprotocol_ble"
+      - coap_client_SNIPPET="ot-ci;ot-logging"
+      - EXTRA_CONF_FILE="extra_conf/mtd.conf;extra_conf/multiprotocol_ble.conf"
       - FILE_SUFFIX=ble
     integration_platforms:
       - nrf52840dk/nrf52840

@@ -45,7 +45,8 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
-      - cli_SNIPPET="ci;logging;multiprotocol;tcp"
+      - cli_SNIPPET="ot-ci;ot-logging"
+      - EXTRA_CONF_FILE="extra_conf/multiprotocol.conf;extra_conf/tcp.conf"
       - CONFIG_OTPERF=y
       - FILE_SUFFIX=ble
     integration_platforms:
@@ -72,7 +73,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
     extra_args:
-      - cli_SNIPPET="ci;logging;tcp"
+      - cli_SNIPPET="ot-ci;ot-logging"
+      - EXTRA_CONF_FILE=extra_conf/tcp.conf
       - CONFIG_OTPERF=y
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -93,7 +95,8 @@ tests:
       - nrf21540dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
     extra_args:
-      - cli_SNIPPET="ci;logging;multiprotocol;tcp;usb"
+      - cli_SNIPPET="ot-ci;ot-logging;ot-usb"
+      - EXTRA_CONF_FILE="extra_conf/multiprotocol.conf;extra_conf/tcp.conf"
       - FILE_SUFFIX=ble
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -112,7 +115,8 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
-      - cli_SNIPPET="ci;low_power"
+      - cli_SNIPPET="ot-ci"
+      - EXTRA_CONF_FILE=extra_conf/low_power.conf
       - CONFIG_OTPERF=y
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -129,7 +133,7 @@ tests:
     platform_allow:
       - nrf52840dk/nrf52840
     extra_args:
-      - cli_SNIPPET=ci
+      - cli_SNIPPET=ot-ci
       - CONFIG_NRF_SECURITY=y
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -148,7 +152,9 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
     extra_args:
-      - cli_SNIPPET="ci;tcat;tcp"
+      - cli_SNIPPET="ot-ci"
+      - EXTRA_CONF_FILE=extra_conf/tcat.conf
+      - EXTRA_CONF_FILE=extra_conf/tcp.conf
       - CONFIG_OTPERF=y
       - FILE_SUFFIX=ble
     integration_platforms:
@@ -172,7 +178,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
     extra_args: >
-      cli_SNIPPET=diag_gpio
+      cli_SNIPPET="ot-diag-gpio"
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -194,7 +200,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
     extra_args:
-      - cli_SNIPPET="ci;l2;ci_l2"
+      - cli_SNIPPET="ot-ci;ot-zephyr-l2"
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -217,7 +223,8 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
     extra_args:
-      - cli_SNIPPET="ci;logging;multiprotocol;tcp;l2;ci_l2;logging_l2"
+      - cli_SNIPPET="ot-logging;ot-zephyr-l2;zperf"
+      - EXTRA_CONF_FILE="extra_conf/l2_logging.conf;extra_conf/multiprotocol.conf"
       - FILE_SUFFIX=ble
     integration_platforms:
       - nrf52840dk/nrf52840

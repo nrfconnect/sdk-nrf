@@ -9,6 +9,9 @@ config PARTITION_MANAGER
 	default n if BOARD_NRF52840DONGLE_NRF52840
 
 config NRF_DEFAULT_IPC_RADIO
-	default y
+	default y if SOC_SERIES_NRF53
+
+config NETCORE_IPC_RADIO_IEEE802154
+	default y if SOC_SERIES_NRF53
 
 source "share/sysbuild/Kconfig"
