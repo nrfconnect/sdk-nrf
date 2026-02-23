@@ -1,29 +1,15 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2025-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "memory_map_dongle_small.dtsi"
+#include "app_common.dtsi"
+
 / {
 	chosen {
 		zephyr,bt-hci = &bt_hci_controller;
-	};
-
-	/* Configure DTS nodes used for USB next HID support. */
-	hid_dev_0: hid_dev_0 {
-		compatible = "zephyr,hid-device";
-		label = "HID0";
-		protocol-code = "none";
-		in-polling-period-us = <1000>;
-		in-report-size = <64>;
-	};
-
-	hid_dev_1: hid_dev_1 {
-		compatible = "zephyr,hid-device";
-		label = "HID1";
-		protocol-code = "none";
-		in-polling-period-us = <1000>;
-		in-report-size = <64>;
 	};
 
 	gpioled0 {
@@ -51,16 +37,6 @@
 	leds {
 		status = "disabled";
 	};
-};
-
-&usbd {
-	compatible = "nordic,nrf-usbd";
-	status = "okay";
-	num-bidir-endpoints = <0>;
-	num-in-endpoints = <4>;
-	num-out-endpoints = <2>;
-	num-isoin-endpoints = <0>;
-	num-isoout-endpoints = <0>;
 };
 
 &bt_hci_controller {

@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	/* Configure DTS nodes used for USB next HID support. */
+	hid_dev_0: hid_dev_0 {
+		compatible = "zephyr,hid-device";
+		label = "HID0";
+		protocol-code = "none";
+		in-polling-period-us = <1000>;
+		in-report-size = <64>;
+	};
+
+	hid_dev_1: hid_dev_1 {
+		compatible = "zephyr,hid-device";
+		label = "HID1";
+		protocol-code = "none";
+		in-polling-period-us = <1000>;
+		in-report-size = <64>;
+	};
+};
+
+&usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+	num-bidir-endpoints = <0>;
+	num-in-endpoints = <4>;
+	num-out-endpoints = <2>;
+	num-isoin-endpoints = <0>;
+	num-isoout-endpoints = <0>;
+};
