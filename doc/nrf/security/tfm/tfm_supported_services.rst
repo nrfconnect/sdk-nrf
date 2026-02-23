@@ -124,7 +124,7 @@ The following TF-M services are supported in the |NCS|:
      - Mandatory implementation of the :ref:`ug_tfm_architecture_rot_services_platform`. Provides platform-specific services to other TF-M partitions and to non-secure applications.
      - :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM` (:ref:`details<ug_tfm_services_platform>`)
    * - Crypto
-     - `PSA Certified Crypto API`_ v1.0.0 (v1.2.0 when you build with :ref:`nrf_security`, but without TF-M)
+     - `PSA Certified Crypto API 1.4.0`_
      - Provides cryptographic operations like encryption and decryption, hashing, key management, and random number generation.
      - :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO` (:ref:`details<tfm_partition_crypto>`)
    * - Internal Trusted Storage (ITS)
@@ -238,7 +238,6 @@ Core features
 Security services
 =================
 
-* |encrypted_its_not_supported_on_nrf54lm20|
 * Firmware Update service is not supported.
 * Firmware verification is not supported.
 * Firmware encryption is not supported.
