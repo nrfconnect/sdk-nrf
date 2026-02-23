@@ -578,10 +578,14 @@ static bool event_packet_is_discardable(const uint8_t *hci_buf)
 		uint8_t subevent = hci_buf[2];
 
 		switch (subevent) {
+#ifdef CONFIG_BT_CTLR_SDC_QOS_CONN_EVENT_REPORT
 		case SDC_HCI_SUBEVENT_VS_QOS_CONN_EVENT_REPORT:
 			return true;
+#endif /* CONFIG_BT_CTLR_SDC_QOS_CONN_EVENT_REPORT */
+#ifdef CONFIG_BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT
 		case SDC_HCI_SUBEVENT_VS_CONN_ANCHOR_POINT_UPDATE_REPORT:
 			return true;
+#endif /* CONFIG_BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT */
 		default:
 			return false;
 		}
