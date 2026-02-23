@@ -44,6 +44,8 @@ static atomic_t op_flags;
 static uint8_t flash_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for flash update. */
 static uint8_t flash_buf_len; /**< Length of the flash buffer. */
 
+static K_SEM_DEFINE(nfc_write_sem, 0, 1);
+
 static void flash_buffer_prepare(size_t data_length)
 {
 	if (atomic_cas(&op_flags, FLASH_WRITE_FINISHED,
@@ -52,6 +54,7 @@ static void flash_buffer_prepare(size_t data_length)
 		memcpy(flash_buf, ndef_msg_buf, sizeof(flash_buf));
 
 		atomic_set(&op_flags, FLASH_BUF_PREP_FINISHED);
+		k_sem_give(&nfc_write_sem);
 	} else {
 		printk("Flash update pending. Discarding new data...\n");
 	}
@@ -119,8 +122,6 @@ static int board_init(void)
  */
 int main(void)
 {
-	printk("Starting Nordic NFC Writable NDEF Message sample\n");
-
 	/* Configure LED-pins as outputs. */
 	if (board_init() < 0) {
 		printk("Cannot initialize board!\n");
@@ -170,6 +171,7 @@ int main(void)
 	printk("Starting NFC Writable NDEF Message sample\n");
 
 	while (true) {
+		k_sem_take(&nfc_write_sem, K_FOREVER);
 		if (atomic_cas(&op_flags, FLASH_BUF_PREP_FINISHED,
 				FLASH_WRITE_STARTED)) {
 			if (ndef_file_update(flash_buf, flash_buf_len) < 0) {
@@ -180,8 +182,6 @@ int main(void)
 
 			atomic_set(&op_flags, FLASH_WRITE_FINISHED);
 		}
-
-		k_cpu_atomic_idle(irq_lock());
 	}
 
 fail:

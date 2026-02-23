@@ -497,7 +497,10 @@ Networking samples
 NFC samples
 -----------
 
-|no_changes_yet_note|
+* :ref:`writable_ndef_msg` sample:
+
+  * Fixed a power consumption issue.
+    The main loop now blocks on a semaphore instead of using the :c:func:`k_cpu_atomic_idle` function, allowing the idle thread to handle power management after the read or write tag.
 
 nRF5340 samples
 ---------------
