@@ -1,0 +1,5 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config BOARD_NRF54LS05DK
+	select SOC_NRF54LS05A_DEVELOP_IN_NRF54LS05B if SOC_NRF54LS05A_CPUAPP
