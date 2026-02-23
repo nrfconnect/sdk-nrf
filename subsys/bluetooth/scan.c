@@ -256,6 +256,16 @@ static struct bt_scan {
 	 */
 	struct bt_le_conn_param conn_param;
 
+	/* Cache of connectable advertiser addresses.
+	 * Scan response PDUs do not carry the connectable bit; it can only be
+	 * determined based on the type of the initial advertising PDU.
+	 * We cache an address when we see a connectable ADV; for SCAN_RSP we treat
+	 * the device as connectable if its address is in this cache.
+	 */
+	bt_addr_le_t connectable_cache[CONFIG_BT_SCAN_CONNECTABLE_CACHE_SIZE];
+	uint8_t connectable_cache_idx;
+	uint8_t connectable_cache_count;
+
 #if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
 	/* Scan Connection attempts filter. */
 	struct conn_attempts_filter attempts_filter;
@@ -1491,6 +1501,27 @@ static void filter_state_check(struct bt_scan_control *control,
 	}
 }
 
+
+static void connectable_cache_add(const bt_addr_le_t *addr)
+{
+	bt_addr_le_copy(&bt_scan.connectable_cache[bt_scan.connectable_cache_idx], addr);
+	bt_scan.connectable_cache_idx =
+		(bt_scan.connectable_cache_idx + 1) % CONFIG_BT_SCAN_CONNECTABLE_CACHE_SIZE;
+	if (bt_scan.connectable_cache_count < CONFIG_BT_SCAN_CONNECTABLE_CACHE_SIZE) {
+		bt_scan.connectable_cache_count++;
+	}
+}
+
+static bool connectable_cache_contains(const bt_addr_le_t *addr)
+{
+	for (size_t i = 0; i < bt_scan.connectable_cache_count; i++) {
+		if (bt_addr_le_cmp(&bt_scan.connectable_cache[i], addr) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
 static void scan_recv(const struct bt_le_scan_recv_info *info,
 		      struct net_buf_simple *ad)
 {
@@ -1503,9 +1534,19 @@ static void scan_recv(const struct bt_le_scan_recv_info *info,
 
 	check_enabled_filters(&scan_control);
 
-	/* Check id device is connectable. */
-	scan_control.connectable =
-		(info->adv_props & BT_GAP_ADV_PROP_CONNECTABLE) != 0;
+	/* Check if device is connectable. */
+	scan_control.connectable = (info->adv_props & BT_GAP_ADV_PROP_CONNECTABLE) != 0;
+
+	/* Legacy advertising scan responses do not have the connectable bit
+	 * set, so for them also check if the corresponding advertising packet
+	 * was connectable.
+	 */
+	if (info->adv_props & BT_GAP_ADV_PROP_SCAN_RESPONSE) {
+		scan_control.connectable =
+			scan_control.connectable || connectable_cache_contains(info->addr);
+	} else if (scan_control.connectable) {
+		connectable_cache_add(info->addr);
+	}
 
 	/* Check the address filter. */
 	check_addr(&scan_control, info->addr);

@@ -154,6 +154,16 @@ config BT_SCAN_BLOCKLIST_LEN
 
 endif # BT_SCAN_BLOCKLIST
 
+config BT_SCAN_CONNECTABLE_CACHE_SIZE
+	int "Connectable advertiser cache size"
+	default 8
+	help
+	  Number of connectable advertiser addresses to cache.
+	  Scan response PDUs do not carry the connectable bit, so the last
+	  few addresses from connectable advertising packets must be cached in
+	  order to determine whether a scan response is a continuation of
+	  connectable advertising or not.
+
 module = BT_SCAN
 module-str = scan library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
