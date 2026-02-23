@@ -440,6 +440,30 @@ psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t 
 	return set_lengths(operation, ad_length, plaintext_length);
 }
 
+static bool buffer_small_input(cracen_aead_operation_t *operation, const uint8_t **input,
+			       size_t *input_length, size_t *output_length_ptr)
+{
+	size_t block_size = get_block_size(operation->alg);
+	size_t remaining_bytes = block_size - operation->unprocessed_input_bytes;
+
+	if (*input_length <= remaining_bytes) {
+		memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
+		       *input, *input_length);
+		operation->unprocessed_input_bytes += *input_length;
+		if (output_length_ptr != NULL) {
+			*output_length_ptr = 0;
+		}
+		return true; /* Buffering complete, caller should return */
+	}
+
+	memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes, *input,
+	       remaining_bytes);
+	*input += remaining_bytes;
+	*input_length -= remaining_bytes;
+	operation->unprocessed_input_bytes += remaining_bytes;
+	return false; /* Partial block buffered, continue processing */
+}
+
 static __maybe_unused psa_status_t cracen_aead_update_internal(
 	cracen_aead_operation_t *operation, const uint8_t *input, size_t input_length,
 	uint8_t *output, size_t output_size, size_t *output_length, bool is_ad_update)
@@ -453,26 +477,9 @@ static __maybe_unused psa_status_t cracen_aead_update_internal(
 	}
 
 	if (operation->unprocessed_input_bytes || input_length < get_block_size(operation->alg)) {
-		uint8_t remaining_bytes =
-			get_block_size(operation->alg) - operation->unprocessed_input_bytes;
-		if (input_length <= remaining_bytes) {
-			memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
-			       input, input_length);
-			operation->unprocessed_input_bytes += input_length;
-			/* The output_length can be NULL when we process the additional data because
-			 * the value is not needed by any of the supported algorithms.
-			 */
-			if (output_length != NULL) {
-				*output_length = 0;
-			}
+		if (buffer_small_input(operation, &input, &input_length, output_length)) {
 			return PSA_SUCCESS;
 		}
-
-		memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes, input,
-		       remaining_bytes);
-		input += remaining_bytes;
-		input_length -= remaining_bytes;
-		operation->unprocessed_input_bytes += remaining_bytes;
 	}
 
 	if (operation->unprocessed_input_bytes == get_block_size(operation->alg)) {
