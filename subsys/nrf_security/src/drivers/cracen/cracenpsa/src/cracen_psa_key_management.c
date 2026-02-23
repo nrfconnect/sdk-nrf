@@ -315,7 +315,7 @@ psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t
 #else
 		return PSA_ERROR_DOES_NOT_EXIST;
 #endif
-	};
+	}
 
 	*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(CRACEN_KEY_PERSISTENCE_READ_ONLY,
 								   PSA_KEY_LOCATION_CRACEN);
