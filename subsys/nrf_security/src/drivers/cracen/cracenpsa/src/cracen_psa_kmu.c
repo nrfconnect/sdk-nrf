@@ -749,6 +749,8 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 	case METADATA_ALG_KEY_BITS_384:
 		psa_set_key_bits(key_attr, 384);
 		break;
+	default:
+		return PSA_ERROR_DATA_INVALID;
 	}
 
 	switch (metadata->key_usage_scheme) {
