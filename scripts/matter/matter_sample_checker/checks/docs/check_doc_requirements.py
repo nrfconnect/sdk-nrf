@@ -231,7 +231,9 @@ class CheckDocRequirementsTestCase(MatterSampleTestCase):
         Enhanced validation of diagnostic logs - reads DTS overlays and compares retention
         partitions.
         """
-        diag_logs_path = self.config.nrf_path / "snippets" / "matter-diagnostic-logs" / "boards"
+        diag_logs_path = (
+            self.config.nrf_path / "snippets" / "matter" / "matter-diagnostic-logs" / "boards"
+        )
 
         if not diag_logs_path.exists():
             self.issue("Diagnostic logs snippet directory not found")

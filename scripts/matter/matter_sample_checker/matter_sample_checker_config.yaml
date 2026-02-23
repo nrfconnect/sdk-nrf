@@ -211,6 +211,9 @@ comment_style:
     - "build*"
     - "default_zap"
     - "**/default_zap/**"
+    - "**/schedules_zap/**"
+    - "**/onoff_plug_zap/**"
+    - "**/lit_icd_zap/**"
     - "snippets"
 
   # Required comment style (block_comment for /* */, line_comment for //)
