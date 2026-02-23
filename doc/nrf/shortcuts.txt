@@ -10,7 +10,7 @@
 
 .. |54H_nrfutil_device_ver| replace:: 2.15.2
 .. |54H_nrfutil_trace_ver| replace:: 4.4.0
-.. |ironside_se_ver| replace:: v23.1.2+21
+.. |ironside_se_ver| replace:: v23.3.0+26
 
 .. ### Config shortcuts
 
