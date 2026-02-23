@@ -6,7 +6,8 @@
 
 /dts-v1/;
 
-#include "nrf54ls05b_cpuapp_common.dtsi"
+#include <nordic/nrf54ls05b_cpuapp.dtsi>
+#include "nrf54ls05_a_b_cpuapp_common.dtsi"
 
 / {
 	compatible = "nordic,nrf54ls05dk_nrf54ls05b-cpuapp";

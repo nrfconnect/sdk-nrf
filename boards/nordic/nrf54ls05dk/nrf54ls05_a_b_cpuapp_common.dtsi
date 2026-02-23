@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nordic/nrf54ls05b_cpuapp.dtsi>
-#include "nrf54ls05dk_nrf54ls05b-common.dtsi"
+#include <nordic/nrf54ls05_a_b_cpuapp.dtsi>
+#include "nrf54ls05dk_common.dtsi"
 
 / {
 	chosen {
