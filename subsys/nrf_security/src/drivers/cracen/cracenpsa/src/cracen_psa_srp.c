@@ -460,10 +460,10 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	sx_get_const_op(&temp_3, &c_temp_3);
 	sx_status = sx_sync_mod_primitive_cmd(&req, NULL, cmd_mul, &modulo, &c_temp_1, &c_temp_3,
 					      &result);
-
+	status = silex_statuscodes_to_psa(sx_status);
 exit:
 	sx_pk_release_req(&req);
-	return silex_statuscodes_to_psa(sx_status);
+	return status;
 }
 
 /* S = (Av^u)^b mod N */
