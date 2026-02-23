@@ -48,10 +48,12 @@ config MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool
 
 config MPSL_FEM_API_AVAILABLE
-	bool
-	# Must be set to y for MPSL FEM protocol API to be available
+	bool "MPSL FEM protocol API"
 	depends on MPSL
 	default y
+	help
+	  Enable the MPSL FEM protocol API, even if no front-end module (FEM)
+	  is utilized.
 
 config MPSL_FEM
 	bool "Radio front-end module (FEM) support"
