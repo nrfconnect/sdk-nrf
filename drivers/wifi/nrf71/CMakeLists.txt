@@ -14,6 +14,13 @@ function(nrf71_wifi_setup_include_and_sources)
   set(os_agnostic_base ${ZEPHYR_NRF_WIFI_MODULE_DIR})
   set(fw_bins_base ${ZEPHYR_NRF_WIFI_MODULE_DIR}/zephyr/blobs/wifi_fw_bins)
 
+  if(CONFIG_NRF_WIFI_USE_KMU)
+    zephyr_library_include_directories(
+      ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/wifi_keys
+    )
+    zephyr_library_link_libraries(wifi_keys_driver)
+  endif()
+
   zephyr_library_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
