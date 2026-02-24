@@ -1,0 +1,4 @@
+config PARTITION_MANAGER
+	default n if !BOARD_IS_NON_SECURE
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
