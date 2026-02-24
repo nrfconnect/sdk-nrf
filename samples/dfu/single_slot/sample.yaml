@@ -30,3 +30,13 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+  sample.dfu.single_slot.usb:
+    tags:
+      - dfu_single_slot
+      - ci_samples_dfu
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - DFILE_SUFFIX=usb
