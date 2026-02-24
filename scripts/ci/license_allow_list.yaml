@@ -70,7 +70,9 @@ Apache-2.0: |
   ^nrf/drivers/flash/soc_flash_nrf_non_secure.c
   ^nrf/applications/nrf_audio/src/modules/audio_usb_init.c
 curl: "^nrf/ext/"
-MIT: "^nrf/ext/"
+MIT: |
+  "^nrf/ext/"
+  ^nrf/doc/_doxygen/doxygen-awesome.css
 BSD-3-CLAUSE: |
   ^nrf/ext/
   ^nrf/drivers/wifi/nrf71/
