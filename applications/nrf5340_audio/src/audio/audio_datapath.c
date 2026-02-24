@@ -90,8 +90,8 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define DRIFT_REGULATOR_DIV_FACTOR 2
 
 /* To allow BLE transmission and (host -> HCI -> controller) */
-#define JUST_IN_TIME_TARGET_DLY_US 3000
-#define JUST_IN_TIME_BOUND_US	   2500
+#define JUST_IN_TIME_TARGET_DLY_US 900
+#define JUST_IN_TIME_BOUND_US	   850
 
 /* How often to print under-run warning */
 #define LOG_INTERVAL_BLKS 5000
@@ -874,10 +874,9 @@ static void audio_datapath_i2s_stop(void)
 static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 							 uint32_t curr_ts_us)
 {
-	static int32_t print_count;
-	int64_t diff;
+	int32_t diff;
 
-	diff = (int64_t)tx_sync_ts_us - curr_ts_us;
+	diff = (int32_t)(tx_sync_ts_us - curr_ts_us);
 
 	/*
 	 * The diff should always be positive. If diff is a large negative number, it
@@ -885,27 +884,23 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	 * point to the application sending data too late, and we need to drop data to
 	 * get back in sync with the controller.
 	 */
-	if (diff < -((int64_t)UINT32_MAX / 2)) {
-		LOG_DBG("Timestamp wrap. diff: %lld", diff);
-		diff += UINT32_MAX;
+	// if (diff < -((int64_t)UINT32_MAX / 2)) {
+	//	LOG_INF("Timestamp wrap. diff: %lld", diff);
+	//	diff += UINT32_MAX;
+	//} else if (diff < 0) {
+	//	LOG_DBG("tx_sync_ts_us: %u is earlier than curr_ts_us %u", tx_sync_ts_us,
+	//		curr_ts_us);
+	//	}
 
-	} else if (diff < 0) {
-		LOG_DBG("tx_sync_ts_us: %u is earlier than curr_ts_us %u", tx_sync_ts_us,
-			curr_ts_us);
-	}
-
-	if (print_count % 100 == 0) {
-		LOG_DBG("JIT diff: %lld us. Target: %u +/- %u", diff, JUST_IN_TIME_TARGET_DLY_US,
-			JUST_IN_TIME_BOUND_US);
-	}
-	print_count++;
+	LOG_INF_RATELIMIT_RATE(1000, "JIT diff: %d us. st_sync: %u, curr_ts: %u, Target: %u +/- %u",
+			       diff, tx_sync_ts_us, curr_ts_us, JUST_IN_TIME_TARGET_DLY_US,
+			       JUST_IN_TIME_BOUND_US);
 
 	if ((diff < (JUST_IN_TIME_TARGET_DLY_US - JUST_IN_TIME_BOUND_US)) ||
 	    (diff > (JUST_IN_TIME_TARGET_DLY_US + JUST_IN_TIME_BOUND_US))) {
 		/* Drop next block to help with just-in-time */
 		atomic_set(&drop_next_block, true);
-		LOG_DBG("Dropped block to align with connection interval");
-		print_count = 0;
+		LOG_INF_RATELIMIT_RATE(1000, "Dropped block to align with connection interval");
 	}
 }
 

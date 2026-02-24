@@ -9,6 +9,7 @@
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/zbus/zbus.h>
+#include <stdlib.h>
 #include <../subsys/bluetooth/audio/bap_stream.h>
 #include <bluetooth/hci_vs_sdc.h>
 #include <audio_defines.h>
@@ -82,7 +83,7 @@ static struct tx_inf tx_info_arr[GROUP_MAX][SUBGROUP_MAX][STREAMS_MAX];
  * @return		0 if successful, error otherwise.
  */
 static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap_stream *cap_stream,
-			   struct tx_inf *tx_info, uint32_t ts_tx)
+			   struct tx_inf *tx_info, uint32_t ts_tx, bool send_ts_tx)
 {
 	int ret;
 	struct net_buf *buf;
@@ -122,10 +123,10 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 
 	atomic_inc(&tx_info->iso_tx_pool_alloc);
 
-	if (ts_tx == 0) {
-		ret = bt_cap_stream_send(cap_stream, buf, tx_info->iso_tx.seq_num);
-	} else {
+	if (send_ts_tx) {
 		ret = bt_cap_stream_send_ts(cap_stream, buf, tx_info->iso_tx.seq_num, ts_tx);
+	} else {
+		ret = bt_cap_stream_send(cap_stream, buf, tx_info->iso_tx.seq_num);
 	}
 
 	if (ret < 0) {
@@ -193,12 +194,14 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 {
 	int ret;
 	size_t data_size_pr_stream = 0;
+	static uint64_t send_counter;
+	send_counter++;
 
 	if (!initialized) {
 		return -EACCES;
 	}
 
-	if (tx == NULL) {
+	if (audio_frame == NULL || tx == NULL) {
 		return -EINVAL;
 	}
 
@@ -214,42 +217,37 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 
 	data_size_pr_stream = audio_frame->len / num_loc;
 
-	/* When sending ISO data, we always send ts = 0 to the first active transmitting channel.
-	 * The controller will populate with a ts which is fetched using bt_iso_chan_get_tx_sync.
-	 * This timestamp will be submitted to all the other channels in order to place data on all
-	 * channels in the same ISO interval.
+	/* When sending ISO data:
+	 * First send CH1(i=0) and CH2(i=0) with no timestamp.
+	 * After that, get_tx_sync_sdc is read out from the last channel sent.
+	 * If this Ts is != CH2(i-1)+SDUinterval then we know we have missed some deadline →
+	 * Print warning and sent the next CH0(i=1) and CH1(i=1) without any TS.
+	 * If the read TS is correct, then we use this timestamp for CH1(i+1) and CH2(i+1).
 	 */
 
-	uint32_t common_tx_sync_ts_us = 0;
-	uint32_t curr_ts_us = 0;
-	bool ts_common_acquired = false;
-	uint32_t common_interval = 0;
+	static uint32_t common_tx_sync_ts_us = 0;
+	static bool common_tx_sync_ts_aquired;
+	static uint32_t common_tx_sync_ts_us_last = 0;
+	static bool common_tx_sync_ts_aquired_last;
 
+	uint32_t common_tx_interval_us = 0;
+
+	/* Pre-check of all tx channels */
 	for (int i = 0; i < num_tx; i++) {
-		struct tx_inf *tx_info =
-			&tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
-
-		if (tx_info->iso_tx.seq_num == 0) {
-			/* Temporary fix until /zephyr/pull/68745/ is available
-			 */
-#if defined(CONFIG_BT_BAP_DEBUG_STREAM_SEQ_NUM)
-			tx[i].cap_stream->bap_stream._prev_seq_num = 0;
-#endif /* CONFIG_BT_BAP_DEBUG_STREAM_SEQ_NUM */
-		}
-
-		if (!le_audio_ep_state_check(tx[i].cap_stream->bap_stream.ep,
-					     BT_BAP_EP_STATE_STREAMING)) {
-			/* This bap_stream is not streaming*/
-			continue;
-		}
-
-		if (tx[i].audio_location > num_loc) {
-			LOG_WRN("Unsupported audio_location: %d", tx[i].audio_location);
-			continue;
-		}
-
 		uint32_t bitrate;
 		int dur_us;
+
+		if (unlikely(!le_audio_ep_state_check(tx[i].cap_stream->bap_stream.ep,
+						      BT_BAP_EP_STATE_STREAMING))) {
+			/* This bap_stream is not streaming*/
+			/* TODO: Hard stop now, but could continue? */
+			return -EACCES;
+		}
+
+		if (unlikely(tx[i].audio_location > num_loc)) {
+			LOG_ERR("Unsupported audio_location: %d", tx[i].audio_location);
+			return -EINVAL;
+		}
 
 		ret = le_audio_bitrate_get(tx[i].cap_stream->bap_stream.codec_cfg, &bitrate);
 		if (ret) {
@@ -263,85 +261,175 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			return ret;
 		}
 
-		if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us)) {
+		if unlikely ((data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us))) {
 			LOG_ERR("The encoded data size (%zu) does not match the SDU size (%d)",
 				data_size_pr_stream, LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us));
 			return -EINVAL;
 		}
 
-		if (common_interval != 0 &&
-		    (common_interval != tx[i].cap_stream->bap_stream.qos->interval)) {
+		if unlikely ((common_tx_interval_us != 0) &&
+			     (common_tx_interval_us !=
+			      tx[i].cap_stream->bap_stream.qos->interval)) {
 			LOG_ERR("Not all channels have the same ISO interval");
 			return -EINVAL;
 		}
-		common_interval = tx[i].cap_stream->bap_stream.qos->interval;
+
+		common_tx_interval_us = tx[i].cap_stream->bap_stream.qos->interval;
+	}
+
+	/* Check that the new timestamp is an interval larger than the previous one */
+	if (common_tx_sync_ts_aquired) {
+		if (common_tx_sync_ts_us == 0) {
+			LOG_WRN("common_tx_sync_ts_us is 0, highly unlikely if "
+				"common_tx_sync_ts_aquired "
+				"is true");
+		}
+
+		/* Increase the TS by an interval */
+		common_tx_sync_ts_us += common_tx_interval_us;
+	}
+
+	struct tx_inf *tx_info = NULL;
+
+	for (int i = 0; i < num_tx; i++) {
+		tx_info = &tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
+
+		if (send_counter % 1000 == 0) {
+			//LOG_WRN("TEst. not sending data to controller");
+			//continue;
+		}
 
 		/* Check if same audio is sent to all locations */
 		if (num_loc == 1) {
 			ret = iso_stream_send(audio_frame->data, data_size_pr_stream,
-					      tx[i].cap_stream, tx_info, common_tx_sync_ts_us);
+					      tx[i].cap_stream, tx_info, common_tx_sync_ts_us,
+					      common_tx_sync_ts_aquired);
 		} else {
 			ret = iso_stream_send(audio_frame->data +
 						      (tx[i].audio_location * data_size_pr_stream),
 					      data_size_pr_stream, tx[i].cap_stream, tx_info,
-					      common_tx_sync_ts_us);
+					      common_tx_sync_ts_us, common_tx_sync_ts_aquired);
 		}
 
 		if (ret) {
-			/* DBG used here as prints are handled within iso_stream_send */
-			LOG_DBG("Failed to send to idx: %d stream: %p, ret: %d ", i,
+			LOG_WRN("Failed to send to idx: %d stream: %p, ret: %d ", i,
 				(void *)&tx[i].cap_stream->bap_stream, ret);
 			continue;
 		}
-
-		ret = iso_conn_handle_set(&tx[i].cap_stream->bap_stream, &tx_info->iso_conn_handle);
-		if (ret) {
-			continue;
-		}
-
-		/* Strictly, it is only required to call get_tx_sync_sdc on the first streaming
-		 * location to get the timestamp which is sent to all other locations.
-		 * However, to be able to detect errors, this is called on each TX.
-		 */
-		ret = get_tx_sync_sdc(tx_info->iso_conn_handle, &tx_info->iso_tx_readback);
-		if (ret) {
-			if (ret != -ENOTCONN) {
-				LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
-					(void *)&tx[i].cap_stream->bap_stream);
-			}
-			continue;
-		}
-
-		if (!ts_common_acquired) {
-			curr_ts_us = audio_sync_timer_capture();
-			common_tx_sync_ts_us = tx_info->iso_tx_readback.ts;
-			ts_common_acquired = true;
-		} else {
-			/* Check that the timestamp is the same on all channels, if not, it likely
-			 * means that the application is sending data too late, hence,
-			 * the controller cannot place the data in the same interval which
-			 * can cause synchronization issues.
-			 */
-			if (tx_info->iso_tx_readback.ts != common_tx_sync_ts_us) {
-				LOG_WRN("Not all channels have the same timestamp, expected: %u, "
-					"actual: %u",
-					common_tx_sync_ts_us, tx_info->iso_tx_readback.ts);
-			}
-		}
 	}
 
-	if (ts_common_acquired) {
-		struct sdu_ref_msg msg;
+	struct sdu_ref_msg msg;
+	/* All data is sent to controller. Get current timestamp */
+	static uint32_t time_now_us_last;
+	static uint32_t time_now_us;
+	time_now_us_last = time_now_us;
+	time_now_us = audio_sync_timer_capture();
+	msg.curr_ts_us = time_now_us;
 
-		msg.tx_sync_ts_us = common_tx_sync_ts_us;
-		msg.curr_ts_us = curr_ts_us;
-		msg.adjust = true;
-
-		ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
-		if (ret) {
-			LOG_WRN("Failed to publish timestamp: %d", ret);
-		}
+	/* Get the timestamp for the last sent stream */
+	ret = iso_conn_handle_set(&tx[num_tx - 1].cap_stream->bap_stream,
+				  &tx_info->iso_conn_handle);
+	if (ret) {
+		LOG_ERR("Failed to set iso_conn_handle: %d", ret);
+		return ret;
 	}
+
+	ret = get_tx_sync_sdc(tx_info->iso_conn_handle, &tx_info->iso_tx_readback);
+	if (ret) {
+
+		LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
+			(void *)&tx[num_tx - 1].cap_stream->bap_stream);
+		return ret;
+	}
+
+	common_tx_sync_ts_aquired_last = common_tx_sync_ts_aquired;
+	common_tx_sync_ts_aquired = true;
+	common_tx_sync_ts_us_last = common_tx_sync_ts_us;
+	common_tx_sync_ts_us = tx_info->iso_tx_readback.ts;
+
+	msg.tx_sync_ts_us = common_tx_sync_ts_us;
+
+	//-------- stats printing --------
+	static uint64_t curr_ts_sum;
+	static uint64_t ts_common_sum;
+	static uint64_t deltas_sum;
+	static uint32_t print_count;
+	static uint64_t time_now_sum;
+
+	time_now_sum += time_now_us - time_now_us_last;
+
+	curr_ts_sum += time_now_us;
+	ts_common_sum += msg.tx_sync_ts_us;
+	deltas_sum += (common_tx_sync_ts_us - time_now_us);
+
+#define ARRAY_LEN 20
+
+	static uint32_t idx;
+	static uint32_t time_now_array[ARRAY_LEN];
+	static uint32_t common_tx_sync_ts_us_array[ARRAY_LEN];
+
+	if (idx < ARRAY_LEN) {
+		time_now_array[idx] = time_now_us;
+		common_tx_sync_ts_us_array[idx] = common_tx_sync_ts_us;
+	}
+	idx++;
+
+#define PRINT_INTERVAL 1000
+
+	if (print_count % PRINT_INTERVAL == 0) {
+		LOG_INF("Avg curr_ts_us: %llu, avg common_tx_sync_ts_us: %llu, avg delta: %llu",
+			curr_ts_sum / print_count, ts_common_sum / print_count,
+			deltas_sum / print_count);
+
+		LOG_WRN("Read back tx sync timestamp: %u curr_ts %u delta: %d us",
+			common_tx_sync_ts_us, msg.curr_ts_us,
+			(common_tx_sync_ts_us - msg.curr_ts_us));
+
+		for (int i = 1; i < ARRAY_LEN; i++) {
+			LOG_INF("Time now: %u: %u diff: %d", i, time_now_array[i],
+				time_now_array[i] - time_now_array[i - 1]);
+		}
+
+		LOG_INF("time_now sum %llu avg %llu us", time_now_sum, time_now_sum / print_count);
+
+		for (int i = 1; i < ARRAY_LEN; i++) {
+			LOG_INF("Cmn tx sync: %u: %u", i, common_tx_sync_ts_us_array[i]);
+		}
+
+		curr_ts_sum = 0;
+		ts_common_sum = 0;
+		deltas_sum = 0;
+		print_count = 0;
+		idx = 0;
+		time_now_sum = 0;
+	}
+
+	print_count++;
+
+	msg.adjust = true;
+	ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
+	if (ret) {
+		LOG_WRN("Failed to publish timestamp: %d", ret);
+	}
+
+	/* At this point, the common_tx_sync_ts_us_last is incremented by the interval and the
+	new TS from the controller is in common_tx_sync_ts_us */
+	int32_t delta_ts = (int32_t)(common_tx_sync_ts_us - common_tx_sync_ts_us_last);
+
+	if ((abs(delta_ts) > 10) && common_tx_sync_ts_aquired_last && common_tx_sync_ts_aquired) {
+		LOG_WRN("Unexpected tx sync timestamp delta: %u us, expected around: %u us. Delta: "
+			"%d us",
+			common_tx_sync_ts_us, common_tx_sync_ts_us_last, delta_ts);
+		/* Will reset the ts to send zero on next interval to re-sync*/
+		common_tx_sync_ts_us = 0;
+		common_tx_sync_ts_us_last = 0;
+		common_tx_sync_ts_aquired = false;
+		common_tx_sync_ts_aquired_last = false;
+	}
+
+	LOG_INF_RATELIMIT_RATE(
+		5000, "Audio data sent to %d channels, timestamp: %u us, last timestamp: %u us",
+		num_tx, common_tx_sync_ts_us, common_tx_sync_ts_us_last);
 
 	return 0;
 }
