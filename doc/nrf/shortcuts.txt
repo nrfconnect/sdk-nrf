@@ -2,13 +2,13 @@
 
 .. ### Versions
 
-.. |release| replace:: v3.2.0
-.. |release_tt| replace:: ``v3.2.0``
-.. |release_number_tt| replace:: ``3.2.0``
+.. |release| replace:: v3.3.0-preview2
+.. |release_tt| replace:: ``v3.3.0-preview2``
+.. |release_number_tt| replace:: ``3.3.0-preview2``
 
 .. |jlink_ver| replace:: v9.18
 
-.. |54H_nrfutil_device_ver| replace:: 2.15.2
+.. |54H_nrfutil_device_ver| replace:: 2.17.2
 .. |54H_nrfutil_trace_ver| replace:: 4.4.0
 .. |ironside_se_ver| replace:: v23.3.0+26
 
