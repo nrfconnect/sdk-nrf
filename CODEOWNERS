@@ -790,6 +790,8 @@
 /subsys/audio/audio_module_template/      @nrfconnect/ncs-audio
 /subsys/audio_module/                     @nrfconnect/ncs-audio
 /subsys/bluetooth/                        @nrfconnect/ncs-dragoon
+/subsys/bluetooth/gatt_dm.c               @nrfconnect/ncs-blenders @nrfconnect/ncs-si-muffin
+/subsys/bluetooth/scan.c                  @nrfconnect/ncs-blenders @nrfconnect/ncs-si-muffin
 /subsys/bluetooth/adv_prov/               @nrfconnect/ncs-si-bluebagel
 /subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/cs_de/                  @nrfconnect/ncs-dragoon
