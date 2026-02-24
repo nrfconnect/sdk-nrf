@@ -160,7 +160,8 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 	}
 
 	if (PSA_KEY_TYPE_IS_RSA(key_type) &&
-	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_IMPORT)) {
+	    (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_IMPORT) ||
+	     IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_PUBLIC_KEY))) {
 		return import_rsa_key(attributes, data, data_length, key_buffer, key_buffer_size,
 				      key_buffer_length, key_bits);
 	}
