@@ -8,6 +8,11 @@ config SUPPORT_FIRMWARE_LOADER_BLE_MCUMGR
 	bool
 	default y
 
+config SUPPORT_FIRMWARE_LOADER_USB_MCUMGR
+	bool
+	depends on SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP
+	default y
+
 choice FIRMWARE_LOADER
 
 config FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
@@ -17,10 +22,19 @@ config FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
 	  Include the minified firmware loader ``ble_mcumgr`` sample as the firmware loader image
 	  to use.
 
+config FIRMWARE_LOADER_IMAGE_USB_MCUMGR
+	bool "usb_mcumgr"
+	depends on SUPPORT_FIRMWARE_LOADER_USB_MCUMGR
+	help
+	  Include the minified firmware loader ``usb_mcumgr`` sample as the firmware loader image
+	  to use.
+
 endchoice
 
 config FIRMWARE_LOADER_IMAGE_NAME
 	default "ble_mcumgr" if FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
+	default "usb_mcumgr" if FIRMWARE_LOADER_IMAGE_USB_MCUMGR
 
 config FIRMWARE_LOADER_IMAGE_PATH
 	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/dfu/fw_loader/ble_mcumgr" if FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/dfu/fw_loader/usb_mcumgr" if FIRMWARE_LOADER_IMAGE_USB_MCUMGR
