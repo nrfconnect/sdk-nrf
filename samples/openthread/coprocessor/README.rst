@@ -128,12 +128,12 @@ Currently, HCI is only supported using the nRF USB interface.
 The device will show two virtual UART ports.
 Usually the first port will be associated with the HCI interface, and the second one with the Thread co-processor.
 
-To enable HCI support, use the following command with *board_target* replaced with the board target name:
+To enable HCI support, run the following command with *board_target* replaced with the board target name:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=overlays/rcp_hci.conf -DEXTRA_DTC_OVERLAY_FILE=overlays/rcp_hci.overlay
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/rcp_hci.conf -DEXTRA_DTC_OVERLAY_FILE=extra_conf/rcp_hci.overlay
 
 Vendor hooks
 ============

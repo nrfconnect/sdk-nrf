@@ -303,7 +303,7 @@ The controller obtains the logs from the connected Matter devices according to t
 To use the diagnostic logs module, add the ``Diagnostic Logs`` cluster as ``server`` in the ZAP configuration.
 To learn how to add a new cluster to the ZAP configuration, see the :ref:`ug_matter_gs_adding_cluster` page.
 
-To enable diagnostic log support, you must use the :ref:`diagnostic logs snippet <ug_matter_diagnostic_logs_snippet>`, which contains required devicetree overlays.
+To enable diagnostic log support, you must use the :ref:`diagnostic logs snippet <snippet_matter_diagnostic_logs>` that contains the required devicetree overlays.
 
 Currently, the following intents are defined within the ``IntentEnum`` enumerator in the Matter stack:
 
@@ -316,7 +316,7 @@ Crash logs
 
 The crash logs module is a part of the diagnostic log module and contains the data of the most recent device crash.
 When a crash occurs, the device saves the crash data to the defined retained RAM partition.
-Because it uses the retained RAM partition, the :ref:`ug_matter_diagnostic_logs_snippet` must be added to the build to enable crash log support.
+Because it uses the retained RAM partition, you must add the :ref:`snippet_matter_diagnostic_logs` to the build to enable crash log support.
 
 Only the latest crash data will be stored in the device's memory, meaning that if another crash occurs, the previous data will be overwritten.
 After receiving the read request from the Matter controller, the device reads the crash data and creates human readable logs at runtime.
@@ -350,78 +350,6 @@ You can then push the network or end-user logs using dedicated API in your appli
 
    Nrf::Matter::DiagnosticLogProvider::GetInstance().PushLog(chip::app::Clusters::DiagnosticLogs::IntentEnum::kNetworkDiag, "Example network log", sizeof("Example network log"));
    Nrf::Matter::DiagnosticLogProvider::GetInstance().PushLog(chip::app::Clusters::DiagnosticLogs::IntentEnum::kEndUserSupport, "Example end user log", sizeof("Example end user log"));
-
-.. _ug_matter_diagnostic_logs_snippet:
-
-Diagnostic logs snippet
------------------------
-
-The diagnostic logs snippet enables the set of configurations needed for full Matter diagnostic logs support.
-The configuration set consist of devicetree overlays for each supported target board, and a config file that enables all diagnostic logs features by default.
-The devicetree overlays add new RAM partitions which are configured as retained to keep the log data persistent and survive the device reboot.
-They also reduce the SRAM size according to the size of the retained partition.
-The partition sizes are configured using example values and may not be sufficient for all use cases.
-To change the partition sizes, you need to change the configuration in the devicetree overlay.
-You can, for example, increase the partition sizes to be able to store more logs.
-
-The snippet sets the following Kconfig options:
-
-  * :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` to ``y``.
-  * :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS` to ``y``.
-  * :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ` to ``y``.
-  * :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS` to ``y``.
-  * :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS` to ``y``.
-  * :kconfig:option:`CONFIG_LOG_MODE_DEFERRED` to ``y``.
-  * :kconfig:option:`CONFIG_LOG_RUNTIME_FILTERING` to ``n``.
-
-Deferred logs mode (:kconfig:option:`CONFIG_LOG_MODE_DEFERRED`) is enabled because it is required by the log redirection functionality (:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REDIRECT`), which is enabled by default for diagnostic network and end-user logs.
-
-.. note::
-
-  You cannot set the :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` Kconfig option separately without adding the devicetree overlays contained in the snippet.
-  Instead, if you want to use just some of the diagnostic logs functionality, use the snippet and set the Kconfig options for the other functionalities to ``n``.
-
-To use the snippet when building a sample, add ``-D<project_name>_SNIPPET=diagnostic-logs`` to the west arguments list.
-
-Example for the ``nrf52840dk/nrf52840`` board target and the :ref:`matter_lock_sample` sample:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=diagnostic-logs
-
-.. _ug_matter_debug_snippet:
-
-Debug snippet
-=============
-
-The Matter debug snippet allows you to enable additional debug features while using Matter samples.
-
-The following features are enabled when using this snippet:
-
-  * UART speed is increased to 1 Mbit/s.
-  * Log buffer size is set to high value to allow showing all logs.
-  * Deferred mode of logging.
-  * Increased verbosity of Matter logs.
-  * OpenThread is built from sources.
-  * OpenThread shell is enabled.
-  * OpenThread logging level is set to INFO.
-  * Full shell functionalities.
-  * Logging source code location on VerifyOrDie failure that occurs in the Matter stack.
-
-To use the snippet when building a sample, add ``-D<project_name>_SNIPPET=matter-debug`` to the west arguments list.
-
-For example, for the ``nrf52840dk/nrf52840`` board target and the :ref:`matter_lock_sample` sample, use the following command:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=matter-debug
-
-.. note::
-
-  You can increase the UART speed using this snippet only for Nordic Development Kits.
-  If you want to use the snippet for your custom board, you need to adjust the UART speed manually.
 
 .. _ug_matter_networking_selection:
 

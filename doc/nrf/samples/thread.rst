@@ -17,3 +17,4 @@ This section lists the available |NCS| samples for the :ref:`ug_thread` protocol
    :glob:
 
    ../../../samples/openthread/*/README
+   openthread/openthread_snippets
