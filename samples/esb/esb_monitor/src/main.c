@@ -18,12 +18,15 @@
 #if defined(CONFIG_CLOCK_CONTROL_NRF2)
 #include <hal/nrf_lrcconf.h>
 #endif
-#if NRF54L_ERRATA_20_PRESENT
+/* TODO: NCSDK-37840 - Remove the NRF54LS05B_XXAA checks once the target is added to nrfx errata
+ * checks.
+ */
+#if NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA)
 #include <hal/nrf_power.h>
-#endif /* NRF54L_ERRATA_20_PRESENT */
-#if defined(NRF54LM20A_XXAA)
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA) */
+#if NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA)
 #include <hal/nrf_clock.h>
-#endif /* defined(NRF54LM20A_XXAA) */
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA) */
 #if defined(CONFIG_ESB_SNIFFER)
 #include <zephyr/sys/byteorder.h>
 #include <SEGGER_RTT.h>
@@ -143,16 +146,29 @@ int clocks_start(void)
 		}
 	} while (err);
 
-#if NRF54L_ERRATA_20_PRESENT
-	if (nrf54l_errata_20()) {
+#if NRF_ERRATA_STATIC_CHECK(54L, 20)
+	/* MLTPAN-20 */
+	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 20)) {
 		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
 	}
-#endif /* NRF54L_ERRATA_20_PRESENT */
+/* TODO: NCSDK-37840 - Remove this check once the NRF54LS05B_XXAA target is added to nrfx errata
+ * checks.
+ */
+#elif defined(NRF54LS05B_XXAA)
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) */
 
-#if defined(NRF54LM20A_XXAA)
+#if (NRF_ERRATA_STATIC_CHECK(54L, 39))
 	/* MLTPAN-39 */
+	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 39)) {
+		nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+	}
+/* TODO: NCSDK-37840 - Remove this check once the NRF54LS05B_XXAA target is added to nrfx errata
+ * checks.
+ */
+#elif defined(NRF54LS05B_XXAA)
 	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-#endif
+#endif /* (NRF_ERRATA_STATIC_CHECK(54L, 39)) */
 
 	LOG_DBG("HF clock started");
 	return 0;

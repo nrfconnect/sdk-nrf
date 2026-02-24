@@ -457,6 +457,7 @@ Enhanced ShockBurst samples
 
   * The :ref:`esb_prx_ble` sample that demonstrates how to use the ESB protocol in PRX mode concurrently with the Bluetooth LE LBS service.
   * The :ref:`esb_ptx_ble` sample that demonstrates how to use the ESB protocol in PTX mode concurrently with the Bluetooth LE LBS service.
+  * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target in all ESB samples.
 
 Gazell samples
 --------------
