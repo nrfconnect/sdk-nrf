@@ -279,6 +279,12 @@
     - nrf9160dk@0.14.0/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37574"
 
+- scenarios:
+    - drivers.i2c.ram.rtio
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37791"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
