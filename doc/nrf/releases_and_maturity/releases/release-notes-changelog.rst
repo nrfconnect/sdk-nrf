@@ -1,16 +1,13 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.2.99
-###########################
+Changelog for |NCS| v3.3.0-preview2
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -33,7 +30,7 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-* Updated the required `SEGGER J-Link`_ version to v9.18.
+* Updated the nRF Util device command version to v2.17.2 and required `SEGGER J-Link`_ version to v9.18.
 
 Board support
 =============
@@ -48,10 +45,8 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-* Updated:
-
-  * Moved the MCUboot SMP Server sample to :file:`samples/dfu/smp_svr`.
-    Added documentation for the sample.
+* Updated the :ref:`nrf_smp_svr_sample` sample to move to :file:`samples/dfu/smp_svr`.
+  Added documentation for the sample.
 
 Developing with nRF91 Series
 ============================
@@ -66,7 +61,10 @@ Developing with nRF70 Series
 Developing with nRF54L Series
 =============================
 
-|no_changes_yet_note|
+* Added:
+
+  * Experimental support for nRF54LS05B.
+  * Experimental support for nRF54LM20B.
 
 Developing with nRF54H Series
 =============================
@@ -292,12 +290,12 @@ nRF5340 Audio
 
   * Improved error handling with ``unlikely()`` macros for better branch prediction in performance-critical paths.
 
-  * Removed the Bluetooth controller watchdog from the application.
-    The watchdog was not providing value and the removal allows for easier porting to other platforms that do not have a multi-core architecture.
-
   * Separated the audio clock configuration into a dedicated module.
     This allows for better organization and potential reuse of the audio clock configuration code between different SoCs that might not have the high-frequency audio clock (HFCLKAUDIO) feature.
     The new module provides an initialization function for setting up the audio clock and a function for configuring the audio clock frequency.
+
+* Removed the Bluetooth controller watchdog from the application.
+  The watchdog was not providing value and the removal allows for easier porting to other platforms that do not have a multi-core architecture.
 
 nRF Desktop
 -----------
@@ -440,9 +438,9 @@ DECT NR+ samples
 
   * Updated:
 
-      * The ``dect rf_tool`` command - Major updates to improve usage for RX and TX testing.
-      * Scheduler - Dynamic flow control based on load tier to prevent modem out-of-memory errors.
-      * Settings - Continuous Wave (CW) support and possibility to disable Synchronization Training Field (STF) on TX and RX.
+    * The ``dect rf_tool`` command - Major updates to improve usage for RX and TX testing.
+    * Scheduler - Dynamic flow control based on load tier to prevent modem out-of-memory errors.
+    * Settings - Continuous Wave (CW) support and possibility to disable Synchronization Training Field (STF) on TX and RX.
 
 Edge Impulse samples
 --------------------
@@ -719,9 +717,7 @@ Libraries for networking
 * :ref:`lib_nrf_cloud_pgps` library:
 
   * Updated the range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
-
   * Fixed an issue where preemptive updates were not always performed when expected.
-
   * Removed the ``CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD`` Kconfig choice and related options (``CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD_120_MIN`` and ``CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD_240_MIN``).
 
 Libraries for NFC
@@ -766,7 +762,10 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* Added the :ref:`matter_sample_checker` script to check the consistency of Matter samples in the |NCS|.
+* Added:
+
+  * The :ref:`matter_sample_checker` script to check the consistency of Matter samples in the |NCS|.
+  * The :ref:`bt_nus_shell_script` that forwards data between TCP clients and a Bluetooth LE device using the Nordic UART Service.
 
 * :ref:`west_sbom` script:
 
@@ -873,5 +872,5 @@ Documentation
 =============
 
 * Added a section in :ref:`ug_nrf54h20_pm_optimization` about optimizing power on the nRF54H20 SoC by relocating the radio core firmware to TCM.
-* Removed references to JITP in different areas of the documentation.
 * Updated the :ref:`emds_readme` library documentation to use static device tree partitions instead of the Partition Manager.
+* Removed references to JITP in different areas of the documentation.
