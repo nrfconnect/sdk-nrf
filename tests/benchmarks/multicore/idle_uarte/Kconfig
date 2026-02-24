@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_BAUDRATE_REGISTER_RETENTION
+	bool "UARTE baudrate register retention test"
+
+source "Kconfig.zephyr"

@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/drivers/uart.h>
+#include <nrfx_uarte.h>
 #include <zephyr/pm/device.h>
 #include <zephyr/pm/device_runtime.h>
 #include <zephyr/kernel.h>
@@ -16,13 +17,16 @@
  */
 LOG_MODULE_REGISTER(idle_uarte);
 
+#define UARTE_GET_BAUDRATE(f_pclk, baudrate) ((BIT(20) / (f_pclk / baudrate)) << 12)
+
 #if DT_NODE_EXISTS(DT_NODELABEL(dut))
 #define UART_NODE DT_NODELABEL(dut)
 #else
 #error Improper device tree configuration, UARTE test node not available
 #endif
 
-#define TEST_BUFFER_LEN 512
+#define TEST_BUFFER_LEN		 512
+#define BAUDRATE_REG_VAL_ABS_TOL 2
 
 static K_SEM_DEFINE(uart_rx_ready_sem, 0, 1);
 static K_SEM_DEFINE(uart_tx_done_sem, 0, 1);
@@ -30,6 +34,7 @@ static K_SEM_DEFINE(uart_tx_done_sem, 0, 1);
 static const struct device *const uart_dev = DEVICE_DT_GET(UART_NODE);
 static const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
+NRF_UARTE_Type *uarte_reg = (NRF_UARTE_Type *)DT_REG_ADDR(UART_NODE);
 
 uint8_t test_pattern[TEST_BUFFER_LEN];
 static uint8_t test_buffer[TEST_BUFFER_LEN];
@@ -47,28 +52,21 @@ K_TIMER_DEFINE(timer, timer_handler, NULL);
  */
 static void async_uart_callback(const struct device *dev, struct uart_event *evt, void *user_data)
 {
-	printk("Callback !\n");
 	switch (evt->type) {
 	case UART_TX_DONE:
-		printk("UART_TX_DONE\n");
 		break;
 	case UART_TX_ABORTED:
-		printk("UART_TX_ABORTED\n");
 		printk("Callback should not enter here\n");
 		__ASSERT_NO_MSG(1 == 0);
 		break;
 	case UART_RX_RDY:
-		printk("UART_RX_RDY\n");
 		k_sem_give(&uart_rx_ready_sem);
 		break;
 	case UART_RX_BUF_RELEASED:
-		printk("UART_RX_BUF_RELEASED\n");
 		break;
 	case UART_RX_BUF_REQUEST:
-		printk("UART_RX_BUF_REQUEST\n");
 		break;
 	case UART_RX_DISABLED:
-		printk("UART_RX_DISABLED\n");
 		break;
 	default:
 		break;
@@ -91,6 +89,32 @@ void set_test_pattern(void)
 		test_pattern[counter] = (uint8_t)(counter & 0xFF);
 	}
 }
+
+#if defined(CONFIG_TEST_BAUDRATE_REGISTER_RETENTION)
+static void verify_uart_baudrate_register_retention(uint32_t baudrate)
+{
+	uint32_t baudrate_setting_from_reg, baudrate_setting_from_config;
+	const uint32_t pclk_frequency = NRF_PERIPH_GET_FREQUENCY(UART_NODE);
+
+	printk("UART PCLK frequency: %u\n", pclk_frequency);
+
+	if (pclk_frequency > 16000000) {
+		baudrate_setting_from_config = UARTE_GET_BAUDRATE(pclk_frequency, baudrate);
+		baudrate_setting_from_reg = uarte_reg->BAUDRATE;
+
+		printk("BAUDRATE register value read: %u\n", baudrate_setting_from_reg);
+		printk("BAUDRATE register setting from config: %u\n", baudrate_setting_from_config);
+
+		__ASSERT((baudrate_setting_from_reg <=
+			  baudrate_setting_from_config + BAUDRATE_REG_VAL_ABS_TOL) &&
+				 (baudrate_setting_from_reg >=
+				  baudrate_setting_from_config - BAUDRATE_REG_VAL_ABS_TOL),
+			 "BAUDRATE register value is invalid\n");
+	} else {
+		printk("BAUDRATE register setting is not verified for the slow instances\n");
+	}
+}
+#endif /* CONFIG_TEST_BAUDRATE_REGISTER_RETENTION */
 
 int main(void)
 {
@@ -141,6 +165,7 @@ int main(void)
 			__ASSERT(err == 0, "Unexpected error when sending UART TX data: %d", err);
 			while (k_sem_take(&uart_rx_ready_sem, K_NO_WAIT) != 0) {
 			};
+
 			for (int index = 0; index < TEST_BUFFER_LEN; index++) {
 				__ASSERT(test_buffer[index] == test_pattern[index],
 					 "Recieived data byte %d does not match pattern 0x%x != "
@@ -151,6 +176,11 @@ int main(void)
 		gpio_pin_set_dt(&led, 0);
 		k_msleep(1000);
 		gpio_pin_set_dt(&led, 1);
+
+#if defined(CONFIG_TEST_BAUDRATE_REGISTER_RETENTION)
+		verify_uart_baudrate_register_retention(test_uart_config.baudrate);
+#endif
+
 #if defined(CONFIG_COVERAGE)
 		if (switch_flag) {
 			printk("Coverage analysis start\n");
