@@ -87,13 +87,54 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
   else()
     set(imgtool_rom_command)
-    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
+    if(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY)
+      # Use overwrite-only instead of swap upgrades.
+      set(imgtool_rom_command --overwrite-only --align 1)
+    elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
+           CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+      # RAM load requires setting the location of where to load the image to
+      dt_chosen(chosen_ram PROPERTY "zephyr,sram")
+      dt_reg_addr(chosen_ram_address PATH ${chosen_ram})
+      dt_nodelabel(slot0_partition NODELABEL "slot0_partition" REQUIRED)
+      dt_reg_addr(slot0_partition_address PATH ${slot0_partition})
+      dt_nodelabel(slot1_partition NODELABEL "slot1_partition" REQUIRED)
+      dt_reg_addr(slot1_partition_address PATH ${slot1_partition})
+
+      if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)
+        set(imgtool_rom_command --align 1 --load-addr ${chosen_ram_address})
+      else() # CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT
+        set(imgtool_rom_command --align ${write_block_size} --load-addr ${chosen_ram_address})
+      endif()
+      set(imgtool_rom_command ${imgtool_rom_command} --hex-addr ${slot0_partition_address})
+      set(imgtool_rom_alt_slot_command ${imgtool_rom_command} --hex-addr ${slot1_partition_address})
+    elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_SINGLE_APP_RAM_LOAD)
+      dt_chosen(ram_load_dev PROPERTY "mcuboot,ram-load-dev")
+      if(DEFINED ram_load_dev)
+        dt_reg_addr(load_address PATH ${ram_load_dev})
+      else()
+        dt_chosen(chosen_ram PROPERTY "zephyr,sram")
+        dt_reg_addr(load_address PATH ${chosen_ram})
+      endif()
+      set(imgtool_rom_command --align 1 --load-addr ${load_address})
+    elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR
+           CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
       dt_chosen(code_partition PROPERTY "zephyr,code-partition")
       dt_partition_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
       dt_reg_size(slot_size PATH "${code_partition}" REQUIRED)
-      set(imgtool_rom_command --rom-fixed ${code_partition_offset})
+      set(imgtool_rom_command --rom-fixed ${code_partition_offset} --align ${write_block_size})
     endif()
-    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot_size} --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_command})
+
+    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
+      ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --slot-size ${slot_size} --header-size
+      ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_command})
+    # In case of RAM load - the second variant is generated automatically by signing logic,
+    # because there is no need to link the code differently.
+    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
+       CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+      set(imgtool_alt_slot_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
+        ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --slot-size ${slot_size} --header-size
+        ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_alt_slot_command})
+    endif()
   endif()
 
   # Arguments to imgtool.
@@ -164,6 +205,9 @@ function(zephyr_mcuboot_tasks)
 
   # Extensionless prefix of any output file.
   set(output ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.signed)
+  if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+    set(alt_output ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.slot1.signed)
+  endif()
 
   if(CONFIG_BUILD_WITH_TFM)
     set(input ${APPLICATION_BINARY_DIR}/zephyr/tfm_merged)
@@ -219,6 +263,13 @@ function(zephyr_mcuboot_tasks)
     # after the commands which generate the unsigned versions.
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
       ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${input_arg} ${output}.bin)
+    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
+       CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+      list(APPEND byproducts ${alt_output}.bin)
+      set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+        ${imgtool_alt_slot_sign} ${imgtool_args} ${imgtool_bin_extra} ${input_arg}
+        ${alt_output}.bin)
+    endif()
 
     if(NOT "${keyfile_enc}" STREQUAL "")
       list(APPEND byproducts ${output}.encrypted.bin)
@@ -228,6 +279,13 @@ function(zephyr_mcuboot_tasks)
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
         ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${imgtool_encrypt_extra_args} --encrypt
         "${keyfile_enc}" ${input_arg} ${output}.encrypted.bin)
+      if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
+         CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+        list(APPEND byproducts ${alt_output}.encrypted.bin)
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_alt_slot_sign} ${imgtool_args} ${imgtool_bin_extra} ${imgtool_encrypt_extra_args} --encrypt
+          "${keyfile_enc}" ${input_arg} ${alt_output}.encrypted.bin)
+      endif()
     endif()
 
     # Generate and use the confirmed image in Direct XIP with revert, so the
@@ -246,6 +304,18 @@ function(zephyr_mcuboot_tasks)
         set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
           ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${imgtool_encrypt_extra_args}
           --encrypt "${keyfile_enc}" --clear --pad --confirm ${input_arg} ${output}.confirmed.bin)
+      endif()
+      if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+        list(APPEND byproducts ${alt_output}.confirmed.bin)
+        if("${keyfile_enc}" STREQUAL "")
+          set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+            ${imgtool_alt_slot_sign} ${imgtool_args} ${imgtool_bin_extra} --pad --confirm ${input_arg}
+            ${alt_output}.confirmed.bin)
+        else()
+          set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+            ${imgtool_alt_slot_sign} ${imgtool_args} ${imgtool_bin_extra} ${imgtool_encrypt_extra_args}
+            --encrypt "${keyfile_enc}" --clear --pad --confirm ${input_arg} ${alt_output}.confirmed.bin)
+        endif()
       endif()
     endif()
   endif()
@@ -291,6 +361,26 @@ function(zephyr_mcuboot_tasks)
         ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${imgtool_encrypt_extra_args} --encrypt
         "${keyfile_enc}" ${input_arg} ${output}.encrypted.hex)
     endif()
+    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
+       CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+      list(APPEND byproducts ${alt_output}.hex)
+      if("${keyfile_enc}" STREQUAL "")
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_alt_slot_sign} ${imgtool_args} ${imgtool_hex_extra} ${input_arg}
+          ${alt_output}.hex)
+      else()
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_alt_slot_sign} ${imgtool_args} ${imgtool_hex_extra}
+          ${imgtool_encrypt_extra_args} --encrypt "${keyfile_enc}" --clear ${input_arg}
+          ${alt_output}.hex)
+
+        list(APPEND byproducts ${alt_output}.encrypted.hex)
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_alt_slot_sign} ${imgtool_args} ${imgtool_hex_extra}
+          ${imgtool_encrypt_extra_args} --encrypt "${keyfile_enc}" ${input_arg}
+          ${alt_output}.encrypted.hex)
+      endif()
+    endif()
 
     # Generate and use the confirmed image in Direct XIP with revert, so the
     # default application will boot after flashing.
@@ -310,6 +400,19 @@ function(zephyr_mcuboot_tasks)
         set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
           ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${imgtool_encrypt_extra_args}
           --encrypt "${keyfile_enc}" --clear --pad --confirm ${input_arg} ${output}.confirmed.hex)
+      endif()
+      if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+        list(APPEND byproducts ${alt_output}.confirmed.hex)
+        if("${keyfile_enc}" STREQUAL "")
+          set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+            ${imgtool_alt_slot_sign} ${imgtool_args} ${imgtool_hex_extra} --pad --confirm
+            ${input_arg} ${alt_output}.confirmed.hex)
+        else()
+          set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+            ${imgtool_alt_slot_sign} ${imgtool_args} ${imgtool_hex_extra}
+            ${imgtool_encrypt_extra_args} --encrypt "${keyfile_enc}" --clear --pad --confirm
+            ${input_arg} ${alt_output}.confirmed.hex)
+        endif()
       endif()
     endif()
   endif()
