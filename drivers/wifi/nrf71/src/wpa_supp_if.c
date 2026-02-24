@@ -998,13 +998,6 @@ static uint32_t spec_key_idx_to_crypto(uint32_t spec_key_idx)
 	       (spec_key_idx - WIFI_CRYPTO_KEY_INDEX_MAX);
 }
 
-/* Track installed keys by spec key_idx (0-7) for destroy lookup */
-static struct {
-	bool valid;
-	wifi_keys_key_type_t type;
-	uint32_t db_id;
-} installed_keys[WIFI_CRYPTO_MAX_KEYS];
-
 static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *key, size_t key_len,
 				     const unsigned char *addr, int key_idx, uint32_t db_id)
 {
@@ -1048,52 +1041,9 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 		return -EIO;
 	}
 
-	/* Track by spec key_idx so destroy can look up and pass same crypto_key_index */
-	installed_keys[spec_key_index].valid = true;
-	installed_keys[spec_key_index].type = type;
-	installed_keys[spec_key_index].db_id = db_id;
-
 	LOG_DBG("%s: Key imported (type: %d, spec_idx: %u, crypto_idx: %u)", __func__, type,
 		spec_key_index, crypto_key_index);
 
-	return 0;
-}
-
-static int wifi_destroy_key_from_crypto(int key_idx, uint32_t db_id)
-{
-	psa_key_attributes_t attr;
-	psa_key_id_t key_id;
-	psa_status_t status;
-	uint32_t spec_key_index;
-	uint32_t crypto_key_index;
-
-	spec_key_index = (key_idx < 0) ? 0 : (uint32_t)key_idx;
-
-	if (spec_key_index >= WIFI_CRYPTO_MAX_KEYS || !installed_keys[spec_key_index].valid) {
-		LOG_WRN("%s: No tracked key at spec index %u", __func__, spec_key_index);
-		/* During init supplicant deletes all keys, so, suppress error */
-		return 0;
-	}
-
-	crypto_key_index = spec_key_idx_to_crypto(spec_key_index);
-	attr = wifi_keys_key_attributes_init(installed_keys[spec_key_index].type,
-					     installed_keys[spec_key_index].db_id,
-					     crypto_key_index);
-	key_id = psa_get_key_id(&attr);
-
-	LOG_DBG("%s: Destroying key (type: %d, spec_idx: %u, crypto_idx: %u, key_id: 0x%08x)",
-		__func__, installed_keys[spec_key_index].type, spec_key_index, crypto_key_index,
-		key_id);
-
-	status = psa_destroy_key(key_id);
-	if (status != PSA_SUCCESS) {
-		LOG_ERR("%s: Failed to destroy key: %d", __func__, status);
-		return -EIO;
-	}
-
-	installed_keys[spec_key_index].valid = false;
-
-	LOG_DBG("%s: Key destroyed successfully", __func__);
 	return 0;
 }
 #endif /* CONFIG_NRF_WIFI_USE_KMU */
@@ -1190,15 +1140,6 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: nrf_wifi_sys_fmac_del_key failed", __func__);
-		} else {
-#ifdef CONFIG_NRF_WIFI_USE_KMU
-			/* Destroy PSA key after successful del_key */
-			ret = wifi_destroy_key_from_crypto(key_idx, 0);
-			if (ret) {
-				LOG_ERR("%s: Failed to destroy key from crypto: %d",
-					__func__, ret);
-			}
-#endif /* CONFIG_NRF_WIFI_USE_KMU */
 		}
 	} else {
 		status = nrf_wifi_sys_fmac_add_key(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
