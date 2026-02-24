@@ -13,4 +13,7 @@ endchoice
 
 endif
 
+config PARTITION_MANAGER
+	default n
+
 source "share/sysbuild/Kconfig"

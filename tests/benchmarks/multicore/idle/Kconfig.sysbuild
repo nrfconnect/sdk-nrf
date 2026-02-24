@@ -7,4 +7,7 @@
 config REMOTE_BOARD
 	string "The board used for remote target"
 
+config PARTITION_MANAGER
+	default n
+
 source "share/sysbuild/Kconfig"
