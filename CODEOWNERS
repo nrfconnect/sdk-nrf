@@ -158,7 +158,6 @@
 /doc/nrf/libraries/networking/coap_utils.rst @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/networking/downloader.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/networking/fota_download.rst @nrfconnect/ncs-eris-doc
-/doc/nrf/libraries/networking/ftp_client.rst @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/networking/icalendar_parser.rst @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/networking/index.rst   @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/networking/lwm2m_*.rst @nrfconnect/ncs-iot-oulu-tampere-doc
@@ -830,7 +829,6 @@
 /subsys/net/lib/aws_*                     @nrfconnect/ncs-cia
 /subsys/net/lib/dect/                     @nrfconnect/ncs-dect-nr-plus
 /subsys/net/lib/downloader/               @nrfconnect/ncs-modem
-/subsys/net/lib/ftp_client/               @nrfconnect/ncs-iot-oulu
 /subsys/net/lib/hostap_crypto/            @krish2718 @jukkar
 /subsys/net/lib/icalendar_parser/         @lats1980
 /subsys/net/lib/lwm2m_client_utils/       @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu

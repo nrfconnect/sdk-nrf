@@ -57,6 +57,28 @@ This section describes the changes related to libraries.
       * Removed the ``CONFIG_MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE`` Kconfig option.
         The PSA Crypto core is able to infer the key slot buffer size based on the keys enabled in the build, so there is no need to define it manually.
 
+   * :ref:`zephyr:ftp_client_interface` library:
+
+      * The library has been moved to the Zephyr repository.
+        Along with the transition, the following API changes were introduced:
+
+         * You need to define the :c:struct:`ftp_client` instance at application level instead of defining it internally within the library to allow to multiple instances of the library.
+         * All FTP client API functions now require an additional ``struct ftp_client *client`` parameter (using the client instance defined in the application).
+           For example:
+
+            .. code-block:: c
+
+               int ftp_mkd(const char *folder);
+
+           Became:
+
+            .. code-block:: c
+
+               int ftp_mkd(struct ftp_client *client, const char *folder);
+
+         * All :c:enum:`ftp_reply_code` reply code names have been extended with additional information, for example ``FTP_CODE_150`` became ``FTP_CODE_150_FILE_STATUS_OK``.
+         * All FTP client API functions now return ``0`` on success instead of function-specific reply code.
+
 Trusted Firmware-M
 ==================
 

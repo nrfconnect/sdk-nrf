@@ -598,7 +598,7 @@ Libraries for networking
 
   * :ref:`lib_aws_fota`
   * :ref:`lib_fota_download`
-  * :ref:`lib_ftp_client`
+  * FTP client
 
 * :ref:`lib_nrf_provisioning` library:
 

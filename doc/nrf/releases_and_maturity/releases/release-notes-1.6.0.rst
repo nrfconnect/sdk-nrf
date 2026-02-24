@@ -149,7 +149,7 @@ nRF9160
     * Added an API to cancel current downloading.
     * Added an API to validate FOTA image type before starting installation.
 
-  * :ref:`lib_ftp_client` library:
+  * FTP client library:
 
     * Support subset of RFC959 FTP commands only.
     * Added support of STOU and APPE (besides STOR) for ``put``.
