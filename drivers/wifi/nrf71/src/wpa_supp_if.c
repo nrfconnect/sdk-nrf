@@ -1159,6 +1159,8 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: nrf_wifi_sys_fmac_del_key failed", __func__);
+		} else {
+			ret = 0;
 		}
 	} else {
 		status = nrf_wifi_sys_fmac_add_key(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
