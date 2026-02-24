@@ -383,6 +383,10 @@ Bluetooth Mesh samples
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
+  * Updated the approach to build the sample with EMDS support.
+    There is no ``overlay-emds.conf`` anymore.
+    EMDS support is enabled as a suffixed configuration.
+
   * Fixed an issue where stale RPL data could persist in EMDS after a node reset.
     The sample now uses the new :c:func:`bt_mesh_dk_prov_node_reset_cb_set` function to clear EMDS data when a node reset occurs, ensuring that stale RPL data is removed.
 
