@@ -4,11 +4,11 @@ common:
     - ci_tests_benchmarks_current_consumption
     - ppk_power_measure
   harness: pytest
-  integration_platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
 
 tests:
   benchmarks.bootup_time:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -23,7 +23,26 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
 
+  benchmarks.bootup_time.no_wait:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    extra_args:
+      - CONFIG_SYSTEM_CLOCK_NO_WAIT=y
+    harness_config:
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
+
   benchmarks.bootup_time.mcuboot:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -32,13 +51,15 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
     harness_config:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_mcuboot"
-    extra_args:
-      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
 
   benchmarks.bootup_time.ext_flash:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -46,13 +67,15 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_args:
+      - CONFIG_FLASH=y
     harness_config:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
-    extra_args:
-      - CONFIG_FLASH=y
 
   benchmarks.bootup_time.all_cores:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
@@ -63,7 +86,9 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_all_cores"
 
-  benchmarks.bootup_time.lfrc:
+  benchmarks.bootup_time.lfrc.54h:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     harness_config:
@@ -71,7 +96,25 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
 
+  benchmarks.bootup_time.lfrc.54l:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    extra_args:
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    harness_config:
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_lfrc_54l"
+
   benchmarks.bootup_time.pm:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
