@@ -987,10 +987,18 @@ static bool is_mic_cipher_suite(unsigned int suite)
 		suite == RSN_CIPHER_SUITE_BIP_CMAC_256);
 }
 
-/* Maximum number of keys we can track (unicast + group keys) */
-#define WIFI_CRYPTO_MAX_KEYS 8
+/* Crypto key RAM supports max 4 keys per type. */
+#define WIFI_CRYPTO_KEY_INDEX_MAX 4
 
-/* Track installed keys: key_idx -> key_type mapping */
+/* Map 802.11 spec key index to crypto key_index: 0-3 PTK/GTK -> 0-3; 4-7 IGTK -> 0-3. */
+static uint32_t spec_key_idx_to_crypto(uint32_t spec_key_idx)
+{
+	/* Map 0-3 PTK/GTK -> 0-3; 4-7 IGTK -> 0-3. */
+	return (spec_key_idx < WIFI_CRYPTO_KEY_INDEX_MAX) ? spec_key_idx :
+	       (spec_key_idx - WIFI_CRYPTO_KEY_INDEX_MAX);
+}
+
+/* Track installed keys by spec key_idx (0-7) for destroy lookup */
 static struct {
 	bool valid;
 	wifi_keys_key_type_t type;
@@ -1004,7 +1012,8 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 	psa_key_attributes_t attr;
 	psa_key_id_t key_id;
 	psa_status_t status;
-	uint32_t key_index;
+	uint32_t spec_key_index;
+	uint32_t crypto_key_index;
 	bool is_broadcast = false;
 
 	/* Determine if this is a broadcast/group key or unicast/pairwise key */
@@ -1019,14 +1028,18 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 		type = is_broadcast ? PEER_BCST_ENC : PEER_UCST_ENC;
 	}
 
-	/* Convert key_idx to uint32_t, ensure it's within valid range */
-	key_index = (key_idx < 0) ? 0 : (uint32_t)key_idx;
+	spec_key_index = (key_idx < 0) ? 0 : (uint32_t)key_idx;
+	crypto_key_index = spec_key_idx_to_crypto(spec_key_index);
+	if (crypto_key_index >= WIFI_CRYPTO_KEY_INDEX_MAX) {
+		LOG_ERR("%s: crypto key_idx %u out of range", __func__, crypto_key_index);
+		return -EINVAL;
+	}
 
-	/* Initialize PSA key attributes */
-	attr = wifi_keys_key_attributes_init(type, db_id, key_index);
+	/* Pass crypto key_index (0-3) to wifi_keys; it maps to key[4]/mic_key[4] slots */
+	attr = wifi_keys_key_attributes_init(type, db_id, crypto_key_index);
 
-	LOG_DBG("%s: Importing key to PSA (suite: 0x%08x, type: %d, idx: %u, len: %zu)",
-		__func__, suite, type, key_index, key_len);
+	LOG_DBG("%s: Importing key to PSA (suite: 0x%08x, type: %d, spec_idx: %u, crypto_idx: %u)",
+		__func__, suite, type, spec_key_index, crypto_key_index);
 
 	/* Import key to PSA */
 	status = psa_import_key(&attr, key, key_len, &key_id);
@@ -1035,14 +1048,13 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 		return -EIO;
 	}
 
-	/* Track installed key for later destruction */
-	if (key_index < WIFI_CRYPTO_MAX_KEYS) {
-		installed_keys[key_index].valid = true;
-		installed_keys[key_index].type = type;
-		installed_keys[key_index].db_id = db_id;
-	}
+	/* Track by spec key_idx so destroy can look up and pass same crypto_key_index */
+	installed_keys[spec_key_index].valid = true;
+	installed_keys[spec_key_index].type = type;
+	installed_keys[spec_key_index].db_id = db_id;
 
-	LOG_DBG("%s: Key imported successfully (type: %d, idx: %u)", __func__, type, key_index);
+	LOG_DBG("%s: Key imported (type: %d, spec_idx: %u, crypto_idx: %u)", __func__, type,
+		spec_key_index, crypto_key_index);
 
 	return 0;
 }
@@ -1052,24 +1064,26 @@ static int wifi_destroy_key_from_crypto(int key_idx, uint32_t db_id)
 	psa_key_attributes_t attr;
 	psa_key_id_t key_id;
 	psa_status_t status;
-	uint32_t key_index;
+	uint32_t spec_key_index;
+	uint32_t crypto_key_index;
 
-	/* Convert key_idx to uint32_t */
-	key_index = (key_idx < 0) ? 0 : (uint32_t)key_idx;
+	spec_key_index = (key_idx < 0) ? 0 : (uint32_t)key_idx;
 
-	if (key_index >= WIFI_CRYPTO_MAX_KEYS || !installed_keys[key_index].valid) {
-		LOG_WRN("%s: No tracked key at index %u", __func__, key_index);
+	if (spec_key_index >= WIFI_CRYPTO_MAX_KEYS || !installed_keys[spec_key_index].valid) {
+		LOG_WRN("%s: No tracked key at spec index %u", __func__, spec_key_index);
 		/* During init supplicant deletes all keys, so, suppress error */
 		return 0;
 	}
 
-	/* Get the key type that was used during import */
-	attr = wifi_keys_key_attributes_init(installed_keys[key_index].type,
-					       installed_keys[key_index].db_id, key_index);
+	crypto_key_index = spec_key_idx_to_crypto(spec_key_index);
+	attr = wifi_keys_key_attributes_init(installed_keys[spec_key_index].type,
+					     installed_keys[spec_key_index].db_id,
+					     crypto_key_index);
 	key_id = psa_get_key_id(&attr);
 
-	LOG_DBG("%s: Destroying key (type: %d, idx: %u, key_id: 0x%08x)",
-		__func__, installed_keys[key_index].type, key_index, key_id);
+	LOG_DBG("%s: Destroying key (type: %d, spec_idx: %u, crypto_idx: %u, key_id: 0x%08x)",
+		__func__, installed_keys[spec_key_index].type, spec_key_index, crypto_key_index,
+		key_id);
 
 	status = psa_destroy_key(key_id);
 	if (status != PSA_SUCCESS) {
@@ -1077,8 +1091,7 @@ static int wifi_destroy_key_from_crypto(int key_idx, uint32_t db_id)
 		return -EIO;
 	}
 
-	/* Clear tracking entry */
-	installed_keys[key_index].valid = false;
+	installed_keys[spec_key_index].valid = false;
 
 	LOG_DBG("%s: Key destroyed successfully", __func__);
 	return 0;
