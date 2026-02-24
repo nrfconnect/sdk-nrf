@@ -135,24 +135,24 @@ Multiprotocol
 The multiprotocol feature enables the Thread CoAP Client sample to support both Thread and Bluetooth® LE functionality simultaneously.
 This allows the device to advertise and operate as a Bluetooth LE peripheral in addition to running a Thread network, enabling use cases such as Thread/Bluetooth firmware upgrades or Thread/Bluetooth device commissioning.
 
-To enable the multiprotocol feature, use the following command with *board_target* replaced with the board target name:
+To enable the multiprotocol feature, run the following command with *board_target* replaced with the board target name:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=overlays/multiprotocol_ble.conf
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/multiprotocol_ble.conf
 
 Minimal Thread Device
 =====================
 
 The Minimal Thread Device feature enables the Thread CoAP Client sample to operate as a Minimal Thread Device (MTD).
 This allows the device to operate in low power mode when not actively participating in the Thread network.
-To enable the Minimal Thread Device feature, use the following command with *board_target* replaced with the board target name:
+To enable the Minimal Thread Device feature, run the following command with *board_target* replaced with the board target name:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=overlays/mtd.conf
+   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/mtd.conf
 
 FEM support
 ===========

@@ -109,7 +109,7 @@ Multiprotocol
 The multiprotocol feature enables the Thread CLI sample to support both Thread and Bluetooth® LE functionality simultaneously.
 This allows the device to advertise and operate as a Bluetooth LE peripheral in addition to running a Thread network, enabling use cases such as Thread/Bluetooth firmware upgrades or Thread/Bluetooth device commissioning.
 
-To enable the multiprotocol feature, use the following command with *board_target* replaced with the board target name:
+To enable the multiprotocol feature, run the following command with *board_target* replaced with the board target name:
 
 .. parsed-literal::
    :class: highlight
@@ -121,7 +121,7 @@ Low power mode
 
 The low power mode feature enables the Thread CLI sample to enter low power mode when the device is not actively participating in the Thread network.
 
-To enable low power mode in this sample, use the following command with *board_target* replaced with the board target name:
+To enable low power mode in this sample, run the following command with *board_target* replaced with the board target name:
 
 .. parsed-literal::
    :class: highlight
@@ -133,7 +133,7 @@ TCP support
 
 The TCP support feature enables the Thread CLI sample to support TCP functionality.
 
-To enable the TCP support feature, use the following command with *board_target* replaced with the board target name:
+To enable the TCP support feature, run the following command with *board_target* replaced with the board target name:
 
 .. parsed-literal::
    :class: highlight
@@ -146,7 +146,7 @@ TCAT support
 
 The TCAT support feature enables the Thread CLI sample to support Thread commissioning over authenticated TLS.
 
-To enable the TCAT support feature, use the following command with *board_target* replaced with the board target name:
+To enable the TCAT support feature, run the following command with *board_target* replaced with the board target name:
 
 .. parsed-literal::
    :class: highlight

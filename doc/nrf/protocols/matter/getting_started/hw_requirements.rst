@@ -992,10 +992,10 @@ Diagnostic logs RAM memory requirements
 =======================================
 
 :ref:`Diagnostic logs support<ug_matter_configuration_diagnostic_logs>` requires changing the RAM memory layout by adding three retained RAM partitions to keep the log data persistent across device reboots.
-The :ref:`ug_matter_diagnostic_logs_snippet` adds these RAM partitions, and also reduces the amount of SRAM available for the application by the size of the retained partitions.
-You can adjust the retained partitions for your needs by editing the :ref:`ug_matter_diagnostic_logs_snippet` devicetree file for the relevant board.
+The :ref:`snippet_matter_diagnostic_logs` adds these RAM partitions and also reduces the amount of SRAM available for the application by the size of the retained partitions.
+You can adjust the retained partitions for your needs by editing the :ref:`snippet_matter_diagnostic_logs` devicetree file for the relevant board.
 
-The following tabs show the RAM memory layout defined for the default configuration of the :ref:`ug_matter_diagnostic_logs_snippet` for each development kit.
+The following tabs show the RAM memory layout defined for the default configuration of the :ref:`snippet_matter_diagnostic_logs` for each development kit.
 
 .. tabs::
 
