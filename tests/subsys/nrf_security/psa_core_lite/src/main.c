@@ -13,6 +13,13 @@
 #include <string.h>
 #include <util/util_macro.h>
 
+#include "rsa_vectors.h"
+
+#if PSA_NEED_CRACEN_KMU_DRIVER && \
+	!(defined(PSA_WANT_ALG_RSA_PSS) || defined(PSA_WANT_ALG_RSA_PKCS1V15_SIGN))
+#define PSA_CORE_LITE_TEST_SUPPORTS_KMU
+#endif
+
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #endif
@@ -227,6 +234,7 @@ static uint8_t aes_ctr_ciphertext[16] = {
 	0xb6, 0x1e, 0x30, 0xb9
 };
 
+
 /* Not yet standard API for key locking */
 psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id);
 
@@ -236,6 +244,9 @@ psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id);
 /* Forward declaration of internal API to provision KMU */
 psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot_id,
 				  const uint8_t *key_buffer, size_t key_buffer_size);
+
+
+#if defined(PSA_CORE_LITE_TEST_SUPPORTS_KMU)
 
 psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
 				   const uint8_t *data, size_t data_length,
@@ -279,6 +290,7 @@ psa_status_t psa_export_key(mbedtls_svc_key_id_t key,
 
 	return PSA_SUCCESS;
 }
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 #else
 psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id)
 {
@@ -292,7 +304,7 @@ psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id)
 
 	return cracen_kmu_block(&attributes);
 }
-#endif
+#endif /* CONFIG_PSA_CORE_LITE */
 
 static void set_kmu_key_attributes(psa_key_attributes_t *attributes, mbedtls_svc_key_id_t key_id,
 			    psa_algorithm_t alg, psa_key_lifetime_t lifetime,
@@ -370,6 +382,7 @@ static void provision_ed25519_public_key(mbedtls_svc_key_id_t key_id,
 	err = psa_import_key(&attributes, key_buffer, pubkey_size, &key_id);
 	zassert_equal(err, PSA_SUCCESS, "Failed to import Ed25519 key. slot_id: %d, err: %d",
 		      KMU_GET_SLOT_ID(key_id), err);
+
 
 	/* Check that imported key is correct */
 	err = psa_export_key(key_id, temp_buffer, pubkey_size, &key_length);
@@ -711,6 +724,204 @@ static void test_ecdsa_secp384r1_verify_hash(mbedtls_svc_key_id_t key_id)
 		      KMU_GET_SLOT_ID(key_id), err);
 }
 
+/* RSA verification */
+
+static void init_rsa_key(psa_key_attributes_t * attributes,
+			 psa_algorithm_t alg, psa_key_usage_t usage, size_t key_size_bits)
+{
+	psa_set_key_usage_flags(attributes, usage);
+	psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_VOLATILE);
+	psa_set_key_algorithm(attributes, alg);
+	psa_set_key_type(attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY);
+	psa_set_key_bits(attributes, key_size_bits);
+}
+
+static void test_rsa_verify_message(psa_key_attributes_t *attributes,
+				    const uint8_t *pub_key, size_t pub_key_size,
+				    const uint8_t *message, size_t message_size,
+				    psa_algorithm_t alg, const char *key_label,
+				    const uint8_t* signature, size_t signature_size)
+{
+	psa_status_t err;
+	mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+
+	err = psa_import_key(attributes, pub_key, pub_key_size, &key_id);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to import key for '%s'. Err: %d", key_label, err);
+
+	err = psa_verify_message(key_id, alg, message, message_size, signature, signature_size);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to verify for '%s'. Err: %d",
+		      key_label, err);
+
+	err = psa_destroy_key(key_id);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to destroy key for '%s'. Err: %d",
+		      key_label, err);
+}
+
+static void test_rsa_verify_hash(psa_key_attributes_t *attributes,
+				 const uint8_t *pub_key, size_t pub_key_size,
+				 const uint8_t *digest, size_t digest_size,
+				 psa_algorithm_t alg, const char *key_label,
+				 const uint8_t* signature, size_t signature_size)
+{
+	psa_status_t err;
+	mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+
+	err = psa_import_key(attributes, pub_key, pub_key_size, &key_id);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to import key for '%s'. Err: %d", key_label, err);
+
+	err = psa_verify_hash(key_id, alg, digest, digest_size, signature, signature_size);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to verify for '%s'. Err: %d",
+		      key_label, err);
+
+	err = psa_destroy_key(key_id);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to destroy key for '%s' key. Err: %d",
+		      key_label, err);
+}
+
+/* RSA PSS tests */
+
+/**
+ * @brief Function to test RSA PSS verify hash with 2048 bit key
+ */
+static void test_rsa_pss_2048_verify_message(void)
+{
+	psa_key_attributes_t attributes = {0};
+	psa_algorithm_t alg = PSA_ALG_RSA_PSS(PSA_ALG_SHA_256);
+	const char key_label[] = "RSA PSS 2048 (verify message)";
+
+	init_rsa_key(&attributes, alg, PSA_KEY_USAGE_VERIFY_MESSAGE, RSA_2048_KEY_BIT_SIZE);
+
+	test_rsa_verify_message(&attributes,
+				rsa_pss_2048_pubkey, sizeof(rsa_pss_2048_pubkey),
+				rsa_pss_2048_msg, sizeof(rsa_pss_2048_msg),
+				alg, key_label,
+				rsa_pss_2048_signature, sizeof(rsa_pss_2048_signature));
+}
+
+/**
+ * @brief Function to test RSA PSS verify hash with 2048 bit key
+ */
+static void test_rsa_pss_2048_verify_hash(void)
+{
+	psa_key_attributes_t attributes = {0};
+	psa_algorithm_t alg = PSA_ALG_RSA_PSS(PSA_ALG_SHA_256);
+	const char key_label[] = "RSA PSS 2048 (verify hash)";
+
+	init_rsa_key(&attributes, alg, PSA_KEY_USAGE_VERIFY_HASH, RSA_2048_KEY_BIT_SIZE);
+
+	test_rsa_verify_hash(&attributes,
+			     rsa_pss_2048_pubkey, sizeof(rsa_pss_2048_pubkey),
+			     rsa_pss_2048_hash, sizeof(rsa_pss_2048_hash),
+			     alg, key_label,
+			     rsa_pss_2048_signature, sizeof(rsa_pss_2048_signature));
+}
+
+/* RSA PKCS#1 v1.5 tests */
+
+/**
+ * @brief Function to test RSA PKCS#1 v1.5 verify hash with 2048 bit key
+ */
+static void test_rsa_pkcs1v15_2048_verify_message(void)
+{
+	psa_key_attributes_t attributes = {0};
+	psa_algorithm_t alg = PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256);
+	uint8_t key_label[] = "RSA PKCS#1 v1.5 2048 (verify message)";
+
+	init_rsa_key(&attributes, alg, PSA_KEY_USAGE_VERIFY_MESSAGE, RSA_2048_KEY_BIT_SIZE);
+
+	test_rsa_verify_message(&attributes,
+				rsa_pkcs1v15_2048_pubkey, sizeof(rsa_pkcs1v15_2048_pubkey),
+				rsa_pkcs1v15_2048_msg, sizeof(rsa_pkcs1v15_2048_msg),
+				alg, key_label,
+				rsa_pkcs1v15_2048_signature, sizeof(rsa_pkcs1v15_2048_signature));
+}
+
+/**
+ * @brief Function to test RSA PKCS#1 v1.5 verify hash with 2048 bit key
+ */
+static void test_rsa_pkcs1v15_2048_verify_hash(void)
+{
+	psa_key_attributes_t attributes = {0};
+	psa_algorithm_t alg = PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256);
+	uint8_t key_label[] = "RSA PKCS#1 v1.5 2048 (verify hash)";
+
+	init_rsa_key(&attributes, alg, PSA_KEY_USAGE_VERIFY_HASH, RSA_2048_KEY_BIT_SIZE);
+
+	test_rsa_verify_hash(&attributes,
+			     rsa_pkcs1v15_2048_pubkey, sizeof(rsa_pkcs1v15_2048_pubkey),
+			     rsa_pkcs1v15_2048_hash, sizeof(rsa_pkcs1v15_2048_hash),
+			     alg, key_label,
+			     rsa_pkcs1v15_2048_signature, sizeof(rsa_pkcs1v15_2048_signature));
+}
+
+/**
+ * @brief Function to test RSA PSS verify message with 3072 bit key
+ */
+static void test_rsa_pss_3072_verify_message(void) {
+	psa_key_attributes_t attributes = {0};
+	psa_algorithm_t alg = PSA_ALG_RSA_PSS(PSA_ALG_SHA_384);
+	const char key_label[] = "RSA PSS 3072 (verify message)";
+
+	init_rsa_key(&attributes, alg, PSA_KEY_USAGE_VERIFY_MESSAGE, RSA_3072_KEY_BIT_SIZE);
+
+	test_rsa_verify_message(&attributes,
+				rsa_pss_3072_pubkey, sizeof(rsa_pss_3072_pubkey),
+				rsa_pss_3072_msg, sizeof(rsa_pss_3072_msg),
+				alg, key_label,
+				rsa_pss_3072_signature, sizeof(rsa_pss_3072_signature));
+}
+
+/**
+ * @brief Function to test RSA PSS verify hash with 3072 bit key
+ */
+static void test_rsa_pss_3072_verify_hash(void) {
+	psa_key_attributes_t attributes = {0};
+	psa_algorithm_t alg = PSA_ALG_RSA_PSS(PSA_ALG_SHA_384);
+	const char key_label[] = "RSA PSS 3072 (verify hash)";
+
+	init_rsa_key(&attributes, alg, PSA_KEY_USAGE_VERIFY_HASH, RSA_3072_KEY_BIT_SIZE);
+
+	test_rsa_verify_hash(&attributes,
+			     rsa_pss_3072_pubkey, sizeof(rsa_pss_3072_pubkey),
+			     rsa_pss_3072_hash, sizeof(rsa_pss_3072_hash),
+			     alg, key_label,
+			     rsa_pss_3072_signature, sizeof(rsa_pss_3072_signature));
+}
+
+static void test_rsa_pkcs1v15_3072_verify_message(void) {
+	psa_key_attributes_t attributes = {0};
+	psa_algorithm_t alg = PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_384);
+	uint8_t key_label[] = "RSA PKCS#1 v1.5 3072 (verify message)";
+
+	init_rsa_key(&attributes, alg, PSA_KEY_USAGE_VERIFY_MESSAGE, RSA_3072_KEY_BIT_SIZE);
+
+	test_rsa_verify_message(&attributes,
+				rsa_pkcs1v15_3072_pubkey, sizeof(rsa_pkcs1v15_3072_pubkey),
+				rsa_pkcs1v15_3072_msg, sizeof(rsa_pkcs1v15_3072_msg),
+				alg, key_label,
+				rsa_pkcs1v15_3072_signature, sizeof(rsa_pkcs1v15_3072_signature));
+}
+
+static void test_rsa_pkcs1v15_3072_verify_hash(void) {
+	psa_key_attributes_t attributes = {0};
+	psa_algorithm_t alg = PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_384);
+	uint8_t key_label[] = "RSA PKCS#1 v1.5 3072 (verify hash)";
+
+	init_rsa_key(&attributes, alg, PSA_KEY_USAGE_VERIFY_HASH, RSA_3072_KEY_BIT_SIZE);
+
+	test_rsa_verify_hash(&attributes,
+			     rsa_pkcs1v15_3072_pubkey, sizeof(rsa_pkcs1v15_3072_pubkey),
+			     rsa_pkcs1v15_3072_hash, sizeof(rsa_pkcs1v15_3072_hash),
+			     alg, key_label,
+			     rsa_pkcs1v15_3072_signature, sizeof(rsa_pkcs1v15_3072_signature));
+}
+
 static void test_hash_compute(psa_algorithm_t alg, const uint8_t *input, size_t input_length,
 			      uint8_t *hash, size_t hash_size)
 {
@@ -821,10 +1032,9 @@ static void test_aes_ctr_crypt(mbedtls_svc_key_id_t key_id)
 	}
 }
 
-static void test_verify(void)
+static void test_verify_ecc(void)
 {
 	bool ran_verify = false;
-
 	/* Ed25519 */
 	if (IS_ENABLED_ALL(PSA_WANT_ALG_PURE_EDDSA, PSA_WANT_ECC_TWISTED_EDWARDS_255)) {
 		test_ed25519_verify(KMU_KEY_ID_PUBKEY_ED25519_REVOKABLE);
@@ -859,9 +1069,43 @@ static void test_verify(void)
 		ran_verify = true;
 	}
 
-	zassert_true(ran_verify, "Did not run any signature verify, check configs!");
-
+	zassert_true(ran_verify, "Did not run ECC signature verify, check configs!");
 }
+
+void test_verify_rsa(void)
+{
+	bool ran_verify = false;
+	/* RSA PSS 2048 with SHA-256 */
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_RSA_PSS, PSA_WANT_RSA_KEY_SIZE_2048, PSA_WANT_ALG_SHA_256)) {
+		test_rsa_pss_2048_verify_message();
+		test_rsa_pss_2048_verify_hash();
+		ran_verify = true;
+	}
+
+	/* RSA PKCS#1 v1.5 2048 with SHA-256 */
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_RSA_PKCS1V15_SIGN, PSA_WANT_RSA_KEY_SIZE_2048, PSA_WANT_ALG_SHA_256)) {
+		test_rsa_pkcs1v15_2048_verify_message();
+		test_rsa_pkcs1v15_2048_verify_hash();
+		ran_verify = true;
+	}
+
+	/* RSA PSS 3072 with SHA-384 */
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_RSA_PSS, PSA_WANT_RSA_KEY_SIZE_3072, PSA_WANT_ALG_SHA_384)) {
+		test_rsa_pss_3072_verify_message();
+		test_rsa_pss_3072_verify_hash();
+		ran_verify = true;
+	}
+
+	/* RSA PKCS#1 v1.5 3072 with SHA-384 */
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_RSA_PKCS1V15_SIGN, PSA_WANT_RSA_KEY_SIZE_3072, PSA_WANT_ALG_SHA_384)) {
+		test_rsa_pkcs1v15_3072_verify_message();
+		test_rsa_pkcs1v15_3072_verify_hash();
+		ran_verify = true;
+	}
+
+	zassert_true(ran_verify, "Did not run RSA signature verify, check configs!");
+}
+
 
 static void test_hash(void)
 {
@@ -872,7 +1116,6 @@ static void test_hash(void)
 
 		test_hash_compute(alg, ecdsa_secp256r1_msg, ARRAY_SIZE(ecdsa_secp256r1_msg),
 				  ecdsa_secp256r1_hash, SHA256_HASH_SIZE);
-
 
 		test_hash_incremental(alg, ecdsa_secp256r1_msg, ARRAY_SIZE(ecdsa_secp256r1_msg),
 				  ecdsa_secp256r1_hash, SHA256_HASH_SIZE);
@@ -885,7 +1128,6 @@ static void test_hash(void)
 
 		test_hash_compute(alg, ecdsa_secp384r1_msg, ARRAY_SIZE(ecdsa_secp384r1_msg),
 				  ecdsa_secp384r1_hash, SHA384_HASH_SIZE);
-
 
 		test_hash_incremental(alg, ecdsa_secp384r1_msg, ARRAY_SIZE(ecdsa_secp384r1_msg),
 				  ecdsa_secp384r1_hash, SHA384_HASH_SIZE);
@@ -1116,42 +1358,55 @@ void test_invalid_kmu(void)
 
 void test_main(void)
 {
-	/* Provisioning key(s) is a requirement for running all tests*/
-	provision_keys();
+	bool ran_tests = false;
+	if (IS_ENABLED(PSA_CORE_LITE_SUPPORTS_KMU)) {
+		/* Provisioning key(s) is a requirement for running KMU tests*/
+		provision_keys();
+	}
 
 	/* Verify is required to be run in these tests */
 	if (IS_ENABLED_ANY(PSA_WANT_ALG_PURE_EDDSA, PSA_WANT_ALG_ED25519PH,
 			   PSA_WANT_ALG_DETERMINISTIC_ECDSA, PSA_WANT_ALG_ECDSA)) {
-		test_verify();
-	} else {
-		zassert_false(true, "No configuration to run verify signature!");
-		return;
+		test_verify_ecc();
+		ran_tests = true;
+	}
+
+	/* Verify is required to be run in these tests */
+	if (IS_ENABLED_ANY(PSA_WANT_ALG_RSA_PSS, PSA_WANT_ALG_RSA_PKCS1V15_SIGN)) {
+		test_verify_rsa();
+		ran_tests = true;
 	}
 
 	/* + Hashing if verify-hash strategy ECDSA or Ed25519ph */
 	if (IS_ENABLED_ANY(PSA_WANT_ALG_SHA_256, PSA_WANT_ALG_SHA_512,
 			   PSA_WANT_ALG_SHA_384)) {
 		test_hash();
+		ran_tests = true;
 	}
 
 	/* + Test any encryption (optional added feature) */
 	if (IS_ENABLED_ANY(PSA_WANT_ALG_CTR)) {
 		test_crypt();
+		ran_tests = true;
 	}
 
 	/* + Test Generate random (optional added feature )*/
 	if (IS_ENABLED(PSA_WANT_GENERATE_RANDOM)) {
 		test_generate_random();
+		ran_tests = true;
 	}
 
-	/* Test revocation (required feature) */
-	test_revoke_keys();
+	if (IS_ENABLED(PSA_CORE_LITE_TEST_SUPPORTS_KMU)) {
+		/* Test revocation (required feature) */
+		test_revoke_keys();
 
-	/* Test locking (on read-only keys, required feature) */
-	test_lock_keys();
+		/* Test locking (on read-only keys, required feature) */
+		test_lock_keys();
 
-	/* Test invalid key operations*/
-	test_invalid_kmu();
+		/* Test invalid key operations*/
+		test_invalid_kmu();
+		ran_tests = true;
+	}
 
-	zassert_true(true, "");
+	zassert_true(ran_tests, "Did not run any tests!");
 }
