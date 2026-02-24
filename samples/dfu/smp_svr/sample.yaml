@@ -347,6 +347,28 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
     harness_config: *bt_harness_config
 
+  sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.nrf_compress.encryption_ed25519.pure_dts:
+    tags:
+      - encryption
+      - nrf_compress
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+      - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - OVERLAY_CONFIG="overlay-bt.conf"
+      - FILE_SUFFIX=ext_encflash_pure_dts
+      - SB_CONFIG_PARTITION_MANAGER=n
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    harness_config: *bt_harness_config
+
   sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.sqspi:
     extra_args:
       - OVERLAY_CONFIG="overlay-bt.conf"
