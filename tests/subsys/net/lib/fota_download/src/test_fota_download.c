@@ -7,6 +7,7 @@
 #include <string.h>
 #include <zephyr/types.h>
 #include <stdbool.h>
+#include <errno.h>
 #include <zephyr/ztest.h>
 #include <downloader.h>
 #include <fw_info.h>
@@ -85,6 +86,7 @@ int dfu_target_schedule_update(int img_num)
 
 int downloader_file_size_get(struct downloader *client, size_t *size)
 {
+	*size = 4096;
 	return 0;
 }
 
@@ -429,6 +431,63 @@ ZTEST(fota_download_tests, test_download_with_offset)
 	zassert_equal(err, -EAGAIN);
 }
 
+ZTEST(fota_download_tests, test_socket_retries)
+{
+	int err;
+	int retryable_errors[] = {-ECONNRESET, -EAGAIN, -ENETDOWN};
+
+	for (int i = 0; i < ARRAY_SIZE(retryable_errors); i++) {
+		/* Init */
+		init();
+
+		uint8_t fragment_buf[1] = {0};
+		size_t  fragment_len = 1;
+		const struct downloader_evt fragment_evt = {
+			.id = DOWNLOADER_EVT_FRAGMENT,
+			.fragment = {
+				.buf = fragment_buf,
+				.len = fragment_len,
+			}
+		};
+		const struct downloader_evt error_evt = {
+			.id = DOWNLOADER_EVT_ERROR,
+			.error = retryable_errors[i],
+		};
+		const struct downloader_evt stopped_evt = {
+			.id = DOWNLOADER_EVT_STOPPED,
+		};
+
+		/* Start download */
+		err = fota_download_any(BASE_DOMAIN, buf, NO_TLS, 0, 0, 0);
+		zassert_ok(err, NULL);
+
+		/* Send first fragment to initialize DFU target */
+		err = downloader_event_handler(&fragment_evt);
+		zassert_ok(err, NULL);
+
+		/* Verify that error triggers retry (returns 0) when retries are left.
+		 * CONFIG_FOTA_SOCKET_RETRIES is set to 2 in test configuration.
+		 */
+		err = downloader_event_handler(&error_evt);
+		zassert_equal(err, 0, "Expected retry on first error %d", retryable_errors[i]);
+
+		err = downloader_event_handler(&error_evt);
+		zassert_equal(err, 0, "Expected retry on second error %d", retryable_errors[i]);
+
+		/* Third error should fail as retries are exhausted */
+		err = downloader_event_handler(&error_evt);
+		zassert_equal(err, -1, "Expected failure when retries exhausted for error %d",
+			      retryable_errors[i]);
+
+		/* Simulate the DOWNLOADER_EVT_STOPPED that the real downloader
+		 * would send after callback returns -1
+		 */
+		err = downloader_event_handler(&stopped_evt);
+		zassert_ok(err, NULL);
+
+		k_sem_take(&stop_sem, K_FOREVER);
+	}
+}
 
 ZTEST(fota_download_tests, test_download_invalid_protocol)
 {
