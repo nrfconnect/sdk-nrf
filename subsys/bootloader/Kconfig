@@ -157,6 +157,11 @@ config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
 
+config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_RSA
+	bool "Use RSA signature"
+	help
+	  This is a Kconfig which is informative only, the value should not be changed.
+
 config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE
 	bool "Signature is verified over an image rather than sha of an image"
 	help
