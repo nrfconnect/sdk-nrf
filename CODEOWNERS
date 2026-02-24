@@ -251,11 +251,13 @@
 /doc/nrf/samples/ironside_se.rst          @nrfconnect/ncs-aurora-doc
 /doc/nrf/samples/keys.rst                 @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/matter.rst               @nrfconnect/ncs-matter-doc
+/doc/nrf/samples/matter/*.rst             @nrfconnect/ncs-matter-doc
 /doc/nrf/samples/mesh.rst                 @nrfconnect/ncs-paladin-doc
 /doc/nrf/samples/net.rst                  @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/nfc.rst                  @nrfconnect/ncs-radio-sw
 /doc/nrf/samples/nrf5340.rst              @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/other.rst                @nrfconnect/ncs-doc-leads
+/doc/nrf/samples/openthread/*.rst         @nrfconnect/ncs-terahertz-doc
 /doc/nrf/samples/peripheral.rst           @nrfconnect/ncs-radio-sw-doc
 /doc/nrf/samples/pmic.rst                 @nrfconnect/ncs-pmic-doc
 /doc/nrf/samples/sensor.rst               @nrfconnect/ncs-cia-doc
@@ -759,8 +761,7 @@
 /snippets/coverage_support/               @nrfconnect/ncs-low-level-test
 /snippets/hpf/                            @nrfconnect/ncs-ll-ursus
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
-/snippets/matter-debug/                   @nrfconnect/ncs-matter
-/snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
+/snippets/matter/                         @nrfconnect/ncs-matter
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
 /snippets/nrf70-driver-debug/             @krish2718 @sachinthegreen
 /snippets/nrf70-driver-verbose-debug/     @krish2718 @sachinthegreen
@@ -770,6 +771,7 @@
 /snippets/nrf91-modem-trace-ram/          @nrfconnect/ncs-modem
 /snippets/nrf91-modem-trace-rtt/          @nrfconnect/ncs-modem
 /snippets/nrf91-modem-trace-uart/         @nrfconnect/ncs-modem
+/snippets/openthread/                     @nrfconnect/ncs-thread
 /snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
 /snippets/wpa-supplicant-debug/           @krish2718 @sachinthegreen
 /snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
