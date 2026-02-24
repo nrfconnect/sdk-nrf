@@ -384,6 +384,10 @@ static int32_t mpsl_lib_init_internal(void)
 	}
 #endif
 
+	if (IS_ENABLED(CONFIG_MPSL_RELAXED_REAL_TIME)) {
+		mpsl_relaxed_real_time_set(true);
+	}
+
 	return 0;
 }
 

@@ -74,6 +74,12 @@ config MPSL_LOW_PRIO_IRQN
 	  This option sets the low priority interrupt that MPSL will use.
 	  Check the interrupt number in the MDK
 
+config MPSL_RELAXED_REAL_TIME
+	bool "Relaxed real-time requirements for MPSL"
+	help
+	  When enabled, MPSL will not trigger assertions when real-time deadlines are missed.
+	  Such deadlines can be missed when interrupts are disabled for longer periods of time.
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
