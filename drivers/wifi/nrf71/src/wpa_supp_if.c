@@ -1008,6 +1008,10 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 	uint32_t spec_key_index;
 	uint32_t crypto_key_index;
 	bool is_broadcast = false;
+	unsigned char key_buf[32] = {0};
+	const unsigned char *key_for_import = key;
+	size_t import_len = 32;
+	size_t max_size;
 
 	/* Determine if this is a broadcast/group key or unicast/pairwise key */
 	if (addr && is_broadcast_ether_addr(addr)) {
@@ -1031,11 +1035,26 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 	/* Pass crypto key_index (0-3) to wifi_keys; it maps to key[4]/mic_key[4] slots */
 	attr = wifi_keys_key_attributes_init(type, db_id, crypto_key_index);
 
-	LOG_DBG("%s: Importing key to PSA (suite: 0x%08x, type: %d, spec_idx: %u, crypto_idx: %u)",
-		__func__, suite, type, spec_key_index, crypto_key_index);
+	LOG_DBG("%s: Importing key to PSA (suite: 0x%08x, type: %d, idx: %u, len: %u)",
+		__func__, suite, type, crypto_key_index, (unsigned int)key_len);
+
+	max_size = is_mic_cipher_suite(suite) ? 16 : 32;
+	/* Pad/copy up to max size for type: 16 bytes for MIC, 32 for ENC.
+	 * Pad with zeros if shorter.
+	 */
+	if (key && key_len > 0) {
+		if (key_len >= max_size) {
+			memcpy(key_buf, key, max_size);
+		} else {
+			memcpy(key_buf, key, key_len);
+			memset(key_buf + key_len, 0, max_size - key_len);
+		}
+	}
+	key_for_import = key_buf;
+	import_len = max_size;
 
 	/* Import key to PSA */
-	status = psa_import_key(&attr, key, key_len, &key_id);
+	status = psa_import_key(&attr, key_for_import, import_len, &key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_ERR("%s: Failed to import key to PSA: %d", __func__, status);
 		return -EIO;
