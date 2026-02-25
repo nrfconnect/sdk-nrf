@@ -566,8 +566,9 @@ if !NRF_WIFI_GLOBAL_HEAP
 
 config NRF_WIFI_CTRL_HEAP_SIZE
 	int "Dedicated memory pool for control plane"
-	# for scan results, we need to increase by 15K (200 results)
-	default 35000
+	# New IPC design uses RAM for commands and events and hold till
+	# Wi-Fi core processes them, so, need more RAM.
+	default 40000
 
 config NRF_WIFI_DATA_HEAP_SIZE
 	int "Dedicated memory pool for data plane"

@@ -24,28 +24,28 @@ static void wifi_ipc_ep_bound(void *priv)
 
 static void wifi_ipc_recv_callback(const void *data, size_t len, void *priv)
 {
-	(void)len;
-	uint32_t global_addr = *((uint32_t *)data);
-
 	wifi_ipc_t *context = (wifi_ipc_t *)priv;
 
-	context->busy_q.recv_cb((void *)global_addr, context->busy_q.priv);
+	if (context->busy_q.recv_cb != NULL) {
+		context->busy_q.recv_cb((void *)data, len, context->busy_q.priv);
+	}
 
-	if (context->free_q != NULL) {
-		while (!spsc32_push(context->free_q, global_addr)) {
-		};
+	if (context->send_ack) {
+		while (!ipc_service_send(&context->busy_q.ipc_ep, data, len)) {
+			/* Retry until success */
+		}
 	}
 }
 
 static void wifi_ipc_busyq_init(wifi_ipc_busyq_t *busyq, const ipc_device_wrapper_t *ipc_inst,
-				void *rx_cb, void *priv)
+				void (*rx_cb)(void *data, size_t len, void *priv), void *priv)
 {
 	busyq->ipc_inst = ipc_inst;
 	busyq->ipc_ep_cfg.cb.bound = wifi_ipc_ep_bound;
-	busyq->ipc_ep_cfg.cb.received = wifi_ipc_recv_callback;
 	busyq->recv_cb = rx_cb;
 	busyq->ipc_ready = false;
 	busyq->priv = priv;
+	busyq->ipc_ep_cfg.cb.received = wifi_ipc_recv_callback;
 }
 
 static wifi_ipc_status_t wifi_ipc_busyq_register(wifi_ipc_t *context)
@@ -74,115 +74,59 @@ static wifi_ipc_status_t wifi_ipc_busyq_register(wifi_ipc_t *context)
 
 wifi_ipc_status_t wifi_ipc_bind_ipc_service(wifi_ipc_t *context,
 						const ipc_device_wrapper_t *ipc_inst,
-						void (*rx_cb)(void *data, void *priv), void *priv)
+						void (*rx_cb)(void *data, size_t len, void *priv),
+						void *priv)
 {
 	wifi_ipc_busyq_init(&context->busy_q, ipc_inst, rx_cb, priv);
+
 	return wifi_ipc_busyq_register(context);
 }
 
-wifi_ipc_status_t wifi_ipc_bind_ipc_service_tx_rx(wifi_ipc_t *tx, wifi_ipc_t *rx,
-						  const ipc_device_wrapper_t *ipc_inst,
-						  void (*rx_cb)(void *data, void *priv), void *priv)
+
+static wifi_ipc_status_t wifi_ipc_busyq_send(wifi_ipc_t *context, const void *data, size_t len)
 {
-	wifi_ipc_busyq_init(&rx->busy_q, ipc_inst, rx_cb, priv);
-
-	tx->linked_ipc = &rx->busy_q;
-
-	return wifi_ipc_busyq_register(rx);
-}
-
-wifi_ipc_status_t wifi_ipc_freeq_get(wifi_ipc_t *context, uint32_t *data)
-{
-	if (context->free_q == NULL) {
-		LOG_ERR("Free queue is not initialised");
-		return WIFI_IPC_STATUS_FREEQ_UNINIT_ERR;
-	}
-
-	if (!spsc32_pop(context->free_q, data)) {
-		LOG_DBG("Free queue is empty");
-		return WIFI_IPC_STATUS_FREEQ_EMPTY;
-	}
-
-	return WIFI_IPC_STATUS_OK;
-}
-
-wifi_ipc_status_t wifi_ipc_freeq_send(wifi_ipc_t *context, uint32_t data)
-{
-	return (spsc32_push(context->free_q, data) == true ? WIFI_IPC_STATUS_OK
-								 : WIFI_IPC_STATUS_FREEQ_FULL);
-}
-
-wifi_ipc_status_t wifi_ipc_busyq_send(wifi_ipc_t *context, uint32_t *data)
-{
-	wifi_ipc_busyq_t *busyq =
-		context->linked_ipc ? context->linked_ipc : &context->busy_q;
+	wifi_ipc_busyq_t *busyq = &context->busy_q;
 
 	if (!busyq->ipc_ready) {
 		LOG_ERR("IPC service is not ready");
 		return WIFI_IPC_STATUS_BUSYQ_NOTREADY;
 	}
 
-	int ret = ipc_service_send(&busyq->ipc_ep, data, sizeof(*data));
+	LOG_DBG("IPC send: len %d", len);
+
+	int ret = ipc_service_send(&busyq->ipc_ep, (const void *)data, len);
 
 	if (ret == -ENOMEM) {
+		LOG_ERR("IPC send: ENOMEM");
 		return WIFI_IPC_STATUS_BUSYQ_FULL;
 	} else if (ret < 0) {
-		LOG_ERR("Critical IPC failure: %d", ret);
+		LOG_ERR("IPC send: Critical IPC failure: %d", ret);
 		return WIFI_IPC_STATUS_BUSYQ_CRITICAL_ERR;
 	}
 
-	if (context->free_q != NULL) {
-		uint32_t data_out;
+	return WIFI_IPC_STATUS_OK;
+}
 
-		return (spsc32_pop(context->free_q, &data_out) == true
-				? (*data == data_out ? WIFI_IPC_STATUS_OK
-							: WIFI_IPC_STATUS_FREEQ_INVALID)
-				: WIFI_IPC_STATUS_FREEQ_EMPTY);
-	}
+wifi_ipc_status_t wifi_ipc_host_tx_init(wifi_ipc_t *context, uint32_t addr_freeq)
+{
+	context->send_ack = false;
 
 	return WIFI_IPC_STATUS_OK;
 }
 
-wifi_ipc_status_t wifi_ipc_host_cmd_init(wifi_ipc_t *context, uint32_t addr_freeq)
+wifi_ipc_status_t wifi_ipc_host_rx_init(wifi_ipc_t *context, uint32_t addr_freeq)
 {
-	context->free_q = (void *)addr_freeq;
+	context->send_ack = false;
+
 	return WIFI_IPC_STATUS_OK;
 }
 
-wifi_ipc_status_t wifi_ipc_host_event_init(wifi_ipc_t *context, uint32_t addr_freeq)
+wifi_ipc_status_t wifi_ipc_host_tx_send(wifi_ipc_t *context, const void *data, size_t len)
 {
-	context->free_q = (void *)addr_freeq;
-	return WIFI_IPC_STATUS_OK;
-}
+	wifi_ipc_buf_desc_t msg_info;
 
-wifi_ipc_status_t wifi_ipc_host_cmd_get(wifi_ipc_t *context, uint32_t *data)
-{
-	return wifi_ipc_freeq_get(context, data);
-}
+	msg_info.addr = (uint32_t)data;
+	msg_info.size = len;
 
-wifi_ipc_status_t wifi_ipc_host_cmd_send(wifi_ipc_t *context, uint32_t *data)
-{
-	return wifi_ipc_busyq_send(context, data);
-}
-
-wifi_ipc_status_t wifi_ipc_host_cmd_send_memcpy(wifi_ipc_t *context, const void *msg,
-						size_t len)
-{
-	int ret;
-	uint32_t gdram_addr;
-
-	ret = wifi_ipc_host_cmd_get(context, &gdram_addr);
-	if (ret != WIFI_IPC_STATUS_OK) {
-		LOG_ERR("Failed to get command location from free queue: %d", ret);
-		return ret;
-	}
-
-	memcpy((void *)gdram_addr, msg, len);
-
-	return wifi_ipc_host_cmd_send(context, &gdram_addr);
-}
-
-wifi_ipc_status_t wifi_ipc_host_tx_send(wifi_ipc_t *context, const void *msg)
-{
-	return wifi_ipc_host_cmd_send(context, (uint32_t *)&msg);
+	return wifi_ipc_busyq_send(context, &msg_info, sizeof(msg_info));
 }
