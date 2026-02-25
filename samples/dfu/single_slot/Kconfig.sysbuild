@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n
+
 config MCUBOOT_SIGNATURE_USING_KMU
 	default y if SOC_SERIES_NRF54L
 
