@@ -309,7 +309,7 @@
 
 .. nrf54ls05dk_nrf54ls05b_cpuapp
 
-| nRF54LS05 DK |   | nrf54ls05dk | ``nrf54ls05dk/nrf54ls05b/cpuapp`` |
+| nRF54LS05 DK | PCA10214 | nrf54ls05dk | ``nrf54ls05dk/nrf54ls05b/cpuapp`` |
 
 .. nrf54ls05dk@0.2.0_nrf54ls05b_cpuapp
 

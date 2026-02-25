@@ -48,16 +48,26 @@ Refer to the following information for the list of supported development kits (D
      - | `nRF54L05 System-on-Chip (SoC) <nRF54L05_>`_
    * - :zephyr:board:`nrf54lm20dk`
      - PCA10184
-     - | ``nrf54lm20dk/nrf54lm20a/cpuapp``
+     - | nRF54LM20A targets:
+       | ``nrf54lm20dk/nrf54lm20a/cpuapp``
        | ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
        | ``nrf54lm20dk/nrf54lm20a/cpuflpr``
        | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``
+       | nRF54LM20B targets:
+       | ``nrf54lm20dk/nrf54lm20b/cpuapp``
+       | ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
      - | `Datasheet <nRF54LM20A Datasheet_>`_
        | `Quick Start app`_
        | `User Guide <nRF54LM20 DK User Guide_>`_
        | `nRF54LM20A Compatibility Matrix`_
      - | `nRF54LM20 DK product page <nRF54LM20 DK_>`_
        | `nRF54LM20A System-on-Chip (SoC) <nRF54LM20A System-on-Chip_>`_
+       | `nRF54LM20B System-on-Chip (SoC) <nRF54LM20B System-on-Chip_>`_
+   * - nRF54LS05 DK
+     - PCA10214
+     - | ``nrf54ls05dk/nrf54ls05b/cpuapp``
+     - | --
+     - | --
    * - nRF54LV10 DK
      - PCA10188
      - | ``nrf54lv10dk/nrf54lv10a/cpuapp``

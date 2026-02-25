@@ -358,6 +358,7 @@
 .. _`nRF54LV10A System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LV10A
 
 .. _`nRF54LM20A System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LM20A
+.. _`nRF54LM20B System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LM20B
 .. _`nRF54LM20 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54LM20-DK
 
 .. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
