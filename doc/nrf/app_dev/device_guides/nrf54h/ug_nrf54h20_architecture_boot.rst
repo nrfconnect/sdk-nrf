@@ -28,6 +28,9 @@ If the system was active and entered the Soft Off sleep state, the system perfor
 
 During cold boot the system has no (or little application-defined) state retained in its RAM memory or hardware registers and performs full initialization.
 
+The following sections describe the startup order of all domains, with boot sequence diagrams for the default, MCUboot, and secondary firmware configurations.
+For information on using |ISE| to configure the boot flow, including secondary firmware setup, boot commands (``ERASEALL``, ``DEBUGWAIT``), the boot report, and register formats, see :ref:`ug_nrf54h20_ironside_se_boot_management`.
+
 Cold boot features
 ******************
 
@@ -74,9 +77,6 @@ The following is a description of the boot sequence steps:
 #. The System Controller CPU and other local domains are released from reset and in parallel start to execute their respective MRAM firmware components.
 
 #. Each of the local domains is responsible to configure its local resources partitioning.
-
-.. note::
-   Read the entire :ref:`ug_nrf54h20_ironside` documentation page to better understand the boot process and how the |ISE| works.
 
 Boot sequence with MCUboot
 ==========================
