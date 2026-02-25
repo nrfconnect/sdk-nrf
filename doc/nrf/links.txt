@@ -1074,6 +1074,7 @@
 .. _`Erasing the device`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_erasing.html
 .. _`Recovering the device`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_recovery.html
 .. _`Configuring readback protection`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_readback_protection.html
+.. _`nRF Util mcu-manager serial`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-mcu-manager/nrfutil-mcu-manager.html
 
 .. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
