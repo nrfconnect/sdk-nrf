@@ -22,6 +22,7 @@
 
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
+#include <cracen_psa_key_ids.h>
 
 #if defined(__NRF_TFM__)
 
