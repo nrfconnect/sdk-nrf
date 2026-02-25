@@ -596,7 +596,7 @@ psa_status_t psa_driver_wrapper_generate_key(const psa_key_attributes_t *attribu
 						   key_buffer_length);
 		break;
 
-#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER) && defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 		return cracen_generate_key(attributes, key_buffer, key_buffer_size,
 					     key_buffer_length);
@@ -636,7 +636,7 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 			return status;
 		}
 #endif
-#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER) || defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY)
 		status = cracen_import_key(attributes, data, data_length, key_buffer,
 					   key_buffer_size, key_buffer_length, bits);
 		/* Declared with fallback == true */
@@ -668,7 +668,7 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 		return psa_import_key_into_slot(attributes, data, data_length, key_buffer,
 						key_buffer_size, key_buffer_length, bits);
 
-#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER) && defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN:
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 		return cracen_import_key(attributes, data, data_length, key_buffer,
@@ -729,14 +729,14 @@ psa_status_t psa_driver_wrapper_export_public_key(const psa_key_attributes_t *at
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 #endif /* defined(PSA_NEED_CRACEN_KMU_DRIVER) */
-#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER) || defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY)
 		status = cracen_export_public_key(attributes, key_buffer, key_buffer_size, data,
 						  data_size, data_length);
 		/* Declared with fallback == true */
 		if (status != PSA_ERROR_NOT_SUPPORTED) {
 			return status;
 		}
-#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER*/
+#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER || PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY */
 #if defined(PSA_NEED_CC3XX_KEY_MANAGEMENT_DRIVER)
 		status = cc3xx_export_public_key(attributes, key_buffer, key_buffer_size, data,
 						 data_size, data_length);
@@ -753,11 +753,11 @@ psa_status_t psa_driver_wrapper_export_public_key(const psa_key_attributes_t *at
 			return status;
 		}
 #endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER */
-#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER) || defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY)
 	case PSA_KEY_LOCATION_CRACEN:
 		return cracen_export_public_key(attributes, key_buffer, key_buffer_size, data,
 						data_size, data_length);
-#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER*/
+#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER || PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY */
 		/* Fell through, meaning no accelerator supports this operation.
 		 * The CryptoCell driver doesn't support export public keys when
 		 * the key is a public key itself, so this is necessary.

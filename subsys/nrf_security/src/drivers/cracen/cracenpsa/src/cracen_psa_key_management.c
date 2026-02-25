@@ -39,17 +39,17 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_EXPORT)) {
-		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
-			return export_ecc_public_key_from_keypair(attributes, key_buffer,
-								  key_buffer_size, data, data_size,
-								  data_length);
-		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
-			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
-					      data_size, data_length);
-		} else {
-			/* For compliance */
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_EXPORT) &&
+	    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
+		return export_ecc_public_key_from_keypair(attributes, key_buffer,
+							  key_buffer_size, data, data_size,
+							  data_length);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY) &&
+	    PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
+		return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
+				      data_size, data_length);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT_SECP_R1_256)) {
@@ -98,7 +98,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
-#ifdef PSA_NEED_CRACEN_KMU_DRIVER
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER) && defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		int slot_id = CRACEN_PSA_GET_KMU_SLOT(
 			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
@@ -147,16 +147,16 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_IMPORT)) {
-		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
-			return import_ecc_private_key(attributes, data, data_length, key_buffer,
-						      key_buffer_size, key_buffer_length, key_bits);
-		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
-			return import_ecc_public_key(attributes, data, data_length, key_buffer,
-						     key_buffer_size, key_buffer_length, key_bits);
-		} else {
-			/* For compliance */
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_IMPORT) &&
+	    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
+		return import_ecc_private_key(attributes, data, data_length, key_buffer,
+					      key_buffer_size, key_buffer_length, key_bits);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY) &&
+	    PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
+		return import_ecc_public_key(attributes, data, data_length, key_buffer,
+					     key_buffer_size, key_buffer_length, key_bits);
 	}
 
 	if (PSA_KEY_TYPE_IS_RSA(key_type) &&
@@ -183,7 +183,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
-#ifdef PSA_NEED_CRACEN_KMU_DRIVER
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER) && defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 static
 psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
 				  size_t key_buffer_size, size_t *key_buffer_length)
@@ -219,7 +219,7 @@ psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_
 	return cracen_import_key(attributes, key, PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)),
 				 key_buffer, key_buffer_size, key_buffer_length, &key_bits);
 }
-#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER && PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER */
 
 psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
 				 size_t key_buffer_size, size_t *key_buffer_length)
@@ -231,7 +231,7 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
-#ifdef PSA_NEED_CRACEN_KMU_DRIVER
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER) && defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		if (!cracen_kmu_key_user_allowed(attributes)) {
 			return PSA_ERROR_NOT_PERMITTED;

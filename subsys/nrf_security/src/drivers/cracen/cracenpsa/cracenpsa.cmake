@@ -112,10 +112,19 @@ if(CONFIG_PSA_NEED_CRACEN_HMAC)
   )
 endif()
 
-if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DRIVER OR CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
+# Core key management routing — needed for any key type handling including
+# public-key-only builds, KMU builtin key resolution, and full key management.
+if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DRIVER OR CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS OR CONFIG_PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_ikg.c
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_management.c
+  )
+endif()
+
+# Full key management implementation — RSA, PAKE, and additional ECC sources
+# only needed when key pair operations or related features are enabled.
+if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+  list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/rsa/cracen_rsa_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/pake/cracen_wpa3_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/pake/cracen_spake2p_key_management.c
