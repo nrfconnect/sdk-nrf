@@ -1,0 +1,116 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Matter-optimized TF-M partition layout for nRF54LM20A
+ *
+ * nRF54LM20A has 2036 kB of RRAM and 512 kB of SRAM (508 kB usable).
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * Optimized for Matter (Connected Home over IP) with:
+ * - Full TF-M for attestation, SPAKE2+, crypto
+ * - MCUboot for Matter OTA
+ * - Enlarged PS for DAC/PAI certificate storage
+ * - Enlarged ITS for fabric credentials
+ * - Factory data partition for Matter device info
+ * - Large NS partition — the 2 MB RRAM gives ample room
+ *   for the Matter stack without needing external flash
+ *
+ * The nRF54LM20A's large memory means the secondary DFU slot can
+ * fit entirely in internal RRAM alongside a generous primary image.
+ *
+ * Suitable for: Matter light bulbs, switches, sensors, door locks,
+ *               Matter over Wi-Fi (with nRF7002 companion)
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(128)>;
+		ranges = <0x0 0x0 DT_SIZE_K(128)>;
+	};
+
+	sram0_ns: image_ns@20000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x20000 DT_SIZE_K(380)>;
+		ranges = <0x0 0x20000 DT_SIZE_K(380)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (320 kB)
+		 *   0x0005C000  Non-secure Matter app    (512 kB)
+		 * 0x000DC000  TF-M PS                    (24 kB)
+		 * 0x000E2000  TF-M ITS                   (24 kB)
+		 * 0x000E8000  TF-M OTP / NV counters      (8 kB)
+		 * 0x000EA000  Factory data                (4 kB)
+		 * 0x000EB000  Secondary slot            (832 kB)
+		 * 0x001BB000  Non-secure storage         (64 kB)
+		 *
+		 * Primary = 320 + 512 = 832 kB = Secondary
+		 * Total: 48 + 832 + 24 + 24 + 8 + 4 + 832 + 64 = 1836 kB
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(320)>;
+		};
+
+		slot0_ns_partition: partition@5c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0005C000 DT_SIZE_K(512)>;
+		};
+
+		tfm_ps_partition: partition@dc000 {
+			label = "tfm-ps";
+			reg = <0x000DC000 DT_SIZE_K(24)>;
+		};
+
+		tfm_its_partition: partition@e2000 {
+			label = "tfm-its";
+			reg = <0x000E2000 DT_SIZE_K(24)>;
+		};
+
+		tfm_otp_partition: partition@e8000 {
+			label = "tfm-otp";
+			reg = <0x000E8000 DT_SIZE_K(8)>;
+		};
+
+		factory_partition: partition@ea000 {
+			label = "factory-data";
+			reg = <0x000EA000 DT_SIZE_K(4)>;
+		};
+
+		slot1_partition: partition@eb000 {
+			label = "image-1";
+			reg = <0x000EB000 DT_SIZE_K(832)>;
+		};
+
+		storage_partition: partition@1bb000 {
+			label = "storage";
+			reg = <0x001BB000 DT_SIZE_K(64)>;
+		};
+	};
+};

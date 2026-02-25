@@ -1,0 +1,98 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Bluetooth-optimized TF-M partition layout for nRF54LV10A
+ *
+ * nRF54LV10A has 1012 kB of RRAM and 192 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * Optimized for Bluetooth LE applications with:
+ * - Smaller TF-M secure partition (BLE crypto needs less than Matter)
+ * - MCUboot for BLE DFU (SMP/FOTA)
+ * - ITS for BLE bond storage
+ * - No Protected Storage (bonds in ITS or NVS)
+ * - Larger NS partition for BLE stack + application
+ *
+ * Suitable for: BLE peripherals, beacons, wearables on nRF54LV10A
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(64)>;
+		ranges = <0x0 0x0 DT_SIZE_K(64)>;
+	};
+
+	/* 124 kB NS — 4 kB unused at top */
+	sram0_ns: image_ns@10000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x10000 DT_SIZE_K(124)>;
+		ranges = <0x0 0x10000 DT_SIZE_K(124)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (128 kB)
+		 *   0x0002C000  Non-secure BLE app       (260 kB)
+		 * 0x0006D000  TF-M ITS                   (12 kB)
+		 * 0x00070000  TF-M OTP / NV counters      (4 kB)
+		 * 0x00071000  Secondary slot            (388 kB)
+		 * 0x000D2000  Non-secure storage (NVS)    (32 kB)
+		 *
+		 * No TF-M PS — BLE bonds stored in ITS or NVS.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(128)>;
+		};
+
+		slot0_ns_partition: partition@2c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0002C000 DT_SIZE_K(260)>;
+		};
+
+		tfm_its_partition: partition@6d000 {
+			label = "tfm-its";
+			reg = <0x0006D000 DT_SIZE_K(12)>;
+		};
+
+		tfm_otp_partition: partition@70000 {
+			label = "tfm-otp";
+			reg = <0x00070000 DT_SIZE_K(4)>;
+		};
+
+		slot1_partition: partition@71000 {
+			label = "image-1";
+			reg = <0x00071000 DT_SIZE_K(388)>;
+		};
+
+		storage_partition: partition@d2000 {
+			label = "storage";
+			reg = <0x000D2000 DT_SIZE_K(32)>;
+		};
+	};
+};

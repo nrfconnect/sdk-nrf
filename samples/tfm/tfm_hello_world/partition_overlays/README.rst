@@ -79,18 +79,67 @@ nRF54L15 (4 kB alignment)
    overhead. More secure SRAM for per-partition stacks. Requires
    ``CONFIG_TFM_ISOLATION_LEVEL=2`` and ``CONFIG_TFM_IPC=y``.
 
-nRF54LV10A (4 kB alignment, smaller memory)
-=============================================
+nRF54LV10A (4 kB alignment, 1012 kB RRAM, 192 kB SRAM)
+========================================================
 
 ``nrf54lv10a_minimal.overlay``
-   Minimal TF-M profile for nRF54LV10A (1012 kB RRAM, 192 kB SRAM).
-   Demonstrates partition planning with tighter memory constraints compared
-   to nRF54L15.
+   Minimal TF-M profile without MCUboot. Demonstrates partition planning
+   with tighter memory constraints compared to nRF54L15.
 
 ``nrf54lv10a_mcuboot.overlay``
-   MCUboot + TF-M for nRF54LV10A. Shows how to fit primary and secondary
-   DFU slots within the smaller 1012 kB RRAM. Symmetric slot layout for
-   MCUboot compatibility.
+   MCUboot + TF-M. Shows how to fit primary and secondary DFU slots within
+   the smaller 1012 kB RRAM. Symmetric slot layout for MCUboot compatibility.
+
+``nrf54lv10a_full.overlay``
+   Full TF-M profile with MCUboot and all TF-M storage partitions. Tighter
+   trade-offs compared to nRF54L15 due to less RRAM.
+
+``nrf54lv10a_bluetooth.overlay``
+   Optimized for BLE. No Protected Storage, enlarged NS partition for the
+   BLE stack within the constrained 1012 kB RRAM.
+
+``nrf54lv10a_matter.overlay``
+   Matter on the nRF54LV10A is tight. Includes a warning that 200 kB NS
+   may be insufficient for full Matter and suggests external flash for the
+   secondary slot.
+
+``nrf54lv10a_thread.overlay``
+   Optimized for OpenThread. Sized for Full Thread Devices (FTD) with
+   networking and NVS storage within 1012 kB.
+
+``nrf54lv10a_crypto_tls.overlay``
+   TLS/DTLS-heavy with enlarged PS and ITS for certificate and key storage.
+
+nRF54LM20A (4 kB alignment, 2036 kB RRAM, 508 kB SRAM)
+=========================================================
+
+``nrf54lm20a_minimal.overlay``
+   Minimal TF-M without MCUboot. The largest nRF54L-family SoC — leaves
+   ~1916 kB for the non-secure application.
+
+``nrf54lm20a_mcuboot.overlay``
+   MCUboot + TF-M with generous DFU slots. 576 kB NS application + 896 kB
+   symmetric primary/secondary slots.
+
+``nrf54lm20a_full.overlay``
+   Full TF-M profile with all services, MCUboot, and 512 kB NS application.
+   The 2 MB RRAM comfortably fits everything internally.
+
+``nrf54lm20a_bluetooth.overlay``
+   Optimized for BLE with 768 kB NS partition — room for complex BLE
+   applications including audio and mesh.
+
+``nrf54lm20a_matter.overlay``
+   Optimized for Matter with 512 kB NS, enlarged PS/ITS, factory data, and
+   832 kB DFU slot — all fitting internally without external flash.
+
+``nrf54lm20a_thread.overlay``
+   Optimized for OpenThread FTD with 640 kB NS for the full Thread stack
+   and 64 kB NVS for Thread settings persistence.
+
+``nrf54lm20a_crypto_tls.overlay``
+   TLS/DTLS-heavy with 32 kB each for PS and ITS, 448 kB NS application,
+   and 768 kB secondary slot for secure firmware updates.
 
 nRF5340 (16 kB alignment)
 ===========================

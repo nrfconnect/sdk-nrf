@@ -1,0 +1,100 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Full-featured TF-M partition layout for nRF54LM20A
+ *
+ * nRF54LM20A has 2036 kB of RRAM and 512 kB of SRAM (508 kB usable).
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * This layout enables all TF-M services with MCUboot, with generous
+ * partition sizes enabled by the large 2 MB RRAM.
+ *
+ * Suitable for: full-featured IoT devices, development, prototyping
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(256)>;
+		ranges = <0x0 0x0 DT_SIZE_K(256)>;
+	};
+
+	sram0_ns: image_ns@40000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x40000 DT_SIZE_K(252)>;
+		ranges = <0x0 0x40000 DT_SIZE_K(252)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (384 kB)
+		 *   0x0006C000  Non-secure application   (512 kB)
+		 * 0x000EC000  TF-M PS                    (16 kB)
+		 * 0x000F0000  TF-M ITS                   (16 kB)
+		 * 0x000F4000  TF-M OTP / NV counters      (8 kB)
+		 * 0x000F6000  Secondary slot            (896 kB)
+		 * 0x001D6000  Non-secure storage         (96 kB)
+		 *
+		 * Primary = 384 + 512 = 896 kB = Secondary
+		 * Total: 48 + 896 + 16 + 16 + 8 + 896 + 96 = 1976 kB
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(384)>;
+		};
+
+		slot0_ns_partition: partition@6c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0006C000 DT_SIZE_K(512)>;
+		};
+
+		tfm_ps_partition: partition@ec000 {
+			label = "tfm-ps";
+			reg = <0x000EC000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@f0000 {
+			label = "tfm-its";
+			reg = <0x000F0000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@f4000 {
+			label = "tfm-otp";
+			reg = <0x000F4000 DT_SIZE_K(8)>;
+		};
+
+		slot1_partition: partition@f6000 {
+			label = "image-1";
+			reg = <0x000F6000 DT_SIZE_K(896)>;
+		};
+
+		storage_partition: partition@1d6000 {
+			label = "storage";
+			reg = <0x001D6000 DT_SIZE_K(96)>;
+		};
+	};
+};
