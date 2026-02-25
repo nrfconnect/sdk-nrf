@@ -20,6 +20,14 @@ clic: &cpuflpr_clic {};
 		compatible = "simple-bus";
 		interrupt-parent = <&cpuflpr_clic>;
 		ranges;
+
+		cpuflpr_sram: memory@2001fc00 {
+			reg = <0x2001fc00 DT_SIZE_K(64)>;
+			ranges = <0x0 0x2001fc00 DT_SIZE_K(64)>;
+			compatible = "mmio-sram";
+			#address-cells = <1>;
+			#size-cells = <1>;
+		};
 	};
 };
 
@@ -38,6 +46,18 @@ clic: &cpuflpr_clic {};
 		#mbox-cells = <1>;
 		nordic,tasks = <7>;
 		nordic,tasks-mask = <0x007f0000>;
+	};
+};
+
+&rram_controller {
+	cpuflpr_rram: rram@ed000 {
+		reg = <0xed000 DT_SIZE_K(64)>;
+		ranges = <0x0 0xed000 DT_SIZE_K(64)>;
+		compatible = "soc-nv-flash";
+		erase-block-size = <4096>;
+		write-block-size = <16>;
+		#address-cells = <1>;
+		#size-cells = <1>;
 	};
 };
 
