@@ -34,8 +34,8 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/dfu/single_slot`
 
-Sample by defult is building with :ref:`fw_loader_ble_mcumgr` firmware loader image.
-To build with :ref:`fw_loader_usb_mcumgr` firmware loader image, use the following provide FILE_SUFFIX=usb to the build command.
+By default, the sample builds with the :ref:`fw_loader_ble_mcumgr` firmware loader image.
+To build with the :ref:`fw_loader_usb_mcumgr` firmware loader image, append ``FILE_SUFFIX=usb`` to the build command.
 
 .. include:: /includes/build_and_run.txt
 
@@ -52,13 +52,22 @@ After programming the sample to your development kit, perform the following step
 
 #. Build a second version of the sample.
 #. Enter the firmware loader mode by holding the **Button 0** on your development kit while you reset the device.
-#. For Bluetooth firmware loader: Open the `nRF Connect Device Manager`_ mobile app to perform DFU over Bluetooth LE.
-   The firmware loader advertises itself as **FW loader** and accepts MCUmgr image upload.
-   #. Send the generated update package for the second version of the sample.
-      See :ref:`ug_nrf54l_developing_ble_fota_steps_testing` for details on how to use the mobile app to perform the DFU.
-#. For USB CDC ACM serial firmware loader: Use `nRF Util mcu-manager serial` to perform DFU over serial port.
-   #. Send the generated update package for the second version of the sample.
-      See `nRF Util mcu-manager serial`_ for details on how to use the command to perform the DFU.
+
+   a. Bluetooth firmware loader:
+
+      Open the `nRF Connect Device Manager`_ mobile app to perform DFU over Bluetooth® LE.
+
+      * The firmware loader advertises itself as *FW loader* and accepts MCUmgr image upload.
+      * Send the generated update package for the second version of the sample.
+        See :ref:`ug_nrf54l_developing_ble_fota_steps_testing` for details on how to use the mobile app to perform the DFU.
+
+   b. USB CDC ACM serial firmware loader:
+
+      Use `nRF Util mcu-manager serial` to perform DFU over serial port.
+
+      * Send the generated update package for the second version of the sample.
+        See `nRF Util mcu-manager serial`_ for details on how to use the command to perform the DFU.
+
 #. Verify that the printed build time corresponds to the new version once the update is complete and the device reboots into the main application.
 
 Dependencies
