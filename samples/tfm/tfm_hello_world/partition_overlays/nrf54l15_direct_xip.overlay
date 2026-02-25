@@ -1,0 +1,118 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Direct-XIP (A/B) update TF-M partition layout for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * Direct-XIP (eXecute In Place) mode means MCUboot does NOT copy
+ * the firmware image from the secondary slot to the primary slot.
+ * Instead, it boots directly from whichever slot contains the newest
+ * valid image. This means:
+ *
+ * 1. BOTH slots must be the SAME size and aligned identically
+ * 2. Both slots are executable — no copy overhead at boot
+ * 3. Boot time is faster (no image copy/swap)
+ * 4. The inactive slot serves as a "known good" fallback
+ * 5. With revert support, a bad update auto-reverts on next boot
+ *
+ * Required sysbuild config:
+ *   SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
+ *   (or SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y for rollback)
+ *
+ * Suitable for: low-latency boot, industrial IoT, safety-critical
+ *               devices, A/B update strategies
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(88)>;
+		ranges = <0x0 0x0 DT_SIZE_K(88)>;
+	};
+
+	sram0_ns: image_ns@16000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x16000 DT_SIZE_K(168)>;
+		ranges = <0x0 0x16000 DT_SIZE_K(168)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Slot A (primary):
+		 *   0x0000C000  TF-M secure image       (192 kB)
+		 *   0x0003C000  Non-secure application   (356 kB)
+		 * 0x00095000  TF-M PS                    (16 kB)
+		 * 0x00099000  TF-M ITS                   (16 kB)
+		 * 0x0009D000  TF-M OTP / NV counters      (8 kB)
+		 * 0x0009F000  Slot B (secondary):
+		 *   (must be same size as Slot A = 548 kB)
+		 *   0x0009F000  TF-M secure image       (192 kB)
+		 *   0x000CF000  Non-secure application   (356 kB)
+		 * 0x00128000  Non-secure storage         (48 kB)
+		 *
+		 * Slot A = Slot B = 192 + 356 = 548 kB (required for XIP)
+		 * MCUboot selects the slot with the highest version to boot.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		/* Slot A (primary) */
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(192)>;
+		};
+
+		slot0_ns_partition: partition@3c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0003C000 DT_SIZE_K(356)>;
+		};
+
+		tfm_ps_partition: partition@95000 {
+			label = "tfm-ps";
+			reg = <0x00095000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@99000 {
+			label = "tfm-its";
+			reg = <0x00099000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@9d000 {
+			label = "tfm-otp";
+			reg = <0x0009D000 DT_SIZE_K(8)>;
+		};
+
+		/* Slot B (secondary) — must equal Slot A size for XIP */
+		slot1_partition: partition@9f000 {
+			label = "image-1";
+			reg = <0x0009F000 DT_SIZE_K(548)>;
+		};
+
+		storage_partition: partition@128000 {
+			label = "storage";
+			reg = <0x00128000 DT_SIZE_K(48)>;
+		};
+	};
+};

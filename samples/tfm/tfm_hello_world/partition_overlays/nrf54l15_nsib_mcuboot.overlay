@@ -1,0 +1,131 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * NSIB + MCUboot secure boot chain TF-M partition layout for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * This layout implements a full secure boot chain:
+ *   NSIB (immutable) → MCUboot (updatable) → TF-M → NS Application
+ *
+ * NSIB (nRF Secure Immutable Bootloader, also called "b0") is
+ * written once during manufacturing and cannot be updated. It
+ * validates MCUboot before handing off. MCUboot then validates the
+ * TF-M + NS application image.
+ *
+ * Additional partitions:
+ * - b0: NSIB bootloader (write-protected after provisioning)
+ * - provision: Secure boot provisioning data (public keys, counters)
+ * - MCUboot has hardware downgrade prevention via monotonic counters
+ *
+ * Required sysbuild config:
+ *   SB_CONFIG_SECURE_BOOT_APPCORE=y
+ *   SB_CONFIG_BOOTLOADER_MCUBOOT=y
+ *   SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
+ *
+ * Suitable for: PSA Certified products, high-security IoT,
+ *               devices requiring immutable root of trust
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(88)>;
+		ranges = <0x0 0x0 DT_SIZE_K(88)>;
+	};
+
+	sram0_ns: image_ns@16000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x16000 DT_SIZE_K(168)>;
+		ranges = <0x0 0x16000 DT_SIZE_K(168)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  NSIB (b0) bootloader       (16 kB)
+		 *             (immutable, write-protected)
+		 * 0x00004000  Provisioning data            (4 kB)
+		 *             (public keys, monotonic counters)
+		 * 0x00005000  MCUboot bootloader          (48 kB)
+		 * 0x00011000  Primary slot:
+		 *   0x00011000  TF-M secure image         (256 kB)
+		 *   0x00051000  Non-secure application    (304 kB)
+		 * 0x0009D000  TF-M PS                      (16 kB)
+		 * 0x000A1000  TF-M ITS                     (16 kB)
+		 * 0x000A5000  TF-M OTP / NV counters        (8 kB)
+		 * 0x000A7000  Secondary slot              (560 kB)
+		 * 0x00133000  Non-secure storage           (40 kB)
+		 *
+		 * Primary = 256 + 304 = 560 kB = Secondary
+		 * NSIB is small (~8 kB code) but aligned to 16 kB for
+		 * write-protection via FPROTECT.
+		 */
+
+		b0_partition: partition@0 {
+			label = "b0";
+			reg = <0x00000000 DT_SIZE_K(16)>;
+		};
+
+		provision_partition: partition@4000 {
+			label = "provision";
+			reg = <0x00004000 DT_SIZE_K(4)>;
+		};
+
+		boot_partition: partition@5000 {
+			label = "mcuboot";
+			reg = <0x00005000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@11000 {
+			label = "image-0";
+			reg = <0x00011000 DT_SIZE_K(256)>;
+		};
+
+		slot0_ns_partition: partition@51000 {
+			label = "image-0-nonsecure";
+			reg = <0x00051000 DT_SIZE_K(304)>;
+		};
+
+		tfm_ps_partition: partition@9d000 {
+			label = "tfm-ps";
+			reg = <0x0009D000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@a1000 {
+			label = "tfm-its";
+			reg = <0x000A1000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@a5000 {
+			label = "tfm-otp";
+			reg = <0x000A5000 DT_SIZE_K(8)>;
+		};
+
+		slot1_partition: partition@a7000 {
+			label = "image-1";
+			reg = <0x000A7000 DT_SIZE_K(560)>;
+		};
+
+		storage_partition: partition@133000 {
+			label = "storage";
+			reg = <0x00133000 DT_SIZE_K(40)>;
+		};
+	};
+};

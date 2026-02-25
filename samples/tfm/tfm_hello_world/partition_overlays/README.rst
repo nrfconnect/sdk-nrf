@@ -79,6 +79,24 @@ nRF54L15 (4 kB alignment)
    overhead. More secure SRAM for per-partition stacks. Requires
    ``CONFIG_TFM_ISOLATION_LEVEL=2`` and ``CONFIG_TFM_IPC=y``.
 
+``nrf54l15_mcuboot_overwrite.overlay``
+   MCUboot overwrite-only mode (``SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y``).
+   The secondary slot can be *smaller* than the primary since no swap buffer
+   is needed. Gains ~192 kB of NS application space compared to swap mode.
+   Trade-off: no rollback on power loss during update.
+
+``nrf54l15_nsib_mcuboot.overlay``
+   Full secure boot chain: NSIB (b0) → MCUboot → TF-M → NS app.
+   Includes immutable bootloader partition, provisioning data for public
+   keys and monotonic counters, and hardware downgrade prevention.
+   Required for PSA Certified products.
+
+``nrf54l15_direct_xip.overlay``
+   Direct-XIP (A/B) update mode. Both Slot A and Slot B are executable
+   in place — MCUboot selects the slot with the highest version. No image
+   copy at boot means faster boot time. Both slots must be the same size.
+   Supports revert with ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y``.
+
 nRF54LV10A (4 kB alignment, 1012 kB RRAM, 192 kB SRAM)
 ========================================================
 
@@ -164,6 +182,12 @@ nRF5340 (16 kB alignment)
    Secondary DFU slot on external QSPI flash (MX25R64). Frees all internal
    flash for the primary image, giving a much larger NS application partition
    (592 kB vs 192 kB). Recommended for production devices with FOTA.
+
+``nrf5340_netcore_dfu.overlay``
+   Application core layout with a network core update staging area. MCUboot
+   on the app core manages updates for both cores. The ``image-2`` partition
+   holds the cpunet firmware update image. Required for products that need
+   to update the BLE controller or 802.15.4 radio stack in the field.
 
 nRF91 Series (32 kB alignment)
 ================================

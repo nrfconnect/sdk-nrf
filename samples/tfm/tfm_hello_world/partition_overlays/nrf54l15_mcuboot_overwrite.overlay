@@ -1,0 +1,121 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * MCUboot overwrite-only TF-M partition layout for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * MCUboot "overwrite-only" mode (CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y)
+ * writes the new image directly over the primary slot instead of
+ * swapping. This has two important consequences for partition layout:
+ *
+ * 1. The secondary slot does NOT need to be the same size as the
+ *    primary slot — it only needs to hold the new firmware image,
+ *    which may be smaller if compressed or delta-updated.
+ *
+ * 2. No swap status area is needed, saving flash.
+ *
+ * Trade-off: overwrite-only means the old image is destroyed during
+ * update. If power is lost mid-update, the device is bricked (no
+ * rollback). Use with caution in production, or pair with NSIB for
+ * a recovery path.
+ *
+ * Required sysbuild config:
+ *   SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+ *
+ * Suitable for: cost-sensitive products, compressed FOTA,
+ *               devices with reliable power supply
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(88)>;
+		ranges = <0x0 0x0 DT_SIZE_K(88)>;
+	};
+
+	sram0_ns: image_ns@16000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x16000 DT_SIZE_K(168)>;
+		ranges = <0x0 0x16000 DT_SIZE_K(168)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (256 kB)
+		 *   0x0004C000  Non-secure application   (448 kB)
+		 * 0x000BC000  TF-M PS                    (16 kB)
+		 * 0x000C0000  TF-M ITS                   (16 kB)
+		 * 0x000C4000  TF-M OTP / NV counters      (8 kB)
+		 * 0x000C6000  Secondary slot            (512 kB)
+		 *             (can be SMALLER than primary since we
+		 *              overwrite, not swap)
+		 * 0x00146000  Non-secure storage         (48 kB)
+		 *
+		 * Primary = 256 + 448 = 704 kB
+		 * Secondary = 512 kB (< Primary — valid for overwrite-only)
+		 *
+		 * Compared to swap mode, we gain ~192 kB of NS application
+		 * space because the secondary slot is smaller.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(256)>;
+		};
+
+		slot0_ns_partition: partition@4c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0004C000 DT_SIZE_K(448)>;
+		};
+
+		tfm_ps_partition: partition@bc000 {
+			label = "tfm-ps";
+			reg = <0x000BC000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@c0000 {
+			label = "tfm-its";
+			reg = <0x000C0000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@c4000 {
+			label = "tfm-otp";
+			reg = <0x000C4000 DT_SIZE_K(8)>;
+		};
+
+		slot1_partition: partition@c6000 {
+			label = "image-1";
+			reg = <0x000C6000 DT_SIZE_K(512)>;
+		};
+
+		storage_partition: partition@146000 {
+			label = "storage";
+			reg = <0x00146000 DT_SIZE_K(48)>;
+		};
+	};
+};

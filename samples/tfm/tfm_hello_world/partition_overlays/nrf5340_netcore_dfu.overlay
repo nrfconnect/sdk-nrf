@@ -1,0 +1,128 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * nRF5340 TF-M partition layout with network core DFU support
+ *
+ * nRF5340 application core: 1024 kB flash, 512 kB SRAM.
+ * TrustZone flash region alignment: 16 kB (SPU-based)
+ * TrustZone RAM region alignment:    8 kB
+ * Flash erase-block-size:            4 kB
+ *
+ * The nRF5340 is a dual-core SoC. The network core (cpunet) runs the
+ * radio stack (BLE controller, 802.15.4, etc.) and has its own 256 kB
+ * flash. When updating both cores, the APPLICATION core's flash must
+ * hold the network core's update image alongside its own.
+ *
+ * This layout reserves a dedicated partition in the application core's
+ * flash for the network core firmware update image. MCUboot on the
+ * application core handles updating both cores.
+ *
+ * Required sysbuild config:
+ *   SB_CONFIG_BOOTLOADER_MCUBOOT=y
+ *   SB_CONFIG_NETCORE_APP_UPDATE=y
+ *   SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD=y
+ *
+ * Suitable for: BLE products needing controller updates, Thread/Matter
+ *               products with 802.15.4 radio stack updates
+ */
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Application core flash layout (S/NS boundaries 16 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot (app core):
+		 *   0x0000C000  TF-M secure image       (192 kB)
+		 *   0x0003C000  Non-secure application   (160 kB)
+		 * 0x00064000  Secondary slot (app core)  (352 kB)
+		 * 0x000BC000  Network core update image  (128 kB)
+		 *             (staging area — MCUboot copies this to cpunet)
+		 * 0x000DC000  TF-M PS                    (16 kB)
+		 * 0x000E0000  TF-M ITS                   (16 kB)
+		 * 0x000E4000  TF-M OTP / NV counters      (8 kB)
+		 * 0x000E6000  Non-secure storage         (32 kB)
+		 * 0x000EE000  (unused / reserved)         (72 kB)
+		 *
+		 * App core primary = 192 + 160 = 352 kB = Secondary
+		 * Net core update = 128 kB (cpunet flash is 256 kB, but
+		 *   the radio stack is typically ~100-120 kB)
+		 *
+		 * Note: The network core has its own flash at 0x01000000
+		 * with its own partition layout managed separately.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(192)>;
+		};
+
+		slot0_ns_partition: partition@3c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0003C000 DT_SIZE_K(160)>;
+		};
+
+		slot1_partition: partition@64000 {
+			label = "image-1";
+			reg = <0x00064000 DT_SIZE_K(352)>;
+		};
+
+		/* Network core firmware update staging area.
+		 * MCUboot reads from here and writes to cpunet flash.
+		 */
+		slot2_partition: partition@bc000 {
+			label = "image-2";
+			reg = <0x000BC000 DT_SIZE_K(128)>;
+		};
+
+		tfm_ps_partition: partition@dc000 {
+			label = "tfm-ps";
+			reg = <0x000DC000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@e0000 {
+			label = "tfm-its";
+			reg = <0x000E0000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@e4000 {
+			label = "tfm-otp";
+			reg = <0x000E4000 DT_SIZE_K(8)>;
+		};
+
+		storage_partition: partition@e6000 {
+			label = "storage";
+			reg = <0x000E6000 DT_SIZE_K(32)>;
+		};
+	};
+};
+
+&sram0 {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(128)>;
+		ranges = <0x0 0x0 DT_SIZE_K(128)>;
+	};
+
+	sram0_ns: image_ns@20000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* 128 kB NS for application (remaining goes to shared) */
+		reg = <0x20000 DT_SIZE_K(128)>;
+		ranges = <0x0 0x20000 DT_SIZE_K(128)>;
+	};
+};
