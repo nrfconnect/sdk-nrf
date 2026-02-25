@@ -263,7 +263,7 @@ UICR.ERASEPROTECT
 Enabling :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT` blocks the ERASEALL operation.
 However, it does not prevent erase operations initiated through other means, such as writing erase values via a debugger.
 
-.. note::
+.. caution::
    If this configuration is enabled and :kconfig:option:`CONFIG_GEN_UICR_LOCK` is also set, it is no longer possible to modify the UICR in any way.
    Therefore, this configuration should only be enabled during the final stages of production.
 
