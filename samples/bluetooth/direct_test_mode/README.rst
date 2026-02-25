@@ -270,12 +270,13 @@ You can configure the antenna output and activation delay for the Skyworks front
 Vendor-specific packet payload
 ==============================
 
-The Bluetooth Low Energy 2-wire UART DTM interface standard reserves the Packet Type, also called payload parameter, with binary value ``11`` for a Vendor Specific packet payload.
+For the LE Uncoded PHYs, the Bluetooth Low Energy 2-wire UART DTM interface standard reserves the Packet Type, also called payload parameter, with binary value ``11`` for a Vendor Specific packet payload.
 
-The DTM command is interpreted as vendor-specific when both of the following conditions are met:
+The DTM command is interpreted as vendor-specific when the following conditions are met:
 
 * Its CMD field is set to Transmitter Test, binary ``10``.
 * Its PKT field is set to vendor-specific, binary ``11``.
+* The PHY is set to the LE Uncoded PHYs.
 
 Vendor-specific commands can be divided into different categories as follows:
 
