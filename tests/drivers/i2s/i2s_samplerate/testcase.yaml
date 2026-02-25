@@ -91,6 +91,7 @@ tests:
       - CONFIG_TEST_96000_TOLERANCE=1000
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # nrf54lm20: PCLK32 and HFXO
@@ -108,6 +109,7 @@ tests:
       - CONFIG_TEST_96000_TOLERANCE=15
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # nrf54lm20: ACLK and internal RC is not possible. Selecting ACLK automatically starts HFXO.
@@ -116,7 +118,7 @@ tests:
     harness_config:
       fixture: gpio_loopback
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_aclk.overlay"
+      - FILE_SUFFIX=aclk
       - CONFIG_TEST_8000_EXPECTED=7978
       - CONFIG_TEST_16000_EXPECTED=15957
       - CONFIG_TEST_32000_EXPECTED=32608
@@ -140,6 +142,7 @@ tests:
       - CONFIG_TEST_96000_DIVIDER=516685824
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # nrf54lm20: ACLK and HFXO
@@ -147,7 +150,7 @@ tests:
     harness_config:
       fixture: gpio_loopback
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_aclk.overlay"
+      - FILE_SUFFIX=aclk
       - CONFIG_TEST_START_HFXO=y
       - CONFIG_TEST_8000_EXPECTED=7978
       - CONFIG_TEST_16000_EXPECTED=15957
@@ -172,6 +175,7 @@ tests:
       - CONFIG_TEST_96000_DIVIDER=516685824
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   # ACLK allows to obtain more accurate actual samplerate
