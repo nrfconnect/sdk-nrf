@@ -168,4 +168,10 @@ void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
 		unsigned int event_len);
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 #endif /* !CONFIG_NRF71_OFFLOADED_RAW_TX */
+enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int *rf_params_addr);
+
+enum nrf_wifi_status nrf_wifi_fmac_config_vtf_params(struct nrf_wifi_fmac_dev_ctx *dev_ctx,
+						     unsigned int voltage, unsigned int temp,
+						     unsigned int x0,
+						     unsigned int *vtf_buffer_start_address);
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */
