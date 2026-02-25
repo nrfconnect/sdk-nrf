@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: ncs/nrf
           fetch-depth: 0
@@ -107,7 +107,7 @@ jobs:
 
       - name: Archive cache
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: cache
           path: ncs/nrf/cache
