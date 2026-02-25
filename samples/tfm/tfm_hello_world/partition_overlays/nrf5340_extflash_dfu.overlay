@@ -1,0 +1,129 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * TF-M partition layout with external flash DFU for nRF5340
+ *
+ * nRF5340 has 1024 kB of internal flash and 512 kB of SRAM.
+ * External flash: MX25R64 (8 MB) via QSPI on nRF5340 DK.
+ * TrustZone flash region alignment: 16 kB (SPU-based)
+ * TrustZone RAM region alignment:    8 kB
+ * Flash erase-block-size:            4 kB (internal), 4 kB (external)
+ *
+ * By moving the secondary (DFU) slot to external QSPI flash, the
+ * entire internal flash is available for the primary image, TF-M
+ * storage, and application data. This is the recommended layout
+ * for production devices that need both a large application and
+ * firmware update capability.
+ *
+ * Suitable for: production BLE/Thread/Matter devices with FOTA
+ */
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Internal flash layout (S/NS boundaries 16 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (256 kB)
+		 *   0x0004C000  Non-secure application   (592 kB)
+		 * 0x000E0000  TF-M PS                    (16 kB)
+		 * 0x000E4000  TF-M ITS                   (16 kB)
+		 * 0x000E8000  TF-M OTP / NV counters      (8 kB)
+		 * 0x000EA000  Factory data                 (4 kB)
+		 * 0x000EB000  Non-secure storage (NVS)    (84 kB)
+		 *
+		 * No secondary slot in internal flash — it's on external.
+		 * This frees ~448 kB compared to the full internal layout.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(256)>;
+		};
+
+		slot0_ns_partition: partition@4c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0004C000 DT_SIZE_K(592)>;
+		};
+
+		tfm_ps_partition: partition@e0000 {
+			label = "tfm-ps";
+			reg = <0x000E0000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@e4000 {
+			label = "tfm-its";
+			reg = <0x000E4000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@e8000 {
+			label = "tfm-otp";
+			reg = <0x000E8000 DT_SIZE_K(8)>;
+		};
+
+		factory_partition: partition@ea000 {
+			label = "factory-data";
+			reg = <0x000EA000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@eb000 {
+			label = "storage";
+			reg = <0x000EB000 DT_SIZE_K(84)>;
+		};
+	};
+};
+
+/* Secondary slot on external QSPI flash (MX25R64) */
+&mx25r64 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * External flash layout:
+		 *
+		 * 0x00000000  Secondary slot           (848 kB)
+		 *             (must be >= primary slot: 256 + 592 = 848 kB)
+		 *
+		 * Remaining external flash (7200+ kB) is available for
+		 * other uses such as large file storage, log buffers,
+		 * or Wi-Fi firmware patches.
+		 */
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x00000000 DT_SIZE_K(848)>;
+		};
+	};
+};
+
+&sram0 {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(256)>;
+		ranges = <0x0 0x0 DT_SIZE_K(256)>;
+	};
+
+	sram0_ns: image_ns@40000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x40000 DT_SIZE_K(192)>;
+		ranges = <0x0 0x40000 DT_SIZE_K(192)>;
+	};
+};

@@ -1,0 +1,112 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * TF-M Isolation Level 2 partition layout for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * TF-M Isolation Level 2 provides stronger security guarantees than
+ * Level 1 by isolating the PSA Root of Trust (PRoT) services from
+ * Application Root of Trust (ARoT) services. This requires:
+ * - CONFIG_TFM_IPC=y (IPC model, not SFN)
+ * - CONFIG_TFM_ISOLATION_LEVEL=2
+ * - CONFIG_TFM_PROFILE_TYPE_NOT_SET=y (full profile)
+ * - Larger secure SRAM for per-partition stacks and isolation
+ * - Larger secure flash for IPC infrastructure
+ *
+ * Suitable for: high-security IoT devices, PSA Certified products,
+ *               applications requiring strong service isolation
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Isolation Level 2 needs more secure SRAM for
+		 * per-partition stacks and MPU-based isolation
+		 */
+		reg = <0x0 DT_SIZE_K(128)>;
+		ranges = <0x0 0x0 DT_SIZE_K(128)>;
+	};
+
+	sram0_ns: image_ns@20000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x20000 DT_SIZE_K(128)>;
+		ranges = <0x0 0x20000 DT_SIZE_K(128)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (384 kB)
+		 *              (larger due to IPC model + Level 2 overhead)
+		 *   0x0006C000  Non-secure application  (148 kB)
+		 * 0x00091000  TF-M PS                    (16 kB)
+		 * 0x00095000  TF-M ITS                   (16 kB)
+		 * 0x00099000  TF-M OTP / NV counters      (8 kB)
+		 * 0x0009B000  Secondary slot            (532 kB)
+		 * 0x0011F000  Non-secure storage         (32 kB)
+		 *
+		 * Note: TF-M Level 2 binary is ~350-380 kB (vs ~320 kB
+		 * for Level 1). The IPC model adds overhead for
+		 * inter-partition communication.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(384)>;
+		};
+
+		slot0_ns_partition: partition@6c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0006C000 DT_SIZE_K(148)>;
+		};
+
+		tfm_ps_partition: partition@91000 {
+			label = "tfm-ps";
+			reg = <0x00091000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@95000 {
+			label = "tfm-its";
+			reg = <0x00095000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@99000 {
+			label = "tfm-otp";
+			reg = <0x00099000 DT_SIZE_K(8)>;
+		};
+
+		slot1_partition: partition@9b000 {
+			label = "image-1";
+			reg = <0x0009B000 DT_SIZE_K(532)>;
+		};
+
+		storage_partition: partition@11f000 {
+			label = "storage";
+			reg = <0x0011F000 DT_SIZE_K(32)>;
+		};
+	};
+};

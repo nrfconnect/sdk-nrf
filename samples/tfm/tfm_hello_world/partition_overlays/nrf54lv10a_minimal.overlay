@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Minimal TF-M partition layout for nRF54LV10A
+ *
+ * nRF54LV10A has 1012 kB of RRAM and 192 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * Compared to nRF54L15, this SoC has less RRAM (1012 vs 1524 kB) and
+ * less SRAM (192 vs 256 kB). Partition sizes must be adjusted accordingly.
+ *
+ * This layout uses the TF-M minimal profile with:
+ * - No MCUboot
+ * - Minimal ITS and OTP
+ * - Maximized non-secure application space
+ *
+ * Suitable for: cost-optimized BLE peripherals, sensors
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(32)>;
+		ranges = <0x0 0x0 DT_SIZE_K(32)>;
+	};
+
+	/* 156 kB NS — 4 kB left unused at top */
+	sram0_ns: image_ns@8000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x8000 DT_SIZE_K(156)>;
+		ranges = <0x0 0x8000 DT_SIZE_K(156)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  TF-M secure image        (64 kB)
+		 * 0x00010000  TF-M ITS                   (8 kB)
+		 * 0x00012000  TF-M OTP / NV counters     (4 kB)
+		 * 0x00013000  Non-secure application    (892 kB)
+		 * 0x000F2000  Non-secure storage         (32 kB)
+		 *
+		 * Total: 64 + 8 + 4 + 892 + 32 = 1000 kB (fits in 1012 kB)
+		 */
+
+		slot0_partition: partition@0 {
+			label = "image-0";
+			reg = <0x00000000 DT_SIZE_K(64)>;
+		};
+
+		tfm_its_partition: partition@10000 {
+			label = "tfm-its";
+			reg = <0x00010000 DT_SIZE_K(8)>;
+		};
+
+		tfm_otp_partition: partition@12000 {
+			label = "tfm-otp";
+			reg = <0x00012000 DT_SIZE_K(4)>;
+		};
+
+		slot0_ns_partition: partition@13000 {
+			label = "image-0-nonsecure";
+			reg = <0x00013000 DT_SIZE_K(892)>;
+		};
+
+		storage_partition: partition@f2000 {
+			label = "storage";
+			reg = <0x000F2000 DT_SIZE_K(32)>;
+		};
+	};
+};

@@ -1,0 +1,113 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Crypto/TLS-heavy TF-M partition layout for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * Optimized for applications that heavily use TLS/DTLS with
+ * certificate-based authentication:
+ * - Enlarged Protected Storage for X.509 certificate chains
+ *   (CA cert + intermediate + device cert can be several kB each)
+ * - Enlarged ITS for multiple TLS session keys, PSKs
+ * - Full TF-M crypto for TLS 1.2/1.3 handshake support
+ * - MCUboot for secure firmware updates
+ *
+ * Suitable for: cloud-connected devices (AWS IoT, Azure IoT,
+ *               nRF Cloud), HTTPS clients, MQTT+TLS, CoAP+DTLS
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Full crypto needs more secure SRAM for concurrent
+		 * TLS operations (CONFIG_TFM_CRYPTO_CONC_OPER_NUM)
+		 */
+		reg = <0x0 DT_SIZE_K(112)>;
+		ranges = <0x0 0x0 DT_SIZE_K(112)>;
+	};
+
+	sram0_ns: image_ns@1c000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x1c000 DT_SIZE_K(144)>;
+		ranges = <0x0 0x1c000 DT_SIZE_K(144)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (288 kB)
+		 *              (full crypto + hash + TLS support)
+		 *   0x00054000  Non-secure application  (256 kB)
+		 * 0x00094000  TF-M PS                    (32 kB)
+		 *             (enlarged for X.509 certificate storage:
+		 *              CA cert chain ~3 kB, device cert ~1 kB,
+		 *              multiple credential sets for different
+		 *              cloud services)
+		 * 0x0009C000  TF-M ITS                   (32 kB)
+		 *             (enlarged for TLS session keys, PSKs,
+		 *              ECDH private keys, ECDSA signing keys)
+		 * 0x000A4000  TF-M OTP / NV counters      (8 kB)
+		 * 0x000A6000  Secondary slot            (544 kB)
+		 * 0x0012E000  Non-secure storage         (48 kB)
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(288)>;
+		};
+
+		slot0_ns_partition: partition@54000 {
+			label = "image-0-nonsecure";
+			reg = <0x00054000 DT_SIZE_K(256)>;
+		};
+
+		tfm_ps_partition: partition@94000 {
+			label = "tfm-ps";
+			reg = <0x00094000 DT_SIZE_K(32)>;
+		};
+
+		tfm_its_partition: partition@9c000 {
+			label = "tfm-its";
+			reg = <0x0009C000 DT_SIZE_K(32)>;
+		};
+
+		tfm_otp_partition: partition@a4000 {
+			label = "tfm-otp";
+			reg = <0x000A4000 DT_SIZE_K(8)>;
+		};
+
+		slot1_partition: partition@a6000 {
+			label = "image-1";
+			reg = <0x000A6000 DT_SIZE_K(544)>;
+		};
+
+		storage_partition: partition@12e000 {
+			label = "storage";
+			reg = <0x0012E000 DT_SIZE_K(48)>;
+		};
+	};
+};

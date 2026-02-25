@@ -1,0 +1,109 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Thread (OpenThread)-optimized TF-M partition layout for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * Optimized for Thread (802.15.4) applications with:
+ * - Medium TF-M for Thread commissioning crypto (DTLS, SPAKE2+)
+ * - MCUboot for Thread OTA (SRP-based service discovery)
+ * - ITS for Thread operational dataset, network keys
+ * - Larger NS partition for OpenThread stack (~300 kB)
+ * - NVS storage for Thread settings persistence
+ *
+ * Note: Thread requires ~200-300 kB of flash for the full
+ * OpenThread stack (FTD). Minimal Thread Devices (MTD) need less.
+ * This layout targets Full Thread Devices (FTD).
+ *
+ * Suitable for: Thread border routers, Thread sensors, Thread locks
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(80)>;
+		ranges = <0x0 0x0 DT_SIZE_K(80)>;
+	};
+
+	sram0_ns: image_ns@14000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x14000 DT_SIZE_K(176)>;
+		ranges = <0x0 0x14000 DT_SIZE_K(176)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (192 kB)
+		 *   0x0003C000  Non-secure Thread app    (404 kB)
+		 * 0x000A1000  TF-M PS                    (16 kB)
+		 * 0x000A5000  TF-M ITS                   (16 kB)
+		 * 0x000A9000  TF-M OTP / NV counters      (4 kB)
+		 * 0x000AA000  Secondary slot            (596 kB)
+		 * 0x0013F000  Non-secure storage (NVS)    (60 kB)
+		 *
+		 * Thread operational dataset and network credentials
+		 * are stored in NVS or ITS depending on configuration.
+		 * 60 kB NVS allows ample Thread settings + app data.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(192)>;
+		};
+
+		slot0_ns_partition: partition@3c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0003C000 DT_SIZE_K(404)>;
+		};
+
+		tfm_ps_partition: partition@a1000 {
+			label = "tfm-ps";
+			reg = <0x000A1000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@a5000 {
+			label = "tfm-its";
+			reg = <0x000A5000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@a9000 {
+			label = "tfm-otp";
+			reg = <0x000A9000 DT_SIZE_K(4)>;
+		};
+
+		slot1_partition: partition@aa000 {
+			label = "image-1";
+			reg = <0x000AA000 DT_SIZE_K(596)>;
+		};
+
+		storage_partition: partition@13f000 {
+			label = "storage";
+			reg = <0x0013F000 DT_SIZE_K(60)>;
+		};
+	};
+};

@@ -1,0 +1,127 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * LwM2M carrier library TF-M partition layout for nRF91 Series
+ *
+ * nRF91 Series has 1024 kB of flash and 256 kB of SRAM.
+ * TrustZone flash region alignment: 32 kB (SPU-based)
+ * TrustZone RAM region alignment:    8 kB
+ * Flash erase-block-size:            4 kB
+ *
+ * Optimized for cellular IoT with the LwM2M carrier library:
+ * - MCUboot for carrier-initiated FOTA updates
+ * - TF-M minimal profile (carrier library uses TLS via modem)
+ * - Additional carrier storage partition (12 kB default)
+ * - Protected Storage for carrier certificates
+ * - ITS for device credentials
+ * - Sufficient NS space for modem lib + carrier lib + application
+ *
+ * The LwM2M carrier library requires:
+ * - CONFIG_LWM2M_CARRIER=y
+ * - CONFIG_LWM2M_CARRIER_STORAGE_AREA_SIZE=0x3000 (12 kB default)
+ * - CONFIG_BOOTLOADER_MCUBOOT=y (carrier needs DFU target)
+ *
+ * Suitable for: operator-certified cellular IoT devices,
+ *               LwM2M-managed fleet devices
+ *
+ * Applies to boards: nrf9160dk/nrf9160/ns, nrf9161dk/nrf9161/ns,
+ *                    nrf9151dk/nrf9151/ns
+ */
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (S/NS boundaries 32 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (64 kB = 2 × 32 kB)
+		 * 0x00010000  Primary slot:
+		 *   0x00010000  TF-M secure image       (160 kB = 5 × 32 kB)
+		 *   0x00038000  Non-secure LTE app       (160 kB = 5 × 32 kB)
+		 * 0x00060000  TF-M PS                    (32 kB = 1 × 32 kB)
+		 * 0x00068000  TF-M ITS                   (32 kB = 1 × 32 kB)
+		 * 0x00070000  TF-M OTP / NV counters     (32 kB = 1 × 32 kB)
+		 * 0x00078000  Secondary slot            (320 kB)
+		 * 0x000C8000  Carrier storage            (16 kB)
+		 * 0x000CC000  Non-secure storage        (208 kB)
+		 *
+		 * Primary = 160 + 160 = 320 kB = Secondary
+		 * Carrier storage aligned to 4 kB erase block.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x00010000 DT_SIZE_K(160)>;
+		};
+
+		slot0_ns_partition: partition@38000 {
+			label = "image-0-nonsecure";
+			reg = <0x00038000 DT_SIZE_K(160)>;
+		};
+
+		tfm_ps_partition: partition@60000 {
+			label = "tfm-ps";
+			reg = <0x00060000 DT_SIZE_K(32)>;
+		};
+
+		tfm_its_partition: partition@68000 {
+			label = "tfm-its";
+			reg = <0x00068000 DT_SIZE_K(32)>;
+		};
+
+		tfm_otp_partition: partition@70000 {
+			label = "tfm-otp";
+			reg = <0x00070000 DT_SIZE_K(32)>;
+		};
+
+		slot1_partition: partition@78000 {
+			label = "image-1";
+			reg = <0x00078000 DT_SIZE_K(320)>;
+		};
+
+		carrier_partition: partition@c8000 {
+			label = "lwm2m-carrier";
+			reg = <0x000C8000 DT_SIZE_K(16)>;
+		};
+
+		storage_partition: partition@cc000 {
+			label = "storage";
+			reg = <0x000CC000 DT_SIZE_K(208)>;
+		};
+	};
+};
+
+&sram0 {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* 64 kB secure — 8 kB aligned */
+		reg = <0x0 DT_SIZE_K(64)>;
+		ranges = <0x0 0x0 DT_SIZE_K(64)>;
+	};
+
+	sram0_ns: image_ns@10000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/*
+		 * 192 kB non-secure:
+		 *  - ~64 kB modem library
+		 *  - ~32 kB carrier library
+		 *  - ~96 kB application
+		 */
+		reg = <0x10000 DT_SIZE_K(192)>;
+		ranges = <0x0 0x10000 DT_SIZE_K(192)>;
+	};
+};

@@ -64,6 +64,34 @@ nRF54L15 (4 kB alignment)
    certificates. Enlarged ITS for fabric credentials. Includes factory data
    partition. MCUboot for Matter OTA.
 
+``nrf54l15_thread.overlay``
+   Optimized for OpenThread (802.15.4). Sized for Full Thread Devices (FTD)
+   with DTLS commissioning crypto. Enlarged NVS for Thread operational
+   dataset and network settings.
+
+``nrf54l15_crypto_tls.overlay``
+   Optimized for TLS/DTLS-heavy applications (cloud connectivity). Enlarged
+   PS (32 kB) for X.509 certificate chains. Enlarged ITS (32 kB) for TLS
+   session keys and PSKs. More secure SRAM for concurrent crypto operations.
+
+``nrf54l15_isolation_lvl2.overlay``
+   TF-M Isolation Level 2 layout. Larger secure image (384 kB) for IPC model
+   overhead. More secure SRAM for per-partition stacks. Requires
+   ``CONFIG_TFM_ISOLATION_LEVEL=2`` and ``CONFIG_TFM_IPC=y``.
+
+nRF54LV10A (4 kB alignment, smaller memory)
+=============================================
+
+``nrf54lv10a_minimal.overlay``
+   Minimal TF-M profile for nRF54LV10A (1012 kB RRAM, 192 kB SRAM).
+   Demonstrates partition planning with tighter memory constraints compared
+   to nRF54L15.
+
+``nrf54lv10a_mcuboot.overlay``
+   MCUboot + TF-M for nRF54LV10A. Shows how to fit primary and secondary
+   DFU slots within the smaller 1012 kB RRAM. Symmetric slot layout for
+   MCUboot compatibility.
+
 nRF5340 (16 kB alignment)
 ===========================
 
@@ -83,6 +111,11 @@ nRF5340 (16 kB alignment)
    Optimized for Matter. Includes factory data partition. Notes on using
    external QSPI flash for the secondary DFU slot.
 
+``nrf5340_extflash_dfu.overlay``
+   Secondary DFU slot on external QSPI flash (MX25R64). Frees all internal
+   flash for the primary image, giving a much larger NS application partition
+   (592 kB vs 192 kB). Recommended for production devices with FOTA.
+
 nRF91 Series (32 kB alignment)
 ================================
 
@@ -98,6 +131,11 @@ nRF91 Series (32 kB alignment)
    Optimized for cellular IoT / LTE applications. Enlarged PS for TLS
    certificates. Larger NS storage for LwM2M/nRF Cloud state. Notes on
    modem library SRAM requirements.
+
+``nrf91_lwm2m_carrier.overlay``
+   Optimized for the LwM2M carrier library. Includes a dedicated carrier
+   storage partition (16 kB). Sized for carrier-initiated FOTA. Notes on
+   modem library and carrier library SRAM requirements.
 
 Design Guidelines
 *****************
