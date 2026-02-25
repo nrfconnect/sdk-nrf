@@ -31,7 +31,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    ug_nrf54h20_gs
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Understand the hardware
 
    ug_nrf54h20_architecture
@@ -54,7 +54,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    ug_nrf54h20_zms
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Secure your application
 
    ug_nrf54h20_ironside

@@ -8,7 +8,10 @@ Managing boot flows
    :depth: 2
 
 
-This page describes the following:
+This page describes how to configure and interact with the boot flow managed by |ISE|, including secondary firmware setup, boot commands, the boot report, and register formats.
+For an overview of the hardware-level boot sequence, including what triggers a cold boot, the step-by-step startup order of all domains, and boot sequence diagrams, see :ref:`ug_nrf54h20_architecture_boot`.
+
+This page covers the following topics:
 
 * The :ref:`boot flow of local domains <ug_nrf54h20_ironside_se_local_domain_boot>`
 * The :ref:`reset handling of local domains <ug_nrf54h20_ironside_se_local_domain_reset>`
