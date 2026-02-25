@@ -466,38 +466,14 @@ The output file :file:`decoded_bicr.json` contains the BICR information stored o
 Provision the nRF54H20 IronSide SE binaries
 *******************************************
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 IronSide SE binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
-To provision the nRF54H20 IronSide SE binaries to the nRF54H20 SoC, do the following:
-
-1. Download the right nRF54H20 IronSide SE binaries version for your |NCS| version.
-   You can find the SoC binaries versions listed in the :ref:`abi_compatibility` page.
-#. Move the :file:`ZIP` bundle to a folder of your choice.
-#. |open_terminal_window_with_environment|
-#. Run nRF Util to program the binaries using the following command::
-
-      nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
-
-You can run the following command to confirm that the Secure Domain Firmware has loaded correctly:
-
-   nrfutil device x-adac-lcs-change
-
-If issues occur during bundle programming, the system will return an ``ADAC_FAILURE`` error.
+.. include:: /includes/nrf54h20_provision_ironside.txt
 
 .. _54h_soc_binaries_transition_rot:
 
 Transition the nRF54H20 SoC to RoT
 ==================================
 
-The nRF54H20 SoC comes with its lifecycle state (LCS) set to ``EMPTY``.
-To operate correctly, you must transition its lifecycle state to Root of Trust (``RoT``).
-
-.. note::
-   The forward transition to LCS ``RoT`` is permanent.
-   After the transition, it is impossible to transition backward to LCS ``EMPTY``.
-
-To transition the LCS to ``RoT``, set the LCS of the nRF54H20 SoC to Root of Trust using the following command::
-
-   nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
+.. include:: /includes/nrf54h20_transition_rot.txt
 
 Create or modify your application for your custom board
 *******************************************************
