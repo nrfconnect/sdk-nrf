@@ -55,7 +55,6 @@ function(nrf71_wifi_setup_include_and_sources)
     ${nrf71_bus_dir}/device.c
     ${nrf71_bus_dir}/ipc_if.c
     ${nrf71_bus_dir}/ipc_service.c
-    ${nrf71_bus_dir}/spsc_qm.c
   )
 
   if(CONFIG_NRF71_RADIO_TEST)
