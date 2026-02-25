@@ -1,0 +1,8 @@
+shield:
+  name: pca63565
+  full_name: PCA63565
+  vendor: nordic
+  supported_features:
+    - sensor
+    - i2c
+    - spi
