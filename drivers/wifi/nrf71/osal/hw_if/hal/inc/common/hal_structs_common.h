@@ -130,10 +130,6 @@ struct nrf_wifi_hal_buf_map_info {
  * in all modes of operation.
  */
 struct nrf_wifi_hal_cfg_params {
-	/** Maximum command size */
-	unsigned int max_cmd_size;
-	/** Maximum event size */
-	unsigned int max_event_size;
 	/** RX buffer headroom size */
 	unsigned char rx_buf_headroom_sz;
 	/** TX buffer headroom size */
@@ -144,8 +140,6 @@ struct nrf_wifi_hal_cfg_params {
 #endif /* CONFIG_NRF71_DATA_TX */
 	/** RX buffer pool parameters */
 	struct rx_buf_pool_params rx_buf_pool[MAX_NUM_OF_RX_QUEUES];
-	/** Maximum TX frame size */
-	unsigned int max_tx_frm_sz;
 	/** Maximum AMPDU length per token */
 	unsigned int max_ampdu_len_per_token;
 };

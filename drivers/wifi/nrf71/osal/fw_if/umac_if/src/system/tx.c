@@ -1006,12 +1006,9 @@ enum nrf_wifi_status tx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		goto out;
 	}
 
-	status = nrf_wifi_sys_hal_data_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-						NRF_WIFI_HAL_MSG_TYPE_CMD_DATA_TX,
+	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
 						umac_cmd,
-						sizeof(*umac_cmd) + len,
-						desc,
-						0);
+						sizeof(*umac_cmd) + len);
 
 	nrf_wifi_osal_mem_free(umac_cmd);
 

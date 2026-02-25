@@ -15,44 +15,6 @@
 #include "system/hal_api.h"
 
 
-enum nrf_wifi_status nrf_wifi_sys_hal_data_cmd_send(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-						    enum NRF_WIFI_HAL_MSG_TYPE cmd_type,
-						    void *cmd,
-						    unsigned int cmd_size,
-						    unsigned int desc_id,
-						    unsigned int pool_id)
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	unsigned int addr = 0;
-
-	nrf_wifi_osal_spinlock_take(hal_dev_ctx->lock_hal);
-	if (cmd_type == NRF_WIFI_HAL_MSG_TYPE_CMD_DATA_TX) {
-		addr  = 0x200C5000 + (RPU_DATA_CMD_SIZE_MAX_TX * desc_id);
-		nrf_wifi_osal_mem_cpy((void *)addr, cmd, cmd_size);
-
-		status = nrf_wifi_osal_ipc_send_msg(
-					cmd_type,
-					(void *)addr,
-					cmd_size);
-	} else {
-		status = nrf_wifi_osal_ipc_send_msg(
-					cmd_type,
-					cmd,
-					cmd_size);
-	}
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Sending message to RPU failed\n",
-				      __func__);
-		goto out;
-	}
-out:
-	nrf_wifi_osal_spinlock_rel(hal_dev_ctx->lock_hal);
-
-
-	return status;
-}
-
 static void event_tasklet_fn(unsigned long data)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;

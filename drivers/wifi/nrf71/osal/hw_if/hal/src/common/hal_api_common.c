@@ -13,141 +13,11 @@
 
 #include "common/hal_api_common.h"
 
-
-static enum nrf_wifi_status hal_rpu_msg_write(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-					      enum NRF_WIFI_HAL_MSG_TYPE msg_type,
-					      void *msg,
-					      unsigned int len)
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-
-	status = nrf_wifi_osal_ipc_send_msg(msg_type, msg, len);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Sending message to RPU failed",
-				      __func__);
-		goto out;
-	}
-out:
-	return status;
-}
-
-
-static enum nrf_wifi_status hal_rpu_cmd_process_queue(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_hal_msg *cmd = NULL;
-
-	while ((cmd = nrf_wifi_utils_ctrl_q_dequeue(hal_dev_ctx->cmd_q))) {
-		status = hal_rpu_msg_write(hal_dev_ctx,
-					   NRF_WIFI_HAL_MSG_TYPE_CMD_CTRL,
-					   cmd->data,
-					   cmd->len);
-
-		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			nrf_wifi_osal_log_err("%s: Writing command to RPU failed",
-					      __func__);
-			nrf_wifi_osal_mem_free(cmd);
-			cmd = NULL;
-			continue;
-		}
-
-		/* Free the command data and command */
-		nrf_wifi_osal_mem_free(cmd);
-		cmd = NULL;
-	}
-
-	return status;
-}
-
-
-static enum nrf_wifi_status hal_rpu_cmd_queue(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-					      void *cmd,
-					      unsigned int cmd_size)
-{
-	int len = 0;
-	int size = 0;
-	char *data = NULL;
-	struct nrf_wifi_hal_msg *hal_msg = NULL;
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-
-	len = cmd_size;
-	data = cmd;
-
-	if (len > hal_dev_ctx->hpriv->cfg_params.max_cmd_size) {
-		while (len > 0) {
-			if (len > hal_dev_ctx->hpriv->cfg_params.max_cmd_size) {
-				size = hal_dev_ctx->hpriv->cfg_params.max_cmd_size;
-			} else {
-				size = len;
-			}
-
-			hal_msg = nrf_wifi_osal_mem_zalloc(sizeof(*hal_msg) + size);
-
-			if (!hal_msg) {
-				nrf_wifi_osal_log_err("%s: Unable to alloc buff for frag HAL cmd",
-						      __func__);
-				status = NRF_WIFI_STATUS_FAIL;
-				goto out;
-			}
-
-			nrf_wifi_osal_mem_cpy(hal_msg->data,
-					      data,
-					      size);
-
-			hal_msg->len = size;
-
-			status = nrf_wifi_utils_ctrl_q_enqueue(hal_dev_ctx->cmd_q,
-							  hal_msg);
-
-			if (status != NRF_WIFI_STATUS_SUCCESS) {
-				nrf_wifi_osal_log_err("%s: Unable to queue frag HAL cmd",
-						      __func__);
-				goto out;
-			}
-
-			len -= size;
-			data += size;
-		}
-	} else {
-		hal_msg = nrf_wifi_osal_mem_zalloc(sizeof(*hal_msg) + len);
-
-		if (!hal_msg) {
-			nrf_wifi_osal_log_err("%s: Unable to allocate buffer for HAL command",
-					      __func__);
-			status = NRF_WIFI_STATUS_FAIL;
-			goto out;
-		}
-
-		nrf_wifi_osal_mem_cpy(hal_msg->data,
-				      cmd,
-				      len);
-
-		hal_msg->len = len;
-
-		status = nrf_wifi_utils_ctrl_q_enqueue(hal_dev_ctx->cmd_q,
-						  hal_msg);
-
-		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			nrf_wifi_osal_log_err("%s: Unable to queue fragmented command",
-					      __func__);
-			goto out;
-		}
-	}
-
-	/* Free the original command data */
-	nrf_wifi_osal_mem_free(cmd);
-
-out:
-	return status;
-}
-
-
 enum nrf_wifi_status nrf_wifi_hal_ctrl_cmd_send(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 						void *cmd,
 						unsigned int cmd_size)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-
 
 #ifdef NRF_WIFI_CMD_EVENT_LOG
 	nrf_wifi_osal_log_info("%s: caller %p",
@@ -159,19 +29,11 @@ enum nrf_wifi_status nrf_wifi_hal_ctrl_cmd_send(struct nrf_wifi_hal_dev_ctx *hal
 			     __builtin_return_address(0));
 #endif
 	nrf_wifi_osal_spinlock_take(hal_dev_ctx->lock_hal);
-
-	status = hal_rpu_cmd_queue(hal_dev_ctx,
-				   cmd,
-				   cmd_size);
-
+	status = nrf_wifi_osal_ipc_send_msg(NRF_WIFI_HAL_MSG_TYPE_CMD_CTRL, cmd, cmd_size);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Queueing of command failed",
-				      __func__);
+		nrf_wifi_osal_log_err("%s: Sending command to RPU failed", __func__);
 		goto out;
 	}
-
-	status = hal_rpu_cmd_process_queue(hal_dev_ctx);
-
 out:
 	nrf_wifi_osal_spinlock_rel(hal_dev_ctx->lock_hal);
 
