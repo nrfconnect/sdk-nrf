@@ -97,6 +97,6 @@ Provisioning a key calls the function to import the key:
    :start-after: nrfutil_provision_keys_command_start
    :end-before: nrfutil_provision_keys_command_end
 
-.. note::
+.. caution::
    The :ref:`ug_nrf54h20_ironside_se_eraseall_command` destroys all keys stored on the device.
    Whenever you execute this boot command, you have to provision your keys all over again.
