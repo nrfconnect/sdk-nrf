@@ -618,6 +618,7 @@ NRF = (
     ("known_issues", "releases_and_maturity/known_issues"), # Known issues
     ("releases_and_maturity/glossary", "glossary"), # Glossary
     # 54H new links
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_nrf7002ek", "app_dev/device_guides/nrf54h/index"), # Working with the nRF54H20 DK and the nRF7002 EK (removed)
     ("device_guides/nrf54h", "app_dev/device_guides/nrf54h/index"), # Developing with nRF54H Series
     ("app_dev/device_guides/nrf54h", "app_dev/device_guides/nrf54h/index"),  # Developing with nRF54H Series
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
@@ -637,7 +638,7 @@ NRF = (
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_flpr", "app_dev/device_guides/nrf54h/ug_nrf54h20_flpr"), # nRF54H20 SoC FLPR guide
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs", "app_dev/device_guides/nrf54h/ug_nrf54h20_gs"), # Getting started with the nRF54H20 DK
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_logging", "app_dev/device_guides/nrf54h/ug_nrf54h20_logging"), # nRF54H20 logging (orphaned as of 2.7.0)
-    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek", "app_dev/device_guides/nrf54h/ug_nrf54h20_nrf7002ek"), # Working with the nRF54H20 DK and the nRF7002 EK (orphaned as of 2.7.0)
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek", "app_dev/device_guides/nrf54h/index"), # Working with the nRF54H20 DK and the nRF7002 EK (orphaned as of 2.7.0)
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_components", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT components
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # How to customize the SUIT DFU process
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_qsg", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Customize SUIT DFU quick start guide
@@ -667,7 +668,7 @@ NRF = (
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_lifecycle", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture_lifecycle"), # nRF54H20 lifecycle states
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_configuration", "app_dev/device_guides/nrf54h/ug_nrf54h20_configuration"), # Configuring the nRF54H20 DK
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_logging", "app_dev/device_guides/nrf54h/ug_nrf54h20_logging"), # nRF54H20 logging (orphaned as of 2.7.0)
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek", "app_dev/device_guides/nrf54h/ug_nrf54h20_nrf7002ek"), # Working with the nRF54H20 DK and the nRF7002 EK (orphaned as of 2.7.0)
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek", "app_dev/device_guides/nrf54h/index"), # Working with the nRF54H20 DK and the nRF7002 EK (orphaned as of 2.7.0)
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Device Firmware Update using SUIT (landing)
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_intro", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Introduction to SUIT
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_manifest_overview", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT manifest overview
