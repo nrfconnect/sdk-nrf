@@ -82,7 +82,7 @@ static struct tx_inf tx_info_arr[GROUP_MAX][SUBGROUP_MAX][STREAMS_MAX];
  * @return		0 if successful, error otherwise.
  */
 static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap_stream *cap_stream,
-			   struct tx_inf *tx_info, uint32_t ts_tx)
+			   struct tx_inf *tx_info, uint32_t ts_tx, bool send_ts_tx)
 {
 	int ret;
 	struct net_buf *buf;
@@ -122,10 +122,10 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 
 	atomic_inc(&tx_info->iso_tx_pool_alloc);
 
-	if (ts_tx == 0) {
-		ret = bt_cap_stream_send(cap_stream, buf, tx_info->iso_tx.seq_num);
-	} else {
+	if (send_ts_tx) {
 		ret = bt_cap_stream_send_ts(cap_stream, buf, tx_info->iso_tx.seq_num, ts_tx);
+	} else {
+		ret = bt_cap_stream_send(cap_stream, buf, tx_info->iso_tx.seq_num);
 	}
 
 	if (ret < 0) {
@@ -188,55 +188,18 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 	return 0;
 }
 
-int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio_tx_info *tx,
-			uint8_t num_tx)
+/* Time before doing a timestamp re-sync with the controller */
+#define TX_TS_RESYNC_US	 1000000
+/* The minimum margin between sending the last data and the next TX window */
+#define TX_MARGIN_MIN_US 2000
+#define TX_MARGIN_MAX_US 6000
+
+static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx, uint8_t num_loc,
+		       size_t data_size_pr_stream, uint32_t *common_interval_us)
 {
 	int ret;
-	size_t data_size_pr_stream = 0;
-
-	if (!initialized) {
-		return -EACCES;
-	}
-
-	if (tx == NULL) {
-		return -EINVAL;
-	}
-
-	/* Get number of locations in the audio frame */
-	struct audio_metadata *meta = net_buf_user_data(audio_frame);
-	uint8_t num_loc = audio_metadata_num_loc_get(meta);
-
-	if (num_loc == 0 || (audio_frame->len % num_loc != 0)) {
-		LOG_ERR("Invalid number (%d) of locations in audio frame (%d)", num_loc,
-			audio_frame->len);
-		return -EINVAL;
-	}
-
-	data_size_pr_stream = audio_frame->len / num_loc;
-
-	/* When sending ISO data, we always send ts = 0 to the first active transmitting channel.
-	 * The controller will populate with a ts which is fetched using bt_iso_chan_get_tx_sync.
-	 * This timestamp will be submitted to all the other channels in order to place data on all
-	 * channels in the same ISO interval.
-	 */
-
-	uint32_t common_tx_sync_ts_us = 0;
-	uint32_t curr_ts_us = 0;
-	bool ts_common_acquired = false;
-	uint32_t common_interval = 0;
 
 	for (int i = 0; i < num_tx; i++) {
-		struct tx_inf *tx_info =
-			&tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
-
-		if (tx_info->iso_tx.seq_num == 0) {
-			/* Temporary fix until /zephyr/pull/68745/ is available
-			 */
-#if defined(CONFIG_BT_BAP_DEBUG_STREAM_SEQ_NUM)
-			tx[i].cap_stream->bap_stream._prev_seq_num = 0;
-#endif /* CONFIG_BT_BAP_DEBUG_STREAM_SEQ_NUM */
-		}
-
 		if (!le_audio_ep_state_check(tx[i].cap_stream->bap_stream.ep,
 					     BT_BAP_EP_STATE_STREAMING)) {
 			/* This bap_stream is not streaming*/
@@ -269,78 +232,176 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			return -EINVAL;
 		}
 
-		if (common_interval != 0 &&
-		    (common_interval != tx[i].cap_stream->bap_stream.qos->interval)) {
+		if (*common_interval_us != 0 &&
+		    (*common_interval_us != tx[i].cap_stream->bap_stream.qos->interval)) {
 			LOG_ERR("Not all channels have the same ISO interval");
 			return -EINVAL;
 		}
-		common_interval = tx[i].cap_stream->bap_stream.qos->interval;
+		*common_interval_us = tx[i].cap_stream->bap_stream.qos->interval;
+	}
+
+	return 0;
+}
+
+int controller_timestamp_tx_get(struct le_audio_tx_info const *const tx, uint8_t num_tx,
+				uint32_t *timestamp_tx_us, struct tx_inf *tx_info)
+{
+	int ret;
+
+	ret = iso_conn_handle_set(&tx[num_tx - 1].cap_stream->bap_stream,
+				  &tx_info->iso_conn_handle);
+	if (ret) {
+		LOG_ERR("Failed to set iso_conn_handle: %d", ret);
+		*timestamp_tx_us = 0;
+		return ret;
+	}
+
+	ret = get_tx_sync_sdc(tx_info->iso_conn_handle, &tx_info->iso_tx_readback);
+	if (ret) {
+		LOG_ERR("Unable to get tx sync. ret: %d", ret);
+		*timestamp_tx_us = 0;
+		return ret;
+	}
+
+	*timestamp_tx_us = tx_info->iso_tx_readback.ts;
+	return 0;
+}
+
+int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio_tx_info *tx,
+			uint8_t num_tx)
+{
+	int ret;
+	size_t data_size_pr_stream = 0;
+
+	if (!initialized) {
+		return -EACCES;
+	}
+
+	if (tx == NULL || audio_frame == NULL) {
+		return -EINVAL;
+	}
+
+	/* Get number of locations in the audio frame */
+	struct audio_metadata *meta = net_buf_user_data(audio_frame);
+	uint8_t num_loc = audio_metadata_num_loc_get(meta);
+
+	if (num_loc == 0 || (audio_frame->len % num_loc != 0)) {
+		LOG_ERR("Invalid number (%d) of locations in audio frame (%d)", num_loc,
+			audio_frame->len);
+		return -EINVAL;
+	}
+
+	data_size_pr_stream = audio_frame->len / num_loc;
+	uint32_t common_interval_us = 0;
+
+	ret = tx_precheck(tx, num_tx, num_loc, data_size_pr_stream, &common_interval_us);
+	if (ret) {
+		return ret;
+	}
+
+	/* The timestamp used when sending*/
+	static uint32_t timestamp_ctlr_esti_us;
+
+	/* Increment the tx timestamp with the interval */
+	timestamp_ctlr_esti_us += common_interval_us;
+	static bool timestamp_ctlr_esti_us_valid;
+
+	struct tx_inf *tx_info = NULL;
+
+	for (int i = 0; i < num_tx; i++) {
+		tx_info = &tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
 
 		/* Check if same audio is sent to all locations */
 		if (num_loc == 1) {
 			ret = iso_stream_send(audio_frame->data, data_size_pr_stream,
-					      tx[i].cap_stream, tx_info, common_tx_sync_ts_us);
+					      tx[i].cap_stream, tx_info, timestamp_ctlr_esti_us,
+					      timestamp_ctlr_esti_us_valid);
 		} else {
 			ret = iso_stream_send(audio_frame->data +
 						      (tx[i].audio_location * data_size_pr_stream),
 					      data_size_pr_stream, tx[i].cap_stream, tx_info,
-					      common_tx_sync_ts_us);
+					      timestamp_ctlr_esti_us, timestamp_ctlr_esti_us_valid);
 		}
 
 		if (ret) {
-			/* DBG used here as prints are handled within iso_stream_send */
-			LOG_DBG("Failed to send to idx: %d stream: %p, ret: %d ", i,
+			LOG_ERR("Failed to send to idx: %d stream: %p, ret: %d ", i,
 				(void *)&tx[i].cap_stream->bap_stream, ret);
 			continue;
 		}
-
-		ret = iso_conn_handle_set(&tx[i].cap_stream->bap_stream, &tx_info->iso_conn_handle);
-		if (ret) {
-			continue;
-		}
-
-		/* Strictly, it is only required to call get_tx_sync_sdc on the first streaming
-		 * location to get the timestamp which is sent to all other locations.
-		 * However, to be able to detect errors, this is called on each TX.
-		 */
-		ret = get_tx_sync_sdc(tx_info->iso_conn_handle, &tx_info->iso_tx_readback);
-		if (ret) {
-			if (ret != -ENOTCONN) {
-				LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
-					(void *)&tx[i].cap_stream->bap_stream);
-			}
-			continue;
-		}
-
-		if (!ts_common_acquired) {
-			curr_ts_us = audio_sync_timer_capture();
-			common_tx_sync_ts_us = tx_info->iso_tx_readback.ts;
-			ts_common_acquired = true;
-		} else {
-			/* Check that the timestamp is the same on all channels, if not, it likely
-			 * means that the application is sending data too late, hence,
-			 * the controller cannot place the data in the same interval which
-			 * can cause synchronization issues.
-			 */
-			if (tx_info->iso_tx_readback.ts != common_tx_sync_ts_us) {
-				LOG_WRN("Not all channels have the same timestamp, expected: %u, "
-					"actual: %u",
-					common_tx_sync_ts_us, tx_info->iso_tx_readback.ts);
-			}
-		}
 	}
 
-	if (ts_common_acquired) {
-		struct sdu_ref_msg msg;
+	/* Get the current (wall clock time) */
+	uint32_t timestamp_now_us = audio_sync_timer_capture();
+	uint32_t timestamp_ctlr_real_us = 0;
+	static uint32_t timestamp_ctlr_real_us_last;
 
-		msg.tx_sync_ts_us = common_tx_sync_ts_us;
-		msg.curr_ts_us = curr_ts_us;
-		msg.adjust = true;
+	/* If the timestamp is not valid or it has been more than TX_TS_RESYNC_US since the last
+	 * timestamp, we re-aquire the timestamp from the controller
+	 */
+	if (!timestamp_ctlr_esti_us_valid ||
+	    (timestamp_ctlr_esti_us - timestamp_ctlr_real_us_last) >= TX_TS_RESYNC_US) {
 
-		ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
+		ret = controller_timestamp_tx_get(tx, num_tx, &timestamp_ctlr_real_us, tx_info);
 		if (ret) {
-			LOG_WRN("Failed to publish timestamp: %d", ret);
+			LOG_ERR("Failed to get timestamp after sending: %d", ret);
+			return ret;
 		}
+
+		LOG_WRN("Got new ts from controller: %u us. esti_valid: %d resync diff: %d",
+			timestamp_ctlr_real_us, timestamp_ctlr_esti_us_valid,
+			(timestamp_ctlr_esti_us - timestamp_ctlr_real_us_last));
+		/* If we got an update from the controller, check our current timestamp against what
+		 * the controller provided
+		 */
+
+		timestamp_ctlr_real_us_last = timestamp_ctlr_real_us;
+		/* Update the estimate to the real (most current) value */
+		timestamp_ctlr_esti_us = timestamp_ctlr_real_us;
+		timestamp_ctlr_esti_us_valid = true;
+	}
+
+	/* At this point, the controller estimated timestamp is valid */
+
+	int32_t diff_us = (int32_t)(timestamp_ctlr_esti_us - timestamp_now_us);
+
+	LOG_INF_RATELIMIT_RATE(1000,
+			       "Controller timestamp: %u us, Current timestamp: %u us, Diff: %d us",
+			       timestamp_ctlr_esti_us, timestamp_now_us, diff_us);
+
+	if (diff_us < 0) {
+		LOG_WRN("Data sent too late! Controller will flush. Diff: %d us, "
+			"ctlr_est: %u now: %u",
+			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
+		timestamp_ctlr_esti_us_valid = false;
+		timestamp_ctlr_esti_us = 0;
+	} else if (diff_us < TX_MARGIN_MIN_US) {
+		LOG_WRN("TX too close to next TX window! Data may be lost. Diff: %d "
+			"us, ctlr_est: %u now: %u",
+			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
+		timestamp_ctlr_esti_us_valid = false;
+		timestamp_ctlr_esti_us = 0;
+	} else if (diff_us > TX_MARGIN_MAX_US) {
+		LOG_WRN("TX too early! This may cause unnecessary latency. Diff: %d "
+			"us, ctlr_est: %u now: %u",
+			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
+		/* Likely not critical, but can update timestamp to better align with controller */
+		timestamp_ctlr_esti_us_valid = false;
+		timestamp_ctlr_esti_us = 0;
+	} else {
+		/* Timestamp is valid and within an acceptable range */
+		timestamp_ctlr_esti_us_valid = true;
+	}
+
+	/* Send on every iteration? */
+	struct sdu_ref_msg msg;
+
+	msg.tx_sync_ts_us = timestamp_ctlr_esti_us;
+	msg.curr_ts_us = timestamp_now_us;
+	msg.adjust = true;
+
+	ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
+	if (ret) {
+		LOG_WRN("Failed to publish timestamp: %d", ret);
 	}
 
 	return 0;

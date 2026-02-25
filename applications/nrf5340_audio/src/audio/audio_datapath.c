@@ -895,7 +895,7 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	}
 
 	if (print_count % 100 == 0) {
-		LOG_DBG("JIT diff: %lld us. Target: %u +/- %u", diff, JUST_IN_TIME_TARGET_DLY_US,
+		LOG_INF("JIT diff: %lld us. Target: %u +/- %u", diff, JUST_IN_TIME_TARGET_DLY_US,
 			JUST_IN_TIME_BOUND_US);
 	}
 	print_count++;
