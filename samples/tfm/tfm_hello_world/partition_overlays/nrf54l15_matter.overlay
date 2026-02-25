@@ -1,0 +1,111 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Matter-optimized TF-M partition layout for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * Optimized for Matter (CHIP/Connected Home over IP) with:
+ * - Larger TF-M secure partition for full crypto (SPAKE2+, attestation)
+ * - MCUboot for Matter OTA firmware updates
+ * - Protected Storage for DAC/PAI certificates
+ * - ITS for device attestation keys, fabric credentials
+ * - Large NS application partition for Matter stack (~400 kB)
+ * - Factory data partition for Matter device info
+ *
+ * Suitable for: Matter light bulbs, switches, sensors, door locks
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(96)>;
+		ranges = <0x0 0x0 DT_SIZE_K(96)>;
+	};
+
+	sram0_ns: image_ns@18000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x18000 DT_SIZE_K(160)>;
+		ranges = <0x0 0x18000 DT_SIZE_K(160)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (256 kB)
+		 *   0x0004C000  Non-secure Matter app    (280 kB)
+		 * 0x00092000  TF-M PS                    (24 kB)
+		 * 0x00098000  TF-M ITS                   (24 kB)
+		 * 0x0009E000  TF-M OTP / NV counters      (8 kB)
+		 * 0x000A0000  Secondary slot             (536 kB)
+		 * 0x00126000  Factory data                (4 kB)
+		 * 0x00127000  Non-secure storage (NVS)    (52 kB)
+		 *
+		 * PS enlarged for DAC/PAI certificate storage.
+		 * ITS enlarged for fabric credentials and attestation keys.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(256)>;
+		};
+
+		slot0_ns_partition: partition@4c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0004C000 DT_SIZE_K(280)>;
+		};
+
+		tfm_ps_partition: partition@92000 {
+			label = "tfm-ps";
+			reg = <0x00092000 DT_SIZE_K(24)>;
+		};
+
+		tfm_its_partition: partition@98000 {
+			label = "tfm-its";
+			reg = <0x00098000 DT_SIZE_K(24)>;
+		};
+
+		tfm_otp_partition: partition@9e000 {
+			label = "tfm-otp";
+			reg = <0x0009E000 DT_SIZE_K(8)>;
+		};
+
+		slot1_partition: partition@a0000 {
+			label = "image-1";
+			reg = <0x000A0000 DT_SIZE_K(536)>;
+		};
+
+		factory_partition: partition@126000 {
+			label = "factory-data";
+			reg = <0x00126000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@127000 {
+			label = "storage";
+			reg = <0x00127000 DT_SIZE_K(52)>;
+		};
+	};
+};

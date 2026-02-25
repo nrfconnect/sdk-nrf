@@ -1,0 +1,93 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Minimal TF-M partition layout for nRF5340
+ *
+ * nRF5340 has 1024 kB of flash and 512 kB of SRAM (application core).
+ * TrustZone flash region alignment: 16 kB (SPU-based)
+ * TrustZone RAM region alignment:    8 kB
+ * Flash erase-block-size:            4 kB
+ *
+ * IMPORTANT: On nRF5340, all secure/non-secure boundaries must be
+ * aligned to 16 kB in flash and 8 kB in SRAM. This is coarser than
+ * the nRF54L series (4 kB) and means partition sizes must be
+ * multiples of 16 kB to avoid wasting flash.
+ *
+ * This layout uses the TF-M minimal profile with:
+ * - No MCUboot (direct boot)
+ * - Minimal TF-M secure image (64 kB, 16 kB aligned)
+ * - ITS only (16 kB, aligned to SPU region)
+ * - No Protected Storage
+ * - Maximized non-secure application space
+ *
+ * Suitable for: minimal crypto operations, key storage only
+ */
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all S/NS boundaries 16 kB aligned):
+		 *
+		 * 0x00000000  TF-M secure image        (64 kB)
+		 * 0x00010000  TF-M ITS                 (16 kB)
+		 * 0x00014000  TF-M OTP / NV counters   (16 kB)
+		 * 0x00018000  Non-secure application   (928 kB)
+		 * 0x000F8000  Non-secure storage        (32 kB)
+		 *
+		 * Note: ITS and OTP are placed in the secure region before
+		 * the S/NS boundary at 0x18000 (96 kB mark).
+		 * The S/NS flash boundary = 0x18000 is 16 kB aligned.
+		 */
+
+		slot0_partition: partition@0 {
+			label = "image-0";
+			reg = <0x00000000 DT_SIZE_K(64)>;
+		};
+
+		tfm_its_partition: partition@10000 {
+			label = "tfm-its";
+			reg = <0x00010000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@14000 {
+			label = "tfm-otp";
+			reg = <0x00014000 DT_SIZE_K(16)>;
+		};
+
+		slot0_ns_partition: partition@18000 {
+			label = "image-0-nonsecure";
+			reg = <0x00018000 DT_SIZE_K(928)>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000F8000 DT_SIZE_K(32)>;
+		};
+	};
+};
+
+&sram0 {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Secure SRAM — 8 kB aligned */
+		reg = <0x0 DT_SIZE_K(64)>;
+		ranges = <0x0 0x0 DT_SIZE_K(64)>;
+	};
+
+	sram0_ns: image_ns@10000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Non-Secure SRAM — rest of 512 kB minus shared */
+		reg = <0x10000 DT_SIZE_K(192)>;
+		ranges = <0x0 0x10000 DT_SIZE_K(192)>;
+	};
+};

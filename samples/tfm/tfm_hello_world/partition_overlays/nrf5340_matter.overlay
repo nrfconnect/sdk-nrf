@@ -1,0 +1,118 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Matter-optimized TF-M partition layout for nRF5340
+ *
+ * nRF5340 has 1024 kB of flash and 512 kB of SRAM (application core).
+ * TrustZone flash region alignment: 16 kB (SPU-based)
+ * TrustZone RAM region alignment:    8 kB
+ * Flash erase-block-size:            4 kB
+ *
+ * Optimized for Matter (CHIP/Connected Home over IP) with:
+ * - MCUboot for Matter OTA firmware updates
+ * - Full TF-M for attestation, SPAKE2+, crypto
+ * - Protected Storage for DAC/PAI certificates
+ * - ITS for fabric credentials, attestation keys
+ * - Factory data partition for Matter device info
+ * - Large NS partition for Matter stack (~350+ kB)
+ *
+ * Note: The nRF5340 network core runs the 802.15.4 radio driver
+ * for Thread/Matter and must be programmed separately.
+ * Matter applications on nRF5340 may also use external flash
+ * for the secondary DFU slot to free up internal flash.
+ *
+ * Suitable for: Matter light bulbs, switches, sensors, door locks
+ */
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (S/NS boundaries 16 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (256 kB)
+		 *   0x0004C000  Non-secure Matter app    (208 kB)
+		 * 0x00080000  TF-M PS                    (16 kB)
+		 * 0x00084000  TF-M ITS                   (16 kB)
+		 * 0x00088000  TF-M OTP / NV counters      (8 kB)
+		 * 0x0008A000  Factory data                (4 kB)
+		 * 0x0008B000  Secondary slot            (464 kB)
+		 * 0x000FF000  Non-secure storage          (4 kB)
+		 *
+		 * Note: If external flash (QSPI) is available, the
+		 * secondary slot can be moved there to enlarge the
+		 * primary NS partition significantly.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(256)>;
+		};
+
+		slot0_ns_partition: partition@4c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0004C000 DT_SIZE_K(208)>;
+		};
+
+		tfm_ps_partition: partition@80000 {
+			label = "tfm-ps";
+			reg = <0x00080000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@84000 {
+			label = "tfm-its";
+			reg = <0x00084000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@88000 {
+			label = "tfm-otp";
+			reg = <0x00088000 DT_SIZE_K(8)>;
+		};
+
+		factory_partition: partition@8a000 {
+			label = "factory-data";
+			reg = <0x0008A000 DT_SIZE_K(4)>;
+		};
+
+		slot1_partition: partition@8b000 {
+			label = "image-1";
+			reg = <0x0008B000 DT_SIZE_K(464)>;
+		};
+
+		storage_partition: partition@ff000 {
+			label = "storage";
+			reg = <0x000FF000 DT_SIZE_K(4)>;
+		};
+	};
+};
+
+&sram0 {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(128)>;
+		ranges = <0x0 0x0 DT_SIZE_K(128)>;
+	};
+
+	sram0_ns: image_ns@20000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* 128 kB NS — Matter needs substantial RAM */
+		reg = <0x20000 DT_SIZE_K(128)>;
+		ranges = <0x0 0x20000 DT_SIZE_K(128)>;
+	};
+};

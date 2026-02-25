@@ -1,0 +1,97 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Minimal TF-M partition layout for nRF91 Series (nRF9160/nRF9161/nRF9151)
+ *
+ * nRF91 Series has 1024 kB of flash and 256 kB of SRAM.
+ * TrustZone flash region alignment: 32 kB (SPU-based)
+ * TrustZone RAM region alignment:    8 kB
+ * Flash erase-block-size:            4 kB
+ *
+ * IMPORTANT: On nRF91 Series, SPU enforces 32 kB flash region
+ * granularity — the coarsest among all nRF families. This means
+ * the secure/non-secure boundary must fall on a 32 kB boundary,
+ * and any secure partition that doesn't fill a full 32 kB region
+ * wastes the remainder.
+ *
+ * This layout uses the TF-M minimal profile with:
+ * - No MCUboot (direct boot)
+ * - TF-M secure image sized to a 32 kB boundary
+ * - ITS for minimal key storage
+ * - No Protected Storage
+ * - Maximized NS space for modem library + application
+ *
+ * Suitable for: minimal cellular IoT, AT commands, basic LTE
+ *
+ * Applies to boards: nrf9160dk/nrf9160/ns, nrf9161dk/nrf9161/ns,
+ *                    nrf9151dk/nrf9151/ns
+ */
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (S/NS boundary 32 kB aligned):
+		 *
+		 * 0x00000000  TF-M secure image        (96 kB = 3 × 32 kB)
+		 * 0x00018000  TF-M ITS                 (32 kB = 1 × 32 kB)
+		 * 0x00020000  TF-M OTP / NV counters   (32 kB = 1 × 32 kB)
+		 * 0x00028000  Non-secure application   (864 kB)
+		 * 0x000F0000  Non-secure storage        (64 kB)
+		 *
+		 * S/NS boundary at 0x28000 (160 kB) is 32 kB aligned.
+		 * Note: ITS and OTP are "rounded up" to 32 kB each even
+		 * though they need less, due to SPU region granularity.
+		 */
+
+		slot0_partition: partition@0 {
+			label = "image-0";
+			reg = <0x00000000 DT_SIZE_K(96)>;
+		};
+
+		tfm_its_partition: partition@18000 {
+			label = "tfm-its";
+			reg = <0x00018000 DT_SIZE_K(32)>;
+		};
+
+		tfm_otp_partition: partition@20000 {
+			label = "tfm-otp";
+			reg = <0x00020000 DT_SIZE_K(32)>;
+		};
+
+		slot0_ns_partition: partition@28000 {
+			label = "image-0-nonsecure";
+			reg = <0x00028000 DT_SIZE_K(800)>;
+		};
+
+		storage_partition: partition@f0000 {
+			label = "storage";
+			reg = <0x000F0000 DT_SIZE_K(64)>;
+		};
+	};
+};
+
+&sram0 {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* 64 kB secure — 8 kB aligned */
+		reg = <0x0 DT_SIZE_K(64)>;
+		ranges = <0x0 0x0 DT_SIZE_K(64)>;
+	};
+
+	sram0_ns: image_ns@10000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* 192 kB non-secure (modem library needs ~64 kB itself) */
+		reg = <0x10000 DT_SIZE_K(192)>;
+		ranges = <0x0 0x10000 DT_SIZE_K(192)>;
+	};
+};
