@@ -249,7 +249,7 @@ Building documentation
    * - sphinx
      - :ncs-tool-version:`SPHINX_VERSION`
    * - sphinx-ncs-theme
-     - :ncs-tool-version:`SPHINX_NCS_THEME_VERSION`
+     - from git (see :file:`doc/requirements.txt`)
    * - sphinx-tabs
      - :ncs-tool-version:`SPHINX_TABS_VERSION`
    * - sphinxcontrib-svg2pdfconverter
