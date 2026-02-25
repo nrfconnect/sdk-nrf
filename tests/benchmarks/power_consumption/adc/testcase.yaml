@@ -21,6 +21,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
 
   benchmarks.power_consumption.adc_async:
     integration_platforms:
@@ -37,5 +38,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y

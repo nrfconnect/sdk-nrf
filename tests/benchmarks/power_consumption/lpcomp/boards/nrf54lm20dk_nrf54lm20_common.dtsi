@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/comparator/nrf-comp.h>
+
+/ {
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+		test-comp = &comp;
+	};
+
+	zephyr,user {
+		test-gpios = <&gpio1 30 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+/delete-node/ &led1;
+
+&gpio1 {
+	status = "okay";
+};
+
+&comp {
+	compatible = "nordic,nrf-lpcomp";
+	psel = <NRF_COMP_AIN1>; /* P1.31 */
+	refsel = "VDD_4_8";
+	status = "okay";
+};
