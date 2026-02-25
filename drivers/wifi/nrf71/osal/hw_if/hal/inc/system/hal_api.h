@@ -29,29 +29,6 @@ void nrf_wifi_sys_hal_lock_rx(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
 void nrf_wifi_sys_hal_unlock_rx(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
 
 /**
- * @brief Send a data command to the RPU.
- *
- * @param hal_ctx Pointer to HAL context.
- * @param cmd_type Type of the data command to send to the RPU.
- * @param data_cmd The data command to be sent to the RPU.
- * @param data_cmd_size Size of the data command to be sent to the RPU.
- * @param desc_id Descriptor ID of the buffer being submitted to RPU.
- * @param pool_id Pool ID to which the buffer being submitted to RPU belongs.
- *
- * This function programs the relevant information about a data command,
- * to the RPU. These buffers are needed by the RPU to receive data and
- * management frames as well as to transmit data frames.
- *
- * @return The status of the operation.
- */
-enum nrf_wifi_status nrf_wifi_sys_hal_data_cmd_send(struct nrf_wifi_hal_dev_ctx *hal_ctx,
-						    enum NRF_WIFI_HAL_MSG_TYPE cmd_type,
-						    void *data_cmd,
-						    unsigned int data_cmd_size,
-						    unsigned int desc_id,
-						    unsigned int pool_id);
-
-/**
  * @brief Map a receive buffer for the Wi-Fi HAL.
  *
  * This function maps a receive buffer to the Wi-Fi HAL device context.

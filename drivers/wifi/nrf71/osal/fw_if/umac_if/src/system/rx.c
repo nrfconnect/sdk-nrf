@@ -274,12 +274,9 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_cmd_send(struct nrf_wifi_fmac_dev_ctx *fma
 		rx_buf_info->nwb =  (unsigned int)nwb;
 		rx_buf_info->mapped = true;
 #else
-		status = nrf_wifi_sys_hal_data_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-							NRF_WIFI_HAL_MSG_TYPE_CMD_DATA_RX,
+		status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
 							&rx_addr,
-							sizeof(rx_addr),
-							desc_id,
-							pool_info.pool_id);
+							sizeof(rx_addr));
 #endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 	} else if (cmd_type == NRF_WIFI_FMAC_RX_CMD_TYPE_DEINIT) {
 
