@@ -13,7 +13,6 @@
 
 #include <nrf71_wifi_ctrl.h>
 #include "radio_test/fmac_structs.h"
-#include "common/hal_mem.h"
 #include "common/fmac_util.h"
 
 static enum nrf_wifi_status umac_event_rt_stats_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
@@ -86,10 +85,6 @@ static enum nrf_wifi_status umac_event_rt_rf_test_process(
 	case NRF_WIFI_RF_TEST_EVENT_RX_ADC_CAP:
 	case NRF_WIFI_RF_TEST_EVENT_RX_STAT_PKT_CAP:
 	case NRF_WIFI_RF_TEST_EVENT_RX_DYN_PKT_CAP:
-		status = hal_rpu_mem_read(fmac_dev_ctx->hal_dev_ctx,
-					  def_dev_ctx->rf_test_cap_data,
-					  RPU_MEM_RF_TEST_CAP_BASE,
-					  def_dev_ctx->rf_test_cap_sz);
 
 		nrf_wifi_osal_mem_cpy(&rf_test_capture_params,
 				      (const unsigned char *)
@@ -151,8 +146,9 @@ static enum nrf_wifi_status umac_event_rt_rf_test_process(
 				(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 				sizeof(rf_get_xo_value_params));
 
-		nrf_wifi_osal_log_info("Best XO value is = %d",
-				       rf_get_xo_value_params.xo_value);
+		nrf_wifi_osal_log_info("Best XO value offset is = %d and status = %d",
+				rf_get_xo_value_params.xo_offset,
+				rf_get_xo_value_params.status);
 		break;
 	default:
 		break;

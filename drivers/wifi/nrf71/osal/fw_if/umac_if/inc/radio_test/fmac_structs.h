@@ -24,6 +24,14 @@
 
 #include "common/fmac_structs_common.h"
 
+#define MAX_TX_PWR_SYS_TEST 30
+#define MAX_TX_PWR_RADIO_TEST 24
+
+#define MAX_CAPTURE_LEN 16383
+#define MIN_CAPTURE_LEN 0
+#define RX_CAPTURE_TIMEOUT_CONST 11
+#define CAPTURE_DURATION_IN_SEC 600
+
 /**
  * @brief  Structure to hold per device context information for the UMAC IF layer.
  *

@@ -13,7 +13,8 @@
 #include "common/hal_api_common.h"
 
 enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-				      struct nrf_wifi_phy_rf_params *rf_params,
+				      unsigned int *rf_params_addr,
+				      unsigned int vtf_buffer_start_address,
 				      bool rf_params_valid,
 #ifdef NRF_WIFI_LOW_POWER
 				      int sleep_type,
@@ -47,15 +48,10 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_INIT;
 	umac_cmd_data->sys_head.len = len;
 
-
-	umac_cmd_data->sys_params.rf_params_valid = rf_params_valid;
-
-	if (rf_params_valid) {
-		nrf_wifi_osal_mem_cpy(umac_cmd_data->sys_params.rf_params,
-				      rf_params,
-				      NRF_WIFI_RF_PARAMS_SIZE);
-	}
-
+	nrf_wifi_osal_mem_cpy(umac_cmd_data->sys_params.rf_params_addr,
+		rf_params_addr,
+		sizeof(unsigned int) * NUM_WIFI_PARAMS);
+	umac_cmd_data->sys_params.vtf_buffer_addr = vtf_buffer_start_address;
 
 	umac_cmd_data->sys_params.phy_calib = phy_calib;
 	umac_cmd_data->sys_params.hw_bringup_time = HW_DELAY;
@@ -91,17 +87,9 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 
 	umac_cmd_data->op_band = op_band;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.rf_params[PCB_LOSS_BYTE_2G_OFST],
-			      &board_params->pcb_loss_2g,
-			      NUM_PCB_LOSS_OFFSET);
-
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.rf_params[ANT_GAIN_2G_OFST],
-			      &tx_pwr_ctrl_params->ant_gain_2g,
-			      NUM_ANT_GAIN);
-
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.rf_params[BAND_2G_LW_ED_BKF_DSSS_OFST],
-			      &tx_pwr_ctrl_params->band_edge_2g_lo_dss,
-			      NUM_EDGE_BACKOFF);
+	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params,
+		&tx_pwr_ctrl_params->ant_gain_2g,
+		10 * sizeof(unsigned char));
 
 	nrf_wifi_osal_mem_cpy(umac_cmd_data->country_code,
 			      country_code,

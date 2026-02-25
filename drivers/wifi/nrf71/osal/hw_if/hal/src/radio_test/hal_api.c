@@ -11,10 +11,6 @@
 
 #include "queue.h"
 #include "common/hal_structs_common.h"
-#include "common/hal_common.h"
-#include "common/hal_reg.h"
-#include "common/hal_mem.h"
-#include "common/hal_interrupt.h"
 #include "radio_test/hal_api.h"
 
 static void event_tasklet_fn(unsigned long data)
@@ -49,7 +45,9 @@ out:
 struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *hpriv,
 						     void *mac_dev_ctx)
 {
+#ifdef NRF_WIFI_LOW_POWER
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+#endif /* NRF_WIFI_LOW_POWER */
 	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = NULL;
 
 	hal_dev_ctx = nrf_wifi_osal_mem_zalloc(sizeof(*hal_dev_ctx));
@@ -63,8 +61,6 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *h
 	hal_dev_ctx->hpriv = hpriv;
 	hal_dev_ctx->mac_dev_ctx = mac_dev_ctx;
 	hal_dev_ctx->idx = hpriv->num_devs++;
-
-	hal_dev_ctx->num_cmds = RPU_CMD_START_MAGIC;
 
 	hal_dev_ctx->cmd_q = nrf_wifi_utils_ctrl_q_alloc();
 
@@ -133,17 +129,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *h
 		goto event_tasklet_free;
 	}
 
-	status = hal_rpu_irq_enable(hal_dev_ctx);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: hal_rpu_irq_enable failed",
-				      __func__);
-		goto bal_dev_free;
-	}
-
 	return hal_dev_ctx;
-bal_dev_free:
-	nrf_wifi_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
 event_tasklet_free:
 	nrf_wifi_osal_tasklet_free(hal_dev_ctx->event_tasklet);
 lock_rx_free:
