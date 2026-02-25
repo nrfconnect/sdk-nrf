@@ -14,9 +14,17 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/init.h>
 #include <ctype.h>
+#ifndef CONFIG_NRF71_RADIO_TEST
 #include <host_rpu_sys_if.h>
+#endif
 #include <radio_test/fmac_structs.h>
 #include <zephyr/drivers/wifi/nrf_wifi/bus/rpu_hw_if.h>
+
+enum nrf_wifi_frequency_bands {
+	NRF_WIFI_FREQ_BAND_2_4_GHZ = 0,
+	NRF_WIFI_FREQ_BAND_5_GHZ,
+	NRF_WIFI_FREQ_BAND_6_GHZ,
+};
 
 /* RX capture display constants */
 #define SAMPLES_PER_LINE 16
