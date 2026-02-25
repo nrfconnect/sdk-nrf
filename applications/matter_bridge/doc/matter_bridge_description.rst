@@ -38,7 +38,7 @@ To test the Matter bridge application with the :ref:`Bluetooth® LE bridged devi
   * :ref:`peripheral_lbs`
   * :zephyr:code-sample:`ble_peripheral_esp`
 
-* A micro-USB cable for every development kit to connect it to the PC.
+* A USB cable for every development kit to connect it to the PC.
 
 To commission the Matter bridge device and control it remotely through a Wi-Fi® network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
 This requires additional hardware depending on your setup.
