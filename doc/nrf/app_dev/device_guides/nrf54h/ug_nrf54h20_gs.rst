@@ -131,7 +131,7 @@ To prepare the nRF54H20 DK for its first use, you must manually program the requ
 
 .. note::
    After you program the BICR, the LFCLK calibrates on first boot.
-   Do not expect accurate LFCLK timing for about 3.5–4 seconds.
+   Do not expect accurate LFCLK timing for about 3.5 to 4 seconds.
    If calibration does not complete, the system controller (sysctrl) starts calibration on the next boot.
 
 .. _ug_nrf54h20_SoC_binaries:
@@ -142,25 +142,7 @@ To prepare the nRF54H20 DK for its first use, you must manually program the requ
 Bring-up step: Programming the nRF54H20 IronSide SE binaries
 ************************************************************
 
-.. note::
-   To program the nRF54H20 IronSide SE binaries on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
-   This means that this is likely the first use of your nRF54H20 DK.
-
-   Devices already provisioned using SUIT-based binaries and in LCS ``RoT`` cannot be transitioned back to LCS ``EMPTY``.
-   For more information, see :ref:`abi_compatibility`.
-
-After programming the BICR, program the :ref:`nRF54H20 IronSide SE binaries <abi_compatibility>`.
-This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
-To program the nRF54H20 IronSide SE binaries to the nRF54H20 DK, do the following:
-
-1. Download the `latest nRF54H20 IronSide SE binaries`_.
-
-   .. note::
-      On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
-
-#. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
-
-      nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
+.. include:: /includes/nrf54h20_provision_ironside.txt
 
 .. _ug_nrf54h20_gs_bringup_transition:
 
@@ -169,22 +151,7 @@ To program the nRF54H20 IronSide SE binaries to the nRF54H20 DK, do the followin
 Bring-up step: Transitioning the nRF54H20 SoC to RoT
 ****************************************************
 
-The current nRF54H20 DK comes with its lifecycle state (LCS) set to ``EMPTY``.
-To operate correctly, you must transition its lifecycle state to Root of Trust (``RoT``).
-
-.. caution::
-   The forward transition to LCS ``RoT`` is permanent.
-   After the transition, it is impossible to transition backward to LCS ``EMPTY``.
-
-To transition the LCS to ``RoT``, do the following:
-
-1. Set the LCS of the nRF54H20 SoC to Root of Trust using the following command::
-
-      nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
-
-#. After the LCS transition, reset the device::
-
-      nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
+.. include:: /includes/nrf54h20_transition_rot.txt
 
 .. _ug_nrf54h20_gs_sample:
 
