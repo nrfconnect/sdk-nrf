@@ -191,8 +191,8 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 /* Time before doing a timestamp re-sync with the controller */
 #define TX_TS_RESYNC_US	 1000000
 /* The minimum margin between sending the last data and the next TX window */
-#define TX_MARGIN_MIN_US 2000
-#define TX_MARGIN_MAX_US 6000
+#define TX_MARGIN_MIN_US (CONFIG_TX_TGT_LEAD_TIME_US - CONFIG_TX_LEAD_TIME_DEVIATION_US)
+#define TX_MARGIN_MAX_US (CONFIG_TX_TGT_LEAD_TIME_US + CONFIG_TX_LEAD_TIME_DEVIATION_US)
 
 static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx, uint8_t num_loc,
 		       size_t data_size_pr_stream, uint32_t *common_interval_us)
@@ -361,6 +361,17 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	}
 
 	/* At this point, the controller estimated timestamp is valid */
+	/* Send on every iteration? */
+	struct sdu_ref_msg msg;
+
+	msg.tx_sync_ts_us = timestamp_ctlr_esti_us;
+	msg.curr_ts_us = timestamp_now_us;
+	msg.adjust = true;
+
+	ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
+	if (ret) {
+		LOG_WRN("Failed to publish timestamp: %d", ret);
+	}
 
 	int32_t diff_us = (int32_t)(timestamp_ctlr_esti_us - timestamp_now_us);
 
@@ -390,18 +401,6 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	} else {
 		/* Timestamp is valid and within an acceptable range */
 		timestamp_ctlr_esti_us_valid = true;
-	}
-
-	/* Send on every iteration? */
-	struct sdu_ref_msg msg;
-
-	msg.tx_sync_ts_us = timestamp_ctlr_esti_us;
-	msg.curr_ts_us = timestamp_now_us;
-	msg.adjust = true;
-
-	ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
-	if (ret) {
-		LOG_WRN("Failed to publish timestamp: %d", ret);
 	}
 
 	return 0;

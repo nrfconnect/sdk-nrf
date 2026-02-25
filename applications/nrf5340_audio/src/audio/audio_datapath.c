@@ -886,11 +886,11 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	 * get back in sync with the controller.
 	 */
 	if (diff < -((int64_t)UINT32_MAX / 2)) {
-		LOG_DBG("Timestamp wrap. diff: %lld", diff);
+		LOG_WRN("Timestamp wrap. diff: %lld", diff);
 		diff += UINT32_MAX;
 
 	} else if (diff < 0) {
-		LOG_DBG("tx_sync_ts_us: %u is earlier than curr_ts_us %u", tx_sync_ts_us,
+		LOG_WRN("tx_sync_ts_us: %u is earlier than curr_ts_us %u", tx_sync_ts_us,
 			curr_ts_us);
 	}
 
@@ -900,11 +900,17 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	}
 	print_count++;
 
-	if ((diff < (JUST_IN_TIME_TARGET_DLY_US - JUST_IN_TIME_BOUND_US)) ||
-	    (diff > (JUST_IN_TIME_TARGET_DLY_US + JUST_IN_TIME_BOUND_US))) {
+	/* If the data is sent too late/too slow, we don't copy in data. Instead,
+	 * blocks are dropped, which in turn will cause the controller to starve and
+	 * send a NULL PDU on air "gaining" an ISO interval of time. This means
+	 * we are again too fast, and drop blocks to come back to sync
+	 */
+
+	if ((diff < (CONFIG_TX_TGT_LEAD_TIME_US - CONFIG_TX_LEAD_TIME_DEVIATION_US)) ||
+	    (diff > (CONFIG_TX_TGT_LEAD_TIME_US + CONFIG_TX_LEAD_TIME_DEVIATION_US))) {
 		/* Drop next block to help with just-in-time */
 		atomic_set(&drop_next_block, true);
-		LOG_DBG("Dropped block to align with connection interval");
+		LOG_WRN("Dropped block to align with connection interval");
 		print_count = 0;
 	}
 }
@@ -934,7 +940,7 @@ static void audio_datapath_sdu_ref_update(const struct zbus_channel *chan)
 		if (ctrl_blk.stream_started) {
 			ctrl_blk.prev_drift_sdu_ref_us = tx_sync_ts_us;
 
-			if (adjust && tx_sync_ts_us != 0) {
+			if (adjust) {
 				audio_datapath_just_in_time_check_and_adjust(tx_sync_ts_us,
 									     curr_ts_us);
 			}
