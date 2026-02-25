@@ -717,6 +717,8 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 
 #ifdef CONFIG_NRF71_RADIO_TEST
 	status = nrf_wifi_rt_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
+					rpu_ctx_zep->phy_rf_params_addr,
+					rpu_ctx_zep->vtf_buffer_start_address,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 					sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
