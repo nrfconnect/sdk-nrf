@@ -41,7 +41,7 @@
  */
 void sx_pk_select_ops(sx_pk_req *req)
 {
-	int slotA = req->cmd->selected_ptrA;
+	int slotA = sx_pk_get_cmd(req)->selected_ptrA;
 
 	if (slotA == 0) {
 		return;
@@ -67,7 +67,7 @@ void sx_pk_write_curve(sx_pk_req *req, const struct sx_pk_ecurve *curve)
 		 */
 		return;
 	}
-	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
+	if (sx_pk_get_cmd(req)->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
 		 * of the slot.
 		 */
@@ -95,12 +95,13 @@ void sx_pk_write_curve_gen(sx_pk_req *pk, const struct sx_pk_ecurve *curve, stru
 
 const uint8_t **sx_pk_get_output_ops(sx_pk_req *req)
 {
-	int slots = req->cmd->outslots;
+	const struct sx_pk_cmd_def *cmd = sx_pk_get_cmd(req);
+	int slots = cmd->outslots;
 	uint8_t *cryptoram = req->cryptoram;
 	int slot_size = req->slot_sz;
 	unsigned int i = 0;
 
-	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
+	if (cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
 		 * of the slot.
 		 */
@@ -126,7 +127,7 @@ static int sx_pk_ik_mode(sx_pk_req *pk)
 
 static void write_command(sx_pk_req *req, int op_size, uint32_t flags)
 {
-	uint32_t command = req->cmd->cmdcode | ((op_size - 1) << 8) | flags;
+	uint32_t command = sx_pk_get_cmd(req)->cmdcode | ((op_size - 1) << 8) | flags;
 
 	sx_pk_wrreg(&req->regs, PK_REG_COMMAND, command);
 }
@@ -144,7 +145,7 @@ static void sx_pk_blind(sx_pk_req *req, sx_pk_blind_factor factor)
 	/* Force lsb bit to guarantee odd random value. Force bits 63 & 62 to 0 and
 	 * bit 61 to 1 to guarantee constant time execution on hardware.
 	 */
-	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
+	if (sx_pk_get_cmd(req)->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		p[0] &= 0x3F;
 		p[0] |= 0x20;
 		p[7] |= 1;
@@ -166,7 +167,8 @@ static void sx_pk_blind(sx_pk_req *req, sx_pk_blind_factor factor)
 int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int flags,
 			   struct sx_pk_slot *inputs)
 {
-	int slots = req->cmd->inslots;
+	const struct sx_pk_cmd_def *cmd = sx_pk_get_cmd(req);
+	int slots = cmd->inslots;
 	uint8_t *cryptoram = req->cryptoram;
 	int slot_size = req->slot_sz;
 	int i = 0;
@@ -193,11 +195,11 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	}
 	req->op_size = curve->sz;
 
-	if (req->cmd->blind_flags) {
-		flags |= req->cmd->blind_flags;
+	if (cmd->blind_flags) {
+		flags |= cmd->blind_flags;
 	}
 	write_command(req, curve->sz, curve->curveflags | flags);
-	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
+	if (cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
 		 * of the slot.
 		 */
@@ -212,7 +214,7 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	}
 	sx_pk_write_curve(req, curve);
 
-	if (req->cmd->blind_flags) {
+	if (cmd->blind_flags) {
 		status = sx_pk_get_blinding_factor(&bld_factor);
 		if (status != SX_OK) {
 			sx_pk_release_req(req);
@@ -240,7 +242,8 @@ static int sx_pk_gfcmd_opsize(const struct sx_pk_cmd_def *cmd, const int *opsize
 
 int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot *inputs)
 {
-	int slots = req->cmd->inslots;
+	const struct sx_pk_cmd_def *cmd = sx_pk_get_cmd(req);
+	int slots = cmd->inslots;
 	uint8_t *cryptoram = req->cryptoram;
 	int slot_size = req->slot_sz;
 	int i = 0;
@@ -253,17 +256,17 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 		return SX_ERR_IK_MODE;
 	}
 
-	req->op_size = sx_pk_gfcmd_opsize(req->cmd, opsizes);
+	req->op_size = sx_pk_gfcmd_opsize(cmd, opsizes);
 	caps = sx_pk_fetch_capabilities();
 	if (req->op_size > caps->max_gfp_opsz) {
 		return SX_ERR_OPERAND_TOO_LARGE;
 	}
 
-	if (req->cmd->blind_flags) {
-		flags |= req->cmd->blind_flags;
+	if (cmd->blind_flags) {
+		flags |= cmd->blind_flags;
 	}
 	write_command(req, req->op_size, flags);
-	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
+	if (cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
 		 * of the slot.
 		 */
@@ -315,7 +318,7 @@ static void run_ik_cmd(sx_pk_req *req)
 		 * So the interrupt is disabled after leaving PK mode and enabled
 		 * when entering.
 		 */
-		if (req->cmd != SX_PK_CMD_IK_EXIT) {
+		if (sx_pk_get_cmd(req) != SX_PK_CMD_IK_EXIT) {
 			nrf_cracen_int_enable(NRF_CRACEN, CRACEN_INTENCLR_PKEIKG_Msk);
 		}
 	}

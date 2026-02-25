@@ -59,6 +59,7 @@ module with entropy will fail"
 struct sx_pk_cnx {
 	struct sx_pk_req instance;
 	struct sx_pk_capabilities caps;
+	const struct sx_pk_cmd_def *cmd;
 };
 
 static struct sx_pk_cnx silex_pk_engine;
@@ -212,6 +213,7 @@ int sx_pk_init(void)
 
 	cnx->instance.regs.base = ADDR_BA414EP_REGS(0);
 	cnx->instance.cryptoram = ADDR_BA414EP_CRYPTORAM(0);
+	cnx->instance.cnx = cnx;
 
 	if (!sx_pk_fetch_capabilities()) {
 		return SX_ERR_PLATFORM_ERROR;
@@ -245,8 +247,8 @@ void sx_pk_acquire_hw(sx_pk_req *req)
 	req->regs = silex_pk_engine.instance.regs;
 	req->cryptoram = silex_pk_engine.instance.cryptoram;
 	req->slot_sz = silex_pk_engine.instance.slot_sz;
-	req->cmd = NULL;
 	req->cnx = &silex_pk_engine;
+	req->cnx->cmd = NULL;
 	req->ik_mode = 0;
 
 	cracen_acquire();
@@ -294,14 +296,14 @@ void sx_pk_release_req(sx_pk_req *req)
 	}
 
 	cracen_release();
-	req->cmd = NULL;
+	req->cnx->cmd = NULL;
 	req->userctxt = NULL;
 	nrf_security_mutex_unlock(cracen_mutex_asymmetric);
 }
 
 void sx_pk_set_cmd(sx_pk_req *req, const struct sx_pk_cmd_def *cmd)
 {
-	req->cmd = cmd;
+	req->cnx->cmd = cmd;
 }
 
 struct sx_regs *sx_pk_get_regs(void)
@@ -312,6 +314,11 @@ struct sx_regs *sx_pk_get_regs(void)
 struct sx_pk_capabilities *sx_pk_get_caps(void)
 {
 	return &silex_pk_engine.caps;
+}
+
+const struct sx_pk_cmd_def *sx_pk_get_cmd(sx_pk_req *req)
+{
+	return req->cnx->cmd;
 }
 
 int sx_pk_clear_memory(sx_pk_req *req)

@@ -18,4 +18,6 @@ struct sx_regs *sx_pk_get_regs(void);
 
 struct sx_pk_capabilities *sx_pk_get_caps(void);
 
+const struct sx_pk_cmd_def *sx_pk_get_cmd(sx_pk_req *req);
+
 #endif

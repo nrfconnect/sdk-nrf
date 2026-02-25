@@ -7,6 +7,7 @@
 #include <cracen/membarriers.h>
 
 #include "ikhardware.h"
+#include <internal.h>
 #include "../ba414/op_slots.h"
 #include "../ik/regs_commands.h"
 #include "../ba414/regs_addr.h"
@@ -26,7 +27,7 @@ int cracen_prepare_ik_key(const uint8_t *user_data);
 
 int sx_pk_is_ik_cmd(sx_pk_req *req)
 {
-	return req->cmd->cmdcode & SX_PK_OP_IK;
+	return sx_pk_get_cmd(req)->cmdcode & SX_PK_OP_IK;
 }
 
 int sx_ik_read_status(sx_pk_req *req)
@@ -45,12 +46,13 @@ int sx_ik_read_status(sx_pk_req *req)
 
 int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *inputs)
 {
-	int slots = req->cmd->inslots;
+	const struct sx_pk_cmd_def *cmd = sx_pk_get_cmd(req);
+	int slots = cmd->inslots;
 	uint8_t *cryptoram = req->cryptoram;
 	int i = 0;
 	const struct sx_pk_capabilities *caps;
 
-	if (req->cmd->cmdcode == PK_OP_IK_EXIT) {
+	if (cmd->cmdcode == PK_OP_IK_EXIT) {
 #ifdef CONFIG_CRACEN_HW_VERSION_LITE
 		/* Workaround to handle IKG freezing on CRACEN lite.
 		 * THE PKE-IKG interrupt can not be cleared from software, but can
@@ -82,12 +84,12 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 	int slot_sz = caps->max_gfp_opsz;
 
 	req->op_size = caps->ik_opsz;
-	uint32_t rval = req->cmd->cmdcode & 0x301;
+	uint32_t rval = cmd->cmdcode & 0x301;
 
 	/* Write IK cmd register */
 	sx_pk_wrreg(&req->regs, IK_REG_PK_COMMAND, rval);
 
-	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
+	if (cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
 		 * of the slot.
 		 */
