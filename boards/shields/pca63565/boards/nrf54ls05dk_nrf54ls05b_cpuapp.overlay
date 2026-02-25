@@ -9,6 +9,7 @@
 		accel0 = &adxl362;
 		accel-gyro = &bmi270;
 		/delete-property/ sw0;
+		/delete-property/ mcuboot-button0;
 	};
 };
 
