@@ -1,0 +1,103 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Maximum non-secure application space for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * "How do I get the most flash for my application?"
+ *
+ * This layout answers the most common customer question by pushing
+ * TF-M to its absolute minimum:
+ * - TF-M minimal profile in SFN mode (smallest binary, ~40-48 kB)
+ * - No MCUboot (direct boot — saves ~48 kB)
+ * - No Protected Storage (saves 16 kB)
+ * - Smallest viable ITS (4 kB — enough for a few keys)
+ * - Smallest OTP/NV counters (4 kB)
+ * - Minimal secure SRAM (24 kB)
+ * - No non-secure storage (application manages its own if needed)
+ *
+ * Result: ~1460 kB available for the non-secure application.
+ *
+ * Required app config:
+ *   CONFIG_TFM_PROFILE_TYPE_MINIMAL=y
+ *   CONFIG_TFM_SFN=y
+ *
+ * Trade-offs:
+ * - No firmware update capability (no MCUboot)
+ * - No rollback protection
+ * - Minimal crypto (no RSA, limited hash algorithms)
+ * - Very small ITS — only a handful of keys
+ * - No application storage partition (add one if needed by
+ *   shrinking slot0_ns_partition)
+ *
+ * Suitable for: prototyping, evaluation, single-purpose devices
+ *               where flash is the primary constraint
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Absolute minimum secure SRAM for TF-M minimal + SFN */
+		reg = <0x0 DT_SIZE_K(24)>;
+		ranges = <0x0 0x0 DT_SIZE_K(24)>;
+	};
+
+	sram0_ns: image_ns@6000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* 232 kB non-secure — almost all SRAM for the app */
+		reg = <0x6000 DT_SIZE_K(232)>;
+		ranges = <0x0 0x6000 DT_SIZE_K(232)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  TF-M secure image         (48 kB)
+		 * 0x0000C000  TF-M ITS                    (4 kB)
+		 * 0x0000D000  TF-M OTP / NV counters      (4 kB)
+		 * 0x0000E000  Non-secure application   (1460 kB)
+		 *
+		 * Total: 48 + 4 + 4 + 1460 = 1516 kB (within 1524 kB)
+		 *
+		 * That's 1,495,040 bytes for the application — 95.7% of
+		 * total RRAM.
+		 */
+
+		slot0_partition: partition@0 {
+			label = "image-0";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		tfm_its_partition: partition@c000 {
+			label = "tfm-its";
+			reg = <0x0000C000 DT_SIZE_K(4)>;
+		};
+
+		tfm_otp_partition: partition@d000 {
+			label = "tfm-otp";
+			reg = <0x0000D000 DT_SIZE_K(4)>;
+		};
+
+		slot0_ns_partition: partition@e000 {
+			label = "image-0-nonsecure";
+			reg = <0x0000E000 DT_SIZE_K(1460)>;
+		};
+	};
+};

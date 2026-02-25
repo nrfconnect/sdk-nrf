@@ -1,0 +1,142 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * nRF5340 TF-M partition layout with explicit shared SRAM regions
+ *
+ * nRF5340 application core: 1024 kB flash, 512 kB SRAM.
+ * TrustZone flash region alignment: 16 kB (SPU-based)
+ * TrustZone RAM region alignment:    8 kB
+ * Flash erase-block-size:            4 kB
+ *
+ * "Where did my SRAM go? I only see 192 kB for my app!"
+ *
+ * The nRF5340's 512 kB SRAM is split THREE ways, not two:
+ *   1. Secure (TF-M)          — owned by TF-M, NS cannot access
+ *   2. Non-Secure application — owned by the NS app
+ *   3. Shared (IPC)           — used for inter-core communication
+ *                               between cpuapp and cpunet
+ *
+ * The shared SRAM region sits at the top of the address space and
+ * is used by the IPC (e.g., HCI, RPMsg) transport between the
+ * application core and network core. Its size depends on the IPC
+ * mechanism:
+ *   - RPMsg (BLE HCI):  ~64 kB typical
+ *   - IPC service:      configurable (32-128 kB)
+ *
+ * This overlay explicitly shows all three SRAM regions and explains
+ * the sizing trade-offs. The flash layout uses the "full" config.
+ *
+ * Suitable for: understanding nRF5340 SRAM usage, debugging
+ *               "out of SRAM" issues, tuning IPC buffer sizes
+ */
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Same flash layout as nrf5340_full.overlay */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x00010000 DT_SIZE_K(256)>;
+		};
+
+		slot0_ns_partition: partition@50000 {
+			label = "image-0-nonsecure";
+			reg = <0x00050000 DT_SIZE_K(192)>;
+		};
+
+		slot1_partition: partition@80000 {
+			label = "image-1";
+			reg = <0x00080000 DT_SIZE_K(448)>;
+		};
+
+		tfm_ps_partition: partition@f0000 {
+			label = "tfm-ps";
+			reg = <0x000F0000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@f4000 {
+			label = "tfm-its";
+			reg = <0x000F4000 DT_SIZE_K(8)>;
+		};
+
+		tfm_otp_partition: partition@f6000 {
+			label = "tfm-otp";
+			reg = <0x000F6000 DT_SIZE_K(8)>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000F8000 DT_SIZE_K(32)>;
+		};
+	};
+};
+
+/*
+ * SRAM layout — the 3-way split explained:
+ *
+ *  0x20000000 ┌─────────────────────┐
+ *             │   Secure (TF-M)     │ 256 kB (0x40000)
+ *             │   sram0_s           │ - TF-M stack, heap, BSS
+ *             │                     │ - Secure service data
+ *  0x20040000 ├─────────────────────┤ ← S/NS boundary (8 kB aligned)
+ *             │   Non-Secure App    │ 192 kB (0x30000)
+ *             │   sram0_ns          │ - Application stack, heap
+ *             │                     │ - BLE host buffers
+ *             │                     │ - Thread/Matter stack data
+ *  0x20070000 ├─────────────────────┤
+ *             │   Shared (IPC)      │ 64 kB (0x10000)
+ *             │   sram0_shared      │ - RPMsg/HCI ring buffers
+ *             │                     │ - IPC service endpoints
+ *             │                     │ - TX/RX queues
+ *  0x20080000 └─────────────────────┘ (512 kB total)
+ *
+ * To adjust:
+ * - Need more NS app RAM?  → shrink sram0_s or sram0_shared
+ * - IPC dropping packets?  → enlarge sram0_shared
+ * - TF-M crypto failing?   → enlarge sram0_s
+ */
+&sram0 {
+	/* Region 1: Secure — TF-M owns this exclusively */
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(256)>;
+		ranges = <0x0 0x0 DT_SIZE_K(256)>;
+	};
+
+	/* Region 2: Non-Secure application */
+	sram0_ns: image_ns@40000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x40000 DT_SIZE_K(192)>;
+		ranges = <0x0 0x40000 DT_SIZE_K(192)>;
+	};
+
+	/* Region 3: Shared IPC memory (app core ↔ net core)
+	 *
+	 * This region is accessible by both cores for inter-processor
+	 * communication. Configured as non-secure so the NS app can
+	 * access it for BLE HCI / 802.15.4 data exchange.
+	 *
+	 * Size depends on IPC transport:
+	 *   RPMsg (BLE HCI):  ~64 kB (default)
+	 *   IPC service:      32-128 kB (configurable)
+	 *   Large MTU BLE:    may need more (~96 kB)
+	 */
+	sram0_shared: memory@70000 {
+		reg = <0x70000 DT_SIZE_K(64)>;
+	};
+};

@@ -1,0 +1,121 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Debug-friendly TF-M partition layout for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * "My build worked in release mode but overflows in debug!"
+ *
+ * When debug options are enabled, TF-M grows significantly:
+ * - CONFIG_DEBUG_OPTIMIZATIONS=y   → ~30-50% larger binary
+ * - CONFIG_TFM_LOG_LEVEL_SILENCE=n → adds logging infrastructure
+ * - CONFIG_TFM_SPM_LOG_LEVEL > 0  → SPM debug logging
+ * - No LTO (link-time optimization)
+ *
+ * This layout allocates extra space for TF-M to accommodate the
+ * debug overhead, preventing overflow during development. The NS
+ * application partition is correspondingly smaller.
+ *
+ * Compared to the "full" overlay:
+ * - TF-M secure image: 384 kB → 448 kB (+64 kB for debug)
+ * - Secure SRAM:       128 kB → 152 kB (+24 kB for debug logging)
+ * - NS application:    148 kB →  84 kB (-64 kB)
+ *
+ * Required app config:
+ *   CONFIG_DEBUG_OPTIMIZATIONS=y
+ *   CONFIG_TFM_LOG_LEVEL_SILENCE=n  (optional, for TF-M logs)
+ *
+ * Suitable for: active development, debugging TF-M integration
+ *               issues, reproducing field bugs
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Extra secure SRAM for debug logging buffers */
+		reg = <0x0 DT_SIZE_K(152)>;
+		ranges = <0x0 0x0 DT_SIZE_K(152)>;
+	};
+
+	sram0_ns: image_ns@26000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x26000 DT_SIZE_K(104)>;
+		ranges = <0x0 0x26000 DT_SIZE_K(104)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader        (48 kB)
+		 * 0x0000C000  Primary slot:
+		 *   0x0000C000  TF-M secure image       (448 kB)
+		 *              (extra 64 kB for debug symbols & logging)
+		 *   0x0007C000  Non-secure application   (84 kB)
+		 * 0x00091000  TF-M PS                    (16 kB)
+		 * 0x00095000  TF-M ITS                   (16 kB)
+		 * 0x00099000  TF-M OTP / NV counters      (8 kB)
+		 * 0x0009B000  Secondary slot            (532 kB)
+		 * 0x0011F000  Non-secure storage         (32 kB)
+		 *
+		 * Tip: Once debugging is complete, switch to the "full"
+		 * or use-case-specific overlay for release builds.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(448)>;
+		};
+
+		slot0_ns_partition: partition@7c000 {
+			label = "image-0-nonsecure";
+			reg = <0x0007C000 DT_SIZE_K(84)>;
+		};
+
+		tfm_ps_partition: partition@91000 {
+			label = "tfm-ps";
+			reg = <0x00091000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@95000 {
+			label = "tfm-its";
+			reg = <0x00095000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@99000 {
+			label = "tfm-otp";
+			reg = <0x00099000 DT_SIZE_K(8)>;
+		};
+
+		slot1_partition: partition@9b000 {
+			label = "image-1";
+			reg = <0x0009B000 DT_SIZE_K(532)>;
+		};
+
+		storage_partition: partition@11f000 {
+			label = "storage";
+			reg = <0x0011F000 DT_SIZE_K(32)>;
+		};
+	};
+};

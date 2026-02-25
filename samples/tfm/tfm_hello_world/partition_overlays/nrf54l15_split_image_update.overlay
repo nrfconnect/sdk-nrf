@@ -1,0 +1,138 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Split image update TF-M partition layout for nRF54L15
+ *
+ * nRF54L15 has 1524 kB of RRAM and 256 kB of SRAM.
+ * TrustZone flash region alignment: 4 kB (MPC-based)
+ * TrustZone RAM region alignment:   4 kB
+ * RRAM erase-block-size:            4 kB
+ *
+ * "Can I update TF-M and my application independently?"
+ *
+ * In a standard MCUboot layout, the TF-M secure image and NS app are
+ * combined into a single "primary slot" and updated as one unit. This
+ * means every NS app update also re-flashes TF-M (wasting time and
+ * bandwidth), and a TF-M update forces an NS app re-flash too.
+ *
+ * This layout uses SEPARATE primary/secondary slot pairs for secure
+ * and non-secure images, allowing independent updates:
+ *   - Slot 0/1: TF-M secure image (updated independently)
+ *   - Slot 2/3: NS application (updated independently)
+ *
+ * MCUboot manages both slot pairs and validates each image separately.
+ *
+ * Required sysbuild config:
+ *   SB_CONFIG_MCUBOOT_MODE_SWAP_USING_SCRATCH=y (or SWAP_USING_MOVE)
+ *   (MCUboot must be configured for multi-image support)
+ *
+ * Trade-offs:
+ * - Four slots instead of two → more flash overhead
+ * - Each secondary slot only needs to match its primary
+ * - More complex update packaging (two separate images)
+ * - MCUboot needs multi-image support enabled
+ *
+ * Suitable for: products where TF-M is rarely updated but the
+ *               application is updated frequently, reducing FOTA
+ *               download size
+ */
+
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0 DT_SIZE_K(88)>;
+		ranges = <0x0 0x0 DT_SIZE_K(88)>;
+	};
+
+	sram0_ns: image_ns@16000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x16000 DT_SIZE_K(168)>;
+		ranges = <0x0 0x16000 DT_SIZE_K(168)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * Flash layout (all addresses 4 kB aligned):
+		 *
+		 * 0x00000000  MCUboot bootloader         (48 kB)
+		 *
+		 * --- Secure image pair ---
+		 * 0x0000C000  S primary (TF-M)           (192 kB)
+		 * 0x0003C000  S secondary (TF-M update)  (192 kB)
+		 *
+		 * --- Non-secure image pair ---
+		 * 0x0006C000  NS primary (application)   (320 kB)
+		 * 0x000BC000  NS secondary (app update)  (320 kB)
+		 *
+		 * --- Storage ---
+		 * 0x0010C000  TF-M PS                     (16 kB)
+		 * 0x00110000  TF-M ITS                    (16 kB)
+		 * 0x00114000  TF-M OTP / NV counters       (8 kB)
+		 * 0x00116000  Non-secure storage          (40 kB)
+		 *
+		 * Total: 48 + 192×2 + 320×2 + 16 + 16 + 8 + 40 = 1152 kB
+		 *
+		 * Updating only the NS app downloads 320 kB instead of
+		 * 512 kB (192 + 320 combined). That's a 37% bandwidth save.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		/* Secure image pair */
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(192)>;
+		};
+
+		slot1_partition: partition@3c000 {
+			label = "image-1";
+			reg = <0x0003C000 DT_SIZE_K(192)>;
+		};
+
+		/* Non-secure image pair */
+		slot2_partition: partition@6c000 {
+			label = "image-2";
+			reg = <0x0006C000 DT_SIZE_K(320)>;
+		};
+
+		slot3_partition: partition@bc000 {
+			label = "image-3";
+			reg = <0x000BC000 DT_SIZE_K(320)>;
+		};
+
+		tfm_ps_partition: partition@10c000 {
+			label = "tfm-ps";
+			reg = <0x0010C000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@110000 {
+			label = "tfm-its";
+			reg = <0x00110000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@114000 {
+			label = "tfm-otp";
+			reg = <0x00114000 DT_SIZE_K(8)>;
+		};
+
+		storage_partition: partition@116000 {
+			label = "storage";
+			reg = <0x00116000 DT_SIZE_K(40)>;
+		};
+	};
+};

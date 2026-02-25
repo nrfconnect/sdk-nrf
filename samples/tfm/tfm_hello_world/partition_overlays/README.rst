@@ -79,6 +79,21 @@ nRF54L15 (4 kB alignment)
    overhead. More secure SRAM for per-partition stacks. Requires
    ``CONFIG_TFM_ISOLATION_LEVEL=2`` and ``CONFIG_TFM_IPC=y``.
 
+``nrf54l15_max_app_space.overlay``
+   Absolute minimum TF-M to maximize non-secure application space (~1460 kB
+   = 95.7% of RRAM). TF-M minimal profile in SFN mode, no MCUboot, no PS,
+   smallest viable ITS. Answers: "How do I get the most flash for my app?"
+
+``nrf54l15_debug.overlay``
+   Debug-friendly layout with extra secure flash (+64 kB) and SRAM (+24 kB)
+   for TF-M debug builds. Prevents overflow when ``CONFIG_DEBUG_OPTIMIZATIONS``
+   is enabled. Switch to a release overlay when debugging is done.
+
+``nrf54l15_split_image_update.overlay``
+   Separate primary/secondary slot pairs for TF-M and NS app. Update each
+   independently — NS app updates are 37% smaller since TF-M is excluded.
+   Four slots total (S primary/secondary + NS primary/secondary).
+
 ``nrf54l15_mcuboot_overwrite.overlay``
    MCUboot overwrite-only mode (``SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y``).
    The secondary slot can be *smaller* than the primary since no swap buffer
@@ -189,6 +204,11 @@ nRF5340 (16 kB alignment)
    holds the cpunet firmware update image. Required for products that need
    to update the BLE controller or 802.15.4 radio stack in the field.
 
+``nrf5340_shared_sram.overlay``
+   Explicit 3-way SRAM split: secure (TF-M) + non-secure (app) + shared
+   (IPC to network core). Includes an ASCII diagram and explains the sizing
+   trade-offs. Answers: "Where did my SRAM go?"
+
 nRF91 Series (32 kB alignment)
 ================================
 
@@ -233,3 +253,10 @@ When creating your own partition layouts:
 5. **Erase block alignment**: All partition addresses should be aligned to the
    flash erase-block-size (4 kB for all nRF SoCs) regardless of the TrustZone
    alignment.
+
+Migration from pm_static.yml
+*****************************
+
+If you are migrating from Partition Manager (``pm_static.yml``) to DTS-based
+partition definitions, see :ref:`tfm_pm_to_dts_migration` in
+``MIGRATION_GUIDE.rst`` for a step-by-step translation guide with examples.
