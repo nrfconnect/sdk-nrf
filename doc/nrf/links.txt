@@ -756,31 +756,31 @@
 
 .. _`nRF Asset Tracker project`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/index.html
 
-.. _`Board Configurator app`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
+.. _`Board Configurator app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-board-configurator/index.html
 
-.. _`Bluetooth Low Energy app`: https://docs.nordicsemi.com/bundle/nrf-connect-ble/page/index.html
+.. _`Bluetooth Low Energy app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-ble/index.html
 
-.. _`Cellular Monitor app`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
-.. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
-.. _`Programming Nordic Thingy:91 firmware`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/programming_thingy91.html
+.. _`Cellular Monitor app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-cellularmonitor/index.html
+.. _`Managing credentials`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-cellularmonitor/managing_credentials.html
+.. _`Programming Nordic Thingy:91 firmware`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-cellularmonitor/programming_thingy91.html
 
-.. _`Matter Quick Start app`: https://docs.nordicsemi.com/bundle/nrf-connect-matter-quickstart/page/index.html
-.. _`Matter Cluster Editor app`: https://docs.nordicsemi.com/bundle/nrf-connect-matter-cluster-editor/page/index.html
-.. _`nPM PowerUP app`: https://docs.nordicsemi.com/bundle/nrf-connect-npm/page/index.html
-.. _`Quick Start app`: https://docs.nordicsemi.com/bundle/nrf-connect-quickstart/page/index.html
-.. _`RSSI Viewer app`: https://docs.nordicsemi.com/bundle/nrf-connect-rssi-viewer/page/index.html
+.. _`Matter Quick Start app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-matter-quickstart/index.html
+.. _`Matter Cluster Editor app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-matter-cluster-editor/index.html
+.. _`nPM PowerUP app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-npm/index.html
+.. _`Quick Start app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-quickstart/index.html
+.. _`RSSI Viewer app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-rssi/index.html
 
-.. _`Direct Test Mode app`: https://docs.nordicsemi.com/bundle/nrf-connect-direct-test-mode/page/index.html
+.. _`Direct Test Mode app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-dtm/index.html
 
-.. _`Programmer app`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/index.html
-.. _`Programming the nRF52840 Dongle`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_nrf52840_dongle.html
-.. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html
+.. _`Programmer app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-programmer/index.html
+.. _`Programming the nRF52840 Dongle`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-programmer/programming_nrf52840_dongle.html
+.. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-programmer/programming_dk.html
 .. _`Programming Nordic Thingy53`:
-.. _`Programming Nordic Thingy prototyping platforms`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_thingy.html
-.. _`Programming nRF91 Series DK firmware`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_91dk.html
+.. _`Programming Nordic Thingy prototyping platforms`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-programmer/programming_thingy.html
+.. _`Programming nRF91 Series DK firmware`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-programmer/programming_91dk.html
 
-.. _`Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
-.. _`Connecting using the Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/connecting.html
+.. _`Serial Terminal app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-serial-terminal/index.html
+.. _`Connecting using the Serial Terminal app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-serial-terminal/connecting.html
 
 .. _`nRF Thread Topology Monitor`: https://docs.nordicsemi.com/bundle/ug_nrf_ttm/page/UG/nrf_ttm/ttm_introduction.html
 .. _`nRF Sniffer for 802.15.4`: https://docs.nordicsemi.com/bundle/ug_sniffer_802154/page/UG/sniffer_802154/intro_802154.html
@@ -788,7 +788,7 @@
 .. _`Power Profiler Kit II (PPK2)`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Intro.html
 .. _`Install the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/common/nrf_connect_app_installing.html
 .. _`Using the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Running_the_software.html
-.. _`Power Profiler app`: https://docs.nordicsemi.com/bundle/nrf-connect-ppk/page/index.html
+.. _`Power Profiler app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-ppk/index.html
 
 .. _`Electrical specification for nRF7002`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
 
