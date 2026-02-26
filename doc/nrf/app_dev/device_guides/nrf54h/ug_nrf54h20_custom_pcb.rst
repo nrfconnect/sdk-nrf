@@ -434,6 +434,26 @@ After programming the BICR binary onto the device, validate whether the BICR wor
    * ``Error``: This indicates that the device is likely suffering from severe power issues after applying the BICR.
      This state is likely unrecoverable.
 
+.. _ug_nrf54h20_custom_pcb_bicr_read:
+
+Read the BICR from the device
+-----------------------------
+
+You can read the BICR from the nRF54H20 SoC to verify the configuration stored on the device.
+This can be useful for confirming that the BICR was programmed correctly, or for comparing the on-device configuration against your source :file:`bicr.json` file.
+
+To read the current BICR configuration from a device, complete the following steps:
+
+1. Read the BICR memory area using nRF Util::
+
+      nrfutil device read --address 0x0FFF87B0 --bytes 0x40 --to-file bicr_readout.hex
+
+#. Convert the HEX file to JSON format using the :file:`bicrgen.py` script::
+
+      python <NRF_CONNECT_SDK>/zephyr/soc/nordic/nrf54h/bicr/bicrgen.py --input bicr_readout.hex --output decoded_bicr.json --svd <NRF_CONNECT_SDK>/modules/hal/nordic/nrfx/bsp/stable/mdk/nrf54h20_application.svd
+
+The output file :file:`decoded_bicr.json` contains the BICR information stored on the device.
+
 .. _54h_soc_binaries_provision:
 
 Provision the nRF54H20 IronSide SE binaries
