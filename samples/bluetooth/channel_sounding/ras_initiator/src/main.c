@@ -262,10 +262,10 @@ static bool process_ranging_header(struct ras_ranging_header *ranging_header, vo
 {
 	cs_de_report_t *p_report = (cs_de_report_t *)user_data;
 
-	p_report->n_ap = ((ranging_header->antenna_paths_mask & BIT(0)) +
-			  ((ranging_header->antenna_paths_mask & BIT(1)) >> 1) +
-			  ((ranging_header->antenna_paths_mask & BIT(2)) >> 2) +
-			  ((ranging_header->antenna_paths_mask & BIT(3)) >> 3));
+	p_report->n_ap = MAX(1, ((ranging_header->antenna_paths_mask & BIT(0)) +
+				 ((ranging_header->antenna_paths_mask & BIT(1)) >> 1) +
+				 ((ranging_header->antenna_paths_mask & BIT(2)) >> 2) +
+				 ((ranging_header->antenna_paths_mask & BIT(3)) >> 3)));
 	return true;
 }
 
