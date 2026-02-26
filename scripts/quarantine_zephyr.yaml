@@ -301,10 +301,15 @@
 
 - scenarios:
     - bluetooth.general.tester_hci_ipc
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37803"
+
+- scenarios:
     - sample.bluetooth.hci_ipc.bis.bt_ll_sw_split
     - sample.bluetooth.hci_ipc.iso.bt_ll_sw_split
   platforms:
-    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpunet
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37803"
 
 # ---------------------------------   Won't fix section -----------------------------------
