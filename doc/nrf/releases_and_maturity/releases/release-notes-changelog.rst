@@ -509,6 +509,15 @@ Networking samples
 NFC samples
 -----------
 
+* Updated NFC samples for the nRF54H20 SoC to reduce current consumption in idle mode.
+  An empty netcore and additional configurations for power management were added to the sysbuild in the following samples:
+
+  * :ref:`record_launch_app`
+  * :ref:`record_text`
+  * :ref:`nfc_shell`
+  * :ref:`nfc_tnep_tag`
+  * :ref:`writable_ndef_msg`
+
 * :ref:`writable_ndef_msg` sample:
 
   * Fixed a power consumption issue.
