@@ -39,7 +39,7 @@ The Fast Pair standard implementation in the |NCS| supports the following extens
 
 * Battery Notification extension
 * Personalized Name extension
-* Find My Device Network (FMDN) extension
+* Find Hub Network (FHN) extension
 
 Each supported extension is described in the following sections.
 
@@ -62,29 +62,31 @@ The extension allows the user to attach a personalized name to their Fast Pair a
 
 For more details on this extension, see the `Fast Pair Personalized Name extension`_ documentation.
 
-FMDN extension
-==============
+FHN extension
+=============
 
-The FMDN extension leverages the Find My Device network, which is a crowdsourced network consisting of millions of Android devices that use Bluetooth® LE to detect missing devices and report their approximate locations back to their owners.
+The FHN extension leverages the Find Hub Network, which is a crowdsourced network consisting of millions of Android devices that use Bluetooth® LE to detect missing devices and report their approximate locations back to their owners.
 The entire process is end-to-end encrypted and anonymous, so no one else (including Google) can view device's location or information.
-The Find My Device network also includes features protecting the user against unwanted tracking.
+The Find Hub Network also includes features protecting the user against unwanted tracking.
 
-.. include:: /includes/fast_pair_fmdn_rename.txt
+.. note::
+   The Find Hub Network (FHN) extension was previously known as the Find My Device Network (FMDN) extension.
+   You might still encounter occasional use of the old extension name in the Google documentation and resources.
 
-You can add your accessory to the Find My Device network through provisioning that happens during the Bluetooth LE connection.
-Once provisioned, the accessory starts to advertise FMDN frames that contain its unique identifier.
+You can add your accessory to the Find Hub Network through provisioning that happens during the Bluetooth LE connection.
+Once provisioned, the accessory starts to advertise FHN frames that contain its unique identifier.
 This advertising payload is used by nearby Android devices to report the accessory location to its owner.
 The accessory location is an approximation of the reporting device's location, meaning it is not precise.
-The FMDN frames are independently broadcasted alongside the standard application payload.
-You can remove your accessory from the Find My Device network in a symmetrical operation, called unprovisioning.
-Once unprovisioned, the accessory stops advertising FMDN frames.
+The FHN frames are independently broadcasted alongside the standard application payload.
+You can remove your accessory from the Find Hub Network in a symmetrical operation, called unprovisioning.
+Once unprovisioned, the accessory stops advertising FHN frames.
 
-The support for the FMDN extension is available on Android platforms.
+The support for the FHN extension is available on Android platforms.
 
-`Google Play Services`_ and Android system level support are responsible for the provisioning of the FMDN extension.
+`Google Play Services`_ and Android system level support are responsible for the provisioning of the FHN extension.
 They also perform background tasks, such as periodic clock synchronization of the provisioned devices.
 
-`Find My Device app`_ is an end-user application for managing the tracking accessories.
+`Find Hub app`_ is an end-user application for managing the tracking accessories.
 It allows you to:
 
 * Locate your accessories using the map view.
@@ -92,11 +94,11 @@ It allows you to:
 * Check the battery level of your accessory.
 * Remove (unprovision) your item.
 
-For more details on this extension, see the `Fast Pair Find My Device Network extension`_ documentation.
-This documentation also contains the FMDN Accessory specification, which is frequently used as a reference in the FMDN sections of this guide.
+For more details on this extension, see the `Fast Pair Find Hub Network extension`_ documentation.
+This documentation also contains the FHN Accessory specification, which is frequently used as a reference in the FHN sections of this guide.
 
-The FMDN Accessory specification integrates the Detecting Unwanted Location Trackers (DULT) specification, which is a joint standardization effort from Apple, Google and other companies to prevent unwanted tracking.
-Relevant FMDN sections of this guide describe the DULT integration with the FMDN extension.
+The FHN Accessory specification integrates the Detecting Unwanted Location Trackers (DULT) specification, which is a joint standardization effort from Apple, Google and other companies to prevent unwanted tracking.
+Relevant FHN sections of this guide describe the DULT integration with the FHN extension.
 For more details on the DULT integration guidelines, see the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
 
 .. _ug_integrating_fast_pair:
@@ -179,18 +181,18 @@ To configure your device model in the Google Nearby Devices console for support 
 
 See :ref:`ug_bt_fast_pair_gatt_service_firmware_update_intent` to learn how to prepare your Provider firmware to support the firmware update intent feature.
 
-FMDN extension
---------------
+FHN extension
+-------------
 
-To support the FMDN extension, set the **Find My Device** feature to **true** for the device that you want to register in the Google Nearby Devices console.
+To support the FHN extension, set the **Find My Device** feature to **true** for the device that you want to register in the Google Nearby Devices console.
 
 For an example that uses the **Find My Device** feature, see the :ref:`fast_pair_locator_tag` sample.
 
 .. note::
-   To test the FMDN extension with the debug (uncertified) device models, you must set up your Android test device.
-   Make sure your phone uses the primary email account that is registered on Google's email allow list for the FMDN feature.
+   To test the FHN extension with the debug (uncertified) device models, you must set up your Android test device.
+   Make sure your phone uses the primary email account that is registered on Google's email allow list for the FHN feature.
    To register your development email account, complete Google's device proposal form.
-   You can find the link to the device proposal form in the `Fast Pair Find My Device Network extension`_ specification.
+   You can find the link to the device proposal form in the `Fast Pair Find Hub Network extension`_ specification.
 
 .. _ug_bt_fast_pair_provisioning_register_hex_generation:
 
@@ -318,96 +320,96 @@ Personalized Name extension
 
 To support the Personalized Name extension, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_PN` Kconfig option in your project.
 
-FMDN extension
-==============
+FHN extension
+=============
 
-To support the FMDN extension, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option in your project.
+To support the FHN extension, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN` Kconfig option in your project.
 
 Managing the activation state
 -----------------------------
 
-The FMDN extension is enabled together with the general Fast Pair module once the :c:func:`bt_fast_pair_enable` function executes successfully.
+The FHN extension is enabled together with the general Fast Pair module once the :c:func:`bt_fast_pair_enable` function executes successfully.
 The Provider can respond to the extension-specific requests coming from the Seeker over the Bluetooth GATT layer only in the enabled state.
 Depending on its state, the extension starts other activities, such as:
 
 * Beacon clock service that is used to measure time in seconds.
-* FMDN advertising with periodical updates to the FMDN payload (the FMDN advertising is in use only if provisioned).
+* FHN advertising with periodical updates to the FHN payload (the FHN advertising is in use only if provisioned).
 
-The FMDN extension is disabled together with the general Fast Pair module once the :c:func:`bt_fast_pair_disable` function executes successfully.
+The FHN extension is disabled together with the general Fast Pair module once the :c:func:`bt_fast_pair_disable` function executes successfully.
 During the disable operation, the Provider terminates all extension-related activities that are mentioned in the enable operation description.
-Additionally, it drops all FMDN connections that were established using the FMDN advertising payload.
+Additionally, it drops all FHN connections that were established using the FHN advertising payload.
 
 .. note::
    A failure in the enable or disable operation can have certain side effects related to the module state.
    An error during the :c:func:`bt_fast_pair_enable` or the :c:func:`bt_fast_pair_disable` function call results in the *unready* state of the extension.
    In that case, you should retry the operation or reboot the system, as certain module operations may be active.
 
-To check the FMDN extension readiness, use the :c:func:`bt_fast_pair_is_ready` function of the general Fast Pair module.
+To check the FHN extension readiness, use the :c:func:`bt_fast_pair_is_ready` function of the general Fast Pair module.
 The extension is marked as *ready* when it is in the enabled state and *unready* when it is in the disabled state.
 The *unready* state is also reported by the :c:func:`bt_fast_pair_is_ready` function if the :c:func:`bt_fast_pair_enable` or :c:func:`bt_fast_pair_disable` operations fail.
 
-You can use the following API functions only in the *unready* state of the FMDN extension:
+You can use the following API functions only in the *unready* state of the FHN extension:
 
 * API functions used to register callbacks:
 
-  * The :c:func:`bt_fast_pair_fmdn_info_cb_register` function (optional)
-  * The :c:func:`bt_fast_pair_fmdn_ring_cb_register` function (mandatory with the Kconfig configuration for at least one ringing component)
-  * The :c:func:`bt_fast_pair_fmdn_read_mode_cb_register` function (optional)
-  * The :c:func:`bt_fast_pair_fmdn_motion_detector_cb_register` function (mandatory if the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option is enabled)
+  * The :c:func:`bt_fast_pair_fhn_info_cb_register` function (optional)
+  * The :c:func:`bt_fast_pair_fhn_ring_cb_register` function (mandatory with the Kconfig configuration for at least one ringing component)
+  * The :c:func:`bt_fast_pair_fhn_read_mode_cb_register` function (optional)
+  * The :c:func:`bt_fast_pair_fhn_motion_detector_cb_register` function (mandatory if the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR` Kconfig option is enabled)
 
-* The :c:func:`bt_fast_pair_fmdn_id_set` API function used for assigning Bluetooth identity to FMDN activities (like advertising and connections)
+* The :c:func:`bt_fast_pair_fhn_id_set` API function used for assigning Bluetooth identity to FHN activities (like advertising and connections)
 * The :c:func:`bt_fast_pair_factory_reset` API function used for performing factory reset of all Fast Pair data
 
-.. _ug_bt_fast_pair_prerequisite_ops_fmdn_clock_svc:
+.. _ug_bt_fast_pair_prerequisite_ops_fhn_clock_svc:
 
 Beacon clock service
 --------------------
 
-Once you have successfully activated the Fast Pair module using the :c:func:`bt_fast_pair_enable` function, the FMDN extension starts the beacon clock service.
+Once you have successfully activated the Fast Pair module using the :c:func:`bt_fast_pair_enable` function, the FHN extension starts the beacon clock service.
 The beacon clock service runs in the background and uses the system workqueue to periodically store the clock information in the non-volatile memory (NVM).
-To adjust the clock store interval, use the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_TIME` Kconfig option.
+To adjust the clock store interval, use the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_CLOCK_NVM_UPDATE_TIME` Kconfig option.
 The service is used to measure time in seconds as a sum of two components: the system uptime (see :c:func:`k_uptime_get`) and beacon clock value as read from the non-volatile memory during the system boot.
 
 Once the Provider is provisioned, it is important to keep the beacon clock synchronized with its counterpart value on the Seeker side.
 The clock drift is the difference between the beacon clock value as measured by the Seeker and the Provider.
-The beacon clock is used to calculate the Ephemeral Identifier (EID), which is a part of the FMDN advertising payload.
+The beacon clock is used to calculate the Ephemeral Identifier (EID), which is a part of the FHN advertising payload.
 Seekers identify and track the provisioned Provider by analyzing the broadcasted EIDs in the advertising frames.
 Performing frequent system reboots or staying in the turned off state (for example, System OFF) may cause the clock drift to accumulate overtime.
-If the clock drift is too high, the Provider EID encoded in the FMDN advertising payload becomes unidentifiable to Seeker devices.
+If the clock drift is too high, the Provider EID encoded in the FHN advertising payload becomes unidentifiable to Seeker devices.
 
-When you disable the FMDN extension using the :c:func:`bt_fast_pair_disable` function, the beacon clock service also gets terminated.
+When you disable the FHN extension using the :c:func:`bt_fast_pair_disable` function, the beacon clock service also gets terminated.
 As a result, the clock information is no longer updated in the non-volatile memory.
 
 .. caution::
    It is not recommended to persist in the disabled state for too long with the provisioned Provider, as your device may accumulate a significant clock drift on a power loss or reboot event.
 
-.. _ug_bt_fast_pair_prerequisite_ops_fmdn_dult_integration:
+.. _ug_bt_fast_pair_prerequisite_ops_fhn_dult_integration:
 
 DULT integration
 ----------------
 
-The FMDN extension uses the :ref:`dult_readme` module to satisfy the requirements from the DULT specification.
-This guide describes the steps necessary to integrate the FMDN extension with the DULT module.
+The FHN extension uses the :ref:`dult_readme` module to satisfy the requirements from the DULT specification.
+This guide describes the steps necessary to integrate the FHN extension with the DULT module.
 For more details on the DULT integration, see the :ref:`ug_dult` documentation.
 
-The DULT support for the FMDN extension is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option.
+The DULT support for the FHN extension is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option.
 This option is enabled by default.
 The DULT support is required for small and not easily discoverable accessories, and is recommended for large accessories.
 
-The FMDN extension registers itself as a DULT user during the :c:func:`bt_fast_pair_enable` function call and unregisters itself during :c:func:`bt_fast_pair_disable` function call.
+The FHN extension registers itself as a DULT user during the :c:func:`bt_fast_pair_enable` function call and unregisters itself during :c:func:`bt_fast_pair_disable` function call.
 If you have multiple DULT users in your application, you must ensure that there is only one DULT user registered at a time.
 
-The FMDN extension passes accessory information parameters to the DULT module during the registration process.
-These parameters are used for the FMDN extension in the DULT module and are configured by the following Kconfig options:
+The FHN extension passes accessory information parameters to the DULT module during the registration process.
+These parameters are used for the FHN extension in the DULT module and are configured by the following Kconfig options:
 
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MANUFACTURER_NAME` - The manufacturer name parameter
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MODEL_NAME` - The model name parameter
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_ACCESSORY_CATEGORY` - The accessory category parameter
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MINOR` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION` - The firmware version parameter
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MANUFACTURER_NAME` - The manufacturer name parameter
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MODEL_NAME` - The model name parameter
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_ACCESSORY_CATEGORY` - The accessory category parameter
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_REVISION` - The firmware version parameter
 
 For more details on how to set these Kconfig options, refer to the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
 
-Subsequent sections for the FMDN extension describe further steps for integrating the DULT module once the DULT user is registered and the DULT module is successfully enabled during the :c:func:`bt_fast_pair_enable` function call.
+Subsequent sections for the FHN extension describe further steps for integrating the DULT module once the DULT user is registered and the DULT module is successfully enabled during the :c:func:`bt_fast_pair_enable` function call.
 
 .. rst-class:: numbered-step
 
@@ -421,7 +423,7 @@ The Fast Pair Seeker must also know the Provider's transmit power to determine p
 
 .. note::
    The :ref:`bt_fast_pair_adv_manager_readme` helper module can be used to simplify the Fast Pair advertising management that is described in this integration step.
-   This module is also compatible with the requirements of the FMDN extension and its FMDN advertising set that are also covered by this integration step.
+   This module is also compatible with the requirements of the FHN extension and its FHN advertising set that are also covered by this integration step.
    See :ref:`ug_bt_fast_pair_adv_manager` for more details on how to integrate it in your application.
 
 Advertising data and parameters
@@ -499,158 +501,158 @@ To use this extension, ensure the following:
 
 See the `Fast Pair Battery Notification extension`_ documentation for more details about this extension.
 
-.. _ug_bt_fast_pair_advertising_fmdn:
+.. _ug_bt_fast_pair_advertising_fhn:
 
-FMDN extension
-==============
+FHN extension
+=============
 
-The FMDN extension requires an independent advertising set for location tracking operations.
-This advertising set hosts the FMDN payload as defined in the FMDN Accessory specification.
-The tracking protocol uses the Bluetooth LE Extended Advertising Zephyr API (:kconfig:option:`CONFIG_BT_EXT_ADV`) to support simultaneous broadcast of advertising sets, which are managed by the application and the FMDN advertising set.
-The extension manages the FMDN advertising set without the user's assistance in the following ways:
+The FHN extension requires an independent advertising set for location tracking operations.
+This advertising set hosts the FHN payload as defined in the FHN Accessory specification.
+The tracking protocol uses the Bluetooth LE Extended Advertising Zephyr API (:kconfig:option:`CONFIG_BT_EXT_ADV`) to support simultaneous broadcast of advertising sets, which are managed by the application and the FHN advertising set.
+The extension manages the FHN advertising set without the user's assistance in the following ways:
 
-* It creates (:c:func:`bt_le_ext_adv_create`) and deletes (:c:func:`bt_le_ext_adv_delete`) the FMDN advertising set.
+* It creates (:c:func:`bt_le_ext_adv_create`) and deletes (:c:func:`bt_le_ext_adv_delete`) the FHN advertising set.
   When the extension is enabled, you must reserve one Bluetooth advertising set from the Bluetooth advertising set pool (:kconfig:option:`CONFIG_BT_EXT_ADV_MAX_ADV_SET`).
-  If all advertising sets are reserved for other purposes, the :c:func:`bt_le_ext_adv_create` function fails to create the FMDN advertising set.
-* It starts (:c:func:`bt_le_ext_adv_start`) and stops (:c:func:`bt_le_ext_adv_stop`) the FMDN advertising.
-  The extension starts the FMDN advertising after a successful FMDN provisioning process and stops it after a successful unprovisioning process.
-  Once provisioned, the Provider keeps advertising until Seekers use all connection slots (:kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_MAX_CONN`) by connecting to the FMDN advertising set.
-  You must reserve :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_MAX_CONN` connection slots from the Bluetooth connection pool (:kconfig:option:`CONFIG_BT_MAX_CONN`).
-* It sets the advertising TX power for the FMDN advertising set using the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option.
+  If all advertising sets are reserved for other purposes, the :c:func:`bt_le_ext_adv_create` function fails to create the FHN advertising set.
+* It starts (:c:func:`bt_le_ext_adv_start`) and stops (:c:func:`bt_le_ext_adv_stop`) the FHN advertising.
+  The extension starts the FHN advertising after a successful FHN provisioning process and stops it after a successful unprovisioning process.
+  Once provisioned, the Provider keeps advertising until Seekers use all connection slots (:kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_MAX_CONN`) by connecting to the FHN advertising set.
+  You must reserve :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_MAX_CONN` connection slots from the Bluetooth connection pool (:kconfig:option:`CONFIG_BT_MAX_CONN`).
+* It sets the advertising TX power for the FHN advertising set using the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER` Kconfig option.
   The configuration is independent from the configuration option that is available for the standard Fast Pair advertising payload.
-  FMDN connections also use the same TX power as the FMDN advertising set.
+  FHN connections also use the same TX power as the FHN advertising set.
   The connection TX power is inherited from the advertising set that was used to establish it.
   Ensure that the chosen TX power configuration is supported by your hardware setup.
-* After successful FMDN provisioning, it controls the Resolvable Private Address (RPA) rotation process for the whole Zephyr Bluetooth subsystem.
-  The extension sets the RPA timeout using the :c:func:`bt_le_set_rpa_timeout` function to match the timeout for the FMDN advertising payload update.
+* After successful FHN provisioning, it controls the Resolvable Private Address (RPA) rotation process for the whole Zephyr Bluetooth subsystem.
+  The extension sets the RPA timeout using the :c:func:`bt_le_set_rpa_timeout` function to match the timeout for the FHN advertising payload update.
   The timeout is slightly different in each interval because it consists of a random component.
   The random part is used to improve the privacy properties of the protocol.
   In some cases, the extension triggers the RPA rotation asynchronously using the :c:func:`bt_le_oob_get_local` function.
-  Such asynchronous RPA rotations currently happen right after successful FMDN provisioning or when advertising is started after a period of inactivity (for example, due to unavailable connection slots).
+  Such asynchronous RPA rotations currently happen right after successful FHN provisioning or when advertising is started after a period of inactivity (for example, due to unavailable connection slots).
 
-  If you have any other advertising set in your application that contains unique device data in its advertising payload (for example, random nonce or identifiers), you must synchronize updates to their payload and RPA address with the FMDN advertising set.
+  If you have any other advertising set in your application that contains unique device data in its advertising payload (for example, random nonce or identifiers), you must synchronize updates to their payload and RPA address with the FHN advertising set.
   Otherwise, the Bluetooth LE advertising process could potentially leak the privacy of your device.
-  The Fast Pair not discoverable advertising payload is an example of a payload that needs to be updated in synchronization with the FMDN payload.
+  The Fast Pair not discoverable advertising payload is an example of a payload that needs to be updated in synchronization with the FHN payload.
 
-Even though the FMDN advertising is controlled by the extension, you must still manage the Fast Pair advertising process in your application.
-To comply with the requirements of the FMDN extension, you must manage the Fast Pair advertising payload as part of application's advertising set using the Bluetooth LE Extended Advertising Zephyr API.
+Even though the FHN advertising is controlled by the extension, you must still manage the Fast Pair advertising process in your application.
+To comply with the requirements of the FHN extension, you must manage the Fast Pair advertising payload as part of application's advertising set using the Bluetooth LE Extended Advertising Zephyr API.
 When creating the Fast Pair advertising set with the :c:func:`bt_le_ext_adv_create` function, register the :c:struct:`bt_le_ext_adv_cb` structure with the following callbacks:
 
-* The :c:member:`bt_le_ext_adv_cb.connected` callback to track connections that are part of the application's connection pool (and were not created from the FMDN advertising set).
+* The :c:member:`bt_le_ext_adv_cb.connected` callback to track connections that are part of the application's connection pool (and were not created from the FHN advertising set).
 * The ``bt_le_ext_adv_cb.rpa_expired()`` callback to synchronize the update of the application's advertising sets' payloads together with their respective Resolvable Private Addresses (RPA).
 
 .. Important::
-   You must manage application advertising sets according to the FMDN provisioning state:
+   You must manage application advertising sets according to the FHN provisioning state:
 
    * For the provisioned device, only update the Fast Pair advertising payload during the ``bt_le_ext_adv_cb.rpa_expired()`` callback execution.
-     The FMDN extension controls the RPA rotation time in this state, and no other module in your application is allowed to change the rotation time.
+     The FHN extension controls the RPA rotation time in this state, and no other module in your application is allowed to change the rotation time.
    * For the unprovisioned device, control the Fast Pair advertising rotation time using the :c:func:`bt_le_set_rpa_timeout` and :c:func:`bt_le_oob_get_local` functions.
      You must still comply with the requirements of the Fast Pair protocol.
 
-   The :c:func:`bt_fast_pair_fmdn_is_provisioned` function can be used to check the current FMDN provisioning state synchronously.
-   Also, the provisioning state changes are indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
-   See :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks` for more details.
+   The :c:func:`bt_fast_pair_fhn_is_provisioned` function can be used to check the current FHN provisioning state synchronously.
+   Also, the provisioning state changes are indicated by the :c:member:`bt_fast_pair_fhn_info_cb.provisioning_state_changed` callback.
+   See :ref:`ug_bt_fast_pair_gatt_service_fhn_info_callbacks` for more details.
 
 See the :ref:`fast_pair_locator_tag` sample that demonstrates how to comply with the rules described in this section.
 
 Bluetooth identity
 ------------------
 
-To set the Bluetooth identity for FMDN advertising and connections, use the :c:func:`bt_fast_pair_fmdn_id_set` function.
+To set the Bluetooth identity for FHN advertising and connections, use the :c:func:`bt_fast_pair_fhn_id_set` function.
 The Bluetooth identity cannot be updated if the Fast Pair module is in the *ready* state (see the :c:func:`bt_fast_pair_is_ready` function).
 The extension uses the :c:macro:`BT_ID_DEFAULT` identity by default.
 
 Advertising interval
 --------------------
 
-To configure the advertising interval for the FMDN advertising set, use the :c:func:`bt_fast_pair_fmdn_adv_param_set` function.
-You can change the advertising interval even when the FMDN advertising is active.
-By default, the FMDN advertising interval is set to two seconds, which is the maximum possible value.
+To configure the advertising interval for the FHN advertising set, use the :c:func:`bt_fast_pair_fhn_adv_param_set` function.
+You can change the advertising interval even when the FHN advertising is active.
+By default, the FHN advertising interval is set to two seconds, which is the maximum possible value.
 
 .. note::
    The advertising interval configuration has a significant impact on the battery life of your product.
-   It also affects the time necessary to establish a new connection from the FMDN advertising set.
+   It also affects the time necessary to establish a new connection from the FHN advertising set.
 
-The FMDN Accessory specification determines the recommended ratio between the Fast Pair and FMDN frames in the `Fast Pair FMDN advertising`_ documentation section.
-To follow this recommendation, the application is responsible for adjusting the advertising interval of both the FMDN and Fast Pair advertising sets.
+The FHN Accessory specification determines the recommended ratio between the Fast Pair and FHN frames in the `Fast Pair FHN advertising`_ documentation section.
+To follow this recommendation, the application is responsible for adjusting the advertising interval of both the FHN and Fast Pair advertising sets.
 
-.. _ug_bt_fast_pair_advertising_fmdn_battery:
+.. _ug_bt_fast_pair_advertising_fhn_battery:
 
 Battery level indication
 ------------------------
 
-To specify the battery level broadcasted in the FMDN advertising payload, use the :c:func:`bt_fast_pair_fmdn_battery_level_set` function.
+To specify the battery level broadcasted in the FHN advertising payload, use the :c:func:`bt_fast_pair_fhn_battery_level_set` function.
 You can update the battery level asynchronously without having to wait on the ``bt_le_ext_adv_cb.rpa_expired()`` callback.
 
 The current API accepts the battery level as a percentage value, and ranges from 0% to 100%.
-This percentage value is first translated according to the quantified battery states defined in the FMDN Accessory specification and then encoded in the FMDN advertising set according to the following rules:
+This percentage value is first translated according to the quantified battery states defined in the FHN Accessory specification and then encoded in the FHN advertising set according to the following rules:
 
-* Normal battery level - The battery level is higher than the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR` Kconfig option threshold and less than or equal to 100%.
-* Low battery level - The battery level is higher than the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR` Kconfig option threshold and less than or equal to the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR` Kconfig option threshold.
-* Critically low battery level (battery replacement needed soon) - The battery level is higher than or equal to 0% and less than or equal to the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR` Kconfig option threshold.
-* Battery level indication unsupported (default setting on bootup) - Occurs when the special :c:macro:`BT_FAST_PAIR_FMDN_BATTERY_LEVEL_NONE` value is passed to the :c:func:`bt_fast_pair_fmdn_battery_level_set` function.
-  This battery level is unavailable when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option is enabled.
+* Normal battery level - The battery level is higher than the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_LEVEL_LOW_THR` Kconfig option threshold and less than or equal to 100%.
+* Low battery level - The battery level is higher than the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_LEVEL_CRITICAL_THR` Kconfig option threshold and less than or equal to the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_LEVEL_LOW_THR` Kconfig option threshold.
+* Critically low battery level (battery replacement needed soon) - The battery level is higher than or equal to 0% and less than or equal to the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_LEVEL_CRITICAL_THR` Kconfig option threshold.
+* Battery level indication unsupported (default setting on bootup) - Occurs when the special :c:macro:`BT_FAST_PAIR_FHN_BATTERY_LEVEL_NONE` value is passed to the :c:func:`bt_fast_pair_fhn_battery_level_set` function.
+  This battery level is unavailable when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_DULT` Kconfig option is enabled.
 
-You can change the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR` and the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR` Kconfig options to control the mapping of the battery percentage values to the battery levels as defined by the FMDN Accessory specification.
+You can change the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_LEVEL_LOW_THR` and the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_LEVEL_CRITICAL_THR` Kconfig options to control the mapping of the battery percentage values to the battery levels as defined by the FHN Accessory specification.
 The mapping is implementation-specific and is up to you to select threshold values that fit your application requirements.
 
-If an application does not specify the battery level using the API, the default level, battery level indication unsupported, is encoded in the FMDN advertising payload.
+If an application does not specify the battery level using the API, the default level, battery level indication unsupported, is encoded in the FHN advertising payload.
 
-In case the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig is enabled, you must initialize battery level with this API before you enable Fast Pair with the :c:func:`bt_fast_pair_enable` function.
+In case the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_DULT` Kconfig is enabled, you must initialize battery level with this API before you enable Fast Pair with the :c:func:`bt_fast_pair_enable` function.
 This requirement is necessary as the DULT battery mechanism does not support unknown battery levels.
-As a result, you must not call this API with the :c:macro:`BT_FAST_PAIR_FMDN_BATTERY_LEVEL_NONE` value in this configuration variant.
+As a result, you must not call this API with the :c:macro:`BT_FAST_PAIR_FHN_BATTERY_LEVEL_NONE` value in this configuration variant.
 
-If you want to support the battery information also in the DULT module, follow the instructions in the :ref:`ug_bt_fast_pair_gatt_service_fmdn_battery_dult` section.
+If you want to support the battery information also in the DULT module, follow the instructions in the :ref:`ug_bt_fast_pair_gatt_service_fhn_battery_dult` section.
 
 Elliptic curve configuration
 ----------------------------
 
-The key field in the FMDN advertising payload is the Ephemeral Identifier (EID).
+The key field in the FHN advertising payload is the Ephemeral Identifier (EID).
 The extension calculates the EID using elliptic curve cryptography.
 You can choose one of the supported elliptic curves for the EID calculation:
 
-* The secp160r1 elliptic curve configuration (:kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_ECC_SECP160R1`):
+* The secp160r1 elliptic curve configuration (:kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_ECC_SECP160R1`):
 
-  * The FMDN advertising frames use the legacy PDU type (ADV_IND).
+  * The FHN advertising frames use the legacy PDU type (ADV_IND).
     The legacy advertising is understood by a wider range of devices than the extended advertising (higher adoption).
   * The 160-bit curve is less secure than the 256-bit curve.
   * The EID is 20 bytes long.
 
-* The secp256r1 elliptic curve configuration (:kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_ECC_SECP256R1`):
+* The secp256r1 elliptic curve configuration (:kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_ECC_SECP256R1`):
 
-  * The FMDN advertising frames use the extended advertising PDU type (ADV_EXT_IND).
+  * The FHN advertising frames use the extended advertising PDU type (ADV_EXT_IND).
     The extended advertising is understood by a smaller range of devices than the legacy advertising (lower adoption).
   * The 256-bit curve is more secure than the 160-bit curve.
   * The EID is 32 bytes long.
 
-By default, the FMDN extension uses the secp160r1 elliptic curve configuration.
+By default, the FHN extension uses the secp160r1 elliptic curve configuration.
 
 TX power
 --------
 
-The Fast Pair Seeker receives the calibrated TX power from the Provider during the FMDN provisioning process and uses it to measure distance based on the RSSI value.
+The Fast Pair Seeker receives the calibrated TX power from the Provider during the FHN provisioning process and uses it to measure distance based on the RSSI value.
 The Provider includes the calibrated TX power value in the Read Beacon Parameters response.
 Typically, the Seeker displays different status messages based on the measured distance when its user is trying to find the Provider device.
-For example, the :guilabel:`It's here` status message is displayed in the :guilabel:`Hot & Cold` experience of the `Find My Device app`_ when the missing device is in very close proximity of the smartphone.
+For example, the :guilabel:`It's here` status message is displayed in the :guilabel:`Hot & Cold` experience of the `Find Hub app`_ when the missing device is in very close proximity of the smartphone.
 
-You can set the TX power for the FMDN advertising and connections using the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option.
+You can set the TX power for the FHN advertising and connections using the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER` Kconfig option.
 The configured value is directly used to set the TX power in the Bluetooth LE controller using an HCI command.
-This Kconfig option must be set to 0 at minimum as the Fast Pair specification requires that the conducted Bluetooth transmit power for FMDN advertisements must not be lower than 0 dBm.
-By default, 0 dBm is used for the FMDN TX power configuration.
+This Kconfig option must be set to 0 at minimum as the Fast Pair specification requires that the conducted Bluetooth transmit power for FHN advertisements must not be lower than 0 dBm.
+By default, 0 dBm is used for the FHN TX power configuration.
 
-You can use the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL` Kconfig option to define a correction value that is added to TX power readout from the Bluetooth LE controller (usually equal to the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option), when calculating the calibrated TX power reported in the Read Beacon Parameters response.
+You can use the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig option to define a correction value that is added to TX power readout from the Bluetooth LE controller (usually equal to the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER` Kconfig option), when calculating the calibrated TX power reported in the Read Beacon Parameters response.
 The hardware configuration, for example used antenna and device casing, may affect the actual TX power of packets broadcasted by the Fast Pair Provider.
 The correction value allows to improve the accuracy of the Fast Pair Seeker's distance measurement.
 The calculated calibrated TX power should range between –100 dBm and 20 dBm.
 
-You need to adjust the correction value for both the FMDN extension and the TX power AD type in the Fast Pair advertising set.
+You need to adjust the correction value for both the FHN extension and the TX power AD type in the Fast Pair advertising set.
 If your application uses the :ref:`bt_le_adv_prov_readme` library, see the :ref:`ug_bt_fast_pair_advertising_tx_power_provider` section for details on how to configure the TX power AD type in the Fast Pair advertising set.
 Otherwise, make sure to encode the calibrated TX power in the TX power AD type of the Fast Pair advertising set.
 
 To select proper correction values, use the ``Calibration`` test from the ``FAST PAIR`` test category that is available in the `Fast Pair Validator app`_.
 
 .. tip::
-   If you plan to use a different TX power configuration for the FMDN extension than for the Fast Pair advertising set, you need to perform individual calibration for the extension to select a proper correction value.
+   If you plan to use a different TX power configuration for the FHN extension than for the Fast Pair advertising set, you need to perform individual calibration for the extension to select a proper correction value.
 
 .. rst-class:: numbered-step
 
@@ -742,124 +744,124 @@ To enable the Zephyr DIS module and the Firmware Revision characteristic, set th
 If you use Zephyr's :ref:`zephyr:app-version-details` feature and define the :file:`VERSION` file in your project, the :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` Kconfig option is automatically set.
 Otherwise, set the :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` Kconfig option explicitly.
 
-If your device model supports the FMDN extension, also follow the additional guidelines to authenticate the connection before the firmware version read operation.
-For further details, see the :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_conn_authenticated` section.
+If your device model supports the FHN extension, also follow the additional guidelines to authenticate the connection before the firmware version read operation.
+For further details, see the :ref:`ug_bt_fast_pair_gatt_service_fhn_info_callbacks_conn_authenticated` section.
 
-FMDN extension
-==============
+FHN extension
+=============
 
-The FMDN extension defines a new characteristic inside the Fast Pair service.
+The FHN extension defines a new characteristic inside the Fast Pair service.
 The new characteristic is called Beacon Actions and is used to exchange extension-related messages between the Seeker and the Provider.
 
-.. _ug_bt_fast_pair_gatt_service_fmdn_info_callbacks:
+.. _ug_bt_fast_pair_gatt_service_fhn_info_callbacks:
 
 Using the information callbacks
 -------------------------------
 
-Register the information callbacks in the FMDN extension using the :c:func:`bt_fast_pair_fmdn_info_cb_register` function.
+Register the information callbacks in the FHN extension using the :c:func:`bt_fast_pair_fhn_info_cb_register` function.
 This callback registration is optional.
-You can register multiple callback sets using the :c:func:`bt_fast_pair_fmdn_info_cb_register` function.
+You can register multiple callback sets using the :c:func:`bt_fast_pair_fhn_info_cb_register` function.
 
 This function supports the following callbacks:
 
-* :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` -  Notification about the provisioning state update
-* :c:member:`bt_fast_pair_fmdn_info_cb.clock_synced` - Notification about the beacon clock synchronization event
-* :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` - Notification about the connected peer authentication event
+* :c:member:`bt_fast_pair_fhn_info_cb.provisioning_state_changed` -  Notification about the provisioning state update
+* :c:member:`bt_fast_pair_fhn_info_cb.clock_synced` - Notification about the beacon clock synchronization event
+* :c:member:`bt_fast_pair_fhn_info_cb.conn_authenticated` - Notification about the connected peer authentication event
 
-.. _ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_provisioning_state:
+.. _ug_bt_fast_pair_gatt_service_fhn_info_callbacks_provisioning_state:
 
 Provisioning state
 ~~~~~~~~~~~~~~~~~~
 
-The :c:func:`bt_fast_pair_fmdn_is_provisioned` function can be used to check the current FMDN provisioning state synchronously.
+The :c:func:`bt_fast_pair_fhn_is_provisioned` function can be used to check the current FHN provisioning state synchronously.
 You can only call this function in the ready state of the Fast Pair module (see the :c:func:`bt_fast_pair_is_ready` function).
 
-The provisioning state changes are indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
+The provisioning state changes are indicated by the :c:member:`bt_fast_pair_fhn_info_cb.provisioning_state_changed` callback.
 This callback is triggered in the following scenarios:
 
 * On the successful provisioning operation over Beacon Actions characteristic.
 * On the successful unprovisioning operation over Beacon Actions characteristic.
 
-The :c:func:`bt_fast_pair_fmdn_is_provisioned` function and the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback are two complementary API elements that can be used to track the FMDN provisioning state in your application code.
+The :c:func:`bt_fast_pair_fhn_is_provisioned` function and the :c:member:`bt_fast_pair_fhn_info_cb.provisioning_state_changed` callback are two complementary API elements that can be used to track the FHN provisioning state in your application code.
 The recommended usage scenario is described in the next paragraph.
 
-Use the :c:func:`bt_fast_pair_fmdn_is_provisioned` function to initialize the provisioning state right after enabling the Fast Pair module with the :c:func:`bt_fast_pair_enable` function call.
-Then, handle the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback to track the provisioning state changes until the Fast Pair module is disabled again with the :c:func:`bt_fast_pair_disable` function call.
+Use the :c:func:`bt_fast_pair_fhn_is_provisioned` function to initialize the provisioning state right after enabling the Fast Pair module with the :c:func:`bt_fast_pair_enable` function call.
+Then, handle the :c:member:`bt_fast_pair_fhn_info_cb.provisioning_state_changed` callback to track the provisioning state changes until the Fast Pair module is disabled again with the :c:func:`bt_fast_pair_disable` function call.
 
-The accurate tracking of the FMDN provisioning state is mandatory for proper management of the Fast Pair and FMDN advertising policies.
+The accurate tracking of the FHN provisioning state is mandatory for proper management of the Fast Pair and FHN advertising policies.
 The advertising policies are extensively described in the :ref:`Setting up Bluetooth LE advertising <ug_bt_fast_pair_advertising>` section of this integration guide.
 
 Clock synchronization
 ~~~~~~~~~~~~~~~~~~~~~
 
-The clock synchronization is indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.clock_synced` callback.
+The clock synchronization is indicated by the :c:member:`bt_fast_pair_fhn_info_cb.clock_synced` callback.
 This callback is triggered on a successful beacon clock read operation over Beacon Actions characteristic.
 
 A typical use case for this callback is to synchronize the beacon clock after the system reboot of the accessory (for example, due to battery replacement).
 In this case, the affected device might have stayed in the power-down state for an unknown period of time.
-As a result, the beacon clock drift may become so high that the Ephemeral Identifier (EID) from the FMDN advertising payload is no longer recognized by the Seeker devices.
-As a fallback mechanism for clock synchronization, the accessory must simultaneously advertise the Fast Pair not discoverable and FMDN payloads right after the system reboot.
+As a result, the beacon clock drift may become so high that the Ephemeral Identifier (EID) from the FHN advertising payload is no longer recognized by the Seeker devices.
+As a fallback mechanism for clock synchronization, the accessory must simultaneously advertise the Fast Pair not discoverable and FHN payloads right after the system reboot.
 The Fast Pair advertising frames make the affected Provider visible to nearby Seekers.
-Once one of the Seeker devices connects to the accessory and synchronizes the clock, the :c:member:`bt_fast_pair_fmdn_info_cb.clock_synced` callback is called to indicate that the Provider is no longer required to advertise the Fast Pair payload.
+Once one of the Seeker devices connects to the accessory and synchronizes the clock, the :c:member:`bt_fast_pair_fhn_info_cb.clock_synced` callback is called to indicate that the Provider is no longer required to advertise the Fast Pair payload.
 
-.. _ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_conn_authenticated:
+.. _ug_bt_fast_pair_gatt_service_fhn_info_callbacks_conn_authenticated:
 
 Connection authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The connected peer authentication is indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` callback.
+The connected peer authentication is indicated by the :c:member:`bt_fast_pair_fhn_info_cb.conn_authenticated` callback.
 This callback is triggered on a successful provisioning state read operation over the Beacon Actions characteristic.
 A successful operation proves that the connected peer has at least one of the Provider's Account Keys.
 
 A typical use case for this callback is to authenticate the connected peer and allow it to read the firmware version to support firmware update intents on the Android platform.
 See :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` for general information about the firmware update intent feature and the required configuration steps in the Google Nearby Device console.
 See :ref:`ug_bt_fast_pair_gatt_service_firmware_update_intent` to learn how to prepare your Provider firmware to support the firmware update intent feature.
-You must meet the requirements in the linked sections before following the guidelines related to the FMDN extension.
+You must meet the requirements in the linked sections before following the guidelines related to the FHN extension.
 
 The firmware version is read by the Fast Pair Seeker over the Firmware Revision characteristic in the Device Information Service (DIS).
 It is assumed that DIS characteristics contain the identifying information and access to these characteristics should be limited to prevent tracking.
 
-If the defined device model from the Google Nearby Devices console supports Bluetooth bonding during the Fast Pair procedure, you can replace the connection authentication mechanism based on the :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` callback with an alternative mechanism based on Bluetooth bonds.
+If the defined device model from the Google Nearby Devices console supports Bluetooth bonding during the Fast Pair procedure, you can replace the connection authentication mechanism based on the :c:member:`bt_fast_pair_fhn_info_cb.conn_authenticated` callback with an alternative mechanism based on Bluetooth bonds.
 In this case, bonded devices are allowed to read the firmware version.
 
-For further details on firmware updates in the FMDN extension context, see the `Fast Pair FMDN firmware updates`_ section in the FMDN specification.
+For further details on firmware updates in the FHN extension context, see the `Fast Pair FHN firmware updates`_ section in the FHN specification.
 
-For an example of how to use the firmware update intents with the FMDN extension, see the :ref:`fast_pair_locator_tag` sample.
+For an example of how to use the firmware update intents with the FHN extension, see the :ref:`fast_pair_locator_tag` sample.
 
-.. _ug_bt_fast_pair_gatt_service_fmdn_read_mode_callbacks:
+.. _ug_bt_fast_pair_gatt_service_fhn_read_mode_callbacks:
 
 Using the read mode callbacks and managing the read mode state
 --------------------------------------------------------------
 
-The FMDN extension defines special read modes, in which sensitive data can be read from the device by the connected peer.
+The FHN extension defines special read modes, in which sensitive data can be read from the device by the connected peer.
 The read mode persists only for limited time after which it is deactivated.
 
-To enter the chosen read mode, you must call the :c:func:`bt_fast_pair_fmdn_read_mode_enter` function and pass the supported read mode type as a function parameter.
-You can only call this function in the ready state of the Fast Pair module (see the :c:func:`bt_fast_pair_is_ready` function) and in the FMDN provisioned state (see the :c:func:`bt_fast_pair_fmdn_is_provisioned` function).
-The FMDN extension supports the following read mode types:
+To enter the chosen read mode, you must call the :c:func:`bt_fast_pair_fhn_read_mode_enter` function and pass the supported read mode type as a function parameter.
+You can only call this function in the ready state of the Fast Pair module (see the :c:func:`bt_fast_pair_is_ready` function) and in the FHN provisioned state (see the :c:func:`bt_fast_pair_fhn_is_provisioned` function).
+The FHN extension supports the following read mode types:
 
-* :c:enum:`BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY` - Ephemeral Identity Key (EIK) recovery mode
-* :c:enum:`BT_FAST_PAIR_FMDN_READ_MODE_DULT_ID` - Identification mode
-  This mode is available only when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option is enabled.
+* :c:enum:`BT_FAST_PAIR_FHN_READ_MODE_FHN_RECOVERY` - Ephemeral Identity Key (EIK) recovery mode
+* :c:enum:`BT_FAST_PAIR_FHN_READ_MODE_DULT_ID` - Identification mode
+  This mode is available only when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option is enabled.
 
-To register the read mode callbacks, use the :c:func:`bt_fast_pair_fmdn_read_mode_cb_register` function.
+To register the read mode callbacks, use the :c:func:`bt_fast_pair_fhn_read_mode_cb_register` function.
 Callback registration is optional.
 You can register only one callback set with this function, as the subsequent call overrides the previous set.
-The :c:func:`bt_fast_pair_fmdn_read_mode_cb_register` function supports currently only one callback type, :c:member:`bt_fast_pair_fmdn_read_mode_cb.exited`, that provides a notification when the specific read mode is over.
+The :c:func:`bt_fast_pair_fhn_read_mode_cb_register` function supports currently only one callback type, :c:member:`bt_fast_pair_fhn_read_mode_cb.exited`, that provides a notification when the specific read mode is over.
 Read mode exit occurs when the read mode naturally times out or when it is forcefully canceled (for example, during the :c:func:`bt_fast_pair_disable` function call).
 
-When the device is already in the selected read mode, you can call the :c:func:`bt_fast_pair_fmdn_read_mode_enter` function with the same read mode type to prolong its timeout.
+When the device is already in the selected read mode, you can call the :c:func:`bt_fast_pair_fhn_read_mode_enter` function with the same read mode type to prolong its timeout.
 
-The :c:enum:`BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY` read mode type is called EIK recovery mode.
+The :c:enum:`BT_FAST_PAIR_FHN_READ_MODE_FHN_RECOVERY` read mode type is called EIK recovery mode.
 This mode is mandatory to support, as it enables the EIK recovery operation.
-The FMDN extension validates if the mode is active during the EIK read operation over Beacon Actions characteristic.
+The FHN extension validates if the mode is active during the EIK read operation over Beacon Actions characteristic.
 This read operation is accepted only when the device is in the recovery mode.
 It is recommended to enter this mode after a user interaction (for example, a button press).
 This physical interaction constitutes user consent to activate the recovery mode.
-You can configure the timeout of the recovery mode using the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT` Kconfig option.
+You can configure the timeout of the recovery mode using the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_READ_MODE_FHN_RECOVERY_TIMEOUT` Kconfig option.
 
-The :c:enum:`BT_FAST_PAIR_FMDN_READ_MODE_DULT_ID` read mode type is called identification mode.
-This mode is only available when the DULT integration with the FMDN extension is enabled with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option.
+The :c:enum:`BT_FAST_PAIR_FHN_READ_MODE_DULT_ID` read mode type is called identification mode.
+This mode is only available when the DULT integration with the FHN extension is enabled with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option.
 In this configuration, your application must implement support for this mode.
 The identification mode allows for reading the Identifier Payload defined in the Detecting Unwanted Location Trackers (DULT) specification.
 This read operation is accepted only when the device is in the identification mode.
@@ -870,153 +872,153 @@ Apart from that, the device should emit visual or audio signal to indicate mode 
 The timeout of the identification mode is equal to five minutes according to the DULT specification requirements and cannot be configured by the user.
 For more details on the identification mode, refer to the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
 
-.. _ug_bt_fast_pair_gatt_service_fmdn_ring_callbacks:
+.. _ug_bt_fast_pair_gatt_service_fhn_ring_callbacks:
 
 Using the ringing callbacks and managing the ringing state
 ----------------------------------------------------------
 
-Select the number of ringing components that you want to support in your application configuration (see the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_COMP` choice configuration).
+Select the number of ringing components that you want to support in your application configuration (see the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_COMP` choice configuration).
 You can only pick one of the following options:
 
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_COMP_NONE`: No component is capable of ringing (the default choice).
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_COMP_ONE`: One component is capable of ringing.
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_COMP_TWO`: Two components (left and right buds) are capable of ringing.
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_COMP_THREE`: Three components (left and right buds and case) are capable of ringing.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_COMP_NONE`: No component is capable of ringing (the default choice).
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_COMP_ONE`: One component is capable of ringing.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_COMP_TWO`: Two components (left and right buds) are capable of ringing.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_COMP_THREE`: Three components (left and right buds and case) are capable of ringing.
 
-Apart from the ringing component configuration, you can enable support for the ringing volume feature by setting the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_VOLUME` option.
+Apart from the ringing component configuration, you can enable support for the ringing volume feature by setting the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_VOLUME` option.
 When this option is enabled, you should be able to individually set the volume for all of your ringing components, choosing from the three provided levels.
 For some devices, however, volume adjustment options may not be available.
-In such a case, you should keep the ringing volume feature disabled and use the default volume (:c:enum:`BT_FAST_PAIR_FMDN_RING_VOLUME_DEFAULT`) for all declared ringing components.
+In such a case, you should keep the ringing volume feature disabled and use the default volume (:c:enum:`BT_FAST_PAIR_FHN_RING_VOLUME_DEFAULT`) for all declared ringing components.
 
 To adjust volume levels for the devices that support the feature, use the following options:
 
-* Low (:c:enum:`BT_FAST_PAIR_FMDN_RING_VOLUME_LOW`)
-* Medium (:c:enum:`BT_FAST_PAIR_FMDN_RING_VOLUME_MEDIUM`)
-* High (:c:enum:`BT_FAST_PAIR_FMDN_RING_VOLUME_HIGH`)
+* Low (:c:enum:`BT_FAST_PAIR_FHN_RING_VOLUME_LOW`)
+* Medium (:c:enum:`BT_FAST_PAIR_FHN_RING_VOLUME_MEDIUM`)
+* High (:c:enum:`BT_FAST_PAIR_FHN_RING_VOLUME_HIGH`)
 
-If your application configuration supports at least one ringing component, you must register the ringing callbacks using the :c:func:`bt_fast_pair_fmdn_ring_cb_register` function.
-In this case, all ringing callbacks defined in the :c:struct:`bt_fast_pair_fmdn_ring_cb` structure are mandatory to register.
+If your application configuration supports at least one ringing component, you must register the ringing callbacks using the :c:func:`bt_fast_pair_fhn_ring_cb_register` function.
+In this case, all ringing callbacks defined in the :c:struct:`bt_fast_pair_fhn_ring_cb` structure are mandatory to register.
 
 Ringing callbacks pass the information about the source that triggered the ringing activity as the first parameter of the callback function.
 The following sources of ringing activity are supported:
 
-* :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_FMDN_BT_GATT` - This ringing source originates from the Bluetooth Fast Pair service and its Beacon Actions characteristic that is defined in the FMDN Accessory specification.
-* :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT` - This ringing source originates from the Bluetooth Accessory Non-owner service and its characteristic that are defined in the DULT specification.
-  This source is available only when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option is enabled.
-* :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR` - This ringing source originates from the DULT motion detector module.
-  This source is available only when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option is enabled.
+* :c:enum:`BT_FAST_PAIR_FHN_RING_SRC_FHN_BT_GATT` - This ringing source originates from the Bluetooth Fast Pair service and its Beacon Actions characteristic that is defined in the FHN Accessory specification.
+* :c:enum:`BT_FAST_PAIR_FHN_RING_SRC_DULT_BT_GATT` - This ringing source originates from the Bluetooth Accessory Non-owner service and its characteristic that are defined in the DULT specification.
+  This source is available only when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option is enabled.
+* :c:enum:`BT_FAST_PAIR_FHN_RING_SRC_DULT_MOTION_DETECTOR` - This ringing source originates from the DULT motion detector module.
+  This source is available only when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR` Kconfig option is enabled.
 
-The following callbacks are defined in the :c:struct:`bt_fast_pair_fmdn_ring_cb` structure:
+The following callbacks are defined in the :c:struct:`bt_fast_pair_fhn_ring_cb` structure:
 
-* The ringing start request is indicated by the :c:member:`bt_fast_pair_fmdn_ring_cb.start_request` callback.
+* The ringing start request is indicated by the :c:member:`bt_fast_pair_fhn_ring_cb.start_request` callback.
   The connected peer can trigger the callback by sending the relevant request message over supported data channel.
 
-  The :c:struct:`bt_fast_pair_fmdn_ring_req_param` structure that is passed in the :c:member:`bt_fast_pair_fmdn_ring_cb.start_request` callback determines the following request parameters as specified by the requesting peer:
+  The :c:struct:`bt_fast_pair_fhn_ring_req_param` structure that is passed in the :c:member:`bt_fast_pair_fhn_ring_cb.start_request` callback determines the following request parameters as specified by the requesting peer:
 
     * Bitmask with ringing component identifiers that are requested to start ringing.
     * Ringing timeout in deciseconds.
-      The timeout value of the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT` Kconfig option is used for the :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT` DULT source.
+      The timeout value of the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_REQ_TIMEOUT_DULT_BT_GATT` Kconfig option is used for the :c:enum:`BT_FAST_PAIR_FHN_RING_SRC_DULT_BT_GATT` DULT source.
       The default value of this Kconfig is in line with the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
-      The timeout value of the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` Kconfig option is used for the :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR` DULT source.
-      There are no specific requirements for this Kconfig value in neither the FMDN nor the DULT specification.
+      The timeout value of the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` Kconfig option is used for the :c:enum:`BT_FAST_PAIR_FHN_RING_SRC_DULT_MOTION_DETECTOR` DULT source.
+      There are no specific requirements for this Kconfig value in neither the FHN nor the DULT specification.
     * Ringing volume level.
 
-  The :c:member:`bt_fast_pair_fmdn_ring_cb.start_request` callback can be called again when the ringing action has already started.
+  The :c:member:`bt_fast_pair_fhn_ring_cb.start_request` callback can be called again when the ringing action has already started.
   In this case, you must update the ringing activity to match the newest set of parameters.
 
-* The ringing timeout is indicated by the :c:member:`bt_fast_pair_fmdn_ring_cb.timeout_expired` callback.
+* The ringing timeout is indicated by the :c:member:`bt_fast_pair_fhn_ring_cb.timeout_expired` callback.
   The extension triggers the callback when the ringing timeout expires on the device.
 
-* The ringing stop request is indicated by the :c:member:`bt_fast_pair_fmdn_ring_cb.stop_request` callback.
+* The ringing stop request is indicated by the :c:member:`bt_fast_pair_fhn_ring_cb.stop_request` callback.
   The connected peer can trigger the callback by sending the relevant request message over supported data channel.
 
-You must treat all callbacks from the :c:struct:`bt_fast_pair_fmdn_ring_cb` structure as requests.
+You must treat all callbacks from the :c:struct:`bt_fast_pair_fhn_ring_cb` structure as requests.
 The internal ringing state of the extension is not automatically changed on any callback event.
-The state is only changed when you acknowledge such a request in your application using the :c:func:`bt_fast_pair_fmdn_ring_state_update` function.
+The state is only changed when you acknowledge such a request in your application using the :c:func:`bt_fast_pair_fhn_ring_state_update` function.
 
 .. note::
-   The ringing timeout countdown starts once you report a start or restart of the ringing action using the :c:func:`bt_fast_pair_fmdn_ring_state_update` function.
+   The ringing timeout countdown starts once you report a start or restart of the ringing action using the :c:func:`bt_fast_pair_fhn_ring_state_update` function.
 
-You must call the :c:func:`bt_fast_pair_fmdn_ring_state_update` function whenever the bitmask with active ringing components changes due to the extension initiated operations.
-Additionally, you must also call this function in response to the :c:member:`bt_fast_pair_fmdn_ring_cb.start_request` and the :c:member:`bt_fast_pair_fmdn_ring_cb.stop_request` callbacks in case of a failure (no bitmask change).
-A call to the :c:func:`bt_fast_pair_fmdn_ring_state_update` function sends a message with the ringing state update.
+You must call the :c:func:`bt_fast_pair_fhn_ring_state_update` function whenever the bitmask with active ringing components changes due to the extension initiated operations.
+Additionally, you must also call this function in response to the :c:member:`bt_fast_pair_fhn_ring_cb.start_request` and the :c:member:`bt_fast_pair_fhn_ring_cb.stop_request` callbacks in case of a failure (no bitmask change).
+A call to the :c:func:`bt_fast_pair_fhn_ring_state_update` function sends a message with the ringing state update.
 The message is sent over the ringing source that is used by the connected peer.
 
-You must select the ringing source that is passed to the :c:func:`bt_fast_pair_fmdn_ring_state_update` function as a first parameter.
+You must select the ringing source that is passed to the :c:func:`bt_fast_pair_fhn_ring_state_update` function as a first parameter.
 Typically, you pass the ringing source that is used in the last ringing callback that triggered the ringing state update.
-In certain edge cases, you can get two simultaneous requests to start ringing with two different sources before you are able to indicate the start of ringing with the :c:func:`bt_fast_pair_fmdn_ring_state_update` function.
+In certain edge cases, you can get two simultaneous requests to start ringing with two different sources before you are able to indicate the start of ringing with the :c:func:`bt_fast_pair_fhn_ring_state_update` function.
 In this situation, you need to select the preferred ringing source.
 
-You must also configure the following fields in the :c:struct:`bt_fast_pair_fmdn_ring_state_param` structure that is passed to the :c:func:`bt_fast_pair_fmdn_ring_state_update` function as a second parameter:
+You must also configure the following fields in the :c:struct:`bt_fast_pair_fhn_ring_state_param` structure that is passed to the :c:func:`bt_fast_pair_fhn_ring_state_update` function as a second parameter:
 
 * Trigger for the new ringing state:
 
-  * Started (:c:enum:`BT_FAST_PAIR_FMDN_RING_TRIGGER_STARTED`): set in response to the :c:member:`bt_fast_pair_fmdn_ring_cb.start_request` callback when at least one component from the requested set has started to ring.
-  * Failed (:c:enum:`BT_FAST_PAIR_FMDN_RING_TRIGGER_FAILED`):
+  * Started (:c:enum:`BT_FAST_PAIR_FHN_RING_TRIGGER_STARTED`): set in response to the :c:member:`bt_fast_pair_fhn_ring_cb.start_request` callback when at least one component from the requested set has started to ring.
+  * Failed (:c:enum:`BT_FAST_PAIR_FHN_RING_TRIGGER_FAILED`):
 
-    * Set in response to the :c:member:`bt_fast_pair_fmdn_ring_cb.start_request` callback when not even one component from the requested set has started to ring.
-    * Set in response to the :c:member:`bt_fast_pair_fmdn_ring_cb.stop_request` callbacks when not even one component has stopped ringing.
+    * Set in response to the :c:member:`bt_fast_pair_fhn_ring_cb.start_request` callback when not even one component from the requested set has started to ring.
+    * Set in response to the :c:member:`bt_fast_pair_fhn_ring_cb.stop_request` callbacks when not even one component has stopped ringing.
 
-  * Stopped on timeout (:c:enum:`BT_FAST_PAIR_FMDN_RING_TRIGGER_TIMEOUT_STOPPED`): set in response to the :c:member:`bt_fast_pair_fmdn_ring_cb.timeout_expired` callback when at least one component has stopped ringing.
-  * Stopped on a button press (:c:enum:`BT_FAST_PAIR_FMDN_RING_TRIGGER_UI_STOPPED`): set in response to the application-specific button press when at least one component has stopped ringing.
-  * Stopped on a GATT request (:c:enum:`BT_FAST_PAIR_FMDN_RING_TRIGGER_GATT_STOPPED`): set in response to the :c:member:`bt_fast_pair_fmdn_ring_cb.stop_request` callback when at least one component has stopped ringing.
+  * Stopped on timeout (:c:enum:`BT_FAST_PAIR_FHN_RING_TRIGGER_TIMEOUT_STOPPED`): set in response to the :c:member:`bt_fast_pair_fhn_ring_cb.timeout_expired` callback when at least one component has stopped ringing.
+  * Stopped on a button press (:c:enum:`BT_FAST_PAIR_FHN_RING_TRIGGER_UI_STOPPED`): set in response to the application-specific button press when at least one component has stopped ringing.
+  * Stopped on a GATT request (:c:enum:`BT_FAST_PAIR_FHN_RING_TRIGGER_GATT_STOPPED`): set in response to the :c:member:`bt_fast_pair_fhn_ring_cb.stop_request` callback when at least one component has stopped ringing.
 
 * Bitmask with currently ringing components.
 * Remaining ringing timeout in deciseconds (can be set to zero to preserve the existing timeout).
 
-If you cannot start the ringing action on all requested components (for example, one of them is out of range), you must set the started trigger and update the connected peer with a ringing state update using the :c:func:`bt_fast_pair_fmdn_ring_state_update` function.
-Once an unavailable component becomes reachable, you can start the delayed ringing action on it and send another update to the connected peer with the :c:func:`bt_fast_pair_fmdn_ring_state_update` function.
+If you cannot start the ringing action on all requested components (for example, one of them is out of range), you must set the started trigger and update the connected peer with a ringing state update using the :c:func:`bt_fast_pair_fhn_ring_state_update` function.
+Once an unavailable component becomes reachable, you can start the delayed ringing action on it and send another update to the connected peer with the :c:func:`bt_fast_pair_fhn_ring_state_update` function.
 Alternatively, you can also ignore it and exclude it altogether from the current ringing action.
 
 Handle a partially executed ringing stop request (with at least one of the components still ringing) in the similar way.
 This update policy applies to all listed stop trigger types.
 
-To satisfy the requirements from the DULT specification when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option is enabled, the FMDN extension communicates with the DULT module to receive ringing requests from the DULT peers and to send updates regarding the ringing state.
+To satisfy the requirements from the DULT specification when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option is enabled, the FHN extension communicates with the DULT module to receive ringing requests from the DULT peers and to send updates regarding the ringing state.
 For more details on the ringing mechanism in the DULT module, see the :ref:`ug_dult_sound` documentation.
 
-.. _ug_bt_fast_pair_gatt_service_fmdn_dult_motion_detector:
+.. _ug_bt_fast_pair_gatt_service_fhn_dult_motion_detector:
 
 Interacting with the motion detector from DULT
 ----------------------------------------------
 
-The motion detector is an optional feature of the DULT subsystem that can be integrated into the FMDN extension.
+The motion detector is an optional feature of the DULT subsystem that can be integrated into the FHN extension.
 For more details about the feature, see the `DULT motion detector`_ section of the DULT specification.
-To activate the DULT motion detector functionality in the FMDN extension, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option.
-The FMDN extension implementation acts as a thin wrapper for the DULT motion detector module callbacks.
+To activate the DULT motion detector functionality in the FHN extension, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR` Kconfig option.
+The FHN extension implementation acts as a thin wrapper for the DULT motion detector module callbacks.
 It passes callbacks from the DULT motion detector module to the user application.
 
-To register the motion detector callbacks, use the :c:func:`bt_fast_pair_fmdn_motion_detector_cb_register` function.
-You must register all motion detector callbacks defined in the :c:struct:`bt_fast_pair_fmdn_motion_detector_cb` structure:
+To register the motion detector callbacks, use the :c:func:`bt_fast_pair_fhn_motion_detector_cb_register` function.
+You must register all motion detector callbacks defined in the :c:struct:`bt_fast_pair_fhn_motion_detector_cb` structure:
 
-* The motion detector start request is indicated by the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.start` callback.
-  After this callback is called, the motion detector events are polled periodically with the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.period_expired` callback.
+* The motion detector start request is indicated by the :c:member:`bt_fast_pair_fhn_motion_detector_cb.start` callback.
+  After this callback is called, the motion detector events are polled periodically with the :c:member:`bt_fast_pair_fhn_motion_detector_cb.period_expired` callback.
   A typical action after the motion detector start request is to power up the accelerometer and start collecting motion data.
-* The motion detector period expired event is indicated by the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.period_expired` callback.
+* The motion detector period expired event is indicated by the :c:member:`bt_fast_pair_fhn_motion_detector_cb.period_expired` callback.
   This callback is called at the end of each motion detector period.
-  The :c:member:`bt_fast_pair_fmdn_motion_detector_cb.start` callback indicates the beginning of the first motion detector period.
+  The :c:member:`bt_fast_pair_fhn_motion_detector_cb.start` callback indicates the beginning of the first motion detector period.
   The next period is started as soon as the previous period expires.
   You need to notify the DULT module if motion was detected in the previous period.
   The return value of this callback is used to pass this information.
   The motion must be considered as detected if it fulfills the requirements defined in the `DULT motion detector`_ section of the DULT documentation.
-* The motion detector stop request is indicated by the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.stop` callback.
-  It concludes the motion detector activity that was started by the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.start` callback.
+* The motion detector stop request is indicated by the :c:member:`bt_fast_pair_fhn_motion_detector_cb.stop` callback.
+  It concludes the motion detector activity that was started by the :c:member:`bt_fast_pair_fhn_motion_detector_cb.start` callback.
   A typical action after the motion detector stop request is to power down the accelerometer.
 
 The motion detector is started by the DULT subsystem when the accessory is in the separated state for an amount of time controlled by the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN` and :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX` Kconfig options.
-When the motion is detected during the motion detector active period, the :c:member:`bt_fast_pair_fmdn_ring_cb.start_request` callback is called to request the ringing action with the :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR` parameter as the ringing source.
+When the motion is detected during the motion detector active period, the :c:member:`bt_fast_pair_fhn_ring_cb.start_request` callback is called to request the ringing action with the :c:enum:`BT_FAST_PAIR_FHN_RING_SRC_DULT_MOTION_DETECTOR` parameter as the ringing source.
 Emitted sounds help to alert the non-owner that they are carrying an accessory that does not belong to them and might be used by the original owner to track their location.
 
-.. _ug_bt_fast_pair_gatt_service_fmdn_battery_dult:
+.. _ug_bt_fast_pair_gatt_service_fhn_battery_dult:
 
 Battery information with DULT
 -----------------------------
 
-Enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option to pass the battery level information from the FMDN extension to the DULT module.
-You need to have the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option enabled that indicates the general DULT integration in the FMDN extension.
+Enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_DULT` Kconfig option to pass the battery level information from the FHN extension to the DULT module.
+You need to have the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option enabled that indicates the general DULT integration in the FHN extension.
 
-The battery level information is passed using the :c:func:`bt_fast_pair_fmdn_battery_level_set` function.
-For more details on how to use this function, see the :ref:`ug_bt_fast_pair_advertising_fmdn_battery` section.
-Similarly to the FMDN battery level indication feature, the DULT module uses Kconfig options to map percentage values to battery levels that are defined in the DULT specification.
+The battery level information is passed using the :c:func:`bt_fast_pair_fhn_battery_level_set` function.
+For more details on how to use this function, see the :ref:`ug_bt_fast_pair_advertising_fhn_battery` section.
+Similarly to the FHN battery level indication feature, the DULT module uses Kconfig options to map percentage values to battery levels that are defined in the DULT specification.
 For more details on how to use these Kconfig options, see the :ref:`ug_dult_battery` documentation.
 
 .. rst-class:: numbered-step
@@ -1054,10 +1056,10 @@ A typical use case is to delete Bluetooth bonding information using either the :
 
 For an example on how to use the custom reset action, see the :ref:`fast_pair_locator_tag` sample.
 
-FMDN extension
-==============
+FHN extension
+=============
 
-The FMDN extension additionally stores the following data in the non-volatile memory:
+The FHN extension additionally stores the following data in the non-volatile memory:
 
 * Owner Account Key (a special Account Key with additional permissions).
 * Ephemeral Identity Key (EIK).
@@ -1133,7 +1135,7 @@ If your product is targeting the locator tag use case, you must enable the :kcon
 This Kconfig option activates the necessary Fast Pair features and extensions while restricting the unsupported ones.
 For the reference configuration of the `Fast Pair Device Feature Requirements for Locator Tags`_  specification, see the :ref:`fast_pair_locator_tag` sample.
 
-The `Fast Pair Device Feature Requirements for Locator Tags`_ documentation refers to the `Fast Pair Locator Tag Specific Guidelines`_ section from the FMDN Accessory specification.
+The `Fast Pair Device Feature Requirements for Locator Tags`_ documentation refers to the `Fast Pair Locator Tag Specific Guidelines`_ section from the FHN Accessory specification.
 You must implement the guidelines at application level as they cannot be automatically handled by the Fast Pair subsystem.
 Implement these guidelines in your application if your product is targeting the locator tag use case.
 To see how to implement `Fast Pair Locator Tag Specific Guidelines`_ , see the :ref:`fast_pair_locator_tag` sample.
@@ -1149,9 +1151,9 @@ To enable the support, populate the **Fast Pair** protocol configuration panel i
 #. Set the **Find My Device** feature to **true**.
 
 It is recommended to use the :ref:`bt_fast_pair_adv_manager_readme` helper module for Fast Pair advertising management in the locator tag use case.
-This module follows the requirements of the FMDN extension and is compatible with the FMDN advertising set.
+This module follows the requirements of the FHN extension and is compatible with the FHN advertising set.
 It also provides additional layer for the locator tag use case.
-You can configure it using the :kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG` Kconfig option, that implements Fast Pair advertising requirements specified in the `Fast Pair Locator Tag Specific Guidelines`_ section of the FMDN Accessory specification.
+You can configure it using the :kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG` Kconfig option, that implements Fast Pair advertising requirements specified in the `Fast Pair Locator Tag Specific Guidelines`_ section of the FHN Accessory specification.
 The :ref:`fast_pair_locator_tag` sample demonstrates how you can integrate the :ref:`bt_fast_pair_adv_manager_readme` in your application.
 See also :ref:`ug_bt_fast_pair_adv_manager` page that provides a comprehensive guide on how to integrate it in your application.
 

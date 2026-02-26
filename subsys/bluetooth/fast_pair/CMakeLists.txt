@@ -37,9 +37,14 @@ if(CONFIG_BT_FAST_PAIR_STORAGE)
   target_link_libraries(fast_pair PRIVATE fp_storage)
 endif()
 
+if(CONFIG_BT_FAST_PAIR_FHN OR CONFIG_BT_FAST_PAIR_FMDN)
+  add_subdirectory(fhn)
+  target_link_libraries(fast_pair PRIVATE fhn)
+endif()
+
 if(CONFIG_BT_FAST_PAIR_FMDN)
-  add_subdirectory(fmdn)
-  target_link_libraries(fast_pair PRIVATE fmdn)
+  zephyr_library_compile_options(
+    -include ${CMAKE_CURRENT_SOURCE_DIR}/fhn/include_priv/fp_fhn_kconfig_compat.h)
 endif()
 
 add_subdirectory_ifdef(CONFIG_BT_FAST_PAIR_ADV_MANAGER adv_manager)

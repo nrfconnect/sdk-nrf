@@ -13,7 +13,7 @@
 
 #include <bluetooth/fast_pair/adv_manager.h>
 #include <bluetooth/fast_pair/fast_pair.h>
-#include <bluetooth/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fhn/fhn.h>
 
 #include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 
@@ -22,7 +22,7 @@
 #include "app_ui.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_INF);
+LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_INF);
 
 /* DFU mode timeout in minutes. */
 #define DFU_MODE_TIMEOUT_MIN (5)
@@ -40,9 +40,9 @@ BT_FAST_PAIR_ADV_MANAGER_TRIGGER_REGISTER(
 static void dfu_mode_timeout_work_handle(struct k_work *w);
 static K_WORK_DELAYABLE_DEFINE(dfu_mode_timeout_work, dfu_mode_timeout_work_handle);
 
-BUILD_ASSERT((APP_VERSION_MAJOR == CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MAJOR) &&
-	     (APP_VERSION_MINOR == CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MINOR) &&
-	     (APP_PATCHLEVEL == CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION),
+BUILD_ASSERT((APP_VERSION_MAJOR == CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR) &&
+	     (APP_VERSION_MINOR == CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR) &&
+	     (APP_PATCHLEVEL == CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_REVISION),
 	     "Firmware version mismatch. Update the DULT FW version in the Kconfig file "
 	     "to be aligned with the VERSION file.");
 
@@ -165,7 +165,7 @@ void app_dfu_fw_version_log(void)
 static void dfu_mode_request_handle(enum app_ui_request request)
 {
 	/* It is assumed that the callback executes in the cooperative
-	 * thread context as it interacts with the FMDN API.
+	 * thread context as it interacts with the FHN API.
 	 */
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 	__ASSERT_NO_MSG(!k_is_in_isr());

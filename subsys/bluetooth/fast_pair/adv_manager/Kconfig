@@ -42,18 +42,18 @@ config BT_FAST_PAIR_ADV_MANAGER_USE_CASE_UNSPECIFIED
 
 config BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG
 	bool "Locator tag use case"
-	depends on BT_FAST_PAIR_FMDN
+	depends on BT_FAST_PAIR_FHN || BT_FAST_PAIR_FMDN
 	help
 	  Tailor the advertising manager for the Fast Pair locator tag. The manager implements the
-	  locator tag requirements for the Fast Pair advertising defined in the FMDN specification:
+	  locator tag requirements for the Fast Pair advertising defined in the FHN specification:
 	  https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#locator-tag.
 
 	  The locator tag extension currently controls the following advertising triggers:
 
-	  - FMDN provisioning trigger: used to maintain the Fast Pair advertising between the
+	  - FHN provisioning trigger: used to maintain the Fast Pair advertising between the
 	    the Owner Account Key write operation until successful provisioning operation.
 	  - Clock synchronization trigger: used to maintain the Fast Pair advertising for the
-	    FMDN clock synchronization; this trigger can be disabled with the
+	    FHN clock synchronization; this trigger can be disabled with the
 	    CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG_CLOCK_SYNC_TRIGGER Kconfig option
 	    and replaced with custom implementation.
 
@@ -62,11 +62,11 @@ endchoice
 if BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG
 
 config BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG_CLOCK_SYNC_TRIGGER
-	bool "Activate the advertising trigger for the FMDN clock synchronization"
+	bool "Activate the advertising trigger for the FHN clock synchronization"
 	default y
 	help
-	  Activate the advertising trigger that is responsible for the FMDN clock
-	  synchronization. After a power loss in the FMDN provisoned state, the trigger
+	  Activate the advertising trigger that is responsible for the FHN clock
+	  synchronization. After a power loss in the FHN provisioned state, the trigger
 	  keeps the Fast Pair non-discoverable advertising active until the next invocation
 	  of Read Beacon Parameters request. This additional advertising state lets the Fast
 	  Pair Seeker (for example, a smartphone) detect the device and synchronize the clock

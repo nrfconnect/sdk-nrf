@@ -52,10 +52,8 @@ The DULT integration in the |NCS| consists of the following steps:
 These steps are described in the following sections.
 
 The DULT standard implementation in the |NCS| integrates the location-tracking accessory role.
-For an integration example, see the Find My Device Network (FMDN) extension of the :ref:`bt_fast_pair_readme`.
-Also see the :ref:`fast_pair_locator_tag` sample that integrates the Fast Pair with the FMDN extension, which integrates the :ref:`dult_readme` module.
-
-.. include:: /includes/fast_pair_fmdn_rename.txt
+For an integration example, see the Find Hub Network (FHN) extension of the :ref:`bt_fast_pair_readme`.
+Also see the :ref:`fast_pair_locator_tag` sample that integrates the Fast Pair with the FHN extension, which integrates the :ref:`dult_readme` module.
 
 .. rst-class:: numbered-step
 
@@ -312,7 +310,7 @@ Applications and samples
 
 The following sample use the DULT integration in the |NCS|:
 
-* :ref:`fast_pair_locator_tag` sample (uses the FMDN extension of the :ref:`bt_fast_pair_readme` that integrates the DULT specification)
+* :ref:`fast_pair_locator_tag` sample (uses the FHN extension of the :ref:`bt_fast_pair_readme` that integrates the DULT specification)
 
 Library support
 ***************

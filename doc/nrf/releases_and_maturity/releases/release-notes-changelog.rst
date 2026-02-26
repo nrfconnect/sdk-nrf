@@ -393,7 +393,11 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Updated the motion detector sensor on Thingy:53 target from gyroscope to accelerometer.
+  * Updated:
+
+    * The sample to use the new name for the Find Hub Network (FHN) that was previously known as the Find My Device Network (FMDN).
+      Migrated the sample to use the new Kconfig options and the new FHN API header.
+    * The motion detector sensor on Thingy:53 target from gyroscope to accelerometer.
 
 Cellular samples
 ----------------
@@ -604,9 +608,21 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
-  * Updated the location of the Fast Pair headers and implementation out of the :file:`services` subdirectory.
-    The headers moved from :file:`include/bluetooth/services/fast_pair/` to :file:`include/bluetooth/fast_pair/` and the implementation moved from :file:`subsys/bluetooth/services/fast_pair/` to :file:`subsys/bluetooth/fast_pair/`.
-    The deprecated forwarding headers remain at the old paths to provide backward compatibility.
+  * Updated:
+
+    * The location of the Fast Pair headers and implementation out of the :file:`services` subdirectory.
+      The headers moved from :file:`include/bluetooth/services/fast_pair/` to :file:`include/bluetooth/fast_pair/` and the implementation moved from :file:`subsys/bluetooth/services/fast_pair/` to :file:`subsys/bluetooth/fast_pair/`.
+      The deprecated forwarding headers remain at the old paths to provide backward compatibility.
+    * The naming of the Find My Device Network (FMDN) extension to Find Hub Network (FHN) to align with the updated Google specification:
+
+      * All public API symbols have been renamed from ``bt_fast_pair_fmdn_*`` to ``bt_fast_pair_fhn_*``.
+        The new FHN header is located at :file:`include/bluetooth/fast_pair/fhn/fhn.h`.
+        Deprecated FMDN API aliases remain available through the :file:`include/bluetooth/services/fast_pair/fmdn.h` header.
+      * All Kconfig options have been renamed from ``CONFIG_BT_FAST_PAIR_FMDN_*`` to ``CONFIG_BT_FAST_PAIR_FHN_*``.
+        Deprecated FMDN Kconfig options remain available under the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` option tree.
+      * The FMDN implementation directory has been renamed from :file:`subsys/bluetooth/services/fast_pair/fmdn/` to :file:`subsys/bluetooth/fast_pair/fhn/`.
+
+      See the `migration guide <Migration guide for nRF Connect SDK v3.3.0_>`_ for details.
 
 * :ref:`bt_mesh_dk_prov` module:
 
@@ -772,7 +788,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+* Updated the :ref:`ug_bt_fast_pair_integration` guide to reflect the Find My Device Network (FMDN) extension rename to Find Hub Network (FHN), aligning with the updated Google specification.
 
 Edge Impulse integration
 ------------------------

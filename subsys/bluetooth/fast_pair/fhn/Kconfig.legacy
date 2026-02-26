@@ -3,13 +3,20 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
+# Deprecated FMDN Kconfig options for backward compatibility.
+# This file is an identical copy of the FHN Kconfig with the legacy FMDN naming.
+# Users should migrate to the BT_FAST_PAIR_FHN_* options.
 
 menuconfig BT_FAST_PAIR_FMDN
-	bool "Find My Device Network extension for Fast Pair"
+	bool "Find My Device Network extension for Fast Pair [DEPRECATED]"
+	depends on !BT_FAST_PAIR_FHN
+	select DEPRECATED
 	select BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
 	select BT_FAST_PAIR_FMDN_CRYPTO
 	help
+	  Deprecated. Use CONFIG_BT_FAST_PAIR_FHN instead.
 	  Enable Find My Device Network (FMDN) extension for Fast Pair.
+	  This option exists for backward compatibility only.
 
 if BT_FAST_PAIR_FMDN
 
@@ -212,7 +219,7 @@ config BT_FAST_PAIR_FMDN_CALLBACKS
 config BT_FAST_PAIR_FMDN_CLOCK
 	bool
 	default y
-	select BT_FAST_PAIR_STORAGE_FMDN_CLOCK
+	select BT_FAST_PAIR_STORAGE_FHN_CLOCK
 	help
 	  Add Fast Pair FMDN Clock source file.
 
@@ -322,7 +329,7 @@ config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MAJOR
 	  the Fast Pair Validator Android app.
 
 config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MINOR
-	int "FMDN Firmware major version"
+	int "FMDN Firmware minor version"
 	default 0
 	range 0 255
 
@@ -406,7 +413,7 @@ config BT_FAST_PAIR_FMDN_STATE
 	bool
 	default y
 	select BT_EXT_ADV
-	select BT_FAST_PAIR_STORAGE_FMDN_EIK
+	select BT_FAST_PAIR_STORAGE_FHN_EIK
 	help
 	  Add Fast Pair FMDN State source file.
 

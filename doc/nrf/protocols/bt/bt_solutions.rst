@@ -64,7 +64,7 @@ These kinds of solutions are known as Bluetooth beacons and work as a foundation
 
 Nordic Semiconductor offers full implementation of two solutions for item finding:
 
-* Google Find My Device Network: See the :ref:`fast_pair_locator_tag` sample for an implementation of a tag device.
+* Google Find Hub Network: See the :ref:`fast_pair_locator_tag` sample for an implementation of a tag device.
 * Apple Find My Network: See :ref:`integrations` page on how to apply for access.
 
 Direction

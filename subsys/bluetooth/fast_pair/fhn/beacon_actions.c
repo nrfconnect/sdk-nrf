@@ -11,18 +11,18 @@
 #include <zephyr/bluetooth/gatt.h>
 
 #include <bluetooth/fast_pair/fast_pair.h>
-#include <bluetooth/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fhn/fhn.h>
 #include <bluetooth/fast_pair/uuid.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(fp_fmdn_beacon_actions, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
+LOG_MODULE_REGISTER(fp_fhn_beacon_actions, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
-#include "fp_fmdn_auth.h"
-#include "fp_fmdn_callbacks.h"
-#include "fp_fmdn_clock.h"
-#include "fp_fmdn_read_mode.h"
-#include "fp_fmdn_ring.h"
-#include "fp_fmdn_state.h"
+#include "fp_fhn_auth.h"
+#include "fp_fhn_callbacks.h"
+#include "fp_fhn_clock.h"
+#include "fp_fhn_read_mode.h"
+#include "fp_fhn_ring.h"
+#include "fp_fhn_state.h"
 #include "fp_crypto.h"
 #include "fp_storage_ak.h"
 
@@ -72,17 +72,17 @@ static bool eik_hash_compare(const uint8_t *eik_hash, const uint8_t *random_nonc
 {
 	int err;
 	uint8_t eik_hash_local[FP_CRYPTO_SHA256_HASH_LEN];
-	uint8_t hash_input[FP_FMDN_STATE_EIK_LEN + BEACON_ACTIONS_RANDOM_NONCE_LEN];
+	uint8_t hash_input[FP_FHN_STATE_EIK_LEN + BEACON_ACTIONS_RANDOM_NONCE_LEN];
 
 	/* Calculate: (Ephemeral Identity Key || random_nonce) */
-	err = fp_fmdn_state_eik_read(hash_input);
+	err = fp_fhn_state_eik_read(hash_input);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Set/Clear request:"
 			" EIK read failed: %d", err);
 
 		return false;
 	}
-	memcpy(hash_input + FP_FMDN_STATE_EIK_LEN,
+	memcpy(hash_input + FP_FHN_STATE_EIK_LEN,
 	       random_nonce,
 	       BEACON_ACTIONS_RANDOM_NONCE_LEN);
 
@@ -147,7 +147,7 @@ static ssize_t beacon_parameters_read_handle(struct bt_conn *conn,
 {
 	int err;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
+	struct fp_fhn_auth_data auth_data;
 	struct fp_account_key account_key;
 	int8_t tx_power;
 	uint8_t padding[BEACON_PARAMETERS_RSP_PADDING_LEN];
@@ -174,7 +174,7 @@ static ssize_t beacon_parameters_read_handle(struct bt_conn *conn,
 	auth_data.data_id = BEACON_ACTIONS_BEACON_PARAMETERS_READ;
 	auth_data.data_len = req_data_len;
 
-	err = fp_fmdn_auth_account_key_find(&auth_data, auth_seg, &account_key);
+	err = fp_fhn_auth_account_key_find(&auth_data, auth_seg, &account_key);
 	if (err) {
 		LOG_ERR("Beacon Actions: Beacon Parameters Read request:"
 			" Authentication failed: %d", err);
@@ -183,16 +183,16 @@ static ssize_t beacon_parameters_read_handle(struct bt_conn *conn,
 	}
 
 	/* Prepare response payload for encryption. */
-	tx_power = fp_fmdn_state_tx_power_encode();
+	tx_power = fp_fhn_state_tx_power_encode();
 	LOG_DBG("Beacon Actions: Beacon Parameters Read request:"
 		" setting response TX power to %d [dBm] encoded as 0x%02X",
 		tx_power, (uint8_t) tx_power);
 
 	net_buf_simple_add_u8(&rsp_data_buf, tx_power);
-	net_buf_simple_add_be32(&rsp_data_buf, fp_fmdn_clock_read());
-	net_buf_simple_add_u8(&rsp_data_buf, fp_fmdn_state_ecc_type_encode());
-	net_buf_simple_add_u8(&rsp_data_buf, fp_fmdn_ring_comp_num_encode());
-	net_buf_simple_add_u8(&rsp_data_buf, fp_fmdn_ring_cap_encode());
+	net_buf_simple_add_be32(&rsp_data_buf, fp_fhn_clock_read());
+	net_buf_simple_add_u8(&rsp_data_buf, fp_fhn_state_ecc_type_encode());
+	net_buf_simple_add_u8(&rsp_data_buf, fp_fhn_ring_comp_num_encode());
+	net_buf_simple_add_u8(&rsp_data_buf, fp_fhn_ring_cap_encode());
 
 	memset(padding, BEACON_PARAMETERS_RSP_PADDING_VAL, sizeof(padding));
 	net_buf_simple_add_mem(&rsp_data_buf, padding, sizeof(padding));
@@ -217,13 +217,13 @@ static ssize_t beacon_parameters_read_handle(struct bt_conn *conn,
 	auth_data.data_len = rsp_data_len;
 	auth_data.add_data = rsp_data_enc;
 
-	err = fp_fmdn_auth_seg_generate(account_key.key,
+	err = fp_fhn_auth_seg_generate(account_key.key,
 					sizeof(account_key.key),
 					&auth_data,
 					auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Beacon Parameters Read request:"
-			" fp_fmdn_auth_seg_generate failed: %d", err);
+			" fp_fhn_auth_seg_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -240,7 +240,7 @@ static ssize_t beacon_parameters_read_handle(struct bt_conn *conn,
 	}
 
 	/* Fire the clock synchronization callback for the application if it is registered. */
-	fp_fmdn_callbacks_clock_synced_notify();
+	fp_fhn_callbacks_clock_synced_notify();
 
 	return 0;
 }
@@ -251,11 +251,11 @@ static ssize_t provisioning_state_read_handle(struct bt_conn *conn,
 {
 	int err;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
+	struct fp_fhn_auth_data auth_data;
 	struct fp_account_key account_key;
 	uint8_t eid[PROVISIONING_STATE_RSP_EID_LEN];
 	uint8_t provisioning_state_flags;
-	const bool provisioned = bt_fast_pair_fmdn_is_provisioned();
+	const bool provisioned = bt_fast_pair_fhn_is_provisioned();
 	static const uint8_t req_data_len = PROVISIONING_STATE_REQ_PAYLOAD_LEN;
 	uint8_t rsp_data_len;
 	enum provisioning_state_bit_flag {
@@ -282,7 +282,7 @@ static ssize_t provisioning_state_read_handle(struct bt_conn *conn,
 	auth_data.data_id = BEACON_ACTIONS_PROVISIONING_STATE_READ;
 	auth_data.data_len = req_data_len;
 
-	err = fp_fmdn_auth_account_key_find(&auth_data, auth_seg, &account_key);
+	err = fp_fhn_auth_account_key_find(&auth_data, auth_seg, &account_key);
 	if (err) {
 		LOG_ERR("Beacon Actions: Provisioning State Read request:"
 			" Authentication failed: %d", err);
@@ -317,7 +317,7 @@ static ssize_t provisioning_state_read_handle(struct bt_conn *conn,
 	net_buf_simple_add_u8(&rsp_data_buf, provisioning_state_flags);
 
 	if (provisioned) {
-		err = fp_fmdn_state_eid_read(eid);
+		err = fp_fhn_state_eid_read(eid);
 		if (err) {
 			LOG_ERR("Beacon Actions: Provisioning State Read request:"
 				" EID read failed: %d", err);
@@ -336,13 +336,13 @@ static ssize_t provisioning_state_read_handle(struct bt_conn *conn,
 	auth_data.data_len = rsp_data_len;
 	auth_data.add_data = rsp_data_buf.data;
 
-	err = fp_fmdn_auth_seg_generate(account_key.key,
+	err = fp_fhn_auth_seg_generate(account_key.key,
 					sizeof(account_key.key),
 					&auth_data,
 					auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Provisioning State Read request:"
-			" fp_fmdn_auth_seg_generate failed: %d", err);
+			" fp_fhn_auth_seg_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -359,7 +359,7 @@ static ssize_t provisioning_state_read_handle(struct bt_conn *conn,
 	}
 
 	/* Fire the connection authenticated callback for the application if it is registered. */
-	fp_fmdn_callbacks_conn_authenticated_notify(conn);
+	fp_fhn_callbacks_conn_authenticated_notify(conn);
 
 	return 0;
 }
@@ -370,11 +370,11 @@ static ssize_t ephemeral_identity_key_set_handle(struct bt_conn *conn,
 {
 	int err;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
+	struct fp_fhn_auth_data auth_data;
 	struct fp_account_key account_key;
 	uint8_t *encrypted_eik;
 	uint8_t new_eik[EPHEMERAL_IDENTITY_KEY_SET_REQ_EIK_LEN];
-	const bool provisioned = bt_fast_pair_fmdn_is_provisioned();
+	const bool provisioned = bt_fast_pair_fhn_is_provisioned();
 	const uint8_t req_data_len = provisioned ?
 		EPHEMERAL_IDENTITY_KEY_SET_REQ_PROVISIONED_PAYLOAD_LEN :
 		EPHEMERAL_IDENTITY_KEY_SET_REQ_UNPROVISIONED_PAYLOAD_LEN;
@@ -399,7 +399,7 @@ static ssize_t ephemeral_identity_key_set_handle(struct bt_conn *conn,
 	auth_data.data_len = req_data_len;
 	auth_data.add_data = req_data_buf->data;
 
-	err = fp_fmdn_auth_account_key_find(&auth_data, auth_seg, &account_key);
+	err = fp_fhn_auth_account_key_find(&auth_data, auth_seg, &account_key);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Set request:"
 			" Authentication failed: %d", err);
@@ -460,7 +460,7 @@ static ssize_t ephemeral_identity_key_set_handle(struct bt_conn *conn,
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
 
-	err = fp_fmdn_state_eik_provision(new_eik);
+	err = fp_fhn_state_eik_provision(new_eik);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Set request:"
 			" Beacon State provision failed: %d", err);
@@ -476,13 +476,13 @@ static ssize_t ephemeral_identity_key_set_handle(struct bt_conn *conn,
 	auth_data.data_len = rsp_data_len;
 	auth_data.add_data = NULL;
 
-	err = fp_fmdn_auth_seg_generate(account_key.key,
+	err = fp_fhn_auth_seg_generate(account_key.key,
 					sizeof(account_key.key),
 					&auth_data,
 					auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Set request:"
-			" fp_fmdn_auth_seg_generate failed: %d", err);
+			" fp_fhn_auth_seg_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -505,11 +505,11 @@ static ssize_t ephemeral_identity_key_clear_handle(struct bt_conn *conn,
 {
 	int err;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
+	struct fp_fhn_auth_data auth_data;
 	struct fp_account_key account_key;
 	uint8_t *current_eik_hash;
 	uint8_t *random_nonce;
-	const bool provisioned = bt_fast_pair_fmdn_is_provisioned();
+	const bool provisioned = bt_fast_pair_fhn_is_provisioned();
 	static const uint8_t req_data_len = EPHEMERAL_IDENTITY_KEY_CLEAR_REQ_PAYLOAD_LEN;
 	static const uint8_t rsp_data_len = EPHEMERAL_IDENTITY_KEY_CLEAR_RSP_PAYLOAD_LEN;
 
@@ -539,7 +539,7 @@ static ssize_t ephemeral_identity_key_clear_handle(struct bt_conn *conn,
 	auth_data.data_len = req_data_len;
 	auth_data.add_data = req_data_buf->data;
 
-	err = fp_fmdn_auth_account_key_find(&auth_data, auth_seg, &account_key);
+	err = fp_fhn_auth_account_key_find(&auth_data, auth_seg, &account_key);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Clear request:"
 			" Authentication failed: %d", err);
@@ -571,7 +571,7 @@ static ssize_t ephemeral_identity_key_clear_handle(struct bt_conn *conn,
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_UNAUTHENTICATED);
 	}
 
-	err = fp_fmdn_state_eik_provision(NULL);
+	err = fp_fhn_state_eik_provision(NULL);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Clear request:"
 			" Beacon State unprovision failed: %d", err);
@@ -593,13 +593,13 @@ static ssize_t ephemeral_identity_key_clear_handle(struct bt_conn *conn,
 	auth_data.data_len = rsp_data_len;
 	auth_data.add_data = NULL;
 
-	err = fp_fmdn_auth_seg_generate(account_key.key,
+	err = fp_fhn_auth_seg_generate(account_key.key,
 					sizeof(account_key.key),
 					&auth_data,
 					auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Clear request:"
-			" fp_fmdn_auth_seg_generate failed: %d", err);
+			" fp_fhn_auth_seg_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -623,8 +623,8 @@ static ssize_t ephemeral_identity_key_read_handle(struct bt_conn *conn,
 	int err;
 	bool user_consent;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
-	uint8_t recovery_key[FP_FMDN_AUTH_KEY_RECOVERY_LEN];
+	struct fp_fhn_auth_data auth_data;
+	uint8_t recovery_key[FP_FHN_AUTH_KEY_RECOVERY_LEN];
 	struct fp_account_key owner_account_key;
 	uint8_t eik[EPHEMERAL_IDENTITY_KEY_READ_RSP_EIK_LEN];
 	uint8_t encrypted_eik[EPHEMERAL_IDENTITY_KEY_READ_RSP_EIK_LEN];
@@ -643,12 +643,12 @@ static ssize_t ephemeral_identity_key_read_handle(struct bt_conn *conn,
 	}
 
 	/* Perform authentication of the incoming packet. */
-	err = fp_fmdn_auth_key_generate(FP_FMDN_AUTH_KEY_TYPE_RECOVERY,
+	err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_RECOVERY,
 					recovery_key,
 					sizeof(recovery_key));
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Read request:"
-			" fp_fmdn_auth_key_generate failed: %d", err);
+			" fp_fhn_auth_key_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -660,7 +660,7 @@ static ssize_t ephemeral_identity_key_read_handle(struct bt_conn *conn,
 	auth_data.data_id = BEACON_ACTIONS_EPHEMERAL_IDENTITY_KEY_READ;
 	auth_data.data_len = req_data_len;
 
-	if (!fp_fmdn_auth_seg_validate(recovery_key, sizeof(recovery_key), &auth_data, auth_seg)) {
+	if (!fp_fhn_auth_seg_validate(recovery_key, sizeof(recovery_key), &auth_data, auth_seg)) {
 		LOG_WRN("Beacon Actions: Ephemeral Identity Key Read request:"
 			" Recovery hash does not match");
 
@@ -668,10 +668,10 @@ static ssize_t ephemeral_identity_key_read_handle(struct bt_conn *conn,
 	}
 
 	/* Check the user consent. */
-	err = fp_fmdn_read_mode_recovery_mode_request(&user_consent);
+	err = fp_fhn_read_mode_recovery_mode_request(&user_consent);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Read request:"
-			" fp_fmdn_read_mode_recovery_mode_request failed: %d", err);
+			" fp_fhn_read_mode_recovery_mode_request failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -684,7 +684,7 @@ static ssize_t ephemeral_identity_key_read_handle(struct bt_conn *conn,
 	}
 
 	/* Fetch and encrypt the EIK. */
-	err = fp_fmdn_state_eik_read(eik);
+	err = fp_fhn_state_eik_read(eik);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Read request:"
 			" EIK read failed: %d", err);
@@ -731,13 +731,13 @@ static ssize_t ephemeral_identity_key_read_handle(struct bt_conn *conn,
 	auth_data.data_len = rsp_data_len;
 	auth_data.add_data = rsp_data_buf.data;
 
-	err = fp_fmdn_auth_seg_generate(recovery_key,
+	err = fp_fhn_auth_seg_generate(recovery_key,
 					sizeof(recovery_key),
 					&auth_data,
 					auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Provisioning State Read request:"
-			" fp_fmdn_auth_seg_generate failed: %d", err);
+			" fp_fhn_auth_seg_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -763,9 +763,9 @@ static ssize_t ring_handle(struct bt_conn *conn,
 	int err;
 	bool perform_auth;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
-	uint8_t ring_key[FP_FMDN_AUTH_KEY_RING_LEN];
-	struct bt_fast_pair_fmdn_ring_req_param ring_param;
+	struct fp_fhn_auth_data auth_data;
+	uint8_t ring_key[FP_FHN_AUTH_KEY_RING_LEN];
+	struct bt_fast_pair_fhn_ring_req_param ring_param;
 	static const uint8_t req_data_len = RING_REQ_PAYLOAD_LEN;
 
 	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
@@ -781,15 +781,15 @@ static ssize_t ring_handle(struct bt_conn *conn,
 	auth_seg = net_buf_simple_pull_mem(
 		req_data_buf, BEACON_ACTIONS_ONE_TIME_AUTH_KEY_LEN);
 
-	perform_auth = !fp_fmdn_state_utp_mode_ring_auth_skip();
+	perform_auth = !fp_fhn_state_utp_mode_ring_auth_skip();
 	if (perform_auth) {
 		/* Perform authentication of the incoming packet. */
-		err = fp_fmdn_auth_key_generate(FP_FMDN_AUTH_KEY_TYPE_RING,
+		err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_RING,
 						ring_key,
 						sizeof(ring_key));
 		if (err) {
 			LOG_ERR("Beacon Actions: Ring request:"
-				" fp_fmdn_auth_key_generate failed: %d", err);
+				" fp_fhn_auth_key_generate failed: %d", err);
 
 			return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 		}
@@ -800,7 +800,7 @@ static ssize_t ring_handle(struct bt_conn *conn,
 		auth_data.data_len = req_data_len;
 		auth_data.add_data = req_data_buf->data;
 
-		if (!fp_fmdn_auth_seg_validate(ring_key, sizeof(ring_key), &auth_data, auth_seg)) {
+		if (!fp_fhn_auth_seg_validate(ring_key, sizeof(ring_key), &auth_data, auth_seg)) {
 			LOG_WRN("Beacon Actions: Ring request: Ring hash does not match");
 
 			return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_UNAUTHENTICATED);
@@ -815,7 +815,7 @@ static ssize_t ring_handle(struct bt_conn *conn,
 	ring_param.volume = net_buf_simple_pull_u8(req_data_buf);
 
 	/* Validate the number of ringing components if authentication is enabled. */
-	if (perform_auth && !fp_fmdn_ring_is_active_comp_bm_supported(ring_param.active_comp_bm)) {
+	if (perform_auth && !fp_fhn_ring_is_active_comp_bm_supported(ring_param.active_comp_bm)) {
 		LOG_ERR("Beacon Actions: Ring request:"
 			" the request state does not match the number of ringing components");
 
@@ -832,7 +832,7 @@ static ssize_t ring_handle(struct bt_conn *conn,
 	       sizeof(ring_context.random_nonce));
 
 	/* Pass the request to the Ring module. */
-	err = fp_fmdn_ring_req_handle(BT_FAST_PAIR_FMDN_RING_SRC_FMDN_BT_GATT, &ring_param);
+	err = fp_fhn_ring_req_handle(BT_FAST_PAIR_FHN_RING_SRC_FHN_BT_GATT, &ring_param);
 	if (err == -EINVAL) {
 		LOG_ERR("Beacon Actions: Ring request: Invalid ring data");
 
@@ -854,8 +854,8 @@ static ssize_t ringing_state_read_handle(struct bt_conn *conn,
 {
 	int err;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
-	uint8_t ring_key[FP_FMDN_AUTH_KEY_RING_LEN];
+	struct fp_fhn_auth_data auth_data;
+	uint8_t ring_key[FP_FHN_AUTH_KEY_RING_LEN];
 	static const uint8_t req_data_len = RINGING_STATE_READ_REQ_PAYLOAD_LEN;
 	static const uint8_t rsp_data_len = RINGING_STATE_READ_RSP_PAYLOAD_LEN;
 
@@ -871,12 +871,12 @@ static ssize_t ringing_state_read_handle(struct bt_conn *conn,
 	}
 
 	/* Perform authentication of the incoming packet. */
-	err = fp_fmdn_auth_key_generate(FP_FMDN_AUTH_KEY_TYPE_RING,
+	err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_RING,
 					ring_key,
 					sizeof(ring_key));
 	if (err) {
 		LOG_ERR("Beacon Actions: Ringing State Read request:"
-			" fp_fmdn_auth_key_generate failed: %d", err);
+			" fp_fhn_auth_key_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -889,7 +889,7 @@ static ssize_t ringing_state_read_handle(struct bt_conn *conn,
 	auth_data.data_id = BEACON_ACTIONS_RINGING_STATE_READ;
 	auth_data.data_len = req_data_len;
 
-	if (!fp_fmdn_auth_seg_validate(ring_key, sizeof(ring_key), &auth_data, auth_seg)) {
+	if (!fp_fhn_auth_seg_validate(ring_key, sizeof(ring_key), &auth_data, auth_seg)) {
 		LOG_WRN("Beacon Actions: Ringing State Read request:"
 			" Ring hash does not match");
 
@@ -897,8 +897,8 @@ static ssize_t ringing_state_read_handle(struct bt_conn *conn,
 	}
 
 	/* Prepare response payload. */
-	net_buf_simple_add_u8(&rsp_data_buf, fp_fmdn_ring_active_comp_bm_get());
-	net_buf_simple_add_be16(&rsp_data_buf, fp_fmdn_ring_timeout_get());
+	net_buf_simple_add_u8(&rsp_data_buf, fp_fhn_ring_active_comp_bm_get());
+	net_buf_simple_add_be16(&rsp_data_buf, fp_fhn_ring_timeout_get());
 
 	/* Prepare a response */
 	net_buf_simple_add_u8(&rsp_buf, BEACON_ACTIONS_RINGING_STATE_READ);
@@ -908,10 +908,10 @@ static ssize_t ringing_state_read_handle(struct bt_conn *conn,
 	auth_data.data_len = rsp_data_len;
 	auth_data.add_data = rsp_data_buf.data;
 
-	err = fp_fmdn_auth_seg_generate(ring_key, sizeof(ring_key), &auth_data, auth_seg);
+	err = fp_fhn_auth_seg_generate(ring_key, sizeof(ring_key), &auth_data, auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ring State Change response:"
-			" fp_fmdn_auth_seg_generate failed: %d", err);
+			" fp_fhn_auth_seg_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -936,8 +936,8 @@ static ssize_t activate_utp_mode_handle(struct bt_conn *conn,
 {
 	int err;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
-	uint8_t utp_key[FP_FMDN_AUTH_KEY_UTP_LEN];
+	struct fp_fhn_auth_data auth_data;
+	uint8_t utp_key[FP_FHN_AUTH_KEY_UTP_LEN];
 	uint8_t control_flags = 0;
 	uint8_t req_data_len = ACTIVATE_UTP_MODE_REQ_PAYLOAD_LEN;
 	static const uint8_t rsp_data_len = ACTIVATE_UTP_MODE_RSP_PAYLOAD_LEN;
@@ -958,7 +958,7 @@ static ssize_t activate_utp_mode_handle(struct bt_conn *conn,
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
 
-	if (!bt_fast_pair_fmdn_is_provisioned()) {
+	if (!bt_fast_pair_fhn_is_provisioned()) {
 		LOG_ERR("Beacon Actions: Activate Unwanted Tracking Protection mode request:"
 			" Device is not provisioned");
 
@@ -966,10 +966,10 @@ static ssize_t activate_utp_mode_handle(struct bt_conn *conn,
 	}
 
 	/* Perform authentication of the incoming packet. */
-	err = fp_fmdn_auth_key_generate(FP_FMDN_AUTH_KEY_TYPE_UTP, utp_key, sizeof(utp_key));
+	err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_UTP, utp_key, sizeof(utp_key));
 	if (err) {
 		LOG_ERR("Beacon Actions: Activate Unwanted Tracking Protection mode request:"
-			" fp_fmdn_auth_key_generate failed: %d", err);
+			" fp_fhn_auth_key_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -983,7 +983,7 @@ static ssize_t activate_utp_mode_handle(struct bt_conn *conn,
 	auth_data.data_len = req_data_len;
 	auth_data.add_data = req_data_buf->data;
 
-	if (!fp_fmdn_auth_seg_validate(utp_key, sizeof(utp_key), &auth_data, auth_seg)) {
+	if (!fp_fhn_auth_seg_validate(utp_key, sizeof(utp_key), &auth_data, auth_seg)) {
 		LOG_WRN("Beacon Actions: Activate Unwanted Tracking Protection mode request:"
 			" UTP hash does not match");
 
@@ -994,11 +994,11 @@ static ssize_t activate_utp_mode_handle(struct bt_conn *conn,
 		control_flags = net_buf_simple_pull_u8(req_data_buf);
 	}
 
-	/* Manage the UTP mode in the FMDN State module. */
-	err = fp_fmdn_state_utp_mode_activate(control_flags);
+	/* Manage the UTP mode in the FHN State module. */
+	err = fp_fhn_state_utp_mode_activate(control_flags);
 	if (err) {
 		LOG_ERR("Beacon Actions: Activate Unwanted Tracking Protection mode request:"
-			" fp_fmdn_state_utp_mode_activate failed: %d", err);
+			" fp_fhn_state_utp_mode_activate failed: %d", err);
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -1011,10 +1011,10 @@ static ssize_t activate_utp_mode_handle(struct bt_conn *conn,
 	auth_data.data_len = rsp_data_len;
 	auth_data.add_data = NULL;
 
-	err = fp_fmdn_auth_seg_generate(utp_key, sizeof(utp_key), &auth_data, auth_seg);
+	err = fp_fhn_auth_seg_generate(utp_key, sizeof(utp_key), &auth_data, auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Activate Unwanted Tracking Protection mode request:"
-			" fp_fmdn_auth_seg_generate failed: %d", err);
+			" fp_fhn_auth_seg_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -1037,8 +1037,8 @@ static ssize_t deactivate_utp_mode_handle(struct bt_conn *conn,
 {
 	int err;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
-	uint8_t utp_key[FP_FMDN_AUTH_KEY_UTP_LEN];
+	struct fp_fhn_auth_data auth_data;
+	uint8_t utp_key[FP_FHN_AUTH_KEY_UTP_LEN];
 	uint8_t *current_eik_hash;
 	uint8_t *random_nonce = conn_contexts[bt_conn_index(conn)].random_nonce;
 	static const uint8_t req_data_len = DEACTIVATE_UTP_MODE_REQ_PAYLOAD_LEN;
@@ -1054,7 +1054,7 @@ static ssize_t deactivate_utp_mode_handle(struct bt_conn *conn,
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
 
-	if (!bt_fast_pair_fmdn_is_provisioned()) {
+	if (!bt_fast_pair_fhn_is_provisioned()) {
 		LOG_ERR("Beacon Actions: Deactivate Unwanted Tracking Protection mode request:"
 			" Device is not provisioned");
 
@@ -1062,10 +1062,10 @@ static ssize_t deactivate_utp_mode_handle(struct bt_conn *conn,
 	}
 
 	/* Perform authentication of the incoming packet. */
-	err = fp_fmdn_auth_key_generate(FP_FMDN_AUTH_KEY_TYPE_UTP, utp_key, sizeof(utp_key));
+	err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_UTP, utp_key, sizeof(utp_key));
 	if (err) {
 		LOG_ERR("Beacon Actions: Deactivate Unwanted Tracking Protection mode request:"
-			" fp_fmdn_auth_key_generate failed: %d", err);
+			" fp_fhn_auth_key_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -1079,7 +1079,7 @@ static ssize_t deactivate_utp_mode_handle(struct bt_conn *conn,
 	auth_data.data_len = req_data_len;
 	auth_data.add_data = req_data_buf->data;
 
-	if (!fp_fmdn_auth_seg_validate(utp_key, sizeof(utp_key), &auth_data, auth_seg)) {
+	if (!fp_fhn_auth_seg_validate(utp_key, sizeof(utp_key), &auth_data, auth_seg)) {
 		LOG_WRN("Beacon Actions: Deactivate Unwanted Tracking Protection mode request:"
 			" UTP hash does not match");
 
@@ -1096,11 +1096,11 @@ static ssize_t deactivate_utp_mode_handle(struct bt_conn *conn,
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_UNAUTHENTICATED);
 	}
 
-	/* Manage the UTP mode in the FMDN State module. */
-	err = fp_fmdn_state_utp_mode_deactivate();
+	/* Manage the UTP mode in the FHN State module. */
+	err = fp_fhn_state_utp_mode_deactivate();
 	if (err) {
 		LOG_ERR("Beacon Actions: Deactivate Unwanted Tracking Protection mode request:"
-			" fp_fmdn_state_utp_mode_deactivate failed: %d", err);
+			" fp_fhn_state_utp_mode_deactivate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -1113,10 +1113,10 @@ static ssize_t deactivate_utp_mode_handle(struct bt_conn *conn,
 	auth_data.data_len = rsp_data_len;
 	auth_data.add_data = NULL;
 
-	err = fp_fmdn_auth_seg_generate(utp_key, sizeof(utp_key), &auth_data, auth_seg);
+	err = fp_fhn_auth_seg_generate(utp_key, sizeof(utp_key), &auth_data, auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Deactivate Unwanted Tracking Protection mode request:"
-			" fp_fmdn_auth_seg_generate failed: %d", err);
+			" fp_fhn_auth_seg_generate failed: %d", err);
 
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
@@ -1133,14 +1133,14 @@ static ssize_t deactivate_utp_mode_handle(struct bt_conn *conn,
 	return 0;
 }
 
-int bt_fast_pair_fmdn_ring_state_update(
-	enum bt_fast_pair_fmdn_ring_src src,
-	const struct bt_fast_pair_fmdn_ring_state_param *param)
+int bt_fast_pair_fhn_ring_state_update(
+	enum bt_fast_pair_fhn_ring_src src,
+	const struct bt_fast_pair_fhn_ring_state_param *param)
 {
 	int err;
 	uint8_t *auth_seg;
-	struct fp_fmdn_auth_data auth_data;
-	uint8_t ring_key[FP_FMDN_AUTH_KEY_RING_LEN];
+	struct fp_fhn_auth_data auth_data;
+	uint8_t ring_key[FP_FHN_AUTH_KEY_RING_LEN];
 	static const uint8_t rsp_data_len = RING_RSP_PAYLOAD_LEN;
 
 	NET_BUF_SIMPLE_DEFINE(rsp_buf, RING_RSP_LEN);
@@ -1155,16 +1155,16 @@ int bt_fast_pair_fmdn_ring_state_update(
 		return -EALREADY;
 	}
 
-	err = fp_fmdn_ring_state_param_set(src, param);
+	err = fp_fhn_ring_state_param_set(src, param);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ring State Change response:"
-			" fp_fmdn_ring_state_param_set failed: %d", err);
+			" fp_fhn_ring_state_param_set failed: %d", err);
 
 		return err;
 	}
 
 	/* Check if connected peers should be notified about the ring state change. */
-	if (!bt_fast_pair_fmdn_is_provisioned()) {
+	if (!bt_fast_pair_fhn_is_provisioned()) {
 		return 0;
 	}
 
@@ -1174,19 +1174,19 @@ int bt_fast_pair_fmdn_ring_state_update(
 
 	/* Prepare response payload. */
 	net_buf_simple_add_u8(&rsp_data_buf, param->trigger);
-	net_buf_simple_add_u8(&rsp_data_buf, fp_fmdn_ring_active_comp_bm_get());
-	net_buf_simple_add_be16(&rsp_data_buf, fp_fmdn_ring_timeout_get());
+	net_buf_simple_add_u8(&rsp_data_buf, fp_fhn_ring_active_comp_bm_get());
+	net_buf_simple_add_be16(&rsp_data_buf, fp_fhn_ring_timeout_get());
 
 	/* Prepare a response. */
 	net_buf_simple_add_u8(&rsp_buf, BEACON_ACTIONS_RING);
 	net_buf_simple_add_u8(&rsp_buf, rsp_data_len);
 
-	err = fp_fmdn_auth_key_generate(FP_FMDN_AUTH_KEY_TYPE_RING,
+	err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_RING,
 					ring_key,
 					sizeof(ring_key));
 	if (err) {
 		LOG_ERR("Beacon Actions: Ring State Change response:"
-			" fp_fmdn_auth_key_generate failed: %d", err);
+			" fp_fhn_auth_key_generate failed: %d", err);
 
 		return err;
 	}
@@ -1199,10 +1199,10 @@ int bt_fast_pair_fmdn_ring_state_update(
 
 	auth_seg = net_buf_simple_add(&rsp_buf, BEACON_ACTIONS_RSP_AUTH_SEG_LEN);
 
-	err = fp_fmdn_auth_seg_generate(ring_key, sizeof(ring_key), &auth_data, auth_seg);
+	err = fp_fhn_auth_seg_generate(ring_key, sizeof(ring_key), &auth_data, auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ring State Change response:"
-			" fp_fmdn_auth_seg_generate failed: %d", err);
+			" fp_fhn_auth_seg_generate failed: %d", err);
 
 		return err;
 	}
@@ -1224,7 +1224,7 @@ int bt_fast_pair_fmdn_ring_state_update(
 	return 0;
 }
 
-ssize_t fp_fmdn_beacon_actions_read(struct bt_conn *conn,
+ssize_t fp_fhn_beacon_actions_read(struct bt_conn *conn,
 				    const struct bt_gatt_attr *attr,
 				    void *buf,
 				    uint16_t len,
@@ -1261,7 +1261,7 @@ ssize_t fp_fmdn_beacon_actions_read(struct bt_conn *conn,
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
 
-	rsp[0] = CONFIG_BT_FAST_PAIR_FMDN_VERSION_MAJOR;
+	rsp[0] = CONFIG_BT_FAST_PAIR_FHN_VERSION_MAJOR;
 	memcpy(&rsp[BEACON_ACTIONS_READ_RSP_VERSION_LEN],
 	       conn_context->random_nonce,
 	       sizeof(conn_context->random_nonce));
@@ -1278,14 +1278,14 @@ ssize_t fp_fmdn_beacon_actions_read(struct bt_conn *conn,
 	return res;
 }
 
-ssize_t fp_fmdn_beacon_actions_write(struct bt_conn *conn,
+ssize_t fp_fhn_beacon_actions_write(struct bt_conn *conn,
 				     const struct bt_gatt_attr *attr,
 				     const void *buf,
 				     uint16_t len,
 				     uint16_t offset,
 				     uint8_t flags)
 {
-	struct net_buf_simple fmdn_beacon_actions_buf;
+	struct net_buf_simple fhn_beacon_actions_buf;
 	struct conn_context *conn_context;
 	uint8_t data_id;
 	uint8_t data_len;
@@ -1322,44 +1322,44 @@ ssize_t fp_fmdn_beacon_actions_write(struct bt_conn *conn,
 		goto finish;
 	}
 
-	net_buf_simple_init_with_data(&fmdn_beacon_actions_buf, (void *) buf, len);
-	data_id = net_buf_simple_pull_u8(&fmdn_beacon_actions_buf);
-	data_len = net_buf_simple_pull_u8(&fmdn_beacon_actions_buf);
+	net_buf_simple_init_with_data(&fhn_beacon_actions_buf, (void *) buf, len);
+	data_id = net_buf_simple_pull_u8(&fhn_beacon_actions_buf);
+	data_len = net_buf_simple_pull_u8(&fhn_beacon_actions_buf);
 
-	if (data_len != net_buf_simple_max_len(&fmdn_beacon_actions_buf)) {
+	if (data_len != net_buf_simple_max_len(&fhn_beacon_actions_buf)) {
 		LOG_ERR("Beacon Actions: request with incorrect length: %d!=%d",
-			data_len, net_buf_simple_max_len(&fmdn_beacon_actions_buf));
+			data_len, net_buf_simple_max_len(&fhn_beacon_actions_buf));
 		res = BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 		goto finish;
 	}
 
 	switch (data_id) {
 	case BEACON_ACTIONS_BEACON_PARAMETERS_READ:
-		res = beacon_parameters_read_handle(conn, attr, &fmdn_beacon_actions_buf);
+		res = beacon_parameters_read_handle(conn, attr, &fhn_beacon_actions_buf);
 		break;
 	case BEACON_ACTIONS_PROVISIONING_STATE_READ:
-		res = provisioning_state_read_handle(conn, attr, &fmdn_beacon_actions_buf);
+		res = provisioning_state_read_handle(conn, attr, &fhn_beacon_actions_buf);
 		break;
 	case BEACON_ACTIONS_EPHEMERAL_IDENTITY_KEY_SET:
-		res = ephemeral_identity_key_set_handle(conn, attr, &fmdn_beacon_actions_buf);
+		res = ephemeral_identity_key_set_handle(conn, attr, &fhn_beacon_actions_buf);
 		break;
 	case BEACON_ACTIONS_EPHEMERAL_IDENTITY_KEY_CLEAR:
-		res = ephemeral_identity_key_clear_handle(conn, attr, &fmdn_beacon_actions_buf);
+		res = ephemeral_identity_key_clear_handle(conn, attr, &fhn_beacon_actions_buf);
 		break;
 	case BEACON_ACTIONS_EPHEMERAL_IDENTITY_KEY_READ:
-		res = ephemeral_identity_key_read_handle(conn, attr, &fmdn_beacon_actions_buf);
+		res = ephemeral_identity_key_read_handle(conn, attr, &fhn_beacon_actions_buf);
 		break;
 	case BEACON_ACTIONS_RING:
-		res = ring_handle(conn, attr, &fmdn_beacon_actions_buf);
+		res = ring_handle(conn, attr, &fhn_beacon_actions_buf);
 		break;
 	case BEACON_ACTIONS_RINGING_STATE_READ:
-		res = ringing_state_read_handle(conn, attr, &fmdn_beacon_actions_buf);
+		res = ringing_state_read_handle(conn, attr, &fhn_beacon_actions_buf);
 		break;
 	case BEACON_ACTIONS_ACTIVATE_UTP_MODE:
-		res = activate_utp_mode_handle(conn, attr, &fmdn_beacon_actions_buf);
+		res = activate_utp_mode_handle(conn, attr, &fhn_beacon_actions_buf);
 		break;
 	case BEACON_ACTIONS_DEACTIVATE_UTP_MODE:
-		res = deactivate_utp_mode_handle(conn, attr, &fmdn_beacon_actions_buf);
+		res = deactivate_utp_mode_handle(conn, attr, &fhn_beacon_actions_buf);
 		break;
 	default:
 		LOG_ERR("Beacon Actions: unrecognized request: data_id=%d", data_id);
@@ -1376,7 +1376,7 @@ finish:
 	return res;
 }
 
-void fp_fmdn_beacon_actions_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
+void fp_fhn_beacon_actions_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
 	LOG_INF("Beacon Actions CCCD write, handle: %u, value: 0x%04X",
 		attr->handle, value);

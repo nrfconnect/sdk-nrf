@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -8,7 +8,7 @@
 #define APP_MOTION_DETECTOR_H_
 
 /**
- * @defgroup fmdn_sample_motion_detector Locator Tag sample motion detector module
+ * @defgroup fhn_sample_motion_detector Locator Tag sample motion detector module
  * @brief Locator Tag sample motion detector module
  *
  * @{

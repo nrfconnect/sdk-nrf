@@ -4,20 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _FP_FMDN_BEACON_ACTIONS_H_
-#define _FP_FMDN_BEACON_ACTIONS_H_
+#ifndef _FP_FHN_BEACON_ACTIONS_H_
+#define _FP_FHN_BEACON_ACTIONS_H_
 
 #include <zephyr/bluetooth/gatt.h>
 
-#include <bluetooth/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fhn/fhn.h>
 #include <bluetooth/fast_pair/uuid.h>
 
 /**
- * @defgroup fp_fmdn_beacon_actions Fast Pair FMDN Beacon Actions
- * @brief Fast Pair FMDN Beacon Actions module for the FMDN extension.
+ * @defgroup fp_fhn_beacon_actions Fast Pair FHN Beacon Actions
+ * @brief Fast Pair FHN Beacon Actions module for the FHN extension.
  *
- * Fast Pair FMDN Beacon Actions module handles requests that are sent
- * on the Beacon Actions characteristics and are relevant for the FMDN
+ * Fast Pair FHN Beacon Actions module handles requests that are sent
+ * on the Beacon Actions characteristics and are relevant for the FHN
  * extension.
  *
  * @{
@@ -28,25 +28,25 @@ extern "C" {
 #endif
 
 /* Beacon Actions GATT Characteristic definition for the Fast Pair service. */
-#define FP_FMDN_BEACON_ACTIONS_CHARACTERISTIC                                 \
+#define FP_FHN_BEACON_ACTIONS_CHARACTERISTIC                                 \
 	BT_GATT_CHARACTERISTIC(BT_FAST_PAIR_UUID_BEACON_ACTIONS,              \
 		BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_NOTIFY, \
 		BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,                       \
-		fp_fmdn_beacon_actions_read,                                  \
-		fp_fmdn_beacon_actions_write,                                 \
+		fp_fhn_beacon_actions_read,                                  \
+		fp_fhn_beacon_actions_write,                                 \
 		NULL),                                                        \
-	BT_GATT_CCC(fp_fmdn_beacon_actions_ccc_cfg_changed,                   \
+	BT_GATT_CCC(fp_fhn_beacon_actions_ccc_cfg_changed,                   \
 		BT_GATT_PERM_READ | BT_GATT_PERM_WRITE)
 
 /* Handle the read operation on the Beacon Actions characteristic. */
-ssize_t fp_fmdn_beacon_actions_read(struct bt_conn *conn,
+ssize_t fp_fhn_beacon_actions_read(struct bt_conn *conn,
 				    const struct bt_gatt_attr *attr,
 				    void *buf,
 				    uint16_t len,
 				    uint16_t offset);
 
 /* Handle the write operation on the Beacon Actions characteristic. */
-ssize_t fp_fmdn_beacon_actions_write(struct bt_conn *conn,
+ssize_t fp_fhn_beacon_actions_write(struct bt_conn *conn,
 				     const struct bt_gatt_attr *attr,
 				     const void *buf,
 				     uint16_t len,
@@ -54,7 +54,7 @@ ssize_t fp_fmdn_beacon_actions_write(struct bt_conn *conn,
 				     uint8_t flags);
 
 /* Handle the write operation on the CCC descriptor of the Beacon Actions characteristic. */
-void fp_fmdn_beacon_actions_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value);
+void fp_fhn_beacon_actions_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value);
 
 #ifdef __cplusplus
 }
@@ -64,4 +64,4 @@ void fp_fmdn_beacon_actions_ccc_cfg_changed(const struct bt_gatt_attr *attr, uin
  * @}
  */
 
-#endif /* _FP_FMDN_BEACON_ACTIONS_H_ */
+#endif /* _FP_FHN_BEACON_ACTIONS_H_ */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -13,7 +13,7 @@
 #include <zephyr/bluetooth/uuid.h>
 
 /**
- * @defgroup fmdn_sample_dfu  Locator Tag sample Device Firmware Update (DFU) module
+ * @defgroup fhn_sample_dfu  Locator Tag sample Device Firmware Update (DFU) module
  * @brief Locator Tag sample Device Firmware Update (DFU) module
  *
  * @{

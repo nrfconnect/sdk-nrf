@@ -351,19 +351,17 @@ To enable the module extension for the locator tag use case, use the :kconfig:op
 .. note::
    If the locator tag extension of this module does not fit your application requirements, you can choose not to enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG` Kconfig option and replace it with your custom implementation.
 
-The Fast Pair Advertising Manager module is compatible with the Find My Device Network (FMDN) extension and handles the complex advertising state transitions automatically.
-The advertising policy of the Fast Pair advertising set respects the requirements of the FMDN advertising set.
+The Fast Pair Advertising Manager module is compatible with the Find Hub Network (FHN) extension and handles the complex advertising state transitions automatically.
+The advertising policy of the Fast Pair advertising set respects the requirements of the FHN advertising set.
 
-.. include:: /includes/fast_pair_fmdn_rename.txt
-
-This extension provides automatic handling of FMDN-related advertising requirements that are specified in the `Fast Pair Locator Tag Specific Guidelines`_ section of the FMDN Accessory specification.
+This extension provides automatic handling of FHN-related advertising requirements that are specified in the `Fast Pair Locator Tag Specific Guidelines`_ section of the FHN Accessory specification.
 This is achieved by using the advertising triggers in the module's use case layer for locator tags.
 This extension manages the following triggers:
 
-* The FMDN provisioning trigger used to maintain Fast Pair non-discoverable advertising after the Account Key write operation.
-  The FMDN provisioning trigger is active until the FMDN provisioning is completed or when the timeout period expires.
-* The FMDN clock synchronization trigger used to maintain Fast Pair non-discoverable advertising after a power loss to synchronize time between the locator tag and the phone.
-  The FMDN clock synchronization trigger is active until the clock synchronization operation is completed.
+* The FHN provisioning trigger used to maintain Fast Pair non-discoverable advertising after the Account Key write operation.
+  The FHN provisioning trigger is active until the FHN provisioning is completed or when the timeout period expires.
+* The FHN clock synchronization trigger used to maintain Fast Pair non-discoverable advertising after a power loss to synchronize time between the locator tag and the phone.
+  The FHN clock synchronization trigger is active until the clock synchronization operation is completed.
   You can disable this trigger with the :kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG_CLOCK_SYNC_TRIGGER` Kconfig option and replace it with your custom implementation.
 
 See the :ref:`fast_pair_locator_tag` sample to understand how to use the locator tag extension of the Fast Pair Advertising Manager module in the example application.

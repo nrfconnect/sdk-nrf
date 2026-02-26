@@ -16,7 +16,7 @@
 
 #include <bluetooth/fast_pair/adv_manager.h>
 #include <bluetooth/fast_pair/fast_pair.h>
-#include <bluetooth/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fhn/fhn.h>
 
 #include "fp_adv_manager_use_case.h"
 
@@ -44,7 +44,7 @@ enum fp_adv_request_bm {
 static bool is_initialized;
 static bool is_enabled;
 
-static bool fmdn_provisioned;
+static bool fhn_provisioned;
 
 static struct bt_conn *fp_conn;
 static struct bt_le_ext_adv *fp_adv_set;
@@ -337,7 +337,7 @@ static bool fp_adv_rpa_expired(struct bt_le_ext_adv *adv)
 	bool expire_rpa = true;
 
 	/* It is assumed that the callback executes in the cooperative
-	 * thread context as it interacts with the FMDN operations.
+	 * thread context as it interacts with the FHN operations.
 	 */
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 	__ASSERT_NO_MSG(!k_is_in_isr());
@@ -357,11 +357,11 @@ static bool fp_adv_rpa_expired(struct bt_le_ext_adv *adv)
 			(k_uptime_delta(&uptime) / MSEC_PER_SEC));
 	}
 
-	/* In the FMDN provisioned state, the FMDN advertising set is responsible
+	/* In the FHN provisioned state, the FHN advertising set is responsible
 	 * for setting the global RPA timeout using the bt_le_set_rpa_timeout API.
 	 * In the unprovisioned state, it is the responsibility of the Fast Pair advertising set.
 	 */
-	if (!fmdn_provisioned) {
+	if (!fhn_provisioned) {
 		next_rpa_timeout = fp_adv_rpa_timeout_calculate();
 		err = bt_le_set_rpa_timeout(next_rpa_timeout);
 		if (err && (err != -EALREADY)) {
@@ -375,9 +375,9 @@ static bool fp_adv_rpa_expired(struct bt_le_ext_adv *adv)
 	} else {
 		if (!fp_adv_set_active) {
 			/* Keep the RPA in the valid state to ensure that the RPA expired callback
-			 * will be received on a forced RPA rotation during the FMDN unprovisioning
+			 * will be received on a forced RPA rotation during the FHN unprovisioning
 			 * operation. The forced RPA rotation allows the Fast Pair advertising set
-			 * to take control from the FMDN advertising set over the RPA timeout. The
+			 * to take control from the FHN advertising set over the RPA timeout. The
 			 * RPA expired callback will not be received if any RPA rotation was
 			 * previously allowed here in the provisioned state and with inactive Fast
 			 * Pair advertising set.
@@ -560,7 +560,7 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 
 static void fp_adv_provisioning_state_changed(bool provisioned)
 {
-	fmdn_provisioned = provisioned;
+	fhn_provisioned = provisioned;
 
 	if (!bt_fast_pair_adv_manager_is_ready()) {
 		return;
@@ -571,7 +571,7 @@ static void fp_adv_provisioning_state_changed(bool provisioned)
 	}
 }
 
-static struct bt_fast_pair_fmdn_info_cb fmdn_info_cb = {
+static struct bt_fast_pair_fhn_info_cb fhn_info_cb = {
 	.provisioning_state_changed = fp_adv_provisioning_state_changed,
 };
 
@@ -732,8 +732,8 @@ int bt_fast_pair_adv_manager_enable(void)
 		return 0;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN)) {
-		fmdn_provisioned = bt_fast_pair_fmdn_is_provisioned();
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN)) {
+		fhn_provisioned = bt_fast_pair_fhn_is_provisioned();
 	}
 
 	if (!fp_adv_set) {
@@ -744,7 +744,7 @@ int bt_fast_pair_adv_manager_enable(void)
 		}
 	}
 
-	if (!fmdn_provisioned) {
+	if (!fhn_provisioned) {
 		err = fp_adv_set_rotate();
 		if (err) {
 			LOG_ERR("Fast Pair: fp_adv_set_rotate failed: %d", err);
@@ -816,13 +816,13 @@ int fp_adv_manager_init(void)
 {
 	int trigger_cnt;
 
-	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN)) {
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN)) {
 		int err;
 
-		err = bt_fast_pair_fmdn_info_cb_register(&fmdn_info_cb);
+		err = bt_fast_pair_fhn_info_cb_register(&fhn_info_cb);
 		if (err) {
 			LOG_ERR("Fast Pair Adv Manager: "
-				"bt_fast_pair_fmdn_info_cb_register returned error: %d", err);
+				"bt_fast_pair_fhn_info_cb_register returned error: %d", err);
 			return err;
 		}
 	}

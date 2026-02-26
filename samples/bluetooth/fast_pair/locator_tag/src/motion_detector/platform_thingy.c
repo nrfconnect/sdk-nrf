@@ -9,7 +9,7 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 
-#include <bluetooth/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fhn/fhn.h>
 
 #include <accel_to_angle/accel_to_angle.h>
 #include <accel_to_angle/filter/ema.h>
@@ -18,7 +18,7 @@
 #include "app_ui.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_INF);
+LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_INF);
 
 /* Minimal motion detection thresholds for angle and axes to trigger motion detection. */
 #define ACCEL_TO_ANGLE_ANGLE_THR_DEG	10
@@ -87,7 +87,7 @@ static void data_ready_trigger_handle(const struct device *dev, const struct sen
 	}
 
 	/* Lock the scheduler to prevent context switches while processing sensor data.
-	 * The FMDN API callbacks have higher priority than the sensor trigger handler,
+	 * The FHN API callbacks have higher priority than the sensor trigger handler,
 	 * which could lead to corruption of the motion detector state if a context switch
 	 * occurs in the middle of processing.
 	 */
@@ -227,20 +227,20 @@ static void state_set(bool enable)
 	LOG_INF("Motion detection: %sabled", motion_detector.active ? "en" : "dis");
 }
 
-static void fmdn_motion_detector_start(void)
+static void fhn_motion_detector_start(void)
 {
 	/* It is assumed that this function executes in the cooperative thread context. */
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
 	__ASSERT_NO_MSG(!motion_detector.active);
-	LOG_INF("FMDN: motion detector started");
+	LOG_INF("FHN: motion detector started");
 
 	state_set(true);
 	app_ui_state_change_indicate(APP_UI_STATE_MOTION_DETECTOR_ACTIVE, motion_detector.active);
 }
 
-static bool fmdn_motion_detector_period_expired(void)
+static bool fhn_motion_detector_period_expired(void)
 {
 	bool ret = motion_detector.motion_detected;
 
@@ -249,7 +249,7 @@ static bool fmdn_motion_detector_period_expired(void)
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
 	__ASSERT_NO_MSG(motion_detector.active);
-	LOG_INF("FMDN: motion detector period expired. Reporting that the motion was %sdetected",
+	LOG_INF("FHN: motion detector period expired. Reporting that the motion was %sdetected",
 		ret ? "" : "not ");
 
 	motion_detector.motion_detected = false;
@@ -258,23 +258,23 @@ static bool fmdn_motion_detector_period_expired(void)
 	return ret;
 }
 
-static void fmdn_motion_detector_stop(void)
+static void fhn_motion_detector_stop(void)
 {
 	/* It is assumed that this function executes in the cooperative thread context. */
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
 	__ASSERT_NO_MSG(motion_detector.active);
-	LOG_INF("FMDN: motion detector stopped");
+	LOG_INF("FHN: motion detector stopped");
 
 	state_set(false);
 	app_ui_state_change_indicate(APP_UI_STATE_MOTION_DETECTOR_ACTIVE, motion_detector.active);
 }
 
-static const struct bt_fast_pair_fmdn_motion_detector_cb fmdn_motion_detector_cb = {
-	.start = fmdn_motion_detector_start,
-	.period_expired = fmdn_motion_detector_period_expired,
-	.stop = fmdn_motion_detector_stop,
+static const struct bt_fast_pair_fhn_motion_detector_cb fhn_motion_detector_cb = {
+	.start = fhn_motion_detector_start,
+	.period_expired = fhn_motion_detector_period_expired,
+	.stop = fhn_motion_detector_stop,
 };
 
 int app_motion_detector_init(void)
@@ -286,9 +286,9 @@ int app_motion_detector_init(void)
 		return -EIO;
 	}
 
-	err = bt_fast_pair_fmdn_motion_detector_cb_register(&fmdn_motion_detector_cb);
+	err = bt_fast_pair_fhn_motion_detector_cb_register(&fhn_motion_detector_cb);
 	if (err) {
-		LOG_ERR("FMDN: bt_fast_pair_fmdn_motion_detector_cb_register failed (err %d)", err);
+		LOG_ERR("FHN: bt_fast_pair_fhn_motion_detector_cb_register failed (err %d)", err);
 		return err;
 	}
 

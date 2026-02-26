@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -12,7 +12,7 @@
 #include <zephyr/drivers/gpio.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 
 #define SPK_NODE	DT_ALIAS(pwm_spk)
 

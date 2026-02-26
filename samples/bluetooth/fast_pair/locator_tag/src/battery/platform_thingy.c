@@ -10,13 +10,13 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/adc.h>
 
-#include <bluetooth/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fhn/fhn.h>
 
 #include "app_battery.h"
 #include "app_battery_priv.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 
 #define VBATT					DT_PATH(vbatt)
 #define BATTERY_ADC_GAIN			ADC_GAIN_1
@@ -145,13 +145,13 @@ static int battery_level_set(bool forced_set)
 	static uint8_t battery_level;
 
 	if (!forced_set && (battery_level == battery_charge)) {
-		LOG_DBG("FMDN: battery level did not change");
+		LOG_DBG("FHN: battery level did not change");
 		return 0;
 	}
 
-	err = bt_fast_pair_fmdn_battery_level_set(battery_charge);
+	err = bt_fast_pair_fhn_battery_level_set(battery_charge);
 	if (err) {
-		LOG_ERR("FMDN: bt_fast_pair_fmdn_battery_level_set failed (err %d)",
+		LOG_ERR("FHN: bt_fast_pair_fhn_battery_level_set failed (err %d)",
 			err);
 		return err;
 	}
