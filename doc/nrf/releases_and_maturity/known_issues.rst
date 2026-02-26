@@ -1332,6 +1332,15 @@ Thread
 
 The issues in this section are related to the :ref:`ug_thread` protocol.
 
+.. rst-class:: v3-2-3 v3-2-2 v3-2-1 v3-2-0
+
+KRKNWK-21449: Long coprocessor boot time for nRF52840 dongle
+  Coprocessor sample running on nrf52840 dongle needs around 30 seconds to boot.
+
+  **Affected platforms:** nRF52840 Dongle
+
+  **Workaround:** Set the value of the :kconfig:option`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` Kconfig option to ``400`` in the :file:`boards/nrf52840dongle_nrf54840.conf` file.
+
 .. rst-class:: v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
 KRKNWK-19628: On nRF54H20, persistence of keys is not yet supported
