@@ -10,9 +10,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <nrf71_wifi_ctrl.h>
+#include <zephyr/sys/sys_heap.h>
 #include "common/fmac_util.h"
 #include "system/fmac_api.h"
 #include "fmac_main.h"
+#include "shim.h"
 #include "wifi_util.h"
 
 
@@ -1218,6 +1220,40 @@ unlock_umac:
 
 #endif /* !CONFIG_NRF71_RADIO_TEST && !CONFIG_NRF71_OFFLOADED_RAW_TX */
 
+static int nrf_wifi_util_heap(const struct shell *sh, size_t argc, char **argv)
+{
+	struct k_heap *ctrl_pool;
+	struct k_heap *data_pool;
+	struct sys_memory_stats stats;
+	int err;
+
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	nrf_wifi_shim_get_heaps(&ctrl_pool, &data_pool);
+
+	err = sys_heap_runtime_stats_get(&ctrl_pool->heap, &stats);
+	if (err) {
+		shell_error(sh, "Failed to read control heap statistics (err %d)", err);
+		return -ENOEXEC;
+	}
+	shell_print(sh, "Control pool:");
+	shell_print(sh, "  free:           %zu", stats.free_bytes);
+	shell_print(sh, "  allocated:      %zu", stats.allocated_bytes);
+	shell_print(sh, "  max. allocated: %zu", stats.max_allocated_bytes);
+
+	err = sys_heap_runtime_stats_get(&data_pool->heap, &stats);
+	if (err) {
+		shell_error(sh, "Failed to read data heap statistics (err %d)", err);
+		return -ENOEXEC;
+	}
+	shell_print(sh, "Data pool:");
+	shell_print(sh, "  free:           %zu", stats.free_bytes);
+	shell_print(sh, "  allocated:      %zu", stats.allocated_bytes);
+	shell_print(sh, "  max. allocated: %zu", stats.max_allocated_bytes);
+
+	return 0;
+}
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf71_util,
@@ -1289,6 +1325,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "Display the driver and the firmware versions",
 		      nrf_wifi_util_show_vers,
+		      1,
+		      0),
+	SHELL_CMD_ARG(heap,
+		      NULL,
+		      "Control and data pool heap usage statistics",
+		      nrf_wifi_util_heap,
 		      1,
 		      0),
 #if !defined(CONFIG_NRF71_RADIO_TEST) && !defined(CONFIG_NRF71_OFFLOADED_RAW_TX)
