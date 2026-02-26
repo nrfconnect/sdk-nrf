@@ -97,7 +97,7 @@ static void validate_and_boot(const struct fw_info *fw_info, counter_t slot)
 	}
 
 	printk("Attempting to boot from address 0x%x.\r\n",
-		fw_info->address);
+		fw_info->boot_address);
 
 	if (!bl_validate_firmware_local(fw_info->address,
 					fw_info)) {
