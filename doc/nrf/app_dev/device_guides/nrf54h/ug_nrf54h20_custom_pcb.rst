@@ -234,7 +234,11 @@ The following parameters are used in the LFOSC configuration:
   The valid range is from 1 to 25 pF.
   This parameter is only applied if ``builtInLoadCapacitors`` is set to ``true``.
 * ``startupTimeMs`` - Defines the startup time for the LFXO oscillator in milliseconds.
-  The valid range is from 1 to 25 ms.
+  The valid range is from 1 to 4095 ms.
+
+  .. note::
+     This value is currently not used.
+
 * ``source`` - Specifies the low-frequency clock source.
   It can be ``LFXO`` when an external crystal oscillator is in place, or ``LFRC`` when an external crystal oscillator is not in place.
 
@@ -269,6 +273,9 @@ LOADCAP
 
 TIME
   The valid values for ``startupTimeMs`` are from 1 to 25 ms.
+
+  .. note::
+     This value is currently not used.
 
 See the following example:
 
