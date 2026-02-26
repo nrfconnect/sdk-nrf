@@ -66,11 +66,9 @@ tests:
       - FILE_SUFFIX=bt_rpc
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
   sample.bluetooth.peripheral_uart.security_disabled:
     sysbuild: true
     build_only: true
