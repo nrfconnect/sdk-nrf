@@ -118,6 +118,16 @@ static void zep_shim_data_mem_free(void *buf)
 	}
 }
 
+void nrf_wifi_shim_get_heaps(struct k_heap **ctrl, struct k_heap **data)
+{
+	if (ctrl != NULL) {
+		*ctrl = wifi_ctrl_pool;
+	}
+	if (data != NULL) {
+		*data = wifi_data_pool;
+	}
+}
+
 static void *zep_shim_mem_cpy(void *dest, const void *src, size_t count)
 {
 	return memcpy(dest, src, count);
