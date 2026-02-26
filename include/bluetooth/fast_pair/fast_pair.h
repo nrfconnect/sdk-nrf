@@ -181,12 +181,12 @@ struct bt_fast_pair_info_cb {
  * this API. The mandatory callback set may depend on the chosen Fast Pair extension set
  * that is selected in the application Kconfig configuration. The enable API fails with
  * an error if mandatory callbacks are not registered. An example of a mandatory callback
- * is the @ref bt_fast_pair_fmdn_ring_cb structure defined in the API header of the Find My
- * Device Network extension when this extension is configured to support ringing operations.
+ * is the @ref bt_fast_pair_fhn_ring_cb structure defined in the API header of the Find Hub
+ * Network (FHN) extension when this extension is configured to support ringing operations.
  * The Fast Pair module configuration without any extensions does not require any mandatory
  * callbacks.
  *
- * If the application uses non-mandatory callbacks, like the @ref bt_fast_pair_fmdn_ring_cb
+ * If the application uses non-mandatory callbacks, like the @ref bt_fast_pair_fhn_ring_cb
  * structure, these callbacks must also be registered before the @ref bt_fast_pair_enable
  * API call.
  *

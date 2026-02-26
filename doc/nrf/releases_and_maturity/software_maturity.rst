@@ -2289,7 +2289,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - Experimental
-            * - **Find My Device Network extension**
+            * - **Find Hub Network extension**
               - --
               - --
               - --
@@ -2313,7 +2313,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
             * - **Personalized Name extension**
               - Experimental
-            * - **Find My Device Network extension**
+            * - **Find Hub Network extension**
               - Experimental
 
       .. tab:: nRF54H Series
@@ -2332,7 +2332,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
             * - **Personalized Name extension**
               - Experimental
-            * - **Find My Device Network extension**
+            * - **Find Hub Network extension**
               - Experimental
 
       .. tab:: nRF54L Series
@@ -2376,7 +2376,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - --
               - --
-            * - **Find My Device Network extension**
+            * - **Find Hub Network extension**
               - Supported
               - Supported
               - Supported
@@ -2415,13 +2415,11 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
-            * - **Find My Device Network extension**
+            * - **Find Hub Network extension**
               - --
               - --
               - --
               - --
-
-.. include:: /includes/fast_pair_fmdn_rename.txt
 
 .. _software_maturity_security_features:
 

@@ -122,7 +122,7 @@ void bt_fast_pair_adv_manager_request(struct bt_fast_pair_adv_manager_trigger *t
  *  to ensure that the advertising data is up to date.
  *
  *  Use with caution, as it updates the Fast Pair advertising payload asynchronously to the RPA
- *  address rotation and to the update of other active advertising sets (for example, the FMDN
+ *  address rotation and to the update of other active advertising sets (for example, the FHN
  *  advertising set).
  */
 void bt_fast_pair_adv_manager_payload_refresh(void);

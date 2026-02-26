@@ -6,6 +6,11 @@
 
 zephyr_library_named(fast_pair_adv_manager)
 
+if(CONFIG_BT_FAST_PAIR_FMDN)
+  zephyr_library_compile_options(
+    -include ${CMAKE_CURRENT_SOURCE_DIR}/../fhn/include_priv/fp_fhn_kconfig_compat.h)
+endif()
+
 zephyr_library_sources(core.c)
 zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG locator_tag.c)
 

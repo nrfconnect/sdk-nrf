@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -200,7 +200,7 @@ static void separated_mode_transition_handle(void)
 	err = sys_csrand_get(&separated_ut_timeout_period_seed,
 			     sizeof(separated_ut_timeout_period_seed));
 	if (err) {
-		LOG_WRN("FMDN State: sys_csrand_get failed: %d", err);
+		LOG_WRN("DULT: sys_csrand_get failed: %d", err);
 
 		sys_rand_get(&separated_ut_timeout_period_seed,
 			     sizeof(separated_ut_timeout_period_seed));

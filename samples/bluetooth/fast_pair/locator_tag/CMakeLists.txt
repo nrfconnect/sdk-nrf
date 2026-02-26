@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2024-2025 Nordic Semiconductor
+# Copyright (c) 2024-2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -23,7 +23,7 @@ if(CONFIG_APP_DFU)
   target_sources(app PRIVATE src/dfu.c)
 endif()
 
-if(NOT CONFIG_BT_FAST_PAIR_FMDN_RING_COMP_NONE)
+if(NOT CONFIG_BT_FAST_PAIR_FHN_RING_COMP_NONE)
   target_sources(app PRIVATE src/ring.c)
 endif()
 
@@ -32,7 +32,7 @@ target_include_directories(app PRIVATE include)
 add_subdirectory(src/ui)
 add_subdirectory(src/battery)
 
-if(CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR)
+if(CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR)
   add_subdirectory(src/motion_detector)
 endif()
 # NORDIC SDK APP END

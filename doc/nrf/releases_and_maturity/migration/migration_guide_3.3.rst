@@ -128,15 +128,74 @@ Google Fast Pair
      .. code-block:: c
 
         /* Old (deprecated) */
+        #include <bluetooth/services/fast_pair/adv_manager.h>
         #include <bluetooth/services/fast_pair/fast_pair.h>
         #include <bluetooth/services/fast_pair/fmdn.h>
         #include <bluetooth/services/fast_pair/uuid.h>
-        #include <bluetooth/services/fast_pair/adv_manager.h>
 
         /* New */
-        #include <bluetooth/fast_pair/fast_pair.h>
-        #include <bluetooth/fast_pair/fmdn.h>
-        #include <bluetooth/fast_pair/uuid.h>
         #include <bluetooth/fast_pair/adv_manager.h>
+        #include <bluetooth/fast_pair/fast_pair.h>
+        #include <bluetooth/fast_pair/fhn/fhn.h>
+        #include <bluetooth/fast_pair/uuid.h>
 
-   * If your project references the Fast Pair source directory directly (for example, in test CMakeLists.txt files), update the path from :file:`subsys/bluetooth/services/fast_pair` to :file:`subsys/bluetooth/fast_pair`.
+     The FMDN API header (:file:`fmdn.h`) has been additionally renamed to FHN (:file:`fhn/fhn.h`).
+     See the next point for details on the FMDN to FHN rename and further migration steps.
+
+     If your project references the Fast Pair source directory directly (for example, in test :file:`CMakeLists.txt` files), update the path from :file:`subsys/bluetooth/services/fast_pair` to :file:`subsys/bluetooth/fast_pair`.
+
+   * The Find My Device Network (FMDN) extension has been renamed to Find Hub Network (FHN), aligning with the updated `Fast Pair Find Hub Network extension`_ specification from Google.
+
+     The API elements have been renamed:
+
+     * Types and functions: from ``bt_fast_pair_fmdn_*`` to ``bt_fast_pair_fhn_*``.
+     * Macros and enum values: from ``BT_FAST_PAIR_FMDN_*`` to ``BT_FAST_PAIR_FHN_*``.
+
+     Update API usage in your application code:
+
+     .. code-block:: c
+
+        /* Old (deprecated) */
+        #include <bluetooth/services/fast_pair/fmdn.h>
+
+        err = bt_fast_pair_fmdn_id_set(bt_id);
+        provisioned = bt_fast_pair_fmdn_is_provisioned();
+
+        /* New */
+        #include <bluetooth/fast_pair/fhn/fhn.h>
+
+        err = bt_fast_pair_fhn_id_set(bt_id);
+        provisioned = bt_fast_pair_fhn_is_provisioned();
+
+     The deprecated FMDN API symbols are still available through the :file:`include/bluetooth/services/fast_pair/fmdn.h` header and will trigger compiler deprecation warnings.
+
+     The Kconfig options have been renamed from ``CONFIG_BT_FAST_PAIR_FMDN_*`` to ``CONFIG_BT_FAST_PAIR_FHN_*``.
+     The deprecated ``CONFIG_BT_FAST_PAIR_FMDN_*`` Kconfig options remain available as a full set of standalone options for backward compatibility.
+     The old and new Kconfig option variants are mutually exclusive and cannot be used together.
+     Using the deprecated options triggers a Kconfig deprecation warning during the build.
+     Update your Kconfig configuration files:
+
+     .. code-block:: none
+
+        # Old (deprecated)
+        CONFIG_BT_FAST_PAIR_FMDN=y
+        CONFIG_BT_FAST_PAIR_FMDN_RING_COMP_ONE=y
+
+        # New
+        CONFIG_BT_FAST_PAIR_FHN=y
+        CONFIG_BT_FAST_PAIR_FHN_RING_COMP_ONE=y
+
+     .. note::
+        If your project configuration relies on the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` Kconfig option, this option currently does not automatically select the new :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN` symbol to maintain backward compatibility.
+        To complete the migration, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN` Kconfig option explicitly in your project configuration (for example, in :file:`prj.conf`) to avoid usage of the deprecated :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` option:
+
+        .. code-block:: none
+
+           # Fast Pair use case configuration
+           # Enable the FHN Kconfig options explicitly to avoid the deprecated FMDN Kconfig options.
+           CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG=y
+           CONFIG_BT_FAST_PAIR_FHN=y
+           CONFIG_BT_FAST_PAIR_FHN_DULT=y
+
+     The FMDN implementation directory has been renamed from :file:`subsys/bluetooth/services/fast_pair/fmdn/` to :file:`subsys/bluetooth/fast_pair/fhn/`.
+     If your project references the FMDN source directory directly (for example, in test :file:`CMakeLists.txt` files), update the path from :file:`subsys/bluetooth/fast_pair/fmdn` to :file:`subsys/bluetooth/fast_pair/fhn`.

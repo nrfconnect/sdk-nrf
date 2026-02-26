@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 /**
- * @defgroup fmdn_sample_ui Locator Tag sample UI module private
+ * @defgroup fhn_sample_ui Locator Tag sample UI module private
  * @brief Locator Tag sample UI module private API
  *
  * @{

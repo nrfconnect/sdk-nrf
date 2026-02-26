@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -13,9 +13,9 @@
 #include "app_ui_priv.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 
-/* Minimum button hold time in milliseconds to trigger the FMDN recovery mode. */
+/* Minimum button hold time in milliseconds to trigger the FHN recovery mode. */
 #define RECOVERY_MODE_BTN_MIN_HOLD_TIME_MS	3000
 
 /* Minimum button hold time in milliseconds to trigger the DFU mode. */

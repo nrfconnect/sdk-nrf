@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _FP_FMDN_READ_MODE_H_
-#define _FP_FMDN_READ_MODE_H_
+#ifndef _FP_FHN_READ_MODE_H_
+#define _FP_FHN_READ_MODE_H_
 
 #include <stdint.h>
 
 /**
- * @defgroup fp_fmdn_read_mode Fast Pair FMDN read mode
- * @brief Internal API for Fast Pair FMDN read mode
+ * @defgroup fp_fhn_read_mode Fast Pair FHN read mode
+ * @brief Internal API for Fast Pair FHN read mode
  *
  * @{
  */
@@ -27,7 +27,7 @@ extern "C" {
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_read_mode_recovery_mode_request(bool *accepted);
+int fp_fhn_read_mode_recovery_mode_request(bool *accepted);
 
 #ifdef __cplusplus
 }
@@ -37,4 +37,4 @@ int fp_fmdn_read_mode_recovery_mode_request(bool *accepted);
  * @}
  */
 
-#endif /* _FP_FMDN_READ_MODE_H_ */
+#endif /* _FP_FHN_READ_MODE_H_ */

@@ -8,26 +8,26 @@
 #include <zephyr/sys/slist.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(fp_fmdn_callbacks, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
+LOG_MODULE_REGISTER(fp_fhn_callbacks, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 #include <bluetooth/fast_pair/fast_pair.h>
-#include <bluetooth/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fhn/fhn.h>
 
-static sys_slist_t fmdn_info_cb_slist = SYS_SLIST_STATIC_INIT(&fmdn_info_cb_slist);
-static sys_slist_t fmdn_info_cb_internal_slist =
-	SYS_SLIST_STATIC_INIT(&fmdn_info_cb_internal_slist);
+static sys_slist_t fhn_info_cb_slist = SYS_SLIST_STATIC_INIT(&fhn_info_cb_slist);
+static sys_slist_t fhn_info_cb_internal_slist =
+	SYS_SLIST_STATIC_INIT(&fhn_info_cb_internal_slist);
 
-void fp_fmdn_callbacks_clock_synced_notify(void)
+void fp_fhn_callbacks_clock_synced_notify(void)
 {
 	sys_slist_t *slists[] = {
-		&fmdn_info_cb_internal_slist,
-		&fmdn_info_cb_slist
+		&fhn_info_cb_internal_slist,
+		&fhn_info_cb_slist
 	};
 
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
 	for (size_t i = 0; i < ARRAY_SIZE(slists); i++) {
-		struct bt_fast_pair_fmdn_info_cb *listener;
+		struct bt_fast_pair_fhn_info_cb *listener;
 
 		SYS_SLIST_FOR_EACH_CONTAINER(slists[i], listener, node) {
 			if (listener->clock_synced) {
@@ -37,17 +37,17 @@ void fp_fmdn_callbacks_clock_synced_notify(void)
 	}
 }
 
-void fp_fmdn_callbacks_conn_authenticated_notify(struct bt_conn *conn)
+void fp_fhn_callbacks_conn_authenticated_notify(struct bt_conn *conn)
 {
 	sys_slist_t *slists[] = {
-		&fmdn_info_cb_internal_slist,
-		&fmdn_info_cb_slist
+		&fhn_info_cb_internal_slist,
+		&fhn_info_cb_slist
 	};
 
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
 	for (size_t i = 0; i < ARRAY_SIZE(slists); i++) {
-		struct bt_fast_pair_fmdn_info_cb *listener;
+		struct bt_fast_pair_fhn_info_cb *listener;
 
 		SYS_SLIST_FOR_EACH_CONTAINER(slists[i], listener, node) {
 			if (listener->conn_authenticated) {
@@ -57,17 +57,17 @@ void fp_fmdn_callbacks_conn_authenticated_notify(struct bt_conn *conn)
 	}
 }
 
-void fp_fmdn_callbacks_provisioning_state_changed_notify(bool provisioned)
+void fp_fhn_callbacks_provisioning_state_changed_notify(bool provisioned)
 {
 	sys_slist_t *slists[] = {
-		&fmdn_info_cb_internal_slist,
-		&fmdn_info_cb_slist
+		&fhn_info_cb_internal_slist,
+		&fhn_info_cb_slist
 	};
 
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
 	for (size_t i = 0; i < ARRAY_SIZE(slists); i++) {
-		struct bt_fast_pair_fmdn_info_cb *listener;
+		struct bt_fast_pair_fhn_info_cb *listener;
 
 		SYS_SLIST_FOR_EACH_CONTAINER(slists[i], listener, node) {
 			if (listener->provisioning_state_changed) {
@@ -77,7 +77,7 @@ void fp_fmdn_callbacks_provisioning_state_changed_notify(bool provisioned)
 	}
 }
 
-static int cb_register(sys_slist_t *slist, struct bt_fast_pair_fmdn_info_cb *cb)
+static int cb_register(sys_slist_t *slist, struct bt_fast_pair_fhn_info_cb *cb)
 {
 	if (bt_fast_pair_is_ready()) {
 		return -EOPNOTSUPP;
@@ -100,12 +100,12 @@ static int cb_register(sys_slist_t *slist, struct bt_fast_pair_fmdn_info_cb *cb)
 	return 0;
 }
 
-int fp_fmdn_callbacks_info_cb_register(struct bt_fast_pair_fmdn_info_cb *cb)
+int fp_fhn_callbacks_info_cb_register(struct bt_fast_pair_fhn_info_cb *cb)
 {
-	return cb_register(&fmdn_info_cb_internal_slist, cb);
+	return cb_register(&fhn_info_cb_internal_slist, cb);
 }
 
-int bt_fast_pair_fmdn_info_cb_register(struct bt_fast_pair_fmdn_info_cb *cb)
+int bt_fast_pair_fhn_info_cb_register(struct bt_fast_pair_fhn_info_cb *cb)
 {
-	return cb_register(&fmdn_info_cb_slist, cb);
+	return cb_register(&fhn_info_cb_slist, cb);
 }

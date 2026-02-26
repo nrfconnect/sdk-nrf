@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,7 +10,7 @@
 #include <zephyr/kernel.h>
 
 /**
- * @defgroup fmdn_sample_factory_reset Locator Tag sample factory reset module
+ * @defgroup fhn_sample_factory_reset Locator Tag sample factory reset module
  * @brief Locator Tag sample factory reset module
  *
  * @{

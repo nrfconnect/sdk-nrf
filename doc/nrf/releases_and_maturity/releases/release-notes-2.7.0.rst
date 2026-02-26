@@ -51,7 +51,7 @@ Added the following features as supported:
 
 * Other:
 
-  * Google Find My Device that allows the creation of a locator device that is compatible with the Android `Find My Device app`_.
+  * Google Find My Device that allows the creation of a locator device that is compatible with the Android Find My Device app.
     This feature is showcased in the :ref:`fast_pair_locator_tag` sample.
   * Hardware model v2 (HWMv2), an improved extensible system for defining boards.
     This is the default boards definition system from this |NCS| release and onwards.

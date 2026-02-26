@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _FP_FMDN_STATE_H_
-#define _FP_FMDN_STATE_H_
+#ifndef _FP_FHN_STATE_H_
+#define _FP_FHN_STATE_H_
 
 #include <stdint.h>
 #include <stddef.h>
 
-#include <bluetooth/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fhn/fhn.h>
 
 /**
- * @defgroup fp_fmdn_state Fast Pair FMDN state
- * @brief Internal API for Fast Pair FMDN state
+ * @defgroup fp_fhn_state Fast Pair FHN state
+ * @brief Internal API for Fast Pair FHN state
  *
  * @{
  */
@@ -24,9 +24,9 @@ extern "C" {
 #endif
 
 /* Length in bytes of the Ephemeral Identifier (EID). */
-#define FP_FMDN_STATE_EID_LEN CONFIG_BT_FAST_PAIR_FMDN_ECC_LEN
+#define FP_FHN_STATE_EID_LEN CONFIG_BT_FAST_PAIR_FHN_ECC_LEN
 /* Length in bytes of the Ephemeral Identity Key (EIK). */
-#define FP_FMDN_STATE_EIK_LEN 32
+#define FP_FHN_STATE_EIK_LEN 32
 
 /** Read the currently used Ephemeral Identifier.
  *
@@ -37,7 +37,7 @@ extern "C" {
 
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_state_eid_read(uint8_t *eid);
+int fp_fhn_state_eid_read(uint8_t *eid);
 
 /** Read the currently provisioned Ephemeral Identity Key (EIK).
  *
@@ -48,24 +48,24 @@ int fp_fmdn_state_eid_read(uint8_t *eid);
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_state_eik_read(uint8_t *eik);
+int fp_fhn_state_eik_read(uint8_t *eik);
 
 /** Encode the Elliptic Curve type configuration.
- *  The configuration is encoded as required by the FMDN Accessory specification.
+ *  The configuration is encoded as required by the FHN Accessory specification.
  *
  * @return Byte with an encoded information about the Elliptic Curve type.
  */
-uint8_t fp_fmdn_state_ecc_type_encode(void);
+uint8_t fp_fhn_state_ecc_type_encode(void);
 
 /** Encode the TX power configuration in dBm.
- *  The TX power is encoded as required by the FMDN Accessory specification.
+ *  The TX power is encoded as required by the FHN Accessory specification.
  *  The return value is a sum of TX power readout from the Bluetooth controller
  *  and the TX power correction value defined in Kconfig:
- *  CONFIG_BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL.
+ *  CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL.
  *
  * @return Byte with information about the TX power, encoded as a signed integer.
  */
-int8_t fp_fmdn_state_tx_power_encode(void);
+int8_t fp_fhn_state_tx_power_encode(void);
 
 /** Provision or unprovision the beacon with the Ephemeral Identity Key (EIK).
  *
@@ -76,7 +76,7 @@ int8_t fp_fmdn_state_tx_power_encode(void);
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_state_eik_provision(const uint8_t *eik);
+int fp_fhn_state_eik_provision(const uint8_t *eik);
 
 /** Activate the Unwanted Tracking Protection (UTP) mode.
  *
@@ -84,19 +84,19 @@ int fp_fmdn_state_eik_provision(const uint8_t *eik);
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_state_utp_mode_activate(uint8_t control_flags);
+int fp_fhn_state_utp_mode_activate(uint8_t control_flags);
 
 /** Deactivate the Unwanted Tracking Protection (UTP) mode.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_state_utp_mode_deactivate(void);
+int fp_fhn_state_utp_mode_deactivate(void);
 
 /** Check if the beacon should skip the authentication step for the ringing request.
  *
  * @return True if the ringing request shouldn't be authenticated, False Otherwise.
  */
-bool fp_fmdn_state_utp_mode_ring_auth_skip(void);
+bool fp_fhn_state_utp_mode_ring_auth_skip(void);
 
 #ifdef __cplusplus
 }
@@ -106,4 +106,4 @@ bool fp_fmdn_state_utp_mode_ring_auth_skip(void);
  * @}
  */
 
-#endif /* _FP_FMDN_STATE_H_ */
+#endif /* _FP_FHN_STATE_H_ */

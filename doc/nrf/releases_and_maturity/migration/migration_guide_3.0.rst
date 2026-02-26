@@ -465,7 +465,7 @@ Google Fast Pair
    * If your Fast Pair application uses the Find My Device (FMD) extension, you must update your application code to correctly track the FMDN provisioning state.
      From this |NCS| release, you must not rely on the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback to report the initial provisioning state right after the Fast Pair module is enabled with the :c:func:`bt_fast_pair_enable` function call.
      Instead, you must use the :c:func:`bt_fast_pair_fmdn_is_provisioned` function to initialize the FMDN provisioning state right after the :c:func:`bt_fast_pair_enable` function call.
-     For more details, see the :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_provisioning_state` section in the Fast Pair integration guide.
+     For more details, see the :ref:`ug_bt_fast_pair_gatt_service_fhn_info_callbacks_provisioning_state` section in the Fast Pair integration guide.
 
 nRF Cloud library
 -----------------

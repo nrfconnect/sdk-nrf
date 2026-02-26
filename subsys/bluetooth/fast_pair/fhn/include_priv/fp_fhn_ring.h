@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _FP_FMDN_RING_H_
-#define _FP_FMDN_RING_H_
+#ifndef _FP_FHN_RING_H_
+#define _FP_FHN_RING_H_
 
 #include <stdint.h>
 #include <stddef.h>
 
-#include <bluetooth/fast_pair/fmdn.h>
+#include <bluetooth/fast_pair/fhn/fhn.h>
 
 /**
- * @defgroup fp_fmdn_ring Fast Pair FMDN Ring module
- * @brief Internal API for Fast Pair FMDN Ring module
+ * @defgroup fp_fhn_ring Fast Pair FHN Ring module
+ * @brief Internal API for Fast Pair FHN Ring module
  *
  * @{
  */
@@ -28,27 +28,27 @@ extern "C" {
  *
  * @return Encoded number of ringing components (0-3).
  */
-uint8_t fp_fmdn_ring_comp_num_encode(void);
+uint8_t fp_fhn_ring_comp_num_encode(void);
 
 /** Encode the ringing capabilities that are defined via Kconfig at the build time.
  *  The capabilities are encoded as required by the Beacon Parameters Read request.
  *
  * @return Encoded ringing capabilities.
  */
-uint8_t fp_fmdn_ring_cap_encode(void);
+uint8_t fp_fhn_ring_cap_encode(void);
 
 /** Get the bitmask with the active ringing components as specified by the application.
  *  The bitmask is automatically cleared on the disable operation of the extension.
  *
- * @return Bitmask with the active ringing components (see @ref bt_fast_pair_fmdn_ring_comp).
+ * @return Bitmask with the active ringing components (see @ref bt_fast_pair_fhn_ring_comp).
  */
-uint8_t fp_fmdn_ring_active_comp_bm_get(void);
+uint8_t fp_fhn_ring_active_comp_bm_get(void);
 
 /** Get the remaining timeout value for ongoing ringing action.
  *
  * @return Remaining timeout in deciseconds.
  */
-uint16_t fp_fmdn_ring_timeout_get(void);
+uint16_t fp_fhn_ring_timeout_get(void);
 
 /** Check if the number of available ringing components matches the requested bitmask.
  *
@@ -58,7 +58,7 @@ uint16_t fp_fmdn_ring_timeout_get(void);
  *               to the number of requested components in the target ringing bitmask.
  *         False Otherwise.
  */
-bool fp_fmdn_ring_is_active_comp_bm_supported(uint8_t active_comp_bm);
+bool fp_fhn_ring_is_active_comp_bm_supported(uint8_t active_comp_bm);
 
 /** Set the ringing state.
  *
@@ -67,9 +67,9 @@ bool fp_fmdn_ring_is_active_comp_bm_supported(uint8_t active_comp_bm);
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_ring_state_param_set(
-	enum bt_fast_pair_fmdn_ring_src src,
-	const struct bt_fast_pair_fmdn_ring_state_param *param);
+int fp_fhn_ring_state_param_set(
+	enum bt_fast_pair_fhn_ring_src src,
+	const struct bt_fast_pair_fhn_ring_state_param *param);
 
 /** Handle the parameters of the ringing request.
  *
@@ -78,9 +78,9 @@ int fp_fmdn_ring_state_param_set(
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_ring_req_handle(
-	enum bt_fast_pair_fmdn_ring_src src,
-	const struct bt_fast_pair_fmdn_ring_req_param *param);
+int fp_fhn_ring_req_handle(
+	enum bt_fast_pair_fhn_ring_src src,
+	const struct bt_fast_pair_fhn_ring_req_param *param);
 
 #ifdef __cplusplus
 }
@@ -90,4 +90,4 @@ int fp_fmdn_ring_req_handle(
  * @}
  */
 
-#endif /* _FP_FMDN_RING_H_ */
+#endif /* _FP_FHN_RING_H_ */

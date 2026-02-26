@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _FP_FMDN_AUTH_H_
-#define _FP_FMDN_AUTH_H_
+#ifndef _FP_FHN_AUTH_H_
+#define _FP_FHN_AUTH_H_
 
 #include <stdint.h>
 #include <stddef.h>
 
 /**
- * @defgroup fp_fmdn_auth Fast Pair FMDN Authentication
- * @brief Internal API for Fast Pair FMDN Authentication
+ * @defgroup fp_fhn_auth Fast Pair FHN Authentication
+ * @brief Internal API for Fast Pair FHN Authentication
  *
  * @{
  */
@@ -25,25 +25,25 @@ extern "C" {
 #include <zephyr/types.h>
 
 /* Length in bytes of the authentication segment. */
-#define FP_FMDN_AUTH_SEG_LEN (CONFIG_BT_FAST_PAIR_FMDN_AUTH_SEG_LEN)
+#define FP_FHN_AUTH_SEG_LEN (CONFIG_BT_FAST_PAIR_FHN_AUTH_SEG_LEN)
 
 /* Length in bytes of the Recovery Key. */
-#define FP_FMDN_AUTH_KEY_RECOVERY_LEN (8U)
+#define FP_FHN_AUTH_KEY_RECOVERY_LEN (8U)
 /* Length in bytes of the Ring Key. */
-#define FP_FMDN_AUTH_KEY_RING_LEN (8U)
+#define FP_FHN_AUTH_KEY_RING_LEN (8U)
 /* Length in bytes of the Unwanted Tracking Protection (UTP) Key. */
-#define FP_FMDN_AUTH_KEY_UTP_LEN (8U)
+#define FP_FHN_AUTH_KEY_UTP_LEN (8U)
 
 /** Authentication key types */
-enum fp_fmdn_auth_key_type {
+enum fp_fhn_auth_key_type {
 	/* Recovery Key type */
-	FP_FMDN_AUTH_KEY_TYPE_RECOVERY,
+	FP_FHN_AUTH_KEY_TYPE_RECOVERY,
 
 	/* Ring Key type */
-	FP_FMDN_AUTH_KEY_TYPE_RING,
+	FP_FHN_AUTH_KEY_TYPE_RING,
 
 	/* Unwanted Tracking Protection (UTP) Key type */
-	FP_FMDN_AUTH_KEY_TYPE_UTP,
+	FP_FHN_AUTH_KEY_TYPE_UTP,
 };
 
 /** Generate the Authentication Key which is used to create authentication segments.
@@ -55,12 +55,12 @@ enum fp_fmdn_auth_key_type {
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_auth_key_generate(enum fp_fmdn_auth_key_type key_type,
+int fp_fhn_auth_key_generate(enum fp_fhn_auth_key_type key_type,
 			      uint8_t *auth_key,
 			      size_t auth_key_len);
 
 /** Authentication seed data */
-struct fp_fmdn_auth_data {
+struct fp_fhn_auth_data {
 	/** Random Nonce */
 	const uint8_t *random_nonce;
 
@@ -86,16 +86,16 @@ struct fp_fmdn_auth_data {
  *
  * @return True if the authentication segment is correct, False Otherwise.
  */
-bool fp_fmdn_auth_seg_validate(const uint8_t *key,
+bool fp_fhn_auth_seg_validate(const uint8_t *key,
 			       size_t key_len,
-			       const struct fp_fmdn_auth_data *auth_data,
-			       const uint8_t auth_seg[FP_FMDN_AUTH_SEG_LEN]);
+			       const struct fp_fhn_auth_data *auth_data,
+			       const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN]);
 
 /** Generate the local authentication segment from the Authentication Key
  *  and the authentication seed data. This segment is used by the remote peer
  *  to authenticate the local peer. The authentication seed is extended by one
  *  byte with a fixed value to make it different from the seed used by the
- *  @ref fp_fmdn_auth_seg_validate.
+ *  @ref fp_fhn_auth_seg_validate.
  *
  * @param[in]  key       The Authentication Key.
  * @param[in]  key_len   Length of the Authentication Key.
@@ -104,10 +104,10 @@ bool fp_fmdn_auth_seg_validate(const uint8_t *key,
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_auth_seg_generate(const uint8_t *key,
+int fp_fhn_auth_seg_generate(const uint8_t *key,
 			      size_t key_len,
-			      struct fp_fmdn_auth_data *auth_data,
-			      uint8_t auth_seg[FP_FMDN_AUTH_SEG_LEN]);
+			      struct fp_fhn_auth_data *auth_data,
+			      uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN]);
 
 /** Find the Account Key that matches the remote authentication segment.
  *  This function generates the local authentication segment from the
@@ -121,8 +121,8 @@ int fp_fmdn_auth_seg_generate(const uint8_t *key,
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_fmdn_auth_account_key_find(const struct fp_fmdn_auth_data *auth_data,
-				  const uint8_t auth_seg[FP_FMDN_AUTH_SEG_LEN],
+int fp_fhn_auth_account_key_find(const struct fp_fhn_auth_data *auth_data,
+				  const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN],
 				  struct fp_account_key *account_key);
 
 #ifdef __cplusplus
@@ -133,4 +133,4 @@ int fp_fmdn_auth_account_key_find(const struct fp_fmdn_auth_data *auth_data,
  * @}
  */
 
-#endif /* _FP_FMDN_AUTH_H_ */
+#endif /* _FP_FHN_AUTH_H_ */

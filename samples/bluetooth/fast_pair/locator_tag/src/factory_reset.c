@@ -14,7 +14,7 @@
 #include "app_ui.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_INF);
+LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_INF);
 
 /** Factory reset state. */
 enum app_factory_reset_state {
@@ -122,7 +122,7 @@ static void factory_reset_perform(void)
 	}
 
 	/* Perform a reset to Factory Settings. This operation will erase
-	 * Fast Pair non-volatile data and FMDN specific non-volatile data.
+	 * Fast Pair non-volatile data and FHN specific non-volatile data.
 	 */
 	err = bt_fast_pair_factory_reset();
 	if (err) {

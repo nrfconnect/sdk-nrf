@@ -10,8 +10,8 @@
 #include <sys/types.h>
 
 /**
- * @defgroup fp_storage_clock Fast Pair Beacon Clock storage for the FMDN extension
- * @brief Internal API of Fast Pair Beacon Clock storage for the FMDN extension
+ * @defgroup fp_storage_clock Fast Pair Beacon Clock storage for the FHN extension
+ * @brief Internal API of Fast Pair Beacon Clock storage for the FHN extension
  *
  * The module must be initialized before using API functions.
  *

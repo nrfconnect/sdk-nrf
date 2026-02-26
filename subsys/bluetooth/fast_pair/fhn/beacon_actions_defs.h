@@ -15,10 +15,10 @@
 const struct {} beacon_actions_defs_include_once;
 
 /* Byte length of fields in data frames exchanged by the Beacon Actions characteristic. */
-#define BEACON_ACTIONS_RANDOM_NONCE_LEN      CONFIG_BT_FAST_PAIR_FMDN_RANDOM_NONCE_LEN
+#define BEACON_ACTIONS_RANDOM_NONCE_LEN      CONFIG_BT_FAST_PAIR_FHN_RANDOM_NONCE_LEN
 #define BEACON_ACTIONS_DATA_ID_LEN           1
 #define BEACON_ACTIONS_DATA_LENGTH_LEN       1
-#define BEACON_ACTIONS_ONE_TIME_AUTH_KEY_LEN CONFIG_BT_FAST_PAIR_FMDN_AUTH_SEG_LEN
+#define BEACON_ACTIONS_ONE_TIME_AUTH_KEY_LEN CONFIG_BT_FAST_PAIR_FHN_AUTH_SEG_LEN
 #define BEACON_ACTIONS_HEADER_LEN       \
 	(BEACON_ACTIONS_DATA_ID_LEN +   \
 	BEACON_ACTIONS_DATA_LENGTH_LEN)
@@ -31,7 +31,7 @@ const struct {} beacon_actions_defs_include_once;
 	BEACON_ACTIONS_RANDOM_NONCE_LEN)
 
 /* Byte length of fields in the Beacon Actions response. */
-#define BEACON_ACTIONS_RSP_AUTH_SEG_LEN CONFIG_BT_FAST_PAIR_FMDN_AUTH_SEG_LEN
+#define BEACON_ACTIONS_RSP_AUTH_SEG_LEN CONFIG_BT_FAST_PAIR_FHN_AUTH_SEG_LEN
 
 /* Byte length of fields in the Beacon Parameters request. */
 #define BEACON_PARAMETERS_REQ_PAYLOAD_LEN BEACON_ACTIONS_ONE_TIME_AUTH_KEY_LEN
@@ -65,7 +65,7 @@ const struct {} beacon_actions_defs_include_once;
 
 /* Byte length of fields in the Provisioning State response. */
 #define PROVISIONING_STATE_RSP_BITFIELD_LEN 1
-#define PROVISIONING_STATE_RSP_EID_LEN      FP_FMDN_STATE_EID_LEN
+#define PROVISIONING_STATE_RSP_EID_LEN      FP_FHN_STATE_EID_LEN
 #define PROVISIONING_STATE_RSP_ADD_DATA_LEN    \
 	(PROVISIONING_STATE_RSP_BITFIELD_LEN + \
 	PROVISIONING_STATE_RSP_EID_LEN)

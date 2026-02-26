@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -14,7 +14,7 @@
 #include "app_ui_speaker_priv.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 
 /* Speaker beep timings. */
 #define SPEAKER_BEEP_SHORT_ON_MS		20
@@ -346,7 +346,7 @@ int app_ui_state_change_indicate(enum app_ui_state state, bool active)
 
 	if (state == APP_UI_STATE_RINGING) {
 		/* If there is any button action in progress, then send ringing stop request.
-		 * A slight delay has been added as there is an issue with the FMD app that
+		 * A slight delay has been added as there is an issue with the Find Hub app that
 		 * does not register sound completion after a very short (close to zero) timeout.
 		 */
 		if (active && (btn_idx != -1)) {

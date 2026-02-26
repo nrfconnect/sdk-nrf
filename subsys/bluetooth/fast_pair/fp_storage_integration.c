@@ -24,7 +24,7 @@ int bt_fast_pair_factory_reset(void)
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
-	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN) && bt_fast_pair_is_ready()) {
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN) && bt_fast_pair_is_ready()) {
 		return -EOPNOTSUPP;
 	}
 

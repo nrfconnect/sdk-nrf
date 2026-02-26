@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 /**
- * @defgroup fmdn_sample_ring Locator Tag sample ringing module
+ * @defgroup fhn_sample_ring Locator Tag sample ringing module
  * @brief Locator Tag sample ringing module
  *
  * @{

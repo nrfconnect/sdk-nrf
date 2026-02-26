@@ -1069,7 +1069,7 @@ Bluetooth libraries and services
       For details, see the NCSDK-32268 known issue in the :ref:`known_issues` page.
     * A new function :c:func:`bt_fast_pair_fmdn_is_provisioned` for the FMDN extension API.
       This function can be used to synchronously check the current FMDN provisioning state.
-      For more details, see the :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_provisioning_state` section in the Fast Pair integration guide.
+      For more details, see the :ref:`ug_bt_fast_pair_gatt_service_fhn_info_callbacks_provisioning_state` section in the Fast Pair integration guide.
 
   * Updated:
 
@@ -1081,7 +1081,7 @@ Bluetooth libraries and services
     * The automatically generated ``bt_fast_pair`` partition definition (in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file) to work correctly when building with TF-M.
     * The behavior of the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
       The callback no longer reports the initial provisioning state after the Fast Pair subsystem is enabled with the :c:func:`bt_fast_pair_enable` function call.
-      See the :ref:`migration guide <migration_3.0_recommended>` for mandatory changes and the :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_provisioning_state` section in the Fast Pair integration guide for the description on how to track the FMDN provisioning state with the new approach.
+      See the :ref:`migration guide <migration_3.0_recommended>` for mandatory changes and the :ref:`ug_bt_fast_pair_gatt_service_fhn_info_callbacks_provisioning_state` section in the Fast Pair integration guide for the description on how to track the FMDN provisioning state with the new approach.
 
   * Removed the sysbuild control over the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option that is defined in the main (default) image.
     Sysbuild no longer sets the value of this Kconfig option.
@@ -1308,7 +1308,7 @@ Google Fast Pair integration
 
   * The :ref:`ug_bt_fast_pair_provisioning_register_hex_generation` section that describes how to generate the hex file with the Fast Pair provisioning data.
   * The :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section to align it with recent changes in the sysbuild configuration for Fast Pair.
-  * The :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_provisioning_state` section with changes to the FMDN API elements that are used for tracking of the FMDN provisioning state.
+  * The :ref:`ug_bt_fast_pair_gatt_service_fhn_info_callbacks_provisioning_state` section with changes to the FMDN API elements that are used for tracking of the FMDN provisioning state.
 
 Memfault integration
 --------------------

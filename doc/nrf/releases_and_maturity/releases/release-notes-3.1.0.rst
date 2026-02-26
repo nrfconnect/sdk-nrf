@@ -22,7 +22,10 @@ Added the following features as supported:
 
   * Find My Network (FMN) and Find My Device Network (FMDN) support for nRF54L05 and nRF54L10 updated from :ref:`experimental <software_maturity>`, including dual network samples.
 
-    .. include:: /includes/fast_pair_fmdn_rename.txt
+    .. note::
+       The Find My Device Network (FMDN) extension has been renamed to the Find Hub Network (FHN) extension, and the Find My Device app is now called the `Find Hub app`_.
+       However, this documentation page still uses the previous terminology.
+       The naming will be updated in the future releases.
 
   * Bootloader and Device Firmware Update (DFU):
 

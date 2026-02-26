@@ -6,21 +6,21 @@
 
 #include <stdbool.h>
 #include "fp_crypto.h"
-#include "fp_fmdn_auth.h"
-#include "fp_fmdn_state.h"
+#include "fp_fhn_auth.h"
+#include "fp_fhn_state.h"
 #include "fp_storage_ak.h"
 
 #include <zephyr/net_buf.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(fp_fmdn_auth, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
+LOG_MODULE_REGISTER(fp_fhn_auth, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 #define AUTH_DATA_BUF_LEN      (100U)
 #define AUTH_DATA_RSP_END_BYTE (0x01)
 
 #define EIK_DERIVED_KEY_SEED_END_BYTE_LEN (1U)
 #define EIK_DERIVED_KEY_SEED_BUF_LEN \
-	(FP_FMDN_STATE_EIK_LEN + EIK_DERIVED_KEY_SEED_END_BYTE_LEN)
+	(FP_FHN_STATE_EIK_LEN + EIK_DERIVED_KEY_SEED_END_BYTE_LEN)
 
 struct account_key_find_context {
 	struct net_buf_simple *auth_data_buf;
@@ -46,7 +46,7 @@ static bool auth_seg_compare(const struct net_buf_simple *auth_data_buf,
 		return false;
 	}
 
-	return !memcmp(local_auth_seg, auth_seg, FP_FMDN_AUTH_SEG_LEN);
+	return !memcmp(local_auth_seg, auth_seg, FP_FHN_AUTH_SEG_LEN);
 }
 
 static bool account_key_find_iterator(const struct fp_account_key *account_key, void *context)
@@ -60,31 +60,31 @@ static bool account_key_find_iterator(const struct fp_account_key *account_key, 
 }
 
 static void auth_data_encode(struct net_buf_simple *auth_data_buf,
-			     const struct fp_fmdn_auth_data *auth_data)
+			     const struct fp_fhn_auth_data *auth_data)
 {
-	__ASSERT(auth_data->data_len >= FP_FMDN_AUTH_SEG_LEN,
+	__ASSERT(auth_data->data_len >= FP_FHN_AUTH_SEG_LEN,
 		"Authentication: incorrect Data Length parameter");
 
 	/* Prepare Authentication data input for HMAC-SHA256 operation:
 	 * (Protocol Major Version || random_nonce || Data ID || Data length ||
 	 * Additional data).
 	 */
-	net_buf_simple_add_u8(auth_data_buf, CONFIG_BT_FAST_PAIR_FMDN_VERSION_MAJOR);
+	net_buf_simple_add_u8(auth_data_buf, CONFIG_BT_FAST_PAIR_FHN_VERSION_MAJOR);
 	net_buf_simple_add_mem(auth_data_buf,
 			       auth_data->random_nonce,
-			       CONFIG_BT_FAST_PAIR_FMDN_RANDOM_NONCE_LEN);
+			       CONFIG_BT_FAST_PAIR_FHN_RANDOM_NONCE_LEN);
 	net_buf_simple_add_u8(auth_data_buf, auth_data->data_id);
 	net_buf_simple_add_u8(auth_data_buf, auth_data->data_len);
 
 	if (auth_data->add_data) {
 		net_buf_simple_add_mem(auth_data_buf,
 				       auth_data->add_data,
-				       (auth_data->data_len - FP_FMDN_AUTH_SEG_LEN));
+				       (auth_data->data_len - FP_FHN_AUTH_SEG_LEN));
 	}
 }
 
 static void auth_data_rsp_encode(struct net_buf_simple *auth_data_buf,
-				 const struct fp_fmdn_auth_data *auth_data)
+				 const struct fp_fhn_auth_data *auth_data)
 {
 	auth_data_encode(auth_data_buf, auth_data);
 
@@ -106,13 +106,13 @@ static int eik_derived_auth_key_generate(uint8_t seed_end_byte,
 	/* Calculate the EIK Derived Key as the first 8 bytes of the following operation:
 	 * SHA256(Ephemeral Identity Key || seed end byte)
 	 */
-	eik = net_buf_simple_add(&eik_derived_key_seed_buf, FP_FMDN_STATE_EIK_LEN);
+	eik = net_buf_simple_add(&eik_derived_key_seed_buf, FP_FHN_STATE_EIK_LEN);
 	net_buf_simple_add_u8(&eik_derived_key_seed_buf, seed_end_byte);
 
 	__ASSERT(eik_derived_key_seed_buf.len == EIK_DERIVED_KEY_SEED_BUF_LEN,
 		"Authentication: key generation: incorrect seed buf length");
 
-	err = fp_fmdn_state_eik_read(eik);
+	err = fp_fhn_state_eik_read(eik);
 	if (err) {
 		LOG_ERR("Authentication: key generation: EIK read failed: %d", err);
 
@@ -133,7 +133,7 @@ static int eik_derived_auth_key_generate(uint8_t seed_end_byte,
 	return 0;
 }
 
-int fp_fmdn_auth_key_generate(enum fp_fmdn_auth_key_type key_type,
+int fp_fhn_auth_key_generate(enum fp_fhn_auth_key_type key_type,
 			      uint8_t *auth_key,
 			      size_t auth_key_len)
 {
@@ -146,13 +146,13 @@ int fp_fmdn_auth_key_generate(enum fp_fmdn_auth_key_type key_type,
 	};
 
 	switch (key_type) {
-	case FP_FMDN_AUTH_KEY_TYPE_RECOVERY:
+	case FP_FHN_AUTH_KEY_TYPE_RECOVERY:
 		seed_end_byte = KEY_SEED_END_BYTE_RECOVERY;
 		break;
-	case FP_FMDN_AUTH_KEY_TYPE_RING:
+	case FP_FHN_AUTH_KEY_TYPE_RING:
 		seed_end_byte = KEY_SEED_END_BYTE_RING;
 		break;
-	case FP_FMDN_AUTH_KEY_TYPE_UTP:
+	case FP_FHN_AUTH_KEY_TYPE_UTP:
 		seed_end_byte = KEY_SEED_END_BYTE_UTP;
 		break;
 	default:
@@ -168,9 +168,9 @@ int fp_fmdn_auth_key_generate(enum fp_fmdn_auth_key_type key_type,
 	return 0;
 }
 
-bool fp_fmdn_auth_seg_validate(const uint8_t *key, size_t key_len,
-			       const struct fp_fmdn_auth_data *auth_data,
-			       const uint8_t auth_seg[FP_FMDN_AUTH_SEG_LEN])
+bool fp_fhn_auth_seg_validate(const uint8_t *key, size_t key_len,
+			       const struct fp_fhn_auth_data *auth_data,
+			       const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN])
 {
 	NET_BUF_SIMPLE_DEFINE(auth_data_buf, AUTH_DATA_BUF_LEN);
 
@@ -180,9 +180,9 @@ bool fp_fmdn_auth_seg_validate(const uint8_t *key, size_t key_len,
 	return auth_seg_compare(&auth_data_buf, key, key_len, auth_seg);
 }
 
-int fp_fmdn_auth_seg_generate(const uint8_t *key, size_t key_len,
-			      struct fp_fmdn_auth_data *auth_data,
-			      uint8_t auth_seg[FP_FMDN_AUTH_SEG_LEN])
+int fp_fhn_auth_seg_generate(const uint8_t *key, size_t key_len,
+			      struct fp_fhn_auth_data *auth_data,
+			      uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN])
 {
 	int err;
 	uint8_t local_auth_seg[FP_CRYPTO_SHA256_HASH_LEN];
@@ -206,13 +206,13 @@ int fp_fmdn_auth_seg_generate(const uint8_t *key, size_t key_len,
 	}
 
 	/* Copy the first 8 bytes to the destination buffer. */
-	memcpy(auth_seg, local_auth_seg, FP_FMDN_AUTH_SEG_LEN);
+	memcpy(auth_seg, local_auth_seg, FP_FHN_AUTH_SEG_LEN);
 
 	return 0;
 }
 
-int fp_fmdn_auth_account_key_find(const struct fp_fmdn_auth_data *auth_data,
-				  const uint8_t auth_seg[FP_FMDN_AUTH_SEG_LEN],
+int fp_fhn_auth_account_key_find(const struct fp_fhn_auth_data *auth_data,
+				  const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN],
 				  struct fp_account_key *account_key)
 {
 	int err;
