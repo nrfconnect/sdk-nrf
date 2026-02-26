@@ -280,7 +280,7 @@ void bl_boot(const struct fw_info *fw_info)
 			"Not in Privileged mode");
 #endif
 
-	printk("Booting (0x%x).\r\n", fw_info->address);
+	printk("Booting (0x%x).\r\n", fw_info->boot_address);
 
 	if (!fw_info_ext_api_provide(fw_info, true)) {
 		printk("Failed to provide ext APIs to image, boot aborted.\r\n");
@@ -321,8 +321,8 @@ void bl_boot(const struct fw_info *fw_info)
 	__DSB(); /* Force Memory Write before continuing */
 	__ISB(); /* Flush and refill pipeline with updated permissions */
 
-	VTOR = fw_info->address;
-	uint32_t *vector_table = (uint32_t *)fw_info->address;
+	VTOR = fw_info->boot_address;
+	uint32_t *vector_table = (uint32_t *)fw_info->boot_address;
 
 #if defined(CONFIG_SB_DISABLE_NEXT_W)
 	if (disable_next_w(fw_info->address)) {
