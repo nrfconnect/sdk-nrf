@@ -162,7 +162,7 @@ static inline int bt_hci_close(const struct device *dev)
  *
  * If the function returns 0 (success) the reference to @c buf was moved to the
  * HCI driver. On error, the caller still owns the reference and is responsible
- * for eventually calling @ref net_buf_unref on it.
+ * for eventually calling @c net_buf_unref on it.
  *
  * @note This function must only be called from a cooperative thread.
  *

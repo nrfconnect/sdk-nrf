@@ -22,8 +22,7 @@
  *          These APIs support both classic Bluetooth and Bluetooth Low Energy
  *          (LE) operations.
  *
- * @defgroup bluetooth Bluetooth APIs
- * @ingroup connectivity
+ * @defgroup bluetooth Bluetooth Host API
  * @{
  */
 
@@ -309,9 +308,9 @@ typedef void (*bt_ready_cb_t)(int err);
  * When @kconfig{CONFIG_BT_SETTINGS} is enabled, the application must load the
  * Bluetooth settings after this API call successfully completes before
  * Bluetooth APIs can be used. Loading the settings before calling this function
- * is insufficient. Bluetooth settings can be loaded with @ref settings_load or
- * @ref settings_load_subtree with argument "bt". The latter selectively loads only
- * Bluetooth settings and is recommended if @ref settings_load has been called
+ * is insufficient. Bluetooth settings can be loaded with @c settings_load or
+ * @c settings_load_subtree with argument "bt". The latter selectively loads only
+ * Bluetooth settings and is recommended if @c settings_load has been called
  * earlier.
  *
  * @param cb Callback to notify completion or NULL to perform the
@@ -328,11 +327,11 @@ int bt_enable(bt_ready_cb_t cb);
  *
  * This API will clear all configured identity addresses and keys that are not persistently
  * stored with @kconfig{CONFIG_BT_SETTINGS}. These can be restored
- * with @ref settings_load before reenabling the stack.
+ * with @c settings_load before reenabling the stack.
  *
  * This API does _not_ clear previously registered callbacks
- * like @ref bt_le_scan_cb_register, @ref bt_conn_cb_register
- * AND @ref bt_br_discovery_cb_register.
+ * like @c bt_le_scan_cb_register, @c bt_conn_cb_register
+ * AND @c bt_br_discovery_cb_register.
  * That is, the application shall not re-register them when
  * the Bluetooth subsystem is re-enabled later.
  *
@@ -358,7 +357,7 @@ bool bt_is_ready(void);
  * advertising data, the name should be updated by calling @ref bt_le_adv_update_data or
  * @ref bt_le_ext_adv_set_data after the call to this function.
  *
- * @kconfig_dep{CONFIG_BT_DEVICE_NAME_DYNAMIC}
+ * @note Requires @kconfig{CONFIG_BT_DEVICE_NAME_DYNAMIC}.
  *
  * @sa @kconfig{CONFIG_BT_DEVICE_NAME_MAX}.
  *
@@ -395,7 +394,7 @@ uint16_t bt_get_appearance(void);
  * Automatically preserves the new appearance across reboots if
  * @kconfig{CONFIG_BT_SETTINGS} is enabled.
  *
- * @kconfig_dep{CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC}
+ * @note Requires @kconfig{CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC}.
  *
  * @param new_appearance Appearance Value
  *
@@ -444,7 +443,7 @@ void bt_id_get(bt_addr_le_t *addrs, size_t *count);
  *
  * If the application wants to have the stack randomly generate identity addresses
  * and store them in flash for later recovery, the way to do it would be
- * to first initialize the stack (using bt_enable), then call @ref settings_load,
+ * to first initialize the stack (using bt_enable), then call @c settings_load,
  * and after that check with @ref bt_id_get how many identity addresses were recovered.
  * If an insufficient amount of identity addresses were recovered the app may then
  * call this function to create new ones.
@@ -874,7 +873,7 @@ enum bt_le_adv_opt {
 	 * Coding Selection. If these conditions are not met, it will default to
 	 * no required coding scheme.
 	 *
-	 * @kconfig_dep{BT_EXT_ADV_CODING_SELECTION}
+	 * @note Requires @kconfig{CONFIG_BT_EXT_ADV_CODING_SELECTION}.
 	 */
 	BT_LE_ADV_OPT_REQUIRE_S2_CODING = BIT(20),
 
@@ -891,7 +890,7 @@ enum bt_le_adv_opt {
 	 * Coding Selection. If these conditions are not met, it will default to
 	 * no required coding scheme.
 	 *
-	 * @kconfig_dep{BT_EXT_ADV_CODING_SELECTION}
+	 * @note Requires @kconfig{CONFIG_BT_EXT_ADV_CODING_SELECTION}.
 	 */
 	BT_LE_ADV_OPT_REQUIRE_S8_CODING = BIT(21),
 };
@@ -2736,7 +2735,7 @@ int bt_le_set_chan_map(uint8_t chan_map[5]);
  *
  * Initially, @kconfig{CONFIG_BT_RPA_TIMEOUT} is used as the RPA timeout.
  *
- * @kconfig_dep{CONFIG_BT_RPA_TIMEOUT_DYNAMIC}.
+ * @note Requires @kconfig{CONFIG_BT_RPA_TIMEOUT_DYNAMIC}.
  *
  * @param new_rpa_timeout Resolvable Private Address timeout in seconds.
  *
@@ -2755,8 +2754,8 @@ int bt_le_set_rpa_timeout(uint16_t new_rpa_timeout);
  *
  * @warning This helper function will consume @p ad when parsing. The user should make a copy if the
  *          original data is to be used afterwards. This can be done by using
- *          @ref net_buf_simple_save to store the state prior to the function call, and then using
- *          @ref net_buf_simple_restore to restore the state afterwards.
+ *          @c net_buf_simple_save to store the state prior to the function call, and then using
+ *          @c net_buf_simple_restore to restore the state afterwards.
  *
  * @param ad        Advertising data as given to the @ref bt_le_scan_cb_t callback.
  * @param func      Callback function which will be called for each element

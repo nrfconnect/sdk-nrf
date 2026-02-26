@@ -724,7 +724,7 @@ struct bt_iso_chan_ops {
 	 * If the channel was established (i.e. @ref bt_iso_chan_ops.connected has been called
 	 * for this channel), then the channel object is still valid and the memory of the channel
 	 * shall not be memset to 0 or otherwise free'd.
-	 * To avoid any issues it is recommended to use a @ref k_work_submit or similar to not
+	 * To avoid any issues it is recommended to use a @c k_work_submit or similar to not
 	 * overwrite any data while in the callback.
 	 *
 	 * For the above reason it is still possible to use bt_iso_chan_get_info() on the @p chan.

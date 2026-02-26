@@ -20,7 +20,7 @@
  *  function, and it will automatically become the event
  *  listener.
  *
- *  @kconfig_dep{CONFIG_BT_TESTING}
+ *  @note Requires @kconfig{CONFIG_BT_TESTING}.
  */
 void bt_testing_trace_event_acl_pool_destroy(struct net_buf *buf);
 

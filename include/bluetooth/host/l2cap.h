@@ -691,7 +691,7 @@ struct bt_l2cap_chan_ops {
 	 *  If the application returns @c -EINPROGRESS, the application takes
 	 *  ownership of the reference in @p buf. (I.e. This pointer value can
 	 *  simply be given to @ref bt_l2cap_chan_recv_complete without any
-	 *  calls @ref net_buf_ref or @ref net_buf_unref.)
+	 *  calls @c net_buf_ref or @c net_buf_unref.)
 	 *
 	 *  @return 0 in case of success or negative value in case of error.
 	 *  @return -EINPROGRESS in case where user has to confirm once the data
@@ -957,7 +957,7 @@ int bt_l2cap_ecred_chan_reconfigure(struct bt_l2cap_chan **chans, uint16_t mtu);
  *  allocate. The caller may try again later. There is no event signaling the
  *  availability of buffers.
  *
- *  @kconfig_dep{CONFIG_BT_L2CAP_RECONFIGURE_EXPLICIT}
+ *  @note Requires @kconfig{CONFIG_BT_L2CAP_RECONFIGURE_EXPLICIT}.
  *
  *  @param chans       Array of channels to reconfigure. Must be non-empty and
  *                     contain at most 5 (@ref BT_L2CAP_ECRED_CHAN_MAX_PER_REQ)
