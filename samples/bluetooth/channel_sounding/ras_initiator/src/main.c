@@ -29,7 +29,20 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 
 #define CON_STATUS_LED DK_LED1
 
-#define CS_CONFIG_ID	       0
+#define CS_CONFIG_ID 0
+
+#if defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_2_SUB_MODE_1)
+#define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_2_SUB_MODE_1
+#elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_2)
+#define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_2_NO_SUB_MODE
+#elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_1)
+#define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_1_NO_SUB_MODE
+#elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_3)
+#define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_3_NO_SUB_MODE
+#else
+BUILD_ASSERT(false, "Invalid ranging mode");
+#endif
+
 #define NUM_MODE_0_STEPS       3
 #define PROCEDURE_COUNTER_NONE (-1)
 #define DE_SLIDING_WINDOW_SIZE (9)
@@ -743,6 +756,43 @@ BT_CONN_CB_DEFINE(conn_cb) = {
 	.le_cs_subevent_data_available = subevent_result_cb,
 };
 
+static void cs_config_get(struct bt_le_cs_create_config_params *config_params)
+{
+	config_params->id = CS_CONFIG_ID;
+	config_params->mode = CS_CONFIG_MODE;
+	config_params->min_main_mode_steps = 2;
+	config_params->max_main_mode_steps = 5;
+	config_params->main_mode_repetition = 0;
+	config_params->mode_0_steps = NUM_MODE_0_STEPS;
+	config_params->role = BT_CONN_LE_CS_ROLE_INITIATOR;
+	config_params->rtt_type = BT_CONN_LE_CS_RTT_TYPE_AA_ONLY;
+	config_params->cs_sync_phy = BT_CONN_LE_CS_SYNC_1M_PHY;
+	config_params->channel_map_repetition = 1;
+	config_params->channel_selection_type = BT_CONN_LE_CS_CHSEL_TYPE_3B;
+	config_params->ch3c_shape = BT_CONN_LE_CS_CH3C_SHAPE_HAT;
+	config_params->ch3c_jump = 2;
+}
+
+static void distance_estimates_print(uint8_t ap)
+{
+	cs_de_dist_estimates_t distance_on_ap = get_distance(ap);
+#if defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_1)
+	LOG_INF("Latest distance estimate rtt: %.2f meters", (double)distance_on_ap.rtt);
+#elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_2)
+	LOG_INF("Latest distance estimates on antenna path %u: ifft: %.2f, phase_slope: %.2f "
+		"meters",
+		ap, (double)distance_on_ap.ifft, (double)distance_on_ap.phase_slope);
+#elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_2_SUB_MODE_1) || \
+	defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_3)
+	LOG_INF("Latest distance estimates on antenna path %u: ifft: %.2f, phase_slope: %.2f, rtt: "
+		"%.2f meters",
+		ap, (double)distance_on_ap.ifft, (double)distance_on_ap.phase_slope,
+		(double)distance_on_ap.rtt);
+#else
+	BUILD_ASSERT(false, "Invalid ranging mode");
+#endif
+}
+
 int main(void)
 {
 	int err;
@@ -864,21 +914,9 @@ int main(void)
 
 	k_sem_take(&sem_remote_capabilities_obtained, K_FOREVER);
 
-	struct bt_le_cs_create_config_params config_params = {
-		.id = CS_CONFIG_ID,
-		.mode = BT_CONN_LE_CS_MAIN_MODE_2_SUB_MODE_1,
-		.min_main_mode_steps = 2,
-		.max_main_mode_steps = 5,
-		.main_mode_repetition = 0,
-		.mode_0_steps = NUM_MODE_0_STEPS,
-		.role = BT_CONN_LE_CS_ROLE_INITIATOR,
-		.rtt_type = BT_CONN_LE_CS_RTT_TYPE_AA_ONLY,
-		.cs_sync_phy = BT_CONN_LE_CS_SYNC_1M_PHY,
-		.channel_map_repetition = 1,
-		.channel_selection_type = BT_CONN_LE_CS_CHSEL_TYPE_3B,
-		.ch3c_shape = BT_CONN_LE_CS_CH3C_SHAPE_HAT,
-		.ch3c_jump = 2,
-	};
+	struct bt_le_cs_create_config_params config_params;
+
+	cs_config_get(&config_params);
 
 	bt_le_cs_set_valid_chmap_bits(config_params.channel_map);
 
@@ -943,13 +981,7 @@ int main(void)
 		k_sem_take(&sem_distance_estimate_updated, K_FOREVER);
 		if (buffer_num_valid != 0) {
 			for (uint8_t ap = 0; ap < MAX_AP; ap++) {
-				cs_de_dist_estimates_t distance_on_ap = get_distance(ap);
-
-				LOG_INF("Latest distance estimates on antenna path %u: ifft: %.2f, "
-					"phase_slope: %.2f, rtt: %.2f meters",
-					ap, (double)distance_on_ap.ifft,
-					(double)distance_on_ap.phase_slope,
-					(double)distance_on_ap.rtt);
+				distance_estimates_print(ap);
 			}
 		}
 	}
