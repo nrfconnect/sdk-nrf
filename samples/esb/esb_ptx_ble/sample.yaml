@@ -9,9 +9,8 @@ common:
       - "Starting Enhanced ShockBurst PTX with Peripheral LBS sample"
       - "Bluetooth initialized"
       - "Advertising successfully started"
-      - "ESB initialized"
-      - "Setting up for packet reception"
       - "Initialization complete"
+      - "Sending test packet"
   timeout: 15
 
 tests:
