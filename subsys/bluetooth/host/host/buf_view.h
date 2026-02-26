@@ -73,7 +73,7 @@ bool bt_buf_has_view(const struct net_buf *parent);
  *
  *  @brief Destroy the view buffer
  *
- *  Equivalent of @ref net_buf_destroy.
+ *  Equivalent of @c net_buf_destroy.
  *  It is mandatory to call this from the view pool's `destroy` callback.
  *
  *  This frees the parent buffer, and allows calling @ref bt_buf_make_view again.

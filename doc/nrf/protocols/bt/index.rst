@@ -15,7 +15,7 @@ If you want to go through an online training course to familiarize yourself with
 The following section describes Bluetooth solution areas and architecture, as well as the Bluetooth Mesh protocol.
 It also includes guidelines on how to qualify a product that uses Bluetooth technology.
 
-To enable Bluetooth LE in your application, you can use the standard HCI-based architecture, where the Bluetooth Host libraries (:ref:`zephyr:bluetooth`) are included in your application or run Bluetooth API functions as remote procedure calls using :ref:`ble_rpc`.
+To enable Bluetooth LE in your application, you can use the standard HCI-based architecture, where the Bluetooth Host libraries (:ref:`host`) are included in your application or run Bluetooth API functions as remote procedure calls using :ref:`ble_rpc`.
 
 .. toctree::
    :maxdepth: 1
@@ -23,5 +23,6 @@ To enable Bluetooth LE in your application, you can use the standard HCI-based a
 
    bt_solutions.rst
    bt_stack_arch.rst
+   host/index.rst
    bt_mesh/index.rst
    bt_qualification/index.rst

@@ -663,11 +663,11 @@ int bt_gatt_authorization_cb_register(const struct bt_gatt_authorization_cb *cb)
  *
  *  When using @kconfig{CONFIG_BT_SETTINGS} then all services that should have
  *  bond configuration loaded, i.e. CCC values, must be registered before
- *  calling @ref settings_load.
+ *  calling @c settings_load.
  *
  *  When using @kconfig{CONFIG_BT_GATT_CACHING} and @kconfig{CONFIG_BT_SETTINGS}
  *  then all services that should be included in the GATT Database Hash
- *  calculation should be added before calling @ref settings_load.
+ *  calculation should be added before calling @c settings_load.
  *  All services registered after settings_load will trigger a new database hash
  *  calculation and a new hash stored.
  *

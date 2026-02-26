@@ -14,6 +14,8 @@ layers of the host.
 
    Bluetooth Host protocol & profile layers.
 
+.. |sample path| replace:: :file:`samples/bluetooth/central_and_peripheral_hrs`
+
 Lowest down in the host stack sits a so-called HCI driver, which is
 responsible for abstracting away the details of the HCI transport. It
 provides a basic API for delivering data from the controller to the
@@ -41,10 +43,7 @@ Each role comes with its own build-time configuration option:
 connection-oriented roles central implicitly enables observer role, and
 peripheral implicitly enables broadcaster role. Usually the first step
 when creating an application is to decide which roles are needed and go
-from there. Bluetooth Mesh is a slightly special case, requiring at
-least the observer and broadcaster roles, and possibly also the
-Peripheral role. This will be described in more detail in a later
-section.
+from there.
 
 Peripheral role
 ===============
@@ -56,7 +55,7 @@ one or more GATT services. After registering services using the
 start connectable advertising using the :c:func:`bt_le_adv_start` API.
 
 There are several peripheral sample applications available in the tree,
-such as :zephyr_file:`samples/bluetooth/peripheral_hr`.
+tree, such as :ref:`ble_samples` (|NCS|) |sample path|.
 
 Central role
 ============
@@ -76,7 +75,7 @@ to be found (using the scan callback), stop scanning using
 :c:func:`bt_conn_le_create`.
 
 There are some sample applications for the central role available in the
-tree, such as :zephyr_file:`samples/bluetooth/central_hr`.
+tree, such as :ref:`ble_samples` (|NCS|) |sample path|.
 
 Observer role
 =============
@@ -136,11 +135,6 @@ there are four possible security levels that can be reached:
     :c:enumerator:`BT_SECURITY_L4`
         Encryption and authentication using the LE Secure Connections
         feature available since Bluetooth 4.2.
-
-.. note::
-  Mesh has its own security solution through a process called
-  provisioning. It follows a similar procedure as pairing, but is done
-  using separate mesh-specific APIs.
 
 L2CAP
 =====
@@ -284,27 +278,6 @@ special cases for ATT timeouts.
 .. image:: img/att_timeout.svg
   :align: center
   :alt: ATT timeout
-
-Mesh
-====
-
-Mesh is a little bit special when it comes to the needed GAP roles. By
-default, mesh requires both observer and broadcaster role to be enabled.
-If the optional GATT Proxy feature is desired, then peripheral role
-should also be enabled.
-
-The API reference for mesh can be found in the
-:ref:`Mesh API reference section <bluetooth_mesh>`.
-
-LE Audio
-========
-The LE audio is a set of profiles and services that utilizes GATT and
-Isochronous Channel to provide audio over Bluetooth Low Energy.
-The architecture and API references can be found in
-:ref:`Bluetooth Audio Architecture <bluetooth_le_audio_arch>`.
-
-
-.. _bluetooth-persistent-storage:
 
 Persistent storage
 ==================

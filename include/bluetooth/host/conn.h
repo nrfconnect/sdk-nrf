@@ -1546,7 +1546,7 @@ int bt_conn_le_subrate_request(struct bt_conn *conn,
  *      @ref bt_conn_le_min_conn_interval_info.min_supported_conn_interval_us
  *      is needed.
  *
- *  @kconfig_dep{CONFIG_BT_SHORTER_CONNECTION_INTERVALS}
+ *  @note Requires @kconfig{CONFIG_BT_SHORTER_CONNECTION_INTERVALS}.
  *
  *  @param info Pointer to structure to receive the minimum connection interval
  *              information.
@@ -1561,7 +1561,7 @@ int bt_conn_le_read_min_conn_interval_groups(struct bt_conn_le_min_conn_interval
  *
  *  @sa bt_conn_le_read_min_conn_interval_groups if groups are needed.
  *
- *  @kconfig_dep{CONFIG_BT_SHORTER_CONNECTION_INTERVALS}
+ *  @note Requires @kconfig{CONFIG_BT_SHORTER_CONNECTION_INTERVALS}.
  *
  *  @param min_interval_us Pointer to variable to receive the minimum connection interval
  *                         in microseconds.
@@ -1576,7 +1576,7 @@ int bt_conn_le_read_min_conn_interval(uint16_t *min_interval_us);
  *  This command does not affect any existing connection.
  *  Parameters set for specific connection will always have precedence.
  *
- *  @kconfig_dep{CONFIG_BT_SHORTER_CONNECTION_INTERVALS}
+ *  @note Requires @kconfig{CONFIG_BT_SHORTER_CONNECTION_INTERVALS}.
  *
  *  @param params Connection rate parameters.
  *
@@ -1593,7 +1593,7 @@ int bt_conn_le_conn_rate_set_defaults(const struct bt_conn_le_conn_rate_param *p
  *  Valid intervals of the local and peer controller should be known.
  *  See @ref bt_conn_le_read_min_conn_interval_groups
  *
- *  @kconfig_dep{CONFIG_BT_SHORTER_CONNECTION_INTERVALS}
+ *  @note Requires @kconfig{CONFIG_BT_SHORTER_CONNECTION_INTERVALS}.
  *
  *  @param conn   @ref BT_CONN_TYPE_LE connection object.
  *  @param params Connection rate parameters.
@@ -1611,7 +1611,7 @@ int bt_conn_le_conn_rate_request(struct bt_conn *conn,
  *  This function will trigger the read_all_remote_feat_complete callback
  *  when the procedure is completed.
  *
- *  @kconfig_dep{CONFIG_BT_LE_EXTENDED_FEAT_SET}
+ *  @note Requires @kconfig{CONFIG_BT_LE_EXTENDED_FEAT_SET}.
  *
  *  @param conn @ref BT_CONN_TYPE_LE connection object.
  *  @param pages_requested Number of feature pages to be requested from peer.
@@ -1628,7 +1628,7 @@ int bt_conn_le_read_all_remote_features(struct bt_conn *conn, uint8_t pages_requ
  *  This function will trigger the frame_space_updated callback when the
  *  procedure is completed.
  *
- *  @kconfig_dep{CONFIG_BT_FRAME_SPACE_UPDATE}.
+ *  @note Requires @kconfig{CONFIG_BT_FRAME_SPACE_UPDATE}.
  *
  *  @param conn   @ref BT_CONN_TYPE_LE connection object.
  *  @param params Frame Space Update parameters.

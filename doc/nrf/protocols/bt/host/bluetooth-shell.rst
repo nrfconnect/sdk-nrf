@@ -11,22 +11,6 @@ For specific Bluetooth functionality see also the following shell documentation
 .. toctree::
    :maxdepth: 1
 
-   shell/audio/bap.rst
-   shell/audio/bap_broadcast_assistant.rst
-   shell/audio/bap_scan_delegator.rst
-   shell/audio/cap.rst
-   shell/audio/ccp.rst
-   shell/audio/csip.rst
-   shell/audio/gmap.rst
-   shell/audio/mcp.rst
-   shell/audio/tbs.rst
-   shell/audio/tmap.rst
-   shell/audio/pbp.rst
-   shell/classic/a2dp.rst
-   shell/classic/goep.rst
-   shell/classic/hfp.rst
-   shell/classic/l2cap.rst
-   shell/classic/rfcomm.rst
    shell/host/gap.rst
    shell/host/gatt.rst
    shell/host/iso.rst
@@ -37,7 +21,7 @@ Bluetooth Shell Setup and Usage
 
 First you need to build and flash your board with the Bluetooth shell. For how to do that, see the
 :ref:`getting_started`. The Bluetooth shell itself is located in
-:zephyr_file:`tests/bluetooth/shell/`.
+:file:`nrf/tests/bluetooth/host/shell/`.
 
 When it's done, connect to the CLI using your favorite serial terminal application. You should see
 the following prompt:
