@@ -27,6 +27,35 @@
 #error "No NRFX memory backend selected"
 #endif
 
+/* When searching for fw_info, we get slot address as a base. The slot address,
+ * equivalent to an offset of the partition the slot resides on, is the beginning
+ * of a binary, which also includes non-executable header used by bootloaders.
+ * The fw_info is offset, using linker script, within rom_start section
+ * which is already, itself, offset by the header, if a header exists.
+ * This means that fw_info is not placed at offset selected by
+ * CONFIG_FW_INFO_OFFSET, in application configuration, but at the offset
+ * equivalent to CONFIG_FW_INFO_OFFSET + CONFIG_ROM_START_OFFSET,
+ * where CONFIG_ROM_START_OFFSET is also taken from application image.
+ * We can not use CONFIG_ROM_START_OFFSET here, because here it is set for this
+ * bootloader, and probably 0, so we have to rely on information set specific
+ * for platform for Secure Bootloader via CONFIG_SB_IMAGE_BOOT_OFFSET,
+ * or take it from Partition Manager padding.
+ */
+#if USE_PARTITION_MANAGER
+/* S0/S1 both have the same pad size */
+#ifdef PM_S0_PAD_SIZE
+#define APP_HEADER_SKIP	PM_S0_PAD_SIZE
+#else
+#define APP_HEADER_SKIP	0
+#endif
+#else
+#if CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER == -1
+#define APP_HEADER_SKIP	0
+#else
+#define APP_HEADER_SKIP	CONFIG_SB_IMAGE_BOOT_OFFSET
+#endif
+#endif
+
 #if defined(CONFIG_HW_UNIQUE_KEY_LOAD)
 #include <zephyr/init.h>
 #include <hw_unique_key.h>
@@ -134,8 +163,11 @@ int main(void)
 	printk("Fprotect disabled. No protection applied.\r\n");
 #endif
 
-	uint32_t s0_addr = s0_address_read();
-	uint32_t s1_addr = s1_address_read();
+	/* Get slot/partition start address and offset it with
+	 * application header size.
+	 */
+	uint32_t s0_addr = s0_address_read() + APP_HEADER_SKIP;
+	uint32_t s1_addr = s1_address_read() + APP_HEADER_SKIP;
 	const struct fw_info *s0_info = fw_info_find(s0_addr);
 	const struct fw_info *s1_info = fw_info_find(s1_addr);
 
