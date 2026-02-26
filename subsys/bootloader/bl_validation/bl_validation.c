@@ -13,6 +13,27 @@
 
 LOG_MODULE_REGISTER(bl_validation, CONFIG_SECURE_BOOT_VALIDATION_LOG_LEVEL);
 
+/* Firmware image contains header, that precedes executable code;
+ * fw_info is placed within image at CONFIG_FW_INFO_OFFSET from the
+ * beginning of executable code. This means that within firmware image
+ * the fw_info is not placed at CONFIG_FW_INFO_OFFSET but at
+ * CONFIG_FW_INFO_OFFSET + CONFIG_ROM_START_OFFSET, where
+ * CONFIG_ROM_START_OFFSET is set for the firmware build.
+ * The CONFIG_ROM_START_OFFSET of bootloader is not the same, so we
+ * can not use it, and instead we use CONFIG_SB_IMAGE_BOOT_OFFSET,
+ * which is supposed to be passed the same value as CONFIG_ROM_START_OFFSET
+ * of firmware or Partition Manager padding, which is equivalent of
+ * reserved header space.
+ */
+#if USE_PARTITION_MANAGER
+#include <pm_config.h>
+
+/* S0/S1 both have the same pad size */
+#define FIRMWARE_HEADER_SKIP	PM_MCUBOOT_PAD_SIZE
+#else
+#define FIRMWARE_HEADER_SKIP	CONFIG_SB_IMAGE_BOOT_OFFSET
+#endif
+
 #ifdef CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
 /* The 15 bit version is encoded into the most significant bits of
  * the 16 bit monotonic_counter, and the 1 bit slot is encoded
@@ -394,7 +415,7 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		return false;
 	}
 
-	if (fw_info_find(fw_src_address) != fwinfo) {
+	if (fw_info_find(fw_src_address + FIRMWARE_HEADER_SKIP) != fwinfo) {
 		if (!external) {
 			LOG_ERR("Firmware info doesn't point to itself.");
 		}
@@ -508,8 +529,10 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 
 bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 {
+	const uint32_t fw_info_offset = fw_src_address + FIRMWARE_HEADER_SKIP;
+
 	return validate_firmware(fw_dst_address, fw_src_address,
-				fw_info_find(fw_src_address), true);
+				fw_info_find(fw_info_offset), true);
 }
 
 
