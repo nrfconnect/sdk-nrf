@@ -101,6 +101,24 @@ config SB_DISABLE_SELF_RWX
 	  Sets RRAMC's BOOTCONF region protection before jumping to application.
 	  It disables reads writes and execution memory area which holds NSIB.
 
+config SB_IMAGE_BOOT_OFFSET
+	hex
+	depends on !PARTITION_MANAGER_ENABLED
+	default 0x800 if SOC_SERIES_NRF54L
+	default 0x200 if SOC_SERIES_NRF53
+	default 0x200 if SOC_SERIES_NRF52
+	help
+	  Size of offset, from the beginning of storage partition, or __rom_start,
+	  where to application code begins. This is usually size of non-executable
+	  header that precedes the entry point and is not used by the applicaiton
+	  itself.
+	  The value provied here is used to skip to bootable code but also to calculate
+	  offsets of various linker sections, in application image, that B0 does access.
+	  In case of images built for MCUboot the value here will be equivalent to
+	  ROM_START_OFFSET set for an application image; it is literal here because
+	  ROM_START_OFFSET of secure bootloader does not reflect value set in image it boots.
+	  Note that when Partition Manager is enabled this value will be 0 and is useless.
+
 config SB_DISABLE_NEXT_W
 	bool "Disable writes for next stage"
 	depends on SB_DISABLE_SELF_RWX_SUPPORTED && !FPROTECT
