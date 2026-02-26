@@ -14,7 +14,7 @@ pykwalify                 # |     |         |        |         |      |         
 recommonmark              # |     |         |   X    |    X    |      |         |      |        |
 sphinx~=6.2               # |  X  |    X    |   X    |    X    |   X  |    X    |  X   |   X    |
 sphinx-copybutton         # |  X  |         |        |         |      |         |      |   X    |
-sphinx-ncs-theme<1.1      # |  X  |         |        |         |      |         |      |        |
+git+https://github.com/nrfconnect/doc-sphinx-ncs-theme@refs/pull/26/merge#egg=sphinx-ncs-theme
 sphinx-notfound-page      # |  X  |         |        |         |      |         |      |   X    |
 sphinx-tabs>=3.4          # |  X  |         |        |         |      |         |      |   X    |
 sphinx-togglebutton       # |  X  |         |        |         |      |         |      |        |
