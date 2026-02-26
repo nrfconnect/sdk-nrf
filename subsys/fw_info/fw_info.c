@@ -38,7 +38,12 @@ const struct fw_info m_firmware_info =
 	.size = ((uint32_t)_flash_used),
 	.version = CONFIG_FW_INFO_FIRMWARE_VERSION,
 	.address = ((uint32_t)__rom_region_start),
-	.boot_address = (uint32_t)__rom_region_start,
+	/* __rom_region_start describes beginning of address range where
+	 * binary start, but does not include data preceding executable code,
+	 * like headers used by bootloaders; that is why CONFIG_ROM_START_OFFSET
+	 * is added here, as it is the offset where executable code starts.
+	 */
+	.boot_address = (uint32_t)__rom_region_start + CONFIG_ROM_START_OFFSET,
 	.valid = CONFIG_FW_INFO_VALID_VAL,
 	.reserved = {0, 0, 0, 0},
 	.ext_api_num = (uint32_t)_ext_apis_size,
