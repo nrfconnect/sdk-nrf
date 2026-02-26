@@ -75,29 +75,32 @@ static int32_t most_recent_local_ranging_counter = PROCEDURE_COUNTER_NONE;
 static int32_t dropped_ranging_counter = PROCEDURE_COUNTER_NONE;
 static uint32_t ras_feature_bits;
 
-static uint8_t buffer_index;
-static uint8_t buffer_num_valid;
-static cs_de_dist_estimates_t distance_estimate_buffer[MAX_AP][DE_SLIDING_WINDOW_SIZE];
+struct distance_estimate_buffer {
+	cs_de_dist_estimates_t estimates[DE_SLIDING_WINDOW_SIZE];
+	uint8_t num_valid;
+	uint8_t index;
+};
+
+static struct distance_estimate_buffer distance_estimate_buffers[MAX_AP];
+
 static struct bt_conn_le_cs_config cs_config;
 
 static uint16_t m_n_iqs[CONFIG_BT_RAS_MAX_ANTENNA_PATHS][CS_DE_NUM_CHANNELS];
 static cs_de_report_t m_cs_de_report;
 
-static void store_distance_estimates(cs_de_report_t *p_report)
+static void store_distance_estimates_in_buffer(cs_de_dist_estimates_t *p_estimates,
+					       struct distance_estimate_buffer *buffer)
 {
 	int lock_state = k_mutex_lock(&distance_estimate_buffer_mutex, K_FOREVER);
 
 	__ASSERT_NO_MSG(lock_state == 0);
 
-	for (uint8_t ap = 0; ap < p_report->n_ap; ap++) {
-		memcpy(&distance_estimate_buffer[ap][buffer_index],
-		       &p_report->distance_estimates[ap], sizeof(cs_de_dist_estimates_t));
-	}
+	memcpy(&buffer->estimates[buffer->index], p_estimates, sizeof(cs_de_dist_estimates_t));
 
-	buffer_index = (buffer_index + 1) % DE_SLIDING_WINDOW_SIZE;
+	buffer->index = (buffer->index + 1) % DE_SLIDING_WINDOW_SIZE;
 
-	if (buffer_num_valid < DE_SLIDING_WINDOW_SIZE) {
-		buffer_num_valid++;
+	if (buffer->num_valid < DE_SLIDING_WINDOW_SIZE) {
+		buffer->num_valid++;
 	}
 
 	k_mutex_unlock(&distance_estimate_buffer_mutex);
@@ -137,22 +140,23 @@ static cs_de_dist_estimates_t get_distance(uint8_t ap)
 	static float temp_phase_slope[DE_SLIDING_WINDOW_SIZE];
 	static float temp_rtt[DE_SLIDING_WINDOW_SIZE];
 
+	struct distance_estimate_buffer *buffer = &distance_estimate_buffers[ap];
+
 	int lock_state = k_mutex_lock(&distance_estimate_buffer_mutex, K_FOREVER);
 
 	__ASSERT_NO_MSG(lock_state == 0);
 
-	for (uint8_t i = 0; i < buffer_num_valid; i++) {
-		if (isfinite(distance_estimate_buffer[ap][i].ifft)) {
-			temp_ifft[num_ifft] = distance_estimate_buffer[ap][i].ifft;
+	for (uint8_t i = 0; i < buffer->num_valid; i++) {
+		if (isfinite(buffer->estimates[i].ifft)) {
+			temp_ifft[num_ifft] = buffer->estimates[i].ifft;
 			num_ifft++;
 		}
-		if (isfinite(distance_estimate_buffer[ap][i].phase_slope)) {
-			temp_phase_slope[num_phase_slope] =
-				distance_estimate_buffer[ap][i].phase_slope;
+		if (isfinite(buffer->estimates[i].phase_slope)) {
+			temp_phase_slope[num_phase_slope] = buffer->estimates[i].phase_slope;
 			num_phase_slope++;
 		}
-		if (isfinite(distance_estimate_buffer[ap][i].rtt)) {
-			temp_rtt[num_rtt] = distance_estimate_buffer[ap][i].rtt;
+		if (isfinite(buffer->estimates[i].rtt)) {
+			temp_rtt[num_rtt] = buffer->estimates[i].rtt;
 			num_rtt++;
 		}
 	}
@@ -373,8 +377,11 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 
 	if (quality == CS_DE_QUALITY_OK) {
 		for (uint8_t ap = 0; ap < m_cs_de_report.n_ap; ap++) {
-			if (m_cs_de_report.tone_quality[ap] == CS_DE_TONE_QUALITY_OK) {
-				store_distance_estimates(&m_cs_de_report);
+			if (m_cs_de_report.tone_quality[ap] == CS_DE_TONE_QUALITY_OK ||
+			    isfinite(m_cs_de_report.distance_estimates[ap].rtt)) {
+				store_distance_estimates_in_buffer(
+					&m_cs_de_report.distance_estimates[ap],
+					&distance_estimate_buffers[ap]);
 			}
 		}
 		k_sem_give(&sem_distance_estimate_updated);
@@ -979,8 +986,8 @@ int main(void)
 
 	while (true) {
 		k_sem_take(&sem_distance_estimate_updated, K_FOREVER);
-		if (buffer_num_valid != 0) {
-			for (uint8_t ap = 0; ap < MAX_AP; ap++) {
+		for (uint8_t ap = 0; ap < MAX_AP; ap++) {
+			if (distance_estimate_buffers[ap].num_valid != 0) {
 				distance_estimates_print(ap);
 			}
 		}
