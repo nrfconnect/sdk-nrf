@@ -910,7 +910,7 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	    (diff > (CONFIG_TX_TGT_LEAD_TIME_US + CONFIG_TX_LEAD_TIME_DEVIATION_US))) {
 		/* Drop next block to help with just-in-time */
 		atomic_set(&drop_next_block, true);
-		LOG_WRN("Dropped block to align with connection interval");
+		LOG_DBG("Dropped block to align with connection interval");
 		print_count = 0;
 	}
 }

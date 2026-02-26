@@ -13,6 +13,8 @@
 #include <bluetooth/hci_vs_sdc.h>
 #include <audio_defines.h>
 
+#include <stdlib.h>
+
 #include "zbus_common.h"
 #include "audio_sync_timer.h"
 
@@ -47,6 +49,23 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 /* 1 since CIGs doesn't have the concept of subgroups */
 #define SUBGROUP_MAX 1
 #endif
+
+/* Time between  doing a timestamp re-sync with the controller
+ * For gateway/central (unicast client/broadcast source) where this device is the master
+ * Bluetooth LE clocking device, the wall clock and BLE clock should be in sync.
+ * Hence, there is no strict need for regular re-sync after the first timestamp is obtained.
+ * For simplicity and risk mitigation, a periodic re-sync is still performed.
+ * However, for the headset/peripheral (unicast server/broadcast sink)
+ * regular re-sync is needed to compensate for clock drift.
+ */
+#define TX_TS_RESYNC_US	 1000000
+#define TX_MARGIN_MIN_US (CONFIG_TX_TGT_LEAD_TIME_US - CONFIG_TX_LEAD_TIME_DEVIATION_US)
+#define TX_MARGIN_MAX_US (CONFIG_TX_TGT_LEAD_TIME_US + CONFIG_TX_LEAD_TIME_DEVIATION_US)
+
+/* When starting a stream, I2S or USB feeding the TX function with data, will usually need some ISO
+ * intervals to stabilize and potentially drop data to meet just-in-time requirements
+ */
+#define SUBSEQUENT_RAPID_CORRECTIONS_LIMIT 20
 
 /* Since we can't assume that the number of streams are equally distributed on the subgroups ,we
  * need to allocate the max number per subgroup
@@ -187,12 +206,6 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 
 	return 0;
 }
-
-/* Time before doing a timestamp re-sync with the controller */
-#define TX_TS_RESYNC_US	 1000000
-/* The minimum margin between sending the last data and the next TX window */
-#define TX_MARGIN_MIN_US (CONFIG_TX_TGT_LEAD_TIME_US - CONFIG_TX_LEAD_TIME_DEVIATION_US)
-#define TX_MARGIN_MAX_US (CONFIG_TX_TGT_LEAD_TIME_US + CONFIG_TX_LEAD_TIME_DEVIATION_US)
 
 static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx, uint8_t num_loc,
 		       size_t data_size_pr_stream, uint32_t *common_interval_us)
@@ -340,6 +353,8 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	 */
 	if (!timestamp_ctlr_esti_us_valid ||
 	    (timestamp_ctlr_esti_us - timestamp_ctlr_real_us_last) >= TX_TS_RESYNC_US) {
+		static uint32_t timestamp_last_correction;
+		static uint32_t subequent_rapid_corrections;
 
 		ret = controller_timestamp_tx_get(tx, num_tx, &timestamp_ctlr_real_us, tx_info);
 		if (ret) {
@@ -347,17 +362,36 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			return ret;
 		}
 
-		LOG_WRN("Got new ts from controller: %u us. esti_valid: %d resync diff: %d",
-			timestamp_ctlr_real_us, timestamp_ctlr_esti_us_valid,
-			(timestamp_ctlr_esti_us - timestamp_ctlr_real_us_last));
 		/* If we got an update from the controller, check our current timestamp against what
-		 * the controller provided
+		 * the controller provided. Given a 500 ppm accuracy for the clocks,
+		 worst case, 1000 ppm diff between devices.
 		 */
+		uint32_t time_since_last_corr_us = timestamp_now_us - timestamp_last_correction;
+		int32_t corr_diff = (int32_t)(timestamp_ctlr_real_us - timestamp_ctlr_esti_us);
+		int32_t corr_ppm = (int32_t)(((int64_t)corr_diff * 1000000LL) /
+					     (int64_t)time_since_last_corr_us);
+
+		if (time_since_last_corr_us < TX_TS_RESYNC_US) {
+			subequent_rapid_corrections++;
+		} else {
+			subequent_rapid_corrections = 0;
+		}
+
+		if (subequent_rapid_corrections > SUBSEQUENT_RAPID_CORRECTIONS_LIMIT) {
+			LOG_ERR("Multiple rapid time corrections detected");
+		}
+
+		LOG_DBG_RATELIMIT_RATE(1000,
+				       "TX clock updated by %d ppm - corr_diff: %d us, "
+				       "estimate: %u corrected to %u",
+				       corr_ppm, corr_diff, timestamp_ctlr_esti_us,
+				       timestamp_ctlr_real_us);
 
 		timestamp_ctlr_real_us_last = timestamp_ctlr_real_us;
 		/* Update the estimate to the real (most current) value */
 		timestamp_ctlr_esti_us = timestamp_ctlr_real_us;
 		timestamp_ctlr_esti_us_valid = true;
+		timestamp_last_correction = timestamp_now_us;
 	}
 
 	/* At this point, the controller estimated timestamp is valid */
@@ -380,19 +414,19 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			       timestamp_ctlr_esti_us, timestamp_now_us, diff_us);
 
 	if (diff_us < 0) {
-		LOG_WRN("Data sent too late! Controller will flush. Diff: %d us, "
+		LOG_INF("TX too late. Controller will flush. Diff: %d us, "
 			"ctlr_est: %u now: %u",
 			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
 		timestamp_ctlr_esti_us_valid = false;
 		timestamp_ctlr_esti_us = 0;
 	} else if (diff_us < TX_MARGIN_MIN_US) {
-		LOG_WRN("TX too close to next TX window! Data may be lost. Diff: %d "
+		LOG_INF("TX too close to next TX window. Data may be lost. Diff: %d "
 			"us, ctlr_est: %u now: %u",
 			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
 		timestamp_ctlr_esti_us_valid = false;
 		timestamp_ctlr_esti_us = 0;
 	} else if (diff_us > TX_MARGIN_MAX_US) {
-		LOG_WRN("TX too early! This may cause unnecessary latency. Diff: %d "
+		LOG_INF("TX too early. This may cause unnecessary latency. Diff: %d "
 			"us, ctlr_est: %u now: %u",
 			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
 		/* Likely not critical, but can update timestamp to better align with controller */
