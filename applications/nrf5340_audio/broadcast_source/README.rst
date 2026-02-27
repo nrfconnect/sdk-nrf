@@ -51,7 +51,7 @@ Configuration
 
 The application requires the ``CONFIG_TRANSPORT_BIS`` Kconfig option to be set to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file for `Building and running`_ to succeed.
 
-For other configuration options, see :ref:`nrf53_audio_app_configuration` and :ref:`nrf53_audio_app_fota`.
+For other configuration options, see :ref:`nrf53_audio_app_configuration`.
 
 For information about how to configure applications in the |NCS|, see :ref:`configure_application`.
 

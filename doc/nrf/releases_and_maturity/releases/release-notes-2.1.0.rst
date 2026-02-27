@@ -328,7 +328,7 @@ nRF5340 Audio
   * Support for Basic Audio Profile, including support for the stereo :term:`Broadcast Isochronous Stream (BIS)`.
   * Bonding between gateway and headsets in the :term:`Connected Isochronous Stream (CIS)`.
   * :ref:`Experimental <software_maturity>` DFU support for internal and external flash layouts.
-    See :ref:`nrf53_audio_app_configuration_configure_fota` in the application documentation for details.
+    See nrf53_audio_app_configuration_configure_fota in the application documentation for details.
   * DFU advertising name based on role.
 
 * Updated:

@@ -19,7 +19,6 @@
 #include "zbus_common.h"
 #include "button_handler.h"
 #include "bt_mgmt_adv_internal.h"
-#include "bt_mgmt_dfu_internal.h"
 #include "button_assignments.h"
 
 #include <zephyr/logging/log.h>
@@ -492,25 +491,6 @@ int bt_mgmt_init(void)
 			}
 		}
 	}
-
-#if defined(CONFIG_AUDIO_BT_MGMT_DFU)
-	bool pressed;
-
-	ret = button_pressed(BUTTON_4, &pressed);
-	if (ret) {
-		return ret;
-	}
-
-	if (pressed) {
-		ret = bt_mgmt_ctlr_cfg_manufacturer_get(true);
-		if (ret) {
-			return ret;
-		}
-		/* This call will not return */
-		bt_mgmt_dfu_start();
-	}
-
-#endif /* CONFIG_AUDIO_BT_MGMT_DFU */
 
 #ifdef CONFIG_MCUMGR_TRANSPORT_BT_DYNAMIC_SVC_REGISTRATION
 	/* Unregister SMP (Simple Management Protocol) service if DFU is not enabled */

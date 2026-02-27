@@ -6,7 +6,6 @@
 
 zephyr_library_include_directories(
   advertising
-  dfu
   scanning
   ${ZEPHYR_BASE}/subsys/bluetooth/host/
 )
@@ -29,8 +28,4 @@ endif()
 
 if(CONFIG_BT_PERIPHERAL OR CONFIG_BT_BROADCASTER)
   target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/advertising/bt_mgmt_adv.c)
-endif()
-
-if(CONFIG_AUDIO_BT_MGMT_DFU)
-  target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dfu/bt_mgmt_dfu.c)
 endif()

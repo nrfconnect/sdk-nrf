@@ -306,8 +306,15 @@ nRF5340 Audio
     This allows for better organization and potential reuse of the audio clock configuration code between different SoCs that might not have the high-frequency audio clock (HFCLKAUDIO) feature.
     The new module provides an initialization function for setting up the audio clock and a function for configuring the audio clock frequency.
 
-* Removed the Bluetooth controller watchdog from the application.
-  The watchdog was not providing value and the removal allows for easier porting to other platforms that do not have a multi-core architecture.
+* Removed:
+
+  * The Bluetooth controller watchdog from the application.
+    The watchdog was not providing value and the removal allows for easier porting to other platforms that do not have a multi-core architecture.
+
+  * The DFU options from the application.
+    The nRF5340 Audio applications have for some time used standard |NCS| tools to perform a DFU.
+    Hence, the applications use the same process as other Bluetooth projects.
+    See :ref:`app_bootloaders` for information on how to set up DFU for their requirements.
 
 nRF Desktop
 -----------

@@ -98,7 +98,6 @@ The building command for running the script requires providing the following par
      - Specifies the application version.
      - ``release``, ``debug``
      - | :ref:`nrf53_audio_app_configuration_files`
-       | **Note:** For FOTA DFU, you must use :ref:`nrf53_audio_app_building_standard`.
    * - Transport type (``-t``)
      - Specifies the transport type.
      - ``broadcast``, ``unicast``
@@ -247,11 +246,6 @@ The nRF5340 Audio applications come with the following configuration files:
      - :file:`prj_release.conf`
      - ``release``
      - Release version of the application. Disables logging capabilities and disables development features to create a smaller application binary.
-   * - FOTA DFU
-     - :file:`prj_fota.conf`
-     - ``fota``
-     - | Builds the debug version of the application (:file:`prj.conf`) with the features needed to perform DFU over Bluetooth LE, and includes bootloaders so that the applications on both the application core and network core can be updated.
-       | See :ref:`nrf53_audio_app_fota` for more information.
    * - Application-specific overlay file
      - :file:`unicast_server/overlay-unicast_server.conf`
      - ``unicast_server``
@@ -341,33 +335,6 @@ Complete the following steps to build each of the configurations you need:
          To work around this standard west behavior, you can add the ``-d`` parameter to the ``west`` command to specify a custom build folder for each device.
          This way, you can build firmware for different device configurations to separate directories before programming the development kits.
          Alternatively, you can use the :ref:`nrf53_audio_app_building_script`, which handles this automatically.
-
-Building the application for FOTA
----------------------------------
-
-To build the application for :ref:`nrf53_audio_app_fota` depending on the environment you are using:
-
-.. tabs::
-
-   .. group-tab:: |nRFVSC|
-
-      Set the following options in the extension UI:
-
-      * :guilabel:`Base configuration files (Kconfig fragments)` - :file:`prj_fota.conf`
-      * :guilabel:`Extra Kconfig fragments` - :file:`unicast_server/overlay-unicast_server.conf`
-
-      When generating and building the application, this selection picks :file:`prj_fota.conf` instead of the default :file:`prj.conf`.
-
-   .. group-tab:: Command line
-
-      Use the following command:
-
-      .. code-block:: console
-
-         west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -DFILE_SUFFIX=fota
-
-      The command uses ``-DFILE_SUFFIX=fota`` to pick :file:`prj_fota.conf` instead of the default :file:`prj.conf`.
-      It also uses the ``--pristine`` to clean the existing directory before starting the build process.
 
 .. _nrf53_audio_app_building_standard_programming:
 
