@@ -112,6 +112,30 @@ int nrf_cloud_coap_pause(void);
 int nrf_cloud_coap_resume(void);
 
 /**
+ * @brief Update the device's shadow with current info for all configured sections.
+ *
+ * This function sends updated info to nRF Cloud for all sections of the shadow that are configured
+ * in Kconfig.
+ *
+ * Possible sections is set by:
+ * - CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS
+ * - CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK
+ * - CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM
+ * - CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF
+ * - CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA
+ *
+ * @param app_ver Version to report to the shadow; can be NULL.
+ *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
+ * @retval -ENODEV No info sections are enabled in Kconfig.
+ * @return 0 If successful, non-zero if failed.
+ *           Negative values are device-side errors defined in errno.h.
+ *           Positive values are cloud-side errors (CoAP result codes)
+ *           defined in zephyr/net/coap.h.
+ */
+int nrf_cloud_coap_shadow_configured_info_update(const char * const app_ver);
+
+/**
  * @brief Update the device's shadow with current network information.
  *
  * This function sends updated network information to nRF Cloud. It can be

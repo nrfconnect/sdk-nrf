@@ -223,12 +223,6 @@ exit:
 
 static int update_configured_info_sections(const char * const app_ver)
 {
-	static bool updated;
-
-	if (updated) {
-		return -EALREADY;
-	}
-
 	/* Create a JSON object to contain shadow info sections */
 	NRF_CLOUD_OBJ_JSON_DEFINE(info_obj);
 	int err = nrf_cloud_obj_init(&info_obj);
@@ -271,7 +265,6 @@ static int update_configured_info_sections(const char * const app_ver)
 		return -EIO;
 	}
 
-	updated = true;
 	return 0;
 }
 
@@ -376,6 +369,7 @@ static void update_control_section(void)
 int nrf_cloud_coap_connect(const char * const app_ver)
 {
 	int err = 0;
+	static bool updated;
 
 	if (!internal_cc.initialized) {
 		LOG_ERR("nRF Cloud CoAP library has not been initialized");
@@ -398,13 +392,15 @@ int nrf_cloud_coap_connect(const char * const app_ver)
 	update_control_section();
 
 	/* On initial connect, update the configured info sections in the shadow */
-	err = update_configured_info_sections(app_ver);
-	if (err != -EIO) {
-		err = 0;
-		goto exit;
-	}
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SHADOW_INFO_ON_CONNECT) && updated == false) {
+		err = update_configured_info_sections(app_ver);
+		if (err == -EIO) {
+			LOG_WRN("Failed to update shadow on connect: %d", err);
+		}
 
-	nrf_cloud_coap_transport_disconnect(&internal_cc);
+		updated = true;
+		err = 0;
+	}
 
 exit:
 	k_mutex_unlock(&internal_transfer_mut);
@@ -428,6 +424,21 @@ int nrf_cloud_coap_resume(void)
 
 	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 	err = nrf_cloud_coap_transport_resume(&internal_cc);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
+}
+
+int nrf_cloud_coap_shadow_configured_info_update(const char * const app_ver)
+{
+	int err = 0;
+
+	if (!nrf_cloud_coap_is_connected()) {
+		return -EACCES;
+	}
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
+	err = update_configured_info_sections(app_ver);
 	k_mutex_unlock(&internal_transfer_mut);
 
 	return err;
