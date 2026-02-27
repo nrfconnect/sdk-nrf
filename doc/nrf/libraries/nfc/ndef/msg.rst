@@ -7,7 +7,7 @@ Messages and records
    :local:
    :depth: 2
 
-Use the :ref:`nfc_ndef_msg` and :ref:`nfc_ndef_record` modules to create standardized messages and records that are not covered by other modules, or to create your own custom messages.
+Use the :ref:`nfc_ndef_msg` and :ref:`nfc_ndef_record` libraries to create standardized messages and records that are not covered by other libraries, or to create your own custom messages.
 
 To generate an NDEF message, perform the following steps:
 
@@ -36,7 +36,7 @@ Use the :c:macro:`NFC_NDEF_RECORD_BIN_DATA_DEF` macro for binary data or the :c:
 You must provide header information for the record (for example, ID and type) and the payload data to the macro.
 For generic data that is not in binary format, you must also provide a payload constructor.
 This constructor converts the payload data to the needed format.
-For binary data, the module provides this constructor.
+For binary data, the library provides this constructor.
 
 The following code example shows how to generate a record descriptor:
 

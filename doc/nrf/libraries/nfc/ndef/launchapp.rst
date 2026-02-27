@@ -19,7 +19,7 @@ The Universal Link is a link associated to the application.
 Implementation
 **************
 
-The :ref:`nfc_launchapp_rec` module provides functions for creating the record and the :ref:`nfc_launchapp_msg` module provides functions for creating and encoding the message.
+The :ref:`nfc_launchapp_rec` library provides functions for creating the record and the :ref:`nfc_launchapp_msg` library provides functions for creating and encoding the message.
 
 The following code snippets show how to generate a Launch App message.
 

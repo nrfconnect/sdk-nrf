@@ -25,7 +25,6 @@ The Connection Handover library provides functions for creating and encoding the
   * Alternative Carrier record
   * Collision Resolution record
 
-
 Connection Handover messages
 ****************************
 
