@@ -37,7 +37,12 @@ When using the nRF Mesh mobile app as a provisioner, do the following:
 Updating the network key
 ************************
 
-Even if the Config Node Reset message has been sent to the node, and the Config Node Reset Status message was received, this does not guarantee that the node has removed all configuration data.
+The functionality responsible for keeping the security materials in the mesh stack and in the configuration database synchronized is enabled by the :kconfig:option:`CONFIG_BT_MESH_CDB_KEY_SYNC` Kconfig option.
+The option is enabled by default and it is recommended to keep it enabled to allow automatic synchronization of keys.
+If the option is enabled and the "Config Node Reset Status" message is received, all configuration data and keys are removed from the node's memory.
+
+However, if the option is disabled and the "Config Node Reset Status" message is received, all configuration data might not be removed.
+The application is then responsible for removing or updating the keys in the configuration database.
 To ensure that the removed node is not able to decrypt network messages after being reset, update the network keys that were known to the removed node.
 
 This procedure can be used in any other cases when a network key needs to be updated.
