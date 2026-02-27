@@ -20,7 +20,7 @@ source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
 if !TFM_PROFILE_TYPE_MINIMAL
 # When enabling full TFM support, then partitions and crypto modules shall be available.
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
-source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
+rsource "Kconfig.tfm.crypto_modules"
 endif
 
 if BUILD_WITH_TFM
