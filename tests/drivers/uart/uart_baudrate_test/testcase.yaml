@@ -52,24 +52,27 @@ tests:
   drivers.uart.baudrate_test.lm20_uart00:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_uart00.overlay"
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20_common_uart00.overlay"
     harness: ztest
     harness_config:
       fixture: uart_fast_loopback
   drivers.uart.baudrate_test.lm20_uart21:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_uart21.overlay"
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20_common_uart21.overlay"
   drivers.uart.baudrate_test.lm20_uart22:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_uart22.overlay"
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20_common_uart22.overlay"
   drivers.uart.baudrate_test.ls05_uart21:
     platform_allow:
       - nrf54ls05dk/nrf54ls05b/cpuapp
