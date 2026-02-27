@@ -10,6 +10,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <bl_storage.h>
+#ifdef CONFIG_SB_LCS_AWARE
+#include <nrf_lcs/nrf_lcs.h>
+#endif
 
 LOG_MODULE_REGISTER(bl_validation, CONFIG_SECURE_BOOT_VALIDATION_LOG_LEVEL);
 
@@ -321,9 +324,10 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 	}
 	return false;
 }
+#endif
 
-
-#elif defined(CONFIG_SB_VALIDATE_FW_HASH)
+#if defined(CONFIG_SB_VALIDATE_FW_HASH) || (defined(CONFIG_SB_LCS_AWARE) && \
+    defined(SB_VALIDATION_STRUCT_HAS_HASH))
 static bool validate_hash(const uint32_t fw_src_address, const uint32_t fw_size,
 			  const struct fw_validation_info *fw_val_info,
 			  bool external)
@@ -495,6 +499,18 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	}
 
 #if defined(CONFIG_SB_VALIDATE_FW_SIGNATURE)
+#if defined(CONFIG_SB_LCS_AWARE)
+	if (nrf_lcs_get() == NRF_LCS_ASSEMBLY_AND_TEST) {
+		LOG_WRN("Device is in ASSEMBLY_AND_TEST, skipping signature validation.");
+#ifdef SB_VALIDATION_STRUCT_HAS_HASH
+		return validate_hash(fw_src_address, fwinfo->size, fw_val_info,
+					external);
+#else
+		LOG_ERR("Hash unavailable. Accepting firmware without validation.");
+		return true;
+#endif /* SB_VALIDATION_STRUCT_HAS_HASH */
+	}
+#endif
 	return validate_signature(fw_src_address, fwinfo->size, fw_val_info,
 				external);
 #elif defined(CONFIG_SB_VALIDATE_FW_HASH)
