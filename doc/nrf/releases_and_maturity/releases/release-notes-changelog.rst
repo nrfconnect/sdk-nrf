@@ -703,6 +703,8 @@ Libraries for networking
   * Added:
 
     * The :c:func:`nrf_cloud_coap_shadow_network_info_update` function.
+    * The :c:func:`nrf_cloud_coap_shadow_configured_info_update` function to update the configured sections in the device shadow over CoAP.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SHADOW_INFO_ON_CONNECT` Kconfig option to control whether the device shadow information is sent when the device connects to nRF Cloud.
     * Handling of the ``/shadow/update/delta/trim/err`` topic.
       Errors will be logged to the application if the delta shadow is larger than 1792 bytes.
 
