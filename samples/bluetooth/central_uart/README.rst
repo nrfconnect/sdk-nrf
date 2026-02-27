@@ -10,6 +10,8 @@ Bluetooth: Central UART
 The Central UART sample demonstrates how to use the :ref:`nus_client_readme`.
 It uses the NUS Client to send data back and forth between a UART connection and a Bluetooth® LE connection, emulating a serial port over Bluetooth LE.
 
+.. _central_uart_requirements:
+
 Requirements
 ************
 
@@ -24,21 +26,51 @@ The sample also requires another development kit running a compatible applicatio
 Overview
 ********
 
-When connected, the sample forwards any data received on the RX pin of the UART 1 peripheral to the Bluetooth LE unit.
-On Nordic Semiconductor's development kits, the UART 1 peripheral is typically gated through the SEGGER chip to a USB CDC virtual serial port.
+When connected to a Bluetooth LE device implementing the :ref:`nus_service_readme`, the sample relays data between a UART peripheral and the Bluetooth LE connection.
+On Nordic Semiconductor's development kits, the UART peripheral is typically gated through the SEGGER chip to a USB CDC ACM virtual serial port.
 
-Any data sent from the Bluetooth LE unit is sent out of the UART 1 peripheral's TX pin.
+.. _central_uart_nrf54lm20dongle_usb_cdc_acm_interfaces:
 
+nRF54LM20 Dongle USB CDC ACM interfaces
+=======================================
+
+The nRF54LM20 Dongle does not have a built-in SEGGER chip, so on this board, the sample implements the USB CDC ACM device class with several interfaces for different purposes.
+When you plug the dongle into a USB port, the following interfaces are available:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Index
+     - Label
+     - Purpose
+   * - 0
+     - (no label)
+     - Zephyr console (logging)
+   * - 1
+     - NUS
+     - Nordic UART Service
 
 .. _central_uart_debug:
 
 Debugging
 *********
 
-In this sample, a UART console is used to send and read data over the NUS Client.
-Debug messages are not displayed in the UART console, but are printed by the RTT logger instead.
+Depending on the board, this sample uses either the SEGGER J-Link RTT or a USB CDC ACM interface to display debug messages.
 
-If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
+.. tabs::
+
+   .. group-tab:: nRF54LM20 Dongle
+
+      The sample uses the CDC ACM interface with index 0 for debug logging (see :ref:`central_uart_nrf54lm20dongle_usb_cdc_acm_interfaces`).
+      Open the interface in a terminal emulator to view debug messages.
+
+   .. group-tab:: Other supported boards
+
+      See the list of supported boards in :ref:`central_uart_requirements`.
+
+      The sample uses the SEGGER J-Link RTT for debug logging.
+      To view debug messages, follow the procedure in :ref:`testing_rtt_connect`.
+
 
 FEM support
 ***********
@@ -66,7 +98,11 @@ Testing
 
 1. |connect_kit|
 #. |connect_terminal_specific|
-#. Optionally, connect the RTT console to display debug messages. See :ref:`central_uart_debug`.
+
+   .. note::
+      On the nRF54LM20 Dongle, the sample uses the USB CDC ACM interface with index 1 for NUS data (see :ref:`central_uart_nrf54lm20dongle_usb_cdc_acm_interfaces`).
+
+#. Optionally, view debug messages as described in :ref:`central_uart_debug`.
 #. Reset the kit.
 #. Observe that the text "Starting Bluetooth Central UART sample" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with NUS.
 #. Program the :ref:`peripheral_uart` sample to the second development kit.
@@ -88,6 +124,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`nus_client_readme`
 * :ref:`gatt_dm_readme`
 * :ref:`nrf_bt_scan_readme`
+* :ref:`lib_uart_async_adapter`
 
 In addition, it uses the following Zephyr libraries:
 
