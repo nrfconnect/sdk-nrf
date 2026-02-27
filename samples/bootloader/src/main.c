@@ -26,6 +26,9 @@
 #else
 #error "No NRFX memory backend selected"
 #endif
+#ifdef CONFIG_SB_LCS_AWARE
+#include <lcs.h>
+#endif
 
 #if defined(CONFIG_HW_UNIQUE_KEY_LOAD)
 #include <zephyr/init.h>
@@ -134,6 +137,24 @@ int main(void)
 	printk("Fprotect disabled. No protection applied.\r\n");
 #endif
 
+#ifdef CONFIG_SB_LCS_AWARE
+	printk("LCS-awareness enabled. Current LCS: %x\n\r", lcs_get());
+
+	switch (lcs_get()) {
+	case LCS_ASSEMBLY_AND_TEST:
+	case LCS_PSA_ROT_PROVISIONING:
+	case LCS_SECURED:
+		/* Boot and update logic is allowed only in these three states. */
+		break;
+
+	default:
+		printk("Device in an unbootable state: %x\n\r", lcs_get());
+		return 0;
+	}
+#else
+	printk("LCS-awareness disabled.\n\r");
+#endif /* CONFIG_SB_LCS_AWARE */
+
 	uint32_t s0_addr = s0_address_read();
 	uint32_t s1_addr = s1_address_read();
 	const struct fw_info *s0_info = fw_info_find(s0_addr);
@@ -155,5 +176,7 @@ int main(void)
 
 	printk("No bootable image found. Aborting boot.\r\n");
 	bl_validate_housekeeping();
+
+	printk("Enable authenticated erase all.\r\n");
 	return 0;
 }
