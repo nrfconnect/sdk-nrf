@@ -5,8 +5,6 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf52dk/nrf52832
-      - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
     platform_allow:
       - nrf52dk/nrf52832
