@@ -31,6 +31,8 @@
 #include "esb_ppi_api.h"
 #include "esb_workarounds.h"
 
+#include "esb_glue.h"
+
 LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT) || ESB_NRF_TIMER_INSTANCE == MPSL_TIMER0,
@@ -2333,6 +2335,14 @@ int esb_init(const struct esb_config *config)
 		esb_disable();
 	}
 
+	if (IS_ENABLED(CONFIG_ESB_CLOCK_INIT)) {
+		err = esb_clocks_start();
+		if (err) {
+			LOG_ERR("Failed to start clocks: %d", err);
+			return err;
+		}
+	}
+
 	event_handler = config->event_handler;
 
 	memcpy(&esb_cfg, config, sizeof(esb_cfg));
@@ -2507,6 +2517,14 @@ void esb_disable(void)
 {
 	if (esb_state == ESB_STATE_UNINITIALIZED) {
 		return;
+	}
+
+	if (IS_ENABLED(CONFIG_ESB_CLOCK_INIT)) {
+		int err = esb_clocks_stop();
+
+		if (err) {
+			LOG_ERR("Failed to stop clocks: %d", err);
+		}
 	}
 
 	if (!IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {

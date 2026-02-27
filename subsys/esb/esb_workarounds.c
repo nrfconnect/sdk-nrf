@@ -6,9 +6,28 @@
 
 #include <zephyr/kernel.h>
 
+#if NRF_ERRATA_STATIC_CHECK(54H, 84)
+#include <hal/nrf_lrcconf.h>
+#endif /* NRF_ERRATA_STATIC_CHECK(54H, 84) */
+
 #if NRF_ERRATA_STATIC_CHECK(54H, 216)
 #include <zephyr/drivers/mbox.h>
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 216) */
+
+/* TODO: NCSDK-37840 - Remove the NRF54LS05B_XXAA checks once the target is added to nrfx errata
+ * checks.
+ */
+#if NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA)
+#if defined(CONFIG_NRFX_POWER)
+#include <nrfx_power.h>
+#else
+#include <hal/nrf_power.h>
+#endif
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA) */
+
+#if NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA)
+#include <hal/nrf_clock.h>
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA) */
 
 #include <hal/nrf_radio.h>
 
@@ -107,6 +126,24 @@ bool esb_is_nrf54h_216_enabled(void)
 }
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 216) */
 
+#if NRF_ERRATA_STATIC_CHECK(54H, 84)
+void esb_apply_nrf54h_84(void)
+{
+	if (NRF_ERRATA_DYNAMIC_CHECK(54H, 84)) {
+		nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
+		nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
+	}
+}
+
+void esb_revert_nrf54h_84(void)
+{
+	if (NRF_ERRATA_DYNAMIC_CHECK(54H, 84)) {
+		nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, false);
+		nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTOP_0);
+	}
+}
+#endif /* NRF_ERRATA_STATIC_CHECK(54H, 84) */
+
 #if NRF_ERRATA_STATIC_CHECK(54H, 229)
 void esb_apply_nrf54h_229(void)
 {
@@ -115,3 +152,71 @@ void esb_apply_nrf54h_229(void)
 	}
 }
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 229) */
+
+#if NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA)
+void esb_apply_nrf54l_20(void)
+{
+	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 20)) {
+#if defined(CONFIG_NRFX_POWER)
+		(void)nrfx_power_constlat_mode_request();
+#else
+		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+#endif /* defined(CONFIG_NRFX_POWER) */
+	} else {
+/* TODO: NCSDK-37840 - Remove this check once the NRF54LS05B_XXAA target is added to nrfx errata
+ * checks.
+ */
+#if defined(NRF54LS05B_XXAA)
+		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+#endif /* defined(NRF54LS05B_XXAA) */
+	}
+} /* NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA) */
+
+void esb_revert_nrf54l_20(void)
+{
+	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 20)) {
+#if defined(CONFIG_NRFX_POWER)
+		(void)nrfx_power_constlat_mode_free();
+#else
+		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
+#endif /* defined(CONFIG_NRFX_POWER) */
+	} else {
+/* TODO: NCSDK-37840 - Remove this check once the NRF54LS05B_XXAA target is added to nrfx errata
+ * checks.
+ */
+#if defined(NRF54LS05B_XXAA)
+		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
+#endif /* defined(NRF54LS05B_XXAA) */
+	}
+}
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA) */
+
+#if NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA)
+void esb_apply_nrf54l_39(void)
+{
+	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 39)) {
+		nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+	} else {
+/* TODO: NCSDK-37840 - Remove this check once the NRF54LS05B_XXAA target is added to nrfx errata
+ * checks.
+ */
+#if defined(NRF54LS05B_XXAA)
+		nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+#endif /* defined(NRF54LS05B_XXAA) */
+	}
+} /* NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA) */
+
+void esb_revert_nrf54l_39(void)
+{
+	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 39)) {
+		nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTOP);
+	} else {
+/* TODO: NCSDK-37840 - Remove this check once the NRF54LS05B_XXAA target is added to nrfx errata
+ * checks.
+ */
+#if defined(NRF54LS05B_XXAA)
+		nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTOP);
+#endif /* defined(NRF54LS05B_XXAA) */
+	}
+}
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA) */
