@@ -249,12 +249,14 @@ Adding up all entries, it is worth setting the cache size to minimum 71.
 Security toolbox
 ----------------
 
-Zephyr's Mesh security toolbox implementation uses third-party crypto library APIs (such as CMAC, AES-CCM, and HMAC-SHA-256) for implementing the encryption and authentication functionality.
+The Mesh security toolbox implementation uses Zephyr's OS Services that provide `PSA Certified Crypto API`_ for implementing the encryption and authentication functionality.
+The :ref:`Mbed TLS <zephyr:psa_crypto>` crypto library is used as the default crypto service provider.
+If the platform supports :ref:`Trusted Firmware-M (TF-M) <zephyr:tfm>`, it is used as the crypto service provider.
 
 .. note::
    For Bluetooth Mesh provisioning, authenticating with the BTM_ECDH_P256_CMAC_AES128_AES_CCM (0x00) algorithm does not provide protection against an active man-in-the-middle (MITM) attacker during the provisioning process if OOB public keys are not used.
 
-The Bluetooth Mesh security toolbox based on the `PSA Certified Crypto API`_ does not operate with open key values.
+The Bluetooth Mesh security toolbox does not operate with open key values.
 After Bluetooth Mesh receives an open key value, it immediately imports the key into the crypto library and receives the unique key identifier.
 The key identifiers are used in the security toolbox and stored in the persistent memory.
 The crypto library is responsible for storing of the key values in the Internal Trusted Storage (`PSA Certified Secure Storage API 1.0`_).
