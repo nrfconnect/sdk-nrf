@@ -9,6 +9,8 @@
  */
 
 #include <errno.h>
+#include <uart_async_adapter.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
@@ -55,6 +57,12 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 static const struct device *uart = DEVICE_DT_GET(NUS_UART_NODE);
 static struct k_work_delayable uart_work;
 static struct k_work scan_work;
+
+#ifdef CONFIG_UART_ASYNC_ADAPTER
+UART_ASYNC_ADAPTER_INST_DEFINE(async_adapter);
+#else
+#define async_adapter NULL
+#endif
 
 K_SEM_DEFINE(nus_write_sem, 0, 1);
 
@@ -284,6 +292,11 @@ static int uart_init(void)
 	}
 
 	k_work_init_delayable(&uart_work, uart_work_handler);
+
+	if (IS_ENABLED(CONFIG_UART_ASYNC_ADAPTER)) {
+		uart_async_adapter_init(async_adapter, uart);
+		uart = async_adapter;
+	}
 
 	err = uart_callback_set(uart, uart_cb, NULL);
 	if (err) {

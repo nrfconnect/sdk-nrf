@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * This overlay adds another USB CDC ACM instance for relaying data to and from
+ * the connected Peripheral UART device, using Bluetooth LE Nordic UART Service.
+ * Note that the board also defines another CDC ACM instance used for logging
+ * (board_cdc_acm_uart from cdc_acm_serial.dtsi).
+ */
+
+/ {
+	chosen {
+		zephyr,shell-uart = &nus_cdc_acm_uart;
+	};
+};
+
+&zephyr_udc0 {
+	nus_cdc_acm_uart: nus_cdc_acm_uart {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "NUS";
+	};
+};

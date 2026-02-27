@@ -404,6 +404,10 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
+* :ref:`central_uart` sample:
+
+  * Added support for the ``nrf54lm20dongle/nrf54lm20b/cpuapp`` board target.
+
 * :ref:`peripheral_ams_client` sample:
 
   * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board targets.
