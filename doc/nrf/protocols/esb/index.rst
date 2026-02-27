@@ -174,13 +174,15 @@ Perform the following steps to set up an application to send and receive packets
    * :c:func:`esb_set_rf_channel`
    * :c:func:`esb_set_bitrate`
 
-#. Make sure that the high-frequency clock is running:
+#. Make sure that the high-frequency clock is running before starting radio activity.
+   There are two ways to handle this:
 
-   .. code-block:: c
+   * **Automatic:** Enable the :kconfig:option:`CONFIG_ESB_CLOCK_INIT` Kconfig option.
+     When enabled, the :c:func:`esb_init` function automatically starts the required high-frequency clock and applies platform-specific errata workarounds.
+     Calling the :c:func:`esb_disable` function automatically stops the clocks and reverts the workarounds.
 
-      NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
-      NRF_CLOCK->TASKS_HFCLKSTART = 1;
-      while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0);
+   * **Manual:** Leave the :kconfig:option:`CONFIG_ESB_CLOCK_INIT` Kconfig option disabled (default).
+     The application is responsible for starting the required high-frequency clock and applying platform-specific errata workarounds before calling :c:func:`esb_init`.
 
 #. Start sending or receiving packets:
 

@@ -186,6 +186,17 @@ config ESB_FAST_CHANNEL_SWITCHING
 	  Allows the radio channel to be changed in RX radio state
 	  without the need to switch the radio to DISABLE state.
 
+config ESB_CLOCK_INIT
+	bool "Initialize clocks during ESB initialization"
+	depends on CLOCK_CONTROL_NRF || CLOCK_CONTROL_NRF2
+	imply NRFX_POWER
+	help
+	  When enabled, the ESB subsystem automatically starts the required
+	  HF clock and applies platform-specific errata workarounds during
+	  initialization (esb_init()). This simplifies the application code by abstracting clock
+	  control details. Disable this option if the application manages
+	  clocks independently.
+
 config ESB_DEFAULT_RF_CHANNEL
 	int "Default channel"
 	default 2
