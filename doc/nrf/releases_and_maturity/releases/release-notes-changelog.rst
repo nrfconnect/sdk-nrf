@@ -67,6 +67,9 @@ Bootloaders and DFU
 
 * Added a new lifecycle state (LCS) API designed for nRF54L Series devices.
 
+* Added a possibility to use the new LCS API to control bootloader behavior.
+  When the new API is enabled, the bootloader may skip signature verification for early LCS states, as well as aborts the boot process in the decommissioned state.
+
 Developing with nRF91 Series
 ============================
 
