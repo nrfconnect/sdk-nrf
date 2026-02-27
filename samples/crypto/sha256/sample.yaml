@@ -110,10 +110,61 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_crypto
+  sample.nrf_security.sha256.integration.rsa:
+    sysbuild: true
+    build_only: true
+    extra_args: SB_CONFIG_BOOTLOADER_MCUBOOT=y SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=n SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y SB_CONFIG_BOOT_SIGNATURE_KEY_FILE="root-rsa-2048.pem"
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf52840dk/nrf52840
+      - nrf52833dk/nrf52833
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf52840dk/nrf52840
+      - nrf52833dk/nrf52833
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
       - sysbuild
       - ci_samples_crypto

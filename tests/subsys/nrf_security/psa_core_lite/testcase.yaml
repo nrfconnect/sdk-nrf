@@ -4,8 +4,10 @@ tests:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     tags:
       - sysbuild
       - crypto
@@ -18,8 +20,10 @@ tests:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     tags:
       - crypto
       - ci_crypto
@@ -27,13 +31,31 @@ tests:
       - sysbuild
     extra_args: >
       OVERLAY_CONFIG="overlays/lite.conf;overlays/ecdsa.conf"
+  # PSA core lite: RSA
+  psa_core_lite.rsa:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/rsa.conf"
   # Oberon PSA crypto: Ed25519
   psa_core_oberon.ed25519:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     tags:
       - crypto
       - ci_crypto
@@ -46,8 +68,10 @@ tests:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     tags:
       - crypto
       - ci_crypto
@@ -55,13 +79,31 @@ tests:
       - sysbuild
     extra_args: >
       OVERLAY_CONFIG="overlays/ecdsa.conf"
+  # Oberon PSA crypto: RSA
+  psa_core_oberon.rsa:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      OVERLAY_CONFIG="overlays/rsa.conf"
   # PSA core lite: Ed25519 + encrypt + RNG
   psa_core_lite.ed25519.encrypt.rng:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     tags:
       - sysbuild
       - crypto
@@ -74,8 +116,10 @@ tests:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     tags:
       - crypto
       - ci_crypto
@@ -88,8 +132,10 @@ tests:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     tags:
       - crypto
       - ci_crypto
@@ -102,8 +148,10 @@ tests:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     tags:
       - crypto
       - ci_crypto
