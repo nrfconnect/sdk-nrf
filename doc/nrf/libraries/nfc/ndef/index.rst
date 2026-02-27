@@ -7,7 +7,7 @@ NFC communication uses NFC Data Exchange Format (NDEF) messages to exchange data
 
 See the :ref:`ug_nfc` user guide for more information about :ref:`ug_nfc_ndef`.
 
-The |NCS| provides modules for generating messages and records to make it easy to generate such messages.
+The |NCS| provides libraries for generating messages and records.
 If you want to implement your own polling device, you can use the supplied parser libraries.
 
 .. note::

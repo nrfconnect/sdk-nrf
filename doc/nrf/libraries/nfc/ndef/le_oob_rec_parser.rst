@@ -16,7 +16,7 @@ This library should be used together with the :ref:`nfc_ndef_parser_readme` in t
 #. Search for LE OOB NDEF records inside the NDEF message descriptor.
 #. If there are any such NDEF records, use this library to parse them and print their content.
 
-The following code sample demonstrates how to use this module:
+The following code sample demonstrates how to use this library:
 
 .. literalinclude:: ../../../../../samples/nfc/tag_reader/src/main.c
     :language: c

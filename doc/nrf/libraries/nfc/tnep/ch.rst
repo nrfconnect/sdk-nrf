@@ -60,7 +60,7 @@ The NFC Tag Device role is defined by callback set in the :c:struct:`nfc_tnep_ch
 NFC Tag Device
 **************
 
-The following code sample demonstrates how to use this module with an NFC Tag Device:
+The following code sample demonstrates how to use this library with an NFC Tag Device:
 
 .. literalinclude:: ../../../../../samples/bluetooth/peripheral_nfc_pairing/src/main.c
     :language: c
@@ -72,7 +72,7 @@ This library is used in the :ref:`peripheral_nfc_pairing` sample.
 NFC Poller Device
 *****************
 
-The following code sample demonstrates how to use this module with an NFC Poller Device:
+The following code sample demonstrates how to use this library with an NFC Poller Device:
 
 .. literalinclude:: ../../../../../samples/bluetooth/central_nfc_pairing/src/main.c
     :language: c

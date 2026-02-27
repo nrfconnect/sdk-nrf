@@ -12,9 +12,9 @@ The subset of these commands that is used to interact with a Type 4 Tag is imple
 
 Command APDUs (C-APDUs) are the commands sent from the polling device, while response APDUs (R-APDUs) are the responses to a specific command received by the polling device from the tag.
 
-The APDU reader/writer module provides functions to encode a C-APDU according to its descriptor and to decode a raw R-APDU data into the appropriate descriptor.
+The APDU reader and writer libraries provide functions to encode a C-APDU according to its descriptor and to decode a raw R-APDU data into the appropriate descriptor.
 
-This library can be used with the :ref:`st25r3911b_nfc_readme` library to exchange NFC Type 4 Tag data.
+You can use these libraries with the :ref:`st25r3911b_nfc_readme` library to exchange NFC Type 4 Tag data.
 
 APDU types
 **********

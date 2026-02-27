@@ -13,7 +13,7 @@ This data should be presented in the form of a Bluetooth LE pairing message.
 A Bluetooth LE pairing message that works with Android devices contains one Bluetooth LE OOB record.
 This record contains the Bluetooth LE advertising data structure with information that is used to establish the connection and pair.
 
-The following Bluetooth LE pairing methods can be used in combination with this module:
+The following Bluetooth LE pairing methods can be used in combination with this library:
 
 Legacy and LE Secure Connections Just Works pairing
   The NDEF record contains basic advertising data such as device name, address, and role.

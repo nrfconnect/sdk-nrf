@@ -17,7 +17,7 @@ This library should be used together with the :ref:`nfc_ndef_parser_readme` in t
 #. If there are any such NDEF records, use this library to parse them and print their content.
 #. The Connection Handover Records contains the local NDEF message with the Connection Handover Local NDEF Records, use this library to first check their type and next parse them and print their content.
 
-The following code sample demonstrates how to use this module:
+The following code sample demonstrates how to use this library:
 
 .. literalinclude:: ../../../../../samples/nfc/tag_reader/src/main.c
     :language: c

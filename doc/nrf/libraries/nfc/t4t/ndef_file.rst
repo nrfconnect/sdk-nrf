@@ -9,7 +9,7 @@ NDEF file
 
 The NDEF file stores the length and content of the NDEF message.
 Use this library to encode standardized data for the NFC Type 4 Tag.
-To generate an NDEF message, you can use the :ref:`nfc_ndef_msg` and :ref:`nfc_ndef_record` modules.
+To generate an NDEF message, you can use the :ref:`nfc_ndef_msg` and :ref:`nfc_ndef_record` libraries.
 
 The following code sample demonstrates how to encode the NDEF file for NFC Type 4 Tag:
 

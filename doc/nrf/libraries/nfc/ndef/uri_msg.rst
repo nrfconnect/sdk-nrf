@@ -13,7 +13,7 @@ In the most typical use case, the URI record contains a web address like "http\:
 URI records consist of a URI field (the actual address) and a URI identifier that specifies the protocol of the URI and is prepended to the URI.
 See :c:enum:`nfc_ndef_uri_rec_id` for the available protocols.
 
-The :ref:`nfc_uri_record` module provides functions for creating the record, and the :ref:`nfc_uri_msg` module provides functions for creating and encoding the message.
+The :ref:`nfc_uri_record` library provides functions for creating the record, and the :ref:`nfc_uri_msg` library provides functions for creating and encoding the message.
 
 The following code snippets show how to generate a URI message.
 
