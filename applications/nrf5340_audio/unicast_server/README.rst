@@ -66,7 +66,7 @@ Configuration
 By default, if you have not made any changes to :file:`.conf` files at :file:`applications/nrf5340_audio/`, the nRF5340 build script tries to build the CIS applications in the CIS unidirectional mode.
 To switch to the bidirectional mode, see :ref:`nrf53_audio_app_configuration_select_bidirectional`.
 
-For other configuration options, see :ref:`nrf53_audio_app_configuration` and :ref:`nrf53_audio_app_fota`.
+For other configuration options, see :ref:`nrf53_audio_app_configuration`.
 
 For information about how to configure applications in the |NCS|, see :ref:`configure_application`.
 

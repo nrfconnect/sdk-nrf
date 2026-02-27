@@ -104,7 +104,7 @@ These modules include the following major ones:
 
 * Application-specific Bluetooth modules for handling the Bluetooth connection:
 
-  * Management - This module handles scanning and advertising, in addition to general initialization, controller configuration, and transfer of DFU images.
+  * Management - This module handles scanning and advertising, in addition to general initialization and controller configuration.
   * Stream - This module handles the setup and transfer of audio in the Bluetooth LE Audio context.
     It includes submodules for CIS (unicast) and BIS (broadcast).
   * Renderer - This module handles rendering, such as volume up and down.
@@ -113,11 +113,6 @@ These modules include the following major ones:
 * Application-specific custom modules, including the synchronization module (part of `I2S-based firmware for gateway and headsets`_) - See `Synchronization module overview`_ for more information.
 
 Since the application architecture is the same for all applications and the code before compilation is shared to a significant degree, the set of modules in use depends on the chosen audio inputs and outputs (USB or analog jack).
-
-.. note::
-   In the current versions of the applications, the bootloader is disabled by default.
-   Device Firmware Update (DFU) can only be enabled when :ref:`nrf53_audio_app_building_script`.
-   See :ref:`nrf53_audio_app_configuration_configure_fota` for details.
 
 .. _nrf53_audio_app_overview_files:
 

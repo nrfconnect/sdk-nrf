@@ -7,7 +7,6 @@
 menu "BT management"
 
 #----------------------------------------------------------------------------#
-rsource "dfu/Kconfig"
 rsource "advertising/Kconfig"
 rsource "scanning/Kconfig"
 

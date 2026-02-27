@@ -83,21 +83,6 @@ tests:
       - FILE_SUFFIX=release
       - CONFIG_SD_CARD_PLAYBACK=y
       - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
-  applications.nrf5340_audio.headset_dfu_release_unidir_usb:
-    integration_platforms:
-      - nrf5340_audio_dk/nrf5340/cpuapp
-    platform_allow:
-      - nrf5340_audio_dk/nrf5340/cpuapp
-    sysbuild: true
-    build_only: true
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_applications_nrf5340_audio
-    extra_args:
-      - FILE_SUFFIX=fota
-      - ipc_radio_FILE_SUFFIX=release
-      - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
   applications.nrf5340_audio.headset_unicast_debug_bidir_usb:
     integration_platforms:
       - nrf5340_audio_dk/nrf5340/cpuapp

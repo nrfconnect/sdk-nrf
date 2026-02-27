@@ -71,10 +71,7 @@ The application uses the following buttons on the supported development kit:
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      | **PLAY/PAUSE**| Starts or pauses the playback of the stream or listening to the stream.                                   | All                                         |
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
-     | **BTN 4**     | Long-pressed during startup: Turns on the DFU mode, if                                                    | All                                         |
-     |               | the device is :ref:`configured for it<nrf53_audio_app_configuration_configure_fota>`.                     |                                             |
-     |               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
-     |               | Pressed on the gateway during playback: Toggles between the normal audio stream and different test        | * :ref:`nrf53_audio_broadcast_source_app`   |
+     | **BTN 4**     | Pressed on the gateway during playback: Toggles between the normal audio stream and different test        | * :ref:`nrf53_audio_broadcast_source_app`   |
      |               | tones generated on the device. Use this tone to check the synchronization of headsets.                    | * :ref:`nrf53_audio_unicast_client_app`     |
      |               +-----------------------------------------------------------------------------------------------------------+                                             |
      |               | Pressed on the gateway during playback multiple times: Changes the test tone frequency.                   |                                             |
