@@ -6,14 +6,14 @@
 
 #include "bt_le_audio_tx.h"
 
+#include <stdlib.h>
+
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/zbus/zbus.h>
 #include <../subsys/bluetooth/audio/bap_stream.h>
 #include <bluetooth/hci_vs_sdc.h>
 #include <audio_defines.h>
-
-#include <stdlib.h>
 
 #include "zbus_common.h"
 #include "audio_sync_timer.h"
@@ -50,7 +50,7 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 #define SUBGROUP_MAX 1
 #endif
 
-/* Time between  doing a timestamp re-sync with the controller
+/* Time between performing a timestamp re-sync with the Bluetooth controller.
  * For gateway/central (unicast client/broadcast source) where this device is the master
  * Bluetooth LE clocking device, the wall clock and BLE clock should be in sync.
  * Hence, there is no strict need for regular re-sync after the first timestamp is obtained.
@@ -62,8 +62,8 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 #define TX_MARGIN_MIN_US (CONFIG_TX_TGT_LEAD_TIME_US - CONFIG_TX_LEAD_TIME_DEVIATION_US)
 #define TX_MARGIN_MAX_US (CONFIG_TX_TGT_LEAD_TIME_US + CONFIG_TX_LEAD_TIME_DEVIATION_US)
 
-/* When starting a stream, I2S or USB feeding the TX function with data, will usually need some ISO
- * intervals to stabilize and potentially drop data to meet just-in-time requirements
+/* When starting a stream, I2S or USB feeding the TX function with data, will usually need some time
+ * to stabilize and potentially drop data to meet just-in-time requirements.
  */
 #define SUBSEQUENT_RAPID_CORRECTIONS_LIMIT 20
 
@@ -314,12 +314,12 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 
 	/* The timestamp used when sending*/
 	static uint32_t timestamp_ctlr_esti_us;
+	static bool timestamp_ctlr_esti_us_valid;
+	uint8_t sent_streams = 0;
+	struct tx_inf *tx_info = NULL;
 
 	/* Increment the tx timestamp with the interval */
 	timestamp_ctlr_esti_us += common_interval_us;
-	static bool timestamp_ctlr_esti_us_valid;
-
-	struct tx_inf *tx_info = NULL;
 
 	for (int i = 0; i < num_tx; i++) {
 		tx_info = &tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
@@ -340,7 +340,15 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			LOG_ERR("Failed to send to idx: %d stream: %p, ret: %d ", i,
 				(void *)&tx[i].cap_stream->bap_stream, ret);
 			continue;
+		} else {
+			sent_streams++;
 		}
+	}
+
+	if (sent_streams == 0) {
+		/* If nothing was sent, do not continue with timestamp handling */
+		LOG_ERR("No streams were sent");
+		return -EIO;
 	}
 
 	/* Get the current (wall clock time) */
@@ -349,7 +357,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	static uint32_t timestamp_ctlr_real_us_last;
 
 	/* If the timestamp is not valid or it has been more than TX_TS_RESYNC_US since the last
-	 * timestamp, we re-aquire the timestamp from the controller
+	 * timestamp, we re-aquire a timestamp from the controller.
 	 */
 	if (!timestamp_ctlr_esti_us_valid ||
 	    (timestamp_ctlr_esti_us - timestamp_ctlr_real_us_last) >= TX_TS_RESYNC_US) {
@@ -362,10 +370,6 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			return ret;
 		}
 
-		/* If we got an update from the controller, check our current timestamp against what
-		 * the controller provided. Given a 500 ppm accuracy for the clocks,
-		 worst case, 1000 ppm diff between devices.
-		 */
 		uint32_t time_since_last_corr_us = timestamp_now_us - timestamp_last_correction;
 		int32_t corr_diff = (int32_t)(timestamp_ctlr_real_us - timestamp_ctlr_esti_us);
 		int32_t corr_ppm = (int32_t)(((int64_t)corr_diff * 1000000LL) /
@@ -395,7 +399,6 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	}
 
 	/* At this point, the controller estimated timestamp is valid */
-	/* Send on every iteration? */
 	struct sdu_ref_msg msg;
 
 	msg.tx_sync_ts_us = timestamp_ctlr_esti_us;
@@ -409,7 +412,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 
 	int32_t diff_us = (int32_t)(timestamp_ctlr_esti_us - timestamp_now_us);
 
-	LOG_INF_RATELIMIT_RATE(1000,
+	LOG_DBG_RATELIMIT_RATE(1000,
 			       "Controller timestamp: %u us, Current timestamp: %u us, Diff: %d us",
 			       timestamp_ctlr_esti_us, timestamp_now_us, diff_us);
 
@@ -429,7 +432,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		LOG_INF("TX too early. This may cause unnecessary latency. Diff: %d "
 			"us, ctlr_est: %u now: %u",
 			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
-		/* Likely not critical, but can update timestamp to better align with controller */
+		/* Not critical, but can update timestamp to better align with controller */
 		timestamp_ctlr_esti_us_valid = false;
 		timestamp_ctlr_esti_us = 0;
 	} else {

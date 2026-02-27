@@ -886,16 +886,16 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	 * get back in sync with the controller.
 	 */
 	if (diff < -((int64_t)UINT32_MAX / 2)) {
-		LOG_WRN("Timestamp wrap. diff: %lld", diff);
+		LOG_DBG("Timestamp wrap. diff: %lld", diff);
 		diff += UINT32_MAX;
 
 	} else if (diff < 0) {
-		LOG_WRN("tx_sync_ts_us: %u is earlier than curr_ts_us %u", tx_sync_ts_us,
+		LOG_DBG("tx_sync_ts_us: %u is earlier than curr_ts_us %u", tx_sync_ts_us,
 			curr_ts_us);
 	}
 
 	if (print_count % 100 == 0) {
-		LOG_INF("JIT diff: %lld us. Target: %u +/- %u", diff, JUST_IN_TIME_TARGET_DLY_US,
+		LOG_DBG("JIT diff: %lld us. Target: %u +/- %u", diff, JUST_IN_TIME_TARGET_DLY_US,
 			JUST_IN_TIME_BOUND_US);
 	}
 	print_count++;
@@ -903,7 +903,7 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	/* If the data is sent too late/too slow, we don't copy in data. Instead,
 	 * blocks are dropped, which in turn will cause the controller to starve and
 	 * send a NULL PDU on air "gaining" an ISO interval of time. This means
-	 * we are again too fast, and drop blocks to come back to sync
+	 * we are again too fast, and drop blocks to come back to sync.
 	 */
 
 	if ((diff < (CONFIG_TX_TGT_LEAD_TIME_US - CONFIG_TX_LEAD_TIME_DEVIATION_US)) ||

@@ -1,14 +1,15 @@
 menu "BT LE Audio TX"
 
 config TX_TGT_LEAD_TIME_US
-	prompt "Target lead time to send data to controller before the controller send the next SDU"
+	prompt "Target data lead time controller"
 	int
 	default 3000
 	help
 	  Do not change this value unless you know what you are doing.
 	  Will likely need to be changed for ISO intervals unequal to 10 ms.
-	  This is the target lead time to send data to controller before it sends the next SDU on air.
-	  This is used to make sure that the data is sent to controller just in time for the next SDU, which can help with reducing the overall latency and power consumption.
+	  Target lead time to send data to controller before it sends the next SDU on air.
+	  Used to make sure that the data is sent to controller just in time for the next SDU,
+	  which can help with reducing the overall latency and power consumption.
 	  Setting this too low may lead to flushed data, and too high will increase latency.
 
 config TX_LEAD_TIME_DEVIATION_US
@@ -20,7 +21,7 @@ config TX_LEAD_TIME_DEVIATION_US
 	  Do not change this value unless you know what you are doing.
 	  Will likely need to be changed for ISO intervals unequal to 10 ms.
 	  This deviation may take into account audio processing jitter,
-	  which can be caused by e.g. variable encoding time.
+	  which is caused by e.g. variable LC3 encoding time.
 	  Modules may use this value in different ways.
 
 

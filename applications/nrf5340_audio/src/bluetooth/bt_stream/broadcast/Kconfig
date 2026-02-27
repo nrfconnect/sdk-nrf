@@ -252,7 +252,7 @@ config BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT
 
 config BT_SET_IDENTITY_RESOLVING_KEY
 	string "String used to configure the SIRK"
-	default "koffes_key123456"
+	default BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT
 	help
 	  Defines a string to configure the Set Identify Resolving Key (SIRK), must
 	  be changed before production uniquely for each coordinated set. The SIRK
