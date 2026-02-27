@@ -331,7 +331,7 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 	memset(&m_cs_de_report, 0x0, sizeof(cs_de_report_t));
 	memset(m_n_iqs, 0, sizeof(m_n_iqs));
 
-	bt_ras_rreq_rd_subevent_data_parse(&latest_local_steps, &latest_peer_steps, cs_config.role,
+	bt_ras_rreq_rd_subevent_data_parse(&latest_peer_steps, &latest_local_steps, cs_config.role,
 					   process_ranging_header, NULL, process_step_data,
 					   &m_cs_de_report);
 
