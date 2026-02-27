@@ -30,8 +30,15 @@ const volatile struct bl_storage_data *const BL_STORAGE =
 
 #define ALIGN_TO_WORD(x) ((uint32_t)x & 0x3)
 
+#if defined(CONFIG_NRFX_NVMC)
 #define STATE_ENTERED 0x0000
 #define STATE_NOT_ENTERED 0xFFFF
+#elif defined(CONFIG_NRFX_RRAMC)
+#define STATE_ENTERED 0x00000000
+#define STATE_NOT_ENTERED 0xFFFFFFFF
+#else
+#error "Unknown LCS size"
+#endif
 
 #ifdef CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,

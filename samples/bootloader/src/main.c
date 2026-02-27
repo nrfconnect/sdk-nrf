@@ -30,6 +30,9 @@
 #else
 #error "No NRFX memory backend selected"
 #endif
+#ifdef CONFIG_SB_LCS_AWARE
+#include <nrf_lcs/nrf_lcs.h>
+#endif
 
 /* When searching for fw_info, we get slot address as a base. The slot address,
  * equivalent to an offset of the partition the slot resides on, is the beginning
@@ -187,6 +190,24 @@ int main(void)
 #else
 	printk("Fprotect disabled. No protection applied.\r\n");
 #endif
+
+#ifdef CONFIG_SB_LCS_AWARE
+	printk("LCS-awareness enabled. Current LCS: %x\n\r", nrf_lcs_get());
+
+	switch (nrf_lcs_get()) {
+	case NRF_LCS_ASSEMBLY_AND_TEST:
+	case NRF_LCS_PSA_ROT_PROVISIONING:
+	case NRF_LCS_SECURED:
+		/* Boot and update logic is allowed only in these three states. */
+		break;
+
+	default:
+		printk("Device in an unbootable state: %x\n\r", nrf_lcs_get());
+		return 0;
+	}
+#else
+	printk("LCS-awareness disabled.\n\r");
+#endif /* CONFIG_SB_LCS_AWARE */
 
 	/* Get slot/partition start address and offset it with
 	 * application header size.

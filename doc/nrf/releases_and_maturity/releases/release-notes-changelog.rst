@@ -50,6 +50,9 @@ Bootloaders and DFU
 
 |no_changes_yet_note|
 
+* Added support for the new LCS API to control bootloader behavior.
+  When this API is enabled, the bootloader can skip signature verification in early LCS states and abort the boot process in the decommissioned state.
+
 Developing with nRF91 Series
 ============================
 
