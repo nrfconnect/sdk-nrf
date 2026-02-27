@@ -472,6 +472,8 @@ Enhanced ShockBurst samples
   * The :ref:`esb_ptx_ble` sample that demonstrates how to use the ESB protocol in PTX mode concurrently with the Bluetooth LE LBS service.
   * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target in all ESB samples.
 
+* Updated all ESB samples to use the :kconfig:option:`CONFIG_ESB_CLOCK_INIT` Kconfig option for automatic HF clock management, removing the manual clock initialization code from the :file:`main.c` files.
+
 Gazell samples
 --------------
 

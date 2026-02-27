@@ -3,31 +3,13 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr/drivers/clock_control.h>
-#include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#include <zephyr/drivers/gpio.h>
-#include <zephyr/irq.h>
-#include <zephyr/logging/log.h>
-#include <nrfx.h>
-#include <esb.h>
-#include <zephyr/device.h>
 #include <zephyr/devicetree.h>
+#include <zephyr/logging/log.h>
+#include <esb.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/pm/device_runtime.h>
 #include <dk_buttons_and_leds.h>
-#if defined(CONFIG_CLOCK_CONTROL_NRF2)
-#include <hal/nrf_lrcconf.h>
-#endif
-/* TODO: NCSDK-37840 - Remove the NRF54LS05B_XXAA checks once the target is added to nrfx errata
- * checks.
- */
-#if NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA)
-#include <hal/nrf_power.h>
-#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA) */
-#if NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA)
-#include <hal/nrf_clock.h>
-#endif /* NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA) */
 
 LOG_MODULE_REGISTER(esb_ptx, CONFIG_ESB_PTX_APP_LOG_LEVEL);
 
@@ -71,103 +53,6 @@ void event_handler(struct esb_evt const *event)
 #endif
 	}
 }
-
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
-int clocks_start(void)
-{
-	int err;
-	int res;
-	struct onoff_manager *clk_mgr;
-	struct onoff_client clk_cli;
-
-	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
-	if (!clk_mgr) {
-		LOG_ERR("Unable to get the Clock manager");
-		return -ENXIO;
-	}
-
-	sys_notify_init_spinwait(&clk_cli.notify);
-
-	err = onoff_request(clk_mgr, &clk_cli);
-	if (err < 0) {
-		LOG_ERR("Clock request failed: %d", err);
-		return err;
-	}
-
-	do {
-		err = sys_notify_fetch_result(&clk_cli.notify, &res);
-		if (!err && res) {
-			LOG_ERR("Clock could not be started: %d", res);
-			return res;
-		}
-	} while (err);
-
-#if NRF_ERRATA_STATIC_CHECK(54L, 20)
-	/* MLTPAN-20 */
-	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 20)) {
-		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
-	}
-/* TODO: NCSDK-37840 - Remove this check once the NRF54LS05B_XXAA target is added to nrfx errata
- * checks.
- */
-#elif defined(NRF54LS05B_XXAA)
-	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
-#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) */
-
-#if (NRF_ERRATA_STATIC_CHECK(54L, 39))
-	/* MLTPAN-39 */
-	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 39)) {
-		nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-	}
-/* TODO: NCSDK-37840 - Remove this check once the NRF54LS05B_XXAA target is added to nrfx errata
- * checks.
- */
-#elif defined(NRF54LS05B_XXAA)
-	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-#endif /* (NRF_ERRATA_STATIC_CHECK(54L, 39)) */
-
-	LOG_DBG("HF clock started");
-	return 0;
-}
-
-#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
-
-int clocks_start(void)
-{
-	int err;
-	int res;
-	const struct device *radio_clk_dev =
-		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
-	struct onoff_client radio_cli;
-
-	/** Keep radio domain powered all the time to reduce latency. */
-	nrf_lrcconf_poweron_force_set(NRF_LRCCONF010, NRF_LRCCONF_POWER_DOMAIN_1, true);
-
-	sys_notify_init_spinwait(&radio_cli.notify);
-
-	err = nrf_clock_control_request(radio_clk_dev, NULL, &radio_cli);
-
-	do {
-		err = sys_notify_fetch_result(&radio_cli.notify, &res);
-		if (!err && res) {
-			LOG_ERR("Clock could not be started: %d", res);
-			return res;
-		}
-	} while (err == -EAGAIN);
-
-	/* HMPAN-84 */
-	if (nrf54h_errata_84()) {
-		nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
-		nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
-	}
-
-	LOG_DBG("HF clock started");
-	return 0;
-}
-
-#else
-BUILD_ASSERT(false, "No Clock Control driver");
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF2) */
 
 int esb_initialize(void)
 {
@@ -243,11 +128,6 @@ int main(void)
 		}
 	}
 #endif /* defined(CONFIG_SOC_SERIES_NRF54H) */
-
-	err = clocks_start();
-	if (err) {
-		return 0;
-	}
 
 	err = dk_leds_init();
 	if (err) {
