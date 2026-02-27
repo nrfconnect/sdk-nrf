@@ -2566,7 +2566,7 @@ Trusted Firmware-M support
 PSA Crypto support
 ==================
 
-The following tables list hardware support for the :ref:`PSA Crypto implementations in the |NCS| <ug_crypto_architecture_implementation_standards>`.
+The following tables list hardware support for the :ref:`PSA Crypto implementations in the nRF Connect SDK <ug_crypto_architecture_implementation_standards>`.
 The lists are organized by device Series and implementation.
 
 .. toggle::

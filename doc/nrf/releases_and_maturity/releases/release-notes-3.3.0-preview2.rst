@@ -1,16 +1,13 @@
-.. _ncs_release_notes_changelog:
+.. _ncs_release_notes_3.3.0-preview2:
 
-Changelog for |NCS| v3.2.99
-###########################
+Changelog for |NCS| v3.3.0-preview2
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -267,9 +264,6 @@ nRF5340 Audio
 
   * :kconfig:option:`CONFIG_SPEED_OPTIMIZATIONS` to enable compiler speed optimizations for the application.
 
-  * Support for multiple independent coordinated sets in :ref:`unicast client app<nrf53_audio_unicast_client_app>`.
-    When all the devices in a coordinated set are disconnected, the SIRK is cleared, allowing a new unicast group to be formed with a new SIRK without the need to restart the application.
-
 * Updated:
 
   * Switched to the new USB stack introduced in Zephyr 3.4.0.
@@ -393,15 +387,9 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-* Updated all Fast Pair samples to use the new ``<bluetooth/fast_pair/...>`` include paths.
-
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Updated:
-
-    * The sample to use the new name for the Find Hub Network (FHN) that was previously known as the Find My Device Network (FMDN).
-      Migrated the sample to use the new Kconfig options and the new FHN API header.
-    * The motion detector sensor on Thingy:53 target from gyroscope to accelerometer.
+  * Updated the motion detector sensor on Thingy:53 target from gyroscope to accelerometer.
 
 Cellular samples
 ----------------
@@ -420,11 +408,6 @@ Cellular samples
   * Added support for JWT authentication by enabling the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option.
     Enabling this option is necessary for using nRF Cloud Utils as an onboarding method.
   * Removed JITP from the shell commands and references from the sample documentation.
-
-* :ref:`nrf_cloud_mqtt_device_message` and :ref:`nrf_cloud_multi_service` samples:
-
-  * Updated shadow handling by removing the shadow type ``Accepted`` and added ``Transform`` request event handling.
-    Delta events can now handle error cases using the ``/shadow/update/delta/trim/err`` and ``/shadow/update/delta/full/err`` topics in nRF Cloud.
 
 Cryptography samples
 --------------------
@@ -465,7 +448,6 @@ Enhanced ShockBurst samples
 
   * The :ref:`esb_prx_ble` sample that demonstrates how to use the ESB protocol in PRX mode concurrently with the Bluetooth LE LBS service.
   * The :ref:`esb_ptx_ble` sample that demonstrates how to use the ESB protocol in PTX mode concurrently with the Bluetooth LE LBS service.
-  * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target in all ESB samples.
 
 Gazell samples
 --------------
@@ -518,19 +500,7 @@ Networking samples
 NFC samples
 -----------
 
-* Updated NFC samples for the nRF54H20 SoC to reduce current consumption in idle mode.
-  An empty netcore and additional configurations for power management were added to the sysbuild in the following samples:
-
-  * :ref:`record_launch_app`
-  * :ref:`record_text`
-  * :ref:`nfc_shell`
-  * :ref:`nfc_tnep_tag`
-  * :ref:`writable_ndef_msg`
-
-* :ref:`writable_ndef_msg` sample:
-
-  * Fixed a power consumption issue.
-    The main loop now blocks on a semaphore instead of using the :c:func:`k_cpu_atomic_idle` function, allowing the idle thread to handle power management after the read or write tag.
+|no_changes_yet_note|
 
 nRF5340 samples
 ---------------
@@ -620,32 +590,10 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-* :ref:`bt_fast_pair_readme` library:
-
-  * Updated:
-
-    * The location of the Fast Pair headers and implementation out of the :file:`services` subdirectory.
-      The headers moved from :file:`include/bluetooth/services/fast_pair/` to :file:`include/bluetooth/fast_pair/` and the implementation moved from :file:`subsys/bluetooth/services/fast_pair/` to :file:`subsys/bluetooth/fast_pair/`.
-      The deprecated forwarding headers remain at the old paths to provide backward compatibility.
-    * The naming of the Find My Device Network (FMDN) extension to Find Hub Network (FHN) to align with the updated Google specification:
-
-      * All public API symbols have been renamed from ``bt_fast_pair_fmdn_*`` to ``bt_fast_pair_fhn_*``.
-        The new FHN header is located at :file:`include/bluetooth/fast_pair/fhn/fhn.h`.
-        Deprecated FMDN API aliases remain available through the :file:`include/bluetooth/services/fast_pair/fmdn.h` header.
-      * All Kconfig options have been renamed from ``CONFIG_BT_FAST_PAIR_FMDN_*`` to ``CONFIG_BT_FAST_PAIR_FHN_*``.
-        Deprecated FMDN Kconfig options remain available under the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` option tree.
-      * The FMDN implementation directory has been renamed from :file:`subsys/bluetooth/services/fast_pair/fmdn/` to :file:`subsys/bluetooth/fast_pair/fhn/`.
-
-      See the `migration guide <Migration guide for nRF Connect SDK v3.3.0_>`_ for details.
-
-* :ref:`bt_mesh_dk_prov` module:
+:ref:`bt_mesh_dk_prov` module:
 
   * Added support for node reset callback.
     Applications can now register a callback using the :c:func:`bt_mesh_dk_prov_node_reset_cb_set` function to perform cleanup operations when a node reset occurs.
-
-* :ref:`lib_nrf_bt_scan_readme` library:
-
-  * Fixed a bug where the central would attempt to connect to a non-connectable peripheral if the device had been matched by specified filters.
 
 Common Application Framework
 ----------------------------
@@ -717,25 +665,9 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-* The FTP client library has been moved to the Zephyr repository (see :ref:`zephyr:ftp_client_interface`).
-
 * :ref:`lib_nrf_cloud` library:
 
-  * Added:
-
-    * The :c:func:`nrf_cloud_coap_shadow_network_info_update` function.
-    * Handling of the ``/shadow/update/delta/trim/err`` topic.
-      Errors will be logged to the application if the delta shadow is larger than 1792 bytes.
-
-  * Removed:
-
-    * The ``NRF_CLOUD_MQTT_SHADOW_TRANSFORMS`` Kconfig option.
-      Transform request are the default method to request AWS shadows, replacing the shadow type ``Accepted``.
-    * The topics ``/shadow/get/accepted/trim``, ``/shadow/get/accepted``, and ``/shadow/get/trim``.
-      Requesting shadow updates through them potentially caused the device to disconnect due to a shadow update larger than two KB.
-    * The ``/shadow/update/delta/full`` topic.
-      It is replaced by ``/shadow/update/delta/trim``.
-      Deltas are now trimmed by default to prioritize smaller shadows.
+  * Added the :c:func:`nrf_cloud_coap_shadow_network_info_update` function to update the network information section in the device shadow over CoAP.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
@@ -803,7 +735,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-* Updated the :ref:`ug_bt_fast_pair_integration` guide to reflect the Find My Device Network (FMDN) extension rename to Find Hub Network (FHN), aligning with the updated Google specification.
+|no_changes_yet_note|
 
 Edge Impulse integration
 ------------------------
