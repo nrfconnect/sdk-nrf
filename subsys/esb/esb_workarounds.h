@@ -24,7 +24,11 @@ extern "C" {
  */
 
 /* nRF54H Workaround 84
- * HMPAN-84 is implemented in the ESB samples in the clocks_start function.
+ * esb_apply_nrf54h_84(void)
+ * esb_revert_nrf54h_84(void)
+ *
+ * Not applied automatically. Enable CONFIG_ESB_CLOCK_INIT to have esb_glue.c apply and
+ * revert this workaround automatically.
  */
 
 /* nRF54H Workaround 103
@@ -41,11 +45,19 @@ extern "C" {
  */
 
 /* nRF54L Workaround 20
- * MLTPAN-20 is implemented in the ESB samples in the clocks_start function
+ * esb_apply_nrf54l_20(void)
+ * esb_revert_nrf54l_20(void)
+ *
+ * Not applied automatically. Enable CONFIG_ESB_CLOCK_INIT to have esb_glue.c apply and
+ * revert this workaround automatically.
  */
 
 /* nRF54L Workaround 39
- * MLTPAN-39 is implemented in the ESB samples in the clocks_start function
+ * esb_apply_nrf54l_39(void)
+ * esb_revert_nrf54l_39(void)
+ *
+ * Not applied automatically. Enable CONFIG_ESB_CLOCK_INIT to have esb_glue.c apply and
+ * revert this workaround automatically.
  */
 
 #if NRF_ERRATA_STATIC_CHECK(52, 143)
@@ -84,11 +96,35 @@ static inline bool esb_is_nrf54h_216_enabled(void)
 }
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 216)*/
 
+#if NRF_ERRATA_STATIC_CHECK(54H, 84)
+void esb_apply_nrf54h_84(void);
+void esb_revert_nrf54h_84(void);
+#else
+static inline void esb_apply_nrf54h_84(void) {}
+static inline void esb_revert_nrf54h_84(void) {}
+#endif /* NRF_ERRATA_STATIC_CHECK(54H, 84) */
+
 #if NRF_ERRATA_STATIC_CHECK(54H, 229)
 void esb_apply_nrf54h_229(void);
 #else
 static inline void esb_apply_nrf54h_229(void) {}
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 229) */
+
+#if NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA)
+void esb_apply_nrf54l_20(void);
+void esb_revert_nrf54l_20(void);
+#else
+static inline void esb_apply_nrf54l_20(void) {}
+static inline void esb_revert_nrf54l_20(void) {}
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA) */
+
+#if NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA)
+void esb_apply_nrf54l_39(void);
+void esb_revert_nrf54l_39(void);
+#else
+static inline void esb_apply_nrf54l_39(void) {}
+static inline void esb_revert_nrf54l_39(void) {}
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA) */
 
 #ifdef __cplusplus
 }
