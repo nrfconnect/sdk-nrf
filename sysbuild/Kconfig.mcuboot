@@ -283,6 +283,29 @@ config NCS_MCUBOOT_LOAD_PERIPHCONF
 	  the different slots. The PERIPHCONF blob pointed to by UICR.PERIPHCONF will by default
 	  only include the configuration from the MCUboot image.
 
+config NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION
+	bool "Write protect partitions using MPCCONF from MCUboot [EXPERIMENTAL]"
+	depends on SOC_SERIES_NRF54H
+	select EXPERIMENTAL
+	help
+	  Remove write permissions from the bootloader partition and the booted images
+	  by configuring the global domain Memory Privilege Controllers (MPCs). Configuration
+	  is done using the UICR.MPCCONF setting, to remove bootloader code partition write
+	  permissions from the very start of the boot, and the IronSide SE MPCCONF service, to
+	  remove write permissions for the booted image partitions before they are booted.
+	  Enabling this option configures both the mcuboot and uicr images to enable the
+	  necessary settings.
+
+	  The UICR.MPCCONF entries are defined by MCUboot and are extracted by the
+	  UICR generator image and placed into the mpcconf_partition area.
+
+	  Using this feature introduces some limitations on the partition layout.
+	  The write protection scheme does not support more than two images per slot.
+	  Additionally, if the UICR.SECURESTORAGE partition is enabled, it must be placed at
+	  the end of the MRAM area.
+
+	  Using the feature requires IronSide SE v23.4.0+27 or higher to be installed.
+
 menu "Custom TLVs"
 	depends on NCS_MCUBOOT_LOAD_PERIPHCONF
 
