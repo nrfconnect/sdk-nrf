@@ -40,11 +40,14 @@ void test_cs_de_calc_empty_report(void)
 	cs_de_report_t test_report;
 	cs_de_quality_t result;
 
-	/* Setup: Initialize report with no antenna paths */
+	/* Setup: Initialize report with no antenna paths and no RTT measurements */
 	test_report.n_ap = 0;
+	test_report.rtt_accumulated_half_ns = 0;
+	test_report.rtt_count = 0;
 
 	/* Execute */
 	result = cs_de_calc(&test_report);
+
 
 	/* Verify: Should return DO_NOT_USE quality */
 	TEST_ASSERT_EQUAL(CS_DE_QUALITY_DO_NOT_USE, result);
@@ -54,15 +57,38 @@ void test_cs_de_calc_bad_tone_quality(void)
 {
 	cs_de_report_t test_report;
 	cs_de_quality_t result;
-	/* Setup: Initialize report with 1 antenna path but bad tone quality */
+	/* Setup: Initialize report with 1 antenna path but bad tone quality
+	 * and no RTT measurements
+	 */
 	test_report.n_ap = 1;
 	test_report.tone_quality[0] = CS_DE_TONE_QUALITY_BAD;
+	test_report.rtt_accumulated_half_ns = 0;
+	test_report.rtt_count = 0;
 
 	/* Execute */
 	result = cs_de_calc(&test_report);
 
 	/* Verify: Should return DO_NOT_USE quality due to bad tone quality */
 	TEST_ASSERT_EQUAL(CS_DE_QUALITY_DO_NOT_USE, result);
+}
+
+void test_cs_de_calc_only_rtt_measurements(void)
+{
+	cs_de_report_t test_report;
+	cs_de_quality_t result;
+	/* Setup: Initialize report with 1 antenna path but bad tone quality. */
+	test_report.n_ap = 1;
+	test_report.tone_quality[0] = CS_DE_TONE_QUALITY_BAD;
+
+	/* Setup: Initialize report with RTT measurements. */
+	test_report.rtt_accumulated_half_ns = 100000;
+	test_report.rtt_count = 10;
+
+	/* Execute */
+	result = cs_de_calc(&test_report);
+
+	/* Verify: Should return OK quality due to RTT measurements. */
+	TEST_ASSERT_EQUAL(CS_DE_QUALITY_OK, result);
 }
 
 void test_cs_de_calc_with_ideal_iq_data(void)
