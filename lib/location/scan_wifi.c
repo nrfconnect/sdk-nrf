@@ -157,9 +157,31 @@ void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE)
 	struct wifi_scan_params scan_params = {0};
+	int chan_idx = 0;
 
 	scan_params.dwell_time_active = CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_ACTIVE;
 	scan_params.dwell_time_passive = CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE;
+
+	if (IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SCANNING_PASSIVE)) {
+		scan_params.scan_type = WIFI_SCAN_TYPE_PASSIVE;
+	}
+
+	if (IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SCANNING_COMMON_CHANNELS)) {
+		scan_params.band_chan[chan_idx].band = WIFI_FREQ_BAND_2_4_GHZ;
+		scan_params.band_chan[chan_idx].channel = 1;
+		chan_idx++;
+		scan_params.band_chan[chan_idx].band = WIFI_FREQ_BAND_2_4_GHZ;
+		scan_params.band_chan[chan_idx].channel = 6;
+		chan_idx++;
+		scan_params.band_chan[chan_idx].band = WIFI_FREQ_BAND_2_4_GHZ;
+		scan_params.band_chan[chan_idx].channel = 11;
+
+		for (int i = 0; i < chan_idx; i++) {
+			LOG_DBG("Scan channel %d (band %d)",
+				scan_params.band_chan[i].channel,
+				scan_params.band_chan[i].band);
+		}
+	}
 
 	LOG_DBG("Scan params: dwell_active=%d, dwell_passive=%d",
 		scan_params.dwell_time_active,

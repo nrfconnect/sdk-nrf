@@ -137,6 +137,20 @@ config LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE
 	  Default value is set to 260ms to cover at least two beacon intervals,
 	  (102.4ms beacon interval + ~30 ms channel contention) * 2
 
+config LOCATION_METHOD_WIFI_SCANNING_PASSIVE
+	bool "Use passive scanning"
+	help
+	  Use passive scanning instead of active scanning. In passive mode the
+	  Wi-Fi chip only listens for beacons and does not transmit probe
+	  requests.
+
+config LOCATION_METHOD_WIFI_SCANNING_COMMON_CHANNELS
+	bool "Scan only common 2.4 GHz channels (1, 6, 11)"
+	help
+	  Restrict scanning to the three most common non-overlapping 2.4 GHz
+	  channels: 1, 6, and 11. This reduces scan time and power consumption
+	  while still covering the vast majority of deployed access points.
+
 endif # LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
 
 endif # LOCATION_METHOD_WIFI
