@@ -11,6 +11,9 @@
 #include <zephyr/cache.h>
 #include <ironside/se/glue.h>
 #include <ironside/se/internal/api_serialization.h>
+#if defined(CONFIG_IRONSIDE_SE_CALL_MINIMAL)
+#include <ironside/se/internal/call_minimal.h>
+#endif
 
 #include <psa/client.h>
 #include <psa/error.h>
