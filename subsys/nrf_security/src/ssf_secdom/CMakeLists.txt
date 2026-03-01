@@ -26,3 +26,8 @@ if(CONFIG_PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS)
     ${CMAKE_CURRENT_LIST_DIR}/bounce_buffers.c
     )
 endif()
+
+# Duplicated from <zephyr>/modules/hal_nordic/ironside/se.
+# Needed because this library uses internal IronSide support APIs.
+zephyr_library_compile_definitions(IRONSIDE_SE_GLUE_EXT_FILE_PATH="ironside_zephyr/se/glue_impl.h")
+zephyr_library_compile_definitions_ifdef(CONFIG_IRONSIDE_SE_CALL_MINIMAL IRONSIDE_SE_CALL_MINIMAL=1)
