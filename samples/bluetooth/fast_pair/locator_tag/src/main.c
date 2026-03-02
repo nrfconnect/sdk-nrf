@@ -506,7 +506,7 @@ static void fhn_provisioning_state_changed(bool provisioned)
 		 * and shutdown the connection.
 		 */
 		fhn_factory_reset_schedule(FACTORY_RESET_TRIGGER_KEY_STATE_MISMATCH,
-					    K_SECONDS(FACTORY_RESET_DELAY));
+					   K_SECONDS(FACTORY_RESET_DELAY));
 	}
 }
 
