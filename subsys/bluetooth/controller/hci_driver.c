@@ -924,6 +924,10 @@ static void configure_supported_features(void)
 		sdc_support_extended_feature_set();
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_LE_FLUSHABLE_ACL_DATA)) {
+		sdc_support_flushable_acl_data();
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST)) {
 		sdc_support_channel_sounding_test();
 	}
