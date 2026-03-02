@@ -40,18 +40,18 @@ extern "C" {
 
 /* Handle the read operation on the Beacon Actions characteristic. */
 ssize_t fp_fhn_beacon_actions_read(struct bt_conn *conn,
-				    const struct bt_gatt_attr *attr,
-				    void *buf,
-				    uint16_t len,
-				    uint16_t offset);
+				   const struct bt_gatt_attr *attr,
+				   void *buf,
+				   uint16_t len,
+				   uint16_t offset);
 
 /* Handle the write operation on the Beacon Actions characteristic. */
 ssize_t fp_fhn_beacon_actions_write(struct bt_conn *conn,
-				     const struct bt_gatt_attr *attr,
-				     const void *buf,
-				     uint16_t len,
-				     uint16_t offset,
-				     uint8_t flags);
+				    const struct bt_gatt_attr *attr,
+				    const void *buf,
+				    uint16_t len,
+				    uint16_t offset,
+				    uint8_t flags);
 
 /* Handle the write operation on the CCC descriptor of the Beacon Actions characteristic. */
 void fp_fhn_beacon_actions_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value);

@@ -218,9 +218,9 @@ static ssize_t beacon_parameters_read_handle(struct bt_conn *conn,
 	auth_data.add_data = rsp_data_enc;
 
 	err = fp_fhn_auth_seg_generate(account_key.key,
-					sizeof(account_key.key),
-					&auth_data,
-					auth_seg);
+				       sizeof(account_key.key),
+				       &auth_data,
+				       auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Beacon Parameters Read request:"
 			" fp_fhn_auth_seg_generate failed: %d", err);
@@ -337,9 +337,9 @@ static ssize_t provisioning_state_read_handle(struct bt_conn *conn,
 	auth_data.add_data = rsp_data_buf.data;
 
 	err = fp_fhn_auth_seg_generate(account_key.key,
-					sizeof(account_key.key),
-					&auth_data,
-					auth_seg);
+				       sizeof(account_key.key),
+				       &auth_data,
+				       auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Provisioning State Read request:"
 			" fp_fhn_auth_seg_generate failed: %d", err);
@@ -477,9 +477,9 @@ static ssize_t ephemeral_identity_key_set_handle(struct bt_conn *conn,
 	auth_data.add_data = NULL;
 
 	err = fp_fhn_auth_seg_generate(account_key.key,
-					sizeof(account_key.key),
-					&auth_data,
-					auth_seg);
+				       sizeof(account_key.key),
+				       &auth_data,
+				       auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Set request:"
 			" fp_fhn_auth_seg_generate failed: %d", err);
@@ -594,9 +594,9 @@ static ssize_t ephemeral_identity_key_clear_handle(struct bt_conn *conn,
 	auth_data.add_data = NULL;
 
 	err = fp_fhn_auth_seg_generate(account_key.key,
-					sizeof(account_key.key),
-					&auth_data,
-					auth_seg);
+				       sizeof(account_key.key),
+				       &auth_data,
+				       auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Clear request:"
 			" fp_fhn_auth_seg_generate failed: %d", err);
@@ -644,8 +644,8 @@ static ssize_t ephemeral_identity_key_read_handle(struct bt_conn *conn,
 
 	/* Perform authentication of the incoming packet. */
 	err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_RECOVERY,
-					recovery_key,
-					sizeof(recovery_key));
+				       recovery_key,
+				       sizeof(recovery_key));
 	if (err) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Read request:"
 			" fp_fhn_auth_key_generate failed: %d", err);
@@ -732,9 +732,9 @@ static ssize_t ephemeral_identity_key_read_handle(struct bt_conn *conn,
 	auth_data.add_data = rsp_data_buf.data;
 
 	err = fp_fhn_auth_seg_generate(recovery_key,
-					sizeof(recovery_key),
-					&auth_data,
-					auth_seg);
+				       sizeof(recovery_key),
+				       &auth_data,
+				       auth_seg);
 	if (err) {
 		LOG_ERR("Beacon Actions: Provisioning State Read request:"
 			" fp_fhn_auth_seg_generate failed: %d", err);
@@ -785,8 +785,8 @@ static ssize_t ring_handle(struct bt_conn *conn,
 	if (perform_auth) {
 		/* Perform authentication of the incoming packet. */
 		err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_RING,
-						ring_key,
-						sizeof(ring_key));
+					       ring_key,
+					       sizeof(ring_key));
 		if (err) {
 			LOG_ERR("Beacon Actions: Ring request:"
 				" fp_fhn_auth_key_generate failed: %d", err);
@@ -872,8 +872,8 @@ static ssize_t ringing_state_read_handle(struct bt_conn *conn,
 
 	/* Perform authentication of the incoming packet. */
 	err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_RING,
-					ring_key,
-					sizeof(ring_key));
+				       ring_key,
+				       sizeof(ring_key));
 	if (err) {
 		LOG_ERR("Beacon Actions: Ringing State Read request:"
 			" fp_fhn_auth_key_generate failed: %d", err);
@@ -1182,8 +1182,8 @@ int bt_fast_pair_fhn_ring_state_update(
 	net_buf_simple_add_u8(&rsp_buf, rsp_data_len);
 
 	err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_RING,
-					ring_key,
-					sizeof(ring_key));
+				       ring_key,
+				       sizeof(ring_key));
 	if (err) {
 		LOG_ERR("Beacon Actions: Ring State Change response:"
 			" fp_fhn_auth_key_generate failed: %d", err);
@@ -1225,10 +1225,10 @@ int bt_fast_pair_fhn_ring_state_update(
 }
 
 ssize_t fp_fhn_beacon_actions_read(struct bt_conn *conn,
-				    const struct bt_gatt_attr *attr,
-				    void *buf,
-				    uint16_t len,
-				    uint16_t offset)
+				   const struct bt_gatt_attr *attr,
+				   void *buf,
+				   uint16_t len,
+				   uint16_t offset)
 {
 	int err;
 	ssize_t res;
@@ -1279,11 +1279,11 @@ ssize_t fp_fhn_beacon_actions_read(struct bt_conn *conn,
 }
 
 ssize_t fp_fhn_beacon_actions_write(struct bt_conn *conn,
-				     const struct bt_gatt_attr *attr,
-				     const void *buf,
-				     uint16_t len,
-				     uint16_t offset,
-				     uint8_t flags)
+				    const struct bt_gatt_attr *attr,
+				    const void *buf,
+				    uint16_t len,
+				    uint16_t offset,
+				    uint8_t flags)
 {
 	struct net_buf_simple fhn_beacon_actions_buf;
 	struct conn_context *conn_context;

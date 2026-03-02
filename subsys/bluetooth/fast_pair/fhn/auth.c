@@ -134,8 +134,8 @@ static int eik_derived_auth_key_generate(uint8_t seed_end_byte,
 }
 
 int fp_fhn_auth_key_generate(enum fp_fhn_auth_key_type key_type,
-			      uint8_t *auth_key,
-			      size_t auth_key_len)
+			     uint8_t *auth_key,
+			     size_t auth_key_len)
 {
 	int err;
 	uint8_t seed_end_byte;
@@ -169,8 +169,8 @@ int fp_fhn_auth_key_generate(enum fp_fhn_auth_key_type key_type,
 }
 
 bool fp_fhn_auth_seg_validate(const uint8_t *key, size_t key_len,
-			       const struct fp_fhn_auth_data *auth_data,
-			       const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN])
+			      const struct fp_fhn_auth_data *auth_data,
+			      const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN])
 {
 	NET_BUF_SIMPLE_DEFINE(auth_data_buf, AUTH_DATA_BUF_LEN);
 
@@ -181,8 +181,8 @@ bool fp_fhn_auth_seg_validate(const uint8_t *key, size_t key_len,
 }
 
 int fp_fhn_auth_seg_generate(const uint8_t *key, size_t key_len,
-			      struct fp_fhn_auth_data *auth_data,
-			      uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN])
+			     struct fp_fhn_auth_data *auth_data,
+			     uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN])
 {
 	int err;
 	uint8_t local_auth_seg[FP_CRYPTO_SHA256_HASH_LEN];
@@ -212,8 +212,8 @@ int fp_fhn_auth_seg_generate(const uint8_t *key, size_t key_len,
 }
 
 int fp_fhn_auth_account_key_find(const struct fp_fhn_auth_data *auth_data,
-				  const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN],
-				  struct fp_account_key *account_key)
+				 const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN],
+				 struct fp_account_key *account_key)
 {
 	int err;
 	struct account_key_find_context account_key_find_context = {0};
