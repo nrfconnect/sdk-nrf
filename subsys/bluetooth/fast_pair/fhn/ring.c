@@ -432,7 +432,7 @@ static void dult_sound_stop(enum dult_sound_src src)
 	dult_ring_req_param.active_comp_bm = BT_FAST_PAIR_FHN_RING_COMP_BM_NONE;
 
 	err = fp_fhn_ring_req_handle(BT_FAST_PAIR_FHN_RING_SRC_DULT_BT_GATT,
-				      &dult_ring_req_param);
+				     &dult_ring_req_param);
 	__ASSERT(!err,
 		 "FHN Ring: invalid translation from DULT Sound to FHN Ring "
 		 "parameters on the sound stop action");

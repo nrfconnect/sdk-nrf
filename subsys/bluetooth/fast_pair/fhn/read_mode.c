@@ -77,8 +77,8 @@ static int dult_id_payload_get(uint8_t *buf, size_t *len)
 	}
 
 	err = fp_fhn_auth_key_generate(FP_FHN_AUTH_KEY_TYPE_RECOVERY,
-					recovery_key,
-					sizeof(recovery_key));
+				       recovery_key,
+				       sizeof(recovery_key));
 	if (err) {
 		LOG_ERR("FHN Read Mode: fp_fhn_auth_key_generate failed: %d", err);
 		return err;

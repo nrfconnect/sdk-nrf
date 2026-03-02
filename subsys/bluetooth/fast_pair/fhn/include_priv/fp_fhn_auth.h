@@ -56,8 +56,8 @@ enum fp_fhn_auth_key_type {
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int fp_fhn_auth_key_generate(enum fp_fhn_auth_key_type key_type,
-			      uint8_t *auth_key,
-			      size_t auth_key_len);
+			     uint8_t *auth_key,
+			     size_t auth_key_len);
 
 /** Authentication seed data */
 struct fp_fhn_auth_data {
@@ -87,9 +87,9 @@ struct fp_fhn_auth_data {
  * @return True if the authentication segment is correct, False Otherwise.
  */
 bool fp_fhn_auth_seg_validate(const uint8_t *key,
-			       size_t key_len,
-			       const struct fp_fhn_auth_data *auth_data,
-			       const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN]);
+			      size_t key_len,
+			      const struct fp_fhn_auth_data *auth_data,
+			      const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN]);
 
 /** Generate the local authentication segment from the Authentication Key
  *  and the authentication seed data. This segment is used by the remote peer
@@ -105,9 +105,9 @@ bool fp_fhn_auth_seg_validate(const uint8_t *key,
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int fp_fhn_auth_seg_generate(const uint8_t *key,
-			      size_t key_len,
-			      struct fp_fhn_auth_data *auth_data,
-			      uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN]);
+			     size_t key_len,
+			     struct fp_fhn_auth_data *auth_data,
+			     uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN]);
 
 /** Find the Account Key that matches the remote authentication segment.
  *  This function generates the local authentication segment from the
@@ -122,8 +122,8 @@ int fp_fhn_auth_seg_generate(const uint8_t *key,
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int fp_fhn_auth_account_key_find(const struct fp_fhn_auth_data *auth_data,
-				  const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN],
-				  struct fp_account_key *account_key);
+				 const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN],
+				 struct fp_account_key *account_key);
 
 #ifdef __cplusplus
 }

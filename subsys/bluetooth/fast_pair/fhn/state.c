@@ -497,7 +497,7 @@ static bool fhn_adv_rpa_expired(struct bt_le_ext_adv *adv)
 }
 
 static void fhn_adv_connected(struct bt_le_ext_adv *adv,
-			       struct bt_le_ext_adv_connected_info *info)
+			      struct bt_le_ext_adv_connected_info *info)
 {
 	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
