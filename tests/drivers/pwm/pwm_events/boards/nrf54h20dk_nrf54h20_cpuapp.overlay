@@ -12,12 +12,6 @@ tst_timer: &timer131 {
 	status = "okay";
 };
 
-&dppic133 {
-	owned-channels = <1>;
-	sink-channels = <1>;
-	status = "okay";
-};
-
 pwm_led: &led3 {
 	status = "okay";
 };
