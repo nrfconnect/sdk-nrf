@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2025 Nordic Semiconductor
+# Copyright (c) 2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -24,9 +24,9 @@ NRFXLIB_BASE = utils.get_projdir("nrfxlib")
 # General configuration --------------------------------------------------------
 
 project = "nrfxlib"
-copyright = "2019-2025, Nordic Semiconductor"
+copyright = "2019-2026, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = "2.6.4"
+version = release = "2.6.5"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
