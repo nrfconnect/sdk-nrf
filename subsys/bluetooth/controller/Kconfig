@@ -320,6 +320,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_EXTENDED_FEAT_SET || \
 						     BT_CTLR_FRAME_SPACE_UPDATE || \
 						     BT_CTLR_SHORTER_CONNECTION_INTERVALS || \
+						     BT_CTLR_LE_FLUSHABLE_ACL_DATA || \
 						     SOC_COMPATIBLE_NRF5340_CPUNET || \
 						     SOC_SERIES_NRF71)
 	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
@@ -735,6 +736,13 @@ config BT_CTLR_SDC_ENABLE_LOWEST_FRAME_SPACE
 
 config BT_CTLR_DTM
 	select EXPERIMENTAL
+
+config BT_CTLR_LE_FLUSHABLE_ACL_DATA
+	bool "LE Flushable ACL Data [EXPERIMENTAL]"
+	depends on BT_CTLR_EXTENDED_FEAT_SET
+	select EXPERIMENTAL
+	help
+	  Enable support for Bluetooth 6.2 LE Flushable ACL Data in the Controller.
 
 config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	int

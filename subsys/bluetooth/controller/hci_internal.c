@@ -836,6 +836,19 @@ static uint8_t controller_and_baseband_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_cb_write_authenticated_payload_timeout((void *)cmd_params,
 									  (void *)event_out_params);
 #endif
+
+#if defined(CONFIG_BT_CTLR_LE_FLUSHABLE_ACL_DATA)
+	case SDC_HCI_OPCODE_CMD_CB_READ_AUTOMATIC_FLUSH_TIMEOUT:
+		*param_length_out += sizeof(sdc_hci_cmd_cb_read_automatic_flush_timeout_return_t);
+		return sdc_hci_cmd_cb_read_automatic_flush_timeout((void *)cmd_params,
+								   (void *)event_out_params);
+
+	case SDC_HCI_OPCODE_CMD_CB_WRITE_AUTOMATIC_FLUSH_TIMEOUT:
+		*param_length_out += sizeof(sdc_hci_cmd_cb_write_automatic_flush_timeout_return_t);
+		return sdc_hci_cmd_cb_write_automatic_flush_timeout((void *)cmd_params,
+								    (void *)event_out_params);
+#endif
+
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
 	}
