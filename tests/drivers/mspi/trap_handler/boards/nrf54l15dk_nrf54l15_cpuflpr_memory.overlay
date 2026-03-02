@@ -18,6 +18,7 @@
 
 &cpuflpr_rram {
 	reg = <0x177000 DT_SIZE_K(24)>;
+	ranges = <0x0 0x177000 DT_SIZE_K(24)>;
 };
 
 &cpuflpr_code_partition {
