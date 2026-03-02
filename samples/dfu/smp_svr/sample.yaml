@@ -357,7 +357,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     harness_config: *bt_harness_config
 
-  sample.dfu.smp_svr.bt.nrf54h20dk.load_periphconf:
+  sample.dfu.smp_svr.bt.nrf54h20dk.ironside_se_conf:
     sysbuild: true
     extra_args:
       - EXTRA_CONF_FILE="overlay-bt.conf"
@@ -367,6 +367,7 @@ tests:
       - mcuboot_CONFIG_MULTITHREADING=y
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
       - SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF=y
+      - SB_CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION=y
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
@@ -389,7 +390,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     harness_config: *bt_harness_config
 
-  sample.dfu.smp_svr.bt.nrf54h20dk.direct_xip_withrevert.load_periphconf:
+  sample.dfu.smp_svr.bt.nrf54h20dk.direct_xip_withrevert.ironside_se_conf:
     sysbuild: true
     extra_args:
       - FILE_SUFFIX="merged_slot"
@@ -400,6 +401,7 @@ tests:
       - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
       - SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF=y
+      - SB_CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION=y
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
