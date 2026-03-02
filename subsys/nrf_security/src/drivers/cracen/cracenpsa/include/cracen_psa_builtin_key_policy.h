@@ -59,7 +59,6 @@ typedef struct {
  */
 psa_key_usage_t cracen_ikg_key_user_get_usage(const psa_key_attributes_t *attributes);
 
-#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 /** @brief Check if a user is allowed to access a KMU key.
  *
  * @param[in] attributes Key attributes.
@@ -67,7 +66,6 @@ psa_key_usage_t cracen_ikg_key_user_get_usage(const psa_key_attributes_t *attrib
  * @return Whether the user is allowed to access the key.
  */
 bool cracen_kmu_key_user_allowed(const psa_key_attributes_t *attributes);
-#endif
 
 #else /* __NRF_TFM__ */
 
@@ -81,13 +79,11 @@ static inline psa_key_usage_t cracen_ikg_key_user_get_usage(const psa_key_attrib
 		: (PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_VERIFY_DERIVATION);
 }
 
-#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 static inline bool cracen_kmu_key_user_allowed(const psa_key_attributes_t *attributes)
 {
 	(void)attributes;
 	return true;
 }
-#endif
 
 #endif /* __NRF_TFM__ */
 
