@@ -211,6 +211,10 @@ static size_t test_tone_size;
  */
 static uint32_t consec_invalid_ts_deltas;
 
+static struct producer_info prod_inf_i2s = {
+	.rate_adjustable = true,
+};
+
 /**
  * @brief	Calculate error between sdu_ref and frame_start_ts_us.
  *
@@ -779,6 +783,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 		meta->data_len_us += i2s_meta.data_len_us; /* Each block is 1ms */
 		meta->bytes_per_location += i2s_meta.bytes_per_location;
 		i2s_blocks_in_current_frame++;
+		meta->prod_inf = &prod_inf_i2s;
 
 		/* Check if we have a complete 10ms frame */
 		if (i2s_blocks_in_current_frame >= CONFIG_FIFO_FRAME_SPLIT_NUM) {

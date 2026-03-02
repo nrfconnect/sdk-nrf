@@ -304,6 +304,12 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		return -EINVAL;
 	}
 
+	if (meta == NULL || meta->prod_inf == NULL) {
+		LOG_ERR("Audio metadata or producer info is missing");
+		return -EINVAL;
+	}
+
+	bool prod_can_rate_adj = meta->prod_inf->rate_adjustable;
 	data_size_pr_stream = audio_frame->len / num_loc;
 	uint32_t common_interval_us = 0;
 
@@ -318,8 +324,12 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	uint8_t sent_streams = 0;
 	struct tx_inf *tx_info = NULL;
 
-	/* Increment the tx timestamp with the interval */
+	/* Increment the tx timestamp with the interval.
+	 * If this TX function is called too fast or slow, the estimate will deteriorate faster.
+	 */
 	timestamp_ctlr_esti_us += common_interval_us;
+
+	LOG_INF_RATELIMIT_RATE(1000, "tx %d valid %d", num_tx, timestamp_ctlr_esti_us_valid);
 
 	for (int i = 0; i < num_tx; i++) {
 		tx_info = &tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
@@ -328,12 +338,13 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		if (num_loc == 1) {
 			ret = iso_stream_send(audio_frame->data, data_size_pr_stream,
 					      tx[i].cap_stream, tx_info, timestamp_ctlr_esti_us,
-					      timestamp_ctlr_esti_us_valid);
+					      timestamp_ctlr_esti_us_valid && prod_can_rate_adj);
 		} else {
 			ret = iso_stream_send(audio_frame->data +
 						      (tx[i].audio_location * data_size_pr_stream),
 					      data_size_pr_stream, tx[i].cap_stream, tx_info,
-					      timestamp_ctlr_esti_us, timestamp_ctlr_esti_us_valid);
+					      timestamp_ctlr_esti_us,
+					      timestamp_ctlr_esti_us_valid && prod_can_rate_adj);
 		}
 
 		if (ret) {
@@ -382,10 +393,13 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		}
 
 		if (subequent_rapid_corrections > SUBSEQUENT_RAPID_CORRECTIONS_LIMIT) {
-			LOG_ERR("Multiple rapid time corrections detected");
+			LOG_WRN_RATELIMIT_RATE(5000,
+					       "%d subsequent time corrections. Expected for "
+					       "synchronous USB",
+					       subequent_rapid_corrections);
 		}
 
-		LOG_DBG_RATELIMIT_RATE(1000,
+		LOG_INF_RATELIMIT_RATE(1000,
 				       "TX clock updated by %d ppm - corr_diff: %d us, "
 				       "estimate: %u corrected to %u",
 				       corr_ppm, corr_diff, timestamp_ctlr_esti_us,
@@ -416,28 +430,27 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			       "Controller timestamp: %u us, Current timestamp: %u us, Diff: %d us",
 			       timestamp_ctlr_esti_us, timestamp_now_us, diff_us);
 
-	if (diff_us < 0) {
-		LOG_INF("TX too late. Controller will flush. Diff: %d us, "
-			"ctlr_est: %u now: %u",
-			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
+	if (diff_us < 0 && prod_can_rate_adj) {
+		/* Late TX / too little data provided. Controller will flush data */
+		LOG_INF("TX late. Diff: %d us, ctlr_est: %u now: %u", diff_us,
+			timestamp_ctlr_esti_us, timestamp_now_us);
 		timestamp_ctlr_esti_us_valid = false;
 		timestamp_ctlr_esti_us = 0;
-	} else if (diff_us < TX_MARGIN_MIN_US) {
-		LOG_INF("TX too close to next TX window. Data may be lost. Diff: %d "
-			"us, ctlr_est: %u now: %u",
-			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
+	} else if ((diff_us < TX_MARGIN_MIN_US) && prod_can_rate_adj) {
+		/* Late TX / too little data provided. Data may be lost */
+		LOG_INF("TX close to next window. Diff: %d us, ctlr_est: %u now: %u", diff_us,
+			timestamp_ctlr_esti_us, timestamp_now_us);
 		timestamp_ctlr_esti_us_valid = false;
 		timestamp_ctlr_esti_us = 0;
-	} else if (diff_us > TX_MARGIN_MAX_US) {
-		LOG_INF("TX too early. This may cause unnecessary latency. Diff: %d "
-			"us, ctlr_est: %u now: %u",
-			diff_us, timestamp_ctlr_esti_us, timestamp_now_us);
+	} else if ((diff_us > TX_MARGIN_MAX_US) && prod_can_rate_adj) {
+		/* Early TX / too much data. Controller will buffer and latency increase */
+		LOG_INF("TX early. Diff: %d us, ctlr_est: %u now: %u", diff_us,
+			timestamp_ctlr_esti_us, timestamp_now_us);
 		/* Not critical, but can update timestamp to better align with controller */
 		timestamp_ctlr_esti_us_valid = false;
 		timestamp_ctlr_esti_us = 0;
 	} else {
 		/* Timestamp is valid and within an acceptable range */
-		timestamp_ctlr_esti_us_valid = true;
 	}
 
 	return 0;
