@@ -276,7 +276,7 @@ Building the application
 
 When you build the application, make sure to create the combination of configurations that matches the application mode you want to work with.
 
-.. literalinclude:: ../index.rst
+.. include:: ../index.rst
    :start-after: nrf53_audio_app_overview_table_start
    :end-before: nrf53_audio_app_overview_table_end
 
