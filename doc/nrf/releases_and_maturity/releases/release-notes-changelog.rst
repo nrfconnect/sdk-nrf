@@ -376,6 +376,8 @@ Bluetooth samples
   * Added a sample-specific ``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`` Kconfig option.
     The option can be used to control support for passkey display MITM protection.
     The passkey display feature can be used only if configuration emits printk messages (:kconfig:option:`CONFIG_PRINTK` Kconfig option must be enabled).
+  * Added configuration without debug features (``release`` configuration).
+    The configuration can be used to verify memory footprint of the sample as it is closer to configuration used by a final product.
 
 Bluetooth Mesh samples
 ----------------------

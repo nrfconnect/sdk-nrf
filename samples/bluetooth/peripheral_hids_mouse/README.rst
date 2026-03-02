@@ -174,6 +174,20 @@ To build the sample in the compatible configuration, use the following command:
 Memory footprint usage
 ======================
 
+The sample supports a dedicated ``release`` configuration that disables debug features like logs or assertions.
+The configuration can be used to verify memory footprint of the sample as it is closer to configuration used by a final product.
+
+.. note::
+   The ``release`` configuration does not emit logs (and :c:func:`printk` messages).
+   Because of that, it cannot enable passkey display MITM protection (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``).
+
+Use the following command to build the sample in ``release`` configuration:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -- -DFILE_SUFFIX=release
+
 To get the memory footprint, run the following commands from the sample directory (:file:`nrf/samples/bluetooth/peripheral_hids_mouse`):
 
 .. parsed-literal::
