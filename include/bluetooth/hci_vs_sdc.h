@@ -24,6 +24,17 @@ extern "C" {
 #include <stdint.h>
 #include <sdc_hci_vs.h>
 
+/** @brief Helper type for reading static address
+ *
+ * Convenience structure to handle variable length response layout.
+ */
+typedef struct __PACKED __ALIGN(1)
+{
+	sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t head;
+	sdc_hci_vs_zephyr_static_address_t addr[1];
+} sdc_hci_cmd_vs_zephyr_read_static_addresses_return_helper_t;
+
+
 /** @brief Zephyr Read Version Information.
  *
  * For the complete API description, see sdc_hci_cmd_vs_zephyr_read_version_info().
@@ -65,7 +76,7 @@ int hci_vs_sdc_zephyr_write_bd_addr(const sdc_hci_cmd_vs_zephyr_write_bd_addr_t 
  * @return 0 on success or negative error value on failure.
  */
 int hci_vs_sdc_zephyr_read_static_addresses(
-	sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t *return_params);
+	sdc_hci_cmd_vs_zephyr_read_static_addresses_return_helper_t *return_params);
 
 /** @brief Zephyr Read KEY Hierarchy Roots.
  *

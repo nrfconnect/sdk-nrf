@@ -88,11 +88,33 @@ int hci_vs_sdc_zephyr_write_bd_addr(const sdc_hci_cmd_vs_zephyr_write_bd_addr_t 
 }
 
 int hci_vs_sdc_zephyr_read_static_addresses(
-	sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t *return_params)
+	sdc_hci_cmd_vs_zephyr_read_static_addresses_return_helper_t *return_params)
 {
-	return hci_vs_cmd_with_rsp_only(SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_STATIC_ADDRESSES,
-					return_params,
-					sizeof(*return_params));
+	int err;
+	struct net_buf *rsp_buf;
+	uint8_t num_addresses;
+
+	err = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_STATIC_ADDRESSES,
+					NULL,
+					&rsp_buf);
+	if (err) {
+		return err;
+	}
+
+	memset(return_params, 0, sizeof(*return_params));
+
+	/* The Controller will return either 0 or 1 address. */
+	num_addresses = rsp_buf->data[1];
+	return_params->head.num_addresses = num_addresses;
+
+	if (num_addresses == 1) {
+		memcpy(&return_params->addr[0],
+			   &rsp_buf->data[2],
+			   sizeof(sdc_hci_vs_zephyr_static_address_t));
+	}
+
+	net_buf_unref(rsp_buf);
+	return 0;
 }
 
 int hci_vs_sdc_zephyr_read_key_hierarchy_roots(
