@@ -53,9 +53,3 @@ dut_spi: &spi130 {
 tst_timer: &timer131 {
 	status = "okay";
 };
-
-&dppic133 {
-	owned-channels = <1>;
-	sink-channels = <1>;
-	status = "okay";
-};
