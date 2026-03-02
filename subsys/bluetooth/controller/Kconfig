@@ -108,7 +108,6 @@ config BT_CTLR_SDC_LLPM
 
 config BT_CTLR_SDC_QOS_CHANNEL_SURVEY
 	bool "Channel survey"
-	select EXPERIMENTAL
 	help
 	  Channel survey feature support
 
