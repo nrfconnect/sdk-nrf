@@ -11,11 +11,19 @@
 #include <zephyr/sys/util.h>
 
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 #define COREDUMP_LOG_PREFIX   "#CD:"
 #define COREDUMP_LOG_BEGIN    "BEGIN#"
 #define COREDUMP_LOG_END      "END#"
 #define COREDUMP_LOG_LINE_LEN 32
+
+#define HISTORY_DUMP_PREFIX   "#LH:"
+
+/* Text payload format marker (server writes this at start of payload) */
+#define HISTORY_DUMP_TEXT_MAGIC "LH02"
+#define HISTORY_DUMP_TEXT_MAGIC_LEN 4
 
 static int cmd_log_rpc_stream_level(const struct shell *sh, size_t argc, char *argv[])
 {
@@ -209,6 +217,62 @@ static int cmd_log_rpc_crash_invalidate(const struct shell *sh, size_t argc, cha
 	return 0;
 }
 
+static int cmd_log_rpc_history_dump(const struct shell *sh, size_t argc, char *argv[])
+{
+	size_t offset = 0;
+	size_t first_chunk_skip = 0; /* Skip "LH02" at start when text format */
+	bool text_format = false;
+	bool first_chunk = true;
+	char buffer[CONFIG_NRF_PS_CLIENT_CRASH_DUMP_READ_BUFFER_SIZE];
+
+	shell_print(sh, HISTORY_DUMP_PREFIX COREDUMP_LOG_BEGIN);
+
+	while (true) {
+		size_t rc = log_rpc_get_history_dump(offset, (uint8_t *)buffer, sizeof(buffer));
+
+		if (rc == 0) {
+			break;
+		}
+
+		if (first_chunk && rc >= HISTORY_DUMP_TEXT_MAGIC_LEN &&
+		    memcmp(buffer, HISTORY_DUMP_TEXT_MAGIC, HISTORY_DUMP_TEXT_MAGIC_LEN) == 0) {
+			text_format = true;
+			first_chunk_skip = HISTORY_DUMP_TEXT_MAGIC_LEN;
+		}
+		first_chunk = false;
+
+		if (text_format) {
+			size_t to_show = rc - first_chunk_skip;
+
+			if (to_show > 0) {
+				shell_fprintf(sh, SHELL_NORMAL, "%.*s", (int)to_show,
+					     (char *)buffer + first_chunk_skip);
+			}
+			first_chunk_skip = 0;
+		}
+
+		offset += rc;
+	}
+
+	shell_print(sh, HISTORY_DUMP_PREFIX COREDUMP_LOG_END);
+
+	return 0;
+}
+
+static int cmd_log_rpc_history_dump_clear(const struct shell *sh, size_t argc, char *argv[])
+{
+	int rc;
+
+	rc = log_rpc_clear_history_dump();
+
+	if (rc) {
+		shell_error(sh, "Error: %d", rc);
+		return -ENOEXEC;
+	}
+
+	return 0;
+}
+
 static int cmd_log_rpc_echo(const struct shell *sh, size_t argc, char *argv[])
 {
 	int rc = 0;
@@ -278,6 +342,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(crash_cmds,
 					     cmd_log_rpc_crash_invalidate, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
+SHELL_STATIC_SUBCMD_SET_CREATE(history_dump_cmds,
+			       SHELL_CMD_ARG(clear, NULL, "Clear history dump on remote",
+					     cmd_log_rpc_history_dump_clear, 1, 0),
+			       SHELL_SUBCMD_SET_END);
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	log_rpc_cmds,
 	SHELL_CMD_ARG(stream_level, NULL, "Set log streaming level <0-4>", cmd_log_rpc_stream_level,
@@ -293,6 +362,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      cmd_log_rpc_history_usage_current, 1, 0),
 	SHELL_CMD_ARG(crash, &crash_cmds, "Retrieve crash dump from remote", cmd_log_rpc_crash, 1,
 		      0),
+	SHELL_CMD_ARG(history_dump, &history_dump_cmds,
+		     "Retrieve log history dump from remote (after crash)",
+		     cmd_log_rpc_history_dump, 1, 0),
 	SHELL_CMD_ARG(echo, NULL, "Generate log message on remote <0-4> <msg>", cmd_log_rpc_echo, 3,
 		      0),
 	SHELL_CMD_ARG(time, NULL, "Set current time <time_us|now>", cmd_log_rpc_time, 2, 0),
