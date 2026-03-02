@@ -60,10 +60,18 @@ config MCUBOOT_NRF_CLEANUP_PERIPHERAL
 	depends on SOC_FAMILY_NORDIC_NRF
 	default y
 
+if IRONSIDE_SE_CALL
+
+choice IRONSIDE_SE_CALL_DRIVER
+	default IRONSIDE_SE_CALL_MINIMAL
+endchoice
+
+endif
+
 config NCS_MCUBOOT_LOAD_PERIPHCONF
 	bool "Load new peripheral configuration before jumping to the application"
-	select IRONSIDE_SE_CALL
 	depends on HAS_IRONSIDE_SE
+	depends on IRONSIDE_SE_CALL_MINIMAL
 	help
 	  When enabled, MCUboot looks for a TLV pointing to a slot specific list of
 	  peripheral configurations (PERIPHCONF) to initialize peripherals with before
