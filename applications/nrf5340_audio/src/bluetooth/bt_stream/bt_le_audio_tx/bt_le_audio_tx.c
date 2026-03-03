@@ -329,7 +329,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	 */
 	timestamp_ctlr_esti_us += common_interval_us;
 	if (flush_next) {
-		LOG_WRN("Flushed %d us of audio data to maintain timestamp sync with controller",
+		LOG_DBG("Flushed %d us of audio data to maintain timestamp sync with controller",
 			common_interval_us);
 		flush_next = false;
 		timestamp_ctlr_esti_us_valid = false;
@@ -415,36 +415,41 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		 * server/broadcast sink, this will happen to correct for drift.
 		 */
 
-		if (corr_diff > (common_interval_us / 2)) {
+		if (corr_diff == 0) {
+			/* No correction needed, the estimate is correct. */
+			LOG_DBG("TX clock no adjustment needed (%d us)", corr_diff);
+			timestamp_ctlr_esti_us_valid = true;
+		} else if (corr_diff > (common_interval_us / 2)) {
 			LOG_WRN("TX clock has been updated by (%d us). Empty packet on air",
 				corr_diff);
+			timestamp_ctlr_esti_us_valid = false;
 		} else if (corr_diff < (common_interval_us / 2)) {
 			LOG_ERR("TX clock has been updated by (%d us). Shall not happen",
 				corr_diff);
+			timestamp_ctlr_esti_us_valid = false;
 			return -EIO;
-		} else if (corr_diff) {
+		} else {
 			if (CONFIG_AUDIO_DEV == HEADSET) {
 				LOG_INF("TX clock has been drift adjusted by (%d us)", corr_diff);
+				timestamp_ctlr_esti_us_valid = true;
 			}
 			if (CONFIG_AUDIO_DEV == GATEWAY) {
 				LOG_ERR("TX clock has been drift adjusted by (%d us)", corr_diff);
+				timestamp_ctlr_esti_us_valid = false;
 			}
-		} else {
-			/* No correction needed, the estimate is correct. */
-			LOG_DBG("TX clock no adjustment needed (%d us)", corr_diff);
 		}
 
 		timestamp_ctlr_real_us_last = timestamp_ctlr_real_us;
 		/* Update the estimate to the real (most current) value */
 		timestamp_ctlr_esti_us = timestamp_ctlr_real_us;
-		timestamp_ctlr_esti_us_valid = true;
+
 		timestamp_last_correction = timestamp_now_us;
 	}
 
 	if (timestamp_now_us > (timestamp_ctlr_esti_us + common_interval_us)) {
-		LOG_WRN("Current timestamp is ahead of controller timestamp. Need to throw data. "
+		LOG_WRN("Curr time ahead of ctlr time. Flush %d us of data. "
 			"Now: %u us, ctlr: %u us",
-			timestamp_now_us, timestamp_ctlr_esti_us);
+			common_interval_us, timestamp_now_us, timestamp_ctlr_esti_us);
 		flush_next = true;
 		timestamp_ctlr_esti_us_valid = false;
 	}
