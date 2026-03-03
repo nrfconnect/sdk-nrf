@@ -58,9 +58,7 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
  * However, for the headset/peripheral (unicast server/broadcast sink)
  * regular re-sync is needed to compensate for clock drift.
  */
-#define TX_TS_RESYNC_US	 1000000
-#define TX_MARGIN_MIN_US (CONFIG_TX_TGT_LEAD_TIME_US - CONFIG_TX_LEAD_TIME_DEVIATION_US)
-#define TX_MARGIN_MAX_US (CONFIG_TX_TGT_LEAD_TIME_US + CONFIG_TX_LEAD_TIME_DEVIATION_US)
+#define TX_TS_RESYNC_US 1000000
 
 /* When starting a stream, I2S or USB feeding the TX function with data, will usually need some time
  * to stabilize and potentially drop data to meet just-in-time requirements.
@@ -309,9 +307,10 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		return -EINVAL;
 	}
 
-	bool prod_can_rate_adj = meta->prod_inf->rate_adjustable;
-	data_size_pr_stream = audio_frame->len / num_loc;
+	bool prod_can_rate_adj = true;
 	uint32_t common_interval_us = 0;
+
+	data_size_pr_stream = audio_frame->len / num_loc;
 
 	ret = tx_precheck(tx, num_tx, num_loc, data_size_pr_stream, &common_interval_us);
 	if (ret) {
@@ -320,6 +319,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 
 	/* The timestamp used when sending*/
 	static uint32_t timestamp_ctlr_esti_us;
+	static bool flush_next;
 	static bool timestamp_ctlr_esti_us_valid;
 	uint8_t sent_streams = 0;
 	struct tx_inf *tx_info = NULL;
@@ -328,8 +328,15 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	 * If this TX function is called too fast or slow, the estimate will deteriorate faster.
 	 */
 	timestamp_ctlr_esti_us += common_interval_us;
+	if (flush_next) {
+		LOG_WRN("Flushed %d us of audio data to maintain timestamp sync with controller",
+			common_interval_us);
+		flush_next = false;
+		timestamp_ctlr_esti_us_valid = false;
+		return 0;
+	}
 
-	LOG_INF_RATELIMIT_RATE(1000, "tx %d valid %d", num_tx, timestamp_ctlr_esti_us_valid);
+	LOG_DBG_RATELIMIT_RATE(1000, "tx %d valid %d", num_tx, timestamp_ctlr_esti_us_valid);
 
 	for (int i = 0; i < num_tx; i++) {
 		tx_info = &tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
@@ -362,7 +369,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		return -EIO;
 	}
 
-	/* Get the current (wall clock time) */
+	/* Get the current (wall clock) time */
 	uint32_t timestamp_now_us = audio_sync_timer_capture();
 	uint32_t timestamp_ctlr_real_us = 0;
 	static uint32_t timestamp_ctlr_real_us_last;
@@ -383,8 +390,6 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 
 		uint32_t time_since_last_corr_us = timestamp_now_us - timestamp_last_correction;
 		int32_t corr_diff = (int32_t)(timestamp_ctlr_real_us - timestamp_ctlr_esti_us);
-		int32_t corr_ppm = (int32_t)(((int64_t)corr_diff * 1000000LL) /
-					     (int64_t)time_since_last_corr_us);
 
 		if (time_since_last_corr_us < TX_TS_RESYNC_US) {
 			subequent_rapid_corrections++;
@@ -393,23 +398,55 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		}
 
 		if (subequent_rapid_corrections > SUBSEQUENT_RAPID_CORRECTIONS_LIMIT) {
-			LOG_WRN_RATELIMIT_RATE(5000,
-					       "%d subsequent time corrections. Expected for "
-					       "synchronous USB",
+			LOG_ERR_RATELIMIT_RATE(1000, "%d subsequent time corrections",
 					       subequent_rapid_corrections);
 		}
 
-		LOG_INF_RATELIMIT_RATE(1000,
-				       "TX clock updated by %d ppm - corr_diff: %d us, "
-				       "estimate: %u corrected to %u",
-				       corr_ppm, corr_diff, timestamp_ctlr_esti_us,
-				       timestamp_ctlr_real_us);
+		/* There are several options which can occur at this point:
+		 *
+		 * - corr_diff >> 0: This means that data was given to this module too slow/late.
+		 * Hence, the controller schedules the sending for the next ISO interval.
+		 * An empty packet will be sent on air, and we will correct the timestamp estimate.
+		 * - corr_diff << 0: This should not happen as an earlier timestamp has already been
+		 * given to the controller.
+		 * - corr_diff > or < 0: This means that the estimate has gotten a small correction.
+		 * As a central/gateway/unicast client/broadcast source, the clocks shall be running
+		 * in lockstep and this should never happen. As a peripheral/headset/unicast
+		 * server/broadcast sink, this will happen to correct for drift.
+		 */
+
+		if (corr_diff > (common_interval_us / 2)) {
+			LOG_WRN("TX clock has been updated by (%d us). Empty packet on air",
+				corr_diff);
+		} else if (corr_diff < (common_interval_us / 2)) {
+			LOG_ERR("TX clock has been updated by (%d us). Shall not happen",
+				corr_diff);
+			return -EIO;
+		} else if (corr_diff) {
+			if (CONFIG_AUDIO_DEV == HEADSET) {
+				LOG_INF("TX clock has been drift adjusted by (%d us)", corr_diff);
+			}
+			if (CONFIG_AUDIO_DEV == GATEWAY) {
+				LOG_ERR("TX clock has been drift adjusted by (%d us)", corr_diff);
+			}
+		} else {
+			/* No correction needed, the estimate is correct. */
+			LOG_DBG("TX clock no adjustment needed (%d us)", corr_diff);
+		}
 
 		timestamp_ctlr_real_us_last = timestamp_ctlr_real_us;
 		/* Update the estimate to the real (most current) value */
 		timestamp_ctlr_esti_us = timestamp_ctlr_real_us;
 		timestamp_ctlr_esti_us_valid = true;
 		timestamp_last_correction = timestamp_now_us;
+	}
+
+	if (timestamp_now_us > (timestamp_ctlr_esti_us + common_interval_us)) {
+		LOG_WRN("Current timestamp is ahead of controller timestamp. Need to throw data. "
+			"Now: %u us, ctlr: %u us",
+			timestamp_now_us, timestamp_ctlr_esti_us);
+		flush_next = true;
+		timestamp_ctlr_esti_us_valid = false;
 	}
 
 	/* At this point, the controller estimated timestamp is valid */
@@ -422,35 +459,6 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
 	if (ret) {
 		LOG_WRN("Failed to publish timestamp: %d", ret);
-	}
-
-	int32_t diff_us = (int32_t)(timestamp_ctlr_esti_us - timestamp_now_us);
-
-	LOG_DBG_RATELIMIT_RATE(1000,
-			       "Controller timestamp: %u us, Current timestamp: %u us, Diff: %d us",
-			       timestamp_ctlr_esti_us, timestamp_now_us, diff_us);
-
-	if (diff_us < 0 && prod_can_rate_adj) {
-		/* Late TX / too little data provided. Controller will flush data */
-		LOG_INF("TX late. Diff: %d us, ctlr_est: %u now: %u", diff_us,
-			timestamp_ctlr_esti_us, timestamp_now_us);
-		timestamp_ctlr_esti_us_valid = false;
-		timestamp_ctlr_esti_us = 0;
-	} else if ((diff_us < TX_MARGIN_MIN_US) && prod_can_rate_adj) {
-		/* Late TX / too little data provided. Data may be lost */
-		LOG_INF("TX close to next window. Diff: %d us, ctlr_est: %u now: %u", diff_us,
-			timestamp_ctlr_esti_us, timestamp_now_us);
-		timestamp_ctlr_esti_us_valid = false;
-		timestamp_ctlr_esti_us = 0;
-	} else if ((diff_us > TX_MARGIN_MAX_US) && prod_can_rate_adj) {
-		/* Early TX / too much data. Controller will buffer and latency increase */
-		LOG_INF("TX early. Diff: %d us, ctlr_est: %u now: %u", diff_us,
-			timestamp_ctlr_esti_us, timestamp_now_us);
-		/* Not critical, but can update timestamp to better align with controller */
-		timestamp_ctlr_esti_us_valid = false;
-		timestamp_ctlr_esti_us = 0;
-	} else {
-		/* Timestamp is valid and within an acceptable range */
 	}
 
 	return 0;
