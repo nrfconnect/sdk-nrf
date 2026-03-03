@@ -402,6 +402,7 @@ Bluetooth Fast Pair samples
     * The sample to use the new name for the Find Hub Network (FHN) that was previously known as the Find My Device Network (FMDN).
       Migrated the sample to use the new Kconfig options and the new FHN API header.
     * The motion detector sensor on Thingy:53 target from gyroscope to accelerometer.
+    * The location of the Kconfig fragment files from the :file:`src` subdirectory to the sample root directory.
 
 Cellular samples
 ----------------
