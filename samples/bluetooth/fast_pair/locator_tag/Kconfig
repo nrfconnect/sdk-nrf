@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2024 Nordic Semiconductor
+# Copyright (c) 2024-2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -19,9 +19,9 @@ config APP_PLATFORM_THINGY
 
 endchoice
 
-rsource "src/Kconfig.dfu"
-rsource "src/ui/Kconfig.ui"
-rsource "src/battery/Kconfig.battery"
+rsource "Kconfig.dfu"
+rsource "Kconfig.ui"
+rsource "Kconfig.battery"
 
 config SETTINGS
 	default y
