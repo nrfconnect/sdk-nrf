@@ -21,6 +21,7 @@ For detailed integration instructions of specific technologies and components, c
    app_dev/create_application
    app_dev/board_names
    app_dev/config_and_build/index
+   app_dev/production_deployment
    app_dev/programming
    app_dev/companion_components
    app_dev/bootloaders_dfu/index
