@@ -6,7 +6,7 @@
 
 / {
 	/*
-	 * Redefine button1 to use RXD0 - P0.01
+	 * Redefine button1 to use RXD0 - P1.14
 	 * Thus, when sending character from host, there will be gpio interrupt,
 	 * the same as originally triggered by sw0 button.
 	 */
@@ -14,7 +14,7 @@
 		compatible = "gpio-keys";
 
 		button1: button_1 {
-			gpios = <&gpio0 1 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			gpios = <&gpio1 14 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 			label = "Input 0";
 			zephyr,code = <INPUT_KEY_0>;
 		};
