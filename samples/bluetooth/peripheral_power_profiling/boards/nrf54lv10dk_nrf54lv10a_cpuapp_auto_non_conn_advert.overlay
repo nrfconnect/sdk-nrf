@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "nrf54lv10dk_nrf54lv10a_cpuapp.overlay"
+
 / {
 	/*
 	 * Redefine button1 to use RXD1 - P1.05
