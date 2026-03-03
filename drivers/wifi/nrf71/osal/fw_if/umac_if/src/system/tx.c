@@ -1010,8 +1010,6 @@ enum nrf_wifi_status tx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						umac_cmd,
 						sizeof(*umac_cmd) + len);
 
-	nrf_wifi_osal_mem_free(umac_cmd);
-
 	while (nrf_wifi_utils_q_len(txq)) {
 		nwb = nrf_wifi_utils_q_dequeue(txq);
 
