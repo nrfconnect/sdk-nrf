@@ -164,12 +164,12 @@ The following table describes the available configurations.
      - External flash
    * - sample.dfu.smp_svr.ram_load
      - UART
-     - Swap
      - RAM load
+     -
    * - sample.dfu.smp_svr.ram_load.kmu
      - UART
-     - Swap
-     - RAM load with KMU-based signature (Ed25519)
+     - RAM load
+     - KMU-based signature (Ed25519)
 
 Building and running
 ********************
