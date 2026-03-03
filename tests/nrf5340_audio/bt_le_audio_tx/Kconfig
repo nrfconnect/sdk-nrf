@@ -1,0 +1,40 @@
+
+config BT_BUF_EVT_RX_COUNT
+	int
+	default 10
+
+config BT_BUF_ACL_TX_COUNT
+	int
+	default 5
+
+config AUDIO_SAMPLE_RATE_48000_HZ
+	bool
+	default y
+
+config BT_LE_AUDIO_TX_LOG_LEVEL
+	int
+	default 4
+
+config AUDIO_DEV
+	int
+	default 1
+
+config BT_CONN_TX_USER_DATA_SIZE
+	int
+	default 200
+
+config BT_ISO_MAX_CIG
+	int
+	default 1
+
+config BT_ISO_MAX_CHAN
+	int
+	default 2
+
+config BT_ISO_TX_MTU
+	int
+	default 200
+
+
+# Include Zephyr's Kconfig.
+source "Kconfig"
