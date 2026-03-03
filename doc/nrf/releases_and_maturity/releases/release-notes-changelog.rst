@@ -545,6 +545,19 @@ DECT NR+ samples
     * Scheduler - Dynamic flow control based on load tier to prevent modem out-of-memory errors.
     * Settings - Continuous Wave (CW) support and possibility to disable Synchronization Training Field (STF) on TX and RX.
 
+DFU samples
+-----------
+
+* Updated the :ref:`single_slot_sample` sample configuration for demonstrating DFU on the :zephyr:board:`nrf54lm20dk` board target using the :ref:`fw_loader_ble_mcumgr` firmware loader.
+
+* Added:
+
+  * The :ref:`fw_loader_usb_mcumgr` sample, which provides a minimal configuration for firmware loading using SMP over the USB CDC ACM virtual serial port.
+    The sample serves as a starting point for developing custom firmware loader applications that work with the MCUboot bootloader.
+    To enable this firmware loader implementation, use the :kconfig:option:`SB_CONFIG_FIRMWARE_LOADER_IMAGE_USB_MCUMGR` Kconfig option.
+  * Support for using the :ref:`fw_loader_usb_mcumgr` sample with the :ref:`single_slot_sample`.
+    You can test this configuration on the :zephyr:board:`nrf54lm20dk` board.
+
 Edge Impulse samples
 --------------------
 
