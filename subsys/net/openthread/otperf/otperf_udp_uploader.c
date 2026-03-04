@@ -17,7 +17,7 @@ LOG_MODULE_REGISTER(otperf, CONFIG_OTPERF_LOG_LEVEL);
 #include "otperf_internal.h"
 #include "otperf_session.h"
 
-#define OTPERF_RESULT_RESPONSE_TIMEOUT 500
+#define OTPERF_RESULT_RESPONSE_TIMEOUT 2000
 #define OTPERF_FULL_BUFFER_TIMEOUT     50
 
 static uint8_t sample_packet[CONFIG_OTPERF_MAX_PACKET_SIZE];
@@ -71,8 +71,9 @@ static void otperf_upload_fin(otUdpSocket *sock, uint32_t nb_packets, uint64_t e
 	otInstance *instance = openthread_get_default_instance();
 	otMessage *message;
 	otMessageInfo messageInfo;
+	size_t fin_size = sizeof(struct otperf_udp_datagram) + sizeof(struct otperf_client_hdr_v1);
 
-	while (loop-- > 0) {
+	while (loop > 0) {
 		datagram = (struct otperf_udp_datagram *)sample_packet;
 
 		/* Fill the packet header */
@@ -90,9 +91,9 @@ static void otperf_upload_fin(otUdpSocket *sock, uint32_t nb_packets, uint64_t e
 		hdr->flags = 0;
 		hdr->num_of_threads = sys_cpu_to_be32(1);
 		hdr->port = 0;
-		hdr->buffer_len = sizeof(sample_packet) - sizeof(*datagram) - sizeof(*hdr);
+		hdr->buffer_len = 0;
 		hdr->bandwidth = 0;
-		hdr->num_of_bytes = sys_cpu_to_be32(packet_size);
+		hdr->num_of_bytes = sys_cpu_to_be32((int32_t)fin_size);
 
 		message = otUdpNewMessage(instance, NULL);
 		if (message == NULL) {
@@ -101,7 +102,7 @@ static void otperf_upload_fin(otUdpSocket *sock, uint32_t nb_packets, uint64_t e
 			continue;
 		}
 
-		ret = otMessageAppend(message, sample_packet, packet_size);
+		ret = otMessageAppend(message, sample_packet, fin_size);
 		if (ret != OT_ERROR_NONE) {
 			otMessageFree(message);
 			/* most Likely the queue is full. wait for it a bit. */
@@ -120,6 +121,8 @@ static void otperf_upload_fin(otUdpSocket *sock, uint32_t nb_packets, uint64_t e
 			otMessageFree(message);
 			continue;
 		}
+
+		loop--;
 		if (k_sem_take(&udp_response_semaphore, K_MSEC(OTPERF_RESULT_RESPONSE_TIMEOUT)) ==
 		    -EAGAIN) {
 			LOG_INF("Time out, no stat response");
@@ -227,7 +230,7 @@ static int udp_upload(otUdpSocket *sock, const struct otperf_upload_params *para
 		hdr->flags = 0;
 		hdr->num_of_threads = sys_cpu_to_be32(1);
 		hdr->port = sys_cpu_to_be32(param->peer_addr.mPort);
-		hdr->buffer_len = sizeof(sample_packet) - sizeof(*datagram) - sizeof(*hdr);
+		hdr->buffer_len = packet_size - sizeof(*datagram) - sizeof(*hdr);
 		hdr->bandwidth = sys_cpu_to_be32(rate_in_kbps);
 		hdr->num_of_bytes = sys_cpu_to_be32(packet_size);
 
