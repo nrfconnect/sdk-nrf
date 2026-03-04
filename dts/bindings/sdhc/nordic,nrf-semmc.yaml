@@ -1,0 +1,10 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: Nordic Software Defined eMMC (sEMMC)
+
+compatible: "nordic,nrf-semmc"
+
+include:
+  - sdhc.yaml
+  - memory-region.yaml
