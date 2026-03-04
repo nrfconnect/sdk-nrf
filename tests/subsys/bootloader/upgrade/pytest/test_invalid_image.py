@@ -10,10 +10,10 @@ import logging
 from pathlib import Path
 
 import pytest
-from imgtool_wrapper import imgtool_keygen, imgtool_sign
-from mcuboot_image_utils import copy_tlvs_areas
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.imgtool_wrapper import imgtool_keygen, imgtool_sign
+from twister_harness_ext.utils.mcuboot_image_utils import copy_tlvs_areas
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
 logger = logging.getLogger(__name__)

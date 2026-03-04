@@ -8,10 +8,10 @@ These tests applications are based on the SMP server from `zephyr/samples/subsys
 
 The tests require the `mcumgr` command-line tool to be installed and available in your system PATH.
 
-Python packages listed in `requirements.txt` are also required. Install them with:
+Python packages listed in `scripts/twister_harness_ext/requirements.txt` are also required. Install them with:
 
 ```console
-pip install -r requirements.txt
+pip install -r scripts/twister_harness_ext/requirements.txt
 ```
 
 Before running the tests, ensure that the `ZEPHYR_BASE` environment variable is set:

@@ -10,9 +10,9 @@ import logging
 from pathlib import Path
 
 import pytest
-from required_build import RequiredBuild
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.required_build import RequiredBuild
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
 logger = logging.getLogger(__name__)

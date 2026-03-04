@@ -694,9 +694,6 @@
     "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
     "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
 ]
-"./tests/subsys/kmu/pytest/common.py" = [
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-]
 "./tests/subsys/kmu/pytest/conftest.py" = [
     "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
     "UP032",    # https://docs.astral.sh/ruff/rules/f-string
@@ -851,7 +848,6 @@ exclude = [
     "./tests/subsys/bluetooth/mesh/metadata_extraction/verify_metadata.py",
     "./tests/subsys/bootloader/bl_crypto/test_generator.py",
     "./tests/subsys/bootloader/bl_validation_ff_key/generate_ff_key.py",
-    "./tests/subsys/kmu/pytest/common.py",
     "./tests/subsys/kmu/pytest/test_kmu_provision.py",
     "./tests/subsys/kmu/pytest/test_kmu_verify_keys_in_app.py",
     "./tests/subsys/rtt/pytest/test_rtt.py",

@@ -7,9 +7,14 @@ import logging
 from pathlib import Path
 
 import pytest
-from common import APP_KEYS_FOR_KMU, get_keyname_for_mcuboot, provision_keys_for_kmu, reset_board
 from twister_harness import DeviceAdapter
 from twister_harness.helpers.utils import find_in_config, match_lines
+from twister_harness_ext.utils.common import (
+    get_keyname_for_mcuboot,
+    provision_keys_for_kmu,
+    reset_board
+)
+from constant import APP_KEYS_FOR_KMU
 
 logger = logging.getLogger(__name__)
 
