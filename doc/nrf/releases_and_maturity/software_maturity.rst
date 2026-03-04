@@ -3132,7 +3132,7 @@ The following table indicates the software maturity levels of the support for ea
             * - Feature
               - nRF54H20
             * - **Immutable MCUboot as part of build**
-              - Experimental
+              - Supported
             * - **Updatable MCUboot as part of build**
               - --
             * - **Application image compression**
