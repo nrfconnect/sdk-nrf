@@ -70,7 +70,7 @@ static const struct sx_pk_cmd_def CMD_MULT = {PK_OP_MULT, (1 << OP_SLOT_PTR_C),
 const struct sx_pk_cmd_def *const SX_PK_CMD_MULT = &CMD_MULT;
 
 static const struct sx_pk_cmd_def CMD_MOD_EXP_CM = {
-	PK_OP_RSA_MDEXP_CM, (1 << OP_SLOT_MOD_EXP_CM_RESULT),
+	PK_OP_RSA_MODEXP, (1 << OP_SLOT_MOD_EXP_CM_RESULT),
 	(1 << OP_SLOT_MOD_EXP_CM_LAMBDA_N) | (1 << OP_SLOT_MOD_EXP_CM_M) |
 		(1 << OP_SLOT_MOD_EXP_CM_INPUT) | (1 << OP_SLOT_MOD_EXP_CM_EXP),
 	OP_SLOT_PTR_A, SX_PK_OP_FLAGS_MOD_CM};
