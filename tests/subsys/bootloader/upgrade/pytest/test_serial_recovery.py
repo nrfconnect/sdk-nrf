@@ -12,9 +12,9 @@ from __future__ import annotations
 import logging
 import time
 
-from helpers import nrfutil_write, reset_board, retry
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.helpers import nrfutil_write, reset_board, retry
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
 logger = logging.getLogger(__name__)

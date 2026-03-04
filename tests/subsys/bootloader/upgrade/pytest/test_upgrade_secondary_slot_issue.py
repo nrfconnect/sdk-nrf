@@ -9,8 +9,8 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from required_build import get_required_build
 from twister_harness import DeviceAdapter, MCUmgr, Shell
+from twister_harness_ext.utils.required_build import get_required_build
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
 logger = logging.getLogger(__name__)

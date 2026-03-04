@@ -9,9 +9,9 @@ from __future__ import annotations
 import logging
 
 import pytest
-from required_build import get_required_images_to_update
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.required_build import get_required_images_to_update
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
 logger = logging.getLogger(__name__)

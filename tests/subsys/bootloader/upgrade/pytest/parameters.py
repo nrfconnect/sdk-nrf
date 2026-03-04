@@ -13,8 +13,8 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from imgtool_wrapper import ImgtoolParams
 from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.imgtool_wrapper import ImgtoolParams
 
 # This is needed to load edt.pickle files.
 ZEPHYR_BASE = os.getenv("ZEPHYR_BASE")

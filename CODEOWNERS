@@ -733,6 +733,7 @@
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
+/scripts/twister_harness_ext/             @nrfconnect/ncs-eris @gchwier @nrfconnect/ncs-test-leads
 /scripts/hpf/                             @nrfconnect/ncs-ll-ursus
 /scripts/generate_psa_key_attributes.py   @nrfconnect/ncs-aegir
 /scripts/tests/                           @nrfconnect/ncs-eris @fundakol

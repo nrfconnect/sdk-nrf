@@ -11,11 +11,15 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
-from helpers import reset_board
-from key_provisioning import APP_KEYS_FOR_KMU, get_keyname_for_mcuboot, provision_keys_for_kmu
+from constant import APP_KEYS_FOR_KMU
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.fixtures import determine_scope
 from twister_harness.helpers.utils import find_in_config, match_lines, match_no_lines
+from twister_harness_ext.utils.helpers import reset_board
+from twister_harness_ext.utils.key_provisioning import (
+    get_keyname_for_mcuboot,
+    provision_keys_for_kmu,
+)
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
 logger = logging.getLogger(__name__)
