@@ -8,6 +8,17 @@
 	aliases {
 		pwm-spk = &pwm_spk0;
 		motion-detector = &adxl362;
+		battery-fuel-gauge = &fuel_gauge;
+	};
+
+	vbatt {
+		status = "okay";
+		zephyr,pm-device-runtime-auto;
+	};
+
+	fuel_gauge {
+		status = "okay";
+		zephyr,pm-device-runtime-auto;
 	};
 
 	pwmspk {

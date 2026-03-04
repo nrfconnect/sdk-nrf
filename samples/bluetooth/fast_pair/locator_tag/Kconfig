@@ -6,21 +6,19 @@
 
 menu "Nordic Fast Pair Locator tag sample"
 
-choice APP_PLATFORM
-	prompt "Application platform"
-
 config APP_PLATFORM_DK
-	bool "Application runs on the Development Kit"
-	depends on !BOARD_THINGY53
+	bool
+	default y
+	depends on !APP_PLATFORM_REF
 
-config APP_PLATFORM_THINGY
-	bool "Application runs on the Thingy:53"
-	depends on BOARD_THINGY53
-
-endchoice
+config APP_PLATFORM_REF
+	bool
+	default y
+	depends on BOARD_THINGY53 || BOARD_NRF54L15TAG
 
 rsource "Kconfig.battery"
 rsource "Kconfig.dfu"
+rsource "Kconfig.motion_detector"
 rsource "Kconfig.ranging"
 rsource "Kconfig.ui"
 

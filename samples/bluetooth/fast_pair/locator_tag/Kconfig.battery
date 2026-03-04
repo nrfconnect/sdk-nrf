@@ -6,7 +6,7 @@
 
 config APP_BATTERY_POLL_INTERVAL
 	int "Battery measurement polling interval [s]"
-	depends on APP_PLATFORM_THINGY
+	depends on APP_PLATFORM_REF
 	default 60
 
 config APP_BATTERY_LEVEL_DECREMENT

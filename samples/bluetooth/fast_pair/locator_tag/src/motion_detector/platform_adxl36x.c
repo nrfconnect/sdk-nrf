@@ -25,12 +25,12 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_INF);
 #define ACCEL_TO_ANGLE_AXIS_THR_NUM	2
 
 /* Configuration parameters for the EMA filter instance. */
-#define EMA_FILTER_ADXL362_ODR_HZ	25.0f
+#define EMA_FILTER_ODR_HZ		25.0f
 #define EMA_FILTER_TAU_S		0.5f
 
 #define ACCEL_NODE    DT_ALIAS(motion_detector)
 
-ACCEL_TO_ANGLE_FILTER_EMA_DEFINE(ema_filter, EMA_FILTER_ADXL362_ODR_HZ, EMA_FILTER_TAU_S);
+ACCEL_TO_ANGLE_FILTER_EMA_DEFINE(ema_filter, EMA_FILTER_ODR_HZ, EMA_FILTER_TAU_S);
 static ACCEL_TO_ANGLE_CTX_DEFINE(accel_to_angle_ctx, &ema_filter);
 
 /** Motion detector state. */
@@ -45,15 +45,23 @@ static struct motion_detector {
 	.accel_to_angle_ctx = &accel_to_angle_ctx,
 };
 
+#if CONFIG_DT_HAS_ADI_ADXL362_ENABLED
 BUILD_ASSERT(IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_25),
 	     "CONFIG_ADXL362_ACCEL_ODR_25 must be enabled");
-BUILD_ASSERT(EMA_FILTER_ADXL362_ODR_HZ == 25.0f,
-	     "EMA_FILTER_ADXL362_ODR_HZ must be set to 25.0f to match the actual "
-	     "ODR of the accelerometer");
 BUILD_ASSERT((CONFIG_ADXL362_INTERRUPT_MODE == 0),
 	     "CONFIG_ADXL362_INTERRUPT_MODE must be set to 0 (default mode)");
 BUILD_ASSERT((CONFIG_ADXL362_ABS_REF_MODE == 1),
 	     "CONFIG_ADXL362_ABS_REF_MODE must be set to 1 (referenced mode)");
+#elif CONFIG_DT_HAS_ADI_ADXL367_ENABLED
+BUILD_ASSERT(DT_PROP(ACCEL_NODE, odr) == 1, "ADXL367 ODR must be set to 1 (25 Hz)");
+#else
+#error "Selected accelerometer is not supported"
+#endif
+
+BUILD_ASSERT(EMA_FILTER_ODR_HZ == 25.0f,
+	     "EMA_FILTER_ODR_HZ must be set to 25.0f to match the actual "
+	     "ODR of the accelerometer");
+
 BUILD_ASSERT(ACCEL_TO_ANGLE_AXIS_THR_NUM <= 2,
 	     "ACCEL_TO_ANGLE_AXIS_THR_NUM must be less than or equal to 2 "
 	     "(only pitch and roll are supported)");
@@ -212,15 +220,23 @@ static void state_set(bool enable)
 	accel_to_angle_state_clean(motion_detector.accel_to_angle_ctx);
 
 	if (motion_detector.active) {
-		/* Start only on activity interrupt.
-		 * Inactivity and data ready interrupts will be enabled
-		 * once activity has been detected.
-		 */
-		activity_trigger_configure(true);
+		if (IS_ENABLED(CONFIG_APP_MOTION_DETECTOR_ACT_INACT_DETECTION_SUPPORTED)) {
+			/* Start only on activity interrupt.
+			 * Inactivity and data ready interrupts will be enabled
+			 * once activity has been detected.
+			 */
+			activity_trigger_configure(true);
+		} else {
+			/* Fallback to use only data ready interrupt. */
+			data_ready_trigger_configure(true);
+		}
+
 	} else {
 		/* Disable all triggers. */
-		activity_trigger_configure(false);
-		inactivity_trigger_configure(false);
+		if (IS_ENABLED(CONFIG_APP_MOTION_DETECTOR_ACT_INACT_DETECTION_SUPPORTED)) {
+			activity_trigger_configure(false);
+			inactivity_trigger_configure(false);
+		}
 		data_ready_trigger_configure(false);
 	}
 

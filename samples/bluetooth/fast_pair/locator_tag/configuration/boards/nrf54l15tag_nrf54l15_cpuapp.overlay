@@ -1,0 +1,103 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		motion-detector = &adxl367;
+		battery-fuel-gauge = &fuel_gauge;
+	};
+
+	vbatt: vbatt {
+		status = "okay";
+		zephyr,pm-device-runtime-auto;
+		compatible = "voltage-divider";
+		io-channels = <&adc 0>;
+		/* Virtual resistor value to fulfill the requirements of the fuel gauge. */
+		output-ohms = <1>;
+		full-ohms = <1>;
+	};
+
+	/* Fuel gauge for the CR2032 battery voltage measurement. */
+	fuel_gauge: fuel_gauge {
+		status = "okay";
+		zephyr,pm-device-runtime-auto;
+		compatible = "zephyr,fuel-gauge-composite";
+		source-primary = <&vbatt>;
+		device-chemistry = "lithium-ion-manganese-oxide";
+
+		/* Example values for a generic CR2032 battery. */
+		ocv-capacity-table-0 = <2400000 2700000 2750000 2800000 2850000 2880000
+					2900000 2920000 2950000 2980000 3000000>;
+		charge-full-design-microamp-hours = <220000>;
+	};
+};
+
+&adc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1_4";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,resolution = <14>;
+		zephyr,oversampling = <8>;
+		zephyr,vref-mv = <900>;
+		zephyr,input-positive = <NRF_SAADC_VDD>;
+	};
+};
+
+&cpuapp_rram {
+	/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
+	reg = <0x0 DT_SIZE_K(1524)>;
+
+	/delete-node/ partitions;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(28)>;
+		};
+
+		slot0_partition: partition@7000 {
+			label = "image-0";
+			reg = <0x7000 DT_SIZE_K(736)>;
+		};
+
+		slot1_partition: partition@bf000 {
+			label = "image-1";
+			reg = <0xbf000 DT_SIZE_K(736)>;
+		};
+
+		bt_fast_pair_partition: partition@177000 {
+			label = "bt_fast_pair";
+			reg = <0x177000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@178000 {
+			label = "storage";
+			reg = <0x178000 DT_SIZE_K(20)>;
+		};
+	};
+};
+
+secondary_app_partition: &slot1_partition {};
+
+&i2c21 {
+	status = "okay";
+};
+
+&adxl367 {
+	status = "okay";
+	int1-gpios = <&gpio0 3 0>;
+	odr = <1>; /* ODR 25Hz */
+};

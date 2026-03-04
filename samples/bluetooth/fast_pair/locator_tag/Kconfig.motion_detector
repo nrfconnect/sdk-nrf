@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config APP_MOTION_DETECTOR_ACT_INACT_DETECTION_SUPPORTED
+	bool
+	default y
+	depends on DT_HAS_ADI_ADXL362_ENABLED && ADXL362_TRIGGER
+	help
+	  Indicates whether the motion detector supports activity/inactivity detection.
+	  This is only supported on the ADXL362 when the trigger feature is enabled.
+	  The activity/inactivity detection usage can decrease power consumption
+	  by allowing the system to enter a low power state when no motion is detected.
