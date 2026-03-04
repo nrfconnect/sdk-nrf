@@ -202,6 +202,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -215,6 +217,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -237,6 +241,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -250,6 +256,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -273,6 +281,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -286,6 +296,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -308,6 +320,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -321,6 +335,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -342,6 +358,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -354,6 +372,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -376,6 +396,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -388,6 +410,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -411,6 +435,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -423,6 +449,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -445,6 +473,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -457,6 +487,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -480,6 +512,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -493,6 +527,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -515,6 +551,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -528,6 +566,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen
@@ -551,6 +591,8 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -562,6 +604,8 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen_oberon
@@ -582,6 +626,8 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -593,6 +639,8 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - cracen_oberon
