@@ -136,6 +136,12 @@ The table mirrors the test setup used for TLS verification.
            - Yes
            - RSA not supported
            -
+         * - ``nrf7120dk/nrf7120/cpuapp``
+           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
+           - No
+           - Yes
+           - RSA not supported
+           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
 
    .. tab:: TLS v1.3
 
@@ -186,6 +192,12 @@ The table mirrors the test setup used for TLS verification.
            - No
            - RSA not supported
            -
+         * - ``nrf7120dk/nrf7120/cpuapp``
+           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
+           - No
+           - Yes
+           - RSA not supported
+           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
 
 .. _crypto_tls_suites:
 
