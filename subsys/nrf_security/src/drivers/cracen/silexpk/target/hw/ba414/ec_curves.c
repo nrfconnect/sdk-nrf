@@ -215,7 +215,7 @@ static const uint8_t params_x25519[] =
 	/* a */
 	"\x06\x6d\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-#if defined(CONFIG_CRACEN_ENABLE_ECC_EXTENDED_COUNTERMEASURES)
+#if defined(CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED)
 	/* The n parameter has the value:
 	 * n = 2^252 + 0x14def9dea2f79cd65812631a5cf5d3ed
 	 */
@@ -239,7 +239,7 @@ static const uint8_t params_x448[] =
 	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 	"\x00\x00\x00\x00\x00\x00\x00\x00"
-#if defined(CONFIG_CRACEN_ENABLE_ECC_EXTENDED_COUNTERMEASURES)
+#if defined(CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED)
 	/* The n parameter has the value:
 	 * n = 2^446 − 0x8335dc163bb124b65129c96fde933d8d723a70aadc873d6d54a7bb0d
 	 */

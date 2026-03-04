@@ -26,11 +26,17 @@
  */
 #define SX_PK_OP_FLAGS_BIGENDIAN (1 << 28)
 
+/** Extra flag to enable modulus randomization.
+ *
+ * In BA414ep datasheet, those flags are called RandMod.
+ */
+#define SX_PK_OP_FLAGS_MOD_RAND_CM (1 << 19)
+
 /** Extra flags to enable modulus and exponent randomization
  *
  * In BA414ep datasheet, those flags are called RandKE and RandMod.
  */
-#define SX_PK_OP_FLAGS_MOD_CM ((1 << 24) | (1 << 19))
+#define SX_PK_OP_FLAGS_MOD_CM ((1 << 24) | SX_PK_OP_FLAGS_MOD_RAND_CM)
 
 /** Extra flags to enable scalar and projective coordinates randomization
  *
