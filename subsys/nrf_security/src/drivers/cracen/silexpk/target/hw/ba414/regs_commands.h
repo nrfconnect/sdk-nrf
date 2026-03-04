@@ -86,9 +86,8 @@
 /** RSA short exponentiation operation */
 #define PK_OP_RSA_PUB_MODEXP (0x14 | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN)
 
-/** RSA modular exponentiation operation with countermeasures */
-#define PK_OP_RSA_MDEXP_CM                                                                         \
-	(0x15 | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN | SX_PK_OP_FLAGS_MOD_CM)
+/** RSA modular exponentiation operation */
+#define PK_OP_RSA_MODEXP (0x15 | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN)
 
 /** DSA signature generation */
 #define PK_OP_DSA_SIGN (0x19 | SX_PK_OP_FLAGS_BIGENDIAN)
