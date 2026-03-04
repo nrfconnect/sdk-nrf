@@ -32,12 +32,6 @@ Mouse clicks are not simulated.
 This sample exposes the HID GATT Service.
 It uses a report map for a generic mouse.
 
-You can also disable the directed advertising feature by clearing the ``BT_DIRECTED_ADVERTISING`` flag in the application configuration.
-This feature is enabled by default and it changes the way how advertising works in comparison to the other Bluetooth Low Energy samples.
-When the device wants to advertise, it starts with high duty cycle directed advertising provided that it has bonding information.
-If the timeout occurs, the device starts directed advertising to the next bonded peer.
-If all bonding information is used and there is still no connection, the regular advertising starts.
-
 User interface
 **************
 
@@ -48,12 +42,12 @@ User interface
       Button 1:
          Simulate moving the mouse pointer five pixels to the left.
 
-         When pairing, press this button to confirm the passkey value that is printed on the COM listener to pair with the other device.
+         If Man-In-The-Middle (MITM) protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) is enabled, you can press this button while pairig to confirm the passkey value that is printed on the COM listener to pair with the other device.
 
       Button 2:
          Simulate moving the mouse pointer five pixels up.
 
-         When pairing, press this button to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
+         If Man-In-The-Middle (MITM) protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) is enabled, you can press this button while pairig to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
 
       Button 3:
          Simulate moving the mouse pointer five pixels to the right.
@@ -66,12 +60,12 @@ User interface
       Button 0:
          Simulate moving the mouse pointer five pixels to the left.
 
-         When pairing, press this button to confirm the passkey value that is printed on the COM listener to pair with the other device.
+         If Man-In-The-Middle (MITM) protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) is enabled, you can press this button while pairig to confirm the passkey value that is printed on the COM listener to pair with the other device.
 
       Button 1:
          Simulate moving the mouse pointer five pixels up.
 
-         When pairing, press this button to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
+         If Man-In-The-Middle (MITM) protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) is enabled, you can press this button while pairig to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
 
       Button 2:
          Simulate moving the mouse pointer five pixels to the right.
@@ -84,13 +78,44 @@ Configuration
 
 |config|
 
-Setup
-=====
+Bluetooth LE security
+=====================
 
-The HID service specification does not require encryption (:kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_ENCRYPT`), but some systems disconnect from the HID devices that do not support security.
+By default, the sample enables Bluetooth LE security support through the following sample-specific Kconfig option: ``CONFIG_BT_HIDS_SECURITY_ENABLED``.
+This allows the sample to encrypt connections and create Bluetooth bonds.
+The option also implies Bluetooth privacy (:kconfig:option:`CONFIG_BT_PRIVACY`).
+The sample-specific Kconfig option can be disabled to disable support for Bluetooth security.
 
 .. note::
-   If you want to pair the device with a computer running MacOS, set the :kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_AUTHEN` Kconfig option to ``y``.
+   Configurations of the sample require Bluetooth link encryption to access HID Service (:kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_ENCRYPT`).
+   The Bluetooth LE security support is required to encrypt a link.
+
+Man-In-The-Middle (MITM) protection
+-----------------------------------
+
+By default, the sample also enables MITM protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``).
+This is done to prevent Man-In-The-Middle attacks through authentication.
+Since :c:func:`printk` function is used to display the passkey, the feature depends on :kconfig:option:`CONFIG_PRINTK`.
+
+HID GATT characteristic attributes permissions
+----------------------------------------------
+
+Allowing to access HID Service without encryption (:kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW`) would allow for, among others, passive eavesdropping of the communication.
+The HID Service specification does not require encryption, but Bluetooth link encryption is required by the HID over GATT Profile Specification.
+Some of the HID hosts may not subscribe for HID input reports or disconnect the Bluetooth link if Bluetooth LE security is not supported.
+
+.. note::
+   If MITM protection based on passkey display is enabled (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) and you want to pair the device with a computer running MacOS, set the :kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_AUTHEN` Kconfig option to ``y``.
+
+Bluetooth direct advertising
+============================
+
+By default, the sample enables the ``CONFIG_BT_DIRECTED_ADVERTISING`` sample-specific Kconfig option that enables using Bluetooth direct advertising.
+The feature depends on Bluetooth LE security support (``CONFIG_BT_HIDS_SECURITY_ENABLED``).
+This feature changes the way how advertising works in comparison to the other Bluetooth Low Energy samples.
+When the device wants to advertise, it starts with high duty cycle directed advertising provided that it has bonding information.
+If the timeout occurs, the device starts directed advertising to the next bonded peer.
+If all bonding information is used and there is still no connection, the regular advertising starts.
 
 Building and running
 ********************
@@ -310,4 +335,5 @@ References
 **********
 
 * `HID Service Specification`_
+* `HID Over GATT Profile Specification`_
 * `HID usage tables`_
