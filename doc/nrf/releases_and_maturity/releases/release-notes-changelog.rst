@@ -392,7 +392,13 @@ Bluetooth samples
 
 * :ref:`peripheral_hids_mouse` sample:
 
-  * Added support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
+  * Added:
+
+    * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
+    * A sample-specific ``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`` Kconfig option.
+      You can use this option to control support for passkey display MITM protection.
+      The passkey display feature can be used only if the configuration emits printk messages (:kconfig:option:`CONFIG_PRINTK` Kconfig option must be enabled).
+
   * Updated sample's configuration to limit the number of supported HID reports (:kconfig:option:`CONFIG_BT_HIDS_FEATURE_REP_MAX`, :kconfig:option:`CONFIG_BT_HIDS_INPUT_REP_MAX`, and :kconfig:option:`CONFIG_BT_HIDS_OUTPUT_REP_MAX`) and maximum number of GATT attribute descriptors (:kconfig:option:`CONFIG_BT_HIDS_ATTR_MAX`) in the :ref:`hids_readme`.
     This reduces the memory consumption of the sample.
 
