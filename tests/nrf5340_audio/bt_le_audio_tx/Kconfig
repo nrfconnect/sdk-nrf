@@ -35,6 +35,30 @@ config BT_ISO_TX_MTU
 	int
 	default 200
 
+config BT_AUDIO_CODEC_CFG_MAX_DATA_SIZE
+	int
+	default 200
+
+config BT_AUDIO_CODEC_CFG_MAX_METADATA_SIZE
+	int
+	default 200
+
+config LC3_BITRATE_MIN
+	int
+	default 32000
+
+config LC3_BITRATE_MAX
+	int
+	default 124000
+
+config AUDIO_FRAME_DURATION_US
+	int
+	default 10000
+
+config BLE_LOG_LEVEL
+	int
+	default 4
+
 
 # Include Zephyr's Kconfig.
 source "Kconfig"
