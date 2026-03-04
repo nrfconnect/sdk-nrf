@@ -208,3 +208,23 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     timeout: 20
+  sample.ipc.ipc_service.nrf7120dk_cpuapp_cpuflpr_icmsg:
+    extra_args:
+      - ipc_service_SNIPPET=nordic-flpr
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    timeout: 20
+  sample.ipc.ipc_service.nrf7120dk_cpuapp_cpuflpr_icbmsg:
+    extra_args:
+      - ipc_service_SNIPPET=nordic-flpr
+      - ipc_service_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
+      - ipc_service_EXTRA_DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuapp_icbmsg.overlay"
+      - remote_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
+      - remote_EXTRA_DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuflpr_icbmsg.overlay"
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    timeout: 20
