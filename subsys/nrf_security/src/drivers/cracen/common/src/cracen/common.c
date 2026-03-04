@@ -414,22 +414,20 @@ int cracen_hash_all_inputs_with_context(struct sxhash *hashopctx, const uint8_t 
 
 	status = sx_hash_create(hashopctx, hashalg, sizeof(*hashopctx));
 	if (status != SX_OK) {
-		return status;
+		goto out;
 	}
-
 	for (size_t i = 0; i < input_count; i++) {
 		status = sx_hash_feed(hashopctx, inputs[i], input_lengths[i]);
 		if (status != SX_OK) {
-			return status;
+			goto out;
 		}
 	}
 	status = sx_hash_digest(hashopctx, digest);
 	if (status != SX_OK) {
-		return status;
+		goto out;
 	}
-
 	status = sx_hash_wait(hashopctx);
-
+out:
 	return status;
 }
 
