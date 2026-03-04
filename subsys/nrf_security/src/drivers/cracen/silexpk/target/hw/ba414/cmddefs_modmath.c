@@ -8,6 +8,7 @@
 #include "op_slots.h"
 #include "regs_commands.h"
 #include "pkhardware_ba414e.h"
+#include <zephyr/kernel.h>
 
 static const struct sx_pk_cmd_def CMD_MOD_ADD = {
 	PK_OP_MOD_ADD, (1 << OP_SLOT_PTR_C), (1 << 0) | (1 << OP_SLOT_PTR_A) | (1 << OP_SLOT_PTR_B),
@@ -51,13 +52,22 @@ const struct sx_pk_cmd_def *const SX_PK_CMD_ODD_MOD_INV = &CMD_ODD_MOD_INV;
 static const struct sx_pk_cmd_def CMD_MOD_EXP = {
 	PK_OP_MDEXP, (1 << OP_SLOT_MOD_EXP_RESULT),
 	(1 << OP_SLOT_MOD_EXP_M) | (1 << OP_SLOT_MOD_EXP_INPUT) | (1 << OP_SLOT_MOD_EXP_EXP),
-	OP_SLOT_PTR_A};
+	OP_SLOT_PTR_A,
+#if defined(CONFIG_CRACEN_ENABLE_RSA_COUNTERMEASURES)
+	/* Generic modular exponentiation does not support exponent randomization in RSA context. */
+	SX_PK_OP_FLAGS_MOD_RAND_CM
+#endif
+};
 const struct sx_pk_cmd_def *const SX_PK_CMD_MOD_EXP = &CMD_MOD_EXP;
 
 static const struct sx_pk_cmd_def CMD_MOD_EXP_FF = {
 	PK_OP_MDEXP, (1 << OP_SLOT_MOD_EXP_RESULT),
 	(1 << OP_SLOT_MOD_EXP_M) | (1 << OP_SLOT_MOD_EXP_INPUT) | (1 << OP_SLOT_MOD_EXP_EXP),
-	OP_SLOT_PTR_A, SX_PK_OP_FLAGS_MOD_CM};
+	OP_SLOT_PTR_A,
+#if defined(CONFIG_CRACEN_ENABLE_RSA_COUNTERMEASURES)
+	SX_PK_OP_FLAGS_MOD_CM
+#endif
+};
 const struct sx_pk_cmd_def *const SX_PK_CMD_FF_MODEXP = &CMD_MOD_EXP_FF;
 
 static const struct sx_pk_cmd_def CMD_MOD_SQRT = {PK_OP_MOD_SQRT, (1 << OP_SLOT_PTR_C),
@@ -69,18 +79,26 @@ static const struct sx_pk_cmd_def CMD_MULT = {PK_OP_MULT, (1 << OP_SLOT_PTR_C),
 					      OP_SLOT_PTR_A};
 const struct sx_pk_cmd_def *const SX_PK_CMD_MULT = &CMD_MULT;
 
-static const struct sx_pk_cmd_def CMD_MOD_EXP_CM = {
+static const struct sx_pk_cmd_def CMD_RSA_MOD_EXP = {
 	PK_OP_RSA_MODEXP, (1 << OP_SLOT_MOD_EXP_CM_RESULT),
 	(1 << OP_SLOT_MOD_EXP_CM_LAMBDA_N) | (1 << OP_SLOT_MOD_EXP_CM_M) |
 		(1 << OP_SLOT_MOD_EXP_CM_INPUT) | (1 << OP_SLOT_MOD_EXP_CM_EXP),
-	OP_SLOT_PTR_A, SX_PK_OP_FLAGS_MOD_CM};
-const struct sx_pk_cmd_def *const SX_PK_CMD_RSA_MOD_EXP_CM = &CMD_MOD_EXP_CM;
+	OP_SLOT_PTR_A,
+#if defined(CRACEN_ENABLE_RSA_EXTENDED_COUNTERMEASURES)
+	SX_PK_OP_FLAGS_MOD_CM
+#endif
+};
+const struct sx_pk_cmd_def *const SX_PK_CMD_RSA_MOD_EXP = &CMD_RSA_MOD_EXP;
 
 static const struct sx_pk_cmd_def CMD_MOD_EXP_CRT = {
 	PK_OP_RSA_CRT, (1 << OP_SLOT_RSA_CRT_RESULT),
 	(1 << OP_SLOT_RSA_CRT_INPUT) | (1 << OP_SLOT_RSA_CRT_P) | (1 << OP_SLOT_RSA_CRT_Q) |
 		(1 << OP_SLOT_RSA_CRT_DP) | (1 << OP_SLOT_RSA_CRT_DQ) | (1 << OP_SLOT_RSA_CRT_QINV),
-	0, SX_PK_OP_FLAGS_MOD_CM};
+	0,
+#if defined(CONFIG_CRACEN_ENABLE_RSA_COUNTERMEASURES)
+	SX_PK_OP_FLAGS_MOD_CM
+#endif
+};
 const struct sx_pk_cmd_def *const SX_PK_CMD_MOD_EXP_CRT = &CMD_MOD_EXP_CRT;
 
 static const struct sx_pk_cmd_def CMD_RSA_KEYGEN = {

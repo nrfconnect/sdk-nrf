@@ -21,8 +21,8 @@ struct sx_pk_cmd_def;
  * @{
  */
 
-/** RSA modular exponentiation operation with countermeasures*/
-extern const struct sx_pk_cmd_def *const SX_PK_CMD_RSA_MOD_EXP_CM;
+/** RSA modular exponentiation operation */
+extern const struct sx_pk_cmd_def *const SX_PK_CMD_RSA_MOD_EXP;
 
 /** Modular exponentiation operation (for RSA) with Chinese Remainder Theorem */
 extern const struct sx_pk_cmd_def *const SX_PK_CMD_MOD_EXP_CRT;
@@ -42,7 +42,7 @@ extern const struct sx_pk_cmd_def *const SX_PK_CMD_MILLER_RABIN;
 
 /** @} */
 
-/** Input slots for ::SX_PK_CMD_RSA_MOD_EXP_CM */
+/** Input slots for ::SX_PK_CMD_RSA_MOD_EXP */
 struct sx_pk_inops_rsa_mod_exp_cm {
 	struct sx_pk_slot m;	    /**< Modulus **/
 	struct sx_pk_slot lambda_n; /**< Lambda_n **/
