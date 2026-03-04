@@ -14,17 +14,17 @@ target_link_libraries(app PRIVATE babblekit)
 # Include application events and configuration headers
 zephyr_library_include_directories(app PRIVATE
     ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/nrf_auraconfig/include
-    ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/include
-    ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth
-    ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules
-    ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/utils/macros
+    ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/include
+    ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/bluetooth
+    ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/modules
+    ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/utils/macros
 )
 
-add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth bluetooth_build)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/bluetooth bluetooth_build)
 
-target_sources_ifdef(CONFIG_NRF5340_AUDIO_SD_CARD_MODULE app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules/sd_card.c)
-target_sources_ifdef(CONFIG_NRF5340_AUDIO_SD_CARD_LC3_FILE app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules/lc3_file.c)
-target_sources_ifdef(CONFIG_NRF5340_AUDIO_SD_CARD_LC3_STREAMER app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules/lc3_streamer.c)
+target_sources_ifdef(CONFIG_NRF_AUDIO_SD_CARD_MODULE app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/modules/sd_card.c)
+target_sources_ifdef(CONFIG_NRF_AUDIO_SD_CARD_LC3_FILE app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/modules/lc3_file.c)
+target_sources_ifdef(CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/modules/lc3_streamer.c)
 
 target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/nrf_auraconfig/src/nrf_auraconfig.c)
 

@@ -221,8 +221,8 @@ Matter bridge
   To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
   See the :ref:`migration guide <migration_3.2_required>` for more information.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Added the API documentation in the header files listed on the :ref:`audio_api` page.
 * Updated:

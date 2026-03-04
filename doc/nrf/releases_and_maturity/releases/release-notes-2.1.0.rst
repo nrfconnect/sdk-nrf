@@ -317,8 +317,8 @@ nRF9160: Serial LTE modem
   The documentation of the Socket AT commands’ socket option numbers was updated accordingly.
 * Removed the software toggle of ``INDICATE_PIN`` in case of reset.
 
-nRF5340 Audio
--------------
+nRF Audio
+-----------
 
 * Added:
 
@@ -328,15 +328,15 @@ nRF5340 Audio
   * Support for Basic Audio Profile, including support for the stereo :term:`Broadcast Isochronous Stream (BIS)`.
   * Bonding between gateway and headsets in the :term:`Connected Isochronous Stream (CIS)`.
   * :ref:`Experimental <software_maturity>` DFU support for internal and external flash layouts.
-    See nrf53_audio_app_configuration_configure_fota in the application documentation for details.
+    See nrf_audio_app_configuration_configure_fota in the application documentation for details.
   * DFU advertising name based on role.
 
 * Updated:
 
   * Network controller.
-  * Documentation in the :ref:`nrf53_audio_app_building_script` section.
+  * Documentation in the :ref:`nrf_audio_app_building_script` section.
     The text now mentions how to recover the device if programming using script fails.
-  * Documentation of the operating temperature maximum range in the :ref:`nrf53_audio_app_dk_features` section.
+  * Documentation of the operating temperature maximum range in the :ref:`nrf_audio_app_dk_features` section.
 
 * Removed support for SBC.
 

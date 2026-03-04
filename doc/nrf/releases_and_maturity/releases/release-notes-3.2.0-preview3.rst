@@ -234,17 +234,17 @@ Matter bridge
   To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
   See the :ref:`migration guide <migration_3.2_required>` for more information.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Added:
 
   * A way to store servers in RAM on the unicast client (gateway) side.
     The storage does a compare on server address to match multiple servers in a unicast group.
     This means that if another device appears with the same address, it will be treated as the same server.
-  * Experimental support for stereo in :ref:`unicast server application<nrf53_audio_unicast_server_app_configuration_stereo>`.
+  * Experimental support for stereo in :ref:`unicast server application<nrf_audio_unicast_server_app_configuration_stereo>`.
   * The :ref:`Audio application API documentation <audio_api>` page.
-  * The :ref:`nrf53_audio_app_config_audio_app_options` page.
+  * The :ref:`nrf_audio_app_config_audio_app_options` page.
   * The API documentation in the header files listed on the :ref:`audio_api` page.
   * Ability to connect by address as a unicast client.
 
@@ -254,13 +254,13 @@ nRF5340 Audio
   * The unicast client (gateway) application now checks if a server has a resolvable address.
     If this has not been resolved, the discovery process will start in the identity resolved callback.
   * The power measurements to be disabled by default in the default debug versions of the applications.
-    To enable power measurements, see :ref:`nrf53_audio_app_configuration_power_measurements`.
+    To enable power measurements, see :ref:`nrf_audio_app_configuration_power_measurements`.
   * The audio application targeting the :zephyr:board:`nrf5340dk` to use pins **P1.5** to **P1.9** for the I2S interface instead of **P0.13** to **P0.17**.
     This change was made to avoid conflicts with the onboard peripherals on the nRF5340 DK.
-  * The documentation pages with information about the :ref:`SD card playback module <nrf53_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf53_audio_app_configuration_sd_card_playback>`.
+  * The documentation pages with information about the :ref:`SD card playback module <nrf_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf_audio_app_configuration_sd_card_playback>`.
   * The API documentation in the header files listed on the :ref:`audio_api` page.
 
-* Removed the LC3 QDID from the :ref:`nrf53_audio_feature_support` page.
+* Removed the LC3 QDID from the :ref:`nrf_audio_feature_support` page.
   The QDID is now listed in the `nRF5340 Bluetooth DNs and QDIDs Compatibility Matrix`_.
 
 nRF Desktop

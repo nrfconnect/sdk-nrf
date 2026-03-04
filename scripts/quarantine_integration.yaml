@@ -119,7 +119,7 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - nrf5340_audio.sw_codec_lc3_test
+    - nrf_audio.sw_codec_lc3_test
   platforms:
     - nrf5340_audio_dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpuapp

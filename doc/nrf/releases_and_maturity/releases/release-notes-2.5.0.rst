@@ -401,8 +401,8 @@ Serial LTE modem
     To remove these errors, you can erase all settings by doing a full erase of the device.
     This will be fixed in the next |NCS| release.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Modified the entire application architecture for handling Bluetooth LE Audio.
   The following new modules have been added:
@@ -415,7 +415,7 @@ nRF5340 Audio
   * Content Control - This module handles content control, such as play and pause.
 
 * Added back the QDID number for the LE Audio controller for nRF5340 to the documentation.
-* Updated the :ref:`application documentation <nrf53_audio_app>` by splitting it into several pages.
+* Updated the :ref:`application documentation <nrf_audio_app>` by splitting it into several pages.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -840,7 +840,7 @@ Binary libraries
 
 * LE Audio controller for nRF5340 library:
 
-  * Added a limitation about the lack of support for the +20 dBm setting when :ref:`building the nRF5340 Audio application with the nRF21540 FEM support <nrf53_audio_app_adding_FEM_support>`.
+  * Added a limitation about the lack of support for the +20 dBm setting when :ref:`building the nRF Audio application with the nRF21540 FEM support <nrf_audio_app_adding_FEM_support>`.
 
 * :ref:`liblwm2m_carrier_readme` library:
 

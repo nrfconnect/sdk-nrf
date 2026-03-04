@@ -268,14 +268,14 @@ nRF9160: Serial LTE modem
 * Updated the service info JSON payload to use ``GNSS`` instead of ``GPS``.
 * Removed automatic quit of data mode in GNSS, FTP, and HTTP services.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Added:
 
   * Kconfig options for different sample rates and BAP presets.
   * Bidirectional mode for the CIS mode.
-  * A :ref:`walkie talkie demo <nrf53_audio_app_configuration_enable_walkie_talkie>` for bidirectional CIS.
+  * A :ref:`walkie talkie demo <nrf_audio_app_configuration_enable_walkie_talkie>` for bidirectional CIS.
   * Minimal Media Control Service (MCS) functionality to the Play/Pause button.
   * Coordinated Set Identification Service (CSIS) for the CIS headset.
   * Functionality for supporting multiple streams on BIS headsets.
@@ -287,11 +287,11 @@ nRF5340 Audio
 
 * Fixed:
 
-  * An issue with the figure for :ref:`nrf53_audio_app_overview_architecture_i2s` in the :ref:`nrf53_audio_app` documentation.
+  * An issue with the figure for :ref:`nrf_audio_app_overview_architecture_i2s` in the :ref:`nrf_audio_app` documentation.
     The figure now correctly shows the interaction with the Bluetooth modules.
   * An issue with Simple Management Protocol (SMP) not advertising in the CIS mode.
   * An issue with the ``mcumgr`` command being unable to receive in the BIS mode.
-  * The nrf53_audio_unicast_client_app_testing_steps_fota section in the documentation did not mention long-pressing **BTN 4** while resetting the development kit to start DFU.
+  * The nrf_audio_unicast_client_app_testing_steps_fota section in the documentation did not mention long-pressing **BTN 4** while resetting the development kit to start DFU.
     This has now been added to the documentation.
 
 * Removed support for the nRF5340 Audio DK (PCA10121) board version 0.7.1 or older.

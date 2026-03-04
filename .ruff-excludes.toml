@@ -1,13 +1,13 @@
 [lint.per-file-ignores]
-"./applications/nrf5340_audio/tools/buildprog/buildprog.py" = [
+"./applications/nrf_audio/tools/buildprog/buildprog.py" = [
     "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
     "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
 ]
-"./applications/nrf5340_audio/tools/buildprog/nrf5340_audio_dk_devices.py" = [
+"./applications/nrf_audio/tools/buildprog/nrf5340_audio_dk_devices.py" = [
     "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
     "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
 ]
-"./applications/nrf5340_audio/tools/buildprog/program.py" = [
+"./applications/nrf_audio/tools/buildprog/program.py" = [
     "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
     "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
     "SIM103",   # https://docs.astral.sh/ruff/rules/needless-bool
@@ -721,9 +721,9 @@
 ]
 [format]
 exclude = [
-    "./applications/nrf5340_audio/tools/buildprog/buildprog.py",
-    "./applications/nrf5340_audio/tools/buildprog/nrf5340_audio_dk_devices.py",
-    "./applications/nrf5340_audio/tools/buildprog/program.py",
+    "./applications/nrf_audio/tools/buildprog/buildprog.py",
+    "./applications/nrf_audio/tools/buildprog/nrf5340_audio_dk_devices.py",
+    "./applications/nrf_audio/tools/buildprog/program.py",
     "./doc/_extensions/inventory_builder.py",
     "./doc/_extensions/manifest_revisions_table.py",
     "./doc/_extensions/ncs_include/ncs_include.py",
