@@ -6,7 +6,7 @@
 #include <zephyr/dt-bindings/regulator/npm13xx.h>
 #include <zephyr/dt-bindings/regulator/npm6001.h>
 
-&i2c2 {
+zephyr_i2c: &i2c2 {
 	compatible = "nordic,nrf-twim";
 	status = "disabled";
 	clock-frequency = <I2C_BITRATE_STANDARD>;
