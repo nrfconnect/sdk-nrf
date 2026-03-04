@@ -279,7 +279,7 @@ int controller_timestamp_tx_get(struct le_audio_tx_info const *const tx, uint8_t
 }
 
 int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio_tx_info *tx,
-			uint8_t num_tx)
+			uint8_t num_tx, struct tx_stats *tx_stats)
 {
 	int ret;
 	size_t data_size_pr_stream = 0;
@@ -294,6 +294,12 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 
 	/* Get number of locations in the audio frame */
 	struct audio_metadata *meta = net_buf_user_data(audio_frame);
+
+	if (meta == NULL) {
+		LOG_ERR("Audio metadata is missing");
+		return -EINVAL;
+	}
+
 	uint8_t num_loc = audio_metadata_num_loc_get(meta);
 
 	if (num_loc == 0 || (audio_frame->len % num_loc != 0)) {
@@ -302,15 +308,13 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		return -EINVAL;
 	}
 
-	if (meta == NULL || meta->prod_inf == NULL) {
-		LOG_ERR("Audio metadata or producer info is missing");
-		return -EINVAL;
-	}
-
-	bool prod_can_rate_adj = true;
 	uint32_t common_interval_us = 0;
 
 	data_size_pr_stream = audio_frame->len / num_loc;
+	if (data_size_pr_stream == 0) {
+		LOG_ERR("Data size per stream is 0");
+		return -EINVAL;
+	}
 
 	ret = tx_precheck(tx, num_tx, num_loc, data_size_pr_stream, &common_interval_us);
 	if (ret) {
@@ -333,7 +337,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			common_interval_us);
 		flush_next = false;
 		timestamp_ctlr_esti_us_valid = false;
-		return 0;
+		return -EAGAIN;
 	}
 
 	LOG_DBG_RATELIMIT_RATE(1000, "tx %d valid %d", num_tx, timestamp_ctlr_esti_us_valid);
@@ -345,13 +349,12 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		if (num_loc == 1) {
 			ret = iso_stream_send(audio_frame->data, data_size_pr_stream,
 					      tx[i].cap_stream, tx_info, timestamp_ctlr_esti_us,
-					      timestamp_ctlr_esti_us_valid && prod_can_rate_adj);
+					      timestamp_ctlr_esti_us_valid);
 		} else {
 			ret = iso_stream_send(audio_frame->data +
 						      (tx[i].audio_location * data_size_pr_stream),
 					      data_size_pr_stream, tx[i].cap_stream, tx_info,
-					      timestamp_ctlr_esti_us,
-					      timestamp_ctlr_esti_us_valid && prod_can_rate_adj);
+					      timestamp_ctlr_esti_us, timestamp_ctlr_esti_us_valid);
 		}
 
 		if (ret) {
@@ -373,6 +376,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	uint32_t timestamp_now_us = audio_sync_timer_capture();
 	uint32_t timestamp_ctlr_real_us = 0;
 	static uint32_t timestamp_ctlr_real_us_last;
+	int32_t corr_diff_us = 0;
 
 	/* If the timestamp is not valid or it has been more than TX_TS_RESYNC_US since the last
 	 * timestamp, we re-aquire a timestamp from the controller.
@@ -389,7 +393,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		}
 
 		uint32_t time_since_last_corr_us = timestamp_now_us - timestamp_last_correction;
-		int32_t corr_diff = (int32_t)(timestamp_ctlr_real_us - timestamp_ctlr_esti_us);
+		corr_diff_us = (int32_t)(timestamp_ctlr_real_us - timestamp_ctlr_esti_us);
 
 		if (time_since_last_corr_us < TX_TS_RESYNC_US) {
 			subequent_rapid_corrections++;
@@ -404,37 +408,40 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 
 		/* There are several options which can occur at this point:
 		 *
-		 * - corr_diff >> 0: This means that data was given to this module too slow/late.
+		 * - corr_diff_us >> 0: This means that data was given to this module too slow/late.
 		 * Hence, the controller schedules the sending for the next ISO interval.
 		 * An empty packet will be sent on air, and we will correct the timestamp estimate.
-		 * - corr_diff << 0: This should not happen as an earlier timestamp has already been
-		 * given to the controller.
-		 * - corr_diff > or < 0: This means that the estimate has gotten a small correction.
-		 * As a central/gateway/unicast client/broadcast source, the clocks shall be running
-		 * in lockstep and this should never happen. As a peripheral/headset/unicast
-		 * server/broadcast sink, this will happen to correct for drift.
+		 * - corr_diff_us << 0: This should not happen as an earlier timestamp has already
+		 * been given to the controller.
+		 * - corr_diff_us > or < 0: This means that the estimate has gotten a small
+		 * correction. As a central/gateway/unicast client/broadcast source, the clocks
+		 * shall be running in lockstep and this should never happen. As a
+		 * peripheral/headset/unicast server/broadcast sink, this will happen to correct for
+		 * drift.
 		 */
 
-		if (corr_diff == 0) {
+		if (corr_diff_us == 0) {
 			/* No correction needed, the estimate is correct. */
-			LOG_DBG("TX clock no adjustment needed (%d us)", corr_diff);
+			LOG_DBG("TX clock no adjustment needed (%d us)", corr_diff_us);
 			timestamp_ctlr_esti_us_valid = true;
-		} else if (corr_diff > (common_interval_us / 2)) {
+		} else if (corr_diff_us > (common_interval_us / 2)) {
 			LOG_WRN("TX clock has been updated by (%d us). Empty packet on air",
-				corr_diff);
+				corr_diff_us);
 			timestamp_ctlr_esti_us_valid = false;
-		} else if (corr_diff < (common_interval_us / 2)) {
+		} else if (corr_diff_us < (common_interval_us / 2)) {
 			LOG_ERR("TX clock has been updated by (%d us). Shall not happen",
-				corr_diff);
+				corr_diff_us);
 			timestamp_ctlr_esti_us_valid = false;
 			return -EIO;
 		} else {
 			if (CONFIG_AUDIO_DEV == HEADSET) {
-				LOG_INF("TX clock has been drift adjusted by (%d us)", corr_diff);
+				LOG_INF("TX clock has been drift adjusted by (%d us)",
+					corr_diff_us);
 				timestamp_ctlr_esti_us_valid = true;
 			}
 			if (CONFIG_AUDIO_DEV == GATEWAY) {
-				LOG_ERR("TX clock has been drift adjusted by (%d us)", corr_diff);
+				LOG_ERR("TX clock has been drift adjusted by (%d us)",
+					corr_diff_us);
 				timestamp_ctlr_esti_us_valid = false;
 			}
 		}
@@ -464,6 +471,15 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 	ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
 	if (ret) {
 		LOG_WRN("Failed to publish timestamp: %d", ret);
+	}
+
+	if (tx_stats != NULL) {
+		tx_stats->num_sent = sent_streams;
+		tx_stats->corr_diff_us = corr_diff_us;
+		tx_stats->timestamp_ctlr_esti_valid = timestamp_ctlr_esti_us_valid;
+		tx_stats->timestamp_ctlr_esti_us = timestamp_ctlr_esti_us;
+		tx_stats->timestamp_now_us = timestamp_now_us;
+		tx_stats->flush_next = flush_next;
 	}
 
 	return 0;

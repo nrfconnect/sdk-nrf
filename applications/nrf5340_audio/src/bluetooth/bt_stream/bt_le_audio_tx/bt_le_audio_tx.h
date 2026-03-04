@@ -27,6 +27,15 @@ struct le_audio_tx_info {
 	uint8_t audio_location;
 };
 
+struct tx_stats {
+	uint8_t num_sent;
+	int32_t corr_diff_us;
+	bool timestamp_ctlr_esti_valid;
+	uint32_t timestamp_ctlr_esti_us;
+	uint32_t timestamp_now_us;
+	bool flush_next;
+};
+
 /**
  * @brief	Allocates buffers and sends data to the controller.
  *
@@ -36,11 +45,13 @@ struct le_audio_tx_info {
  * @param[in]	audio_frame	Pointer to the encoded audio data.
  * @param[in]	tx		Pointer to an array of le_audio_tx_info elements.
  * @param[in]	num_tx		Number of elements in @p tx.
+ * @param[out]	tx_stats	Pointer to an optional struct to be filled with transmission
+ * statistics. NULL if not used.
  *
  * @return	0 if successful, error otherwise.
  */
 int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio_tx_info *tx,
-			uint8_t num_tx);
+			uint8_t num_tx, struct tx_stats *stats);
 
 /**
  * @brief	Initializes a stream. Must be called when a TX stream is started.
