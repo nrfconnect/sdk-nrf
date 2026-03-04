@@ -309,32 +309,40 @@ static void dect_phy_rf_tool_mdm_pcc_cb(const struct nrf_modem_dect_phy_pcc_even
 						need_thread_processing = true;
 					}
 				} else if (pkt_count == 1) {
-					/* 2nd pkt: calculate frame count for synch rx restart */
-					int frame_count_for_synch_rx_restart =
-						((evt->stf_start_time -
-						  rf_tool_data.rx_metrics.last_synch_pcc_stf_time) /
-						 rf_tool_data.frame_len_mdmticks) - 1;
+					/* 2nd pkt: calculate frame count for synch rx restart.
+					 * Only compute when:
+					 * stf_start_time >= last_synch_pcc_stf_time
+					 * to avoid unsigned underflow; otherwise use 0.
+					 */
+					uint64_t last_stf =
+						rf_tool_data.rx_metrics.last_synch_pcc_stf_time;
+					int frame_count = 0;
 
-					if (frame_count_for_synch_rx_restart < 0) {
-						frame_count_for_synch_rx_restart = 0;
+					if (evt->stf_start_time >= last_stf) {
+						int n = (evt->stf_start_time - last_stf) /
+							rf_tool_data.frame_len_mdmticks - 1;
+
+						frame_count = (n < 0) ? 0 : n;
 					}
-					rf_tool_data.frame_count_for_synch_rx_restart =
-						frame_count_for_synch_rx_restart;
+					rf_tool_data.frame_count_for_synch_rx_restart = frame_count;
 				}
 			} else if (cmd_params->mode == DECT_PHY_RF_TOOL_MODE_RX_TX) {
 				if (pkt_count == 0) {
-					/* Synch is from our 1st RX frame time sent to modem */
-					int frame_count_for_synch_rx_restart =
-						((evt->stf_start_time -
-							rf_tool_data.rx_metrics
-								.first_rx_mdm_op_frame_time) /
-							rf_tool_data.frame_len_mdmticks);
+					/* Synch is from our 1st RX frame time sent to modem. */
+					uint64_t first =
+						rf_tool_data.rx_metrics.first_rx_mdm_op_frame_time;
+					int frame_count = 0;
 
-					if (frame_count_for_synch_rx_restart < 0) {
-						frame_count_for_synch_rx_restart = 0;
+					/* Only compute when we have first RX op time and
+					 * STF >= first; if STF before RX op start, keep 0.
+					 */
+					if (first != 0 && evt->stf_start_time >= first) {
+						int n = (evt->stf_start_time - first) /
+							rf_tool_data.frame_len_mdmticks;
+
+						frame_count = (n < 0) ? 0 : n;
 					}
-					rf_tool_data.frame_count_for_synch_rx_restart =
-						frame_count_for_synch_rx_restart;
+					rf_tool_data.frame_count_for_synch_rx_restart = frame_count;
 				}
 			}
 		}
