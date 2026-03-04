@@ -1,0 +1,17 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SDHC_NRF_SEMMC
+	bool "sEMMC driver"
+	default y
+	depends on DT_HAS_NORDIC_NRF_SEMMC_ENABLED
+	select SDHC_SUPPORTS_NATIVE_MODE
+	select PINCTRL
+
+if SDHC_NRF_SEMMC
+
+# sEMMC requires 32-bit aligned buffers
+config SDHC_BUFFER_ALIGNMENT
+	default 4
+
+endif
