@@ -53,6 +53,8 @@ static bool initialized;
 static bool delete_broadcast_src[CONFIG_BT_ISO_MAX_BIG];
 static uint32_t stored_broadcast_id;
 
+BT_LE_AUDIO_TX_DEFINE(bt_le_audio_tx);
+
 static int metadata_u8_add(uint8_t buffer[], uint8_t *index, uint8_t type, uint8_t value)
 {
 	if (buffer == NULL || index == NULL) {
@@ -113,7 +115,7 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 		le_audio_event_publish(LE_AUDIO_EVT_STREAM_SENT, &idx);
 	}
 
-	ERR_CHK(bt_le_audio_tx_stream_sent(idx));
+	ERR_CHK(bt_le_audio_tx_stream_sent(bt_le_audio_tx, idx));
 }
 
 static void stream_started_cb(struct bt_bap_stream *stream)
@@ -126,7 +128,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 		return;
 	}
 
-	ERR_CHK(bt_le_audio_tx_stream_started(idx));
+	ERR_CHK(bt_le_audio_tx_stream_started(bt_le_audio_tx, idx));
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, &idx);
 
@@ -664,7 +666,7 @@ int broadcast_source_send(struct net_buf const *const audio_frame, uint8_t big_i
 		return -ECANCELED;
 	}
 
-	ret = bt_le_audio_tx_send(audio_frame, tx, num_active_streams, NULL);
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, audio_frame, tx, num_active_streams);
 	if (ret) {
 		return ret;
 	}
@@ -818,7 +820,11 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 	}
 
 	if (!initialized) {
-		bt_le_audio_tx_init();
+		ret = bt_le_audio_tx_init(bt_le_audio_tx);
+		if (ret) {
+			LOG_ERR("Failed to initialize LE Audio TX: %d", ret);
+			return ret;
+		}
 	}
 
 	ret = bt_cap_initiator_register_cb(&cap_cbs);

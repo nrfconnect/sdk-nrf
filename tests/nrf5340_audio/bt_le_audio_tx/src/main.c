@@ -16,6 +16,8 @@
 
 DEFINE_FFF_GLOBALS;
 
+BT_LE_AUDIO_TX_DEFINE(bt_le_audio_tx);
+
 static void test_setup(void *f)
 {
 	ARG_UNUSED(f);
@@ -24,7 +26,9 @@ static void test_setup(void *f)
 	RESET_FAKE(bt_bap_ep_get_info);
 	RESET_FAKE(bt_hci_get_conn_handle);
 	RESET_FAKE(bt_cap_stream_send);
+	bt_cap_stream_send_fake.custom_fake = bt_cap_stream_send_custom_fake;
 	RESET_FAKE(bt_cap_stream_send_ts);
+	bt_cap_stream_send_ts_fake.custom_fake = bt_cap_stream_send_ts_custom_fake;
 	RESET_FAKE(zbus_chan_pub);
 	RESET_FAKE(audio_sync_timer_capture);
 	RESET_FAKE(bt_audio_codec_cfg_get_frame_dur);
@@ -45,7 +49,7 @@ static void test_setup(void *f)
 	audio_sync_timer_capture_fake.return_val = 0;
 
 	FFF_RESET_HISTORY();
-	bt_le_audio_tx_init();
+	zassert_equal(0, bt_le_audio_tx_init(bt_le_audio_tx));
 }
 
 NET_BUF_POOL_FIXED_DEFINE(dummy_pool, 1, 240, sizeof(struct audio_metadata), NULL);
@@ -56,8 +60,10 @@ NET_BUF_POOL_FIXED_DEFINE(dummy_pool, 1, 240, sizeof(struct audio_metadata), NUL
 	uint8_t dummy_data[240];                                                                   \
 	net_buf_add_mem(dummy_audio_frame, dummy_data, sizeof(dummy_data));                        \
 	struct le_audio_tx_info tx[2];                                                             \
-	TEST_CAP_STREAM(cap_stream_0, BT_AUDIO_DIR_SINK, 10000, 1);                                \
-	TEST_CAP_STREAM(cap_stream_1, BT_AUDIO_DIR_SINK, 10000, 1);                                \
+	TEST_CAP_STREAM(cap_stream_0, BT_AUDIO_DIR_SINK, 10000, 1, 10000);                         \
+	TEST_CAP_STREAM(cap_stream_1, BT_AUDIO_DIR_SINK, 10000, 1, 10000);                         \
+	cap_stream_0.bap_stream.ep->state = BT_BAP_EP_STATE_STREAMING;                             \
+	cap_stream_1.bap_stream.ep->state = BT_BAP_EP_STATE_STREAMING;                             \
 	tx[0].idx.lvl1 = 0;                                                                        \
 	tx[0].idx.lvl2 = 0;                                                                        \
 	tx[0].idx.lvl3 = 0;                                                                        \
@@ -71,25 +77,36 @@ NET_BUF_POOL_FIXED_DEFINE(dummy_pool, 1, 240, sizeof(struct audio_metadata), NUL
 	struct audio_metadata *meta = net_buf_user_data(dummy_audio_frame);                        \
 	meta->data_len_us = 10000;                                                                 \
 	meta->bytes_per_location = 120;                                                            \
-	meta->locations = 0x03
+	meta->locations = 0x03;                                                                    \
+	static const uint8_t chan_to_send = 2;
+
+static void call_tx_sent(struct le_audio_tx_info *tx, uint8_t num_streams)
+{
+	for (int i = 0; i < num_streams; i++) {
+		struct stream_index idx = tx[i].idx;
+
+		zassert_equal(0, bt_le_audio_tx_stream_sent(bt_le_audio_tx, idx));
+	}
+}
 
 ZTEST(bt_le_audio_tx, test_basic_tx)
 {
 	int ret;
 
 	TEST_SETUP_2;
-	struct tx_stats stats;
 
 	audio_sync_timer_capture_fake.return_val = 10000;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000;
 
-	ret = bt_le_audio_tx_send(dummy_audio_frame, tx, 2, &stats);
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
 	zassert_equal(0, ret, "ret %d", ret);
 	zassert_equal(2, bt_cap_stream_send_fake.call_count);
 	zassert_equal(0, bt_cap_stream_send_ts_fake.call_count);
 
 	zassert_equal(1, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
 	zassert_equal(1, zbus_chan_pub_fake.call_count);
+
+	call_tx_sent(tx, 2);
 
 	net_buf_unref(dummy_audio_frame);
 }
@@ -100,12 +117,13 @@ ZTEST(bt_le_audio_tx, test_bad_parameters)
 
 	TEST_SETUP_2;
 
-	ret = bt_le_audio_tx_send(NULL, tx, 2, NULL);
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, NULL, tx, chan_to_send);
 	zassert_equal(-EINVAL, ret, "ret %d", ret);
 
-	ret = bt_le_audio_tx_send(dummy_audio_frame, NULL, 2, NULL);
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, NULL, chan_to_send);
 	zassert_equal(-EINVAL, ret, "ret %d", ret);
 
+	call_tx_sent(tx, chan_to_send);
 	net_buf_unref(dummy_audio_frame);
 }
 
@@ -114,15 +132,31 @@ ZTEST(bt_le_audio_tx, test_wrapping)
 	int ret;
 
 	TEST_SETUP_2;
-	struct tx_stats stats;
 
-	ret = bt_le_audio_tx_send(dummy_audio_frame, tx, 2, &stats);
+	audio_sync_timer_capture_fake.return_val = 10000;
+	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000;
+
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
 	zassert_equal(0, ret, "ret %d", ret);
-	zassert_equal(2, bt_cap_stream_send_fake.call_count);
+	zassert_equal(2, bt_cap_stream_send_fake.call_count, "%d",
+		      bt_cap_stream_send_fake.call_count);
 	zassert_equal(0, bt_cap_stream_send_ts_fake.call_count);
 
 	zassert_equal(1, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
 	zassert_equal(1, zbus_chan_pub_fake.call_count);
+	call_tx_sent(tx, chan_to_send);
+
+	audio_sync_timer_capture_fake.return_val = 20000;
+	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 20000;
+
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
+	zassert_equal(0, ret, "ret %d", ret);
+	zassert_equal(2, bt_cap_stream_send_fake.call_count);
+	zassert_equal(2, bt_cap_stream_send_ts_fake.call_count);
+
+	zassert_equal(1, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
+	zassert_equal(2, zbus_chan_pub_fake.call_count);
+	call_tx_sent(tx, chan_to_send);
 
 	net_buf_unref(dummy_audio_frame);
 }

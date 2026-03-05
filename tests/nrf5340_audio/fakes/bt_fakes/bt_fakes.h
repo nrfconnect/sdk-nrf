@@ -27,13 +27,14 @@ FAKE_VALUE_FUNC(int, bt_audio_codec_cfg_frame_dur_to_frame_dur_us,
 FAKE_VALUE_FUNC(int, bt_audio_codec_cfg_get_octets_per_frame, const struct bt_audio_codec_cfg *);
 FAKE_VALUE_FUNC(int, bt_hci_get_conn_handle, const struct bt_conn *, uint16_t *);
 
-#define TEST_CAP_STREAM(name, dir_in, pd_in, group_in)                                             \
+#define TEST_CAP_STREAM(name, dir_in, pd_in, group_in, interval_in)                                \
 	struct bt_cap_stream name = {0};                                                           \
 	struct bt_bap_ep name##_ep_var = {0};                                                      \
 	struct bt_iso_chan name##_bap_iso = {0};                                                   \
 	struct bt_bap_qos_cfg name##_qos = {0};                                                    \
 	struct bt_bap_iso name##_iso = {0};                                                        \
 	name##_qos.pd = pd_in;                                                                     \
+	name##_qos.interval = interval_in;                                                         \
 	name##_ep_var.dir = dir_in;                                                                \
 	name.bap_stream.ep = &name##_ep_var;                                                       \
 	name.bap_stream.iso = &name##_bap_iso;                                                     \
@@ -95,6 +96,27 @@ int bt_bap_ep_get_info_custom_fake(const struct bt_bap_ep *ep, struct bt_bap_ep_
 		return -EINVAL;
 	}
 
+	return 0;
+}
+
+int bt_cap_stream_send_ts_custom_fake(struct bt_cap_stream *stream, struct net_buf *buf,
+				      uint16_t seq_num, uint32_t ts)
+{
+	if (stream == NULL || buf == NULL) {
+		return -EINVAL;
+	}
+	net_buf_unref(buf);
+	return 0;
+}
+
+int bt_cap_stream_send_custom_fake(struct bt_cap_stream *stream, struct net_buf *buf,
+				   uint16_t seq_num)
+{
+
+	if (stream == NULL || buf == NULL) {
+		return -EINVAL;
+	}
+	net_buf_unref(buf);
 	return 0;
 }
 
