@@ -22,6 +22,19 @@ static void wifi_ipc_ep_bound(void *priv)
 	context->busy_q.ipc_ready = true;
 }
 
+/* For single-endpoint TX+RX bind: set both contexts ready when endpoint is bound */
+static wifi_ipc_t *wifi_ipc_rx_ctx_shared;
+
+static void wifi_ipc_ep_bound_tx_rx(void *priv)
+{
+	wifi_ipc_t *tx_ctx = (wifi_ipc_t *)priv;
+
+	tx_ctx->busy_q.ipc_ready = true;
+	if (wifi_ipc_rx_ctx_shared != NULL) {
+		wifi_ipc_rx_ctx_shared->busy_q.ipc_ready = true;
+	}
+}
+
 static void wifi_ipc_recv_callback(const void *data, size_t len, void *priv)
 {
 	wifi_ipc_t *context = (wifi_ipc_t *)priv;
@@ -82,6 +95,24 @@ wifi_ipc_status_t wifi_ipc_bind_ipc_service(wifi_ipc_t *context,
 	return wifi_ipc_busyq_register(context);
 }
 
+wifi_ipc_status_t wifi_ipc_bind_ipc_service_tx_rx(wifi_ipc_t *tx_context,
+						  wifi_ipc_t *rx_context,
+						  const ipc_device_wrapper_t *ipc_inst,
+						  void (*rx_cb)(void *data, size_t len, void *priv),
+						  void *priv)
+{
+	wifi_ipc_status_t ret;
+
+	wifi_ipc_rx_ctx_shared = rx_context;
+	wifi_ipc_busyq_init(&tx_context->busy_q, ipc_inst, rx_cb, priv);
+	tx_context->busy_q.ipc_ep_cfg.cb.bound = wifi_ipc_ep_bound_tx_rx;
+
+	ret = wifi_ipc_busyq_register(tx_context);
+	wifi_ipc_rx_ctx_shared = NULL;
+
+	return ret;
+}
+
 
 static wifi_ipc_status_t wifi_ipc_busyq_send(wifi_ipc_t *context, const void *data, size_t len)
 {
@@ -121,12 +152,16 @@ wifi_ipc_status_t wifi_ipc_host_rx_init(wifi_ipc_t *context, uint32_t addr_freeq
 	return WIFI_IPC_STATUS_OK;
 }
 
-wifi_ipc_status_t wifi_ipc_host_tx_send(wifi_ipc_t *context, const void *data, size_t len)
+wifi_ipc_status_t wifi_ipc_host_tx_send(wifi_ipc_t *context,
+					const void *data,
+					size_t len,
+					uint32_t *ack_addr)
 {
-	wifi_ipc_buf_desc_t msg_info;
+	wifi_ipc_buf_desc_t msg_info = { 0 };
 
 	msg_info.addr = (uint32_t)data;
 	msg_info.size = len;
+	msg_info.ack_addr = ack_addr;
 
 	return wifi_ipc_busyq_send(context, &msg_info, sizeof(msg_info));
 }
