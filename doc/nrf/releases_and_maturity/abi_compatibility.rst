@@ -46,6 +46,23 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Element (IronSide SE) v23.4.0+27
+================================================
+
+Added
+-----
+
+* Support for UICR.MPCCONF to set up static access permissions for global domain memory.
+  This is currently limited to OVERRIDE configuration in MPC110 (restricting access for global domain RAM0x and MRAM1x only).
+  It requires UICR.VERSION to be at least 2.2. (NCSDK-37095)
+* MPCCONF service providing APIs for reading and writing the same MPC registers as ``UICR.MPCCONF``.
+  These APIs enable extension or replacement of the static configuration via ``UICR.MPCCONF``. (NCSDK-37095)
+
+Updated
+-------
+
+* Support for managing MRAMC110.CONFIGNVR.PAGE[1] through UICR.PERIPHCONF and the PERIPHCONF service, allowing for permission management (for example, setting MRAM10 NVR page 1 as read-only). (NCSDK-35891)
+
 IronSide Secure Element (IronSide SE) v23.3.0+26
 =================================================
 
