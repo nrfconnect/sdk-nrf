@@ -77,6 +77,7 @@ struct bt_le_audio_tx_ctx_layout {
 	uint32_t timestamp_ctlr_real_us_last;
 	uint32_t timestamp_last_correction;
 	uint32_t subequent_rapid_corrections;
+	int32_t corr_diff_us;
 };
 
 #define BT_LE_AUDIO_TX_CTX_SIZE	 sizeof(struct bt_le_audio_tx_ctx_layout)

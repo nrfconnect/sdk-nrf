@@ -59,6 +59,7 @@ struct bt_le_audio_tx_ctx {
 	uint32_t timestamp_ctlr_real_us_last;
 	uint32_t timestamp_last_correction;
 	uint32_t subequent_rapid_corrections;
+	int32_t corr_diff_us;
 };
 
 /**
@@ -353,7 +354,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	/* Get the current (wall clock) time */
 	uint32_t timestamp_now_us = audio_sync_timer_capture();
 	uint32_t timestamp_ctlr_real_us = 0;
-	int32_t corr_diff_us = 0;
+	ctx->corr_diff_us = 0;
 
 	/* If the timestamp is not valid or it has been more than TX_TS_RESYNC_US since the last
 	 * timestamp, we re-aquire a timestamp from the controller.
@@ -369,7 +370,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 
 		uint32_t time_since_last_corr_us =
 			timestamp_now_us - ctx->timestamp_last_correction;
-		corr_diff_us = (int32_t)(timestamp_ctlr_real_us - ctx->timestamp_ctlr_esti_us);
+		ctx->corr_diff_us = (int32_t)(timestamp_ctlr_real_us - ctx->timestamp_ctlr_esti_us);
 
 		if (time_since_last_corr_us < TX_TS_RESYNC_US) {
 			ctx->subequent_rapid_corrections++;
@@ -396,28 +397,28 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		 * drift.
 		 */
 
-		if (corr_diff_us == 0) {
+		if (ctx->corr_diff_us == 0) {
 			/* No correction needed, the estimate is correct. */
-			LOG_DBG("TX clock no adjustment needed (%d us)", corr_diff_us);
+			LOG_DBG("TX clock no adjustment needed (%d us)", ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = true;
-		} else if (corr_diff_us > (common_interval_us / 2)) {
+		} else if (ctx->corr_diff_us > (common_interval_us / 2)) {
 			LOG_WRN("TX clock has been updated by (%d us). Empty packet on air",
-				corr_diff_us);
+				ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = false;
-		} else if (corr_diff_us < (common_interval_us / 2)) {
+		} else if (ctx->corr_diff_us < (common_interval_us / 2)) {
 			LOG_ERR("TX clock has been updated by (%d us). Shall not happen",
-				corr_diff_us);
+				ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = false;
 			return -EIO;
 		} else {
 			if (CONFIG_AUDIO_DEV == HEADSET) {
 				LOG_INF("TX clock has been drift adjusted by (%d us)",
-					corr_diff_us);
+					ctx->corr_diff_us);
 				ctx->timestamp_ctlr_esti_us_valid = true;
 			}
 			if (CONFIG_AUDIO_DEV == GATEWAY) {
 				LOG_ERR("TX clock has been drift adjusted by (%d us)",
-					corr_diff_us);
+					ctx->corr_diff_us);
 				ctx->timestamp_ctlr_esti_us_valid = false;
 			}
 		}
