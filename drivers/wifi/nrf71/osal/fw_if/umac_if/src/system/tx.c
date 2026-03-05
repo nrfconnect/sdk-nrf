@@ -982,7 +982,6 @@ enum nrf_wifi_status tx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
 	unsigned int len = 0;
-	void *nwb = NULL;
 
 	len += sizeof(struct nrf_wifi_tx_buff_info);
 	len *= nrf_wifi_utils_list_len(txq);
