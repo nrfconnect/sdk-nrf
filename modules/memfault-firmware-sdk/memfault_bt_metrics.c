@@ -74,13 +74,6 @@ BT_CONN_CB_DEFINE(conn_callback) = {
 	.disconnected = disconnected
 };
 
-void bond_process(const struct bt_bond_info *info, void *user_data)
-{
-	uint8_t *count = user_data;
-
-	(*count)++;
-}
-
 #if CONFIG_MEMFAULT_NCS_STACK_METRICS
 void memfault_bt_metrics_init(void)
 {
@@ -101,9 +94,20 @@ void memfault_bt_metrics_init(void)
 }
 #endif /* CONFIG_MEMFAULT_NCS_STACK_METRICS */
 
+#if defined(CONFIG_BT_SMP)
+void bond_process(const struct bt_bond_info *info, void *user_data)
+{
+	uint8_t *count = user_data;
+
+	(*count)++;
+}
+#endif /* CONFIG_BT_SMP */
+
 void memfault_bt_metrics_update(void)
 {
 	int err;
+
+	#if defined(CONFIG_BT_SMP)
 	bt_addr_le_t addrs[CONFIG_BT_ID_MAX];
 	size_t id_count = ARRAY_SIZE(addrs);
 	uint8_t bond_count = 0;
@@ -120,6 +124,7 @@ void memfault_bt_metrics_update(void)
 	if (err) {
 		LOG_ERR("Failed to set the ncs_bt_bond_count metric, err: %d", err);
 	}
+	#endif /* CONFIG_BT_SMP */
 
 	err = MEMFAULT_METRIC_SET_UNSIGNED(ncs_bt_connection_count, atomic_get(&connection_count));
 	if (err) {
