@@ -339,30 +339,7 @@
 
 - scenarios:
     - tfm.psa_test_initial_attestation_lvl1
-    - tfm.psa_test_internal_trusted_storage_lvl1
-    - tfm.psa_test_protected_storage_lvl1
     - tfm.psa_test_storage_lvl1
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk@0.14.0/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - tfm.psa_test_crypto_lvl2
-    - tfm.psa_test_initial_attestation_lvl2
-    - tfm.psa_test_internal_trusted_storage_lvl2
-    - tfm.psa_test_protected_storage_lvl2
-    - tfm.psa_test_storage_lvl2
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - tfm.regression_fp_hardabi
-    - tfm.regression_ipc_lvl1
-    - tfm.regression_ipc_lvl2.cc3xx
-    - tfm.regression_ipc_lvl2.oberon
-    - tfm.regression_sfn_lvl1
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
