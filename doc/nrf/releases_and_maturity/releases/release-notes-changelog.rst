@@ -437,6 +437,10 @@ Bluetooth samples
   * Updated sample's configuration to limit the number of supported HID reports (:kconfig:option:`CONFIG_BT_HIDS_FEATURE_REP_MAX`, :kconfig:option:`CONFIG_BT_HIDS_INPUT_REP_MAX`, and :kconfig:option:`CONFIG_BT_HIDS_OUTPUT_REP_MAX`) and maximum number of GATT attribute descriptors (:kconfig:option:`CONFIG_BT_HIDS_ATTR_MAX`) in the :ref:`hids_readme`.
     This reduces the memory consumption of the sample.
 
+* :ref:`peripheral_mds`:
+
+   * Replaced the nRF Memfault mobile applications with the `nRF Connect Device Manager`_.
+
 Bluetooth Mesh samples
 ----------------------
 
