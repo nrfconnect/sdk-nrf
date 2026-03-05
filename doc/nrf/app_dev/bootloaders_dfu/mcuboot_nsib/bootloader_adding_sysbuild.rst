@@ -360,18 +360,6 @@ To use this mode, you must create a static partition file for the application th
 Ensure the firmware loader partition is named ``firmware_loader``.
 This partition must be located identically as ``mcuboot_secondary_app`` partition, starting after the image's header offset within ``mcuboot_secondary`` partition.
 
-The following are example static Partition Manager files:
-
-.. tabs::
-
-    .. group-tab:: nRF52840
-        .. literalinclude:: ../../../../../samples/mcuboot/firmware_loader_entrance/pm_static_nrf52840dk_nrf52840.yml
-           :language: yaml
-
-    .. group-tab:: nRF54L15
-        .. literalinclude:: ../../../../../samples/mcuboot/firmware_loader_entrance/pm_static_nrf54l15dk_nrf54l15_cpuapp.yml
-           :language: yaml
-
 The project must also configure MCUboot to operate in firmware loader mode and specify a firmware loader image in the :file:`sysbuild.conf` file.
 For example to select ``smp_svr``, set the following options:
 
