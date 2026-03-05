@@ -1,0 +1,3 @@
+.. note::
+   The :ref:`partition_manager` script is deprecated in the |NCS| v3.3.0, as partitions are now configured using DTS.
+   For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`release_notes` and :ref:`migration_guides`.
