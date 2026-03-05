@@ -26,7 +26,7 @@ int sx_pk_get_blinding_factor(sx_pk_blind_factor *bld_factor)
 		if (status != SX_OK) {
 			return status;
 		}
-	} while (bld_factor == 0);
+	} while (*bld_factor == 0);
 
 	return cracen_prng_value_from_pool((uint32_t *)bld_factor + 1);
 }
