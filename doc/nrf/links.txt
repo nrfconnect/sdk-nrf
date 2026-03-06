@@ -1055,6 +1055,7 @@
 .. _`Provisioning cryptographic keys`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/provisioning_keys.html
 .. _`Erasing the device`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_erasing.html
 .. _`Logging HCI packets`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/hci_logger.html
+.. _`nRF Util mcu-manager serial`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-mcu-manager/nrfutil-mcu-manager.html
 
 .. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
