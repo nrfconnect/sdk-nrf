@@ -83,7 +83,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
   sample.bluetooth.peripheral_hids_mouse.ble_rpc:
-    build_only: true
+    harness: console
     extra_args:
       - SNIPPET=nordic-bt-rpc
       - FILE_SUFFIX=bt_rpc
@@ -93,7 +93,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
   sample.bluetooth.peripheral_hids_mouse.no_sec:
-    build_only: true
+    harness: console
     extra_configs:
       - CONFIG_BT_HIDS_SECURITY_ENABLED=n
       - CONFIG_BT_HIDS_DEFAULT_PERM_RW=y
