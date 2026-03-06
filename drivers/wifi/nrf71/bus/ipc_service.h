@@ -18,14 +18,27 @@ typedef struct device ipc_device_wrapper_t;
 #include <stdint.h>
 
 /**
+ * Ring buffer descriptor (used by RPU->Host RX path for free without IPC).
+ */
+typedef struct wifi_ipc_ring_info {
+	uint32_t tail_addr;  /* GDRAM address of the tail slot in the ring buffer */
+	uint32_t base;       /* Base address of the ring buffer */
+	uint32_t size;       /* Size of the ring buffer in bytes */
+	bool padded;         /* True if message was padded to buffer start */
+} wifi_ipc_ring_info_t;
+
+/**
  * @struct wifi_ipc_buf_desc_t
  * @brief Descriptor for TX (Host->UMAC) and RX (UMAC->Host) message.
- *        Host sends (addr, size) for TX; UMAC sends (addr, size) for RX events.
- *        Host sends same descriptor back on RX free to notify UMAC to release ring slot.
+ *        Host sends (addr, size, ack_addr) for TX. UMAC sends
+ *        (addr, size, ring) for RX. Host frees RX by writing new tail to
+ *        ring.tail_addr without IPC.
  */
 typedef struct wifi_ipc_buf_desc {
 	uint32_t addr;
 	uint32_t size;
+	uint32_t *ack_addr;
+	wifi_ipc_ring_info_t ring;  /* RX only: used to free without sending IPC */
 } wifi_ipc_buf_desc_t;
 
 /**
@@ -63,9 +76,29 @@ wifi_ipc_status_t wifi_ipc_bind_ipc_service(wifi_ipc_t *p_context,
 						void (*rx_cb)(void *data, size_t len, void *priv),
 						void *priv);
 
+/**
+ * Bind both TX and RX contexts to a single IPC endpoint.
+ */
+wifi_ipc_status_t wifi_ipc_bind_ipc_service_tx_rx(wifi_ipc_t *tx_context,
+						  wifi_ipc_t *rx_context,
+						  const ipc_device_wrapper_t *ipc_inst,
+						  void (*rx_cb)(void *data, size_t len, void *priv),
+						  void *priv);
+
 wifi_ipc_status_t wifi_ipc_host_tx_init(wifi_ipc_t *p_context, uint32_t addr_freeq);
 
 wifi_ipc_status_t wifi_ipc_host_rx_init(wifi_ipc_t *p_context, uint32_t addr_freeq);
 
-wifi_ipc_status_t wifi_ipc_host_tx_send(wifi_ipc_t *p_context, const void *p_msg, size_t len);
+wifi_ipc_status_t wifi_ipc_host_tx_send(wifi_ipc_t *p_context,
+					const void *p_msg,
+					size_t len,
+					uint32_t *ack_addr);
+
+/**
+ * Free RX event buffer by writing new tail to RAM slot reserved by RPU.
+ *
+ * @param event_info Event descriptor received from UMAC (must include ring info).
+ */
+void wifi_ipc_host_rx_free_event(const wifi_ipc_buf_desc_t *event_info);
+
 #endif /* IPC_SERVICE_H */
