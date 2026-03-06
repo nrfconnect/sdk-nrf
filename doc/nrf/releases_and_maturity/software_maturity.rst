@@ -735,7 +735,7 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
-             - Experimental
+             - --
            * - **Concurrent Roles**\ :sup:`1`
              - Supported
              - Supported
@@ -784,7 +784,7 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Experimental
              - Experimental
-             - Experimental
+             - --
            * - **LE Power Control**
              - Supported
              - Supported
@@ -805,7 +805,7 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Experimental
-             - Experimental
+             - --
            * - **GATT Database Hash**
              - Supported
              - Supported
