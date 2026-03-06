@@ -1,8 +1,8 @@
 /*
  *
- *Copyright (c) 2026 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
- *SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
@@ -513,6 +513,8 @@ struct nrf_wifi_ftm_loc_params {
 	unsigned char capabilities;
 };
 
+#define NRF_WIFI_LDPC_ENABLE_HT  (1 << 0)
+#define NRF_WIFI_LDPC_ENABLE_VHT (1 << 1)
 /**
  * @brief This structure defines the command responsible for initializing the UMAC.
  *  After the host driver brings up, the host sends NRF_WIFI_CMD_INIT to the RPU.
@@ -599,8 +601,21 @@ struct nrf_wifi_cmd_sys_init {
 	 *  in the case of coexistence with Short Range radio.
 	 */
 	unsigned int inband_scan_type;
+	/** 0:umac checksum disable 1: umac checksum enable */
+	unsigned char tcp_ip_checksum_offload;
 	/** @ref nrf_wifi_ftm_loc_params */
-	struct nrf_wifi_ftm_loc_params ftm_loc_params;
+	struct nrf_wifi_ftm_loc_params  ftm_loc_params;
+	/** Bit 0 : LDPC in HT mode. Use NRF_WIFI_LDPC_ENABLE_HT
+	 *  Bit 1 : LDPC in VHT mode. Use NRF_WIFI_LDPC_ENABLE_VHT
+	 */
+	unsigned char ldpc_config;
+	/** Protocol mode bitmap for registration. Use NRF_WIFI_802_11G,
+	 *  NRF_WIFI_802_11N, NRF_WIFI_802_11AC, NRF_WIFI_802_11AX from nrf71_wifi_ctrl.h.
+	 *  Zero = all supported. Otherwise only the set bits are advertised (e.g. 11G only,
+	 *  or 11G|11N, or 11G|11N|11AC, or 11G|11N|11AC|11AX).
+	 *  11AC implies 11N; 11AX implies 11AC+11N.
+	 */
+	unsigned int protocol_mode;
 } __NRF_WIFI_PKD;
 
 /**
@@ -747,6 +762,12 @@ struct rpu_conf_params {
 	unsigned char ru_index;
 	/** Desired tone frequency to be transmitted */
 	signed char tx_tone_freq;
+	/** Tone type to be transmitted (0=complex, 1=real-only, 2=imag-only) */
+	unsigned char tx_tone_type;
+	/** DC offset for I channel (Q.11 format) */
+	signed short int tx_tone_dc_offset_i;
+	/** DC offset for Q channel (Q.11 format) */
+	signed short int tx_tone_dc_offset_q;
 	/** RX LNA gain */
 	unsigned char lna_gain;
 	/** RX BB gain */
@@ -777,6 +798,10 @@ struct rpu_conf_params {
 	unsigned char tx_fec_padd_factor;
 	/** Informs number of HE-LTFs: 0->1x, 1->2x, 2->4x, 3->6x, 4->8x */
 	unsigned char tx_num_he_ltf;
+	/** An array containing RF & baseband control params */
+	unsigned int rf_params_addr[NUM_WIFI_PARAMS];
+	/** VTF buffer address */
+	unsigned int vtf_buffer_addr;
 } __NRF_WIFI_PKD;
 
 /**
@@ -899,6 +924,10 @@ struct nrf_wifi_umac_event_debug_stats {
 	struct nrf_wifi_rpu_debug_stats stats;
 } __NRF_WIFI_PKD;
 
+
+enum umac_fail_events {
+	UMAC_MEM_ALLOC_FAIL = 0,
+};
 /**
  * @brief This structure defines the event used to send error statistics to the Host.
  *
@@ -1579,19 +1608,12 @@ struct phy_prod_stats {
 	unsigned int dsss_crc32_fail_cnt;
 	char averageRSSI;
 };
-struct lmac_offload_raw_tx_stats {
-	unsigned int offLoad_raw_tx_state;
-	unsigned int offload_raw_tx_cnt;
-	unsigned int offload_raw_tx_complete_cnt;
-	unsigned int warm_boot_cnt;
-} __NRF_WIFI_PKD;
+
 
 
 union rpu_stats {
 	struct lmac_prod_stats lmac_stats;
 	struct phy_prod_stats  phy_stats;
-	struct lmac_offload_raw_tx_stats offload_raw_tx_stats;
-
 };
 
 
@@ -1727,6 +1749,8 @@ enum nrf_wifi_rf_test {
 	NRF_WIFI_RF_TEST_PATCH_SETTINGS,
 	NRF_WIFI_RF_TEST_ENABLE_VT_CALIB,
 	NRF_WIFI_RF_TEST_ENABLE_VT_COMP,
+	NRF_WIFI_RF_SET_CALIB_REGS,
+	NRF_WIFI_RF_TEST_ADPLL_CAP_PARAMS,
 	NRF_WIFI_RF_TEST_GET_STATS,
 	NRF_WIFI_RF_TEST_MAX,
 
@@ -1767,6 +1791,8 @@ enum nrf_wifi_rf_test_event {
 	NRF_WIFI_RF_TEST_EVENT_PATCH_SETTINGS,
 	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_CALIB,
 	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_COMP,
+	NRF_WIFI_RF_TEST_EVENT_SET_CALIB_REGS,
+	NRF_WIFI_RF_TEST_EVENT_ADPLL_CAP_PARAMS,
 	NRF_WIFI_RF_TEST_EVENT_GET_STATS,
 	NRF_WIFI_RF_TEST_EVENT_MAX,
 
@@ -1850,8 +1876,14 @@ struct nrf_wifi_rf_test_tx_params {
 	/* Set 1 for staring tone transmission. */
 	unsigned char enabled;
 
-	/** Tone type: complex, real-only, or imag-only. */
-	enum nrf_wifi_rf_test_tone_type tone_type;
+	/* DC offset for I channel. Format: Q.11 */
+	signed short int dc_offset_i;
+
+	/* DC offset for Q channel. Format: Q.11 */
+	signed short int dc_offset_q;
+
+	/** Tone type: 0=complex, 1=real-only, 2=imag-only */
+	unsigned char tone_type;
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_rf_test_transmit_samples {
@@ -1896,8 +1928,7 @@ struct nrf_wifi_rf_get_rf_rssi {
 struct nrf_wifi_rf_test_xo_calib {
 	unsigned char test;
 
-	/* XO value in the range between 0 to 127 */
-	unsigned char xo_val;
+	signed char xo_val;
 
 } __NRF_WIFI_PKD;
 
@@ -2237,6 +2268,29 @@ struct nrf_wifi_rf_test_enable_vt_calibration {
 struct nrf_wifi_rf_test_enable_vt_compensation {
 	unsigned char test_id;
 	unsigned char enable_compensation;
+} __NRF_WIFI_PKD;
+
+/**
+ * @brief Calibration register set type for NRF_WIFI_RF_SET_CALIB_REGS.
+ */
+enum cal_id_e {
+	RX_DC_CAL,
+	TX_DC_CAL,
+	RX_IQ_CAL,
+	TX_IQ_CAL,
+	DPD_CAL
+};
+
+/**
+ * @brief Structure for setting calibration registers (NRF_WIFI_RF_SET_CALIB_REGS).
+ */
+struct nrf_wifi_set_cal_regs {
+	unsigned char test;
+	/** Calibration identifier; see enum cal_id_e */
+	unsigned char cal_id;
+	unsigned char num_regs;
+	unsigned int reg_val[MAX_REGS_CONF];
+	unsigned int reg_addr[MAX_REGS_CONF];
 } __NRF_WIFI_PKD;
 
 /* Holds the transmit related info */
@@ -3028,6 +3082,13 @@ struct lmac_tuning_params {
 	unsigned int additional_retry_be;
 	unsigned int additional_retry_vi;
 	unsigned int additional_retry_vo;
+	unsigned int enable_vif_tsmc;
+	unsigned int vif_channel_switch_delay;
+	unsigned int vif_window_size_in_usec;
+	unsigned int cts_duration_field;
+	unsigned int  offloadTXChecksum;
+	unsigned int offloadRXChecksum;
+	unsigned int  internal_recovery_enable;
 	/* reserved for patching */
 	unsigned int reserved[16];
 } __NRF_WIFI_PKD;
@@ -3045,6 +3106,19 @@ struct nrf_wifi_vtf_params {
 	unsigned int x0_freq;
 } __NRF_WIFI_PKD;
 
+/* ADPLL capture-related parameters */
+struct nrf_wifi_set_adpll_capture_params {
+	unsigned char test;
+
+	/* Control for the ADPLL capture module */
+	unsigned char enabled;
+
+	/* Number of samples to be captured. */
+	unsigned short int cap_len;
+
+	/* address of the adpll capture data */
+	unsigned int *cap_addr;
+} __NRF_WIFI_PKD;
 /**
  * @}
  */
