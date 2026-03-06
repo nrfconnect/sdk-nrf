@@ -433,6 +433,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		ctx->timestamp_last_correction = timestamp_now_us;
 	}
 
+	/* TODO: need to check if this should trigger if the above also triggers */
 	if ((int32_t)(timestamp_now_us - ctx->timestamp_ctlr_esti_us) > 0) {
 		LOG_WRN("Curr time ahead of ctlr time. Flush %d us of data. "
 			"Now: %u us, ctlr: %u us",

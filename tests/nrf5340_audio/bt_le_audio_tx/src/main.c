@@ -174,7 +174,7 @@ ZTEST(bt_le_audio_tx, test_wrapping)
 
 	TEST_SETUP_2;
 
-	audio_sync_timer_capture_fake.return_val = UINT32_MAX - 19500;
+	audio_sync_timer_capture_fake.return_val = UINT32_MAX - 20500;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = UINT32_MAX - 20000;
 
 	/* Data is submitted way too late */
@@ -190,7 +190,7 @@ ZTEST(bt_le_audio_tx, test_wrapping)
 	call_tx_sent(tx, chan_to_send);
 	internals_verify(UINT32_MAX - 30000, false, UINT32_MAX - 20000, false);
 
-	audio_sync_timer_capture_fake.return_val = UINT32_MAX - 9500;
+	audio_sync_timer_capture_fake.return_val = UINT32_MAX - 10500;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = UINT32_MAX - 10000;
 
 	ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
@@ -206,7 +206,7 @@ ZTEST(bt_le_audio_tx, test_wrapping)
 
 	for (int i = 0; i < 10; i++) {
 		TC_PRINT("Iteration %d\n", i);
-		audio_sync_timer_capture_fake.return_val = UINT32_MAX - 9500 + (i * 10000);
+		audio_sync_timer_capture_fake.return_val = UINT32_MAX - 10500 + (i * 10000);
 		hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = UINT32_MAX - 10000 + (i * 10000);
 
 		ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
@@ -220,6 +220,33 @@ ZTEST(bt_le_audio_tx, test_wrapping)
 		call_tx_sent(tx, chan_to_send);
 		internals_verify(0, true, UINT32_MAX + (i * 10000), false);
 	}
+
+	net_buf_unref(dummy_audio_frame);
+}
+
+ZTEST(bt_le_audio_tx, test_send_too_fast)
+{
+	int ret;
+
+	TEST_SETUP_2;
+
+	audio_sync_timer_capture_fake.return_val = 10000;
+	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 5000;
+
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
+	zassert_equal(0, ret, "ret %d", ret);
+	zassert_equal(2, bt_cap_stream_send_fake.call_count);
+	zassert_equal(0, bt_cap_stream_send_ts_fake.call_count);
+
+	zassert_equal(1, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
+	zassert_equal(1, zbus_chan_pub_fake.call_count);
+
+	call_tx_sent(tx, chan_to_send);
+	internals_verify(-5000, false, 5000, true);
+
+	/* Call send again immediately, should trigger flush */
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
+	zassert_equal(-EAGAIN, ret, "ret %d", ret);
 
 	net_buf_unref(dummy_audio_frame);
 }
