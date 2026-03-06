@@ -96,6 +96,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_BT_HIDS_SECURITY_ENABLED=n
+      - CONFIG_BT_HIDS_DEFAULT_PERM_RW=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow:
