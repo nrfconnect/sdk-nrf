@@ -6,8 +6,8 @@
 
 if(CONFIG_APP_PLATFORM_DK)
   target_sources(app PRIVATE platform_dk.c)
-elseif(CONFIG_APP_PLATFORM_THINGY)
-  target_sources(app PRIVATE platform_thingy.c)
+elseif(CONFIG_APP_PLATFORM_THINGY OR CONFIG_APP_PLATFORM_TAG)
+  target_sources(app PRIVATE platform_adxl36x.c)
 else()
   message(FATAL_ERROR "Unsupported platform")
 endif()

@@ -10,7 +10,6 @@ config APP_BATTERY_POLL_INTERVAL
 	default 60
 
 config APP_BATTERY_LEVEL_DECREMENT
-	int "Battery level decrement [%] used to simulate battery level on the DK"
-	depends on APP_PLATFORM_DK
+	int "Battery level decrement [%] used to simulate battery level"
 	range 0 100
 	default 10

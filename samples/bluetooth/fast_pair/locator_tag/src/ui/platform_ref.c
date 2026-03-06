@@ -16,13 +16,24 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 
-/* Speaker beep timings. */
+/* Speaker beep timings. Extended speaker timings for tag to improve visibility. */
+#ifdef CONFIG_APP_PLATFORM_TAG
+#define SPEAKER_BEEP_SHORT_ON_MS		40
+#define SPEAKER_BEEP_SHORT_OFF_MS		200
+#define SPEAKER_BEEP_MID_ON_MS			500
+#define SPEAKER_BEEP_MID_OFF_MS			200
+#define SPEAKER_BEEP_LONG_ON_MS			2000
+#define SPEAKER_BEEP_LONG_OFF_MS		200
+#define SPEAKER_CLEARANCE_OFF_MS		500
+#else
 #define SPEAKER_BEEP_SHORT_ON_MS		20
 #define SPEAKER_BEEP_SHORT_OFF_MS		100
 #define SPEAKER_BEEP_MID_ON_MS			250
 #define SPEAKER_BEEP_MID_OFF_MS			100
 #define SPEAKER_BEEP_LONG_ON_MS			1000
 #define SPEAKER_BEEP_LONG_OFF_MS		100
+#define SPEAKER_CLEARANCE_OFF_MS		0
+#endif /* CONFIG_APP_PLATFORM_TAG */
 
 /* Thingy LED hardware assignments. */
 #define LED_COLOR_RED				DK_LED1
@@ -32,6 +43,10 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 #define LED_COLOR_NONE				0xFF
 #define LED_RGB_DEF(...)			{__VA_ARGS__, LED_COLOR_NONE}
 #define LED_RGB_DEF_LEN				4
+
+
+/* Tag platform buzzer is simulated by the green LED */
+#define LED_RINGING_STATUS			LED_COLOR_ID_GREEN
 
 /* Thingy state status LEDs. */
 #define LED_RUN_STATUS				LED_COLOR_ID_GREEN
@@ -47,6 +62,8 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 #define LED_THREAD_INTERVAL_MS			1000
 #define LED_THREAD_PRIORITY			K_PRIO_PREEMPT(0)
 #define LED_THREAD_STACK_SIZE			512
+#define LED_BLINK_STATE_RING_ON_OFF_MS		125
+#define LED_BLINK_STATE_RING_ON_OFF_CNT		4
 
 /* Thingy button hardware assignments. */
 #define BTN_MULTI_ACTION			DK_BTN1_MSK
@@ -149,7 +166,9 @@ static K_WORK_DELAYABLE_DEFINE(btn_press_beep_work, btn_press_beep_work_handle);
 
 static ATOMIC_DEFINE(ui_state_status, APP_UI_STATE_COUNT);
 static const struct led_state_id_map led_state_id_maps[] = {
+#ifndef CONFIG_APP_PLATFORM_TAG
 	{.state = APP_UI_STATE_APP_RUNNING,		.id = LED_RUN_STATUS},
+#endif
 	{.state = APP_UI_STATE_PROVISIONED,		.id = LED_PROVISIONED},
 	{.state = APP_UI_STATE_ID_MODE,			.id = LED_ID_MODE},
 	{.state = APP_UI_STATE_RECOVERY_MODE,		.id = LED_RECOVERY_MODE},
@@ -158,14 +177,62 @@ static const struct led_state_id_map led_state_id_maps[] = {
 	{.state = APP_UI_STATE_MOTION_DETECTOR_ACTIVE,	.id = LED_MOTION_DETECTOR_ACTIVE},
 };
 
+#ifdef CONFIG_APP_PLATFORM_TAG
+static void led_drive(enum led_color_id color, bool active);
+K_MUTEX_DEFINE(led_mutex);
+
+static int led_mutex_lock(void)
+{
+	return k_mutex_lock(&led_mutex, K_FOREVER);
+}
+
+static int led_mutex_unlock(void)
+{
+	return k_mutex_unlock(&led_mutex);
+}
+
+int app_ui_speaker_init(void)
+{
+	/* No initialization needed for the LED used as a speaker. */
+	return 0;
+}
+
+int app_ui_speaker_on(void)
+{
+	led_drive(LED_COLOR_ID_GREEN, true);
+	return 0;
+}
+
+int app_ui_speaker_off(void)
+{
+	led_drive(LED_COLOR_ID_GREEN, false);
+	return 0;
+}
+#else
+static int led_mutex_lock(void)
+{
+	return 0;
+}
+
+static int led_mutex_unlock(void)
+{
+	return 0;
+}
+#endif /* CONFIG_APP_PLATFORM_TAG */
+
 static void speaker_beep_play(uint8_t cnt, uint32_t on_ms, uint32_t off_ms)
 {
+	led_mutex_lock();
+
+	k_msleep(SPEAKER_CLEARANCE_OFF_MS);
 	for (uint8_t i = 0; i < cnt; i++) {
 		app_ui_speaker_on();
 		k_msleep(on_ms);
 		app_ui_speaker_off();
 		k_msleep(off_ms);
 	}
+
+	led_mutex_unlock();
 }
 
 static void speaker_beep_handle(const struct speaker_beep *req)
@@ -312,12 +379,36 @@ static void led_blink_once(uint8_t color, uint32_t on_ms)
 
 static void led_thread_process(void)
 {
+	int err;
+
 	while (1) {
+		err = led_mutex_lock();
+		if (err) {
+			LOG_ERR("LED mutex lock failed (err %d)", err);
+		}
+
+		if (IS_ENABLED(CONFIG_APP_PLATFORM_TAG) &&
+					atomic_test_bit(ui_state_status, APP_UI_STATE_RINGING)) {
+			led_blink(LED_RINGING_STATUS, LED_BLINK_STATE_RING_ON_OFF_CNT,
+				  LED_BLINK_STATE_RING_ON_OFF_MS, LED_BLINK_STATE_RING_ON_OFF_MS);
+
+			err = led_mutex_unlock();
+			if (err) {
+				LOG_ERR("LED mutex unlock failed (err %d)", err);
+			}
+			continue;
+		}
+
 		for (uint8_t i = 0; i < ARRAY_SIZE(led_state_id_maps); i++) {
 			if (atomic_test_bit(ui_state_status, led_state_id_maps[i].state)) {
 				led_blink_once(led_state_id_maps[i].id,
 					       LED_BLINK_STATE_STATUS_ON_MS);
 			}
+		}
+
+		err = led_mutex_unlock();
+		if (err) {
+			LOG_ERR("LED mutex unlock failed (err %d)", err);
 		}
 
 		k_msleep(LED_THREAD_INTERVAL_MS);
@@ -352,7 +443,9 @@ int app_ui_state_change_indicate(enum app_ui_state state, bool active)
 		if (active && (btn_idx != -1)) {
 			k_work_reschedule(&cancel_ringing_work, K_MSEC(50));
 		} else {
-			active ? app_ui_speaker_on() : app_ui_speaker_off();
+			if (!IS_ENABLED(CONFIG_APP_PLATFORM_TAG)) {
+				active ? app_ui_speaker_on() : app_ui_speaker_off();
+			}
 		}
 	}
 
