@@ -1,10 +1,13 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2025-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
-&cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(1012)>;
+#include "../../../configuration/boards/nrf54l15dk_nrf54l10_cpuapp.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
 };
