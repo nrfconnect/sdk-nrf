@@ -19,9 +19,10 @@ config APP_PLATFORM_THINGY
 
 endchoice
 
-rsource "Kconfig.dfu"
-rsource "Kconfig.ui"
 rsource "Kconfig.battery"
+rsource "Kconfig.dfu"
+rsource "Kconfig.ranging"
+rsource "Kconfig.ui"
 
 config SETTINGS
 	default y
