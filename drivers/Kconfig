@@ -30,19 +30,4 @@ config HPF
 	default y if MSPI_HPF
 	# Temporary kconfig to include DPPI channel allocation for HPF
 
-config CLOCK_CONTROL_NRF2
-	bool "Use NRF2 clock control API"
-	depends on CLOCK_CONTROL
-	depends on SOC_SERIES_NRF54H && !RISCV_CORE_NORDIC_VPR
-	default y
-	help
-	  The clock control drivers are currently split into two groups,
-	  one which implement the "NRF2" clock control API, and one which
-	  implements the "NRF" clock control API. This config helps
-	  applications and subsystems align to the clock control API
-	  implemented for an SoC.
-
-	  This config can be removed once all clock control drivers have
-	  been updated to use the "NRF2" API.
-
 endmenu
