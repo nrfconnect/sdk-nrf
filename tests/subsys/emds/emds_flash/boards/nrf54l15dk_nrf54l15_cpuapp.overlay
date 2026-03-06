@@ -2,19 +2,19 @@
 
 &cpuapp_rram {
 	partitions {
-		storage_partition: partition@15c000 {
+		storage_partition: partition@174000 {
 			label = "storage";
-			reg = <0x15c000 0x2000>;
+			reg = <0x174000 DT_SIZE_K(8)>;
 		};
 
-		emds_partition_0: partition@15e000 {
+		emds_partition_0: partition@176000 {
 			label = "emds-0";
-			reg = <0x0015e000 0x00001000>;
+			reg = <0x00176000 DT_SIZE_K(4)>;
 		};
 
-		emds_partition_1: partition@15f000 {
+		emds_partition_1: partition@177000 {
 			label = "emds-1";
-			reg = <0x0015f000 0x00001000>;
+			reg = <0x00177000 DT_SIZE_K(4)>;
 		};
 	};
 };

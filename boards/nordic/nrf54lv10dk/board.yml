@@ -7,6 +7,8 @@ board:
     variants:
     - name: ns
       cpucluster: cpuapp
+    - name: xip
+      cpucluster: cpuflpr
   revision:
     format: major.minor.patch
     default: "0.7.0"
