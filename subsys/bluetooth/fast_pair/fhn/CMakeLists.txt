@@ -56,3 +56,5 @@ target_include_directories(fhn PRIVATE include_priv)
 target_include_directories(fhn PRIVATE ../include/common)
 target_link_libraries(fhn PRIVATE fp_crypto)
 target_link_libraries(fhn PRIVATE fp_storage)
+
+add_subdirectory(pf)
