@@ -247,6 +247,9 @@ kconfig_check_and_set_base_to_one(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
 # Key wrap driver
 kconfig_check_and_set_base_to_one(PSA_NEED_CRACEN_KEY_WRAP_DRIVER)
 
+# KMU push driver
+kconfig_check_and_set_base_to_one(PSA_NEED_KMU_PUSH_DRIVER)
+
 # Convert nrf_cc3xx_platform driver configurations
 kconfig_check_and_set_base_to_one(PSA_NEED_CC3XX_CTR_DRBG_DRIVER)
 kconfig_check_and_set_base_to_one(PSA_NEED_CC3XX_HMAC_DRBG_DRIVER)

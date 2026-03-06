@@ -40,6 +40,14 @@ config PSA_CRYPTO_DRIVER_IRONSIDE
 	  Internal option selected by IronSide firmware to enable
 	  the IronSide PSA crypto driver.
 
+config PSA_CRYPTO_DRIVER_KMU_PUSH
+	bool "KMU push driver"
+	depends on PSA_CRYPTO_DRIVER_CRACEN
+	depends on MBEDTLS_PSA_CRYPTO_C
+	depends on HAS_HW_NRF_CRACEN
+	help
+	  PSA crypto driver to push KMU keys to arbitrary addresses
+
 menu "Choose DRBG algorithm"
 config PSA_WANT_ALG_CTR_DRBG
 	bool "CTR_DRBG"
@@ -268,5 +276,7 @@ rsource "nrf_cc3xx/Kconfig"
 rsource "cracen/Kconfig"
 
 rsource "nrf_oberon/Kconfig"
+
+rsource "kmu_push/Kconfig"
 
 rsource "zephyr/Kconfig"
