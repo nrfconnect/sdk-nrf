@@ -13,9 +13,10 @@ import tempfile
 import textwrap
 from pathlib import Path
 
-from helpers import run_command
 from intelhex import IntelHex
-from mcuboot_image_utils import ImageHeader
+
+from .helpers import run_command
+from .mcuboot_image_utils import ImageHeader
 
 logger = logging.getLogger(__name__)
 

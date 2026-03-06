@@ -6,12 +6,12 @@ import logging
 import os
 from pathlib import Path
 
-from helpers import normalize_path, run_command
 from twister_harness import DeviceAdapter
 from twister_harness.helpers.utils import find_in_config
 
+from .helpers import normalize_path, run_command
+
 ZEPHYR_BASE = os.environ["ZEPHYR_BASE"]
-APP_KEYS_FOR_KMU = Path(f"{ZEPHYR_BASE}/../nrf/tests/subsys/kmu/keys").resolve()
 
 logger = logging.getLogger(__name__)
 

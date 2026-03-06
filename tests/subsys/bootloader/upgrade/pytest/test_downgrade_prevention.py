@@ -10,9 +10,9 @@ import logging
 from pathlib import Path
 
 import pytest
-from helpers import reset_board
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.helpers import reset_board
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
 logger = logging.getLogger(__name__)

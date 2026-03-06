@@ -11,10 +11,10 @@ import os
 from pathlib import Path
 
 import pytest
-from check_lzma_compression import check_lzma_compression
-from mcuboot_image_utils import change_byte_in_tlv_area
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.check_lzma_compression import check_lzma_compression
+from twister_harness_ext.utils.mcuboot_image_utils import change_byte_in_tlv_area
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
 logger = logging.getLogger(__name__)
