@@ -15,6 +15,8 @@ menuconfig BT_FAST_PAIR_FHN
 
 if BT_FAST_PAIR_FHN
 
+rsource "pf/Kconfig"
+
 config BT_FAST_PAIR_FHN_TX_POWER
 	int "TX power set in Bluetooth LE controller [dBm]"
 	default 0
