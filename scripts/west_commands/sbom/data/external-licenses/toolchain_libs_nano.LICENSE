@@ -1,0 +1,8 @@
+/*
+ * SPDX-License-Identifier: LicenseRef-west-ncs-sbom-newlib-nano-runtime
+ *
+ * Apply the newlib-nano runtime bundled license notice to nano runtime
+ * archives that do not carry SPDX tags themselves.
+ * NCS-SBOM-Apply-To-File: **/toolchains/**/libc_nano.a
+ * NCS-SBOM-Apply-To-File: **/toolchains/**/libm_nano.a
+ */

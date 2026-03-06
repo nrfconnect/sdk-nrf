@@ -1,0 +1,10 @@
+/*
+ * SPDX-License-Identifier: LicenseRef-west-ncs-sbom-newlib-runtime
+ *
+ * Apply the newlib runtime bundled license notice to full runtime archives
+ * that do not carry SPDX tags themselves.
+ * NCS-SBOM-Apply-To-File: **/toolchains/**/arm-zephyr-eabi/arm-zephyr-eabi/lib*/libc.a
+ * NCS-SBOM-Apply-To-File: **/toolchains/**/arm-zephyr-eabi/arm-zephyr-eabi/lib*/libm.a
+ * NCS-SBOM-Apply-To-File: **/toolchains/**/riscv64-zephyr-elf/riscv64-zephyr-elf/lib*/libc.a
+ * NCS-SBOM-Apply-To-File: **/toolchains/**/riscv64-zephyr-elf/riscv64-zephyr-elf/lib*/libm.a
+ */

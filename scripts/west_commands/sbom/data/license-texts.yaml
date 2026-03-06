@@ -44,6 +44,70 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
     OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+- id: LicenseRef-west-ncs-sbom-newlib-nano-runtime
+  name: newlib-nano runtime archives bundled license notice
+  text: |
+    The newlib-nano runtime archives are built from a collection of source files
+    that carry multiple licenses and notices.
+
+    The upstream COPYING.NEWLIB notice states:
+    "The newlib subdirectory is a collection of software from several sources.
+    Each file may have its own copyright/license that is embedded in the source
+    file."
+
+    For Zephyr SDK toolchains that bundle newlib-nano, the applicable notice
+    files are:
+    - share/licenses/newlib-nano/COPYING
+    - share/licenses/newlib-nano/COPYING.LIB
+    - share/licenses/newlib-nano/COPYING.LIBGLOSS
+    - share/licenses/newlib-nano/COPYING.NEWLIB
+    - share/licenses/newlib-nano/COPYING3
+    - share/licenses/newlib-nano/COPYING3.LIB
+
+    This LicenseRef represents that bundled multi-license notice set for the
+    toolchain runtime archives libc_nano.a and libm_nano.a.
+
+- id: LicenseRef-west-ncs-sbom-newlib-runtime
+  name: newlib runtime archives bundled license notice
+  text: |
+    The newlib runtime archives are built from a collection of source files
+    that carry multiple licenses and notices.
+
+    The upstream COPYING.NEWLIB notice states:
+    "The newlib subdirectory is a collection of software from several sources.
+    Each file may have its own copyright/license that is embedded in the source
+    file."
+
+    For Zephyr SDK toolchains that bundle newlib, the applicable notice files
+    are:
+    - share/licenses/newlib/COPYING
+    - share/licenses/newlib/COPYING.LIB
+    - share/licenses/newlib/COPYING.LIBGLOSS
+    - share/licenses/newlib/COPYING.NEWLIB
+    - share/licenses/newlib/COPYING3
+    - share/licenses/newlib/COPYING3.LIB
+
+    This LicenseRef represents that bundled multi-license notice set for the
+    toolchain runtime archives libc.a and libm.a.
+
+- id: LicenseRef-west-ncs-sbom-picolibc-runtime
+  name: picolibc runtime archives bundled license notice
+  text: |
+    The picolibc runtime archives are built from a collection of source files
+    that carry multiple licenses and notices.
+
+    The upstream picolibc distribution ships a machine-readable copyright and
+    license manifest in COPYING.picolibc, and it also ships COPYING.NEWLIB for
+    the newlib-derived portions of the source tree.
+
+    For Zephyr SDK toolchains that bundle picolibc, the applicable notice files
+    are:
+    - share/licenses/picolibc/COPYING.NEWLIB
+    - share/licenses/picolibc/COPYING.picolibc
+
+    This LicenseRef represents that bundled multi-license notice set for the
+    toolchain runtime archives libc.a and libm.a from the picolibc directory.
+
 - id: LicenseRef-west-ncs-sbom-BSD-1-Clause-SEGGER
   name: BSD 1-Clause License (SEGGER-Specific)
   text: |
