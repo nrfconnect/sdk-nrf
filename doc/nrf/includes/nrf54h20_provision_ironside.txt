@@ -1,0 +1,20 @@
+After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 IronSide SE binaries, a bundle containing the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
+
+.. note::
+   To program the nRF54H20 IronSide SE binaries on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
+   This means that this is likely the first use of your nRF54H20 DK.
+
+   Devices already provisioned using SUIT-based binaries and in LCS ``RoT`` cannot be transitioned back to LCS ``EMPTY``.
+   For more information, see :ref:`abi_compatibility`.
+
+To provision the nRF54H20 IronSide SE binaries to the nRF54H20 SoC, complete the following steps:
+
+1. Download the `latest nRF54H20 IronSide SE binaries`_.
+   You can find the version compatible with your |NCS| version listed on the :ref:`abi_compatibility` page.
+
+   .. note::
+      On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
+
+#. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
+
+      nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>

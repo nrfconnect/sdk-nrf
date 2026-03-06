@@ -1,0 +1,18 @@
+The nRF54H20 SoC comes with its lifecycle state (LCS) set to ``EMPTY``.
+To operate correctly, you must transition its lifecycle state to Root of Trust (``RoT``).
+
+.. caution::
+   The forward transition to LCS ``RoT`` is permanent.
+   After the transition, you cannot transition backward to LCS ``EMPTY``.
+
+To transition the LCS to ``RoT``, do the following:
+
+1. Set the LCS of the nRF54H20 SoC to ``RoT`` using the following command::
+
+      nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
+
+   If issues occur during bundle programming, the system returns an ``ADAC_FAILURE`` error.
+
+#. After the LCS transition, reset the device::
+
+      nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
