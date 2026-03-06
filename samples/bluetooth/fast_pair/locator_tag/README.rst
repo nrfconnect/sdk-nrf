@@ -205,24 +205,25 @@ See the :ref:`zephyr:app-version-details` for details.
 
 The configuration of the DFU solution varies depending on the board target:
 
-+--------------+--------------------------------+-------------------------------------------------------------------+
-| DFU solution | Mode of operation              | Board targets                                                     |
-+==============+================================+===================================================================+
-| MCUboot      | direct-xip mode without revert | * ``nrf52dk/nrf52832`` (only ``release`` configuration)           |
-|              |                                | * ``nrf52833dk/nrf52833`` (only ``release`` configuration)        |
-|              |                                | * ``nrf52840dk/nrf52840``                                         |
-|              |                                | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration) |
-|              |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                  |
-|              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                  |
-|              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                               |
-+--------------+--------------------------------+-------------------------------------------------------------------+
-| MCUboot      | overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                                    |
-|              |                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                 |
-|              |                                | * ``thingy53/nrf5340/cpuapp``                                     |
-|              |                                | * ``thingy53/nrf5340/cpuapp/ns``                                  |
-+--------------+--------------------------------+-------------------------------------------------------------------+
-| SUIT         | overwrite only mode            | * ``nrf54h20dk/nrf54h20/cpuapp``                                  |
-+--------------+--------------------------------+-------------------------------------------------------------------+
++--------------+--------------------------------+----------------------------------------------------------------------+
+| DFU solution | Mode of operation              | Board targets                                                        |
++==============+================================+======================================================================+
+| MCUboot      | direct-xip mode without revert | * ``nrf52dk/nrf52832`` (only ``release`` configuration)              |
+|              |                                | * ``nrf52833dk/nrf52833`` (only ``release`` configuration)           |
+|              |                                | * ``nrf52840dk/nrf52840``                                            |
+|              |                                | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration)    |
+|              |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                     |
+|              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                     |
+|              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |
+|              |                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |
++--------------+--------------------------------+----------------------------------------------------------------------+
+| MCUboot      | overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                                       |
+|              |                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                    |
+|              |                                | * ``thingy53/nrf5340/cpuapp``                                        |
+|              |                                | * ``thingy53/nrf5340/cpuapp/ns``                                     |
++--------------+--------------------------------+----------------------------------------------------------------------+
+| SUIT         | overwrite only mode            | * ``nrf54h20dk/nrf54h20/cpuapp``                                     |
++--------------+--------------------------------+----------------------------------------------------------------------+
 
 Signature algorithm
 -------------------
@@ -234,26 +235,30 @@ The choice of the signature algorithm and the implementation of the public key s
 
 The configuration of the signature algorithm and the public key storage solution in this sample varies depending on the board target:
 
-+--------------------------------+-------------------------------------------------------------------+---------------------------+---------------------------+
-| Signature algorithm            | Board targets                                                     | Public key storage        | Properties                |
-+================================+===================================================================+===========================+===========================+
-| RSA-2048                       | * ``nrf52dk/nrf52832`` (only ``release`` configuration)           | Bootloader partition      | SW calculation,           |
-|                                | * ``nrf52833dk/nrf52833`` (only ``release`` configuration)        |                           | Signature derived from    |
-|                                | * ``nrf5340dk/nrf5340/cpuapp``                                    |                           | image hash                |
-|                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                 |                           |                           |
-|                                | * ``thingy53/nrf5340/cpuapp``                                     |                           |                           |
-|                                | * ``thingy53/nrf5340/cpuapp/ns``                                  |                           |                           |
-+--------------------------------+-------------------------------------------------------------------+---------------------------+---------------------------+
-| ECDSA-P256                     | * ``nrf52840dk/nrf52840``                                         | Bootloader partition      | HW-accelerated            |
-|                                |                                                                   |                           | (Cryptocell 310),         |
-|                                |                                                                   |                           | Signature derived from    |
-|                                |                                                                   |                           | image hash                |
-+--------------------------------+-------------------------------------------------------------------+---------------------------+---------------------------+
-| ED25519                        | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration) | Key Management Unit (KMU) | HW-accelerated (CRACEN),  |
-|                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                  |                           | Signature derived from    |
-|                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                  |                           | image (pure)              |
-|                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                               |                           |                           |
-+--------------------------------+-------------------------------------------------------------------+---------------------------+---------------------------+
++--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
+| Signature algorithm            | Board targets                                                        | Public key storage        | Properties                |
++================================+======================================================================+===========================+===========================+
+| RSA-2048                       | * ``nrf52dk/nrf52832`` (only ``release`` configuration)              | Bootloader partition      | SW calculation,           |
+|                                | * ``nrf52833dk/nrf52833`` (only ``release`` configuration)           |                           | Signature derived from    |
+|                                | * ``nrf5340dk/nrf5340/cpuapp``                                       |                           | image hash                |
+|                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                    |                           |                           |
+|                                | * ``thingy53/nrf5340/cpuapp``                                        |                           |                           |
+|                                | * ``thingy53/nrf5340/cpuapp/ns``                                     |                           |                           |
++--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
+| ECDSA-P256                     | * ``nrf52840dk/nrf52840``                                            | Bootloader partition      | HW-accelerated            |
+|                                |                                                                      |                           | (Cryptocell 310),         |
+|                                |                                                                      |                           | Signature derived from    |
+|                                |                                                                      |                           | image hash                |
++--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
+| ECDSA-P256                     | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) | Bootloader partition      | SW calculation,           |
+|                                |                                                                      |                           | Signature derived from    |
+|                                |                                                                      |                           | image hash                |
++--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
+| ED25519                        | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration)    | Key Management Unit (KMU) | HW-accelerated (CRACEN),  |
+|                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                     |                           | Signature derived from    |
+|                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                     |                           | image (pure)              |
+|                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |                           |                           |
++--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
 
 .. note::
    The SUIT DFU integration in this sample does not support the secure boot feature and its requirement for the signature verification.
