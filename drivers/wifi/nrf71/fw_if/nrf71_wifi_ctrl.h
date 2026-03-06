@@ -1,8 +1,8 @@
 /*
  *
- *Copyright (c) 2026 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
- *SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
@@ -158,10 +158,10 @@ enum nrf_wifi_umac_commands {
 	NRF_WIFI_UMAC_CMD_SQI_SET_THRESHOLD
 };
 
- /**
-  * @brief The host can receive the following events from the RPU.
-  *
-  */
+/**
+ * @brief The host can receive the following events from the RPU.
+ *
+ */
 
 enum nrf_wifi_umac_events {
 	NRF_WIFI_UMAC_EVENT_UNSPECIFIED = 256,
@@ -475,6 +475,8 @@ enum nrf_wifi_security_type {
 	NRF_WIFI_WPA3_HNP,
 	/** WPA3-H2E */
 	NRF_WIFI_WPA3_H2E,
+	/** WPA3-AUTO : HNP-H2E */
+	NRF_WIFI_WPA3_AUTO,
 	/** WPA3-FT-SAE */
 	NRF_WIFI_WPA3_FT_SAE,
 	/** 8021X SUITE-B SHA256 */
@@ -1132,7 +1134,7 @@ struct nrf_wifi_umac_hdr {
 #define NRF_WIFI_KEY_DEFAULT_MGMT (1 << 2)
 #define NRF_WIFI_KEY_DEFAULT_TYPE_UNICAST (1 << 3)
 #define NRF_WIFI_KEY_DEFAULT_TYPE_MULTICAST (1 << 4)
-
+#define NRF_WIFI_KEY_DEFAULT_BEACON (1 << 5)
 /**
  * @brief This structure contains information about a security key.
  *
