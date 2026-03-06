@@ -47,6 +47,9 @@ def test_rtt_logging(dut: DeviceAdapter):
         'nrf5340dk/nrf5340/cpuapp': {
             'device': 'nRF5340_xxAA_APP',
         },
+        'nrf5340dk/nrf5340/cpunet': {
+            'device': 'nRF5340_xxAA_NET',
+        },
         'nrf54l15dk/nrf54l05/cpuapp': {
             'device': 'nRF54L05_M33',
         },
