@@ -23,6 +23,10 @@ if(CONFIG_APP_DFU)
   target_sources(app PRIVATE src/dfu.c)
 endif()
 
+if(CONFIG_APP_RANGING)
+  target_sources(app PRIVATE src/ranging.c)
+endif()
+
 if(NOT CONFIG_BT_FAST_PAIR_FHN_RING_COMP_NONE)
   target_sources(app PRIVATE src/ring.c)
 endif()
