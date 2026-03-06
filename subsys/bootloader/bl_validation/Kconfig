@@ -43,6 +43,16 @@ config SB_VALIDATION_INFO_VERSION
 	  Used to ensure binary compatibility.
 	  For more info, see FW_INFO_MAGIC_COMMON.
 
+config SB_VALIDATION_INFO_TOTAL_SIZE
+	bool "Make sure that update fits destination slot"
+	depends on !SOC_NRF5340_CPUNET
+	default y
+	help
+	  Check if firmware in source slot fits into the destination slot.
+	  This requires NSIB with S0/S1 slots available, as the check is
+	  done for these two.
+	  Not available on nRF5340 CPUNET as there is only S0 available.
+
 config SB_VALIDATION_METADATA_OFFSET
 	int "Offset at which to store validation metadata"
 	default 0

@@ -39,6 +39,7 @@ config PCD_READ_NETCORE_APP_VERSION
 config PCD_USE_CONSTANTS
 	bool "Use KConfig constants rather than pm_config.h"
 	depends on !PCD_LOCK_NETCORE_DEBUG
+	default y if !PARTITION_MANAGER_ENABLED
 
 config PCD_CMD_ADDRESS
 	hex "PCD Command Address in RAM"

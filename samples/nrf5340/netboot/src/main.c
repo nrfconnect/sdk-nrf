@@ -6,7 +6,11 @@
 
 #include <zephyr/types.h>
 #include <zephyr/sys/printk.h>
+#if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#else
+#include <zephyr/storage/flash_map.h>
+#endif
 #include <fw_info.h>
 #include <fprotect.h>
 #include <bl_storage.h>
@@ -19,6 +23,21 @@
 #include <nrfx_nvmc.h>
 #endif
 
+#if USE_PARTITION_MANAGER
+#define B0N_ADDRESS	PM_B0N_CONTAINER_ADDRESS
+#define B0N_SIZE	PM_B0N_CONTAINER_SIZE
+/* The flash is locked at flash page granularity */
+BUILD_ASSERT((B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
+	"B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE was not 0. Check the B0_SIZE Kconfig.");
+#else
+#define B0N_ADDRESS	FIXED_PARTITION_ADDRESS(b0n)
+#define B0N_SIZE	FIXED_PARTITION_SIZE(b0n)
+/* The flash is locked at flash page granularity */
+BUILD_ASSERT((B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
+	"B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE was not 0. Check the b0n partition size.");
+#endif
+
+
 int main(void)
 {
 	int err;
@@ -29,12 +48,7 @@ int main(void)
 		return 0;
 	}
 
-	/* The flash is locked at flash page granularity */
-	BUILD_ASSERT(
-		(PM_B0N_CONTAINER_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
-		"PM_B0N_CONTAINER_SIZE % CONFIG_FPROTECT_BLOCK_SIZE was not 0. Check the B0_SIZE Kconfig.");
-
-	err = fprotect_area(PM_B0N_CONTAINER_ADDRESS, PM_B0N_CONTAINER_SIZE);
+	err = fprotect_area(B0N_ADDRESS, B0N_SIZE);
 	if (err) {
 		printk("Failed to protect b0n flash, cancel startup\n\r");
 		goto failure;
