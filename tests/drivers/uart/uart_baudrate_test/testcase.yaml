@@ -119,3 +119,9 @@ tests:
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     extra_args: DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuapp_uart22.overlay"
+  drivers.uart.baudrate_test.nrf5340dk_uart1:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_uart1.overlay"
