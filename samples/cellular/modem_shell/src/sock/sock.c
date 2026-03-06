@@ -760,7 +760,7 @@ static int sock_send(
 	}
 
 	if (socket_info->send_info.packet_number_prefix > 0) {
-		if (socket_info->send_info.packet_number_prefix == 10000) {
+		if (socket_info->send_info.packet_number_prefix >= 10000) {
 			socket_info->send_info.packet_number_prefix = 1;
 		}
 		sprintf(packet_number_prefix_str,
