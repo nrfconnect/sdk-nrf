@@ -205,6 +205,7 @@ ZTEST(bt_le_audio_tx, test_wrapping)
 	internals_verify(0, true, UINT32_MAX - 10000, false);
 
 	for (int i = 0; i < 10; i++) {
+		TC_PRINT("Iteration %d\n", i);
 		audio_sync_timer_capture_fake.return_val = UINT32_MAX - 9500 + (i * 10000);
 		hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = UINT32_MAX - 10000 + (i * 10000);
 

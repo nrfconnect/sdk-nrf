@@ -194,7 +194,7 @@ static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx, 
 			continue;
 		}
 
-		if (tx[i].audio_location > num_loc) {
+		if (tx[i].audio_location >= num_loc) {
 			LOG_WRN("Unsupported audio_location: %d", tx[i].audio_location);
 			continue;
 		}
@@ -360,7 +360,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	 * timestamp, we re-aquire a timestamp from the controller.
 	 */
 	if (!ctx->timestamp_ctlr_esti_us_valid ||
-	    ((int32_t)(ctx->timestamp_ctlr_esti_us - ctx->timestamp_ctlr_real_us_last) >=
+	    ((uint32_t)(ctx->timestamp_ctlr_esti_us - ctx->timestamp_ctlr_real_us_last) >=
 	     TX_TS_RESYNC_US)) {
 
 		ret = controller_timestamp_tx_get(tx, num_tx, &timestamp_ctlr_real_us, tx_info);
@@ -369,14 +369,13 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 			return ret;
 		}
 
-		uint32_t time_since_last_corr_us =
-			timestamp_now_us - ctx->timestamp_last_correction;
 		ctx->corr_diff_us =
 			(int64_t)timestamp_ctlr_real_us - (int64_t)ctx->timestamp_ctlr_esti_us;
 		LOG_DBG("TX clock correction: %lld us real %u esti %u", ctx->corr_diff_us,
 			timestamp_ctlr_real_us, ctx->timestamp_ctlr_esti_us);
 
-		if (time_since_last_corr_us < TX_TS_RESYNC_US) {
+		if ((uint32_t)(timestamp_now_us - ctx->timestamp_last_correction) <
+		    TX_TS_RESYNC_US) {
 			ctx->subequent_rapid_corrections++;
 		} else {
 			ctx->subequent_rapid_corrections = 0;
@@ -409,7 +408,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 			LOG_WRN("TX clock has been updated by (%lld us). Empty packet on air",
 				ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = false;
-		} else if (ctx->corr_diff_us < ((int64_t)common_interval_us / 2)) {
+		} else if (ctx->corr_diff_us < -((int64_t)common_interval_us / 2)) {
 			LOG_ERR("TX clock has been updated by (%lld us). Shall not happen",
 				ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = false;
@@ -434,9 +433,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		ctx->timestamp_last_correction = timestamp_now_us;
 	}
 
-	uint32_t deadline_us = ctx->timestamp_ctlr_esti_us + common_interval_us;
-
-	if ((int32_t)(timestamp_now_us - deadline_us) > 0) {
+	if ((int32_t)(timestamp_now_us - ctx->timestamp_ctlr_esti_us) > 0) {
 		LOG_WRN("Curr time ahead of ctlr time. Flush %d us of data. "
 			"Now: %u us, ctlr: %u us",
 			common_interval_us, timestamp_now_us, ctx->timestamp_ctlr_esti_us);
