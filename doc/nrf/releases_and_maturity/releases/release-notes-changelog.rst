@@ -165,6 +165,7 @@ Trusted Firmware-M (TF-M)
 
 * Updated to version 2.2.2.
 * The default TF-M profile is now :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` for all configurations except for Thingy:91 and Thingy:91 X, on which it is still :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL`.
+* Reading UICR.OTP using the :c:func:`tfm_platform_mem_read` function is now allowed on the nRF54L Series devices.
 
 Protocols
 =========
