@@ -65,7 +65,10 @@ struct Credential {
 	 *
 	 * @return size of single credential entry.
 	 */
-	constexpr static size_t RequiredBufferSize() { return sizeof(Info) + sizeof(Secret); }
+	constexpr static size_t RequiredBufferSize()
+	{
+		return sizeof(Info) + sizeof(Secret::mDataLength) + sizeof(Secret::mData);
+	}
 
 	/**
 	 * @brief fill Credential entry with data from EmberAfPluginDoorLockCredentialInfo struct.
@@ -338,7 +341,11 @@ struct User {
 	 *
 	 * @return size of single credential entry.
 	 */
-	constexpr static size_t RequiredBufferSize() { return sizeof(Info) + sizeof(Credentials) + sizeof(Name); }
+	constexpr static size_t RequiredBufferSize()
+	{
+		return sizeof(Info) + sizeof(Credentials::mSize) + sizeof(Credentials::mData) + sizeof(Name::mSize) +
+		       sizeof(Name::mValue);
+	}
 
 	/**
 	 * @brief fill User entry with data from EmberAfPluginDoorLockUserInfo struct.
