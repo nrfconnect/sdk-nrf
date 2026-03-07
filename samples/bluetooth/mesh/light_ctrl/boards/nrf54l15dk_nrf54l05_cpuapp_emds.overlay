@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	partitions {
+		slot0_partition: partition@0 {
+			label = "image-0";
+			reg = <0x00000000 0x0006d000>;
+		};
+
+		storage_partition: partition@6d000 {
+			label = "storage";
+			reg = <0x0006d000 0x00008000>;
+		};
+
+		emds_partition_0: partition@75000 {
+			label = "emds-0";
+			reg = <0x00075000 0x00004000>;
+		};
+
+		emds_partition_1: partition@79000 {
+			label = "emds-1";
+			reg = <0x00079000 0x00004000>;
+		};
+	};
+};

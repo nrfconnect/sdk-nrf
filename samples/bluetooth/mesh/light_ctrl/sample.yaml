@@ -29,7 +29,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.bluetooth.mesh.light_ctrl.emds:
     sysbuild: true
-    extra_args: OVERLAY_CONFIG="overlay-emds.conf"
     build_only: true
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -45,6 +44,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args: FILE_SUFFIX=emds
   sample.bluetooth.mesh.light_ctrl.settings_ext_flash:
     sysbuild: true
     build_only: true
