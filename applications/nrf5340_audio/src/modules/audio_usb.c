@@ -38,6 +38,8 @@ K_MEM_SLAB_DEFINE_STATIC(usb_rx_slab, ROUND_UP(USB_BLOCK_SIZE_MULTI_CHAN, UDC_BU
 static struct k_msgq *audio_q_tx;
 static struct k_msgq *audio_q_rx;
 
+static struct producer_info prod_inf_usb;
+
 NET_BUF_POOL_FIXED_DEFINE(pool_in, USB_BLOCKS,
 			  (USB_BLOCK_SIZE_MULTI_CHAN * CONFIG_FIFO_FRAME_SPLIT_NUM),
 			  sizeof(struct audio_metadata), NULL);
@@ -50,6 +52,7 @@ static bool terminal_headset_in_enabled;
 static bool playing_state;
 static bool local_host_in;
 static bool local_host_out;
+static bool usb_sof_synchronized;
 
 /* The meta data for the USB and that required for the following audio system. */
 struct audio_metadata usb_in_meta = {.data_coding = PCM,
@@ -234,6 +237,7 @@ static void data_recv_cb(const struct device *dev, uint8_t terminal, void *buf, 
 	meta->data_len_us += usb_in_meta.data_len_us;
 	meta->bytes_per_location += usb_in_meta.bytes_per_location;
 	blocks_in_current_frame++;
+	meta->prod_inf = &prod_inf_usb;
 
 	/* Release USB buffer */
 	k_mem_slab_free(&usb_rx_slab, buf);
@@ -331,9 +335,11 @@ int audio_usb_init(bool host_in, bool host_out)
 
 	if (host_in && host_out) {
 		dev = DEVICE_DT_GET(DT_NODELABEL(uac2_headset));
+		usb_sof_synchronized = DT_PROP(DT_NODELABEL(uac_aclk), sof_synchronized);
 		LOG_INF("USB initialized as bidirectional (headset).");
 	} else if (host_out) {
 		dev = DEVICE_DT_GET(DT_NODELABEL(uac2_headphones));
+		usb_sof_synchronized = DT_PROP(DT_NODELABEL(hp_uac_aclk), sof_synchronized);
 		LOG_INF("USB initialized as unidirectional (headphones only).");
 	} else {
 		LOG_ERR("USB currently only supports output (host out) or bidirectional (host in "
@@ -353,13 +359,16 @@ int audio_usb_init(bool host_in, bool host_out)
 		return -ENODEV;
 	}
 
+	prod_inf_usb.rate_adjustable = !usb_sof_synchronized;
+
 	ret = usbd_enable(audio_usbd);
 	if (ret) {
 		LOG_ERR("Failed to enable USB");
 		return ret;
 	}
 
-	LOG_INF("Ready for USB host to send/receive.");
+	LOG_INF("Ready for USB host to send/receive: %s",
+		usb_sof_synchronized ? "No Sync (multi-clock) " : "Async (host-adjustable)");
 
 	return 0;
 }

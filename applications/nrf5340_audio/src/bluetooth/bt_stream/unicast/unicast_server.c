@@ -25,6 +25,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_server, CONFIG_UNICAST_SERVER_LOG_LEVEL);
 
+BT_LE_AUDIO_TX_DEFINE(bt_le_audio_tx);
+
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
@@ -366,7 +368,7 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 		.lvl2 = 0,
 		.lvl3 = 0,
 	};
-	ERR_CHK(bt_le_audio_tx_stream_sent(idx));
+	ERR_CHK(bt_le_audio_tx_stream_sent(bt_le_audio_tx, idx));
 }
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
@@ -420,7 +422,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 			.lvl2 = 0,
 			.lvl3 = 0,
 		};
-		ERR_CHK(bt_le_audio_tx_stream_started(idx));
+		ERR_CHK(bt_le_audio_tx_stream_started(bt_le_audio_tx, idx));
 	}
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn, dir);
@@ -692,7 +694,7 @@ int unicast_server_send(struct net_buf const *const audio_frame)
 		num_active_streams++;
 	}
 
-	ret = bt_le_audio_tx_send(audio_frame, tx, num_active_streams);
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, audio_frame, tx, num_active_streams);
 	if (ret) {
 		return ret;
 	}
@@ -813,7 +815,11 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		bt_le_audio_tx_init();
+		ret = bt_le_audio_tx_init(bt_le_audio_tx);
+		if (ret) {
+			LOG_ERR("Failed to initialize LE Audio TX: %d", ret);
+			return ret;
+		}
 
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE, location);
 		if (ret) {
