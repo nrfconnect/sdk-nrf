@@ -14,9 +14,12 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/init.h>
 #include <ctype.h>
+#ifndef CONFIG_NRF71_RADIO_TEST
 #include <host_rpu_sys_if.h>
+#endif
 #include <radio_test/fmac_structs.h>
 #include <zephyr/drivers/wifi/nrf_wifi/bus/rpu_hw_if.h>
+#include <zephyr/net/wifi.h>
 
 /* RX capture display constants */
 #define SAMPLES_PER_LINE 16

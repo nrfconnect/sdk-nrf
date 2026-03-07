@@ -777,6 +777,10 @@ struct rpu_conf_params {
 	unsigned char tx_fec_padd_factor;
 	/** Informs number of HE-LTFs: 0->1x, 1->2x, 2->4x, 3->6x, 4->8x */
 	unsigned char tx_num_he_ltf;
+	/** An array containing RF & baseband control params */
+	unsigned int rf_params_addr[NUM_WIFI_PARAMS];
+	/** VTF buffer address */
+	unsigned int vtf_buffer_addr;
 } __NRF_WIFI_PKD;
 
 /**

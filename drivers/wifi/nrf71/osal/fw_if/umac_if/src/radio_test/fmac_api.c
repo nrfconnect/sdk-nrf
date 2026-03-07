@@ -23,7 +23,8 @@
 
 static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-	struct nrf_wifi_phy_rf_params *rf_params,
+	unsigned int *rf_params_addr,
+	unsigned int vtf_buffer_start_address,
 	bool rf_params_valid,
 #ifdef NRF_WIFI_LOW_POWER
 	int sleep_type,
@@ -45,7 +46,8 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 	}
 
 	status = umac_cmd_rt_init(fmac_dev_ctx,
-				  rf_params,
+				  rf_params_addr,
+				  vtf_buffer_start_address,
 				  rf_params_valid,
 #ifdef NRF_WIFI_LOW_POWER
 				  sleep_type,
@@ -137,6 +139,8 @@ out:
 
 enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	unsigned int *rf_params_addr,
+	unsigned int vtf_buffer_start_address,
 #ifdef NRF_WIFI_LOW_POWER
 	int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
@@ -149,8 +153,6 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	unsigned char *country_code)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_fmac_otp_info otp_info;
-	struct nrf_wifi_phy_rf_params phy_rf_params;
 
 	if (!fmac_dev_ctx) {
 		nrf_wifi_osal_log_err("%s: Invalid device context",
@@ -177,31 +179,8 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 			      tx_pwr_ceil_params,
 			      sizeof(*tx_pwr_ceil_params));
 
-	nrf_wifi_osal_mem_set(&otp_info,
-			      0xFF,
-			      sizeof(otp_info));
-
-	status = nrf_wifi_hal_otp_info_get(fmac_dev_ctx->hal_dev_ctx,
-					   &otp_info.info,
-					   &otp_info.flags);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Fetching of RPU OTP information failed",
-				      __func__);
-		goto out;
-	}
-
-	status = nrf_wifi_rt_fmac_rf_params_get(fmac_dev_ctx,
-						&phy_rf_params);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: RF parameters get failed",
-				     __func__);
-		goto out;
-	}
-
 	status = nrf_wifi_rt_fmac_fw_init(
-		fmac_dev_ctx, phy_rf_params_addr, vtf_buffer_start_address,
+		fmac_dev_ctx, rf_params_addr, vtf_buffer_start_address, true,
 #ifdef NRF_WIFI_LOW_POWER
 		sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
@@ -320,9 +299,10 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_radio_test_init(struct nrf_wifi_fmac_dev_c
 			      0,
 			      sizeof(init_params));
 
-	nrf_wifi_osal_mem_cpy(init_params.rf_params,
-			      params->rf_params,
-			      NRF_WIFI_RF_PARAMS_SIZE);
+	nrf_wifi_osal_mem_cpy(init_params.rf_params_addr,
+			      params->rf_params_addr,
+			      sizeof(unsigned int) * NUM_WIFI_PARAMS);
+	init_params.vtf_buffer_addr =  params->vtf_buffer_addr;
 
 	nrf_wifi_osal_mem_cpy(&init_params.chan,
 			      &params->chan,
@@ -407,10 +387,6 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_prog_rx(struct nrf_wifi_fmac_dev_ctx *fmac
 
 	rx_params.nss = params->nss;
 
-	nrf_wifi_osal_mem_cpy(rx_params.rf_params,
-			      params->rf_params,
-			      NRF_WIFI_RF_PARAMS_SIZE);
-
 	nrf_wifi_osal_mem_cpy(&rx_params.chan,
 			      &params->chan,
 			      sizeof(rx_params.chan));
@@ -470,6 +446,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 	rf_test_cap_params.cap_time = capture_timeout;
 	rf_test_cap_params.lna_gain = lna_gain;
 	rf_test_cap_params.bb_gain = bb_gain;
+	rf_test_cap_params.capture_addr = (unsigned int *)cap_data;
 
 	rt_dev_ctx->rf_test_type = rf_test_type;
 	rt_dev_ctx->rf_test_cap_data = cap_data;

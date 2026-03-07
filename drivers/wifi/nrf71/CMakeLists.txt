@@ -21,7 +21,7 @@ function(nrf71_wifi_setup_include_and_sources)
     zephyr_library_link_libraries(wifi_keys_driver)
   endif()
 
-  zephyr_library_include_directories(
+  zephyr_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../bus
