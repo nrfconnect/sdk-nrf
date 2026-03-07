@@ -189,4 +189,6 @@ config NCS_MCUBOOT_MANIFEST_IMAGE_INDEX
 
 endif # NCS_MCUBOOT_MANIFEST_UPDATES
 
+rsource "lcs/Kconfig"
+
 endmenu
