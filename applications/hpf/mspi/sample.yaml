@@ -8,7 +8,9 @@ tests:
   applications.hpf.mspi:
     build_only: true
     sysbuild: true
-    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuflpr
+      - nrf54lm20dk/nrf54lm20a/cpuflpr
     tags:
       - ci_build
       - sysbuild

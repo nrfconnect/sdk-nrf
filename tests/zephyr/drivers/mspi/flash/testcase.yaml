@@ -1,0 +1,21 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+common:
+  tags:
+    - drivers
+    - mspi
+    - ci_tests_drivers_hpf
+    - flash
+  harness: ztest
+  harness_config:
+    fixture: external_flash
+tests:
+  nrf.extended.drivers.mspi.flash.hpf:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/hpf_mspi.overlay"

@@ -9,7 +9,7 @@ Fault handling
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
 
 The following page outlines mechanisms and strategies that shall be employed to manage faults in both the Host and High-Performance Framework (HPF) firmware environments.
 

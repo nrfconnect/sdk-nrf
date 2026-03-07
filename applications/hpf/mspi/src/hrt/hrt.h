@@ -17,6 +17,7 @@
 
 #define VPRCSR_NORDIC_DIR_OUTPUT 1
 #define VPRCSR_NORDIC_DIR_INPUT	 0
+#define VPRCSR_NORDIC_PIN_USED	 1
 
 #define BITS_IN_WORD 32
 #define BITS_IN_BYTE 8
@@ -103,11 +104,8 @@ typedef struct {
 	/** @brief Chip enable pin polarity in enabled state. */
 	enum mspi_ce_polarity ce_polarity;
 
-	/** @brief Tx mode mask for csr dir register  */
-	uint16_t tx_direction_mask;
-
-	/** @brief Rx mode mask for csr dir register  */
-	uint16_t rx_direction_mask;
+	/** @brief Used pins mask for csr dir register  */
+	uint16_t used_pins_mask;
 
 	/** @brief Due to hardware issues hrt module needs to know about selected spi mode */
 	enum mspi_cpp_mode cpp_mode;
