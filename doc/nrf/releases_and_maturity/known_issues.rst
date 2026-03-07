@@ -197,6 +197,15 @@ KRKNWK-14299: NRPA MAC address cannot be set in Zephyr
 Bluetooth LE
 ============
 
+.. rst-class:: v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-99-cs2 v2-6-99-cs1 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2-dev1 v1-9-2 v1-9-1 v1-9-0
+
+NCSDK-37787: Bluetooth LE ATT ``prep_pool`` memory leakage in ``att_exec_write_rsp``
+  When the reassembly was initially added in Zephyr and introduced in the |NCS| v1.9.0, a ``prep_pool`` leak occurred when reassembly failed during ``exec_write_reassemble`` in the``att_exec_write_rsp()`` function.
+  The buffer is not dequeued and freed.
+  On reassembly error, the ``prep_pool`` has only one free slot available (:kconfig:option:`CONFIG_BT_ATT_PREPARE_COUNT` = ``1``).
+  **Workaround:** Check the ``offset`` and ``len`` parameters in the application ``bt_gatt_attr_write_func_t()`` callback and return ``BT_ATT_ERR_INVALID_OFFSET`` (instead of ``0``) if the sum of ``offset`` and ``len``  is greater than attribute length.
+  In this case, the buffer in the ``prep_write_cb()`` function is not allocated, and on the ``att_exec_write_rsp()`` function with flag ``BT_ATT_FLAG_CANCEL``, all allocated buffers are unreferenced successfully.
+
 .. rst-class:: v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-99-cs2 v2-6-99-cs1 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2-dev1 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 NCSDK-32763: Upgrading firmware may corrupt Bluetooth bonding keys
