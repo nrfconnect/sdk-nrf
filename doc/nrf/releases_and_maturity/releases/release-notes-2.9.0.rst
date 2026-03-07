@@ -26,7 +26,7 @@ Added the following features as supported:
     * Protocol support on the nRF54L10 SoC for Bluetooth® LE, Amazon Sidewalk, :ref:`Thread 1.4 <thread_ug_supported_features_v14>`, and Matter over Thread.
     * Protocol support on the nRF54L05 SoC for Bluetooth LE and Thread 1.4.
     * All standard SoC peripherals.
-    * :ref:`PSA Crypto APIs <ug_nrf54l_cryptography>` (hardware-accelerated) for cryptographic operations and key storage.
+    * :ref:`PSA Crypto APIs <ug_crypto_kmu_psa_key_programming_model>` (hardware-accelerated) for cryptographic operations and key storage.
 
 * Bluetooth:
 
@@ -169,7 +169,7 @@ Developing with nRF54L Series
 * Added:
 
   * The :ref:`nRF54l_signing_app_with_flpr_payload` page that includes instructions for building separate applications, merging them, and signing them for MCUboot.
-  * The :ref:`ug_nrf54l_developing_basics_kmu` page explaining basic concepts and recommendations.
+  * The :ref:`ug_kmu_guides_cracen_overview` page explaining basic concepts and recommendations.
 
 Developing with nRF53 Series
 ============================
