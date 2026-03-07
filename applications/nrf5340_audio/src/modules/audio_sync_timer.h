@@ -19,6 +19,9 @@
 #include <zephyr/kernel.h>
 #include <stdint.h>
 
+/* Timer channel number */
+#define AUDIO_SYNC_HF_TIMER_CURR_TIME_CAPTURE_CHANNEL 1
+
 /**
  * @brief Capture a timestamp on the sync timer.
  *
