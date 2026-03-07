@@ -30,14 +30,17 @@ if(BUILD_INSIDE_TFM)
       tfm_psa_rot_partition_crypto
   )
 else()
-  # This special linking is done to give access to the zephyr kernel library
-  # which possibly isn't --whole-archived in the build. Trying to link to the 
-  # kernel library directly will give cyclic dependency. The only way to avoid
-  # it seems to be to link with a full path instead.
+  # Do not link to the kernel target by name to avoid a cyclic dependency
+  # (kernel -> zephyr_interface -> psa_crypto_config_chosen -> mbedcrypto_base
+  #  -> nrf_security_utils -> kernel).
+  # Using $<TARGET_FILE:kernel> resolves to the library path at generation time
+  # without creating a link-level dependency edge, which breaks the cycle while
+  # still giving us the kernel symbols (k_mutex_*, k_event_*, etc.).
   target_link_libraries(nrf_security_utils
     PRIVATE
-      ${Zephyr-Kernel_BINARY_DIR}/zephyr/kernel/libkernel.a
+      $<TARGET_FILE:kernel>
   )
+  add_dependencies(nrf_security_utils kernel)
 endif()
 
 nrf_security_add_zephyr_options_library(nrf_security_utils)

@@ -12,6 +12,17 @@ if(NOT PSA_CRYPTO_EXTERNAL_CORE)
     return()
 endif()
 
+# Initialize "add links only once" state here (moved from config_extra.cmake) so path setup
+# stays separate from external core logic and config_extra contains only path/toolchain vars.
+if(NOT DEFINED EXTERNAL_CRYPTO_CORE_HANDLED_TFM_API_NS)
+  set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_API_NS False CACHE BOOL "Ensure we add links only once")
+  set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_INTERFACE False CACHE BOOL "Ensure we add links only once")
+  set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_CRYPTO_CONFIG False CACHE BOOL "Ensure we add links only once")
+  set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_CRYPTO_LIBRARY_CONFIG False CACHE BOOL "Ensure we add links only once")
+  set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_PSA_ROT_PARTITION_CRYPTO False CACHE BOOL "Ensure we add links only once")
+  set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_SPRT False CACHE BOOL "Ensure we add links only once")
+endif()
+
 # Adjusting includes from spe-CMakeLists.txt which has the following heading:
 #
 # This CMake script is prepard by TF-M for building the non-secure side
@@ -32,8 +43,13 @@ endif()
 #set(TFM_MBEDCRYPTO_PSA_CRYPTO_CONFIG_PATH ${MBEDTLS_PSA_CRYPTO_CONFIG_FILE})
 #set(TFM_MBEDCRYPTO_PSA_CRYPTO_USER_CONFIG_PATH ${MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE})
 
-# Note: This is a duplicate from nrf_security/CMakeLists.txt
-#       with additions of the install-target for Oberon-psa-core includes
+# psa_interface / psa_crypto_config / psa_crypto_library_config setup:
+# Similar logic exists in nrf_security/CMakeLists.txt for the NS (app) build.
+# This block runs in the TF-M build context (separate CMake invocation) and configures
+# the TF-M copy of these targets with TF-M-specific additions (INSIDE_TFM_BUILD,
+# INTERFACE_INC_DIR, different config paths). Deduplication would require a shared
+# CMake function with many parameters and careful handling of include order; the
+# split is kept to avoid regressions in the TF-M vs NS build paths.
 if(TARGET psa_interface)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_INTERFACE True)
     target_include_directories(psa_interface
