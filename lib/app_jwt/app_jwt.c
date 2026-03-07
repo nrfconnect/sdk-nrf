@@ -19,11 +19,9 @@
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
 
-#if defined(CONFIG_BOARD_NATIVE_SIM)
-#define IAK_APPLICATION_GEN1 0x41020100
-#else
-#include <psa/nrf_platform_key_ids.h>
-#endif
+#ifdef CONFIG_APP_JWT_PROVIDE_UUID
+#include <ironside/se/boot_report.h>
+#endif /* CONFIG_APP_JWT_PROVIDE_UUID */
 
 #include <cJSON.h>
 
@@ -39,11 +37,16 @@
 
 LOG_MODULE_REGISTER(app_jwt, CONFIG_APP_JWT_LOG_LEVEL);
 
+/* Use key ID defined in configuration file */
+#define IAK_APPLICATION_GEN1 ((uint32_t)CONFIG_APP_JWT_DEFAULT_IDENTITY_KEY_ID)
+
+#if CONFIG_APP_JWT_PROVIDE_UUID
 /* Size of a UUID in words */
 #define UUID_BINARY_WORD_SZ (4)
 
 /* Size of a UUID in bytes */
 #define UUID_BINARY_BYTES_SZ (16)
+#endif /* CONFIG_APP_JWT_PROVIDE_UUID */
 
 /* String size of a binary word encoded in hexadecimal */
 #define BINARY_WORD_STR_SZ (9)
@@ -97,6 +100,7 @@ static void base64_url_format(char *const base64_string)
 	}
 }
 
+#ifdef CONFIG_APP_JWT_PROVIDE_UUID
 static int bytes_to_uuid_str(const uint32_t *uuid_words, const int32_t uuid_byte_len,
 			     char *uuid_str_out, const int32_t uuid_str_out_size)
 {
@@ -126,6 +130,14 @@ static int bytes_to_uuid_str(const uint32_t *uuid_words, const int32_t uuid_byte
 
 	return 0;
 }
+
+static void device_info_get_uuid(uint8_t *uuid_bytes)
+{
+	const struct ironside_se_boot_report *report = IRONSIDE_SE_BOOT_REPORT;
+
+	memcpy(uuid_bytes, (void *)&report->device_info_uuid, IRONSIDE_SE_BOOT_REPORT_UUID_SIZE);
+}
+#endif /* CONFIG_APP_JWT_PROVIDE_UUID */
 
 static int crypto_init(void)
 {
@@ -701,6 +713,7 @@ finish_crypto_exit:
 	return err;
 }
 
+#ifdef CONFIG_APP_JWT_PROVIDE_UUID
 int app_jwt_get_uuid(char *uuid_buffer, const size_t uuid_buffer_size)
 {
 	if ((NULL == uuid_buffer) || (uuid_buffer_size < APP_JWT_UUID_V4_STR_LEN)) {
@@ -708,8 +721,11 @@ int app_jwt_get_uuid(char *uuid_buffer, const size_t uuid_buffer_size)
 		return -EINVAL;
 	}
 
-	uint8_t uuid_bytes[UUID_BINARY_BYTES_SZ] = {0}; /* TODO NRFX-8297 */
+	uint8_t uuid_bytes[UUID_BINARY_BYTES_SZ] = {0};
+
+	device_info_get_uuid(uuid_bytes);
 
 	return bytes_to_uuid_str((uint32_t *)uuid_bytes, UUID_BINARY_BYTES_SZ, uuid_buffer,
 				 uuid_buffer_size);
 }
+#endif /* CONFIG_APP_JWT_PROVIDE_UUID */
