@@ -258,6 +258,8 @@ For each key type, the table lists the supported algorithms and indicates which 
        | - ``PSA_ALG_GCM``
        | - ``PSA_ALG_CMAC*``
        | - ``PSA_ALG_SP800_108_COUNTER_CMAC``
+       | - ``PSA_ALG_AES_KW``
+       | - ``PSA_ALG_AES_KWP``
      - 1
      - Yes
      - Yes
@@ -276,6 +278,8 @@ For each key type, the table lists the supported algorithms and indicates which 
        | - ``PSA_ALG_GCM``
        | - ``PSA_ALG_CMAC*``
        | - ``PSA_ALG_SP800_108_COUNTER_CMAC``
+       | - ``PSA_ALG_AES_KW``
+       | - ``PSA_ALG_AES_KWP``
      - 2
      - Yes
      - Yes
