@@ -894,6 +894,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endforeach()
   endif()
 
+  if(SB_CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION)
+    set_config_bool(uicr CONFIG_GEN_UICR_MPCCONF y)
+    set_config_bool(uicr CONFIG_GEN_UICR_POLICY_MPCCONF_STAGE_INIT y)
+    set_config_bool(mcuboot CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION y)
+    set_config_bool(mcuboot CONFIG_NRF_MPCCONF_API_IN_RAM y)
+  endif()
+
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
