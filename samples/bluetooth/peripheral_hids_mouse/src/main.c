@@ -574,7 +574,7 @@ static void mouse_handler(struct k_work *work)
 	}
 }
 
-#if defined(CONFIG_BT_HIDS_SECURITY_ENABLED)
+#if defined(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -620,7 +620,16 @@ static void auth_cancel(struct bt_conn *conn)
 	printk("Pairing cancelled: %s\n", addr);
 }
 
+static struct bt_conn_auth_cb conn_auth_callbacks = {
+	.passkey_display = auth_passkey_display,
+	.passkey_confirm = auth_passkey_confirm,
+	.cancel = auth_cancel,
+};
+#else
+static struct bt_conn_auth_cb conn_auth_callbacks;
+#endif /* CONFIG_BT_HIDS_SECURITY_MITM_ENABLED */
 
+#if defined(CONFIG_BT_HIDS_SECURITY_ENABLED)
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -634,15 +643,18 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
-	struct pairing_data_mitm pairing_data;
 
-	if (k_msgq_peek(&mitm_queue, &pairing_data) != 0) {
-		return;
-	}
+	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)) {
+		struct pairing_data_mitm pairing_data;
 
-	if (pairing_data.conn == conn) {
-		bt_conn_unref(pairing_data.conn);
-		k_msgq_get(&mitm_queue, &pairing_data, K_NO_WAIT);
+		if (k_msgq_peek(&mitm_queue, &pairing_data) != 0) {
+			return;
+		}
+
+		if (pairing_data.conn == conn) {
+			bt_conn_unref(pairing_data.conn);
+			k_msgq_get(&mitm_queue, &pairing_data, K_NO_WAIT);
+		}
 	}
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
@@ -651,18 +663,12 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	       bt_security_err_to_str(reason));
 }
 
-static struct bt_conn_auth_cb conn_auth_callbacks = {
-	.passkey_display = auth_passkey_display,
-	.passkey_confirm = auth_passkey_confirm,
-	.cancel = auth_cancel,
-};
 
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
 #else
-static struct bt_conn_auth_cb conn_auth_callbacks;
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks;
 #endif /* defined(CONFIG_BT_HIDS_SECURITY_ENABLED) */
 
@@ -702,7 +708,7 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 
 	memset(&pos, 0, sizeof(struct mouse_pos));
 
-	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_ENABLED)) {
+	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)) {
 		if (k_msgq_num_used_get(&mitm_queue)) {
 			if (buttons & KEY_PAIRING_ACCEPT) {
 				num_comp_reply(true);
@@ -786,10 +792,12 @@ int main(void)
 	printk("Starting Bluetooth Peripheral HIDS mouse sample\n");
 
 	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_ENABLED)) {
-		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
-		if (err) {
-			printk("Failed to register authorization callbacks.\n");
-			return 0;
+		if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)) {
+			err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+			if (err) {
+				printk("Failed to register authorization callbacks.\n");
+				return 0;
+			}
 		}
 
 		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
@@ -812,7 +820,7 @@ int main(void)
 
 	k_work_init(&hids_work, mouse_handler);
 	k_work_init(&adv_work, advertising_process);
-	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_ENABLED)) {
+	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)) {
 		k_work_init(&pairing_work, pairing_process);
 	}
 
