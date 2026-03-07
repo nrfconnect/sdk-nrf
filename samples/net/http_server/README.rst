@@ -47,7 +47,8 @@ The following table explains some of these differences:
 .. [2] The sample includes pregenerated server and client certificates with the local hostname *httpserver.local* used as the Common Name (CN).
        These certificates work out of the box when building the sample for Wi-Fi.
        On a cellular network, a static IP is required to reach the server.
-       This means that a new set of server and client certificates needs to be generated, with a CN matching the assigned IP.
+       This means that a new set of server and client certificates needs to be generated, with the server's static IP address included as a Subject Alternative Name (SAN).
+       See the `Security`_ section for details on how to generate certificates.
 .. [3] IPv4 and/or IPv6 might not be enabled in your Wi-Fi Access Point (AP) or cellular network.
 
 .. tabs::
@@ -120,13 +121,17 @@ To enable TLS, the sample includes pregenerated credentials that are located in 
 
 Peer verification can be used by building the sample with the :ref:`CONFIG_HTTP_SERVER_SAMPLE_PEER_VERIFICATION_REQUIRE <CONFIG_HTTP_SERVER_SAMPLE_PEER_VERIFICATION_REQUIRE>` Kconfig option, and passing the appropriate credentials when making the HTTP calls.
 These pregenerated credentials work only when you are building for Wi-Fi and running the server on your local Wi-Fi network.
-You need to generate new credentials when building for cellular due to a CN mismatch.
-To generate new credentials, run the following commands:
+You need to generate new credentials when building for cellular, since the client connects using an IP address rather than a hostname.
+The server certificate must include the device's static IP address as a Subject Alternative Name (SAN) for the client to verify the server's identity.
+
+To generate new credentials, run the following commands, replacing ``<ip>`` with the device's static IP address:
 
       .. code-block:: console
 
-         # Generate a new RSA key pair (private key and public key) and create a self-signed X.509 certificate for a server.
-         openssl req -newkey rsa:2048 -nodes -keyout server_private_key.pem -x509 -days 365 -out server_certificate.pem
+         # Generate a new RSA key pair and create a self-signed X.509 certificate with the IP address as a SAN.
+         openssl req -newkey rsa:2048 -nodes -keyout server_private_key.pem -x509 -days 365 -out server_certificate.pem \
+           -subj "/C=NO/ST=Norway/O=Internet Widgits Pty Ltd/CN=httpserver.local" \
+           -addext "subjectAltName=IP:<ip>,DNS:httpserver.local"
 
          # Generate a new RSA private key for a client.
          openssl genpkey -algorithm RSA -out client.key
@@ -137,8 +142,11 @@ To generate new credentials, run the following commands:
          # Sign the client's CSR with the server's private key and certificate, creating a client certificate.
          openssl x509 -req -in client.csr -CA server_certificate.pem -CAkey server_private_key.pem -CAcreateserial -out client.crt -days 365
 
-To provision the generated credentials to the server's TLS stack, replace the pregenerated certificates with the newly generated one in the :file:`http_server/credentials` folder in PEM format.
+To provision the generated credentials to the server's TLS stack, replace the pregenerated certificates with the newly generated ones in the :file:`http_server/credentials` folder in PEM format.
 Provisioning happens automatically after the firmware boots by the sample.
+
+.. note::
+   If the device's IP address changes, you must regenerate the server certificate with the new IP address and rebuild the firmware.
 
 Configuration
 *************
@@ -261,14 +269,21 @@ Testing
             http PUT http://<ip>:80/led/1 --raw="1"
             http GET http://<ip>:80/led/1
 
-         TLS with server authentication:
+         TLS without server verification (minimum TLS connection):
+
+         .. code-block:: console
+
+            https PUT https://<ip>:443/led/1 --raw="1" --verify=no
+            https GET https://<ip>:443/led/1 --verify=no
+
+         TLS with server authentication (requires regenerated certificates with the IP as SAN, see `Security`_):
 
          .. code-block:: console
 
             https PUT https://<ip>:443/led/1 --raw="1" --verify server_certificate.pem
             https GET https://<ip>:443/led/1 --verify server_certificate.pem
 
-         TLS with server authentication and client authentication:
+         TLS with server authentication and client authentication (requires regenerated certificates, see `Security`_):
 
          .. code-block:: console
 
@@ -326,6 +341,22 @@ The following serial output is from the terminal window that performs the HTTP c
 
 Troubleshooting
 ***************
+
+TLS handshake failure on nRF91 Series
+======================================
+
+If the TLS handshake fails on nRF91 Series devices when using native mbedTLS (``overlay-tls-nrf91.conf``), verify the following:
+
+* **Certificates match the IP address**: When connecting to the server over cellular using an IP address, the server certificate must include the IP as a Subject Alternative Name (SAN).
+  See the `Security`_ section for instructions on regenerating certificates.
+
+* **PDN type IPv6 not supported by the APN**: If the Access Point Name (APN) used by the device does not support PDN type ``IPV6`` or ``IPV4V6``, enabling IPv6 in the sample can cause TLS handshake failures.
+  This happens because the nRF91 modem does not support sending data on IPv4-mapped IPv6 sockets, which can occur when an IPv6 listener accepts an IPv4 connection.
+  To resolve this, disable IPv6 in the sample configuration by setting :kconfig:option:`CONFIG_NET_IPV6` to ``n``.
+  The PDN type for the default PDP context can be verified using the ``AT+CGDCONT?`` AT command.
+
+General connectivity issues
+===========================
 
 If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces to debug network traffic in Wireshark.
 Modem traces can be enabled by providing a snippet with the west build command as shown in the following example for nRF9161 DK:
