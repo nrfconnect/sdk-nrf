@@ -26,11 +26,17 @@
  */
 #define SX_PK_OP_FLAGS_BIGENDIAN (1 << 28)
 
+/** Extra flag to enable modulus randomization.
+ *
+ * In BA414ep datasheet, those flags are called RandMod.
+ */
+#define SX_PK_OP_FLAGS_MOD_RAND_CM (1 << 19)
+
 /** Extra flags to enable modulus and exponent randomization
  *
  * In BA414ep datasheet, those flags are called RandKE and RandMod.
  */
-#define SX_PK_OP_FLAGS_MOD_CM ((1 << 24) | (1 << 19))
+#define SX_PK_OP_FLAGS_MOD_CM ((1 << 24) | SX_PK_OP_FLAGS_MOD_RAND_CM)
 
 /** Extra flags to enable scalar and projective coordinates randomization
  *
@@ -86,9 +92,8 @@
 /** RSA short exponentiation operation */
 #define PK_OP_RSA_PUB_MODEXP (0x14 | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN)
 
-/** RSA modular exponentiation operation with countermeasures */
-#define PK_OP_RSA_MDEXP_CM                                                                         \
-	(0x15 | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN | SX_PK_OP_FLAGS_MOD_CM)
+/** RSA modular exponentiation operation */
+#define PK_OP_RSA_MODEXP (0x15 | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN)
 
 /** DSA signature generation */
 #define PK_OP_DSA_SIGN (0x19 | SX_PK_OP_FLAGS_BIGENDIAN)

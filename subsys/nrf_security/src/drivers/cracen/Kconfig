@@ -152,11 +152,26 @@ config CRACEN_ENABLE_ECC_COUNTERMEASURES
 	  - ECDSA signature generation and public key generation
 	  - ECC point multiplication
 
-	  In nRF54LM20X, nRF54LV10A, and nRF7120 the countermeasures the following
-	  countermerasures are available in adddition to the above operations:
+	  In nRF54LM20X, nRF54LV10A, and nRF7120 the following countermerasures
+	  are available in addition to the above operations:
 	  - Montgomery curve multiplication
 	  - EdDSA base point multiplication
 	  - Edwards point multiplication
+
+config CRACEN_ENABLE_RSA_EXTENDED_COUNTERMEASURES
+	def_bool CRACEN_HW_VERSION_BASE
+	depends on CRACEN_ENABLE_RSA_COUNTERMEASURES
+
+config CRACEN_ENABLE_RSA_COUNTERMEASURES
+	bool "CRACEN RSA countermeasures"
+	default y
+	help
+	  Enable Cracen RSA countermeasures, using exponent randomization
+	  and modulus randomization.
+
+	  The countermeasures are available for the following operations:
+	  - Modular exponentiation
+	  - Modular exponentiation with CRT (Chinese Remainder Theorem)
 
 rsource 'psa_driver.Kconfig'
 
