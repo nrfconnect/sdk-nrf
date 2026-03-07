@@ -21,6 +21,8 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 
+#include <string.h>
+
 LOG_MODULE_REGISTER(remote, LOG_LEVEL_DBG);
 
 static K_MUTEX_DEFINE(history_transfer_mtx);
@@ -210,6 +212,43 @@ int log_rpc_invalidate_crash_dump(void)
 
 	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_INVALIDATE_CRASH_DUMP, &ctx,
+				nrf_rpc_rsp_decode_i32, &rc);
+
+	return rc;
+}
+
+size_t log_rpc_get_history_dump(size_t offset, uint8_t *buffer, size_t buffer_length)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	const uint8_t *chunk;
+	size_t chunk_size = 0;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 2 + sizeof(offset) + sizeof(buffer_length));
+	nrf_rpc_encode_uint(&ctx, offset);
+	nrf_rpc_encode_uint(&ctx, buffer_length);
+	nrf_rpc_cbor_cmd_rsp_no_err(&log_rpc_group, LOG_RPC_CMD_GET_HISTORY_DUMP, &ctx);
+
+	chunk = nrf_rpc_decode_buffer_ptr_and_size(&ctx, &chunk_size);
+	if (chunk && buffer) {
+		chunk_size = MIN(chunk_size, buffer_length);
+		memcpy(buffer, chunk, chunk_size);
+	}
+
+	if (!nrf_rpc_decoding_done_and_check(&log_rpc_group, &ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &log_rpc_group,
+			    LOG_RPC_CMD_GET_HISTORY_DUMP, NRF_RPC_PACKET_TYPE_RSP);
+	}
+
+	return chunk_size;
+}
+
+int log_rpc_clear_history_dump(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	int32_t rc;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 0);
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_CLEAR_HISTORY_DUMP, &ctx,
 				nrf_rpc_rsp_decode_i32, &rc);
 
 	return rc;

@@ -19,6 +19,7 @@
 #include <nrf_rpc_cbor.h>
 
 #include <zephyr/debug/coredump.h>
+#include <zephyr/fatal.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys_clock.h>
 #include <zephyr/logging/log.h>
@@ -427,6 +428,88 @@ NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_crash_info, LOG_RPC_CMD_GET_CRAS
 
 #endif /* CONFIG_LOG_BACKEND_RPC_CRASH_LOG */
 
+#if defined(CONFIG_LOG_BACKEND_RPC_HISTORY_STORE_ON_CRASH)
+
+static void log_rpc_get_history_dump_handler(const struct nrf_rpc_group *group,
+					    struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	size_t offset;
+	size_t length;
+	size_t total_length;
+	int rc;
+	struct nrf_rpc_cbor_ctx rsp_ctx;
+
+	offset = nrf_rpc_decode_uint(ctx);
+	length = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_GET_HISTORY_DUMP,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	total_length = log_rpc_history_dump_get_stored_size();
+	if (total_length == 0) {
+		NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
+		zcbor_bstr_encode_ptr(rsp_ctx.zs, NULL, 0);
+		nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+		return;
+	}
+
+	if (offset >= total_length) {
+		NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
+		zcbor_bstr_encode_ptr(rsp_ctx.zs, NULL, 0);
+		nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+		return;
+	}
+
+	length = MIN(length, total_length - offset);
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5 + length);
+
+	if (!zcbor_bstr_start_encode(rsp_ctx.zs)) {
+		NRF_RPC_CBOR_DISCARD(group, rsp_ctx);
+		NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
+		zcbor_bstr_encode_ptr(rsp_ctx.zs, NULL, 0);
+		nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+		return;
+	}
+
+	rc = log_rpc_history_dump_copy(offset, rsp_ctx.zs[0].payload_mut, length);
+	if (rc <= 0) {
+		NRF_RPC_CBOR_DISCARD(group, rsp_ctx);
+		NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
+		zcbor_bstr_encode_ptr(rsp_ctx.zs, NULL, 0);
+		nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+		return;
+	}
+
+	rsp_ctx.zs[0].payload_mut += rc;
+	if (!zcbor_bstr_end_encode(rsp_ctx.zs, NULL)) {
+		NRF_RPC_CBOR_DISCARD(group, rsp_ctx);
+		NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
+		zcbor_bstr_encode_ptr(rsp_ctx.zs, NULL, 0);
+	}
+	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_get_history_dump_handler,
+			 LOG_RPC_CMD_GET_HISTORY_DUMP, log_rpc_get_history_dump_handler, NULL);
+
+static void log_rpc_clear_history_dump_handler(const struct nrf_rpc_group *group,
+					       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	int rc;
+
+	nrf_rpc_cbor_decoding_done(group, ctx);
+	rc = log_rpc_history_dump_clear();
+	nrf_rpc_rsp_send_int(group, rc);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_clear_history_dump_handler,
+			 LOG_RPC_CMD_CLEAR_HISTORY_DUMP, log_rpc_clear_history_dump_handler, NULL);
+
+#endif /* CONFIG_LOG_BACKEND_RPC_HISTORY_STORE_ON_CRASH */
+
 static void format_message(struct log_msg *msg, uint32_t flags, log_output_func_t output_func,
 			   void *output_ctx)
 {
@@ -480,6 +563,15 @@ static size_t format_message_to_buf(struct log_msg *msg, uint32_t flags, uint8_t
 
 	return output_ctx.total_len;
 }
+
+#if defined(CONFIG_LOG_BACKEND_RPC_HISTORY_STORE_ON_CRASH)
+size_t log_rpc_format_msg_to_buf(struct log_msg *msg, uint8_t *buf, size_t buf_len)
+{
+	const uint32_t flags = common_output_flags | LOG_OUTPUT_FLAG_CRLF_LFONLY;
+
+	return format_message_to_buf(msg, flags, buf, buf_len);
+}
+#endif
 
 static void stream_message(struct log_msg *msg)
 {
@@ -997,3 +1089,18 @@ static int init_dump_metadata(void)
 SYS_INIT(init_dump_metadata, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 #endif
+
+#if defined(CONFIG_LOG_BACKEND_RPC_HISTORY_STORE_ON_CRASH)
+void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
+{
+	ARG_UNUSED(esf);
+
+#if defined(CONFIG_LOG_BACKEND_RPC_HISTORY_STORAGE_RAM)
+	/* Drain RAM log history to log_history partition via direct nrfx writes. */
+	log_rpc_history_dump_to_flash();
+#endif
+	LOG_PANIC();
+	k_fatal_halt(reason);
+	CODE_UNREACHABLE;
+}
+#endif /* CONFIG_LOG_BACKEND_RPC_HISTORY_STORE_ON_CRASH */
