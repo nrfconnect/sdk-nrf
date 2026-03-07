@@ -1,8 +1,8 @@
 /*
  *
- *Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
- *SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 /**
@@ -176,6 +176,7 @@ struct umac_tx_dbg_params {
 	unsigned int tx_dones_from_lmac;
 	/** Total commands sent to lmac in UMAC hal */
 	unsigned int total_cmds_to_lmac;
+	unsigned int cmdq_empty;
 	/** Number of data packets sent */
 	unsigned int tx_packet_data_count;
 	/** Number of management packets sent */
@@ -198,7 +199,8 @@ struct umac_tx_dbg_params {
 	unsigned int tx_packet_other_mgmt_count;
 	/** Number of Non management packets sent */
 	unsigned int tx_packet_non_mgmt_data_count;
-
+	/** Number of EAPOL packets sent */
+	unsigned int tx_packet_eapol_count;
 } __NRF_WIFI_PKD;
 
 /**
@@ -336,6 +338,7 @@ struct umac_sleep_stats {
 	unsigned int sleep_req;
 	unsigned int sleep_req_succ;
 	unsigned int sleep_req_fail;
+	unsigned int sleep_status_to_lmac;
 	unsigned int umac_init;
 	unsigned int umac_init_warmboot;
 	unsigned int reorder_not_empty;
@@ -354,7 +357,6 @@ struct umac_sleep_stats {
 	unsigned int get_channel;
 	unsigned int rx_pending;
 	unsigned int pre_init;
-	unsigned int get_scan;
 	unsigned int rx_mbox_pending;
 	unsigned int tx_mbox_pending;
 	unsigned int pending_cmd_resubmit;
@@ -402,6 +404,32 @@ struct nrf_wifi_misc_stats {
 	 *  and allocated from next available memory buffer
 	 */
 	unsigned int alloc_buf_fail;
+	/** Number of twt requests sent on air */
+	unsigned int twt_req_sent;
+	/** Number of TWT response info events sent to lmac */
+	unsigned int twt_info_sent_to_lmac;
+	/** Number of TWT teardown info events sent to lmac */
+	unsigned int twt_teardown_info_sent_to_lmac;
+	/** Number of FTM requests sent to LMAC */
+	unsigned int ftm_req_info_sent_to_lmac;
+	/** Number of FTM responses received from LMAC */
+	unsigned int ftm_resp_rcvd;
+	/** Number of gas requests sent */
+	unsigned int gas_req_sent;
+	/** Number of gas responses received */
+	unsigned int gas_resp_received;
+	/** Number of gas comeback requests sent */
+	unsigned int gas_comeback_req_sent;
+	/** Number of neighbor requests sent */
+	unsigned int neighbor_req_sent;
+	/** Number of neighbor responses received */
+	unsigned int neighbor_resp_received;
+	/** Number of IPC tx initialisation failures*/
+	unsigned int ipc_tx_init_fail;
+	/** Number of IPC rx initialisation failures*/
+	unsigned int ipc_rx_init_fail;
+	/** Number of IPC bind failures*/
+	unsigned int ipc_bind_fail;
 
 } __NRF_WIFI_PKD;
 
@@ -751,16 +779,40 @@ struct lmac_sqi_stats {
 	unsigned int sqi_events_cnt;
 };
 
+enum {
+	INTERVAL_15SEC = 0,
+	INTERVAL_MAX,
+	INTERVAL_COUNT
+};
 
-
+/**
+ * @struct lmac_sleep_timing_stats
+ * @brief Tracks wake/sleep durations, counters, and interval stats.
+ *
+ * - last_wake_sleep_stats[i][type]:
+ *   Stores previous completed interval stats for wake/sleep.
+ *   i = interval index, type = 0 (wake), 1 (sleep)
+ * - cur_wake_sleep_stats[i][type]:
+ *   Accumulates stats for current ongoing interval.
+ * - time_stamps[i]:
+ *   Timestamp marking the start of each interval tracking window.
+ */
 struct lmac_sleep_timing_stats {
 	unsigned int index;
-	unsigned int boot_time;
 	unsigned int bcn_delay_after_wakeup;
-	unsigned int time_stamp_instance_before_sleep;
-	unsigned int time_stamp_instance_after_wakeup;
+	unsigned int last_one_minute_bcn_rcv_cnt;
+	unsigned int last_one_second_bcn_rcv_cnt;
+	unsigned int current_one_minute_bcn_rcv_cnt;
+	unsigned int current_one_second_bcn_rcv_cnt;
 	unsigned int wake_duration[SLEEP_DEBUG_BUFFER];
 	unsigned int sleep_duration[SLEEP_DEBUG_BUFFER];
+	unsigned int temp_time_stamp_minute;
+	unsigned int temp_time_stamp_second;
+	/* 0->15s, 2->MAX */
+	double time_stamps[INTERVAL_COUNT];
+	/* 0: wake, 1: sleep */
+	double last_wake_sleep_stats[INTERVAL_COUNT][2];
+	double cur_wake_sleep_stats[INTERVAL_COUNT][2];
 };
 
 
@@ -785,6 +837,7 @@ struct lmac_sleep_stats {
 	unsigned int more_buffered_broadcast;
 	unsigned int buffered_broadcast;
 	unsigned int sleep_attempt_fail_power_save_off;
+	unsigned int sleep_attempt_fail_ftm_responder_active;
 	unsigned int sleep_attempt_fail_vif_non_sta;
 	unsigned int sleep_attempt_fail_cmds_present;
 	unsigned int scan_in_progress;
@@ -854,7 +907,12 @@ struct lmac_twt_stats {
 	unsigned int time_stamp_before_sleep;
 	unsigned int time_stamp_after_sleep;
 };
-
+struct lmac_offload_raw_tx_stats {
+	unsigned int offLoad_raw_tx_state;
+	unsigned int offload_raw_tx_cnt;
+	unsigned int offload_raw_tx_complete_cnt;
+	unsigned int warm_boot_cnt;
+};
 
 enum LMAC_STATS_CATEGORY {
 	LMAC_STATS_INIT_DEBUG_PARAMS = (1 << 0),
@@ -874,12 +932,14 @@ enum LMAC_STATS_CATEGORY {
 	AGG_CONFIG = (1 << 14),
 	DEAGG_CONFIG = (1 << 15),
 	MAC_CTRL_CONFIG = (1 << 16),
-	MAC_STATS_END = (1 << 17),
+	OFFLOAD_RAW_TX_STATS = (1 << 17),
+	MAC_STATS_END = (1 << 18),
 };
 
 enum PHY_STATS_CATEGORY {
 	PHY_RX_DEBUG_STATS = (1 << 0),
 	PHY_RSSI_HIST_STATS = (1 << 1),
+	PHY_STATS_END       = (1 << 2)
 };
 
 
@@ -904,6 +964,7 @@ struct lmac_debug_stats {
 		unsigned int agg_config[96];
 		unsigned int deagg_config[96];
 		unsigned int mac_ctrl_config[96];
+		struct lmac_offload_raw_tx_stats offload_raw_tx_stats;
 	};
 
 } __NRF_WIFI_PKD;
@@ -1048,7 +1109,7 @@ struct pool_data_to_host {
 
 /**
  * struct lmac_prod_stats - used to get the production mode stats
- **/
+ */
 
 /* Events */
 #define MAX_RSSI_SAMPLES 10
