@@ -135,6 +135,11 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
+	status = sx_hw_reserve(NULL, SX_HW_RESERVE_DEFAULT);
+	if (status != SX_OK) {
+		return silex_statuscodes_to_psa(status);
+	}
+
 	while (temp_length < CRACEN_ENTROPY_AND_NONCE_SIZE) {
 		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 
@@ -142,11 +147,14 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 						 temp + temp_length, SX_BLKCIPHER_AES_BLK_SZ);
 
 		if (status != PSA_SUCCESS) {
+			sx_hw_release(NULL);
 			return status;
 		}
 		temp_length += SX_BLKCIPHER_AES_BLK_SZ;
 		prng.reseed_counter++;
 	}
+
+	sx_hw_release(NULL);
 
 	if (data) {
 		cracen_xorbytes(temp, data, CRACEN_ENTROPY_AND_NONCE_SIZE);
@@ -265,6 +273,12 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
+	status = sx_hw_reserve(NULL, SX_HW_RESERVE_DEFAULT);
+	if (status != SX_OK) {
+		nrf_security_mutex_unlock(cracen_prng_trng_mutex);
+		return silex_statuscodes_to_psa(status);
+	}
+
 	while (len_left > 0) {
 		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);
 		ALIGN_ON_STACK(uint8_t, temp, SX_BLKCIPHER_AES_BLK_SZ, CONFIG_DCACHE_LINE_SIZE);
@@ -274,6 +288,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 						 temp, SX_BLKCIPHER_AES_BLK_SZ);
 
 		if (status != PSA_SUCCESS) {
+			sx_hw_release(NULL);
 			nrf_security_mutex_unlock(cracen_prng_trng_mutex);
 			return status;
 		}
@@ -286,6 +301,8 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		output += cur_len;
 		prng.reseed_counter++;
 	}
+
+	sx_hw_release(NULL);
 
 	status = ctr_drbg_update(NULL);
 	nrf_security_mutex_unlock(cracen_prng_trng_mutex);

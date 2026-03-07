@@ -414,38 +414,21 @@ int cracen_hash_all_inputs_with_context(struct sxhash *hashopctx, const uint8_t 
 
 	status = sx_hash_create(hashopctx, hashalg, sizeof(*hashopctx));
 	if (status != SX_OK) {
-		return status;
+		goto out;
 	}
-
 	for (size_t i = 0; i < input_count; i++) {
 		status = sx_hash_feed(hashopctx, inputs[i], input_lengths[i]);
 		if (status != SX_OK) {
-			return status;
+			goto out;
 		}
 	}
 	status = sx_hash_digest(hashopctx, digest);
 	if (status != SX_OK) {
-		return status;
+		goto out;
 	}
-
 	status = sx_hash_wait(hashopctx);
-
+out:
 	return status;
-}
-
-int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[],
-			   size_t input_count, const struct sxhashalg *hashalg, uint8_t *digest)
-{
-	struct sxhash hashopctx;
-
-	return cracen_hash_all_inputs_with_context(&hashopctx, inputs, input_lengths, input_count,
-						   hashalg, digest);
-}
-
-int cracen_hash_input(const uint8_t *input, const size_t input_length,
-		      const struct sxhashalg *hashalg, uint8_t *digest)
-{
-	return cracen_hash_all_inputs(&input, &input_length, 1, hashalg, digest);
 }
 
 int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *input,
@@ -454,4 +437,28 @@ int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *inpu
 {
 	return cracen_hash_all_inputs_with_context(hashopctx, &input, &input_length, 1, hashalg,
 						   digest);
+}
+
+int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[],
+			   size_t input_count, const struct sxhashalg *hashalg, uint8_t *digest)
+{
+	struct sxhash hashopctx;
+	int status;
+
+	status = sx_hw_reserve(&hashopctx.dma, SX_HW_RESERVE_DEFAULT);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	status = cracen_hash_all_inputs_with_context(&hashopctx, inputs, input_lengths,
+						     input_count, hashalg, digest);
+	sx_hw_release(&hashopctx.dma);
+
+	return status;
+}
+
+int cracen_hash_input(const uint8_t *input, const size_t input_length,
+		      const struct sxhashalg *hashalg, uint8_t *digest)
+{
+	return cracen_hash_all_inputs(&input, &input_length, 1, hashalg, digest);
 }
