@@ -7,7 +7,7 @@
    :local:
    :depth: 2
 
-The image is based on Linux - Ubuntu 22.04 Docker image with the following additional tools:
+The image is based on Linux - Ubuntu 24.04 Docker image with the following additional tools:
 
 * Git
 * |NCS| toolchain bundle, which includes `nRF Util`_ and the ``device`` command
