@@ -2,12 +2,20 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
+config SUPPORTS_NRF_MODEM
+	bool
+	default y if SOC_SERIES_NRF91 && TRUSTED_EXECUTION_NONSECURE
+
+config SUPPORTS_NRF_MODEM_EXPERIMENTAL
+	bool
+	default y if SOC_NRF9280_CPUAPP
+	select SUPPORTS_NRF_MODEM
 
 menuconfig NRF_MODEM_LIB
-	bool "Modem library"
-	depends on (SOC_SERIES_NRF91 && TRUSTED_EXECUTION_NONSECURE) || SOC_NRF9280_CPUAPP
+	bool "nRF Modem Library"
+	depends on SUPPORTS_NRF_MODEM
+	select EXPERIMENTAL if SUPPORTS_NRF_MODEM_EXPERIMENTAL
 	select NRF_MODEM
-	select EXPERIMENTAL if SOC_NRF9280_CPUAPP
 	imply NET_SOCKETS_OFFLOAD
 	imply NET_IPV4
 	imply NET_IPV6
