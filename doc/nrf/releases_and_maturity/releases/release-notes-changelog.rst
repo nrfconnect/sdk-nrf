@@ -196,7 +196,13 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-* Added experimental support for concurrent operation of ESB with other radio protocols using the :ref:`mpsl_timeslot` feature.
+  * Added:
+
+    * Experimental support for concurrent operation of ESB with other radio protocols using the :ref:`mpsl_timeslot` feature.
+    * The :kconfig:option:`CONFIG_ESB_CLOCK_INIT` Kconfig option.
+      When this option is enabled, the :c:func:`esb_init` function automatically starts the required high-frequency clock and applies platform-specific errata workarounds.
+      Applications that manage clocks independently can leave this option disabled (default).
+
 * Fixed invalid radio configuration for legacy ESB protocol.
 
 Gazell
@@ -486,6 +492,8 @@ Enhanced ShockBurst samples
   * The :ref:`esb_prx_ble` sample that demonstrates how to use the ESB protocol in PRX mode concurrently with the Bluetooth LE LBS service.
   * The :ref:`esb_ptx_ble` sample that demonstrates how to use the ESB protocol in PTX mode concurrently with the Bluetooth LE LBS service.
   * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target in all ESB samples.
+
+* Updated all ESB samples to use the :kconfig:option:`CONFIG_ESB_CLOCK_INIT` Kconfig option for automatic HF clock management, removing the manual clock initialization code from the :file:`main.c` files.
 
 Gazell samples
 --------------
