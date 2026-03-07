@@ -434,23 +434,23 @@ Connectivity Bridge
 * Added support for Thingy:91 X.
 * Updated to make the Bluetooth LE feature work for Thingy:91 X by using the load switch.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Added:
 
-  * CAP initiator for the :ref:`unicast client <nrf53_audio_unicast_client_app>`, including Coordinated Set Identification Profile (CSIP).
+  * CAP initiator for the :ref:`unicast client <nrf_audio_unicast_client_app>`, including Coordinated Set Identification Profile (CSIP).
   * Support for any context type, not just media.
-  * Rejection of connection if :ref:`unicast client <nrf53_audio_unicast_client_app>` or :ref:`broadcast source <nrf53_audio_broadcast_source_app>` (or both) tries to use an unsupported sample rate.
+  * Rejection of connection if :ref:`unicast client <nrf_audio_unicast_client_app>` or :ref:`broadcast source <nrf_audio_broadcast_source_app>` (or both) tries to use an unsupported sample rate.
   * Debug prints of discovered endpoints.
-  * Support for multiple :ref:`unicast servers <nrf53_audio_unicast_server_app>` in :ref:`unicast client <nrf53_audio_unicast_client_app>`, regardless of location.
+  * Support for multiple :ref:`unicast servers <nrf_audio_unicast_server_app>` in :ref:`unicast client <nrf_audio_unicast_client_app>`, regardless of location.
 
 * Updated:
 
-  * Low latency configuration to be used as default setting for the nRF5340 Audio application.
+  * Low latency configuration to be used as default setting for the nRF Audio application.
   * ACL interval for service discovery to reduce setup time.
   * Default settings to be lower latency end-to-end.
-  * API for creating a :ref:`broadcast source <nrf53_audio_broadcast_source_app>`, to be more flexible.
+  * API for creating a :ref:`broadcast source <nrf_audio_broadcast_source_app>`, to be more flexible.
   * Migrated build system to support :ref:`configuration_system_overview_sysbuild`.
     This means that the old Kconfig used to enable FOTA updates no longer exists, and the :ref:`file suffix <app_build_file_suffixes>` ``fota`` must be used instead.
 
@@ -458,8 +458,8 @@ nRF5340 Audio
 
   * Missing data in the advertising packet after the directed advertising has timed out.
   * Connection procedure so that a central does not try to connect to the same device twice.
-  * PAC record creation in :ref:`unicast server <nrf53_audio_unicast_server_app>` so that it does not expose source records if only the sink direction is supported.
-  * Presentation delay calculation so that it is railed between min and max values of the :ref:`unicast server <nrf53_audio_unicast_server_app>`.
+  * PAC record creation in :ref:`unicast server <nrf_audio_unicast_server_app>` so that it does not expose source records if only the sink direction is supported.
+  * Presentation delay calculation so that it is railed between min and max values of the :ref:`unicast server <nrf_audio_unicast_server_app>`.
 
 * Removed the LE Audio controller for nRF5340 library.
   The only supported controller for LE Audio is :ref:`ug_ble_controller_softdevice`.

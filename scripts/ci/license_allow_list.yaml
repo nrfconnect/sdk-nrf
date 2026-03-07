@@ -12,8 +12,8 @@
 # Nordic 5-Clause is always allowed.
 LicenseRef-Nordic-5-Clause: ".*"
 
-# PCFT license is allowed for nRF53 Audio.
-LicenseRef-PCFT: "^nrf/applications/nrf5340_audio/"
+# PCFT license is allowed for nRF Audio.
+LicenseRef-PCFT: "^nrf/applications/nrf_audio/"
 
 # Missing license information is allowed in all files except the ones listed below using
 # negative match.

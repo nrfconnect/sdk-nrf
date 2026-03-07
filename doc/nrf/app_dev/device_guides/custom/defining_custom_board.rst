@@ -35,5 +35,5 @@ Application porting guides
 Some :ref:`applications` in the |NCS| provide detailed guides for adapting the application to custom boards:
 
 * :ref:`nrf_desktop` - See :ref:`nrf_desktop_porting_guide` in the application documentation.
-* :ref:`nrf53_audio_app` - See :ref:`nrf53_audio_app_adapting` in the application documentation.
+* :ref:`nrf_audio_app` - See :ref:`nrf_audio_app_adapting` in the application documentation.
 * :ref:`nrf_machine_learning_app` - See :ref:`nrf_machine_learning_app_porting_guide` in the application documentation.

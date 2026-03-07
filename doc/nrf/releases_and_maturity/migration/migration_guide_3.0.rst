@@ -400,13 +400,13 @@ nRF Desktop
      * The ``peer_name`` array inside the :file:`ble_scan_def.h` file determines device name filters used by HID dongle while scanning for unpaired HID peripherals.
      * The :file:`99-hid.rules` file allows HID configurator Python script to configure nRF Desktop devices without root access.
 
-nRF5340 Audio applications
+nRF Audio applications
 --------------------------
 
 .. toggle::
 
-   * The :ref:`nrf53_audio_app` :ref:`nrf53_audio_app_building_script` now requires the transport (``-t/--transport``) type to be included.
-   * The :ref:`nrf53_audio_app` :ref:`nrf53_audio_app_building_standard` now requires an extra :ref:`CMake option to provide extra Kconfig fragments <cmake_options>` to select the device type.
+   * The :ref:`nrf_audio_app` :ref:`nrf_audio_app_building_script` now requires the transport (``-t/--transport``) type to be included.
+   * The :ref:`nrf_audio_app` :ref:`nrf_audio_app_building_standard` now requires an extra :ref:`CMake option to provide extra Kconfig fragments <cmake_options>` to select the device type.
 
 Libraries
 =========

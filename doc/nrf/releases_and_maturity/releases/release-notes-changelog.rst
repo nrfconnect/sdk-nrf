@@ -257,8 +257,8 @@ Matter bridge
 * Removed the ``onoff_plug`` snippet from the application.
   To build the application with the ``onoff_plug`` functionality, use the :file:`overlay-onoff_plug.conf` configuration overlay file.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Added:
 
@@ -273,7 +273,7 @@ nRF5340 Audio
 
   * :kconfig:option:`CONFIG_SPEED_OPTIMIZATIONS` to enable compiler speed optimizations for the application.
 
-  * Support for multiple independent coordinated sets in :ref:`unicast client app<nrf53_audio_unicast_client_app>`.
+  * Support for multiple independent coordinated sets in :ref:`unicast client app<nrf_audio_unicast_client_app>`.
     When all the devices in a coordinated set are disconnected, the SIRK is cleared, allowing a new unicast group to be formed with a new SIRK without the need to restart the application.
 
 * Updated:
@@ -288,8 +288,8 @@ nRF5340 Audio
     with the headsets starting first.
     This eases sniffing of advertisement packets.
 
-  * With the latest release of |nRFVSC|, you can build and program the nRF5340 Audio application using the |nRFVSC| GUI.
-    Updated the :ref:`nrf53_audio_app_building` accordingly: the note about missing support in |nRFVSC| has been removed and the section about programming using standard methods now lists the steps for |nRFVSC| and the command line.
+  * With the latest release of |nRFVSC|, you can build and program the nRF Audio application using the |nRFVSC| GUI.
+    Updated the :ref:`nrf_audio_app_building` accordingly: the note about missing support in |nRFVSC| has been removed and the section about programming using standard methods now lists the steps for |nRFVSC| and the command line.
 
   * Improved handling of I2S RX buffer overruns.
     When an overrun occurs, the most recent block in the current frame is removed to make space for new incoming data.

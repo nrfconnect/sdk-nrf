@@ -427,7 +427,22 @@ NRF = (
     ("protocols/zigbee/other_ecosystems", "protocols/zigbee/index"),
     ("ug_zigbee_tools", "protocols/zigbee/index"), # Zigbee tools (removed after v3.0.0)
     ("protocols/zigbee/tools", "protocols/zigbee/index"),
-    ("applications/nrf5340_audio/README", "applications/nrf5340_audio/index"), # nRF5340 Audio applications (landing)
+    ("applications/nrf5340_audio/README", "applications/nrf_audio/index"), # nRF Audio applications (landing)
+    ("applications/nrf5340_audio/index", "applications/nrf_audio/index"),
+    ("applications/nrf5340_audio/doc/audio_api", "applications/nrf_audio/doc/audio_api"),
+    ("applications/nrf5340_audio/doc/configuration_options", "applications/nrf_audio/doc/configuration_options"),
+    ("applications/nrf5340_audio/doc/adapting_application", "applications/nrf_audio/doc/adapting_application"),
+    ("applications/nrf5340_audio/doc/building", "applications/nrf_audio/doc/building"),
+    ("applications/nrf5340_audio/doc/configuration", "applications/nrf_audio/doc/configuration"),
+    ("applications/nrf5340_audio/doc/feature_support", "applications/nrf_audio/doc/feature_support"),
+    ("applications/nrf5340_audio/doc/firmware_architecture", "applications/nrf_audio/doc/firmware_architecture"),
+    ("applications/nrf5340_audio/doc/fota", "applications/nrf_audio/doc/fota"),
+    ("applications/nrf5340_audio/doc/requirements", "applications/nrf_audio/doc/requirements"),
+    ("applications/nrf5340_audio/doc/user_interface", "applications/nrf_audio/doc/user_interface"),
+    ("applications/nrf5340_audio/broadcast_sink/README", "applications/nrf_audio/broadcast_sink/README"),
+    ("applications/nrf5340_audio/broadcast_source/README", "applications/nrf_audio/broadcast_source/README"),
+    ("applications/nrf5340_audio/unicast_client/README", "applications/nrf_audio/unicast_client/README"),
+    ("applications/nrf5340_audio/unicast_server/README", "applications/nrf_audio/unicast_server/README"),
     ("applications/sdp/gpio/README", "applications/hpf/gpio/README"), #High-Performance Framework applications
     ("samples/samples_bl", "samples/bl"), # Bluetooth samples (landing)
     ("samples/bluetooth/connection_event_trigger/README", "samples/bluetooth/event_trigger/README"),

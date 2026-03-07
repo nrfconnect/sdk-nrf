@@ -1,5 +1,5 @@
 tests:
-  nrf5340_audio.audio_module_template:
+  nrf_audio.audio_module_template:
     sysbuild: true
     platform_allow: qemu_cortex_m3
     integration_platforms:
@@ -7,6 +7,6 @@ tests:
     tags:
       - audio_module
       - audio_module_template
-      - nrf5340_audio_unit_tests
+      - nrf_audio_unit_tests
       - sysbuild
       - ci_tests_subsys_audio_module

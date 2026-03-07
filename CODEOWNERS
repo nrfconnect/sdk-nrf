@@ -34,7 +34,7 @@
 /applications/machine_learning/           @nrfconnect/ncs-si-muffin
 /applications/matter_bridge/              @nrfconnect/ncs-matter
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
-/applications/nrf5340_audio/              @nrfconnect/ncs-audio
+/applications/nrf_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-xcake
 /applications/hpf/                        @nrfconnect/ncs-ll-ursus
 /applications/hpf/**/*.rst                @nrfconnect/ncs-lowlevel-doc
@@ -43,7 +43,7 @@
 /applications/machine_learning/*.rst      @nrfconnect/ncs-si-muffin-doc
 /applications/matter_bridge/**/*.rst      @nrfconnect/ncs-matter-doc
 /applications/matter_weather_station/*.rst @nrfconnect/ncs-matter-doc
-/applications/nrf5340_audio/**/*.rst      @nrfconnect/ncs-audio-doc
+/applications/nrf_audio/**/*.rst      @nrfconnect/ncs-audio-doc
 /applications/nrf_desktop/**/*.rst        @nrfconnect/ncs-si-xcake-doc
 
 # Boards
@@ -934,7 +934,7 @@
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/                   @nrfconnect/ncs-eris
-/tests/nrf5340_audio/                     @nrfconnect/ncs-audio @nordic-auko
+/tests/nrf_audio/                     @nrfconnect/ncs-audio @nordic-auko
 /tests/psa_crypto/                        @nrfconnect/ncs-aegir
 /tests/subsys/app_event_manager/          @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/app_protect/                @nrfconnect/ncs-low-level-test
