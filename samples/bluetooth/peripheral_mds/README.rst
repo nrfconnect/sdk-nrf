@@ -236,20 +236,20 @@ Before testing, ensure that your device is configured with the project key of yo
 Testing with nRF Memfault mobile applications
 ---------------------------------------------
 
-You can use the `nRF Memfault for Android`_ or the `nRF Memfault for iOS`_ applications for testing the :ref:`mds_readme`.
-You can also use them for your custom applications using the Memfault Diagnostic Service.
+You can use the `nRF Connect Device Manager`_ application for testing the :ref:`mds_readme`.
+You can also use it for your custom applications using the Memfault Diagnostic Service.
 
 1. |connect_terminal_ANSI|
 #. Reset your development kit.
 #. Observe that the sample starts.
-#. On your mobile phone with access to the Internet, open the nRF Memfault application.
-#. In the mobile application, tap the :guilabel:`Start` button.
-#. Look for your device running the Memfault Diagnostic Service in the :guilabel:`Discovered devices` list.
-#. Select your device from the list.
-#. Tap :guilabel:`Connect` button to connect with your development kit.
-#. Wait for the application to establish connection with your development kit.
+#. On your mobile phone with access to the Internet, open the nRF Connect Device Manager application and allow it a moment to scan for devices.
+#. Select your device from the list. If using the `prj.conf` settings from this sample, it will be titled `Nordic_Memfault`.
+#. Use the "Echo" feature to send a "Hello" message to your device to ensure a connection is initiated.
+#. If your device requires a PIN for a pairing request, it will be visible via a serial terminal connection.
+#. If you are having trouble connecting to your device, forget the device's entry from your phone's Bluetooth settings and try again.
+#. Once connected, navigate to the Logs and Stats or Diagnostics tab (labeled differently depending on your platform).
+   You should see `Status: Awaiting New Chunks` and/or a message such as `Uploaded: 2 chunk(s), 152 bytes`.
 
-   In the mobile application, observe that Memfault chunks are forwarded from your device to the Memfault Cloud.
 #. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed.
    The symbol file is located in the build folder: :file:`peripheral_mds/build/peripheral_mds/zephyr/zephyr.elf`:
 
@@ -267,7 +267,7 @@ You can also use them for your custom applications using the Memfault Diagnostic
 
    See :ref:`peripheral_mds_user_interface` for details about button functions.
 #. Explore the Memfault user interface to see the errors and metrics sent from your device.
-#. When you have finished collecting diagnostic data, tap :guilabel:`Disconnect` to the close connection with your development kit.
+#. When you have finished collecting diagnostic data, tap :guilabel:`Disconnect` to close the connection with your development kit.
 
    As the bond information is preserved, you can tap :guilabel:`Connect` again to immediately reconnect to the device.
 
