@@ -85,10 +85,9 @@ static psa_status_t cracen_hkdf_sha256_expand(const uint8_t *seed,
 	return status;
 }
 
-static psa_status_t cracen_wpa3_sae_reduce_p256(const uint8_t *input,
-						size_t input_size,
-						uint8_t *output,
-						size_t output_size)
+static psa_status_t cracen_wpa3_sae_reduce_p256(sx_pk_req *req,
+						const uint8_t *input, size_t input_size,
+						uint8_t *output, size_t output_size)
 {
 	const uint8_t *prime = sx_pk_curve_prime(&sx_curve_nistp256);
 
@@ -98,7 +97,7 @@ static psa_status_t cracen_wpa3_sae_reduce_p256(const uint8_t *input,
 	sx_op result = {.sz = output_size, .bytes = output};
 
 	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_ODD_MOD_REDUCE;
-	int sx_status = sx_mod_single_op_cmd(cmd, &modulo, &operand, &result);
+	int sx_status = sx_mod_single_op_cmd(req, cmd, &modulo, &operand, &result);
 
 	return silex_statuscodes_to_psa(sx_status);
 }
@@ -110,6 +109,8 @@ psa_status_t import_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	int sx_status;
+	sx_pk_req req;
+
 	/** Note: input for this function is expected to be a pwd-seed value obtained
 	 *	  as a result of HKDF extraction
 	 */
@@ -138,10 +139,13 @@ psa_status_t import_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
 		}
 
 		MAKE_SX_CONST_POINT(key_pt, data, CRACEN_P256_POINT_SIZE);
-		sx_status = sx_ec_ptoncurve(sx_curve, &key_pt);
+		sx_pk_acquire_hw(&req);
+		sx_status = sx_ec_ptoncurve(&req, sx_curve, &key_pt);
 		if (sx_status != SX_OK) {
+			sx_pk_release_req(&req);
 			return silex_statuscodes_to_psa(sx_status);
 		}
+		sx_pk_release_req(&req);
 
 		if (!memcpy_check_non_zero(key_buffer, key_buffer_size,
 						data, data_length)) {
@@ -182,6 +186,8 @@ psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 	sx_op p1 = {.sz = CRACEN_P256_POINT_SIZE, .bytes = p1_buf};
 	sx_op p2 = {.sz = CRACEN_P256_POINT_SIZE, .bytes = p2_buf};
 
+	sx_pk_req req;
+
 	switch (type) {
 	case PSA_KEY_TYPE_WPA3_SAE_ECC(PSA_ECC_FAMILY_SECP_R1):
 
@@ -209,11 +215,14 @@ psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 			return status;
 		}
 
+		sx_pk_acquire_hw(&req);
+
 		/* u1 = pwd-value modulo p */
-		status = cracen_wpa3_sae_reduce_p256(pwd_value,
+		status = cracen_wpa3_sae_reduce_p256(&req, pwd_value,
 							req_pwd_value_len,
 							u1.bytes, u1.sz);
 		if (status != PSA_SUCCESS) {
+			sx_pk_release_req(&req);
 			return status;
 		}
 
@@ -221,8 +230,9 @@ psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 		sx_const_op u1_const;
 
 		sx_get_const_op(&u1, &u1_const);
-		status = cracen_ecc_h2e_sswu(psa_curve, key_bits_attr, &u1_const, &p1);
+		status = cracen_ecc_h2e_sswu(&req, psa_curve, key_bits_attr, &u1_const, &p1);
 		if (status != PSA_SUCCESS) {
+			sx_pk_release_req(&req);
 			return status;
 		}
 
@@ -239,10 +249,11 @@ psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 		}
 
 		/* u2 = pwd-value modulo p */
-		status = cracen_wpa3_sae_reduce_p256(pwd_value,
+		status = cracen_wpa3_sae_reduce_p256(&req, pwd_value,
 							req_pwd_value_len,
 							u2.bytes, u2.sz);
 		if (status != PSA_SUCCESS) {
+			sx_pk_release_req(&req);
 			return status;
 		}
 
@@ -250,8 +261,10 @@ psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 		sx_const_op u2_const;
 
 		sx_get_const_op(&u2, &u2_const);
-		status = cracen_ecc_h2e_sswu(psa_curve, key_bits_attr, &u2_const, &p2);
+		status = cracen_ecc_h2e_sswu(&req, psa_curve,
+					key_bits_attr, &u2_const, &p2);
 		if (status != PSA_SUCCESS) {
+			sx_pk_release_req(&req);
 			return status;
 		}
 
@@ -268,10 +281,13 @@ psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 		MAKE_SX_CONST_POINT(p1_pt, p1.bytes, CRACEN_P256_POINT_SIZE);
 		MAKE_SX_CONST_POINT(p2_pt, p2.bytes, CRACEN_P256_POINT_SIZE);
 		MAKE_SX_POINT(p_pt, key, key_size);
-		sx_status = sx_ecp_ptadd(sx_curve, &p1_pt, &p2_pt, &p_pt);
+
+		sx_status = sx_ecp_ptadd(&req, sx_curve, &p1_pt, &p2_pt, &p_pt);
 		if (sx_status != SX_OK) {
+			sx_pk_release_req(&req);
 			return silex_statuscodes_to_psa(sx_status);
 		}
+		sx_pk_release_req(&req);
 
 		*key_length = CRACEN_P256_POINT_SIZE;
 		return PSA_SUCCESS;

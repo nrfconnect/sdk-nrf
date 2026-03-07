@@ -22,6 +22,7 @@ psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 {
 	int sx_status;
 	const size_t curve_op_sz = sx_pk_curve_opsize(curve);
+	sx_pk_req req;
 
 	if (publ_key_size != curve_op_sz) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -32,6 +33,8 @@ psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 	}
 
 	sx_status = SX_ERR_INVALID_CURVE_PARAM;
+
+	sx_pk_acquire_hw(&req);
 
 	if (curve_op_sz == CRACEN_X25519_KEY_SIZE_BYTES) {
 		struct sx_x25519_op k;
@@ -44,7 +47,10 @@ psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 		memcpy(pt.bytes, publ_key, CRACEN_X25519_KEY_SIZE_BYTES);
 		decode_u_coordinate_25519(pt.bytes);
 
-		sx_status = sx_x25519_ptmult(&k, &pt, (struct sx_x25519_op *)output);
+		sx_status = sx_x25519_ptmult(&req, &k, &pt, (struct sx_x25519_op *)output);
+		if (sx_status != SX_OK) {
+			goto exit;
+		}
 
 	} else if (curve_op_sz == CRACEN_X448_KEY_SIZE_BYTES) {
 		struct sx_x448_op k;
@@ -53,17 +59,17 @@ psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 		decode_scalar_448(k.bytes);
 
 		/* 448 % 8 = 0, so there is no need to decode pt coordinate. */
-		sx_status = sx_x448_ptmult(&k, (struct sx_x448_op *)publ_key,
+		sx_status = sx_x448_ptmult(&req, &k, (struct sx_x448_op *)publ_key,
 					   (struct sx_x448_op *)output);
+		if (sx_status != SX_OK) {
+			goto exit;
+		}
 	} else {
 		/* For compliance */
 	}
 
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
 	*output_length = curve_op_sz;
-
-	return PSA_SUCCESS;
+exit:
+	sx_pk_release_req(&req);
+	return silex_statuscodes_to_psa(sx_status);
 }

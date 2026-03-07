@@ -34,100 +34,12 @@ SX_PK_API_ASSERT_SRC_COMPATIBLE(2, 0, sxopssrp);
 
 struct sx_pk_cmd_def;
 
-/**
- * @addtogroup SX_PK_SXOPS_SRP
- *
- * @{
- */
-
-/** Asynchronous (non-blocking) SRP user key generation.
- *
- * Start a SRP user key generation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_srp_user_keygen_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- startup
- * @param[in] n Safe prime number (N=2*q+1 with q prime)
- * @param[in] g Generator of the multiplicative group
- * @param[in] a Random value
- * @param[in] b k * g^x + g^t with t random value
- * @param[in] x Hash of (s, p) with s a random salt and p the user password
- * @param[in] k Hash value derived by both sides (for example k = H(n, g))
- * @param[in] u Hash of (g^a, b)
-
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- *
- */
-static inline int sx_async_srp_user_keygen_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-					      const sx_const_op *n, const sx_const_op *g,
-					      const sx_const_op *a, const sx_const_op *b,
-					      const sx_const_op *x, const sx_const_op *k,
-					      const sx_const_op *u)
-{
-	struct sx_pk_inops_srp_user_keyparams inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SRP_USER_KEY_GEN);
-
-	/* convert and transfer operands */
-	int sizes[] = {sx_const_op_size(n), sx_const_op_size(g), sx_const_op_size(a),
-		       sx_const_op_size(b), sx_const_op_size(x), sx_const_op_size(k),
-		       sx_const_op_size(u)};
-	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		sx_pk_release_req(req);
-		return status;
-	}
-	sx_pk_op2vmem(n, inputs.n.addr);
-	sx_pk_op2vmem(g, inputs.g.addr);
-	sx_pk_op2vmem(a, inputs.a.addr);
-	sx_pk_op2vmem(b, inputs.b.addr);
-	sx_pk_op2vmem(x, inputs.x.addr);
-	sx_pk_op2vmem(k, inputs.k.addr);
-	sx_pk_op2vmem(u, inputs.u.addr);
-
-	sx_pk_run(req);
-
-	return SX_OK;
-}
-
-/** Finish asynchronous (non-blocking) SRP user key generation.
- *
- * Get the output operans of the SRP user key generation and
- * release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] s Value to hash to get the strong password key K
- *
- * @see sx_async_srp_user_keygen_go()
- */
-static inline void sx_async_srp_user_keygen_end(sx_pk_req *req, sx_op *s)
-{
-	const uint8_t **outputs = sx_pk_get_output_ops(req);
-	const int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_mem2op(outputs[0], opsz, s);
-
-	sx_pk_release_req(req);
-}
-
 /** Secure Remote Password (SRP): Generate key for user session
  *
  * Computes the following:
  *    s = (b - k * g^x) ^ (a + u * x)
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
  * startup
  * @param[in] n Safe prime number (N=2*q+1 with q prime)
@@ -150,97 +62,47 @@ static inline void sx_async_srp_user_keygen_end(sx_pk_req *req, sx_op *s)
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_srp_user_keygen_go() and sx_async_srp_user_keygen_end()
- * for an asynchronous version
  */
-static inline int sx_srp_user_keygen(struct sx_pk_cnx *cnx, const sx_op *n, const sx_op *g,
-				     const sx_op *a, const sx_op *b, const sx_op *x, const sx_op *k,
-				     const sx_op *u, sx_op *s)
+static inline int sx_srp_user_keygen(sx_pk_req *req, struct sx_pk_cnx *cnx,
+					const sx_op *n, const sx_op *g, const sx_op *a,
+					const sx_op *b, const sx_op *x, const sx_op *k,
+					const sx_op *u, sx_op *s)
 {
-	sx_pk_req req;
 	int status;
+	struct sx_pk_inops_srp_user_keyparams inputs;
 
-	status = sx_async_srp_user_keygen_go(&req, cnx, n, g, a, b, x, k, u);
-	if (status != SX_OK) {
-		return status;
-	}
+	sx_pk_set_cmd(req, SX_PK_CMD_SRP_USER_KEY_GEN);
 
-	status = sx_pk_wait(&req);
-
-	sx_async_srp_user_keygen_end(&req, s);
-
-	return status;
-}
-
-/** Asynchronous SRP server public key generation
- *
- * Start an SRP server public key generation operation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_srp_server_public_key_gen_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] n Safe prime number (N=2*q+1 with q prime)
- * @param[in] g Generator
- * @param[in] k Hash value derived by both sides (for example k = H(n, g))
- * @param[in] v Exponentiated hash digest
- * @param[in] b k * g^x + g^t with t random value
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_srp_server_public_key_gen_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-							const sx_const_op *n, const sx_const_op *g,
-							const sx_const_op *k, const sx_const_op *v,
-							const sx_const_op *b)
-{
-	struct sx_pk_inops_srp_server_public_key_gen inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SRP_SERVER_PUBLIC_KEY_GEN);
-
-	int sizes[] = {sx_const_op_size(n), sx_const_op_size(g), sx_const_op_size(k),
-		       sx_const_op_size(v), sx_const_op_size(b)};
-
+	/* convert and transfer operands */
+	int sizes[] = {sx_const_op_size(n), sx_const_op_size(g), sx_const_op_size(a),
+		       sx_const_op_size(b), sx_const_op_size(x), sx_const_op_size(k),
+		       sx_const_op_size(u)};
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 
 	sx_pk_op2vmem(n, inputs.n.addr);
 	sx_pk_op2vmem(g, inputs.g.addr);
-	sx_pk_op2vmem(k, inputs.k.addr);
-	sx_pk_op2vmem(v, inputs.v.addr);
+	sx_pk_op2vmem(a, inputs.a.addr);
 	sx_pk_op2vmem(b, inputs.b.addr);
+	sx_pk_op2vmem(x, inputs.x.addr);
+	sx_pk_op2vmem(k, inputs.k.addr);
+	sx_pk_op2vmem(u, inputs.u.addr);
 
 	sx_pk_run(req);
 
-	return SX_OK;
-}
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
-/** Finish asynchronous (non-blocking) SRP server public key generation.
- *
- * Get the output operands of the SRP server public key generation
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] rb The resulting value
- */
-static inline void sx_async_srp_server_public_key_gen_end(sx_pk_req *req, sx_op *rb)
-{
-	sx_async_finish_single(req, rb);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+	const int opsz = sx_pk_get_opsize(req);
+
+	sx_pk_mem2op(outputs[0], opsz, s);
+
+	return status;
 }
 
 /** Perform an SRP server public key generation.
@@ -248,6 +110,7 @@ static inline void sx_async_srp_server_public_key_gen_end(sx_pk_req *req, sx_op 
  * The SRP server public key generation has the following steps:
  *   1. B = k*v + g^b
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] n Safe prime number (N=2*q+1 with q prime)
  * @param[in] g Generator
@@ -268,97 +131,42 @@ static inline void sx_async_srp_server_public_key_gen_end(sx_pk_req *req, sx_op 
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_srp_server_public_key_gen_go(),
- * sx_async_srp_server_public_key_gen_end() for an asynchronous version
  */
-static inline int sx_srp_server_public_key_gen(struct sx_pk_cnx *cnx, const sx_op *n,
-					       const sx_op *g, const sx_op *k, const sx_op *v,
-					       const sx_op *b, sx_op *rb)
+static inline int sx_srp_server_public_key_gen(sx_pk_req *req, struct sx_pk_cnx *cnx,
+						const sx_op *n, const sx_op *g, const sx_op *k,
+						const sx_op *v, const sx_op *b, sx_op *rb)
 {
-	int status;
-	sx_pk_req req;
+	uint32_t status;
+	struct sx_pk_inops_srp_server_public_key_gen inputs;
 
-	status = sx_async_srp_server_public_key_gen_go(&req, cnx, n, g, k, v, b);
-	if (status != SX_OK) {
-		return status;
-	}
+	sx_pk_set_cmd(req, SX_PK_CMD_SRP_SERVER_PUBLIC_KEY_GEN);
 
-	status = sx_pk_wait(&req);
-
-	sx_async_srp_server_public_key_gen_end(&req, rb);
-
-	return status;
-}
-
-/** Asynchronous SRP server session key generation
- *
- * Start an SRP server session key generation operation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_srp_server_public_key_gen_end()
- *
- * @param[out] req The acquired acceleration request for this operation
- * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
- * @param[in] n Safe prime number (N=2*q+1 with q prime)
- * @param[in] a Random
- * @param[in] u Hash of (g^a, b)
- * @param[in] v Exponentiated hash digest
- * @param[in] b k * g^x + g^t with t random value
- *
- * Truncation or padding should be done by user application
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PK_RETRY
- * @return ::SX_ERR_BUSY
- */
-static inline int sx_async_srp_server_session_key_gen_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
-							 const sx_const_op *n, const sx_const_op *a,
-							 const sx_const_op *u, const sx_const_op *v,
-							 const sx_const_op *b)
-{
-	struct sx_pk_inops_srp_server_session_key_gen inputs;
-	int status;
-
-	sx_pk_acquire_hw(req);
-	sx_pk_set_cmd(req, SX_PK_CMD_SRP_SERVER_SESSION_KEY_GEN);
-
-	int sizes[] = {sx_const_op_size(n), sx_const_op_size(a), sx_const_op_size(u),
+	int sizes[] = {sx_const_op_size(n), sx_const_op_size(g), sx_const_op_size(k),
 		       sx_const_op_size(v), sx_const_op_size(b)};
 
 	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(req);
 		return status;
 	}
 
 	sx_pk_op2vmem(n, inputs.n.addr);
-	sx_pk_op2vmem(a, inputs.a.addr);
-	sx_pk_op2vmem(u, inputs.u.addr);
+	sx_pk_op2vmem(g, inputs.g.addr);
+	sx_pk_op2vmem(k, inputs.k.addr);
 	sx_pk_op2vmem(v, inputs.v.addr);
 	sx_pk_op2vmem(b, inputs.b.addr);
 
 	sx_pk_run(req);
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
-	return SX_OK;
-}
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+	const int opsz = sx_pk_get_opsize(req);
 
-/** Finish asynchronous (non-blocking) SRP server session key generation.
- *
- * Get the output operands of the SRP server session key generation
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] rs The resulting value
- */
-static inline void sx_async_srp_server_session_key_gen_end(sx_pk_req *req, sx_op *rs)
-{
-	sx_async_finish_single(req, rs);
+	sx_pk_mem2op(outputs[0], opsz, rb);
+
+	return status;
 }
 
 /** Perform an SRP server session key generation.
@@ -366,6 +174,7 @@ static inline void sx_async_srp_server_session_key_gen_end(sx_pk_req *req, sx_op
  * The SRP server session key generation has the following steps:
  *   1. (a * v ^ u) ^ b
  *
+ * @param[in,out] req Acquired acceleration request for this operation
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] n Safe prime number (N=2*q+1 with q prime)
  * @param[in] a Random
@@ -386,24 +195,41 @@ static inline void sx_async_srp_server_session_key_gen_end(sx_pk_req *req, sx_op
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  *
- * @see sx_async_srp_server_session_key_gen_go(),
- * sx_async_srp_server_session_key_gen_end() for an asynchronous version
  */
-static inline int sx_srp_server_session_key_gen(struct sx_pk_cnx *cnx, const sx_op *n,
-						const sx_op *a, const sx_op *u, const sx_op *v,
-						const sx_op *b, sx_op *rs)
+static inline int sx_srp_server_session_key_gen(sx_pk_req *req,
+					struct sx_pk_cnx *cnx, const sx_op *n, const sx_op *a,
+					const sx_op *u, const sx_op *v, const sx_op *b, sx_op *rs)
 {
-	int status;
-	sx_pk_req req;
+	uint32_t status;
+	struct sx_pk_inops_srp_server_session_key_gen inputs;
 
-	status = sx_async_srp_server_session_key_gen_go(&req, cnx, n, a, u, v, b);
+	sx_pk_set_cmd(req, SX_PK_CMD_SRP_SERVER_SESSION_KEY_GEN);
+
+	int sizes[] = {sx_const_op_size(n), sx_const_op_size(a), sx_const_op_size(u),
+		       sx_const_op_size(v), sx_const_op_size(b)};
+
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	status = sx_pk_wait(&req);
+	sx_pk_op2vmem(n, inputs.n.addr);
+	sx_pk_op2vmem(a, inputs.a.addr);
+	sx_pk_op2vmem(u, inputs.u.addr);
+	sx_pk_op2vmem(v, inputs.v.addr);
+	sx_pk_op2vmem(b, inputs.b.addr);
 
-	sx_async_srp_server_session_key_gen_end(&req, rs);
+	sx_pk_run(req);
+
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+	const int opsz = sx_pk_get_opsize(req);
+
+	sx_pk_mem2op(outputs[0], opsz, rs);
 
 	return status;
 }

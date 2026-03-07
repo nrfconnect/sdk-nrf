@@ -153,6 +153,9 @@ psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attributes, ui
 	size_t key_size_bytes = PSA_BITS_TO_BYTES(bits);
 	size_t key_size_half = key_size_bytes / 2;
 	int sx_status;
+	sx_pk_req req;
+
+	sx_pk_acquire_hw(&req);
 
 	/* RSA public exponent used in PSA is 65537. We provide this as a 3 byte
 	 * big endian array.
@@ -207,9 +210,10 @@ psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attributes, ui
 	/* Generate RSA CRT key. */
 	struct cracen_rsa_key privkey = CRACEN_KEY_INIT_RSACRT(&p, &q, &dp, &dq, &qinv);
 
-	sx_status = cracen_rsa_generate_privkey(pub_exponent, sizeof(pub_exponent), key_size_bytes,
-						&privkey);
+	sx_status = cracen_rsa_generate_privkey(&req, pub_exponent, sizeof(pub_exponent),
+						key_size_bytes, &privkey);
 	if (sx_status != SX_OK) {
+		sx_pk_release_req(&req);
 		status = silex_statuscodes_to_psa(sx_status);
 		goto error_exit;
 	}
@@ -222,10 +226,12 @@ psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attributes, ui
 	sx_get_const_op(&p, &c_p);
 	sx_get_const_op(&q, &c_q);
 	sx_get_const_op(&e, &c_e);
-	status = silex_statuscodes_to_psa(sx_rsa_keygen(&c_p, &c_q, &c_e, &n, NULL, &d));
+	status = silex_statuscodes_to_psa(sx_rsa_keygen(&req, &c_p, &c_q, &c_e, &n, NULL, &d));
 	if (status != PSA_SUCCESS) {
+		sx_pk_release_req(&req);
 		goto error_exit;
 	}
+	sx_pk_release_req(&req);
 
 	/* In DER encoding all numbers are in 2's complement form. We need to
 	 * pad numbers where the first bit is set with 0x0 to encode them as
