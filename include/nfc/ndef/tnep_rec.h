@@ -84,8 +84,8 @@ struct nfc_ndef_tnep_rec_svc_param {
  * @retval 0 If the operation was successful.
  * Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_tnep_rec_status_payload(struct nfc_ndef_tnep_rec_status *payload_desc,
-				     uint8_t *buffer, uint32_t *len);
+int nfc_ndef_tnep_rec_status_payload(struct nfc_ndef_tnep_rec_status *payload_desc, uint8_t *buffer,
+				     uint32_t *len);
 
 /**
  * @brief Payload constructor for the TNEP Service Select Record.
@@ -133,17 +133,14 @@ int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payl
  * @param[in] _name Name of the created record descriptor instance.
  * @param[in] _status TNEP Message Status.
  */
-#define NFC_TNEP_STATUS_RECORD_DESC_DEF(_name, _status)                   \
-	struct nfc_ndef_tnep_rec_status _name = {                         \
-		.status = _status,                                        \
-	};                                                                \
-									  \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name, TNF_WELL_KNOWN,           \
-					 0, 0,                            \
-					 nfc_ndef_tnep_rec_type_status,   \
-					 NFC_NDEF_TNEP_REC_TYPE_LEN,      \
-					 nfc_ndef_tnep_rec_status_payload,\
-					 &(_name))
+#define NFC_TNEP_STATUS_RECORD_DESC_DEF(_name, _status)                                            \
+	struct nfc_ndef_tnep_rec_status _name = {                                                  \
+		.status = _status,                                                                 \
+	};                                                                                         \
+                                                                                                   \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(                                                          \
+		_name, TNF_WELL_KNOWN, 0, 0, nfc_ndef_tnep_rec_type_status,                        \
+		NFC_NDEF_TNEP_REC_TYPE_LEN, nfc_ndef_tnep_rec_status_payload, &(_name))
 
 /**
  * @brief Macro for creating and initializing a NFC NDEF record descriptor for
@@ -160,18 +157,15 @@ int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payl
  * @param[in] _uri_length Length of the following Service Name URI.
  * @param[in] _uri Service Name URI.
  */
-#define NFC_TNEP_SERIVCE_SELECT_RECORD_DESC_DEF(_name, _uri_length, _uri)      \
-	struct nfc_ndef_tnep_rec_svc_select _name = {                          \
-		.uri_len = _uri_length,                                        \
-		.uri = _uri,	                                               \
-	};                                                                     \
-									       \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name, TNF_WELL_KNOWN,                \
-					 0, 0,                                 \
-					 nfc_ndef_tnep_rec_type_svc_select,    \
-					 NFC_NDEF_TNEP_REC_TYPE_LEN,           \
-					 nfc_ndef_tnep_rec_svc_select_payload, \
-					 &(_name))
+#define NFC_TNEP_SERVICE_SELECT_RECORD_DESC_DEF(_name, _uri_length, _uri)                          \
+	struct nfc_ndef_tnep_rec_svc_select _name = {                                              \
+		.uri_len = _uri_length,                                                            \
+		.uri = _uri,                                                                       \
+	};                                                                                         \
+                                                                                                   \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(                                                          \
+		_name, TNF_WELL_KNOWN, 0, 0, nfc_ndef_tnep_rec_type_svc_select,                    \
+		NFC_NDEF_TNEP_REC_TYPE_LEN, nfc_ndef_tnep_rec_svc_select_payload, &(_name))
 
 /**
  * @brief Macro for creating and initializing a NFC NDEF record descriptor for
@@ -194,27 +188,21 @@ int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payl
  * @param[in] _max_time_ext Maximum number of waiting time extensions.
  * @param[in] _max_message_size Maximum NDEF message size in bytes.
  */
-#define NFC_TNEP_SERIVCE_PARAM_RECORD_DESC_DEF(_name, _tnep_version,          \
-					       _uri_length, _uri,             \
-					       _mode, _min_time,              \
-					       _max_time_ext,                 \
-					       _max_message_size)             \
-	struct nfc_ndef_tnep_rec_svc_param _name = {                          \
-		.version = _tnep_version,                                     \
-		.uri_length = _uri_length,                                    \
-		.uri = _uri,                                                  \
-		.communication_mode = _mode,                                  \
-		.min_time = _min_time,                                        \
-		.max_time_ext = _max_time_ext,                                \
-		.max_size = _max_message_size,                                \
-	};                                                                    \
-									      \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name, TNF_WELL_KNOWN,               \
-					 0, 0,                                \
-					 nfc_ndef_tnep_rec_type_svc_param,    \
-					 NFC_NDEF_TNEP_REC_TYPE_LEN,          \
-					 nfc_ndef_tnep_rec_svc_param_payload, \
-					 &(_name))
+#define NFC_TNEP_SERVICE_PARAM_RECORD_DESC_DEF(_name, _tnep_version, _uri_length, _uri, _mode,     \
+					       _min_time, _max_time_ext, _max_message_size)        \
+	struct nfc_ndef_tnep_rec_svc_param _name = {                                               \
+		.version = _tnep_version,                                                          \
+		.uri_length = _uri_length,                                                         \
+		.uri = _uri,                                                                       \
+		.communication_mode = _mode,                                                       \
+		.min_time = _min_time,                                                             \
+		.max_time_ext = _max_time_ext,                                                     \
+		.max_size = _max_message_size,                                                     \
+	};                                                                                         \
+                                                                                                   \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(                                                          \
+		_name, TNF_WELL_KNOWN, 0, 0, nfc_ndef_tnep_rec_type_svc_param,                     \
+		NFC_NDEF_TNEP_REC_TYPE_LEN, nfc_ndef_tnep_rec_svc_param_payload, &(_name))
 
 /**
  * @brief Macro for accessing the NFC NDEF TNEP record descriptor

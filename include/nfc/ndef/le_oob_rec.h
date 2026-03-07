@@ -54,20 +54,19 @@ enum nfc_ndef_le_oob_rec_le_role {
  * @brief Macro for including Appearance BLE AD Type to the
  *        @ref nfc_ndef_le_oob_rec_payload_desc descriptor.
  */
-#define NFC_NDEF_LE_OOB_REC_APPEARANCE(value) ((uint16_t []) {value})
+#define NFC_NDEF_LE_OOB_REC_APPEARANCE(value) ((uint16_t[]){value})
 
 /**
  * @brief Macro for including Flags BLE AD Type to the
  *        @ref nfc_ndef_le_oob_rec_payload_desc descriptor.
  */
-#define NFC_NDEF_LE_OOB_REC_FLAGS(value) ((uint8_t []) {value})
+#define NFC_NDEF_LE_OOB_REC_FLAGS(value) ((uint8_t[]){value})
 
 /**
  * @brief Macro for including LE Role BLE AD Type to the
  *        @ref nfc_ndef_le_oob_rec_payload_desc descriptor.
  */
-#define NFC_NDEF_LE_OOB_REC_LE_ROLE(value) \
-	((enum nfc_ndef_le_oob_rec_le_role []) {value})
+#define NFC_NDEF_LE_OOB_REC_LE_ROLE(value) ((enum nfc_ndef_le_oob_rec_le_role[]){value})
 
 /**
  * @brief LE OOB record payload descriptor.
@@ -102,8 +101,7 @@ struct nfc_ndef_le_oob_rec_payload_desc {
  *                 buffer space.
  */
 int nfc_ndef_le_oob_rec_payload_constructor(
-	const struct nfc_ndef_le_oob_rec_payload_desc *payload_desc, uint8_t *buff,
-	uint32_t *len);
+	const struct nfc_ndef_le_oob_rec_payload_desc *payload_desc, uint8_t *buff, uint32_t *len);
 
 /** @brief Generate a description of an NFC NDEF Bluetooth Carrier
  *  Configuration LE Record.
@@ -120,20 +118,14 @@ int nfc_ndef_le_oob_rec_payload_constructor(
  * @param payload_desc Pointer to the description of the payload. This data is
  *                     used to create the record payload.
  */
-#define NFC_NDEF_LE_OOB_RECORD_DESC_DEF(name,                        \
-					payload_id,                  \
-					payload_desc)                \
-	const uint8_t name##_nfc_ndef_le_oob_rec_id     = (payload_id); \
-	const uint8_t name##_nfc_ndef_le_oob_rec_id_len =		     \
-				((payload_id) != 0) ? 1 : 0;	     \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(name,                       \
-		TNF_MEDIA_TYPE,					     \
-		&name##_nfc_ndef_le_oob_rec_id,			     \
-		name##_nfc_ndef_le_oob_rec_id_len,		     \
-		(nfc_ndef_le_oob_rec_type_field),		     \
-		sizeof(nfc_ndef_le_oob_rec_type_field),		     \
-		nfc_ndef_le_oob_rec_payload_constructor,	     \
-		(payload_desc))
+#define NFC_NDEF_LE_OOB_RECORD_DESC_DEF(name, payload_id, payload_desc)                            \
+	const uint8_t name##_nfc_ndef_le_oob_rec_id = (payload_id);                                \
+	const uint8_t name##_nfc_ndef_le_oob_rec_id_len = ((payload_id) != 0) ? 1 : 0;             \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(name, TNF_MEDIA_TYPE, &name##_nfc_ndef_le_oob_rec_id,     \
+					 name##_nfc_ndef_le_oob_rec_id_len,                        \
+					 (nfc_ndef_le_oob_rec_type_field),                         \
+					 sizeof(nfc_ndef_le_oob_rec_type_field),                   \
+					 nfc_ndef_le_oob_rec_payload_constructor, (payload_desc))
 
 /**
  * @brief Macro for accessing the NFC NDEF Bluetooth Carrier Configuration LE

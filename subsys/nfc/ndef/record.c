@@ -14,13 +14,12 @@
  */
 #define NDEF_RECORD_BASE_LONG_SIZE (2 + NDEF_RECORD_PAYLOAD_LEN_LONG_SIZE)
 
-static uint32_t record_header_size_calc(
-			struct nfc_ndef_record_desc const *ndef_record_desc)
+static uint32_t record_header_size_calc(struct nfc_ndef_record_desc const *ndef_record_desc)
 {
 	uint32_t len;
 
 	len = NDEF_RECORD_BASE_LONG_SIZE + ndef_record_desc->id_length +
-			ndef_record_desc->type_length;
+	      ndef_record_desc->type_length;
 
 	if (ndef_record_desc->id_length > 0) {
 		len++;
@@ -31,10 +30,10 @@ static uint32_t record_header_size_calc(
 
 int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 			   enum nfc_ndef_record_location const record_location,
-			   uint8_t *record_buffer,
-			   uint32_t *record_len)
+			   uint8_t *record_buffer, uint32_t *record_len)
 {
-	uint8_t *payload_len = NULL; /* use as pointer to payload length field */
+	/* Use as pointer to payload length field. */
+	uint8_t *payload_len = NULL;
 	uint32_t record_payload_len;
 
 	if (!ndef_record_desc) {
@@ -78,15 +77,11 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 			*flags |= NDEF_RECORD_IL_MASK;
 		}
 		/* TYPE */
-		memcpy(record_buffer,
-		       ndef_record_desc->type,
-		       ndef_record_desc->type_length);
+		memcpy(record_buffer, ndef_record_desc->type, ndef_record_desc->type_length);
 		record_buffer += ndef_record_desc->type_length;
 		/* ID */
 		if (ndef_record_desc->id_length > 0) {
-			memcpy(record_buffer,
-			       ndef_record_desc->id,
-			       ndef_record_desc->id_length);
+			memcpy(record_buffer, ndef_record_desc->id, ndef_record_desc->id_length);
 			record_buffer += ndef_record_desc->id_length;
 		}
 		/* count how much memory is left in record buffer for payload
@@ -100,10 +95,8 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 	} else if (ndef_record_desc->payload_constructor) {
 		int err;
 
-		err = ndef_record_desc->payload_constructor(
-					ndef_record_desc->payload_descriptor,
-					record_buffer,
-					&record_payload_len);
+		err = ndef_record_desc->payload_constructor(ndef_record_desc->payload_descriptor,
+							    record_buffer, &record_payload_len);
 
 		if (err) {
 			return err;
@@ -122,19 +115,15 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 	return 0;
 }
 
-int nfc_ndef_bin_payload_memcopy(
-			struct nfc_ndef_bin_payload_desc *payload_descriptor,
-			uint8_t *buffer,
-			uint32_t *len)
+int nfc_ndef_bin_payload_memcopy(struct nfc_ndef_bin_payload_desc *payload_descriptor,
+				 uint8_t *buffer, uint32_t *len)
 {
 	if (buffer) {
 		if (*len < payload_descriptor->payload_length) {
 			return -ENOSR;
 		}
 
-		memcpy(buffer,
-		       payload_descriptor->payload,
-		       payload_descriptor->payload_length);
+		memcpy(buffer, payload_descriptor->payload, payload_descriptor->payload_length);
 	}
 
 	*len = payload_descriptor->payload_length;

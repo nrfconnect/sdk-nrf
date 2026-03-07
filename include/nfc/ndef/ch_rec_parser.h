@@ -106,8 +106,8 @@ bool nfc_ndef_ch_rec_check(const struct nfc_ndef_record_desc *rec_desc,
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_rec_parse(const struct nfc_ndef_record_desc *rec_desc,
-			  uint8_t *result_buf, uint32_t *result_buf_len);
+int nfc_ndef_ch_rec_parse(const struct nfc_ndef_record_desc *rec_desc, uint8_t *result_buf,
+			  uint32_t *result_buf_len);
 
 /** @brief Parse an NDEF Alternative Carrier Record.
  *
@@ -130,8 +130,8 @@ int nfc_ndef_ch_rec_parse(const struct nfc_ndef_record_desc *rec_desc,
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_ac_rec_parse(const struct nfc_ndef_record_desc *rec_desc,
-			     uint8_t *result_buf, uint32_t *result_buf_len);
+int nfc_ndef_ch_ac_rec_parse(const struct nfc_ndef_record_desc *rec_desc, uint8_t *result_buf,
+			     uint32_t *result_buf_len);
 
 /** @brief Parse an NDEF Collision Resolution Record.
  *
@@ -171,8 +171,8 @@ int nfc_ndef_ch_cr_rec_parse(const struct nfc_ndef_record_desc *rec_desc,
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_ch_hc_rec_parse(const struct nfc_ndef_record_desc *rec_desc,
-			     uint8_t *result_buf, uint32_t *result_buf_len);
+int nfc_ndef_ch_hc_rec_parse(const struct nfc_ndef_record_desc *rec_desc, uint8_t *result_buf,
+			     uint32_t *result_buf_len);
 
 /** @brief Print the parsed contents of the fallowing Connection Handover
  *  Records:

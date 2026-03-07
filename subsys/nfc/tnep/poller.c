@@ -476,7 +476,7 @@ int nfc_tnep_poller_svc_select(const struct nfc_tnep_buf *svc_buf,
 		return -ENOMEM;
 	}
 
-	NFC_TNEP_SERIVCE_SELECT_RECORD_DESC_DEF(select_rec, svc->uri_length,
+	NFC_TNEP_SERVICE_SELECT_RECORD_DESC_DEF(select_rec, svc->uri_length,
 						svc->uri);
 
 	/* Prepare the NDEF message and add the Service Select
@@ -516,7 +516,7 @@ int nfc_tnep_poller_svc_deselect(void)
 		return 0;
 	}
 
-	NFC_TNEP_SERIVCE_SELECT_RECORD_DESC_DEF(deselect_rec, 0,
+	NFC_TNEP_SERVICE_SELECT_RECORD_DESC_DEF(deselect_rec, 0,
 						NULL);
 
 	nfc_ndef_msg_clear(&NFC_NDEF_MSG(deselect_msg));

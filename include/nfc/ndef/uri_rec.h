@@ -106,8 +106,7 @@ extern const uint8_t nfc_ndef_uri_rec_type;
  * @retval -ENOMEM If the predicted payload size is bigger than the provided
  * buffer space.
  */
-int nfc_ndef_uri_rec_payload_encode(struct nfc_ndef_uri_rec_payload *input,
-				    uint8_t *buff,
+int nfc_ndef_uri_rec_payload_encode(struct nfc_ndef_uri_rec_payload *input, uint8_t *buff,
 				    uint32_t *len);
 
 /** @brief Macro for generating a description of a URI record.
@@ -126,25 +125,16 @@ int nfc_ndef_uri_rec_payload_encode(struct nfc_ndef_uri_rec_payload *input,
  * the protocol field if the protocol was specified in @p uri_id_code.
  * @param uri_data_len_arg  Length of the URI string.
  */
-#define NFC_NDEF_URI_RECORD_DESC_DEF(name,				       \
-				     uri_id_code_arg,			       \
-				     uri_data_arg,			       \
-				     uri_data_len_arg)			       \
-	struct nfc_ndef_uri_rec_payload name##_ndef_uri_record_payload_desc =  \
-	{								       \
-		.uri_id_code = (uri_id_code_arg),			       \
-		.uri_data = (uri_data_arg),				       \
-		.uri_data_len = (uri_data_len_arg)			       \
-	};								       \
-									       \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(name,				       \
-					 TNF_WELL_KNOWN,		       \
-					 NULL,				       \
-					 0,				       \
-					 &nfc_ndef_uri_rec_type,	       \
-					 sizeof(nfc_ndef_uri_rec_type),	       \
-					 nfc_ndef_uri_rec_payload_encode,      \
-					 &name##_ndef_uri_record_payload_desc) \
+#define NFC_NDEF_URI_RECORD_DESC_DEF(name, uri_id_code_arg, uri_data_arg, uri_data_len_arg)        \
+	struct nfc_ndef_uri_rec_payload name##_ndef_uri_record_payload_desc = {                    \
+		.uri_id_code = (uri_id_code_arg),                                                  \
+		.uri_data = (uri_data_arg),                                                        \
+		.uri_data_len = (uri_data_len_arg)};                                               \
+                                                                                                   \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(name, TNF_WELL_KNOWN, NULL, 0, &nfc_ndef_uri_rec_type,    \
+					 sizeof(nfc_ndef_uri_rec_type),                            \
+					 nfc_ndef_uri_rec_payload_encode,                          \
+					 &name##_ndef_uri_record_payload_desc)
 
 /**
  * @brief Macro for accessing the NFC NDEF URI record descriptor instance that

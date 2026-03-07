@@ -51,16 +51,15 @@ bool nfc_ndef_le_oob_rec_check(const struct nfc_ndef_record_desc *rec_desc);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_le_oob_rec_parse(const struct nfc_ndef_record_desc *rec_desc,
-			      uint8_t *result_buf, uint32_t *result_buf_len);
+int nfc_ndef_le_oob_rec_parse(const struct nfc_ndef_record_desc *rec_desc, uint8_t *result_buf,
+			      uint32_t *result_buf_len);
 
 /** @brief Print the parsed contents of an NDEF LE OOB Record.
  *
  *  @param[in] le_oob_rec_desc Descriptor of the LE OOB Record that should
  *                             be printed.
  */
-void nfc_ndef_le_oob_rec_printout(
-	const struct nfc_ndef_le_oob_rec_payload_desc *le_oob_rec_desc);
+void nfc_ndef_le_oob_rec_printout(const struct nfc_ndef_le_oob_rec_payload_desc *le_oob_rec_desc);
 
 #ifdef __cplusplus
 }
