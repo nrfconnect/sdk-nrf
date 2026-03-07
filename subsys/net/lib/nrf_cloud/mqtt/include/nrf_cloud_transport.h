@@ -11,6 +11,13 @@
 #include <zephyr/net/mqtt.h>
 #include <net/nrf_cloud.h>
 
+/**
+ * @file
+ * @defgroup nrf_cloud_transport nRF Cloud Transport API
+ * @{
+ * @brief nRF Cloud Transport API.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
