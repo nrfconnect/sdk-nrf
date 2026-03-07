@@ -22,13 +22,12 @@ LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
 static void nrf_modem_lib_dfu_handler(uint32_t dfu_res);
 
-#ifdef CONFIG_SOC_SERIES_NRF91
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 #include <nrfx_ipc.h>
 #include <pm_config.h>
 
 #ifndef CONFIG_TRUSTED_EXECUTION_NONSECURE
-#error  nrf_modem_lib must be run as non-secure firmware.\
-	Are you building for the correct board ?
+#error  nrf_modem_lib must be run as non-secure firmware. Are you building for the correct board?
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 
 /* Interrupt used for communication with the network layer. */
@@ -71,9 +70,32 @@ static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
 	.shmem.size = PM_NRF_MODEM_LIB_SRAM_SIZE,
 	.fault_handler = nrf_modem_fault_handler
 };
-#endif /* CONFIG_SOC_SERIES_NRF91 */
+#else /* !CONFIG_PARTITION_MANAGER_ENABLED (use Device Tree) */
 
-#ifdef CONFIG_SOC_SERIES_NRF92
+#if CONFIG_SOC_SERIES_NRF91
+#include <nrfx_ipc.h>
+
+#ifndef CONFIG_TRUSTED_EXECUTION_NONSECURE
+#error  nrf_modem_lib must be run as non-secure firmware. Are you building for the correct board?
+#endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
+
+/* Interrupt used for communication with the network layer. */
+#define NRF_MODEM_IPC_IRQ DT_IRQ_BY_IDX(DT_NODELABEL(ipc), 0, irq)
+BUILD_ASSERT(IPC_IRQn == NRF_MODEM_IPC_IRQ, "NRF_MODEM_IPC_IRQ mismatch");
+
+static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
+	.ipc_irq_prio = CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
+	.shmem.base = DT_REG_ADDR(DT_NODELABEL(sram0_ns_modem)),
+	.shmem.size = DT_REG_SIZE(DT_NODELABEL(sram0_ns_modem)),
+	.fault_handler = nrf_modem_fault_handler
+};
+
+#endif
+
+/* The heap implementation in `nrf_modem_os.c` require some overhead
+ * to allow allocating up to `NRF_MODEM_LIB_SHMEM_TX_SIZE` bytes.
+ */
+#define NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE 128
 
 static const struct nrf_modem_init_params init_params = {
 	.shmem.ctrl = {
@@ -82,21 +104,17 @@ static const struct nrf_modem_init_params init_params = {
 	},
 	.shmem.tx = {
 		.base = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)),
-		.size = DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)),
+		.size = DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)) -
+			NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE,
 	},
 	.shmem.rx = {
 		.base = DT_REG_ADDR(DT_NODELABEL(cpucell_cpuapp_ipc_shm_heap)),
-#if CONFIG_NRF_MODEM_LIB_TRACE
-		.size = DT_REG_SIZE(DT_NODELABEL(cpucell_cpuapp_ipc_shm_heap)) / 2,
-#else
 		.size = DT_REG_SIZE(DT_NODELABEL(cpucell_cpuapp_ipc_shm_heap)),
-#endif
 	},
 #if CONFIG_NRF_MODEM_LIB_TRACE
 	.shmem.trace = {
-		.base = DT_REG_ADDR(DT_NODELABEL(cpucell_cpuapp_ipc_shm_heap)) +
-			DT_REG_SIZE(DT_NODELABEL(cpucell_cpuapp_ipc_shm_heap)) / 2,
-		.size = DT_REG_SIZE(DT_NODELABEL(cpucell_cpuapp_ipc_shm_heap)) / 2,
+		.base = DT_REG_ADDR(DT_NODELABEL(cpucell_cpuapp_ipc_shm_trace)),
+		.size = DT_REG_SIZE(DT_NODELABEL(cpucell_cpuapp_ipc_shm_trace)),
 	},
 #endif
 	.fault_handler = nrf_modem_fault_handler,
@@ -107,8 +125,7 @@ BUILD_ASSERT(
 	CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE <=
 		DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
 	"CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE exceeds 'cpuapp_cpucell_ipc_shm_ctrl' in devicetree");
-
-#endif /* CONFIG_SOC_SERIES_NRF92 */
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 #if CONFIG_NRF_MODEM_LIB_TRACE
 extern void nrf_modem_lib_trace_init(void);

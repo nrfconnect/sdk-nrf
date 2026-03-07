@@ -1,0 +1,38 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&sram0_ns_modem {
+	/* Modem (shared) memory */
+	reg = <0x0 0x8800>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ranges = <0x0 0x0 0x8800>;
+
+	cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+		/* Modem IPC control */
+		reg = <0x0 0x4e8>;
+	};
+
+	cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@4e8 {
+		/* Modem IPC transmit */
+		reg = <0x4e8 0x2080>;
+	};
+
+	cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@2568 {
+		/* Modem IPC receive */
+		reg = <0x2568 0x2000>;
+	};
+
+	cpucell_cpuapp_ipc_shm_trace: sram0_ns_modem@4568 {
+		/* Modem IPC receive */
+		reg = <0x4568 0x4000>;
+	};
+};
+
+&sram0_ns_app {
+	/* Non-Secure application memory */
+	reg = <0x8800 0x2f800>;
+};
