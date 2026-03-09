@@ -60,6 +60,8 @@ You can use the following Kconfig options to configure the sample:
 * :kconfig:option:`CONFIG_FPROTECT` - This option is disabled by default.
   It enables flash protection for the MCUboot code.
   You can disable it for development and enable it for production purposes to prevent MCUboot overwriting at runtime.
+  This option is not available on the nRF54H20 DK.
+  You can enable the flash protection on this platform using IronSide services (see :ref:`ug_nrf54h20_ironside_protect` for more details).
 * :kconfig:option:`CONFIG_MCUBOOT_LOG_LEVEL_DBG` - This option is enabled by default.
   It allows you to easily verify that MCUboot is starting up.
   Disable it for production builds.
@@ -70,11 +72,21 @@ You can use the following Kconfig options to configure the sample:
 * :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` - Use this option to set the application image version for software updates.
 
 To configure the sample to use KMU crypto storage, add ``-DSB_EXTRA_CONF_FILE=sysbuild_kmu.conf`` to the build command line.
+This option is supported only on nRF54L Series devices.
 This option brings in sysbuild configuration file that selects two additional options:
 
- * :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` - This option enables KMU support.
- * :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` - This option uses the build system to generate and prepare a bundle of default KMU keys to be used with the sample.
-   Do not use this option in a production build.
+* :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` - This option enables KMU support.
+* :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` - This option uses the build system to generate and prepare a bundle of default KMU keys to be used with the sample.
+
+  .. caution::
+     Do not use this option in a production build.
+     This is a security risk.
+
+To configure the sample to use ITS crypto storage, add the ``-DSB_EXTRA_CONF_FILE=sysbuild_its.conf`` option to the build command.
+This option is supported only on nRF54H Series devices.
+This option brings in sysbuild configuration file that selects one additional option:
+
+* :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_ITS` - This option enables ITS support.
 
 Signature key
 *************
@@ -92,14 +104,15 @@ On devices that store keys in crypto storage, the number of stored keys depends 
 Typically, three slots are reserved for storing MCUboot signature keys.
 To use MCUboot with crypto storage, you must provision a set of keys to the device in addition to compiling in support for crypto storage.
 If you use KMU for signature key storage, follow the instructions in :ref:`ug_kmu_provisioning_overview` to provision the keys.
+If you use ITS for signature key storage, follow the instructions in the :ref:`ug_nrf54h20_keys` page to provision the keys.
 
 Security considerations
 ***********************
 
 See the list of best practices, security-related options, and recommended settings when configuring the sample:
 
-* For secure production builds, enable the :kconfig:option:`CONFIG_FPROTECT` and :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV` Kconfig options.
-  For production builds, it is recommended to manage keys independently rather than rely on the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`.
+* For secure production builds, enable flash protection (either :kconfig:option:`CONFIG_FPROTECT` or the IronSide memory protection service, depending on the SoC) and the :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV` Kconfig option.
+  For production builds, manage keys independently instead of relying on automatic key generation (:kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`).
   See the :ref:`mcuboot_with_encryption_config` section for details.
 * MCUmgr's shell is enabled by default, allowing you to manage commands using a serial terminal.
 * MCUboot accepts unencrypted images in the secondary slot if signature verification passes.
@@ -111,6 +124,13 @@ See the list of best practices, security-related options, and recommended settin
     Use hardware-backed key storage in production.
   * Do not leave encryption keys or private keys in plain text inside the MCUboot binary.
 
+* ITS key handling:
+
+  * By default, MCUboot does not use ITS to store keys.
+  * If you enable ITS, MCUboot still compiles the asymmetric private key for transport encryption of the random AES key into the binary in plain text.
+    Use hardware-backed key storage in production.
+  * Do not store encryption keys or private keys in plain text in the MCUboot binary.
+
 Building and running
 ********************
 
@@ -118,7 +138,8 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-By default, the sample builds with KMU support for the platform that supports it (nRF54LV10, nRF54L15 and nRF54LM20), otherwise without KMU the encryption key is embedded within the MCUboot binary.
+By default, the sample builds with KMU support on platforms that support it (nRF54L Series).
+Otherwise, the signature key is embedded in the MCUboot binary.
 To see the encryption workflow, you must build two application images with different version numbers (for example, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option to ``1.0.0`` and ``2.0.0``), using separate build directories.
 
 Testing
@@ -176,6 +197,7 @@ Users should familiarize themselves with this section, as they will need to gene
    Do not use them in your product under any circumstances.
 
 To learn how to upload custom keys to KMU, see the :ref:`ug_nrf54l_dfu_config` documentation page.
+To learn how to upload custom keys to ITS, see the :ref:`ug_nrf54h20_keys` documentation page.
 
 Dependencies
 ************

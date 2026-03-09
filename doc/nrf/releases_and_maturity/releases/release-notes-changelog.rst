@@ -55,6 +55,10 @@ Bootloaders and DFU
 
   * Added the :ref:`sample documentation page <firmware_loader_entrance>`.
 
+* :ref:`mcuboot_with_encryption` sample:
+
+  * Added support for the nRF54H20 SoC.
+
 Developing with nRF91 Series
 ============================
 
