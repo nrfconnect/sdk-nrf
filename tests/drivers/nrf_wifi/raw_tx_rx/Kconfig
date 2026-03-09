@@ -56,3 +56,9 @@ config RX_THREAD_STACK_SIZE
 	default 4096
 	help
 	  This option sets the stack size for the threads used in the sample.
+
+config NRF_WIFI_RAW_TX_RX_PACKET_COUNT
+	int "Number of packets for TX-only and RX-only tests"
+	default 10
+	help
+	  Number of packets to send in TX-only test and to receive in RX-only test.
