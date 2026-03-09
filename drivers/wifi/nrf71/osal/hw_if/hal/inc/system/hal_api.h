@@ -119,20 +119,4 @@ enum nrf_wifi_status nrf_wifi_hal_coex_config_sleep_ctrl_gpio_ctrl(
 #endif /* NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL */
 
 
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
-/**
- * @brief Get the mapped address of a receive buffer.
- *
- * This function returns the mapped address of a receive buffer.
- *
- * @param hal_dev_ctx Pointer to the Wi-Fi HAL device context.
- * @param pool_id Pool ID of the buffer.
- * @param buf_id Buffer ID of the buffer.
- *
- * @return The mapped address of the buffer.
- */
-unsigned long nrf_wifi_hal_get_buf_map_rx(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-					  unsigned int pool_id,
-					  unsigned int buf_id);
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 #endif /* __HAL_API_SYS_H__ */

@@ -211,8 +211,6 @@ struct nrf_wifi_hal_dev_ctx {
 	void *event_tasklet;
 	/** RX lock */
 	void *lock_rx;
-	/** RX buffer information */
-	struct nrf_wifi_hal_buf_map_info *rx_buf_info[MAX_NUM_OF_RX_QUEUES];
 	/** RPU PKTRAM base address */
 	unsigned long addr_rpu_pktram_base;
 	/** RPU PKTRAM base address for TX */

@@ -112,8 +112,6 @@ void nrf_wifi_hal_proc_ctx_set(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 
 void nrf_wifi_hal_dev_rem(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 {
-	unsigned int i = 0;
-
 	nrf_wifi_osal_tasklet_kill(hal_dev_ctx->recovery_tasklet);
 	nrf_wifi_osal_tasklet_free(hal_dev_ctx->recovery_tasklet);
 	nrf_wifi_osal_spinlock_free(hal_dev_ctx->lock_recovery);
@@ -136,11 +134,6 @@ void nrf_wifi_hal_dev_rem(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 #endif
 
 	nrf_wifi_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
-
-	for (i = 0; i < MAX_NUM_OF_RX_QUEUES; i++) {
-		nrf_wifi_osal_mem_free(hal_dev_ctx->rx_buf_info[i]);
-		hal_dev_ctx->rx_buf_info[i] = NULL;
-	}
 
 	hal_dev_ctx->hpriv->num_devs--;
 

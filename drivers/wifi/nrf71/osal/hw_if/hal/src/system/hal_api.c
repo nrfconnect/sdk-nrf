@@ -48,9 +48,6 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 						      void *mac_dev_ctx)
 {
 	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = NULL;
-	unsigned int i = 0;
-	unsigned int num_rx_bufs = 0;
-	unsigned int size = 0;
 
 	hal_dev_ctx = nrf_wifi_osal_mem_zalloc(sizeof(*hal_dev_ctx));
 
@@ -120,24 +117,8 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 				      __func__);
 		goto lock_recovery_free;
 	}
-	for (i = 0; i < MAX_NUM_OF_RX_QUEUES; i++) {
-		num_rx_bufs = hal_dev_ctx->hpriv->cfg_params.rx_buf_pool[i].num_bufs;
-
-		size = (num_rx_bufs * sizeof(struct nrf_wifi_hal_buf_map_info));
-
-		hal_dev_ctx->rx_buf_info[i] = nrf_wifi_osal_mem_zalloc(size);
-
-		if (!hal_dev_ctx->rx_buf_info[i]) {
-			nrf_wifi_osal_log_err("%s: No space for RX buf info[%d]",
-					      __func__,
-					      i);
-			goto bal_dev_free;
-		}
-	}
 	return hal_dev_ctx;
 
-bal_dev_free:
-	nrf_wifi_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
 lock_recovery_free:
 	nrf_wifi_osal_spinlock_free(hal_dev_ctx->lock_recovery);
 	nrf_wifi_osal_tasklet_free(hal_dev_ctx->event_tasklet);
@@ -214,24 +195,3 @@ void nrf_wifi_sys_hal_unlock_rx(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 	nrf_wifi_osal_spinlock_irq_rel(hal_dev_ctx->lock_rx,
 				       &flags);
 }
-
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
-unsigned long nrf_wifi_hal_get_buf_map_rx(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-					  unsigned int pool_id,
-					  unsigned int buf_id)
-{
-	struct nrf_wifi_hal_buf_map_info *rx_buf_info = NULL;
-
-	rx_buf_info = &hal_dev_ctx->rx_buf_info[pool_id][buf_id];
-
-	if (rx_buf_info->mapped) {
-		return rx_buf_info->phy_addr;
-	}
-	nrf_wifi_osal_log_err("%s: Rx buffer not mapped for pool_id = %d, buf_id=%d\n",
-			      __func__,
-			      pool_id,
-			      buf_id);
-
-	return -1;
-}
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
