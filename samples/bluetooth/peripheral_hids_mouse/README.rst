@@ -42,12 +42,12 @@ User interface
       Button 1:
          Simulate moving the mouse pointer five pixels to the left.
 
-         If Man-In-The-Middle (MITM) protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) is enabled, you can press this button while pairing to confirm the passkey value that is printed on the COM listener to pair with the other device.
+         If Man-In-The-Middle (MITM) protection based on passkey display (:option:`CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`) is enabled, you can press this button while pairing to confirm the passkey value that is printed on the COM listener to pair with the other device.
 
       Button 2:
          Simulate moving the mouse pointer five pixels up.
 
-         If Man-In-The-Middle (MITM) protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) is enabled, you can press this button while pairing to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
+         If Man-In-The-Middle (MITM) protection based on passkey display (:option:`CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`) is enabled, you can press this button while pairing to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
 
       Button 3:
          Simulate moving the mouse pointer five pixels to the right.
@@ -60,12 +60,12 @@ User interface
       Button 0:
          Simulate moving the mouse pointer five pixels to the left.
 
-         If Man-In-The-Middle (MITM) protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) is enabled, you can press this button while pairing to confirm the passkey value that is printed on the COM listener to pair with the other device.
+         If Man-In-The-Middle (MITM) protection based on passkey display (:option:`CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`) is enabled, you can press this button while pairing to confirm the passkey value that is printed on the COM listener to pair with the other device.
 
       Button 1:
          Simulate moving the mouse pointer five pixels up.
 
-         If Man-In-The-Middle (MITM) protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) is enabled, you can press this button while pairing to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
+         If Man-In-The-Middle (MITM) protection based on passkey display (:option:`CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`) is enabled, you can press this button while pairing to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
 
       Button 2:
          Simulate moving the mouse pointer five pixels to the right.
@@ -78,41 +78,51 @@ Configuration
 
 |config|
 
-Bluetooth LE security
+Configuration options
 =====================
 
-By default, the sample enables Bluetooth LE security support through the ``CONFIG_BT_HIDS_SECURITY_ENABLED`` sample-specific Kconfig option.
+The following sample-specific Kconfig options are used in this sample (defined in :file:`samples/bluetooth/peripheral_hids_mouse/Kconfig`):
+
+.. options-from-kconfig::
+   :show-type:
+
+See the following sections for more details related to the options.
+
+Bluetooth LE security
+---------------------
+
+By default, the sample enables Bluetooth LE security support through the :option:`CONFIG_BT_HIDS_SECURITY_ENABLED` sample-specific Kconfig option.
 This allows the sample to encrypt connections and create Bluetooth bonds.
 The option also implies Bluetooth privacy (:kconfig:option:`CONFIG_BT_PRIVACY`).
 You can disable the sample-specific Kconfig option to disable support for Bluetooth security.
 
 Man-In-The-Middle (MITM) protection
------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, the sample also enables MITM protection based on passkey display (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``).
+By default, the sample also enables MITM protection based on passkey display (:option:`CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`).
 This is done to prevent Man-In-The-Middle attacks through authentication.
 Since the :c:func:`printk` function is used to display the passkey, the feature depends on :kconfig:option:`CONFIG_PRINTK`.
 
 HID GATT characteristic attributes permissions
-----------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Configurations of the sample require Bluetooth link encryption to access the HID Service (:kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_ENCRYPT`).
 The HID Service specification does not require encryption, but Bluetooth link encryption is required by the HID over GATT Profile Specification.
-The Bluetooth LE security support (``CONFIG_BT_HIDS_SECURITY_ENABLED``) is required to encrypt a link.
+The Bluetooth LE security support (:option:`CONFIG_BT_HIDS_SECURITY_ENABLED`) is required to encrypt a link.
 Some of the HID hosts may not subscribe for HID input reports or disconnect the Bluetooth link if Bluetooth LE security is not supported.
 
-If you disable Bluetooth LE security support (``CONFIG_BT_HIDS_SECURITY_ENABLED``), you need to allow access to HID Service without encryption (:kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW`) too.
+If you disable Bluetooth LE security support (:option:`CONFIG_BT_HIDS_SECURITY_ENABLED`), you need to allow access to HID Service without encryption (:kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW`) too.
 This imposes a security risk of, among others, passive eavesdropping of the communication between HID device and HID host.
 Because of that it is not recommended for production.
 
 .. note::
-   If MITM protection based on passkey display is enabled (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``) and you want to pair the device with a computer running MacOS, set the :kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_AUTHEN` Kconfig option to ``y``.
+   If MITM protection based on passkey display is enabled (:option:`CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`) and you want to pair the device with a computer running MacOS, set the :kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_AUTHEN` Kconfig option to ``y``.
 
 Bluetooth direct advertising
-============================
+----------------------------
 
-By default, the sample enables the ``CONFIG_BT_DIRECTED_ADVERTISING`` sample-specific Kconfig option that enables using Bluetooth direct advertising.
-The feature depends on Bluetooth LE security support (``CONFIG_BT_HIDS_SECURITY_ENABLED``).
+By default, the sample enables the :option:`CONFIG_BT_DIRECTED_ADVERTISING` sample-specific Kconfig option that enables using Bluetooth direct advertising.
+The feature depends on Bluetooth LE security support (:option:`CONFIG_BT_HIDS_SECURITY_ENABLED`).
 This feature changes the way advertising works in comparison to the other Bluetooth Low Energy samples.
 When the device wants to advertise, it starts with high duty cycle directed advertising provided that it has bonding information.
 If the timeout occurs, the device starts directed advertising to the next bonded peer.
@@ -180,7 +190,7 @@ You can use the configuration to verify the memory footprint of the sample as it
 
 .. note::
    The ``release`` configuration does not emit logs (and :c:func:`printk` messages).
-   Because of that, it cannot enable passkey display MITM protection (``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED``).
+   Because of that, it cannot enable passkey display MITM protection (:option:`CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`).
 
 Use the following command to build the sample in ``release`` configuration:
 
