@@ -996,7 +996,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
         | Static RAM (sram_primary)                     | 0 kB (0x0)          | 512 kB (0x80000)  |-                    |-                |-                |
         +-----------------------------------------------+---------------------+-------------------+---------------------+-----------------+-----------------+
 
-..
+.. include:: ../../../includes/pm_deprecation.txt
 
 You can generate :ref:`Partition Manager's ASCII representation <pm_partition_reports>` of these tables by running the following command for your respective *board_target*:
 
