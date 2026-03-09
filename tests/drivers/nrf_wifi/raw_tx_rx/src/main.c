@@ -21,6 +21,10 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 
 #include <zephyr/ztest.h>
 
+#ifndef CONFIG_NRF_WIFI_RAW_TX_RX_PACKET_COUNT
+#define CONFIG_NRF_WIFI_RAW_TX_RX_PACKET_COUNT 10
+#endif
+
 #define BEACON_PAYLOAD_LENGTH	     256
 #define CONTINUOUS_MODE_TRANSMISSION 0
 #define FIXED_MODE_TRANSMISSION	     1
@@ -39,8 +43,11 @@ struct packet_data {
 };
 
 struct packet_data test_packet;
-#define STACK_SIZE	CONFIG_RX_THREAD_STACK_SIZE
-#define THREAD_PRIORITY K_PRIO_COOP(CONFIG_NUM_COOP_PRIORITIES - 1)
+#define STACK_SIZE		CONFIG_RX_THREAD_STACK_SIZE
+#define THREAD_PRIORITY		K_PRIO_COOP(CONFIG_NUM_COOP_PRIORITIES - 1)
+#define THREAD_JOIN_TIMEOUT_SEC  1
+/* RX thread must exit before join timeout so we never close socket while blocked in recv. */
+#define RX_THREAD_RUN_MS	       (THREAD_JOIN_TIMEOUT_SEC * 1000U - 200U)
 struct sockaddr_ll sa;
 
 static void rx_thread_oneshot(void);
@@ -245,8 +252,7 @@ static int wifi_send_raw_tx_packets(unsigned int num_pkts)
 	struct raw_tx_pkt_header packet;
 	char *test_frame = NULL;
 	unsigned int buf_length;
-
-	ARG_UNUSED(num_pkts);
+	unsigned int i;
 
 	fill_raw_tx_pkt_hdr(&packet);
 
@@ -259,20 +265,23 @@ static int wifi_send_raw_tx_packets(unsigned int num_pkts)
 	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
 	memcpy(test_frame, &packet, sizeof(struct raw_tx_pkt_header));
 
-	ret = wifi_send_single_raw_tx_packet(raw_socket_fd, test_frame, buf_length, &sa);
-	if (ret < 0) {
-		LOG_ERR("Failed to send raw tx packets");
+	for (i = 0; i < num_pkts; i++) {
+		ret = wifi_send_single_raw_tx_packet(raw_socket_fd, test_frame, buf_length, &sa);
+		if (ret < 0) {
+			LOG_ERR("Failed to send raw tx packet %u/%u", i + 1, num_pkts);
+			free(test_frame);
+			return -1;
+		}
 	}
 
 	free(test_frame);
-	return ret;
+	return 0;
 }
 
+/* Returns 1 if a packet was received, 0 on timeout (EAGAIN), negative on error. */
 static int process_single_rx_packet(struct packet_data *packet)
 {
 	int received;
-
-	LOG_INF("Wi-Fi monitor mode RX thread started");
 
 	received = recv(raw_socket_fd, packet->recv_buffer, sizeof(packet->recv_buffer), 0);
 	if (received <= 0) {
@@ -286,7 +295,7 @@ static int process_single_rx_packet(struct packet_data *packet)
 		}
 	}
 
-	return 0;
+	return 1;
 }
 
 /* handle incoming wifi packets in monitor mode */
@@ -298,6 +307,8 @@ static void rx_thread_oneshot(void)
 		.tv_usec = 0,
 	};
 
+	LOG_INF("Wi-Fi monitor mode RX thread started");
+
 	ret = setsockopt(raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
 			 sizeof(timeo_optval));
 	if (ret < 0) {
@@ -306,6 +317,47 @@ static void rx_thread_oneshot(void)
 	}
 
 	process_single_rx_packet(&test_packet);
+}
+
+static volatile uint32_t g_rx_packets_received;
+
+K_THREAD_STACK_DEFINE(rx_n_stack, STACK_SIZE);
+
+static void rx_thread_n_packets(void *p1, void *p2, void *p3)
+{
+	int ret;
+	struct timeval timeo_optval = {
+		.tv_sec = 0,
+		.tv_usec = 100000, /* 100 ms per recv so we can check deadline */
+	};
+	uint32_t n = CONFIG_NRF_WIFI_RAW_TX_RX_PACKET_COUNT;
+	uint64_t start_ms = k_uptime_get();
+
+	ARG_UNUSED(p1);
+	ARG_UNUSED(p2);
+	ARG_UNUSED(p3);
+
+	g_rx_packets_received = 0;
+
+	ret = setsockopt(raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
+			 sizeof(timeo_optval));
+	if (ret < 0) {
+		LOG_ERR("Failed to set socket options: %s", strerror(errno));
+		return;
+	}
+
+	LOG_INF("Wi-Fi monitor mode RX thread started (expect up to %u packets, max %ums)", n,
+		(unsigned int)RX_THREAD_RUN_MS);
+
+	while (n > 0 && (k_uptime_get() - start_ms) < RX_THREAD_RUN_MS) {
+		ret = process_single_rx_packet(&test_packet);
+		if (ret == 1) {
+			g_rx_packets_received++;
+			n--;
+		} else if (ret < 0) {
+			break;
+		}
+	}
 }
 
 ZTEST(nrf_wifi, test_single_raw_tx_rx)
@@ -342,11 +394,85 @@ ZTEST(nrf_wifi, test_single_raw_tx_rx)
 	/* TODO: Wait for interface to be operationally UP */
 	k_sleep(K_MSEC(50));
 	zassert_false(wifi_send_raw_tx_packets(1), "Failed to send raw tx packets");
-	zassert_not_equal(
-		k_thread_join(receiver_thread_id, K_SECONDS(CONFIG_NRF_WIFI_RAW_RX_PKT_TIMEOUT_S)),
-		0, "Thread join failed/timedout");
+	ret = k_thread_join(receiver_thread_id, K_SECONDS(THREAD_JOIN_TIMEOUT_SEC));
+	zassert_equal(ret, 0, "RX thread join failed or timed out");
 	zassert_mem_equal(&test_beacon_frame, &test_packet.recv_buffer[RAW_PKT_DATA_OFFSET],
 			  sizeof(test_beacon_frame), "Mismatch in sent and received data");
+
+	close(raw_socket_fd);
+}
+
+ZTEST(nrf_wifi, test_tx_only)
+{
+	struct net_if *iface;
+	struct wifi_filter_info filter_info = {0};
+	int ret;
+	unsigned int n = CONFIG_NRF_WIFI_RAW_TX_RX_PACKET_COUNT;
+	/* MONITOR mode */
+	int mode = BIT(1);
+
+	wifi_set_mode(mode);
+	zassert_false(wifi_set_tx_injection_mode(), "Failed to set TX injection mode");
+	zassert_equal(wifi_set_channel(), 0, "Failed to set channel");
+
+	iface = net_if_get_first_wifi();
+	zassert_not_null(iface, "Failed to get Wi-Fi iface for packet filter");
+
+	filter_info.oper = WIFI_MGMT_SET;
+	filter_info.if_index = net_if_get_by_iface(iface);
+	filter_info.filter = WIFI_PACKET_FILTER_ALL;
+	filter_info.buffer_size = 1550;
+
+	ret = net_mgmt(NET_REQUEST_WIFI_PACKET_FILTER, iface, &filter_info, sizeof(filter_info));
+	zassert_equal(ret, 0, "Packet filter setting failed %d", ret);
+
+	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt transmission failed");
+
+	k_sleep(K_MSEC(50));
+
+	zassert_false(wifi_send_raw_tx_packets(n), "Failed to send %u raw tx packets", n);
+
+	close(raw_socket_fd);
+}
+
+ZTEST(nrf_wifi, test_rx_only)
+{
+	struct net_if *iface;
+	struct wifi_filter_info filter_info = {0};
+	struct k_thread rx_n_thread;
+	k_tid_t rx_n_tid;
+	int ret;
+	uint32_t n = CONFIG_NRF_WIFI_RAW_TX_RX_PACKET_COUNT;
+	/* MONITOR mode */
+	int mode = BIT(1);
+
+	wifi_set_mode(mode);
+	zassert_equal(wifi_set_channel(), 0, "Failed to set channel");
+
+	iface = net_if_get_first_wifi();
+	zassert_not_null(iface, "Failed to get Wi-Fi iface for packet filter");
+
+	filter_info.oper = WIFI_MGMT_SET;
+	filter_info.if_index = net_if_get_by_iface(iface);
+	filter_info.filter = WIFI_PACKET_FILTER_ALL;
+	filter_info.buffer_size = 1550;
+
+	ret = net_mgmt(NET_REQUEST_WIFI_PACKET_FILTER, iface, &filter_info, sizeof(filter_info));
+	zassert_equal(ret, 0, "Packet filter setting failed %d", ret);
+
+	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt receive failed");
+
+	rx_n_tid = k_thread_create(&rx_n_thread, rx_n_stack, K_THREAD_STACK_SIZEOF(rx_n_stack),
+				   rx_thread_n_packets, NULL, NULL, NULL,
+				   THREAD_PRIORITY, 0, K_NO_WAIT);
+
+	ret = k_thread_join(rx_n_tid, K_SECONDS(THREAD_JOIN_TIMEOUT_SEC));
+	zassert_equal(ret, 0, "RX thread join failed or timed out");
+
+	LOG_INF("RX-only: received %u packets in %ds", g_rx_packets_received,
+		THREAD_JOIN_TIMEOUT_SEC);
+	zassert_true(g_rx_packets_received >= n,
+		     "RX-only: expected at least %u packets, got %u", n, g_rx_packets_received);
 
 	close(raw_socket_fd);
 }
