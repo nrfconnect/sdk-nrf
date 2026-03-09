@@ -248,6 +248,13 @@ config MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE
 	help
 	  If enabled, the build system will generate keyfile.json file in the build directory.
 
+config MCUBOOT_GENERATE_DEFAULT_KEY_FILE
+	bool "Generate default keyfile for provisioning"
+	depends on SOC_SERIES_NRF54H
+	depends on MCUBOOT_SIGNATURE_USING_ITS
+	help
+	  If enabled, the build system will generate keyfile.json file in the build directory.
+
 endif
 
 config MCUBOOT_USE_ALL_AVAILABLE_RAM
