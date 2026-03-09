@@ -625,51 +625,28 @@ enum nrf_wifi_status rawtx_cmd_prep_callbk_fn(void *callbk_data,
 					      void *nbuf)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	struct nrf_wifi_fmac_buf_map_info *tx_buf_info = NULL;
 	unsigned long nwb = 0;
 	unsigned long nwb_data = 0;
 	struct tx_cmd_prep_raw_info *info = NULL;
 	struct nrf_wifi_cmd_raw_tx *config = NULL;
-	unsigned int desc_id = 0;
 	unsigned int buf_len = 0;
 	unsigned char frame_indx = 0;
-	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
-	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 
 	info = (struct tx_cmd_prep_raw_info *)callbk_data;
-	fmac_dev_ctx = info->fmac_dev_ctx;
 	config = info->raw_config;
 	frame_indx = info->num_tx_pkts;
 
-	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
-	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	nwb = (unsigned long)nbuf;
-	desc_id = (config->raw_tx_info.desc_num *
-		   sys_fpriv->data_config.max_tx_aggregation) + frame_indx;
-
-	tx_buf_info = &sys_dev_ctx->tx_buf_info[desc_id];
-	if (tx_buf_info->mapped) {
-		nrf_wifi_osal_log_err("%s: Raw init_TX cmd called for already mapped TX buffer(%d)",
-				      __func__,
-				      desc_id);
-
-		status = NRF_WIFI_STATUS_FAIL;
-		goto out;
-	}
 
 	nwb_data = (unsigned long)nrf_wifi_osal_nbuf_data_get((void *)nwb);
 	buf_len = nrf_wifi_osal_nbuf_data_size((void *)nwb);
 
 	config->raw_tx_info.pkt_length[frame_indx] = buf_len;
-	tx_buf_info->nwb = nwb;
-	tx_buf_info->mapped = true;
 	nrf_wifi_osal_log_dbg("%s: frame pointer for data is 0x%x", __func__, nwb_data);
 	config->raw_tx_info.frame_ddr_pointer[frame_indx] = (unsigned long long)nwb_data;
 	info->num_tx_pkts++;
 
 	status = NRF_WIFI_STATUS_SUCCESS;
-out:
 	return status;
 }
 #endif /* NRF71_RAW_DATA_TX */
@@ -679,41 +656,23 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	struct nrf_wifi_fmac_buf_map_info *tx_buf_info = NULL;
 	unsigned long nwb = 0;
 	unsigned long nwb_data = 0;
 	struct tx_cmd_prep_info *info = NULL;
 	struct nrf_wifi_tx_buff *config = NULL;
-	unsigned int desc_id = 0;
 	unsigned int buf_len = 0;
 	unsigned char frame_indx = 0;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
-	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
 
 	info = (struct tx_cmd_prep_info *)callbk_data;
 	fmac_dev_ctx = info->fmac_dev_ctx;
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
-	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
 	config = info->config;
 	frame_indx = config->num_tx_pkts;
 
 	nwb = (unsigned long)nbuf;
-
-	desc_id = (config->tx_desc_num *
-		   sys_fpriv->data_config.max_tx_aggregation) + frame_indx;
-
-	tx_buf_info = &sys_dev_ctx->tx_buf_info[desc_id];
-
-	if (tx_buf_info->mapped) {
-		nrf_wifi_osal_log_err("%s: Init_TX cmd called for already mapped TX buffer(%d)",
-				      __func__,
-				      desc_id);
-
-		status = NRF_WIFI_STATUS_FAIL;
-		goto out;
-	}
 
 	nwb_data = (unsigned long)nrf_wifi_osal_nbuf_data_get((void *)nwb);
 
@@ -724,7 +683,6 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	config->num_tx_pkts++;
 
 	status = NRF_WIFI_STATUS_SUCCESS;
-out:
 	return status;
 }
 
@@ -1264,9 +1222,6 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_priv *fpriv = NULL;
 	unsigned int desc = 0;
-	unsigned int frame = 0;
-	unsigned int desc_id = 0;
-	struct nrf_wifi_fmac_buf_map_info *tx_buf_info = NULL;
 	struct tx_pkt_info *pkt_info = NULL;
 	unsigned int pkt = 0;
 	unsigned int pkts_pending = 0;
@@ -1291,14 +1246,6 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 
 	pkt_info = &sys_dev_ctx->tx_config.pkt_info_p[desc];
 	nwb_list = pkt_info->pkt;
-
-	for (frame = 0;
-	     frame < sys_dev_ctx->tx_config.send_pkt_coalesce_count_p[desc];
-	     frame++) {
-		desc_id = (desc * sys_fpriv->data_config.max_tx_aggregation) + frame;
-
-		tx_buf_info = &sys_dev_ctx->tx_buf_info[desc_id];
-	}
 
 	pkt = 0;
 

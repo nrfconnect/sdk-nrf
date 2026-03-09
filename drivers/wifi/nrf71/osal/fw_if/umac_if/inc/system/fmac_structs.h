@@ -486,8 +486,6 @@ struct nrf_wifi_sys_fmac_dev_ctx {
 	struct tx_config tx_config;
 #endif
 #if defined(NRF71_STA_MODE)
-	/** Queue for storing mapping info of TX buffers. */
-	struct nrf_wifi_fmac_buf_map_info *tx_buf_info;
 	/** TWT state of the RPU. */
 	enum nrf_wifi_fmac_twt_state twt_sleep_status;
 #if defined(NRF71_TX_DONE_WQ_ENABLED)

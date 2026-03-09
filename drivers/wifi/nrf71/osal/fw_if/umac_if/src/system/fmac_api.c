@@ -47,28 +47,14 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_init_tx(struct nrf_wifi_fmac_dev_c
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	unsigned int size = 0;
 
 	fpriv = fmac_dev_ctx->fpriv;
 
 	sys_fpriv = wifi_fmac_priv(fpriv);
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	size = (sys_fpriv->num_tx_tokens *
-		sys_fpriv->data_config.max_tx_aggregation *
-		sizeof(struct nrf_wifi_fmac_buf_map_info));
-
-	sys_dev_ctx->tx_buf_info = nrf_wifi_osal_data_mem_zalloc(size);
-
-	if (!sys_dev_ctx->tx_buf_info) {
-		nrf_wifi_osal_log_err("%s: No space for TX buf info",
-				      __func__);
-		goto out;
-	}
-
 	status = tx_init(fmac_dev_ctx);
 
-out:
 	return status;
 }
 
@@ -83,8 +69,6 @@ static void nrf_wifi_sys_fmac_deinit_tx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 	fpriv = fmac_dev_ctx->fpriv;
 
 	tx_deinit(fmac_dev_ctx);
-
-	nrf_wifi_osal_data_mem_free(sys_dev_ctx->tx_buf_info);
 }
 
 #endif /* NRF71_DATA_TX */
