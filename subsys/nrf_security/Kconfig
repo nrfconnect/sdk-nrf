@@ -45,6 +45,7 @@ config NRF_SECURITY
 	select TFM_BL2_NOT_SUPPORTED if BUILD_WITH_TFM
 	select PSA_CRYPTO_CLIENT
 	select PSA_CRYPTO
+	imply MBEDTLS
 	help
 	  Set this configuration to enable nRF Security. This provides
 	  Arm PSA cryptography APIs with RNG support (optionally).
