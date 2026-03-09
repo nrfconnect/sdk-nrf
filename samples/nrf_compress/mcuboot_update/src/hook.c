@@ -17,8 +17,6 @@
 
 LOG_MODULE_REGISTER(mcuboot_update_sample, LOG_LEVEL_DBG);
 
-#define SECONDARY_SLOT 1
-
 #ifndef CONFIG_MCUMGR_GRP_IMG_FRUGAL_LIST
 #define ZCBOR_ENCODE_FLAG(zse, label, value) \
 	(zcbor_tstr_put_lit(zse, label) && zcbor_bool_put(zse, value))
@@ -34,24 +32,28 @@ static struct k_work slot_output_work;
 
 static void slot_output_handler(struct k_work *work)
 {
+	uint32_t slot;
 	uint32_t slot_flags;
 	int rc;
 
-	rc = img_mgmt_read_info(SECONDARY_SLOT, NULL, NULL, &slot_flags);
+	for (size_t img = 0; img < CONFIG_UPDATEABLE_IMAGE_NUMBER; img++) {
+		slot = (img * 2) + 1;
 
-	if (!rc) {
-		slot_flags &= IMAGE_F_COMPRESSED_LZMA2 | IMAGE_F_COMPRESSED_ARM_THUMB_FLT;
-
-		if (slot_flags == (IMAGE_F_COMPRESSED_LZMA2 | IMAGE_F_COMPRESSED_ARM_THUMB_FLT)) {
-			LOG_INF(
-			"Secondary slot image is LZMA2 compressed with ARM thumb filter applied");
-		} else if (slot_flags & IMAGE_F_COMPRESSED_LZMA2) {
-			LOG_INF("Secondary slot image is LZMA2 compressed");
-		} else {
-			LOG_INF("Secondary slot image is uncompressed");
+		rc = img_mgmt_read_info(slot, NULL, NULL, &slot_flags);
+		if (rc) {
+			continue;
 		}
-	} else {
-		LOG_ERR("Failed to read slot info: %d", rc);
+
+		slot_flags &= IMAGE_F_COMPRESSED_LZMA2 | IMAGE_F_COMPRESSED_ARM_THUMB_FLT;
+		if (slot_flags == (IMAGE_F_COMPRESSED_LZMA2 | IMAGE_F_COMPRESSED_ARM_THUMB_FLT)) {
+			LOG_INF("Secondary slot image %d is LZMA2 compressed with ARM thumb filter "
+				"applied",
+				img);
+		} else if (slot_flags & IMAGE_F_COMPRESSED_LZMA2) {
+			LOG_INF("Secondary slot image %d is LZMA2 compressed", img);
+		} else {
+			LOG_INF("Secondary slot image %d is uncompressed", img);
+		}
 	}
 }
 
