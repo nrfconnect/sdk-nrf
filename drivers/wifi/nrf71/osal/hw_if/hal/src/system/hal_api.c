@@ -134,28 +134,8 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 			goto bal_dev_free;
 		}
 	}
-#ifdef NRF71_DATA_TX
-	size = (hal_dev_ctx->hpriv->cfg_params.max_tx_frms *
-		sizeof(struct nrf_wifi_hal_buf_map_info));
-
-	hal_dev_ctx->tx_buf_info = nrf_wifi_osal_mem_zalloc(size);
-
-	if (!hal_dev_ctx->tx_buf_info) {
-		nrf_wifi_osal_log_err("%s: No space for TX buf info",
-				      __func__);
-		goto rx_buf_free;
-	}
-#endif /* NRF71_DATA_TX */
 	return hal_dev_ctx;
 
-#ifdef NRF71_DATA_TX
-rx_buf_free:
-
-	for (i = 0; i < MAX_NUM_OF_RX_QUEUES; i++) {
-		nrf_wifi_osal_mem_free(hal_dev_ctx->rx_buf_info[i]);
-		hal_dev_ctx->rx_buf_info[i] = NULL;
-	}
-#endif /* NRF71_DATA_TX */
 bal_dev_free:
 	nrf_wifi_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
 lock_recovery_free:

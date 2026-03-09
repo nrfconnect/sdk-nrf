@@ -137,9 +137,6 @@ void nrf_wifi_hal_dev_rem(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 
 	nrf_wifi_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
 
-	nrf_wifi_osal_mem_free(hal_dev_ctx->tx_buf_info);
-	hal_dev_ctx->tx_buf_info = NULL;
-
 	for (i = 0; i < MAX_NUM_OF_RX_QUEUES; i++) {
 		nrf_wifi_osal_mem_free(hal_dev_ctx->rx_buf_info[i]);
 		hal_dev_ctx->rx_buf_info[i] = NULL;
