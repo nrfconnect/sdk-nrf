@@ -22,6 +22,8 @@ However, it customizes Zephyr's sample to fulfill the |NCS| requirements (for ex
 This sample supports optional :ref:`logging extension <ot_coprocessor_sample_logging>`, which can be turned on or off independently.
 To enable logging extension, use the ``ot-debug`` snippet.
 
+.. _ot_coprocessor_sample_requirements:
+
 Requirements
 ************
 
@@ -124,16 +126,38 @@ Building and running
 HCI support
 ===========
 
-Currently, HCI is only supported using the nRF USB interface.
-The device will show two virtual UART ports.
-Usually the first port will be associated with the HCI interface, and the second one with the Thread co-processor.
+The sample supports Bluetooth® Low Energy (LE) Controller functionality using HCI over UART.
+To enable HCI support, complete the following steps:
 
-To enable HCI support, run the following command with *board_target* replaced with the board target name:
+.. tabs::
 
-.. parsed-literal::
-   :class: highlight
+   .. tab:: nRF54L15, nRF54L10, and nRF54L05 DKs
 
-   west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/rcp_hci.conf -DEXTRA_DTC_OVERLAY_FILE=extra_conf/rcp_hci.overlay
+      HCI communication is handled over a dedicated UART peripheral on the nRF54L Series System-on-Chip (SoC).
+      After connecting the board using the SEGGER J-Link USB port, two serial ports will be created.
+      The first port is used for HCI and the second for the Thread co-processor (Spinel).
+
+      To enable HCI support, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/rcp_hci_nrf54l_05_10_15.conf -DEXTRA_DTC_OVERLAY_FILE=extra_conf/rcp_hci_nrf54l_05_10_15.overlay
+
+   .. tab:: Other supported boards
+
+      For a list of supported boards, see the :ref:`ot_coprocessor_sample_requirements` section.
+
+      HCI communication is handled over a USB CDC ACM interface.
+      After connecting the board using the nRF USB port, two serial ports will be created.
+      Usually, the first port is used for HCI and the second for the Thread co-processor.
+
+      To enable HCI support, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/rcp_hci.conf -DEXTRA_DTC_OVERLAY_FILE=extra_conf/rcp_hci.overlay
 
 Vendor hooks
 ============
@@ -153,7 +177,7 @@ Testing
 After building the sample and programming it to your development kit, complete the following steps to test it:
 
 1. Connect the development kit's SEGGER J-Link USB port to the PC USB port with a USB cable.
-   If you are using HCI, connect the kit's nRF USB port to the PC USB port instead.
+   If you are using HCI for boards other than nRF54L15, nRF54L10, and nRF54L05 DKs, connect the kit's nRF USB port to the PC USB port instead.
 #. Get the kit's serial port name (for example, :file:`/dev/ttyACM0`).
 #. Run and configure ot-cli as described in :ref:`ug_thread_tools_ot_apps`.
 #. From this point, you can follow the :ref:`ot_cli_sample_testing` instructions in the CLI sample by removing the `ot` prefix for each command.
