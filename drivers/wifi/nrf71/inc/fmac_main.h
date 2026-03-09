@@ -79,6 +79,13 @@ struct nrf_wifi_vif_ctx_zep {
 #if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_TX)
 	bool authorized;
 #endif
+#ifdef CONFIG_NRF71_RAW_DATA_TX
+	/** Last base mode from WiFi mgmt set_mode (e.g. MONITOR/STA). Used when
+	 *  building combined mode for TX injection so we send the intended base
+	 *  even before the async mode event has been applied.
+	 */
+	unsigned char requested_wifi_mode;
+#endif
 #ifdef CONFIG_NRF71_STA_MODE
 	unsigned int assoc_freq;
 	enum nrf_wifi_fmac_if_carr_state if_carr_state;

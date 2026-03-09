@@ -1178,25 +1178,37 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 #ifdef CONFIG_NRF71_RAW_DATA_TX
 	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
 		unsigned char mode;
+		struct nrf_wifi_fmac_vif_ctx *vif =
+			sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx];
 
-		if (sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode ==
-		    config->txinjection_mode) {
+		/* When enabling TX injection, never skip: a pending set_mode(MONITOR)
+		 * from the same test can downgrade us to MONITOR later; we must send
+		 * (MONITOR | TX_INJECTION) so we stay in MONITOR_TX_INJECTOR.
+		 * When disabling, skip only if already disabled.
+		 */
+		if (!config->txinjection_mode &&
+		    vif->txinjection_mode == config->txinjection_mode) {
 			LOG_INF("%s: Driver TX injection setting is same as configured setting",
 				__func__);
 			goto unlock;
 		}
 		/**
 		 * Since UMAC wishes to use the same mode command as previously
-		 * used for mode, `OR` the primary mode with TX-Injection mode and
-		 * send it to the UMAC. That way UMAC can still maintain code
-		 * as is
+		 * used for mode, OR the primary mode with TX-Injection and send
+		 * to the UMAC. Use requested_wifi_mode when set so we send the
+		 * intended base (e.g. MONITOR) even before the async mode event
+		 * has been applied; otherwise vif->mode can be stale.
 		 */
-		if (config->txinjection_mode) {
-			mode = (sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode) |
-			       (NRF_WIFI_TX_INJECTION_MODE);
-		} else {
-			mode = (sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode) ^
-			       (NRF_WIFI_TX_INJECTION_MODE);
+		{
+			unsigned char base = vif_ctx_zep->requested_wifi_mode ?
+					    vif_ctx_zep->requested_wifi_mode :
+					    vif->mode;
+
+			if (config->txinjection_mode) {
+				mode = base | NRF_WIFI_TX_INJECTION_MODE;
+			} else {
+				mode = base ^ NRF_WIFI_TX_INJECTION_MODE;
+			}
 		}
 
 		ret = nrf_wifi_sys_fmac_set_mode(rpu_ctx_zep->rpu_ctx,
