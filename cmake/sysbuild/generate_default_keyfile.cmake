@@ -34,13 +34,14 @@ if(SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE)
       --keyname BL_PUBKEY
       --key ${signature_private_key_file}
       --build-dir ${CMAKE_BINARY_DIR}
+      --soc ${SB_CONFIG_SOC}
       --dry-run
   )
   list(APPEND kmu_json_dependencies ${signature_private_key_file})
 endif()
 
 # Second command (conditional): Update keyfile for MCUboot (UROT_PUBKEY or BL_PUBKEY)
-if(SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE)
+if(SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE OR SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE)
   string(CONFIGURE "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}" mcuboot_signature_key_file)
   set(mcuboot_kmu_keyname UROT_PUBKEY)
 
@@ -48,11 +49,20 @@ if(SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE)
     set(mcuboot_kmu_keyname BL_PUBKEY)
   endif()
 
+  # ITS does not support locking the key.
+  if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_ITS)
+    set(key_policy "revokable")
+  else()
+    set(key_policy "lock-last")
+  endif()
+
   list(APPEND kmu_json_commands
     COMMAND ${Python3_EXECUTABLE} -m west ncs-provision upload
       --keyname ${mcuboot_kmu_keyname}
       --key ${mcuboot_signature_key_file}
       --build-dir ${CMAKE_BINARY_DIR}
+      --soc ${SB_CONFIG_SOC}
+      --policy ${key_policy}
       --dry-run
   )
   list(APPEND kmu_json_dependencies ${mcuboot_signature_key_file})
@@ -64,7 +74,7 @@ if(NOT kmu_json_commands STREQUAL "")
     OUTPUT ${CMAKE_BINARY_DIR}/keyfile.json
     ${kmu_json_commands} # Expands to one or more COMMAND clauses
     DEPENDS ${kmu_json_dependencies}
-    COMMENT "Generating/Updating KMU keyfile JSON (${CMAKE_BINARY_DIR}/keyfile.json)"
+    COMMENT "Generating/Updating KMU/ITS keyfile JSON (${CMAKE_BINARY_DIR}/keyfile.json)"
     VERBATIM
   )
 
