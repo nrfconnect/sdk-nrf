@@ -395,7 +395,7 @@ Bluetooth samples
   * Added:
 
     * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
-    * A sample-specific ``CONFIG_BT_HIDS_SECURITY_MITM_ENABLED`` Kconfig option.
+    * A sample-specific :option:`CONFIG_BT_HIDS_SECURITY_MITM_ENABLED` Kconfig option.
       You can use this option to control support for passkey display MITM protection.
       The passkey display feature can be used only if the configuration emits printk messages (:kconfig:option:`CONFIG_PRINTK` Kconfig option must be enabled).
     * Configuration without debug features (``release`` configuration).
