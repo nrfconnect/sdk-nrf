@@ -33,7 +33,7 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-* Updated the nRF Util device command version to v2.17.2 and required `SEGGER J-Link`_ version to v9.18.
+* Updated the required `SEGGER J-Link`_ version to v9.24a.
 
 Board support
 =============
