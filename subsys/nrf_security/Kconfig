@@ -88,15 +88,6 @@ config MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE
 	  Name of the additional PSA Crypto configuration file. Used for PSA_NEED_* configurations.
 	  This file is auto-generated with the values of the relevant Kconfig options.
 
-config MBEDTLS_ENABLE_HEAP
-	bool "Global heap for mbed TLS"
-	help
-	  This option enables the mbedtls to use the heap. This setting must
-	  be global so that various applications and libraries in Zephyr do not
-	  try to do this themselves as there can be only one heap defined
-	  in mbedtls. If this is enabled, then the Zephyr will, during the device
-	  startup, initialize the heap automatically.
-
 if MBEDTLS_ENABLE_HEAP
 
 config MBEDTLS_HEAP_SIZE
