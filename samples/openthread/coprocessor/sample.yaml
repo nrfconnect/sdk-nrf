@@ -91,6 +91,23 @@ tests:
       - nrf21540dk/nrf52840
     integration_platforms:
       - nrf52840dk/nrf52840
+  sample.openthread.coprocessor.hci.nrf54l_05_10_15:
+    sysbuild: true
+    build_only: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_openthread
+    extra_args: >
+      coprocessor_SNIPPET="ot-ci"
+      EXTRA_CONF_FILE=extra_conf/rcp_hci_nrf54l_05_10_15.conf
+      EXTRA_DTC_OVERLAY_FILE=extra_conf/rcp_hci_nrf54l_05_10_15.overlay
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
   sample.openthread.coprocessor.l2:
     sysbuild: true
     build_only: true

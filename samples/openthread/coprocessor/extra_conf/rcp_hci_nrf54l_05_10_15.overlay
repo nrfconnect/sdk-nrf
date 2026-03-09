@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,bt-c2h-uart = &uart30;
+	};
+};
+
+&uart30 {
+	current-speed = <1000000>;
+	status = "okay";
+	hw-flow-control;
+};
