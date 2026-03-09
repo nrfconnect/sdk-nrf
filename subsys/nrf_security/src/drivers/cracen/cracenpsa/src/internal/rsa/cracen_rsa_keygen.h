@@ -34,6 +34,7 @@
  * structure's slotmask field, which must be initialized by the caller before
  * calling this function.
  *
+ * @param[in,out] req  The acceleration request obtained through sx_pk_acquire_hw()
  * @param[in] pubexp   Public exponent in big-endian format. Must not be NULL.
  *                     Must be an odd integer strictly greater than 2^16 and
  *                     strictly less than 2^256. The most significant byte must
