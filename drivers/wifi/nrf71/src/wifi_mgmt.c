@@ -823,6 +823,9 @@ int nrf_wifi_mode(const struct device *dev,
 			LOG_ERR("%s: mode set operation failed", __func__);
 			goto out;
 		}
+#ifdef CONFIG_NRF71_RAW_DATA_TX
+		vif_ctx_zep->requested_wifi_mode = mode->mode;
+#endif
 
 	} else {
 		mode->mode = sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode;
