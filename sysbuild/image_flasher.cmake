@@ -9,7 +9,7 @@
 #
 # Adds a sysbuild image which will flash the hex file when `west flash` is invoked.
 function(add_image_flasher)
-  set(single_args NAME HEX_FILE)
+  set(single_args NAME HEX_FILE BASE_IMAGE)
   cmake_parse_arguments(args "" "${single_args}" "" ${ARGN})
 
   if(NOT args_NAME)
@@ -29,6 +29,10 @@ function(add_image_flasher)
     APPLICATION ${args_NAME}
     SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/applications/image_flasher
   )
+
+  if(args_BASE_IMAGE)
+    set(${args_NAME}_IMAGE_FLASHER_SPECIFIC_IMAGE ${args_BASE_IMAGE} CACHE STRING "Base image" FORCE)
+  endif()
 
   # Must be configured after the default image as the default image Kconfig and dts files are
   # copied.

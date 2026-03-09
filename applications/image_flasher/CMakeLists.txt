@@ -19,6 +19,13 @@ add_custom_target(runners_yaml_props_target)
 # Fetch hex file to flash from sysbuild
 zephyr_get(hex_file_to_flash SYSBUILD LOCAL VAR HEX_FILE)
 zephyr_get(default_image SYSBUILD GLOBAL VAR IMAGE_FLASHER_DEFAULT_IMAGE)
+zephyr_get(specific_image SYSBUILD LOCAL VAR IMAGE_FLASHER_SPECIFIC_IMAGE)
+
+if(specific_image)
+  set(base_image ${specific_image})
+else()
+  set(base_image ${default_image})
+endif()
 
 # Set hex_file property to point to the hex file
 set_target_properties(runners_yaml_props_target PROPERTIES
@@ -31,14 +38,14 @@ set_target_properties(runners_yaml_props_target PROPERTIES
 set(PROJECT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/zephyr)
 
 # Copy over Kconfig and dts files from the main image
-set(default_image_binary_dir ${PROJECT_BINARY_DIR}/../../${default_image}/zephyr)
-zephyr_file_copy(${default_image_binary_dir}/.config ${PROJECT_BINARY_DIR}/.config
+set(base_image_binary_dir ${PROJECT_BINARY_DIR}/../../${base_image}/zephyr)
+zephyr_file_copy(${base_image_binary_dir}/.config ${PROJECT_BINARY_DIR}/.config
   ONLY_IF_DIFFERENT
 )
-zephyr_file_copy(${default_image_binary_dir}/edt.pickle ${PROJECT_BINARY_DIR}/edt.pickle
+zephyr_file_copy(${base_image_binary_dir}/edt.pickle ${PROJECT_BINARY_DIR}/edt.pickle
   ONLY_IF_DIFFERENT
 )
-import_kconfig(CONFIG_ ${default_image_binary_dir}/.config)
+import_kconfig(CONFIG_ ${base_image_binary_dir}/.config)
 
 # Manually include board configuration to enable automatic runners.yaml generation
 foreach(dir ${BOARD_DIRECTORIES})
