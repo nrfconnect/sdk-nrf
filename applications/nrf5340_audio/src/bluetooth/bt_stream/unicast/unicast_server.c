@@ -695,7 +695,9 @@ int unicast_server_send(struct net_buf const *const audio_frame)
 	}
 
 	ret = bt_le_audio_tx_send(bt_le_audio_tx, audio_frame, tx, num_active_streams);
-	if (ret) {
+	if (ret == -ECANCELED || ret == -ETIMEDOUT) {
+		LOG_DBG("Failed to send audio frame: %d", ret);
+	} else if (ret) {
 		return ret;
 	}
 

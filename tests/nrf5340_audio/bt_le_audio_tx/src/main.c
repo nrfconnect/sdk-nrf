@@ -180,7 +180,7 @@ ZTEST(bt_le_audio_tx, test_wrapping)
 	/* Data is submitted way too late */
 
 	ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
-	zassert_equal(0, ret, "ret %d", ret);
+	zassert_equal(-ETIMEDOUT, ret, "ret %d", ret);
 	zassert_equal(2, bt_cap_stream_send_fake.call_count, "%d",
 		      bt_cap_stream_send_fake.call_count);
 	zassert_equal(0, bt_cap_stream_send_ts_fake.call_count);
@@ -206,8 +206,9 @@ ZTEST(bt_le_audio_tx, test_wrapping)
 
 	for (int i = 0; i < 10; i++) {
 		TC_PRINT("Iteration %d\n", i);
-		audio_sync_timer_capture_fake.return_val = UINT32_MAX - 10500 + (i * 10000);
-		hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = UINT32_MAX - 10000 + (i * 10000);
+		audio_sync_timer_capture_fake.return_val = UINT32_MAX - 10500 + ((i + 1) * 10000);
+		hci_vs_sdc_iso_read_tx_timestamp_fake.return_val =
+			UINT32_MAX - 10000 + ((i + 1) * 10000);
 
 		ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
 		zassert_equal(0, ret, "ret %d", ret);
@@ -246,7 +247,7 @@ ZTEST(bt_le_audio_tx, test_send_too_fast)
 
 	/* Call send again immediately, should trigger flush */
 	ret = bt_le_audio_tx_send(bt_le_audio_tx, dummy_audio_frame, tx, chan_to_send);
-	zassert_equal(-EAGAIN, ret, "ret %d", ret);
+	zassert_equal(-ECANCELED, ret, "ret %d", ret);
 
 	net_buf_unref(dummy_audio_frame);
 }

@@ -26,6 +26,15 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 
 #define HANDLE_INVALID 0xFFFF
 
+/* Maximum allowed deviation for call timing.
+ * E.g. 0.2 = 20 % deviation from the common interval
+ * So, if the common interval is 10 ms, the function can be called with an interval between 8 ms and
+ * 12 ms without considering it a gap and resyncing with the controller.
+ */
+#define CALL_LIM     0.2
+#define CALL_LIM_MAX (1 + CALL_LIM)
+#define CALL_LIM_MIN (1 - CALL_LIM)
+
 /* Time between performing a timestamp re-sync with the Bluetooth controller.
  * For gateway/central (unicast client/broadcast source) where this device is the master
  * Bluetooth LE clocking device, the wall clock and BLE clock should be in sync.
@@ -60,6 +69,8 @@ struct bt_le_audio_tx_ctx {
 	uint32_t timestamp_last_correction;
 	uint32_t subequent_rapid_corrections;
 	int64_t corr_diff_us;
+	uint32_t timestamp_last_us;
+	bool timestamp_last_us_valid;
 };
 
 /**
@@ -259,6 +270,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 			struct le_audio_tx_info *tx, uint8_t num_tx)
 {
 	int ret;
+	int status = 0;
 	size_t data_size_pr_stream = 0;
 
 	if (ctx == NULL) {
@@ -315,10 +327,28 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 			common_interval_us);
 		ctx->flush_next = false;
 		ctx->timestamp_ctlr_esti_us_valid = false;
-		return -EAGAIN;
+		return -ECANCELED;
 	}
 
 	LOG_DBG_RATELIMIT_RATE(1000, "tx %d valid %d", num_tx, ctx->timestamp_ctlr_esti_us_valid);
+
+	uint32_t timestamp_now_us = audio_sync_timer_capture();
+
+	/* Need to check if the elapsed time since last call this function.
+	 * If too long, there has been a gap/pause in the data and we resync with the controller
+	 */
+	uint32_t time_since_last_call_us = timestamp_now_us - ctx->timestamp_last_us;
+	uint32_t upper_lim_us = (uint32_t)(common_interval_us * CALL_LIM_MAX);
+	uint32_t lower_lim_us = (uint32_t)(common_interval_us * CALL_LIM_MIN);
+
+	if (!IN_RANGE(time_since_last_call_us, lower_lim_us, upper_lim_us) &&
+	    ctx->timestamp_last_us_valid) {
+		LOG_INF("Audio tx called with interval of %u us, (min %u us, max %u us) expected "
+			"around %u us. Resync "
+			"with controller",
+			time_since_last_call_us, lower_lim_us, upper_lim_us, common_interval_us);
+		ctx->timestamp_ctlr_esti_us_valid = false;
+	}
 
 	for (int i = 0; i < num_tx; i++) {
 		tx_info = &ctx->tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
@@ -352,7 +382,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	}
 
 	/* Get the current (wall clock) time */
-	uint32_t timestamp_now_us = audio_sync_timer_capture();
+	timestamp_now_us = audio_sync_timer_capture();
 	uint32_t timestamp_ctlr_real_us = 0;
 	ctx->corr_diff_us = 0;
 
@@ -361,7 +391,8 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	 */
 	if (!ctx->timestamp_ctlr_esti_us_valid ||
 	    ((uint32_t)(ctx->timestamp_ctlr_esti_us - ctx->timestamp_ctlr_real_us_last) >=
-	     TX_TS_RESYNC_US)) {
+	     TX_TS_RESYNC_US) ||
+	    ((uint32_t)(timestamp_now_us - ctx->timestamp_last_us) >= TX_TS_RESYNC_US)) {
 
 		ret = controller_timestamp_tx_get(tx, num_tx, &timestamp_ctlr_real_us, tx_info);
 		if (ret) {
@@ -388,16 +419,17 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 
 		/* There are several options which can occur at this point:
 		 *
-		 * - corr_diff_us >> 0: This means that data was given to this module too slow/late.
-		 * Hence, the controller schedules the sending for the next ISO interval.
-		 * An empty packet will be sent on air, and we will correct the timestamp estimate.
-		 * - corr_diff_us << 0: This should not happen as an earlier timestamp has already
-		 * been given to the controller.
+		 * - corr_diff_us >> 0: This means that data was given to this module too
+		 * slow/late. Hence, the controller schedules the sending for the next ISO
+		 * interval. An empty packet will be sent on air, and we will correct the
+		 * timestamp estimate.
+		 * - corr_diff_us << 0: This should not happen as an earlier timestamp has
+		 * already been given to the controller.
 		 * - corr_diff_us > or < 0: This means that the estimate has gotten a small
-		 * correction. As a central/gateway/unicast client/broadcast source, the clocks
-		 * shall be running in lockstep and this should never happen. As a
-		 * peripheral/headset/unicast server/broadcast sink, this will happen to correct for
-		 * drift.
+		 * correction. As a central/gateway/unicast client/broadcast source, the
+		 * clocks shall be running in lockstep and this should never happen. As a
+		 * peripheral/headset/unicast server/broadcast sink, this will happen to
+		 * correct for drift.
 		 */
 
 		if (ctx->corr_diff_us == 0) {
@@ -405,17 +437,21 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 			LOG_DBG("TX clock no adjustment needed (%lld us)", ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = true;
 		} else if (ctx->corr_diff_us > ((int64_t)common_interval_us / 2)) {
-			LOG_WRN("TX clock has been updated by (%lld us). Empty packet on air",
+			LOG_INF("TX clock has been updated by (%lld us). Empty packet(s) on "
+				"air",
 				ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = false;
+			status = -ETIMEDOUT;
 		} else if (ctx->corr_diff_us < -((int64_t)common_interval_us / 2)) {
 			LOG_ERR("TX clock has been updated by (%lld us). Shall not happen",
 				ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = false;
+			ctx->timestamp_last_us = timestamp_now_us;
+			ctx->timestamp_last_us_valid = true;
 			return -EIO;
 		} else {
 			if (CONFIG_AUDIO_DEV == HEADSET) {
-				LOG_INF("TX clock has been drift adjusted by (%lld us)",
+				LOG_ERR("TX clock has been drift adjusted by (%lld us)",
 					ctx->corr_diff_us);
 				ctx->timestamp_ctlr_esti_us_valid = true;
 			}
@@ -435,7 +471,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 
 	/* TODO: need to check if this should trigger if the above also triggers */
 	if ((int32_t)(timestamp_now_us - ctx->timestamp_ctlr_esti_us) > 0) {
-		LOG_WRN("Curr time ahead of ctlr time. Flush %d us of data. "
+		LOG_INF("Curr time ahead of ctlr time. Flush %d us of data. "
 			"Now: %u us, ctlr: %u us",
 			common_interval_us, timestamp_now_us, ctx->timestamp_ctlr_esti_us);
 		ctx->flush_next = true;
@@ -454,7 +490,9 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		LOG_WRN("Failed to publish timestamp: %d", ret);
 	}
 
-	return 0;
+	ctx->timestamp_last_us = timestamp_now_us;
+	ctx->timestamp_last_us_valid = true;
+	return status;
 }
 
 int bt_le_audio_tx_stream_started(struct bt_le_audio_tx_ctx *ctx, struct stream_index idx)

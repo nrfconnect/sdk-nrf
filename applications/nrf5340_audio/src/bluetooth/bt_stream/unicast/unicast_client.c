@@ -1796,7 +1796,16 @@ int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_ind
 	}
 
 	ret = bt_le_audio_tx_send(bt_le_audio_tx, audio_frame, info.tx, info.num_active_streams);
-	if (ret) {
+	if (ret == -ECANCELED || ret == -ETIMEDOUT) {
+		if (IS_ENABLED(CONFIG_AUDIO_SOURCE_I2S)) {
+			LOG_WRN("Failed to send audio frame: %d", ret);
+		}
+		if (IS_ENABLED(CONFIG_AUDIO_SOURCE_USB)) {
+			/* Synchronous USB has separate clock from USB host */
+			LOG_DBG("Failed to send audio frame: %d", ret);
+		}
+
+	} else if (ret) {
 		srv_store_unlock();
 		return ret;
 	}
