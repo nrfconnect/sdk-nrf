@@ -37,6 +37,8 @@ This configuration allows to reduce the flash partition occupied by MCUboot to 2
 Partition layout
 ****************
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 Each application that uses MCUboot must use :ref:`partition_manager` to define partitions of the flash memory.
 This is needed for the bootloader to know where the current and the new firmware images are located in the flash.
 
@@ -45,7 +47,7 @@ Consider the following when defining partitions for your end product:
 * There are multiple ways to define partitions using Partition Manager.
   For example, each :ref:`Matter sample <matter_samples>` provides a :file:`pm_static_dfu.yml` file (one for each configuration) that statically defines the partition layout.
   See :ref:`ug_matter_hw_requirements_layouts` to confirm the reference partition layout for each supported platform.
-* Given the size of the Matter stack, it will usually not be possible to fit both the primary and the secondary slot in the internal flash in order to store the current and the new firmware image, respectively.
+* Given the size of the Matter stack, it is usually not possible to fit both the primary and the secondary slot in the internal flash in order to store the current and the new firmware image, respectively.
   Instead, you should use the :ref:`external flash <ug_bootloader_external_flash>` to host the secondary slot.
 
   .. note::
@@ -53,9 +55,9 @@ Consider the following when defining partitions for your end product:
       For example, if you develop your application on a Nordic Semiconductor's development kit that includes a QSPI NOR flash module, set the :kconfig:option:`CONFIG_NORDIC_QSPI_NOR` Kconfig option.
 
 * When selecting the partition sizes, take into account that some of the partitions, such as settings and factory data ones, are not modified during the DFU process.
-  This means that performing DFU from one firmware version to another using different partition sizes may not be possible, and you will not be able to change the partition sizes without reprogramming the device.
+  This means that performing DFU from one firmware version to another using different partition sizes might not be possible, and you cannot change the partition sizes without reprogramming the device.
   Trying to perform DFU between applications that use incompatible partition sizes can result in unwanted application behavior, depending on which partitions are overlapping.
-  In some cases, this may corrupt some partitions; in others, this can lead to a DFU failure.
+  In some cases, this might corrupt some partitions; in others, this can lead to a DFU failure.
 * The MCUboot requires its `mcuboot_primary` and `mcuboot_secondary` partitions to be located under offsets being aligned to the 4 kB flash page size.
   Selecting offset values that are not aligned to 4 kB for these partitions will lead to erase failures, and result in a DFU failure.
 
