@@ -194,7 +194,7 @@
 /doc/nrf/libraries/others/index.rst       @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/others/log_rpc.rst     @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/others/network_core_monitor.rst @nrfconnect/ncs-si-muffin-doc
-/doc/nrf/libraries/others/nrf_compression.rst @nrfconnect/ncs-vestavind-doc
+/doc/nrf/libraries/others/nrf_compression.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/others/nrf_profiler.rst @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/pcm_mix.rst     @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/pcm_stream_channel_modifier.rst @nrfconnect/ncs-audio-doc
@@ -356,7 +356,7 @@
 /include/net/downloader*                  @nrfconnect/ncs-modem
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-radio-sw
-/include/nrf_compress/                    @nordicjm
+/include/nrf_compress/                    @nrfconnect/ncs-eris
 /include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
 /include/power/                           @nrfconnect/ncs-co-drivers
 /include/shell/                           @nordic-krch
@@ -845,7 +845,7 @@
 /subsys/net_core_monitor/                 @nrfconnect/ncs-si-muffin
 /subsys/nfc/                              @nrfconnect/ncs-radio-sw
 /subsys/nfc/rpc/                          @nrfconnect/ncs-protocols-serialization
-/subsys/nrf_compress/                     @nordicjm
+/subsys/nrf_compress/                     @nrfconnect/ncs-eris
 /subsys/nrf_profiler/                     @nrfconnect/ncs-si-xcake
 /subsys/nrf_rpc/                          @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
@@ -966,7 +966,7 @@
 /tests/subsys/net/lib/tls_credentials*/   @nrfconnect/ncs-co-networking
 /tests/subsys/net/openthread/rpc/         @nrfconnect/ncs-protocols-serialization
 /tests/subsys/nfc/rpc/                    @nrfconnect/ncs-protocols-serialization
-/tests/subsys/nrf_compress/               @nordicjm
+/tests/subsys/nrf_compress/               @nrfconnect/ncs-eris
 /tests/subsys/nrf_profiler/               @nrfconnect/ncs-si-xcake
 /tests/subsys/nrf_rpc/                    @nrfconnect/ncs-protocols-serialization
 /tests/subsys/nrf_security/psa_core_lite/ @nrfconnect/ncs-aegir
