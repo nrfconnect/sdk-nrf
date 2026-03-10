@@ -81,11 +81,6 @@
 #cmakedefine MBEDTLS_ENTROPY_MAX_SOURCES                        @MBEDTLS_ENTROPY_MAX_SOURCES@
 #cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
 
-/* Nordic defines for library support. Note that these configurations are used by the PSA interface */
-#cmakedefine MBEDTLS_LEGACY_CRYPTO_C
-#cmakedefine MBEDTLS_TLS_LIBRARY
-#cmakedefine MBEDTLS_X509_LIBRARY
-
 /* Platform configurations for Mbed TLS APIs*/
 #cmakedefine MBEDTLS_BASE64_C
 #cmakedefine MBEDTLS_OID_C

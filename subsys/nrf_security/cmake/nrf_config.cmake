@@ -70,11 +70,6 @@ kconfig_check_and_set_base(MBEDTLS_ENTROPY_FORCE_SHA256)
 kconfig_check_and_set_base(MBEDTLS_NO_PLATFORM_ENTROPY)
 kconfig_check_and_set_base_int(MBEDTLS_ENTROPY_MAX_SOURCES)
 
-# Nordic defines for library support.
-kconfig_check_and_set_base(MBEDTLS_LEGACY_CRYPTO_C)
-kconfig_check_and_set_base(MBEDTLS_TLS_LIBRARY)
-kconfig_check_and_set_base(MBEDTLS_X509_LIBRARY)
-
 # Still required for some things in psa_util?
 kconfig_check_and_set_base(MBEDTLS_MD_C)
 
