@@ -1900,9 +1900,7 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 			/*
 			 * Process Certificates
 			 */
-			struct net_if *iface = net_if_get_wifi_sta();
-
-			wifi_set_enterprise_credentials(iface, 0);
+			process_certificates();
 
 			if (strstr(tlv->value, "WPA-EAP-SHA256")) {
 				ret = run_qt_command("SET_NETWORK 0 ieee80211w 2");
