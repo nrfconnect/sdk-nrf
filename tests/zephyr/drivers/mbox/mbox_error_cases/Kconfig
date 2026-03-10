@@ -1,0 +1,1 @@
+source "tests/drivers/mbox/mbox_error_cases/Kconfig"
