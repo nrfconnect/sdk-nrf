@@ -304,6 +304,48 @@ struct umac_cmd_evnt_dbg_params {
 } __NRF_WIFI_PKD;
 
 /**
+ * @brief UMAC scan debug counters (separate from @ref umac_cmd_evnt_dbg_params).
+ */
+struct umac_scan_dbg_params {
+	/** NL80211_CMD_TRIGGER_SCAN received from host */
+	unsigned int scan_req_from_host;
+	/** Trigger-scan with display scan_reason */
+	unsigned int display_scan_req_from_host;
+	/** Trigger-scan with connect scan_reason */
+	unsigned int connect_scan_req_from_host;
+	/** LMAC scan commands for 2.4 GHz */
+	unsigned int scan_req_to_lmac_2g;
+	/** LMAC scan commands for 5 GHz */
+	unsigned int scan_req_to_lmac_5g;
+	/** LMAC scan commands for 6 GHz */
+	unsigned int scan_req_to_lmac_6g;
+	/** Scan-complete events from LMAC attributed to 2.4 GHz */
+	unsigned int scan_complete_from_lmac_2g;
+	/** Scan-complete events from LMAC attributed to 5 GHz */
+	unsigned int scan_complete_from_lmac_5g;
+	/** Scan-complete events from LMAC attributed to 6 GHz */
+	unsigned int scan_complete_from_lmac_6g;
+	/** Scan-done notifications toward upper layers (cfg80211) */
+	unsigned int scan_done_to_host;
+	/** Display scan: ieee80211_abort_scan when DB is at cap and a stronger new BSS arrives */
+	unsigned int display_scan_abort_bss_limit;
+	/** Host NL80211 abort-scan (rdev_abort_scan / cancel_hw_scan path) */
+	unsigned int scan_abort_req_from_host;
+	/** LMAC_CMD_SCAN_ABORT successfully queued to LMAC */
+	unsigned int scan_abort_cmd_to_lmac;
+	/** LMAC_CMD_SCAN_ABORT not sent (e.g. kmalloc failure in rpu_scan_abort) */
+	unsigned int scan_abort_cmd_alloc_fail;
+	/** wait_for_scan_abort timed out waiting for SCAN_ABORT_DONE */
+	unsigned int scan_abort_wait_timeout;
+	/** LMAC_EVENT_SCAN_ABORT_COMPLETE handled in rpu_scan_complete (IRQ path) */
+	unsigned int scan_abort_complete_lmac_irq;
+	/** cancel_hw_scan: wait succeeded; mac80211 completed from LMAC IRQ */
+	unsigned int scan_abort_cancel_scan_irq_done;
+	/** cancel_hw_scan: forced ieee80211_scan_completed after abort wait timeout */
+	unsigned int scan_abort_cancel_scan_timeout_umac;
+} __NRF_WIFI_PKD;
+
+/**
  * @brief This structure specifies the UMAC interface debug parameters used for debugging purpose.
  *
  */
@@ -430,6 +472,10 @@ struct nrf_wifi_misc_stats {
 	unsigned int ipc_rx_init_fail;
 	/** Number of IPC bind failures*/
 	unsigned int ipc_bind_fail;
+	/** Number of IPC ring buffer size failures*/
+	unsigned int ipc_ring_buf_size_fail;
+	/** Number of IPC mem configuration failures*/
+	unsigned int ipc_mem_config_fail;
 
 } __NRF_WIFI_PKD;
 
@@ -465,6 +511,8 @@ struct rpu_umac_stats {
 	struct umac_rx_dbg_params rx_dbg_params;
 	/** Command Event debug statistics @ref umac_cmd_evnt_dbg_params */
 	struct umac_cmd_evnt_dbg_params cmd_evnt_dbg_params;
+	/** Scan debug statistics @ref umac_scan_dbg_params */
+	struct umac_scan_dbg_params scan_dbg_params;
 	/** Interface debug parameters @ref nrf_wifi_interface_stats */
 	struct nrf_wifi_interface_stats interface_data_stats;
 
@@ -481,6 +529,7 @@ enum UMAC_STATS_CATEGORY {
 	UMAC_SOFTAP_DEBUG_PARAMS = (1 << 8),
 	UMAC_RAWTXRX_DEBUG_PARAMS = (1 << 9),
 	UMAC_MISC_DEBUG_PARAMS = (1 << 10),
+	UMAC_SCAN_DEBUG_PARAMS = (1 << 11),
 };
 
 struct umac_debug_stats {
@@ -492,6 +541,8 @@ struct umac_debug_stats {
 		struct umac_rx_dbg_params rx_dbg_params;
 		/** Command Event debug statistics @ref umac_cmd_evnt_dbg_params */
 		struct umac_cmd_evnt_dbg_params cmd_evnt_dbg_params;
+		/** Scan debug statistics @ref umac_scan_dbg_params */
+		struct umac_scan_dbg_params scan_dbg_params;
 		/** Interface debug parameters @ref nrf_wifi_interface_stats */
 		struct nrf_wifi_interface_stats interface_data_stats;
 		struct nrf_wifi_mempools_stats mempools_dbg_stats;
@@ -719,6 +770,7 @@ struct ftm_debug_stats {
 	unsigned int beacon_not_captured;
 	unsigned int ftm_event;
 	unsigned int ftm_event_failed;
+	unsigned int ftm_timer_expired;
 	unsigned int ftm_initiator_cpy_params_cnt;
 	unsigned int ftm_null_frm_send_success;
 	unsigned int ftm_null_frm_send_fail;
@@ -937,11 +989,12 @@ enum LMAC_STATS_CATEGORY {
 };
 
 enum PHY_STATS_CATEGORY {
-	PHY_RX_DEBUG_STATS = (1 << 0),
-	PHY_RSSI_HIST_STATS = (1 << 1),
-	PHY_STATS_END       = (1 << 2)
+	PHY_RX_DEBUG_STATS    = (1 << 0),
+	PHY_SW_DBG_STATS      = (1 << 1),
+	PHY_RSSI_HIST_STATS   = (1 << 2),
+	PHY_DC_RSSI_SNR_STATS = (1 << 3),
+	PHY_STATS_END         = (1 << 4)
 };
-
 
 
 struct lmac_debug_stats {
@@ -1177,7 +1230,7 @@ struct nrf_wifi_rf_get_rx_debug_stats {
 struct phy_debug_stats {
 	unsigned int stats_category;
 	union {
-		unsigned int phy_stats[128];
+		unsigned int phy_stats[64];
 	};
 } __NRF_WIFI_PKD;
 
