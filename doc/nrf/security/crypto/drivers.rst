@@ -380,6 +380,9 @@ Depending on the hardware platform:
   You must use the CRACEN driver as provided in the IronSide SE firmware bundle.
   See :ref:`ug_nrf54h20_SoC_binaries` for more information.
 
+The CRACEN driver also supports several :ref:`side-channel countermeasures <ug_kmu_cracen_countermeasures>` available on the CRACEN peripheral.
+For the device support breakdown for these countermeasures, see :ref:`ug_crypto_supported_features_countermeasures`.
+
 .. _crypto_drivers_oberon:
 .. _nrf_security_drivers_oberon:
 
