@@ -204,9 +204,8 @@ int sx_trng_restore_state(struct sx_trng *ctx, const struct sx_trng_config *conf
  * by this call.
  * The configuration from sx_trng_init() is preserved.
  *
- * @param[in] ctx TRNG operation context
  */
-void sx_trng_restart(struct sx_trng *ctx);
+void sx_trng_restart(void);
 
 #if defined(CONFIG_CRACEN_HW_VERSION_LITE)
 /** Configure CRACEN Lite TRNG test threshold registers

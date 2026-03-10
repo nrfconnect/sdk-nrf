@@ -45,7 +45,7 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 								  key_buffer_size, data, data_size,
 								  data_length);
 		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
-			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
+			return ecc_export_key(key_buffer, key_buffer_size, data,
 					      data_size, data_length);
 		} else {
 			/* For compliance */
@@ -58,7 +58,7 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 								      key_buffer_size, data,
 								      data_size, data_length);
 		} else if (PSA_KEY_TYPE_IS_SPAKE2P_PUBLIC_KEY(key_type)) {
-			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
+			return ecc_export_key(key_buffer, key_buffer_size, data,
 					      data_size, data_length);
 		} else {
 			/* For compliance */
@@ -460,7 +460,7 @@ psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uin
 #endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 
 	if (PSA_KEY_TYPE_IS_SPAKE2P_KEY_PAIR(key_type) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
-		return cracen_derive_spake2p_key(attributes, input, input_length, key, key_size,
+		return cracen_derive_spake2p_key(attributes, input, input_length, key,
 						 key_length);
 	}
 

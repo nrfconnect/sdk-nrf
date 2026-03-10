@@ -201,7 +201,7 @@ static size_t get_expected_pub_key_size(psa_ecc_family_t psa_curve, size_t key_b
 }
 
 static psa_status_t handle_identity_key(const uint8_t *key_buffer, size_t key_buffer_size,
-					       const struct sx_pk_ecurve *sx_curve, uint8_t *data)
+							 uint8_t *data)
 {
 	if (key_buffer_size != sizeof(ikg_opaque_key)) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -294,7 +294,7 @@ psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_t *attr
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
 		if (IS_ENABLED(CONFIG_CRACEN_IKG)) {
-			status = handle_identity_key(key_buffer, key_buffer_size, sx_curve, data);
+			status = handle_identity_key(key_buffer, key_buffer_size, data);
 		} else {
 			status = PSA_ERROR_NOT_SUPPORTED;
 		}
@@ -387,8 +387,7 @@ psa_status_t import_ecc_public_key(const psa_key_attributes_t *attributes,
 	return PSA_SUCCESS;
 }
 
-psa_status_t ecc_export_key(const psa_key_attributes_t *attributes,
-			    const uint8_t *key_buffer, size_t key_buffer_size, uint8_t *data,
+psa_status_t ecc_export_key(const uint8_t *key_buffer, size_t key_buffer_size, uint8_t *data,
 			    size_t data_size, size_t *data_length)
 {
 	if (data_size < key_buffer_size) {

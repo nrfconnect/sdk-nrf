@@ -339,7 +339,7 @@ int sx_aead_create_aesgcm_dec(struct sxaead *c, const struct sxkeyref *key, cons
  *           sx_aead_feed_aad()
  */
 int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, const uint8_t *nonce,
-			      size_t noncesz, size_t tagsz, size_t aadsz, size_t datasz);
+			      size_t noncesz, size_t tagsz, size_t datasz);
 
 /** Prepares an AES CCM AEAD decryption operation.
  *
@@ -378,7 +378,7 @@ int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, cons
  *           sx_aead_feed_aad()
  */
 int sx_aead_create_aesccm_dec(struct sxaead *c, const struct sxkeyref *key, const uint8_t *nonce,
-			      size_t noncesz, size_t tagsz, size_t aadsz, size_t datasz);
+			      size_t noncesz, size_t tagsz, size_t datasz);
 
 static inline bool sx_aead_aesccm_nonce_size_is_valid(size_t noncesz)
 {

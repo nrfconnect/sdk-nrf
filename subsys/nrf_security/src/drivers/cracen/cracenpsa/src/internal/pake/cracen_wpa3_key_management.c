@@ -226,7 +226,7 @@ psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 			return status;
 		}
 
-		/* P1 = SSWU(u1) */
+		/* P1 equals SSWU(u1) */
 		sx_const_op u1_const;
 
 		sx_get_const_op(&u1, &u1_const);
@@ -257,7 +257,7 @@ psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 			return status;
 		}
 
-		/* P2 = SSWU(u2) */
+		/* P2 equals SSWU(u2) */
 		sx_const_op u2_const;
 
 		sx_get_const_op(&u2, &u2_const);

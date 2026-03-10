@@ -104,7 +104,6 @@ int cracen_ecdsa_sign_message(const struct cracen_ecc_priv_key *privkey,
 /** @brief Sign a digest using ECDSA.
  *
  * @param[in] privkey       Private key structure.
- * @param[in] hashalg       Hash algorithm to use for message digest.
  * @param[in] curve         Elliptic curve parameters.
  * @param[in] digest        Digest to sign.
  * @param[in] digest_length Length of the digest in bytes.
@@ -121,7 +120,7 @@ int cracen_ecdsa_sign_message(const struct cracen_ecc_priv_key *privkey,
  * @retval Other SX status codes from @ref cracen_status_codes on internal errors.
  */
 int cracen_ecdsa_sign_digest(const struct cracen_ecc_priv_key *privkey,
-			     const struct sxhashalg *hashalg, const struct sx_pk_ecurve *curve,
+			     const struct sx_pk_ecurve *curve,
 			     const uint8_t *digest, size_t digest_length, uint8_t *signature);
 
 /** @brief Sign a message using deterministic ECDSA (RFC 6979).

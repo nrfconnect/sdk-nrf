@@ -19,7 +19,7 @@
 /* number of bytes used for the MGF1 internal counter */
 #define MGF1_COUNTER_SZ 4
 
-static int mgf1xor_hash(uint8_t *mgfctr, size_t workmemsz, const struct sxhashalg *hashalg,
+static int mgf1xor_hash(uint8_t *mgfctr, const struct sxhashalg *hashalg,
 			uint8_t *seed, size_t digestsz)
 {
 	uint8_t *mask_segment = mgfctr + MGF1_COUNTER_SZ;
@@ -48,7 +48,7 @@ int cracen_run_mgf1xor(uint8_t *workmem, size_t workmemsz, const struct sxhashal
 	mgfctr[2] = 0;
 	mgfctr[3] = 0;
 
-	sx_status = mgf1xor_hash(workmem, workmemsz, hashalg, seed, digestsz);
+	sx_status = mgf1xor_hash(workmem, hashalg, seed, digestsz);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -70,7 +70,7 @@ int cracen_run_mgf1xor(uint8_t *workmem, size_t workmemsz, const struct sxhashal
 		masksz -= toxor;
 
 		cracen_be_add(mgfctr, MGF1_COUNTER_SZ, 1);
-		sx_status = mgf1xor_hash(mgfctr, workmemsz, hashalg, seed, digestsz);
+		sx_status = mgf1xor_hash(mgfctr, hashalg, seed, digestsz);
 		if (sx_status != SX_OK) {
 			return sx_status;
 		}

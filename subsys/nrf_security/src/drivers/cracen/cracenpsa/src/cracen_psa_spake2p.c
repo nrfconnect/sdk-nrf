@@ -159,7 +159,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	sx_const_op b = {.sz = CRACEN_P256_KEY_SIZE, .bytes = &w0N[CRACEN_P256_KEY_SIZE]};
 	sx_op res = {.sz = CRACEN_P256_KEY_SIZE, .bytes = &w0N[CRACEN_P256_KEY_SIZE]};
 
-	status = sx_mod_primitive_cmd(&req, NULL, cmd, &modulo, &a, &b, &res);
+	status = sx_mod_primitive_cmd(&req, cmd, &modulo, &a, &b, &res);
 	if (status != SX_OK) {
 		goto exit;
 	}
@@ -520,8 +520,7 @@ static psa_status_t cracen_write_confirm(cracen_spake2p_operation_t *operation, 
 }
 
 static psa_status_t set_password_key(cracen_spake2p_operation_t *operation,
-				     const psa_key_attributes_t *attributes,
-				     const uint8_t *password, size_t password_length)
+					 const uint8_t *password, size_t password_length)
 {
 	psa_status_t status;
 
@@ -569,8 +568,7 @@ static psa_status_t set_password_key(cracen_spake2p_operation_t *operation,
 }
 
 psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
-
-				  const psa_key_attributes_t *attributes, const uint8_t *password,
+				  const uint8_t *password,
 				  size_t password_length,
 				  const psa_pake_cipher_suite_t *cipher_suite)
 {
@@ -587,7 +585,7 @@ psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
 		return status;
 	}
 
-	status = set_password_key(operation, attributes, password, password_length);
+	status = set_password_key(operation, password, password_length);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -729,8 +727,7 @@ psa_status_t cracen_spake2p_input(cracen_spake2p_operation_t *operation, psa_pak
 }
 
 psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation,
-					   const psa_key_attributes_t *attributes, uint8_t *output,
-					   size_t output_size, size_t *output_length)
+				   uint8_t *output, size_t output_size, size_t *output_length)
 {
 	if (output_size < operation->shared_len) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;

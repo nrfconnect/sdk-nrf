@@ -16,7 +16,6 @@
 /** @brief Set up a SPAKE2+ operation.
  *
  * @param[in,out] operation     SPAKE2+ operation context.
- * @param[in] attributes        Key attributes.
  * @param[in] password          Password.
  * @param[in] password_length   Length of the password in bytes.
  * @param[in] cipher_suite      PAKE cipher suite.
@@ -25,7 +24,7 @@
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
  */
 psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
-				  const psa_key_attributes_t *attributes, const uint8_t *password,
+				  const uint8_t *password,
 				  size_t password_length,
 				  const psa_pake_cipher_suite_t *cipher_suite);
 
@@ -115,7 +114,6 @@ psa_status_t cracen_spake2p_input(cracen_spake2p_operation_t *operation, psa_pak
 /** @brief Get the shared key from a completed SPAKE2+ operation.
  *
  * @param[in,out] operation     SPAKE2+ operation context.
- * @param[in] attributes        Key attributes for the shared key.
  * @param[out] output           Buffer to store the shared key.
  * @param[in] output_size       Size of the output buffer in bytes.
  * @param[out] output_length    Length of the generated shared key in bytes.
@@ -125,8 +123,7 @@ psa_status_t cracen_spake2p_input(cracen_spake2p_operation_t *operation, psa_pak
  * @retval PSA_ERROR_BUFFER_TOO_SMALL The output buffer is too small.
  */
 psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation,
-					   const psa_key_attributes_t *attributes, uint8_t *output,
-					   size_t output_size, size_t *output_length);
+				   uint8_t *output, size_t output_size, size_t *output_length);
 
 /** @brief Abort a SPAKE2+ operation.
  *

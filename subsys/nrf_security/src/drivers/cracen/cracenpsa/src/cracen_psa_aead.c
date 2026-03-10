@@ -152,12 +152,12 @@ static psa_status_t initialize_ctx(cracen_aead_operation_t *operation)
 					    ? sx_aead_create_aesccm_dec(
 						      &operation->ctx, &operation->keyref,
 						      operation->nonce, operation->nonce_length,
-						      operation->tag_size, operation->ad_length,
+						      operation->tag_size,
 						      operation->plaintext_length)
 					    : sx_aead_create_aesccm_enc(
 						      &operation->ctx, &operation->keyref,
 						      operation->nonce, operation->nonce_length,
-						      operation->tag_size, operation->ad_length,
+						      operation->tag_size,
 						      operation->plaintext_length);
 		}
 		break;

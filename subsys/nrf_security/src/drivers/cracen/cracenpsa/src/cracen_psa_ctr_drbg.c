@@ -129,12 +129,6 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	size_t temp_length = 0;
 	_Static_assert(CRACEN_ENTROPY_AND_NONCE_SIZE % SX_BLKCIPHER_AES_BLK_SZ == 0, "");
 
-	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
-
-	psa_set_key_type(&attr, PSA_KEY_TYPE_AES);
-	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
-	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
-
 	while (temp_length < CRACEN_ENTROPY_AND_NONCE_SIZE) {
 		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 
@@ -258,12 +252,6 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 			return status;
 		}
 	}
-
-	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
-
-	psa_set_key_type(&attr, PSA_KEY_TYPE_AES);
-	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
-	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
 	while (len_left > 0) {
 		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);

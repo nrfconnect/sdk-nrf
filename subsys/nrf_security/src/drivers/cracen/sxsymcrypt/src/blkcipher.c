@@ -239,7 +239,7 @@ int sx_blkcipher_create_aesctr_enc(struct sxblkcipher *cipher_ctx, const struct 
 int sx_blkcipher_create_aesctr_dec(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
 				   const uint8_t *iv)
 {
-	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411ctrcfg, ba411ctrcfg.decr);
+	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411ctrcfg, CM_CFG_DECRYPT);
 }
 
 int sx_blkcipher_create_aesecb_enc(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key)
@@ -249,7 +249,7 @@ int sx_blkcipher_create_aesecb_enc(struct sxblkcipher *cipher_ctx, const struct 
 
 int sx_blkcipher_create_aesecb_dec(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key)
 {
-	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, NULL, &ba411ecbcfg, ba411ecbcfg.decr);
+	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, NULL, &ba411ecbcfg, CM_CFG_DECRYPT);
 }
 
 int sx_blkcipher_create_aescbc_enc(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
@@ -261,7 +261,7 @@ int sx_blkcipher_create_aescbc_enc(struct sxblkcipher *cipher_ctx, const struct 
 int sx_blkcipher_create_aescbc_dec(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
 				   const uint8_t *iv)
 {
-	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411cbccfg, ba411cbccfg.decr);
+	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411cbccfg, CM_CFG_DECRYPT);
 }
 
 int sx_blkcipher_crypt(struct sxblkcipher *cipher_ctx, const uint8_t *datain, size_t sz,

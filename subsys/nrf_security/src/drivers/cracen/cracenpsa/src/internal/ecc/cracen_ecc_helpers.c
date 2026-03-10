@@ -231,7 +231,7 @@ bool cracen_ecc_curve_is_weierstrass(psa_ecc_family_t curve)
 }
 
 static psa_status_t check_wstr_publ_key_for_ecdh(psa_ecc_family_t curve_family, size_t curve_bits,
-						 const uint8_t *data, size_t data_length)
+						 const uint8_t *data)
 {
 	size_t priv_key_size = PSA_BITS_TO_BYTES(curve_bits);
 	psa_status_t psa_status;
@@ -269,7 +269,7 @@ psa_status_t check_wstr_pub_key_data(psa_algorithm_t key_alg, psa_ecc_family_t c
 	}
 
 	if (PSA_ALG_IS_ECDH(key_alg)) {
-		return check_wstr_publ_key_for_ecdh(curve, key_bits, data, data_length);
+		return check_wstr_publ_key_for_ecdh(curve, key_bits, data);
 	}
 
 	return PSA_SUCCESS;
@@ -362,7 +362,7 @@ psa_status_t cracen_ecc_is_quadratic_residue(sx_pk_req *req,
 	/* tmp = value^((p-1)/2) mod p */
 	sx_op tmp = {.sz = op_size, .bytes = pm1_tmp_buf};
 
-	sx_status = sx_mod_exp(req, NULL, value, &pm1_div_2, curve_prime, &tmp);
+	sx_status = sx_mod_exp(req, value, &pm1_div_2, curve_prime, &tmp);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -484,7 +484,7 @@ static int cracen_ecc_h2e_sswu_calc_gx(sx_pk_req *req, const sx_const_op *curve_
 	sx_const_op exp = {.sz = op_size, .bytes = three_ax_x3ax_buf};
 	sx_op x_3 = {.sz = op_size, .bytes = x3_buf};
 
-	sx_status = sx_mod_exp(req, NULL, x, &exp, modulo, &x_3);
+	sx_status = sx_mod_exp(req, x, &exp, modulo, &x_3);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -492,7 +492,7 @@ static int cracen_ecc_h2e_sswu_calc_gx(sx_pk_req *req, const sx_const_op *curve_
 	/* ax = a*x */
 	sx_op ax = {.sz = op_size, .bytes = ax_buf};
 
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, modulo, curve_a, x, &ax);
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, modulo, curve_a, x, &ax);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -504,7 +504,7 @@ static int cracen_ecc_h2e_sswu_calc_gx(sx_pk_req *req, const sx_const_op *curve_
 
 	sx_get_const_op(&x_3, &x_3_const);
 	sx_get_const_op(&ax, &ax_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_add, modulo,
+	sx_status = sx_mod_primitive_cmd(req, cmd_add, modulo,
 					&x_3_const, &ax_const, &x_3_ax);
 	if (sx_status != SX_OK) {
 		return sx_status;
@@ -514,7 +514,7 @@ static int cracen_ecc_h2e_sswu_calc_gx(sx_pk_req *req, const sx_const_op *curve_
 	sx_const_op x_3_ax_const;
 
 	sx_get_const_op(&x_3_ax, &x_3_ax_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_add, modulo, &x_3_ax_const, curve_b, gx);
+	sx_status = sx_mod_primitive_cmd(req, cmd_add, modulo, &x_3_ax_const, curve_b, gx);
 
 	return sx_status;
 }
@@ -544,7 +544,7 @@ static int cracen_ecc_h2e_sswu_calc_m(sx_pk_req *req,
 	/* u_sqr = u^2 */
 	sx_op u_sqr = {.sz = curve_opsize, .bytes = usqr_zufourth_buf};
 
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, modulo, u, u, &u_sqr);
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, modulo, u, u, &u_sqr);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -553,7 +553,7 @@ static int cracen_ecc_h2e_sswu_calc_m(sx_pk_req *req,
 	sx_const_op u_sqr_const;
 
 	sx_get_const_op(&u_sqr, &u_sqr_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, modulo, z_param, &u_sqr_const, zu_sqr);
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, modulo, z_param, &u_sqr_const, zu_sqr);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -563,7 +563,7 @@ static int cracen_ecc_h2e_sswu_calc_m(sx_pk_req *req,
 	sx_op zu_fourth = {.sz = curve_opsize, .bytes = usqr_zufourth_buf};
 
 	sx_get_const_op(zu_sqr, &zu_sqr_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, modulo, &zu_sqr_const,
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, modulo, &zu_sqr_const,
 					 &zu_sqr_const, &zu_fourth);
 	if (sx_status != SX_OK) {
 		return sx_status;
@@ -573,7 +573,7 @@ static int cracen_ecc_h2e_sswu_calc_m(sx_pk_req *req,
 	sx_const_op zu_fourth_const;
 
 	sx_get_const_op(&zu_fourth, &zu_fourth_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_add, modulo, &zu_fourth_const,
+	sx_status = sx_mod_primitive_cmd(req, cmd_add, modulo, &zu_fourth_const,
 					 &zu_sqr_const, m);
 
 	return sx_status;
@@ -615,7 +615,7 @@ static int cracen_ecc_h2e_sswu_calc_x1(sx_pk_req *req, const sx_const_op *a,
 	/* (z * a) */
 	sx_op za = {.sz = curve_op_size, .bytes = za_pmb_one_buf};
 
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, modulo, z_param, a, &za);
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, modulo, z_param, a, &za);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -625,7 +625,7 @@ static int cracen_ecc_h2e_sswu_calc_x1(sx_pk_req *req, const sx_const_op *a,
 	sx_op x1a = {.sz = curve_op_size, .bytes = x1a_buf};
 
 	sx_get_const_op(&za, &za_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_div, modulo, b, &za_const, &x1a);
+	sx_status = sx_mod_primitive_cmd(req, cmd_div, modulo, b, &za_const, &x1a);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -650,7 +650,7 @@ static int cracen_ecc_h2e_sswu_calc_x1(sx_pk_req *req, const sx_const_op *a,
 	sx_op m_b_inv_a = {.sz = curve_op_size, .bytes = mbinva_buf};
 
 	sx_get_const_op(&inv_a, &inv_a_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, modulo, &p_m_b,
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, modulo, &p_m_b,
 					&inv_a_const, &m_b_inv_a);
 	if (sx_status != SX_OK) {
 		return sx_status;
@@ -663,7 +663,7 @@ static int cracen_ecc_h2e_sswu_calc_x1(sx_pk_req *req, const sx_const_op *a,
 	sx_const_op one = {.sz = curve_op_size, .bytes = za_pmb_one_buf};
 	sx_op one_p_t = {.sz = curve_op_size, .bytes = inva_onept_buf};
 
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_add, modulo, &one, t_const, &one_p_t);
+	sx_status = sx_mod_primitive_cmd(req, cmd_add, modulo, &one, t_const, &one_p_t);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -675,7 +675,7 @@ static int cracen_ecc_h2e_sswu_calc_x1(sx_pk_req *req, const sx_const_op *a,
 
 	sx_get_const_op(&m_b_inv_a, &m_b_inv_a_const);
 	sx_get_const_op(&one_p_t, &one_p_t_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, modulo, &m_b_inv_a_const,
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, modulo, &m_b_inv_a_const,
 					 &one_p_t_const, &x1b);
 	if (sx_status != SX_OK) {
 		return sx_status;
@@ -786,7 +786,7 @@ psa_status_t cracen_ecc_h2e_sswu(sx_pk_req *req, psa_ecc_family_t curve_family,
 	sx_op t = {.sz = sx_pk_curve_opsize(sx_curve), .bytes = zero_t_gx1_x_buf};
 
 	sx_get_const_op(&m, &m_const);
-	sx_status = sx_mod_exp(req, NULL, &m_const, &p_decreased, &modulo, &t);
+	sx_status = sx_mod_exp(req, &m_const, &p_decreased, &modulo, &t);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -819,7 +819,7 @@ psa_status_t cracen_ecc_h2e_sswu(sx_pk_req *req, psa_ecc_family_t curve_family,
 	/* x2 = (z * u^2 * x1) modulo p */
 	sx_op x2 = {.sz = sx_pk_curve_opsize(sx_curve), .bytes = x2_buf};
 
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, &modulo,
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, &modulo,
 					&zu_sqr_const, &x1_const, &x2);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);

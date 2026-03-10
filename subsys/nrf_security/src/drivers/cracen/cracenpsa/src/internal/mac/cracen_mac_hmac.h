@@ -17,7 +17,6 @@
  * This function initializes an HMAC operation with the provided key and algorithm.
  *
  * @param[in,out] operation       Pointer to the HMAC operation context to be initialized.
- * @param[in]     attributes      Pointer to the key attributes structure.
  * @param[in]     key_buffer      Pointer to the buffer containing the key material.
  * @param[in]     key_buffer_size Size of the key buffer in bytes.
  * @param[in]     alg             The HMAC algorithm to be used.
@@ -25,8 +24,8 @@
  * @return PSA_SUCCESS on success or a valid PSA status code.
  */
 psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
-			       const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
-			       size_t key_buffer_size, psa_algorithm_t alg);
+				   const uint8_t *key_buffer,
+				   size_t key_buffer_size, psa_algorithm_t alg);
 
 /**
  * @brief Update an HMAC operation with input data.

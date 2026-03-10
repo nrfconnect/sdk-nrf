@@ -151,25 +151,6 @@ struct sx_pk_config_rng {
 	int personalization_sz;
 };
 
-/** Reconfigure internal RNG of IK (advanced)
- *
- * This function shall be called after the key derivation and can be run
- * multiple times. Each time it will change the personalization string
- * for the internal RNG of IK.
- *
- * @remark This is an experimental function and might disappear in
- * newer versions. Normally users can ignore this function and use the default
- * RNG settings.
- *
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- * startup
- * @param[in] cfg Rng configuration structure to provide personalization string
- *
- * @return ::SX_OK
- * @return ::SX_ERR_OPERAND_TOO_LARGE when personalization string is too large
- */
-int sx_pk_ik_rng_reconfig(struct sx_pk_cnx *cnx, struct sx_pk_config_rng *cfg);
-
 #ifdef __cplusplus
 }
 #endif

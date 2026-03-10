@@ -101,7 +101,6 @@ static psa_status_t setup(enum cipher_operation dir, cracen_cipher_operation_t *
 }
 
 static psa_status_t cipher_crypt(cracen_cipher_operation_t *operation,
-				 const psa_key_attributes_t *attributes, psa_algorithm_t alg,
 			  const uint8_t *input, size_t input_length, uint8_t *output,
 			  size_t output_size, size_t *output_length)
 {
@@ -226,7 +225,7 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 		return status;
 	}
 
-	return cipher_crypt(&operation, attributes, alg, input, input_length, output, output_size,
+	return cipher_crypt(&operation, input, input_length, output, output_size,
 			   output_length);
 }
 
@@ -303,7 +302,7 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 		return status;
 	}
 
-	return cipher_crypt(&operation, attributes, alg, input + iv_size, input_length - iv_size,
+	return cipher_crypt(&operation, input + iv_size, input_length - iv_size,
 			   output, output_size, output_length);
 }
 

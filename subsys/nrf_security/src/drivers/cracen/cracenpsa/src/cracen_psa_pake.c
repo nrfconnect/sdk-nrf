@@ -39,7 +39,7 @@ psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
 #endif /* PSA_NEED_CRACEN_SRP_6 */
 	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
 #ifdef PSA_NEED_CRACEN_SPAKE2P
-		status = cracen_spake2p_setup(&operation->cracen_spake2p_ctx, attributes, password,
+		status = cracen_spake2p_setup(&operation->cracen_spake2p_ctx, password,
 					      password_length, cipher_suite);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
 	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
@@ -245,7 +245,7 @@ psa_status_t cracen_pake_get_shared_key(cracen_pake_operation_t *operation,
 #endif /* PSA_NEED_CRACEN_SRP_6 */
 	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
 #ifdef PSA_NEED_CRACEN_SPAKE2P
-		status = cracen_spake2p_get_shared_key(&operation->cracen_spake2p_ctx, attributes,
+		status = cracen_spake2p_get_shared_key(&operation->cracen_spake2p_ctx,
 						       key_buffer, key_buffer_size,
 						       key_buffer_length);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
