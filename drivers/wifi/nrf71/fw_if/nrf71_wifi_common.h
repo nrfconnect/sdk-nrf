@@ -230,6 +230,8 @@ enum nrf_wifi_sys_commands {
 	NRF_WIFI_CMD_UPDATE_XO,
 	/** Command to configure LMAC tuning parameters */
 	NRF_WIFI_CMD_LMAC_TUNING_PARAMS,
+	/** Radio test: push full @ref rpu_conf_params (MAC/PHY update) to LMAC/PHY */
+	NRF_WIFI_CMD_MAC_PARAM_UPDATE,
 };
 
 /**
@@ -616,6 +618,16 @@ struct nrf_wifi_cmd_sys_init {
 	 *  11AC implies 11N; 11AX implies 11AC+11N.
 	 */
 	unsigned int protocol_mode;
+	/** Display scan behaviour once @ref display_scan_bss_limit slots are filled
+	 *  (and host scan DB size / fallback caps apply in the UMAC).
+	 *  0 (default): keep scanning; a strictly stronger RSSI than the weakest stored
+	 *               BSS replaces that weakest entry (list stays signal-ranked).
+	 *  1: at capacity, further qualifying beacons/probes trigger scan abort to the
+	 *     lower layer and scan completion to the upper layer; no RSSI replacement.
+	 */
+	unsigned char display_scan_abort_on_bss_limit;
+	/** Flag to prevent fallback from 802.11ac to lower Wi-Fi modes */
+	unsigned char nrf_wifi_11ac_downgrade_disable;
 } __NRF_WIFI_PKD;
 
 /**
@@ -776,6 +788,10 @@ struct rpu_conf_params {
 	unsigned short int capture_length;
 	/** Capture timeout in seconds */
 	unsigned short int capture_timeout;
+	/** ED threshold for OFDM dynamic capture (stored as 8-bit signed value) */
+	unsigned char ed_thresh_ofdm;
+	/** ED threshold for DSSS dynamic capture (stored as 8-bit signed value) */
+	unsigned char ed_thresh_dsss;
 	/** Configure WLAN to bypass regulatory */
 	unsigned char bypass_regulatory;
 	/** Two letter country code (00: Default for WORLD) */
@@ -802,6 +818,8 @@ struct rpu_conf_params {
 	unsigned int rf_params_addr[NUM_WIFI_PARAMS];
 	/** VTF buffer address */
 	unsigned int vtf_buffer_addr;
+	/** BSS check in RX filter: 0=disable, 1=enable */
+	unsigned char bss_check_enable;
 } __NRF_WIFI_PKD;
 
 /**
@@ -868,6 +886,17 @@ struct nrf_wifi_cmd_rx {
 	struct nrf_wifi_sys_head sys_head;
 	/** rx configuration parameters @ref rpu_conf_rx_radio_test_params */
 	struct rpu_conf_rx_radio_test_params conf;
+} __NRF_WIFI_PKD;
+
+/**
+ * @brief Radio test command for MAC/PHY update using the full set
+ *  of @ref rpu_conf_params (see LMAC_CMD_CONFIG_MAC_PARAMS).
+ */
+struct nrf_wifi_cmd_mac_param_update {
+	/** UMAC header, @ref nrf_wifi_sys_head */
+	struct nrf_wifi_sys_head sys_head;
+	/** Full radio-test configuration @ref rpu_conf_params */
+	struct rpu_conf_params conf;
 } __NRF_WIFI_PKD;
 
 /**
@@ -1526,7 +1555,7 @@ struct nrf_wifi_cmd_gi_config {
 
 #define NRF_WIFI_LMAC_MAX_RX_BUFS 256
 
-
+#define HW_SLEEP_WITH_LP_RF 3
 #define HW_SLEEP_ENABLE 2
 #define SW_SLEEP_ENABLE 1
 #define SLEEP_DISABLE 0
@@ -1706,101 +1735,37 @@ enum wifi_operation_modes {
 
 /**
  * @enum nrf_wifi_rf_test
- * @brief Enumerates the available RF test commands for the Wi-Fi RPU.
+ * @brief RF test commands for the Wi-Fi RPU (radio test mode).
  *
- * This enumeration defines the various RF test commands that can be issued to the
- * Radio Processing Unit (RPU) for testing, calibration, and debugging purposes.
- * The commands cover a range of RF test operations such as ADC capture, packet capture,
- * tone generation, DPD, RSSI measurement, sleep, temperature reading, XO calibration,
- * register/memory access, and compensation/calibration routines.
+ * Supports RX ADC capture, RX packet capture (static and dynamic), TX tone
+ * generation, and XO tune.
  */
 enum nrf_wifi_rf_test {
 	NRF_WIFI_RF_TEST_RX_ADC_CAP,
 	NRF_WIFI_RF_TEST_RX_STAT_PKT_CAP,
 	NRF_WIFI_RF_TEST_RX_DYN_PKT_CAP,
 	NRF_WIFI_RF_TEST_TX_TONE,
-	NRF_WIFI_RF_TEST_DPD,
-	NRF_WIFI_RF_TEST_RF_RSSI,
-	NRF_WIFI_RF_TEST_SLEEP,
-	NRF_WIFI_RF_TEST_GET_TEMPERATURE,
-	NRF_WIFI_RF_TEST_XO_CALIB,
 	NRF_WIFI_RF_TEST_XO_TUNE,
-	NRF_WIFI_RF_TEST_GET_BAT_VOLT,
-	NRF_WIFI_SET_TEMP_VOLT_RECAL_PARAMS,
-	NRF_WIFI_SET_CALIB_CTRL_PARAMS,
-	NRF_WIFI_SET_TX_POWER_CEILINGS,
-	NRF_WIFI_SET_TX_POWER_OFFSETS,
-	NRF_WIFI_SET_PHY_PARAMS,
-	NRF_WIFI_SET_TEMP_VOLT_BUF_ADDR,
-	NRF_WIFI_SET_RX_GAINS_OFFSETS,
-	NRF_WIFI_SET_EDGE_CHANNEL_PARAMS,
-	NRF_WIFI_SET_EVM_AFFECTED_CHANNELS,
-	NRF_WIFI_SET_ANTENNA_GAIN_PARAMS,
-	NRF_WIFI_SET_MULTIPATH_DET_PARAMS,
-	NRF_WIFI_RH_START,
-	NRF_WIFI_RH_STOP,
-	NRF_WIFI_RF_TEST_SET_REGS = 128,
-	NRF_WIFI_RF_TEST_READ_REGS,
-	NRF_WIFI_RF_TEST_SET_MEM,
-	NRF_WIFI_RF_TEST_READ_MEM,
-	NRF_WIFI_RF_PERFORM_CALIBRATION,
-	NRF_WIFI_RF_APPLY_COMPENSATION,
-	NRF_WIFI_RF_READ_COMP_RESULTS,
-	NRF_WIFI_RF_TEST_PATCH_SETTINGS,
-	NRF_WIFI_RF_TEST_ENABLE_VT_CALIB,
-	NRF_WIFI_RF_TEST_ENABLE_VT_COMP,
-	NRF_WIFI_RF_SET_CALIB_REGS,
-	NRF_WIFI_RF_TEST_ADPLL_CAP_PARAMS,
-	NRF_WIFI_RF_TEST_GET_STATS,
 	NRF_WIFI_RF_TEST_MAX,
-
 };
 
+/**
+ * @enum nrf_wifi_rf_test_event
+ * @brief RF test completion events from the RPU (radio test mode).
+ */
 enum nrf_wifi_rf_test_event {
 	NRF_WIFI_RF_TEST_EVENT_RX_ADC_CAP,
 	NRF_WIFI_RF_TEST_EVENT_RX_STAT_PKT_CAP,
 	NRF_WIFI_RF_TEST_EVENT_RX_DYN_PKT_CAP,
 	NRF_WIFI_RF_TEST_EVENT_TX_TONE_START,
-	NRF_WIFI_RF_TEST_EVENT_DPD_ENABLE,
-	NRF_WIFI_RF_TEST_EVENT_RF_RSSI,
-	NRF_WIFI_RF_TEST_EVENT_SLEEP,
-	NRF_WIFI_RF_TEST_EVENT_TEMP_MEAS,
-	NRF_WIFI_RF_TEST_EVENT_XO_CALIB,
 	NRF_WIFI_RF_TEST_EVENT_XO_TUNE,
-	NRF_WIFI_RF_TEST_EVENT_GET_BAT_VOLT,
-	NRF_WIFI_EVENT_SET_TEMP_VOLT_RECAL_PARAMS,
-	NRF_WIFI_EVENT_SET_CALIB_CTRL_PARAMS,
-	NRF_WIFI_EVENT_SET_TX_POWER_CEILINGS,
-	NRF_WIFI_EVENT_SET_TX_POWER_OFFSETS,
-	NRF_WIFI_EVENT_SET_PHY_PARAMS,
-	NRF_WIFI_EVENT_SET_TEMP_VOLT_BUF_ADDR,
-	NRF_WIFI_EVENT_SET_RX_GAINS_OFFSETS,
-	NRF_WIFI_EVENT_SET_EDGE_CHANNEL_PARAMS,
-	NRF_WIFI_EVENT_SET_EVM_AFFECTED_CHANNELS,
-	NRF_WIFI_EVENT_SET_ANTENNA_GAIN_PARAMS,
-	NRF_WIFI_EVENT_SET_MULTIPATH_DET_PARAMS,
-	NRF_WIFI_RH_TEST_EVENT_START,
-	NRF_WIFI_RH_TEST_EVENT_STOP,
-	NRF_WIFI_RF_TEST_EVENT_SET_REGS = 128,
-	NRF_WIFI_RF_TEST_EVENT_READ_REGS,
-	NRF_WIFI_RF_TEST_EVENT_SET_MEM,
-	NRF_WIFI_RF_TEST_EVENT_READ_MEM,
-	NRF_WIFI_RF_TEST_EVENT_PERFORM_CALIBRATION,
-	NRF_WIFI_RF_TEST_EVENT_APPLY_COMPENSATION,
-	NRF_WIFI_RF_TEST_EVENT_READ_COMP_RESULTS,
-	NRF_WIFI_RF_TEST_EVENT_PATCH_SETTINGS,
-	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_CALIB,
-	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_COMP,
-	NRF_WIFI_RF_TEST_EVENT_SET_CALIB_REGS,
-	NRF_WIFI_RF_TEST_EVENT_ADPLL_CAP_PARAMS,
-	NRF_WIFI_RF_TEST_EVENT_GET_STATS,
 	NRF_WIFI_RF_TEST_EVENT_MAX,
-
 };
 
-#define MAX_REGS_CONF 8
-#define MAX_MEM_CONF 8
-#define CAL_MEM_SIZE 2048
+#define NRF_WIFI_RF_TEST_RX_CAPTURE_MAX_SAMPLES 12256
+#define MIN_CAPTURE_LEN 0
+#define RX_CAPTURE_TIMEOUT_CONST 11
+#define CAPTURE_DURATION_IN_SEC 600
 
 /* Holds the RX capture related info */
 struct nrf_wifi_rf_test_capture_params {
@@ -1833,25 +1798,12 @@ struct nrf_wifi_rf_test_capture_params {
 	 */
 	unsigned char bb_gain;
 
+	/* OFDM / DSSS ED thresholds in dBm for NRF_WIFI_RF_TEST_RX_DYN_PKT_CAP */
+	unsigned char ed_thresh_ofdm;
+	unsigned char ed_thresh_dsss;
+
 	/* address of the capture data */
 	unsigned int *capture_addr;
-} __NRF_WIFI_PKD;
-
-/* Struct to hold the events from RF test SW. */
-struct nrf_wifi_rf_test_capture_meas {
-	unsigned char test;
-
-	/* Mean of I samples. Format: Q.11 */
-	signed short mean_I;
-
-	/* Mean of Q samples. Format: Q.11 */
-	signed short mean_Q;
-
-	/* RMS of I samples */
-	unsigned int rms_I;
-
-	/* RMS of Q samples */
-	unsigned int rms_Q;
 } __NRF_WIFI_PKD;
 
 /** Tone type for RF test TX tone: 0 = complex, 1 = real-only, 2 = imag-only. */
@@ -1886,52 +1838,6 @@ struct nrf_wifi_rf_test_tx_params {
 	unsigned char tone_type;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_rf_test_transmit_samples {
-	unsigned char test;
-	unsigned char enabled;
-} __NRF_WIFI_PKD;
-
-
-struct nrf_wifi_rf_test_dpd_params {
-	unsigned char test;
-	unsigned char enabled;
-
-} __NRF_WIFI_PKD;
-
-struct nrf_wifi_rf_test_multipath_params {
-	unsigned char test;
-	unsigned char enabled;
-} __NRF_WIFI_PKD;
-
-
-
-struct nrf_wifi_temperature_params {
-	unsigned char test;
-
-	/** Current measured temperature */
-	signed int temperature;
-
-	/** Temperature measurment status.
-	 * 0: Reading successful
-	 * 1: Reading failed
-	 */
-	unsigned int readTemperatureStatus;
-} __NRF_WIFI_PKD;
-
-struct nrf_wifi_rf_get_rf_rssi {
-	unsigned char test;
-	unsigned char lna_gain;
-	unsigned char bb_gain;
-	unsigned char agc_status_val;
-} __NRF_WIFI_PKD;
-
-struct nrf_wifi_rf_test_xo_calib {
-	unsigned char test;
-
-	signed char xo_val;
-
-} __NRF_WIFI_PKD;
-
 struct nrf_wifi_rf_get_xo_value {
 	unsigned char test;
 
@@ -1943,382 +1849,6 @@ struct nrf_wifi_rf_get_xo_value {
 	 */
 	unsigned char status;
 } __NRF_WIFI_PKD;
-
-
-struct nrf_wifi_rf_test_enter_sleep {
-	unsigned char test;
-	unsigned char enabled;
-
-} __NRF_WIFI_PKD;
-
-/* Structure to hold battery voltage parameters */
-struct nrf_wifi_bat_volt_params {
-	unsigned char test;
-
-	/** Measured battery voltage in volts. */
-	unsigned char voltage;
-
-	/** Status of the voltage measurement command.
-	 * 0: Reading successful
-	 * 1: Reading failed
-	 */
-	unsigned int cmd_status;
-} __NRF_WIFI_PKD;
-
-typedef enum {
-	rx_only_mode,
-	trx_normal_mode
-} sys_oper_mode_e;
-
-/**
- * @struct nrf_wifi_rf_config_regs
- * @brief Holds configuration details for RPU registers.
- */
-struct nrf_wifi_rf_config_regs {
-	/** Test identifier */
-	unsigned char test;
-
-	/** Number of registers to be configured */
-	unsigned char num_regs;
-
-	/** Array to store register values */
-	unsigned int reg_val[MAX_REGS_CONF];
-
-	/** Array to store register addresses */
-	unsigned int reg_addr[MAX_REGS_CONF];
-
-} __NRF_WIFI_PKD;
-
-/**
- * @struct nrf_wifi_rf_config_mem
- * @brief Holds memory configuration details for RPU.
- */
-struct nrf_wifi_rf_config_mem {
-	/** Test identifier */
-	unsigned char test;
-
-	/** Number of memory locations to be configured */
-	unsigned char num_memory_loc;
-
-	/** Array to store memory values */
-	unsigned int mem_val[MAX_MEM_CONF];
-
-	/** Array to store memory addresses */
-	unsigned int mem_addr[MAX_MEM_CONF];
-
-} __NRF_WIFI_PKD;
-
-/**
- * @struct nrf_wifi_rf_calib
- * @brief Holds calibration configuration details for RPU.
- */
-struct nrf_wifi_rf_calib {
-	/** Test identifier */
-	unsigned char test;
-
-	/** RF calibration bit map */
-	unsigned char calib_bitmap;
-
-	/** refer enum sys_oper_mode_e. */
-	unsigned char sys_operating_mode;
-
-	/** Index of the calibration results to be used. */
-	unsigned char index;
-
-	/** Result structure to store calibration results
-	 * (pointer to buffer of size >= CAL_MEM_SIZE)
-	 */
-	unsigned char *rf_calib_results;
-} __NRF_WIFI_PKD;
-
-enum nrf_wifi_rf_get_calib_results_mode_e {
-	OPERATING_CHANNEL_RESULTS,
-	SCAN_CHANNEL_RESULTS,
-};
-
-/**
- * @struct nrf_wifi_rf_read_calib_results
- * @brief Read calibration results structure for the current channel.
- */
-struct nrf_wifi_rf_read_calib_results {
-	/** Test identifier */
-	unsigned char test;
-
-	/** refer enum nrf_wifi_rf_get_calib_results_mode_e. */
-	unsigned char mode;
-
-	/** If mode is OPERATING_CHANNEL_RESULTS then
-	 * configure index as 0 or 1 based on which results are needed.
-	 */
-	unsigned char index;
-
-	/** Result structure to store calibration results
-	 * (pointer to buffer of size >= CAL_MEM_SIZE)
-	 */
-	unsigned char *rf_calib_results;
-} __NRF_WIFI_PKD;
-
-
-enum freq_hb_slice_e {
-	FREQHB_SLICE_PA_DA_TUNE,
-	FREQHB_SLICE_PA_PGA_TUNE,
-	FREQHB_SLICE_TXPA_TUNE,
-	FREQHB_SLICE_ICT_LO_HB_DRV,
-	FREQHB_SLICE_RXBIAS_LODIV,
-	FREQHB_SLICE_LOGEN_CAP,
-	FREQHB_SLICE_LOGEN_BIAS,
-	FREQHB_SLICE_LO_HB_DRV_CLOAD,
-	FREQHB_SLICE_ICT_TXRF_LODIV,
-	FREQHB_SLICE_LNA_CAP,
-	FREQHB_SLICE_PLACE_HOLDER1,
-	FREQHB_SLICE_PLACE_HOLDER2,
-};
-
-enum freq_lb_slice_e {
-	FREQLB_SLICE_LOGEN_CAP
-};
-
-enum temp_hb_slice_e {
-	TEMPHB_SLICE_PA_DABIAS,
-	TEMPHB_SLICE_PA_PGABIAS,
-	TEMPHB_SLICE_LOGEN_BIAS_CTRL,
-	TEMPHB_SLICE_ICT_TXRF_LODIV_CTRL,
-	TEMPHB_SLICE_PLACE_HOLDER1,
-	TEMPHB_SLICE_PLACE_HOLDER2,
-};
-
-enum temp_lb_slice_e {
-	TEMPLB_SLICE_PA_DABIAS,
-	TEMPLB_SLICE_PA_PGABIAS,
-	TEMPLB_SLICE_LOGEN_BIAS_CTRL,
-	TEMPLB_SLICE_ICT_TXRF_LODIV_CTRL,
-	TEMPLB_SLICE_PLACE_HOLDER1,
-	TEMPLB_SLICE_PLACE_HOLDER2,
-};
-
-enum optimized_settings_slice_e {
-	OPTIM_SETTINGS_SLICE_TRX_ADC_DAC,
-	OPTIM_SETTINGS_SLICE_TRX_RX_SX_PWR,
-	OPTIM_SETTINGS_SLICE_DTIM
-};
-
-enum tx_gain_table_slice_e {
-	TXGAIN_SLICE_PA,
-	TXGAIN_SLICE_DA,
-	TXGAIN_SLICE_PGA,
-	TXGAIN_SLICE_BB,
-	TXGAIN_SLICE_ALL
-};
-
-enum rx_bb_gain_table_slice_e {
-	RXBB_GAIN_SLICE_GAIN1,
-	RXBB_GAIN_SLICE_GAIN2,
-	RXBB_GAIN_SLICE_GAIN3,
-	RXBB_GAIN_SLICE_RXLB_DTIM_V2I_SLICE_EN,
-	RXBB_GAIN_SLICE_RXLB_MAIN_V2I_SLICE_EN,
-	RXBB_GAIN_SLICE_RXHB_DTIM_V2I_SLICE_EN,
-	RXBB_GAIN_SLICE_RXHB_MAIN_V2I_SLICE_EN,
-	RXBB_GAIN_SLICE_ALL
-};
-
-enum rx_lna_gain_table_slice_e {
-	RXLNA_GAIN_SLICE_LB_GAIN_CTRL,
-	RXLNA_GAIN_SLICE_LB_GAIN_FEEDBACKR_CTRL,
-	RXLNA_GAIN_SLICE_LB_ALL,
-	RXLNA_GAIN_SLICE_HB_GAIN_CTRL,
-	RXLNA_GAIN_SLICE_HB_GAIN_CASCODE_CTRL,
-	RXLNA_GAIN_SLICE_HB_ALL
-};
-
-enum wait_idx_e {
-	WAITIDX_Activate_TX2RX = 0,
-	WAITIDX_Activate_RX2TX,
-	WAITIDX_Deactivate_TXRX,
-	WAITIDX_Activate_RX_DCOC_INTERNAL_LOOP,
-	WAITIDX_Activate_TX_DCOC_INTERNAL_LOOP,
-	WAITIDX_Activate_WLPWR_TRX_ON,
-	WAITIDX_Activate_WLPWR_DTIM_ON,
-	WAITIDX_Activate_WLPWR_WUR_LB_ON,
-	WAITIDX_Activate_WLPWR_WUR_HB_ON,
-	WAITIDX_Activate_RXPWR_DTIM_ON,
-	WAITIDX_Activate_RXPWR_WUR_ON,
-	WAITIDX_Activate_SXLP_DTIM_LB_ON,
-	WAITIDX_Activate_SXLP_DTIM_HB_ON,
-	WAITIDX_Activate_WUR_DCOC_INTERNAL_LOOP,
-	WAITIDX_Activate_TRXPWR_LB_ALL,
-	WAITIDX_Activate_TRXPWR_HB_ALL,
-	WAITIDX_Activate_SXHP_ALLPWR,
-	/** Hardcoded 4us wait */
-	WAITIDX_WLPWR_PALDO_SOFTST,
-	/** Hardcoded 20us wait */
-	WAITIDX_PWR_BEACON2TRX_RFLDO,
-	/** Hardcoded 40us wait */
-	WAITIDX_PWR_BEACON2TRX_SXHP,
-	/** Must be last - used for array size */
-	WAITIDX_COUNT,
-};
-
-/**
- * @brief Enum for SXHP ADPLL static setting indices
- */
-enum sxhp_adpll_slice_e {
-	SXHPADPLL_SLICE_EST_KDTC_EN = 0,
-	SXHPADPLL_SLICE_FSM_ACQ_FIRST_GEAR,
-	SXHPADPLL_SLICE_FSM_ACQ_SECOND_GEAR,
-	SXHPADPLL_SLICE_FSM_ACQ_TOTAL_TIME,
-	SXHPADPLL_SLICE_FSM_TRK_FIRST_GEAR,
-	SXHPADPLL_SLICE_FSM_TRK_SECOND_GEAR,
-	SXHPADPLL_SLICE_FSM_TRK_THIRD_GEAR,
-	SXHPADPLL_SLICE_LOOP_FILTER_CFG,
-	SXHPADPLL_SLICE_TDC_LOCK_THRESHOLD,
-	SXHPADPLL_SLICE_SPARE1,
-	SXHPADPLL_SLICE_SPARE2,
-	SXHPADPLL_SLICE_SPARE3,
-};
-
-/**
- * @brief Enum for SXLP ADPLL static setting indices
- */
-enum sxlp_adpll_slice_e {
-	SXLPADPLL_SLICE_FSM_ACQ_FIRST_GEAR = 0,
-	SXLPADPLL_SLICE_FSM_ACQ_SECOND_GEAR,
-	SXLPADPLL_SLICE_FSM_ACQ_TOTAL_TIME,
-	SXLPADPLL_SLICE_FSM_TRK_FIRST_GEAR,
-	SXLPADPLL_SLICE_FSM_TRK_SECOND_GEAR,
-	SXLPADPLL_SLICE_FSM_TRK_THIRD_GEAR,
-	SXLPADPLL_SLICE_LOOP_FILTER_CFG,
-	SXLPADPLL_SLICE_TDC_LOCK_THRESHOLD,
-	SXLPADPLL_SLICE_SPARE1,
-	SXLPADPLL_SLICE_SPARE2,
-	SXLPADPLL_SLICE_SPARE3,
-};
-
-/**
- * @brief Patch type selector. Interpretation of struct nrf_wifi_patch_settings
- *        fields depends on this value.
- */
-enum nrf_wifi_patch_settings_e {
-	PATCH_FREQ_SETTINGS_HB,
-	PATCH_FREQ_SETTINGS_LB,
-	PATCH_CONST_SETTINGS,
-	PATCH_TEMP_SETTINGS_HB,
-	PATCH_TEMP_SETTINGS_LB,
-	PATCH_OPTIMIZED_SETTINGS,
-	PATCH_TX_GAIN_TABLE,
-	PATCH_RX_BB_GAIN_TABLE,
-	PATCH_RX_LNA_GAIN_TABLE,
-	PATCH_WAIT_TIME,
-	PATCH_SXHP_ADPLL_STATIC,
-	PATCH_SXLP_ADPLL_STATIC,
-};
-
-/**
- * @brief Generic structure for patching RF settings (shared layout for all patch types)
- *
- * All fields use only unsigned char or unsigned int. Interpretation depends on patch_type.
- * Unused fields for a given patch_type should be zeroed.
- *
- * Field usage by patch_type:
- *   - index:       channel/temp/table index (unsigned char). For PATCH_WAIT_TIME, unused.
- *   - slice:       slice identifier (unsigned char); meaning depends on patch_type.
- *   - band:        band identifier (unsigned char); only for PATCH_CONST_SETTINGS,
- *                  PATCH_TX_GAIN_TABLE, PATCH_RX_LNA_GAIN_TABLE; otherwise 0.
- *   - value:       unsigned int; use low 8 bits, low 16 bits, or full 32 bits per patch_type.
- *   - is_new_setting: unsigned char; 1 = new setting, 0 = otherwise; only for
- *                    PATCH_CONST_SETTINGS and PATCH_OPTIMIZED_SETTINGS; otherwise 0.
- */
-struct nrf_wifi_patch_settings {
-	/** Test identifier */
-	unsigned char test_id;
-	/** Patch type; see enum nrf_wifi_patch_settings_e */
-	unsigned char patch_type;
-	/** Index (channel/temp/table); for PATCH_WAIT_TIME this field is unused */
-	unsigned char index;
-	/** Slice identifier; meaning depends on patch_type */
-	unsigned char slice;
-	/** Band identifier; used only for PATCH_CONST_SETTINGS, PATCH_TX_GAIN_TABLE,
-	 *  PATCH_RX_LNA_GAIN_TABLE; otherwise 0
-	 */
-	unsigned char band;
-	/** New-setting flag (0 or 1); only for PATCH_CONST_SETTINGS, PATCH_OPTIMIZED_SETTINGS;
-	 *  otherwise 0
-	 */
-	unsigned char is_new_setting;
-	/** Value; use low 8, low 16, or full 32 bits depending on patch_type */
-	unsigned int value;
-} __NRF_WIFI_PKD;
-
-/**
- * @brief Structure to disable calibration.
- *
- * @param test_id: Test identifier.
- * @param enable_calibration: Set 1 to enable calibration.
- */
-struct nrf_wifi_rf_test_enable_vt_calibration {
-	unsigned char test_id;
-	unsigned char enable_calibration;
-} __NRF_WIFI_PKD;
-
-/**
- * @brief Structure to disable compensation.
- *
- * @param test_id: Test identifier.
- * @param enable_compensation: Set 1 to enable compensation.
- */
-struct nrf_wifi_rf_test_enable_vt_compensation {
-	unsigned char test_id;
-	unsigned char enable_compensation;
-} __NRF_WIFI_PKD;
-
-/**
- * @brief Calibration register set type for NRF_WIFI_RF_SET_CALIB_REGS.
- */
-enum cal_id_e {
-	RX_DC_CAL,
-	TX_DC_CAL,
-	RX_IQ_CAL,
-	TX_IQ_CAL,
-	DPD_CAL
-};
-
-/**
- * @brief Structure for setting calibration registers (NRF_WIFI_RF_SET_CALIB_REGS).
- */
-struct nrf_wifi_set_cal_regs {
-	unsigned char test;
-	/** Calibration identifier; see enum cal_id_e */
-	unsigned char cal_id;
-	unsigned char num_regs;
-	unsigned int reg_val[MAX_REGS_CONF];
-	unsigned int reg_addr[MAX_REGS_CONF];
-} __NRF_WIFI_PKD;
-
-/* Holds the transmit related info */
-struct nrf_wifi_rh_test_params {
-	unsigned char test;
-
-	/* Set 1 to enable rssi histogram. */
-	unsigned char rh_enable;
-
-	/* oneshot:0, Periodic:1. */
-	unsigned char mode;
-
-	/* unconditional:0, pkt_only:1, noise_only:2. */
-	unsigned char hist_type;
-
-	/* all:0, max:1, range:2. */
-	unsigned char stat_type;
-
-	/* Accumulation period in seconds. */
-	unsigned char period;
-
-	/* Starting rssi for histogram accumulation */
-	signed char range_start;
-
-	/* Ending rssi for histogram accumulation */
-	signed char range_end;
-} __NRF_WIFI_PKD;
-
 
 /* TODO: Below OTP + PCB loss won't work for nRF71, but added
  * here to avoid code churn. Need to revisit this.
@@ -3089,8 +2619,25 @@ struct lmac_tuning_params {
 	unsigned int  offloadTXChecksum;
 	unsigned int offloadRXChecksum;
 	unsigned int  internal_recovery_enable;
+	unsigned int  ppmError;
+	unsigned int reSyncTime;
+	unsigned int syncTSF;
+	unsigned int raw_tx_inactivity_timer;
+	unsigned int adjustEDCACW;
+	unsigned int setCWforAC;
+	unsigned int ftm_delay;
+	unsigned int connection_inactivity_timer;
+	int tod_offset;
+	int toa_offset;
+	unsigned int clock_mode;
 	/* reserved for patching */
 	unsigned int reserved[16];
+} __NRF_WIFI_PKD;
+
+struct nrf_wifi_vtf_params {
+	unsigned int voltage;
+	unsigned int temp;
+	unsigned int x0_freq;
 } __NRF_WIFI_PKD;
 
 struct nrf_wifi_cmd_lmac_tuning_params {
@@ -3100,26 +2647,4 @@ struct nrf_wifi_cmd_lmac_tuning_params {
 	struct lmac_tuning_params params;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_vtf_params {
-	unsigned int voltage;
-	unsigned int temp;
-	unsigned int x0_freq;
-} __NRF_WIFI_PKD;
-
-/* ADPLL capture-related parameters */
-struct nrf_wifi_set_adpll_capture_params {
-	unsigned char test;
-
-	/* Control for the ADPLL capture module */
-	unsigned char enabled;
-
-	/* Number of samples to be captured. */
-	unsigned short int cap_len;
-
-	/* address of the adpll capture data */
-	unsigned int *cap_addr;
-} __NRF_WIFI_PKD;
-/**
- * @}
- */
 #endif /* __NRF71_WIFI_COMMON_H__ */
