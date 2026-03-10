@@ -719,6 +719,7 @@ struct ftm_debug_stats {
 	unsigned int beacon_not_captured;
 	unsigned int ftm_event;
 	unsigned int ftm_event_failed;
+    unsigned int ftm_timer_expired;
 	unsigned int ftm_initiator_cpy_params_cnt;
 	unsigned int ftm_null_frm_send_success;
 	unsigned int ftm_null_frm_send_fail;
@@ -1177,7 +1178,7 @@ struct nrf_wifi_rf_get_rx_debug_stats {
 struct phy_debug_stats {
 	unsigned int stats_category;
 	union {
-		unsigned int phy_stats[128];
+		unsigned int phy_stats[64];
 	};
 } __NRF_WIFI_PKD;
 
