@@ -150,17 +150,42 @@ Supported CLI commands
        | [-h, --help] : Print out the help for the scan command.
    * - connect
      - | Connect to a Wi-Fi AP
-       | <-s --ssid \"<SSID>\">: SSID.
-       | [-c --channel]: Channel that needs to be scanned for connection. 0:any channel
+       | <-s --ssid "<SSID>">: SSID to connect.
+       | [-c --channel]: Channel that needs to be scanned for connection.
+       | Value 0 indicates any channel.
        | [-b, --band] 0: any band (2:2.4GHz, 5:5GHz, 6:6GHz)
-       | [-p, --psk]: Passphrase (valid only for secure SSIDs)
-       | [-k, --key-mgmt]: Key management type.
-       | 0:None, 1:WPA2-PSK, 2:WPA2-PSK-256, 3:SAE, 4:WAPI, 5:EAP, 6:WEP,
-       | 7:WPA-PSK, 8: WPA-Auto-Personal
-       | [-w, --ieee-80211w]: MFP (optional: needs security type to be specified)
-       | : 0:Disable, 1:Optional, 2:Required.
+       | [-p, --passphrase]: Passphrase (valid only for secure SSIDs)
+       | [-k, --key-mgmt]: Key Management type (valid only for secure SSIDs)
+       | 0:None, 1:WPA2-PSK, 2:WPA2-PSK-256, 3:SAE-HNP, 4:SAE-H2E,
+       | 5:SAE-AUTO, 6:WAPI, 7:EAP-TLS, 8:WEP, 9:WPA-PSK,
+       | 10:WPA-Auto-Personal, 11:DPP, 12:EAP-PEAP-MSCHAPv2,
+       | 13:EAP-PEAP-GTC, 14:EAP-TTLS-MSCHAPv2, 15:EAP-PEAP-TLS,
+       | 20:SAE-EXT-KEY, 21:WEP-OPEN, 22:WEP-SHARED
+       | [-w, --ieee-80211w]: MFP (optional: needs security type to be
+       | specified): 0:Disable, 1:Optional, 2:Required.
        | [-m, --bssid]: MAC address of the AP (BSSID).
-       | [-t, --timeout]: Duration after which connection attempt needs to fail.
+       | [-t, --timeout]: Timeout for the connection attempt (in seconds).
+       | [-a, --anon-id]: Anonymous identity for enterprise mode.
+       | [-K, --key1-pwd for eap phase1 or --key2-pwd for eap phase2]:
+       | Private key passwd for enterprise mode. Default is no password
+       | for private key.
+       | [-S, --wpa3-enterprise]: WPA3 enterprise mode:
+       | Default is 0. 0:No WPA3 enterprise mode, 1:Suite-b mode,
+       | 2:Suite-b-192-bit mode, 3:WPA3-enterprise-only mode.
+       | [-T, --TLS-cipher]: 0:TLS-NONE, 1:TLS-ECC-P384, 2:TLS-RSA-3K.
+       | [-A, --verify-peer-cert]: apply for EAP-PEAP-MSCHAPv2 and
+       | EAP-TTLS-MSCHAPv2.
+       | Default is 0. 0:do not use CA to verify peer, 1:use CA to
+       | verify peer.
+       | [-V, --eap-version]: 0 or 1. Default is 1: use eap version 1.
+       | [-I, --eap-id1]: Client Identity. Default is no eap identity.
+       | [-P, --eap-pwd1]: Client Password. Default is no password for
+       | eap user.
+       | [-R, --ieee-80211r]: Use IEEE80211R fast BSS transition connect.
+       | [-e, --server-cert-domain-exact]: Full domain names for server
+       | certificate match.
+       | [-x, --server-cert-domain-suffix]: Domain name suffixes for
+       | server certificate match.
        | [-h, --help]: Print out the help for the connect command.
    * - disconnect
      - Disconnect from the Wi-Fi AP
