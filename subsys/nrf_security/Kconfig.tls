@@ -304,7 +304,7 @@ config MBEDTLS_SSL_OUT_CONTENT_LEN
 	int
 	prompt "Max length for TLS outgoing fragments"
 	range 0 16384
-	default 900 if OPENTHREAD_NRF_SECURITY || OPENTHREAD_NRF_SECURITY_PSA
+	default 900 if OPENTHREAD_NRF_SECURITY_PSA
 	default 2048 if NET_TEST
 	default 16384
 
@@ -312,7 +312,7 @@ config MBEDTLS_SSL_IN_CONTENT_LEN
 	prompt "Max length for TLS outgoing fragments"
 	int
 	range 0 16384
-	default 900 if OPENTHREAD_NRF_SECURITY || OPENTHREAD_NRF_SECURITY_PSA
+	default 900 if OPENTHREAD_NRF_SECURITY_PSA
 	default 2048 if NET_TEST
 	default 16384
 
