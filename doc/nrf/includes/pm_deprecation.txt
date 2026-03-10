@@ -1,3 +1,8 @@
 .. note::
-   The :ref:`partition_manager` script is deprecated in the |NCS| v3.3.0, as partitions are now configured using DTS.
+   The :ref:`partition_manager` script is a component in the |NCS| that handles the flash memory partitioning at build time.
+
+   This functionality is now replaced by Zephyr's default devicetree-based flash partitioning when multi-image builds are involved.
+   It is recommended that all new designs with Nordic devices are built with DTS instead of Partition Manager.
+   Partition Manager will be removed from the |NCS| in December 2026 from the main branch.
+
    For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`release_notes` and :ref:`migration_guides`.
