@@ -38,3 +38,8 @@
 &lfclk {
 	status = "okay";
 };
+
+&uart135 {
+	zephyr,pm-device-runtime-auto;
+	disable-rx;
+};
