@@ -12,13 +12,15 @@
  *
  * @param shell       Shell instance where output will be printed.
  * @param conn_param  Connection parameters.
- * @param phy         Phy parameters.
+ * @param phy         PHY parameters.
  * @param data_len    Maximum transmission payload.
+ * @param frame_space_us Frame space in microseconds.
  */
 int test_run(const struct shell *shell,
 	     const struct bt_le_conn_param *conn_param,
 	     const struct bt_conn_le_phy_param *phy,
-	     const struct bt_conn_le_data_len_param *data_len);
+	     const struct bt_conn_le_data_len_param *data_len,
+	     uint16_t frame_space_us);
 
 /**
  * @brief Set the board into a specific role.

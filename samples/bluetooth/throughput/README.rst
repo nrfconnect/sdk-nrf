@@ -52,6 +52,11 @@ Physical layer (PHY) data rate
    Starting with Bluetooth 5, the over-the-air data rate in Bluetooth Low Energy can exceed 1 Ms/s (mega symbols per second), which allows for faster transmission.
    In addition, you can use coded PHY (available on select nRF SoCs) for long-range transmission.
 
+Frame space
+   The frame space is the time between two consecutive radio packets.
+   Starting with Bluetooth 6.0, the frame space can be configured on a BLE connection.
+   When decreasing this value, more time is available for the radio to send and receive data, increasing the throughput.
+
 By default, the following connection parameter values are used:
 
 .. list-table:: Default parameter values
@@ -67,6 +72,12 @@ By default, the following connection parameter values are used:
      - 320 units (400 ms)
    * - PHY data rate
      - 2 Ms/s
+   * - Frame space
+     - Minimum frame space
+
+.. note::
+   The minimum frame space is requested by default.
+   This is negotiated between both devices for the minimum frame space for the current PHY.
 
 Changing connection parameter values
 ====================================
@@ -78,6 +89,7 @@ You can adjust the following parameters:
 * PHY
 * LE Data Length
 * LE Connection interval
+* Frame space
 
 .. note::
    In a Bluetooth Low Energy connection, the different devices negotiate the connection parameters that are used.
@@ -187,11 +199,12 @@ For the tester::
 
 
    : HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
-   I: Firmware: Standard Bluetooth controller (0x00) Version 51.10872 Build 1643454488
+   I: HW Variant: nRF54Lx (0x0005)
+   I: Firmware: Standard Bluetooth controller (0x00) Version 114.50547 Build 1092906799
+   I: HCI transport: SDC
    I: Identity: D7:D6:AD:A2:50:62 (random)
-   I: HCI: version 5.3 (0x0c) revision 0x1136, manufacturer 0x0059
-   I: LMP: version 5.3 (0x0c) subver 0x1136
+   I: HCI: version 6.2 (0x10) revision 0x107b, manufacturer 0x0059
+   I: LMP: version 6.2 (0x10) subver 0x107b
    Bluetooth initialized
 
    Press button 1 or type "central" on the central board.
@@ -215,10 +228,12 @@ For the tester::
    LE PHY updated: TX PHY LE 2M, RX PHY LE 2M
    LE Data length update pending
    LE data len updated: TX (len: 251 time: 2120) RX (len: 251 time: 2120)
+   Frame space update pending
+   Frame space updated: frame space 65 us, PHYs 0x0002, spacing types 0x0003
    The test is in progress and will require around 20 seconds to complete.
    Done
-   [local] sent 1242945 bytes (1213 KB) in 7292 ms at 1363 kbps
-   [peer] received 1242945 bytes (1213 KB) in 2511 GATT writes at 1415583 bps
+   [local] sent 3762990 bytes (3674 KB) in 20003 ms at 1504 kbps
+   [peer] received 3762990 bytes (3674 KB) in 7602 GATT writes at 1524771 bps
 
    Type 'config' to change the configuration parameters.
    You can use the Tab key to autocomplete your input.
@@ -235,12 +250,13 @@ For the peer::
    I: 7c f1 14 e4             ||...
 
 
-   : HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
-   I: Firmware: Standard Bluetooth controller (0x00) Version 51.10872 Build 1643454488
-   I: Identity: DC:D6:E5:EE:75:9A (random)
-   I: HCI: version 5.3 (0x0c) revision 0x1136, manufacturer 0x0059
-   I: LMP: version 5.3 (0x0c) subver 0x1136
+   I: HW Platform: Nordic Semiconductor (0x0002)
+   I: HW Variant: nRF54Lx (0x0005)
+   I: Firmware: Standard Bluetooth controller (0x00) Version 114.50547 Build 1092906799
+   I: HCI transport: SDC
+   I: Identity: DE:11:9D:70:34:D3 (random)
+   I: HCI: version 6.2 (0x10) revision 0x107b, manufacturer 0x0059
+   I: LMP: version 6.2 (0x10) subver 0x107b
    Bluetooth initialized
 
    Press button 1 or type "central" on the central board.
@@ -250,6 +266,7 @@ For the peer::
    Connected as peripheral
    Conn. interval is 320 units
    LE PHY updated: TX PHY LE 2M, RX PHY LE 2M
+   Frame space updated: frame space 65 us, PHYs 0x0002, spacing types 0x0003
 
    =============================================================================
    =============================================================================
@@ -259,7 +276,7 @@ For the peer::
    =============================================================================
    =============================================================================
    ===========================================================
-   [local] received 1242945 bytes (1213 KB) in 2511 GATT writes at 1415583 bps
+   [local] received 3762990 bytes (3674 KB) in 7602 GATT writes at 1524771 bps
 
 
 Dependencies
