@@ -7,7 +7,11 @@ boards:
     append:
       EXTRA_DTC_OVERLAY_FILE: modem-trace-uart-nrf91.overlay
       EXTRA_CONF_FILE: modem-trace-uart-nrf91.conf
-  /.*/nrf91[0-9][0-9]/.*/:
+  /thingy91.*/nrf91[0-9][0-9]/.*/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: modem-trace-uart-thingy.overlay
+      EXTRA_CONF_FILE: modem-trace-uart-nrf91.conf
+  /nrf91[0-9][0-9]dk/nrf91[0-9][0-9]/.*/:
     append:
       EXTRA_DTC_OVERLAY_FILE: modem-trace-uart-nrf91.overlay
       EXTRA_CONF_FILE: modem-trace-uart-nrf91.conf

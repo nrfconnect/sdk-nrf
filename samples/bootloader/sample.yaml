@@ -20,8 +20,6 @@ tests:
       - nrf52833dk/nrf52833
       - nrf52dk/nrf52832
       - nrf21540dk/nrf52840
-    extra_args:
-      - SB_CONFIG_PARTITION_MANAGER=n
     tags:
       - ci_build
       - sysbuild
