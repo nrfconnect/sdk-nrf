@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(2036)>;
+	ranges = <0x0 0x0 DT_SIZE_K(2036)>;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* nRF54LM20 Dongle: 24 kB boot, 116 kB slot1, 1832 kB slot0, 64 kB storage
+		 * (2036 kB total).
+		 * This is MCUboot's single-slot DFU compatible partition view:
+		 * When used in application image, slot0 can be trimmed or prolonged from its end as
+		 * required for the application.
+		 * MCUboot might be buil with slot0 spanned till the end of RRAM, so it will support
+		 * any size of slot0.
+		 */
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(24)>;
+		};
+
+		/* firmware_loader */
+		slot1_partition: partition@6000 {
+			label = "image-1";
+			reg = <0x6000 DT_SIZE_K(116)>;
+		};
+
+		/* application */
+		slot0_partition: partition@23000 {
+			label = "image-0";
+			reg = <0x23000 DT_SIZE_K(1832)>;
+		};
+
+		storage_partition: partition@1ed000 {
+			label = "storage";
+			reg = <0x1ed000 DT_SIZE_K(64)>;
+		};
+	};
+};
