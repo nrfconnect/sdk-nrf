@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "Kconfig.zephyr"
-
 menu "Nordic HIDS BLE GATT mouse service sample"
 
 config BT_HIDS_SECURITY_ENABLED
@@ -29,3 +27,5 @@ config BT_DIRECTED_ADVERTISING
 	depends on BT_HIDS_SECURITY_ENABLED
 
 endmenu
+
+source "Kconfig.zephyr"
