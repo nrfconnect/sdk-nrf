@@ -11,9 +11,6 @@ config MBEDTLS
 config MBEDTLS_TLS_VERSION_1_2
 	default n
 
-config MBEDTLS_MAC_SHA256_ENABLED
-	default n
-
 config MBEDTLS_CTR_DRBG_ENABLED
 	default n
 
