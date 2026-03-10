@@ -113,10 +113,9 @@ menuconfig NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
 	select STREAM_FLASH_ERASE
 	select STREAM_FLASH
 	select FLASH
+	select PSA_CRYPTO
 	select PSA_WANT_ALG_SHA_256
 	select FMFU_FDEV
-	select OBERON_BACKEND
-	select NORDIC_SECURITY_BACKEND
 	help
 	  Requires flash device of at least 4MB.
 
