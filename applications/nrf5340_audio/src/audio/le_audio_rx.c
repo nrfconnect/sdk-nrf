@@ -233,7 +233,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	audio_frame = net_buf_alloc(&ble_rx_pool, K_NO_WAIT);
 	if (audio_frame == NULL) {
-		LOG_WRN("Out of RX buffers");
+		LOG_WRN_RATELIMIT_RATE(1000, "Out of RX buffers");
 		return;
 	}
 
