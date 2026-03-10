@@ -35,7 +35,7 @@ endif()
 
 if(CONFIG_NRFX_GPPI AND NOT CONFIG_NRFX_GPPI_V1 AND CONFIG_SOC_SERIES_NRF71)
   zephyr_library_sources_ifdef(CONFIG_HAS_HW_NRF_PPI ${helpers_dir}/nrfx_gppi_ppi.c)
-  zephyr_library_sources(${BSP_DIR}/stable/soc/interconnect/nrfx_gppi_lumos.c)
+  zephyr_library_sources(${BSP_DIR}/stable/soc/interconnect/nrfx_gppi_d2ppi.c)
   if(CONFIG_HAS_HW_NRF_DPPIC)
     zephyr_library_sources(${helpers_dir}/nrfx_gppi_dppi.c)
   endif()
