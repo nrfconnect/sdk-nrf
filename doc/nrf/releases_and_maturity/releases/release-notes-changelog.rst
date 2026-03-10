@@ -165,6 +165,10 @@ Security
   * The :ref:`app_approtect` page with more detailed information about the AP-Protect implementation types and how to configure them for each device.
 
   * The :ref:`API documentation section for the cryptographic drivers <crypto_drivers_api_documentation>` with links to the added API documentation for the CRACEN driver.
+  * The documentation with the information about the side-channel countermeasures in the CRACEN peripheral:
+
+    * The :ref:`ug_crypto_supported_features` page with the :ref:`ug_crypto_supported_features_countermeasures` section with information about support for the countermeasures in the CRACEN driver.
+    * The :ref:`ug_kmu_guides_cracen_overview` page with the section about :ref:`ug_kmu_cracen_countermeasures`.
 
 * Removed:
 

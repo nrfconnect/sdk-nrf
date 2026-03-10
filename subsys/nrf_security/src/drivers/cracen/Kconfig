@@ -129,7 +129,7 @@ config CRACEN_IKG_PERSONALIZED_KEYS
 	  it will be passed to the IKG as a personalization string.
 
 config CRACEN_USE_INTERRUPTS
-	bool "Use cracen with interrupts"
+	bool "Use CRACEN with interrupts"
 	default y
 	help
 	  Run CRACEN using supported interrupts.
@@ -140,7 +140,7 @@ config CRACEN_ECC_COUNTERMEASURES
 	bool "CRACEN ECC countermeasures"
 	default y
 	help
-	  Enable Cracen ECC countermeasures, using scalar randomization
+	  Enable CRACEN ECC countermeasures using scalar randomization
 	  and projective coordinate randomization.
 
 	  The countermeasures are available for the following operations:
@@ -151,7 +151,7 @@ config CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED
 	def_bool y
 	depends on CRACEN_ECC_COUNTERMEASURES && CRACEN_HW_VERSION_LITE
 	help
-	  For some SOCs extended ECC countermeasures are available.
+	  For some SOCs, extended ECC countermeasures are available.
 	  These include the following operations:
 	  - Montgomery curve multiplication
 	  - EdDSA base point multiplication
@@ -161,7 +161,7 @@ config CRACEN_RSA_COUNTERMEASURES
 	bool "CRACEN RSA countermeasures"
 	default y
 	help
-	  Enable Cracen RSA countermeasures, using exponent randomization
+	  Enable CRACEN RSA countermeasures using exponent randomization
 	  and modulus randomization.
 
 	  The countermeasures are available for the following operations:

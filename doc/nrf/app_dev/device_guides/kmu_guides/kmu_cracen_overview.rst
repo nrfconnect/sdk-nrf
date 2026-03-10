@@ -90,6 +90,38 @@ IKG keys are also accessed using the standard PSA Crypto APIs, and are reference
 
 The keys are not exportable, except for the public key associated with the asymmetric key.
 
+.. _ug_kmu_cracen_countermeasures:
+
+CRACEN side-channel countermeasures
+===================================
+
+The CRACEN peripheral supports countermeasures to increase protection of asymmetric cryptographic operations against side-channel attacks and other malicious usage.
+For more information about the hardware implementation, see the device datasheet, for example `CRACEN - Crypto accelerator engine <nRF54L15 CRACEN_>`_ in the nRF54L15 datasheet.
+
+In the |NCS|, the following countermeasures are exposed through the CRACEN driver for configuration:
+
+* ECC operation countermeasures - Enabled by default through the :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES` Kconfig option.
+
+  * Scalar randomization (RandKE) - Randomizes the scalar value before point multiplication, preventing attackers from correlating power traces to individual scalar bits.
+  * Projective coordinate randomization (RandProj) - Randomizes the internal projective representation of curve points so that each execution uses different intermediate values, making power and electromagnetic analysis non-reproducible.
+
+  These countermeasures apply to the following :ref:`cryptographic operations <ug_crypto_supported_features_operations>` for devices that support them:
+
+  * ECDSA signature generation and public key generation
+  * ECC point multiplication
+  * Montgomery curve multiplication (X25519, X448)
+  * EdDSA base point multiplication
+  * Edwards point multiplication
+
+* RSA countermeasures - Enabled by default through the :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES` Kconfig option.
+
+  * Exponent randomization (RandKE) - Randomizes the private exponent during modular exponentiation.
+  * Modulus randomization (RandMod) - Randomizes the modulus representation to decorrelate power traces from key material.
+
+  These countermeasures apply to RSA CRT modular exponentiation, standard modular exponentiation, and SRP server operations, for devices that support them.
+
+For more information, see :ref:`ug_crypto_supported_features_countermeasures`.
+
 .. _ug_kmu_hardware_peripheral:
 
 KMU hardware peripheral

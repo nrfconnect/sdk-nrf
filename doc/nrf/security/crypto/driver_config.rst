@@ -149,6 +149,13 @@ In addition, it enables the following :ref:`cryptographic features <ug_crypto_su
 * Key derivation function (KDF) support: SP800-108 CMAC in counter mode
 * Authenticated Encryption with Associated Data (AEAD) cipher: Galois Counter Mode (GCM) cipher
 
+Configuring countermeasures
+===========================
+
+The CRACEN driver supports several :ref:`side-channel countermeasures <ug_kmu_cracen_countermeasures>` available on the CRACEN peripheral.
+You can enable or disable these countermeasures using Kconfig options for devices that support them.
+For the support breakdown and the Kconfig options, see :ref:`ug_crypto_supported_features_countermeasures`.
+
 Building PSA Crypto API
 ***********************
 

@@ -11408,3 +11408,74 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+
+.. _ug_crypto_supported_features_countermeasures:
+
+Side-channel countermeasures
+============================
+
+The following tables show the Kconfig options for configuring :ref:`side-channel countermeasures <ug_kmu_cracen_countermeasures>`.
+These countermeasures are available on the CRACEN peripheral and protect private key operations against power analysis attacks.
+
+The options are grouped by Series and support level for each device is listed.
+The countermeasures are available only on the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+
+.. tabs::
+
+   .. tab:: nRF54L Series
+
+      The following table lists the supported side-channel countermeasures for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. note::
+               nRF54L15, nRF54L10, and nRF54L05 do not support countermeasures for Montgomery curve multiplication (X25519, X448), EdDSA base point multiplication, and Edwards point multiplication.
+
+            .. list-table:: Side-channel countermeasures support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Countermeasure
+                 - Configuration option
+                 - nRF54L15
+                 - nRF54L10
+                 - nRF54L05
+                 - nRF54LM20
+                 - nRF54LV10A
+               * - ECC scalar randomization
+                 - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC projective coordinate randomization
+                 - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC extended (Montgomery/Edwards)
+                 - :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED`
+                 - -- (see note above)
+                 - -- (see note above)
+                 - -- (see note above)
+                 - Supported
+                 - Supported
+               * - RSA exponent randomization
+                 - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+               * - RSA modulus randomization
+                 - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
