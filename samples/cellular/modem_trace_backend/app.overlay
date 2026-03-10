@@ -1,20 +1,8 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-/* Enable uart1 for tracing. */
-&uart1 {
-	status = "okay";
-	current-speed = <1000000>;
-};
-
-/ {
-	chosen {
-		nordic,modem-trace-uart = &uart1;
-	};
-};
 
 /* Increase modem (shared) memory. */
 &sram0_ns_modem {
