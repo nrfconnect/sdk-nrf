@@ -22,15 +22,20 @@
 #define MAX_CONN_INTERVAL   3200
 #define SUPERVISION_TIMEOUT 1000
 
+/* Requesting frame space of 0 us will result in the minimum frame space being used. */
+#define REQUEST_MIN_FRAME_SPACE_US 0
+
 static struct test_params {
 	struct bt_le_conn_param *conn_param;
 	struct bt_conn_le_phy_param *phy;
 	struct bt_conn_le_data_len_param *data_len;
+	uint16_t frame_space_us;
 } test_params = {
 	.conn_param = BT_LE_CONN_PARAM(INTERVAL_MIN, INTERVAL_MAX, CONN_LATENCY,
 				       SUPERVISION_TIMEOUT),
 	.phy = BT_CONN_LE_PHY_PARAM_2M,
-	.data_len = BT_LE_DATA_LEN_PARAM_MAX
+	.data_len = BT_LE_DATA_LEN_PARAM_MAX,
+	.frame_space_us = REQUEST_MIN_FRAME_SPACE_US,
 };
 
 static const char *phy_str(const struct bt_conn_le_phy_param *phy)
@@ -213,16 +218,50 @@ static int conn_interval_cmd(const struct shell *shell, size_t argc,
 	return 0;
 }
 
+#if defined(CONFIG_BT_FRAME_SPACE_UPDATE)
+static int frame_space_cmd(const struct shell *shell, size_t argc,
+			     char **argv)
+{
+	int64_t frame_space_us;
+
+	if (argc == 1) {
+		shell_help(shell);
+		return SHELL_CMD_HELP_PRINTED;
+	}
+
+	if (argc > 2) {
+		shell_error(shell, "%s: bad parameters count", argv[0]);
+		return -EINVAL;
+	}
+
+	frame_space_us = strtol(argv[1], NULL, 10);
+
+	if (frame_space_us < 0 || frame_space_us > 10000) {
+		shell_error(shell, "%s: Invalid setting: %llu", argv[0],
+					frame_space_us);
+		shell_error(shell, "Frame space must be between: 0 and 10000");
+		return -EINVAL;
+	}
+
+	test_params.frame_space_us = (uint16_t)frame_space_us;
+
+	shell_print(shell, "Minimum frame space: %d us", test_params.frame_space_us);
+	return 0;
+}
+#endif
+
 static int print_cmd(const struct shell *shell, size_t argc,
 		     char **argv)
 {
 	shell_print(shell, "==== Current test configuration ====\n");
 	shell_print(shell, "Data length:\t\t%d\n"
 		    "Connection interval:\t%d units\n"
-		    "Preferred PHY:\t\t%s\n",
+		    "Preferred PHY:\t\t%s\n"
+		    "Frame space:\t\t%d us\n",
 		    test_params.data_len->tx_max_len,
 		    test_params.conn_param->interval_min,
-		    phy_str(test_params.phy));
+		    phy_str(test_params.phy),
+		    test_params.frame_space_us);
 	return 0;
 }
 
@@ -246,6 +285,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
 		  "Configure connection interval <1.25ms units>",
 		  conn_interval_cmd),
 	SHELL_CMD(phy, &phy_sub, "Configure connection interval", default_cmd),
+#if defined(CONFIG_BT_FRAME_SPACE_UPDATE)
+	SHELL_CMD(frame_space, NULL, "Configure frame space <us>", frame_space_cmd),
+#endif
 	SHELL_CMD(print, NULL, "Print current configuration", print_cmd),
 	SHELL_SUBCMD_SET_END
 );
@@ -255,7 +297,7 @@ static int test_run_cmd(const struct shell *shell, size_t argc,
 			char **argv)
 {
 	return test_run(shell, test_params.conn_param, test_params.phy,
-			test_params.data_len);
+			test_params.data_len, test_params.frame_space_us);
 }
 
 static int test_central_cmd(const struct shell *shell, size_t argc,

@@ -366,6 +366,22 @@ static void le_data_length_updated(struct bt_conn *conn,
 	k_sem_give(&throughput_sem);
 }
 
+#if defined(CONFIG_BT_FRAME_SPACE_UPDATE)
+static void frame_space_updated(struct bt_conn *conn,
+				const struct bt_conn_le_frame_space_updated *params)
+{
+	if (params->status != BT_HCI_ERR_SUCCESS) {
+		printk("Frame space update failed: %d\n", params->status);
+		return;
+	}
+
+	printk("Frame space updated: frame space %d us, PHYs 0x%04x, spacing types 0x%04x\n",
+	       params->frame_space, params->phys, params->spacing_types);
+
+	k_sem_give(&throughput_sem);
+}
+#endif
+
 static uint8_t throughput_read(const struct bt_throughput_metrics *met)
 {
 	printk("[peer] received %u bytes (%u KB)"
@@ -468,7 +484,8 @@ static void buttons_init(void)
 static int connection_configuration_set(const struct shell *shell,
 			const struct bt_le_conn_param *conn_param,
 			const struct bt_conn_le_phy_param *phy,
-			const struct bt_conn_le_data_len_param *data_len)
+			const struct bt_conn_le_data_len_param *data_len,
+			uint16_t frame_space_us)
 {
 	int err;
 	struct bt_conn_info info = {0};
@@ -533,13 +550,35 @@ static int connection_configuration_set(const struct shell *shell,
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_FRAME_SPACE_UPDATE)) {
+		struct bt_conn_le_frame_space_update_param fsu_params;
+
+		fsu_params.frame_space_min = frame_space_us;
+		fsu_params.frame_space_max = MAX(150, frame_space_us);
+		fsu_params.phys = phy->pref_tx_phy | phy->pref_rx_phy;
+		fsu_params.spacing_types = BT_CONN_LE_FRAME_SPACE_TYPES_MASK_ACL_IFS;
+		err = bt_conn_le_frame_space_update(default_conn, &fsu_params);
+		if (err) {
+			shell_error(shell, "Frame space update failed: %d\n", err);
+			return err;
+		}
+
+		shell_print(shell, "Frame space update pending");
+		err = k_sem_take(&throughput_sem, THROUGHPUT_CONFIG_TIMEOUT);
+		if (err) {
+			shell_error(shell, "Frame space update timeout");
+			return err;
+		}
+	}
+
 	return 0;
 }
 
 int test_run(const struct shell *shell,
 	     const struct bt_le_conn_param *conn_param,
 	     const struct bt_conn_le_phy_param *phy,
-	     const struct bt_conn_le_data_len_param *data_len)
+	     const struct bt_conn_le_data_len_param *data_len,
+	     uint16_t frame_space_us)
 {
 	int err;
 	uint64_t stamp;
@@ -563,7 +602,7 @@ int test_run(const struct shell *shell,
 
 	shell_print(shell, "\n==== Starting throughput test ====");
 
-	err = connection_configuration_set(shell, conn_param, phy, data_len);
+	err = connection_configuration_set(shell, conn_param, phy, data_len, frame_space_us);
 	if (err) {
 		return err;
 	}
@@ -623,6 +662,9 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.le_param_updated = le_param_updated,
 	.le_phy_updated = le_phy_updated,
 	.le_data_len_updated = le_data_length_updated,
+#if defined(CONFIG_BT_FRAME_SPACE_UPDATE)
+	.frame_space_updated = frame_space_updated,
+#endif
 	.security_changed = security_changed
 };
 
