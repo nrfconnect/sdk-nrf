@@ -333,7 +333,6 @@ nRF Desktop
 
   * A workaround for the USB next stack race issue where the application could try to submit HID reports while the USB is being disabled after USB cable has been unplugged, which results in an error.
     The workaround is applied when the :option:`CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL` Kconfig option is enabled.
-  * Support for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` board target.
   * Application-specific Kconfig options that simplify using SEGGER J-Link RTT (:option:`CONFIG_DESKTOP_LOG_RTT`) or UART (:option:`CONFIG_DESKTOP_LOG_UART`) as logging backend used by the application (:option:`CONFIG_DESKTOP_LOG`).
     The :kconfig:option:`CONFIG_LOG_BACKEND_UART` and :kconfig:option:`CONFIG_LOG_BACKEND_RTT` Kconfig options are no longer enabled by default if nRF Desktop logging (:option:`CONFIG_DESKTOP_LOG`) is enabled.
     These options are controlled through the newly introduced nRF Desktop application-specific Kconfig options.
