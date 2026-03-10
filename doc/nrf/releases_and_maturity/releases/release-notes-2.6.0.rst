@@ -374,7 +374,7 @@ Thread
 * Updated:
 
   * The default cryptography backend for Thread is now Arm PSA Crypto API instead of Mbed TLS, which was used in earlier versions.
-    You can still build all examples with deprecated Mbed TLS support by setting the :kconfig:option:`CONFIG_OPENTHREAD_NRF_SECURITY_CHOICE` Kconfig option to ``y``, but you must build the Thread libraries from sources.
+    You can still build all examples with deprecated Mbed TLS support by setting the ``CONFIG_OPENTHREAD_NRF_SECURITY_CHOICE`` Kconfig option to ``y``, but you must build the Thread libraries from sources.
     To :ref:`inherit Thread certification <ug_thread_cert_inheritance_without_modifications>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
 
   * nRF5340 SoC targets that do not include :ref:`Trusted Firmware-M <ug_tfm>` now use Hardware Unique Key (HUK, see the :ref:`lib_hw_unique_key` library) for PSA Internal Trusted Storage (ITS).
