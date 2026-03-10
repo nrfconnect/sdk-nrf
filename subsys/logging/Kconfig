@@ -78,6 +78,9 @@ config LOG_BACKEND_RPC_HISTORY_SIZE
 	default 0x8000 if LOG_BACKEND_RPC_HISTORY_STORAGE_FCB
 	help
 	  Size of the ring buffer used to store the log history, in bytes.
+	  For RAM storage with a board-specific log_rpc_history_region in devicetree,
+	  the reserved memory region must be large enough for this buffer plus the
+	  mpsc control block and warm-boot metadata placed after it in the same region.
 
 config LOG_BACKEND_RPC_HISTORY_STORAGE_FCB_NUM_SECTORS
 	int "Log history FCB maximum number of flash sectors"
