@@ -1723,6 +1723,11 @@ ci_samples_zephyr_drivers_i2c:
     - nrf/samples/zephyr/drivers/i2c/
     - zephyr/samples/drivers/i2c/
 
+ci_tests_zephyr_drivers_mbox:
+  files:
+    - nrf/tests/zephyr/drivers/mbox/
+    - zephyr/tests/drivers/mbox
+
 ci_samples_zephyr_drivers_mbox:
   files:
     - nrf/samples/zephyr/drivers/mbox/
