@@ -668,14 +668,7 @@ int broadcast_source_send(struct net_buf const *const audio_frame, uint8_t big_i
 
 	ret = bt_le_audio_tx_send(bt_le_audio_tx, audio_frame, tx, num_active_streams);
 	if (ret == -ECANCELED || ret == -ETIMEDOUT) {
-		if (IS_ENABLED(CONFIG_AUDIO_SOURCE_I2S)) {
-			LOG_WRN("Failed to send audio frame: %d", ret);
-		}
-		if (IS_ENABLED(CONFIG_AUDIO_SOURCE_USB)) {
-			/* Synchronous USB has separate clock from USB host */
-			LOG_DBG("Failed to send audio frame: %d", ret);
-		}
-
+		LOG_INF("Adjusted audio TX: %d", ret);
 	} else if (ret) {
 		return ret;
 	}

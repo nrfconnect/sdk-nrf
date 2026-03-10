@@ -128,9 +128,9 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 	atomic_inc(&tx_info->iso_tx_pool_alloc);
 
 	if (send_ts_tx) {
-		ret = bt_cap_stream_send_ts(cap_stream, buf, tx_info->iso_tx.seq_num, ts_tx);
+		ret = bt_cap_stream_send_ts(cap_stream, buf, 0, ts_tx);
 	} else {
-		ret = bt_cap_stream_send(cap_stream, buf, tx_info->iso_tx.seq_num);
+		ret = bt_cap_stream_send(cap_stream, buf, 0);
 	}
 
 	if (ret < 0) {
@@ -141,8 +141,6 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 		net_buf_unref(buf);
 		atomic_dec(&tx_info->iso_tx_pool_alloc);
 		return ret;
-	} else {
-		tx_info->iso_tx.seq_num++;
 	}
 
 	return 0;
@@ -194,7 +192,8 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 }
 
 static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx, uint8_t num_loc,
-		       size_t data_size_pr_stream, uint32_t *common_interval_us)
+		       size_t data_size_pr_stream, uint32_t *common_interval_us,
+		       uint8_t *num_streaming_state)
 {
 	int ret;
 
@@ -205,10 +204,7 @@ static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx, 
 			continue;
 		}
 
-		if (tx[i].audio_location >= num_loc) {
-			LOG_WRN("Unsupported audio_location: %d", tx[i].audio_location);
-			continue;
-		}
+		(*num_streaming_state)++;
 
 		uint32_t bitrate;
 		int dur_us;
@@ -298,6 +294,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	}
 
 	uint32_t common_interval_us = 0;
+	uint8_t num_streaming_state = 0;
 
 	data_size_pr_stream = audio_frame->len / num_loc;
 	if (data_size_pr_stream == 0) {
@@ -305,9 +302,15 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		return -EINVAL;
 	}
 
-	ret = tx_precheck(tx, num_tx, num_loc, data_size_pr_stream, &common_interval_us);
+	ret = tx_precheck(tx, num_tx, num_loc, data_size_pr_stream, &common_interval_us,
+			  &num_streaming_state);
 	if (ret) {
 		return ret;
+	}
+
+	if (num_streaming_state == 0) {
+		LOG_DBG("No streams are in streaming state");
+		return 0;
 	}
 
 	uint8_t sent_streams = 0;
@@ -343,7 +346,8 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 
 	if (!IN_RANGE(time_since_last_call_us, lower_lim_us, upper_lim_us) &&
 	    ctx->timestamp_last_us_valid) {
-		LOG_INF("Audio tx called with interval of %u us, (min %u us, max %u us) expected "
+		/* This will happen if a stream is paused/restarted */
+		LOG_DBG("Audio tx called with interval of %u us, (min %u us, max %u us) expected "
 			"around %u us. Resync "
 			"with controller",
 			time_since_last_call_us, lower_lim_us, upper_lim_us, common_interval_us);
@@ -402,8 +406,9 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 
 		ctx->corr_diff_us =
 			(int64_t)timestamp_ctlr_real_us - (int64_t)ctx->timestamp_ctlr_esti_us;
-		LOG_DBG("TX clock correction: %lld us real %u esti %u", ctx->corr_diff_us,
-			timestamp_ctlr_real_us, ctx->timestamp_ctlr_esti_us);
+		LOG_DBG_RATELIMIT_RATE(1000, "TX clock correction: %lld us real %u esti %u",
+				       ctx->corr_diff_us, timestamp_ctlr_real_us,
+				       ctx->timestamp_ctlr_esti_us);
 
 		if ((uint32_t)(timestamp_now_us - ctx->timestamp_last_correction) <
 		    TX_TS_RESYNC_US) {
@@ -443,15 +448,16 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 			ctx->timestamp_ctlr_esti_us_valid = false;
 			status = -ETIMEDOUT;
 		} else if (ctx->corr_diff_us < -((int64_t)common_interval_us / 2)) {
-			LOG_ERR("TX clock has been updated by (%lld us). Shall not happen",
-				ctx->corr_diff_us);
+			LOG_INF("TX clock has been updated by (%lld us). %u "
+				"timestamp_ctlr_esti_us, %u timestamp_ctlr_real_us_last",
+				ctx->corr_diff_us, ctx->timestamp_ctlr_esti_us,
+				ctx->timestamp_ctlr_real_us_last);
 			ctx->timestamp_ctlr_esti_us_valid = false;
 			ctx->timestamp_last_us = timestamp_now_us;
 			ctx->timestamp_last_us_valid = true;
-			return -EIO;
 		} else {
 			if (CONFIG_AUDIO_DEV == HEADSET) {
-				LOG_ERR("TX clock has been drift adjusted by (%lld us)",
+				LOG_DBG("TX clock has been drift adjusted by (%lld us)",
 					ctx->corr_diff_us);
 				ctx->timestamp_ctlr_esti_us_valid = true;
 			}
@@ -465,7 +471,6 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		ctx->timestamp_ctlr_real_us_last = timestamp_ctlr_real_us;
 		/* Update the estimate to the real (most current) value */
 		ctx->timestamp_ctlr_esti_us = timestamp_ctlr_real_us;
-
 		ctx->timestamp_last_correction = timestamp_now_us;
 	}
 
@@ -505,7 +510,6 @@ int bt_le_audio_tx_stream_started(struct bt_le_audio_tx_ctx *ctx, struct stream_
 
 	ctx->tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].hci_wrn_printed = false;
 	ctx->tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].iso_conn_handle = HANDLE_INVALID;
-	ctx->tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].iso_tx.seq_num = 0;
 	ctx->tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].iso_tx_readback.seq_num = 0;
 	return 0;
 }
