@@ -9,7 +9,7 @@ Real-time peripherals
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
 
 .. contents::
    :local:
@@ -111,6 +111,9 @@ The interrupt line triggered varies depending on the System on Chip (SoC):
    * - nRF54L15 FLPR
      - 31
 
+   * - nRF54LM20 FLPR
+     - 31
+
 CPU stalling
 ============
 
@@ -135,17 +138,37 @@ See the following table for pin mapping between GPIO and VIO for specific target
    :widths: auto
    :header-rows: 1
 
-   * - Target
-     - VIO pins available
-     - Corresponding GPIO pins
+   * - PORT2 GPIO pin number
+     - Corresponding VIO pin for nRF54L15 FLPR
+     - Corresponding VIO pin for nRF54LM20 FLPR
 
-   * - nrf54L15 FLPR
-     - 4,0,1,3,2,5..10
-     - P2: 0..10
+   * - 0
+     - 4
+     - 4
+
+   * - 1
+     - 0
+     - 0
+
+   * - 2
+     - 1
+     - 1
+
+   * - 3
+     - 3
+     - 3
+
+   * - 4
+     - 2
+     - 2
+
+   * - 5..10
+     - 5..10
+     - 5..10
 
 .. note::
    Routing the signal between VPR and physical pins may require SoC-specific configuration.
-   For instance, on the nRF54L15 SoC, you must change the ownership of GPIO pin with ``nrf_gpio_pin_control_select(pin, NRF_GPIO_PIN_SEL_VPR);``.
+   For instance, on the nRF54L15/nRF54LM20 SoC, you must change the ownership of GPIO pin with ``nrf_gpio_pin_control_select(pin, NRF_GPIO_PIN_SEL_VPR);``.
 
 Direction
 =========
