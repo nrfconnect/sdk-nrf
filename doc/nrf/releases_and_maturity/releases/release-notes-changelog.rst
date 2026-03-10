@@ -59,6 +59,9 @@ Bootloaders and DFU
 
   * Added support for the nRF54H20 SoC.
 
+* Moved the :ref:`mcuboot_with_decompression` sample to :file:`samples/dfu/compressed_update` and
+  updated the sample name from "nRF Compression: MCUboot compressed update".
+
 Developing with nRF91 Series
 ============================
 

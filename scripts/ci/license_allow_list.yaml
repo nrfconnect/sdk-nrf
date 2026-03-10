@@ -60,7 +60,7 @@ Apache-2.0: |
   ^nrf/tests/zephyr/subsys/settings/
   ^nrf/tests/zephyr/boards/nrf/rram_throttling/
   ^nrf/samples/zephyr/
-  ^nrf/samples/nrf_compress/mcuboot_update/sysbuild/mcuboot/prj.conf
+  ^nrf/samples/dfu/compressed_update/sysbuild/mcuboot/prj.conf
   ^nrf/boards/shields/nrf7002eb_interposer_p1/
   ^nrf/drivers/wifi/nrf71/
   ^nrf/samples/dfu/smp_svr/sysbuild/mcuboot/boards/nrf54h20dk_nrf54h20_cpuapp.overlay

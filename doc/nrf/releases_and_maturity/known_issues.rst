@@ -3704,7 +3704,7 @@ Other samples
 
 .. rst-class:: v3-2-3 v3-2-2 v3-2-1 v3-2-0
 
-NCSDK-34929: The :ref:`nrf_compression_mcuboot_compressed_update` sample does work correctly on nRF54H20
+NCSDK-34929: The :ref:`mcuboot_with_decompression` sample does not work correctly on nRF54H20
   After updating a compressed image for app/radio slot, MCUboot fails to verify the start address of the binary.
 
   **Affected platforms:** nRF54H20

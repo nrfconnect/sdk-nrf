@@ -78,7 +78,7 @@ Other configuration options
 Samples using the library
 *************************
 
-The :ref:`nrf_compression_mcuboot_compressed_update` sample uses this library.
+The :ref:`mcuboot_with_decompression` sample uses this library.
 
 Application integration
 ***********************
