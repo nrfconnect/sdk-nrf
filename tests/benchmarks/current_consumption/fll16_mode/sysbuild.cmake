@@ -1,0 +1,3 @@
+if(NOT DEFINED SB_CONFIG_NETCORE_NONE)
+  set_config_bool(fll16_mode CONFIG_SOC_NRF54H20_CPURAD_ENABLE y)
+endif()
