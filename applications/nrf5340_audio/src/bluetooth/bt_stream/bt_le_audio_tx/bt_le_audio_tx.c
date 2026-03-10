@@ -6,8 +6,6 @@
 
 #include "bt_le_audio_tx.h"
 
-#include <string.h>
-
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/zbus/zbus.h>
@@ -59,9 +57,8 @@ struct tx_inf {
 };
 
 struct bt_le_audio_tx_ctx {
-	struct bt_le_audio_tx_cfg cfg;
-	struct tx_inf tx_info_arr[BT_LE_AUDIO_TX_GROUP_MAX][BT_LE_AUDIO_TX_SUBGROUP_MAX]
-				 [BT_LE_AUDIO_TX_STREAMS_MAX];
+	struct net_buf_pool *iso_tx_pool;
+	struct tx_inf tx_info_arr[GROUP_MAX][SUBGROUP_MAX][TX_STREAMS_MAX];
 	uint32_t timestamp_ctlr_esti_us;
 	bool flush_next;
 	bool timestamp_ctlr_esti_us_valid;
@@ -100,7 +97,7 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 	 * Data will be discarded if allocation becomes too high, to avoid audio delays.
 	 * If the NET and APP core operates in clock sync, discarding should not occur.
 	 */
-	if (atomic_get(&tx_info->iso_tx_pool_alloc) >= BT_LE_AUDIO_TX_HCI_ISO_BUF_PER_CHAN) {
+	if (atomic_get(&tx_info->iso_tx_pool_alloc) >= HCI_ISO_BUF_PER_CHAN) {
 		if (!tx_info->hci_wrn_printed) {
 			struct bt_iso_chan *iso_chan;
 
@@ -115,7 +112,7 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 
 	tx_info->hci_wrn_printed = false;
 
-	buf = net_buf_alloc(ctx->cfg.iso_tx_pool, K_NO_WAIT);
+	buf = net_buf_alloc(ctx->iso_tx_pool, K_NO_WAIT);
 	if (buf == NULL) {
 		/* This should never occur because of the iso_tx_pool_alloc check above */
 		LOG_WRN("Out of TX buffers");
@@ -191,6 +188,9 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 	return 0;
 }
 
+/* Performs checks across all TX streams. Ensures streaming state and equal parameters
+ * where required
+ */
 static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx, uint8_t num_loc,
 		       size_t data_size_pr_stream, uint32_t *common_interval_us,
 		       uint8_t *num_streaming_state)
@@ -198,8 +198,8 @@ static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx, 
 	int ret;
 
 	for (int i = 0; i < num_tx; i++) {
-		if (!le_audio_ep_state_check(tx[i].cap_stream->bap_stream.ep,
-					     BT_BAP_EP_STATE_STREAMING)) {
+		if (unlikely(!le_audio_ep_state_check(tx[i].cap_stream->bap_stream.ep,
+						      BT_BAP_EP_STATE_STREAMING))) {
 			/* This bap_stream is not streaming*/
 			continue;
 		}
@@ -221,14 +221,14 @@ static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx, 
 			return ret;
 		}
 
-		if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us)) {
+		if (unlikely(data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us))) {
 			LOG_ERR("The encoded data size (%zu) does not match the SDU size (%d)",
 				data_size_pr_stream, LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us));
 			return -EINVAL;
 		}
 
-		if (*common_interval_us != 0 &&
-		    (*common_interval_us != tx[i].cap_stream->bap_stream.qos->interval)) {
+		if (unlikely(*common_interval_us != 0 &&
+			     (*common_interval_us != tx[i].cap_stream->bap_stream.qos->interval))) {
 			LOG_ERR("Not all channels have the same ISO interval");
 			return -EINVAL;
 		}
@@ -269,25 +269,25 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	int status = 0;
 	size_t data_size_pr_stream = 0;
 
-	if (ctx == NULL) {
+	if (unlikely(ctx == NULL)) {
 		return -EACCES;
 	}
 
-	if (tx == NULL || audio_frame == NULL) {
+	if (unlikely(tx == NULL || num_tx == 0 || audio_frame == NULL)) {
 		return -EINVAL;
 	}
 
 	/* Get number of locations in the audio frame */
 	struct audio_metadata *meta = net_buf_user_data(audio_frame);
 
-	if (meta == NULL) {
+	if (unlikely(meta == NULL)) {
 		LOG_ERR("Audio metadata is missing");
 		return -EINVAL;
 	}
 
 	uint8_t num_loc = audio_metadata_num_loc_get(meta);
 
-	if (num_loc == 0 || (audio_frame->len % num_loc != 0)) {
+	if (unlikely(num_loc == 0 || (audio_frame->len % num_loc != 0))) {
 		LOG_ERR("Invalid number (%d) of locations in audio frame (%d)", num_loc,
 			audio_frame->len);
 		return -EINVAL;
@@ -297,7 +297,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	uint8_t num_streaming_state = 0;
 
 	data_size_pr_stream = audio_frame->len / num_loc;
-	if (data_size_pr_stream == 0) {
+	if (unlikely(data_size_pr_stream == 0)) {
 		LOG_ERR("Data size per stream is 0");
 		return -EINVAL;
 	}
@@ -322,7 +322,8 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	}
 
 	/* Increment the tx timestamp with the interval.
-	 * If this TX function is called too fast or slow, the estimate will deteriorate faster.
+	 * If this TX function is called too fast or slow, the estimate will deteriorate more
+	 * quickly.
 	 */
 	ctx->timestamp_ctlr_esti_us += common_interval_us;
 	if (ctx->flush_next) {
@@ -387,8 +388,8 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 
 	/* Get the current (wall clock) time */
 	timestamp_now_us = audio_sync_timer_capture();
-	uint32_t timestamp_ctlr_real_us = 0;
 	ctx->corr_diff_us = 0;
+	uint32_t timestamp_ctlr_real_us = 0;
 
 	/* If the timestamp is not valid or it has been more than TX_TS_RESYNC_US since the last
 	 * timestamp, we re-aquire a timestamp from the controller.
@@ -424,16 +425,18 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 
 		/* There are several options which can occur at this point:
 		 *
-		 * - corr_diff_us >> 0: This means that data was given to this module too
-		 * slow/late. Hence, the controller schedules the sending for the next ISO
-		 * interval. An empty packet will be sent on air, and we will correct the
-		 * timestamp estimate.
-		 * - corr_diff_us << 0: This should not happen as an earlier timestamp has
-		 * already been given to the controller.
+		 * - corr_diff_us == 0: The estimate is correct, no correction needed.
+		 *
+		 * - corr_diff_us >> 0: Data was given to this module too slow/late.
+		 * Hence, the controller schedules sending for the next ISO
+		 * interval. An empty packet will be sent on air.
+		 *
+		 * - corr_diff_us << 0: Data was given to this module too fast/early.
+		 *
 		 * - corr_diff_us > or < 0: This means that the estimate has gotten a small
 		 * correction. As a central/gateway/unicast client/broadcast source, the
 		 * clocks shall be running in lockstep and this should never happen. As a
-		 * peripheral/headset/unicast server/broadcast sink, this will happen to
+		 * peripheral/headset/unicast server/broadcast sink, this will occur to
 		 * correct for drift.
 		 */
 
@@ -442,25 +445,20 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 			LOG_DBG("TX clock no adjustment needed (%lld us)", ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = true;
 		} else if (ctx->corr_diff_us > ((int64_t)common_interval_us / 2)) {
-			LOG_INF("TX clock has been updated by (%lld us). Empty packet(s) on "
-				"air",
+			LOG_INF("TX clock corrected by (%lld us). Late: Empty packet(s) on air",
 				ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = false;
 			status = -ETIMEDOUT;
 		} else if (ctx->corr_diff_us < -((int64_t)common_interval_us / 2)) {
-			LOG_INF("TX clock has been updated by (%lld us). %u "
-				"timestamp_ctlr_esti_us, %u timestamp_ctlr_real_us_last",
-				ctx->corr_diff_us, ctx->timestamp_ctlr_esti_us,
-				ctx->timestamp_ctlr_real_us_last);
+			LOG_INF("TX clock corrected by (%lld us). Early", ctx->corr_diff_us);
 			ctx->timestamp_ctlr_esti_us_valid = false;
-			ctx->timestamp_last_us = timestamp_now_us;
-			ctx->timestamp_last_us_valid = true;
 		} else {
 			if (CONFIG_AUDIO_DEV == HEADSET) {
 				LOG_DBG("TX clock has been drift adjusted by (%lld us)",
 					ctx->corr_diff_us);
 				ctx->timestamp_ctlr_esti_us_valid = true;
 			}
+
 			if (CONFIG_AUDIO_DEV == GATEWAY) {
 				LOG_ERR("TX clock has been drift adjusted by (%lld us)",
 					ctx->corr_diff_us);
@@ -474,7 +472,6 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		ctx->timestamp_last_correction = timestamp_now_us;
 	}
 
-	/* TODO: need to check if this should trigger if the above also triggers */
 	if ((int32_t)(timestamp_now_us - ctx->timestamp_ctlr_esti_us) > 0) {
 		LOG_INF("Curr time ahead of ctlr time. Flush %d us of data. "
 			"Now: %u us, ctlr: %u us",
@@ -483,7 +480,6 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		ctx->timestamp_ctlr_esti_us_valid = false;
 	}
 
-	/* At this point, the controller estimated timestamp is valid */
 	struct sdu_ref_msg msg;
 
 	msg.tx_sync_ts_us = ctx->timestamp_ctlr_esti_us;
@@ -527,19 +523,19 @@ int bt_le_audio_tx_stream_sent(struct bt_le_audio_tx_ctx *ctx, struct stream_ind
 
 int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx)
 {
-	if (ctx == NULL || ctx->cfg.iso_tx_pool == NULL) {
+	if (ctx == NULL || ctx->iso_tx_pool == NULL) {
 		return -EINVAL;
 	}
 
-	struct bt_le_audio_tx_cfg cfg = ctx->cfg;
+	struct net_buf_pool *tmp = ctx->iso_tx_pool;
 
 	(void)memset(ctx, 0, sizeof(*ctx));
 
-	ctx->cfg = cfg;
+	ctx->iso_tx_pool = tmp;
 
-	for (int i = 0; i < BT_LE_AUDIO_TX_GROUP_MAX; i++) {
-		for (int j = 0; j < BT_LE_AUDIO_TX_SUBGROUP_MAX; j++) {
-			for (int k = 0; k < BT_LE_AUDIO_TX_STREAMS_MAX; k++) {
+	for (int i = 0; i < GROUP_MAX; i++) {
+		for (int j = 0; j < SUBGROUP_MAX; j++) {
+			for (int k = 0; k < TX_STREAMS_MAX; k++) {
 				ctx->tx_info_arr[i][j][k].iso_conn_handle = HANDLE_INVALID;
 			}
 		}

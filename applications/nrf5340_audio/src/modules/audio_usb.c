@@ -38,8 +38,6 @@ K_MEM_SLAB_DEFINE_STATIC(usb_rx_slab, ROUND_UP(USB_BLOCK_SIZE_MULTI_CHAN, UDC_BU
 static struct k_msgq *audio_q_tx;
 static struct k_msgq *audio_q_rx;
 
-static struct producer_info prod_inf_usb;
-
 NET_BUF_POOL_FIXED_DEFINE(pool_in, USB_BLOCKS,
 			  (USB_BLOCK_SIZE_MULTI_CHAN * CONFIG_FIFO_FRAME_SPLIT_NUM),
 			  sizeof(struct audio_metadata), NULL);
@@ -237,7 +235,6 @@ static void data_recv_cb(const struct device *dev, uint8_t terminal, void *buf, 
 	meta->data_len_us += usb_in_meta.data_len_us;
 	meta->bytes_per_location += usb_in_meta.bytes_per_location;
 	blocks_in_current_frame++;
-	meta->prod_inf = &prod_inf_usb;
 
 	/* Release USB buffer */
 	k_mem_slab_free(&usb_rx_slab, buf);
@@ -358,8 +355,6 @@ int audio_usb_init(bool host_in, bool host_out)
 	if (audio_usbd == NULL) {
 		return -ENODEV;
 	}
-
-	prod_inf_usb.rate_adjustable = !usb_sof_synchronized;
 
 	ret = usbd_enable(audio_usbd);
 	if (ret) {

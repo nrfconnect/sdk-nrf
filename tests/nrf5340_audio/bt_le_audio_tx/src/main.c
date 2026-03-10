@@ -90,9 +90,8 @@ struct tx_inf_dummy {
 };
 
 struct bt_le_audio_tx_ctx {
-	struct bt_le_audio_tx_cfg cfg;
-	struct tx_inf_dummy tx_info_arr[BT_LE_AUDIO_TX_GROUP_MAX][BT_LE_AUDIO_TX_SUBGROUP_MAX]
-				       [BT_LE_AUDIO_TX_STREAMS_MAX];
+	struct net_buf_pool *iso_tx_pool;
+	struct tx_inf_dummy tx_info_arr[GROUP_MAX][SUBGROUP_MAX][TX_STREAMS_MAX];
 	uint32_t timestamp_ctlr_esti_us;
 	bool flush_next;
 	bool timestamp_ctlr_esti_us_valid;

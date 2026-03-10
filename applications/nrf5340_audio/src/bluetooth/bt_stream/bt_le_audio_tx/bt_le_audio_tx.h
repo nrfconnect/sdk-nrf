@@ -31,48 +31,41 @@ struct le_audio_tx_info {
 
 struct bt_le_audio_tx_ctx;
 
-struct bt_le_audio_tx_cfg {
-	struct net_buf_pool *iso_tx_pool;
-};
-
-#define BT_LE_AUDIO_TX_HCI_ISO_BUF_PER_CHAN 2
+#define HCI_ISO_BUF_PER_CHAN 2
 
 #if defined(CONFIG_BT_ISO_MAX_CIG) && defined(CONFIG_BT_ISO_MAX_BIG)
-#define BT_LE_AUDIO_TX_GROUP_MAX (CONFIG_BT_ISO_MAX_BIG + CONFIG_BT_ISO_MAX_CIG)
+#define GROUP_MAX (CONFIG_BT_ISO_MAX_BIG + CONFIG_BT_ISO_MAX_CIG)
 #elif defined(CONFIG_BT_ISO_MAX_CIG)
-#define BT_LE_AUDIO_TX_GROUP_MAX CONFIG_BT_ISO_MAX_CIG
+#define GROUP_MAX CONFIG_BT_ISO_MAX_CIG
 #elif defined(CONFIG_BT_ISO_MAX_BIG)
-#define BT_LE_AUDIO_TX_GROUP_MAX CONFIG_BT_ISO_MAX_BIG
+#define GROUP_MAX CONFIG_BT_ISO_MAX_BIG
 #else
 #error Neither CIG nor BIG defined
 #endif
 
 #if (defined(CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT) && defined(CONFIG_BT_BAP_UNICAST))
-#define BT_LE_AUDIO_TX_SUBGROUP_MAX (1 + CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT)
+#define SUBGROUP_MAX (1 + CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT)
 #elif (defined(CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT) && !defined(CONFIG_BT_BAP_UNICAST))
-#define BT_LE_AUDIO_TX_SUBGROUP_MAX CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT
+#define SUBGROUP_MAX CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT
 #else
-#define BT_LE_AUDIO_TX_SUBGROUP_MAX 1
+#define SUBGROUP_MAX 1
 #endif
 
-#define BT_LE_AUDIO_TX_STREAMS_MAX CONFIG_BT_ISO_MAX_CHAN
+#define TX_STREAMS_MAX CONFIG_BT_ISO_MAX_CHAN
 
-#define BT_LE_AUDIO_TX_BUF_COUNT                                                                   \
-	(BT_LE_AUDIO_TX_GROUP_MAX * BT_LE_AUDIO_TX_SUBGROUP_MAX * BT_LE_AUDIO_TX_STREAMS_MAX *     \
-	 BT_LE_AUDIO_TX_HCI_ISO_BUF_PER_CHAN)
+#define TX_BUF_NUM (GROUP_MAX * SUBGROUP_MAX * TX_STREAMS_MAX * HCI_ISO_BUF_PER_CHAN)
 
 struct bt_le_audio_tx_ctx_layout {
-	struct bt_le_audio_tx_cfg cfg;
+	struct net_buf_pool *iso_tx_pool;
 	struct {
 		uint16_t iso_conn_handle;
 		struct bt_iso_tx_info iso_tx;
 		struct bt_iso_tx_info iso_tx_readback;
 		atomic_t iso_tx_pool_alloc;
 		bool hci_wrn_printed;
-	} tx_info_arr[BT_LE_AUDIO_TX_GROUP_MAX][BT_LE_AUDIO_TX_SUBGROUP_MAX]
-		     [BT_LE_AUDIO_TX_STREAMS_MAX];
-	uint32_t timestamp_ctlr_esti_us;
+	} tx_info_arr[GROUP_MAX][SUBGROUP_MAX][TX_STREAMS_MAX];
 	bool flush_next;
+	uint32_t timestamp_ctlr_esti_us;
 	bool timestamp_ctlr_esti_us_valid;
 	uint32_t timestamp_ctlr_real_us_last;
 	uint32_t timestamp_last_correction;
@@ -82,15 +75,12 @@ struct bt_le_audio_tx_ctx_layout {
 	bool timestamp_last_us_valid;
 };
 
-#define BT_LE_AUDIO_TX_CTX_SIZE	 sizeof(struct bt_le_audio_tx_ctx_layout)
-#define BT_LE_AUDIO_TX_CTX_ALIGN __alignof__(struct bt_le_audio_tx_ctx_layout)
-
 #define BT_LE_AUDIO_TX_DEFINE(name)                                                                \
-	NET_BUF_POOL_FIXED_DEFINE(name##_cfg_buf, BT_LE_AUDIO_TX_BUF_COUNT,                        \
+	NET_BUF_POOL_FIXED_DEFINE(name##_cfg_buf, TX_BUF_NUM,                                      \
 				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU),                       \
 				  CONFIG_BT_CONN_TX_USER_DATA_SIZE, NULL);                         \
 	static struct bt_le_audio_tx_ctx_layout name##_ctx = {                                     \
-		.cfg = {.iso_tx_pool = &name##_cfg_buf},                                           \
+		.iso_tx_pool = &name##_cfg_buf,                                                    \
 	};                                                                                         \
 	static struct bt_le_audio_tx_ctx *name = (struct bt_le_audio_tx_ctx *)&name##_ctx
 
@@ -105,7 +95,15 @@ struct bt_le_audio_tx_ctx_layout {
  * @param[in]	tx		Pointer to an array of le_audio_tx_info elements.
  * @param[in]	num_tx		Number of elements in @p tx.
  *
- * @return	0 if successful, error otherwise.
+ * @retval	0		Success.
+ * @retval	-EACCES		@p ctx is NULL.
+ * @retval	-EINVAL		Invalid arguments or invalid audio/frame/stream configuration.
+ * @retval	-ECANCELED	Current call is intentionally flushed due to previous late timing.
+ * @retval	-ETIMEDOUT	Controller timestamp indicates late delivery (empty packet(s) on
+ * air).
+ * @retval	-EIO		No stream was sent successfully.
+ *
+ * @return	Other negative error codes may be propagated from timestamp/HCI operations.
  */
 int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *const audio_frame,
 			struct le_audio_tx_info *tx, uint8_t num_tx);
@@ -136,6 +134,9 @@ int bt_le_audio_tx_stream_sent(struct bt_le_audio_tx_ctx *ctx, struct stream_ind
  * @brief	Initializes the TX path for ISO transmission.
  *
  * @param[in]	ctx		Pointer to TX context.
+ *
+ * @retval	-EINVAL		@p ctx is NULL or required configuration is missing.
+ * @retval	0		Success.
  */
 int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx);
 
