@@ -14,6 +14,7 @@
 		zephyr,flash-controller = &rram_controller;
 		zephyr,flash = &cpuapp_rram;
 		zephyr,ieee802154 = &ieee802154;
+		zephyr,boot-mode = &boot_mode0;
 	};
 
 	aliases {
@@ -43,6 +44,16 @@
 &vregmain {
 	status = "okay";
 	regulator-initial-mode = <NRF5X_REG_MODE_DCDC>;
+};
+
+&gpregret1 {
+	status = "okay";
+
+	boot_mode0: boot_mode@0 {
+		compatible = "zephyr,retention";
+		status = "okay";
+		reg = <0x0 0x1>;
+	};
 };
 
 &grtc {
