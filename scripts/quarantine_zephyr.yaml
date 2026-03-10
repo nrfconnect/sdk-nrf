@@ -623,3 +623,12 @@
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37556"
+
+- scenarios:
+    - libraries.libc.newlib.thread_safety.userspace.stress
+    - libraries.libc.newlib_nano.thread_safety.userspace.stress
+    - libraries.cmsis_dsp.matrix.unary_f64
+    - libraries.cmsis_dsp.matrix.unary_f64.fpu
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+  comment: "region FLASH overflowed"
