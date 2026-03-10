@@ -11,7 +11,6 @@ menuconfig FMFU_FDEV
 	depends on NRF_MODEM_LIB
 	depends on PSA_WANT_ALG_SHA_256
 
-
 if FMFU_FDEV
 
 config FMFU_CDDL_DECODER_GENERATE
@@ -25,7 +24,6 @@ config FMFU_FDEV_SKIP_PREVALIDATION
 	  Set this option to skip prevalidation of the modem firmware. Note
 	  that the modem will still verify the validity of the modem firmmware
 	  before booting it, but only after it has been written to the modem.
-	  This option
 
 if FMFU_FDEV_SKIP_PREVALIDATION
 	comment "FMFU_FDEV_SKIP_PREVALIDATE should ONLY be used during development"
