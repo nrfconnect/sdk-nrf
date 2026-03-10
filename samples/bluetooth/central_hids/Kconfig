@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "Kconfig.zephyr"
-
 config SETTINGS
 	default y
 
@@ -14,3 +12,5 @@ config ZMS
 
 config NVS
 	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+source "Kconfig.zephyr"
