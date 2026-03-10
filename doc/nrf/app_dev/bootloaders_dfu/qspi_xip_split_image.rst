@@ -14,9 +14,9 @@ The QSPI XIP split image feature lets you gain more flash storage space for appl
 
 This feature is supported on nRF52840 and nRF5340.
 
-.. warning::
-    On the nRF52840, do not relocate interrupts to the QSPI XIP flash.
-    Doing so can lock up or brick the device by making the debug access port inaccessible.
+.. caution::
+   On the nRF52840, do not relocate interrupts to the QSPI XIP flash.
+   Doing so can lock up or brick the device by making the debug access port inaccessible.
 
 The QSPI XIP split images are supported in :doc:`MCUboot <mcuboot:index-ncs>`, which allows for updating them over-the-air.
 
@@ -36,9 +36,9 @@ To use this feature, meet the following requirements:
 * :ref:`configuration_system_overview_sysbuild`
 
 .. caution::
-    Currently, MCUboot images cannot be linked together.
-    This means that both parts of the firmware update must be loaded properly before an update is initiated.
-    If one part fails to update, the image on the device will be unbootable and that will likely brick the device.
+   Currently, MCUboot images cannot be linked together.
+   This means that both parts of the firmware update must be loaded properly before an update is initiated.
+   If one part fails to update, the image on the device will be unbootable and that will likely brick the device.
 
 Network core image updates
 **************************

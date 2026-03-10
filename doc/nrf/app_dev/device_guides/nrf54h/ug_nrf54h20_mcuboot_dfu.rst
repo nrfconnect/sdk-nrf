@@ -71,7 +71,7 @@ Image encryption
 MCUboot supports AES-encrypted images on the nRF54H20 SoC, using ECIES-X25519 for key exchange.
 For detailed information on ECIES-X25519 support, refer to the :ref:`ug_nrf54h_ecies_x25519` documentation page.
 
-.. warning::
+.. caution::
    On the nRF54H20 SoC, private and public keys are currently stored in the image.
    Embedding keys directly within the firmware image is a security risk.
 
