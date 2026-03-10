@@ -77,6 +77,9 @@ static psa_status_t handle_ikg_sign(bool is_message, const uint8_t *key_buffer,
 	const struct sxhashalg *hashalgpointer = &hashalg;
 
 	status = hash_get_algo(alg, &hashalgpointer);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
 	*signature_length = 2 * ecurve->sz;
 	if (is_message) {
 		status = cracen_ikg_sign_message(((const ikg_opaque_key *)key_buffer)->owner_id,
@@ -128,7 +131,7 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 			status = cracen_ecdsa_sign_message(&privkey, hashalgpointer, ecurve, input,
 							   input_length, signature);
 		} else {
-			status = cracen_ecdsa_sign_digest(&privkey, hashalgpointer, ecurve, input,
+			status = cracen_ecdsa_sign_digest(&privkey, ecurve, input,
 							  input_length, signature);
 		}
 	}

@@ -16,7 +16,7 @@ int sx_pk_get_blinding_factor(sx_pk_blind_factor *bld_factor)
 	const struct sx_pk_capabilities *caps = sx_pk_fetch_capabilities();
 	if (!caps->blinding) {
 		return SX_ERR_INCOMPATIBLE_HW;
-	};
+	}
 
 	/* The blinding factor needs to be a non zero value, make sure that
 	 * at least half of it is not zero.

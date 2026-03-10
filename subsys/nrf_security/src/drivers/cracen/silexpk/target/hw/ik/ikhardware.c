@@ -220,24 +220,3 @@ int sx_pk_ik_derive_keys(struct sx_pk_config_ik *cfg)
 
 	return r;
 }
-
-int sx_pk_ik_rng_reconfig(struct sx_pk_cnx *cnx, struct sx_pk_config_rng *cfg)
-{
-	if (cfg->personalization && cfg->personalization_sz) {
-		struct sx_regs *regs = sx_pk_get_regs();
-		uint32_t config = sx_pk_rdreg(regs, IK_REG_HW_CONFIG);
-		int max_perso_sz = (config >> 24) & 0xF;
-
-		if (cfg->personalization_sz > max_perso_sz) {
-			return SX_ERR_OPERAND_TOO_LARGE;
-		}
-
-		/* Write Personalization string */
-		sx_pk_wrreg(regs, IK_REG_INITDATA, 1);
-		for (int i = 0; i < cfg->personalization_sz; i++) {
-			sx_pk_wrreg(regs, IK_REG_PERSONALIZATION_STRING, cfg->personalization[i]);
-		}
-	}
-
-	return SX_OK;
-}

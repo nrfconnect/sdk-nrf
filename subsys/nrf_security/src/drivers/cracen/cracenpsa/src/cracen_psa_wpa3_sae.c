@@ -175,7 +175,7 @@ static int cracen_ec_pt_calc_y_sqr(sx_pk_req *req, const struct sx_pk_ecurve *cu
 	/* x^2 */
 	sx_op x_sqr = {.sz = CRACEN_P256_KEY_SIZE, .bytes = tmp};
 
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, &modulo, x, x, &x_sqr);
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, &modulo, x, x, &x_sqr);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -186,7 +186,7 @@ static int cracen_ec_pt_calc_y_sqr(sx_pk_req *req, const struct sx_pk_ecurve *cu
 	sx_op xsqr_a = {.sz = CRACEN_P256_KEY_SIZE, .bytes = tmp_2};
 
 	sx_get_const_op(&x_sqr, &x_sqr_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_add, &modulo, &x_sqr_const, &a, &xsqr_a);
+	sx_status = sx_mod_primitive_cmd(req, cmd_add, &modulo, &x_sqr_const, &a, &xsqr_a);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -196,7 +196,7 @@ static int cracen_ec_pt_calc_y_sqr(sx_pk_req *req, const struct sx_pk_ecurve *cu
 	sx_op xsqr_a_x = {.sz = CRACEN_P256_KEY_SIZE, .bytes = tmp};
 
 	sx_get_const_op(&xsqr_a, &xsqr_a_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_mul, &modulo, &xsqr_a_const, x, &xsqr_a_x);
+	sx_status = sx_mod_primitive_cmd(req, cmd_mul, &modulo, &xsqr_a_const, x, &xsqr_a_x);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -206,7 +206,7 @@ static int cracen_ec_pt_calc_y_sqr(sx_pk_req *req, const struct sx_pk_ecurve *cu
 	sx_const_op b = {.sz = sx_pk_curve_opsize(curve), .bytes = sx_pk_curve_param_b(curve)};
 
 	sx_get_const_op(&xsqr_a_x, &xsqr_a_x_const);
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd_add, &modulo, &xsqr_a_x_const, &b, sqr_y);
+	sx_status = sx_mod_primitive_cmd(req, cmd_add, &modulo, &xsqr_a_x_const, &b, sqr_y);
 
 	return sx_status;
 }
@@ -445,7 +445,7 @@ static psa_status_t cracen_wpa3_sae_inverse_key_op(sx_pk_req *req, const struct 
 	sx_const_op b = {.sz = CRACEN_P256_KEY_SIZE, .bytes = key};
 	sx_op res = {.sz = CRACEN_P256_KEY_SIZE, .bytes = key};
 
-	sx_status = sx_mod_primitive_cmd(req, NULL, cmd, &modulo, &a, &b, &res);
+	sx_status = sx_mod_primitive_cmd(req, cmd, &modulo, &a, &b, &res);
 	return silex_statuscodes_to_psa(sx_status);
 }
 
@@ -497,7 +497,7 @@ static psa_status_t cracen_construct_commit_msg(cracen_wpa3_sae_operation_t *op)
 		sx_op result = {.sz = CRACEN_P256_KEY_SIZE, .bytes = scalar};
 		const struct sx_pk_cmd_def *cmd_add = SX_PK_CMD_MOD_ADD;
 
-		sx_status = sx_mod_primitive_cmd(&req, NULL, cmd_add, &modulo,
+		sx_status = sx_mod_primitive_cmd(&req, cmd_add, &modulo,
 						 &rand_op, &mask_op, &result);
 		if (sx_status != SX_OK) {
 			status = silex_statuscodes_to_psa(sx_status);
@@ -703,7 +703,7 @@ static psa_status_t cracen_wpa3_sae_calc_keys(cracen_wpa3_sae_operation_t *op)
 	sx_op result = {.sz = CRACEN_P256_KEY_SIZE, .bytes = ctx};
 	const struct sx_pk_cmd_def *cmd_add = SX_PK_CMD_MOD_ADD;
 
-	sx_status = sx_mod_primitive_cmd(&req, NULL, cmd_add, &modulo, &cmt_scalar,
+	sx_status = sx_mod_primitive_cmd(&req, cmd_add, &modulo, &cmt_scalar,
 					 &peer_cmt_scalar, &result);
 	if (sx_status != SX_OK) {
 		sx_pk_release_req(&req);

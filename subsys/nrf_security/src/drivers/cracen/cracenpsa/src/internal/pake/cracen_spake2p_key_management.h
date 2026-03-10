@@ -16,7 +16,7 @@ psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, const ui
 
 psa_status_t cracen_derive_spake2p_key(const psa_key_attributes_t *attributes,
 				       const uint8_t *input, size_t input_length,
-				       uint8_t *key, size_t key_size, size_t *key_length);
+				       uint8_t *key, size_t *key_length);
 
 psa_status_t export_spake2p_public_key_from_keypair(const psa_key_attributes_t *attributes,
 						    const uint8_t *priv_key,

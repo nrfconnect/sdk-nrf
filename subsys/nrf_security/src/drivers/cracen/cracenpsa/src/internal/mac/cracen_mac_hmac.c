@@ -19,7 +19,6 @@
 #include <cracen/cracen_hmac.h>
 
 psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
-				      const psa_key_attributes_t *attributes,
 				      const uint8_t *key_buffer, size_t key_buffer_size,
 				      psa_algorithm_t alg)
 {

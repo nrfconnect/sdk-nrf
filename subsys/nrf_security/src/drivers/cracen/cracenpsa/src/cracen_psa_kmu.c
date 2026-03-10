@@ -458,11 +458,9 @@ static psa_status_t set_provisioning_in_progress(uint32_t slot_id, uint32_t num_
 /**
  * @brief Signals that the provisioning of several key slots are finalized.
  *
- * @param slot_id
- * @param num_slots
  * @return psa_status_t
  */
-static psa_status_t end_provisioning(uint32_t slot_id, uint32_t num_slots)
+static psa_status_t end_provisioning(void)
 {
 	if (lib_kmu_revoke_slot(PROVISIONING_SLOT) != LIB_KMU_SUCCESS) {
 		return PSA_ERROR_HARDWARE_FAILURE;
@@ -1148,7 +1146,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	}
 
 	if (num_slots > 1 && psa_status == PSA_SUCCESS) {
-		psa_status = end_provisioning(slot_id, num_slots);
+		psa_status = end_provisioning();
 	}
 
 	return psa_status;

@@ -259,7 +259,7 @@ psa_status_t cracen_key_agreement(const psa_key_attributes_t *attributes, const 
 
 #if defined(PSA_NEED_CRACEN_ECDH_MONTGOMERY)
 	if (curve_family == PSA_ECC_FAMILY_MONTGOMERY) {
-		return cracen_ecdh_montgmr_calc_secret(curve, priv_key, priv_key_size,
+		return cracen_ecdh_montgmr_calc_secret(curve, priv_key,
 								publ_key, publ_key_size, output,
 								output_size, output_length);
 	}

@@ -204,11 +204,11 @@ int cracen_ecdsa_sign_message(const struct cracen_ecc_priv_key *privkey,
 		return status;
 	}
 
-	return cracen_ecdsa_sign_digest(privkey, hashalg, curve, digest, digestsz, signature);
+	return cracen_ecdsa_sign_digest(privkey, curve, digest, digestsz, signature);
 }
 
 int cracen_ecdsa_sign_digest(const struct cracen_ecc_priv_key *privkey,
-			     const struct sxhashalg *hashalg, const struct sx_pk_ecurve *curve,
+			     const struct sx_pk_ecurve *curve,
 			     const uint8_t *digest, size_t digest_length, uint8_t *signature)
 {
 	int status;

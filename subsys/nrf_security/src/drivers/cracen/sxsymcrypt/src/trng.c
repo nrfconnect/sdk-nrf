@@ -55,7 +55,7 @@ static int ba431_check_state(void)
 	return SX_OK;
 }
 
-static void sx_trng_enable(struct sx_trng *ctx)
+static void sx_trng_enable(void)
 {
 	uint32_t ctrl_reg = sx_rd_trng(BA431_REG_Control_OFST);
 
@@ -71,10 +71,10 @@ static void sx_trng_flush(void)
 	sx_wr_trng(BA431_REG_Control_OFST, ctrl_reg & ~BA431_FLD_Control_SoftRst_MASK);
 }
 
-void sx_trng_restart(struct sx_trng *ctx)
+void sx_trng_restart(void)
 {
 	sx_trng_flush();
-	sx_trng_enable(ctx);
+	sx_trng_enable();
 }
 
 int sx_trng_open(struct sx_trng *ctx, const struct sx_trng_config *config)
@@ -168,7 +168,7 @@ static int ba431_setup_conditioning_key(struct sx_trng *ctx)
 	/* After the conditioning keys are written the FIFOs should be cleared
 	 * as that data generated up to this point used default keys.
 	 */
-	sx_trng_restart(ctx);
+	sx_trng_restart();
 	ctx->conditioning_key_set = 1;
 
 	return SX_OK;
@@ -263,7 +263,7 @@ int sx_trng_restore_state(struct sx_trng *ctx,
 			sx_wr_trng(BA431_REG_Key0_OFST + i * sizeof(state->cond_key[0]),
 				   state->cond_key[i]);
 		}
-		sx_trng_restart(ctx);
+		sx_trng_restart();
 		ctx->conditioning_key_set = 1;
 	}
 

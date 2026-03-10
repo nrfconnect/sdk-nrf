@@ -35,7 +35,7 @@ static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attri
 		PSA_MAC_LENGTH(psa_get_key_type(attributes), psa_get_key_bits(attributes), alg);
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC) && PSA_ALG_IS_HMAC(alg)) {
-		return cracen_hmac_setup(operation, attributes, key_buffer, key_buffer_size, alg);
+		return cracen_hmac_setup(operation, key_buffer, key_buffer_size, alg);
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) && PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
 		return cracen_cmac_setup(operation, attributes, key_buffer, key_buffer_size);

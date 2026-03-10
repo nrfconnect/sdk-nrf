@@ -116,7 +116,6 @@ static inline int sx_mod_single_op_cmd(sx_pk_req *req,
  * odd modular multiplication or odd modular division.
  *
  * @param[in,out] req Acquired acceleration request for this operation
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
  * startup
  * @param[in] cmd Command definition. Should be a primitive modular
  * operation with 2 operands. See description
@@ -136,7 +135,7 @@ static inline int sx_mod_single_op_cmd(sx_pk_req *req,
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_mod_primitive_cmd(sx_pk_req *req, struct sx_pk_cnx *cnx,
+static inline int sx_mod_primitive_cmd(sx_pk_req *req,
 						const struct sx_pk_cmd_def *cmd,
 						const sx_const_op *modulo,
 						const sx_const_op *a,
@@ -179,8 +178,6 @@ static inline int sx_mod_primitive_cmd(sx_pk_req *req, struct sx_pk_cnx *cnx,
  *    result = input ^ e mod m
  *
  * @param[in,out] req Acquired acceleration request for this operation
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- * startup
  * @param[in] input Base operand
  * @param[in] e Exponent operand
  * @param[in] m Modulus operand
@@ -197,7 +194,7 @@ static inline int sx_mod_primitive_cmd(sx_pk_req *req, struct sx_pk_cnx *cnx,
  * @return ::SX_ERR_PK_RETRY
  *
  */
-static inline int sx_mod_exp(sx_pk_req *req, struct sx_pk_cnx *cnx, const sx_const_op *input,
+static inline int sx_mod_exp(sx_pk_req *req, const sx_const_op *input,
 					const sx_const_op *e, const sx_const_op *m, sx_op *result)
 {
 	struct sx_pk_inops_mod_cmd inputs;
@@ -230,79 +227,6 @@ static inline int sx_mod_exp(sx_pk_req *req, struct sx_pk_cnx *cnx, const sx_con
 	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_mem2op(outputs[0], opsz, result);
-	return status;
-}
-
-/** @} */
-
-/** Compute modular exponentiation with CRT
- *
- *  Compute (result = in ^ db mod m) with those steps:
- *
- *   vp = in ^ dp mod p
- *   vq = in ^ dq mod q
- *   u = (vp -vq) * qinv mod p
- *   result = vq + u * q
- *
- * @param[in,out] req Acquired acceleration request for this operation
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- * startup
- * @param[in] in Input
- * @param[in] p Prime number p
- * @param[in] q Prime number q
- * @param[in] dp d mod (p-1), with d the private key
- * @param[in] dq d mod (q-1), with d the private key
- * @param[in] qinv q^(-1) mod p
- * @param[out] result Result of modular exponentiation with CRT
- *
- * @return ::SX_OK
- * @return ::SX_ERR_INVALID_PARAM
- * @return ::SX_ERR_UNKNOWN_ERROR
- * @return ::SX_ERR_BUSY
- * @return ::SX_ERR_NOT_IMPLEMENTED
- * @return ::SX_ERR_OPERAND_TOO_LARGE
- * @return ::SX_ERR_PLATFORM_ERROR
- * @return ::SX_ERR_EXPIRED
- * @return ::SX_ERR_PK_RETRY
- *
- */
-static inline int sx_crt_mod_exp(sx_pk_req *req, struct sx_pk_cnx *cnx,
-					const sx_const_op *in, const sx_const_op *p,
-					const sx_const_op *q, const sx_const_op *dp,
-					const sx_const_op *dq, const sx_const_op *qinv,
-					sx_op *result)
-{
-	struct sx_pk_inops_crt_mod_exp inputs;
-	int status;
-
-	sx_pk_set_cmd(req, SX_PK_CMD_MOD_EXP_CRT);
-
-	/* convert and transfer operands */
-	int sizes[] = {sx_const_op_size(p),  sx_const_op_size(q),  sx_const_op_size(in),
-		       sx_const_op_size(dp), sx_const_op_size(dq), sx_const_op_size(qinv)};
-	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
-	if (status != SX_OK) {
-		return status;
-	}
-	sx_pk_op2vmem(in, inputs.in.addr);
-	sx_pk_op2vmem(p, inputs.p.addr);
-	sx_pk_op2vmem(q, inputs.q.addr);
-	sx_pk_op2vmem(dp, inputs.dp.addr);
-	sx_pk_op2vmem(dq, inputs.dq.addr);
-	sx_pk_op2vmem(qinv, inputs.qinv.addr);
-
-	sx_pk_run(req);
-
-	status = sx_pk_wait(req);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	const uint8_t **outputs = sx_pk_get_output_ops(req);
-	const int opsz = sx_pk_get_opsize(req);
-
-	sx_pk_mem2op(outputs[0], opsz, result);
-
 	return status;
 }
 

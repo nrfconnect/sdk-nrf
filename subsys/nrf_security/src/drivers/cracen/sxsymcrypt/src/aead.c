@@ -215,7 +215,7 @@ int sx_aead_create_aesgcm_dec(struct sxaead *aead_ctx, const struct sxkeyref *ke
 }
 
 static int sx_aead_create_aesccm(struct sxaead *aead_ctx, const struct sxkeyref *key,
-				 const uint8_t *nonce, size_t noncesz, size_t tagsz, size_t aadsz,
+				 const uint8_t *nonce, size_t noncesz, size_t tagsz,
 				 size_t datasz, const uint32_t dir)
 {
 	int err;
@@ -279,18 +279,18 @@ static int sx_aead_create_aesccm(struct sxaead *aead_ctx, const struct sxkeyref 
 }
 
 int sx_aead_create_aesccm_enc(struct sxaead *aead_ctx, const struct sxkeyref *key,
-			      const uint8_t *nonce, size_t noncesz, size_t tagsz, size_t aadsz,
+			      const uint8_t *nonce, size_t noncesz, size_t tagsz,
 			      size_t datasz)
 {
-	return sx_aead_create_aesccm(aead_ctx, key, nonce, noncesz, tagsz, aadsz, datasz, 0);
+	return sx_aead_create_aesccm(aead_ctx, key, nonce, noncesz, tagsz, datasz, 0);
 }
 
 int sx_aead_create_aesccm_dec(struct sxaead *aead_ctx, const struct sxkeyref *key,
-			      const uint8_t *nonce, size_t noncesz, size_t tagsz, size_t aadsz,
+			      const uint8_t *nonce, size_t noncesz, size_t tagsz,
 			      size_t datasz)
 {
-	return sx_aead_create_aesccm(aead_ctx, key, nonce, noncesz, tagsz, aadsz, datasz,
-				     ba411ccmcfg.decr);
+	return sx_aead_create_aesccm(aead_ctx, key, nonce, noncesz, tagsz, datasz,
+				     CM_CFG_DECRYPT);
 }
 
 int sx_aead_feed_aad(struct sxaead *aead_ctx, const uint8_t *aad, size_t aadsz)

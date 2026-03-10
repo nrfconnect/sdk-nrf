@@ -23,7 +23,6 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/target/hw/ba414/cmddefs_ecc.c
   ${CMAKE_CURRENT_LIST_DIR}/target/hw/ba414/cmddefs_modmath.c
   ${CMAKE_CURRENT_LIST_DIR}/target/hw/ba414/cmddefs_ecjpake.c
-  ${CMAKE_CURRENT_LIST_DIR}/target/hw/ba414/cmddefs_srp.c
 )
 
 # We need internal.h to be on path
