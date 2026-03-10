@@ -9,7 +9,7 @@ Event handling
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
 
 This page section outlines the critical requirements and implementation strategies for managing events within the system, ensuring that functionalities are both modular and precise in execution.
 

@@ -5,7 +5,7 @@ Developing with coprocessors
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
 
 You can use the VPR coprocessor (Fast Lightweight Peripheral Processor - FLPR) as follows:
 
@@ -61,7 +61,7 @@ For detailed comparison see the :ref:`ug_hpf_softperipherals_comparison` page.
      - Not supported.
    * - Maturity level
      - Experimental (nRF54L15, nRF54LM20, and nRF54H20)
-     - Experimental (nRF54L15)
+     - Experimental (nRF54L15, nRF54LM20)
      - Supported (see :ref:`nrfxlib:soft_peripherals` documentation for the list of supported devices)
    * - Example use case
      - Utilizes VPR as a standard CPU and offloads tasks to VPR.

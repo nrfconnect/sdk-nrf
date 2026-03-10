@@ -9,7 +9,7 @@ Assembly management
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
 
 Assembly management is a critical component in the development process, particularly when meeting the modularity and testability requirements defined in the :ref:`hpf_event_handling`.
 
@@ -52,7 +52,7 @@ hpf_assembly_generate
 
 The :c:func:`hpf_assembly_generate` function creates a build target (asm_gen) that generates a temporary assembly file from HRT source files.
 This files is named :file:`file-soc-temp.s` and is located in the Fast Lightweight Peripheral Processor (FLPR) application's build directory when running ``ninja build``.
-In the filename, *soc* represents the System on Chip (SoC) name used in the current build, such as ``nrf54l15``.
+In the filename, *soc* represents the System on Chip (SoC) name used in the current build, such as ``nrf54l15`` or ``nrf54lm20a``.
 
 hpf_assembly_check
 ==================
