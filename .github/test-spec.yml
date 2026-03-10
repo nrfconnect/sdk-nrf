@@ -160,7 +160,6 @@
   - "samples/bootloader/**/*"
   - "samples/dfu/**/*"
   - "samples/mcuboot/**/*"
-  - "samples/nrf_compress/**/*"
   - "scripts/bootloader/**/*"
   - "scripts/nrf_compress/**/*"
   - "scripts/west_commands/ncs*"

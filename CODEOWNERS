@@ -535,7 +535,6 @@
 /samples/nrf54h20/idle_relocated_tcm/     @nrfconnect/ncs-si-muffin
 /samples/nrf54h20/radio_loader/           @nrfconnect/ncs-si-muffin
 /samples/ironside_se/                     @nrfconnect/ncs-aurora
-/samples/nrf_compress/                    @nordicjm
 /samples/nrf_profiler/                    @nrfconnect/ncs-si-xcake
 /samples/nrf_rpc/protocols_serialization/ @nrfconnect/ncs-protocols-serialization
 /samples/openthread/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
@@ -668,7 +667,6 @@
 /samples/nrf5340/extxip_smp_svr/*.rst     @nrfconnect/ncs-eris-doc
 /samples/nrf5340/netboot/*.rst            @nrfconnect/ncs-eris-doc
 /samples/nrf5340/remote_shell/*.rst       @nrfconnect/ncs-si-muffin-doc
-/samples/nrf_compress/mcuboot_update/*.rst @nrfconnect/ncs-vestavind-doc
 /samples/nrf_profiler/*.rst               @nrfconnect/ncs-si-xcake-doc
 /samples/nrf_rpc/**/*.rst                 @nrfconnect/ncs-blenders-doc
 /samples/openthread/**/*.rst              @nrfconnect/ncs-terahertz-doc

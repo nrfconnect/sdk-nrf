@@ -24,7 +24,7 @@ The system includes the following features and limitation:
 Sample
 ******
 
-For a demonstration of this feature, see the :ref:`nrf_compression_mcuboot_compressed_update` sample.
+For a demonstration of this feature, see the :ref:`mcuboot_with_decompression` sample.
 This sample already implements the configuration requirements mentioned in :ref:`mcuboot_image_compression_setup` below.
 
 .. _mcuboot_image_compression_setup:
@@ -53,19 +53,19 @@ The following shows example partitioning for image compression:
 
     .. group-tab:: nRF52840
 
-        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf52840dk_nrf52840.overlay
+        .. literalinclude:: ../../../../samples/dfu/compressed_update/boards/nrf52840dk_nrf52840.overlay
              :language: devicetree
              :lines: 12-
 
     .. group-tab:: nRF5340
 
-        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf5340dk_nrf5340_cpuapp.overlay
+        .. literalinclude:: ../../../../samples/dfu/compressed_update/boards/nrf5340dk_nrf5340_cpuapp.overlay
              :language: devicetree
              :lines: 12-
 
     .. group-tab:: nRF54L15
 
-        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/boards/nrf54l15dk_nrf54l15_cpuapp.overlay
+        .. literalinclude:: ../../../../samples/dfu/compressed_update/boards/nrf54l15dk_nrf54l15_cpuapp.overlay
              :language: devicetree
              :lines: 12-
 

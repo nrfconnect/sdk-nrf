@@ -1,7 +1,8 @@
 .. _nrf_compression_mcuboot_compressed_update:
+.. _mcuboot_with_decompression:
 
-nRF Compression: MCUboot compressed update
-##########################################
+MCUboot with decompression enabled
+##################################
 
 .. contents::
    :local:
@@ -39,15 +40,13 @@ See :ref:`configuring_kconfig` for information about the different ways you can 
 Configuration options
 =====================
 
-.. _CONFIG_OUTPUT_BOOT_MESSAGE:
-
-CONFIG_OUTPUT_BOOT_MESSAGE
-    When enabled, this optional configuration option outputs a message at run-time that allows for checking if the image has been updated successfully.
+.. options-from-kconfig::
+   :show-type:
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf_compress/mcuboot_update`
+.. |sample path| replace:: :file:`samples/dfu/compressed_update`
 
 .. include:: /includes/build_and_run.txt
 
@@ -60,8 +59,8 @@ The testing scenario uses the FOTA over Bluetooth LE method to load the firmware
 For the testing scenario to work, make sure you meet the following requirements:
 
 * Your update image differs from the base image so that the update can be applied.
-* You changed the firmware version by setting :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` to ``"2.0.0"``.
-* You set the :kconfig:option:`CONFIG_OUTPUT_BOOT_MESSAGE` Kconfig option to ``y``.
+* Change the firmware version by setting :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` to ``"2.0.0"``.
+* Set the :option:`CONFIG_OUTPUT_BOOT_MESSAGE` Kconfig option to ``y``.
 * You are familiar with the FOTA over Bluetooth LE method (see :ref:`the guide for the nRF52840 DK <ug_nrf52_developing_ble_fota_steps>`, :ref:`the guide for the nRF5340 DK <ug_nrf53_developing_ble_fota_steps>`, and :ref:`the guide for the nRF54L15 DK <ug_nrf54l_developing_ble_fota_steps>`).
 * You have the `nRF Connect Device Manager`_ mobile app installed on your smartphone to update your device with the new firmware over Bluetooth LE.
 

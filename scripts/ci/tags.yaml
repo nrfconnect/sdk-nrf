@@ -327,7 +327,7 @@ ci_samples_nrf_compress:
   files:
     - bootloader/mcuboot/
     - modules/lib/zcbor/
-    - nrf/samples/nrf_compress/
+    - nrf/samples/dfu/compressed_update/
     - nrf/subsys/nrf_compress/
     - zephyr/subsys/storage/
 

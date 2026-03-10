@@ -20,7 +20,6 @@ This section lists single |NCS| samples for various uses that are not part of ot
    ../../../samples/ipc/*/README
    ../../../samples/mpsl/*/README
    ../../../samples/benchmarks/*/README
-   ../../../samples/nrf_compress/*/README
    ../../../samples/ironside_se/*/README
    ../../../tests/benchmarks/multicore/*/README
    ../../../samples/basic/*/README

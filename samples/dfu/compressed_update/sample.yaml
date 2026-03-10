@@ -13,7 +13,7 @@ common:
       - "smp_bt_sample: Advertising successfully started"
   timeout: 15
 tests:
-  nrf_compress.mcuboot_update:
+  sample.dfu.compressed_update:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp

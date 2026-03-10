@@ -15,7 +15,7 @@
 #include <zcbor_encode.h>
 #include <bootutil/image.h>
 
-LOG_MODULE_REGISTER(mcuboot_update_sample, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(compressed_update_sample, LOG_LEVEL_DBG);
 
 #ifndef CONFIG_MCUMGR_GRP_IMG_FRUGAL_LIST
 #define ZCBOR_ENCODE_FLAG(zse, label, value) \
