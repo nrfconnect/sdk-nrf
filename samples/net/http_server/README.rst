@@ -121,12 +121,13 @@ To enable TLS, the sample includes pregenerated credentials that are located in 
 Peer verification can be used by building the sample with the :ref:`CONFIG_HTTP_SERVER_SAMPLE_PEER_VERIFICATION_REQUIRE <CONFIG_HTTP_SERVER_SAMPLE_PEER_VERIFICATION_REQUIRE>` Kconfig option, and passing the appropriate credentials when making the HTTP calls.
 These pregenerated credentials work only when you are building for Wi-Fi and running the server on your local Wi-Fi network.
 You need to generate new credentials when building for cellular due to a CN mismatch.
-To generate new credentials, run the following commands:
+To generate new credentials, run the following commands, replacing ``<ip>`` with the static IP address assigned to the device:
 
       .. code-block:: console
 
          # Generate a new RSA key pair (private key and public key) and create a self-signed X.509 certificate for a server.
-         openssl req -newkey rsa:2048 -nodes -keyout server_private_key.pem -x509 -days 365 -out server_certificate.pem
+         # The -subj and -addext flags set the Common Name (CN) and Subject Alternative Name (SAN) to the server's static IP.
+         openssl req -newkey rsa:2048 -nodes -keyout server_private_key.pem -x509 -days 365 -out server_certificate.pem -subj "/CN=<ip>" -addext "subjectAltName=IP:<ip>"
 
          # Generate a new RSA private key for a client.
          openssl genpkey -algorithm RSA -out client.key
