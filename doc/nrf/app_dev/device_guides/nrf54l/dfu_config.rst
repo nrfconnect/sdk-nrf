@@ -128,7 +128,7 @@ MCUboot can invalidate image verification keys through the ``CONFIG_BOOT_KMU_KEY
 Enable this option during the MCUboot build process if there is a risk that images signed with a compromised key might contain critical vulnerabilities.
 The revocation of keys is triggered during an update when a new image is signed with a newer key.
 
-.. warning::
+.. caution::
    You must enable the ``CONFIG_BOOT_KMU_KEYS_REVOCATION`` Kconfig option when creating your project.
    If this option is not activated initially, it will not be possible to enable it later, making this functionality unavailable and potentially exposing your project to security issues.
 
