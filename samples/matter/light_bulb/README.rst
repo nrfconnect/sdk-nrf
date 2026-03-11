@@ -133,11 +133,19 @@ AWS IoT setup and configuration
       The certificates will vary in size depending on the method you chose when generating the certificates.
       Due to this, you might need to increase the value of the :kconfig:option:`CONFIG_MBEDTLS_SSL_OUT_CONTENT_LEN` option to be able to establish a connection.
    #. |open_terminal_window_with_environment|
-   #. Build the sample using the following command:
+   #. Build the sample:
 
-      .. code-block:: console
+      .. tabs::
 
-         west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dlight_bulb_SHIELD=nrf7002eb2 -DEXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
+         .. group-tab:: |nRFVSC|
+
+            Add ``-DSB_CONFIG_WIFI_NRF70=y -Dlight_bulb_SHIELD=nrf7002eb2 -DEXTRA_CONF_FILE=overlay-aws-iot-integration.conf`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+         .. group-tab:: Command line
+
+            .. code-block:: console
+
+               west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dlight_bulb_SHIELD=nrf7002eb2 -DEXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
 
    #. Flash the firmware and boot the sample.
    #. |connect_kit|

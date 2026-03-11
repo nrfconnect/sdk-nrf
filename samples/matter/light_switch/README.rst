@@ -105,12 +105,22 @@ LIT ICD support
 
 .. toggle::
 
-   To enable the :ref:`Long Idle Time (LIT)<ug_matter_device_low_power_icd_sit_lit>` support, run the following command with *board_target* replaced with the board target name:
+   To enable the :ref:`Long Idle Time (LIT)<ug_matter_device_low_power_icd_sit_lit>` support:
 
-   .. parsed-literal::
-      :class: highlight
+   .. tabs::
 
-      west build -b *board_target* -p -- -DEXTRA_CONF_FILE=icd_lit.conf
+      .. group-tab:: |nRFVSC|
+
+         Add ``-DEXTRA_CONF_FILE=icd_lit.conf`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+      .. group-tab:: Command line
+
+         Run the following command with *board_target* replaced with the board target name:
+
+         .. parsed-literal::
+            :class: highlight
+
+            west build -b *board_target* -p -- -DEXTRA_CONF_FILE=icd_lit.conf
 
 .. _matter_light_switch_sample_ui:
 

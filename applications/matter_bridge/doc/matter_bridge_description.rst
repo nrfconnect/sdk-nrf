@@ -477,12 +477,22 @@ Configuring the number of Bluetooth LE bridged devices
                You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
                The default number of Bluetooth LE connections that you can select using the default configuration is ``10`` for Matter, which effectively means 9 bridged devices.
 
-               Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the size of Bluetooth LE TX/RX buffers:
+               To enable up to 20 Bluetooth LE connections (19 bridged devices) using reduced buffer sizes:
 
-               .. parsed-literal::
-                  :class: highlight
+               .. tabs::
 
-                  west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek
+                  .. group-tab:: |nRFVSC|
+
+                     Add ``-Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+                  .. group-tab:: Command line
+
+                     Run the following command in the project directory:
+
+                     .. parsed-literal::
+                        :class: highlight
+
+                        west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek
 
             .. group-tab:: Matter bridge over Thread
 
@@ -501,12 +511,22 @@ Configuring the number of Bluetooth LE bridged devices
 
                You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
 
-               Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
+               To enable up to 20 Bluetooth LE connections (19 bridged devices) using reduced buffer sizes:
 
-               .. parsed-literal::
-                  :class: highlight
+               .. tabs::
 
-                  west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf"
+                  .. group-tab:: |nRFVSC|
+
+                     Add ``-DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf"`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+                  .. group-tab:: Command line
+
+                     Run the following command in the project directory:
+
+                     .. parsed-literal::
+                        :class: highlight
+
+                        west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf"
 
       .. group-tab:: nRF54LM20 DKs
 
@@ -517,22 +537,44 @@ Configuring the number of Bluetooth LE bridged devices
             .. group-tab:: Matter bridge over Wi-Fi
 
                You can increase the number of Bluetooth LE connections, but you may need to decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller to balance the memory usage, and this will decrease the communication throughput.
-               Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
 
-               .. parsed-literal::
-                  :class: highlight
+               To enable up to 20 Bluetooth LE connections (19 bridged devices) using reduced buffer sizes:
 
-                  west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dmatter_bridge_SHIELD=nrf7002eb2 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
+               .. tabs::
+
+                  .. group-tab:: |nRFVSC|
+
+                     Add ``-DSB_CONFIG_WIFI_NRF70=y -Dmatter_bridge_SHIELD=nrf7002eb2 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+                  .. group-tab:: Command line
+
+                     Run the following command in the project directory:
+
+                     .. parsed-literal::
+                        :class: highlight
+
+                        west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dmatter_bridge_SHIELD=nrf7002eb2 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
 
             .. group-tab:: Matter bridge over Thread
 
                You can increase the number of Bluetooth LE connections, but you may need to decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller to balance the memory usage, and this will decrease the communication throughput.
-               Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
 
-               .. parsed-literal::
-                  :class: highlight
+               To enable up to 20 Bluetooth LE connections (19 bridged devices) using reduced buffer sizes:
 
-                  west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
+               .. tabs::
+
+                  .. group-tab:: |nRFVSC|
+
+                     Add ``-DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+                  .. group-tab:: Command line
+
+                     Run the following command in the project directory:
+
+                     .. parsed-literal::
+                        :class: highlight
+
+                        west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
 
 Configuring Bluetooth LE connection and scan parameters
 -------------------------------------------------------
@@ -605,12 +647,22 @@ Matter smart plug functionality
 
 .. toggle::
 
-   To enable the Matter smart plug functionality, run the following command with *board_target* replaced with the board target name:
+   To enable the Matter smart plug functionality:
 
-   .. parsed-literal::
-      :class: highlight
+   .. tabs::
 
-      west build -b *board_target* -p -- -DEXTRA_CONF_FILE=onoff_plug.conf
+      .. group-tab:: |nRFVSC|
+
+         Add ``-DEXTRA_CONF_FILE=onoff_plug.conf`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+      .. group-tab:: Command line
+
+         Run the following command with *board_target* replaced with the board target name:
+
+         .. parsed-literal::
+            :class: highlight
+
+            west build -b *board_target* -p -- -DEXTRA_CONF_FILE=onoff_plug.conf
 
 .. _matter_bridge_testing:
 

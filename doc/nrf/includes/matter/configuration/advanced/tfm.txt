@@ -6,10 +6,16 @@ Support for Trusted Firmware-M
     The |matter_type| supports using :ref:`Trusted Firmware-M <ug_tfm>` on the |matter_dks_tfm|.
     The memory map of the |matter_type| has been aligned to meet the :ref:`ug_tfm_partition_alignment_requirements`.
 
-    To build the |matter_type| with Trusted Firmware-M support, add the ``ns`` suffix to the |matter_dks_tfm|.
+    To build the |matter_type| with Trusted Firmware-M support, add the ``ns`` suffix to the |matter_dks_tfm| board target:
 
-    For example:
+    .. tabs::
 
-    .. code-block:: console
+       .. group-tab:: |nRFVSC|
 
-        west build -p -b nrf54l15dk/nrf54l15/cpuapp/ns
+          When building with |nRFVSC|, set the board target to include the ``ns`` suffix (for example ``nrf54l15dk/nrf54l15/cpuapp/ns``) in your build configuration.
+
+       .. group-tab:: Command line
+
+          .. code-block:: console
+
+             west build -p -b nrf54l15dk/nrf54l15/cpuapp/ns

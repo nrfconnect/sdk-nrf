@@ -147,23 +147,46 @@ Building with factory data support
 
 .. toggle::
 
-    To build the application with the factory data support, run the following command:
 
-    .. code-block:: console
 
-       west build -b <board_target> -- -DEXTRA_CONF_FILE=overlay-factory_data.conf -DFILE_SUFFIX=factory_data
+    .. tabs::
 
-    Where ``<board_target>`` is ``thingy53/nrf5340/cpuapp`` or ``nrf54l15tag/nrf54l15/cpuapp``.
+       .. group-tab:: |nRFVSC|
+
+          To build the application in |nRFVSC| with factory data support, add ``-DEXTRA_CONF_FILE=overlay-factory_data.conf -DFILE_SUFFIX=factory_data`` to :guilabel:`Extra CMake arguments` in your build configuration.
+          Use board target ``thingy53/nrf5340/cpuapp`` or ``nrf54l15tag/nrf54l15/cpuapp``.
+
+       .. group-tab:: Command line
+
+          To build the application with factory data support, run the following command:
+
+          .. code-block:: console
+
+             west build -b <board_target> -- -DEXTRA_CONF_FILE=overlay-factory_data.conf -DFILE_SUFFIX=factory_data
+
+          Where ``<board_target>`` is ``thingy53/nrf5340/cpuapp`` or ``nrf54l15tag/nrf54l15/cpuapp``.
 
     .. note::
        Matter factory data support requires a dedicated partition layout.
        This means that if you build the application using the ``overlay-factory_data`` configuration overlay, it will not be compatible with other :ref:`Thingy:53 applications and samples <thingy53_compatible_applications>`.
 
-    To generate a new factory data set when building for the given board target, run the following command:
+    To generate a new factory data set when building for the given board target:
 
-    .. code-block:: console
+    .. tabs::
 
-       west build -b <board_target> -- -DEXTRA_CONF_FILE=overlay-factory_data.conf -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y -DFILE_SUFFIX=factory_data
+       .. group-tab:: |nRFVSC|
+
+          Add ``-DEXTRA_CONF_FILE=overlay-factory_data.conf -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y -DFILE_SUFFIX=factory_data`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+       .. group-tab:: Command line
+
+          Run the following command:
+
+          .. code-block:: console
+
+             west build -b <board_target> -- -DEXTRA_CONF_FILE=overlay-factory_data.conf -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y -DFILE_SUFFIX=factory_data
+
+          Where ``<board_target>`` is ``thingy53/nrf5340/cpuapp`` or ``nrf54l15tag/nrf54l15/cpuapp``.
 
     This command builds the application with default certificates.
     After building for the board target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the :ref:`regular command to flash it to the device <programming>`.
@@ -187,10 +210,9 @@ Building for the nRF7002 Wi-Fi expansion board
 
       .. tabs::
 
-         .. group-tab:: nRF Connect for VS Code
+         .. group-tab:: |nRFVSC|
 
-            To build the application in the nRF Connect for VS Code IDE for Thingy:53 with the nRF7002 EB attached, add the expansion board and the file suffix variables in the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
-            For example: ``-- -Dmatter_weather_station_SHIELD=nrf7002eb -DFILE_SUFFIX=release -DSB_CONFIG_WIFI_NRF70=y``.
+            To build the application in the |nRFVSC| IDE for Thingy:53 with the nRF7002 EB attached, add ``-Dmatter_weather_station_SHIELD=nrf7002eb -DFILE_SUFFIX=release -DSB_CONFIG_WIFI_NRF70=y`` to :guilabel:`Extra CMake arguments` in your build configuration.
 
          .. group-tab:: Command line
 
