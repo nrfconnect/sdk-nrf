@@ -654,8 +654,8 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
 * Added the :ref:`uart_driver` documentation.
 
-* Removed GPIOTE instance Kconfig options (for example, ``CONFIG_NRFX_GPIOTE0``).
-  Use :kconfig:option:`CONFIG_NRFX_GPIOTE` to enable the GPIOTE driver.
+* Updated the ``nrfx_gppi`` API to now have full support on the application core of the nRF54H20 device.
+  Using DPPI does not require the devicetree configuration.
 
 Wi-Fi drivers
 -------------
