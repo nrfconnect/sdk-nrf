@@ -23,6 +23,47 @@
 #define VEVIF_IRQN(vevif) VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
+#define VIO_PIN_NOT_CONNECTED 0xFF
+
+#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A)
+static const uint8_t vio_index_to_pin_map[] = {
+	[0]  = 1,  /* Physical pin 2.01 */
+	[1]  = 2,  /* Physical pin 2.02 */
+	[2]  = 4,  /* Physical pin 2.04 */
+	[3]  = 3,  /* Physical pin 2.03 */
+	[4]  = 0,  /* Physical pin 2.00 */
+	[5]  = 5,  /* Physical pin 2.05 */
+	[6]  = 6,  /* Physical pin 2.06 */
+	[7]  = 7,  /* Physical pin 2.07 */
+	[8]  = 8,  /* Physical pin 2.08 */
+	[9]  = 9,  /* Physical pin 2.09 */
+	[10] = 10, /* Physical pin 2.10 */
+};
+
+#define VIO_GPIO_PORT  2
+#define VIO_PIN_COUNT ARRAY_SIZE(vio_index_to_pin_map)
+
+#elif defined(CONFIG_SOC_NRF54LV10A)
+static const uint8_t vio_index_to_pin_map[] = {
+	[0] = 16, /* Physical pin 1.16 */
+	[1] = 17, /* Physical pin 1.17 */
+	[2] = 19, /* Physical pin 1.19 */
+	[3] = 18, /* Physical pin 1.18 */
+	[4] = 15, /* Physical pin 1.15 */
+	[5] = 20, /* Physical pin 1.20 */
+	[6] = 21, /* Physical pin 1.21 */
+	[7] = 22, /* Physical pin 1.22 */
+	[8] = 23, /* Physical pin 1.23 */
+	[9] = 24, /* Physical pin 1.24 */
+};
+
+#define VIO_GPIO_PORT  1
+#define VIO_PIN_COUNT ARRAY_SIZE(vio_index_to_pin_map)
+
+#else
+#error "Unsupported target"
+#endif
+
 volatile uint16_t irq_arg;
 
 static nrf_gpio_pin_pull_t get_pull(gpio_flags_t flags)
@@ -36,13 +77,13 @@ static nrf_gpio_pin_pull_t get_pull(gpio_flags_t flags)
 	return NRF_GPIO_PIN_NOPULL;
 }
 
-static int gpio_hpf_pin_configure(uint8_t port, uint16_t pin, uint32_t flags)
+static int gpio_hpf_pin_configure(uint16_t pin, uint32_t flags)
 {
-	if (port != 2) {
+	if (pin >= ARRAY_SIZE(vio_index_to_pin_map)) {
 		return -EINVAL;
 	}
 
-	uint32_t abs_pin = NRF_GPIO_PIN_MAP(port, pin);
+	uint32_t abs_pin = NRF_GPIO_PIN_MAP(VIO_GPIO_PORT, vio_index_to_pin_map[pin]);
 	nrf_gpio_pin_pull_t pull = get_pull(flags);
 	nrf_gpio_pin_drive_t drive;
 
@@ -107,13 +148,9 @@ static int gpio_hpf_pin_configure(uint8_t port, uint16_t pin, uint32_t flags)
 
 void process_packet(hpf_gpio_data_packet_t *packet)
 {
-	if (packet->port != 2) {
-		return;
-	}
-
 	switch (packet->opcode) {
 	case HPF_GPIO_PIN_CONFIGURE: {
-		gpio_hpf_pin_configure(packet->port, packet->pin, packet->flags);
+		gpio_hpf_pin_configure(packet->pin, packet->flags);
 		break;
 	}
 	case HPF_GPIO_PIN_CLEAR: {
