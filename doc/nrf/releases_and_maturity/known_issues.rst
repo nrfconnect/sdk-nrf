@@ -2972,7 +2972,7 @@ nRF Machine Learning
 
 The issues in this section are related to the :ref:`nrf_machine_learning_app` application.
 
-.. rst-class:: v3-2-0 v3-2-1 v3-2-3 v3-2-2
+.. rst-class:: v3-2-2 v3-2-1 v3-2-0
 
 NCSDK-37049: The application asserts on the nRF54H20 in ``debug`` configurations (single-core and dual-core) due to a stack overflow in the main thread
   The stack overflow occurs when the application starts.
