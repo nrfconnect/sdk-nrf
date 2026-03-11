@@ -292,6 +292,7 @@ void group_action_set(enum action_req *action, enum action_req new_action)
 static void stream_state_check(struct bt_cap_stream *stream,
 			       struct new_pres_delays *new_pres_delays)
 {
+	int ret;
 	uint8_t ep_state;
 
 	ret = le_audio_ep_state_get(stream->bap_stream.ep, &ep_state);
