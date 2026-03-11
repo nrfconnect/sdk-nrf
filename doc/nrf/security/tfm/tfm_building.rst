@@ -129,8 +129,8 @@ The minimal build uses an image of 32 kB.
 It is set with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option that is enabled by default on the :ref:`Thingy:91 <ug_thingy91>` and :ref:`Thingy:91 X <ug_thingy91x>` devices.
 
 With the minimal build, the configuration of TF-M is severely limited.
-Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of the minimal configuration.
-Instead, the default configuration must be used as a starting point.
+The only configurable option is to enable a security service for cryptographic hashes.
+For example, you can enable the :kconfig:option:`PSA_WANT_ALG_SHA_256` Kconfig option to provide SHA-256 support using TF-M.
 
 .. _tfm_configurable_build:
 
