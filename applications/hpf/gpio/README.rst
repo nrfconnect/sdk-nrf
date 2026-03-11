@@ -10,7 +10,7 @@ High-Performance Framework GPIO
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20A devices.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20A, and nRF54LV10A devices.
 
 This application demonstrates how to write a :ref:`High-Performance Framework (HPF) <hpf_index>` application implementing a simple peripheral.
 The application implements a subset of the Zephyr GPIO API.
