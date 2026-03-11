@@ -481,6 +481,7 @@ static bool foreach_stream_transp_latency_set(struct bt_cap_stream *existing_str
 	}
 
 	int dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
+
 	if (dir < 0) {
 		LOG_ERR("Failed to get stream direction");
 		return true;
