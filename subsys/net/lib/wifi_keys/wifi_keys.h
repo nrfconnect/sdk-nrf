@@ -30,4 +30,9 @@ uint32_t wifi_keys_get_key_size_in_bits(wifi_keys_type_t type);
 
 psa_key_attributes_t wifi_keys_key_attributes_init(uint32_t key_length_bytes);
 
+int wifi_keys_reverse_byte_order(void *restrict dst, const void *restrict src,
+				 uint32_t key_length_bytes);
+
+int wifi_keys_reverse_byte_order_in_place(void *buf, uint32_t key_length_bytes);
+
 #endif
