@@ -116,7 +116,7 @@ tests:
     harness_config:
       fixture: lfclk_at_lfrc
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_clock_control"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_clock_control_with_logs"
     timeout: 90
 
   benchmarks.multicore.idle_clock_control.coverage:
