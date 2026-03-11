@@ -123,3 +123,47 @@ psa_key_attributes_t wifi_keys_key_attributes_init(uint32_t key_length_bytes)
 	 * key locations can be reused for different algorithms).
 	 */
 }
+
+int wifi_keys_reverse_byte_order(void *restrict dst, const void *restrict src,
+				 uint32_t key_length_bytes)
+{
+	/* Fix byte order of keys from wpa_supplicant */
+
+	uint8_t *d = dst;
+	const uint8_t *s = src;
+	const uint32_t group_size = 16;
+
+	if (key_length_bytes % group_size != 0) {
+		return -1;
+	}
+
+	for (uint32_t i = 0; i < key_length_bytes; i += group_size) {
+		for (uint32_t j = 0; j < group_size; j++) {
+			d[i + j] = s[i + group_size - 1 - j];
+		}
+	}
+
+	return 0;
+}
+
+int wifi_keys_reverse_byte_order_in_place(void *buf, uint32_t key_length_bytes)
+{
+	/* Fix byte order of keys from wpa_supplicant - in place version */
+
+	uint8_t *b = buf;
+	const uint32_t group_size = 16;
+
+	if (key_length_bytes % group_size != 0) {
+		return -1;
+	}
+
+	for (uint32_t i = 0; i < key_length_bytes; i += group_size) {
+		for (uint32_t j = 0; j < group_size / 2; j++) {
+			uint8_t tmp = b[i + j];
+			b[i + j] = b[i + group_size - 1 - j];
+			b[i + group_size - 1 - j] = tmp;
+		}
+	}
+
+	return 0;
+}
