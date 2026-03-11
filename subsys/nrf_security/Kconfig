@@ -21,7 +21,6 @@ config NORDIC_SECURITY_BACKEND
 	select NRF_SECURITY
 	select MBEDTLS_LEGACY_CRYPTO_C
 	select OBERON_BACKEND if BUILD_WITH_TFM
-	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
 	help
 	  Using this configuration enables legacy support for mbed TLS APIs
 	  This configuration is not to be used for PSA API support.
@@ -36,7 +35,6 @@ config NRF_SECURITY
 	default y if DT_HAS_ZEPHYR_PSA_CRYPTO_RNG_ENABLED \
 		&& (SOC_SERIES_NRF54L || SOC_SERIES_NRF71 || DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED) \
 		&& !IS_BOOTLOADER_IMG && GEN_ISR_TABLES
-	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
 	# NCS does not use TF-M's BL2 bootloader, but uses it's own fork
 	# of MCUBoot instead (CONFIG_BOOTLOADER_MCUBOOT).
 	#
