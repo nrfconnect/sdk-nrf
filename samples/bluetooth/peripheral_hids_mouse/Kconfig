@@ -9,7 +9,7 @@ source "Kconfig.zephyr"
 menu "Nordic HIDS BLE GATT mouse service sample"
 
 config BT_HIDS_SECURITY_ENABLED
-	bool "Enable Bluetooth LE security"
+	bool "Bluetooth LE security"
 	default y
 	imply BT_PRIVACY
 	select BT_SMP
@@ -24,7 +24,7 @@ config BT_HIDS_SECURITY_ENABLED
 	  Enable Bluetooth LE security support.
 
 config BT_HIDS_SECURITY_MITM_ENABLED
-	bool "Enable passkey display MITM protection"
+	bool "Passkey display MITM protection"
 	depends on BT_HIDS_SECURITY_ENABLED
 	depends on PRINTK
 	default y
@@ -33,7 +33,7 @@ config BT_HIDS_SECURITY_MITM_ENABLED
 	  Implementation uses the "printk" function to display the passkey.
 
 config BT_DIRECTED_ADVERTISING
-	bool "Enable directed advertising"
+	bool "Directed advertising"
 	default y
 	depends on BT_HIDS_SECURITY_ENABLED
 
