@@ -39,19 +39,6 @@ enum coding {
 	LC3
 };
 
-/**
- * @brief Generic information about the audio producer.
- */
-struct producer_info {
-	/* Flag showing whether the producer can adjust the production rate of data.
-	 * Examples are async USB or I2S which can be rate-adjusted.
-	 * Synchronous USB cannot be rate adjusted.
-	 * Setting this to true also means that producer module shall
-	 * subscribe to a form of feedback mechanism to adjust its production rate.
-	 */
-	bool rate_adjustable;
-};
-
 struct audio_metadata {
 	/* Indicates the data type/encoding. */
 	enum coding data_coding;
