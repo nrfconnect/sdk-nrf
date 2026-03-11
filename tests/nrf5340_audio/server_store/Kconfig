@@ -17,6 +17,7 @@ config BT_MAX_CONN
 	int
 	default 5
 
+
 config BT_MAX_PAIRED
 	int
 	default 5
