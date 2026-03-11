@@ -794,7 +794,16 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-|no_changes_yet_note|
+* :ref:`lib_nfc_tnep` library:
+
+  * Fixed:
+
+    * The ``BUILD_ASSERT`` for the waiting time extension count (``_n_wait``) in the TNEP Tag API.
+      It now uses ``NFC_TNEP_TAG_MAX_N_WAIT_TIME`` instead of ``NFC_TNEP_TAG_MAX_WAIT_TIME``, aligning the check with the TNEP 1.0 specification.
+
+  * Removed:
+
+    * The unused ``NFC_TNEP_NDEF_NLEN_SIZE`` define from the TNEP base API.
 
 nRF RPC libraries
 -----------------
