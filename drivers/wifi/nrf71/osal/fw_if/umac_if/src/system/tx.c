@@ -680,6 +680,9 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	config->tx_buff_info[frame_indx].ddr_ptr =
 		(unsigned long long)nwb_data;
 	config->tx_buff_info[frame_indx].pkt_length = buf_len;
+	if (!nrf_wifi_osal_nbuf_get_chksum_done(nbuf)) {
+		config->csum_bitmap |= (1u << frame_indx);
+	}
 	config->num_tx_pkts++;
 
 	status = NRF_WIFI_STATUS_SUCCESS;
@@ -834,6 +837,8 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	if (nrf_wifi_osal_nbuf_get_chksum_done(nwb)) {
 		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_CHKSUM_AVAILABLE;
 	}
+
+	config->csum_bitmap = 0;
 
 #ifdef NRF_WIFI_QOS_NOACK_POLICY
 	if (has_matching_tid(txq, NRF_WIFI_QOS_NOACK_POLICY_TID)) {
