@@ -1093,6 +1093,8 @@ static int all_streams_configured(void)
 		}
 	} else if (action == ACTION_REQ_GROUP_RESTART) {
 		LOG_WRN("Check action");
+	} else {
+		LOG_DBG("No action required");
 	}
 
 	return 0;
