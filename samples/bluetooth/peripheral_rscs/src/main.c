@@ -145,6 +145,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
 		printk("Connection failed, err 0x%02x %s\n", err, bt_hci_err_to_str(err));
+		return;
 	} else {
 		printk("Connected\n");
 	}
