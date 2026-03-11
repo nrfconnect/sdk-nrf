@@ -184,7 +184,7 @@ template <CredentialsBits CRED_BIT_MASK> void AccessManager<CRED_BIT_MASK>::Init
 			memset(schedule.mData.mRaw, 0, sizeof(schedule.mData));
 		}
 	}
-	for (size_t holidayIndex = 0; holidayIndex < CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER; ++holidayIndex) {
+	for (size_t holidayIndex = 0; holidayIndex < CONFIG_LOCK_MAX_HOLIDAY_SCHEDULES; ++holidayIndex) {
 		auto &schedule = mHolidaySchedule[holidayIndex];
 		memset(schedule.mData.mRaw, 0, sizeof(schedule.mData));
 	}
