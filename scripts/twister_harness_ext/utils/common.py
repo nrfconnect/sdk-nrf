@@ -8,8 +8,11 @@ import os
 import shlex
 import subprocess
 from pathlib import Path
+from typing import Literal
 
 from twister_harness.helpers.utils import find_in_config
+
+ERASE_MODE = Literal["ERASE_NONE", "ERASE_ALL", "ERASE_CTRL_AP", "ERASE_RANGES_TOUCHED_BY_FIRMWARE"]
 
 logger = logging.getLogger(__name__)
 
@@ -46,10 +49,15 @@ def erase_board(dev_id: str | None):
     run_command(command)
 
 
-def flash_with_nrfutil(firmware: Path | str, dev_id: str):
+def flash_with_nrfutil(firmware: Path | str, dev_id: str, erase_mode: ERASE_MODE | None):
     command = ['nrfutil', 'device', 'program', '--firmware', str(firmware)]
     if dev_id:
         command.extend(['--serial-number', dev_id])
+    options = []
+    if erase_mode:
+        options += [f"chip_erase_mode={erase_mode}"]
+    if options:
+        command += ["--options"] + options
     run_command(command)
 
 

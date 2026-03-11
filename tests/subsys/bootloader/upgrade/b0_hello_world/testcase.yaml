@@ -1,0 +1,17 @@
+common:
+  sysbuild: true
+  slow: true
+  build_only: false
+  timeout: 180
+  tags:
+    - nsib
+    - ci_tests_subsys_bootloader
+
+tests:
+  nsib.update.invalid_image:
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade_invalid_application.py"
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
