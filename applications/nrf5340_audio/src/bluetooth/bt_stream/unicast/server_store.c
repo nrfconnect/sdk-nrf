@@ -20,6 +20,11 @@ LOG_MODULE_REGISTER(srvstore, CONFIG_SERVER_STORE_LOG_LEVEL);
 
 static struct bt_bap_lc3_preset lc3_preset_48_4_1 = BT_BAP_LC3_UNICAST_PRESET_48_4_1(
 	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
+static struct bt_bap_lc3_preset lc3_preset_48_4_1_rtn_2 = BT_BAP_LC3_PRESET(
+	BT_AUDIO_CODEC_LC3_CONFIG(BT_AUDIO_CODEC_CFG_FREQ_48KHZ, BT_AUDIO_CODEC_CFG_DURATION_10,
+				  BT_AUDIO_LOCATION_ANY, 120u, 1,
+				  BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED),
+	BT_BAP_QOS_CFG_UNFRAMED(10000u, 120u, 2u, 20u, 40000u));
 static struct bt_bap_lc3_preset lc3_preset_24_2_1 = BT_BAP_LC3_UNICAST_PRESET_24_2_1(
 	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
 static struct bt_bap_lc3_preset lc3_preset_16_2_1 = BT_BAP_LC3_UNICAST_PRESET_16_2_1(
@@ -90,16 +95,14 @@ static int server_remove(struct server_store *server, bool force)
 }
 
 /* Populate a preset based on preferred sample rate */
-static int preset_pop_on_sample_rate(uint16_t lc3_freq_bit, struct bt_bap_lc3_preset *preset,
-				     uint8_t pref_sample_rate)
+static int preset_select_on_sample_rate(uint16_t lc3_freq_bit, struct bt_bap_lc3_preset *preset,
+					uint8_t pref_sample_rate)
 {
 
 	switch (pref_sample_rate) {
 	case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
 		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
-			memcpy(preset, &lc3_preset_48_4_1, sizeof(struct bt_bap_lc3_preset));
-			/* SET RTN to 2 to reduce latency. */
-			preset->qos.rtn = 2;
+			memcpy(preset, &lc3_preset_48_4_1_rtn_2, sizeof(struct bt_bap_lc3_preset));
 			return 0;
 		}
 
@@ -151,7 +154,7 @@ static bool pac_parse(struct bt_data *data, struct bt_bap_lc3_preset *preset,
 	case BT_AUDIO_CODEC_CAP_TYPE_FREQ:
 		uint16_t lc3_freq_bit = sys_get_le16(data->data);
 
-		ret = preset_pop_on_sample_rate(lc3_freq_bit, preset, pref_sample_rate);
+		ret = preset_select_on_sample_rate(lc3_freq_bit, preset, pref_sample_rate);
 		if (ret) {
 			/* This PAC record from the server is not supported by the client.
 			 * Stop parsing this record.

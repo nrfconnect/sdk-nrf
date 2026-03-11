@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <zephyr/bluetooth/audio/cap.h>
 
+/* Required actions. Higher number -> more severe */
 enum action_req {
 	ACTION_REQ_NONE = 0,
 	ACTION_REQ_STREAM_QOS_RECONFIG,

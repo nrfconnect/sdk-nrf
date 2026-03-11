@@ -37,6 +37,7 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 #define CAP_PROCED_SEM_WAIT_TIME_MS K_MSEC(500)
 K_SEM_DEFINE(sem_cap_procedure_proceed, 1, 1);
 
+/* Global group parameters. Reused when reconfiguring the group */
 static struct bt_cap_unicast_group_stream_pair_param
 	pair_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
 
@@ -66,6 +67,8 @@ K_MSGQ_DEFINE(cap_proc_q, sizeof(enum cap_procedure_type), CONFIG_BT_ISO_MAX_CHA
 #define LVL2 0
 /* Will return 1 if x == 0, due to how locations are defined in LE Audio */
 #define POPCOUNT_ZERO(x) ((x) == 0 ? 1 : POPCOUNT(x))
+
+#define MAX_TRANS_LAT_NOT_SET UINT16_MAX
 
 struct discover_dir {
 	struct bt_conn *conn;
@@ -748,9 +751,10 @@ static void endpoint_cb(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_b
  * @note	If a stereo sink is found, the preset for both left and right channel will be set to
  *		the same preset, only differing in channel allocation.
  *
- * @param[in]	conn	Connection pointer to the unicast_server where the discovery was done.
- * @param[in]	err	Error code, 0 if successful.
- * @param[in]	server	Server pointer to where the discovered group_data will be stored.
+ * @param[in]	conn		Connection pointer to the unicast_server where the discovery was
+ * done.
+ * @param[in]	err		Error code, 0 if successful.
+ * @param[in, out] server	Server pointer to where the discovered group_data will be stored.
  */
 static void discover_cb_sink(struct bt_conn *conn, int err, struct server_store *server)
 {
@@ -994,10 +998,10 @@ static int all_streams_configured(void)
 	int ret;
 
 	enum action_req action = ACTION_REQ_NONE;
-	uint32_t pres_dly_snk_us = UINT32_MAX;
-	uint32_t pres_dly_src_us = UINT32_MAX;
-	uint16_t max_transp_lat_snk_ms = UINT16_MAX;
-	uint16_t max_transp_lat_src_ms = UINT16_MAX;
+	uint32_t pres_dly_snk_us = BT_BAP_PD_UNSET;
+	uint32_t pres_dly_src_us = BT_BAP_PD_UNSET;
+	uint16_t max_transp_lat_snk_ms = MAX_TRANS_LAT_NOT_SET;
+	uint16_t max_transp_lat_src_ms = MAX_TRANS_LAT_NOT_SET;
 
 	struct pd_struct common_pd_src;
 	struct pd_struct common_pd_snk;
@@ -1012,6 +1016,7 @@ static int all_streams_configured(void)
 		return ret;
 	}
 
+	/* Get CAP info and then BAP info */
 	ret = bt_cap_unicast_group_get_info(unicast_group, &cap_info);
 	if (ret) {
 		LOG_ERR("Failed to get unicast group info: %d", ret);
@@ -1024,7 +1029,9 @@ static int all_streams_configured(void)
 		return ret;
 	}
 
-	/* Check if any stream is in a streaming state */
+	/* Check if any stream is in a streaming state.
+	 * If PD is unset, the stream cannot be streaming
+	 */
 	if (info.sink_pd != BT_BAP_PD_UNSET) {
 		if (!IN_RANGE(info.sink_pd, common_pd_snk.pd_min, common_pd_snk.pd_max)) {
 			/* The existing running PD is outside the min-max.
@@ -1075,7 +1082,7 @@ static int all_streams_configured(void)
 	}
 
 	/* Check if a group reconfiguration is required */
-	if (action != ACTION_REQ_NONE) {
+	if (action == ACTION_REQ_STREAM_QOS_RECONFIG) {
 
 		LOG_INF("Unicast group reconfigure");
 
@@ -1084,6 +1091,8 @@ static int all_streams_configured(void)
 			LOG_ERR("Failed to reconfigure unicast group: %d", ret);
 			return ret;
 		}
+	} else if (action == ACTION_REQ_GROUP_RESTART) {
+		LOG_WRN("Check action");
 	}
 
 	return 0;
@@ -1094,7 +1103,6 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 {
 	int ret;
 	enum bt_audio_dir dir;
-	bool this_is_the_last_stream = false;
 
 	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
 	if (ret < 0) {
@@ -1141,11 +1149,11 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 		LOG_WRN("Server does not prefer 2M PHY");
 	}
 
-	if (stream->qos->rtn > stream_pref->rtn) {
+	if (stream->qos->rtn != stream_pref->rtn) {
 		/* Currently, the client does not alter the RTN based on a streams'
 		 * preference.
 		 */
-		LOG_WRN("Stream (%p) prefers a lower RTN: %d (is %d)", (void *)stream,
+		LOG_WRN("Stream (%p) prefers a different RTN: %d (is %d)", (void *)stream,
 			stream_pref->rtn, stream->qos->rtn);
 	}
 
@@ -1155,26 +1163,21 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 	if (ret == -ECANCELED) {
 		LOG_DBG("Not all streams are configured yet");
 	} else if (ret == 0) {
-		this_is_the_last_stream = true;
 		LOG_DBG("All streams are configured");
-	} else {
-		LOG_ERR("Foreach error: %d", ret);
-		srv_store_unlock();
-		return;
-	}
-
-	if (this_is_the_last_stream) {
 		ret = all_streams_configured();
 		if (ret) {
 			LOG_ERR("Failed to check all streams configured: %d", ret);
 			srv_store_unlock();
 			return;
 		}
+	} else {
+		LOG_ERR("Foreach error: %d", ret);
+		srv_store_unlock();
+		return;
 	}
 
 	srv_store_unlock();
 
-	/* Should this be sent on every stream_configured cb? */
 	le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, stream->conn, stream, dir);
 }
 
@@ -1185,7 +1188,7 @@ static void stream_qos_set_cb(struct bt_bap_stream *stream)
 
 static void stream_enabled_cb(struct bt_bap_stream *stream)
 {
-	LOG_INF("BAP Stream (%p) enabled", (void *)stream);
+	LOG_DBG("BAP Stream (%p) enabled", (void *)stream);
 }
 
 static void stream_started_cb(struct bt_bap_stream *stream)
@@ -1224,7 +1227,7 @@ static void stream_metadata_updated_cb(struct bt_bap_stream *stream)
 
 static void stream_disabled_cb(struct bt_bap_stream *stream)
 {
-	LOG_INF("Audio Stream %p disabled", (void *)stream);
+	LOG_DBG("Audio Stream %p disabled", (void *)stream);
 }
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
@@ -1397,7 +1400,7 @@ static void unicast_start_complete_cb(int err, struct bt_conn *conn)
 	if (err) {
 		LOG_WRN("Failed unicast_start_complete for conn: %p, err: %d", (void *)conn, err);
 	} else {
-		LOG_INF("Successful unicast_start_complete for conn: %p, err: %d", (void *)conn,
+		LOG_DBG("Successful unicast_start_complete for conn: %p, err: %d", (void *)conn,
 			err);
 	}
 
@@ -1753,7 +1756,7 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 
 		ret = le_audio_ep_state_get(server->src.eps[j], &state);
 		if (state == BT_BAP_EP_STATE_STREAMING || ret) {
-			LOG_INF("Source endpoint is already streaming, skipping start");
+			LOG_DBG("Source endpoint is already streaming, skipping start");
 			continue;
 		}
 

@@ -471,7 +471,7 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 	LOG_DBG("Received BASE with %d subgroup(s) from broadcast sink", subgroup_count);
 
 	ret = bt_bap_base_foreach_subgroup(base, base_subgroup_cb, &suitable_stream_found);
-	if (ret != 0 && ret != -ECANCELED) {
+	if (ret != 0) {
 		LOG_WRN("Failed to parse subgroups: %d", ret);
 		return;
 	}

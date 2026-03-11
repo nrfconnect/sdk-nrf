@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -11,7 +11,9 @@
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/bluetooth/audio/audio.h>
 
-/* TODO: Remove when more info is available in public APIs */
+/* TODO: Remove when more info is available in public APIs
+ * See https://github.com/zephyrproject-rtos/zephyr/issues/103567
+ */
 #include <../subsys/bluetooth/audio/cap_internal.h>
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
@@ -77,20 +79,21 @@ static bool foreach_stream_pres_dly_calc(struct bt_cap_stream *stream, void *use
 		return true;
 	}
 
-	if (!le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_CODEC_CONFIGURED) &&
-	    !le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_QOS_CONFIGURED) &&
-	    !le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_ENABLING) &&
-	    !le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		LOG_DBG("Existing stream not in codec configured, QoS configured, enabling or "
-			"streaming state");
-		return true;
-	}
-
 	struct bt_bap_ep_info ep_info;
 
 	ret = bt_bap_ep_get_info(stream->bap_stream.ep, &ep_info);
 	if (ret != 0) {
 		LOG_ERR("Failed to get existing stream ep info: %d", ret);
+		ctx->ret = ret;
+		return true;
+	}
+
+	if ((ep_info.state != BT_BAP_EP_STATE_CODEC_CONFIGURED) &&
+	    (ep_info.state != BT_BAP_EP_STATE_QOS_CONFIGURED) &&
+	    (ep_info.state != BT_BAP_EP_STATE_ENABLING) &&
+	    (ep_info.state != BT_BAP_EP_STATE_STREAMING)) {
+		LOG_DBG("Existing stream not in codec configured, QoS configured, enabling or "
+			"streaming state");
 		return true;
 	}
 
@@ -252,7 +255,7 @@ int unicast_client_internal_pres_dly_get(struct bt_cap_unicast_group *unicast_gr
 			LOG_ERR("Failed to parse common sink QoS for pres delay: %d", ret);
 			return ret;
 		}
-		LOG_INF("Sink PD: (%d streams checked)", foreach_data.streams_checked_snk);
+		LOG_DBG("Sink PD: (%d streams checked)", foreach_data.streams_checked_snk);
 		pd_print(common_pd_snk, foreach_data.existing_pres_dly_us_snk, *pres_dly_snk_us);
 	}
 
@@ -265,7 +268,7 @@ int unicast_client_internal_pres_dly_get(struct bt_cap_unicast_group *unicast_gr
 			LOG_ERR("Failed to parse common source QoS for pres delay: %d", ret);
 			return ret;
 		}
-		LOG_INF("Source PD: (%d streams checked)", foreach_data.streams_checked_src);
+		LOG_DBG("Source PD: (%d streams checked)", foreach_data.streams_checked_src);
 		pd_print(common_pd_src, foreach_data.existing_pres_dly_us_src, *pres_dly_src_us);
 	}
 
@@ -289,9 +292,15 @@ void group_action_set(enum action_req *action, enum action_req new_action)
 static void stream_state_check(struct bt_cap_stream *stream,
 			       struct new_pres_delays *new_pres_delays)
 {
+	uint8_t ep_state;
 
-	if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_IDLE) ||
-	    le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_RELEASING)) {
+	ret = le_audio_ep_state_get(stream->bap_stream.ep, &ep_state);
+	if (ret) {
+		LOG_ERR("Failed to get ep state: %d", ret);
+		return;
+	}
+
+	if ((ep_state == BT_BAP_EP_STATE_IDLE) || (ep_state == BT_BAP_EP_STATE_RELEASING)) {
 		/* This should not be the case as all streams should be in Codec configured
 		 * or higher state at this point.
 		 */
@@ -300,11 +309,12 @@ static void stream_state_check(struct bt_cap_stream *stream,
 		group_action_set(&new_pres_delays->action, ACTION_REQ_GROUP_RESTART);
 	}
 
-	if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_QOS_CONFIGURED)) {
+	if (ep_state == BT_BAP_EP_STATE_QOS_CONFIGURED) {
 		/* Stream needs to be QoS configured again to update the presentation delay */
 		group_action_set(&new_pres_delays->action, ACTION_REQ_STREAM_QOS_RECONFIG);
-	} else if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_ENABLING) ||
-		   le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
+	} else if ((ep_state == BT_BAP_EP_STATE_ENABLING) ||
+		   (ep_state == BT_BAP_EP_STATE_STREAMING)) {
+
 		/* Streams must be restarted (go through he QoS step again to update PD) */
 		group_action_set(&new_pres_delays->action, ACTION_REQ_STREAM_QOS_RECONFIG);
 	} else {
@@ -336,7 +346,6 @@ static bool new_pres_dly_us_set(struct bt_cap_stream *stream, void *user_data)
 		}
 	} else {
 		/* No update needed for this stream */
-		return false;
 	}
 	return false;
 }
@@ -442,7 +451,7 @@ int unicast_client_internal_max_transp_latency_get(struct bt_cap_unicast_group *
 		return foreach_data.ret;
 	}
 
-	LOG_INF("Checked %d sink stream(s) and %d source stream(s) in the same group",
+	LOG_DBG("Checked %d sink stream(s) and %d source stream(s) in the same group",
 		foreach_data.streams_checked_snk, foreach_data.streams_checked_src);
 
 	*max_trans_lat_snk_ms = foreach_data.max_trans_lat_snk_ms;
@@ -458,6 +467,9 @@ struct foreach_trans_latency_set {
 	uint8_t streams_set_src;
 };
 
+/* If the max transport latency must be changed, we need to tear down and re-establish the
+ * stream in order for the controller to get the new information.
+ */
 static bool foreach_stream_transp_latency_set(struct bt_cap_stream *existing_stream,
 					      void *user_data)
 {
@@ -468,9 +480,6 @@ static bool foreach_stream_transp_latency_set(struct bt_cap_stream *existing_str
 		return true;
 	}
 
-	/* If the max transport latency must be changed, we need to tear down and re-establish the
-	 * stream in order for the controller to get the new information.
-	 */
 	int dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
 	if (dir < 0) {
 		LOG_ERR("Failed to get stream direction");
@@ -532,13 +541,13 @@ int unicast_client_internal_max_transp_latency_set(struct bt_cap_unicast_group *
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, foreach_stream_transp_latency_set,
 						  (void *)&stream_trans_lat_set);
 
-	if (ret != 0 && ret != -ECANCELED) {
+	if (ret != 0) {
 		LOG_ERR("Failed to iterate streams in group: %d", ret);
 		return ret;
 	}
 
 	if (new_max_trans_lat_snk_ms != UINT16_MAX) {
-		LOG_INF("Max transp latency %d ms selected for %d sink streams",
+		LOG_DBG("Max transp latency %d ms selected for %d sink streams",
 			new_max_trans_lat_snk_ms, stream_trans_lat_set.streams_set_snk);
 		if (unicast_group->bap_unicast_group->cig_param.c_to_p_latency !=
 		    new_max_trans_lat_snk_ms) {
@@ -547,7 +556,7 @@ int unicast_client_internal_max_transp_latency_set(struct bt_cap_unicast_group *
 	}
 
 	if (new_max_trans_lat_src_ms != UINT16_MAX) {
-		LOG_INF("Max transp latency %d ms selected for %d source streams",
+		LOG_DBG("Max transp latency %d ms selected for %d source streams",
 			new_max_trans_lat_src_ms, stream_trans_lat_set.streams_set_src);
 		if (unicast_group->bap_unicast_group->cig_param.p_to_c_latency !=
 		    new_max_trans_lat_src_ms) {
