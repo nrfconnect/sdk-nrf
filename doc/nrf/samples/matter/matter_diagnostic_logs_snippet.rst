@@ -9,11 +9,21 @@ Matter diagnostic logs snippet (matter-diagnostic-logs)
    :depth: 2
 
 To build with this snippet, follow the instructions in the :ref:`using-snippets` page.
-When building with west, run the following command:
 
-.. code-block:: console
+.. tabs::
 
-   west build -- -D<project_name>_SNIPPET=matter-diagnostic-logs
+   .. group-tab:: |nRFVSC|
+
+      When using |nRFVSC| select the ``matter-diagnostic-logs`` snippet from the list in the :guilabel:`Snippets` menu.
+
+   .. group-tab:: Command line
+
+      When building with west, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -- -D<project_name>_SNIPPET=matter-diagnostic-logs
 
 Overview
 ********
@@ -43,11 +53,21 @@ Deferred logs mode (:kconfig:option:`CONFIG_LOG_MODE_DEFERRED`) is enabled, beca
    You cannot set the :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` Kconfig option separately without adding the devicetree overlays contained in the snippet.
    Instead, if you want to use just some of the diagnostic logs functionality, use the snippet and set the Kconfig options for the other functionalities to ``n``.
 
-To use the snippet when building a sample, add ``-D<project_name>_SNIPPET=matter-diagnostic-logs`` to the west arguments list.
+To use the snippet when building a sample:
 
-For example, for the ``nrf52840dk/nrf52840`` board target and the :ref:`matter_lock_sample` sample, run the following command:
+.. tabs::
 
-.. parsed-literal::
-   :class: highlight
+   .. group-tab:: |nRFVSC|
 
-   west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=matter-diagnostic-logs
+      When using |nRFVSC| select the ``matter-diagnostic-logs`` snippet from the list in the :guilabel:`Snippets` menu.
+
+   .. group-tab:: Command line
+
+      When building with west, add ``-D<project_name>_SNIPPET=matter-diagnostic-logs`` to the west arguments list.
+
+      For example, for the ``nrf52840dk/nrf52840`` board target and the :ref:`matter_lock_sample` sample, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=matter-diagnostic-logs

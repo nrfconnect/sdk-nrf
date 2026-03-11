@@ -7,7 +7,7 @@ Building the Matter over Wi-Fi variant on nRF54LM20 DK with nRF7002-EB II shield
 
    .. tabs::
 
-      .. group-tab:: nRF Connect for VS Code
+      .. group-tab:: |nRFVSC|
 
          1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
          #. In the :guilabel:`Add Build Configuration` screen, click the :guilabel:`Add argument` button under the :guilabel:`Extra CMake argument` section.
@@ -15,7 +15,7 @@ Building the Matter over Wi-Fi variant on nRF54LM20 DK with nRF7002-EB II shield
 
             .. code-block:: console
 
-               -- -DSHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y
+               -DSHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y
 
       .. group-tab:: Command line
 

@@ -230,21 +230,21 @@ Enabling Matter Bluetooth LE with Nordic UART Service
 
     .. note::
 
-       This |matter_type| supports one Bluetooth LE connection at a time.
-       Matter commissioning, DFU, and NUS over Bluetooth LE must be run separately.
+      This |matter_type| supports one Bluetooth LE connection at a time.
+      Matter commissioning, DFU, and NUS over Bluetooth LE must be run separately.
 
-    The door lock's Bluetooth LE service extension with NUS requires a secure connection with a smartphone, which is established using a security PIN code.
-    The PIN code is different depending on the `Configuration`_ the |matter_type| was built with:
+   The door lock's Bluetooth LE service extension with NUS requires a secure connection with a smartphone, which is established using a security PIN code.
+   The PIN code is different depending on the `Configuration`_ the |matter_type| was built with:
 
-    * In the ``debug`` configuration, the secure PIN code is generated randomly and printed in the log console in the following way:
+   * In the ``debug`` configuration, the secure PIN code is generated randomly and printed in the log console in the following way:
 
-    .. code-block:: console
+   .. code-block:: console
 
-       PROVIDE THE FOLLOWING CODE IN YOUR MOBILE APP: 165768
+      PROVIDE THE FOLLOWING CODE IN YOUR MOBILE APP: 165768
 
-    * In the ``release`` configuration, the secure PIN is set to ``123456``.
+   * In the ``release`` configuration, the secure PIN is set to ``123456``.
 
-    See the `Testing Bluetooth LE with Nordic UART Service`_ section for more information about how to test this feature.
+   See the `Testing Bluetooth LE with Nordic UART Service`_ section for more information about how to test this feature.
 
 .. _matter_lock_sample_schedules:
 
@@ -253,12 +253,22 @@ Scheduled timed access
 
 .. toggle::
 
-   To enable the scheduled timed access feature, run the following command with *board_target* replaced with the board target name:
+   To enable the scheduled timed access feature:
 
-   .. parsed-literal::
-      :class: highlight
+   .. tabs::
 
-      west build -b *board_target* -p -- -DEXTRA_CONF_FILE=schedules.conf
+      .. group-tab:: |nRFVSC|
+
+         Add ``-DEXTRA_CONF_FILE=schedules.conf`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+      .. group-tab:: Command line
+
+         Run the following command with *board_target* replaced with the board target name:
+
+         .. parsed-literal::
+            :class: highlight
+
+            west build -b *board_target* -p -- -DEXTRA_CONF_FILE=schedules.conf
 
 User interface
 **************
@@ -558,9 +568,17 @@ Testing switching between Thread and Wi-Fi
 
    #. Build the door lock application using the switched Thread and Wi-Fi configuration:
 
-      .. code-block:: console
+      .. tabs::
 
-         west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DFILE_SUFFIX=thread_wifi_switched -Dlock_SHIELD=nrf7002eb2  -DSB_CONFIG_WIFI_NRF70=y
+         .. group-tab:: |nRFVSC|
+
+            Add ``-DFILE_SUFFIX=thread_wifi_switched -Dlock_SHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+         .. group-tab:: Command line
+
+            .. code-block:: console
+
+               west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DFILE_SUFFIX=thread_wifi_switched -Dlock_SHIELD=nrf7002eb2  -DSB_CONFIG_WIFI_NRF70=y
 
    #. Prepare the development kit for testing.
       Refer to the :ref:`matter_lock_sample_testing_start` section for more information.
@@ -593,11 +611,20 @@ Testing Bluetooth LE with Nordic UART Service
 
    #. Install `nRF Toolbox`_ on your Android (Android 11 or newer) or iOS (iOS 16.1 or newer) smartphone.
    #. Build the door lock application for Matter over Thread with the :option:`CONFIG_CHIP_NUS` set to ``y``.
-      For example, if you build from command line for the ``nrf52840dk/nrf52840``, use the following command:
 
-      .. code-block:: console
+      .. tabs::
 
-         west build -b nrf52840dk/nrf52840 -- -DCONFIG_CHIP_NUS=y
+         .. group-tab:: |nRFVSC|
+
+            Add ``-DCONFIG_CHIP_NUS=y`` to :guilabel:`Extra CMake arguments` in your build configuration (see :ref:`matter_lock_sample_configuration_nus`).
+
+         .. group-tab:: Command line
+
+            For example, for the ``nrf52840dk/nrf52840``:
+
+            .. code-block:: console
+
+               west build -b nrf52840dk/nrf52840 -- -DCONFIG_CHIP_NUS=y
 
    #. Prepare the development kit for testing.
       Refer to the :ref:`matter_lock_sample_testing_start` section for more information.

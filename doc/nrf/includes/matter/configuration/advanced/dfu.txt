@@ -27,15 +27,24 @@ Device firmware upgrade support
    You can run DFU without external flash memory on the nRF54L15 and nRF54LM20 DKs using the :ref:`mcuboot_image_compression` feature.
    To see if the |matter_type| supports this feature, check whether the ``internal`` build configuration is available in the build configuration table.
 
-   When building on the command line, run the following command with *board_target* replaced with the board target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
+   .. tabs::
 
-   .. parsed-literal::
-      :class: highlight
+      .. group-tab:: |nRFVSC|
 
-      west build -b *board_target* -- *dfu_build_flag*
+         When building with |nRFVSC|, add your desired *dfu_build_flag* to :guilabel:`Extra CMake arguments`.
+         For example add ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` to enable DFU over BT SMP.
 
-   For example:
+      .. group-tab:: Command line
 
-   .. code-block:: console
+         When building on the command line, run the following command with *board_target* replaced with the board target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
 
-      west build -b nrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+         .. parsed-literal::
+            :class: highlight
+
+            west build -b *board_target* -- *dfu_build_flag*
+
+         For example:
+
+         .. code-block:: console
+
+            west build -b nrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y

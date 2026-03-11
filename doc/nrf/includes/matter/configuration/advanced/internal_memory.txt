@@ -11,16 +11,34 @@ Internal memory only
     This configuration is disabled by default for the Matter |matter_name| |matter_type|.
     To enable it, set the ``FILE_SUFFIX`` CMake option to ``internal``.
 
-    The following is an example command to build the |matter_type| for the nRF54LM20 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal RRAM only:
+    To build the |matter_type| for the nRF54LM20 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal RRAM only:
 
-    .. code-block:: console
+    .. tabs::
 
-        west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal
+       .. group-tab:: |nRFVSC|
 
-    To build the |matter_type| for the same purpose in the ``release`` configuration, use the following command and replace <sample_name> with the actual |matter_type| name:
+          Add ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal`` to :guilabel:`Extra CMake arguments` in your build configuration.
 
-    .. code-block:: console
+       .. group-tab:: Command line
 
-        west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal -D<sample_name>_EXTRA_CONF_FILE=prj_release.conf
+          .. code-block:: console
+
+             west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal
+
+    To build the |matter_type| for the same purpose in the ``release`` configuration:
+
+    .. tabs::
+
+       .. group-tab:: |nRFVSC|
+
+          Add ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal -D<sample_name>_EXTRA_CONF_FILE=prj_release.conf`` to :guilabel:`Extra CMake arguments` in your build configuration, replacing ``<sample_name>`` with the actual |matter_type| name (for example ``light_bulb`` or ``matter_bridge``).
+
+       .. group-tab:: Command line
+
+          Replace ``<sample_name>`` with the actual |matter_type| name and run:
+
+          .. code-block:: console
+
+             west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal -D<sample_name>_EXTRA_CONF_FILE=prj_release.conf
 
     In this case, the size of the MCUboot secondary partition used for storing the new application image is approximately 30-40% smaller than it would be when using a configuration with external flash memory support.

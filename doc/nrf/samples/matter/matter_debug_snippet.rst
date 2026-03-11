@@ -9,11 +9,23 @@ Matter debug snippet (matter-debug)
    :depth: 2
 
 To build with this snippet, follow the instructions in the :ref:`using-snippets` page.
-When building with west, run the following command:
 
-.. code-block:: console
 
-   west build -- -D<project_name>_SNIPPET=matter-debug
+.. tabs::
+
+   .. group-tab:: |nRFVSC|
+
+      When using |nRFVSC| select the ``matter-debug`` snippet from the list in the :guilabel:`Snippets` menu.
+
+   .. group-tab:: Command line
+
+      When building with west, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -- -D<project_name>_SNIPPET=matter-debug
+
 
 Overview
 ********
@@ -32,14 +44,24 @@ The following features are enabled when using this snippet:
   * Full shell functionalities.
   * Logging source code location on VerifyOrDie failure that occurs in the Matter stack.
 
-To use the snippet when building a sample, add ``-D<project_name>_SNIPPET=matter-debug`` to the west arguments list.
+To use the snippet when building a sample:
 
-For example, for the ``nrf52840dk/nrf52840`` board target and the :ref:`matter_lock_sample` sample, run the following command:
+.. tabs::
 
-.. parsed-literal::
-   :class: highlight
+   .. group-tab:: |nRFVSC|
 
-   west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=matter-debug
+      When using |nRFVSC| select the ``matter-debug`` snippet from the list in the :guilabel:`Snippets` menu.
+
+   .. group-tab:: Command line
+
+      When building with west, add ``-D<project_name>_SNIPPET=matter-debug`` to the west arguments list.
+
+      For example, for the ``nrf52840dk/nrf52840`` board target and the :ref:`matter_lock_sample` sample, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=matter-debug
 
 Requirements
 ************
