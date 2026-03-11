@@ -839,11 +839,11 @@ config MBEDTLS_PK_PARSE_EC_EXTENDED
 
 config MBEDTLS_PEM_PARSE_C
 	bool "Support parsing PEM files"
-	depends on MBEDTLS_BASE64_C
+	select MBEDTLS_BASE64_C
 
 config MBEDTLS_PEM_WRITE_C
 	bool "Support writing PEM files"
-	depends on MBEDTLS_BASE64_C
+	select MBEDTLS_BASE64_C
 
 config MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME
 	bool
