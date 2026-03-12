@@ -24,6 +24,7 @@ def test_if_file_is_properly_signed_with_ec_key(tmpdir, utils):
         private_key_file=private_key_file,
         input_file=input_file,
         output_file=signature_file,
+        skip=0,
     )
 
     public_key = load_pem_public_key(utils.read_bytes(public_key_file))
@@ -48,6 +49,7 @@ def test_if_validation_does_not_pass_for_wrong_ec_key(tmpdir, utils):
         private_key_file=private_key_file,
         input_file=input_file,
         output_file=signature_file,
+        skip=0,
     )
 
     public_key = load_pem_public_key(utils.read_bytes(public_key_file))
@@ -71,7 +73,8 @@ def test_if_validation_does_not_pass_for_wrong_ed25519_key(tmpdir, utils):
     sign_with_ed25519(
         private_key_file=private_key_file,
         input_file=input_file,
-        output_file=signature_file
+        output_file=signature_file,
+        skip=0,
     )
     assert Ed25519KeysGenerator.verify_signature(
         public_key, message, utils.read_bytes(signature_file)
@@ -92,7 +95,8 @@ def test_if_file_is_properly_signed_with_ed25519_key(tmpdir, utils):
     sign_with_ed25519(
         private_key_file=private_key_file,
         input_file=input_file,
-        output_file=signature_file
+        output_file=signature_file,
+        skip=0,
     )
     assert Ed25519KeysGenerator.verify_signature(
         public_key, message, utils.read_bytes(signature_file)

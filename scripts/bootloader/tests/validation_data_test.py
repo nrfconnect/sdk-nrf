@@ -58,10 +58,10 @@ def test_data_validation_for_ec(tmpdir, utils):
     keys_generator.write_public_key_pem(public_key_file)
 
     zephyr_hex_file.write(DUMMY_ZEPHYR_HEX)
-    hash_digest = generate_hash_digest(str(zephyr_hex_file), 'sha256')
+    hash_digest = generate_hash_digest(str(zephyr_hex_file), 0, 'sha256')
     utils.write_bytes(hash_file, hash_digest)
 
-    do_sign.sign_with_ecdsa(private_key_file, hash_file, message_signature_file)
+    do_sign.sign_with_ecdsa(private_key_file, hash_file, 0, output_file=message_signature_file)
 
     public_key = load_ecdsa_public_key(public_key_file)
     EcdsaSignatureValidator(hashfunc=hashlib.sha256).append_validation_data(
@@ -71,7 +71,8 @@ def test_data_validation_for_ec(tmpdir, utils):
         offset=OFFSET,
         output_hex=output_hex_file.open('w'),
         output_bin=output_bin_file.open('wb'),
-        magic_value=MAGIC_VALUE
+        magic_value=MAGIC_VALUE,
+        skip=0,
     )
     assert utils.read_bytes(message_signature_file) in utils.read_bytes(output_bin_file)
     # check with CLI command too
@@ -106,7 +107,7 @@ def test_data_validation_for_ec_with_openssl(tmpdir, utils):
     zephyr_hex_file.write(DUMMY_ZEPHYR_HEX)
 
     # Generate sha256 hash
-    hash_digest = generate_hash_digest(str(zephyr_hex_file), 'sha256')
+    hash_digest = generate_hash_digest(str(zephyr_hex_file), 0, 'sha256')
     utils.write_bytes(hash_file, hash_digest)
 
     # sign hex file
@@ -123,7 +124,8 @@ def test_data_validation_for_ec_with_openssl(tmpdir, utils):
         offset=OFFSET,
         output_hex=output_hex_file.open('w'),
         output_bin=output_bin_file.open('wb'),
-        magic_value=MAGIC_VALUE
+        magic_value=MAGIC_VALUE,
+        skip=0,
     )
     assert utils.read_bytes(asn1_signature_file) in utils.read_bytes(output_bin_file)
     # check with CLI command too
@@ -154,10 +156,10 @@ def test_data_validation_for_ed25519_with_sha512(tmpdir, utils):
     keys_generator.write_private_key_pem(private_key_file)
 
     zephyr_hex_file.write(DUMMY_ZEPHYR_HEX)
-    hash_digits = generate_hash_digest(str(zephyr_hex_file), 'sha512')
+    hash_digits = generate_hash_digest(str(zephyr_hex_file), 0, 'sha512')
     utils.write_bytes(hash_file, hash_digits)
 
-    do_sign.sign_with_ed25519(private_key_file, hash_file, message_signature_file)
+    do_sign.sign_with_ed25519(private_key_file, hash_file, 0, output_file=message_signature_file)
 
     Ed25519SignatureValidator(hashfunc=hashlib.sha512).append_validation_data(
         signature_file=message_signature_file,
@@ -166,7 +168,8 @@ def test_data_validation_for_ed25519_with_sha512(tmpdir, utils):
         offset=OFFSET,
         output_hex=output_hex_file.open('w'),
         output_bin=output_bin_file.open('wb'),
-        magic_value=MAGIC_VALUE
+        magic_value=MAGIC_VALUE,
+        skip=0,
     )
     assert utils.read_bytes(message_signature_file) in utils.read_bytes(output_bin_file)
 
@@ -184,13 +187,16 @@ def test_data_validation_for_ed25519_no_hash(tmpdir, utils):
     keys_generator.write_public_key_pem(public_key_file)
 
     zephyr_hex_file.write(DUMMY_ZEPHYR_HEX)
-    do_sign.sign_with_ed25519(private_key_file, zephyr_hex_file, message_signature_file)
+    do_sign.sign_with_ed25519(
+        private_key_file=private_key_file, input_file=zephyr_hex_file,
+        output_file=message_signature_file, skip=0
+    )
 
     # verify signature
     Ed25519SignatureValidator().verify(
         public_key=keys_generator.public_key,
         message_bytes=do_sign.hex_to_binary(str(zephyr_hex_file)),
-        signature_bytes=message_signature_file.open('rb').read()
+        signature_bytes=message_signature_file.open('rb').read(),
     )
 
     # create validation data
@@ -201,7 +207,8 @@ def test_data_validation_for_ed25519_no_hash(tmpdir, utils):
         offset=OFFSET,
         output_hex=output_hex_file.open('w'),
         output_bin=output_bin_file.open('wb'),
-        magic_value=MAGIC_VALUE
+        magic_value=MAGIC_VALUE,
+        skip=0,
     )
     assert utils.read_bytes(message_signature_file) in utils.read_bytes(output_bin_file)
 
