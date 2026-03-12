@@ -217,6 +217,27 @@ tests:
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
 
+  sample.dfu.smp_svr.nsib.kmu.lcs:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - kmu
+      - nsib
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - b0_CONFIG_NRF_LCS=y
+      - manufacturing_app_CONFIG_SECURE_BOOT_STORAGE=y
+      - mcuboot_CONFIG_NRF_LCS=y
+      - mcuboot_CONFIG_SECURE_BOOT_STORAGE=y
+      - CONFIG_SECURE_BOOT_STORAGE=y
+      - CONFIG_NRF_LCS=y
+      - CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE=y
+      - SB_CONFIG_NRF_MANUFACTURING_APP=y
+
   sample.dfu.smp_svr.kmu.revocation:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
