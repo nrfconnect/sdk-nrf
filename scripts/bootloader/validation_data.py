@@ -76,6 +76,7 @@ class BaseValidator(abc.ABC):
         self,
         signature_file: Path,
         input_file: Path,
+        skip : int,
         public_key: ec.EllipticCurvePublicKey | ed25519.Ed25519PublicKey,
         offset: int,
         output_hex: TextIO,
@@ -140,6 +141,7 @@ class EcdsaSignatureValidator(BaseValidator):
         self,
         signature_bytes: bytes,
         input_hex: IntelHex,
+        skip: int,
         public_key,
         magic_value: bytes
     ) -> bytes:
@@ -150,7 +152,7 @@ class EcdsaSignatureValidator(BaseValidator):
         self.verify(public_key, signature_bytes, hash_bytes)
 
         validation_bytes = magic_value
-        validation_bytes += struct.pack('<I', input_hex.addresses()[0])
+        validation_bytes += struct.pack('<I', input_hex.addresses()[0] + skip)
         validation_bytes += hash_bytes
         validation_bytes += public_key_bytes
         validation_bytes += signature_bytes
@@ -204,6 +206,7 @@ class Ed25519SignatureValidator(BaseValidator):
         self,
         signature_bytes: bytes,
         input_hex: IntelHex,
+        skip: int,
         public_key: ed25519.Ed25519PublicKey,
         magic_value: bytes
     ) -> bytes:
@@ -215,7 +218,7 @@ class Ed25519SignatureValidator(BaseValidator):
                 magic_value=magic_value
             )
         validation_bytes = magic_value
-        validation_bytes += struct.pack('<I', input_hex.addresses()[0])
+        validation_bytes += struct.pack('<I', input_hex.addresses()[0] + skip)
         validation_bytes += signature_bytes
 
         return validation_bytes
@@ -224,6 +227,7 @@ class Ed25519SignatureValidator(BaseValidator):
         self,
         signature_file: Path,
         input_file: Path,
+        skip : int,
         public_key: ec.EllipticCurvePublicKey | ed25519.Ed25519PublicKey,
         offset: int,
         output_hex: TextIO,
@@ -256,11 +260,12 @@ class Ed25519SignatureValidator(BaseValidator):
         self.verify(
             public_key=public_key,
             signature_bytes=signature_bytes,
-            message_bytes=ih.tobinstr()
+            message_bytes=ih.tobinstr()[skip:]
         )
         validation_data = self.get_validation_data(
             signature_bytes=signature_bytes,
             input_hex=ih,
+            skip=skip,
             public_key=public_key,
             magic_value=parsed_magic_value
         )
@@ -297,6 +302,9 @@ def parse_args(argv=None):
                         help='Offset to store validation metadata at.', default=0)
     parser.add_argument('-s', '--signature', required=True, type=Path,
                         help="Signature file (DER) of ECDSA (secp256r1) or ED25519 signature of 'input' argument.")
+    parser.add_argument('--skip', required=False, type=lambda x: int(x, 0),
+                        help='Amount of data to skip in front of binary when doing validation. '
+                             'Allows to skip non important information or padding left for some header.', default=0)
     parser.add_argument('-p', '--public-key', required=True,
                         type=Path, help='Public key file (PEM).')
     parser.add_argument('-m', '--magic-value', required=True,
@@ -333,6 +341,7 @@ def main(argv=None) -> int:
     signature_validator.append_validation_data(
         signature_file=args.signature,
         input_file=args.input,
+        skip=args.skip,
         public_key=public_key,
         offset=args.offset,
         output_hex=args.output_hex,
