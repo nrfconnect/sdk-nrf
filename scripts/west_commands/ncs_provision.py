@@ -18,6 +18,7 @@ import yaml
 from west.commands import WestCommand
 
 KEY_SLOTS: dict[str, list[int]] = {
+    "MANUFACTURING_APP_PUBKEY": [224],
     "UROT_PUBKEY": [226, 228, 230],
     "BL_PUBKEY": [242, 244, 246],
     "APP_PUBKEY": [202, 204, 206],
