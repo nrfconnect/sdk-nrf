@@ -522,7 +522,7 @@ void reg_change_callbk_fn(void *vif_ctx,
  * @return Bitmap of bands (NRF_WIFI_OP_BAND_2GHZ, NRF_WIFI_OP_BAND_5GHZ,
  *         NRF_WIFI_OP_BAND_6GHZ).
  */
-static unsigned char get_nrf_wifi_op_band(void)
+unsigned char get_nrf_wifi_op_band(void)
 {
 	if (IS_ENABLED(CONFIG_NRF_WIFI_2G_BAND)) {
 		return NRF_WIFI_OP_BAND_2GHZ;
