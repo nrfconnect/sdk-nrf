@@ -12,7 +12,7 @@ if OPENTHREAD
 
 menu "OpenThread"
 
-choice OPENTHREAD_SECURITY
+choice OPENTHREAD_SECURITY_CONFIG
 
 config OPENTHREAD_NRF_SECURITY_PSA_CHOICE
 	bool "nRF Security with PSA crypto enabled"
