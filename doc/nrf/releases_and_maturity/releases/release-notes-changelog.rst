@@ -576,7 +576,10 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`radio_test` sample:
+
+  * Added support for pin debugging of radio events on nRF54L Series devices.
+    You can enable it using the :option:`CONFIG_RADIO_TEST_PIN_DEBUG` Kconfig option.
 
 PMIC samples
 ------------
