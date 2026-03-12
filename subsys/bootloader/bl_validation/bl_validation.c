@@ -513,13 +513,6 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		return false;
 	}
 
-	if (fw_val_info->address != fwinfo->address) {
-		if (!external) {
-			LOG_ERR("Validation info doesn't belong to this firmware.");
-		}
-		return false;
-	}
-
 #if defined(CONFIG_SB_VALIDATE_FW_SIGNATURE)
 	return validate_signature(fw_src_address, fwinfo->size, fw_val_info,
 				external);
