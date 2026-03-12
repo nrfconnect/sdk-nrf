@@ -141,6 +141,24 @@ config BOOT_SIGNATURE_KEY_FILE
 	  what key was used when compiling it. Hence, it is required that the
 	  key is passed to the build system through this option.
 
+config NRF_BOOT_MANUFACTURING_APP_SIGNATURE_KEY_FILE
+	string "PEM manufacturing application key file"
+	depends on NCS_MCUBOOT_LCS_AWARE
+	default "root-ec-p256.pem" if BOOT_SIGNATURE_TYPE_ECDSA_P256
+	default "root-ed25519.pem" if BOOT_SIGNATURE_TYPE_ED25519
+	default "root-rsa-3072.pem" if BOOT_SIGNATURE_TYPE_RSA && BOOT_SIGNATURE_TYPE_RSA_LEN=3072
+	default "root-rsa-2048.pem" if BOOT_SIGNATURE_TYPE_RSA && BOOT_SIGNATURE_TYPE_RSA_LEN=2048
+	default ""
+	help
+	  You can use either absolute or relative path.
+	  In case relative path is used, the build system assumes that it starts
+	  from the directory where the MCUBoot KConfig configuration file is
+	  located. If the key file is not there, the build system uses relative
+	  path that starts from the MCUBoot repository root directory.
+	  The key file will be parsed by imgtool's getpub command and a .c source
+	  with the public key information will be written in a format expected by
+	  MCUboot.
+
 choice BOOT_SIGNATURE_TYPE
 	default BOOT_SIGNATURE_TYPE_ECDSA_P256 if HAS_HW_NRF_CC310 && !BOARD_THINGY91_NRF9160 && !BOARD_THINGY91_NRF52840
 

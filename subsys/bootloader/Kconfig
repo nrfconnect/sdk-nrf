@@ -162,6 +162,12 @@ config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
 
+config NCS_MCUBOOT_APPLICATION_MANUFACTURING_APP
+	bool "Application is manufacturing image"
+	help
+	  When enabled, the current image is the manufacturing image.
+	  This is a Kconfig which is informative only, the value should not be changed.
+
 config NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY
 	bool "Sign merged binary instead of individual images (informative only, do not change)"
 	help
