@@ -861,6 +861,7 @@ int nrf_wifi_channel(const struct device *dev,
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct peers_info *peer = NULL;
+	unsigned char band = 0;
 	int i = 0;
 	int ret = -1;
 
@@ -903,15 +904,42 @@ int nrf_wifi_channel(const struct device *dev,
 	}
 
 	if (channel->oper == WIFI_MGMT_SET) {
-		/**
-		 * Send the driver vif_idx instead of upper layer sent if_index.
-		 * we map network if_index 1 to vif_idx of 0 and so on. The vif_ctx_zep
-		 * context maps the correct network interface index to current driver
-		 * interface index.
-		 */
+		/* Band from (band, channel); infer when unknown. 2.4/5 GHz backwards compat. */
+		if (channel->band == WIFI_FREQ_BAND_2_4_GHZ &&
+		    channel->channel >= 1 && channel->channel <= 14) {
+			band = NRF_WIFI_OP_BAND_2GHZ;
+		} else if ((channel->band == WIFI_FREQ_BAND_5_GHZ ||
+			    (channel->band == WIFI_FREQ_BAND_2_4_GHZ &&
+			     channel->channel >= 36 && channel->channel <= 165)) &&
+			   channel->channel >= 36 && channel->channel <= 165) {
+			band = NRF_WIFI_OP_BAND_5GHZ;
+		} else if (channel->band == WIFI_FREQ_BAND_6_GHZ) {
+			band = NRF_WIFI_OP_BAND_6GHZ;
+		} else {
+			/* Infer from channel (1-14: 2.4 GHz, 36-165: 5 GHz);
+			 * 6 GHz needs band set.
+			 */
+			if (channel->channel >= 1 && channel->channel <= 14) {
+				band = NRF_WIFI_OP_BAND_2GHZ;
+			} else if (channel->channel >= 36 && channel->channel <= 165) {
+				band = NRF_WIFI_OP_BAND_5GHZ;
+			} else {
+				LOG_ERR("%s: channel %u needs band (e.g. -b6 for 6 GHz)",
+					__func__, channel->channel);
+				ret = -EINVAL;
+				goto out;
+			}
+		}
+		if ((band & get_nrf_wifi_op_band()) == 0) {
+			LOG_ERR("%s: channel %u band not enabled (check SYS_INIT bands)",
+				__func__, channel->channel);
+			ret = -EINVAL;
+			goto out;
+		}
 		status = nrf_wifi_sys_fmac_set_channel(rpu_ctx_zep->rpu_ctx,
 						       vif_ctx_zep->vif_idx,
-						       channel->channel);
+						       channel->channel,
+						       band);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: set channel failed", __func__);

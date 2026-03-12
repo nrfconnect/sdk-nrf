@@ -3434,7 +3434,8 @@ out:
 #if defined(NRF71_RAW_DATA_TX) || defined(NRF71_RAW_DATA_RX)
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 						   unsigned char if_idx,
-						   unsigned int channel)
+						   unsigned int channel,
+						   unsigned char op_band)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_cmd_set_channel *umac_cmd_data = NULL;
@@ -3469,6 +3470,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_CHANNEL;
 	umac_cmd_data->sys_head.len = len;
 	umac_cmd_data->if_index = if_idx;
+	umac_cmd_data->chan.op_band = op_band;
 	umac_cmd_data->chan.primary_num = channel;
 
 	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,

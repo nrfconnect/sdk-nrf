@@ -1071,6 +1071,8 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_mode(void *dev_ctx,
  * @param dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param if_idx Index of the interface on which mode is to be set.
  * @param channel Value to be set for the interface.
+ * @param op_band Single operating band for this channel (NRF_WIFI_OP_BAND_2GHZ,
+ *         NRF_WIFI_OP_BAND_5GHZ, or NRF_WIFI_OP_BAND_6GHZ). Not a bitmap.
  *
  * This function is used to send a command
  *         to RPU to set current channel of operation
@@ -1080,7 +1082,8 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_mode(void *dev_ctx,
  */
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 						   unsigned char if_idx,
-						   unsigned int channel);
+						   unsigned int channel,
+						   unsigned char op_band);
 
 #endif /* NRF71_RAW_DATA_TX || NRF71_RAW_DATA_RX */
 

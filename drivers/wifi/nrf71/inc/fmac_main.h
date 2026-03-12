@@ -174,5 +174,8 @@ void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
 		void *event_data,
 		unsigned int event_len);
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+unsigned char get_nrf_wifi_op_band(void);
+#endif
 #endif /* !CONFIG_NRF71_OFFLOADED_RAW_TX */
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */
