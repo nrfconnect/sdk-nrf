@@ -82,6 +82,7 @@ Apache-2.0: |
   ^nrf/tests/bluetooth/gatt/
   ^nrf/tests/bluetooth/hci/
   ^nrf/tests/bluetooth/host/
+  ^nrf/tests/bluetooth/host/shell/
   ^nrf/tests/bluetooth/host_long_adv_recv/
   ^nrf/tests/bluetooth/host_config_variants/
   ^nrf/tests/bluetooth/init/
