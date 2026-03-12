@@ -6,17 +6,8 @@
 
 menu "nRF Security"
 
-config NORDIC_SECURITY_PROMPTLESS
-	bool
-	help
-	  Internal setting to disable the Nordic security backend.
-	  This setting is Kconfig internal that must be used by subsystems that
-	  provide nRF Security selection groups.
-
-
 config NORDIC_SECURITY_BACKEND
-	bool "Use nRF Security with Mbed TLS legacy crypto APIs support" \
-		if !NORDIC_SECURITY_PROMPTLESS
+	bool "Use nRF Security with Mbed TLS legacy crypto APIs support"
 	depends on SOC_FAMILY_NORDIC_NRF
 	select NRF_SECURITY
 	select MBEDTLS_LEGACY_CRYPTO_C
