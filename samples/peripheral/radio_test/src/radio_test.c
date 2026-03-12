@@ -960,9 +960,20 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 
 	radio_mode_set(NRF_RADIO, mode);
 
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
+	if ((mode == NRF_RADIO_MODE_BLE_LR125KBIT) || (mode == NRF_RADIO_MODE_BLE_LR500KBIT)) {
+		nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK |
+							   RADIO_TEST_SHORT_END_DISABLE_MASK |
+							   NRF_RADIO_SHORT_DISABLED_RXEN_MASK);
+	} else {
+		nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK |
+							   NRF_RADIO_SHORT_END_START_MASK);
+	}
+#else
 	nrf_radio_shorts_enable(NRF_RADIO,
-				NRF_RADIO_SHORT_READY_START_MASK |
-				NRF_RADIO_SHORT_END_START_MASK);
+				NRF_RADIO_SHORT_READY_START_MASK | NRF_RADIO_SHORT_END_START_MASK);
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
+
 	nrf_radio_packetptr_set(NRF_RADIO, rx_packet);
 
 	radio_config(mode, pattern);

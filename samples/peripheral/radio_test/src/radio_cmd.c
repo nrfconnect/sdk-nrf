@@ -807,6 +807,21 @@ static int cmd_rx_start(const struct shell *shell, size_t argc, char **argv)
 	memset(&test_config, 0, sizeof(test_config));
 	test_config.type = RX;
 	test_config.mode = config.mode;
+
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
+	if (config.mode == NRF_RADIO_MODE_BLE_LR125KBIT ||
+	    config.mode == NRF_RADIO_MODE_BLE_LR500KBIT) {
+		shell_warn(
+			shell,
+			"Warning:\n Due to required post-processing in the receiver,"
+			" only every second packet sent by a device\n"
+			" running the start_tx_modulated_carrier command"
+			" with the configured data rate: %s can be received. Starting RX anyway.",
+			config.mode == NRF_RADIO_MODE_BLE_LR125KBIT ? "ble_lr125kbit"
+								    : "ble_lr500kbit");
+	}
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
+
 	test_config.params.rx.channel = config.channel_start;
 	test_config.params.rx.pattern = config.tx_pattern;
 #if CONFIG_FEM
