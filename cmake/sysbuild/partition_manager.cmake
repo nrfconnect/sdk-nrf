@@ -8,6 +8,13 @@
 # Try user defined file first, then file found in configuration directory,
 # finally file from board directory.
 
+if(SB_CONFIG_NRF_MANUFACTURING_APP)
+  set(manufacturing_images
+    manufacturing_image
+    manufacturing_app
+  )
+endif()
+
 macro(add_region)
   set(oneValueArgs NAME SIZE BASE PLACEMENT DEVICE DEFAULT_DRIVER_KCONFIG DYNAMIC_PARTITION DOMAIN)
   cmake_parse_arguments(REGION "" "${oneValueArgs}" "" ${ARGN})
@@ -290,6 +297,11 @@ function(partition_manager)
 
     # Prepare the list of hex files and list of dependencies for the merge command.
     foreach(part ${PM_${CONTAINER}_SPAN})
+      if(SB_CONFIG_NRF_MANUFACTURING_APP)
+        if(${part} IN_LIST manufacturing_images)
+          continue()
+        endif()
+      endif()
       string(TOUPPER ${part} PART)
       list(APPEND ${container}hex_files ${${part}_PM_HEX_FILE})
       list(APPEND ${container}elf_files ${${part}_PM_ELF_FILE})
@@ -424,6 +436,12 @@ list(APPEND prefixed_images ":${dynamic_partition}")
 list(APPEND input_files  ${${DEFAULT_IMAGE}_input_files})
 list(APPEND header_files ${${DEFAULT_IMAGE}_binary_dir}/${generated_path}/pm_config.h)
 
+if (SB_CONFIG_NRF_MANUFACTURING_APP)
+  sysbuild_get(manufacturing_app_binary_dir IMAGE "manufacturing_app" VAR ZEPHYR_BINARY_DIR CACHE)
+  list(APPEND prefixed_images ":manufacturing_app")
+  list(APPEND header_files ${manufacturing_app_binary_dir}/${generated_path}/pm_config.h)
+endif()
+
 if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
   sysbuild_get(s1_image_binary_dir  IMAGE s1_image VAR ZEPHYR_BINARY_DIR CACHE)
   list(APPEND prefixed_images ":s1_image")
@@ -448,7 +466,9 @@ foreach (image ${IMAGES})
     endif()
   endforeach()
 
-  if(NOT "${DEFAULT_IMAGE}" STREQUAL "${image}" AND NOT "s1_image" STREQUAL "${image}" AND NOT "${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME}" STREQUAL "${image}")
+  if(NOT "${DEFAULT_IMAGE}" STREQUAL "${image}" AND NOT "s1_image" STREQUAL "${image}" AND
+    NOT "${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME}" STREQUAL "${image}" AND
+    NOT "${image}" IN_LIST manufacturing_images)
     sysbuild_get(${image}_input_files IMAGE ${image} VAR PM_YML_FILES CACHE)
     sysbuild_get(${image}_binary_dir  IMAGE ${image} VAR ZEPHYR_BINARY_DIR CACHE)
 
