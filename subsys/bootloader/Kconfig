@@ -33,6 +33,23 @@ config SB_IMAGE_BOOT_OFFSET
 	  ROM_START_OFFSET of secure bootloader does not reflect value set in image it boots.
 	  Note that when Partition Manager is enabled this value will be 0 and is useless.
 
+config SB_IMAGE_SIGNATURE_SKIPPED_SIZE
+	hex
+	default 0 if PARTITION_MANAGER_ENABLED
+	default SB_IMAGE_BOOT_OFFSET
+	help
+	  Amount of bytes to skip when calculating signature on image that will be
+	  boot by Secure Bootloader (b0). This is used, for example, when build
+	  outputs images that are already shifted to account for header, like
+	  imgtool from MCUboot adds. Because such headers are added after images
+	  are signed for b0, they would make signature invalid when recalculated,
+	  so the place where image will be added needs to be skipped.
+	  The skipped size will also be deducted from size of an image when
+	  generating signature.
+	  The value is fed, by build system, to do_sign.py and validate_data.py.
+	  When validating image signature be careful to use the value to skip
+	  the beginning of an image.
+
 if SECURE_BOOT
 
 config SB_MONOTONIC_COUNTER_IS_ENABLED
