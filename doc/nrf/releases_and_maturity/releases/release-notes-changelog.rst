@@ -651,6 +651,9 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
 * Added the :ref:`uart_driver` documentation.
 
+* Removed GPIOTE instance Kconfig options (for example, ``CONFIG_NRFX_GPIOTE0``).
+  Use :kconfig:option:`CONFIG_NRFX_GPIOTE` to enable the GPIOTE driver.
+
 Wi-Fi drivers
 -------------
 
