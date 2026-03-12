@@ -175,6 +175,21 @@ tests:
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
 
+  sample.dfu.smp_svr.kmu.basic.lcs:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10/cpuapp
+    tags: kmu
+    extra_args:
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - mcuboot_CONFIG_LCS=y
+      - CONFIG_LCS=y
+      - CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE=y
+      - SB_CONFIG_NRF_MANUFACTURING_APP=y
+      - SB_CONFIG_PARTITION_MANAGER=n
+
   sample.dfu.smp_svr.nsib.kmu.basic:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
