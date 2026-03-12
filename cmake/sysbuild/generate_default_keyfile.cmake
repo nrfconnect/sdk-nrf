@@ -58,6 +58,21 @@ if(SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE)
   list(APPEND kmu_json_dependencies ${mcuboot_signature_key_file})
 endif()
 
+# Third command (conditional): Update keyfile for Manufacturing application
+if(SB_CONFIG_NRF_BOOT_MANUFACTURING_APP_SIGNATURE_KEY_FILE)
+  string(CONFIGURE "${SB_CONFIG_NRF_BOOT_MANUFACTURING_APP_SIGNATURE_KEY_FILE}" mcuboot_manufacturing_app_signature_key_file)
+
+  list(APPEND kmu_json_commands
+    COMMAND ${Python3_EXECUTABLE} -m west ncs-provision upload
+      --keyname MANUFACTURING_APP_PUBKEY
+      --key ${mcuboot_manufacturing_app_signature_key_file}
+      --policy revokable
+      --build-dir ${CMAKE_BINARY_DIR}
+      --dry-run
+  )
+  list(APPEND kmu_json_dependencies ${mcuboot_manufacturing_app_signature_key_file})
+endif()
+
 # --- Add custom command to generate/update keyfile.json ---
 if(NOT kmu_json_commands STREQUAL "")
   add_custom_command(
