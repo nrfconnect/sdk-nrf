@@ -86,9 +86,6 @@ static bool playing_state = true;
 
 static int group_data_reset(void)
 {
-	if (playing_state) {
-		return -EBUSY;
-	}
 
 	memset(pair_params, 0, sizeof(pair_params));
 	memset(&group_param, 0, sizeof(group_param));
@@ -1082,7 +1079,7 @@ static int all_streams_configured(void)
 	}
 
 	/* Check if a group reconfiguration is required */
-	if (action == ACTION_REQ_STREAM_QOS_RECONFIG) {
+	if (action != ACTION_REQ_NONE) {
 
 		LOG_INF("Unicast group reconfigure");
 
@@ -1091,8 +1088,6 @@ static int all_streams_configured(void)
 			LOG_ERR("Failed to reconfigure unicast group: %d", ret);
 			return ret;
 		}
-	} else if (action == ACTION_REQ_GROUP_RESTART) {
-		LOG_WRN("Check action");
 	} else {
 		LOG_DBG("No action required");
 	}
