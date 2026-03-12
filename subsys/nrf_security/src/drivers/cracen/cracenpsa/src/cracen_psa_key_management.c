@@ -159,16 +159,17 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_IMPORT)) {
-		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
-			return import_ecc_private_key(attributes, data, data_length, key_buffer,
-						      key_buffer_size, key_buffer_length, key_bits);
-		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
-			return import_ecc_public_key(attributes, data, data_length, key_buffer,
-						     key_buffer_size, key_buffer_length, key_bits);
-		} else {
-			/* For compliance */
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_IMPORT) &&
+	    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
+		return import_ecc_private_key(attributes, data, data_length, key_buffer,
+					      key_buffer_size, key_buffer_length, key_bits);
+
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY) &&
+	    PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
+		return import_ecc_public_key(attributes, data, data_length, key_buffer,
+					     key_buffer_size, key_buffer_length, key_bits);
 	}
 
 	if (PSA_KEY_TYPE_IS_RSA(key_type) &&
