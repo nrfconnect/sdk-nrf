@@ -147,6 +147,10 @@ struct nrf_wifi_ctx_zep {
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS];
 	unsigned int vtf_buffer_start_address;
+#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+	struct k_sem channel_set_done_sem;
+	volatile int channel_set_status;
+#endif
 };
 
 struct nrf_wifi_drv_priv_zep {

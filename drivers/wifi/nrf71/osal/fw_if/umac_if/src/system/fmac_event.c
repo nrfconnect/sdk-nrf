@@ -315,16 +315,29 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 		break;
 #endif
 #if defined(NRF71_RAW_DATA_TX) || defined(NRF71_RAW_DATA_RX)
-	case NRF_WIFI_EVENT_CHANNEL_SET_DONE:
+	case NRF_WIFI_EVENT_CHANNEL_SET_DONE: {
 		struct nrf_wifi_event_set_channel *channel_event;
+		struct nrf_wifi_sys_fmac_priv *sys_fpriv;
+		struct nrf_wifi_fmac_vif_ctx *vif_ctx;
+		unsigned int event_len = ((struct nrf_wifi_sys_head *)sys_head)->len;
 
 		channel_event = (struct nrf_wifi_event_set_channel *)sys_head;
-		if (!channel_event->status) {
-			sys_dev_ctx->vif_ctx[channel_event->if_index]->channel =
-			channel_event->chan.primary_num;
+		vif_ctx = sys_dev_ctx->vif_ctx[channel_event->if_index];
+		if (channel_event->status) {
+			nrf_wifi_osal_log_err("%s: set channel failed, status=%d",
+					     __func__, channel_event->status);
+		} else if (vif_ctx) {
+			vif_ctx->channel = channel_event->chan.primary_num;
+		}
+		sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
+		if (sys_fpriv->callbk_fns.channel_set_done_callbk_fn) {
+			sys_fpriv->callbk_fns.channel_set_done_callbk_fn(
+				vif_ctx ? vif_ctx->os_vif_ctx : NULL,
+				channel_event, event_len);
 		}
 		status = NRF_WIFI_STATUS_SUCCESS;
 		break;
+	}
 #endif /* NRF71_RAW_DATA_TX */
 #if defined(NRF71_RAW_DATA_RX) || defined(NRF71_PROMISC_DATA_RX)
 	case NRF_WIFI_EVENT_FILTER_SET_DONE:

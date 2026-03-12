@@ -512,6 +512,27 @@ void reg_change_callbk_fn(void *vif_ctx,
 		   sizeof(struct nrf_wifi_event_regulatory_change));
 	fmac_dev_ctx->reg_set_status = true;
 }
+
+#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+void nrf_wifi_event_proc_channel_set_done_zep(void *os_vif_ctx,
+	struct nrf_wifi_event_set_channel *channel_event,
+	unsigned int event_len)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+
+	(void)event_len;
+	if (!channel_event) {
+		return;
+	}
+	vif_ctx_zep = os_vif_ctx;
+	rpu_ctx_zep = vif_ctx_zep ? vif_ctx_zep->rpu_ctx_zep : &rpu_drv_priv_zep.rpu_ctx_zep;
+	if (rpu_ctx_zep) {
+		rpu_ctx_zep->channel_set_status = channel_event->status;
+		k_sem_give(&rpu_ctx_zep->channel_set_done_sem);
+	}
+}
+#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
 #endif /* !CONFIG_NRF71_RADIO_TEST */
 
 
@@ -873,6 +894,9 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	callbk_fns.roc_callbk_fn = nrf_wifi_supp_event_remain_on_channel;
 	callbk_fns.roc_cancel_callbk_fn = nrf_wifi_supp_event_roc_cancel_complete;
 #endif /* CONFIG_NRF71_STA_MODE */
+#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+	callbk_fns.channel_set_done_callbk_fn = nrf_wifi_event_proc_channel_set_done_zep;
+#endif
 
 	/* The OSAL layer needs to be initialized before any other initialization
 	 * so that other layers (like FW IF,HW IF etc) have access to OS ops
@@ -922,6 +946,9 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 #endif /* CONFIG_NRF71_RADIO_TEST */
 
 	k_mutex_init(&rpu_drv_priv_zep.rpu_ctx_zep.rpu_lock);
+#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+	k_sem_init(&rpu_drv_priv_zep.rpu_ctx_zep.channel_set_done_sem, 0, 1);
+#endif
 
 	return 0;
 #ifdef CONFIG_NRF71_RADIO_TEST
