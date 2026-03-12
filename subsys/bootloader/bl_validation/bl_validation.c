@@ -322,11 +322,12 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 			LOG_INF("Hash: 0x%02x...%02x", key_data[0],
 				key_data[SB_PUBLIC_KEY_HASH_LEN-1]);
 		}
+		/* Validation skips pre-configured size in front of image */
 		int retval = rot_verify(fw_val_info->public_key,
 					key_data,
 					fw_val_info->signature,
-					(const uint8_t *)fw_src_address,
-					fw_size);
+					(const uint8_t *)fw_src_address + CONFIG_SB_IMAGE_SIGNATURE_SKIPPED_SIZE,
+					fw_size - CONFIG_SB_IMAGE_SIGNATURE_SKIPPED_SIZE);
 
 		if (retval == 0) {
 			for (uint32_t i = 0; i < key_data_idx; i++) {
@@ -353,9 +354,10 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 		}
 	}
 #else
+	/* Validation skips pre-configured size in front of image */
 	int retval = rot_verify(NULL, NULL, fw_val_info->signature,
-				(const uint8_t *)fw_src_address,
-				fw_size);
+				(const uint8_t *)fw_src_address + CONFIG_SB_IMAGE_SIGNATURE_SKIPPED_SIZE,
+				fw_size - CONFIG_SB_IMAGE_SIGNATURE_SKIPPED_SIZE);
 
 	if (retval == 0) {
 		LOG_INF("Firmware signature verified.");
