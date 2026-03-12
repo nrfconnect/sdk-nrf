@@ -945,6 +945,19 @@ int nrf_wifi_channel(const struct device *dev,
 			LOG_ERR("%s: set channel failed", __func__);
 			goto out;
 		}
+		rpu_ctx_zep->channel_set_status = -1;
+		if (k_sem_take(&rpu_ctx_zep->channel_set_done_sem, K_MSEC(2000)) != 0) {
+			LOG_ERR("%s: set channel timed out waiting for "
+				"NRF_WIFI_EVENT_CHANNEL_SET_DONE", __func__);
+			ret = -ETIMEDOUT;
+			goto out;
+		}
+		if (rpu_ctx_zep->channel_set_status != 0) {
+			LOG_ERR("%s: set channel failed, status=%d", __func__,
+				rpu_ctx_zep->channel_set_status);
+			ret = -EIO;
+			goto out;
+		}
 	} else {
 		channel->channel = sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->channel;
 	}
