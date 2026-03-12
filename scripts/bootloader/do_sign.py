@@ -33,6 +33,10 @@ def parse_args(argv=None):
     parser.add_argument('-i', '--in', '-in', required=False, dest='infile',
                         type=Path, default=sys.stdin.buffer,
                         help='Sign the contents of the specified file instead of stdin.')
+    parser.add_argument('--skip', type=lambda x: int(x, 0), required=False, dest='skip', default=00,
+                        help='Amount of bytes to skip in front of the input binary, when '
+                             'generating signature. It can be used to skip space reserved '
+                             'for header added after firmware is signed.')
     parser.add_argument('-o', '--out', '-out', required=False, dest='outfile',
                         type=Path, default=None,
                         help='Write the signature to the specified file instead of stdout.')
@@ -67,7 +71,7 @@ def hex_to_binary(input_hex_file: str) -> bytes:
 
 
 def sign_with_ecdsa(
-    private_key_file: Path, input_file: Path, output_file: Path | None = None
+    private_key_file: Path, input_file: Path, skip: int, *, output_file: Path | None = None
 ) -> int:
     with open(private_key_file, 'rb') as f:
         private_key = load_pem_private_key(f.read(), password=None)
@@ -76,6 +80,8 @@ def sign_with_ecdsa(
 
     with open(input_file, 'rb') as f:
         data = f.read()
+    if isinstance(skip, int):
+        data = data[skip:]
     signature = private_key.sign(data, ec.ECDSA(hashes.SHA256()))
     asn1_signature_bytes = parse_asn1_signature(signature)
     with open_stream(output_file) as stream:
@@ -93,7 +99,7 @@ def parse_asn1_signature(signature: bytes, length=32) -> bytes:
 
 
 def sign_with_ed25519(
-    private_key_file: Path, input_file: Path, output_file: Path | None = None
+    private_key_file: Path, input_file: Path, skip: int, *, output_file: Path | None = None
 ) -> int:
     with open(private_key_file, 'rb') as f:
         private_key = load_pem_private_key(f.read(), password=None)
@@ -105,6 +111,8 @@ def sign_with_ed25519(
     else:
         with open(input_file, 'rb') as f:
             data = f.read()
+    if isinstance(skip, int):
+        data = data[skip:]
     signature = private_key.sign(data)
     with open_stream(output_file) as stream:
         stream.write(signature)
@@ -120,7 +128,7 @@ ALGORITHMS = {
 def main(argv=None) -> int:
     args = parse_args(argv)
     sign_function = ALGORITHMS[args.algorithm]
-    return sign_function(args.private_key, args.infile, args.outfile)
+    return sign_function(args.private_key, args.infile, args.skip, output_file=args.outfile)
 
 
 if __name__ == '__main__':
