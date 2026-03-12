@@ -11,18 +11,17 @@ config RADIO_TEST_USB
 	depends on SOC_NRF5340_CPUNET
 	select EXPERIMENTAL
 	help
-	  Use USB instead of UART as the Radio Test shell transport.
-	  For nRF5340 the USB from application core is used as communication interface.
+	  Selects USB instead of UART as the Radio Test shell transport.
+	  For nRF5340, the USB from application core is used as the communication interface.
 
 config RADIO_TEST_POWER_CONTROL_AUTOMATIC
 	bool "Automatic power control"
 	depends on FEM
 	default y
 	help
-	  Set SoC output power and front-end module gain to achieve Tx output power requested
-	  by user. If the exact value cannot be achieved, power is set to closest value which does
-	  not exceed the limits. If this option is disabled, user has to set SoC output power and
-	  fem gain with separate commands.
+	  Sets the SoC output power and front-end module gain to achieve the requested TX output power.
+	  If the exact value cannot be achieved, power is set to closest value that does not exceed the limits
+	  If this option is disabled, set the SoC output power and FEM gain with separate commands.
 
 config RADIO_TEST_RX_TIMEOUT
 	int "RX packet reception timeout"

@@ -105,7 +105,7 @@ Peripheral samples
 
   * Added support for the :ref:`nRF54H20 DK <ug_nrf54h20_gs>` with build target ``nrf54h20dk_nrf54h20_cpurad``.
   * Updated the CLI command ``fem tx_power_control <tx_power_control>`` which replaces ``fem tx_gain <tx_gain>`` .
-    This change applies to the sample built with the Kconfig option :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
+    This change applies to the sample built with the Kconfig option :option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` set to ``n``.
 
 Zephyr
 ======

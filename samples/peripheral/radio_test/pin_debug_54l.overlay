@@ -1,0 +1,14 @@
+/ {
+	zephyr,user {
+		ready-disabled-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		address-end-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpiote20 {
+	status = "okay";
+};
