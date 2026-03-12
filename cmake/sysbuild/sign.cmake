@@ -186,7 +186,7 @@ function(b0_sign_image slot cpunet_target)
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/do_sign.py
       --private-key ${SIGNATURE_PRIVATE_KEY_FILE}
       --in ${hash_file} ${sign_cmd_signature_type}
-      > ${signature_file}
+      --out ${signature_file}
       )
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
     set(custom_sign_cmd "${SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND}")

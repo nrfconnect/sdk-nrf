@@ -183,6 +183,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       list(GET dfu_slots_cache_names ${index} current_cache_name)
       list(GET dfu_slots_output_names ${index} current_output_name)
       set(value -1)
+      set(image_list mcuboot;${updateable_images})
+
+      if(SB_CONFIG_SECURE_BOOT_APPCORE)
+        list(APPEND image_list b0)
+      endif()
 
       if(${current_sysbuild_kconfig})
         math(EXPR dfu_image_index "${dfu_image_index} + 1")
@@ -190,7 +195,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         string(APPEND dfu_slots_output_text "   * ${current_output_name}: ${value}\n")
       endif()
 
-      foreach(image mcuboot;${updateable_images})
+      foreach(image ${image_list})
         set_config_int(${image} ${current_application_kconfig} ${value})
       endforeach()
 

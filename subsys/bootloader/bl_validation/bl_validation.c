@@ -127,7 +127,7 @@ bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
  */
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
-#if CONFIG_SOC_NRF5340_CPUNET
+#ifdef CONFIG_SOC_NRF5340_CPUNET
 /* When running on nRF5340 CPUNET, then S0 is actually application and
  * there is no S1 slot.
  */
@@ -142,9 +142,10 @@ bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 #else /* USE_PARTITION_MANAGER */
 /* DTS Partitions */
 #include <zephyr/storage/flash_map.h>
-/* Same as described for PP, above, except that this time we use DTS partition labels */
 #define S0_SIZE		FIXED_PARTITION_SIZE(s0_partition)
+
 #if !defined(CONFIG_SOC_NRF5340_CPUNET)
+/* Same as described for PP, above, except that this time we use DTS partition labels */
 #define	S1_SIZE		FIXED_PARTITION_SIZE(s1_partition)
 #endif
 #endif
@@ -523,7 +524,6 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	#error "Validation not specified."
 #endif
 }
-
 
 bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 {
