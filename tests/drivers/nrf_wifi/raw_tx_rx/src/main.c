@@ -413,8 +413,8 @@ ZTEST(nrf_wifi, test_tx_only)
 	struct wifi_filter_info filter_info = {0};
 	int ret;
 	unsigned int n = CONFIG_NRF_WIFI_RAW_TX_RX_PACKET_COUNT;
-	/* MONITOR mode */
-	int mode = BIT(1);
+	/* STA mode - to excite power save */
+	int mode = BIT(0);
 
 	wifi_set_mode(mode);
 	zassert_false(wifi_set_tx_injection_mode(), "Failed to set TX injection mode");
