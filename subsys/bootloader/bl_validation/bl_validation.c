@@ -148,7 +148,7 @@ bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
  */
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
-#if CONFIG_SOC_NRF5340_CPUNET
+#ifdef CONFIG_SOC_NRF5340_CPUNET
 /* When running on nRF5340 CPUNET, then S0 is actually application and
  * there is no S1 slot.
  */
@@ -163,9 +163,10 @@ bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 #else /* USE_PARTITION_MANAGER */
 /* DTS Partitions */
 #include <zephyr/storage/flash_map.h>
-/* Same as described for PP, above, except that this time we use DTS partition labels */
 #define S0_SIZE		FIXED_PARTITION_SIZE(s0_partition)
+
 #if !defined(CONFIG_SOC_NRF5340_CPUNET)
+/* Same as described for PM, above, except that this time we use DTS partition labels */
 #define	S1_SIZE		FIXED_PARTITION_SIZE(s1_partition)
 #endif
 #endif
@@ -325,8 +326,8 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 		int retval = rot_verify(fw_val_info->public_key,
 					key_data,
 					fw_val_info->signature,
-					(const uint8_t *)fw_src_address,
-					fw_size);
+					(const uint8_t *)fw_src_address + FIRMWARE_HEADER_SKIP,
+					fw_size - FIRMWARE_HEADER_SKIP);
 
 		if (retval == 0) {
 			for (uint32_t i = 0; i < key_data_idx; i++) {
@@ -354,8 +355,8 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 	}
 #else
 	int retval = rot_verify(NULL, NULL, fw_val_info->signature,
-				(const uint8_t *)fw_src_address,
-				fw_size);
+				(const uint8_t *)fw_src_address + FIRMWARE_HEADER_SKIP,
+				fw_size - FIRMWARE_HEADER_SKIP);
 
 	if (retval == 0) {
 		LOG_INF("Firmware signature verified.");
@@ -544,7 +545,6 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	#error "Validation not specified."
 #endif
 }
-
 
 bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 {
