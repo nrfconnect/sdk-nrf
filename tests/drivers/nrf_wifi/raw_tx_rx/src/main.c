@@ -15,6 +15,7 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 #include <zephyr/sys/printk.h>
 #include <zephyr/posix/sys/socket.h>
 #include <zephyr/posix/unistd.h>
+#include <zephyr/net/wifi.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/ethernet.h>
@@ -166,6 +167,7 @@ static int wifi_set_channel(void)
 	}
 
 	channel_info.if_index = net_if_get_by_iface(iface);
+	channel_info.band = (enum wifi_frequency_bands)CONFIG_NRF_WIFI_RAW_TX_RX_BAND;
 	channel_info.channel = CONFIG_NRF_WIFI_RAW_TX_PKT_SAMPLE_CHANNEL;
 	if ((channel_info.channel < WIFI_CHANNEL_MIN) ||
 	    (channel_info.channel > WIFI_CHANNEL_MAX)) {
@@ -175,11 +177,11 @@ static int wifi_set_channel(void)
 
 	ret = net_mgmt(NET_REQUEST_WIFI_CHANNEL, iface, &channel_info, sizeof(channel_info));
 	if (ret) {
-		LOG_ERR(" Channel setting failed %d\n", ret);
+		LOG_ERR("Channel setting failed %d", ret);
 		return -1;
 	}
 
-	LOG_INF("Wi-Fi channel set to %d", channel_info.channel);
+	LOG_INF("Wi-Fi channel set to %d (band %d)", channel_info.channel, channel_info.band);
 	return 0;
 }
 

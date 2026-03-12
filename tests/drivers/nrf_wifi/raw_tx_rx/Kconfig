@@ -5,12 +5,21 @@
 #
 source "Kconfig.zephyr"
 
+config NRF_WIFI_RAW_TX_RX_BAND
+	int "Frequency band for raw TX/RX (0=2.4GHz, 1=5GHz, 2=6GHz)"
+	range 0 2
+	default 0
+	help
+	  Frequency band for raw TX/RX tests. Must match SYS_INIT op_band.
+	  0 = WIFI_FREQ_BAND_2_4_GHZ, 1 = WIFI_FREQ_BAND_5_GHZ, 2 = WIFI_FREQ_BAND_6_GHZ.
+
 config NRF_WIFI_RAW_TX_PKT_SAMPLE_CHANNEL
 	int "Channel for non-connected Station mode"
 	range 1 233
+	default 6
 	help
 	  Specify the Wi-Fi channel for transmitting raw TX packets in non-connected Station mode.
-	  The valid channel range is 1 to 233.
+	  The valid channel range is 1 to 233. Must be valid for the selected band.
 
 config NRF_WIFI_RAW_RX_PKT_TIMEOUT_S
 	int "Wi-Fi raw RX packet timeout in seconds"
