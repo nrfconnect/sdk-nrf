@@ -481,13 +481,17 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Added an experimental application ranging module (:ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>`) that uses the :ref:`ug_bt_fast_pair_fhn_pf` feature of the :ref:`bt_fast_pair_readme` library with Bluetooth Low Energy Channel Sounding as the ranging technology.
-    The module is enabled by default on board targets with Channel Sounding hardware support.
-    The experimental status is inherited due to its experimental dependencies.
+  * Added:
 
-    As of the beginning of the second quarter of 2026, Precision Finding support using Bluetooth Low Energy Channel Sounding as the ranging technology is not publicly available on Android platforms.
-    However, you can experiment with this configuration on Android test devices that provide hardware and software support for Bluetooth Low Energy Channel Sounding (for example, Google Pixel 10) if you satisfy the necessary requirements.
-    For details regarding the requirements, see a note in the :ref:`ug_bt_fast_pair_fhn_pf` documentation section.
+    * An experimental application ranging module (:ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>`) that uses the :ref:`ug_bt_fast_pair_fhn_pf` feature of the :ref:`bt_fast_pair_readme` library with Bluetooth Low Energy Channel Sounding as the ranging technology.
+      The module is enabled by default on board targets with Channel Sounding hardware support.
+      The experimental status is inherited due to its experimental dependencies.
+
+      As of the beginning of the second quarter of 2026, Precision Finding support using Bluetooth Low Energy Channel Sounding as the ranging technology is not publicly available on Android platforms.
+      However, you can experiment with this configuration on Android test devices that provide hardware and software support for Bluetooth Low Energy Channel Sounding (for example, Google Pixel 10) if you satisfy the necessary requirements.
+      For details regarding the requirements, see the note in the :ref:`ug_bt_fast_pair_fhn_pf` documentation section.
+
+    * Support for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
 
   * Updated:
 
@@ -495,6 +499,12 @@ Bluetooth Fast Pair samples
       Migrated the sample to use the new Kconfig options and the new FHN API header.
     * The motion detector sensor on Thingy:53 target from gyroscope to accelerometer.
     * The location of the Kconfig fragment files from the :file:`src` subdirectory to the sample root directory.
+    * Improved the battery level measurement module by switching to the :ref:`fuel_gauge_api` API, allowing for more accurate battery level readings and better support for different battery types.
+      For more information, see the :ref:`migration guide for Fast Pair Locator Tag sample <migration_3.3_fp_locator_tag>`.
+    * For the ``thingy53/nrf5340/cpuapp`` target, the green color of the RGB LED no longer indicates a running status, instead it is used in the following ways:
+
+      * The LED visually indicates the button actions.
+      * The LED flashes during the ringing state.
 
 Cellular samples
 ----------------

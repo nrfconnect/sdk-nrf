@@ -34,6 +34,19 @@ The sample supports the following development kits:
    In case of the :zephyr:board:`nrf54h20dk` board target, the application still has high power consumption as the Bluetooth LE controller running on the radio core requires disabling MRAM latency (:kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ`).
    Enabling MRAM latency makes the Bluetooth LE controller unstable.
 
+.. _fast_pair_locator_tag_reference_boards:
+
+Reference board targets
+=======================
+
+Reference board targets are complete boards with the onboard peripherals that are required in the locator tag products (speaker, motion detector, battery).
+You can use such devices as a reference design for the development and testing of the locator tag products.
+
+The following are considered reference board targets:
+
+  * Thingy:53 (``thingy53/nrf5340/cpuapp``)
+  * nRF54L15 TAG (``nrf54l15tag/nrf54l15/cpuapp``)
+
 Overview
 ********
 
@@ -97,7 +110,7 @@ The mode is activated when the accessory is separated from the owner for a suffi
 In this state, if motion is detected, the accessory starts the ringing action.
 Emitted sounds help to alert the non-owner that they are carrying an accessory that does not belong to them and might be used by the original owner to track their location.
 On DKs, you can generate the simulated motion by button action.
-On the Thingy:53, the built-in accelerometer is used to detect the motion.
+On the :ref:`fast_pair_locator_tag_reference_boards`, the built-in accelerometer is used to detect the motion.
 The motion detector is deactivated for the period set in the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD` Kconfig option after 10 sounds has been played or after the motion has been detected and 20 seconds have passed.
 The motion detector is also deactivated if the accessory reappears near its owner.
 
@@ -117,6 +130,7 @@ The following board targets support the ranging module:
 
 * ``nrf54l15dk/nrf54l10/cpuapp``
 * ``nrf54l15dk/nrf54l15/cpuapp``
+* ``nrf54l15tag/nrf54l15/cpuapp``
 * ``nrf54lm20dk/nrf54lm20a/cpuapp``
 
 .. note::
@@ -214,6 +228,7 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration)    |
 |              |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                     |
 |              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                     |
+|              |                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |
 |              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |
 |              |                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |
 +--------------+--------------------------------+----------------------------------------------------------------------+
@@ -257,6 +272,7 @@ The configuration of the signature algorithm and the public key storage solution
 | ED25519                        | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration)    | Key Management Unit (KMU) | HW-accelerated (CRACEN),  |
 |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                     |                           | Signature derived from    |
 |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                     |                           | image (pure)              |
+|                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |                           |                           |
 |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |                           |                           |
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
 
@@ -529,15 +545,15 @@ The user interface of the sample depends on the hardware platform you are using.
 
               Enables the DFU mode for five minutes.
 
-   .. group-tab:: Thingy:53
+   .. group-tab:: :ref:`fast_pair_locator_tag_reference_boards`
 
       RGB LED:
-         Thingy:53 displays the application state in the RGB scale using **LED1**.
-         The **LED1** displays a color sequence with each blink that indicates the overall application state.
+         The board displays the application state in the RGB scale using **LED1**.
+         The **LED1** displays a color sequence with each blink, which indicates the overall application state.
 
-         Each color of the LED indicates the different application state:
+         Each color of the LED indicates a different application state:
 
-         * Green - Indicates that firmware is running.
+         * Green - Indicates that the ringing action is in progress and a new button action.
          * Blue - Indicates that the device is provisioned.
          * Yellow - Indicates that the identification mode is active.
          * Red - Indicates that the recovery mode is active.
@@ -545,39 +561,42 @@ The user interface of the sample depends on the hardware platform you are using.
          * Purple - Indicates that the DFU mode is active.
          * Cyan - Indicates that the motion detector is active.
 
-      Speaker/Buzzer:
+      Speaker/Buzzer (available only on Thingy:53):
          Produces sound when the ringing action is in progress and to indicate a new button action.
+         The sound is accompanied by the green color of the RGB LED.
+         On the nRF54L15 TAG, the speaker is not present by default, so all the actions are indicated solely by the green color of the RGB LED.
 
-      Button (SW3):
+      Button (Thingy:53 ``SW3``, nRF54L15 TAG ``BTN1``):
          When pressed during the application bootup, resets the accessory to its default factory settings.
+         Reset to default factory settings is indicated by one long beep and a long green blink.
 
          When pressed, stops the ongoing ringing action.
 
          When released, the triggered action varies depending on how long the button was held:
 
-         * From 1 to 3 seconds (notified by one short beep):
+         * From 1 to 3 seconds - indicated by one short green blink, and one short beep if the selected board target has a speaker:
 
            Sends a request to turn on Fast Pair discoverable advertising or removes such a request.
            This action controls the pairing mode trigger.
            It is enabled only in the FHN unprovisioned state and is disabled immediately once the FHN provisioning is started.
            See the :ref:`fast_pair_locator_tag_fp_adv_policy` section for details.
 
-         * From 3 to 5 seconds (notified by two short beeps):
+         * From 3 to 5 seconds - indicated by two short green blinks, and two short beeps if the selected board target has a speaker:
 
            Requests the FHN subsystem to enable the identification mode for five minutes.
            This timeout value is defined by the :kconfig:option:`CONFIG_DULT_ID_READ_STATE_TIMEOUT` Kconfig option according to the DULT specification requirements.
 
-         * From 5 to 7 seconds (notified by three short beeps):
+         * From 5 to 7 seconds - indicated by three short green blinks, and three short beeps if the selected board target has a speaker:
 
            Enables the recovery mode for one minute as defined by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_READ_MODE_FHN_RECOVERY_TIMEOUT` Kconfig option.
 
-         * From 7 to 10 seconds (notified by four short beeps):
+         * From 7 to 10 seconds - indicated by four short green blinks, and four short beeps if the selected board target has a speaker:
 
            Enables the DFU mode for five minutes.
 
-         * From 10 seconds or more (notified by one longer beep):
+         * From 10 seconds or more - indicated by one longer green blink, and one longer beep if the selected board target has a speaker:
 
-           No action - allows to not perform any button operation.
+           No action - allows you to release the button without triggering any operation.
 
 Configuration
 *************
@@ -624,7 +643,7 @@ The following Kconfig options are specific to the chosen hardware platform.
          By default, the decrement level is set to 10%.
 
 
-   .. group-tab:: Thingy:53
+   .. group-tab:: :ref:`fast_pair_locator_tag_reference_boards`
 
       .. _CONFIG_APP_BATTERY_POLL_INTERVAL:
 
@@ -637,6 +656,9 @@ The following Kconfig options are specific to the chosen hardware platform.
       CONFIG_APP_UI_SPEAKER_FREQ
          The sample configuration defines the frequency in hertz units for sounds generated by the speaker.
          By default, the frequency is set to 4000 Hz.
+
+      .. note::
+         The :ref:`CONFIG_APP_UI_SPEAKER_FREQ <CONFIG_APP_UI_SPEAKER_FREQ>` configuration option is available only for the Thingy:53 board target as it requires a speaker to be present.
 
 Building and running
 ********************
