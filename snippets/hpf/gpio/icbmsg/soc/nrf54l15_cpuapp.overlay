@@ -33,6 +33,7 @@
 	reserved-memory {
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		sram_rx: memory@2003b800 {
 			reg = <0x2003b800 0x0800>;
@@ -73,10 +74,6 @@
 	source-memory = <&cpuflpr_code_partition>;
 };
 
-&gpio2 {
-	status = "disabled";
-};
-
 &cpuapp_vevif_rx {
 	status = "okay";
 };
@@ -87,4 +84,6 @@
 
 &hpf_gpio {
 	status = "okay";
+	ngpios = <11>;
+	port = <2>;
 };

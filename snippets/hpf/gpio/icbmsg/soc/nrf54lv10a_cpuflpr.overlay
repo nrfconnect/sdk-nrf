@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,21 +10,23 @@
 		#size-cells = <1>;
 		ranges;
 
-		sram_tx: memory@2007bc00 {
-			reg = <0x2007bc00 0x0800>;
+		sram_tx: memory@2002ac00 {
+			reg = <0x2002ac00 0x0800>;
 		};
 
-		sram_rx: memory@2007c400 {
-			reg = <0x2007c400 0x0800>;
+		sram_rx: memory@2002b400 {
+			reg = <0x2002b400 0x0800>;
 		};
 	};
 
 	ipc {
 		ipc0: ipc0 {
-			compatible = "zephyr,ipc-icmsg";
+			compatible = "zephyr,ipc-icbmsg";
 			dcache-alignment = <32>;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
+			tx-blocks = <18>;
+			rx-blocks = <16>;
 			mboxes = <&cpuflpr_vevif_rx 16>, <&cpuflpr_vevif_tx 20>;
 			mbox-names = "rx", "tx";
 			status = "okay";
@@ -33,17 +35,17 @@
 };
 
 &cpuflpr_rram {
-	reg = <0x1fa000 DT_SIZE_K(12)>;
-	ranges = <0x0 0x1fa000 DT_SIZE_K(12)>;
+	reg = <0xf9000 DT_SIZE_K(16)>;
+	ranges = <0x0 0xf9000 DT_SIZE_K(16)>;
 	#address-cells = <1>;
 	#size-cells = <1>;
 };
 
 &cpuflpr_code_partition {
-	reg = <0x0 DT_SIZE_K(12)>;
+	reg = <0x0 DT_SIZE_K(16)>;
 };
 
 &cpuflpr_sram {
-	reg = <0x2007cc00 DT_SIZE_K(12)>;
-	ranges = <0x0 0x2007cc00 DT_SIZE_K(12)>;
+	reg = <0x2002bc00 DT_SIZE_K(16)>;
+	ranges = <0x0 0x2002bc00 DT_SIZE_K(16)>;
 };

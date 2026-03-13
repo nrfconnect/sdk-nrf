@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -12,33 +12,31 @@
 		#size-cells = <1>;
 		ranges;
 
-		sram_rx: memory@2007ac00 {
-			reg = <0x2007ac00 0x0800>;
+		sram_rx: memory@2002bc00 {
+			reg = <0x2002bc00 0x0800>;
 		};
 
-		sram_tx: memory@2007b400 {
-			reg = <0x2007b400 0x0800>;
+		sram_tx: memory@2002c400 {
+			reg = <0x2002c400 0x0800>;
 		};
 	};
 
 	soc {
-		cpuflpr_code_data_sram: memory@2007bc00 {
+		cpuflpr_code_data_sram: memory@2002cc00 {
 			compatible = "mmio-sram";
-			reg = <0x2007bc00 DT_SIZE_K(16)>;
+			reg = <0x2002cc00 DT_SIZE_K(12)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x2007bc00 DT_SIZE_K(16)>;
+			ranges = <0x0 0x2002cc00 DT_SIZE_K(12)>;
 		};
 	};
 
 	ipc {
 		ipc0: ipc0 {
-			compatible = "zephyr,ipc-icbmsg";
+			compatible = "zephyr,ipc-icmsg";
 			dcache-alignment = <32>;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
-			tx-blocks = <16>;
-			rx-blocks = <18>;
 			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
 			mbox-names = "rx", "tx";
 			status = "okay";
@@ -47,24 +45,24 @@
 };
 
 &rram_controller {
-	cpuflpr_rram: rram@1f9000 {
+	cpuflpr_rram: rram@fa000 {
 		compatible = "soc-nv-flash";
 		erase-block-size = <4096>;
 		write-block-size = <16>;
-		reg = <0x1f9000 DT_SIZE_K(16)>;
-		ranges = <0x0 0x1f9000 DT_SIZE_K(16)>;
+		reg = <0xfa000 DT_SIZE_K(12)>;
+		ranges = <0x0 0xfa000 DT_SIZE_K(12)>;
 		#address-cells = <1>;
 		#size-cells = <1>;
 	};
 };
 
 &cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(2020)>;
+	reg = <0x0 DT_SIZE_K(1000)>;
 };
 
 &cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(495)>;
-	ranges = <0x0 0x20000000 DT_SIZE_K(495)>;
+	reg = <0x20000000 DT_SIZE_K(175)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(175)>;
 };
 
 &cpuflpr_vpr {
@@ -82,6 +80,6 @@
 
 &hpf_gpio {
 	status = "okay";
-	ngpios = <11>;
-	port = <2>;
+	ngpios = <25>;
+	port = <1>;
 };
