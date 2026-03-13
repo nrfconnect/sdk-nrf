@@ -67,6 +67,8 @@ Bootloaders and DFU
 
 * Added a new lifecycle state (LCS) API designed for nRF54L Series devices.
 
+* Added support for firmware loader updates using the :ref:`installer` application.
+
 Developing with nRF91 Series
 ============================
 
@@ -404,6 +406,11 @@ nRF Machine Learning (Edge Impulse)
 
 Thingy:53: Matter weather station
 ---------------------------------
+
+Installer (MCUboot Firmware Loader installer)
+-----------------------------------------------
+
+* Added support for the Installer application which is a helper application for the MCUboot Firmware Loader update.
 
 |no_changes_yet_note|
 
