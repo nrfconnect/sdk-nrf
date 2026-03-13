@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,12 +10,12 @@
 		#size-cells = <1>;
 		ranges;
 
-		sram_tx: memory@2007bc00 {
-			reg = <0x2007bc00 0x0800>;
+		sram_tx: memory@2002bc00 {
+			reg = <0x2002bc00 0x0800>;
 		};
 
-		sram_rx: memory@2007c400 {
-			reg = <0x2007c400 0x0800>;
+		sram_rx: memory@2002c400 {
+			reg = <0x2002c400 0x0800>;
 		};
 	};
 
@@ -27,8 +27,8 @@
 };
 
 &cpuflpr_rram {
-	reg = <0x1fa000 DT_SIZE_K(12)>;
-	ranges = <0x0 0x1fa000 DT_SIZE_K(12)>;
+	reg = <0xfa000 DT_SIZE_K(12)>;
+	ranges = <0x0 0xfa000 DT_SIZE_K(12)>;
 	#address-cells = <1>;
 	#size-cells = <1>;
 };
@@ -38,6 +38,6 @@
 };
 
 &cpuflpr_sram {
-	reg = <0x2007cc00 DT_SIZE_K(12)>;
-	ranges = <0x0 0x2007cc00 DT_SIZE_K(12)>;
+	reg = <0x2002cc00 DT_SIZE_K(12)>;
+	ranges = <0x0 0x2002cc00 DT_SIZE_K(12)>;
 };

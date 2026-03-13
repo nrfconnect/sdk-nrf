@@ -8,7 +8,7 @@
 
 / {
 	soc {
-		cpuflpr_sram_code_data: memory@2003d000 {
+		cpuflpr_code_data_sram: memory@2003d000 {
 			compatible = "mmio-sram";
 			reg = <0x2003d000 DT_SIZE_K(12)>;
 			#address-cells = <1>;
@@ -26,6 +26,7 @@
 	reserved-memory {
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		sram_rx: memory@2003c000 {
 			reg = <0x2003c000 0x0800>;
@@ -62,7 +63,7 @@
 };
 
 &cpuflpr_vpr {
-	execution-memory = <&cpuflpr_sram_code_data>;
+	execution-memory = <&cpuflpr_code_data_sram>;
 	source-memory = <&cpuflpr_code_partition>;
 };
 
@@ -80,4 +81,6 @@
 
 &hpf_gpio {
 	status = "okay";
+	ngpios = <11>;
+	port = <2>;
 };

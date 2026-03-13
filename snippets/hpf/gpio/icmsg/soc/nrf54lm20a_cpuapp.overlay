@@ -10,6 +10,7 @@
 	reserved-memory {
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		sram_rx: memory@2007bc00 {
 			reg = <0x2007bc00 0x0800>;
@@ -69,10 +70,6 @@
 	execution-memory = <&cpuflpr_code_data_sram>;
 };
 
-&gpio2 {
-	status = "disabled";
-};
-
 &cpuapp_vevif_rx {
 	status = "okay";
 };
@@ -83,4 +80,6 @@
 
 &hpf_gpio {
 	status = "okay";
+	ngpios = <11>;
+	port = <2>;
 };
