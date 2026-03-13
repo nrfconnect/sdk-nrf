@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = INSTALLER
+module-str = installer
+source "subsys/logging/Kconfig.template.log_config"
+
+choice INSTALLER_FW_LOADER_ENTRANCE_METHOD
+	prompt "Firmware loader entrance method"
+	default INSTALLER_FW_LOADER_ENTRANCE_SELF_INVALIDATE_BY_ERASE
+	help
+	  Select the method which the installer uses to request firmware loader entrance.
+
+config INSTALLER_FW_LOADER_ENTRANCE_SELF_INVALIDATE_BY_ERASE
+	bool "Erase start of the installer package"
+	help
+	  If this method is used, the installer will erase the start of the installer package
+	  if it detects the need to request firmware loader entrance.
+	  The amount of bytes to erase is equal to the erase block size.
+	  The memory area where the installer code resides must be writable
+	  by the installer image for this method to work.
+
+config INSTALLER_FW_LOADER_ENTRANCE_BOOT_MODE
+	bool "Boot mode"
+	depends on RETENTION_BOOT_MODE
+	help
+	  If this method is selected, the installer will use a retained memory
+	  boot mode mechanism to request entrance into the firmware loader. This
+	  involves setting a specific flag in retained memory, which is
+	  checked upon reboot by MCUboot to determine whether to enter the firmware loader.
+	  Requirements for this method include both retained memory support
+	  and a compatible MCUboot bootloader.
+
+config INSTALLER_FW_LOADER_ENTRANCE_BOOT_REQ
+	bool "Boot request"
+	depends on (RETENTION || SOC_NRF54H20) && NRF_MCUBOOT_BOOT_REQUEST && IMG_MANAGER
+	help
+	  Selecting this method causes the installer to utilize the bootloader
+	  "boot request" feature, which typically triggers the firmware loader
+	  through MCUboot's boot request mechanism. Requirements for this method
+	  include a compatible MCUboot bootloader and retained memory support.
+	  For nRF54H20 devices the retained memory support is mocked
+	  by using the NVM backend.
+
+config INSTALLER_FW_LOADER_ENTRANCE_METHOD_NONE
+	bool "No actions"
+	help
+	  In some of the cases the installer should not perform any actions
+	  to request firmware loader entrance.
+	  Currently these include:
+	  - Firmware loader entrance requested by gpio
+	  - Firmware loader entrance requested by reset pin
+
+endchoice
+
+config INSTALLER_REBOOT
+	bool "Reboot the device after requesting firmware loader entrance"
+	depends on !INSTALLER_FW_LOADER_ENTRANCE_METHOD_NONE
+	depends on REBOOT
+	default y if INSTALLER_FW_LOADER_ENTRANCE_SELF_INVALIDATE_BY_ERASE
+	default y if INSTALLER_FW_LOADER_ENTRANCE_BOOT_REQ
+	default y if INSTALLER_FW_LOADER_ENTRANCE_BOOT_MODE
+
+config INSTALLER_PACKAGE_BUILD_SIGNED_HEX
+	bool "Build the .signed.hex file with the installer package"
+	help
+	  This option will cause the build system to generate
+	  fw_loader_installer.signed.hex containing the installer application
+	  and the firmware loader image.
+
+source "Kconfig.zephyr"

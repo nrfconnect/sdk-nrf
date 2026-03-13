@@ -36,6 +36,8 @@
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-xcake
+/applications/installer/                  @nrfconnect/ncs-eris
+/applications/installer/**/*.rst          @nrfconnect/ncs-eris-doc
 /applications/hpf/                        @nrfconnect/ncs-ll-ursus
 /applications/hpf/**/*.rst                @nrfconnect/ncs-lowlevel-doc
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
