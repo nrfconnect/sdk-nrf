@@ -710,6 +710,7 @@
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
 /samples/zephyr/sysbuild/                 @nrfconnect/ncs-low-level-test
+/samples/zephyr/tfm_integration/          @nrfconnect/ncs-aegir
 
 /samples/**/*.svg                         @nrfconnect/ncs-doc-leads
 /samples/**/*.png                         @nrfconnect/ncs-doc-leads
