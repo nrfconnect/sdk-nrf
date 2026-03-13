@@ -1005,6 +1005,7 @@
 /tests/zephyr/drivers/uart/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/watchdog/           @nrfconnect/ncs-low-level-test
 /tests/zephyr/kernel/timer/timer_behavior/ @nrfconnect/ncs-low-level-test
+/tests/zephyr/subsys/sd/                  @nrfconnect/ncs-low-level-test
 /tests/zephyr/subsys/secure_storage/      @nrfconnect/ncs-aegir
 /tests/zephyr/subsys/settings/performance/ @nrfconnect/ncs-eris @rghaddab
 /tests/zephyr/bluetooth/tester/host/       @nrfconnect/ncs-paladin
