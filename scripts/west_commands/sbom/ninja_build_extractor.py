@@ -20,6 +20,10 @@ from data_structure import DataBaseClass
 from west import log
 
 COMMAND_LINE_MAX_SIZE = 7000  # Size of command line parameters in Windows is limited.
+IGNORE_TARGETS = (
+    'zephyr/misc/generated/syscalls.json',
+    'zephyr/misc/generated/struct_tags.json',
+)
 
 
 class BuildObject(DataBaseClass):
@@ -101,6 +105,13 @@ class NinjaBuildExtractor:
             args.ninja, '-t', 'deps', cwd=self.build_dir, return_path=True
         )
         self.parse_deps_file(deps_file_name)
+
+    def should_ignore_target(self, target: str | Path) -> bool:
+        '''
+        Ignore targets which pollute the SBOM with unrelated headers.
+        '''
+        normalized = str(target).replace('\\', '/').lower()
+        return normalized.endswith(IGNORE_TARGETS)
 
     def detect_file_type(self, file: Path) -> FileType:
         '''
@@ -293,6 +304,9 @@ class NinjaBuildExtractor:
                 time.sleep(0.1)
                 self.lock.acquire()
             return self.cache[target]
+        if self.should_ignore_target(target):
+            self.cache[target] = set()
+            return set()
         self.cache[target] = None
         if done is None:
             done = set()
@@ -311,6 +325,8 @@ class NinjaBuildExtractor:
             file_path = (
                 input_path if input_path.is_absolute() else (self.build_dir / input).resolve()
             )
+            if self.should_ignore_target(input):
+                continue
             if input in done:
                 continue
             done.add(input)
