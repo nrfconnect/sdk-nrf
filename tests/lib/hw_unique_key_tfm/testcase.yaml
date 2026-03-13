@@ -6,11 +6,19 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     tags:
       - huk
       - sysbuild
