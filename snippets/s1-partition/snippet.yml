@@ -1,0 +1,3 @@
+name: s1-partition
+append:
+  EXTRA_DTC_OVERLAY_FILE: s1-partition.overlay

@@ -33,25 +33,25 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     string(TOUPPER "${application}" application_uppercase)
     set(slot_size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE>)
     set(header_size ${SB_CONFIG_PM_MCUBOOT_PAD})
+    set(slot_address $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_ADDRESS>)
   else()
-    # With partition manager disabled we need to map applications to partitions by hand as there
-    # is no reflection in application name in partitions. This mapping should probably by done
-    # at application cmake level.
-    set(part_label)
-    if(application STREQUAL "mcuboot")
-      set(part_label "s0_partition")
-    elseif(application STREQUAL "s1_image")
-      set(part_label "s1_partition")
-    else()
-      message(FATAL_ERROR "No mapping for ${application}")
-    endif()
-
     # Get the partition node and pick size from it.
-    dt_partition_size(slot_size LABEL "${part_label}" TARGET ${application} REQUIRED)
+    dt_chosen(code_partition_path PROPERTY "zephyr,code-partition" TARGET ${application})
+    dt_partition_size(slot_size PATH "${code_partition_path}" TARGET ${application} REQUIRED)
+    dt_partition_addr(slot_address PATH "${code_partition_path}" TARGET ${application} REQUIRED)
     # Header size is picked from the image that is being signed.
     sysbuild_get(header_size IMAGE mcuboot VAR CONFIG_NCS_MCUBOOT_IMAGE_HEADER_SIZE KCONFIG)
   endif()
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size ${slot_size} --header-size ${header_size})
+
+  if(SB_CONFIG_PARTITION_MANAGER)
+    set(pad_header --pad-header)
+  elseif("${prefix}" STREQUAL "CPUNET_")
+    set(pad_header --pad-header)
+  else()
+    set(pad_header)
+  endif()
+
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size ${slot_size} --header-size ${header_size} ${pad_header} --rom-fixed ${slot_address})
 
   if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     set(imgtool_extra --security-counter ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
@@ -193,8 +193,14 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
 
     # Signing the MCUboot image, secondary stage bootloader, that will be running from S1 slot.
     if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-      ncs_secure_boot_mcuboot_sign(s1_image "${bin_files}" "${signed_targets}" "")
-      set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=${s1_slot_address};signed_by_mcuboot_and_b0_s1_image.binslot=1")
+      if(SB_CONFIG_PARTITION_MANAGER)
+        ncs_secure_boot_mcuboot_sign(s1_image "${bin_files}" "${signed_targets}" "")
+        set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=${s1_partition_address};signed_by_mcuboot_and_b0_s1_image.binslot=1")
+      else()
+        b0_image_name(s1_image_name)
+        ncs_secure_boot_mcuboot_sign(${s1_image_name} "${bin_files}" "${signed_targets}" "")
+        set(extra_bin_data "signed_by_mcuboot_and_b0_${s1_image_name}.binload_address=${s1_partition_address};signed_by_mcuboot_and_b0_${s1_image_name}.binslot=1")
+      endif()
     endif()
 
     if(bin_files)
@@ -208,7 +214,7 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
         TYPE mcuboot
         IMAGE mcuboot
         SCRIPT_PARAMS
-        "signed_by_mcuboot_and_b0_mcuboot.binload_address=${s0_slot_address}"
+        "signed_by_mcuboot_and_b0_mcuboot.binload_address=${s0_partition_address}"
         ${extra_bin_data}
         "version_MCUBOOT=${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION}"
         "version_B0=${mcuboot_fw_info_firmware_version}"
@@ -219,8 +225,12 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
-    get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
-    ncs_secure_boot_mcuboot_sign(${image_name} "${bin_files}" "${signed_targets}" CPUNET_)
+    if(SB_CONFIG_PARTITION_MANAGER)
+      get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
+      ncs_secure_boot_mcuboot_sign(${image_name} "${bin_files}" "${signed_targets}" CPUNET_)
+    else()
+      ncs_secure_boot_mcuboot_sign(${SB_CONFIG_NETCORE_IMAGE_NAME} "${bin_files}" "${signed_targets}" CPUNET_)
+    endif()
   endif()
 
   # Clear temp variables

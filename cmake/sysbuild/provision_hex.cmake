@@ -72,7 +72,8 @@ function(provision application prefix_name)
 
     b0_sign_image(${application} ${cpunet_target})
     if(NOT cpunet_target AND SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-      b0_sign_image("s1_image" n)
+      b0_image_name(s1_image_name)
+      b0_sign_image(${s1_image_name} n)
     endif()
   endif()
 
@@ -105,16 +106,14 @@ function(provision application prefix_name)
     endif()
   else()
     if(cpunet_target)
-      # TODO: we should switch to intenional partition naming and not "we use what we found",
-      # so instead of s0_partition we should use s0n_partition, for example, and intntionally
-      # place such partition name in the DTS.
       dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET b0n ABSOLUTE REQUIRED)
       set(s0_arg --s0-addr ${s0_slot_address})
+      set(s1_arg)
     else()
       # We can pick all of these from MCUboot image, as DTS partitions come from common
       # DTS and image header size is the same for all images for a given platform.
-      dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET mcuboot ABSOLUTE REQUIRED)
-      dt_partition_addr(s1_slot_address LABEL "s1_partition" TARGET mcuboot ABSOLUTE REQUIRED)
+      dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET ${DEFAULT_IMAGE} ABSOLUTE REQUIRED)
+      dt_partition_addr(s1_slot_address LABEL "s1_partition" TARGET ${DEFAULT_IMAGE} ABSOLUTE REQUIRED)
       set(s0_arg --s0-addr ${s0_slot_address})
       set(s1_arg --s1-addr ${s1_slot_address})
     endif()
@@ -189,32 +188,41 @@ function(provision application prefix_name)
     )
   endif()
 
-  add_custom_target(
-    ${prefix_name}provision_target
-    DEPENDS
-    ${PROVISION_HEX}
-    ${PROVISION_DEPENDS}
-    )
-
-  get_property(
-    ${prefix_name}provision_set
-    GLOBAL PROPERTY ${prefix_name}provision_PM_HEX_FILE SET
-    )
-
-  if(NOT ${prefix_name}provision_set)
-    # Set hex file and target for the 'provision' placeholder partition.
-    # This includes the hex file (and its corresponding target) to the build.
-    set_property(
-      GLOBAL PROPERTY
-      ${prefix_name}provision_PM_HEX_FILE
-      ${PROVISION_HEX}
-      )
-
-    set_property(
-      GLOBAL PROPERTY
-      ${prefix_name}provision_PM_TARGET
+  if(SB_CONFIG_PARTITION_MANAGER)
+    add_custom_target(
       ${prefix_name}provision_target
+      DEPENDS
+      ${PROVISION_HEX}
+      ${PROVISION_DEPENDS}
+    )
+
+    get_property(
+      ${prefix_name}provision_set
+      GLOBAL PROPERTY ${prefix_name}provision_PM_HEX_FILE SET
+    )
+
+    if(NOT ${prefix_name}provision_set)
+      # Set hex file and target for the 'provision' placeholder partition.
+      # This includes the hex file (and its corresponding target) to the build.
+      set_property(
+        GLOBAL PROPERTY
+        ${prefix_name}provision_PM_HEX_FILE
+        ${PROVISION_HEX}
       )
+
+      set_property(
+        GLOBAL PROPERTY
+        ${prefix_name}provision_PM_TARGET
+        ${prefix_name}provision_target
+      )
+    endif()
+  else()
+    add_custom_target(
+      ${prefix_name}provision_target
+      ALL
+      DEPENDS
+      ${PROVISION_HEX}
+    )
   endif()
 endfunction()
 
