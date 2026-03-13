@@ -73,6 +73,22 @@ def _run_pipeline():
             log.dbg(f'GENERATOR: Done in {t}s')
 
 
+def _target_maps_present(build_dir: Path, targets: list[str]) -> bool:
+    '''
+    Return True if map file is present in build directory.
+    '''
+    resolved_targets = targets or [input_build.DEFAULT_TARGET]
+    for target_with_map in resolved_targets:
+        target_name, separator, map_name = target_with_map.partition(':')
+        if separator:
+            map_file = build_dir / map_name
+        else:
+            map_file = (build_dir / target_name).with_suffix('.map')
+        if not map_file.exists():
+            return False
+    return True
+
+
 def main():
     '''Main entry function for the script.'''
     try:
@@ -115,16 +131,31 @@ def main():
                 }
                 base_outputs = {f'output_{k}': args.__dict__.get(f'output_{k}') for k in generators}
                 entry, domains = sysbuild_entries[0]
+                processed_domains = 0
+
                 for domain_name, domain_dir in domains:
+                    if not _target_maps_present(domain_dir, entry[1:]):
+                        log.wrn(
+                            f'Skipping "{domain_name}" because required map file '
+                            f'missing in "{domain_dir}"'
+                        )
+                        continue
+
                     log.inf(f'Generating SBOM for sysbuild domain "{domain_name}"')
                     domain_entry = [str(domain_dir)] + entry[1:]
                     args.build_dir = other_entries + [domain_entry]
+
                     for gen in generators:
                         key = f'output_{gen}'
                         args.__dict__[key] = domain_output(
                             base_outputs[key], domain_name, defaults[gen]
                         )
+
                     _run_pipeline()
+                    processed_domains += 1
+
+                if processed_domains == 0:
+                    raise SbomException('No sysbuild domains contain map files')
                 return
 
         _run_pipeline()
