@@ -63,6 +63,8 @@ Bootloaders and DFU
 
   * Added support for the nRF54H20 SoC.
 
+* Added support for firmware loader updates using the :ref:`installer` application.
+
 Developing with nRF91 Series
 ============================
 
