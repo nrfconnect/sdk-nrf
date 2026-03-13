@@ -29,6 +29,57 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
+.. _migration_3.3_fp_locator_tag:
+
+Fast Pair Locator Tag sample
+----------------------------
+
+.. toggle::
+
+   * The battery measurement configuration for the ``thingy53/nrf5340/cpuapp`` board target has changed.
+     The battery level is now measured and calculated by the :ref:`fuel_gauge_api` library instead of direct ADC read and linear approximation of charge level.
+     This change requires the following configuration updates:
+
+       * Define fuel gauge device in the DTS along with its source.
+         In case of the Thingy:53 target, the fuel gauge device is already defined in the board DTS as ``fuel_gauge`` with the source set to the voltage divider ``vbatt``.
+         Enable the fuel gauge and source devices as follows:
+
+         .. code-block:: dts
+
+             vbatt {
+                 status = "okay";
+             };
+
+             fuel_gauge {
+                 status = "okay";
+             };
+
+       * Add the following entries to the Kconfig configuration:
+
+         .. code-block:: cfg
+
+             CONFIG_FUEL_GAUGE=y
+             CONFIG_FUEL_GAUGE_COMPOSITE=y
+             CONFIG_VOLTAGE_DIVIDER=y
+
+       * Alias the fuel gauge device to the ``battery-fuel-gauge`` name in the DTS:
+
+         .. code-block:: dts
+
+             aliases {
+                 battery-fuel-gauge = &fuel_gauge;
+             };
+
+       * Additionally, you can configure the Power Management module to decrease the power consumption of the voltage divider:
+
+         * Add the ``zephyr,pm-device-runtime-auto;`` property to the voltage divider and the fuel gauge device in the DTS.
+         * Add the following entries to the Kconfig configuration:
+
+           .. code-block:: cfg
+
+               CONFIG_PM_DEVICE=y
+               CONFIG_PM_DEVICE_RUNTIME=y
+
 .. _matter_lock_snippets:
 
 Matter
