@@ -80,4 +80,6 @@
 
 &hpf_gpio {
 	status = "okay";
+	ngpios = <11>;
+	port = <2>;
 };

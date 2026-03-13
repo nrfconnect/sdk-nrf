@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,19 +7,33 @@
 #include "../../hpf-gpio-app.overlay"
 
 / {
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		sram_rx: memory@2002ac00 {
+			reg = <0x2002ac00 0x0800>;
+		};
+
+		sram_tx: memory@2002b400 {
+			reg = <0x2002b400 0x0800>;
+		};
+	};
+
 	soc {
-		cpuflpr_sram_code_data: memory@2003c800 {
+		cpuflpr_sram_code_data: memory@2002bc00 {
 			compatible = "mmio-sram";
-			reg = <0x2003c800 DT_SIZE_K(14)>;
+			reg = <0x2002bc00 DT_SIZE_K(16)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x2003c800 0x3800>;
+			ranges = <0x0 0x2002bc00 DT_SIZE_K(16)>;
 		};
 	};
 
 	ipc {
 		ipc0: ipc0 {
 			compatible = "zephyr,ipc-icbmsg";
+			dcache-alignment = <32>;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
 			tx-blocks = <16>;
@@ -29,48 +43,32 @@
 			status = "okay";
 		};
 	};
+};
 
-	reserved-memory {
+&rram_controller {
+	cpuflpr_rram: rram@f9000 {
+		compatible = "soc-nv-flash";
+		erase-block-size = <4096>;
+		write-block-size = <16>;
+		reg = <0xf9000 DT_SIZE_K(16)>;
+		ranges = <0x0 0xf9000 DT_SIZE_K(16)>;
 		#address-cells = <1>;
 		#size-cells = <1>;
-
-		sram_rx: memory@2003b800 {
-			reg = <0x2003b800 0x0800>;
-		};
-
-		sram_tx: memory@2003c000 {
-			reg = <0x2003c000 0x0800>;
-		};
 	};
 };
 
 &cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(1510)>;
-	ranges = <0x0 0x0 DT_SIZE_K(1510)>;
-	#address-cells = <1>;
-	#size-cells = <1>;
-};
-
-&rram_controller {
-	cpuflpr_code_partition: rram@179800 {
-		compatible = "soc-nv-flash";
-		erase-block-size = <0x1000>;
-		write-block-size = <16>;
-		reg = <0x179800 DT_SIZE_K(14)>;
-		ranges = <0x0 0x179800 DT_SIZE_K(14)>;
-		#address-cells = <1>;
-		#size-cells = <1>;
-	};
+	reg = <0x0 DT_SIZE_K(996)>;
 };
 
 &cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(242)>;
-	ranges = <0x0 0x20000000 0x3d000>;
+	reg = <0x20000000 DT_SIZE_K(171)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(171)>;
 };
 
 &cpuflpr_vpr {
+	source-memory = <&cpuflpr_rram>;
 	execution-memory = <&cpuflpr_sram_code_data>;
-	source-memory = <&cpuflpr_code_partition>;
 };
 
 &cpuapp_vevif_rx {
@@ -83,6 +81,6 @@
 
 &hpf_gpio {
 	status = "okay";
-	ngpios = <11>;
-	port = <2>;
+	ngpios = <10>;
+	port = <1>;
 };
