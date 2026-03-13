@@ -819,7 +819,7 @@ psa_status_t psa_driver_wrapper_copy_key(psa_key_attributes_t *attributes,
 					     target_key_buffer, target_key_buffer_size,
 					     target_key_buffer_length);
 #endif
-#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+#if defined(PSA_NEED_CRACEN_KMU_KEY_COPY)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 		return cracen_copy_key(attributes, source_key, source_key_length, target_key_buffer,
 				       target_key_buffer_size, target_key_buffer_length);
