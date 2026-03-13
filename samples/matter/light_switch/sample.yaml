@@ -62,7 +62,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - DEXTRA_CONF_FILE=lit_icd.conf
+      - EXTRA_CONF_FILE=icd_lit.conf
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
