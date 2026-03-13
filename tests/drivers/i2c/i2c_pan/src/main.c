@@ -128,7 +128,8 @@ ZTEST(i2c_pan, test_clock_stretching_recovery)
 	zassert_ok(ret, "i2c_read failed: %d\n", ret);
 	zassert_mem_equal(fixture.master_buffer, fixture.slave_buffer, TEST_BUFFER_SIZE);
 
-	TC_PRINT("STEP 2: TWIM - TWIS transmission with SCL pulled low (EIO error is expected)\n");
+	TC_PRINT("STEP 2: TWIM - TWIS transmission with SCL pulled low "
+		 "(ETIMEDOUT error is expected)\n");
 	/* Pull TWIS SCL pin low */
 	nrf_twis_scl_pin_set(twis.p_reg, 1 << 31);
 	nrf_gpio_cfg_output(scl_pin);
@@ -136,8 +137,8 @@ ZTEST(i2c_pan, test_clock_stretching_recovery)
 	TC_PRINT("TWIS SCL pin (disconnected): 0x%x\n", nrf_twis_scl_pin_get(twis.p_reg));
 	memset(fixture.slave_buffer, 0, TEST_BUFFER_SIZE);
 	ret = i2c_read(fixture.dev, fixture.master_buffer, TEST_BUFFER_SIZE, fixture.addr);
-	zassert_equal(ret, -EIO, "i2c_read failed with different error than expeced (EIO) %d\n",
-		      ret);
+	zassert_equal(ret, -ETIMEDOUT,
+		      "i2c_read failed with different error than expeced (ETIMEDOUT) %d\n", ret);
 
 	TC_PRINT("STEP 3: TWIM - TWIS transmission after TWIS pin reconfiguration\n");
 	/* Restore original TWIS pin configuration */
@@ -146,9 +147,16 @@ ZTEST(i2c_pan, test_clock_stretching_recovery)
 	zassert_ok(ret);
 	TC_PRINT("TWIS SCL pin (reconfigured): 0x%x\n", nrf_twis_scl_pin_get(twis.p_reg));
 
+	/* Attempt proper transfer, expected to fail on devices affected by nRf54L anomaly 105. */
 	ret = i2c_read(fixture.dev, fixture.master_buffer, TEST_BUFFER_SIZE, fixture.addr);
-	zassert_ok(ret, "i2c_read failed (after SCL release): %d\n", ret);
-	zassert_mem_equal(fixture.master_buffer, fixture.slave_buffer, TEST_BUFFER_SIZE);
+	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 105)) {
+		zassert_equal(ret, -ETIMEDOUT,
+			      "i2c_read failed with different error than expeced (ETIMEDOUT) %d\n",
+			      ret);
+	} else {
+		zassert_ok(ret, "i2c_read failed (after SCL release): %d\n", ret);
+		zassert_mem_equal(fixture.master_buffer, fixture.slave_buffer, TEST_BUFFER_SIZE);
+	}
 }
 
 ZTEST_SUITE(i2c_pan, NULL, test_setup, NULL, cleanup_buffers, NULL);
