@@ -123,6 +123,8 @@ function(zephyr_mcuboot_tasks)
       dt_partition_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
       dt_reg_size(slot_size PATH "${code_partition}" REQUIRED)
       set(imgtool_rom_command --rom-fixed ${code_partition_offset} --align ${write_block_size})
+    else()
+      set(imgtool_rom_command --align ${write_block_size})
     endif()
 
     set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
