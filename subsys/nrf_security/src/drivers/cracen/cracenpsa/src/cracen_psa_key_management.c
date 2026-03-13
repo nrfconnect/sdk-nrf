@@ -132,7 +132,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KMU_DRIVER) &&
+	if (IS_ENABLED(PSA_NEED_CRACEN_KMU_KEY_IMPORT) &&
 	    location == PSA_KEY_LOCATION_CRACEN_KMU) {
 
 #ifdef CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
@@ -238,7 +238,7 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KMU_DRIVER) &&
+	if (IS_ENABLED(PSA_NEED_CRACEN_KMU_KEY_GENERATE) &&
 	    location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		if (!cracen_kmu_key_user_allowed(attributes)) {
 			return PSA_ERROR_NOT_PERMITTED;
