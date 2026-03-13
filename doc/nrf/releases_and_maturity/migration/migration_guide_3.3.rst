@@ -155,6 +155,8 @@ This section describes the changes related to libraries.
       * Removed the ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it by options :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
       * Removed the ``CONFIG_MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE`` Kconfig option.
         The PSA Crypto core is able to infer the key slot buffer size based on the keys enabled in the build, so there is no need to define it manually.
+      * The configuration :kconfig:option:`PSA_WANT_AES_KEY_SIZE_192` is no longer enabled by default.
+        Please enable it manually if this is required in the project.
 
    * :ref:`zephyr:ftp_client_interface` library:
 
