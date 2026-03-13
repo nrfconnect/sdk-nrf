@@ -97,9 +97,42 @@ It allows you to:
 For more details on this extension, see the `Fast Pair Find Hub Network extension`_ documentation.
 This documentation also contains the FHN Accessory specification, which is frequently used as a reference in the FHN sections of this guide.
 
+Detecting Unwanted Location Trackers
+------------------------------------
+
 The FHN Accessory specification integrates the Detecting Unwanted Location Trackers (DULT) specification, which is a joint standardization effort from Apple, Google and other companies to prevent unwanted tracking.
 Relevant FHN sections of this guide describe the DULT integration with the FHN extension.
 For more details on the DULT integration guidelines, see the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
+
+.. _ug_bt_fast_pair_fhn_pf:
+
+Precision Finding
+-----------------
+
+The Precision Finding (PF) feature extends the FHN extension with ranging capabilities that enable the Seeker to perform a precise distance measurement with the Provider device.
+It uses ranging technologies such as Bluetooth LE Channel Sounding (CS) to provide accurate proximity information, improving the user experience when locating a missing device.
+The feature supports the following ranging technologies:
+
+* Ultra Wideband (UWB)
+* Bluetooth Low Energy Channel Sounding
+* Wi-Fi Neighbor Awareness Networking (NAN) Round-Trip Time (RTT)
+* Bluetooth Low Energy Received Signal Strength Indicator
+
+For more details on this feature, see the `Fast Pair FHN Precision Finding`_ documentation that is part of the FHN Accessory specification.
+
+.. note::
+   The Precision Finding feature is marked as :ref:`experimental <software_maturity>`.
+
+   As of the beginning of the second quarter of 2026, Precision Finding support using Bluetooth Low Energy Channel Sounding as the ranging technology is not publicly available on Android platforms.
+   However, you can experiment with this configuration on Android test devices that provide hardware and software support for Bluetooth Low Energy Channel Sounding (for example, Google Pixel 10), provided that the following requirements are met:
+
+   * The target Android device must run Android QPR3 Beta 2 (January 2026) or a later release.
+   * `Google Play Services`_ must **not** be enrolled in its independent beta program.
+   * The primary email account on the Android test device must be registered on Google's allowlist for this feature.
+     To add a test email address to the allowlist, contact the Google team to request approval.
+
+The Precision Finding feature is optional.
+For more details on the Precision Finding integration, see the :ref:`ug_bt_fast_pair_prerequisite_ops_fhn_pf` and :ref:`ug_bt_fast_pair_gatt_service_fhn_pf` sections.
 
 .. _ug_integrating_fast_pair:
 
@@ -356,6 +389,7 @@ You can use the following API functions only in the *unready* state of the FHN e
   * The :c:func:`bt_fast_pair_fhn_ring_cb_register` function (mandatory with the Kconfig configuration for at least one ringing component)
   * The :c:func:`bt_fast_pair_fhn_read_mode_cb_register` function (optional)
   * The :c:func:`bt_fast_pair_fhn_motion_detector_cb_register` function (mandatory if the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR` Kconfig option is enabled)
+  * The :c:func:`bt_fast_pair_fhn_pf_ranging_mgmt_cb_register` function (mandatory if the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_PF` Kconfig option is enabled)
 
 * The :c:func:`bt_fast_pair_fhn_id_set` API function used for assigning Bluetooth identity to FHN activities (like advertising and connections)
 * The :c:func:`bt_fast_pair_factory_reset` API function used for performing factory reset of all Fast Pair data
@@ -410,6 +444,21 @@ These parameters are used for the FHN extension in the DULT module and are confi
 For more details on how to set these Kconfig options, refer to the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
 
 Subsequent sections for the FHN extension describe further steps for integrating the DULT module once the DULT user is registered and the DULT module is successfully enabled during the :c:func:`bt_fast_pair_enable` function call.
+
+.. _ug_bt_fast_pair_prerequisite_ops_fhn_pf:
+
+Precision Finding
+-----------------
+
+To support the optional :ref:`ug_bt_fast_pair_fhn_pf` feature, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_PF` Kconfig option in your project.
+
+You must register the ranging management callbacks using the :c:func:`bt_fast_pair_fhn_pf_ranging_mgmt_cb_register` function before enabling the Fast Pair module with the :c:func:`bt_fast_pair_enable` function.
+Otherwise, the enable operation fails.
+
+All callbacks in the :c:struct:`bt_fast_pair_fhn_pf_ranging_mgmt_cb` structure, except for the :c:member:`bt_fast_pair_fhn_pf_ranging_mgmt_cb.comm_channel_terminated` callback, are mandatory to register.
+
+See the :ref:`ug_bt_fast_pair_gatt_service_fhn_pf` section for details on how to handle the ranging management workflow.
+For an integration example that uses Bluetooth Low Energy Channel Sounding as the ranging technology, see the :ref:`fast_pair_locator_tag` sample.
 
 .. rst-class:: numbered-step
 
@@ -1021,6 +1070,55 @@ For more details on how to use this function, see the :ref:`ug_bt_fast_pair_adve
 Similarly to the FHN battery level indication feature, the DULT module uses Kconfig options to map percentage values to battery levels that are defined in the DULT specification.
 For more details on how to use these Kconfig options, see the :ref:`ug_dult_battery` documentation.
 
+.. _ug_bt_fast_pair_gatt_service_fhn_pf:
+
+Using the Precision Finding callbacks
+-------------------------------------
+
+The optional :ref:`ug_bt_fast_pair_fhn_pf` feature uses the Beacon Actions characteristic to exchange ranging management messages between the Seeker and the Provider.
+Register the ranging management callbacks using the :c:func:`bt_fast_pair_fhn_pf_ranging_mgmt_cb_register` function before enabling the Fast Pair module with the :c:func:`bt_fast_pair_enable` function.
+See the :ref:`ug_bt_fast_pair_prerequisite_ops_fhn_pf` section for more details on the prerequisite operations.
+
+The ranging management workflow consists of the following phases:
+
+1. **Capability discovery** - The Seeker sends a Ranging Capability Request to discover which ranging technologies the Provider supports.
+   This request is indicated by the :c:member:`bt_fast_pair_fhn_pf_ranging_mgmt_cb.ranging_capability_request` callback.
+   The application must determine which of the requested ranging technologies it supports and respond using the :c:func:`bt_fast_pair_fhn_pf_ranging_capability_response_send` function.
+   The response includes a bitmask of the supported technologies and an array of technology-specific capability payloads.
+   The order of capability payloads in the array determines the ranging technology priority, with the first element having the highest priority.
+
+#. **Configuration and start** - The Seeker sends a Ranging Configuration Request to configure and start the ranging sessions for the selected technologies.
+   This request is indicated by the :c:member:`bt_fast_pair_fhn_pf_ranging_mgmt_cb.ranging_config_request` callback.
+   The callback provides the technology-specific configuration payloads for each ranging technology that must be configured and started.
+   The application must configure the requested technologies, start the ranging sessions, and respond using the :c:func:`bt_fast_pair_fhn_pf_ranging_config_response_send` function.
+
+#. **Stop** - The Seeker sends a Stop Ranging Request to stop active ranging sessions.
+   This request is indicated by the :c:member:`bt_fast_pair_fhn_pf_ranging_mgmt_cb.stop_ranging_request` callback.
+   The application must stop the specified ranging technologies and respond using the :c:func:`bt_fast_pair_fhn_pf_stop_ranging_response_send` function.
+
+You can call all response functions asynchronously outside of the callback context, as the preparation, configuration, or teardown of certain ranging technologies may require time to complete.
+
+The optional :c:member:`bt_fast_pair_fhn_pf_ranging_mgmt_cb.comm_channel_terminated` callback is called when the communication channel for ranging is terminated.
+This can occur on a Bluetooth LE disconnection or when the Fast Pair module is disabled.
+The application can use this callback to implement the ranging timeout and clean up any active ranging sessions associated with the connection.
+
+Bluetooth Low Energy Channel Sounding
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The :ref:`ug_bt_fast_pair_fhn_pf` API provides helper functions for encoding and decoding the technology-specific payloads when using Bluetooth Low Energy Channel Sounding as the ranging technology.
+
+Use the :c:func:`bt_fast_pair_fhn_pf_ble_cs_ranging_capability_encode` function to encode the Bluetooth Low Energy Channel Sounding ranging capability descriptor (:c:struct:`bt_fast_pair_fhn_pf_ble_cs_ranging_capability`) into a technology-specific payload for the Ranging Capability Response.
+The capability descriptor includes the bitmask of supported Bluetooth Low Energy Channel Sounding security levels and the local Bluetooth device address to use for the ranging session.
+
+.. note::
+   To work around the Android platform limitations, the local Bluetooth device address provided in the Bluetooth Low Energy Channel Sounding ranging capability descriptor must be set to the Resolvable Private Address (RPA) that was used for pairing during the Fast Pair procedure.
+   It is recommended that the application saves the pairing address in non-volatile memory to ensure that the Precision Finding feature remains functional across device reboots.
+
+Use the :c:func:`bt_fast_pair_fhn_pf_ble_cs_ranging_config_decode` function to decode the Bluetooth Low Energy Channel Sounding configuration data from the technology-specific payload received in the Ranging Configuration Request callback.
+The decoded configuration descriptor (:c:struct:`bt_fast_pair_fhn_pf_ble_cs_ranging_config`) contains the security level selected by the Seeker and the peer's Bluetooth device address.
+
+For a complete integration example with Bluetooth Low Energy Channel Sounding, see the ranging module of the :ref:`fast_pair_locator_tag` sample.
+
 .. rst-class:: numbered-step
 
 .. _ug_bt_fast_pair_factory_reset:
@@ -1142,13 +1240,22 @@ To see how to implement `Fast Pair Locator Tag Specific Guidelines`_ , see the :
 
 .. note::
    You can configure the :ref:`bt_fast_pair_adv_manager_readme` helper module to automatically handle locator tag guidelines related to the Fast Pair advertising.
-   Read through this section to learn more about this module.
+   Read through the :ref:`ug_bt_fast_pair_use_case_locator_tag_adv_manager` section to learn more about this module.
 
 You must declare support for the locator tag use case when registering your device in the Google Nearby Device console.
 To enable the support, populate the **Fast Pair** protocol configuration panel in the following order:
 
 #. Select the :guilabel:`Locator Tag` option from the **Device Type** list.
 #. Set the **Find My Device** feature to **true**.
+
+.. note::
+   It is recommended to use the special mode of the ``Fast Pair Procedure`` for the locator tag use case (see :ref:`ug_bt_fast_pair_gatt_service_no_ble_pairing` for more details).
+   The Bluetooth bonding information can cause connection establishment issues and delays on some Android devices.
+
+.. _ug_bt_fast_pair_use_case_locator_tag_adv_manager:
+
+Fast Pair Advertising Manager
+-----------------------------
 
 It is recommended to use the :ref:`bt_fast_pair_adv_manager_readme` helper module for Fast Pair advertising management in the locator tag use case.
 This module follows the requirements of the FHN extension and is compatible with the FHN advertising set.
@@ -1157,9 +1264,17 @@ You can configure it using the :kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER_
 The :ref:`fast_pair_locator_tag` sample demonstrates how you can integrate the :ref:`bt_fast_pair_adv_manager_readme` in your application.
 See also :ref:`ug_bt_fast_pair_adv_manager` page that provides a comprehensive guide on how to integrate it in your application.
 
+Precision Finding
+-----------------
+
+You can optionally integrate the :ref:`ug_bt_fast_pair_fhn_pf` in the locator tag use case to enable precise distance measurement between the locator tag and the Seeker device.
+To enable this feature, follow the instructions in the :ref:`ug_bt_fast_pair_prerequisite_ops_fhn_pf` section.
+The :ref:`fast_pair_locator_tag` sample demonstrates how to use the :ref:`ug_bt_fast_pair_fhn_pf` with Bluetooth Low Energy Channel Sounding as the ranging technology.
+The ranging module in the sample is enabled by default on board targets with Bluetooth Low Energy Channel Sounding hardware support.
+
 .. note::
-   It is recommended to use the special mode of the ``Fast Pair Procedure`` for the locator tag use case (see :ref:`ug_bt_fast_pair_gatt_service_no_ble_pairing` for more details).
-   The Bluetooth bonding information can cause connection establishment issues and delays on some Android devices.
+   Using the Precision Finding feature with Bluetooth Low Energy CS as the ranging technology requires Bluetooth bond creation during the  Fast Pair Procedure, since bonding is mandatory for Bluetooth Low Energy CS.
+   If Bluetooth bonding was previously disabled for your device model, enabling this feature changes the ``Fast Pair Procedure`` flow by adding the bonding step to the existing flow.
 
 .. _ug_bt_fast_pair_use_case_mouse:
 
