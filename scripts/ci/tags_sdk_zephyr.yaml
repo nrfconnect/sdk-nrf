@@ -319,11 +319,12 @@ clock_control:
   files:
     - zephyr/drivers/clock_control/
     - zephyr/dts/bindings/clock/
-    - zephyr/include/zephyr/dt-bindings/clock/
     - zephyr/include/zephyr/drivers/clock_control.h
-    - zephyr/include/zephyr/dt-bindings/clock/
-    - zephyr/tests/drivers/clock_control/
     - zephyr/include/zephyr/drivers/clock_control/
+    - zephyr/include/zephyr/dt-bindings/clock/
+    - zephyr/include/zephyr/dt-bindings/clock/
+    - zephyr/samples/boards/nordic/clock_control/
+    - zephyr/tests/drivers/clock_control/
 
 comparator:
   files:
@@ -734,7 +735,7 @@ heap: &tag_heap
 
 multi_heap: *tag_heap
 
-logging:
+logging: &tag_logging
   files:
     - zephyr/include/zephyr/logging/
     - zephyr/include/zephyr/sys/mpsc_pbuf.h
@@ -746,6 +747,8 @@ logging:
     - zephyr/tests/subsys/logging/
     - zephyr/scripts/logging/
     - zephyr/tests/lib/spsc_pbuf/
+
+xsi.system.logging: *tag_logging
 
 settings:
   files:
@@ -965,6 +968,8 @@ modem_pipelink: *tag_modem
 modem_pipe: *tag_modem
 
 modem_ppp: *tag_modem
+
+modem_ubx: *tag_modem
 
 modem: *tag_modem
 
@@ -1330,3 +1335,45 @@ codec:
     - zephyr/drivers/audio/
     - zephyr/include/zephyr/audio/codec.h
     - zephyr/samples/drivers/audio/codec/
+
+nrfx:
+  files:
+    - modules/hal/nordic/nrfx/
+
+nrfs:
+  files:
+    - modules/hal/nordic/nrfs/
+    - zephyr/tests/boards/nrf/nrfs/
+
+rtk:
+  files:
+    - zephyr/include/zephyr/gnss/rtk/
+    - zephyr/subsys/gnss/rtk/
+    - zephyr/tests/subsys/gnss/rtk/
+
+emul:
+  files:
+    - zephyr/tests/subsys/emul/
+    - zephyr/include/zephyr/drivers/emul*
+
+assert_custom_header:
+  files:
+    - zephyr/sys/__assert.h
+    - zephyr/tests/subsys/debug/assert_custom_header/
+
+kconfigoptions:
+  files:
+    - zephyr/tests/misc/kconfigoptions/
+
+sysbuild_snippets:
+  files:
+    - zephyr/tests/cmake/sysbuild_snippets/
+
+nrf_ironside:
+  files:
+    - zephyr/samples/boards/nordic/nrf_ironside/
+    - zephyr/modules/hal_nordic/ironside/
+
+footprint:
+  files:
+    - zephyr/samples/basic/minimal/
