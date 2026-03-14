@@ -237,6 +237,7 @@ void sae_clear_temp_data(struct sae_data *sae)
 	op = get_psa_op(sae);
 	if (op) {
 		wpa3_psa_cleanup_operation(op);
+		os_free(op);
 		sae->tmp = NULL;
 	}
 }
