@@ -1,0 +1,130 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Nordic P2P sample"
+
+choice SAMPLE_P2P_MODE
+	prompt "P2P device mode"
+	default SAMPLE_P2P_CLI_MODE
+
+config SAMPLE_P2P_CLI_MODE
+	bool "CLI mode (Client: Find peer and connect)"
+	help
+	  This configuration option enables the device to act as a P2P client.
+endchoice
+
+if SAMPLE_P2P_CLI_MODE
+
+choice SAMPLE_P2P_DISCOVERY_TYPE
+	prompt "P2P discovery type"
+	default SAMPLE_P2P_DISCOVERY_FULL
+
+config SAMPLE_P2P_DISCOVERY_FULL
+	bool "Full discovery"
+	help
+	  This configuration option enables the device to scan
+	  all Wi‑Fi channels while searching for P2P peers.
+
+config SAMPLE_P2P_DISCOVERY_SOCIAL
+	bool "Social discovery"
+	help
+	  This configuration option enables the device to
+	  scan only the Wi-Fi Direct social channels (1, 6, 11).
+
+config SAMPLE_P2P_DISCOVERY_PROGRESSIVE
+	bool "Progressive discovery"
+	help
+	  This configuration option enables alternating
+	  between social channel scans and full scans.
+
+endchoice
+
+config SAMPLE_P2P_FIND_TIMEOUT_S
+	int "P2P discovery timeout (seconds)"
+	default 30
+	help
+	  This configuration option sets the timeout, in seconds,
+	  during which the device performs P2P peer discovery.
+
+config SAMPLE_P2P_GO_INTENT_VALUE
+	int "GO intent value"
+	default 0
+	range 0 15
+	help
+	  This configuration option sets the Group Owner
+	  intent value used during P2P negotiation.
+
+config SAMPLE_P2P_FREQUENCY
+	int "P2P connection frequency (MHz)"
+	default 2462
+	help
+	  This configuration option sets the frequency used when
+	  initiating the P2P connection.
+
+config SAMPLE_P2P_JOIN
+	bool "Join an existing P2P group"
+	help
+	  This configuration option enables the device to join an
+	  existing P2P group instead of creating a new one.
+
+choice SAMPLE_P2P_CONNECTION_METHODS
+	prompt "P2P connection methods"
+	default SAMPLE_P2P_CONNECTION_METHOD_PIN
+
+config SAMPLE_P2P_CONNECTION_METHOD_PIN
+	bool "PIN method"
+	help
+	  This configuration option enables establishing the P2P connection using a WPS PIN.
+
+config SAMPLE_P2P_CONNECTION_METHOD_PBC
+	bool "Push Button Configuration (PBC)"
+	help
+	  This configuration option enables the device to establish
+	  the P2P connection using WPS Push Button Configuration (PBC).
+
+endchoice
+
+if SAMPLE_P2P_CONNECTION_METHOD_PIN
+
+config SAMPLE_P2P_METHOD_DISPLAY
+	bool "Display PIN method"
+	default y
+	help
+	  This configuration option enables the device to generate
+	  and display a PIN which must be entered on the peer device.
+
+config SAMPLE_P2P_METHOD_KEYPAD
+	bool "Keypad PIN method"
+	help
+	  This configuration option enables the device to
+	  use the PIN provided by the peer device.
+
+endif
+
+if SAMPLE_P2P_METHOD_KEYPAD
+
+config SAMPLE_P2P_CONNECTION_METHOD_PIN_VALUE
+	string "PIN value"
+	help
+	  This configuration option sets the PIN value to be
+	  used when the keypad method is selected.
+
+endif
+
+config SAMPLE_P2P_PEER_ADDRESS
+	string "P2P peer MAC address"
+	help
+	  This configuration option sets the MAC address of the peer P2P device.
+
+config SAMPLE_P2P_DHCP_TIMEOUT_S
+	int "DHCP timeout in seconds"
+	default 20
+
+endif
+
+endmenu
+
+source "Kconfig.zephyr"
