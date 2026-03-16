@@ -15,6 +15,8 @@ int main(void)
 
 #ifdef CONFIG_P2P_SAMPLE_CLI_MODE
 	p2p_cli_run();
+#elif CONFIG_P2P_SAMPLE_GO_MODE
+	p2p_go_run();
 #endif
 
 	return 0;

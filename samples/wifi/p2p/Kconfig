@@ -16,6 +16,11 @@ config P2P_SAMPLE_CLI_MODE
 	bool "CLI mode (Client: Find peer and connect)"
 	help
 	  This configuration option enables the device to act as a P2P client.
+
+config P2P_SAMPLE_GO_MODE
+	bool "GO mode (Group owner: Group add/remove)"
+	help
+	  This configuration option enables the device to act as a P2P Group Owner.
 endchoice
 
 if P2P_SAMPLE_CLI_MODE
@@ -117,5 +122,42 @@ config P2P_SAMPLE_PEER_ADDRESS
 	string "P2P peer MAC address"
 	help
 	  This configuration option sets the MAC address of the peer P2P device.
+endif
+
+if P2P_SAMPLE_GO_MODE
+
+config P2P_GO_FREQ
+	int "P2P GO operating frequency (MHz)"
+	default 2462
+	help
+	  This configuration option sets the operating frequency
+	  used when creating the P2P Group Owner (GO) group.
+
+config P2P_GO_PERSISTENT
+	int "Persistent P2P group"
+	default -1
+	range -1 255
+	help
+	  This configuration option enables the device to configure
+	  persistent group behavior when creating a P2P group.
+
+config P2P_GO_VHT
+	bool "Enable VHT support"
+	default n
+	help
+	  This configuration option enables the device to allow
+	  Very High Throughput (VHT) capabilities when creating the P2P group.
+
+config P2P_GO_BSSID
+	string "GO BSSID"
+	help
+	  This configuration option sets the BSSID to be used when creating the P2P group.
+	  If left empty, the BSSID is selected automatically.
+
+config P2P_SAMPLE_IFACE_NAME
+	string "Interface name"
+	default "wlan0"
+	help
+	  This configuration sets the interface name used when removing the P2P group.
 endif
 endmenu
