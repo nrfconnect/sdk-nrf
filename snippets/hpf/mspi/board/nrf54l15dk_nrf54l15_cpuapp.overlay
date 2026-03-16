@@ -29,7 +29,6 @@
 		mspi-endian = "MSPI_BIG_ENDIAN";
 		mspi-ce-polarity = "MSPI_CE_ACTIVE_LOW";
 
-		reset-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
 		quad-enable-requirements = "S1B6";
 	};
 };

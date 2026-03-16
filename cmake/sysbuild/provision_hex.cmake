@@ -31,8 +31,7 @@ function(provision application prefix_name)
     endif()
 
     # Skip signing if MCUBoot is to be booted and its not built from source
-    if((CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH) AND
-        NCS_SYSBUILD_PARTITION_MANAGER)
+    if(CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH)
       if(${SB_CONFIG_SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
         message(WARNING
           "
@@ -62,14 +61,8 @@ function(provision application prefix_name)
 
     # Adjustment to be able to load into sysbuild
     if(CONFIG_SOC_NRF5340_CPUNET OR "${domain}" STREQUAL "CPUNET")
-      set(partition_manager_target partition_manager_CPUNET)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
-      set(s1_arg)
       set(cpunet_target y)
     else()
-      set(partition_manager_target partition_manager)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
-      set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
       set(cpunet_target n)
     endif()
 
@@ -78,8 +71,9 @@ function(provision application prefix_name)
     endif()
 
     b0_sign_image(${application} ${cpunet_target})
-    if(NOT (CONFIG_SOC_NRF5340_CPUNET OR "${domain}" STREQUAL "CPUNET") AND SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-      b0_sign_image("s1_image" n)
+    if(NOT cpunet_target AND SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+      b0_image_name(s1_image_name)
+      b0_sign_image(${s1_image_name} n)
     endif()
   endif()
 
@@ -91,6 +85,57 @@ function(provision application prefix_name)
     set(psa_certificate_reference --psa-certificate-reference ${SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE})
   endif()
 
+  set(provision_address)
+  set(provision_size)
+  if(SB_CONFIG_PARTITION_MANAGER)
+    set(provision_size ${CONFIG_PM_PARTITION_SIZE_PROVISION})
+    if(cpunet_target)
+      set(partition_manager_target partition_manager_CPUNET)
+      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
+      set(s1_arg)
+    else()
+      set(partition_manager_target partition_manager)
+      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
+      set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
+    endif()
+
+    if(CONFIG_SECURE_BOOT)
+      set(provision_address $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>)
+    else(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+      set(provision_address $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>)
+    endif()
+  else()
+    if(cpunet_target)
+      dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET b0n ABSOLUTE REQUIRED)
+      set(s0_arg --s0-addr ${s0_slot_address})
+      set(s1_arg)
+    else()
+      # We can pick all of these from MCUboot image, as DTS partitions come from common
+      # DTS and image header size is the same for all images for a given platform.
+      dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET ${DEFAULT_IMAGE} ABSOLUTE REQUIRED)
+      dt_partition_addr(s1_slot_address LABEL "s1_partition" TARGET ${DEFAULT_IMAGE} ABSOLUTE REQUIRED)
+      set(s0_arg --s0-addr ${s0_slot_address})
+      set(s1_arg --s1-addr ${s1_slot_address})
+    endif()
+
+    # Need to configure where bl_storage is placed.
+    if(CONFIG_SECURE_BOOT)
+      if(cpunet_target)
+        # CPUNET uses b0n variant of b0 bootloader.
+        set(bl_storage_target b0n)
+      else()
+        set(bl_storage_target b0)
+      endif()
+    else(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+      # This is MCUboot downgrade prevention.
+      set(bl_storage_target mcuboot)
+    endif()
+    # Pick partition address and size from the proper DTS of a processed targed.
+    dt_nodelabel(bl_storage_path NODELABEL bl_storage REQUIRED TARGET ${bl_storage_target})
+    dt_reg_addr(provision_address PATH "${bl_storage_path}" TARGET ${bl_storage_target})
+    dt_reg_size(provision_size PATH "${bl_storage_path}" TARGET ${bl_storage_target})
+  endif()
+
   if(CONFIG_SECURE_BOOT)
     add_custom_command(
       OUTPUT
@@ -100,10 +145,10 @@ function(provision application prefix_name)
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
       ${s0_arg}
       ${s1_arg}
-      --provision-addr $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>
+      --provision-addr ${provision_address}
       ${public_keys_file_arg}
       --output ${PROVISION_HEX}
-      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+      --max-size ${provision_size}
       ${monotonic_counter_arg}
       ${no_verify_hashes_arg}
       ${mcuboot_counters_slots}
@@ -126,9 +171,9 @@ function(provision application prefix_name)
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
       --mcuboot-only
-      --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
+      --provision-addr ${provision_address}
       --output ${PROVISION_HEX}
-      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+      --max-size ${provision_size}
       ${mcuboot_counters_num}
       ${mcuboot_counters_slots}
       --otp-write-width ${otp_write_width}
@@ -143,57 +188,64 @@ function(provision application prefix_name)
     )
   endif()
 
-  add_custom_target(
-    ${prefix_name}provision_target
-    DEPENDS
-    ${PROVISION_HEX}
-    ${PROVISION_DEPENDS}
-    )
-
-  get_property(
-    ${prefix_name}provision_set
-    GLOBAL PROPERTY ${prefix_name}provision_PM_HEX_FILE SET
-    )
-
-  if(NOT ${prefix_name}provision_set)
-    # Set hex file and target for the 'provision' placeholder partition.
-    # This includes the hex file (and its corresponding target) to the build.
-    set_property(
-      GLOBAL PROPERTY
-      ${prefix_name}provision_PM_HEX_FILE
-      ${PROVISION_HEX}
-      )
-
-    set_property(
-      GLOBAL PROPERTY
-      ${prefix_name}provision_PM_TARGET
+  if(SB_CONFIG_PARTITION_MANAGER)
+    add_custom_target(
       ${prefix_name}provision_target
+      DEPENDS
+      ${PROVISION_HEX}
+      ${PROVISION_DEPENDS}
+    )
+
+    get_property(
+      ${prefix_name}provision_set
+      GLOBAL PROPERTY ${prefix_name}provision_PM_HEX_FILE SET
+    )
+
+    if(NOT ${prefix_name}provision_set)
+      # Set hex file and target for the 'provision' placeholder partition.
+      # This includes the hex file (and its corresponding target) to the build.
+      set_property(
+        GLOBAL PROPERTY
+        ${prefix_name}provision_PM_HEX_FILE
+        ${PROVISION_HEX}
       )
+
+      set_property(
+        GLOBAL PROPERTY
+        ${prefix_name}provision_PM_TARGET
+        ${prefix_name}provision_target
+      )
+    endif()
+  else()
+    add_custom_target(
+      ${prefix_name}provision_target
+      ALL
+      DEPENDS
+      ${PROVISION_HEX}
+    )
   endif()
 endfunction()
 
-if(NCS_SYSBUILD_PARTITION_MANAGER)
-  b0_gen_keys()
+b0_gen_keys()
 
-  # Get the main app of the domain that secure boot should handle.
-  if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE)
-    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-      provision("mcuboot" "app_")
-    else()
-      provision("${DEFAULT_IMAGE}" "app_")
-    endif()
-  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+# Get the main app of the domain that secure boot should handle.
+if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE)
+  if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+    provision("mcuboot" "app_")
+  else()
     provision("${DEFAULT_IMAGE}" "app_")
   endif()
+elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+  provision("${DEFAULT_IMAGE}" "app_")
+endif()
 
-  if(SB_CONFIG_SECURE_BOOT_NETCORE)
-    get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
+if(SB_CONFIG_SECURE_BOOT_NETCORE)
+  get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
 
-    if(NOT main_app)
-      message(FATAL_ERROR "Secure boot is enabled on domain CPUNET"
-                          " but no image is selected for this domain.")
-    endif()
-
-    provision("${main_app}" "net_")
+  if(NOT main_app)
+    message(FATAL_ERROR "Secure boot is enabled on domain CPUNET"
+                        " but no image is selected for this domain.")
   endif()
+
+  provision("${main_app}" "net_")
 endif()
