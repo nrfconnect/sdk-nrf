@@ -1,0 +1,3 @@
+name: s0-partition
+append:
+  EXTRA_DTC_OVERLAY_FILE: s0-partition.overlay
