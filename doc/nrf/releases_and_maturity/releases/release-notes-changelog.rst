@@ -814,6 +814,8 @@ Wi-Fi samples
 
 * Added support for the ``nrf54lm20dk/nrf54lm20b/cpuapp`` board target variant to all Wi-Fi samples.
 
+* Added the :ref:`wifi_p2p_sample` sample that demonstrates how to establish a Wi-Fi Peer-to-Peer (P2P) connection using Wi-Fi Direct®, supporting both Client (CLI) mode and Group Owner (GO) mode operations.
+
 Other samples
 -------------
 
