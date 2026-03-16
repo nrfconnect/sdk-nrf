@@ -153,7 +153,6 @@ config MEMFAULT_NCS_INIT_PRIORITY
 
 config MEMFAULT_NCS_PROVISION_CERTIFICATES
 	bool "Provision certificates on initalization"
-	default y if MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM
 	help
 	  Provision required TLS root certificates for connecting to Memfault's
 	  endpoints. If this option is disabled, the user is responsible for

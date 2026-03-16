@@ -110,7 +110,6 @@ Following are some of the configuration options that Memfault SDK defines:
 * :kconfig:option:`CONFIG_MEMFAULT_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_METRICS_DEFAULT_SET_ENABLE`
 * :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD`
-* :kconfig:option:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM`
 
 For more details on each option, use ``menuconfig`` or ``guiconfig``, and see the Kconfig sources in ``modules/lib/memfault-firmware-sdk/ports/zephyr/Kconfig``.
 
