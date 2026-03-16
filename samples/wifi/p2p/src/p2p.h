@@ -8,5 +8,6 @@
 #define __P2P_H__
 
 int p2p_cli_run(void);
+int p2p_go_run(void);
 
 #endif /* __P2P_H__ */

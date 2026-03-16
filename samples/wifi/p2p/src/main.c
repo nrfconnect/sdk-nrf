@@ -18,5 +18,9 @@ int main(void)
 		p2p_cli_run();
 	}
 
+	if (IS_ENABLED(CONFIG_SAMPLE_P2P_GO_MODE)) {
+		p2p_go_run();
+	}
+
 	return 0;
 }
