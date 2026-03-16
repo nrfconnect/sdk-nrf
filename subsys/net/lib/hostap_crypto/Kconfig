@@ -12,12 +12,12 @@ endchoice
 
 choice HOSTAP_CRYPTO_BACKEND
 	prompt "WPA supplicant crypto implementation"
-	default HOSTAP_CRYPTO_ALT_PSA if SOC_SERIES_NRF54H
-	default HOSTAP_CRYPTO_ALT_LEGACY_PSA
+	default HOSTAP_CRYPTO_ALT_LEGACY_PSA if WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE || WIFI_NM_WPA_SUPPLICANT_WPS
+	default HOSTAP_CRYPTO_ALT_PSA
 	help
 	  Select the crypto implementation to use for WPA supplicant.
-	  HOSTAP_CRYPTO_ALT supports enterprise mode
-	  and DPP.
+	  Use Legacy for Enterprise support; PSA does not support
+	  Enterprise mode.
 
 config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 	bool "Legacy Crypto support for WiFi using nRF security"
