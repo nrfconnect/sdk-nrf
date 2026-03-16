@@ -11,6 +11,7 @@
 # function to avoid polluting the top-level scope.
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/ironside_se_tlv.cmake)
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
 
 function(zephyr_runner_file type path)
   # Property magic which makes west flash choose the signed build
@@ -93,26 +94,56 @@ function(zephyr_mcuboot_tasks)
     message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
   endif()
 
+  if(NOT CONFIG_PARTITION_MANAGER_ENABLED)
+    dt_chosen(code_partition_path PROPERTY "zephyr,code-partition")
+    dt_partition_size(slot_size PATH "${code_partition_path}" REQUIRED)
+    dt_partition_addr(slot_address PATH "${code_partition_path}" REQUIRED)
+    dt_nodelabel(slot0_partition_path NODELABEL "slot0_partition" REQUIRED)
+    dt_nodelabel(slot1_partition_path NODELABEL "slot1_partition" REQUIRED)
+
+    if("${code_partition_path}" STREQUAL "${slot0_partition_path}")
+      math(EXPR qspi_slot_number "${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} * 2")
+    elseif("${code_partition_path}" STREQUAL "${slot1_partition_path}")
+      math(EXPR qspi_slot_number "${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} * 2 + 1")
+    else()
+      message(FATAL_ERROR "Cannot determine which slot this image resides on and unable to calculate the QSPI slot, please check your dts")
+    endif()
+
+    dt_nodelabel(qspi_partition_path NODELABEL "slot${qspi_slot_number}_partition" REQUIRED)
+    dt_partition_size(qspi_slot_size PATH "${qspi_partition_path}" REQUIRED)
+    dt_partition_addr(qspi_slot_address PATH "${qspi_partition_path}" REQUIRED)
+  endif()
+
   if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
     # XIP image, need to use the fixed address for these slots
-    if(CONFIG_NCS_IS_VARIANT_IMAGE)
-      set(imgtool_internal_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
-      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS@)
+    if(CONFIG_PARTITION_MANAGER_ENABLED)
+      if(CONFIG_NCS_IS_VARIANT_IMAGE)
+        set(imgtool_internal_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
+        set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS@)
+      else()
+        set(imgtool_internal_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
+        set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS@)
+      endif()
     else()
-      set(imgtool_internal_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
-      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS@)
+      set(imgtool_internal_rom_command --rom-fixed ${slot_address})
+      set(imgtool_external_rom_command --rom-fixed ${qspi_slot_address})
     endif()
   endif()
 
-  # Split fields, imgtool_[internal/external]_sign_sysbuild are stored in cache which will have
-  # fields updated by sysbuild, imgtool_[internal/external]_sign must not be stored in cache
-  # because it would then prevent those fields from being updated without a pristine build
-  # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
-  # invalid if a static PM file is updated without pristine build
-  set(imgtool_internal_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_internal_rom_command} CACHE STRING "imgtool sign (internal flash) sysbuild replacement")
-  set(imgtool_external_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_external_rom_command} CACHE STRING "imgtool sign (external flash) sysbuild replacement")
-  set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_internal_sign_sysbuild})
-  set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_external_sign_sysbuild})
+  if(CONFIG_PARTITION_MANAGER_ENABLED)
+    # Split fields, imgtool_[internal/external]_sign_sysbuild are stored in cache which will have
+    # fields updated by sysbuild, imgtool_[internal/external]_sign must not be stored in cache
+    # because it would then prevent those fields from being updated without a pristine build
+    # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
+    # invalid if a static PM file is updated without pristine build
+    set(imgtool_internal_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_internal_rom_command} CACHE STRING "imgtool sign (internal flash) sysbuild replacement")
+    set(imgtool_external_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_external_rom_command} CACHE STRING "imgtool sign (external flash) sysbuild replacement")
+    set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_internal_sign_sysbuild})
+    set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_external_sign_sysbuild})
+  else()
+    set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot_size} --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_internal_rom_command})
+    set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${qspi_slot_size} --pad-header --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_external_rom_command})
+  endif()
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
@@ -209,7 +240,7 @@ function(zephyr_mcuboot_tasks)
 
     # Do not run zephyr_runner_file here as PM will provide the merged hex file from
     # sysbuild's scope unless this is a variant image
-    if(CONFIG_NCS_IS_VARIANT_IMAGE)
+    if(CONFIG_NCS_IS_VARIANT_IMAGE OR NOT CONFIG_PARTITION_MANAGER_ENABLED)
       zephyr_runner_file(hex ${output_merged}.hex)
     endif()
 
@@ -260,7 +291,7 @@ function(zephyr_mcuboot_tasks)
 
     if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
       list(APPEND byproducts ${output_merged}.confirmed.hex)
-      if(CONFIG_NCS_IS_VARIANT_IMAGE)
+      if(CONFIG_NCS_IS_VARIANT_IMAGE OR NOT CONFIG_PARTITION_MANAGER_ENABLED)
         zephyr_runner_file(hex ${output_merged}.confirmed.hex)
       endif()
       set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME "${output_merged}.confirmed.hex"
