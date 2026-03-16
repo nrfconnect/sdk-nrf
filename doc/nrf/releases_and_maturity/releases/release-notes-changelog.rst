@@ -113,7 +113,17 @@ Developing with custom boards
 Security
 ========
 
-|no_changes_yet_note|
+
+* Updated:
+
+  * How the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_PSA_CRYPTO` interact with each other.
+    :kconfig:option:`CONFIG_NRF_SECURITY` is now promptless and auto-enabled indirectly by :kconfig:option:`CONFIG_PSA_CRYPTO`.
+
+* Removed:
+
+  * The following Kconfig options:
+
+    * ``CONFIG_NRF_SECURITY_ADVANCED``
 
 Mbed TLS
 --------
