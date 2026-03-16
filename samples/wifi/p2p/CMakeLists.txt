@@ -13,3 +13,4 @@ target_include_directories(app PUBLIC ${ZEPHYR_BASE}/subsys/net/ip)
 
 target_sources(app PRIVATE src/main.c)
 target_sources_ifdef(CONFIG_SAMPLE_P2P_CLI_MODE app PRIVATE src/p2p_cli.c)
+target_sources_ifdef(CONFIG_SAMPLE_P2P_GO_MODE app PRIVATE src/p2p_go.c)

@@ -14,6 +14,12 @@ config SAMPLE_P2P_CLI_MODE
 	bool "CLI mode (Client: Find peer and connect)"
 	help
 	  This configuration option enables the device to act as a P2P client.
+
+config SAMPLE_P2P_GO_MODE
+	bool "GO mode (Group owner: Group add/remove)"
+	help
+	  This configuration option enables the device to act as a P2P Group Owner.
+
 endchoice
 
 if SAMPLE_P2P_CLI_MODE
@@ -122,6 +128,54 @@ config SAMPLE_P2P_PEER_ADDRESS
 config SAMPLE_P2P_DHCP_TIMEOUT_S
 	int "DHCP timeout in seconds"
 	default 20
+
+endif
+
+if SAMPLE_P2P_GO_MODE
+
+config SAMPLE_P2P_DHCPV4_SERVER
+	bool "DHCPv4 server"
+	select NET_DHCPV4_SERVER
+	default y
+	help
+	  This configuration option enables DHCPV4 server settings.
+
+config SAMPLE_P2P_DHCPV4_POOL_START
+	string "Start address of DHCPv4 pool"
+	default "192.168.1.2"
+	help
+	  This configuration option sets the start IP address of DHCPv4 pool.
+
+config SAMPLE_P2P_GO_FREQ
+	int "P2P GO operating frequency (MHz)"
+	default 2462
+	help
+	  This configuration option sets the operating frequency
+	  used when creating the P2P Group Owner group.
+
+config SAMPLE_P2P_GO_VHT
+	bool "VHT support"
+	help
+	  This configuration option enables the device to allow
+	  Very High Throughput (VHT) capabilities when creating the P2P group.
+
+config SAMPLE_P2P_GO_BSSID
+	string "GO BSSID"
+	help
+	  This configuration option sets the BSSID to be used when creating the P2P group.
+	  If left empty, the BSSID is selected automatically.
+
+config SAMPLE_P2P_IFACE_NAME
+	string "Interface name"
+	default "wlan0"
+	help
+	  This configuration option sets the interface name used when removing the P2P group.
+
+config SAMPLE_P2P_PEER_DISCONN_TIMEOUT_S
+	int "Timeout waiting for peer disconnect (seconds)"
+	default 30
+	help
+	  This configuration option sets the timeout for waiting for a peer to disconnect.
 
 endif
 
