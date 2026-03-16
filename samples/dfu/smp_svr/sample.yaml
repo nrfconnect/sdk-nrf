@@ -10,7 +10,7 @@ common:
     regex:
       - "Starting .*bootloader"
       - "Jumping to the .*image slot"
-      - "smp_sample: build time"
+      - "build time"
   timeout: 15
   tags:
     - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
