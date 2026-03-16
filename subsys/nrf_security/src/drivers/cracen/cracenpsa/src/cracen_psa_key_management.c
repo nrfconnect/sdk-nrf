@@ -39,17 +39,14 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_EXPORT)) {
-		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
-			return export_ecc_public_key_from_keypair(attributes, key_buffer,
-								  key_buffer_size, data, data_size,
-								  data_length);
-		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
-			return ecc_export_key(key_buffer, key_buffer_size, data,
-					      data_size, data_length);
-		} else {
-			/* For compliance */
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_EXPORT) &&
+	    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
+		return export_ecc_public_key_from_keypair(attributes, key_buffer,
+							  key_buffer_size, data, data_size,
+							  data_length);
+	} else if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY) &&
+		   PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
+		return ecc_export_key(key_buffer, key_buffer_size, data, data_size, data_length);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT_SECP_R1_256)) {
