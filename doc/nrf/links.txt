@@ -246,6 +246,7 @@
 
 .. _`Memfault-SDK`:
 .. _`Memfault firmware SDK`: https://github.com/memfault/memfault-firmware-sdk
+.. _`Memfault firmware SDK changelog`: https://github.com/memfault/memfault-firmware-sdk/blob/master/CHANGELOG.md
 .. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
 
 

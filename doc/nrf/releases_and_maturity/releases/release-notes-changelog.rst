@@ -943,6 +943,8 @@ Memfault integration
   * The :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED` Kconfig option to control whether an initial heartbeat is sent when the device connects to a network
     This shows the device status and initial metrics in the Memfault dashboard soon after boot.
   * Support for recording location metrics when using external cloud location services (:kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL`).
+  * Updated Memfault to version 1.37.1.
+    See the `Memfault firmware SDK changelog`_ for details.
 
 AVSystem integration
 --------------------
