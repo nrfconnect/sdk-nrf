@@ -1,0 +1,5 @@
+/ {
+	chosen {
+		zephyr,code-partition = &s1_partition;
+	};
+};
