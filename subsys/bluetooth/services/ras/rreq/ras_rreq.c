@@ -606,6 +606,7 @@ static int ras_cp_subscribe_params_populate(struct bt_gatt_dm *dm, struct bt_ras
 	rreq->cp.subscribe_params.notify = ras_cp_notify_func;
 	rreq->cp.subscribe_params.value = BT_GATT_CCC_INDICATE;
 	rreq->cp.subscribe_params.subscribe = subscribed_func;
+	atomic_set_bit(rreq->cp.subscribe_params.flags, BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
 	return 0;
 }
@@ -737,6 +738,7 @@ static int ondemand_rd_subscribe_params_populate(struct bt_gatt_dm *dm, struct b
 	rreq->on_demand_rd.subscribe_params.notify = ras_on_demand_ranging_data_notify_func;
 	rreq->on_demand_rd.subscribe_params.value = BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE;
 	rreq->on_demand_rd.subscribe_params.subscribe = subscribed_func;
+	atomic_set_bit(rreq->on_demand_rd.subscribe_params.flags, BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
 	return 0;
 }
@@ -771,6 +773,7 @@ static int realtime_rd_subscribe_params_populate(struct bt_gatt_dm *dm, struct b
 	rreq->real_time_rd.subscribe_params.notify = ras_real_time_ranging_data_notify_func;
 	rreq->real_time_rd.subscribe_params.value = BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE;
 	rreq->real_time_rd.subscribe_params.subscribe = subscribed_func;
+	atomic_set_bit(rreq->real_time_rd.subscribe_params.flags, BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
 	return 0;
 }
@@ -803,6 +806,7 @@ static int rd_ready_subscribe_params_populate(struct bt_gatt_dm *dm, struct bt_r
 	rreq->rd_ready.subscribe_params.notify = ranging_data_ready_notify_func;
 	rreq->rd_ready.subscribe_params.value = BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE;
 	rreq->rd_ready.subscribe_params.subscribe = subscribed_func;
+	atomic_set_bit(rreq->rd_ready.subscribe_params.flags, BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
 	return 0;
 }
@@ -835,6 +839,8 @@ static int rd_overwritten_subscribe_params_populate(struct bt_gatt_dm *dm, struc
 	rreq->rd_overwritten.subscribe_params.notify = ranging_data_overwritten_notify_func;
 	rreq->rd_overwritten.subscribe_params.value = BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE;
 	rreq->rd_overwritten.subscribe_params.subscribe = subscribed_func;
+	atomic_set_bit(rreq->rd_overwritten.subscribe_params.flags,
+			BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
 	return 0;
 }
