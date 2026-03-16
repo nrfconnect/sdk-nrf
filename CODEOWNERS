@@ -549,6 +549,7 @@
 /samples/wifi/provisioning/ble/           @wentong-li @bama-nordic
 /samples/wifi/provisioning/softap/        @nrfconnect/ncs-cia
 /samples/wifi/provisioning/internal/      @krish2718 @rado17
+/samples/wifi/p2p/                        @D-Triveni @rado17 @kapbh
 /samples/wifi/radio_test/                 @bama-nordic @sachinthegreen
 /samples/wifi/scan/                       @D-Triveni @bama-nordic
 /samples/wifi/shell/                      @nrfconnect/ncs-co-networking @krish2718 @sachinthegreen @rado17
