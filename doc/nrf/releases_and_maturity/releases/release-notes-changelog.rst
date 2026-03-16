@@ -816,6 +816,9 @@ Memfault integration
   * Devicetree support for the internal flash coredump backend (:kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`).
     The backend now locates its storage from a fixed partition labeled ``memfault_coredump_partition`` when Partition Manager is disabled, while continuing to support Partition Manager when enabled.
   * The :ref:`snippet-memfault-coredump` snippet that supplies a board-specific partition overlay for flash-backed coredump storage on common DKs and Thingy:91 or Thingy:91 X.
+* Removed the ``CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`` Kconfig option from nRF91x targets.
+  Certificate provisioning for nRF91x targets is now handled automatically by the `Memfault firmware SDK`_.
+  The option remains available for nRF7002 targets, which do not have automatic cert provisioning.
 
 AVSystem integration
 --------------------
