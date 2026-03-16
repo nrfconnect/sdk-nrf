@@ -293,6 +293,8 @@ Wi-Fi®
 * Added deprecated Wired Equivalent Privacy (WEP) support for backward compatibility with legacy networks.
   The support is enabled through the :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_WEP` Kconfig option and is not recommended for new deployments.
 
+* Updated by enabling PSA Crypto support by default for personal security modes.
+
 Applications
 ============
 
