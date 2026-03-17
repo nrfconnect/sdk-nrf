@@ -23,7 +23,7 @@ Internal memory only
 
           .. code-block:: console
 
-             west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal
+             west build -p -b nrf54lm20dk/nrf54lm20b/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal
 
     To build the |matter_type| for the same purpose in the ``release`` configuration:
 
@@ -39,6 +39,6 @@ Internal memory only
 
           .. code-block:: console
 
-             west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal -D<sample_name>_EXTRA_CONF_FILE=prj_release.conf
+             west build -p -b nrf54lm20dk/nrf54lm20b/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal -D<sample_name>_EXTRA_CONF_FILE=prj_release.conf
 
     In this case, the size of the MCUboot secondary partition used for storing the new application image is approximately 30-40% smaller than it would be when using a configuration with external flash memory support.

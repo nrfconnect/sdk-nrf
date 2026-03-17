@@ -11,6 +11,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
@@ -18,6 +19,7 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.thermostat.nrf7002eb2.debug:
     sysbuild: true
@@ -26,8 +28,10 @@ tests:
       - thermostat_SHIELD=nrf7002eb2
       - SB_CONFIG_WIFI_NRF70=y
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.thermostat.release:
     sysbuild: true
@@ -37,12 +41,14 @@ tests:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_PARTITION_MANAGER=y
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.thermostat.nrf7002eb2.release:
     sysbuild: true
@@ -54,6 +60,8 @@ tests:
       - thermostat_SHIELD=nrf7002eb2
       - SB_CONFIG_WIFI_NRF70=y
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp

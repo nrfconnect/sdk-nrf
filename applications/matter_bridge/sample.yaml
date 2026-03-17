@@ -16,10 +16,12 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.nrf7002eb2.release:
     sysbuild: true
@@ -31,8 +33,10 @@ tests:
       - matter_bridge_SHIELD=nrf7002eb2
       - SB_CONFIG_WIFI_NRF70=y
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.debug:
     sysbuild: true
@@ -43,10 +47,12 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.nrf7002eb2.debug:
     sysbuild: true
@@ -57,8 +63,10 @@ tests:
       - matter_bridge_SHIELD=nrf7002eb2
       - SB_CONFIG_WIFI_NRF70=y
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.br_ble:
     sysbuild: true
@@ -70,10 +78,12 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.nrf7002eb2.br_ble:
     sysbuild: true
@@ -85,8 +95,10 @@ tests:
       - matter_bridge_SHIELD=nrf7002eb2
       - SB_CONFIG_WIFI_NRF70=y
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.release.br_ble:
     sysbuild: true
@@ -99,10 +111,12 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.nrf7002eb2.release.br_ble:
     sysbuild: true
@@ -115,8 +129,10 @@ tests:
       - matter_bridge_SHIELD=nrf7002eb2
       - SB_CONFIG_WIFI_NRF70=y
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.br_ble.smp_dfu:
     sysbuild: true
@@ -128,9 +144,11 @@ tests:
       - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.nrf7002eb2.br_ble.smp_dfu:
     sysbuild: true
@@ -143,8 +161,10 @@ tests:
       - matter_bridge_SHIELD=nrf7002eb2
       - SB_CONFIG_WIFI_NRF70=y
     integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.nrf5340.wifi:
     sysbuild: true
@@ -171,9 +191,11 @@ tests:
       - CONFIG_BRIDGE_MIGRATE_VERSION_1=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.memory_profiling:
     sysbuild: true
