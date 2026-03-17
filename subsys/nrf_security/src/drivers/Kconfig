@@ -206,12 +206,14 @@ menu "AES key size configuration"
 
 config PSA_WANT_AES_KEY_SIZE_128
 	bool "AES 128 bits key"
+	default y
 
 config PSA_WANT_AES_KEY_SIZE_192
 	bool "AES 192 bits key"
 
 config PSA_WANT_AES_KEY_SIZE_256
 	bool "AES 256 bits key"
+	default y
 
 endmenu
 
