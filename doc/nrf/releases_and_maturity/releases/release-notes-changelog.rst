@@ -228,7 +228,11 @@ Gazell
 Matter
 ------
 
-* Updated the :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
+* Updated:
+
+  * The :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
+  * Decreased Matter OTA image transfer time by around 15%.
+
 * Deprecated the secure persistent storage backend enabled with the :option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option.
 
 Matter fork
