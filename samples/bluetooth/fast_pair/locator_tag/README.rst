@@ -101,6 +101,28 @@ On the Thingy:53, the built-in accelerometer is used to detect the motion.
 The motion detector is deactivated for the period set in the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD` Kconfig option after 10 sounds has been played or after the motion has been detected and 20 seconds have passed.
 The motion detector is also deactivated if the accessory reappears near its owner.
 
+.. _fast_pair_locator_tag_pf:
+
+Precision Finding
+-----------------
+
+In the provisioned state, if the :ref:`ug_bt_fast_pair_fhn_pf` is enabled, the Android device can initiate precise distance measurement with the locator tag using the :guilabel:`Find nearby` feature of the `Find Hub app`_.
+
+The sample uses Bluetooth Low Energy Channel Sounding (CS) as the ranging technology for the :ref:`ug_bt_fast_pair_fhn_pf`.
+When the Seeker initiates the Find nearby session, it negotiates the supported ranging technologies with the Provider and configures the Bluetooth Low Energy CS session.
+Once the Bluetooth Low Energy CS session is established, the `Find Hub app`_ displays the measured distance to the locator tag in the center of the Find nearby view.
+
+The application-level ranging module is enabled by the :ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>` Kconfig option, which is set to ``y`` by default on board targets that provide hardware support for Bluetooth Low Energy CS.
+The following board targets support the ranging module:
+
+* ``nrf54l15dk/nrf54l10/cpuapp``
+* ``nrf54l15dk/nrf54l15/cpuapp``
+* ``nrf54lm20dk/nrf54lm20a/cpuapp``
+
+.. note::
+   The :ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>` Kconfig option is explicitly disabled for CS-capable board targets with limited memory to avoid memory overflow.
+   Currently, the ``nrf54l15dk/nrf54l05/cpuapp`` board target is the only example of such a board target.
+
 FHN unprovisioning
 ==================
 
@@ -576,6 +598,13 @@ CONFIG_APP_DFU
    The sample application configuration option enables the Device Firmware Update (DFU) functionality.
    The value of this option is set based on the sysbuild configuration option :ref:`SB_CONFIG_APP_DFU <SB_CONFIG_APP_DFU>`.
 
+.. _CONFIG_APP_RANGING:
+
+CONFIG_APP_RANGING
+   The sample application configuration option enables the ranging module that demonstrates the :ref:`ug_bt_fast_pair_fhn_pf` with Bluetooth Low Energy Channel Sounding (CS) as the ranging technology.
+   This option is enabled by default on board targets that provide hardware support for Bluetooth Low Energy CS (the :kconfig:option:`HAS_HW_NRF_RADIO_CS` Kconfig option).
+   See the :ref:`fast_pair_locator_tag_pf` section for more details.
+
 The following Kconfig options are specific to the chosen hardware platform.
 
 .. tabs::
@@ -817,6 +846,10 @@ Testing
             :scale: 80 %
             :alt: Find nearby view of the `Find Hub app`_
 
+         .. note::
+            If the :ref:`ug_bt_fast_pair_fhn_pf` is enabled for the chosen board target and you use the Android test device with the Bluetooth Low Energy CS support, the Find nearby view may also display the estimated distance from the locator tag in meters.
+            See the :ref:`fast_pair_locator_tag_testing_pf` section for comprehensive testing steps of this feature.
+
       #. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
       #. Observe that **LED 1** is lit, which indicates that the ringing action is in progress.
       #. Stop the ringing action in one of the following ways:
@@ -841,6 +874,63 @@ Testing
       #. Observe that **LED 2** is off, which indicates that the device is no longer provisioned as an FHN beacon and the Fast Pair advertising is disabled.
       #. Observe that the Android does not display a notification about the detected Fast Pair Provider, as the locator tag device disables advertising after the unprovisioning operation.
       #. Press **Button 0** to request turning on the Fast Pair advertising in discoverable mode and to restart the FHN provisioning process.
+
+.. _fast_pair_locator_tag_testing_pf:
+
+Precision Finding
+-----------------
+
+Testing the :ref:`ug_bt_fast_pair_fhn_pf` requires a board target that supports Bluetooth Low Energy Channel Sounding.
+See the :ref:`fast_pair_locator_tag_pf` section for the list of supported board targets.
+Currently, only selected nRF54 Series DKs support Bluetooth Low Energy CS for this testing scenario.
+
+.. note::
+   The :ref:`ug_bt_fast_pair_fhn_pf` with Bluetooth Low Energy CS as the ranging technology requires an Android test device with hardware and software support for Bluetooth Low Energy Channel Sounding.
+
+   As of the beginning of the second quarter of 2026, Precision Finding support using Bluetooth Low Energy Channel Sounding as the ranging technology is not publicly available on Android platforms.
+   However, you can experiment with this configuration on Android test devices that provide hardware and software support for Bluetooth Low Energy Channel Sounding (for example, Google Pixel 10), provided that the following requirements are met:
+
+   * The target Android device must run Android QPR3 Beta 2 (January 2026) or a later release.
+   * `Google Play Services`_ must **not** be enrolled in its independent beta program.
+   * The primary email account on the Android test device must be registered on Google's allowlist for this feature.
+     To add a test email address to the allowlist, contact the Google team to request approval.
+
+To test this feature, complete the following steps:
+
+1. Go to the :ref:`fast_pair_locator_tag_testing` section and follow the instructions on performing the FHN provisioning operation.
+#. Observe that a Bluetooth bond was created during the Fast Pair procedure.
+   The following log message in the terminal confirms that the bonding was successful::
+
+      Ranging: pairing completed (bonded) with ...
+
+#. Observe that **LED 2** is lit, which indicates that the device is provisioned as an FHN beacon.
+#. Open the `Find Hub app`_ by tapping the :guilabel:`Open app` button.
+#. In your accessory view, tap the :guilabel:`Find nearby` button.
+#. Wait for the Bluetooth Low Energy CS ranging session to be established.
+   In the terminal, observe the log messages confirming that the ranging capability exchange and configuration have been completed.
+   The following key log messages indicate that the ranging session has been successfully configured and started::
+
+      Ranging: Ranging Configuration Response message to (...)
+               Ranging technologies configuration set successfully bitfield 0x0002:
+               (...) BLE CS=(X) (...)
+
+   Verify that the bitfield value includes the Bluetooth Low Energy CS bit (``0x0002``) to confirm that the Bluetooth Low Energy CS technology has been successfully configured and started.
+
+#. Observe in the Find nearby view that the grey shape shrinks when you move your Android device further away from your locator tag device.
+   The shape also grows when you move your Android device closer to the locator tag.
+   With Bluetooth Low Energy CS enabled, the `Find Hub app`_ additionally displays the estimated distance from the locator tag in meters in the center of the shape.
+   The distance updates as you adjust your position relative to the locator tag.
+   The distance value is not displayed when the locator tag is within approximately 1 meter range from the Android device.
+#. Hold your phone straight up and try moving around.
+   Observe that both the shape size and the displayed distance value change as you move closer to or further away from the locator tag.
+#. Exit the Find nearby view and return to the main accessory view.
+   In the terminal, observe the log messages confirming that the ranging session has been stopped::
+
+      Ranging: Stop Ranging Response message to (...)
+               Ranging technologies stopped successfully bitfield 0x0002:
+               (...) BLE CS=(X) (...)
+
+   Verify that the bitfield value includes the Bluetooth Low Energy CS bit (``0x0002``) to confirm that the Bluetooth Low Energy CS technology has been successfully stopped.
 
 .. _fast_pair_locator_tag_testing_clock_sync:
 
@@ -1358,6 +1448,16 @@ The sample uses the Bluetooth device name provider (:kconfig:option:`CONFIG_BT_A
 
 When the DFU functionality is enabled (:ref:`CONFIG_APP_DFU <CONFIG_APP_DFU>`), the sample uses the SMP GATT Service UUID provider.
 The SMP UUID is placed in the advertising data when Fast Pair advertising is in the discoverable mode, or in the scan response data when it is in the not discoverable mode.
+
+Precision Finding
+=================
+
+When you enable the :ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>` Kconfig option, the sample uses the following components for the :ref:`ug_bt_fast_pair_fhn_pf`:
+
+* :ref:`ug_bt_fast_pair_fhn_pf` API from the :ref:`bt_fast_pair_readme`
+* Bluetooth LE Channel Sounding (:kconfig:option:`CONFIG_BT_CHANNEL_SOUNDING`)
+* Bluetooth Ranging Service in the Ranging Responder (RRSP) role (:kconfig:option:`CONFIG_BT_RAS_RRSP`)
+* :ref:`zephyr:settings_api` for storing the local RPA used for Bluetooth pairing and bonding during the Fast Pair procedure.
 
 Device Firmware Update (DFU)
 ============================
