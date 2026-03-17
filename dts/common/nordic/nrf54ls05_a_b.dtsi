@@ -410,6 +410,7 @@
 				clocks = <&lfxo>, <&pclk>;
 				clock-names = "lfclock", "hfclock";
 				status = "disabled";
+				extended-channels = <0>;
 			};
 
 			tampc: tampc@e7000 {
