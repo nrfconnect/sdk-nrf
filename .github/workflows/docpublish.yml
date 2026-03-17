@@ -50,7 +50,7 @@ jobs:
             NCS_DOC_STORAGE_URL="${{ vars.NCS_DOC_STORAGE_URL }}"
           fi
 
-          azcopy cp $OUTDIR "$NCS_DOC_STORAGE_URL?$NCS_DOC_SAS" --recursive=true
+          azcopy cp ncs "$NCS_DOC_STORAGE_URL?$NCS_DOC_SAS" --recursive=true
 
       - name: Upload Zoomin documentation
         if: >
