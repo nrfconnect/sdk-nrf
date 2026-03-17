@@ -25,4 +25,7 @@ config NETCORE_IMAGE_NAME
 config NETCORE_IMAGE_PATH
 	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/peripheral/radio_test/" if NETCORE_PERIPHERAL_RADIO_TEST
 
+config PARTITION_MANAGER
+	default n if !BOARD_THINGY91X && !BOARD_THINGY91 && !BOARD_THINGY53
+
 source "share/sysbuild/Kconfig"
