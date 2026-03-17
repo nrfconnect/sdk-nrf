@@ -94,6 +94,9 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
 
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_CLOCK_NVM_UPDATE_TIME` - The option configures the time interval (in minutes) of periodic beacon clock writes to the non-volatile memory.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_CLOCK_NVM_UPDATE_RETRY_TIME` - The option configures the retry time (in seconds) when the beacon clock write to the non-volatile memory fails.
+
+  * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_PF` - The option enables the :ref:`ug_bt_fast_pair_fhn_pf` support in the FHN extension (see :ref:`ug_bt_fast_pair_prerequisite_ops_fhn_pf`).
+
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` - These options are used to select the Fast Pair use case and configure the Fast Pair library according to the `Fast Pair Device Feature Requirements`_ for the chosen use case.
   The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` Kconfig option is used by default.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER` - The option enables the :ref:`bt_fast_pair_adv_manager_readme` module.
@@ -229,6 +232,14 @@ API documentation
 
 .. doxygengroup:: bt_fast_pair
 
+Fast Pair UUID API
+==================
+
+| Header file: :file:`include/bluetooth/fast_pair/uuid.h`
+| Source files: :file:`subsys/bluetooth/fast_pair`
+
+.. doxygengroup:: bt_fast_pair_uuid
+
 FHN extension
 =============
 
@@ -237,10 +248,18 @@ FHN extension
 
 .. doxygengroup:: bt_fast_pair_fhn
 
-Fast Pair UUID API
-==================
+FHN Precision Finding
+=====================
 
-| Header file: :file:`include/bluetooth/fast_pair/uuid.h`
-| Source files: :file:`subsys/bluetooth/fast_pair`
+| Header file: :file:`include/bluetooth/fast_pair/fhn/pf/pf.h`
+| Source files: :file:`subsys/bluetooth/fast_pair/fhn/pf`
 
-.. doxygengroup:: bt_fast_pair_uuid
+.. doxygengroup:: bt_fast_pair_fhn_pf
+
+FHN Precision Finding for Bluetooth LE Channel Sounding
+=======================================================
+
+| Header file: :file:`include/bluetooth/fast_pair/fhn/pf/ble_cs.h`
+| Source files: :file:`subsys/bluetooth/fast_pair/fhn/pf`
+
+.. doxygengroup:: bt_fast_pair_fhn_pf_ble_cs
