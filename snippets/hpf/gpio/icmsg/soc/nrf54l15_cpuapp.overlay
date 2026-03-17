@@ -43,6 +43,7 @@
 };
 
 &cpuapp_rram {
+	/delete-node/ partitions;
 	reg = <0x0 DT_SIZE_K(1512)>;
 	ranges = <0x0 0x0 DT_SIZE_K(1512)>;
 	#address-cells = <1>;
@@ -86,3 +87,6 @@
 &hpf_gpio {
 	status = "okay";
 };
+
+#define WITH_FLPR_PARTITIONS
+#include <vendor/nordic/nrf54l15_cpuapp_partition.dtsi>

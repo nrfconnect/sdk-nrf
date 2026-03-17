@@ -58,6 +58,7 @@
 };
 
 &cpuapp_rram {
+	/delete-node/ partitions;
 	reg = <0x0 DT_SIZE_K(1509)>;
 	ranges = <0x0 0x0 DT_SIZE_K(1509)>;
 	#address-cells = <1>;
@@ -120,3 +121,6 @@
 	pinctrl-names = "default", "sleep";
 	status = "okay";
 };
+
+#define WITH_FLPR_PARTITIONS
+#include <vendor/nordic/nrf54l15_cpuapp_partition.dtsi>

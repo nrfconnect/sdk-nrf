@@ -58,6 +58,7 @@
 };
 
 &cpuapp_rram {
+	/delete-node/ partitions;
 	reg = <0x0 DT_SIZE_K(2020)>;
 };
 
@@ -86,3 +87,6 @@
 &hpf_gpio {
 	status = "okay";
 };
+
+#define WITH_FLPR_PARTITIONS
+#include <vendor/nordic/nrf54lm20a_cpuapp_partition.dtsi>

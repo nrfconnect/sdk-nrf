@@ -1,0 +1,17 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+identifier: nrf54lv10dk/nrf54lv10/cpuflpr/xip
+name: nRF54LV10-DK-nRF54LV10-Fast-Lightweight-Peripheral-Processor (RRAM XIP)
+type: mcu
+arch: riscv
+toolchain:
+  - zephyr
+sysbuild: true
+ram: 68
+flash: 96
+supported:
+  - counter
+  - gpio
+  - i2c
+  - spi

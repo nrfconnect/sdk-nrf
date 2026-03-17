@@ -1,19 +1,7 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor
+ * Copyright (c) 2026 Nordic Semiconductor
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-/ {
-	soc {
-		cpuflpr_sram_code_data: memory@2001fc00 {
-			compatible = "mmio-sram";
-			reg = <0x2001fc00 DT_SIZE_K(64)>;
-			#address-cells = <1>;
-			#size-cells = <1>;
-			ranges = <0x0 0x2001fc00 DT_SIZE_K(64)>;
-		};
-	};
-};
 
 &cpuapp_sram {
 	reg = <0x20000000 DT_SIZE_K(127)>;
@@ -44,8 +32,7 @@
 };
 
 &cpuflpr_vpr {
-	execution-memory = <&cpuflpr_sram_code_data>;
-	source-memory = <&cpuflpr_rram>;
+	execution-memory = <&cpuflpr_rram>;
 };
 
 &cpuapp_vevif_tx {
