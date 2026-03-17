@@ -365,7 +365,10 @@ tests:
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
       - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
+      - mcuboot_CONFIG_CRC=y
+      - mcuboot_CONFIG_NRF_MCUBOOT_BOOT_REQUEST=y
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
+      - CONFIG_NRF_MCUBOOT_BOOT_REQUEST=y
       - SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF=y
       - SB_CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION=y
     platform_allow:
@@ -393,7 +396,7 @@ tests:
   sample.dfu.smp_svr.bt.nrf54h20dk.direct_xip_withrevert.ironside_se_conf:
     sysbuild: true
     extra_args:
-      - FILE_SUFFIX="merged_slot"
+      - FILE_SUFFIX="requests"
       - EXTRA_CONF_FILE="overlay-bt.conf"
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
