@@ -1,0 +1,12 @@
+tests:
+  nrf.extended.drivers.pwm.pwm_api:
+    tags:
+      - drivers
+      - pwm
+      - ci_tests_zephyr_drivers_pwm
+    filter: dt_alias_exists("pwm-test")
+    depends_on: pwm
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
