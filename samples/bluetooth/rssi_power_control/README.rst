@@ -56,7 +56,7 @@ To adapt this sample for dual-core SoCs:
 
   .. code-block:: c
 
-     struct net_buf *buf = bt_hci_cmd_create(...);
+     struct net_buf *buf = bt_hci_cmd_alloc(...);
      bt_hci_cmd_send_sync(...);
 
 Refer to the :zephyr:code-sample:`bluetooth_hci_pwr_ctrl` sample or Nordic DevZone for reference implementations.

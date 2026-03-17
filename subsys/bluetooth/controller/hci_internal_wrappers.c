@@ -29,7 +29,7 @@
 #if defined(CONFIG_BT_HCI_HOST) && (BT_BUF_ACL_RX_COUNT > 0)
 /*
  * When `CONFIG_BT_HCI_HOST`, `CONFIG_BT_BUF_CMD_TX_COUNT` controls the capacity of
- * `bt_hci_cmd_create`. Which is used for all BT HCI Commands, and can be called concurrently from
+ * `bt_hci_cmd_alloc`, which is used for all BT HCI Commands, and can be called concurrently from
  * many different application contexts, initiating various processes.
  *
  * Currently `bt_hci_cmd_alloc` is generally `K_FOREVER`, as such this build assert only guarantees
