@@ -34,6 +34,7 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 #define NRF_WIFI_MAGIC_NUM_RAWTX	0x12345678
 
 int raw_socket_fd;
+int rx_raw_socket_fd;
 
 #define RECV_BUFFER_SIZE    1024
 #define RAW_PKT_DATA_OFFSET 6
@@ -182,13 +183,13 @@ static int wifi_set_channel(void)
 	return 0;
 }
 
-static int setup_raw_pkt_socket(struct sockaddr_ll *sa)
+static int setup_raw_pkt_socket(struct sockaddr_ll *sa, int *sockfd)
 {
 	struct net_if *iface = NULL;
 	int ret;
 
-	raw_socket_fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-	if (raw_socket_fd < 0) {
+	*sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+	if (*sockfd < 0) {
 		LOG_ERR("Unable to create a socket %d", errno);
 		return -1;
 	}
@@ -202,8 +203,7 @@ static int setup_raw_pkt_socket(struct sockaddr_ll *sa)
 	sa->sll_family = AF_PACKET;
 	sa->sll_ifindex = net_if_get_by_iface(iface);
 
-	/* Bind the socket */
-	ret = bind(raw_socket_fd, (struct sockaddr *)sa, sizeof(struct sockaddr_ll));
+	ret = bind(*sockfd, (struct sockaddr *)sa, sizeof(struct sockaddr_ll));
 	if (ret < 0) {
 		LOG_ERR("Error: Unable to bind socket to the network interface:%s",
 			strerror(errno));
@@ -283,7 +283,7 @@ static int process_single_rx_packet(struct packet_data *packet)
 {
 	int received;
 
-	received = recv(raw_socket_fd, packet->recv_buffer, sizeof(packet->recv_buffer), 0);
+	received = recv(rx_raw_socket_fd, packet->recv_buffer, sizeof(packet->recv_buffer), 0);
 	if (received <= 0) {
 		if (errno == EAGAIN) {
 			return 0;
@@ -309,7 +309,7 @@ static void rx_thread_oneshot(void)
 
 	LOG_INF("Wi-Fi monitor mode RX thread started");
 
-	ret = setsockopt(raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
+	ret = setsockopt(rx_raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
 			 sizeof(timeo_optval));
 	if (ret < 0) {
 		LOG_ERR("Failed to set socket options : %s", strerror(errno));
@@ -339,7 +339,7 @@ static void rx_thread_n_packets(void *p1, void *p2, void *p3)
 
 	g_rx_packets_received = 0;
 
-	ret = setsockopt(raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
+	ret = setsockopt(rx_raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
 			 sizeof(timeo_optval));
 	if (ret < 0) {
 		LOG_ERR("Failed to set socket options: %s", strerror(errno));
@@ -389,9 +389,11 @@ ZTEST(nrf_wifi, test_single_raw_tx_rx)
 	} else {
 		LOG_INF("Packet filter set with buffer size %d", filter_info.buffer_size);
 	}
-	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt transmission failed");
+	zassert_false(setup_raw_pkt_socket(&sa, &raw_socket_fd),
+		      "Setting TX socket failed");
+	zassert_false(setup_raw_pkt_socket(&sa, &rx_raw_socket_fd),
+		      "Setting RX socket failed");
 	k_thread_start(receiver_thread_id);
-	/* TODO: Wait for interface to be operationally UP */
 	k_sleep(K_MSEC(50));
 	zassert_false(wifi_send_raw_tx_packets(1), "Failed to send raw tx packets");
 	ret = k_thread_join(receiver_thread_id, K_SECONDS(THREAD_JOIN_TIMEOUT_SEC));
@@ -400,6 +402,7 @@ ZTEST(nrf_wifi, test_single_raw_tx_rx)
 			  sizeof(test_beacon_frame), "Mismatch in sent and received data");
 
 	close(raw_socket_fd);
+	close(rx_raw_socket_fd);
 }
 
 ZTEST(nrf_wifi, test_tx_only)
@@ -426,7 +429,8 @@ ZTEST(nrf_wifi, test_tx_only)
 	ret = net_mgmt(NET_REQUEST_WIFI_PACKET_FILTER, iface, &filter_info, sizeof(filter_info));
 	zassert_equal(ret, 0, "Packet filter setting failed %d", ret);
 
-	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt transmission failed");
+	zassert_false(setup_raw_pkt_socket(&sa, &raw_socket_fd),
+		      "Setting TX socket failed");
 
 	k_sleep(K_MSEC(50));
 
@@ -460,7 +464,8 @@ ZTEST(nrf_wifi, test_rx_only)
 	ret = net_mgmt(NET_REQUEST_WIFI_PACKET_FILTER, iface, &filter_info, sizeof(filter_info));
 	zassert_equal(ret, 0, "Packet filter setting failed %d", ret);
 
-	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt receive failed");
+	zassert_false(setup_raw_pkt_socket(&sa, &rx_raw_socket_fd),
+		      "Setting RX socket failed");
 
 	rx_n_tid = k_thread_create(&rx_n_thread, rx_n_stack, K_THREAD_STACK_SIZEOF(rx_n_stack),
 				   rx_thread_n_packets, NULL, NULL, NULL,
@@ -474,7 +479,7 @@ ZTEST(nrf_wifi, test_rx_only)
 	zassert_true(g_rx_packets_received >= n,
 		     "RX-only: expected at least %u packets, got %u", n, g_rx_packets_received);
 
-	close(raw_socket_fd);
+	close(rx_raw_socket_fd);
 }
 
 ZTEST_SUITE(nrf_wifi, NULL, NULL, NULL, NULL, NULL);
