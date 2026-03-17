@@ -42,6 +42,7 @@ jobs:
         working-directory: docs
         env:
           AZCOPY_CONCURRENCY_VALUE: 1024
+          NCS_DOC_SAS: ${{ secrets.NCS_DOC_SAS }}
         run: |
           if [[ "${{ github.event.workflow_run.event }}" == "pull_request" ]]; then
             NCS_DOC_STORAGE_URL="${{ vars.NCS_DOC_PR_STORAGE_URL }}"
@@ -49,7 +50,7 @@ jobs:
             NCS_DOC_STORAGE_URL="${{ vars.NCS_DOC_STORAGE_URL }}"
           fi
 
-          azcopy cp $OUTDIR "$NCS_DOC_STORAGE_URL?${{ secrets.NCS_DOC_SAS}}" --recursive=true
+          azcopy cp $OUTDIR "$NCS_DOC_STORAGE_URL?$NCS_DOC_SAS" --recursive=true
 
       - name: Upload Zoomin documentation
         if: >
