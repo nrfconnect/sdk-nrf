@@ -24,7 +24,8 @@ jobs:
       - name: Unzip html archive
         working-directory: docs
         run: |
-          OUTDIR=$(awk 'NR==1 { if ($3 ~ /^(latest|PR-[0-9]+|[0-9]+\.[0-9a-zA-Z\.\-]+)$/) print $3 }' monitor_*.txt)
+          OUTDIR=ncs/$(awk 'NR==1 { if ($3 ~ /^(latest|PR-[0-9]+|[0-9]+\.[0-9a-zA-Z\.\-]+)$/) print $3 }' monitor_*.txt)
+          mkdir -p "$OUTDIR"
           echo "OUTDIR=$OUTDIR" >> "$GITHUB_ENV"
           unzip legacy-ncs*.zip -d $OUTDIR
           find "$OUTDIR" -type l -delete
@@ -42,7 +43,13 @@ jobs:
         env:
           AZCOPY_CONCURRENCY_VALUE: 1024
         run: |
-         azcopy cp $OUTDIR "${{ vars.NCS_DOC_STORAGE_URL }}?${{ secrets.NCS_DOC_SAS}}" --recursive=true
+          if [[ "${{ github.event.workflow_run.event }}" == "pull_request" ]]; then
+            NCS_DOC_STORAGE_URL="${{ vars.NCS_DOC_PR_STORAGE_URL }}"
+          else
+            NCS_DOC_STORAGE_URL="${{ vars.NCS_DOC_STORAGE_URL }}"
+          fi
+
+          azcopy cp $OUTDIR "$NCS_DOC_STORAGE_URL?${{ secrets.NCS_DOC_SAS}}" --recursive=true
 
       - name: Upload Zoomin documentation
         if: >
