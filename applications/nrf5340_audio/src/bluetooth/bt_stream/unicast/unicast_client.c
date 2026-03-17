@@ -1957,7 +1957,10 @@ int unicast_client_stop(uint8_t cig_index)
 	}
 
 	ret = bt_cap_initiator_unicast_audio_stop(&param);
-	if (ret) {
+	if (ret == -EALREADY) {
+		LOG_DBG("Already stopped");
+		k_sem_give(&sem_cap_procedure_proceed);
+	} else if (ret) {
 		LOG_ERR("Failed to stop unicast audio: %d", ret);
 		k_sem_give(&sem_cap_procedure_proceed);
 		return ret;
