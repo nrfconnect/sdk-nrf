@@ -21,15 +21,15 @@ Building the Matter over Wi-Fi variant on nRF54LM20 DK with nRF7002-EB II shield
 
          Use one of the following options:
 
-         * west with the following command:
+         * west with the following command (``nrf54lm20a`` SoC variant is also supported):
 
          .. code-block:: console
 
-            west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y
+            west build -p -b nrf54lm20dk/nrf54lm20b/cpuapp -- -DSHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y
 
          * CMake with the following command:
 
          .. code-block:: console
 
-            cmake -GNinja -Bbuild -DBOARD=nrf54lm20dk/nrf54lm20a/cpuapp -DSHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -DAPP_DIR=*app_path* *path_to_zephyr*/share/sysbuild
+            cmake -GNinja -Bbuild -DBOARD=nrf54lm20dk/nrf54lm20b/cpuapp -DSHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -DAPP_DIR=*app_path* *path_to_zephyr*/share/sysbuild
             ninja -C build

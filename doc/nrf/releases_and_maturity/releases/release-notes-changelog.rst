@@ -239,6 +239,7 @@ Gazell
 Matter
 ------
 
+* Added support for nRF54LM20B SoC in Matter samples and applications.
 * Updated:
 
   * The :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
@@ -264,6 +265,7 @@ Thread
   * A warning when using precompiled OpenThread libraries with modified Kconfig options related to the OpenThread stack.
   * The otperf tool that is compatible with zperf and iperf for measuring throughput of thread transmissions.
     For more details, see :ref:`ug_otperf_tool`.
+  * Support for nRF54LM20B SoC in Thread samples.
 
 Wi-Fi®
 ------
@@ -289,6 +291,7 @@ IPC radio firmware
 Matter bridge
 -------------
 
+* Added support for nRF54LM20B SoC.
 * Updated partitions mapping for the nRF7002 DK in the application.
   See the :ref:`migration guide <migration_3.3_required>` for more information.
 * Removed the ``onoff_plug`` snippet from the application.
