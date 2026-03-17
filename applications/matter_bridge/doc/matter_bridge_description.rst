@@ -1,7 +1,7 @@
 .. |matter_name| replace:: Matter bridge
 .. |matter_type| replace:: application
-.. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
-.. |matter_dks_wifi| replace:: ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target with the ``nrf7002eb2`` shield attached
+.. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
+.. |matter_dks_wifi| replace:: ``nrf54lm20dk/nrf54lm20b/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets with the ``nrf7002eb2`` shield attached
 .. |matter_dks_internal| replace:: nRF54LM20 DK
 .. |sample path| replace:: :file:`applications/matter_bridge`
 .. |matter_qr_code_payload| replace:: MT:Y.K9042C00KA0648G00
@@ -553,7 +553,7 @@ Configuring the number of Bluetooth LE bridged devices
                      .. parsed-literal::
                         :class: highlight
 
-                        west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dmatter_bridge_SHIELD=nrf7002eb2 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
+                        west build -b nrf54lm20dk/nrf54lm20b/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dmatter_bridge_SHIELD=nrf7002eb2 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
 
             .. group-tab:: Matter bridge over Thread
 
@@ -574,7 +574,7 @@ Configuring the number of Bluetooth LE bridged devices
                      .. parsed-literal::
                         :class: highlight
 
-                        west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
+                        west build -b nrf54lm20dk/nrf54lm20b/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
 
 Configuring Bluetooth LE connection and scan parameters
 -------------------------------------------------------
