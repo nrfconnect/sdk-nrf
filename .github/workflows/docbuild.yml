@@ -235,7 +235,7 @@ jobs:
         working-directory: ncs/nrf
         run: |
           COMMENT="comment.txt"
-          PREFIX="https://ncsdoc.z6.web.core.windows.net/PR-${{ github.event.pull_request.number }}/"
+          PREFIX="https://ncsbmdoc.z6.web.core.windows.net/ncs/PR-${{ github.event.pull_request.number }}/"
           CHANGED=$(git diff --name-only --diff-filter=d "${{ github.event.pull_request.base.sha }}..HEAD")
 
           echo "You can find the documentation preview for this PR [here](${PREFIX})." >> $COMMENT
