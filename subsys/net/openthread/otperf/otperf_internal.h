@@ -29,6 +29,8 @@ struct otperf_udp_datagram {
 	uint32_t id2;
 } __packed;
 
+#define OTPERF_MIN_FUNCTIONAL_PACKET_SIZE (sizeof(struct otperf_udp_datagram))
+
 struct otperf_client_hdr_v1 {
 	int32_t flags;
 	int32_t num_of_threads;

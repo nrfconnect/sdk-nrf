@@ -9,6 +9,7 @@ LOG_MODULE_REGISTER(otperf, CONFIG_OTPERF_LOG_LEVEL);
 
 #include <zephyr/toolchain.h>
 
+#include <errno.h>
 #include <string.h>
 
 #include <openthread/udp.h>
@@ -114,7 +115,9 @@ static void otperf_upload_fin(otUdpSocket *sock, uint32_t nb_packets, uint64_t e
 		messageInfo.mPeerAddr = sock_address->mAddress;
 		messageInfo.mPeerPort = sock_address->mPort;
 
+		openthread_mutex_lock();
 		ret = otUdpSend(instance, sock, message, &messageInfo);
+		openthread_mutex_unlock();
 
 		if (ret != OT_ERROR_NONE) {
 			LOG_ERR("Unable to send statistics message via udp");
@@ -161,16 +164,15 @@ static void ot_uploader_udp_receive_cb(void *aContext, otMessage *aMessage,
 static int udp_upload(otUdpSocket *sock, const struct otperf_upload_params *param,
 		      struct otperf_results *results, struct otperf_extra_results *extra_results)
 {
-	size_t header_size =
-		sizeof(struct otperf_udp_datagram) + sizeof(struct otperf_client_hdr_v1);
 	uint32_t duration_in_ms = param->duration_ms;
 	uint32_t packet_size = param->packet_size;
 	uint32_t rate_in_kbps = param->rate_kbps;
 	uint32_t packet_duration_us = otperf_packet_duration(packet_size, rate_in_kbps);
-	uint32_t packet_duration_ticks = k_us_to_ticks_ceil32(packet_duration_us);
 	uint32_t nb_packets = 0U;
 	uint32_t nb_packets_transmitted = 0U;
+	uint32_t nb_packets_to_sent = (1000 * duration_in_ms) / packet_duration_us;
 	uint64_t usecs64;
+	uint64_t start_us;
 	int64_t start_time, end_time;
 	otInstance *instance = openthread_get_default_instance();
 	otMessage *message;
@@ -180,36 +182,30 @@ static int udp_upload(otUdpSocket *sock, const struct otperf_upload_params *para
 	curr_results = results;
 
 	if (packet_size > CONFIG_OTPERF_MAX_PACKET_SIZE) {
-		LOG_ERR("Packet size too large! max size: %u", CONFIG_OTPERF_MAX_PACKET_SIZE);
-		packet_size = CONFIG_OTPERF_MAX_PACKET_SIZE;
-	} else if (packet_size < sizeof(struct otperf_udp_datagram)) {
-		LOG_ERR("Packet size set to the min size: %zu", header_size);
-		packet_size = header_size;
+		return -E2BIG;
+	}
+	if (packet_size < OTPERF_MIN_FUNCTIONAL_PACKET_SIZE) {
+		return -EINVAL;
 	}
 
 	/* Start the loop */
 	start_time = k_uptime_ticks();
-	end_time = start_time + k_ms_to_ticks_ceil64(duration_in_ms);
-
-	int64_t next_scheduled_tick = start_time;
+	start_us = k_ticks_to_us_floor64(start_time);
 
 	/* Default data payload */
 	(void)memset(sample_packet, 'n', sizeof(sample_packet));
 
-	while (next_scheduled_tick < end_time) {
+	while (nb_packets < nb_packets_to_sent) {
 		struct otperf_udp_datagram *datagram;
 		struct otperf_client_hdr_v1 *hdr;
 		uint32_t secs, usecs;
+		uint64_t next_scheduled_us = start_us + (uint64_t)nb_packets * packet_duration_us;
+		uint64_t current_us = k_ticks_to_us_floor64(k_uptime_ticks());
 		int64_t current_loop_time;
 
-		int64_t ticks_to_wait = next_scheduled_tick - k_uptime_ticks();
-
-		if (ticks_to_wait > 0) {
-			k_sleep(K_TICKS(ticks_to_wait));
+		if (next_scheduled_us > current_us) {
+			k_usleep(next_scheduled_us - current_us);
 		}
-
-		next_scheduled_tick += packet_duration_ticks;
-
 		/* Timestamp */
 		current_loop_time = k_uptime_ticks();
 
@@ -237,6 +233,10 @@ static int udp_upload(otUdpSocket *sock, const struct otperf_upload_params *para
 		message = otUdpNewMessage(instance, NULL);
 		if (message == NULL) {
 			/* Most likely the baudrate is to high for the radio to keep up */
+			/* Make sure the last packet is transmitted */
+			if (nb_packets == nb_packets_to_sent) {
+				nb_packets--;
+			}
 			continue;
 		}
 
@@ -244,6 +244,10 @@ static int udp_upload(otUdpSocket *sock, const struct otperf_upload_params *para
 		if (error != OT_ERROR_NONE) {
 			/* Most likely the baudrate is to high for the radio to keep up */
 			otMessageFree(message);
+			/* Make sure the last packet is transmitted */
+			if (nb_packets == nb_packets_to_sent) {
+				nb_packets--;
+			}
 			continue;
 		}
 
@@ -251,7 +255,9 @@ static int udp_upload(otUdpSocket *sock, const struct otperf_upload_params *para
 		messageInfo.mPeerAddr = param->peer_addr.mAddress;
 		messageInfo.mPeerPort = param->peer_addr.mPort;
 
+		openthread_mutex_lock();
 		error = otUdpSend(instance, sock, message, &messageInfo);
+		openthread_mutex_unlock();
 
 		if (error != OT_ERROR_NONE) {
 			LOG_ERR("Unable to send statistics message via udp");
@@ -264,13 +270,13 @@ static int udp_upload(otUdpSocket *sock, const struct otperf_upload_params *para
 	end_time = k_uptime_ticks();
 	usecs64 = param->unix_offset_us + k_ticks_to_us_floor64(end_time - start_time);
 
-	otperf_upload_fin(sock, nb_packets, usecs64, packet_size, &param->peer_addr);
-
 	/* Add result coming from the client */
 	results->nb_packets_sent = nb_packets;
 	results->client_time_in_us = k_ticks_to_us_ceil64(end_time - start_time);
 	results->packet_size = packet_size;
 	extra_results->nb_packets_skipped = nb_packets - nb_packets_transmitted;
+
+	otperf_upload_fin(sock, nb_packets, usecs64, packet_size, &param->peer_addr);
 
 	return 0;
 }
@@ -287,7 +293,10 @@ int otperf_udp_upload(const struct otperf_upload_params *param, struct otperf_re
 		return -EINVAL;
 	}
 
+	openthread_mutex_lock();
 	ret = otUdpOpen(instance, &sock, ot_uploader_udp_receive_cb, &udp_response_semaphore);
+	openthread_mutex_unlock();
+
 	if (ret != OT_ERROR_NONE) {
 		LOG_ERR("Failed to open UDP socket: %d", ret);
 		return -EIO;
@@ -295,7 +304,9 @@ int otperf_udp_upload(const struct otperf_upload_params *param, struct otperf_re
 
 	ret = udp_upload(&sock, param, result, extra_results);
 
+	openthread_mutex_lock();
 	otUdpClose(instance, &sock);
+	openthread_mutex_unlock();
 
 	return ret;
 }

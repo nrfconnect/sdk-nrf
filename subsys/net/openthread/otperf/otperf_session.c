@@ -50,13 +50,14 @@ void otperf_reset_session_stats(struct session *session)
 	}
 
 	session->counter = 0U;
-	session->start_time = 0U;
-	session->next_id = 1U;
+	session->start_time = 0;
+	session->next_id = 0U;
 	session->length = 0U;
 	session->outorder = 0U;
 	session->error = 0U;
 	session->jitter = 0;
 	session->last_transit_time = 0;
+	session->last_received_time = 0;
 }
 
 void otperf_session_reset(void)
