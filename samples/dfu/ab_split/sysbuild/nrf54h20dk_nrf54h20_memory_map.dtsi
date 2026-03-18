@@ -15,10 +15,12 @@
 &mram1x {
 	partitions {
 		boot_request: partition@1ad000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1ad000 16>;
 		};
 
 		boot_request_backup: partition@1ad010 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1ad010 16>;
 		};
 	};

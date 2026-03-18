@@ -22,23 +22,26 @@
 
 	/* Redefine the "partitions" DTS node. */
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
 
 		cpuapp_boot_partition: boot_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x30000 0x10000>;
 		};
 
 		/* Image 0, slot 0 (primary slot) - Application code for cpuapp core. */
 		slot0_partition: cpuapp_slot0_partition: partition@40000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x40000 DT_SIZE_K(326)>;
 		};
 
 		/* Image 2, slot 0 (primary slot) - radio loader code for cpurad core. */
 		slot4_partition: cpurad_slot0_partition: cpurad_loader_partition: partition@92000 {
+			compatible = "zephyr,mapped-partition";
 			label = "cpurad_loader_partition";
 			reg = <0x92000 DT_SIZE_K(16)>;
 			/* size: radio loader + 2KB trailer MCUboot
@@ -50,27 +53,32 @@
 		 * in MRAM that will be loaded to TCM by radio loader for cpurad core.
 		 */
 		slot2_partition: cpurad_slot2_partition: cpurad_loaded_fw: partition@96000 {
+			compatible = "zephyr,mapped-partition";
 			label = "cpurad_loaded_fw";
 			reg = <0x96000 DT_SIZE_K(192)>;
 			/* size: application + 192B for s2ram + 2KB trailer MCUboot */
 		};
 
 		cpuppr_code_partition: partition@e4000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0xe4000 DT_SIZE_K(64)>;
 		};
 
 		cpuflpr_code_partition: partition@f4000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0xf4000 DT_SIZE_K(48)>;
 		};
 
 		/* Image 0, slot 1 (secondary slot) - Application code for cpuapp core. */
 		slot1_partition: cpuapp_slot1_partition: partition@100000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x100000 DT_SIZE_K(326)>;
 		};
 
 		/* Image 2, slot 1 (secondary slot) - radio loader code for cpurad core. */
 		slot5_partition: cpurad_slot1_partition: cpurad_loader_partition_slot1:
 		partition@152000 {
+			compatible = "zephyr,mapped-partition";
 			label = "cpurad_loader_partition_slot1";
 			reg = <0x152000 DT_SIZE_K(16)>;
 			/* size: radio loader + 2KB trailer MCUboot
@@ -82,24 +90,29 @@
 		 * in MRAM that will be loaded to TCM by radio loader for cpurad core.
 		 */
 		slot3_partition: cpurad_slot3_partition: cpurad_loaded_fw_slot1: partition@156000 {
+			compatible = "zephyr,mapped-partition";
 			label = "cpurad_loaded_fw_slot1";
 			reg = <0x156000 DT_SIZE_K(192)>;
 			/* size: application + 192B for s2ram + 2KB trailer MCUboot */
 		};
 
 		storage_partition: partition@1a4000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1a4000 DT_SIZE_K(40)>;
 		};
 
 		periphconf_partition: partition@1ae000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1ae000 DT_SIZE_K(8)>;
 		};
 
 		secondary_partition: partition@1b0000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1b0000 DT_SIZE_K(64)>;
 		};
 
 		secondary_periphconf_partition: partition@1c0000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1c0000 DT_SIZE_K(8)>;
 		};
 
@@ -109,25 +122,29 @@
 		 * there is no more space after secure_storage_partition.
 		 */
 		secure_storage_partition: partition@1fd000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1fd000 DT_SIZE_K(12)>;
 			ranges = <0x0 0x1fd000 0x3000>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
 			cpuapp_crypto_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x0 DT_SIZE_K(4)>;
 			};
 
 			cpurad_crypto_partition: partition@1000 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x1000 DT_SIZE_K(4)>;
 			};
 
 			cpuapp_its_partition: partition@2000 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x2000 DT_SIZE_K(2)>;
 			};
 
 			cpurad_its_partition: partition@2800 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x2800 DT_SIZE_K(2)>;
 			};
 		};

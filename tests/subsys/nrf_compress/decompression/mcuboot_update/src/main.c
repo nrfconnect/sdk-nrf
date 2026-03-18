@@ -25,9 +25,9 @@ LOG_MODULE_REGISTER(mcuboot_update, LOG_LEVEL_DBG);
 #endif
 #else
 #if CONFIG_UPDATE_IMAGE_NUMBER == 0
-#define UPDATE_SLOT_ID DT_FIXED_PARTITION_ID(DT_NODELABEL(slot1_partition))
+#define UPDATE_SLOT_ID DT_PARTITION_ID(DT_NODELABEL(slot1_partition))
 #else
-#define UPDATE_SLOT_ID DT_FIXED_PARTITION_ID(DT_NODELABEL(slot3_partition))
+#define UPDATE_SLOT_ID DT_PARTITION_ID(DT_NODELABEL(slot3_partition))
 #endif
 #endif
 

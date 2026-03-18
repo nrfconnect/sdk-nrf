@@ -12,21 +12,25 @@
 &flash0 {
 	partitions {
 		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00000000 0x000f0000>;
 		};
 
 		storage_partition: partition@f0000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x000f0000 0x00008000>;
 		};
 
 		emds_partition_0: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
 			label = "emds-0";
 			reg = <0x000f8000 0x00004000>;
 		};
 
 		emds_partition_1: partition@fc000 {
+			compatible = "zephyr,mapped-partition";
 			label = "emds-1";
 			reg = <0x000fc000 0x00004000>;
 		};

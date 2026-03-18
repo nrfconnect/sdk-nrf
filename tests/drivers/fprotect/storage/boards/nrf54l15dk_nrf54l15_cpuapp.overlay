@@ -16,16 +16,18 @@
 		reg = <0x0 0x17d000>;
 
 		partitions {
-			compatible = "fixed-partitions";
+			ranges;
 			#address-cells = <0x1>;
 			#size-cells = <0x1>;
 
 			slot0_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0";
 				reg = <0x0 0xd800>;
 			};
 
 			storage_partition: partition@175000 {
+				compatible = "zephyr,mapped-partition";
 				label = "storage";
 				reg = <0x175000 0x8000>;
 			};

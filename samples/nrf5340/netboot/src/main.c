@@ -32,13 +32,13 @@
 BUILD_ASSERT((B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE) == 0,
 	"B0N_SIZE % CONFIG_FPROTECT_BLOCK_SIZE was not 0. Check the B0_SIZE Kconfig.");
 #else
-#define B0N_ADDRESS FIXED_PARTITION_ADDRESS(b0n_partition)
-#define B0N_SIZE (FIXED_PARTITION_SIZE(b0n_partition) + FIXED_PARTITION_SIZE(provision_partition))
-#define S0_ADDRESS FIXED_PARTITION_ADDRESS(s0_partition)
-#define S0_SIZE FIXED_PARTITION_SIZE(s0_partition)
+#define B0N_ADDRESS PARTITION_ADDRESS(b0n_partition)
+#define B0N_SIZE (PARTITION_SIZE(b0n_partition) + PARTITION_SIZE(provision_partition))
+#define S0_ADDRESS PARTITION_ADDRESS(s0_partition)
+#define S0_SIZE PARTITION_SIZE(s0_partition)
 
-BUILD_ASSERT(FIXED_PARTITION_ADDRESS(provision_partition) ==
-	     (FIXED_PARTITION_ADDRESS(b0n_partition) + FIXED_PARTITION_SIZE(b0n_partition)),
+BUILD_ASSERT(PARTITION_ADDRESS(provision_partition) ==
+	     (PARTITION_ADDRESS(b0n_partition) + PARTITION_SIZE(b0n_partition)),
 	     "`provision` partition must be directly after `b0n` partition.");
 
 /* The flash is locked at flash page granularity */

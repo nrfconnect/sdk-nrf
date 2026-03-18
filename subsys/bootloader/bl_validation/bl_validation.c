@@ -164,11 +164,11 @@ bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 #else /* USE_PARTITION_MANAGER */
 /* DTS Partitions */
 #include <zephyr/storage/flash_map.h>
-#define S0_SIZE		FIXED_PARTITION_SIZE(s0_partition)
+#define S0_SIZE		PARTITION_SIZE(s0_partition)
 
 #if !defined(CONFIG_SOC_NRF5340_CPUNET)
 /* Same as described for PM, above, except that this time we use DTS partition labels */
-#define	S1_SIZE		FIXED_PARTITION_SIZE(s1_partition)
+#define	S1_SIZE		PARTITION_SIZE(s1_partition)
 #endif
 #endif
 

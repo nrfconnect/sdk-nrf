@@ -15,16 +15,19 @@
 
 	partitions {
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(88)>;
 		};
 
 		slot0_partition: partition@16000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x16000 DT_SIZE_K(1912)>;
 		};
 
 		storage_partition: partition@1f4000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x1f4000 DT_SIZE_K(36)>;
 		};

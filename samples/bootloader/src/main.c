@@ -66,8 +66,8 @@
 static const uint32_t b0_offset = PM_B0_ADDRESS;
 static const uint32_t b0_size = PM_B0_SIZE;
 #else
-static const uint32_t b0_offset = FIXED_PARTITION_OFFSET(b0_partition);
-static const uint32_t b0_size = FIXED_PARTITION_SIZE(b0_partition);
+static const uint32_t b0_offset = PARTITION_OFFSET(b0_partition);
+static const uint32_t b0_size = PARTITION_SIZE(b0_partition);
 #endif
 #endif
 
@@ -83,7 +83,7 @@ static const uint32_t b0_size = FIXED_PARTITION_SIZE(b0_partition);
 #if USE_PARTITION_MANAGER
 static const uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_FLAG_OFFSET;
 #else
-static const uint32_t huk_flag_addr = FIXED_PARTITION_ADDRESS(hw_unique_key_partition);
+static const uint32_t huk_flag_addr = PARTITION_ADDRESS(hw_unique_key_partition);
 #endif
 
 

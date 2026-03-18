@@ -8,16 +8,19 @@
 
 	partitions {
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x000000000 0x00014000>;
 		};
 
 		slot0_partition: partition@14000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x000014000 0x000e0000>;
 		};
 
 		storage_partition: partition@f4000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0xf4000 0x9000>;
 		};

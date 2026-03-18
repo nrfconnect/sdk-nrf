@@ -136,7 +136,7 @@ static void do_key_test(void)
 			zassert_equal(0, err, "unexpected error: %d\n", err);
 			zassert_mem_equal(expected_key, out_key, sizeof(expected_key), NULL);
 
-#if defined(PM_HW_UNIQUE_KEY_PARTITION_ADDRESS) || FIXED_PARTITION_EXISTS(hw_unique_key_partition)
+#if defined(PM_HW_UNIQUE_KEY_PARTITION_ADDRESS) || PARTITION_EXISTS(hw_unique_key_partition)
 			state = STATE_TEST_INVALID;
 			expected_fatal++;
 #ifdef CONFIG_PARTITION_MANAGER_ENABLED
@@ -144,7 +144,7 @@ static void do_key_test(void)
 			zassert_equal(0, *(uint32_t *)PM_HW_UNIQUE_KEY_PARTITION_ADDRESS, NULL);
 #else
 			/* The following causes an exception */
-			zassert_equal(0, *(uint32_t *)FIXED_PARTITION_ADDRESS(
+			zassert_equal(0, *(uint32_t *)PARTITION_ADDRESS(
 								hw_unique_key_partition), NULL);
 #endif
 #else

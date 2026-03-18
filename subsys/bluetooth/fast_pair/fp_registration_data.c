@@ -22,9 +22,9 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #define FP_PARTITION_ID		PM_BT_FAST_PAIR_ID
 #define FP_PARTITION_SIZE	PM_BT_FAST_PAIR_SIZE
 #else
-BUILD_ASSERT(FIXED_PARTITION_EXISTS(bt_fast_pair_partition));
-#define FP_PARTITION_ID		FIXED_PARTITION_ID(bt_fast_pair_partition)
-#define FP_PARTITION_SIZE	FIXED_PARTITION_SIZE(bt_fast_pair_partition)
+BUILD_ASSERT(PARTITION_EXISTS(bt_fast_pair_partition));
+#define FP_PARTITION_ID		PARTITION_ID(bt_fast_pair_partition)
+#define FP_PARTITION_SIZE	PARTITION_SIZE(bt_fast_pair_partition)
 #endif
 
 static const uint8_t fp_magic[] = {0xFA, 0x57, 0xFA, 0x57};

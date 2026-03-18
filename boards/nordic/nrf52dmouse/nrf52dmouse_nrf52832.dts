@@ -87,31 +87,36 @@
 	 * http://docs.zephyrproject.org/latest/guides/dts/index.html#flash-partitions
 	 */
 	partitions {
-		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x00000000 0x0000c000>;
 		};
 
 		slot0_partition: partition@c000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x0000c000 0x00036000>;
 		};
 
 		slot1_partition: partition@42000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0x00042000 0x00036000>;
 		};
 
 		scratch_partition: partition@78000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-scratch";
 			reg = <0x00078000 0x00004000>;
 		};
 
 		storage_partition: partition@7c000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x0007c000 0x00004000>;
 		};
