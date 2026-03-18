@@ -33,6 +33,7 @@ struct session {
 	int64_t start_time;
 	int32_t jitter;
 	int32_t last_transit_time;
+	int64_t last_received_time;
 
 	/* Stats packet*/
 	struct otperf_server_hdr stat;
