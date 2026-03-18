@@ -992,7 +992,7 @@ static void api_irq_rx_enable(const struct device *dev)
 	struct lpuart_data *data = get_dev_data(dev);
 
 	data->int_driven.rx_enabled = true;
-	if (int_driven_rd_available(data)) {
+	if (int_driven_rd_available(data) || data->rx_state == RX_BLOCKED) {
 		/* We need to move to the interrupt context of the same priority as UARTE. */
 		k_timer_start(&data->int_driven.trampoline_timer, K_NO_WAIT, K_NO_WAIT);
 	}
