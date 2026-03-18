@@ -107,8 +107,8 @@ For example, verifying that the application is running from slot A can be done b
 .. code-block:: c
 
     #define IS_RUNNING_FROM_SLOT_A \
-        (FIXED_PARTITION_NODE_OFFSET(DT_CHOSEN(zephyr_code_partition)) == \
-         FIXED_PARTITION_OFFSET(cpuapp_slot0_partition))
+        (PARTITION_NODE_OFFSET(DT_CHOSEN(zephyr_code_partition)) == \
+         PARTITION_OFFSET(cpuapp_slot0_partition))
 
 .. _ab_split_build_files:
 

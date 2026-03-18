@@ -38,11 +38,11 @@ static int failsafe_check(bool *failure_detected)
 static int failsafe_erase(void)
 {
 	const struct flash_area *flash_area;
-	int err = flash_area_open(FIXED_PARTITION_ID(storage_partition),
+	int err = flash_area_open(PARTITION_ID(storage_partition),
 				  &flash_area);
 	if (!err) {
 		err = flash_area_erase(flash_area, 0,
-				       FIXED_PARTITION_SIZE(storage_partition));
+				       PARTITION_SIZE(storage_partition));
 		flash_area_close(flash_area);
 	}
 

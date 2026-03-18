@@ -21,11 +21,12 @@
 
 &cpuflpr_mram {
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 
 		cpuflpr_code_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x0 DT_SIZE_K(116)>;
 		};
 	};

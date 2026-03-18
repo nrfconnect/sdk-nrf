@@ -57,7 +57,7 @@ static const char nrf70_fw_patch[] = {
 #include <pm_config.h>
 #define NRF70_FW_PATCH_ID PM_NRF70_WIFI_FW_ID
 #else
-#define NRF70_FW_PATCH_ID FIXED_PARTITION_ID(nrf70_fw_partition)
+#define NRF70_FW_PATCH_ID PARTITION_ID(nrf70_fw_partition)
 #endif
 static const struct flash_area *fa;
 

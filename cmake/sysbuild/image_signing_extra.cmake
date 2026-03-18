@@ -14,6 +14,8 @@ if(NOT extra_paths)
   return()
 endif()
 
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+
 function(dt_get_parent node)
   string(FIND "${${node}}" "/" pos REVERSE)
 
@@ -48,10 +50,20 @@ if(NOT SB_CONFIG_PARTITION_MANAGER)
   # Construct list of items which are flash/NVM devices which contain partitions
   dt_comp_path(fixed_partition_nodes TARGET ${DEFAULT_IMAGE} COMPATIBLE fixed-partitions)
   dt_comp_path(fixed_subpartition_nodes TARGET ${DEFAULT_IMAGE} COMPATIBLE fixed-subpartitions)
+  dt_comp_path(zephyr_mapped_partition_nodes TARGET ${DEFAULT_IMAGE} COMPATIBLE zephyr,mapped-partition)
   list(TRANSFORM fixed_partition_nodes REPLACE "/partitions$" "")
   list(TRANSFORM fixed_subpartition_nodes REPLACE "/partitions(.*)" "")
+  list(TRANSFORM zephyr_mapped_partition_nodes REPLACE "/partitions(.*)" "")
 
   foreach(node ${fixed_subpartition_nodes})
+    list(FIND fixed_partition_nodes ${node} exist_check)
+
+    if(${exist_check} EQUAL "-1")
+      list(APPEND fixed_partition_nodes ${node})
+    endif()
+  endforeach()
+
+  foreach(node ${zephyr_mapped_partition_nodes})
     list(FIND fixed_partition_nodes ${node} exist_check)
 
     if(${exist_check} EQUAL "-1")
@@ -174,7 +186,7 @@ if(num_binaries GREATER 0)
       )
     else()
       dt_nodelabel(slot_flash TARGET ${DEFAULT_IMAGE} NODELABEL "slot${slot_id}_partition" REQUIRED)
-      dt_reg_addr(slot_address TARGET ${DEFAULT_IMAGE} PATH "${slot_flash}")
+      dt_partition_addr(slot_address PATH "${slot_flash}" TARGET ${DEFAULT_IMAGE} ABSOLUTE)
 
       foreach(partition_node ${fixed_partition_nodes})
         if(${slot_flash} MATCHES ${partition_node}/.*$)
@@ -182,7 +194,7 @@ if(num_binaries GREATER 0)
             PROPERTY "compatible"
           )
 
-          if(${partition_node_compatible} MATCHES "soc-nv-flash")
+          if("soc-nv-flash" IN_LIST partition_node_compatible)
             # Internal flash, use offset of 0
             set(base_offset 0)
           else()

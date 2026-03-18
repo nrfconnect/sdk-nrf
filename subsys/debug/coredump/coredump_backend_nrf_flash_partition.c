@@ -35,8 +35,6 @@
 #error "Unsupported internal flash controller"
 #endif
 
-#define PARTITION_LABEL coredump_partition
-
 /* Extract DTS properties */
 
 #define FLASH_NODE	 DT_INST(0, soc_nv_flash)
@@ -48,13 +46,13 @@
 #define FLASH_ERASE_SIZE FLASH_WRITE_SIZE
 #endif
 
-#define PARTITION_OFFSET FIXED_PARTITION_OFFSET(PARTITION_LABEL)
-#define PARTITION_SIZE	 FIXED_PARTITION_SIZE(PARTITION_LABEL)
-#define PARTITION_ADDR	 (FLASH_ADDR + PARTITION_OFFSET)
+#define COREDUMP_PARTITION_OFFSET PARTITION_OFFSET(coredump_partition)
+#define COREDUMP_PARTITION_SIZE PARTITION_SIZE(coredump_partition)
+#define COREDUMP_PARTITION_ADDR PARTITION_ADDRESS(coredump_partition)
 
-BUILD_ASSERT(FIXED_PARTITION_EXISTS(PARTITION_LABEL),
+BUILD_ASSERT(PARTITION_EXISTS(coredump_partition),
 	     "Missing fixed partition named 'coredump_partition'");
-BUILD_ASSERT(PARTITION_OFFSET % FLASH_ERASE_SIZE == 0,
+BUILD_ASSERT(COREDUMP_PARTITION_OFFSET % FLASH_ERASE_SIZE == 0,
 	     "Core dump partition unaligned to erase block size");
 
 struct header {
@@ -81,12 +79,12 @@ static uint16_t dump_crc;		  /* CRC16 of already written or buffered bytes */
 
 static inline const struct header *get_stored_header(void)
 {
-	return (const struct header *)(PARTITION_ADDR);
+	return (const struct header *)(COREDUMP_PARTITION_ADDR);
 }
 
 static inline const uint8_t *get_stored_dump(const struct header *header)
 {
-	return (const uint8_t *)(PARTITION_ADDR) + header->offset;
+	return (const uint8_t *)(COREDUMP_PARTITION_ADDR) + header->offset;
 }
 
 static inline uint16_t calc_header_crc(const struct header *header)
@@ -112,7 +110,7 @@ static inline bool validate_dump(const struct header *header)
 
 static inline bool is_within_partition(uint32_t offset, size_t size)
 {
-	return (offset < PARTITION_SIZE) && (size <= PARTITION_SIZE - offset);
+	return (offset < COREDUMP_PARTITION_SIZE) && (size <= COREDUMP_PARTITION_SIZE - offset);
 }
 
 static void write(uint32_t offset, const uint8_t *data, size_t size)
@@ -128,7 +126,7 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 
 #ifdef CONFIG_NRFX_NVMC
 	for (uint32_t i = 0; i < size; i += sizeof(uint32_t)) {
-		nrfx_nvmc_word_write(PARTITION_OFFSET + offset + i,
+		nrfx_nvmc_word_write(COREDUMP_PARTITION_OFFSET + offset + i,
 				     UNALIGNED_GET((const uint32_t *)&data[i]));
 	}
 	while (!nrfx_nvmc_write_done_check()) {
@@ -141,7 +139,7 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
-	memcpy((void *)(PARTITION_ADDR + offset), data, size);
+	memcpy((void *)(COREDUMP_PARTITION_ADDR + offset), data, size);
 	barrier_dmem_fence_full();
 
 	/*
@@ -169,7 +167,7 @@ static void erase(uint32_t offset, size_t size)
 
 #ifdef CONFIG_NRFX_NVMC
 	for (uint32_t end = offset + size; offset < end; offset += FLASH_ERASE_SIZE) {
-		(void)nrfx_nvmc_page_erase(PARTITION_OFFSET + offset);
+		(void)nrfx_nvmc_page_erase(COREDUMP_PARTITION_OFFSET + offset);
 	}
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrf_rramc_config_t config = {
@@ -179,7 +177,7 @@ static void erase(uint32_t offset, size_t size)
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
-	memset((void *)(PARTITION_ADDR + offset), 0xff, size);
+	memset((void *)(COREDUMP_PARTITION_ADDR + offset), 0xff, size);
 	barrier_dmem_fence_full();
 
 	/*
@@ -218,7 +216,7 @@ static void coredump_nrf_flash_backend_start(void)
 	 * For flash: erase the entire partition to prepare it for write.
 	 * For RRAM:  erase the previously written header only.
 	 */
-	erase(0, IS_ENABLED(CONFIG_NRFX_NVMC) ? PARTITION_SIZE : HEADER_SIZE);
+	erase(0, IS_ENABLED(CONFIG_NRFX_NVMC) ? COREDUMP_PARTITION_SIZE : HEADER_SIZE);
 
 	write_buf_pos = 0;
 	write_pos = 0;
@@ -318,7 +316,7 @@ static int coredump_nrf_flash_backend_cmd(enum coredump_cmd_id cmd_id, void *arg
 		ret = (validate_header(header) && validate_dump(header)) ? 1 : 0;
 		break;
 	case COREDUMP_CMD_ERASE_STORED_DUMP:
-		erase(0, PARTITION_SIZE);
+		erase(0, COREDUMP_PARTITION_SIZE);
 		ret = 0;
 		break;
 	case COREDUMP_CMD_COPY_STORED_DUMP:

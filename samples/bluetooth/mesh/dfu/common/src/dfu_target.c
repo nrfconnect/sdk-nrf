@@ -133,8 +133,8 @@ static int dfu_meta_check(struct bt_mesh_dfu_srv *srv,
 		return -EINVAL;
 	}
 
-	if (flash_area_size_get(FIXED_PARTITION_ID(slot0_partition)) < metadata.fw_size ||
-	    flash_area_size_get(FIXED_PARTITION_ID(slot1_partition)) < metadata.fw_size) {
+	if (flash_area_size_get(PARTITION_ID(slot0_partition)) < metadata.fw_size ||
+	    flash_area_size_get(PARTITION_ID(slot1_partition)) < metadata.fw_size) {
 		printk("New firmware won't fit into flash.");
 		return -EINVAL;
 	}
@@ -251,7 +251,7 @@ static void image_version_load(void)
 	struct mcuboot_img_header img_header;
 	int err;
 
-	err = boot_read_bank_header(FIXED_PARTITION_ID(slot0_partition), &img_header,
+	err = boot_read_bank_header(PARTITION_ID(slot0_partition), &img_header,
 				    sizeof(img_header));
 	if (err) {
 		printk("Failed to read image header: %d\n", err);

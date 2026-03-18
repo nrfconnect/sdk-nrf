@@ -45,13 +45,14 @@
 &mram1x {
 	partitions {
 		boot_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x30000 DT_SIZE_K(24)>;
 		};
 
 		/* Main application with the MCUboot header. */
 		slot0_partition: partition@36000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			reg = <0x36000 DT_SIZE_K(1628)>;
 			ranges = <0x0 0x36000 DT_SIZE_K(1628)>;
 			#address-cells = <1>;
@@ -61,13 +62,14 @@
 			 * Offset by the MCUboot header size (2048 bytes).
 			 */
 			cpuapp_slot0_partition: partition@800 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x800 DT_SIZE_K(1626)>;
 			};
 		};
 
 		/* Merged partition used by the FW loader. */
 		slot1_partition: partition@1cd000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1cd000 DT_SIZE_K(144)>;
 			ranges = <0x0 0x1cd000 DT_SIZE_K(144)>;
 			#address-cells = <1>;
@@ -77,20 +79,24 @@
 			 * Offset by the MCUboot header size (2048 bytes).
 			 */
 			fw_loader_partition: cpuapp_slot1_partition: partition@800 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x800 DT_SIZE_K(60)>;
 			};
 
 			/* Radio code partition (part of the FW loader). */
 			cpurad_slot0_partition: partition@f800 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0xf800 DT_SIZE_K(82)>;
 			};
 		};
 
 		storage_partition: partition@1f1000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1f1000 DT_SIZE_K(40)>;
 		};
 
 		periphconf_partition: partition@1fb000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1fb000 DT_SIZE_K(8)>;
 		};
 	};
