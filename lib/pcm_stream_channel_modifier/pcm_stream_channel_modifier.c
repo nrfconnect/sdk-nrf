@@ -244,14 +244,12 @@ int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
 int pscm_deinterleave(void const *const input, size_t input_size, uint8_t input_channels,
 		      uint8_t channel, uint8_t pcm_bit_depth, void *output, size_t output_size)
 {
-	uint8_t bytes_per_sample;
-	size_t step;
-	uint8_t *pointer_input;
-	uint8_t *pointer_output;
+	size_t bytes_to_copy;
 
 	if (input == NULL || output == NULL || input_size == 0 || channel >= input_channels ||
 	    pcm_bit_depth == 0 || pcm_bit_depth % 8 || output_size == 0 ||
-	    pcm_bit_depth > PSCM_MAX_CARRIER_BIT_DEPTH || input_channels == 0) {
+	    pcm_bit_depth > PSCM_MAX_CARRIER_BIT_DEPTH || input_channels == 0 ||
+	    !IS_ALIGNED(input, 4) || !IS_ALIGNED(output, 4)) {
 		return -EINVAL;
 	}
 
@@ -260,17 +258,41 @@ int pscm_deinterleave(void const *const input, size_t input_size, uint8_t input_
 		return -EINVAL;
 	}
 
-	bytes_per_sample = pcm_bit_depth / 8;
-	step = bytes_per_sample * (input_channels - 1);
-	pointer_input = (uint8_t *)input + (bytes_per_sample * channel);
-	pointer_output = (uint8_t *)output;
+	uint8_t bytes_per_sample = pcm_bit_depth / 8;
+	/*
+	 * Use types corresponding to pcm_bit_depth to make iterating over an array faster
+	 * when pcm_bit_depth is 16 or 32. Use uint8_t in 8/24 bits case.
+	 */
+	bytes_to_copy = input_size / input_channels;
+	if (bytes_per_sample == 2) {
+		uint16_t *output_16 = (uint16_t *)output;
+		uint16_t *input_16 = (uint16_t *)input + channel;
+		uint16_t *output_16_end = output_16 + bytes_to_copy / sizeof(uint16_t);
 
-	for (size_t i = 0; i < input_size; i += (step + bytes_per_sample)) {
-		for (size_t j = 0; j < bytes_per_sample; j++) {
-			*pointer_output++ = *pointer_input++;
+		while (output_16 < output_16_end) {
+			*output_16++ = *input_16;
+			input_16 += input_channels;
+		};
+	} else if (bytes_per_sample == 4) {
+		uint32_t *output_32 = (uint32_t *)output;
+		uint32_t *input_32 = (uint32_t *)input + channel;
+		uint32_t *output_32_end = output_32 + bytes_to_copy / sizeof(uint32_t);
+
+		while (output_32 < output_32_end) {
+			*output_32++ = *input_32;
+			input_32 += input_channels;
+		};
+	} else {
+		uint8_t *output_8 = (uint8_t *)output;
+		uint8_t *input_8 = (uint8_t *)input + (channel * bytes_per_sample);
+		size_t step = bytes_per_sample * (input_channels - 1);
+
+		for (size_t i = 0; i < bytes_to_copy; i += bytes_per_sample) {
+			for (uint8_t j = 0; j < bytes_per_sample; j++) {
+				*output_8++ = *input_8++;
+			}
+			input_8 += step;
 		}
-
-		pointer_input += step;
 	}
 
 	return 0;
