@@ -247,7 +247,7 @@ int main(void)
 	int ret;
 
 	LOG_INF("Idle clock_control, %s", CONFIG_BOARD_TARGET);
-	k_msleep(10);
+	k_msleep(100);
 
 	ret = gpio_is_ready_dt(&led);
 	__ASSERT(ret, "Error: GPIO Device not ready");
