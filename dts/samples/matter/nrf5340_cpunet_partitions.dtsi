@@ -12,16 +12,19 @@
 &flash1 {
 	partitions {
 		b0n_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "b0n";
 			reg = <0x0 0x8580>;
 		};
 
 		bl_storage: provision_partition: partition@8580 {
+			compatible = "zephyr,mapped-partition";
 			label = "b0-provision-data";
 			reg = <0x8580 0x280>;
 		};
 
 		s0_partition: partition@8800 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x8800 DT_SIZE_K(222)>;
 		};

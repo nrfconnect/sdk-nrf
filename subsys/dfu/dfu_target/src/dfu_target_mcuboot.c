@@ -78,14 +78,14 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
  */
 #define SEC_PAT_NODELABEL(i) UTIL_CAT(slot, UTIL_CAT(UTIL_INC(UTIL_X2(i)), _partition))
 
-#define SEC_PAT_ADDRESS(i) FIXED_PARTITION_OFFSET(SEC_PAT_NODELABEL(i))
+#define SEC_PAT_ADDRESS(i) PARTITION_OFFSET(SEC_PAT_NODELABEL(i))
 
-#define SEC_PAT_SIZE(i) FIXED_PARTITION_SIZE(SEC_PAT_NODELABEL(i))
+#define SEC_PAT_SIZE(i) PARTITION_SIZE(SEC_PAT_NODELABEL(i))
 
 #define _MB_SEC_PAT(i, x) UTIL_CAT(SEC_PAT_, x)(i)
 
 /* Ignore the 'x' parameter, it is needed for compatibility with Partition Manager scenarios. */
-#define _MB_SEC_PAT_DEV(i, x) FIXED_PARTITION_DEVICE(SEC_PAT_NODELABEL(i))
+#define _MB_SEC_PAT_DEV(i, x) PARTITION_DEVICE(SEC_PAT_NODELABEL(i))
 
 /* Ignore the 'x' parameter, it is needed for compatibility with Partition Manager scenarios. */
 #define _MB_SEC_PAT_STRING(i, x) STRINGIFY(SEC_PAT_NODELABEL(i))

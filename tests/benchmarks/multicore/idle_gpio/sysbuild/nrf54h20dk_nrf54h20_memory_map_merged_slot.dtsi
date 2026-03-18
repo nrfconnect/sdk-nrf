@@ -22,7 +22,7 @@
 	partitions {
 		/* Merged partition used by the MCUboot (variant 0). */
 		slot0_partition: partition@40000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			reg = <0x40000 DT_SIZE_K(656)>;
 			ranges = <0x0 0x40000 DT_SIZE_K(656)>;
 			#address-cells = <1>;
@@ -32,18 +32,20 @@
 			 * Offset by the MCUboot header size (2048 bytes).
 			 */
 			cpuapp_slot0_partition: partition@800 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x800 DT_SIZE_K(326)>;
 			};
 
 			/* Radio code partition (variant 0). */
 			cpurad_slot0_partition: partition@52000 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x52000 DT_SIZE_K(328)>;
 			};
 		};
 
 		/* Merged partition used by the MCUboot (variant 1). */
 		slot1_partition: partition@100000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			reg = <0x100000 DT_SIZE_K(656)>;
 			ranges = <0x0 0x100000 DT_SIZE_K(656)>;
 			#address-cells = <1>;
@@ -53,11 +55,13 @@
 			 * Offset by the MCUboot header size (2048 bytes).
 			 */
 			cpuapp_slot1_partition: partition@800 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x800 DT_SIZE_K(326)>;
 			};
 
 			/* Radio code partition (variant 1). */
 			cpurad_slot1_partition: partition@52000 {
+				compatible = "zephyr,mapped-partition";
 				reg = <0x52000 DT_SIZE_K(328)>;
 			};
 		};

@@ -16,7 +16,7 @@
 &flash0 {
 	partitions {
 		slot0_partition: partition@10000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x10000 0x74000>;
 			ranges = <0x0 0x10000 0x74000>;
@@ -24,18 +24,20 @@
 			#size-cells = <1>;
 
 			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-secure";
 				reg = <0x0 0x30000>;
 			};
 
 			slot0_ns_partition: partition@30000 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-nonsecure";
 				reg = <0x30000 0x44000>;
 			};
 		};
 
 		slot1_partition: partition@84000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0x84000 0x74000>;
 			ranges = <0x0 0x84000 0x74000>;
@@ -43,11 +45,13 @@
 			#size-cells = <1>;
 
 			slot1_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-1-secure";
 				reg = <0x0 0x30000>;
 			};
 
 			slot1_ns_partition: partition@30000 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-1-nonsecure";
 				reg = <0x30000 0x44000>;
 			};

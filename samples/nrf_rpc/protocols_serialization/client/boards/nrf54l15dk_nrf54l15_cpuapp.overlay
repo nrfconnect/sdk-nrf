@@ -29,6 +29,7 @@
 
 	partitions {
 		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00000000 0x15c000>;
 		};

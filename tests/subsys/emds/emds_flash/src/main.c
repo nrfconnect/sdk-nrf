@@ -85,8 +85,8 @@ static void microsecond_timer_cleanup(void)
 /** Local functions ***********************************************************/
 static void *emds_flash_setup(void)
 {
-	const uint8_t id[] = {FIXED_PARTITION_ID(emds_partition_0),
-			      FIXED_PARTITION_ID(emds_partition_1)};
+	const uint8_t id[] = {PARTITION_ID(emds_partition_0),
+			      PARTITION_ID(emds_partition_1)};
 
 	for (int i = 0; i < ARRAY_SIZE(id); i++) {
 		zassert_ok(flash_area_open(id[i], &partition[i].fa), "Failed to open flash area %d",

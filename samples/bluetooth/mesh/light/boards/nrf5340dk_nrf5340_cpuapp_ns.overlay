@@ -15,7 +15,7 @@
 &flash0 {
 	partitions {
 		slot0_partition: partition@0 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00000000 0xe8000>;
 			ranges = <0x0 0x0 0xe8000>;
@@ -23,11 +23,13 @@
 			#size-cells = <1>;
 
 			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-secure";
 				reg = <0x00000000 0x20000>;
 			};
 
 			slot0_ns_partition: partition@20000 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-nonsecure";
 				reg = <0x00020000 0xc8000>;
 			};

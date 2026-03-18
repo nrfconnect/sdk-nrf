@@ -19,27 +19,32 @@
 
 	partitions {
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x00000000 DT_SIZE_K(52)>;
 		};
 
 		slot0_partition: partition@d000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x0000d000 DT_SIZE_K(864)>;
 		};
 
 		/* Compression ratio 34.75% */
 		slot1_partition: partition@e5000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0x00e5000 DT_SIZE_K(564)>;
 		};
 
 		factory_data_partition: partition@172000 {
+			compatible = "zephyr,mapped-partition";
 			label = "factory-data";
 			reg = <0x00172000 DT_SIZE_K(4)>;
 		};
 
 		storage_partition: partition@173000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x00173000 DT_SIZE_K(40)>;
 		};

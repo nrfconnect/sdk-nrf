@@ -40,8 +40,6 @@
 #error "Unsupported internal flash controller"
 #endif
 
-#define PARTITION_LABEL coredump_partition
-
 /* Extract DTS properties */
 
 #define FLASH_NODE	 DT_INST(0, soc_nv_flash)
@@ -53,15 +51,15 @@
 #define FLASH_ERASE_SIZE FLASH_WRITE_SIZE
 #endif
 
-#define PARTITION_OFFSET FIXED_PARTITION_OFFSET(PARTITION_LABEL)
-#define PARTITION_SIZE	 FIXED_PARTITION_SIZE(PARTITION_LABEL)
-#define PARTITION_ADDR	 FIXED_PARTITION_ADDRESS(PARTITION_LABEL)
+#define COREDUMP_PARTITION_OFFSET PARTITION_OFFSET(coredump_partition)
+#define COREDUMP_PARTITION_SIZE PARTITION_SIZE(coredump_partition)
+#define COREDUMP_PARTITION_ADDR PARTITION_ADDRESS(coredump_partition)
 
 #define STORAGE_ALIGN FLASH_WRITE_SIZE
 
-BUILD_ASSERT(FIXED_PARTITION_EXISTS(PARTITION_LABEL),
+BUILD_ASSERT(PARTITION_EXISTS(coredump_partition),
 	     "Missing fixed partition named 'coredump_partition'");
-BUILD_ASSERT(PARTITION_OFFSET % FLASH_ERASE_SIZE == 0,
+BUILD_ASSERT(COREDUMP_PARTITION_OFFSET % FLASH_ERASE_SIZE == 0,
 	     "Core dump partition unaligned to erase block size");
 
 #elif IS_ENABLED(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_RAM_REGION)
@@ -75,18 +73,18 @@ BUILD_ASSERT(PARTITION_OFFSET % FLASH_ERASE_SIZE == 0,
 #endif
 
 #define CDUMP_NODE	DT_NODELABEL(coredump_storage_region)
-#define PARTITION_SIZE	DT_REG_SIZE(CDUMP_NODE)
+#define COREDUMP_PARTITION_SIZE	DT_REG_SIZE(CDUMP_NODE)
 
 #define STORAGE_ALIGN 4U
 
 #define _COREDUMP_RAM_SECTION Z_GENERIC_SECTION(LINKER_DT_NODE_REGION_NAME_TOKEN(CDUMP_NODE))
 
 /* Buffer spans the DTS COREDUMP_STORAGE region (NOLOAD linker section). */
-static uint8_t _COREDUMP_RAM_SECTION __aligned(STORAGE_ALIGN) coredump_ram[PARTITION_SIZE];
+static uint8_t _COREDUMP_RAM_SECTION __aligned(STORAGE_ALIGN) coredump_ram[COREDUMP_PARTITION_SIZE];
 
-#define PARTITION_ADDR UINT_TO_POINTER((uintptr_t)coredump_ram)
+#define COREDUMP_PARTITION_ADDR UINT_TO_POINTER((uintptr_t)coredump_ram)
 
-BUILD_ASSERT(sizeof(coredump_ram) == PARTITION_SIZE);
+BUILD_ASSERT(sizeof(coredump_ram) == COREDUMP_PARTITION_SIZE);
 
 #else
 #error "Enable NRF coredump backend: FLASH_PARTITION or RAM_REGION (see Kconfig)"
@@ -106,7 +104,7 @@ enum {
 };
 
 #if IS_ENABLED(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_RAM_REGION)
-BUILD_ASSERT(PARTITION_SIZE >= HEADER_SIZE + WRITE_BUF_SIZE,
+BUILD_ASSERT(COREDUMP_PARTITION_SIZE >= HEADER_SIZE + WRITE_BUF_SIZE,
 	     "coredump_storage_region too small for header and write buffer");
 #endif
 
@@ -120,12 +118,12 @@ static uint16_t dump_crc;		  /* CRC16 of already written or buffered bytes */
 
 static inline const struct header *get_stored_header(void)
 {
-	return (const struct header *)(PARTITION_ADDR);
+	return (const struct header *)(COREDUMP_PARTITION_ADDR);
 }
 
 static inline const uint8_t *get_stored_dump(const struct header *header)
 {
-	return (const uint8_t *)(PARTITION_ADDR) + header->offset;
+	return (const uint8_t *)(COREDUMP_PARTITION_ADDR) + header->offset;
 }
 
 static inline uint16_t calc_header_crc(const struct header *header)
@@ -151,7 +149,7 @@ static inline bool validate_dump(const struct header *header)
 
 static inline bool is_within_partition(uint32_t offset, size_t size)
 {
-	return (offset < PARTITION_SIZE) && (size <= PARTITION_SIZE - offset);
+	return (offset < COREDUMP_PARTITION_SIZE) && (size <= COREDUMP_PARTITION_SIZE - offset);
 }
 
 static void write(uint32_t offset, const uint8_t *data, size_t size)
@@ -169,7 +167,7 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 
 #ifdef CONFIG_NRFX_NVMC
 	for (uint32_t i = 0; i < size; i += sizeof(uint32_t)) {
-		nrfx_nvmc_word_write(PARTITION_OFFSET + offset + i,
+		nrfx_nvmc_word_write(COREDUMP_PARTITION_OFFSET + offset + i,
 				     UNALIGNED_GET((const uint32_t *)&data[i]));
 	}
 	while (!nrfx_nvmc_write_done_check()) {
@@ -182,7 +180,7 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
-	memcpy(UINT_TO_POINTER(FLASH_ADDR + PARTITION_OFFSET + offset), data, size);
+	memcpy(UINT_TO_POINTER(FLASH_ADDR + COREDUMP_PARTITION_OFFSET + offset), data, size);
 	barrier_dmem_fence_full();
 
 	/*
@@ -198,7 +196,7 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 
 #else /* RAM */
 
-	memcpy((uint8_t *)(PARTITION_ADDR) + offset, data, size);
+	memcpy((uint8_t *)(COREDUMP_PARTITION_ADDR) + offset, data, size);
 	barrier_dmem_fence_full();
 
 #endif
@@ -219,7 +217,7 @@ static void erase(uint32_t offset, size_t size)
 
 #ifdef CONFIG_NRFX_NVMC
 	for (uint32_t end = offset + size; offset < end; offset += FLASH_ERASE_SIZE) {
-		(void)nrfx_nvmc_page_erase(PARTITION_OFFSET + offset);
+		(void)nrfx_nvmc_page_erase(COREDUMP_PARTITION_OFFSET + offset);
 	}
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrf_rramc_config_t config = {
@@ -229,7 +227,7 @@ static void erase(uint32_t offset, size_t size)
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
-	memset(UINT_TO_POINTER(FLASH_ADDR + PARTITION_OFFSET + offset), 0xff, size);
+	memset(UINT_TO_POINTER(FLASH_ADDR + COREDUMP_PARTITION_OFFSET + offset), 0xff, size);
 	barrier_dmem_fence_full();
 
 	/*
@@ -245,7 +243,7 @@ static void erase(uint32_t offset, size_t size)
 
 #else /* RAM */
 
-	memset((uint8_t *)(PARTITION_ADDR) + offset, 0xff, size);
+	memset((uint8_t *)(COREDUMP_PARTITION_ADDR) + offset, 0xff, size);
 	barrier_dmem_fence_full();
 
 #endif
@@ -276,10 +274,10 @@ static void nrf_coredump_backend_start(void)
 	 * For flash: erase the entire partition to prepare it for write.
 	 * For RRAM:  erase the previously written header only.
 	 */
-	erase(0, IS_ENABLED(CONFIG_NRFX_NVMC) ? PARTITION_SIZE : HEADER_SIZE);
+	erase(0, IS_ENABLED(CONFIG_NRFX_NVMC) ? COREDUMP_PARTITION_SIZE : HEADER_SIZE);
 #else
 	/* RAM backend: clear the whole region before writing a new dump. */
-	erase(0, PARTITION_SIZE);
+	erase(0, COREDUMP_PARTITION_SIZE);
 #endif
 
 	write_buf_pos = 0;
@@ -382,7 +380,7 @@ static int nrf_coredump_backend_cmd(enum coredump_cmd_id cmd_id, void *arg)
 		ret = (validate_header(header) && validate_dump(header)) ? 1 : 0;
 		break;
 	case COREDUMP_CMD_ERASE_STORED_DUMP:
-		erase(0, PARTITION_SIZE);
+		erase(0, COREDUMP_PARTITION_SIZE);
 		ret = 0;
 		break;
 	case COREDUMP_CMD_COPY_STORED_DUMP:

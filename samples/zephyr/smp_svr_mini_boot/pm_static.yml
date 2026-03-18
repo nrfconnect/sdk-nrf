@@ -48,4 +48,4 @@ settings_storage:
 unallocated:
   address: 0xcd000
   region: flash_primary
-  size: 0x98000
+  size: 0xb0000

@@ -16,10 +16,12 @@
 &mram1x {
 	partitions {
 		cpuapp_slot0_partition: partition@40000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x40000 DT_SIZE_K(580)>;
 		};
 
 		cpuapp_slot1_partition: partition@d1000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0xd1000 DT_SIZE_K(580)>;
 		};
 	};

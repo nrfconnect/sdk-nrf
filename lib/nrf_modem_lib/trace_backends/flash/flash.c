@@ -221,7 +221,7 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 
 	trace_processed_callback = trace_processed_cb;
 
-	err = flash_area_open(FIXED_PARTITION_ID(MODEM_TRACE_PARTITION), &modem_trace_area);
+	err = flash_area_open(PARTITION_ID(MODEM_TRACE_PARTITION), &modem_trace_area);
 	if (err) {
 		LOG_ERR("flash_area_open error:  %d", err);
 		return -ENODEV;
@@ -258,7 +258,7 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	uint32_t f_sector_cnt = sizeof(trace_flash_sectors) / sizeof(struct flash_sector);
 
 	err = flash_area_get_sectors(
-		FIXED_PARTITION_ID(MODEM_TRACE_PARTITION), &f_sector_cnt, trace_flash_sectors);
+		PARTITION_ID(MODEM_TRACE_PARTITION), &f_sector_cnt, trace_flash_sectors);
 	if (err) {
 		LOG_ERR("flash_area_get_sectors error: %d", err);
 
@@ -275,7 +275,7 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	LOG_DBG("Sectors: %d, first sector: %p, sector size: %d",
 		f_sector_cnt, trace_flash_sectors, trace_flash_sectors[0].fs_size);
 
-	err = fcb_init(FIXED_PARTITION_ID(MODEM_TRACE_PARTITION), &trace_fcb);
+	err = fcb_init(PARTITION_ID(MODEM_TRACE_PARTITION), &trace_fcb);
 	if (err) {
 		LOG_ERR("fcb_init error: %d", err);
 		return err;

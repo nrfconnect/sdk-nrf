@@ -6,7 +6,7 @@
 
 &flash0 {
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 
@@ -17,6 +17,7 @@
 
 		/* modem_trace partition - matches flash backend without partition manager */
 		modem_trace: partition@75000 {
+			compatible = "zephyr,mapped-partition";
 			label = "modem_trace";
 			reg = <0x00075000 0x00010000>; /* 64KB */
 		};

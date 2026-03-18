@@ -3,11 +3,13 @@
 &flash0 {
 	partitions {
 		storage_partition: partition@fd000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x000fd000 0x00002000>;
 		};
 
 		hw_unique_key_partition: partition@ff000 {
+			compatible = "zephyr,mapped-partition";
 			label = "";
 			reg = <0x000ff000 0x00001000>;
 		};
