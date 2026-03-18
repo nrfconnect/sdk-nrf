@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief SPAKE2+ protocol operations for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_SPAKE2P_H
 #define CRACEN_PSA_SPAKE2P_H
 
@@ -135,5 +141,7 @@ psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_spake2p_abort(cracen_spake2p_operation_t *operation);
+
+/** @} */
 
 #endif /* CRACEN_PSA_SPAKE2P_H */

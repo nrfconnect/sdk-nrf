@@ -5,14 +5,18 @@
  */
 
 /**
- * @file cracen_sw_chacha20_poly1305.h
+ * @file
  *
- * @defgroup cracen_sw_chacha_poly Software ChaCha20-Poly1305 implementation
+ * @addtogroup cracen_sw_chacha_poly
  * @{
  * @brief Software implementation of the ChaCha20-Poly1305 AEAD.
  *
  * This module provides a software-based implementation of ChaCha20-Poly1305 for use
  * as a workaround for hardware limitations with multipart operations.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
  */
 
 #ifndef CRACEN_SW_CHACHA_POLY_H

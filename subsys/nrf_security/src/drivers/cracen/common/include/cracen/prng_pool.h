@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_prng_pool
+ * @{
+ * @brief Pre-computed secure random number pool for AES counter-measures.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #ifndef PRNG_POOL_H
 #define PRNG_POOL_H
 
@@ -29,5 +39,7 @@
  * \retval SX_ERR_UNKNOWN_ERROR or error
  */
 int cracen_prng_value_from_pool(uint32_t *prng_value);
+
+/** @} */
 
 #endif /* PRNG_POOL_H */

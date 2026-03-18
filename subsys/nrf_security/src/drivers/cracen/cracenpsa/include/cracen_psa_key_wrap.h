@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief AES Key Wrap and Key Wrap with Padding for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_KEY_WRAP_H
 #define CRACEN_PSA_KEY_WRAP_H
 
@@ -67,5 +73,7 @@ psa_status_t cracen_unwrap_key(const psa_key_attributes_t *attributes,
 			       psa_algorithm_t alg,
 			       const uint8_t *data, size_t data_length,
 			       uint8_t *key, size_t key_size, size_t *key_length);
+
+/** @} */
 
 #endif /* CRACEN_PSA_KEY_WRAP_H */

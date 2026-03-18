@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_common_utils
+ * @{
+ * @brief Shared internal utilities for the CRACEN PSA layer.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #pragma once
 
 #include "cracen_psa.h"
@@ -37,7 +47,7 @@ hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo);
  * @param[in]  upperlimit  Upper limit for generated number.
  * @param[in]  retrylimit  Maximum number of attempts to generate a number in the range.
  *
- * @note Output number and upper limit must be big endian numbers of size @ref sz.
+ * @note Output number and upper limit must be big endian numbers of size @p sz.
  *
  * @return PSA status code.
  */
@@ -101,7 +111,7 @@ int cracen_be_sub(const uint8_t *a, const uint8_t *b, uint8_t *c, size_t sz);
  *
  * @param a	Big-endian value a.
  * @param n	Number of bits.
- * @param c	Bitshift result.
+ * @param r	Bitshift result.
  * @param sz	Size of the buffers.
  *
  */
@@ -113,7 +123,7 @@ void cracen_be_rshift(const uint8_t *a, int n, uint8_t *r, size_t sz);
  *
  * @param a		First value to be compared
  * @param b		Second value to be compared
- * @param size		Size of a and b.
+ * @param sz		Size of a and b.
  * @param carry		Value of the carry.
  *
  * \retval 0 if equal.
@@ -134,11 +144,11 @@ void cracen_be_xor(uint8_t *buf, size_t buf_sz, size_t xor_val);
 /**
  * @brief Hash several elements at different locations in memory
  *
- * @param inputs[in]		Array of pointers to elements that will be hashed.
- * @param input_lengths[in]	Array of lengths of elements to be hashed.
- * @param input_count[in]	Number of elements to be hashed.
- * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
- * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ * @param[in]  inputs			Array of pointers to elements that will be hashed.
+ * @param[in]  input_lengths	Array of lengths of elements to be hashed.
+ * @param[in]  input_count		Number of elements to be hashed.
+ * @param[in]  hashalg			Hash algorithm to be used in sxhashalg format.
+ * @param[out] digest			Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
  *
  * @return sxsymcrypt status code.
  */
@@ -149,12 +159,12 @@ int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[]
  * @brief Hash several elements at different locations in memory with a previously created hash
  * context(sxhash)
  *
- * @param sxhashopctx[in]	Pointer to the sxhash context.
- * @param inputs[in]		Array of pointers to elements that will be hashed.
- * @param input_lengths[in]	Array of lengths of elements to be hashed.
- * @param input_count[in]	Number of elements to be hashed.
- * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
- * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ * @param[in]  sxhashopctx		Pointer to the sxhash context.
+ * @param[in]  inputs			Array of pointers to elements that will be hashed.
+ * @param[in]  input_lengths	Array of lengths of elements to be hashed.
+ * @param[in]  input_count		Number of elements to be hashed.
+ * @param[in]  hashalg			Hash algorithm to be used in sxhashalg format.
+ * @param[out] digest			Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
  *
  * @return sxsymcrypt status code.
  */
@@ -165,10 +175,10 @@ int cracen_hash_all_inputs_with_context(struct sxhash *sxhashopctx, const uint8_
 /**
  * @brief Hash a single element
  *
- * @param input[in]		Pointer to the element that will be hashed.
- * @param input_length[in]	Length of the element to be hashed.
- * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
- * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ * @param[in]  input		Pointer to the element that will be hashed.
+ * @param[in]  input_length	Length of the element to be hashed.
+ * @param[in]  hashalg		Hash algorithm to be used in sxhashalg format.
+ * @param[out] digest		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
  *
  * @return sxsymcrypt status code.
  */
@@ -178,11 +188,11 @@ int cracen_hash_input(const uint8_t *input, const size_t input_length,
 /**
  * @brief Hash a single element with a previously created hash context(sxhash)
  *
- * @param sxhashopctx[in]	Pointer to the sxhash context.
- * @param input[in]		Pointer to element that will be hashed.
- * @param input_length[in]	Length of element to be hashed.
- * @param hashalg[in]		hash algorithm to be used in sxhashalg format.
- * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ * @param[in]  hashopctx	Pointer to the sxhash context.
+ * @param[in]  input		Pointer to element that will be hashed.
+ * @param[in]  input_length	Length of element to be hashed.
+ * @param[in]  hashalg		Hash algorithm to be used in sxhashalg format.
+ * @param[out] digest		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
  *
  * @return sxsymcrypt status code.
  */
@@ -197,12 +207,14 @@ int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *inpu
  *        The generated random number is evenly distributed over the range [0, n-1]. If the range
  *        is invalid (e.g., `n` is zero, less than three, or even), an error code is returned.
  *
- * @param n[in]         Pointer to a buffer holding the upper limit of the random range.
- *                      The upper limit must be a non-zero odd number.
- * @param nsz[in]       Size of the upper limit buffer in bytes.
- * @param out[out]      Buffer to store the generated random number.
- *                      The size of `out` should be at least `nsz`.
+ * @param[in]  n    Pointer to a buffer holding the upper limit of the random range.
+ *                  The upper limit must be a non-zero odd number.
+ * @param[in]  nsz  Size of the upper limit buffer in bytes.
+ * @param[out] out  Buffer to store the generated random number.
+ *                  The size of @p out should be at least @p nsz.
  *
  * @return sxsymcrypt status code.
  */
 int cracen_get_rnd_in_range(const uint8_t *n, size_t nsz, uint8_t *out);
+
+/** @} */

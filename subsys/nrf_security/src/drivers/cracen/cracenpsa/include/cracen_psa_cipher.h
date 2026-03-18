@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief Symmetric cipher operations for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_CIPHER_H
 #define CRACEN_PSA_CIPHER_H
 
@@ -142,5 +148,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_cipher_abort(cracen_cipher_operation_t *operation);
+
+/** @} */
 
 #endif /* CRACEN_PSA_CIPHER_H */

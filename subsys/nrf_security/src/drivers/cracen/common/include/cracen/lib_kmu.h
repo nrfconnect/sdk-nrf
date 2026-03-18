@@ -4,18 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/** @file
- * @brief Lib KMU header.
- */
-
 #ifndef __LIB_KMU_H
 #define __LIB_KMU_H
 
-/**
- * @defgroup lib_kmu Lib Key Management Unit
- * @brief Lib KMU
- *
+/** @file
+ * @addtogroup cracen_kmu_hal
  * @{
+ * @brief Low-level HAL for provisioning, pushing, blocking, revoking, and querying KMU slots.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
  */
 
 #include <stdint.h>

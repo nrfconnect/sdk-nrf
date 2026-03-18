@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief Asymmetric encryption and decryption for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_ASYMMETRIC_H
 #define CRACEN_PSA_ASYMMETRIC_H
 
@@ -62,5 +68,7 @@ psa_status_t cracen_asymmetric_decrypt(const psa_key_attributes_t *attributes,
 				       psa_algorithm_t alg, const uint8_t *input,
 				       size_t input_length, const uint8_t *salt, size_t salt_length,
 				       uint8_t *output, size_t output_size, size_t *output_length);
+
+/** @} */
 
 #endif /* CRACEN_PSA_ASYMMETRIC_H */

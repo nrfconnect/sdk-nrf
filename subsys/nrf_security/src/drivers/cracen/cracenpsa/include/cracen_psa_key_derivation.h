@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief Key derivation operations for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_KEY_DERIVATION_H
 #define CRACEN_PSA_KEY_DERIVATION_H
 
@@ -118,5 +124,7 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_key_derivation_abort(cracen_key_derivation_operation_t *operation);
+
+/** @} */
 
 #endif /* CRACEN_PSA_KEY_DERIVATION_H */

@@ -5,14 +5,18 @@
  */
 
 /**
- * @file cracen_sw_aes_ccm.h
+ * @file
  *
- * @defgroup cracen_sw_aes_ccm Software AES-CCM implementation
+ * @addtogroup cracen_sw_aes_ccm
  * @{
  * @brief Software implementation of the AES-CCM (Counter with CBC-MAC) mode.
  *
  * This module provides a software-based implementation of AES-CCM for use
  * as a workaround for hardware limitations with multipart operations.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
  */
 
 #ifndef CRACEN_SW_AES_CCM_H

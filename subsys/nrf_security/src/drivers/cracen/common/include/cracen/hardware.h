@@ -5,10 +5,14 @@
  */
 
 /**
- * @defgroup security Security
- * @brief Cracen security
- *
+ * @file
+ * @addtogroup cracen_hardware
  * @{
+ * @brief CRACEN hardware base address macros and peripheral lifecycle API.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
  */
 
 #ifndef CRACEN_HARDWARE_H_

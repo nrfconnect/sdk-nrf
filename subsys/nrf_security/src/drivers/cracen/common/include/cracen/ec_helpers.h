@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_ec_helpers
+ * @{
+ * @brief RFC 7748 elliptic curve coordinate and scalar decoding helpers.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #pragma once
 
 #include <stdint.h>
@@ -34,3 +44,5 @@ void decode_scalar_25519(uint8_t *k);
  * @param[in,out] k Byte array containing a scalar of size 56.
  */
 void decode_scalar_448(uint8_t *k);
+
+/** @} */
