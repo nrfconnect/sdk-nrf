@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief SRP protocol operations for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_SRP_H
 #define CRACEN_PSA_SRP_H
 
@@ -112,5 +118,7 @@ psa_status_t cracen_srp_get_shared_key(cracen_srp_operation_t *operation,
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_srp_abort(cracen_srp_operation_t *operation);
+
+/** @} */
 
 #endif /* CRACEN_PSA_SRP_H */

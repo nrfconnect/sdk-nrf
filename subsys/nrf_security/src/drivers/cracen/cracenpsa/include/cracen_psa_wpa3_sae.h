@@ -6,7 +6,7 @@
 
 /**
  * @file
- * @addtogroup cracen_psa_wpa3_sae
+ * @addtogroup cracen_psa_driver_api
  * @{
  * @brief WPA3 SAE (Simultaneous Authentication of Equals) support for CRACEN PSA
  *        driver (internal use only).

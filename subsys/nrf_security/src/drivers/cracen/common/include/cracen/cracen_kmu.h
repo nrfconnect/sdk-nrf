@@ -3,6 +3,17 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/** @file
+ * @addtogroup cracen_kmu
+ * @{
+ * @brief CRACEN Key Management Unit (KMU) integration for the PSA layer.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #pragma once
 
 #include <stdint.h>
@@ -94,3 +105,5 @@ psa_status_t cracen_provision_prot_ram_inv_slots(void);
  * @return PSA status code.
  */
 psa_status_t cracen_push_prot_ram_inv_slots(void);
+
+/** @} */

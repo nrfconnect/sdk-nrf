@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_sw_aes_ctr
+ * @{
+ * @brief Software AES-CTR implementation for the CRACEN driver.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #ifndef CRACEN_SW_AES_CTR_H
 #define CRACEN_SW_AES_CTR_H
 
@@ -86,5 +96,7 @@ psa_status_t cracen_sw_aes_ctr_crypt(const psa_key_attributes_t *attributes,
 				     const uint8_t *iv, size_t iv_length, const uint8_t *input,
 				     size_t input_length, uint8_t *output, size_t output_size,
 				     size_t *output_length);
+
+/** @} */
 
 #endif /* CRACEN_SW_AES_CTR_H */

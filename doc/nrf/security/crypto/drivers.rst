@@ -456,13 +456,6 @@ API documentation
 CRACEN driver API
 =================
 
-| Header files: :file:`subsys/nrf_security/src/drivers/cracen/cracenpsa/include/`
+| Header files: :file:`subsys/nrf_security/src/drivers/cracen/`
 
-.. doxygengroup:: cracen_psa_driver_apis
-
-SX status codes
-===============
-
-| Header files: :file:`subsys/nrf_security/src/drivers/cracen/common/include/cracen/statuscodes.h`
-
-.. doxygengroup:: cracen_status_codes
+.. doxygengroup:: cracen_driver_apis

@@ -3,6 +3,17 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/** @file
+ * @addtogroup cracen_sw_mac_cmac
+ * @{
+ * @brief Software CMAC implementation using hardware AES-ECB as a primitive.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #ifndef CRACEN_SW_CMAC_H
 #define CRACEN_SW_CMAC_H
 
@@ -18,7 +29,7 @@
  * and key buffer. It prepares the operation structure for subsequent CMAC
  * processing. This operation runs cmac in software using hardware AES-ECB primitives
  *
- * @param[in,out] operation        Pointer to the CMAC operation structure to be initialized.
+ * @param[in,out] op               Pointer to the CMAC operation structure to be initialized.
  * @param[in]     attributes       Pointer to the key attributes structure.
  * @param[in]     key_buffer       Pointer to the buffer containing the key material.
  * @param[in]     key_buffer_size  Size of the key buffer in bytes.
@@ -36,9 +47,9 @@ psa_status_t cracen_sw_cmac_setup(cracen_mac_operation_t *op,
  * It can be called multiple times to process data in chunks.
  * This operation runs cmac in software using hardware AES-ECB primitives
  *
- * @param[in,out] operation    Pointer to the CMAC operation structure.
- * @param[in]     input        Pointer to the input data buffer.
- * @param[in]     input_length Length of the input data in bytes.
+ * @param[in,out] op       Pointer to the CMAC operation structure.
+ * @param[in]     data     Pointer to the input data buffer.
+ * @param[in]     data_len Length of the input data in bytes.
  *
  * @return PSA_SUCCESS on success or a valid PSA status code.
  */
@@ -52,7 +63,7 @@ psa_status_t cracen_sw_cmac_update(cracen_mac_operation_t *op, const uint8_t *da
  * associated with it. It should be called after all input data has been
  * processed. This operation runs cmac in software using hardware AES-ECB primitives
  *
- * @param[in,out] operation Pointer to the CMAC operation structure.
+ * @param[in,out] op Pointer to the CMAC operation structure.
  *
  * @return PSA_SUCCESS on success or a valid PSA status code.
  */
@@ -67,5 +78,7 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *op);
  */
 psa_status_t cracen_cmac_compute(cracen_mac_operation_t *op, const uint8_t *input,
 				 size_t input_length, uint8_t *mac);
+
+/** @} */
 
 #endif /* CRACEN_SW_CMAC_H */

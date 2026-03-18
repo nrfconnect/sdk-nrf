@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_mem_helpers
+ * @{
+ * @brief Constant-time memory utilities for the CRACEN driver.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #pragma once
 
 #include <stddef.h>
@@ -90,3 +100,5 @@ void safe_memzero(void *dest, const size_t dest_size);
  * \return true if src buffer is non-zero and fits into the destination.
  */
 bool memcpy_check_non_zero(void *dest, size_t dest_size, const void *src, size_t src_size);
+
+/** @} */

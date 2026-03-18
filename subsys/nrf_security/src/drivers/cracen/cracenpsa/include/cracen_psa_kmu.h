@@ -6,7 +6,7 @@
 
 /**
  * @file
- * @addtogroup cracen_psa_kmu
+ * @addtogroup cracen_psa_driver_api
  * @{
  * @brief Key Management Unit (KMU) support for CRACEN PSA driver.
  *

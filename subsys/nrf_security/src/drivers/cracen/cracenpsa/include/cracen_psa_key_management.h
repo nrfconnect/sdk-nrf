@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief Key management operations for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_KEY_MANAGEMENT_H
 #define CRACEN_PSA_KEY_MANAGEMENT_H
 
@@ -150,5 +156,7 @@ psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uin
  */
 psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
 				 psa_drv_slot_number_t *slot_number);
+
+/** @} */
 
 #endif /* CRACEN_PSA_KEY_MANAGEMENT_H */

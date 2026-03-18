@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief AEAD operations for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_AEAD_H
 #define CRACEN_PSA_AEAD_H
 
@@ -198,5 +204,7 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_aead_abort(cracen_aead_operation_t *operation);
+
+/** @} */
 
 #endif /* CRACEN_PSA_AEAD_H */

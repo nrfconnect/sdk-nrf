@@ -3,6 +3,17 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/** @file
+ * @addtogroup cracen_sw_common
+ * @{
+ * @brief Shared primitives for CRACEN software implementation.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #ifndef CRACEN_SW_COMMON_H
 #define CRACEN_SW_COMMON_H
 
@@ -90,5 +101,7 @@ psa_status_t cracen_sw_increment_counter_be(uint8_t *ctr_buf, size_t ctr_buf_siz
  */
 void cracen_sw_encode_value_be(uint8_t *buffer, size_t buffer_size, size_t value,
 			       size_t value_size);
+
+/** @} */
 
 #endif /* CRACEN_SW_COMMON_H */

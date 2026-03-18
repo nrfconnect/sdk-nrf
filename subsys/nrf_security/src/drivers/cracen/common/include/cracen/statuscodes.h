@@ -7,11 +7,14 @@
 #ifndef CRACEN_STATUSCODES_HEADER_FILE
 #define CRACEN_STATUSCODES_HEADER_FILE
 
-/**
- * @defgroup cracen_status_codes CRACEN SX Status Codes
+/** @file
+ * @addtogroup cracen_status_codes
+ * @{
  * @brief SX status code definitions for the CRACEN driver.
  *
- * @{
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
  */
 
 /** The function or operation succeeded */

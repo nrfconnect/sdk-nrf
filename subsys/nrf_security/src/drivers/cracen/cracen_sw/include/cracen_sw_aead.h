@@ -5,15 +5,19 @@
  */
 
 /**
- * @file cracen_sw_aead.h
+ * @file
  *
- * @defgroup cracen_sw_aead Software AEAD dispatcher
+ * @addtogroup cracen_sw_aead
  * @{
  * @brief Dispatcher layer for the software AEAD implementations.
  *
  * This module provides a common interface that dispatches to specific
  * software AEAD implementations (such as AES-CCM) as a workaround for
  * hardware limitations with multipart operations.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
  */
 
 #ifndef CRACEN_SW_AEAD_H

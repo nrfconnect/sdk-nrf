@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief CTR_DRBG entropy and random generation for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_CTR_DRBG_H
 #define CRACEN_PSA_CTR_DRBG_H
 
@@ -46,5 +52,7 @@ psa_status_t cracen_free_random(cracen_prng_context_t *context);
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_get_trng(uint8_t *output, size_t output_size);
+
+/** @} */
 
 #endif /* CRACEN_PSA_CTR_DRBG_H */

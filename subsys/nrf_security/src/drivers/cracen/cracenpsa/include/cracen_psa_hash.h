@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief Hash operations for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_HASH_H
 #define CRACEN_PSA_HASH_H
 
@@ -99,5 +105,7 @@ static inline psa_status_t cracen_hash_abort(cracen_hash_operation_t *operation)
 
 	return PSA_SUCCESS;
 }
+
+/** @} */
 
 #endif /* CRACEN_PSA_HASH_H */

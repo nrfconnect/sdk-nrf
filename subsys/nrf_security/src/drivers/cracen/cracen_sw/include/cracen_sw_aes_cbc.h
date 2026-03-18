@@ -5,14 +5,17 @@
  */
 
 /**
- * @file cracen_sw_aes_cbc.h
- * @defgroup cracen_sw_aes_cbc CRACEN Software AES-CBC
+ * @file
+ * @addtogroup cracen_sw_aes_cbc
+ * @{
  * @brief Software implementation of AES-CBC for CRACEN driver
  *
  * This module provides a software implementation of AES-CBC (Cipher Block Chaining)
  * for the CRACEN_SW driver.
  *
- * @{
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
  */
 
 #ifndef CRACEN_SW_AES_CBC_H

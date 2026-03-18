@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_psa_driver_api
+ * @{
+ * @brief MAC operations for the CRACEN PSA driver.
+ */
+
 #ifndef CRACEN_PSA_MAC_H
 #define CRACEN_PSA_MAC_H
 
@@ -113,5 +119,7 @@ psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const u
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_mac_abort(cracen_mac_operation_t *operation);
+
+/** @} */
 
 #endif /* CRACEN_PSA_MAC_H */

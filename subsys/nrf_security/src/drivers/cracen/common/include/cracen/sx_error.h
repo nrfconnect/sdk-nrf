@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_sx_error
+ * @{
+ * @brief SX error code to errno and string conversion utilities.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #include <stdint.h>
 #include <errno.h>
 #include <cracen/statuscodes.h>
@@ -507,3 +517,5 @@ inline __attribute__((always_inline)) const char *sx_err2str(int sx_err)
 		return "(UNKNOWN)";
 	}
 }
+
+/** @} */

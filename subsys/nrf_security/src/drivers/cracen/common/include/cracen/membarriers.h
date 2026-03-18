@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup cracen_membarriers
+ * @{
+ * @brief Compiler and CPU memory barrier utilities.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
+ */
+
 #include <zephyr/kernel.h>
 #include <nrfx.h>
 
@@ -71,3 +81,5 @@ static inline void rmb(void)
 	cmb();
 #endif
 }
+
+/** @} */

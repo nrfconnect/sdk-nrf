@@ -5,14 +5,18 @@
  */
 
 /**
- * @file cracen_sw_aes_gcm.h
+ * @file
  *
- * @defgroup cracen_sw_aes_gcm Software AES-GCM implementation
+ * @addtogroup cracen_sw_aes_gcm
  * @{
  * @brief Software implementation of the AES-GCM (Galois/Counter) mode.
  *
  * This module provides a software-based implementation of AES-GCM for use
  * as a workaround for hardware limitations with multipart operations.
+ *
+ * @note These APIs are for internal use only. Applications must use the
+ *          PSA Crypto API (psa_* functions) instead of calling these functions
+ *          directly.
  */
 
 #ifndef CRACEN_SW_AES_GCM_H

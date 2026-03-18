@@ -6,13 +6,9 @@
 
 /**
  * @file
- * @addtogroup cracen_psa_mac_kdf
+ * @addtogroup cracen_psa_driver_api
  * @{
- * @brief MAC and KDF definitions for CRACEN PSA driver (internal use only).
- *
- * @note These APIs are for internal use only. Applications must use the
- *          PSA Crypto API (psa_* functions) instead of calling these functions
- *          directly.
+ * @brief MAC and KDF definitions for CRACEN PSA driver.
  */
 
 #ifndef CRACEN_PSA_MAC_KDF_H
