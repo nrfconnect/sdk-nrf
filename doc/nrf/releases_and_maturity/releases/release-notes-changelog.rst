@@ -659,6 +659,8 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 * Updated the ``nrfx_gppi`` API to now have full support on the application core of the nRF54H20 device.
   Using DPPI does not require the devicetree configuration.
 
+* Fixed case where Low Power UART may fail after the reset if reset happened during the transmission.
+
 Wi-Fi drivers
 -------------
 
