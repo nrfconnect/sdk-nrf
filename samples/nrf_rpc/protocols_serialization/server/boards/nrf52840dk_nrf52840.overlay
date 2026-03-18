@@ -23,16 +23,19 @@
 &flash0 {
 	partitions {
 		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00000000 0x000fb000>;
 		};
 
 		storage_partition: partition@fb000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x000fb000 0x00002000>;
 		};
 
 		coredump_partition: partition@fd000 {
+			compatible = "zephyr,mapped-partition";
 			label = "";
 			reg = <0x000fd000 0x00003000>;
 		};

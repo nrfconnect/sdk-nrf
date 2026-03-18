@@ -9,6 +9,7 @@
 	partitions {
 		/* Align the partition size to 4096 B to avoid gaps. */
 		bt_fast_pair_partition: partition@1b0000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1b0000 DT_SIZE_K(4)>;
 		};
 	};

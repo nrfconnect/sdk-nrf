@@ -68,7 +68,7 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29462"
 
 - scenarios:
-    - sample.filesystem.fat_fs.nrf54l15dk
+    - sample.filesystem.fat_fs.nrf54l15
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34573"

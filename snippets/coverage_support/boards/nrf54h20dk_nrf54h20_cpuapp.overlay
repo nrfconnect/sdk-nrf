@@ -19,6 +19,7 @@
 &mram1x {
 	partitions {
 		cpurad_slot0_partition: partition@ba000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0xba000 DT_SIZE_K(168)>;
 		};
 	};
