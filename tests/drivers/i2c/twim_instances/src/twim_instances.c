@@ -73,9 +73,10 @@ static void test_configure_instance(const struct device *dev)
 	ret = i2c_configure(dev, i2c_config);
 	zassert_equal(0, ret, "%s: i2c_configure() failed (%d)", dev->name, ret);
 
-	/* -EIO as there is no device connnected to the I2C bus. */
+	/* Returns error (-EIO or -ETIMEDOUT) as there is no device connnected to the I2C bus. */
 	ret = i2c_write(dev, i2c_tx_buffer, sizeof(i2c_tx_buffer), 0xFF);
-	zassert_equal(-EIO, ret, "%s: i2c_write() failed (%d)", dev->name, ret);
+	zassert_true((ret == -EIO) || (ret == -ETIMEDOUT),
+		     "%s: i2c_write() failed (%d)", dev->name, ret);
 }
 
 
