@@ -111,6 +111,17 @@ config CRACEN_IKG_SEED_LOAD
 	  Note that this is not required to be used if a bootloader is loading
 	  KMU seed.
 
+config CRACEN_KMU_ALLOW_ANY_AEAD_TAG_LENGTH
+	bool "Allow storing AEAD keys with non-default tag length to KMU"
+	depends on PSA_NEED_CRACEN_AEAD_DRIVER && CRACEN_LIB_KMU
+	help
+	  Allow KMU to store keys for AEAD algorithms with non-default (shortened)
+	  tag lengths.
+
+	  Note: activating this option leads to algorithm policy for the key being
+	  relaxed upon its extraction from the KMU. It will allow using the key
+	  for operations with a shorter tag.
+
 config CRACEN_IKG_SEED_KMU_SLOT
 	int "KMU slot of the CRACEN IKG seed"
 	range 0 183

@@ -32,6 +32,9 @@
 #define CRACEN_KMU_256_BIT_KEY_SIZE	     32u
 #define CRACEN_KMU_384_BIT_KEY_SIZE	     48u
 
+#define CRACEN_KMU_MIN_TAG_SIZE_CCM	     4u /* RFC-3610 */
+#define CRACEN_KMU_MIN_TAG_SIZE_GCM	     4u /* NIST SP800-38D */
+
 /* Reserved slot, used to record whether provisioning is in progress for a set of slots.
  * We only use the metadata field, formatted as follows:
  *      Bits 31-16: Unused
@@ -636,19 +639,43 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 #ifdef PSA_NEED_CRACEN_CHACHA20_POLY1305
 	case METADATA_ALG_CHACHA20_POLY1305:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_CHACHA20);
+		/** There is no need to build an AEAD minimum-tag-length
+		 *  wildcard algorithm for ChaCha20-Poly1305 since it does not
+		 *  support non-standard tag lengths (RFC-8439).
+		 */
 		psa_set_key_algorithm(key_attr, PSA_ALG_CHACHA20_POLY1305);
 		break;
 #endif /* PSA_NEED_CRACEN_CHACHA20_POLY1305 */
 #ifdef PSA_NEED_CRACEN_GCM_AES
 	case METADATA_ALG_AES_GCM:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
-		psa_set_key_algorithm(key_attr, PSA_ALG_GCM);
+
+		if (IS_ENABLED(CONFIG_CRACEN_KMU_ALLOW_ANY_AEAD_TAG_LENGTH)) {
+			/** Building an AEAD minimum-tag-length wildcard algorithm
+			 *  since we do not store non-default tag length to the metadata
+			 *  during key provisioning.
+			 */
+			psa_set_key_algorithm(key_attr, PSA_ALG_AEAD_WITH_AT_LEAST_THIS_LENGTH_TAG(
+							PSA_ALG_GCM, CRACEN_KMU_MIN_TAG_SIZE_GCM));
+		} else {
+			psa_set_key_algorithm(key_attr, PSA_ALG_GCM);
+		}
 		break;
 #endif /* PSA_NEED_CRACEN_GCM_AES */
 #ifdef PSA_NEED_CRACEN_CCM_AES
 	case METADATA_ALG_AES_CCM:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
-		psa_set_key_algorithm(key_attr, PSA_ALG_CCM);
+
+		if (IS_ENABLED(CONFIG_CRACEN_KMU_ALLOW_ANY_AEAD_TAG_LENGTH)) {
+			/** Building an AEAD minimum-tag-length wildcard algorithm
+			 *  since we do not store non-default tag length to the metadata
+			 *  during key provisioning.
+			 */
+			psa_set_key_algorithm(key_attr, PSA_ALG_AEAD_WITH_AT_LEAST_THIS_LENGTH_TAG(
+							PSA_ALG_CCM, CRACEN_KMU_MIN_TAG_SIZE_CCM));
+		} else {
+			psa_set_key_algorithm(key_attr, PSA_ALG_CCM);
+		}
 		break;
 #endif /* PSA_NEED_CRACEN_CCM_AES */
 #ifdef PSA_NEED_CRACEN_ECB_NO_PADDING_AES
@@ -770,6 +797,8 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 						kmu_metadata *metadata)
 {
 	int kmu_slot;
+	psa_algorithm_t key_algorithm;
+
 	memset(metadata, 0, sizeof(*metadata));
 	metadata->metadata_version = 0;
 
@@ -801,7 +830,13 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		return PSA_SUCCESS;
 	}
 
-	switch (psa_get_key_algorithm(key_attr)) {
+	key_algorithm = psa_get_key_algorithm(key_attr);
+	if (IS_ENABLED(CONFIG_CRACEN_KMU_ALLOW_ANY_AEAD_TAG_LENGTH) &&
+	    PSA_ALG_IS_AEAD(key_algorithm)) {
+		key_algorithm = PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(key_algorithm);
+	}
+
+	switch (key_algorithm) {
 #ifdef PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20
 	case PSA_ALG_STREAM_CIPHER:
 		metadata->algorithm = METADATA_ALG_CHACHA20;
