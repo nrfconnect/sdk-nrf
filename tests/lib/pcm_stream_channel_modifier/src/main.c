@@ -45,10 +45,11 @@ uint8_t unpadded_surround_left[] = {37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 
 uint8_t unpadded_surround_right[] = {49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60};
 uint8_t stereo_split[] = {1, 13, 2, 14, 3, 15, 4,  16, 5,  17, 6,  18,
 			  7, 19, 8, 20, 9, 21, 10, 22, 11, 23, 12, 24};
-uint8_t multi_split[] = {1,  13, 25, 37, 49, 2,	 14, 26, 38, 50, 3,  15, 27, 39, 51,
-			 4,  16, 28, 40, 52, 5,	 17, 29, 41, 53, 6,  18, 30, 42, 54,
-			 7,  19, 31, 43, 55, 8,	 20, 32, 44, 56, 9,  21, 33, 45, 57,
-			 10, 22, 34, 46, 58, 11, 23, 35, 47, 59, 12, 24, 36, 48, 60};
+uint8_t __aligned(4) multi_split[] = {
+	1,  13, 25, 37, 49, 2,  14, 26, 38, 50, 3,  15, 27, 39, 51,
+	4,  16, 28, 40, 52, 5,  17, 29, 41, 53, 6,  18, 30, 42, 54,
+	7,  19, 31, 43, 55, 8,  20, 32, 44, 56, 9,  21, 33, 45, 57,
+	10, 22, 34, 46, 58, 11, 23, 35, 47, 59, 12, 24, 36, 48, 60};
 
 /* Result arrays */
 uint8_t left_zero_padded_8[] = {1, 0, 2, 0, 3, 0, 4,  0, 5,  0, 6,  0,
@@ -57,8 +58,8 @@ uint8_t right_zero_padded_8[] = {0, 13, 0, 14, 0, 15, 0, 16, 0, 17, 0, 18,
 				 0, 19, 0, 20, 0, 21, 0, 22, 0, 23, 0, 24};
 uint8_t copy_padded_8[] = {1, 1, 2, 2, 3, 3, 4,	 4,  5,	 5,  6,	 6,
 			   7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12};
-uint8_t combine_8_ch2[] = {1, 13, 2, 14, 3, 15, 4,  16, 5,  17, 6,  18,
-			   7, 19, 8, 20, 9, 21, 10, 22, 11, 23, 12, 24};
+uint8_t __aligned(4) combine_8_ch2[] = {1, 13, 2, 14, 3, 15, 4,  16, 5,  17, 6,  18,
+					7, 19, 8, 20, 9, 21, 10, 22, 11, 23, 12, 24};
 
 uint8_t left_zero_padded_16[] = {1, 2, 0, 0, 3, 4,  0, 0, 5,  6,  0, 0,
 				 7, 8, 0, 0, 9, 10, 0, 0, 11, 12, 0, 0};
@@ -66,8 +67,8 @@ uint8_t right_zero_padded_16[] = {0, 0, 1, 2, 0, 0, 3, 4,  0, 0, 5,  6,
 				  0, 0, 7, 8, 0, 0, 9, 10, 0, 0, 11, 12};
 uint8_t copy_padded_16[] = {1, 2, 1, 2, 3, 4,  3, 4,  5,  6,  5,  6,
 			    7, 8, 7, 8, 9, 10, 9, 10, 11, 12, 11, 12};
-uint8_t combine_16[] = {1, 2, 13, 14, 3, 4,  15, 16, 5,	 6,  17, 18,
-			7, 8, 19, 20, 9, 10, 21, 22, 11, 12, 23, 24};
+uint8_t __aligned(4) combine_16[] = {1, 2, 13, 14, 3, 4,  15, 16, 5,  6,  17, 18,
+					     7, 8, 19, 20, 9, 10, 21, 22, 11, 12, 23, 24};
 uint8_t stereo_split_left_16[] = {1, 13, 3, 15, 5, 17, 7, 19, 9, 21, 11, 23};
 uint8_t stereo_split_right_16[] = {2, 14, 4, 16, 6, 18, 8, 20, 10, 22, 12, 24};
 
@@ -77,8 +78,8 @@ uint8_t right_zero_padded_24[] = {0, 0, 0, 1, 2, 3, 0, 0, 0, 4,	 5,  6,
 				  0, 0, 0, 7, 8, 9, 0, 0, 0, 10, 11, 12};
 uint8_t copy_padded_24[] = {1, 2, 3, 1, 2, 3, 4,  5,  6,  4,  5,  6,
 			    7, 8, 9, 7, 8, 9, 10, 11, 12, 10, 11, 12};
-uint8_t combine_24[] = {1, 2, 3, 13, 14, 15, 4,	 5,  6,	 16, 17, 18,
-			7, 8, 9, 19, 20, 21, 10, 11, 12, 22, 23, 24};
+uint8_t __aligned(4) combine_24[] = {1, 2, 3, 13, 14, 15, 4,  5,  6,  16, 17, 18,
+					     7, 8, 9, 19, 20, 21, 10, 11, 12, 22, 23, 24};
 uint8_t stereo_split_left_24[] = {1, 13, 2, 4, 16, 5, 7, 19, 8, 10, 22, 11};
 uint8_t stereo_split_right_24[] = {14, 3, 15, 17, 6, 18, 20, 9, 21, 23, 12, 24};
 
@@ -88,8 +89,8 @@ uint8_t right_zero_padded_32[] = {0, 0, 0, 0, 1, 2, 3, 4, 0, 0,	 0,  0,
 				  5, 6, 7, 8, 0, 0, 0, 0, 9, 10, 11, 12};
 uint8_t copy_padded_32[] = {1, 2, 3, 4, 1, 2,  3,  4,  5, 6,  7,  8,
 			    5, 6, 7, 8, 9, 10, 11, 12, 9, 10, 11, 12};
-uint8_t combine_32[] = {1,  2,	3,  4,	13, 14, 15, 16, 5,  6,	7,  8,
-			17, 18, 19, 20, 9,  10, 11, 12, 21, 22, 23, 24};
+uint8_t __aligned(4) combine_32[] = {1,  2,  3,  4,  13, 14, 15, 16, 5,  6,  7,  8,
+					     17, 18, 19, 20, 9,  10, 11, 12, 21, 22, 23, 24};
 uint8_t stereo_split_left_32[] = {1, 13, 2, 14, 5, 17, 6, 18, 9, 21, 10, 22};
 uint8_t stereo_split_right_32[] = {3, 15, 4, 16, 7, 19, 8, 20, 11, 23, 12, 24};
 
@@ -149,7 +150,7 @@ ZTEST(suite_pscm_int, test_pscm_interleave_api_parameters)
 ZTEST(suite_pscm_deint, test_pscm_deinterleave_api_parameters)
 {
 	int ret;
-	uint8_t input[2], output[2];
+	uint8_t __aligned(4) input[2], output[2];
 	size_t input_size = sizeof(input);
 	size_t output_size = sizeof(output);
 	size_t test_output_size = 0;
@@ -194,6 +195,17 @@ ZTEST(suite_pscm_deint, test_pscm_deinterleave_api_parameters)
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, pcm_bit_depth, &output,
 				test_output_size);
 	zassert_equal(ret, -EINVAL, "Failed de-interleave for output size too small: ret %d", ret);
+
+	uint8_t *misaligned_input = (uint8_t *)input + 1;
+	uint8_t *misaligned_output = (uint8_t *)output + 1;
+
+	ret = pscm_deinterleave(misaligned_input, input_size, input_channels, channel,
+				pcm_bit_depth, output, output_size);
+	zassert_equal(ret, -EINVAL, "Failed de-interleave for misaligned input: ret %d", ret);
+
+	ret = pscm_deinterleave(input, input_size, input_channels, channel, pcm_bit_depth,
+				misaligned_output, output_size);
+	zassert_equal(ret, -EINVAL, "Failed de-interleave for misaligned output: ret %d", ret);
 }
 
 int interleave_test(void const *const input, size_t input_size, uint8_t pcm_bit_depth,
@@ -222,7 +234,7 @@ int deinterleave_test(void const *const input, size_t input_size, uint8_t pcm_bi
 		      size_t test_result_size)
 {
 	int ret;
-	uint8_t output[TEST_PCM_DEINT_SIZE];
+	uint8_t __aligned(4) output[TEST_PCM_DEINT_SIZE];
 	size_t output_size = sizeof(output);
 
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, pcm_bit_depth, &output,

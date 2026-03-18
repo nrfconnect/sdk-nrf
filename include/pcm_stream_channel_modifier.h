@@ -129,15 +129,16 @@ int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
 
 /**
  * @brief  De-interleave a channel from a buffer of N channels of PCM
- * @note: The de-interleaver can not be executed inplace (i.e. input != output)
+ * @note:  The de-interleaver can not be executed inplace (i.e. input != output)
  *
- * @param[in]	input				Pointer to the multi channel input buffer.
- * @param[in]	input_size			Number of bytes in input.
+ * @param[in]	input			Pointer to the multi channel input buffer.
+ *					Should be 4-bytes aligned.
+ * @param[in]	input_size		Number of bytes in input.
  * @param[in]	input_channels		Number of channels in the input buffer.
- * @param[in]	channel				Channel to de-interleave.
+ * @param[in]	channel			Channel to de-interleave.
  * @param[in]	pcm_bit_depth		Bit depth of PCM samples (8, 16, 24, or 32).
- * @param[out]	output				Pointer to the channel output.
- * @param[in]	output_size			Number of bytes in output. Must be at least
+ * @param[out]	output			Pointer to the channel output. Should be 4-bytes aligned.
+ * @param[in]	output_size		Number of bytes in output. Must be at least
  *					(input_size / output_channels).
  *
  * @return	0 if successful, error value
