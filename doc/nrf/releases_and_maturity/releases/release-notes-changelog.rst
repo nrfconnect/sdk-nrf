@@ -578,6 +578,8 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
+* Fixed an issue where the low power UART may fail after a reset if the reset occurs during transmission.
+
 Wi-Fi drivers
 -------------
 
