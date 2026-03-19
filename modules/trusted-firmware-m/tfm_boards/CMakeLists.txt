@@ -156,6 +156,11 @@ if(TFM_CPU_FREQ_MHZ)
   target_compile_definitions(platform_s PUBLIC NRF_CONFIG_CPU_FREQ_MHZ=${TFM_CPU_FREQ_MHZ})
 endif()
 
+if(NOT DEFINED TFM_MCUBOOT_OFFSET)
+  set(TFM_MCUBOOT_OFFSET 0)
+endif()
+target_compile_definitions(platform_region_defs INTERFACE TFM_MCUBOOT_OFFSET=${TFM_MCUBOOT_OFFSET})
+
 if(CONFIG_NRF_TRACE_PORT)
   target_compile_definitions(platform_s PUBLIC ENABLE_TRACE)
 endif()

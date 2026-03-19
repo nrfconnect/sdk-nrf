@@ -53,7 +53,14 @@
 #define FLASH_S_PARTITION_SIZE	(PM_TFM_SECURE_SIZE)
 #define FLASH_NS_PARTITION_SIZE (PM_TFM_NONSECURE_SIZE)
 #else
+#if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot0_s_partition))
+/* When slot0_partition is the combined MCUboot slot, use slot0_s_partition
+ * for the size of the secure-only sub-partition.
+ */
+#define FLASH_S_PARTITION_SIZE	TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_s_partition))
+#else
 #define FLASH_S_PARTITION_SIZE	TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_partition))
+#endif
 #define FLASH_NS_PARTITION_SIZE TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_ns_partition))
 #endif
 #define FLASH_MAX_PARTITION_SIZE                                                                   \
