@@ -1,16 +1,13 @@
-.. _ncs_release_notes_changelog:
+.. _ncs_release_notes_330-preview3:
 
-Changelog for |NCS| v3.2.99
-###########################
+Changelog for |NCS| v3.3.0-preview3
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -48,8 +45,7 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-* Moved the :ref:`mcuboot_with_decompression` sample to :file:`samples/dfu/compressed_update` and
-  updated the sample name from "nRF Compression: MCUboot compressed update".
+* Moved the :ref:`mcuboot_with_decompression` sample to :file:`samples/dfu/compressed_update` and updated the sample name from "nRF Compression: MCUboot compressed update".
 
 * :ref:`nrf_smp_svr_sample` sample:
 
@@ -146,8 +142,6 @@ Security
   * Support for ChaCha20-Poly1305 AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>` board.
   * Support for AES Key Wrap (AES-KW) and AES Key Wrap with Padding (AES-KWP) algorithms in the :ref:`nrf_oberon <crypto_drivers_oberon>` and :ref:`CRACEN <crypto_drivers_cracen>` drivers.
     The :ref:`Supported cryptographic operations in the nRF Connect SDK <ug_crypto_supported_features_key_wrap_algorithms>` page has been updated accordingly.
-  * Doxygen API group hierarchy files for the CRACEN driver: :file:`cracen_api_structure.h` (top-level), :file:`cracen_sw/include/cracen_sw_api_structure.h` (software implementations), and :file:`common/include/cracen_common_api_structure.h` (common utilities).
-    The :ref:`API documentation section for the cryptographic drivers <crypto_drivers_api_documentation>` has been updated accordingly.
 
 * Updated:
 
@@ -168,29 +162,20 @@ Security
   * The :ref:`app_approtect` page with more detailed information about the AP-Protect implementation types and how to configure them for each device.
 
   * The :ref:`API documentation section for the cryptographic drivers <crypto_drivers_api_documentation>` with links to the added API documentation for the CRACEN driver.
-  * The documentation with the information about the side-channel countermeasures in the CRACEN peripheral:
-
-    * The :ref:`ug_crypto_supported_features` page with the :ref:`ug_crypto_supported_features_countermeasures` section with information about support for the countermeasures in the CRACEN driver.
-    * The :ref:`ug_kmu_guides_cracen_overview` page with the section about :ref:`ug_kmu_cracen_countermeasures`.
 
 * Removed:
 
   * The ``CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`.
   * The ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it by options :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
-  * The ``CONFIG_MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE`` Kconfig option.
-    The PSA Crypto API is able to infer the key slot buffer size based on the keys enabled in the build, so there is no need to define it manually.
-  * The ``CONFIG_MBEDTLS_MAC_SHA256_ENABLED`` Kconfig option.
 
 Trusted Firmware-M (TF-M)
 -------------------------
 
 * Added support for the PSA Key Wrapping functions from the PSA Certified Crypto API v1.4.0.
-
 * Updated:
 
   * To version 2.2.2.
   * The default TF-M profile is now :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` for all configurations except for Thingy:91 and Thingy:91 X, on which it is still :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL`.
-  * The :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option now supports enabling PSA crypto hash functions.
 
 Protocols
 =========
@@ -239,11 +224,7 @@ Gazell
 Matter
 ------
 
-* Updated:
-
-  * The :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
-  * Decreased Matter OTA image transfer time by around 15%.
-
+* Updated the :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
 * Deprecated the secure persistent storage backend enabled with the :option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option.
 
 Matter fork
@@ -315,9 +296,9 @@ nRF5340 Audio
 
 * Updated:
 
-  * The application to switch to the new USB stack introduced in Zephyr 3.4.0.
-    This change requires no action from you.
-    macOS now works out of the box, fixing OCT-2154.
+  * Switched to the new USB stack introduced in Zephyr 3.4.0.
+    For an end user, this change requires no action.
+    macOS will now work out of the box, fixing OCT-2154.
 
   * Programming script.
     Devices are now halted before programming.
@@ -325,18 +306,21 @@ nRF5340 Audio
     with the headsets starting first.
     This eases sniffing of advertisement packets.
 
-  * The audio data path to now accumulate 10 ms frames instead of processing 1 ms blocks individually, reducing message queue operations by 90% and improving overall system performance.
-    This optimization affects both USB audio input processing and the I2S audio datapath, resulting in more efficient encoder thread operation.
+  * With the latest release of |nRFVSC|, you can build and program the nRF5340 Audio application using the |nRFVSC| GUI.
+    Updated the :ref:`nrf53_audio_app_building` accordingly: the note about missing support in |nRFVSC| has been removed and the section about programming using standard methods now lists the steps for |nRFVSC| and the command line.
 
-  * The application to improved handling of I2S RX buffer overruns.
+  * Improved handling of I2S RX buffer overruns.
     When an overrun occurs, the most recent block in the current frame is removed to make space for new incoming data.
 
-  * The application to optimize USB-to-encoder audio processing pipeline to reduce CPU usage.
-    LC3-encoding of sinusoidal input demands more of the CPU than real-world audio input.
+  * Optimized USB-to-encoder audio processing pipeline to reduce CPU usage.
+    Note that LC3-encoding of sinusoidal input demands more of the CPU than real-world audio input.
 
-  * The application to improved error handling with ``unlikely()`` macros for better branch prediction in performance-critical paths.
+  * The audio data path now accumulates 10 ms frames instead of processing 1 ms blocks individually, reducing message queue operations by 90% and improving overall system performance.
+    This optimization affects both USB audio input processing and the I2S audio datapath, resulting in more efficient encoder thread operation.
 
-  * The application to separate the audio clock configuration into a dedicated module.
+  * Improved error handling with ``unlikely()`` macros for better branch prediction in performance-critical paths.
+
+  * Separated the audio clock configuration into a dedicated module.
     This allows for better organization and potential reuse of the audio clock configuration code between different SoCs that might not have the high-frequency audio clock (HFCLKAUDIO) feature.
     The new module provides an initialization function for setting up the audio clock and a function for configuring the audio clock frequency.
 
@@ -349,10 +333,6 @@ nRF5340 Audio
     The nRF5340 Audio applications have for some time used standard |NCS| tools to perform a DFU.
     Hence, the applications use the same process as other Bluetooth projects.
     See :ref:`app_bootloaders` for information on how to set up DFU for their requirements.
-
-  * The note about missing support in |nRFVSC|.
-    The section about programming using standard methods now lists the steps for |nRFVSC| and the command line from the :ref:`nrf53_audio_app_building` document.
-    This is because, with the latest release of |nRFVSC|, you can build and program the nRF5340 Audio application using the |nRFVSC| GUI.
 
 nRF Desktop
 -----------
@@ -462,14 +442,6 @@ Bluetooth Fast Pair samples
 * Updated all Fast Pair samples to use the new ``<bluetooth/fast_pair/...>`` include paths.
 
 * :ref:`fast_pair_locator_tag` sample:
-
-  * Added an experimental application ranging module (:ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>`) that uses the :ref:`ug_bt_fast_pair_fhn_pf` feature of the :ref:`bt_fast_pair_readme` library with Bluetooth Low Energy Channel Sounding as the ranging technology.
-    The module is enabled by default on board targets with Channel Sounding hardware support.
-    The experimental status is inherited due to its experimental dependencies.
-
-    As of the beginning of the second quarter of 2026, Precision Finding support using Bluetooth Low Energy Channel Sounding as the ranging technology is not publicly available on Android platforms.
-    However, you can experiment with this configuration on Android test devices that provide hardware and software support for Bluetooth Low Energy Channel Sounding (for example, Google Pixel 10) if you satisfy the necessary requirements.
-    For details regarding the requirements, see a note in the :ref:`ug_bt_fast_pair_fhn_pf` documentation section.
 
   * Updated:
 
@@ -711,9 +683,6 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
-  * Added :ref:`ug_bt_fast_pair_fhn_pf` support for the Find Hub Network (FHN) extension, enabling distance measurement for FHN accessories using supported ranging technologies.
-    The feature is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_PF` Kconfig option and is experimental.
-
   * Updated:
 
     * The location of the Fast Pair headers and implementation out of the :file:`services` subdirectory.
@@ -902,9 +871,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-* Added documentation for the :ref:`ug_bt_fast_pair_fhn_pf` to the :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide, covering the feature overview with supported ranging technologies, prerequisite operations, GATT service interaction with the ranging management workflow, and the Bluetooth Low Energy Channel Sounding helper APIs.
-
-* Updated the :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide to reflect the Find My Device Network (FMDN) extension rename to Find Hub Network (FHN), aligning with the updated Google specification.
+* Updated the :ref:`ug_bt_fast_pair_integration` guide to reflect the Find My Device Network (FMDN) extension rename to Find Hub Network (FHN), aligning with the updated Google specification.
 
 Edge Impulse integration
 ------------------------
