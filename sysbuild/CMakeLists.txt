@@ -473,7 +473,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
        OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
        # Do not use the upstream mcuboot.cmake on new platforms.
        OR SB_CONFIG_SOC_SERIES_NRF54L
-       OR SB_CONFIG_SOC_SERIES_NRF54H OR SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
+       OR SB_CONFIG_SOC_SERIES_NRF54H OR SB_CONFIG_QSPI_XIP_SPLIT_IMAGE
+       # TF-M NS builds require signing tfm_merged.hex, not zephyr.hex.
+       OR SB_CONFIG_BOARD_IS_NON_SECURE)
       # Use NCS signing script with support for PM or direct XIP (NCS specific features)
       if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
         set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)

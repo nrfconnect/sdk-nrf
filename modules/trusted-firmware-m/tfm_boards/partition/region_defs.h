@@ -30,13 +30,13 @@
 #endif /* NRF_NS_SECONDARY */
 #define NS_IMAGE_PRIMARY_PARTITION_OFFSET (PM_TFM_NONSECURE_ADDRESS)
 #else
-/* DTS-based partition offsets.
- * Note: NRF_NS_SECONDARY is only supported with Partition Manager.
- */
+/* DTS-based partition offsets. */
 #ifdef NRF_NS_SECONDARY
-#error "NRF_NS_SECONDARY requires Partition Manager to be enabled"
-#endif
-#define S_IMAGE_PRIMARY_PARTITION_OFFSET  TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
+#define S_IMAGE_PRIMARY_PARTITION_OFFSET   TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
+#define S_IMAGE_SECONDARY_PARTITION_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot1_partition))
+#else
+#define S_IMAGE_PRIMARY_PARTITION_OFFSET   TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
+#endif /* NRF_NS_SECONDARY */
 #define NS_IMAGE_PRIMARY_PARTITION_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_ns_partition))
 #endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 #else
@@ -47,6 +47,18 @@
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #define S_CODE_START (PM_TFM_OFFSET)
 #define S_CODE_SIZE  (PM_TFM_SIZE)
+#elif TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot0_s_partition))
+/* When slot0_partition is the combined MCUboot slot containing sub-partitions,
+ * use slot0_s_partition for the secure-only size and start address.
+ * BL2_HEADER_SIZE (= CONFIG_ROM_START_OFFSET, 0x200 with MCUboot) skips the
+ * MCUboot header at the start of the combined slot. BL2_HEADER_SIZE is also
+ * used by target_cfg.c to locate the NS vector table, keeping both in sync.
+ * This is a bit of a hack to get around handing the offset manually in TF-m.
+ */
+#define S_CODE_START (TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_s_partition)) + \
+		      TFM_MCUBOOT_OFFSET)
+#define S_CODE_SIZE  (TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_s_partition)) - \
+		      TFM_MCUBOOT_OFFSET)
 #else
 #define S_CODE_START TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
 #define S_CODE_SIZE  TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_partition))
