@@ -211,6 +211,14 @@ function(zephyr_mcuboot_tasks)
 
   set(imgtool_args ${imgtool_extra})
 
+  if(CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED)
+    set(imgtool_args ${imgtool_args} --compression-lzma-dictsize=${CONFIG_NCS_MCUBOOT_IMGTOOL_LZMA_MAX_DICT_SIZE})
+    set(imgtool_args ${imgtool_args} --compression-lzma-pb=${CONFIG_NCS_MCUBOOT_IMGTOOL_LZMA_PB})
+    set(imgtool_args ${imgtool_args} --compression-lzma-lc=${CONFIG_NCS_MCUBOOT_IMGTOOL_LZMA_LC})
+    set(imgtool_args ${imgtool_args} --compression-lzma-lp=${CONFIG_NCS_MCUBOOT_IMGTOOL_LZMA_LP})
+    set(imgtool_args ${imgtool_args} --compression-lzma-preset=${CONFIG_NCS_MCUBOOT_IMGTOOL_LZMA_COMPRESSION_PRESET})
+  endif()
+
   # Extensionless prefix of any output file.
   set(output ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.signed)
   if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)

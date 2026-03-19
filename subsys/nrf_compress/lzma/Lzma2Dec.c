@@ -33,7 +33,7 @@
 
 #define LZMA2_IS_UNCOMPRESSED_STATE(p) (((p)->control & (1 << 7)) == 0)
 
-#define LZMA2_LCLP_MAX		    4
+#define LZMA2_LCLP_MAX		    CONFIG_NRF_COMPRESS_LZMA_MAX_LC_LP
 #define LZMA2_DIC_SIZE_FROM_PROP(p) (((UInt32)2 | ((p) & 1)) << ((p) / 2 + 11))
 
 #ifdef SHOW_DEBUG_INFO
