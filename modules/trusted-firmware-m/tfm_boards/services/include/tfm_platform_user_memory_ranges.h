@@ -54,7 +54,7 @@
 #define CPUC_CPUID_SIZE (sizeof(uint32_t))
 #endif /* NRF_APPLICATION_CPUC_S_BASE */
 
-#if defined(NRF91_SERIES) || defined(NRF53_SERIES)
+#if defined(NRF91_SERIES) || defined(NRF53_SERIES) || defined(NRF54L_SERIES)
 #define UICR_OTP_ADDR (NRF_UICR_S_BASE + offsetof(NRF_UICR_Type, OTP))
 #define UICR_OTP_SIZE (sizeof(NRF_UICR_S->OTP))
 #endif
