@@ -19,6 +19,9 @@ from elftools.elf.elffile import ELFFile
 PERIPHCONF_START_SYMBOL = "_periphconf_entry_list_start"
 PERIPHCONF_END_SYMBOL = "_periphconf_entry_list_end"
 
+# Size of each entry (4B register pointer, 4B register value)
+PERIPHCONF_ENTRY_SIZE = 8
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
@@ -59,31 +62,55 @@ def main() -> None:
             start_syms = symtab.get_symbol_by_name(PERIPHCONF_START_SYMBOL)
             end_syms = symtab.get_symbol_by_name(PERIPHCONF_END_SYMBOL)
             if not start_syms:
-                parser.error(f"symbol '{PERIPHCONF_START_SYMBOL}' not found in ELF: {fp.name}")
+                parser.error(
+                    f"failed to locate PERIPHCONF section in ELF {fp.name}: "
+                    f"missing symbol '{PERIPHCONF_START_SYMBOL}'"
+                )
             if not end_syms:
-                parser.error(f"symbol '{PERIPHCONF_END_SYMBOL}' not found in ELF: {fp.name}")
+                parser.error(
+                    f"failed to locate PERIPHCONF section in ELF {fp.name}: "
+                    f"missing symbol '{PERIPHCONF_END_SYMBOL}'"
+                )
 
-            addr = start_syms[0]["st_value"]
+            addr_vma = start_syms[0]["st_value"]
             end = end_syms[0]["st_value"]
-            size = end - addr
+            size = end - addr_vma
 
             if size < 0:
                 parser.error(
                     f"invalid iterable range in ELF {fp.name}: "
-                    f"{PERIPHCONF_START_SYMBOL}=0x{addr:09_x} > "
+                    f"{PERIPHCONF_START_SYMBOL}=0x{addr_vma:09_x} > "
                     f"{PERIPHCONF_END_SYMBOL}=0x{end:09_x}"
                 )
 
-            if size % 8 != 0:
-                parser.error(f"PERIPHCONF section size is not divisible by 8: {size}")
+            if size % PERIPHCONF_ENTRY_SIZE != 0:
+                parser.error(
+                    f"PERIPHCONF section size is not divisible by {PERIPHCONF_ENTRY_SIZE}: {size}"
+                )
 
-            offset = addr - args.image_fw_base
+            # When CONFIG_XIP=n, code/data run from RAM (VMA) but are stored in the image at LMA.
+            try:
+                addr_lma = vma_to_lma(elf, addr_vma, size)
+            except LmaNotFoundError:
+                parser.error(
+                    f"failed to map PERIPHCONF range [0x{addr_vma:x}, 0x{addr_vma + size:x}) in "
+                    f"ELF {fp.name} to its nonvolatile location: VMA address did not match any "
+                    f"PT_LOAD segment in ELF {fp.name}."
+                )
+            except LmaOutOfBoundsError:
+                parser.error(
+                    f"PERIPHCONF range [0x{addr_vma:x}, 0x{addr_vma + size:x}) is placed in "
+                    f"uninitialized memory range in ELF: {fp.name}: the p_filesz of the matching "
+                    f"PT_LOAD segment in ELF {fp.name} is less than the size of the VMA range."
+                )
+            offset = addr_lma - args.image_fw_base
             if offset < 0:
                 parser.error(
-                    f"periphconf start (0x{addr:x}) is before "
-                    f"image FW base (0x{args.image_fw_base:x}) in ELF: {fp.name}"
+                    f"failed to map PERIPHCONF nonvolatile start address (0x{addr_lma:x}) in "
+                    f"ELF {fp.name} to image firmware region offset. Address is less than the "
+                    f"the image firmware base address (0x{args.image_fw_base:x}). "
                 )
-            count = size // 8
+            count = size // PERIPHCONF_ENTRY_SIZE
             periphconf_tlv_params.append((offset, count, fp.name))
 
     # Sort by ascending offset for more predictable output
@@ -98,6 +125,32 @@ def main() -> None:
             )
             args.periphconf_tlv_out.write(offset.to_bytes(4, byteorder="little"))
             args.periphconf_tlv_out.write(count.to_bytes(4, byteorder="little"))
+
+
+class LmaNotFoundError(RuntimeError):
+    """No PT_LOAD segment contained the VMA."""
+
+
+class LmaOutOfBoundsError(RuntimeError):
+    """The VMA range size exceeds the p_filesz of its matching PT_LOAD segment."""
+
+
+def vma_to_lma(elf: ELFFile, vma: int, size: int = 0) -> int:
+    for segment in elf.iter_segments():
+        if segment["p_type"] != "PT_LOAD":
+            continue
+
+        p_vaddr = segment["p_vaddr"]
+        p_memsz = segment["p_memsz"]
+        p_filesz = segment["p_filesz"]
+        if not p_vaddr <= vma <= vma + size < p_vaddr + p_memsz:
+            continue
+        if not p_vaddr <= vma <= vma + size < p_vaddr + p_filesz:
+            raise LmaOutOfBoundsError()
+        p_paddr = segment["p_paddr"]
+        return p_paddr + (vma - p_vaddr)
+
+    raise LmaNotFoundError()
 
 
 if __name__ == "__main__":
