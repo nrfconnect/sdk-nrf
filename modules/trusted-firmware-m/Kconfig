@@ -25,6 +25,18 @@ endif
 
 if BUILD_WITH_TFM
 
+config TFM_MCUBOOT_HEADER_SIZE
+	hex "MCUboot header size for the TF-M combined slot"
+	default 0x800 if BOOTLOADER_MCUBOOT && SOC_SERIES_NRF54L
+	default 0x200 if BOOTLOADER_MCUBOOT
+	default 0
+	help
+	  Size of the MCUboot header at the start of the combined TF-M slot
+	  (slot0_s_partition). The secure image is shifted by this amount to
+	  leave room for the header. This is separate from ROM_START_OFFSET so
+	  that the NS image does not need to reserve an unused header gap in its
+	  own partition.
+
 # Copied from secure_fw/partitions/platform/Kconfig, appended the TFM prefix
 menu "Platform partition component configs"
 	depends on TFM_PARTITION_PLATFORM
