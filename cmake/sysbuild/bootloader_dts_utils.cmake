@@ -84,24 +84,47 @@ function(dt_partition_addr var)
   dt_reg_addr(dt_partition_offset PATH "${arg_DT_PARTITION_PATH}" TARGET
     "${arg_DT_PARTITION_TARGET}")
 
+  # Read compatible property to adjust the offset and address caluculation for subpartitions.
+  dt_prop(partition_compat PATH "${arg_DT_PARTITION_PATH}" TARGET "${arg_DT_PARTITION_TARGET}"
+    PROPERTY compatible)
+
   # The partition parent should be either a fixed-partitions or a fixed-subpartitions node.
   set(dt_partition_parent "${arg_DT_PARTITION_PATH}")
   dt_get_parent(dt_partition_parent)
 
-  if("${dt_partition_parent}" IN_LIST fixed_subpartitions)
+  if("${partition_compat}" STREQUAL "zephyr,mapped-partition")
+    dt_prop(parent_compat PATH "${dt_partition_parent}" TARGET "${arg_DT_PARTITION_TARGET}"
+      PROPERTY compatible)
+    # Go up in the tree until the NVM memory controller is reached.
+    while("${parent_compat}" STREQUAL "zephyr,mapped-partition")
+      dt_get_parent(dt_partition_parent)
+      dt_prop(parent_compat PATH "${dt_partition_parent}" TARGET "${arg_DT_PARTITION_TARGET}"
+        PROPERTY compatible)
+    endwhile()
+  elseif("${dt_partition_parent}" IN_LIST fixed_subpartitions)
     # Get the parent of the subpartition node, which should be a fixed-partitions node.
     dt_get_parent(dt_partition_parent)
   elseif(NOT "${dt_partition_parent}" IN_LIST fixed_partitions)
-    message(FATAL_ERROR "dt_partition_addr: Node is not a partition or subpartition: "
+    message(FATAL_ERROR "dt_partition_addr: Node is not a (mapped) partition or subpartition: "
                         "${arg_DT_PARTITION_PATH} in target: ${arg_DT_PARTITION_TARGET}")
   endif()
 
-  if(NOT arg_DT_PARTITION_ABSOLUTE)
-    # A parent of the "fixed-partitions" node should be the memory controller.
+  if("${partition_compat}" STREQUAL "zephyr,mapped-partition")
+    if(NOT arg_DT_PARTITION_ABSOLUTE)
+      # Skip the "partitions" node.
+      dt_get_parent(dt_partition_parent)
+      # A grandparent of the upmost "mapped-partition" node should be the memory controller.
+      dt_reg_addr(mem_ctrl_addr PATH "${dt_partition_parent}" TARGET "${arg_DT_PARTITION_TARGET}")
+      # Subtract the memory controller base address to get a relative address.
+      math(EXPR dt_partition_offset "${dt_partition_offset} - ${mem_ctrl_addr}" OUTPUT_FORMAT
+        HEXADECIMAL)
+    endif()
+  elseif(arg_DT_PARTITION_ABSOLUTE)
+    # A parent of the "fixed-partitions" should be the memory controller.
     dt_get_parent(dt_partition_parent)
     # Add the memory controller base address to get an absolute address.
     dt_reg_addr(parent_addr PATH "${dt_partition_parent}" TARGET "${arg_DT_PARTITION_TARGET}")
-    math(EXPR dt_partition_offset "${dt_partition_offset} - ${parent_addr}" OUTPUT_FORMAT
+    math(EXPR dt_partition_offset "${dt_partition_offset} + ${parent_addr}" OUTPUT_FORMAT
       HEXADECIMAL)
   endif()
 
