@@ -131,3 +131,46 @@ module-str = compression/decompression library
 source "subsys/logging/Kconfig.template.log_config"
 
 endif # NRF_COMPRESS
+
+if NRF_COMPRESS || MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED
+
+config NRF_COMPRESS_LZMA_MAX_DICT_SIZE
+	int "Max size of LZMA dictionary"
+	default 131072
+	help
+	  Dictionary size in bytes.
+	  Affects amount of RAM needed for decompression.
+	  Minimal allowed size is 4 KiB.
+
+config NRF_COMPRESS_LZMA_PB
+	int "Number of position bits"
+	default 2
+	help
+	  Must be at most 4.
+
+config NRF_COMPRESS_LZMA_LC
+	int "Number of literal context bits"
+	default 3
+	help
+	  The sum lc + lp must be at most 4.
+
+config NRF_COMPRESS_LZMA_LP
+	int "Number of literal position bits"
+	default 1
+	help
+	  The sum lc + lp must be at most 4.
+
+config NRF_COMPRESS_LZMA_COMPRESSION_PRESET
+	int "Compression level preset"
+	default 9
+	help
+	  Determines compression level preset.
+	  Possible values are 0 (lowest compression) to 9 (highest compression).
+
+config NRF_COMPRESS_LZMA_MAX_LC_LP
+	int "Max value of lc + lp"
+	default 4
+	help
+	  The sum lc + lp must be at most 4.
+
+endif # NRF_COMPRESS || MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED

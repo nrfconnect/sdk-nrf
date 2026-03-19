@@ -596,6 +596,13 @@ Debug samples
 
 |no_changes_yet_note|
 
+DFU samples
+-----------
+
+* :ref:`nrf_compression_mcuboot_compressed_update`:
+
+  * Added support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
+
 DECT NR+ samples
 ----------------
 
