@@ -177,7 +177,8 @@
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
 .. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
 .. _`chip-tool`: https://docs.nordicsemi.com/bundle/ncs-latest/page/matter/chip_tool_guide.html
-.. _`Matter nRF Connect SDK Platform Certificate`: https://csa-iot.org/csa_product/nrf-connect-sdk/
+.. _`Matter nRF Connect SDK Platform Certificate_1_4_2`: https://csa-iot.org/csa_product/nrf-connect-sdk/
+.. _`Matter nRF Connect SDK Platform Certificate_1_5_0`: https://csa-iot.org/csa_product/nrf-connect-sdk-with-nrf52-nrf53-and-nrf54l-series-socs/
 
 .. _`CoreMark GitHub`: https://github.com/eembc/coremark
 

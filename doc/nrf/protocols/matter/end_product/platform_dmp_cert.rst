@@ -55,14 +55,16 @@ The following table presents the certification matrix for the Matter Compliant P
 This matrix lists the |NCS| versions, Matter versions, product names, certification details, CSA certificate links, and supported hardware within the SDK (SOE).
 The table will be updated as new platform versions are certified.
 
-+-------------------+-------------------+---------------------+---------------------+------------------+----------------------------------------------------+-------------------------------------------+
-| NCS version       | Matter version    | Product name        | Certification ID    | Transport        | CSA Certificate link                               | Supported hardware (SOE)                  |
-+===================+===================+=====================+=====================+==================+====================================================+===========================================+
-| 3.1.1             | 1.4.2             | |NCS|               | CSA25001MCPM0001-24 | Thread, BLE      | `Matter nRF Connect SDK Platform Certificate`_     | nRF52 Series, nRF53 Series, nRF54L Series |
-+-------------------+-------------------+---------------------+---------------------+------------------+----------------------------------------------------+-------------------------------------------+
++-------------------+-------------------+---------------------+---------------------+-----------------------+----------------------------------------------------------+-------------------------------------------+
+| |NCS| version     | Matter version    | Product name        | Certification ID    | Transport             | CSA Certificate link                                     | Supported hardware (SOE)                  |
++===================+===================+=====================+=====================+=======================+==========================================================+===========================================+
+| 3.1.1             | 1.4.2             | |NCS|               | CSA25001MCPM0001-24 | Thread, Bluetooth LE  | `Matter nRF Connect SDK Platform Certificate_1_4_2`_     | nRF52 Series, nRF53 Series, nRF54L Series |
++-------------------+-------------------+---------------------+---------------------+-----------------------+----------------------------------------------------------+-------------------------------------------+
+| 3.2.0             | 1.5.0             | |NCS|               | CSA26002MCPM0008-24 | Thread, Bluetooth LE  | `Matter nRF Connect SDK Platform Certificate_1_5_0`_     | nRF52 Series, nRF53 Series, nRF54L Series |
++-------------------+-------------------+---------------------+---------------------+-----------------------+----------------------------------------------------------+-------------------------------------------+
 
 .. note::
-   The `Matter nRF Connect SDK Platform Certificate`_ provides access to both the platform certificate and the associated PICS baseline.
+   The CSA Certificate link provides information about the platform certificate and the associated PICS baseline.
 
 Derived Matter Product
 ======================
@@ -205,7 +207,7 @@ This provides a certified reference for the enabled features and clusters:
    west flash --recover
 
 .. note::
-   The reference data model used during platform testing can be found in: :file:`samples/matter/common/src/certification`
+   The reference data model used during platform testing can be found in :file:`samples/matter/common/src/certification`.
 
 This template is provided as a reference (transport, core clusters).
 You may customize your product by enabling or disabling optional clusters, attributes, and features and by building your own application data model.
