@@ -42,17 +42,6 @@
 /** @brief Address of the SilexPK MicroCode */
 #define CRACEN_SX_PK_MICROCODE_ADDRESS ((uint32_t)(NRF_CRACENCORE_BASE + 0xC000))
 
-/** @brief TODO: Replace with define from the MDK of the same name when available */
-#define KMU_KEYSLOT_BITS 128
-
-/** @brief Number of KMU slots required for the IKG seed.
- *
- * Calculated to be the size of the seed divided by the size of each key slot.
- *
- * 3 = 384 bits / 128 bit
- */
-#define IKG_SEED_KMU_SLOT_NUM ((CRACEN_SEED_MaxCount * 32) / KMU_KEYSLOT_BITS)
-
 /**
  * @brief Initialize CRACEN.
  *
