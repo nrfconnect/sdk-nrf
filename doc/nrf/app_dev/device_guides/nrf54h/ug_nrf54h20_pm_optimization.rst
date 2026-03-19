@@ -86,7 +86,8 @@ Locality principle
 
 Power optimization is driven by keeping execution and data access local:
 
-* Prefer executing code from local RAM (TCM/local SRAM) within the active core's logical domain.
+* Prefer executing code from local RAM (Tightly Coupled Memory (TCM)/local SRAM) within the active core's logical domain.
+  Using TCM is recommended for achieving the lowest power consumption.
 * Minimize accesses to MRAM (global non-volatile memory) to avoid waking other domains and incurring cache refill energy.
 * Batch work: Gather peripheral data locally (auxiliary cores) and hand off larger buffers to high-performance cores for computation, instead of driving peripherals directly from high-performance cores.
 
@@ -99,6 +100,7 @@ Accessing peripherals from these cores expands the active footprint by adding ad
 Recommendations:
 
 * Use auxiliary or peripheral-oriented cores (for example, PPR- or FLPR-type helper cores) to perform SPI, I2C, ADC, or UART transactions, local preprocessing, and DMA into local RAM.
+* For slow-domain peripheral access, use PPR for best performance and power optimization.
 * Signal (IPC or shared memory flag) the application or radio core only when a batch of data is ready.
 * Avoid fine-grained peripheral polling from high-performance cores.
   Use the following instead:
@@ -133,6 +135,7 @@ Integration checklist
 For optimal power management integration, follow these guidelines:
 
 * Place time-critical ISR code and frequently used data structures in local RAM sections (see code/data relocation).
+* Use TCM for the lowest power consumption.
 * Profile cache miss sources.
   Reduce MRAM fetches by relocating hot code paths.
 * Disable MRAM latency manager (set :kconfig:option:`CONFIG_MRAM_LATENCY` to ``n`` and :kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ` to ``n``) to allow MRAM power gating.
@@ -268,7 +271,9 @@ The following recommendations help optimize memory placement and cache usage to 
 
 * Relocate frequently accessed code and data to local RAM to avoid waking global domains, especially MRAM, which uses high power.
   For more information, see the :ref:`zephyr:code_data_relocation` page.
-* Execute the radio core image from Tightly Coupled Memory (TCM).
+* Execute the radio core image from TCM.
+  This is recommended for the lowest power consumption.
+* Limit the use of Global RAM (GRAM) in your application design to optimize power consumption.
 * Profile L1 cache usage to minimize MRAM accesses.
   For more information, see ``nrf_cache_hal`` in the `nrfx API documentation`_.
 * Configure the MRAM latency manager:
