@@ -115,7 +115,7 @@ The feature supports the following ranging technologies:
 
 * Ultra Wideband (UWB)
 * Bluetooth Low Energy Channel Sounding
-* Wi-Fi Neighbor Awareness Networking (NAN) Round-Trip Time (RTT)
+* Wi-Fi® Neighbor Awareness Networking (NAN) Round-Trip Time (RTT)
 * Bluetooth Low Energy Received Signal Strength Indicator
 
 For more details on this feature, see the `Fast Pair FHN Precision Finding`_ documentation that is part of the FHN Accessory specification.
