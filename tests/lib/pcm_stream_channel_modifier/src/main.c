@@ -38,11 +38,11 @@ void verify_array_eq(void *p1, void *p2, size_t size)
 }
 
 /* Input arrays */
-uint8_t unpadded_left[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-uint8_t unpadded_right[] = {13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-uint8_t unpadded_centre[] = {25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36};
-uint8_t unpadded_surround_left[] = {37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48};
-uint8_t unpadded_surround_right[] = {49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60};
+uint8_t __aligned(4) unpadded_left[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+uint8_t __aligned(4) unpadded_right[] = {13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
+uint8_t __aligned(4) unpadded_centre[] = {25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36};
+uint8_t __aligned(4) unpadded_surround_left[] = {37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48};
+uint8_t __aligned(4) unpadded_surround_right[] = {49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60};
 uint8_t stereo_split[] = {1, 13, 2, 14, 3, 15, 4,  16, 5,  17, 6,  18,
 			  7, 19, 8, 20, 9, 21, 10, 22, 11, 23, 12, 24};
 uint8_t multi_split[] = {1,  13, 25, 37, 49, 2,	 14, 26, 38, 50, 3,  15, 27, 39, 51,
@@ -101,7 +101,7 @@ uint8_t stereo_split_right_32[] = {3, 15, 4, 16, 7, 19, 8, 20, 11, 23, 12, 24};
 ZTEST(suite_pscm_int, test_pscm_interleave_api_parameters)
 {
 	int ret;
-	uint8_t input[2], output[2];
+	uint8_t __aligned(4) input[2], output[2];
 	size_t input_size = sizeof(input);
 	size_t output_size = sizeof(output);
 	uint8_t channel = 0;
@@ -144,6 +144,17 @@ ZTEST(suite_pscm_int, test_pscm_interleave_api_parameters)
 	ret = pscm_interleave(input, input_size, channel, pcm_bit_depth, &output,
 			      input_size * (output_channels - 1), output_channels);
 	zassert_equal(ret, -EINVAL, "Failed interleave for output size too small: ret %d", ret);
+
+	uint8_t *misaligned_input = (uint8_t *)input + 1;
+	uint8_t *misaligned_output = (uint8_t *)output + 1;
+
+	ret = pscm_interleave(misaligned_input, input_size, channel, pcm_bit_depth, output,
+			      output_size, output_channels);
+	zassert_equal(ret, -EINVAL, "Failed interleave for misaligned input: ret %d", ret);
+
+	ret = pscm_interleave(input, input_size, channel, pcm_bit_depth, misaligned_output,
+			      output_size, output_channels);
+	zassert_equal(ret, -EINVAL, "Failed interleave for misaligned output: ret %d", ret);
 }
 
 ZTEST(suite_pscm_deint, test_pscm_deinterleave_api_parameters)
@@ -201,7 +212,7 @@ int interleave_test(void const *const input, size_t input_size, uint8_t pcm_bit_
 		    size_t test_result_size, bool zero)
 {
 	int ret;
-	uint8_t output[TEST_PCM_INT_SIZE];
+	uint8_t __aligned(4) output[TEST_PCM_INT_SIZE];
 	size_t output_size = sizeof(output);
 
 	if (zero) {
@@ -329,7 +340,7 @@ ZTEST(suite_pscm_int, test_pscm_interleave_zero_pad)
 ZTEST(suite_pscm_int, test_pscm_interleave_multi)
 {
 	int ret;
-	uint8_t output[TEST_PCM_INT_MULTI_SIZE] = {0};
+	uint8_t __aligned(4) output[TEST_PCM_INT_MULTI_SIZE] = {0};
 
 	ret = pscm_interleave(&unpadded_left[0], sizeof(unpadded_left), TEST_AUDIO_CH_L,
 			      TEST_SAMPLE_BITS_8, &output[0], TEST_PCM_INT_MULTI_SIZE,
