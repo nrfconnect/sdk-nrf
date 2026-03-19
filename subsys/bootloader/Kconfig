@@ -11,9 +11,45 @@ config SECURE_BOOT
 	depends on !IS_SECURE_BOOTLOADER
 	select FW_INFO
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51
+	select USE_DT_CODE_PARTITION if !PARTITION_MANAGER_ENABLED
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
+
+config SB_IMAGE_BOOT_OFFSET
+	hex
+	depends on !PARTITION_MANAGER_ENABLED
+	default 0x800 if SOC_SERIES_NRF54L
+	default 0x200 if SOC_SERIES_NRF53
+	default 0x200 if SOC_SERIES_NRF52
+	help
+	  Size of offset, from the beginning of storage partition, or __rom_start,
+	  where to application code begins. This is usually size of non-executable
+	  header that precedes the entry point and is not used by the applicaiton
+	  itself.
+	  The value provied here is used to skip to bootable code but also to calculate
+	  offsets of various linker sections, in application image, that B0 does access.
+	  In case of images built for MCUboot the value here will be equivalent to
+	  ROM_START_OFFSET set for an application image; it is literal here because
+	  ROM_START_OFFSET of secure bootloader does not reflect value set in image it boots.
+	  Note that when Partition Manager is enabled this value will be 0 and is useless.
+
+config SB_IMAGE_SIGNATURE_SKIPPED_SIZE
+	hex
+	default 0 if PARTITION_MANAGER_ENABLED
+	default SB_IMAGE_BOOT_OFFSET
+	help
+	  Amount of bytes to skip when calculating signature on image that will be
+	  boot by Secure Bootloader (b0). This is used, for example, when build
+	  outputs images that are already shifted to account for header, like
+	  imgtool from MCUboot adds. Because such headers are added after images
+	  are signed for b0, they would make signature invalid when recalculated,
+	  so the place where image will be added needs to be skipped.
+	  The skipped size will also be deducted from size of an image when
+	  generating signature.
+	  The value is fed, by build system, to do_sign.py and validate_data.py.
+	  When validating image signature be careful to use the value to skip
+	  the beginning of an image.
 
 if SECURE_BOOT
 
@@ -27,6 +63,7 @@ endif # SECURE_BOOT
 
 config PM_PARTITION_SIZE_PROVISION
 	hex
+	depends on PARTITION_MANAGER_ENABLED
 	default 0x280 if SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP # Stored in OTP region
 	# Monotonic counter slot takes 4 bytes on nRF54L Series
 	default 0x460 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || \
@@ -45,6 +82,7 @@ config B0_MIN_PARTITION_SIZE
 
 config PM_PARTITION_SIZE_B0_IMAGE
 	hex "Flash space reserved for B0_IMAGE"
+	depends on PARTITION_MANAGER_ENABLED
 	default 0x8000 if !B0_MIN_PARTITION_SIZE && (SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP || SOC_NRF52840)
 	default 0x7800 if !B0_MIN_PARTITION_SIZE && (SOC_NRF5340_CPUNET)
 	default FPROTECT_BLOCK_SIZE if SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP
@@ -100,6 +138,17 @@ config SB_DISABLE_SELF_RWX
 	help
 	  Sets RRAMC's BOOTCONF region protection before jumping to application.
 	  It disables reads writes and execution memory area which holds NSIB.
+
+config SB_DISABLE_SELF_RWX_SKIP_SIZE
+	hex
+	depends on SB_DISABLE_SELF_RWX
+	depends on !PARTITION_MANAGER_ENABLED
+	default SB_IMAGE_BOOT_OFFSET
+	help
+	  Size of region, at the beginning of the partition, that does not require
+	  protections. This is used, for example, when MCUboot type image is protected
+	  but the header does not have to be. Allows to spare some protection bits.
+	  Note that when Partition Manager is enabled this value will be 0 and is useless.
 
 config SB_DISABLE_NEXT_W
 	bool "Disable writes for next stage"
