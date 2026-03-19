@@ -110,14 +110,16 @@ int pscm_two_channel_split(void const *const input, size_t input_size, uint8_t p
 
 /**
  * @brief  Interleave a channel into a buffer of N channels of PCM
- * @note: The interleaver can not be executed inplace (i.e. input != output)
+ * @note:  The interleaver can not be executed inplace (i.e. input != output)
  *
- * @param[in]	input				Pointer to the channel input buffer.
- * @param[in]	input_size			Number of bytes in input.
- * @param[in]	channel				Channel to interleave into.
+ * @param[in]	input			Pointer to the channel input buffer.
+ *					Should be 4-bytes aligned.
+ * @param[in]	input_size		Number of bytes in input.
+ * @param[in]	channel			Channel to interleave into.
  * @param[in]	pcm_bit_depth		Bit depth of PCM samples (8, 16, 24, or 32).
- * @param[out]	output				Pointer to the multi-channel output buffer.
- * @param[in]	output_size			Number of bytes in output. Must be at least
+ * @param[out]	output			Pointer to the multi-channel output buffer.
+ *					Should be 4-bytes aligned.
+ * @param[in]	output_size		Number of bytes in output. Must be at least
  *					(input_size * output_channels).
  * @param[in]	output_channels		Number of channels in the output buffer.
  *
