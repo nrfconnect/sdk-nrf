@@ -22,13 +22,13 @@ LOG_MODULE_REGISTER(nrf_compress_lzma, CONFIG_NRF_COMPRESS_LOG_LEVEL);
 /* Assume lp and lc parameters in the compressed images do not sum to a value greater than the
  * following constant to limit the memory used by LZMA probability array.
  */
-#define MAX_LZMA_LC_PLUS_LP 4
+#define MAX_LZMA_LC_PLUS_LP CONFIG_NRF_COMPRESS_LZMA_MAX_LC_LP
 #define MAX_LZMA_PROB_SIZE  (1984 + (0x300 << MAX_LZMA_LC_PLUS_LP))
 
 /* Assume the maximum LZMA dictionary size to limit the RAM buffer size for the decompressed
  * stream.
  */
-#define MAX_LZMA_DICT_SIZE  (128 * 1024)
+#define MAX_LZMA_DICT_SIZE  CONFIG_NRF_COMPRESS_LZMA_MAX_DICT_SIZE
 
 #if !defined(CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA1) && \
 	!defined(CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2)
