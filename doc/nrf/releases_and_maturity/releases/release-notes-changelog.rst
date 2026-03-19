@@ -145,6 +145,8 @@ Security
   * Support for ChaCha20-Poly1305 AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>` board.
   * Support for AES Key Wrap (AES-KW) and AES Key Wrap with Padding (AES-KWP) algorithms in the :ref:`nrf_oberon <crypto_drivers_oberon>` and :ref:`CRACEN <crypto_drivers_cracen>` drivers.
     The :ref:`Supported cryptographic operations in the nRF Connect SDK <ug_crypto_supported_features_key_wrap_algorithms>` page has been updated accordingly.
+  * The ``CONFIG_CRACEN_KMU_ALLOW_ANY_AEAD_TAG_LENGTH`` Kconfig option, which allows to store keys for AEAD algorithms with non-default (shortened)
+	  tag lengths in the KMU.
 
 * Updated:
 

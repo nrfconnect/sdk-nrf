@@ -16,6 +16,8 @@
 #include <tfm_ns_interface.h>
 #endif
 
+#include <cracen_psa_kmu.h>
+
 #define APP_SUCCESS		(0)
 #define APP_ERROR		(-1)
 #define APP_SUCCESS_MESSAGE "Example finished successfully!"
@@ -36,7 +38,7 @@ LOG_MODULE_REGISTER(aes_ccm, LOG_LEVEL_DBG);
 #define NRF_CRYPTO_EXAMPLE_AES_MAX_TEXT_SIZE (100)
 #define NRF_CRYPTO_EXAMPLE_AES_ADDITIONAL_SIZE (35)
 #define NRF_CRYPTO_EXAMPLE_AES_CCM_NONCE_SIZE (13)
-#define NRF_CRYPTO_EXAMPLE_AES_CCM_TAG_LENGTH (16)
+#define NRF_CRYPTO_EXAMPLE_AES_CCM_TAG_LENGTH (12)
 
 /* AES sample nonce, DO NOT USE IN PRODUCTION */
 static uint8_t m_nonce[NRF_CRYPTO_EXAMPLE_AES_CCM_NONCE_SIZE] = {
@@ -58,7 +60,8 @@ static uint8_t m_encrypted_text[NRF_CRYPTO_EXAMPLE_AES_MAX_TEXT_SIZE +
 
 static uint8_t m_decrypted_text[NRF_CRYPTO_EXAMPLE_AES_MAX_TEXT_SIZE];
 
-static psa_key_id_t key_id;
+static psa_key_id_t key_id = PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW,
+						       PSA_KEY_ID_USER_MIN);
 /* ====================================================================== */
 
 int crypto_init(void)
@@ -78,11 +81,11 @@ int crypto_finish(void)
 	psa_status_t status;
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(key_id);
-	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
-		return APP_ERROR;
-	}
+	// status = psa_destroy_key(key_id);
+	// if (status != PSA_SUCCESS) {
+	// 	LOG_INF("psa_destroy_key failed! (Error: %d)", status);
+	// 	return APP_ERROR;
+	// }
 
 	return APP_SUCCESS;
 }
@@ -90,6 +93,7 @@ int crypto_finish(void)
 int generate_key(void)
 {
 	psa_status_t status;
+	psa_key_id_t tmp_key_id = key_id;
 
 	LOG_INF("Generating random AES key...");
 
@@ -98,15 +102,26 @@ int generate_key(void)
 
 	psa_set_key_usage_flags(&key_attributes, PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT);
 	psa_set_key_lifetime(&key_attributes, PSA_KEY_LIFETIME_VOLATILE);
-	psa_set_key_algorithm(&key_attributes, PSA_ALG_CCM);
+	psa_set_key_algorithm(&key_attributes, PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CCM, NRF_CRYPTO_EXAMPLE_AES_CCM_TAG_LENGTH) /*PSA_ALG_CCM*/);
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_AES);
 	psa_set_key_bits(&key_attributes, 128);
+
+	psa_set_key_lifetime(&key_attributes,
+			     PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+				     PSA_KEY_PERSISTENCE_DEFAULT, PSA_KEY_LOCATION_CRACEN_KMU));
+	psa_set_key_id(&key_attributes, key_id);
 
 	/* Generate a random key. The key is not exposed to the application,
 	 * we can use it to encrypt/decrypt using the key handle
 	 */
 	status = psa_generate_key(&key_attributes, &key_id);
-	if (status != PSA_SUCCESS) {
+	if (status == PSA_ERROR_ALREADY_EXISTS) {
+		/* Revering the key ID to the one provided.
+		 * Reason: psa_generate_key() modifies it
+		 */
+		LOG_INF("psa_generate_key: key already exists!");
+		key_id = tmp_key_id;
+	} else if (status != PSA_SUCCESS) {
 		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
@@ -128,7 +143,7 @@ int encrypt_ccm_aes(void)
 
 	/* Encrypt the plaintext and create the authentication tag */
 	status = psa_aead_encrypt(key_id,
-							  PSA_ALG_CCM,
+							  PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CCM, NRF_CRYPTO_EXAMPLE_AES_CCM_TAG_LENGTH) /*PSA_ALG_CCM*/,
 							  m_nonce,
 							  sizeof(m_nonce),
 							  m_additional_data,
@@ -164,7 +179,7 @@ int decrypt_ccm_aes(void)
 
 	/* Decrypt the encrypted data and authenticate the tag */
 	status = psa_aead_decrypt(key_id,
-							  PSA_ALG_CCM,
+							  PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CCM, NRF_CRYPTO_EXAMPLE_AES_CCM_TAG_LENGTH) /*PSA_ALG_CCM*/,
 							  m_nonce,
 							  sizeof(m_nonce),
 							  m_additional_data,
