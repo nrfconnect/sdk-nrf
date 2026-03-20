@@ -19,6 +19,7 @@ tests:
   nrf.extended.sample.usbd.mass_ram_none:
     harness: console
     harness_config:
+      fixture: usb_connected
       type: multi_line
       ordered: true
       regex:
@@ -31,6 +32,7 @@ tests:
   nrf.extended.sample.usbd.mass_ram_fat:
     harness: console
     harness_config:
+      fixture: usb_connected
       type: multi_line
       ordered: true
       regex:

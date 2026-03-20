@@ -13,6 +13,7 @@ tests:
     timeout: 15
     harness: console
     harness_config:
+      fixture: usb_connected
       type: multi_line
       regex:
         - "HS bNumConfigurations 1"
