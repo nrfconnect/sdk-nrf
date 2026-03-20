@@ -454,7 +454,7 @@ Bluetooth samples
 
 * :ref:`peripheral_hids_mouse` sample:
 
-  * Fixed building the sample with the :kconfig:option:`CONFIG_BT_HIDS_SECURITY_ENABLED` Kconfig option disabled.
+  * Fixed building the sample with the ``CONFIG_BT_HIDS_SECURITY_ENABLED`` Kconfig option disabled.
 
 Bluetooth mesh samples
 ----------------------

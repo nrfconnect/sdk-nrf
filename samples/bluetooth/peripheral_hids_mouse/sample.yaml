@@ -43,7 +43,7 @@ tests:
   sample.bluetooth.peripheral_hids_mouse.no_mitm:
     harness: console
     extra_configs:
-      - CONFIG_BT_HIDS_SECURITY_MITM_ENABLED=n
+      - CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM=n
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf54h20dk/nrf54h20/cpuapp
@@ -95,7 +95,7 @@ tests:
   sample.bluetooth.peripheral_hids_mouse.no_sec:
     harness: console
     extra_configs:
-      - CONFIG_BT_HIDS_SECURITY_ENABLED=n
+      - CONFIG_SAMPLE_BT_HIDS_SECURITY=n
       - CONFIG_BT_HIDS_DEFAULT_PERM_RW=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp

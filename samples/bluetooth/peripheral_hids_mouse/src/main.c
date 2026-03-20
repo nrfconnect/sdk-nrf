@@ -90,13 +90,13 @@ K_MSGQ_DEFINE(hids_queue,
 	      HIDS_QUEUE_SIZE,
 	      4);
 
-#if CONFIG_BT_DIRECTED_ADVERTISING
+#if CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING
 /* Bonded address queue. */
 K_MSGQ_DEFINE(bonds_queue,
 	      sizeof(bt_addr_le_t),
 	      CONFIG_BT_MAX_PAIRED,
 	      4);
-#endif
+#endif /* CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING */
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
@@ -131,7 +131,7 @@ K_MSGQ_DEFINE(mitm_queue,
 	      CONFIG_BT_HIDS_MAX_CLIENT_COUNT,
 	      4);
 
-#if CONFIG_BT_DIRECTED_ADVERTISING
+#if CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
 	int err;
@@ -153,13 +153,13 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 		printk("No space in the queue for the bond.\n");
 	}
 }
-#endif
+#endif /* CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING */
 
 static void advertising_continue(void)
 {
 	struct bt_le_adv_param adv_param;
 
-#if CONFIG_BT_DIRECTED_ADVERTISING
+#if CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING
 	bt_addr_le_t addr;
 
 	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT)) {
@@ -188,7 +188,7 @@ static void advertising_continue(void)
 		bt_addr_le_to_str(&addr, addr_buf, BT_ADDR_LE_STR_LEN);
 		printk("Direct advertising to %s started\n", addr_buf);
 	} else
-#endif
+#endif /* CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING */
 	{
 		int err;
 
@@ -212,10 +212,10 @@ static void advertising_continue(void)
 
 static void advertising_start(void)
 {
-#if CONFIG_BT_DIRECTED_ADVERTISING
+#if CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING
 	k_msgq_purge(&bonds_queue);
 	bt_foreach_bond(BT_ID_DEFAULT, bond_find, NULL);
-#endif
+#endif /* CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING */
 
 	k_work_submit(&adv_work);
 }
@@ -339,7 +339,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 
-#ifdef CONFIG_BT_HIDS_SECURITY_ENABLED
+#ifdef CONFIG_SAMPLE_BT_HIDS_SECURITY
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err err)
 {
@@ -354,14 +354,14 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 		       bt_security_err_to_str(err));
 	}
 }
-#endif
+#endif /* CONFIG_SAMPLE_BT_HIDS_SECURITY */
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
-#ifdef CONFIG_BT_HIDS_SECURITY_ENABLED
+#ifdef CONFIG_SAMPLE_BT_HIDS_SECURITY
 	.security_changed = security_changed,
-#endif
+#endif /* CONFIG_SAMPLE_BT_HIDS_SECURITY */
 };
 
 
@@ -574,7 +574,7 @@ static void mouse_handler(struct k_work *work)
 	}
 }
 
-#if defined(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)
+#if defined(CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -627,9 +627,9 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 };
 #else
 static struct bt_conn_auth_cb conn_auth_callbacks;
-#endif /* CONFIG_BT_HIDS_SECURITY_MITM_ENABLED */
+#endif /* CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM */
 
-#if defined(CONFIG_BT_HIDS_SECURITY_ENABLED)
+#if defined(CONFIG_SAMPLE_BT_HIDS_SECURITY)
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -644,7 +644,7 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
-	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)) {
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM)) {
 		struct pairing_data_mitm pairing_data;
 
 		if (k_msgq_peek(&mitm_queue, &pairing_data) != 0) {
@@ -670,7 +670,7 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 };
 #else
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks;
-#endif /* defined(CONFIG_BT_HIDS_SECURITY_ENABLED) */
+#endif /* defined(CONFIG_SAMPLE_BT_HIDS_SECURITY) */
 
 
 static void num_comp_reply(bool accept)
@@ -708,7 +708,7 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 
 	memset(&pos, 0, sizeof(struct mouse_pos));
 
-	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)) {
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM)) {
 		if (k_msgq_num_used_get(&mitm_queue)) {
 			if (buttons & KEY_PAIRING_ACCEPT) {
 				num_comp_reply(true);
@@ -791,8 +791,8 @@ int main(void)
 
 	printk("Starting Bluetooth Peripheral HIDS mouse sample\n");
 
-	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_ENABLED)) {
-		if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)) {
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_HIDS_SECURITY)) {
+		if (IS_ENABLED(CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM)) {
 			err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 			if (err) {
 				printk("Failed to register authorization callbacks.\n");
@@ -820,7 +820,7 @@ int main(void)
 
 	k_work_init(&hids_work, mouse_handler);
 	k_work_init(&adv_work, advertising_process);
-	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_MITM_ENABLED)) {
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM)) {
 		k_work_init(&pairing_work, pairing_process);
 	}
 
