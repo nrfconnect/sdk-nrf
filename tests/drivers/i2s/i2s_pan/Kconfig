@@ -12,4 +12,11 @@ config TEST_I2S_ALLOWED_DATA_OFFSET
 	  Maximum allowed offset between sent and received samples. Non-zero
 	  value of this option may be needed when GPIO loopback is used.
 
+config TEST_WORDS_COUNT
+	int "I2S buffer size in bytes"
+	default 12
+	help
+	  Selected value may result in skipping some tests that require
+	  specific size of the data buffer.
+
 source "Kconfig.zephyr"
