@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	/* Test requirements:
+	 * out-gpios[0] wire connected with in-gpios[0],
+	 * etc.
+	 * Output-input GPIO pair must have identical active level flag.
+	 */
+	zephyr,user {
+		out-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&cpuflpr_code_partition {
+	reg = <0xf4000 DT_SIZE_K(64)>;
+};
