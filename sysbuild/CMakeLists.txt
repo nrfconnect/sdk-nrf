@@ -397,7 +397,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         endif()
 
         # MCUboot uses hash function to identify key internally when KMU is disabled.
-        if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU AND SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
+        # Don't use Cracen hash driver on nrf54ls05 as this SoC uses Cracen only for TRNG.
+        if((SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU AND SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE) OR SB_CONFIG_SOC_NRF54LS05B)
           set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_HASH_DRIVER n)
         else()
           set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_HASH_DRIVER y)
