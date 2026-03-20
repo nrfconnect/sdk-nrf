@@ -52,6 +52,16 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
       - FILE_SUFFIX=usb_enter
+  sample.dfu.single_slot.usb_enter_dongle:
+    tags:
+      - dfu_single_slot
+      - ci_samples_dfu
+    platform_allow:
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
+    extra_args:
+      - FILE_SUFFIX=usb_enter_dongle
   sample.dfu.single_slot.fw_loader_update.nrf54l15:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
