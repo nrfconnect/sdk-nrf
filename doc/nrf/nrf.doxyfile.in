@@ -2459,7 +2459,6 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_NRF_CLOUD_PGPS=y" \
                          "CONFIG_MODEM_INFO=y" \
                          "CONFIG_NRF_MODEM=y" \
-                         "CONFIG_NRF_CLOUD_GATEWAY=y" \
                          "CONFIG_BT_CENTRAL" \
                          "CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE=y" \
                          "CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE=y" \

@@ -193,9 +193,6 @@ int nct_keepalive_time_left(void);
 /** @brief Input from the cloud module. */
 int nct_input(const struct nct_evt *evt);
 
-/** @brief Retrieve the device id. */
-int nct_client_id_get(char *id, size_t id_len);
-
 /** @brief Send cloud event to the application. */
 void nct_send_event(const struct nrf_cloud_evt *const evt);
 
@@ -210,9 +207,6 @@ int nct_get_session_state(void);
  * will be constructed.
  */
 void nct_set_topic_prefix(const char *topic_prefix);
-
-/** @brief Troubleshooting function to retrieve the current nrfcloud stage. */
-int nct_stage_get(char *cur_stage, const int cur_stage_len);
 
 /** @brief Troubleshooting function to query the current nrfcloud tenant ID. */
 int nct_tenant_id_get(char *cur_tenant, const int cur_tenant_len);

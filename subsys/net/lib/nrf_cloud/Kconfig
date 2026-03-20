@@ -152,12 +152,6 @@ config NRF_CLOUD_VERBOSE_DETAILS
 	  Log at INF level the protocol, sec tag, host name, and team ID,
 	  in addition to device ID.
 
-config NRF_CLOUD_GATEWAY
-	bool "nRF Cloud Gateway"
-	help
-	  Enables functionality in this device to be compatible with
-	  nRF Cloud LTE gateway support.
-
 config NRF_CLOUD_DOWNLOADS
 	bool
 	default y
