@@ -145,7 +145,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 9977089907352a9a0190d0fcdc82a6fb4fcce6ab
+      revision: 3e5fdae958fd319264d68409950cc749cd575d39
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -183,7 +183,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 677cb17de37bef86d3c6740507ae42e606cea32a
+      revision: 8fe0f85399fc36b32b8a6ec9973d345c0bf41ac8
       groups:
         - dragoon
     - name: cjson
