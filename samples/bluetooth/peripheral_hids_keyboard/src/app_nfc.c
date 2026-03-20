@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#if CONFIG_NFC_OOB_PAIRING
+#if CONFIG_SAMPLE_NFC_OOB_PAIRING
 
 #include "app_nfc.h"
 #include <nfc_t2t_lib.h>
@@ -116,4 +116,4 @@ struct bt_le_oob *app_nfc_oob_data_get(void)
 	return &oob_local;
 }
 
-#endif
+#endif /* CONFIG_SAMPLE_NFC_OOB_PAIRING */

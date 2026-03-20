@@ -23,7 +23,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-If the NFC_OOB_PAIRING feature is enabled, the sample requires a smartphone or a tablet with Android v8.0.0 or newer.
+If the NFC OOB pairing feature (:option:`CONFIG_SAMPLE_NFC_OOB_PAIRING`) is enabled, the sample requires a smartphone or a tablet with Android v8.0.0 or newer.
 
 Overview
 ********
@@ -37,7 +37,7 @@ This sample exposes the HID GATT Service.
 It uses a report map for a generic keyboard.
 
 LE Secure Out-of-Band pairing with NFC is enabled by default in this sample.
-You can disable this feature by clearing the `NFC_OOB_PAIRING` flag in the application configuration.
+You can disable this feature by clearing the :option:`CONFIG_SAMPLE_NFC_OOB_PAIRING` flag in the application configuration.
 The following paragraphs describe the application behavior when NFC pairing is enabled.
 
 When the application starts, it initializes and starts the NFCT peripheral that is used for pairing.
@@ -88,7 +88,7 @@ User interface
       LED 3:
          Indicates if Caps Lock is enabled.
 
-      If the `NFC_OOB_PAIRING` feature is enabled:
+      If the NFC OOB pairing feature (:option:`CONFIG_SAMPLE_NFC_OOB_PAIRING`) is enabled:
 
       Button 4:
          Starts advertising.
@@ -117,7 +117,7 @@ User interface
       LED 2:
          Indicates if Caps Lock is enabled.
 
-      If the `NFC_OOB_PAIRING` feature is enabled:
+      If the NFC OOB pairing feature (:option:`CONFIG_SAMPLE_NFC_OOB_PAIRING`) is enabled:
 
       Button 3:
          Starts advertising.
@@ -129,6 +129,14 @@ Configuration
 *************
 
 |config|
+
+Configuration options
+=====================
+
+The following sample-specific Kconfig options are used in this sample (defined in :file:`samples/bluetooth/peripheral_hids_keyboard/Kconfig`):
+
+.. options-from-kconfig::
+   :show-type:
 
 Setup
 =====
@@ -357,10 +365,10 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`hids_readme`
-* :ref:`nfc_ndef` (if the `NFC_OOB_PAIRING` option is enabled)
-* :ref:`nfc_ndef_le_oob` (if the `NFC_OOB_PAIRING` option is enabled)
+* :ref:`nfc_ndef` (if the :option:`CONFIG_SAMPLE_NFC_OOB_PAIRING` option is enabled)
+* :ref:`nfc_ndef_le_oob` (if the :option:`CONFIG_SAMPLE_NFC_OOB_PAIRING` option is enabled)
 
-When the `NFC_OOB_PAIRING` feature is enabled, it also uses the Type 2 Tag library from `sdk-nrfxlib`_:
+When the NFC OOB pairing feature (:option:`CONFIG_SAMPLE_NFC_OOB_PAIRING`) is enabled, it also uses the Type 2 Tag library from `sdk-nrfxlib`_:
 
 * :ref:`nrfxlib:nfc_api_type2`
 * :ref:`dk_buttons_and_leds_readme`

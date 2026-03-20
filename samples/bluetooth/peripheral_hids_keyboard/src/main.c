@@ -151,9 +151,9 @@ static struct keyboard_state {
 	uint8_t keys_state[KEY_PRESS_MAX];
 } hid_keyboard_state;
 
-#if CONFIG_NFC_OOB_PAIRING
+#if CONFIG_SAMPLE_NFC_OOB_PAIRING
 static struct k_work adv_work;
-#endif
+#endif /* CONFIG_SAMPLE_NFC_OOB_PAIRING */
 
 static struct k_work pairing_work;
 struct pairing_data_mitm {
@@ -192,7 +192,7 @@ static void advertising_start(void)
 }
 
 
-#if CONFIG_NFC_OOB_PAIRING
+#if CONFIG_SAMPLE_NFC_OOB_PAIRING
 static void delayed_advertising_start(struct k_work *work)
 {
 	advertising_start();
@@ -216,7 +216,7 @@ void nfc_field_lost(void)
 {
 	dk_set_led_off(NFC_LED);
 }
-#endif
+#endif /* CONFIG_SAMPLE_NFC_OOB_PAIRING */
 
 
 static void pairing_process(struct k_work *work)
@@ -273,14 +273,14 @@ static void connected(struct bt_conn *conn, uint8_t err)
 		}
 	}
 
-#if CONFIG_NFC_OOB_PAIRING == 0
+#ifndef CONFIG_SAMPLE_NFC_OOB_PAIRING
 	for (size_t i = 0; i < CONFIG_BT_HIDS_MAX_CLIENT_COUNT; i++) {
 		if (!conn_mode[i].conn) {
 			advertising_start();
 			return;
 		}
 	}
-#endif
+#endif /* !CONFIG_SAMPLE_NFC_OOB_PAIRING */
 	is_adv = false;
 }
 
@@ -315,7 +315,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		dk_set_led_off(CON_STATUS_LED);
 	}
 
-#if CONFIG_NFC_OOB_PAIRING
+#if CONFIG_SAMPLE_NFC_OOB_PAIRING
 	if (is_adv) {
 		printk("Advertising stopped after disconnect\n");
 		bt_le_adv_stop();
@@ -323,7 +323,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	}
 #else
 	advertising_start();
-#endif
+#endif /* CONFIG_SAMPLE_NFC_OOB_PAIRING */
 }
 
 
@@ -558,7 +558,7 @@ static void auth_cancel(struct bt_conn *conn)
 }
 
 
-#if CONFIG_NFC_OOB_PAIRING
+#if CONFIG_SAMPLE_NFC_OOB_PAIRING
 static void auth_oob_data_request(struct bt_conn *conn,
 				  struct bt_conn_oob_info *info)
 {
@@ -585,7 +585,7 @@ static void auth_oob_data_request(struct bt_conn *conn,
 		printk("Successfully provided LESC OOB data\n");
 	}
 }
-#endif
+#endif /* CONFIG_SAMPLE_NFC_OOB_PAIRING */
 
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
@@ -622,9 +622,9 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
-#if CONFIG_NFC_OOB_PAIRING
+#if CONFIG_SAMPLE_NFC_OOB_PAIRING
 	.oob_data_request = auth_oob_data_request,
-#endif
+#endif /* CONFIG_SAMPLE_NFC_OOB_PAIRING */
 };
 
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
@@ -886,7 +886,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 	if (has_changed & KEY_SHIFT_MASK) {
 		button_shift_changed((button_state & KEY_SHIFT_MASK) != 0);
 	}
-#if CONFIG_NFC_OOB_PAIRING
+#if CONFIG_SAMPLE_NFC_OOB_PAIRING
 	if (has_changed & KEY_ADV_MASK) {
 		size_t i;
 
@@ -900,7 +900,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 		printk("Cannot start advertising, all connections slots are"
 		       " taken\n");
 	}
-#endif
+#endif /* CONFIG_SAMPLE_NFC_OOB_PAIRING */
 }
 
 
@@ -969,12 +969,12 @@ int main(void)
 		settings_load();
 	}
 
-#if CONFIG_NFC_OOB_PAIRING
+#if CONFIG_SAMPLE_NFC_OOB_PAIRING
 	k_work_init(&adv_work, delayed_advertising_start);
 	app_nfc_init();
 #else
 	advertising_start();
-#endif
+#endif /* CONFIG_SAMPLE_NFC_OOB_PAIRING */
 
 	k_work_init(&pairing_work, pairing_process);
 
