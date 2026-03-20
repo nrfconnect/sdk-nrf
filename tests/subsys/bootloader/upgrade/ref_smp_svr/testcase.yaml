@@ -15,18 +15,28 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54h20dk/nrf54h20/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade.py"
+        - "../pytest/test_invalid_image.py::test_invalid_signature"
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+
+  mcuboot.upgrade.basic.nrf54l:
+    platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     harness_config:
@@ -35,6 +45,7 @@ tests:
         - "../pytest/test_invalid_image.py::test_invalid_signature"
     extra_args:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xf800
 
   mcuboot.upgrade.serial_recovery_no_bootable_app:
     tags:
@@ -101,7 +112,7 @@ tests:
         - "../pytest/test_upgrade.py"
     extra_args:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
-      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xfe00
+      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xf800
 
   nsib.mcuboot.upgrade.basic:
     tags:
@@ -325,6 +336,7 @@ tests:
     extra_args:
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xf800
 
   nsib.mcuboot.upgrade.kmu.basic:
     platform_allow:
