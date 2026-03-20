@@ -808,6 +808,9 @@ Libraries for networking
       It is replaced by ``/shadow/update/delta/trim``.
       Deltas are now trimmed by default to prioritize smaller shadows.
 
+  * Fixed an issue where CoAP FOTA was affected due to the downloader reading ``proxy_uri`` as a C string using ``strlen()`` to determine the CoAP option length.
+    It picked up the stale tail, producing a corrupted download URL.
+
 * :ref:`lib_nrf_cloud_pgps` library:
 
   * Updated the range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
