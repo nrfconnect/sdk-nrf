@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,uart-mcumgr = &mcumgr_cdc_acm_uart0;
+	};
+};
+
+&zephyr_udc0 {
+	mcumgr_cdc_acm_uart0: mcumgr_cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "nRF54LM20 Dongle MCUmgr";
+	};
+};
+
+&board_cdc_acm_uart {
+	label = "console";
+};
