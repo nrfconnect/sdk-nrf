@@ -196,6 +196,8 @@ tests:
       - SHIELD=pca63565
       - CONFIG_CAN=n
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      # FPROTECT does not affect benchmarks
+      - mcuboot_CONFIG_FPROTECT=n
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -257,6 +259,8 @@ tests:
       - SHIELD=pca63565
       - CONFIG_CAN=n
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      # Disabled FPROTECT does not affect benchmarks
+      - mcuboot_CONFIG_FPROTECT=n
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
@@ -309,6 +313,8 @@ tests:
       - CONFIG_I2S=n
       - CONFIG_BT=n
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      # Disabled FPROTECT does not affect benchmarks
+      - mcuboot_CONFIG_FPROTECT=n
     platform_allow:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
@@ -361,6 +367,8 @@ tests:
       - CONFIG_I2S=n
       - CONFIG_PWM=n
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      # Disabled FPROTECT does not affect benchmarks
+      - mcuboot_CONFIG_FPROTECT=n
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
