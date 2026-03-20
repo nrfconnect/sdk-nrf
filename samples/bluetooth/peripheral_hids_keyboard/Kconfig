@@ -6,7 +6,7 @@
 
 menu "Nordic BLE HIDS Keyboard sample"
 
-config NFC_OOB_PAIRING
+config SAMPLE_NFC_OOB_PAIRING
 	bool "Enable NFC OOB pairing"
 	depends on HAS_HW_NRF_NFCT
 	default y

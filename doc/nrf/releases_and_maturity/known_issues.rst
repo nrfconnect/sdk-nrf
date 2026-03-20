@@ -3220,7 +3220,7 @@ Peripheral HIDS keyboard sample cannot be used with nRF Bluetooth LE Controller
 .. rst-class:: v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
 NCSDK-33053: The Bluetooth Peripheral HIDS Keyboard with unmet dependency for the NFC OOB pairing Kconfig
-  The :ref:`peripheral_hids_keyboard` sample defines the :kconfig:option:`CONFIG_NFC_OOB_PAIRING` Kconfig option that is used to enable the NFC OOB pairing feature.
+  The :ref:`peripheral_hids_keyboard` sample defines the ``CONFIG_NFC_OOB_PAIRING`` Kconfig option that is used to enable the NFC OOB pairing feature.
   This option cannot be enabled because of the unmet dependency on the :kconfig:option:`CONFIG_HAS_HW_NRF_NFCT` Kconfig option.
   The :kconfig:option:`CONFIG_HAS_HW_NRF_NFCT` Kconfig option is not directly configurable by the user and derives its value from the status field of the ``nfct`` node defined in the devicetree configuration.
   Starting from the |NCS| v2.7.0 release, the ``nfct`` node is not enabled by default for all board targets that support the NFCT peripheral.

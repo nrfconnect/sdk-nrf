@@ -655,7 +655,7 @@ Bluetooth samples
 
 * :ref:`peripheral_hids_keyboard` sample:
 
-  * Fixed the issue with the :kconfig:option:`CONFIG_NFC_OOB_PAIRING` Kconfig option that is defined at the sample level and could not be enabled due to the unmet dependency on the :kconfig:option:`CONFIG_HAS_HW_NRF_NFCT` Kconfig option.
+  * Fixed the issue with the ``CONFIG_NFC_OOB_PAIRING`` Kconfig option that is defined at the sample level and could not be enabled due to the unmet dependency on the :kconfig:option:`CONFIG_HAS_HW_NRF_NFCT` Kconfig option.
     The issue is resolved by enabling the ``nfct`` node in the sample devicetree configuration, which sets the :kconfig:option:`CONFIG_HAS_HW_NRF_NFCT` Kconfig option to the expected value.
 
 * :ref:`power_profiling` sample:
