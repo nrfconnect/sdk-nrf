@@ -463,6 +463,14 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
+  * Added an experimental application ranging module (:ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>`) that uses the :ref:`ug_bt_fast_pair_fhn_pf` feature of the :ref:`bt_fast_pair_readme` library with Bluetooth Low Energy Channel Sounding as the ranging technology.
+    The module is enabled by default on board targets with Channel Sounding hardware support.
+    The experimental status is inherited due to its experimental dependencies.
+
+    As of the beginning of the second quarter of 2026, Precision Finding support using Bluetooth Low Energy Channel Sounding as the ranging technology is not publicly available on Android platforms.
+    However, you can experiment with this configuration on Android test devices that provide hardware and software support for Bluetooth Low Energy Channel Sounding (for example, Google Pixel 10) if you satisfy the necessary requirements.
+    For details regarding the requirements, see a note in the :ref:`ug_bt_fast_pair_fhn_pf` documentation section.
+
   * Updated:
 
     * The sample to use the new name for the Find Hub Network (FHN) that was previously known as the Find My Device Network (FMDN).
@@ -703,6 +711,9 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
+  * Added :ref:`ug_bt_fast_pair_fhn_pf` support for the Find Hub Network (FHN) extension, enabling distance measurement for FHN accessories using supported ranging technologies.
+    The feature is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_PF` Kconfig option and is experimental.
+
   * Updated:
 
     * The location of the Fast Pair headers and implementation out of the :file:`services` subdirectory.
@@ -895,7 +906,9 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-* Updated the :ref:`ug_bt_fast_pair_integration` guide to reflect the Find My Device Network (FMDN) extension rename to Find Hub Network (FHN), aligning with the updated Google specification.
+* Added documentation for the :ref:`ug_bt_fast_pair_fhn_pf` to the :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide, covering the feature overview with supported ranging technologies, prerequisite operations, GATT service interaction with the ranging management workflow, and the Bluetooth Low Energy Channel Sounding helper APIs.
+
+* Updated the :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide to reflect the Find My Device Network (FMDN) extension rename to Find Hub Network (FHN), aligning with the updated Google specification.
 
 Edge Impulse integration
 ------------------------
