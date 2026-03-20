@@ -262,19 +262,6 @@ static int nct_client_id_set(const char *const client_id)
 	return 0;
 }
 
-int nct_stage_get(char *cur_stage, const int cur_stage_len)
-{
-	int len = strlen(stage);
-
-	if (cur_stage_len <= len) {
-		return -EMSGSIZE;
-	} else if ((cur_stage != NULL) && len) {
-		strncpy(cur_stage, stage, cur_stage_len);
-		return 0;
-	}
-	return -EINVAL;
-}
-
 int nct_tenant_id_get(char *cur_tenant, const int cur_tenant_len)
 {
 	int len = strlen(tenant);
@@ -1057,18 +1044,6 @@ int nct_dc_connect(void)
 
 	const struct mqtt_subscription_list subscription_list = {
 		.list = &subscribe_topic, .list_count = 1, .message_id = NCT_MSG_ID_DC_SUB};
-
-#if defined(CONFIG_NRF_CLOUD_GATEWAY)
-	/** The topic for cloud to device we receive in the shadow for
-	 * BLE gateway devices is incorrect. The <device_id>/+/r suffix is invalid and
-	 * must be corrected here to be <device_id>/c2g. Using it without this
-	 * change results in immediate disconnection from nRF Cloud.
-	 */
-	char *p = (char *)subscribe_topic.topic.utf8;
-	int l = subscribe_topic.topic.size;
-
-	memcpy(&p[l - 3], NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE, 3);
-#endif
 
 	LOG_DBG("Subscribing to:");
 	for (int i = 0; i < subscription_list.list_count; i++) {
