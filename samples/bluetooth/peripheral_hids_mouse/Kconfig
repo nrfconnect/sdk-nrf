@@ -6,7 +6,7 @@
 
 menu "Nordic HIDS BLE GATT mouse service sample"
 
-config BT_HIDS_SECURITY_ENABLED
+config SAMPLE_BT_HIDS_SECURITY
 	bool "Bluetooth LE security"
 	default y
 	imply BT_PRIVACY
@@ -21,19 +21,19 @@ config BT_HIDS_SECURITY_ENABLED
 	help
 	  Enable Bluetooth LE security support.
 
-config BT_HIDS_SECURITY_MITM_ENABLED
+config SAMPLE_BT_HIDS_SECURITY_MITM
 	bool "Passkey display MITM protection"
-	depends on BT_HIDS_SECURITY_ENABLED
+	depends on SAMPLE_BT_HIDS_SECURITY
 	depends on PRINTK
 	default y
 	help
 	  Enable displaying passkey for Man-In-The-Middle (MITM) protection.
 	  Implementation uses the "printk" function to display the passkey.
 
-config BT_DIRECTED_ADVERTISING
+config SAMPLE_BT_DIRECTED_ADVERTISING
 	bool "Directed advertising"
 	default y
-	depends on BT_HIDS_SECURITY_ENABLED
+	depends on SAMPLE_BT_HIDS_SECURITY
 
 endmenu
 

@@ -426,11 +426,13 @@ Bluetooth samples
   * Added:
 
     * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
-    * A sample-specific :option:`CONFIG_BT_HIDS_SECURITY_MITM_ENABLED` Kconfig option.
+    * A sample-specific :option:`CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM` Kconfig option.
       You can use this option to control support for passkey display MITM protection.
       The passkey display feature can be used only if the configuration emits printk messages (:kconfig:option:`CONFIG_PRINTK` Kconfig option must be enabled).
     * Configuration without debug features (``release`` configuration).
       You can use this configuration to verify the memory footprint of the sample as it is closer to the configuration used by a final product.
+
+  * Renamed sample-specific Kconfig options to use the ``SAMPLE_`` prefix and dropped the ``_ENABLED`` suffix to follow the Kconfig naming convention for samples.
 
   * Updated sample's configuration to limit the number of supported HID reports (:kconfig:option:`CONFIG_BT_HIDS_FEATURE_REP_MAX`, :kconfig:option:`CONFIG_BT_HIDS_INPUT_REP_MAX`, and :kconfig:option:`CONFIG_BT_HIDS_OUTPUT_REP_MAX`) and maximum number of GATT attribute descriptors (:kconfig:option:`CONFIG_BT_HIDS_ATTR_MAX`) in the :ref:`hids_readme`.
     This reduces the memory consumption of the sample.

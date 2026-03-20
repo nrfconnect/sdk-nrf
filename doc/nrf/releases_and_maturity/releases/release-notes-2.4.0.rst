@@ -419,7 +419,7 @@ Bluetooth samples
 
 * :ref:`peripheral_hids_mouse` sample:
 
-  * Updated the sample to include the :kconfig:option:`CONFIG_BT_SMP` Kconfig option when :option:`CONFIG_BT_HIDS_SECURITY_ENABLED` is selected.
+  * Updated the sample to include the :kconfig:option:`CONFIG_BT_SMP` Kconfig option when ``CONFIG_BT_HIDS_SECURITY_ENABLED`` is selected.
   * Fixed a CMake warning by moving the nRF RPC configuration (the :kconfig:option:`CONFIG_NRF_RPC_THREAD_STACK_SIZE` Kconfig option) to a separate overlay config file.
 
 * :ref:`direct_test_mode` sample:
