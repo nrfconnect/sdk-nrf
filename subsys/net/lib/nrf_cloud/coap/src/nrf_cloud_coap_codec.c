@@ -15,6 +15,7 @@
 #include <net/nrf_cloud_codec.h>
 #include <cJSON.h>
 #include "nrf_cloud_codec_internal.h"
+#include "nrf_cloud_mem.h"
 #include "ground_fix_encode_types.h"
 #include "ground_fix_encode.h"
 #include "ground_fix_decode_types.h"
@@ -595,6 +596,18 @@ int coap_codec_fota_resp_decode(struct nrf_cloud_fota_job_info *job, const uint8
 		LOG_ERR("Invalid format for FOTA: %d", fmt);
 		return -ENOTSUP;
 	} else {
-		return nrf_cloud_rest_fota_execution_decode(buf, job);
+		/* Create a null-terminated copy for cJSON parsing. */
+		uint8_t *buf_copy = nrf_cloud_malloc(len + 1);
+
+		if (!buf_copy) {
+			return -ENOMEM;
+		}
+		memcpy(buf_copy, buf, len);
+		buf_copy[len] = '\0';
+
+		int err = nrf_cloud_rest_fota_execution_decode(buf_copy, job);
+
+		nrf_cloud_free(buf_copy);
+		return err;
 	}
 }

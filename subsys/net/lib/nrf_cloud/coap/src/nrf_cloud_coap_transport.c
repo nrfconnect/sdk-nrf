@@ -1093,17 +1093,22 @@ int nrf_cloud_coap_transport_proxy_dl_uri_get(char *const uri, size_t uri_len,
 	const size_t needed_len =
 		PROXY_URI_DL_HTTPS_LEN + host_len + PROXY_URI_DL_SEP_LEN +  path_len;
 
-	if (needed_len > uri_len) {
+	/* +1 is required to include the terminating '\0' byte in addition to the URI content. */
+	if ((needed_len + 1) > uri_len) {
 		LOG_ERR("Host and path for CoAP proxy GET is too large: %u bytes",
 			needed_len);
 		return -E2BIG;
 	}
 
-	/* We don't want a NULL terminated string, so just copy the data to create the full URI */
+	/*
+	 * Force a NUL terminator at the URI end so any stale tail bytes in the buffer are ignored;
+	 * otherwise downstream C-string readers could see a corrupted download URL.
+	 */
 	memcpy(uri, PROXY_URI_DL_HTTPS, PROXY_URI_DL_HTTPS_LEN);
 	memcpy(&uri[PROXY_URI_DL_HTTPS_LEN], host, host_len);
 	memcpy(&uri[PROXY_URI_DL_HTTPS_LEN + host_len], PROXY_URI_DL_SEP, PROXY_URI_DL_SEP_LEN);
 	memcpy(&uri[PROXY_URI_DL_HTTPS_LEN + host_len + PROXY_URI_DL_SEP_LEN], path, path_len);
+	uri[needed_len] = '\0';
 
 	LOG_DBG("Proxy URI: %.*s", needed_len, uri);
 
