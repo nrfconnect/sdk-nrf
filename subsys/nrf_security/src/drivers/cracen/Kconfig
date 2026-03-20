@@ -70,13 +70,22 @@ config CRACEN_LIB_KMU
 	depends on CRACEN_KMU_HW_PRESENT
 	select NRFX_RRAMC if !BUILD_WITH_TFM && SOC_SERIES_NRF54L
 	select NRFX_MRAMC if !BUILD_WITH_TFM && SOC_SERIES_NRF71
-	default y
 	help
 	  The CRACEN KMU library.
 
+config CRACEN_KMU
+	bool "CRACEN KMU"
+	depends on CRACEN_KMU_HW_PRESENT
+	select NRFX_KMU if !BUILD_WITH_TFM
+	select NRFX_RRAMC if !BUILD_WITH_TFM && SOC_SERIES_NRF54L
+	select NRFX_MRAMC if !BUILD_WITH_TFM && SOC_SERIES_NRF71
+	default y
+	help
+	  Activate CRACEN Key Management Unit (KMU) functionality for the PSA layer.
+
 config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 	bool "Provision protected RAM invalidation slots on boot"
-	depends on CRACEN_LIB_KMU
+	depends on CRACEN_KMU
 	default y
 	help
 	  Provision the protected RAM invalidation data in the KMU. This will generate random
@@ -87,7 +96,7 @@ config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 
 config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
 	bool "Provision protected RAM invalidation slots using psa_import_key"
-	depends on CRACEN_LIB_KMU
+	depends on CRACEN_KMU
 	help
 	  Provision the protected RAM invalidation KMU slots (248,249) in the KMU using a
 	  psa_import_key call. The application is required to call psa_import_key with the
@@ -103,7 +112,7 @@ config CRACEN_IKG
 
 config CRACEN_IKG_SEED_LOAD
 	bool "Load the CRACEN IKG seed"
-	depends on CRACEN_LIB_KMU
+	depends on CRACEN_KMU
 	default y
 	help
 	  The IKG seed is used to derive the keys in the IKG.

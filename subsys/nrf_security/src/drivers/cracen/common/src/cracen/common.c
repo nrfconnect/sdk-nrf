@@ -9,7 +9,7 @@
 #include <cracen/cracen_kmu.h>
 #include <cracen_psa_ctr_drbg.h>
 #include <hal/nrf_cracen.h>
-#include <cracen/lib_kmu.h>
+#include <nrfx_kmu.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <silexpk/core.h>
@@ -25,6 +25,8 @@
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
 #define NOT_ENABLED_HASH_ALG (0)
+
+#define CRACEN_IKG_SEED_KMU_SLOT_COUNT 3u
 
 psa_status_t silex_statuscodes_to_psa(int sx_status)
 {
@@ -181,9 +183,8 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 {
 #ifdef CONFIG_CRACEN_IKG_SEED_LOAD
 	if (!nrf_cracen_seedram_lock_check(NRF_CRACEN)) {
-		if (lib_kmu_push_slot(CONFIG_CRACEN_IKG_SEED_KMU_SLOT + 0) ||
-		    lib_kmu_push_slot(CONFIG_CRACEN_IKG_SEED_KMU_SLOT + 1) ||
-		    lib_kmu_push_slot(CONFIG_CRACEN_IKG_SEED_KMU_SLOT + 2)) {
+		if (nrfx_kmu_key_slots_push(CONFIG_CRACEN_IKG_SEED_KMU_SLOT,
+					    CRACEN_IKG_SEED_KMU_SLOT_COUNT) != 0) {
 			return SX_ERR_INVALID_KEYREF;
 		}
 		nrf_cracen_seedram_lock_enable_set(NRF_CRACEN, true);

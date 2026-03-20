@@ -16,6 +16,7 @@
 #include <nrf_security_mutexes.h>
 #include <sxsymcrypt/trng.h>
 #include <silexpk/core.h>
+#include <nrfx_kmu.h>
 
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #define LOG_ERR_MSG(msg) LOG_ERR(msg)
@@ -151,6 +152,12 @@ int cracen_init(void)
 	err = sx_pk_init();
 	if (err != SX_OK) {
 		status = silex_statuscodes_to_psa(err);
+		goto exit;
+	}
+
+	err = nrfx_kmu_init(NULL);
+	if (err != 0) {
+		status = PSA_ERROR_HARDWARE_FAILURE;
 		goto exit;
 	}
 
