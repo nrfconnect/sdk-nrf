@@ -1,7 +1,11 @@
 mcuboot:
   address: 0x0
   region: flash_primary
-  size: 0x10000
+  size: 0xf800
+EMPTY_1:
+  address: 0xf800
+  region: flash_primary
+  size: 0x800
 mcuboot_pad:
   address: 0x10000
   region: flash_primary
