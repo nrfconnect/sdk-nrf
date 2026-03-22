@@ -984,6 +984,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_manifest.cmake)
   endif()
 
+  if(SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/ironside_se_tlv.cmake)
+    ironside_se_tlv_conf_post_cmake()
+  endif()
+
   if(SB_CONFIG_DFU_ZIP)
     if(SB_CONFIG_BOOTLOADER_MCUBOOT)
       include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/zip.cmake)
