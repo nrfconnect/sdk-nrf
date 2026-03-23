@@ -72,6 +72,9 @@
 #define KEY_PAIRING_ACCEPT DK_BTN1_MSK
 #define KEY_PAIRING_REJECT DK_BTN2_MSK
 
+/* Timeout for low duty directed advertising (2 seconds). */
+#define LOW_DUTY_DIRECTED_ADV_TIMEOUT_MS 2000
+
 /* HIDS instance. */
 BT_HIDS_DEF(hids_obj,
 	    INPUT_REP_BUTTONS_LEN,
@@ -96,6 +99,8 @@ K_MSGQ_DEFINE(bonds_queue,
 	      sizeof(bt_addr_le_t),
 	      CONFIG_BT_MAX_PAIRED,
 	      4);
+
+static struct k_work_delayable low_duty_directed_adv_timeout_work;
 #endif /* CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING */
 
 static const struct bt_data ad[] = {
@@ -116,7 +121,7 @@ static struct conn_mode {
 	bool in_boot_mode;
 } conn_mode[CONFIG_BT_HIDS_MAX_CLIENT_COUNT];
 
-static volatile bool is_adv_running;
+static bool is_adv_running;
 
 static struct k_work adv_work;
 
@@ -131,13 +136,15 @@ K_MSGQ_DEFINE(mitm_queue,
 	      CONFIG_BT_HIDS_MAX_CLIENT_COUNT,
 	      4);
 
+static void advertising_continue(void);
+
 #if CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
 	int err;
 
 	/* Filter already connected peers. */
-	for (size_t i = 0; i < CONFIG_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
 		if (conn_mode[i].conn) {
 			const bt_addr_le_t *dst =
 				bt_conn_get_dst(conn_mode[i].conn);
@@ -153,6 +160,37 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 		printk("No space in the queue for the bond.\n");
 	}
 }
+
+static bool is_any_peer_connected(void)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
+		if (conn_mode[i].conn) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static void low_duty_directed_adv_timeout_handler(struct k_work *work)
+{
+	int err;
+
+	ARG_UNUSED(work);
+
+	printk("Low duty directed advertising timed out\n");
+
+	__ASSERT_NO_MSG(is_adv_running);
+
+	err = bt_le_adv_stop();
+	if (err) {
+		printk("Advertising failed to stop (err %d)\n", err);
+		return;
+	}
+	is_adv_running = false;
+
+	advertising_continue();
+}
 #endif /* CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING */
 
 static void advertising_continue(void)
@@ -164,6 +202,7 @@ static void advertising_continue(void)
 
 	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT)) {
 		char addr_buf[BT_ADDR_LE_STR_LEN];
+		bool any_peer_connected = is_any_peer_connected();
 		int err;
 
 		if (is_adv_running) {
@@ -173,9 +212,18 @@ static void advertising_continue(void)
 				return;
 			}
 			is_adv_running = false;
+			(void)k_work_cancel_delayable(&low_duty_directed_adv_timeout_work);
 		}
 
-		adv_param = *BT_LE_ADV_CONN_DIR(&addr);
+		if (any_peer_connected) {
+			/* Use low duty directed advertising to maintain connections with other
+			 * peers. High duty directed advertising may disconnect existing
+			 * connections.
+			 */
+			adv_param = *BT_LE_ADV_CONN_DIR_LOW_DUTY(&addr);
+		} else {
+			adv_param = *BT_LE_ADV_CONN_DIR(&addr);
+		}
 		adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 
 		err = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
@@ -187,6 +235,15 @@ static void advertising_continue(void)
 
 		bt_addr_le_to_str(&addr, addr_buf, BT_ADDR_LE_STR_LEN);
 		printk("Direct advertising to %s started\n", addr_buf);
+
+		/* High-duty directed advertising expires automatically after timeout defined in
+		 * the Bluetooth specification. The Bluetooth stack will call connected() callback
+		 * with error code.
+		 */
+		if (any_peer_connected) {
+			(void)k_work_schedule(&low_duty_directed_adv_timeout_work,
+					      K_MSEC(LOW_DUTY_DIRECTED_ADV_TIMEOUT_MS));
+		}
 	} else
 #endif /* CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING */
 	{
@@ -252,7 +309,7 @@ static void pairing_process(struct k_work *work)
 
 static void insert_conn_object(struct bt_conn *conn)
 {
-	for (size_t i = 0; i < CONFIG_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
 		if (!conn_mode[i].conn) {
 			conn_mode[i].conn = conn;
 			conn_mode[i].in_boot_mode = false;
@@ -267,7 +324,7 @@ static void insert_conn_object(struct bt_conn *conn)
 
 static bool is_conn_slot_free(void)
 {
-	for (size_t i = 0; i < CONFIG_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
 		if (!conn_mode[i].conn) {
 			return true;
 		}
@@ -283,11 +340,15 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 	is_adv_running = false;
 
+#if CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING
+	(void)k_work_cancel_delayable(&low_duty_directed_adv_timeout_work);
+#endif
+
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (err) {
 		if (err == BT_HCI_ERR_ADV_TIMEOUT) {
-			printk("Direct advertising to %s timed out\n", addr);
+			printk("High-duty directed advertising to %s timed out\n", addr);
 			k_work_submit(&adv_work);
 		} else {
 			printk("Failed to connect to %s 0x%02x %s\n", addr, err,
@@ -328,7 +389,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		printk("Failed to notify HID service about disconnection\n");
 	}
 
-	for (size_t i = 0; i < CONFIG_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
 		if (conn_mode[i].conn == conn) {
 			conn_mode[i].conn = NULL;
 			break;
@@ -371,13 +432,13 @@ static void hids_pm_evt_handler(enum bt_hids_pm_evt evt,
 	char addr[BT_ADDR_LE_STR_LEN];
 	size_t i;
 
-	for (i = 0; i < CONFIG_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (i = 0; i < ARRAY_SIZE(conn_mode); i++) {
 		if (conn_mode[i].conn == conn) {
 			break;
 		}
 	}
 
-	if (i >= CONFIG_BT_HIDS_MAX_CLIENT_COUNT) {
+	if (i >= ARRAY_SIZE(conn_mode)) {
 		return;
 	}
 
@@ -520,7 +581,7 @@ static void hid_init(void)
 
 static void mouse_movement_send(int16_t x_delta, int16_t y_delta)
 {
-	for (size_t i = 0; i < CONFIG_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
 
 		if (!conn_mode[i].conn) {
 			continue;
@@ -834,6 +895,10 @@ int main(void)
 
 	k_work_init(&hids_work, mouse_handler);
 	k_work_init(&adv_work, advertising_process);
+#if CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING
+	k_work_init_delayable(&low_duty_directed_adv_timeout_work,
+			      low_duty_directed_adv_timeout_handler);
+#endif
 	if (IS_ENABLED(CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM)) {
 		k_work_init(&pairing_work, pairing_process);
 	}
