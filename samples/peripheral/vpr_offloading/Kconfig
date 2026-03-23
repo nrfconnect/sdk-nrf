@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SAMPLE_LOCAL_TEMP_MONITOR
+	bool "Local temperature monitor"
+
+config SAMPLE_LOCAL_LED_CONTROL
+	bool "Local LED control"
+
+source "Kconfig.zephyr"
