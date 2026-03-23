@@ -488,6 +488,10 @@ Bluetooth samples
       This reduces the memory consumption of the sample.
     * The Bluetooth TX processor thread stack size (:kconfig:option:`CONFIG_BT_TX_PROCESSOR_STACK_SIZE` Kconfig option) to prevent stack overflow when receiving directed advertising right after boot.
       On the ``nrf54l15dk/nrf54l15/cpuapp`` board target, the maximum measured stack usage is 936 bytes.
+    * The directed advertising from high-duty to low-duty cycle to prevent disconnecting peers that are already connected.
+      Scheduling high-duty directed advertising might cause problems with reacting to Bluetooth LE connection events from connected peers, which can result in disconnections.
+      The low-duty cycle directed advertising is used only when there is at least one connected peer.
+      An application-specified timeout of two seconds is used for each low-duty cycle directed advertising attempt.
 
   * Renamed sample-specific Kconfig options to use the ``SAMPLE_`` prefix and dropped the ``_ENABLED`` suffix to follow the Kconfig naming convention for samples.
 
