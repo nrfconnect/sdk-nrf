@@ -161,16 +161,6 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
-  sample.bluetooth.peripheral_lbs.tcm.nrf54h20:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    extra_args:
-      - FILE_SUFFIX=tcm
-
   sample.bluetooth.peripheral_lbs.l15_tag:
     sysbuild: true
     integration_platforms:

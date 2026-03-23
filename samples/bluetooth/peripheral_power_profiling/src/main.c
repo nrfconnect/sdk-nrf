@@ -67,7 +67,9 @@ static void adv_work_handler(struct k_work *work);
 static K_WORK_DEFINE(adv_work, adv_work_handler);
 #endif /* !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED) */
 
+#if IS_ENABLED(CONFIG_BT_EXT_ADV)
 static struct bt_le_ext_adv *adv_set;
+#endif /* IS_ENABLED(CONFIG_BT_EXT_ADV) */
 
 static void system_off_work_handler(struct k_work *work);
 static void key_generation_work_handler(struct k_work *work);
@@ -87,6 +89,7 @@ static const struct bt_data connectable_ad_data[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
+#if IS_ENABLED(CONFIG_BT_EXT_ADV)
 static const struct bt_data non_connectable_ad_data[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
 	BT_DATA_BYTES(BT_DATA_URI, /* The URI of the https://www.nordicsemi.com website */
@@ -99,6 +102,7 @@ static const struct bt_data non_connectable_ad_data[] = {
 static const struct bt_data non_connectable_sd_data[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
+#endif /* IS_ENABLED(CONFIG_BT_EXT_ADV) */
 
 static const struct bt_le_adv_param *connectable_ad_params =
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN,
@@ -106,11 +110,14 @@ static const struct bt_le_adv_param *connectable_ad_params =
 			CONNECTABLE_ADV_INTERVAL_MAX,
 			NULL);
 
+
+#if IS_ENABLED(CONFIG_BT_EXT_ADV)
 static const struct bt_le_adv_param *non_connectable_ad_params =
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE,
 			NON_CONNECTABLE_ADV_INTERVAL_MIN,
 			NON_CONNECTABLE_ADV_INTERVAL_MAX,
 			NULL);
+#endif /* IS_ENABLED(CONFIG_BT_EXT_ADV) */
 
 static int leds_init(void)
 {
@@ -246,17 +253,21 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t l
 	       interval, latency, timeout);
 }
 
+#if IS_ENABLED(CONFIG_BT_USER_PHY_UPDATE)
 static void le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 {
 	printk("PHY updated, TX: %u RX: %u\n", param->tx_phy, param->rx_phy);
 }
+#endif /* IS_ENABLED(CONFIG_BT_USER_PHY_UPDATE) */
 
 BT_CONN_CB_DEFINE(connection_cb) = {
 	.connected = connected,
 	.disconnected = disconnected,
 	.security_changed = security_changed,
 	.le_param_updated = le_param_updated,
+#if IS_ENABLED(CONFIG_BT_USER_PHY_UPDATE)
 	.le_phy_updated = le_phy_updated
+#endif /* IS_ENABLED(CONFIG_BT_USER_PHY_UPDATE) */
 };
 
 static void auth_cancel(struct bt_conn *conn)
@@ -384,13 +395,14 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	uint32_t buttons = button_state & has_changed;
 
 	if (buttons & CONNECTABLE_ADV_BUTTON) {
+		/* It is called from workqueue context, checking return value is not needed. */
+		k_work_cancel_delayable(&system_off_work);
+
+#if IS_ENABLED(CONFIG_BT_EXT_ADV)
 		struct bt_le_ext_adv_start_param connectable_start_param = {
 			.timeout = CONNECTABLE_ADV_TIMEOUT,
 			.num_events = 0
 		};
-
-		/* It is called from workqueue context, checking return value is not needed. */
-		k_work_cancel_delayable(&system_off_work);
 
 		(void)bt_le_ext_adv_stop(adv_set);
 		err = bt_le_ext_adv_update_param(adv_set, connectable_ad_params);
@@ -407,6 +419,11 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 		}
 
 		err = bt_le_ext_adv_start(adv_set, &connectable_start_param);
+#else
+		(void)bt_le_adv_stop();
+		err = bt_le_adv_start(connectable_ad_params, connectable_ad_data,
+				      ARRAY_SIZE(connectable_ad_data), NULL, 0);
+#endif /* IS_ENABLED(CONFIG_BT_EXT_ADV) */
 		if (err) {
 			printk("Connectable advertising failed to start (err %d)\n", err);
 		} else {
@@ -416,6 +433,7 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 		return;
 	}
 
+#if IS_ENABLED(CONFIG_BT_EXT_ADV)
 	if (buttons & NON_CONNECTABLE_ADV_BUTTON) {
 		struct bt_le_ext_adv_start_param non_connectable_start_param = {
 			.timeout = NON_CONNECTABLE_ADV_TIMEOUT,
@@ -451,6 +469,7 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 
 		return;
 	}
+#endif /* IS_ENABLED(CONFIG_BT_EXT_ADV) */
 }
 
 static int pairing_key_generate(void)
@@ -475,13 +494,15 @@ static void key_generation_work_handler(struct k_work *work)
 static void adv_work_handler(struct k_work *work)
 {
 	int err;
+
+	/* Called from workqueue context. */
+	k_work_cancel_delayable(&system_off_work);
+
+#if IS_ENABLED(CONFIG_BT_EXT_ADV)
 	struct bt_le_ext_adv_start_param param = {
 		.timeout = NFC_ADV_TIMEOUT,
 		.num_events = 0
 	};
-
-	/* Called from workqueue context. */
-	k_work_cancel_delayable(&system_off_work);
 
 	(void)bt_le_ext_adv_stop(adv_set);
 	err = bt_le_ext_adv_update_param(adv_set, connectable_ad_params);
@@ -498,6 +519,11 @@ static void adv_work_handler(struct k_work *work)
 	}
 
 	err = bt_le_ext_adv_start(adv_set, &param);
+#else
+	(void)bt_le_adv_stop();
+	err = bt_le_adv_start(connectable_ad_params, connectable_ad_data,
+			      ARRAY_SIZE(connectable_ad_data), NULL, 0);
+#endif /* IS_ENABLED(CONFIG_BT_EXT_ADV) */
 	if (err) {
 		printk("Connectable advertising failed to start (err %d)\n", err);
 	} else {
@@ -682,6 +708,7 @@ static void system_off_work_handler(struct k_work *work)
 	system_off();
 }
 
+#if IS_ENABLED(CONFIG_BT_EXT_ADV)
 static void advertising_terminated(struct bt_le_ext_adv *adv, struct bt_le_ext_adv_sent_info *info)
 {
 	if (!device_conn) {
@@ -697,6 +724,7 @@ static void advertising_terminated(struct bt_le_ext_adv *adv, struct bt_le_ext_a
 static const struct bt_le_ext_adv_cb adv_callbacks = {
 	.sent = advertising_terminated
 };
+#endif /* IS_ENABLED(CONFIG_BT_EXT_ADV) */
 
 int main(void)
 {
@@ -756,11 +784,13 @@ int main(void)
 		return 0;
 	}
 
+#if IS_ENABLED(CONFIG_BT_EXT_ADV)
 	err = bt_le_ext_adv_create(connectable_ad_params, &adv_callbacks, &adv_set);
 	if (err) {
 		printk("Failed to create advertising set (err %d)\n", err);
 		return 0;
 	}
+#endif /* IS_ENABLED(CONFIG_BT_EXT_ADV) */
 
 	err = pairing_key_generate();
 	if (err) {
