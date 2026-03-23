@@ -1,0 +1,4 @@
+#define SP_RAM_REG_ADDR 0x2007c000
+#define SP_RAM_UNIT_ADDR 2007c000
+
+#include "nrf54l_sqspi.dtsi"
