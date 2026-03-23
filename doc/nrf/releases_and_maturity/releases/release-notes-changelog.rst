@@ -444,6 +444,8 @@ Bluetooth samples
   * Updated sample's configuration to limit the number of supported HID reports (:kconfig:option:`CONFIG_BT_HIDS_FEATURE_REP_MAX`, :kconfig:option:`CONFIG_BT_HIDS_INPUT_REP_MAX`, and :kconfig:option:`CONFIG_BT_HIDS_OUTPUT_REP_MAX`) and maximum number of GATT attribute descriptors (:kconfig:option:`CONFIG_BT_HIDS_ATTR_MAX`) in the :ref:`hids_readme`.
     This reduces the memory consumption of the sample.
 
+  * Fixed a :c:struct:`bt_conn` reference leak in the ``pairing_failed`` callback that occurred when the second queued MITM pairing request failed, causing advertising to fail with ``-ENOMEM``.
+
 * :ref:`peripheral_mds`:
 
    * Replaced the nRF Memfault mobile applications with the `nRF Connect Device Manager`_.
