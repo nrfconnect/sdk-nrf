@@ -143,7 +143,7 @@ function(zephyr_mcuboot_tasks)
   endif()
 
   if(CONFIG_HAS_IRONSIDE_SE)
-    generate_ironside_se_tlvs(imgtool_extra_tlv)
+    generate_ironside_se_tlvs_image(imgtool_extra_tlv)
     list(APPEND imgtool_extra ${imgtool_extra_tlv})
   endif()
 

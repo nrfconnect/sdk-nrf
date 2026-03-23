@@ -63,24 +63,31 @@ def main() -> None:
             if not end_syms:
                 parser.error(f"symbol '{PERIPHCONF_END_SYMBOL}' not found in ELF: {fp.name}")
 
-            addr = start_syms[0]["st_value"]
+            addr_vma = start_syms[0]["st_value"]
             end = end_syms[0]["st_value"]
-            size = end - addr
+            size = end - addr_vma
 
             if size < 0:
                 parser.error(
                     f"invalid iterable range in ELF {fp.name}: "
-                    f"{PERIPHCONF_START_SYMBOL}=0x{addr:09_x} > "
+                    f"{PERIPHCONF_START_SYMBOL}=0x{addr_vma:09_x} > "
                     f"{PERIPHCONF_END_SYMBOL}=0x{end:09_x}"
                 )
 
             if size % 8 != 0:
                 parser.error(f"PERIPHCONF section size is not divisible by 8: {size}")
 
-            offset = addr - args.image_fw_base
+            # When CONFIG_XIP=n, code/data run from RAM (VMA) but are stored in the image at LMA.
+            addr_lma = vma_to_lma(elf, addr_vma, size)
+            if addr_lma is None:
+                parser.error(
+                    f"PERIPHCONF range [0x{addr_vma:x}, 0x{addr_vma + size:x}) not in any PT_LOAD "
+                    f"region in ELF: {fp.name}"
+                )
+            offset = addr_lma - args.image_fw_base
             if offset < 0:
                 parser.error(
-                    f"periphconf start (0x{addr:x}) is before "
+                    f"periphconf start LMA (0x{addr_lma:x}) is before "
                     f"image FW base (0x{args.image_fw_base:x}) in ELF: {fp.name}"
                 )
             count = size // 8
@@ -98,6 +105,24 @@ def main() -> None:
             )
             args.periphconf_tlv_out.write(offset.to_bytes(4, byteorder="little"))
             args.periphconf_tlv_out.write(count.to_bytes(4, byteorder="little"))
+
+
+def vma_to_lma(elf: ELFFile, vma: int, size: int = 0) -> int | None:
+    for segment in elf.iter_segments():
+        if segment["p_type"] != "PT_LOAD":
+            continue
+        p_vaddr = segment["p_vaddr"]
+        p_memsz = segment["p_memsz"]
+        p_filesz = segment["p_filesz"]
+        if not p_vaddr <= vma < p_vaddr + p_memsz:
+            continue
+        if p_filesz == 0 or vma >= p_vaddr + p_filesz:
+            return None
+        if vma + size > p_vaddr + p_filesz:
+            return None
+        p_paddr = segment["p_paddr"]
+        return p_paddr + (vma - p_vaddr)
+    return None
 
 
 if __name__ == "__main__":
