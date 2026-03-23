@@ -87,6 +87,7 @@ This option is supported only on nRF54H Series devices.
 This option brings in sysbuild configuration file that selects one additional option:
 
 * :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_ITS` - This option enables ITS support.
+* :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE` - This option uses the build system to generate and prepare a bundle of default ITS keys to be used with the sample.
 
 Signature key
 *************
@@ -111,9 +112,16 @@ Security considerations
 
 See the list of best practices, security-related options, and recommended settings when configuring the sample:
 
-* For secure production builds, enable flash protection (either :kconfig:option:`CONFIG_FPROTECT` or the IronSide memory protection service, depending on the SoC) and the :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV` Kconfig option.
-  For production builds, manage keys independently instead of relying on automatic key generation (:kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`).
+* For secure production builds:
+
+  * Enable flash memory protection.
+    Use either :kconfig:option:`CONFIG_FPROTECT` or the IronSide memory protection service, depending on the SoC.
+    Also enable :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV`.
+  * Manage keys independently instead of relying on automatic key generation.
+    As such, do not use :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` or :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE`.
+
   See the :ref:`mcuboot_with_encryption_config` section for details.
+
 * MCUmgr's shell is enabled by default, allowing you to manage commands using a serial terminal.
 * MCUboot accepts unencrypted images in the secondary slot if signature verification passes.
   For higher security, use encrypted images wherever possible.
