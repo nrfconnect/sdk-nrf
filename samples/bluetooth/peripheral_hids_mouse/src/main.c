@@ -594,6 +594,7 @@ static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
 	pairing_data.conn    = bt_conn_ref(conn);
 	pairing_data.passkey = passkey;
 
+	k_sched_lock();
 	err = k_msgq_put(&mitm_queue, &pairing_data, K_NO_WAIT);
 	if (err) {
 		printk("Pairing queue is full. Purge previous data.\n");
@@ -608,6 +609,7 @@ static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
 	if (k_msgq_num_used_get(&mitm_queue) == 1) {
 		k_work_submit(&pairing_work);
 	}
+	k_sched_unlock();
 }
 
 
@@ -647,14 +649,23 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	if (IS_ENABLED(CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM)) {
 		struct pairing_data_mitm pairing_data;
 
-		if (k_msgq_peek(&mitm_queue, &pairing_data) != 0) {
-			return;
-		}
+		k_sched_lock();
+		uint32_t cnt = k_msgq_num_used_get(&mitm_queue);
 
-		if (pairing_data.conn == conn) {
-			bt_conn_unref(pairing_data.conn);
-			k_msgq_get(&mitm_queue, &pairing_data, K_NO_WAIT);
+		for (size_t i = 0; i < cnt; i++) {
+			int err = k_msgq_get(&mitm_queue, &pairing_data, K_NO_WAIT);
+
+			__ASSERT(!err, "k_msgq_get failed: %d", err);
+
+			if (pairing_data.conn == conn) {
+				bt_conn_unref(pairing_data.conn);
+			} else {
+				err = k_msgq_put(&mitm_queue, &pairing_data,
+						 K_NO_WAIT);
+				__ASSERT(!err, "k_msgq_put failed: %d", err);
+			}
 		}
+		k_sched_unlock();
 	}
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
@@ -678,7 +689,9 @@ static void num_comp_reply(bool accept)
 	struct pairing_data_mitm pairing_data;
 	struct bt_conn *conn;
 
+	k_sched_lock();
 	if (k_msgq_get(&mitm_queue, &pairing_data, K_NO_WAIT) != 0) {
+		k_sched_unlock();
 		return;
 	}
 
@@ -697,6 +710,7 @@ static void num_comp_reply(bool accept)
 	if (k_msgq_num_used_get(&mitm_queue)) {
 		k_work_submit(&pairing_work);
 	}
+	k_sched_unlock();
 }
 
 
