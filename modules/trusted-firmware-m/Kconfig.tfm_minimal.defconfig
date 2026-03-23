@@ -13,7 +13,7 @@ config TFM_CRYPTO_RNG_MODULE_ENABLED
 	default y
 
 config TFM_CRYPTO_HASH_MODULE_ENABLED
-	bool
+	bool "TF-M hash crypto module"
 	depends on PSA_HAS_HASH_SUPPORT
 	default y
 
