@@ -663,7 +663,7 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* Added  the :ref:`vpr_offloading_sample` sample, that demonstrates how to use VPR core (PPR or FLPR) to offload the application core.
 
 PMIC samples
 ------------
