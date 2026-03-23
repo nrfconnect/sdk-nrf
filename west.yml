@@ -275,6 +275,12 @@ manifest:
       groups:
         - benchmark
 
+    - name: sdk-bsp-nrf54lm20
+      remote: ncs
+      repo-path: sdk-hal_nordic
+      path: modules/sdk-bsp-nrf54lm20
+      revision: bsp-nrf54lm20-example
+
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.
