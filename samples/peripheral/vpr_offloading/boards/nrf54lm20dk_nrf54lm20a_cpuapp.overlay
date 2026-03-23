@@ -1,0 +1,107 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	soc {
+		reserved-memory {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			sram_rx: memory@20065c00 {
+				reg = <0x20065c00 0x1000>;
+			};
+
+			sram_tx: memory@20066c00 {
+				reg = <0x20066c00 0x1000>;
+			};
+		};
+
+		cpuflpr_sram_code_data: memory@20067c00 {
+			compatible = "mmio-sram";
+			reg = <0x20067c00 DT_SIZE_K(96)>;
+			ranges = <0x0 0x20067c00 0x17c00>;
+			status = "reserved";
+			#address-cells = <1>;
+			#size-cells = <1>;
+		};
+	};
+
+	ipc {
+		ipc0: ipc0 {
+			compatible = "zephyr,ipc-icbmsg";
+			dcache-alignment = <32>;
+			tx-region = <&sram_tx>;
+			rx-region = <&sram_rx>;
+			tx-blocks = <16>;
+			rx-blocks = <18>;
+			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 21>;
+			mbox-names = "rx", "tx";
+			status = "okay";
+		};
+	};
+
+	aliases {
+		remote-temp-monitor-ipc = &ipc0;
+	};
+};
+
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(407)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(407)>;
+};
+
+&rram_controller {
+	cpuflpr_rram: rram@1e5000 {
+		compatible = "soc-nv-flash";
+		reg = <0x1e5000 DT_SIZE_K(96)>;
+		ranges = <0x0 0x1e5000 DT_SIZE_K(96)>;
+		erase-block-size = <0x1000>;
+		write-block-size = <0x10>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+	};
+};
+
+&cpuflpr_vpr {
+	status = "okay";
+	execution-memory = <&cpuflpr_sram_code_data>;
+	source-memory = <&cpuflpr_rram>;
+};
+
+&cpuapp_vevif_tx {
+	status = "okay";
+};
+
+&cpuapp_vevif_rx {
+	status = "okay";
+};
+
+&pinctrl {
+	spi22_default_alt: spi22_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 23)>,
+				<NRF_PSEL(SPIM_MISO, 1, 30)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 13)>;
+		};
+	};
+
+	spi22_sleep_alt: spi22_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 23)>,
+				<NRF_PSEL(SPIM_MISO, 1, 30)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 13)>;
+			low-power-enable;
+		};
+	};
+};
+
+app_spi: &spi22 {
+	status = "okay";
+	pinctrl-0 = <&spi22_default_alt>;
+	pinctrl-1 = <&spi22_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
+};
