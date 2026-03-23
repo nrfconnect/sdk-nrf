@@ -3,10 +3,8 @@
 
 set(ZEPHYR_CURRENT_LIBRARY "nrfx")
 
-set(BSP_DIR ${NRFX_DIR}/bsp)
-set(SOC_DIR ${BSP_DIR}/${CONFIG_SOC_NORDIC_BSP_NAME})
+set(SOC_DIR ${NRFX_DIR}/bsp/stable)
 set(MDK_DIR ${SOC_DIR}/mdk)
-set(mdk_dir ${NRFX_DIR}/mdk)
 set(helpers_dir ${NRFX_DIR}/helpers)
 
 # Add definitions for products which are yet to be upstreamed.
@@ -51,7 +49,7 @@ endif()
 
 if(CONFIG_NRFX_GPPI AND NOT CONFIG_NRFX_GPPI_V1 AND CONFIG_SOC_SERIES_NRF71)
   zephyr_library_sources_ifdef(CONFIG_HAS_HW_NRF_PPI ${helpers_dir}/nrfx_gppi_ppi.c)
-  zephyr_library_sources(${BSP_DIR}/stable/soc/interconnect/nrfx_gppi_d2ppi.c)
+  zephyr_library_sources(${SOC_DIR}/soc/interconnect/nrfx_gppi_d2ppi.c)
   if(CONFIG_HAS_HW_NRF_DPPIC)
     zephyr_library_sources(${helpers_dir}/nrfx_gppi_dppi.c)
   endif()
