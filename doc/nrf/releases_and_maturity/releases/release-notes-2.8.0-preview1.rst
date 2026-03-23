@@ -187,7 +187,7 @@ Bluetooth® LE
 
 * Added functions :c:func:`bt_hci_err_to_str` and :c:func:`bt_security_err_to_str` to allow printing error codes as strings.
   Each function returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
-  The :ref:`ble_samples` and :ref:`nrf53_audio_app` are updated to use these new functions.
+  The :ref:`ble_samples` and :ref:`nrf_audio_app` are updated to use these new functions.
 
 * Updated:
 
@@ -213,7 +213,7 @@ Bluetooth Mesh
   To use the metadata, enable the :kconfig:option:`CONFIG_BT_MESH_LARGE_COMP_DATA_SRV` Kconfig option.
 
 * Removed the ``BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE`` Kconfig option, deprecated in the |NCS| v2.6.0, as the old APIs, based on the :c:struct:`sensor_value` type, are removed.
-  You need to update applications using the old APIs, as described in the :ref:`v2.6.0 migration guide <nrf5340_audio_migration_notes>`.
+  You need to update applications using the old APIs, as described in the :ref:`v2.6.0 migration guide <nrf_audio_migration_notes>`.
 
 DECT NR+
 --------
@@ -326,12 +326,12 @@ Matter Bridge
   * Experimental support for the Thread protocol.
   * The :ref:`multiprotocol_bt_thread` page.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Added the functions :c:func:`bt_hci_err_to_str` and :c:func:`bt_security_err_to_str` that are used to allow printing error codes as strings.
   Each function returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
-* Updated the :ref:`nrf53_audio_app_overview` documentation page with the :ref:`nrf53_audio_app_overview_files` section.
+* Updated the :ref:`nrf_audio_app_overview` documentation page with the :ref:`nrf_audio_app_overview_files` section.
 
 nRF Desktop
 -----------
@@ -431,7 +431,7 @@ Bluetooth samples
   * The :ref:`ble_radio_notification_conn_cb` sample demonstrating how to use the :ref:`ug_radio_notification_conn_cb` feature.
   * The :ref:`bluetooth_conn_time_synchronization` sample demonstrating microsecond-accurate synchronization of connections that are happening over Bluetooth® Low Energy Asynchronous Connection-oriented Logical transport (ACL).
   * The :ref:`ble_subrating` sample that showcases the effect of the LE Connection Subrating feature on the duty cycle of a connection.
-  * The :ref:`nrf_auraconfig` sample that implements the :ref:`BIS gateway mode <nrf53_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
+  * The :ref:`nrf_auraconfig` sample that implements the :ref:`BIS gateway mode <nrf_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
   * Support for the :zephyr:board:`nrf54l15dk` board in the following samples:
 
     * :ref:`central_bas`

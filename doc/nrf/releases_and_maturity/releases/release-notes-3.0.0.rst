@@ -456,18 +456,18 @@ Matter bridge
 * Updated by enabling Link Time Optimization (LTO) by default for the ``release`` configuration.
 * Removed support for the nRF54H20 devices.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
-* Added more information on new :ref:`DNs and QDIDs <nrf5340_audio_dns_and_qdids>`.
+* Added more information on new :ref:`DNs and QDIDs <nrf_audio_dns_and_qdids>`.
 
 * Updated:
 
-  * The documentation for :ref:`nrf53_audio_app_building` with cross-links and additional information.
+  * The documentation for :ref:`nrf_audio_app_building` with cross-links and additional information.
   * The :file:`buildprog.py` script is an app-specific script for building and programming multiple kits and cores with various audio application configurations.
     The script will be deprecated in a future release.
     The audio applications will gradually shift to using only standard tools for building and programming development kits.
-  * The :ref:`nRF5340 Audio application\'s <nrf53_audio_app>` :ref:`script for building and programming <nrf53_audio_app_building_script>` now builds into a directory for each transport, device type, core, and version combination.
+  * The :ref:`nRF Audio application\'s <nrf_audio_app>` :ref:`script for building and programming <nrf_audio_app_building_script>` now builds into a directory for each transport, device type, core, and version combination.
   * The build system to use overlay files for each of the four applications instead of using :file:`Kconfig.default`.
   * The :file:`buildprog.py` script to demand argument ``--transport`` to set either ``unicast`` or ``broadcast``.
 

@@ -7,7 +7,7 @@ Audio module
    :local:
    :depth: 2
 
-The audio module library is an interface to audio processing functions that coordinate audio states and the exchange of audio-related data of an LE Audio application, such as :ref:`nrf53_audio_app`.
+The audio module library is an interface to audio processing functions that coordinate audio states and the exchange of audio-related data of an LE Audio application, such as :ref:`nrf_audio_app`.
 
 Overview
 ********

@@ -7,7 +7,7 @@ nRF Auraconfig
    :local:
    :depth: 2
 
-The nRF Auraconfig sample implements the :ref:`BIS gateway mode <nrf53_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
+The nRF Auraconfig sample implements the :ref:`BIS gateway mode <nrf_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
 The sample features a shell interface that allows you to configure the broadcast source in many different ways.
 
 In the BIS gateway mode, transmitting audio from the broadcast source happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
@@ -787,7 +787,7 @@ Building and running
 .. include:: /includes/ipc_radio_conf.txt
 
 The nRF5340 Audio DK comes pre-programmed with basic firmware that indicates if the kit is functional.
-See :ref:`nrf53_audio_app_dk_testing_out_of_the_box` for more information.
+See :ref:`nrf_audio_app_dk_testing_out_of_the_box` for more information.
 
 .. _nrf_auraconfig_testing:
 

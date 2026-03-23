@@ -218,8 +218,8 @@ Matter Bridge
   Currently, only the Matter OTA protocol is fully supported for SUIT DFU purposes.
 * Enabled Link Time Optimization (LTO) by default for the ``release`` configuration.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 |no_changes_yet_note|
 

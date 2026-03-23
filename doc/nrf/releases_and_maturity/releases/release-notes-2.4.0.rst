@@ -383,8 +383,8 @@ nRF Desktop
   * Aligned the nRF52833 dongle's board DTS configuration files and nRF Desktop's application-specific DTS overlays to hardware revision 0.2.1.
   * The documentation with debug Fast Pair provisioning data obtained for development purposes.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Added Kconfig options for setting periodic and extended advertising intervals.
   For more information on the options, see all options prefixed with ``CONFIG_BLE_ACL_PER_ADV_INT_`` and ``CONFIG_BLE_ACL_EXT_ADV_INT_``.
@@ -663,7 +663,7 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-* Added the standalone LE Audio controller for nRF5340 library, originally a part of the :ref:`nrf53_audio_app` application.
+* Added the standalone LE Audio controller for nRF5340 library, originally a part of the :ref:`nrf_audio_app` application.
 * :ref:`liblwm2m_carrier_readme` library:
 
   * Updated to v3.2.0.

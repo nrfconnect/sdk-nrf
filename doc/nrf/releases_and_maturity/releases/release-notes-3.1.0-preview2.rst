@@ -205,8 +205,8 @@ Matter bridge
 
 |no_changes_yet_note|
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Added:
 

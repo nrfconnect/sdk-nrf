@@ -295,12 +295,12 @@ Matter bridge
   * Version 2 of the bridged device data scheme containing ``UniqueID``.
   * Kconfig options :option:`CONFIG_BRIDGE_MIGRATE_PRE_2_7_0` and :option:`CONFIG_BRIDGE_MIGRATE_VERSION_1` to enable migration from older data schemes.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 * Updated:
 
-  * The documentation for :ref:`nrf53_audio_app_building` with cross-links and additional information, based on user feedback.
+  * The documentation for :ref:`nrf_audio_app_building` with cross-links and additional information, based on user feedback.
   * The calculation in ``audio_datapath.num_blks_in_fifo`` to consider wrapping.
 
 nRF Desktop

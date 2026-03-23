@@ -35,7 +35,7 @@ Third-party integrations
   The |NCS| provides integrations with third-party and Nordic products within the SDK, such as AWS, nRF Cloud, :ref:`Memfault (Remote Observability) <ug_memfault>` and more.
 
 Varied reference designs
-  The |NCS| comes with advanced hardware reference designs for different use cases, ranging from nRF Desktop for Human Interface Devices to nRF5340 Audio for audio devices based on Bluetooth LE Audio specifications.
+  The |NCS| comes with advanced hardware reference designs for different use cases, ranging from nRF Desktop for Human Interface Devices to nRF Audio for audio devices based on Bluetooth LE Audio specifications.
 
 .. toctree::
    :maxdepth: 2

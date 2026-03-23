@@ -266,8 +266,8 @@ Matter Bridge
 * Updated by enabling Link Time Optimization (LTO) by default for the ``release`` configuration.
 * Removed support for the nRF54H20 devices.
 
-nRF5340 Audio
--------------
+nRF Audio
+---------
 
 |no_changes_yet_note|
 
