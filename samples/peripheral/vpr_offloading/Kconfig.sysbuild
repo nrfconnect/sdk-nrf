@@ -1,0 +1,69 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+if SOC_NRF54H20_CPUAPP
+
+choice NETCORE
+	default NETCORE_EMPTY
+
+endchoice
+
+endif # SOC_NRF54H20_CPUAPP
+
+if SUPPORT_PPRCORE
+
+config RUN_PPRCORE
+	bool "Run sample on PPR"
+
+choice PPRCORE
+	default PPRCORE_REMOTE if RUN_PPRCORE
+
+config PPRCORE_REMOTE
+	bool "Remote"
+	help
+	  Include remote image as the PPR core image to use.
+
+endchoice
+
+if !PPRCORE_NONE
+
+config PPRCORE_IMAGE_NAME
+	default "remote" if PPRCORE_REMOTE
+
+config PPRCORE_IMAGE_PATH
+	default "$(APP_DIR)/remote" if PPRCORE_REMOTE
+
+endif # !PPRCORE_NONE
+
+endif # SUPPORT_PPRCORE
+
+if SUPPORT_FLPRCORE
+
+config RUN_FLPRCORE
+	bool "Run sample on FLPR"
+
+choice FLPRCORE
+	default FLPRCORE_REMOTE if RUN_FLPRCORE
+
+config FLPRCORE_REMOTE
+	bool "Remote"
+	help
+	  Include remote image as the FLPR core image to use.
+
+endchoice
+
+if !FLPRCORE_NONE
+
+config FLPRCORE_IMAGE_NAME
+	default "remote" if FLPRCORE_REMOTE
+
+config FLPRCORE_IMAGE_PATH
+	default "$(APP_DIR)/remote" if FLPRCORE_REMOTE
+
+endif # !FLPRCORE_NONE
+
+endif # SUPPORT_FLPRCORE
+
+source "share/sysbuild/Kconfig"
