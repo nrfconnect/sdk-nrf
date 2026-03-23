@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* The nordic-flpr snippet splits the 512k RAM into 415k for the application core,
+ * 96k for the FLPR code and data, and 1k for the FLPR hibernation space.
+ * The IPC buffers below take the top 8k of the application core RAM.
+ */
+
+/ {
+	soc {
+		reserved-memory {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			sram_rx: memory@20065c00 {
+				reg = <0x20065c00 0x1000>;
+			};
+
+			sram_tx: memory@20066c00 {
+				reg = <0x20066c00 0x1000>;
+			};
+		};
+	};
+
+	ipc {
+		ipc0: ipc0 {
+			compatible = "zephyr,ipc-icbmsg";
+			tx-region = <&sram_tx>;
+			rx-region = <&sram_rx>;
+			tx-blocks = <15>;
+			rx-blocks = <15>;
+			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 21>;
+			mbox-names = "rx", "tx";
+			status = "okay";
+		};
+	};
+
+	aliases {
+		remote-temp-monitor-ipc = &ipc0;
+	};
+};
+
+&cpuapp_vevif_rx {
+	status = "okay";
+};
+
+&pinctrl {
+	spi22_default_alt: spi22_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 23)>,
+				<NRF_PSEL(SPIM_MISO, 1, 30)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 13)>;
+		};
+	};
+
+	spi22_sleep_alt: spi22_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 23)>,
+				<NRF_PSEL(SPIM_MISO, 1, 30)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 13)>;
+			low-power-enable;
+		};
+	};
+};
+
+app_spi: &spi22 {
+	status = "okay";
+	pinctrl-0 = <&spi22_default_alt>;
+	pinctrl-1 = <&spi22_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
+};
