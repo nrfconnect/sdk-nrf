@@ -421,8 +421,14 @@ Bluetooth samples
     * Configuration without debug features (``release`` configuration).
       You can use this configuration to verify the memory footprint of the sample as it is closer to the configuration used by a final product.
 
-  * Updated sample's configuration to limit the number of supported HID reports (:kconfig:option:`CONFIG_BT_HIDS_FEATURE_REP_MAX`, :kconfig:option:`CONFIG_BT_HIDS_INPUT_REP_MAX`, and :kconfig:option:`CONFIG_BT_HIDS_OUTPUT_REP_MAX`) and maximum number of GATT attribute descriptors (:kconfig:option:`CONFIG_BT_HIDS_ATTR_MAX`) in the :ref:`hids_readme`.
-    This reduces the memory consumption of the sample.
+  * Updated:
+
+    * Sample's configuration to limit the number of supported HID reports (:kconfig:option:`CONFIG_BT_HIDS_FEATURE_REP_MAX`, :kconfig:option:`CONFIG_BT_HIDS_INPUT_REP_MAX`, and :kconfig:option:`CONFIG_BT_HIDS_OUTPUT_REP_MAX`) and maximum number of GATT attribute descriptors (:kconfig:option:`CONFIG_BT_HIDS_ATTR_MAX`) in the :ref:`hids_readme`.
+      This reduces the memory consumption of the sample.
+    * The directed advertising from high-duty to low-duty cycle to prevent disconnecting peers that are already connected.
+      Scheduling high-duty directed advertising might cause problems with reacting to Bluetooth LE connection events from connected peers, which can result in disconnections.
+      The low-duty cycle directed advertising is used only when there is at least one connected peer.
+      An application-specified timeout of two seconds is used for each low-duty cycle directed advertising attempt.
 
 Bluetooth Mesh samples
 ----------------------
