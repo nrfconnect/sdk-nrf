@@ -11,7 +11,7 @@ menuconfig NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
 	  Provides support for diagnostics logs. Diagnostics logs allow the Matter controller to read end-user,
 	  network and crash logs from the Matter device.
 	  Diagnostic logs are usable only if the DiagnosticCluster is available and active on the device's root endpoint.
-	  Otherwise the compilation error occurs.
+	  Otherwise, the compilation error occurs.
 
 if NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
 
