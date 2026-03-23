@@ -289,6 +289,13 @@ manifest:
       repo-path: sdk-hostap
       path: modules/lib/hostap
       revision: dc22e8cf8dd03c8ff2bdde68002a4496525f6eb2
+
+    - name: sdk-bsp-nrf54lm20
+      remote: ncs
+      repo-path: sdk-hal_nordic
+      path: modules/sdk-bsp-nrf54lm20
+      revision: bsp-nrf54lm20-example
+
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.
