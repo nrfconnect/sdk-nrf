@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires GPIO loopback between P2.00 and P1.01. */
+
+/ {
+	resources {
+		compatible = "test-hpf-gpio";
+		out-gpios = <&hpf_gpio 0 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
