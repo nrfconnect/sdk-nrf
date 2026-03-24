@@ -68,3 +68,30 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  drivers.hpf.gpio.many_loops.7120.icmsg:
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+
+  drivers.hpf.gpio.many_loops.7120.icbmsg:
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG=y
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+
+  drivers.hpf.gpio.many_loops.7120.mbox:
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_MBOX=y
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
