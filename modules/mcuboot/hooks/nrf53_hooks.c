@@ -137,7 +137,7 @@ int network_core_update(bool wait)
 		return -ENODEV;
 	}
 
-	mock_flash = flash_simulator_get_memory(NULL, &mock_size);
+	mock_flash = flash_simulator_get_memory(mock_flash_dev, &mock_size);
 	hdr = (struct image_header *) mock_flash;
 	if (hdr->ih_magic == IMAGE_MAGIC) {
 		uint32_t fw_size = hdr->ih_img_size;
