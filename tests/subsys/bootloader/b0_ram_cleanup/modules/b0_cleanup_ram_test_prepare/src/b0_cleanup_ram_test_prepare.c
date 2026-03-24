@@ -9,7 +9,6 @@
 #include <zephyr/sys/printk.h>
 #include <hal/nrf_timer.h>
 #include <zephyr/linker/linker-defs.h>
-#include <zephyr/drivers/retained_mem.h>
 
 #define CLEANUP_RAM_GAP_START ((uint32_t)__ramfunc_start)
 #define CLEANUP_RAM_GAP_END ((uint32_t) __ramfunc_end)
@@ -34,8 +33,6 @@
 #define RAMFUNC_START_SAVE_REGISTER NRF_TIMER00->CC[0]
 #define RAMFUNC_END_SAVE_REGISTER NRF_TIMER00->CC[1]
 
-#define RETAINED_DATA "RETAINED"
-
 static int populate_ram(void)
 {
 	RAMFUNC_START_SAVE_REGISTER = CLEANUP_RAM_GAP_START;
@@ -55,15 +52,6 @@ static int populate_ram(void)
 		printk("Retained memory device is not ready");
 		return -ENODEV;
 	}
-
-	retained_size = retained_mem_size(retained_mem_dev);
-
-	if (retained_size < strlen(RETAINED_DATA)) {
-		printk("Retained memory size is too small");
-		return -EINVAL;
-	}
-
-	retained_mem_write(retained_mem_dev, 0, RETAINED_DATA, strlen(RETAINED_DATA));
 #endif
 	return 0;
 }

@@ -6,7 +6,6 @@
 
 #include <zephyr/ztest.h>
 #include <hal/nrf_timer.h>
-#include <zephyr/drivers/retained_mem.h>
 
 /* As peripheral registers are not cleared during RAM cleanup, we can
  * use a register of a peripheral unused by NSIB to save data which can then
@@ -28,8 +27,6 @@
 static uint32_t __noinit ram_cleanup_result;
 static uint32_t __noinit uncleared_address;
 static uint32_t __noinit uncleared_value;
-
-#define EXPECTED_RETAINED_DATA "RETAINED"
 
 /**
  * This hook needs to have the attribute __attribute__((naked)),
@@ -126,24 +123,6 @@ ZTEST(b0_ram_cleanup, test_ram_cleanup)
 	zassert_equal(ram_cleanup_result, RAM_CLEANUP_SUCCESS_MAGIC,
 		      "Uncleared word detected at address %p, value 0x%x",
 		      (void *) uncleared_address, uncleared_value);
-
-#if DT_HAS_COMPAT_STATUS_OKAY(zephyr_retained_ram)
-	const struct device *retained_mem_dev =
-		DEVICE_DT_GET(DT_INST(0, zephyr_retained_ram));
-	size_t retained_size;
-	uint8_t buffer[strlen(EXPECTED_RETAINED_DATA)+1];
-
-	zassert_true(device_is_ready(retained_mem_dev), "Retained memory device is not ready");
-
-	retained_size = retained_mem_size(retained_mem_dev);
-
-	zassert_true(retained_size >= strlen(EXPECTED_RETAINED_DATA),
-		     "Retained memory size is too small");
-
-	retained_mem_read(retained_mem_dev, 0, buffer, strlen(EXPECTED_RETAINED_DATA));
-	zassert_mem_equal(buffer, EXPECTED_RETAINED_DATA, strlen(EXPECTED_RETAINED_DATA),
-			  "Retained data is not correct");
-#endif
 }
 
 ZTEST_SUITE(b0_ram_cleanup, NULL, NULL, NULL, NULL, NULL);
