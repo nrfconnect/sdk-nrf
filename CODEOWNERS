@@ -188,7 +188,7 @@
 /doc/nrf/libraries/others/emds.rst        @nrfconnect/ncs-paladin-doc
 /doc/nrf/libraries/others/esb.rst         @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/event_manager_proxy.rst @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
-/doc/nrf/libraries/others/fem_al.rst      @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/libraries/others/fem_al.rst      @nrfconnect/ncs-dragoon
 /doc/nrf/libraries/others/flash_map_pm.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/others/hw_id.rst       @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/index.rst       @nrfconnect/ncs-doc-leads
@@ -383,7 +383,7 @@
 /lib/dk_buttons_and_leds/                 @nrfconnect/ncs-si-muffin
 /lib/edge_impulse/                        @nrfconnect/ncs-si-muffin
 /lib/fatal_error/                         @nordic-krch
-/lib/fem_al/                              @nrfconnect/ncs-si-muffin
+/lib/fem_al/                              @nrfconnect/ncs-dragoon
 /lib/flash_patch/                         @nrfconnect/ncs-eris
 /lib/fprotect/                            @nrfconnect/ncs-eris
 /lib/gcf_sms/                             @nrfconnect/ncs-modem
