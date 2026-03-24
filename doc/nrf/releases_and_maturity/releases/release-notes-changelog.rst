@@ -439,10 +439,14 @@ Bluetooth samples
     * Configuration without debug features (``release`` configuration).
       You can use this configuration to verify the memory footprint of the sample as it is closer to the configuration used by a final product.
 
-  * Renamed sample-specific Kconfig options to use the ``SAMPLE_`` prefix and dropped the ``_ENABLED`` suffix to follow the Kconfig naming convention for samples.
+  * Updated:
 
-  * Updated sample's configuration to limit the number of supported HID reports (:kconfig:option:`CONFIG_BT_HIDS_FEATURE_REP_MAX`, :kconfig:option:`CONFIG_BT_HIDS_INPUT_REP_MAX`, and :kconfig:option:`CONFIG_BT_HIDS_OUTPUT_REP_MAX`) and maximum number of GATT attribute descriptors (:kconfig:option:`CONFIG_BT_HIDS_ATTR_MAX`) in the :ref:`hids_readme`.
-    This reduces the memory consumption of the sample.
+    * Sample's configuration to limit the number of supported HID reports (:kconfig:option:`CONFIG_BT_HIDS_FEATURE_REP_MAX`, :kconfig:option:`CONFIG_BT_HIDS_INPUT_REP_MAX`, and :kconfig:option:`CONFIG_BT_HIDS_OUTPUT_REP_MAX`) and maximum number of GATT attribute descriptors (:kconfig:option:`CONFIG_BT_HIDS_ATTR_MAX`) in the :ref:`hids_readme`.
+      This reduces the memory consumption of the sample.
+    * The Bluetooth TX processor thread stack size (:kconfig:option:`CONFIG_BT_TX_PROCESSOR_STACK_SIZE` Kconfig option) to prevent stack overflow when receiving directed advertising right after boot.
+      On the ``nrf54l15dk/nrf54l15/cpuapp`` board target, the maximum measured stack usage is 936 bytes.
+
+  * Renamed sample-specific Kconfig options to use the ``SAMPLE_`` prefix and dropped the ``_ENABLED`` suffix to follow the Kconfig naming convention for samples.
 
 * :ref:`peripheral_mds`:
 
