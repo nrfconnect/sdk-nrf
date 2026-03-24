@@ -3,7 +3,8 @@ common:
     - usb
     - ci_samples_zephyr_subsys_usb
   harness: pytest
-
+  harness_config:
+    fixture: usb_connected
 tests:
   usb.negotiated_speed:
     min_ram: 128
