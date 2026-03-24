@@ -709,6 +709,8 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* Added the :ref:`dtm_twowire_to_hci_readme` library that converts DTM 2-wire UART commands into appropriate 2-wire UART events or HCI commands, and subsequent HCI events into 2-wire UART events.
+
 * :ref:`bt_fast_pair_readme` library:
 
   * Added :ref:`ug_bt_fast_pair_fhn_pf` support for the Find Hub Network (FHN) extension, enabling distance measurement for FHN accessories using supported ranging technologies.
