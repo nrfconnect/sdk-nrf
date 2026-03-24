@@ -543,6 +543,7 @@
 /samples/peripheral/802154_sniffer/       @e-rk
 /samples/peripheral/lpuart/               @nordic-krch @nrfconnect/ncs-low-level-test
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
+/samples/peripheral/vpr_offloading/       @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/pmic/native/                     @nordic-auko
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
@@ -675,6 +676,7 @@
 /samples/peripheral/802154_sniffer/*.rst  @nrfconnect/ncs-radio-sw-doc
 /samples/peripheral/lpuart/*.rst          @nrfconnect/ncs-doc-leads
 /samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-dragoon-doc
+/samples/peripheral/vpr_offloading/*.rst  @nrfconnect/ncs-ll-izera @nrfconnect/ncs-lowlevel-doc
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
