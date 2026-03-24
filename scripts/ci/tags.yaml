@@ -295,6 +295,12 @@ ci_samples_tfm: &ci_tfm
 
 ci_tests_tfm: *ci_tfm
 
+ci_tests_subsys_sd:
+  files:
+    - nrf/drivers/sdhc/
+    - nrf/tests/zephyr/subsys/sd/
+    - nrfxlib/softperipheral/sEMMC/
+
 ci_tests_subsys_suit:
   files:
     - modules/lib/suit-generator/
