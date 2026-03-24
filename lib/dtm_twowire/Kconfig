@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DTM_TWOWIRE_TO_HCI
+	bool "DTM 2-wire to HCI conversion library"
+
+if DTM_TWOWIRE_TO_HCI
+
+config DTM_TWOWIRE_TO_HCI_RECEIVER_TEST_VERSION
+	int "HCI_LE_Receiver_Test command version"
+	range 1 3
+	default 3 if BT_CTLR_DTM_HCI_RX_V3
+	default 2
+	help
+		Selects the version of the HCI_LE_Receiver_Test command to generate,
+		as specified in the Bluetooth Core Specification 6.2 Vol 4, Part E, 7.8.28.
+
+config DTM_TWOWIRE_TO_HCI_TRANSMITTER_TEST_VERSION
+	int "HCI_LE_Transmitter_Test command version"
+	range 1 4
+	default 4 if BT_CTLR_DTM_HCI_TX_V4
+	default 3 if BT_CTLR_DTM_HCI_TX_V3
+	default 2
+	help
+		Selects the version of the HCI_LE_Transmitter_Test command to generate,
+		as specified in the Bluetooth Core Specification 6.2 Vol 4, Part E, 7.8.29.
+
+module=DTM_TWOWIRE_TO_HCI
+module-dep=LOG
+module-str= DTM 2-wire to HCI conversion library
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # DTM_TWOWIRE_TO_HCI
