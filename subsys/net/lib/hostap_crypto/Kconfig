@@ -23,7 +23,6 @@ config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 	bool "Legacy Crypto support for WiFi using nRF security"
 	select MBEDTLS
 	select NORDIC_SECURITY_BACKEND
-	select NRF_SECURITY
 	# Enable for non-TF-M builds to keep it simple, no overhead
 	select PSA_WANT_GENERATE_RANDOM
 	select MBEDTLS_CIPHER_MODE_CBC
@@ -47,7 +46,7 @@ config HOSTAP_CRYPTO_ALT_PSA
 	bool "PSA Crypto support for WiFi WPA2 using nRF security"
 	depends on !WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
 	select MBEDTLS
-	select NRF_SECURITY
+	select PSA_CRYPTO
 	select PSA_WANT_GENERATE_RANDOM
 	select MBEDTLS_PK_C
 	select MBEDTLS_PK_PARSE_C

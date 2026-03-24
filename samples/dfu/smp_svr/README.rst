@@ -207,7 +207,7 @@ Alternatively, review the ``extra_args`` parameters defined for this configurati
     EXTRA_CONF_FILE="overlay-bt.conf"
     SB_CONFIG_NETCORE_IPC_RADIO=y
     SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
-    mcuboot_CONFIG_NRF_SECURITY=y
+    mcuboot_CONFIG_PSA_CRYPTO=y
     mcuboot_CONFIG_MULTITHREADING=y
     CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
 
@@ -215,7 +215,7 @@ You can then build the configuration by explicitly passing these parameters:
 
 .. code-block:: console
 
-    west build -b nrf54h20dk/nrf54h20/cpuapp -- -DEXTRA_CONF_FILE="overlay-bt.conf" -DSB_CONFIG_NETCORE_IPC_RADIO=y -DSB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y -Dmcuboot_CONFIG_NRF_SECURITY=y -Dmcuboot_CONFIG_MULTITHREADING=y -DCONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
+    west build -b nrf54h20dk/nrf54h20/cpuapp -- -DEXTRA_CONF_FILE="overlay-bt.conf" -DSB_CONFIG_NETCORE_IPC_RADIO=y -DSB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y -Dmcuboot_CONFIG_MULTITHREADING=y -DCONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
 
 Testing
 =======

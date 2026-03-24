@@ -14,8 +14,7 @@ menuconfig APP_JWT
 	# Needed to print integer values in JSON
 	select CJSON_LIB
 	select CBPRINTF_FP_SUPPORT
-	select NRF_SECURITY
-	select PSA_SSF_CRYPTO_CLIENT if HAS_IRONSIDE_SE
+	select PSA_CRYPTO
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
 	select PSA_WANT_ALG_ECDSA
 	select PSA_WANT_ECC_SECP_R1_256

@@ -385,7 +385,6 @@ tests:
     extra_args:
       - FILE_SUFFIX="nrf54h20_bt"
       - EXTRA_CONF_FILE="overlay-bt.conf"
-      - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
@@ -401,7 +400,6 @@ tests:
       - EXTRA_CONF_FILE="overlay-bt.conf"
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
-      - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
       - mcuboot_CONFIG_CRC=y
       - mcuboot_CONFIG_NRF_MCUBOOT_BOOT_REQUEST=y
@@ -421,7 +419,6 @@ tests:
       - FILE_SUFFIX="merged_slot"
       - EXTRA_CONF_FILE="overlay-bt.conf"
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
-      - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -437,7 +434,6 @@ tests:
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
-      - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
       - SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF=y
       - SB_CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION=y
@@ -451,7 +447,6 @@ tests:
     sysbuild: true
     extra_args:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
-      - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -464,7 +459,6 @@ tests:
       - FILE_SUFFIX="requests"
       - EXTRA_CONF_FILE="overlay-bt.conf"
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
-      - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -477,7 +471,6 @@ tests:
       - FILE_SUFFIX="ext_flash"
       - EXTRA_CONF_FILE="overlay-bt.conf"
       - mcuboot_CONFIG_MULTITHREADING=y
-      - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_BOOT_IMG_HASH_DIRECTLY_ON_STORAGE=n
       - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS_AUTO=n
       - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS=512
