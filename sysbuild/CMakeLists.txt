@@ -365,9 +365,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     # The NRF54LX goes with PSA crypto by default
     if(SB_CONFIG_SOC_SERIES_NRF54L)
       if(SB_CONFIG_BOOT_SIGNATURE_TYPE_NONE)
-        set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
+        set_config_bool(mcuboot CONFIG_PSA_CRYPTO y)
       elseif(SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
-        set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
+        set_config_bool(mcuboot CONFIG_PSA_CRYPTO y)
 
         # We are sure that ED25519 signature on MCUboot does not need these
         set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_AEAD_DRIVER n)
@@ -668,7 +668,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
     if(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ED25519)
       if(SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE)
-        set_config_bool(b0 CONFIG_NRF_SECURITY y)
+        set_config_bool(b0 CONFIG_PSA_CRYPTO y)
         set_config_bool(b0 CONFIG_SB_CRYPTO_PSA_ED25519 y)
       endif()
     elseif(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ECDSA)

@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <hw_unique_key.h>
 #include <identity_key.h>
-#include <psa/crypto.h>
 
 LOG_MODULE_REGISTER(identity_key_generation, LOG_LEVEL_DBG);
 
