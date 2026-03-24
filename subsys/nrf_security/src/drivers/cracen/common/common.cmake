@@ -24,9 +24,3 @@ if(CONFIG_PSA_NEED_CRACEN_HMAC OR CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DR
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen/cracen_hmac.c
   )
 endif()
-
-if(CONFIG_CRACEN_LIB_KMU)
-  list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen/lib_kmu.c
-  )
-endif()
