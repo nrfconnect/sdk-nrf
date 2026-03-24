@@ -65,14 +65,6 @@ config CRACEN_LOAD_MICROCODE
 	  nRF54L10, and nRF54L05. (This is not required
 	  when a bootloader has already loaded the microcode.)
 
-config CRACEN_LIB_KMU
-	bool "CRACEN KMU library"
-	depends on CRACEN_KMU_HW_PRESENT
-	select NRFX_RRAMC if !BUILD_WITH_TFM && SOC_SERIES_NRF54L
-	select NRFX_MRAMC if !BUILD_WITH_TFM && SOC_SERIES_NRF71
-	help
-	  The CRACEN KMU library.
-
 config CRACEN_KMU
 	bool "CRACEN KMU"
 	depends on CRACEN_KMU_HW_PRESENT
