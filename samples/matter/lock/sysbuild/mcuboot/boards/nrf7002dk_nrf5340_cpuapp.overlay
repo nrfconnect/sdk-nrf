@@ -10,3 +10,11 @@
 		nordic,pm-ext-flash = &mx25r64;
 	};
 };
+
+&hfclk {
+	status = "disabled";
+};
+
+&hfclkaudio {
+	status = "disabled";
+};
