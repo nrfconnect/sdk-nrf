@@ -248,7 +248,7 @@ void sx_pk_acquire_hw(sx_pk_req *req)
 	req->cryptoram = silex_pk_engine.instance.cryptoram;
 	req->slot_sz = silex_pk_engine.instance.slot_sz;
 	req->cnx = &silex_pk_engine;
-	req->cnx->cmd = NULL;
+	req->cnx->cmd = SX_PK_CMD_NONE;
 	req->ik_mode = 0;
 
 	cracen_acquire();
@@ -288,15 +288,15 @@ void *sx_pk_get_user_context(sx_pk_req *req)
 
 void sx_pk_release_req(sx_pk_req *req)
 {
-	nrf_cracen_int_disable(NRF_CRACEN, NRF_CRACEN_INT_PKE_IKG_MASK);
-
 	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_BASE)) {
 		/* Clear PK data memory */
 		(void)sx_pk_clear_memory(req);
 	}
 
+	nrf_cracen_int_disable(NRF_CRACEN, NRF_CRACEN_INT_PKE_IKG_MASK);
+
 	cracen_release();
-	req->cnx->cmd = NULL;
+	req->cnx->cmd = SX_PK_CMD_NONE;
 	req->userctxt = NULL;
 	nrf_security_mutex_unlock(cracen_mutex_asymmetric);
 }

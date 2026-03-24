@@ -150,3 +150,6 @@ const struct sx_pk_cmd_def *const SX_PK_CMD_CHECK_XY = &CMD_CHECK_XY;
 static const struct sx_pk_cmd_def CMD_CLEAR_MEMORY = {
 	PK_OP_CLEAR_MEMORY, 0, 0, OP_SLOT_DEFAULT_PTRS};
 const struct sx_pk_cmd_def *const SX_PK_CMD_CLEAR_MEMORY = &CMD_CLEAR_MEMORY;
+
+static const struct sx_pk_cmd_def CMD_NONE = {0};
+const struct sx_pk_cmd_def *const SX_PK_CMD_NONE = &CMD_NONE;
