@@ -381,6 +381,7 @@
 /lib/data_fifo/                           @nrfconnect/ncs-audio
 /lib/date_time/                           @nrfconnect/ncs-modem-tre
 /lib/dk_buttons_and_leds/                 @nrfconnect/ncs-si-muffin
+/lib/dtm_twowire/                         @nrfconnect/ncs-dragoon
 /lib/edge_impulse/                        @nrfconnect/ncs-si-muffin
 /lib/fatal_error/                         @nordic-krch
 /lib/fem_al/                              @nrfconnect/ncs-si-muffin
