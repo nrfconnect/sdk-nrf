@@ -201,6 +201,8 @@
 /doc/nrf/libraries/others/nrf_profiler.rst @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/pcm_mix.rst     @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/pcm_stream_channel_modifier.rst @nrfconnect/ncs-audio-doc
+/doc/nrf/libraries/others/ppi_seq.rst     @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
+/doc/nrf/libraries/others/ppi_seq_i2c_spi.rst @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/libraries/others/qos.rst         @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/ram_pwrdn.rst   @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/others/sfloat.rst      @nrfconnect/ncs-si-muffin-doc
@@ -362,6 +364,7 @@
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-radio-sw
 /include/nrf_compress/                    @nrfconnect/ncs-eris
 /include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
+/include/ppi_seq/                         @nrfconnect/ncs-ll-izera
 /include/power/                           @nrfconnect/ncs-co-drivers
 /include/shell/                           @nordic-krch
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
@@ -410,6 +413,7 @@
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
 /lib/pcm_stream_channel_modifier/         @nrfconnect/ncs-audio
 /lib/pdn/                                 @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
+/lib/ppi_seq/                             @nrfconnect/ncs-ll-izera
 /lib/qos/                                 @nrfconnect/ncs-cia
 /lib/ram_pwrdn/                           @MarekPorwisz
 /lib/sample_rate_converter/               @nrfconnect/ncs-audio
@@ -547,6 +551,7 @@
 /samples/peripheral/802154_phy_test/      @nrfconnect/ncs-radio-sw
 /samples/peripheral/802154_sniffer/       @e-rk
 /samples/peripheral/lpuart/               @nordic-krch @nrfconnect/ncs-low-level-test
+/samples/peripheral/ppi_seq_spi/          @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
 /samples/pmic/native/                     @nordic-auko
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
@@ -679,6 +684,7 @@
 /samples/peripheral/802154_phy_test/*.rst @nrfconnect/ncs-radio-sw-doc
 /samples/peripheral/802154_sniffer/*.rst  @nrfconnect/ncs-radio-sw-doc
 /samples/peripheral/lpuart/*.rst          @nrfconnect/ncs-doc-leads
+/samples/peripheral/ppi_seq_spi/*.rst     @nrfconnect/ncs-ll-izera @nrfconnect/ncs-lowlevel-doc
 /samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-dragoon-doc
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
@@ -928,6 +934,7 @@
 /tests/lib/ntn/                           @nrfconnect/ncs-modem-tre
 /tests/lib/pcm_mix/                       @nrfconnect/ncs-audio
 /tests/lib/pcm_stream_channel_modifier/   @nrfconnect/ncs-audio
+/tests/lib/ppi_seq/                       @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /tests/lib/qos/                           @nrfconnect/ncs-cia
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
 /tests/lib/sample_rate_converter/         @nrfconnect/ncs-audio
