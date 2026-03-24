@@ -3,21 +3,26 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #include <zephyr/debug/coredump.h>
-#include <zephyr/kernel.h>
-#include <zephyr/storage/flash_map.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/sys/barrier.h>
 #include <zephyr/sys/crc.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/toolchain.h>
+
+#include <string.h>
+
+#if IS_ENABLED(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION)
+
+#include <zephyr/kernel.h>
+#include <zephyr/storage/flash_map.h>
 
 #if defined(CONFIG_NRFX_NVMC)
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
 #endif
-
-#include <string.h>
 
 /* Check DTS prerequisites */
 
@@ -50,12 +55,42 @@
 
 #define PARTITION_OFFSET FIXED_PARTITION_OFFSET(PARTITION_LABEL)
 #define PARTITION_SIZE	 FIXED_PARTITION_SIZE(PARTITION_LABEL)
-#define PARTITION_ADDR	 (FLASH_ADDR + PARTITION_OFFSET)
+#define PARTITION_ADDR	 FIXED_PARTITION_ADDRESS(PARTITION_LABEL)
+
+#define STORAGE_ALIGN FLASH_WRITE_SIZE
 
 BUILD_ASSERT(FIXED_PARTITION_EXISTS(PARTITION_LABEL),
 	     "Missing fixed partition named 'coredump_partition'");
 BUILD_ASSERT(PARTITION_OFFSET % FLASH_ERASE_SIZE == 0,
 	     "Core dump partition unaligned to erase block size");
+
+#elif IS_ENABLED(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_RAM_REGION)
+
+#include <zephyr/kernel.h>
+#include <zephyr/linker/devicetree_regions.h>
+#include <zephyr/linker/section_tags.h>
+
+#if !DT_NODE_EXISTS(DT_NODELABEL(coredump_storage_region))
+#error "coredump_storage_region DT node required (CONFIG_DEBUG_COREDUMP_BACKEND_NRF_RAM_REGION)"
+#endif
+
+#define CDUMP_NODE	DT_NODELABEL(coredump_storage_region)
+#define PARTITION_SIZE	DT_REG_SIZE(CDUMP_NODE)
+
+#define STORAGE_ALIGN 4U
+
+#define _COREDUMP_RAM_SECTION Z_GENERIC_SECTION(LINKER_DT_NODE_REGION_NAME_TOKEN(CDUMP_NODE))
+
+/* Buffer spans the DTS COREDUMP_STORAGE region (NOLOAD linker section). */
+static uint8_t _COREDUMP_RAM_SECTION __aligned(STORAGE_ALIGN) coredump_ram[PARTITION_SIZE];
+
+#define PARTITION_ADDR UINT_TO_POINTER((uintptr_t)coredump_ram)
+
+BUILD_ASSERT(sizeof(coredump_ram) == PARTITION_SIZE);
+
+#else
+#error "Enable NRF coredump backend: FLASH_PARTITION or RAM_REGION (see Kconfig)"
+#endif
 
 struct header {
 	uint8_t magic[4];    /* "CD01" */
@@ -65,13 +100,17 @@ struct header {
 	uint16_t header_crc; /* Header CRC16 (up to this field) */
 } __packed;
 
-static const uint8_t MAGIC[4] = {'C', 'D', '0', '1'};
-
 enum {
-	HEADER_SIZE = ROUND_UP(sizeof(struct header), FLASH_WRITE_SIZE),
-	WRITE_BUF_SIZE = ROUND_UP(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION_WRITE_BUF_SIZE,
-				  FLASH_WRITE_SIZE),
+	HEADER_SIZE = ROUND_UP(sizeof(struct header), STORAGE_ALIGN),
+	WRITE_BUF_SIZE = ROUND_UP(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_WRITE_BUF_SIZE, STORAGE_ALIGN),
 };
+
+#if IS_ENABLED(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_RAM_REGION)
+BUILD_ASSERT(PARTITION_SIZE >= HEADER_SIZE + WRITE_BUF_SIZE,
+	     "coredump_storage_region too small for header and write buffer");
+#endif
+
+static const uint8_t MAGIC[4] = {'C', 'D', '0', '1'};
 
 static int write_error;			  /* Error occurred when writing a core dump */
 static uint8_t write_buf[WRITE_BUF_SIZE]; /* Write buffer to assure aligned flash access */
@@ -126,6 +165,8 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 		return;
 	}
 
+#if IS_ENABLED(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION)
+
 #ifdef CONFIG_NRFX_NVMC
 	for (uint32_t i = 0; i < size; i += sizeof(uint32_t)) {
 		nrfx_nvmc_word_write(PARTITION_OFFSET + offset + i,
@@ -141,7 +182,7 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
-	memcpy((void *)(PARTITION_ADDR + offset), data, size);
+	memcpy(UINT_TO_POINTER(FLASH_ADDR + PARTITION_OFFSET + offset), data, size);
 	barrier_dmem_fence_full();
 
 	/*
@@ -153,6 +194,13 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 
 	config.mode_write = false;
 	nrf_rramc_config_set(NRF_RRAMC, &config);
+#endif
+
+#else /* RAM */
+
+	memcpy((uint8_t *)(PARTITION_ADDR) + offset, data, size);
+	barrier_dmem_fence_full();
+
 #endif
 }
 
@@ -167,6 +215,8 @@ static void erase(uint32_t offset, size_t size)
 		return;
 	}
 
+#if IS_ENABLED(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION)
+
 #ifdef CONFIG_NRFX_NVMC
 	for (uint32_t end = offset + size; offset < end; offset += FLASH_ERASE_SIZE) {
 		(void)nrfx_nvmc_page_erase(PARTITION_OFFSET + offset);
@@ -179,7 +229,7 @@ static void erase(uint32_t offset, size_t size)
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
-	memset((void *)(PARTITION_ADDR + offset), 0xff, size);
+	memset(UINT_TO_POINTER(FLASH_ADDR + PARTITION_OFFSET + offset), 0xff, size);
 	barrier_dmem_fence_full();
 
 	/*
@@ -191,6 +241,13 @@ static void erase(uint32_t offset, size_t size)
 
 	config.mode_write = false;
 	nrf_rramc_config_set(NRF_RRAMC, &config);
+#endif
+
+#else /* RAM */
+
+	memset((uint8_t *)(PARTITION_ADDR) + offset, 0xff, size);
+	barrier_dmem_fence_full();
+
 #endif
 }
 
@@ -212,20 +269,25 @@ static int copy_stored_dump(off_t offset, uint8_t *buffer, size_t size)
 	return (int)size;
 }
 
-static void coredump_nrf_flash_backend_start(void)
+static void nrf_coredump_backend_start(void)
 {
+#if IS_ENABLED(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION)
 	/*
 	 * For flash: erase the entire partition to prepare it for write.
 	 * For RRAM:  erase the previously written header only.
 	 */
 	erase(0, IS_ENABLED(CONFIG_NRFX_NVMC) ? PARTITION_SIZE : HEADER_SIZE);
+#else
+	/* RAM backend: clear the whole region before writing a new dump. */
+	erase(0, PARTITION_SIZE);
+#endif
 
 	write_buf_pos = 0;
 	write_pos = 0;
 	dump_crc = 0xffff;
 }
 
-static void coredump_nrf_flash_backend_end(void)
+static void nrf_coredump_backend_end(void)
 {
 	struct header header;
 	uint8_t buffer[HEADER_SIZE] = {};
@@ -251,7 +313,7 @@ static void coredump_nrf_flash_backend_end(void)
 	write(0, buffer, HEADER_SIZE);
 }
 
-static void coredump_nrf_flash_backend_buffer_output(uint8_t *data, size_t size)
+static void nrf_coredump_backend_buffer_output(uint8_t *data, size_t size)
 {
 	size_t chunk_size;
 
@@ -277,10 +339,12 @@ static void coredump_nrf_flash_backend_buffer_output(uint8_t *data, size_t size)
 	}
 }
 
-static int coredump_nrf_flash_backend_query(enum coredump_query_id query_id, void *arg)
+static int nrf_coredump_backend_query(enum coredump_query_id query_id, void *arg)
 {
 	int ret;
 	const struct header *header;
+
+	ARG_UNUSED(arg);
 
 	switch (query_id) {
 	case COREDUMP_QUERY_GET_ERROR:
@@ -302,7 +366,7 @@ static int coredump_nrf_flash_backend_query(enum coredump_query_id query_id, voi
 	return ret;
 }
 
-static int coredump_nrf_flash_backend_cmd(enum coredump_cmd_id cmd_id, void *arg)
+static int nrf_coredump_backend_cmd(enum coredump_cmd_id cmd_id, void *arg)
 {
 	int ret;
 	const struct header *header;
@@ -343,9 +407,9 @@ static int coredump_nrf_flash_backend_cmd(enum coredump_cmd_id cmd_id, void *arg
 }
 
 struct coredump_backend_api coredump_backend_other = {
-	.start = coredump_nrf_flash_backend_start,
-	.end = coredump_nrf_flash_backend_end,
-	.buffer_output = coredump_nrf_flash_backend_buffer_output,
-	.query = coredump_nrf_flash_backend_query,
-	.cmd = coredump_nrf_flash_backend_cmd,
+	.start = nrf_coredump_backend_start,
+	.end = nrf_coredump_backend_end,
+	.buffer_output = nrf_coredump_backend_buffer_output,
+	.query = nrf_coredump_backend_query,
+	.cmd = nrf_coredump_backend_cmd,
 };

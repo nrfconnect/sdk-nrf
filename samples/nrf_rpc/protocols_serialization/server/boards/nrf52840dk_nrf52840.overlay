@@ -5,9 +5,17 @@
  */
 #include <zephyr/dt-bindings/memory-attr/memory-attr-arm.h>
 
-/* Log RPC history: fixed region at top of 256 KB SRAM (same layout as nRF54L15). */
+/* Log RPC history + optional RAM coredump. */
 / {
 	soc {
+		coredump_storage_region: memory@20033f00 {
+			compatible = "zephyr,memory-region", "mmio-sram";
+			reg = <0x20033f00 DT_SIZE_K(32)>;
+			zephyr,memory-region = "COREDUMP_STORAGE";
+			zephyr,memory-attr = <DT_MEM_ARM(ATTR_MPU_RAM_NOCACHE)>;
+			status = "okay";
+		};
+
 		/* 0x4100 = 0x4000 buffer + 0x100 control; ends at 0x20040000 */
 		log_rpc_history_region: memory@2003bf00 {
 			compatible = "zephyr,memory-region", "mmio-sram";
@@ -19,9 +27,9 @@
 	};
 };
 
-/* 240 KB app SRAM; top 17 KB (0x4100) = log_rpc_history_region. */
+/* Shorter sram0 (0x33f00); 32 KiB COREDUMP_STORAGE; top 0x4100 = log history. */
 &sram0 {
-	reg = <0x20000000 0x3bf00>;
+	reg = <0x20000000 0x33f00>;
 };
 
 / {

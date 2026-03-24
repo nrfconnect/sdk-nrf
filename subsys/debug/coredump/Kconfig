@@ -4,9 +4,17 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
-	bool "Core dump backend using nRF internal flash/RRAM partition [EXPERIMENTAL]"
-	depends on DEBUG_COREDUMP_BACKEND_OTHER
+if DEBUG_COREDUMP_BACKEND_OTHER
+
+choice DEBUG_COREDUMP_BACKEND_NRF
+	prompt "nRF core dump storage implementation"
+	default DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
+	help
+	  Select whether core dumps are written to on-chip non-volatile memory or to a
+	  dedicated SRAM region (survives soft reset, not power loss).
+
+config DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
+	bool "Internal flash or RRAM (partition coredump_partition) [EXPERIMENTAL]"
 	depends on DT_HAS_NORDIC_NRF51_FLASH_CONTROLLER_ENABLED || \
 		   DT_HAS_NORDIC_NRF52_FLASH_CONTROLLER_ENABLED || \
 		   DT_HAS_NORDIC_NRF53_FLASH_CONTROLLER_ENABLED || \
@@ -20,14 +28,24 @@ menuconfig DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
 	  flash or RRAM partition named "coredump_partition". This backend is
 	  similar to the one enabled with DEBUG_COREDUMP_BACKEND_FLASH_PARTITION
 	  option except that it bypasses the Zephyr flash device layer and uses
-	  nrfx library directly. This minimizes the dependencies needed to write
-	  the core dump and bypasses synchronization primitives incorporated
-	  into the Zephyr flash drivers.
+	  nrfx library directly.
 
-if DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
+config DEBUG_COREDUMP_BACKEND_NRF_RAM_REGION
+	bool "Dedicated SRAM region (devicetree coredump_storage_region) [EXPERIMENTAL]"
+	depends on $(dt_nodelabel_enabled,coredump_storage_region)
+	select EXPERIMENTAL
+	help
+	  Stores raw core dump bytes in a reserved SRAM block defined in devicetree
+	  (nodelabel coredump_storage_region), with the same header and CRC layout as
+	  the flash/RRAM backend. Suitable when non-volatile coredump storage is
+	  undesirable or unavailable.
 
-config DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION_WRITE_BUF_SIZE
-	int "Write buffer size"
+endchoice
+
+config DEBUG_COREDUMP_BACKEND_NRF_WRITE_BUF_SIZE
+	int "Coredump backend streaming buffer size"
+	depends on DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION || \
+		   DEBUG_COREDUMP_BACKEND_NRF_RAM_REGION
 	default 128
 
-endif # DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
+endif # DEBUG_COREDUMP_BACKEND_OTHER

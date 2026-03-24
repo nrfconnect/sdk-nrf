@@ -4,4 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_sources_ifdef(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION coredump_backend_nrf_flash_partition.c)
+if(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION OR CONFIG_DEBUG_COREDUMP_BACKEND_NRF_RAM_REGION)
+  zephyr_sources(coredump_backend_nrf.c)
+endif()
