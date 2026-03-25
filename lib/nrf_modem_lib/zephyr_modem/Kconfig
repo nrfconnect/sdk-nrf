@@ -1,0 +1,38 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM
+	bool "nRF Modem library implemented over Zephyr modem subsystem (CMUX)"
+	help
+	  Replaces the real nRF Modem library (nrfxlib) with a proxy that
+	  routes AT commands over a CMUX session to an nRF91 Series SiP
+	  running Serial Modem application.  Intended for non-nRF91 host
+	  processors (e.g. nRF54L20).
+
+if NRF_MODEM_LIB_ZEPHYR_MODEM
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM_AT_BUF_SIZE
+	int "AT response buffer size"
+	default 2048
+	help
+	  Size of the buffer used to accumulate AT response lines.
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM_UART_BUF_SIZE
+	int "UART TX/RX buffer size"
+	default 512
+	help
+	  Size of each of the UART backend send and receive buffers.
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM_STACK_SIZE
+	int "AT reader thread stack size"
+	default 2048
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM_RESPONSE_TIMEOUT_MS
+	int "AT command response timeout (ms)"
+	default 30000
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM_INIT_PRIORITY
+	int "SYS_INIT priority"
+	default 10
+
+endif # NRF_MODEM_LIB_ZEPHYR_MODEM

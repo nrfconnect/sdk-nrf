@@ -4,6 +4,14 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if(CONFIG_NRF_MODEM_LIB_ZEPHYR_MODEM)
+  # Standalone CMUX proxy — no nrfxlib modem, no partition manager sources
+  zephyr_linker_sources(RODATA nrf_modem_lib.ld)
+  zephyr_linker_sources_ifdef(CONFIG_NRF_MODEM_LIB_CFUN_HOOKS RODATA cfun_hooks.ld)
+  add_subdirectory(zephyr_modem)
+  return()
+endif()
+
 zephyr_library()
 zephyr_library_sources(nrf_modem_lib.c)
 zephyr_library_sources(nrf_modem_os.c)
