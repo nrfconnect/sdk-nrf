@@ -52,8 +52,8 @@ struct raw_tx_pkt_header {
 	unsigned short packet_length;
 	unsigned char tx_mode;
 	unsigned char queue;
-	unsigned char raw_tx_flag;
-};
+	unsigned char reserved[3];
+} __packed;
 
 struct raw_tx_pkt_header raw_tx_pkt;
 
@@ -108,7 +108,7 @@ void fill_raw_tx_pkt_hdr(int rate_flags, int data_rate, int queue_num)
 	raw_tx_pkt.packet_length = sizeof(test_beacon_frame);
 	raw_tx_pkt.tx_mode = rate_flags;
 	raw_tx_pkt.queue = queue_num;
-	raw_tx_pkt.raw_tx_flag = 0;
+	memset(raw_tx_pkt.reserved, 0, sizeof(raw_tx_pkt.reserved));
 }
 
 int validate(int value, int min, int max, const char *param)
