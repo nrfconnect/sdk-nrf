@@ -76,7 +76,7 @@ This option is supported only on nRF54L Series devices.
 This option brings in sysbuild configuration file that selects two additional options:
 
 * :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` - This option enables KMU support.
-* :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` - This option uses the build system to generate and prepare a bundle of default KMU keys to be used with the sample.
+* :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE` - This option uses the build system to generate and prepare a bundle of default KMU keys to be used with the sample.
 
   .. caution::
      Do not use this option in a production build.

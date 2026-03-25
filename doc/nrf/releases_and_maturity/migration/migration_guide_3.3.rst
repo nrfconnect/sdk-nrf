@@ -207,7 +207,13 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+MCUboot
+-------
+
+.. toggle::
+
+   * The ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option has been deprecated.
+     Replace it with :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE` in your sysbuild configuration files.
 
 Libraries
 =========

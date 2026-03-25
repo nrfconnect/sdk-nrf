@@ -283,7 +283,7 @@ You must also make sure to provision the public key to your target device before
 See the :ref:`ug_kmu_provisioning_overview` documentation for details.
 
 .. note::
-    To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` sysbuild Kconfig option.
+    To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE` sysbuild Kconfig option.
     This option enables generating a default :file:`keyfile.json` file during the build process based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option.
     The automatic provisioning is only performed if the west flash command is executed with the ``--erase`` or ``--recover`` flag.
 
