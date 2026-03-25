@@ -28,8 +28,12 @@ const struct nrf_clock_spec fll16m_bypass_mode = {
 	.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
 };
 
-#else
+#elif defined(CONFIG_CLOCK_CONTROL_NRF)
 const struct device *const hfclock = DEVICE_DT_GET(DT_NODELABEL(clock));
+#else
+const struct device *const hfclock = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+								   (nordic_nrfx_clock_hfclk),
+								   (nordic_nrfx_clock_xo)));
 #endif /* CONFIG_SOC_NRF54H20 */
 
 #if defined(CONFIG_SOC_NRF54H20)
