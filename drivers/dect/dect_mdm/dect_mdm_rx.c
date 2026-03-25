@@ -27,7 +27,7 @@
 LOG_MODULE_DECLARE(dect_mdm, CONFIG_DECT_MDM_LOG_LEVEL);
 
 K_MSGQ_DEFINE(dect_mdm_rx_th_op_event_msgq, sizeof(struct dect_mdm_common_op_event_msgq_item),
-	      10, 4);
+	      CONFIG_DECT_MDM_NRF_RX_MSGQ_SIZE, 4);
 
 #define DECT_MDM_RX_THREAD_STACK_SIZE CONFIG_DECT_MDM_NRF_RX_THREAD_STACK_SIZE
 #define DECT_MDM_RX_THREAD_PRIORITY   5
