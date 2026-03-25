@@ -10,6 +10,7 @@
 
 LOG_MODULE_REGISTER(lcs, CONFIG_LCS_LOG_LEVEL);
 
+
 /**
  * @brief Check if the LCS transition from @p current to @p new is legal.
  *
