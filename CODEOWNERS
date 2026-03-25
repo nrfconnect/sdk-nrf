@@ -404,6 +404,7 @@
 /lib/modem_jwt/                           @nrfconnect/ncs-iot-oulu @nrfconnect/ncs-modem
 /lib/modem_key_mgmt/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
+/lib/nrf_802154_callbacks_dispatcher/     @nrfconnect/ncs-thread
 /lib/nrf_modem_lib/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/ntn/                                 @nrfconnect/ncs-modem-tre
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
