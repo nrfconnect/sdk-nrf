@@ -85,6 +85,21 @@ config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 	  When disabled the application is expected to provision the reserved KMU slots 248 and 249
 	  manually, otherwise the protected RAM keys will not be usable.
 
+config CRACEN_PUSH_PROT_RAM_INV_SLOTS_ON_INIT
+	bool "Push protected RAM invalidation slots on boot"
+	depends on CRACEN_LIB_KMU
+	default y
+	help
+	  Push the protected RAM invalidation data from KMU slots 248 and 249
+	  to CRACEN's protected RAM during initialization. Required for
+	  PROTECTED-scheme keys to function correctly after boot.
+
+	  Disable when the KMU slots are not yet provisioned at the time
+	  psa_crypto_init() is called — for example in a manufacturing application
+	  that provisions the slots manually in a later step. The application is
+	  then responsible for ensuring the slots are provisioned before any
+	  PROTECTED-scheme key is used.
+
 config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
 	bool "Provision protected RAM invalidation slots using psa_import_key"
 	depends on CRACEN_LIB_KMU
