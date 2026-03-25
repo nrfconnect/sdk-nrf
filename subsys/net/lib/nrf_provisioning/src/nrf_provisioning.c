@@ -18,8 +18,8 @@
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/reboot.h>
 
+#include <zephyr/net/tls_credentials.h>
 #include <modem/lte_lc.h>
-#include <modem/modem_key_mgmt.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/modem_attest_token.h>
 #include <net/nrf_provisioning.h>
@@ -91,9 +91,11 @@ static void nrf_provisioning_on_modem_init(int ret, void *ctx)
 
 	ret = cert_provision();
 	if (ret) {
-		__ASSERT(false, "Failed to provision certificate, err %d", ret);
+		LOG_ERR("Failed to provision certificate, err %d", ret);
 		return;
 	}
+
+	printk("Certificate provisioning successful, scheduling provisioning work\n");
 }
 #endif /* CONFIG_NRF_PROVISIONING_WITH_CERT */
 
@@ -130,11 +132,15 @@ static int cert_provision(void)
 		return -ENFILE;
 	}
 
-	ret = modem_key_mgmt_exists(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG,
-				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exists);
-	if (ret) {
-		LOG_ERR("Failed to check for certificates err %d", ret);
-		return ret;
+	/* Check existence: tls_credential_get with zero-length buffer returns -ENOENT if absent
+	 * or -EFBIG (buf too small) / 0 if present — without touching the modem.
+	 */
+	{
+		size_t credlen = 0;
+
+		ret = tls_credential_get(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG,
+					 TLS_CREDENTIAL_CA_CERTIFICATE, NULL, &credlen);
+		exists = (ret != -ENOENT);
 	}
 
 	/* Don't overwrite certificate if one has been provisioned */
@@ -151,9 +157,9 @@ static int cert_provision(void)
 	LOG_DBG("Provisioning new certificate");
 	LOG_HEXDUMP_DBG(cert, cert_size, "New certificate: ");
 
-	ret = modem_key_mgmt_write(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG,
-				   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				   cert, cert_size);
+	ret = tls_credential_add(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG,
+				 TLS_CREDENTIAL_CA_CERTIFICATE,
+				 cert, cert_size);
 	if (ret) {
 		LOG_ERR("Failed to provision certificate, err %d", ret);
 		return ret;
