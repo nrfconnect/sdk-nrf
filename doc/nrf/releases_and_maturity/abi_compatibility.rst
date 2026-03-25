@@ -46,6 +46,17 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Element (IronSide SE) v23.5.0+28
+================================================
+
+Added
+-----
+
+* Support for snapshot services, which offer APIs to capture and recover system MRAM and NVR region contents.
+  The support is currently limited to system-critical regions configured by IronSide SE.
+  The snapshot functionality must be enabled and configured in OTP before using these APIs. (NCSDK-37077)
+* IronSide SE now automatically performs a snapshot recovery operation when an error is detected in a system-critical region. (NCSDK-37077)
+
 IronSide Secure Element (IronSide SE) v23.4.0+27
 ================================================
 
