@@ -126,7 +126,8 @@ Building and running
 .. include:: /includes/build_and_run_ns.txt
 
 .. note::
-   To flash nrf54L15TAG it needs to be plugged into `DEBUG IN` header on nrf54l DK. TAG is not powered via that header therefore CR2032 cell needs to be installed.
+   To flash the :zephyr:board:`nrf54l15tag`, you need to plug into the ``DEBUG IN`` header on the nRF54L15 DK. 
+   TAG is not powered through that header, therefore, you must install the CR2032 cell.
 
 Minimal build
 =============
