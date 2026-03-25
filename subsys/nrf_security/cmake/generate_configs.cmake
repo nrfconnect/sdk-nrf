@@ -89,7 +89,7 @@ macro(generate_mbedcrypto_library_configs)
     kconfig_backup_current_config(CONFIG_MBEDTLS_PLATFORM_PRINTF_ALT)
     kconfig_backup_current_config(CONFIG_MBEDTLS_THREADING_C)
     kconfig_backup_current_config(CONFIG_MBEDTLS_THREADING_ALT)
-
+    kconfig_backup_current_config(CONFIG_MBEDTLS_MEMORY_BUFFER_ALLOC_C)
 
     nrf_security_debug("=========== Checkpoint: backup ===============")
 
@@ -115,6 +115,11 @@ macro(generate_mbedcrypto_library_configs)
       # Disable threading for the PSA interface used in TF-M build (NS and S image)
       set(CONFIG_MBEDTLS_THREADING_C False)
       set(CONFIG_MBEDTLS_THREADING_ALT False)
+      # Disable heap when using CONFIG_TFM_PROFILE_TYPE_MINIMAL to ensure that the build size
+      # is underneath 32 KB
+      if(CONFIG_TFM_PROFILE_TYPE_MINIMAL)
+        set(CONFIG_MBEDTLS_MEMORY_BUFFER_ALLOC_C False)
+      endif()
     endif()
 
     # Generate MBEDCRYPTO_CONFIG_FILE
@@ -138,6 +143,7 @@ macro(generate_mbedcrypto_library_configs)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PLATFORM_PRINTF_ALT)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_C)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_ALT)
+    kconfig_restore_backup_config(CONFIG_MBEDTLS_MEMORY_BUFFER_ALLOC_C)
 
     nrf_security_debug("=========== End psa_crypto_library_config ===============")
   endif()
