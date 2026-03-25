@@ -1055,7 +1055,7 @@ Path to the private key is defined by the :kconfig:option:`SB_CONFIG_BOOT_SIGNAT
 
 To store the public key in the KMU, it must first be provisioned.
 This provisioning step can be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
-In this application, the :file:`keyfile.json` file is automatically generated using the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig option.
+In this application, the :file:`keyfile.json` file is automatically generated using the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE` Kconfig option.
 This option uses the private key specified by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option to generate the required file during the build process.
 
 To trigger KMU provisioning during flashing, use the ``west flash`` command with either the ``--erase`` or ``--recover`` flag.

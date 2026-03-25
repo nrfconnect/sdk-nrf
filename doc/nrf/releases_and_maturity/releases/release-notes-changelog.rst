@@ -67,6 +67,18 @@ Bootloaders and DFU
 
 * Added a new lifecycle state (LCS) API designed for nRF54L Series devices.
 
+* Replaced the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option with :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE`.
+  This change allows generating a default key file for MCUboot when using either the KMU or ITS for key storage.
+
+  Affected samples:
+
+  * :ref:`nrf_desktop`
+  * :ref:`fast_pair_locator_tag`
+  * :ref:`mcuboot_with_encryption`
+  * :ref:`single_slot_sample`
+  * :ref:`nrf_smp_svr_sample`
+  * :ref:`mcuboot_minimal_configuration`
+
 Developing with nRF91 Series
 ============================
 
