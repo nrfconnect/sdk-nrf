@@ -53,6 +53,9 @@ extern const struct sx_pk_cmd_def *const SX_PK_CMD_MULT;
 /** Clear memory **/
 extern const struct sx_pk_cmd_def *const SX_PK_CMD_CLEAR_MEMORY;
 
+/** Init command */
+extern const struct sx_pk_cmd_def *const SX_PK_CMD_NONE;
+
 /** @} */
 
 /** Input slots for ::SX_PK_CMD_ODD_MOD_INV & ::SX_PK_CMD_ODD_MOD_REDUCE
