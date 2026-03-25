@@ -86,7 +86,7 @@ The user interface of the sample depends on the hardware platform you are using.
    .. group-tab:: nRF54 TAG
 
       LED 1:
-         Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
+         Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds and a duty cycle of 50%.
 
    .. group-tab:: Thingy:53
 
