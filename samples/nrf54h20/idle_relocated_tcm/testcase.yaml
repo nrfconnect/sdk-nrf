@@ -26,3 +26,23 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - FILE_SUFFIX=split_slot
+  benchmarks.multicore.idle_relocated_tcm.nrf54h20dk_cpuapp_cpurad.direct_xip.merged_slot.ironside_se_conf:
+    harness: console
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF=y
+      - SB_CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION=y
+  benchmarks.multicore.idle_relocated_tcm.nrf54h20dk_cpuapp_cpurad.direct_xip.split_slot.ironside_se_conf:
+    harness: console
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - FILE_SUFFIX=split_slot
+      # Does not currently set SB_CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION=y since only
+      # two images per slot are supported when using that feature.
+      - SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF=y
