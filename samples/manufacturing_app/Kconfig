@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SAMPLE_MFG_LOG_MACHINE_READABLE
+	bool "Machine-readable log output"
+	default n
+	help
+	  When enabled, the manufacturing application emits minimal, line-oriented
+	  output suitable for automated test equipment:
+
+	    STEP:<name>        — a step is starting
+	    ERR:<message>      — an error condition was detected
+	    KV:<key>:<value>   — structured datum (LCS state, IAK public key, ...)
+	    DONE:PASS          — manufacturing completed successfully
+	    DONE:FAIL          — manufacturing halted with an error
+
+	  MFG_LOG_INF lines (verbose human-readable explanations) are suppressed.
+
+	  When disabled (default), the application emits verbose human-readable
+	  output including source file and line numbers for each step.
+
+config SAMPLE_BLOCK_ERASE_ALL
+	bool "Block erase-all by programming UICR.ERASEPROTECT during manufacturing"
+	default n
+	help
+	  When enabled, the manufacturing application programs
+	  UICR.ERASEPROTECT.PROTECT0 and UICR.ERASEPROTECT.PROTECT1 to
+	  0x50FA50FA, permanently blocking the SWD erase-all command on the
+	  device.
+
+	  WARNING: This operation is irreversible without authenticated erase-all.
+	  Do not enable this option for engineering/development devices.
+
+	  UICR is accessible directly on the privileged cpuapp target via
+	  nrfx_rramc_word_write(). See src/erase_protection.c for details.
+
+config SAMPLE_MFG_APP_KEY_KMU_SLOT
+	int "KMU slot holding the manufacturing application authentication key"
+	default 122
+	help
+	  KMU slot number that holds the key used to authenticate this
+	  manufacturing application. This key is revoked in Step 12 of the
+	  manufacturing flow once provisioning is complete.
+
+	  The key must be pre-loaded into this slot before the manufacturing
+	  application runs
+
+config SAMPLE_MFG_UROT_KEY_GEN0_KMU_SLOT
+	int "KMU slot for UROT public key generation 0 (urot_pubkey_gen0)"
+	default 120
+	help
+	  First physical KMU slot for the UROT generation-0 public key.
+	  Ed25519 keys occupy 2 consecutive slots.
+
+config SAMPLE_MFG_UROT_KEY_GEN1_KMU_SLOT
+	int "KMU slot for UROT public key generation 1 (urot_pubkey_gen1)"
+	default 124
+	help
+	  First physical KMU slot for the UROT generation-1 public key.
+	  Ed25519 keys occupy 2 consecutive slots.
+
+source "Kconfig.zephyr"

@@ -1,0 +1,5 @@
+# Treat all key material as binary so git never attempts newline
+# conversion or text-mode diffing regardless of byte content.
+keys/*.bin  binary
+keys/*.msg  binary
+keys/*.pem  text eol=lf
