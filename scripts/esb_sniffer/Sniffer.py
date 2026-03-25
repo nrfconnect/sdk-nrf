@@ -11,7 +11,9 @@ from time import sleep
 
 from pynrfjprog.APIError import APIError
 from pynrfjprog.LowLevel import API
-from pynrfjprog.Parameters import CoProcessor
+from pynrfjprog.Parameters import CoProcessor, DeviceFamily
+
+import contextlib
 
 
 class RttCommands(Enum):
@@ -72,7 +74,22 @@ class Sniffer:
             self.jlink = API()
             self.jlink.open()
             self.jlink.connect_to_emu_without_snr(jlink_speed_khz=self.swd_freq_khz)
+        except APIError as err:
+            self.logger.warning("Failed to connect to device - auto-detect failed: err = %d, retrying with NRF54L", err.err_code)
+            with contextlib.suppress(Exception):
+                self.jlink.close()
+            try:
+                self.jlink = API(DeviceFamily.NRF54L)
+                self.jlink.open()
+                self.jlink.connect_to_emu_without_snr(jlink_speed_khz=self.swd_freq_khz)
+            except APIError as err:
+                self.logger.error("Failed to connect to device: err = %d", err.err_code)
+                with contextlib.suppress(Exception):
+                    self.jlink.close()
+                self.jlink = None
+                return -1
 
+        try:
             if self.jlink.read_device_family() == "NRF53":
                 self.jlink.select_coprocessor(CoProcessor.CP_NETWORK)
 
@@ -80,7 +97,9 @@ class Sniffer:
             self.jlink.go()
             self.jlink.rtt_start()
         except APIError as err:
-            self.logger.error("Failed to connect to device: err = %d", err.err_code)
+            self.logger.error("Failed to initialize device: err = %d", err.err_code)
+            with contextlib.suppress(Exception):
+                self.jlink.close()
             self.jlink = None
             return -1
 
@@ -90,6 +109,8 @@ class Sniffer:
 
         if timeout == 0:
             self.logger.error("Failed to find rtt control block")
+            with contextlib.suppress(Exception):
+                self.jlink.close()
             self.jlink = None
             return -1
 
