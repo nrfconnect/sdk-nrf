@@ -110,21 +110,21 @@ void esb_apply_nrf54h_229(void);
 static inline void esb_apply_nrf54h_229(void) {}
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 229) */
 
-#if NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA)
+#if NRF_ERRATA_STATIC_CHECK(54L, 20)
 void esb_apply_nrf54l_20(void);
 void esb_revert_nrf54l_20(void);
 #else
 static inline void esb_apply_nrf54l_20(void) {}
 static inline void esb_revert_nrf54l_20(void) {}
-#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) || defined(NRF54LS05B_XXAA) */
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) */
 
-#if NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA)
+#if NRF_ERRATA_STATIC_CHECK(54L, 39)
 void esb_apply_nrf54l_39(void);
 void esb_revert_nrf54l_39(void);
 #else
 static inline void esb_apply_nrf54l_39(void) {}
 static inline void esb_revert_nrf54l_39(void) {}
-#endif /* NRF_ERRATA_STATIC_CHECK(54L, 39) || defined(NRF54LS05B_XXAA) */
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 39) */
 
 #ifdef __cplusplus
 }
