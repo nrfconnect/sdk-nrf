@@ -142,6 +142,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
   set(keyfile "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}")
   set(keyfile_enc "${SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE}")
   set(imgtool_cmd)
+  set(imgtool_depends ${merged_hex})
   string(CONFIGURE "${keyfile}" keyfile)
   string(CONFIGURE "${keyfile_enc}" keyfile_enc)
 
@@ -307,6 +308,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
   # Append key file path.
   if(NOT "${keyfile}" STREQUAL "")
     set(imgtool_args --key "${keyfile}" ${imgtool_args})
+    list(APPEND imgtool_depends "${keyfile}")
   endif()
 
   # Construct imgtool command, based on the selected MCUboot mode.
@@ -347,10 +349,10 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
     return()
   endif()
 
-  set(tlv_extra_imgtool_args)
-  set(tlv_extra_sign_depends)
-
   if(SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF)
+    set(tlv_extra_imgtool_args)
+    set(tlv_extra_sign_depends)
+
     if(slot_addr EQUAL slot0_addr)
       dt_partition_addr(tlv_slot_addr PATH "${slot0_path}" TARGET mcuboot REQUIRED ABSOLUTE)
     else()
@@ -364,6 +366,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
       ${image_fw_base} "${merged_images}"
     )
     list(APPEND imgtool_args ${tlv_extra_imgtool_args})
+    list(APPEND imgtool_depends ${tlv_extra_sign_depends})
   endif()
 
   if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER OR SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY)
@@ -408,6 +411,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
     if(SB_CONFIG_BOOT_ENCRYPTION_ALG_AES_256)
       set(imgtool_args ${imgtool_args} --encrypt-keylen 256)
     endif()
+    list(APPEND imgtool_depends "${keyfile_enc}")
   endif()
 
   # Set up .hex outputs.
@@ -474,8 +478,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
     ALL
     ${imgtool_cmd}
     DEPENDS
-    ${merged_hex}
-    ${tlv_extra_sign_depends}
+    ${imgtool_depends}
     BYPRODUCTS
     ${byproducts}
     COMMAND_EXPAND_LISTS
