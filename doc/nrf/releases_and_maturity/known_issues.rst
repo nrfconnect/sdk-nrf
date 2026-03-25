@@ -3048,6 +3048,27 @@ NCSDK-18263: |NCS| samples might fail to boot on Thingy:53
 Bluetooth samples
 =================
 
+.. rst-class:: v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+NCSDK-38486: High-duty cycle directed advertising in the :ref:`peripheral_hids_mouse` sample might not start when there are connected peers to not disrupt connections
+  Scheduling high-duty cycle directed advertising might cause problems with reacting to Bluetooth LE connection events from connected peers, which can result in disconnections.
+  To avoid that, the high-duty cycle directed advertising might not start when there are connected peers even when ``bt_le_adv_start`` function does not return an error.
+  In newer |NCS| versions the high-duty cycle directed advertising will start as expected, but the issue with reacting to Bluetooth LE connection events from connected peers might occur.
+  See issue NCSDK-37899 for more details.
+
+  **Workaround:** Use low-duty cycle directed advertising when there are peers connected to the device.
+  Manually cherry-pick and apply commit with fix from main (commit hash: ``1de05797baa8cd2096d4748672c66dd0e6ab3ab0``).
+
+.. rst-class:: v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
+
+NCSDK-37899: High-duty cycle directed advertising in the :ref:`peripheral_hids_mouse` sample might lead to disconnecting connected peers
+  Scheduling high-duty cycle directed advertising might cause problems with reacting to Bluetooth LE connection events from connected peers, which can result in disconnections.
+  In older |NCS| versions, the high-duty cycle directed advertising might not start when there are connected peers to not disrupt connections.
+  See issue NCSDK-38486 for more details.
+
+  **Workaround:** Use low-duty cycle directed advertising when there are peers connected to the device.
+  Manually cherry-pick and apply commit with fix from main (commit hash: ``1de05797baa8cd2096d4748672c66dd0e6ab3ab0``).
+
 .. rst-class:: v3-2-1 v3-2-0
 
 NCSDK-36880: The :ref:`direct_test_mode` sample cannot allocate a DPPI channel on nRF54H20 devices
