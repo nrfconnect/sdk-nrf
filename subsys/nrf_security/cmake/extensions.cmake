@@ -12,6 +12,8 @@ macro(kconfig_check_and_set_base_val base val)
   if(CONFIG_${base})
     nrf_security_debug("Setting ${base} to ${val}")
     set(${base} ${val})
+  else()
+    unset(${base})
   endif()
 endmacro()
 
