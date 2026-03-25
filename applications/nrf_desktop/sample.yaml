@@ -316,3 +316,29 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args: FILE_SUFFIX=release_ram_load
+  applications.nrf_desktop.zdebug_partition_manager_mcuboot_single_app:
+    build_only: true
+    platform_allow:
+      - nrf52833dk/nrf52833
+    integration_platforms:
+      - nrf52833dk/nrf52833
+    extra_args:
+      - SB_CONFIG_PARTITION_MANAGER=y
+  applications.nrf_desktop.zdebug_partition_manager_single_image.uart:
+    platform_allow:
+      - nrf54l15dk/nrf54l05/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l05/cpuapp
+    extra_args:
+      - SB_CONFIG_PARTITION_MANAGER=y
+      - CONFIG_USE_DT_CODE_PARTITION=n
+    harness: console
+  applications.nrf_desktop.zdebug_partition_manager_mcuboot_direct_xip.uart:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_PARTITION_MANAGER=y
+      - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS=256
+    harness: console
