@@ -104,7 +104,8 @@ macro(generate_mbedcrypto_library_configs)
 
     # Handle configurations required by library build inside TF-M (NS world doesn't use psa_crypto_library_config)
     if(CONFIG_BUILD_WITH_TFM)
-      set(MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER True)
+      # CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER must be set for the library build in TF-M
+      set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER True)
       # CONFIG_MBEDTLS_PSA_CRYPTO_SPM must be set for the library build in TF-M
       set(CONFIG_MBEDTLS_PSA_CRYPTO_SPM True)
       # CONFIG_MBEDTLS_USE_PSA_CRYPTO must be unset for library build in TF-M
