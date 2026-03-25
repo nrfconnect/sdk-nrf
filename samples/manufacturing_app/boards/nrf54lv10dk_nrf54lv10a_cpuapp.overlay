@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Replace storage_partition (unused: this sample uses bl_storage in UICR,
+ * not Zephyr settings) with a 4 KB partition for the side-loaded
+ * manufacturing key blob. The remaining 32 KB at 0xe5000-0xed000 is left
+ * unallocated.
+ */
+
+&cpuapp_rram {
+	partitions {
+		/delete-node/ partition@e4000;
+
+		mfg_keys_partition: partition@e4000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mfg_keys";
+			reg = <0xe4000 DT_SIZE_K(4)>;
+		};
+	};
+};

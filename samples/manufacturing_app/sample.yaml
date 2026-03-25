@@ -1,9 +1,11 @@
 sample:
-  description: Sample manufacturing image for the nRF54LV10 SoC.
+  description: >
+    Manufacturing application sample for nRF54LV10A.
   name: Manufacturing Application
 common:
   tags:
     - keys
+    - manufacturing
   platform_allow:
     - nrf54lv10dk/nrf54lv10a/cpuapp
   integration_platforms:
