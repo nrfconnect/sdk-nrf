@@ -247,7 +247,7 @@ To simplify the development process, keys can be generated and then provisioned 
 You can provision keys during flashing when the build directory contains the :file:`keyfile.json` file with commands, such as ``west flash --recover`` or ``west flash --erase``.
 When flashing a project that contains NSIB, you can only use the ``west flash --recover``, as the programming file contains UICR provisioning data as well.
 
-You can generate the :file:`keyfile.json` file during the build process (for example, when running ``west build``) if the :Kconfig:option:`SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE` or :Kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig options are enabled.
+You can generate the :file:`keyfile.json` file during the build process (for example, when running ``west build``) if the :kconfig:option:`SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE` or :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE` Kconfig options are enabled.
 These options enable, respectively, the NSIB and the MCUboot keys, included in the generated :file:`keyfile.json` file.
 This file contains the necessary key provisioning information.
 
