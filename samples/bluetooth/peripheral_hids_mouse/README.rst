@@ -124,7 +124,12 @@ Bluetooth direct advertising
 By default, the sample enables the :option:`CONFIG_BT_DIRECTED_ADVERTISING` sample-specific Kconfig option that enables using Bluetooth direct advertising.
 The feature depends on Bluetooth LE security support (:option:`CONFIG_BT_HIDS_SECURITY_ENABLED`).
 This feature changes the way advertising works in comparison to the other Bluetooth Low Energy samples.
-When the device wants to advertise, it starts with high duty cycle directed advertising provided that it has bonding information.
+When the device wants to advertise, it starts with directed advertising provided that it has bonding information.
+When there is at least one connected peer, low-duty cycle directed advertising is used.
+Otherwise, high-duty cycle directed advertising is used.
+The low-duty cycle directed advertising is used because scheduling high-duty directed advertising might cause problems with reacting to Bluetooth LE connection events from connected peers, which can result in disconnections.
+Each low-duty cycle directed advertising attempt has an application-specified timeout of two seconds.
+The high-duty cycle directed advertising has a timeout of 1.28 seconds defined by the Bluetooth specification.
 If the timeout occurs, the device starts directed advertising to the next bonded peer.
 If all bonding information is used and there is still no connection, the regular advertising starts.
 
