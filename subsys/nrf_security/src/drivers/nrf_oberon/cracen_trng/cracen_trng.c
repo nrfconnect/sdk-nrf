@@ -50,5 +50,7 @@ psa_status_t cracen_trng_get_entropy(uint32_t flags, size_t *estimate_bits,
 
 	*estimate_bits = PSA_BYTES_TO_BITS(request_len);
 
+	nrfx_cracen_uninit();
+
 	return PSA_SUCCESS;
 }
