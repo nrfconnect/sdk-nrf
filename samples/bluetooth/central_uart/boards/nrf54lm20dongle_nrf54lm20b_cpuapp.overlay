@@ -12,6 +12,8 @@
 / {
 	chosen {
 		zephyr,shell-uart = &nus_cdc_acm_uart;
+		nordic,central-uart-ble-led = &led0_green;
+		nordic,central-uart-log-led = &led0_blue;
 	};
 };
 

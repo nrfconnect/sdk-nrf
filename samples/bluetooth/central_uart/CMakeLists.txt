@@ -11,5 +11,6 @@ project(central_uart)
 # NORDIC SDK APP START
 target_sources(app PRIVATE
   src/main.c
+  src/leds.c
 )
 # NORDIC SDK APP END
