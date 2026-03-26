@@ -32,6 +32,7 @@
 
 &gpiote130 {
 	status = "okay";
+	interrupts = <104 NRF_DEFAULT_IRQ_PRIORITY>;
 };
 
 &gpio2 {
