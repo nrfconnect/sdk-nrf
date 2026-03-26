@@ -8,3 +8,4 @@ config REMOTE_BOARD
 	string
 	default "$(BOARD)/nrf54lv10a/cpuflpr" if SOC_NRF54LV10A_CPUAPP
 	default "$(BOARD)/nrf54lm20a/cpuflpr" if SOC_NRF54LM20A_CPUAPP
+	default "$(BOARD)/nrf54lm20b/cpuflpr" if SOC_NRF54LM20B_CPUAPP
