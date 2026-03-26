@@ -540,6 +540,8 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
+* Added experimental support for the ``nrf54lm20dk/nrf54lm20b/cpuapp`` board target in all Bluetooth Fast Pair samples.
+
 * Updated all Fast Pair samples to use the new ``<bluetooth/fast_pair/...>`` include paths.
 
 * :ref:`fast_pair_locator_tag` sample:
