@@ -8,7 +8,7 @@ get_property(PM_DOMAINS GLOBAL PROPERTY PM_DOMAINS)
 # Include application core image if enabled
 if(SB_CONFIG_SUPPORT_APPCORE AND NOT SB_CONFIG_APPCORE_NONE AND DEFINED SB_CONFIG_APPCORE_IMAGE_NAME)
   # Calculate the application board target
-  string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
+  string(REPLACE "/" ";" split_board_qualifiers ";${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
   list(GET split_board_qualifiers 2 target_cpucluster)
 
