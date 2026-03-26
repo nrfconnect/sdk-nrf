@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Set product string for USB device
+config CDC_ACM_SERIAL_PRODUCT_STRING
+	default "Thread Co-Processor"
+	depends on USB_DEVICE_STACK_NEXT
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
