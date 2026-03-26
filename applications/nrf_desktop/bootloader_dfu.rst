@@ -203,11 +203,11 @@ The application image is always built for the RAM address space in only one vari
 .. caution::
    The RAM load mode of the MCUboot bootloader is not officially supported in |NCS|.
    However, the mode is available in the |NCS| as the support for this feature has been developed as part of the Zephyr RTOS project.
-   This feature is only used in a limited context for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target configuration to improve performance.
+   This feature is only used in a limited context for the nRF54LM20 DK to improve performance.
 
 You can use the RAM load mode of the MCUboot bootloader to speed up the code execution for the application image, as code execution from the RAM is generally faster than from the NVM.
 This can improve the device performance during the activities that require high CPU usage.
-As an example, the nRF Desktop application uses the RAM load mode for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to improve the HID report rate over USB.
+As an example, the nRF Desktop application uses the RAM load mode for the nRF54LM20 DK to improve the HID report rate over USB.
 
 To set the MCUboot mode of operations to the RAM load mode, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_RAM_LOAD` Kconfig option in the sysbuild configuration.
 

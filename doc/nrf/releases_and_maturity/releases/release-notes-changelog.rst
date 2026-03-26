@@ -372,6 +372,8 @@ nRF Desktop
     The application still uses SEGGER J-Link RTT as the default logging backend.
   * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
     The board target can act as either a mouse or a keyboard.
+  * Support for the ``nrf54lm20dk/nrf54lm20b/cpuapp`` board target.
+    The board target supports the same set of configurations as the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
 
 * Updated:
 
