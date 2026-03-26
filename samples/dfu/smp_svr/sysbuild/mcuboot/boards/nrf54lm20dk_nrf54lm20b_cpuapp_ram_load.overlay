@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../nrf54lm20_nrf54lm20_cpuapp_memory_map_ram_load.dtsi"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+		zephyr,sram = &cpuapp_sram_mcuboot_ram_region;
+		zephyr,bootloader-info = &boot_info0;
+	};
+};
