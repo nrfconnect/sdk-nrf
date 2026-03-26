@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		nrf,bootloader-request = &boot_request;
+	};
+};
+
+/ {
+	cpuapp_sram_retention@2007fff0 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2007fff0 0x10>;
+		zephyr,memory-region = "RetainedMem";
+		status = "okay";
+
+		retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			boot_request: boot_request@0 {
+				compatible = "zephyr,retention";
+				status = "okay";
+				reg = <0x0 0x10>;
+				prefix = [0b 01];
+				checksum = <4>;
+			};
+		};
+	};
+};
+
+&cpuapp_sram {
+	/* Keep top 16 bytes for retention-backed boot requests. */
+	reg = <0x20000000 0x7fff0>;
+	ranges = <0x0 0x20000000 0x7fff0>;
+};
