@@ -169,7 +169,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
-Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
+Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``)
       * The configuration uses the nRF54LM20 DK.
       * The build types allow to build the application as a mouse.
       * Inputs are simulated based on the hardware button presses.
