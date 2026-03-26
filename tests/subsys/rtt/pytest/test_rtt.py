@@ -65,11 +65,15 @@ def test_rtt_logging(dut: DeviceAdapter):
         # Using nRF54L15_M33 as the device because its RAM region closely matches LS05.
         # This enables automatic SEGGER RTT symbol detection by JLinkRTTLogger.
         # Update to the official LS05 device name when SEGGER adds support.
-        'nrf54ls05dk/nrf54ls05b/cpuapp': {
-            # 'device': 'NRF54LS05B_M33',
+        'nrf54ls05dk/nrf54ls05a/cpuapp': {
+            # 'device': 'NRF54LS05A_M33',
             'device': 'nRF54L15_M33',
         },
-        'nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp': {
+        'nrf54ls05dk@0.2.0/nrf54ls05a/cpuapp': {
+            # 'device': 'NRF54LS05A_M33',
+            'device': 'nRF54L15_M33',
+        },
+        'nrf54ls05dk/nrf54ls05b/cpuapp': {
             # 'device': 'NRF54LS05B_M33',
             'device': 'nRF54L15_M33',
         },
