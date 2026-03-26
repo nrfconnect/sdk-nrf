@@ -46,6 +46,18 @@ ITS_KEY_POLICIES: dict[str, str] = {
     "rotatable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
 }
 
+KMU_KEY_STORAGE_SOC_PREFIXES = ("nrf54l", "nrf7120")
+ITS_KEY_STORAGE_SOC_PREFIXES = ("nrf54h",)
+
+
+def uses_kmu_key_storage(soc: str) -> bool:
+    return soc.startswith(KMU_KEY_STORAGE_SOC_PREFIXES)
+
+
+def uses_its_key_storage(soc: str) -> bool:
+    return soc.startswith(ITS_KEY_STORAGE_SOC_PREFIXES)
+
+
 @dataclass
 class SlotParams:
     id: int
@@ -83,7 +95,7 @@ class NrfutilWrapper:
     def _make_json_file(self, soc: str) -> str:
         """Generate PSA key attribute file, see generate_psa_key_attributes.py for details"""
 
-        if soc.startswith("nrf54l"):
+        if uses_kmu_key_storage(soc):
             location = psa_attr_generator.PsaKeyLocation.LOCATION_CRACEN_KMU
         else:
             location = psa_attr_generator.PsaKeyLocation.LOCATION_LOCAL_STORAGE
@@ -216,6 +228,7 @@ class NcsProvision(WestCommand):
                 "nrf54lm20a", "nrf54lm20b",
                 "nrf54lv10a",
                 "nrf54ls05b",
+                "nrf7120",
                 "nrf54h20"
             ],
             default="nrf54l15",
@@ -288,9 +301,9 @@ class NcsProvision(WestCommand):
 
     def _generate_slots(self, keyname: str, keys: str, policy: str, soc: str) -> list[SlotParams]:
         """Return list of SlotParams for given keys."""
-        if soc.startswith("nrf54l"):
+        if uses_kmu_key_storage(soc):
             key_slots = KMU_KEY_SLOTS[keyname]
-        elif soc.startswith("nrf54h"):
+        elif uses_its_key_storage(soc):
             key_slots = ITS_KEY_SLOTS[keyname]
 
         if len(keys) > len(key_slots):
@@ -299,22 +312,22 @@ class NcsProvision(WestCommand):
             )
         slots: list[SlotParams] = []
         for slot_idx, keyfile in enumerate(keys):
-            if policy == "lock-last" and soc.startswith("nrf54l"):
+            if policy == "lock-last" and uses_kmu_key_storage(soc):
                 if slot_idx == (len(keys) - 1):
                     key_policy = KMU_KEY_POLICIES["lock"]
                 else:
                     key_policy = KMU_KEY_POLICIES["revokable"]
-            elif soc.startswith("nrf54l"):
+            elif uses_kmu_key_storage(soc):
                 key_policy = KMU_KEY_POLICIES[policy]
             elif policy.startswith("lock"):
                 sys.exit("Locking policy is not supported for ITS keys.")
-            elif soc.startswith("nrf54h"):
+            elif uses_its_key_storage(soc):
                 key_policy = ITS_KEY_POLICIES[policy]
 
             slot_id = key_slots[slot_idx]
 
             # Key policy in ITS is statically assigned to the key ID ranges
-            if soc.startswith("nrf54h"):
+            if uses_its_key_storage(soc):
                 if policy == "revokable" and not 0x40002000 <= slot_id <= 0x4FFFFFFF:
                     sys.exit("Revokable policy key ID out of range.")
                 elif policy == "rotatable" and not 0x1 <= slot_id <= 0x3FFFFFFF:
