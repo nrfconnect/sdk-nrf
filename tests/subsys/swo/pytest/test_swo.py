@@ -85,6 +85,12 @@ def test_swo_logging(dut: DeviceAdapter):
             "swofreq": 1000000,
             "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
+        "nrf54lm20dk/nrf54lm20b/cpuapp": {
+            "device": "NRF54LM20A_M33",
+            "cpufreq": 128000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
+        },
         "nrf54lv10dk/nrf54lv10a/cpuapp": {
             "device": "NRF54LV10A_M33",
             "cpufreq": 128000000,
