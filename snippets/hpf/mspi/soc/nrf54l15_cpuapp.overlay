@@ -59,9 +59,6 @@
 
 &cpuapp_rram {
 	reg = <0x0 DT_SIZE_K(1509)>;
-	ranges = <0x0 0x0 DT_SIZE_K(1509)>;
-	#address-cells = <1>;
-	#size-cells = <1>;
 };
 
 &cpuapp_sram {

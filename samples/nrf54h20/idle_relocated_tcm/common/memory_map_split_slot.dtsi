@@ -25,7 +25,6 @@
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges;
 
 		cpuapp_boot_partition: boot_partition: partition@30000 {
 			label = "mcuboot";
