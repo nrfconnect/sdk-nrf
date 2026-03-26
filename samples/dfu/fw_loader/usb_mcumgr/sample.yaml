@@ -9,5 +9,7 @@ tests:
       - ci_samples_dfu
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
