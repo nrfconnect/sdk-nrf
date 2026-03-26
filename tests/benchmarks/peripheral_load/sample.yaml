@@ -283,6 +283,7 @@ tests:
       - CONFIG_I2S=n
       - CONFIG_BT=n
     platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
