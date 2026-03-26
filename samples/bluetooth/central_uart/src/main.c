@@ -34,6 +34,8 @@
 
 #include <zephyr/logging/log.h>
 
+#include "leds.h"
+
 #define LOG_MODULE_NAME central_uart
 LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
@@ -85,6 +87,8 @@ static void ble_data_sent(struct bt_nus_client *nus, uint8_t err,
 	ARG_UNUSED(data);
 	ARG_UNUSED(len);
 
+	leds_indicate_ble_traffic();
+
 	k_sem_give(&nus_write_sem);
 
 	if (err) {
@@ -98,6 +102,8 @@ static uint8_t ble_data_received(struct bt_nus_client *nus,
 	ARG_UNUSED(nus);
 
 	int err;
+
+	leds_indicate_ble_traffic();
 
 	for (uint16_t pos = 0; pos != len;) {
 		struct uart_data_t *tx = k_malloc(sizeof(*tx));
@@ -390,6 +396,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 
 	LOG_INF("Connected: %s", addr);
 
+	leds_set_ble_connected(true);
+
 	static struct bt_gatt_exchange_params exchange_params;
 
 	exchange_params.func = exchange_func;
@@ -423,6 +431,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		return;
 	}
 
+	leds_set_ble_connected(false);
 	bt_conn_unref(default_conn);
 	default_conn = NULL;
 
@@ -623,6 +632,8 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 int main(void)
 {
 	int err;
+
+	leds_init();
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {

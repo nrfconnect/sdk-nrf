@@ -50,6 +50,25 @@ When you plug the dongle into a USB port, the following interfaces are available
      - NUS
      - Nordic UART Service
 
+User interface
+**************
+
+.. tabs::
+
+   .. group-tab:: nRF54LM20 Dongle
+
+      Green LED:
+         Lit when connected over Bluetooth LE.
+         Blinks briefly when data is sent or received over Bluetooth LE.
+
+      Blue LED:
+         Blinks when debug messages are emitted.
+
+   .. group-tab:: Other supported boards
+
+      See the list of supported boards in :ref:`central_uart_requirements`.
+      No buttons and LEDs are used.
+
 .. _central_uart_debug:
 
 Debugging
