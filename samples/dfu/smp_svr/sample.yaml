@@ -26,6 +26,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
@@ -34,6 +35,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
   sample.dfu.smp_svr.serial:
     platform_allow:
@@ -43,6 +45,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
@@ -56,6 +59,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
@@ -66,6 +70,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
@@ -84,6 +89,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
@@ -101,6 +107,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
@@ -119,6 +126,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
@@ -132,6 +140,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
@@ -168,6 +177,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -180,6 +190,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -195,6 +206,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -214,6 +226,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -242,6 +255,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -262,6 +276,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -463,6 +478,7 @@ tests:
       - FILE_SUFFIX="ram_load"
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
 
   sample.dfu.smp_svr.ram_load.kmu:
     extra_args:
@@ -471,3 +487,4 @@ tests:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp

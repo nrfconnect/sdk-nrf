@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../../boards/nrf54lm20dk_nrf54lm20b_cpuapp.overlay"
+
+/* Need to add this here as the app.overlay is not picked
+ * with board overlay.
+ */
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
