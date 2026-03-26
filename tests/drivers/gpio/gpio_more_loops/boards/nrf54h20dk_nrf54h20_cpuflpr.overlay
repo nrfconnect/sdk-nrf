@@ -23,6 +23,15 @@
 	};
 };
 
+&gpiote130 {
+	status = "okay";
+	interrupts = <104 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+&gpio0 {
+	status = "okay";
+};
+
 &cpuflpr_code_partition {
 	reg = <0xf4000 DT_SIZE_K(64)>;
 };
