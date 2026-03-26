@@ -104,7 +104,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   endif()
 
   # Calculate the secure board target when building for non-secure board targets
-  string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
+  string(REPLACE "/" ";" split_board_qualifiers ";${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
 
   if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF54L)

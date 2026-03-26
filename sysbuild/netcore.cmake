@@ -8,7 +8,7 @@ get_property(PM_DOMAINS GLOBAL PROPERTY PM_DOMAINS)
 # Include network core image if enabled
 if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND DEFINED SB_CONFIG_NETCORE_IMAGE_NAME)
   # Calculate the network board target
-  string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
+  string(REPLACE "/" ";" split_board_qualifiers ";${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
   list(GET split_board_qualifiers 2 target_cpucluster)
   set(board_target_netcore "${BOARD}/${target_soc}/${SB_CONFIG_NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER}")
