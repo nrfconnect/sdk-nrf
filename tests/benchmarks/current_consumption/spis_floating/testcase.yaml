@@ -15,8 +15,9 @@ common:
   integration_platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   platform_exclude:
-    - nrf54lv10dk/nrf54lv10a/cpuapp # Must NOT be powered from 3V
+    - nrf54ls05dk/nrf54ls05a/cpuapp # Device do NOT have low power SPI30
     - nrf54ls05dk/nrf54ls05b/cpuapp # Device do NOT have low power SPI30
+    - nrf54lv10dk/nrf54lv10a/cpuapp # Must NOT be powered from 3V
 
 tests:
   benchmarks.current_consumption.spis_floating: {}

@@ -13,6 +13,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -28,7 +29,9 @@ tests:
       - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
+      - platform:nrf54ls05dk/nrf54ls05a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54ls05dk/nrf54ls05b/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_gpio_wakeup.overlay"
+      - platform:nrf54ls05dk@0.2.0/nrf54ls05a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_gpio_wakeup.overlay"
     harness: pytest
     harness_config:
@@ -43,6 +46,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
@@ -55,7 +59,9 @@ tests:
       - platform:nrf54lm20dk/nrf54lm20b/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20b_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
+      - platform:nrf54ls05dk/nrf54ls05a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54ls05dk/nrf54ls05b/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_gpio_wakeup.overlay"
+      - platform:nrf54ls05dk@0.2.0/nrf54ls05a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_gpio_wakeup.overlay"
       - FILE_SUFFIX=retain_4k
     extra_configs:
@@ -75,6 +81,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -95,6 +102,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -118,6 +126,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -140,6 +149,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -168,6 +178,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -189,6 +200,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -212,6 +224,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -237,6 +250,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -261,6 +275,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -315,6 +330,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
