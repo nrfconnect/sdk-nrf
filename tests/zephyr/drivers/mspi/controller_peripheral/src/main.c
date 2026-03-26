@@ -32,6 +32,7 @@
 #define TEST_AREA_OFFSET    0xff000
 #define TEST_MEMORY_DEV_IDX 0
 #define TEST_SPIS_DEV_IDX   1
+#define SPI_NOR_SECTOR_SIZE 0x1000U
 
 static const struct device *mspi_devices[] = {
 	DT_FOREACH_CHILD_STATUS_OKAY_SEP(MSPI_BUS_NODE, DEVICE_DT_GET, (,))
@@ -65,7 +66,7 @@ struct test_data {
 	struct spi_buf_set *mrx_set;
 	struct spi_buf_set *stx_set;
 	struct spi_buf_set *srx_set;
-	struct spi_buf bufs[8];
+	struct spi_buf bufs[4];
 	bool test_emu_spis_dev;
 };
 
@@ -121,7 +122,7 @@ static void work_handler(struct k_work *work)
 		.timeout = 30,
 	};
 
-	if (td->test_emu_spis_dev == TEST_SPIS_DEV_IDX) {
+	if (td->test_emu_spis_dev) {
 		struct mspi_dev_cfg device_cfg = {
 			.ce_num = TEST_SPIS_DEV_IDX,
 			.freq = CONFIG_TESTED_SPI_FREQUENCY,
@@ -159,6 +160,10 @@ static void work_handler(struct k_work *work)
 	} else {
 		/* transfer data to memory */
 		if (td->mtx_set) {
+			ret = flash_erase(mspi_devices[TEST_MEMORY_DEV_IDX], TEST_AREA_OFFSET,
+				SPI_NOR_SECTOR_SIZE);
+			zassert_equal(ret, 0, "Cannot erase flash");
+
 			ret = flash_write(mspi_devices[TEST_MEMORY_DEV_IDX], TEST_AREA_OFFSET,
 					  td->mtx_set->buffers[0].buf, td->mtx_set->buffers[0].len);
 			zassert_equal(ret, 0, "Cannot write flash");
@@ -304,7 +309,13 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 				ztest_test_skip();
 			}
 		}
+
+		rv = k_sem_take(&tdata.sem, K_MSEC(100));
+		zassert_equal(rv, 0);
 	} else {
+		rv = k_sem_take(&tdata.sem, K_MSEC(100));
+		zassert_equal(rv, 0);
+
 		if (tdata.srx_set) {
 			rv = flash_read(mspi_devices[TEST_MEMORY_DEV_IDX], TEST_AREA_OFFSET,
 					tdata.srx_set->buffers[0].buf,
@@ -312,9 +323,6 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 			zassert_equal(rv, 0, "Cannot read flash");
 		}
 	}
-
-	rv = k_sem_take(&tdata.sem, K_MSEC(100));
-	zassert_equal(rv, 0);
 
 	/* This releases the MSPI controller. */
 	(void)mspi_get_channel_status(mspi_bus, 0);
@@ -379,20 +387,8 @@ ZTEST(mspi_controller_peripheral, test_basic_zero_len)
 	tdata.sets[1].count = 2;
 	tdata.mrx_set = &tdata.sets[1];
 
-	/* SPIS */
-	tdata.bufs[4].buf = buf_alloc(len, false);
-	tdata.bufs[4].len = len;
-	tdata.sets[2].buffers = &tdata.bufs[4];
-	tdata.sets[2].count = 1;
-	tdata.stx_set = &tdata.sets[2];
+	/* SPIS: scattered buffers are not supported */
 
-	tdata.bufs[6].buf = buf_alloc(len, false);
-	tdata.bufs[6].len = len;
-	tdata.sets[3].buffers = &tdata.bufs[6];
-	tdata.sets[3].count = 1;
-	tdata.srx_set = &tdata.sets[3];
-
-	run_test(true, true, true);
 	run_test(true, true, false);
 }
 
@@ -452,34 +448,6 @@ ZTEST(mspi_controller_peripheral, test_only_tx)
 	run_test(true, true, false);
 }
 
-/** Test where only SPI controller transmits and SPI peripheral receives in chunks. */
-ZTEST(mspi_controller_peripheral, test_only_tx_in_chunks)
-{
-	size_t len1 = 7;
-	size_t len2 = 8;
-
-	/* MTX buffer */
-	tdata.bufs[0].buf = buf_alloc(len1 + len2, true);
-	tdata.bufs[0].len = len1 + len2;
-	tdata.sets[0].buffers = &tdata.bufs[0];
-	tdata.sets[0].count = 1;
-	tdata.mtx_set = &tdata.sets[0];
-	tdata.mrx_set = NULL;
-
-	/* STX buffer */
-	tdata.bufs[1].buf = buf_alloc(len1, false);
-	tdata.bufs[1].len = len1;
-	tdata.bufs[2].buf = buf_alloc(len2, false);
-	tdata.bufs[2].len = len2;
-	tdata.sets[1].buffers = &tdata.bufs[1];
-	tdata.sets[1].count = 2;
-	tdata.srx_set = &tdata.sets[1];
-	tdata.stx_set = NULL;
-
-	run_test(true, true, true);
-	run_test(true, true, false);
-}
-
 /** Test where only SPI peripheral transmits. */
 ZTEST(mspi_controller_peripheral, test_only_rx)
 {
@@ -505,44 +473,16 @@ ZTEST(mspi_controller_peripheral, test_only_rx)
 	run_test(true, true, false);
 }
 
-/** Test where only SPI peripheral transmits in chunks. */
-ZTEST(mspi_controller_peripheral, test_only_rx_in_chunks)
-{
-	size_t len1 = 7;
-	size_t len2 = 9;
-
-	/* MTX buffer */
-	tdata.bufs[0].buf = buf_alloc(len1 + len2, true);
-	tdata.bufs[0].len = len1 + len2;
-	tdata.sets[0].buffers = &tdata.bufs[0];
-	tdata.sets[0].count = 1;
-	tdata.mrx_set = &tdata.sets[0];
-	tdata.mtx_set = NULL;
-
-	/* STX buffer */
-	tdata.bufs[1].buf = buf_alloc(len1, false);
-	tdata.bufs[1].len = len1;
-	tdata.bufs[2].buf = buf_alloc(len2, false);
-	tdata.bufs[2].len = len2;
-	tdata.sets[1].buffers = &tdata.bufs[1];
-	tdata.sets[1].count = 2;
-	tdata.stx_set = &tdata.sets[1];
-	tdata.srx_set = NULL;
-
-	run_test(true, true, true);
-	run_test(true, true, false);
-}
-
 static void before(void *not_used)
 {
 	ARG_UNUSED(not_used);
 
 	memset(&tdata, 0, sizeof(tdata));
 	for (size_t i = 0; i < sizeof(mspi_buffer); i++) {
-		mspi_buffer[i] = (uint8_t)i;
+		mspi_buffer[i] = (uint8_t)sys_clock_cycle_get_32() + i; /* random context */
 	}
 	for (size_t i = 0; i < sizeof(spis_buffer); i++) {
-		spis_buffer[i] = (uint8_t)(i + 0x80);
+		spis_buffer[i] = (uint8_t)sys_clock_cycle_get_32() + i; /* random context */
 	}
 
 	k_work_init_delayable(&tdata.test_work, work_handler);
