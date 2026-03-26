@@ -1,0 +1,9 @@
+/ {
+	aliases {
+		/*
+		 * Reuse image-1 as helper buffer region when fixed partitions
+		 * are used without Partition Manager.
+		 */
+		dfu-target-helper = &slot1_partition;
+	};
+};
