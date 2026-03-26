@@ -136,6 +136,7 @@ The following board targets support the ranging module:
 * ``nrf54l15dk/nrf54l15/cpuapp``
 * ``nrf54l15tag/nrf54l15/cpuapp``
 * ``nrf54lm20dk/nrf54lm20a/cpuapp``
+* ``nrf54lm20dk/nrf54lm20b/cpuapp``
 
 .. note::
    The :ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>` Kconfig option is explicitly disabled for CS-capable board targets with limited memory to avoid memory overflow.
@@ -234,6 +235,7 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                     |
 |              |                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |
 |              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |
+|              |                                | * ``nrf54lm20dk/nrf54lm20b/cpuapp``                                  |
 |              |                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |
 +--------------+--------------------------------+----------------------------------------------------------------------+
 | MCUboot      | overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                                       |
@@ -278,6 +280,7 @@ The configuration of the signature algorithm and the public key storage solution
 |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                     |                           | image (pure)              |
 |                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |                           |                           |
 |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |                           |                           |
+|                                | * ``nrf54lm20dk/nrf54lm20b/cpuapp``                                  |                           |                           |
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
 
 .. note::
