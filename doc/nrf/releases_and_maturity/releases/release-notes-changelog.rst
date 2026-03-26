@@ -397,12 +397,13 @@ nRF Desktop
 
   * The :option:`CONFIG_DESKTOP_BT` Kconfig option to no longer select the deprecated :kconfig:option:`CONFIG_BT_SIGNING` Kconfig option.
     The application relies on Bluetooth LE security mode 1 and security level of at least 2 to ensure data confidentiality through encryption.
-  * The memory map for RAM load configurations of nRF54LM20 target to increase KMU RAM section size to allow for secp384r1 key.
+  * The memory map for RAM load configurations of nRF54LM20 SoC to increase KMU RAM section size to allow for secp384r1 key.
   * The default log levels used by the legacy USB stack (:option:`CONFIG_DESKTOP_USB_STACK_LEGACY`) to enable error logs (:kconfig:option:`CONFIG_USB_DEVICE_LOG_LEVEL_ERR`, :kconfig:option:`CONFIG_USB_DRIVER_LOG_LEVEL_ERR`).
     Previously, the legacy USB stack logs were turned off.
     This change ensures visibility of runtime issues.
   * Application configurations that emit debug logs over UART to use the :option:`CONFIG_DESKTOP_LOG_UART` Kconfig option instead of explicitly configuring the logger.
     This is done to simplify the configurations.
+  * The memory map for the nRF54H20 SoC to include a secure storage partition and adjust the size of existing partitions.
 
 * Removed the application-specific Kconfig option (``CONFIG_DESKTOP_RTT``) that enabled RTT for nRF Desktop logging (:option:`CONFIG_DESKTOP_LOG`) or nRF Desktop shell (:option:`CONFIG_DESKTOP_SHELL`).
   nRF Desktop shell automatically enables RTT by default (:kconfig:option:`CONFIG_USE_SEGGER_RTT`).
