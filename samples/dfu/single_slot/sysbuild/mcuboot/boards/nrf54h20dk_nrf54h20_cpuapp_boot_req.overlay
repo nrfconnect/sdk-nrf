@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../../boards/nrf54h20dk_nrf54h20_cpuapp_boot_req.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+
+	aliases {
+		mcuboot-button0 = &button0;
+	};
+};
