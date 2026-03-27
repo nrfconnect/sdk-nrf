@@ -9,6 +9,16 @@ if(NOT DEFINED CONFIG_SOC_FAMILY_NORDIC_NRF)
   return()
 endif()
 
+# Kconfig cannot enforce this: select from a choice member ORs deps rather than ANDs.
+if(CONFIG_HOSTAP_CRYPTO_ALT_PSA AND CONFIG_WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_INT)
+  message(FATAL_ERROR
+    "Internal bignum WPA3 (CONFIG_WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_INT) "
+    "is incompatible with PSA backend (CONFIG_HOSTAP_CRYPTO_ALT_PSA). "
+    "Either switch to legacy backend: CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA=y, "
+    "or use the PSA WPA3 implementation: "
+    "CONFIG_WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_EXT=y")
+endif()
+
 zephyr_interface_library_named(hostap_crypto)
 
 set(HOSTAP_BASE ${ZEPHYR_HOSTAP_MODULE_DIR})

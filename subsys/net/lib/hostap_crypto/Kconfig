@@ -45,6 +45,7 @@ config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 
 config HOSTAP_CRYPTO_ALT_PSA
 	bool "PSA Crypto support for WiFi WPA2 using nRF security"
+	depends on !WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
 	select MBEDTLS
 	select NRF_SECURITY
 	select PSA_WANT_GENERATE_RANDOM
@@ -78,7 +79,8 @@ config HOSTAP_CRYPTO_ALT_PSA
 
 endchoice
 
-if WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+# Enterprise needs legacy mbedtls symbols only the legacy backend provides
+if WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE && HOSTAP_CRYPTO_ALT_LEGACY_PSA
 
 config HOSTAP_CRYPTO_ENTERPRISE
 	bool "Enterprise Crypto support for WiFi using nRF security"
