@@ -10,4 +10,7 @@ config APP_PROVIDE_PM_HOOKS
 	select HAS_PM
 	select HAS_POWEROFF
 
+config TEST_GPIOTE_LATENCY_LOWPOWER
+	bool "Set GPIOTE latency to low power"
+
 source "Kconfig.zephyr"
