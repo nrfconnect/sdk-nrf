@@ -246,6 +246,7 @@ Matter
 
   * The :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
   * Decreased Matter OTA image transfer time by around 15%.
+  * Enabled PSA Crypto support by default even when Wi-Fi is enabled.
 
 * Deprecated the secure persistent storage backend enabled with the :option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option.
 
@@ -274,6 +275,8 @@ Wi-Fi®
 
 * Added deprecated Wired Equivalent Privacy (WEP) support for backward compatibility with legacy networks.
   The support is enabled through the :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_WEP` Kconfig option and is not recommended for new deployments.
+
+* Enabled PSA Crypto support by default for personal security modes.
 
 Applications
 ============

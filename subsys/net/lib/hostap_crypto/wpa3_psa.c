@@ -30,6 +30,23 @@
 /* WPA3-SAE PSA implementation constants */
 #define WPA3_PSA_MAX_COMMIT_LEN	 1024
 #define WPA3_PSA_MAX_CONFIRM_LEN 1024
+/* SAE commit: wire = [group(2)][scalar(32)][element(64)]; PSA/Oberon = [scalar][element] */
+#define WPA3_PSA_SAE_COMMIT_WIRE_LEN 98
+#define WPA3_PSA_SAE_COMMIT_PSA_LEN  96
+#define WPA3_PSA_SAE_GROUP_19        19
+#define WPA3_PSA_MAX_PT_PASSWORD_MAP 8
+
+/* Password storage for PT-based operations */
+struct wpa3_psa_pt_password {
+	const struct sae_pt *pt;
+	u8 password[256];
+	size_t password_len;
+	u8 ssid[32];
+	size_t ssid_len;
+};
+
+static struct wpa3_psa_pt_password pt_password_map[WPA3_PSA_MAX_PT_PASSWORD_MAP];
+static int pt_password_map_count;
 
 /* Setup operation parameters */
 struct wpa3_psa_setup_params {
@@ -143,6 +160,8 @@ static int init_psa_op(struct sae_data *sae)
 	op->shared_key_len = 0;
 	op->pmk_len = 0;
 	op->group = 19; /* Default to group 19 (NIST P-256) */
+	/* H2E is determined by whether PT is used - if PT is used, H2E should be enabled */
+	/* This will be set correctly when sae_prepare_commit_pt is called */
 	op->h2e_enabled = false;
 	op->gdh_enabled = false;
 
@@ -194,7 +213,7 @@ int sae_set_group(struct sae_data *sae, int group)
 	if (group == 0) {
 		group = 19;
 	} else if (group != 19) {
-		wpa_printf(MSG_ERROR, "WPA3-PSA: Only group 19 (NIST P-256) is supported, got %d",
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: Only group 19 (NIST P-256) is supported, got %d",
 			   group);
 		return -1;
 	}
@@ -218,6 +237,7 @@ void sae_clear_temp_data(struct sae_data *sae)
 	op = get_psa_op(sae);
 	if (op) {
 		wpa3_psa_cleanup_operation(op);
+		os_free(op);
 		sae->tmp = NULL;
 	}
 }
@@ -345,19 +365,31 @@ int sae_write_commit(struct sae_data *sae, struct wpabuf *buf, const struct wpab
 		return -1;
 	}
 
-	/* PSA PAKE output should be exactly 98 bytes in SAE format: [group][scalar][element] */
-	if (op->shared_key_len != 98) {
-		wpa_printf(MSG_DEBUG, "WPA3-PSA: Commit data wrong size (%zu bytes, expected 98)",
-			   op->shared_key_len);
+	/* PSA outputs 96 bytes (scalar+element); wire format is 98 (group+scalar+element) */
+	size_t commit_wire_len;
+
+	if (op->shared_key_len == WPA3_PSA_SAE_COMMIT_PSA_LEN) {
+		commit_wire_len = WPA3_PSA_SAE_COMMIT_WIRE_LEN;
+		pos = wpabuf_put(buf, commit_wire_len);
+		/* Group ID in wire format is little-endian (matches hostap wpabuf_put_le16) */
+		pos[0] = WPA3_PSA_SAE_GROUP_19 & 0xff;
+		pos[1] = (WPA3_PSA_SAE_GROUP_19 >> 8) & 0xff;
+		os_memcpy(pos + 2, op->shared_key, WPA3_PSA_SAE_COMMIT_PSA_LEN);
+	} else if (op->shared_key_len == WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
+		commit_wire_len = op->shared_key_len;
+		pos = wpabuf_put(buf, commit_wire_len);
+		os_memcpy(pos, op->shared_key, op->shared_key_len);
+	} else {
+		wpa_printf(MSG_DEBUG,
+			   "WPA3-PSA: Commit data wrong size (%zu bytes, expected %d or %d)",
+			   op->shared_key_len, WPA3_PSA_SAE_COMMIT_PSA_LEN,
+			   WPA3_PSA_SAE_COMMIT_WIRE_LEN);
 		return -1;
 	}
 
-	/* Use PSA PAKE output directly as commit message */
-	pos = wpabuf_put(buf, op->shared_key_len);
-	os_memcpy(pos, op->shared_key, op->shared_key_len);
-
-	wpa_printf(MSG_DEBUG, "WPA3-PSA: Commit message written (%zu bytes)", wpabuf_len(buf));
-	wpa_hexdump(MSG_DEBUG, "WPA3-PSA: Full commit message", pos, op->shared_key_len);
+	/* Caller (sme) may prepend 4 bytes (transaction seq + status); total frame = 4 + 98 */
+	wpa_printf(MSG_DEBUG, "WPA3-PSA: Commit payload written (%zu bytes)", commit_wire_len);
+	wpa_hexdump(MSG_DEBUG, "WPA3-PSA: Commit payload", pos, commit_wire_len);
 	return 0;
 }
 
@@ -385,8 +417,15 @@ u16 sae_parse_commit(struct sae_data *sae, const u8 *data, size_t len, const u8 
 		return WLAN_STATUS_UNSPECIFIED_FAILURE;
 	}
 
-	/* SAE commit message should be exactly 98 bytes: [group][scalar][element] */
-	if (len != 98) {
+	/* Update H2E flag if peer indicates H2E support */
+	/* Note: This is informational - commit is already sent, so we can't change it */
+	if (h2e) {
+		op->h2e_enabled = true;
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: Peer indicates H2E support");
+	}
+
+	/* SAE commit on wire is 98 bytes: [group][scalar][element] */
+	if (len != WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
 		return WLAN_STATUS_UNSPECIFIED_FAILURE;
 	}
 
@@ -566,6 +605,10 @@ const char *sae_state_txt(enum sae_state state)
  * @pk: SAE PK data
  *
  * Returns: 0 on success, -1 on failure
+ *
+ * Note: For PSA implementation, the password must be set in op->password
+ * before calling this function. This is typically done by calling
+ * sae_prepare_commit first or by storing it when PT is derived.
  */
 int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u8 *addr1,
 			  const u8 *addr2, int *rejected_groups, const struct sae_pk *pk)
@@ -596,8 +639,56 @@ int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u
 	os_memcpy(op->own_addr, addr1, ETH_ALEN);
 	os_memcpy(op->peer_addr, addr2, ETH_ALEN);
 
+	/* Retrieve password and SSID from PT password map if not already set */
+	if (op->password_len == 0 || op->ssid_len == 0) {
+		int i;
+		bool found = false;
+
+		/* Look up password and SSID stored when PT was derived */
+		for (i = 0; i < pt_password_map_count; i++) {
+			if (pt_password_map[i].pt == pt && pt_password_map[i].password_len > 0) {
+				if (pt_password_map[i].password_len > sizeof(op->password)) {
+					wpa_printf(MSG_ERROR,
+						   "WPA3-PSA: Stored password too long (%zu > %zu)",
+						   pt_password_map[i].password_len,
+						   sizeof(op->password));
+					return -1;
+				}
+				os_memcpy(op->password, pt_password_map[i].password,
+					  pt_password_map[i].password_len);
+				op->password_len = pt_password_map[i].password_len;
+
+				/* Also retrieve SSID if available */
+				if (pt_password_map[i].ssid_len > 0 &&
+				    pt_password_map[i].ssid_len <= sizeof(op->ssid)) {
+					os_memcpy(op->ssid, pt_password_map[i].ssid,
+						  pt_password_map[i].ssid_len);
+					op->ssid_len = pt_password_map[i].ssid_len;
+				}
+
+				found = true;
+				wpa_printf(MSG_DEBUG,
+					   "WPA3-PSA: Retrieved password and SSID from PT map "
+					   "(pw_len=%zu, ssid_len=%zu)",
+					   op->password_len, op->ssid_len);
+				break;
+			}
+		}
+
+		if (!found) {
+			wpa_printf(MSG_ERROR,
+				   "WPA3-PSA: sae_prepare_commit_pt failed - password not found "
+				   "for PT. Password should have been stored when PT was derived.");
+			return -1;
+		}
+	}
+
 	/* Set up PSA operation for the full SAE flow with PT */
-	/* For PSA, we don't need to do anything special with PT */
+	/* When PT is used, H2E should be enabled (PT is derived using H2E KDF) */
+	op->h2e_enabled = true;
+	sae->h2e = 1; /* So SME accepts AP's WLAN_STATUS_SAE_HASH_TO_ELEMENT in commit */
+	wpa_printf(MSG_DEBUG, "WPA3-PSA: PT mode - enabling H2E");
+
 	struct wpa3_psa_setup_params params = {
 		.addr1 = addr1,
 		.addr2 = addr2,
@@ -606,7 +697,7 @@ int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u
 		.ssid = op->ssid,
 		.ssid_len = op->ssid_len,
 		.group = op->group,
-		.h2e = op->h2e_enabled,
+		.h2e = true, /* PT implies H2E */
 		.gdh = op->gdh_enabled,
 	};
 
@@ -718,8 +809,23 @@ struct sae_pt *sae_derive_pt(int *groups, const u8 *ssid, size_t ssid_len, const
  */
 void sae_deinit_pt(struct sae_pt *pt)
 {
+	int i;
+
 	if (!pt) {
 		return;
+	}
+
+	/* Clean up password and SSID from map */
+	for (i = 0; i < pt_password_map_count; i++) {
+		if (pt_password_map[i].pt == pt) {
+			os_memset(pt_password_map[i].password, 0,
+				  sizeof(pt_password_map[i].password));
+			os_memset(pt_password_map[i].ssid, 0,
+				  sizeof(pt_password_map[i].ssid));
+			pt_password_map[i].password_len = 0;
+			pt_password_map[i].ssid_len = 0;
+			pt_password_map[i].pt = NULL;
+		}
 	}
 
 	/* Free PT structure */
@@ -912,6 +1018,7 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 					       const char *identifier)
 {
 	struct sae_pt *pt;
+	int i;
 
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Derive PT - group %d (PSA only)", group);
 
@@ -939,6 +1046,32 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 
 	pt->group = group;
 
+	/* Store password and SSID for later use in sae_prepare_commit_pt */
+	if (password && password_len > 0 && password_len <= 256) {
+		/* Find empty slot or reuse existing for this PT */
+		for (i = 0; i < WPA3_PSA_MAX_PT_PASSWORD_MAP; i++) {
+			if (pt_password_map[i].pt == pt || pt_password_map[i].pt == NULL) {
+				pt_password_map[i].pt = pt;
+				os_memcpy(pt_password_map[i].password, password, password_len);
+				pt_password_map[i].password_len = password_len;
+				if (ssid && ssid_len > 0 && ssid_len <= 32) {
+					os_memcpy(pt_password_map[i].ssid, ssid, ssid_len);
+					pt_password_map[i].ssid_len = ssid_len;
+				} else {
+					pt_password_map[i].ssid_len = 0;
+				}
+				if (i >= pt_password_map_count) {
+					pt_password_map_count = i + 1;
+				}
+				wpa_printf(MSG_DEBUG,
+					   "WPA3-PSA: Stored password and SSID for PT (pw_len=%zu, "
+					   "ssid_len=%zu)",
+					   password_len, pt_password_map[i].ssid_len);
+				break;
+			}
+		}
+	}
+
 	/* PSA PAKE handles PWE derivation internally, no need for EC/ECC structures */
 	pt->ec = NULL;
 	pt->ecc_pt = NULL;
@@ -961,7 +1094,6 @@ static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
 {
 	psa_status_t status;
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-	psa_algorithm_t alg;
 
 	if (!op) {
 		wpa_printf(MSG_ERROR, "WPA3-PSA: wpa3_psa_setup_operation failed - op is NULL");
@@ -992,12 +1124,15 @@ static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
 	/* Set up hash algorithm */
 	op->hash_alg = PSA_ALG_SHA_256;
 
-	/* Determine WPA3-SAE algorithm based on parameters */
+	/* Determine WPA3-SAE PAKE algorithm based on parameters */
+	/* Note: H2E is a PWE derivation method, not a PAKE algorithm variant */
+	/* For PAKE, we use FIXED (HnP) or GDH regardless of H2E */
+	psa_algorithm_t pake_alg;
 	if (params->gdh) {
-		alg = PSA_ALG_WPA3_SAE_GDH(op->hash_alg);
+		pake_alg = PSA_ALG_WPA3_SAE_GDH(op->hash_alg);
 		wpa_printf(MSG_DEBUG, "WPA3-PSA: Using GDH algorithm");
 	} else {
-		alg = PSA_ALG_WPA3_SAE_FIXED(op->hash_alg);
+		pake_alg = PSA_ALG_WPA3_SAE_FIXED(op->hash_alg);
 		wpa_printf(MSG_DEBUG, "WPA3-PSA: Using HnP (fixed) algorithm");
 	}
 
@@ -1005,9 +1140,9 @@ static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Setting up cipher suite");
 	op->cipher_suite = psa_pake_cipher_suite_init();
 
-	/* Set algorithm */
-	psa_pake_cs_set_algorithm(&op->cipher_suite, alg);
-	wpa_printf(MSG_DEBUG, "WPA3-PSA: Algorithm set to 0x%08x", alg);
+	/* Set PAKE algorithm */
+	psa_pake_cs_set_algorithm(&op->cipher_suite, pake_alg);
+	wpa_printf(MSG_DEBUG, "WPA3-PSA: PAKE algorithm set to 0x%08x", pake_alg);
 
 	/* Set primitive */
 	psa_pake_primitive_t primitive =
@@ -1024,36 +1159,138 @@ static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
 
 	/* Set up password key */
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Setting up password key");
-	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT);
+	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_DERIVE);
 	psa_set_key_lifetime(&attributes, PSA_KEY_LIFETIME_VOLATILE);
 
-	/* Use correct key type based on H2E */
-	if (params->h2e) {
-		psa_set_key_type(&attributes, PSA_KEY_TYPE_PASSWORD);
-		wpa_printf(MSG_DEBUG, "WPA3-PSA: Using PSA_KEY_TYPE_PASSWORD for H2E");
-	} else {
-		psa_set_key_type(&attributes, PSA_KEY_TYPE_PASSWORD);
-		wpa_printf(MSG_DEBUG, "WPA3-PSA: Using PSA_KEY_TYPE_PASSWORD for basic SAE");
+	/* Validate password before processing */
+	if (!params->password || params->password_len == 0) {
+		wpa_printf(MSG_ERROR,
+			   "WPA3-PSA: wpa3_psa_setup_operation failed - invalid password (len=%zu)",
+			   params->password_len);
+		return -1;
 	}
 
-	psa_set_key_bits(&attributes, params->password_len * 8);
+	/* For H2E, derive PT from password and use PT as key */
+	/* For HnP, use raw password as key */
+	if (params->h2e) {
+		psa_key_derivation_operation_t kdf = PSA_KEY_DERIVATION_OPERATION_INIT;
+		psa_key_attributes_t pw_attr = PSA_KEY_ATTRIBUTES_INIT;
+		psa_key_attributes_t pt_attr = PSA_KEY_ATTRIBUTES_INIT;
+		psa_key_id_t pw_key = PSA_KEY_ID_NULL;
 
-	/* Set key algorithm for WPA3-SAE */
-	psa_set_key_algorithm(&attributes, alg);
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: H2E mode - deriving PT from password");
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: Using hash algorithm: 0x%08x (SHA-256)",
+			   op->hash_alg);
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: H2E algorithm: 0x%08x",
+			   PSA_ALG_WPA3_SAE_H2E(op->hash_alg));
 
-	/* Import password as key */
-	status = psa_import_key(&attributes, params->password, params->password_len,
-				&op->password_key);
-	if (status != PSA_SUCCESS) {
-		wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to import password key: %d", status);
-		return -1;
+		/* Set up password key for H2E KDF */
+		psa_set_key_usage_flags(&pw_attr, PSA_KEY_USAGE_DERIVE);
+		psa_set_key_lifetime(&pw_attr, PSA_KEY_LIFETIME_VOLATILE);
+		psa_set_key_type(&pw_attr, PSA_KEY_TYPE_PASSWORD);
+		psa_set_key_algorithm(&pw_attr, PSA_ALG_WPA3_SAE_H2E(op->hash_alg));
+
+		status = psa_import_key(&pw_attr, params->password, params->password_len, &pw_key);
+		if (status != PSA_SUCCESS) {
+			wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to import password for H2E: %d",
+				   status);
+			return -1;
+		}
+
+		/* Derive PT using H2E KDF */
+		status = psa_key_derivation_setup(&kdf, PSA_ALG_WPA3_SAE_H2E(op->hash_alg));
+		if (status != PSA_SUCCESS) {
+			wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to setup H2E KDF: %d", status);
+			psa_destroy_key(pw_key);
+			return -1;
+		}
+
+		/* Set SSID as salt - SSID is required for H2E KDF */
+		if (!params->ssid || params->ssid_len == 0) {
+			wpa_printf(MSG_ERROR,
+				   "WPA3-PSA: H2E requires SSID but it's not set (len=%zu)",
+				   params->ssid_len);
+			psa_key_derivation_abort(&kdf);
+			psa_destroy_key(pw_key);
+			return -1;
+		}
+
+		status = psa_key_derivation_input_bytes(&kdf, PSA_KEY_DERIVATION_INPUT_SALT,
+							params->ssid, params->ssid_len);
+		if (status != PSA_SUCCESS) {
+			wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to set SSID salt: %d", status);
+			psa_key_derivation_abort(&kdf);
+			psa_destroy_key(pw_key);
+			return -1;
+		}
+
+		/* Input password */
+		status = psa_key_derivation_input_key(&kdf, PSA_KEY_DERIVATION_INPUT_PASSWORD,
+						      pw_key);
+		if (status != PSA_SUCCESS) {
+			wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to input password: %d", status);
+			psa_key_derivation_abort(&kdf);
+			psa_destroy_key(pw_key);
+			return -1;
+		}
+
+		psa_destroy_key(pw_key);
+
+		/* PT for P-256: 32 bits from H2E KDF, Oberon derive_key expands to 64-byte PT.
+		 * Set algorithm so psa_pake_setup() policy check permits this key for PAKE.
+		 */
+		psa_set_key_type(&pt_attr, PSA_KEY_TYPE_WPA3_SAE_ECC(PSA_ECC_FAMILY_SECP_R1));
+		psa_set_key_bits(&pt_attr, 256);
+		psa_set_key_usage_flags(&pt_attr, PSA_KEY_USAGE_DERIVE);
+		psa_set_key_algorithm(&pt_attr, pake_alg);
+		psa_set_key_lifetime(&pt_attr, PSA_KEY_LIFETIME_VOLATILE);
+
+		status = psa_key_derivation_output_key(&pt_attr, &kdf, &op->password_key);
+		psa_key_derivation_abort(&kdf);
+		if (status != PSA_SUCCESS) {
+			wpa_printf(MSG_ERROR,
+				   "WPA3-PSA: Failed to derive PT key: %d (KDF alg: 0x%08x)",
+				   (int)status, PSA_ALG_WPA3_SAE_H2E(op->hash_alg));
+			return -1;
+		}
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: PT key derived successfully for H2E");
+	} else {
+		/* For HnP, use raw password */
+		psa_set_key_type(&attributes, PSA_KEY_TYPE_PASSWORD);
+		psa_set_key_algorithm(&attributes, pake_alg);
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: Using PSA_KEY_TYPE_PASSWORD for HnP");
+
+		/* Note: key_bits is not set for password keys - PSA infers it from data length */
+
+		status = psa_import_key(&attributes, params->password, params->password_len,
+					&op->password_key);
+		if (status != PSA_SUCCESS) {
+			wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to import password key: %d",
+				   status);
+			return -1;
+		}
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: Password key imported successfully for HnP");
 	}
 
 	/* Set up PAKE operation */
 
 	status = psa_pake_setup(&op->pake_op, op->password_key, &op->cipher_suite);
 	if (status != PSA_SUCCESS) {
-		wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to setup PAKE: %d", status);
+		int s = (int)status;
+
+		wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to setup PAKE: %d (%s)", s,
+			   s == (int)PSA_ERROR_NOT_SUPPORTED ? "PSA_ERROR_NOT_SUPPORTED" :
+			   s == (int)PSA_ERROR_NOT_PERMITTED ? "PSA_ERROR_NOT_PERMITTED" :
+			   "see PSA status");
+		if (s == (int)PSA_ERROR_NOT_SUPPORTED) {
+			wpa_printf(MSG_ERROR,
+				   "WPA3-PSA: Crypto backend does not support PAKE; ensure "
+				   "CONFIG_PSA_NEED_OBERON_WPA3_SAE and WPA3-PSA are enabled.");
+		}
+		if (s == (int)PSA_ERROR_NOT_PERMITTED) {
+			wpa_printf(MSG_ERROR,
+				   "WPA3-PSA: Key policy does not permit PAKE (set key algorithm).");
+		}
 		psa_destroy_key(op->password_key);
 		return -1;
 	}
@@ -1169,16 +1406,18 @@ static int wpa3_psa_process_commit(struct wpa3_psa_operation *op, const u8 *comm
 
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Processing commit data of %zu bytes", commit_len);
 
-	/* DEBUG: Parse and dump commit message contents */
-	wpa_printf(MSG_DEBUG, "WPA3-PSA: Processing commit data of %zu bytes", commit_len);
-	if (commit_len != 98) {
-		wpa_printf(MSG_DEBUG, "WPA3-PSA: Commit data wrong size (%zu bytes, expected 98)",
-			   commit_len);
+	/* Wire format is 98 bytes [group][scalar][element]; PSA expects 96 [scalar][element] */
+	if (commit_len == WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
+		commit_data += 2;
+		commit_len = WPA3_PSA_SAE_COMMIT_PSA_LEN;
+	} else if (commit_len != WPA3_PSA_SAE_COMMIT_PSA_LEN) {
+		wpa_printf(MSG_DEBUG,
+			   "WPA3-PSA: Commit data wrong size (%zu bytes, expected %d or %d)",
+			   commit_len, WPA3_PSA_SAE_COMMIT_PSA_LEN, WPA3_PSA_SAE_COMMIT_WIRE_LEN);
 		return -1;
 	}
-	wpa_hexdump(MSG_DEBUG, "WPA3-PSA: Full commit data", commit_data, commit_len);
+	wpa_hexdump(MSG_DEBUG, "WPA3-PSA: Commit payload for PSA", commit_data, commit_len);
 
-	/* Store peer commit data for later context calculation */
 	if (commit_len > sizeof(op->peer_commit)) {
 		wpa_printf(MSG_ERROR,
 			   "WPA3-PSA: wpa3_psa_process_commit failed - commit data too large (%zu "
@@ -1190,7 +1429,7 @@ static int wpa3_psa_process_commit(struct wpa3_psa_operation *op, const u8 *comm
 	os_memcpy(op->peer_commit, commit_data, commit_len);
 	op->peer_commit_len = commit_len;
 
-	/* Input the peer's commit message to PSA PAKE */
+	/* Input the peer's commit message to PSA PAKE (96 bytes: scalar + element) */
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Calling psa_pake_input for commit step");
 	status = psa_pake_input(&op->pake_op, PSA_PAKE_STEP_COMMIT, commit_data, commit_len);
 	if (status != PSA_SUCCESS) {
