@@ -3,3 +3,28 @@
 
 config BOARD_NRF54LM20DONGLE
 	select EXPERIMENTAL
+
+if BOARD_NRF54LM20DONGLE_NRF54LM20B_CPUAPP || BOARD_NRF54LM20DONGLE_NRF54LM20B_CPUAPP_NS
+
+config NRF54LM20DONGLE_MCUMGR_RESET
+	bool "Reset using MCUmgr command over USB CDC ACM"
+	default y
+	imply CDC_ACM_SERIAL_MULTIPLE_INSTANCES if CDC_ACM_SERIAL_INITIALIZE_AT_BOOT
+	select BASE64
+	select CRC
+	select MCUMGR
+	select MCUMGR_GRP_OS
+	select MCUMGR_GRP_OS_RESET_BOOT_MODE
+	select MCUMGR_TRANSPORT_UART
+	select NET_BUF
+	select RETAINED_MEM
+	select RETENTION
+	select RETENTION_BOOT_MODE
+	select ZCBOR
+	help
+	  Enables the support for MCUmgr reset command sent over a dedicated
+	  USB CDC ACM instance with label "nRF54LM20 Dongle MCUmgr".
+	  When the reset command is sent with the boot mode 1, the device is
+	  reset to the bootloader that can accept a firmware update.
+
+endif # BOARD_NRF54LM20DONGLE_NRF54LM20B_CPUAPP || BOARD_NRF54LM20DONGLE_NRF54LM20B_CPUAPP_NS
