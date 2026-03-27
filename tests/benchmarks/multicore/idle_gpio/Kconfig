@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config GPIOTE_LATENCY_LOWPOWER
+	bool "Set GPIOTE latency to low power"
+
+source "Kconfig.zephyr"

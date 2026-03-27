@@ -8,6 +8,9 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/pm/pm.h>
+#include <hal/nrf_gpiote.h>
+#include <nrfx_gpiote.h>
+#include <zephyr/drivers/gpio/gpio_nrf.h>
 
 
 LOG_MODULE_REGISTER(idle_gpio);
@@ -83,6 +86,17 @@ int main(void)
 		LOG_ERR("Could not configure sw GPIO (%d)", rc);
 		return 0;
 	}
+
+#if IS_ENABLED(CONFIG_GPIOTE_LATENCY_LOWPOWER)
+	printk("GPIOTE latency low power test\n");
+	nrfx_gpiote_t *gpiote = (nrfx_gpiote_t *)gpio_nrf_gpiote_by_port_get(sw.port);
+	printk("GPIOTE instance p_reg: %p", (void *)gpiote->p_reg);
+	nrf_gpiote_latency_t latency = nrf_gpiote_latency_get(NRF_GPIOTE130);
+	printk("Current GPIOTE latency: %d, expected: %d", latency, NRF_GPIOTE_LATENCY_LOWPOWER);
+	nrf_gpiote_latency_set(NRF_GPIOTE130, NRF_GPIOTE_LATENCY_LOWPOWER);
+	latency = nrf_gpiote_latency_get(NRF_GPIOTE130);
+	printk("After setting latency: %d, expected: %d", latency, NRF_GPIOTE_LATENCY_LOWPOWER);
+#endif
 
 	rc = gpio_pin_interrupt_configure(sw.port, sw.pin, GPIO_INT_LEVEL_ACTIVE);
 	if (rc < 0) {
