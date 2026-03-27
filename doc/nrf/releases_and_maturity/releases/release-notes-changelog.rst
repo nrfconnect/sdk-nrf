@@ -97,6 +97,8 @@ Developing with nRF54H Series
   * The :ref:`ug_nrf54h20_mcuboot_requests` page that describes bootloader requests for the nRF54H20 SoC.
     It explains how you can pass information from the application to the bootloader.
 
+* Fixed an issue affecting the MCUboot PERIPHCONF load feature where, for ``CONFIG_XIP=n``, PERIPHCONF entry offsets could be calculated incorrectly.
+
 Developing with nRF53 Series
 ============================
 
