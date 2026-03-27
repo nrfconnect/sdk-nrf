@@ -7,6 +7,7 @@ common:
     - ci_samples_zephyr_drivers_spi_flash
   harness: console
   harness_config:
+    fixture: external_flash
     type: multi_line
     ordered: true
     regex:
@@ -20,7 +21,8 @@ tests:
     filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,mspi-nor")
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_sqspi.overlay"
+      - FILE_SUFFIX=sqspi
