@@ -45,6 +45,7 @@ config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 
 config HOSTAP_CRYPTO_ALT_PSA
 	bool "PSA Crypto support for WiFi WPA2 using nRF security"
+	depends on !WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
 	select MBEDTLS
 	select NRF_SECURITY
 	select PSA_WANT_GENERATE_RANDOM
@@ -77,6 +78,11 @@ config HOSTAP_CRYPTO_ALT_PSA
 	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
 
 endchoice
+
+# Internal bignum WPA3 is incompatible with the PSA alt backend; defaults use
+# EXT when HOSTAP_CRYPTO_WPA3_PSA is enabled (see Kconfig.defconfig).
+config WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_INT
+	depends on !HOSTAP_CRYPTO_ALT_PSA
 
 if WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
 
