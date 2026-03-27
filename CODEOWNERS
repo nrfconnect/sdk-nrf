@@ -45,6 +45,8 @@
 /applications/matter_weather_station/*.rst @nrfconnect/ncs-matter-doc
 /applications/nrf5340_audio/**/*.rst      @nrfconnect/ncs-audio-doc
 /applications/nrf_desktop/**/*.rst        @nrfconnect/ncs-si-xcake-doc
+/applications/installer/                  @nrfconnect/ncs-eris
+/applications/installer/**/*.rst          @nrfconnect/ncs-eris-doc
 
 # Boards
 /boards/nordic/nrf54l*/                   @nrfconnect/ncs-co-boards @kl-cruz

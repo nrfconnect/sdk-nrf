@@ -356,18 +356,19 @@ This mode enables a project configuration that includes MCUboot instance (option
 The benefit of this configuration is having a dedicated application for loading firmware updates, for example, over Bluetooth®.
 This allows the main application to be larger in comparison to any symmetric size dual-bank mode update, which helps on devices with limited flash or RAM.
 
-To use this mode, you must create a static partition file for the application that designates the addresses and sizes of the main image and firmware loader applications.
-Ensure the firmware loader partition is named ``firmware_loader``.
-This partition must be located identically as ``mcuboot_secondary_app`` partition, starting after the image's header offset within ``mcuboot_secondary`` partition.
+If your application uses a custom memory layout (a very common scenario), you must include it in the overlay file for the firmware loader image.
+For reference, see :file:`nrf/samples/dfu/single_slot/sysbuild/ble_mcumgr/boards/nrf54l15dk_nrf54l15_cpuapp.overlay`.
+For devices with a separate radio core, the firmware loader solution has a different architecture.
+For details, see :ref:`ug_bootloader_firmware_loader_mode_nrf54h20`.
 
 The project must also configure MCUboot to operate in firmware loader mode and specify a firmware loader image in the :file:`sysbuild.conf` file.
-For example to select ``smp_svr``, set the following options:
+For example, to select the :ref:`fw_loader_ble_mcumgr` firmware loader image, set the following options:
 
 .. code-block:: cfg
 
     SB_CONFIG_BOOTLOADER_MCUBOOT=y
     SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER=y
-    SB_CONFIG_FIRMWARE_LOADER_IMAGE_SMP_SVR=y
+    SB_CONFIG_FIRMWARE_LOADER_IMAGE_BLE_MCUMGR=y
 
 At least one mode must be set in MCUboot for entering the firmware loader application, supported entrance methods include:
 
@@ -384,3 +385,76 @@ For this example, the use of a GPIO when booting will be used. Create a ``sysbui
 
 The project can now be built and flashed and will boot the firmware loader application when the button is held upon device reboot, or the main application will be booted when the device is reset and the button is not held down.
 See :ref:`sysbuild_images_adding_custom_firmware_loader_images` for details on how to add custom firmware loader images using sysbuild.
+
+.. _ug_bootloader_firmware_loader_mode_nrf54h20:
+
+Firmware loader mode on the nRF54H20 SoC
+========================================
+
+On the  nRF54H20 SoC, the firmware loader mode uses the merged slot update strategy.
+This means that the application and radio images are merged into a single image, for both the main application and the firmware loader application.
+MCUboot treats this merged package as a single image.
+For details on the merged slot update strategy, see :ref:`ug_nrf54h20_partitioning_merged`.
+
+The usage of the merged slot update strategy requires the chosen ``zephyr,code-partition`` devicetree node for the firmware loader image to be explicitly set to the ``cpuapp_slot1_partition`` node.
+For reference, see :file:`nrf/samples/dfu/single_slot/sysbuild/ble_mcumgr/boards/nrf54h20dk_nrf54h20_cpuapp.overlay`.
+
+.. _ug_bootloader_firmware_loader_update:
+
+Update of the firmware loader image
+===================================
+
+.. caution::
+   Failures in firmware loader updates make the device unrecoverable without physical access.
+   Make sure to test the firmware loader update process thoroughly before deploying the firmware to a production environment.
+
+To build a firmware loader image prepared for update, the ``SB_CONFIG_FIRMWARE_LOADER_UPDATE`` Kconfig option must be set to ``y``.
+This causes the build system to generate a special installer application, linked to the same slot as the main application.  
+The signed firmware loader image is appended at the end of the installer image, creating a single binary blob ``fw_loader_installer.merged.bin``.
+This blob is then signed with the same key as the main application, creating the ``fw_loader_installer.signed.bin`` file that can be uploaded to the device.
+In the following chapters, the MCUBoot image contained in the ``fw_loader_installer.signed.bin`` is referred to as the installer package.
+When building, a ``dfu_fw_loader_installer.zip`` file is generated, which can be used to update the firmware loader image via DFU like a standard application update.
+
+The following are the DFU steps for updating the firmware loader image.
+
+#. Replacement of existing application: The firmware update process begins with replacing the existing application with the installer package via DFU.
+#. Validation: Once the new DFU image is transferred, mcuboot validates the installer package.
+#. Installation: After successful validation, the installer is activated.
+   The installer carries out the necessary actions to copy the firmware loader to its designated location in the device's memory.
+   Parameters such as the number of bytes to copy are determined based on the MCUBoot header and TLV information of the new firmware loader image (included in the installer package).
+#. Request firmware loader entrance: After the copy is completed, the installer requests firmware loader entrance by the configured method.
+#. Entry into DFU mode: MCUBoot validates the newly installed firmware loader image and starts it.
+   The device enters DFU mode, ready to receive additional images.
+
+After a successful firmware loader update, the main application must be updated again, as it was previously replaced by the installer image.
+
+The following firmware loader entrance methods are currently supported:
+
+* Installer self-invalidation by erasing the start of the installer package, enabled by :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_SELF_INVALIDATE_BY_ERASE`.
+
+  .. note::
+     This strategy cannot be used if MCUBoot locks the flash area containing the installer.
+
+* Using a boot mode, enabled by :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_MODE`.
+* Using a boot request, enabled by :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_REQ`.
+* Installer does not perform any actions to request firmware loader entrance, enabled by :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_METHOD_NONE`.
+
+  This strategy can be used if firmware loader entrance is requested by other means, for example, by a GPIO or a reset pin.
+
+Depending on the board and other configuration, additional steps, such as adding DTS overlays and MCUBoot configuration, may be required.
+
+.. caution::
+   Do not ignore build warnings about inconsistent configuration.
+   When using the :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_REQ` method, the :kconfig:option:`CONFIG_NRF_BOOT_FIRMWARE_LOADER_BOOT_REQ` Kconfig option must be set to ``y`` in the MCUBoot image.
+   Similarly, when using the :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_MODE` method, the :kconfig:option:`CONFIG_BOOT_FIRMWARE_LOADER_BOOT_MODE` Kconfig option must be set to ``y`` in the MCUBoot image.
+   Failure to ensure this results in a boot loop.
+
+Additionally, the installer can be configured to reboot the device after requesting firmware loader entrance by setting the :kconfig:option:`CONFIG_INSTALLER_REBOOT` Kconfig option to ``y``.
+This is the default behavior for the :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_SELF_INVALIDATE_BY_ERASE`, :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_REQ`, and :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_MODE` methods.
+This behavior is not supported for the :kconfig:option:`CONFIG_INSTALLER_FW_LOADER_ENTRANCE_METHOD_NONE` strategy, as it may cause the installer to enter a boot loop.
+
+For examples of how to configure the firmware loader update, refer to the :ref:`single_slot_sample` sample.
+
+The basic installer is provided in the |NCS| as :ref:`installer`, enabled by :kconfig:option:`SB_CONFIG_FIRMWARE_LOADER_INSTALLER`.
+This is the default selection for the ``FIRMWARE_LOADER_INSTALLER_APPLICATION`` Kconfig choice.
+You can use a custom installer by extending the ``FIRMWARE_LOADER_INSTALLER_APPLICATION`` Kconfig choice, as well as the :kconfig:option:`SB_CONFIG_FIRMWARE_LOADER_INSTALLER_APPLICATION_IMAGE_NAME` and :kconfig:option:`SB_CONFIG_FIRMWARE_LOADER_INSTALLER_APPLICATION_IMAGE_PATH` options.

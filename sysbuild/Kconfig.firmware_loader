@@ -38,3 +38,31 @@ config FIRMWARE_LOADER_IMAGE_NAME
 config FIRMWARE_LOADER_IMAGE_PATH
 	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/dfu/fw_loader/ble_mcumgr" if FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
 	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/dfu/fw_loader/usb_mcumgr" if FIRMWARE_LOADER_IMAGE_USB_MCUMGR
+
+config FIRMWARE_LOADER_UPDATE
+	bool "Firmware loader update"
+	depends on MCUBOOT_MODE_FIRMWARE_UPDATER && !FIRMWARE_LOADER_IMAGE_NONE
+	help
+	  Firmware loader update.
+	  This will allow to update the firmware loader image with the help of the installer image.
+
+if FIRMWARE_LOADER_UPDATE
+
+choice FIRMWARE_LOADER_INSTALLER_APPLICATION
+	prompt "Firmware loader installer application image"
+	default FIRMWARE_LOADER_INSTALLER
+
+config FIRMWARE_LOADER_INSTALLER
+	bool "Basic fw loader installer"
+
+endchoice
+
+config FIRMWARE_LOADER_INSTALLER_APPLICATION_IMAGE_NAME
+	string
+	default "installer" if FIRMWARE_LOADER_INSTALLER
+
+config FIRMWARE_LOADER_INSTALLER_APPLICATION_IMAGE_PATH
+	string
+	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/installer" if FIRMWARE_LOADER_INSTALLER
+
+endif

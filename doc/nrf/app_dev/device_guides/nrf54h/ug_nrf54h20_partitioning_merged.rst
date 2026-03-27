@@ -8,7 +8,7 @@ Configuring nRF54H20 applications for updates using a merged slot
    :depth: 2
 
 This guide describes the merged slot update strategy.
-It provides guidelines for partitioning memory and lists the steps required to configure an existing application for the nRF54H20 SoC to use a merged slot for updates in one of the Direct XIP modes.
+It provides guidelines for memory partitioning and lists the steps required to configure an existing application for the nRF54H20 SoC to use a merged slot for updates in one of the Direct XIP modes or in firmware loader mode.
 
 It is organized into the following sections:
 
