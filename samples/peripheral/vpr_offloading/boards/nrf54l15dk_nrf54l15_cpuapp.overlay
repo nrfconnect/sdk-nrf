@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* 256k RAM layout:
+ *  - 189k APP RAM
+ *  - 2k APP-FLPR IPC communication
+ *  - 64k FLPR Code
+ *  - 1k FLPR Hibernation space
+ */
+
+/ {
+	soc {
+		reserved-memory {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			sram_rx: memory@2002f400 {
+				reg = <0x2002f400 DT_SIZE_K(1)>;
+			};
+
+			sram_tx: memory@2002f800 {
+				reg = <0x2002f800 DT_SIZE_K(1)>;
+			};
+		};
+
+		cpuflpr_sram_code_data: memory@2002fc00 {
+			compatible = "mmio-sram";
+			reg = <0x2002fc00 DT_SIZE_K(64)>;
+			ranges = <0x0 0x2002fc00 DT_SIZE_K(64)>;
+			status = "reserved";
+			#address-cells = <1>;
+			#size-cells = <1>;
+		};
+	};
+
+	ipc {
+		ipc0: ipc0 {
+			compatible = "zephyr,ipc-icbmsg";
+			tx-blocks = <16>;
+			rx-blocks = <16>;
+			dcache-alignment = <32>;
+			tx-region = <&sram_tx>;
+			rx-region = <&sram_rx>;
+			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 21>;
+			mbox-names = "rx", "tx";
+			status = "okay";
+		};
+	};
+
+	aliases {
+		remote-temp-monitor-ipc = &ipc0;
+	};
+};
+
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(189)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(189)>;
+};
+
+&rram_controller {
+	cpuflpr_rram: rram@165000 {
+		compatible = "soc-nv-flash";
+		reg = <0x165000 DT_SIZE_K(96)>;
+		ranges = <0x0 0x165000 DT_SIZE_K(96)>;
+		erase-block-size = <0x1000>;
+		write-block-size = <0x10>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+	};
+};
+
+&cpuflpr_vpr {
+	status = "okay";
+	execution-memory = <&cpuflpr_sram_code_data>;
+	source-memory = <&cpuflpr_rram>;
+};
+
+&cpuapp_vevif_rx {
+	status = "okay";
+};
+
+&cpuapp_vevif_tx {
+	status = "okay";
+};
+
+&pinctrl {
+	spi22_default_alt: spi22_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 8)>,
+				<NRF_PSEL(SPIM_MISO, 1, 10)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 9)>;
+		};
+	};
+
+	spi22_sleep_alt: spi22_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 8)>,
+				<NRF_PSEL(SPIM_MISO, 1, 10)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 9)>;
+			low-power-enable;
+		};
+	};
+};
+
+app_spi: &spi22 {
+	status = "okay";
+	pinctrl-0 = <&spi22_default_alt>;
+	pinctrl-1 = <&spi22_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	cs-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
+};
