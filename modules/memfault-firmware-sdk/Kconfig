@@ -118,6 +118,7 @@ endchoice
 config MEMFAULT_NCS_FW_VERSION_PREFIX
 	string "Firmware version prefix"
 	depends on MEMFAULT_NCS_FW_VERSION_AUTO
+	default "$(APP_VERSION_STRING)+" if "$(VERSION_MAJOR)" != ""
 	default "0.0.1+"
 	help
 	  Prefix to use in front of automatically generated build version string.
