@@ -79,13 +79,6 @@ config NRF_WIFI_FW_PATCH_DFU
 	  Ensure that the required MCUBoot partitions are properly configured
 	  before enabling this option. Refer to the documentation for detailed
 	  instructions on partition configuration and the DFU process.
-
-# To work with nRF security always use PSA (even for non-TFM builds)
-if NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
-choice FLASH_AREA_CHECK_INTEGRITY_BACKEND
-	default FLASH_AREA_CHECK_INTEGRITY_PSA
-endchoice
-endif
 endif
 
 config CUSTOM_LINKER_SCRIPT
