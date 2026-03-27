@@ -694,6 +694,8 @@ The snippet is based on the :file:`pm_static.yml` file from the :ref:`matter_loc
 In this example, a ``factory_data`` partition has been placed between the application partition (``mcuboot_primary_app``) and the settings storage.
 Its size has been set to one flash page (4 kB).
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 Use Partition Manager's report tool to ensure you created the factory data partition correctly.
 Navigate to the example directory and run the following command:
 
