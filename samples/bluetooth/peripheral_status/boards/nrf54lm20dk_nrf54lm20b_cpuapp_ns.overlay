@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_sram {
+	reg = <0x20000000 0x7fe40>;
+	ranges = <0x0 0x20000000 0x7fe40>;
+};
