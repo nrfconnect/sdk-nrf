@@ -7,4 +7,19 @@
 config PARTITION_MANAGER
 	default n if SOC_SERIES_NRF52 || SOC_NRF54L15 || SOC_NRF54LM20A || SOC_NRF54LV10A
 
+if SOC_NRF54LS05B
+# LS05 has limited HW resources - adjust compression parameters accordingly
+config NCS_MCUBOOT_LZMA_MAX_DICT_SIZE
+	default 4096
+
+config NCS_MCUBOOT_LZMA_LC
+	default 0
+
+config NCS_MCUBOOT_LZMA_LP
+	default 0
+
+config NCS_MCUBOOT_LZMA_MAX_LC_LP
+	default 0
+endif # SOC_NRF54LS05B
+
 source "share/sysbuild/Kconfig"
