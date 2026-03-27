@@ -23,4 +23,10 @@ size_t log_rpc_history_get_usage_size(void);
 
 size_t log_rpc_history_get_max_size(void);
 
+/**
+ * Store checksum of the RAM retention pbuf for validation after warm reset.
+ * Call from fatal/panic path.
+ */
+void log_rpc_history_save_checksum(void);
+
 #endif /* LOG_RPC_HISTORY_H_ */
