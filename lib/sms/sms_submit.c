@@ -376,7 +376,8 @@ static int sms_submit_encode(
  * This function should not be used for short texts that don't need concatenation
  * because this will add concatenation User-Data-Header.
  *
- * @param[in] text Text to be sent.
+ * @param[in] text Text to be sent (not necessarily null-terminated).
+ * @param[in] text_len Length of @p text in bytes.
  * @param[in] encoded_number Number in semi-octet representation for SMS-SUBMIT message.
  * @param[in] encoded_number_size Number of characters in number (encoded_number).
  * @param[in] encoded_number_size_octets Number of octets in number (encoded_number).
@@ -388,6 +389,7 @@ static int sms_submit_encode(
  */
 static int sms_submit_concat(
 	const char *text,
+	uint16_t text_len,
 	uint8_t *encoded_number,
 	uint8_t encoded_number_size,
 	uint8_t encoded_number_size_octets,
@@ -404,7 +406,7 @@ static int sms_submit_concat(
 	uint8_t concat_seq_number = 0;
 
 	uint8_t size;
-	uint16_t text_size = strlen(text);
+	uint16_t text_size = text_len;
 	uint8_t encoded_data_size_octets = 0;
 	uint8_t encoded_data_size_septets = 0;
 
@@ -418,7 +420,8 @@ static int sms_submit_concat(
 	while (text_encoded_size < text_size) {
 		concat_seq_number++;
 
-		text_part_size = MIN(strlen(text_index), SMS_MAX_CONCAT_PAYLOAD_LEN_CHARS);
+		text_part_size = MIN(text_size - (uint16_t)(text_index - text),
+				     SMS_MAX_CONCAT_PAYLOAD_LEN_CHARS);
 		memcpy(user_data + SMS_UDH_CONCAT_SIZE_SEPTETS, text_index, text_part_size);
 
 		/* User Data Header is included into encoded buffer because the actual data/text
@@ -543,12 +546,12 @@ int sms_submit_send(
 		LOG_DBG("Entire message doesn't fit into one SMS message. Using concatenated SMS.");
 
 		/* Encode messages to get number of message parts required to send given text */
-		err = sms_submit_concat(data,
+		err = sms_submit_concat(data, data_len,
 			encoded_number, encoded_number_size, encoded_number_size_octets, sca_field,
 			false, &concat_msg_count);
 
 		/* Then, encode and send message parts */
-		err = sms_submit_concat(data,
+		err = sms_submit_concat(data, data_len,
 			encoded_number, encoded_number_size, encoded_number_size_octets, sca_field,
 			true, &concat_msg_count);
 	} else {
