@@ -1,0 +1,16 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*#include "../../../boards/nrf54lm20dk_nrf54lm20a_cpuapp.overlay"*/
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
+
+/* ensure same RRAM layout im firmware_loader as in MCUboot */
+#include "../../nrf54lm20dongle_dfu_partitions.dtsi"
