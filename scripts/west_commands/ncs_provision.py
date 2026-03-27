@@ -17,17 +17,32 @@ import generate_psa_key_attributes as psa_attr_generator
 import yaml
 from west.commands import WestCommand
 
-KEY_SLOTS: dict[str, list[int]] = {
+KEY_TYPES = ["UROT_PUBKEY", "BL_PUBKEY", "APP_PUBKEY"]
+KMU_KEY_SLOTS: dict[str, list[int]] = {
     "UROT_PUBKEY": [226, 228, 230],
     "BL_PUBKEY": [242, 244, 246],
     "APP_PUBKEY": [202, 204, 206],
 }
-POLICIES = ["revokable", "lock", "lock-last"]
-NRF54L15_KEY_POLICIES: dict[str, str] = {
+ITS_KEY_SLOTS: dict[str, list[int]] = {
+    "UROT_PUBKEY": [],
+    "BL_PUBKEY": [
+        0x40022100,
+        0x40022101,
+        0x40022102,
+        0x40022103
+    ],
+    "APP_PUBKEY": [],
+}
+
+POLICIES = ["revokable", "lock", "lock-last", "rotatable"]
+KMU_KEY_POLICIES: dict[str, str] = {
     "revokable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_REVOKABLE,
     "lock": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_READ_ONLY,
 }
-
+ITS_KEY_POLICIES: dict[str, str] = {
+    "revokable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_REVOKABLE,
+    "rotatable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
+}
 
 @dataclass
 class SlotParams:
@@ -50,8 +65,8 @@ class NrfutilWrapper:
         self.dry_run = dry_run
         self.output_dir = output_dir or tempfile.mkdtemp(prefix="nrfutil_")
 
-    def run_command(self):
-        command = self._build_command()
+    def run_command(self, soc: str):
+        command = self._build_command(soc)
         print(" ".join(command), file=sys.stderr)
         if self.dry_run:
             return
@@ -62,17 +77,22 @@ class NrfutilWrapper:
         else:
             print("Uploaded!", file=sys.stderr)
 
-    def _make_json_file(self) -> str:
+    def _make_json_file(self, soc: str) -> str:
         """Generate PSA key attribute file, see generate_psa_key_attributes.py for details"""
         output_file = (
             Path(self.output_dir).joinpath("keyfile.json").resolve().expanduser()
         )
 
+        if soc.startswith("nrf54l"):
+            location = psa_attr_generator.PsaKeyLocation.LOCATION_CRACEN_KMU
+        else:
+            location = psa_attr_generator.PsaKeyLocation.LOCATION_LOCAL_STORAGE
+
         for slot in self.slots:
             attr = psa_attr_generator.PlatformKeyAttributes(
                 key_type=psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS,
                 identifier=slot.id,
-                location=psa_attr_generator.PsaKeyLocation.LOCATION_CRACEN_KMU,
+                location=location,
                 persistence=slot.lifetime,
                 key_usage=psa_attr_generator.PsaKeyUsage.VERIFY,
                 algorithm=psa_attr_generator.PsaAlgorithm.EDDSA_PURE,
@@ -86,8 +106,8 @@ class NrfutilWrapper:
                 )
         return str(output_file)
 
-    def _build_command(self) -> list[str]:
-        json_file_path = self._make_json_file()
+    def _build_command(self, soc: str) -> list[str]:
+        json_file_path = self._make_json_file(soc)
         command = [
             "nrfutil",
             "device",
@@ -142,7 +162,7 @@ class NcsProvision(WestCommand):
         )
         upload_parser.add_argument(
             "--keyname",
-            choices=KEY_SLOTS.keys(),
+            choices=KEY_TYPES,
             # default value for backward compatibility
             default="UROT_PUBKEY",
             type=lambda x: x.upper(),
@@ -163,7 +183,15 @@ class NcsProvision(WestCommand):
         upload_parser.add_argument(
             "-s",
             "--soc",
-            help="Deprecated, is not used anymore."
+            type=str,
+            choices=[
+                "nrf54l05", "nrf54l10", "nrf54l15",
+                "nrf54lm20a", "nrf54lm20b",
+                "nrf54lv10a",
+                "nrf54h20"
+            ],
+            default="nrf54l15",
+            help="SoC"
         )
         upload_parser.add_argument("--dev-id", help="Device serial number")
         upload_parser.add_argument(
@@ -201,11 +229,11 @@ class NcsProvision(WestCommand):
             output_dir=args.build_dir,
             dry_run=args.dry_run,
         )
-        runner.run_command()
+        runner.run_command(args.soc)
 
     @staticmethod
     def _read_keys_params_from_args(args: argparse.Namespace) -> list[dict[str, Any]]:
-        data = [dict(keyname=args.keyname, policy=args.policy, keys=args.keys)]
+        data = [dict(keyname=args.keyname, policy=args.policy, keys=args.keys, soc=args.soc)]
         return data
 
     def _read_keys_params_from_file(self, filename: str) -> list[dict[str, Any]]:
@@ -218,22 +246,32 @@ class NcsProvision(WestCommand):
                 sys.exit("Invalid input file format")
         return data
 
-    def _generate_slots(self, keyname: str, keys: str, policy: str) -> list[SlotParams]:
+    def _generate_slots(self, keyname: str, keys: str, policy: str, soc: str) -> list[SlotParams]:
         """Return list of SlotParams for given keys."""
-        if len(keys) > len(KEY_SLOTS[keyname]):
+        if soc.startswith("nrf54l"):
+            key_slots = KMU_KEY_SLOTS[keyname]
+        elif soc.startswith("nrf54h"):
+            key_slots = ITS_KEY_SLOTS[keyname]
+
+        if len(keys) > len(key_slots):
             sys.exit(
                 "Error: requested upload of more keys than there are designated slots."
             )
         slots: list[SlotParams] = []
         for slot_idx, keyfile in enumerate(keys):
-            if policy == "lock-last":
+            if policy == "lock-last" and soc.startswith("nrf54l"):
                 if slot_idx == (len(keys) - 1):
-                    key_policy = NRF54L15_KEY_POLICIES["lock"]
+                    key_policy = KMU_KEY_POLICIES["lock"]
                 else:
-                    key_policy = NRF54L15_KEY_POLICIES["revokable"]
-            else:
-                key_policy = NRF54L15_KEY_POLICIES[policy]
-            slot_id = KEY_SLOTS[keyname][slot_idx]
+                    key_policy = KMU_KEY_POLICIES["revokable"]
+            elif soc.startswith("nrf54l"):
+                key_policy = KMU_KEY_POLICIES[policy]
+            elif policy.startswith("lock"):
+                sys.exit("Locking policy is not supported for ITS keys.")
+            elif soc.startswith("nrf54h"):
+                key_policy = ITS_KEY_POLICIES[policy]
+
+            slot_id = key_slots[slot_idx]
             slot = SlotParams(id=slot_id, keyfile=keyfile, lifetime=key_policy)
             slots.append(slot)
         return slots
@@ -248,7 +286,7 @@ class NcsProvision(WestCommand):
                 return False
             if {"keyname", "keys", "policy"} != set(item.keys()):
                 return False
-            if item["keyname"] not in KEY_SLOTS:
+            if item["keyname"] not in KEY_TYPES:
                 return False
             if item["policy"] not in POLICIES:
                 return False

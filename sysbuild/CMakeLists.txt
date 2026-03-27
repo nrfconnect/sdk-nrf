@@ -955,7 +955,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include_provision_hex()
   endif()
 
-  if(SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE OR SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE)
+  if(SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE OR
+     SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE
+  )
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/generate_default_keyfile.cmake)
   endif()
 
