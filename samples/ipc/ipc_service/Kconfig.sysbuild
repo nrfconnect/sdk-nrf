@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
-
 config REMOTE_BOARD
 	string "The board used for remote target"
 	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS
@@ -16,3 +14,8 @@ config REMOTE_BOARD
 	default "nrf54lm20dk/nrf54lm20b/cpuflpr" if BOARD_NRF54LM20DK_NRF54LM20B_CPUAPP
 	default "nrf54lv10dk/nrf54lv10a/cpuflpr" if BOARD_NRF54LV10DK_NRF54LV10A_CPUAPP
 	default "nrf7120dk/nrf7120/cpuflpr" if BOARD_NRF7120DK_NRF7120_CPUAPP
+
+config PARTITION_MANAGER
+	default n if SOC_NRF54LM20B
+
+source "share/sysbuild/Kconfig"
