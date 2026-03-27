@@ -6,15 +6,11 @@
 
 #include <internal/aes/cracen_aes_ecb.h>
 
-#include <string.h>
 #include <stdbool.h>
-#include <silexpk/core.h>
 #include <sxsymcrypt/aes.h>
 #include <sxsymcrypt/blkcipher.h>
 #include <cracen/statuscodes.h>
-#include <cracen_psa.h>
 #include <cracen/common.h>
-#include <cracen_psa_primitives.h>
 
 /* The AES ECB does not support multipart operations in Cracen. This means that keeping
  * the state between calls is not supported. This function is using the single part
