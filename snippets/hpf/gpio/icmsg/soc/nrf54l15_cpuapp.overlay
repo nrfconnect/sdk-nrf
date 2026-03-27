@@ -8,7 +8,7 @@
 
 / {
 	soc {
-		cpuflpr_code_data_sram: memory@2003d000 {
+		cpuflpr_sram_code_data: memory@2003d000 {
 			compatible = "mmio-sram";
 			reg = <0x2003d000 DT_SIZE_K(12)>;
 			#address-cells = <1>;
@@ -67,12 +67,8 @@
 };
 
 &cpuflpr_vpr {
-	execution-memory = <&cpuflpr_code_data_sram>;
+	execution-memory = <&cpuflpr_sram_code_data>;
 	source-memory = <&cpuflpr_code_partition>;
-};
-
-&gpio2 {
-	status = "disabled";
 };
 
 &cpuapp_vevif_rx {
@@ -85,4 +81,6 @@
 
 &hpf_gpio {
 	status = "okay";
+	ngpios = <11>;
+	port = <2>;
 };

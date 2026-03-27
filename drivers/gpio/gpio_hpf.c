@@ -31,8 +31,7 @@ static int gpio_hpf_pin_configure(const struct device *port, gpio_pin_t pin, gpi
 {
 	hpf_gpio_data_packet_t msg = {.opcode = HPF_GPIO_PIN_CONFIGURE,
 				       .pin = pin,
-				       .port = get_port_cfg(port)->port_num,
-				       .flags = flags};
+				       .flags = flags };
 
 	return gpio_send(&msg);
 }
@@ -45,7 +44,7 @@ static int gpio_hpf_port_set_masked_raw(const struct device *port, gpio_port_pin
 	const uint32_t clear_mask = (~set_mask) & mask;
 
 	hpf_gpio_data_packet_t msg = {
-		.opcode = HPF_GPIO_PIN_SET, .pin = set_mask, .port = get_port_cfg(port)->port_num};
+		.opcode = HPF_GPIO_PIN_SET, .pin = set_mask };
 
 	int ret_val = gpio_send(&msg);
 
@@ -62,7 +61,7 @@ static int gpio_hpf_port_set_masked_raw(const struct device *port, gpio_port_pin
 static int gpio_hpf_port_set_bits_raw(const struct device *port, gpio_port_pins_t mask)
 {
 	hpf_gpio_data_packet_t msg = {
-		.opcode = HPF_GPIO_PIN_SET, .pin = mask, .port = get_port_cfg(port)->port_num};
+		.opcode = HPF_GPIO_PIN_SET, .pin = mask };
 
 	return gpio_send(&msg);
 }
@@ -70,7 +69,7 @@ static int gpio_hpf_port_set_bits_raw(const struct device *port, gpio_port_pins_
 static int gpio_hpf_port_clear_bits_raw(const struct device *port, gpio_port_pins_t mask)
 {
 	hpf_gpio_data_packet_t msg = {
-		.opcode = HPF_GPIO_PIN_CLEAR, .pin = mask, .port = get_port_cfg(port)->port_num};
+		.opcode = HPF_GPIO_PIN_CLEAR, .pin = mask };
 
 	return gpio_send(&msg);
 }
@@ -78,7 +77,7 @@ static int gpio_hpf_port_clear_bits_raw(const struct device *port, gpio_port_pin
 static int gpio_hpf_port_toggle_bits(const struct device *port, gpio_port_pins_t mask)
 {
 	hpf_gpio_data_packet_t msg = {
-		.opcode = HPF_GPIO_PIN_TOGGLE, .pin = mask, .port = get_port_cfg(port)->port_num};
+		.opcode = HPF_GPIO_PIN_TOGGLE, .pin = mask };
 
 	return gpio_send(&msg);
 }

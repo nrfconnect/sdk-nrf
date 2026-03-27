@@ -71,10 +71,6 @@
 	execution-memory = <&cpuflpr_sram_code_data>;
 };
 
-&gpio2 {
-	status = "disabled";
-};
-
 &cpuapp_vevif_rx {
 	status = "okay";
 };
@@ -85,4 +81,6 @@
 
 &hpf_gpio {
 	status = "okay";
+	ngpios = <11>;
+	port = <2>;
 };

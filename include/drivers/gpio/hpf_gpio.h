@@ -25,8 +25,7 @@ typedef enum {
 /** @brief eGPIO data packet. */
 typedef struct __packed {
 	uint8_t opcode; /* eGPIO opcode. */
-	uint32_t pin; /* Pin number when opcode is HPF_GPIO_PIN_CONFIGURE, pin mask for others. */
-	uint8_t port; /* Port number. */
+	uint32_t pin;   /* FLPR pin number for configuration, FLPR pin mask for others. */
 	uint32_t flags; /* Configuration flags when opcode
 			 * is HPF_GPIO_PIN_CONFIGURE (gpio_flags_t).
 			 * Not used in other cases.
