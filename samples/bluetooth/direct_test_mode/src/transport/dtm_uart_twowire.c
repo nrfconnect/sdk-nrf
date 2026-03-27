@@ -13,6 +13,13 @@
 
 #include "dtm_transport.h"
 
+#if defined(CONFIG_DTM_FEM_LOOPBACK)
+/* DTM FEM loopback: host sends 0xFE01, device returns pass (0x0000) or fail (0x0001). */
+#define DTM_CMD_FEM_LOOPBACK_VERIFY 0xFE01
+
+extern uint16_t dtm_fem_loopback_get_response(void);
+#endif
+
 LOG_MODULE_REGISTER(dtm_tw_tr, CONFIG_DTM_TRANSPORT_LOG_LEVEL);
 
 /* The DTM maximum wait time in milliseconds for the UART command second byte. */
@@ -525,6 +532,18 @@ int dtm_tr_process(union dtm_tr_packet cmd)
 	uint16_t ret;
 
 	LOG_INF("Processing 0x%04x command", tmp);
+
+#if defined(CONFIG_DTM_FEM_LOOPBACK)
+	if (tmp == DTM_CMD_FEM_LOOPBACK_VERIFY) {
+		ret = dtm_fem_loopback_get_response();
+		LOG_INF("Sending 0x%04x response (FEM loopback verification)", ret);
+
+		uart_poll_out(dtm_uart, (ret >> 8) & 0xFF);
+		uart_poll_out(dtm_uart, ret & 0xFF);
+
+		return 0;
+	}
+#endif
 
 	ret = dtm_cmd_put(tmp);
 	LOG_INF("Sending 0x%04x response", ret);
