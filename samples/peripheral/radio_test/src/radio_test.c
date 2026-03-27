@@ -84,12 +84,16 @@
 #define TIMER_CC1_MOD_TX_DUTY NRF_TIMER_CC_CHANNEL1
 #define TIMER_CC2_FEM_0 NRF_TIMER_CC_CHANNEL2
 #define TIMER_CC3_FEM_1 NRF_TIMER_CC_CHANNEL3
+#define TIMER_CC4_SWEEP_DUTY NRF_TIMER_CC_CHANNEL4
 #if NRF54H_ERRATA_216_PRESENT
 #define TIMER_CC7_ERRATA216 NRF_TIMER_CC_CHANNEL7
 #endif /* NRF54H_ERRATA_216_PRESENT */
 
 /* RX timeout counted from the last packet received. */
 #define RX_PACKET_TIMEOUT_MS 100
+
+/* Ram-up time for radio when using fast ramp. */
+#define RADIO_RAMP_UP_FAST_US 40
 
 /* Buffer for the radio TX packet */
 static uint8_t tx_packet[RADIO_MAX_PAYLOAD_LEN];
@@ -102,6 +106,12 @@ static uint32_t rx_packet_cnt;
 
 /* Radio current channel (frequency). */
 static uint8_t current_channel;
+
+/* Radio Sweep with duty-cycle channel array */
+const static uint8_t channel_array[72] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+	17, 18, 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
+	42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+	64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78};
 
 /* Timer used for channel sweeps and tx with duty cycle. */
 static nrfx_timer_t timer =
@@ -848,15 +858,18 @@ static void radio_mode_set(NRF_RADIO_Type *reg, nrf_radio_mode_t mode)
 	mltpan_6(mode);
 }
 
-static void radio_unmodulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t channel)
+static void radio_unmodulated_tx_carrier_radio_setup(uint8_t mode, int8_t txpower, uint8_t channel,
+					 bool start_ready_short_enable)
 {
 	radio_disable();
 
 	radio_mode_set(NRF_RADIO, mode);
-	nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK);
 	radio_power_set(mode, channel, txpower);
-
 	radio_channel_set(mode, channel);
+
+	if (start_ready_short_enable) {
+		nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK);
+	}
 
 #if CONFIG_FEM
 	(void)fem_configure(false, mode, &fem);
@@ -865,7 +878,11 @@ static void radio_unmodulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t c
 		radio_ppi_config(false);
 	}
 #endif /* CONFIG_FEM */
+}
 
+static void radio_unmodulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t channel)
+{
+	radio_unmodulated_tx_carrier_radio_setup(mode, txpower, channel, true);
 	radio_start(false, sweep_processing);
 }
 
@@ -1050,6 +1067,31 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	irq_unlock(key);
 }
 
+static void radio_tx_sweep_with_sleep(int8_t txpower, uint16_t t_tx_us, uint16_t t_sleep_us)
+{
+	radio_disable();
+	const uint32_t total_time_per_channel_us = t_tx_us + t_sleep_us;
+
+	current_channel = 0;
+
+	nrfx_timer_disable(&timer);
+	nrf_timer_shorts_disable(timer.p_reg, ~0);
+	nrf_timer_int_disable(timer.p_reg, ~0);
+
+	nrfx_timer_compare(&timer,
+		TIMER_CC0_SWEEP_DWELL,
+		nrfx_timer_us_to_ticks(&timer, t_tx_us + RADIO_RAMP_UP_FAST_US),
+		true);
+
+	nrfx_timer_extended_compare(&timer,
+		TIMER_CC4_SWEEP_DUTY,
+		nrfx_timer_us_to_ticks(&timer, total_time_per_channel_us),
+		NRF_TIMER_SHORT_COMPARE4_CLEAR_MASK,
+		true);
+
+	nrfx_timer_enable(&timer);
+}
+
 void radio_test_start(const struct radio_test_config *config)
 {
 #if CONFIG_FEM
@@ -1096,6 +1138,11 @@ void radio_test_start(const struct radio_test_config *config)
 			config->params.modulated_tx_duty_cycle.channel,
 			config->params.modulated_tx_duty_cycle.pattern,
 			config->params.modulated_tx_duty_cycle.duty_cycle);
+		break;
+	case TX_SWEEP_WITH_DUTY_CYCLE:
+		radio_tx_sweep_with_sleep(config->params.tx_sweep_duty_cycle.txpower,
+			config->params.tx_sweep_duty_cycle.t_tx_us,
+			config->params.tx_sweep_duty_cycle.t_sleep_us);
 		break;
 	}
 
@@ -1219,6 +1266,19 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 
 			channel_start = config->params.rx_sweep.channel_start;
 			channel_end = config->params.rx_sweep.channel_end;
+		} else if (config->type == TX_SWEEP_WITH_DUTY_CYCLE) {
+
+			sweep_processing = true;
+
+			/* disable radio after tone */
+			radio_unmodulated_tx_carrier_radio_setup(NRF_RADIO_MODE_BLE_1MBIT,
+				config->params.tx_sweep_duty_cycle.txpower,
+				channel_array[current_channel],
+				false);
+
+			/* set up next channel */
+			channel_start = config->params.tx_sweep_duty_cycle.channel_index_start;
+			channel_end = config->params.tx_sweep_duty_cycle.channel_index_end;
 		} else {
 			printk("Unexpected test type: %d\n", config->type);
 			return;
@@ -1234,6 +1294,8 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 	} else if (event_type == NRF_TIMER_EVENT_COMPARE7) { /* HMPAN-216 errata */
 		errata_216_release();
 #endif /* NRF54H_ERRATA_216_PRESENT */
+	} else if (event_type == NRF_TIMER_EVENT_COMPARE4) {
+		radio_start(false, true);
 	} else {
 		/* Do nothing */
 	}

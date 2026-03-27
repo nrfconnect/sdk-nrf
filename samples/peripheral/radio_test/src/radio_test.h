@@ -67,6 +67,9 @@ enum radio_test_mode {
 
 	/** Duty-cycled modulated TX carrier. */
 	MODULATED_TX_DUTY_CYCLE,
+
+	/** TX carrier sweep with unmodulated carrier wave */
+	TX_SWEEP_WITH_DUTY_CYCLE,
 };
 
 /**@brief Radio test front-end module (FEM) configuration */
@@ -173,6 +176,23 @@ struct radio_test_config {
 			/** Duty cycle. */
 			uint32_t duty_cycle;
 		} modulated_tx_duty_cycle;
+
+		struct {
+			/** Radio output power. */
+			int8_t txpower;
+
+			/** Radio start channel (frequency). */
+			uint8_t channel_index_start;
+
+			/** Radio end channel (frequency). */
+			uint8_t channel_index_end;
+
+			/** Radio transmission time in us */
+			uint16_t t_tx_us;
+
+			/** Radio sleep time in us */
+			uint16_t t_sleep_us;
+		} tx_sweep_duty_cycle;
 	} params;
 
 #if CONFIG_FEM
