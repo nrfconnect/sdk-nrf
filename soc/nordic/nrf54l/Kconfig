@@ -28,3 +28,10 @@ config SOC_NRF54LS05A_DEVELOP_IN_NRF54LS05B
 	  The nrf54ls05dk board can be used to develop the nRF54LS05A or nRF54LS05B SoCs
 	  onto the nRF54LS05B DK. This symbol needs to be considered by certain system
 	  initialization functionality residing in SoC erratas.
+
+config SOC_NRF54LX_SKIP_GLITCHDETECTOR_DISABLE
+	bool "Skip disabling glitch detector"
+	default y if TRUSTED_EXECUTION_NONSECURE || IS_SECURE_BOOTLOADER || MCUBOOT
+	help
+	  With this option, the glitch detector is not disabled during system initialization.
+	  The CPU runs with the default state of glitch detector.
