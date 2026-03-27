@@ -8,6 +8,8 @@
 #include <zephyr/net/net_if.h>
 
 #include "ipv6.h"
+#include "route.h"    /* for net_route_add / net_route_del / net_route_lookup */
+#include <zephyr/net/mld.h>
 
 #include <net/dect/dect_net_l2.h>
 #include <net/dect/dect_net_l2_mgmt.h>
@@ -57,6 +59,61 @@ static void dect_net_l2_ipv6_util_global_nbr_add(
 					"as a neighbor to dect iface",
 					(__func__), net_sprint_ipv6_addr(&nbr_addr),
 					net_sprint_ll_addr(net_if_get_link_addr(iface)->addr, 8));
+
+				struct dect_net_l2_context *l2_ctx = net_if_l2_data(iface);
+				if (l2_ctx->device_type & DECT_DEVICE_TYPE_FT) {
+					/* only handle FT, don't do anything more otherwise */
+
+					/* PSY mod Add a /128 host route so return traffic from the internet
+					 * is directed to the DECT interface rather than being swallowed
+					 * by the broader ethernet prefix route (e.g. /56).
+					 * The nexthop is the address itself — it is on-link on the DECT iface.
+					 * PREFERENCE_HIGH ensures this beats the ethernet prefix route.
+					 */
+					struct net_route_entry *route = net_route_add(
+						iface,
+						&nbr_addr, 128,
+						&nbr_addr,
+						NET_IPV6_ND_INFINITE_LIFETIME,
+						NET_ROUTE_PREFERENCE_HIGH);
+					if (!route) {
+						LOG_ERR("(%s): failed to add /128 host route for %s on iface %p",
+							(__func__), net_sprint_ipv6_addr(&nbr_addr), iface);
+					} else {
+						LOG_DBG("(%s): /128 host route added for %s via DECT iface %p",
+							(__func__), net_sprint_ipv6_addr(&nbr_addr), iface);
+					}
+
+
+
+					struct net_if *eth_iface = net_if_get_first_by_type(&NET_L2_GET_NAME(ETHERNET));
+					if (eth_iface) {
+						struct net_linkaddr *eth_mac = net_if_get_link_addr(eth_iface);
+						if (!net_ipv6_nbr_add(eth_iface, &nbr_addr, eth_mac, false,
+											  NET_IPV6_NBR_STATE_REACHABLE)) {
+							LOG_ERR("Failed to add PT global addr as neighbor on ethernet iface");
+						} else {
+							LOG_DBG("Added PT %s as neighbor on ethernet iface with FT MAC",
+								net_sprint_ipv6_addr(&nbr_addr));
+						}
+
+
+						/* Join the solicited-node multicast group for the PT's address
+						 * on the ethernet interface, so the FT responds to NS from the
+						 * upstream router on the PT's behalf (proxy NDP).
+						 */
+						struct in6_addr mcast;
+						net_ipv6_addr_create_solicited_node(&nbr_addr, &mcast);
+						int jmcast = net_ipv6_mld_join(eth_iface, &mcast);
+						if ( jmcast< 0) {
+							LOG_ERR("Failed to join solicited-node multicast for PT on ethernet (%i)", jmcast);
+						} else {
+							LOG_INF("Joined solicited-node multicast %s on ethernet for PT %s",
+								net_sprint_ipv6_addr(&mcast),
+								net_sprint_ipv6_addr(&nbr_addr));
+						}
+					}
+				}
 			}
 		}
 	}
@@ -115,6 +172,21 @@ static void dect_net_l2_ipv6_util_nbr_remove(struct net_if *iface,
 		ass_list_item->local_ipv6_addr_set = false;
 	}
 	if (ass_list_item->global_ipv6_addr_set) {
+
+		struct dect_net_l2_context *l2_ctx = net_if_l2_data(iface);
+		if (l2_ctx->device_type & DECT_DEVICE_TYPE_FT) {
+			/* PSY mod: If this is an FT, remove the /128 host route added when this child associated */
+			struct net_route_entry *route =
+				net_route_lookup(iface, &ass_list_item->global_ipv6_addr);
+			if (route) {
+				net_route_del(route);
+			} else {
+				LOG_WRN("(%s): no host route found for %s on iface %p to remove",
+					(__func__),
+					net_sprint_ipv6_addr(&ass_list_item->global_ipv6_addr),
+					iface);
+			}
+		}
 		if (!net_ipv6_nbr_rm(iface, &ass_list_item->global_ipv6_addr)) {
 			LOG_ERR("Failed to remove global IPv6 neighbor %s on iface %p",
 				net_sprint_ipv6_addr(&ass_list_item->global_ipv6_addr), iface);
