@@ -119,12 +119,12 @@ You can use either the nRF Connect for VS Code extension or the command line.
 
    .. group-tab:: Command line
 
-      To apply the appropriate configuration, use the ``-DEXTRA_DTC_OVERLAY`` CMake argument.
+      To apply the appropriate configuration, use the ``-DEXTRA_DTC_OVERLAY_FILE`` CMake argument.
       For example, to build for an nRF54L15 DK and an nPM1300 EK use the following command:
 
       .. code-block:: bash
 
-         west build -b nrf54l15dk/nrf54l15/cpuapp samples/pmic/native/npm13xx_fuel_gauge -- -DEXTRA_DTC_OVERLAY=npm1300.overlay
+         west build -b nrf54l15dk/nrf54l15/cpuapp samples/pmic/native/npm13xx_fuel_gauge -- -DEXTRA_DTC_OVERLAY_FILE=npm1300.overlay
 
 Testing
 *******

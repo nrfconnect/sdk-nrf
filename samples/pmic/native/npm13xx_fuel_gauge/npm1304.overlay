@@ -17,7 +17,7 @@
 
 		npm1304_ek_charger: charger {
 			compatible = "nordic,npm1304-charger";
-			term-microvolt = <4150000>;
+			term-microvolt = <4200000>;
 			term-warm-microvolt = <4000000>;
 			current-microamp = <4000>;
 			vbus-limit-microamp = <500000>;
