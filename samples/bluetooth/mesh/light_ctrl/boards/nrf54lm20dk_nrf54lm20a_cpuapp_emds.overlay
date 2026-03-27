@@ -12,21 +12,25 @@
 &cpuapp_rram {
 	partitions {
 		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00000000 0x001d5000>;
 		};
 
 		storage_partition: partition@1d5000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x001d5000 0x00008000>;
 		};
 
 		emds_partition_0: partition@1dd000 {
+			compatible = "zephyr,mapped-partition";
 			label = "emds-0";
 			reg = <0x001dd000 0x00004000>;
 		};
 
 		emds_partition_1: partition@1e1000 {
+			compatible = "zephyr,mapped-partition";
 			label = "emds-1";
 			reg = <0x001e1000 0x00004000>;
 		};

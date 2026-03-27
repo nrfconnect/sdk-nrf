@@ -103,6 +103,7 @@
 		 * It will likely need to be updated as the MRAM memory map is not yet final.
 		 */
 		cpurad_storage_partition: partition@1e3000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1e3000 DT_SIZE_K(24)>;
 		};
 	};

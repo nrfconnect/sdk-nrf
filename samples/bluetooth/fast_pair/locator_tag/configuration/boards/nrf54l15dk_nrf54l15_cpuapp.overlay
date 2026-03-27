@@ -12,30 +12,35 @@
 	/delete-node/ partitions;
 
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(24)>;
 		};
 
 		slot0_partition: partition@6000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x6000 DT_SIZE_K(736)>;
 		};
 
 		slot1_partition: partition@be000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0xbe000 DT_SIZE_K(736)>;
 		};
 
 		bt_fast_pair_partition: partition@176000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x176000 DT_SIZE_K(4)>;
 		};
 
 		storage_partition: partition@177000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x177000 DT_SIZE_K(24)>;
 		};

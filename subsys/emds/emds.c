@@ -122,8 +122,8 @@ static int emds_partition_init(const uint8_t id, struct emds_partition *partitio
 
 int emds_init(emds_store_cb_t cb)
 {
-	const uint8_t id[] = {FIXED_PARTITION_ID(emds_partition_0),
-			      FIXED_PARTITION_ID(emds_partition_1)};
+	const uint8_t id[] = {PARTITION_ID(emds_partition_0),
+			      PARTITION_ID(emds_partition_1)};
 	int rc;
 
 	if (emds_state != EMDS_STATE_NOT_INITIALIZED) {
@@ -131,8 +131,8 @@ int emds_init(emds_store_cb_t cb)
 		return -EALREADY;
 	}
 
-	if (!FIXED_PARTITION_EXISTS(emds_partition_0) ||
-	    !FIXED_PARTITION_EXISTS(emds_partition_1)) {
+	if (!PARTITION_EXISTS(emds_partition_0) ||
+	    !PARTITION_EXISTS(emds_partition_1)) {
 		LOG_ERR("EMDS partitions not found: %d, %d", id[0], id[1]);
 		return -ENODEV;
 	}

@@ -16,6 +16,7 @@
 &mram1x {
 	partitions {
 		dfu_target_helper_partition: partition@92000 {
+			compatible = "zephyr,mapped-partition";
 			label = "helper";
 			reg = <0x92000 DT_SIZE_K(328)>;
 		};

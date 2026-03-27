@@ -107,14 +107,14 @@ int main(void)
 			    PM_MCUBOOT_PRIMARY_2_SIZE);
 #else
 	print_image_content("Extra Image 1",
-			    FIXED_PARTITION_ID(slot2_partition),
-			    FIXED_PARTITION_ADDRESS(slot2_partition),
-			    FIXED_PARTITION_SIZE(slot2_partition));
+			    PARTITION_ID(slot2_partition),
+			    PARTITION_ADDRESS(slot2_partition),
+			    PARTITION_SIZE(slot2_partition));
 
 	print_image_content("Extra Image 2",
-			    FIXED_PARTITION_ID(slot4_partition),
-			    FIXED_PARTITION_ADDRESS(slot4_partition),
-			    FIXED_PARTITION_SIZE(slot4_partition));
+			    PARTITION_ID(slot4_partition),
+			    PARTITION_ADDRESS(slot4_partition),
+			    PARTITION_SIZE(slot4_partition));
 #endif
 
 	printk("\nDone\n");

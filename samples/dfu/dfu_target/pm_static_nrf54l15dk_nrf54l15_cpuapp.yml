@@ -8,12 +8,12 @@ EMPTY_0:
   size: 0x800
 EMPTY_1:
   address: 0x164000
-  end_address: 0x165000
+  end_address: 0x17d000
   placement:
     after:
     - mcuboot_secondary
   region: flash_primary
-  size: 0x1000
+  size: 0x19000
 app:
   address: 0xe800
   end_address: 0xb9000

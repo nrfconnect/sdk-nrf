@@ -12,20 +12,23 @@
 	/delete-node/ partitions;
 
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 
 		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x0 DT_SIZE_K(480)>;
 		};
 
 		bt_fast_pair_partition: partition@78000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x78000 DT_SIZE_K(4)>;
 		};
 
 		storage_partition: partition@79000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x79000 DT_SIZE_K(16)>;
 		};

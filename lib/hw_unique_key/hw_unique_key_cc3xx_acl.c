@@ -29,7 +29,7 @@ static const uint32_t huk_magic[4] = {
 #ifdef CONFIG_PARTITION_MANAGER_ENABLED
 static uint32_t huk_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS;
 #else
-static uint32_t huk_addr = FIXED_PARTITION_ADDRESS(hw_unique_key_partition);
+static uint32_t huk_addr = PARTITION_ADDRESS(hw_unique_key_partition);
 #endif
 
 int hw_unique_key_write(enum hw_unique_key_slot key_slot, const uint8_t *key)

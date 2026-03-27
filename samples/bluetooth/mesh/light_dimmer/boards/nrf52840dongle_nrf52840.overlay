@@ -11,11 +11,13 @@
 &flash0 {
 	partitions {
 		slot0_partition: partition@1000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00001000 0x000d7000>;
 		};
 
 		storage_partition: partition@d8000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x000d8000 0x00008000>;
 		};
