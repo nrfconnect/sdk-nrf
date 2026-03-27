@@ -101,6 +101,13 @@ function(ExternalNcsVariantProject_Add)
   ExternalProject_Get_Property(${VBUILD_APPLICATION} SOURCE_DIR BINARY_DIR)
   set(${VBUILD_APPLICATION}_BINARY_DIR ${BINARY_DIR})
 
+  if(NOT SB_CONFIG_PARTITION_MANAGER AND NOT SB_CONFIG_SOC_NRF54H20)
+    message(FATAL_ERROR
+      "This function is only for use on nrf54h20 or with partition manager, "
+      "use ExternalZephyrVariantProject_Add() instead"
+    )
+  endif()
+
   get_property(VARIANT_BOARD TARGET ${VBUILD_APPLICATION} PROPERTY BOARD)
   if(DEFINED VARIANT_BOARD)
     ExternalZephyrProject_Add(

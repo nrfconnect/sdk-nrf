@@ -10,6 +10,8 @@
 # Since this file is brought in via include(), we do the work in a
 # function to avoid polluting the top-level scope.
 
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+
 function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefix)
   find_program(IMGTOOL imgtool.py HINTS ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/ NAMES imgtool NAMES_PER_DIR)
   set(keyfile "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}")
@@ -25,8 +27,26 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   sysbuild_get(CONFIG_BUILD_OUTPUT_BIN IMAGE ${application} VAR CONFIG_BUILD_OUTPUT_BIN KCONFIG)
   sysbuild_get(CONFIG_BUILD_OUTPUT_HEX IMAGE ${application} VAR CONFIG_BUILD_OUTPUT_HEX KCONFIG)
 
-  string(TOUPPER "${application}" application_uppercase)
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE> --pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD})
+  set(slot_size)        # imgtool --slot-size
+  set(header_size)      # imgtool --header
+  if(SB_CONFIG_PARTITION_MANAGER)
+    string(TOUPPER "${application}" application_uppercase)
+    set(slot_size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE>)
+    set(header_size ${SB_CONFIG_PM_MCUBOOT_PAD})
+    set(slot_address $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_ADDRESS>)
+  else()
+    # Get the partition node and pick size from it.
+    dt_chosen(code_partition_path PROPERTY "zephyr,code-partition" TARGET ${application})
+    dt_partition_size(slot_size PATH "${code_partition_path}" TARGET ${application} REQUIRED)
+    dt_partition_addr(slot_address PATH "${code_partition_path}" TARGET ${application} REQUIRED)
+    # Because there is no need to align the header size to VTOR alignment requirements and the
+    # header will be discarded in the end, we can select the smallest possible size;
+    # 64 bytes is reasonable to cover actual header, which is actually smaller, and align size
+    # to 16 bytes, which is write block size of nNR54L.
+    set(header_size 0x40)
+  endif()
+
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size ${slot_size} --header-size ${header_size} --pad-header --rom-fixed ${slot_address})
 
   if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     set(imgtool_extra --security-counter ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
@@ -141,13 +161,41 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
   if(SB_CONFIG_SECURE_BOOT_APPCORE)
     set(bin_files)
     set(signed_targets)
+    # extra_bin_data is used for generating zip file, and is set to information
+    # on variant S1 image, in case it is also added to a zip file.
     set(extra_bin_data)
 
     ncs_secure_boot_mcuboot_sign(mcuboot "${bin_files}" "${signed_targets}" "")
 
+    # Because S0/S1 images are build for slot they are designated for, we need
+    # slot addresses to be able to sign them for that specific slot.
+    # We also need slot, for signing sript.
+    set(s0_slot_address)
+    set(s0_slot_size)
+    set(s1_slot_address)
+    set(s1_slot_size)
+    if(SB_CONFIG_PARTITION_MANAGER)
+      set(s1_slot_address "$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>")
+      set(s0_slot_address "$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>")
+    else()
+      # The same DTS is used for all images, so the application selection does not
+      # matter here, so we just use the mcuboot
+      dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET mcuboot ABSOLUTE REQUIRED)
+      dt_partition_size(s0_slot_size LABEL "s0_partition" TARGET mcuboot REQUIRED)
+      dt_partition_addr(s1_slot_address LABEL "s1_partition" TARGET mcuboot ABSOLUTE REQUIRED)
+      dt_partition_size(s1_slot_size LABEL "s1_partition" TARGET mcuboot REQUIRED)
+    endif()
+
+    # Signing the MCUboot image, secondary stage bootloader, that will be running from S1 slot.
     if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-      ncs_secure_boot_mcuboot_sign(s1_image "${bin_files}" "${signed_targets}" "")
-      set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>;signed_by_mcuboot_and_b0_s1_image.binslot=1")
+      if(SB_CONFIG_PARTITION_MANAGER)
+        ncs_secure_boot_mcuboot_sign(s1_image "${bin_files}" "${signed_targets}" "")
+        set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=${s1_partition_address};signed_by_mcuboot_and_b0_s1_image.binslot=1")
+      else()
+        b0_image_name(s1_image_name)
+        ncs_secure_boot_mcuboot_sign(${s1_image_name} "${bin_files}" "${signed_targets}" "")
+        set(extra_bin_data "signed_by_mcuboot_and_b0_${s1_image_name}.binload_address=${s1_partition_address};signed_by_mcuboot_and_b0_${s1_image_name}.binslot=1")
+      endif()
     endif()
 
     if(bin_files)
@@ -161,7 +209,7 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
         TYPE mcuboot
         IMAGE mcuboot
         SCRIPT_PARAMS
-        "signed_by_mcuboot_and_b0_mcuboot.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
+        "signed_by_mcuboot_and_b0_mcuboot.binload_address=${s0_partition_address}"
         ${extra_bin_data}
         "version_MCUBOOT=${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION}"
         "version_B0=${mcuboot_fw_info_firmware_version}"
@@ -172,8 +220,12 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
-    get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
-    ncs_secure_boot_mcuboot_sign(${image_name} "${bin_files}" "${signed_targets}" CPUNET_)
+    if(SB_CONFIG_PARTITION_MANAGER)
+      get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
+      ncs_secure_boot_mcuboot_sign(${image_name} "${bin_files}" "${signed_targets}" CPUNET_)
+    else()
+      ncs_secure_boot_mcuboot_sign(${SB_CONFIG_NETCORE_IMAGE_NAME} "${bin_files}" "${signed_targets}" CPUNET_)
+    endif()
   endif()
 
   # Clear temp variables

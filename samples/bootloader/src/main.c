@@ -7,7 +7,11 @@
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#else
+#include <zephyr/storage/flash_map.h>
+#endif
 #include <fw_info.h>
 #if defined(CONFIG_FPROTECT)
 #include <fprotect.h>
@@ -27,19 +31,57 @@
 #error "No NRFX memory backend selected"
 #endif
 
+/* When searching for fw_info, we get slot address as a base. The slot address,
+ * equivalent to an offset of the partition the slot resides on, is the beginning
+ * of a binary, which also includes non-executable header used by bootloaders.
+ * The fw_info is offset, using linker script, within rom_start section
+ * which is already, itself, offset by the header, if a header exists.
+ */
+#if USE_PARTITION_MANAGER
+/* S0/S1 both have the same pad size */
+#ifdef PM_S0_PAD_SIZE
+#define APP_HEADER_SKIP	PM_S0_PAD_SIZE
+#else
+#define APP_HEADER_SKIP	0
+#endif
+#else
+#define APP_HEADER_SKIP	0
+#endif
+
+#if defined(CONFIG_FPROTECT)
+/* Invoked from B0, FPROTECT will only protect B0 partition */
+#if USE_PARTITION_MANAGER
+static const uint32_t b0_offset = PM_B0_ADDRESS;
+static const uint32_t b0_size = PM_B0_SIZE;
+#else
+static const uint32_t b0_offset = FIXED_PARTITION_OFFSET(b0_partition);
+static const uint32_t b0_size = FIXED_PARTITION_SIZE(b0_partition);
+#endif
+#endif
+
 #if defined(CONFIG_HW_UNIQUE_KEY_LOAD)
 #include <zephyr/init.h>
 #include <hw_unique_key.h>
 
 #define HUK_FLAG_OFFSET 0xFFC /* When this word is set, expect HUK to be written. */
 
+/* huk_flag_addr is actually address in CPU address space, not offset within
+ * flash device.
+ */
+#if USE_PARTITION_MANAGER
+static const uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_FLAG_OFFSET;
+#else
+static const uint32_t huk_flag_addr = FIXED_PARTITION_ADDRESS(hw_unique_key_partition);
+#endif
+
+
 int load_huk(void)
 {
 	if (!hw_unique_key_is_written(HUK_KEYSLOT_KDR)) {
-		uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_FLAG_OFFSET;
-
+		/* Directly reading flag via CPU address space */
 		if (*(uint32_t *)huk_flag_addr == 0xFFFFFFFF) {
 			printk("First boot, expecting app to write HUK.\n");
+			/* Write done via NRFX API */
 #if defined(CONFIG_NRFX_NVMC)
 			nrfx_nvmc_word_write(huk_flag_addr, 0);
 #elif defined(CONFIG_NRFX_RRAMC)
@@ -76,7 +118,7 @@ static void validate_and_boot(const struct fw_info *fw_info, counter_t slot)
 	}
 
 	printk("Attempting to boot from address 0x%x.\r\n",
-		fw_info->address);
+		fw_info->boot_address);
 
 	if (!bl_validate_firmware_local(fw_info->address,
 					fw_info)) {
@@ -124,7 +166,7 @@ int main(void)
 {
 
 #if defined(CONFIG_FPROTECT)
-	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+	int err = fprotect_area(b0_offset, b0_size);
 
 	if (err) {
 		printk("Failed to protect B0 flash, cancel startup.\r\n");
@@ -134,8 +176,11 @@ int main(void)
 	printk("Fprotect disabled. No protection applied.\r\n");
 #endif
 
-	uint32_t s0_addr = s0_address_read();
-	uint32_t s1_addr = s1_address_read();
+	/* Get slot/partition start address and offset it with
+	 * application header size.
+	 */
+	uint32_t s0_addr = s0_address_read() + APP_HEADER_SKIP;
+	uint32_t s1_addr = s1_address_read() + APP_HEADER_SKIP;
 	const struct fw_info *s0_info = fw_info_find(s0_addr);
 	const struct fw_info *s1_info = fw_info_find(s1_addr);
 
