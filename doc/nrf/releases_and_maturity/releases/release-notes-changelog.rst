@@ -415,6 +415,30 @@ Bluetooth samples
 
   * Added support for the ``nrf54lm20dongle/nrf54lm20b/cpuapp`` board target.
 
+* Added support for the ``nrf54lm20dk/nrf54lm20b`` board target variant in the following samples:
+
+  * :ref:`central_and_peripheral_hrs`
+  * :ref:`central_bas`
+  * :ref:`bluetooth_central_hr_coded`
+  * :ref:`central_uart`
+  * :ref:`multiple_adv_sets`
+  * :ref:`peripheral_ams_client`
+  * :ref:`peripheral_ancs_client`
+  * :ref:`peripheral_bms`
+  * :ref:`peripheral_cgms`
+  * :ref:`peripheral_cts_client`
+  * :ref:`peripheral_gatt_dm`
+  * :ref:`peripheral_hr_coded`
+  * :ref:`peripheral_lbs`
+  * :ref:`peripheral_mds`
+  * :ref:`peripheral_nfc_pairing`
+  * :ref:`power_profiling`
+  * :ref:`peripheral_rscs`
+  * :ref:`peripheral_status`
+  * :ref:`peripheral_uart`
+  * :ref:`shell_bt_nus`
+  * :ref:`ble_throughput`
+
 * :ref:`bluetooth_central_hids` sample:
 
   * Added support for the ``nrf54lm20dk/nrf54lm20b/cpuapp`` board target.
@@ -701,7 +725,11 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54lm20dk/nrf54lm20b`` board target variant in the following samples:
+
+  * :ref:`coremark_sample`
+  * :ref:`nrf_rpc_protocols_serialization_client`
+  * :ref:`nrf_rpc_protocols_serialization_server`
 
 Drivers
 =======
