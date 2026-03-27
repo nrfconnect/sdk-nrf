@@ -1,0 +1,17 @@
+sample:
+  description: Using zephyr to access different privileged level of peripherals
+  name: test privileged unprivileged access
+
+tests:
+  sample.nrf7120.test_priv_unpriv_access:
+    depends_on: gpio
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    tags:
+      - ci_samples_nrf7120
+      - ci_build
