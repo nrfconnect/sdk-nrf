@@ -28,6 +28,10 @@ if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
     add_subdirectory(ironside)
   endif()
 
+  if(CONFIG_PSA_CRYPTO_DRIVER_KMU_PUSH)
+    add_subdirectory(kmu_push)
+  endif()
+
   add_subdirectory(zephyr)
 endif()
 
