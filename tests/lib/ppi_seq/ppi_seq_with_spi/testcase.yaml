@@ -1,0 +1,12 @@
+tests:
+  lib.ppi_seq.ppi_seq_with_spi:
+    depends_on: spi
+    tags:
+      - drivers
+      - spi
+    harness: ztest
+    harness_config:
+      fixture: gpio_spi_loopback
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp

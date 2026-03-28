@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires loopbacks:
+ * - between P1.3 and P1.4.
+ * - between P1.13 and P1.14,
+ */
+
+&pinctrl {
+	i2c21_default_alt: i2c21_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 13)>;
+		};
+	};
+
+	i2c21_sleep_alt: i2c21_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 13)>;
+			low-power-enable;
+		};
+	};
+
+	i2c22_default_alt: i2c22_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 4)>,
+				<NRF_PSEL(TWIM_SCL, 1, 14)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c22_sleep_alt: i2c22_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 4)>,
+				<NRF_PSEL(TWIM_SCL, 1, 14)>;
+			low-power-enable;
+		};
+	};
+};
+
+/* Timer used for triggering tasks in the PPI sequencer. */
+&timer21 {
+	status = "reserved";
+};
+
+/* Timer used for counting end events in the PPI sequencer. */
+&timer22 {
+	status = "reserved";
+};
+
+test_timer: &timer23 {
+	status = "reserved";
+};
+
+dut: &i2c21 {
+	compatible = "nordic,ppi-seq-i2c";
+	status = "okay";
+	pinctrl-0 = <&i2c21_default_alt>;
+	pinctrl-1 = <&i2c21_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	clock-frequency = <400000>;
+	timer = <&timer21>;
+	timer_notifier = <&timer22>;
+};
+
+tester: &i2c22 {
+	compatible = "nordic,nrf-twis";
+	status = "reserved";
+	pinctrl-0 = <&i2c22_default_alt>;
+	pinctrl-1 = <&i2c22_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};

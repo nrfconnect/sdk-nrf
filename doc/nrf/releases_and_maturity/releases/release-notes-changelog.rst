@@ -918,6 +918,10 @@ Other libraries
   * Removed strict dependency on the Partition Manager.
     The Partition Manager can still be used with the library, but it is deprecated and not recommended for new designs.
 
+* Added :ref:`ppi_seq` library for triggering periodic hardware tasks using PPI.
+
+* Added :ref:`ppi_seq_i2c_spi` driver which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
+
 Shell libraries
 ---------------
 
