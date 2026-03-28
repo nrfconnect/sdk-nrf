@@ -207,6 +207,32 @@ int log_rpc_get_crash_dump(size_t offset, uint8_t *buffer, size_t buffer_length)
  */
 int log_rpc_invalidate_crash_dump(void);
 
+/**
+ * @brief Retrieves the log history dump saved on the remote device after a crash.
+ *
+ * When CONFIG_LOG_BACKEND_RPC_HISTORY_STORE_ON_CRASH is enabled on the remote,
+ * the fatal error handler writes the RAM log history to the log_history partition.
+ * This function reads a chunk of that dump.
+ *
+ * Call repeatedly with increasing offset until it returns 0 (no more data).
+ *
+ * @param offset   Byte offset into the dump payload.
+ * @param buffer   Output buffer for the chunk.
+ * @param buffer_length  Size of the output buffer.
+ *
+ * @returns  Number of bytes copied into @p buffer, or 0 if no dump or no more data.
+ */
+size_t log_rpc_get_history_dump(size_t offset, uint8_t *buffer, size_t buffer_length);
+
+/**
+ * @brief Clears the log history dump on the remote device.
+ *
+ * Invalidates the dump so it can no longer be read with log_rpc_get_history_dump.
+ *
+ * @returns 0 on success, negative errno on failure.
+ */
+int log_rpc_clear_history_dump(void);
+
 /** @brief Get crash dump summary.
  *
  * @param[out] info A pointer to a structure for storing the information.
