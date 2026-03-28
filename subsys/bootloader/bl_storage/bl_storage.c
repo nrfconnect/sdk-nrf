@@ -629,3 +629,72 @@ int read_variable_data(enum variable_data_type data_type, uint8_t *buf, uint32_t
 }
 
 #endif /* CONFIG_BUILD_WITH_TFM */
+
+#ifdef CONFIG_NRF_LCS_MEM_BL_STORAGE
+int nrf_lcs_mem_provisioning_read(uint32_t *value)
+{
+	if (value == NULL) {
+		return -EINVAL;
+	}
+
+	lcs_data_t provisioning = bl_storage_lcs_get((uint32_t)&BL_STORAGE->lcs.provisioning);
+
+	if (provisioning == STATE_NOT_ENTERED) {
+		*value = NRF_LCS_MEM_VALUE_NOT_ENTERED;
+	} else {
+		*value = (uint32_t)provisioning;
+	}
+
+	return 0;
+}
+
+int nrf_lcs_mem_provisioning_write(uint32_t value)
+{
+	return bl_storage_lcs_set((uint32_t)&BL_STORAGE->lcs.provisioning, STATE_ENTERED);
+}
+
+int nrf_lcs_mem_secured_read(uint32_t *value)
+{
+	if (value == NULL) {
+		return -EINVAL;
+	}
+
+	lcs_data_t secured = bl_storage_lcs_get((uint32_t) &BL_STORAGE->lcs.secure);
+
+	if (secured == STATE_NOT_ENTERED) {
+		*value = NRF_LCS_MEM_VALUE_NOT_ENTERED;
+	} else {
+		*value = (uint32_t)secured;
+	}
+
+	return 0;
+}
+
+int nrf_lcs_mem_secured_write(uint32_t value)
+{
+	return bl_storage_lcs_set((uint32_t)&BL_STORAGE->lcs.secure, STATE_ENTERED);
+}
+
+int nrf_lcs_mem_decommissioned_read(uint32_t *value)
+{
+	if (value == NULL) {
+		return -EINVAL;
+	}
+
+	lcs_data_t decommissioned = bl_storage_lcs_get((uint32_t)&BL_STORAGE->lcs.decommissioned);
+
+	if (decommissioned == STATE_NOT_ENTERED) {
+		*value = NRF_LCS_MEM_VALUE_NOT_ENTERED;
+	} else {
+		*value = (uint32_t)decommissioned;
+	}
+
+	return 0;
+}
+
+int nrf_lcs_mem_decommissioned_write(uint32_t value)
+{
+	return bl_storage_lcs_set((uint32_t)&BL_STORAGE->lcs.decommissioned, STATE_ENTERED);
+}
+
+#endif /* CONFIG_NRF_LCS_MEM_BL_STORAGE */

@@ -18,6 +18,7 @@ choice NRF_LCS_MEM
 
 config NRF_LCS_MEM_BL_STORAGE
 	bool "Bootloader Storage"
+	depends on SECURE_BOOT_STORAGE
 	help
 	  Store Life Cycle State values in bootloader storage.
 
