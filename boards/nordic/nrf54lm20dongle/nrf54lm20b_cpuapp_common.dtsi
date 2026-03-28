@@ -15,6 +15,11 @@
 		zephyr,flash = &cpuapp_rram;
 		zephyr,ieee802154 = &ieee802154;
 		zephyr,boot-mode = &boot_mode0;
+		zephyr,console = &board_cdc_acm_uart;
+		zephyr,shell-uart = &board_cdc_acm_uart;
+		zephyr,uart-mcumgr = &mcumgr_cdc_acm_uart;
+		zephyr,bt-mon-uart = &board_cdc_acm_uart;
+		zephyr,bt-c2h-uart = &board_cdc_acm_uart;
 	};
 
 	aliases {
@@ -113,6 +118,13 @@
 
 zephyr_udc0: &usbhs {
 	status = "okay";
-};
 
-#include <../boards/common/usb/cdc_acm_serial.dtsi>
+	board_cdc_acm_uart: board_cdc_acm_uart {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+
+	mcumgr_cdc_acm_uart: mcumgr_cdc_acm_uart {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "nRF54LM20 Dongle MCUmgr";
+	};
+};
