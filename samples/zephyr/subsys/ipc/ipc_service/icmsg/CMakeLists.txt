@@ -8,11 +8,6 @@ cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
-if(NOT CONFIG_BOARD_NRF54LV10DK_NRF54LV10A_CPUAPP AND
-   NOT CONFIG_BOARD_NRF54LM20DK_NRF54LM20A_CPUAPP)
-  message(FATAL_ERROR "${BOARD} is not supported for this sample")
-endif()
-
 if(NOT SYSBUILD)
   message(FATAL_ERROR
     " This is a multi-image application that should be built using sysbuild.\n"
