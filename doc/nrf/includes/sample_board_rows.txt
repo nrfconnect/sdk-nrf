@@ -330,3 +330,7 @@
 .. nrf7120dk_nrf7120_cpuapp_ns
 
 | nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuapp/ns`` |
+
+.. nrf7120dk_nrf7120_cpuflpr
+
+| nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuflpr`` |

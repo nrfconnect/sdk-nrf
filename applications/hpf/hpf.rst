@@ -5,7 +5,7 @@ High-Performance Framework
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF7120 devices.
 
 High-Performance Framework, is a framework designed to facilitate the creation and integration of :ref:`peripheral emulations using coprocessors <coprocessors_index>`.
 The following applications are created using HPF:

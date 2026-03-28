@@ -10,7 +10,7 @@ High-Performance Framework GPIO
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20A devices.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20A and nRF7120 devices.
 
 This application demonstrates how to write a :ref:`High-Performance Framework (HPF) <hpf_index>` application implementing a simple peripheral.
 The application implements a subset of the Zephyr GPIO API.
@@ -54,7 +54,7 @@ Building and running
 To build and run the application, you must include code for both the application core and FLPR core.
 The process involves building the :zephyr:code-sample:`blinky` sample with the appropriate sysbuild configuration.
 
-For example, to build with icmsg backend, run the following commands:
+For example, to build with icmsg backend, run the following commands (replace ``<board>`` with your target board, such as ``nrf54l15dk/nrf54l15/cpuapp`` or ``nrf7120dk/nrf7120/cpuapp``):
 
 .. code-block:: console
 
