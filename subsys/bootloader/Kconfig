@@ -189,4 +189,22 @@ config NCS_MCUBOOT_MANIFEST_IMAGE_INDEX
 
 endif # NCS_MCUBOOT_MANIFEST_UPDATES
 
+DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
+DT_NODELABEL_SECONDARY_PARTITION := secondary_app_partition
+DT_NODELABEL_SLOT1_PARTITION := slot1_partition
+
+config NCS_IS_VARIANT_IMAGE
+	bool
+	default y if "$(sub, \
+			$(dt_nodelabel_reg_addr_int,$(DT_NODELABEL_SECONDARY_PARTITION)), \
+			$(dt_chosen_reg_addr_int,$(DT_CHOSEN_Z_CODE_PARTITION)))" = 0
+	default y if "$(sub, \
+			$(dt_nodelabel_reg_addr_int,$(DT_NODELABEL_SLOT1_PARTITION)), \
+			$(dt_chosen_reg_addr_int,$(DT_CHOSEN_Z_CODE_PARTITION)))" = 0
+	help
+	  This is an internal configuration option used to distinguish between
+	  the main image and the variant image when building multi-image applications.
+	  This option is set automatically based on devicetree partitions and should not require
+	  manual intervention.
+
 endmenu

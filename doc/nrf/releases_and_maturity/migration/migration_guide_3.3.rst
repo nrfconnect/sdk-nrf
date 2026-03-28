@@ -24,6 +24,35 @@ Required changes
 
 The following changes are mandatory to make your application work in the same way as in previous releases.
 
+Build system
+============
+
+.. toggle::
+
+   * The NCS-specific mechanism for creating variant images is replaced with the Zephyr-provided `ExternalZephyrVariantProject_Add(..)` function.
+     The new function is defined and maintained in the Zephyr repository, providing a very similar API and functionality.
+     The old function, `ExternalNcsVariantProject_Add(..)`, is deprecated and kept for backward compatibility, but it will be removed in the future.
+     To migrate your project, replace all instances of `ExternalNcsVariantProject_Add(..)` with `ExternalZephyrVariantProject_Add(..)`.
+
+     For example, the following code snippet:
+
+     .. code-block:: none
+
+        ExternalNcsVariantProject_Add(
+          APPLICATION <src_image>
+          VARIANT <variant_image>
+        )
+
+     Should be modified as follows:
+
+     .. code-block:: none
+
+        ExternalZephyrVariantProject_Add(
+          SOURCE_APP <src_image>
+          APPLICATION <variant_image>
+          SNIPPET secondary-app-partition
+        )
+
 Samples and applications
 ========================
 
