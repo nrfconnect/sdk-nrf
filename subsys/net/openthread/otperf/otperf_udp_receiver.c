@@ -16,6 +16,9 @@ LOG_MODULE_DECLARE(otperf, CONFIG_OTPERF_LOG_LEVEL);
 #include "otperf_internal.h"
 #include "otperf_session.h"
 
+/* Used to realign the number of packets lost after server sends the finishing packet */
+#define OTPERF_UDP_EXPECTED_COUNT_TOLERANCE 5
+
 static otperf_callback udp_session_cb;
 static void *udp_user_data;
 static bool udp_server_running;
@@ -77,7 +80,9 @@ static int otperf_receiver_send_stat(otUdpSocket *sock, const struct otSockAddr 
 	messageInfo.mPeerAddr = addr->mAddress;
 	messageInfo.mPeerPort = addr->mPort;
 
+	openthread_mutex_lock();
 	error = otUdpSend(instance, sock, message, &messageInfo);
+	openthread_mutex_unlock();
 
 	if (error != OT_ERROR_NONE) {
 		LOG_ERR("Unable to send statistics message via udp");
@@ -135,6 +140,7 @@ static void udp_received(otUdpSocket *sock, const struct otSockAddr *addr, uint8
 			session->start_time = time;
 			session->counter = 1;
 			session->length = datalen;
+			session->next_id = id + 1;
 
 			/* Start a new session! */
 			if (udp_session_cb != NULL) {
@@ -146,11 +152,27 @@ static void udp_received(otUdpSocket *sock, const struct otSockAddr *addr, uint8
 		if (id < 0) { /* Negative id means session end. */
 			struct otperf_results results = {0};
 			uint64_t duration;
+			uint32_t expected_from_client = (uint32_t)(-(int32_t)id);
 
-			duration = k_ticks_to_us_ceil64(time - session->start_time);
+			duration = k_ticks_to_us_ceil64(session->last_received_time -
+							session->start_time);
 
 			/* Update state machine */
 			session->state = STATE_COMPLETED;
+
+			/* When last packet is received, it has a negative id.
+			 * Zperf and Otperf set it to -number of total packets.
+			 * While IPerf just sets the first bit.
+			 * If the numbers are close it probably means some of the last packets were
+			 * skipped. In that case, we can recalculate the error count
+			 */
+			if (expected_from_client > session->next_id) {
+				uint32_t diff = expected_from_client - session->counter;
+
+				if (diff <= OTPERF_UDP_EXPECTED_COUNT_TOLERANCE) {
+					session->error += diff;
+				}
+			}
 
 			/* Fill statistics */
 			session->stat.flags = 0x80000000;
@@ -188,6 +210,7 @@ static void udp_received(otUdpSocket *sock, const struct otSockAddr *addr, uint8
 			/* Update counter */
 			session->counter++;
 			session->length += datalen;
+			session->last_received_time = time;
 
 			/* Compute jitter */
 			transit_time = time_delta(k_ticks_to_us_ceil32(time),
@@ -225,7 +248,10 @@ static void udp_receiver_cleanup(void)
 {
 	otInstance *instance = openthread_get_default_instance();
 
+	openthread_mutex_lock();
 	otUdpClose(instance, &current_socket);
+	openthread_mutex_unlock();
+
 	udp_server_running = false;
 	udp_session_cb = NULL;
 
@@ -268,7 +294,10 @@ static int otperf_udp_receiver_init(otInstance *instance)
 {
 	otError error;
 
+	openthread_mutex_lock();
 	error = otUdpOpen(instance, &current_socket, ot_udp_receive_cb, NULL);
+	openthread_mutex_unlock();
+
 	if (error != OT_ERROR_NONE) {
 		LOG_ERR("Failed to open UDP socket: %d", error);
 		return -EIO;
@@ -280,7 +309,11 @@ static int otperf_udp_receiver_init(otInstance *instance)
 	error = otUdpBind(instance, &current_socket, &bindAddr, OT_NETIF_THREAD);
 	if (error != OT_ERROR_NONE) {
 		LOG_ERR("Cannot bind IPv6 UDP port %d: %d", bindAddr.mPort, error);
+
+		openthread_mutex_lock();
 		otUdpClose(instance, &current_socket);
+		openthread_mutex_unlock();
+
 		return -EIO;
 	}
 

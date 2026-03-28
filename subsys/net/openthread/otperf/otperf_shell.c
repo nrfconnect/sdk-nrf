@@ -7,6 +7,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(otperf, CONFIG_OTPERF_LOG_LEVEL);
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
@@ -188,21 +189,22 @@ static void udp_session_cb(enum otperf_status status, struct otperf_results *res
 
 		shell_fprintf(sh, SHELL_NORMAL, "End of session!\n");
 
-		shell_fprintf(sh, SHELL_NORMAL, " duration:\t\t");
+		shell_fprintf(sh, SHELL_NORMAL, " Duration:\t\t");
 		print_number_64(sh, result->time_in_us, TIME_US, TIME_US_UNIT);
 		shell_fprintf(sh, SHELL_NORMAL, "\n");
 
-		shell_fprintf(sh, SHELL_NORMAL, " received packets:\t%u\n",
+		shell_fprintf(sh, SHELL_NORMAL, " Received packets:\t%u\n",
 			      result->nb_packets_rcvd);
-		shell_fprintf(sh, SHELL_NORMAL, " nb packets lost:\t%u\n", result->nb_packets_lost);
-		shell_fprintf(sh, SHELL_NORMAL, " nb packets outorder:\t%u\n",
+		shell_fprintf(sh, SHELL_NORMAL, " Num packets not received:\t%u\n",
+			      result->nb_packets_lost);
+		shell_fprintf(sh, SHELL_NORMAL, " Num packets outorder:\t%u\n",
 			      result->nb_packets_outorder);
 
-		shell_fprintf(sh, SHELL_NORMAL, " jitter:\t\t\t");
+		shell_fprintf(sh, SHELL_NORMAL, " Jitter:\t\t");
 		print_number(sh, result->jitter_in_us, TIME_US, TIME_US_UNIT);
 		shell_fprintf(sh, SHELL_NORMAL, "\n");
 
-		shell_fprintf(sh, SHELL_NORMAL, " rate:\t\t\t");
+		shell_fprintf(sh, SHELL_NORMAL, " Rate:\t\t\t");
 		print_number(sh, rate_in_kbps, KBPS, KBPS_UNIT);
 		shell_fprintf(sh, SHELL_NORMAL, "\n");
 
@@ -266,7 +268,8 @@ static int cmd_udp_download(const struct shell *sh, size_t argc, char *argv[])
 static void shell_udp_upload_print_stats(const struct shell *sh, struct otperf_results *results,
 					 struct otperf_extra_results *extra_results)
 {
-	uint64_t rate_in_kbps, client_rate_in_kbps;
+	uint64_t rate_in_kbps, real_client_rate_in_kbps;
+	uint32_t nb_packets_actually_lost = 0;
 
 	shell_fprintf(sh, SHELL_NORMAL, "-\nUpload completed!\n");
 
@@ -277,43 +280,52 @@ static void shell_udp_upload_print_stats(const struct shell *sh, struct otperf_r
 		rate_in_kbps = 0U;
 	}
 
+	if (results->nb_packets_lost > extra_results->nb_packets_skipped) {
+		nb_packets_actually_lost =
+			results->nb_packets_lost - extra_results->nb_packets_skipped;
+	}
+
 	if (results->client_time_in_us != 0U) {
-		client_rate_in_kbps = (uint32_t)(((uint64_t)results->nb_packets_sent *
-						  (uint64_t)results->packet_size * (uint64_t)8 *
-						  (uint64_t)USEC_PER_SEC) /
-						 (results->client_time_in_us * 1000U));
+		real_client_rate_in_kbps =
+			(uint32_t)(((uint64_t)(results->nb_packets_sent -
+					       extra_results->nb_packets_skipped) *
+				    (uint64_t)results->packet_size * (uint64_t)8 *
+				    (uint64_t)USEC_PER_SEC) /
+				   (results->client_time_in_us * 1000U));
 	} else {
-		client_rate_in_kbps = 0U;
+		real_client_rate_in_kbps = 0U;
 	}
 
 	if (!rate_in_kbps) {
 		shell_fprintf(sh, SHELL_ERROR, "LAST PACKET NOT RECEIVED!!!\n");
 	}
 
-	shell_fprintf(sh, SHELL_NORMAL, "Statistics:\t\tserver\t(client)\n");
-	shell_fprintf(sh, SHELL_NORMAL, "Duration:\t\t");
+	shell_fprintf(sh, SHELL_NORMAL, "Statistics:\t\t\tserver\t(client)\n");
+	shell_fprintf(sh, SHELL_NORMAL, "Duration:\t\t\t");
 	print_number_64(sh, results->time_in_us, TIME_US, TIME_US_UNIT);
 	shell_fprintf(sh, SHELL_NORMAL, "\t(");
 	print_number_64(sh, results->client_time_in_us, TIME_US, TIME_US_UNIT);
 	shell_fprintf(sh, SHELL_NORMAL, ")\n");
 
-	shell_fprintf(sh, SHELL_NORMAL, "Num packets:\t\t%u\t(%u)\n", results->nb_packets_rcvd,
+	shell_fprintf(sh, SHELL_NORMAL, "Num packets:\t\t\t%u\t(%u)\n", results->nb_packets_rcvd,
 		      results->nb_packets_sent);
 
-	shell_fprintf(sh, SHELL_NORMAL, "Num packets out order:\t%u\n",
+	shell_fprintf(sh, SHELL_NORMAL, "Num packets out order:\t\t%u\n",
 		      results->nb_packets_outorder);
-	shell_fprintf(sh, SHELL_NORMAL, "Num packets lost:\t%u\n", results->nb_packets_lost);
-	shell_fprintf(sh, SHELL_NORMAL, "Num packets skipped:\t\t%u\n",
+	shell_fprintf(sh, SHELL_NORMAL, "Num packets not received:\t%u\n",
+		      results->nb_packets_lost);
+	shell_fprintf(sh, SHELL_NORMAL, "Num packets skipped:\t\t\t%u\n",
 		      extra_results->nb_packets_skipped);
+	shell_fprintf(sh, SHELL_NORMAL, "Num packets lost:\t\t%u\n", nb_packets_actually_lost);
 
-	shell_fprintf(sh, SHELL_NORMAL, "Jitter:\t\t\t");
+	shell_fprintf(sh, SHELL_NORMAL, "Jitter:\t\t\t\t");
 	print_number(sh, results->jitter_in_us, TIME_US, TIME_US_UNIT);
 	shell_fprintf(sh, SHELL_NORMAL, "\n");
 
-	shell_fprintf(sh, SHELL_NORMAL, "Rate:\t\t\t");
+	shell_fprintf(sh, SHELL_NORMAL, "Rate:\t\t\t\t");
 	print_number(sh, rate_in_kbps, KBPS, KBPS_UNIT);
 	shell_fprintf(sh, SHELL_NORMAL, "\t(");
-	print_number(sh, client_rate_in_kbps, KBPS, KBPS_UNIT);
+	print_number(sh, real_client_rate_in_kbps, KBPS, KBPS_UNIT);
 	shell_fprintf(sh, SHELL_NORMAL, ")\n");
 }
 
@@ -403,10 +415,6 @@ static int execute_upload(const struct shell *sh, const struct otperf_upload_par
 
 	uint32_t packet_duration = otperf_packet_duration(param->packet_size, param->rate_kbps);
 
-	shell_fprintf(sh, SHELL_NORMAL, "Rate:\t\t");
-	print_number(sh, param->rate_kbps, KBPS, KBPS_UNIT);
-	shell_fprintf(sh, SHELL_NORMAL, "\n");
-
 	if (packet_duration > 1000U) {
 		shell_fprintf(sh, SHELL_NORMAL, "Packet duration %u ms\n",
 			      (unsigned int)(packet_duration / 1000U));
@@ -417,7 +425,15 @@ static int execute_upload(const struct shell *sh, const struct otperf_upload_par
 
 	ret = otperf_udp_upload(param, &results, &extra_results);
 	if (ret < 0) {
-		shell_fprintf(sh, SHELL_ERROR, "UDP upload failed (%d)\n", ret);
+		if (ret == -EINVAL) {
+			shell_fprintf(sh, SHELL_ERROR, "Packet size too small (min %u bytes)\n",
+				      OTPERF_MIN_FUNCTIONAL_PACKET_SIZE);
+		} else if (ret == -E2BIG) {
+			shell_fprintf(sh, SHELL_ERROR, "Packet size too large (max %u bytes)\n",
+				      CONFIG_OTPERF_MAX_PACKET_SIZE);
+		} else {
+			shell_fprintf(sh, SHELL_ERROR, "UDP upload failed (%d)\n", ret);
+		}
 		return ret;
 	}
 
