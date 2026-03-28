@@ -23,6 +23,10 @@
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)
 #include <nrfx_power.h>
 #endif
+#if IS_ENABLED(CONFIG_SOC_SERIES_NRF54L)
+#include <nrf_sys_event.h>
+#endif
+
 #if defined(CONFIG_SOC_SERIES_NRF54H)
 #include <hal/nrf_dppi.h>
 #endif
@@ -189,6 +193,14 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_GRTC_TIMER_AUTO_KEEP_ALIVE),
 static struct k_work mpsl_low_prio_work;
 struct k_work_q mpsl_work_q;
 static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
+
+#if IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
+#if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
+static int m_nvm_low_latency_event_handle = -1;
+#else
+static uint32_t m_rram_lowpower_config;
+#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
+#endif /* IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
 
 #define MPSL_TIMESLOT_SESSION_COUNT (\
 	CONFIG_MPSL_TIMESLOT_SESSION_COUNT + \
@@ -602,6 +614,69 @@ void mpsl_lowpower_request_callback(void)
 #else
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
 #endif
+}
+
+void mpsl_low_latency_acquire_callback(void)
+{
+#if IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
+#if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
+	int err;
+
+	err = nrf_sys_event_request_global_constlat();
+	if (err) {
+		LOG_ERR("NVM low latency request has failed (%d)", err);
+	}
+#elif IS_ENABLED(CONFIG_NRFX_POWER)
+	nrfx_power_constlat_mode_request();
+#else
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
+
+#if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
+	int event_handle;
+
+	event_handle = nrf_sys_event_register(0, true);
+	if (event_handle < 0) {
+		LOG_ERR("NVM low latency request has failed (%d)", event_handle);
+	}
+
+	m_nvm_low_latency_event_handle = event_handle;
+#else
+	m_rram_lowpower_config = NRF_RRAMC->POWER.LOWPOWERCONFIG;
+	NRF_RRAMC->POWER.LOWPOWERCONFIG = RRAMC_POWER_LOWPOWERCONFIG_MODE_Standby
+					  << RRAMC_POWER_LOWPOWERCONFIG_MODE_Pos;
+#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
+#endif /* IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
+}
+
+void mpsl_low_latency_release_callback(void)
+{
+#if IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
+
+#if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
+	int ret;
+
+	ret = nrf_sys_event_release_global_constlat();
+	if (ret) {
+		LOG_ERR("NVM low latency release has failed (%d)", ret);
+	}
+#elif IS_ENABLED(CONFIG_NRFX_POWER)
+	nrfx_power_constlat_mode_free();
+#else
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
+#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
+
+#if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
+	ret = nrf_sys_event_unregister(m_nvm_low_latency_event_handle, false);
+	if (ret != 0) {
+		LOG_ERR("NVM low latency release has failed (%d)", ret);
+	}
+
+	m_nvm_low_latency_event_handle = -1;
+#else
+	NRF_RRAMC->POWER.LOWPOWERCONFIG = m_rram_lowpower_config;
+#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
+#endif /* IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
 }
 #endif /* defined(CONFIG_SOC_COMPATIBLE_NRF54LX) */
 
