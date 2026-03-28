@@ -85,6 +85,10 @@ Bootloaders and DFU
   The new function is defined and maintained in the Zephyr repository, providing a very similar API and functionality.
   The old function is deprecated and kept for backward compatibility, but it will be removed in the future.
 
+* Moved the UUID configuration for the MCUboot images from the Kconfig options to the Devicetree.
+  The UUIDs are now defined in the Devicetree overlay files for each image.
+  For more information, see the :ref:`mcuboot_config`.
+
 Developing with nRF91 Series
 ============================
 
