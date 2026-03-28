@@ -99,3 +99,4 @@ This self-paced course introduces the hardware architecture, functionality, capa
    ecies_x25519.rst
    otp_map_nrf54l
    pinmap
+   errata_nrf54l
