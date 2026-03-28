@@ -1,0 +1,8 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* CPURAD TCM memory map for FILE_SUFFIX=tcm (no MCUboot). */
+#include "../common/memory_map_tcm.dtsi"

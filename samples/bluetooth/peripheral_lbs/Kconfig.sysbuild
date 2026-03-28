@@ -7,7 +7,38 @@
 config PARTITION_MANAGER
 	default n if !BOARD_THINGY53 && !BOARD_IS_NON_SECURE
 
+# User-assignable (sysbuild_tcm.conf): gates NETCORE_REMOTE without creating a Kconfig loop with
+# NRF_DEFAULT_IPC_RADIO (which has no prompt and cannot be set from .conf).
+config LBS_IPC_RADIO_TCM
+	bool "ipc_radio in cpurad TCM (radio_loader, no MCUboot)"
+	depends on SOC_NRF54H20_CPUAPP
+	default n
+	help
+	  ipc_radio runs from TCM; default cpuapp flash layout; CPURAD slots split for
+	  radio_loader + stored firmware. No MCUboot. Use FILE_SUFFIX=tcm.
+
+# Merges with the Nordic sysbuild NETCORE choice: ipc_radio in MRAM (default) or
+# ipc_radio relocated to cpurad TCM (LBS_IPC_RADIO_TCM + FILE_SUFFIX=tcm).
+choice NETCORE
+	default NETCORE_REMOTE if LBS_IPC_RADIO_TCM
+
+config NETCORE_REMOTE
+	bool "ipc_radio relocated to TCM (nRF54H20 radio_loader)"
+	depends on SOC_NRF54H20_CPUAPP
+	help
+	  Build ipc_radio for cpurad from TCM using radio_loader and static devicetree
+	  partitions. Use west build ... -- -DFILE_SUFFIX=tcm (no MCUboot).
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "remote" if NETCORE_REMOTE
+
+config NETCORE_IMAGE_PATH
+	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/ipc_radio" if NETCORE_REMOTE
+
 config NRF_DEFAULT_IPC_RADIO
+	default n if LBS_IPC_RADIO_TCM
 	default y
 
 config NETCORE_IPC_RADIO_BT_HCI_IPC
