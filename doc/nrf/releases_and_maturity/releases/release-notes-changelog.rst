@@ -67,6 +67,10 @@ Bootloaders and DFU
 
 * Added a new lifecycle state (LCS) API designed for nRF54L Series devices.
 
+* Moved the UUID configuration for the MCUboot images from the Kconfig options to the Devicetree.
+  The UUIDs are now defined in the Devicetree overlay files for each image.
+  For more information, see the :ref:`mcuboot_config`.
+
 Developing with nRF91 Series
 ============================
 
