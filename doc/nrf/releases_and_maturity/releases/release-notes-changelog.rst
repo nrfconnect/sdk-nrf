@@ -713,7 +713,7 @@ Thread samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`wifi_p2p_sample` sample that demonstrates how to establish a Wi-Fi Peer-to-Peer (P2P) connection using Wi-Fi Direct®, supporting both Client (CLI) mode and Group Owner (GO) mode operations.
 
 Other samples
 -------------
