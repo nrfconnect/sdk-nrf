@@ -18,3 +18,5 @@
 		nordic,pm-ext-flash = &gd25wb256;
 	};
 };
+
+#include <common/nordic/nrf91_partitions_full_tfm.dtsi>

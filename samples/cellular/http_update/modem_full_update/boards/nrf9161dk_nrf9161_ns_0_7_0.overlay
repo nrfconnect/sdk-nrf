@@ -15,3 +15,5 @@
 &gd25lb256 {
 	status = "okay";
 };
+
+#include <common/nordic/nrf91_partitions_full_tfm.dtsi>

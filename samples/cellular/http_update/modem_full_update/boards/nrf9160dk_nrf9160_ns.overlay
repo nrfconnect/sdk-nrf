@@ -18,3 +18,5 @@
 		nordic,pm-ext-flash = &mx25r64;
 	};
 };
+
+#include <common/nordic/nrf91_partitions_full_tfm.dtsi>

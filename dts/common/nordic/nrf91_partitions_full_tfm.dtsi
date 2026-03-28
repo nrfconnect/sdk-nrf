@@ -1,0 +1,93 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &slot0_partition;
+/delete-node/ &slot0_ns_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			label = "image-0-secure";
+			reg = <0x0 0x30000>;
+		};
+
+		slot0_ns_partition: partition@30000 {
+			label = "image-0-nonsecure";
+			reg = <0x30000 0xc0000>;
+		};
+
+		tfm_ps_partition: partition@f0000 {
+			label = "tfm-ps";
+			reg = <0xf0000 0x04000>;
+		};
+
+		tfm_its_partition: partition@f4000 {
+			label = "tfm-its";
+			reg = <0xf4000 0x2000>;
+		};
+
+		tfm_otp_partition: partition@f6000 {
+			label = "tfm-otp";
+			reg = <0xf6000 0x2000>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0xf8000 0x8000>;
+		};
+	};
+};
+
+/delete-node/ &sram0_s;
+/delete-node/ &sram0_ns;
+
+&sram0 {
+	sram0_s: sram@0 {
+		/* Secure image memory */
+		reg = <0x0 0x10000>;
+	};
+
+	sram0_ns: sram@10000 {
+		/* Non-Secure image memory */
+		reg = <0x10000 0x30000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x10000 0x30000>;
+
+		sram0_ns_modem: sram0_ns@0 {
+			/* Modem (shared) memory */
+			reg = <0x0 0x4800>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x0 0x4800>;
+
+			cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+				/* Modem IPC control */
+				reg = <0x0 0x728>;
+			};
+
+			cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@4e8 {
+				/* Modem IPC transmit */
+				reg = <0x728 0x2080>;
+			};
+
+			cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@2568 {
+				/* Modem IPC receive */
+				reg = <0x27a8 0x2000>;
+			};
+		};
+
+		sram0_ns_app: sram0_ns@4800 {
+			/* Non-Secure application memory */
+			reg = <0x4800 0x2b800>;
+		};
+	};
+};
