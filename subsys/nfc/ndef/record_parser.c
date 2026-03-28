@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <errno.h>
@@ -18,11 +19,9 @@ LOG_MODULE_DECLARE(nfc_ndef_parser, CONFIG_NFC_NDEF_PARSER_LOG_LEVEL);
  */
 #define NDEF_RECORD_BASE_SHORT_LEN (2 + NDEF_RECORD_PAYLOAD_LEN_SHORT_SIZE)
 
-
 int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
 			  struct nfc_ndef_record_desc *rec_desc,
-			  enum nfc_ndef_record_location *record_location,
-			  const uint8_t *nfc_data,
+			  enum nfc_ndef_record_location *record_location, const uint8_t *nfc_data,
 			  uint32_t *nfc_data_len)
 {
 	uint32_t expected_rec_size = NDEF_RECORD_BASE_SHORT_LEN;
@@ -31,7 +30,7 @@ int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
 		return -EINVAL;
 	}
 
-	rec_desc->tnf = (enum nfc_ndef_record_tnf) ((*nfc_data) & NDEF_RECORD_TNF_MASK);
+	rec_desc->tnf = (enum nfc_ndef_record_tnf)((*nfc_data) & NDEF_RECORD_TNF_MASK);
 
 	/* An NDEF parser that receives an NDEF record with an unknown
 	 * or unsupported TNF field value
@@ -41,7 +40,7 @@ int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
 		rec_desc->tnf = TNF_UNKNOWN_TYPE;
 	}
 
-	*record_location = (enum nfc_ndef_record_location) ((*nfc_data) & NDEF_RECORD_LOCATION_MASK);
+	*record_location = (enum nfc_ndef_record_location)((*nfc_data) & NDEF_RECORD_LOCATION_MASK);
 
 	uint8_t flags = *(nfc_data++);
 
@@ -73,7 +72,7 @@ int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
 		rec_desc->id_length = *(nfc_data++);
 	} else {
 		rec_desc->id_length = 0;
-		rec_desc->id        = NULL;
+		rec_desc->id = NULL;
 	}
 
 	expected_rec_size += rec_desc->type_length + rec_desc->id_length + payload_length;
@@ -103,52 +102,42 @@ int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
 	bin_pay_desc->payload_length = payload_length;
 
 	rec_desc->payload_descriptor = bin_pay_desc;
-	rec_desc->payload_constructor  = (payload_constructor_t) nfc_ndef_bin_payload_memcopy;
+	rec_desc->payload_constructor = (payload_constructor_t)nfc_ndef_bin_payload_memcopy;
 
 	*nfc_data_len = expected_rec_size;
 
 	return 0;
 }
 
-static const char * const tnf_strings[] = {
-	"Empty",
-	"NFC Forum well-known type",
-	"Media-type (RFC 2046)",
-	"Absolute URI (RFC 3986)",
-	"NFC Forum external type (NFC RTD)",
-	"Unknown",
-	"Unchanged",
-	"Reserved"
-};
+static const char *const tnf_strings[] = {"Empty",
+					  "NFC Forum well-known type",
+					  "Media-type (RFC 2046)",
+					  "Absolute URI (RFC 3986)",
+					  "NFC Forum external type (NFC RTD)",
+					  "Unknown",
+					  "Unchanged",
+					  "Reserved"};
 
-void nfc_ndef_record_printout(uint32_t num,
-			      const struct nfc_ndef_record_desc *rec_desc)
+void nfc_ndef_record_printout(uint32_t num, const struct nfc_ndef_record_desc *rec_desc)
 {
 	LOG_INF("NDEF record %d content:", num);
 	LOG_INF("TNF: %s", tnf_strings[rec_desc->tnf]);
 
 	if (rec_desc->id != NULL) {
-		LOG_HEXDUMP_INF((uint8_t *)rec_desc->id,
-				rec_desc->id_length,
-				"Record ID: ");
+		LOG_HEXDUMP_INF((uint8_t *)rec_desc->id, rec_desc->id_length, "Record ID: ");
 	}
 
 	if (rec_desc->type != NULL) {
-		LOG_HEXDUMP_INF((uint8_t *)rec_desc->type,
-				rec_desc->type_length,
-				"Record type: ");
+		LOG_HEXDUMP_INF((uint8_t *)rec_desc->type, rec_desc->type_length, "Record type: ");
 	}
 
-	if (rec_desc->payload_constructor == (payload_constructor_t) nfc_ndef_bin_payload_memcopy) {
-		const struct nfc_ndef_bin_payload_desc *bin_pay_desc =
-			rec_desc->payload_descriptor;
+	if (rec_desc->payload_constructor == (payload_constructor_t)nfc_ndef_bin_payload_memcopy) {
+		const struct nfc_ndef_bin_payload_desc *bin_pay_desc = rec_desc->payload_descriptor;
 
 		if (bin_pay_desc->payload != NULL) {
-			LOG_INF("Payload length: %d bytes",
-				bin_pay_desc->payload_length);
+			LOG_INF("Payload length: %d bytes", bin_pay_desc->payload_length);
 			LOG_HEXDUMP_DBG((uint8_t *)bin_pay_desc->payload,
-					bin_pay_desc->payload_length,
-					"Payload length: ");
+					bin_pay_desc->payload_length, "Payload length: ");
 		} else {
 			LOG_INF("No payload");
 		}

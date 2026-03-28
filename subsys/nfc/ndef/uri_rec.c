@@ -27,8 +27,7 @@ const uint8_t nfc_ndef_uri_rec_type = 'U'; /**< URI Record type. */
  * @return -ENOMEM If the predicted payload size is bigger than the provided
  * buffer space.
  */
-int nfc_ndef_uri_rec_payload_encode(struct nfc_ndef_uri_rec_payload *input,
-				    uint8_t *buff,
+int nfc_ndef_uri_rec_payload_encode(struct nfc_ndef_uri_rec_payload *input, uint8_t *buff,
 				    uint32_t *len)
 {
 	if (buff) {

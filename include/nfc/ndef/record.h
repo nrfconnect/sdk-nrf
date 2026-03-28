@@ -24,18 +24,18 @@ extern "C" {
  */
 
 /** Mask of the ID field presence bit in the flags byte of an NDEF record. */
-#define NDEF_RECORD_IL_MASK                0x08
+#define NDEF_RECORD_IL_MASK		   0x08
 /** Mask of the TNF value field in the first byte of an NDEF record. */
-#define NDEF_RECORD_TNF_MASK               0x07
+#define NDEF_RECORD_TNF_MASK		   0x07
 /** Mask of the SR flag. If set, this flag indicates that the PAYLOAD_LENGTH
  *  field has a size of 1 byte. Otherwise, PAYLOAD_LENGTH has 4 bytes.
  */
-#define NDEF_RECORD_SR_MASK                0x10
+#define NDEF_RECORD_SR_MASK		   0x10
 /** Size of the Payload Length field in a long NDEF record. */
 #define NDEF_RECORD_PAYLOAD_LEN_LONG_SIZE  4
 /** Size of the Payload Length field in a short NDEF record. */
 #define NDEF_RECORD_PAYLOAD_LEN_SHORT_SIZE 1
-#define NDEF_RECORD_ID_LEN_SIZE            1
+#define NDEF_RECORD_ID_LEN_SIZE		   1
 
 /**
  * @brief Payload constructor type.
@@ -54,9 +54,7 @@ extern "C" {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-typedef int (*payload_constructor_t)(void *payload_descriptor,
-				     uint8_t *buffer,
-				     uint32_t *len);
+typedef int (*payload_constructor_t)(void *payload_descriptor, uint8_t *buffer, uint32_t *len);
 /**
  * @brief Type Name Format (TNF) Field Values.
  *
@@ -66,23 +64,23 @@ enum nfc_ndef_record_tnf {
 	/** The value indicates that there is no type or payload associated
 	 *  with this record.
 	 */
-	TNF_EMPTY         = 0x00,
+	TNF_EMPTY = 0x00,
 	/** NFC Forum well-known type [NFC RTD]. */
-	TNF_WELL_KNOWN    = 0x01,
+	TNF_WELL_KNOWN = 0x01,
 	/** Media-type as defined in RFC 2046 [RFC 2046]. */
-	TNF_MEDIA_TYPE    = 0x02,
+	TNF_MEDIA_TYPE = 0x02,
 	/** Absolute URI as defined in RFC 3986 [RFC 3986]. */
-	TNF_ABSOLUTE_URI  = 0x03,
+	TNF_ABSOLUTE_URI = 0x03,
 	/** NFC Forum external type [NFC RTD]. */
 	TNF_EXTERNAL_TYPE = 0x04,
 	/** The value indicates that there is no type associated with this
 	 *  record.
 	 */
-	TNF_UNKNOWN_TYPE  = 0x05,
+	TNF_UNKNOWN_TYPE = 0x05,
 	/** The value is used for the record chunks used in chunked payload. */
-	TNF_UNCHANGED     = 0x06,
+	TNF_UNCHANGED = 0x06,
 	/** The value is reserved for future use. */
-	TNF_RESERVED      = 0x07,
+	TNF_RESERVED = 0x07,
 };
 
 /**
@@ -113,10 +111,10 @@ struct nfc_ndef_record_desc {
  * Values to specify the location of a record within the NDEF message.
  */
 enum nfc_ndef_record_location {
-	NDEF_FIRST_RECORD  = 0x80, /**< First record. */
+	NDEF_FIRST_RECORD = 0x80,  /**< First record. */
 	NDEF_MIDDLE_RECORD = 0x00, /**< Middle record. */
-	NDEF_LAST_RECORD   = 0x40, /**< Last record. */
-	NDEF_LONE_RECORD   = 0xC0  /**< Only one record in the message. */
+	NDEF_LAST_RECORD = 0x40,   /**< Last record. */
+	NDEF_LONE_RECORD = 0xC0	   /**< Only one record in the message. */
 };
 
 /** Mask of the Record Location bits in the NDEF record's flags byte. */
@@ -126,7 +124,7 @@ enum nfc_ndef_record_location {
  * @brief Binary data descriptor containing the payload for the record.
  */
 struct nfc_ndef_bin_payload_desc {
-	uint8_t const *payload;  /**< Pointer to the buffer with the data. */
+	uint8_t const *payload;	 /**< Pointer to the buffer with the data. */
 	uint32_t payload_length; /**< Length of data in bytes. */
 };
 
@@ -154,25 +152,16 @@ struct nfc_ndef_bin_payload_desc {
  * @param payload_descriptor_arg Pointer to the data for the payload
  * constructor.
  */
-#define NFC_NDEF_GENERIC_RECORD_DESC_DEF(name,				    \
-					 tnf_arg,			    \
-					 id_arg,			    \
-					 id_len,			    \
-					 type_arg,			    \
-					 type_len,			    \
-					 payload_constructor_arg,	    \
-					 payload_descriptor_arg)	    \
-	struct nfc_ndef_record_desc name##_ndef_generic_record_desc =	    \
-	{								    \
-		.tnf = tnf_arg,						    \
-		.id_length = id_len,					    \
-		.id = id_arg,						    \
-		.type_length = type_len,				    \
-		.type = type_arg,					    \
-		.payload_constructor  =					    \
-			(payload_constructor_t)payload_constructor_arg,	    \
-		.payload_descriptor = (void *) payload_descriptor_arg	    \
-	}
+#define NFC_NDEF_GENERIC_RECORD_DESC_DEF(name, tnf_arg, id_arg, id_len, type_arg, type_len,        \
+					 payload_constructor_arg, payload_descriptor_arg)          \
+	struct nfc_ndef_record_desc name##_ndef_generic_record_desc = {                            \
+		.tnf = tnf_arg,                                                                    \
+		.id_length = id_len,                                                               \
+		.id = id_arg,                                                                      \
+		.type_length = type_len,                                                           \
+		.type = type_arg,                                                                  \
+		.payload_constructor = (payload_constructor_t)payload_constructor_arg,             \
+		.payload_descriptor = (void *)payload_descriptor_arg}
 
 /** @brief Macro for accessing the NFC NDEF record descriptor instance that you
  *  created with @ref NFC_NDEF_GENERIC_RECORD_DESC_DEF.
@@ -202,32 +191,19 @@ struct nfc_ndef_bin_payload_desc {
  * payload field.
  * @param payload_len Length of the payload.
  */
-#define NFC_NDEF_RECORD_BIN_DATA_DEF(name,				    \
-				     tnf_arg,				    \
-				     id_arg,				    \
-				     id_len,				    \
-				     type_arg,				    \
-				     type_len,				    \
-				     payload_arg,			    \
-				     payload_len)			    \
-	struct nfc_ndef_bin_payload_desc name##_nfc_ndef_bin_payload_desc = \
-	{								    \
-		.payload  = payload_arg,				    \
-		.payload_length = payload_len				    \
-	};								    \
-									    \
-	struct nfc_ndef_record_desc name##_nfc_ndef_bin_record_desc =	    \
-	{								    \
-		.tnf = tnf_arg,						    \
-		.id_length = id_len,					    \
-		.id = id_arg,						    \
-		.type_length = type_len,				    \
-		.type = type_arg,					    \
-		.payload_constructor  =					    \
-		    (payload_constructor_t) nfc_ndef_bin_payload_memcopy,   \
-		.payload_descriptor =					    \
-		    (void *) &name##_nfc_ndef_bin_payload_desc		    \
-	}
+#define NFC_NDEF_RECORD_BIN_DATA_DEF(name, tnf_arg, id_arg, id_len, type_arg, type_len,            \
+				     payload_arg, payload_len)                                     \
+	struct nfc_ndef_bin_payload_desc name##_nfc_ndef_bin_payload_desc = {                      \
+		.payload = payload_arg, .payload_length = payload_len};                            \
+                                                                                                   \
+	struct nfc_ndef_record_desc name##_nfc_ndef_bin_record_desc = {                            \
+		.tnf = tnf_arg,                                                                    \
+		.id_length = id_len,                                                               \
+		.id = id_arg,                                                                      \
+		.type_length = type_len,                                                           \
+		.type = type_arg,                                                                  \
+		.payload_constructor = (payload_constructor_t)nfc_ndef_bin_payload_memcopy,        \
+		.payload_descriptor = (void *)&name##_nfc_ndef_bin_payload_desc}
 
 /** @brief Macro for accessing the NFC NDEF record descriptor instance
  *  that you created with @ref NFC_NDEF_RECORD_BIN_DATA_DEF.
@@ -258,8 +234,7 @@ struct nfc_ndef_bin_payload_desc {
  */
 int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 			   enum nfc_ndef_record_location const record_location,
-			   uint8_t *record_buffer,
-			   uint32_t *record_len);
+			   uint8_t *record_buffer, uint32_t *record_len);
 
 /**
  * @brief Construct the payload for an NFC NDEF record from binary data.
@@ -277,15 +252,12 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_bin_payload_memcopy(
-			struct nfc_ndef_bin_payload_desc *payload_descriptor,
-			uint8_t *buffer,
-			uint32_t *len);
+int nfc_ndef_bin_payload_memcopy(struct nfc_ndef_bin_payload_desc *payload_descriptor,
+				 uint8_t *buffer, uint32_t *len);
 
 /**
  * @}
  */
-
 
 #ifdef __cplusplus
 }
