@@ -878,6 +878,7 @@
 /tests/crypto/                            @magnev
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
 /tests/drivers/can/                       @nrfconnect/ncs-low-level-test
+/tests/drivers/dect/dect_mdm/integration/ @nrfconnect/ncs-dect-nr-plus
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-eris
 /tests/drivers/flash_patch/               @nrfconnect/ncs-eris
 /tests/drivers/fprotect/                  @nrfconnect/ncs-eris
