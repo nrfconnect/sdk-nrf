@@ -295,6 +295,9 @@ MCUboot
    * The ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option has been deprecated.
      Replace it with :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE` in your sysbuild configuration files.
 
+   * UUID configuration for MCUboot images has been moved from Kconfig options to Devicetree.
+     For information about enabling this feature using Devicetree overlay files, see :ref:`mcuboot_config`.
+
 Libraries
 =========
 
