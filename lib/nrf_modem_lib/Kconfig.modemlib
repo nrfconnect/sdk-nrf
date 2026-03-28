@@ -3,6 +3,16 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Helper symbol for selecting transport type
+config SUPPORTS_NRF_MODEM_LIB_TRANSPORT_MBOX
+	bool
+	default y if SOC_SERIES_NRF92
+
+# Helper symbol for trace dependency
+config SUPPORTS_NRF_MODEM_LIB_TRACE
+	bool
+	default y if SOC_SERIES_NRF91 || SOC_SERIES_NRF92 || UNITY
+
 # The offloading layer cannot handle truncated block notifications.
 config COAP_CLIENT_TRUNCATE_MSGS
 	default n if NRF_MODEM_LIB
@@ -77,17 +87,14 @@ config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
 
 endif # SOC_SERIES_NRF91 || UNITY
 
-if SOC_SERIES_NRF92
-
 config NRF_MODEM_LIB_TRANSPORT_MBOX
 	bool
 	default y
+	depends on SUPPORTS_NRF_MODEM_LIB_TRANSPORT_MBOX
 	select MBOX
 	select IPC_SERVICE
 	select IPC_SERVICE_ICMSG
 	select IPC_SERVICE_ICMSG_SHMEM_ACCESS_SYNC
-
-endif # SOC_SERIES_NRF92
 
 config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
 	int "Size of the sendmsg intermediate buffer"
@@ -130,7 +137,7 @@ endmenu # Memory config
 
 menuconfig NRF_MODEM_LIB_TRACE
 	bool "Tracing"
-	depends on SOC_SERIES_NRF91 || SOC_SERIES_NRF92 || UNITY
+	depends on SUPPORTS_NRF_MODEM_LIB_TRACE
 	help
 	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
 	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
