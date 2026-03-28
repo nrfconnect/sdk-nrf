@@ -52,6 +52,7 @@ Varied reference designs
    applications
    samples
    drivers
+   nrf_peripherals
    libraries/index
    scripts
    integrations
