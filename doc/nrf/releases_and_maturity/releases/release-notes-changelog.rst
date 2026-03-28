@@ -415,6 +415,8 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
+* Added the :ref:`throughput_many_to_one` sample.
+
 * :ref:`central_uart` sample:
 
   * Added support for the ``nrf54lm20dongle/nrf54lm20b/cpuapp`` board target.
