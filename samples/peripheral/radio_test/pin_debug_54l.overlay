@@ -1,0 +1,21 @@
+/ {
+	ready_disabled_pin: ready-disabled-pin {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+
+	address_end_pin: address-end-pin {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpiote20 {
+	status = "okay";
+};

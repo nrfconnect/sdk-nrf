@@ -98,7 +98,7 @@ User interface
    * - output_power
      - <sub_cmd>
      - Output power set.
-       If a front-end module is attached and the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` Kconfig option is enabled, it has the same effect as the ``total_output_power`` command.
+       If a front-end module is attached and the :option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled, it has the same effect as the ``total_output_power`` command.
    * - parameters_print
      -
      - Print current delay, channel, and other parameters.
@@ -151,14 +151,14 @@ The behavior of the commands vary depending on the hardware configuration and Kc
   * The ``output_power`` command sets the SoC output command with a subcommand set.
     The output power is set directly in the radio peripheral.
 
-* Radio Test with front-end module support in default configuration (the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` Kconfig option is enabled):
+* Radio Test with front-end module support in default configuration (the :option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled):
 
   * The ``output_power`` command sets the total output power, including front-end module gain.
   * The ``total_output_power`` command sets the total output power, including front-end module gain with a value in dBm unit provided by user.
   * For these commands, the radio peripheral and FEM transmit power control is calculated and set automatically to meet your requirements.
   * If an exact output power value cannot be set, a lower value is used.
 
-* Radio Test with front-end module support and manual TX output power control (the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` Kconfig option is disabled):
+* Radio Test with front-end module support and manual TX output power control (the :option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is disabled):
 
   * The ``output_power`` command sets the SoC output command with a subcommands set.
   * The ``fem`` command with the ``tx_power_control`` subcommand sets the front-end module transmit power control to a value for given specific front-end module.
@@ -169,23 +169,10 @@ Configuration
 
 |config|
 
-Configuration options
-=====================
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/peripheral/radio_test/Kconfig`) :
 
-Check and configure the following Kconfig options:
-
-.. _CONFIG_RADIO_TEST_USB:
-
-CONFIG_RADIO_TEST_USB
-   Selects USB instead of UART as the Radio Test shell transport.
-   For nRF5340 the USB from application core is used as the communication interface.
-
-.. _CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC:
-
-CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
-   Sets the SoC output power and front-end module gain to achieve the requested TX output power.
-   If the exact value cannot be achieved, power is set to closest value that does not exceed the limits.
-   If this option is disabled, set the SoC output power and FEM gain with separate commands.
+.. options-from-kconfig::
+   :show-type:
 
 Building and running
 ********************

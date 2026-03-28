@@ -3695,7 +3695,7 @@ NCSDK-18847: The :ref:`radio_test` sample does not build with support for Skywor
   When building a sample with support for a front-end module different from nRF21540, the sample uses a non-existing configuration to initialize TX power data.
   This causes a compilation error because the source file containing code for a generic front-end module is not included in the build.
 
-  **Workaround:** Do not use the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` Kconfig option and replace ``CONFIG_GENERIC_FEM`` with :kconfig:option:`CONFIG_MPSL_FEM_SIMPLE_GPIO` in the :file:`CMakeLists.txt` file of the sample.
+  **Workaround:** Do not use the :option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option and replace ``CONFIG_GENERIC_FEM`` with :kconfig:option:`CONFIG_MPSL_FEM_SIMPLE_GPIO` in the :file:`CMakeLists.txt` file of the sample.
 
 .. rst-class:: v2-8-0 v2-7-0
 
