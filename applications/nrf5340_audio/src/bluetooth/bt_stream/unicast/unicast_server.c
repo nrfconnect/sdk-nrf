@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(unicast_server, CONFIG_UNICAST_SERVER_LOG_LEVEL);
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
-#define BLE_ISO_LATENCY_MS 10
+#define PREF_MAX_TRANS_LAT_MS 10
 #define CSIP_SET_SIZE	   2
 enum csip_set_rank {
 	CSIP_HL_RANK = 1,
@@ -141,7 +141,7 @@ static enum bt_audio_dir caps_dirs[] = {
 };
 
 static struct bt_bap_qos_cfg_pref qos_pref = BT_BAP_QOS_CFG_PREF(
-	true, BT_GAP_LE_PHY_2M, CONFIG_BT_AUDIO_RETRANSMITS, BLE_ISO_LATENCY_MS,
+	true, BT_GAP_LE_PHY_2M, CONFIG_BT_AUDIO_RETRANSMITS, PREF_MAX_TRANS_LAT_MS,
 	CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
 	CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
 
@@ -255,7 +255,6 @@ static int lc3_enable_cb(struct bt_bap_stream *stream, const uint8_t *meta, size
 			 struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("Enable: stream %p meta_len %d", (void *)stream, meta_len);
-
 	return 0;
 }
 
@@ -451,6 +450,17 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 	LOG_INF("Stream %p released", stream);
 }
 
+static void stream_qos_configured_cb(struct bt_bap_stream *stream)
+{
+	int ret;
+
+	LOG_DBG("QoS configured for stream %p", stream);
+	ret = le_audio_print_qos_from_stream(stream);
+	if (ret) {
+		LOG_ERR("Failed to print QoS from stream: %d", ret);
+	}
+}
+
 static struct bt_bap_stream_ops stream_ops = {
 #if (CONFIG_BT_AUDIO_RX)
 	.recv = stream_recv_cb,
@@ -463,6 +473,7 @@ static struct bt_bap_stream_ops stream_ops = {
 	.started = stream_started_cb,
 	.stopped = stream_stopped_cb,
 	.released = stream_released_cb,
+	.qos_set = stream_qos_configured_cb,
 };
 
 int unicast_server_pd_min_set(uint32_t dly_min_in_us)

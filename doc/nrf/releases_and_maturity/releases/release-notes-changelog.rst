@@ -322,6 +322,11 @@ nRF5340 Audio
   * Support for multiple independent coordinated sets in :ref:`unicast client app<nrf53_audio_unicast_client_app>`.
     When all the devices in a coordinated set are disconnected, the SIRK is cleared, allowing a new unicast group to be formed with a new SIRK without the need to restart the application.
 
+  * Added logic so the unicast client will process the RTN (retransmission number) from unicast servers.
+
+  * Improved how the unicast client handles group reconfiguration and restarts.
+    The client will now check and decide whether a group restart is needed or if a simpler reconfiguration is sufficient when parameters change.
+
 * Updated:
 
   * The application to switch to the new USB stack introduced in Zephyr 3.4.0.
