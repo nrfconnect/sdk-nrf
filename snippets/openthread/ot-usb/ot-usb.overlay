@@ -8,6 +8,7 @@
 	chosen {
 		zephyr,shell-uart = &snippet_cdc_acm_uart;
 		zephyr,console = &snippet_cdc_acm_uart;
+		zephyr,ot-uart = &snippet_cdc_acm_uart;
 	};
 };
 
