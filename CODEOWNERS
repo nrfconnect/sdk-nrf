@@ -425,6 +425,7 @@
 /modules/mcuboot/                         @nrfconnect/ncs-eris
 /modules/memfault-firmware-sdk/           @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
 /modules/nrfxlib/                         @nrfconnect/ncs-code-owners
+/modules/nrfxlib/nrf_802154_callbacks_dispatcher/ @nrfconnect/ncs-thread
 /modules/openthread/                      @nrfconnect/ncs-thread
 /modules/trusted-firmware-m/              @nrfconnect/ncs-aegir
 /modules/wfa-qt/                          @nrfconnect/ncs-wifi
