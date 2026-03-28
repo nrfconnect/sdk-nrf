@@ -207,7 +207,13 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+MCUboot
+-------
+
+.. toggle::
+
+   * The UUID configuration for the MCUboot images has been moved from the Kconfig options to the Devicetree.
+     For more information, how to enable this feature using Devicetree overlay files, see the :ref:`mcuboot_config`.
 
 Libraries
 =========
