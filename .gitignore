@@ -13,16 +13,10 @@ cscope.*
 .dir
 venv
 .venv
-.idea
 
 /*.patch
 
 tags
-.project
-.cproject
-.xxproject
-.envrc
-.vscode
 sanity-out*
 twister-out*
 
@@ -38,6 +32,21 @@ ext/BSEC_*
 
 applications/nrf5340_audio/src/fw_info_app.c
 scripts/hid_configurator/hidapi.dll
+
+# Editor files
+.clode
+.code
+.code-search
+.codespaces
+.codex
+.copilot
+.cproject
+.cursor
+.envrc
+.idea
+.project
+.vscode
+.xxproject
 
 # CI output
 compliance.xml
