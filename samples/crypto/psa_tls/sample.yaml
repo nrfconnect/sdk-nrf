@@ -812,3 +812,143 @@ tests:
       - oberon_legacy
       - sysbuild
       - ci_samples_crypto
+  ################################################################################
+  ## PSA APIs with Oberon
+  ################################################################################
+  sample.psa_tls.tls_server.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+  sample.psa_tls.dtls_server.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf;overlays/dtls.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - dtls
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+  sample.psa_tls.tls_client.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+  sample.psa_tls.dtls_client.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf;overlays/dtls.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - dtls
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+  sample.psa_tls.tls_1_3_server.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf;overlays/tls_1_3.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+  sample.psa_tls.tls_1_3_client.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf;overlays/tls_1_3.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+  sample.psa_tls.tls_server_secp384r1.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa_secp384r1.conf;overlays/oberon-psa.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+      - secp384r1
+  sample.psa_tls.dtls_server_secp384r1.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa_secp384r1.conf;overlays/oberon-psa.conf;overlays/dtls.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - oberon
+      - dtls
+      - sysbuild
+      - ci_samples_crypto
+      - secp384r1
+  sample.psa_tls.tls_client_secp384r1.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa_secp384r1.conf;overlays/oberon-psa.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+      - secp384r1
+  sample.psa_tls.dtls_client_secp384r1.ecdsa.oberon:
+    sysbuild: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa_secp384r1.conf;overlays/oberon-psa.conf;overlays/dtls.conf"
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    tags:
+      - ci_build
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+      - secp384r1
