@@ -16,6 +16,8 @@ target_sources(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules/lc3_file.c
   ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/sd_card/sd_card_fake.c
   ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/sd_card/lc3_file_data.c
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/zbus_fakes/zbus_fakes.c
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/application/application.c
 )
 
 target_compile_definitions(app PRIVATE CONFIG_MODULE_SD_CARD_LC3_FILE_LOG_LEVEL=3)
