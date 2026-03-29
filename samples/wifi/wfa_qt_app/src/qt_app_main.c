@@ -16,14 +16,22 @@
 #include <zephyr/device.h>
 #include <zephyr/net/net_config.h>
 
-#ifdef CONFIG_USB_DEVICE_STACK
+#if defined(CONFIG_USB_DEVICE_STACK)
 #include <zephyr/usb/usb_device.h>
+#elif defined(CONFIG_USB_DEVICE_STACK_NEXT)
+#include "wifi_sample_usbd.h"
+#endif
 
+#if defined(CONFIG_USB_DEVICE_STACK) || defined(CONFIG_USB_DEVICE_STACK_NEXT)
 int init_usb(void)
 {
 	int ret;
 
+#ifdef CONFIG_USB_DEVICE_STACK
 	ret = usb_enable(NULL);
+#elif defined(CONFIG_USB_DEVICE_STACK_NEXT)
+	ret = wifi_usbd_init();
+#endif
 	if (ret != 0) {
 		printk("Cannot enable USB (%d)", ret);
 		return ret;
@@ -31,7 +39,7 @@ int init_usb(void)
 
 	return 0;
 }
-#endif /* CONFIG_USB_DEVICE_STACK */
+#endif /* CONFIG_USB_DEVICE_STACK || CONFIG_USB_DEVICE_STACK_NEXT */
 
 int main(void)
 {
@@ -45,10 +53,14 @@ int main(void)
 #endif
 	printk("Starting %s with CPU frequency: %d MHz\n", CONFIG_BOARD, SystemCoreClock/MHZ(1));
 
-#ifdef CONFIG_USB_DEVICE_STACK
+#if defined(CONFIG_USB_DEVICE_STACK) || defined(CONFIG_USB_DEVICE_STACK_NEXT)
 	init_usb();
+#ifdef CONFIG_USB_DEVICE_STACK
 	/* Redirect static IP address to netusb*/
 	const struct device *usb_dev = device_get_binding("eth_netusb");
+#elif defined(CONFIG_USB_DEVICE_STACK_NEXT)
+	const struct device *usb_dev = device_get_binding("cdc_ecm_eth0");
+#endif /* CONFIG_USB_DEVICE_STACK */
 	struct net_if *iface = net_if_lookup_by_dev(usb_dev);
 
 	if (!iface) {
@@ -70,7 +82,7 @@ int main(void)
 			net_if_ipv4_set_netmask_by_addr(iface, &addr, &mask);
 		}
 	}
-#endif /* CONFIG_USB_DEVICE_STACK */
+#endif /* CONFIG_USB_DEVICE_STACK || CONFIG_USB_DEVICE_STACK_NEXT */
 
 #ifdef CONFIG_SLIP
 	const struct device *slip_dev = device_get_binding(CONFIG_SLIP_DRV_NAME);

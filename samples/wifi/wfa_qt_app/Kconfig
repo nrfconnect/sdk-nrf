@@ -5,6 +5,7 @@
 #
 
 source "Kconfig.zephyr"
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/common/Kconfig.usbd"
 
 menu "Nordic WFA QT sample"
 

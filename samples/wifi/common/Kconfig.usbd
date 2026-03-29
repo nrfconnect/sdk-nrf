@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu " Wi-Fi sample USB Next configuration"
+
+config WIFI_SAMPLE_USBD
+	bool "Enable USB device next configuration"
+	depends on USB_DEVICE_STACK_NEXT
+	help
+	  This configuration option enables the USB device next configuration.
+
+if WIFI_SAMPLE_USBD
+
+config WIFI_SAMPLE_USBD_PID
+	hex "USB device Product ID (PID)"
+
+config WIFI_SAMPLE_USBD_VID
+	hex "USB device Vendor ID (VID)"
+	default 0x1915
+
+config WIFI_SAMPLE_USBD_MANUFACTURER
+	string "USB manufacturer string"
+	default "Nordic Semiconductor ASA"
+
+config WIFI_SAMPLE_USBD_PRODUCT
+	string "USB product string"
+	default "Wi-Fi promiscuous sample (ECM)"
+
+config WIFI_SAMPLE_USBD_SELF_POWERED
+	bool "Self-powered"
+	default y
+
+config WIFI_SAMPLE_USBD_REMOTE_WAKEUP
+	bool "Remote wakeup"
+
+config WIFI_SAMPLE_USBD_MAX_POWER
+	int "bMaxPower (2 mA units)"
+	default 125
+	range 0 250
+endif
+endmenu
