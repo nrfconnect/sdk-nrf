@@ -12,12 +12,12 @@ endchoice
 
 choice HOSTAP_CRYPTO_BACKEND
 	prompt "WPA supplicant crypto implementation"
-	default HOSTAP_CRYPTO_ALT_PSA if SOC_SERIES_NRF54H
-	default HOSTAP_CRYPTO_ALT_LEGACY_PSA
+	default HOSTAP_CRYPTO_ALT_LEGACY_PSA if WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+	default HOSTAP_CRYPTO_ALT_PSA
 	help
 	  Select the crypto implementation to use for WPA supplicant.
-	  HOSTAP_CRYPTO_ALT supports enterprise mode
-	  and DPP.
+	  Use Legacy for Enterprise support; PSA does not support
+	  Enterprise mode.
 
 config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 	bool "Legacy Crypto support for WiFi using nRF security"
@@ -45,10 +45,12 @@ config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 
 config HOSTAP_CRYPTO_ALT_PSA
 	bool "PSA Crypto support for WiFi WPA2 using nRF security"
+	depends on !WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
 	select MBEDTLS
 	select NRF_SECURITY
 	select PSA_WANT_GENERATE_RANDOM
 	select MBEDTLS_PK_C
+	select MBEDTLS_PK_PARSE_C
 	select MBEDTLS_MD_C
 	select MBEDTLS_PK_WRITE_C
 	select MBEDTLS_ENABLE_HEAP
@@ -78,13 +80,15 @@ config HOSTAP_CRYPTO_ALT_PSA
 
 endchoice
 
-if WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+# Enterprise needs legacy mbedtls symbols only the legacy backend provides
+if WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE && HOSTAP_CRYPTO_ALT_LEGACY_PSA
 
 config HOSTAP_CRYPTO_ENTERPRISE
 	bool "Enterprise Crypto support for WiFi using nRF security"
 	select MBEDTLS_ECDH_C
 	select MBEDTLS_ECDSA_C
 	select MBEDTLS_DHM_C
+	select MBEDTLS_MD_C
 	select MBEDTLS_SSL_TLS_C
 	select MBEDTLS_SSL_SRV_C
 	select MBEDTLS_SSL_CLI_C
@@ -102,10 +106,6 @@ endif
 # PSA crypto is personal security only for now
 if HOSTAP_CRYPTO_ALT_PSA
 
-# PSA doesn't support enterprise mode yet
-config WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
-	default n
-
 config HOSTAP_CRYPTO_WPA3_PSA
 	bool "WPA3 PSA support"
 	depends on !SOC_SERIES_NRF54H && !WIFI_NM_WPA_SUPPLICANT_AP
@@ -115,11 +115,6 @@ config HOSTAP_CRYPTO_WPA3_PSA
 	select PSA_WANT_ALG_WPA3_SAE_H2E
 	select PSA_WANT_KEY_TYPE_WPA3_SAE
 	select PSA_WANT_ECC_SECP_R1_256
-
-choice WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION
-	default WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_EXT if HOSTAP_CRYPTO_WPA3_PSA
-	default WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_NONE if !HOSTAP_CRYPTO_WPA3_PSA
-endchoice
 
 endif
 

@@ -137,7 +137,7 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: d77330677bef8221fff58c88fd0cd9ab4fd33cd8
+      revision: pull/48/head
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
@@ -149,7 +149,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: f0a4e60c4e5967f72c86dcc9b22cc4f080c4c274
+      revision: pull/244/head
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -157,7 +157,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: d624f59a4f2b349271fd88fa4649abf045f2b912
+      revision: pull/710/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
