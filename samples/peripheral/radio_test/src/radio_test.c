@@ -32,6 +32,17 @@
 #include <zephyr/drivers/mbox.h>
 #endif /* NRF54H_ERRATA_216_PRESENT */
 
+#if CONFIG_RADIO_TEST_PIN_DEBUG
+#include <zephyr/drivers/gpio.h>
+
+#define READY_DISABLED_PIN_PSEL NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(ready_disabled_pin), gpios)
+#define ADDRESS_END_PIN_PSEL NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(address_end_pin), gpios)
+#define GPIOTE_NODE NRF_DT_GPIOTE_NODE(DT_NODELABEL(ready_disabled_pin), gpios)
+
+#include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
+#endif /* CONFIG_RADIO_TEST_PIN_DEBUG */
+
 /* IEEE 802.15.4 default frequency. */
 #define IEEE_DEFAULT_FREQ         (5)
 /* Length on air of the LENGTH field. */
@@ -1291,6 +1302,106 @@ void radio_handler(const void *context)
 	}
 }
 
+#if CONFIG_RADIO_TEST_PIN_DEBUG
+static int pin_debug_ppi_config(nrfx_gpiote_t *gpiote)
+{
+	int err;
+	uint32_t tep[4];
+	uint32_t eep[4];
+	nrfx_gppi_handle_t handle[4];
+
+	tep[0] = nrfx_gpiote_set_task_address_get(
+		gpiote, READY_DISABLED_PIN_PSEL);
+	tep[1] = nrfx_gpiote_clr_task_address_get(
+		gpiote, READY_DISABLED_PIN_PSEL);
+	tep[2] = nrfx_gpiote_set_task_address_get(
+		gpiote, ADDRESS_END_PIN_PSEL);
+	tep[3] = nrfx_gpiote_clr_task_address_get(
+		gpiote, ADDRESS_END_PIN_PSEL);
+
+	eep[0] = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_READY);
+	eep[1] = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+	eep[2] = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
+	eep[3] = nrf_radio_event_address_get(NRF_RADIO, RADIO_TEST_EVENT_END);
+
+	for (size_t i = 0; i < ARRAY_SIZE(tep); i++) {
+		err = nrfx_gppi_conn_alloc(eep[i], tep[i], &handle[i]);
+		if (err < 0) {
+			printk("Failed to allocate GPPI conn with error: %d\n", err);
+			return err;
+		}
+
+		nrfx_gppi_conn_enable(handle[i]);
+	}
+
+	return 0;
+}
+
+static int pin_debug_gpiote_config(nrfx_gpiote_t *gpiote)
+{
+	uint8_t radio_ready_radio_disabled_gpiote_channel;
+	uint8_t radio_address_radio_end_gpiote_channel;
+
+	const nrfx_gpiote_output_config_t gpiote_output_cfg = NRFX_GPIOTE_DEFAULT_OUTPUT_CONFIG;
+
+	if (nrfx_gpiote_channel_alloc(gpiote, &radio_ready_radio_disabled_gpiote_channel) != 0) {
+		printk("Failed allocating GPIOTE chan\n");
+		return -ENOMEM;
+	}
+
+	if (nrfx_gpiote_channel_alloc(gpiote, &radio_address_radio_end_gpiote_channel) != 0) {
+		printk("Failed allocating GPIOTE chan\n");
+		return -ENOMEM;
+	}
+
+	const nrfx_gpiote_task_config_t task_cfg_ready_disabled = {
+		.task_ch = radio_ready_radio_disabled_gpiote_channel,
+		.polarity = NRF_GPIOTE_POLARITY_TOGGLE,
+		.init_val = NRF_GPIOTE_INITIAL_VALUE_LOW,
+	};
+
+	if (nrfx_gpiote_output_configure(gpiote,
+					 READY_DISABLED_PIN_PSEL,
+					 &gpiote_output_cfg, &task_cfg_ready_disabled) != 0) {
+		printk("Failed configuring GPIOTE chan\n");
+		return -ENOMEM;
+	}
+
+	const nrfx_gpiote_task_config_t task_cfg_address_end = {
+		.task_ch = radio_address_radio_end_gpiote_channel,
+		.polarity = NRF_GPIOTE_POLARITY_TOGGLE,
+		.init_val = NRF_GPIOTE_INITIAL_VALUE_LOW,
+	};
+
+	if (nrfx_gpiote_output_configure(gpiote,
+					 ADDRESS_END_PIN_PSEL,
+					 &gpiote_output_cfg, &task_cfg_address_end) != 0) {
+		printk("Failed configuring GPIOTE chan\n");
+		return -ENOMEM;
+	}
+
+	nrfx_gpiote_out_task_enable(gpiote,
+				    READY_DISABLED_PIN_PSEL);
+	nrfx_gpiote_out_task_enable(gpiote, ADDRESS_END_PIN_PSEL);
+
+	return 0;
+}
+
+static int radio_test_pin_debug_init(void)
+{
+	nrfx_gpiote_t *gpiote = &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_NODE);
+	int err;
+
+	err = pin_debug_gpiote_config(gpiote);
+	if (err) {
+		return err;
+	}
+
+	return pin_debug_ppi_config(gpiote);
+}
+
+#endif /* CONFIG_RADIO_TEST_PIN_DEBUG */
+
 int radio_test_init(struct radio_test_config *config)
 {
 	int nrfx_err;
@@ -1312,13 +1423,26 @@ int radio_test_init(struct radio_test_config *config)
 	rx_timeout_cb = &config->params.rx.cb;
 
 #if CONFIG_FEM
-	int err = fem_init(timer.p_reg,
-			   (BIT(NRF_TIMER_CC_CHANNEL2) | BIT(NRF_TIMER_CC_CHANNEL3)));
+	{
+		int err = fem_init(timer.p_reg,
+				   (BIT(NRF_TIMER_CC_CHANNEL2) | BIT(NRF_TIMER_CC_CHANNEL3)));
 
-	if (err) {
-		return err;
+		if (err) {
+			return err;
+		}
 	}
 #endif /* CONFIG_FEM */
+
+#if CONFIG_RADIO_TEST_PIN_DEBUG
+	{
+		int err = radio_test_pin_debug_init();
+
+		if (err) {
+			printk("Failed to initialize radio_test pin debug with error: %d\n", err);
+			return err;
+		}
+	}
+#endif /* CONFIG_RADIO_TEST_PIN_DEBUG */
 
 	return 0;
 }
