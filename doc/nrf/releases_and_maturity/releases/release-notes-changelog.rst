@@ -707,7 +707,7 @@ Peripheral samples
 PMIC samples
 ------------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54lm20dk/nrf54lm20b/cpuapp`` board target to the :ref:`npm13xx_fuel_gauge` and the :ref:`npm13xx_one_button` samples.
 
 Protocol serialization samples
 ------------------------------
