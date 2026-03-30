@@ -16,12 +16,6 @@
   comment: "Needs alignment to work with IronSide SE"
 
 - scenarios:
-    - sample.nrf7002_eb.thingy53.shell
-  platforms:
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35521"
-
-- scenarios:
     - mcuboot.upgrade.encryption.ecdsa_p256
   platforms:
     - nrf52840dk/nrf52840
