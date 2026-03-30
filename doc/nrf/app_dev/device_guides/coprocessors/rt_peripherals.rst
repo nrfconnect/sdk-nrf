@@ -9,7 +9,7 @@ Real-time peripherals
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, and nRF54LV10A devices.
 
 .. contents::
    :local:
@@ -114,6 +114,9 @@ The interrupt line triggered varies depending on the System on Chip (SoC):
    * - nRF54LM20 FLPR
      - 31
 
+   * - nRF54LV10A FLPR
+     - 31
+
 CPU stalling
 ============
 
@@ -138,33 +141,53 @@ See the following table for pin mapping between GPIO and VIO for specific target
    :widths: auto
    :header-rows: 1
 
-   * - PORT2 GPIO pin number
-     - Corresponding VIO pin for nRF54L15 FLPR
-     - Corresponding VIO pin for nRF54LM20 FLPR
+   * - VIO pin number
+     - Corresponding GPIO pin for nRF54L15/nRF54LM20
+     - Corresponding GPIO pin for nRF54LV10A
 
    * - 0
-     - 4
-     - 4
+     - P2.01
+     - P1.16
 
    * - 1
-     - 0
-     - 0
+     - P2.02
+     - P1.17
 
    * - 2
-     - 1
-     - 1
+     - P2.04
+     - P1.19
 
    * - 3
-     - 3
-     - 3
+     - P2.03
+     - P1.18
 
    * - 4
-     - 2
-     - 2
+     - P2.00
+     - P1.15
 
-   * - 5..10
-     - 5..10
-     - 5..10
+   * - 5
+     - P2.05
+     - P1.20
+
+   * - 6
+     - P2.06
+     - P1.21
+
+   * - 7
+     - P2.07
+     - P1.22
+
+   * - 8
+     - P2.08
+     - P1.23
+
+   * - 9
+     - P2.09
+     - P1.24
+
+   * - 10
+     - P2.10
+     - -
 
 .. note::
    Routing the signal between VPR and physical pins may require SoC-specific configuration.

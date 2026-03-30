@@ -310,6 +310,11 @@ Connectivity bridge
 
 |no_changes_yet_note|
 
+High-Performance Framework (HPF)
+--------------------------------
+
+* Added support for the nRF54LV10A SoC in HPF GPIO.
+
 IPC radio firmware
 ------------------
 
