@@ -68,6 +68,8 @@ To use external flash, you also need to enable configuration and devicetree opti
 Using Partition Manager
 ***********************
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 If your application was built using the |NCS|, you must define partitions using :ref:`partition_manager`.
 The built-in partition definitions can be found in the :file:`nrf/subsys/partition_manager` folder, and the file names start with ``pm.yml``.
 The files that have ``external_flash`` as their region support storing partitions in the external flash.

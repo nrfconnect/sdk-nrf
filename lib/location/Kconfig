@@ -134,8 +134,8 @@ config LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE
 	  Time in milliseconds to dwell on each channel during passive scanning.
 	  Increasing dwell time improves detection of distant APs but increases
 	  scan time and power consumption.
-	  Default value is set to 260ms to cover at least two beacon intervals,
-	  (102.4ms beacon interval + ~30 ms channel contention) * 2
+	  Default value is set to 260 ms to cover at least two beacon intervals,
+	  (102.4 ms beacon interval + ~30 ms channel contention) * 2
 
 endif # LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
 
