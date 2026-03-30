@@ -31,7 +31,8 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define DATA_LINE_INDEX(pinctr_fun)  (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 #define DATA_PIN_UNUSED              UINT8_MAX
 
-#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A)
+#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
+	defined(CONFIG_SOC_NRF54LM20B)
 
 #define HPF_MSPI_PORT_NUMBER	2 /* Physical port number */
 #define HPF_MSPI_SCK_PIN_NUMBER 1 /* Physical pin number on port 2 */

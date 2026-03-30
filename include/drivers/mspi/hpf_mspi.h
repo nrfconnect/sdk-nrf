@@ -15,7 +15,8 @@
 extern "C" {
 #endif
 
-#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A)
+#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
+	defined(CONFIG_SOC_NRF54LM20B)
 #define HPF_MSPI_PINS_MAX	 11
 #else
 #error "Unsupported SoC for HPF MSPI"
