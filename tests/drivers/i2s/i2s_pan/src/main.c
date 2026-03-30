@@ -64,7 +64,7 @@ ZTEST(i2s_pan, test_hmpan_46_workaround)
 	i2s_cfg.frame_clk_freq = 44100;
 	i2s_cfg.block_size = BLOCK_SIZE;
 	i2s_cfg.timeout = TIMEOUT_MS;
-	i2s_cfg.options = I2S_OPT_FRAME_CLK_MASTER | I2S_OPT_BIT_CLK_MASTER;
+	i2s_cfg.options = I2S_OPT_FRAME_CLK_CONTROLLER | I2S_OPT_BIT_CLK_CONTROLLER;
 
 	i2s_cfg.mem_slab = &tx_mem_slab;
 	ret = i2s_configure(i2s_dev, I2S_DIR_TX, &i2s_cfg);
@@ -143,7 +143,7 @@ ZTEST(i2s_pan, test_hmpan_146_not_observed)
 		.frame_clk_freq = 44100U,
 		.block_size = BLOCK_SIZE,
 		.timeout = TIMEOUT_MS,
-		.options = I2S_OPT_FRAME_CLK_MASTER | I2S_OPT_BIT_CLK_MASTER,
+		.options = I2S_OPT_FRAME_CLK_CONTROLLER | I2S_OPT_BIT_CLK_CONTROLLER,
 	};
 	const uint8_t offest_1 = 11;
 	const uint8_t offest_2 = 22;
