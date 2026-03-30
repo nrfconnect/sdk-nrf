@@ -11,6 +11,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuflpr
       - nrf54lm20dk/nrf54lm20a/cpuflpr
+      - nrf54lm20dk/nrf54lm20b/cpuflpr
     tags:
       - ci_build
       - sysbuild

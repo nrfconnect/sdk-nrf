@@ -324,7 +324,7 @@ void hrt_write(volatile hrt_xfer_t *hrt_xfer_params)
 	}
 }
 
-#if defined(CONFIG_SOC_NRF54LM20A)
+#if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B)
 void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 {
 	nrf_vpr_csr_vio_shift_ctrl_t rx_shift_ctrl = {

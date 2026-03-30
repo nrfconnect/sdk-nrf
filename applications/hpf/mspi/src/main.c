@@ -47,7 +47,8 @@
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#if !defined(CONFIG_SOC_NRF54L15) && !defined(CONFIG_SOC_NRF54LM20A)
+#if !defined(CONFIG_SOC_NRF54L15) && !defined(CONFIG_SOC_NRF54LM20A) && \
+	!defined(CONFIG_SOC_NRF54LM20B)
 #error "Unsupported SoC for HPF MSPI"
 #endif
 
@@ -194,7 +195,7 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 {
 	nrf_vpr_csr_vio_config_t vio_config = {
 		.input_sel = false,
-#if defined(CONFIG_SOC_NRF54LM20A)
+#if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B)
 		.stop_cnt = false,
 #else
 		.stop_cnt = true,
@@ -464,7 +465,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		}
 
 		/* Set unshifted parts of OUT to high state */
-#if defined(CONFIG_SOC_NRF54LM20A)
+#if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B)
 		nrf_csr_write(VPRCSR_NORDIC_OUTUB,
 			      BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ1)]) |
 			      BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ2)]) |
