@@ -23,3 +23,9 @@ boards:
   /nrf54lm20dk/nrf54lm20a/cpuapp/:
     append:
       EXTRA_DTC_OVERLAY_FILE: board/nrf54lm20dk_nrf54lm20a_cpuapp.overlay
+  /.*/nrf54lm20b/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf54lm20b_cpuapp.overlay
+  /nrf54lm20dk/nrf54lm20b/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: board/nrf54lm20dk_nrf54lm20b_cpuapp.overlay
