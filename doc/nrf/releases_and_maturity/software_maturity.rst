@@ -207,6 +207,13 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - --
+         * - **ESB**
+           - Supported
+           - --
+           - --
+           - Supported
+           - Supported
+           - Supported
          * - **LTE**
            - --
            - --
@@ -271,6 +278,8 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
          * - **DECT NR+ PHY**
            - --
+         * - **ESB**
+           - Supported\ :sup:`6`
          * - **LTE**
            - --
          * - **Matter**
@@ -300,6 +309,8 @@ The following table indicates the software maturity levels of the support for ea
            - --
          * - **DECT NR+ PHY**
            - --
+         * - **ESB**
+           - Supported\ :sup:`7`
          * - **LTE**
            - --
          * - **Matter**
@@ -326,20 +337,26 @@ The following table indicates the software maturity levels of the support for ea
            - nRF54L10
            - nRF54L15
            - nRF54LM20A
+           - nRF54LM20B
            - nRF54LV10A
+           - nRF54LS05A
            - nRF54LS05B
          * - **Bluetooth®**
            - Supported
            - Supported
            - Supported
            - Supported
+           - Supported
            - Experimental
+           - --
            - Experimental
          * - **Bluetooth Mesh**
            - Supported
            - Supported
            - Supported
            - Supported
+           - Supported
+           - Experimental
            - --
            - --
          * - **DECT NR+ PHY**
@@ -349,7 +366,20 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - --
+           - --
+           - --
+         * - **ESB**
+           - Supported
+           - Supported
+           - Supported
+           - Supported
+           - Supported
+           - Experimental
+           - --
+           - Experimental
          * - **LTE**
+           - --
+           - --
            - --
            - --
            - --
@@ -360,14 +390,18 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - Supported
            - Supported
-           - Experimental
+           - Supported
+           - Supported
+           - --
            - --
            - --
          * - **NFC**
            - Supported
            - Supported
            - Supported
-           - Experimental
+           - Supported
+           - Supported
+           - --
            - --
            - --
          * - **Amazon Sidewalk**
@@ -377,18 +411,24 @@ The following table indicates the software maturity levels of the support for ea
            - --\ :sup:`4`
            - --\ :sup:`4`
            - --\ :sup:`4`
+           - --
+           - --\ :sup:`4`
          * - **Thread**
            - Supported
            - Supported
            - Supported
-           - Experimental
+           - Supported
+           - Supported
+           - --
            - --
            - --
          * - **Wi-Fi®**
            - --
            - --
+           - Supported\ :sup:`3`
+           - Supported\ :sup:`3`
            - Experimental\ :sup:`3`
-           - Experimental\ :sup:`3`
+           - --
            - --
            - --
          * - **Zigbee**
@@ -397,6 +437,8 @@ The following table indicates the software maturity levels of the support for ea
            - --\ :sup:`5`
            - --\ :sup:`5`
            - --\ :sup:`5`
+           - --\ :sup:`5`
+           - --
            - --\ :sup:`5`
 
    .. group-tab:: nRF91 Series
@@ -425,6 +467,11 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - --
               - Experimental
+            * - **ESB**
+              - --
+              - --
+              - --
+              - --
             * - **LTE**
               - Supported
               - Supported
@@ -466,6 +513,8 @@ The following table indicates the software maturity levels of the support for ea
 | [3]: Only with nRF7002-EB II
 | [4]: The software maturity levels for Amazon Sidewalk can be found on the `Amazon Sidewalk <Amazon Sidewalk documentation_>`_ add-on page
 | [5]: The software maturity levels for Zigbee can be found on the `Zigbee R23`_ add-on page
+| [6]: ESB APIs can be used directly by code running on the network core
+| [7]: ESB APIs can be used directly by code running on the radio core
 
 Amazon Sidewalk features support
 ********************************
@@ -720,63 +769,81 @@ The following table indicates the software maturity levels of the support for ea
              - nRF54L10
              - nRF54L15
              - nRF54LM20A
+             - nRF54LM20B
              - nRF54LV10A
+             - nRF54LS05A
              - nRF54LS05B
            * - **2 Mbps PHY**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Coded PHY (Long Range)**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - --
            * - **Concurrent Roles**\ :sup:`1`
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Data Length Extensions**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Advertising Extensions**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Periodic Advertising with Responses**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Periodic Advertising Sync Transfer**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Isochronous Channels**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Direction Finding**\ :sup:`3`
              - Experimental
@@ -784,69 +851,89 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Experimental
              - Experimental
+             - Experimental
+             - --
              - --
            * - **LE Power Control**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Connection Subrating**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Channel Sounding**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - --
            * - **GATT Database Hash**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Enhanced ATT**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **L2CAP Connection Oriented Channels**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Shorter Connection Intervals**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Frame Space Update**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
            * - **Extended Feature Set**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Supported
              - Experimental
+             - --
              - Experimental
 
   | [1]: Subject to RAM availability
@@ -958,42 +1045,54 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **Low Latency Packet Mode**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Supported
               - Experimental
+              - --
               - Experimental
             * - **Multi-protocol Support**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Supported
               - Experimental
+              - --
               - Experimental
             * - **QoS Conn Event Reports**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Supported
               - Experimental
+              - --
               - Experimental
             * - **QoS Channel Survey**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Supported
               - Experimental
+              - --
               - Experimental
             * - **Radio Coexistence**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Supported
               - Experimental
+              - --
               - Experimental
 
 Thread features support
@@ -1180,161 +1279,115 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **Thread - Full Thread Device (FTD)**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread - Minimal Thread Device (MTD)**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread 1.1**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread 1.2 - CSL Receiver**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread 1.2 - Core**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread 1.2 - Link Metrics**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread 1.3 - Core**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread 1.4 - Core**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread FTD + Bluetooth LE multiprotocol**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread MTD + Bluetooth LE multiprotocol**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread Radio Co-Processor (RCP)**
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Thread TCP**
               - --
               - Supported
               - Supported
-              - Experimental
-              - --
-              - --
-
-      .. tab:: nRF91 Series
-
-         .. list-table:: Thread features support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF9131
-              - nRF9151
-              - nRF9160
-              - nRF9161
-            * - **Thread - Full Thread Device (FTD)**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread - Minimal Thread Device (MTD)**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread 1.1**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread 1.2 - CSL Receiver**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread 1.2 - Core**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread 1.2 - Link Metrics**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread 1.3 - Core**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread 1.4 - Core**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread FTD + Bluetooth LE multiprotocol**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread MTD + Bluetooth LE multiprotocol**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread Radio Co-Processor (RCP)**
-              - --
-              - --
-              - --
-              - --
-            * - **Thread TCP**
-              - --
+              - Supported
+              - Supported
               - --
               - --
               - --
@@ -1479,102 +1532,61 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **Matter - OTA DFU over Bluetooth LE**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Matter Intermittently Connected Device**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Matter commissioning over Bluetooth LE with NFC onboarding**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Matter commissioning over Bluetooth LE with QR code onboarding**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Matter commissioning over IP**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **Matter over Thread**
               - --
               - Supported
               - Supported
-              - Experimental
-              - --
-              - --
-            * - **Matter over Wi-Fi**
-              - --
-              - --
-              - --
-              - Experimental
-              - --
-              - --
-            * - **OTA DFU over Matter**
-              - --
               - Supported
               - Supported
-              - Experimental
-              - --
-              - --
-
-      .. tab:: nRF91 Series
-         .. list-table:: Matter features support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF9131
-              - nRF9151
-              - nRF9160
-              - nRF9161
-            * - **Matter - OTA DFU over Bluetooth LE**
-              - --
-              - --
-              - --
-              - --
-            * - **Matter Intermittently Connected Device**
-              - --
-              - --
-              - --
-              - --
-            * - **Matter commissioning over Bluetooth LE with NFC onboarding**
-              - --
-              - --
-              - --
-              - --
-            * - **Matter commissioning over Bluetooth LE with QR code onboarding**
-              - --
-              - --
-              - --
-              - --
-            * - **Matter commissioning over IP**
-              - --
-              - --
-              - --
-              - --
-            * - **Matter over Thread**
-              - --
               - --
               - --
               - --
@@ -1582,9 +1594,17 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
+              - Supported
+              - Supported
+              - --
+              - --
               - --
             * - **OTA DFU over Matter**
               - --
+              - Supported
+              - Supported
+              - Supported
+              - Supported
               - --
               - --
               - --
@@ -1729,23 +1749,31 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **NFC Type 2 Tag (read-only)**
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **NFC Type 4 Tag (read/write)**
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **NFC Reader/Writer (polling device)**
+              - --
+              - --
               - --
               - --
               - --
@@ -1756,86 +1784,44 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **NDEF encoding/decoding**
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **NFC Record Type Definitions: URI, Text, Connection Handover**
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
+              - --
               - --
               - --
             * - **NFC Connection Handover to Bluetooth carrier, Static and Negotiated Handover**
               - Supported
               - Supported
               - Supported
-              - Experimental
-              - --
-              - --
-            * - **NFC Tag NDEF Exchange Protocol (TNEP)**
-              - Supported\ :sup:`1`
-              - Supported\ :sup:`1`
-              - Supported\ :sup:`1`
-              - Experimental\ :sup:`1`
-              - --
-              - --
-
-      .. group-tab:: nRF91 Series
-
-         .. list-table:: NFC features support
-            :widths: auto
-            :header-rows: 1
-
-            * -
-              - nRF9131
-              - nRF9151
-              - nRF9160
-              - nRF9161
-            * - **NFC Type 2 Tag (read-only)**
-              - --
-              - --
-              - --
-              - --
-            * - **NFC Type 4 Tag (read/write)**
-              - --
-              - --
-              - --
-              - --
-            * - **NFC Reader/Writer (polling device)**
-              - --
-              - --
-              - --
-              - --
-            * - **NFC ISO-DEP protocol (ISO/IEC 14443-4)**
-              - --
-              - --
-              - --
-              - --
-            * - **NDEF encoding/decoding**
-              - --
-              - --
-              - --
-              - --
-            * - **NFC Record Type Definitions: URI, Text, Connection Handover**
-              - --
-              - --
-              - --
-              - --
-            * - **NFC Connection Handover to Bluetooth carrier, Static and Negotiated Handover**
-              - --
+              - Supported
+              - Supported
               - --
               - --
               - --
             * - **NFC Tag NDEF Exchange Protocol (TNEP)**
-              - --
+              - Supported\ :sup:`1`
+              - Supported\ :sup:`1`
+              - Supported\ :sup:`1`
+              - Supported\ :sup:`1`
+              - Supported\ :sup:`1`
               - --
               - --
               - --
@@ -1925,6 +1911,13 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
+            * - **Wi-Fi Direct (P2P)**
+              - --
+              - --
+              - --
+              - --
+              - --
+              - --
 
       .. tab:: nRF53 Series
          .. list-table:: Wi-Fi feature support
@@ -1949,6 +1942,8 @@ The following table indicates the software maturity levels of the support for ea
               - Supported\ :sup:`1`
             * - **Thread Coexistence**
               - Experimental
+            * - **Wi-Fi Direct (P2P)**
+              - --
 
       .. tab:: nRF54H Series
          .. list-table:: Wi-Fi feature support
@@ -1973,6 +1968,8 @@ The following table indicates the software maturity levels of the support for ea
               - --
             * - **Thread Coexistence**
               - --
+            * - **Wi-Fi Direct (P2P)**
+              - --
 
       .. tab:: nRF54L Series
          .. list-table:: Wi-Fi feature support
@@ -1984,34 +1981,44 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **Bluetooth LE Coexistence**
               - --
               - --
               - --
+              - Supported\ :sup:`4`
               - Experimental\ :sup:`4`
+              - --
               - --
               - --
             * - **Monitor Mode**
               - --
               - --
+              - Supported\ :sup:`4`
+              - Supported\ :sup:`4`
               - Experimental\ :sup:`4`
-              - Experimental\ :sup:`4`
+              - --
               - --
               - --
             * - **Promiscuous Mode**
               - --
               - --
+              - Supported\ :sup:`4`
+              - Supported\ :sup:`4`
               - Experimental\ :sup:`4`
-              - Experimental\ :sup:`4`
+              - --
               - --
               - --
             * - **STA Mode**
               - --
               - --
+              - Supported\ :sup:`4`
+              - Supported\ :sup:`4`
               - Experimental\ :sup:`4`
-              - Experimental\ :sup:`4`
+              - --
               - --
               - --
             * - **Scan only (for location accuracy)**
@@ -2021,24 +2028,41 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
+              - --
+              - --
             * - **SoftAP Mode (for Wi-Fi provisioning)**
               - --
               - --
+              - Supported\ :sup:`4`
+              - Supported\ :sup:`4`
               - Experimental\ :sup:`4`
-              - Experimental\ :sup:`4`
+              - --
               - --
               - --
             * - **TX injection Mode**
               - --
               - --
+              - Supported\ :sup:`4`
+              - Supported\ :sup:`4`
               - Experimental\ :sup:`4`
-              - Experimental\ :sup:`4`
+              - --
               - --
               - --
             * - **Thread Coexistence**
               - --
               - --
               - --
+              - --
+              - --
+              - --
+              - --
+              - --
+            * - **Wi-Fi Direct (P2P)**
+              - --
+              - --
+              - --
+              - Supported\ :sup:`4`
+              - Experimental\ :sup:`4`
               - --
               - --
               - --
@@ -2089,6 +2113,11 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
             * - **Thread Coexistence**
+              - --
+              - --
+              - --
+              - --
+            * - **Wi-Fi Direct (P2P)**
               - --
               - --
               - --
@@ -2179,10 +2208,10 @@ The following table indicates the software maturity levels of the support for Go
               - nRF54H20
             * - **Input device**
               - :ref:`fast_pair_input_device`
-              - Experimental
+              - --
             * - **Locator tag**
               - :ref:`fast_pair_locator_tag`
-              - Experimental
+              - --
 
       .. tab:: nRF54L Series
 
@@ -2196,7 +2225,9 @@ The following table indicates the software maturity levels of the support for Go
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **Input device**
               - :ref:`fast_pair_input_device`
@@ -2204,41 +2235,20 @@ The following table indicates the software maturity levels of the support for Go
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
               - --
               - --
+              - Experimental
             * - **Locator tag**
               - :ref:`fast_pair_locator_tag`
+              - Supported
               - Supported
               - Supported
               - Supported
               - Experimental
               - --
               - --
-
-      .. tab:: nRF91 Series
-
-         .. list-table:: Google Fast Pair use case support
-            :header-rows: 1
-            :widths: auto
-
-            * - Use case
-              - |NCS| sample demonstration
-              - nRF9131
-              - nRF9151
-              - nRF9160
-              - nRF9161
-            * - **Input device**
-              - :ref:`fast_pair_input_device`
-              - --
-              - --
-              - --
-              - --
-            * - **Locator tag**
-              - :ref:`fast_pair_locator_tag`
-              - --
-              - --
-              - --
-              - --
+              - Experimental
 
 The following table indicates the software maturity levels of the support for each Fast Pair feature:
 
@@ -2325,15 +2335,15 @@ The following table indicates the software maturity levels of the support for ea
             * - Feature
               - nRF54H20
             * - **Initial pairing**
-              - Experimental
+              - --
             * - **Subsequent pairing**
-              - Experimental
+              - --
             * - **Battery Notification extension**
-              - Experimental
+              - --
             * - **Personalized Name extension**
-              - Experimental
+              - --
             * - **Find Hub Network extension**
-              - Experimental
+              - --
 
       .. tab:: nRF54L Series
 
@@ -2346,77 +2356,149 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **Initial pairing**
               - Supported
               - Supported
               - Supported
+              - Supported
               - Experimental
               - --
               - --
+              - Experimental
             * - **Subsequent pairing**
               - Experimental
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
               - --
               - --
+              - Experimental
             * - **Battery Notification extension**
               - Experimental
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
               - --
               - --
+              - Experimental
             * - **Personalized Name extension**
               - Experimental
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
               - --
               - --
+              - Experimental
             * - **Find Hub Network extension**
+              - Supported
               - Supported
               - Supported
               - Supported
               - Experimental
               - --
               - --
+              - Experimental
 
-      .. tab:: nRF91 Series
+Find Hub Network extension
+----------------------------
 
-         .. list-table:: Google Fast Pair feature support
+The following table indicates the software maturity levels of the support for the optional Find Hub Network features:
+
+.. toggle::
+
+   .. tabs::
+
+      .. tab:: nRF52 Series
+
+         .. list-table:: Google Fast Pair FHN extension feature support
             :header-rows: 1
             :widths: auto
 
             * - Feature
-              - nRF9131
-              - nRF9151
-              - nRF9160
-              - nRF9161
-            * - **Initial pairing**
+              - nRF52810
+              - nRF52811
+              - nRF52820
+              - nRF52832
+              - nRF52833
+              - nRF52840
+            * - **Precision Finding**
+              - --
+              - --
+              - --
+              - Experimental
+              - Experimental
+              - Experimental
+            * - **Precision Finding with Bluetooth LE Channel Sounding**
               - --
               - --
               - --
               - --
-            * - **Subsequent pairing**
               - --
               - --
+
+      .. tab:: nRF53 Series
+
+         .. list-table:: Google Fast Pair FHN extension feature support
+            :header-rows: 1
+            :widths: auto
+
+            * - Feature
+              - nRF5340
+            * - **Precision Finding**
+              - Experimental
+            * - **Precision Finding with Bluetooth LE Channel Sounding**
+              - --
+
+      .. tab:: nRF54H Series
+
+         .. list-table:: Google Fast Pair FHN extension feature support
+            :header-rows: 1
+            :widths: auto
+
+            * - Feature
+              - nRF54H20
+            * - **Precision Finding**
+              - --
+            * - **Precision Finding with Bluetooth LE Channel Sounding**
+              - --
+
+      .. tab:: nRF54L Series
+
+         .. list-table:: Google Fast Pair FHN extension feature support
+            :header-rows: 1
+            :widths: auto
+
+            * - Feature
+              - nRF54L05
+              - nRF54L10
+              - nRF54L15
+              - nRF54LM20A
+              - nRF54LM20B
+              - nRF54LV10A
+              - nRF54LS05A
+              - nRF54LS05B
+            * - **Precision Finding**
+              - Experimental
+              - Experimental
+              - Experimental
+              - Experimental
+              - Experimental
               - --
               - --
-            * - **Battery Notification extension**
-              - --
-              - --
-              - --
-              - --
-            * - **Personalized Name extension**
-              - --
-              - --
-              - --
-              - --
-            * - **Find Hub Network extension**
-              - --
+              - Experimental
+            * - **Precision Finding with Bluetooth LE Channel Sounding**
+              - Experimental
+              - Experimental
+              - Experimental
+              - Experimental
+              - Experimental
               - --
               - --
               - --
@@ -2516,21 +2598,27 @@ Trusted Firmware-M support
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - :ref:`Configurable <ug_tfm_supported_services_profiles_configurable>`
               - --
               - Experimental
               - Experimental
-              - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
               - Experimental
+              - Experimental
+              - Experimental
+              - --
               - --
             * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
               - --
               - Experimental
               - Experimental
-              - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
               - Experimental
+              - Experimental
+              - Experimental
+              - --
               - --
 
       .. tab:: nRF91 Series
@@ -2685,9 +2773,13 @@ The lists are organized by device Series and implementation.
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+              - --
               - --
               - --
               - --
@@ -2698,8 +2790,10 @@ The lists are organized by device Series and implementation.
               - Supported
               - Supported
               - Supported
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
+              - --
               - --
             * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
               - Supported
@@ -2708,14 +2802,20 @@ The lists are organized by device Series and implementation.
               - Supported
               - Supported
               - Supported
+              - --
+              - Supported
             * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
               - --
               - Experimental
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
+              - --
               - --
             * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+              - --
+              - --
               - --
               - --
               - --
@@ -2828,15 +2928,19 @@ The lists are organized by device Series and implementation.
              - nRF54L10
              - nRF54L15
              - nRF54LM20A
+             - nRF54LM20B
              - nRF54LV10A
+             - nRF54LS05A
              - nRF54LS05B
            * - **Immutable Bootloader as part of build**
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+             - Supported
              - Experimental
-             - Experimental
-             - Experimental
-             - Experimental
-             - Experimental
-             - Experimental
+             - --
+             - --
 
       .. tab:: nRF91 Series
 
@@ -2918,14 +3022,18 @@ Hardware Unique Key
              - nRF54L10
              - nRF54L15
              - nRF54LM20A
+             - nRF54LM20B
              - nRF54LV10A
+             - nRF54LS05A
              - nRF54LS05B
            * - **Key Derivation from Hardware Unique Key**
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+             - Supported
              - Experimental
-             - Experimental
-             - Experimental
-             - Experimental
-             - Experimental
+             - --
              - --
 
       .. tab:: nRF91 Series
@@ -3010,14 +3118,18 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **Trusted storage**
               - Supported
               - Supported
               - Supported
-              - Experimental
               - Supported
+              - Supported
+              - Supported
+              - --
               - --
 
       .. tab:: nRF91 Series
@@ -3155,49 +3267,63 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **Immutable MCUboot as part of build**
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
               - Experimental
               - --
+              - Experimental
             * - **Updatable MCUboot as part of build**
+              - Supported
+              - Supported
+              - Supported
+              - Supported
+              - Supported
               - Experimental
-              - Experimental
-              - Experimental
-              - Experimental
-              - Experimental
+              - --
               - --
             * - **Application image compression**
               - --
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - --
               - Experimental
               - --
+              - Experimental
             * - **Hardware cryptography acceleration**
               - Supported
               - Supported
               - Supported
+              - Supported
+              - Supported
               - Experimental
-              - Experimental
+              - --
               - --
             * - **Multiple signature keys**
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
+              - Supported
               - Experimental
               - --
+              - Experimental
             * - **Image encryption**
               - Experimental
               - Experimental
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
+              - --
               - --
 
       .. tab:: nRF91 Series
@@ -3339,9 +3465,13 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
+              - nRF54LS05A
               - nRF54LS05B
             * - **nPM1100**
+              - --
+              - --
               - --
               - --
               - --
@@ -3353,6 +3483,8 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - Supported
               - Supported
+              - Supported
+              - --
               - --
               - --
             * - **nPM1304**
@@ -3360,6 +3492,8 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - Supported
               - Supported
+              - Supported
+              - --
               - --
               - --
             * - **nPM2100**
@@ -3369,7 +3503,11 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
+              - --
+              - --
             * - **nPM6001**
+              - --
+              - --
               - --
               - --
               - --
@@ -3509,7 +3647,9 @@ The following table indicates the software maturity levels of the support for Fr
             - nRF54L10
             - nRF54L15
             - nRF54LM20A
+            - nRF54LM20B
             - nRF54LV10A
+            - nRF54LS05A
             - nRF54LS05B
           * - nRF21540
             - nRF21540 GPIO
@@ -3519,12 +3659,16 @@ The following table indicates the software maturity levels of the support for Fr
             - --
             - --
             - --
+            - --
+            - --
           * - nRF21540
             - nRF21540 GPIO+SPI
             - Supported
             - Supported
             - Supported
             - Supported
+            - Supported
+            - --
             - --
             - --
           * - SKY66112-11
@@ -3532,6 +3676,8 @@ The following table indicates the software maturity levels of the support for Fr
             - Supported
             - Supported
             - Supported
+            - --
+            - --
             - --
             - --
             - --
