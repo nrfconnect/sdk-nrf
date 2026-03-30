@@ -11,3 +11,13 @@
 &uart135 {
 	status = "disabled";
 };
+
+/delete-node/ &cpuapp_cpuppr_ipc;
+/delete-node/ &cpuapp_cpuppr_ipc_shm;
+/delete-node/ &cpuppr_cpuapp_ipc_shm;
+/delete-node/ &cpuapp_dma_region;
+/delete-node/ &cpurad_dma_region;
+
+&cpuppr_code_data {
+	reg = <0x2fc00000 DT_SIZE_K(80)>;
+};
