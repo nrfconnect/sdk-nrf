@@ -164,11 +164,22 @@ Security re-establishment
 By default, the Fast Pair service disables the automatic security re-establishment request as a peripheral (:kconfig:option:`CONFIG_BT_GATT_AUTO_SEC_REQ`).
 This allows a Fast Pair Seeker to control the security re-establishment.
 
-Partition Manager
------------------
+Partition Manager (deprecated)
+------------------------------
+
+.. note::
+   The :ref:`partition_manager` script is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
+
+   This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
+   It is recommended that all new designs with Nordic devices are built with DTS instead of Partition Manager.
+   Partition Manager will be removed from the |NCS| in December 2026 from the main branch.
+
+   For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`release_notes` page.
+
+   The only exception from these migration guidelines in the context of the Fast Pair sample support is the nRF53 Series DFU configuration with MCUboot in the overwrite mode (for example, the ``nrf5340dk/nrf5340/cpuapp`` board target in the :ref:`fast_pair_locator_tag` sample).
+   This particular configuration is not yet deprecated, as the DTS alternative is not yet available.
 
 The Fast Pair provisioning data is preprogrammed to a dedicated flash memory partition.
-The :zephyr:board:`nrf54h20dk` is the only device that does not support this feature.
 
 Settings
 --------

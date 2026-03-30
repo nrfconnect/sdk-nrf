@@ -80,7 +80,7 @@ Make sure to replace the following parameter values:
 
 * ``0xFFFFFF`` - Add your Model ID.
 * ``AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=`` - Add your Anti Spoofing Key.
-* ``0x50000`` - Add the address of the ``bt_fast_pair`` partition defined by the :ref:`partition_manager`.
+* ``0x50000`` - Add the address of the ``bt_fast_pair`` partition defined in the devicetree (DTS) or by the deprecated :ref:`partition_manager`.
 
 Implementation details
 **********************
