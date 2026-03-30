@@ -407,6 +407,8 @@ nRF Desktop
   * Application configurations that emit debug logs over UART to use the :option:`CONFIG_DESKTOP_LOG_UART` Kconfig option instead of explicitly configuring the logger.
     This is done to simplify the configurations.
   * The memory map for the nRF54H20 SoC to include a secure storage partition and adjust the size of existing partitions.
+  * The dependencies of the :ref:`nrf_desktop_constlat` to allow using it for nRF54L Series SoC.
+    The :option:`CONFIG_DESKTOP_CONSTLAT_ENABLE` Kconfig option no longer depends on :kconfig:option:`CONFIG_SOC_SERIES_NRF54L` being disabled.
 
 * Removed the application-specific Kconfig option (``CONFIG_DESKTOP_RTT``) that enabled RTT for nRF Desktop logging (:option:`CONFIG_DESKTOP_LOG`) or nRF Desktop shell (:option:`CONFIG_DESKTOP_SHELL`).
   nRF Desktop shell automatically enables RTT by default (:kconfig:option:`CONFIG_USE_SEGGER_RTT`).
