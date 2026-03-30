@@ -7,7 +7,7 @@
 config PSA_NEED_CRACEN_TRNG_DRIVER
 	bool
 	depends on !PSA_CRYPTO_DRIVER_CRACEN
-	default y if SOC_NRF54LS05B
+	default y if (SOC_NRF54LS05A || SOC_NRF54LS05B)
 	select PSA_ACCEL_GET_ENTROPY
 	select NRFX_CRACEN
 	help
