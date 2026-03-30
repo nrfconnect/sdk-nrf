@@ -358,3 +358,80 @@ Google Fast Pair
 
      The FMDN implementation directory has been renamed from :file:`subsys/bluetooth/services/fast_pair/fmdn/` to :file:`subsys/bluetooth/fast_pair/fhn/`.
      If your project references the FMDN source directory directly (for example, in test :file:`CMakeLists.txt` files), update the path from :file:`subsys/bluetooth/fast_pair/fmdn` to :file:`subsys/bluetooth/fast_pair/fhn`.
+
+   * The Partition Manager approach for defining the Fast Pair partition is now deprecated in favor of devicetree (DTS).
+     The :ref:`fast_pair_input_device` and :ref:`fast_pair_locator_tag` samples have been migrated to use DTS overlay files instead of the Partition Manager for defining the ``bt_fast_pair`` partition.
+     The nRF53 Series DFU configuration with MCUboot is the only exception that still requires the Partition Manager.
+
+     .. important::
+        If your product has devices in the field using MCUboot DFU, the partition addresses and sizes in the new DTS overlay must match exactly the layout previously defined in the Partition Manager static configuration file (for example, :file:`pm_static.yml`).
+        Mismatched partition addresses break backwards compatibility and prevent DFU from working between the old (PM-based) and new (DTS-based) firmware images.
+
+     If your application uses the Partition Manager for the Fast Pair partition, perform the following steps to migrate to the DTS approach:
+
+     1. Translate the memory map from your Partition Manager static YAML file into a DTS overlay.
+        Create a board-specific devicetree overlay file (for example, :file:`boards/<board_target>.overlay`) and redefine a ``partitions`` node under the NVM device node.
+        The overlay must redefine the full NVM memory layout: ``boot_partition`` (MCUboot), ``slot0_partition`` (image-0), ``slot1_partition`` (image-1), ``bt_fast_pair_partition`` (Fast Pair), and ``storage_partition`` (storage).
+        If your configuration does not use MCUboot, you can remove the ``boot_partition`` and ``slot1_partition`` nodes.
+
+        If you want to maintain the NVM layout compatibility, use the same addresses and sizes as in the original PM static file.
+        For example, a PM static entry ``bt_fast_pair: {address: 0xfc000, size: 0x1000}`` translates to the following DTS node:
+
+        .. code-block:: devicetree
+
+           bt_fast_pair_partition: partition@fc000 {
+               reg = <0xfc000 0x1000>;
+           };
+
+        Refer to the board overlay files in the :ref:`fast_pair_input_device` or :ref:`fast_pair_locator_tag` samples for complete examples.
+        The DTS-based NVM layouts in these samples are compatible with the previous layouts defined using Partition Manager in |NCS| v3.2.x.
+
+     #. If your configuration uses MCUboot, create a MCUboot-specific board overlay (for example, :file:`sysbuild/mcuboot/boards/<board_target>.overlay`) that includes the application overlay to share the same partition map.
+        The MCUboot overlay must also set its ``zephyr,code-partition`` chosen node to the ``boot_partition``.
+        For example:
+
+        .. code-block:: devicetree
+
+           #include "../../../configuration/boards/<board_target>.overlay"
+
+           / {
+               chosen {
+                   zephyr,code-partition = &boot_partition;
+               };
+           };
+
+     #. Disable the Partition Manager in your sysbuild configuration.
+        You can do this in one of the following ways:
+
+        * Set the option in a board-specific sysbuild configuration file:
+
+          .. code-block:: kconfig
+
+             SB_CONFIG_PARTITION_MANAGER=n
+
+          See the :file:`sysbuild/configuration/<board_target>/sysbuild.conf` file from the :ref:`fast_pair_locator_tag` sample as an example.
+
+        * Alternatively, change the Kconfig default in your project's :file:`Kconfig.sysbuild` file if your DTS migration covers all supported board targets:
+
+          .. code-block:: kconfig
+
+             config PARTITION_MANAGER
+                 default n
+
+          See the :file:`Kconfig.sysbuild` file from the :ref:`fast_pair_input_device` sample as an example.
+
+          The global project configuration can also be changed if you use global :file:`sysbuild.conf` file that is applied to all board targets:
+
+          .. code-block:: kconfig
+
+             SB_CONFIG_PARTITION_MANAGER=n
+
+     #. Enable the :kconfig:option:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option in your board-specific application configuration file.
+        This option ensures that the application links into the DTS code partition when the Partition Manager is disabled.
+
+        .. note::
+           If your configuration uses MCUboot, the :kconfig:option:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option is enabled by default in the application and MCUboot image.
+           You do not need to explicitly enable it in your project configuration.
+
+     The ``nrf5340dk/nrf5340/cpuapp/ns`` board target has been removed from the :ref:`fast_pair_input_device` sample's default configuration.
+     It is only available with the deprecated Partition Manager solution as a legacy build configuration (``SB_CONFIG_PARTITION_MANAGER=y``).
