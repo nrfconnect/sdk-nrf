@@ -248,33 +248,43 @@ The Fast Pair provisioning data is stored on the dedicated Fast Pair partition.
 To properly define this partition, you must rely on the partitioning tool that is supported by your target device.
 The specific description for each partitioning tool is provided in the following subsections.
 
-Partition Manager (PM)
-~~~~~~~~~~~~~~~~~~~~~~
+Devicetree (DTS)
+~~~~~~~~~~~~~~~~
+
+The recommended approach for defining the Fast Pair partition is to declare the ``bt_fast_pair_partition`` partition manually in the devicetree overlay file.
+See the board overlay examples in the :ref:`fast_pair_input_device` and :ref:`fast_pair_locator_tag` samples.
+
+.. note::
+   The Fast Pair partition can be provisioned by the build system only if it is defined in the DTS configuration of the main (default) application image.
+
+Partition Manager (PM) (deprecated)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+   The :ref:`partition_manager` script is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
+
+   This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
+   It is recommended that all new designs with Nordic devices are built with DTS instead of Partition Manager.
+   Partition Manager will be removed from the |NCS| in December 2026 from the main branch.
+
+   For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`release_notes` page.
+
+   The only exception from these migration guidelines in the context of the Fast Pair sample support is the nRF53 Series DFU configuration with MCUboot in the overwrite mode (for example, the ``nrf5340dk/nrf5340/cpuapp`` board target in the :ref:`fast_pair_locator_tag` sample).
+   This particular configuration is not yet deprecated, as the DTS alternative is not yet available.
 
 For devices that support :ref:`partition_manager`, the system also automatically creates the ``bt_fast_pair`` partition.
 The partition is defined in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file.
-The :ref:`fast_pair_input_device` sample follows this approach.
 
 .. note::
    The dynamic generation of the ``bt_fast_pair`` partition definition is only supported if you enable the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in your application image.
 
-Alternatively, the Fast Pair partition can be defined manually in the application's configuration file.
-To see how to do this, refer to the example in the :file:`samples/bluetooth/fast_pair/locator_tag/configuration/pm_static_nrf52840dk_nrf52840.yml` file which is a part of the :ref:`fast_pair_locator_tag` sample.
+Alternatively, you can define the Fast Pair partition manually in the application's static Partition Manager configuration file.
+See the nRF53 board examples in the :file:`samples/bluetooth/fast_pair/locator_tag/configuration/` directory, which is a part of the :ref:`fast_pair_locator_tag` sample.
 For more information about defining Partition Manager partitions, see the :ref:`Configuration <pm_configuration>` section of the :ref:`partition_manager` page.
 
 .. note::
    The Fast Pair partition can be provisioned by the build system only if it is defined in the main (default) application domain.
    For example, defining partition in the CPUNET domain for nRF53 targets is not supported.
-
-Devicetree (DTS)
-~~~~~~~~~~~~~~~~
-
-For devices that do not support :ref:`partition_manager`, you must declare the ``bt_fast_pair_partition`` partition manually in the devicetree.
-Currently, the :zephyr:board:`nrf54h20dk` is the only device that requires manual partition definition.
-To see how to do this, refer to the example in the :file:`samples/bluetooth/fast_pair/input_device/boards/nrf54h20dk_nrf54h20_cpuapp.overlay` file.
-
-.. note::
-   The Fast Pair partition can be provisioned by the build system only if it is defined in the DTS configuration of main (default) application image.
 
 Sysbuild Kconfig configuration and provisioning data generation
 ---------------------------------------------------------------
@@ -292,7 +302,7 @@ See :ref:`zephyr:sysbuild` for detailed information on how to configure the sysb
 
 If the provisioning data generation is triggered successfully, the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_PROV_DATA` Kconfig option is set in the project sysbuild configuration.
 
-The build system automatically places the Fast Pair provisioning data onto the partition defined by the supported partitioning tool (for example, the Partition Manager or DTS).
+The build system automatically places the Fast Pair provisioning data onto the partition defined by the supported partitioning tool (DTS or the deprecated Partition Manager).
 
 The provisioning hex file is automatically merged with the final hexadecimal output from the build command (:file:`merged.hex`) and is uploaded on your target device with the ``west flash`` command.
 
@@ -1333,5 +1343,5 @@ The following are the required dependencies for the Fast Pair integration:
 * :ref:`nrfxlib:crypto`
 * :ref:`zephyr:bluetooth`
 * :ref:`zephyr:settings_api`
-* :ref:`partition_manager` (only for supported board targets)
+* :ref:`partition_manager` (deprecated, only used for nRF53 Series board targets)
 * :ref:`dult_readme`
