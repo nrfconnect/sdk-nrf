@@ -5,7 +5,7 @@ Raw IEEE 802.11 packet transmission
 
 .. contents::
    :local:
-   :depth: 2
+   :depth: 3
 
 The nRF70 Series device supports the transmission of raw IEEE 802.11 packets.
 Raw IEEE 802.11 packets are packets that are not modified by the 802.11 Medium Access Control (MAC) layer during transmission by the nRF70 Series device.
@@ -165,6 +165,65 @@ The channel configuration for raw packet transmission will be applied as follows
 
 .. note::
    You must explicitly configure the channel for raw packet transmission when the device operates in non-connected Station mode. The device will use a fallback channel for raw packet transmission if one is not configured.
+
+.. _ug_nrf70_raw_tx_performance_profiling:
+
+Performance profiling
+*********************
+
+You can profile raw transmit throughput in a lab setup by combining Zephyr's ``zperf raw upload`` command on the device with host-side capture and aggregation on a separate device.
+The SDK includes two helper scripts under :file:`nrf/scripts/wifi_test/` that automate common steps.
+These are provided as optional conveniences.
+You can also manually create the equivalent hexadecimal strings and **tshark** commands.
+Run either script with ``--help`` for the full option list and defaults.
+
+.. important::
+   These scripts are developed and validated on Linux hosts only.
+   Zephyr and the |NCS| are typically built and flashed from Windows, WSL, macOS, and other environments, however, the profiling flow described here assumes a Linux host with **tshark** and a capture-capable Wi-Fi interface (for example, Monitor mode on ``mon0``).
+   Adaptation for non-Linux systems is not covered.
+
+.. note::
+   Monitor mode settings such as channel, regulatory domain, interface name, ``sudo``, and capture filters depend on your driver, hardware, and lab setup.
+   Configuring Monitor mode, selecting an interface, and ensuring that frames are visible to **tshark** are outside the scope of this section and the provided scripts.
+   You must establish a working capture path before using the tools described below.
+
+Scripts
+=======
+
+The following scripts are intended for performance profiling workflows and must not be used for product configuration.
+
+``nrf_wifi_gen_raw_tx.py``
+   This script generates a zperf raw upload shell line for the Zephyr shell.
+   It builds the raw transmit header (including the ``packet_length`` field, which is consistent with the MPDU size) and a fixed 802.11 + LLC/SNAP + IPv4 + UDP header template, encoded in hex.
+   Zperf pads the remainder of the packet to the requested size on the device; the script does not embed that padding in the hexadecimal string.
+
+   Run the script on the Linux host, copy the printed command, and then paste it into the Zephyr shell on the DUT when you are ready to transmit.
+   You can adjust command line options such as length, rate, duration, and interface index.
+   See ``--help`` for details.
+   Ensure that the :kconfig:option:`CONFIG_NET_ZPERF_RAW_TX_MAX_HDR_SIZE` Kconfig option is set large enough in the Zephyr build for the hexadecimal header length output by the script, as the default limit may be too small.
+
+``nrf_wifi_zperf_raw_tx.py``
+   This script runs **tshark** on a live interface or reads a PCAP/PCAPNG file (``-r`` / ``--read`` / ``--pcap``) and prints an estimated throughput per second based on the sum of frame lengths for frames matching a TCP or UDP port (the default is the iperf2 port).
+   For live capture, it reports results line-by-line as each second completes and can stop after a timeout.
+   For a saved capture, run the script after the test to avoid missing the start of the transmission, and use the same port filter as the traffic under test.
+   It is a measurement aid on the sniffer side.
+   Wireshark may label the traffic as iPerf2 or display malformed application data when the payload consists of zperf padding, and the script simply sums ``frame.len`` without validating iPerf2 semantics.
+   Throughput is reported in SI megabits per second (Mbps, divisor ``10^6``), consistent with typical iperf2 Mbits/sec output.
+
+Example workflow (no throughput figures)
+========================================
+
+Complete the following steps to perform a typical raw TX profiling workflow using zperf and a Linux sniffer host, without presenting throughput figures:
+
+#. On a Linux sniffer host, bring up Monitor mode and confirm **tshark** can see frames.
+#. On the Linux host, generate a ``zperf raw upload`` command using the ``nrf_wifi_gen_raw_tx.py`` script.
+   See ``--help`` for details.
+#. On the Zephyr device shell, run the ``zperf raw upload`` command first, so that the DUT is already transmitting when you begin measuring.
+#. On the sniffer host, run ``nrf_wifi_zperf_raw_tx.py`` script against the monitor interface (using a port that matches your test) for the same wall-clock interval as the test, so that capture does not begin only after the device has stopped transmitting.
+
+   Alternatively, record a complete PCAP using a separate tool for the duration of the test, and then run ``nrf_wifi_zperf_raw_tx.py`` command with ``-r`` on that file to ensure the entire transmission burst is included.
+
+#. Compare the per-second and average results reported by the script with your expectations for the test conditions, do not treat a single run as a specification.
 
 .. _ug_nrf70_developing_error_handling_for_raw_packet_transmission:
 
