@@ -129,7 +129,7 @@ static void configure_i2s(const struct device *dev, uint32_t frame_clk_freq)
 	i2s_cfg.frame_clk_freq = frame_clk_freq;
 	i2s_cfg.block_size = BLOCK_SIZE;
 	i2s_cfg.timeout = TIMEOUT_MS;
-	i2s_cfg.options = I2S_OPT_FRAME_CLK_MASTER | I2S_OPT_BIT_CLK_MASTER;
+	i2s_cfg.options = I2S_OPT_FRAME_CLK_CONTROLLER | I2S_OPT_BIT_CLK_CONTROLLER;
 
 	i2s_cfg.mem_slab = &tx_mem_slab;
 	ret = i2s_configure(i2s_dev, I2S_DIR_TX, &i2s_cfg);

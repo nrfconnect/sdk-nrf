@@ -163,15 +163,15 @@ static int configure_stream(const struct device *dev_i2s, enum i2s_dir dir)
 
 	if (dir == I2S_DIR_TX) {
 		/* Configure the Transmit port as Master */
-		i2s_cfg.options = I2S_OPT_FRAME_CLK_MASTER
-				| I2S_OPT_BIT_CLK_MASTER | I2S_OPT_BIT_CLK_GATED;
+		i2s_cfg.options = I2S_OPT_FRAME_CLK_CONTROLLER
+				| I2S_OPT_BIT_CLK_CONTROLLER | I2S_OPT_BIT_CLK_GATED;
 	} else if (dir == I2S_DIR_RX) {
 		/* Configure the Receive port as Slave */
-		i2s_cfg.options = I2S_OPT_FRAME_CLK_SLAVE
-				| I2S_OPT_BIT_CLK_SLAVE | I2S_OPT_BIT_CLK_GATED;
+		i2s_cfg.options = I2S_OPT_FRAME_CLK_TARGET
+				| I2S_OPT_BIT_CLK_TARGET | I2S_OPT_BIT_CLK_GATED;
 	} else { /* dir == I2S_DIR_BOTH */
-		i2s_cfg.options = I2S_OPT_FRAME_CLK_MASTER
-				| I2S_OPT_BIT_CLK_MASTER | I2S_OPT_BIT_CLK_GATED;
+		i2s_cfg.options = I2S_OPT_FRAME_CLK_CONTROLLER
+				| I2S_OPT_BIT_CLK_CONTROLLER | I2S_OPT_BIT_CLK_GATED;
 	}
 
 	if (!IS_ENABLED(CONFIG_TEST_USE_GPIO_LOOPBACK)) {
