@@ -398,7 +398,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
         # MCUboot uses hash function to identify key internally when KMU is disabled.
         # Don't use Cracen hash driver on nrf54ls05 as this SoC uses Cracen only for TRNG.
-        if((SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU AND SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE) OR SB_CONFIG_SOC_NRF54LS05B)
+        if((SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU AND SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE) OR SB_CONFIG_SOC_NRF54LS05B OR SB_CONFIG_SOC_NRF54LS05A)
           set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_HASH_DRIVER n)
         else()
           set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_HASH_DRIVER y)
@@ -1079,7 +1079,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     endif()
   endif()
 
-  if(SB_CONFIG_SOC_NRF54LS05B AND SB_CONFIG_PARTITION_MANAGER)
+  if((SB_CONFIG_SOC_NRF54LS05B OR SB_CONFIG_SOC_NRF54LS05A) AND SB_CONFIG_PARTITION_MANAGER)
     message(WARNING "nrf54ls05 needs to move away from partition manager, usage of PM is temporary")
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
