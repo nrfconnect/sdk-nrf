@@ -87,6 +87,17 @@ config SB_VALIDATE_FW_HASH
 	  Hash validation (not secure). Only meant for nRF5340 network core
 	  since the app core will do the signature validation.
 
+config SB_LCS_AWARE
+	bool "Enable LCS-aware validation"
+	depends on NRF_LCS
+	default y
+	help
+	  If enabled, the bootloader will check the lifecycle state (LCS) of the
+	  device and only validate firmware signature if the LCS is PROVISIONING
+	  or SECURED.
+	  This is meant to be used together with PSA RoT provisioning, but can be
+	  used in other scenarios as well.
+
 if SECURE_BOOT_VALIDATION
 
 module = SECURE_BOOT_VALIDATION
