@@ -36,3 +36,34 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_net
+  sample.net.azure_iot_hub.nrf54lm20_nrf7002eb2.wifi:
+    sysbuild: true
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+    extra_args:
+      - azure_iot_hub_SHIELD="nrf7002eb2"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.azure_iot_hub.dps.nrf54lm20_nrf7002eb2.wifi:
+    sysbuild: true
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+    extra_args:
+      - azure_iot_hub_SHIELD="nrf7002eb2"
+      - OVERLAY_CONFIG=overlay-dps.conf
+    extra_configs:
+      - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net

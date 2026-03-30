@@ -613,7 +613,9 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`azure_iot_hub` sample:
+
+  * Added support for the nRF54LM20 DK with the nRF7002-EB II shield.
 
 NFC samples
 -----------
