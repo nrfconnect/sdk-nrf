@@ -23,3 +23,11 @@ boards:
     append:
       EXTRA_CONF_FILE: flpr.conf
       EXTRA_DTC_OVERLAY_FILE: soc/nrf54lm20a_cpuflpr.overlay
+  /.*/nrf54lm20b/cpuapp/:
+    append:
+      EXTRA_CONF_FILE: app.conf
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf54lm20b_cpuapp.overlay
+  /.*/nrf54lm20b/cpuflpr/:
+    append:
+      EXTRA_CONF_FILE: flpr.conf
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf54lm20b_cpuflpr.overlay
