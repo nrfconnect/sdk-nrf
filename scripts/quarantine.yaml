@@ -59,3 +59,9 @@
   platforms:
     - nrf54ls05dk@0.2.0/nrf54ls05a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38475"
+
+- scenarios:
+    - nrf.extended.drivers.mspi.api.hpf
+  platforms:
+    - nrf54lm20dk/nrf54lm20b/cpuapp
+  comment: "https://github.com/nrfconnect/sdk-nrf/pull/27792"
