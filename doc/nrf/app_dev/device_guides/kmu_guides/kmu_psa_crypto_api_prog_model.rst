@@ -217,6 +217,16 @@ For each key type, the table lists the supported algorithms and indicates which 
      - No
      - No
      - Yes
+   * - X25519 key pair (ECDH usage only)
+     - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_MONTGOMERY)``
+       |
+       | ``key_bits``: 255
+       |
+       | ``key_algorithm``: ``PSA_ALG_ECDH``
+     - 2
+     - No
+     - Yes
+     - Yes
 .. [1] Store each key with only one algorithm to follow PSA Crypto best practices.
 .. [2] Keys with the Encrypted usage scheme (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) require two additional KMU slots to store the nonce and the authentication tag.
 .. [3] 192-bit key size is not supported on nRF54LM20A.
