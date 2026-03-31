@@ -307,6 +307,14 @@
 
 | :ref:`nRF54LM20 DK <ug_nrf54l>` | PCA10184 | :zephyr:board:`nrf54lm20dk <nrf54lm20dk>` | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip`` |
 
+.. nrf54lm20dk_nrf54lm20b_cpuflpr
+
+| :ref:`nRF54LM20 DK <ug_nrf54l>` | PCA10184 | :zephyr:board:`nrf54lm20dk <nrf54lm20dk>` | ``nrf54lm20dk/nrf54lm20b/cpuflpr`` |
+
+.. nrf54lm20dk_nrf54lm20b_cpuflpr_xip
+
+| :ref:`nRF54LM20 DK <ug_nrf54l>` | PCA10184 | :zephyr:board:`nrf54lm20dk <nrf54lm20dk>` | ``nrf54lm20dk/nrf54lm20b/cpuflpr/xip`` |
+
 .. nrf54lm20dongle_nrf54lm20b_cpuapp
 
 | :ref:`nRF54LM20 Dongle <ug_nrf54l>` | PCA10208 | nrf54lm20dongle | ``nrf54lm20dongle/nrf54lm20b/cpuapp`` |
