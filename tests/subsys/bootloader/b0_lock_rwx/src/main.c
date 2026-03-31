@@ -7,12 +7,14 @@
 #include <zephyr/ztest.h>
 #include <hal/nrf_rramc.h>
 #include <nrfx_rramc.h>
-#include <pm_config.h>
 
 #define B0_RRAMC_REGION      3
 #define MCUBOOT_RRAMC_REGION 4
 
 #define RRAMC_REGION_FOR_TEST CONFIG_TEST_B0_LOCK_REGION
+
+#if USE_PARTITION_MANAGER
+#include <pm_config.h>
 
 #if RRAMC_REGION_FOR_TEST == B0_RRAMC_REGION
 #define RRAMC_REGION_FOR_TEST_SIZE   PM_B0_SIZE
@@ -24,6 +26,24 @@
 #else
 #define RRAMC_REGION_FOR_TEST_SIZE   PM_S1_IMAGE_SIZE
 #define RRAM_REGION_FOR_TEST_ADDRESS PM_S1_IMAGE_ADDRESS
+#endif
+#endif
+
+#else
+#include <zephyr/storage/flash_map.h>
+#define RWX_SKIP_SIZE           CONFIG_SB_IMAGE_BOOT_OFFSET
+
+#if RRAMC_REGION_FOR_TEST == B0_RRAMC_REGION
+#define RRAMC_REGION_FOR_TEST_SIZE   FIXED_PARTITION_SIZE(b0_partition)
+#define RRAM_REGION_FOR_TEST_ADDRESS FIXED_PARTITION_OFFSET(b0_partition)
+#elif RRAMC_REGION_FOR_TEST == MCUBOOT_RRAMC_REGION
+#if !defined(CONFIG_TEST_B0_LOCK_USE_S1)
+#define RRAMC_REGION_FOR_TEST_SIZE   (FIXED_PARTITION_SIZE(s0_partition) - RWX_SKIP_SIZE)
+#define RRAM_REGION_FOR_TEST_ADDRESS (FIXED_PARTITION_OFFSET(s0_partition) + RWX_SKIP_SIZE)
+#else
+#define RRAMC_REGION_FOR_TEST_SIZE   (FIXED_PARTITION_SIZE(s1_partition) - RWX_SKIP_SIZE)
+#define RRAM_REGION_FOR_TEST_ADDRESS (FIXED_PARTITION_OFFSET(s1_partition) + RWX_SKIP_SIZE)
+#endif
 #endif
 #endif
 
