@@ -39,3 +39,23 @@
   platforms:
     - nrf54lm20dk/nrf54lm20b/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38444"
+
+- scenarios:
+    - benchmarks.current_consumption.beacon_idle.nrf54l
+    - benchmarks.current_consumption.beacon_idle.nrf54l.lfrc
+    - benchmarks.current_consumption.beacon_vs_vdd
+    - benchmarks.current_consumption.beacon_vs_vdd.nrf54l_lfrc
+    - sample.bluetooth.peripheral_power_profiling
+    - sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_0dBm_100ms
+    - sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_0dBm_30ms
+    - sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_8dBm_100ms
+    - sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_8dBm_30ms
+    - sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_0dBm_100ms
+    - sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_0dBm_30ms
+    - sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_8dBm_100ms
+    - sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_8dBm_30ms
+    - sample.bluetooth.peripheral_power_profiling.auto_non_conn_advert_lfxo_0dbm_100ms
+    - sample.bluetooth.peripheral_power_profiling.auto_non_conn_advert_lfxo_0dbm_30ms
+  platforms:
+    - nrf54ls05dk@0.2.0/nrf54ls05a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38475"
