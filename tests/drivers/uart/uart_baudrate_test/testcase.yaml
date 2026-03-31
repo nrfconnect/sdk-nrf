@@ -75,7 +75,6 @@ tests:
     extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20_common_uart22.overlay"
   drivers.uart.baudrate_test.ls05_uart21:
     platform_allow:
-      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
@@ -83,7 +82,6 @@ tests:
       - FILE_SUFFIX="uart21"
   drivers.uart.baudrate_test.ls05_uart22:
     platform_allow:
-      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
