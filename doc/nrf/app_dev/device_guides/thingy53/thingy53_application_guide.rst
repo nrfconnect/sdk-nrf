@@ -29,6 +29,8 @@ For more information, see :ref:`thingy53_app_usb`.
 Partition manager configuration
 *******************************
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 The samples and applications for Nordic Thingy:53 use the :ref:`partition_manager` by default to define memory partitions.
 The memory layout must stay consistent, so that MCUboot can perform proper image updates and clean up the settings storage partition.
 To ensure that the partition layout does not change between builds, the sample must use a static partition layout that is consistent between all samples in the |NCS|.
