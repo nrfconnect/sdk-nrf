@@ -141,7 +141,6 @@ For more information, see :ref:`emds_readme`.
 
 * :kconfig:option:`CONFIG_EMDS` - Enables the emergency data storage.
 * :kconfig:option:`CONFIG_BT_MESH_RPL_STORAGE_MODE_EMDS` - Enables the persistent storage of RPL in EMDS.
-* :kconfig:option:`CONFIG_PM_PARTITION_SIZE_EMDS_STORAGE` =0x4000 - Defines the partition size for the Partition Manager.
 
 .. _ug_bt_mesh_configuring_lpn:
 
@@ -303,4 +302,4 @@ Currently, all :ref:`bt_mesh_samples` in the |NCS| use the :ref:`trusted_storage
    This approach is less secure than using the :ref:`lib_hw_unique_key` library for key derivation as it only provides integrity of sensitive material.
    It is also possible to implement a custom AEAD key generation method when the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM` Kconfig option is selected.
 
-For more details about AEAD key generation and backend configuration, see the :ref:`trusted_storage_readme` readme.
+For more details about AEAD key generation and backend configuration, see the :ref:`trusted_storage_readme`.
