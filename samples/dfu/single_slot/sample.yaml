@@ -36,10 +36,12 @@ tests:
       - ci_samples_dfu
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
-      - DFILE_SUFFIX=usb
+      - FILE_SUFFIX=usb
   sample.dfu.single_slot.fw_loader_update.nrf54l15:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
