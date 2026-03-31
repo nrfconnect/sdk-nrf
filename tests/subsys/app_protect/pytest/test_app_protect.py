@@ -23,6 +23,7 @@ DEVICEID = {
     'nrf54l15dk/nrf54l10/cpuapp': "0x00FFC304",
     'nrf54l15dk/nrf54l15/cpuapp': "0x00FFC304",
     'nrf54lm20dk/nrf54lm20a/cpuapp': "0x00FFC304",
+    'nrf54lm20dk/nrf54lm20b/cpuapp': "0x00FFC304",
     'nrf54ls05dk/nrf54ls05b/cpuapp': "0x00FFC304",
     'nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp': "0x00FFC304",
     'nrf54lv10dk/nrf54lv10a/cpuapp': "0x00FFC304",
