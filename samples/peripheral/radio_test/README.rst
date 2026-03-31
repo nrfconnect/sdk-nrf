@@ -129,6 +129,12 @@ User interface
    * - time_on_channel
      - <time>
      - Time on each channel in ms (between 1 and 99).
+   * - start_tx_sweep_duty_cycle
+     -
+     - Start TX sweep with duty cycle
+   * - sweep_duty_cycle_timings
+     - <tx_time> <sleep_time>
+     - Time reserved for transmission and sleep respectively on each channel in us.
    * - toggle_dcdc_state
      - <state>
      - Toggle DC/DC converter state.
