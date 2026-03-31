@@ -109,9 +109,11 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf54h20dk/nrf54h20/cpuppr``                                           |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF54LS05 DK      | PCA10214   | ``nrf54ls10dk``                                        | ``nrf54ls05dk/nrf54ls05b/cpuapp``                                        |
+| nRF54LS05 DK      | PCA10214   | ``nrf54ls05dk``                                        | ``nrf54ls05dk/nrf54ls05a/cpuapp``                                        |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf54ls05dk/nrf54ls05b/cpuapp``                                        |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF54LV10 DK      | PCA10188   | ``nrf54lv10dk``                                        | ``nrf54lv10dk/nrf54lv10a/cpuapp``                                        |
+| nRF54LV10 DK      | PCA10188   | :ref:`nrf54lv10dk <board_nrf54lv10dk>`                 | ``nrf54lv10dk/nrf54lv10a/cpuapp``                                        |
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`) |
 |                   |            |                                                        |                                                                          |
