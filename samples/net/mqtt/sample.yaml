@@ -134,7 +134,9 @@ tests:
   sample.net.mqtt.nrf54lm20_nrf7002eb2.wifi:
     sysbuild: true
     build_only: true
-    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -144,7 +146,9 @@ tests:
   sample.net.mqtt.nrf54lm20_nrf7002eb2.wifi.tls:
     sysbuild: true
     build_only: true
-    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild

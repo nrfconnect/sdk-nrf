@@ -79,7 +79,9 @@ tests:
     build_on_all: true
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
       - aws_iot_SHIELD="nrf7002eb2"

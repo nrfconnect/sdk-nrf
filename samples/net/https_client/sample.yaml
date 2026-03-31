@@ -109,8 +109,10 @@ tests:
     build_only: true
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
