@@ -90,7 +90,10 @@ tests:
       - throughput_SHIELD=nrf7002eb2
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -103,7 +106,10 @@ tests:
       - throughput_SHIELD=nrf7002eb2
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -116,7 +122,10 @@ tests:
       - throughput_SHIELD=nrf7002eb2
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -129,7 +138,10 @@ tests:
       - throughput_SHIELD=nrf7002eb2
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -142,7 +154,10 @@ tests:
       - throughput_SHIELD=nrf7002eb2
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild

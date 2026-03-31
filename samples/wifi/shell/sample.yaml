@@ -357,9 +357,13 @@ tests:
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     tags:
       - ci_build
       - sysbuild

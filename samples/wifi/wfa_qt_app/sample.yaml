@@ -72,8 +72,10 @@ tests:
       - EXTRA_CONF_FILE="overlay-netusb.conf"
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -87,8 +89,10 @@ tests:
       - EXTRA_DTC_OVERLAY_FILE="nrf54lm20_uart_pipe.overlay"
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
