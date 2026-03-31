@@ -57,8 +57,10 @@ tests:
       - CONFIG_TRAFFIC_GEN_REMOTE_IPV4_ADDR="1.2.3.4"
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
