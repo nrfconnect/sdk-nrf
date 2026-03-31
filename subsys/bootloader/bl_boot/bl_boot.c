@@ -36,9 +36,11 @@
 
 
 #if USE_PARTITION_MANAGER
-#define RWX_PROTECTION_REGION	CONFIG_PM_PARTITION_SIZE_B0_IMAGE
+#define RWX_PROTECTION_REGION	PM_B0_SIZE
+#define RWX_SKIP_SIZE		PM_MCUBOOT_PAD_SIZE
 #else
 #define RWX_PROTECTION_REGION	FIXED_PARTITION_SIZE(b0_partition)
+#define RWX_SKIP_SIZE		CONFIG_SB_DISABLE_SELF_RWX_SKIP_SIZE
 #endif
 
 #include <zephyr/linker/linker-defs.h>
@@ -61,16 +63,21 @@
 #define MAX_NEXT_W_SIZE (1023 * 1024)
 #endif
 
+/* Note: the protection is only applied to the image itself, not the header (pad).
+ * When building with MCUBoot, applying protection to the header is not needed, as the
+ * header is only used during DFU and is only left for compatibility. Without MCUBoot, the
+ * header is not present.
+ */
 #if USE_PARTITION_MANAGER
-#define S0_IMAGE_ADDRESS	FIXED_PARTITION_OFFSET(s0_image)
-#define S0_IMAGE_SIZE		FIXED_PARTITION_SIZE(s0_image)
-#define S1_IMAGE_ADDRESS	FIXED_PARTITION_OFFSET(s1_image)
-#define S1_IMAGE_SIZE		FIXED_PARTITION_SIZE(s1_image)
+#define S0_IMAGE_ADDRESS	(PM_S0_IMAGE_ADDRESS + RWX_SKIP_SIZE)
+#define S0_IMAGE_SIZE		(PM_S0_IMAGE_SIZE - RWX_SKIP_SIZE)
+#define S1_IMAGE_ADDRESS	(PM_S1_IMAGE_ADDRESS + RWX_SKIP_SIZE)
+#define S1_IMAGE_SIZE		(PM_S1_IMAGE_SIZE - RWX_SKIP_SIZE)
 #else
-#define S0_IMAGE_ADDRESS	FIXED_PARTITION_OFFSET(s0_partition)
-#define S0_IMAGE_SIZE		FIXED_PARTITION_SIZE(s0_partition)
-#define S1_IMAGE_ADDRESS	FIXED_PARTITION_OFFSET(s1_partition)
-#define S1_IMAGE_SIZE		FIXED_PARTITION_SIZE(s1_partition)
+#define S0_IMAGE_ADDRESS	(FIXED_PARTITION_OFFSET(s0_partition) + RWX_SKIP_SIZE)
+#define S0_IMAGE_SIZE		(FIXED_PARTITION_SIZE(s0_partition) - RWX_SKIP_SIZE)
+#define S1_IMAGE_ADDRESS	(FIXED_PARTITION_OFFSET(s1_partition) + RWX_SKIP_SIZE)
+#define S1_IMAGE_SIZE		(FIXED_PARTITION_SIZE(s1_partition) - RWX_SKIP_SIZE)
 #endif
 
 BUILD_ASSERT((S0_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
@@ -352,7 +359,7 @@ void bl_boot(const struct fw_info *fw_info)
 	uint32_t *vector_table = (uint32_t *)fw_info->boot_address;
 
 #if defined(CONFIG_SB_DISABLE_NEXT_W)
-	if (disable_next_w(fw_info->address)) {
+	if (disable_next_w(fw_info->address + RWX_SKIP_SIZE)) {
 		printk("Unable to disable writes on next stage");
 		return;
 	}

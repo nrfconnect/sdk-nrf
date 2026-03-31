@@ -30,6 +30,7 @@ menu "Nordic nRF Connect"
 config ROM_START_OFFSET
 	default 0 if PARTITION_MANAGER_ENABLED
 	default 0 if BUILD_WITH_TFM
+	default SB_IMAGE_BOOT_OFFSET if !PARTITION_MANAGER_ENABLED && MCUBOOT && SECURE_BOOT
 
 # nRF Connect SDK default experimental warnings to on.
 config WARN_EXPERIMENTAL
