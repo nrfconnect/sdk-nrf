@@ -4,7 +4,7 @@
 set(ZEPHYR_CURRENT_LIBRARY "nrfx")
 
 set(BSP_DIR ${NRFX_DIR}/bsp)
-set(SOC_DIR ${BSP_DIR}/${CONFIG_SOC_NORDIC_BSP_NAME})
+set(SOC_DIR ${BSP_DIR}/stable)
 set(MDK_DIR ${SOC_DIR}/mdk)
 set(mdk_dir ${NRFX_DIR}/mdk)
 set(helpers_dir ${NRFX_DIR}/helpers)

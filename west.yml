@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: ceecbc8422660dd7b07e4a3686a5d4c48b3904fe
+      revision: pull/3915/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -274,6 +274,12 @@ manifest:
       revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
       groups:
         - benchmark
+
+    - name: sdk-bsp-nrf54lm20
+      remote: ncs
+      repo-path: sdk-hal_nordic
+      path: modules/sdk-bsp-nrf54lm20
+      revision: bsp-nrf54lm20-example
 
   # West-related configuration for the nrf repository.
   self:
