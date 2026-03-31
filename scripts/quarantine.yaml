@@ -34,13 +34,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38328"
 
 - scenarios:
-    - sample.ipc.ipc_service.nrf54l_cpuapp_cpuflpr_icbmsg
-    - sample.ipc.ipc_service.nrf54l_cpuapp_cpuflpr_icmsg
-  platforms:
-    - nrf54lm20dk/nrf54lm20b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38444"
-
-- scenarios:
     - benchmarks.current_consumption.beacon_idle.nrf54l
     - benchmarks.current_consumption.beacon_idle.nrf54l.lfrc
     - benchmarks.current_consumption.beacon_vs_vdd
