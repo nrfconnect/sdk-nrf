@@ -517,6 +517,13 @@ ci_samples_peripheral_802154:
     - zephyr/modules/hal_nordic/nrf_802154/
     - zephyr/soc/nordic/
 
+ci_samples_peripheral_vpr_offloading:
+  files:
+    - modules/hal/nordic/
+    - nrf/samples/peripheral/vpr_offloading/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/ipc/
+
 ci_samples_keys:
   files:
     - modules/crypto/mbedtls/
