@@ -34,14 +34,14 @@ ITS_KEY_SLOTS: dict[str, list[int]] = {
     "APP_PUBKEY": [],
 }
 
-POLICIES = ["revokable", "lock", "lock-last", "rotatable"]
+POLICIES = ["revokable", "lock", "lock-last", "rotable"]
 KMU_KEY_POLICIES: dict[str, str] = {
     "revokable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_REVOKABLE,
     "lock": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_READ_ONLY,
 }
 ITS_KEY_POLICIES: dict[str, str] = {
-    "revokable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_REVOKABLE,
-    "rotatable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
+    "revokable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
+    "rotable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
 }
 
 @dataclass
@@ -272,6 +272,14 @@ class NcsProvision(WestCommand):
                 key_policy = ITS_KEY_POLICIES[policy]
 
             slot_id = key_slots[slot_idx]
+
+            # Key policy in ITS is statically assigned to the key ID ranges
+            if soc.startswith("nrf54h"):
+                if policy == "revokable" and not 0x40002000 <= slot_id <= 0x4FFFFFFF:
+                    sys.exit("Revokable policy key ID out of range.")
+                elif policy == "rotable" and not 0x1 <= slot_id <= 0x3FFFFFFF:
+                    sys.exit("Rotable policy key ID out of range.")
+
             slot = SlotParams(id=slot_id, keyfile=keyfile, lifetime=key_policy)
             slots.append(slot)
         return slots
