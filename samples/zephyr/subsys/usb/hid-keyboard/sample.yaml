@@ -19,7 +19,7 @@ common:
       - "HID keyboard sample is initialized"
       - "USBD message: VBUS ready"
       - "Actual device speed 2"
-      - "s-in-status finished"
+      - "Status OUT finished"
   integration_platforms:
     - nrf54h20dk/nrf54h20/cpuapp
   platform_allow:
