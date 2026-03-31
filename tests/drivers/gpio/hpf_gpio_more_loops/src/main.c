@@ -11,8 +11,12 @@ LOG_MODULE_REGISTER(hpf_gpio_loops, LOG_LEVEL_INF);
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/ztest.h>
 
-#if !DT_NODE_EXISTS(DT_NODELABEL(out_gpios)) || !DT_NODE_EXISTS(DT_NODELABEL(in_gpios))
-#error "Unsupported board: test_gpio node is not defined"
+#if !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), out_gpios)
+#error "Unsupported board: out_gpios are not defined"
+#endif
+
+#if !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), in_gpios)
+#error "Unsupported board: in_gpios are not defined"
 #endif
 
 /* Delay after setting GPIO ouputs. It allows signals to settle. */
@@ -20,12 +24,14 @@ LOG_MODULE_REGISTER(hpf_gpio_loops, LOG_LEVEL_INF);
 
 /* ASSUMPTION: All output GPIOs are on the same device */
 const struct gpio_dt_spec out_pins[] = {
-	DT_FOREACH_PROP_ELEM_SEP(DT_NODELABEL(out_gpios), gpios, GPIO_DT_SPEC_GET_BY_IDX, (,))
+	DT_FOREACH_PROP_ELEM_SEP(DT_PATH(zephyr_user), out_gpios, GPIO_DT_SPEC_GET_BY_IDX, (,))
 };
+BUILD_ASSERT(ARRAY_SIZE(out_pins) > 0, "missing out pins");
+
 const struct gpio_dt_spec in_pins[] = {
-	DT_FOREACH_PROP_ELEM_SEP(DT_NODELABEL(in_gpios), gpios, GPIO_DT_SPEC_GET_BY_IDX, (,))
+	DT_FOREACH_PROP_ELEM_SEP(DT_PATH(zephyr_user), in_gpios, GPIO_DT_SPEC_GET_BY_IDX, (,))
 };
-BUILD_ASSERT(ARRAY_SIZE(in_pins) == ARRAY_SIZE(out_pins), "mismatched in/out pairs");
+BUILD_ASSERT(ARRAY_SIZE(in_pins) == ARRAY_SIZE(out_pins), "different number of in and out pins");
 const uint8_t npairs = ARRAY_SIZE(in_pins);
 
 

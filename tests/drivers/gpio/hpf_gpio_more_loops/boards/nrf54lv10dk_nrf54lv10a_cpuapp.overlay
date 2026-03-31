@@ -18,18 +18,12 @@
 	 * Output-input GPIO pair must have identical active level flag.
 	 * All outputs must be on the same device.
 	 */
-	test_gpios {
-		compatible = "gpio-leds";
+	zephyr,user {
+		out-gpios = <&hpf_gpio 16 GPIO_ACTIVE_HIGH>, <&hpf_gpio 18 GPIO_ACTIVE_HIGH>,
+			    <&hpf_gpio 20 GPIO_ACTIVE_HIGH>;
 
-		out_gpios: out_gpios {
-			gpios = <&hpf_gpio 16 GPIO_ACTIVE_HIGH>, <&hpf_gpio 18 GPIO_ACTIVE_HIGH>,
-				<&hpf_gpio 20 GPIO_ACTIVE_HIGH>;
-		};
-
-		in_gpios: in_gpios {
-			gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio1 19 GPIO_ACTIVE_HIGH>,
-				<&gpio1 21 GPIO_ACTIVE_HIGH>;
-		};
+		in-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio1 19 GPIO_ACTIVE_HIGH>,
+			   <&gpio1 21 GPIO_ACTIVE_HIGH>;
 	};
 };
 
