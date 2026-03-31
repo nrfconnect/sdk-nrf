@@ -190,6 +190,8 @@
 .. _`ISO 8601 date format`: https://www.iso.org/iso-8601-date-and-time-format.html
 .. _`X.509`: https://www.itu.int/rec/T-REC-X.509-201910-I/en
 
+.. _`ncs-door-lock-and-access-control`: https://github.com/nrfconnect/ncs-door-lock-and-access-control
+
 .. ### Matter links that need updated SHA per release
 
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5e2e5a02d6/src/controller
@@ -358,6 +360,8 @@
 
 .. _`nRF54LV10 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54LV10-DK
 .. _`nRF54LV10A System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LV10A
+
+.. _`nRF54LS05 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54LS05-DK
 
 .. _`nRF54LM20A System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LM20A
 .. _`nRF54LM20B System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LM20B
@@ -896,6 +900,8 @@
 .. _`nRF54LV10 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lv10_dk/page/UG/nRF54LV10_DK/intro/intro.html
 .. _`nRF54LV10 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lv10a/page/COMP/nrf54lv10a/nrf54lv10a_comp_matrix.html
 
+.. _`nRF54LS05A/B Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LS05A/page/keyfeatures_html5.html
+
 .. _`nRF53 Series`: https://docs.nordicsemi.com/category/nrf-53-series
 
 .. _`nRF5340 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/keyfeatures_html5.html
@@ -1156,6 +1162,7 @@
 .. _`How to work with sysbuild domains`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_multi_domain.html
 
 .. _`Edge AI Add-on for nRF Connect SDK`: https://docs.nordicsemi.com/bundle/addon-edge-ai_latest/page/index.html
+.. _`nRF Door Lock and Access Control Add-on`: https://docs.nordicsemi.com/bundle/door_lock_and_access_control_latest/page/index.html
 
 .. ### Source: files.nordicsemi.com
 
