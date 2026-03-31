@@ -446,7 +446,7 @@
 /samples/bluetooth/central_hids/          @nrfconnect/ncs-si-xcake
 /samples/bluetooth/central_hr_coded/      @nrfconnect/ncs-blenders
 /samples/bluetooth/central_nfc_pairing/   @nrfconnect/ncs-blenders
-/samples/bluetooth/central_smp_client/    @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_smp_client/    @nrfconnect/ncs-eris
 /samples/bluetooth/central_uart/          @nrfconnect/ncs-blenders
 /samples/bluetooth/channel_sounding/ras_initiator/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/channel_sounding/ras_reflector/ @nrfconnect/ncs-dragoon
@@ -581,7 +581,7 @@
 /samples/bluetooth/central_hids/*.rst     @nrfconnect/ncs-si-xcake-doc
 /samples/bluetooth/central_hr_coded/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/central_nfc_pairing/*.rst @nrfconnect/ncs-blenders-doc
-/samples/bluetooth/central_smp_client/*.rst @nrfconnect/ncs-si-muffin-doc
+/samples/bluetooth/central_smp_client/*.rst @nrfconnect/ncs-eris-doc
 /samples/bluetooth/central_uart/*.rst     @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/channel_sounding/ras_initiator/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/channel_sounding/ras_reflector/*.rst @nrfconnect/ncs-dragoon-doc
