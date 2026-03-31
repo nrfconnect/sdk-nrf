@@ -25,6 +25,9 @@
 #include <ncs_version.h>
 #include <ncs_commit.h>
 #include "cJSON_os.h"
+#if (CONFIG_MEMFAULT)
+#include "memfault/ports/zephyr/periodic_upload.h"
+#endif /* CONFIG_MEMFAULT */
 
 LOG_MODULE_REGISTER(nrf_cloud_codec_internal, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -284,15 +287,26 @@ int nrf_cloud_device_control_encode_internal(cJSON *const obj,
 	if (data) {
 		if ((json_add_bool_cs(ctrl_obj, NRF_CLOUD_JSON_KEY_ALERT, data->alerts_enabled)) ||
 		    (!cJSON_AddNumberToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_LOG,
-						data->log_level))) {
+					       data->log_level))) {
 			ret = -ENOMEM;
 		}
+#if (CONFIG_MEMFAULT)
+		if (!ret && json_add_bool_cs(ctrl_obj, NRF_CLOUD_JSON_KEY_MEMFAULT,
+					     data->memfault_enabled)) {
+			ret = -ENOMEM;
+		}
+#endif /* CONFIG_MEMFAULT */
 	} else {
 		/* If data is NULL, add null to control object */
 		if ((!cJSON_AddNullToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_ALERT)) ||
 		    (!cJSON_AddNullToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_LOG))) {
 			ret = -ENOMEM;
 		}
+#if (CONFIG_MEMFAULT)
+		if (!ret && !cJSON_AddNullToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_MEMFAULT)) {
+			ret = -ENOMEM;
+		}
+#endif /* CONFIG_MEMFAULT */
 	}
 
 	if (ret == 0) {
@@ -392,6 +406,19 @@ int nrf_cloud_shadow_control_decode(struct nrf_cloud_obj *const ctrl_obj,
 
 	cJSON *alert_obj = NULL;
 	cJSON *log_obj = NULL;
+#if (CONFIG_MEMFAULT)
+	cJSON *memfault_obj = NULL;
+
+	memfault_obj = cJSON_GetObjectItem(ctrl_obj->json, NRF_CLOUD_JSON_KEY_MEMFAULT);
+	if (memfault_obj == NULL) {
+		LOG_DBG(NRF_CLOUD_JSON_KEY_MEMFAULT " not found");
+	} else if (cJSON_IsBool(memfault_obj)) {
+		data->memfault_enabled = cJSON_IsTrue(memfault_obj);
+	} else {
+		LOG_WRN(NRF_CLOUD_JSON_KEY_MEMFAULT " is not a bool");
+		return -EINVAL;
+	}
+#endif /* CONFIG_MEMFAULT */
 
 	alert_obj = cJSON_GetObjectItem(ctrl_obj->json, NRF_CLOUD_JSON_KEY_ALERT);
 	if (alert_obj == NULL) {
@@ -3358,6 +3385,11 @@ void nrf_cloud_device_control_get(struct nrf_cloud_ctrl_data *const ctrl)
 	ctrl->alerts_enabled = false;
 #endif
 	ctrl->log_level = nrf_cloud_log_control_get();
+#if (CONFIG_MEMFAULT)
+	ctrl->memfault_enabled = memfault_zephyr_port_periodic_upload_enabled();
+#else
+	ctrl->memfault_enabled = false;
+#endif /* CONFIG_MEMFAULT */
 }
 
 bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const input)
@@ -3633,6 +3665,15 @@ int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const inp
 		if (device_ctrl.log_level != cloud_ctrl.log_level) {
 			ctrl_status = NRF_CLOUD_CTRL_REPLY;
 			nrf_cloud_log_control_set(cloud_ctrl.log_level);
+		}
+
+		if (device_ctrl.memfault_enabled != cloud_ctrl.memfault_enabled) {
+			ctrl_status = NRF_CLOUD_CTRL_REPLY;
+#if (CONFIG_MEMFAULT)
+			LOG_INF("Changing Memfault enabled to: %s",
+				cloud_ctrl.memfault_enabled ? "true" : "false");
+			memfault_zephyr_port_periodic_upload_enable(cloud_ctrl.memfault_enabled);
+#endif /* CONFIG_MEMFAULT */
 		}
 	}
 
