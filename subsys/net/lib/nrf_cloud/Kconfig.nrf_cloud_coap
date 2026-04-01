@@ -85,6 +85,16 @@ config NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST
 config COAP_CLIENT_MAX_PATH_LENGTH
 	default 128
 
+# When Memfault uploads via nRF Cloud CoAP, larger block/message sizes reduce the number
+# of CoAP messages needed to send large payloads (e.g. flash-backed coredumps).
+# Scoped to MEMFAULT_USE_NRF_CLOUD_COAP to avoid increasing static CoAP client buffer
+# sizes (MAX_COAP_MSG_LEN) for all builds.
+config COAP_CLIENT_BLOCK_SIZE
+	default 1024 if MEMFAULT_USE_NRF_CLOUD_COAP
+
+config COAP_CLIENT_MESSAGE_SIZE
+	default 1024 if MEMFAULT_USE_NRF_CLOUD_COAP
+
 module = NRF_CLOUD_COAP
 module-str = nRF Cloud COAP
 source "subsys/logging/Kconfig.template.log_config"
