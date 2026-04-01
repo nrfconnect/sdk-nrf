@@ -133,6 +133,8 @@ The :ref:`Kconfig Reference <configuration_options>` provides the documentation 
 Memory layout configuration
 ---------------------------
 
+.. include:: ../../includes/pm_deprecation.txt
+
 The memory layout configuration is provided by the :ref:`partition_manager` script, specific to the |NCS|.
 
 The script must be enabled to provide the memory layout configuration.
