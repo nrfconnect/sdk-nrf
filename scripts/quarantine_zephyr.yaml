@@ -626,12 +626,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37556"
 
 - scenarios:
-    - application_development.ram_context_for_isr
-  platforms:
-    - nrf54lm20dk/nrf54lm20b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38489"
-
-- scenarios:
     - libraries.libc.newlib.thread_safety.userspace.stress
     - libraries.libc.newlib_nano.thread_safety.userspace.stress
     - libraries.cmsis_dsp.matrix.unary_f64
