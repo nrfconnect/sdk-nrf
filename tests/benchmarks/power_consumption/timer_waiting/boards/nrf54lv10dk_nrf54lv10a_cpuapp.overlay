@@ -1,5 +1,0 @@
-/ {
-	aliases {
-		led = &led0;
-	};
-};

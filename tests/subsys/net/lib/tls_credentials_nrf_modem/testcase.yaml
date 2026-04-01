@@ -1,7 +1,0 @@
-tests:
-  net.lib.tls_credentials:
-    platform_allow: native_sim
-    integration_platforms:
-      - native_sim
-    tags:
-      - ci_tests_subsys_net

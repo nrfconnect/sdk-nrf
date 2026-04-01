@@ -1,9 +1,0 @@
-/*
- * Copyright (c) Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
- *
- * The following tag tells the "west ncs-sbom" tool which files are covered
- * by the license information above.
- * NCS-SBOM-Apply-To-File: ./lib/**/*.a
- */

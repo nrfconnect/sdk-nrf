@@ -1,8 +1,0 @@
-Enable the Thread network with the ``ot ifconfig up`` and ``ot thread start`` commands:
-
-.. code-block:: console
-
-   uart:~$ ot ifconfig up
-   Done
-   uart:~$ ot thread start
-   Done

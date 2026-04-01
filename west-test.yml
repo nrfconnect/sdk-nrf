@@ -1,8 +1,0 @@
-manifest:
-  version: "0.12"
-
-  self:
-    west-commands: scripts/west-commands.yml
-    import:
-      - test-manifests
-      - west.yml

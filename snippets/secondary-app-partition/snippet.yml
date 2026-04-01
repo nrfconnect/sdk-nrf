@@ -1,3 +1,0 @@
-name: secondary-app-partition
-append:
-  EXTRA_DTC_OVERLAY_FILE: secondary-app-partition.overlay

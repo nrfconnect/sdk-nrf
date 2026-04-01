@@ -1,2 +1,0 @@
-pc-ble-driver-py>=0.15.0
-nrfutil>=6.0.0

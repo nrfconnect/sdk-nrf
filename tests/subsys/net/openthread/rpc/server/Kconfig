@@ -1,7 +1,0 @@
-menu "Zephyr Kernel"
-source "Kconfig.zephyr"
-endmenu
-
-config OPENTHREAD_MESH_DIAG
-	bool "Mesh diagnostics"
-	default y

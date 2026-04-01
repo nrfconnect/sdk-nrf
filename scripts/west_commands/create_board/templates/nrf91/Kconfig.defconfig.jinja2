@@ -1,6 +1,0 @@
-if BOARD_{{ board | upper }}_{{ soc | upper }} || BOARD_{{ board | upper }}_{{ soc | upper }}_NS
-
-config BOARD_{{ board | upper }}
-	select USE_DT_CODE_PARTITION if BOARD_{{ board | upper }}_{{ soc | upper }}_NS
-
-endif # BOARD_{{ board | upper }}_{{ soc | upper }} || BOARD_{{ board | upper }}_{{ soc | upper }}_NS

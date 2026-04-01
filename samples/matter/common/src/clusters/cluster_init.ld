@@ -1,1 +1,0 @@
-ITERABLE_SECTION_ROM(nrf_matter_cluster_init_entry, 4)

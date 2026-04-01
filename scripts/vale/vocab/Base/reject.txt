@@ -1,7 +1,0 @@
-simply
-obviously
-easy
-trivial
-just
-nrf utils
-nrf-util

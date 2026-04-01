@@ -1,9 +1,0 @@
-Stack components,Wi-Fi SSID scanning with cellular backhaul,Wi-Fi application for end-device-to-cloud products,Wi-Fi + Bluetooth LE application for end-device-to-cloud products,Matter over Wi-Fi products,Matter over Thread products,Dual-stack capable Matter devices (not gateways)
-Wi-Fi scan only driver,X,,,,,
-Wi-Fi client stack ,,X,X,X,,X
-Bluetooth LE stack ,,,X,,,
-Matter stack ,,,,X,X,X
-Thread stack ,,,,,X,X
-LTE modem library ,X,,,,,
-TCP/IP networking stack ,,X,X,X,,X
-MQTT/CoAP/HTTPS,,X,X,,,

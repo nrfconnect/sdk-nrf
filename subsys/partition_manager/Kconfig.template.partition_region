@@ -1,4 +1,0 @@
-DT_CHOSEN_EXT_FLASH:= nordic,pm-ext-flash
-config PM_PARTITION_REGION_$(partition)_EXTERNAL
-	bool "Locate partition $(partition) in region 'external_flash'"
-	depends on $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))

@@ -1,3 +1,0 @@
-This test can be found under |test path| in the |NCS| folder structure.
-
-See :ref:`programming_cmd` for information about how to build and program the tests.

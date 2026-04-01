@@ -1,2 +1,0 @@
-#include "../../../boards/nrf52840dk_nrf52840.overlay"
-#include "../app.overlay"

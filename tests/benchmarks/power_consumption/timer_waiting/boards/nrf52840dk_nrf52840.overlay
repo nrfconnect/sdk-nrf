@@ -1,9 +1,0 @@
-/ {
-	aliases {
-		counter = &timer0;
-	};
-};
-
-&timer0 {
-	status = "okay";
-};

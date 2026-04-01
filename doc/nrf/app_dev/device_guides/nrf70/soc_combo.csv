@@ -1,4 +1,0 @@
-Host SoC,Wi-Fi SSID scanning with cellular backhaul,Wi-Fi application for end-device-to-cloud products,Wi-Fi + Bluetooth LE application for end-device-to-cloud products,Matter over Wi-Fi products,Matter over Thread products,Dual-stack capable Matter devices (not gateways)
-nRF52840,,X*,X*,,,
-nRF5340,,X,X,X,X,X
-nRF9160,X,,,,,

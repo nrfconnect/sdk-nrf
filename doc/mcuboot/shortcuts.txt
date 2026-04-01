@@ -1,3 +1,0 @@
-.. |NCS| replace:: nRF Connect SDK
-
-.. |BLE| replace:: Bluetooth LE

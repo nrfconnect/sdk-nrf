@@ -1,3 +1,0 @@
-Cellular connectivity is supported on the nRF91 Series SiPs, while |wifi| connectivity is supported on the nRF53 or nRF54 Series SoCs hosting the nRF70 Series Wi-Fi companion ICs.
-
-The sample uses the :ref:`connection manager <zephyr:conn_mgr_overview>` that provides a common connectivity API for LTE and Wi-Fi stacks.

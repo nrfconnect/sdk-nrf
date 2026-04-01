@@ -1,2 +1,0 @@
--r requirements-base.txt
--r requirements-build.txt

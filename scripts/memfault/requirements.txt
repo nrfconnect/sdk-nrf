@@ -1,2 +1,0 @@
-pc-ble-driver-py>=0.16.4
-requests

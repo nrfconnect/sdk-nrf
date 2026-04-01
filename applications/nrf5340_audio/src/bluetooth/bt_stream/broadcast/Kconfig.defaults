@@ -1,8 +1,0 @@
-#
-# Copyright (c) 2023 Nordic Semiconductor ASA
-#
-# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-#
-
-config BT_AUDIO_CODEC_CFG_MAX_METADATA_SIZE
-	default 80

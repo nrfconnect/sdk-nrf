@@ -1,8 +1,0 @@
-# Copyright (c) 2022 Nordic Semiconductor ASA
-# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-
-module = PCM_MIX
-module-str = pcm-mix
-source "subsys/logging/Kconfig.template.log_config"
-
-source "Kconfig.zephyr"

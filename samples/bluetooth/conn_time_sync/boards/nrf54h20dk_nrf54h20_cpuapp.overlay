@@ -1,9 +1,0 @@
-&grtc {
-	status = "okay";
-
-	// Change channel 6 to be owned by the application (not child)
-	child-owned-channels = <0x5>;
-	// Change channel 6 to be secure
-	nonsecure-channels = <0x5>;
-	owned-channels = <0x4 0x5 0x6>;
-};

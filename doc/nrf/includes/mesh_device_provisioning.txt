@@ -1,9 +1,0 @@
-The provisioning assigns an address range to the device, and adds it to the mesh network.
-Complete the following steps in the nRF Mesh app:
-
-1. Tap :guilabel:`Add node` to start scanning for unprovisioned mesh devices.
-#. Select the |device name| device to connect to it.
-#. Tap :guilabel:`Identify`, and then :guilabel:`Provision`, to provision the device.
-#. When prompted, select an OOB method and follow the instructions in the app.
-
-Once the provisioning is complete, the app returns to the Network screen.

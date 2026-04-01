@@ -1,9 +1,0 @@
-/ {
-	chosen {
-		zephyr,console = &uart30;
-	};
-};
-
-&uart30 {
-	status = "okay";
-};

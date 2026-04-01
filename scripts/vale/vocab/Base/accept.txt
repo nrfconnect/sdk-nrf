@@ -1,5 +1,0 @@
-nRF
-nrfutil
-Nordic
-SDFU
-Util

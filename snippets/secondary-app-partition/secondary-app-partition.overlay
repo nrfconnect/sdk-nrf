@@ -1,5 +1,0 @@
-/ {
-	chosen {
-		zephyr,code-partition = &secondary_app_partition;
-	};
-};

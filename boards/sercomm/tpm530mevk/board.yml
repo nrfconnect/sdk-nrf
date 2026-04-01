@@ -1,8 +1,0 @@
-board:
-  name: tpm530mevk
-  full_name: TPM530M EVK
-  vendor: sercomm
-  socs:
-  - name: tpm530m
-    variants:
-    - name: ns

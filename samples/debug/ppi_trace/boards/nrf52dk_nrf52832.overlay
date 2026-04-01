@@ -1,9 +1,0 @@
-&rtc2 {
-	status = "okay";
-};
-
-/ {
-	zephyr,user {
-		ppi-trace-rtc = <&rtc2>;
-	};
-};

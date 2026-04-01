@@ -1,6 +1,0 @@
-# packages required to run tests for Python scripts
-cryptography
-intelhex
-pytest
-pyyaml
-west
