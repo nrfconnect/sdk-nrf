@@ -21,12 +21,12 @@ The |NCS| |release| allows you to develop applications with the following versio
        - Mbed TLS version
      * - |release|
        - v2.2.0
-       - |ironside_se_ver|
+       - v23.1.1+20
        - 3.6.5
      * - Upcoming release (currently on the ``main`` branch of `sdk-nrf`_)
-       - v2.2.2
+       - |tf-m_ver|
        - |ironside_se_ver|
-       - 3.6.5
+       - |mbed_tls_ver|
 
 .. security_components_ver_table_end
 
@@ -42,7 +42,7 @@ Expand the following section to see the table listing versions of different secu
 
       Similarly, not all `official Mbed TLS releases`_ are implemented by the |NCS| through the `sdk-mbedtls`_ repository.
 
-   .. list-table:: |NCS|, TF-M, and Mbed TLS versions
+   .. list-table:: |NCS|, TF-M, IronSide Secure Element, and Mbed TLS versions
      :header-rows: 1
      :widths: auto
 
@@ -51,12 +51,16 @@ Expand the following section to see the table listing versions of different secu
        - IronSide Secure Element version
        - Mbed TLS version
      * - Upcoming release (currently on the ``main`` branch of `sdk-nrf`_)
+       - |tf-m_ver|
+       - |ironside_se_ver|
+       - |mbed_tls_ver|
+     * - v3.3.0
        - v2.2.2
        - |ironside_se_ver|
-       - 3.6.5
+       - 3.6.6
      * - v3.2.0
        - v2.2.0
-       - |ironside_se_ver|
+       - v23.1.1+20
        - 3.6.5
      * - v3.1.0, v3.1.1
        - v2.1.2
