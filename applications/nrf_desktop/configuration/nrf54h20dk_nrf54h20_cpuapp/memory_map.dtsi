@@ -71,15 +71,15 @@
 			 */
 		};
 
-		storage_partition: partition@1ca000 {
-			reg = <0x1ca000 DT_SIZE_K(40)>;
+		storage_partition: partition@1c8000 {
+			reg = <0x1c8000 DT_SIZE_K(40)>;
 		};
 
-		periphconf_partition: partition@1d4000 {
-			reg = <0x1d4000 DT_SIZE_K(8)>;
+		periphconf_partition: partition@1d2000 {
+			reg = <0x1d2000 DT_SIZE_K(8)>;
 		};
 
-		/* A gap of 156 KB (0x27000) has been left here for future partitions. */
+		/* A gap of 164 KB (0x29000) has been left here for future partitions. */
 
 		/* 0x1fd000 was chosen for secure_storage_partition such that
 		 * there is no more space after secure_storage_partition.
