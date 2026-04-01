@@ -805,8 +805,9 @@ static void radio_disable(void)
 		(void)fem_power_down();
 	}
 #endif /* CONFIG_FEM */
-
-	test_is_running = false;
+	if (!sweep_processing) {
+		test_is_running = false;
+	}
 }
 
 static void mltpan_6(nrf_radio_mode_t mode)
