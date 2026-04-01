@@ -739,7 +739,9 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`azure_iot_hub`:
+
+  * Updated the sample for the nRF7002DK to explicitly enable ECDH/ECDSA and RSA cert support.
 
 NFC samples
 -----------
