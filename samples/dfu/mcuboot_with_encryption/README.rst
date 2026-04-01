@@ -139,6 +139,61 @@ See the list of best practices, security-related options, and recommended settin
     Use hardware-backed key storage in production.
   * Do not store encryption keys or private keys in plain text in the MCUboot binary.
 
+Signing encrypted images outside the build system
+*************************************************
+
+You can sign and encrypt application images outside the NCS build system using ``imgtool`` directly.
+This is useful for production workflows where the signing infrastructure is separate from the build environment.
+
+To do this, you need to extract the raw application payload from an unencrypted signed image and then re-sign and encrypt it with ``imgtool``.
+
+Extracting the raw payload
+==========================
+
+Extract the raw application binary from the unencrypted signed image (``zephyr.signed.bin``) by stripping the MCUboot header and TLV trailer.
+Do not use the encrypted image (``zephyr.signed.encrypted.bin``).
+
+See the following example:
+
+.. code-block:: python
+
+   import struct
+
+   data = open("build_dir/mcuboot_with_encryption/zephyr/zephyr.signed.bin", "rb").read()
+   hdr_size = struct.unpack_from("<H", data, 4)[0]
+   img_size = struct.unpack_from("<I", data, 12)[0]
+   open("raw_payload.bin", "wb").write(data[hdr_size : hdr_size + img_size])
+
+Re-signing and encrypting
+=========================
+
+Use ``imgtool sign`` with the ``--encrypt`` option to re-sign the extracted payload and encrypt it with your X25519 key.
+Ensure that the signing parameters (``--align``, ``--header-size``, ``--slot-size``, ``--sha``) match the values used during the original build.
+You can find these in the build directory configuration files.
+
+.. note::
+   On nRF54L Series devices, you must use also the ``--hmac-sha 512`` argument.
+   Without it, MCUboot will reject the image.
+
+   See the following example for the nRF54L Series:
+
+   .. code-block:: console
+
+      imgtool sign \
+        --align 16 \
+        --header-size 0x800 \
+        --slot-size 0xa5000 \
+        --version 2.0.0 \
+        --pad-header \
+        --key root-ed25519.pem \
+        --encrypt custom-x25519-enc-priv.pem \
+        --sha 512 \
+        --hmac-sha 512 \
+        raw_payload.bin \
+        encrypted_output.bin
+
+
+
 Building and running
 ********************
 
