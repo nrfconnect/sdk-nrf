@@ -2516,20 +2516,23 @@ Trusted Firmware-M support
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
               - nRF54LS05B
             * - :ref:`Configurable <ug_tfm_supported_services_profiles_configurable>`
               - --
               - Experimental
               - Experimental
-              - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
+              - Experimental
+              - Experimental
               - Experimental
               - --
             * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
               - --
               - Experimental
               - Experimental
-              - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
+              - Experimental
+              - Experimental
               - Experimental
               - --
 
@@ -2685,9 +2688,11 @@ The lists are organized by device Series and implementation.
               - nRF54L10
               - nRF54L15
               - nRF54LM20A
+              - nRF54LM20B
               - nRF54LV10A
               - nRF54LS05B
             * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
               - --
               - --
               - --
@@ -2700,8 +2705,10 @@ The lists are organized by device Series and implementation.
               - Supported
               - Experimental
               - Experimental
+              - Supported
               - --
             * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
+              - Supported
               - Supported
               - Supported
               - Supported
@@ -2714,8 +2721,10 @@ The lists are organized by device Series and implementation.
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
               - --
             * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+              - --
               - --
               - --
               - --
