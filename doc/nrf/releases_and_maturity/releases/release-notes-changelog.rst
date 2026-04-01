@@ -565,6 +565,8 @@ Bluetooth Fast Pair samples
 
   * Removed support for the ``nrf5340dk/nrf5340/cpuapp/ns`` board target.
     This board target is only available with the deprecated Partition Manager solution as a legacy build configuration (``SB_CONFIG_PARTITION_MANAGER=y``).
+  * Updated the documentation with a note about Android 16 automatic reconnection behavior for bonded HID devices.
+    On Android 16 and later, disconnecting a bonded HID over GATT Profile (HOGP) device might result in an immediate reconnection.
 
 * :ref:`fast_pair_locator_tag` sample:
 

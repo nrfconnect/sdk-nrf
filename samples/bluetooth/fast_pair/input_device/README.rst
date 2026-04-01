@@ -351,6 +351,11 @@ Test not discoverable advertising by completing `Testing`_ and the following add
             .. note::
                Do not remove Bluetooth bond information related to the Fast Pair Provider.
 
+            .. note::
+               On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
+               This is expected behavior for HID over GATT Profile (HOGP) devices.
+               To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
+
             After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode.
             **LED 3** is blinking rapidly.
 
@@ -408,6 +413,11 @@ Test not discoverable advertising by completing `Testing`_ and the following add
 
             .. note::
                Do not remove Bluetooth bond information related to the Fast Pair Provider.
+
+            .. note::
+               On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
+               This is expected behavior for HID over GATT Profile (HOGP) devices.
+               To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
 
             After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode.
             **LED 2** is blinking rapidly.
@@ -482,6 +492,12 @@ Complete the following steps to test `Fast Pair Battery Notification extension`_
 
       #. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
       #. Disconnect the Fast Pair Seeker from the Fast Pair Provider.
+
+         .. note::
+            On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
+            This is expected behavior for HID over GATT Profile (HOGP) devices.
+            To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
+
       #. After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode and starts advertising sample battery data.
          **LED 3** is blinking rapidly.
       #. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application:
@@ -496,6 +512,12 @@ Complete the following steps to test `Fast Pair Battery Notification extension`_
 
       #. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
       #. Disconnect the Fast Pair Seeker from the Fast Pair Provider.
+
+         .. note::
+            On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
+            This is expected behavior for HID over GATT Profile (HOGP) devices.
+            To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
+
       #. After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode and starts advertising sample battery data.
          **LED 2** is blinking rapidly.
       #. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application:
