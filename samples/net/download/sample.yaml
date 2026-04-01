@@ -62,7 +62,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - download_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - download_SNIPPET=nrf70-wifi
   sample.net.downloader.nrf54h20.wifi:
     sysbuild: true
     tags:
@@ -76,7 +75,6 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - download_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - download_SNIPPET=nrf70-wifi
   sample.net.downloader.nrf54l15_nrf7002eb2.wifi:
     sysbuild: true
     tags:
@@ -90,7 +88,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - download_SHIELD="nrf7002eb2"
-      - download_SNIPPET=nrf70-wifi
   sample.net.downloader.nrf54lm20_nrf7002eb2.wifi:
     sysbuild: true
     tags:

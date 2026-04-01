@@ -19,7 +19,6 @@ tests:
     build_only: true
     extra_args:
       - twt_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - twt_SNIPPET=nrf70-wifi
       # Dummy IP address for building the sample
       - CONFIG_TRAFFIC_GEN_REMOTE_IPV4_ADDR="1.2.3.4"
     integration_platforms:
@@ -37,7 +36,6 @@ tests:
     build_only: true
     extra_args:
       - twt_SHIELD="nrf7002eb2"
-      - twt_SNIPPET=nrf70-wifi
       # Dummy IP address for building the sample
       - CONFIG_TRAFFIC_GEN_REMOTE_IPV4_ADDR="1.2.3.4"
     integration_platforms:

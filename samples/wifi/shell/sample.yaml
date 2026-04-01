@@ -304,7 +304,6 @@ tests:
     build_only: true
     extra_args:
       - shell_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - shell_SNIPPET=nrf70-wifi
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -320,7 +319,6 @@ tests:
     build_only: true
     extra_args:
       - shell_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - shell_SNIPPET=nrf70-wifi
       - EXTRA_CONF_FILE=overlay-zperf.conf
       - CONFIG_NRF70_UTIL=y
       - CONFIG_WPA_CLI=y
@@ -340,7 +338,6 @@ tests:
     build_only: true
     extra_args:
       - shell_SHIELD="nrf7002eb2"
-      - SNIPPET=nrf70-wifi
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
@@ -544,7 +541,6 @@ tests:
     build_only: true
     extra_args:
       - softap_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - softap_SNIPPET=nrf70-wifi
       - CONFIG_HEAP_MEM_POOL_IGNORE_MIN=n
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp

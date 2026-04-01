@@ -98,7 +98,6 @@ tests:
     build_only: true
     extra_args:
       - multi_domain_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - SNIPPET=nrf70-wifi
       - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
       - SB_CONFIG_NETCORE_PERIPHERAL_RADIO_TEST=y
     integration_platforms:
