@@ -286,7 +286,7 @@ Mbed TLS
 * Updated to version 3.6.5.
 
 Trusted Firmware-M
-==================
+------------------
 
 * Updated:
 

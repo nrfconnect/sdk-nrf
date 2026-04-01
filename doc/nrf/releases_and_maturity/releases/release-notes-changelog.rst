@@ -205,6 +205,11 @@ Security
     The PSA Crypto API is able to infer the key slot buffer size based on the keys enabled in the build, so there is no need to define it manually.
   * The ``CONFIG_MBEDTLS_MAC_SHA256_ENABLED`` Kconfig option.
 
+Mbed TLS
+--------
+
+* Updated to version 3.6.6.
+
 Trusted Firmware-M (TF-M)
 -------------------------
 
