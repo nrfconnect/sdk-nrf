@@ -52,7 +52,7 @@ one of the helper macros:
 
 Each attribute contain a ``uuid``, which describes their type, a ``read``
 callback, a ``write`` callback and a set of permission. Both read and write
-callbacks can be set to NULL if the attribute permission don't allow their
+callbacks can be set to NULL if the attribute permission do not allow their
 respective operations.
 
 .. note::
@@ -86,7 +86,7 @@ more attributes can be set, though setting multiple handles requires the option:
 
 Write procedures are supported by :c:func:`bt_gatt_write` API and takes
 :c:struct:`bt_gatt_write_params` struct as parameters. In case the write
-operation don't require a response :c:func:`bt_gatt_write_without_response`
+operation does not require a response :c:func:`bt_gatt_write_without_response`
 or :c:func:`bt_gatt_write_without_response_cb` APIs can be used, with the
 later working similarly to :c:func:`bt_gatt_notify_cb`.
 
