@@ -200,10 +200,12 @@ Security
 * Removed:
 
   * The ``CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`.
-  * The ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it by options :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
+  * The ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
   * The ``CONFIG_MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE`` Kconfig option.
     The PSA Crypto API is able to infer the key slot buffer size based on the keys enabled in the build, so there is no need to define it manually.
   * The ``CONFIG_MBEDTLS_MAC_SHA256_ENABLED`` Kconfig option.
+  * The ``CONFIG_MBEDTLS_KEY_EXCHANGE_RSA_ENABLED`` Kconfig option in preparation for the update to the Mbed TLS v4.0.0.
+    Key exchanges and cipher suites using RSA encryption are removed in the Mbed TLS v4.0.0.
 
 Trusted Firmware-M (TF-M)
 -------------------------

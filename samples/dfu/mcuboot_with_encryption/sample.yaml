@@ -26,7 +26,7 @@ tests:
     extra_args:
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
-      - mcuboot_CONFIG_NRF_SECURITY=y
+      - mcuboot_CONFIG_PSA_CRYPTO=y
     extra_configs:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
@@ -40,7 +40,7 @@ tests:
       - SB_EXTRA_CONF_FILE=sysbuild_its.conf
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
-      - mcuboot_CONFIG_NRF_SECURITY=y
+      - mcuboot_CONFIG_PSA_CRYPTO=y
     extra_configs:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:

@@ -80,7 +80,7 @@ config SB_CRYPTO_NO_ECDSA_SECP256R1
 
 config SB_CRYPTO_PSA_ED25519
 	bool "PSA ed25519 support"
-	depends on NRF_SECURITY
+	depends on PSA_CRYPTO
 	depends on CRACEN_LIB_KMU
 	select SB_ED25519
 	# Below depends on PSA_CORE_LITE
@@ -166,7 +166,7 @@ config SB_CRYPTO_NONE
 
 config SB_CRYPTO_PSA_SHA512
 	bool "PSA SHA512 support"
-	depends on NRF_SECURITY
+	depends on PSA_CRYPTO
 	select SB_SHA512
 	select PSA_WANT_ALG_SHA_512
 	select PSA_WANT_ALG_PURE_EDDSA

@@ -64,7 +64,6 @@ tests:
       - ci_samples_tfm
     extra_args:
       - CONFIG_TFM_PROFILE_TYPE_NOT_SET=y
-      - CONFIG_NRF_SECURITY=y
   sample.tfm.hello_world.lvl2:
     sysbuild: true
     tags:
