@@ -32,6 +32,12 @@ The platform service also exposes the following |NCS| specific APIs for the non-
     /* Check if S0 is the active B1 slot. */
     int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active);
 
+    /* Writes a word to the secure memory as long as the address permissions allow it. */
+    enum tfm_platform_err_t tfm_platform_mem_write32(uint32_t addr, uint32_t value, uint32_t mask, uint32_t *result);
+
+    /* Reads data from the secure memory as long as the address range permissions allow it. */
+    enum tfm_platform_err_t tfm_platform_mem_read(void *destination, uint32_t addr, size_t len, uint32_t *result);
+
 See :ref:`lib_tfm_ioctl_api` for more information about APIs available for the non-secure application.
 
 For more information about the general features of the TF-M Platform partition, see `TF-M Platform`_.
