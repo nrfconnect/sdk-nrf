@@ -150,6 +150,8 @@ Enable the following options:
 
 The MCUboot target will then use the :ref:`zephyr:settings_api` subsystem in Zephyr to store the current progress used by the :c:func:`dfu_target_write` function across power failures and device resets.
 
+.. include:: ../../includes/pm_deprecation.txt
+
 Using a dedicated partition for full modem upgrades
 ===================================================
 

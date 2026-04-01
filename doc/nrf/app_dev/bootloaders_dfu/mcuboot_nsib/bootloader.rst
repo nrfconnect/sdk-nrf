@@ -67,6 +67,8 @@ The |NCS| currently supports two implementations:
   .. figure:: ../images/bootloader_memory_layout.svg
      :alt: Memory layout
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 By default, building an application with any bootloader configuration uses :ref:`sysbuild` to build multiple image, where the :ref:`partition_manager` manages its memory partitions.
 When building an application with :ref:`Cortex-M Security Extensions (CMSE) enabled <app_boards_spe_nspe_cpuapp_ns>`, then :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` is built with the image automatically.
 From the bootloader perspective, the TF-M is part of the booted application image.

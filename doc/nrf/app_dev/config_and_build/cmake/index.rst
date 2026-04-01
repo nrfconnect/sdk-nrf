@@ -56,6 +56,9 @@ The |NCS| uses the same CMake build variables as Zephyr and they are compatible 
 |parameters_override_west_config|
 
 For the complete list of build variables in Zephyr and more information about them, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
+.. include:: ../../../includes/pm_deprecation.txt
+
 The following table lists the most common ones used in the |NCS|:
 
 .. list-table:: Common build system variables in the |NCS|

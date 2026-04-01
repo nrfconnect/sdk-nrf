@@ -65,6 +65,8 @@ These options specify the image for the firmware loader:
 Adding custom images
 ********************
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 Custom images can be added directly to a project (or board) or to a Zephyr module, making them accessible to multiple projects.
 
 .. _sysbuild_images_adding_to_single_project:

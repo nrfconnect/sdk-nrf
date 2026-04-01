@@ -7,6 +7,8 @@ Sysbuild controls some Kconfig options in images that are part of a project.
 This means that these Kconfig options can only be changed from within sysbuild itself and cannot be changed directly in an image.
 Trying to change them directly in an image will result in the new value being overwritten with the sysbuild value.
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
 | Kconfig                                                                 | Sysbuild Kconfig                                                          | Images                  |
 +=========================================================================+===========================================================================+=========================+
