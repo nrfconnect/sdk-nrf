@@ -16,7 +16,7 @@ This sample test uses the ``testlib`` (:zephyr_file:`tests/bluetooth/common/test
 test library, in order to de-duplicate code that is not relevant to the test in question. Things
 like setting up a connection, getting the GATT handle of a characteristic, etc..
 
-Please don't use the ``bs_`` prefix in files or identifiers. It's meant to
+Please do not use the ``bs_`` prefix in files or identifiers. It is meant to
 namespace the babblesim simulator code.
 
 Reading guide

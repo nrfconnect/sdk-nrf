@@ -23,7 +23,7 @@ First you need to build and flash your board with the Bluetooth shell. For how t
 :ref:`getting_started`. The Bluetooth shell itself is located in
 :file:`nrf/tests/bluetooth/host/shell/`.
 
-When it's done, connect to the CLI using your favorite serial terminal application. You should see
+When it is done, connect to the CLI using your favorite serial terminal application. You should see
 the following prompt:
 
 .. code-block:: console

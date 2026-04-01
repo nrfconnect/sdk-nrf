@@ -27,13 +27,13 @@ four distinct roles of Bluetooth usage:
 
 * Connection-oriented roles
 
-  * Peripheral (e.g. a smart sensor, often with a limited user interface)
+  * Peripheral (for example, a smart sensor, often with a limited user interface)
 
   * Central (typically a mobile phone or a PC)
 
 * Connection-less roles
 
-  * Broadcaster (sending out Bluetooth LE advertisements, e.g. a smart beacon)
+  * Broadcaster (sending out Bluetooth LE advertisements, for example, a smart beacon)
 
   * Observer (scanning for Bluetooth LE advertisements)
 
@@ -90,7 +90,7 @@ Broadcaster role
 
 A broadcaster role device will use the :c:func:`bt_le_adv_start` API to
 advertise specific advertising data, but the type of advertising will be
-non-connectable, i.e. other device will not be able to connect to it.
+non-connectable, that is, other device will not be able to connect to it.
 
 Connections
 ===========
@@ -111,7 +111,7 @@ Man-In-The-Middle (MITM) attacks, it is recommended to use some
 out-of-band channel during the pairing. If the devices have a sufficient
 user interface this "channel" is the user itself. The capabilities of
 the device are registered using the :c:func:`bt_conn_auth_cb_register`
-API.  The :c:struct:`bt_conn_auth_cb` struct that's passed to this API has
+API.  The :c:struct:`bt_conn_auth_cb` struct that is passed to this API has
 a set of optional callbacks that can be used during the pairing - if the
 device lacks some feature the corresponding callback may be set to NULL.
 For example, if the device does not have an input method but does have a
