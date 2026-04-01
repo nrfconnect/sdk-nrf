@@ -132,14 +132,16 @@ static void __ramfunc jump_in(uint32_t reset)
 		"   mov  r4, %3\n"
 		/* gap size */
 		"   mov  r5, %4\n"
+		/* Reduce loop by gap size */
+		"   sub  r2, r2, r5\n"
 		"clear:\n"
 		"   subs r6, r4, r1\n"
 		"   cbnz r6, skip_gap\n"
 		"   add  r1, r5\n"
 		"skip_gap:\n"
 		"   str  r3, [r1]\n"
-		"   add  r1, r1, #1\n"
-		"   sub  r2, r2, #1\n"
+		"   add  r1, r1, #4\n"
+		"   sub  r2, r2, #4\n"
 		"   cbz  r2, clear_end\n"
 		"   b    clear\n"
 		"clear_end:\n"
