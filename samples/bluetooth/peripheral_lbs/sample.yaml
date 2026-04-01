@@ -26,6 +26,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
@@ -34,6 +35,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - thingy53/nrf5340/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -45,6 +47,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     harness: console
     harness_config:
@@ -83,6 +86,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
@@ -100,6 +104,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
   sample.bluetooth.peripheral_lbs_bt_ota_dfu:
     sysbuild: true
@@ -108,12 +113,14 @@ tests:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_BOOTLOADER_MCUBOOT=y
@@ -123,9 +130,11 @@ tests:
     build_only: true
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_args: mcuboot_CONFIG_BOOT_DIRECT_XIP=y
     extra_configs:
@@ -137,9 +146,11 @@ tests:
     build_only: true
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_args:
       - mcuboot_CONFIG_BOOT_DIRECT_XIP=y
@@ -159,6 +170,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -168,6 +180,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     tags:
       - bluetooth
