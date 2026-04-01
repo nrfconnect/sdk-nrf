@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "../common/memory_map_tcm.dtsi"
+
 /* Disable unused peripherals to reduce power consumption */
 &usbhs {
 	status = "disabled";
