@@ -19,14 +19,14 @@ add_library(mocks
 )
 
 target_include_directories(mocks PUBLIC
-	${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/conn/mocks
-	${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/conn/mocks
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth
 )
 
 target_compile_options(test_interface INTERFACE -include ztest.h)
 target_link_libraries(mocks PRIVATE test_interface)
 target_link_options(mocks PUBLIC
-	"SHELL:-T ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/conn/mocks/mock-sections.ld"
+  "SHELL:-T ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/conn/mocks/mock-sections.ld"
 )
 
 target_compile_options(mocks PRIVATE -DCONFIG_BT_ID_MAX=1)
