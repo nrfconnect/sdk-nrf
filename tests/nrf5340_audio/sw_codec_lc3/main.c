@@ -473,7 +473,8 @@ static void *test_sw_codec_lc3_init(void)
 {
 	int ret;
 
-	sw_codec_lc3_init(NULL, NULL, LC3_FRAME_SIZE_US);
+	sw_codec_lc3_single_rate_init(PCM_SAMPLE_RATE, PCM_SAMPLE_RATE,
+				      NULL, NULL, LC3_FRAME_SIZE_US);
 
 	ret = sw_codec_lc3_enc_init(PCM_SAMPLE_RATE, PCM_BIT_DEPTH, LC3_FRAME_SIZE_US, LC3_BITRATE,
 				    LC3_NUM_CHANNELS, &pcm_bytes_req_enc);

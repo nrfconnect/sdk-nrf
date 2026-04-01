@@ -395,6 +395,7 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg)
 		LOG_ERR("Trying to uninit a codec that is not first initialized");
 		return -ENODEV;
 	}
+
 	switch (m_config.sw_codec) {
 	case SW_CODEC_LC3:
 #if (CONFIG_SW_CODEC_LC3)
@@ -404,10 +405,12 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg)
 					"initialized");
 				return -EALREADY;
 			}
+
 			ret = sw_codec_lc3_enc_uninit_all();
 			if (ret) {
 				return ret;
 			}
+
 			m_config.encoder.enabled = false;
 		}
 
@@ -422,7 +425,13 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg)
 			if (ret) {
 				return ret;
 			}
+
 			m_config.decoder.enabled = false;
+		}
+
+		ret = sw_codec_lc3_uninit();
+		if (ret) {
+			return ret;
 		}
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;
@@ -443,9 +452,23 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 	switch (sw_codec_cfg.sw_codec) {
 	case SW_CODEC_LC3: {
 #if (CONFIG_SW_CODEC_LC3)
-		if (m_config.sw_codec != SW_CODEC_LC3) {
+		if (!m_config.initialized) {
 			/* Check if LC3 is already initialized */
-			ret = sw_codec_lc3_init(NULL, NULL, CONFIG_AUDIO_FRAME_DURATION_US);
+			uint16_t encoder_sample_rate = 0;
+			uint16_t decoder_sample_rate = 0;
+
+			if (sw_codec_cfg.encoder.enabled) {
+				encoder_sample_rate = sw_codec_cfg.encoder.sample_rate_hz;
+			}
+
+			if (sw_codec_cfg.decoder.enabled) {
+				decoder_sample_rate = sw_codec_cfg.decoder.sample_rate_hz;
+			}
+
+			ret = sw_codec_lc3_single_rate_init(encoder_sample_rate,
+							    decoder_sample_rate,
+							    NULL, NULL,
+							    CONFIG_AUDIO_FRAME_DURATION_US);
 			if (ret) {
 				return ret;
 			}
@@ -456,6 +479,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 				LOG_WRN("The LC3 encoder is already initialized");
 				return -EALREADY;
 			}
+
 			uint16_t pcm_bytes_req_enc;
 
 			LOG_DBG("Encode: %dHz %dbits %dus %dbps %d channel(s)",
