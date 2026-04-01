@@ -1159,6 +1159,10 @@ cJSON
 Documentation
 =============
 
-* Added a section in :ref:`ug_nrf54h20_pm_optimization` about optimizing power on the nRF54H20 SoC by relocating the radio core firmware to TCM.
+* Added:
+
+  * A section in :ref:`ug_nrf54h20_pm_optimization` about optimizing power on the nRF54H20 SoC by relocating the radio core firmware to TCM.
+  * A section in the :ref:`lib_tfm_ioctl_api` page about using the TF-M IOCTL API to perform secure memory writes from NSPE.
+
 * Updated the :ref:`emds_readme` library documentation to use static device tree partitions instead of the Partition Manager.
 * Removed references to JITP in different areas of the documentation.
