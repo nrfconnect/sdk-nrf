@@ -1108,6 +1108,8 @@
 .. _`nRF54L05 Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54L05_Rev2/page/ERR/nRF54L05/Rev2/latest/err_L05_new.html
 .. _`nRF54L10 Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54L10_Rev2/page/ERR/nRF54L10/Rev2/latest/err_L10_new.html
 .. _`nRF54L15 Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54L15_Rev2/page/ERR/nRF54L15/Rev2/latest/err_L15_new.html
+.. _`nRF54LM20A Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54LM20A_EngB/page/ERR/nRF54LM20A/EngineeringB/latest/err_20A_new.html
+.. _`nRF54LM20B Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54LM20B_EngB/page/ERR/nRF54LM20B/EngineeringB/latest/err_20B_new.html
 
 .. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://docs.nordicsemi.com/bundle/SA/resource/SA-2023-234-v1_1.pdf
 
