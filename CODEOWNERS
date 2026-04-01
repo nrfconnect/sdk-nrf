@@ -875,10 +875,28 @@
 /tests/benchmarks/multicore/idle*         @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/idle/         @adamkondraciuk @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/idle_gpio/    @adamkondraciuk @nrfconnect/ncs-low-level-test
+/tests/bluetooth/addr/                    @nrfconnect/ncs-paladin
+/tests/bluetooth/adv/                     @nrfconnect/ncs-paladin
+/tests/bluetooth/bluetooth/               @nrfconnect/ncs-paladin
+/tests/bluetooth/bt_crypto/               @nrfconnect/ncs-paladin
+/tests/bluetooth/bt_crypto_ccm/           @nrfconnect/ncs-paladin
+/tests/bluetooth/buf/                     @nrfconnect/ncs-paladin
+/tests/bluetooth/common/                  @nrfconnect/ncs-paladin
+/tests/bluetooth/gap/                     @nrfconnect/ncs-paladin
+/tests/bluetooth/gatt/                    @nrfconnect/ncs-paladin
+/tests/bluetooth/hci/                     @nrfconnect/ncs-paladin
+/tests/bluetooth/host/                    @nrfconnect/ncs-paladin
+/tests/bluetooth/host_config_variants/    @nrfconnect/ncs-paladin
+/tests/bluetooth/host_long_adv_recv/      @nrfconnect/ncs-paladin
+/tests/bluetooth/init/                    @nrfconnect/ncs-paladin
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/bluetooth/bsim/nrf_auraconfig/     @nrfconnect/ncs-audio
 /tests/bluetooth/bsim/custom_ltk/         @nrfconnect/ncs-paladin
+/tests/bluetooth/l2cap/                   @nrfconnect/ncs-paladin
+/tests/bluetooth/smp/                     @nrfconnect/ncs-paladin
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
+/tests/bluetooth/uuid/                    @nrfconnect/ncs-paladin
+/tests/bsim/                              @nrfconnect/ncs-paladin
 /tests/crypto/                            @magnev
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
 /tests/drivers/can/                       @nrfconnect/ncs-low-level-test
