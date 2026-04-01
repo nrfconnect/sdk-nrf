@@ -246,7 +246,7 @@ static const struct bt_l2cap_chan_ops l2cap_ops = {
 #endif
 };
 
-static struct channel *get_free_channel()
+static struct channel *get_free_channel(void)
 {
 	uint8_t i;
 	struct channel *chan;

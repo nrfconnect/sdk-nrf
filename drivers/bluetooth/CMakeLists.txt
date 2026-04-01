@@ -7,7 +7,7 @@
 # Attach this subtree to the upstream bluetooth drivers library when it exists,
 # preserving the same target and compilation order as Zephyr's own sources.
 # If there is no such target, create the library out-of-tree.
-if (TARGET drivers__bluetooth)
+if(TARGET drivers__bluetooth)
     zephyr_library_amend(${ZEPHYR_BASE}/drivers/bluetooth)
 else()
     # Note: When the target is created here, we won’t automatically inherit any in-tree properties (include dirs, options)
