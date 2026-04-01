@@ -71,6 +71,10 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 #define LED_BLINK_STATE_RING_ON_OFF_MS		125
 #define LED_BLINK_STATE_RING_ON_OFF_CNT		4
 
+/* Speaker thread configuration. */
+#define SPK_THREAD_PRIORITY			K_PRIO_PREEMPT(0)
+#define SPK_THREAD_STACK_SIZE			512
+
 /* Reference button hardware assignments. */
 #define BTN_MULTI_ACTION			DK_BTN1_MSK
 
@@ -93,26 +97,25 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 			.duration = _ind_duration},			\
 	}
 
-/* Flash request encoding */
-#define LED_FLASH_REQUEST_CNT_POS		0
-#define LED_FLASH_REQUEST_CNT_MASK		0xFF
-#define LED_FLASH_REQUEST_ON_MS_POS		8
-#define LED_FLASH_REQUEST_ON_MS_MASK		0xFFF
-#define LED_FLASH_REQUEST_OFF_MS_POS		20
-#define LED_FLASH_REQUEST_OFF_MS_MASK		0xFFF
+/* Indication request encoding */
+#define IND_REQUEST_CNT_POS			0
+#define IND_REQUEST_CNT_MASK			0xFF
+#define IND_REQUEST_ON_MS_POS			8
+#define IND_REQUEST_ON_MS_MASK			0xFFF
+#define IND_REQUEST_OFF_MS_POS			20
+#define IND_REQUEST_OFF_MS_MASK			0xFFF
 
-#define LED_FLASH_REQUEST_ENCODE(_cnt, _on_ms, _off_ms)					\
-	((((_cnt) & LED_FLASH_REQUEST_CNT_MASK) << LED_FLASH_REQUEST_CNT_POS) |		\
-	 (((_on_ms) & LED_FLASH_REQUEST_ON_MS_MASK) << LED_FLASH_REQUEST_ON_MS_POS) |	\
-	 (((_off_ms) & LED_FLASH_REQUEST_OFF_MS_MASK) << LED_FLASH_REQUEST_OFF_MS_POS))
+#define IND_REQUEST_ENCODE(_cnt, _on_ms, _off_ms)					\
+	((((_cnt) & IND_REQUEST_CNT_MASK) << IND_REQUEST_CNT_POS) |			\
+	 (((_on_ms) & IND_REQUEST_ON_MS_MASK) << IND_REQUEST_ON_MS_POS) |		\
+	 (((_off_ms) & IND_REQUEST_OFF_MS_MASK) << IND_REQUEST_OFF_MS_POS))
 
-
-#define LED_FLASH_REQUEST_DECODE_CNT(req)	\
-	(((req) >> LED_FLASH_REQUEST_CNT_POS) & LED_FLASH_REQUEST_CNT_MASK)
-#define LED_FLASH_REQUEST_DECODE_ON_MS(req)	\
-	(((req) >> LED_FLASH_REQUEST_ON_MS_POS) & LED_FLASH_REQUEST_ON_MS_MASK)
-#define LED_FLASH_REQUEST_DECODE_OFF_MS(req)	\
-	(((req) >> LED_FLASH_REQUEST_OFF_MS_POS) & LED_FLASH_REQUEST_OFF_MS_MASK)
+#define IND_REQUEST_DECODE_CNT(req)	\
+	(((req) >> IND_REQUEST_CNT_POS) & IND_REQUEST_CNT_MASK)
+#define IND_REQUEST_DECODE_ON_MS(req)	\
+	(((req) >> IND_REQUEST_ON_MS_POS) & IND_REQUEST_ON_MS_MASK)
+#define IND_REQUEST_DECODE_OFF_MS(req)	\
+	(((req) >> IND_REQUEST_OFF_MS_POS) & IND_REQUEST_OFF_MS_MASK)
 
 
 struct ind_param {
@@ -219,22 +222,25 @@ static const struct led_state_id_map led_state_id_maps[] = {
 static atomic_t led_flash_request = ATOMIC_INIT(0);
 static K_SEM_DEFINE(led_flash_request_sem, 0, 1);
 
-static atomic_val_t led_flash_request_encode(const struct ind_param *param)
+static atomic_t spk_beep_request = ATOMIC_INIT(0);
+static K_SEM_DEFINE(spk_beep_request_sem, 0, 1);
+
+static atomic_val_t ind_request_encode(const struct ind_param *param)
 {
 	__ASSERT_NO_MSG(param);
-	__ASSERT_NO_MSG(param->cnt <= LED_FLASH_REQUEST_CNT_MASK);
-	__ASSERT_NO_MSG(param->on_ms <= LED_FLASH_REQUEST_ON_MS_MASK);
-	__ASSERT_NO_MSG(param->off_ms <= LED_FLASH_REQUEST_OFF_MS_MASK);
+	__ASSERT_NO_MSG(param->cnt <= IND_REQUEST_CNT_MASK);
+	__ASSERT_NO_MSG(param->on_ms <= IND_REQUEST_ON_MS_MASK);
+	__ASSERT_NO_MSG(param->off_ms <= IND_REQUEST_OFF_MS_MASK);
 
-	return LED_FLASH_REQUEST_ENCODE(param->cnt, param->on_ms, param->off_ms);
+	return IND_REQUEST_ENCODE(param->cnt, param->on_ms, param->off_ms);
 }
 
-static struct ind_param led_flash_request_decode(atomic_val_t req)
+static struct ind_param ind_request_decode(atomic_val_t req)
 {
 	struct ind_param param = {
-		.cnt = LED_FLASH_REQUEST_DECODE_CNT(req),
-		.on_ms = LED_FLASH_REQUEST_DECODE_ON_MS(req),
-		.off_ms = LED_FLASH_REQUEST_DECODE_OFF_MS(req),
+		.cnt = IND_REQUEST_DECODE_CNT(req),
+		.on_ms = IND_REQUEST_DECODE_ON_MS(req),
+		.off_ms = IND_REQUEST_DECODE_OFF_MS(req),
 	};
 
 	return param;
@@ -244,8 +250,20 @@ static void led_flash_indicate_request(struct ind_param *param)
 {
 	__ASSERT_NO_MSG(param);
 
-	atomic_set(&led_flash_request, led_flash_request_encode(param));
+	atomic_set(&led_flash_request, ind_request_encode(param));
 	k_sem_give(&led_flash_request_sem);
+}
+
+static void speaker_beep_indicate_request(struct ind_param *param)
+{
+	__ASSERT_NO_MSG(param);
+
+	if (!IS_ENABLED(CONFIG_APP_UI_USE_HW_SPEAKER)) {
+		return;
+	}
+
+	atomic_set(&spk_beep_request, ind_request_encode(param));
+	k_sem_give(&spk_beep_request_sem);
 }
 
 static void speaker_beep_play(struct ind_param *param)
@@ -313,10 +331,7 @@ static void btn_action_ind_handle(const struct btn_action_ind *req)
 	param_spk.cnt = req->cnt;
 
 	led_flash_indicate_request(&param_led);
-
-	if (IS_ENABLED(CONFIG_APP_UI_USE_HW_SPEAKER)) {
-		speaker_beep_play(&param_spk);
-	}
+	speaker_beep_indicate_request(&param_spk);
 }
 
 static void btn_press_beep_work_handle(struct k_work *w)
@@ -491,7 +506,7 @@ static bool led_flash_and_ring_status_indicate(void)
 	};
 
 	if (req) {
-		param_btn = led_flash_request_decode(req);
+		param_btn = ind_request_decode(req);
 
 		/* In the rare event of semaphore not interrupting any signaling. */
 		k_sem_take(&led_flash_request_sem, K_NO_WAIT);
@@ -543,6 +558,28 @@ static void led_thread_process(void)
 
 K_THREAD_DEFINE(led_thread_id, LED_THREAD_STACK_SIZE, led_thread_process,
 		NULL, NULL, NULL, LED_THREAD_PRIORITY, 0, 0);
+
+#ifdef CONFIG_APP_UI_USE_HW_SPEAKER
+static void speaker_thread_process(void)
+{
+	struct ind_param param;
+	atomic_val_t req;
+
+	while (1) {
+		k_sem_take(&spk_beep_request_sem, K_FOREVER);
+
+		req = atomic_clear(&spk_beep_request);
+
+		if (req) {
+			param = ind_request_decode(req);
+			speaker_beep_play(&param);
+		}
+	}
+}
+
+K_THREAD_DEFINE(spk_thread_id, SPK_THREAD_STACK_SIZE, speaker_thread_process,
+		NULL, NULL, NULL, SPK_THREAD_PRIORITY, 0, 0);
+#endif /* CONFIG_APP_UI_USE_HW_SPEAKER */
 
 static void cancel_ringing_work_handle(struct k_work *w)
 {
