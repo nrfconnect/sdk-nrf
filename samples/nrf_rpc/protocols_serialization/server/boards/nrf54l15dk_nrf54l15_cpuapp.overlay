@@ -18,6 +18,21 @@
 		/delete-property/ sw2;
 		/delete-property/ sw3;
 	};
+
+	openthread_config: openthread {
+		compatible = "openthread,config";
+		diag-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>,
+			     <&gpio1 10 GPIO_ACTIVE_HIGH>,
+			     <&gpio2 7 GPIO_ACTIVE_HIGH>,
+			     <&gpio1 14 GPIO_ACTIVE_HIGH>,
+			     <&gpio1 13 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+	};
+
+	coredump_device: coredump-device {
+		compatible = "zephyr,coredump";
+		coredump-type = "COREDUMP_TYPE_MEMCPY";
+		status = "okay";
+	};
 };
 
 /delete-node/ &button1;

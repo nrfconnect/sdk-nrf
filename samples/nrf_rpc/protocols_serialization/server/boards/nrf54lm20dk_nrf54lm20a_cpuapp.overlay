@@ -18,6 +18,12 @@
 		/delete-property/ sw2;
 		/delete-property/ sw3;
 	};
+
+	coredump_device: coredump-device {
+		compatible = "zephyr,coredump";
+		coredump-type = "COREDUMP_TYPE_MEMCPY";
+		status = "okay";
+	};
 };
 
 /delete-node/ &button1;
