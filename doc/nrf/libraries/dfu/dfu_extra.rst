@@ -51,6 +51,8 @@ Add extra binaries in your application's :file:`sysbuild.cmake` file:
        )
    endif()
 
+.. include:: ../../includes/pm_deprecation.txt
+
 If an additional binary needs to be handled by MCUboot as updatable slots, adjust the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option, and make sure MCUboot partitions are defined correctly.
 
 To automatically include the extra binary in the final :file:`merged.hex` output, define a partition with the same name as provided in the ``NAME`` parameter within your partition manager configuration.
