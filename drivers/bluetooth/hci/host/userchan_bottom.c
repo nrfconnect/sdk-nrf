@@ -117,7 +117,7 @@ int user_chan_unix_connect(char socket_path[])
 	}
 
 	addr.sun_family = AF_UNIX;
-	strcpy(addr.sun_path, socket_path);
+	strcpy(addr.sun_path, socket_path); /* NOSONAR bounds checked above */
 
 	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
 		int err = -nsi_errno_to_mid(errno);

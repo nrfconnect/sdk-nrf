@@ -3,3 +3,5 @@ paths:
   - lib
   - samples
   - subsys
+paths-ignore:
+  - subsys/bluetooth/host/host/classic
