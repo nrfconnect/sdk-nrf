@@ -6,22 +6,14 @@
  *  SPDX-License-Identifier: Apache-2.0
  */
 
-#if defined(CONFIG_BT_HOST_NORDIC)
-
-#define ZEPHYR_INCLUDE_DRIVERS_BLUETOOTH_H_
-
-#include <bluetooth/drivers/bluetooth.h>
-
-#endif /* CONFIG_BT_HOST_NORDIC */
-
 /**
  * @file
  * @ingroup bt_hci_api
  * @brief Main header file for Bluetooth HCI driver API.
  */
 
-#ifndef ZEPHYR_INCLUDE_DRIVERS_BLUETOOTH_H_
-#define ZEPHYR_INCLUDE_DRIVERS_BLUETOOTH_H_
+#ifndef BT_HOST_BLUETOOTH_DRIVER_H_
+#define BT_HOST_BLUETOOTH_DRIVER_H_
 
 /**
  * @brief Interfaces for Bluetooth Host Controller Interface (HCI).
@@ -74,7 +66,7 @@ enum {
 };
 
 /** Possible values for the 'bus' member of the bt_hci_driver struct */
-enum __deprecated bt_hci_bus { /* Use macro BT_DT_HCI_BUS_GET() instead */
+enum bt_hci_bus {
 	BT_HCI_BUS_VIRTUAL       = 0,
 	BT_HCI_BUS_USB           = 1,
 	BT_HCI_BUS_PCCARD        = 2,
@@ -102,9 +94,7 @@ enum __deprecated bt_hci_bus { /* Use macro BT_DT_HCI_BUS_GET() instead */
 #define BT_DT_HCI_NAME_GET(node_id) DT_PROP_OR(node_id, bt_hci_name, "HCI")
 #define BT_DT_HCI_NAME_INST_GET(inst) BT_DT_HCI_NAME_GET(DT_DRV_INST(inst))
 
-/* Fallback default when there's no property, same as "virtual" */
-#define BT_PRIV_HCI_BUS_DEFAULT (0)
-#define BT_DT_HCI_BUS_GET(node_id) DT_ENUM_IDX_OR(node_id, bt_hci_bus, BT_PRIV_HCI_BUS_DEFAULT)
+#define BT_DT_HCI_BUS_GET(node_id) DT_ENUM_IDX_OR(node_id, bt_hci_bus, BT_HCI_BUS_VIRTUAL)
 
 #define BT_DT_HCI_BUS_INST_GET(inst) BT_DT_HCI_BUS_GET(DT_DRV_INST(inst))
 
@@ -292,4 +282,4 @@ struct net_buf *bt_hci_cmd_status_create(uint16_t op, uint8_t status);
 }
 #endif
 
-#endif /* ZEPHYR_INCLUDE_DRIVERS_BLUETOOTH_H_ */
+#endif /* BT_HOST_BLUETOOTH_DRIVER_H_ */

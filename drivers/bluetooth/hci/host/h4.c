@@ -29,7 +29,7 @@ LOG_MODULE_REGISTER(bt_driver);
 
 #include "common/bt_str.h"
 
-#include "../util.h"
+#include "../../util.h"
 
 #define DT_DRV_COMPAT zephyr_bt_hci_uart
 
