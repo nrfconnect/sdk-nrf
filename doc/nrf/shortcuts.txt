@@ -12,6 +12,9 @@
 .. |54H_nrfutil_trace_ver| replace:: 4.4.0
 .. |ironside_se_ver| replace:: v23.5.0+28
 
+.. |mbed_tls_ver| replace:: 3.6.6
+.. |tf-m_ver| replace:: v2.2.2
+
 .. ### Config shortcuts
 
 .. |how_to_configure| replace:: See :ref:`configure_application` for information on how to set the required configuration options temporarily or permanently.
