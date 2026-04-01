@@ -749,6 +749,8 @@
 /scripts/docker/*.rst                     @nrfconnect/ncs-doc-leads
 /scripts/hid_configurator/*.rst           @nrfconnect/ncs-si-xcake-doc
 /scripts/memfault/*.rst                   @nrfconnect/ncs-cia-doc
+/scripts/memfault/mds_ble_client.py       @nrfconnect/ncs-blenders
+/scripts/memfault/mds_ble_gateway.py      @nrfconnect/ncs-blenders
 /scripts/nrf_profiler/*.rst               @nrfconnect/ncs-si-xcake-doc
 /scripts/nrf_provision/fast_pair/*.rst    @nrfconnect/ncs-si-bluebagel-doc
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
