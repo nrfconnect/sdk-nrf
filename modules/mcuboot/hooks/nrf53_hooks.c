@@ -49,7 +49,7 @@ int pcd_version_cmp_net(const struct flash_area *fap, struct image_header *hdr)
 		return -EFAULT;
 	}
 
-	err = flash_area_read(fap, hdr->ih_load_addr, &read_buf,
+	err = flash_area_read(fap, (hdr->ih_hdr_size + hdr->ih_protect_tlv_size), &read_buf,
 				ARRAY_SIZE(read_buf));
 	if (err != 0) {
 		return -EFAULT;
