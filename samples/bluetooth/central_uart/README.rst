@@ -49,6 +49,9 @@ When you plug the dongle into a USB port, the following interfaces are available
    * - 1
      - NUS
      - Nordic UART Service
+   * - 2
+     - nRF54LM20 Dongle MCUmgr
+     - MCUmgr (used by nrfutil to reset the device to bootloader during DFU)
 
 User interface
 **************
