@@ -57,7 +57,6 @@ General information about samples in the |NCS|
    samples/gazell
    samples/keys
    samples/matter
-   samples/mcuboot
    samples/net
    samples/nfc
    samples/nrf5340
