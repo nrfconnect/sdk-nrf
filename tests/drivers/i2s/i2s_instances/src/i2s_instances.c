@@ -129,8 +129,8 @@ static void test_transmit_any_data_instance(const struct device *dev)
 	i2s_cfg.frame_clk_freq = FRAME_CLK_FREQ;
 	i2s_cfg.block_size = BLOCK_SIZE;
 	i2s_cfg.timeout = TIMEOUT;
-	i2s_cfg.options = I2S_OPT_FRAME_CLK_MASTER
-				| I2S_OPT_BIT_CLK_MASTER | I2S_OPT_BIT_CLK_GATED;
+	i2s_cfg.options = I2S_OPT_FRAME_CLK_CONTROLLER
+			| I2S_OPT_BIT_CLK_CONTROLLER | I2S_OPT_BIT_CLK_GATED;
 
 	i2s_cfg.mem_slab = &tx_0_mem_slab;
 	ret = i2s_configure(dev, I2S_DIR_TX, &i2s_cfg);

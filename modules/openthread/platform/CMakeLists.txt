@@ -7,7 +7,8 @@ zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_CRYPTO_PSA crypto_psa.c)
 
 # Source platform files from Zephyr
 zephyr_library_sources(
-  ${ZEPHYR_BASE}/modules/openthread/platform/alarm.c
+  ${ZEPHYR_BASE}/modules/openthread/platform/alarm_micro.c
+  ${ZEPHYR_BASE}/modules/openthread/platform/alarm_milli.c
   ${ZEPHYR_BASE}/modules/openthread/platform/entropy.c
   ${ZEPHYR_BASE}/modules/openthread/platform/misc.c
   ${ZEPHYR_BASE}/modules/openthread/platform/platform.c

@@ -22,17 +22,17 @@ struct test_partition_t {
  */
 static struct test_partition_t partitions[] = {
 	{
-		.slot = FIXED_PARTITION_ID(dummy_1),
+		.slot = PARTITION_ID(dummy_1),
 		.start_address = 0x98000,
 		.size = 0x1000,
 	},
 	{
-		.slot = FIXED_PARTITION_ID(dummy_2),
+		.slot = PARTITION_ID(dummy_2),
 		.start_address = 0x99000,
 		.size = 0x1000,
 	},
 	{
-		.slot = FIXED_PARTITION_ID(dummy_3),
+		.slot = PARTITION_ID(dummy_3),
 		.start_address = 0x9a000,
 		.size = 0x66000,
 	},

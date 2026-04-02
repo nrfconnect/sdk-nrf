@@ -16,35 +16,42 @@
 	/delete-node/ partitions;
 
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 
 		cpuapp_boot_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x30000 DT_SIZE_K(64)>;
 		};
 
 		slot0_partition: cpuapp_slot0_partition: partition@40000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x40000 DT_SIZE_K(1076)>;
 		};
 
 		cpurad_slot0_partition: partition@14d000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x14d000 DT_SIZE_K(328)>;
 		};
 
 		cpuppr_code_partition: partition@19f000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x19f000 DT_SIZE_K(64)>;
 		};
 
 		cpuflpr_code_partition: partition@1af000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1af000 DT_SIZE_K(48)>;
 		};
 
 		storage_partition: partition@1bb000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1bb000 DT_SIZE_K(40)>;
 		};
 
 		periphconf_partition: partition@1c5000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x1c5000 DT_SIZE_K(8)>;
 		};
 	};

@@ -7,7 +7,7 @@ get_property(PM_DOMAINS GLOBAL PROPERTY PM_DOMAINS)
 if(SB_CONFIG_SECURE_BOOT)
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
     # Calculate the network board target
-    string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
+    string(REPLACE "/" ";" split_board_qualifiers ";${BOARD_QUALIFIERS}")
     list(GET split_board_qualifiers 1 target_soc)
     list(GET split_board_qualifiers 2 target_cpucluster)
 

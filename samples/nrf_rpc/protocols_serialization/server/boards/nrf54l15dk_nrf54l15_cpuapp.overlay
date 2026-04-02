@@ -34,16 +34,19 @@
 
 	partitions {
 		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00000000 0x00178000>;
 		};
 
 		storage_partition: partition@178000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x00178000 0x00002000>;
 		};
 
 		coredump_partition: partition@17a000 {
+			compatible = "zephyr,mapped-partition";
 			label = "";
 			reg = <0x0017a000 0x00003000>;
 		};

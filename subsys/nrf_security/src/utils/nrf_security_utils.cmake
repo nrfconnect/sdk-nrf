@@ -30,6 +30,10 @@ if(BUILD_INSIDE_TFM)
       tfm_psa_rot_partition_crypto
   )
 else()
+  # Ensure that zephyr/heap_constants.h needed by zephyr/kernel.h
+  # is generated first
+  add_dependencies(nrf_security_utils zephyr_generated_headers)
+
   # This special linking is done to give access to the zephyr kernel library
   # which possibly isn't --whole-archived in the build. Trying to link to the 
   # kernel library directly will give cyclic dependency. The only way to avoid

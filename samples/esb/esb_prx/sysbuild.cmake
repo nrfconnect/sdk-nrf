@@ -8,7 +8,7 @@ get_property(PM_DOMAINS GLOBAL PROPERTY PM_DOMAINS)
 # Include app core image if enabled
 if(SB_CONFIG_SOC_NRF5340_CPUNET)
   # Get application core board target
-  string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
+  string(REPLACE "/" ";" split_board_qualifiers ";${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
   set(board_target_appcore "${BOARD}/${target_soc}/cpuapp")
   set(target_soc)

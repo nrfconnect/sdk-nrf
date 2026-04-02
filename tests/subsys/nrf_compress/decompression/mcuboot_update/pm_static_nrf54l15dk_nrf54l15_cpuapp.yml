@@ -23,9 +23,9 @@ EMPTY_2:
   size: 0x75e000
 EMPTY_3:
   address: 0x100000
-  end_address: 0x165000
+  end_address: 0x17d000
   region: flash_primary
-  size: 0x65000
+  size: 0x7d000
 mcuboot:
   address: 0x0
   end_address: 0x11000
