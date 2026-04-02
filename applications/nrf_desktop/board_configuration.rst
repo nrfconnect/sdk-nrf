@@ -220,5 +220,7 @@ Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
         All configurations enable hardware cryptography for the MCUboot bootloader.
         The MCUboot bootloader uses the :ref:`ug_crypto_architecture_implementation_standards_ironside` for hardware cryptography.
         The application image is verified using a pure ED25519 signature.
+        The public key that MCUboot uses for validating the application image is securely stored in the Internal Trusted Storage (ITS).
+        For more details about secure storage on the nRF54H20, see :ref:`ug_nrf54h20_ironside_secure_storage`.
         In all configurations, the MCUboot bootloader uses a merged image slot that combines both application and radio core images.
         For more details on nRF54H Series DFU, see :ref:`ug_nrf54h20_mcuboot_dfu`.
