@@ -1,0 +1,5 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config HAS_NORDIC_VPR_LAUNCHER_IMAGE
+	default y if SOC_NRF9251_CPUPPR || SOC_NRF9251_CPUFLPR
