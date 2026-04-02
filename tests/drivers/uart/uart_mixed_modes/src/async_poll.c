@@ -40,9 +40,9 @@ ZTEST(uart_async_poll, test_uart_async_poll_transmission)
 	zassert_equal(err, 0, "ASYNC UART callback setup failed");
 
 	TC_PRINT("Starting transmission\n");
+	enable_uart_rx(uart_dev_async_mode, &uart_async_test_data);
 	err = uart_tx(uart_dev_async_mode, uart_async_test_data.tx_buffer, BUFFER_SIZE,
 		      UART_TIMEOUT_US);
-	enable_uart_rx(uart_dev_async_mode, &uart_async_test_data);
 
 	for (uint32_t counter = 0; counter < BUFFER_SIZE; counter++) {
 		uart_poll_out(uart_dev_poll_mode, uart_poll_test_data.tx_buffer[counter]);
