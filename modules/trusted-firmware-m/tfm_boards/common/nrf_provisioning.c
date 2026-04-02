@@ -17,10 +17,22 @@
 #include <identity_key.h>
 #include <tfm_spm_log.h>
 #include <pm_config.h>
-#if defined(NRF53_SERIES) && defined(PM_CPUNET_APP_ADDRESS)
+#if defined(NRF53_SERIES) && (defined(PM_CPUNET_APP_ADDRESS) || defined(CONFIG_TFM_HAS_B0N))
 #include <dfu/pcd_common.h>
 #include <spu.h>
 #include <hal/nrf_reset.h>
+
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
+#if defined(PM_PCD_SRAM_ADDRESS)
+volatile struct pcd_cmd *pcd_cmd_p = (struct pcd_cmd *)PM_PCD_SRAM_ADDRESS;
+#elif defined(PM__PCD_SRAM_ADDRESS)
+volatile struct pcd_cmd *pcd_cmd_p = (struct pcd_cmd *)PM__PCD_SRAM_ADDRESS;
+#endif
+#else
+#include "flash_layout.h"
+volatile struct pcd_cmd *pcd_cmd_p =
+	(struct pcd_cmd *)TFM_DT_REG_ADDR(TFM_DT_NODELABEL(sram0_dfu_shared));
+#endif
 
 #define DEBUG_LOCK_TIMEOUT_MS 3000
 #define USEC_IN_MSEC 1000

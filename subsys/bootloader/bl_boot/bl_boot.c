@@ -7,7 +7,12 @@
 #include <soc.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
+#if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#include <flash_map_pm.h>
+#else
+#include <zephyr/storage/flash_map.h>
+#endif
 #include <fw_info.h>
 #include <fprotect.h>
 #include <hal/nrf_clock.h>
@@ -17,6 +22,25 @@
 #ifdef CONFIG_UART_NRFX_UARTE
 #include <hal/nrf_uarte.h>
 #include <hal/nrf_gpio.h>
+#endif
+#if USE_PARTITION_MANAGER
+#include <pm_config.h>
+/* Address of storage as seen in processor address space */
+#define BL_STORAGE_ADDRESS	PM_PROVISION_ADDRESS
+#define BL_STORAGE_SIZE		PM_PROVISION_SIZE
+#else
+/* Address of storage as seen in processor address space */
+#define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
+#define BL_STORAGE_SIZE		DT_REG_SIZE(DT_NODELABEL(bl_storage))
+#endif
+
+
+#if USE_PARTITION_MANAGER
+#define RWX_PROTECTION_REGION	PM_B0_SIZE
+#define RWX_SKIP_SIZE		PM_MCUBOOT_PAD_SIZE
+#else
+#define RWX_PROTECTION_REGION	FIXED_PARTITION_SIZE(b0_partition)
+#define RWX_SKIP_SIZE		CONFIG_SB_DISABLE_SELF_RWX_SKIP_SIZE
 #endif
 
 #include <zephyr/linker/linker-defs.h>
@@ -39,37 +63,47 @@
 #define MAX_NEXT_W_SIZE (1023 * 1024)
 #endif
 
-BUILD_ASSERT((PM_S0_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
+/* Note: the protection is only applied to the image itself, not the header (pad).
+ * When building with MCUBoot, applying protection to the header is not needed, as the
+ * header is only used during DFU and is only left for compatibility. Without MCUBoot, the
+ * header is not present.
+ */
+#if USE_PARTITION_MANAGER
+#define S0_IMAGE_ADDRESS	(PM_S0_IMAGE_ADDRESS + RWX_SKIP_SIZE)
+#define S0_IMAGE_SIZE		(PM_S0_IMAGE_SIZE - RWX_SKIP_SIZE)
+#define S1_IMAGE_ADDRESS	(PM_S1_IMAGE_ADDRESS + RWX_SKIP_SIZE)
+#define S1_IMAGE_SIZE		(PM_S1_IMAGE_SIZE - RWX_SKIP_SIZE)
+#else
+#define S0_IMAGE_ADDRESS	(FIXED_PARTITION_OFFSET(s0_partition) + RWX_SKIP_SIZE)
+#define S0_IMAGE_SIZE		(FIXED_PARTITION_SIZE(s0_partition) - RWX_SKIP_SIZE)
+#define S1_IMAGE_ADDRESS	(FIXED_PARTITION_OFFSET(s1_partition) + RWX_SKIP_SIZE)
+#define S1_IMAGE_SIZE		(FIXED_PARTITION_SIZE(s1_partition) - RWX_SKIP_SIZE)
+#endif
+
+BUILD_ASSERT((S0_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
 	     "Start of S0 image region is not aligned - not possible to protect");
 
-BUILD_ASSERT((PM_S0_IMAGE_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
+BUILD_ASSERT((S0_IMAGE_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
 	     "Size of S0 image region is not aligned - not possible to protect");
 
-BUILD_ASSERT(PM_S0_IMAGE_SIZE <= MAX_NEXT_W_SIZE, "Size of S0 partition is too big for protection");
+BUILD_ASSERT(S0_IMAGE_SIZE <= MAX_NEXT_W_SIZE, "Size of S0 partition is too big for protection");
 
-#if defined(PM_S1_IMAGE_ADDRESS)
-BUILD_ASSERT((PM_S1_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
+BUILD_ASSERT((S1_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
 	     "Start of S1 image region is not aligned - not possible to protect");
 
-BUILD_ASSERT((PM_S1_IMAGE_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
+BUILD_ASSERT((S1_IMAGE_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
 	     "Size of S1 image region is not aligned - not possible to protect");
 
-BUILD_ASSERT(PM_S1_IMAGE_SIZE <= MAX_NEXT_W_SIZE, "Size of S1 partition is too big for protection");
-#endif /* defined(PM_S1_IMAGE_ADDRESS) */
+BUILD_ASSERT(S1_IMAGE_SIZE <= MAX_NEXT_W_SIZE, "Size of S1 partition is too big for protection");
 
 static int disable_next_w(const uint32_t address)
 {
 	uint32_t region_size_kb = 0;
 
-	/* Note: the protection is only applied to the image itself, not the header (pad).
-	 * When building with MCUBoot, applying protection to the header is not needed, as the
-	 * header is only used during DFU and is only left for compatibility. Without MCUBoot, the
-	 * header is not present.
-	 */
-	if (address == PM_S0_IMAGE_ADDRESS) {
-		region_size_kb = PM_S0_IMAGE_SIZE / NRF_RRAM_REGION_SIZE_UNIT;
-	} else if (address == PM_S1_IMAGE_ADDRESS) {
-		region_size_kb = PM_S1_IMAGE_SIZE / NRF_RRAM_REGION_SIZE_UNIT;
+	if (address == S0_IMAGE_ADDRESS) {
+		region_size_kb = S0_IMAGE_SIZE / NRF_RRAM_REGION_SIZE_UNIT;
+	} else if (address == S1_IMAGE_ADDRESS) {
+		region_size_kb = S1_IMAGE_SIZE / NRF_RRAM_REGION_SIZE_UNIT;
 	} else {
 		return -EINVAL;
 	}
@@ -132,14 +166,16 @@ static void __ramfunc jump_in(uint32_t reset)
 		"   mov  r4, %3\n"
 		/* gap size */
 		"   mov  r5, %4\n"
+		/* Reduce loop by gap size */
+		"   sub  r2, r2, r5\n"
 		"clear:\n"
 		"   subs r6, r4, r1\n"
 		"   cbnz r6, skip_gap\n"
 		"   add  r1, r5\n"
 		"skip_gap:\n"
 		"   str  r3, [r1]\n"
-		"   add  r1, r1, #1\n"
-		"   sub  r2, r2, #1\n"
+		"   add  r1, r1, #4\n"
+		"   sub  r2, r2, #4\n"
 		"   cbz  r2, clear_end\n"
 		"   b    clear\n"
 		"clear_end:\n"
@@ -184,7 +220,7 @@ static void __ramfunc jump_in(uint32_t reset)
 #ifdef CONFIG_SB_DISABLE_SELF_RWX
 		  , "i" (RRAMC_REGION_TO_LOCK_ADDR_L),
 		  "i" (RRAMC_REGION_TO_LOCK_ADDR_H),
-		  "i" (CONFIG_PM_PARTITION_SIZE_B0_IMAGE / 1024),
+		  "i" (RWX_PROTECTION_REGION / 1024),
 		  "i" (RRAMC_REGION_RWX_LSB),
 		  "i" (RRAMC_REGION_RWX_WIDTH),
 		  "i" (RRAMC_REGION_CONFIG_LOCK_Msk),
@@ -261,7 +297,7 @@ void bl_boot(const struct fw_info *fw_info)
 	 * application.
 	 */
 #if defined(CONFIG_FPROTECT)
-	int err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
+	int err = fprotect_area(BL_STORAGE_ADDRESS, BL_STORAGE_SIZE);
 
 	if (err) {
 		printk("Failed to protect bootloader storage.\n\r");
@@ -278,7 +314,7 @@ void bl_boot(const struct fw_info *fw_info)
 			"Not in Privileged mode");
 #endif
 
-	printk("Booting (0x%x).\r\n", fw_info->address);
+	printk("Booting (0x%x).\r\n", fw_info->boot_address);
 
 	if (!fw_info_ext_api_provide(fw_info, true)) {
 		printk("Failed to provide ext APIs to image, boot aborted.\r\n");
@@ -319,11 +355,11 @@ void bl_boot(const struct fw_info *fw_info)
 	__DSB(); /* Force Memory Write before continuing */
 	__ISB(); /* Flush and refill pipeline with updated permissions */
 
-	VTOR = fw_info->address;
-	uint32_t *vector_table = (uint32_t *)fw_info->address;
+	VTOR = fw_info->boot_address;
+	uint32_t *vector_table = (uint32_t *)fw_info->boot_address;
 
 #if defined(CONFIG_SB_DISABLE_NEXT_W)
-	if (disable_next_w(fw_info->address)) {
+	if (disable_next_w(fw_info->address + RWX_SKIP_SIZE)) {
 		printk("Unable to disable writes on next stage");
 		return;
 	}

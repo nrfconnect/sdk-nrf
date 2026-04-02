@@ -127,16 +127,31 @@ function(zephyr_mcuboot_tasks)
       set(imgtool_rom_command --align ${write_block_size})
     endif()
 
+    # TF-M combined images need --pad-header because the MCUboot header gap is
+    # at the combined slot start (in tfm_s.hex), not at the NS partition start.
+    set(imgtool_pad_header_arg)
+    if(CONFIG_BUILD_WITH_TFM)
+      set(imgtool_pad_header_arg --pad-header)
+    endif()
+
+    # For TF-M builds the MCUboot header lives at the start of the combined slot
+    # (slot0_s_partition). Use TFM_MCUBOOT_HEADER_SIZE so the correct 0x200 value
+    # is used even when ROM_START_OFFSET is 0 for TF-M NS builds.
+    if(CONFIG_BUILD_WITH_TFM)
+      set(imgtool_header_size ${CONFIG_TFM_MCUBOOT_HEADER_SIZE})
+    else()
+      set(imgtool_header_size ${CONFIG_ROM_START_OFFSET})
+    endif()
     set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
       ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --slot-size ${slot_size} --header-size
-      ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_command})
+      ${imgtool_header_size} ${imgtool_pad_header_arg} ${imgtool_rom_command})
     # In case of RAM load - the second variant is generated automatically by signing logic,
     # because there is no need to link the code differently.
     if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
        CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
       set(imgtool_alt_slot_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
         ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --slot-size ${slot_size} --header-size
-        ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_alt_slot_command})
+        ${imgtool_header_size} ${imgtool_rom_alt_slot_command})
     endif()
   endif()
 

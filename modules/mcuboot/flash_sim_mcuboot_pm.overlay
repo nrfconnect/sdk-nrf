@@ -1,0 +1,9 @@
+#include "flash_sim_pm.overlay"
+
+&nordic_ram_flash_controller {
+	status = "okay";
+};
+
+&flash_sim0 {
+	status = "okay";
+};

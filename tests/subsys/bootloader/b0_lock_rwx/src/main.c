@@ -14,16 +14,22 @@
 
 #define RRAMC_REGION_FOR_TEST CONFIG_TEST_B0_LOCK_REGION
 
+#if USE_PARTITION_MANAGER
+#define RWX_SKIP_SIZE           PM_MCUBOOT_PAD_SIZE
+#else
+#define RWX_SKIP_SIZE           CONFIG_SB_DISABLE_SELF_RWX_SKIP_SIZE
+#endif
+
 #if RRAMC_REGION_FOR_TEST == B0_RRAMC_REGION
 #define RRAMC_REGION_FOR_TEST_SIZE   PM_B0_SIZE
 #define RRAM_REGION_FOR_TEST_ADDRESS PM_B0_ADDRESS
 #elif RRAMC_REGION_FOR_TEST == MCUBOOT_RRAMC_REGION
 #if !defined(CONFIG_TEST_B0_LOCK_USE_S1)
-#define RRAMC_REGION_FOR_TEST_SIZE   PM_MCUBOOT_SIZE
-#define RRAM_REGION_FOR_TEST_ADDRESS PM_MCUBOOT_ADDRESS
+#define RRAMC_REGION_FOR_TEST_SIZE   (PM_MCUBOOT_SIZE - RWX_SKIP_SIZE)
+#define RRAM_REGION_FOR_TEST_ADDRESS (PM_MCUBOOT_ADDRESS + RWX_SKIP_SIZE)
 #else
-#define RRAMC_REGION_FOR_TEST_SIZE   PM_S1_IMAGE_SIZE
-#define RRAM_REGION_FOR_TEST_ADDRESS PM_S1_IMAGE_ADDRESS
+#define RRAMC_REGION_FOR_TEST_SIZE   (PM_S1_IMAGE_SIZE - RWX_SKIP_SIZE)
+#define RRAM_REGION_FOR_TEST_ADDRESS (PM_S1_IMAGE_ADDRESS + RWX_SKIP_SIZE)
 #endif
 #endif
 
@@ -62,6 +68,7 @@ void *get_config(void)
 #endif
 	zassert_equal(config.size_kb, RRAMC_REGION_FOR_TEST_SIZE / 1024,
 		      "Protected region size doesn't match protected partition size.");
+printk("wtf 0x%x vs 0x%x\n", config.address, RRAM_REGION_FOR_TEST_ADDRESS);
 	zassert_equal(
 		config.address, RRAM_REGION_FOR_TEST_ADDRESS,
 		"Protected region start address doesn't match protected partition start address.");

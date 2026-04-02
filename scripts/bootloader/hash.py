@@ -33,6 +33,12 @@ def parse_args():
              'For all other file types, no conversion is done.'
     )
     parser.add_argument(
+        '--skip', required=False, default=0, type=lambda x: int(x, 0),
+        help='Amount of bytes to skip in front of the input binary, when '
+             'generating signature. It can be used to skip space reserved '
+             'for header added after firmware is signed.'
+    )
+    parser.add_argument(
         '--type', '-t', dest='hash_function', help='Hash function (default: %(default)s)',
         action='store', choices=HASH_FUNCTION_FACTORY.keys(), default='sha256'
     )
@@ -40,13 +46,14 @@ def parse_args():
     return parser.parse_args()
 
 
-def generate_hash_digest(file: str, hash_function_name: str) -> bytes:
+def generate_hash_digest(file: str, skip:int, hash_function_name: str) -> bytes:
     if file.endswith('.hex'):
         ih = IntelHex(file)
         ih.padding = 0xff  # Allows hashing with empty regions
-        to_hash = ih.tobinstr()
+        to_hash = ih.tobinstr()[skip:]
     else:
         to_hash = open(file, 'rb').read()
+        to_hash = to_hash[skip:]
 
     hash_function = HASH_FUNCTION_FACTORY[hash_function_name]
     return hash_function(to_hash).digest()
@@ -54,7 +61,7 @@ def generate_hash_digest(file: str, hash_function_name: str) -> bytes:
 
 def main():
     args = parse_args()
-    sys.stdout.buffer.write(generate_hash_digest(args.infile, args.hash_function))
+    sys.stdout.buffer.write(generate_hash_digest(args.infile, args.skip, args.hash_function))
     return 0
 
 

@@ -1,6 +1,7 @@
+#include "../../../boards/nrf5340dk_nrf5340_cpuapp.overlay"
+
 / {
 	chosen {
 		zephyr,code-partition = &boot_partition;
-		nordic,pm-ext-flash = &mx25r64;
 	};
 };

@@ -14,6 +14,12 @@ function(b0_gen_keys)
   set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem)
   set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem PARENT_SCOPE)
 
+  if(CONFIG_PARTITION_MANAGER_ENABLED)
+    set(skip_size 0)
+  else()
+    set(skip_size ${CONFIG_SB_IMAGE_BOOT_OFFSET})
+  endif()
+
   if(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ED25519)
     set(keygen_algorithm --algorithm ed25519)
   else()
@@ -68,11 +74,20 @@ function(b0_gen_keys)
   endif()
 
   # Public key file target is required for all signing options
-  add_custom_target(
+  if(SB_CONFIG_PARTITION_MANAGER)
+    add_custom_target(
       signature_public_key_file_target
       DEPENDS
-      ${SIGNATURE_PUBLIC_KEY_FILE}
+        ${SIGNATURE_PUBLIC_KEY_FILE}
     )
+  else()
+    add_custom_target(
+      signature_public_key_file_target
+      ALL
+      DEPENDS
+        ${SIGNATURE_PUBLIC_KEY_FILE}
+    )
+  endif()
 endfunction()
 
 function(b0_sign_image slot cpunet_target)
@@ -85,6 +100,14 @@ function(b0_sign_image slot cpunet_target)
   sysbuild_get(${slot}_fw_info_magic_compatibility_id IMAGE ${slot} VAR CONFIG_FW_INFO_MAGIC_COMPATIBILITY_ID KCONFIG)
   sysbuild_get(${slot}_fw_info_magic_common IMAGE ${slot} VAR CONFIG_FW_INFO_MAGIC_COMMON KCONFIG)
   sysbuild_get(${slot}_sb_validation_info_magic IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_MAGIC KCONFIG)
+
+  if(SB_CONFIG_PARTITION_MANAGER)
+    set(skip_size 0)
+  elseif(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
+    set(skip_size 0)
+  else()
+    sysbuild_get(skip_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+  endif()
 
   math(EXPR
     MAGIC_COMPATIBILITY_VALIDATION_INFO
@@ -99,41 +122,37 @@ function(b0_sign_image slot cpunet_target)
   set(signed_hex ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.hex)
   set(signed_bin ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.bin)
 
-  if(NCS_SYSBUILD_PARTITION_MANAGER)
-    # A container can be merged, in which case we should use old style below,
-    # or it may be an actual image, where we know everything.
-    # Initial support disregards the merged hex files.
-    # In parent-child, everything is merged, even when having a single image in a
-    # container (where the original image == the merged image).
-    if(TARGET ${slot})
-      # If slot is a target of it's own, then it means we target the hex directly and not a merged hex.
-      sysbuild_get(${slot}_image_dir IMAGE ${slot} VAR APPLICATION_BINARY_DIR CACHE)
-      sysbuild_get(${slot}_kernel_name IMAGE ${slot} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
-      sysbuild_get(${slot}_crypto_id IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
-      sysbuild_get(${slot}_validation_offset IMAGE ${slot} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
+  # A container can be merged, in which case we should use old style below,
+  # or it may be an actual image, where we know everything.
+  # Initial support disregards the merged hex files.
+  # In parent-child, everything is merged, even when having a single image in a
+  # container (where the original image == the merged image).
+  if(TARGET ${slot})
+    # If slot is a target of it's own, then it means we target the hex directly and not a merged hex.
+    sysbuild_get(${slot}_image_dir IMAGE ${slot} VAR APPLICATION_BINARY_DIR CACHE)
+    sysbuild_get(${slot}_kernel_name IMAGE ${slot} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+    sysbuild_get(${slot}_crypto_id IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
+    sysbuild_get(${slot}_validation_offset IMAGE ${slot} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
 
-      set(slot_bin ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.bin)
-      set(slot_hex ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.hex)
-      set(sign_depends ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.elf)
-      set(target_name ${slot})
-    elseif("${slot}" STREQUAL "s0_image")
-      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-        set(target_name mcuboot)
-      else()
-        set(target_name ${DEFAULT_IMAGE})
-      endif()
-
-      sysbuild_get(${target_name}_image_dir IMAGE ${target_name} VAR APPLICATION_BINARY_DIR CACHE)
-      sysbuild_get(${target_name}_kernel_name IMAGE ${target_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
-      sysbuild_get(${slot}_crypto_id IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
-      sysbuild_get(${slot}_validation_offset IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
-
-      set(slot_bin ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.bin)
-      set(slot_hex ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.hex)
-      set(sign_depends ${target_name} ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.elf)
+    set(slot_bin ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.bin)
+    set(slot_hex ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.hex)
+    set(sign_depends ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.elf)
+    set(target_name ${slot})
+  elseif("${slot}" STREQUAL "s0_image")
+    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+      set(target_name mcuboot)
     else()
-      message(FATAL_ERROR "Not supported")
+      set(target_name ${DEFAULT_IMAGE})
     endif()
+
+    sysbuild_get(${target_name}_image_dir IMAGE ${target_name} VAR APPLICATION_BINARY_DIR CACHE)
+    sysbuild_get(${target_name}_kernel_name IMAGE ${target_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+    sysbuild_get(${slot}_crypto_id IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
+    sysbuild_get(${slot}_validation_offset IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
+
+    set(slot_bin ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.bin)
+    set(slot_hex ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.hex)
+    set(sign_depends ${target_name} ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.elf)
   else()
     message(FATAL_ERROR "Not supported")
   endif()
@@ -170,6 +189,7 @@ function(b0_sign_image slot cpunet_target)
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/hash.py
       --in ${to_sign} ${hash_cmd_type}
+      --skip ${skip_size}
       > ${hash_file}
       )
   endif()
@@ -181,12 +201,22 @@ function(b0_sign_image slot cpunet_target)
       set(sign_cmd_signature_type)
     endif()
 
+    # In case when signing hash we there is no skip in do_sign call
+    # as we are not skipping any meterial, this has been skipped
+    # already when generating the hash function.
+    if(sign_cmd_hash_type)
+       set(do_sign_skip_arg)
+    else()
+       set(do_sign_skip_arg --skip ${skip_size})
+    endif()
+
     set(sign_cmd
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/do_sign.py
       --private-key ${SIGNATURE_PRIVATE_KEY_FILE}
       --in ${hash_file} ${sign_cmd_signature_type}
-      > ${signature_file}
+      ${do_sign_skip_arg}
+      --out ${signature_file}
       )
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
     set(custom_sign_cmd "${SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND}")
@@ -236,11 +266,20 @@ function(b0_sign_image slot cpunet_target)
       )
   endif()
 
-  add_custom_target(
-    ${slot}_signature_file_target
-    DEPENDS
-    ${signature_file}
+  if(SB_CONFIG_PARTITION_MANAGER)
+    add_custom_target(
+      ${slot}_signature_file_target
+      DEPENDS
+      ${signature_file}
     )
+  else()
+    add_custom_target(
+      ${slot}_signature_file_target
+      ALL
+      DEPENDS
+      ${signature_file}
+    )
+  endif()
 
   cmake_path(GET signed_hex FILENAME signed_hex_filename)
   cmake_path(GET to_sign FILENAME to_sign_filename)
@@ -260,6 +299,7 @@ function(b0_sign_image slot cpunet_target)
     ${PYTHON_EXECUTABLE}
     ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/validation_data.py
     --input ${to_sign} ${validation_signature_cmd}
+    --skip ${skip_size}
     --output-hex ${signed_hex}
     --output-bin ${signed_bin}
     --offset ${${slot}_validation_offset}
@@ -278,13 +318,24 @@ function(b0_sign_image slot cpunet_target)
     USES_TERMINAL
     )
 
-  add_custom_target(
-    ${slot}_signed_kernel_hex_target
-    DEPENDS
-    ${signed_hex}
-    ${slot}_signature_file_target
-    signature_public_key_file_target
+  if(SB_CONFIG_PARTITION_MANAGER)
+    add_custom_target(
+      ${slot}_signed_kernel_hex_target
+      DEPENDS
+      ${signed_hex}
+      ${slot}_signature_file_target
+      signature_public_key_file_target
     )
+  else()
+    add_custom_target(
+      ${slot}_signed_kernel_hex_target
+      ALL
+      DEPENDS
+        ${signed_hex}
+        ${slot}_signature_file_target
+        signature_public_key_file_target
+    )
+  endif()
 
   if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT OR cpunet_target)
     # Set hex file and target for the ${slot) (s0/s1) container partition.
