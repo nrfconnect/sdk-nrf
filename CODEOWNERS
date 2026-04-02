@@ -51,6 +51,7 @@
 # Boards
 /boards/nordic/nrf54l*/                   @nrfconnect/ncs-co-boards @kl-cruz
 /boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-xcake
+/boards/nordic/nrf92*/                    @nrfconnect/ncs-co-boards @tervonenja
 /boards/nordic/thingy91*/                 @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
 /boards/sercomm/                          @nrfconnect/ncs-co-boards @tokangas
 
@@ -281,6 +282,7 @@
 
 # Drivers
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
+/drivers/clock_control/clock_control_nrf92* @nrfconnect/ncs-co-drivers @tervonenja
 /drivers/dect/                            @nrfconnect/ncs-dect-nr-plus
 /drivers/entropy/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/flash/                           @nrfconnect/ncs-co-drivers
@@ -348,6 +350,9 @@
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
+/include/dt-bindings/misc/nordic-domain-id-nrf9220.h @tervonenja
+/include/dt-bindings/misc/nordic-nrf-ficr-nrf9220.h @tervonenja
+/include/dt-bindings/misc/nordic-owner-id-nrf9220.h @tervonenja
 /include/emds/                            @nrfconnect/ncs-paladin
 /include/fem_al/                          @nrfconnect/ncs-dragoon
 /include/hpf/                             @nrfconnect/ncs-ll-ursus

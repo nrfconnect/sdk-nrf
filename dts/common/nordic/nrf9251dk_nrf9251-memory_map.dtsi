@@ -1,0 +1,145 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/memory-attr/memory-attr.h>
+
+/ {
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		/* IPC Ctrl */
+		cpuapp_cpucell_ipc_shm_ctrl: memory@2f051000 {
+			reg = <0x2f051000 DT_SIZE_K(4)>;
+		};
+
+		/* IPC TX heap, user defined */
+		cpuapp_cpucell_ipc_shm_heap: memory@2f052000 {
+			reg = <0x2f052000 DT_SIZE_K(16)>;
+		};
+
+		/* IPC RX heap, user defined */
+		cpucell_cpuapp_ipc_shm_heap: memory@2f056000 {
+			reg = <0x2f056000 DT_SIZE_K(16)>;
+		};
+
+		cpuapp_cpusys_ipc_shm: memory@2f88f600 {
+			reg = <0x2f88f600 0x80>;
+		};
+
+		cpusys_cpuapp_ipc_shm: memory@2f88f680 {
+			reg = <0x2f88f680 0x80>;
+		};
+
+		cpusec_cpuapp_ipc_shm: memory@2f88fb80 {
+			reg = <0x2f88fb80 0x80>;
+		};
+
+		cpuapp_ironside_se_event_report: memory@2f88fc00 {
+			reg = <0x2f88fc00 0x100>;
+		};
+
+		cpuapp_ironside_se_boot_report: memory@2f88fd00 {
+			reg = <0x2f88fd00 0x200>;
+		};
+
+		cpuapp_cpuflpr_ipc_shm: memory@2f89b800 {
+			reg = <0x2f89b800 DT_SIZE_K(1)>;
+		};
+
+		cpuflpr_cpuapp_ipc_shm: memory@2f89bc00 {
+			reg = <0x2f89bc00 DT_SIZE_K(1)>;
+		};
+
+		dma_fast_region: memory@2f89c000 {
+			compatible = "zephyr,memory-region";
+			reg = <0x2f89c000 DT_SIZE_K(16)>;
+			status = "disabled";
+			#memory-region-cells = <0>;
+			zephyr,memory-region = "DMA_RAM21";
+			zephyr,memory-attr = <(DT_MEM_DMA | DT_MEM_CACHEABLE)>;
+		};
+
+		cpuapp_cpuppr_ipc_shm: memory@2fc0f800 {
+			reg = <0x2fc0f800 DT_SIZE_K(1)>;
+		};
+
+		cpuppr_cpuapp_ipc_shm: memory@2fc0fc00 {
+			reg = <0x2fc0fc00 DT_SIZE_K(1)>;
+		};
+
+		cpuapp_dma_region: memory@2fc10000 {
+			compatible = "zephyr,memory-region";
+			reg = <0x2fc10000 DT_SIZE_K(16)>;
+			status = "disabled";
+			#memory-region-cells = <0>;
+			zephyr,memory-region = "DMA_RAM31_APP";
+			zephyr,memory-attr = <DT_MEM_DMA>;
+		};
+	};
+};
+
+&mram1x {
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		cpuapp_boot_partition: partition@312000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x312000 DT_SIZE_K(64)>;
+		};
+
+		cpuapp_slot0_partition: partition@322000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x322000 DT_SIZE_K(336)>;
+		};
+
+		cpuapp_slot1_partition: partition@376000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x376000 DT_SIZE_K(424)>;
+		};
+
+		cpuppr_code_partition: partition@3e0000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3e0000 DT_SIZE_K(64)>;
+		};
+
+		cpuflpr_code_partition: partition@3f0000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3f0000 DT_SIZE_K(64)>;
+		};
+
+		storage_partition: partition@400000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x400000 DT_SIZE_K(40)>;
+		};
+
+		periphconf_partition: partition@40a000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x40a000 DT_SIZE_K(8)>;
+		};
+
+		secure_storage_partition: partition@40c000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x40c000 DT_SIZE_K(8)>;
+			ranges = <0x0 0x40c000 0x2000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			cpuapp_crypto_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x0 DT_SIZE_K(4)>;
+			};
+
+			cpuapp_its_partition: partition@1000 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x1000 DT_SIZE_K(4)>;
+			};
+		};
+	};
+};

@@ -1,0 +1,24 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config HW_STACK_PROTECTION
+	default ARCH_HAS_STACK_PROTECTION
+
+if BOARD_NRF9251DK_NRF9251_CPUAPP
+
+if !USE_DT_CODE_PARTITION
+
+DT_CHOSEN_Z_FLASH := zephyr,flash
+
+config FLASH_LOAD_OFFSET
+	default $(sub_hex, $(dt_nodelabel_reg_addr_hex,cpuapp_boot_partition), \
+		$(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_FLASH)))
+
+config FLASH_LOAD_SIZE
+	default $(add_hex, $(dt_nodelabel_reg_addr_hex,cpuapp_slot0_partition), \
+			   $(dt_nodelabel_reg_size_hex,cpuapp_slot0_partition), \
+			   -$(dt_nodelabel_reg_addr_hex,cpuapp_boot_partition))
+
+endif # !DT_USE_CODE_PARTITION
+
+endif # BOARD_NRF9251DK_NRF9251_CPUAPP
