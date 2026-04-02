@@ -19,6 +19,8 @@ common:
   tags:
     - ci_build
     - ci_samples_nrf_rpc
+  extra_args:
+    - SNIPPET_ROOT="."
 
 tests:
   sample.nrf_rpc.protocols_serialization.client.rpc_ble:
