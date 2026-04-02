@@ -2411,6 +2411,7 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_THREAD_CUSTOM_DATA=y" \
                          "CONFIG_ERRNO=y" \
                          "CONFIG_THREAD_STACK_INFO=y" \
+                         "CONFIG_BT_L2CAP_SEG_RECV=y" \
                          "CONFIG_UART_INTERRUPT_DRIVEN=y" \
                          "CONFIG_UART_DRV_CMD=y" \
                          "CONFIG_PM_DEVICE=y" \

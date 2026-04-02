@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if BT_HCI
+
+config BT_HOST_NORDIC
+	bool "nRF Connect SDK Bluetooth Host"
+	default y
+	help
+	  Enable the nRF Connect SDK Bluetooth Host.
+
+endif # BT_HCI

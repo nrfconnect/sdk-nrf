@@ -1,0 +1,78 @@
+common:
+  # Default platform_allow & integration_platforms for the tests below, which a few override
+  platform_allow:
+    - native_sim
+  integration_platforms:
+    - native_sim
+tests:
+  bluetooth.shell.main:
+    extra_configs:
+      - CONFIG_UART_NATIVE_PTY_0_ON_STDINOUT=y
+    platform_allow:
+      - qemu_x86
+      - native_sim
+      - native_sim/native/64
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - qemu_x86
+    platform_exclude: nrf52dk/nrf52810
+    tags: bluetooth
+    harness: keyboard
+    min_flash: 145
+  bluetooth.shell.power_control_request:
+    extra_configs:
+      - CONFIG_BT_TRANSMIT_POWER_CONTROL=y
+      - CONFIG_BT_LL_SW_SPLIT=n
+    build_only: true
+  bluetooth.shell.path_loss_monitoring:
+    extra_configs:
+      - CONFIG_BT_PATH_LOSS_MONITORING=y
+      - CONFIG_BT_LL_SW_SPLIT=n
+    build_only: true
+  bluetooth.shell.subrating:
+    extra_configs:
+      - CONFIG_BT_SUBRATING=y
+      - CONFIG_BT_LL_SW_SPLIT=n
+    build_only: true
+  bluetooth.shell.extended_feature_set:
+    extra_configs:
+      - CONFIG_BT_LE_MAX_LOCAL_SUPPORTED_FEATURE_PAGE=10
+      - CONFIG_BT_LE_EXTENDED_FEAT_SET=y
+      - CONFIG_BT_LL_SW_SPLIT=n
+    build_only: true
+  bluetooth.shell.frame_space_update:
+    extra_configs:
+      - CONFIG_BT_FRAME_SPACE_UPDATE=y
+      - CONFIG_BT_LE_EXTENDED_FEAT_SET=y
+      - CONFIG_BT_LL_SW_SPLIT=n
+    build_only: true
+  bluetooth.shell.shorter_connection_intervals:
+    extra_configs:
+      - CONFIG_BT_SHORTER_CONNECTION_INTERVALS=y
+      - CONFIG_BT_LE_EXTENDED_FEAT_SET=y
+      - CONFIG_BT_SUBRATING=y
+      - CONFIG_BT_LL_SW_SPLIT=n
+    build_only: true
+  bluetooth.shell.channel_sounding:
+    extra_configs:
+      - CONFIG_BT_CHANNEL_SOUNDING=y
+      - CONFIG_BT_CHANNEL_SOUNDING_TEST=y
+      - CONFIG_BT_LL_SW_SPLIT=n
+    build_only: true
+  bluetooth.shell.no_privacy:
+    build_only: true
+    extra_args: CONFIG_BT_PRIVACY=n
+    tags: bluetooth
+  bluetooth.shell.log_defaults:
+    build_only: true
+    extra_args: CONF_FILE="log.conf"
+    tags: bluetooth
+  bluetooth.native_shell:
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE=snippets/xterm-native-shell/xterm-native-shell.conf
+      - EXTRA_DTC_OVERLAY_FILE=snippets/xterm-native-shell/xterm-native-shell.overlay
+    platform_allow:
+      - nrf52_bsim
+    integration_platforms:
+      - nrf52_bsim

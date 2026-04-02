@@ -1,0 +1,16 @@
+common:
+  build_only: true
+  tags:
+    - bluetooth
+  harness: bsim
+  sysbuild: true
+
+tests:
+  bluetooth.ll.multiple_id:
+    platform_allow:
+      - nrf52_bsim/native
+      - nrf5340bsim/nrf5340/cpunet
+      - nrf5340bsim/nrf5340/cpuapp
+      - nrf54l15bsim/nrf54l15/cpuapp
+    harness_config:
+      bsim_exe_name: tests_bsim_bluetooth_ll_multiple_id_prj_conf
