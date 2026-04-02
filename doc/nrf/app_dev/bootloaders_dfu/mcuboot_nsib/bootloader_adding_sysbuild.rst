@@ -358,6 +358,7 @@ This allows the main application to be larger in comparison to any symmetric siz
 
 If your application uses a custom memory layout (a very common scenario), you must include it in the overlay file for the firmware loader image.
 For reference, see :file:`nrf/samples/dfu/single_slot/sysbuild/ble_mcumgr/boards/nrf54l15dk_nrf54l15_cpuapp.overlay`.
+The firmware loader will be automatically placed in the ``slot1_partition`` partition by the build system.
 For devices with a separate radio core, the firmware loader solution has a different architecture.
 For details, see :ref:`ug_bootloader_firmware_loader_mode_nrf54h20`.
 
