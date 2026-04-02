@@ -1,0 +1,23 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+identifier: nrf9251pdk@0.1.0/nrf9251/cpuapp
+name: nRF9251-DK-nRF9251-Application (rev. 0.1.0)
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - xtools
+  - zephyr
+sysbuild: true
+ram: 320
+flash: 880
+supported:
+  - adc
+  - counter
+  - gpio
+  - i2c
+  - pwm
+  - spi
+  - watchdog
+  - usbd

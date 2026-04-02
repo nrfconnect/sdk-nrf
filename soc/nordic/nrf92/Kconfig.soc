@@ -1,0 +1,50 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+config SOC_NRF9220
+	bool
+	select SOC_SERIES_NRF92
+
+config SOC_NRF9220_CPUAPP
+	bool
+	select SOC_NRF9220
+	select SOC_SERIES_NRF92_CPUAPP
+
+config SOC_NRF9220_CPUPPR
+	bool
+	select SOC_NRF9220
+
+config SOC_NRF9220_CPUFLPR
+	bool
+	select SOC_NRF9220
+
+# The SiP selects the actual SoC complete with engineer revision and appropriate CPU
+config SOC_NRF9251
+	bool
+	select SOC_NRF9220_CPUAPP if SOC_NRF9251_CPUAPP
+	select SOC_NRF9220_CPUPPR if SOC_NRF9251_CPUPPR
+	select SOC_NRF9220_CPUFLPR if SOC_NRF9251_CPUFLPR
+	help
+	  nRF9251 SiP
+
+# The CPU select the "SoC" (SiP)
+config SOC_NRF9251_CPUAPP
+	bool
+	select SOC_NRF9251
+	help
+	  nRF9251 CPUAPP
+
+config SOC_NRF9251_CPUPPR
+	bool
+	select SOC_NRF9251
+	help
+	  nRF9251 CPUPPR
+
+config SOC_NRF9251_CPUFLPR
+	bool
+	select SOC_NRF9251
+	help
+	  nRF9251 CPUFLPR
+
+config SOC
+	default "nrf9251" if SOC_NRF9251

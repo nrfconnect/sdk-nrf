@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+
+zephyr_library_amend()
+
+zephyr_library_include_directories(${ZEPHYR_BASE}/drivers/clock_control)
+
+zephyr_library_sources_ifdef(CONFIG_CLOCK_CONTROL_NRF92_HFXO clock_control_nrf92_hfxo.c)
+zephyr_library_sources_ifdef(CONFIG_CLOCK_CONTROL_NRF92_HSFLL_LOCAL clock_control_nrf92_hsfll_local.c)

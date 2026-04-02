@@ -1,0 +1,18 @@
+board:
+  full_name: nRF9251 PDK
+  name: nrf9251pdk
+  vendor: nordic
+  socs:
+  - name: nrf9251
+    variants:
+    - name: ppr
+      cpucluster: cpuppr
+    - name: flpr
+      cpucluster: cpuflpr
+    - name: app
+      cpucluster: cpuapp
+  revision:
+    format: major.minor.patch
+    default: "0.1.0"
+    revisions:
+    - name: "0.1.0"

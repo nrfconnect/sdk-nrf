@@ -1,0 +1,16 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+if SOC_NRF9220_CPUAPP
+
+config NUM_IRQS
+	default 471
+
+config NRF_REGTOOL_GENERATE_UICR
+	default n
+
+config NRF_PERIPHCONF_SECTION
+	default y
+	depends on $(dt_nodelabel_exists,periphconf_partition)
+
+endif # SOC_NRF9220_CPUAPP
