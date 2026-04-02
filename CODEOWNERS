@@ -253,7 +253,6 @@
 /doc/nrf/samples/keys.rst                 @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/matter.rst               @nrfconnect/ncs-matter-doc
 /doc/nrf/samples/matter/*.rst             @nrfconnect/ncs-matter-doc
-/doc/nrf/samples/mcuboot.rst              @nrfconnect/ncs-eris-doc
 /doc/nrf/samples/mesh.rst                 @nrfconnect/ncs-paladin-doc
 /doc/nrf/samples/net.rst                  @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/nfc.rst                  @nrfconnect/ncs-radio-sw
