@@ -1,0 +1,197 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/dts-v1/;
+
+#include <arm/nordic/nrf9251_cpuapp.dtsi>
+#include "nrf9251dk_nrf9251_common.dtsi"
+
+#include <common/nordic/nrf9251dk_nrf9251-memory_map.dtsi>
+#include <common/nordic/nrf9251dk_nrf9251-ipc_conf.dtsi>
+#include <common/nordic/nrf9251dk_nrf9251-pinctrl.dtsi>
+
+/ {
+	compatible = "nordic,nrf9251dk_nrf9251-cpuapp";
+	model = "Nordic nRF9251 DK nRF9251 Application MCU";
+
+	chosen {
+		zephyr,code-partition = &cpuapp_slot0_partition;
+		zephyr,flash = &mram1x;
+		zephyr,sram = &cpuapp_data;
+		zephyr,entropy = &psa_rng;
+		zephyr,console = &uart133;
+		zephyr,shell-uart = &uart133;
+		zephyr,uart-mcumgr = &uart133;
+	};
+
+	aliases {
+		resetinfo = &cpuapp_resetinfo;
+		ipc-to-cpusys = &cpuapp_cpusys_ipc;
+		watchdog0 = &wdt010;
+		sw0 = &button0;
+		led0 = &led0;
+	};
+
+	psa_rng: psa-rng {
+		compatible = "zephyr,psa-crypto-rng";
+		status = "okay";
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&cpuapp_ram0x_region {
+	status = "okay";
+};
+
+&cpuapp_cpucell_ram0x_region {
+	status = "okay";
+};
+
+&ram21_region {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+	interrupts = <96 NRF_DEFAULT_IRQ_PRIORITY>;
+	interrupt-names = "irq0";
+	/* The following bells on this bellboard are rang by these cores
+	 *  - Bell 0: cpusec
+	 *  - Bell 6: cpusys
+	 *  - Bell 13: cpuppr
+	 *  - Bell 14: cpuflpr
+	 *  - Bells 24, 25, 29, 31: cpucell
+	 */
+	nordic,interrupt-mapping = <0xa3046041 0>;
+};
+
+&cpuppr_vpr {
+	execution-memory = <&cpuppr_code_data>;
+	source-memory = <&cpuppr_code_partition>;
+};
+
+&cpuflpr_vpr {
+	execution-memory = <&cpuflpr_code_data>;
+	source-memory = <&cpuflpr_code_partition>;
+};
+
+&cpucell_bellboard {
+	status = "okay";
+};
+
+&cpusys_vevif {
+	status = "okay";
+};
+
+&cpuapp_cpusys_ipc {
+	status = "okay";
+	mbox-names = "rx", "tx";
+	tx-region = <&cpuapp_cpusys_ipc_shm>;
+	rx-region = <&cpusys_cpuapp_ipc_shm>;
+};
+
+&cpuapp_cpuppr_ipc {
+	mbox-names = "rx", "tx";
+	tx-region = <&cpuapp_cpuppr_ipc_shm>;
+	rx-region = <&cpuppr_cpuapp_ipc_shm>;
+};
+
+&cpuapp_cpuflpr_ipc {
+	mbox-names = "rx", "tx";
+	tx-region = <&cpuapp_cpuflpr_ipc_shm>;
+	rx-region = <&cpuflpr_cpuapp_ipc_shm>;
+};
+
+&cpuapp_dma_region {
+	status = "okay";
+};
+
+&cpuapp_dma2_region {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <1 2 3 4 5 6 7>;
+};
+
+&grtc {
+	status = "okay";
+	child-owned-channels = <5 6>;
+	nonsecure-channels = <4 5 6>;
+	owned-channels = <4 5 6>;
+};
+
+&uart120 {
+	current-speed = <115200>;
+	pinctrl-0 = <&uart120_default>;
+	pinctrl-1 = <&uart120_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&uart132 {
+	current-speed = <115200>;
+	pinctrl-0 = <&uart132_default>;
+	pinctrl-1 = <&uart132_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&uart133 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart133_default>;
+	pinctrl-1 = <&uart133_sleep>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&coresight {
+	pinctrl-0 = <&tpiu_default>;
+	pinctrl-names = "default";
+};
+
+&nfct {
+	status = "okay";
+	memory-regions = <&cpuapp_dma2_region>;
+};
+
+&hfxo {
+	status = "okay";
+};
+
+&fll16m {
+	status = "okay";
+};
+
+&cpusec_bellboard {
+	status = "okay";
+};
+
+&cpusec_cpuapp_ipc {
+	mbox-names = "tx", "rx";
+	status = "okay";
+};
+
+ironside_se_boot_report: &cpuapp_ironside_se_boot_report {};
+
+boot_partition: &cpuapp_boot_partition {
+	label = "mcuboot";
+};
+
+slot0_partition: &cpuapp_slot0_partition {
+	label = "image-0";
+};
+
+slot1_partition: &cpuapp_slot1_partition {
+	label = "image-1";
+};
