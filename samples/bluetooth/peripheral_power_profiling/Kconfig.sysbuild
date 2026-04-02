@@ -7,7 +7,13 @@
 config PARTITION_MANAGER
 	default n if !BOARD_IS_NON_SECURE
 
+config NRF_RADIO_LOADER
+	default y if SOC_NRF54H20
+
 config NRF_DEFAULT_IPC_RADIO
+	default y
+
+config NETCORE_IPC_RADIO_BT_HCI_IPC
 	default y
 
 source "share/sysbuild/Kconfig"

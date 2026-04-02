@@ -225,6 +225,30 @@ tests:
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
+  sample.bluetooth.peripheral_power_profiling.console_log:
+    extra_configs:
+      - CONFIG_SERIAL=y
+      - CONFIG_CONSOLE=y
+      - CONFIG_UART_CONSOLE=y
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting Bluetooth Power Profiling sample"
+        - |
+          ".*(Power-on reset|Application soft reset detected|Reset from pin-reset|"
+          "System reset from different reason).*"
+    timeout: 30
+    tags:
+      - twister
+
   sample.bluetooth.peripheral_power_profiling.llvm:
     toolchain_allow: llvm
     integration_platforms:

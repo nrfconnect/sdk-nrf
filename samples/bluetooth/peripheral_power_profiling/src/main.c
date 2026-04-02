@@ -29,10 +29,8 @@
 
 #include <helpers/nrfx_reset_reason.h>
 
+#include "advertising.h"
 #include "pwr_service.h"
-
-#define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 #define RUN_STATUS_LED       DK_LED1
 #define CON_STATUS_LED       DK_LED2
@@ -44,16 +42,8 @@
 #define RUN_LED_BLINK_INTERVAL 1000
 #define SYSTEM_OFF_DELAY       5
 
-#define NOTIFICATION_INTERVAL       CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL
-#define CONNECTABLE_ADV_TIMEOUT     CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_DURATION
-#define NON_CONNECTABLE_ADV_TIMEOUT CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_DURATION
-#define NFC_ADV_TIMEOUT             CONFIG_BT_POWER_PROFILING_NFC_ADV_DURATION
-#define NOTIFICATION_TIMEOUT        CONFIG_BT_POWER_PROFILING_NOTIFICATION_TIMEOUT
-
-#define CONNECTABLE_ADV_INTERVAL_MIN     CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MIN
-#define CONNECTABLE_ADV_INTERVAL_MAX     CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MAX
-#define NON_CONNECTABLE_ADV_INTERVAL_MIN CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MIN
-#define NON_CONNECTABLE_ADV_INTERVAL_MAX CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MAX
+#define NOTIFICATION_INTERVAL CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL
+#define NOTIFICATION_TIMEOUT  CONFIG_BT_POWER_PROFILING_NOTIFICATION_TIMEOUT
 
 #define NOTIFICATION_PIPELINE_SIZE CONFIG_BT_CONN_TX_MAX
 
@@ -67,8 +57,6 @@ static void adv_work_handler(struct k_work *work);
 static K_WORK_DEFINE(adv_work, adv_work_handler);
 #endif /* !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED) */
 
-static struct bt_le_ext_adv *adv_set;
-
 static void system_off_work_handler(struct k_work *work);
 static void key_generation_work_handler(struct k_work *work);
 static void notify_work_handler(struct k_work *work);
@@ -81,36 +69,6 @@ static K_WORK_DELAYABLE_DEFINE(notify_timeout, notify_timeout_handler);
 
 static atomic_t notify_pipeline = ATOMIC_INIT(NOTIFICATION_PIPELINE_SIZE);
 static struct bt_conn *device_conn;
-
-static const struct bt_data connectable_ad_data[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
-};
-
-static const struct bt_data non_connectable_ad_data[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
-	BT_DATA_BYTES(BT_DATA_URI, /* The URI of the https://www.nordicsemi.com website */
-		      0x17, /* UTF-8 code point for “https:” */
-		      '/', '/', 'w', 'w', 'w', '.',
-		      'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.',
-		      'c', 'o', 'm'),
-};
-
-static const struct bt_data non_connectable_sd_data[] = {
-	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
-};
-
-static const struct bt_le_adv_param *connectable_ad_params =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN,
-			CONNECTABLE_ADV_INTERVAL_MIN,
-			CONNECTABLE_ADV_INTERVAL_MAX,
-			NULL);
-
-static const struct bt_le_adv_param *non_connectable_ad_params =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE,
-			NON_CONNECTABLE_ADV_INTERVAL_MIN,
-			NON_CONNECTABLE_ADV_INTERVAL_MAX,
-			NULL);
 
 static int leds_init(void)
 {
@@ -246,17 +204,21 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t l
 	       interval, latency, timeout);
 }
 
+#if IS_ENABLED(CONFIG_BT_USER_PHY_UPDATE)
 static void le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 {
 	printk("PHY updated, TX: %u RX: %u\n", param->tx_phy, param->rx_phy);
 }
+#endif /* IS_ENABLED(CONFIG_BT_USER_PHY_UPDATE) */
 
 BT_CONN_CB_DEFINE(connection_cb) = {
 	.connected = connected,
 	.disconnected = disconnected,
 	.security_changed = security_changed,
 	.le_param_updated = le_param_updated,
+#if IS_ENABLED(CONFIG_BT_USER_PHY_UPDATE)
 	.le_phy_updated = le_phy_updated
+#endif /* IS_ENABLED(CONFIG_BT_USER_PHY_UPDATE) */
 };
 
 static void auth_cancel(struct bt_conn *conn)
@@ -384,29 +346,9 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	uint32_t buttons = button_state & has_changed;
 
 	if (buttons & CONNECTABLE_ADV_BUTTON) {
-		struct bt_le_ext_adv_start_param connectable_start_param = {
-			.timeout = CONNECTABLE_ADV_TIMEOUT,
-			.num_events = 0
-		};
-
-		/* It is called from workqueue context, checking return value is not needed. */
 		k_work_cancel_delayable(&system_off_work);
 
-		(void)bt_le_ext_adv_stop(adv_set);
-		err = bt_le_ext_adv_update_param(adv_set, connectable_ad_params);
-		if (err) {
-			printk("Failed to set connectable advertising data (err %d)\n", err);
-			return;
-		}
-
-		err = bt_le_ext_adv_set_data(adv_set, connectable_ad_data,
-				     ARRAY_SIZE(connectable_ad_data), NULL, 0);
-		if (err) {
-			printk("Failed to set data for connectable advertising (err %d)\n", err);
-			return;
-		}
-
-		err = bt_le_ext_adv_start(adv_set, &connectable_start_param);
+		err = advertising_start_connectable();
 		if (err) {
 			printk("Connectable advertising failed to start (err %d)\n", err);
 		} else {
@@ -417,32 +359,9 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	}
 
 	if (buttons & NON_CONNECTABLE_ADV_BUTTON) {
-		struct bt_le_ext_adv_start_param non_connectable_start_param = {
-			.timeout = NON_CONNECTABLE_ADV_TIMEOUT,
-			.num_events = 0
-		};
-
-		/* It is called from workqueue context, checking return value is not needed. */
 		k_work_cancel_delayable(&system_off_work);
 
-		(void)bt_le_ext_adv_stop(adv_set);
-		err = bt_le_ext_adv_update_param(adv_set, non_connectable_ad_params);
-		if (err) {
-			printk("Failed to set non-connectable advertising data (err %d)\n", err);
-			return;
-		}
-
-		err = bt_le_ext_adv_set_data(adv_set, non_connectable_ad_data,
-					     ARRAY_SIZE(non_connectable_ad_data),
-					     non_connectable_sd_data,
-					     ARRAY_SIZE(non_connectable_sd_data));
-		if (err) {
-			printk("Failed to set data for non-connectable advertising (err %d)\n",
-			       err);
-			return;
-		}
-
-		err = bt_le_ext_adv_start(adv_set, &non_connectable_start_param);
+		err = advertising_start_non_connectable();
 		if (err) {
 			printk("Non-connectable advertising failed to start (err %d)\n", err);
 		} else {
@@ -475,29 +394,11 @@ static void key_generation_work_handler(struct k_work *work)
 static void adv_work_handler(struct k_work *work)
 {
 	int err;
-	struct bt_le_ext_adv_start_param param = {
-		.timeout = NFC_ADV_TIMEOUT,
-		.num_events = 0
-	};
 
 	/* Called from workqueue context. */
 	k_work_cancel_delayable(&system_off_work);
 
-	(void)bt_le_ext_adv_stop(adv_set);
-	err = bt_le_ext_adv_update_param(adv_set, connectable_ad_params);
-	if (err) {
-		printk("Failed to set connectable advertising data (err %d)\n", err);
-		return;
-	}
-
-	err = bt_le_ext_adv_set_data(adv_set, connectable_ad_data,
-				     ARRAY_SIZE(connectable_ad_data), NULL, 0);
-	if (err) {
-		printk("Failed to set data for connectable advertising (err %d)\n", err);
-		return;
-	}
-
-	err = bt_le_ext_adv_start(adv_set, &param);
+	err = advertising_start_connectable_nfc();
 	if (err) {
 		printk("Connectable advertising failed to start (err %d)\n", err);
 	} else {
@@ -682,10 +583,10 @@ static void system_off_work_handler(struct k_work *work)
 	system_off();
 }
 
-static void advertising_terminated(struct bt_le_ext_adv *adv, struct bt_le_ext_adv_sent_info *info)
+static void on_adv_terminated(void)
 {
 	if (!device_conn) {
-		printk("Adverting set %p, terminated.\n", (void *)adv);
+		printk("Advertising terminated.\n");
 #if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54H)
 		printk("Scheduling system off\n");
 
@@ -694,8 +595,8 @@ static void advertising_terminated(struct bt_le_ext_adv *adv, struct bt_le_ext_a
 	}
 }
 
-static const struct bt_le_ext_adv_cb adv_callbacks = {
-	.sent = advertising_terminated
+static const struct advertising_cb adv_module_cb = {
+	.terminated = on_adv_terminated,
 };
 
 int main(void)
@@ -756,9 +657,9 @@ int main(void)
 		return 0;
 	}
 
-	err = bt_le_ext_adv_create(connectable_ad_params, &adv_callbacks, &adv_set);
+	err = advertising_init(&adv_module_cb);
 	if (err) {
-		printk("Failed to create advertising set (err %d)\n", err);
+		printk("Failed to initialize advertising (err %d)\n", err);
 		return 0;
 	}
 
