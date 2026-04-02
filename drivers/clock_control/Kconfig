@@ -1,0 +1,14 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config CLOCK_CONTROL_NRF92_HFXO
+	bool "NRF92 HFXO driver support"
+	depends on DT_HAS_NORDIC_NRF92_HFXO_ENABLED
+	select CLOCK_CONTROL_NRF2_COMMON
+	default y
+
+config CLOCK_CONTROL_NRF92_HSFLL_LOCAL
+	bool "NRF92 local HSFLL driver support"
+	depends on DT_HAS_NORDIC_NRF92_HSFLL_LOCAL_ENABLED
+	select CLOCK_CONTROL_NRF2_COMMON
+	default y

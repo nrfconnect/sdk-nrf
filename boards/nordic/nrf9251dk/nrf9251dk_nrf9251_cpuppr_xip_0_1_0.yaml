@@ -1,0 +1,14 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+identifier: nrf9251dk@0.1.0/nrf9251/cpuppr/xip
+name: nRF9251-DK-nRF9251-PPR (MRAM XIP) (rev. 0.1.0)
+type: mcu
+arch: riscv
+toolchain:
+  - zephyr
+sysbuild: true
+ram: 64
+flash: 64
+supported:
+  - gpio

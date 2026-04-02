@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/dts-v1/;
+
+#include <nordic/nrf9251_cpuppr.dtsi>
+#include "nrf9251dk_nrf9251_common.dtsi"
+
+#include <common/nordic/nrf9251dk_nrf9251-memory_map.dtsi>
+#include <common/nordic/nrf9251dk_nrf9251-ipc_conf.dtsi>
+#include <common/nordic/nrf9251dk_nrf9251-pinctrl.dtsi>
+
+/delete-node/ &cpuapp_cpusys_ipc;
+/delete-node/ &cpuapp_cpuflpr_ipc;
+/delete-node/ &cpusec_cpuapp_ipc;
+
+/ {
+	compatible = "nordic,nrf9251dk_nrf9251-cpuppr";
+	model = "Nordic nRF9251 DK nRF9251 Peripheral Processor MCU";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	chosen {
+		zephyr,code-partition = &cpuppr_code_partition;
+		zephyr,flash = &mram1x;
+		zephyr,sram = &cpuppr_tcm_sram;
+		zephyr,console = &uart132;
+	};
+};
+
+&cpuapp_cpuppr_ipc {
+	mbox-names = "tx", "rx";
+	tx-region = <&cpuppr_cpuapp_ipc_shm>;
+	rx-region = <&cpuapp_cpuppr_ipc_shm>;
+};
+
+&grtc {
+	status = "okay";
+	owned-channels = <5>;
+};
+
+&uart132 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart132_default>;
+	pinctrl-1 = <&uart132_sleep>;
+	pinctrl-names = "default", "sleep";
+};

@@ -13,8 +13,16 @@ rsource "gpio/Kconfig"
 rsource "hw_cc3xx/Kconfig"
 rsource "dect/Kconfig"
 
+if CLOCK_CONTROL
+
+rsource "clock_control/Kconfig"
+
+endif
+
 if !MPSL_FEM_ONLY
+
 rsource "mpsl/Kconfig"
+
 endif
 
 rsource "mspi/Kconfig"
@@ -34,7 +42,7 @@ config HPF
 config CLOCK_CONTROL_NRF2
 	bool "Use NRF2 clock control API"
 	depends on CLOCK_CONTROL
-	depends on SOC_SERIES_NRF54H && !RISCV_CORE_NORDIC_VPR
+	depends on (SOC_SERIES_NRF54H || SOC_SERIES_NRF92) && !RISCV_CORE_NORDIC_VPR
 	default y
 	help
 	  The clock control drivers are currently split into two groups,

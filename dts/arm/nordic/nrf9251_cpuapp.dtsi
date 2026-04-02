@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <common/nordic/nrf9251.dtsi>
+
+cpu: &cpuapp {};
+
+systick: &cpuapp_systick {};
+
+nvic: &cpuapp_nvic {};
+
+cpuppr_vevif: &cpuppr_vevif_tx {};
+
+cpuflpr_vevif: &cpuflpr_vevif_tx {};
+
+cpusys_vevif: &cpusys_vevif_tx {};
+
+wdt010: &cpuapp_wdt010 {};
+
+wdt011: &cpuapp_wdt011 {};
+
+/delete-node/ &cpuppr;
+/delete-node/ &cpuflpr;
+
+/ {
+	soc {
+		compatible = "simple-bus";
+		interrupt-parent = <&cpuapp_nvic>;
+
+		stmesp: memory@a2000000 {
+			compatible = "arm,stmesp";
+			reg = <0xa2000000 0x1000000>;
+		};
+
+		etm: etm@e0041000 {
+			reg = <0xe0041000 0x0001000>;
+		};
+
+		cti: cti@e0042000 {
+			reg = <0xe0042000 0x0001000>;
+		};
+	};
+};
+
+&cpuapp_ppb {
+	compatible = "simple-bus";
+	ranges;
+};
+
+&cpusec_bellboard {
+	compatible = "nordic,nrf-bellboard-tx";
+};
+
+&cpuapp_bellboard {
+	compatible = "nordic,nrf-bellboard-rx";
+};
+
+&cpucell_bellboard {
+	compatible = "nordic,nrf-bellboard-tx";
+};
+
+&gpiote130 {
+	interrupts = <105 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+&grtc {
+	interrupts = <109 NRF_DEFAULT_IRQ_PRIORITY>;
+};

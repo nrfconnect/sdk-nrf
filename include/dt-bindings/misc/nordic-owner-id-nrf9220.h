@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#ifndef ZEPHYR_INCLUDE_DT_BINDINGS_MISC_NORDIC_OWNER_ID_NRF9220_H_
+#define ZEPHYR_INCLUDE_DT_BINDINGS_MISC_NORDIC_OWNER_ID_NRF9220_H_
+
+#define NRF_OWNER_ID_NONE        0
+#define NRF_OWNER_ID_APPLICATION 2
+#define NRF_OWNER_ID_CELL        4
+
+#endif /* ZEPHYR_INCLUDE_DT_BINDINGS_MISC_NORDIC_OWNER_ID_NRF9220_H_ */
