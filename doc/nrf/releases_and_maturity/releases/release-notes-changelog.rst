@@ -399,6 +399,9 @@ nRF Desktop
     The board target can act as either a mouse or a keyboard.
   * Support for the ``nrf54lm20dk/nrf54lm20b/cpuapp`` board target.
     The board target supports the same set of configurations as the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
+  * Support for storing the MCUboot image verification public key in the Internal Trusted Storage (ITS) for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
+    For more details about secure storage on the nRF54H20, see :ref:`ug_nrf54h20_ironside_secure_storage`.
+    The :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_ITS` and :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE` sysbuild Kconfig options are enabled in all nRF54H20 DK configurations.
 
 * Updated:
 
