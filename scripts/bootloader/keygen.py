@@ -50,13 +50,11 @@ def generate_legal_key_for_ed25519():
     while True:
         key = ed25519.Ed25519PrivateKey.generate()
         public_bytes = key.public_key().public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+            encoding=serialization.Encoding.Raw,
+            format=serialization.PublicFormat.Raw
         )
+        digest = sha512(public_bytes).digest()[:16]
 
-        # The digest don't contain the first byte as it denotes
-        # if it is compressed/UncompressedPoint.
-        digest = sha512(public_bytes[1:]).digest()[:16]
         if not any([digest[n:n + 2] == b'\xff\xff' for n in range(0, len(digest), 2)]):
             return key
 
