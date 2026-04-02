@@ -6,6 +6,7 @@
 config NRF_802154_CALLBACKS_DISPATCHER
 	bool "nRF 802.15.4 callbacks dispatcher [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	select NRF_802154_DRV_REINIT_ENABLED
 	help
 	  This option enables the nRF 802.15.4 callbacks dispatcher.
 	  It is used to dispatch callbacks from the nRF 802.15.4 radio driver
