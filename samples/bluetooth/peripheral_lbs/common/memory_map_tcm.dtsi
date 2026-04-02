@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * CPURAD TCM load layout (no MCUboot): keep default cpuapp MRAM partitions.
+ * Replace the two 328 KiB cpurad XIP slots with loader + stored firmware pairs
+ * (see nrf/samples/nrf54h20/radio_loader/src/main.c nodelabel expectations).
+ */
+
+/ {
+	soc {
+		/* Global RAM for radio_loader during memcpy (see board default layout). */
+		cpurad_loader_ram: sram@2f039000 {
+			compatible = "mmio-sram";
+			reg = <0x2f039000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x2f039000 0x1000>;
+		};
+	};
+};
+
+&mram1x {
+	partitions {
+		/delete-node/ partition@92000;
+		/delete-node/ partition@152000;
+
+		/* Primary: loader (MRAM) + ipc_radio image (MRAM, copied to TCM). */
+		cpurad_slot0_partition: cpurad_loader_partition: partition@92000 {
+			label = "cpurad_loader_partition";
+			reg = <0x92000 DT_SIZE_K(8)>;
+		};
+
+		/* Max size == TCM region (see memory_map_ram_cpurad.dtsi, 192 KiB). */
+		cpurad_slot2_partition: cpurad_loaded_fw: partition@94000 {
+			label = "cpurad_loaded_fw";
+			reg = <0x94000 DT_SIZE_K(192)>;
+		};
+
+		/* Secondary slot pair (same firmware sizes as primary). */
+		cpurad_slot1_partition: cpurad_loader_partition_slot1: partition@152000 {
+			label = "cpurad_loader_partition_slot1";
+			reg = <0x152000 DT_SIZE_K(8)>;
+		};
+
+		cpurad_slot3_partition: cpurad_loaded_fw_slot1: partition@154000 {
+			label = "cpurad_loaded_fw_slot1";
+			reg = <0x154000 DT_SIZE_K(192)>;
+		};
+	};
+};
