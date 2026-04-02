@@ -123,7 +123,7 @@ Mbed TLS
 Trusted Firmware-M (TF-M)
 -------------------------
 
-|no_changes_yet_note|
+* Reading UICR.OTP using the :c:func:`tfm_platform_mem_read` function is now allowed on the nRF54L Series devices.
 
 Protocols
 =========
