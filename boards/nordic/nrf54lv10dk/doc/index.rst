@@ -37,12 +37,12 @@ nRF54LV10 DK has two crystal oscillators:
 * High-frequency 32 MHz crystal oscillator (HFXO)
 * Low-frequency 32.768 kHz crystal oscillator (LFXO)
 
-The crystal oscillators can be configured to use either internal or external capacitors.
+You can configure the crystal oscillators to use either internal or external capacitors.
 
 Programming and Debugging
 *************************
 
-Applications for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` board target can be built, flashed, and debugged in the usual way.
+You can build, flash, and debug applications for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` in the usual way.
 See :ref:`zephyr:build_an_application` and :ref:`zephyr:application_run` for more details on building and running.
 
 Applications for the ``nrf54lv10dk/nrf54lv10a/cpuflpr`` board target must be built using sysbuild to include the ``vpr_launcher`` image for the application core.
@@ -56,7 +56,7 @@ Enter the following command to compile ``hello_world`` for the FLPR core:
 Flashing
 ========
 
-As an example, this section shows how to build and flash the :zephyr:code-sample:`hello_world` application.
+As an example, the following section shows how to build and flash the :zephyr:code-sample:`hello_world` application.
 
 .. warning::
 
@@ -76,12 +76,12 @@ As an example, this section shows how to build and flash the :zephyr:code-sample
    This binary prevents the readback protection from enabling itself again after a pin reset or power cycle.
 
 Follow the instructions in the :ref:`zephyr:nordic_segger` page to install and configure all the necessary software.
-Further information can be found in :ref:`zephyr:nordic_segger_flashing`.
+Refer to further information about :ref:`zephyr:nordic_segger_flashing`.
 
 To build and program the sample to the nRF54LV10 DK, complete the following steps:
 
-1. First, connect the nRF54LV10 DK to your computer using the IMCU USB port on the DK.
-#. Next, build the sample by running the following command:
+1. Connect the nRF54LV10 DK to your computer using the IMCU USB port on the DK.
+#. Build the sample by running the following command:
 
   .. code-block:: console
 
