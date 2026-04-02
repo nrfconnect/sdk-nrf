@@ -21,7 +21,28 @@ if(SB_CONFIG_NRF_RADIO_LOADER)
   )
 
   UpdateableImage_Add(APPLICATION radio_loader)
-  # Note: Memory map configuration should be provided by the user project
-  # at the project level in sysbuild directory.
-  # This overlay should define partitions and nodelabels for the loader
+
+  # radio_loader is not flashed as its own domain — its hex is merged into the
+  # netcore (ipc_radio) hex so that a single flash of the radio domain programs
+  # both the loader (MRAM) and the BT controller firmware (MRAM, copied to TCM).
+  set_target_properties(radio_loader PROPERTIES BUILD_ONLY true)
+
+  if(NOT SB_CONFIG_NETCORE_NONE)
+    add_dependencies(radio_loader ${SB_CONFIG_NETCORE_IMAGE_NAME})
+
+    ExternalProject_Get_Property(radio_loader BINARY_DIR)
+    set(RADIO_LOADER_BINARY_DIR ${BINARY_DIR})
+    ExternalProject_Get_Property(${SB_CONFIG_NETCORE_IMAGE_NAME} BINARY_DIR)
+    set(NETCORE_BINARY_DIR ${BINARY_DIR})
+
+    add_custom_target(merge_radio_loader ALL
+      COMMAND ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py
+        -o ${NETCORE_BINARY_DIR}/zephyr/zephyr.hex
+        --overlap replace
+        ${NETCORE_BINARY_DIR}/zephyr/zephyr.hex
+        ${RADIO_LOADER_BINARY_DIR}/zephyr/zephyr.hex
+      DEPENDS radio_loader ${SB_CONFIG_NETCORE_IMAGE_NAME}
+      COMMENT "Merging radio_loader into ${SB_CONFIG_NETCORE_IMAGE_NAME} hex"
+    )
+  endif()
 endif()
