@@ -44,6 +44,32 @@ static K_SEM_DEFINE(sem_distance_estimate_updated, 0, 1);
 static struct bt_conn *connection;
 static struct bt_conn_le_cs_config cs_config;
 
+/* Store local initiator IQs in this array. The size is based on requirements of cs_de_ifft. */
+static float local_iq_tones[2 * CONFIG_BT_CS_DE_NFFT_SIZE];
+
+static void distance_estimates_print(void)
+{
+	for (uint8_t i = 0; i < CS_DE_NUM_CHANNELS + 5; i++) {
+		LOG_ERR("local_iq_tones[%d]: %.1f + j * %.1f", i, (double)local_iq_tones[2 * i], (double)local_iq_tones[2 * i + 1]);
+	}
+	LOG_ERR("\n\n");
+}
+
+static void extract_pcts(uint8_t channel_index, struct bt_hci_le_cs_step_data_tone_info *local_tone_info)
+{
+
+	// if (local_tone_info[0].quality_indicator != BT_HCI_LE_CS_TONE_QUALITY_HIGH) {
+		// LOG_ERR("bad quality");
+		// return;
+	// }
+
+	struct bt_le_cs_iq_sample local_iq =
+		bt_le_cs_parse_pct(local_tone_info[0].phase_correction_term);
+
+	local_iq_tones[channel_index * 2] = local_iq.i;
+	local_iq_tones[channel_index * 2 + 1] = local_iq.q;
+}
+
 static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subevent_result *result)
 {
 	static int64_t prev_ts = 0;
@@ -53,7 +79,6 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 	if (prev_ts != 0) {
 		delta = now - prev_ts;
 	}
-
 	LOG_INF("Subevent result callback for procedure counter %u procedure done status %u subevent done status %u, number of steps reported %u, time delta since last call: %lld ms",
 		result->header.procedure_counter,
 		result->header.procedure_done_status,
@@ -72,18 +97,21 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 			local_step.channel = net_buf_simple_pull_u8(result->step_data_buf);
 			local_step.data_len = net_buf_simple_pull_u8(result->step_data_buf);
 
-			LOG_ERR("Local step with number %u has data length %u, mode %u, channel %u", i, local_step.data_len, local_step.mode, local_step.channel);
+
+			// LOG_ERR("Local step with number %u has data length %u, mode %u, channel %u", i, local_step.data_len, local_step.mode, local_step.channel);
 			if (local_step.data_len == 0) {
 				LOG_WRN("Encountered zero-length step data.");
 				return;
 			}
 
-			local_step.data = result->step_data_buf;
+			local_step.data = result->step_data_buf->data;
+
 			if (local_step.mode == BT_HCI_OP_LE_CS_MAIN_MODE_2) {
 				struct bt_hci_le_cs_step_data_mode_2 *local_step_data =
 					(struct bt_hci_le_cs_step_data_mode_2 *)local_step.data;
-
+					extract_pcts(local_step.channel, local_step_data->tone_info);
 			}
+
 			if (local_step.data_len > result->step_data_buf->len) {
 				LOG_WRN("Local step data appears malformed.");
 				return;
@@ -93,7 +121,7 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 		}
 
 	prev_ts = now;
-
+	k_sem_give(&sem_distance_estimate_updated);
 	return;
 }
 
@@ -518,7 +546,7 @@ int main(void)
 	/* scale factor of conn_interval units to proc_interval units is 1.25/0.625 = 2 */
 	const uint16_t acl_interval_in_proc_interval_units =
 		scan_params.conn_param->interval_max * 2;
-	uint16_t desired_procedure_interval = 100;
+	uint16_t desired_procedure_interval = 500;
 	uint16_t desired_max_procedure_length =
 		acl_interval_in_proc_interval_units * (desired_procedure_interval - 1);
 
@@ -554,6 +582,11 @@ int main(void)
 		LOG_ERR("Failed to enable CS procedures (err %d)", err);
 		return 0;
 	}
+
+	while (true) {
+			k_sem_take(&sem_distance_estimate_updated, K_FOREVER);
+			distance_estimates_print();
+		}
 
 	return 0;
 }
