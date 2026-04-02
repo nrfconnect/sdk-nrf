@@ -55,6 +55,22 @@ tests:
         - "Bluetooth initialized"
         - "Advertising successfully started"
     timeout: 15
+  sample.bluetooth.peripheral_lbs.tcm:
+    sysbuild: true
+    extra_args: SB_CONFIG_NRF_RADIO_LOADER=y
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting Bluetooth Peripheral LBS sample"
+        - "Bluetooth initialized"
+        - "Advertising successfully started"
+    timeout: 15
   sample.bluetooth.peripheral_lbs_minimal:
     sysbuild: true
     build_only: true
