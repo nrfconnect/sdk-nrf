@@ -25,6 +25,9 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define MAX_TX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
 #define MAX_RX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_rx)))
 #define IPC_TIMEOUT_MS		     100
+#define IPC_BOUND_TIMEOUT_MS	     100
+#define IPC_BOUND_RETRY_COUNT	     10
+#define IPC_BOUND_RETRY_DELAY_MS	     10
 #define EP_SEND_TIMEOUT_MS	     10
 #define EXTREME_DRIVE_FREQ_THRESHOLD 32000000
 #define CNT0_TOP_CALCULATE(freq)     (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
@@ -300,6 +303,71 @@ static int hpf_mspi_wait_for_response(hpf_mspi_opcode_t opcode, uint32_t timeout
 	}
 #endif /* CONFIG_MULTITHREADING */
 	return 0;
+}
+
+static int hpf_mspi_wait_for_endpoint_bound(void)
+{
+#if defined(CONFIG_MULTITHREADING)
+	int ret = k_sem_take(&ipc_sem, K_MSEC(IPC_BOUND_TIMEOUT_MS));
+
+	return (ret < 0) ? -ETIMEDOUT : 0;
+#else
+#if defined(CONFIG_SYS_CLOCK_EXISTS)
+	uint32_t start = k_uptime_get_32();
+#else
+	uint32_t repeat = IPC_BOUND_TIMEOUT_MS * 1000; /* Convert ms to us */
+#endif
+
+	while (!atomic_test_and_clear_bit(&ipc_atomic_sem, HPF_MSPI_EP_BOUNDED)) {
+#if defined(CONFIG_SYS_CLOCK_EXISTS)
+		if ((k_uptime_get_32() - start) > IPC_BOUND_TIMEOUT_MS) {
+			return -ETIMEDOUT;
+		}
+#else
+		repeat--;
+		if (repeat == 0U) {
+			return -ETIMEDOUT;
+		}
+#endif
+		k_sleep(K_USEC(1));
+	}
+
+	return 0;
+#endif
+}
+
+static int hpf_mspi_register_endpoint_with_retry(const struct device *ipc_instance)
+{
+	int ret;
+
+	for (int attempt = 0; attempt < IPC_BOUND_RETRY_COUNT; attempt++) {
+#if defined(CONFIG_MULTITHREADING)
+		k_sem_reset(&ipc_sem);
+#else
+		atomic_clear_bit(&ipc_atomic_sem, HPF_MSPI_EP_BOUNDED);
+#endif
+
+		ret = ipc_service_register_endpoint(ipc_instance, &ep, &ep_cfg);
+		if (ret < 0) {
+			LOG_ERR("ipc_service_register_endpoint() failure");
+			return ret;
+		}
+
+		ret = hpf_mspi_wait_for_endpoint_bound();
+		if (ret == 0) {
+			return 0;
+		}
+
+		ret = ipc_service_deregister_endpoint(&ep);
+		if (ret < 0) {
+			LOG_ERR("ipc_service_deregister_endpoint() failure");
+			return ret;
+		}
+
+		k_sleep(K_MSEC(IPC_BOUND_RETRY_DELAY_MS));
+	}
+
+	return -ETIMEDOUT;
 }
 
 /**
@@ -954,6 +1022,9 @@ static void flpr_fault_handler(const struct device *dev, void *user_data)
 {
 	ARG_UNUSED(dev);
 	ARG_UNUSED(user_data);
+	const struct device *const flpr_fault_timer = DEVICE_DT_GET(DT_NODELABEL(fault_timer));
+
+	counter_stop(flpr_fault_timer);
 
 	LOG_ERR("HPF fault detected.");
 }
@@ -1002,19 +1073,14 @@ static int hpf_mspi_init(const struct device *dev)
 		return ret;
 	}
 
-	ret = ipc_service_register_endpoint(ipc_instance, &ep, &ep_cfg);
-	if (ret < 0) {
-		LOG_ERR("ipc_service_register_endpoint() failure");
+	ret = hpf_mspi_register_endpoint_with_retry(ipc_instance);
+	if (ret == -ETIMEDOUT) {
+		LOG_ERR("Endpoint bind timeout: %d", ret);
+		return ret;
+	} else if (ret < 0) {
+		LOG_ERR("Endpoint registration/deregistration failed: %d", ret);
 		return ret;
 	}
-
-	/* Wait for ep to be bounded */
-#if defined(CONFIG_MULTITHREADING)
-	k_sem_take(&ipc_sem, K_FOREVER);
-#else
-	while (!atomic_test_and_clear_bit(&ipc_atomic_sem, HPF_MSPI_EP_BOUNDED)) {
-	}
-#endif
 
 	ret = api_config(&spec);
 	if (ret < 0) {
