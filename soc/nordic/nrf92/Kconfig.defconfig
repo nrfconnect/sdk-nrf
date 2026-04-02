@@ -1,0 +1,8 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if SOC_SERIES_NRF92
+
+rsource "Kconfig.defconfig.nrf92*"
+
+endif #SOC_SERIES_NRF92

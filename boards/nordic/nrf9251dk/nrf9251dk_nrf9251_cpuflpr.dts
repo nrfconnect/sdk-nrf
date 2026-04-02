@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/dts-v1/;
+
+#include <nordic/nrf9251_cpuflpr.dtsi>
+#include "nrf9251dk_nrf9251_common.dtsi"
+
+#include <common/nordic/nrf9251dk_nrf9251-memory_map.dtsi>
+#include <common/nordic/nrf9251dk_nrf9251-ipc_conf.dtsi>
+#include <common/nordic/nrf9251dk_nrf9251-pinctrl.dtsi>
+
+/delete-node/ &cpuapp_cpusys_ipc;
+/delete-node/ &cpuapp_cpuppr_ipc;
+/delete-node/ &cpusec_cpuapp_ipc;
+
+/ {
+	compatible = "nordic,nrf9251dk_nrf9251-cpuflpr";
+	model = "Nordic nRF9251 DK nRF9251 Fast Lightweight Processor MCU";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	chosen {
+		zephyr,console = &uart120;
+		zephyr,code-partition = &cpuflpr_code_partition;
+		zephyr,flash = &mram1x;
+		zephyr,sram = &cpuflpr_code_data;
+	};
+};
+
+&ram21_region {
+	status = "okay";
+};
+
+&cpuapp_cpuflpr_ipc {
+	mbox-names = "tx", "rx";
+	tx-region = <&cpuflpr_cpuapp_ipc_shm>;
+	rx-region = <&cpuapp_cpuflpr_ipc_shm>;
+};
+
+&grtc {
+	status = "okay";
+	owned-channels = <6>;
+};
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&uart120 {
+	status = "okay";
+	/* This will not work on this core. Use runtime configure to set baudrate. */
+	current-speed = <115200>;
+	pinctrl-0 = <&uart120_default>;
+	pinctrl-1 = <&uart120_sleep>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&dma_fast_region>;
+};
