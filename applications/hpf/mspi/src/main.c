@@ -101,7 +101,7 @@ static volatile struct {
 } response;
 
 static struct ipc_ept ep;
-static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
+static atomic_t endpoint_state = ATOMIC_INIT(0);
 #if defined(CONFIG_HPF_MSPI_FAULT_TIMER)
 static NRF_TIMER_Type *fault_timer;
 #endif
@@ -405,7 +405,8 @@ static void config_pins(hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 
 static void ep_bound(void *priv)
 {
-	atomic_set_bit(&ipc_atomic_sem, HPF_MSPI_EP_BOUNDED);
+	ARG_UNUSED(priv);
+	atomic_set_bit(&endpoint_state, HPF_MSPI_EP_BOUNDED);
 }
 
 static void ep_recv(const void *data, size_t len, void *priv)
@@ -580,15 +581,16 @@ static int backend_init(void)
 		return ret;
 	}
 
+	atomic_clear_bit(&endpoint_state, HPF_MSPI_EP_BOUNDED);
+
 	ret = ipc_service_register_endpoint(ipc0_instance, &ep, &ep_cfg);
 	if (ret < 0) {
 		return ret;
 	}
 
-	/* Wait for endpoint to be bound. */
-	while (!atomic_test_and_clear_bit(&ipc_atomic_sem, HPF_MSPI_EP_BOUNDED)) {
-	}
-
+	/* Do not block FLPR waiting for APP to bind.
+	 * The master image may come up later.
+	 */
 	return 0;
 }
 
@@ -715,11 +717,6 @@ int main(void)
 
 	init_trap_handler();
 
-	ret = backend_init();
-	if (ret < 0) {
-		return 0;
-	}
-
 	IRQ_DIRECT_CONNECT(HRT_VEVIF_IDX_READ, HRT_IRQ_PRIORITY, hrt_handler_read, 0);
 	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_READ), true);
 
@@ -727,6 +724,11 @@ int main(void)
 	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE), true);
 
 	nrf_vpr_csr_rtperiph_enable_set(true);
+
+	ret = backend_init();
+	if (ret < 0) {
+		return 0;
+	}
 
 	while (true) {
 		k_cpu_idle();

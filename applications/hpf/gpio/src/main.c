@@ -235,16 +235,16 @@ int main(void)
 {
 	int ret = 0;
 
-	ret = backend_init(process_packet);
-	if (ret < 0) {
-		return 0;
-	}
-
 	HRT_CONNECT(HRT_VEVIF_IDX_GPIO_CLEAR, hrt_handler_clear_bits);
 	HRT_CONNECT(HRT_VEVIF_IDX_GPIO_SET, hrt_handler_set_bits);
 	HRT_CONNECT(HRT_VEVIF_IDX_GPIO_TOGGLE, hrt_handler_toggle_bits);
 
 	nrf_vpr_csr_rtperiph_enable_set(true);
+
+	ret = backend_init(process_packet);
+	if (ret < 0) {
+		return 0;
+	}
 
 	while (true) {
 		k_cpu_idle();
