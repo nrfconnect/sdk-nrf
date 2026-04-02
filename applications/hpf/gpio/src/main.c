@@ -59,6 +59,25 @@ static const uint8_t pin_to_vio_map[] = {
 #define VIO_PORT 1
 #define VIO_PIN_OFFSET 15
 
+#elif defined(CONFIG_SOC_NRF7120)
+static const uint8_t pin_to_vio_map[] = {
+	6,  /* Physical pin 0 */
+	7,  /* Physical pin 1 */
+	8,  /* Physical pin 2 */
+	9,  /* Physical pin 3 */
+	10, /* Physical pin 4 */
+	11, /* Physical pin 5 */
+	0,  /* Physical pin 6 */
+	1,  /* Physical pin 7 */
+	2,  /* Physical pin 8 */
+	3,  /* Physical pin 9 */
+	4,  /* Physical pin 10 */
+	5,  /* Physical pin 11 */
+};
+
+#define VIO_PORT 2
+#define VIO_PIN_OFFSET 0
+
 #else
 #error "Unsupported target"
 #endif
@@ -148,6 +167,19 @@ static int gpio_hpf_pin_configure(uint8_t port, uint16_t pin, uint32_t flags)
 		return -EINVAL;
 	}
 
+	nrf_gpio_pin_dir_t dir =
+		(flags & GPIO_OUTPUT) ? NRF_GPIO_PIN_DIR_OUTPUT : NRF_GPIO_PIN_DIR_INPUT;
+	nrf_gpio_pin_input_t input =
+		(flags & GPIO_INPUT) ? NRF_GPIO_PIN_INPUT_CONNECT : NRF_GPIO_PIN_INPUT_DISCONNECT;
+
+	nrfy_gpio_reconfigure(abs_pin, &dir, &input, &pull, &drive, NULL);
+
+	nrfy_gpio_pin_control_select(abs_pin, NRF_GPIO_PIN_SEL_VPR);
+
+	if (dir == NRF_GPIO_PIN_DIR_OUTPUT) {
+		nrf_vpr_csr_vio_dir_set(nrf_vpr_csr_vio_dir_get() | (BIT(pin_vio_index)));
+	}
+
 	if (flags & GPIO_OUTPUT_INIT_HIGH) {
 		uint16_t outs = nrf_vpr_csr_vio_out_get();
 
@@ -157,23 +189,6 @@ static int gpio_hpf_pin_configure(uint8_t port, uint16_t pin, uint32_t flags)
 
 		nrf_vpr_csr_vio_out_set(outs & ~(BIT(pin_vio_index)));
 	}
-
-	nrf_gpio_pin_dir_t dir =
-		(flags & GPIO_OUTPUT) ? NRF_GPIO_PIN_DIR_OUTPUT : NRF_GPIO_PIN_DIR_INPUT;
-	nrf_gpio_pin_input_t input =
-		(flags & GPIO_INPUT) ? NRF_GPIO_PIN_INPUT_CONNECT : NRF_GPIO_PIN_INPUT_DISCONNECT;
-
-	/* Reconfigure the GPIO pin with the specified pull-up/pull-down configuration and drive
-	 * strength.
-	 */
-	nrfy_gpio_reconfigure(abs_pin, &dir, &input, &pull, &drive, NULL);
-
-	if (dir == NRF_GPIO_PIN_DIR_OUTPUT) {
-		nrf_vpr_csr_vio_dir_set(nrf_vpr_csr_vio_dir_get() | (BIT(pin_vio_index)));
-	}
-
-	/* Take control of the pin */
-	nrfy_gpio_pin_control_select(abs_pin, NRF_GPIO_PIN_SEL_VPR);
 
 	return 0;
 }
