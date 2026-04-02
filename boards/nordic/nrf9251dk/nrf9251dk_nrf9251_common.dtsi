@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 1 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 0";
+		};
+
+		button1: button_1 {
+			gpios = <&gpio0 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 1";
+		};
+
+		button2: button_2 {
+			gpios = <&gpio0 3 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 2";
+		};
+
+		button3: button_3 {
+			gpios = <&gpio0 2 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 3";
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led0: led_0 {
+			gpios = <&gpio2 2 0>;
+			label = "LED0";
+		};
+
+		led1: led_1 {
+			gpios = <&gpio2 3 0>;
+			label = "LED1";
+		};
+
+		led2: led_2 {
+			gpios = <&gpio2 7 0>;
+			label = "LED2";
+		};
+
+		led3: led_3 {
+			gpios = <&gpio2 9 0>;
+			label = "LED3";
+		};
+	};
+};
