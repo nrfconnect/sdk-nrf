@@ -52,6 +52,32 @@ config USBD_REMOTE_WAKEUP
 	help
 	  Set the Remote Wakeup attribute in the configuration.
 
+config USB_FEEDBACK_CAPTURE_NUM
+	int
+	default 100
+	help
+	  Number of USB 1ms blocks between which to calculate the feedback
+
+config USB_FEEDBACK_LOW_TIDE
+	int
+	default 900
+	help
+	  Gives a low-tide in the encoder input buffer in bytes
+	  Below which it will re-calculate the feedback level
+
+config USB_FEEDBACK_HIGH_TIDE
+	int
+	default 1020
+	help
+	  Gives a high-tide in the encoder input buffer in bytes
+	  Above which it will re-calculate the feedback level
+
+config AUDIO_USB_FEEDBACK
+	bool "Allow USB feedback"
+	depends on AUDIO_SOURCE_USB
+	help
+	  Turn on USB explicit feedback, only valid for headphone devices only
+
 #----------------------------------------------------------------------------#
 menuconfig NRF5340_AUDIO_POWER_MEASUREMENT
 	bool "Power measurement"

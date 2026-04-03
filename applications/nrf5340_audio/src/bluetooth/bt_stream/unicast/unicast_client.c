@@ -1505,7 +1505,7 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 		server->snk.waiting_for_disc = true;
 	}
 
-	if (dir == UNICAST_SERVER_BIDIR) {
+	if (dir == UNICAST_SERVER_BIDIR && !IS_ENABLED(CONFIG_AUDIO_USB_FEEDBACK)) {
 		/* If we need to discover both source and sink, do sink first */
 		ret = bt_bap_unicast_client_discover(conn, BT_AUDIO_DIR_SINK);
 		srv_store_unlock();
