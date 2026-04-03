@@ -11,6 +11,8 @@ Partitioning device memory is a crucial aspect of managing how a device's storag
 By default, the Partition Manager in the system dynamically generates a partition map, which is suitable for most applications that do not use Device Firmware Upgrades (DFU).
 For scenarios involving DFU, read the following sections.
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 .. _bootloader_partitioning_partitions_file:
 
 Partition map file

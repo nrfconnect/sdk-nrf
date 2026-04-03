@@ -24,6 +24,8 @@ All of them have a role in the creation of an application, from configuring the 
 * Ninja (comparable to Make) uses the build files to build the program.
 * The compiler (for example, GCC) creates the executables.
 
+.. include:: ../../includes/pm_deprecation.txt
+
 For a more detailed overview, see :ref:`app_build_system`.
 
 Depending on the board you are working with, check also its :ref:`hardware guide <device_guides>`, as some nRF Series families have specific exceptions and rules to be applied on top of the general configuration procedures.

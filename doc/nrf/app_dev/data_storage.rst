@@ -98,6 +98,8 @@ See the following sections for descriptions of the storage features from the tab
 Partitioning
 ------------
 
+.. include:: ../includes/pm_deprecation.txt
+
 Partitioning prevents storage subsystems from overwriting each other's data by giving them ownership over different non-volatile memory regions.
 In the |NCS|, you can use either :ref:`Devicetree fixed flash partitions <zephyr:flash_map_api>` or the :ref:`Partition Manager <partition_manager>` to manage non-volatile memory partitions.
 

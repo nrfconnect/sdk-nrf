@@ -52,6 +52,8 @@ The QSPI XIP split image feature supports network core image updates on nRF5340 
 Create the Partition Manager static files
 *****************************************
 
+.. include:: ../../includes/pm_deprecation.txt
+
 Create the following files:
 
 * A static :ref:`partition_manager` file to set up the partitions that will be used on the device.
