@@ -749,7 +749,7 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* Updated the networking samples for nRF7002DK to build with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` because the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_SMALL` profile type is not supported by nRF Connect SDK.
 
 NFC samples
 -----------
