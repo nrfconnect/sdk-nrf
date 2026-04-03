@@ -59,6 +59,8 @@ BUILD_ASSERT(CONFIG_BT_ISO_MAX_CIG == 1, "Only one CIG is supported");
 
 static le_audio_receive_cb receive_cb;
 
+BT_LE_AUDIO_TX_DEFINE(bt_le_audio_tx);
+
 static struct bt_cap_unicast_group *unicast_group;
 static bool unicast_group_created;
 
@@ -921,7 +923,7 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 			LOG_ERR("%s: Failed to get stream index: %d", __func__, ret);
 			return;
 		}
-		ERR_CHK(bt_le_audio_tx_stream_sent(idx));
+		ERR_CHK(bt_le_audio_tx_stream_sent(bt_le_audio_tx, idx));
 	} else {
 		LOG_WRN("Not in streaming state: %d", state);
 	}
@@ -1040,7 +1042,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		ERR_CHK(bt_le_audio_tx_stream_started(idx));
+		ERR_CHK(bt_le_audio_tx_stream_started(bt_le_audio_tx, idx));
 	}
 
 	/* NOTE: The string below is used by the Nordic CI system */
@@ -1881,8 +1883,10 @@ int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_ind
 		return -ECANCELED;
 	}
 
-	ret = bt_le_audio_tx_send(audio_frame, info.tx, info.num_active_streams);
-	if (ret) {
+	ret = bt_le_audio_tx_send(bt_le_audio_tx, audio_frame, info.tx, info.num_active_streams);
+	if (ret == -ECANCELED || ret == -ETIMEDOUT) {
+		LOG_INF("Adjusted audio TX: %d", ret);
+	} else if (ret) {
 		srv_store_unlock();
 		return ret;
 	}
@@ -1945,7 +1949,12 @@ int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		bt_le_audio_tx_init();
+		ret = bt_le_audio_tx_init(bt_le_audio_tx);
+		if (ret) {
+			LOG_ERR("Failed to initialize LE Audio TX: %d", ret);
+			srv_store_unlock();
+			return ret;
+		}
 	}
 
 	initialized = true;

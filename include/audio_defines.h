@@ -106,6 +106,8 @@ struct audio_metadata {
 	 * Note: Timestamps are still valid when this is set.
 	 */
 	uint32_t bad_data;
+
+	struct producer_info *prod_inf;
 };
 
 /**
