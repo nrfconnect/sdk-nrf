@@ -55,5 +55,6 @@ rsource "boot_banner/Kconfig"
 rsource "uicc_lwm2m/Kconfig"
 rsource "dtm_twowire/Kconfig"
 rsource "nrf_802154_callbacks_dispatcher/Kconfig"
+rsource "ppi_seq/Kconfig"
 
 endmenu

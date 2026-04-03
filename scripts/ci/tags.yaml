@@ -477,6 +477,12 @@ ci_samples_cellular:
     - zephyr/subsys/shell/
     - zephyr/subsys/storage/
 
+ci_samples_peripheral_ppi:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/samples/peripheral/ppi_seq_spi/
+    - nrf/lib/ppi_seq/
+
 ci_samples_peripheral_radio_test:
   files:
     - modules/crypto/mbedtls/
@@ -851,6 +857,12 @@ ci_tests_lib_hw_id:
   files:
     - nrf/lib/hw_id/
     - nrf/tests/lib/hw_id/
+
+ci_tests_lib_ppi_seq:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/lib/ppi_seq/
+    - nrf/lib/ppi_seq/
 
 ci_tests_subsys_debug:
   files:

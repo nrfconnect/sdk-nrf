@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PPI_SEQ
+	bool "PPI Sequencer"
+	select NRFX_TIMER
+	imply NRFX_GPPI
+	help
+	  PPI Sequencer is a module for periodically triggering hardware tasks
+	  (like SPI transfer) using PPI and timing source (GRTC, TIMER or RTC).
+
+config PPI_SEQ_MAX_PPI_HANDLES
+	int "Maximum number of PPI handles"
+	default 8
+	help
+	  Should not be touched unless RAM optimization is needed. For simpler use
+	  cases not all handles are used but each slot is just 4 bytes.
+config PPI_SEQ_I2C_SPI
+	bool "PPI Sequencer for I2C/SPI"
+	depends on $(dt_compat_enabled,$(DT_COMPAT_NORDIC_PPI_SEQ_I2C)) || \
+		   $(dt_compat_enabled,$(DT_COMPAT_NORDIC_PPI_SEQ_SPI))
+	default y
+	select NRFX_SPIM if $(dt_compat_enabled,$(DT_COMPAT_NORDIC_PPI_SEQ_SPI))
+	select NRFX_TWIM if $(dt_compat_enabled,$(DT_COMPAT_NORDIC_PPI_SEQ_I2C))
+	select PPI_SEQ
+	select PINCTRL

@@ -776,7 +776,7 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* Added the :ref:`ppi_seq_spi_sample` sample that demonstrates use of :ref:`ppi_seq_i2c_spi`.
 
 PMIC samples
 ------------
@@ -1023,7 +1023,11 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-* Added the :ref:`lib_accel_to_angle` library for converting three-dimensional acceleration into pitch and roll angles.
+* Added:
+
+  * The :ref:`lib_accel_to_angle` library for converting three-dimensional acceleration into pitch and roll angles.
+  * The :ref:`ppi_seq` library for triggering periodic hardware tasks using PPI.
+  * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
 
 * Deprecated the :ref:`ei_wrapper` library.
   Replaced by Edge Impulse SDK in `Edge AI Add-on for nRF Connect SDK`_.
