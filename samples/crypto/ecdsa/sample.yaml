@@ -2,15 +2,23 @@ sample:
   description: |
     This sample demonstrates ECDSA signing and verification using the ECDSA algorithm.
   name: ECDSA sample
+common:
+  sysbuild: true
+  tags:
+    - introduction
+    - psa
+    - sysbuild
+    - ci_samples_crypto
+    - crypto
+  harness: console
+  harness_config:
+    type: multi_line
+    regex:
+      - ".*Example finished successfully!.*"
 tests:
   sample.ecdsa.cc3xx:
-    sysbuild: true
     tags:
-      - introduction
-      - psa
       - cc3xx
-      - sysbuild
-      - ci_samples_crypto
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf5340dk/nrf5340/cpuapp
@@ -21,11 +29,6 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
-    harness: console
-    harness_config:
-      type: multi_line
-      regex:
-        - ".*Example finished successfully!.*"
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf5340dk/nrf5340/cpuapp
@@ -37,30 +40,15 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
   sample.ecdsa.oberon:
-    sysbuild: true
     tags:
-      - introduction
-      - psa
       - oberon
-      - sysbuild
-      - ci_samples_crypto
     platform_allow:
       - nrf5340dk/nrf5340/cpunet
-    harness: console
-    harness_config:
-      type: multi_line
-      regex:
-        - .*Example finished successfully!.*
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
   sample.ecdsa.cracen:
-    sysbuild: true
     tags:
-      - introduction
-      - psa
       - cracen
-      - sysbuild
-      - ci_samples_crypto
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -76,11 +64,6 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
-    harness: console
-    harness_config:
-      type: multi_line
-      regex:
-        - ".*Example finished successfully!.*"
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -97,20 +80,9 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
   sample.ecdsa.cracen.crypto_service:
-    sysbuild: true
     tags:
-      - introduction
-      - psa
       - cracen
-      - sysbuild
-      - crypto
-      - ci_samples_crypto
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
-    harness: console
-    harness_config:
-      type: multi_line
-      regex:
-        - ".*Example finished successfully!.*"
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
