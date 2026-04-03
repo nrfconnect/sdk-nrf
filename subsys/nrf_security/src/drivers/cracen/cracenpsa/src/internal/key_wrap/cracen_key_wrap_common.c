@@ -9,8 +9,10 @@
 
 #include <stddef.h>
 #include <cracen/statuscodes.h>
+#include <cracen/common.h>
 #include <cracen/mem_helpers.h>
 #include <silexpk/core.h>
+#include <sxsymcrypt/internal.h>
 
 /* RFC3394 and RFC5649 */
 _Static_assert(CRACEN_KEY_WRAP_BLOCK_SIZE == PSA_BITS_TO_BYTES(64),
@@ -22,10 +24,17 @@ psa_status_t cracen_key_wrap(const struct sxkeyref *keyref, uint8_t *block_array
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	struct sxblkcipher cipher;
+	int sx_status;
 	size_t length;
 	uint8_t intermediate_block[SX_BLKCIPHER_AES_BLK_SZ];
 	uint8_t cipher_input_data[SX_BLKCIPHER_AES_BLK_SZ];
 	size_t enc_step;
+
+	/* Acquire HW once for the entire wrap loop */
+	sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 
 	for (size_t j = 0; j <= CRACEN_KEY_WRAP_ITERATIONS_COUNT; j++) {
 		for (size_t i = 0; i < plaintext_blocks_count; i++) {
@@ -64,6 +73,7 @@ psa_status_t cracen_key_wrap(const struct sxkeyref *keyref, uint8_t *block_array
 	}
 
 exit:
+	sx_hw_release(&cipher.dma);
 	safe_memzero(intermediate_block, SX_BLKCIPHER_AES_BLK_SZ);
 	safe_memzero(cipher_input_data, SX_BLKCIPHER_AES_BLK_SZ);
 	return status;
@@ -74,9 +84,16 @@ psa_status_t cracen_key_unwrap(const struct sxkeyref *keyref, uint8_t *cipher_in
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	struct sxblkcipher cipher;
+	int sx_status;
 	size_t length;
 	uint8_t intermediate_block[SX_BLKCIPHER_AES_BLK_SZ];
 	size_t enc_step;
+
+	/* Acquire HW once for the entire unwrap loop */
+	sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 
 	for (size_t j = CRACEN_KEY_WRAP_ITERATIONS_COUNT + 1; j > 0; j--) {
 		for (size_t i = ciphertext_blocks_count; i > 0; i--) {
@@ -105,6 +122,7 @@ psa_status_t cracen_key_unwrap(const struct sxkeyref *keyref, uint8_t *cipher_in
 	}
 
 exit:
+	sx_hw_release(&cipher.dma);
 	safe_memzero(intermediate_block, SX_BLKCIPHER_AES_BLK_SZ);
 	return status;
 }
