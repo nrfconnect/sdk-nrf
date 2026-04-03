@@ -7,12 +7,18 @@ if [ ! -f /jlink/license_processed ] && [ ! -f /usr/bin/JLinkExe ] ; then
     cat '/jlink/license.txt'
     printf '\n'
     while true; do
-      read -p "Do you accept these Terms of Use (y/n)? " yn
-      case $yn in
-          [Yy]* ) export ACCEPT_JLINK_LICENSE=1; break;;
-          [Nn]* ) export ACCEPT_JLINK_LICENSE=0; break;;
-          * ) echo "Invalid input. Please use y/n";;
-      esac
+      if read -p "Do you accept these Terms of Use (y/n)? " yn ; then
+        case $yn in
+            [Yy]* ) export ACCEPT_JLINK_LICENSE=1; break;;
+            [Nn]* ) export ACCEPT_JLINK_LICENSE=0; break;;
+            * ) echo "Invalid input. Please use y/n";;
+        esac
+      else
+        echo "Failed to read answer, assuming no."
+        echo "To install manually, run:"
+        echo "    env ACCEPT_JLINK_LICENSE=1 /jlink/install.sh"
+        break
+      fi
     done
   fi
   if [[ "${ACCEPT_JLINK_LICENSE}" == "1" ]]; then
