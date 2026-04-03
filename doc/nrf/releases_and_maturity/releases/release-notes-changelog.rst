@@ -524,6 +524,9 @@ Bluetooth samples
       Scheduling high-duty directed advertising might cause problems with reacting to Bluetooth LE connection events from connected peers, which can result in disconnections.
       The low-duty cycle directed advertising is used only when there is at least one connected peer.
       An application-specified timeout of two seconds is used for each low-duty cycle directed advertising attempt.
+    * The Bluetooth TX processor thread stack size (:kconfig:option:`CONFIG_BT_TX_PROCESSOR_STACK_SIZE` Kconfig option) to prevent stack overflow when performing directed advertising.
+      On the ``nrf52840dk/nrf52840`` board target, the maximum measured stack usage is 780 bytes.
+      On the ``nrf54l15dk/nrf54l15/cpuapp`` board target, the maximum measured stack usage is 856 bytes.
 
   * Renamed sample-specific Kconfig options to use the ``SAMPLE_`` prefix and dropped the ``_ENABLED`` suffix to follow the Kconfig naming convention for samples.
 
