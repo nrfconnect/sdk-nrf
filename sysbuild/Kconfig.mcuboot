@@ -27,6 +27,7 @@ config MCUBOOT_MANIFEST_UPDATES
 	bool "Manifest-based updates"
 	depends on SOC_NRF54H20
 	depends on (MCUBOOT_UPDATEABLE_IMAGES > 1) && (MCUBOOT_MODE_DIRECT_XIP || MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT)
+	default y if !MCUBOOT_SIGN_MERGED_BINARY
 	help
 	  When enabled, supports transactional updates using manifests.
 	  This allows multiple images to be updated atomically. The manifest
