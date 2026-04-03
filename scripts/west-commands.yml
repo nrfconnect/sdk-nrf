@@ -44,3 +44,8 @@ west-commands:
       - name: ncs-ironside-se-update
         class: NcsIronSideSEUpdate
         help: IronSide SE update utility
+  - file: scripts/west_commands/ncs_cherry_pick.py
+    commands:
+      - name: ncs-cherry-pick
+        class: NcsCherryPick
+        help: NCS cherry-pick utility
