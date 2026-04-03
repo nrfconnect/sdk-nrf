@@ -22,6 +22,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
@@ -33,6 +34,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     harness: console
     harness_config:
@@ -83,6 +85,7 @@ tests:
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
       - nrf21540dk/nrf52840
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
