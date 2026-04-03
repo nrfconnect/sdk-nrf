@@ -48,3 +48,4 @@ To learn more, refer to the following documentation pages:
    mcuboot_serial_recovery
    mcuboot_image_compression
    sysbuild_image_ids
+   mcuboot_config
