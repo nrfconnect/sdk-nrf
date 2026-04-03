@@ -41,6 +41,11 @@ You can use the sample to transmit the button state from your development kit to
       When connected, the sample sends the state of **Button 0** on the development kit to the connected device, such as a phone or tablet.
       The mobile application on the device can display the received button state and control the state of **LED 2** on the development kit.
 
+   .. group-tab:: nRF54 TAG
+
+      When connected, the sample sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
+      The mobile application on the device can display the received button state and control the state of **LED 1** on the development kit.
+
 You can also use this sample to control the color of the RGB LED on the nRF52840 Dongle or Thingy:53.
 
 User interface
@@ -78,6 +83,11 @@ The user interface of the sample depends on the hardware platform you are using.
       Button 0:
          Send a notification with the button state: "pressed" or "released".
 
+   .. group-tab:: nRF54 TAG
+
+      LED 1:
+         Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds and a duty cycle of 50%.
+
    .. group-tab:: Thingy:53
 
       RGB LED:
@@ -114,6 +124,10 @@ Building and running
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_lbs`
 
 .. include:: /includes/build_and_run_ns.txt
+
+.. note::
+   To flash the :zephyr:board:`nrf54l15tag`, you need to plug into the ``DEBUG IN`` header on the nRF54L15 DK. 
+   TAG is not powered through that header, therefore, you must install the CR2032 cell.
 
 Minimal build
 =============
