@@ -35,12 +35,17 @@
 	partitions {
 		slot0_partition: partition@0 {
 			label = "image-0";
-			reg = <0x00000000 0x00178000>;
+			reg = <0x00000000 0x00170000>;
 		};
 
-		storage_partition: partition@178000 {
+		storage_partition: partition@170000 {
 			label = "storage";
-			reg = <0x00178000 0x00002000>;
+			reg = <0x00170000 0x00002000>;
+		};
+
+		log_history: partition@172000 {
+			label = "log-history";
+			reg = <0x172000 0x8000>;
 		};
 
 		coredump_partition: partition@17a000 {

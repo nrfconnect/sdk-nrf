@@ -84,6 +84,17 @@ config LOG_BACKEND_RPC_HISTORY_STORAGE_FCB_NUM_SECTORS
 	default 64
 	depends on LOG_BACKEND_RPC_HISTORY_STORAGE_FCB
 
+config LOG_BACKEND_RPC_HISTORY_STORE_ON_CRASH
+	bool "Dump log history to flash on fatal error"
+	depends on LOG_BACKEND_RPC_HISTORY
+	help
+	  When enabled, the custom fatal error handler will run on crash (before
+	  the system halts) so that the current RAM log history can be written
+	  to the log_history flash partition for retrieval after reboot.
+	  Requires the "log_history" flash partition. Only effective when log
+	  history storage is RAM; uses direct nrfx writes so it is safe in the
+	  fault path.
+
 endif # LOG_BACKEND_RPC_HISTORY
 
 config LOG_BACKEND_RPC_CRASH_LOG

@@ -149,7 +149,7 @@ if(CONFIG_WIFI_NRF70 AND CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
   ncs_add_partition_manager_config(pm.yml.wifi)
 endif()
 
-if(CONFIG_LOG_BACKEND_RPC_HISTORY_STORAGE_FCB)
+if(CONFIG_LOG_BACKEND_RPC_HISTORY_STORAGE_FCB OR CONFIG_LOG_BACKEND_RPC_HISTORY_STORE_ON_CRASH)
   ncs_add_partition_manager_config(pm.yml.log_history)
 endif()
 
