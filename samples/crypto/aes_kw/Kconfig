@@ -12,6 +12,14 @@ config SAMPLE_AES_KW_SHOW_KWP
 	  When activated, sample demonstrates AES-KWP (key wrap with padding)
 	  algorithm usage.
 
+config SAMPLE_AES_KW_KMU_DEMO
+	bool "Demonstrate KMU usage with key-encryption key"
+	help
+	  When activated, sample demonstrates AES-KW (or AES-KWP) operation
+	  with key-encryption key stored to the KMU.
+	  This also shows the capability to block the key, preventing its use
+	  in all subsequent cryptographic operations.
+
 endmenu
 
 source "Kconfig.zephyr"
