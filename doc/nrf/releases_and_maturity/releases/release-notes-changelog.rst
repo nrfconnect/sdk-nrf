@@ -230,7 +230,10 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth® LE
 -------------
 
-* Updated the Direct Test Mode HCI commands by making them optional through the :kconfig:option:`CONFIG_BT_CTLR_DTM_HCI` Kconfig option.
+* Updated
+
+  * The Direct Test Mode HCI commands by making them optional through the :kconfig:option:`CONFIG_BT_CTLR_DTM_HCI` Kconfig option.
+  * The SoftDevice Controller library to automatically select the :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE_MULTIROLE` Kconfig option when using FEM based on :kconfig:option:`CONFIG_MPSL_FEM`.
 
 Bluetooth Mesh
 --------------
