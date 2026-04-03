@@ -13,6 +13,13 @@ family:
             cpuclusters:
               - name: cpuapp
               - name: cpuflpr
+      - name: nrf92
+        socs:
+          - name: nrf9251
+            cpuclusters:
+              - name: cpuapp
+              - name: cpuppr
+              - name: cpuflpr
 runners:
   run_once:
     '--recover':
@@ -27,6 +34,8 @@ runners:
               - nrf54ls05a/cpuapp
           - qualifiers:
               - nrf54ls05b/cpuapp
+          - qualifiers:
+              - nrf9251/cpuapp
     '--erase':
       - runners:
           - jlink
@@ -52,3 +61,5 @@ runners:
               - nrf54ls05a/cpuapp
           - qualifiers:
               - nrf54ls05b/cpuapp
+          - qualifiers:
+              - nrf9251/cpuapp

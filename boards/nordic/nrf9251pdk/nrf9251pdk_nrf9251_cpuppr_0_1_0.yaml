@@ -1,0 +1,18 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+identifier: nrf9251pdk@0.1.0/nrf9251/cpuppr
+name: nRF9251-DK-nRF9251-PPR (rev. 0.1.0)
+type: mcu
+arch: riscv
+toolchain:
+  - zephyr
+sysbuild: true
+ram: 64
+flash: 64
+supported:
+  - counter
+  - gpio
+  - i2c
+  - pwm
+  - spi
