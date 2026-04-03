@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* CPURAD TCM memory map (radio_loader, no MCUboot). */
+#include "../common/memory_map_tcm.dtsi"
+
+&cpuapp_data {
+	reg = <0x2f000000 0x39000>;
+};
+
 / {
 	aliases {
 		/delete-property/ sw2;
