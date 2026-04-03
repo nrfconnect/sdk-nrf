@@ -250,6 +250,8 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_rt_fmac_dev_add(
  */
 enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+	unsigned int *rf_params_addr,
+	unsigned int vtf_buffer_start_address,
 #if defined(NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
 	int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */

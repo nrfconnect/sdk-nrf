@@ -560,7 +560,6 @@ unsigned char get_nrf_wifi_op_band(void)
 	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
 }
 
-#ifndef CONFIG_NRF71_RADIO_TEST
 struct rf_hex_param {
 	const char *hex_str;
 	uint8_t *bytes;
@@ -649,7 +648,6 @@ enum nrf_wifi_status nrf_wifi_fmac_config_vtf_params(struct nrf_wifi_fmac_dev_ct
 	*vtf_buffer_start_address = (unsigned int)vtf_buf;
 	return NRF_WIFI_STATUS_SUCCESS;
 }
-#endif /* CONFIG_NRF71_RADIO_TEST */
 
 enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
 {
@@ -740,6 +738,8 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 
 #ifdef CONFIG_NRF71_RADIO_TEST
 	status = nrf_wifi_rt_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
+					rpu_ctx_zep->phy_rf_params_addr,
+					rpu_ctx_zep->vtf_buffer_start_address,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 					sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
