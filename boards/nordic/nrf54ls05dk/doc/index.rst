@@ -1,19 +1,19 @@
-.. _board_nrf54lv10dk:
+.. _board_nrf54ls05dk:
 
-nRF54LV10 DK
+nRF54LS05 DK
 ############
 
 .. note::
 
-   You can find more information about the nRF54LV10A SoC on the `nRF54LV10A System-on-Chip`_ product page.
-   For the nRF54LV10A technical documentation and other resources (such as the SoC Datasheet), see :ref:`ug_nrf54l`.
+   You can find more information about the nRF54LS05B SoC on the `nRF54LS05B System-on-Chip`_ product page.
+   For the nRF54LS05B technical documentation and other resources (such as the SoC Datasheet), see :ref:`ug_nrf54l`.
 
-.. figure:: /images/nrf54lv10dk_nrf54lv10a.webp
-   :alt: nRF54LV10 DK
+.. figure:: /images/nrf54ls05dk_nrf54ls05b.webp
+   :alt: nRF54LS05 DK
 
-   nRF54LV10 DK
+   nRF54LS05 DK
 
-The nRF54LV10 Development Kit hardware provides support for the Nordic Semiconductor nRF54LV10A Arm Cortex-M33 CPU and the following devices:
+The nRF54LS05 Development Kit hardware provides support for the Nordic Semiconductor nRF54LS05B Arm Cortex-M33 CPU and the following devices:
 
 * :abbr:`SAADC (Successive Approximation Analog to Digital Converter)`
 * CLOCK
@@ -32,7 +32,7 @@ The nRF54LV10 Development Kit hardware provides support for the Nordic Semicondu
 Hardware
 ********
 
-nRF54LV10 DK has two crystal oscillators:
+nRF54LS05 DK has two crystal oscillators:
 
 * High-frequency 32 MHz crystal oscillator (HFXO)
 * Low-frequency 32.768 kHz crystal oscillator (LFXO)
@@ -42,16 +42,8 @@ You can configure the crystal oscillators to use either internal or external cap
 Programming and Debugging
 *************************
 
-You can build, flash, and debug applications for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` in the usual way.
+You can build, flash, and debug applications for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` in the usual way.
 See :ref:`zephyr:build_an_application` and :ref:`zephyr:application_run` for more details on building and running.
-
-Applications for the ``nrf54lv10dk/nrf54lv10a/cpuflpr`` board target must be built using sysbuild to include the ``vpr_launcher`` image for the application core.
-
-Enter the following command to compile ``hello_world`` for the FLPR core:
-
-.. code-block:: console
-
-   west build -p -b nrf54lv10dk/nrf54lv10a/cpuflpr --sysbuild
 
 Flashing
 ========
@@ -78,18 +70,18 @@ As an example, the following section shows how to build and flash the :zephyr:co
 Follow the instructions in the :ref:`zephyr:nordic_segger` page to install and configure all the necessary software.
 Refer to further information about :ref:`zephyr:nordic_segger_flashing`.
 
-To build and program the sample to the nRF54LV10 DK, complete the following steps:
+To build and program the sample to the nRF54LS05 DK, complete the following steps:
 
-1. Connect the nRF54LV10 DK to your computer using the IMCU USB port on the DK.
-#. Build the sample by running the following command:
+1. Connect, connect the nRF54LS05 DK to your computer using the IMCU USB port on the DK.
+#. Build, build the sample by running the following command:
 
   .. code-block:: console
 
      # From the root of the zephyr repository
-     west build -b nrf54lv10dk/nrf54lv10a/cpuapp samples/hello_world
+     west build -b nrf54ls05dk/nrf54ls05b/cpuapp samples/hello_world
      west flash
 
-Testing the LEDs and buttons on the nRF54LV10 DK
+Testing the LEDs and buttons on the nRF54LS05 DK
 ************************************************
 
-Test the nRF54LV10 DK with the :zephyr:code-sample:`blinky` sample.
+Test the nRF54LS05 DK with the :zephyr:code-sample:`blinky` sample.
