@@ -22,4 +22,6 @@ tests:
   sample.dect.dect_shell.nrf_cloud_mqtt:
     extra_args: EXTRA_CONF_FILE="nrf_cloud_mqtt.conf"
   sample.dect.dect_shell.nrf_cloud_coap:
-    extra_args: EXTRA_CONF_FILE="nrf_cloud_coap.conf"
+    extra_args: >
+      EXTRA_CONF_FILE="nrf_cloud_coap.conf"
+      DTC_OVERLAY_FILE="nrf_cloud_coap.overlay"

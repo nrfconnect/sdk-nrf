@@ -18,10 +18,41 @@
 
 &gd25lb256 {
 	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		modem_trace: partition@0 {
+			reg = <0x0 0x100000>; /* 1 MB */
+		};
+	};
 };
 
 /* Enable UART1 at 1 megabaud for printing modem traces  */
 &uart1 {
 	status = "okay";
 	current-speed = <1000000>;
+};
+
+/* Increase modem (shared) memory. */
+&sram0_ns_modem {
+	reg = <0x0 0x8800>;
+	ranges = <0x0 0x0 0x8800>;
+
+	/* Add modem IPC receive. */
+	cpucell_cpuapp_ipc_shm_trace: sram0_ns_modem@47a8 {
+		reg = <0x47a8 0x4000>;
+	};
+};
+
+/* Delete Non-Secure application memory so we can move it. */
+/delete-node/ &sram0_ns_app;
+
+&sram0_ns {
+	sram0_ns_app: sram0_ns@8800 {
+		/* Redefine smaller Non-Secure application memory. */
+		reg = <0x8800 0x2f800>;
+	};
 };

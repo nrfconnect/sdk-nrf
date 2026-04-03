@@ -9,7 +9,9 @@
 #include <zephyr/sys/hash_function.h>
 #include <net/fota_download.h>
 #include <net/downloader.h>
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 #include <pm_config.h>
+#endif
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
 

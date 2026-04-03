@@ -35,7 +35,9 @@ tests:
   sample.net.https_client.lte.tfm-mbedtls:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG="overlay-tfm-nrf91.conf"
+    extra_args: >
+      OVERLAY_CONFIG="overlay-tfm-nrf91.conf"
+      DTC_OVERLAY_FILE="overlay-tfm-nrf91.overlay"
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     platform_allow:

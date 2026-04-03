@@ -1,0 +1,104 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0x8000>;
+		};
+
+		slot0_partition: partition@8000 {
+			label = "image-0";
+			reg = <0x0008000 0x14000>;
+		};
+
+		slot1_partition: partition@1c000 {
+			label = "image-1";
+			reg = <0x0001c000 0x14000>;
+		};
+
+		slot0_ns_partition: partition@30000 {
+			label = "image-0-nonsecure";
+			reg = <0x00030000 0xcc000>;
+		};
+
+		storage_partition: partition@fc000 {
+			label = "storage";
+			reg = <0x000fc000 0x4000>;
+		};
+	};
+};
+
+&flash_ext {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_ns_partition: partition@0 {
+			label = "image-1-nonsecure";
+			reg = <0x00000000 0xcc000>;
+		};
+
+		fmfu_storage_partition: partition@d0000 {
+			label = "full_modem_firmware_update";
+			reg = <0x000d0000 0x400000>;
+		};
+
+		external_flash_partition: partition@4d0000 {
+			label = "external_flash";
+			reg = <0x004d0000 0x1b30000>;
+		};
+	};
+};
+
+&sram0 {
+	sram0_s: sram@0 {
+		/* Secure image memory */
+		reg = <0x0 0x8000>;
+	};
+
+	sram0_ns: sram@8000 {
+		/* Non-Secure image memory */
+		reg = <0x8000 0x38000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x8000 0x38000>;
+
+		sram0_ns_modem: sram0_ns@0 {
+			/* Modem (shared) memory */
+			reg = <0x0 0x4800>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x0 0x4800>;
+
+			cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+				/* Modem IPC control */
+				reg = <0x0 0x728>;
+			};
+
+			cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+				/* Modem IPC transmit */
+				reg = <0x728 0x2080>;
+			};
+
+			cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@27a8 {
+				/* Modem IPC receive */
+				reg = <0x27a8 0x2000>;
+			};
+		};
+
+		sram0_ns_app: sram0_ns@4800 {
+			/* Non-Secure application memory */
+			reg = <0x4800 0x33800>;
+		};
+	};
+};

@@ -6,4 +6,16 @@
 
 &mx25r64 {
 	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		fmfu_storage: partition@0 {
+			reg = <0x0 0x100000>; /* 1 MB */
+		};
+	};
 };
+
+#include <common/nordic/nrf91_partitions_mcuboot.dtsi>

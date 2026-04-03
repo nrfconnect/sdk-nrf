@@ -24,3 +24,5 @@
 	/* Disabled in non-secure image. */
 	status = "disabled";
 };
+
+#include <common/nordic/nrf91_partitions_full_tfm.dtsi>
