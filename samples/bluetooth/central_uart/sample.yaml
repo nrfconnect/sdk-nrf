@@ -37,6 +37,19 @@ tests:
       regex:
         - "Starting Bluetooth Central UART sample"
     timeout: 15
+  sample.bluetooth.central_uart.usb_enter_dongle:
+    sysbuild: true
+    build_only: true
+    tags:
+      - bluetooth
+      - ci_build
+      - ci_samples_bluetooth
+    platform_allow:
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
+    extra_args:
+      - FILE_SUFFIX=usb_enter_dongle
   sample.bluetooth.central_uart.bt_rpc:
     sysbuild: true
     build_only: true

@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+/* This is nRF54lm20dongle_nrf54lm20b_cpuapp peculiar partitioning for MCUboot and firmware loader
+ * slot0_partition spans RRAM with can be update by the firmware loader and booted by MCUboot.
+ * beginning of the slot0_partition must match with the beginning of the slot0_partition of the user
+ * application. Althought Application can be build for smaler partition and live some space for
+ * other purposes like a storage partition.
+ */
+
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(2036)>;
+	ranges = <0x0 0x0 DT_SIZE_K(2036)>;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Matches board layout */
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(24)>;
+		};
+
+		/* Matches board layout */
+		slot1_partition: partition@6000 {
+			label = "image-1";
+			reg = <0x6000 DT_SIZE_K(116)>;
+		};
+
+		/* Start matches board layout */
+		slot0_partition: partition@23000 {
+			label = "image-0";
+			reg = <0x23000 DT_SIZE_K(1896)>;
+		};
+	};
+};
