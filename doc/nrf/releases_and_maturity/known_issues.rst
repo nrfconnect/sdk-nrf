@@ -3048,6 +3048,15 @@ NCSDK-18263: |NCS| samples might fail to boot on Thingy:53
 Bluetooth samples
 =================
 
+.. rst-class:: v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
+
+NCSDK-37899: High-duty cycle directed advertising in the :ref:`peripheral_hids_mouse` sample might lead to disconnecting connected peers
+  Scheduling high-duty cycle directed advertising might cause problems with reacting to Bluetooth LE connection events from connected peers, which can result in disconnections.
+  In older |NCS| versions, the high-duty cycle directed advertising might not start when there are connected peers to not disrupt connections.
+
+  **Workaround:** Use low-duty cycle directed advertising when there are peers connected to the device.
+  Manually cherry-pick and apply commit with fix from main (commit hash: ``tbd``).
+
 .. rst-class:: v3-2-1 v3-2-0
 
 NCSDK-36880: The :ref:`direct_test_mode` sample cannot allocate a DPPI channel on nRF54H20 devices
