@@ -635,6 +635,7 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_cs_create_config = 1;
 	cmds->hci_le_cs_remove_config = 1;
 	cmds->hci_le_cs_read_local_supported_capabilities = 1;
+	cmds->hci_le_cs_read_local_supported_capabilities_v2 = 1;
 	cmds->hci_le_cs_read_remote_supported_capabilities = 1;
 	cmds->hci_le_cs_write_cached_remote_supported_capabilities = 1;
 #if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST)
