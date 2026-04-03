@@ -16,7 +16,14 @@ This section lists single |NCS| samples for various uses that are not part of ot
    :caption: Subpages
    :glob:
 
-   ../../../samples/*/README
+   ../../../samples/app_event_manager/README
+   ../../../samples/app_event_manager_profiler_tracer/README
+   ../../../samples/app_jwt/README
+   ../../../samples/caf/README
+   ../../../samples/caf_sensor_manager/README
+   ../../../samples/event_manager_proxy/README
+   ../../../samples/hw_id/README
+   ../../../samples/nrf_profiler/README
    ../../../samples/ipc/*/README
    ../../../samples/mpsl/*/README
    ../../../samples/benchmarks/*/README
