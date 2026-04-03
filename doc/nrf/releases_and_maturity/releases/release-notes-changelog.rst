@@ -353,6 +353,9 @@ nRF5340 Audio
   * Support for multiple independent coordinated sets in :ref:`unicast client app<nrf53_audio_unicast_client_app>`.
     When all the devices in a coordinated set are disconnected, the SIRK is cleared, allowing a new unicast group to be formed with a new SIRK without the need to restart the application.
 
+  * :kconfig:option:`CONFIG_LTO` to enable link-time optimization for the application.
+    It improves application performance and reduces code size.
+
 * Updated:
 
   * The application to switch to the new USB stack introduced in Zephyr 3.4.0.
