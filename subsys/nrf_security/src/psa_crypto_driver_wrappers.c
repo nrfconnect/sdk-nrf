@@ -134,6 +134,10 @@
 #include "ironside_psa.h"
 #endif
 
+#if defined(PSA_NEED_KMU_PUSH_DRIVER)
+#include "kmu_push.h"
+#endif
+
 /* Repeat above block for each JSON-declared driver during autogeneration */
 #endif /* MBEDTLS_PSA_CRYPTO_DRIVERS */
 
@@ -487,6 +491,11 @@ psa_driver_wrapper_get_key_buffer_size_from_key_data(const psa_key_attributes_t 
 #endif
 		return cracen_get_opaque_size(attributes, key_buffer_size);
 #endif
+#if defined(PSA_NEED_KMU_PUSH_DRIVER)
+	case PSA_KEY_LOCATION_KMU_PUSH:
+		return kmu_push_get_opaque_size(attributes, key_buffer_size);
+#endif
+
 	default:
 		(void)key_type;
 		(void)data;
@@ -660,6 +669,7 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 			return status;
 		}
 #endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER */
+
 		/*
 		 * Fall through, meaning no accelerator supports this operation.
 		 * Oberon doesn't support importing symmetric keys at the moment
@@ -674,6 +684,11 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 		return cracen_import_key(attributes, data, data_length, key_buffer,
 					   key_buffer_size, key_buffer_length, bits);
 #endif
+#if defined(PSA_NEED_KMU_PUSH_DRIVER)
+	case PSA_KEY_LOCATION_KMU_PUSH:
+		return kmu_push_import_key(attributes, data, data_length, key_buffer,
+					   key_buffer_size, key_buffer_length, bits);
+#endif /* PSA_NEED_KMU_PUSH_DRIVER */
 
 	default:
 		(void)status;
@@ -791,6 +806,11 @@ psa_status_t psa_driver_wrapper_get_builtin_key(psa_drv_slot_number_t slot_numbe
 		return (cracen_get_builtin_key(slot_number, attributes, key_buffer, key_buffer_size,
 					       key_buffer_length));
 #endif /* PSA_CRYPTO_DRIVER_CRACEN */
+#if defined(PSA_NEED_KMU_PUSH_DRIVER)
+	case PSA_KEY_LOCATION_KMU_PUSH:
+		return kmu_push_get_builtin_key(slot_number, attributes, key_buffer, key_buffer_size,
+						key_buffer_length);
+#endif /* PSA_NEED_KMU_PUSH_DRIVER */
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
 		return tfm_builtin_key_loader_get_builtin_key(slot_number, attributes, key_buffer,
@@ -3234,6 +3254,10 @@ psa_status_t psa_driver_wrapper_destroy_builtin_key(const psa_key_attributes_t *
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 		return cracen_destroy_key(attributes);
+#endif
+#if defined(PSA_NEED_KMU_PUSH_DRIVER)
+	case PSA_KEY_LOCATION_KMU_PUSH:
+		return kmu_push_destroy_key(attributes);
 #endif
 	}
 
