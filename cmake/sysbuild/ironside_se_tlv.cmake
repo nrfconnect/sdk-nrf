@@ -129,6 +129,7 @@ function(add_ironside_se_tlv_conf_validate_targets prefix images)
         --in-periphconf-hex-mcuboot-tlv
         ${image_signed_hex} ${image_periphconf_tlv_bin} ${image_start_offset}
       )
+      list(APPEND input_file_deps ${image_signed_hex})
     else()
       set(image_signed_bin)
       sysbuild_get(image_signed_bin IMAGE ${image} VAR BYPRODUCT_KERNEL_SIGNED_BIN_NAME CACHE)
@@ -143,9 +144,8 @@ function(add_ironside_se_tlv_conf_validate_targets prefix images)
         --in-periphconf-bin-mcuboot-tlv
         ${image_signed_bin} ${image_periphconf_tlv_bin} ${image_start_offset}
       )
+      list(APPEND input_file_deps ${image_signed_bin})
     endif()
-
-    list(APPEND input_file_deps ${image})
   endforeach()
 
   if(input_file_args)
