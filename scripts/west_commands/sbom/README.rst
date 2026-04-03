@@ -28,9 +28,15 @@ The process of using the ``ncs-sbom`` command involves the following steps:
    for example, read `SPDX identifier`_ from ``SPDX-License-Identifier`` tag.
    For details, see :ref:`west_sbom Detectors`.
 
-#. Create an output report containing all the files and license information related to them,
+#. Create an output report containing all the files and license information related to them.
+   Depending on the selected output format, the command can also group files into packages
+   and include package metadata in the report,
    for example, write a report file in HTML format.
    For details, see :ref:`west_sbom Specifying output`.
+
+When the input is a build directory, the command starts from the linked target,
+walks the Ninja dependency graph to collect build inputs, validates the result
+against the :file:`.map` file, and checks archive contents with the GNU ar tool.
 
 Requirements
 ************
@@ -69,10 +75,19 @@ Use the following command to install the requirements.
            pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
 
 .. note::
-   The ``ncs-sbom`` command uses the `Scancode-Toolkit`_ that requires installation of additional dependencies on a Linux system.
+   The ``scancode-toolkit`` detector relies on the `Scancode-Toolkit`_ which is
+   not part of the standard NCS toolchain bundle.
+   On Windows and Linux, the :file:`requirements-west-ncs-sbom.txt` file installs
+   ScanCode Toolkit together with its Python dependencies.
+
+   On Linux, ScanCode Toolkit requires installation of additional system dependencies.
    To install the required tools on Ubuntu, run::
 
       sudo apt install python-dev bzip2 xz-utils zlib1g libxml2-dev libxslt1-dev libpopt0
+
+   On macOS with Apple Silicon installing ScanCode Toolkit with ``pip`` is not supported.
+   Install ScanCode Toolkit separately from a release archive and use ``--scancode``
+   to point to the executable if needed.
 
    For more details, see `Scancode-Toolkit Installation`_.
 
@@ -80,6 +95,7 @@ Using the command
 *****************
 
 The following examples demonstrate the basic usage of the ``ncs-sbom`` command.
+The input options and output options can be combined as needed.
 
 * To see the help, run the following command:
 
@@ -87,19 +103,33 @@ The following examples demonstrate the basic usage of the ``ncs-sbom`` command.
 
      west ncs-sbom -h
 
-* To get an analysis of the built application and generate a report to the :file:`sbom_report.html` file in the build directory, run:
+* To analyze a build directory and generate the default HTML report in the build directory run:
 
   .. parsed-literal::
      :class: highlight
 
       west ncs-sbom -d *build-directory*
 
-* To analyze the selected files and generate a report to an HTML file, run:
+* To analyze a build directory and generate an SPDX report run:
+
+  .. parsed-literal::
+     :class: highlight
+
+     west ncs-sbom -d *build-directory* --output-spdx *file-name.spdx*
+
+* To analyze selected files and generate an HTML report run:
 
   .. parsed-literal::
      :class: highlight
 
      west ncs-sbom --input-files *file1* *file2* --output-html *file-name.html*
+
+* To analyze selected files and generate an SPDX report run:
+
+  .. parsed-literal::
+     :class: highlight
+
+     west ncs-sbom --input-files *file1* *file2* --output-spdx *file-name.spdx*
 
 .. _west_sbom Specifying input:
 
@@ -132,7 +162,10 @@ You can also mix them, for example, to generate a report for the application and
      west ncs-sbom -d *build* -d *build/mcuboot*
 
   .. note::
-      If the build directory is a sysbuild root (contains :file:`domains.yaml`), the command automatically generates one report for each domain.
+      If the build directory is a sysbuild root (contains :file:`domains.yaml`) the command runs one analysis for each domain.
+      It generates one output file for each requested output format and each domain.
+      For example, with the default settings it generates one HTML report for each domain.
+      If both HTML and SPDX outputs are requested, it generates two files for each domain.
       To adjust the output file names, append ``_<domain>`` before the extension (for example, :file:`sbom_report_with_mcuboot.html`).
       To control where ``{domain}`` appears in the filename, include ``{domain}`` in ``--output-html`` or ``--output-spdx`` (for example, ``--output-spdx sbom_{domain}_sysbuild.spdx``).
       In PS, escape the curly braces with backticks.
@@ -142,6 +175,17 @@ You can also mix them, for example, to generate a report for the application and
       If you modify the :file:`.elf` file after the linking, the modifications are not applied.
 
       The ``-d`` option is experimental.
+
+  .. note::
+      The build directory input expects the standard west/CMake/Ninja files including
+      :file:`build.ninja`, :file:`CMakeCache.txt` and the target :file:`.map` file.
+      The same flow can also be used for NCS Bare Metal applications if the build
+      directory provides these files.
+
+  .. note::
+      Toolchain package detection uses metadata written by the build system.
+      The built-in runtime license mappings cover the Zephyr SDK layouts bundled
+      with NCS including ``arm-zephyr-eabi`` and ``riscv64-zephyr-elf``.
 
 * Provide a list of input files directly on the command line:
 
@@ -210,7 +254,7 @@ You can specify the format of the report output using the ``output`` argument.
 
      --output-spdx *file-name.spdx*
 
-  The SPDX report includes:
+  The SPDX report groups files into packages and includes:
 
   * Package supplier information (auto-detected from git URLs or specified via ``--package-supplier``)
   * Component name, version, and download location
@@ -218,6 +262,8 @@ You can specify the format of the report output using the ``output`` argument.
   * Common Platform Enumeration (CPE) identifiers when specified via ``--package-cpe``
   * Dependency relationships showing supply chain connections
   * File checksums and license information
+
+  SPDX 2.2 is currently the supported machine-readable standardized output format.
 
   This format meets requirements from:
 
@@ -282,6 +328,8 @@ The ``ncs-sbom`` command includes the following detectors:
       * NCS-SBOM-Apply-To-File: lib/**/*.lib
       */
 
+  This mechanism is also used for precompiled libraries including libraries in ``nrfxlib``.
+
 * ``cache-database`` - Use license information detected and cached earlier in the cache database file.
   Disabled by default.
 
@@ -302,6 +350,12 @@ The ``ncs-sbom`` command includes the following detectors:
         :class: highlight
 
         west ncs-sbom --input-files *files ...* --license-detectors scancode-toolkit --output-cache-database *cache-database.json*
+
+* ``git-info`` - Detect the source repository URL and revision for files and group files into packages.
+  Enabled by default.
+
+  The information is used in the HTML and SPDX outputs to group files into packages.
+  If ``--package-supplier`` is not provided the supplier is auto-detected from the repository URL.
 
 If you prefer a non-default set of detectors, you can provide a list of comma-separated detectors with the ``--license-detectors`` option, for example:
 
@@ -380,6 +434,12 @@ The HTML report has following structure:
    * Link to license text or more details if available.
    * All files from the input covered by this license.
 
+* Details about each detected package:
+
+   * Package name and version if available.
+   * URL if available.
+   * Licenses detected in files from the package.
+
 * License texts added to this report.
 
 .. _west_sbom Extracting from build:
@@ -417,7 +477,9 @@ There are two additional methods for improving the correctness of the above algo
 
   Exceptions are the runtime and standard libraries.
   You can specify the list of exceptions with the ``--allowed-in-map-file-only`` option.
-  By default, it contains a few common names for the runtime and standard libraries.
+  By default, it contains common names for the runtime and standard libraries
+  including ``libgcc.a``, ``libc*.a``, ``libstdc++*.a``, ``libm*.a``, ``crti.o``,
+  ``crt0.o``, ``crtn.o``, ``crtbegin.o``, and ``crtend.o``.
 
   If the :file:`.map` file and the associated :file:`.elf` file have different names,
   you can provide the :file:`.map` file after the ``:`` sign following the target,
@@ -434,3 +496,5 @@ Integration with the GN meta-build system
 The :file:`ncs-sbom` script reads a list of all commands needed to build provided targets.
 If there is a ``gn gen`` command, the script enters the command's build directory and tries to extract files from it using the same method as described earlier.
 The results are integrated with the main build directory results.
+
+This also applies to applications that use GN-based external projects such as Matter applications.
