@@ -3,6 +3,8 @@
 Partition manager integration
 #############################
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 The Modem library, which runs on the application core, shares an area of RAM memory with the nRF91 Series modem core.
 During the initialization, the Modem library accepts the boundaries of this area of RAM and configures the communication with the modem core accordingly.
 
