@@ -528,7 +528,7 @@
 /samples/matter/                          @nrfconnect/ncs-matter
 /samples/mcuboot/                         @nrfconnect/ncs-eris
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
-/samples/net/                             @nrfconnect/ncs-cia
+/samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-bifrost
 /samples/nfc/                             @nrfconnect/ncs-radio-sw
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-eris
 /samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
