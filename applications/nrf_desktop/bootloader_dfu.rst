@@ -290,6 +290,16 @@ See the :ref:`ug_kmu_provisioning_overview` documentation for details.
 MCUboot bootloader features specific to nRF54H series
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The nRF54H Series devices support the use of the Internal Trusted Storage (ITS) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
+To use ITS in the MCUboot bootloader, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_ITS` sysbuild Kconfig option.
+You must also make sure to provision the public key to your target device before running the firmware.
+See the :ref:`ug_nrf54h20_keys` documentation for details.
+
+.. note::
+    To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE` sysbuild Kconfig option.
+    This option enables generating a default :file:`keyfile.json` file during the build process based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option.
+    The automatic provisioning is only performed if the west flash command is executed with the ``--erase`` or ``--recover`` flag.
+
 On the nRF54H devices, the MCUboot direct-xip mode uses by default a merged image slot that combines both application and radio core images.
 The merged binary size is the sum of the application image, the radio core image, and the padding between them.
 The merged image slot configuration is indicated by the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY` sysbuild Kconfig option.
