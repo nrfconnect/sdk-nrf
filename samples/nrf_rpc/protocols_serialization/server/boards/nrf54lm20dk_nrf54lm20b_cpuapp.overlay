@@ -4,6 +4,28 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/dt-bindings/memory-attr/memory-attr-arm.h>
+
+/* Log RPC history: fixed region at top of cpuapp SRAM (same 0x4100 layout as nRF54L15). */
+/ {
+	soc {
+		/* cpuapp_sram is 511 KiB @ 0x20000000; reserve top 0x4100 ending @ 0x2007fc00 */
+		log_rpc_history_region: memory@2007bb00 {
+			compatible = "zephyr,memory-region", "mmio-sram";
+			reg = <0x2007bb00 0x4100>;
+			zephyr,memory-region = "LOG_RPC_HISTORY";
+			zephyr,memory-attr = <DT_MEM_ARM(ATTR_MPU_RAM_NOCACHE)>;
+			status = "okay";
+		};
+	};
+};
+
+/* App SRAM minus log history (511 KiB - 0x4100 = 0x7bb00). */
+&cpuapp_sram {
+	reg = <0x20000000 0x7bb00>;
+	ranges = <0x0 0x20000000 0x7bb00>;
+};
+
 / {
 	chosen {
 		nordic,rpc-uart = &uart21;

@@ -4,6 +4,24 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/dt-bindings/memory-attr/memory-attr-arm.h>
+
+/* Log RPC history: one fixed region (buffer + control + magic) at top of 256 KB SRAM.
+ * Layout: [16 KB buffer][pbuf struct + magic]. MPU: non-executable, non-cacheable.
+ */
+/ {
+	soc {
+		/* 0x4100 = 0x4000 buffer + 0x100 control; base so region ends at 0x20040000 */
+		log_rpc_history_region: memory@2003bf00 {
+			compatible = "zephyr,memory-region", "mmio-sram";
+			reg = <0x2003bf00 0x4100>;
+			zephyr,memory-region = "LOG_RPC_HISTORY";
+			zephyr,memory-attr = <DT_MEM_ARM(ATTR_MPU_RAM_NOCACHE)>;
+			status = "okay";
+		};
+	};
+};
+
 / {
 	chosen {
 		nordic,rpc-uart = &uart21;
@@ -84,9 +102,10 @@
 	hw-flow-control;
 };
 
+/* 240 KB app SRAM; top 17 KB (0x4100) = log_rpc_history_region (buffer + control). */
 &cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(256)>;
-	ranges = <0x0 0x20000000 0x40000>;
+	reg = <0x20000000 0x3bf00>;
+	ranges = <0x0 0x20000000 0x3bf00>;
 };
 
 &rram_controller {
