@@ -207,15 +207,10 @@ int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
 		    uint8_t pcm_bit_depth, void *output, size_t output_size,
 		    uint8_t output_channels)
 {
-	uint8_t bytes_per_sample;
-	size_t step;
-	uint8_t *pointer_input;
-	uint8_t *pointer_output;
-
 	if (input == NULL || output == NULL || input == output || input_size == 0 ||
 	    channel >= output_channels || pcm_bit_depth == 0 ||
 	    pcm_bit_depth > PSCM_MAX_CARRIER_BIT_DEPTH || pcm_bit_depth % 8 || output_size == 0 ||
-	    output_channels == 0) {
+	    output_channels == 0 || !IS_ALIGNED(input, 4) || !IS_ALIGNED(output, 4)) {
 		LOG_WRN("Invalid parameter(s) passed to interleaver");
 		return -EINVAL;
 	}
@@ -225,17 +220,40 @@ int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
 		return -EINVAL;
 	}
 
-	bytes_per_sample = pcm_bit_depth / 8;
-	step = bytes_per_sample * (output_channels - 1);
-	pointer_input = (uint8_t *)input;
-	pointer_output = (uint8_t *)output + (bytes_per_sample * channel);
+	uint8_t bytes_per_sample = pcm_bit_depth / 8;
+	/*
+	 * Use types corresponding to pcm_bit_depth to make iterating over an array faster
+	 * when pcm_bit_depth is 16 or 32. Use uint8_t in 8/24 bits case.
+	 */
+	if (bytes_per_sample == sizeof(uint16_t)) {
+		const uint16_t *input_16 = (const uint16_t *)input;
+		uint16_t *output_16 = (uint16_t *)output + channel;
+		const uint16_t *input_16_end = input_16 + (input_size / sizeof(uint16_t));
 
-	for (size_t i = 0; i < input_size; i += bytes_per_sample) {
-		for (size_t j = 0; j < bytes_per_sample; j++) {
-			*pointer_output++ = *pointer_input++;
+		while (input_16 < input_16_end) {
+			*output_16 = *input_16++;
+			output_16 += output_channels;
 		}
+	} else if (bytes_per_sample == sizeof(uint32_t)) {
+		const uint32_t *input_32 = (const uint32_t *)input;
+		uint32_t *output_32 = (uint32_t *)output + channel;
+		const uint32_t *input_32_end = input_32 + (input_size / sizeof(uint32_t));
 
-		pointer_output += step;
+		while (input_32 < input_32_end) {
+			*output_32 = *input_32++;
+			output_32 += output_channels;
+		}
+	} else {
+		const uint8_t *input_8 = (const uint8_t *)input;
+		uint8_t *output_8 = (uint8_t *)output + (bytes_per_sample * channel);
+		size_t step = bytes_per_sample * (output_channels - 1);
+
+		for (size_t i = 0; i < input_size; i += bytes_per_sample) {
+			for (uint8_t j = 0; j < bytes_per_sample; j++) {
+				*output_8++ = *input_8++;
+			}
+			output_8 += step;
+		}
 	}
 
 	return 0;
