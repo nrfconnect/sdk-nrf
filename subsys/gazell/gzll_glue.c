@@ -92,7 +92,11 @@ static void gazell_swi_irq_handler(void *args)
 bool gzll_glue_init(void)
 {
 	bool is_ok = true;
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	const struct device *clkctrl = DEVICE_DT_GET_ONE(nordic_nrf_clock);
+#else
+	const struct device *clkctrl = DEVICE_DT_GET_ONE(nordic_nrfx_clock_hfclk);
+#endif
 	int err;
 	nrf_ppi_channel_t ppi_channel[3];
 	nrfx_gppi_handle_t handle;

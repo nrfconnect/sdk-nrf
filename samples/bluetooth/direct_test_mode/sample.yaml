@@ -11,6 +11,8 @@ tests:
   sample.bluetooth.direct_test_mode:
     sysbuild: true
     build_only: true
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf21540dk/nrf52840
       - nrf52840dk/nrf52840
@@ -32,6 +34,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: FILE_SUFFIX=hci
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf21540dk/nrf52840
       - nrf52840dk/nrf52840
@@ -48,6 +52,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf21540ek
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -55,6 +61,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: FILE_SUFFIX=usb_5340
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -64,6 +72,8 @@ tests:
     extra_args:
       - SHIELD=nrf21540ek
       - FILE_SUFFIX=usb_5340
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -72,6 +82,7 @@ tests:
     build_only: true
     extra_args: SHIELD=nrf21540ek
     extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
       - CONFIG_DTM_POWER_CONTROL_AUTOMATIC=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
@@ -80,6 +91,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: DSB_CONFIG_DTM_NO_DFE=y
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -87,6 +100,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf2220ek
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - nrf54l15dk/nrf54l15/cpuapp
@@ -99,6 +114,8 @@ tests:
     extra_args:
       - SHIELD=nrf2220ek
       - FILE_SUFFIX=usb_5340
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -106,6 +123,128 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: FILE_SUFFIX=usb_54h20
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpurad
+    platform_allow: nrf54h20dk/nrf54h20/cpurad
+  sample.bluetooth.direct_test_mode.legacy:
+    sysbuild: true
+    build_only: true
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+    integration_platforms:
+      - nrf21540dk/nrf52840
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54h20dk/nrf54h20/cpurad
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf21540dk/nrf52840
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+  sample.bluetooth.direct_test_mode.hci.legacy:
+    sysbuild: true
+    build_only: true
+    extra_args: FILE_SUFFIX=hci
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+    integration_platforms:
+      - nrf21540dk/nrf52840
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54h20dk/nrf54h20/cpurad
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf21540dk/nrf52840
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+  sample.bluetooth.direct_test_mode.nrf5340_nrf21540.legacy:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf21540ek
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
+  sample.bluetooth.direct_test_mode.nrf5340_usb.legacy:
+    sysbuild: true
+    build_only: true
+    extra_args: FILE_SUFFIX=usb_5340
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
+  sample.bluetooth.direct_test_mode.nrf5340_nrf21540_usb.legacy:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SHIELD=nrf21540ek
+      - FILE_SUFFIX=usb_5340
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
+  sample.bluetooth.direct_test_mode.nrf5340_nrf21540.no_automatic_power.legacy:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf21540ek
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DTM_POWER_CONTROL_AUTOMATIC=n
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
+  sample.bluetooth.direct_test_mode.nrf5340_no_dfe.legacy:
+    sysbuild: true
+    build_only: true
+    extra_args: DSB_CONFIG_DTM_NO_DFE=y
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
+  sample.bluetooth.direct_test_mode.nrf2220.legacy:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf2220ek
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.bluetooth.direct_test_mode.nrf5340_nrf2220_usb.legacy:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SHIELD=nrf2220ek
+      - FILE_SUFFIX=usb_5340
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
+  sample.bluetooth.direct_test_mode.nrf54h20_usb.legacy:
+    sysbuild: true
+    build_only: true
+    extra_args: FILE_SUFFIX=usb_54h20
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow: nrf54h20dk/nrf54h20/cpurad

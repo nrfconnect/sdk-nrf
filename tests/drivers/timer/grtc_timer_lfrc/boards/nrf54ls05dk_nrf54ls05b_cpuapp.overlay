@@ -9,3 +9,7 @@
 &timer20 {
 	status = "okay";
 };
+
+&lfclk {
+	k32src = "rc";
+};

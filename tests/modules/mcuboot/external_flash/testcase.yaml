@@ -1,6 +1,26 @@
 tests:
   mcuboot.external_flash:
     sysbuild: true
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp
+    tags:
+      - mcuboot
+      - external_flash
+      - sysbuild
+      - ci_tests_modules_mcuboot
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp
+
+  mcuboot.external_flash.legacy:
+    sysbuild: true
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
