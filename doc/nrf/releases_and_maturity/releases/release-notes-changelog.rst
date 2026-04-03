@@ -776,7 +776,10 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`radio_test` sample:
+
+  * Added the new ``start_tx_sweep_duty_cycle`` shell command.
+    It allows for running a TX sweep with silent periods between each frequency.
 
 PMIC samples
 ------------

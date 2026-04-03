@@ -31,7 +31,6 @@
 	"Toggle DC/DC state regardless of state value"
 #endif
 
-
 /* Radio parameter configuration. */
 static struct radio_param_config {
 	/** Radio transmission pattern. */
@@ -55,6 +54,12 @@ static struct radio_param_config {
 	/** Duty cycle. */
 	uint32_t duty_cycle;
 
+	/** Radio transmission time in us */
+	uint16_t t_tx_us;
+
+	/** Radio sleep time in us */
+	uint16_t t_sleep_us;
+
 	/**
 	 * Number of packets to be received.
 	 * Set to zero for continuous RX.
@@ -73,6 +78,8 @@ static struct radio_param_config {
 	.channel_end = 80,
 	.delay_ms = 10,
 	.duty_cycle = 50,
+	.t_tx_us = 80,
+	.t_sleep_us = 160,
 #if CONFIG_FEM
 	.fem.tx_power_control = FEM_USE_DEFAULT_TX_POWER_CONTROL
 #endif /* CONFIG_FEM */
@@ -210,6 +217,45 @@ static int cmd_data_rate_set(const struct shell *shell, size_t argc,
 	if (argc == 2) {
 		shell_error(shell, "Unknown argument: %s", argv[1]);
 		return -EINVAL;
+	}
+
+	return 0;
+}
+
+static int cmd_sweep_duty_cycle_timings_set(const struct shell *shell, size_t argc,
+			     char **argv)
+{
+	if (argc == 1) {
+		shell_help(shell);
+		return SHELL_CMD_HELP_PRINTED;
+	}
+
+	if (argc != 3) {
+		shell_error(shell, "%s: bad parameters count", argv[0]);
+		return -EINVAL;
+	}
+
+	if (argc == 3) {
+		uint8_t tx_time = atoi(argv[1]);
+		uint8_t sleep_time = atoi(argv[2]);
+
+		const uint8_t min_tx_time_us = 20;
+		const uint8_t min_sleep_time_us = 80;
+
+		if (sleep_time < min_sleep_time_us) {
+			shell_error(shell, "Too short sleep time: %ius.\nNeeds to be at least: %ius", sleep_time,
+				min_sleep_time_us);
+			return -EINVAL;
+		}
+
+		if (tx_time < min_tx_time_us) {
+			shell_error(shell, "Too short tx time: %ius.\nNeeds to be at least: %ius", tx_time,
+				min_tx_time_us);
+			return -EINVAL;
+		}
+
+		config.t_tx_us = tx_time;
+		config.t_sleep_us = sleep_time;
 	}
 
 	return 0;
@@ -627,6 +673,26 @@ static int cmd_tx_sweep_start(const struct shell *shell, size_t argc,
 	test_in_progress = true;
 
 	shell_print(shell, "TX sweep");
+	return 0;
+}
+
+static int cmd_tx_sweep_duty_cycle_start(const struct shell *shell, size_t argc,
+			      char **argv)
+{
+memset(&test_config, 0, sizeof(test_config));
+	test_config.type = TX_SWEEP_WITH_DUTY_CYCLE;
+	test_config.mode = config.mode;
+	test_config.params.tx_sweep_duty_cycle.channel_index_start = 0;
+	test_config.params.tx_sweep_duty_cycle.channel_index_end = 71;
+	test_config.params.tx_sweep_duty_cycle.t_tx_us = config.t_tx_us;
+	test_config.params.tx_sweep_duty_cycle.t_sleep_us = config.t_sleep_us;
+	test_config.params.tx_sweep_duty_cycle.txpower = config.txpower;
+
+	radio_test_start(&test_config);
+
+	test_in_progress = true;
+
+	shell_print(shell, "TX sweep with duty cycle");
 	return 0;
 }
 
@@ -1439,6 +1505,8 @@ SHELL_CMD_REGISTER(cancel, NULL, "Cancel the sweep or the carrier",
 		   cmd_cancel);
 SHELL_CMD_REGISTER(data_rate, &sub_data_rate, "Set data rate <sub_cmd>",
 		   cmd_data_rate_set);
+SHELL_CMD_REGISTER(sweep_duty_cycle_timings, NULL, "Set timings for sweep <tx_time> (us) <sleep_time> (us)",
+		   cmd_sweep_duty_cycle_timings_set);
 SHELL_CMD_REGISTER(start_tx_carrier, NULL, "Start the TX carrier",
 		   cmd_tx_carrier_start);
 SHELL_CMD_REGISTER(start_tx_modulated_carrier, NULL,
@@ -1470,6 +1538,7 @@ SHELL_CMD_REGISTER(parameters_print, NULL,
 		   cmd_print);
 SHELL_CMD_REGISTER(start_rx_sweep, NULL, "Start RX sweep", cmd_rx_sweep_start);
 SHELL_CMD_REGISTER(start_tx_sweep, NULL, "Start TX sweep", cmd_tx_sweep_start);
+SHELL_CMD_REGISTER(start_tx_sweep_duty_cycle, NULL, "Start TX sweep with duty cycle", cmd_tx_sweep_duty_cycle_start);
 SHELL_CMD_REGISTER(start_rx, NULL, "Start RX", cmd_rx_start);
 SHELL_CMD_REGISTER(print_rx, NULL, "Print RX payload", cmd_print_payload);
 #if defined(TOGGLE_DCDC_HELP)
