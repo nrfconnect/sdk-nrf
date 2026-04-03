@@ -67,8 +67,6 @@ static nrfx_gpiote_t * const gpiote_inst[GPIO_COUNT] = {
 
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
-#define CLOCK_NODE DT_INST(0, nordic_nrf_clock)
-
 static const struct device *gpio_port0_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 
 /* Check if the system has GPIO port 1 */

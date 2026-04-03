@@ -13,6 +13,27 @@ common:
   timeout: 30
 
 tests:
-  nrf.extended.drivers.clock.clock_control_nrf5: {}
+  nrf.extended.drivers.clock.clock_control_nrf5:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+      - CONFIG_CLOCK_CONTROL_NRFX_K32SRC_RC_CALIBRATION=n
   nrf.extended.drivers.clock.clock_control_nrf5_lfclk_rc:
-    extra_args: EXTRA_CONF_FILE="nrf_lfclk_rc.conf"
+    extra_args:
+      - EXTRA_CONF_FILE="nrf_lfclk_rc.conf"
+      - EXTRA_DTC_OVERLAY_FILE="nrf_lfclk_rc.overlay"
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+      - CONFIG_CLOCK_CONTROL_NRFX_K32SRC_RC_CALIBRATION=n
+  
+  nrf.extended.drivers.clock.clock_control_nrf5.legacy:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION=n
+  nrf.extended.drivers.clock.clock_control_nrf5_lfclk_rc.legacy:
+    extra_args:
+      - EXTRA_CONF_FILE="nrf_lfclk_rc.conf"
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION=n

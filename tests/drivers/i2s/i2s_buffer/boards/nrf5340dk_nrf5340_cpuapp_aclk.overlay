@@ -4,6 +4,10 @@
 	hfclkaudio-frequency = <11289600>;
 };
 
+&hfclkaudio {
+	hfclkaudio-frequency = <11289600>;
+};
+
 &i2s0 {
 	clock-source = "ACLK";
 };

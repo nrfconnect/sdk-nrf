@@ -4,6 +4,39 @@ tests:
       - drivers
       - clock_control
       - ci_tests_zephyr_drivers_clock_control
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+      - CONFIG_CLOCK_CONTROL_NRFX_CALIBRATION_MAX_SKIP=1
+      - CONFIG_CLOCK_CONTROL_NRFX_CALIBRATION_TEMP_DIFF=2
+      - CONFIG_CLOCK_CONTROL_NRFX_CALIBRATION_PERIOD=150
+      - CONFIG_CLOCK_CONTROL_NRFX_CALIBRATION_DEBUG=y
+      - CONFIG_CLOCK_CONTROL_NRFX_CALIBRATION_LF_ALWAYS_ON=n
+      - CONFIG_CLOCK_CONTROL_NRFX_USES_TEMP_SENSOR=n
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    timeout: 30
+    extra_args: EXTRA_DTC_OVERLAY_FILE="clock_calibration.overlay"
+
+  nrf.extended.drivers.clock.nrf5_clock_calibration.legacy:
+    tags:
+      - drivers
+      - clock_control
+      - ci_tests_zephyr_drivers_clock_control
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_MAX_SKIP=1
+      - CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_TEMP_DIFF=2
+      - CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD=150
+      - CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_DEBUG=y
+      - CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_LF_ALWAYS_ON=n
+      - CONFIG_CLOCK_CONTROL_NRF_USES_TEMP_SENSOR=n
     platform_allow:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp

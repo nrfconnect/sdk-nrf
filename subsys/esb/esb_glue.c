@@ -24,23 +24,24 @@
 #include "esb_glue.h"
 #include "esb_workarounds.h"
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF2)
+#if defined(CONFIG_CLOCK_CONTROL_NRF_COMMON)
 #include <hal/nrf_lrcconf.h>
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF2) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) */
 
 LOG_MODULE_REGISTER(esb_glue, CONFIG_ESB_LOG_LEVEL);
 
 #if defined(CONFIG_ESB_CLOCK_INIT)
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
+#if defined(CONFIG_CLOCK_CONTROL_NRF) || defined(CONFIG_CLOCK_CONTROL_NRFX_COMMON)
 
 int esb_clocks_start(void)
 {
 	int err;
 	int res;
-	struct onoff_manager *clk_mgr;
 	struct onoff_client clk_cli;
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
+	struct onoff_manager *clk_mgr;
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	if (!clk_mgr) {
 		LOG_ERR("Unable to get the Clock manager");
@@ -50,6 +51,14 @@ int esb_clocks_start(void)
 	sys_notify_init_spinwait(&clk_cli.notify);
 
 	err = onoff_request(clk_mgr, &clk_cli);
+#else
+	const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+							(nordic_nrfx_clock_hfclk),
+							(nordic_nrfx_clock_xo)));
+
+	sys_notify_init_spinwait(&clk_cli.notify);
+	err = nrf_clock_control_request(dev, NULL, &clk_cli);
+#endif
 	if (err < 0) {
 		LOG_ERR("Clock request failed: %d", err);
 		return err;
@@ -82,6 +91,8 @@ int esb_clocks_start(void)
 int esb_clocks_stop(void)
 {
 	int err;
+
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	struct onoff_manager *clk_mgr;
 
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
@@ -91,6 +102,14 @@ int esb_clocks_stop(void)
 	}
 
 	err = onoff_release(clk_mgr);
+#else
+const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+							(nordic_nrfx_clock_hfclk),
+							(nordic_nrfx_clock_xo)));
+
+	err = nrf_clock_control_release(dev, NULL);
+#endif
+
 	if (err < 0) {
 		LOG_ERR("Clock release failed: %d", err);
 		return err;
@@ -103,7 +122,7 @@ int esb_clocks_stop(void)
 	return 0;
 }
 
-#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+#elif defined(CONFIG_CLOCK_CONTROL_NRF_COMMON)
 
 int esb_clocks_start(void)
 {
@@ -179,6 +198,6 @@ int esb_clocks_stop(void)
 
 #else
 BUILD_ASSERT(false, "No Clock Control driver");
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) || defined(CONFIG_CLOCK_CONTROL_NRFX_COMMON) */
 
 #endif /* defined(CONFIG_ESB_CLOCK_INIT) */
