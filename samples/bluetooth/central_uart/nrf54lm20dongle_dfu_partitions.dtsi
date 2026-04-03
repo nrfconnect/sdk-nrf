@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* This file modifies RRAM partitioning for MCUboot and firmware loader by
+ * extending slot0_partition (application image) to the end of RRAM.
+ *
+ * While the application may use extra partitions, such as storage_partition
+ * defined by default, this partitioning of application-dedicated region is
+ * irrelevant to the bootloader images.
+ */
+
+/delete-node/ &storage_partition;
+
+&slot0_partition {
+	/* Start matches board layout */
+	reg = <0x23000 DT_SIZE_K(1896)>;
+};
