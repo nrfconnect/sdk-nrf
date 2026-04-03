@@ -17,6 +17,18 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
 
+  sample.dfu.ab.s2ram:
+    extra_args:
+      - mcuboot_CONFIG_SOC_EARLY_RESET_HOOK=y
+      - CONFIG_PM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
+      - CONFIG_POWEROFF=y
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
   sample.dfu.ab.ironside_se_conf:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
