@@ -740,7 +740,13 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 #endif /* PSA_NEED_CRACEN_HMAC */
 #ifdef PSA_NEED_CRACEN_ECDH
 	case METADATA_ALG_ECDH:
-		psa_set_key_type(key_attr, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
+		if (metadata->size == METADATA_ALG_KEY_BITS_255) {
+			psa_set_key_type(key_attr,
+					 PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_MONTGOMERY));
+		} else {
+			psa_set_key_type(key_attr,
+					 PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
+		}
 		psa_set_key_algorithm(key_attr, PSA_ALG_ECDH);
 		break;
 #endif
@@ -967,8 +973,11 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #endif /* PSA_NEED_CRACEN_HMAC */
 #ifdef PSA_NEED_CRACEN_ECDH
 	case PSA_ALG_ECDH:
-		if (!can_derive(key_attr) || PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(
-						     key_attr)) != PSA_ECC_FAMILY_SECP_R1) {
+		if (!can_derive(key_attr) ||
+		    (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
+			     PSA_ECC_FAMILY_SECP_R1 &&
+		     PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
+			     PSA_ECC_FAMILY_MONTGOMERY)) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_ECDH;
