@@ -71,7 +71,7 @@ if(CONFIG_ZMS AND NOT (CONFIG_SETTINGS_ZMS OR CONFIG_SETTINGS_ZMS_LEGACY))
   ncs_add_partition_manager_config(pm.yml.zms)
 endif()
 
-if(CONFIG_NRF_MODEM_LIB)
+if(CONFIG_NRF_MODEM_LIB AND NOT CONFIG_NRF_MODEM_LIB_ZEPHYR_MODEM)
   ncs_add_partition_manager_config(pm.yml.libmodem)
 endif()
 

@@ -22,7 +22,6 @@
 #include "nrf_provisioning_internal.h"
 
 #include <modem/lte_lc.h>
-#include <modem/modem_key_mgmt.h>
 #include <nrf_modem_at.h>
 
 

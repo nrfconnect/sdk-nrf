@@ -3,12 +3,17 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Must be sourced before NRF_MODEM_LIB so it can be used as a dependency
+# without creating a circular reference.
+rsource "zephyr_modem/Kconfig"
+
 menuconfig NRF_MODEM_LIB
 	bool "Modem library"
-	depends on (SOC_SERIES_NRF91 && TRUSTED_EXECUTION_NONSECURE) || SOC_NRF9280_CPUAPP
-	select NRF_MODEM
+	depends on (SOC_SERIES_NRF91 && TRUSTED_EXECUTION_NONSECURE) || SOC_NRF9280_CPUAPP \
+		|| NRF_MODEM_LIB_ZEPHYR_MODEM
+	select NRF_MODEM if !NRF_MODEM_LIB_ZEPHYR_MODEM
 	select EXPERIMENTAL if SOC_NRF9280_CPUAPP
-	imply NET_SOCKETS_OFFLOAD
+	imply NET_SOCKETS_OFFLOAD if !NRF_MODEM_LIB_ZEPHYR_MODEM
 	imply NET_IPV4
 	imply NET_IPV6
 	# The modem must be turned on to achieve low power consumption.
