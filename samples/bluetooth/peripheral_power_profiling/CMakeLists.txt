@@ -13,4 +13,10 @@ target_sources(app PRIVATE
   src/main.c
   src/pwr_service.c
 )
+
+if(CONFIG_BT_EXT_ADV)
+  target_sources(app PRIVATE src/advertising_ext.c)
+else()
+  target_sources(app PRIVATE src/advertising_legacy.c)
+endif()
 # NORDIC SDK APP END
