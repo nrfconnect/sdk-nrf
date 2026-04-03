@@ -13,6 +13,24 @@
 		rpc-alive-led = &led0;
 		fatal-error-trigger = &button0;
 	};
+
+	openthread_config: openthread {
+		compatible = "openthread,config";
+		diag-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>,
+			     <&gpio0 14 GPIO_ACTIVE_LOW>,
+			     <&gpio0 15 GPIO_ACTIVE_LOW>,
+			     <&gpio0 16 GPIO_ACTIVE_LOW>,
+			     <&gpio0 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,
+			     <&gpio0 12 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,
+			     <&gpio0 24 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,
+			     <&gpio0 25 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+	};
+
+	coredump_device: coredump-device {
+		compatible = "zephyr,coredump";
+		coredump-type = "COREDUMP_TYPE_MEMCPY";
+		status = "okay";
+	};
 };
 
 /delete-node/ &boot_partition;

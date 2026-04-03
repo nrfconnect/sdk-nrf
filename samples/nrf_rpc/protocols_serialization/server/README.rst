@@ -36,19 +36,36 @@ Configuration
 
 |config|
 
-Snippets
-========
+Additional configuration files
+==============================
 
-.. |snippet| replace:: :makevar:`server_SNIPPET`
+You can configure the sample using additional Kconfig fragments (:file:`.conf`) and devicetree overlays (:file:`.overlay`) passed to the build system.
 
-The following snippets are available:
+Use :makevar:`EXTRA_CONF_FILE` to apply extra Kconfig fragments and :makevar:`EXTRA_DTC_OVERLAY_FILE` to apply extra devicetree overlays.
+When multiple files are provided, separate them with ``;``.
 
-* ``ble`` - Enables the server part of the :ref:`Bluetooth LE RPC <ble_rpc>`.
-* ``coex`` - Enables the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation.
-* ``debug`` - Enables debugging features, such as :c:func:`__ASSERT()` statements and verbose logging.
-* ``log_rpc`` - Enables the log backend part of the :ref:`Logging RPC <log_rpc>`.
-* ``openthread`` - Enables the server part of the :ref:`OpenThread RPC <ot_rpc>`.
-* ``nfc`` - Enables the server part of the :ref:`NFC RPC <nfc_rpc>`.
+Examples:
+
+* Enable verbose logging and asserts::
+
+    west build -b nrf54l15dk/nrf54l15/cpuapp -- \
+      -DEXTRA_CONF_FILE=verbose.conf
+
+* Enable MPSL software coexistence (coex)::
+
+    west build -b nrf54l15dk/nrf54l15/cpuapp -- \
+      -DEXTRA_CONF_FILE=coex.conf \
+      -DEXTRA_DTC_OVERLAY_FILE=coex.overlay
+
+Optional configuration files shipped with this sample:
+
+* :file:`verbose.conf` - Development-oriented options: asserts, UART logging, and DBG log levels.
+* :file:`log_rpc.conf` - Enables Logging over RPC and core dump support used by the client to retrieve crash logs.
+* :file:`ble.conf` - Enables the server part of the :ref:`Bluetooth LE RPC <ble_rpc>`.
+* :file:`openthread.conf` - Enables the server part of the :ref:`OpenThread RPC <ot_rpc>` and required OpenThread features.
+* :file:`nfc.conf` - Enables the server part of the :ref:`NFC RPC <nfc_rpc>`.
+* :file:`coex.conf` - Enables MPSL Software Coexistence.
+  Use together with the :file:`coex.overlay` file (pass it via :makevar:`EXTRA_DTC_OVERLAY_FILE`).
 
 User interface
 **************
@@ -59,7 +76,7 @@ User interface
 
       Button 1:
 
-         * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
+         * When the :file:`log_rpc.conf` file is provided, triggers a fatal error.
            This is used for testing the core dump feature.
          * Otherwise: not available.
 
@@ -67,7 +84,7 @@ User interface
 
       Button 0:
 
-         * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
+         * When the :file:`log_rpc.conf` file is provided, triggers a fatal error.
            This is used for testing the core dump feature.
          * Otherwise: not available.
 

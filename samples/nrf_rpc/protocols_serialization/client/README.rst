@@ -36,20 +36,39 @@ Configuration
 
 |config|
 
-Snippets
-========
+Additional configuration files
+==============================
 
-.. |snippet| replace:: :makevar:`client_SNIPPET`
+You can configure the sample using additional Kconfig fragments (:file:`.conf`) and devicetree overlays (:file:`.overlay`) passed to the build system.
 
-The following snippets are available:
+Use :makevar:`EXTRA_CONF_FILE` to apply extra Kconfig fragments and :makevar:`EXTRA_DTC_OVERLAY_FILE` to apply extra devicetree overlays.
+When multiple files are provided, separate them with ``;``.
 
-* ``ble`` - Enables the client part of the :ref:`Bluetooth LE RPC <ble_rpc>` and ``bt`` shell commands.
+Examples:
+
+* Enable verbose logging and asserts::
+
+    west build -b nrf54l15dk/nrf54l15/cpuapp -- \
+      -DEXTRA_CONF_FILE=verbose.conf
+
+* Enable MPSL software coexistence (coex)::
+
+    west build -b nrf54l15dk/nrf54l15/cpuapp -- \
+      -DEXTRA_CONF_FILE=coex.conf \
+      -DEXTRA_DTC_OVERLAY_FILE=coex.overlay
+
+Optional configuration files shipped with this sample:
+
+* :file:`verbose.conf` - Development-oriented options: asserts and DBG log levels for this sample and nRF RPC modules.
+* :file:`log_rpc.conf` - Enables the log forwarder part of the :ref:`Logging RPC <log_rpc>` and ``log_rpc`` shell commands.
+* :file:`ble.conf` - Enables the client part of the :ref:`Bluetooth LE RPC <ble_rpc>` and ``bt`` shell commands.
   It also enables the :ref:`nus_service_readme` and :ref:`throughput_readme`.
-* ``coex`` - Enables ``coex`` shell commands for controlling the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation on the server device.
-* ``debug`` - Enables debugging features, such as :c:func:`__ASSERT()` statements and verbose logging.
-* ``log_rpc`` - Enables the log forwarder part of the :ref:`Logging RPC <log_rpc>` and ``log_rpc`` shell commands.
-* ``openthread`` - Enables the client part of the :ref:`OpenThread RPC <ot_rpc>` and ``ot`` shell commands.
-* ``nfc`` - Enables the client part of the :ref:`NFC RPC <nfc_rpc>` and ``nfc`` shell commands.
+* :file:`openthread.conf` - Enables the client part of the :ref:`OpenThread RPC <ot_rpc>` and ``ot`` shell commands.
+* :file:`nfc.conf` - Enables the client part of the :ref:`NFC RPC <nfc_rpc>` and ``nfc`` shell commands.
+* :file:`coex.conf` - Enables ``coex`` shell commands for controlling the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation on the server device.
+  Use together with the :file:`coex.overlay` file (pass it via :makevar:`EXTRA_DTC_OVERLAY_FILE`).
+
+For automated testing, CI builds might add global snippets such as ``ci-shell`` and ``zperf`` together with the configuration fragments above (see the :file:`sample.yaml` file).
 
 Building and running
 ********************

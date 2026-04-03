@@ -22,17 +22,20 @@ common:
 
 tests:
   sample.nrf_rpc.protocols_serialization.server.rpc_ble:
-    extra_args: >
-      SNIPPET="ble"
+    extra_args:
+      - EXTRA_CONF_FILE=ble.conf
   sample.nrf_rpc.protocols_serialization.server.rpc_ot:
-    extra_args: >
-      SNIPPET="openthread"
+    extra_args:
+      - EXTRA_CONF_FILE=openthread.conf
   sample.nrf_rpc.protocols_serialization.server.rpc:
-    extra_args: >
-      SNIPPET="ble;openthread;debug;coex;log_rpc"
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE=coex.overlay
+      - EXTRA_CONF_FILE="ble.conf;openthread.conf;verbose.conf;log_rpc.conf;coex.conf"
   sample.nrf_rpc.protocols_serialization.server.rpc_ci:
-    extra_args: >
-      SNIPPET="ble;openthread;debug;coex;log_rpc;ci-shell"
+    extra_args:
+      - SNIPPET="ci-shell"
+      - EXTRA_DTC_OVERLAY_FILE=coex.overlay
+      - EXTRA_CONF_FILE="ble.conf;openthread.conf;verbose.conf;log_rpc.conf;coex.conf"
     extra_configs:
       - CONFIG_NRF_RPC_UTILS_CRASH_GEN=y
       - CONFIG_OPENTHREAD_RPC_ERASE_SETTINGS=y
