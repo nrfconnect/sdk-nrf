@@ -397,6 +397,77 @@ static enum net_verdict dect_net_l2_recv(struct net_if *iface, struct net_pkt *p
 
 		/* ... and pass also to us */
 	}
+#if defined(CONFIG_NET_L2_DECT_BR)
+	/* PSY mod:  handle forwarding */
+	else if (!net_ipv6_is_ll_addr((struct in6_addr *)NET_IPV6_HDR(pkt)->dst) &&
+		!net_ipv6_is_addr_mcast_link((struct in6_addr *)NET_IPV6_HDR(pkt)->dst)) {
+
+
+		struct dect_net_l2_context *l2_ctx = net_if_l2_data(iface);
+		if (! l2_ctx->device_type & DECT_DEVICE_TYPE_FT) {
+			/* only handle FT, on't do anything more otherwise */
+			goto exit;
+		}
+
+		/* Check if this packet is destined for us — if so don't forward it */
+		struct net_if_addr *ifaddr = net_if_ipv6_addr_lookup(
+			(struct in6_addr *)NET_IPV6_HDR(pkt)->dst, NULL);
+		if (ifaddr) {
+			/* It's for us, let the stack handle it locally */
+			goto exit;
+		}
+
+		struct net_if *eth_iface =
+			net_if_get_first_by_type(&NET_L2_GET_NAME(ETHERNET));
+
+		if (eth_iface) {
+			//
+			struct net_linkaddr *eth_mac = net_if_get_link_addr(eth_iface);
+
+			/* Fix src: replace DECT RD ID with our ethernet MAC */
+			struct net_linkaddr *src = net_pkt_lladdr_src(pkt);
+			src->len = 0;
+			src->type = NET_LINK_ETHERNET;
+			memcpy(src->addr, eth_mac->addr, eth_mac->len);
+			src->len = eth_mac->len;
+
+			/* Fix dst: look up the default router's MAC on the ethernet interface */
+			struct net_if_router *router = net_if_ipv6_router_find_default(eth_iface, NULL);
+			if (router) {
+				struct net_nbr *nbr = net_ipv6_nbr_lookup(eth_iface, &router->address.in6_addr);
+				if (nbr) {
+					struct net_linkaddr *router_mac = net_nbr_get_lladdr(nbr);
+					struct net_linkaddr *dst = net_pkt_lladdr_dst(pkt);
+					dst->len = 0;
+					dst->type = NET_LINK_ETHERNET;
+					memcpy(dst->addr, router_mac->addr, router_mac->len);
+					dst->len = router_mac->len;
+				} else {
+					LOG_WRN("No neighbor entry for default router - cannot forward");
+					goto exit;
+				}
+			} else {
+				LOG_WRN("No default router on ethernet iface - cannot forward");
+				goto exit;
+			}
+
+			net_pkt_set_ll_proto_type(pkt, NET_ETH_PTYPE_IPV6);
+			net_pkt_set_iface(pkt, eth_iface);
+			net_pkt_set_family(pkt, AF_INET6);
+
+			if (net_if_send_data(eth_iface, pkt) == NET_DROP) {
+				LOG_ERR("Failed to forward pkt to ethernet iface");
+				net_pkt_unref(pkt);
+			}
+			return NET_OK;
+		}
+	}
+#endif
+
+
+
+
+
 exit:
 	return NET_CONTINUE;
 }
