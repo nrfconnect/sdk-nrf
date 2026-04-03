@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * MCUboot runs as its own Zephyr image; it does not inherit the application
+ * board overlay. PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY requires chosen
+ * nordic,pm-ext-flash and the external NOR enabled here (see also
+ * boards/nrf7002dk_nrf5340_cpuapp.overlay).
+ */
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+};
