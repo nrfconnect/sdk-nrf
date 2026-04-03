@@ -130,6 +130,7 @@
 .. _`nrfx API documentation`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/index.html
 .. _`nrfx 4.0 migration note`: https://docs.nordicsemi.com/bundle/nrfx_4.0.1/page/md_doc_nrfx_4_0_migration_guide.html
 .. _`nrfx NVMC driver`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/group_nrfx_nvmc.html
+.. _`nrfx SPIM driver`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/group_nrfx_spim.html
 .. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
 .. _`Changelog for nrfx 2.3.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-230---2020-08-19
 .. _`Changelog for nrfx 2.4.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-240---2020-11-13
@@ -253,6 +254,8 @@
 .. _`Zephyr hostap fork`: https://github.com/zephyrproject-rtos/hostap
 
 .. _`tfm_secure_peripheral_partition.yaml`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/tfm/tfm_secure_peripheral/secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in
+
+.. _`nrfx SPIM sample`: https://github.com/zephyrproject-rtos/hal_nordic/tree/master/nrfx/samples/src/nrfx_spim
 
 .. ### Source: github.io
 
@@ -2069,7 +2072,13 @@
 .. _`BICR configuration example in DTS format`: https://github.com/nrfconnect/sdk-zephyr/blob/v3.7.99-ncs2/boards/nordic/nrf54h20dk/nrf54h20dk_bicr.dtsi
 .. _`BICR configuration example in JSON format`: https://github.com/nrfconnect/sdk-zephyr/blob/v4.0.99-ncs1/boards/nordic/nrf54h20dk/bicr.json
 
+.. _`Zephyr's device driver API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers
+.. _`Zephyr's pinctrl pin configuration`: https://docs.zephyrproject.org/latest/hardware/pinctrl/index.html#pin-configuration
+.. _`Zephyr's pinctrl API`: https://docs.zephyrproject.org/latest/doxygen/html/group__pinctrl__interface.html
+.. _`Zephyr's SPI driver API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/spi.h
+.. _`Zephyr's sensor driver API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/sensor.h
 .. _`Zephyr's nRF clock control API extensions`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/clock_control/nrf_clock_control.h
+.. _`Zephyr's SPI driver twister test`: https://github.com/nrfconnect/sdk-zephyr/tree/main/tests/drivers/spi/spi_loopback
 .. _`clocks devicetree macro API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/devicetree/clocks.h
 
 .. _`nRF54H20 DK memory map`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf54h20dk/nrf54h20dk_nrf54h20-memory_map.dtsi
