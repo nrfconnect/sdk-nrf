@@ -45,6 +45,7 @@ config NRF_SECURITY
 	select TFM_BL2_NOT_SUPPORTED if BUILD_WITH_TFM
 	select PSA_CRYPTO_CLIENT
 	select PSA_CRYPTO
+	imply MBEDTLS
 	help
 	  Set this configuration to enable nRF Security. This provides
 	  Arm PSA cryptography APIs with RNG support (optionally).
@@ -87,15 +88,6 @@ config MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE
 	help
 	  Name of the additional PSA Crypto configuration file. Used for PSA_NEED_* configurations.
 	  This file is auto-generated with the values of the relevant Kconfig options.
-
-config MBEDTLS_ENABLE_HEAP
-	bool "Global heap for mbed TLS"
-	help
-	  This option enables the mbedtls to use the heap. This setting must
-	  be global so that various applications and libraries in Zephyr do not
-	  try to do this themselves as there can be only one heap defined
-	  in mbedtls. If this is enabled, then the Zephyr will, during the device
-	  startup, initialize the heap automatically.
 
 if MBEDTLS_ENABLE_HEAP
 

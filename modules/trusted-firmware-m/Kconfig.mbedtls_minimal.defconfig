@@ -26,9 +26,6 @@ config MBEDTLS_MD_C
 config MBEDTLS_X509_LIBRARY
 	default n
 
-config MBEDTLS_ENABLE_HEAP
-	default n
-
 config MBEDTLS_DHM_C
 	default n
 
