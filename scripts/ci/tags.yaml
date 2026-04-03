@@ -1260,6 +1260,15 @@ ci_tests_drivers_flash:
     - nrfxlib/nrf_rpc/
     - zephyr/drivers/flash/
 
+ci_tests_drivers_dect:
+  files:
+    - nrf/include/net/dect/
+    - nrf/drivers/dect/
+    - nrf/subsys/net/l2_dect/
+    - nrf/subsys/net/lib/dect/
+    - nrf/tests/drivers/dect/
+    - nrfxlib/nrf_modem/include/nrf_modem_dect.h
+
 ci_tests_unity:
   files:
     - nrf/tests/unity/
@@ -1519,9 +1528,13 @@ ci_samples_sdfw:
 ci_samples_dect:
   files:
     - nrf/include/modem/
+    - nrf/include/net/dect/
     - nrf/lib/modem_info/
     - nrf/lib/nrf_modem_lib/
-    - nrf/samples/dect/dect_phy/
+    - nrf/samples/dect/
+    - nrf/drivers/dect/
+    - nrf/subsys/net/l2_dect/
+    - nrf/subsys/net/lib/dect/
     - nrfxlib/nrf_modem/
     - zephyr/drivers/hwinfo/
 

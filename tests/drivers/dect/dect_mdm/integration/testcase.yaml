@@ -1,0 +1,14 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+tests:
+  unity.dect_integration_test:
+    sysbuild: true
+    tags:
+      - sysbuild
+      - ci_tests_drivers_dect
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim

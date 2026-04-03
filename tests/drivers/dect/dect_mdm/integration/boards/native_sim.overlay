@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Mock modem device for DECT L2 sink tests (CONFIG_MODEM_CELLULAR).
+ * Provides DT_ALIAS(modem) so dect_net_l2_sink.c can use DEVICE_DT_GET(DT_ALIAS(modem))
+ * without real cellular hardware.
+ */
+
+/ {
+	aliases {
+		modem = &modem_mock;
+	};
+
+	modem_mock: modem_mock {
+		compatible = "dect,modem-mock";
+		status = "okay";
+	};
+};
