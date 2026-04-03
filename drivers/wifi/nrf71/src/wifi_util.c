@@ -508,6 +508,7 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  "tx_cmds_to_lmac: %u\n"
 				  "tx_dones_from_lmac: %u\n"
 				  "total_cmds_to_lmac: %u\n"
+				  "cmdq_empty: %u\n"
 				  "tx_packet_data_count: %u\n"
 				  "tx_packet_mgmt_count: %u\n"
 				  "tx_packet_beacon_count: %u\n"
@@ -518,7 +519,8 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  "tx_packet_disassoc_count: %u\n"
 				  "tx_packet_action_count: %u\n"
 				  "tx_packet_other_mgmt_count: %u\n"
-				  "tx_packet_non_mgmt_data_count: %u\n\n",
+				  "tx_packet_non_mgmt_data_count: %u\n"
+				  "tx_packet_eapol_count: %u\n\n",
 				  umac->tx_dbg_params.tx_cmd,
 				  umac->tx_dbg_params.tx_non_coalesce_pkts_rcvd_from_host,
 				  umac->tx_dbg_params.tx_coalesce_pkts_rcvd_from_host,
@@ -542,6 +544,7 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  umac->tx_dbg_params.tx_cmds_to_lmac,
 				  umac->tx_dbg_params.tx_dones_from_lmac,
 				  umac->tx_dbg_params.total_cmds_to_lmac,
+				  umac->tx_dbg_params.cmdq_empty,
 				  umac->tx_dbg_params.tx_packet_data_count,
 				  umac->tx_dbg_params.tx_packet_mgmt_count,
 				  umac->tx_dbg_params.tx_packet_beacon_count,
@@ -552,7 +555,8 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  umac->tx_dbg_params.tx_packet_disassoc_count,
 				  umac->tx_dbg_params.tx_packet_action_count,
 				  umac->tx_dbg_params.tx_packet_other_mgmt_count,
-				  umac->tx_dbg_params.tx_packet_non_mgmt_data_count);
+				  umac->tx_dbg_params.tx_packet_non_mgmt_data_count,
+				  umac->tx_dbg_params.tx_packet_eapol_count);
 
 		shell_fprintf(sh, SHELL_INFO,
 				  "UMAC RX debug stats\n"
@@ -585,6 +589,16 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  "rx_packet_other_mgmt_count: %u\n"
 				  "max_coalesce_pkts: %u\n"
 				  "null_skb_pointer_from_lmac: %u\n"
+				  "null_skb_pointer_from_host: %u\n"
+				  "null_skb_pointer_resubmitted: %u\n"
+				  "reorder_flush_pkt_count: %u\n"
+				  "unsecured_data_error: %u\n"
+				  "pkts_in_null_skb_pointer_event: %u\n"
+				  "rx_buffs_resubmit_cnt: %u\n"
+				  "rx_packet_amsdu_cnt: %u\n"
+				  "rx_packet_mpdu_cnt: %u\n"
+				  "rx_err_secondary_pkt: %u\n"
+				  "rx_err_invalid_pkt_info_type: %u\n"
 				  "unexpected_mgmt_pkt: %u\n\n",
 				  umac->rx_dbg_params.lmac_events,
 				  umac->rx_dbg_params.rx_events,
@@ -614,6 +628,16 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  umac->rx_dbg_params.rx_packet_other_mgmt_count,
 				  umac->rx_dbg_params.max_coalesce_pkts,
 				  umac->rx_dbg_params.null_skb_pointer_from_lmac,
+				  umac->rx_dbg_params.null_skb_pointer_from_host,
+				  umac->rx_dbg_params.null_skb_pointer_resubmitted,
+				  umac->rx_dbg_params.reorder_flush_pkt_count,
+				  umac->rx_dbg_params.unsecured_data_error,
+				  umac->rx_dbg_params.pkts_in_null_skb_pointer_event,
+				  umac->rx_dbg_params.rx_buffs_resubmit_cnt,
+				  umac->rx_dbg_params.rx_packet_amsdu_cnt,
+				  umac->rx_dbg_params.rx_packet_mpdu_cnt,
+				  umac->rx_dbg_params.rx_err_secondary_pkt,
+				  umac->rx_dbg_params.rx_err_invalid_pkt_info_type,
 				  umac->rx_dbg_params.unexpected_mgmt_pkt);
 
 		shell_fprintf(sh, SHELL_INFO,
@@ -631,9 +655,13 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  "cmd_trigger_scan: %u\n"
 				  "event_scan_done: %u\n"
 				  "cmd_get_scan: %u\n"
+				  "scan_cmd_fail: %u\n"
 				  "umac_scan_req: %u\n"
 				  "umac_scan_complete: %u\n"
 				  "umac_scan_busy: %u\n"
+				  "umac_scan_abort: %u\n"
+				  "umac_scan_abort_complete: %u\n"
+				  "umac_scan_abort_fail: %u\n"
 				  "cmd_auth: %u\n"
 				  "cmd_assoc: %u\n"
 				  "cmd_deauth: %u\n"
@@ -671,9 +699,13 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  umac->cmd_evnt_dbg_params.cmd_trigger_scan,
 				  umac->cmd_evnt_dbg_params.event_scan_done,
 				  umac->cmd_evnt_dbg_params.cmd_get_scan,
+				  umac->cmd_evnt_dbg_params.scan_cmd_fail,
 				  umac->cmd_evnt_dbg_params.umac_scan_req,
 				  umac->cmd_evnt_dbg_params.umac_scan_complete,
 				  umac->cmd_evnt_dbg_params.umac_scan_busy,
+				  umac->cmd_evnt_dbg_params.umac_scan_abort,
+				  umac->cmd_evnt_dbg_params.umac_scan_abort_complete,
+				  umac->cmd_evnt_dbg_params.umac_scan_abort_fail,
 				  umac->cmd_evnt_dbg_params.cmd_auth,
 				  umac->cmd_evnt_dbg_params.cmd_assoc,
 				  umac->cmd_evnt_dbg_params.cmd_deauth,
@@ -771,7 +803,12 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  "scan_abort_complete: %u\n"
 				  "internal_buf_pool_null: %u\n"
 				  "rpu_hw_lockup_count: %u\n"
-				  "rpu_hw_lockup_recovery_done: %u\n\n",
+				  "rpu_hw_lockup_recovery_done: %u\n"
+				  "SQIThresholdCmdsCnt: %u\n"
+				  "SQIConfigCmdsCnt: %u\n"
+				  "SQIEventsCnt: %u\n"
+				  "SleepType: %u\n"
+				  "warmBootCnt: %u\n\n",
 				  lmac->reset_cmd_cnt,
 				  lmac->reset_complete_event_cnt,
 				  lmac->unable_gen_event,
@@ -808,7 +845,12 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
 				  lmac->scan_abort_complete,
 				  lmac->internal_buf_pool_null,
 				  lmac->rpu_hw_lockup_count,
-				  lmac->rpu_hw_lockup_recovery_done);
+				  lmac->rpu_hw_lockup_recovery_done,
+				  lmac->SQIThresholdCmdsCnt,
+				  lmac->SQIConfigCmdsCnt,
+				  lmac->SQIEventsCnt,
+				  lmac->SleepType,
+				  lmac->warmBootCnt);
 	}
 
 	if (stats_type == RPU_STATS_TYPE_PHY || stats_type == RPU_STATS_TYPE_ALL) {

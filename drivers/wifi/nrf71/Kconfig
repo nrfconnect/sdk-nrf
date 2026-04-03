@@ -135,10 +135,11 @@ config NRF_WIFI_LOW_POWER
 	depends on !NRF71_RADIO_TEST && !NRF71_AP_MODE
 	default y
 
-# Internal option, not user-configurable
 config NRF71_TCP_IP_CHECKSUM_OFFLOAD
-	# Enable once CAL-6760 is fixed
-	bool
+	bool "TCP/IP checksum offload"
+	default y if !NRF71_RADIO_TEST
+	help
+	  Enable TCP/IP checksum offload for Wi-Fi driver.
 
 config NRF71_REG_DOMAIN
 	string "The ISO/IEC alpha2"
