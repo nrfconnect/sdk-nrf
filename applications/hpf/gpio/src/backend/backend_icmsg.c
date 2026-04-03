@@ -6,14 +6,18 @@
 
 #include "backend.h"
 #include <zephyr/ipc/ipc_service.h>
+#include <zephyr/sys/atomic.h>
+
+#define IPC_ENDPOINT_BOUND_BIT 0
 
 static struct ipc_ept ep;
 static backend_callback_t cbck;
-static volatile uint32_t bound_sem = 1;
+static atomic_t endpoint_state = ATOMIC_INIT(0);
 
 static void ep_bound(void *priv)
 {
-	bound_sem = 0;
+	ARG_UNUSED(priv);
+	atomic_set_bit(&endpoint_state, IPC_ENDPOINT_BOUND_BIT);
 }
 
 static void ep_recv(const void *data, size_t len, void *priv)
@@ -52,14 +56,15 @@ int backend_init(backend_callback_t callback)
 		return ret;
 	}
 
+	atomic_clear_bit(&endpoint_state, IPC_ENDPOINT_BOUND_BIT);
+
 	ret = ipc_service_register_endpoint(ipc0_instance, &ep, &ep_cfg);
 	if (ret < 0) {
 		return ret;
 	}
 
-	/* Wait for endpoint to be bound */
-	while (bound_sem != 0) {
-	};
-
+	/* Do not block FLPR waiting for APP to bind.
+	 * The master image may come up later.
+	 */
 	return 0;
 }

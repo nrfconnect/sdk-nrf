@@ -17,8 +17,17 @@ static hpf_gpio_mbox_data_t *tx_data =
 
 int gpio_send(hpf_gpio_data_packet_t *msg)
 {
+	uint32_t spin_count = 0U;
+
 	/* Wait for the access to the shared data structure */
 	while (!atomic_cas(&tx_data->lock.locked, DATA_LOCK_STATE_READY, DATA_LOCK_STATE_BUSY)) {
+		spin_count++;
+
+		if ((spin_count % 1000000U) == 0U &&
+		    atomic_get(&tx_data->lock.locked) == DATA_LOCK_STATE_WITH_DATA) {
+			/* If the remote side still has unread data, re-notify it. */
+			(void)mbox_send_dt(&tx_channel, NULL);
+		}
 	}
 
 	memcpy((void *)&tx_data->data, (void *)msg, sizeof(hpf_gpio_data_packet_t));
