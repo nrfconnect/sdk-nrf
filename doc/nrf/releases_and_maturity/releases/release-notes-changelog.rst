@@ -300,8 +300,14 @@ Thread
 Wi-Fi®
 ------
 
-* Added deprecated Wired Equivalent Privacy (WEP) support for backward compatibility with legacy networks.
-  The support is enabled through the :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_WEP` Kconfig option and is not recommended for new deployments.
+* Added:
+
+  * Deprecated Wired Equivalent Privacy (WEP) support for backward compatibility with legacy networks.
+    The support is enabled through the :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_WEP` Kconfig option and is not recommended for new deployments.
+  * Host helper scripts under the :file:`nrf/scripts/wifi_test/` directory for raw TX profiling.
+    The ``nrf_wifi_gen_raw_tx.py`` script builds a ``zperf raw upload`` shell line and an 802.11 QoS Data template for aggregation-friendly MPDUs.
+    The ``nrf_wifi_zperf_raw_tx.py`` script aggregates **tshark** throughput from a live interface or a PCAP file, reporting rates in Mbps consistent with iperf2 style output.
+  * A :ref:`Performance profiling <ug_nrf70_raw_tx_performance_profiling>` subsection under :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`.
 
 * Updated by enabling PSA Crypto support by default for personal security modes.
 

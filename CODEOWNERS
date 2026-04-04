@@ -724,6 +724,7 @@
 /scripts/quarantine*.yaml                 @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @nrfconnect/ncs-si-xcake
 /scripts/nrf_profiler/                    @nrfconnect/ncs-si-xcake
+/scripts/wifi_test/                       @krish2718 @sachinthegreen
 /scripts/pip-audit-whitelist.yml          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
