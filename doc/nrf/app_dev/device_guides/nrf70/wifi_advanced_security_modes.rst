@@ -225,12 +225,13 @@ This improves the security of the nRF70 device compared to the non-PSA mode.
 Enable PSA support
 ==================
 
-To enable the nRF70 PSA crypto support in your applications, use the :kconfig:option:`CONFIG_HOSTAP_CRYPTO_ALT_PSA` Kconfig option.
+PSA crypto support for the nRF70 Series is now enabled by default for WPA2 and WPA3-personal security profiles.
+
+The Enterprise mode and WPS security profiles are not supported with PSA crypto.
 
 The Wi-Fi connection process is similar to the non-PSA mode, however, the only difference is that the cryptographic operations are performed using PSA crypto APIs.
 
 WPA3-SAE support
 ----------------
 
-To enable WPA3-SAE support in your applications, use the :kconfig:option:`CONFIG_HOSTAP_CRYPTO_WPA3_PSA` Kconfig option.
-This is disabled by default.
+WPA3-SAE support in your applications is enabled by default using the :kconfig:option:`CONFIG_HOSTAP_CRYPTO_WPA3_PSA` Kconfig option.
