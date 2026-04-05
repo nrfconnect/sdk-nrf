@@ -32,6 +32,7 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "sphinx.ext.intersphinx",
+    "sphinxcontrib.jquery",
     "sphinxcontrib.mscgen",
     "inventory_builder",
     "warnings_filter",

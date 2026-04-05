@@ -59,6 +59,7 @@ html_theme_options = {
     "docset": "zephyr",
     "docsets": utils.ALL_DOCSETS,
     "subtitle": "nRF Connect SDK",
+    "collapse_navigation": False
 }
 
 # Options for intersphinx ------------------------------------------------------
