@@ -4,6 +4,10 @@
 Protecting a device with |ISE|
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 By default, |ISE| configures the system with the following access policies on the nRF54H20 SoC:
 
 .. list-table::

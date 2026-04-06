@@ -3,6 +3,10 @@
 nRF54LV10 DK
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. note::
 
    You can find more information about the nRF54LV10A SoC on the `nRF54LV10A System-on-Chip`_ product page.

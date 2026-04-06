@@ -522,6 +522,7 @@
 .. _`Serial Modem`: https://docs.nordicsemi.com/bundle/addon-serial_modem-latest/page/index.html
 
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v3.3.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-3-0
 .. _`known issues for nRF Connect SDK v3.2.4`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-2-4
 .. _`known issues for nRF Connect SDK v2.6.5`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-6-5
 .. _`known issues for nRF Connect SDK v3.2.3`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-2-3
@@ -578,6 +579,7 @@
 .. _`known issues for nRF Connect SDK v1.4.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-4-1
 .. _`known issues for nRF Connect SDK v1.4.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-4-0
 
+.. _`Repositories and revisions for v3.3.0`: https://docs.nordicsemi.com/bundle/ncs-3.3.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v3.2.4`: https://docs.nordicsemi.com/bundle/ncs-3.2.4/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.5`: https://docs.nordicsemi.com/bundle/ncs-2.6.5/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v3.2.3`: https://docs.nordicsemi.com/bundle/ncs-3.2.3/page/nrf/releases_and_maturity/repository_revisions.html
@@ -623,6 +625,7 @@
 .. _`Repositories and revisions for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/introduction.html#repositories_and_revisions
 .. _`Repositories and revisions`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/introduction.html#repositories_and_revisions
 
+.. _`Modem library changelog for v3.3.0`: https://docs.nordicsemi.com/bundle/ncs-3.3.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.2.4`: https://docs.nordicsemi.com/bundle/ncs-3.2.4/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.6.5`: https://docs.nordicsemi.com/bundle/ncs-2.6.5/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.2.3`: https://docs.nordicsemi.com/bundle/ncs-3.2.3/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -667,6 +670,7 @@
 .. _`Modem library changelog for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 .. _`Modem library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 
+.. _`LwM2M carrier library changelog for v3.3.0`: https://docs.nordicsemi.com/bundle/ncs-3.3.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v3.2.4`: https://docs.nordicsemi.com/bundle/ncs-3.2.4/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.6.5`: https://docs.nordicsemi.com/bundle/ncs-2.6.5/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v3.2.3`: https://docs.nordicsemi.com/bundle/ncs-3.2.3/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
@@ -723,10 +727,10 @@
 .. _`Migration guide for nRF Connect SDK v2.5.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.5.html
 .. _`Migration guide for nRF Connect SDK v2.0.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_1.x_to_2.x.html
 
+.. _`Migrating from Partition Manager to devicetree (DTS)`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_partitions.html
 .. _`Migration from SUIT to IronSide SE for the nRF54H20 SoC`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_3.1_54h_suit_ironside.html
 .. _`Migrating nRF54H20 SoC BICR from DTS to JSON`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_bicr_nRF54H20.html
 .. _`Migrating from multi-image builds to sysbuild`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_sysbuild.html
-.. _`Migrating to the current hardware model`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_hwmv2.html
 .. _`Migration guide for nRF Connect SDK v2.6.99_cs2 for v2.4.99-cs3 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.4.99-cs3_to_2.6.99-cs2.html
 .. _`Migration notes for nRF Connect SDK v2.7.99-cs2 and the nRF54H20 DK`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_nRF54H20_cs_to_2_7_99-cs2.html
 .. _`Migration notes for nRF Connect SDK v2.7.99-cs1 and the nRF54H20 DK`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_nRF54H20_cs_to_2_7_99-cs1.html
@@ -736,6 +740,8 @@
 .. _`Migrate your application for the nRF54H20 DK to nRF Connect SDK v2.7.0 for v2.6.99-cs2 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/nRF54H20_migration_2.7/migration_guide_2.6.99-cs2_to_2.7_application.html
 .. _`Migrate your application for the nRF54H20 DK to nRF Connect SDK v2.7.0 for v2.4.99-cs3 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/nRF54H20_migration_2.7/migration_guide_2.4.99-cs3_to_2.7_application.html
 .. _`Migrating from Secure Partition Manager to Trusted Firmware-M`: https://docs.nordicsemi.com/bundle/ncs-2.0.0/page/nrf/ug_tfm.html#migrating_from_secure_partition_manager_to_trusted_firmware-m
+
+.. _`migration_guide_3.3_fp_locator_tag`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_3.3.html#fast_pair_locator_tag_sample
 
 .. _`nRF54H20 DK getting started guide for the nRF Connect SDK v2.6.99-cs2`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs2/page/nrf/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs.html
 
@@ -1169,6 +1175,8 @@
 
 .. ### Source: files.nordicsemi.com
 
+.. _`Twister test report for nRF Connect SDK v3.3.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.3.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
+.. _`Hardware test report for nRF Connect SDK v3.3.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.3.0/test-report/common_ncs_test_results_report.html?isNativeBrowsing=true
 .. _`Twister test report for nRF Connect SDK v3.2.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.2.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
 .. _`Hardware test report for nRF Connect SDK v3.2.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.2.0/test-report/common_ncs_test_results_report.html?isNativeBrowsing=true
 .. _`Twister test report for nRF Connect SDK v3.1.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.1.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
@@ -1694,7 +1702,7 @@
 .. _`Requests`: https://requests.readthedocs.io/en/latest/
 
 .. _`Scancode-Toolkit`: https://scancode-toolkit.readthedocs.io/
-.. _`Scancode-Toolkit Installation`: https://scancode-toolkit.readthedocs.io/en/stable/getting-started/install.html
+.. _`Scancode-Toolkit Installation`: https://scancode-toolkit.readthedocs.io/en/stable/getting-started/installation/index.html
 
 .. ### Source: google.com
 

@@ -20,9 +20,9 @@ The |NCS| |release| allows you to develop applications with the following versio
        - IronSide Secure Element version
        - Mbed TLS version
      * - |release|
-       - v2.2.0
-       - v23.1.1+20
-       - 3.6.5
+       - v2.2.2
+       - |ironside_se_ver|
+       - 3.6.6
      * - Upcoming release (currently on the ``main`` branch of `sdk-nrf`_)
        - |tf-m_ver|
        - |ironside_se_ver|

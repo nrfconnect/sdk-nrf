@@ -15,8 +15,8 @@ The DECT NR+ full stack samples showcase the use of the DECT NR+ full stack with
 
 * DECT NR+ :ref:`Connection Manager <zephyr:conn_mgr_overview>` and related APIs:
 
-  * .. doxygengroup:: dect_net_l2_mgmt
-  * .. doxygengroup:: dect_net_l2
+  .. doxygengroup:: dect_net_l2_mgmt
+  .. doxygengroup:: dect_net_l2
 
 * IPv6 networking capabilities.
 

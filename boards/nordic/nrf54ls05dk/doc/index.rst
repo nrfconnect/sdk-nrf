@@ -3,6 +3,10 @@
 nRF54LS05 DK
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. note::
 
    You can find more information about the nRF54LS05B SoC on the `nRF54LS05B System-on-Chip`_ product page.

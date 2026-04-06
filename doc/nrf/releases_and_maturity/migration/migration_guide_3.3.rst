@@ -1,7 +1,9 @@
+:orphan:
+
 .. _migration_3.3:
 
-Migration notes for |NCS| v3.3.0 (Working draft)
-################################################
+Migration notes for |NCS| v3.3.0
+################################
 
 .. contents::
    :local:
@@ -23,6 +25,19 @@ Required changes
 ****************
 
 The following changes are mandatory to make your application work in the same way as in previous releases.
+
+Partition Manager deprecation
+=============================
+
+.. toggle::
+
+   The :ref:`partition_manager` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
+
+   This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
+   It is recommended that all new designs using Nordic devices, excluding the nRF91 Series devices, are to be built with DTS instead of Partition Manager.
+   Partition Manager will be removed from the |NCS| by the end of 2026 from the main branch.
+
+   For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`migration_partitions` page.
 
 Build system
 ============
@@ -58,18 +73,13 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-Partition Manager deprecation
------------------------------
+nRF5340 Audio
+-------------
 
 .. toggle::
 
-   The :ref:`partition_manager` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
-
-   This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
-   It is recommended that all new designs using Nordic devices, excluding the nRF91 Series devices, are to be built with DTS instead of Partition Manager.
-   Partition Manager will be removed from the |NCS| by the end of 2026 from the main branch.
-
-   For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`migration_partitions` page.
+   When preparing the JSON file, the ``sirk`` field sets the Set Identity Resolving Key (SIRK) for the device set, which is used in the unicast applications.
+   The SIRK must be 16 characters long and cannot be the default SIRK defined in the Kconfig file (``NRF5340_TWS_DEMO``).
 
 .. _migration_3.3_fp_locator_tag:
 
@@ -83,7 +93,7 @@ Fast Pair Locator Tag sample
      This change requires the following configuration updates:
 
        * Define fuel gauge device in the DTS along with its source.
-         In case of the Thingy:53 target, the fuel gauge device is already defined in the board DTS as ``fuel_gauge`` with the source set to the voltage divider ``vbatt``.
+         In case of the ``thingy53/nrf5340/cpuapp`` board target, the fuel gauge device is already defined in the board DTS as ``fuel_gauge`` with the source set to the voltage divider ``vbatt``.
          Enable the fuel gauge and source devices as follows:
 
          .. code-block:: dts
@@ -247,7 +257,7 @@ This section describes the changes related to libraries.
      * Removed:
 
        * The ``CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`.
-       * The ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it by options :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
+       * The ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
        * The ``CONFIG_MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE`` Kconfig option.
          The PSA Crypto API is able to infer the key slot buffer size based on the keys enabled in the build, so there is no need to define it manually.
        * The ``CONFIG_MBEDTLS_MAC_SHA256_ENABLED`` Kconfig option.
@@ -480,3 +490,12 @@ Google Fast Pair
 
      The ``nrf5340dk/nrf5340/cpuapp/ns`` board target has been removed from the :ref:`fast_pair_input_device` sample's default configuration.
      It is only available with the deprecated Partition Manager solution as a legacy build configuration (``SB_CONFIG_PARTITION_MANAGER=y``).
+
+Drivers
+=======
+
+This section describes the changes related to drivers.
+
+.. toggle::
+
+   * The ``mfd_npm13xx_reg_write2`` function has been renamed to ``mfd_npm13xx_reg_write_burst``.
