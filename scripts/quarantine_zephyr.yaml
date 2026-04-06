@@ -80,13 +80,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24488"
 
 - scenarios:
-    - drivers.stepper.shell
-    - drivers.stepper.shell_async
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31591"
-
-- scenarios:
     - portability.posix.common.dynamic_stack
   platforms:
     - qemu_cortex_m3/ti_lm3s6965
@@ -122,7 +115,6 @@
 
 - scenarios:
     - libraries.encoding.jwt.rsa.psa
-    - libraries.encoding.jwt.rsa.legacy
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
@@ -139,18 +131,6 @@
   comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89488"
 
 - scenarios:
-    - drivers.gpio.build
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuflpr
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33288"
-
-- scenarios:
-    - usb.device_next.build_all
-  platforms:
-    - qemu_cortex_m3/ti_lm3s6965
-  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89484"
-
-- scenarios:
     - libraries.encoding.json
   platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
@@ -158,27 +138,12 @@
 
 - scenarios:
     - boards.nrf.rram_throttling
-    - drivers.flash.common.disable_spi_nor
     - drivers.flash.common.test_storage_partition
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l05/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7879"
-
-- scenarios:
-    - libraries.libc.common.picolibc.module
-    - libraries.libc.common.picolibc.notls
-    - libraries.libc.strerror.picolibc.module
-    - libraries.libc.strerror.picolibc.notls
-    - libraries.libc.picolibc.sprintf_inexact
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34100"
-
-- scenarios:
-    - testing.ctest.base
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35402"
 
 - scenarios:
     - kernel.common.misra
@@ -269,14 +234,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37803"
 
 # ---------------------------------   Won't fix section -----------------------------------
-
-- scenarios:
-    - libraries.encoding.jwt
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk@0.14.0/nrf9160/ns
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15508"
 
 - scenarios:
     - net.socket.register.tls
@@ -420,12 +377,6 @@
     - portability.cmsis_rtos_v1
     - portability.cmsis_rtos_v2
     - portability.posix.eventfd
-    - portability.posix.headers.newlib.with_posix_api
-    - portability.posix.headers.newlib.without_posix_api
-    - portability.posix.headers.picolibc.with_posix_api
-    - portability.posix.headers.picolibc.without_posix_api
-    - portability.posix.headers.with_posix_api
-    - portability.posix.headers.without_posix_api
     - sample.drivers.crypto.mbedtls
     - sample.drivers.flash.shell
     - sample.harness.shell
@@ -454,7 +405,6 @@
 - scenarios:
     - .*secure_storage.*
     - cpp.libcxx.glibcxx.picolibc
-    - crypto.mbedtls
     - drivers.can.shell
     - kernel.common
     - kernel.common.lto
@@ -470,7 +420,6 @@
     - net.coap.server.common
     - net.http.server.common
     - net.http.server.crime
-    - net.http.server.prototype
     - portability.cmsis_rtos_v1
     - portability.cmsis_rtos_v2
     - portability.posix.common
@@ -484,12 +433,6 @@
     - portability.posix.common.tls
     - portability.posix.common.tls.newlib
     - portability.posix.eventfd
-    - portability.posix.headers.newlib.with_posix_api
-    - portability.posix.headers.newlib.without_posix_api
-    - portability.posix.headers.picolibc.with_posix_api
-    - portability.posix.headers.picolibc.without_posix_api
-    - portability.posix.headers.with_posix_api
-    - portability.posix.headers.without_posix_api
     - sample.drivers.flash.shell
     - sample.net.sockets.dumb_http_server
     - sample.net.sockets.http_get
