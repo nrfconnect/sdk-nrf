@@ -17,15 +17,10 @@ psa_status_t cracen_sp800_108_ctr_mac_input_bytes(cracen_key_derivation_operatio
 						  psa_key_derivation_step_t step,
 						  const uint8_t *data, size_t data_length);
 
-psa_status_t cracen_sp800_108_ctr_cmac_input_key(cracen_key_derivation_operation_t *operation,
-						 psa_key_derivation_step_t step,
-						 const psa_key_attributes_t *attributes,
-						 const uint8_t *key_buffer, size_t key_buffer_size);
-
-psa_status_t cracen_sp800_108_ctr_hmac_input_key(cracen_key_derivation_operation_t *operation,
-						 psa_key_derivation_step_t step,
-						 const psa_key_attributes_t *attributes,
-						 const uint8_t *key_buffer, size_t key_buffer_size);
+psa_status_t cracen_sp800_108_ctr_mac_input_key(cracen_key_derivation_operation_t *operation,
+						psa_key_derivation_step_t step,
+						const psa_key_attributes_t *attributes,
+						const uint8_t *key_buffer, size_t key_buffer_size);
 
 psa_status_t cracen_sp800_108_ctr_cmac_output_bytes(cracen_key_derivation_operation_t *operation,
 						    uint8_t *output, size_t output_length);

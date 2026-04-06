@@ -90,8 +90,8 @@ static psa_status_t cracen_ctr_mac_generate_block(cracen_key_derivation_operatio
 	size_t length;
 	size_t mac_sz = SX_BLKCIPHER_AES_BLK_SZ;
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
-	if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC) &&
+	    PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg)) {
 		const struct sxhashalg *hash;
 
 		status = hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &hash);
@@ -100,17 +100,12 @@ static psa_status_t cracen_ctr_mac_generate_block(cracen_key_derivation_operatio
 		}
 		mac_sz = sx_hash_get_alg_digestsz(hash);
 	}
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
-	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
-		status = cracen_kdf_start_mac_operation(operation, operation->mac_ctr.key_buffer,
-							operation->mac_ctr.key_size);
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
+	status = cracen_kdf_start_mac_operation(operation, operation->mac_ctr.key_buffer,
+						operation->mac_ctr.key_size);
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 
 	counter_be = uint32_to_be(operation->mac_ctr.counter);
 	status = cracen_mac_update(&operation->mac_op, (const uint8_t *)&counter_be,
@@ -124,15 +119,14 @@ static psa_status_t cracen_ctr_mac_generate_block(cracen_key_derivation_operatio
 		return status;
 	}
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
-	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) &&
+	    operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
 		status = cracen_mac_update(&operation->mac_op, operation->mac_ctr.K_0,
 					   sizeof(operation->mac_ctr.K_0));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
 	}
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 
 	status = cracen_mac_sign_finish(&operation->mac_op, operation->output_block,
 					mac_sz, &length);
@@ -204,12 +198,22 @@ psa_status_t cracen_sp800_108_ctr_mac_input_bytes(cracen_key_derivation_operatio
 	return PSA_SUCCESS;
 }
 
-psa_status_t cracen_sp800_108_ctr_cmac_input_key(cracen_key_derivation_operation_t *operation,
+psa_status_t cracen_sp800_108_ctr_mac_input_key(cracen_key_derivation_operation_t *operation,
 						 psa_key_derivation_step_t step,
 						 const psa_key_attributes_t *attributes,
 						 const uint8_t *key_buffer, size_t key_buffer_size)
 {
-	if (psa_get_key_type(attributes) != PSA_KEY_TYPE_AES) {
+	psa_key_type_t key_type = psa_get_key_type(attributes);
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) &&
+	    operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC &&
+	    key_type != PSA_KEY_TYPE_AES) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC) &&
+	    PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg) &&
+	    key_type != PSA_KEY_TYPE_HMAC) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -234,31 +238,6 @@ psa_status_t cracen_sp800_108_ctr_cmac_input_key(cracen_key_derivation_operation
 	}
 	memcpy(operation->mac_ctr.key_buffer, key_buffer, key_buffer_size);
 	operation->mac_ctr.key_size = key_buffer_size;
-
-	operation->state = CRACEN_KD_STATE_MAC_CTR_KEY_LOADED;
-	return PSA_SUCCESS;
-}
-
-psa_status_t cracen_sp800_108_ctr_hmac_input_key(cracen_key_derivation_operation_t *operation,
-						 psa_key_derivation_step_t step,
-						 const psa_key_attributes_t *attributes,
-						 const uint8_t *key_buffer, size_t key_buffer_size)
-{
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-
-	if (psa_get_key_type(attributes) != PSA_KEY_TYPE_HMAC) {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
-
-	if (operation->state != CRACEN_KD_STATE_MAC_CTR_INIT ||
-	    step != PSA_KEY_DERIVATION_INPUT_SECRET) {
-		return PSA_ERROR_BAD_STATE;
-	}
-
-	status = cracen_kdf_start_mac_operation(operation, key_buffer, key_buffer_size);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
 
 	operation->state = CRACEN_KD_STATE_MAC_CTR_KEY_LOADED;
 	return PSA_SUCCESS;

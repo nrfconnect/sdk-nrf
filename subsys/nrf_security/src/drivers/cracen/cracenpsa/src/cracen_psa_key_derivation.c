@@ -192,15 +192,15 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
 
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
 	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
-		return cracen_sp800_108_ctr_cmac_input_key(operation, step, attributes,
-							   key_buffer, key_buffer_size);
+		return cracen_sp800_108_ctr_mac_input_key(operation, step, attributes,
+							  key_buffer, key_buffer_size);
 	}
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
 	if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg)) {
-		return cracen_sp800_108_ctr_hmac_input_key(operation, step, attributes,
-							   key_buffer, key_buffer_size);
+		return cracen_sp800_108_ctr_mac_input_key(operation, step, attributes,
+							  key_buffer, key_buffer_size);
 	}
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
 

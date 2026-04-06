@@ -61,6 +61,12 @@
 #define CRACEN_MAX_AES_KEY_SIZE (32u)
 #define CRACEN_MAX_AEAD_BLOCK_SIZE (64u)
 
+#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
+#define CRACEN_MAC_CTR_MAX_KEY_SIZE (128u)
+#else
+#define CRACEN_MAC_CTR_MAX_KEY_SIZE CRACEN_MAX_AES_KEY_SIZE
+#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
+
 /** Maximum AEAD key size.
  *
  * CRACEN AEAD uses two backends, BA411 for GCM/CCM and BA417 for
@@ -106,7 +112,7 @@
 #define CRACEN_HKDF_MAX_INFO_SIZE 128
 
 #define CRACEN_MAC_MAX_LABEL_SIZE 127
-#define CRACEN_MAC_MAX_CONTEXT_SIZE 64
+#define CRACEN_MAC_MAX_CONTEXT_SIZE 160
 #define CRACEN_JPAKE_USER_ID_MAX_SIZE 16
 #define CRACEN_P256_KEY_SIZE   32
 #define CRACEN_P256_POINT_SIZE 64
@@ -453,12 +459,12 @@ struct cracen_key_derivation_operation {
 	defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
 		struct {
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
-			psa_key_lifetime_t key_lifetime;
-			mbedtls_svc_key_id_t key_id;
-			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
-			size_t key_size;
 			uint8_t K_0[SX_BLKCIPHER_AES_BLK_SZ];
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
+			psa_key_lifetime_t key_lifetime;
+			mbedtls_svc_key_id_t key_id;
+			uint8_t key_buffer[CRACEN_MAC_CTR_MAX_KEY_SIZE];
+			size_t key_size;
 			uint32_t counter;
 			/* The +1 here is meant to store an algorithm-specific byte needed after
 			 * the label.
