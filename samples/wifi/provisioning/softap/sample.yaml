@@ -45,7 +45,6 @@ tests:
     extra_args:
       - softap_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
       - softap_SNIPPET=nrf70-wifi
-      - CONFIG_MBEDTLS_X509_CRT_PARSE_C=n
       - CONFIG_MBEDTLS_SSL_SERVER_NAME_INDICATION=n
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
