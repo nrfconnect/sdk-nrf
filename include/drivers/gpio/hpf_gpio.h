@@ -20,15 +20,17 @@ typedef enum {
 	HPF_GPIO_PIN_CLEAR     = 1, /* Clear eGPIO pin. */
 	HPF_GPIO_PIN_SET       = 2, /* Set eGPIO pin. */
 	HPF_GPIO_PIN_TOGGLE    = 3, /* Toggle eGPIO pin. */
+	HPF_GPIO_PORT_SET_MASKED = 4, /* Atomically update selected eGPIO pins. */
 } hpf_gpio_opcode_t;
 
 /** @brief eGPIO data packet. */
 typedef struct __packed {
 	uint8_t opcode; /* eGPIO opcode. */
-	uint32_t pin; /* Pin number when opcode is HPF_GPIO_PIN_CONFIGURE, pin mask for others. */
+	uint32_t pin; /* Pin number when opcode is HPF_GPIO_PIN_CONFIGURE, pin mask otherwise. */
 	uint8_t port; /* Port number. */
 	uint32_t flags; /* Configuration flags when opcode
 			 * is HPF_GPIO_PIN_CONFIGURE (gpio_flags_t).
+			 * Raw pin value when opcode is HPF_GPIO_PORT_SET_MASKED.
 			 * Not used in other cases.
 			 */
 } hpf_gpio_data_packet_t;
