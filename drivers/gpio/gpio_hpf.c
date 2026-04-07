@@ -40,21 +40,12 @@ static int gpio_hpf_pin_configure(const struct device *port, gpio_pin_t pin, gpi
 static int gpio_hpf_port_set_masked_raw(const struct device *port, gpio_port_pins_t mask,
 					 gpio_port_value_t value)
 {
-
-	const uint32_t set_mask = value & mask;
-	const uint32_t clear_mask = (~set_mask) & mask;
-
 	hpf_gpio_data_packet_t msg = {
-		.opcode = HPF_GPIO_PIN_SET, .pin = set_mask, .port = get_port_cfg(port)->port_num};
-
-	int ret_val = gpio_send(&msg);
-
-	if (ret_val < 0) {
-		return ret_val;
-	}
-
-	msg.opcode = HPF_GPIO_PIN_CLEAR;
-	msg.pin = clear_mask;
+		.opcode = HPF_GPIO_PORT_SET_MASKED,
+		.pin = mask,
+		.port = get_port_cfg(port)->port_num,
+		.flags = value,
+	};
 
 	return gpio_send(&msg);
 }
