@@ -8,3 +8,15 @@
 		nordic,pm-ext-flash = &mx25r64;
 	};
 };
+
+&mx25r64 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		nrf70_wifi_fw_partition: nrf70_fw_partition: partition@0 {
+			reg = <0x0 0x20000>;
+		};
+	};
+};
