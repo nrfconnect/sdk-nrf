@@ -188,12 +188,12 @@ This is a reference configuration that you can modify in the production firmware
      - Oberon + CryptoCell [2]_
      - Yes
      - Trusted Storage library + Hardware Unique Key (HUK)
-   * - nRF54LM20, nRF54L15, nRF54L10, nRF54L05 SoCs
+   * - nRF54LM20A, nRF54L15, nRF54L10, nRF54L05 SoCs
      - Thread
      - CRACEN [3]_
      - Yes
      - Trusted Storage library + Hardware Unique Key (HUK) + Key Management Unit (KMU)
-   * - nRF54L15, nRF54L10, nRF54L05 SoCs + Trusted Firmware-M (TF-M)
+   * - nRF54LM20A, nRF54L15, nRF54L10, SoCs + Trusted Firmware-M (TF-M)
      - Thread
      - CRACEN
      - Yes

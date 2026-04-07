@@ -119,8 +119,8 @@ This is a reference configuration that can be modified in the production firmwar
      - PSA Crypto API
      - CRACEN [2]_
      - Yes
-     - Trusted Storage library + Hardware Unique Key (HUK) + Key Management Unit (KMU)
-   * - nRF54LM20 SoC
+     - Hardware Unique Key (HUK) + Key Management Unit (KMU)
+   * - nRF54LM20A and nRF54LM20B SoCs
      - Thread
      - PSA Crypto API
      - CRACEN [2]_
