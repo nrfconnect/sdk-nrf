@@ -213,7 +213,7 @@
   - "drivers/mpsl/**/*"
 
 "CI-ble-host-test":
-  - "include/bluetooth/host/**/*
+  - "include/bluetooth/host/**/*"
   - "include/bluetooth/drivers/**/*"
   - "subsys/bluetooth/host/host/**/*"
   - "tests/bluetooth/**/*"
