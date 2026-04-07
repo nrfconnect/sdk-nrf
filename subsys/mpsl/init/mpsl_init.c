@@ -618,7 +618,7 @@ void mpsl_lowpower_request_callback(void)
 
 void mpsl_low_latency_acquire_callback(void)
 {
-#if IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
+#if IS_ENABLED(CONFIG_SOC_SERIES_NRF54L)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
 	int err;
 
@@ -632,6 +632,7 @@ void mpsl_low_latency_acquire_callback(void)
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
 
+#if !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
 	int event_handle;
 
@@ -646,13 +647,13 @@ void mpsl_low_latency_acquire_callback(void)
 	NRF_RRAMC->POWER.LOWPOWERCONFIG = RRAMC_POWER_LOWPOWERCONFIG_MODE_Standby
 					  << RRAMC_POWER_LOWPOWERCONFIG_MODE_Pos;
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
-#endif /* IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
+#endif /* !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
+#endif /* IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) */
 }
 
 void mpsl_low_latency_release_callback(void)
 {
-#if IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
-
+#if IS_ENABLED(CONFIG_SOC_SERIES_NRF54L)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
 	int ret;
 
@@ -666,6 +667,7 @@ void mpsl_low_latency_release_callback(void)
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
 
+#if !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
 	ret = nrf_sys_event_unregister(m_nvm_low_latency_event_handle, false);
 	if (ret != 0) {
@@ -676,7 +678,8 @@ void mpsl_low_latency_release_callback(void)
 #else
 	NRF_RRAMC->POWER.LOWPOWERCONFIG = m_rram_lowpower_config;
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
-#endif /* IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
+#endif /* !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
+#endif /* IS_ENABLED(CONFIG_SOC_SERIES_NRF54L) */
 }
 #endif /* defined(CONFIG_SOC_COMPATIBLE_NRF54LX) */
 
