@@ -25,8 +25,8 @@
 
 &mram1x {
 	partitions {
-		/delete-node/ partition@92000;
-		/delete-node/ partition@152000;
+		/delete-node/ &cpurad_slot0_partition;
+		/delete-node/ &cpurad_slot1_partition;
 
 		/* Primary: loader (MRAM) + ipc_radio image (MRAM, copied to TCM). */
 		cpurad_slot0_partition: cpurad_loader_partition: partition@92000 {
