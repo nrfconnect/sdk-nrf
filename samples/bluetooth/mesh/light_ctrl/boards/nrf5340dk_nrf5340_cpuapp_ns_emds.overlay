@@ -1,0 +1,123 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &storage_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+
+&flash0 {
+	/*
+	 * Flash planning for nRF5340 with EMDS support (no MCUboot):
+	 *
+	 * 0x0000_0000 Primary image area (928 KB):
+	 *    0x0000_0000 Secure     image primary (128 KB)
+	 *    0x0002_0000 Non-secure image primary (800 KB)
+	 * 0x000e_8000 Protected Storage Area (16 KB)
+	 * 0x000e_c000 Internal Trusted Storage Area (8 KB)
+	 * 0x000e_e000 OTP / NV counters area (8 KB)
+	 * 0x000f_0000 Non-secure storage area (64 KB):
+	 *    0x000f_0000 NVS settings storage (32 KB)
+	 *    0x000f_8000 EMDS partition 0 (16 KB)
+	 *    0x000f_c000 EMDS partition 1 (16 KB)
+	 */
+	partitions {
+		slot0_partition: partition@0 {
+			compatible = "fixed-subpartitions";
+			label = "image-0";
+			reg = <0x00000000 0xe8000>;
+			ranges = <0x0 0x0 0xe8000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				label = "image-0-secure";
+				reg = <0x00000000 0x20000>;
+			};
+
+			slot0_ns_partition: partition@20000 {
+				label = "image-0-nonsecure";
+				reg = <0x00020000 0xc8000>;
+			};
+		};
+
+		tfm_ps_partition: partition@e8000 {
+			label = "tfm-ps";
+			reg = <0x000e8000 0x00004000>;
+		};
+
+		tfm_its_partition: partition@ec000 {
+			label = "tfm-its";
+			reg = <0x000ec000 0x00002000>;
+		};
+
+		tfm_otp_partition: partition@ee000 {
+			label = "tfm-otp";
+			reg = <0x000ee000 0x00002000>;
+		};
+
+		/*
+		 * storage_partition spans the full 64 KB NS storage area so
+		 * that TF-M's SPU init marks 0xF0000-0xFFFFF as non-secure.
+		 * Sub-partitions keep NVS and EMDS regions independent.
+		 */
+		storage_partition: partition@f0000 {
+			compatible = "fixed-subpartitions";
+			label = "storage";
+			reg = <0x000f0000 DT_SIZE_K(64)>;
+			ranges = <0x0 0xf0000 DT_SIZE_K(64)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			nvs_storage: partition@0 {
+				label = "nvs-storage";
+				reg = <0x0 DT_SIZE_K(32)>;
+			};
+
+			emds_partition_0: partition@8000 {
+				label = "emds-0";
+				reg = <0x8000 DT_SIZE_K(16)>;
+			};
+
+			emds_partition_1: partition@c000 {
+				label = "emds-1";
+				reg = <0xc000 DT_SIZE_K(16)>;
+			};
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,settings-partition = &nvs_storage;
+	};
+};
+
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default_alt>;
+	pinctrl-1 = <&pwm0_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pinctrl {
+	pwm0_default_alt: pwm0_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 28)>;
+			nordic,invert;
+		};
+	};
+
+	pwm0_sleep_alt: pwm0_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 28)>;
+			low-power-enable;
+		};
+	};
+};
