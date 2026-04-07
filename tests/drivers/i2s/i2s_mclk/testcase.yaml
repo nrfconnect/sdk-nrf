@@ -21,7 +21,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
 
   drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h:
     harness_config:
@@ -41,7 +41,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
 
   drivers.i2s.i2s_mclk.gpio_loopback.4ch.54h:
     harness_config:
@@ -63,7 +63,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
 
   drivers.i2s.i2s_mclk.gpio_loopback.8ch.54h:
     harness_config:

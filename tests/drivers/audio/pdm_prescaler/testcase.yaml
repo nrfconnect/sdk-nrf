@@ -18,7 +18,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
   drivers.audio.pdm_prescaler.nrf54lm20.1000khz:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -32,7 +32,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
@@ -43,7 +43,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
       - CONFIG_TEST_PDM_SAMPLING_RATE=32000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000

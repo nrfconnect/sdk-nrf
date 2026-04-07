@@ -93,7 +93,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
   # nrf54lm20: PCLK32 and HFXO
   drivers.i2s.samplerate.nrf54lm20.pclk32m.hfxo:
     harness_config:
@@ -111,7 +111,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
   # nrf54lm20: ACLK and internal RC is not possible. Selecting ACLK automatically starts HFXO.
   # Highter tolerance (than nrf54lm20.aclk.hfxo) results from waiting for HFXO ready.
   drivers.i2s.samplerate.nrf54lm20.aclk.implicit_hfxo:
@@ -144,7 +144,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
   # nrf54lm20: ACLK and HFXO
   drivers.i2s.samplerate.nrf54lm20.aclk.hfxo:
     harness_config:
@@ -177,7 +177,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
   # ACLK allows to obtain more accurate actual samplerate
   # ACLK instead of PCLK results in different divider and expected
   # Selecting ACLK automatically starts HFXO.

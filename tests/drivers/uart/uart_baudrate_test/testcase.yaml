@@ -54,7 +54,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20_common_uart00.overlay"
     harness: ztest
     harness_config:
@@ -64,14 +64,14 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20_common_uart21.overlay"
   drivers.uart.baudrate_test.lm20_uart22:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20_common_uart22.overlay"
   drivers.uart.baudrate_test.ls05_uart21:
     platform_allow:
