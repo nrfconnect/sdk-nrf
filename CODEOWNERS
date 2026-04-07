@@ -659,6 +659,7 @@
 /samples/dfu/mcuboot_with_encryption/*.rst @nrfconnect/ncs-eris @nrfconnect/ncs-eris-doc
 /samples/dfu/single_slot/*.rst            @nrfconnect/ncs-eris-doc
 /samples/dfu/smp_svr/*.rst                @nrfconnect/ncs-eris-doc
+/samples/dfu/smp_svr_mini_boot/*.rst      @nrfconnect/ncs-eris-doc
 /samples/esb/**/*.rst                     @nrfconnect/ncs-si-xcake-doc
 /samples/edge_impulse/**/*.rst            @nrfconnect/ncs-si-muffin-doc
 /samples/event_manager_proxy/*.rst        @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
@@ -704,7 +705,6 @@
 /samples/zephyr/sensor/accel_polling/     @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/bme680/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
-/samples/zephyr/smp_svr_mini_boot/        @nrfconnect/ncs-eris
 /samples/zephyr/subsys/ipc/               @nrfconnect/ncs-low-level-test @anangl
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
