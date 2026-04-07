@@ -20,6 +20,7 @@
 #define HRT_VEVIF_IDX_GPIO_CLEAR  17
 #define HRT_VEVIF_IDX_GPIO_SET    18
 #define HRT_VEVIF_IDX_GPIO_TOGGLE 19
+#define HRT_VEVIF_IDX_GPIO_SET_MASKED 21
 
 #define VEVIF_IRQN(vevif) VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
@@ -70,6 +71,7 @@ static const uint8_t pin_to_vio_map[] = {
 #define VIO_VALID_PIN_MASK ((BIT(VIO_PIN_COUNT) - 1) << VIO_PIN_OFFSET)
 
 volatile uint16_t irq_arg;
+volatile uint16_t irq_arg2;
 
 static uint8_t gpio_pin_port_to_vio_index(uint8_t port, uint16_t pin)
 {
@@ -205,6 +207,11 @@ void process_packet(hpf_gpio_data_packet_t *packet)
 			nrf_vpr_clic_int_pending_set(NRF_VPRCLIC,
 						     VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_TOGGLE));
 			break;
+		case HPF_GPIO_PORT_SET_MASKED:
+			irq_arg2 = gpio_pin_mask_to_vio_mask(packet->flags & packet->pin);
+			nrf_vpr_clic_int_pending_set(NRF_VPRCLIC,
+						     VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_SET_MASKED));
+			break;
 		default:
 			break;
 		}
@@ -231,6 +238,11 @@ __attribute__ ((interrupt)) void hrt_handler_toggle_bits(void)
 	hrt_toggle_bits();
 }
 
+__attribute__ ((interrupt)) void hrt_handler_set_masked_bits(void)
+{
+	hrt_set_masked_bits();
+}
+
 int main(void)
 {
 	int ret = 0;
@@ -238,6 +250,7 @@ int main(void)
 	HRT_CONNECT(HRT_VEVIF_IDX_GPIO_CLEAR, hrt_handler_clear_bits);
 	HRT_CONNECT(HRT_VEVIF_IDX_GPIO_SET, hrt_handler_set_bits);
 	HRT_CONNECT(HRT_VEVIF_IDX_GPIO_TOGGLE, hrt_handler_toggle_bits);
+	HRT_CONNECT(HRT_VEVIF_IDX_GPIO_SET_MASKED, hrt_handler_set_masked_bits);
 
 	nrf_vpr_csr_rtperiph_enable_set(true);
 

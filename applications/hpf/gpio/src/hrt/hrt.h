@@ -13,4 +13,6 @@ void hrt_clear_bits(void);
 
 void hrt_toggle_bits(void);
 
+void hrt_set_masked_bits(void);
+
 #endif /* _HRT_H__ */
