@@ -7,7 +7,7 @@
  #include <zephyr/kernel.h>
 #include <silexpk/ec_curves.h>
 #include "../../../src/regs_curves.h"
-#include "../../target/hw/ba414/regs_commands.h"
+#include "regs_commands.h"
 #include <silexpk/core.h>
 #include <string.h>
 #include <zephyr/sys/util.h>

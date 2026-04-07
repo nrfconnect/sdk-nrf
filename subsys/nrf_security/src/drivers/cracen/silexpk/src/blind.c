@@ -8,7 +8,7 @@
 #include <silexpk/blinding.h>
 #include <cracen/statuscodes.h>
 #include <cracen/prng_pool.h>
-#include "internal.h"
+#include <baremetal_ba414e_with_ik/internal.h>
 
 int sx_pk_get_blinding_factor(sx_pk_blind_factor *bld_factor)
 {

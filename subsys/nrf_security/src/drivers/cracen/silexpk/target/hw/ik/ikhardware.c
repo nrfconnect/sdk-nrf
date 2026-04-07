@@ -7,7 +7,7 @@
 #include <cracen/membarriers.h>
 
 #include "ikhardware.h"
-#include <internal.h>
+#include <baremetal_ba414e_with_ik/internal.h>
 #include "../ba414/op_slots.h"
 #include "../ik/regs_commands.h"
 #include "../ba414/regs_addr.h"

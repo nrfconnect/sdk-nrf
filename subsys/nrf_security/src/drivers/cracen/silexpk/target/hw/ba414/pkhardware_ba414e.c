@@ -13,7 +13,7 @@
 
 #include <silexpk/core.h>
 #include "regs_addr.h"
-#include <internal.h>
+#include <baremetal_ba414e_with_ik/internal.h>
 #include "op_slots.h"
 #include "regs_commands.h"
 #include "pkhardware_ba414e.h"

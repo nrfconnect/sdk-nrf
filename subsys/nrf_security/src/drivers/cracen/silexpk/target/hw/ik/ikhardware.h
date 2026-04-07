@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 #include <silexpk/core.h>
-#include <internal.h>
+#include <baremetal_ba414e_with_ik/internal.h>
 #include <silexpk/ik.h>
 
 /** Get status for IK operation */

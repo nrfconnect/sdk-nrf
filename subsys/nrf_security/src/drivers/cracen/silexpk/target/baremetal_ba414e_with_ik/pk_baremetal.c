@@ -19,7 +19,7 @@
 #include <silexpk/blinding.h>
 #include <cracen/interrupts.h>
 #include <cracen/statuscodes.h>
-#include "internal.h"
+#include <baremetal_ba414e_with_ik/internal.h>
 
 #include <hal/nrf_cracen.h>
 #include <cracen/hardware.h>
