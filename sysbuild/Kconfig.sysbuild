@@ -7,13 +7,13 @@
 # This file contains extra images which can be used with sysbuild based builds.
 
 menuconfig PARTITION_MANAGER
-	bool "Partition Manager"
+	bool "Partition Manager [DEPRECATED]"
 	default y
 	depends on SOC_SERIES_NRF52 || SOC_SERIES_NRF53 || SOC_SERIES_NRF91 || \
 		SOC_NRF54L05 || SOC_NRF54L10 || SOC_NRF54L15 || SOC_NRF54LM20A || \
 		SOC_NRF54LM20B_CPUAPP || SOC_NRF54LV10A || SOC_NRF54LS05B
 	depends on !EXTERNAL_CONFIGURED_NETCORE
-	select DEPRECATED if SOC_NRF54LS05B
+	select DEPRECATED
 
 if PARTITION_MANAGER
 
