@@ -80,12 +80,9 @@ config NRF_WIFI_FW_PATCH_DFU
 	  before enabling this option. Refer to the documentation for detailed
 	  instructions on partition configuration and the DFU process.
 
-# To work with nRF security always use PSA (even for non-TFM builds)
-if NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
-choice FLASH_AREA_CHECK_INTEGRITY_BACKEND
-	default FLASH_AREA_CHECK_INTEGRITY_PSA
-endchoice
-endif
+config HEAP_MEM_POOL_ADD_SIZE_NRF70_FW_EXT
+	def_int 10000
+
 endif
 
 config CUSTOM_LINKER_SCRIPT
