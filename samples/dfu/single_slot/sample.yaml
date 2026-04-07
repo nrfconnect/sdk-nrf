@@ -52,6 +52,11 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
       - FILE_SUFFIX=usb_enter
+    harness_config:
+      fixture: usb_connected
+      type: one_line
+      regex:
+        - "Starting single_slot sample"
   sample.dfu.single_slot.usb_enter_dongle:
     tags:
       - dfu_single_slot
