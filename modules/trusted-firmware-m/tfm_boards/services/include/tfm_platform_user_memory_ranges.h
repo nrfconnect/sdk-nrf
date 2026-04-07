@@ -10,6 +10,8 @@
 #include <zephyr/autoconf.h>
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #include <pm_config.h>
+#else
+#include "flash_layout.h"
 #endif
 
 #include <tfm_ioctl_core_api.h>
@@ -59,11 +61,18 @@
 #define UICR_OTP_SIZE (sizeof(NRF_UICR_S->OTP))
 #endif
 
-/* We can't currently get PAD froom dts so ignore this for now if not using PM */
 static const struct tfm_read_service_range ranges[] = {
+/* Allow reads of MCUboot header/pad metadata from the secure slot */
 #if defined(PM_MCUBOOT_ADDRESS) && defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	/* Allow reads of mcuboot metadata */
 	{.start = PM_MCUBOOT_PAD_ADDRESS, .size = PM_MCUBOOT_PAD_SIZE},
+#elif !defined(CONFIG_PARTITION_MANAGER_ENABLED) && (TFM_MCUBOOT_OFFSET > 0)
+#if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot0_s_partition))
+	{.start = TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_s_partition)),
+	 .size  = TFM_MCUBOOT_OFFSET},
+#elif TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot0_partition))
+	{.start = TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition)),
+	 .size  = TFM_MCUBOOT_OFFSET},
+#endif
 #endif
 #if defined(FICR_INFO_ADDR)
 	{.start = FICR_INFO_ADDR, .size = FICR_INFO_SIZE},
