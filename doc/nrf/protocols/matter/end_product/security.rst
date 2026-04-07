@@ -96,12 +96,6 @@ This is a reference configuration that can be modified in the production firmwar
      - Oberon + CryptoCell [1]_
      - Yes
      - Trusted Storage library + Hardware Unique Key (HUK)
-   * - nRF5340 SoC + nRF7002 companion IC
-     - Wi-Fi
-     - Mbed TLS
-     - Oberon + CryptoCell [1]_
-     - Yes
-     - ---
    * - nRF54L15 SoC
      - Thread
      - PSA Crypto API
@@ -293,9 +287,6 @@ See the following table to learn about the default secure storage backends for t
      - Trusted Storage library + Hardware Unique Key (Zephyr Settings)
      - | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
        | Trusted Storage library + SHA-256 hash (Zephyr Settings)
-   * - nRF5340 SoC + nRF7002 companion IC
-     - Not available
-     - Not available
    * - nRF54L15 SoC
      - Key Management Unit (KMU)
      - | Key Management Unit (KMU),

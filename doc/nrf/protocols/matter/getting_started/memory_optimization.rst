@@ -50,7 +50,6 @@ LTO is enabled by default for the following:
 
 * The :ref:`matter_bridge_app` application.
 * The ``release`` configuration of the :ref:`matter_samples` and the :ref:`matter_weather_station_app`.
-* The ``nrf7002dk/nrf5340/cpuapp`` build target in the :ref:`matter_samples`.
 
 
 To enable LTO, set the :kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION` Kconfig options to ``y``.
