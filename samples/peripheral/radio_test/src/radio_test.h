@@ -178,6 +178,15 @@ struct radio_test_config {
 
 			/** Duty cycle. */
 			uint32_t duty_cycle;
+
+			/**
+			 * Number of packets to transmit.
+			 * Set to zero for continuous mode.
+			 */
+			uint32_t packets_num;
+
+			/** Callback to indicate that TX is finished. */
+			void (*cb)(void);
 		} modulated_tx_duty_cycle;
 
 		struct {

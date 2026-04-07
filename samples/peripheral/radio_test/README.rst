@@ -81,7 +81,7 @@ User interface
    :header-rows: 1
 
    * - Command
-     - Argument
+     - Arguments
      - Description
    * - cancel
      -
@@ -120,7 +120,11 @@ User interface
      - Start channel for the sweep or the channel for the constant carrier (in MHz, as difference from 2400 MHz).
    * - start_duty_cycle_modulated_tx
      - <duty_cycle>
+
+       <packet_num> (optional)
      - Duty cycle as a percentage (two decimal digits, ranging from 01 to 90).
+
+       Number of packets to transmit (default is 0, which means continuous TX).
    * - start_rx
      - <packet_num>
      - Start RX (continuous RX mode is used if no argument is provided).

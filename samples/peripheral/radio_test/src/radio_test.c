@@ -1099,6 +1099,7 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 						  enum transmit_pattern pattern,
 						  uint32_t duty_cycle)
 {
+	tx_packet_cnt = 0;
 	/* Lookup table with time per byte in each radio MODE
 	 * Mapped per NRF_RADIO->MODE available on nRF5-series devices
 	 */
@@ -1491,6 +1492,10 @@ void on_radio_end(const struct radio_test_config *config)
 		config->params.modulated_tx.cb();
 	} else if (cancel_request) {
 		cancel();
+	} else if (config->type == MODULATED_TX_DUTY_CYCLE &&
+		tx_packet_cnt == config->params.modulated_tx_duty_cycle.packets_num) {
+		cancel();
+		config->params.modulated_tx_duty_cycle.cb();
 	} else if (config->type == MODULATED_TX ||
 			   config->type == TX_SWEEP_WITH_SLEEP_MODULATED) {
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);

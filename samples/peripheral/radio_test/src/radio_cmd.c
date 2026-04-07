@@ -254,6 +254,12 @@ static void tx_modulated_carrier_end(void)
 	printk("The modulated TX has finished\n");
 }
 
+static void tx_modulated_carrier_duty_cycle_end(void)
+{
+	printk("The modulated TX duty cycle has finished\n");
+}
+
+
 static void rx_end(void)
 {
 	uint32_t recv_pkt, req_pkt;
@@ -328,13 +334,14 @@ static int cmd_duty_cycle_set(const struct shell *shell, size_t argc,
 			      char **argv)
 {
 	uint32_t duty_cycle;
+	uint32_t packets_num = 0;
 
 	if (argc == 1) {
 		shell_help(shell);
 		return SHELL_CMD_HELP_PRINTED;
 	}
 
-	if (argc > 2) {
+	if (argc > 3) {
 		shell_error(shell, "%s: bad parameters count.", argv[0]);
 		return -EINVAL;
 	}
@@ -346,13 +353,21 @@ static int cmd_duty_cycle_set(const struct shell *shell, size_t argc,
 		return -EINVAL;
 	}
 
+	memset(&test_config, 0, sizeof(test_config));
+
+	if (argc == 3) {
+		packets_num = atoi(argv[2]);
+		if (packets_num > 0) {
+			test_config.params.modulated_tx_duty_cycle.cb =
+				tx_modulated_carrier_duty_cycle_end;
+		}
+	}
+
 	config.duty_cycle = duty_cycle;
 
 #if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	ieee_channel_check(shell, config.channel_start);
 #endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
-
-	memset(&test_config, 0, sizeof(test_config));
 	test_config.type = MODULATED_TX_DUTY_CYCLE;
 	test_config.mode = config.mode;
 	test_config.params.modulated_tx_duty_cycle.txpower = config.txpower;
@@ -361,6 +376,7 @@ static int cmd_duty_cycle_set(const struct shell *shell, size_t argc,
 		config.channel_start;
 	test_config.params.modulated_tx_duty_cycle.duty_cycle =
 		config.duty_cycle;
+	test_config.params.modulated_tx_duty_cycle.packets_num = packets_num;
 #if CONFIG_FEM
 	test_config.fem = config.fem;
 #endif /* CONFIG_FEM */
@@ -1699,7 +1715,7 @@ SHELL_CMD_REGISTER(transmit_pattern,
 		   cmd_transmit_pattern_set);
 SHELL_CMD_REGISTER(start_duty_cycle_modulated_tx, NULL,
 		   "Duty cycle in percent (two decimal digits, between 01 and "
-		   "90) <duty_cycle>", cmd_duty_cycle_set);
+		   "90) <duty_cycle> Optional <num_packets> to send", cmd_duty_cycle_set);
 SHELL_CMD_REGISTER(parameters_print, NULL,
 		   "Print current delay, channel and so on",
 		   cmd_print);
