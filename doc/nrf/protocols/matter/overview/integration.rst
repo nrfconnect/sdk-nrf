@@ -84,18 +84,11 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf7002dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp
+   :rows: nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp
 
-For this design, the Wi-Fi driver on the application core communicates with the external nRF7002 Wi-Fi 6 Companion IC over QSPI or SPI:
+For this design, the Wi-Fi driver on the application core communicates with the external nRF7002 Wi-Fi 6 Companion IC over SPI:
 
-* For the ``nrf5340dk/nrf5340/cpuapp``, nRF7002 support is added using ``nrf7002ek`` shield connected through SPI.
-* For the ``nrf7002dk/nrf5340/cpuapp``, nRF7002 is connected with the nRF5340 SoC through QSPI.
 * For the ``nrf54lm20dk/nrf54lm20b/cpuapp`` (``nrf54lm20a`` SoC is also supported), nRF7002 support is added using the ``nrf7002eb2`` shield connected through SPI.
-
-.. figure:: images/matter_platform_design_nRF53_wifi.svg
-   :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)
-
-   Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)
 
 .. figure:: images/matter_platform_design_nRF54lm20_wifi.svg
    :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF54LM20 with the nRF7002)
@@ -107,7 +100,7 @@ For this design, the Wi-Fi driver on the application core communicates with the 
 Switchable Matter over Wi-Fi and Matter over Thread
 ===================================================
 
-.. |Third Button| replace:: **Button 3** on the nRF5340 DK or **Button 2** on the nRF54LM20 DK
+.. |Third Button| replace:: **Button 2** on the nRF54LM20 DK
 
 In this design, the Matter stack, the OpenThread stack, the Wi-Fi stack, and the Bluetooth LE stack run on a single SoC.
 
@@ -121,12 +114,12 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp
+   :rows: nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp
 
-This design is only available for the ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield.
-The Wi-Fi driver on the application core communicates through SPI with the external nRF7002 EK shield, which works as the Wi-Fi 6 Companion IC.
+This design is only available for the ``nrf54lm20dk/nrf54lm20b/cpuapp`` board target (``nrf54lm20a`` is also supported).
+The Wi-Fi driver on the application core communicates through SPI with the external nRF7002-EB II shield, which works as the Wi-Fi 6 Companion IC.
 
-.. figure:: images/matter_platform_design_nRF53_wifi_switching.svg
-   :alt: Multiprotocol Wi-Fi/Thread and Bluetooth LE architecture (nRF53 with the nRF7002 EK shield as the Wi-Fi 6 Companion IC)
+.. figure:: images/matter_platform_design_nRF54lm20_wifi_switching.svg
+   :alt: Multiprotocol Wi-Fi/Thread and Bluetooth LE architecture (nRF54LM20 with the nRF7002-EB II shield as the Wi-Fi 6 Companion IC)
 
-   Multiprotocol Wi-Fi/Thread and Bluetooth LE architecture (nRF53 with the nRF7002 EK shield as the Wi-Fi 6 Companion IC)
+   Multiprotocol Wi-Fi/Thread and Bluetooth LE architecture (nRF54LM20 with the nRF7002-EB II shield as the Wi-Fi 6 Companion IC)
