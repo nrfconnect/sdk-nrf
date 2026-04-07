@@ -954,7 +954,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set_config_bool(mcuboot CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION y)
     set_config_bool(mcuboot CONFIG_NRF_MPCCONF_API_IN_RAM y)
   endif()
-
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
@@ -1144,6 +1143,16 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   if(SB_CONFIG_SOC_NRF54LS05B AND SB_CONFIG_PARTITION_MANAGER)
     message(WARNING "nrf54ls05 needs to move away from partition manager, usage of PM is temporary")
+  endif()
+
+  if(SB_CONFIG_PARTITION_MANAGER)
+    message(WARNING "
+    -----------------------------------------------------------------------------------
+    --- WARNING: SB_CONFIG_PARTITION_MANAGER is enabled, partition manager has been ---
+    --- deprecated and boards should be updated to use DTS-based partitioning, see  ---
+    --- the migration guide for more details on this.                               ---
+    -----------------------------------------------------------------------------------
+    ")
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
