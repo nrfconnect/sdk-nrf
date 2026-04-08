@@ -537,10 +537,13 @@
   - "tests/subsys/net/lib/nrf_cloud/**/*"
 
 "CI-test-low-level":
+  - "applications/hpf/**/*"
   - any:
       - "boards/nordic/nrf54*/*"
       - "!boards/nordic/nrf54*dongle/*"
   - "boards/nordic/nrf7120dk/**/*"
+  - "drivers/gpio/**/*"
+  - "drivers/mspi/**/*"
   - "dts/arm/nordic/**/*"
   - "dts/common/nordic/**/*"
   - "samples/peripheral/lpuart/**/*"
