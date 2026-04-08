@@ -25,22 +25,42 @@ on:
     tags:
       - v*
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   build:
     runs-on: ubuntu-24.04
+    container:
+      # Pin digest or tag in release branches if reproducibility is required.
+      image: ghcr.io/nrfconnect/sdk-nrf-toolchain:latest
+      # Clear image ENTRYPOINT ["bash","-c"]; use --entrypoint= so Docker gets a true empty entrypoint ("" is easy to misparse in YAML).
+      options: "--user root --entrypoint="
+    # Job containers default to /bin/sh (dash); bash is required for ${var//./_}, [[ ]], etc.
+    defaults:
+      run:
+        shell: bash
+    env:
+      # System Python on Ubuntu 24.04 is externally-managed; allow pip installs globally
+      # (applies to our steps and composite actions like action-zephyr-setup).
+      PIP_BREAK_SYSTEM_PACKAGES: "1"
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - name: Remove not needed libs
-        run: |
-          sudo rm -rf /usr/local/lib/android
       - name: checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           path: ncs/nrf
+
+      - name: Verify container environment
+        run: |
+          set -e
+          id
+          test -r /opt/toolchain-env.sh && echo "toolchain-env: ok"
 
       - name: Rebase
         if: github.event_name == 'pull_request'
@@ -60,28 +80,43 @@ jobs:
 
       - name: Install packages
         working-directory: ncs
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo apt update
-          sudo apt-get install -y wget python3-pip git ninja-build graphviz lcov mscgen plantuml
-          sudo snap install yq
-          DOXYGEN_VERSION=$(yq ".doxygen.version" nrf/scripts/tools-versions-linux.yml)
+          set -e
+          # action-zephyr-setup runs "sudo apt install ..." on Linux; enable i386 for multilib deps.
+          if [ "$(uname -m)" = "x86_64" ]; then
+            dpkg --add-architecture i386
+          fi
+          apt-get update -y
+          # sudo required because action-zephyr-setup invokes it even when running as root.
+          apt-get install -y sudo \
+            wget python3-pip git cmake ninja-build graphviz lcov mscgen plantuml \
+            zip unzip python3-yaml ccache gperf \
+            findutils file xz-utils
+          if [ "$(uname -m)" = "x86_64" ]; then
+            apt-get install -y libc6-dev-i386 g++-multilib
+          fi
+          # Preflight diagnostics for SDK host-tools setup troubleshooting.
+          find --version | head -n1
+          file --version | head -n1
+          tar --version | head -n1
+          uname -a
+          echo "cmake (PATH): $(command -v cmake)"
+          cmake --version | head -n1
+          env -u LD_LIBRARY_PATH /usr/bin/cmake --version | head -n1 || true
+          DOXYGEN_VERSION="$(python3 -c "import yaml; print(yaml.safe_load(open('nrf/scripts/tools-versions-linux.yml'))['doxygen']['version'])")"
           wget --no-verbose "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
           tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           echo "${PWD}/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH
-
-      - name: Set up Python
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
-        with:
-          python-version: 3.12
-          cache: pip
-          cache-dependency-path: ncs/nrf/doc/requirements.txt
 
       - name: Setup Zephyr project
         uses: zephyrproject-rtos/action-zephyr-setup@6a744370a22e4ecb24f5dda3c7e80ff3e0a3b847 # v1.0.8
         with:
           base-path: ncs
           app-path: nrf
-          toolchains: 'all'
+          # Match zephyr-sdk.architectures in scripts/tools-versions-linux.yml (smaller than toolchains: all).
+          toolchains: 'arm-zephyr-eabi:riscv64-zephyr-elf'
 
       - name: install-pip
         working-directory: ncs
@@ -100,7 +135,7 @@ jobs:
             BUILD_CONF="-DDTS_BINDINGS=ON -DHW_FEATURES=ON"
           fi
 
-          cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-q" ${BUILD_CONF}
+          env -u LD_LIBRARY_PATH /usr/bin/cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-q" ${BUILD_CONF}
           ninja -C doc/_build
 
       - name: Check version
@@ -241,13 +276,13 @@ jobs:
           echo "You can find the documentation preview for this PR [here](${PREFIX})." >> $COMMENT
 
           NRF=$(echo "$CHANGED" | \
-                grep -e "doc/nrf/" | \
-                grep -e ".rst" | \
+                { grep -e "doc/nrf/" || true; } | \
+                { grep -e ".rst" || true; } | \
                 sed -e "s#^doc/nrf\(.*\)\.rst#${PREFIX}nrf\1.html#g")
 
           NRF_EXT=$(echo "$CHANGED" | \
-                    grep -e "applications/" -e "samples/" -e "scripts/" -e "tests/" | \
-                    grep -e ".rst" | \
+                    { grep -e "applications/" -e "samples/" -e "scripts/" -e "tests/" || true; } | \
+                    { grep -e ".rst" || true; } | \
                     sed -e "s#^\(applications\|samples\|scripts\|tests\)\(.*\)\.rst#${PREFIX}nrf\/\1\2.html#g")
 
           NRF_ALL=$(printf "$NRF\n$NRF_EXT")
