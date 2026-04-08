@@ -273,6 +273,17 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_BOOT_IMG_HASH_ALG_SHA512 y)
     endif()
 
+    if(SB_CONFIG_SOC_NRF54H20 AND SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES GREATER 1 AND
+      (SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT) AND
+      NOT (SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY OR SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
+    )
+      message(WARNING "If MCUboot is used on nRF54H20 without merged binary signing or manifest "
+        "updates, it will not be able to handle slot-specific dependencies. It may lead to security"
+        " weakness or vulnerability. "
+        "Please enable one of these features to ensure secure boot functionality."
+      )
+    endif()
+
     if(SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
       set_config_bool(mcuboot CONFIG_MCUBOOT_MANIFEST_UPDATES y)
       set_config_int(mcuboot CONFIG_MCUBOOT_MANIFEST_IMAGE_INDEX
