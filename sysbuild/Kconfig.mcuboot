@@ -310,7 +310,7 @@ config NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION
 	  UICR generator image and placed into the mpcconf_partition area.
 
 	  Using this feature introduces some limitations on the partition layout.
-	  The write protection scheme does not support more than two images per slot.
+	  The write protection scheme does not support more than four images.
 	  Additionally, if the UICR.SECURESTORAGE partition is enabled, it must be placed at
 	  the end of the MRAM area.
 
