@@ -144,6 +144,14 @@ static void button_msg_sub_thread(void)
 				break;
 			}
 
+			if (IS_ENABLED(CONFIG_BT_AUDIO_SCAN_DELEGATOR)) {
+				/* If this device is a scan delegator, we depend on a broadcast
+				 * assistant to transfer the broadcast source info.
+				 * It should not scan by itself.
+				 */
+				break;
+			}
+
 			ret = broadcast_sink_disable();
 			if (ret) {
 				LOG_ERR("Failed to disable the broadcast sink: %d", ret);
@@ -337,6 +345,11 @@ static void bt_mgmt_msg_sub_thread(void)
 
 		case BT_MGMT_SECURITY_CHANGED:
 			LOG_DBG("Security changed");
+			break;
+
+		case BT_MGMT_PAIRING_COMPLETE:
+			/* If this device is a scan delegator */
+			LOG_DBG("Pairing complete");
 			break;
 
 		case BT_MGMT_PA_SYNCED:
