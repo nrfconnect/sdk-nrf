@@ -65,6 +65,8 @@ Apache-2.0: |
   ^nrf/drivers/wifi/nrf71/
   ^nrf/samples/dfu/smp_svr/sysbuild/mcuboot/boards/nrf54h20dk_nrf54h20_cpuapp.overlay
   ^nrf/samples/dfu/smp_svr/CMakeLists.txt
+  ^nrf/drivers/flash/Kconfig.nrf_non_secure
+  ^nrf/drivers/flash/soc_flash_nrf_non_secure.c
 curl: "^nrf/ext/"
 MIT: "^nrf/ext/"
 BSD-3-CLAUSE: |
