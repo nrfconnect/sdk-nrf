@@ -403,7 +403,7 @@ config BT_MGMT_MSG_SUB_STACK_SIZE
 
 config CONTENT_CONTROL_MSG_SUB_STACK_SIZE
 	int "Stack size for content control subscriber"
-	default 1024
+	default 1200
 
 endmenu # Stack sizes
 
