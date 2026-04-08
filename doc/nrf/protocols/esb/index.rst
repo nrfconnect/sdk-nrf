@@ -43,6 +43,20 @@ Features
  * Monitor mode for protocol debugging purposes.
  * Configurable support for concurrent operation with other protocols.
 
+.. _esb_security:
+
+Security
+========
+
+The ESB protocol does not provide built-in security mechanisms.
+Communication over ESB is transmitted in plaintext and is not secure.
+
+.. caution::
+   Do not transmit sensitive or security-relevant data over ESB without additional cryptographic protection.
+
+Applications requiring secure communication must apply an additional security layer on top of ESB.
+Such layer must ensure confidentiality, integrity, and authentication of transmitted sensitive data using appropriate cryptographic mechanisms.
+
 .. _esb_config:
 
 Resources
