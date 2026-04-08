@@ -34,6 +34,7 @@ enum le_audio_evt_type {
 	LE_AUDIO_EVT_SYNC_LOST,
 	LE_AUDIO_EVT_NO_VALID_CFG,
 	LE_AUDIO_EVT_COORD_SET_DISCOVERED,
+	LE_AUDIO_EVT_DISCOVERY_COMPLETE,
 };
 
 struct le_audio_msg {

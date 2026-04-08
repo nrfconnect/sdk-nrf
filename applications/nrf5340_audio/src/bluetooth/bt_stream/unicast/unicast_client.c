@@ -898,6 +898,8 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 		return;
 	}
 
+	le_audio_event_publish(LE_AUDIO_EVT_DISCOVERY_COMPLETE, conn, NULL, dir);
+
 	srv_store_unlock();
 	k_work_submit(&cap_start_work);
 }
