@@ -57,6 +57,7 @@ extensions = [
     "page_filter",
     "sphinxcontrib.plantuml",
     "sphinxcontrib.programoutput",
+    "sphinx.ext.graphviz",
 ]
 
 linkcheck_ignore = [
@@ -82,6 +83,12 @@ rst_epilog = """
 .. include:: /links.txt
 .. include:: /shortcuts.txt
 """
+
+# -- Options for graphviz -------------------------------------------------------
+
+graphviz_output_format = "svg"
+graphviz_dot = "neato"
+graphviz_dot_args = ["-n"]
 
 # Options for HTML output ------------------------------------------------------
 

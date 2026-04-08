@@ -178,19 +178,574 @@ Write access is restricted to the backup copy to reduce NVM wear in the backup a
 The bootloader always starts with the initialization procedure.
 During initialization, it copies the primary copy to the backup copy if the primary copy is valid.
 
+.. graphviz::
+   :alt: Initialization procedure of bootloader requests module with NVM backend and backup copy
+   :caption: Initialization procedure of bootloader requests module with NVM backend and backup copy
+   :align: center
+   :layout: dot
+
+        digraph boot_validation_flow {
+        graph [
+                layout=dot,
+                rankdir=TB,
+                bgcolor="transparent",
+                pad=0.35,
+                margin=0.15,
+                dpi=96,
+                nodesep=0.55,
+                ranksep=0.60,
+                size="8.125,8.333",
+                splines=polyline
+        ];
+
+        edge [
+                color="#007C92",
+                penwidth=1.2,
+                arrowsize=0.8
+        ];
+
+        /* ── action / process nodes ── */
+        node [
+                shape=box,
+                style="filled",
+                fillcolor="#00A9CE",
+                color="#00A9CE",
+                fontcolor="white",
+                fontname="Arial",
+                fontsize=13,
+                penwidth=1,
+                margin="0.12,0.08"
+        ];
+
+        start            [label="boot_request_init", group=g_center];
+        update_backup_a  [label="update_backup()",   group=g_left_out];
+        update_backup_b  [label="update_backup()",   group=g_left_in];
+        restore_backup   [label="restore_backup()",  group=g_right_in];
+        clear_backup     [label="clear(backup)",     group=g_right_out];
+        clear_primary    [label="clear(primary)",    group=g_right_out];
+        stop_node        [label="stop",              group=g_center];
+
+        /* ── decision diamonds ── */
+        d_primary [
+                label="valid(primary)?",
+                shape=diamond, width=2.0, height=0.9, fixedsize=true,
+                group=g_center
+        ];
+        d_backup_yes [
+                label="valid(backup)?",
+                shape=diamond, width=2.0, height=0.9, fixedsize=true,
+                group=g_left
+        ];
+        d_backup_no [
+                label="valid(backup)?",
+                shape=diamond, width=2.0, height=0.9, fixedsize=true,
+                group=g_right
+        ];
+        d_equal [
+                label="!equal(primary,\nbackup)?",
+                shape=diamond, width=2.0, height=0.9, fixedsize=true,
+                group=g_left_in
+        ];
+
+        /* ── branch-label pseudo-nodes (plain text, no border) ── */
+        node [
+                shape=plain, style="", fillcolor=none,
+                fontcolor="#004F5E", fontname="Arial", fontsize=11,
+                fixedsize=false, width=0, height=0, margin="0.01,0.01"
+        ];
+
+        lbl_p_yes  [label="yes",  group=g_left];
+        lbl_p_no   [label="no",   group=g_right];
+        lbl_by_yes [label="yes",  group=g_left_in];
+        lbl_by_no  [label="no",   group=g_left_out];
+        lbl_bn_yes [label="yes",  group=g_right_in];
+        lbl_bn_no  [label="no",   group=g_right_out];
+        lbl_eq_yes [label="yes",  group=g_left_out];
+        lbl_eq_no  [label="no",   group=g_left_in];
+
+        /* invisible spacer to center d_primary between the two branches */
+        node [shape=point, width=0, height=0, style=invis];
+        spacer_lbl [group=g_center];
+
+        /* ── edges ── */
+
+        start -> d_primary [weight=10];
+
+        /* valid(primary)? — symmetric fork */
+        d_primary -> lbl_p_yes  [arrowhead=none, weight=5];
+        lbl_p_yes -> d_backup_yes [weight=5];
+        d_primary -> lbl_p_no   [arrowhead=none, weight=5];
+        lbl_p_no  -> d_backup_no [weight=5];
+
+        /* valid(backup)? – yes branch (left) */
+        d_backup_yes -> lbl_by_yes [arrowhead=none];
+        lbl_by_yes   -> d_equal;
+        d_backup_yes -> lbl_by_no  [arrowhead=none];
+        lbl_by_no    -> update_backup_a;
+
+        /* !equal(primary, backup)? */
+        d_equal -> lbl_eq_yes [arrowhead=none];
+        lbl_eq_yes -> update_backup_b;
+        d_equal -> lbl_eq_no  [arrowhead=none];
+        lbl_eq_no -> stop_node;
+
+        /* valid(backup)? – no branch (right) */
+        d_backup_no -> lbl_bn_yes [arrowhead=none];
+        lbl_bn_yes  -> restore_backup;
+        d_backup_no -> lbl_bn_no  [arrowhead=none];
+        lbl_bn_no   -> clear_backup;
+
+        /* continuation */
+        update_backup_a -> stop_node;
+        update_backup_b -> stop_node;
+        restore_backup  -> stop_node;
+        clear_backup    -> clear_primary;
+        clear_primary   -> stop_node;
+
+        /* ── rank constraints for symmetry ── */
+        { rank=same; lbl_p_yes; spacer_lbl; lbl_p_no; }
+        { rank=same; d_backup_yes; d_backup_no; }
+        { rank=same; lbl_by_no; lbl_by_yes; lbl_bn_yes; lbl_bn_no; }
+        { rank=same; d_equal; restore_backup; }
+
+        /* invisible ordering edges to enforce left→right symmetry */
+        lbl_p_yes  -> spacer_lbl [style=invis];
+        spacer_lbl -> lbl_p_no   [style=invis];
+
+        lbl_by_no  -> lbl_by_yes -> lbl_bn_yes -> lbl_bn_no [style=invis];
+
+        update_backup_a -> update_backup_b [style=invis, weight=1];
+        update_backup_b -> restore_backup  [style=invis, weight=1];
+        restore_backup  -> clear_backup    [style=invis, weight=1];
+        }
+
+..
+
 When the bootloader processes a slot preference request, it first checks the validity of the primary copy.
 If the primary copy is valid, it uses it as the source for the requested slot preference.
 If the primary copy is invalid and the backup copy is valid, it uses the backup copy.
 If neither copy is valid, it does not request a slot preference.
 
+.. graphviz::
+   :alt: Reading slot preference from bootloader requests module with NVM backend and backup copy
+   :caption: Reading slot preference from bootloader requests module with NVM backend and backup copy
+   :align: center
+   :layout: dot
+
+        digraph boot_request_get_preferred_slot {
+
+        graph [
+                layout=dot,
+                rankdir=TB,
+                bgcolor="transparent",
+                pad=0.35,
+                margin=0.15,
+                dpi=96,
+                nodesep=0.55,
+                ranksep=0.60,
+                size="8.125,8.333",
+                splines=polyline
+        ];
+
+        edge [
+                color="#007C92",
+                penwidth=1.2,
+                arrowsize=0.8
+        ];
+
+        /* ── Action / Process Nodes ── */
+        node [
+                shape=box,
+                style="filled",
+                fillcolor="#00A9CE",
+                color="#00A9CE",
+                fontcolor="white",
+                fontname="Arial",
+                fontsize=13,
+                penwidth=1,
+                margin="0.12,0.08"
+        ];
+
+        start        [label="boot_request_get_preferred_slot", group=g_center];
+        read_primary [label="read(primary, slot_offset)",      group=g_left];
+        read_backup  [label="read(backup, slot_offset)",       group=g_right];
+        stop_node    [label="stop",                            group=g_center];
+        end_node     [label="end",                             group=g_far_right];
+
+        /* ── Decision Diamonds ── */
+        d_primary [
+                label="valid(primary)?",
+                shape=diamond, width=2.0, height=0.9, fixedsize=true,
+                group=g_center
+        ];
+
+        d_backup [
+                label="valid(backup)?",
+                shape=diamond, width=2.0, height=0.9, fixedsize=true,
+                group=g_right
+        ];
+
+        /* ── Branch-Label Pseudo-Nodes ── */
+        node [
+                shape=plain, style="", fillcolor=none,
+                fontcolor="#004F5E", fontname="Arial", fontsize=11,
+                fixedsize=false, width=0, height=0, margin="0.01,0.01"
+        ];
+
+        lbl_prim_yes [label="yes", group=g_left];
+        lbl_prim_no  [label="no",  group=g_right];
+        lbl_back_yes [label="yes", group=g_right];
+        lbl_back_no  [label="no",  group=g_far_right];
+
+        /* ── Invisible Spacer Nodes ── */
+        node [shape=point, width=0, height=0, style=invis];
+        spacer_prim [group=g_center];
+
+        /* ── Edges ── */
+
+        /* Spine */
+        start -> d_primary [weight=10];
+
+        /* d_primary → yes (left) */
+        d_primary -> lbl_prim_yes [arrowhead=none];
+        lbl_prim_yes -> read_primary [weight=10];
+
+        /* d_primary → no (right) */
+        d_primary -> lbl_prim_no [arrowhead=none];
+        lbl_prim_no -> d_backup [weight=10];
+
+        /* d_backup → yes */
+        d_backup -> lbl_back_yes [arrowhead=none];
+        lbl_back_yes -> read_backup [weight=10];
+
+        /* d_backup → no → end */
+        d_backup -> lbl_back_no [arrowhead=none];
+        lbl_back_no -> end_node;
+
+        /* converge reads to stop */
+        read_primary -> stop_node [weight=10];
+        read_backup  -> stop_node;
+
+        /* ── Rank Constraints ── */
+        { rank=same; lbl_prim_yes; spacer_prim; lbl_prim_no; }
+        { rank=same; read_primary; d_backup; }
+        { rank=same; lbl_back_yes; lbl_back_no; }
+        { rank=same; read_backup; end_node; }
+
+        /* ── Invisible Ordering Edges ── */
+        lbl_prim_yes -> spacer_prim -> lbl_prim_no [style=invis];
+        lbl_back_yes -> lbl_back_no [style=invis];
+        }
+
+..
+
 When the bootloader successfully processes boot mode or image confirm requests (that is, any requests other than slot preference requests), it erases the primary area, copies the slot preference values from the backup area to the primary area, and then updates the checksum of the primary area.
 After the primary area becomes valid and contains the backed-up slot preference values, the bootloader copies the primary area to the backup area.
 This ensures that both areas stay in sync after the bootloader processes requests.
+
+.. graphviz::
+   :alt: Boot requests cleaning procedure after processing requests with NVM backend and backup copy
+   :caption: Boot requests cleaning procedure after processing requests with NVM backend and backup copy
+   :align: center
+   :layout: dot
+
+        digraph boot_request_clear_flow {
+        graph [
+                layout=dot,
+                rankdir=TB,
+                bgcolor="transparent",
+                pad=0.35,
+                margin=0.15,
+                dpi=96,
+                nodesep=0.55,
+                ranksep=0.60,
+                size="8.125,8.333",
+                splines=polyline,
+                compound=true
+        ];
+
+        edge [
+                color="#007C92",
+                penwidth=1.2,
+                arrowsize=0.8
+        ];
+
+        /* ── action / process nodes ── */
+        node [
+                shape=box,
+                style="filled",
+                fillcolor="#00A9CE",
+                color="#00A9CE",
+                fontcolor="white",
+                fontname="Arial",
+                fontsize=13,
+                penwidth=1,
+                margin="0.12,0.08"
+        ];
+
+        boot_request_clear  [label="boot_request_clear",     group=g_main];
+        update_needed_false [label="update_needed = false",  group=g_main];
+        erase_primary       [label="erase(primary)",         group=g_main];
+        update_digest       [label="update_digest(primary)", group=g_main];
+        update_backup       [label="update_backup()",        group=g_main];
+        stop_node           [label="stop",                   group=g_main];
+
+        /* ── decision diamonds ── */
+        d_valid_backup [
+                label="valid(backup)?",
+                shape=diamond, width=2.0, height=0.9, fixedsize=true,
+                group=g_main
+        ];
+        d_update_needed [
+                label="update_needed?",
+                shape=diamond, width=2.0, height=0.9, fixedsize=true,
+                group=g_main
+        ];
+
+        /* ── loop 1: check equality across slots ── */
+        subgraph cluster_loop1 {
+                label="loop over slot_preferences";
+                labeljust=l;
+                style=dashed;
+                color="#007C92";
+                fontname="Arial";
+                fontsize=11;
+                fontcolor="#004F5E";
+                margin=16;
+
+                node [
+                shape=box, style="filled", fillcolor="#00A9CE", color="#00A9CE",
+                fontcolor="white", fontname="Arial", fontsize=13,
+                penwidth=1, margin="0.12,0.08"
+                ];
+                update_needed_true [label="update_needed = true", group=g_side];
+
+                d_equal [
+                label="!equal(backup,\nprimary)?",
+                shape=diamond, width=2.0, height=0.9, fixedsize=true,
+                group=g_main
+                ];
+
+                node [
+                shape=plain, style="", fillcolor=none,
+                fontcolor="#004F5E", fontname="Arial", fontsize=11,
+                fixedsize=false, width=0, height=0, margin="0.01,0.01"
+                ];
+                lbl_eq_yes [label="yes", group=g_side];
+        }
+
+        /* ── loop 2: write preferred slots ── */
+        subgraph cluster_loop2 {
+                label="loop over slot_preferences";
+                labeljust=l;
+                labelloc=t;
+                style=dashed;
+                color="#007C92";
+                fontname="Arial";
+                fontsize=11;
+                fontcolor="#004F5E";
+                margin=20;
+
+                node [shape=box, fixedsize=true, style=invis, label=""];
+                loop2_entry    [width=0.01, height=0.01, group=g_main];
+                loop2_pad_left [width=2.5,  height=0.01, group=g_side];
+
+                node [
+                shape=box, style="filled", fillcolor="#00A9CE", color="#00A9CE",
+                fontcolor="white", fontname="Arial", fontsize=13,
+                penwidth=1, margin="0.12,0.08", fixedsize=false
+                ];
+                write_primary [label="write(primary,\nslot_offset,\npreferred_slot)", group=g_main];
+        }
+
+        /* ── branch-label pseudo-nodes (outside clusters) ── */
+        node [
+                shape=plain, style="", fillcolor=none,
+                fontcolor="#004F5E", fontname="Arial", fontsize=11,
+                fixedsize=false, width=0, height=0, margin="0.01,0.01"
+        ];
+
+        lbl_vb_yes [label="yes", group=g_main];
+        lbl_vb_no  [label="no",  group=g_side];
+        lbl_eq_no  [label="no",  group=g_main];
+        lbl_un_yes [label="yes", group=g_main];
+        lbl_un_no  [label="no",  group=g_side];
+
+        /* ── edges ── */
+
+        boot_request_clear -> d_valid_backup [weight=10];
+
+        /* valid(backup)? — yes continues down spine, no bypasses to stop */
+        d_valid_backup -> lbl_vb_yes [arrowhead=none, weight=10];
+        lbl_vb_yes -> update_needed_false [weight=10];
+        d_valid_backup -> lbl_vb_no  [arrowhead=none];
+        lbl_vb_no -> stop_node;
+
+        /* update_needed = false → loop 1 */
+        update_needed_false -> d_equal [weight=10];
+
+        /* !equal(...)? — no continues down spine, yes detours to set flag */
+        d_equal -> lbl_eq_no  [arrowhead=none, weight=10];
+        lbl_eq_no -> d_update_needed [weight=10];
+        d_equal -> lbl_eq_yes [arrowhead=none];
+        lbl_eq_yes -> update_needed_true;
+        update_needed_true -> d_update_needed;
+
+        /* update_needed? — yes continues down spine, no bypasses to stop */
+        d_update_needed -> lbl_un_yes [arrowhead=none, weight=10];
+        lbl_un_yes -> erase_primary [weight=10];
+        d_update_needed -> lbl_un_no  [arrowhead=none];
+        lbl_un_no -> stop_node;
+
+        /* update sequence */
+        erase_primary -> loop2_entry [arrowhead=none, weight=10];
+        loop2_entry   -> write_primary [weight=10];
+        loop2_pad_left -> write_primary [style=invis];
+        write_primary -> update_digest [weight=10];
+        update_digest -> update_backup [weight=10];
+        update_backup -> stop_node     [weight=10];
+
+        /* ── rank constraints ── */
+        { rank=same; lbl_vb_yes; lbl_vb_no; }
+        { rank=same; lbl_eq_yes; lbl_eq_no; }
+        { rank=same; lbl_un_yes; lbl_un_no; }
+        }
+
+..
 
 When the application creates a request, it first checks the validity of the primary copy.
 If the primary copy is invalid and the backup copy is valid, it restores the backup copy to the primary copy before proceeding.
 If neither copy is valid, it erases the primary area and processes the request as usual.
 If the primary copy is valid and already matches the requested value, it ignores the request to avoid unnecessary erase cycles.
 If the primary area initialization fails or the backup copy cannot be restored, the request fails with an error code.
+
+.. graphviz::
+   :alt: Setting slot preference using boot requests module with NVM backend and backup copy
+   :caption: Setting slot preference using boot requests module with NVM backend and backup copy
+   :align: center
+   :layout: dot
+
+        digraph boot_request_set_preferred_slot {
+
+        graph [
+                layout=dot,
+                rankdir=TB,
+                bgcolor="transparent",
+                pad=0.35,
+                margin=0.15,
+                dpi=96,
+                nodesep=0.55,
+                ranksep=0.60,
+                size="8.125,8.333",
+                splines=polyline
+        ];
+
+        edge [
+                color="#007C92",
+                penwidth=1.2,
+                arrowsize=0.8
+        ];
+
+        /* ── Action / Process Nodes ── */
+        node [
+                shape=box,
+                style="filled",
+                fillcolor="#00A9CE",
+                color="#00A9CE",
+                fontcolor="white",
+                fontname="Arial",
+                fontsize=13,
+                penwidth=1,
+                margin="0.12,0.08"
+        ];
+
+        start           [label="boot_request_set_preferred_slot", group=g_center];
+        restore_backup  [label="restore_backup()",                group=g_bk_left];
+        clear_primary   [label="clear(primary)",                  group=g_bk_right];
+        write_primary   [label="write(primary,\nslot_offset,\npreferred_slot)", group=g_center];
+        update_digest   [label="update_digest(primary)",          group=g_center];
+        stop_node       [label="stop",                            group=g_center];
+        end_node        [label="end",                             group=g_right];
+
+        /* ── Decision Diamonds ── */
+        node [
+                shape=diamond,
+                width=2.0,
+                height=0.9,
+                fixedsize=true
+        ];
+
+        d_primary  [label="valid(primary)?", group=g_center];
+        d_backup   [label="valid(backup)?",  group=g_left];
+        d_primary2 [label="valid(primary)?", group=g_center];
+
+        /* ── Branch-Label Pseudo-Nodes ── */
+        node [
+                shape=plain, style="", fillcolor=none,
+                fontcolor="#004F5E", fontname="Arial", fontsize=11,
+                fixedsize=false, width=0, height=0, margin="0.01,0.01"
+        ];
+
+        lbl_p1_yes [label="yes", group=g_right];
+        lbl_p1_no  [label="no",  group=g_left];
+        lbl_bk_yes [label="yes", group=g_bk_left];
+        lbl_bk_no  [label="no",  group=g_bk_right];
+        lbl_p2_yes [label="yes", group=g_center];
+        lbl_p2_no  [label="no",  group=g_right];
+
+        /* ── Invisible Spacer Nodes ── */
+        node [shape=point, width=0, height=0, style=invis];
+        sp_p1 [group=g_center];
+        sp_bk [group=g_left];
+
+        /* ── Edges ── */
+
+        /* Spine */
+        start -> d_primary [weight=10];
+
+        /* d_primary → yes (right — primary is valid, skip repair) */
+        d_primary -> lbl_p1_yes [arrowhead=none];
+        lbl_p1_yes -> d_primary2;
+
+        /* d_primary → no (left — enter repair sub-flow) */
+        d_primary -> lbl_p1_no  [arrowhead=none];
+        lbl_p1_no -> d_backup   [weight=10];
+
+        /* d_backup → yes → restore_backup → merge at d_primary2 */
+        d_backup -> lbl_bk_yes  [arrowhead=none];
+        lbl_bk_yes -> restore_backup [weight=10];
+        restore_backup -> d_primary2;
+
+        /* d_backup → no → clear_primary → merge at d_primary2 */
+        d_backup -> lbl_bk_no   [arrowhead=none];
+        lbl_bk_no -> clear_primary [weight=10];
+        clear_primary -> d_primary2;
+
+        /* d_primary2 → yes (continue down spine) */
+        d_primary2 -> lbl_p2_yes [arrowhead=none, weight=10];
+        lbl_p2_yes -> write_primary [weight=10];
+        write_primary -> update_digest [weight=10];
+        update_digest -> stop_node [weight=10];
+
+        /* d_primary2 → no → end */
+        d_primary2 -> lbl_p2_no  [arrowhead=none];
+        lbl_p2_no -> end_node;
+
+        /* ── Rank Constraints ── */
+        { rank=same; lbl_p1_no; sp_p1; lbl_p1_yes; }
+        { rank=same; lbl_bk_yes; sp_bk; lbl_bk_no; }
+        { rank=same; restore_backup; clear_primary; }
+        { rank=same; lbl_p2_yes; lbl_p2_no; }
+        { rank=same; write_primary; end_node; }
+
+        /* ── Invisible Ordering Edges ── */
+        lbl_p1_no -> sp_p1 -> lbl_p1_yes [style=invis];
+        lbl_bk_yes -> sp_bk -> lbl_bk_no [style=invis];
+        restore_backup -> clear_primary [style=invis];
+        lbl_p2_yes -> lbl_p2_no [style=invis];
+        write_primary -> end_node [style=invis];
+        }
+
+..
 
 This mechanism ensures that even in the event of a power loss during an update operation, the bootloader can always recover a valid slot preference from the backup copy, maintaining the integrity of the boot process.

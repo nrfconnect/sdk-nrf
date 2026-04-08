@@ -58,10 +58,59 @@ Radio core
 
 The following image shows the radio core:
 
-.. figure:: images/nRF54H20_radiocore.svg
+.. graphviz::
    :alt: Radio core
+   :caption: Radio core
+   :align: center
 
-   Radio core
+   graph nRF54H20_radiocore_test_pinned {
+     graph [
+       layout=neato,
+       overlap=true,
+       splines=false,
+       bgcolor="#71D0E3",
+       pad=0.18,
+       margin=0,
+       dpi=72,
+       size="10.833,11.111"
+     ];
+
+     node [
+       shape=box,
+       style="filled",
+       fillcolor="#00A9CE",
+       color="#00A9CE",
+       fontcolor="white",
+       fontname="Arial",
+       fontsize=13,
+       penwidth=1,
+       fixedsize=true
+     ];
+
+     cpu [label="Arm Cortex-M33\n256 MHz Fast Start-Stop\nL1 I-Cache, L1 D-Cache\nTrustZone, FPU, DSP", pos="116,176!", width=2.90, height=1.36];
+     ram [label="192 KB RAM", pos="116,55!", width=2.90, height=1.06];
+
+     mvdma [label="MVDMA", pos="278,201!", width=1.28, height=0.54];
+     rtc   [label="RTC",   pos="278,151!", width=1.28, height=0.54];
+     dppi  [label="DPPI",  pos="278,101!", width=1.28, height=0.54];
+
+     aes   [label="AES-128", pos="383,201!", width=1.28, height=0.54];
+     wdt   [label="2x WDT",  pos="383,151!", width=1.28, height=0.54];
+     timer [label="Timer",   pos="383,101!", width=1.28, height=0.54];
+
+       mpc   [label="MPC", pos="269,45!", width=0.78, height=0.54];
+       ipc   [label="IPC", pos="331,45!", width=0.78, height=0.54];
+       spu   [label="SPU", pos="393,45!", width=0.78, height=0.54];
+
+     radio [
+       label="Multiprotocol\n2.4 GHz Radio\nBluetooth Low Energy\nBluetooth LE Audio\nBluetooth Mesh\n2.4 GHz proprietary\nprotocols",
+       pos="531,121!",
+       width=2.55,
+       height=2.88
+     ];
+   }
+
+..
 
 The radio core is intended to run the radio protocol stacks, such as Bluetooth® Low Energy, Thread, Enhanced ShockBurst (ESB), or other proprietary protocols.
 It is also possible to implement a combination of protocols that use multiprotocol support.
