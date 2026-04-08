@@ -1084,11 +1084,11 @@ external:
 nvs:
   files:
     - zephyr/drivers/flash/
-    - zephyr/samples/subsys/nvs/
-    - zephyr/subsys/fs/nvs/
+    - zephyr/samples/subsys/kvss/nvs/
+    - zephyr/subsys/kvss/nvs/
     - zephyr/subsys/mem_mgmt/
     - zephyr/subsys/storage/flash_map/
-    - zephyr/tests/subsys/fs/nvs/
+    - zephyr/tests/subsys/kvss/nvs/
 
 openamp:
   files:
@@ -1193,10 +1193,10 @@ snippets:
 
 zms:
   files:
-    - zephyr/subsys/fs/zms/
-    - zephyr/include/zephyr/fs/zms.h
-    - zephyr/samples/subsys/fs/zms/
-    - zephyr/tests/subsys/fs/zms/
+    - zephyr/subsys/kvss/zms/
+    - zephyr/include/zephyr/kvss/zms.h
+    - zephyr/samples/subsys/kvss/zms/
+    - zephyr/tests/subsys/kvss/zms/
 
 arch:
   files:

@@ -7,9 +7,9 @@
 #include "persistent_storage_shell.h"
 
 #if defined(CONFIG_SETTINGS_NVS)
-#include <zephyr/fs/nvs.h>
+#include <zephyr/kvss/nvs.h>
 #elif defined(CONFIG_SETTINGS_ZMS) || defined(CONFIG_SETTINGS_ZMS_LEGACY)
-#include <zephyr/fs/zms.h>
+#include <zephyr/kvss/zms.h>
 #endif
 #include <zephyr/settings/settings.h>
 #include <zephyr/shell/shell.h>

@@ -16,14 +16,14 @@
 #include <zephyr/kernel.h>
 #include <soc.h>
 #include <zephyr/device.h>
-#include <zephyr/fs/nvs.h>
+#include <zephyr/kvss/nvs.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/uri_msg.h>
 #include <zephyr/storage/flash_map.h>
 #if defined(CONFIG_NVS)
-#include <zephyr/fs/nvs.h>
+#include <zephyr/kvss/nvs.h>
 #elif defined(CONFIG_ZMS)
-#include <zephyr/fs/zms.h>
+#include <zephyr/kvss/zms.h>
 #endif /* defined(CONFIG_NVS) */
 #include "ndef_file_m.h"
 

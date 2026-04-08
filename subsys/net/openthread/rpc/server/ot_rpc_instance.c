@@ -15,8 +15,8 @@
 #include <openthread/platform/misc.h>
 #include <openthread/thread.h>
 
-#include <zephyr/fs/nvs.h>
-#include <zephyr/fs/zms.h>
+#include <zephyr/kvss/nvs.h>
+#include <zephyr/kvss/zms.h>
 #include <zephyr/net/openthread.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/__assert.h>

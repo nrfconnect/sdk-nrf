@@ -7,7 +7,7 @@
 #ifndef __SETTINGS_ZMS_LEGACY_H_
 #define __SETTINGS_ZMS_LEGACY_H_
 
-#include <zephyr/fs/zms.h>
+#include <zephyr/kvss/zms.h>
 #include <zephyr/settings/settings.h>
 
 #ifdef __cplusplus
