@@ -1,5 +1,9 @@
 .. _bluetooth_host_api:
 
+.. contents::
+   :local:
+   :depth: 2
+
 API
 ###
 

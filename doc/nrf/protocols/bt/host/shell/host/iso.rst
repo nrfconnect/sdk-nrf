@@ -1,5 +1,11 @@
+.. bt_iso_ch_shell:
+
 Bluetooth: Isochronous Channels Shell
 #####################################
+
+.. contents::
+   :local:
+   :depth: 2
 
 Commands
 ********
@@ -23,54 +29,46 @@ Commands
       term-big    :Terminate a BIG
 
 
-Unicast examples
 ****************
 1. [Central] Create CIG:
+   Requires to be connected:
+   .. code-block:: console
+      uart:~$ iso cig_create
+      CIG created
 
-Requires to be connected:
+#. [Peripheral] Listen to ISO connections
+   .. code-block:: console
+      uart:~$ iso listen txrx
 
-.. code-block:: console
+#. [Central] Connect ISO channel:
+   .. code-block:: console
+      uart:~$ iso connect
+      ISO Connect pending...
+      ISO Channel 0x20000f88 connected
 
-   uart:~$ iso cig_create
-   CIG created
+#. [Central] Connect ISO channel:
+   .. code-block:: console
+      uart:~$ iso connect
+      ISO Connect pending...
+      ISO Channel 0x20000f88 connected
 
-2. [Peripheral] Listen to ISO connections
-
-.. code-block:: console
-
-   uart:~$ iso listen txrx
-
-3. [Central] Connect ISO channel:
-
-.. code-block:: console
-
-   uart:~$ iso connect
-   ISO Connect pending...
-   ISO Channel 0x20000f88 connected
-
-4. Send data:
-
-.. code-block:: console
-
-   uart:~$ iso send
-   send: 40 bytes of data
-   ISO sending...
-
-
-5. Disconnect ISO channel:
-
-.. code-block:: console
-
-   uart:~$ iso disconnect
-   ISO Disconnect pending...
-   ISO Channel 0x20000f88 disconnected with reason 0x16
-
+#. Disconnect ISO channel:
+   .. code-block:: console
+      uart:~$ iso disconnect
+      ISO Disconnect pending...
+      ISO Channel 0x20000f88 disconnected with reason 0x16
 
 Broadcast examples
 ******************
 
+The following examples show how to use the shell to broadcast BIG data and synchronize to it.
+They cover both unencrypted and encrypted broadcast setups.
+
 Setting up broadcaster
 ======================
+
+This example initializes Bluetooth, creates an extended advertiser, and creates a BIG for broadcast.
+It then starts advertising, enables periodic advertising, and begins sending ISO data on the BIG.
 
 .. code-block:: console
 
@@ -93,7 +91,7 @@ Setting up broadcaster
    send: 247 bytes of data with PSN 4350
    ISO broadcasting...
 
-If encrypted broadcast is required, then a broadcast code can be provided as
+If encrypted broadcast is required, you can provide the broadcast code as follows:
 
 .. code-block:: console
 
@@ -102,6 +100,11 @@ If encrypted broadcast is required, then a broadcast code can be provided as
 
 Setting up sync receiver
 ========================
+
+This example scans for the broadcaster, creates a periodic advertising sync, and retrieves BIG
+information from the advertiser.
+After the BIG is discovered, it synchronizes to the selected BIS and establishes the ISO channel.
+The same flow can be used with an encrypted broadcast by providing the broadcast code.
 
 .. code-block:: console
 
@@ -119,7 +122,7 @@ Setting up sync receiver
    ISO Channel 0x200008c0 connected
 
 
-If encrypted broadcast is required, then a broadcast code can be provided as
+If encrypted broadcast is required, provide the broadcast code as follows:
 
 .. code-block:: console
 

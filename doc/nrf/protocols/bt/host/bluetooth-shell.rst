@@ -3,8 +3,12 @@
 Shell
 #####
 
-The Bluetooth Shell is an application based on the :ref:`shell_api` module. It offer a collection of
-commands made to easily interact with the Bluetooth stack.
+.. contents::
+   :local:
+   :depth: 2
+
+The Bluetooth Shell is an application based on the :ref:`shell_api` module.
+It offer a collection of commands made to easily interact with the Bluetooth stack.
 
 For specific Bluetooth functionality see also the following shell documentation
 
@@ -19,12 +23,12 @@ For specific Bluetooth functionality see also the following shell documentation
 Bluetooth Shell Setup and Usage
 *******************************
 
-First you need to build and flash your board with the Bluetooth shell. For how to do that, see the
-:ref:`getting_started`. The Bluetooth shell itself is located in
-:file:`nrf/tests/bluetooth/host/shell/`.
+First you need to build and flash your board with the Bluetooth shell.
+For how to do that, see the :ref:`getting_started`.
+The Bluetooth shell itself is located in :file:`nrf/tests/bluetooth/host/shell/`.
 
-When it is done, connect to the CLI using your favorite serial terminal application. You should see
-the following prompt:
+When it is done, connect to the CLI using your favorite serial terminal application.
+You should see the following prompt:
 
 .. code-block:: console
 
@@ -32,8 +36,9 @@ the following prompt:
 
 For more details on general usage of the shell, see :ref:`shell_api`.
 
-The first step is enabling Bluetooth. To do so, use the :code:`bt init` command. The following
-message is printed to confirm Bluetooth has been initialized.
+The first step is enabling Bluetooth.
+To do so, use the :code:`bt init` command.
+The following message is printed to confirm Bluetooth has been initialized.
 
 .. code-block:: console
 
@@ -55,8 +60,9 @@ message is printed to confirm Bluetooth has been initialized.
 Logging
 *******
 
-You can configure the logging level per module at runtime. This depends on the maximum logging level
-that is compiled in. To configure, use the :code:`log` command. Here are some examples:
+You can configure the logging level per module at runtime.
+This depends on the maximum logging level that is compiled in. To configure, use the :code:`log` command.
+Here are some examples:
 
 * List the available modules and their current logging level
 

@@ -3,6 +3,9 @@
 Universal Unique Identifiers (UUIDs)
 #####################################
 
+.. contents::
+   :local:
+   :depth: 2
 
 API Reference
 *************
