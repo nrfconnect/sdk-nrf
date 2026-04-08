@@ -7,9 +7,9 @@
 #include "access_storage_print.h"
 
 #ifdef CONFIG_SETTINGS_NVS
-#include <zephyr/fs/nvs.h>
+#include <zephyr/kvss/nvs.h>
 #elif CONFIG_SETTINGS_ZMS || CONFIG_SETTINGS_ZMS_LEGACY
-#include <zephyr/fs/zms.h>
+#include <zephyr/kvss/zms.h>
 #endif /* CONFIG_SETTINGS_NVS */
 #include <zephyr/logging/log.h>
 #include <zephyr/settings/settings.h>
