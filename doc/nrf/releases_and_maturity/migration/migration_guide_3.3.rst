@@ -58,6 +58,19 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
+Partition Manager deprecation
+-----------------------------
+
+.. toggle::
+
+   The :ref:`partition_manager` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
+
+   This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
+   It is recommended that all new designs using Nordic devices, excluding the nRF91 Series devices, are to be built with DTS instead of Partition Manager.
+   Partition Manager will be removed from the |NCS| by the end of 2026 from the main branch.
+
+   For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`migration_partitions` page.
+
 .. _migration_3.3_fp_locator_tag:
 
 Fast Pair Locator Tag sample
