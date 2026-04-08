@@ -41,6 +41,19 @@ If you wish to change the default memory layout of the board without editing the
 The nRF Desktop application automatically adds the :file:`app.overlay` file if it is present in the project's board configuration directory.
 For more details, see the :ref:`nrf_desktop_board_configuration` section.
 
+Some of the nRF Desktop application configurations define the non-volatile memory layout in :file:`memory_map.dtsi` files (for example, :file:`memory_map.dtsi` or :file:`memory_map_release.dtsi`).
+These files are placed in the project's board configuration directory and are included by the DTS overlay file of the given build type (:file:`app.overlay` or :file:`app_release.overlay`).
+See the nRF Desktop board configuration directories for examples of the DTS-based memory layout definitions.
+The following board targets use the DTS-based memory layout:
+
+* ``nrf52833dk/nrf52833``
+* ``nrf54h20dk/nrf54h20/cpuapp``
+* ``nrf54l15dk/nrf54l15/cpuapp``
+* ``nrf54l15dk/nrf54l05/cpuapp``
+* ``nrf54lm20dk/nrf54lm20a/cpuapp`` (only for the ``ram_load`` build type)
+* ``nrf54lm20dk/nrf54lm20b/cpuapp`` (only for the ``ram_load`` build type)
+* ``nrf54ls05dk/nrf54ls05b/cpuapp``
+
 .. important::
    By default, Zephyr does not use the code partition defined in the DTS files.
    It is only used if the :kconfig:option:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option is enabled.
@@ -52,6 +65,8 @@ For more information about how to configure the non-volatile memory layout in th
 
 Memory layout in Partition Manager
 **********************************
+
+.. include:: /includes/pm_deprecation.txt
 
 When the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` Kconfig option is enabled, the nRF Desktop application uses the Partition Manager for the memory layout configuration.
 The nRF Desktop configurations use static configurations of partitions to ensure that the partition layout does not change between builds.
