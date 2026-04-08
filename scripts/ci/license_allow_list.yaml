@@ -65,6 +65,38 @@ Apache-2.0: |
   ^nrf/drivers/wifi/nrf71/
   ^nrf/samples/dfu/smp_svr/sysbuild/mcuboot/boards/nrf54h20dk_nrf54h20_cpuapp.overlay
   ^nrf/samples/dfu/smp_svr/CMakeLists.txt
+  ^nrf/drivers/bluetooth/hci/
+  ^nrf/drivers/bluetooth/util.h
+  ^nrf/include/bluetooth/host/
+  ^nrf/include/bluetooth/drivers/bluetooth.h
+  ^nrf/subsys/bluetooth/host/
+  ^nrf/tests/bluetooth/addr/
+  ^nrf/tests/bluetooth/common/testlib/
+  ^nrf/tests/bluetooth/bt_crypto/
+  ^nrf/tests/bluetooth/bt_crypto_ccm/
+  ^nrf/tests/bluetooth/common/testlib/
+  ^nrf/tests/bluetooth/adv/
+  ^nrf/tests/bluetooth/bluetooth/
+  ^nrf/tests/bluetooth/buf/
+  ^nrf/tests/bluetooth/gap/
+  ^nrf/tests/bluetooth/gatt/
+  ^nrf/tests/bluetooth/hci/
+  ^nrf/tests/bluetooth/host/
+  ^nrf/tests/bluetooth/host/shell/
+  ^nrf/tests/bluetooth/host_long_adv_recv/
+  ^nrf/tests/bluetooth/host_config_variants/
+  ^nrf/tests/bluetooth/init/
+  ^nrf/tests/bluetooth/l2cap/
+  ^nrf/tests/bluetooth/smp/
+  ^nrf/tests/bluetooth/uuid/
+  ^nrf/tests/bsim/babblekit/
+  ^nrf/tests/bsim/bluetooth/
+  ^nrf/tests/bsim/compile.source
+  ^nrf/tests/bsim/run_parallel.sh
+  ^nrf/tests/bsim/sh_common.source
+  ^nrf/tests/zephyr/bluetooth/tester/host/src/
+  ^nrf/tests/zephyr/bluetooth/tester/host/Kconfig
+  ^nrf/tests/zephyr/bluetooth/tester/host/README.rst
 curl: "^nrf/ext/"
 MIT: "^nrf/ext/"
 BSD-3-CLAUSE: |

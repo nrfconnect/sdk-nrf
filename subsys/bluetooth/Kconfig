@@ -22,7 +22,8 @@ config BT_COMPANY_ID
 # When both connection roles are enabled there has to be one for each role.
 config BT_MAX_CONN
 	int
-	range 1 20 if BT_LL_SOFTDEVICE
+	range 1 20 if BT_LL_SOFTDEVICE && !SOC_SERIES_BSIM_NRFXX
+	range 1 250 if SOC_SERIES_BSIM_NRFXX
 	default 2 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
 	help
 	  When using the SoftDevice controller, the application needs to configure
@@ -46,6 +47,7 @@ config BT_LONG_WQ_STACK_SIZE
 	default 1024
 
 rsource "controller/Kconfig"
+rsource "host/Kconfig"
 rsource "host_extensions/Kconfig"
 rsource "cs_de/Kconfig"
 

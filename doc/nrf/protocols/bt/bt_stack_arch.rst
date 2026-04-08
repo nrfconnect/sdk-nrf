@@ -95,7 +95,5 @@ To use the Zephyr Bluetooth LE Controller instead, use the :ref:`bt-ll-sw-split 
 Zephyr Host
 ***********
 
-The |NCS| uses the Bluetooth Host implementation in the Zephyr project for host feature support.
+The |NCS| uses the Bluetooth Host implementation in sdk-nrf for host feature support.
 The Zephyr Host implementation is tested with the rest of the SDK for releases, and a valid QDID is provided for each SDK release.
-
-For more information, see the :ref:`bluetooth_le_host` page in the Zephyr documentation set.

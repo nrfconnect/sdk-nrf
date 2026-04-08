@@ -9,6 +9,7 @@ Bluetooth libraries and services
    :glob:
 
    fast_pair/index
+   host/*
    *
 
 

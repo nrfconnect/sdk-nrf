@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+add_subdirectory_ifdef(CONFIG_BT_DRIVERS bluetooth)
 add_subdirectory(entropy)
 add_subdirectory(flash)
 add_subdirectory(gpio)
