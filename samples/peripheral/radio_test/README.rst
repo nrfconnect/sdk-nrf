@@ -75,8 +75,11 @@ See :ref:`radio_test_ui` for a list of available commands.
 
 .. _radio_test_ui:
 
+Command Descriptions
+********************
+
 User interface
-**************
+==============
 .. list-table:: Main shell commands (in alphabetical order)
    :header-rows: 1
 
@@ -155,6 +158,496 @@ User interface
      - <tx output power>
      - Set total output power in dBm.
        This value includes SoC output power and front-end module gain.
+
+
+cancel
+======
+
+The ``cancel`` command is used to stop an ongoing TX or RX test.
+
+data_rate
+=========
+
+The ``data_rate`` command sets the data rate used for any modulated transmission.
+
+.. list-table:: Accepted data rates for the ``data_rate`` command
+   :header-rows: 1
+
+   * - Data rate
+     - Description
+   * - ``nrf_1Mbit``
+     - 1 Mbit/s Nordic proprietary radio mode
+   * - ``nrf_2Mbit``
+     - 2 Mbit/s Nordic proprietary radio mode
+   * - ``nrf_4Mbit_BT06``
+     - 4 Mbps Nordic proprietary radio mode (BT=0.6/h=0.5)
+   * - ``nrf_4Mbit_BT04``
+     - 4 Mbps Nordic proprietary radio mode (BT=0.4/h=0.5)
+   * - ``ble_1Mbit``
+     - 1 Mbit/s Bluetooth Low Energy
+   * - ``ble_2Mbit``
+     - 2 Mbit/s Bluetooth Low Energy
+   * - ``ble_lr125Kbit``
+     - Long range 125 kbit/s TX, 125 kbit/s and 500 kbit/s RX
+   * - ``ble_lr500Kbit``
+     - Long range 500 kbit/s TX, 125 kbit/s and 500 kbit/s RX
+   * - ``ieee802154_250Kbit``
+     - IEEE 802.15.4-2006 250 kbit/s
+
+.. note::
+
+   Not all data rates are supported on all platforms.
+   What data rates a given platform support is covered at <link_to_device_documentation?>
+
+Usage example
+-------------
+
+.. code-block:: console
+
+  uart:~$ data_rate ble_1Mbit
+
+end_channel
+===========
+
+The ``end_channel`` command sets the end channel for the TX and RX sweeps.
+The channel represents an offset, in MHz, from 2400 MHz.
+It must be between ``0`` and ``80``, where ``0`` corresponds to 2400 MHz and ``80`` corresponds to 2480 MHz.
+
+fem
+===
+
+The ``fem`` command is used to set front-end module (FEM) parameters.
+It is invoked with a sub-command to determine what parameters are being controlled.
+
+.. list-table:: ``fem`` command sub-command list
+   :header-rows: 1
+
+   * - Command
+     - Description
+   * - ``tx_power_control``
+     - Set the FEM TX power control to a given value. This value is defined by the FEM in use, and this can only be used when the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` Kconfig option is disabled.
+   * - ``antenna``
+     - Set the FEM antenna in use.
+   * - ``ramp_up_time``
+     - Set the FEM ramp up time in microseconds.
+
+
+output_power
+============
+
+The ``output_power`` command sets the output power for all TX commands.
+The command also accounts for front-end module if FEM is attached and automatic power control is enabled.
+
+.. list-table:: Accepted power levels for the ``output_power`` command
+   :header-rows: 1
+
+   * - Power level
+     - Description
+   * - pos8dBm
+     - TX power: +8 dBm
+   * - pos7dBm
+     - TX power: +7 dBm
+   * - pos6dBm
+     - TX power: +6 dBm
+   * - pos5dBm
+     - TX power: +5 dBm
+   * - pos4dBm
+     - TX power: +4 dBm
+   * - pos3dBm
+     - TX power: +3 dBm
+   * - pos2dBm
+     - TX power: +2 dBm
+   * - pos1dBm
+     - TX power: +1 dBm
+   * - pos0dBm
+     - TX power: 0 dBm
+   * - neg1dBm
+     - TX power: -1 dBm
+   * - neg2dBm
+     - TX power: -2 dBm
+   * - neg3dBm
+     - TX power: -3 dBm
+   * - neg4dBm
+     - TX power: -4 dBm
+   * - neg5dBm
+     - TX power: -5 dBm
+   * - neg6dBm
+     - TX power: -6 dBm
+   * - neg7dBm
+     - TX power: -7 dBm
+   * - neg8dBm
+     - TX power: -8 dBm
+   * - neg9dBm
+     - TX power: -9 dBm
+   * - neg10dBm
+     - TX power: -10 dBm
+   * - neg12dBm
+     - TX power: -12 dBm
+   * - neg14dBm
+     - TX power: -14 dBm
+   * - neg16dBm
+     - TX power: -16 dBm
+   * - neg18dBm
+     - TX power: -18 dBm
+   * - neg20dBm
+     - TX power: -20 dBm
+   * - neg22dBm
+     - TX power: -22 dBm
+   * - neg28dBm
+     - TX power: -28 dBm
+   * - neg40dBm
+     - TX power: -40 dBm
+   * - neg46dBm
+     - TX power: -46 dBm
+
+.. note::
+
+   Not all TX power levels are supported on all platforms.
+   What TX power levels a given platform support is covered at <link_to_device_documentation?>
+
+Usage example
+-------------
+
+.. code-block:: console
+
+  uart:~$ output_power pos0dBm
+
+parameters_print
+================
+
+The ``parameters_print`` command prints the currently configured parameters.
+
+.. list-table:: Parameters printed and command to configure the parameter
+   :header-rows: 1
+
+   * - Printed parameter
+     - Command to modify
+   * - Data rate
+     - ``data_rate``
+   * - TX power
+     - ``output_power``
+   * - Transmission pattern
+     - ``transmit_pattern``
+   * - Start channel
+     - ``start_channel``
+   * - End channel
+     - ``end_channel``
+   * - Time on each channel
+     - ``time_on_channel``
+   * - Duty cycle
+     - ``start_duty_cycle_modulated_tx``
+
+print_channel_sequence
+======================
+
+The ``print_channel_sequence`` commnd prints the currently configured channel sequence,
+configured with the ``set_channel_sequence`` command, as well as how many channels are in the sequence.
+
+print_rx
+========
+
+The ``print_rx`` command prints the received RX payload and number of packets received.
+
+set_channel_sequence
+====================
+
+The ``set_channel_sequence`` command sets a custom channel sequence for the ``start_tx_with_sleep`` and ``start_tx_sweep_with_sleep_modulated`` command.
+The channel sequence can contain up to 80 channels between ``0`` and ``80``.
+Each channel represents an offset, in MHz, from 2400 MHz.
+They must be between ``0`` and ``80``, where ``0`` corresponds to 2400 MHz and ``80`` corresponds to 2480 MHz.
+
+Usage example
+-------------
+
+Configure the channel sequence to only have one channel so transmission repeats on the same frequency.
+
+.. code-block:: console
+
+  uart:~$ set_channel_sequence 10
+  uart:~$ print_channel_sequence
+  Channel Sequence length: 1
+  Channel Sequence: [10]
+
+
+Configure a new channel sequence with multiple channels.
+
+.. code-block:: console
+
+  uart:~$ set_channel_sequence 0 2 4 6 8 10
+  uart:~$ print_channel_sequence
+  Channel Sequence length: 6
+  Channel Sequence: [0, 2, 4, 6, 8, 10]
+
+
+Configure a channel sequence that is not strictly ascending with multiple channels.
+
+.. code-block:: console
+
+  uart:~$ set_channel_sequence 0 2 4 6 8 10 8 6 4 2
+  uart:~$ print_channel_sequence
+  Channel Sequence length: 10
+  Channel Sequence: [0, 2, 4, 6, 8, 10, 8, 6, 4, 2]
+
+
+.. note::
+
+   Using the print_channel_sequence is not required, but it makes verifying the configured channel sequence easier.
+
+start_channel
+=============
+
+The ``start_channel`` command sets the start channel for the ``start_rx_sweep`` and ``start_tx_sweep`` commands.
+The command also configures the transmission channel for the ``start_rx``, ``start_tx_carrier`` and ``start_tx_modulated_carrier`` commands.
+
+The channel represents an offset, in MHz, from 2400 MHz.
+It must be between ``0`` and ``80``, where ``0`` corresponds to 2400 MHz and ``80`` corresponds to 2480 MHz.
+
+start_duty_cycle_modulated_tx
+=============================
+
+The ``start_duty_cycle_modulated_tx`` command starts a modulated carrier with a configurable duty cycle.
+The data rate and transmission pattern are controlled with the ``data_rate`` and ``transmit_pattern`` commands, respectively,
+while the duty cycle is controlled when invoking the ``start_duty_cycle_modulated_tx`` as a value between 1 and 90 as a percentage.
+
+Usage example
+-------------
+
+To configure the device to transmit on ``ble_1Mbit`` with a random transmit pattern and a 50% duty cycle, use the following command:
+
+.. code-block:: console
+
+  uart:~$ data_rate ble_1Mbit
+  uart:~$ transmit_pattern pattern_random
+  uart:~$ start_duty_cycle_modulated_tx 50
+
+start_rx
+========
+
+The ``start_rx`` starts an RX reception window.
+With additional configuration during invocation, the RX window expects a specified number of packets.
+Without configuration, the device enters a continuous RX reception mode.
+
+Usage example
+-------------
+
+To configure the device to receive a specified number of packets, here 50, use the following command:
+
+.. code-block:: console
+
+  uart:~$ start_rx 50
+
+To configure the radio to enter continuous RX mode, use the following command:
+
+.. code-block:: console
+
+  uart:~$ start_rx
+
+start_rx_sweep
+==============
+
+The ``start_rx_sweep`` command starts an RX sweep.
+The RX sweep starts at the channel configured with ``start_channel`` and increments by 1 MHz until it reaches the end channel configured with ``end_channel``.
+When the sweep reaches the end channel, it restarts at the start channel.
+The RX sweep remains on each channel for the number of milliseconds specified by ``time_on_channel``.
+
+Usage example
+-------------
+
+To configure an RX sweep starting at 2400 MHz and ending at 2480 MHz, with 10 ms on each channel, use the following command:
+
+.. code-block:: console
+
+  uart:~$ start_channel 0
+  uart:~$ end_channel 80
+  uart:~$ time_on_channel 10
+  uart:~$ start_rx_sweep
+
+start_tx_carrier
+================
+
+The ``start_tx_carrier`` command starts a continuous, unmodulated TX carrier on the channel configured with ``start_channel``.
+
+start_tx_modulated_carrier
+==========================
+
+The ``start_tx_modulated_carrier`` command starts a modulated TX carrier on the channel configured with ``start_channel``.
+If no argument is given, the TX carrier transmits continuously.
+If an argument is given, the TX carrier transmits the specified number of packets.
+The data rate and transmission pattern are controlled using the ``data_rate`` and ``transmit_pattern`` commands, respectively.
+
+Usage example
+-------------
+
+To configure a continuous modulated TX carrier at 2400 MHz on the ``ble_2Mbit`` PHY with a random transmission pattern, use the following commands:
+
+.. code-block:: console
+
+  uart:~$ start_channel 0
+  uart:~$ data_rate ble_2Mbit
+  uart:~$ transmit_pattern pattern_random
+  uart:~$ start_tx_modulated_carrier
+
+To configure a modulated TX carrier at 2440 MHz on the ``ble_1Mbit`` PHY with a random transmission pattern that sends 50 packets, use the following commands:
+
+.. code-block:: console
+
+  uart:~$ start_channel 40
+  uart:~$ data_rate ble_1Mbit
+  uart:~$ transmit_pattern pattern_random
+  uart:~$ start_tx_modulated_carrier 50
+
+start_tx_sweep
+==============
+
+The ``start_tx_sweep`` command starts a TX sweep.
+The TX sweep starts at the channel configured with ``start_channel`` and increments by 1 MHz until it reaches the end channel configured with ``end_channel``.
+When the sweep reaches the end channel, it restarts at the start channel.
+The TX sweep remains on each channel for the number of milliseconds configured with ``time_on_channel``.
+
+Usage example
+-------------
+
+To configure a a TX sweep starting at 2400 MHz and ending at 2480 MHz, with 10 ms on each channel, use the following commands:
+
+.. code-block:: console
+
+  uart:~$ start_channel 0
+  uart:~$ end_channel 80
+  uart:~$ time_on_channel 10
+  uart:~$ start_tx_sweep
+
+start_tx_sweep_with_sleep
+=========================
+
+The ``start_tx_sweep_with_sleep`` command starts a TX sweep with a configurable sleep time.
+The channel sequence used for the sweep is configured with the ``set_channel_sequence`` command.
+The sweep will start at the first channel in the channel sequence and iterates through the sequence until it reaches the last channel in the sequence.
+When the sweep reaches the last channel in the sequence, it restarts at he start of the sequence.
+The time spent on each channel is configured by setting the TX time and sleep time.
+This is done when invoking the ``start_tx_sweep_with_sleep`` command providing the TX time and sleep time in microseconds.
+
+.. note::
+   The default TX sweep with sleep starts at 2404 MHz and increments by 1 MHz up to 2478 MHz.
+   When it reaches 2478 MHz, it restarts at 2404 MHz.
+   It does not transmit on 2425, 2426, and 2427 MHz.
+   This is done to avoid the standard BLE advertising channels.
+
+Usage example
+-------------
+
+To configure a TX sweep with an 80 µs TX window and a 160 µs sleep interval on each channel, use the following command.
+This configuration results in a sweep that spends 240 µs on each channel, corresponding to a 33.33% duty cycle.
+
+.. code-block:: console
+
+  uart:~$ start_tx_sweep_with_sleep 80 160
+
+To configure a TX sweep that uses every other channel with a 80 µs TX window and a 240 µs sleep interval on channel, use the following command.
+This configuration results in a sweep that spends 320 µs on each channel, corresponding to a 25% duty cycle.
+
+.. code-block:: console
+
+  uart:~$ set_channel_sequence 0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80
+  uart:~$ start_tx_sweep_with_sleep 80 240
+
+start_tx_sweep_with_sleep_modulated
+===================================
+
+The ``start_tx_sweep_with_sleep_modulated`` command starts a modulated TX sweep with a configurable sleep time.
+The channel sequence used for the sweep is configured with the ``set_channel_sequence`` command.
+The sweep will start at the first channel in the channel sequence and iterates through the sequence until it reaches the last channel in the sequence.
+When the sweep reaches the last channel in the sequence, it restarts at he start of the sequence.
+The time spent on each channel is configured by setting the TX time and sleep time.
+This is done when invoking the ``start_tx_sweep_with_sleep`` command providing the TX time and sleep time in microseconds.
+
+.. note::
+   The default TX sweep with sleep starts at 2404 MHz and increments by 1 MHz up to 2478 MHz.
+   When it reaches 2478 MHz, it restarts at 2404 MHz.
+   It does not transmit on 2425, 2426, and 2427 MHz.
+   This is done to avoid the standard BLE advertising channels.
+
+Usage example
+-------------
+
+To configure a TX sweep with an 80 µs TX window and a 160 µs sleep interval on each channel, use the following command.
+This configuration results in a sweep that spends 240 µs on each channel, corresponding to a 33.33% duty cycle.
+
+.. code-block:: console
+
+  uart:~$ start_tx_sweep_with_sleep_modulated 80 160
+
+To configure a TX sweep that uses every other channel with a 80 µs TX window and a 240 µs sleep interval on channel, use the following command.
+This configuration results in a sweep that spends 320 µs on each channel, corresponding to a 25% duty cycle.
+
+.. code-block:: console
+
+  uart:~$ set_channel_sequence 0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80
+  uart:~$ start_tx_sweep_with_sleep_modulated 80 240
+
+time_on_channel
+===============
+
+The ``time_on_channel`` command configures the time, in milliseconds, on each channel for standard TX and RX sweeps
+
+toggle_dcdc_state
+=================
+
+The ``toggle_dcdc_state`` command is used to toggle the DC/DC state.
+This command functions differently if ``NRF_POWER_HAS_DCDCEN_VDDH`` or ``NRF_POWER_HAS_DCDCEN`` is set.
+
+Usage example
+-------------
+
+To toggle the DC/DC state when ``NRF_POWER_HAS_DCDCEN_VDDH`` is set, use the following command.
+
+.. code-block:: console
+
+   uart:~$ toggle_dcdc_state 1
+
+To toggle the DC/DC VDDH state when ``NRF_POWER_HAS_DCDCEN_VDDH`` is set, use the following command.
+
+.. code-block:: console
+
+   uart:~$ toggle_dcdc_state 0
+
+To toggle the DC/DC state when ``NRF_POWER_HAS_DCDCEN`` is set, use the following command.
+
+.. code-block:: console
+
+   uart:~$ toggle_dcdc_state
+
+
+transmit_pattern
+================
+
+The ``transmit_pattern`` command is used to configure the transmission pattern for modulated transmissions.
+
+.. list-table:: Selectable transmit patterns
+   :header-rows: 1
+
+   * - Transmit pattern
+     - Description
+   * - pattern_random
+     - Transmitt a random sequence
+   * - pattern_11110000
+     - Transmit 11110000 repeating
+   * - pattern_11001100
+     - Transmit 11001100 repeating
+
+total_output_power
+==================
+
+The ``total_output_power`` command sets the total output power of the device in dBm.
+This command accounts for any FEM module gain as well as the SoC output power.
+
+Usage example
+-------------
+
+To configure the total ouput power to 10 dBm, use the following command.
+
+.. code-block:: console
+
+  uart:~$ total_output_power 10
 
 TX output power
 ===============
