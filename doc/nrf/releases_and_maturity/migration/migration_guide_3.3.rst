@@ -58,6 +58,174 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
+.. _migration_3.3_pm_deprecation:
+
+Partition Manager static files
+------------------------------
+
+.. toggle::
+
+   * The Partition Manager is a component in the nRF Connect SDK (NCS) that handles the flash memory partitioning at build time.
+     This functionality is now replaced by Zephyr's default Device Tree–based flash partitioning when multi-image builds are involved.
+     Use the following procedure to migrate existing projects.
+
+     1. Determine whether migration is needed.
+
+        Check the following:
+
+        * Do you have a :file:`pm_static.yml` file or similar ``pm_static*`` files?
+        * Do you need custom partitions that are not already provided by upstream dts board files?
+
+        If both answers are no, skip to Step 10.
+
+     2. Identify the board and configuration matrix.
+
+        Run Steps 3 to 8 for each board target and each configuration that can change the partition layout.
+
+        A typical example of a different configuration is a sample or test that uses different ``FILE_SUFFIX`` values.
+        For an example, see :file:`nrf/samples/bluetooth/mesh/dfu/distributor/sample.yaml` and search for ``FILE_SUFFIX``.
+
+        If your project supports only one board and one configuration, run the procedure once.
+
+     3. Configure a build without compiling sources.
+
+        "Configure a build" means generating build system files only, without compiling sources.
+        Use the ``--cmake-only`` option.
+
+        The following example assumes that the command is run from the workspace root:
+
+        .. code-block:: none
+
+           west build -p \
+             -b nrf54h20dk@0.9.0/nrf54h20/cpuapp \
+             nrf/tests/zephyr/drivers/flash/common \
+             -T drivers.flash.common.default \
+             --cmake-only
+
+        Expected result:
+
+        * A :file:`build/` directory is generated with Devicetree and CMake context.
+        * No object files or binaries are compiled at this stage.
+
+     4. Run the PM-to-DTS helper script on the build directory.
+
+        Helper script:
+        <https://github.com/nrfconnect/partition_manager_deprecation/blob/main/pm_to_dts.py>
+
+        .. code-block:: none
+
+           python /path/to/pm_to_dts.py build
+
+        One script invocation on one build directory produces one overlay output file.
+
+     5. Compare the generated partitions with upstream board Devicetree partitions.
+
+        Compare partition node content, including:
+
+        * Node labels
+        * Addresses and offsets
+        * Sizes
+        * Presence or absence of nodes
+
+        If the generated partition nodes match upstream:
+
+        * Do not add a new board overlay for this board and configuration.
+        * Remove the corresponding ``pm_static*`` files, if present.
+        * Continue with the next board and configuration from Step 2.
+
+     6. If partitions differ, create overlay files.
+
+        Use only the following filenames:
+
+        * :file:`<app>/boards/<board_target>.overlay`
+        * :file:`<app>/boards/<board_target>_<file_suffix>.overlay` for configuration-specific overlays
+
+        Do not create a custom partitions folder or a separate :file:`.dtsi` file for migrated partitions.
+
+     7. Manually review and fix the generated output.
+
+        The helper script is not guaranteed to produce correct output for every board and configuration.
+        Manually review and fix the generated overlay as needed.
+
+        Typical fixes include:
+
+        * Correcting partition labels
+        * Correcting sizes and offsets
+        * Adding missing partition nodes
+        * Removing incorrect extra nodes
+
+        Ensure that partition ordering and boundaries match the intended flash layout for the board and configuration.
+
+     8. Propagate partitions to other sysbuild images when required.
+
+        If the build contains additional images that need the same partition definitions, include the generated overlay from image-specific overlays.
+
+        Place the ``#include`` directive at the top of the overlay file.
+        For example:
+
+        .. code-block:: dts
+
+           #include "../../../boards/<board_target>.overlay"
+
+        Replace the relative path with the actual path to the generated overlay.
+
+     9. Build and run with Partition Manager disabled.
+
+        Reconfigure and build with Partition Manager disabled:
+
+        .. code-block:: none
+
+           west build -p \
+             -b <board_target> \
+             <app_or_test_path> \
+             -- \
+             -DSB_CONFIG_PARTITION_MANAGER=n
+
+        Then flash and verify the result:
+
+        .. code-block:: none
+
+           west flash
+
+        Confirm that the sample or test runs as expected with Devicetree partitions only.
+
+     10. Remove migrated ``pm_static*`` files.
+
+         Delete ``pm_static*`` files that are fully replaced by Devicetree overlays.
+         If migration is done in phases, remove only files that have already been ported.
+
+     11. Disable Partition Manager by default in :file:`Kconfig.sysbuild`.
+
+         For example:
+
+         .. code-block:: kconfig
+
+            config PARTITION_MANAGER
+               default n
+
+     12. Update code to avoid default inclusion of :file:`pm_config.h`.
+
+         For example, use the following pattern:
+
+         .. code-block:: c
+
+            #ifdef CONFIG_PARTITION_MANAGER_ENABLED
+            #include <pm_config.h>
+            #else
+            #include <zephyr/storage/flash_map.h>
+            #endif
+
+         When possible, replace Partition Manager-specific usage with fixed-partition or flash map APIs such as:
+
+         * ``FIXED_PARTITION_ADDRESS(label)``
+         * ``FIXED_PARTITION_NODE_ADDRESS(node)``
+         * ``FIXED_PARTITION_OFFSET(label)``
+         * ``FIXED_PARTITION_NODE_OFFSET(node)``
+         * ``FIXED_PARTITION_ID(label)``
+         * ``FIXED_PARTITION_EXISTS(label)``
+         * ``FIXED_PARTITION_SIZE(label)``
+         * ``FIXED_PARTITION_NODE_SIZE(node)``
+
 .. _migration_3.3_fp_locator_tag:
 
 Fast Pair Locator Tag sample
