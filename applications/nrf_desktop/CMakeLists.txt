@@ -61,12 +61,6 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   endif()
 
   if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)
-    message(WARNING "
-            -----------------------------------------------------------------------------
-            --- WARNING: The RAM load mode of the MCUboot bootloader is experimental. ---
-            -----------------------------------------------------------------------------
-            ")
-
     # Enforce the specific RAM layout in DTS when MCUboot uses the RAM load mode.
     dt_nodelabel(app_rxm_region_node NODELABEL cpuapp_sram_app_rxm_region)
     if(NOT app_rxm_region_node)

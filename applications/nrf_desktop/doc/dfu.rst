@@ -77,10 +77,7 @@ RAM load mode
 -------------
 
 If this bootloader mode is selected, the DFU module does not mark the newly uploaded image as pending and does not confirm it after a successful boot.
-
-.. note::
-   Support for the RAM load mode in this module is experimental.
-   For more details about the support of the MCUboot RAM load mode in the nRF Desktop application, see the MCUboot :ref:`nrf_desktop_configuring_mcuboot_bootloader_ram_load` section in the nRF Desktop documentation.
+For more details about the support of the MCUboot RAM load mode in the nRF Desktop application, see the MCUboot :ref:`nrf_desktop_configuring_mcuboot_bootloader_ram_load` section in the nRF Desktop documentation.
 
 .. note::
    DTS is the only supported partitioning method when you use the MCUboot bootloader in the RAM load mode.
