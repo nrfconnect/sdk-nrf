@@ -7,6 +7,7 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/net/socket_ncs.h>
 #include <zephyr/net/tls_credentials.h>
+#include <zephyr/net/net_log.h>
 #include <stdio.h>
 #include <stdbool.h>
 
