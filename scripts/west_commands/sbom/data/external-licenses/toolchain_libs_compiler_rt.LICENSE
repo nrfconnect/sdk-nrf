@@ -1,0 +1,11 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+ *
+ * Apply the compiler-rt bundled license notice to runtime archives that do
+ * not carry SPDX tags themselves.
+ *
+ * Source:
+ * ATfE-22.1.0-Windows-x86_64/third-party-licenses/COMPILER-RT-LICENSE.txt
+ *
+ * NCS-SBOM-Apply-To-File: **/clang-runtimes/**/libclang_rt.builtins.a
+ */

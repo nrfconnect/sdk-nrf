@@ -479,6 +479,10 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
+* :ref:`west_sbom` script:
+
+  * Added licence handling of the LLVM toolchain libraries.
+
 |no_changes_yet_note|
 
 Integrations
