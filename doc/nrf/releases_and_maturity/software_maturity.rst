@@ -207,6 +207,13 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - --
+         * - **ESB**
+           - Supported
+           - --
+           - --
+           - Supported
+           - Supported
+           - Supported
          * - **LTE**
            - --
            - --
@@ -271,6 +278,8 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
          * - **DECT NR+ PHY**
            - --
+         * - **ESB**
+           - Supported\ :sup:`6`
          * - **LTE**
            - --
          * - **Matter**
@@ -300,6 +309,8 @@ The following table indicates the software maturity levels of the support for ea
            - --
          * - **DECT NR+ PHY**
            - --
+         * - **ESB**
+           - Supported\ :sup:`7`
          * - **LTE**
            - --
          * - **Matter**
@@ -349,6 +360,13 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - --
+         * - **ESB**
+           - Supported
+           - Supported
+           - Supported
+           - Supported
+           - Experimental
+           - Experimental
          * - **LTE**
            - --
            - --
@@ -425,6 +443,11 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - --
               - Experimental
+            * - **ESB**
+              - --
+              - --
+              - --
+              - --
             * - **LTE**
               - Supported
               - Supported
@@ -466,6 +489,8 @@ The following table indicates the software maturity levels of the support for ea
 | [3]: Only with nRF7002-EB II
 | [4]: The software maturity levels for Amazon Sidewalk can be found on the `Amazon Sidewalk <Amazon Sidewalk documentation_>`_ add-on page
 | [5]: The software maturity levels for Zigbee can be found on the `Zigbee R23`_ add-on page
+| [6]: Runs on the network core
+| [7]: Runs on the radio core
 
 Amazon Sidewalk features support
 ********************************
