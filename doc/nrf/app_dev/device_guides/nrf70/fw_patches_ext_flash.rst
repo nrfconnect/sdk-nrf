@@ -9,6 +9,8 @@ Firmware patches in the external memory
 
 This guide explains the available options for having the nRF70 Series firmware patches reside in the external memory.
 
+.. include:: ../../../includes/pm_deprecation.txt
+
 .. note::
    External memory refers to the memory that is outside the SoC, for example, an external flash memory chip, or external non-volatile memory (NVM) chip.
 
@@ -80,10 +82,6 @@ In this case the upload of the firmware patch from the external memory to the nR
 
 You can enable this feature using the :ref:`app_build_snippets` feature.
 
-.. note::
-
-   Storing the nRF70 firmware patches in external RAM memory requires the partition manager to be enabled.
-
 Configuration
 -------------
 
@@ -93,18 +91,25 @@ The following configuration options are available:
 * :kconfig:option:`CONFIG_NRF_WIFI_FW_FLASH_CHUNK_SIZE` - Defines the size of the chunks used to read the firmware patches from the external non-XIP memory.
   The default value is 8192 bytes.
 
-You must define the external memory partition name in the Partition Manager configuration file as follows:
+You must define the firmware patch region in devicetree so that the build can place the image and the driver can locate it.
+The partition node must use the node label ``nrf70_wifi_fw_partition`` (see the ``nrf70-fw-patch-ext-flash`` snippet overlay).
 
-* ``nrf70_wifi_fw`` - Defines the name of the external memory partition that stores the firmware patches.
-  This must be defined in the partition manager configuration file, for example:
+.. code-block:: devicetree
 
-.. code-block:: console
+   &mx25r64 {
+           partitions {
+                   compatible = "fixed-partitions";
+                   #address-cells = <1>;
+                   #size-cells = <1>;
 
-      nrf70_wifi_fw:
-        address: 0x12f000
-        size: 0x20000
-        device: MX25R64
-        region: external_flash
+                   nrf70_wifi_fw_partition: nrf70_fw_partition: partition@0 {
+                           reg = <0x0 0x20000>;
+                   };
+           };
+   };
+
+Adjust the parent node (for example, ``&mx25r64``), as well as the offsets and sizes, to match your board's external flash layout.
+The ``nrf70-fw-patch-ext-flash`` snippet provides a working starting point, together with the devicetree ``chosen`` property ``nordic,pm-ext-flash``.
 
 Building
 --------
@@ -128,24 +133,6 @@ With CMake
 .. code-block:: console
 
     cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dshell_SHIELD=nrf7002ek -Dshell_SNIPPET="nrf70-fw-patch-ext-flash"
-    ninja -C build
-
-For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with partition manager enabled, run the following commands:
-
-With west
-^^^^^^^^^
-
-.. code-block:: console
-
-    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SHIELD=nrf7002ek -Dshell_SNIPPET=nrf70-fw-patch-ext-flash
-
-With CMake
-^^^^^^^^^^
-
-.. code-block:: console
-
-    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dshell_SHIELD=nrf7002ek -Dshell_SNIPPET=nrf70-fw-patch-ext-flash
-    samples/wifi/shell
     ninja -C build
 
 Programming
