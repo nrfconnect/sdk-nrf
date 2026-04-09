@@ -81,13 +81,13 @@ GATT
 GATT Server
 ===========
 
-TODO: Add location
+| Header file: :file:`include/bluetooth/host/gatt.h`
 
 .. doxygengroup:: bt_gatt_server
 
 GATT Client
 ===========
 
-TODO: Add location
+| Header file: :file:`include/bluetooth/host/gatt.h`
 
 .. doxygengroup:: bt_gatt_client

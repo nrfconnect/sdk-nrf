@@ -7,12 +7,15 @@ Bluetooth: Isochronous Channels Shell
    :local:
    :depth: 2
 
-TODO: Add intro text.
+The ISO shell provides commands for working with Bluetooth isochronous channels from the command
+line.
+It can be used to exercise both connected isochronous streams and broadcast isochronous streams.
 
 Commands
 ********
 
-TODO: Add intro text.
+The following command list shows the available ISO shell subcommands.
+Use `iso --help` in the shell to print the same overview at runtime.
 
 .. code-block:: console
 
@@ -32,10 +35,11 @@ TODO: Add intro text.
                   [enc <broadcast code>]
       term-big    :Terminate a BIG
 
-TODO: Add title
+Unicast examples
 ***************
 
-TODO: Add intro text. Is the numbered list below a procedure that happens in order or should they be bullets?
+The following steps form an ordered procedure for setting up and using a unicast ISO channel.
+Some steps are run on the central side and others on the peripheral side, as noted below.
 
 1. [Central] Create CIG:
    Requires to be connected:
@@ -47,11 +51,11 @@ TODO: Add intro text. Is the numbered list below a procedure that happens in ord
    .. code-block:: console
       uart:~$ iso listen txrx
 
-#. [Central] Connect ISO channel:
+#. Send data:
    .. code-block:: console
-      uart:~$ iso connect
-      ISO Connect pending...
-      ISO Channel 0x20000f88 connected
+   uart:~$ iso send
+   send: 40 bytes of data
+   ISO sending...
 
 #. [Central] Connect ISO channel:
    .. code-block:: console

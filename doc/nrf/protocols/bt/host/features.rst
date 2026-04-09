@@ -7,7 +7,7 @@ Supported features
     :local:
     :depth: 2
 
-TODO: Add intro text. Something like: The Bluetooth host supports the following features:
+The Bluetooth host supports the following features:
 
 * Bluetooth Host
 

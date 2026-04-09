@@ -160,7 +160,8 @@ The definitions are from the Core Specification version 5.4, volume 3, part A 1.
 PDU Types
 ---------
 
-TODO: Add intro text.
+The following PDU types are used for LE L2CAP data transport, depending on the selected channel
+mode.
 
 .. _bluetooth_l2cap_b_frame:
 
@@ -202,7 +203,8 @@ It contains a SDU segment and additional protocol information.
 Relevant Kconfig
 ----------------
 
-TODO: Add intro text. Always after a title.
+The following Kconfig options affect the L2CAP payload sizes and whether credit-based channels are
+available.
 
 .. list-table::
    :header-rows: 1

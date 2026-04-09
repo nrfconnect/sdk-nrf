@@ -7,7 +7,10 @@ Privacy feature test
    :local:
    :depth: 2
 
-TODO: Add intro text.
+This test suite verifies Bluetooth privacy behavior for devices using the BabbleSim test
+environment.
+It focuses on address handling and resolvable private address resolution after peers have exchanged
+identity information.
 
 Tests goals
 ***********

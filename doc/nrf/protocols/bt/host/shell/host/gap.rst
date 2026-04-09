@@ -154,11 +154,10 @@ The following example shows how to set the advertiser name with it using raw adv
    Advertiser[0] 0x20002348 set started
 
 The data must be formatted according to the Bluetooth Core Specification (see version 5.3, vol. 3, part C, 11).
-In this example, the first octet is the size of the data (the data and one octet for the data type), the second one is the type of data, ``0x09`` is the Complete Local Name and the remaining data are
-the name in ASCII.
+In this example, the raw value ``1009426C7565746F6F74682D5368656C6C`` starts with the size octet
+``0x10`` and then the type octet ``0x09``.
+The value ``0x09`` is the Complete Local Name type, and the remaining bytes are the name in ASCII.
 So, on the other device you should see the name *Bluetooth-Shell*.
-
-TODO: Where is 0x09 mentioned above? Cannot find it in the example.
 
 When advertising, if other devices use an *active* scanner, you may receive *scan request* packets.
 To visualize those packets, you can add :code:`scan-reports` to the parameters of your advertiser.

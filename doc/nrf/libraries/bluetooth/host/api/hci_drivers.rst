@@ -7,11 +7,15 @@ HCI Drivers
    :local:
    :depth: 2
 
-TODO: Add description text.
+The HCI Driver API defines the interface between the Bluetooth host stack and an HCI transport
+driver.
+It provides operations for opening and closing the transport, sending HCI packets, and performing
+optional controller-specific setup.
+These APIs are used by HCI driver implementations that connect the host to a Bluetooth controller.
 
 API Reference
 *************
 
-TODO: Add location.
+| Header file: :file:`include/bluetooth/drivers/bluetooth.h`
 
 .. doxygengroup:: bt_hci_api
