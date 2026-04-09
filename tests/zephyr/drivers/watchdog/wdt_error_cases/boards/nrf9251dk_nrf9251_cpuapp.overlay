@@ -1,0 +1,15 @@
+&wdt010 {
+	status = "okay";
+};
+
+&wdt011 {
+	status = "disabled";
+};
+
+&wdt131 {
+	status = "disabled";
+};
+
+&wdt132 {
+	status = "disabled";
+};
