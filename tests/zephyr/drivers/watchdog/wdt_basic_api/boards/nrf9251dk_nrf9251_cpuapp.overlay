@@ -1,0 +1,3 @@
+watchdog0: &wdt010 {
+	status = "okay";
+};
