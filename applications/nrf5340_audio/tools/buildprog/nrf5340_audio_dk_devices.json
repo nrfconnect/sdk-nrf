@@ -1,17 +1,26 @@
-[
- {
-        "nrf5340_audio_dk_snr": 1000,
-        "nrf5340_audio_dk_dev": "headset",
-        "location": ["FRONT_LEFT"]
- },
- {
-        "nrf5340_audio_dk_snr": 1000,
-        "nrf5340_audio_dk_dev": "gateway",
-        "location": ["NA"]
- },
- {
-        "nrf5340_audio_dk_snr": 1000,
-        "nrf5340_audio_dk_dev": "headset",
-        "location": ["FRONT_RIGHT"]
- }
-]
+{
+       "sirk": "NRF5340_TWS_DEMO",
+       "devices": [
+              {
+                     "nrf5340_audio_dk_snr": 1000,
+                     "nrf5340_audio_dk_dev": "headset",
+                     "location": [
+                            "FRONT_LEFT"
+                     ]
+              },
+              {
+                     "nrf5340_audio_dk_snr": 1000,
+                     "nrf5340_audio_dk_dev": "gateway",
+                     "location": [
+                            "NA"
+                     ]
+              },
+              {
+                     "nrf5340_audio_dk_snr": 1000,
+                     "nrf5340_audio_dk_dev": "headset",
+                     "location": [
+                            "FRONT_RIGHT"
+                     ]
+              }
+       ]
+}

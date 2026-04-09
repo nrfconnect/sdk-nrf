@@ -53,6 +53,8 @@ BROADCAST_SOURCE_OVERLAY = NRF5340_AUDIO_FOLDER / "broadcast_source/overlay-broa
 TARGET_RELEASE_FOLDER = "build_release"
 TARGET_DEBUG_FOLDER = "build_debug"
 
+DEFAULT_SIRK = "NRF5340_TWS_DEMO"
+
 MAX_USER_NAME_LEN = 248 - len('\0')
 
 
@@ -99,7 +101,7 @@ def __print_dev_conf(device_list):
 
 
 def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
-                    pristine, options):
+                    pristine, options, sirk=""):
 
     build_cmd = (f"west build {TARGET_AUDIO_FOLDER} "
                  f"-b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME} "
@@ -143,6 +145,14 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
     else:
         if device == AudioDevice.headset:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_SERVER_OVERLAY}"
+
+            if sirk == DEFAULT_SIRK:
+                raise ValueError("Default SIRK is not allowed. Please set a custom SIRK in the JSON file.")
+
+            if len(sirk) != 16:
+                raise ValueError("SIRK must be 16 characters long")
+
+            device_flag += " -DCONFIG_BT_SET_IDENTITY_RESOLVING_KEY=\\\"" + sirk + "\\\""
         else:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_CLIENT_OVERLAY}"
 
@@ -156,13 +166,14 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
     return build_cmd, dest_folder, device_flag, release_flag, overlay_flag
 
 
-def __build_module(build_config, options):
+def __build_module(build_config, options, sirk=""):
     build_cmd, dest_folder, device_flag, release_flag, overlay_flag = __build_cmd_get(
         build_config.core,
         build_config.device,
         build_config.build,
         build_config.pristine,
         options,
+        sirk,
     )
     west_str = f"{build_cmd} -d {dest_folder} "
 
@@ -196,10 +207,10 @@ def __find_snr():
 def __populate_hex_paths(dev, options):
     """Poplulate hex paths where relevant"""
 
-    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options)
+    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options, dev.sirk)
     dev.hex_path_app = temp_dest_folder / "nrf5340_audio/zephyr/zephyr.hex"
 
-    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options)
+    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options, dev.sirk)
     dev.hex_path_net = temp_dest_folder / "ipc_radio/zephyr/zephyr.hex"
 
 
@@ -350,7 +361,17 @@ def __main():
     # Then run git update-index --skip-worktree FILENAME to avoid changes
     # being pushed
     with AUDIO_KIT_SERIAL_NUMBERS_JSON.open() as f:
-        dev_arr = json.load(f)
+        json_data = json.load(f)
+
+    # Extract SIRK and devices from the new JSON structure
+    if "devices" in json_data:
+        dev_arr = json_data["devices"]
+        sirk = json_data.get("sirk", "")
+    else:
+        # Fallback for old format (array at root level)
+        dev_arr = json_data
+        sirk = DEFAULT_SIRK
+
     device_list = []
     for dev in dev_arr:
         if AudioDevice[dev["nrf5340_audio_dk_dev"]] == AudioDevice.headset:
@@ -387,6 +408,7 @@ def __main():
             snr_connected=(dev["nrf5340_audio_dk_snr"] in boards_snr_connected),
             recover_on_fail=options.recover_on_fail,
             nrf5340_audio_dk_dev=AudioDevice[dev["nrf5340_audio_dk_dev"]],
+            sirk=sirk,
             cores=cores,
             devices=devices,
             _only_reboot=options.only_reboot,
@@ -431,7 +453,7 @@ def __main():
                     )
 
         for build_cfg in build_configs:
-            __build_module(build_cfg, options)
+            __build_module(build_cfg, options, sirk)
 
     # Build step finished
     # Program step start

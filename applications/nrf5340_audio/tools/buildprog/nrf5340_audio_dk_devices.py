@@ -105,6 +105,8 @@ class DeviceConf:
     cores: InitVar[list[Core]]
     devices: InitVar[list[AudioDevice]]
     _only_reboot: InitVar[SelectFlags]
+    sirk: str = ""  # SIRK for the device set
+
     # Post init variables
     only_reboot: SelectFlags = field(init=False, default=SelectFlags.NOT)
     hex_path_app: Path = field(init=False, default=None)

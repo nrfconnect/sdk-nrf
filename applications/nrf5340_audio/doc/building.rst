@@ -68,6 +68,9 @@ When preparing the JSON file, update the following fields:
 * ``location`` - This field is valid only for headsets.
   It sets the location on which the headset is meant to work, especially when using the :ref:`default CIS transport mode configuration <nrf53_audio_transport_mode_configuration>`.
   For more information, see :ref:`nrf53_audio_app_configuration_headset_location`.
+* ``sirk`` - This field sets the SIRK for the device set, which is used in the unicast applications.
+  The SIRK must be 16 characters long and cannot be the default SIRK defined in the Kconfig file (``NRF5340_TWS_DEMO``).
+  If the default SIRK is used, the script will raise an error and stop building.
 
 .. _nrf53_audio_app_building_script_running:
 
