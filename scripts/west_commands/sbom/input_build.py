@@ -212,7 +212,7 @@ def detect_toolchain(build_dir: Path) -> tuple[Path | None, str | None, str | No
     info_file = build_dir / 'build_info.yml'
     if info_file.exists():
         try:
-            build_info = yaml.safe_load(info_file.read_text()) or dict()
+            build_info = yaml.safe_load(info_file.read_text()) or {}
             toolchain = build_info.get('cmake', {}).get('toolchain', {})
             path = toolchain.get('path')
             name = toolchain.get('name')
@@ -378,6 +378,77 @@ class InputBuild:
         self.seen_input_files = set()
 
 
+    @staticmethod
+    def create_map_file_item(file_path: Path, optional: bool) -> MapFileItem:
+        '''
+        Initialize a map file item for the provided file path.
+        '''
+        item = MapFileItem()
+        item.path = file_path
+        item.optional = optional
+        item.content = {}
+        return item
+
+
+    @staticmethod
+    def is_transient_map_item(file_name: str, lto_markers: tuple[str, ...]) -> bool:
+        '''
+        Return True for temporary LTO files that should not appear in the report.
+        '''
+        return any(file_name.endswith(marker) for marker in lto_markers)
+
+
+    def map_item_optional(self, file_path: Path, file: str, file_name: str,
+                          archive_entry: str | None, exists: bool,
+                          linker_stuff_re: str, lto_markers: tuple[str, ...]) -> bool:
+        '''
+        Decide whether a file extracted from the map should be treated as optional.
+        '''
+        if exists:
+            return False
+        possibly_linker = (archive_entry is None and
+                           re.search(linker_stuff_re, file, re.I) is not None)
+        is_transient = self.is_transient_map_item(file_name, lto_markers)
+        if is_transient:
+            log.dbg(f'Skipping temporary build artifact from map file: "{file_path}".')
+        return possibly_linker or is_transient
+
+
+    def get_map_item(self, items: dict[str, MapFileItem], file_path: Path, file: str,
+                     file_name: str, archive_entry: str | None, linker_stuff_re: str,
+                     lto_markers: tuple[str, ...]) -> MapFileItem:
+        '''
+        Return an existing map item or create a new one for the provided file.
+        '''
+        path_str = str(file_path)
+        if path_str in items:
+            return items[path_str]
+        exists = file_path.is_file()
+        optional = self.map_item_optional(file_path, file, file_name, archive_entry, exists,
+                                          linker_stuff_re, lto_markers)
+        if (not exists) and (not optional):
+            raise SbomException(f'The input file {file}, extracted from a map file, '
+                                f'does not exists.')
+        item = self.create_map_file_item(file_path, optional)
+        items[path_str] = item
+        return item
+
+
+    def add_map_item(self, items: dict[str, MapFileItem], file: str,
+                     linker_stuff_re: str, lto_markers: tuple[str, ...],
+                     archive_entry: str | None = None):
+        '''
+        Add one file extracted from a map file to the dictionary.
+        '''
+        file_path = (self.build_dir / file).resolve()
+        file_name = Path(file).name
+        item = self.get_map_item(items, file_path, file, file_name, archive_entry,
+                                 linker_stuff_re, lto_markers)
+        if archive_entry is not None:
+            file = Path(archive_entry).name
+            item.content[file] = False
+
+
     def read_file_list_from_map(self, map_file: Path,
                                 items: dict[str, MapFileItem] | None = None
                                 ) -> dict[str, MapFileItem]:
@@ -388,41 +459,30 @@ class InputBuild:
         with open(map_file, 'r') as fd:
             map_content = fd.read()
         if items is None:
-            items = dict()
-        file_entry_re = (r'^(?:[ \t]+\.[^\s]+(?:\r?\n)?[ \t]+0x[0-9a-fA-F]{16}[ \t]+'
-                         r'0x[0-9a-fA-F]+|LOAD)[ \t]+(.*?)(?:\((.*)\))?$')
+            items = {}
+        gnu_file_entry_re = (r'^(?:[ \t]+\.[^\s]+(?:\r?\n)?[ \t]+0x[0-9a-fA-F]{16}[ \t]+'
+                             r'0x[0-9a-fA-F]+|LOAD)[ \t]+(.*?)(?:\((.*)\))?$')
+        llvm_file_entry_re = (r'^[ \t]*[0-9a-fA-F]+[ \t]+[0-9a-fA-F]+[ \t]+[0-9a-fA-F]+'
+                              r'[ \t]+[0-9a-fA-F]+[ \t]+(.+)$')
+        file_name_re = re.compile(r'\.(?:a|o|obj|lib)$', re.I)
         linker_stuff_re = r'(?:\s+|^)linker\s+|\s+linker(?:\s+|$)'
         lto_markers = ('.ltrans', '.debug.temp', '.lto_priv', '.o')
-        for match in re.finditer(file_entry_re, map_content, re.M):
-            file = match.group(1)
-            file_path = (self.build_dir / file).resolve()
-            file_name = Path(file).name
-            if str(file_path) not in items:
-                exists = file_path.is_file()
-                possibly_linker = (match.group(2) is None and
-                                   re.search(linker_stuff_re, file, re.I) is not None)
-                is_transient = False
-                if not exists:
-                    if any(file_name.endswith(marker) for marker in lto_markers):
-                        is_transient = True
-                    if is_transient:
-                        log.dbg(f'Skipping temporary build artifact from map file: "{file_path}".')
-                optional = ((not exists) and possibly_linker) or is_transient
-                if (not exists) and (not optional):
-                    raise SbomException(f'The input file {file}, extracted from a map file, '
-                                        f'does not exists.')
-                content = dict()
-                item = MapFileItem()
-                item.path = file_path
-                item.optional = optional
-                item.content = content
-                items[str(file_path)] = item
-            else:
-                item = items[str(file_path)]
-                content = item.content
-            if match.group(2) is not None:
-                file = Path(match.group(2)).name
-                content[file] = False
+        for match in re.finditer(gnu_file_entry_re, map_content, re.M):
+            self.add_map_item(items, match.group(1), linker_stuff_re, lto_markers,
+                              match.group(2))
+        for match in re.finditer(llvm_file_entry_re, map_content, re.M):
+            entry = match.group(1).strip()
+            if ':(' in entry:
+                entry, _ = entry.split(':(', 1)
+            archive_entry = None
+            if entry.endswith(')') and ('(' in entry):
+                entry, archive_entry = entry.rsplit('(', 1)
+                archive_entry = archive_entry[:-1]
+            entry = entry.strip()
+            if ((re.search(linker_stuff_re, entry, re.I) is None)
+                    and (file_name_re.search(entry) is None)):
+                continue
+            self.add_map_item(items, entry, linker_stuff_re, lto_markers, archive_entry)
         return items
 
 
@@ -478,7 +538,7 @@ class InputBuild:
         '''
         from ninja_build_extractor import BuildArchive
 
-        map_items: dict[str, MapFileItem] = dict()
+        map_items: dict[str, MapFileItem] = {}
 
         for map_file in maps:
             self.read_file_list_from_map(map_file, map_items)

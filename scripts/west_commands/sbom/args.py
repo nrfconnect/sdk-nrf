@@ -121,6 +121,7 @@ def add_arguments(parser: argparse.ArgumentParser):
                              'detector')
     parser.add_argument('--allowed-in-map-file-only',
                         default='libgcc.a,'
+                                'libclang_rt.builtins.a,'
                                 'libc_nano.a,libc++_nano.a,libm_nano.a,libstdc++_nano.a,'
                                 'libc.a,libc++.a,libstdc++.a,libm.a,crti.o,crt0.o,crtn.o,crtbegin.o,crtend.o',
                         help='Comma separated list of file names which can be detected in a map '
