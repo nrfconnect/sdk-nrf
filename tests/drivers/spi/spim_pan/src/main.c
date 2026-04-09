@@ -19,7 +19,7 @@
 
 #if DT_NODE_EXISTS(DT_NODELABEL(dut_spi_fast))
 #define DUT_SPI_NODE	    DT_NODELABEL(dut_spi_fast)
-#define DUT_SPI_FAST	    1
+#define DUT_SPI_FAST		1
 #define TEST_BUFFER_SIZE    4
 #define MX25R64_RDID	    0x9F
 #define MX25R64_MFG_ID	    0xC2
@@ -85,6 +85,7 @@ static uint32_t configure_test_timer(nrfx_timer_t *timer)
 ZTEST(spim_pan, test_spim_mltpan_8_workaround)
 {
 	Z_TEST_SKIP_IFDEF(DUT_SPI_FAST);
+	Z_TEST_SKIP_IFDEF(CONFIG_SOC_NRF54H20);
 
 	int err;
 
@@ -115,6 +116,7 @@ ZTEST(spim_pan, test_spim_mltpan_8_workaround)
 ZTEST(spim_pan, test_spim_mltpan_55_workaround)
 {
 	Z_TEST_SKIP_IFDEF(DUT_SPI_FAST);
+	Z_TEST_SKIP_IFDEF(CONFIG_SOC_NRF54H20);
 
 	int err;
 
@@ -165,6 +167,7 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 {
 	Z_TEST_SKIP_IFDEF(CONFIG_COVERAGE);
 	Z_TEST_SKIP_IFNDEF(DUT_SPI_FAST);
+	Z_TEST_SKIP_IFDEF(CONFIG_SOC_NRF54H20);
 #if defined(DUT_SPI_FAST)
 	int err;
 
@@ -235,9 +238,11 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
  * the TX data have been transferred
  * but before the final RX byte has been received
  */
+
 ZTEST(spim_pan, test_spim_mltpan_69_workaround)
 {
 	Z_TEST_SKIP_IFDEF(DUT_SPI_FAST);
+	Z_TEST_SKIP_IFDEF(CONFIG_SOC_NRF54H20);
 
 	int err;
 
@@ -279,6 +284,35 @@ ZTEST(spim_pan, test_spim_mltpan_69_workaround)
 	TC_PRINT("NRF_SPIM_EVENT_STOPPED events count: %u\n", timer_cc_after - timer_cc_before);
 	zassert_true((timer_cc_after - timer_cc_before) > 0,
 		     "NRF_SPIM_EVENT_STOPPED did not trigger\n");
+	zassert_mem_equal(tx_buffer, rx_buffer, TEST_BUFFER_SIZE, "TX buffer != RX buffer\n");
+}
+
+/*
+ * Reference: HMPAN-115
+ * SPIM is configured with CPHA to 0,
+ * PRESCALER is larger than 2,
+ * and the first transmitted bit is 1.
+ */
+
+ZTEST(spim_pan, test_spim_hmpan_115_workaround)
+{
+	Z_TEST_SKIP_IFNDEF(CONFIG_SOC_NRF54H20);
+
+	int err;
+
+	struct spi_buf tx_spi_buf = {.buf = tx_buffer, .len = TEST_BUFFER_SIZE};
+	struct spi_buf_set tx_spi_buf_set = {.buffers = &tx_spi_buf, .count = 1};
+
+	struct spi_buf rx_spi_buf = {.buf = rx_buffer, .len = TEST_BUFFER_SIZE};
+	struct spi_buf_set rx_spi_buf_set = {.buffers = &rx_spi_buf, .count = 1};
+
+	memset(tx_buffer, 0x8A, TEST_BUFFER_SIZE);
+	memset(rx_buffer, 0x00, TEST_BUFFER_SIZE);
+
+	err = spi_transceive_dt(&spim_spec, &tx_spi_buf_set, &rx_spi_buf_set);
+	TC_PRINT("SPIM prescaler: %u\n", spim_reg->PRESCALER);
+	zassert_true(spim_reg->PRESCALER > 2, "SPIM prescaler is not greater than 2\n");
+	zassert_ok(err, "SPI transceive failed: %d\n", err);
 	zassert_mem_equal(tx_buffer, rx_buffer, TEST_BUFFER_SIZE, "TX buffer != RX buffer\n");
 }
 
