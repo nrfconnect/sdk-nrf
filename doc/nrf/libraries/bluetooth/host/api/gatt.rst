@@ -1,28 +1,23 @@
 .. _bt_gatt:
 
+Generic Attribute Profile (GATT)
+################################
+
 .. contents::
    :local:
    :depth: 2
 
-Generic Attribute Profile (GATT)
-################################
+The GATT layer manages the service database providing APIs for service registration and attribute declaration.
 
-The GATT layer manages the service database providing APIs for service registration and attribute
-declaration.
-
-The GATT Client initiates commands and requests towards the GATT Server, and can receive responses,
-indications, and notifications sent by the server.
+The GATT Client initiates commands and requests towards the GATT Server, and can receive responses, indications, and notifications sent by the server.
 It is enabled through the :kconfig:option:`CONFIG_BT_GATT_CLIENT` Kconfig option.
 
-The GATT Server accepts incoming commands and requests from the GATT Client, and sends responses,
-indications, and notifications to the client.
+The GATT Server accepts incoming commands and requests from the GATT Client, and sends responses, indications, and notifications to the client.
 
-Services can be registered using the :c:func:`bt_gatt_service_register` function that takes the
-:c:struct:`bt_gatt_service` structure providing the list of attributes the service contains.
+Services can be registered using the :c:func:`bt_gatt_service_register` function that takes the :c:struct:`bt_gatt_service` structure providing the list of attributes the service contains.
 The helper macro :c:macro:`BT_GATT_SERVICE()` can be used to declare a service.
 
-Attributes can be declared using the :c:struct:`bt_gatt_attr` structure or using one of the
-following helper macros:
+Attributes can be declared using the :c:struct:`bt_gatt_attr` structure or using one of the following helper macros:
 
 * :c:macro:`BT_GATT_PRIMARY_SERVICE` - Declares a Primary Service.
 * :c:macro:`BT_GATT_SECONDARY_SERVICE` - Declares a Secondary Service.
@@ -34,27 +29,22 @@ following helper macros:
 * :c:macro:`BT_GATT_CEP` - Declares Characteristic Extended Properties.
 * :c:macro:`BT_GATT_CUD` - Declares a Characteristic User Format.
 
-Each attribute contain a ``uuid`` that describes their type, a ``read`` callback, a ``write``
-callback, and a set of permissions.
-Both read and write callbacks can be set to NULL if the attribute permission does not allow their
-respective operations.
+Each attribute contain a ``uuid`` that describes their type, a ``read`` callback, a ``write`` callback, and a set of permissions.
+Both read and write callbacks can be set to NULL if the attribute permission does not allow their respective operations.
 
 .. note::
    32-bit UUIDs are not supported in GATT.
    All 32-bit UUIDs must be converted to 128-bit UUIDs when the UUID is contained in an ATT PDU.
 
 .. note::
-  Attribute ``read`` and ``write`` callbacks are called directly from the RX Thread and thus, it is
-  not recommended to block them for long periods of time.
+   Attribute ``read`` and ``write`` callbacks are called directly from the RX thread and thus, it is not recommended to block them for long periods of time.
 
 Attribute value changes can be notified using the :c:func:`bt_gatt_notify` function.
-Alternatively, you can use the :c:func:`bt_gatt_notify_cb` function that enables passing a callback
-to be called when it is necessary to know the exact instant when the data has been transmitted over
+Alternatively, you can use the :c:func:`bt_gatt_notify_cb` function that enables passing a callback to be called when it is necessary to know the exact instant when the data has been transmitted over
 the air.
 Indications are supported by the :c:func:`bt_gatt_indicate` function.
 
-Discover procedures can be initiated using the :c:func:`bt_gatt_discover` function that takes the
-:c:struct:`bt_gatt_discover_params` structure describing the type of discovery.
+Discover procedures can be initiated using the :c:func:`bt_gatt_discover` function that takes the :c:struct:`bt_gatt_discover_params` structure describing the type of discovery.
 The parameters also serve as a filter when setting the ``uuid`` field.
 Only matching attributes will be discovered.
 In contrast, setting the field to NULL allows all attributes to be discovered.
@@ -62,22 +52,17 @@ In contrast, setting the field to NULL allows all attributes to be discovered.
 .. note::
    Caching discovered attributes is not supported.
 
-Read procedures are supported by the :c:func:`bt_gatt_read` function that takes the contents of the
-:c:struct:`bt_gatt_read_params` structure as parameters.
+Read procedures are supported by the :c:func:`bt_gatt_read` function that takes the contents of the :c:struct:`bt_gatt_read_params` structure as parameters.
 In the parameters, one or more attributes can be set.
 Setting multiple handles requires the :kconfig:option:`CONFIG_BT_GATT_READ_MULTIPLE` Kconfig option.
 
-Write procedures are supported by the :c:func:`bt_gatt_write` function that takes the contents of
-the :c:struct:`bt_gatt_write_params` structure as parameters.
-If the write operation does not require a response, the :c:func:`bt_gatt_write_without_response` or
-:c:func:`bt_gatt_write_without_response_cb` functions can be used, with the later working similarly
+Write procedures are supported by the :c:func:`bt_gatt_write` function that takes the contents of the :c:struct:`bt_gatt_write_params` structure as parameters.
+If the write operation does not require a response, the :c:func:`bt_gatt_write_without_response` or :c:func:`bt_gatt_write_without_response_cb` functions can be used, with the later working similarly
 to the :c:func:`bt_gatt_notify_cb` function.
 
-Subscriptions to a notification and an indication can be initiated using the
-:c:func:`bt_gatt_subscribe` function that takes the contents of the
+Subscriptions to a notification and an indication can be initiated using the :c:func:`bt_gatt_subscribe` function that takes the contents of the
 :c:struct:`bt_gatt_subscribe_params` structure as parameters.
-Multiple subscriptions to the same attribute are supported, so there might be multiple ``notify``
-callbacks triggered for the same attribute.
+Multiple subscriptions to the same attribute are supported, so there might be multiple ``notify`` callbacks triggered for the same attribute.
 Subscriptions can be removed using the :c:func:`bt_gatt_unsubscribe` function.
 
 .. note::
@@ -86,14 +71,23 @@ Subscriptions can be removed using the :c:func:`bt_gatt_unsubscribe` function.
 API Reference
 *************
 
+GATT
+====
+
+| Header file: :file:`include/bluetooth/host/gatt.h`
+
 .. doxygengroup:: bt_gatt
 
 GATT Server
 ===========
 
+TODO: Add location
+
 .. doxygengroup:: bt_gatt_server
 
 GATT Client
 ===========
+
+TODO: Add location
 
 .. doxygengroup:: bt_gatt_client

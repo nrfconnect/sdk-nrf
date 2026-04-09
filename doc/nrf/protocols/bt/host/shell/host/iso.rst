@@ -7,8 +7,12 @@ Bluetooth: Isochronous Channels Shell
    :local:
    :depth: 2
 
+TODO: Add intro text.
+
 Commands
 ********
+
+TODO: Add intro text.
 
 .. code-block:: console
 
@@ -28,8 +32,11 @@ Commands
                   [enc <broadcast code>]
       term-big    :Terminate a BIG
 
+TODO: Add title
+***************
 
-****************
+TODO: Add intro text. Is the numbered list below a procedure that happens in order or should they be bullets?
+
 1. [Central] Create CIG:
    Requires to be connected:
    .. code-block:: console
@@ -101,10 +108,9 @@ If encrypted broadcast is required, you can provide the broadcast code as follow
 Setting up sync receiver
 ========================
 
-This example scans for the broadcaster, creates a periodic advertising sync, and retrieves BIG
-information from the advertiser.
+This example scans for the broadcaster, creates a periodic advertising sync, and retrieves BIG information from the advertiser.
 After the BIG is discovered, it synchronizes to the selected BIS and establishes the ISO channel.
-The same flow can be used with an encrypted broadcast by providing the broadcast code.
+You can use the same flow with an encrypted broadcast by providing the broadcast code.
 
 .. code-block:: console
 

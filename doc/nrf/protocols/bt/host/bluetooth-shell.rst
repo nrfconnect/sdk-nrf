@@ -8,9 +8,9 @@ Shell
    :depth: 2
 
 The Bluetooth Shell is an application based on the :ref:`shell_api` module.
-It offer a collection of commands made to easily interact with the Bluetooth stack.
+It offers a collection of commands made to interact with the Bluetooth stack.
 
-For specific Bluetooth functionality see also the following shell documentation
+For specific Bluetooth functionality see also the following shell documentation:
 
 .. toctree::
    :maxdepth: 1
@@ -20,76 +20,78 @@ For specific Bluetooth functionality see also the following shell documentation
    shell/host/iso.rst
    shell/host/l2cap.rst
 
-Bluetooth Shell Setup and Usage
+Bluetooth shell setup and usage
 *******************************
 
-First you need to build and flash your board with the Bluetooth shell.
-For how to do that, see the :ref:`getting_started`.
-The Bluetooth shell itself is located in :file:`nrf/tests/bluetooth/host/shell/`.
+Perform the following steps to set up the Bluetooth shell and start using it:
 
-When it is done, connect to the CLI using your favorite serial terminal application.
-You should see the following prompt:
+1. Build and flash your board with the Bluetooth shell.
+   See the :ref:`getting_started` for instructions.
+   The Bluetooth shell itself is located in :file:`nrf/tests/bluetooth/host/shell/`.
 
-.. code-block:: console
+#. Connect to the CLI using your favorite serial terminal application.
+   You should see the following prompt:
 
-        uart:~$
+   .. code-block:: console
 
-For more details on general usage of the shell, see :ref:`shell_api`.
+      uart:~$
 
-The first step is enabling Bluetooth.
-To do so, use the :code:`bt init` command.
-The following message is printed to confirm Bluetooth has been initialized.
+   For more details on general usage of the shell, see :ref:`shell_api`.
 
-.. code-block:: console
+#. Enable Bluetooth using the :code:`bt init` command.
+   The following message is printed to confirm that Bluetooth has been initialized.
 
-        uart:~$ bt init
-        Bluetooth initialized
-        Settings Loaded
-        [00:02:26.771,148] <inf> fs_nvs: nvs_mount: 8 Sectors of 4096 bytes
-        [00:02:26.771,148] <inf> fs_nvs: nvs_mount: alloc wra: 0, fe8
-        [00:02:26.771,179] <inf> fs_nvs: nvs_mount: data wra: 0, 0
-        [00:02:26.777,984] <inf> bt_hci_core: hci_vs_init: HW Platform: Nordic Semiconductor (0x0002)
-        [00:02:26.778,015] <inf> bt_hci_core: hci_vs_init: HW Variant: nRF52x (0x0002)
-        [00:02:26.778,045] <inf> bt_hci_core: hci_vs_init: Firmware: Standard Bluetooth controller (0x00) Version 3.2 Build 99
-        [00:02:26.778,656] <inf> bt_hci_core: bt_init: No ID address. App must call settings_load()
-        [00:02:26.794,738] <inf> bt_hci_core: bt_dev_show_info: Identity: EB:BF:36:26:42:09 (random)
-        [00:02:26.794,769] <inf> bt_hci_core: bt_dev_show_info: HCI: version 5.3 (0x0c) revision 0x0000, manufacturer 0x05f1
-        [00:02:26.794,799] <inf> bt_hci_core: bt_dev_show_info: LMP: version 5.3 (0x0c) subver 0xffff
+   .. code-block:: console
+
+      uart:~$ bt init
+      Bluetooth initialized
+      Settings Loaded
+      [00:02:26.771,148] <inf> fs_nvs: nvs_mount: 8 Sectors of 4096 bytes
+      [00:02:26.771,148] <inf> fs_nvs: nvs_mount: alloc wra: 0, fe8
+      [00:02:26.771,179] <inf> fs_nvs: nvs_mount: data wra: 0, 0
+      [00:02:26.777,984] <inf> bt_hci_core: hci_vs_init: HW Platform: Nordic Semiconductor (0x0002)
+      [00:02:26.778,015] <inf> bt_hci_core: hci_vs_init: HW Variant: nRF52x (0x0002)
+      [00:02:26.778,045] <inf> bt_hci_core: hci_vs_init: Firmware: Standard Bluetooth controller (0x00) Version 3.2 Build 99
+      [00:02:26.778,656] <inf> bt_hci_core: bt_init: No ID address. App must call settings_load()
+      [00:02:26.794,738] <inf> bt_hci_core: bt_dev_show_info: Identity: EB:BF:36:26:42:09 (random)
+      [00:02:26.794,769] <inf> bt_hci_core: bt_dev_show_info: HCI: version 5.3 (0x0c) revision 0x0000, manufacturer 0x05f1
+      [00:02:26.794,799] <inf> bt_hci_core: bt_dev_show_info: LMP: version 5.3 (0x0c) subver 0xffff
 
 
 Logging
 *******
 
-You can configure the logging level per module at runtime.
-This depends on the maximum logging level that is compiled in. To configure, use the :code:`log` command.
+You can configure the logging level for each module at runtime.
+This depends on the maximum logging level that is compiled in.
+To configure, use the :code:`log` command.
 Here are some examples:
 
-* List the available modules and their current logging level
+* List the available modules and their current logging level:
 
-.. code-block:: console
+  .. code-block:: console
 
-        uart:~$ log status
+     uart:~$ log status
 
-* Disable logging for *bt_hci_core*
+* Disable logging for *bt_hci_core*:
 
-.. code-block:: console
+  .. code-block:: console
 
-        uart:~$ log disable bt_hci_core
+     uart:~$ log disable bt_hci_core
 
-* Enable error logs for *bt_att* and *bt_smp*
+* Enable error logs for *bt_att* and *bt_smp*:
 
-.. code-block:: console
+  .. code-block:: console
 
-        uart:~$ log enable err bt_att bt_smp
+     uart:~$ log enable err bt_att bt_smp
 
-* Disable logging for all modules
+* Disable logging for all modules:
 
-.. code-block:: console
+  .. code-block:: console
 
-        uart:~$ log disable
+     uart:~$ log disable
 
-* Enable warning logs for all modules
+* Enable warning logs for all modules:
 
-.. code-block:: console
+  .. code-block:: console
 
-        uart:~$ log enable wrn
+     uart:~$ log enable wrn

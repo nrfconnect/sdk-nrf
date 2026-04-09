@@ -1,9 +1,5 @@
 .. _bluetooth_host_api:
 
-.. contents::
-   :local:
-   :depth: 2
-
 API
 ###
 
@@ -18,7 +14,7 @@ Bluetooth LE Host
    att.rst
    l2cap.rst
 
-Core Host and drivers
+Core host and drivers
 =====================
 
 .. toctree::

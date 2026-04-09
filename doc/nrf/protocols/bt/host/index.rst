@@ -4,8 +4,7 @@ Bluetooth Host
 ##############
 
 This section contains information regarding the Bluetooth stack of the Zephyr OS.
-You can use this information to understand the principles behind the operation of the layers and how
-they were implemented.
+It provides information about the principles behind the operation of the layers and how they were implemented.
 
 .. toctree::
    :maxdepth: 1

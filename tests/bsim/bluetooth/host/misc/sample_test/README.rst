@@ -3,26 +3,29 @@
 Bluetooth: Example BabbleSim test
 #################################
 
-Abstract
-********
+.. contents::
+    :local:
+    :depth: 2
 
-This test's purpose is to serve as template for implementing a new BabbleSim Bluetooth test.
+This serves as template for implementing a new BabbleSim Bluetooth test.
+
+Overview
+********
 
 BabbleSim_ is :ref:`integrated in zephyr <bsim>` and used for testing the Bluetooth stack.
 The tests are implemented in ``tests/bsim/bluetooth``.
-They can only be run on Linux.
+You can run them only on Linux.
 
-This sample test uses the ``testlib`` (:zephyr_file:`tests/bluetooth/common/testlib/CMakeLists.txt`)
-test library, in order to de-duplicate code that is not relevant to the test in question. Things
-like setting up a connection, getting the GATT handle of a characteristic, etc..
+This sample test uses the ``testlib`` (:zephyr_file:`tests/bluetooth/common/testlib/CMakeLists.txt`) test library.
+You do not need to duplicate code that is not relevant to the test in question, such as setting up a connection, getting the GATT handle of a characteristic, and more.
 
-Please do not use the ``bs_`` prefix in files or identifiers. It is meant to
-namespace the babblesim simulator code.
+Do not use the ``bs_`` prefix in files or identifiers.
+It is meant to namespace the babblesim simulator code.
 
 Reading guide
 *************
 
-Read in order:
+It is recommended to read the documentation and code in the following order:
 
 1. The :ref:`Bsim test documentation <bsim>`.
 #. ``test_scripts/run.sh``

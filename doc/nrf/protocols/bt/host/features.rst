@@ -7,13 +7,15 @@ Supported features
     :local:
     :depth: 2
 
+TODO: Add intro text. Something like: The Bluetooth host supports the following features:
+
 * Bluetooth Host
 
   * Generic Access Profile (GAP) with all possible LE roles
 
-    * Peripheral & Central
-    * Observer & Broadcaster
-    * Multiple PHY support (2Mbit/s, Coded)
+    * Peripheral and Central
+    * Observer and Broadcaster
+    * Multiple PHY support (2 Mbit/s, Coded)
     * Extended Advertising
     * Periodic Advertising (including Sync Transfer)
 

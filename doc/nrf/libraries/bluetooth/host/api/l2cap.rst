@@ -1,14 +1,13 @@
 .. _bt_l2cap:
 
+Logical Link Control and Adaptation Protocol (L2CAP)
+####################################################
+
 .. contents::
    :local:
    :depth: 2
 
-Logical Link Control and Adaptation Protocol (L2CAP)
-####################################################
-
-The L2CAP layer enables connection-oriented channels that can be enabled using the
-:kconfig:option:`CONFIG_BT_L2CAP_DYNAMIC_CHANNEL` Kconfig option.
+The L2CAP layer enables connection-oriented channels that can be enabled using the :kconfig:option:`CONFIG_BT_L2CAP_DYNAMIC_CHANNEL` Kconfig option.
 These channels support segmentation and reassembly transparently.
 They also support credit-based flow control making it suitable for data streams.
 
@@ -46,31 +45,26 @@ Here is an example of how to define a fixed channel:
        .accept = l2cap_fixed_accept,
    };
 
-Channel instances are represented by the :c:struct:`bt_l2cap_chan` structure containing the
-callbacks in the :c:struct:`bt_l2cap_chan_ops` structure.
-This structure indicates when the channel has been connected, disconnected, or when the encryption
-has changed.
+Channel instances are represented by the :c:struct:`bt_l2cap_chan` structure containing the callbacks in the :c:struct:`bt_l2cap_chan_ops` structure.
+This structure indicates when the channel has been connected, disconnected, or when the encryption has changed.
 In addition, it also contains the ``recv`` callback that is called whenever data has been received.
-Data received this way can be marked as processed by returning ``0`` or using the
-:c:func:`bt_l2cap_chan_recv_complete` function if processing is asynchronous.
+Data received this way can be marked as processed by returning ``0`` or using the :c:func:`bt_l2cap_chan_recv_complete` function if processing is asynchronous.
 
 .. note::
-   The ``recv`` callback is called directly from RX Thread.
+   The ``recv`` callback is called directly from RX thread.
    It is not recommended to be blocked for long periods of time.
 
-For sending data, the :c:func:`bt_l2cap_chan_send` function can be used to note that
-it may block if no credits are available, and resuming as soon as more credits are available.
+For sending data, the :c:func:`bt_l2cap_chan_send` function can be used to note that it may block if no credits are available, and resuming as soon as more credits are available.
 
-Servers can be registered using the :c:func:`bt_l2cap_server_register` function passing the
-:c:struct:`bt_l2cap_server` structure that indicates which ``psm`` it should listen to, the required
-security level ``sec_level``, and the callback ``accept`` that is called to authorize incoming
-connection requests and allocate channel instances.
+Servers can be registered using the :c:func:`bt_l2cap_server_register` function passing the :c:struct:`bt_l2cap_server` structure that indicates which ``psm`` it should listen to, the required
+security level ``sec_level``, and the callback ``accept`` that is called to authorize incoming connection requests and allocate channel instances.
 
-Client channels can be initiated using the :c:func:`bt_l2cap_chan_connect` function and disconnected
-using the :c:func:`bt_l2cap_chan_disconnect` function.
+Client channels can be initiated using the :c:func:`bt_l2cap_chan_connect` function and disconnected using the :c:func:`bt_l2cap_chan_disconnect` function.
 The later can also disconnect channel instances created by servers.
 
 API Reference
 *************
+
+| Header file: :file:`include/bluetooth/host/l2cap.h`
 
 .. doxygengroup:: bt_l2cap
