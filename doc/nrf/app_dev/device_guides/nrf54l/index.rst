@@ -63,7 +63,7 @@ Refer to the following information for the list of supported development kits (D
      - | `nRF54LM20 DK product page <nRF54LM20 DK_>`_
        | `nRF54LM20A System-on-Chip (SoC) <nRF54LM20A System-on-Chip_>`_
        | `nRF54LM20B System-on-Chip (SoC) <nRF54LM20B System-on-Chip_>`_
-   * - nRF54LS05 DK
+   * - :ref:`nRF54LS05 DK <board_nrf54ls05dk>`
      - PCA10214
      - | nRF54LS05A targets:
        | ``nrf54ls05dk/nrf54ls05a/cpuapp``
