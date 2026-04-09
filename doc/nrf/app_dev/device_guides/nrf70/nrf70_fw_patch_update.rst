@@ -16,6 +16,9 @@ This guide explains the available option for updating the nRF70 Series firmware 
     Currently, you cannot build an example with the both :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` and :kconfig:option:`SB_CONFIG_QSPI_XIP_SPLIT_IMAGE` Kconfig options enabled.
     To enable XIP support use the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` Kconfig option instead of the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option.
 
+For nRF70 Series firmware patch update, define external memory regions in devicetree (DTS) using ``compatible = "fixed-partitions"`` under the external flash device node.
+See :ref:`zephyr:flash_map_api` for details on how partitions map to the flash map used by MCUboot and the application.
+
 Overview
 ========
 
@@ -53,11 +56,12 @@ The following platforms are supported:
 Preparing the application
 =========================
 
-The DFU procedure for the nRF70 Series firmware patch, when located in external memory, requires the creation of additional MCUboot partitions.
-This can be accomplished using the Partition Manager by defining the necessary partition layout in the Partition Manager configuration file specific to your application.
-For instructions on configuring basic partitions with the Partition Manager, refer to the :ref:`partition_manager` documentation.
+.. include:: ../../../includes/pm_deprecation.txt
 
-The instructions in this guide assume you are using the Partition Manager and its associated configuration files.
+When the nRF70 Series firmware patch is stored in external memory, the DFU procedure requires additional MCUboot primary and secondary slot partitions on the external flash.
+Define these regions in devicetree overlays or shared DTS fragments for your board or application.
+
+The instructions in this guide assume that you are using devicetree-based partitioning (``compatible = "fixed-partitions"`` on the external NVM device).
 
 .. _nrf70_fw_patch_update_mcuboot_partitions:
 
@@ -82,85 +86,39 @@ Adding nRF70 Series firmware patch partitions
 
 The examples below assume that there are two existing MCUboot partitions (for the application and network cores) and that the starting address of the free external memory space is ``0x12f000``.
 
-To add the required partitions for the nRF70 Series firmware patch update, complete the following steps:
+To add the required regions for the nRF70 Series firmware patch update, complete the following steps.
+Define partitions under the external flash device (for example, ``&mx25r64``) in devicetree overlays or shared DTS fragments.
+Within a single ``fixed-partitions`` node, sibling partitions must not overlap.
 
-1. Create the ``nrf70_wifi_fw_mcuboot_pad`` partition for the MCUboot header.
+1. Specify the MCUboot image slot for the Wi‑Fi firmware child image so that the slot begins with an MCUboot image header (512 bytes, ``0x200`` in this example), followed by 128 kB (``0x20000``) for the firmware image body.
+   The total primary slot size is 132 kB + 512 bytes (``0x21000``), aligned to the external flash sector size (for example, 4 kB on MX25R64kB on MX25R64).
 
-   This partition should start from the first available address in the external memory space and have a size equal to the MCUboot image header length.
+#. Add a partition with the node label ``nrf70_wifi_fw_partition`` for the firmware image body (128 kB).
+   Its base address must match the location where the nRF Wi-Fi build places the patch, immediately after the MCUboot header within the primary slot, such as ``0x12f200`` in this example.
+   The firmware body resides within the same address range as the MCUboot primary slot, so you cannot describe both as overlapping children of the same fixed-partitions node.
+   Follow your board's pattern instead (for example, define MCUboot partitions in one overlay and ``nrf70_wifi_fw_partition`` in the application overlay, or use a single merged memory map used by sysbuild).
 
-   For example:
+#. Reserve any remaining external flash with additional partition nodes as required by your product.
 
-    .. code-block:: console
+The following devicetree fragment shows the ``nrf70_wifi_fw_partition`` node that the nRF Wi-Fi build expects.
+Ensure that the parent device, partition offsets, and sizes match your complete external flash layout.
 
-        nrf70_wifi_fw_mcuboot_pad:
-            address: 0x12f000
-            size: 0x200
-            device: MX25R64
-            region: external_flash
+.. code-block:: devicetree
 
-#. Create the ``nrf70_wifi_fw`` partition for the firmware patch.
+   &mx25r64 {
+           partitions {
+                   compatible = "fixed-partitions";
+                   #address-cells = <1>;
+                   #size-cells = <1>;
 
-   This partition should start from the end address of the previously created MCUboot header partition and have a size of 128 kB (``0x20000``).
+                   nrf70_wifi_fw_partition: nrf70_fw_partition: partition@12f200 {
+                           reg = <0x12f200 0x20000>;
+                   };
+           };
+   };
 
-   For example:
-
-    .. code-block:: console
-
-        nrf70_wifi_fw:
-            address: 0x12f200
-            size: 0x20000
-            device: MX25R64
-            region: external_flash
-
-#. Create the ``mcuboot_primary_X`` partition for MCUboot where ``X`` represents the appropriate partition number as described previously.
-
-   This partition should have the same starting address as the ``nrf70_wifi_fw_mcuboot_pad`` partition, and a size of 132 kB + 200 B aligned to the device's sector size.
-   It includes both the MCUboot header and the nRF70 Series firmware patch.
-
-   For example, the MX25R64 device has a sector size of 4 kB, so the following configuration can be used:
-
-    .. code-block:: console
-
-        mcuboot_primary_2:
-            orig_span: &id003
-            - nrf70_wifi_fw_mcuboot_pad
-            - nrf70_wifi_fw
-            span: *id003
-            address: 0x12F000
-            size: 0x21000
-            device: MX25R64
-            region: external_flash
-
-#. Create the ``mcuboot_secondary_X`` partition for MCUboot, where ``X`` represents the appropriate partition number as described in the :ref:`nrf70_fw_patch_update_mcuboot_partitions` section.
-
-   This partition should start at the address immediately following the end of the ``mcuboot_primary_X`` partition and have the same size as the primary partition.
-   This partition will be used to store the new nRF70 Series firmware patch during the DFU procedure.
-
-   For example:
-
-    .. code-block:: console
-
-        mcuboot_secondary_2:
-            address: 0x150000
-            size: 0x21000
-            device: MX25R64
-            region: external_flash
-
-#. Update the ``external_flash`` partition to allocate all available memory space to it.
-
-   For example:
-
-    .. code-block:: console
-
-        external_flash:
-            address: 0x171000
-            size: 0x68F000
-            device: MX25R64
-            region: external_flash
-
-.. note::
-    The actual configuration syntax for the Partition Manager will depend on the specific system and tools being used.
-    The example provided is for illustrative purposes and may need to be adjusted to fit the actual configuration file format and syntax required by the Partition Manager in use.
+The ``nrf70-fw-patch-ext-flash`` snippet uses a smaller example layout; for DFU, you must align the MCUboot slot addresses and sizes with this guide and with :ref:`ug_fw_update`.
+If you migrate devices from an older release, keep the partition addresses and sizes identical to the previous layout.
 
 Configuring build system
 ------------------------
@@ -176,7 +134,7 @@ To enable the DFU procedure for the nRF70 Series firmware patch, complete the fo
         #. Use the ``nrf70-fw-patch-ext-flash`` snippet, by adding ``-D<project_name>_SNIPPET=nrf70-fw-patch-ext-flash`` to the build command.
         #. Add shield configuration, by adding ``-DSHIELD=nrf7002ek`` to the build command.
 
-        For example, to build the :ref:`wifi_shell_sample` sample with the DFU procedure for the nRF70 Series firmware patch on the nRF7002 DK platform, which includes the network core image, run the following commands:
+        For example, to build the :ref:`wifi_shell_sample` sample with the DFU procedure for the nRF70 Series firmware patch on the nRF5340 DK platform, which includes the network core image, run the following commands:
 
         .. tabs::
 
