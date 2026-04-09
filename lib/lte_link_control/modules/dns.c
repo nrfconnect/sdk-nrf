@@ -5,6 +5,7 @@
  */
 
 #include <stddef.h>
+#include <zephyr/logging/log.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/sys/util.h>
 #include <nrf_socket.h>
