@@ -276,7 +276,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 9aa3d6cbdd5a51043888fa478956dcc84efa0d45
+      revision: 957e9578648b7da0e35f20dbf9a0c35fce9dc4af
 
   # West-related configuration for the nrf repository.
   self:
