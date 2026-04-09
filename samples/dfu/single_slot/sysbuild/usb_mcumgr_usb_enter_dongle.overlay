@@ -10,19 +10,11 @@
 		/delete-property/ zephyr,shell-uart;
 		/delete-property/ zephyr,bt-mon-uart;
 		/delete-property/ zephyr,bt-c2h-uart;
-		zephyr,uart-mcumgr = &mcumgr_cdc_acm_uart0;
 	};
 };
 
 &zephyr_udc0 {
 	/delete-node/ board_cdc_acm_uart;
-};
-
-&zephyr_udc0 {
-	mcumgr_cdc_acm_uart0: mcumgr_cdc_acm_uart0 {
-		compatible = "zephyr,cdc-acm-uart";
-		label = "nRF54LM20 Dongle MCUmgr";
-	};
 };
 
 /* ensure same RRAM layout im firmware_loader as in MCUboot */
