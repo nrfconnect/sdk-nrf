@@ -1,0 +1,3 @@
+&wdt010 {
+	status = "okay";
+};
