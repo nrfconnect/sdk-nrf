@@ -49,6 +49,7 @@
     - sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_8dBm_30ms
     - sample.bluetooth.peripheral_power_profiling.auto_non_conn_advert_lfxo_0dbm_100ms
     - sample.bluetooth.peripheral_power_profiling.auto_non_conn_advert_lfxo_0dbm_30ms
+    - sample.bluetooth.peripheral_power_profiling.console_log
   platforms:
     - nrf54ls05dk@0.2.0/nrf54ls05a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38475"
