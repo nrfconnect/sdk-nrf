@@ -24,6 +24,11 @@
 	status = "okay";
 };
 
+&lfxo {
+	load-capacitors = "internal";
+	load-capacitance-femtofarad = <17000>;
+};
+
 &hfxo {
 	load-capacitors = "internal";
 	load-capacitance-femtofarad = <15000>;
