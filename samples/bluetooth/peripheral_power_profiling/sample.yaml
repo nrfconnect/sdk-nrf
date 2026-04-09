@@ -7,7 +7,6 @@ common:
     - bluetooth
     - ci_build
     - sysbuild
-    - ppk_power_measure
     - ci_samples_bluetooth
   harness: pytest
   harness_config:
@@ -42,6 +41,8 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_0dBm_100ms:
+    tags: &ppk_tag
+      - ppk_power_measure
     integration_platforms: &ppk_power_measure_integration_54l_platforms
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
@@ -53,6 +54,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     extra_args:
@@ -63,6 +65,7 @@ tests:
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_0dBm_100ms.54h:
+    tags: *ppk_tag
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
@@ -78,6 +81,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_0dBm_30ms:
+    tags: *ppk_tag
     integration_platforms: *ppk_power_measure_integration_54l_platforms
     platform_allow: *ppk_power_measure_54l_platform_allow
     extra_args:
@@ -88,6 +92,7 @@ tests:
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_0dBm_30ms.54h:
+    tags: *ppk_tag
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
@@ -103,6 +108,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_8dBm_100ms:
+    tags: *ppk_tag
     integration_platforms: *ppk_power_measure_integration_54l_platforms
     platform_allow: *ppk_power_measure_54l_platform_allow
     extra_args:
@@ -113,6 +119,7 @@ tests:
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_8dBm_100ms.54h:
+    tags: *ppk_tag
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
@@ -128,6 +135,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_8dBm_30ms:
+    tags: *ppk_tag
     integration_platforms: *ppk_power_measure_integration_54l_platforms
     platform_allow: *ppk_power_measure_54l_platform_allow
     extra_args:
@@ -138,6 +146,7 @@ tests:
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_8dBm_30ms.54h:
+    tags: *ppk_tag
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
@@ -153,6 +162,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_0dBm_100ms:
+    tags: *ppk_tag
     integration_platforms: &ppk_power_measure_integration_platforms
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
@@ -165,6 +175,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -176,6 +187,7 @@ tests:
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_0dBm_30ms:
+    tags: *ppk_tag
     integration_platforms: *ppk_power_measure_integration_platforms
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
@@ -186,6 +198,7 @@ tests:
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_8dBm_100ms:
+    tags: *ppk_tag
     integration_platforms: *ppk_power_measure_integration_platforms
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
@@ -196,6 +209,7 @@ tests:
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_8dBm_30ms:
+    tags: *ppk_tag
     integration_platforms: *ppk_power_measure_integration_platforms
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
@@ -206,6 +220,7 @@ tests:
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
   sample.bluetooth.peripheral_power_profiling.auto_non_conn_advert_lfxo_0dbm_100ms:
+    tags: *ppk_tag
     integration_platforms: *ppk_power_measure_integration_platforms
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
@@ -216,6 +231,7 @@ tests:
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
 
   sample.bluetooth.peripheral_power_profiling.auto_non_conn_advert_lfxo_0dbm_30ms:
+    tags: *ppk_tag
     integration_platforms: *ppk_power_measure_integration_platforms
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
@@ -234,8 +250,17 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     harness: console
     harness_config:
       type: multi_line
@@ -246,8 +271,6 @@ tests:
           ".*(Power-on reset|Application soft reset detected|Reset from pin-reset|"
           "System reset from different reason).*"
     timeout: 30
-    tags:
-      - twister
 
   sample.bluetooth.peripheral_power_profiling.llvm:
     toolchain_allow: llvm
