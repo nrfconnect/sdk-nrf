@@ -1,6 +1,6 @@
 	.file	"hrt.c"
 	.option nopic
-	.attribute arch, "rv32e1p9_m2p0_c2p0_zicsr2p0"
+	.attribute arch, "rv32e2p0_m2p0_c2p0_zicsr2p0"
 	.attribute unaligned_access, 0
 	.attribute stack_align, 4
 	.text
@@ -77,3 +77,4 @@ hrt_set_masked_bits:
  #NO_APP
 	ret
 	.size	hrt_set_masked_bits, .-hrt_set_masked_bits
+	.section	.note.GNU-stack,"",@progbits
