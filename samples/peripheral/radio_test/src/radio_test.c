@@ -107,6 +107,9 @@ static uint32_t rx_packet_cnt;
 /* Radio current channel (frequency). */
 static uint8_t current_channel;
 
+/* Modulated TX sweep with sleep: sequential index into channel_array. */
+static uint8_t mod_tx_sweep_ch_idx;
+
 /* Radio TX Sweep with sleep channel array */
 static struct radio_test_channel_sequence channel_sequence = {
 	.sequence_length = 72,
@@ -1072,6 +1075,44 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	irq_unlock(key);
 }
 
+static void tx_sweep_with_sleep_modulated_timer_setup(const struct radio_test_config *cfg)
+{
+	const uint32_t t_tx_us = cfg->params.tx_sweep_with_sleep_modulated.t_tx_us;
+	const uint32_t t_sleep_us = cfg->params.tx_sweep_with_sleep_modulated.t_sleep_us;
+	const uint32_t total_time_per_channel_us = t_tx_us + t_sleep_us;
+
+	nrf_timer_shorts_disable(timer.p_reg, ~0);
+	nrf_timer_int_disable(timer.p_reg, ~0);
+
+	nrfx_timer_compare(
+		&timer, TIMER_CC0_SWEEP_DWELL,
+		nrfx_timer_us_to_ticks(&timer, RADIO_RAMP_UP_FAST_US + t_tx_us),
+		true);
+
+	nrfx_timer_extended_compare(
+		&timer, TIMER_CC4_SWEEP_DUTY,
+		nrfx_timer_us_to_ticks(&timer, total_time_per_channel_us),
+		NRF_TIMER_SHORT_COMPARE4_CLEAR_MASK, true);
+}
+
+static void radio_tx_sweep_with_sleep_modulated(const struct radio_test_config *cfg)
+{
+	mod_tx_sweep_ch_idx = 0;
+
+	nrfx_timer_disable(&timer);
+	tx_sweep_with_sleep_modulated_timer_setup(cfg);
+
+	sweep_processing = true;
+	radio_modulated_tx_carrier(cfg->mode,
+				   cfg->params.tx_sweep_with_sleep_modulated.txpower,
+				   channel_sequence.sequence_array[mod_tx_sweep_ch_idx],
+				   cfg->params.tx_sweep_with_sleep_modulated.pattern,
+				   0);
+	sweep_processing = false;
+
+	nrfx_timer_enable(&timer);
+}
+
 static void radio_tx_sweep_with_sleep(int8_t txpower, uint16_t t_tx_us, uint16_t t_sleep_us)
 {
 	radio_disable();
@@ -1148,6 +1189,9 @@ void radio_test_start(const struct radio_test_config *config)
 		radio_tx_sweep_with_sleep(config->params.tx_sweep_with_sleep.txpower,
 			config->params.tx_sweep_with_sleep.t_tx_us,
 			config->params.tx_sweep_with_sleep.t_sleep_us);
+		break;
+	case TX_SWEEP_WITH_SLEEP_MODULATED:
+		radio_tx_sweep_with_sleep_modulated(config);
 		break;
 	}
 
@@ -1251,8 +1295,8 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 		(const struct radio_test_config *) context;
 
 	if (event_type == NRF_TIMER_EVENT_COMPARE0) { /* sweep test running */
-		uint8_t channel_start;
-		uint8_t channel_end;
+		uint8_t channel_start = 0;
+		uint8_t channel_end = 0;
 
 		if (config->type == TX_SWEEP) {
 			sweep_processing = true;
@@ -1284,6 +1328,25 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 			/* set up next channel */
 			channel_start = 0;
 			channel_end = channel_sequence.sequence_length - 1;
+		} else if (config->type == TX_SWEEP_WITH_SLEEP_MODULATED) {
+
+			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
+			while (!nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_DISABLED)) {
+				/* Do nothing */
+			}
+			nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+			nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
+			mod_tx_sweep_ch_idx++;
+
+			if (mod_tx_sweep_ch_idx >
+				  channel_sequence.sequence_length - 1) {
+				mod_tx_sweep_ch_idx = 0;
+			}
+
+			nrf_radio_event_clear(NRF_RADIO, RADIO_TEST_EVENT_END);
+			radio_channel_set(
+				config->mode,
+				channel_sequence.sequence_array[mod_tx_sweep_ch_idx]);
 		} else {
 			printk("Unexpected test type: %d\n", config->type);
 			return;
@@ -1300,7 +1363,11 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 		errata_216_release();
 #endif /* NRF54H_ERRATA_216_PRESENT */
 	} else if (event_type == NRF_TIMER_EVENT_COMPARE4) {
-		radio_start(false, true);
+		if (config->type == TX_SWEEP_WITH_SLEEP_MODULATED) {
+			radio_start(false, false);
+		} else {
+			radio_start(false, true);
+		}
 	} else {
 		/* Do nothing */
 	}
@@ -1325,8 +1392,8 @@ static void timer_init(const struct radio_test_config *config)
 void on_radio_end(const struct radio_test_config *config)
 {
 	tx_packet_cnt++;
-	if (tx_packet_cnt == config->params.modulated_tx.packets_num &&
-	    config->type == MODULATED_TX) {
+	if (config->type == MODULATED_TX &&
+		tx_packet_cnt == config->params.modulated_tx.packets_num) {
 		radio_disable();
 
 		/* Send off signal for nRF54H20 errata HMPAN-216 */
@@ -1338,7 +1405,8 @@ void on_radio_end(const struct radio_test_config *config)
 		config->params.modulated_tx.cb();
 	} else if (cancel_request) {
 		cancel();
-	} else if (config->type == MODULATED_TX) {
+	} else if (config->type == MODULATED_TX ||
+			   config->type == TX_SWEEP_WITH_SLEEP_MODULATED) {
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
 	}
 }

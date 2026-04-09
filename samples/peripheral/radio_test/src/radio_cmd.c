@@ -83,6 +83,9 @@ static struct radio_param_config {
 #endif /* CONFIG_FEM */
 };
 
+const static uint16_t min_tx_time_us = 20;
+const static uint16_t min_sleep_time_us = 80;
+
 /* Radio test configuration. */
 static struct radio_test_config test_config;
 
@@ -648,11 +651,8 @@ static int cmd_tx_sweep_with_sleep_start(const struct shell *shell, size_t argc,
 		return -EINVAL;
 	}
 
-	uint8_t tx_time = atoi(argv[1]);
-	uint8_t sleep_time = atoi(argv[2]);
-
-	const uint8_t min_tx_time_us = 20;
-	const uint8_t min_sleep_time_us = 80;
+	uint16_t tx_time = atoi(argv[1]);
+	uint16_t sleep_time = atoi(argv[2]);
 
 	if (sleep_time < min_sleep_time_us) {
 		shell_error(shell, "Too short sleep time: %ius.\nNeeds to be at least: %ius",
@@ -681,6 +681,58 @@ static int cmd_tx_sweep_with_sleep_start(const struct shell *shell, size_t argc,
 	test_in_progress = true;
 
 	shell_print(shell, "TX sweep with duty cycle");
+	return 0;
+}
+
+static int cmd_tx_sweep_with_sleep_modulated_start(
+	const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc == 1) {
+		shell_help(shell);
+		return SHELL_CMD_HELP_PRINTED;
+	}
+
+	if (argc != 3) {
+		shell_error(shell, "%s: bad parameters count", argv[0]);
+		return -EINVAL;
+	}
+
+	uint16_t tx_time = atoi(argv[1]);
+	uint16_t sleep_time = atoi(argv[2]);
+
+	if (tx_time < min_tx_time_us) {
+		shell_error(shell, "Too short tx time: %ius.\nNeeds to be at least: %ius",
+			    tx_time, min_tx_time_us);
+		return -EINVAL;
+	}
+
+	if (sleep_time < min_sleep_time_us) {
+		shell_error(shell,
+			    "Too short sleep time: %ius.\nNeeds to be at least: %ius",
+			    sleep_time, min_sleep_time_us);
+		return -EINVAL;
+	}
+
+
+	if (test_in_progress) {
+		radio_test_cancel(test_config.type);
+		test_in_progress = false;
+	}
+
+	memset(&test_config, 0, sizeof(test_config));
+	test_config.type = TX_SWEEP_WITH_SLEEP_MODULATED;
+	test_config.mode = config.mode;
+	test_config.params.tx_sweep_with_sleep_modulated.txpower = config.txpower;
+	test_config.params.tx_sweep_with_sleep_modulated.pattern = config.tx_pattern;
+	test_config.params.tx_sweep_with_sleep_modulated.t_tx_us = tx_time;
+	test_config.params.tx_sweep_with_sleep_modulated.t_sleep_us = sleep_time;
+#if CONFIG_FEM
+	test_config.fem = config.fem;
+#endif /* CONFIG_FEM */
+
+	radio_test_start(&test_config);
+	test_in_progress = true;
+	shell_print(shell, "Modulated TX sweep with duty cycle");
 	return 0;
 }
 
@@ -1587,6 +1639,10 @@ SHELL_CMD_REGISTER(set_channel_sequence, NULL,
 SHELL_CMD_REGISTER(print_channel_sequence, NULL,
 		   "Print the custom channel sequence for TX.",
 		   cmd_print_channel_sequence);
+SHELL_CMD_REGISTER(start_tx_sweep_with_sleep_modulated, NULL,
+		   "Start modulated TX sweep with sleep cycle, "
+		   "<tx_time> (us) <sleep_time> (us)",
+		   cmd_tx_sweep_with_sleep_modulated_start);
 SHELL_CMD_REGISTER(start_rx, NULL, "Start RX", cmd_rx_start);
 SHELL_CMD_REGISTER(print_rx, NULL, "Print RX payload", cmd_print_payload);
 #if defined(TOGGLE_DCDC_HELP)
