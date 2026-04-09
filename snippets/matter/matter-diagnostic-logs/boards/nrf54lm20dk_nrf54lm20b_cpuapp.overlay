@@ -4,9 +4,9 @@
  */
 
 / {
-	cpuapp_sram@2007df40 {
+	cpuapp_sram@2007db40 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x2007df40 0x20c0>;
+		reg = <0x2007db40 0x20c0>;
 		zephyr,memory-region = "DiagnosticLogMem";
 		status = "okay";
 
@@ -48,5 +48,5 @@
 
 /* Reduce cpuapp_sram usage by 8384 B to account for non-init area */
 &cpuapp_sram {
-	reg = <0x20000000 0x7df40>;
+	reg = <0x20000000 0x7db40>;
 };
