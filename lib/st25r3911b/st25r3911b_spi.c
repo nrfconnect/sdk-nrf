@@ -40,7 +40,8 @@ static const struct spi_config spi_cfg =  {
 	.slave = DT_REG_ADDR(ST25R3911B_NODE),
 	.cs = {
 		.gpio = SPI_CS_GPIOS_DT_SPEC_GET(ST25R3911B_NODE),
-		.delay = T_NCS_SCLK
+		.delay = T_NCS_SCLK,
+		.cs_is_gpio = true
 	}
 };
 
