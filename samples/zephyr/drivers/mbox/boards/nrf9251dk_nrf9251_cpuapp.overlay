@@ -1,0 +1,37 @@
+/*
+ * Copyright 2026 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	mbox-consumer {
+		compatible = "vnd,mbox-consumer";
+		mboxes = <&cpuppr_vevif 15>, <&cpuapp_bellboard 18>;
+		mbox-names = "tx", "rx";
+	};
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+	/* When other cpuapp_bellboard channel is selected for RX,
+	 * make sure it's enabled in the interrupt mask.
+	 * See `nordic,interrupt-mapping` property.
+	 */
+};
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+&uart133 {
+	/delete-property/ hw-flow-control;
+};
+
+&cpuppr_vpr {
+	status = "okay";
+};
+
+&uart132 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
