@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+sample:
+  name: IronSide SE snapshot capture and recover
+  description: |
+    Demonstrates IronSide SE snapshot capture and recovery.
+
+common:
+  sysbuild: true
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "Snapshot status: "
+
+tests:
+  samples.ironside_se.snapshot_capture_recover:
+    build_only: true
+    tags:
+      - sysbuild
+      - ci_samples_sdfw
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    timeout: 30
