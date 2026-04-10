@@ -1,0 +1,9 @@
+&timer120 {
+	status = "reserved";
+	interrupt-parent = <&cpuflpr_clic>;
+};
+
+&timer130 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
