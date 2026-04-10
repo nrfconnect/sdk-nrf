@@ -341,8 +341,14 @@ Peripheral samples
 
 * :ref:`radio_test` sample:
 
-  * Added the new ``start_tx_sweep_with_sleep`` shell command.
-    It allows for running a TX sweep with silent periods between each frequency.
+  * Added:
+
+    * ``start_tx_sweep_with_sleep`` shell command.
+        It allows for running a TX sweep with silent periods between each frequency.
+    * ``set_channel_sequence`` shell command.
+        It allows for setting a custom channel sequence for the ``start_tx_sweep_with_sleep`` command.
+    * ``print_channel_sequence`` shell command.
+        It prints the currently configured channel sequence.
 
 PMIC samples
 ------------
