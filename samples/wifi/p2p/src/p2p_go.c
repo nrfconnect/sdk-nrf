@@ -246,5 +246,6 @@ int p2p_go_run(void)
 		return ret;
 	}
 
+	LOG_INF("P2P group removed successfully");
 	return 0;
 }
