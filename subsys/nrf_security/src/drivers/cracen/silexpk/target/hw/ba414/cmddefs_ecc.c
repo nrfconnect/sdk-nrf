@@ -14,10 +14,13 @@ static const struct sx_pk_cmd_def CMD_MG_PTMUL = {PK_OP_MG_PTMUL, (1 << OP_SLOT_
 						  (1 << OP_SLOT_PTR_A) | (1 << OP_SLOT_PTR_B),
 						  OP_SLOT_PTR_A,
 #if defined(CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED)
-						  SX_PK_OP_FLAGS_ECC_CM
+						/* Temporary workaround due to failures when
+						 * running twist curve operations
+						 * NCSDK-38476
+						 */
+						  SX_PK_OP_FLAGS_RANDPROJ
 #endif
 };
-
 const struct sx_pk_cmd_def *const SX_PK_CMD_MONTGOMERY_PTMUL = &CMD_MG_PTMUL;
 
 static const struct sx_pk_cmd_def CMD_ECDSA_VER = {
