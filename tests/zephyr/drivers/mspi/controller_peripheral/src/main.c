@@ -287,8 +287,6 @@ static int peripheral_rx_len(struct spi_buf_set *tx_set, struct spi_buf_set *rx_
 static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 {
 	int rv;
-	int periph_rv;
-	int srx_len;
 
 	tdata.test_emu_spis_dev = emu_spis_dev;
 
@@ -297,10 +295,16 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 
 	if (emu_spis_dev) {
 		if (tdata.srx_set) {
+			int periph_rv;
+			int srx_len;
+
 			periph_rv = spi_transceive(spis_dev, &spis_config, NULL, tdata.srx_set);
 			if (periph_rv == -ENOTSUP) {
 				ztest_test_skip();
 			}
+
+			srx_len = peripheral_rx_len(tdata.mtx_set, tdata.srx_set);
+			zassert_equal(periph_rv, srx_len, "Got: %d but expected:%d", periph_rv, srx_len);
 		}
 
 		if (tdata.stx_set) {
@@ -326,11 +330,6 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 
 	/* This releases the MSPI controller. */
 	(void)mspi_get_channel_status(mspi_bus, 0);
-
-	if (emu_spis_dev && tdata.srx_set) {
-		srx_len = peripheral_rx_len(tdata.mtx_set, tdata.srx_set);
-		zassert_equal(periph_rv, srx_len, "Got: %d but expected:%d", periph_rv, srx_len);
-	}
 
 	rv = check_buffers(tdata.mtx_set, tdata.srx_set, m_same_size);
 	zassert_equal(rv, 0);
