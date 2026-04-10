@@ -1,0 +1,24 @@
+/*
+ * Copyright 2026 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	mbox_reproducer: mbox-reproducer {
+		compatible = "vnd,mbox-consumer";
+		mboxes = <&cpuapp_bellboard 14>, <&cpuflpr_vevif 16>;
+		mbox-names = "rx", "tx";
+	};
+};
+
+&cpuflpr_vpr {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&cpuflpr_vevif {
+	status = "okay";
+};

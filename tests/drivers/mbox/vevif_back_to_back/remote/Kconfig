@@ -1,0 +1,37 @@
+menu "VEVIF Back-To-Back Reproducer"
+
+choice REPRO_MODE
+	prompt "Back-to-back scenario"
+	default REPRO_MODE_TASK_BURST
+
+config REPRO_MODE_TASK_BURST
+	bool "Host sends two back-to-back notifications"
+
+config REPRO_MODE_REVERSE_BURST
+	bool "Remote sends two back-to-back notifications after host kick"
+
+endchoice
+
+config REPRO_ITERATIONS
+	int "Number of iterations"
+	range 1 100000
+	default 200
+
+config REPRO_START_DELAY_MS
+	int "Producer startup delay in milliseconds"
+	range 0 60000
+	default 2000
+
+config REPRO_ITERATION_GAP_MS
+	int "Delay between back-to-back pairs in milliseconds"
+	range 0 1000
+	default 1
+
+config REPRO_OVERALL_TIMEOUT_MS
+	int "Consumer timeout in milliseconds"
+	range 1 60000
+	default 10000
+
+endmenu
+
+source "Kconfig.zephyr"
