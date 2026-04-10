@@ -108,10 +108,13 @@ static uint32_t rx_packet_cnt;
 static uint8_t current_channel;
 
 /* Radio TX Sweep with sleep channel array */
-const static uint8_t channel_array[72] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+static struct radio_test_channel_sequence channel_sequence = {
+	.sequence_length = 72,
+	.sequence_array = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
 	17, 18, 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
 	42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-	64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78};
+	64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78}
+};
 
 /* Timer used for channel sweeps and tx with duty cycle. */
 static nrfx_timer_t timer =
@@ -1142,9 +1145,9 @@ void radio_test_start(const struct radio_test_config *config)
 			config->params.modulated_tx_duty_cycle.duty_cycle);
 		break;
 	case TX_SWEEP_WITH_SLEEP:
-		radio_tx_sweep_with_sleep(config->params.tx_sweep_duty_cycle.txpower,
-			config->params.tx_sweep_duty_cycle.t_tx_us,
-			config->params.tx_sweep_duty_cycle.t_sleep_us);
+		radio_tx_sweep_with_sleep(config->params.tx_sweep_with_sleep.txpower,
+			config->params.tx_sweep_with_sleep.t_tx_us,
+			config->params.tx_sweep_with_sleep.t_sleep_us);
 		break;
 	}
 
@@ -1273,14 +1276,14 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 			sweep_processing = true;
 
 			/* disable radio after tone */
-			radio_unmodulated_tx_carrier_radio_setup(NRF_RADIO_MODE_BLE_1MBIT,
-				config->params.tx_sweep_duty_cycle.txpower,
-				channel_array[current_channel],
-				false);
+			radio_unmodulated_tx_carrier_radio_setup(
+				NRF_RADIO_MODE_BLE_1MBIT,
+				config->params.tx_sweep_with_sleep.txpower,
+				channel_sequence.sequence_array[current_channel], false);
 
 			/* set up next channel */
-			channel_start = config->params.tx_sweep_duty_cycle.channel_index_start;
-			channel_end = config->params.tx_sweep_duty_cycle.channel_index_end;
+			channel_start = 0;
+			channel_end = channel_sequence.sequence_length - 1;
 		} else {
 			printk("Unexpected test type: %d\n", config->type);
 			return;
@@ -1403,4 +1406,9 @@ int radio_test_init(struct radio_test_config *config)
 #endif /* CONFIG_FEM */
 
 	return 0;
+}
+
+struct radio_test_channel_sequence *radio_test_channel_sequence_get(void)
+{
+	return &channel_sequence;
 }

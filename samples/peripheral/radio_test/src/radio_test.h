@@ -181,18 +181,12 @@ struct radio_test_config {
 			/** Radio output power. */
 			int8_t txpower;
 
-			/** Radio start channel index. */
-			uint8_t channel_index_start;
-
-			/** Radio end channel index. */
-			uint8_t channel_index_end;
-
 			/** Radio transmission time in us. */
 			uint16_t t_tx_us;
 
 			/** Radio sleep time in us. */
 			uint16_t t_sleep_us;
-		} tx_sweep_duty_cycle;
+		} tx_sweep_with_sleep;
 	} params;
 
 #if CONFIG_FEM
@@ -214,6 +208,15 @@ struct radio_rx_stats {
 
 	/** Number of received packets with valid CRC. */
 	uint32_t packet_cnt;
+};
+
+/**@brief Configurable channel sequence for TX with sleep. */
+struct radio_test_channel_sequence {
+	/** Length of configurable channel sequence. */
+	uint8_t sequence_length;
+
+	/** Configurable channel sequence contents. */
+	uint8_t sequence_array[80];
 };
 
 /**
@@ -253,5 +256,12 @@ void radio_rx_stats_get(struct radio_rx_stats *rx_stats);
  * @param[in] dcdc_state  DC/DC converter state.
  */
 void toggle_dcdc_state(uint8_t dcdc_state);
+
+/**
+ * @brief Function for getting the radio_test_channel_sequence for the TX sweep with sleep.
+ *
+ * @return Pointer to the static channel_sequence in the radio_test
+ */
+struct radio_test_channel_sequence *radio_test_channel_sequence_get(void);
 
 #endif /* RADIO_TEST_H_ */
