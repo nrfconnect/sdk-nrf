@@ -15,12 +15,12 @@
 
 		cpuapp_slot1_partition: slot1_partition: partition@0 {
 			label = "image-1";
-			reg = <0x0 DT_SIZE_K(328)>;
+			reg = <0x0 DT_SIZE_K(324)>;
 		};
 
-		cpurad_slot1_partition: slot3_partition: partition@52000 {
+		cpurad_slot1_partition: slot3_partition: partition@51000 {
 			label = "image-3";
-			reg = <0x52000 DT_SIZE_K(328)>;
+			reg = <0x51000 DT_SIZE_K(324)>;
 		};
 	};
 };
