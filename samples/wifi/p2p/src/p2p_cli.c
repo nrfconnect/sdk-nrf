@@ -259,9 +259,12 @@ int p2p_cli_run(void)
 			}
 
 			LOG_INF("Successfully connected to Peer");
+			break;
 		} else {
 			LOG_INF("No peer found, retrying in 10 seconds...");
 			k_sleep(K_SECONDS(10));
 		}
 	}
+
+	return 0;
 }
