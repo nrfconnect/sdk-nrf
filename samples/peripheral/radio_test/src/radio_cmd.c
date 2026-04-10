@@ -672,17 +672,67 @@ static int cmd_tx_sweep_with_sleep_start(const struct shell *shell, size_t argc,
 	memset(&test_config, 0, sizeof(test_config));
 	test_config.type = TX_SWEEP_WITH_SLEEP;
 	test_config.mode = config.mode;
-	test_config.params.tx_sweep_duty_cycle.channel_index_start = 0;
-	test_config.params.tx_sweep_duty_cycle.channel_index_end = 71;
-	test_config.params.tx_sweep_duty_cycle.t_tx_us = config.t_tx_us;
-	test_config.params.tx_sweep_duty_cycle.t_sleep_us = config.t_sleep_us;
-	test_config.params.tx_sweep_duty_cycle.txpower = config.txpower;
+	test_config.params.tx_sweep_with_sleep.t_tx_us = config.t_tx_us;
+	test_config.params.tx_sweep_with_sleep.t_sleep_us = config.t_sleep_us;
+	test_config.params.tx_sweep_with_sleep.txpower = config.txpower;
 
 	radio_test_start(&test_config);
 
 	test_in_progress = true;
 
 	shell_print(shell, "TX sweep with duty cycle");
+	return 0;
+}
+
+static int cmd_set_channel_sequence(const struct shell *shell, size_t argc,
+							 char **argv)
+{
+	if (argc == 1) {
+		shell_help(shell);
+		return SHELL_CMD_HELP_PRINTED;
+	}
+
+	uint8_t sequence_length = argc - 1;
+
+	if (sequence_length > 80) {
+		shell_error(shell, "Too many channels in array, %i is larger than 80",
+			    sequence_length);
+	}
+
+	for (uint8_t i = 0; i < sequence_length; i++) {
+		int channel = atoi(argv[i + 1]);
+
+		if (channel > 80 || channel < 0) {
+			shell_error(shell, "Channel number %i with value %i is out of range. "
+				"Allowed range for channels is 0 to 80", i,
+				    channel);
+			return -EINVAL;
+		}
+	}
+
+	struct radio_test_channel_sequence *channel_sequence = radio_test_channel_sequence_get();
+
+	channel_sequence->sequence_length = sequence_length;
+	for (uint8_t i = 0; i < sequence_length; i++) {
+		uint8_t channel = atoi(argv[i + 1]);
+
+		channel_sequence->sequence_array[i] = channel;
+	}
+	return 0;
+}
+
+static int cmd_print_channel_sequence(const struct shell *shell, size_t argc, char **argv)
+{
+	struct radio_test_channel_sequence *channel_sequence = radio_test_channel_sequence_get();
+
+	shell_print(shell, "Channel Sequence length: %i", channel_sequence->sequence_length);
+	shell_fprintf_normal(shell, "Channel Sequence: [%i", channel_sequence->sequence_array[0]);
+
+	for (uint8_t i = 1; i < channel_sequence->sequence_length; i++) {
+		shell_fprintf_normal(shell, ", %i", channel_sequence->sequence_array[i]);
+	}
+
+	shell_print(shell, "]");
 	return 0;
 }
 
@@ -1530,6 +1580,13 @@ SHELL_CMD_REGISTER(start_tx_sweep_with_sleep, NULL,
 		   "Start TX sweep with sleep cycle, "
 		   "<tx_time> (us) <sleep_time> (us)",
 		   cmd_tx_sweep_with_sleep_start);
+SHELL_CMD_REGISTER(set_channel_sequence, NULL,
+		   "Set a custom channel sequence for TX "
+		   "<sequence_of_up_to_80_channels>",
+		   cmd_set_channel_sequence);
+SHELL_CMD_REGISTER(print_channel_sequence, NULL,
+		   "Print the custom channel sequence for TX.",
+		   cmd_print_channel_sequence);
 SHELL_CMD_REGISTER(start_rx, NULL, "Start RX", cmd_rx_start);
 SHELL_CMD_REGISTER(print_rx, NULL, "Print RX payload", cmd_print_payload);
 #if defined(TOGGLE_DCDC_HELP)
