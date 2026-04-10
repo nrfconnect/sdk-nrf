@@ -1,0 +1,1 @@
+source "tests/drivers/watchdog/wdt_basic_api/Kconfig"
