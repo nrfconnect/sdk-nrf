@@ -242,9 +242,7 @@ tests:
       ordered: true
       regex:
         - "Starting Bluetooth Power Profiling sample"
-        - |
-          ".*(Power-on reset|Application soft reset detected|Reset from pin-reset|"
-          "System reset from different reason).*"
+        - "Reset from pin-reset"
     timeout: 30
     tags:
       - twister
