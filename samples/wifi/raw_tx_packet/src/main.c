@@ -91,8 +91,8 @@ struct raw_tx_pkt_header {
 	unsigned short packet_length;
 	unsigned char tx_mode;
 	unsigned char queue;
-	unsigned char raw_tx_flag;
-};
+	unsigned char reserved[3];
+} __packed;
 
 #ifdef CONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE
 static void wifi_set_channel(void)
@@ -313,7 +313,7 @@ static void fill_raw_tx_pkt_hdr(struct raw_tx_pkt_header *raw_tx_pkt)
 	raw_tx_pkt->tx_mode = CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS;
 	raw_tx_pkt->queue = CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM;
 	/* The byte is reserved and used by the driver */
-	raw_tx_pkt->raw_tx_flag = 0;
+	memset(raw_tx_pkt->reserved, 0, sizeof(raw_tx_pkt->reserved));
 }
 
 int wifi_send_raw_tx_pkt(int sockfd, char *test_frame,
