@@ -1567,7 +1567,7 @@ fail:
 static void sensor_get(uint8_t *data, uint16_t len)
 {
 	struct mesh_sensor_get *cmd = (void *)data;
-	const struct bt_mesh_sensor_type *sensor;
+	const struct bt_mesh_sensor_type *sensor = NULL;
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(BT_MESH_TX_SDU_MAX);
 	struct bt_mesh_sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
 	struct bt_mesh_sensor_data values[5];
