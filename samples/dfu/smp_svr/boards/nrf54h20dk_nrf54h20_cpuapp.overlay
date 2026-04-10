@@ -6,8 +6,24 @@
 
 #include "../dts/nrf54h20dk_nrf54h20_bootchain.dtsi"
 
+/delete-node/ &cpuapp_boot_partition;
+/delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &cpuapp_slot1_partition;
+
 &mram1x {
 	partitions {
+		cpuapp_boot_partition: partition@30000 {
+			reg = <0x30000 DT_SIZE_K(72)>;
+		};
+
+		cpuapp_slot0_partition: partition@42000 {
+			reg = <0x42000 DT_SIZE_K(324)>;
+		};
+
+		cpuapp_slot1_partition: partition@93000 {
+			reg = <0x93000 DT_SIZE_K(324)>;
+		};
+
 		boot_request: partition@0x1c2400 {
 			reg = <0x1c2400 16>;
 		};
@@ -23,4 +39,16 @@
 		nrf,bootloader-request = &boot_request;
 		nrf,bootloader-request-backup = &boot_request_backup;
 	};
+};
+
+boot_partition: &cpuapp_boot_partition {
+	label = "mcuboot";
+};
+
+slot0_partition: &cpuapp_slot0_partition {
+	label = "image-0";
+};
+
+slot1_partition: &cpuapp_slot1_partition {
+	label = "image-1";
 };
