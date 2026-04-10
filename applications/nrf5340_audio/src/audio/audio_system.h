@@ -39,6 +39,13 @@ void audio_system_encoder_start(void);
 void audio_system_encoder_stop(void);
 
 /**
+ * @brief	Check if the encoder thread is currently enabled to execute.
+ *
+ * @return	true if encoder thread is enabled, false otherwise.
+ */
+bool audio_system_encoder_is_started(void);
+
+/**
  * @brief	Toggle a test tone on and off.
  *
  * @note	A stream must already be running to use this feature.

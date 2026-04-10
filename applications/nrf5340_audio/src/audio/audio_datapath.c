@@ -738,7 +738,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 	static uint32_t num_overruns;
 	static uint32_t num_overruns_last_printed;
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == GATEWAY)) {
+	if (audio_system_encoder_is_started()) {
 		if (unlikely(rx_buf_released == NULL)) {
 			ERR_CHK_MSG(-ENOMEM, "No RX data available");
 		}

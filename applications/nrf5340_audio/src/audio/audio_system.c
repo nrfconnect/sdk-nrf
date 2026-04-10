@@ -231,6 +231,15 @@ void audio_system_encoder_stop(void)
 	k_poll_signal_reset(&encoder_sig);
 }
 
+bool audio_system_encoder_is_started(void)
+{
+	int set, res;
+
+	k_poll_signal_check(&encoder_sig, &set, &res);
+
+	return (set == 0 ? false : true);
+}
+
 int audio_system_encode_test_tone_set(uint32_t freq)
 {
 	int ret;
