@@ -121,6 +121,7 @@ static int wifi_p2p_group_add(void)
 
 	params.oper = WIFI_P2P_GROUP_ADD;
 	params.group_add.freq = CONFIG_SAMPLE_P2P_GO_FREQ;
+	params.group_add.persistent = -1;
 	params.group_add.vht = IS_ENABLED(CONFIG_SAMPLE_P2P_GO_VHT);
 	params.group_add.go_bssid_length = 0;
 
