@@ -36,9 +36,7 @@
 			#size-cells = <1>;
 			ranges = <0x0 0x2f050000 0x9000>;
 
-			/* Control region, with ICmsg buffers.
-			 * Size is fixed.
-			 */
+			/* Control region, with ICmsg buffers. Size is fixed. */
 			cpuapp_cpucell_ipc_shm_ctrl: memory@0 {
 				reg = <0x0 0x1000>;
 			};

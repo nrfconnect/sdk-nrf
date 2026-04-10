@@ -19,10 +19,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(clock_control_nrf2, CONFIG_CLOCK_CONTROL_LOG_LEVEL);
 
-/* TODO: add support for other HSFLLs */
-BUILD_ASSERT(DT_NUM_INST_STATUS_OKAY(DT_DRV_COMPAT) == 1,
-	     "multiple instances not supported");
-
+BUILD_ASSERT(DT_NUM_INST_STATUS_OKAY(DT_DRV_COMPAT) == 1, "multiple instances not supported");
 
 #define HSFLL_FREQ_HIGH	DT_INST_PROP(0, clock_frequency)
 
@@ -41,8 +38,7 @@ struct hsfll_dev_data {
 
 static void hsfll_work_handler(struct k_work *work)
 {
-	struct hsfll_dev_data *dev_data =
-		CONTAINER_OF(work, struct hsfll_dev_data, clk_cfg.work);
+	struct hsfll_dev_data *dev_data = CONTAINER_OF(work, struct hsfll_dev_data, clk_cfg.work);
 	NRF_HSFLL_Type *hsfll = (NRF_HSFLL_Type *)DT_INST_REG_ADDR(0);
 	uint8_t to_activate_idx;
 

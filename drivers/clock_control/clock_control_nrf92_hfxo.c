@@ -12,14 +12,14 @@
 #include "clock_control_nrf2_common.h"
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(clock_control_nrf2, CONFIG_CLOCK_CONTROL_LOG_LEVEL);
 
 #include <soc_lrcconf.h>
 #include <hal/nrf_bicr.h>
 
-BUILD_ASSERT(DT_NUM_INST_STATUS_OKAY(DT_DRV_COMPAT) == 1,
-	     "multiple instances not supported");
+BUILD_ASSERT(DT_NUM_INST_STATUS_OKAY(DT_DRV_COMPAT) == 1, "multiple instances not supported");
 
 struct dev_data_hfxo {
 	struct onoff_manager mgr;
@@ -58,8 +58,7 @@ static void full_irq_unlock(uint32_t mcu_critical_state)
 
 static void hfxo_start_up_timer_handler(struct k_timer *timer)
 {
-	struct dev_data_hfxo *dev_data =
-		CONTAINER_OF(timer, struct dev_data_hfxo, timer);
+	struct dev_data_hfxo *dev_data = CONTAINER_OF(timer, struct dev_data_hfxo, timer);
 
 	/* In specific cases, the HFXOSTARTED event might not be set even
 	 * though the HFXO has started (this is a hardware issue that will
@@ -111,8 +110,7 @@ void nrf_clock_control_hfxo_request(void)
 
 static void onoff_start_hfxo(struct onoff_manager *mgr, onoff_notify_fn notify)
 {
-	struct dev_data_hfxo *dev_data =
-		CONTAINER_OF(mgr, struct dev_data_hfxo, mgr);
+	struct dev_data_hfxo *dev_data = CONTAINER_OF(mgr, struct dev_data_hfxo, mgr);
 
 	dev_data->notify = notify;
 	request_hfxo(dev_data);
@@ -167,8 +165,7 @@ void nrf_clock_control_hfxo_release(void)
 
 static void onoff_stop_hfxo(struct onoff_manager *mgr, onoff_notify_fn notify)
 {
-	struct dev_data_hfxo *dev_data =
-		CONTAINER_OF(mgr, struct dev_data_hfxo, mgr);
+	struct dev_data_hfxo *dev_data = CONTAINER_OF(mgr, struct dev_data_hfxo, mgr);
 
 	release_hfxo(dev_data);
 	notify(mgr, 0);
