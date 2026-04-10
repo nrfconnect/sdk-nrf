@@ -68,7 +68,7 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 
 	sys_getopt_init();
 
-	int opt, tmp_value;
+	int opt, tmp_value = 0;
 
 	startup_cmd_settings_data_read(&current_settings);
 	newsettings = current_settings;
