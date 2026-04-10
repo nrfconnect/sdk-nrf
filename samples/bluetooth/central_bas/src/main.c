@@ -103,6 +103,9 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm,
 	err = bt_bas_handles_assign(dm, &bas);
 	if (err) {
 		printk("Could not init BAS client object, error: %d\n", err);
+		bt_gatt_dm_data_release(dm);
+		bt_conn_disconnect(default_conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+		return;
 	}
 
 	if (bt_bas_notify_supported(&bas)) {
