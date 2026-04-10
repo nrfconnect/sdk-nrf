@@ -7,6 +7,7 @@
 #include "radio_test.h"
 
 #include <string.h>
+#include <stdlib.h>
 #include <inttypes.h>
 
 #if !(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L))
@@ -107,17 +108,69 @@ static uint32_t rx_packet_cnt;
 /* Radio current channel (frequency). */
 static uint8_t current_channel;
 
-/* Modulated TX sweep with sleep: sequential index into channel_array. */
-static uint8_t mod_tx_sweep_ch_idx;
+#define DEFAULT_CHANNEL_VALUES						\
+	4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,				\
+	17, 18, 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, 33,		\
+	34, 35, 36, 37, 38, 39, 40, 41,					\
+	42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55,		\
+	56, 57, 58, 59, 60, 61, 62, 63,					\
+	64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78
+
+#define DEFAULT_CHANNEL_SEQUENCE	{DEFAULT_CHANNEL_VALUES}
+
+#define DEFAULT_CHANNEL_COUNT							\
+	((uint8_t)(sizeof((uint8_t[]){ DEFAULT_CHANNEL_VALUES }) / sizeof(uint8_t)))
 
 /* Radio TX Sweep with sleep channel array */
 static struct radio_test_channel_sequence channel_sequence = {
-	.sequence_length = 72,
-	.sequence_array = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-	17, 18, 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-	42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-	64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78}
+	.length = DEFAULT_CHANNEL_COUNT,
+	.sequence_array = DEFAULT_CHANNEL_SEQUENCE,
+	.hopping_mode = CHANNEL_HOP_SEQUENTIAL,
+	.shuffled = {
+		.seed = 1,
+	}
 };
+
+static const uint8_t *active_channel_sequence(void)
+{
+	if (channel_sequence.hopping_mode == CHANNEL_HOP_RANDOM_FISHER_YATES) {
+		return channel_sequence.shuffled.sequence;
+	}
+	return channel_sequence.sequence_array;
+}
+
+/**
+ * @brief Random index in [0, n - 1] using rand() (n is exclusive upper bound).
+ */
+static uint8_t shuffle_rand_index(uint8_t n)
+{
+	if (n <= 1) {
+		return 0;
+	}
+
+	return (uint8_t)((uint32_t)rand() % (uint32_t)n);
+}
+
+/**
+ * @brief Shuffle hop order on shuffled.sequence (Fisher–Yates) using C library rand().
+ *
+ *
+ */
+void shuffle_channel_sequence(void)
+{
+	if (channel_sequence.length <= 1) {
+		return;
+	}
+
+	/* Fisher-Yates shuffle */
+	for (uint8_t i = channel_sequence.length - 1; i > 0; i--) {
+		uint8_t j = shuffle_rand_index(i + 1);
+		uint8_t tmp = channel_sequence.shuffled.sequence[i];
+
+		channel_sequence.shuffled.sequence[i] = channel_sequence.shuffled.sequence[j];
+		channel_sequence.shuffled.sequence[j] = tmp;
+	}
+}
 
 /* Timer used for channel sweeps and tx with duty cycle. */
 static nrfx_timer_t timer =
@@ -1108,7 +1161,7 @@ static void tx_sweep_with_sleep_modulated_timer_setup(const struct radio_test_co
 
 static void radio_tx_sweep_with_sleep_modulated(const struct radio_test_config *cfg)
 {
-	mod_tx_sweep_ch_idx = 0;
+	channel_sequence.current_index = 0;
 
 	nrfx_timer_disable(&timer);
 	tx_sweep_with_sleep_modulated_timer_setup(cfg);
@@ -1116,7 +1169,7 @@ static void radio_tx_sweep_with_sleep_modulated(const struct radio_test_config *
 	sweep_processing = true;
 	radio_modulated_tx_carrier(cfg->mode,
 				   cfg->params.tx_sweep_with_sleep_modulated.txpower,
-				   channel_sequence.sequence_array[mod_tx_sweep_ch_idx],
+				   active_channel_sequence()[channel_sequence.current_index],
 				   cfg->params.tx_sweep_with_sleep_modulated.pattern,
 				   0);
 	sweep_processing = false;
@@ -1334,11 +1387,11 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 			radio_unmodulated_tx_carrier_radio_setup(
 				NRF_RADIO_MODE_BLE_1MBIT,
 				config->params.tx_sweep_with_sleep.txpower,
-				channel_sequence.sequence_array[current_channel], false);
+				active_channel_sequence()[current_channel], false);
 
 			/* set up next channel */
 			channel_start = 0;
-			channel_end = channel_sequence.sequence_length - 1;
+			channel_end = channel_sequence.length - 1;
 		} else if (config->type == TX_SWEEP_WITH_SLEEP_MODULATED) {
 
 			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
@@ -1347,17 +1400,18 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 			}
 			nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 			nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
-			mod_tx_sweep_ch_idx++;
+			channel_sequence.current_index =
+				(channel_sequence.current_index + 1) % channel_sequence.length;
 
-			if (mod_tx_sweep_ch_idx >
-				  channel_sequence.sequence_length - 1) {
-				mod_tx_sweep_ch_idx = 0;
+			if (channel_sequence.hopping_mode == CHANNEL_HOP_RANDOM_FISHER_YATES &&
+				channel_sequence.current_index == 0) {
+				shuffle_channel_sequence();
 			}
 
 			nrf_radio_event_clear(NRF_RADIO, RADIO_TEST_EVENT_END);
 			radio_channel_set(
 				config->mode,
-				channel_sequence.sequence_array[mod_tx_sweep_ch_idx]);
+				active_channel_sequence()[channel_sequence.current_index]);
 		} else {
 			printk("Unexpected test type: %d\n", config->type);
 			return;
@@ -1368,6 +1422,11 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 		current_channel++;
 		if (current_channel > channel_end) {
 			current_channel = channel_start;
+
+			if (channel_sequence.hopping_mode == CHANNEL_HOP_RANDOM_FISHER_YATES &&
+			    config->type == TX_SWEEP_WITH_SLEEP) {
+				shuffle_channel_sequence();
+			}
 		}
 #if NRF54H_ERRATA_216_PRESENT
 	} else if (event_type == NRF_TIMER_EVENT_COMPARE7) { /* HMPAN-216 errata */

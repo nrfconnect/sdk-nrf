@@ -228,13 +228,41 @@ struct radio_rx_stats {
 	uint32_t packet_cnt;
 };
 
-/**@brief Configurable channel sequence for TX with sleep. */
+/**
+ * @brief How the TX sweep walks the configured channel list.
+ *
+ * Sequential: index order. Random: list order is shuffled before use.
+ */
+typedef enum {
+	CHANNEL_HOP_SEQUENTIAL,
+	CHANNEL_HOP_RANDOM_FISHER_YATES,
+} channel_hopping_mode_t;
+
+/**
+ * @brief Configurable channel sequence.
+ *
+ * sequence_array holds the configured channel order (never permuted here).
+ * When hopping_mode is CHANNEL_HOP_RANDOM_FISHER_YATES,
+ * the sweep uses shuffled.sequence, a Fisher–Yates permutation of sequence_array.
+ */
 struct radio_test_channel_sequence {
 	/** Length of configurable channel sequence. */
-	uint8_t sequence_length;
+	uint8_t length;
 
-	/** Configurable channel sequence contents. */
+	/** Configured channel sequence (canonical order). */
 	uint8_t sequence_array[80];
+
+	/* Index of the next channel in the sequence. */
+	uint8_t current_index;
+
+	/** Channel hopping mode. */
+	channel_hopping_mode_t hopping_mode;
+
+	/** Shuffled channel sequence. */
+	struct {
+		uint32_t seed;
+		uint8_t sequence[80];
+	} shuffled;
 };
 
 /**
@@ -281,5 +309,11 @@ void toggle_dcdc_state(uint8_t dcdc_state);
  * @return Pointer to the static channel_sequence in the radio_test
  */
 struct radio_test_channel_sequence *radio_test_channel_sequence_get(void);
+
+/**
+ * @brief Shuffle channel sequence using Fisher–Yates shuffling algorithm.
+ * Randomness provided by standard library rand().
+ */
+void shuffle_channel_sequence(void);
 
 #endif /* RADIO_TEST_H_ */

@@ -749,6 +749,7 @@ static int cmd_set_channel_sequence(const struct shell *shell, size_t argc,
 	if (sequence_length > 80) {
 		shell_error(shell, "Too many channels in array, %i is larger than 80",
 			    sequence_length);
+		return -EINVAL;
 	}
 
 	for (uint8_t i = 0; i < sequence_length; i++) {
@@ -764,7 +765,7 @@ static int cmd_set_channel_sequence(const struct shell *shell, size_t argc,
 
 	struct radio_test_channel_sequence *channel_sequence = radio_test_channel_sequence_get();
 
-	channel_sequence->sequence_length = sequence_length;
+	channel_sequence->length = sequence_length;
 	for (uint8_t i = 0; i < sequence_length; i++) {
 		uint8_t channel = atoi(argv[i + 1]);
 
@@ -773,14 +774,65 @@ static int cmd_set_channel_sequence(const struct shell *shell, size_t argc,
 	return 0;
 }
 
+static int cmd_sequential(const struct shell *shell, size_t argc,
+			      char **argv)
+{
+	(void)argc;
+	(void)argv;
+
+	struct radio_test_channel_sequence *seq = radio_test_channel_sequence_get();
+
+	seq->hopping_mode = CHANNEL_HOP_SEQUENTIAL;
+	shell_print(shell, "Channel hopping: sequential (default order)");
+
+	return 0;
+}
+
+static int cmd_random(const struct shell *shell, size_t argc,
+			      char **argv)
+{
+	struct radio_test_channel_sequence *seq = radio_test_channel_sequence_get();
+
+	seq->hopping_mode = CHANNEL_HOP_RANDOM_FISHER_YATES;
+
+	if (argc >= 2) {
+		seq->shuffled.seed = (uint32_t)atoi(argv[1]);
+	}
+
+	memcpy(seq->shuffled.sequence, seq->sequence_array, seq->length);
+
+	srand((unsigned int)seq->shuffled.seed);
+	shuffle_channel_sequence();
+
+	shell_print(shell, "Channel hopping: random (seed %u)", seq->shuffled.seed);
+	return 0;
+}
+
+static int cmd_set_channel_sequence_hopping_mode(const struct shell *shell, size_t argc,
+							 char **argv)
+{
+	if (argc == 1) {
+		shell_help(shell);
+		return SHELL_CMD_HELP_PRINTED;
+	}
+
+	if (argc > 2) {
+		shell_error(shell, "%s: bad parameters count", argv[0]);
+		return -EINVAL;
+	}
+
+	shell_error(shell, "Unknown argument: %s", argv[1]);
+	return -EINVAL;
+}
+
 static int cmd_print_channel_sequence(const struct shell *shell, size_t argc, char **argv)
 {
 	struct radio_test_channel_sequence *channel_sequence = radio_test_channel_sequence_get();
 
-	shell_print(shell, "Channel Sequence length: %i", channel_sequence->sequence_length);
+	shell_print(shell, "Channel Sequence length: %i", channel_sequence->length);
 	shell_fprintf_normal(shell, "Channel Sequence: [%i", channel_sequence->sequence_array[0]);
 
-	for (uint8_t i = 1; i < channel_sequence->sequence_length; i++) {
+	for (uint8_t i = 1; i < channel_sequence->length; i++) {
 		shell_fprintf_normal(shell, ", %i", channel_sequence->sequence_array[i]);
 	}
 
@@ -1631,6 +1683,16 @@ SHELL_CMD_REGISTER(total_output_power, NULL,
 		  cmd_total_output_power_set);
 #endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
 
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_set_channel_sequence_hopping_mode,
+	SHELL_CMD(sequential, NULL,
+		  "Set the channel sequence hopping mode to sequential",
+		  cmd_sequential),
+	SHELL_CMD(random, NULL,
+		  "Set the channel sequence hopping mode to random with <seed>",
+		  cmd_random),
+	SHELL_SUBCMD_SET_END
+);
+
 SHELL_CMD_REGISTER(transmit_pattern,
 		   &sub_transmit_pattern,
 		   "Set the transmission pattern",
@@ -1651,6 +1713,9 @@ SHELL_CMD_REGISTER(set_channel_sequence, NULL,
 		   "Set a custom channel sequence for TX "
 		   "<sequence_of_up_to_80_channels>",
 		   cmd_set_channel_sequence);
+SHELL_CMD_REGISTER(set_channel_sequence_hopping_mode, &sub_set_channel_sequence_hopping_mode,
+		   "TX hop: sequential (default order) | random <seed>",
+		   cmd_set_channel_sequence_hopping_mode);
 SHELL_CMD_REGISTER(print_channel_sequence, NULL,
 		   "Print the custom channel sequence for TX.",
 		   cmd_print_channel_sequence);

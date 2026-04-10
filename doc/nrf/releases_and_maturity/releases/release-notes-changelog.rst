@@ -327,7 +327,9 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`radio_test` sample:
+
+  * Added the ``set_channel_sequence_hopping_mode`` shell command that allows for setting the hopping mode for the channel sequence.
 
 PMIC samples
 ------------

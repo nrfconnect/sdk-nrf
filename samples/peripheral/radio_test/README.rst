@@ -111,6 +111,10 @@ User interface
    * - set_channel_sequence
      - <sequence of up to 80 channels>
      - Set a custom channel sequence for the start_tx_with_sleep command
+   * - set_channel_sequence_hopping_mode
+     - <hopping_mode>
+     - Set the hopping mode for the channel sequence.
+       Sequential (default order) | random <seed>
    * - start_channel
      - <channel>
      - Start channel for the sweep or the channel for the constant carrier (in MHz, as difference from 2400 MHz).
