@@ -552,15 +552,23 @@ The user interface of the sample depends on the hardware platform you are using.
 
               Enables the DFU mode for five minutes.
 
-   .. group-tab:: :ref:`fast_pair_locator_tag_reference_boards`
+   .. group-tab:: Reference board targets
 
       RGB LED:
-         The board displays the application state in the RGB scale using **LED1**.
-         The **LED1** displays a color sequence with each blink, which indicates the overall application state.
+         +-------------------------+------------------------+
+         | Reference board targets | RGB LED on-board label |
+         +=========================+========================+
+         | Thingy:53               | ``LD1``                |
+         +-------------------------+------------------------+
+         | nRF54L15 TAG            | ``LED1``               |
+         +-------------------------+------------------------+
+
+         The board displays the application state in the RGB scale using an onboard RGB LED.
+         The LED displays a color sequence with each blink, which indicates the overall application state.
 
          Each color of the LED indicates a different application state:
 
-         * Green - Indicates that the ringing action is in progress and a new button action.
+         * Green - Indicates that the ringing action is in progress or that a new button action has been triggered.
          * Blue - Indicates that the device is provisioned.
          * Yellow - Indicates that the identification mode is active.
          * Red - Indicates that the recovery mode is active.
@@ -568,11 +576,27 @@ The user interface of the sample depends on the hardware platform you are using.
          * Purple - Indicates that the DFU mode is active.
          * Cyan - Indicates that the motion detector is active.
 
-      Speaker/Buzzer (available only on the selected reference board targets such as Thingy:53):
+      Speaker/Buzzer:
+         +-------------------------+------------------------+
+         | Reference board targets | Speaker on-board label |
+         +=========================+========================+
+         | Thingy:53               | Piezo buzzer ``BZ1``   |
+         +-------------------------+------------------------+
+         | nRF54L15 TAG            | Unavailable            |
+         +-------------------------+------------------------+
+
          Produces sound when the ringing action is in progress and to indicate a new button action.
          The green flashes of the RGB LED accompany the sound.
 
-      Button (Thingy:53 ``SW3``, nRF54L15 TAG ``BTN1``):
+      Button:
+         +-------------------------+-----------------------+
+         | Reference board targets | Button on-board label |
+         +=========================+=======================+
+         | Thingy:53               | ``SW3``               |
+         +-------------------------+-----------------------+
+         | nRF54L15 TAG            | ``BTN1``              |
+         +-------------------------+-----------------------+
+
          When pressed during the application bootup, resets the accessory to its default factory settings.
          Reset to default factory settings is indicated by a long green blink, and one long beep if the selected board target has a speaker.
 
