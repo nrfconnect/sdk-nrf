@@ -56,3 +56,36 @@ tests:
       regex:
         - "Ping \\(on channel 21\\)"
         - "Pong \\(on channel 20\\)"
+
+  nrf.extended.sample.drivers.mbox.nrf9251_app_ppr:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf9251dk_nrf9251_cpuppr.conf
+    sysbuild: true
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - "Ping \\(on channel 15\\)"
+        - "Pong \\(on channel 18\\)"
+
+  nrf.extended.sample.drivers.mbox.nrf9251_app_flpr:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - mbox_DTC_OVERLAY_FILE="boards/nrf9251dk_nrf9251_cpuapp_cpuflpr.overlay"
+      - SB_CONF_FILE=sysbuild/nrf9251dk_nrf9251_cpuflpr.conf
+    sysbuild: true
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - "Ping \\(on channel 16\\)"
+        - "Pong \\(on channel 14\\)"
