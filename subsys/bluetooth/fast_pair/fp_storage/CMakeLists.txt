@@ -5,6 +5,7 @@
 #
 
 zephyr_library_named(fp_storage)
+add_dependencies(fp_storage zephyr_generated_headers)
 
 if(CONFIG_BT_FAST_PAIR_STORAGE_MANAGER)
   zephyr_linker_sources(SECTIONS fp_storage_manager.ld)
