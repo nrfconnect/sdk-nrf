@@ -17,6 +17,7 @@ config SAMPLE_P2P_CLI_MODE
 
 config SAMPLE_P2P_GO_MODE
 	bool "GO mode (Group owner: Group add/remove)"
+	select NRF70_AP_MODE
 	help
 	  This configuration option enables the device to act as a P2P Group Owner.
 
