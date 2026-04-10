@@ -496,7 +496,7 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-|no_changes_yet_note|
+* Fixed an issue where MCUboot could not recover after resuming from suspend-to-RAM when manifest-based updates were enabled on nRF54H20 devices.
 
 Zephyr
 ======
