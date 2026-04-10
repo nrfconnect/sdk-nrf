@@ -421,7 +421,7 @@ Gazell samples
 |ISE| samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`ironside_se_snapshot_capture_recover` sample that demonstrates |ISE| snapshot capture and recovery on the nRF54H20 DK.
 
 Keys samples
 ------------
