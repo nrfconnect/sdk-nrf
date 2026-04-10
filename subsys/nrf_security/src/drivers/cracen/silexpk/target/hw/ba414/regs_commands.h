@@ -38,6 +38,9 @@
  */
 #define SX_PK_OP_FLAGS_MOD_CM ((1 << 24) | SX_PK_OP_FLAGS_MOD_RAND_CM)
 
+/* Extra flags to enable projective coordinates randomization */
+ #define SX_PK_OP_FLAGS_RANDPROJ (1 << 25)
+
 /** Extra flags to enable scalar and projective coordinates randomization
  *
  * In BA414ep datasheet, those flags are called RandKE and RandProj.
