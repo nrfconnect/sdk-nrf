@@ -5,6 +5,7 @@
 #
 
 zephyr_library_named(fp_crypto)
+add_dependencies(fp_crypto zephyr_generated_headers)
 
 if(CONFIG_BT_FAST_PAIR_CRYPTO)
   target_sources(fp_crypto PRIVATE fp_crypto_common.c)
