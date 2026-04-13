@@ -132,6 +132,14 @@
 	owned-channels = <4 5 6>;
 };
 
+&pwm130 {
+	status = "okay";
+	pinctrl-0 = <&pwm130_default>;
+	pinctrl-1 = <&pwm130_sleep>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
+
 &uart120 {
 	current-speed = <115200>;
 	pinctrl-0 = <&uart120_default>;
