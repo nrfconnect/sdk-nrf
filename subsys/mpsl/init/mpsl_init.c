@@ -598,24 +598,6 @@ int32_t mpsl_lib_uninit(void)
 }
 
 #if defined(CONFIG_SOC_COMPATIBLE_NRF54LX)
-void mpsl_constlat_request_callback(void)
-{
-#if defined(CONFIG_NRFX_POWER)
-	nrfx_power_constlat_mode_request();
-#else
-	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
-#endif
-}
-
-void mpsl_lowpower_request_callback(void)
-{
-#if defined(CONFIG_NRFX_POWER)
-	nrfx_power_constlat_mode_free();
-#else
-	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
-#endif
-}
-
 void mpsl_low_latency_acquire_callback(void)
 {
 #if IS_ENABLED(CONFIG_SOC_SERIES_NRF54L)
