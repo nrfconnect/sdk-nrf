@@ -236,6 +236,8 @@ To enable more verbose logging from the AWS IoT library, enable the :kconfig:opt
   The sample enables modem traces by default.
 * If you have issues with the sample, refer to :ref:`testing`.
 * For issues related to connection towards AWS IoT, refer to :ref:`AWS IoT library troubleshooting <aws_iot_troubleshooting>`.
+* If the connection to the server times out with error -116 (``ETIMEDOUT``), increase the :kconfig:option:`CONFIG_NET_SOCKETS_CONNECT_TIMEOUT` value.
+  The default timeout might be insufficient for Wi-Fi connections that require a full TLS handshake.
 
 Dependencies
 ************
