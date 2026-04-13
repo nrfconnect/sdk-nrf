@@ -1101,11 +1101,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       get_property(PM_MCUBOOT_SECONDARY_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_SIZE)
     endif()
 
-    # If the network core image is enabled on nRF53, ensure it is flashed before the main application
-    if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
-      sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
-    endif()
-
     if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE AND SB_CONFIG_SOC_NRF52840)
       # Emit a warning to the user to not relocate interrupts as this can brick nRF52840 devices
       message(WARNING "
@@ -1118,6 +1113,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       ")
     endif()
   endif()
+
+  # If the network core image is enabled on nRF53, ensure it is flashed before the main application
+  if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
+    sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
+  endif()
+
   foreach(image ${IMAGES})
     configure_cache(IMAGE ${image})
   endforeach()
