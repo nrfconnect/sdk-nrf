@@ -85,6 +85,12 @@ Bootloaders and DFU
   The new function is defined and maintained in the Zephyr repository, providing a very similar API and functionality.
   The old function is deprecated and kept for backward compatibility, but it will be removed in the future.
 
+* Added implementation of USB firmware loader. It is possible to by selected for a sysbuild project by enabling the :kconfig:option:`SB_CONFIG_FIRMWARE_LOADER_IMAGE_USB_MCUMGR` Kconfig option.
+
+* Added support for ``nRF54L15tag`` board target with MCUboot dual bank scheme.
+* Added experimental support for ``nRF54LM20dongle`` with MCUboot singel slot scheme and USB buttonless DFU support with the firmware loader.
+* Glitch detector is enabled when |NSIB| is running on nRF54L15 SoC.
+
 Developing with nRF91 Series
 ============================
 
@@ -647,13 +653,6 @@ Debug samples
 
 |no_changes_yet_note|
 
-DFU samples
------------
-
-* :ref:`nrf_compression_mcuboot_compressed_update`:
-
-  * Added support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
-
 DECT NR+ samples
 ----------------
 
@@ -671,15 +670,28 @@ DECT NR+ samples
 DFU samples
 -----------
 
-* Updated the :ref:`single_slot_sample` sample configuration for demonstrating DFU on the :zephyr:board:`nrf54lm20dk` board target using the :ref:`fw_loader_ble_mcumgr` firmware loader.
+* Updated
 
+  * the :ref:`single_slot_sample` sample:
+
+    * configuration for demonstrating DFU on the :zephyr:board:`nrf54lm20dk` and ``nrf54lm20dongle/nrf54lm20b/cpuapp`` boards target using the :ref:`fw_loader_ble_mcumgr` firmware loader.
+    * support for entering the firmware loader mode using applications's USB CDC ACM virtual serial port and SMP MCUmgr reset command with boot-mode selection.
+      Avilable for the :zephyr:board:`nrf54lm20dk` and ``nrf54lm20dongle/nrf54lm20b/cpuapp`` boards targets.
+  
 * Added:
 
+  * :ref:`nrf_compression_mcuboot_compressed_update`, :ref:`single_slot_sample sample`, :ref:`nrf_smp_svr_sample` and :ref:`mcuboot_minimal_configuration` samples:
+
+    * Added support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
+
+  * The :ref:`mcuboot_minimal_configuration` sample: size-optimized configuration for ``nrf54ls05dk/nrf54ls05b/cpuapp`` with EC P256 signature support.
   * The :ref:`fw_loader_usb_mcumgr` sample, which provides a minimal configuration for firmware loading using SMP over the USB CDC ACM virtual serial port.
     The sample serves as a starting point for developing custom firmware loader applications that work with the MCUboot bootloader.
     To enable this firmware loader implementation, use the :kconfig:option:`SB_CONFIG_FIRMWARE_LOADER_IMAGE_USB_MCUMGR` Kconfig option.
   * Support for using the :ref:`fw_loader_usb_mcumgr` sample with the :ref:`single_slot_sample`.
     You can test this configuration on the :zephyr:board:`nrf54lm20dk` board.
+  * The :ref:`mcuboot_with_encryption` sample: added support for the :zephyr:board:`nrf54h20dk` board target along with autogenarted ITS signature key.
+  * The :ref:`nrf_smp_svr_sample` sample: added UUID configuration for ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, ``nrf54l15dk/nrf54l05/cpuapp``, ``nrf54lm20dk/nrf54lm20a/cpuapp``, and ``nrf54lm20dk/nrf54lm20b/cpuapp`` board targets.
 
 Edge Impulse samples
 --------------------
@@ -1127,7 +1139,17 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-|no_changes_yet_note|
+* Added deinitialization for the QSPI flash driver in MCUboot.
+* Fixed suspend-to-RAM (S2RAM) resume on the nRF54H20 SoC for direct-XIP mode.
+* Added support for the nRF54LM20B SoC.
+* Fixed UUID handling with external flash support.
+* Added serial recovery support with the Zephyr USB device stack (USB next), especially on the nRF54LM20 DK and nRF54LM20 Dongle.
+* Fixed decompression when the CC310 crypto accelerator is used.
+* Reworked image UUID support to use Devicetree-based configuration.
+* Made LZMA compression parameters configurable to reduce MCUboot size, enabling decompression on the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
+* Updated ``imgtool.py`` so images can be ordered on demand in the manifest.
+* Allowed cleanup of UARTE pins on nRF54L Series SoCs, including UARTE00 and UARTE136.
+* Added support for a subset of functions in ``nrfxlib_crypto`` using the ocrypto software cryptography implementation (ECDSA P-256, SHA-256) for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
 
 Zephyr
 ======
