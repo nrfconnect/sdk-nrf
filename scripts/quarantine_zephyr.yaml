@@ -576,3 +576,9 @@
   platforms:
     - qemu_cortex_m3/ti_lm3s6965
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31667"
+
+- scenarios:
+    - scripts.dashboard
+  platforms:
+    - native_sim/native
+  comment: "The dashboard does not support sysbuild images"
