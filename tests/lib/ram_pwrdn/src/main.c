@@ -50,29 +50,6 @@ static bool check_section_range(struct bank_section first, struct bank_section l
 	return true;
 }
 
-static bool get_first_down_section(struct bank_section *out)
-{
-	bool down_section_found = false;
-
-	for (uint8_t bank_id = 0; bank_id <= 8; ++bank_id) {
-		for (uint8_t sect_id = 0; sect_id < (bank_id == 8 ? 6 : 2); ++sect_id) {
-			bool is_up = check_section_up(bank_id, sect_id);
-
-			if (is_up && down_section_found) {
-				return false;
-			}
-
-			if (!is_up && !down_section_found) {
-				out->bank_id = bank_id;
-				out->sect_id = sect_id;
-				down_section_found = true;
-			}
-		}
-	}
-
-	return down_section_found;
-}
-
 static void teardown(void *f)
 {
 	const uintptr_t RAM_START_ADDR = 0x20000000UL;
@@ -82,43 +59,6 @@ static void teardown(void *f)
 }
 
 /* ===== Test cases ===== */
-
-/*
- * Use a global extern pointer to hold the allocated buffer to prevent the
- * compiler from optimizing away malloc()/free().
- */
-void *allocated_buffer;
-
-ZTEST(ram_pwrdn, test_heap_resize)
-{
-	const size_t buffer_size = 20480; // 20KiB
-
-	struct bank_section limit;
-	struct bank_section limit_saved;
-
-	/* Save the current limit between powered up and down RAM areas */
-	zassert_true(get_first_down_section(&limit_saved), "Enabled RAM limit not found");
-
-	/* Allocate some memory and verify that the limit has moved forward */
-	allocated_buffer = malloc(buffer_size);
-	memset(allocated_buffer, 0, buffer_size);
-
-	zassert_true(get_first_down_section(&limit), "Enabled RAM limit not found after malloc");
-	zassert_true(limit.bank_id > limit_saved.bank_id || (limit.bank_id == limit_saved.bank_id &&
-							     limit.sect_id > limit_saved.sect_id),
-		     "Enabled RAM limit not moved forward after malloc");
-
-	/* Trim memory and verify that the limit has moved backward */
-	free(allocated_buffer);
-	malloc_trim(0);
-	limit_saved.bank_id = limit.bank_id;
-	limit_saved.sect_id = limit.sect_id;
-
-	zassert_true(get_first_down_section(&limit), "Enabled RAM limit not found after malloc");
-	zassert_true(limit.bank_id < limit_saved.bank_id || (limit.bank_id == limit_saved.bank_id &&
-							     limit.sect_id < limit_saved.sect_id),
-		     "Enabled RAM limit not moved backward after malloc");
-}
 
 ZTEST(ram_pwrdn, test_manual_power_control)
 {

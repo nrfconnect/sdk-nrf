@@ -19,11 +19,6 @@
 #error "RAM power-down library is not supported on the current platform"
 #endif
 
-#if CONFIG_RAM_POWER_ADJUST_ON_HEAP_RESIZE
-#include <zephyr/init.h>
-#include <zephyr/sys/heap_listener.h>
-#endif
-
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #include <pm_config.h>
 #endif
@@ -225,31 +220,3 @@ void power_up_unused_ram(void)
 {
 	power_up_ram(RAM_IMAGE_END_ADDR, ram_end_addr());
 }
-
-#if CONFIG_RAM_POWER_ADJUST_ON_HEAP_RESIZE
-
-static void libc_heap_resize_cb(uintptr_t heap_id, void *old_heap_end, void *new_heap_end)
-{
-	ARG_UNUSED(heap_id);
-
-	if (new_heap_end > old_heap_end) {
-		power_up_ram(RAM_IMAGE_END_ADDR, (uintptr_t)new_heap_end);
-	} else if (new_heap_end < old_heap_end) {
-		power_down_ram((uintptr_t)new_heap_end, ram_end_addr());
-	}
-}
-
-static HEAP_LISTENER_RESIZE_DEFINE(heap_listener, HEAP_ID_LIBC, libc_heap_resize_cb);
-
-static int ram_power_init(void)
-{
-
-	power_down_unused_ram();
-	heap_listener_register(&heap_listener);
-
-	return 0;
-}
-
-SYS_INIT(ram_power_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
-
-#endif
