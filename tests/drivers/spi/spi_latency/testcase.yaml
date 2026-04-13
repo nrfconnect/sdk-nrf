@@ -18,6 +18,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
@@ -35,5 +36,17 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - CONFIG_TEST_MEASUREMENT_REPEATS=200
+      - CONFIG_SPI_NRFX_RAM_BUFFER_SIZE=512
+
+  drivers.spim_latency_16Mbps_fast_loopback:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    harness_config:
+      fixture: spi_fast_loopback
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf9251dk_nrf9251_cpuapp_fast.overlay"
       - CONFIG_TEST_MEASUREMENT_REPEATS=200
       - CONFIG_SPI_NRFX_RAM_BUFFER_SIZE=512
