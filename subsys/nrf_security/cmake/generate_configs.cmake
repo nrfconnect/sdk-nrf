@@ -90,6 +90,7 @@ macro(generate_mbedcrypto_library_configs)
     kconfig_backup_current_config(CONFIG_MBEDTLS_THREADING_C)
     kconfig_backup_current_config(CONFIG_MBEDTLS_THREADING_ALT)
     kconfig_backup_current_config(CONFIG_MBEDTLS_MEMORY_BUFFER_ALLOC_C)
+    kconfig_backup_current_config(CONFIG_MBEDTLS_SSL_CONTEXT_SERIALIZATION)
 
     nrf_security_debug("=========== Checkpoint: backup ===============")
 
@@ -120,6 +121,11 @@ macro(generate_mbedcrypto_library_configs)
       if(CONFIG_TFM_PROFILE_TYPE_MINIMAL)
         set(CONFIG_MBEDTLS_MEMORY_BUFFER_ALLOC_C False)
       endif()
+      # CONFIG_MBEDTLS_SSL_CONTEXT_SERIALIZATION must be set to false because it is not used
+      # in the library build in TF-M and there is a check_config.h test that will fail if this
+      # is enabled but not some of the prerequisites. Functionally TF-M does not rely on this
+      # config or any TLS APIs. NS image still must be able to enable and use this feature
+      set(CONFIG_MBEDTLS_SSL_CONTEXT_SERIALIZATION False)
     endif()
 
     # Generate MBEDCRYPTO_CONFIG_FILE
@@ -144,6 +150,7 @@ macro(generate_mbedcrypto_library_configs)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_C)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_ALT)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_MEMORY_BUFFER_ALLOC_C)
+    kconfig_restore_backup_config(CONFIG_MBEDTLS_SSL_CONTEXT_SERIALIZATION)
 
     nrf_security_debug("=========== End psa_crypto_library_config ===============")
   endif()
