@@ -33,3 +33,5 @@ set(CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING OFF         CACHE BOOL      "Enabl
 
 set(CONFIG_HW_UNIQUE_KEY                      ON          CACHE BOOL      "Enable Hardware Unique Key")
 set(CONFIG_HW_UNIQUE_KEY_RANDOM               ON          CACHE BOOL      "Write a new Hardware Unique Key if none exists")
+
+set(CONFIG_NRF91_ANOMALY_36_WORKAROUND        OFF         CACHE BOOL      "Enable workaround for NRF91 Anomaly 36")
