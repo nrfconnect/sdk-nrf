@@ -735,6 +735,16 @@ void dect_net_l2_child_association_created(struct net_if *iface, uint32_t child_
 		child_long_rd_id);
 
 	k_mutex_lock(&associations_mutex, K_FOREVER);
+
+	/* Search for existing association */
+	for (int i = 0; i < ARRAY_SIZE(child_associations); i++) {
+		if (child_associations[i].in_use &&
+			child_associations[i].target_long_rd_id == child_long_rd_id) {
+			LOG_INF("Re-association with child_long_rd_id %u", child_long_rd_id);
+			k_mutex_unlock(&associations_mutex);
+			goto send_event;
+		}
+	}
 	for (int i = 0; i < ARRAY_SIZE(child_associations); i++) {
 		if (!child_associations[i].in_use) {
 			child_associations[i].in_use = true;
@@ -754,6 +764,8 @@ void dect_net_l2_child_association_created(struct net_if *iface, uint32_t child_
 	/* Do external calls outside of mutex to avoid lock ordering issues */
 	dect_net_l2_ipv6_addressing_child_added_handle(
 		assoc, iface, child_long_rd_id, first_child);
+
+send_event:
 	dect_mgmt_child_association_created_evt(iface, child_long_rd_id);
 
 	/* Put the carrier on if this was the first association */

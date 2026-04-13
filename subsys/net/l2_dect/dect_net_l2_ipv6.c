@@ -48,8 +48,10 @@ static void dect_net_l2_ipv6_util_global_nbr_add(
 			/* global: add a parent as a neighbor to dect iface */
 			if (!net_ipv6_nbr_add(iface, &nbr_addr, net_if_get_link_addr(iface), false,
 					      NET_IPV6_NBR_STATE_REACHABLE)) {
-				LOG_ERR("(%s): cannot add parents global addr as nbr to dect iface",
-					(__func__));
+				LOG_ERR("(%s): cannot add global addr (%s) as nbr to dect iface "
+					"(sink long RD ID %u, nbr long RD ID %u)",
+					(__func__), net_sprint_ipv6_addr(&nbr_addr),
+					sink_long_rd_id, nbr_long_rd_id);
 			} else {
 				*nbr_global_addr_was_set = true;
 				*nbr_global_ipv6_addr_out = nbr_addr;
@@ -85,7 +87,7 @@ static void dect_net_l2_ipv6_util_nbr_add(
 		/* local: add a parent as a neighbor to dect iface */
 		if (!net_ipv6_nbr_add(iface, &nbr_addr, net_if_get_link_addr(iface), false,
 				      NET_IPV6_NBR_STATE_REACHABLE)) {
-			LOG_ERR("(%s): cannot add parents local addr (%s) as nbr to dect iface",
+			LOG_ERR("(%s): cannot add local addr (%s) as nbr to dect iface",
 				(__func__), net_sprint_ipv6_addr(&nbr_addr));
 		} else {
 			*nbr_local_addr_was_set = true;
@@ -96,8 +98,8 @@ static void dect_net_l2_ipv6_util_nbr_add(
 				net_sprint_ll_addr(net_if_get_link_addr(iface)->addr, 8), iface);
 		}
 	} else {
-		LOG_ERR("(%s): cannot create parents local addr as nbr to dect iface",
-			(__func__));
+		LOG_ERR("(%s): cannot create local addr as nbr to dect iface for long RD ID %u",
+			(__func__), nbr_long_rd_id);
 	}
 	dect_net_l2_ipv6_util_global_nbr_add(
 		iface, ipv6_prefix_cfg, sink_long_rd_id, nbr_long_rd_id,

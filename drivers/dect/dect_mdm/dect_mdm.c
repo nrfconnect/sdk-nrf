@@ -193,6 +193,7 @@ dect_mdm_child_association_list_add(uint32_t target_long_rd_id)
 	/* Return existing item if already in list */
 	ass_list_item = dect_mdm_child_association_list_item_get(target_long_rd_id);
 	if (ass_list_item != NULL) {
+		LOG_DBG("Re-association with child_long_rd_id %u", target_long_rd_id);
 		return ass_list_item;
 	}
 
