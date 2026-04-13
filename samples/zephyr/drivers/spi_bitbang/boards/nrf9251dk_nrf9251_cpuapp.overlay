@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Test requires loopback between P2.03 and P2.09
+ * No other driver on SPI_CLK and SPI_CS.
+ */
+
+/ {
+	spibb0: spibb0 {
+		compatible = "zephyr,spi-bitbang";
+		status = "okay";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		clk-gpios = <&gpio2 0 GPIO_ACTIVE_HIGH>;
+		mosi-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
+		miso-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
+		cs-gpios = <&gpio2 3 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+};
