@@ -1,0 +1,49 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	pwm130_default_test: pwm130_default_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 0)>;
+		};
+	};
+
+	pwm130_sleep_test: pwm130_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 0)>;
+			low-power-enable;
+		};
+	};
+
+	pwm131_default_test: pwm131_default_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 2, 0)>;
+		};
+	};
+
+	pwm131_sleep_test: pwm131_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 2, 0)>;
+			low-power-enable;
+		};
+	};
+};
+
+&pwm130 {
+	status = "okay";
+	pinctrl-0 = <&pwm130_default_test>;
+	pinctrl-1 = <&pwm130_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&pwm131 {
+	status = "okay";
+	pinctrl-0 = <&pwm131_default_test>;
+	pinctrl-1 = <&pwm131_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
