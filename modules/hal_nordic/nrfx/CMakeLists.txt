@@ -34,7 +34,7 @@ mdk_svd_ifdef(CONFIG_SOC_NRF54LV10A_CPUAPP nrf54lv10a_application.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF54LV10A_CPUFLPR nrf54lv10a_flpr.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF7120_ENGA_CPUAPP nrf7120_enga_application.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF7120_ENGA_CPUFLPR nrf7120_enga_flpr.svd)
-mdk_svd_ifdef(CONFIG_SOC_NRF9251_APPLICATION nrf9220_application.svd)
+mdk_svd_ifdef(CONFIG_SOC_NRF9251_CPUAPP nrf9220_application.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF9251_CPUPPR nrf9220_cpuppr.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF9251_CPUFLPR nrf9220_cpuflpr.svd)
 
