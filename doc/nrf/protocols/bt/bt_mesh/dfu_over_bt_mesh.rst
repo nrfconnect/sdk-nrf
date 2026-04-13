@@ -41,8 +41,6 @@ You can use either the nRF Mesh app or the shell commands to configure and contr
 
       .. figure:: images/bt_mesh_dfuapp_00_proxy.png
          :alt: nRF Mesh app Proxy screen with Mesh DFU Distributor
-         :figwidth: 450px
-         :width: 120px
 
          **Proxy** screen with distributor node connection and proxy filter
 
@@ -86,8 +84,6 @@ Uploading the firmware
 
          .. figure:: images/bt_mesh_dfuapp_01_nw.png
             :alt: nRF Mesh app Network screen with Update button
-            :figwidth: 450px
-            :width: 120px
 
             **Network** screen with mesh nodes and :guilabel:`Update` button
 
@@ -95,15 +91,11 @@ Uploading the firmware
 
          .. figure:: images/bt_mesh_dfuapp_02_fdsconfig.png
             :alt: Firmware Distributor screen with model details
-            :figwidth: 450px
-            :width: 120px
 
             **Firmware Distributor** screen showing details of the Firmware Distributor Server model
 
          .. figure:: images/bt_mesh_dfuapp_04_fdsconfig.png
             :alt: Firmware Distributor with firmware image slot empty and available
-            :figwidth: 450px
-            :width: 120px
 
             **Firmware Distributor** with firmware image slot empty and available
 
@@ -147,8 +139,6 @@ Populating the Distributor's receivers list
 
          .. figure:: images/bt_mesh_dfuapp_05_tgtnodes.png
             :alt: Target Nodes screen with firmware selection and node list
-            :figwidth: 450px
-            :width: 120px
 
             **Target Nodes** screen with firmware details and available target nodes to select
 
@@ -177,8 +167,6 @@ Initiating the distribution
 
          .. figure:: images/bt_mesh_dfuapp_06_fds.png
             :alt: Firmware Distribution parameters (TTL, timeout, transfer mode, policy, multicast)
-            :figwidth: 450px
-            :width: 120px
 
             **Firmware Distribution** screen with transfer parameters and multicast options
 
@@ -217,8 +205,6 @@ Firmware distribution
 
          .. figure:: images/bt_mesh_dfuapp_07_autoconf.png
             :alt: App configures distributor and target nodes
-            :figwidth: 450px
-            :width: 120px
 
             **Firmware Update** screen while uploading image to the distributor
 
@@ -226,8 +212,6 @@ Firmware distribution
 
          .. figure:: images/bt_mesh_dfuapp_09_fu.png
             :alt: Firmware Update screen during distribution to targets
-            :figwidth: 450px
-            :width: 120px
 
             **Firmware Update** screen during distribution to target nodes
 
@@ -277,8 +261,6 @@ Suspending the distribution
 
          .. figure:: images/bt_mesh_dfuapp_10_fds.png
             :alt: Firmware Distribution Server screen with Control (Get, Suspend, Cancel, Apply)
-            :figwidth: 450px
-            :width: 120px
 
             **Firmware Distribution Server** screen with status, phase, and control actions
 
@@ -313,8 +295,6 @@ Depending on the update policy set at the start of the DFU transfer, the Firmwar
 
          .. figure:: images/bt_mesh_dfuapp_10_fds.png
             :alt: Firmware Distribution Server screen with Control (Get, Suspend, Cancel, Apply)
-            :figwidth: 450px
-            :width: 120px
 
             **Firmware Distribution Server** screen with status, phase, and control actions
 
