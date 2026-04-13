@@ -288,6 +288,7 @@
 
 - scenarios:
     - .*secure_storage.*
+    - arch.shared_interrupt.lto.speed
     - benchmark.crypto.mbedtls
     - benchmark.kernel.core
     - cpp.libcxx.glibcxx.newlib
@@ -336,6 +337,8 @@
     - libraries.encoding.json
     - libraries.hash_map.cxx.djb2
     - libraries.heap
+    - libraries.heap.hardening_full
+    - libraries.heap.hardening_none
     - libraries.libc.c11_threads.minimal
     - libraries.libc.c11_threads.newlib
     - libraries.libc.c11_threads.newlib_nano
@@ -356,6 +359,8 @@
     - message_bus.zbus.general_unittests
     - message_bus.zbus.general_unittests_without_priority_boost
     - message_bus.zbus.hlp_priority_boost
+    - message_bus.zbus.proxy_agent.ipc_backend
+    - message_bus.zbus.proxy_agent.proxy_agent
     - mgmt.mcumgr.fs.mgmt.hash.supported.all
     - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
     - mgmt.mcumgr.os.info
