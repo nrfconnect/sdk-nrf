@@ -59,7 +59,7 @@ def west_tester(dut: DeviceAdapter, main_command: str, input_data: str, expected
     gdb_port = find_free_port()
     cmd = (
         f"west {main_command}"
-        f" -d {BUILD_DIR} --skip-rebuild --"
+        f" -d {BUILD_DIR} --no-rebuild --"
         f" --dev-id {SEGGER_ID}"
         f" --gdb-port {gdb_port}"
         f" --domain west_debug"

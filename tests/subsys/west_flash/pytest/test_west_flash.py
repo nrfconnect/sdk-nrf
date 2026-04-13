@@ -98,7 +98,7 @@ def test_west_flash(dut: DeviceAdapter):
     ### Check that west -v flash -r jlink works
     cmd = (
         "west -v flash -r jlink"
-        f" -d {BUILD_DIR} --skip-rebuild --"
+        f" -d {BUILD_DIR} --no-rebuild --"
         f" --dev-id {SEGGER_ID}"
         f" --gdb-port {gdb_port}"
     )
