@@ -25,50 +25,42 @@
 		 * images and points to the "merged" partition.
 		 */
 		slot0_partition: partition@38000 {
-			compatible = "fixed-subpartitions";
 			reg = <0x38000 DT_SIZE_K(800)>;
-			ranges = <0x0 0x38000 DT_SIZE_K(800)>;
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			cpuapp_slot0_partition: partition@800 {
-				reg = <0x800 DT_SIZE_K(330)>;
-			};
-
-			cpurad_slot0_partition: partition@53000 {
-				reg = <0x53000 DT_SIZE_K(220)>;
-			};
-
-			/* Leave free space at the end of the slot0_partition that can be used to
-			 * increase the existing application or radio partition. Optimizing the size
-			 * of the application and radio partition results in a smaller DFU package
-			 * and faster DFU transfer.
-			 */
 		};
+
+		cpuapp_slot0_partition: partition@38800 {
+			reg = <0x38800 DT_SIZE_K(330)>;
+		};
+
+		cpurad_slot0_partition: partition@8b000 {
+			reg = <0x8b000 DT_SIZE_K(220)>;
+		};
+
+		/* Leave free space at the end of the slot0_partition that can be used to increase
+		 * the existing application or radio partition. Optimizing the size of the
+		 * application and radio partition results in a smaller DFU package and faster DFU
+		 * transfer.
+		 */
 
 		/* Partitions belonging to the MRAM_11 memory block. */
 
 		slot1_partition: partition@100000 {
-			compatible = "fixed-subpartitions";
 			reg = <0x100000 DT_SIZE_K(800)>;
-			ranges = <0x0 0x100000 DT_SIZE_K(800)>;
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			cpuapp_slot1_partition: partition@800 {
-				reg = <0x800 DT_SIZE_K(330)>;
-			};
-
-			cpurad_slot1_partition: partition@53000 {
-				reg = <0x53000 DT_SIZE_K(220)>;
-			};
-
-			/* Leave free space at the end of the slot1_partition that can be used to
-			 * increase the existing application or radio partition. Optimizing the size
-			 * of the application and radio partition results in a smaller DFU package
-			 * and faster DFU transfer.
-			 */
 		};
+
+		cpuapp_slot1_partition: partition@100800 {
+			reg = <0x100800 DT_SIZE_K(330)>;
+		};
+
+		cpurad_slot1_partition: partition@153000 {
+			reg = <0x153000 DT_SIZE_K(220)>;
+		};
+
+		/* Leave free space at the end of the slot1_partition that can be used to increase
+		 * the existing application or radio partition. Optimizing the size of the
+		 * application and radio partition results in a smaller DFU package and faster DFU
+		 * transfer.
+		 */
 
 		storage_partition: partition@1c8000 {
 			reg = <0x1c8000 DT_SIZE_K(40)>;
