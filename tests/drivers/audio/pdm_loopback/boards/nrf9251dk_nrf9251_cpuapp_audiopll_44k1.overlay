@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires loopback between P2.03 and P2.07.
+ * For best performance, PDM_CLK shall be on 'Clock pin'.
+ */
+
+/ {
+	gpio_test {
+		compatible = "gpio-leds";
+
+		pulse_counter: pulse_counter {
+			gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&pinctrl {
+	pdm0_default_alt: pdm0_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PDM_CLK, 2, 3)>,
+				<NRF_PSEL(PDM_DIN, 1, 4)>;
+		};
+	};
+};
+
+pdm_dev: &pdm0 {
+	status = "okay";
+	pinctrl-0 = <&pdm0_default_alt>;
+	pinctrl-names = "default";
+	clock-source = "ACLK";
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&audiopll {
+	status = "okay";
+	frequency = <NRFS_AUDIOPLL_FREQ_AUDIO_44K1>;
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+};
+
+&timer130 {
+	status = "okay";
+};
