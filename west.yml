@@ -146,7 +146,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 529012899ffb2aa8ef69cbbb315eaf2848737aca
+      revision: pull/2073/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -158,7 +158,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 06f463dd878a39741edfc08a9f15e04666642b20
+      revision: pull/714/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -247,7 +247,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.37.1
+      revision: pull/113/head
       remote: memfault
     - name: bsim
       repo-path: bsim_west
