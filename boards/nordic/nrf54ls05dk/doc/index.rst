@@ -9,6 +9,7 @@ nRF54LS05 DK
    For the nRF54LS05B technical documentation and other resources (such as the SoC Datasheet), see :ref:`ug_nrf54l`.
 
 .. figure:: /images/nrf54ls05dk_nrf54ls05b.webp
+   :scale: 60%
    :alt: nRF54LS05 DK
 
    nRF54LS05 DK

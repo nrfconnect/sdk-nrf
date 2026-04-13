@@ -9,6 +9,7 @@ nRF54LV10 DK
    For the nRF54LV10A technical documentation and other resources (such as the SoC Datasheet), see :ref:`ug_nrf54l`.
 
 .. figure:: /images/nrf54lv10dk_nrf54lv10a.webp
+   :scale: 60%
    :alt: nRF54LV10 DK
 
    nRF54LV10 DK
