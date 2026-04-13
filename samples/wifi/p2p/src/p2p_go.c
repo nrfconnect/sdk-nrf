@@ -170,6 +170,54 @@ static int wifi_p2p_wps_pin(void)
 	return 0;
 }
 
+#ifdef CONFIG_SAMPLE_P2P_CONNECTION_METHOD_PIN
+static int wifi_p2p_wps_pin(void)
+{
+	struct wifi_wps_config_params params = {0};
+	struct net_if *iface = net_if_get_first_wifi();
+
+	if (!iface) {
+		LOG_ERR("Failed to get Wi-Fi interface");
+		return -1;
+	}
+
+	params.oper = WIFI_WPS_PIN_GET;
+
+	if (net_mgmt(NET_REQUEST_WIFI_WPS_CONFIG, iface, &params, sizeof(params))) {
+		LOG_WRN("Failed to start WPS PIN connection");
+		return -1;
+	}
+
+	if (params.oper == WIFI_WPS_PIN_GET) {
+		LOG_INF("WPS PIN is: %s", params.pin);
+	}
+
+	return 0;
+}
+#endif /* CONFIG_SAMPLE_P2P_CONNECTION_METHOD_PIN */
+
+#ifdef CONFIG_SAMPLE_P2P_CONNECTION_METHOD_PBC
+static int wifi_p2p_wps_pbc(void)
+{
+	struct wifi_wps_config_params params = {0};
+	struct net_if *iface = net_if_get_first_wifi();
+
+	if (!iface) {
+		LOG_ERR("Failed to get Wi-Fi interface");
+		return -1;
+	}
+
+	params.oper = WIFI_WPS_PBC;
+
+	if (net_mgmt(NET_REQUEST_WIFI_WPS_CONFIG, iface, &params, sizeof(params))) {
+		LOG_WRN("Failed to start WPS PBC connection");
+		return -1;
+	}
+
+	return 0;
+}
+#endif /* CONFIG_SAMPLE_P2P_CONNECTION_METHOD_PBC */
+
 static int wifi_p2p_group_remove(void)
 {
 	struct wifi_p2p_params params = { 0 };
@@ -224,6 +272,18 @@ int p2p_go_run(void)
 	if (ret < 0) {
 		return ret;
 	}
+
+#ifdef CONFIG_SAMPLE_P2P_CONNECTION_METHOD_PIN
+	ret = wifi_p2p_wps_pin();
+	if (ret < 0) {
+		return ret;
+	}
+#elif defined(CONFIG_SAMPLE_P2P_CONNECTION_METHOD_PBC)
+	ret = wifi_p2p_wps_pbc();
+	if (ret < 0) {
+		return ret;
+	}
+#endif
 
 	LOG_INF("Waiting for Peer to connect....");
 	while (!context.connected) {
