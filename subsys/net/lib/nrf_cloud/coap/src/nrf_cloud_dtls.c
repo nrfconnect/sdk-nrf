@@ -110,7 +110,7 @@ int nrfc_dtls_setup(int sock)
 		cid_supported = false;
 	}
 
-#if !defined(CONFIG_BOARD_NATIVE_SIM) && !defined(CONFIG_DECT)
+#if !defined(CONFIG_BOARD_NATIVE_SIM) && !defined(CONFIG_DECT) && defined(CONFIG_NET_SOCKETS_OFFLOAD)
 	int timeout = TLS_DTLS_HANDSHAKE_TIMEO_123S;
 
 	LOG_DBG("  Set handshake timeout %d", timeout);

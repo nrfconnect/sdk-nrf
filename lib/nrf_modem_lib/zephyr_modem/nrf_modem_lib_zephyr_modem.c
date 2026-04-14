@@ -239,8 +239,110 @@ static void dispatch_urc(const char *urc)
 }
 
 /* -------------------------------------------------------------------------
+ * PPP readiness flow control
+ *
+ * On a native nRF91 PDN activation (+CGEV: ME PDN ACT 0) means the modem's
+ * IP stack is ready.  With CMUX/PPP the modem signals PDN activation before
+ * PPP/IPCP has completed on the host, so the host has no IP yet.
+ *
+ * The proxy owns the PPP instance and can check its interface directly.
+ * +CGEV PDN ACT URCs are held until IPCP has assigned an IPv4 address,
+ * then released via a work item.  On reconnects where SLM consumes the
+ * +CGEV on DLCI 1, IPCP completion itself proves PDN is active, so the
+ * proxy forwards the URC on the host's behalf.
+ * ---------------------------------------------------------------------- */
+
+static char held_pdn_act_urc[64];
+static bool ppp_ipv4_ready;
+
+static bool ppp_has_ipv4(void)
+{
+	struct net_if *iface = modem_ppp_get_iface(&ppp);
+
+	if (iface == NULL || iface->config.ip.ipv4 == NULL) {
+		return false;
+	}
+
+	for (int i = 0; i < NET_IF_MAX_IPV4_ADDR; i++) {
+		struct net_if_addr *addr = &iface->config.ip.ipv4->unicast[i].ipv4;
+
+		if (addr->is_used &&
+		    !net_ipv4_is_addr_unspecified(&addr->address.in_addr)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static void ppp_ipv4_poll_work_handler(struct k_work *work);
+static K_WORK_DELAYABLE_DEFINE(ppp_ipv4_poll_work, ppp_ipv4_poll_work_handler);
+
+static void ppp_ipv4_poll_work_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	if (ppp_has_ipv4()) {
+		ppp_ipv4_ready = true;
+
+		if (held_pdn_act_urc[0] != '\0') {
+			LOG_INF("PPP IPv4 ready, forwarding held +CGEV URC");
+			dispatch_urc(held_pdn_act_urc);
+			held_pdn_act_urc[0] = '\0';
+		} else {
+			LOG_INF("PPP IPv4 ready, forwarding +CGEV for default PDN");
+			dispatch_urc("+CGEV: ME PDN ACT 0");
+		}
+		return;
+	}
+
+	k_work_reschedule(&ppp_ipv4_poll_work, K_MSEC(100));
+}
+
+static bool hold_pdn_act_if_ppp_not_ready(const char *line)
+{
+	if (strncmp(line, "+CGEV:", 6) != 0) {
+		return false;
+	}
+
+	if (strstr(line, "ACT") == NULL || strstr(line, "DEACT") != NULL) {
+		return false;
+	}
+
+	if (ppp_ipv4_ready) {
+		return false;
+	}
+
+	LOG_INF("Holding +CGEV PDN ACT until PPP IPv4 ready");
+	strncpy(held_pdn_act_urc, line, sizeof(held_pdn_act_urc) - 1);
+	held_pdn_act_urc[sizeof(held_pdn_act_urc) - 1] = '\0';
+
+	k_work_reschedule(&ppp_ipv4_poll_work, K_MSEC(100));
+	return true;
+}
+
+/* -------------------------------------------------------------------------
  * Line processor (called for every \r\n-terminated line)
  * ---------------------------------------------------------------------- */
+
+/* URCs that are never AT command responses and must always be dispatched. */
+static bool is_unsolicited(const char *line)
+{
+	static const char * const prefixes[] = {
+		"+CGEV:",
+		"+CNEC_ESM:",
+		"%MDMEV:",
+		"%XTIME:",
+	};
+
+	for (size_t i = 0; i < ARRAY_SIZE(prefixes); i++) {
+		if (strncmp(line, prefixes[i], strlen(prefixes[i])) == 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
 
 static void process_line(const char *line)
 {
@@ -251,15 +353,26 @@ static void process_line(const char *line)
 	}
 
 	if (!cmd_pending) {
-		dispatch_urc(line);
+		if (!hold_pdn_act_if_ppp_not_ready(line)) {
+			dispatch_urc(line);
+		}
+		return;
+	}
+
+	if (is_unsolicited(line)) {
+		if (!hold_pdn_act_if_ppp_not_ready(line)) {
+			dispatch_urc(line);
+		}
 		return;
 	}
 
 	if (is_terminal_ok(line)) {
-		while (resp_len > 0 &&
-		       (resp_buf[resp_len - 1] == '\r' ||
-			resp_buf[resp_len - 1] == '\n')) {
-			resp_len--;
+		/* Append OK\r\n to match nrf_modem_at_cmd() output format.
+		 * Callers like modem_info parse the raw buffer for "OK\r\n".
+		 */
+		if (resp_len + 4 < AT_BUF_SIZE) {
+			memcpy(&resp_buf[resp_len], "OK\r\n", 4);
+			resp_len += 4;
 		}
 		resp_buf[resp_len] = '\0';
 		cmd_result  = 0;
@@ -345,19 +458,40 @@ static void at_reader_fn(void *p1, void *p2, void *p3)
  * Internal: synchronous AT command send/receive
  * ---------------------------------------------------------------------- */
 
+static int pipe_transmit_all(struct modem_pipe *pipe, const uint8_t *buf, size_t len)
+{
+	size_t sent = 0;
+
+	while (sent < len) {
+		int ret = modem_pipe_transmit(pipe, buf + sent, len - sent);
+
+		if (ret < 0) {
+			return ret;
+		}
+
+		if (ret == 0) {
+			k_sleep(K_MSEC(1));
+			continue;
+		}
+
+		sent += ret;
+	}
+
+	return 0;
+}
+
 static int at_cmd_send(char *out_buf, size_t out_len, const char *cmd)
 {
-	char cmd_line[AT_CMD_SIZE];
-	int cmd_line_len;
 	int result;
 	int err;
+	size_t cmd_len;
 
 	if (dlci2_pipe == NULL) {
 		return -ENODEV;
 	}
 
-	LOG_INF("AT >> %s", cmd);
 	k_mutex_lock(&at_cmd_mutex, K_FOREVER);
+	LOG_INF("AT >> %s", cmd);
 
 	resp_len    = 0;
 	resp_buf[0] = '\0';
@@ -371,17 +505,44 @@ static int at_cmd_send(char *out_buf, size_t out_len, const char *cmd)
 		(void)sscanf(cmd + 8, "%d", &cfun_set);
 	}
 
-	cmd_pending = true;
-
-	cmd_line_len = snprintk(cmd_line, sizeof(cmd_line), "%s\r\n", cmd);
-	if (cmd_line_len < 0 || cmd_line_len >= (int)sizeof(cmd_line)) {
-		cmd_pending = false;
-		k_mutex_unlock(&at_cmd_mutex);
-		return -ENOMEM;
+	if (cfun_set == 0 || cfun_set == 4) {
+		ppp_ipv4_ready = false;
+		held_pdn_act_urc[0] = '\0';
 	}
 
-	err = modem_pipe_transmit(dlci2_pipe, (const uint8_t *)cmd_line,
-				  cmd_line_len);
+	/* When transitioning to normal mode, tell SLM to (re-)start PPP
+	 * management before the modem goes online.  Without this the SLM
+	 * never restarts its PPP handler after a CFUN=4 cycle and the PDN
+	 * activation event (+CGEV) is never generated.
+	 */
+	if (cfun_set == 1 || cfun_set == 21) {
+		LOG_INF("AT >> AT#XPPP=1 (SLM PPP restart before CFUN=%d)",
+			cfun_set);
+		cmd_pending = true;
+		err = pipe_transmit_all(dlci2_pipe,
+					(const uint8_t *)"AT#XPPP=1\r\n", 11);
+		if (err >= 0) {
+			err = k_sem_take(&at_resp_sem, K_MSEC(5000));
+		}
+		LOG_INF("AT << AT#XPPP=1 result=%d", cmd_result);
+		cmd_pending = false;
+		k_sem_reset(&at_resp_sem);
+		resp_len = 0;
+		resp_buf[0] = '\0';
+		cmd_result = 0;
+	}
+
+	cmd_pending = true;
+
+	cmd_len = strlen(cmd);
+	err = pipe_transmit_all(dlci2_pipe, (const uint8_t *)cmd, cmd_len);
+	if (err < 0) {
+		cmd_pending = false;
+		k_mutex_unlock(&at_cmd_mutex);
+		return err;
+	}
+
+	err = pipe_transmit_all(dlci2_pipe, (const uint8_t *)"\r\n", 2);
 	if (err < 0) {
 		cmd_pending = false;
 		k_mutex_unlock(&at_cmd_mutex);
@@ -432,13 +593,33 @@ void nrf_modem_at_cfun_handler_set(nrf_modem_at_cfun_handler_t handler)
 int nrf_modem_at_printf(const char *fmt, ...)
 {
 	va_list args;
-	char buf[AT_CMD_SIZE];
+	char small[AT_CMD_SIZE];
+	char *cmd = small;
+	int ret;
 
 	va_start(args, fmt);
-	vsnprintk(buf, sizeof(buf), fmt, args);
+	ret = vsnprintk(small, sizeof(small), fmt, args);
 	va_end(args);
 
-	return at_cmd_send(NULL, 0, buf);
+	if (ret >= (int)sizeof(small)) {
+		size_t needed = ret + 1;
+
+		cmd = k_malloc(needed);
+		if (!cmd) {
+			return -ENOMEM;
+		}
+		va_start(args, fmt);
+		vsnprintk(cmd, needed, fmt, args);
+		va_end(args);
+	}
+
+	ret = at_cmd_send(NULL, 0, cmd);
+
+	if (cmd != small) {
+		k_free(cmd);
+	}
+
+	return ret;
 }
 
 int nrf_modem_at_scanf(const char *cmd, const char *fmt, ...)
@@ -463,34 +644,72 @@ int nrf_modem_at_scanf(const char *cmd, const char *fmt, ...)
 int nrf_modem_at_cmd(void *buf, size_t len, const char *fmt, ...)
 {
 	va_list args;
-	char cmd[AT_CMD_SIZE];
+	char small[AT_CMD_SIZE];
+	char *cmd = small;
+	int ret;
 
 	va_start(args, fmt);
-	vsnprintk(cmd, sizeof(cmd), fmt, args);
+	ret = vsnprintk(small, sizeof(small), fmt, args);
 	va_end(args);
 
-	return at_cmd_send((char *)buf, len, cmd);
+	if (ret >= (int)sizeof(small)) {
+		size_t needed = ret + 1;
+
+		cmd = k_malloc(needed);
+		if (!cmd) {
+			return -ENOMEM;
+		}
+		va_start(args, fmt);
+		vsnprintk(cmd, needed, fmt, args);
+		va_end(args);
+	}
+
+	ret = at_cmd_send((char *)buf, len, cmd);
+
+	if (cmd != small) {
+		k_free(cmd);
+	}
+
+	return ret;
 }
 
 int nrf_modem_at_cmd_async(nrf_modem_at_resp_handler_t callback,
 			   const char *fmt, ...)
 {
 	va_list args;
-	char cmd[AT_CMD_SIZE];
+	char small[AT_CMD_SIZE];
+	char *cmd = small;
 	char resp[AT_BUF_SIZE];
-	int err;
+	int ret;
 
 	if (callback == NULL) {
 		return -EINVAL;
 	}
 
 	va_start(args, fmt);
-	vsnprintk(cmd, sizeof(cmd), fmt, args);
+	ret = vsnprintk(small, sizeof(small), fmt, args);
 	va_end(args);
 
-	err = at_cmd_send(resp, sizeof(resp), cmd);
+	if (ret >= (int)sizeof(small)) {
+		size_t needed = ret + 1;
+
+		cmd = k_malloc(needed);
+		if (!cmd) {
+			return -ENOMEM;
+		}
+		va_start(args, fmt);
+		vsnprintk(cmd, needed, fmt, args);
+		va_end(args);
+	}
+
+	ret = at_cmd_send(resp, sizeof(resp), cmd);
 	callback(resp);
-	return err;
+
+	if (cmd != small) {
+		k_free(cmd);
+	}
+
+	return ret;
 }
 
 int nrf_modem_at_cmd_custom_set(struct nrf_modem_at_cmd_custom *custom_commands,
