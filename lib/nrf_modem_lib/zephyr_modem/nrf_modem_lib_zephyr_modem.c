@@ -22,8 +22,12 @@
  *   2. Run init chat script (AT, AT+CFUN=4, ..., AT#XCMUX=1) on UART pipe.
  *   3. Transfer UART pipe to modem_cmux; connect CMUX.
  *   4. Init DLCI 1 (PPP) and DLCI 2 (AT channel after switch).
- *   5. Run dial chat script (AT#XPPP=1, AT+CFUN=1, AT#XCMUX=2) on DLCI 1
+ *   5. Run dial chat script (AT#XPPP=1, AT#XCMUX=2) on DLCI 1
  *      (which is the default AT channel until AT#XCMUX=2 switches it).
+ *      AT+CFUN=1 is intentionally NOT in the dial script: lte_lc must be
+ *      able to set AT%XSYSTEMMODE while the modem is still in CFUN=4, and
+ *      lte_lc itself drives the CFUN transition later.  The proxy
+ *      intercepts that CFUN=1 in at_cmd_send() to also restart SLM PPP.
  *   6. Open DLCI 2 (now the AT channel), start reader thread.
  *   7. Attach modem_ppp to DLCI 1 (now the PPP channel).
  *   8. Call nrf_modem_lib_init() to fire ON_INIT callbacks.
@@ -34,6 +38,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
 #include <zephyr/modem/backend/uart.h>
 #include <zephyr/modem/cmux.h>
 #include <zephyr/modem/chat.h>
@@ -59,6 +64,16 @@ LOG_MODULE_REGISTER(nrf_modem, LOG_LEVEL_INF);
 
 /* UART device: parent of the DT alias "modem" node */
 #define MODEM_UART_DEV  DEVICE_DT_GET(DT_BUS(DT_ALIAS(modem)))
+
+/* Modem reset GPIO (optional) */
+#define MODEM_NODE DT_ALIAS(modem)
+#if DT_NODE_HAS_PROP(MODEM_NODE, mdm_reset_gpios)
+static const struct gpio_dt_spec mdm_reset_spec =
+	GPIO_DT_SPEC_GET(MODEM_NODE, mdm_reset_gpios);
+#define HAS_MDM_RESET 1
+#else
+#define HAS_MDM_RESET 0
+#endif
 
 /* AT command buffer sizes */
 #define AT_CMD_SIZE   256U
@@ -123,10 +138,16 @@ MODEM_CHAT_SCRIPT_CMDS_DEFINE(init_script_cmds,
 MODEM_CHAT_SCRIPT_DEFINE(init_script, init_script_cmds,
 			 abort_matches, NULL, 10);
 
-/* Dial script: runs on DLCI 1 (SLM default AT channel), switches to DLCI 2 */
+/* Dial script: runs on DLCI 1 (SLM default AT channel), switches to DLCI 2.
+ *
+ * Note: AT+CFUN=1 is intentionally omitted.  lte_lc needs to issue
+ * AT%XSYSTEMMODE before the modem goes to CFUN=1 (the modem rejects mode
+ * changes with +CME ERROR: 6 once active).  lte_lc itself drives CFUN=1
+ * later, and at_cmd_send() pairs that CFUN=1 with AT#XPPP=1 to restart
+ * the SLM PPP handler.
+ */
 MODEM_CHAT_SCRIPT_CMDS_DEFINE(dial_script_cmds,
 			      MODEM_CHAT_SCRIPT_CMD_RESP("AT#XPPP=1", ok_match),
-			      MODEM_CHAT_SCRIPT_CMD_RESP("AT+CFUN=1", ok_match),
 			      MODEM_CHAT_SCRIPT_CMD_RESP("AT#XCMUX=2", ok_match));
 
 MODEM_CHAT_SCRIPT_DEFINE(dial_script, dial_script_cmds,
@@ -170,6 +191,7 @@ static char  resp_buf[AT_BUF_SIZE]; /* accumulated response body */
 static size_t resp_len;
 static int   cmd_result;            /* 0=OK, >0=encoded error */
 static bool  cmd_pending;
+static char  current_cmd[AT_CMD_SIZE]; /* in-flight AT command (for URC disambiguation) */
 
 static char  line_buf[AT_BUF_SIZE];
 static size_t line_len;
@@ -239,8 +261,165 @@ static void dispatch_urc(const char *urc)
 }
 
 /* -------------------------------------------------------------------------
+ * PPP readiness flow control
+ *
+ * On a native nRF91 PDN activation (+CGEV: ME PDN ACT 0) means the modem's
+ * IP stack is ready.  With CMUX/PPP the modem signals PDN activation before
+ * PPP/IPCP has completed on the host, so the host has no IP yet.
+ *
+ * The proxy owns the PPP instance and can check its interface directly.
+ * +CGEV PDN ACT URCs are held until IPCP has assigned an IPv4 address,
+ * then released via a work item.  On reconnects where SLM consumes the
+ * +CGEV on DLCI 1, IPCP completion itself proves PDN is active, so the
+ * proxy forwards the URC on the host's behalf.
+ * ---------------------------------------------------------------------- */
+
+static char held_pdn_act_urc[64];
+static bool ppp_ipv4_ready;
+
+static bool ppp_has_ipv4(void)
+{
+	struct net_if *iface = modem_ppp_get_iface(&ppp);
+
+	if (iface == NULL || iface->config.ip.ipv4 == NULL) {
+		return false;
+	}
+
+	for (int i = 0; i < NET_IF_MAX_IPV4_ADDR; i++) {
+		struct net_if_addr *addr = &iface->config.ip.ipv4->unicast[i].ipv4;
+
+		if (addr->is_used &&
+		    !net_ipv4_is_addr_unspecified(&addr->address.in_addr)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static void ppp_ipv4_poll_work_handler(struct k_work *work);
+static K_WORK_DELAYABLE_DEFINE(ppp_ipv4_poll_work, ppp_ipv4_poll_work_handler);
+
+static void ppp_ipv4_poll_work_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	if (ppp_has_ipv4()) {
+		ppp_ipv4_ready = true;
+
+		if (held_pdn_act_urc[0] != '\0') {
+			LOG_INF("PPP IPv4 ready, forwarding held +CGEV URC");
+			dispatch_urc(held_pdn_act_urc);
+			held_pdn_act_urc[0] = '\0';
+		} else {
+			LOG_INF("PPP IPv4 ready, forwarding +CGEV for default PDN");
+			dispatch_urc("+CGEV: ME PDN ACT 0");
+		}
+		return;
+	}
+
+	k_work_reschedule(&ppp_ipv4_poll_work, K_MSEC(100));
+}
+
+static bool hold_pdn_act_if_ppp_not_ready(const char *line)
+{
+	if (strncmp(line, "+CGEV:", 6) != 0) {
+		return false;
+	}
+
+	if (strstr(line, "ACT") == NULL || strstr(line, "DEACT") != NULL) {
+		return false;
+	}
+
+	if (ppp_ipv4_ready) {
+		return false;
+	}
+
+	LOG_INF("Holding +CGEV PDN ACT until PPP IPv4 ready");
+	strncpy(held_pdn_act_urc, line, sizeof(held_pdn_act_urc) - 1);
+	held_pdn_act_urc[sizeof(held_pdn_act_urc) - 1] = '\0';
+
+	k_work_reschedule(&ppp_ipv4_poll_work, K_MSEC(100));
+	return true;
+}
+
+/* -------------------------------------------------------------------------
  * Line processor (called for every \r\n-terminated line)
  * ---------------------------------------------------------------------- */
+
+/* URCs that are never AT command responses and must always be dispatched.
+ *
+ * Lines that match one of these prefixes are routed to the URC handler
+ * even while a command is pending, so they never end up appended to the
+ * response buffer of an unrelated command.  Without this, callers like
+ * modem_info that parse the raw response can fail with -ENOMSG when an
+ * unrelated URC slips into e.g. an AT+CESQ response.
+ *
+ * The list intentionally only includes prefixes that are *always* sent
+ * unsolicited (i.e. the corresponding AT command response uses a
+ * different prefix or none at all, so there is no ambiguity with
+ * cmd_pending).
+ */
+static bool is_unsolicited(const char *line)
+{
+	static const char * const prefixes[] = {
+		/* 3GPP / nRF91 URCs */
+		"+CGEV:",
+		"+CNEC_ESM:",
+		"+CEDRXP:",
+		"%MDMEV:",
+		"%XTIME:",
+		"%NCELLMEAS:",
+		/* SLM URCs */
+		"#XPPP:",
+	};
+
+	for (size_t i = 0; i < ARRAY_SIZE(prefixes); i++) {
+		if (strncmp(line, prefixes[i], strlen(prefixes[i])) == 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/* Some URCs share their prefix with a regular AT command response (e.g.
+ * +CEREG: is both the response to AT+CEREG? and an unsolicited
+ * notification when registration changes).  Those must be dispatched as
+ * URCs only when they don't belong to the in-flight command, otherwise
+ * they would slip into the response buffer of an unrelated command and
+ * break callers like modem_info that parse the raw response.
+ *
+ * For each ambiguous prefix we record the AT command stem that owns it
+ * as a response.  If the in-flight command starts with that stem the
+ * line is treated as a response (accumulated); otherwise it's a URC.
+ */
+static bool is_orphan_urc(const char *line)
+{
+	static const struct {
+		const char *line_prefix;
+		const char *cmd_stem;
+	} ambiguous[] = {
+		{ "+CEREG:",  "AT+CEREG"  },
+		{ "+CSCON:",  "AT+CSCON"  },
+		{ "+CGREG:",  "AT+CGREG"  },
+	};
+
+	for (size_t i = 0; i < ARRAY_SIZE(ambiguous); i++) {
+		if (strncmp(line, ambiguous[i].line_prefix,
+			    strlen(ambiguous[i].line_prefix)) != 0) {
+			continue;
+		}
+
+		/* Line starts with this prefix: URC unless the in-flight
+		 * command would generate this as its response.
+		 */
+		return strncasecmp(current_cmd, ambiguous[i].cmd_stem,
+				   strlen(ambiguous[i].cmd_stem)) != 0;
+	}
+
+	return false;
+}
 
 static void process_line(const char *line)
 {
@@ -251,15 +430,26 @@ static void process_line(const char *line)
 	}
 
 	if (!cmd_pending) {
-		dispatch_urc(line);
+		if (!hold_pdn_act_if_ppp_not_ready(line)) {
+			dispatch_urc(line);
+		}
+		return;
+	}
+
+	if (is_unsolicited(line) || is_orphan_urc(line)) {
+		if (!hold_pdn_act_if_ppp_not_ready(line)) {
+			dispatch_urc(line);
+		}
 		return;
 	}
 
 	if (is_terminal_ok(line)) {
-		while (resp_len > 0 &&
-		       (resp_buf[resp_len - 1] == '\r' ||
-			resp_buf[resp_len - 1] == '\n')) {
-			resp_len--;
+		/* Append OK\r\n to match nrf_modem_at_cmd() output format.
+		 * Callers like modem_info parse the raw buffer for "OK\r\n".
+		 */
+		if (resp_len + 4 < AT_BUF_SIZE) {
+			memcpy(&resp_buf[resp_len], "OK\r\n", 4);
+			resp_len += 4;
 		}
 		resp_buf[resp_len] = '\0';
 		cmd_result  = 0;
@@ -345,19 +535,40 @@ static void at_reader_fn(void *p1, void *p2, void *p3)
  * Internal: synchronous AT command send/receive
  * ---------------------------------------------------------------------- */
 
+static int pipe_transmit_all(struct modem_pipe *pipe, const uint8_t *buf, size_t len)
+{
+	size_t sent = 0;
+
+	while (sent < len) {
+		int ret = modem_pipe_transmit(pipe, buf + sent, len - sent);
+
+		if (ret < 0) {
+			return ret;
+		}
+
+		if (ret == 0) {
+			k_sleep(K_MSEC(1));
+			continue;
+		}
+
+		sent += ret;
+	}
+
+	return 0;
+}
+
 static int at_cmd_send(char *out_buf, size_t out_len, const char *cmd)
 {
-	char cmd_line[AT_CMD_SIZE];
-	int cmd_line_len;
 	int result;
 	int err;
+	size_t cmd_len;
 
 	if (dlci2_pipe == NULL) {
 		return -ENODEV;
 	}
 
-	LOG_INF("AT >> %s", cmd);
 	k_mutex_lock(&at_cmd_mutex, K_FOREVER);
+	LOG_INF("AT >> %s", cmd);
 
 	resp_len    = 0;
 	resp_buf[0] = '\0';
@@ -371,17 +582,48 @@ static int at_cmd_send(char *out_buf, size_t out_len, const char *cmd)
 		(void)sscanf(cmd + 8, "%d", &cfun_set);
 	}
 
-	cmd_pending = true;
-
-	cmd_line_len = snprintk(cmd_line, sizeof(cmd_line), "%s\r\n", cmd);
-	if (cmd_line_len < 0 || cmd_line_len >= (int)sizeof(cmd_line)) {
-		cmd_pending = false;
-		k_mutex_unlock(&at_cmd_mutex);
-		return -ENOMEM;
+	if (cfun_set == 0 || cfun_set == 4) {
+		ppp_ipv4_ready = false;
+		held_pdn_act_urc[0] = '\0';
 	}
 
-	err = modem_pipe_transmit(dlci2_pipe, (const uint8_t *)cmd_line,
-				  cmd_line_len);
+	/* When transitioning to normal mode, tell SLM to (re-)start PPP
+	 * management before the modem goes online.  Without this the SLM
+	 * never restarts its PPP handler after a CFUN=4 cycle and the PDN
+	 * activation event (+CGEV) is never generated.
+	 */
+	if (cfun_set == 1 || cfun_set == 21) {
+		LOG_INF("AT >> AT#XPPP=1 (SLM PPP restart before CFUN=%d)",
+			cfun_set);
+		strncpy(current_cmd, "AT#XPPP=1", sizeof(current_cmd) - 1);
+		current_cmd[sizeof(current_cmd) - 1] = '\0';
+		cmd_pending = true;
+		err = pipe_transmit_all(dlci2_pipe,
+					(const uint8_t *)"AT#XPPP=1\r\n", 11);
+		if (err >= 0) {
+			err = k_sem_take(&at_resp_sem, K_MSEC(5000));
+		}
+		LOG_INF("AT << AT#XPPP=1 result=%d", cmd_result);
+		cmd_pending = false;
+		k_sem_reset(&at_resp_sem);
+		resp_len = 0;
+		resp_buf[0] = '\0';
+		cmd_result = 0;
+	}
+
+	strncpy(current_cmd, cmd, sizeof(current_cmd) - 1);
+	current_cmd[sizeof(current_cmd) - 1] = '\0';
+	cmd_pending = true;
+
+	cmd_len = strlen(cmd);
+	err = pipe_transmit_all(dlci2_pipe, (const uint8_t *)cmd, cmd_len);
+	if (err < 0) {
+		cmd_pending = false;
+		k_mutex_unlock(&at_cmd_mutex);
+		return err;
+	}
+
+	err = pipe_transmit_all(dlci2_pipe, (const uint8_t *)"\r\n", 2);
 	if (err < 0) {
 		cmd_pending = false;
 		k_mutex_unlock(&at_cmd_mutex);
@@ -432,13 +674,33 @@ void nrf_modem_at_cfun_handler_set(nrf_modem_at_cfun_handler_t handler)
 int nrf_modem_at_printf(const char *fmt, ...)
 {
 	va_list args;
-	char buf[AT_CMD_SIZE];
+	char small[AT_CMD_SIZE];
+	char *cmd = small;
+	int ret;
 
 	va_start(args, fmt);
-	vsnprintk(buf, sizeof(buf), fmt, args);
+	ret = vsnprintk(small, sizeof(small), fmt, args);
 	va_end(args);
 
-	return at_cmd_send(NULL, 0, buf);
+	if (ret >= (int)sizeof(small)) {
+		size_t needed = ret + 1;
+
+		cmd = k_malloc(needed);
+		if (!cmd) {
+			return -ENOMEM;
+		}
+		va_start(args, fmt);
+		vsnprintk(cmd, needed, fmt, args);
+		va_end(args);
+	}
+
+	ret = at_cmd_send(NULL, 0, cmd);
+
+	if (cmd != small) {
+		k_free(cmd);
+	}
+
+	return ret;
 }
 
 int nrf_modem_at_scanf(const char *cmd, const char *fmt, ...)
@@ -463,34 +725,72 @@ int nrf_modem_at_scanf(const char *cmd, const char *fmt, ...)
 int nrf_modem_at_cmd(void *buf, size_t len, const char *fmt, ...)
 {
 	va_list args;
-	char cmd[AT_CMD_SIZE];
+	char small[AT_CMD_SIZE];
+	char *cmd = small;
+	int ret;
 
 	va_start(args, fmt);
-	vsnprintk(cmd, sizeof(cmd), fmt, args);
+	ret = vsnprintk(small, sizeof(small), fmt, args);
 	va_end(args);
 
-	return at_cmd_send((char *)buf, len, cmd);
+	if (ret >= (int)sizeof(small)) {
+		size_t needed = ret + 1;
+
+		cmd = k_malloc(needed);
+		if (!cmd) {
+			return -ENOMEM;
+		}
+		va_start(args, fmt);
+		vsnprintk(cmd, needed, fmt, args);
+		va_end(args);
+	}
+
+	ret = at_cmd_send((char *)buf, len, cmd);
+
+	if (cmd != small) {
+		k_free(cmd);
+	}
+
+	return ret;
 }
 
 int nrf_modem_at_cmd_async(nrf_modem_at_resp_handler_t callback,
 			   const char *fmt, ...)
 {
 	va_list args;
-	char cmd[AT_CMD_SIZE];
+	char small[AT_CMD_SIZE];
+	char *cmd = small;
 	char resp[AT_BUF_SIZE];
-	int err;
+	int ret;
 
 	if (callback == NULL) {
 		return -EINVAL;
 	}
 
 	va_start(args, fmt);
-	vsnprintk(cmd, sizeof(cmd), fmt, args);
+	ret = vsnprintk(small, sizeof(small), fmt, args);
 	va_end(args);
 
-	err = at_cmd_send(resp, sizeof(resp), cmd);
+	if (ret >= (int)sizeof(small)) {
+		size_t needed = ret + 1;
+
+		cmd = k_malloc(needed);
+		if (!cmd) {
+			return -ENOMEM;
+		}
+		va_start(args, fmt);
+		vsnprintk(cmd, needed, fmt, args);
+		va_end(args);
+	}
+
+	ret = at_cmd_send(resp, sizeof(resp), cmd);
 	callback(resp);
-	return err;
+
+	if (cmd != small) {
+		k_free(cmd);
+	}
+
+	return ret;
 }
 
 int nrf_modem_at_cmd_custom_set(struct nrf_modem_at_cmd_custom *custom_commands,
@@ -566,9 +866,46 @@ static void cmux_event_cb(struct modem_cmux *_cmux,
  * Init sequence
  * ---------------------------------------------------------------------- */
 
+#if HAS_MDM_RESET
+static int reset_modem(void)
+{
+	int err;
+
+	if (!gpio_is_ready_dt(&mdm_reset_spec)) {
+		LOG_WRN("Modem reset GPIO not ready");
+		return -ENODEV;
+	}
+
+	LOG_INF("Resetting modem via GPIO...");
+
+	/* Configure as output, asserted (active state) */
+	err = gpio_pin_configure_dt(&mdm_reset_spec, GPIO_OUTPUT_ACTIVE);
+	if (err) {
+		LOG_ERR("Failed to configure modem reset GPIO: %d", err);
+		return err;
+	}
+
+	/* Hold reset for 100ms */
+	k_sleep(K_MSEC(100));
+
+	/* Deassert reset (release) */
+	gpio_pin_set_dt(&mdm_reset_spec, 0);
+
+	/* Wait for modem to boot (nRF91 SLM boot time is ~1-2 seconds) */
+	LOG_INF("Waiting for modem to boot...");
+	k_sleep(K_MSEC(2500));
+
+	return 0;
+}
+#endif /* HAS_MDM_RESET */
+
 static int run_init_sequence(void)
 {
 	int err;
+
+#if HAS_MDM_RESET
+	(void)reset_modem();
+#endif
 
 	/* 1. Open UART backend pipe */
 	const struct modem_backend_uart_config uart_cfg = {
@@ -721,7 +1058,7 @@ static int run_init_sequence(void)
 		return err;
 	}
 
-	LOG_INF("Running dial script (AT#XPPP=1, AT+CFUN=1, AT#XCMUX=2)...");
+	LOG_INF("Running dial script (AT#XPPP=1, AT#XCMUX=2)...");
 	err = modem_chat_run_script(&chat, &dial_script);
 	if (err) {
 		LOG_ERR("Dial script failed: %d", err);

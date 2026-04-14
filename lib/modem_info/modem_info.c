@@ -870,7 +870,7 @@ int modem_info_get_rsrp(int *val)
 	}
 
 	if (*val == CELL_RSRP_INVALID) {
-		LOG_WRN("No valid RSRP");
+		LOG_DBG("No valid RSRP");
 		return -ENOENT;
 	}
 

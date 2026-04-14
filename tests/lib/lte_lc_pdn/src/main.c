@@ -5,6 +5,7 @@
  */
 
 #include <unity.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1873,12 +1874,38 @@ void test_lte_lc_cellular_profile_remove_invalid_id(void)
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
+static int nrf_modem_at_printf_pdn_default_ctx_enable_ok(const char *cmd, va_list args)
+{
+	ARG_UNUSED(cmd);
+	ARG_UNUSED(args);
+
+	return 0;
+}
+
+static int nrf_modem_at_cmd_cgact_query_default_inactive(void *buf, size_t len, const char *cmd,
+							 va_list args)
+{
+	static const char resp[] = "\r\n+CGACT: 0,0\r\nOK\r\n";
+
+	ARG_UNUSED(args);
+
+	TEST_ASSERT_EQUAL_STRING("AT+CGACT?", cmd);
+	TEST_ASSERT_TRUE(len > sizeof(resp));
+
+	strncpy(buf, resp, len - 1);
+	((char *)buf)[len - 1] = '\0';
+
+	return 0;
+}
+
 void test_lte_lc_pdn_default_ctx_events_enable(void)
 {
 	int ret;
 
 	k_malloc_fake.custom_fake = k_malloc_PDN0;
 	k_free_fake.custom_fake = k_free_PDN0;
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_pdn_default_ctx_enable_ok;
+	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_cgact_query_default_inactive;
 
 	pdn0.context_id = -1;
 
@@ -1901,6 +1928,8 @@ void test_lte_lc_pdn_default_ctx_events_disable(void)
 
 	k_malloc_fake.custom_fake = k_malloc_PDN0;
 	k_free_fake.custom_fake = k_free_PDN0;
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_pdn_default_ctx_enable_ok;
+	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_cgact_query_default_inactive;
 
 	ret = lte_lc_pdn_default_ctx_events_disable();
 	TEST_ASSERT_EQUAL(0, ret);

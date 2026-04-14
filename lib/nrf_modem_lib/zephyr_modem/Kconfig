@@ -27,6 +27,46 @@ config NRF_MODEM_LIB_ZEPHYR_MODEM_STACK_SIZE
 	int "AT reader thread stack size"
 	default 2048
 
+config NRF_MODEM_LIB_ZEPHYR_MODEM_AT_READER_PRIO
+	int "AT reader thread priority"
+	default 7
+	help
+	  Thread priority for the AT response reader. Must be high enough to
+	  prevent starvation when other threads issue AT commands frequently
+	  (e.g. Memfault LTE metrics). Lower values = higher priority.
+	  Default 7 is in the cooperative range below typical application threads.
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM_AT_READER_POLL_MS
+	int "AT reader poll interval (ms)"
+	default 100
+	help
+	  Interval at which the AT reader thread polls for data even if no
+	  pipe event was received. This handles edge cases where the CMUX
+	  pipe event is missed due to race conditions. Lower values improve
+	  responsiveness but increase CPU usage slightly.
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM_CMUX_BUF_SIZE
+	int "CMUX work buffer size"
+	default 1024
+	help
+	  Size of CMUX receive and transmit work buffers. Should be at least
+	  as large as the maximum CMUX frame size (MTU + headers).
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM_DLCI1_RX_BUF_SIZE
+	int "DLCI 1 (PPP) receive buffer size"
+	default 4096
+	help
+	  Receive buffer size for the PPP data channel (DLCI 1). Larger buffers
+	  reduce the risk of overflow during high throughput periods. This buffer
+	  holds received PPP frames until the network stack consumes them.
+
+config NRF_MODEM_LIB_ZEPHYR_MODEM_DLCI2_RX_BUF_SIZE
+	int "DLCI 2 (AT) receive buffer size"
+	default 2048
+	help
+	  Receive buffer size for the AT command channel (DLCI 2). Should be
+	  large enough to handle verbose AT responses and unsolicited result codes.
+
 config NRF_MODEM_LIB_ZEPHYR_MODEM_RESPONSE_TIMEOUT_MS
 	int "AT command response timeout (ms)"
 	default 30000

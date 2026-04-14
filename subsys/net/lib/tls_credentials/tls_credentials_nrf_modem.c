@@ -233,6 +233,10 @@ int tls_credential_add(sec_tag_t tag, enum tls_credential_type type,
 	credential = credential_get(tag, type);
 	if (credential != NULL) {
 		err = credential_verify_or_write(credential, cred, credlen);
+		if (err == 0) {
+			credential->buf = cred;
+			credential->len = credlen;
+		}
 		goto exit;
 	}
 

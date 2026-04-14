@@ -163,10 +163,10 @@ static int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params, const cha
 
 	if (status == AT_NCELLMEAS_STATUS_VALUE_FAIL) {
 		err = 1;
-		LOG_WRN("NCELLMEAS failed");
+		LOG_DBG("NCELLMEAS: no cells reported");
 		goto clean_exit;
 	} else if (status == AT_NCELLMEAS_STATUS_VALUE_INCOMPLETE) {
-		LOG_WRN("NCELLMEAS interrupted; results incomplete");
+		LOG_DBG("NCELLMEAS: results incomplete");
 		if (param_count == 3) {
 			/* No results, skip parsing. */
 			goto clean_exit;
@@ -445,10 +445,10 @@ static int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *ce
 
 	if (status == AT_NCELLMEAS_STATUS_VALUE_FAIL) {
 		err = 1;
-		LOG_WRN("NCELLMEAS failed");
+		LOG_DBG("NCELLMEAS: no cells reported");
 		goto clean_exit;
 	} else if (status == AT_NCELLMEAS_STATUS_VALUE_INCOMPLETE) {
-		LOG_WRN("NCELLMEAS interrupted; results incomplete");
+		LOG_DBG("NCELLMEAS: results incomplete");
 		if (count == 2) {
 			/* No results, skip parsing. */
 			goto clean_exit;

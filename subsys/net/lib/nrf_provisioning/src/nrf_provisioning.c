@@ -21,6 +21,7 @@
 #include <zephyr/net/tls_credentials.h>
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
+#include <nrf_modem_at.h>
 #include <modem/modem_attest_token.h>
 #include <net/nrf_provisioning.h>
 #include <net/rest_client.h>
@@ -268,6 +269,14 @@ int nrf_provisioning_notify_event_and_wait_for_modem_state(
 		.type = event,
 	};
 
+	if (event == NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED) {
+		/* Clear nw_connected so we wait for a real PDN activation event.
+		 * With SLM + CMUX/PPP the PDN deactivation event for CFUN=4 may
+		 * have been missed, leaving nw_connected stale.
+		 */
+		nw_connected = false;
+	}
+
 	callback(&event_data);
 
 	for (int i = 0; i < timeout_seconds; i++) {
@@ -293,6 +302,24 @@ int nrf_provisioning_notify_event_and_wait_for_modem_state(
 				 */
 				k_sleep(K_SECONDS(2));
 				return 0;
+			}
+
+			/* When SLM restarts PPP it reclaims DLCI 1 before the
+			 * +CGEV URC can be forwarded, so the host never sees it.
+			 * Fall back to polling AT+CGACT? directly.
+			 */
+			if (fmode == LTE_LC_FUNC_MODE_NORMAL ||
+			    fmode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
+				char cgact_buf[64];
+
+				if (nrf_modem_at_cmd(cgact_buf, sizeof(cgact_buf),
+						     "AT+CGACT?") == 0 &&
+				    strstr(cgact_buf, "+CGACT: 0,1") != NULL) {
+					LOG_DBG("PDN CID 0 active (polled)");
+					nw_connected = true;
+					k_sleep(K_SECONDS(2));
+					return 0;
+				}
 			}
 		}
 

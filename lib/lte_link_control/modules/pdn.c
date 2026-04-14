@@ -39,6 +39,7 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 #define MODEM_CFUN_POWER_OFF 0
 #define MODEM_CFUN_NORMAL 1
+#define MODEM_CFUN_OFFLINE 4
 #define MODEM_CFUN_ACTIVATE_LTE 21
 
 #define AT_CMD_PDN_CONTEXT_READ_INFO  "AT+CGCONTRDP=%u"
@@ -798,6 +799,55 @@ int pdn_ctx_default_apn_get(char *buf, size_t len)
 	return 0;
 }
 
+static void pdn_subscribe_cgev_esm_reports(void)
+{
+	int err;
+
+	LOG_DBG("Subscribing to +CNEC=16 and +CGEREP=1");
+
+	err = nrf_modem_at_printf("AT+CNEC=16");
+	if (err) {
+		LOG_ERR("Unable to subscribe to +CNEC=16, err %d", err);
+	}
+
+	err = nrf_modem_at_printf("AT+CGEREP=1");
+	if (err) {
+		LOG_ERR("Unable to subscribe to +CGEREP=1, err %d", err);
+	}
+}
+
+static void pdn_synthetic_activate_default_if_up(void)
+{
+	char buf[256];
+	int err;
+	const char *p;
+
+	err = nrf_modem_at_cmd(buf, sizeof(buf), "AT+CGACT?");
+	if (err < 0) {
+		LOG_DBG("AT+CGACT? failed, err %d (skip synthetic PDN ACT)", err);
+
+		return;
+	}
+
+	p = buf;
+	while ((p = strstr(p, "+CGACT:")) != NULL) {
+		unsigned long cid;
+		unsigned long state;
+
+		if (sscanf(p, "+CGACT: %lu,%lu", &cid, &state) == 2) {
+			if (cid == 0UL && state == 1UL) {
+				LOG_DBG("Default PDN (CID 0) already active, synthetic ACTIVATED event");
+				pdn_event_dispatch(0, LTE_LC_EVT_PDN_ACTIVATED, PDN_ACT_REASON_NONE,
+						   CP_ID_UNASSIGNED);
+
+				return;
+			}
+		}
+
+		p += strlen("+CGACT:");
+	}
+}
+
 int pdn_default_ctx_events_enable(void)
 {
 	struct pdn *pdn;
@@ -816,16 +866,20 @@ int pdn_default_ctx_events_enable(void)
 
 	k_mutex_unlock(&list_mutex);
 
-	if (exists) {
-		return 0;
+	if (!exists) {
+		pdn = pdn_ctx_new();
+		if (!pdn) {
+			return -ENOMEM;
+		}
+
+		pdn->context_id = 0;
 	}
 
-	pdn = pdn_ctx_new();
-	if (!pdn) {
-		return -ENOMEM;
-	}
-
-	pdn->context_id = 0;
+	/* With SLM + CMUX/PPP, the default bearer may already be up before the app runs; +CGEV may
+	 * have been missed. (Re-)subscribe and synthesize ACTIVATED if CID 0 is active.
+	 */
+	pdn_subscribe_cgev_esm_reports();
+	pdn_synthetic_activate_default_if_up();
 
 	return 0;
 }
@@ -863,31 +917,24 @@ NRF_MODEM_LIB_ON_CFUN(pdn_cfun_hook, pdn_on_modem_cfun, NULL);
 static void pdn_on_modem_cfun(int mode, void *ctx)
 #endif
 {
-	int err;
 	struct pdn *pdn;
 	struct pdn *tmp;
 
 	if (mode == MODEM_CFUN_NORMAL ||
 	    mode == MODEM_CFUN_ACTIVATE_LTE) {
-		LOG_DBG("Subscribing to +CNEC=16 and +CGEREP=1");
-
-		err = nrf_modem_at_printf("AT+CNEC=16");
-		if (err) {
-			LOG_ERR("Unable to subscribe to +CNEC=16, err %d", err);
-		}
-
-		err = nrf_modem_at_printf("AT+CGEREP=1");
-		if (err) {
-			LOG_ERR("Unable to subscribe to +CGEREP=1, err %d", err);
-		}
+		pdn_subscribe_cgev_esm_reports();
 	}
 
-	if (mode == MODEM_CFUN_POWER_OFF) {
+	if (mode == MODEM_CFUN_POWER_OFF || mode == MODEM_CFUN_OFFLINE) {
 		k_mutex_lock(&list_mutex, K_FOREVER);
 
 		SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&pdp_contexts, pdn, tmp, node) {
 			if (pdn->context_id == 0) {
-				/* Default context is not destroyed */
+				/* Default context is not destroyed, but signal deactivation
+				 * so consumers (e.g. nrf_provisioning) know the bearer is down.
+				 */
+				pdn_event_dispatch(0, LTE_LC_EVT_PDN_DEACTIVATED, 0,
+						   CP_ID_UNASSIGNED);
 				continue;
 			}
 

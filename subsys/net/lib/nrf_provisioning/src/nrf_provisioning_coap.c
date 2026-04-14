@@ -610,7 +610,15 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 	coap_ctx->rx_buf = rx_buf;
 	coap_ctx->rx_buf_len = sizeof(rx_buf);
 
-	ret = socket_connect(&coap_ctx->connect_socket);
+	for (int dns_retry = 0; dns_retry < 5; dns_retry++) {
+		ret = socket_connect(&coap_ctx->connect_socket);
+		if (ret == 0) {
+			break;
+		}
+		LOG_WRN("socket_connect failed (%d), retry %d/5",
+			ret, dns_retry + 1);
+		k_sleep(K_SECONDS(2));
+	}
 	if (ret < 0) {
 		return ret;
 	}
@@ -669,7 +677,15 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 			}
 retry_response:
 			if (!socket_keep_open) {
-				ret = socket_connect(&coap_ctx->connect_socket);
+				for (int dns_retry = 0; dns_retry < 5; dns_retry++) {
+					ret = socket_connect(&coap_ctx->connect_socket);
+					if (ret == 0) {
+						break;
+					}
+					LOG_WRN("socket_connect failed (%d), retry %d/5",
+						ret, dns_retry + 1);
+					k_sleep(K_SECONDS(2));
+				}
 				if (ret < 0) {
 					break;
 				}

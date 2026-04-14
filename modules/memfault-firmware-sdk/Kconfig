@@ -198,13 +198,11 @@ menuconfig MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
 	bool "Post coredump on network connected"
 	depends on LTE_LC_PDN_MODULE
 	depends on LTE_LINK_CONTROL
-	depends on SOC_SERIES_NRF91
 	select SMF
 	select SMF_ANCESTOR_SUPPORT
 	select SMF_INITIAL_TRANSITION
 	help
 	  Post coredump to Memfault when the device is connected to LTE network.
-	  This option is only supported for nRF91 targets.
 
 if MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
 
