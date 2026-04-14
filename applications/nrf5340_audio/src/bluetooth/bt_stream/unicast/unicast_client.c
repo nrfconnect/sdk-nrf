@@ -458,22 +458,20 @@ static void cap_start_worker(struct k_work *work)
 
 	/* Check if each of the connected servers in srv_store are in the unicast_group */
 	ret = srv_store_foreach_server(server_stream_in_unicast_group_check, NULL);
+	srv_store_unlock();
+
 	if (ret == -ECANCELED) {
 		/* A new group will be created after the released_cb has been called */
 		ret = unicast_client_stop(0);
 		if (ret == -EAGAIN) {
-			srv_store_unlock();
 			unicast_group_create();
 			goto start_streams;
 		}
 
 		unicast_group_created = false;
-		srv_store_unlock();
 
 		return;
 	}
-
-	srv_store_unlock();
 
 start_streams:
 
@@ -1766,12 +1764,26 @@ int unicast_client_stop(uint8_t cig_index)
 		/* No streams found. Check if devices are connected, if no, delete the group */
 		bool connected_server_found = false;
 
-		ret = bt_cap_unicast_group_foreach_stream(unicast_group, server_connected_check,
-							  &connected_server_found);
-		if (ret) {
-			LOG_ERR("Failed to check if servers are connected: %d", ret);
+		ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+		if (ret < 0) {
+			LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 			return ret;
 		}
+
+		ret = bt_cap_unicast_group_foreach_stream(unicast_group, server_connected_check,
+							  &connected_server_found);
+
+		if (ret == -ECANCELED) {
+			/* If cancelled a connected server has been found */
+			srv_store_unlock();
+			return ret;
+		} else if (ret) {
+			LOG_ERR("Failed to check if servers are connected: %d", ret);
+			srv_store_unlock();
+			return ret;
+		}
+
+		srv_store_unlock();
 
 		if (!connected_server_found) {
 			LOG_DBG("No connected servers found, deleting unicast group");
