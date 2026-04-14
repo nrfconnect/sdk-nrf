@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Disable EXMIF node if it's added to the board definition later. */
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&nfct {
+	status = "disabled";
+	nfct-pins-as-gpios;
+};
+
+&gpiote130 {
+	nonsecure-channels = <7>;
+	child-owned-channels = <7>;
+};
+
+&spi130 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&spi131 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+/* spi132 inaccessible due to console on uart132 (cpuppr) */
+
+/* spi133 inaccessible due to console on uart133 (cpuapp) */
