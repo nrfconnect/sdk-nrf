@@ -111,13 +111,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - tfm.psa_test_initial_attestation_lvl1
-    - tfm.psa_test_storage_lvl1
-  platforms:
-    - nrf9160dk@0.14.0/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - lib.fprotect.sys_init_fprotect
     - drivers.fprotect.positive
     - drivers.fprotect.negative
