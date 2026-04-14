@@ -1,0 +1,128 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	spi120_default_test: spi120_default_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_MISO, 5, 4)>;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(SPIM_SCK, 5, 1)>,
+				<NRF_PSEL(SPIM_MOSI, 5, 2)>;
+			nordic,drive-mode = <NRF_DRIVE_E0E1>;
+		};
+	};
+
+	spi120_sleep_test: spi120_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 5, 1)>,
+				<NRF_PSEL(SPIM_MISO, 5, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 5, 2)>;
+			low-power-enable;
+		};
+	};
+
+	spi130_default_test: spi130_default_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 0)>,
+				<NRF_PSEL(SPIM_MISO, 1, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 8)>;
+		};
+	};
+
+	spi130_sleep_test: spi130_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 0)>,
+				<NRF_PSEL(SPIM_MISO, 1, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 8)>;
+			low-power-enable;
+		};
+	};
+
+	spi131_default_test: spi131_default_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 3)>,
+				<NRF_PSEL(SPIM_MISO, 2, 9)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 3)>;
+		};
+	};
+
+	spi131_sleep_test: spi131_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 3)>,
+				<NRF_PSEL(SPIM_MISO, 2, 9)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 3)>;
+			low-power-enable;
+		};
+	};
+
+	spi132_default_test: spi132_default_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 2, 0)>,
+				<NRF_PSEL(SPIM_MISO, 1, 9)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 8)>;
+		};
+	};
+
+	spi132_sleep_test: spi132_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 2, 0)>,
+				<NRF_PSEL(SPIM_MISO, 1, 9)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 8)>;
+			low-power-enable;
+		};
+	};
+};
+
+/* Disable EXMIF node if it's added to the board definition later. */
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&nfct {
+	status = "disabled";
+	nfct-pins-as-gpios;
+};
+
+&spi120 {
+	status = "okay";
+	pinctrl-0 = <&spi120_default_test>;
+	pinctrl-1 = <&spi120_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	memory-regions = <&dma_fast_region>;
+};
+
+&spi130 {
+	status = "okay";
+	pinctrl-0 = <&spi130_default_test>;
+	pinctrl-1 = <&spi130_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&spi131 {
+	status = "okay";
+	pinctrl-0 = <&spi131_default_test>;
+	pinctrl-1 = <&spi131_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&spi132 {
+	status = "okay";
+	pinctrl-0 = <&spi132_default_test>;
+	pinctrl-1 = <&spi132_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+/* spi133 inaccessible due to console on uart133 */
