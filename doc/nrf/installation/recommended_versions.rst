@@ -336,11 +336,11 @@ For firmware OS support, see :ref:`the table at the top of the page <supported_O
     - Not supported
   * - `Linux - Ubuntu 24.04 LTS`_
     - Not supported
-    - Tier 2
+    - Tier 1
     - Not supported
   * - `Linux - Ubuntu 22.04 LTS`_
     - Not supported
-    - Tier 1
+    - Tier 2
     - Not supported
   * - `Linux - Ubuntu 20.04 LTS`_
     - Not supported
