@@ -7,10 +7,7 @@ tests:
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
-      - nrf9160dk/nrf9160
       - nrf52840dk/nrf52840
-      - nrf52dk/nrf52832
-      - nrf5340dk/nrf5340/cpuapp
     tags:
       - b0
       - fw_info
