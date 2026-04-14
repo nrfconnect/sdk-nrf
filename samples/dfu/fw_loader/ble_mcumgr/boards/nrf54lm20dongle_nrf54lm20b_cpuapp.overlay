@@ -4,22 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		/delete-property/ zephyr,console;
-		/delete-property/ zephyr,shell-uart;
-		/delete-property/ zephyr,bt-mon-uart;
-		/delete-property/ zephyr,bt-c2h-uart;
-		zephyr,uart-mcumgr = &cdc_acm_uart0;
-	};
-};
-
-&zephyr_udc0 {
-	/delete-node/ board_cdc_acm_uart;
-};
-
-#include "../app.overlay"
-
 /* This is nRF54lm20dongle_nrf54lm20b_cpuapp-specific partitioning for MCUboot and firmware loader.
  * slot0_partition defines RRAM region which can be updated by the firmware loader and booted by
  * MCUboot.
