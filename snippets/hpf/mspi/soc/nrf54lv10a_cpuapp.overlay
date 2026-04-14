@@ -1,0 +1,122 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		sram_rx: memory@2002b000 {
+			reg = <0x2002b000 0x07f0>;
+		};
+
+		sram_tx: memory@2002b7f0 {
+			reg = <0x2002b7f0 0x07f0>;
+		};
+
+		cpuflpr_error_code: memory@2002bfe0 {
+			reg = <0x2002bfe0 0x0020>; /* 32 bytes */
+		};
+	};
+
+	soc {
+		cpuflpr_sram_code_data: memory@2002c000 {
+			compatible = "mmio-sram";
+			reg = <0x2002c000 DT_SIZE_K(15)>;
+			ranges = <0x0 0x2002c000 DT_SIZE_K(15)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			status = "reserved";
+		};
+	};
+
+	ipc {
+		ipc0: ipc0 {
+			compatible = "zephyr,ipc-icmsg";
+			tx-region = <&sram_tx>;
+			rx-region = <&sram_rx>;
+			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
+			mbox-names = "rx", "tx";
+			status = "okay";
+		};
+	};
+};
+
+&rram_controller {
+	cpuflpr_rram: rram@f9400 {
+		compatible = "soc-nv-flash";
+		reg = <0xf9400 DT_SIZE_K(15)>;
+		ranges = <0x0 0xf9400 DT_SIZE_K(15)>;
+		erase-block-size = <0x1000>;
+		write-block-size = <0x10>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+	};
+};
+
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(997)>;
+	ranges = <0x0 0x0 DT_SIZE_K(997)>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+};
+
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(171)>;
+	ranges = <0x0 0x20000000 0x3b400>;
+};
+
+&cpuflpr_vpr {
+	execution-memory = <&cpuflpr_sram_code_data>;
+	source-memory = <&cpuflpr_rram>;
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&cpuapp_vevif_rx {
+	status = "okay";
+};
+
+&cpuapp_vevif_tx {
+	status = "okay";
+};
+
+&pinctrl {
+	/omit-if-no-ref/ hpf_mspi_default: hpf_mspi_default {
+		group1 {
+			psels = <NRF_PSEL(HPF_MSPI_SCK, 1, 16)>,
+				<NRF_PSEL(HPF_MSPI_DQ0, 1, 17)>,
+				<NRF_PSEL(HPF_MSPI_DQ1, 1, 19)>,
+				<NRF_PSEL(HPF_MSPI_DQ2, 1, 18)>,
+				<NRF_PSEL(HPF_MSPI_DQ3, 1, 15)>,
+				<NRF_PSEL(HPF_MSPI_CS0, 1, 20)>;
+			nordic,drive-mode = <NRF_DRIVE_S0S1>;
+			bias-pull-up;
+		};
+	};
+
+	/omit-if-no-ref/ hpf_mspi_sleep: hpf_mspi_sleep {
+		group1 {
+			psels = <NRF_PSEL(HPF_MSPI_SCK, 1, 16)>,
+				<NRF_PSEL(HPF_MSPI_DQ0, 1, 17)>,
+				<NRF_PSEL(HPF_MSPI_DQ1, 1, 19)>,
+				<NRF_PSEL(HPF_MSPI_DQ2, 1, 18)>,
+				<NRF_PSEL(HPF_MSPI_DQ3, 1, 15)>,
+				<NRF_PSEL(HPF_MSPI_CS0, 1, 20)>;
+			low-power-enable;
+		};
+	};
+};
+
+&hpf_mspi {
+	clock-frequency = <DT_FREQ_M(64)>;
+	pinctrl-0 = <&hpf_mspi_default>;
+	pinctrl-1 = <&hpf_mspi_sleep>;
+	pinctrl-names = "default", "sleep";
+	status = "okay";
+};

@@ -43,6 +43,14 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define HPF_MSPI_DATA_LINE_CNT_MAX 8
 #define HPF_MSPI_CS_LINE_CNT_MAX 5
 #define MAX_MSPI_DUMMY_CLOCKS 59
+#elif defined(CONFIG_SOC_NRF54LV10A)
+#define HPF_MSPI_PORT_NUMBER	1  /* Physical port number */
+#define HPF_MSPI_SCK_PIN_NUMBER 16 /* Physical pin number on port 1 */
+
+#define HPF_MSPI_DATA_LINE_CNT_MAX 8
+#define HPF_MSPI_CS_LINE_CNT_MAX 5
+#define MAX_MSPI_DUMMY_CLOCKS 59
+
 #else
 #error "Unsupported SoC for HPF MSPI"
 #endif
@@ -431,7 +439,7 @@ static int check_pin_assignments(const struct pinctrl_state *state)
 {
 	uint8_t data_pins[HPF_MSPI_DATA_LINE_CNT_MAX];
 	uint8_t data_pins_cnt = 0;
-	uint8_t cs_pins[HPF_MSPI_PINS_MAX];
+	uint8_t cs_pins[HPF_MSPI_PIN_COUNT];
 	uint8_t cs_pins_cnt = 0;
 	uint32_t psel = 0;
 	uint32_t pin_fun = 0;
@@ -571,8 +579,8 @@ static int api_config(const struct mspi_dt_spec *spec)
 		}
 	}
 
-	if (drv_cfg->pcfg->states[state_id].pin_cnt > HPF_MSPI_PINS_MAX) {
-		LOG_ERR("Too many pins defined. Max: %d", HPF_MSPI_PINS_MAX);
+	if (drv_cfg->pcfg->states[state_id].pin_cnt > HPF_MSPI_PIN_COUNT) {
+		LOG_ERR("Too many pins defined. Max: %d", HPF_MSPI_PIN_COUNT);
 		return -ENOTSUP;
 	}
 

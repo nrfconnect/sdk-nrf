@@ -17,7 +17,9 @@ extern "C" {
 
 #if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
 	defined(CONFIG_SOC_NRF54LM20B)
-#define HPF_MSPI_PINS_MAX	 11
+#define HPF_MSPI_PIN_COUNT	 11
+#elif defined(CONFIG_SOC_NRF54LV10A)
+#define HPF_MSPI_PIN_COUNT	 10
 #else
 #error "Unsupported SoC for HPF MSPI"
 #endif
@@ -63,7 +65,7 @@ typedef struct {
 typedef struct {
 	hpf_mspi_opcode_t opcode; /* HPF_MSPI_CONFIG_PINS */
 	uint8_t pins_count;
-	pinctrl_soc_pin_t pin[HPF_MSPI_PINS_MAX];
+	pinctrl_soc_pin_t pin[HPF_MSPI_PIN_COUNT];
 } hpf_mspi_pinctrl_soc_pin_msg_t;
 
 typedef struct {
