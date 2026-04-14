@@ -135,9 +135,11 @@ int main(void)
 	}
 	nrfx_gppi_conn_enable(gppi_handle);
 
-	/* Set tx_data for current test. Test scenario reqires:
+	/* MLTPAN-21
+	 * Set tx_data for current test. Test scenario reqires:
+	 * SPIM00 or SPIM02 configured in SPI mode 0 (CPHA==0, CPOL==0).
 	 * The first transmitted bit in the final byte is 1.
-	 * The last trnasmitted bit in the final byte is 0.
+	 * The last transmitted bit in the final byte is 0.
 	 * After changing the spim_buffer, align
 	 * TEST_DATA_SIZE and edges_exp (count both edges).
 	 */
