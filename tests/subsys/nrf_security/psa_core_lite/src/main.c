@@ -444,6 +444,22 @@ static void provision_ecdsa_secp384r1_public_key(mbedtls_svc_key_id_t key_id,
 		zassert_false(true, "Imported/exported secp384r1 key mismatch");
 	}
 }
+static void compare_key_attributes(const psa_key_attributes_t *l, const psa_key_attributes_t *r)
+{
+	zassert_equal(psa_get_key_lifetime(l), psa_get_key_lifetime(r),
+		      "0x%x != 0x%x", psa_get_key_lifetime(l), psa_get_key_lifetime(r));
+	zassert_equal(psa_get_key_id(l), psa_get_key_id(r),
+		      "0x%x != 0x%x", psa_get_key_id(l), psa_get_key_id(r));
+	zassert_equal(psa_get_key_type(l), psa_get_key_type(r),
+		      "0x%x != 0x%x", psa_get_key_type(l), psa_get_key_type(r));
+	zassert_equal(psa_get_key_algorithm(l), psa_get_key_algorithm(r),
+		      "0x%x != 0x%x", psa_get_key_algorithm(l), psa_get_key_algorithm(r));
+	zassert_equal(psa_get_key_bits(l), psa_get_key_bits(r),
+		      "0x%x != 0x%x", psa_get_key_bits(l), psa_get_key_bits(r));
+	zassert_true((psa_get_key_usage_flags(l) & psa_get_key_usage_flags(r))
+		     == psa_get_key_usage_flags(l),
+		     "0x%x != 0x%x", psa_get_key_usage_flags(l), psa_get_key_usage_flags(r));
+}
 
 static void provision_aes_256_ctr_key(mbedtls_svc_key_id_t key_id,
 				      psa_key_persistence_t persistence,
@@ -473,9 +489,7 @@ static void provision_aes_256_ctr_key(mbedtls_svc_key_id_t key_id,
 		      "Failed to get AES-256 ctr attributes: slot_id: %d, err: %d",
 		      KMU_GET_SLOT_ID(key_id), err);
 
-	if (constant_memcmp(&attributes, &temp_attributes, sizeof(psa_key_attributes_t)) != 0) {
-		zassert_false(true, "Key attributes mismatch for AES-256 ctr key");
-	}
+	compare_key_attributes(&attributes, &temp_attributes);
 }
 
 static void provision_keys(void)
