@@ -603,7 +603,7 @@ static void panic(struct log_backend const *const backend)
 {
 	ARG_UNUSED(backend);
 
-#ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
+#ifdef CONFIG_LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
 	/* Stores the buffer checksum for integrity verification. */
 	log_rpc_history_save_checksum();
 #endif

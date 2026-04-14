@@ -339,6 +339,7 @@
 /include/caf/                             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /include/debug/                           @nrfconnect/ncs-co-drivers
 /include/debug/ppi_trace.h                @nrfconnect/ncs-co-drivers @nordic-krch
+/include/debug/rram_wear_test.h           @nrfconnect/ncs-protocols-serialization
 /include/dfu/                             @nrfconnect/ncs-code-owners
 /include/drivers/flash/                   @nrfconnect/ncs-co-drivers
 /include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
@@ -392,6 +393,7 @@
 /lib/fatal_error/                         @nordic-krch
 /lib/fem_al/                              @nrfconnect/ncs-dragoon
 /lib/flash_patch/                         @nrfconnect/ncs-eris
+/lib/rram_wear_test/                     @nrfconnect/ncs-protocols-serialization
 /lib/fprotect/                            @nrfconnect/ncs-eris
 /lib/gcf_sms/                             @nrfconnect/ncs-modem
 /lib/hw_id/                               @nrfconnect/ncs-cia
