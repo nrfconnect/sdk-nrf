@@ -6371,14 +6371,8 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Edwards448 (Ed448)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                  - --
-               * - secp192k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
-                 - Supported
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - Supported
-               * - secp192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                  - Supported
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6449,18 +6443,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-               * - secp192k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
-                 - --
-                 - --
-                 - --
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - --
-                 - --
-                 - --
-               * - secp192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                  - --
                  - --
                  - --
@@ -6527,14 +6511,8 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Edwards448 (Ed448)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                  - --
-               * - secp192k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
-                 - Supported
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - Supported
-               * - secp192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                  - Supported
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6585,14 +6563,8 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Edwards448 (Ed448)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                  - Supported
-               * - secp192k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
-                 - --
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - --
-               * - secp192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                  - --
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6657,14 +6629,8 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Edwards448 (Ed448)
                  - ``PSA_WANT_ECC_TWISTED_EDWARDS_448``
                  - --
-               * - secp192k1
-                 - ``PSA_WANT_ECC_SECP_K1_192``
-                 - --
                * - secp256k1
                  - ``PSA_WANT_ECC_SECP_K1_256``
-                 - --
-               * - secp192r1
-                 - ``PSA_WANT_ECC_SECP_R1_192``
                  - --
                * - secp224r1
                  - ``PSA_WANT_ECC_SECP_R1_224``
@@ -6771,14 +6737,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - --
-               * - secp192k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
                  - Supported
@@ -6786,14 +6744,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Experimental
                  - Experimental
-                 - --
-               * - secp192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
                  - --
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6914,24 +6864,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-               * - secp192k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-               * - secp192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                  - --
                  - --
                  - --
@@ -7043,20 +6977,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
-               * - secp192k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-               * - secp192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                  - Supported
                  - Supported
                  - Supported
@@ -7152,20 +7074,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-               * - secp192k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
-                 - --
-                 - --
-                 - --
-                 - --
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - --
-                 - --
-                 - --
-                 - --
-               * - secp192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                  - --
                  - --
                  - --
@@ -7221,9 +7131,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`
@@ -7263,9 +7171,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`
@@ -7311,9 +7217,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`
@@ -7354,9 +7258,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`

@@ -589,13 +589,6 @@ config MBEDTLS_ECJPAKE_C
 
 menu "ECC curves"
 
-config MBEDTLS_ECP_DP_SECP192R1_ENABLED
-	bool "NIST curve secp192r1"
-	depends on !OBERON_BACKEND
-	select PSA_WANT_ECC_SECP_R1_192 if PSA_CRYPTO_CLIENT
-	help
-	  MBEDTLS_ECP_DP_SECP192R1_ENABLED setting in mbed TLS config file.
-
 config MBEDTLS_ECP_DP_SECP224R1_ENABLED
 	bool "NIST curve secp224r1"
 	select PSA_WANT_ECC_SECP_R1_224 if PSA_CRYPTO_CLIENT
@@ -622,13 +615,6 @@ config MBEDTLS_ECP_DP_SECP521R1_ENABLED
 	select PSA_WANT_ECC_SECP_R1_521 if PSA_CRYPTO_CLIENT
 	help
 	  MBEDTLS_ECP_DP_SECP521R1_ENABLED setting in mbed TLS config file.
-
-config MBEDTLS_ECP_DP_SECP192K1_ENABLED
-	bool "Koblitz curve secp192k1"
-	depends on !OBERON_BACKEND
-	select PSA_WANT_ECC_SECP_R1_192 if PSA_CRYPTO_CLIENT
-	help
-	  MBEDTLS_ECP_DP_SECP192K1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_SECP224K1_ENABLED
 	bool "Koblitz curve secp224k1"
