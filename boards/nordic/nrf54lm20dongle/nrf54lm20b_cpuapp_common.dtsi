@@ -116,6 +116,10 @@
 	status = "okay";
 };
 
+&vregusb {
+	status = "okay";
+};
+
 zephyr_udc0: &usbhs {
 	status = "okay";
 
