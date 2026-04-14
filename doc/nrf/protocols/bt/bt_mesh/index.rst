@@ -31,3 +31,4 @@ Find more information about the Bluetooth Mesh in the Bluetooth SIG's `Bluetooth
    fota
    node_removal
    vendor_model/index
+   samples_on_other_platforms
