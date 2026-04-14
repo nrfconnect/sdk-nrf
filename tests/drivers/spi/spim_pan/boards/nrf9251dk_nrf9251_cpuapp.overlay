@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Required loopbacks:
+ * P2.03 <-> P2.09
+ */
+
+&pinctrl {
+	dut_spi_default: dut_spi_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 2, 0)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 3)>,
+				<NRF_PSEL(SPIM_MISO, 2, 9)>;
+		};
+	};
+
+	dut_spi_sleep: dut_spi_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 2, 0)>,
+				<NRF_PSEL(SPIM_MISO, 2, 9)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 3)>;
+			low-power-enable;
+		};
+	};
+};
+
+dut_spi: &spi130 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&dut_spi_default>;
+	pinctrl-1 = <&dut_spi_sleep>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	memory-regions = <&cpuapp_dma_region>;
+	cs-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
+	zephyr,pm-device-runtime-auto;
+	rx-delay = <1>;
+
+	dut_spi_dt: test-spi-dev@0 {
+		compatible = "vnd,spi-device";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(1)>;
+	};
+};
+
+tst_timer: &timer131 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
