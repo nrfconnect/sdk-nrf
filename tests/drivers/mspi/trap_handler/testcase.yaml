@@ -6,13 +6,14 @@ common:
   sysbuild: true
   harness: console
   harness_config:
-    fixture: external_flash
     type: one_line
     regex:
       - ">>> HPF APP FATAL ERROR"
 
 tests:
   drivers.mspi.hpf_trap_handler.l15:
+    harness_config:
+      fixture: external_flash
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
@@ -33,3 +34,13 @@ tests:
       - hpf_mspi_CONFIG_ASSERT=y
       - hpf_mspi_CONFIG_ASSERT_TEST=y
       - hpf_mspi_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/mspi/trap_handler/boards/nrf54lm20dk_nrf54lm20_cpuflpr_memory.overlay"
+  drivers.mspi.hpf_trap_handler.lv10:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="./boards/nrf54lv10dk_nrf54lv10a_cpuapp_memory.overlay;./boards/emul_device.overlay"
+      - hpf_mspi_CONFIG_ASSERT=y
+      - hpf_mspi_CONFIG_ASSERT_TEST=y
+      - hpf_mspi_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/mspi/trap_handler/boards/nrf54lv10dk_nrf54lv10a_cpuflpr_memory.overlay"

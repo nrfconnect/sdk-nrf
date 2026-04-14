@@ -15,3 +15,14 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_sqspi.overlay"
+  drivers.mspi.mspi_with_spis.nrf54lv10.hpf:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/hpf_mspi.overlay"
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - SB_CONFIG_PARTITION_MANAGER=n
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
