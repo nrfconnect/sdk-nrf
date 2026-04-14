@@ -149,15 +149,13 @@
     - lpuart.two_chip_test_busy_sim
     - lpuart.two_chip_test_debug
   platforms:
-    - nrf9160dk@0.14.0/nrf52840
+    - nrf52840dk/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - lpuart.loopback_busy_sim
     - lpuart.loopback_busy_sim_no_hfxo
     - lpuart.loopback_no_hfxo
-    - lpuart.two_chip_test_busy_sim
-    - lpuart.two_chip_test_debug
   platforms:
     - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"

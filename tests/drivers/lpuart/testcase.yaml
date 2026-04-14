@@ -134,7 +134,6 @@ tests:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
     integration_platforms:
-      - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
     build_only: true
     extra_configs:
@@ -146,7 +145,6 @@ tests:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
     integration_platforms:
-      - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
     build_only: true
     extra_args: OVERLAY_CONFIG=dbg.conf
