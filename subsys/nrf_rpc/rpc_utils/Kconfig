@@ -51,6 +51,18 @@ config NRF_RPC_UTILS_SYSTEM_HEALTH
 	help
 	  Enables nRF RPC commands for getting the system health information.
 
+config NRF_RPC_UTILS_RRAM_WEAR_TEST
+	bool "RRAM wear test over RPC"
+	depends on NRF_RPC_UTILS_CLIENT || (NRF_RPC_UTILS_SERVER && SOC_FLASH_NRF_RRAM)
+	select RRAM_WEAR_TEST if NRF_RPC_UTILS_SERVER
+	help
+	  Enables an RPC command on the server that fills a selected flash region with
+	  0x00, verifies readback, then 0xFF and verifies, without erase. Regions are chosen
+	  by name (for example storage), or a custom byte range
+	  on the internal flash when explicitly forced. The client exposes
+	  nrf_rpc_rram_wear_test(). The server delegates to
+	  CONFIG_RRAM_WEAR_TEST.
+
 if NRF_RPC_UTILS_SYSTEM_HEALTH && NRF_RPC_UTILS_SERVER
 
 config NRF_RPC_UTILS_WATCHDOG_PERIOD

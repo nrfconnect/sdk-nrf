@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config RRAM_WEAR_TEST
+	bool "RRAM wear test library [EXPERIMENTAL]"
+	depends on FLASH
+	depends on FLASH_MAP
+	depends on SOC_FLASH_NRF_RRAM
+	select EXPERIMENTAL
+	help
+	  Library that writes 0x00 / 0xFF patterns over a flash partition (or a forced
+	  custom range) and verifies readback. Used by nRF RPC utilities and callable
+	  directly from in-tree applications.
+
+module = RRAM_WEAR_TEST
+module-str = rram_wear_test
+source "subsys/logging/Kconfig.template.log_config"
