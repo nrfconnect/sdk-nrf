@@ -5,8 +5,8 @@
  */
 
 /* Test requires GPIO loopback:
- * - between P1.16 and P0.04,
- * - between P1.18 and P1.19,
+ * - between P1.16 and P1.22,
+ * - between P1.17 and P1.23,
  * - between P1.20 and P1.21.
  */
 
@@ -19,23 +19,15 @@
 	 * All outputs must be on the same device.
 	 */
 	zephyr,user {
-		out-gpios = <&hpf_gpio 16 GPIO_ACTIVE_HIGH>, <&hpf_gpio 18 GPIO_ACTIVE_HIGH>,
+		out-gpios = <&hpf_gpio 16 GPIO_ACTIVE_HIGH>, <&hpf_gpio 17 GPIO_ACTIVE_HIGH>,
 			    <&hpf_gpio 20 GPIO_ACTIVE_HIGH>;
 
-		in-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio1 19 GPIO_ACTIVE_HIGH>,
+		in-gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>, <&gpio1 23 GPIO_ACTIVE_HIGH>,
 			   <&gpio1 21 GPIO_ACTIVE_HIGH>;
 	};
 };
 
 &gpiote20 {
-	status = "okay";
-};
-
-&gpiote30 {
-	status = "okay";
-};
-
-&gpio0 {
 	status = "okay";
 };
 

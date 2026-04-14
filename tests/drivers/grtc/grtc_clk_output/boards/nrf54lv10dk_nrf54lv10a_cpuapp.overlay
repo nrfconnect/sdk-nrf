@@ -10,7 +10,7 @@
 
 / {
 	zephyr,user {
-		gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>;  /* Connect to dedicated GRTC output */
+		gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>;  /* Connect to dedicated GRTC output */
 	};
 };
 

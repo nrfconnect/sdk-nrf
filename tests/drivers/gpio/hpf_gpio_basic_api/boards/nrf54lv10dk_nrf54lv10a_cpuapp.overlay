@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Test requires GPIO loopback between P0.04 and P1.16. */
+/* Test requires GPIO loopback between P1.22 and P1.16. */
 
 / {
 	resources {
 		compatible = "test-hpf-gpio";
 		out-gpios = <&hpf_gpio 16 0>;
-		in-gpios = <&gpio0 4 0>;
+		in-gpios = <&gpio1 22 0>;
 	};
 };
 
@@ -18,6 +18,6 @@
 	status = "okay";
 };
 
-&gpio0 {
+&gpio1 {
 	status = "okay";
 };
