@@ -13,6 +13,8 @@
 #include <common/nordic/nrf9251dk_nrf9251-ipc_conf.dtsi>
 #include <common/nordic/nrf9251dk_nrf9251-pinctrl.dtsi>
 
+/delete-node/ &led2;
+
 / {
 	compatible = "nordic,nrf9251dk_nrf9251-cpuapp";
 	model = "Nordic nRF9251 DK nRF9251 Application MCU";
