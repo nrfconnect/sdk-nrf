@@ -30,10 +30,6 @@ static const struct bt_data non_connectable_ad_data[] = {
 		      'i', '.', 'c', 'o', 'm'),
 };
 
-static const struct bt_data non_connectable_sd_data[] = {
-	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
-};
-
 static const struct bt_le_adv_param *connectable_ad_params =
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN, CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MIN,
 			CONFIG_BT_POWER_PROFILING_CONNECTABLE_ADV_INTERVAL_MAX, NULL);
@@ -94,8 +90,7 @@ static int start_non_connectable(uint16_t timeout)
 	}
 
 	err = bt_le_ext_adv_set_data(adv_set, non_connectable_ad_data,
-				     ARRAY_SIZE(non_connectable_ad_data), non_connectable_sd_data,
-				     ARRAY_SIZE(non_connectable_sd_data));
+				     ARRAY_SIZE(non_connectable_ad_data), NULL, 0);
 	if (err) {
 		return err;
 	}
