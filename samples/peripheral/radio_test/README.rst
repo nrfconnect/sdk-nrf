@@ -102,9 +102,15 @@ User interface
    * - parameters_print
      -
      - Print current delay, channel, and other parameters.
+   * - print_channel_sequence
+     -
+     - Print the custom sequence set with the set_channel_sequence command
    * - print_rx
      -
      - Print the received RX payload.
+   * - set_channel_sequence
+     - <sequence of up to 80 channels>
+     - Set a custom channel sequence for the start_tx_with_sleep command
    * - start_channel
      - <channel>
      - Start channel for the sweep or the channel for the constant carrier (in MHz, as difference from 2400 MHz).
@@ -129,6 +135,12 @@ User interface
    * - time_on_channel
      - <time>
      - Time on each channel in ms (between 1 and 99).
+   * - start_tx_sweep_with_sleep
+     - <tx_time> (us) <sleep_time> (us)
+     - Start TX sweep with a controlled sleep cycle
+   * - start_modulated_tx_sweep_with_sleep
+     - <tx_time> (us) <sleep_time> (us)
+     - Start modulated TX sweep with a controlled sleep cycle
    * - toggle_dcdc_state
      - <state>
      - Toggle DC/DC converter state.
