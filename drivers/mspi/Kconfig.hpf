@@ -30,7 +30,7 @@ config MSPI_HPF_INIT_PRIORITY
 config MSPI_HPF_IPC_NO_COPY
 	bool "IPC no copy mode"
 	default y
-	depends on SOC_NRF54L15 || SOC_NRF54LM20A || SOC_NRF54LM20B
+	depends on SOC_NRF54L15 || SOC_NRF54LM20A || SOC_NRF54LM20B || SOC_NRF54LV10A
 	help
 	  If y Data is passed through IPC by reference,
 	  this requires both cores to be able to access each others memory spaces.

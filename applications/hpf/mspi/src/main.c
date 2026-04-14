@@ -47,18 +47,10 @@
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#if !defined(CONFIG_SOC_NRF54L15) && !defined(CONFIG_SOC_NRF54LM20A) && \
-	!defined(CONFIG_SOC_NRF54LM20B)
-#error "Unsupported SoC for HPF MSPI"
-#endif
+#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
+	defined(CONFIG_SOC_NRF54LM20B)
 
-#define DATA_LINE_INDEX(pinctr_fun) (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
-
-#ifndef CONFIG_HPF_MSPI_IPC_NO_COPY
-BUILD_ASSERT(CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
-#endif
-
-static const uint8_t pin_to_vio_map[HPF_MSPI_PINS_MAX] = {
+static const uint8_t pin_to_vio_map[HPF_MSPI_PIN_COUNT] = {
 	4,  /* Physical pin 0 */
 	0,  /* Physical pin 1 */
 	1,  /* Physical pin 2 */
@@ -71,6 +63,39 @@ static const uint8_t pin_to_vio_map[HPF_MSPI_PINS_MAX] = {
 	9,  /* Physical pin 9 */
 	10, /* Physical pin 10 */
 };
+#define VIO_PIN_OFFSET 0
+
+#elif defined(CONFIG_SOC_NRF54LV10A)
+static const uint8_t pin_to_vio_map[HPF_MSPI_PIN_COUNT] = {
+	4,  /* Physical pin 15 */
+	0,  /* Physical pin 16 */
+	1,  /* Physical pin 17 */
+	3,  /* Physical pin 18 */
+	2,  /* Physical pin 19 */
+	5,  /* Physical pin 20 */
+	6,  /* Physical pin 21 */
+	7,  /* Physical pin 22 */
+	8,  /* Physical pin 23 */
+	9,  /* Physical pin 24 */
+};
+#define VIO_PIN_OFFSET 15
+
+#else
+#error "Unsupported SoC for HPF MSPI"
+#endif
+
+#define DATA_LINE_INDEX(pinctr_fun) (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
+
+#ifndef CONFIG_HPF_MSPI_IPC_NO_COPY
+BUILD_ASSERT(CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
+#endif
+
+static uint8_t gpio_pin_to_vio_index(uint16_t pin)
+{
+	/* Check if the pin and the port can be accessed by VIO. */
+	NRFX_ASSERT((pin >= VIO_PIN_OFFSET) && (pin < (VIO_PIN_OFFSET + HPF_MSPI_PIN_COUNT)));
+	return pin_to_vio_map[pin - VIO_PIN_OFFSET];
+}
 
 static const hrt_xfer_bus_widths_t io_modes[SUPPORTED_IO_MODES_COUNT] = {
 	{1, 1, 1, 1}, /* MSPI_IO_MODE_SINGLE */
@@ -195,7 +220,8 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 {
 	nrf_vpr_csr_vio_config_t vio_config = {
 		.input_sel = false,
-#if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B)
+#if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B) || \
+	defined(CONFIG_SOC_NRF54LV10A)
 		.stop_cnt = false,
 #else
 		.stop_cnt = true,
@@ -373,11 +399,9 @@ static void config_pins(hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 
 		uint8_t pin_number = NRF_PIN_NUMBER_TO_PIN(psel);
 
-		NRFX_ASSERT(pin_number < HPF_MSPI_PINS_MAX);
-
 		if ((fun >= NRF_FUN_HPF_MSPI_CS0) && (fun <= NRF_FUN_HPF_MSPI_CS4)) {
 
-			ce_vios[ce_vios_count] = pin_to_vio_map[pin_number];
+			ce_vios[ce_vios_count] = gpio_pin_to_vio_index(pin_number);
 			WRITE_BIT(xfer_params.used_pins_mask, ce_vios[ce_vios_count],
 				  VPRCSR_NORDIC_PIN_USED);
 			ce_vios_count++;
@@ -387,12 +411,12 @@ static void config_pins(hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 			NRFX_ASSERT(DATA_LINE_INDEX(fun) < DATA_PINS_MAX);
 			NRFX_ASSERT(data_vios[DATA_LINE_INDEX(fun)] == DATA_PIN_UNUSED);
 
-			data_vios[DATA_LINE_INDEX(fun)] = pin_to_vio_map[pin_number];
+			data_vios[DATA_LINE_INDEX(fun)] = gpio_pin_to_vio_index(pin_number);
 			WRITE_BIT(xfer_params.used_pins_mask, data_vios[DATA_LINE_INDEX(fun)],
 				  VPRCSR_NORDIC_PIN_USED);
 			data_vios_count++;
 		} else if (fun == NRF_FUN_HPF_MSPI_SCK) {
-			clk_vio = pin_to_vio_map[pin_number];
+			clk_vio = gpio_pin_to_vio_index(pin_number);
 			WRITE_BIT(xfer_params.used_pins_mask, clk_vio, VPRCSR_NORDIC_PIN_USED);
 		}
 	}
@@ -466,7 +490,8 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		}
 
 		/* Set unshifted parts of OUT to high state */
-#if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B)
+#if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B) || \
+	defined(CONFIG_SOC_NRF54LV10A)
 		nrf_csr_write(VPRCSR_NORDIC_OUTUB,
 			      BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ1)]) |
 			      BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ2)]) |
@@ -508,12 +533,13 @@ static void ep_recv(const void *data, size_t len, void *priv)
 #endif
 		configure_clock(hpf_mspi_devices[hpf_mspi_xfer_config_ptr->device_index].cpp);
 
+#if defined(NRF_GPIOHSPADCTRL)
 		/* Tune up pad bias for frequencies above 32MHz */
 		if (hpf_mspi_devices[hpf_mspi_xfer_config_ptr->device_index].cnt0_value <=
 		    STD_PAD_BIAS_CNT0_THRESHOLD) {
 			NRF_GPIOHSPADCTRL->BIAS = PAD_BIAS_VALUE;
 		}
-
+#endif
 		break;
 	}
 	case HPF_MSPI_TX:
@@ -548,7 +574,6 @@ static void ep_recv(const void *data, size_t len, void *priv)
 #else
 			);
 #endif
-
 #if defined(CONFIG_HPF_MSPI_FAULT_TIMER)
 	if (fault_timer != NULL) {
 		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_CLEAR);
