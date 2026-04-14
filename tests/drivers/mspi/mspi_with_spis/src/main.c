@@ -12,9 +12,8 @@
 
 #define MSPI_NODE DT_NODELABEL(dut)
 
-#define DATA_LINES_MAX 4
-
 #define SCK_FREQUENCY MHZ(4)
+#define CE_NUM DT_PROP(DT_PATH(zephyr_user), mspi_ce_num)
 
 #define CMD_LEN_MAX 2
 #define ADDR_LEN_MAX 4
@@ -34,26 +33,26 @@ static const struct spi_config spis_config = {
 		     SPI_TRANSFER_MSB
 };
 #define SPIS_DEV_ENTRY(i, _) DEVICE_DT_GET(DT_NODELABEL(test_line##i))
-static const struct device *spis_dev[DATA_LINES_MAX] = {
-	LISTIFY(DATA_LINES_MAX, SPIS_DEV_ENTRY, (,))
+static const struct device *spis_dev[CONFIG_TEST_MSPI_DATA_LINES_MAX] = {
+	LISTIFY(CONFIG_TEST_MSPI_DATA_LINES_MAX, SPIS_DEV_ENTRY, (,))
 };
-static struct k_poll_signal async_sig[DATA_LINES_MAX];
-static struct k_poll_event async_evt[DATA_LINES_MAX];
+static struct k_poll_signal async_sig[CONFIG_TEST_MSPI_DATA_LINES_MAX];
+static struct k_poll_event async_evt[CONFIG_TEST_MSPI_DATA_LINES_MAX];
 
 /* Use buffers that are one byte longer than the maximum length of a transfer,
  * since for some mysterious reason it often happened that when the SPIS buffer
  * had exactly the same size as a transfer length, the last received byte had
  * wrong value, although sQSPI transferred it correctly.
  */
-static uint8_t rx_arr[DATA_LINES_MAX]
+static uint8_t rx_arr[CONFIG_TEST_MSPI_DATA_LINES_MAX]
 		     [CMD_LEN_MAX + ADDR_LEN_MAX + DATA_LEN_MAX + 1];
 #define RX_BUF_ENTRY(i, _) [i] = { .buf = rx_arr[i], .len = sizeof(rx_arr[i]), }
 static const struct spi_buf rx_buf[] = {
-	LISTIFY(DATA_LINES_MAX, RX_BUF_ENTRY, (,))
+	LISTIFY(CONFIG_TEST_MSPI_DATA_LINES_MAX, RX_BUF_ENTRY, (,))
 };
 #define RX_SET_ENTRY(i, _) [i] = { .buffers = &rx_buf[i], .count = 1, }
 static const struct spi_buf_set rx_set[] = {
-	LISTIFY(DATA_LINES_MAX, RX_SET_ENTRY, (,))
+	LISTIFY(CONFIG_TEST_MSPI_DATA_LINES_MAX, RX_SET_ENTRY, (,))
 };
 
 static uint32_t get_octet(uint8_t *octet, uint8_t num_lines, uint32_t stream_pos)
@@ -162,7 +161,7 @@ static void test_tx_transfer(struct mspi_xfer *xfer, uint8_t cmd_lines,
 static void test_tx_transfers(enum mspi_io_mode io_mode)
 {
 	struct mspi_dev_cfg dev_cfg = {
-		.ce_num = 1,
+		.ce_num = CE_NUM,
 		.freq = SCK_FREQUENCY,
 		.io_mode = io_mode,
 		.data_rate = MSPI_DATA_RATE_SINGLE,
@@ -270,6 +269,7 @@ ZTEST(mspi_with_spis, test_tx_single)
 	test_tx_transfers(MSPI_IO_MODE_SINGLE);
 }
 
+#if CONFIG_TEST_MSPI_DATA_LINES_MAX >= 2
 ZTEST(mspi_with_spis, test_tx_dual_1_1_2)
 {
 	test_tx_transfers(MSPI_IO_MODE_DUAL_1_1_2);
@@ -279,7 +279,9 @@ ZTEST(mspi_with_spis, test_tx_dual_1_2_2)
 {
 	test_tx_transfers(MSPI_IO_MODE_DUAL_1_2_2);
 }
+#endif
 
+#if CONFIG_TEST_MSPI_DATA_LINES_MAX >= 4
 ZTEST(mspi_with_spis, test_tx_quad_1_1_4)
 {
 	test_tx_transfers(MSPI_IO_MODE_QUAD_1_1_4);
@@ -289,6 +291,7 @@ ZTEST(mspi_with_spis, test_tx_quad_1_4_4)
 {
 	test_tx_transfers(MSPI_IO_MODE_QUAD_1_4_4);
 }
+#endif
 
 static void *setup(void)
 {

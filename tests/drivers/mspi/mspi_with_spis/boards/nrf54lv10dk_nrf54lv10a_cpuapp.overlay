@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Wiring required for the test:
+ * - P1.16 <-> P1.24
+ * - P1.17 <-> P1.25
+ * - P1.20 <-> P1.21
+ */
+
+/ {
+	zephyr,user {
+		mspi-ce-num = <0>;
+	};
+};
+
+&pinctrl {
+	spis20_default_alt: spi20_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 1, 22)>,
+				<NRF_PSEL(SPIS_MOSI, 1, 23)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 1, 21)>;
+		};
+	};
+
+	spis20_sleep_alt: spis20_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 1, 22)>,
+				<NRF_PSEL(SPIS_MOSI, 1, 23)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 1, 21)>;
+			low-power-enable;
+		};
+	};
+};
+
+test_line0: &spi20 {
+	compatible = "nordic,nrf-spis";
+	status = "okay";
+	def-char = <0x00>;
+	pinctrl-0 = <&spis20_default_alt>;
+	pinctrl-1 = <&spis20_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	/delete-property/ rx-delay-supported;
+	/delete-property/ rx-delay;
+};

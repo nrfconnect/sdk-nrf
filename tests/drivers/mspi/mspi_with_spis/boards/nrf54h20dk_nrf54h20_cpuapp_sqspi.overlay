@@ -8,6 +8,12 @@
  * - P7.5 <-> P0.9
  */
 
+/ {
+	zephyr,user {
+		mspi-ce-num = <1>;
+	};
+};
+
 &pinctrl {
 	sqspi_default: sqspi_default {
 		group1 {

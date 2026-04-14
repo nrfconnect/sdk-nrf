@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config FLASH
+	default y if DT_HAS_JEDEC_MSPI_NOR_ENABLED
+
+config FLASH_PAGE_LAYOUT
+	default y if DT_HAS_JEDEC_MSPI_NOR_ENABLED
+
+source "Kconfig.zephyr"
