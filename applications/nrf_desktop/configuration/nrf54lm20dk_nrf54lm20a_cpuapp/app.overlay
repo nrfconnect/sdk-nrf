@@ -1,15 +1,11 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2025-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "memory_map.dtsi"
 #include "app_common.dtsi"
-
-/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
-&cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(2036)>;
-};
 
 / {
 	hid_dev_0: hid_dev_0 {
