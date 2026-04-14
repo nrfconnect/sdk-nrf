@@ -29,7 +29,7 @@ NRF_SECURITY_MUTEX_DEFINE(cracen_mutex);
 
 LOG_MODULE_REGISTER(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
-/* Lumos defines NRF_CRACEN_S and Haltium NRF_CRACEN */
+/* nRF54L/nRF71 define NRF_CRACEN_S while nRF54H/nRF92 define NRF_CRACEN */
 #ifdef NRF_CRACEN_S
 #define NRF_CRACEN NRF_CRACEN_S
 #endif

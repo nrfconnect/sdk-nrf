@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-#define HALTIUM_PLATFORM_PSA_KEY_ID(access, domain, usage, generation)                             \
+#define NRF_PLATFORM_PSA_KEY_ID(access, domain, usage, generation)                                 \
 	((0x4 << 28) | ((access & 0xF) << 24) | ((domain & 0xFF) << 16) | ((usage & 0xFF) << 8) |  \
 	 (generation & 0xF))
 
