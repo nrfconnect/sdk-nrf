@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	spi130_default_test: spi130_default_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 0)>,
+				<NRF_PSEL(SPIM_MISO, 1, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 8)>;
+		};
+	};
+
+	spi130_sleep_test: spi130_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 0)>,
+				<NRF_PSEL(SPIM_MISO, 1, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 8)>;
+			low-power-enable;
+		};
+	};
+
+	spi131_default_test: spi131_default_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 3)>,
+				<NRF_PSEL(SPIM_MISO, 2, 9)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 3)>;
+		};
+	};
+
+	spi131_sleep_test: spi131_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 3)>,
+				<NRF_PSEL(SPIM_MISO, 2, 9)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 3)>;
+			low-power-enable;
+		};
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <7>;
+};
+
+/* PPR does not have interrupts from fast peripheral spi120. */
+
+&spi130 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi130_default_test>;
+	pinctrl-1 = <&spi130_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	zephyr,pm-device-runtime-auto;
+};
+
+&spi131 {
+	status = "okay";
+	pinctrl-0 = <&spi131_default_test>;
+	pinctrl-1 = <&spi131_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+};
+
+/* spi132 inaccessible due to console on uart132 (cpuppr) */
+
+/* spi133 inaccessible due to console on uart133 (cpuapp) */
