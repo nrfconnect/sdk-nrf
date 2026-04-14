@@ -18,6 +18,10 @@
 #include <internal/ecc/cracen_eddsa.h>
 #endif
 
+/* Needed for AES-KW (RFC3394) */
+#define PSA_CORE_LITE_KEY_WRAP_BLOCK_SIZE			8u
+#define PSA_CORE_LITE_KEY_WRAP_INTEGRITY_CHECK_REG_SIZE		PSA_CORE_LITE_KEY_WRAP_BLOCK_SIZE
+
 #if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
 #include "cracen_psa.h"
 psa_status_t silex_statuscodes_to_psa(int ret);
@@ -481,6 +485,81 @@ psa_status_t psa_purge_key(mbedtls_svc_key_id_t key_id)
 }
 
 #endif /* PSA_NEED_CRACEN_KMU_DRIVER */
+
+/* Key wrapping */
+
+#if defined(PSA_WANT_ALG_AES_KW)
+
+psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
+			    mbedtls_svc_key_id_t wrapping_key,
+			    psa_algorithm_t alg,
+			    const uint8_t *data,
+			    size_t data_length,
+			    mbedtls_svc_key_id_t *key)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_key_attributes_t wrapping_key_attributes = PSA_KEY_ATTRIBUTES_INIT;
+	uint8_t encryption_key[PSA_LITE_KEY_MAX_SIZE];
+	size_t wrapping_key_length;
+	psa_lite_key_slot_t *key_slot;
+	size_t storage_size;
+	size_t required_key_size_bits;
+
+	if (attributes == NULL || key == NULL || data == NULL || alg != PSA_ALG_KW ||
+	    data_length < PSA_CORE_LITE_KEY_WRAP_BLOCK_SIZE) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	storage_size = data_length - PSA_CORE_LITE_KEY_WRAP_INTEGRITY_CHECK_REG_SIZE;
+	if (storage_size > sizeof(encryption_key)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	*key = MBEDTLS_SVC_KEY_ID_INIT;
+
+	status = get_key_buffer(wrapping_key, &wrapping_key_attributes, encryption_key,
+				sizeof(encryption_key), &wrapping_key_length);
+	if (status != PSA_SUCCESS) {
+		safe_memzero(encryption_key, sizeof(encryption_key));
+		return status;
+	}
+
+	status = psa_lite_get_key_slot(key, &key_slot);
+	if (status != PSA_SUCCESS) {
+		goto error;
+	}
+
+	status = psa_driver_wrapper_unwrap_key(attributes, &wrapping_key_attributes, encryption_key,
+					       wrapping_key_length, alg, data, data_length,
+					       key_slot->key,
+					       sizeof(key_slot->key),
+					       &key_slot->key_size);
+
+	safe_memzero(encryption_key, sizeof(encryption_key));
+	if (status != PSA_SUCCESS) {
+		goto error;
+	}
+
+	key_slot->key_attributes = *attributes;
+	required_key_size_bits = psa_get_key_bits(attributes);
+	if (required_key_size_bits == 0) {
+		psa_set_key_bits(&key_slot->key_attributes,
+				 PSA_BYTES_TO_BITS(key_slot->key_size));
+	} else if (required_key_size_bits != PSA_BYTES_TO_BITS(key_slot->key_size)) {
+		status = PSA_ERROR_INVALID_ARGUMENT;
+		goto error;
+	} else {
+		/* For compliance. Nothing to do here. */
+	}
+
+	return status;
+
+error:
+	psa_lite_free_key_slot(*key);
+	return status;
+}
+
+#endif /* PSA_WANT_ALG_AES_KW */
 
 /* Initialization function */
 

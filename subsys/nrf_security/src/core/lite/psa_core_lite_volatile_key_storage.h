@@ -10,7 +10,7 @@
 #include <psa/crypto.h>
 #include "psa_core_lite.h"
 
-#if defined(PSA_WANT_ALG_CTR)
+#if defined(PSA_WANT_ALG_CTR) || defined(PSA_WANT_ALG_AES_KW)
 /* Ensure that the largest key size is supported */
 #if PSA_WANT_AES_KEY_SIZE_256
 #define PSA_LITE_KEY_MAX_SIZE	(32)
@@ -71,6 +71,6 @@ psa_status_t psa_lite_get_key_slot(mbedtls_svc_key_id_t *key_id, psa_lite_key_sl
  */
 void psa_lite_free_key_slot(mbedtls_svc_key_id_t key_id);
 
-#endif /* PSA_WANT_ALG_CTR */
+#endif /* PSA_WANT_ALG_CTR || PSA_WANT_ALG_AES_KW */
 
 #endif /* PSA_CORE_LITE_VOLATILE_KEY_STORAGE_H_ */
