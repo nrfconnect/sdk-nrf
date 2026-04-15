@@ -26,7 +26,7 @@ config PSA_CRYPTO_DRIVER_CC3XX
 
 config PSA_CRYPTO_DRIVER_CRACEN
 	bool "Cracen PSA driver"
-	depends on MBEDTLS_PSA_CRYPTO_C
+	depends on PSA_CRYPTO_CLIENT
 	depends on HAS_HW_NRF_CRACEN
 	# CRACEN uses the k_event_ API
 	select EVENTS if MULTITHREADING

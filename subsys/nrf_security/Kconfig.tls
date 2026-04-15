@@ -7,7 +7,7 @@
 menuconfig MBEDTLS_X509_LIBRARY
 	bool "Create mbed TLS x509 library"
 	select MBEDTLS_PK_C
-	default y if MBEDTLS_PSA_CRYPTO_C && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
+	default y if PSA_CRYPTO_CLIENT && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
 	help
 	  Create the mbed x509 library for handling of certificates.
 
@@ -123,7 +123,7 @@ config MBEDTLS_SSL_PROTO_TLS1_2
 	bool "TLS version 1.2 protocol"
 	default y
 	depends on (MBEDTLS_SHA1_C || MBEDTLS_SHA256_C || MBEDTLS_SHA512_C) || \
-		    MBEDTLS_PSA_CRYPTO_C
+		    PSA_CRYPTO_CLIENT
 	help
 	  Enable the TLS 1.2 protocol
 	  Corresponds to MBEDTLS_SSL_PROTO_TLS1_2 in mbed TLS config file

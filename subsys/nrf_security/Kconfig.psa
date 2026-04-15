@@ -4,14 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config MBEDTLS_PSA_CRYPTO_C
-	bool "PSA crypto APIs"
-	default y
-	help
-	  Enable the Platform Security Architecture cryptography API.
-	  Corresponds to setting in mbed TLS config file.
-
-if MBEDTLS_PSA_CRYPTO_C
+if PSA_CRYPTO_CLIENT
 
 config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 	bool
@@ -28,12 +21,7 @@ config MBEDTLS_PSA_CRYPTO_DRIVERS
 	bool
 	default y
 
-config MBEDTLS_PSA_CRYPTO_CLIENT
-	bool
-	default y
-
 rsource "src/drivers/Kconfig"
-
 
 
 menu "PSA API support"
@@ -94,4 +82,4 @@ config PSA_CRYPTO_DRIVER_ALG_PRNG_TEST
 
 endmenu # PSA API support
 
-endif # MBEDTLS_PSA_CRYPTO_C
+endif # PSA_CRYPTO_CLIENT
