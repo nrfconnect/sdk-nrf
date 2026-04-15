@@ -30,6 +30,11 @@ If enabled, the :ref:`partition_manager` defines a new memory layout that is use
 You can use the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` Kconfig option value to check whether the Partition Manager is enabled in the current build.
 The option is automatically enabled when using Zephyr's :ref:`zephyr:sysbuild` (unless your board uses nRF54H SoC Series).
 
+.. note::
+   The nRF Desktop application configurations are being migrated from Partition Manager to DTS memory layout because of Partition Manager deprecation.
+   Some of the configurations already explicitly disable the Partition Manager through the related sysbuild configuration option (:kconfig:option:`SB_CONFIG_PARTITION_MANAGER`).
+   See the following documentation sections for details.
+
 Memory layout in DTS
 ********************
 
@@ -42,7 +47,7 @@ The nRF Desktop application automatically adds the :file:`app.overlay` file if i
 For more details, see the :ref:`nrf_desktop_board_configuration` section.
 
 Some of the nRF Desktop application configurations define the non-volatile memory layout in :file:`memory_map.dtsi` files (for example, :file:`memory_map.dtsi` or :file:`memory_map_release.dtsi`).
-These files are placed in the project's board configuration directory and are included by the DTS overlay file of the given build type (:file:`app.overlay` or :file:`app_release.overlay`).
+These files are placed in the project's board configuration directory and are included by the DTS overlay file of the given build type (for example, :file:`app.overlay` or :file:`app_release.overlay`).
 See the nRF Desktop board configuration directories for examples of the DTS-based memory layout definitions.
 The following board targets use the DTS-based memory layout:
 
@@ -50,8 +55,8 @@ The following board targets use the DTS-based memory layout:
 * ``nrf54h20dk/nrf54h20/cpuapp``
 * ``nrf54l15dk/nrf54l15/cpuapp``
 * ``nrf54l15dk/nrf54l05/cpuapp``
-* ``nrf54lm20dk/nrf54lm20a/cpuapp`` (only for the ``ram_load`` build type)
-* ``nrf54lm20dk/nrf54lm20b/cpuapp`` (only for the ``ram_load`` build type)
+* ``nrf54lm20dk/nrf54lm20a/cpuapp`` (only for the ``ram_load`` and ``release_ram_load`` build types)
+* ``nrf54lm20dk/nrf54lm20b/cpuapp`` (only for the ``ram_load`` and ``release_ram_load`` build types)
 * ``nrf54ls05dk/nrf54ls05b/cpuapp``
 
 .. important::
