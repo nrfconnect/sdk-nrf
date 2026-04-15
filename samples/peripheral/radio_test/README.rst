@@ -132,15 +132,15 @@ User interface
    * - start_tx_sweep
      -
      - Start the TX sweep.
-   * - time_on_channel
-     - <time>
-     - Time on each channel in ms (between 1 and 99).
    * - start_tx_sweep_with_sleep
      - <tx_time> (us) <sleep_time> (us)
      - Start TX sweep with a controlled sleep cycle
-   * - start_modulated_tx_sweep_with_sleep
+   * - start_tx_sweep_with_sleep_modulated
      - <tx_time> (us) <sleep_time> (us)
      - Start modulated TX sweep with a controlled sleep cycle
+   * - time_on_channel
+     - <time>
+     - Time on each channel in ms (between 1 and 99).
    * - toggle_dcdc_state
      - <state>
      - Toggle DC/DC converter state.
