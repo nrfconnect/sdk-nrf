@@ -92,6 +92,7 @@ static void print_hex_number(uint8_t *num, size_t len)
 
 int main(void)
 {
+	bool failed = false;
 	char hello_string[sizeof(HELLO_PATTERN) + sizeof(CONFIG_BOARD_TARGET)];
 	size_t len;
 
@@ -114,6 +115,7 @@ int main(void)
 		status = psa_generate_random(random_bytes, sizeof(random_bytes));
 		if (status != PSA_SUCCESS) {
 			printk("psa_generate_random failed with status %d\n", status);
+			failed = true;
 		} else {
 			print_hex_number(random_bytes, sizeof(random_bytes));
 		}
@@ -127,6 +129,7 @@ int main(void)
 		status = psa_crypto_init();
 		if (status != PSA_SUCCESS) {
 			printk("psa_crypto_init failed with status %d\n", status);
+			failed = true;
 		}
 		status = psa_hash_compute(PSA_ALG_SHA_256, hello_string,
 						strlen(hello_string), hello_digest,
@@ -134,6 +137,7 @@ int main(void)
 
 		if (status != PSA_SUCCESS) {
 			printk("psa_hash_compute failed with status %d\n", status);
+			failed = true;
 		} else {
 			printk("SHA256 digest:\n");
 			print_hex_number(hello_digest, 32);
@@ -148,13 +152,16 @@ int main(void)
 	ret = tfm_platform_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
 	if (ret != 0) {
 		printk("Unexpected failure from spm_s0_active: %d\n", ret);
+		failed = true;
 	}
 
 	printk("S0 active? %s\n", s0_active ? "True" : "False");
 #endif /*  PM_S1_ADDRESS */
 #endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
 
-	printk("Example finished successfully!\n");
+	if (!failed) {
+		printk("Example finished successfully!\n");
+	}
 
-	return 0;
+	return failed;
 }
