@@ -332,7 +332,6 @@ choice TFM_PROFILE_TYPE
 
 config TFM_PROFILE_TYPE_MINIMAL
 	bool "TF-M build profile: minimal"
-	select PSA_DEFAULT_OFF
 	select PSA_WANT_GENERATE_RANDOM
 	select PSA_WANT_ALG_HMAC_DRBG
 	help
