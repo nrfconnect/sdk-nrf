@@ -80,6 +80,10 @@ config BOARD_IS_NON_SECURE
 	bool
 	default y if "$(BOARD_NS_QUALIFIER_CHECK)" = "/ns"
 
+config NRF_NON_DEVELOPMENT_BUILD
+	bool "Disable development settings"
+	default n
+
 rsource "Kconfig.appcore"
 rsource "Kconfig.flprcore"
 rsource "Kconfig.netcore"
