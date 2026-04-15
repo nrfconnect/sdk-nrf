@@ -107,14 +107,17 @@ DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
 
 config NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION_INITIAL_REGION_SIZE
 	hex "Size of the initial write protected region"
+	default $(dt_nodelabel_reg_size_hex,protectedmem_partition) \
+		if $(dt_nodelabel_enabled,protectedmem_partition)
 	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
 	help
 	  Size in bytes of the first write protected region, which begins at the start
-	  of the application MRAM. It defaults to the size of the code partition region of the
-	  bootloader, but can be increased in order to span subsequent partitions, for example
-	  to write protect a PERIPHCONF partition and/or MPCCONF partition together with
-	  integrity checking the region at boot using the UICR.PROTECTEDMEM feature.
-
+	  of the application MRAM. If a UICR.PROTECTEDMEM region is defined in the device tree
+	  by labeling a node with 'protectedmem_partition', it is used as the default
+	  value for this configuration, making that region both write protected and integrity
+	  checked at boot. Otherwise, it defaults to the size of the code partition
+	  region of the bootloader, but can be increased manually in order to span subsequent
+	  partitions.
 endif
 
 if NCS_MCUBOOT_LOAD_PERIPHCONF || NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION
