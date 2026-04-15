@@ -105,6 +105,8 @@ def test_west_flash(dut: DeviceAdapter):
     expected = r"Flash download: Bank \d @ 0x\d+: Skipped. Contents already match"
     if "nrf54h20dk" in dut.device_config.platform:
         expected = r"O\.K\."
+    if "nrf9251dk" in dut.device_config.platform:
+        expected = r"O\.K\."
     run_communicate_check(
         cmd,
         None,
