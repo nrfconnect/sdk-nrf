@@ -7,7 +7,7 @@
 #include <mpsl_hwres_ppi.h>
 #include <helpers/nrfx_gppi.h>
 
-#if defined(DPPI_PRESENT) || defined(LUMOS_XXAA)
+#if defined(DPPI_PRESENT) || defined(NRF54L_SERIES) || defined(NRF7120_ENGA_XXAA)
 static bool mpsl_hwres_channel_alloc(uint32_t node_id, uint8_t *p_ch)
 {
 	int ch = nrfx_gppi_channel_alloc(node_id);
@@ -31,7 +31,7 @@ bool mpsl_hwres_dppi_channel_alloc(NRF_DPPIC_Type *p_dppic, uint8_t *p_dppi_ch)
 
 #if defined(PPIB_PRESENT)
 
-#if defined(LUMOS_XXAA)
+#if defined(NRF54L_SERIES) || defined(NRF7120_ENGA_XXAA)
 #include <soc/interconnect/nrfx_gppi_d2ppi.h>
 static uint32_t ppib_get_domain(NRF_PPIB_Type *p_ppib)
 {
@@ -56,7 +56,7 @@ static uint32_t ppib_get_domain(NRF_PPIB_Type *p_ppib)
 
 bool mpsl_hwres_ppib_channel_alloc(NRF_PPIB_Type *p_ppib, uint8_t *p_ppib_ch)
 {
-#if defined(LUMOS_XXAA)
+#if defined(NRF54L_SERIES) || defined(NRF7120_ENGA_XXAA)
 	return mpsl_hwres_channel_alloc(ppib_get_domain(p_ppib), p_ppib_ch);
 #else
 	(void)p_ppib;
