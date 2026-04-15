@@ -76,17 +76,17 @@ Door lock credentials
    The PIN code assigned by the Matter controller is stored persistently, which means that it can survive a device reboot.
    Depending on the IPv6 network technology in use, the following storage implementations are enabled by default to store credentials and other lock configuration data:
 
-   * Matter over Thread - secure storage (:kconfig:option:`CONFIG_LOCK_ACCESS_STORAGE_PROTECTED_STORAGE` Kconfig option enabled by default).
-   * Matter over Wi-Fi - non-secure storage (:kconfig:option:`CONFIG_LOCK_ACCESS_STORAGE_PERSISTENT_STORAGE` and :option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` Kconfig options enabled by default).
+   * Matter over Thread - secure storage (:option:`CONFIG_LOCK_ACCESS_STORAGE_PROTECTED_STORAGE` Kconfig option enabled by default).
+   * Matter over Wi-Fi - non-secure storage (:option:`CONFIG_LOCK_ACCESS_STORAGE_PERSISTENT_STORAGE` and :option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` Kconfig options enabled by default).
      For more details about the |NCS| Matter persistent storage module and its configuration, see the :ref:`ug_matter_persistent_storage` section of the :ref:`ug_matter_device_advanced_kconfigs` documentation.
 
    The application supports multiple door lock users and PIN code credentials.
    The following Kconfig options control the limits of the users and credentials that can be added to the door lock:
 
-   * :kconfig:option:`CONFIG_LOCK_MAX_NUM_USERS` - Maximum number of users supported by the door lock.
-   * :kconfig:option:`CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_USER` - Maximum number of credentials that can be assigned to one user.
-   * :kconfig:option:`CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_TYPE` - Maximum number of credentials in total.
-   * :kconfig:option:`CONFIG_LOCK_MAX_CREDENTIAL_LENGTH` - Maximum length of a single credential in bytes.
+   * :option:`CONFIG_LOCK_MAX_NUM_USERS` - Maximum number of users supported by the door lock.
+   * :option:`CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_USER` - Maximum number of credentials that can be assigned to one user.
+   * :option:`CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_TYPE` - Maximum number of credentials in total.
+   * :option:`CONFIG_LOCK_MAX_CREDENTIAL_LENGTH` - Maximum length of a single credential in bytes.
 
 .. _matter_lock_sample_wifi_thread_switching:
 
@@ -208,6 +208,14 @@ The |matter_type| supports the following build configurations:
      - ``thread_wifi_switched``
      - nRF54LM20 DK with the nRF7002-EB II shield attached
      - Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_wifi_thread_switching>` in the field.
+
+Configuration options
+=====================
+
+The following Kconfig options are specific to this sample:
+
+.. options-from-kconfig::
+   :show-type:
 
 Advanced configuration options
 ==============================
