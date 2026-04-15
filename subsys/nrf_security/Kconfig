@@ -43,6 +43,15 @@ config PSA_PROMPTLESS
 
 if NRF_SECURITY
 
+# Include TLS/DTLS and x509 configurations
+rsource "Kconfig.tls"
+
+# Include PSA Crypto configurations
+rsource "Kconfig.psa"
+
+# Include Legacy mbed TLS configurations
+rsource "Kconfig.legacy"
+
 config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 	bool
 	default y if HAS_HW_NRF_CRACEN && PSA_CRYPTO_DRIVER_CRACEN
@@ -114,17 +123,6 @@ config MBEDTLS_ENTROPY_POLL
 	  implementation of mbedtls_hardware_poll function.
 	  This file is not useful for TF-M build where entropy should come
 	  from SPE image, using psa_generate_random
-
-
-# Include TLS/DTLS and x509 configurations
-rsource "Kconfig.tls"
-
-# Include PSA Crypto configurations
-rsource "Kconfig.psa"
-
-# Include Legacy mbed TLS configurations
-rsource "Kconfig.legacy"
-
 
 # This Kconfig symbol is referenced in nrf_security CMake code but is
 # configured out-of-tree. Define it here to satisfy the linter and ensure
