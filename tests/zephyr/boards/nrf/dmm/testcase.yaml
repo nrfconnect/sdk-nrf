@@ -1,0 +1,22 @@
+common:
+  tags:
+    - drivers
+    - ci_tests_zephyr_boards_nrf_dmm
+  harness: ztest
+  platform_allow:
+    - nrf9251dk/nrf9251/cpuapp
+  integration_platforms:
+    - nrf9251dk/nrf9251/cpuapp
+
+tests:
+  nrf.extended.boards.nrf.dmm: {}
+  nrf.extended.boards.nrf.dmm.cache_disabled:
+    extra_configs:
+      - CONFIG_DCACHE=n
+  nrf.extended.boards.nrf.dmm.stats:
+    extra_configs:
+      - CONFIG_DMM_STATS=y
+  nrf.extended.boards.nrf.dmm.more_chunks:
+    extra_configs:
+      - CONFIG_DMM_STATS=y
+      - CONFIG_DMM_HEAP_CHUNKS=96
