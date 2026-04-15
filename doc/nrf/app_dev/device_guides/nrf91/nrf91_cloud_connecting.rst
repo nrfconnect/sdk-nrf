@@ -20,7 +20,7 @@ Once you have an account, activate your SIM card and add the device to your nRF 
 
 .. note::
 
-   The instructions assume you are activating an iBasis SIM card that came with your |DK|.
+   The instructions assume you are activating the iBasis SIM card that came with your device.
 
    If you are using a SIM card from another provider, make sure you activate it through your network operator before adding the device to nRF Cloud.
 
@@ -54,7 +54,7 @@ Activating the SIM card
 
 .. nrf_cloud_activate_sim_start
 
-To activate the iBasis SIM card that comes shipped with the |DK|, complete the following steps in the `nRF Cloud`_ portal.
+To activate the iBasis SIM card that comes shipped with the device, complete the following steps in the `nRF Cloud`_ portal.
 Make sure you are logged in to the portal.
 
 1. Click :guilabel:`SIM Cards` under :guilabel:`Device Management` in the navigation pane on the left.
