@@ -245,9 +245,8 @@ You can also use it for your custom applications using the Memfault Diagnostic S
 #. On your mobile phone with access to the Internet, open the nRF Connect Device Manager application and allow it a moment to scan for devices.
 #. Select your device from the list.
    If you use the settings defined in the :file:`prj.conf` file of this sample, it is titled "Nordic_Memfault."
-#. Use the "Echo" feature to send a "Hello" message to your device to ensure a connection is initiated.
    If your device requires a PIN for a pairing request, it is visible through a serial terminal connection.
-#. If you are having trouble connecting to your device, forget the device's entry from your phone's Bluetooth settings and try again.
+   If you are having trouble connecting to your device, forget the device's entry from your phone's Bluetooth settings and try again.
 #. Once connected, navigate to the **Logs and Stats** or **Diagnostics** tab (labeled differently depending on your platform).
    You should see "Status: Awaiting New Chunks" or a message such as "Uploaded: 2 chunk(s), 152 bytes" (or both).
 
