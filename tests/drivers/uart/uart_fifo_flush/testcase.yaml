@@ -22,5 +22,13 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+  drivers.uart.uart_fifo_flush.fast:
+    harness_config:
+      fixture: uart_fast_loopback
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuflpr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuflpr
