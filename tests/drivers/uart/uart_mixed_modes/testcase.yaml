@@ -173,3 +173,41 @@ tests:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
       - CONFIG_UART_1_INTERRUPT_DRIVEN=y
       - CONFIG_UART_2_INTERRUPT_DRIVEN=n
+
+  drivers.uart.async_int.nrf9251:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONFIG_TEST_ASYNC_AND_INT=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_130_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_130_ASYNC=y
+      - CONFIG_UART_131_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_131_ASYNC=n
+
+  drivers.uart.async_poll.nrf9251:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONFIG_TEST_ASYNC_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_130_ASYNC=y
+      - CONFIG_UART_131_ASYNC=n
+
+  drivers.uart.int_poll.nrf9251:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONFIG_TEST_INT_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=n
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_130_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_131_INTERRUPT_DRIVEN=n
