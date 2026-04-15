@@ -13,7 +13,7 @@ Enabling images
 ***************
 
 To add an additional image using sysbuild, you must modify the central sysbuild configuration.
-This is typically done in a `sysbuild.conf` file within an application, which is a Kconfig fragment applied to the default sysbuild configuration when a project is configured.
+This is typically done in a :file:`sysbuild.conf` file within an application, which is a Kconfig fragment applied to the default sysbuild configuration when a project is configured.
 
 .. note::
    On the nRF54H20 SoC, do not use any ``SECURE_BOOT`` or ``MCUBOOT`` option.
@@ -264,7 +264,7 @@ sysbuild.cmake:
 Adding through a Zephyr module
 ==============================
 
-To add images in a Zephyr module, create a folder within the module to hold the `Kconfig.sysbuild` and (optionally, if needed) `CMakeLists.txt` files.
+To add images in a Zephyr module, create a folder within the module to hold the :file:`Kconfig.sysbuild` and (optionally, if needed) :file:`CMakeLists.txt` files.
 Then, add this folder to the Zephyr module file:
 
 .. code-block:: yaml
@@ -273,11 +273,11 @@ Then, add this folder to the Zephyr module file:
       sysbuild-cmake: sysbuild  # Only needed if a sysbuild CMakeLists.txt file is being added
       sysbuild-kconfig: sysbuild/Kconfig.sysbuild
 
-The ``CMakeLists.txt`` file is the same as the ``sysbuild.cmake`` file from the previous examples.
-The ``Kconfig.sysbuild`` file is the same as the file from the previous examples but without the Zephyr sourcing.
+The :file:`CMakeLists.txt` file is the same as the :file:`sysbuild.cmake` file from the previous examples.
+The :file:`Kconfig.sysbuild` file is the same as the file from the previous examples but without the Zephyr sourcing.
 When images are configured, these additional images will be available from sysbuild and can be used in any project within the tree.
 
-Kconfig.sysbuild:
+:file:`Kconfig.sysbuild`:
 
 .. code-block:: kconfig
 

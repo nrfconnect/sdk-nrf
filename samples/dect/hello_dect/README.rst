@@ -89,26 +89,18 @@ You can customize the following key options:
 .. options-from-kconfig::
    :show-type:
 
-* :kconfig:option:`CONFIG_DECT_DEFAULT_NW_ID`
+Additional options
+------------------
 
-  * The sample overrides the default network ID to ``0x12345678``.
-
-* :kconfig:option:`CONFIG_DECT_DEFAULT_DEV_TYPE_FT`
-
-  * The sample configures the device as FT only.
-    The device will create a cluster.
-    Sets hostname to ``dect-nr+-ft-device`` and resolves ``dect-nr+-pt-device.local`` as peer.
-
-* :kconfig:option:`CONFIG_DECT_DEFAULT_DEV_TYPE_PT`
-
-  * The sample configures the device as PT only.
-    The device will join existing cluster.
-    Sets hostname to ``dect-nr+-pt-device`` and resolves ``dect-nr+-ft-device.local`` as peer.
-
-* :kconfig:option:`CONFIG_NET_HOSTNAME`
-
-  * The sample sets the hostname to ``dect-nr+-ft-device`` for FT mode and ``dect-nr+-pt-device`` for PT mode.
-    This hostname is advertised using mDNS and used for peer discovery.
+* :kconfig:option:`CONFIG_DECT_DEFAULT_NW_ID` - The sample overrides the default network ID to ``0x12345678``.
+* :kconfig:option:`CONFIG_DECT_DEFAULT_DEV_TYPE_FT` - The sample configures the device as FT only.
+  The device will create a cluster.
+  Sets hostname to ``dect-nr+-ft-device`` and resolves ``dect-nr+-pt-device.local`` as peer.
+* :kconfig:option:`CONFIG_DECT_DEFAULT_DEV_TYPE_PT` - The sample configures the device as PT only.
+  The device will join existing cluster.
+  Sets hostname to ``dect-nr+-pt-device`` and resolves ``dect-nr+-ft-device.local`` as peer.
+* :kconfig:option:`CONFIG_NET_HOSTNAME` - The sample sets the hostname to ``dect-nr+-ft-device`` for FT mode and ``dect-nr+-pt-device`` for PT mode.
+  This hostname is advertised using mDNS and used for peer discovery.
 
 Building and running
 ********************
