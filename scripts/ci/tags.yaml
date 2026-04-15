@@ -1799,6 +1799,11 @@ ci_tests_zephyr_boards_nrf_comp:
     - nrf/tests/zephyr/boards/nrf/comp/
     - zephyr/tests/boards/nrf/comp/
 
+ci_tests_zephyr_boards_nrf_dmm:
+  files:
+    - nrf/tests/zephyr/boards/nrf/dmm/
+    - zephyr/tests/boards/nrf/dmm/
+
 ci_tests_zephyr_drivers_gpio:
   files:
     - nrf/tests/zephyr/drivers/gpio/
