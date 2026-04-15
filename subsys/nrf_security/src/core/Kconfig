@@ -26,8 +26,9 @@ config PSA_CORE_LITE
 	  The PSA core with tiny footprint is created to be used e.g. for bootloader
 	  or similar use cases where there are severe size restrictions. This PSA core
 	  will only provide limited algorithm support and a limited amount of features
-	  from the PSA Crypto key management APIs. Note that the volatile key-store is
-	  not possible to use. Also note that PSA core lite is not thread-safe.
+	  from the PSA Crypto key management APIs. Note that PSA core lite uses
+	  a custom volatile key store with limited functionality. Also note that
+	  PSA core lite is not thread-safe.
 
 endchoice
 

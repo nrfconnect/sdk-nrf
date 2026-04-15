@@ -5,6 +5,7 @@
  */
 
 #include "psa_core_lite.h"
+#include "psa_core_lite_volatile_key_storage.h"
 #include <psa/crypto.h>
 #include <psa_crypto_driver_wrappers.h>
 
@@ -230,25 +231,16 @@ psa_status_t psa_hash_compute(
 
 #if defined(PSA_WANT_ALG_CTR)
 
-/* Ensure that the largest key size is supported */
-#if PSA_WANT_AES_KEY_SIZE_256
-#define ENC_KEY_MAX_SIZE	(32)
-#elif PSA_WANT_AES_KEY_SIZE_192
-#define ENC_KEY_MAX_SIZE	(24)
-#elif PSA_WANT_AES_KEY_SIZE_128
-#define ENC_KEY_MAX_SIZE	(16)
-#else
-#error "FW encryption requires either AES-256, AES-192 or AES-128 being enabled"
-#endif
-
-/** @brief Buffer containing the established/derived encryption key */
-uint8_t g_enc_key[ENC_KEY_MAX_SIZE];
+/** @brief Id of the volatile key that is created by extracting key material from the KMU */
+static mbedtls_svc_key_id_t g_volatile_enc_key_id;
 
 static psa_status_t get_enc_key(
 	mbedtls_svc_key_id_t key_id, psa_algorithm_t alg,
-	psa_key_attributes_t *attributes, size_t *key_length)
+	psa_lite_key_slot_t **key_slot)
 {
-	if (attributes == NULL) {
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	if (key_slot == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -256,33 +248,48 @@ static psa_status_t get_enc_key(
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	return get_key_buffer(key_id, attributes, g_enc_key, ENC_KEY_MAX_SIZE, key_length);
+	if (psa_lite_key_id_is_volatile(key_id)) {
+		return psa_lite_get_key_slot(&key_id, key_slot);
+	}
+
+	/* Allocating volatile key slot to store key material from the KMU */
+	status = psa_lite_get_key_slot(&g_volatile_enc_key_id, key_slot);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	return get_key_buffer(key_id, &(*key_slot)->key_attributes,
+			      (*key_slot)->key, sizeof((*key_slot)->key), &(*key_slot)->key_size);
 }
 
 static inline void clear_enc_key(void)
 {
-	safe_memzero(g_enc_key, ENC_KEY_MAX_SIZE);
+	psa_lite_free_key_slot(g_volatile_enc_key_id);
+	/* Resetting key ID here to avoid clearing volatile key that may have the same ID */
+	g_volatile_enc_key_id = PSA_LITE_KEY_ID_NULL;
 }
 
 psa_status_t psa_cipher_encrypt_setup(
 	psa_cipher_operation_t *operation, mbedtls_svc_key_id_t key, psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
-	psa_key_attributes_t attributes;
-	size_t key_length;
+	psa_lite_key_slot_t *key_slot;
 
 	if (operation == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	status = get_enc_key(key, alg, &attributes, &key_length);
+	status = get_enc_key(key, alg, &key_slot);
 	if (status != PSA_SUCCESS) {
 		clear_enc_key();
 		return status;
 	}
 
-	status = psa_driver_wrapper_cipher_encrypt_setup(operation, &attributes, g_enc_key,
-							 key_length, alg);
+	status = psa_driver_wrapper_cipher_encrypt_setup(operation,
+							 &key_slot->key_attributes,
+							 key_slot->key,
+							 key_slot->key_size,
+							 alg);
 	if (status != PSA_SUCCESS) {
 		clear_enc_key();
 	}
@@ -294,21 +301,23 @@ psa_status_t psa_cipher_decrypt_setup(
 	psa_cipher_operation_t *operation, mbedtls_svc_key_id_t key, psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
-	psa_key_attributes_t attributes;
-	size_t key_length;
+	psa_lite_key_slot_t *key_slot;
 
 	if (operation == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	status = get_enc_key(key, alg, &attributes, &key_length);
+	status = get_enc_key(key, alg, &key_slot);
 	if (status != PSA_SUCCESS) {
 		clear_enc_key();
 		return status;
 	}
 
-	status = psa_driver_wrapper_cipher_decrypt_setup(operation, &attributes, g_enc_key,
-							 key_length, alg);
+	status = psa_driver_wrapper_cipher_decrypt_setup(operation,
+							 &key_slot->key_attributes,
+							 key_slot->key,
+							 key_slot->key_size,
+							 alg);
 	if (status != PSA_SUCCESS) {
 		clear_enc_key();
 	}
@@ -434,6 +443,13 @@ psa_status_t psa_destroy_key(mbedtls_svc_key_id_t key_id)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
 	psa_key_attributes_t attr;
+
+#if defined(PSA_WANT_ALG_CTR)
+	if (psa_lite_key_id_is_volatile(key_id)) {
+		psa_lite_free_key_slot(key_id);
+		return PSA_SUCCESS;
+	}
+#endif /* PSA_WANT_ALG_CTR */
 
 	status = psa_get_key_attributes(key_id, &attr);
 	if (status != PSA_SUCCESS) {

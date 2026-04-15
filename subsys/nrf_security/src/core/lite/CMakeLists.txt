@@ -16,6 +16,13 @@ if(CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
   )
 endif()
 
+if(CONFIG_PSA_WANT_ALG_CTR)
+  target_sources(psa_core
+    PRIVATE
+      psa_core_lite_volatile_key_storage.c
+  )
+endif()
+
 target_link_libraries(psa_core
   PRIVATE
     psa_crypto_library_config
