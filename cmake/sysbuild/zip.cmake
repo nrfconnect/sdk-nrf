@@ -214,7 +214,7 @@ function(dfu_app_zip_package)
       mcuboot_image_number_to_slot(slot_primary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
       mcuboot_image_number_to_slot(slot_secondary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
 
-      if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+      if(NOT SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP AND NOT SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT)
         if(SB_CONFIG_PARTITION_MANAGER)
           set(load_address "$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>")
         else()
