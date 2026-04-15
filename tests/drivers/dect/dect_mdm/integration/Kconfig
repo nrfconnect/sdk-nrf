@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+# Kconfig for DECT NR+ Integration Tests
+# Provides minimal definitions needed for DECT stack compilation without full modem library
+
+# Enable SETTINGS support needed by DECT drivers
+config SETTINGS
+	bool "Settings subsystem"
+	default y
+	help
+	  Settings support needed by DECT drivers.
+
+config MODEM_CELLULAR
+	bool "Modem cellular support"
+	default y
+	help
+	  Modem cellular support needed by DECT L2 sink.
+	  When enabled, a mock modem device is provided via boards/native_sim.overlay for testing.
+
+# Define DECT_UTILS_LIB that is selected by DECT drivers
+config DECT_UTILS_LIB
+	bool "DECT MAC utilities library support"
+	default y
+	help
+	  Mock DECT MAC utilities library configuration for testing.
+	  In real builds this would pull in the utilities library.
+
+# Modem shared memory configurations needed by MAC drivers
+config NRF_MODEM_LIB_SHMEM_TX_SIZE
+	int "Modem shared memory TX size"
+	default 12288
+	help
+	  Mock definition for modem shared memory TX size.
+	  Used by MAC driver for validation.
+
+config NRF_MODEM_LIB_SHMEM_RX_SIZE
+	int "Modem shared memory RX size"
+	default 6144
+	help
+	  Mock definition for modem shared memory RX size.
+	  Used by MAC driver for validation.
+
+config NRF_MODEM_SHMEM_CTRL_SIZE
+	hex "Modem shared memory control size"
+	default 0x4e8
+	help
+	  Mock definition for modem shared memory control size.
+	  Used by MAC driver for validation.
+
+# Most modem CONFIG values are already defined in the main SDK
+# We only need to ensure they have reasonable defaults for testing
+# The values will be set in prj.conf
+
+# Logging configuration for test module
+module = TEST_DECT_INTEGRATION
+module-str = DECT Integration Tests
+source "subsys/logging/Kconfig.template.log_config"
+
+source "Kconfig.zephyr"
