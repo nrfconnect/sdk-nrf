@@ -41,6 +41,7 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/net_if.h
   FUNC_EXCLUDE ".*net_if_add_tx_timestamp"
   FUNC_EXCLUDE ".*net_if_ipv4_get_netmask"
   FUNC_EXCLUDE ".*net_if_ipv4_set_netmask"
+  FUNC_EXCLUDE ".*net_if_offload_set"
   WORD_EXCLUDE ".*deprecated.*"
   WORD_EXCLUDE ".*net_if_send_data.*"
   WORD_EXCLUDE ".*net_if_try_send_data.*"
