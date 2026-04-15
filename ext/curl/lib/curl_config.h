@@ -1089,7 +1089,9 @@
 /* #undef USE_WOLFSSL */
 
 /* Version number of package */
+#if !defined(CONFIG_NRF_CURL_INTEGRATION)
 #define VERSION "-"
+#endif
 
 /* Define to 1 to provide own prototypes. */
 /* #undef WANT_IDN_PROTOTYPES */

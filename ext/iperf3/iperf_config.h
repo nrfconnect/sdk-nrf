@@ -127,7 +127,11 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
+#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 #define VERSION "3.9"
 #define IPERF_VERSION VERSION
+#else
+#define IPERF_VERSION "3.9"
+#endif
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */

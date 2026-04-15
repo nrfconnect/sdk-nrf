@@ -586,7 +586,7 @@ static CURLcode easy_transfer(struct Curl_multi *multi)
   while(!done && !mcode) {
     int still_running = 0;
 
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
     if (multi->kill_signal != NULL) {
 	    int set, res;
 

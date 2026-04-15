@@ -34,7 +34,7 @@
 
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
 #if defined (CONFIG_NRF_MODEM_LIB_TRACE)
-/* NRF_IPERF3_INTEGRATION_CHANGE: added */
+/* NRF_CURL_INTEGRATION_CHANGE: added */
 #include <nrf_modem_at.h>
 #endif
 #endif
