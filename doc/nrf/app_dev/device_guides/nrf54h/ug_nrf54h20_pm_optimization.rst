@@ -126,8 +126,8 @@ Local and global wake-up planning
 
 On local domain wake-ups (suspend-to-RAM/suspend-to-idle), schedule GRTC events early enough to cover the following latencies:
 
-  * Core restore latency (cache, context).
-  * Software module restore latency (driver reconfiguration).
+* Core restore latency (cache, context).
+* Software module restore latency (driver reconfiguration).
 
 Integration checklist
 ---------------------
@@ -205,23 +205,23 @@ Recommended Kconfig configuration
 
 For applications running on either the application core or the radio core, set the following Kconfig options:
 
-  * :kconfig:option:`CONFIG_PM` to ``y``
-  * :kconfig:option:`CONFIG_POWEROFF` to ``y``
+* :kconfig:option:`CONFIG_PM` to ``y``
+* :kconfig:option:`CONFIG_POWEROFF` to ``y``
 
 These options automatically enable :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME`, which is required to manage the energy states of individual devices.
 
 Consider also the following recommendations:
 
-  * Disable all unused peripherals before entering sleep.
-    When supported, Zephyr's API automatically handles this by using the PM device runtime.
-  * Build and program an empty image on any unused core to release shared resources.
-  * If one or more specific sleep states are not desired, disable them in the devicetree by setting their status to ``disabled``:
+* Disable all unused peripherals before entering sleep.
+  When supported, Zephyr's API automatically handles this by using the PM device runtime.
+* Build and program an empty image on any unused core to release shared resources.
+* If one or more specific sleep states are not desired, disable them in the devicetree by setting their status to ``disabled``:
 
-    .. code-block:: dts
+  .. code-block:: dts
 
-       &s2ram {
-               status = "disabled";
-       };
+     &s2ram {
+             status = "disabled";
+            };
 
 .. _ug_nrf54h20_pm_optimizations_bootloader:
 
@@ -238,8 +238,8 @@ This option integrates the S2RAM resume bridge into the start-up code.
 
 Also ensure that your board's DTS file includes the following Zephyr nodes, which describe the linker sections used:
 
-* a ``zephyr,memory-region`` compatible node labeled ``mcuboot_s2ram``, with a size of 8 bytes, used for placing MCUboot's S2RAM magic variable.
-* a ``zephyr,memory-region`` compatible node labeled ``pm_s2ram_stack``, with a size of 16 bytes.
+* A ``zephyr,memory-region`` compatible node labeled ``mcuboot_s2ram``, with a size of 8 bytes, used for placing MCUboot's S2RAM magic variable.
+* A ``zephyr,memory-region`` compatible node labeled ``pm_s2ram_stack``, with a size of 16 bytes.
   This region is used as the program stack by MCUboot during S2RAM resume.
 
 Example DTS snippet:

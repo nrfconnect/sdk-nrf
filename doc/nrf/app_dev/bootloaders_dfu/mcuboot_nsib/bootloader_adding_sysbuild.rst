@@ -410,9 +410,9 @@ Update of the firmware loader image
 
 To build a firmware loader image prepared for update, the ``SB_CONFIG_FIRMWARE_LOADER_UPDATE`` Kconfig option must be set to ``y``.
 This causes the build system to generate a special installer application, linked to the same slot as the main application.
-The signed firmware loader image is appended at the end of the installer image, creating a single binary blob ``fw_loader_installer.merged.bin``.
-This blob is then signed with the same key as the main application, creating the ``fw_loader_installer.signed.bin`` file that can be uploaded to the device.
-In the following chapters, the MCUboot image contained in the ``fw_loader_installer.signed.bin`` is referred to as the installer package.
+The signed firmware loader image is appended at the end of the installer image, creating a single binary blob :file:`fw_loader_installer.merged.bin`.
+This blob is then signed with the same key as the main application, creating the :file:`fw_loader_installer.signed.bin` file that can be uploaded to the device.
+In the following chapters, the MCUboot image contained in the :file:`fw_loader_installer.signed.bin` is referred to as the installer package.
 When building, a :file:`dfu_fw_loader_installer.zip` file is generated, which can be used to update the firmware loader image using DFU like a standard application update.
 
 The following are the DFU steps for updating the firmware loader image.

@@ -15,7 +15,7 @@ The nRF70 Series device is a companion IC and can be used with any Nordic Semico
 
 You can enable the driver by using the following Kconfig options:
 
-  * When using :ref:`zephyr:sysbuild` to build your application, set the :kconfig:option:`SB_CONFIG_WIFI_NRF70` Kconfig option to ``y`` in your :file:`sysbuild.conf` file.`
+  * When using :ref:`zephyr:sysbuild` to build your application, set the :kconfig:option:`SB_CONFIG_WIFI_NRF70` Kconfig option to ``y`` in your :file:`sysbuild.conf` file.
   * When not using :ref:`zephyr:sysbuild`, set the :kconfig:option:`CONFIG_WIFI_NRF70` Kconfig option to ``y`` in your application's :file:`prj.conf` file.
 
 Architecture
