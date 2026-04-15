@@ -87,7 +87,6 @@ manifest:
           - cmsis_6
           - edtt
           - fatfs
-          - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
@@ -117,6 +116,13 @@ manifest:
     #
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
+    - name: hal_nordic
+      revision: pull/355/head
+      remote: zephyrproject
+      path: modules/hal/nor
+    - name: nrfx
+      revision: nrfx-9272_remove_symbols_in_mdk
+      path: modules/hal/nor/nrfx
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
@@ -141,11 +147,11 @@ manifest:
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: fd1f2aa156d8beb78584dfbaf30df30bf8f6568f
+      revision: pull/38/head
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 529012899ffb2aa8ef69cbbb315eaf2848737aca
+      revision: pull/2080/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
