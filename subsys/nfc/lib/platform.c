@@ -255,6 +255,13 @@ void nfc_platform_event_handler(nrfx_nfct_evt_t const *event)
 		__ASSERT_NO_MSG(err >= 0);
 		break;
 	case NRFX_NFCT_EVT_FIELD_LOST:
+		/* Workaround: Ensure the FRAMEDELAYMAX register is set to default value when
+		 * field is lost. This avoids violating protocol timing, which can lead readers
+		 * to reject the NFC tag's response.
+		 */
+		if (!(NRF_ERRATA_DYNAMIC_CHECK(52, 218) && NRF_ERRATA_DYNAMIC_CHECK(53, 71))) {
+			nrf_nfct_frame_delay_max_set(NRF_NFCT, NRF_NFCT_FAME_DELAY_MAX_DEFAULT);
+		}
 		LOG_DBG("Field lost");
 
 #if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
