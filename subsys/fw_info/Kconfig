@@ -78,6 +78,7 @@ config FW_INFO_HARDWARE_ID
 	default 53 if SOC_SERIES_NRF53
 	default 54 if SOC_SERIES_NRF54L
 	default 91 if SOC_SERIES_NRF91
+	default 92 if SOC_SERIES_NRF92
 	default 0 if BOARD_NATIVE_SIM
 	help
 	  Used to ensure binary compatibility.
