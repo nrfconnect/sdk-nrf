@@ -35,6 +35,13 @@ config NRF_SECURITY
 	select TFM_BL2_NOT_SUPPORTED if BUILD_WITH_TFM
 	select PSA_CRYPTO_CLIENT
 
+if NRF_SECURITY && !MBEDTLS
+# This file gets included only if MBEDTLS, but it defines options that we
+# make use of even when !MBEDTLS (such as MBEDTLS_PSA_CRYPTO_C).
+# Include it in this scenario to make said options available.
+rsource "$(ZEPHYR_BASE)/modules/mbedtls/Kconfig.tf-psa-crypto"
+endif
+
 # Include Nordic-only PSA configurations
 rsource "Kconfig.psa.nordic"
 
