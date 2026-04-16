@@ -1,4 +1,5 @@
 /dts-v1/;
+
 #include <nordic/{{ soc }}_{{ variant }}.dtsi>
 #include "{{ board }}-pinctrl.dtsi"
 
@@ -21,68 +22,68 @@
 
 		boot_partition: partition@0 {
 			label = "mcuboot";
-			reg = <0x00000000 DT_SIZE_K(48)>;
+			reg = <0x0 DT_SIZE_K(48)>;
 		};
 
 {% if soc == "nrf52840" %}
 		slot0_partition: partition@c000 {
 			label = "image-0";
-			reg = <0x0000c000 DT_SIZE_K(472)>;
+			reg = <0xc000 DT_SIZE_K(472)>;
 		};
 
 		slot1_partition: partition@82000 {
 			label = "image-1";
-			reg = <0x00082000 DT_SIZE_K(472)>;
+			reg = <0x82000 DT_SIZE_K(472)>;
 		};
 
 		storage_partition: partition@f8000 {
 			label = "storage";
-			reg = <0x000f8000 DT_SIZE_K(32)>;
+			reg = <0xf8000 DT_SIZE_K(32)>;
 		};
-{% elif soc == "nrf52833" or soc == "nrf52832" %}
+{% elif soc == "nrf52833" or (soc == "nrf52832" and target["flash"] > 256) %}
 		slot0_partition: partition@c000 {
 			label = "image-0";
-			reg = <0x0000c000 DT_SIZE_K(220)>;
+			reg = <0xc000 DT_SIZE_K(220)>;
 		};
 
 		slot1_partition: partition@43000 {
 			label = "image-1";
-			reg = <0x00043000 DT_SIZE_K(220)>;
+			reg = <0x43000 DT_SIZE_K(220)>;
 		};
 
 		storage_partition: partition@7a000 {
 			label = "storage";
-			reg = <0x0007a000 DT_SIZE_K(24)>;
+			reg = <0x7a000 DT_SIZE_K(24)>;
 		};
-{% elif soc == "nrf52820" %}
+{% elif soc == "nrf52820" or soc == "nrf52832" %}
 		slot0_partition: partition@c000 {
 			label = "image-0";
-			reg = <0x0000c000 DT_SIZE_K(92)>;
+			reg = <0xc000 DT_SIZE_K(92)>;
 		};
 
 		slot1_partition: partition@23000 {
 			label = "image-1";
-			reg = <0x00023000 DT_SIZE_K(92)>;
+			reg = <0x23000 DT_SIZE_K(92)>;
 		};
 
 		storage_partition: partition@3a000 {
 			label = "storage";
-			reg = <0x0003a000 DT_SIZE_K(24)>;
+			reg = <0x3a000 DT_SIZE_K(24)>;
 		};
 {% elif soc == "nrf52811" or soc == "nrf52810" or soc == "nrf52805" %}
 		slot0_partition: partition@c000 {
 			label = "image-0";
-			reg = <0x0000c000 DT_SIZE_K(56)>;
+			reg = <0xc000 DT_SIZE_K(56)>;
 		};
 
 		slot1_partition: partition@1a000 {
 			label = "image-1";
-			reg = <0x0001a000 DT_SIZE_K(56)>;
+			reg = <0x1a000 DT_SIZE_K(56)>;
 		};
 
 		storage_partition: partition@28000 {
 			label = "storage";
-			reg = <0x00028000 DT_SIZE_K(32)>;
+			reg = <0x28000 DT_SIZE_K(32)>;
 		};
 {% endif %}
 	};
