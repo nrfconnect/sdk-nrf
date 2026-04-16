@@ -1,0 +1,22 @@
+#include "nrf9251dk_nrf9251_common.dtsi"
+
+/* FLPR does not have interrupts for slow peripherals. */
+&timer130 {
+	status = "disabled";
+};
+
+&timer131 {
+	status = "disabled";
+};
+
+&timer132 {
+	status = "disabled";
+};
+
+&timer133 {
+	status = "disabled";
+};
+
+&rtc130 {
+	status = "disabled";
+};
