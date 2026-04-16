@@ -1,0 +1,24 @@
+&timer130 {
+	status = "okay";
+	prescaler = <4>;
+};
+
+&timer131 {
+	status = "okay";
+	prescaler = <4>;
+};
+
+&timer132 {
+	status = "okay";
+	prescaler = <4>;
+};
+
+&timer133 {
+	status = "okay";
+	prescaler = <4>;
+};
+
+&rtc130 {
+	status = "okay";
+	ppi-wrap;
+};
