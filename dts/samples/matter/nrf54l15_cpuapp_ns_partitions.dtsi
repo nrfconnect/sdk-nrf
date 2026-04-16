@@ -1,0 +1,117 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &sram0_s;
+/delete-node/ &sram0_ns;
+
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(256)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(256)>;
+
+	sram0_s: image_s@0 {
+		#address-cells = <0x1>;
+		#size-cells = <0x1>;
+		reg = <0x0 DT_SIZE_K(60)>;
+		ranges = <0x0 0x0 DT_SIZE_K(60)>;
+	};
+
+	sram0_ns: image_ns@f000 {
+		#address-cells = <0x1>;
+		#size-cells = <0x1>;
+		reg = <0xf000 DT_SIZE_K(196)>;
+		ranges = <0x0 0xf000 DT_SIZE_K(196)>;
+	};
+};
+
+/delete-node/ &slot0_partition;
+/delete-node/ &storage_partition;
+/delete-node/ &slot0_ns_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &tfm_ps_partition;
+
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(1524)>;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(32)>;
+		};
+
+		slot0_partition: partition@d000 {
+			compatible = "fixed-subpartitions";
+			label = "image-0";
+			reg = <0xd000 DT_SIZE_K(1396)>;
+			ranges = <0x0 0xd000 DT_SIZE_K(1396)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				label = "image-0-secure";
+				reg = <0x0 DT_SIZE_K(128)>;
+			};
+
+			slot0_ns_partition: partition@20000 {
+				label = "image-0-nonsecure";
+				reg = <0x00020000 DT_SIZE_K(1268)>;
+			};
+		};
+
+		factory_data_partition: partition@16a000 {
+			label = "factory-data";
+			reg = <0x0016a000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@16b000 {
+			label = "storage";
+			reg = <0x0016b000 DT_SIZE_K(40)>;
+		};
+
+		tfm_storage_partition: partition@175000 {
+			compatible = "fixed-subpartitions";
+			label = "tfm-storage";
+			reg = <0x175000 DT_SIZE_K(32)>;
+			ranges = <0x0 0x175000 DT_SIZE_K(32)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			tfm_its_partition: partition@0 {
+				label = "tfm-its";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+
+			tfm_otp_partition: partition@2000 {
+				label = "tfm-otp";
+				reg = <0x2000 DT_SIZE_K(8)>;
+			};
+
+			tfm_ps_partition: partition@4000 {
+				label = "tfm-ps";
+				reg = <0x4000 DT_SIZE_K(16)>;
+			};
+		};
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x00000000 DT_SIZE_K(1396)>;
+		};
+	};
+};

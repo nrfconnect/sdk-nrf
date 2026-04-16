@@ -1,0 +1,69 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(940)>;
+		};
+
+		factory_data_partition: partition@f7000 {
+			label = "factory-data";
+			reg = <0x000f7000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 DT_SIZE_K(32)>;
+		};
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x00000000 DT_SIZE_K(940)>;
+		};
+
+		slot3_partition: partition@eb000 {
+			label = "image-3";
+			reg = <0x000eb000 DT_SIZE_K(224)>;
+		};
+
+		slot4_partition: partition@12b000 {
+			label = "image-4";
+			reg = <0x0012b000 DT_SIZE_K(132)>;
+		};
+
+		nrf70_wifi_fw_partition: nrf70_fw_partition: partition@12b200 {
+			label = "nrf70-wifi-fw";
+			reg = <0x0012b200 DT_SIZE_K(128)>;
+		};
+
+		slot5_partition: partition@14c000 {
+			label = "image-5";
+			reg = <0x0014c000 DT_SIZE_K(132)>;
+		};
+	};
+};
