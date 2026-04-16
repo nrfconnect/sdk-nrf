@@ -55,6 +55,9 @@ BUILD_ASSERT(false, "Invalid ranging mode");
 #define CHANNEL_INDEX_OFFSET (2)
 #define TONE_QI_OK_TONE_COUNT_THRESHOLD (15)
 
+#define RAS_SETUP_THREAD_STACK_SIZE 2048
+#define RAS_SETUP_THREAD_PRIORITY	  K_PRIO_PREEMPT(7)
+
 static K_SEM_DEFINE(sem_remote_capabilities_obtained, 0, 1);
 static K_SEM_DEFINE(sem_config_created, 0, 1);
 static K_SEM_DEFINE(sem_cs_security_enabled, 0, 1);
@@ -63,8 +66,12 @@ static K_SEM_DEFINE(sem_discovery_done, 0, 1);
 static K_SEM_DEFINE(sem_mtu_exchange_done, 0, 1);
 static K_SEM_DEFINE(sem_security, 0, 1);
 static K_SEM_DEFINE(sem_ras_features, 0, 1);
+static K_SEM_DEFINE(sem_ras_setup_start, 0, 1);
+static K_SEM_DEFINE(sem_ras_setup_done, 0, 1);
 static K_SEM_DEFINE(sem_local_steps, 1, 1);
 static K_SEM_DEFINE(sem_distance_estimate_updated, 0, 1);
+
+static int ras_setup_result;
 
 static K_MUTEX_DEFINE(distance_estimate_buffer_mutex);
 
@@ -806,6 +813,86 @@ static void distance_estimates_print(uint8_t ap)
 #endif
 }
 
+static int ras_subscriptions_setup(void)
+{
+	int err;
+
+	static struct bt_gatt_exchange_params mtu_exchange_params = {.func = mtu_exchange_cb};
+
+	bt_gatt_exchange_mtu(connection, &mtu_exchange_params);
+
+	k_sem_take(&sem_mtu_exchange_done, K_FOREVER);
+
+	err = bt_gatt_dm_start(connection, BT_UUID_RANGING_SERVICE, &discovery_cb, NULL);
+	if (err) {
+		LOG_ERR("Discovery failed (err %d)", err);
+		return 0;
+	}
+	k_sem_take(&sem_discovery_done, K_FOREVER);
+
+	err = bt_ras_rreq_read_features(connection, ras_features_read_cb);
+	if (err) {
+		LOG_ERR("Could not get RAS features from peer (err %d)", err);
+		return err;
+	}
+
+	k_sem_take(&sem_ras_features, K_FOREVER);
+
+	const bool realtime_rd = ras_feature_bits & RAS_FEAT_REALTIME_RD;
+
+	if (realtime_rd) {
+		err = bt_ras_rreq_realtime_rd_subscribe(connection,
+							&latest_peer_steps,
+							ranging_data_cb);
+		if (err) {
+			LOG_ERR("RAS RREQ Real-time ranging data subscribe failed (err %d)", err);
+			return err;
+		}
+	} else {
+		err = bt_ras_rreq_rd_overwritten_subscribe(connection, ranging_data_overwritten_cb);
+		if (err) {
+			LOG_ERR("RAS RREQ ranging data overwritten subscribe failed (err %d)", err);
+			return err;
+		}
+
+		err = bt_ras_rreq_rd_ready_subscribe(connection, ranging_data_ready_cb);
+		if (err) {
+			LOG_ERR("RAS RREQ ranging data ready subscribe failed (err %d)", err);
+			return err;
+		}
+
+		err = bt_ras_rreq_on_demand_rd_subscribe(connection);
+		if (err) {
+			LOG_ERR("RAS RREQ On-demand ranging data subscribe failed (err %d)", err);
+			return err;
+		}
+
+		err = bt_ras_rreq_cp_subscribe(connection);
+		if (err) {
+			LOG_ERR("RAS RREQ CP subscribe failed (err %d)", err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+static void ras_setup_worker(void *p1, void *p2, void *p3)
+{
+	ARG_UNUSED(p1);
+	ARG_UNUSED(p2);
+	ARG_UNUSED(p3);
+
+	while (true) {
+		k_sem_take(&sem_ras_setup_start, K_FOREVER);
+		ras_setup_result = ras_subscriptions_setup();
+		k_sem_give(&sem_ras_setup_done);
+	}
+}
+
+K_THREAD_DEFINE(ras_setup_thread, RAS_SETUP_THREAD_STACK_SIZE, ras_setup_worker, NULL, NULL, NULL,
+		RAS_SETUP_THREAD_PRIORITY, 0, 0);
+
 int main(void)
 {
 	int err;
@@ -839,6 +926,7 @@ int main(void)
 	}
 
 	k_sem_take(&sem_connected, K_FOREVER);
+	k_sem_give(&sem_ras_setup_start);
 
 	err = bt_conn_set_security(connection, BT_SECURITY_L2);
 	if (err) {
@@ -847,20 +935,6 @@ int main(void)
 	}
 
 	k_sem_take(&sem_security, K_FOREVER);
-
-	static struct bt_gatt_exchange_params mtu_exchange_params = {.func = mtu_exchange_cb};
-
-	bt_gatt_exchange_mtu(connection, &mtu_exchange_params);
-
-	k_sem_take(&sem_mtu_exchange_done, K_FOREVER);
-
-	err = bt_gatt_dm_start(connection, BT_UUID_RANGING_SERVICE, &discovery_cb, NULL);
-	if (err) {
-		LOG_ERR("Discovery failed (err %d)", err);
-		return 0;
-	}
-
-	k_sem_take(&sem_discovery_done, K_FOREVER);
 
 	const struct bt_le_cs_set_default_settings_param default_settings = {
 		.enable_initiator_role = true,
@@ -873,50 +947,6 @@ int main(void)
 	if (err) {
 		LOG_ERR("Failed to configure default CS settings (err %d)", err);
 		return 0;
-	}
-
-	err = bt_ras_rreq_read_features(connection, ras_features_read_cb);
-	if (err) {
-		LOG_ERR("Could not get RAS features from peer (err %d)", err);
-		return 0;
-	}
-
-	k_sem_take(&sem_ras_features, K_FOREVER);
-
-	const bool realtime_rd = ras_feature_bits & RAS_FEAT_REALTIME_RD;
-
-	if (realtime_rd) {
-		err = bt_ras_rreq_realtime_rd_subscribe(connection,
-							&latest_peer_steps,
-							ranging_data_cb);
-		if (err) {
-			LOG_ERR("RAS RREQ Real-time ranging data subscribe failed (err %d)", err);
-			return 0;
-		}
-	} else {
-		err = bt_ras_rreq_rd_overwritten_subscribe(connection, ranging_data_overwritten_cb);
-		if (err) {
-			LOG_ERR("RAS RREQ ranging data overwritten subscribe failed (err %d)", err);
-			return 0;
-		}
-
-		err = bt_ras_rreq_rd_ready_subscribe(connection, ranging_data_ready_cb);
-		if (err) {
-			LOG_ERR("RAS RREQ ranging data ready subscribe failed (err %d)", err);
-			return 0;
-		}
-
-		err = bt_ras_rreq_on_demand_rd_subscribe(connection);
-		if (err) {
-			LOG_ERR("RAS RREQ On-demand ranging data subscribe failed (err %d)", err);
-			return 0;
-		}
-
-		err = bt_ras_rreq_cp_subscribe(connection);
-		if (err) {
-			LOG_ERR("RAS RREQ CP subscribe failed (err %d)", err);
-			return 0;
-		}
 	}
 
 	err = bt_le_cs_read_remote_supported_capabilities(connection);
@@ -953,7 +983,7 @@ int main(void)
 	/* scale factor of conn_interval units to proc_interval units is 1.25/0.625 = 2 */
 	const uint16_t acl_interval_in_proc_interval_units =
 		scan_params.conn_param->interval_max * 2;
-	uint16_t desired_procedure_interval = realtime_rd ? 100 : 100;
+	uint16_t desired_procedure_interval = 100;
 	uint16_t desired_max_procedure_length =
 		acl_interval_in_proc_interval_units * (desired_procedure_interval - 1);
 
@@ -983,6 +1013,12 @@ int main(void)
 		.config_id = CS_CONFIG_ID,
 		.enable = 1,
 	};
+
+	k_sem_take(&sem_ras_setup_done, K_FOREVER);
+	if (ras_setup_result != 0) {
+		LOG_ERR("RAS setup failed (err %d)", ras_setup_result);
+		return 0;
+	}
 
 	err = bt_le_cs_procedure_enable(connection, &params);
 	if (err) {
