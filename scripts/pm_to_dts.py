@@ -489,8 +489,8 @@ def main():
             if tfm_enabled and mcuboot_enabled and area[0] == 'slot0_ns_partition':
                 indent = '\t\t'
                 subpartition_offset = 0
-                f.write('{indent}};\n')
-                print('{indent}};')
+                f.write(f'{indent}}};\n')
+                print(f'{indent}}};')
 
             output_count += 1
 
