@@ -13,3 +13,12 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+  nrf.extended.drivers.adc.accuracy.ref_volt.nrf9251:
+    harness_config:
+      # any setup that sets AINx to logic high
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
