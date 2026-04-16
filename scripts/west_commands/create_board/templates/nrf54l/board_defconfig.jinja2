@@ -1,5 +1,16 @@
 {% if target['core'] == 'cpuapp' %}
 CONFIG_ARM_MPU=y
+
+# MPU-based null-pointer dereferencing detection cannot
+# be applied as the (0x0 - 0x400) is unmapped for this target.
+CONFIG_NULL_POINTER_EXCEPTION_DETECTION_NONE=y
+
+# Enable Cache
+CONFIG_CACHE_MANAGEMENT=y
+CONFIG_EXTERNAL_CACHE=y
+
+# Start SYSCOUNTER on driver init
+CONFIG_NRF_GRTC_START_SYSCOUNTER=y
 {% else %}
 {% if not target['xip'] %}
 CONFIG_USE_DT_CODE_PARTITION=y
@@ -7,4 +18,5 @@ CONFIG_XIP=n
 {% else %}
 CONFIG_XIP=y
 {% endif %}
+CONFIG_RISCV_ALWAYS_SWITCH_THROUGH_ECALL=y
 {% endif %}
