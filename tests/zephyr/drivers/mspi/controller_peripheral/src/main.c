@@ -304,7 +304,8 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 			}
 
 			srx_len = peripheral_rx_len(tdata.mtx_set, tdata.srx_set);
-			zassert_equal(periph_rv, srx_len, "Got: %d but expected:%d", periph_rv, srx_len);
+			zassert_equal(periph_rv, srx_len, "Got: %d but expected:%d",
+				      periph_rv, srx_len);
 		}
 
 		if (tdata.stx_set) {
