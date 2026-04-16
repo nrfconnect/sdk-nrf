@@ -182,11 +182,11 @@ int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *inpu
  * for the entire call, do not use if the caller needs to hold the hardware
  * across multiple operations. This operation should never be used more than once.
  *
- * @param inputs[in]		Array of pointers to elements that will be hashed.
- * @param input_lengths[in]	Array of lengths of elements to be hashed.
- * @param input_count[in]	Number of elements to be hashed.
- * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
- * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ * @param[in]  inputs		Array of pointers to elements that will be hashed.
+ * @param[in]  input_lengths	Array of lengths of elements to be hashed.
+ * @param[in]  input_count	Number of elements to be hashed.
+ * @param[in]  hashalg		Hash algorithm to be used in sxhashalg format.
+ * @param[out] digest		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
  *
  * @return sxsymcrypt status code.
  */
@@ -202,10 +202,10 @@ int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[]
  * entire call, do not use if the caller needs to hold the hardware across
  * multiple operations This operation should never be used more than once.
  *
- * @param input[in]		Pointer to element that will be hashed.
- * @param input_length[in]	Length of element to be hashed.
- * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
- * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ * @param[in]  input		Pointer to element that will be hashed.
+ * @param[in]  input_length	Length of element to be hashed.
+ * @param[in]  hashalg		Hash algorithm to be used in sxhashalg format.
+ * @param[out] digest		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
  *
  * @return sxsymcrypt status code.
  */
