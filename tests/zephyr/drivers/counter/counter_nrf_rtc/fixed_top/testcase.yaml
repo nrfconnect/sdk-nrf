@@ -1,0 +1,12 @@
+tests:
+  nrf.extended.drivers.counter.nrf_rtc:
+    tags:
+      - drivers
+      - counter
+      - ci_tests_zephyr_drivers_counter
+    depends_on: counter
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
