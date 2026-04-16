@@ -23,9 +23,14 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 
+#define CS_CONFIG_ID 0
+#define NUM_MODE_0_STEPS       3
+#define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_2_SUB_MODE_1
+
 #define CON_STATUS_LED DK_LED1
 
 static K_SEM_DEFINE(sem_connected, 0, 1);
+static K_SEM_DEFINE(sem_security, 0, 1);
 static K_SEM_DEFINE(sem_config, 0, 1);
 
 static struct bt_conn *connection;
@@ -142,12 +147,28 @@ static void config_create_cb(struct bt_conn *conn, uint8_t status,
 	}
 }
 
+static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	if (err) {
+		LOG_ERR("Security failed: %s level %u err %d %s", addr, level, err,
+			bt_security_err_to_str(err));
+		return;
+	}
+
+	LOG_DBG("Security changed: %s level %u", addr, level);
+	k_sem_give(&sem_security);
+}
+
 static void security_enable_cb(struct bt_conn *conn, uint8_t status)
 {
 	ARG_UNUSED(conn);
 
 	if (status == BT_HCI_ERR_SUCCESS) {
-		LOG_INF("CS security enabled.");
+		LOG_DBG("CS security enabled.");
 	} else {
 		LOG_WRN("CS security enable failed. (HCI status 0x%02x)", status);
 	}
@@ -188,11 +209,30 @@ static void procedure_enable_cb(struct bt_conn *conn,
 BT_CONN_CB_DEFINE(conn_cb) = {
 	.connected = connected_cb,
 	.disconnected = disconnected_cb,
+	.security_changed = security_changed,
 	.le_cs_read_remote_capabilities_complete = remote_capabilities_cb,
 	.le_cs_config_complete = config_create_cb,
 	.le_cs_security_enable_complete = security_enable_cb,
 	.le_cs_procedure_enable_complete = procedure_enable_cb,
 };
+
+static void cs_config_get(struct bt_le_cs_create_config_params *config_params)
+{
+	config_params->id = CS_CONFIG_ID;
+	config_params->mode = CS_CONFIG_MODE;
+	config_params->min_main_mode_steps = 2;
+	config_params->max_main_mode_steps = 5;
+	config_params->main_mode_repetition = 0;
+	config_params->mode_0_steps = NUM_MODE_0_STEPS;
+	config_params->role = BT_CONN_LE_CS_ROLE_REFLECTOR;
+	config_params->rtt_type = BT_CONN_LE_CS_RTT_TYPE_AA_ONLY;
+	config_params->cs_sync_phy = BT_CONN_LE_CS_SYNC_1M_PHY;
+	config_params->channel_map_repetition = 1;
+	config_params->channel_selection_type = BT_CONN_LE_CS_CHSEL_TYPE_3B;
+	config_params->ch3c_shape = BT_CONN_LE_CS_CH3C_SHAPE_HAT;
+	config_params->ch3c_jump = 2;
+	config_params->cs_enhancements_1 = 0;
+}
 
 int main(void)
 {
@@ -267,6 +307,21 @@ int main(void)
 		err = bt_le_cs_write_cached_remote_supported_capabilities(connection, &remote_capabilities);
 		if (err) {
 			LOG_ERR("Failed to cache remote CS capabilities (err %d)", err);
+			return 0;
+		}
+
+		struct bt_le_cs_create_config_params config_params;
+
+		cs_config_get(&config_params);
+
+		bt_le_cs_set_valid_chmap_bits(config_params.channel_map);
+
+		k_sem_take(&sem_security, K_FOREVER);
+
+		err = bt_le_cs_create_config(connection, &config_params,
+																BT_LE_CS_CREATE_CONFIG_CONTEXT_LOCAL_ONLY);
+		if (err) {
+			LOG_ERR("Failed to create CS config (err %d)", err);
 			return 0;
 		}
 

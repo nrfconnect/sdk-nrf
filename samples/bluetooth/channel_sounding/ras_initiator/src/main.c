@@ -31,17 +31,17 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 
 #define CS_CONFIG_ID 0
 
-#if defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_2_SUB_MODE_1)
+// #if defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_2_SUB_MODE_1)
 #define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_2_SUB_MODE_1
-#elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_2)
-#define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_2_NO_SUB_MODE
-#elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_1)
-#define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_1_NO_SUB_MODE
-#elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_3)
-#define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_3_NO_SUB_MODE
-#else
-BUILD_ASSERT(false, "Invalid ranging mode");
-#endif
+// #elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_2)
+// #define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_2_NO_SUB_MODE
+// #elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_1)
+// #define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_1_NO_SUB_MODE
+// #elif defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_3)
+// #define CS_CONFIG_MODE BT_CONN_LE_CS_MAIN_MODE_3_NO_SUB_MODE
+// #else
+// BUILD_ASSERT(false, "Invalid ranging mode");
+// #endif
 
 #define NUM_MODE_0_STEPS       3
 #define PROCEDURE_COUNTER_NONE (-1)
@@ -996,7 +996,7 @@ int main(void)
 	bt_le_cs_set_valid_chmap_bits(config_params.channel_map);
 
 	err = bt_le_cs_create_config(connection, &config_params,
-				     BT_LE_CS_CREATE_CONFIG_CONTEXT_LOCAL_AND_REMOTE);
+															BT_LE_CS_CREATE_CONFIG_CONTEXT_LOCAL_ONLY);
 	if (err) {
 		LOG_ERR("Failed to create CS config (err %d)", err);
 		return 0;
