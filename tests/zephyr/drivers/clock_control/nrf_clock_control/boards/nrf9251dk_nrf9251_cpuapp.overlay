@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&fll16m {
+	status = "okay";
+};
+
+&hsfll120 {
+	status = "okay";
+};
+
+&lfclk {
+	status = "okay";
+};
