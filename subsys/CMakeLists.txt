@@ -63,7 +63,7 @@ add_subdirectory_ifdef(CONFIG_NRF_COMPRESS nrf_compress)
 add_subdirectory(mgmt/mcumgr)
 add_subdirectory_ifdef(CONFIG_SETTINGS settings)
 
-if(CONFIG_SECURE_BOOT)
+if(CONFIG_SECURE_BOOT AND NOT CONFIG_PARTITION_MANAGER_ENABLED)
   function(zephyr_runner_file type path)
     # Property magic which makes west flash choose the signed build output of a given type.
     set_target_properties(runners_yaml_props_target PROPERTIES "${type}_file" "${path}")
