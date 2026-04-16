@@ -69,6 +69,7 @@ static K_SEM_DEFINE(sem_distance_estimate_updated, 0, 1);
 static K_MUTEX_DEFINE(distance_estimate_buffer_mutex);
 
 static struct bt_conn *connection;
+static int64_t cs_setup_start_ms;
 NET_BUF_SIMPLE_DEFINE_STATIC(latest_local_steps, LOCAL_PROCEDURE_MEM);
 NET_BUF_SIMPLE_DEFINE_STATIC(latest_peer_steps, BT_RAS_PROCEDURE_MEM);
 static int32_t most_recent_local_ranging_counter = PROCEDURE_COUNTER_NONE;
@@ -548,6 +549,8 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	} else {
 		connection = bt_conn_ref(conn);
 
+		cs_setup_start_ms = k_uptime_get();
+
 		k_sem_give(&sem_connected);
 
 		dk_set_led_on(CON_STATUS_LED);
@@ -663,6 +666,9 @@ static void procedure_enable_cb(struct bt_conn *conn,
 
 	if (status == BT_HCI_ERR_SUCCESS) {
 		if (params->state == 1) {
+			int64_t elapsed_ms = k_uptime_get() - cs_setup_start_ms;
+
+			LOG_INF("Connection to CS procedure enable: %lld ms", (long long)elapsed_ms);
 			LOG_INF("CS procedures enabled:\n"
 				" - config ID: %u\n"
 				" - antenna configuration index: %u\n"
@@ -947,7 +953,7 @@ int main(void)
 	/* scale factor of conn_interval units to proc_interval units is 1.25/0.625 = 2 */
 	const uint16_t acl_interval_in_proc_interval_units =
 		scan_params.conn_param->interval_max * 2;
-	uint16_t desired_procedure_interval = realtime_rd ? 5 : 10;
+	uint16_t desired_procedure_interval = realtime_rd ? 100 : 100;
 	uint16_t desired_max_procedure_length =
 		acl_interval_in_proc_interval_units * (desired_procedure_interval - 1);
 
