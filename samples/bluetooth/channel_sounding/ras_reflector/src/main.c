@@ -41,7 +41,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-	LOG_INF("Connected to %s (err 0x%02X)", addr, err);
+	LOG_DBG("Connected to %s (err 0x%02X)", addr, err);
 
 	if (err) {
 		bt_conn_unref(conn);
@@ -57,7 +57,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("Disconnected (reason 0x%02X)", reason);
+	LOG_DBG("Disconnected (reason 0x%02X)", reason);
 
 	bt_conn_unref(conn);
 	connection = NULL;
@@ -75,7 +75,7 @@ static void remote_capabilities_cb(struct bt_conn *conn,
 	ARG_UNUSED(params);
 
 	if (status == BT_HCI_ERR_SUCCESS) {
-		LOG_INF("CS capability exchange completed.");
+		LOG_DBG("CS capability exchange completed.");
 	} else {
 		LOG_WRN("CS capability exchange failed. (HCI status 0x%02x)", status);
 	}
@@ -106,7 +106,7 @@ static void config_create_cb(struct bt_conn *conn, uint8_t status,
 		uint8_t chsel_type_idx = MIN(config->channel_selection_type, 2);
 		uint8_t ch3c_shape_idx = MIN(config->ch3c_shape, 2);
 
-		LOG_INF("CS config creation complete.\n"
+		LOG_DBG("CS config creation complete.\n"
 			" - id: %u\n"
 			" - mode: %s\n"
 			" - min_main_mode_steps: %u\n"
@@ -161,7 +161,7 @@ static void procedure_enable_cb(struct bt_conn *conn,
 
 	if (status == BT_HCI_ERR_SUCCESS) {
 		if (params->state == 1) {
-			LOG_INF("CS procedures enabled:\n"
+			LOG_DBG("CS procedures enabled:\n"
 				" - config ID: %u\n"
 				" - antenna configuration index: %u\n"
 				" - TX power: %d dbm\n"
@@ -178,7 +178,7 @@ static void procedure_enable_cb(struct bt_conn *conn,
 				params->event_interval, params->procedure_interval,
 				params->procedure_count, params->max_procedure_len);
 		} else {
-			LOG_INF("CS procedures disabled.");
+			LOG_DBG("CS procedures disabled.");
 		}
 	} else {
 		LOG_WRN("CS procedures enable failed. (HCI status 0x%02x)", status);

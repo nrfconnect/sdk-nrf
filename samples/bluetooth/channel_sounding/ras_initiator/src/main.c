@@ -476,7 +476,7 @@ static void mtu_exchange_cb(struct bt_conn *conn, uint8_t err,
 		return;
 	}
 
-	LOG_INF("MTU exchange success (%u)", bt_gatt_get_mtu(conn));
+	LOG_DBG("MTU exchange success (%u)", bt_gatt_get_mtu(conn));
 	k_sem_give(&sem_mtu_exchange_done);
 }
 
@@ -484,7 +484,7 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm, void *context)
 {
 	int err;
 
-	LOG_INF("The discovery procedure succeeded");
+	LOG_DBG("The discovery procedure succeeded");
 
 	struct bt_conn *conn = bt_gatt_dm_conn_get(dm);
 
@@ -505,13 +505,13 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm, void *context)
 
 static void discovery_service_not_found_cb(struct bt_conn *conn, void *context)
 {
-	LOG_INF("The service could not be found during the discovery, disconnecting");
+	LOG_DBG("The service could not be found during the discovery, disconnecting");
 	bt_conn_disconnect(connection, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 }
 
 static void discovery_error_found_cb(struct bt_conn *conn, int err, void *context)
 {
-	LOG_INF("The discovery procedure failed (err %d)", err);
+	LOG_DBG("The discovery procedure failed (err %d)", err);
 	bt_conn_disconnect(connection, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 }
 
@@ -533,7 +533,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 		return;
 	}
 
-	LOG_INF("Security changed: %s level %u", addr, level);
+	LOG_DBG("Security changed: %s level %u", addr, level);
 	k_sem_give(&sem_security);
 }
 
