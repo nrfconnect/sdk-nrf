@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <samples/matter/nrf54l15_cpuapp_internal_partitions.dtsi>
+#include <samples/matter/nrf5340_cpunet_partitions.dtsi>
 
 / {
 	chosen {
-		zephyr,code-partition = &boot_partition;
+		zephyr,code-partition = &b0n_partition;
 	};
 };
