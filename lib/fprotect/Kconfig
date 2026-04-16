@@ -51,7 +51,9 @@ menuconfig FPROTECT
 	depends on SOC_FAMILY_NORDIC_NRF
 	depends on !(SOC_SERIES_NRF54L && IS_SECURE_BOOTLOADER)
 	depends on !SOC_SERIES_NRF54H
-	default y if MCUBOOT && (!SOC_SERIES_NRF54L || (SOC_SERIES_NRF54L && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1))
+	default y if MCUBOOT && !SOC_SERIES_NRF54L
+	default y if MCUBOOT && (SOC_NRF54L15 || SOC_NRF54L10 || SOC_NRF54L05) && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1
+	default y if MCUBOOT && (SOC_NRF54LM20A || SOC_NRF54LM20B || SOC_NRF54LV10A) && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1
 	#enabled for nRF54L SoC's when MCUboot is the only one bootloader
 	select NRFX_RRAMC if SOC_SERIES_NRF54L
 	#allow utilization of both nRF54L SoC's RRAMC regions.
