@@ -127,21 +127,11 @@
 
 		cpuapp_dma_region: memory@2fc10000 {
 			compatible = "nordic,owned-memory", "zephyr,memory-region";
-			reg = <0x2fc10000 DT_SIZE_K(2)>;
+			reg = <0x2fc10000 DT_SIZE_K(4)>;
 			status = "disabled";
 			#memory-region-cells = <0>;
 			nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RW>;
 			zephyr,memory-region = "DMA_RAM3x_APP";
-			zephyr,memory-attr = <DT_MEM_DMA>;
-		};
-
-		cpuapp_dma2_region: memory@2fc10800 {
-			compatible = "nordic,owned-memory", "zephyr,memory-region";
-			reg = <0x2fc10800 DT_SIZE_K(2)>;
-			status = "disabled";
-			#memory-region-cells = <0>;
-			nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RW>;
-			zephyr,memory-region = "DMA2_RAM3x_APP";
 			zephyr,memory-attr = <DT_MEM_DMA>;
 		};
 	};
