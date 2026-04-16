@@ -1,4 +1,7 @@
-if  BOARD_{{ board | upper }}_NRF5340_CPUAPP || BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
+config HW_STACK_PROTECTION
+	default ARCH_HAS_STACK_PROTECTION
+
+if BOARD_{{ board | upper }}_NRF5340_CPUAPP || BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
 
 # Code Partition:
 #
@@ -39,10 +42,10 @@ config BOARD_{{ board | upper }}
 	select USE_DT_CODE_PARTITION if BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
 
 config BT_HCI_IPC
-	default y if BT
+	default y if BT_HCI
 
 config HEAP_MEM_POOL_ADD_SIZE_BOARD
 	int
 	default 4096 if BT_HCI_IPC
 
-endif #  BOARD_{{ board | upper }}_NRF5340_CPUAPP || BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
+endif # BOARD_{{ board | upper }}_NRF5340_CPUAPP || BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
