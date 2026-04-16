@@ -233,6 +233,43 @@ int main(void)
 			LOG_ERR("Failed to configure default CS settings (err %d)", err);
 		}
 
+		struct bt_conn_le_cs_capabilities remote_capabilities = {
+			.num_config_supported = 1,
+			.max_consecutive_procedures_supported = 0,
+			.num_antennas_supported = 1,
+			.max_antenna_paths_supported = 1,
+			.initiator_supported = 1,
+			.reflector_supported = 0,
+			.mode_3_supported = 0,
+			.rtt_aa_only_precision = 2,
+			.rtt_sounding_precision = 0,
+			.rtt_random_payload_precision = 2,
+			.rtt_aa_only_n = 30,
+			.rtt_sounding_n = 0,
+			.rtt_random_payload_n = 30,
+			.phase_based_nadm_sounding_supported = 0,
+			.phase_based_nadm_random_supported = 0,
+			.cs_sync_2m_phy_supported = 1,
+			.cs_sync_2m_2bt_phy_supported = 0,
+			.cs_without_fae_supported = 1,
+			.chsel_alg_3c_supported = 0,
+			.pbr_from_rtt_sounding_seq_supported = 0,
+			.t_ip1_times_supported = 0x007c,
+			.t_ip2_times_supported = 0x007e,
+			.t_fcs_times_supported = 0x01e0,
+			.t_pm_times_supported = 0x0003,
+			.t_sw_time = 0,
+			.tx_snr_capability = 0x00,
+			.t_ip2_ipt_times_supported = 0x0000,
+			.t_sw_ipt_time_supported = 0x00
+		};
+
+		err = bt_le_cs_write_cached_remote_supported_capabilities(connection, &remote_capabilities);
+		if (err) {
+			LOG_ERR("Failed to cache remote CS capabilities (err %d)", err);
+			return 0;
+		}
+
 		k_sem_take(&sem_config, K_FOREVER);
 
 		const struct bt_le_cs_set_procedure_parameters_param procedure_params = {

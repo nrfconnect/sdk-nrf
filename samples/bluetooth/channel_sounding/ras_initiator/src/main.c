@@ -548,7 +548,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-	LOG_INF("Connected to %s (err 0x%02X)", addr, err);
+	LOG_DBG("Connected to %s (err 0x%02X)", addr, err);
 
 	if (err) {
 		bt_conn_unref(conn);
@@ -566,7 +566,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("Disconnected (reason 0x%02X)", reason);
+	LOG_DBG("Disconnected (reason 0x%02X)", reason);
 
 	bt_conn_unref(conn);
 	connection = NULL;
@@ -583,7 +583,7 @@ static void remote_capabilities_cb(struct bt_conn *conn,
 	ARG_UNUSED(params);
 
 	if (status == BT_HCI_ERR_SUCCESS) {
-		LOG_INF("CS capability exchange completed.");
+		LOG_DBG("CS capability exchange completed.");
 		k_sem_give(&sem_remote_capabilities_obtained);
 	} else {
 		LOG_WRN("CS capability exchange failed. (HCI status 0x%02x)", status);
@@ -617,7 +617,7 @@ static void config_create_cb(struct bt_conn *conn, uint8_t status,
 		uint8_t chsel_type_idx = MIN(config->channel_selection_type, 2);
 		uint8_t ch3c_shape_idx = MIN(config->ch3c_shape, 2);
 
-		LOG_INF("CS config creation complete.\n"
+		LOG_DBG("CS config creation complete.\n"
 			" - id: %u\n"
 			" - mode: %s\n"
 			" - min_main_mode_steps: %u\n"
@@ -658,7 +658,7 @@ static void security_enable_cb(struct bt_conn *conn, uint8_t status)
 	ARG_UNUSED(conn);
 
 	if (status == BT_HCI_ERR_SUCCESS) {
-		LOG_INF("CS security enabled.");
+		LOG_DBG("CS security enabled.");
 		k_sem_give(&sem_cs_security_enabled);
 	} else {
 		LOG_WRN("CS security enable failed. (HCI status 0x%02x)", status);
@@ -676,7 +676,7 @@ static void procedure_enable_cb(struct bt_conn *conn,
 			int64_t elapsed_ms = k_uptime_get() - cs_setup_start_ms;
 
 			LOG_INF("Connection to CS procedure enable: %lld ms", (long long)elapsed_ms);
-			LOG_INF("CS procedures enabled:\n"
+			LOG_DBG("CS procedures enabled:\n"
 				" - config ID: %u\n"
 				" - antenna configuration index: %u\n"
 				" - TX power: %d dbm\n"
@@ -693,7 +693,7 @@ static void procedure_enable_cb(struct bt_conn *conn,
 				params->event_interval, params->procedure_interval,
 				params->procedure_count, params->max_procedure_len);
 		} else {
-			LOG_INF("CS procedures disabled.");
+			LOG_DBG("CS procedures disabled.");
 		}
 	} else {
 		LOG_WRN("CS procedures enable failed. (HCI status 0x%02x)", status);
@@ -705,7 +705,7 @@ void ras_features_read_cb(struct bt_conn *conn, uint32_t feature_bits, int err)
 	if (err) {
 		LOG_WRN("Error while reading RAS feature bits (err %d)", err);
 	} else {
-		LOG_INF("Read RAS feature bits: 0x%x", feature_bits);
+		LOG_DBG("Read RAS feature bits: 0x%x", feature_bits);
 		ras_feature_bits = feature_bits;
 	}
 
@@ -719,14 +719,14 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
-	LOG_INF("Filters matched. Address: %s connectable: %d", addr, connectable);
+	LOG_DBG("Filters matched. Address: %s connectable: %d", addr, connectable);
 }
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
 	int err;
 
-	LOG_INF("Connecting failed, restarting scanning");
+	LOG_DBG("Connecting failed, restarting scanning");
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
 	if (err) {
@@ -737,7 +737,7 @@ static void scan_connecting_error(struct bt_scan_device_info *device_info)
 
 static void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn)
 {
-	LOG_INF("Connecting");
+	LOG_DBG("Connecting");
 }
 
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, scan_connecting);
@@ -791,6 +791,7 @@ static void cs_config_get(struct bt_le_cs_create_config_params *config_params)
 	config_params->channel_selection_type = BT_CONN_LE_CS_CHSEL_TYPE_3B;
 	config_params->ch3c_shape = BT_CONN_LE_CS_CH3C_SHAPE_HAT;
 	config_params->ch3c_jump = 2;
+	config_params->cs_enhancements_1 = 0;
 }
 
 static void distance_estimates_print(uint8_t ap)
@@ -949,13 +950,44 @@ int main(void)
 		return 0;
 	}
 
-	err = bt_le_cs_read_remote_supported_capabilities(connection);
+	struct bt_conn_le_cs_capabilities remote_capabilities = {
+		.num_config_supported = 1,
+		.max_consecutive_procedures_supported = 0,
+		.num_antennas_supported = 1,
+		.max_antenna_paths_supported = 1,
+		.initiator_supported = 0,
+		.reflector_supported = 1,
+		.mode_3_supported = 0,
+		.rtt_aa_only_precision = 2,
+		.rtt_sounding_precision = 0,
+		.rtt_random_payload_precision = 2,
+		.rtt_aa_only_n = 30,
+		.rtt_sounding_n = 0,
+		.rtt_random_payload_n = 30,
+		.phase_based_nadm_sounding_supported = 0,
+		.phase_based_nadm_random_supported = 0,
+		.cs_sync_2m_phy_supported = 1,
+		.cs_sync_2m_2bt_phy_supported = 0,
+		.cs_without_fae_supported = 1,
+		.chsel_alg_3c_supported = 0,
+		.pbr_from_rtt_sounding_seq_supported = 0,
+		.t_ip1_times_supported = 0x007c,
+		.t_ip2_times_supported = 0x007e,
+		.t_fcs_times_supported = 0x01e0,
+		.t_pm_times_supported = 0x0003,
+		.t_sw_time = 0,
+		.tx_snr_capability = 0x00,
+		.t_ip2_ipt_times_supported = 0x0000,
+		.t_sw_ipt_time_supported = 0x00
+	};
+
+	err = bt_le_cs_write_cached_remote_supported_capabilities(connection, &remote_capabilities);
+
 	if (err) {
-		LOG_ERR("Failed to exchange CS capabilities (err %d)", err);
+		LOG_ERR("Failed to cache remote CS capabilities (err %d)", err);
 		return 0;
 	}
 
-	k_sem_take(&sem_remote_capabilities_obtained, K_FOREVER);
 
 	struct bt_le_cs_create_config_params config_params;
 
