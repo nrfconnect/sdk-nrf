@@ -11,7 +11,7 @@
 #include <nrfx.h>
 #include <hal/nrf_rramc.h>
 
-#define RRAMC_REGION_FOR_FPROTECT_DEFAULT_VALUE 0x0000000f
+#define RRAMC_REGION_FOR_FPROTECT_DEFAULT_VALUE NRF_RRAMC_REGION_CONFIG_PERM_MASK
 #define RRAMC_REGION_FOR_FPROTECT 4
 #define RRAMC_REGION_FOR_COMBINED_REGIONS_FPROTECT 3
 /* symbols temporarily defined here, since PM can't handle different
