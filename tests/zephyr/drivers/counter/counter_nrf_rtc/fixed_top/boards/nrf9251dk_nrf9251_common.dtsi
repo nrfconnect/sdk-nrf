@@ -1,0 +1,4 @@
+&rtc130 {
+	status = "okay";
+	fixed-top;
+};
