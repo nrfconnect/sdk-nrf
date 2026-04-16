@@ -116,10 +116,6 @@
 	status = "okay";
 };
 
-&cpuapp_dma2_region {
-	status = "okay";
-};
-
 &gpiote130 {
 	status = "okay";
 	owned-channels = <1 2 3 4 5 6 7>;
@@ -170,7 +166,7 @@
 
 &nfct {
 	status = "okay";
-	memory-regions = <&cpuapp_dma2_region>;
+	memory-regions = <&cpuapp_dma_region>;
 };
 
 &hfxo {
