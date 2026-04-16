@@ -1,0 +1,12 @@
+common:
+  tags:
+    - drivers
+    - ci_tests_zephyr_boards_nrf_mram_latency
+  harness: ztest
+
+tests:
+  nrf.extended.boards.nrf.mram_latency:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
