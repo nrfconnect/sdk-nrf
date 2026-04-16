@@ -1,5 +1,6 @@
 {% if target['core'] == 'cpuapp' %}
 /dts-v1/;
+
 #include <nordic/{{ soc }}_{{ target['core'] }}.dtsi>
 #include "{{ board }}-pinctrl.dtsi"
 
@@ -33,10 +34,105 @@
 {% endif %}
 };
 
-#include <nordic/{{ soc }}_partition.dtsi>
+{% if soc == "nrf54l05" %}
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(500)>;
+};
+
+/* These partition sizes assume no FLPR area in RRAM */
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x10000 DT_SIZE_K(200)>;
+		};
+
+		slot1_partition: partition@42000 {
+			label = "image-1";
+			reg = <0x42000 DT_SIZE_K(200)>;
+		};
+
+		storage_partition: partition@74000 {
+			label = "storage";
+			reg = <0x74000 DT_SIZE_K(36)>;
+		};
+	};
+};
+{% elif soc == "nrf54l10" %}
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(1012)>;
+};
+
+/* These partition sizes assume no FLPR area in RRAM */
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x10000 DT_SIZE_K(456)>;
+		};
+
+		slot1_partition: partition@82000 {
+			label = "image-1";
+			reg = <0x82000 DT_SIZE_K(456)>;
+		};
+
+		storage_partition: partition@f4000 {
+			label = "storage";
+			reg = <0xf4000 DT_SIZE_K(36)>;
+		};
+	};
+};
+{% elif soc == "nrf54l15" %}
+&cpuapp_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x10000 DT_SIZE_K(664)>;
+		};
+
+		slot1_partition: partition@b6000 {
+			label = "image-1";
+			reg = <0xb6000 DT_SIZE_K(664)>;
+		};
+
+		storage_partition: partition@15c000 {
+			label = "storage";
+			reg = <0x15c000 DT_SIZE_K(36)>;
+		};
+	};
+};
+{% endif %}
 {% else %}
 {% if not target['xip'] %}
 /dts-v1/;
+
 #include <nordic/{{ soc }}_{{ target['core'] }}.dtsi>
 #include "{{ board }}-pinctrl.dtsi"
 
@@ -62,6 +158,7 @@
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		cpuflpr_code_partition: partition@0 {
 			label = "image-0";

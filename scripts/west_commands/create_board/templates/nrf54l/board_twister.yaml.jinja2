@@ -6,5 +6,11 @@ toolchain:
   - zephyr
 sysbuild: true
 ram: {{ target['ram'] }}
-flash: {{ target['flash'] }}
+{% if soc == "nrf54l05" %}
+flash: 200
+{% elif soc == "nrf54l10" %}
+flash: 456
+{% elif soc == "nrf54l15" %}
+flash: 664
+{% endif %}
 supported: []
