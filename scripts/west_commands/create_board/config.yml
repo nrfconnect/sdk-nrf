@@ -30,8 +30,8 @@ products:
             ram: 64
             flash: 512
           - name: qfab
-            ram: 64
-            flash: 512
+            ram: 32
+            flash: 256
       - name: nrf52833
         variants:
           - name: qdaa

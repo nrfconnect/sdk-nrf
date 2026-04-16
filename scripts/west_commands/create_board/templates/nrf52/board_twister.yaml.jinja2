@@ -4,7 +4,15 @@ vendor: {{ vendor }}
 type: mcu
 arch: arm
 ram: {{ target["ram"] }}
-flash: {{ target["flash"] }}
+{% if soc == "nrf52840" %}
+flash: 472
+{% elif soc == "nrf52833" or (soc == "nrf52832" and target["flash"] > 256) %}
+flash: 220
+{% elif soc == "nrf52820" or soc == "nrf52832" %}
+flash: 92
+{% elif soc == "nrf52811" or soc == "nrf52810" or soc == "nrf52805" %}
+flash: 56
+{% endif %}
 toolchain:
   - zephyr
 supported: []
