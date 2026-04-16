@@ -80,7 +80,7 @@ Testing
    +===================+==================+
    | nRF5340 DK        | ``0xb8000``      |
    +-------------------+------------------+
-   | nRF54H20 DK       | ``0xe134000``    |
+   | nRF54H20 DK       | ``0xe132000``    |
    +-------------------+------------------+
 
 #. Upload the second version of the images to the device using ``nrfutil device``:
