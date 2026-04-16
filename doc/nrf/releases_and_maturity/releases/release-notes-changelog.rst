@@ -590,7 +590,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
   * Licence handling of the LLVM toolchain libraries.
   * Support for hex only ``softdevice`` sysbuild domains.
-
+  * Updated the SPDX License List database to version 3.28.0.
 
 Integrations
 ============
