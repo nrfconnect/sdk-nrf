@@ -1,0 +1,3 @@
+/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */
+
+#include "nrf54ls05dk_nrf54ls05b_cpuapp.overlay"

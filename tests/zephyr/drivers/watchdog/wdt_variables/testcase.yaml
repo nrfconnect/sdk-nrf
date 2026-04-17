@@ -13,6 +13,7 @@ common:
 tests:
   nrf.extended.drivers.watchdog.wdt_variables.default:
     platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuflpr
