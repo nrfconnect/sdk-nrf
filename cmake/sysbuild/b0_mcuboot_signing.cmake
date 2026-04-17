@@ -43,7 +43,12 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     sysbuild_get(header_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_ROM_START_OFFSET KCONFIG)
 
     if(${header_size} EQUAL 0)
-      message(FATAL_ERROR "imgtool header size picked from ${DEFAULT_IMAGE} is 0, check CONFIG_ROM_START_OFFSET value")
+      sysbuild_get(build_with_tfm IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BUILD_WITH_TFM KCONFIG)
+      if(build_with_tfm)
+        sysbuild_get(header_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_TFM_MCUBOOT_HEADER_SIZE KCONFIG)
+      else()
+        message(FATAL_ERROR "imgtool header size picked from ${DEFAULT_IMAGE} is 0, check CONFIG_ROM_START_OFFSET value")
+      endif()
     endif()
   endif()
 

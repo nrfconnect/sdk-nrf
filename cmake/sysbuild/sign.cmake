@@ -105,7 +105,12 @@ function(b0_sign_image slot cpunet_target)
   elseif(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
     set(skip_size 0)
   else()
-    sysbuild_get(skip_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+    sysbuild_get(build_with_tfm IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BUILD_WITH_TFM KCONFIG)
+    if(build_with_tfm)
+      sysbuild_get(skip_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_TFM_MCUBOOT_HEADER_SIZE KCONFIG)
+    else()
+      sysbuild_get(skip_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+    endif()
   endif()
 
   math(EXPR
