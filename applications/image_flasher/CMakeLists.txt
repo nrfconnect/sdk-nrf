@@ -24,11 +24,6 @@ if(NOT base_image)
   zephyr_get(base_image SYSBUILD GLOBAL VAR IMAGE_FLASHER_DEFAULT_IMAGE)
 endif()
 
-# Set hex_file property to point to the hex file
-set_target_properties(runners_yaml_props_target PROPERTIES
-  hex_file "${hex_file_to_flash}"
-)
-
 # Override the runners.yaml path to use CMAKE_CURRENT_BINARY_DIR/zephyr instead of
 # PROJECT_BINARY_DIR, this ensures runners.yaml is generated at <build>/softdevice/zephyr where
 # west expects it
@@ -48,6 +43,11 @@ import_kconfig(CONFIG_ ${base_image_binary_dir}/.config)
 foreach(dir ${BOARD_DIRECTORIES})
   include(${dir}/board.cmake OPTIONAL)
 endforeach()
+
+# Set hex_file property to point to the hex file
+set_target_properties(runners_yaml_props_target PROPERTIES
+  hex_file "${hex_file_to_flash}"
+)
 
 # Include flash support to automatically generate runners.yaml
 include(${ZEPHYR_BASE}/cmake/flash/CMakeLists.txt)
