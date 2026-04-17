@@ -562,6 +562,11 @@ int app_ui_state_change_indicate(enum app_ui_state state, bool active)
 	}
 
 	if (state == APP_UI_STATE_RINGING) {
+		/* Wake the LED thread immediately so it reacts to the ringing state change
+		 * without waiting for the current idle sleep or state-LED blink to expire.
+		 */
+		k_sem_give(&led_flash_request_sem);
+
 		/* If there is any button action in progress, then send ringing stop request.
 		 * A slight delay has been added as there is an issue with the Find Hub app that
 		 * does not register sound completion after a very short (close to zero) timeout.
