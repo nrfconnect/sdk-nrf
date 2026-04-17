@@ -25,8 +25,7 @@ Sysbuild
   For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` user guide.
 
 Hardware Model v2
-  A new hardware model was recently introduced in the |NCS|.
-  For more information, see :ref:`hwmv1_to_v2_migration`.
+  The hardware model was introduced in the |NCS| v2.7.0.
 
 nRF54H20 SoC binaries
   A new version (v0.5.0) of the nRF54H20 SoC binaries was released.
@@ -57,8 +56,7 @@ General
      For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` user guide.
 
    * Hardware Model v2
-     A new hardware model was recently introduced in the |NCS|.
-     For more information, see :ref:`hwmv1_to_v2_migration`.
+     The hardware model was introduced in the |NCS| v2.7.0.
 
 Applications using the :file:`dfu_application.zip` file
 -------------------------------------------------------
