@@ -16,20 +16,20 @@
 	pwm_to_gpio_loopback: pwm_to_gpio_loopback {
 		compatible = "test-pwm-to-gpio-loopback";
 		pwms = <&pwm130 0 0 PWM_POLARITY_NORMAL>;
-		gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+		gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
 	};
 };
 
 &pinctrl {
 	pwm_default: pwm_default {
 		group1 {
-			psels = <NRF_PSEL(PWM_OUT0, 1, 0)>;
+			psels = <NRF_PSEL(PWM_OUT0, 2, 3)>;
 		};
 	};
 
 	pwm_sleep: pwm_sleep {
 		group1 {
-			psels = <NRF_PSEL(PWM_OUT0, 1, 0)>;
+			psels = <NRF_PSEL(PWM_OUT0, 2, 3)>;
 			low-power-enable;
 		};
 	};
