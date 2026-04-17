@@ -7,6 +7,7 @@
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
 	status = "okay";
+	hw-flow-control;
 };
 
 &uart1 {
@@ -14,4 +15,5 @@
 	current-speed = <115200>;
 	/* Set to disabled in application, since TF-M will be using it. */
 	status = "disabled";
+	hw-flow-control;
 };
