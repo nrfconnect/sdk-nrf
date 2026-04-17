@@ -38,7 +38,7 @@ IDE, OS, and tool support
 Board support
 =============
 
-|no_changes_yet_note|
+* Updated the Thingy:91 and Thingy:91 X devicetree partitions to match the Partition Manager partitions.
 
 Build and configuration system
 ==============================

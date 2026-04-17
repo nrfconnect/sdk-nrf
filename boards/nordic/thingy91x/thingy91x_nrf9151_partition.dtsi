@@ -1,0 +1,108 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&flash0 {
+	/*
+	 * 0x0000_0000  MCUboot                      ( 32 kB)
+	 * 0x0000_8000  Primary updatable MCUboot    ( 80 kB)
+	 * 0x0001_c000  Secondary updatable MCUboot  ( 80 kB)
+	 * 0x0003_0000  Primary image area           (832 kB)
+	 *   0x0003_0000  Primary secure image       ( 32 kB)
+	 *   0x0003_8000  Primary non-secure image   (800 kB)
+	 */
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		b0_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0x8000>;
+		};
+
+		s0_partition: partition@8000 {
+			label = "mcuboot-0";
+			reg = <0x00008000 0x14000>;
+		};
+
+		s1_partition: partition@1c000 {
+			label = "mcuboot-1";
+			reg = <0x0001c000 0x14000>;
+		};
+
+		slot0_partition: partition@30000 {
+			compatible = "fixed-subpartitions";
+			label = "image-0";
+			reg = <0x00030000 0xd0000>;
+			ranges = <0x0 0x00030000 0xd0000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				label = "image-0-secure";
+				reg = <0x00000000 0x8000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				label = "image-0-nonsecure";
+				reg = <0x00008000 0xc8000>;
+			};
+		};
+	};
+};
+
+&flash_ext {
+	/*
+	 * 0x0000_0000  Secondary image area          (  832 kB)
+	 *   0x0000_0000  Secondary secure image      (   32 kB)
+	 *   0x0000_8000  Secondary non-secure image  (  800 kB)
+	 * 0x000d_0000  Full Modem Firmware Update    ( 4096 kB)
+	 * 0x004d_0000  Settings                      (    8 kB)
+	 * 0x004d_2000  Free                          (27832 kB)
+	 */
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			compatible = "fixed-subpartitions";
+			label = "image-1";
+			reg = <0x00000000 0xd0000>;
+			ranges = <0x0 0x00000 0xd0000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot1_s_partition: partition@0 {
+				label = "image-1-secure";
+				reg = <0x00000000 0x8000>;
+			};
+
+			slot1_ns_partition: partition@8000 {
+				label = "image-1-nonsecure";
+				reg = <0x00008000 0xc8000>;
+			};
+		};
+
+		fmfu_storage_partition: partition@d0000 {
+			label = "fmfu_storage";
+			reg = <0x000d0000 0x400000>;
+		};
+
+		storage_partition: partition@4d0000 {
+			label = "settings_storage";
+			reg = <0x004d0000 0x2000>;
+		};
+
+		external_flash_partition: partition@4d20000 {
+			label = "external_flash";
+			reg = <0x0004d2000 0x1b2e000>;
+		};
+	};
+};
+
+#include <common/nordic/nrf91_partition_sram.dtsi>

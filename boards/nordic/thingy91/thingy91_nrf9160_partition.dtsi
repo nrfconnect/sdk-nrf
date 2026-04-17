@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&flash0 {
+	/*
+	 * 0x0000_0000  MCUboot                        ( 48 kB)
+	 * 0x0000_c000  Primary area                   (420 kB)
+	 *   0x0000_c000  Primary secure image         ( 48 kB)
+	 *   0x0001_8000  Primary non-secure image     (372 kB)
+	 * 0x0007_5000  Secondary area                 (420 kB)
+	 *    0x0007_5000  Secondary secure image      ( 48 kB)
+	 *    0x0008_1000  Secondary non-secure image  (372 kB)
+	 * 0x000d_e000 DFU scratch area                (120 kB)
+	 * 0x000f_e000 Settings storage                (  8 kB)
+	 */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0xc000>;
+		};
+
+		slot0_partition: partition@c000 {
+			compatible = "fixed-subpartitions";
+			label = "image-0";
+			reg = <0x0000c000 0x69000>;
+			ranges = <0x0 0x0000c000 0x69000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				label = "image-0-secure";
+				reg = <0x00000000 0xc000>;
+			};
+
+			slot0_ns_partition: partition@c000 {
+				label = "image-0-nonsecure";
+				reg = <0x0000c000 0x5d000>;
+			};
+		};
+
+		slot1_partition: partition@75000 {
+			compatible = "fixed-subpartitions";
+			label = "image-1";
+			reg = <0x00075000 0x69000>;
+			ranges = <0x0 0x00075000 0x69000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot1_s_partition: partition@0 {
+				label = "image-1-secure";
+				reg = <0x00000000 0xc000>;
+			};
+
+			slot1_ns_partition: partition@c000 {
+				label = "image-1-nonsecure";
+				reg = <0x0000c000 0x5d000>;
+			};
+		};
+
+		scratch_partition: partition@de000 {
+			label = "image-scratch";
+			reg = <0x000de000 0x1e000>;
+		};
+
+		storage_partition: partition@fe000 {
+			label = "storage";
+			reg = <0x000fe000 0x2000>;
+		};
+	};
+};
+
+#include <common/nordic/nrf91_partition_sram.dtsi>
