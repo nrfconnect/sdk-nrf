@@ -1,0 +1,17 @@
+/ {
+	resources {
+		compatible = "test-gpio-basic-api";
+		out-gpios = <&gpio0 0 0>;
+		in-gpios = <&gpio0 1 0>;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+	sense-edge-mask = <0x3>;
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <0 1>;
+};
