@@ -7,6 +7,12 @@ common:
     - ci_tests_zephyr_drivers_mbox
   harness: ztest
 tests:
+  nrf.extended.tests.drivers.mbox_error_cases:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
   nrf.extended.tests.drivers.mbox_error_cases.nrf54l:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
