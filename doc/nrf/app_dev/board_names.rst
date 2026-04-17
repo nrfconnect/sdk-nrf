@@ -67,7 +67,6 @@ While the board name is always present, other elements, such as the board revisi
 
 .. note::
     This board name scheme was introduced in the |NCS| before the v2.7.0 release following changes in Zephyr v3.6.0.
-    Read :ref:`hwmv1_to_v2_migration`, Zephyr's :ref:`zephyr:hw_model_v2`, and refer to the `conversion example Pull Request`_ in Zephyr upstream if you have to port a board to the new model.
 
 .. _app_boards_names_zephyr:
 

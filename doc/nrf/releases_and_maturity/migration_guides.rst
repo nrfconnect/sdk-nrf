@@ -44,4 +44,3 @@ Migration notes are also provided for major functionality updates.
    :caption: General migration guides
 
    migration/migration_sysbuild
-   migration/migration_hwmv2

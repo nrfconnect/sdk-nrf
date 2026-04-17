@@ -27,7 +27,7 @@ Requirements
 
 To use this feature, meet the following requirements:
 
-* Board based on nRF52840 or nRF5340, with file structure compatible with :ref:`Hardware model v2 (HWMv2) <hwmv1_to_v2_migration>`
+* Board based on nRF52840 or nRF5340, with file structure compatible with Hardware model v2 (HWMv2)
 * External QSPI flash chip with supported commands connected to QSPI pins
 * QSPI flash chip in always-on mode (meaning, no DPM or low-power modes)
 * :doc:`MCUboot configuration <mcuboot:design>` in the Swap using move mode (``MCUBOOT_SWAP_USING_MOVE``), the Upgrade only mode (``MCUBOOT_OVERWRITE_ONLY``), or in the direct-XIP mode
