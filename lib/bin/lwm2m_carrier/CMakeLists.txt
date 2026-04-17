@@ -31,7 +31,9 @@ set(                    LWM2M_CARRIER_TARGET liblwm2m_carrier)
 zephyr_library_import(${LWM2M_CARRIER_TARGET} ${LWM2M_CARRIER_LIB_PATH}/liblwm2m_carrier.a)
 target_link_libraries(${LWM2M_CARRIER_TARGET} INTERFACE modem)
 
-ncs_add_partition_manager_config(pm.yml.lwm2m_carrier)
+if(CONFIG_PARTITION_MANAGER_ENABLED)
+  ncs_add_partition_manager_config(pm.yml.lwm2m_carrier)
+endif()
 
 zephyr_include_directories(include)
 zephyr_library()

@@ -423,7 +423,10 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-|no_changes_yet_note|
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Added support for building without Partition Manager.
+    This requires an ``lwm2m_carrier`` partition to be defined in devicetree.
 
 Bluetooth libraries and services
 --------------------------------

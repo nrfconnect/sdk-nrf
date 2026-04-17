@@ -34,12 +34,23 @@
 
 /* Divide flash area into NVS sectors */
 #define NVS_SECTOR_SIZE     (CONFIG_LWM2M_CARRIER_STORAGE_SECTOR_SIZE)
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+
 #define NVS_SECTOR_COUNT    (FLASH_AREA_SIZE(lwm2m_carrier) / NVS_SECTOR_SIZE)
 /* Start address of the filesystem in flash */
 #define NVS_STORAGE_OFFSET  (FLASH_AREA_OFFSET(lwm2m_carrier))
-/* Flash Device runtime structure */
 #define NVS_FLASH_DEVICE    (DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller)))
 
+#else /* !CONFIG_PARTITION_MANAGER_ENABLED */
+
+#define NVS_PARTITION DT_CHOSEN(lwm2m_carrier)
+#define NVS_SECTOR_COUNT (FIXED_PARTITION_NODE_SIZE(NVS_PARTITION) / NVS_SECTOR_SIZE)
+#define NVS_STORAGE_OFFSET FIXED_PARTITION_NODE_OFFSET(NVS_PARTITION)
+#define NVS_FLASH_DEVICE    DEVICE_DT_GET(DT_MTD_FROM_FIXED_PARTITION(NVS_PARTITION))
+
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
+
+/* Flash Device runtime structure */
 static struct nvs_fs fs = {
 	.sector_size = NVS_SECTOR_SIZE,
 	.sector_count = NVS_SECTOR_COUNT,
@@ -1399,9 +1410,11 @@ static struct {
 #if CONFIG_DFU_TARGET_MCUBOOT
 #include <dfu/dfu_target_mcuboot.h>
 #include <dfu/dfu_target_stream.h>
-#include <pm_config.h>
 #include <zephyr/sys/crc.h>
 #include <zephyr/dfu/mcuboot.h>
+
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+#include <pm_config.h>
 
 #define MCUBOOT_SECONDARY_ADDR	PM_MCUBOOT_SECONDARY_ADDRESS
 
@@ -1410,6 +1423,15 @@ static struct {
 #else
 #define MCUBOOT_SECONDARY_MTD	DT_NODELABEL(PM_MCUBOOT_SECONDARY_DEV)
 #endif
+
+#else /* !CONFIG_PARTITION_MANAGER_ENABLED */
+
+#define MCUBOOT_SECONDARY_NODE	DT_NODELABEL(slot1_partition)
+
+#define MCUBOOT_SECONDARY_ADDR	DT_FIXED_PARTITION_ADDR(MCUBOOT_SECONDARY_NODE)
+#define MCUBOOT_SECONDARY_MTD	DT_MTD_FROM_FIXED_PARTITION(MCUBOOT_SECONDARY_NODE)
+
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 static uint8_t dfu_stream_buf[1024] __aligned(4);
 
