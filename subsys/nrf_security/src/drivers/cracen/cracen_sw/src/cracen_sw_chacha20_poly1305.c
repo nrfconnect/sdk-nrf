@@ -363,8 +363,6 @@ psa_status_t cracen_sw_chacha20_poly1305_update(cracen_aead_operation_t *operati
 	finalize_ad_padding(operation);
 	operation->ad_finished = true;
 
-	safe_memzero(output, output_size);
-
 	/* Process data with CTR mode encryption/decryption */
 	if (operation->dir == CRACEN_ENCRYPT) {
 		/* Encrypt: apply ChaCha20 keystream, then calc Poly1305 MAC */
