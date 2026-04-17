@@ -3,6 +3,10 @@ family:
     series:
       - name: nrf54l
         socs:
+          - name: nrf54lc10a
+            cpuclusters:
+              - name: cpuapp
+              - name: cpuflpr
           - name: nrf54ls05a
             cpuclusters:
               - name: cpuapp
@@ -28,6 +32,9 @@ runners:
         run: first
         groups:
           - qualifiers:
+              - nrf54lc10a/cpuapp
+              - nrf54lc10a/cpuflpr
+          - qualifiers:
               - nrf54lv10a/cpuapp
               - nrf54lv10a/cpuflpr
           - qualifiers:
@@ -45,6 +52,9 @@ runners:
         run: first
         groups:
           - qualifiers:
+              - nrf54lc10a/cpuapp
+              - nrf54lc10a/cpuflpr
+          - qualifiers:
               - nrf54lv10a/cpuapp
               - nrf54lv10a/cpuflpr
           - qualifiers:
@@ -60,6 +70,9 @@ runners:
           - nrfutil
         run: last
         groups:
+          - qualifiers:
+              - nrf54lc10a/cpuapp
+              - nrf54lc10a/cpuflpr
           - qualifiers:
               - nrf54lv10a/cpuapp
               - nrf54lv10a/cpuflpr
