@@ -9,7 +9,7 @@
 #include "nrf54lv10dk_nrf54lv10a-common.dtsi"
 
 / {
-	model = "Nordic nRF54Lv10 DK nRF54Lv10a FLPR MCU";
+	model = "Nordic nRF54LV10 DK nRF54LV10A FLPR MCU";
 	compatible = "nordic,nrf54lv10dk_nrf54lv10a-cpuflpr";
 
 	chosen {
