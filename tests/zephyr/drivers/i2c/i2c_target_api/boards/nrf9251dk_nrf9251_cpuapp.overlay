@@ -1,0 +1,98 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * SDA = P2.03 - P2.09
+ * SCL = P1.00 - P1.01
+ */
+
+/ {
+	zephyr,user {
+		sda0-gpios = <&gpio2 3 0>;
+		scl0-gpios = <&gpio1 0 0>;
+		sda1-gpios = <&gpio2 9 0>;
+		scl1-gpios = <&gpio1 1 0>;
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&pinctrl {
+	i2c130_default_alt: i2c130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 0)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c130_sleep_alt: i2c130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 0)>;
+			low-power-enable;
+		};
+	};
+
+	i2c131_default_alt: i2c131_default_alt {
+		group1 {
+			/* Temporary workaround as it is currently not possible
+			 * to configure pins for TWIS with pinctrl.
+			 */
+			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+				<NRF_PSEL(TWIM_SCL, 1, 1)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c131_sleep_alt: i2c131_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+				<NRF_PSEL(TWIM_SCL, 1, 1)>;
+			low-power-enable;
+		};
+	};
+};
+
+&i2c130 {
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	pinctrl-0 = <&i2c130_default_alt>;
+	pinctrl-1 = <&i2c130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	zephyr,concat-buf-size = <256>;
+	memory-regions = <&cpuapp_dma_region>;
+	status = "okay";
+
+	eeprom1: eeprom@56 {
+		compatible = "zephyr,i2c-target-eeprom";
+		reg = <0x56>;
+		address-width = <8>;
+		size = <256>;
+	};
+};
+
+&i2c131 {
+	compatible = "nordic,nrf-twis";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	pinctrl-0 = <&i2c131_default_alt>;
+	pinctrl-1 = <&i2c131_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+	status = "okay";
+
+	eeprom0: eeprom@54 {
+		compatible = "zephyr,i2c-target-eeprom";
+		reg = <0x54>;
+		address-width = <8>;
+		size = <256>;
+	};
+};
