@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	/*
+	 * 0x0000_c000  Primary area                 (992 kB)
+	 *   0x0000_c000  Primary secure image       ( 32 kB)
+	 *   0x0001_8000  Primary non-secure image   (960 kB)
+	 * 0x000f_e000 Settings storage              ( 32 kB)
+	 */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			compatible = "fixed-subpartitions";
+			label = "image-0";
+			reg = <0x0 0xf8000>;
+			ranges = <0x0 0x0 0xf8000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				label = "image-0-secure";
+				reg = <0x0 0x8000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				label = "image-0-nonsecure";
+				reg = <0x8000 0xf0000>;
+			};
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 0x00008000>;
+		};
+	};
+};
+
+/delete-node/ &sram0_s;
+/delete-node/ &sram0_ns;
+
+&sram0 {
+	/*
+	 * 0x2000_0000  Secure RAM                   (  32 kB)
+	 * 0x2000_8000  Non-secure RAM area          ( 224 kB)
+	 *   0x2000_8000  Modem shared area          (  18 kB)
+	 *     0x2000_8000  control                  (1832 B)
+	 *     0x2000_8728  app -> cell              (8408 B)
+	 *     0x2000_a800  cell -> app              (   8 kB)
+	 *   0x2000_c800  Application RAM            ( 206 kB)
+	 */
+
+	sram0_s: sram@0 {
+		reg = <0x0 0x8000>;
+	};
+
+	sram0_ns: sram@8000 {
+		reg = <0x8000 0x38000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x8000 0x38000>;
+
+		/* Must be in first 128 kB of RAM. */
+		sram0_ns_modem: sram0_ns@0 {
+			/* Modem (shared) memory */
+			reg = <0x0 0x4800>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x0 0x4800>;
+
+			cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+				/* Modem IPC control */
+				reg = <0x0 0x728>;
+			};
+
+			cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+				/* Modem IPC transmit */
+				reg = <0x728 0x20d8>;
+			};
+
+			cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@2800 {
+				/* Modem IPC receive */
+				reg = <0x2800 0x2000>;
+			};
+		};
+
+		sram0_ns_app: sram0_ns@4800 {
+			/* Non-Secure application memory */
+			reg = <0x4800 0x33800>;
+		};
+	};
+};
