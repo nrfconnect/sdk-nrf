@@ -57,3 +57,8 @@ psa_status_t psa_lite_get_key_slot(mbedtls_svc_key_id_t *key_id, psa_lite_key_sl
 	}
 	return PSA_ERROR_INSUFFICIENT_MEMORY;
 }
+
+void psa_lite_free_all_key_slots(void)
+{
+	safe_memzero(g_key_slots, sizeof(g_key_slots));
+}

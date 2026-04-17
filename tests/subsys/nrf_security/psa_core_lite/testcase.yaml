@@ -55,8 +55,8 @@ tests:
       - sysbuild
     extra_args: >
       EXTRA_CONF_FILE="ecdsa.conf"
-  # PSA core lite: Ed25519 + encrypt + RNG
-  psa_core_lite.ed25519.encrypt.rng:
+  # PSA core lite: Ed25519 + AES-KW + encrypt + RNG
+  psa_core_lite.ed25519.aes_kw.encrypt.rng:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -68,9 +68,9 @@ tests:
       - ci_crypto
       - ci_tests_crypto
     extra_args: >
-      EXTRA_CONF_FILE="lite.conf;eddsa.conf;encrypt.conf;rng.conf"
-  # PSA core lite: ECDSA + encrypt + RNG
-  psa_core_lite.ecdsa.encrypt.rng:
+      EXTRA_CONF_FILE="lite.conf;eddsa.conf;key_wrap.conf;encrypt.conf;rng.conf"
+  # PSA core lite: ECDSA + AES-KW + encrypt + RNG
+  psa_core_lite.ecdsa.aes_kw.encrypt.rng:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -82,9 +82,9 @@ tests:
       - ci_tests_crypto
       - sysbuild
     extra_args: >
-      EXTRA_CONF_FILE="lite.conf;ecdsa.conf;encrypt.conf;rng.conf"
-  # Oberon PSA crypto: Ed25519 + encrypt + RNG
-  psa_core_oberon.ed25519.encrypt.rng:
+      EXTRA_CONF_FILE="lite.conf;ecdsa.conf;key_wrap.conf;encrypt.conf;rng.conf"
+  # Oberon PSA crypto: Ed25519 + AES-KW + encrypt + RNG
+  psa_core_oberon.ed25519.aes_kw.encrypt.rng:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -96,9 +96,9 @@ tests:
       - ci_tests_crypto
       - sysbuild
     extra_args: >
-      EXTRA_CONF_FILE="eddsa.conf;encrypt.conf;rng.conf"
-  # ECDSA + Oberon PSA crypto: ECDSA + encrypt + RNG
-  psa_core_oberon.ecdsa.encrypt.rng:
+      EXTRA_CONF_FILE="eddsa.conf;key_wrap.conf;encrypt.conf;rng.conf"
+  # ECDSA + Oberon PSA crypto: ECDSA + AES-KW + encrypt + RNG
+  psa_core_oberon.ecdsa.aes_kw.encrypt.rng:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -110,7 +110,7 @@ tests:
       - ci_tests_crypto
       - sysbuild
     extra_args: >
-      EXTRA_CONF_FILE="ecdsa.conf;encrypt.conf;rng.conf"
+      EXTRA_CONF_FILE="ecdsa.conf;key_wrap.conf;encrypt.conf;rng.conf"
   # PSA core lite: ECDSA + AES-KW + encrypt
   psa_core_lite.ecdsa.aes_kw.encrypt:
     sysbuild: true

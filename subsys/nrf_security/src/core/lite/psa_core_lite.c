@@ -216,41 +216,20 @@ psa_status_t psa_hash_compute(
 
 #if defined(PSA_WANT_ALG_CTR)
 
-/** @brief Id of the volatile key that is created by extracting key material from the KMU */
-static mbedtls_svc_key_id_t g_volatile_enc_key_id;
-
 static psa_status_t get_enc_key(
 	mbedtls_svc_key_id_t key_id, psa_algorithm_t alg,
 	psa_lite_key_slot_t **key_slot)
 {
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-
-	if (key_slot == NULL) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
-	if (!VERIFY_ALG_CTR(alg)) {
+	if (!VERIFY_ALG_CTR(alg) || !psa_lite_key_id_is_volatile(key_id)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (psa_lite_key_id_is_volatile(key_id)) {
-		return psa_lite_get_key_slot(&key_id, key_slot);
-	}
-
-	/* Allocating volatile key slot to store key material from the KMU */
-	status = psa_lite_get_key_slot(&g_volatile_enc_key_id, key_slot);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-
-	return get_kmu_key(key_id, *key_slot);
+	return psa_lite_get_key_slot(&key_id, key_slot);
 }
 
-static inline void clear_enc_key(void)
+static inline void clear_all_enc_keys(void)
 {
-	psa_lite_free_key_slot(g_volatile_enc_key_id);
-	/* Resetting key ID here to avoid clearing volatile key that may have the same ID */
-	g_volatile_enc_key_id = PSA_LITE_KEY_ID_NULL;
+	psa_lite_free_all_key_slots();
 }
 
 psa_status_t psa_cipher_encrypt_setup(
@@ -265,7 +244,7 @@ psa_status_t psa_cipher_encrypt_setup(
 
 	status = get_enc_key(key, alg, &key_slot);
 	if (status != PSA_SUCCESS) {
-		clear_enc_key();
+		clear_all_enc_keys();
 		return status;
 	}
 
@@ -275,7 +254,7 @@ psa_status_t psa_cipher_encrypt_setup(
 							 key_slot->key_size,
 							 alg);
 	if (status != PSA_SUCCESS) {
-		clear_enc_key();
+		clear_all_enc_keys();
 	}
 
 	return status;
@@ -293,7 +272,7 @@ psa_status_t psa_cipher_decrypt_setup(
 
 	status = get_enc_key(key, alg, &key_slot);
 	if (status != PSA_SUCCESS) {
-		clear_enc_key();
+		clear_all_enc_keys();
 		return status;
 	}
 
@@ -303,7 +282,7 @@ psa_status_t psa_cipher_decrypt_setup(
 							 key_slot->key_size,
 							 alg);
 	if (status != PSA_SUCCESS) {
-		clear_enc_key();
+		clear_all_enc_keys();
 	}
 
 	return status;
@@ -320,7 +299,7 @@ psa_status_t psa_cipher_set_iv(
 
 	status = psa_driver_wrapper_cipher_set_iv(operation, iv, iv_length);
 	if (status != PSA_SUCCESS) {
-		clear_enc_key();
+		clear_all_enc_keys();
 	}
 
 	return status;
@@ -339,7 +318,7 @@ psa_status_t psa_cipher_update(
 	status = psa_driver_wrapper_cipher_update(operation, input, input_length,
 						  output, output_size, output_length);
 	if (status != PSA_SUCCESS) {
-		clear_enc_key();
+		clear_all_enc_keys();
 	}
 
 	return status;
@@ -356,22 +335,27 @@ psa_status_t psa_cipher_finish(
 	}
 
 	status = psa_driver_wrapper_cipher_finish(operation, output, output_size, output_length);
-
-	/* Always clear key when finishing operation */
-	clear_enc_key();
+	if (status != PSA_SUCCESS) {
+		clear_all_enc_keys();
+	}
 
 	return status;
 }
 
 psa_status_t psa_cipher_abort(psa_cipher_operation_t *operation)
 {
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
 	if (operation == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	clear_enc_key();
+	status = psa_driver_wrapper_cipher_abort(operation);
+	if (status != PSA_SUCCESS) {
+		clear_all_enc_keys();
+	}
 
-	return psa_driver_wrapper_cipher_abort(operation);
+	return status;
 }
 
 #endif /* PSA_WANT_ALG_CTR */

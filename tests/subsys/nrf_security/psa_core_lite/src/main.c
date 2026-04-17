@@ -49,17 +49,9 @@
 #define KMU_KEY_ID_PUBKEY_SECP384R1_READ_ONLY \
 	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, 26)
 
-/* AES-256 key used to check usage and ability to revoke */
-#define KMU_KEY_ID_AES_256_KEY_REVOKABLE \
-	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, 32)
-
-/* AES-256 key used to check usage and ability to lock  */
-#define KMU_KEY_ID_AES_256_KEY_READ_ONLY \
-	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, 34)
-
 /* AES-256 key used to unwrap another AES-256 key  */
 #define KMU_KEY_ID_AES_256_KW_ENC_KEY_READ_ONLY \
-	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, 36)
+	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, 32)
 
 #define KMU_GET_SLOT_ID(key_id) \
 	CRACEN_PSA_GET_KMU_SLOT(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id))
@@ -208,29 +200,6 @@ static uint8_t ecdsa_secp384r1_signature[ECDSA_SECP384R1_SIGNATURE_SIZE] = {
 	0x78, 0x6e, 0x67, 0x9e, 0x7b, 0x82, 0xc7, 0x1a, 0x38, 0x62, 0x8a, 0xc8
 };
 
-/* Test material for AES 256-bits using a phony key */
-static uint8_t aes_ctr_key[32] = {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
-	0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
-	0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f
-};
-
-/* Nonce for the CTR operation (12 bytes)*/
-static uint8_t aes_ctr_nonce[16] = {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
-	0x00, 0x00, 0x00, 0x00
-};
-
-static uint8_t aes_ctr_plaintext[16] = {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
-	0x0c, 0x0d, 0x0e, 0x0f
-};
-
-static uint8_t aes_ctr_ciphertext[16] = {
-	0xbd, 0xdd, 0x4e, 0xc9, 0xb5, 0x55, 0x60, 0xcb, 0xc9, 0xf7, 0x61, 0x07,
-	0xb6, 0x1e, 0x30, 0xb9
-};
-
 /** Test material for AES-KW 256-bits key-encryption key is taken from
  *  NIST CAVP (SP 800-38F), KW-AD with AES-256, plaintext length = 256, #0
  */
@@ -247,6 +216,17 @@ static uint8_t aes_kw_wrapped_key[40] = {
 	0xdf, 0xc6, 0xaf, 0xc1, 0x20, 0x00, 0xf1, 0xbd,
 	0xe9, 0x13, 0xdf, 0x5d, 0x67, 0x40, 0x70, 0x61,
 	0xdb, 0x82, 0x27, 0xfc, 0xd0, 0x89, 0x53, 0xd4,
+};
+
+/* Nonce for the CTR operation (12 bytes)*/
+static uint8_t aes_ctr_nonce[16] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+	0x00, 0x00, 0x00, 0x00
+};
+
+static uint8_t aes_ctr_plaintext[16] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+	0x0c, 0x0d, 0x0e, 0x0f
 };
 
 /** Ciphertext obtained as a result of AES-CTR encryption with
@@ -527,16 +507,6 @@ static void provision_aes_256_key(mbedtls_svc_key_id_t key_id,
 	compare_key_attributes(&attributes, &temp_attributes);
 }
 
-static void provision_aes_256_ctr_key(mbedtls_svc_key_id_t key_id,
-				      psa_key_persistence_t persistence,
-				      uint8_t key_buffer[32])
-{
-	provision_aes_256_key(key_id, persistence,
-			      PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT,
-			      PSA_ALG_CTR,
-			      key_buffer);
-}
-
 static void provision_aes_256_kw_enc_key(mbedtls_svc_key_id_t key_id,
 					 psa_key_persistence_t persistence,
 					 uint8_t key_buffer[32])
@@ -605,19 +575,6 @@ static void provision_keys(void)
 		provision_ecdsa_secp384r1_public_key(KMU_KEY_ID_PUBKEY_SECP384R1_READ_ONLY,
 						     CRACEN_KEY_PERSISTENCE_READ_ONLY,
 						     ecdsa_secp384r1_pubkey);
-
-		ran_provisioning = true;
-	}
-
-	/* AES CTR using 256-bits key */
-	if (IS_ENABLED_ALL(PSA_WANT_ALG_CTR, PSA_WANT_AES_KEY_SIZE_256)) {
-		provision_aes_256_ctr_key(KMU_KEY_ID_AES_256_KEY_REVOKABLE,
-					  CRACEN_KEY_PERSISTENCE_REVOKABLE,
-					  aes_ctr_key);
-
-		provision_aes_256_ctr_key(KMU_KEY_ID_AES_256_KEY_READ_ONLY,
-					  CRACEN_KEY_PERSISTENCE_READ_ONLY,
-					  aes_ctr_key);
 
 		ran_provisioning = true;
 	}
@@ -835,10 +792,9 @@ static void test_hash_incremental(psa_algorithm_t alg, const uint8_t *input, siz
 }
 
 /**
- * @brief Function to test AES CTR encrypt/decrypt
+ * @brief Function to test AES CTR encrypt/decrypt with a volatile key
  *
  * @param key_id Valid, revoked or locked key to use for signature check
- * @param kmu_key Selects if the key is stored in KMU
  * @param nonce Nonce
  * @param nonce_size Nonce size, bytes
  * @param req_plaintext Required plaintext
@@ -846,7 +802,7 @@ static void test_hash_incremental(psa_algorithm_t alg, const uint8_t *input, siz
  * @param req_ciphertext Required ciphertext
  * @param req_ciphertext_size Required ciphertext size, bytes
  */
-static void test_aes_ctr_crypt(mbedtls_svc_key_id_t key_id, bool kmu_key, const uint8_t *nonce,
+static void test_aes_ctr_crypt(mbedtls_svc_key_id_t key_id, const uint8_t *nonce,
 			       size_t nonce_size, const uint8_t *req_plaintext,
 			       size_t req_plaintext_size, const uint8_t *req_ciphertext,
 			       size_t req_ciphertext_size)
@@ -859,30 +815,22 @@ static void test_aes_ctr_crypt(mbedtls_svc_key_id_t key_id, bool kmu_key, const 
 	uint32_t out_length;
 
 	err = psa_cipher_encrypt_setup(&operation, key_id, PSA_ALG_CTR);
-	zassert_equal(err, PSA_SUCCESS, "Failed to setup AES CTR encryption: %s: %d, err: %d",
-		      kmu_key ? "slot_id" : "key_id",
-		      kmu_key ? KMU_GET_SLOT_ID(key_id) : MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id),
-		      err);
+	zassert_equal(err, PSA_SUCCESS, "Failed to setup AES CTR encryption: key_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
 	err = psa_cipher_set_iv(&operation, nonce, nonce_size);
-	zassert_equal(err, PSA_SUCCESS, "Failed to setup AES CTR IV: %s: %d, err: %d",
-		      kmu_key ? "slot_id" : "key_id",
-		      kmu_key ? KMU_GET_SLOT_ID(key_id) : MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id),
-		      err);
+	zassert_equal(err, PSA_SUCCESS, "Failed to setup AES CTR IV: key_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
 	err = psa_cipher_update(&operation, req_plaintext, req_plaintext_size,
 				ciphertext, ARRAY_SIZE(ciphertext), &out_length);
-	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher update: %s: %d, err: %d",
-		      kmu_key ? "slot_id" : "key_id",
-		      kmu_key ? KMU_GET_SLOT_ID(key_id) : MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id),
-		      err);
+	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher update: key_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
 	err = psa_cipher_finish(&operation, ciphertext + out_length,
 				ARRAY_SIZE(ciphertext) - out_length, &out_length);
-	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher finish: %s: %d, err: %d",
-		      kmu_key ? "slot_id" : "key_id",
-		      kmu_key ? KMU_GET_SLOT_ID(key_id) : MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id),
-		      err);
+	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher finish: key_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
 	/** NOTE: Abort cipher currently unsupported (size-optimization) */
 
@@ -892,49 +840,28 @@ static void test_aes_ctr_crypt(mbedtls_svc_key_id_t key_id, bool kmu_key, const 
 
 	/* Test out decryption */
 	err = psa_cipher_decrypt_setup(&operation, key_id, PSA_ALG_CTR);
-	zassert_equal(err, PSA_SUCCESS, "Failed to setup AES CTR decryption: %s: %d, err: %d",
-		      kmu_key ? "slot_id" : "key_id",
-		      kmu_key ? KMU_GET_SLOT_ID(key_id) : MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id),
-		      err);
+	zassert_equal(err, PSA_SUCCESS, "Failed to setup AES CTR decryption: key_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
 	err = psa_cipher_set_iv(&operation, nonce, nonce_size);
-	zassert_equal(err, PSA_SUCCESS, "Failed to setup AES CTR IV: %s: %d, err: %d",
-		      kmu_key ? "slot_id" : "key_id",
-		      kmu_key ? KMU_GET_SLOT_ID(key_id) : MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id),
-		      err);
+	zassert_equal(err, PSA_SUCCESS, "Failed to setup AES CTR IV: key_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
 	err = psa_cipher_update(&operation, req_ciphertext, req_ciphertext_size,
 				plaintext, ARRAY_SIZE(plaintext), &out_length);
-	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher update: %s: %d, err: %d",
-		      kmu_key ? "slot_id" : "key_id",
-		      kmu_key ? KMU_GET_SLOT_ID(key_id) : MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id),
-		      err);
+	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher update: key_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
 	err = psa_cipher_finish(&operation, ciphertext + out_length,
 				ARRAY_SIZE(ciphertext) -  + out_length, &out_length);
-	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher finish: %s: %d, err: %d",
-		      kmu_key ? "slot_id" : "key_id",
-		      kmu_key ? KMU_GET_SLOT_ID(key_id) : MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id),
-		      err);
+	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher finish: key_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
 	/** NOTE: Abort cipher currently unsupported (size-optimization) */
 
 	if (constant_memcmp(ciphertext, req_ciphertext, req_ciphertext_size) != 0) {
 		zassert_false(true, "AES CTR encrypted ciphertext mismathed");
 	}
-}
-
-/**
- * @brief Function to test AES CTR encrypt/decrypt with phony key
- *
- * @param key_id Valid, revoked or locked key to use for signature check
- * @return PSA_SUCCESS if verify succeeded, otherwise a non-zero error code
- */
-static void test_aes_ctr_crypt_phony_key(mbedtls_svc_key_id_t key_id)
-{
-	test_aes_ctr_crypt(key_id, true, aes_ctr_nonce, ARRAY_SIZE(aes_ctr_nonce),
-			   aes_ctr_plaintext, ARRAY_SIZE(aes_ctr_plaintext),
-			   aes_ctr_ciphertext, ARRAY_SIZE(aes_ctr_ciphertext));
 }
 
 static void unwrap_key(mbedtls_svc_key_id_t key_enc_key_id, mbedtls_svc_key_id_t *unwrapped_key_id)
@@ -965,7 +892,7 @@ static void test_aes_ctr_crypt_unwrapped_key(mbedtls_svc_key_id_t key_id)
 	mbedtls_svc_key_id_t unwrapped_key_id;
 
 	unwrap_key(key_id, &unwrapped_key_id);
-	test_aes_ctr_crypt(unwrapped_key_id, false, aes_ctr_nonce, ARRAY_SIZE(aes_ctr_nonce),
+	test_aes_ctr_crypt(unwrapped_key_id, aes_ctr_nonce, ARRAY_SIZE(aes_ctr_nonce),
 			   aes_ctr_plaintext, ARRAY_SIZE(aes_ctr_plaintext),
 			   aes_ctr_unwrapped_key_ciphertext,
 			   ARRAY_SIZE(aes_ctr_unwrapped_key_ciphertext));
@@ -1092,14 +1019,6 @@ static void test_crypt(void)
 {
 	bool ran_encrypt = false;
 
-	/* AES CTR using 256-bits key */
-	if (IS_ENABLED_ALL(PSA_WANT_ALG_CTR, PSA_WANT_AES_KEY_SIZE_256)) {
-		test_aes_ctr_crypt_phony_key(KMU_KEY_ID_AES_256_KEY_REVOKABLE);
-		test_aes_ctr_crypt_phony_key(KMU_KEY_ID_AES_256_KEY_READ_ONLY);
-
-		ran_encrypt = true;
-	}
-
 	/* AES CTR using unwrapped 256-bits key */
 	if (IS_ENABLED_ALL(PSA_WANT_ALG_CTR, PSA_WANT_ALG_AES_KW)) {
 		test_aes_ctr_crypt_unwrapped_key(KMU_KEY_ID_AES_256_KW_ENC_KEY_READ_ONLY);
@@ -1191,13 +1110,6 @@ static void test_revoke_keys(void)
 		ran_revoke = true;
 	}
 
-	/* Any AES using 256-bits key */
-	if (IS_ENABLED_ALL(PSA_WANT_ALG_CTR, PSA_WANT_AES_KEY_SIZE_256)) {
-		/* Try to revoke the revokable AES key */
-		revoke_key(KMU_KEY_ID_AES_256_KEY_REVOKABLE);
-		ran_revoke = true;
-	}
-
 	zassert_true(ran_revoke, "Did not run any valid revocation, check configs!");
 }
 
@@ -1236,7 +1148,7 @@ static void test_lock_keys(void)
 	/* Any AES using 256-bits key */
 	if (IS_ENABLED_ALL(PSA_WANT_ALG_CTR, PSA_WANT_AES_KEY_SIZE_256)) {
 		/* Try to lock the read-only AES key */
-		lock_key(KMU_KEY_ID_AES_256_KEY_READ_ONLY);
+		lock_key(KMU_KEY_ID_AES_256_KW_ENC_KEY_READ_ONLY);
 		ran_lock = true;
 	}
 

@@ -75,4 +75,9 @@ psa_status_t psa_lite_get_key_slot(mbedtls_svc_key_id_t *key_id, psa_lite_key_sl
  */
 void psa_lite_free_key_slot(mbedtls_svc_key_id_t key_id);
 
+/**
+ * @brief Clear all volatile key slots
+ */
+void psa_lite_free_all_key_slots(void);
+
 #endif /* PSA_CORE_LITE_VOLATILE_KEY_STORAGE_H_ */
