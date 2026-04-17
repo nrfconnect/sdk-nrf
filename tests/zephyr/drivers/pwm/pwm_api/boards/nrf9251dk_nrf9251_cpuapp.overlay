@@ -1,0 +1,28 @@
+/ {
+	aliases {
+		pwm-test = &pwm130;
+	};
+};
+
+&pinctrl {
+	pwm_default_alt: pwm_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 3)>;
+		};
+	};
+
+	pwm_sleep_alt: pwm_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 3)>;
+			low-power-enable;
+		};
+	};
+};
+
+&pwm130 {
+	status = "okay";
+	pinctrl-0 = <&pwm_default_alt>;
+	pinctrl-1 = <&pwm_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
