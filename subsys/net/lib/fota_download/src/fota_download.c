@@ -9,11 +9,14 @@
 #include <zephyr/sys/hash_function.h>
 #include <net/fota_download.h>
 #include <net/downloader.h>
-#include <pm_config.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
 
 #include "fota_download_util.h"
+
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+#include <pm_config.h>
+#endif
 
 #if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
 /* MCUBoot support is required */
