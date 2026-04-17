@@ -1,9 +1,6 @@
 sample:
   name: USB HID mouse sample
 common:
-  filter: dt_alias_exists("sw0") and dt_alias_exists("led0")
-  depends_on:
-    - gpio
   tags:
     - ci_samples_zephyr_subsys_usb
     - usb
@@ -26,3 +23,22 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+
+  nrf.extended.sample.usb_device_next.hid-mouse-bc12:
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_configs:
+      - CONFIG_USB_BC12=y
+    harness: console
+    harness_config:
+      fixture: usb_connected
+      type: multi_line
+      regex:
+        - "HS bNumConfigurations 1"
+        - "FS bNumConfigurations 1"
+        - "New BC state CDP \\(5000000 uV \\d+ uA\\)"
+        - "Actual device speed 2"
+        - "Status OUT finished"
