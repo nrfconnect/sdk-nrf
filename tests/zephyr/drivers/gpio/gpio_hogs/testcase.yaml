@@ -1,0 +1,17 @@
+common:
+  tags:
+    - drivers
+    - gpio
+    - ci_tests_zephyr_drivers_gpio
+  depends_on: gpio
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+
+tests:
+  nrf.extended.drivers.gpio.hogs:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
