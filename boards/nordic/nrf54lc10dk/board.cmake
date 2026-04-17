@@ -1,0 +1,20 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+# Using nRF54LV10A device until nRF54LC10A is supported in jlink.
+if(CONFIG_SOC_NRF54LC10A_CPUAPP)
+  board_runner_args(jlink "--device=NRF54LV10A_M33" "--speed=4000")
+elseif(CONFIG_SOC_NRF54LC10A_CPUFLPR)
+  board_runner_args(jlink "--device=NRF54LV10A_RV32" "--speed=4000")
+endif()
+
+if(CONFIG_TRUSTED_EXECUTION_NONSECURE)
+  set(TFM_PUBLIC_KEY_FORMAT "full")
+endif()
+
+if(CONFIG_TFM_FLASH_MERGED_BINARY)
+  set_property(TARGET runners_yaml_props_target PROPERTY hex_file tfm_merged.hex)
+endif()
+
+include(${ZEPHYR_BASE}/boards/common/nrfutil.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)

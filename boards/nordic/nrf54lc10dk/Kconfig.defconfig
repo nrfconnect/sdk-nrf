@@ -1,0 +1,27 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+# Workaround for not being able to have commas in macro arguments
+DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
+DT_CHOSEN_Z_SRAM_PARTITION := zephyr,sram-secure-partition
+
+config HAS_BT_CTLR
+	default BT
+
+config SOC_NRF54LX_SKIP_GLITCHDETECTOR_DISABLE
+	default y
+
+config NRF_RRAM_WRITE_BUFFER_SIZE
+	default 16
+
+if BOARD_NRF54LC10DK_NRF54LC10A_CPUAPP_NS
+
+config BOARD_NRF54LC10DK
+	select USE_DT_CODE_PARTITION
+
+# By default, if building for the /ns variant of the board,
+# enable building with TF-M as the Secure Processing Environment.
+config BUILD_WITH_TFM
+	default y
+
+endif # BOARD_NRF54LC10DK_NRF54LC10A_CPUAPP_NS
