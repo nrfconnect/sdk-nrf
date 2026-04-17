@@ -1,9 +1,5 @@
 .. bt_gap_shell:
 
-.. contents::
-   :local:
-   :depth: 2
-
 Bluetooth: GAP Shell
 ####################
 
@@ -167,8 +163,7 @@ Directed Advertising
 
 You can use directed advertising on the shell if you want to reconnect to a device.
 The following example demonstrates how to create a directed advertiser with the address specified right after the parameter :code:`directed`.
-The :code:`low` parameter indicates that you want to use the low duty cycle mode, and the :code:`dir-rpa` parameter is required if the remote device is privacy-enabled and supports address
-resolution of the target address in directed advertisement.
+The :code:`low` parameter indicates that you want to use the low duty cycle mode, and the :code:`dir-rpa` parameter is required if the remote device is privacy-enabled and supports address resolution of the target address in directed advertisement.
 
 .. code-block:: console
 
@@ -201,10 +196,9 @@ To encrypt the advertising data, you need to provide key materials using :code:`
 The session key is 16 bytes long and the initialisation vector is 8 bytes long.
 
 To add advertising data, use :code:`bt encrypted-ad add-ad` and :code:`bt encrypted-ad add-ead`.
-The former will take add one advertising data structure (as defined in the Core Specification), whereas the later will read the given data, encrypt them, and add the generated encrypted advertising
-data structure.
+The former will take add one advertising data structure (as defined in the Core Specification), whereas the later will read the given data, encrypt them, and add the generated encrypted advertising data structure.
 You can mix encrypted and non-encrypted data, when done adding advertising data.
-Use :code:`bt encrypted-ad commit-ad` to apply the change to the data to the selected advertiser.
+Use :code:`bt encrypted-ad commit-ad` to apply the change to the data of the selected advertiser.
 After that, you can start the advertiser as described previously.
 To clear the advertising data, use :code:`bt encrypted-ad clear-ad`.
 
@@ -270,8 +264,7 @@ Here is a simple example demonstrating the usage of EAD:
 Filter Accept List
 ******************
 
-You can create a list of allowed addresses that can be used to connect to them automatically.
-Here is how to do it:
+You can create a list of allowed addresses that can be used to connect to them automatically as follows:
 
 .. code-block:: console
    uart:~$ bt fal-add 47:38:76:EA:29:36 random
@@ -282,8 +275,7 @@ The shell will connect to the first available device.
 If both devices are advertising at the same time, connection is established to the first address added to the list.
 
 You can also use the Filter Accept List for scanning or advertising using the :code:`fal` command.
-For example, if you want to scan for a bunch of selected addresses, you can set up a Filter Accept
-List like this:
+For example, if you want to scan for a bunch of selected addresses, you can set up a Filter Accept List like this:
 
 .. code-block:: console
    uart:~$ bt fal-add 65:4B:9E:83:AF:73 random

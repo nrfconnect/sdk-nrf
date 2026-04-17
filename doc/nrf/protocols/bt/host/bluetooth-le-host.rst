@@ -60,8 +60,7 @@ Central role may not be as common for Zephyr-based devices as peripheral role, b
 Rather than accepting connections from other devices, a central role device scans for available peripheral devices and chooses one to connect to.
 Once connected, a central typically acts as a GATT client, first performing discovery of available services and then accessing one or more supported services.
 
-To initially discover a device to connect to, the application likely uses the :c:func:`bt_le_scan_start` function, waits for an appropriate device to be found (using the scan
-callback), stops scanning using :c:func:`bt_le_scan_stop`, and then connects to the device using :c:func:`bt_conn_le_create`.
+To initially discover a device to connect to, the application likely uses the :c:func:`bt_le_scan_start` function, waits for an appropriate device to be found (using the scan callback), stops scanning using :c:func:`bt_le_scan_stop`, and then connects to the device using :c:func:`bt_conn_le_create`.
 
 There are some sample applications for the central role available in the tree, such as :ref:`ble_samples` (|NCS|) |sample path|.
 
@@ -74,7 +73,8 @@ Instead, it uses the advertising data of found devices, combining it optionally 
 Broadcaster role
 ================
 
-A broadcaster role device uses the :c:func:`bt_le_adv_start` function to advertise specific advertising data, but the type of advertising is non-connectable, that is, another device cannot connect to it.
+A broadcaster role device uses the :c:func:`bt_le_adv_start` function to send non-connectable advertisements.
+Other devices cannot connect to a broadcaster, and can only receive its advertising data.
 
 Connections
 ===========
@@ -92,8 +92,7 @@ If the devices have a sufficient user interface this "channel" is the user itsel
 The capabilities of the device are registered using the :c:func:`bt_conn_auth_cb_register` function.
 The :c:struct:`bt_conn_auth_cb` structure that is passed to this function has a set of optional callbacks that can be used during the pairing.
 If the device lacks some feature, the corresponding callback can be set to NULL.
-For example, if the device does not have an input method but does have a display, the ``passkey_entry`` and ``passkey_confirm`` callbacks would be set to NULL, but the
-``passkey_display`` would be set to a callback capable of displaying a passkey to the user.
+For example, if the device does not have an input method but does have a display, the ``passkey_entry`` and ``passkey_confirm`` callbacks would be set to NULL, but the ``passkey_display`` would be set to a callback capable of displaying a passkey to the user.
 
 Depending on the local and remote security requirements and capabilities, there are four possible security levels that can be reached:
 
@@ -105,8 +104,7 @@ Depending on the local and remote security requirements and capabilities, there 
 L2CAP
 =====
 
-L2CAP stands for the Logical Link Control and Adaptation Protocol.
-It is a common layer for all communication over Bluetooth connections.
+The Logical Link Control and Adaptation Protocol (L2CAP) is a common layer for all communication over Bluetooth connections.
 However, an application comes in direct contact with it only when using it in the Connection-oriented Channels (CoC) mode.
 More information on this can be found in the :ref:`L2CAP API section <bt_l2cap>`.
 
@@ -203,8 +201,8 @@ It contains a SDU segment and additional protocol information.
 Relevant Kconfig
 ----------------
 
-The following Kconfig options affect the L2CAP payload sizes and whether credit-based channels are
-available.
+The following Kconfig options have an impact on the L2CAP payload sizes.
+They also define whether credit-based channels are available.
 
 .. list-table::
    :header-rows: 1

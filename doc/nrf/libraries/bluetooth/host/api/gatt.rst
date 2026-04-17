@@ -40,8 +40,7 @@ Both read and write callbacks can be set to NULL if the attribute permission doe
    Attribute ``read`` and ``write`` callbacks are called directly from the RX thread and thus, it is not recommended to block them for long periods of time.
 
 Attribute value changes can be notified using the :c:func:`bt_gatt_notify` function.
-Alternatively, you can use the :c:func:`bt_gatt_notify_cb` function that enables passing a callback to be called when it is necessary to know the exact instant when the data has been transmitted over
-the air.
+Alternatively, you can use the :c:func:`bt_gatt_notify_cb` function that enables passing a callback to be called when it is necessary to know the exact instant when the data has been transmitted over the air.
 Indications are supported by the :c:func:`bt_gatt_indicate` function.
 
 Discover procedures can be initiated using the :c:func:`bt_gatt_discover` function that takes the :c:struct:`bt_gatt_discover_params` structure describing the type of discovery.
@@ -53,17 +52,15 @@ In contrast, setting the field to NULL allows all attributes to be discovered.
    Caching discovered attributes is not supported.
 
 Read procedures are supported by the :c:func:`bt_gatt_read` function that takes the contents of the :c:struct:`bt_gatt_read_params` structure as parameters.
-In the parameters, one or more attributes can be set.
+You can set one or more attributes in the parameters.
 Setting multiple handles requires the :kconfig:option:`CONFIG_BT_GATT_READ_MULTIPLE` Kconfig option.
 
 Write procedures are supported by the :c:func:`bt_gatt_write` function that takes the contents of the :c:struct:`bt_gatt_write_params` structure as parameters.
-If the write operation does not require a response, the :c:func:`bt_gatt_write_without_response` or :c:func:`bt_gatt_write_without_response_cb` functions can be used, with the later working similarly
-to the :c:func:`bt_gatt_notify_cb` function.
+If the write operation does not require a response, you can use the :c:func:`bt_gatt_write_without_response` or :c:func:`bt_gatt_write_without_response_cb` function, with the later working similarly to the :c:func:`bt_gatt_notify_cb` function.
 
-Subscriptions to a notification and an indication can be initiated using the :c:func:`bt_gatt_subscribe` function that takes the contents of the
-:c:struct:`bt_gatt_subscribe_params` structure as parameters.
+You can initiate subscriptions to a notification and an indication using the :c:func:`bt_gatt_subscribe` function that takes the contents of the :c:struct:`bt_gatt_subscribe_params` structure as parameters.
 Multiple subscriptions to the same attribute are supported, so there might be multiple ``notify`` callbacks triggered for the same attribute.
-Subscriptions can be removed using the :c:func:`bt_gatt_unsubscribe` function.
+To remove subscriptions, use the :c:func:`bt_gatt_unsubscribe` function.
 
 .. note::
    When subscriptions are removed, the ``notify`` callback is called with the data set to NULL.

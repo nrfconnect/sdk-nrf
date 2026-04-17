@@ -3,6 +3,10 @@
 API
 ###
 
+.. contents::
+   :local:
+   :depth: 2
+
 Bluetooth LE Host
 =================
 

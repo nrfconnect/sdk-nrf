@@ -13,8 +13,7 @@ BTP commands and events are received and buffered for further processing over th
 BTP specification can be found in auto-pts project repository: https://github.com/auto-pts/auto-pts
 The auto-pts is an automation framework for PTS Bluetooth testing tool provided by Bluetooth SIG.
 
-See https://docs.zephyrproject.org/latest/guides/bluetooth/index.html for full
-documentation about how to use this test.
+See https://docs.zephyrproject.org/latest/guides/bluetooth/index.html for full documentation about how to use this test.
 
 
 Supported Profiles and Services

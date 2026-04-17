@@ -7,11 +7,10 @@ Generic Access Profile (GAP)
    :local:
    :depth: 2
 
-The Generic Access Profile (GAP) defines fundamental Bluetooth procedures such as advertising,
-scanning, device discovery, and connection establishment.
-In this API set, the main GAP procedures are declared in :file:`include/bluetooth/host/bluetooth.h`,
-while related device address helpers are declared in :file:`include/bluetooth/host/addr.h` and GAP
-defines and assigned numbers are declared in :file:`include/bluetooth/host/gap.h`.
+The Generic Access Profile (GAP) defines fundamental Bluetooth procedures such as advertising, scanning, device discovery, and connection establishment.
+In this API set, the main GAP procedures are declared in the :file:`include/bluetooth/host/bluetooth.h` file.
+Related device address helpers are declared in :file:`include/bluetooth/host/addr.h`.
+GAP defines and assigned numbers are declared in :file:`include/bluetooth/host/gap.h`.
 
 API Reference
 *************

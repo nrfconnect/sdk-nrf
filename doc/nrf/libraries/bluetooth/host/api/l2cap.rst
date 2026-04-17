@@ -7,7 +7,7 @@ Logical Link Control and Adaptation Protocol (L2CAP)
    :local:
    :depth: 2
 
-The L2CAP layer enables connection-oriented channels that can be enabled using the :kconfig:option:`CONFIG_BT_L2CAP_DYNAMIC_CHANNEL` Kconfig option.
+The L2CAP layer enables connection-oriented channels that you can enable using the :kconfig:option:`CONFIG_BT_L2CAP_DYNAMIC_CHANNEL` Kconfig option.
 These channels support segmentation and reassembly transparently.
 They also support credit-based flow control making it suitable for data streams.
 
@@ -56,10 +56,9 @@ Data received this way can be marked as processed by returning ``0`` or using th
 
 For sending data, the :c:func:`bt_l2cap_chan_send` function can be used to note that it may block if no credits are available, and resuming as soon as more credits are available.
 
-Servers can be registered using the :c:func:`bt_l2cap_server_register` function passing the :c:struct:`bt_l2cap_server` structure that indicates which ``psm`` it should listen to, the required
-security level ``sec_level``, and the callback ``accept`` that is called to authorize incoming connection requests and allocate channel instances.
+You can register servers using the :c:func:`bt_l2cap_server_register` function passing the :c:struct:`bt_l2cap_server` structure that indicates which ``psm`` it should listen to, the required security level ``sec_level``, and the callback ``accept`` that is called to authorize incoming connection requests and allocate channel instances.
 
-Client channels can be initiated using the :c:func:`bt_l2cap_chan_connect` function and disconnected using the :c:func:`bt_l2cap_chan_disconnect` function.
+You can initiate client channels using the :c:func:`bt_l2cap_chan_connect` function and disconnected using the :c:func:`bt_l2cap_chan_disconnect` function.
 The later can also disconnect channel instances created by servers.
 
 API Reference

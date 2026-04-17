@@ -7,9 +7,8 @@ Bluetooth: Isochronous Channels Shell
    :local:
    :depth: 2
 
-The ISO shell provides commands for working with Bluetooth isochronous channels from the command
-line.
-It can be used to exercise both connected isochronous streams and broadcast isochronous streams.
+The ISO shell provides commands for working with Bluetooth isochronous channels from the command line.
+You can use it to exercise both connected isochronous streams and broadcast isochronous streams.
 
 Commands
 ********
@@ -36,7 +35,7 @@ Use `iso --help` in the shell to print the same overview at runtime.
       term-big    :Terminate a BIG
 
 Unicast examples
-***************
+****************
 
 The following steps form an ordered procedure for setting up and using a unicast ISO channel.
 Some steps are run on the central side and others on the peripheral side, as noted below.
