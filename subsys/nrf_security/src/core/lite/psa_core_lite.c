@@ -27,32 +27,12 @@
 psa_status_t silex_statuscodes_to_psa(int ret);
 #endif
 
-#if defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA) || \
-	defined(PSA_WANT_ALG_PURE_EDDSA)
-
-#if (defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA)) && \
-	defined(PSA_WANT_ECC_SECP_R1_384)
-	const size_t pub_key_max_size = 97;
-#elif (defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA)) && \
-	defined(PSA_WANT_ECC_SECP_R1_256)
-	const size_t pub_key_max_size = 65;
-#elif (defined(PSA_WANT_ALG_ED25519PH) || defined(PSA_WANT_ALG_PURE_EDDSA)) && \
-	defined(PSA_WANT_ECC_TWISTED_EDWARDS_255)
-	const size_t pub_key_max_size = 32;
-#else
-#error No valid curve for signature validation
-#endif
-
-#endif
-
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 	psa_key_attributes_t *attributes, uint8_t *key_buffer,
 	size_t key_buffer_size, size_t *key_buffer_length);
 
-static psa_status_t get_key_buffer(
-	mbedtls_svc_key_id_t key_id, psa_key_attributes_t *attributes,
-	uint8_t *key, size_t key_size, size_t *key_length)
+static psa_status_t get_kmu_key(mbedtls_svc_key_id_t key_id, psa_lite_key_slot_t *key_slot)
 {
 	psa_status_t status;
 	psa_key_lifetime_t lifetime;
@@ -63,7 +43,9 @@ static psa_status_t get_key_buffer(
 		return status;
 	}
 
-	return cracen_kmu_get_builtin_key(slot_number, attributes, key, key_size, key_length);
+	return cracen_kmu_get_builtin_key(slot_number, &key_slot->key_attributes,
+					  key_slot->key, sizeof(key_slot->key),
+					  &key_slot->key_size);
 }
 #endif
 
@@ -77,17 +59,14 @@ static psa_status_t get_key_buffer(
 #error PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS with ECDSA is invalid!
 #endif
 
-#if defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA) || \
-	defined(PSA_WANT_ALG_ED25519PH)
+#if defined(CONFIG_PSA_CORE_LITE_HAS_VERIFY_HASH)
 
 psa_status_t psa_verify_hash(
 	mbedtls_svc_key_id_t key_id, psa_algorithm_t alg, const uint8_t *hash, size_t hash_length,
 	const uint8_t *signature, size_t signature_length)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
-	psa_key_attributes_t attr;
-	uint8_t pub_key[pub_key_max_size];
-	size_t pub_key_length;
+	psa_lite_key_slot_t pub_key_slot;
 
 	if (hash == NULL || signature == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -102,26 +81,28 @@ psa_status_t psa_verify_hash(
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	status = get_key_buffer(key_id, &attr, pub_key, pub_key_max_size, &pub_key_length);
+	status = get_kmu_key(key_id, &pub_key_slot);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
 #if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
-	int cracen_status = cracen_ed25519ph_verify(pub_key, hash, hash_length, signature, false);
+	int cracen_status = cracen_ed25519ph_verify(pub_key_slot.key, hash, hash_length,
+						    signature, false);
 
 	return silex_statuscodes_to_psa(cracen_status);
 #else
-	return psa_driver_wrapper_verify_hash_with_context(&attr, pub_key, pub_key_length, alg,
+	return psa_driver_wrapper_verify_hash_with_context(&pub_key_slot.key_attributes,
+							   pub_key_slot.key,
+							   pub_key_slot.key_size, alg,
 							   hash, hash_length, NULL, 0, signature,
 							   signature_length);
 #endif
 }
 
-#endif /* PSA_WANT_ALG_ECDSA || PSA_WANT_ALG_DETERMINISTIC_ECDSA || PSA_WANT_ALG_ED25519PH  */
+#endif /* CONFIG_PSA_CORE_LITE_HAS_VERIFY_HASH  */
 
-#if defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA) || \
-	defined(PSA_WANT_ALG_PURE_EDDSA)
+#if defined(CONFIG_PSA_CORE_LITE_HAS_VERIFY_MESSAGE)
 
 psa_status_t psa_verify_message(
 	mbedtls_svc_key_id_t key_id, psa_algorithm_t alg,
@@ -129,9 +110,7 @@ psa_status_t psa_verify_message(
 	const uint8_t *signature, size_t signature_length)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
-	psa_key_attributes_t attr;
-	uint8_t pub_key[pub_key_max_size];
-	size_t pub_key_size = 0;
+	psa_lite_key_slot_t pub_key_slot;
 
 	if (input == NULL || signature == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -146,22 +125,24 @@ psa_status_t psa_verify_message(
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	status = get_key_buffer(key_id, &attr, pub_key, pub_key_max_size, &pub_key_size);
+	status = get_kmu_key(key_id, &pub_key_slot);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 #if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
-	int cracen_status = cracen_ed25519_verify(pub_key, input, input_length, signature);
+	int cracen_status = cracen_ed25519_verify(pub_key_slot.key, input, input_length, signature);
 
 	return silex_statuscodes_to_psa(cracen_status);
 #else
-	return psa_driver_wrapper_verify_message_with_context(&attr, pub_key, pub_key_size, alg,
+	return psa_driver_wrapper_verify_message_with_context(&pub_key_slot.key_attributes,
+							      pub_key_slot.key,
+							      pub_key_slot.key_size, alg,
 							      input, input_length, NULL, 0,
 							      signature, signature_length);
 #endif
 }
 
-#endif /* PSA_WANT_ALG_ECDSA || PSA_WANT_ALG_DETERMINISTIC_ECDSA || PSA_WANT_ALG_PURE_EDDSA  */
+#endif /* CONFIG_PSA_CORE_LITE_HAS_VERIFY_MESSAGE  */
 
 /* Hash algorithms */
 
@@ -262,8 +243,7 @@ static psa_status_t get_enc_key(
 		return status;
 	}
 
-	return get_key_buffer(key_id, &(*key_slot)->key_attributes,
-			      (*key_slot)->key, sizeof((*key_slot)->key), &(*key_slot)->key_size);
+	return get_kmu_key(key_id, *key_slot);
 }
 
 static inline void clear_enc_key(void)
@@ -448,12 +428,12 @@ psa_status_t psa_destroy_key(mbedtls_svc_key_id_t key_id)
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
 	psa_key_attributes_t attr;
 
-#if defined(PSA_WANT_ALG_CTR)
+#if defined(CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE)
 	if (psa_lite_key_id_is_volatile(key_id)) {
 		psa_lite_free_key_slot(key_id);
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_WANT_ALG_CTR */
+#endif /* CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE */
 
 	status = psa_get_key_attributes(key_id, &attr);
 	if (status != PSA_SUCCESS) {
@@ -498,9 +478,7 @@ psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
 			    mbedtls_svc_key_id_t *key)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_attributes_t wrapping_key_attributes = PSA_KEY_ATTRIBUTES_INIT;
-	uint8_t encryption_key[PSA_LITE_KEY_MAX_SIZE];
-	size_t wrapping_key_length;
+	psa_lite_key_slot_t wrapping_key_slot;
 	psa_lite_key_slot_t *key_slot;
 	size_t storage_size;
 	size_t required_key_size_bits;
@@ -511,31 +489,32 @@ psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
 	}
 
 	storage_size = data_length - PSA_CORE_LITE_KEY_WRAP_INTEGRITY_CHECK_REG_SIZE;
-	if (storage_size > sizeof(encryption_key)) {
+	if (storage_size > sizeof(wrapping_key_slot.key)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
 	*key = MBEDTLS_SVC_KEY_ID_INIT;
 
-	status = get_key_buffer(wrapping_key, &wrapping_key_attributes, encryption_key,
-				sizeof(encryption_key), &wrapping_key_length);
+	status = get_kmu_key(wrapping_key, &wrapping_key_slot);
 	if (status != PSA_SUCCESS) {
-		safe_memzero(encryption_key, sizeof(encryption_key));
+		safe_memzero(&wrapping_key_slot, sizeof(wrapping_key_slot));
 		return status;
 	}
 
 	status = psa_lite_get_key_slot(key, &key_slot);
 	if (status != PSA_SUCCESS) {
+		safe_memzero(&wrapping_key_slot, sizeof(wrapping_key_slot));
 		goto error;
 	}
 
-	status = psa_driver_wrapper_unwrap_key(attributes, &wrapping_key_attributes, encryption_key,
-					       wrapping_key_length, alg, data, data_length,
+	status = psa_driver_wrapper_unwrap_key(attributes, &wrapping_key_slot.key_attributes,
+					       wrapping_key_slot.key,
+					       wrapping_key_slot.key_size, alg, data, data_length,
 					       key_slot->key,
 					       sizeof(key_slot->key),
 					       &key_slot->key_size);
 
-	safe_memzero(encryption_key, sizeof(encryption_key));
+	safe_memzero(&wrapping_key_slot, sizeof(wrapping_key_slot));
 	if (status != PSA_SUCCESS) {
 		goto error;
 	}

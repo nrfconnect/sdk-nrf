@@ -7,18 +7,22 @@
 #define PSA_CORE_LITE_VOLATILE_KEY_STORAGE_H_
 
 #include <util/util_macro.h>
+#include <zephyr/sys/util.h>
 #include <psa/crypto.h>
 #include "psa_core_lite.h"
 
-#if defined(PSA_WANT_ALG_CTR) || defined(PSA_WANT_ALG_AES_KW)
-/* Ensure that the largest key size is supported */
-#if PSA_WANT_AES_KEY_SIZE_256
-#define PSA_LITE_KEY_MAX_SIZE	(32)
-#elif PSA_WANT_AES_KEY_SIZE_128
-#define PSA_LITE_KEY_MAX_SIZE	(16)
-#else
+#if CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE == 0 && \
+    defined(CONFIG_PSA_CORE_LITE_HAS_VERIFY_SIGNATURE)
+#error "No valid algorithm for signature validation"
+#endif
+
+#if CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE == 0 && \
+    defined(PSA_WANT_ALG_CTR)
 #error "FW encryption requires either AES-256 or AES-128 being enabled"
-#endif /* PSA_WANT_AES_KEY_SIZE_XXX */
+#endif
+
+#define PSA_LITE_KEY_MAX_SIZE	MAX(CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE, \
+				    CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE)
 
 #define PSA_LITE_MAX_KEYS_SUPPORTED	1u
 #define PSA_LITE_KEY_ID_NULL		PSA_KEY_ID_NULL
@@ -70,7 +74,5 @@ psa_status_t psa_lite_get_key_slot(mbedtls_svc_key_id_t *key_id, psa_lite_key_sl
  * @param[in] key_id	Volatile key id that corresponds to the slot that must be cleared.
  */
 void psa_lite_free_key_slot(mbedtls_svc_key_id_t key_id);
-
-#endif /* PSA_WANT_ALG_CTR || PSA_WANT_ALG_AES_KW */
 
 #endif /* PSA_CORE_LITE_VOLATILE_KEY_STORAGE_H_ */
