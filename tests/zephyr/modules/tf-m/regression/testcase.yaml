@@ -2,22 +2,28 @@ common:
   tags:
     - tfm
     - ci_tests_tfm
-  build_only: true
+    - sysbuild
+  modules:
+    - tf-m-tests
   harness: console
   harness_config:
     type: multi_line
+    ordered: true
     regex:
-      - "Non-Secure system starting..."
-      - "\\#\\#\\#\\# Execute test suites for the Non-secure area \\#\\#\\#\\#"
-      - "\\*\\*\\* End of Non-secure test suites \\*\\*\\*"
+      # There's an ANSI escape code between has and  PASSED: \x1b[32m (green color). The log file
+      # strips ANSI sequences, which is why it looks clean there. But harness.handle() receives
+      # the raw line with ANSI codes — so has PASSED never matches as a literal string.
+      - "Test suite 'PSA protected storage NS interface tests.*' has.*PASSED"
+      - "Test suite 'PSA internal trusted storage NS interface tests.*' has.*PASSED"
+      - "Test suite 'Crypto non-secure interface test.*' has.*PASSED"
+      - "Test suite 'Platform Service Non-Secure interface tests.*' has.*PASSED"
+  extra_args:
+    - EXTRA_CONF_FILE=${ZEPHYR_BASE}/tests/modules/tf-m/regression/prj.conf
 
 tests:
-  tfm.regression_ipc_lvl1:
-    sysbuild: true
+  nrf.extended.tf-m.regression.ipc.lvl1:
     tags:
       - tfm_lvl1
-      - sysbuild
-      - ci_tests_tfm
     extra_args:
       - CONFIG_TFM_IPC=y
       - CONFIG_TFM_ISOLATION_LEVEL=1
@@ -34,13 +40,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9161dk/nrf9161/ns
-  tfm.regression_ipc_lvl2.cc3xx:
-    sysbuild: true
+  nrf.extended.tf-m.regression.ipc.lvl2.cc3xx:
     tags:
       - tfm_lvl2
-      - sysbuild
-      - ci_tests_tfm
     extra_args:
       - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y
       - CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
@@ -53,13 +55,9 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9161dk/nrf9161/ns
-  tfm.regression_ipc_lvl2.oberon:
-    sysbuild: true
+  nrf.extended.tf-m.regression.ipc.lvl2.oberon:
     tags:
       - tfm_lvl2
-      - sysbuild
-      - ci_tests_tfm
     extra_args:
       - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=n
       - CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
@@ -72,13 +70,9 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9161dk/nrf9161/ns
-  tfm.regression_ipc_lvl2.cc3xx_oberon:
-    sysbuild: true
+  nrf.extended.tf-m.regression.ipc.lvl2.cc3xx.oberon:
     tags:
       - tfm_lvl2
-      - sysbuild
-      - ci_tests_tfm
     extra_args:
       - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y
       - CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
@@ -91,14 +85,9 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
-  tfm.regression_ipc_lvl2.cracen:
-    sysbuild: true
+  nrf.extended.tf-m.regression.ipc.lvl2.cracen:
     tags:
       - tfm_lvl2
-      - sysbuild
-      - ci_tests_tfm
     extra_args:
       - CONFIG_PSA_CRYPTO_DRIVER_CRACEN=y
       - CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
@@ -109,12 +98,9 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
-  tfm.regression_sfn_lvl1:
-    sysbuild: true
+  nrf.extended.tf-m.regression.sfn:
     tags:
       - tfm_lvl1
-      - sysbuild
-      - ci_tests_tfm
     extra_args:
       - CONFIG_TFM_SFN=y
       - CONFIG_TFM_ISOLATION_LEVEL=1
@@ -131,13 +117,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9161dk/nrf9161/ns
-  tfm.regression_fp_hardabi:
-    sysbuild: true
+  nrf.extended.tf-m.regression.fp.hardabi:
     tags:
       - tfm_fp
-      - sysbuild
-      - ci_tests_tfm
     extra_args:
       - CONFIG_FPU=y
       - CONFIG_FP_HARDABI=y
@@ -153,4 +135,3 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9161dk/nrf9161/ns

@@ -1,0 +1,1 @@
+source "${ZEPHYR_BASE}/tests/modules/tf-m/regression/Kconfig"
