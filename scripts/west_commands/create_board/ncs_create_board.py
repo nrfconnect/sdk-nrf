@@ -163,6 +163,12 @@ class NcsCreateBoard(WestCommand):
         tmpl = TEMPLATE_DIR / series / "board-pinctrl.dtsi"
         shutil.copy(tmpl, out_dir / f"{ input['board'] }-pinctrl.dtsi")
 
+        try:
+            tmpl = TEMPLATE_DIR / series / "Kconfig.sysbuild"
+            shutil.copy(tmpl, out_dir)
+        except FileNotFoundError:
+            pass
+
         tmpl = env.get_template("board.cmake.jinja2")
         with open(out_dir / "board.cmake", "w") as f:
             f.write(tmpl.render())
