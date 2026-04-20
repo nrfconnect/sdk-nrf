@@ -638,6 +638,10 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
   * Support for hex only ``softdevice`` sysbuild domains.
   * Updated the SPDX License List database to version 3.28.0.
 
+* :ref:`nrf_profiler_script` script:
+
+  * Fixed the ``ms_per_timestamp_tick`` parameter (defined in the :file: `rtt_nordic_config.py`) to accurately align with the system clock's frequency of the nRF52, nRF53, and nRF91 Series SoCs.
+
 Integrations
 ============
 

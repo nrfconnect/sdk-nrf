@@ -12,7 +12,7 @@ RttNordicConfig = {
     'rtt_down_channel_names': {
         'Nordic nrf_profiler command': 'command',
     },
-    'ms_per_timestamp_tick': 0.03125,
+    'ms_per_timestamp_tick': 1000/32768,
     'byteorder': 'little',
     'reset_on_start': True,
     'connection_timeout': -1,
