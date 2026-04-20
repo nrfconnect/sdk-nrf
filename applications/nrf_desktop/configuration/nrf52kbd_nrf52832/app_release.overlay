@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "memory_map_b0.dtsi"
+
 / {
 	pwmleds0 {
 		compatible = "pwm-leds";
