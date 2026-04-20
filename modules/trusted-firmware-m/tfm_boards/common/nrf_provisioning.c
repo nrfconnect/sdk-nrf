@@ -76,10 +76,63 @@ static enum tfm_plat_err_t disable_netcore_debug(void)
 }
 #endif /* NRF53_SERIES && PM_CPUNET_APP_ADDRESS */
 
+#if defined(CONFIG_HAS_HW_NRF_CRACEN)
+/* The runtime check in verify_debug_disabled() only observes the current
+ * session's TAMPC state. Re-establishing the same state from reset on
+ * subsequent boots requires the boot chain's SystemInit to engage the
+ * APPROTECT and SECUREAPPROTECT locks, which depends on
+ * CONFIG_NRF_APPROTECT_LOCK and CONFIG_NRF_SECURE_APPROTECT_LOCK being set.
+ * Those Kconfig options are propagated into TF-M as the NRF_APPROTECT and
+ * NRF_SECURE_APPROTECT preprocessor definitions (see tfm_boards/CMakeLists.txt).
+ * Refuse to build TF-M with NRF_PROVISIONING enabled if either is missing,
+ * so a misconfigured boot chain cannot reach a SECURED LCS through this
+ * provisioning path.
+ */
+#if !defined(NRF_APPROTECT) || !defined(NRF_SECURE_APPROTECT)
+#error "TFM_NRF_PROVISIONING on nRF54L (CRACEN) requires CONFIG_NRF_APPROTECT_LOCK and " \
+       "CONFIG_NRF_SECURE_APPROTECT_LOCK so the TAMPC debug-disable state is re-applied " \
+       "from reset on every boot"
+#endif
+
+/* Returns true when the given TAMPC PROTECT signal CTRL is locked in the
+ * debug-disabled state (VALUE=Low, LOCK=Enabled). The field positions and
+ * enumerators are identical across DBGEN / NIDEN / SPIDEN / SPNIDEN and the
+ * AUX AP DBGEN, so the DBGEN macros are used for all of them.
+ */
+static bool tampc_signal_is_locked_closed(volatile const uint32_t *ctrl)
+{
+	const uint32_t mask = TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_LOCK_Msk |
+			      TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_VALUE_Msk;
+	const uint32_t expected =
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_LOCK_Enabled
+			<< TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_LOCK_Pos) |
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_VALUE_Low
+			<< TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_VALUE_Pos);
+
+	return (*ctrl & mask) == expected;
+}
+#endif
+
 static enum tfm_plat_err_t verify_debug_disabled(void)
 {
 #if defined(CONFIG_HAS_HW_NRF_CRACEN)
-	/* nRF54L: debug-access lock is handled by the manufacturing image. */
+	/* On nRF54L the debug-access policy lives in TAMPC PROTECT signals, not
+	 * in UICR.APPROTECT. Each signal CTRL becomes write-protected once its
+	 * LOCK bit is set, so whichever image's SystemInit runs first (NSIB,
+	 * MCUboot, or TF-M itself) pins the state for the rest of the power
+	 * cycle. Refuse to advance to SECURED unless every debug signal is
+	 * currently locked in the closed state. The complementary build-time
+	 * assertion above ensures that the NRF_APPROTECT / NRF_SECURE_APPROTECT
+	 * locks are also engaged from reset on subsequent boots.
+	 */
+	if (!tampc_signal_is_locked_closed(&NRF_TAMPC_S->PROTECT.DOMAIN[0].DBGEN.CTRL) ||
+	    !tampc_signal_is_locked_closed(&NRF_TAMPC_S->PROTECT.DOMAIN[0].NIDEN.CTRL) ||
+	    !tampc_signal_is_locked_closed(&NRF_TAMPC_S->PROTECT.DOMAIN[0].SPIDEN.CTRL) ||
+	    !tampc_signal_is_locked_closed(&NRF_TAMPC_S->PROTECT.DOMAIN[0].SPNIDEN.CTRL) ||
+	    !tampc_signal_is_locked_closed(&NRF_TAMPC_S->PROTECT.AP[0].DBGEN.CTRL)) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+
 	return TFM_PLAT_ERR_SUCCESS;
 #else
 	/* Ensures that APPROTECT and SECUREAPPROTECT are enabled upon the next reset */
