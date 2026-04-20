@@ -1,0 +1,8 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Source the original Zephyr sample Kconfig.sysbuild directly to avoid duplication.
+source "${ZEPHYR_BASE}/samples/net/telnet/Kconfig.sysbuild"

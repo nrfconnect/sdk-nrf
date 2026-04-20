@@ -1,0 +1,8 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Source the original Zephyr sample Kconfig directly to avoid duplication.
+source "${ZEPHYR_BASE}/samples/net/sockets/sntp_client/Kconfig"

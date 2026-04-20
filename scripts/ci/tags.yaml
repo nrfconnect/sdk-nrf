@@ -102,6 +102,19 @@ ci_samples_net: &ci_net
     - nrf/modules/cjson/
     - nrf/modules/trusted-firmware-m/
     - nrf/samples/net/
+    - nrf/samples/zephyr/net/dns_resolve/
+    - nrf/samples/zephyr/net/ipv4_autoconf/
+    - nrf/samples/zephyr/net/mdns_responder/
+    - nrf/samples/zephyr/net/mqtt_publisher/
+    - nrf/samples/zephyr/net/mqtt_sn_publisher/
+    - nrf/samples/zephyr/net/sockets/coap_server/
+    - nrf/samples/zephyr/net/sockets/echo_async/
+    - nrf/samples/zephyr/net/sockets/echo_client/
+    - nrf/samples/zephyr/net/sockets/echo_server/
+    - nrf/samples/zephyr/net/sockets/http_get/
+    - nrf/samples/zephyr/net/sockets/sntp_client/
+    - nrf/samples/zephyr/net/syslog_net/
+    - nrf/samples/zephyr/net/telnet/
     - nrf/subsys/dfu/
     - nrf/subsys/fw_info/
     - nrf/subsys/net/

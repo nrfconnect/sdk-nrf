@@ -1,0 +1,13 @@
+sample:
+  description: DNS resolver, mDNS and LLMNR responder
+  name: DNS resolver and responder sample application
+tests:
+  nrf.extended.sample.net.dns_resolve.wifi.nrf71dk:
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - SNIPPET=wifi-ipv4
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
