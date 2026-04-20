@@ -1,0 +1,62 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	uart130_default_alt: uart130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 2, 3)>;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(UART_RX, 2, 9)>;
+			bias-pull-up;
+		};
+	};
+
+	uart130_sleep_alt: uart130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 2, 3)>,
+				<NRF_PSEL(UART_RX, 2, 9)>;
+			low-power-enable;
+		};
+	};
+
+	uart120_default_alt: uart120_default_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 5, 2)>;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(UART_RX, 5, 3)>;
+			bias-pull-up;
+		};
+	};
+
+	uart120_sleep_alt: uart120_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 5, 2)>,
+				<NRF_PSEL(UART_RX, 5, 3)>;
+			low-power-enable;
+		};
+	};
+};
+
+dut: &uart130 {
+	status = "okay";
+	pinctrl-0 = <&uart130_default_alt>;
+	pinctrl-1 = <&uart130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	current-speed = <115200>;
+	zephyr,pm-device-runtime-auto;
+};
+
+dut2: &uart120 {
+	pinctrl-0 = <&uart120_default_alt>;
+	pinctrl-1 = <&uart120_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	current-speed = <4000000>;
+	zephyr,pm-device-runtime-auto;
+};

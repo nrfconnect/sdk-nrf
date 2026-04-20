@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf9251dk_nrf9251_common.dtsi"
+
+&dut {
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&dut2 {
+	status = "okay";
+	memory-regions = <&dma_fast_region>;
+};
+
+&dma_fast_region {
+	status = "okay";
+};
