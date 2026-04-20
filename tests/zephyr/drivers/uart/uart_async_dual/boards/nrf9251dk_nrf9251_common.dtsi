@@ -1,0 +1,96 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires loopbacks:
+ * TX-RX: P1.04 - P1.11
+ * RTS-CTS: P2.03 - P2.09
+ */
+
+&pinctrl {
+	uart130_alt_default: uart130_alt_default {
+		group1 {
+			psels = <NRF_PSEL(UART_RX, 1, 4)>;
+			bias-pull-up;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(UART_RTS, 2, 3)>;
+		};
+	};
+
+	uart130_alt_sleep: uart130_alt_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_RX, 1, 4)>,
+				<NRF_PSEL(UART_RTS, 2, 3)>;
+			low-power-enable;
+			bias-pull-up;
+		};
+	};
+
+	uart131_alt_default: uart131_alt_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 11)>;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(UART_CTS, 2, 9)>;
+			bias-pull-up;
+		};
+	};
+
+	uart131_alt_sleep: uart131_alt_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 11)>,
+				<NRF_PSEL(UART_CTS, 2, 9)>;
+			low-power-enable;
+			bias-pull-up;
+		};
+	};
+};
+
+&timer130 {
+	status = "reserved";
+};
+
+&dppic134 {
+	owned-channels = <0>;
+	source-channels = <0>;
+	status = "okay";
+};
+
+dut: &uart130 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart130_alt_default>;
+	pinctrl-1 = <&uart130_alt_sleep>;
+	pinctrl-names = "default", "sleep";
+	hw-flow-control;
+	timer = <&timer130>;
+	zephyr,pm-device-runtime-auto;
+};
+
+dut_aux: &uart131 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart131_alt_default>;
+	pinctrl-1 = <&uart131_alt_sleep>;
+	pinctrl-names = "default", "sleep";
+	hw-flow-control;
+	zephyr,pm-device-runtime-auto;
+};
+
+&timer133 {
+	status = "okay";
+	interrupts = <435 0>;
+};
+
+/ {
+	busy-sim {
+		compatible = "vnd,busy-sim";
+		status = "okay";
+		counter = <&timer133>;
+	};
+};
