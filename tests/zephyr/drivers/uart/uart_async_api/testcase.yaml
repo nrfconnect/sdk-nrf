@@ -4,6 +4,7 @@ common:
     - uart
     - ci_tests_zephyr_drivers_uart
   timeout: 30
+
 tests:
   nrf.extended.drivers.uart.async_api:
     platform_allow:
@@ -11,26 +12,40 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuppr
+      - nrf9251dk/nrf9251/cpuppr/xip
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     filter: CONFIG_SERIAL_SUPPORT_ASYNC and not CONFIG_UART_MCUX_LPUART
     harness: ztest
     harness_config:
       fixture: gpio_loopback
-    depends_on: gpio
   nrf.extended.drivers.uart.async_api.rtt:
     platform_allow:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuppr
+      - nrf9251dk/nrf9251/cpuppr/xip
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     filter: CONFIG_SERIAL_SUPPORT_ASYNC and CONFIG_HAS_SEGGER_RTT
       and not CONFIG_UART_MCUX_LPUART and not CONFIG_UART_MCUX_FLEXCOMM
-    extra_args: |
-      DTC_OVERLAY_FILE=${ZEPHYR_BASE}/tests/drivers/uart/uart_async_api/boards/segger_rtt.overlay
+    extra_args:
+      - DTC_OVERLAY_FILE=${ZEPHYR_BASE}/tests/drivers/uart/uart_async_api/boards/segger_rtt.overlay
     extra_configs:
       - CONFIG_USE_SEGGER_RTT=y
       - CONFIG_UART_RTT=y
     build_only: true
+  nrf.extended.drivers.uart.async_api.fast:
+    filter: CONFIG_SERIAL_SUPPORT_ASYNC and not CONFIG_UART_MCUX_LPUART
+    harness: ztest
+    harness_config:
+      fixture: uart_fast_loopback
+    extra_args:
+      - FILE_SUFFIX=fast
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
