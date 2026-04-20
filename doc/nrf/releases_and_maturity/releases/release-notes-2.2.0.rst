@@ -481,7 +481,7 @@ Trusted Firmware-M (TF-M) samples
 * Added:
 
   * :ref:`tfm_psa_test` for validating compliance with Arm PSA Certified requirements.
-  * :ref:`tfm_regression_test` to run secure and non-secure Trusted Firmware-M (TF-M) regression tests.
+  * TF-M: Regression tests to run secure and non-secure Trusted Firmware-M (TF-M) regression tests.
   * :ref:`tfm_psa_template`, providing a template for Arm PSA best practices on nRF devices and enforcing correct transition and usage of the PSA lifecycle states.
   * :ref:`provisioning_image` sample that provisions the PSA platform root of trust parameters (such as the PSA Implementation ID and lifecycle state) in a manner compatible with Trusted Firmware-M (TF-M).
 

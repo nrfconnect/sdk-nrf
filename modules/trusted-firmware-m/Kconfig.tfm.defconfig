@@ -28,11 +28,6 @@ config TFM_DUMMY_PROVISIONING
 	bool
 	default n
 
-config TFM_REGRESSION_NS
-	bool
-	select NRF_TIMER0_SECURE if !NRF_PLATFORM_LUMOS
-	select NRF_TIMER00_SECURE if NRF_PLATFORM_LUMOS
-
 config TFM_LOG_LEVEL_SILENCE
 	# Overrule zephyr disable TF-M secure output if the uart1 node has not
 	# assigned GPIO pins using pinctrl.

@@ -10,7 +10,6 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	hex
 	prompt "Memory reserved for TFM_RAM" if !TFM_PROFILE_TYPE_MINIMAL
 	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
-	default 0x18000 if SOC_SERIES_NRF91 && TFM_REGRESSION_S
 	# It has been observed for 54L that when Matter is enabled, then
 	# assigning 0x16000 of RAM to TFM will not leave enough RAM for
 	# Matter. So we use 0x13000 of RAM on 54L.
@@ -38,8 +37,6 @@ config PM_PARTITION_SIZE_TFM
 		(SOC_NRF54L15_CPUAPP || SOC_NRF7120_ENGA_CPUAPP)
 	default 0x7E00 if TFM_PROFILE_TYPE_MINIMAL && BOOTLOADER_MCUBOOT
 	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
-	# NCSDK-13503: Temporarily bump size while regressions are being fixed
-	default 0x60000 if TFM_REGRESSION_S
 	default 0x4FE00 if TFM_CMAKE_BUILD_TYPE_DEBUG && BOOTLOADER_MCUBOOT
 	default 0x50000 if TFM_CMAKE_BUILD_TYPE_DEBUG
 	default 0x3F800 if BOOTLOADER_MCUBOOT && (SOC_SERIES_NRF54L || SOC_NRF7120_ENGA_CPUAPP)
