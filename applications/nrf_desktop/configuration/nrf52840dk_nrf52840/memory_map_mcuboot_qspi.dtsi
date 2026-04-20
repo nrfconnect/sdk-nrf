@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&flash0 {
+	/delete-node/ partitions;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0xc000 DT_SIZE_K(960)>;
+		};
+
+		storage_partition: partition@fc000 {
+			label = "storage";
+			reg = <0xfc000 DT_SIZE_K(16)>;
+		};
+	};
+};
+
+/* The mx25r64 external flash is a child of the QSPI peripheral (see the board
+ * definition), so the QSPI node must be enabled in order to use it.
+ */
+&qspi {
+	status = "okay";
+};
+
+&mx25r64 {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x0 DT_SIZE_K(960)>;
+		};
+	};
+};

@@ -129,7 +129,7 @@ These options allow the :ref:`nrf_desktop_dfu`, :ref:`nrf_desktop_ble_smp`, and 
 
 .. note::
    When the MCUboot bootloader is in the swap mode, it can use a secondary image slot located on the external non-volatile memory.
-   For details on using external non-volatile memory for the secondary image slot, see the :ref:`nrf_desktop_pm_external_flash` section.
+   For details on using external non-volatile memory for the secondary image slot, see the :ref:`nrf_desktop_external_flash` section.
 
 Direct-xip mode
 ~~~~~~~~~~~~~~~

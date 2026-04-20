@@ -1,13 +1,17 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "memory_map_mcuboot_qspi.dtsi"
 #include "app_common.dtsi"
 
 / {
 	chosen {
+		/* Used by the Partition Manager (when enabled through sysbuild).
+		 * Unused when the DTS-based memory map is used.
+		 */
 		nordic,pm-ext-flash = &mx25r64;
 	};
 
@@ -19,8 +23,4 @@
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
-};
-
-&qspi {
-	status = "okay";
 };
