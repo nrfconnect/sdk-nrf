@@ -15,10 +15,8 @@ set(options
   -DCONFIG_NRF_MODEM_LIB_MEM_DIAG=y
   -DCONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S=300
   -DCONFIG_MODEM_JWT_MAX_LEN=850
-  -DCONFIG_LTE_LC_PDN_MODULE=y
 )
 
-cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/date_time.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h
   FUNC_EXCLUDE ".*(lte_lc_rai_req|lte_lc_rai_param_set)"
   WORD_EXCLUDE "__deprecated"

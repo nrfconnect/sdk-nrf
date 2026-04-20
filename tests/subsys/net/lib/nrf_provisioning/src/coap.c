@@ -14,8 +14,6 @@
 #include <time.h>
 #include <ncs_version.h>
 
-#include "cmock_date_time.h"
-#include "cmock_lte_lc.h"
 #include "cmock_modem_key_mgmt.h"
 #include "cmock_modem_info.h"
 #include "cmock_nrf_modem_lib.h"
@@ -810,13 +808,10 @@ void test_provisioning_task_valid(void)
 	__cmock_coap_client_init_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
 	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
-	__cmock_lte_lc_register_handler_Ignore();
-	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
@@ -859,13 +854,11 @@ void test_provisioning_commands(void)
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
 	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
-	__cmock_lte_lc_register_handler_Ignore();
-	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_at_func_mode_is_offline_IgnoreAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_enable_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 
 	__cmock_nrf_provisioning_at_cmd_ExpectAnyArgsAndReturn(513);
@@ -915,7 +908,6 @@ void test_coap_rps_bad_request(void)
 
 	struct coap_client_option block2_option = {};
 
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
@@ -953,7 +945,6 @@ void test_coap_rsp_server_error(void)
 
 	struct coap_client_option block2_option = {};
 
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 
@@ -992,7 +983,6 @@ void test_coap_rsp_unsupported_code(void)
 
 	struct coap_client_option block2_option = {};
 
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 

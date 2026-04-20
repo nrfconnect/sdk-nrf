@@ -178,7 +178,7 @@ Dependencies
 
 This library uses the following |NCS| libraries:
 
-* :ref:`lte_lc_readme`
+* :ref:`at_monitor_readme`
 * :ref:`modem_info_readme`
 * :ref:`modem_key_mgmt`
 * :ref:`lib_rest_client`

@@ -20,8 +20,6 @@
 #include <time.h>
 #include <ncs_version.h>
 
-#include "cmock_date_time.h"
-#include "cmock_lte_lc.h"
 #include "cmock_modem_attest_token.h"
 #include "cmock_modem_key_mgmt.h"
 #include "cmock_modem_info.h"
@@ -744,10 +742,10 @@ void test_codec_priv_keygen_valid(void)
 	cdc_ctx.opkt = tx_buff;
 	cdc_ctx.opkt_sz = sizeof(tx_buff);
 
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_at_func_mode_is_offline_IgnoreAndReturn(true);
 
 	__cmock_nrf_provisioning_at_cmd_ExpectAnyArgsAndReturn(513);
 	__cmock_nrf_modem_at_err_ExpectAnyArgsAndReturn(513);
@@ -789,10 +787,10 @@ void test_codec_priv_keygen_rejected_invalid(void)
 	cdc_ctx.opkt = tx_buff;
 	cdc_ctx.opkt_sz = sizeof(tx_buff);
 
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_at_func_mode_is_offline_IgnoreAndReturn(true);
 
 	char at_resp[] = "";
 
@@ -831,10 +829,10 @@ void test_codec_endorsement_keygen_valid(void)
 	cdc_ctx.opkt = tx_buff;
 	cdc_ctx.opkt_sz = sizeof(tx_buff);
 
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_at_func_mode_is_offline_IgnoreAndReturn(true);
 
 	char at_resp[] = "";
 
@@ -870,10 +868,10 @@ void test_codec_endorsement_keygen_invalid(void)
 	cdc_ctx.opkt = tx_buff;
 	cdc_ctx.opkt_sz = sizeof(tx_buff);
 
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_at_func_mode_is_offline_IgnoreAndReturn(true);
 
 	char at_resp[] = "ERROR";
 
@@ -912,7 +910,6 @@ void test_codec_config_store1_valid(void)
 	cdc_ctx.opkt = tx_buff;
 	cdc_ctx.opkt_sz = sizeof(tx_buff);
 
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
@@ -989,11 +986,11 @@ void test_codec_modem_unresponsive_invalid(void)
 	cdc_ctx.opkt = NULL;
 	cdc_ctx.opkt_sz = 0;
 
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmd_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_at_func_mode_is_offline_IgnoreAndReturn(true);
 
 	nrf_provisioning_codec_setup(&cdc_ctx, at_buff, sizeof(at_buff));
 
@@ -1025,7 +1022,7 @@ void test_provisioning_manual_uninitialized_invalid(void)
 void test_provisioning_init_wo_cert_change_valid(void)
 {
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_settings_subsys_init_ExpectAndReturn(0);
@@ -1043,8 +1040,6 @@ void test_provisioning_init_wo_cert_change_valid(void)
 
 	__cmock_rest_client_request_ExpectAnyArgsAndReturn(0);
 	__cmock_rest_client_request_AddCallback(rest_client_request_auth_hdr_valid);
-
-	__cmock_lte_lc_register_handler_Ignore();
 
 	int ret = nrf_provisioning_init(nrf_provisioning_event_cb);
 
@@ -1071,10 +1066,7 @@ void test_provisioning_task_valid(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
-	__cmock_date_time_now_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
@@ -1110,10 +1102,7 @@ void test_provisioning_task_server_busy_invalid(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
-	__cmock_date_time_now_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
@@ -1211,7 +1200,7 @@ void test_provisioning_event_failed_device_not_claimed(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 	__cmock_modem_attest_token_get_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_attest_token_free_ExpectAnyArgs();
@@ -1249,7 +1238,7 @@ void test_provisioning_event_failed_too_many_commands(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
@@ -1285,7 +1274,7 @@ void test_provisioning_event_failed_wrong_root_ca(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
@@ -1313,7 +1302,7 @@ void test_provisioning_event_failed_wrong_root_ca(void)
 /*
  * - Test NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME
  * - Verify that no valid datetime error triggers the correct event
- * - Mock date_time_is_valid to return false to trigger no valid datetime event
+ * - Mock nrf_provisioning_at_time_get to return error to trigger no valid datetime event
  */
 void test_provisioning_event_failed_no_valid_datetime(void)
 {
@@ -1321,7 +1310,7 @@ void test_provisioning_event_failed_no_valid_datetime(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(0); /* Return false - no valid datetime */
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(1); /* Return error */
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	int ret = nrf_provisioning_trigger_manually();
@@ -1346,7 +1335,7 @@ void test_provisioning_event_failed_timeout(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
@@ -1382,7 +1371,7 @@ void test_provisioning_event_done(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
@@ -1433,16 +1422,11 @@ void test_provisioning_event_lte_deactivation_activation(void)
 	cdc_ctx.opkt = tx_buff;
 	cdc_ctx.opkt_sz = sizeof(tx_buff);
 
-	/* Mock LTE function mode to return NORMAL (online) to trigger deactivation */
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
-	enum lte_lc_func_mode online_mode = LTE_LC_FUNC_MODE_NORMAL;
-
-	__cmock_lte_lc_func_mode_get_ReturnThruPtr_mode(&online_mode);
-
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 
 	/* Mock the LTE deactivation event notification */
+	__cmock_nrf_provisioning_at_func_mode_is_offline_ExpectAndReturn(false);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_ExpectAndReturn(
 		CONFIG_NRF_PROVISIONING_MODEM_STATE_WAIT_TIMEOUT_SECONDS,
 		NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED,
@@ -1487,7 +1471,7 @@ void test_provisioning_event_failed_device_not_claimed_with_token(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();

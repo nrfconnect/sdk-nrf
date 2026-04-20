@@ -19,12 +19,13 @@
 #include <zephyr/sys/reboot.h>
 
 #include <modem/lte_lc.h>
+#include <modem/at_monitor.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/modem_attest_token.h>
+#include <nrf_modem_at.h>
 #include <net/nrf_provisioning.h>
 #include <net/rest_client.h>
-#include <date_time.h>
 
 #include "nrf_provisioning_at.h"
 #include "nrf_provisioning_http.h"
@@ -72,6 +73,7 @@ static void schedule_next_work(unsigned int seconds);
 static void init_work_fn(struct k_work *work);
 static void trigger_reschedule(void);
 static int cert_provision(void);
+static int wait_for_valid_modem_time(int timeout_seconds);
 
 K_WORK_DEFINE(init_work, init_work_fn);
 K_WORK_DELAYABLE_DEFINE(provisioning_work, nrf_provisioning_work);
@@ -96,6 +98,28 @@ static void nrf_provisioning_on_modem_init(int ret, void *ctx)
 	}
 }
 #endif /* CONFIG_NRF_PROVISIONING_WITH_CERT */
+
+NRF_MODEM_LIB_ON_CFUN(nrf_provisioning_cfun_hook, on_modem_cfun, NULL);
+
+static void on_modem_cfun(int mode, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	/* Subscribe to +CGEV notifications when the modem enters a connected functional
+	 * mode. +CGEV is required for tracking PDN connectivity state.
+	 */
+	if (mode == LTE_LC_FUNC_MODE_NORMAL || mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
+		int err;
+		struct nrf_provisioning_callback_data event_data = { 0 };
+
+		err = nrf_modem_at_printf("AT+CGEREP=1");
+		if (err) {
+			__ASSERT(false, "Failed to subscribe to +CGEREP=1, err %d", err);
+			event_data.type = NRF_PROVISIONING_EVENT_FATAL_ERROR;
+			callback_local(&event_data);
+		}
+	}
+}
 
 static void schedule_next_work(unsigned int seconds)
 {
@@ -244,9 +268,6 @@ int nrf_provisioning_notify_event_and_wait_for_modem_state(
 				enum nrf_provisioning_event event,
 				nrf_provisioning_event_cb_t callback)
 {
-	int ret;
-	enum lte_lc_func_mode fmode;
-
 	if (callback == NULL) {
 		LOG_ERR("Callback data is NULL");
 		return -EINVAL;
@@ -265,14 +286,8 @@ int nrf_provisioning_notify_event_and_wait_for_modem_state(
 	callback(&event_data);
 
 	for (int i = 0; i < timeout_seconds; i++) {
-		ret = lte_lc_func_mode_get(&fmode);
-		if (ret) {
-			LOG_ERR("Failed to read modem functional mode");
-			return ret;
-		}
-
 		if (event == NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED) {
-			if (fmode == LTE_LC_FUNC_MODE_OFFLINE) {
+			if (nrf_provisioning_at_func_mode_is_offline()) {
 				LOG_DBG("Modem is offline");
 				return 0;
 			}
@@ -329,40 +344,53 @@ static int settings_init(void)
 	return 0;
 }
 
-static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
+static void cgev_handler(const char *notif)
 {
-	switch (evt->type) {
-	case LTE_LC_EVT_PDN:
-		switch (evt->pdn.type) {
-		case LTE_LC_EVT_PDN_ACTIVATED:
-		case LTE_LC_EVT_PDN_RESUMED:
+	struct cgev_mapping {
+		const char *prefix;
+		size_t len;
+		bool connected;
+	} events[] = {
+		{"ME PDN ACT 0",   sizeof("ME PDN ACT 0") - 1,   true},
+		{"ME PDN DEACT 0", sizeof("ME PDN DEACT 0") - 1, false},
+		{"NW PDN DEACT 0", sizeof("NW PDN DEACT 0") - 1, false},
+		{"ME DETACH",      sizeof("ME DETACH") - 1,      false},
+		{"NW DETACH",      sizeof("NW DETACH") - 1,      false},
+	};
 
+	const char *event = strchr(notif, ':');
+
+	if (!event) {
+		return;
+	}
+
+	/* Skip ':' and any leading spaces */
+	event++;
+	while (*event == ' ') {
+		event++;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(events); i++) {
+		if (strncmp(event, events[i].prefix, events[i].len) != 0) {
+			continue;
+		}
+
+		nw_connected = events[i].connected;
+
+		if (nw_connected) {
 			LOG_DBG("Connected to network");
-			nw_connected = true;
 			if (backoff && IS_ENABLED(CONFIG_NRF_PROVISIONING_SCHEDULED)) {
-				/* If network resumed while waiting, resume immediately */
 				schedule_next_work(0);
 			}
-
-			break;
-		case LTE_LC_EVT_PDN_DEACTIVATED:
-		case LTE_LC_EVT_PDN_NETWORK_DETACH:
-		case LTE_LC_EVT_PDN_SUSPENDED:
-
+		} else {
 			LOG_DBG("Disconnected from network");
-			nw_connected = false;
-
-			break;
-		default:
-			/* Don't care about other PDN events */
-			break;
 		}
-		break;
-	default:
-		/* Don't care about other events */
-		break;
+
+		return;
 	}
 }
+
+AT_MONITOR(nrf_provisioning_cgev, "CGEV", cgev_handler);
 
 int nrf_provisioning_init(nrf_provisioning_event_cb_t callback_handler)
 {
@@ -419,9 +447,6 @@ static void init_work_fn(struct k_work *work)
 		return;
 	}
 
-	/* Setup handler for LTE Link Control events. */
-	lte_lc_register_handler(lte_lc_event_handler);
-
 	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_AUTO_START_ON_INIT)) {
 		LOG_DBG("Starting provisioning on init");
 
@@ -448,10 +473,9 @@ int nrf_provisioning_trigger_manually(void)
  */
 int nrf_provisioning_schedule(void)
 {
-	int ret;
 	int64_t now_s;
 	static time_t retry_s = 1;
-	static time_t deadline_s;
+	static int64_t deadline_s;
 	time_t spread_s;
 	static bool first = true;
 
@@ -473,25 +497,7 @@ int nrf_provisioning_schedule(void)
 		goto out;
 	}
 
-	ret = date_time_now(&now_s);
-	if (ret < 0) {
-		if (ret != -ENODATA) {
-			LOG_ERR("Getting time failed, error: %d", ret);
-			return ret;
-		}
-
-		/* Backoff... */
-		retry_s = retry_s * 2;
-
-		/* ...up to a degree */
-		if (retry_s > CONFIG_NRF_PROVISIONING_INTERVAL_S) {
-			retry_s = CONFIG_NRF_PROVISIONING_INTERVAL_S;
-		}
-
-		goto out;
-	}
-
-	now_s /= 1000; /* date_time_now() is ms */
+	now_s = k_uptime_get() / MSEC_PER_SEC;
 
 	if (now_s > deadline_s || reschedule) {
 		/* Interval set by the server takes precedence */
@@ -528,13 +534,14 @@ static void commit_latest_cmd_id(void)
 	}
 }
 
-static int wait_for_valid_datetime(int timeout_seconds)
+static int wait_for_valid_modem_time(int timeout_seconds)
 {
 	int waited = 0;
+	char time_buf[65];
 
 	while (waited < timeout_seconds) {
-		if (date_time_is_valid()) {
-			LOG_DBG("Valid date time obtained");
+		if (nrf_provisioning_at_time_get(time_buf, sizeof(time_buf)) == 0) {
+			LOG_DBG("Valid modem time obtained");
 			return 0;
 		}
 
@@ -759,9 +766,9 @@ void nrf_provisioning_work(struct k_work *work)
 	event_data.type = NRF_PROVISIONING_EVENT_START;
 	callback_local(&event_data);
 
-	ret = wait_for_valid_datetime(CONFIG_NRF_PROVISIONING_VALID_DATE_TIME_TIMEOUT_SECONDS);
+	ret = wait_for_valid_modem_time(CONFIG_NRF_PROVISIONING_VALID_DATE_TIME_TIMEOUT_SECONDS);
 	if (ret) {
-		LOG_ERR("Failed to get valid date time, err %d", ret);
+		LOG_ERR("Failed to get valid modem time, err %d", ret);
 		event_data.type = NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME;
 		callback_local(&event_data);
 

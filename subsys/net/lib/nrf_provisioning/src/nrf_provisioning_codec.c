@@ -21,7 +21,6 @@
 #include "nrf_provisioning_cbor_encode_types.h"
 #include "nrf_provisioning_internal.h"
 
-#include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
 #include <nrf_modem_at.h>
 
@@ -499,14 +498,7 @@ int nrf_provisioning_codec_process_commands(void)
 			break;
 		case command_union_at_command_m_c:
 
-			enum lte_lc_func_mode func_mode;
-
-			ret = lte_lc_func_mode_get(&func_mode);
-			if (ret < 0) {
-				goto stop_provisioning;
-			}
-
-			if (func_mode != LTE_LC_FUNC_MODE_OFFLINE) {
+			if (!nrf_provisioning_at_func_mode_is_offline()) {
 				ret = nrf_provisioning_notify_event_and_wait_for_modem_state(
 					CONFIG_NRF_PROVISIONING_MODEM_STATE_WAIT_TIMEOUT_SECONDS,
 					NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED,

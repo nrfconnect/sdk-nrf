@@ -7,6 +7,7 @@
 #include <zephyr/logging/log.h>
 
 #include <nrf_modem_at.h>
+#include <modem/lte_lc.h>
 
 #include "nrf_provisioning_at.h"
 
@@ -60,4 +61,19 @@ int nrf_provisioning_at_cmd(void *resp, size_t resp_sz, const char *cmd)
 int nrf_provisioning_at_del_credential(int tag, int type)
 {
 	return nrf_modem_at_printf("AT%%CMNG=3,%d,%d", tag, type);
+}
+
+bool nrf_provisioning_at_func_mode_is_offline(void)
+{
+	int err;
+	int mode;
+
+	err = nrf_modem_at_scanf("AT+CFUN?", "+CFUN: %d", &mode);
+	if (err < 0) {
+		LOG_WRN("Failed to retrieve modem functional mode, err %d", err);
+		return false;
+	}
+
+	/* CFUN=4 is offline (flight) mode */
+	return mode == LTE_LC_FUNC_MODE_OFFLINE;
 }

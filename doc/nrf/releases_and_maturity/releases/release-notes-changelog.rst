@@ -484,7 +484,10 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_nrf_provisioning` library:
+
+  * Removed dependency on the :ref:`lte_lc_readme` library.
+    The :ref:`at_monitor_readme` library is now used for tracking network connectivity status.
 
 Libraries for NFC
 -----------------

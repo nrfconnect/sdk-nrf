@@ -111,8 +111,8 @@ enum nrf_provisioning_event {
 	NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA,
 
 	/**
-	 * Provisioning process failed because no valid datetime reference is available.
-	 * Ensure the device has access to network time or SNTP.
+	 * Provisioning process failed because no valid modem/network time is available.
+	 * Ensure the modem has acquired network time.
 	 */
 	NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME,
 

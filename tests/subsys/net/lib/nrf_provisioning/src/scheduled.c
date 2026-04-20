@@ -19,7 +19,6 @@
 #include <time.h>
 #include <ncs_version.h>
 
-#include "cmock_date_time.h"
 #include "cmock_lte_lc.h"
 #include "cmock_modem_attest_token.h"
 #include "cmock_modem_key_mgmt.h"
@@ -214,16 +213,9 @@ static int rest_client_request_with_commands_cb(struct rest_client_req_context *
 	return 0; /* Success */
 }
 
-static int time_now(int64_t *unix_time_ms, int cmock_num_calls)
-{
-	*unix_time_ms = (int64_t)time(NULL) * MSEC_PER_SEC;
-	return 0;
-}
-
 void setUp(void)
 {
 	k_sem_reset(&event_received_sem);
-	__cmock_date_time_now_Stub(time_now);
 }
 
 void test_provisioning_init_should_start_provisioning(void)
@@ -235,8 +227,7 @@ void test_provisioning_init_should_start_provisioning(void)
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_lte_lc_register_handler_Ignore();
-	__cmock_date_time_now_IgnoreAndReturn(0);
-	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 	__cmock_rest_client_request_defaults_set_Ignore();
 	__cmock_modem_info_get_fw_version_IgnoreAndReturn(0);
@@ -366,47 +357,12 @@ void test_provisioning_schedule_valid(void)
 	/* To avoid being entangled to other tests let's assume that the function has
 	 * never been called earlier. If that's not the case let's just ignore the first invocation.
 	 */
-	__cmock_date_time_now_IgnoreAndReturn(0);
 	(void)nrf_provisioning_schedule();
-
-	__cmock_date_time_now_StopIgnore();
-
-	__cmock_date_time_now_AddCallback(time_now);
-	__cmock_date_time_now_ExpectAnyArgsAndReturn(0);
 
 	int ret = nrf_provisioning_schedule();
 
 	/* Can't have exact match due to the spread factor */
 	TEST_ASSERT_GREATER_OR_EQUAL(0, ret);
-	TEST_ASSERT_LESS_OR_EQUAL_INT(
-		CONFIG_NRF_PROVISIONING_INTERVAL_S + CONFIG_NRF_PROVISIONING_SPREAD_S, ret);
-}
-
-/*
- * - Get when next provisioning should be executed when network time is not available
- * - It's not guaranteed that network provides the time information
- * - Call the function and check that the returned interval is within the expected range.
- *   The compile time configuration is used as we are not reading the value from flash.
- *   Internals are configured in a way that it looks like the time information is not
- *   available.
- */
-void test_provisioning_schedule_no_nw_time_valid(void)
-{
-	/* To avoid being entangled to other tests let's assume that the function has
-	 * never been called earlier. If that's not the case let's just ignore the first invocation.
-	 */
-	__cmock_date_time_now_AddCallback(time_now);
-	__cmock_date_time_now_IgnoreAndReturn(0);
-	(void)nrf_provisioning_schedule();
-
-	__cmock_date_time_now_StopIgnore();
-
-	__cmock_date_time_now_ExpectAnyArgsAndReturn(-1);
-
-	int ret = nrf_provisioning_schedule();
-
-	/* Can't have exact match due to the spread factor */
-	TEST_ASSERT_GREATER_THAN_INT(0, ret);
 	TEST_ASSERT_LESS_OR_EQUAL_INT(
 		CONFIG_NRF_PROVISIONING_INTERVAL_S + CONFIG_NRF_PROVISIONING_SPREAD_S, ret);
 }

@@ -77,6 +77,15 @@ int nrf_provisioning_at_cmd(void *resp, size_t resp_sz, const char *cmd);
  */
 int nrf_provisioning_at_del_credential(int sec_tag, int type);
 
+/**
+ * @brief Check whether the modem is in offline (flight) mode.
+ *
+ * Queries the modem functional mode through AT+CFUN?
+ *
+ * @returns True if the modem functional mode is offline (CFUN=4), false otherwise.
+ */
+bool nrf_provisioning_at_func_mode_is_offline(void);
+
 #ifdef __cplusplus
 }
 #endif
