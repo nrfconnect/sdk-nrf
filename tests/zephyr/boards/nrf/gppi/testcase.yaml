@@ -1,0 +1,12 @@
+common:
+  tags:
+    - drivers
+    - ci_tests_zephyr_boards_nrf_gppi
+  harness: ztest
+
+tests:
+  nrf.extended.boards.nrf.gppi:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
