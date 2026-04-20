@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&grtc {
+	/delete-property/ child-owned-channels;
+	interrupts = <109 2>;
+};
+
+test_timer: &timer131 {
+	status = "okay";
+	interrupts = <419 1>;
+};
+
+&timer130 {
+	status = "okay";
+	prescaler = <0>;
+};
+
+/ {
+	chosen {
+		zephyr,cpu-load-counter = &timer130;
+	};
+};
