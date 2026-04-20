@@ -46,6 +46,25 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Element (IronSide SE) v23.6.0+29
+================================================
+
+Added
+-----
+
+* Support for ``UICR.SNAPSHOT_REGIONS`` to configure user-defined snapshot regions.
+  This is only relevant when snapshot is enabled and configured in OTP.
+* L2CACHE can now be disabled with PERIPHCONF to mitigate HMPAN-234 and HMPAN-242.
+  The L2CACHE is enabled by default. (NCSDK-38144)
+
+Updated
+-------
+
+* The secure domain clock frequency now matches the application domain clock frequency.
+  Previously the secure domain always ran at 64 MHz, but it now matches the application domain frequency, which is at least 64 MHz and usually much higher.
+  This change is expected to significantly improve the IronSide SE CPU and cryptographic accelerator performance. (NCSDK-38284)
+* CRACEN ECC operation countermeasures are now enabled (``CONFIG_CRACEN_ECC_COUNTERMEASURES=y``). (NCSDK-38269)
+
 IronSide Secure Element (IronSide SE) v23.5.0+28
 ================================================
 
