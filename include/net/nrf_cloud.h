@@ -633,11 +633,6 @@ struct nrf_cloud_gnss_data {
  *  cloud side. This data is stored in the device shadow.
  */
 struct nrf_cloud_ctrl_data {
-	/** If true, nrf_cloud_alert_send() or nrf_cloud_rest_alert_send()
-	 *  will transfer alerts to the cloud whenever they are raised.
-	 *  If false, alerts will be suppressed.
-	 */
-	bool alerts_enabled;
 	/** If 0: None - the nrf_cloud library logging backend is disabled.
 	 *     4: LOG_DBG (least urgent) and all levels below are sent to the cloud.
 	 *     3: LOG_INF and all levels below are sent to the cloud.

@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <net/nrf_cloud_coap.h>
-#include <net/nrf_cloud_alert.h>
 
 #include <zephyr/shell/shell.h>
 
@@ -89,27 +88,6 @@ static void cmd_cloud_coap_disconnect(const struct shell *shell, size_t argc, ch
 	connected = false;
 }
 
-static void cmd_cloud_coap_alert_tx(const struct shell *shell, size_t argc, char **argv)
-{
-	ARG_UNUSED(shell);
-	ARG_UNUSED(argc);
-	ARG_UNUSED(argv);
-
-	if (argc < 2) {
-		desh_error("Alert data not provided");
-		return;
-	}
-	int err;
-	char *alert_data = argv[1];
-
-	err = nrf_cloud_alert_send(ALERT_TYPE_MSG, 0, alert_data);
-	if (err) {
-		desh_error("Sending to nRF Cloud failed, error: %d", err);
-	} else {
-		desh_print("Alert data sent to nRF Cloud");
-	}
-}
-
 static void cmd_cloud_coap_raw_data_tx(const struct shell *shell, size_t argc, char **argv)
 {
 	ARG_UNUSED(shell);
@@ -136,8 +114,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(raw_data_tx, NULL, " Send raw bytes to nRF Cloud on the /msg/d2c/raw topic.",
 		      cmd_cloud_coap_raw_data_tx, 2, 0),
-	SHELL_CMD_ARG(alert_tx, NULL, " Send given alert message to nRF Cloud.",
-		      cmd_cloud_coap_alert_tx, 2, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(cloud, &sub_cloud, "CoAP connection to nRF Cloud", desh_print_help_shell);

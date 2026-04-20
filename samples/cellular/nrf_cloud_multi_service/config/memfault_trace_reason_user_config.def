@@ -1,0 +1,4 @@
+// This is where project specific trace reasons should be defined
+// using the MEMFAULT_TRACE_REASON_DEFINE macro
+//
+MEMFAULT_TRACE_REASON_DEFINE(temperature_alert)

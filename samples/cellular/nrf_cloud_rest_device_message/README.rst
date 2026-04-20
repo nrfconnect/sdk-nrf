@@ -15,9 +15,9 @@ Cellular: nRF Cloud REST Device Message
 The REST Device Message sample demonstrates how to use the `nRF Cloud REST API`_ to send `Device Messages <nRF Cloud Device Messages_>`_ using the ``SendDeviceMessage`` REST endpoint.
 Every button press sends a message to nRF Cloud.
 
-It also demonstrates use of the :ref:`lib_nrf_cloud_alert` and the :ref:`lib_nrf_cloud_log` libraries.
-The sample sends an alert when the device first comes online.
-It also sends a log message indicating the sample version, as well as when the button is pressed.
+The sample uses the :ref:`lib_nrf_cloud_log` library.
+When the device first comes online, it sends a log message that indicates the sample version.
+When a button is pressed, the device sends the same log message to nRF Cloud indicating the sample version.
 
 Requirements
 ************
@@ -134,7 +134,6 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_rest`
-* :ref:`lib_nrf_cloud_alert`
 * :ref:`lib_nrf_cloud_log`
 * :ref:`lib_modem_jwt`
 * :ref:`dk_buttons_and_leds_readme`

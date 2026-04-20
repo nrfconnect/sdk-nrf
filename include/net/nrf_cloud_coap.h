@@ -448,8 +448,7 @@ int nrf_cloud_coap_shadow_service_info_update(const struct nrf_cloud_svc_info * 
 /**
  * @brief Process any elements of the shadow relevant to this library.
  *
- * One such element is the control section, which specifies the log level and turns
- * alerts on and off.
+ * One such element is the control section, which specifies the log level.
  *
  * If application-specific delta data exists, it will be provided in delta_out.
  *

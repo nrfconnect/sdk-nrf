@@ -13,7 +13,6 @@
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_log.h>
-#include <net/nrf_cloud_alert.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <date_time.h>
@@ -222,29 +221,18 @@ static void print_reset_reason(void)
 	int reset_reason = 0;
 
 	reset_reason = nrfx_reset_reason_get();
+	nrfx_reset_reason_clear(reset_reason);
 	LOG_INF("Reset reason: 0x%x", reset_reason);
 }
 
 static void report_startup(void)
 {
 	int err = 0;
-	int reset_reason = 0;
 
 	/* Set the keep alive flag to true;
 	 * connection will remain open to allow for multiple REST calls
 	 */
 	rest_ctx.keep_alive = true;
-
-	reset_reason = nrfx_reset_reason_get();
-	nrfx_reset_reason_clear(reset_reason);
-	LOG_INF("Reset reason: 0x%x", reset_reason);
-
-	err = nrf_cloud_rest_alert_send(&rest_ctx, device_id,
-								ALERT_TYPE_DEVICE_NOW_ONLINE,
-								reset_reason, NULL);
-	if (err) {
-		LOG_ERR("Error sending alert to cloud: %d", err);
-	}
 
 	err = nrf_cloud_rest_log_send(&rest_ctx, device_id,
 							LOG_LEVEL_INF,
@@ -483,7 +471,7 @@ int main(void)
 		return 0;
 	}
 
-	/* Send alert and log message to the cloud. */
+	/* Log message to the cloud. */
 	report_startup();
 
 	/* Set the keep alive flag to false;

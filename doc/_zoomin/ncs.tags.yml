@@ -422,7 +422,6 @@ mapping_topics:
                                  "development-kits", "at-commands"]
   - nrf/libraries/networking/nrf_cloud.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_cloud_agnss.html: ["nrf-cloud"]
-  - nrf/libraries/networking/nrf_cloud_alert.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_cloud_coap.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_cloud_location.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_cloud_log.html: ["nrf-cloud"]

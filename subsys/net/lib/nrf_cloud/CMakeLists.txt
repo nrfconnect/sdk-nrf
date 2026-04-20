@@ -92,13 +92,6 @@ if(CONFIG_MCUBOOT_IMG_MANAGER)
   zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
 endif()
 
-if(CONFIG_NRF_CLOUD_ALERT)
-  zephyr_library_sources(common/src/nrf_cloud_alert.c)
-  zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_COAP coap/src/nrf_cloud_alert.c)
-  zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_MQTT mqtt/src/nrf_cloud_alert.c)
-  zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_REST rest/src/nrf_cloud_alert.c)
-endif()
-
 if(CONFIG_NRF_CLOUD_LOG_DIRECT)
   zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_COAP coap/src/nrf_cloud_log.c)
   zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_MQTT mqtt/src/nrf_cloud_log.c)

@@ -205,7 +205,6 @@ For more information on the various services, see the following documentation:
 * :ref:`lib_nrf_cloud_location`
 * :ref:`lib_nrf_cloud_fota`
 * :ref:`lib_nrf_cloud_pgps`
-* :ref:`lib_nrf_cloud_alert`
 * :ref:`lib_nrf_cloud_log`
 * :ref:`lib_nrf_cloud_coap`
 

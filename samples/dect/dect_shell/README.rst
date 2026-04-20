@@ -45,7 +45,6 @@ Main command structure:
        connect
        disconnect
        raw_data_tx (with CoAP)
-       alert_tx (with CoAP)
      dect
        activate
        deactivate

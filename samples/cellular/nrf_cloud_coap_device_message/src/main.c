@@ -13,7 +13,6 @@
 #include <helpers/nrfx_reset_reason.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_log.h>
-#include <net/nrf_cloud_alert.h>
 #include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud_coap.h>
 #include <zephyr/logging/log.h>
@@ -147,33 +146,15 @@ static void print_reset_reason(void)
 	int reset_reason = 0;
 
 	reset_reason = nrfx_reset_reason_get();
+	nrfx_reset_reason_clear(reset_reason);
 	LOG_INF("Reset reason: 0x%x", reset_reason);
 }
 
 static void report_startup(void)
 {
-	int err = 0;
-	int reset_reason = 0;
-
-
-	reset_reason = nrfx_reset_reason_get();
-	nrfx_reset_reason_clear(reset_reason);
-	LOG_INF("Reset reason: 0x%x", reset_reason);
-
-	err = nrf_cloud_alert_send(ALERT_TYPE_DEVICE_NOW_ONLINE,
-				   reset_reason, NULL);
-
-	if (err) {
-		LOG_ERR("Error sending alert to cloud: %d", err);
-	}
-
 	(void)nrf_cloud_log_send(LOG_LEVEL_INF,
 				 SAMPLE_SIGNON_FMT,
 				 APP_VERSION_STRING);
-
-	if (err) {
-		LOG_ERR("Error sending direct log to cloud: %d", err);
-	}
 }
 
 static int send_hello_world_msg(void)
@@ -518,7 +499,7 @@ int main(void)
 		return 0;
 	}
 
-	/* Send alert and log message to the cloud. */
+	/* Log message to the cloud. */
 	report_startup();
 
 	err = send_hello_world_msg();

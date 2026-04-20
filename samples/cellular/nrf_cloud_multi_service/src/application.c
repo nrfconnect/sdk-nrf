@@ -14,7 +14,6 @@
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_log.h>
-#include <net/nrf_cloud_alert.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #endif
@@ -30,6 +29,9 @@
 #include "led_control.h"
 #include "at_commands.h"
 #include "shadow_config.h"
+#if IS_ENABLED(CONFIG_MEMFAULT) && IS_ENABLED(CONFIG_NRF_CLOUD_COAP)
+#include <memfault/core/trace_event.h>
+#endif
 
 LOG_MODULE_REGISTER(application, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
@@ -286,12 +288,13 @@ cleanup:
 }
 
 /** @brief Check whether temperature is acceptable.
- * If the device exceeds a temperature limit, send the temperature alert one time.
+ * If the device exceeds a temperature limit, log a warning and send the temperature_alert
+ * Trace Event one time (when Memfault with CoAP is enabled).
  * Once the temperature falls below a lower limit, re-enable the temperature alert
- * so it will be sent if limit is exceeded again.
+ * so it will be sent if the limit is exceeded again.
  *
  * The difference between the two limits should be sufficient to prevent sending
- * new alerts if the temperature value oscillates between two nearby values.
+ * a new Trace Event if the temperature value oscillates between two nearby values.
  *
  * @param temp - The current device temperature.
  */
@@ -301,10 +304,15 @@ static void monitor_temperature(double temp)
 
 	if ((temp > TEMP_ALERT_LIMIT) && !temperature_alert_active) {
 		temperature_alert_active = true;
-		(void)nrf_cloud_alert_send(ALERT_TYPE_TEMPERATURE, (float)temp,
-					   "Temperature over limit!");
 		LOG_INF("Temperature limit %f C exceeded: now %f C.",
 			TEMP_ALERT_LIMIT, temp);
+		#if defined(CONFIG_MEMFAULT) && defined(CONFIG_NRF_CLOUD_COAP)
+			/* When using nRF Cloud powered by Memfault, send a Trace Event when the
+			 * temperature limit is exceeded.
+			 */
+			MEMFAULT_TRACE_EVENT_WITH_LOG(temperature_alert,
+				"Alert! Temperature is: %.2f C", temp);
+		#endif
 	} else if ((temp < TEMP_ALERT_LOWER_LIMIT) && temperature_alert_active) {
 		temperature_alert_active = false;
 		LOG_INF("Temperature now below limit: %f C.", temp);
@@ -331,7 +339,6 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	if (has_changed & DK_BTN1_MSK) {
 		if ((button_state & DK_BTN1_MSK) == DK_BTN1_MSK) {
 			LOG_INF("Button pressed");
-			(void)nrf_cloud_alert_send(ALERT_TYPE_MSG, 0, "Button pressed");
 		}
 	}
 }
@@ -343,20 +350,8 @@ static void print_reset_reason(void)
 	uint32_t reset_reason;
 
 	reset_reason = nrfx_reset_reason_get();
+	nrfx_reset_reason_clear(reset_reason);
 	LOG_INF("Reset reason: 0x%x", reset_reason);
-#endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
-}
-
-static void report_startup(void)
-{
-#if !defined(CONFIG_BOARD_NATIVE_SIM)
-	if (IS_ENABLED(CONFIG_SEND_ONLINE_ALERT)) {
-		uint32_t reset_reason;
-
-		reset_reason = nrfx_reset_reason_get();
-		nrfx_reset_reason_clear(reset_reason);
-		(void)nrf_cloud_alert_send(ALERT_TYPE_DEVICE_NOW_ONLINE, reset_reason, NULL);
-	}
 #endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
 }
 
@@ -377,8 +372,6 @@ void main_application_thread_fn(void)
 
 	/* Wait for first connection before starting the application. */
 	(void)await_cloud_ready(K_FOREVER);
-
-	report_startup();
 
 	/* Wait for the date and time to become known.
 	 * This is needed both for location services and for sensor sample timestamping.

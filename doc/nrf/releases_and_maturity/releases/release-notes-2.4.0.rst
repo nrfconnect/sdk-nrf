@@ -80,7 +80,7 @@ The following list includes the summary of the most relevant changes introduced 
 
   * nRF Cloud library:
 
-    * :ref:`lib_nrf_cloud_alert`, which enables applications to generate and transmit messages that comply with the alert features of nRF Cloud.
+    * nRF Cloud Alert library, which enables applications to generate and transmit messages that comply with the alert features of nRF Cloud.
     * :ref:`lib_nrf_cloud_log`, which enables applications to generate and transmit messages that comply with the logs features of nRF Cloud.
 
 * Improved:

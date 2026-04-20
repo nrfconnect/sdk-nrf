@@ -14,7 +14,6 @@
 #include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
-#include <net/nrf_cloud_alert.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
@@ -80,13 +79,6 @@ struct nrf_cloud_fota_job_update {
 /** @brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks);
 
-/** @brief Encode an alert and update the output struct with pointer
- *  to data and its length.  Caller must free the pointer when done,
- *  but only if it is not NULL; when CONFIG_NRF_CLOUD_ALERT is disabled,
- *  this function returns 0, and sets output->ptr = NULL and output->len = 0.
- */
-int nrf_cloud_alert_encode(const struct nrf_cloud_alert_info *alert, struct nrf_cloud_data *output);
-
 /** @brief Encode the sensor data based on the indicated type. */
 int nrf_cloud_sensor_data_encode(const struct nrf_cloud_sensor_data *input,
 				 struct nrf_cloud_data *output);
@@ -148,7 +140,7 @@ void nrf_cloud_device_control_get(struct nrf_cloud_ctrl_data *const ctrl);
 int nrf_cloud_shadow_control_response_encode(struct nrf_cloud_ctrl_data const *const data,
 					     bool accept, struct nrf_cloud_data *const output);
 
-/** @brief Parse shadow data for control section. Act on any changes to logging or alerts.
+/** @brief Parse shadow data for control section. Act on any changes to logging or Memfault state.
  * If needed, generate output JSON to send back to cloud to confirm change.
  */
 int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const input,

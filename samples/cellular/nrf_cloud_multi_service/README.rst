@@ -8,7 +8,7 @@ Cellular: nRF Cloud multi-service
    :depth: 2
 
 This sample is a minimal, error tolerant, integrated demonstration of the :ref:`lib_nrf_cloud`, :ref:`lib_location`, and :ref:`lib_at_host` libraries.
-It demonstrates how you can integrate Firmware-Over-The-Air (FOTA), Location Services, Alert and Log Services, periodic sensor sampling, and more in your `nRF Cloud`_-enabled application.
+It demonstrates how you can integrate Firmware-Over-The-Air (FOTA), Location Services, Memfault Trace Events and Log Services, periodic sensor sampling, and more in your `nRF Cloud`_-enabled application.
 It also demonstrates how to build connected, error-tolerant applications without worrying about physical-level specifics using Zephyr's ``conn_mgr``.
 
 .. note::
@@ -53,8 +53,8 @@ This sample implements or demonstrates the following features:
 * Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud Device Messages`_.
 * Construction of valid `nRF Cloud Device Messages`_.
 * Minimal LED status indication using the `Zephyr LED API`_.
-* Transmission of an alert on sample startup using the :ref:`lib_nrf_cloud_alert` library.
-* Transmission of additional alerts, whenever a specified temperature limit is exceeded.
+* Definition of a user config Trace Event (``temperature_alert``).
+* Transmission of an Alert Trace Event whenever a specified temperature limit is exceeded.
 * Optional transmission of log messages to the cloud using the :ref:`lib_nrf_cloud_log` library.
 * Experimental support for Wi-Fi connectivity.
 
@@ -117,7 +117,6 @@ If more than :ref:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES <CONFIG_MAX_CONSECUTIVE_
 
 Most messages sent to nRF Cloud by this sample are sent using the message queue, but the following are sent directly:
 
-* Alerts using the :ref:`lib_nrf_cloud_alert` library.
 * Logs using the :ref:`lib_nrf_cloud_log` library.
 * `Device shadow <nRF Cloud Device Shadows_>`_ updates.
 * Ground fix requests from the :ref:`lib_location` library.
@@ -130,7 +129,6 @@ Application thread and main application loop
 The application thread is implemented in the :file:`src/application.c` file, and is responsible for the high-level behavior of this sample.
 
 When it starts, it logs the `reset reason code <nRF9160 RESETREAS_>`_.
-If the :ref:`CONFIG_SEND_ONLINE_ALERT <CONFIG_SEND_ONLINE_ALERT>` Kconfig option is enabled, it sends an alert to nRF Cloud containing the reset reason as the value field.
 
 It performs the following major tasks:
 
@@ -139,7 +137,8 @@ It performs the following major tasks:
 * Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.
 * Sends sensor sample and location device messages to the :ref:`nrf_cloud_multi_service_device_message_queue`.
 * Checks for and executes :ref:`remote modem AT command requests <nrf_cloud_multi_service_remote_at>`.
-* Sends temperature alerts and sample startup alerts using the :ref:`lib_nrf_cloud_alert` library.
+* Prints temperature alerts.
+* Sends Memfault Trace Events when temperature limits are exceeded.
 
 .. note::
    Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
@@ -717,12 +716,6 @@ CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES - FOTA job check interval (minutes)
 
 CONFIG_COAP_FOTA_THREAD_STACK_SIZE - CoAP FOTA Thread Stack Size (bytes)
    Sets the stack size (in bytes) for the FOTA job checking thread of the sample.
-
-.. _CONFIG_SEND_ONLINE_ALERT:
-
-CONFIG_SEND_ONLINE_ALERT - Send a routine ``ALERT_TYPE_DEVICE_NOW_ONLINE`` on startup
-   This option, on enabling, demonstrates the alert feature of nRF Cloud.
-   Reception of this alert indicates that the device has rebooted.
 
 .. _CONFIG_POST_PROVISIONING_INTERVAL_M:
 
@@ -1520,7 +1513,6 @@ This sample uses the following |NCS| libraries and drivers:
 * :ref:`lib_location`
 * :ref:`lib_at_host`
 * :ref:`lte_lc_readme`
-* :ref:`lib_nrf_cloud_alert`
 * :ref:`lib_nrf_cloud_log`
 
 It uses the following `sdk-nrfxlib`_ library:
