@@ -47,12 +47,121 @@ static struct bt_conn_le_cs_config cs_config;
 /* Store local initiator IQs in this array. The size is based on requirements of cs_de_ifft. */
 static float local_iq_tones[2 * CONFIG_BT_CS_DE_NFFT_SIZE];
 
+/* --- Simple constant-velocity Kalman filter for distance tracking --- *
+ *
+ * State vector: x = [d, v]^T  (distance [m], velocity [m/s])
+ * Measurement : z = d         (distance from cs_de_ifft, in meters)
+ *
+ * Transition   F = [[1, dt],
+ *                   [0,  1]]
+ * Measurement  H = [1, 0]
+ *
+ * Process noise is modeled as continuous white-noise acceleration with
+ * spectral density sigma_a^2, giving
+ *   Q = sigma_a^2 * [[dt^4/4, dt^3/2],
+ *                    [dt^3/2, dt^2  ]]
+ *
+ * R is the scalar measurement-noise variance.
+ *
+ * Tune KF_SIGMA_A and KF_R_MEAS for the expected motion / sensor noise.
+ */
+#define KF_SIGMA_A   1.0f   /* [m/s^2] expected acceleration std-dev */
+#define KF_R_MEAS    0.25f  /* [m^2] distance measurement variance (sigma = 0.5 m) */
+#define KF_P_INIT    10.0f  /* initial state covariance (large = trust first measurement) */
+
+static bool  kf_initialized;
+static float kf_x[2];       /* state: [distance, velocity] */
+static float kf_P[2][2];    /* covariance */
+
+/* Run one predict + update cycle.
+ * z  : new distance measurement [m]
+ * dt : time since previous measurement [s] (ignored on first call)
+ * Returns the filtered distance estimate.
+ */
+static float kalman_update(float z, float dt)
+{
+	if (!kf_initialized || dt <= 0.0f) {
+		/* Initialize state directly from the first measurement. */
+		kf_x[0] = z;
+		kf_x[1] = 0.0f;
+		kf_P[0][0] = KF_P_INIT; kf_P[0][1] = 0.0f;
+		kf_P[1][0] = 0.0f;      kf_P[1][1] = KF_P_INIT;
+		kf_initialized = true;
+		return kf_x[0];
+	}
+
+	/* ---------------- Predict ---------------- */
+	/* x = F x */
+	kf_x[0] += kf_x[1] * dt;
+	/* x[1] unchanged */
+
+	/* P = F P F^T + Q */
+	const float p00 = kf_P[0][0];
+	const float p01 = kf_P[0][1];
+	const float p10 = kf_P[1][0];
+	const float p11 = kf_P[1][1];
+
+	const float dt2 = dt * dt;
+	const float dt3 = dt2 * dt;
+	const float dt4 = dt2 * dt2;
+	const float sa2 = KF_SIGMA_A * KF_SIGMA_A;
+
+	const float q00 = sa2 * dt4 * 0.25f;
+	const float q01 = sa2 * dt3 * 0.5f;
+	const float q11 = sa2 * dt2;
+
+	/* F P F^T for F = [[1,dt],[0,1]] */
+	kf_P[0][0] = p00 + dt * (p10 + p01) + dt2 * p11 + q00;
+	kf_P[0][1] = p01 + dt * p11 + q01;
+	kf_P[1][0] = p10 + dt * p11 + q01;
+	kf_P[1][1] = p11 + q11;
+
+	/* ---------------- Update (H = [1, 0]) ---------------- */
+	const float y = z - kf_x[0];                       /* innovation */
+	const float S = kf_P[0][0] + KF_R_MEAS;            /* innovation covariance */
+	const float K0 = kf_P[0][0] / S;                   /* Kalman gain */
+	const float K1 = kf_P[1][0] / S;
+
+	kf_x[0] += K0 * y;
+	kf_x[1] += K1 * y;
+
+	/* P = (I - K H) P */
+	const float np00 = (1.0f - K0) * kf_P[0][0];
+	const float np01 = (1.0f - K0) * kf_P[0][1];
+	const float np10 = kf_P[1][0] - K1 * kf_P[0][0];
+	const float np11 = kf_P[1][1] - K1 * kf_P[0][1];
+
+	kf_P[0][0] = np00;
+	kf_P[0][1] = np01;
+	kf_P[1][0] = np10;
+	kf_P[1][1] = np11;
+
+	return kf_x[0];
+}
+
 static void distance_estimates_print(void)
 {
-	for (uint8_t i = 0; i < CS_DE_NUM_CHANNELS + 5; i++) {
-		LOG_ERR("local_iq_tones[%d]: %.1f + j * %.1f", i, (double)local_iq_tones[2 * i], (double)local_iq_tones[2 * i + 1]);
+	static int64_t prev_ts = 0;
+
+	int64_t now = k_uptime_get();
+	int64_t delta = 0;
+	if (prev_ts != 0) {
+		delta = now - prev_ts;
 	}
-	LOG_ERR("\n\n");
+	prev_ts = now;
+	for (uint8_t i = 0; i < CS_DE_NUM_CHANNELS + 5; i++) {
+		LOG_DBG("local_iq_tones[%d]: %.1f + j * %.1f", i, (double)local_iq_tones[2 * i], (double)local_iq_tones[2 * i + 1]);
+	}
+	LOG_DBG("\n");
+
+	float distance_ifft = cs_de_ifft(local_iq_tones);
+
+	float dt_s = (float)delta * 1e-3f;
+	float distance_kf = kalman_update(distance_ifft, dt_s);
+
+	LOG_ERR("distance_ifft: %.2f  kf: %.2f  v: %.2f m/s  dt: %lld ms",
+		(double)distance_ifft, (double)distance_kf,
+		(double)kf_x[1], delta);
 }
 
 static void extract_pcts(uint8_t channel_index, struct bt_hci_le_cs_step_data_tone_info *local_tone_info)
@@ -73,19 +182,28 @@ static void extract_pcts(uint8_t channel_index, struct bt_hci_le_cs_step_data_to
 static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subevent_result *result)
 {
 	static int64_t prev_ts = 0;
-
+	static uint32_t prev_procedure_counter = 0xdeadbeef;
 	int64_t now = k_uptime_get();
 	int64_t delta = 0;
 	if (prev_ts != 0) {
 		delta = now - prev_ts;
 	}
-	LOG_INF("Subevent result callback for procedure counter %u procedure done status %u subevent done status %u, number of steps reported %u, time delta since last call: %lld ms",
+
+	if (result->header.procedure_counter == prev_procedure_counter) {
+		LOG_ERR("Procedure counter %u is the same as the previous one", result->header.procedure_counter);
+		return;
+	}
+	prev_procedure_counter = result->header.procedure_counter;
+
+	if (result->header.procedure_counter == prev_procedure_counter) {
+	LOG_DBG("Subevent result callback for procedure counter %u procedure done status %u subevent done status %u, number of steps reported %u, time delta since last call: %lld ms",
 		result->header.procedure_counter,
 		result->header.procedure_done_status,
 		result->header.subevent_done_status,
 		result->header.num_steps_reported,
 		delta);
 
+		memset(local_iq_tones, 0, sizeof(local_iq_tones));
 		for (uint8_t i = 0; i < result->header.num_steps_reported; i++) {
 			if (result->step_data_buf->len < 3) {
 				LOG_WRN("Local step data appears malformed.");
@@ -123,6 +241,7 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 	prev_ts = now;
 	k_sem_give(&sem_distance_estimate_updated);
 	return;
+}
 }
 
 static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
@@ -463,7 +582,7 @@ int main(void)
 
 	struct bt_scan_init_param scan_params = {
 		.scan_param = NULL,
-		.conn_param = BT_LE_CONN_PARAM(0x10, 0x10, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
+		.conn_param = BT_LE_CONN_PARAM(6, 6, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
 		.connect_if_match = 1
 	};
 
@@ -546,9 +665,9 @@ int main(void)
 	/* scale factor of conn_interval units to proc_interval units is 1.25/0.625 = 2 */
 	const uint16_t acl_interval_in_proc_interval_units =
 		scan_params.conn_param->interval_max * 2;
-	uint16_t desired_procedure_interval = 500;
+	uint16_t desired_procedure_interval = 2;
 	uint16_t desired_max_procedure_length =
-		acl_interval_in_proc_interval_units * (desired_procedure_interval - 1);
+		acl_interval_in_proc_interval_units * (desired_procedure_interval) - 1;
 
 	const struct bt_le_cs_set_procedure_parameters_param procedure_params = {
 		.config_id = CS_CONFIG_ID,
@@ -556,8 +675,8 @@ int main(void)
 		.min_procedure_interval = desired_procedure_interval,
 		.max_procedure_interval = desired_procedure_interval,
 		.max_procedure_count = 0,
-		.min_subevent_len = 16000,
-		.max_subevent_len = 16000,
+		.min_subevent_len = 11000,
+		.max_subevent_len = 11000,
 		.tone_antenna_config_selection = BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A1_B1,
 		.phy = BT_LE_CS_PROCEDURE_PHY_2M,
 		.tx_power_delta = 0x80,
