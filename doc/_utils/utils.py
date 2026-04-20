@@ -25,6 +25,7 @@ ALL_DOCSETS = {
     "tfm": ("Trusted Firmware-M", "wrapper", "trusted-firmware-m"),
     "matter": ("Matter", "index", "matter"),
     "kconfig": ("Kconfig Reference", "index", None),
+    "api": ("API Reference", "index", None),
 }
 """All supported docsets (name: title, home page, manifest project name)."""
 

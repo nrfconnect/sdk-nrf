@@ -100,6 +100,10 @@
     "F821",     # https://docs.astral.sh/ruff/rules/undefined-name
     "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
 ]
+"./doc/api/conf.py" = [
+    "E402",    # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "I001",    # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
 "./doc/kconfig/conf.py" = [
     "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
     "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports

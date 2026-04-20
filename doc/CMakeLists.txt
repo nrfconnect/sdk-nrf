@@ -352,6 +352,11 @@ add_doxygen_docset(nrfxlib ${ZEPHYR_NRFXLIB_MODULE_DIR} ${NRF_VERSION})
 add_doxygen_docset(wifi ${ZEPHYR_NRF_WIFI_MODULE_DIR} "" STANDALONE)
 
 #-------------------------------------------------------------------------------
+# docset: api
+
+add_docset(api "")
+
+#-------------------------------------------------------------------------------
 # docset: internal
 
 if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
@@ -390,6 +395,7 @@ add_dependencies(merge-search-indexes
     mcuboot-all
     tfm-all
     kconfig-all
+    api-all
 )
 if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(merge-search-indexes internal-all)
@@ -408,6 +414,7 @@ add_doc_dependencies(zephyr kconfig-all)
 add_doc_dependencies(mcuboot kconfig-all)
 add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all matter-all tfm-all kconfig-all wifi)
 add_doc_dependencies(nrfxlib nrf-all)
+add_doc_dependencies(api nrf-doxygen zephyr-doxygen nrfxlib-doxygen nrfx wifi)
 
 add_custom_target(build-all ALL)
 add_dependencies(build-all
@@ -422,6 +429,7 @@ add_dependencies(build-all
     matter-all
     kconfig-all
     wifi
+    api-all
 )
 if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(build-all internal-all)
