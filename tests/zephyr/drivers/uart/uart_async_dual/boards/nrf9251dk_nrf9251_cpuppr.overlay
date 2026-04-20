@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf9251dk_nrf9251_cpuapp.overlay"
+
+&timer137 {
+	interrupts = <435 (NRF_DEFAULT_IRQ_PRIORITY + 1)>;
+};

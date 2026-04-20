@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../../boards/nrf9251dk_nrf9251_cpuapp.overlay"
+
+&dut {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&dut_aux {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&timer130 {
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&dppic134 {
+	child-owned-channels = <0>;
+};
+
+&uart132 {
+	current-speed = <1000000>;
+};
