@@ -832,5 +832,8 @@ zcbor
 Documentation
 =============
 
-* Added the :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
-  To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
+* Added:
+
+  *  The :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
+     To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
+  * The API Reference documentation set to serve as an entry point to doxygen-generated API documentation for various components.
