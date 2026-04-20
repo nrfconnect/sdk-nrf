@@ -1810,6 +1810,11 @@ ci_tests_zephyr_boards_nrf_mram_latency:
     - nrf/tests/zephyr/boards/nrf/mram_latency/
     - zephyr/tests/boards/nrf/mram_latency/
 
+ci_tests_zephyr_boards_nrf_gppi:
+  files:
+    - nrf/tests/zephyr/boards/nrf/gppi/
+    - zephyr/tests/boards/nrf/gppi/
+
 ci_tests_zephyr_drivers_gpio:
   files:
     - nrf/tests/zephyr/drivers/gpio/
