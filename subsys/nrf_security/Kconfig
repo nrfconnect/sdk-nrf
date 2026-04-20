@@ -68,7 +68,7 @@ config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 	help
 	  Promptless option used to control if the PSA Crypto core should have support for builtin keys or not.
 
-config MBEDTLS_CFG_FILE
+config MBEDTLS_CONFIG_FILE
 	default "nrf-config.h"
 
 config MBEDTLS_PSA_CRYPTO_CONFIG

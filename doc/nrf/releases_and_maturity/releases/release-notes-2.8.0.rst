@@ -236,7 +236,7 @@ Build and configuration system
 * Fixed:
 
   * An issue with the |NCS| boot banner using ``CMAKE_SOURCE_DIR`` instead of ``APPLICATION_SOURCE_DIR``.
-  * An issue with :kconfig:option:`CONFIG_MBEDTLS_CFG_FILE` having a prompt which would, in some circumstances, lead to a sticky value if the configuration was changed.
+  * An issue with ``CONFIG_MBEDTLS_CFG_FILE`` having a prompt which would, in some circumstances, lead to a sticky value if the configuration was changed.
   * An issue with changes to image configurations in a ``sysbuild.cmake`` file not being applied to variant images.
   * An issue with signing variables not expanding strings for nRF70 Series devices.
 
