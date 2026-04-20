@@ -63,6 +63,14 @@ void dump_hex_ascii(const uint8_t *data, size_t size)
 	printk("\n");
 }
 
+/* The S0/S1 NSIB upgrade slot pair only exists on platforms that use the
+ * second-stage bootloader B0 with a redundant b0 image (nRF5340, nRF91x).
+ * On nRF54L the boot chain is NSIB -> MCUboot -> TF-M+app with a single
+ * MCUboot slot, so PM_S1_ADDRESS is undefined and get_fw_info() is compiled
+ * out. The rest of the sample (attestation token, mcumgr DFU) works the
+ * same on all targets.
+ */
+#if defined(CONFIG_FW_INFO) && defined(PM_S1_ADDRESS)
 static void get_fw_info_address(uint32_t fw_address)
 {
 	struct fw_info info;
@@ -107,6 +115,7 @@ static void get_fw_info(void)
 
 	printk("\nActive slot: %s\n", s0_active ? "S0" : "S1");
 }
+#endif /* defined(CONFIG_FW_INFO) && defined(PM_S1_ADDRESS) */
 
 static void get_attestation_token(void)
 {
@@ -163,7 +172,9 @@ int main(void)
 	 */
 	printk("build time: " __DATE__ " " __TIME__ "\n");
 
+#if defined(CONFIG_FW_INFO) && defined(PM_S1_ADDRESS)
 	get_fw_info();
+#endif
 	get_attestation_token();
 
 	/* The system work queue handles all incoming mcumgr requests.  Let the

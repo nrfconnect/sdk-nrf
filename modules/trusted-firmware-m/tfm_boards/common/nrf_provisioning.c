@@ -9,14 +9,16 @@
 #include "tfm_platform_system.h"
 #include "tfm_attest_hal.h"
 #include "hw_unique_key.h"
-#include "nrfx_nvmc.h"
 #include <nrfx.h>
-#include <nrf_cc3xx_platform.h>
-#include <nrf_cc3xx_platform_identity_key.h>
 #include "nrf_provisioning.h"
-#include <identity_key.h>
 #include <tfm_spm_log.h>
 #include <pm_config.h>
+#if !defined(CONFIG_HAS_HW_NRF_CRACEN)
+#include "nrfx_nvmc.h"
+#include <nrf_cc3xx_platform.h>
+#include <nrf_cc3xx_platform_identity_key.h>
+#include <identity_key.h>
+#endif
 #if defined(NRF53_SERIES) && (defined(PM_CPUNET_APP_ADDRESS) || defined(CONFIG_TFM_HAS_B0N))
 #include <dfu/pcd_common.h>
 #include <spu.h>
@@ -76,6 +78,10 @@ static enum tfm_plat_err_t disable_netcore_debug(void)
 
 static enum tfm_plat_err_t verify_debug_disabled(void)
 {
+#if defined(CONFIG_HAS_HW_NRF_CRACEN)
+	/* nRF54L: debug-access lock is handled by the manufacturing image. */
+	return TFM_PLAT_ERR_SUCCESS;
+#else
 	/* Ensures that APPROTECT and SECUREAPPROTECT are enabled upon the next reset */
 	if (NRF_UICR_S->APPROTECT != UICR_APPROTECT_PALL_Protected ||
 	    NRF_UICR_S->SECUREAPPROTECT != UICR_SECUREAPPROTECT_PALL_Protected) {
@@ -83,6 +89,7 @@ static enum tfm_plat_err_t verify_debug_disabled(void)
 	}
 
 	return TFM_PLAT_ERR_SUCCESS;
+#endif
 }
 
 enum tfm_plat_err_t tfm_plat_provisioning_is_required(bool *provisioning_required)
@@ -119,8 +126,8 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-#ifdef TFM_PARTITION_INITIAL_ATTESTATION
-	/* The Initial Attestation key should be already written */
+#if defined(TFM_PARTITION_INITIAL_ATTESTATION) && !defined(CONFIG_HAS_HW_NRF_CRACEN)
+	/* The Initial Attestation key should be already written. */
 	if (!identity_key_is_written()) {
 		SPMLOG_ERRMSG(
 			"This device has not been provisioned with an Initial Attestation Key.");
@@ -168,7 +175,7 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 
 static bool dummy_key_is_present(void)
 {
-#ifdef TFM_PARTITION_INITIAL_ATTESTATION
+#if defined(TFM_PARTITION_INITIAL_ATTESTATION) && !defined(CONFIG_HAS_HW_NRF_CRACEN)
 	uint8_t key[IDENTITY_KEY_SIZE_BYTES];
 	int err;
 
