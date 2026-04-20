@@ -7,6 +7,8 @@ common:
     - nrf54ls05dk/nrf54ls05b/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuflpr
+    - nrf9251dk/nrf9251/cpuapp
+    - nrf9251dk/nrf9251/cpuppr
   integration_platforms:
     - nrf54ls05dk/nrf54ls05b/cpuapp
   timeout: 45
