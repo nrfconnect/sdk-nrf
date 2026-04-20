@@ -56,6 +56,10 @@ NAME_EXCHANGE = {
     's1_image': 's1_partition',
     'tfm_secure': 'slot0_s_partition',
     'tfm_nonsecure': 'slot0_ns_partition',
+    'tfm_storage': 'tfm_storage_partition',
+    'tfm_its': 'tfm_its_partition',
+    'tfm_otp_nv_counters': 'tfm_otp_partition',
+    'tfm_ps': 'tfm_ps_partition',
 }
 
 # Mapping for label exchanges
@@ -82,7 +86,115 @@ LABEL_EXCHANGE = {
     's1_image': 'b0-image-1',
     'tfm_secure': 'image-0-secure',
     'tfm_nonsecure': 'image-0-nonsecure',
+    'tfm_storage': 'tfm-storage',
+    'tfm_its': 'tfm-its',
+    'tfm_otp_nv_counters': 'tfm-otp',
+    'tfm_ps': 'tfm-ps',
 }
+
+
+def normalize_inside_parent(area):
+    """Return the parent partition name from a PM `inside` field."""
+    inside = area.get('inside')
+
+    if isinstance(inside, list) and inside:
+        return inside[0]
+    if isinstance(inside, str):
+        return inside
+
+    return None
+
+
+def normalize_before_list(area):
+    """Return a list of `placement.before` partition names."""
+    placement = area.get('placement')
+    if not isinstance(placement, dict):
+        return []
+
+    before = placement.get('before')
+    if isinstance(before, list):
+        return before
+    if isinstance(before, str):
+        return [before]
+
+    return []
+
+
+def build_inside_relationships(flash_regions):
+    """Build parent->children map from partitions using `inside`."""
+    by_original_name = {area[6]: area for area in flash_regions}
+    parent_children = {}
+
+    for area in flash_regions:
+        parent_name = area[7]
+        if parent_name and parent_name in by_original_name:
+            parent_children.setdefault(parent_name, []).append(area[6])
+            # Children are emitted within their parent subpartition node.
+            area[4] = True
+
+    return parent_children
+
+
+def add_topology_edge(graph, indegree, source, target):
+    """Add a dependency edge if it does not already exist."""
+    if target not in graph[source]:
+        graph[source].add(target)
+        indegree[target] += 1
+
+
+def insert_available_by_address(available, candidate, by_original_name):
+    """Insert an available node while preserving address order."""
+    for i, current in enumerate(available):
+        if by_original_name[candidate][1] < by_original_name[current][1]:
+            available.insert(i, candidate)
+            return
+
+    available.append(candidate)
+
+
+def release_ready_neighbors(current, graph, indegree, available, by_original_name):
+    """Decrement neighbors and enqueue those that become ready."""
+    for next_name in sorted(graph[current], key=lambda name: by_original_name[name][1]):
+        indegree[next_name] -= 1
+        if indegree[next_name] == 0:
+            insert_available_by_address(available, next_name, by_original_name)
+
+
+def order_subpartitions(child_names, by_original_name):
+    """Order children by address and placement.before dependencies."""
+    ordered_by_address = sorted(child_names, key=lambda name: by_original_name[name][1])
+    child_set = set(child_names)
+
+    graph = {name: set() for name in child_names}
+    indegree = dict.fromkeys(child_names, 0)
+
+    for child_name in child_names:
+        before_list = by_original_name[child_name][8]
+        for before_target in before_list:
+            if before_target in child_set:
+                add_topology_edge(graph, indegree, child_name, before_target)
+
+    available = [name for name in ordered_by_address if indegree[name] == 0]
+    result = []
+
+    while available:
+        current = available.pop(0)
+        result.append(current)
+        release_ready_neighbors(current, graph, indegree, available, by_original_name)
+
+    # If dependency data is malformed (cycle), fall back to address order.
+    if len(result) != len(child_names):
+        return ordered_by_address
+
+    return result
+
+
+def format_partition_size(size):
+    """Format partition size for DTS output."""
+    if size % 1024 == 0:
+        return f'DT_SIZE_K({size // 1024})'
+
+    return f'0x{format(size, "x")}'
 
 
 def extend_partition(all_areas):
@@ -128,26 +240,68 @@ def flash_sort_cpunet(a, b, odd_area_ref):
     return -1 if a[1] < b[1] else 1
 
 
-def find_duplicate_address(regions):
-    # Find duplicate addresses and return the odd area name
-    address_map = {}
+def should_keep_odd_area(odd_area, flash_regions):
+    """Check whether to keep an area marked as duplicate by flash_sort."""
+    if not odd_area:
+        return False
+    odd_original_name = odd_area[6]
+    # Keep if it has a parent (inside relationship) or if it has children.
+    return odd_area[7] is not None or any(a[7] == odd_original_name for a in flash_regions)
 
-    for region in regions:
-        address = region[1]
 
-        if address in address_map:
-            existing = address_map[address]
+def write_and_print(f, text):
+    """Write to file and print simultaneously."""
+    f.write(text)
+    print(text, end='')
 
-            if existing[0] == 'slot0_partition':
-                return region[0]
-            elif region[0] == 'slot0_partition':
-                return existing[0]
-            else:
-                continue
 
-        address_map[address] = region
+def write_partition_node(f, indent, area, offset, subpartition_base_offset=0):
+    """Write a flat (non-parent) partition node."""
+    final_offset = offset - subpartition_base_offset
+    node_str = f'{indent}{area[5]}{area[0]}: partition@{format(final_offset, "x")} {{\n'
+    write_and_print(f, node_str)
+    write_and_print(f, f'{indent}\tlabel = "{area[2]}";\n')
+    reg_str = f'{indent}\treg = <0x{format(final_offset, "x")} '
+    reg_str += f'0x{format(area[3], "x")}>;\n'
+    write_and_print(f, reg_str)
+    write_and_print(f, f'{indent}}};\n')
 
-    return None
+
+def write_parent_partition_node(
+    f, indent, area, offset, size, by_original_name, parent_children, subpartition_base_offset=0
+):
+    """Write a parent partition node with fixed-subpartitions and child nodes."""
+    final_offset = offset - subpartition_base_offset
+    node_hdr = f'{indent}{area[5]}{area[0]}: partition@{format(final_offset, "x")} {{\n'
+    write_and_print(f, node_hdr)
+    write_and_print(f, f'{indent}\tcompatible = "fixed-subpartitions";\n')
+    write_and_print(f, f'{indent}\tlabel = "{area[2]}";\n')
+    reg_str = f'{indent}\treg = <0x{format(final_offset, "x")} '
+    reg_str += f'{format_partition_size(size)}>;\n'
+    write_and_print(f, reg_str)
+    ranges_str = f'{indent}\tranges = <0x0 0x{format(final_offset, "x")} '
+    ranges_str += f'{format_partition_size(size)}>;\n'
+    write_and_print(f, ranges_str)
+    write_and_print(f, f'{indent}\t#address-cells = <1>;\n')
+    write_and_print(f, f'{indent}\t#size-cells = <1>;\n\n')
+
+    child_indent = indent + '\t'
+    child_names = order_subpartitions(parent_children, by_original_name)
+    for child_name in child_names:
+        child_area = by_original_name[child_name]
+        child_offset = child_area[1] - area[1]
+        child_node = (
+            f'{child_indent}{child_area[5]}{child_area[0]}: '
+            f'partition@{format(child_offset, "x")} {{\n'
+        )
+        write_and_print(f, child_node)
+        write_and_print(f, f'{child_indent}\tlabel = "{child_area[2]}";\n')
+        child_reg = f'{child_indent}\treg = <0x{format(child_offset, "x")} '
+        child_reg += f'{format_partition_size(child_area[3])}>;\n'
+        write_and_print(f, child_reg)
+        write_and_print(f, f'{child_indent}}};\n\n')
+
+    write_and_print(f, f'{indent}}};\n')
 
 
 def main():
@@ -291,11 +445,24 @@ def main():
             continue
 
         # Get label and name
-        label = LABEL_EXCHANGE.get(name, '')
+        label = LABEL_EXCHANGE.get(name, name.replace('_', '-'))
         partition_name = NAME_EXCHANGE.get(name, name)
 
-        # Add region information: [name, address, label, size, skip, extra_labels]
-        flash_regions.append([partition_name, area['address'], label, area['size'], False, ''])
+        # Add region information:
+        # [name, address, label, size, skip, extra_labels, original_name, inside_parent, before]
+        flash_regions.append(
+            [
+                partition_name,
+                area['address'],
+                label,
+                area['size'],
+                False,
+                '',
+                name,
+                normalize_inside_parent(area),
+                normalize_before_list(area),
+            ]
+        )
 
     # Process CPUNET partitions if they exist
     partitions_cpunet_file = os.path.join(input_folder, 'partitions_CPUNET.yml')
@@ -324,14 +491,27 @@ def main():
                 continue
 
             # Get label and name
-            label = LABEL_EXCHANGE.get(name, '')
+            label = LABEL_EXCHANGE.get(name, name.replace('_', '-'))
             partition_name = NAME_EXCHANGE.get(name, name)
 
             if area['address'] >= 0x100000000:
                 area['address'] -= 0x100000000
 
-            # Add region information: [name, address, label, size, skip, extra_labels]
-            flash_regions.append([partition_name, area['address'], label, area['size'], False, ''])
+            # Add region information:
+            # [name, address, label, size, skip, extra_labels, original_name, inside_parent, before]
+            flash_regions.append(
+                [
+                    partition_name,
+                    area['address'],
+                    label,
+                    area['size'],
+                    False,
+                    '',
+                    name,
+                    normalize_inside_parent(area),
+                    normalize_before_list(area),
+                ]
+            )
 
     # Adjust for MCUboot
     if mcuboot_enabled:
@@ -364,9 +544,14 @@ def main():
         )
 
         if odd_area_ref[0]:
-            internal_flash_regions_cpunet = [
-                area for area in internal_flash_regions_cpunet if area[0] != odd_area_ref[0]
-            ]
+            odd_area = next(
+                (area for area in internal_flash_regions_cpunet if area[0] == odd_area_ref[0]),
+                None,
+            )
+            if not should_keep_odd_area(odd_area, internal_flash_regions_cpunet):
+                internal_flash_regions_cpunet = [
+                    area for area in internal_flash_regions_cpunet if area[0] != odd_area_ref[0]
+                ]
 
     # Sort internal and external flash regions
     odd_area_ref = ['']
@@ -377,9 +562,14 @@ def main():
 
     # Remove potentially duplicate area
     if odd_area_ref[0]:
-        internal_flash_regions = [
-            area for area in internal_flash_regions if area[0] != odd_area_ref[0]
-        ]
+        odd_area = next(
+            (area for area in internal_flash_regions if area[0] == odd_area_ref[0]),
+            None,
+        )
+        if not should_keep_odd_area(odd_area, internal_flash_regions):
+            internal_flash_regions = [
+                area for area in internal_flash_regions if area[0] != odd_area_ref[0]
+            ]
 
     # Extend partitions for nrf70 wifi firmware
     extend_partition(internal_flash_regions)
@@ -387,6 +577,13 @@ def main():
 
     if parsed_cpunet:
         extend_partition(internal_flash_regions_cpunet)
+
+    # Build parent-child maps for inside-based subpartitions.
+    internal_parent_children = build_inside_relationships(internal_flash_regions)
+    external_parent_children = build_inside_relationships(external_flash_regions)
+
+    if parsed_cpunet:
+        internal_cpunet_parent_children = build_inside_relationships(internal_flash_regions_cpunet)
 
     # Calculate actual entries to output
     internal_entries = len([area for area in internal_flash_regions if not area[4]])
@@ -398,193 +595,161 @@ def main():
         )
 
     f = open(f'{board_target}.overlay', 'w')  # noqa: SIM115
-    # Nordic boards for overlays only
-    f.write('/delete-node/ &boot_partition;\n')
-    f.write('/delete-node/ &slot0_partition;\n')
-    f.write('/delete-node/ &slot1_partition;\n')
-    f.write('/delete-node/ &storage_partition;\n\n')
-    print('/delete-node/ &boot_partition;')
-    print('/delete-node/ &slot0_partition;')
-    print('/delete-node/ &slot1_partition;')
-    print('/delete-node/ &storage_partition;\n')
 
     # Output internal flash regions
     if internal_entries > 0:
-        f.write(f'&{nvm_device} {{\n')
-        f.write('\tpartitions {\n')
-        print(f'&{nvm_device} {{')
-        print('\tpartitions {')
+        write_and_print(f, f'&{nvm_device} {{\n')
+        write_and_print(f, '\tpartitions {\n')
 
         output_count = 0
         indent = '\t\t'
         subpartition_offset = 0
+        internal_by_original_name = {area[6]: area for area in internal_flash_regions}
 
         for area in internal_flash_regions:
             if area[4]:
                 continue
 
             if output_count > 0:
-                f.write('\n')
-                print()
+                write_and_print(f, '\n')
 
             # Handle TFM subpartitions
             if tfm_enabled and mcuboot_enabled and area[0] == 'slot0_s_partition':
                 subpartition_offset = area[1]
-
-                f.write(
-                    f'{indent}slot0_partition: partition@{format(subpartition_offset, "x")} {{\n'
-                )
-                f.write(f'{indent}\tcompatible = "fixed-subpartitions";\n')
-                f.write(f'{indent}\tlabel = "image-0";\n')
-                f.write(
-                    f'{indent}\treg = <0x{format(subpartition_offset, "x")} '
-                    f'0x{format(tfm_slot0_combined_size, "x")}>;\n'
-                )
-                f.write(
-                    f'{indent}\tranges = <0x0 0x{format(subpartition_offset, "x")} '
-                    f'0x{format(tfm_slot0_combined_size, "x")}>;\n'
-                )
-                f.write(f'{indent}\t#address-cells = <1>;\n')
-                f.write(f'{indent}\t#size-cells = <1>;\n\n')
-
-                print(f'{indent}slot0_partition: partition@{format(subpartition_offset, "x")} {{')
-                print(f'{indent}\tcompatible = "fixed-subpartitions";')
-                print(f'{indent}\tlabel = "image-0";')
-                print(
-                    f'{indent}\treg = <0x{format(subpartition_offset, "x")} '
-                    f'0x{format(tfm_slot0_combined_size, "x")}>;'
-                )
-                print(
-                    f'{indent}\tranges = <0x0 0x{format(subpartition_offset, "x")} '
-                    f'0x{format(tfm_slot0_combined_size, "x")}>;'
-                )
-                print(f'{indent}\t#address-cells = <1>;')
-                print(f'{indent}\t#size-cells = <1>;\n')
-
+                slot0_hdr = f'{indent}slot0_partition: partition@'
+                slot0_node = f'{slot0_hdr}{format(subpartition_offset, "x")} {{\n'
+                write_and_print(f, slot0_node)
+                write_and_print(f, f'{indent}\tcompatible = "fixed-subpartitions";\n')
+                write_and_print(f, f'{indent}\tlabel = "image-0";\n')
+                slot0_reg = f'{indent}\treg = <0x{format(subpartition_offset, "x")} '
+                slot0_reg += f'0x{format(tfm_slot0_combined_size, "x")}>;\n'
+                write_and_print(f, slot0_reg)
+                slot0_ranges = f'{indent}\tranges = <0x0 0x{format(subpartition_offset, "x")} '
+                slot0_ranges += f'0x{format(tfm_slot0_combined_size, "x")}>;\n'
+                write_and_print(f, slot0_ranges)
+                write_and_print(f, f'{indent}\t#address-cells = <1>;\n')
+                write_and_print(f, f'{indent}\t#size-cells = <1>;\n\n')
                 indent = '\t\t\t'
 
             # Write main partition
-            f.write(
-                f'{indent}{area[5]}{area[0]}: '
-                f'partition@{format(area[1] - subpartition_offset, "x")} {{\n'
-            )
-            f.write(f'{indent}\tlabel = "{area[2]}";\n')
-            f.write(
-                f'{indent}\treg = '
-                f'<0x{format(area[1] - subpartition_offset, "x")} 0x{format(area[3], "x")}>;\n'
-            )
-            f.write(f'{indent}}};\n')
-            print(
-                f'{indent}{area[5]}{area[0]}: '
-                f'partition@{format(area[1] - subpartition_offset, "x")} {{'
-            )
-            print(f'{indent}\tlabel = "{area[2]}";')
-            print(
-                f'{indent}\treg = '
-                f'<0x{format(area[1] - subpartition_offset, "x")} 0x{format(area[3], "x")}>;'
-            )
-            print(f'{indent}}};')
+            parent_children = internal_parent_children.get(area[6], [])
+            if parent_children:
+                write_parent_partition_node(
+                    f,
+                    indent,
+                    area,
+                    area[1],
+                    area[3],
+                    internal_by_original_name,
+                    parent_children,
+                    subpartition_offset,
+                )
+            else:
+                write_partition_node(f, indent, area, area[1], subpartition_offset)
 
             # Close subpartition container
             if tfm_enabled and mcuboot_enabled and area[0] == 'slot0_ns_partition':
                 indent = '\t\t'
                 subpartition_offset = 0
-                f.write(f'{indent}}};\n')
-                print(f'{indent}}};')
+                write_and_print(f, f'{indent}}};\n')
 
             output_count += 1
 
-        f.write('\t};\n')
-        f.write('};\n\n')
-        print('\t};')
-        print('};\n')
+        write_and_print(f, '\t};\n')
+        write_and_print(f, '};\n\n')
 
     # Generate device tree nodes for external flash regions
     if external_entries > 0:
-        f.write('&mx25r64 {\n')
-        f.write('\tpartitions {\n')
-        f.write('\t\tcompatible = "fixed-partitions";\n')
-        f.write('\t\tranges;\n')
-        f.write('\t\t#address-cells = <1>;\n')
-        f.write('\t\t#size-cells = <1>;\n\n')
-        print('&mx25r64 {')
-        print('\tpartitions {')
-        print('\t\tcompatible = "fixed-partitions";')
-        print('\t\tranges;')
-        print('\t\t#address-cells = <1>;')
-        print('\t\t#size-cells = <1>;\n')
+        write_and_print(f, '&mx25r64 {\n')
+        write_and_print(f, '\tpartitions {\n')
+        write_and_print(f, '\t\tcompatible = "fixed-partitions";\n')
+        write_and_print(f, '\t\tranges;\n')
+        write_and_print(f, '\t\t#address-cells = <1>;\n')
+        write_and_print(f, '\t\t#size-cells = <1>;\n\n')
 
         output_count = 0
         indent = '\t\t'
+        external_by_original_name = {area[6]: area for area in external_flash_regions}
 
         for area in external_flash_regions:
             if area[4]:
                 continue
 
             if output_count > 0:
-                f.write('\n')
-                print()
+                write_and_print(f, '\n')
 
-            f.write(f'{indent}{area[5]}{area[0]}: partition@{format(area[1], "x")} {{\n')
-            f.write(f'{indent}\tlabel = "{area[2]}";\n')
-            f.write(f'{indent}\treg = <0x{format(area[1], "x")} 0x{format(area[3], "x")}>;\n')
-            f.write(f'{indent}}};\n')
-            print(f'{indent}{area[5]}{area[0]}: partition@{format(area[1], "x")} {{')
-            print(f'{indent}\tlabel = "{area[2]}";')
-            print(f'{indent}\treg = <0x{format(area[1], "x")} 0x{format(area[3], "x")}>;')
-            print(f'{indent}}};')
+            parent_children = external_parent_children.get(area[6], [])
+            if parent_children:
+                write_parent_partition_node(
+                    f, indent, area, area[1], area[3], external_by_original_name, parent_children
+                )
+            else:
+                write_partition_node(f, indent, area, area[1])
 
             output_count += 1
 
-        f.write('\t};\n')
-        f.write('};\n\n')
-        print('\t};')
-        print('};\n')
+        write_and_print(f, '\t};\n')
+        write_and_print(f, '};\n\n')
 
     # Output CPUNET partitions
     if parsed_cpunet and internal_cpunet_entries > 0:
         f_net = open(f'{board_target}_cpunet.overlay', 'w')  # noqa: SIM115
         print('**CPUNET**:\n')
 
-        # Nordic boards for overlays only
-        f_net.write('/delete-node/ &boot_partition;\n')
-        f_net.write('/delete-node/ &slot0_partition;\n')
-        f_net.write('/delete-node/ &slot1_partition;\n')
-        f_net.write('/delete-node/ &storage_partition;\n\n')
-        print('/delete-node/ &boot_partition;')
-        print('/delete-node/ &slot0_partition;')
-        print('/delete-node/ &slot1_partition;')
-        print('/delete-node/ &storage_partition;\n')
-
-        f_net.write('&flash1 {\n')
-        f_net.write('\tpartitions {\n')
-        print('&flash1 {')
-        print('\tpartitions {')
+        write_and_print(f_net, '&flash1 {\n')
+        write_and_print(f_net, '\tpartitions {\n')
 
         output_count = 0
+        indent = '\t\t'
+        cpunet_by_original_name = {area[6]: area for area in internal_flash_regions_cpunet}
         for area in internal_flash_regions_cpunet:
             if area[4]:
                 continue
 
             if output_count > 0:
-                f_net.write('\n')
-                print()
+                write_and_print(f_net, '\n')
 
-            f_net.write(f'\t\t{area[5]}{area[0]}: partition@{format(area[1], "x")} {{\n')
-            f_net.write(f'\t\t\tlabel = "{area[2]}";\n')
-            f_net.write(f'\t\t\treg = <0x{format(area[1], "x")} 0x{format(area[3], "x")}>;\n')
-            f_net.write('\t\t};\n')
-            print(f'\t\t{area[5]}{area[0]}: partition@{format(area[1], "x")} {{')
-            print(f'\t\t\tlabel = "{area[2]}";')
-            print(f'\t\t\treg = <0x{format(area[1], "x")} 0x{format(area[3], "x")}>;')
-            print('\t\t};')
+            parent_children = internal_cpunet_parent_children.get(area[6], [])
+            if parent_children:
+                # Adjust write function to use f_net for CPUNET output
+                final_offset = area[1]
+                node_hdr = f'{indent}{area[5]}{area[0]}: partition@{format(final_offset, "x")} {{\n'
+                write_and_print(f_net, node_hdr)
+                write_and_print(f_net, f'{indent}\tcompatible = "fixed-subpartitions";\n')
+                write_and_print(f_net, f'{indent}\tlabel = "{area[2]}";\n')
+                net_reg = f'{indent}\treg = <0x{format(final_offset, "x")} '
+                net_reg += f'{format_partition_size(area[3])}>;\n'
+                write_and_print(f_net, net_reg)
+                net_ranges = f'{indent}\tranges = <0x0 0x{format(final_offset, "x")} '
+                net_ranges += f'{format_partition_size(area[3])}>;\n'
+                write_and_print(f_net, net_ranges)
+                write_and_print(f_net, f'{indent}\t#address-cells = <1>;\n')
+                write_and_print(f_net, f'{indent}\t#size-cells = <1>;\n\n')
+
+                child_indent = indent + '\t'
+                child_names = order_subpartitions(parent_children, cpunet_by_original_name)
+                for child_name in child_names:
+                    child_area = cpunet_by_original_name[child_name]
+                    child_offset = child_area[1] - area[1]
+                    child_node = (
+                        f'{child_indent}{child_area[5]}{child_area[0]}: '
+                        f'partition@{format(child_offset, "x")} {{\n'
+                    )
+                    write_and_print(f_net, child_node)
+                    write_and_print(f_net, f'{child_indent}\tlabel = "{child_area[2]}";\n')
+                    net_child_reg = f'{child_indent}\treg = <0x{format(child_offset, "x")} '
+                    net_child_reg += f'{format_partition_size(child_area[3])}>;\n'
+                    write_and_print(f_net, net_child_reg)
+                    write_and_print(f_net, f'{child_indent}}};\n\n')
+
+                write_and_print(f_net, f'{indent}}};\n')
+            else:
+                write_partition_node(f_net, indent, area, area[1])
 
             output_count += 1
 
-        f_net.write('\t};\n')
-        f_net.write('};\n\n')
-        print('\t};')
-        print('};\n')
+        write_and_print(f_net, '\t};\n')
+        write_and_print(f_net, '};\n\n')
 
 
 if __name__ == '__main__':
