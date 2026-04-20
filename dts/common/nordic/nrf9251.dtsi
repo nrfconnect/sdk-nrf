@@ -451,6 +451,8 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
+				channels = <8>;
+				groups = <2>;
 			};
 
 			timer120: timer@8e2000 {
@@ -522,6 +524,8 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
+				channels = <8>;
+				groups = <2>;
 			};
 
 			rtc130: rtc@928000 {
@@ -635,6 +639,8 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
+				channels = <8>;
+				groups = <2>;
 			};
 
 			adc: adc@982000 {
@@ -665,6 +671,8 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
+				channels = <8>;
+				groups = <2>;
 			};
 
 			pdm0: pdm@993000 {
@@ -690,6 +698,8 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
+				channels = <8>;
+				groups = <2>;
 			};
 
 			timer130: timer@9a2000 {
@@ -814,6 +824,8 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
+				channels = <8>;
+				groups = <2>;
 			};
 
 			timer132: timer@9b2000 {
