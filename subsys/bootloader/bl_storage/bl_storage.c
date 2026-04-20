@@ -31,7 +31,12 @@ const volatile struct bl_storage_data *const BL_STORAGE =
 #define ALIGN_TO_WORD(x) ((uint32_t)x & 0x3)
 
 #define STATE_ENTERED 0x0000
+/* Erased-word value: halfword on NVMC, word on RRAMC (matches lcs_data_t width). */
+#if defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_SOC_SERIES_NRF54L)
+#define STATE_NOT_ENTERED 0xFFFFFFFF
+#else
 #define STATE_NOT_ENTERED 0xFFFF
+#endif
 
 #ifdef CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,

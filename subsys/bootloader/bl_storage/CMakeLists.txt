@@ -5,7 +5,12 @@
 #
 
 zephyr_library()
-zephyr_library_sources(bl_storage.c)
+
+# bl_storage.c accesses OTP directly via NRFX_NVMC or NRFX_RRAMC. Neither is
+# available in NS builds (OTP access goes through TF-M), so skip the source.
+if(CONFIG_NRFX_NVMC OR CONFIG_NRFX_RRAMC)
+  zephyr_library_sources(bl_storage.c)
+endif()
 
 if(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION)
   # NB: This option can only be enabled for the MCUBoot image
