@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&flash0 {
+	/delete-node/ partitions;
+
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0";
+			reg = <0x0 DT_SIZE_K(32)>;
+		};
+
+		bl_storage: provision_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0-provision-data";
+			reg = <0x8000 DT_SIZE_K(4)>;
+		};
+
+		s0_partition: partition@9000 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0-image-0";
+			reg = <0x9000 DT_SIZE_K(488)>;
+		};
+
+		s1_partition: partition@83000 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0-image-1";
+			reg = <0x83000 DT_SIZE_K(488)>;
+		};
+
+		storage_partition: partition@fd000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0xfd000 DT_SIZE_K(12)>;
+		};
+	};
+};
+
+&uicr {
+	/* B0 reads provisioning data from internal flash on nRF5340. Delete the UICR
+	 * bl_storage node so that the bl_storage label resolves to the internal flash
+	 * partition above, maintaining backwards compatibility with PM-based builds.
+	 */
+	/delete-node/ uicr@100;
+};
