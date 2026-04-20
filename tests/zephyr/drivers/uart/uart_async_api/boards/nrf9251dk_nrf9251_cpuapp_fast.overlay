@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf9251dk_nrf9251_cpuapp.overlay"
+
+&dut2 {
+	status = "okay";
+};
+
+&dma_fast_region {
+	status = "okay";
+};
