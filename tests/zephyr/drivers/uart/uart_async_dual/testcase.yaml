@@ -1,0 +1,35 @@
+common:
+  tags:
+    - drivers
+    - uart
+    - ci_tests_zephyr_drivers_uart
+  timeout: 120
+  harness: ztest
+  harness_config:
+    fixture: uart_loopback
+  platform_allow:
+    - nrf9251dk/nrf9251/cpuapp
+    - nrf9251dk/nrf9251/cpuppr
+tests:
+  nrf.extended.drivers.uart.async_dual: {}
+  nrf.extended.drivers.uart.async_dual.busy_sim:
+    extra_configs:
+      - CONFIG_TEST_BUSY_SIM=y
+  nrf.extended.drivers.uart.async_dual.pm_runtime:
+    extra_configs:
+      - CONFIG_PM_DEVICE_RUNTIME=y
+      - CONFIG_PM_DEVICE=y
+  nrf.extended.drivers.uart.async_dual.pm_runtime.busy_sim:
+    extra_configs:
+      - CONFIG_PM_DEVICE_RUNTIME=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_TEST_BUSY_SIM=y
+  nrf.extended.drivers.uart.async_dual.pm_runtime.explicit:
+    extra_configs:
+      - CONFIG_PM_RUNTIME_IN_TEST=y
+  nrf.extended.drivers.uart.async_dual.no_tx_chopped:
+    extra_configs:
+      - CONFIG_TEST_CHOPPED_TX=n
+      - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER=n
+      - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER_LEGACY=n
+      - CONFIG_UART_1_NRF_HW_ASYNC=n
