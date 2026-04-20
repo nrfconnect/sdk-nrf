@@ -19,7 +19,7 @@ set(NRF_DIR              ${NRF_DIR}                              CACHE STRING "N
 set(TFM_BOARDS_NRF_DIR   ${NRF_DIR}/modules/trusted-firmware-m/tfm_boards CACHE STRING "tfm_boards folder")
 
 # This file is populated with the Mbed TLS config file names
-set(MBEDTLS_CONFIG_FILE                 ${CONFIG_MBEDTLS_CFG_FILE}                      CACHE STRING "Mbed TLS Config file")
+set(MBEDTLS_CONFIG_FILE                 ${CONFIG_MBEDTLS_CONFIG_FILE}                   CACHE STRING "Mbed TLS Config file")
 set(MBEDTLS_PSA_CRYPTO_CONFIG_FILE      ${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}        CACHE STRING "PSA Crypto config file (PSA_WANT)")
 set(MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE ${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}   CACHE STRING "PSA Crypto config file (PSA_NEED)")
 

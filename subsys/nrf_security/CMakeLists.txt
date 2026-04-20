@@ -97,7 +97,7 @@ add_library(psa_crypto_config INTERFACE)
 # Add config files required for PSA crypto interface
 target_compile_definitions(psa_crypto_config
   INTERFACE
-    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
+    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CONFIG_FILE}"
     -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
 )
 
@@ -108,7 +108,7 @@ add_library(psa_crypto_library_config INTERFACE)
 # Add config files required for PSA core
 target_compile_definitions(psa_crypto_library_config
   INTERFACE
-    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
+    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CONFIG_FILE}"
     -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
     -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
 )

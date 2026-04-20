@@ -169,5 +169,5 @@ kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_CONFIG)
 
 # Generate the Mbed TLS config file (default nrf-config.h)
 configure_file(${NRF_SECURITY_ROOT}/configs/nrf-config.h.template
-  ${generated_include_path}/${CONFIG_MBEDTLS_CFG_FILE}
+  ${generated_include_path}/${CONFIG_MBEDTLS_CONFIG_FILE}
 )
