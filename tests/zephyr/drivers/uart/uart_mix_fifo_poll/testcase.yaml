@@ -5,12 +5,6 @@ common:
     - ci_tests_drivers_uart
   depends_on: gpio
   harness: ztest
-  platform_allow:
-    - nrf54ls05dk/nrf54ls05a/cpuapp
-    - nrf54ls05dk/nrf54ls05b/cpuapp
-    - nrf54lv10dk/nrf54lv10a/cpuapp
-  integration_platforms:
-    - nrf54ls05dk/nrf54ls05b/cpuapp
   harness_config:
     fixture: uart_loopback
   timeout: 45
@@ -19,16 +13,95 @@ tests:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=n
       - CONFIG_UART_ASYNC_API=n
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
 
   nrf.extended.drivers.uart.uart_mix_poll_fifo:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
 
   nrf.extended.drivers.uart.uart_mix_poll_async_api:
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
 
   nrf.extended.drivers.uart.uart_mix_poll_async_api_const:
     extra_args: TEST_CONST_BUFFER=1
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+
+  # Fast instances:
+  nrf.extended.drivers.uart.uart_mix_poll.fast:
+    harness_config:
+      fixture: uart_fast_loopback
+    extra_args:
+      - FILE_SUFFIX=fast
+    extra_configs:
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_ASYNC_API=n
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+
+  nrf.extended.drivers.uart.uart_mix_poll_fifo.fast:
+    harness_config:
+      fixture: uart_fast_loopback
+    extra_args:
+      - FILE_SUFFIX=fast
+    extra_configs:
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+
+  nrf.extended.drivers.uart.uart_mix_poll_async_api.fast:
+    harness_config:
+      fixture: uart_fast_loopback
+    extra_args:
+      - FILE_SUFFIX=fast
+    extra_configs:
+      - CONFIG_UART_ASYNC_API=y
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+
+  nrf.extended.drivers.uart.uart_mix_poll_async_api_const.fast:
+    harness_config:
+      fixture: uart_fast_loopback
+    extra_args:
+      - FILE_SUFFIX=fast
+      - TEST_CONST_BUFFER=1
+    extra_configs:
+      - CONFIG_UART_ASYNC_API=y
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
