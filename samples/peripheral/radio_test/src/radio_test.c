@@ -1139,6 +1139,17 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	irq_unlock(key);
 }
 
+static void increment_channel_index_and_reshuffle_on_wrap(void)
+{
+	channel_sequence.current_index =
+		(channel_sequence.current_index + 1) % channel_sequence.length;
+
+	if (channel_sequence.hopping_mode == CHANNEL_HOP_RANDOM_FISHER_YATES &&
+	    channel_sequence.current_index == 0) {
+		shuffle_channel_sequence();
+	}
+}
+
 static void tx_sweep_with_sleep_modulated_timer_setup(const struct radio_test_config *cfg)
 {
 	const uint32_t t_tx_us = cfg->params.tx_sweep_with_sleep_modulated.t_tx_us;
@@ -1172,6 +1183,7 @@ static void radio_tx_sweep_with_sleep_modulated(const struct radio_test_config *
 				   active_channel_sequence()[channel_sequence.current_index],
 				   cfg->params.tx_sweep_with_sleep_modulated.pattern,
 				   0);
+	increment_channel_index_and_reshuffle_on_wrap();
 	sweep_processing = false;
 
 	nrfx_timer_enable(&timer);
@@ -1182,7 +1194,7 @@ static void radio_tx_sweep_with_sleep(int8_t txpower, uint16_t t_tx_us, uint16_t
 	radio_disable();
 	const uint32_t total_time_per_channel_us = t_tx_us + t_sleep_us;
 
-	current_channel = 0;
+	channel_sequence.current_index = 0;
 
 	nrfx_timer_disable(&timer);
 	nrf_timer_shorts_disable(timer.p_reg, ~0);
@@ -1383,15 +1395,13 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 
 			sweep_processing = true;
 
-			/* disable radio after tone */
 			radio_unmodulated_tx_carrier_radio_setup(
 				NRF_RADIO_MODE_BLE_1MBIT,
 				config->params.tx_sweep_with_sleep.txpower,
-				active_channel_sequence()[current_channel], false);
+				active_channel_sequence()[channel_sequence.current_index], false);
 
-			/* set up next channel */
-			channel_start = 0;
-			channel_end = channel_sequence.length - 1;
+			increment_channel_index_and_reshuffle_on_wrap();
+
 		} else if (config->type == TX_SWEEP_WITH_SLEEP_MODULATED) {
 
 			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
@@ -1400,18 +1410,13 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 			}
 			nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 			nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
-			channel_sequence.current_index =
-				(channel_sequence.current_index + 1) % channel_sequence.length;
-
-			if (channel_sequence.hopping_mode == CHANNEL_HOP_RANDOM_FISHER_YATES &&
-				channel_sequence.current_index == 0) {
-				shuffle_channel_sequence();
-			}
-
 			nrf_radio_event_clear(NRF_RADIO, RADIO_TEST_EVENT_END);
+
 			radio_channel_set(
 				config->mode,
 				active_channel_sequence()[channel_sequence.current_index]);
+
+			increment_channel_index_and_reshuffle_on_wrap();
 		} else {
 			printk("Unexpected test type: %d\n", config->type);
 			return;
