@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 
 #define CON_STATUS_LED DK_LED1
 #define CS_CONFIG_ID 0
-#define NUM_MODE_0_STEPS       3
+#define NUM_MODE_0_STEPS 3
 #define REFLECTOR_NAME "Nordic CS Reflector"
 
 
@@ -45,7 +45,14 @@ static struct bt_conn *connection;
 static struct bt_conn_le_cs_config cs_config;
 
 /* Store local initiator IQs in this array. The size is based on requirements of cs_de_ifft. */
-static float local_iq_tones[2 * CONFIG_BT_CS_DE_NFFT_SIZE];
+
+static union {
+	struct {
+		float i;
+		float q;
+	} values[CONFIG_BT_CS_DE_NFFT_SIZE];
+	float scratch_mem[2 * CONFIG_BT_CS_DE_NFFT_SIZE];
+} iq;
 
 /* --- Simple constant-velocity Kalman filter for distance tracking --- *
  *
@@ -148,20 +155,23 @@ static void distance_estimates_print(void)
 	if (prev_ts != 0) {
 		delta = now - prev_ts;
 	}
-	prev_ts = now;
-	for (uint8_t i = 0; i < CS_DE_NUM_CHANNELS + 5; i++) {
-		LOG_DBG("local_iq_tones[%d]: %.1f + j * %.1f", i, (double)local_iq_tones[2 * i], (double)local_iq_tones[2 * i + 1]);
-	}
-	LOG_DBG("\n");
+	// for (uint8_t i = 0; i < CS_DE_NUM_CHANNELS + 5; i++) {
+	// 	LOG_DBG("local_iq_tones[%d]: %.1f + j * %.1f", i, (double)local_iq_tones[2 * i], (double)local_iq_tones[2 * i + 1]);
+	// }
+	// LOG_DBG("\n");
 
-	float distance_ifft = cs_de_ifft(local_iq_tones);
+	float distance_ifft = cs_de_ifft(iq.scratch_mem);
 
+	if (isfinite(distance_ifft)) {
 	float dt_s = (float)delta * 1e-3f;
 	float distance_kf = kalman_update(distance_ifft, dt_s);
 
-	LOG_ERR("distance_ifft: %.2f  kf: %.2f  v: %.2f m/s  dt: %lld ms",
-		(double)distance_ifft, (double)distance_kf,
-		(double)kf_x[1], delta);
+	// LOG_ERR("distance_ifft: %.2f  kf: %.2f  v: %.2f m/s  dt: %lld ms",
+	// 	(double)distance_ifft, (double)distance_kf,
+	// 	(double)kf_x[1], delta);
+		LOG_ERR("kf: %.2f", (double)distance_kf);
+		prev_ts = now;
+	}
 }
 
 static void extract_pcts(uint8_t channel_index, struct bt_hci_le_cs_step_data_tone_info *local_tone_info)
@@ -175,8 +185,8 @@ static void extract_pcts(uint8_t channel_index, struct bt_hci_le_cs_step_data_to
 	struct bt_le_cs_iq_sample local_iq =
 		bt_le_cs_parse_pct(local_tone_info[0].phase_correction_term);
 
-	local_iq_tones[channel_index * 2] = local_iq.i;
-	local_iq_tones[channel_index * 2 + 1] = local_iq.q;
+	iq.values[channel_index].i = local_iq.i;
+	iq.values[channel_index].q = local_iq.q;
 }
 
 static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subevent_result *result)
@@ -203,7 +213,7 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 		result->header.num_steps_reported,
 		delta);
 
-		memset(local_iq_tones, 0, sizeof(local_iq_tones));
+		memset(iq.scratch_mem, 0, sizeof(iq.scratch_mem));
 		for (uint8_t i = 0; i < result->header.num_steps_reported; i++) {
 			if (result->step_data_buf->len < 3) {
 				LOG_WRN("Local step data appears malformed.");
@@ -605,9 +615,9 @@ int main(void)
 		LOG_ERR("Failed to encrypt connection (err %d)", err);
 		return 0;
 	}
-
 	k_sem_take(&sem_security, K_FOREVER);
 
+	/* Needed for IPT. */
 	const uint8_t pages_requested = 10;
 	err = bt_conn_le_read_all_remote_features(connection, pages_requested);
 
@@ -665,7 +675,7 @@ int main(void)
 	/* scale factor of conn_interval units to proc_interval units is 1.25/0.625 = 2 */
 	const uint16_t acl_interval_in_proc_interval_units =
 		scan_params.conn_param->interval_max * 2;
-	uint16_t desired_procedure_interval = 2;
+	uint16_t desired_procedure_interval = 4;
 	uint16_t desired_max_procedure_length =
 		acl_interval_in_proc_interval_units * (desired_procedure_interval) - 1;
 
