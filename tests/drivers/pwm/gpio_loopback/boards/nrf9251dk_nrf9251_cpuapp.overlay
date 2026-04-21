@@ -45,4 +45,5 @@
 
 &gpio1 {
 	status = "okay";
+	zephyr,pm-device-runtime-auto;
 };
