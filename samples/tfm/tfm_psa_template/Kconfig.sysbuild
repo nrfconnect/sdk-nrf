@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n if !SOC_SERIES_NRF91
+
 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 
 choice NETCORE
@@ -17,9 +20,6 @@ config NETCORE_APP_UPDATE
 	default y
 
 config MCUBOOT_APP_SYNC_UPDATEABLE_IMAGES
-	default y
-
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	default y
 
 config MCUBOOT_USE_ALL_AVAILABLE_RAM

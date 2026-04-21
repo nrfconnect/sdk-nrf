@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * NS-application partition layout for the bootloaders variant of this sample
+ * (selected by FILE_SUFFIX=bootloaders). Shares the b0 / MCUboot flash
+ * layout with the mcuboot and b0 images via the included .dtsi, then nests
+ * the TF-M secure / non-secure split inside MCUboot's image-0 slot.
+ */
+
+#include "../dts/nrf5340_bootloaders_partitions.dtsi"
+
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &tfm_ps_partition;
+
+&slot0_partition {
+	ranges = <0x0 0x28000 0x68000>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	slot0_s_partition: partition@0 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-secure";
+		reg = <0x0 0x40000>;
+	};
+
+	slot0_ns_partition: partition@40000 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-nonsecure";
+		reg = <0x40000 0x28000>;
+	};
+};
