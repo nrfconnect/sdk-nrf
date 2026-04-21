@@ -35,6 +35,6 @@ tests:
     extra_args:
       - SNIPPET="ci-shell;zperf"
       - EXTRA_DTC_OVERLAY_FILE=coex.overlay
-      - EXTRA_CONF_FILE="ble.conf;openthread.conf;verbose.conf;log_rpc.conf;coex.conf"
+      - EXTRA_CONF_FILE="ble.conf;openthread.conf;log_rpc.conf;coex.conf"
     extra_configs:
       - CONFIG_NRF_RPC_UTILS_CRASH_GEN=y
