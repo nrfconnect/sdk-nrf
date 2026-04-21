@@ -243,6 +243,13 @@
     - nrf9160dk@0.14.0/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38955"
 
+- scenarios:
+    - net.coap.server.secure
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38539"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
