@@ -511,7 +511,13 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* :ref:`west_sbom` script:
+
+* Added:
+
+  * Licence handling of the LLVM toolchain libraries.
+  * Support for hex only ``softdevice`` sysbuild domains.
+
 
 Integrations
 ============

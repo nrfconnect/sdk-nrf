@@ -89,6 +89,18 @@ def _target_maps_present(build_dir: Path, targets: list[str]) -> bool:
     return True
 
 
+def _domain_inputs_present(build_dir: Path, targets: list[str]) -> bool:
+    '''
+    Return True if the domain can be analyzed either via map files or
+    via a hex files in runners.yaml.
+    '''
+    if _target_maps_present(build_dir, targets):
+        return True
+    if len(targets) <= 1 and (len(targets) == 0 or targets[0] == input_build.DEFAULT_TARGET):
+        return input_build.get_runner_artifact(build_dir) is not None
+    return False
+
+
 def main():
     '''Main entry function for the script.'''
     try:
@@ -134,10 +146,10 @@ def main():
                 processed_domains = 0
 
                 for domain_name, domain_dir in domains:
-                    if not _target_maps_present(domain_dir, entry[1:]):
+                    if not _domain_inputs_present(domain_dir, entry[1:]):
                         log.wrn(
-                            f'Skipping "{domain_name}" because required map file '
-                            f'missing in "{domain_dir}"'
+                            f'Skipping "{domain_name}" because no map file or hex '
+                            f'was found"{domain_dir}"'
                         )
                         continue
 
@@ -155,7 +167,7 @@ def main():
                     processed_domains += 1
 
                 if processed_domains == 0:
-                    raise SbomException('No sysbuild domains contain map files')
+                    raise SbomException('No sysbuild domains contain map or hex files')
                 return
 
         _run_pipeline()

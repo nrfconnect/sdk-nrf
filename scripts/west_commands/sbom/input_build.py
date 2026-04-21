@@ -96,6 +96,19 @@ def get_sysbuild_domains(build_dir: Path) -> list[tuple[str, Path]]:
         raise SbomException(f'No domains detected in "{domains_yaml}".')
     return results
 
+def get_runner_artifact(build_dir: Path) -> Path | None:
+    '''
+    Returns the hex file referenced by zephyr/runners.yaml or None.
+    '''
+    try:
+        runners_yaml = build_dir / 'zephyr' / 'runners.yaml'
+        hex_file = yaml.safe_load(runners_yaml.read_text())['config']['hex_file']
+        artifact = (runners_yaml.parent / hex_file).resolve()
+        return artifact if artifact.is_file() else None
+    except Exception:
+        return None
+
+
 def get_ninja_default_targets(build_dir: Path) -> list[str]:
     '''
     Returns default targets listed in build.ninja.
@@ -703,6 +716,17 @@ class InputBuild:
                 target = target_with_map
 
             if not map_file.exists():
+                # Only fall back to .hex when the user is asking for the default target.
+                # Both "-d build" and "-d build zephyr/zephyr.elf" reach this.
+                if len(targets_with_maps) <= 1 and (
+                    len(targets_with_maps) == 0 or targets_with_maps[0] == DEFAULT_TARGET
+                ):
+                    artifact = get_runner_artifact(self.build_dir)
+                    if artifact is not None:
+                        self.data.inputs.append(f'The "{artifact}" file from the build directory '
+                                    f'"{self.build_dir.resolve()}"')
+                        self.add_file_info(artifact)
+                        return
                 raise SbomException(f'Cannot find map file for "{target_with_map}" '
                                     f'in build directory "{self.build_dir}". '
                                     f'Expected location "{map_file}".')
