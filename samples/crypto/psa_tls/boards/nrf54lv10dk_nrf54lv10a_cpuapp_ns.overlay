@@ -15,19 +15,12 @@
 /delete-node/ &sram0_s;
 /delete-node/ &sram0_ns;
 
-&rram_controller {
-	/delete-node/ cpuflpr_sram;
-	/delete-node/ cpuflpr_rram;
-};
-
-/* Adjust cpuapp_sram to include the freed-up cpuflpr_sram (192 kB total)
- * and rebalance the secure/non-secure split to 64 kB / 128 kB so the
- * non-secure image (psa_tls needs ~115 kB of RAM) fits.
+/* Rebalance the secure/non-secure SRAM split to 64 kB / 127 kB so the
+ * non-secure image (psa_tls needs ~115 kB of RAM) fits. nRF54LV10A has
+ * 192 kB total SRAM; 1 kB at the top is left unused to match the upstream
+ * TF-M layout.
  */
 &cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(192)>;
-	ranges = <0x0 0x20000000 0x20030000>;
-
 	sram0_s: image_s@0 {
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -40,31 +33,23 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 		/* Non-Secure image memory */
-		reg = <0x10000 DT_SIZE_K(128)>;
-		ranges = <0x0 0x10000 DT_SIZE_K(128)>;
+		reg = <0x10000 DT_SIZE_K(127)>;
+		ranges = <0x0 0x10000 DT_SIZE_K(127)>;
 	};
 };
 
-/* Adjust cpuapp_rram to include the freed-up cpuflpr_rram */
 &cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(1024)>;
-
 	partitions {
 		slot0_s_partition: partition@0 {
 			label = "image-0-secure";
 			reg = <0x0 0x40000>;
 		};
 
-		slot0_ns_partition: partition@40000 {
-			label = "image-0-nonsecure";
-			reg = <0x40000 0xb6000>;
-		};
-
-		tfm_storage_partition: partition@f6000 {
+		tfm_storage_partition: partition@40000 {
 			compatible = "fixed-subpartitions";
 			label = "tfm-storage";
-			reg = <0xf6000 DT_SIZE_K(40)>;
-			ranges = <0x0 0xf6000 DT_SIZE_K(40)>;
+			reg = <0x40000 DT_SIZE_K(40)>;
+			ranges = <0x0 0x40000 DT_SIZE_K(40)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
@@ -82,6 +67,11 @@
 				label = "tfm-ps";
 				reg = <0x6000 DT_SIZE_K(16)>;
 			};
+		};
+
+		slot0_ns_partition: partition@4a000 {
+			label = "image-0-nonsecure";
+			reg = <0x4a000 0xb3000>;
 		};
 	};
 };
