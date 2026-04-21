@@ -484,6 +484,13 @@
 				groups = <2>;
 			};
 
+			egu130: egu@92d000 {
+				compatible = "nordic,nrf-egu";
+				reg = <0x92d000 0x1000>;
+				status = "disabled";
+				interrupts = <301 NRF_DEFAULT_IRQ_PRIORITY>;
+			};
+
 			rtc130: rtc@928000 {
 				compatible = "nordic,nrf-rtc";
 				reg = <0x928000 0x1000>;
