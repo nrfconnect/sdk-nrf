@@ -18,7 +18,9 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/net/net_if.h>
-#ifndef CONFIG_NRF71_RADIO_TEST
+#ifdef CONFIG_NRF71_RADIO_TEST
+#include <nrf71_radio_test.h>
+#else
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/ethernet.h>
 #ifdef CONFIG_NETWORKING
@@ -28,9 +30,7 @@
 #include <drivers/driver_zephyr.h>
 #endif /* CONFIG_NRF71_STA_MODE */
 #include <system/fmac_api.h>
-#else
-#include <radio_test/fmac_api.h>
-#endif /* !CONFIG_NRF71_RADIO_TEST */
+#endif /* CONFIG_NRF71_RADIO_TEST */
 #include <nrf71_wifi_ctrl.h>
 
 #define NRF71_DRIVER_VERSION "1."KERNEL_VERSION_STRING
@@ -118,21 +118,14 @@ struct nrf_wifi_vif_ctx_map {
 	const char *ifname;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx;
 };
-#endif /* !CONFIG_NRF71_RADIO_TEST */
 
 struct nrf_wifi_ctx_zep {
 	void *drv_priv_zep;
 	void *rpu_ctx;
-#ifdef CONFIG_NRF71_RADIO_TEST
-	struct rpu_conf_params conf_params;
-	bool rf_test_run;
-	unsigned char rf_test;
-#else /* CONFIG_NRF71_RADIO_TEST */
 	struct nrf_wifi_vif_ctx_zep vif_ctx_zep[MAX_NUM_VIFS];
 #ifdef CONFIG_NRF71_UTIL
 	struct rpu_conf_params conf_params;
 #endif /* CONFIG_NRF71_UTIL */
-#endif /* CONFIG_NRF71_RADIO_TEST */
 	unsigned char *extended_capa, *extended_capa_mask;
 	unsigned int extended_capa_len;
 	struct k_mutex rpu_lock;
@@ -160,6 +153,7 @@ struct nrf_wifi_drv_priv_zep {
 };
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
+#endif /* !CONFIG_NRF71_RADIO_TEST */
 
 void nrf_wifi_scan_timeout_work(struct k_work *work);
 
