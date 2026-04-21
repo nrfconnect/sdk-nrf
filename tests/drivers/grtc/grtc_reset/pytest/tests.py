@@ -24,6 +24,7 @@ platform_with_mcuboot_uptime_range_map = {
     "nrf54ls05dk/nrf54ls05a/cpuapp": range(9, 13),
     "nrf54ls05dk/nrf54ls05b/cpuapp": range(9, 13),
     "nrf54lv10dk/nrf54lv10a/cpuapp": range(11, 13),
+    "nrf9251dk/nrf9251/cpuapp": range(9, 11),
 }
 
 platform_without_mcuboot_uptime_range_map = {
@@ -36,6 +37,7 @@ platform_without_mcuboot_uptime_range_map = {
     "nrf54ls05dk/nrf54ls05a/cpuapp": range(9, 13),
     "nrf54ls05dk/nrf54ls05b/cpuapp": range(9, 13),
     "nrf54lv10dk/nrf54lv10a/cpuapp": range(11, 13),
+    "nrf9251dk/nrf9251/cpuapp": range(9, 11),
 }
 
 
