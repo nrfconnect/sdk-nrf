@@ -8,33 +8,61 @@ common:
     - drivers
     - uart
     - ci_tests_drivers_uart
-  platform_allow:
-    - nrf52840dk/nrf52840
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf54h20dk/nrf54h20/cpuapp
-    - nrf54h20dk/nrf54h20/cpuflpr/xip
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54lm20dk/nrf54lm20b/cpuapp
-    - nrf54ls05dk/nrf54ls05a/cpuapp
-    - nrf54ls05dk/nrf54ls05b/cpuapp
-    - nrf54lv10dk/nrf54lv10a/cpuapp
-    - nrf9251dk/nrf9251/cpuapp
-  integration_platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
   timeout: 60
 
 tests:
   drivers.uart.uart_latency.async:
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuflpr/xip
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
   drivers.uart.uart_latency.int_driven:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuflpr/xip
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
   drivers.uart.uart_latency.poll:
     extra_configs:
       - CONFIG_UART_ASYNC_API=n
       - CONFIG_UART_INTERRUPT_DRIVEN=n
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuflpr/xip
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   drivers.uart.uart_latency.async.fast:
     harness_config:
