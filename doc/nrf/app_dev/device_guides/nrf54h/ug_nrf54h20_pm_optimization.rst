@@ -50,6 +50,11 @@ It schedules the system wake-up from the system-off state in advance of the next
 
 Because the warm-boot latency is compensated by the System Controller, from a local CPU's perspective, the latency when restoring from the local-off state and the system-off state is expected to be the same.
 
+The MRAM auto-powerdown feature (``MRAMC.POWER.AUTOPOWERDOWN``), which the System Controller configures, trades power usage for latency.
+If you run with MRAM auto-powerdown disabled, MRAM stays powered on.
+That improves latency for MRAM-related wake-up and access, at the cost of higher power consumption because the memory is not allowed to power down when idle.
+For more information on how MRAM power state affects wake-up latency, see :ref:`ug_nrf54h20_architecture_pm`.
+
 Latency in local domains
 ------------------------
 

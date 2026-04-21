@@ -16,7 +16,8 @@ It guides you through the following:
 1. Installing the |NCS| and other required software and tools.
 #. Preparing the nRF54H20 DK for first use:
 
-   a. Programming the nRF54H20 DK's Board Information Configuration Registers (BICR) using the provided binary file.
+   a. Disabling the onboard debugger's USB Mass Storage Device (MSD) feature and forcing UART hardware flow control (HWFC).
+   #. Programming the nRF54H20 DK's Board Information Configuration Registers (BICR) using the provided binary file.
    #. Programming the Secure Domain and System Controller of the nRF54H20 SoC using the provided IronSide SE binaries.
    #. Transitioning the SoC's lifecycle state (LCS) to Root of Trust (RoT).
 
@@ -104,6 +105,83 @@ Install a terminal emulator, such as the `Serial Terminal app`_ (from the nRF Co
 Both of these terminal emulators start the required :ref:`toolchain environment <using_toolchain_environment>`.
 
 .. _ug_nrf54h20_gs_bringup:
+
+.. _ug_nrf54h20_gs_bringup_msd:
+
+.. rst-class:: numbered-step
+
+Bring-up step: Disable onboard J-Link Mass Storage Device (MSD)
+***************************************************************
+
+The onboard debugger enables a USB Mass Storage Device (MSD) by default so you can drag and drop firmware images onto the probe.
+The nRF54H20 DK does not support drag-and-drop programming through MSD, so it is recommended to disable MSD.
+
+You should also force UART hardware flow control (HWFC) on the debugger's virtual serial port to avoid potential race conditions related to HWFC auto-detection.
+
+.. note::
+   You need the `J-Link Software and Documentation Pack`_ installed (included with the |NCS| toolchain).
+
+.. tabs::
+
+   .. tab:: Windows
+
+      To disable MSD and force HWFC:
+
+      #. Connect the nRF54H20 DK to your computer with a USB cable using the **DEBUGGER** port on the DK.
+      #. Run *J-Link Commander*.
+         The configuration window appears.
+      #. From the :guilabel:`Specify Target Device` dropdown menu, select the nRF54H20 device entry that matches your kit and J-Link version.
+
+         For a new DK in lifecycle state (LCS) ``EMPTY``, this is typically ``NRF54H20_SECURE``.
+         After you transition the SoC to Root of Trust (RoT), ``NRF54H20_APP`` is typically used.
+      #. From the :guilabel:`Target Interface & Speed` dropdown menu, select :guilabel:`SWD`.
+      #. After J-Link Commander connects, enter the following commands at the ``J-Link>`` prompt.
+
+         To disable MSD:
+
+         .. code-block:: text
+
+            MSDDisable
+
+         To force HWFC:
+
+         .. code-block:: text
+
+            SetHWFC Force
+
+      #. Power cycle the board using the **POWER** on/off switch on the DK.
+
+   .. tab:: Linux and macOS
+
+      To disable MSD, force HWFC, or both:
+
+      #. Connect the nRF54H20 DK to your computer with a USB cable using the **DEBUGGER** port on the DK.
+      #. Run ``JLinkExe`` to connect to the target.
+         For example, for a new DK in LCS ``EMPTY`` (device name can differ slightly between J-Link releases):
+
+         .. parsed-literal::
+            :class: highlight
+
+            JLinkExe -device NRF54H20_SECURE -if SWD -speed 4000 -autoconnect 1 -SelectEmuBySN <SEGGER_ID>
+
+         Replace ``<SEGGER_ID>`` with the serial number of your onboard J-Link probe (see the sticker on the DK or use ``nrfutil device list``).
+         After RoT transition, you can use ``NRF54H20_APP`` instead of ``NRF54H20_SECURE`` if required for a successful connection.
+      #. At the ``J-Link>`` prompt, run the following commands as needed.
+
+         To disable MSD:
+
+         .. code-block:: text
+
+            MSDDisable
+
+         To force HWFC:
+
+         .. code-block:: text
+
+            SetHWFC Force
+
+      #. Power cycle the board using the **POWER** on/off switch on the DK.
+
 .. _ug_nrf54h20_gs_bringup_bicr:
 .. _ug_nrf54h20_gs_bicr:
 
@@ -119,7 +197,8 @@ To prepare the nRF54H20 DK for its first use, you must manually program the requ
 #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 
    .. note::
-      On MacOS, when connecting the DK, you might see a popup with the message ``Disk Not Ejected Properly`` appearing multiple times.
+      On macOS, when connecting the DK, you might see a popup with the message ``Disk Not Ejected Properly`` appearing multiple times.
+      See :ref:`ug_nrf54h20_gs_bringup_msd` to disable MSD on the onboard debugger.
 
 #. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
 

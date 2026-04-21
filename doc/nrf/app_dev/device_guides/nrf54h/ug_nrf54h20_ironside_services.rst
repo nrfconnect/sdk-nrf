@@ -40,7 +40,8 @@ For details about the CPUCONF peripheral, refer to the nRF54H20 SoC datasheet.
 |ISE| provides an update service that allows local domains to trigger the :ref:`update process <ug_nrf54h20_ironside_se_update_architecture>` of |ISE| itself.
 
 The update service requires a release of |ISE| or the |ISE| Recovery image to be programmed within a valid memory range that is accessible by the application core.
-See :file:`nrf_ironside/update.h` for more details on the supported memory range.
+The image must be stored in MRAM11 and cannot reside in MRAM10.
+See :ref:`ug_nrf54h20_ironside_se_update_limitations` and :file:`nrf_ironside/update.h` for details.
 
 After the application has invoked the service, |ISE| will update on the next system reset.
 The update can be verified by checking the listed versions in the :ref:`boot report <ug_nrf54h20_ironside_se_boot_report>` on startup.

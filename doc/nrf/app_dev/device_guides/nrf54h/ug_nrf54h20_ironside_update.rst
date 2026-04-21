@@ -54,6 +54,17 @@ Performing an update
 .. note::
    You can update the |ISE| only on an nRF54H20 SoC that was initially :ref:`provisioned <ug_nrf54h20_SoC_binaries>` with it.
 
+.. _ug_nrf54h20_ironside_se_update_limitations:
+
+Limitations
+===========
+
+.. important::
+
+   A URoT (|ISE|) update image must be stored in MRAM11.
+   The update cannot be performed with the image placed in MRAM10.
+   See :ref:`ug_nrf54h20_architecture_memory` for the MRAMM10 and MRAMM11 layout.
+
 |ISE| supports being updated in the following ways:
 
 * :ref:`Manual updates <ug_nrf54h20_ironside_se_update_manual>` with a debugger
@@ -163,6 +174,7 @@ Architecture
 ************
 
 The |ISE| update process starts when the application firmware invokes the :ref:`update service <ug_nrf54h20_ironside_se_update_service>` with the address of where the update release package has been written in MRAM.
+The package must lie in MRAMM11 as described in :ref:`ug_nrf54h20_ironside_se_update_limitations`.
 
 .. _ug_nrf54h20_ironside_se_update_architecture_app:
 
@@ -171,7 +183,7 @@ Application procedure
 
 The following describes the process for an |ISE| update from the point of view of the application:
 
-1. The application MRAM is updated with the |ISE| update image.
+1. MRAMM11 is updated with the |ISE| update image (see :ref:`ug_nrf54h20_ironside_se_update_limitations`).
 #. It calls the |ISE| update service with the update image location.
 #. It verifies that the update request is acknowledged.
 #. It triggers a reset.
@@ -195,7 +207,7 @@ The following describes the update process in the |ISE| upon request:
 Once the device comes out of reset, SDROM sees the update metadata and does the following to verify and apply the update:
 
 1. Enables write-protection on the update image and firmware contents.
-#. Checks firmware metadata stored in SICR registers against address range and size constraints.
+#. Checks firmware metadata stored in SICR registers against permitted MRAM region and size constraints.
 #. Verifies update version against current firmware to prevent downgrades.
 #. Computes and validates digest of the public key.
 #. Checks public key is not revoked.
