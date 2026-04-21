@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		sample-device = &uart133;
+	};
+};
+
+&uart133 {
+	status = "okay";
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&fll16m {
+	status = "okay";
+};
