@@ -87,7 +87,6 @@ manifest:
           - cmsis_6
           - edtt
           - fatfs
-          - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
@@ -117,6 +116,13 @@ manifest:
     #
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
+    - name: hal_nordic
+      revision: nrfx-removed
+      remote: zephyrproject
+      path: modules/hal/nor
+    - name: nrfx
+      revision: pull/1186/head
+      path: modules/hal/nor/nrfx
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
