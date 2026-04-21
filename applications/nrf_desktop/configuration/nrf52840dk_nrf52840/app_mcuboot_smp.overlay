@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "memory_map_mcuboot_smp.dtsi"
 #include "app_common.dtsi"
 
 / {
