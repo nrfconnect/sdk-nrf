@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -24,7 +24,6 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 #define CON_STATUS_LED DK_LED1
 
 static K_SEM_DEFINE(sem_connected, 0, 1);
-static K_SEM_DEFINE(sem_config, 0, 1);
 
 static struct bt_conn *connection;
 
@@ -133,7 +132,6 @@ static void config_create_cb(struct bt_conn *conn, uint8_t status,
 			sys_get_le32(&config->channel_map[2]),
 			sys_get_le16(&config->channel_map[0]));
 
-		k_sem_give(&sem_config);
 	} else {
 		LOG_WRN("CS config creation failed. (HCI status 0x%02x)", status);
 	}
@@ -211,44 +209,18 @@ int main(void)
 		return 0;
 	}
 
-	while (true) {
-		k_sem_take(&sem_connected, K_FOREVER);
+	k_sem_take(&sem_connected, K_FOREVER);
 
-		const struct bt_le_cs_set_default_settings_param default_settings = {
-			.enable_initiator_role = false,
-			.enable_reflector_role = true,
-			.cs_sync_antenna_selection = BT_LE_CS_ANTENNA_SELECTION_OPT_REPETITIVE,
-			.max_tx_power = BT_HCI_OP_LE_CS_MAX_MAX_TX_POWER,
-		};
+	const struct bt_le_cs_set_default_settings_param default_settings = {
+		.enable_initiator_role = false,
+		.enable_reflector_role = true,
+		.cs_sync_antenna_selection = BT_LE_CS_ANTENNA_SELECTION_OPT_REPETITIVE,
+		.max_tx_power = BT_HCI_OP_LE_CS_MAX_MAX_TX_POWER,
+	};
 
-		err = bt_le_cs_set_default_settings(connection, &default_settings);
-		if (err) {
-			LOG_ERR("Failed to configure default CS settings (err %d)", err);
-		}
-
-		k_sem_take(&sem_config, K_FOREVER);
-
-		const struct bt_le_cs_set_procedure_parameters_param procedure_params = {
-			.config_id = 0,
-			.max_procedure_len = 1000,
-			.min_procedure_interval = 1,
-			.max_procedure_interval = 100,
-			.max_procedure_count = 0,
-			.min_subevent_len = 10000,
-			.max_subevent_len = 75000,
-			.tone_antenna_config_selection = BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A1_B1,
-			.phy = BT_LE_CS_PROCEDURE_PHY_2M,
-			.tx_power_delta = 0x80,
-			.preferred_peer_antenna = BT_LE_CS_PROCEDURE_PREFERRED_PEER_ANTENNA_1,
-			.snr_control_initiator = BT_LE_CS_SNR_CONTROL_NOT_USED,
-			.snr_control_reflector = BT_LE_CS_SNR_CONTROL_NOT_USED,
-		};
-
-		err = bt_le_cs_set_procedure_parameters(connection, &procedure_params);
-		if (err) {
-			LOG_ERR("Failed to set procedure parameters (err %d)", err);
-			return 0;
-		}
+	err = bt_le_cs_set_default_settings(connection, &default_settings);
+	if (err) {
+		LOG_ERR("Failed to configure default CS settings (err %d)", err);
 	}
 
 	return 0;

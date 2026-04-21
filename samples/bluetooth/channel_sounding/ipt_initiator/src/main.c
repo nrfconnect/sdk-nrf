@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /** @file
- *  @brief Channel Sounding Initiator with Ranging Requestor sample
+ *  @brief Channel Sounding IPT Initiator sample
  */
 
 #include <math.h>
@@ -27,30 +27,30 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 #define CON_STATUS_LED DK_LED1
 #define CS_CONFIG_ID 0
 #define NUM_MODE_0_STEPS 3
-#define REFLECTOR_NAME "Nordic CS Reflector"
+#define REFLECTOR_NAME "Nordic CS IPT Reflector"
 
+#define CHANNEL_INDEX_OFFSET (2)
 
 static K_SEM_DEFINE(sem_remote_capabilities_obtained, 0, 1);
 static K_SEM_DEFINE(sem_config_created, 0, 1);
 static K_SEM_DEFINE(sem_cs_security_enabled, 0, 1);
 static K_SEM_DEFINE(sem_connected, 0, 1);
-static K_SEM_DEFINE(sem_discovery_done, 0, 1);
-static K_SEM_DEFINE(sem_mtu_exchange_done, 0, 1);
 static K_SEM_DEFINE(sem_security, 0, 1);
 static K_SEM_DEFINE(sem_read_all_remote_feat_complete, 0, 1);
-static K_SEM_DEFINE(sem_local_steps, 1, 1);
-static K_SEM_DEFINE(sem_distance_estimate_updated, 0, 1);
+static K_SEM_DEFINE(sem_subevent_results_parsed, 0, 1);
+static K_SEM_DEFINE(sem_distance_estimate_updated, 1, 1);
 
 static struct bt_conn *connection;
 static struct bt_conn_le_cs_config cs_config;
 
-/* Store local initiator IQs in this array. The size is based on requirements of cs_de_ifft. */
-
+/* Store local initiator IQs in this union.
+  The size is based on requirements of cs_de_ifft.
+  The scratch memory is used for the ifft operation. */
 static union {
 	struct {
 		float i;
 		float q;
-	} values[CONFIG_BT_CS_DE_NFFT_SIZE];
+	} values[CS_DE_NUM_CHANNELS];
 	float scratch_mem[2 * CONFIG_BT_CS_DE_NFFT_SIZE];
 } iq;
 
@@ -146,7 +146,7 @@ static float kalman_update(float z, float dt)
 	return kf_x[0];
 }
 
-static void distance_estimates_print(void)
+static void distance_estimates_update(void)
 {
 	static int64_t prev_ts = 0;
 
@@ -155,16 +155,16 @@ static void distance_estimates_print(void)
 	if (prev_ts != 0) {
 		delta = now - prev_ts;
 	}
-	// for (uint8_t i = 0; i < CS_DE_NUM_CHANNELS + 5; i++) {
-	// 	LOG_DBG("local_iq_tones[%d]: %.1f + j * %.1f", i, (double)local_iq_tones[2 * i], (double)local_iq_tones[2 * i + 1]);
-	// }
-	// LOG_DBG("\n");
+
+	for (uint8_t i = 0; i < CS_DE_NUM_CHANNELS; i++) {
+		LOG_DBG("iq[%d]: %.1f + j * %.1f", i, (double)iq.values[i].i, (double)iq.values[i].q);
+	}
 
 	float distance_ifft = cs_de_ifft(iq.scratch_mem);
 
 	if (isfinite(distance_ifft)) {
-	float dt_s = (float)delta * 1e-3f;
-	float distance_kf = kalman_update(distance_ifft, dt_s);
+		float dt_s = (float)delta * 1e-3f;
+		float distance_kf = kalman_update(distance_ifft, dt_s);
 
 	// LOG_ERR("distance_ifft: %.2f  kf: %.2f  v: %.2f m/s  dt: %lld ms",
 	// 	(double)distance_ifft, (double)distance_kf,
@@ -172,9 +172,10 @@ static void distance_estimates_print(void)
 		LOG_ERR("kf: %.2f", (double)distance_kf);
 		prev_ts = now;
 	}
+	k_sem_give(&sem_distance_estimate_updated);
 }
 
-static void extract_pcts(uint8_t channel_index, struct bt_hci_le_cs_step_data_tone_info *local_tone_info)
+static void pcts_parse(uint8_t channel_index, struct bt_hci_le_cs_step_data_tone_info *local_tone_info)
 {
 
 	// if (local_tone_info[0].quality_indicator != BT_HCI_LE_CS_TONE_QUALITY_HIGH) {
@@ -185,73 +186,79 @@ static void extract_pcts(uint8_t channel_index, struct bt_hci_le_cs_step_data_to
 	struct bt_le_cs_iq_sample local_iq =
 		bt_le_cs_parse_pct(local_tone_info[0].phase_correction_term);
 
-	iq.values[channel_index].i = local_iq.i;
-	iq.values[channel_index].q = local_iq.q;
+	iq.values[channel_index - CHANNEL_INDEX_OFFSET].i = local_iq.i;
+	iq.values[channel_index - CHANNEL_INDEX_OFFSET].q = local_iq.q;
+}
+
+static void subevent_steps_parse(struct bt_conn_le_cs_subevent_result *result)
+{
+	for (uint8_t i = 0; i < result->header.num_steps_reported; i++) {
+		if (result->step_data_buf->len < 3) {
+			LOG_WRN("Local step data appears malformed.");
+			return;
+		}
+		struct bt_le_cs_subevent_step local_step = {0};
+		local_step.mode = net_buf_simple_pull_u8(result->step_data_buf);
+		local_step.channel = net_buf_simple_pull_u8(result->step_data_buf);
+		local_step.data_len = net_buf_simple_pull_u8(result->step_data_buf);
+
+		if (local_step.data_len == 0) {
+			LOG_WRN("Encountered zero-length step data.");
+			return;
+		}
+		if (local_step.data_len > result->step_data_buf->len) {
+			LOG_WRN("Local step data appears malformed.");
+			return;
+		}
+
+		local_step.data = result->step_data_buf->data;
+
+		if (local_step.mode == BT_HCI_OP_LE_CS_MAIN_MODE_2) {
+			struct bt_hci_le_cs_step_data_mode_2 *local_step_data =
+				(struct bt_hci_le_cs_step_data_mode_2 *)local_step.data;
+			pcts_parse(local_step.channel, local_step_data->tone_info);
+		}
+
+		net_buf_simple_pull(result->step_data_buf, local_step.data_len);
+	}
 }
 
 static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subevent_result *result)
 {
 	static int64_t prev_ts = 0;
-	static uint32_t prev_procedure_counter = 0xdeadbeef;
+	static uint32_t prev_procedure_counter = UINT16_MAX + 1;
+
 	int64_t now = k_uptime_get();
 	int64_t delta = 0;
 	if (prev_ts != 0) {
 		delta = now - prev_ts;
 	}
+	prev_ts = now;
 
-	if (result->header.procedure_counter == prev_procedure_counter) {
-		LOG_ERR("Procedure counter %u is the same as the previous one", result->header.procedure_counter);
-		return;
+	LOG_INF("Subevent result callback for procedure counter %u procedure done status "
+		"%u subevent done status %u, number of steps reported %u, time delta since "
+		"last call: %lld ms",
+		result->header.procedure_counter, result->header.procedure_done_status,
+		result->header.subevent_done_status, result->header.num_steps_reported,
+		delta);
+
+	if (result->header.procedure_counter != prev_procedure_counter) {
+		LOG_DBG("Procedure counter %u is the same as the previous one. This means there are multiple"
+			       "CS subevents per CS procedure.", result->header.procedure_counter);
+		k_sem_take(&sem_distance_estimate_updated, K_FOREVER);
+		memset(iq.scratch_mem, 0, sizeof(iq.scratch_mem));
 	}
 	prev_procedure_counter = result->header.procedure_counter;
 
-	if (result->header.procedure_counter == prev_procedure_counter) {
-	LOG_DBG("Subevent result callback for procedure counter %u procedure done status %u subevent done status %u, number of steps reported %u, time delta since last call: %lld ms",
-		result->header.procedure_counter,
-		result->header.procedure_done_status,
-		result->header.subevent_done_status,
-		result->header.num_steps_reported,
-		delta);
+	subevent_steps_parse(result);
+	/*TODO: How do we handle aborted PROCEDURES / SUBEVENTS ?? */
 
-		memset(iq.scratch_mem, 0, sizeof(iq.scratch_mem));
-		for (uint8_t i = 0; i < result->header.num_steps_reported; i++) {
-			if (result->step_data_buf->len < 3) {
-				LOG_WRN("Local step data appears malformed.");
-				return;
-			}
-			struct bt_le_cs_subevent_step local_step = {0};
+	/* This means all the steps from the procedure have been parsed and distance estimation can run. */
+	if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_COMPLETE) {
+		k_sem_give(&sem_subevent_results_parsed);
+	}
 
-			local_step.mode = net_buf_simple_pull_u8(result->step_data_buf);
-			local_step.channel = net_buf_simple_pull_u8(result->step_data_buf);
-			local_step.data_len = net_buf_simple_pull_u8(result->step_data_buf);
-
-
-			// LOG_ERR("Local step with number %u has data length %u, mode %u, channel %u", i, local_step.data_len, local_step.mode, local_step.channel);
-			if (local_step.data_len == 0) {
-				LOG_WRN("Encountered zero-length step data.");
-				return;
-			}
-
-			local_step.data = result->step_data_buf->data;
-
-			if (local_step.mode == BT_HCI_OP_LE_CS_MAIN_MODE_2) {
-				struct bt_hci_le_cs_step_data_mode_2 *local_step_data =
-					(struct bt_hci_le_cs_step_data_mode_2 *)local_step.data;
-					extract_pcts(local_step.channel, local_step_data->tone_info);
-			}
-
-			if (local_step.data_len > result->step_data_buf->len) {
-				LOG_WRN("Local step data appears malformed.");
-				return;
-			}
-
-			net_buf_simple_pull(result->step_data_buf, local_step.data_len);
-		}
-
-	prev_ts = now;
-	k_sem_give(&sem_distance_estimate_updated);
 	return;
-}
 }
 
 static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
@@ -625,7 +632,6 @@ int main(void)
 		LOG_ERR("bt_conn_le_read_all_remote_features returned error %d", err);
 		return 0;
 	}
-
 	k_sem_take(&sem_read_all_remote_feat_complete, K_FOREVER);
 
 	const struct bt_le_cs_set_default_settings_param default_settings = {
@@ -661,7 +667,6 @@ int main(void)
 		LOG_ERR("Failed to create CS config (err %d)", err);
 		return 0;
 	}
-
 	k_sem_take(&sem_config_created, K_FOREVER);
 
 	err = bt_le_cs_security_enable(connection);
@@ -675,9 +680,9 @@ int main(void)
 	/* scale factor of conn_interval units to proc_interval units is 1.25/0.625 = 2 */
 	const uint16_t acl_interval_in_proc_interval_units =
 		scan_params.conn_param->interval_max * 2;
-	uint16_t desired_procedure_interval = 4;
+	uint16_t desired_procedure_interval = 200;
 	uint16_t desired_max_procedure_length =
-		acl_interval_in_proc_interval_units * (desired_procedure_interval) - 1;
+		acl_interval_in_proc_interval_units * (desired_procedure_interval - 1);
 
 	const struct bt_le_cs_set_procedure_parameters_param procedure_params = {
 		.config_id = CS_CONFIG_ID,
@@ -713,8 +718,8 @@ int main(void)
 	}
 
 	while (true) {
-			k_sem_take(&sem_distance_estimate_updated, K_FOREVER);
-			distance_estimates_print();
+			k_sem_take(&sem_subevent_results_parsed, K_FOREVER);
+			distance_estimates_update();
 		}
 
 	return 0;
