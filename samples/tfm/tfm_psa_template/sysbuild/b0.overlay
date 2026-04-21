@@ -11,7 +11,7 @@
 
 / {
 	chosen {
-		zephyr,code-partition = &s0_partition;
+		zephyr,code-partition = &b0_partition;
 	};
 };
 
@@ -52,28 +52,6 @@
 			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0xf8000 0x8000>;
-		};
-	};
-};
-
-/* Must match sram0_dfu_shared in the cpuapp_ns overlay. */
-/delete-node/ &sram0_dfu_shared;
-
-&sram0_ns {
-	sram0_dfu_shared: sram@2e000 {
-		reg = <0x2e000 0x2000>;
-	};
-};
-
-&mx25r64 {
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		slot3_partition: partition@0 {
-			label = "image-3";
-			reg = <0x0 DT_SIZE_K(256)>;
 		};
 	};
 };

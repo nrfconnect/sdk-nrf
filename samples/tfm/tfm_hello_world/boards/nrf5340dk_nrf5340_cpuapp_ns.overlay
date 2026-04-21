@@ -1,4 +1,5 @@
-/* Copyright (c) 2022 Nordic Semiconductor ASA
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -14,6 +15,12 @@
 
 &flash0 {
 	partitions {
+		/* Sized to accommodate the full TF-M profile (selected by
+		 * CONFIG_TFM_PROFILE_TYPE_NOT_SET=y in the .full / .lvl2 test
+		 * variants), matching the slot0_s split used by
+		 * tfm_secure_peripheral. The minimal profile used by the
+		 * default and bootloaders builds easily fits in this region.
+		 */
 		slot0_s_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0-secure";
@@ -26,6 +33,12 @@
 			reg = <0x40000 0xb4000>;
 		};
 
+		/* TF-M storage region for the full / lvl2 profiles. The
+		 * minimal profile used by the default and bootloaders builds
+		 * does not consume these partitions, so they only cost flash
+		 * when CONFIG_TFM_PROFILE_TYPE_NOT_SET=y selects a profile
+		 * with PS/ITS/OTP enabled.
+		 */
 		tfm_storage_partition: partition@f4000 {
 			compatible = "zephyr,mapped-partition";
 			label = "tfm-storage";
@@ -53,26 +66,4 @@
 			};
 		};
 	};
-};
-
-&pinctrl {
-	spi3_default: spi3_default {
-		group1 {
-			psels = <NRF_PSEL(SPIM_SCK, 1, 15)>,
-				<NRF_PSEL(SPIM_MOSI, 1, 13)>;
-		};
-	};
-
-	spi3_sleep: spi3_sleep {
-		group1 {
-			psels = <NRF_PSEL(SPIM_SCK, 1, 15)>,
-				<NRF_PSEL(SPIM_MOSI, 1, 13)>;
-			low-power-enable;
-		};
-	};
-};
-
-&spi3 {
-	/* Disabled in non-secure image. */
-	status = "disabled";
 };

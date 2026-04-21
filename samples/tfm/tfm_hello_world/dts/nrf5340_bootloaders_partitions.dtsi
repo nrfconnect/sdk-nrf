@@ -1,7 +1,16 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Shared flash partition layout for the FILE_SUFFIX=bootloaders variant of
+ * tfm_hello_world on nRF5340. Included from:
+ *   - boards/nrf5340dk_nrf5340_cpuapp_ns_bootloaders.overlay (NS application)
+ *   - sysbuild/mcuboot/boards/nrf5340dk_nrf5340_cpuapp.overlay (MCUboot image)
+ *   - sysbuild/b0/boards/nrf5340dk_nrf5340_cpuapp.overlay (B0 image)
+ *
+ * s0/s1 must be aligned to the SPU flash block size (0x4000) so that
+ * MCUboot's fprotect_area() over (s0 + s1) succeeds.
  */
 
 /delete-node/ &boot_partition;
@@ -9,13 +18,6 @@
 /delete-node/ &slot1_partition;
 /delete-node/ &storage_partition;
 
-/ {
-	chosen {
-		zephyr,code-partition = &s0_partition;
-	};
-};
-
-/* Keep in sync with boards/nrf5340dk_nrf5340_cpuapp_ns.overlay. */
 &flash0 {
 	partitions {
 		b0_partition: partition@0 {
@@ -52,28 +54,6 @@
 			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0xf8000 0x8000>;
-		};
-	};
-};
-
-/* Must match sram0_dfu_shared in the cpuapp_ns overlay. */
-/delete-node/ &sram0_dfu_shared;
-
-&sram0_ns {
-	sram0_dfu_shared: sram@2e000 {
-		reg = <0x2e000 0x2000>;
-	};
-};
-
-&mx25r64 {
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		slot3_partition: partition@0 {
-			label = "image-3";
-			reg = <0x0 DT_SIZE_K(256)>;
 		};
 	};
 };

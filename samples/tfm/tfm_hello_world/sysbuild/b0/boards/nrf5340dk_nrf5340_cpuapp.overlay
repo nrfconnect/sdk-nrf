@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * B0 flash layout for the FILE_SUFFIX=bootloaders variant of
+ * tfm_hello_world on nRF5340. Shares the b0 / MCUboot partition table with
+ * the application and MCUboot images via the included .dtsi.
+ */
+
+#include "../../../dts/nrf5340_bootloaders_partitions.dtsi"
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0_partition;
+	};
+};
