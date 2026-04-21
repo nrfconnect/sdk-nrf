@@ -1,0 +1,61 @@
+sample:
+  name: Clock control sample
+common:
+  tags:
+    - ci_samples_zephyr_boards_nordic_clock_control
+  harness: console
+  harness_config:
+    type: one_line
+    regex:
+      - "clock spec request released"
+tests:
+  nrf.extended.sample.boards.nrf.clock_control.fll16m:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/fll16m.conf"
+      - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/fll16m.overlay"
+  nrf.extended.sample.boards.nrf.clock_control.lfclk:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/lfclk.conf"
+      - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/lfclk.overlay"
+  nrf.extended.sample.boards.nrf.clock_control.uart133:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONF_FILE="configs/uart133.conf"
+      - DTC_OVERLAY_FILE="configs/uart133.overlay"
+  nrf.extended.sample.boards.nrf.clock_control.uart135:
+    depends_on:
+      - future_target
+    extra_args:
+      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/uart135.conf"
+      - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/uart135.overlay"
+  nrf.extended.sample.boards.nrf.clock_control.cpuapp_hsfll:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/cpuapp_hsfll.conf"
+      - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/cpuapp_hsfll.overlay"
+  nrf.extended.sample.boards.nrf.clock_control.global_hsfll:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/global_hsfll.conf"
+      - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/global_hsfll.overlay"
+  nrf.extended.sample.boards.nrf.clock_control.global_hsfll.req_low_freq_n:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF_HSFLL_GLOBAL_REQ_LOW_FREQ=n
+    extra_args:
+      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/global_hsfll.conf"
+      - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/global_hsfll.overlay"
+  nrf.extended.sample.boards.nrf.clock_control.audiopll:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/audiopll.conf"
+      - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/audiopll.overlay"
