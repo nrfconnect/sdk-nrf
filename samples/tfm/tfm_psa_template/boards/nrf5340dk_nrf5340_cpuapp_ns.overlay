@@ -4,8 +4,130 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &tfm_ps_partition;
+
+/* Resolve bl_storage in the forwarded TF-M secure image. */
 / {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
+	soc {
+		uicr_bl: uicr@ff8000 {
+			reg = <0xff8000 0x1000>;
+			ranges = <0x0 0xff8000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			bl_storage: uicr@100 {
+				reg = <0x100 0x280>;
+			};
+		};
+	};
+};
+
+/* s0/s1 must be aligned to the SPU flash block size (0x4000). */
+&flash0 {
+	partitions {
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0";
+			reg = <0x0 0x8000>;
+		};
+
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x8000 0x10000>;
+		};
+
+		s1_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot_s1";
+			reg = <0x18000 0x10000>;
+		};
+
+		slot0_partition: partition@28000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x28000 0x68000>;
+			ranges = <0x0 0x28000 0x68000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x0 0x40000>;
+			};
+
+			slot0_ns_partition: partition@40000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x40000 0x28000>;
+			};
+		};
+
+		slot1_partition: partition@90000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x90000 0x68000>;
+		};
+
+		tfm_storage_partition: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-storage";
+			reg = <0xf8000 DT_SIZE_K(32)>;
+			ranges = <0x0 0xf8000 DT_SIZE_K(32)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			tfm_its_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-its";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+
+			tfm_otp_partition: partition@2000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-otp";
+				reg = <0x2000 DT_SIZE_K(8)>;
+			};
+
+			tfm_ps_partition: partition@4000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-ps";
+				reg = <0x4000 DT_SIZE_K(16)>;
+			};
+		};
+	};
+};
+
+/* Place sram0_dfu_shared in sram0_ns so MCUboot does not lock it as part of sram0_s. */
+/delete-node/ &sram0_dfu_shared;
+
+&sram0_ns {
+	sram0_dfu_shared: sram@2e000 {
+		reg = <0x2e000 0x2000>;
+	};
+};
+
+&sram0_ns_app {
+	reg = <0x0 0x2e000>;
+};
+
+&mx25r64 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot3_partition: partition@0 {
+			label = "image-3";
+			reg = <0x0 DT_SIZE_K(256)>;
+		};
 	};
 };

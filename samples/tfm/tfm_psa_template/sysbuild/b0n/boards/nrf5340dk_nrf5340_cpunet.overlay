@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0n_partition;
+	};
+};
+
+/* Must match sram0_dfu_shared in the cpuapp_ns overlay. */
+/delete-node/ &sram0_dfu_shared;
+
+&sram0 {
+	sram0_dfu_shared: sram@6e000 {
+		reg = <0x6e000 0x2000>;
+	};
+};
+
+&flash1 {
+	partitions {
+		b0n_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0n";
+			reg = <0x0 0x8580>;
+		};
+
+		bl_storage: provision_partition: partition@8580 {
+			compatible = "zephyr,mapped-partition";
+			label = "provision";
+			reg = <0x8580 0x280>;
+		};
+
+		s0_partition: partition@8800 {
+			compatible = "zephyr,mapped-partition";
+			label = "netboot-image-0";
+			reg = <0x8800 0x37800>;
+		};
+	};
+};
