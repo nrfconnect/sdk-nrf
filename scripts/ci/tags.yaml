@@ -2045,3 +2045,8 @@ ci_tests_zephyr_board_nrf_throttling:
   files:
     - nrf/tests/zephyr/boards/nrf/rram_throttling/
     - zephyr/tests/boards/nrf/rram_throttling/
+
+ci_tests_zephyr_application_development_ram_context_for_isr:
+  files:
+    - nrf/tests/zephyr/application_development/ram_context_for_isr/
+    - zephyr/tests/application_development/ram_context_for_isr/

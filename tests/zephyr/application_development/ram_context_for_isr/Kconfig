@@ -1,0 +1,1 @@
+source "tests/application_development/ram_context_for_isr/Kconfig"

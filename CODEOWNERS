@@ -1031,6 +1031,7 @@
 /tests/zephyr/modules/tf-m/regression/    @nrfconnect/ncs-aegir
 /tests/zephyr/subsys/sd/                  @nrfconnect/ncs-low-level-test
 /tests/zephyr/subsys/secure_storage/      @nrfconnect/ncs-aegir
+/tests/zephyr/application_development/ram_context_for_isr/ @nrfconnect/ncs-aegir
 /tests/zephyr/subsys/settings/performance/ @nrfconnect/ncs-eris @rghaddab
 /tests/zephyr/bluetooth/tester/host/       @nrfconnect/ncs-paladin
 
