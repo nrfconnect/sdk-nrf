@@ -60,6 +60,10 @@
 	};
 };
 
+&gpio5 {
+	status = "okay";
+};
+
 &dma_fast_region {
 	status = "okay";
 };
