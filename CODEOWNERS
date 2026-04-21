@@ -731,7 +731,7 @@
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/west_commands/utils/             @gmarull
-/scripts/west_commands/create_board/      @gmarull
+/scripts/west_commands/create_board/      @nordicjm
 /scripts/west_commands/sbom/              @nrfconnect/ncs-co-scripts
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
 /scripts/west_commands/ncs_ironside_se_update.py @nrfconnect/ncs-aurora
