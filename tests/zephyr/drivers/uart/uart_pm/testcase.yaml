@@ -8,6 +8,7 @@ common:
     - nrf54ls05dk/nrf54ls05a/cpuapp
     - nrf54ls05dk/nrf54ls05b/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
+    - nrf9251dk/nrf9251/cpuapp
   harness_config:
     fixture: gpio_loopback
   depends_on: gpio
