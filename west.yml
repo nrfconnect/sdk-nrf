@@ -121,7 +121,7 @@ manifest:
       remote: zephyrproject
       path: modules/hal/nor
     - name: nrfx
-      revision: master
+      revision: pull/1221/head
       path: modules/hal/nor/nrfx
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
