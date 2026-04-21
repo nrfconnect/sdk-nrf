@@ -1762,6 +1762,11 @@ ci_samples_zephyr_drivers_mbox:
     - nrf/samples/zephyr/drivers/mbox/
     - zephyr/samples/drivers/mbox/
 
+ci_samples_zephyr_boards_nordic_clock_control:
+  files:
+    - nrf/samples/zephyr/boards/nordic/clock_control/
+    - zephyr/samples/boards/nordic/clock_control/
+
 ci_samples_zephyr_boards_nordic_nrf_sys_event:
   files:
     - nrf/samples/zephyr/boards/nordic/nrf_sys_event/
