@@ -59,7 +59,21 @@
 			};
 		};
 
-		/* 0xf0000 to 0xf7fff reserved for TF-M partitions */
+		tfm_ps_partition: partition@f0000 {
+			label = "tfm-ps";
+			reg = <0xf0000 0x4000>;
+		};
+
+		tfm_its_partition: partition@f4000 {
+			label = "tfm-its";
+			reg = <0xf4000 0x2000>;
+		};
+
+		tfm_otp_partition: partition@f6000 {
+			label = "tfm-otp";
+			reg = <0xf6000 0x2000>;
+		};
+
 		storage_partition: partition@f8000 {
 			label = "storage";
 			reg = <0xf8000 DT_SIZE_K(32)>;
