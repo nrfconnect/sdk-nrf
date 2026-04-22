@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v0.06
+# v0.07
 
 import os
 import sys
@@ -380,6 +380,10 @@ def main():
         sys.exit(1)
 
     board_family = build_config[board_family_line_start:board_family_line_end]
+
+    # Extract SoC part before '/' for CPUNET overlay filename
+    soc_part = board_family.split('/')[0] if '/' in board_family else board_family
+
     board_family = board_family.replace('/', '_')
 
     # Target name for output files
@@ -693,7 +697,7 @@ def main():
 
     # Output CPUNET partitions
     if parsed_cpunet and internal_cpunet_entries > 0:
-        f_net = open(f'{board_target}_cpunet.overlay', 'w')  # noqa: SIM115
+        f_net = open(f'{board}_{soc_part}_cpunet.overlay', 'w')  # noqa: SIM115
         print('**CPUNET**:\n')
 
         write_and_print(f_net, '&flash1 {\n')
