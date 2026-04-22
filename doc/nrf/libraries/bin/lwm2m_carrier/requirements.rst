@@ -51,8 +51,8 @@ Following are some of the requirements and limitations of the application while 
   Out-of-band FOTA updates are done by the :ref:`lib_downloader`.
   Although the certificates are updated as part of the |NCS| releases, you must check the requirements from your carrier to know which certificates are applicable.
 
-* The LwM2M carrier library uses the following NVS record key range: ``0xCA00`` to ``0xCAFF``.
-  This range must not be used by the application.
+* The LwM2M carrier library requires a :ref:`zephyr:nvs_api` partition to be chosen as ``lwm2m_carrier`` in the devicetree.
+  To mark this partition as non-secure in TF-M it needs to be (part of) a partition called ``storage_partition``.
 
 .. _lwm2m_carrier_dependent:
 
