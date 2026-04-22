@@ -22,4 +22,4 @@ config TFM_CRYPTO_KEY_WRAPPING_MODULE_ENABLED
 
 endif # TFM_PARTITION_CRYPTO && (PSA_CRYPTO_DRIVER_OBERON || PSA_CRYPTO_DRIVER_CRACEN)
 
-source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto"
