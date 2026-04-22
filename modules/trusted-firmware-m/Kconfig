@@ -17,13 +17,14 @@ rsource "Kconfig.tfm.defconfig"
 
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
 
+if BUILD_WITH_TFM
+
 if !TFM_PROFILE_TYPE_MINIMAL
 # When enabling full TFM support, then partitions and crypto modules shall be available.
-source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
-rsource "Kconfig.tfm.crypto_modules"
+rsource "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
+rsource "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.ps"
+rsource "Kconfig.tfm.crypto"
 endif
-
-if BUILD_WITH_TFM
 
 config TFM_MCUBOOT_HEADER_SIZE
 	hex "MCUboot header size for the TF-M combined slot"
@@ -255,12 +256,6 @@ config TFM_PS_RAM_FS
 	help
 	  Enable emulated RAM FS for platforms that don't have flash for
 	  Protected Storage partition
-
-config TFM_PS_ROLLBACK_PROTECTION
-	bool "Rollback protection"
-	default y
-	help
-	  Enable rollback protection for Protected Storage partition
 
 config TFM_PS_VALIDATE_METADATA_FROM_FLASH
 	bool "Validate filesystem metadata"

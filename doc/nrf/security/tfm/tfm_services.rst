@@ -166,7 +166,7 @@ It implements the PSA Crypto APIs (`PSA Certified Crypto API 1.4.0`_) and provid
 
 To enable the crypto service, set the :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO` Kconfig option.
 
-You can configure the service directly using the ``CONFIG_TFM_CRYPTO_*`` Kconfig options found in the :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules` file.
+You can configure the service directly using the ``CONFIG_TFM_CRYPTO_*`` Kconfig options found in the :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto` file.
 However, it is recommended to use the ``CONFIG_PSA_WANT_*`` Kconfig options to enable the required algorithms and key types.
 These will enable the required ``CONFIG_TFM_CRYPTO_*`` Kconfig options.
 
