@@ -235,7 +235,6 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
-
 |no_changes_yet_note|
 
 Bluetooth Fast Pair samples
@@ -342,7 +341,6 @@ Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
 |no_changes_yet_note|
-
 
 Thread samples
 --------------
