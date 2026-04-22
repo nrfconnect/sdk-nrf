@@ -23,15 +23,13 @@ tests:
       - EXTRA_CONF_FILE=\
         ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-secure_storage.conf;\
         ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-store_zms.conf;\
-        ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf;\
-        transform_default.conf
+        ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf
 
   nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.store.settings:
     extra_args: "EXTRA_CONF_FILE=\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-secure_storage.conf;\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf;\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-store_settings.conf;\
-      transform_default.conf;\
       store_settings.conf"
 
   nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.custom.transform:
@@ -45,8 +43,7 @@ tests:
     extra_args: "EXTRA_CONF_FILE=\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-secure_storage.conf;\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf;\
-      ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-store_custom.conf;\
-      transform_default.conf"
+      ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-store_custom.conf"
 
   nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.custom.both:
     extra_args: "EXTRA_CONF_FILE=\
