@@ -704,6 +704,12 @@ static int hci_cmd(const struct bt_hci_cmd_hdr *hdr, const uint8_t *data)
 		LOG_INF("Executing HCI LE Test End command.");
 		return hci_test_end();
 
+	case BT_HCI_OP_SET_EVENT_MASK:
+	case BT_HCI_OP_LE_SET_EVENT_MASK:
+		LOG_INF("Tester sets HCI event mask, do nothing");
+		/* Ignore command parameters, and simply return success */
+		return base_cc_evt(cmd, BT_HCI_ERR_SUCCESS);
+
 	default:
 		LOG_ERR("Unknown HCI command opcode: 0x%04x", cmd);
 		base_cc_evt(cmd, BT_HCI_ERR_UNKNOWN_CMD);
