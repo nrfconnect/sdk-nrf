@@ -533,9 +533,16 @@
 
 - scenarios:
     - sample.psa.its.secure_storage.entropy_driver
+    - sample.psa.its.secure_storage.entropy_not_secure
+    - secure_storage.psa.crypto.secure_storage
+    - secure_storage.psa.its.secure_storage.custom.store
+    - secure_storage.psa.its.secure_storage.store.settings
+    - secure_storage.psa.its.secure_storage.store.settings.64-bit_uids
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf54h20dk@0.9.0/nrf54h20/cpurad
+    - nrf9251dk/nrf9251/cpuapp
+    - nrf9251dk/nrf9251/cpurad
   comment: "Not compatible"
 
 - scenarios:
