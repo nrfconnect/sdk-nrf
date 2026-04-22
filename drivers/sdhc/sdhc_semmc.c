@@ -335,7 +335,7 @@ static int api_get_host_props(const struct device *dev,
 	props->f_min = FREQUENCY_MIN;
 	props->f_max = FREQUENCY_MAX;
 
-	props->host_caps.bus_4_bit_support = 1;
+	props->bus_4_bit_support = 1;
 	props->host_caps.vol_180_support = 1;
 
 	return 0;
