@@ -12,13 +12,15 @@ config HW_UNIQUE_KEY_SRC
 	  This is true whenever hw_unique_key source files are included in the
 	  build.
 
+config HW_UNIQUE_KEY_LOAD_SUPPORTED
+	def_bool y
+	depends on \
+		HAS_HW_NRF_ACL && HAS_HW_NRF_CC310 && NRF_CC3XX_PLATFORM && \
+		(PARTITION_MANAGER_ENABLED || $(dt_nodelabel_exists,hw_unique_key_partition))
+
 config HW_UNIQUE_KEY_LOAD
 	bool "Load Hardware Unique key on boot"
-	depends on HAS_HW_NRF_ACL
-	depends on HAS_HW_NRF_CC310
-	depends on NRF_CC3XX_PLATFORM
-	depends on PARTITION_MANAGER_ENABLED || $(dt_nodelabel_exists,hw_unique_key_partition)
-
+	depends on HW_UNIQUE_KEY_LOAD_SUPPORTED
 	select FPROTECT
 	imply NRFX_NVMC if !CRACEN_KMU_HW_PRESENT
 	help
@@ -31,8 +33,10 @@ config HW_UNIQUE_KEY_LOAD
 	  will fail if no key is present.
 
 config HW_UNIQUE_KEY_SUPPORTED
-	bool
-	default y if HAS_HW_NRF_CC3XX || (CRACEN_KMU_HW_PRESENT && !TFM_PROFILE_TYPE_MINIMAL)
+	def_bool y
+	depends on \
+		(HAS_HW_NRF_CC3XX && (!HAS_HW_NRF_ACL || HW_UNIQUE_KEY_LOAD_SUPPORTED)) || \
+		(CRACEN_KMU_HW_PRESENT && !TFM_PROFILE_TYPE_MINIMAL)
 
 config HW_UNIQUE_KEY
 	bool "Hardware Unique Keys (HUK)"

@@ -224,18 +224,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37803"
 
 - scenarios:
-    - secure_storage.psa.its.secure_storage.store.zms
-    - secure_storage.psa.its.secure_storage.store.zms.64-bit_uids
-    - secure_storage.psa.its.secure_storage.store.settings.64-bit_uids
-    - secure_storage.psa.its.secure_storage.store.settings
-    - sample.psa.its.secure_storage.entropy_driver
-    - secure_storage.psa.crypto.secure_storage
-    - sample.psa.persistent_key.secure_storage.entropy_driver
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38955"
-
-- scenarios:
     - secure_storage.psa.its.secure_storage.custom.store
   platforms:
     - nrf52840dk/nrf52840
