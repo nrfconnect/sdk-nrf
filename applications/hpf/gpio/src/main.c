@@ -25,45 +25,6 @@
 #define VEVIF_IRQN(vevif) VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B)
-static const uint8_t pin_to_vio_map[] = {
-	4,  /* Physical pin 0 */
-	0,  /* Physical pin 1 */
-	1,  /* Physical pin 2 */
-	3,  /* Physical pin 3 */
-	2,  /* Physical pin 4 */
-	5,  /* Physical pin 5 */
-	6,  /* Physical pin 6 */
-	7,  /* Physical pin 7 */
-	8,  /* Physical pin 8 */
-	9,  /* Physical pin 9 */
-	10, /* Physical pin 10 */
-};
-
-#define VIO_PORT 2
-#define VIO_PIN_OFFSET 0
-
-#elif defined(CONFIG_SOC_NRF54LV10A)
-static const uint8_t pin_to_vio_map[] = {
-	4,  /* Physical pin 15 */
-	0,  /* Physical pin 16 */
-	1,  /* Physical pin 17 */
-	3,  /* Physical pin 18 */
-	2,  /* Physical pin 19 */
-	5,  /* Physical pin 20 */
-	6,  /* Physical pin 21 */
-	7,  /* Physical pin 22 */
-	8,  /* Physical pin 23 */
-	9,  /* Physical pin 24 */
-};
-
-#define VIO_PORT 1
-#define VIO_PIN_OFFSET 15
-
-#else
-#error "Unsupported target"
-#endif
-
 #define VIO_INDEX_INVALID UINT8_MAX
 #define VIO_PIN_MASK_INVALID UINT16_MAX
 

@@ -27,33 +27,16 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define IPC_TIMEOUT_MS		     100
 #define IPC_BOUND_TIMEOUT_MS	     100
 #define IPC_BOUND_RETRY_COUNT	     10
-#define IPC_BOUND_RETRY_DELAY_MS	     10
+#define IPC_BOUND_RETRY_DELAY_MS     10
 #define EP_SEND_TIMEOUT_MS	     10
 #define EXTREME_DRIVE_FREQ_THRESHOLD 32000000
 #define CNT0_TOP_CALCULATE(freq)     (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
 #define DATA_LINE_INDEX(pinctr_fun)  (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 #define DATA_PIN_UNUSED              UINT8_MAX
 
-#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
-	defined(CONFIG_SOC_NRF54LM20B)
-
-#define HPF_MSPI_PORT_NUMBER	2 /* Physical port number */
-#define HPF_MSPI_SCK_PIN_NUMBER 1 /* Physical pin number on port 2 */
-
 #define HPF_MSPI_DATA_LINE_CNT_MAX 8
 #define HPF_MSPI_CS_LINE_CNT_MAX 5
 #define MAX_MSPI_DUMMY_CLOCKS 59
-#elif defined(CONFIG_SOC_NRF54LV10A)
-#define HPF_MSPI_PORT_NUMBER	1  /* Physical port number */
-#define HPF_MSPI_SCK_PIN_NUMBER 16 /* Physical pin number on port 1 */
-
-#define HPF_MSPI_DATA_LINE_CNT_MAX 8
-#define HPF_MSPI_CS_LINE_CNT_MAX 5
-#define MAX_MSPI_DUMMY_CLOCKS 59
-
-#else
-#error "Unsupported SoC for HPF MSPI"
-#endif
 
 #ifdef CONFIG_PINCTRL_STORE_REG
 #define HPF_MPSI_PINCTRL_DEV_CONFIG_INIT(node_id)                                                  \
