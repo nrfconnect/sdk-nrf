@@ -796,6 +796,7 @@ config MBEDTLS_MD_C
 config MBEDTLS_PK_C
 	bool "PK support"
 	default y if MBEDTLS_TLS_LIBRARY
+	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY if MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_ECP_C
 
 config MBEDTLS_PKCS5_C
 	bool "PKCS5 support"
