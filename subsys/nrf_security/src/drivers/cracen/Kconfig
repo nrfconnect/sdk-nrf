@@ -32,12 +32,12 @@ config PSA_NEED_CRACEN_RNG_NO_ENTROPY_WORKAROUND
 	# TODO: Revisit once pre-silicon targets are added
 	def_bool n
 
+if PSA_CRYPTO_DRIVER_CRACEN
+
 # Configure CRACEN_LOG_LEVEL
 module = CRACEN
 module-str = CRACEN
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
-
-if PSA_CRYPTO_DRIVER_CRACEN
 
 config PSA_NEED_CRACEN_ECC_KEY_GEN_PKE
 	bool
