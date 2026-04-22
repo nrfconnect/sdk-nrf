@@ -254,7 +254,10 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* :ref:`bluetooth_mesh_light` sample:
+
+  * The partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` board target is not backward compatible with the previous versions of the sample.
+    This affects builds with support of point-to-point Device Firmware Update (DFU) over the Simple Management Protocol (SMP).
 
 Bluetooth Fast Pair samples
 ---------------------------
