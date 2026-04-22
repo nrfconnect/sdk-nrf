@@ -1,0 +1,29 @@
+[gpio_secure_0]
+PIN_2 = "NonSecure"
+
+[gpio_own_0]
+PIN_2 = "Own"
+
+[gpio_secure_1]
+PIN_2 = "NonSecure"
+
+[gpio_own_1]
+PIN_2 = "Own"
+
+[gpio_secure_2]
+PIN_8 = "NonSecure"
+
+[gpio_own_2]
+PIN_8 = "Own"
+
+[gpio_secure_7]
+PIN_0 = "NonSecure"
+
+[gpio_own_7]
+PIN_0 = "Own"
+
+[gpio_secure_9]
+PIN_2 = "NonSecure"
+
+[gpio_own_9]
+PIN_2 = "Own"
