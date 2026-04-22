@@ -370,8 +370,10 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 #endif
 		break;
 	case NRF_WIFI_EVENT_ERROR_STATS: {
+#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
 		struct nrf_wifi_umac_event_error_stats *err_ev =
 			(struct nrf_wifi_umac_event_error_stats *)sys_head;
+#endif
 
 		nrf_wifi_osal_log_info("%s: Error stats event: stats_type=%d status_code=%u",
 				       __func__,
