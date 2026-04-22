@@ -6,3 +6,9 @@
 
 /* Delete led2. This can be removed after a fix in IronSide SE has been released. */
 /delete-node/ &led2;
+
+/ {
+	aliases {
+		/delete-property/ led2;
+	};
+};
