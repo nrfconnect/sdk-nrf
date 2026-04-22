@@ -241,7 +241,6 @@ config MBEDTLS_SSL_ALL_ALERT_MESSAGES
 
 config MBEDTLS_SSL_CONTEXT_SERIALIZATION
 	bool "Serialization of TLS context structures"
-	default y
 	help
 	  This setting enables serialization of TLS structures, through use of
 	  the mbedtls_ssl_context_save() and mbedtls_ssl_context_load().
