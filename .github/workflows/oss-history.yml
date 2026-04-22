@@ -41,4 +41,4 @@ jobs:
         uses: nrfconnect/action-oss-history@main
         with:
           workspace: 'ncs'
-          args: -p zephyr -p hostap -p wfa-qt-control-app
+          args: -p zephyr -p wfa-qt-control-app
