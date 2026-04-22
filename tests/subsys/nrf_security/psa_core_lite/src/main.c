@@ -53,8 +53,14 @@
 #define KMU_KEY_ID_AES_256_KW_ENC_KEY_READ_ONLY \
 	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, 32)
 
+/* X25519 Curve25519 secret key to calculate shared secret with ECDH */
+#define KMU_KEY_ID_KEY_PAIR_X25519_READ_ONLY \
+	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, 34)
+
 #define KMU_GET_SLOT_ID(key_id) \
 	CRACEN_PSA_GET_KMU_SLOT(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id))
+
+#define AES_256_KEY_SIZE	(32)
 
 /* Largest exportable size for KMU key (either buffer or kmu_opaque_key_buffer) */
 #define KMU_MAX_EXPORTED_SIZE	(97)
@@ -242,6 +248,79 @@ static uint8_t aes_ctr_unwrapped_key_ciphertext[16] = {
 	0x9e, 0x85, 0x4b, 0x41, 0x6b, 0x1e, 0xbd, 0x2e
 };
 
+/* Test material for X25519 (ECDH on Curve25519, RFC7748, 6.1) */
+#define X25519_PRIVKEY_SIZE	(32)
+#define X25519_PUBKEY_SIZE	(32)
+
+/* Alice's private key */
+static uint8_t x25519_alice_privkey[X25519_PRIVKEY_SIZE] = {
+	0x77, 0x07, 0x6d, 0x0a, 0x73, 0x18, 0xa5, 0x7d,
+	0x3c, 0x16, 0xc1, 0x72, 0x51, 0xb2, 0x66, 0x45,
+	0xdf, 0x4c, 0x2f, 0x87, 0xeb, 0xc0, 0x99, 0x2a,
+	0xb1, 0x77, 0xfb, 0xa5, 0x1d, 0xb9, 0x2c, 0x2a,
+};
+
+/* Bob's private key */
+static uint8_t x25519_bob_pubkey[X25519_PUBKEY_SIZE] = {
+	0xde, 0x9e, 0xdb, 0x7d, 0x7b, 0x7d, 0xc1, 0xb4,
+	0xd3, 0x5b, 0x61, 0xc2, 0xec, 0xe4, 0x35, 0x37,
+	0x3f, 0x83, 0x43, 0xc8, 0x5b, 0x78, 0x67, 0x4d,
+	0xad, 0xfc, 0x7e, 0x14, 0x6f, 0x88, 0x2b, 0x4f,
+};
+
+/**
+ * Expected shared secret key (RFC7748, 6.1):
+ * 0x4a5d9d5ba4ce2de1728e3bf480350f25e07e21c947d19e3376f09b3c1e161742
+ */
+
+/* Info input used for HKDF to derive keys from shared secret obtained with ECDH (9 octets)*/
+static uint8_t hkdf_info[9] = "HKDF_info";
+
+/**
+ * Expected output (pseudorandom key) after HKDF operation on the specified shared secret and
+ * info hkdf_info that was calculated with OpenSSL by running the following command:
+ *    openssl kdf -keylen 64 \
+ *		  -kdfopt digest:SHA2-512 \
+ *		  -kdfopt hexkey:4a5d9d5ba4ce2de1728e3bf480350f25e07e21c947d19e3376f09b3c1e161742 \
+ *		  -kdfopt info:HKDF_info \
+ *		  HKDF
+ * is:
+ * 9C:B2:99:0D:9A:11:1D:7B:B5:5F:2A:1A:B1:69:CD:42:5F:9B:F9:36:00:CB:89:F2:3D:C1:1A:3F:8B:A8:52:CE:\
+ * CD:7E:70:B0:A5:38:60:BF:40:20:AE:02:B7:F0:B5:AE:99:5C:43:D7:8E:6A:8B:76:E3:6A:D8:AE:71:AF:14:90
+ */
+
+#define HMAC_SHA512_MAC_SIZE	(64)
+
+static uint8_t hmac_sha512_msg[6] = "sample";
+
+/** Mac is calculated for the key ecdh_hkdf_expected_out_key and a message hmac_sha512_msg.
+ *
+ * The following value (hmac_sha512_mac) was calculated by using OpenSSL command (under Windows):
+ *	echo|set /p="sample" | \
+ *	openssl dgst -sha512 -mac HMAC \
+ *		-macopt hexkey:9CB2990D9A111D7BB55F2A1AB169CD425F9BF93600CB89F23DC11A3F8BA852CECD7\
+ *			       E70B0A53860BF4020AE02B7F0B5AE995C43D78E6A8B76E36AD8AE71AF1490 -hex
+ */
+static uint8_t hmac_sha512_mac[HMAC_SHA512_MAC_SIZE] = {
+	0x2d, 0x08, 0xd0, 0x60, 0xd9, 0x5c, 0x16, 0x66,
+	0x48, 0x63, 0xc8, 0x63, 0x18, 0xb4, 0x23, 0xc3,
+	0xbc, 0xc8, 0xc2, 0x9f, 0x50, 0x67, 0x27, 0x77,
+	0xbe, 0xe7, 0xf4, 0xfc, 0xa2, 0x93, 0x47, 0xea,
+	0x57, 0xb3, 0x45, 0x78, 0x38, 0xdb, 0xc1, 0x24,
+	0x41, 0x73, 0x8e, 0x02, 0x57, 0xff, 0x95, 0x5f,
+	0x82, 0x71, 0xf0, 0xba, 0x07, 0x6b, 0x88, 0x0f,
+	0x76, 0x84, 0x50, 0x3b, 0x00, 0x86, 0xda, 0x9c,
+};
+
+/** Ciphertext obtained as a result of AES-CTR encryption with
+ *  nonce aes_ctr_nonce and plaintext aes_ctr_plaintext using a
+ *  pseudorandom key ecdh_hkdf_expected_out_key.
+ */
+static uint8_t aes_ctr_derived_key_ciphertext[16] = {
+	0x13, 0x9f, 0x64, 0x0f, 0x56, 0xae, 0x51, 0xe5,
+	0x29, 0xea, 0x60, 0x4e, 0x57, 0xf3, 0xa9, 0x49,
+};
+
 /* Not yet standard API for key locking */
 psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id);
 
@@ -366,6 +445,23 @@ static void init_attributes_ecdsa_secp384r1_public_key(mbedtls_svc_key_id_t key_
 			persistence, PSA_KEY_LOCATION_CRACEN_KMU);
 	psa_key_usage_t usage = PSA_KEY_USAGE_VERIFY_MESSAGE | PSA_KEY_USAGE_VERIFY_HASH;
 	size_t key_bits = 384;
+
+	set_kmu_key_attributes(attributes, key_id, alg, lifetime, usage, key_type, key_bits);
+}
+
+static void init_attributes_x25519_private_key(mbedtls_svc_key_id_t key_id,
+					       psa_key_persistence_t persistence,
+					       psa_key_attributes_t *attributes)
+{
+	psa_algorithm_t alg = PSA_ALG_ECDH;
+	psa_key_type_t key_type = PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_MONTGOMERY);
+	psa_key_lifetime_t lifetime =
+		PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+			persistence, PSA_KEY_LOCATION_CRACEN_KMU);
+
+	/* Allow key export here so as to be able to check if the key is correctly provisioned.*/
+	psa_key_usage_t usage = PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT;
+	size_t key_bits = 255;
 
 	set_kmu_key_attributes(attributes, key_id, alg, lifetime, usage, key_type, key_bits);
 }
@@ -517,6 +613,36 @@ static void provision_aes_256_kw_enc_key(mbedtls_svc_key_id_t key_id,
 			      key_buffer);
 }
 
+static void provision_x25519_private_key(mbedtls_svc_key_id_t key_id,
+					 psa_key_persistence_t persistence,
+					 uint8_t key_buffer[X25519_PRIVKEY_SIZE])
+{
+	psa_status_t err;
+	uint8_t temp_buffer[X25519_PRIVKEY_SIZE];
+	const size_t privkey_size = X25519_PRIVKEY_SIZE;
+	size_t key_length;
+	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+
+	init_attributes_x25519_private_key(key_id, persistence, &attributes);
+
+	err = psa_import_key(&attributes, key_buffer, privkey_size, &key_id);
+	zassert_equal(err, PSA_SUCCESS,
+		"Failed to import X25519 key. slot_id: %d, err: %d",
+		KMU_GET_SLOT_ID(key_id), err);
+
+	/* Check that imported key is correct */
+	err = psa_export_key(key_id, temp_buffer, privkey_size, &key_length);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to export X25519 key. slot_id: %d, err: %d",
+		      KMU_GET_SLOT_ID(key_id), err);
+
+	zassert_equal(key_length, privkey_size, "Exported X25519 key size mismatch.");
+
+	if (constant_memcmp(key_buffer, temp_buffer, privkey_size) != 0) {
+		zassert_false(true, "Imported/exported X25519 key mismatch");
+	}
+}
+
 static void provision_keys(void)
 {
 	bool ran_provisioning = false;
@@ -584,6 +710,15 @@ static void provision_keys(void)
 		provision_aes_256_kw_enc_key(KMU_KEY_ID_AES_256_KW_ENC_KEY_READ_ONLY,
 					     CRACEN_KEY_PERSISTENCE_READ_ONLY,
 					     aes_kw_enc_key);
+
+		ran_provisioning = true;
+	}
+
+	/* X25519 secret key for ECDH */
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_ECDH, PSA_WANT_ECC_MONTGOMERY_255)) {
+		provision_x25519_private_key(KMU_KEY_ID_KEY_PAIR_X25519_READ_ONLY,
+					     CRACEN_KEY_PERSISTENCE_READ_ONLY,
+					     x25519_alice_privkey);
 
 		ran_provisioning = true;
 	}
@@ -899,6 +1034,80 @@ static void test_aes_ctr_crypt_unwrapped_key(mbedtls_svc_key_id_t key_id)
 		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(unwrapped_key_id), err);
 }
 
+static void derive_key_from_shared_secret(mbedtls_svc_key_id_t private_key_id,
+					  const psa_key_attributes_t *output_key_attr,
+					  mbedtls_svc_key_id_t *output_key)
+{
+	psa_status_t err;
+	psa_key_derivation_operation_t operation = PSA_KEY_DERIVATION_OPERATION_INIT;
+
+	err = psa_key_derivation_setup(
+		&operation, PSA_ALG_KEY_AGREEMENT(PSA_ALG_ECDH, PSA_ALG_HKDF(PSA_ALG_SHA_512)));
+	zassert_equal(err, PSA_SUCCESS, "Failed to setup key derivation: err: %d", err);
+
+	err = psa_key_derivation_key_agreement(&operation, PSA_KEY_DERIVATION_INPUT_SECRET,
+					       private_key_id,
+					       x25519_bob_pubkey, X25519_PUBKEY_SIZE);
+	zassert_equal(err, PSA_SUCCESS, "Failed to perform a key agreement: err: %d", err);
+
+	err = psa_key_derivation_input_bytes(&operation, PSA_KEY_DERIVATION_INPUT_INFO,
+					     hkdf_info, sizeof(hkdf_info));
+	zassert_equal(err, PSA_SUCCESS, "Failed to input info for key derivation: err: %d", err);
+
+	err = psa_key_derivation_output_key(output_key_attr, &operation, output_key);
+	zassert_equal(err, PSA_SUCCESS, "Failed to output derived key: err: %d", err);
+
+	err = psa_key_derivation_abort(&operation);
+	zassert_equal(err, PSA_SUCCESS, "Failed to abort key derivation operation: err: %d", err);
+}
+
+static void test_mac_verify(mbedtls_svc_key_id_t key_id)
+{
+	psa_status_t err;
+	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
+	mbedtls_svc_key_id_t output_key_id;
+
+	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_HMAC);
+	psa_set_key_usage_flags(&key_attributes, PSA_KEY_USAGE_VERIFY_MESSAGE);
+	psa_set_key_algorithm(&key_attributes, PSA_ALG_HMAC(PSA_ALG_SHA_512));
+	psa_set_key_bits(&key_attributes, PSA_BYTES_TO_BITS(PSA_HASH_LENGTH(PSA_ALG_SHA_512)));
+
+	derive_key_from_shared_secret(key_id, &key_attributes, &output_key_id);
+
+	err = psa_mac_verify(output_key_id,
+			     PSA_ALG_HMAC(PSA_ALG_SHA_512),
+			     hmac_sha512_msg, sizeof(hmac_sha512_msg),
+			     hmac_sha512_mac, HMAC_SHA512_MAC_SIZE);
+	zassert_equal(err, PSA_SUCCESS, "Failed to verify message MAC: slot_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(output_key_id), err);
+
+	err = psa_destroy_key(output_key_id);
+	zassert_equal(err, PSA_SUCCESS, "Failed to destroy derived key: slot_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(output_key_id), err);
+}
+
+static void test_aes_ctr_crypt_derived_key(mbedtls_svc_key_id_t key_id)
+{
+	psa_status_t err;
+	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
+	mbedtls_svc_key_id_t output_key_id;
+
+	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_AES);
+	psa_set_key_usage_flags(&key_attributes, PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT);
+	psa_set_key_algorithm(&key_attributes, PSA_ALG_CTR);
+	psa_set_key_bits(&key_attributes, PSA_BYTES_TO_BITS(AES_256_KEY_SIZE));
+
+	derive_key_from_shared_secret(key_id, &key_attributes, &output_key_id);
+	test_aes_ctr_crypt(output_key_id, aes_ctr_nonce, ARRAY_SIZE(aes_ctr_nonce),
+			   aes_ctr_plaintext, ARRAY_SIZE(aes_ctr_plaintext),
+			   aes_ctr_derived_key_ciphertext,
+			   ARRAY_SIZE(aes_ctr_derived_key_ciphertext));
+
+	err = psa_destroy_key(output_key_id);
+	zassert_equal(err, PSA_SUCCESS, "Failed to destroy derived key: slot_id: %d, err: %d",
+		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(output_key_id), err);
+}
+
 static void test_verify(void)
 {
 	bool ran_verify = false;
@@ -1022,7 +1231,30 @@ static void test_crypt(void)
 		ran_encrypt = true;
 	}
 
+	/* AES CTR using 256-bits key derived from HKDF after ECDH key agreement */
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_CTR, PSA_WANT_ALG_ECDH, PSA_WANT_ALG_HKDF)) {
+		test_aes_ctr_crypt_derived_key(KMU_KEY_ID_KEY_PAIR_X25519_READ_ONLY);
+
+		ran_encrypt = true;
+	}
+
 	zassert_true(ran_encrypt, "Did not run encrypt, check configs!");
+}
+
+static void test_mac(void)
+{
+	bool ran_mac = false;
+
+	/** Message MAC verification using 256-bits key
+	 *  derived from HKDF after ECDH key agreement
+	 */
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_ECDH, PSA_WANT_ALG_HMAC, PSA_WANT_ALG_HKDF)) {
+		test_mac_verify(KMU_KEY_ID_KEY_PAIR_X25519_READ_ONLY);
+
+		ran_mac = true;
+	}
+
+	zassert_true(ran_mac, "Did not run MAC verification testing, check configs!");
 }
 
 static void test_generate_random(void)
@@ -1142,9 +1374,15 @@ static void test_lock_keys(void)
 	}
 
 	/* Any AES using 256-bits key */
-	if (IS_ENABLED_ALL(PSA_WANT_ALG_CTR, PSA_WANT_AES_KEY_SIZE_256)) {
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_AES_KW, PSA_WANT_ALG_CTR, PSA_WANT_AES_KEY_SIZE_256)) {
 		/* Try to lock the read-only AES key */
 		lock_key(KMU_KEY_ID_AES_256_KW_ENC_KEY_READ_ONLY);
+		ran_lock = true;
+	}
+
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_ECDH, PSA_WANT_ECC_MONTGOMERY_255)) {
+		/* Try to lock the read-only X25519 key */
+		lock_key(KMU_KEY_ID_KEY_PAIR_X25519_READ_ONLY);
 		ran_lock = true;
 	}
 
@@ -1237,6 +1475,11 @@ void test_main(void)
 	/* + Test any encryption (optional added feature) */
 	if (IS_ENABLED_ANY(PSA_WANT_ALG_CTR)) {
 		test_crypt();
+	}
+
+	/* + Test any key derivation (optional added feature) */
+	if (IS_ENABLED_ANY(PSA_WANT_ALG_HMAC)) {
+		test_mac();
 	}
 
 	/* + Test Generate random (optional added feature )*/
