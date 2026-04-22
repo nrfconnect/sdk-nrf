@@ -4,26 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config RUN_PPRCORE
-	bool "Run test on Peripheral Processor Core (PPR)"
-
-choice PPRCORE
-	default PPRCORE_REMOTE if RUN_PPRCORE
-
-config PPRCORE_REMOTE
-	bool "Remote image"
-
-endchoice
-
-config PPRCORE_IMAGE_NAME
-	default "remote" if PPRCORE_REMOTE
-
-config PPRCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_gpio/remote" if PPRCORE_REMOTE
-
 choice NETCORE
-	default NETCORE_REMOTE if PPRCORE_NONE
-	default NETCORE_REMOTE_SLEEP_FOREVER if !PPRCORE_NONE
+	default NETCORE_REMOTE
 
 config NETCORE_REMOTE
 	bool "Remote image"
@@ -40,5 +22,19 @@ config NETCORE_IMAGE_NAME
 config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_gpio/remote" if NETCORE_REMOTE
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever" if NETCORE_REMOTE_SLEEP_FOREVER
+
+choice PPRCORE
+	default PPRCORE_NONE
+
+config PPRCORE_REMOTE
+	bool "Remote image"
+
+endchoice
+
+config PPRCORE_IMAGE_NAME
+	default "remote" if PPRCORE_REMOTE
+
+config PPRCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_gpio/remote" if PPRCORE_REMOTE
 
 source "share/sysbuild/Kconfig"

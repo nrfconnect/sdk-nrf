@@ -9,8 +9,6 @@ common:
     regex:
       - "Multicore idle_gpio test on"
       - "Multicore idle_gpio test iteration 0"
-  extra_args:
-    - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
 
 tests:
   benchmarks.multicore.idle_gpio.nrf54h20dk_cpuapp_cpurad.s2ram:
@@ -20,6 +18,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - FILE_SUFFIX=s2ram
+      - SB_CONFIG_NETCORE_REMOTE=y
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
@@ -34,8 +33,8 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - FILE_SUFFIX=s2ram
-      - SB_CONFIG_RUN_PPRCORE=y
-      - EXTRA_DTC_OVERLAY_FILE="enable_ppr.overlay"
+      - SB_CONFIG_NETCORE_REMOTE_SLEEP_FOREVER=y
+      - SB_CONFIG_PPRCORE_REMOTE=y
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
@@ -52,6 +51,7 @@ tests:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - FILE_SUFFIX=s2ram
       - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_gpio/boards/nrf54h20dk_nrf54h20_cpuapp_s2ram.overlay"
+      - SB_CONFIG_NETCORE_REMOTE=y
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
@@ -68,6 +68,7 @@ tests:
       - FILE_SUFFIX=s2ram_merged_slot
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_EXTRA_CONF_FILE="sysbuild/sysbuild_merged_slot.conf"
+      - SB_CONFIG_NETCORE_REMOTE=y
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
@@ -83,6 +84,7 @@ tests:
     extra_args:
       - FILE_SUFFIX=s2ram
       - EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins.overlay"
+      - SB_CONFIG_NETCORE_REMOTE=y
       - remote_EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins.overlay"
     harness: pytest
     harness_config:
@@ -100,6 +102,7 @@ tests:
     extra_args:
       - FILE_SUFFIX=s2ram
       - EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins.overlay"
+      - SB_CONFIG_NETCORE_REMOTE=y
       - remote_EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins_gpiote0.overlay"
     harness: pytest
     harness_config:
@@ -117,6 +120,7 @@ tests:
     extra_args:
       - FILE_SUFFIX=s2ram
       - EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins.overlay"
+      - SB_CONFIG_NETCORE_REMOTE=y
       - remote_EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins_gpiote0.overlay"
       - remote_CONFIG_TEST_GPIOTE_LATENCY_LOWPOWER=y
     harness: pytest
@@ -134,8 +138,9 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - FILE_SUFFIX=s2ram
-      - SB_CONFIG_RUN_PPRCORE=y
-      - EXTRA_DTC_OVERLAY_FILE="enable_ppr.overlay;wakeup_from_uart_pins.overlay"
+      - EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins.overlay"
+      - SB_CONFIG_NETCORE_REMOTE_SLEEP_FOREVER=y
+      - SB_CONFIG_PPRCORE_REMOTE=y
       - remote_EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins.overlay"
     harness: pytest
     harness_config:
