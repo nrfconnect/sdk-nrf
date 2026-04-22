@@ -10,6 +10,9 @@ choice NETCORE
 config NETCORE_REMOTE
 	bool "Remote image"
 
+config NETCORE_WAKEUP_TRIGGER
+	bool "Wakeup trigger image"
+
 config NETCORE_REMOTE_SLEEP_FOREVER
 	bool "Remote sleep forever image"
 
@@ -17,10 +20,12 @@ endchoice
 
 config NETCORE_IMAGE_NAME
 	default "remote" if NETCORE_REMOTE
+	default "wakeup_trigger" if NETCORE_WAKEUP_TRIGGER
 	default "remote_sleep_forever" if NETCORE_REMOTE_SLEEP_FOREVER
 
 config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_gpio/remote" if NETCORE_REMOTE
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_gpio/wakeup_trigger" if NETCORE_WAKEUP_TRIGGER
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever" if NETCORE_REMOTE_SLEEP_FOREVER
 
 choice PPRCORE
