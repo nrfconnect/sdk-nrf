@@ -1,0 +1,15 @@
+&grtc {
+	owned-channels = <0 4 5 6>;
+};
+
+tst_timer: &timer130 {
+	status = "okay";
+};
+
+&fll16m {
+	status = "okay";
+};
+
+&lfclk {
+	status = "okay";
+};

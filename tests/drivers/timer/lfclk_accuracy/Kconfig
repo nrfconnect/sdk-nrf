@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+config TEST_NRFX_HF_CLOCK_DRIVER
+	bool "Use NRFX HF clock driver in test"
+	default y if SOC_NRF54L05
+	default y if SOC_NRF54L10
+	default y if SOC_NRF54L15
+	default y if SOC_NRF54LM20A
+	default y if SOC_NRF54LM20B
+	default y if SOC_NRF54LS05A
+	default y if SOC_NRF54LS05B
+	default y if SOC_NRF54LV10A
+	select NRFX_CLOCK
+
+config TEST_CC_HF_CLOCK_DRIVER
+	bool "Use Clock Control HF clock driver in test"
+	default y if SOC_NRF54H20
+	select CLOCK_CONTROL
+
+config TEST_GRTC_TIMER_INTERVAL_US
+	int "GRTC interval [us]"
+	default 4000
+
+config TEST_DURATION_MS
+	int "Test durations [ms]"
+	default 10000
+
+config TEST_ABS_TIMIMG_DEVIATION_US
+	int "Maximal measured interval deviation in [us]"
+	default 1
