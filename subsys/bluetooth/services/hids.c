@@ -1353,12 +1353,12 @@ int bt_hids_boot_kb_inp_rep_send(struct bt_hids *hids_obj,
 	struct bt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids_obj->conn_ctx, conn);
 
-	if (len > sizeof(conn_data->hids_boot_kb_inp_rep_ctx)) {
+	if (!conn_data) {
+		LOG_WRN("The context was not found");
 		return -EINVAL;
 	}
 
-	if (!conn_data) {
-		LOG_WRN("The context was not found");
+	if (len > sizeof(conn_data->hids_boot_kb_inp_rep_ctx)) {
 		return -EINVAL;
 	}
 
