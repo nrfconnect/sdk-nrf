@@ -112,6 +112,7 @@ The sample provides predefined configuration files for the following development
 * :file:`nrf54l15dk_nrf54l15_cpuapp.conf` - Configuration file for the nRF54L15 DK.
 * :file:`nrf54lm20dk_nrf54lm20a_cpuapp.conf` - Configuration file for the nRF54LM20 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
+* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
 
 Files that are located under the :file:`/boards` folder is automatically merged with the :file:`prj.conf` file when you build for corresponding target.
 
@@ -121,6 +122,7 @@ In addition, the sample provides the following overlay configuration files, whic
 * :file:`tls-nrf7002.conf` - TLS overlay configuration file for nRF70 Series devices.
 * :file:`tls-nrf54l-nrf70.conf` - TLS overlay configuration file for nRF54L Series devices.
 * :file:`overlay-tls-native_sim.conf` - TLS overlay configuration file for the native simulator board.
+* :file:`tls-nrf7120.conf` - TLS overlay configuration file for nRF71 Series devices.
 
 They are located in :file:`samples/net/mqtt` folder.
 

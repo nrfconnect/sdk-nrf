@@ -5,7 +5,7 @@
 #
 
 menu "Network"
-	depends on NRF_MODEM_LIB_NET_IF || WIFI_NRF70 || BOARD_NATIVE_SIM
+	depends on NRF_MODEM_LIB_NET_IF || WIFI_NRF70 || BOARD_NATIVE_SIM || WIFI_NRF71
 
 config MQTT_SAMPLE_NETWORK_THREAD_STACK_SIZE
 	int "Thread stack size"
