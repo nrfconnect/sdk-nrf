@@ -43,6 +43,7 @@
 };
 
 &uart132 {
+	status = "okay";
 	current-speed = <115200>;
 	pinctrl-0 = <&uart132_default>;
 	pinctrl-1 = <&uart132_sleep>;
