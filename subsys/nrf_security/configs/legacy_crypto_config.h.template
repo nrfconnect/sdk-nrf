@@ -3322,7 +3322,7 @@
  * Requires: MBEDTLS_PSA_CRYPTO_C
  *
  */
-#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOTS
+//#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOTS
 
 /**
  * \def MBEDTLS_RIPEMD160_C

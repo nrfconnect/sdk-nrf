@@ -52,12 +52,6 @@ config MBEDTLS_PSA_KEY_SLOT_COUNT
 	  transparent keys that we can have open concurrently.
 	  The default value comes from MBedTLS.
 
-config MBEDTLS_PSA_STATIC_KEY_SLOTS
-	bool "Static key slots for PSA"
-	help
-	  When this option is enabled the PSA core doesn't use the heap to store keys.
-	  It uses a static buffer to hold the key material.
-
 config PSA_CRYPTO_SYS_INIT
 	bool "Invoke psa_crypto_init during system initialization"
 	default y
