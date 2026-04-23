@@ -12,6 +12,7 @@
 #ifdef CONFIG_PCD_NET
 #ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
 #include <fw_info_bare.h>
+#include <zephyr/storage/flash_map.h>
 #endif
 #include <zephyr/storage/stream_flash.h>
 #endif
@@ -91,7 +92,11 @@ int pcd_find_fw_version(void)
 		return -EFAULT;
 	}
 
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 	firmware_info = fw_info_find(PM_APP_ADDRESS);
+#else
+	firmware_info = fw_info_find(PARTITION_ADDRESS(s0_partition));
+#endif
 
 	if (firmware_info != NULL) {
 		memcpy((void *)pcd_cmd_p->data, &firmware_info->version, pcd_cmd_p->len);
