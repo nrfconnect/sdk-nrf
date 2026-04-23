@@ -76,6 +76,7 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
 * :file:`nrf54l15dk_nrf54l15_cpuapp.conf` - Configuration file for the nRF54L15 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :file:`boards/nrf7120dk_nrf7120_ns.conf` - Configuration file for the nRF7120 DK.
 
 Building and running
 ********************
