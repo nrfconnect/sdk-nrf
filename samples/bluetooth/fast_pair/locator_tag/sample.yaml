@@ -22,7 +22,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
     platform_allow:
@@ -38,7 +37,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
   sample.bluetooth.fast_pair.locator_tag.release:
@@ -55,7 +53,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
     platform_allow:
@@ -71,7 +68,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
     extra_args: FILE_SUFFIX=release

@@ -276,7 +276,14 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* Removed the remaining ``nrf54h20dk/nrf54h20/cpuapp`` board target configurations from the following samples:
+
+  * :ref:`fast_pair_locator_tag`
+  * :ref:`fast_pair_input_device`
+
+  Updated the sample documentation to remove all references to the ``nrf54h20dk/nrf54h20/cpuapp`` board target, including descriptions of nRF54H-specific solutions such as the legacy SUIT DFU integration.
+
+  Support for this target was already dropped during the IronSide SE migration in the |NCS| v3.1.0 release.
 
 Cellular samples
 ----------------

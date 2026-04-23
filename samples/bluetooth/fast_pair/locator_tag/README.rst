@@ -24,16 +24,6 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. note::
-   This sample does not build or run for the ``nrf54h20dk/nrf54h20/cpuapp`` board target due to the IronSide SE migration.
-   See the ``NCSDK-34821`` in the :ref:`known_issues` page for more information.
-   This documentation page may still refer to concepts that were valid before the IronSide SE migration (for example, to the SUIT solution).
-   The codebase and documentation will be updated in the future releases to address this issue.
-
-.. note::
-   In case of the :zephyr:board:`nrf54h20dk` board target, the application still has high power consumption as the Bluetooth LE controller running on the radio core requires disabling MRAM latency (:kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ`).
-   Enabling MRAM latency makes the Bluetooth LE controller unstable.
-
 .. _fast_pair_locator_tag_reference_boards:
 
 Reference board targets
@@ -243,8 +233,6 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``thingy53/nrf5340/cpuapp``                                        |
 |              |                                | * ``thingy53/nrf5340/cpuapp/ns``                                     |
 +--------------+--------------------------------+----------------------------------------------------------------------+
-| SUIT         | overwrite only mode            | * ``nrf54h20dk/nrf54h20/cpuapp``                                     |
-+--------------+--------------------------------+----------------------------------------------------------------------+
 
 Signature algorithm
 -------------------
@@ -282,10 +270,6 @@ The configuration of the signature algorithm and the public key storage solution
 |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |                           |                           |
 |                                | * ``nrf54lm20dk/nrf54lm20b/cpuapp``                                  |                           |                           |
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
-
-.. note::
-   The SUIT DFU integration in this sample does not support the secure boot feature and its requirement for the signature verification.
-   The affected board targets are not listed in the table above.
 
 Each supported board target has the signature key file (the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option) defined in the :file:`sysbuild/configuration` directory that is part of the sample directory.
 The signature key file is unique for each board target and is located in the :file:`<board_target>` subdirectory.
@@ -644,7 +628,7 @@ SB_CONFIG_APP_DFU
    The sample sysbuild configuration option enables the Device Firmware Update (DFU) functionality.
    The value of this option is propagated to the application configuration option :ref:`CONFIG_APP_DFU <CONFIG_APP_DFU>`.
    On multi-core devices, it adds the Kconfig fragment to the network core image configuration which speeds up the DFU process.
-   This option is enabled by default if the MCUboot bootloader image is used (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`) or if the chosen board target is based on an nRF54H Series SoC  (:kconfig:option:`SB_CONFIG_SOC_SERIES_NRF54H`).
+   This option is enabled by default if the MCUboot bootloader image is used (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`).
 
 .. _CONFIG_APP_DFU:
 
@@ -1240,16 +1224,6 @@ To perform the DFU procedure, complete the following steps:
          .. include:: /app_dev/device_guides/nrf52/fota_update.rst
             :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
             :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
-
-   .. group-tab:: nRF54H DKs
-
-      1. Observe that **LED 0** is blinking at a 1 second interval, which indicates that the DFU mode is disabled.
-      #. Press the **Button 3** for 7 seconds or more to enter the DFU mode.
-      #. Observe that **LED 0** is blinking at a 0.25 second interval, which indicates that the DFU mode is enabled.
-      #. Observe that **LED 2** is blinking, which indicates that the Fast Pair advertising is enabled.
-      #. Perform DFU using the `nRF Connect Device Manager`_ mobile app:
-
-         .. include:: /includes/suit_fota_update_nrfcdm_test_steps.txt
 
 .. _fast_pair_locator_tag_testing_fw_update_notifications:
 

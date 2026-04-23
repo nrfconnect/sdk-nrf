@@ -3395,9 +3395,12 @@ NCSDK-34821: Fast Pair samples do not build or run due to the IronSide SE migrat
   The :ref:`fast_pair_input_device` and :ref:`fast_pair_locator_tag` samples are currently incompatible with the latest |NCS| transition to the IronSide SE solution - bundle 22.1.0 and higher for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
   As a result, you cannot use these samples with that board target in any of the affected releases.
 
+  Although the ``nrf54h20dk/nrf54h20/cpuapp`` board target has not been functional with the affected samples since the IronSide SE transition in the |NCS| v3.1.0 release, the samples continued to ship with leftover configuration files and documentation that described the target as supported.
+  The |NCS| v3.4.0 release removes those leftovers, aligns the documentation with the actual state, officially drops support for this board target, and closes this known issue for subsequent releases.
+
   **Affected platforms:** nRF54H20
 
-  **Workaround:** Use a future |NCS| release that includes IronSide SE support in the Fast Pair samples or use the |NCS| v3.0.0 release with the SUIT SDSC bundle (version up to 0.9.6).
+  **Workaround:** Use the |NCS| v3.0.0 release with the SUIT SDSC bundle (version up to 0.9.6).
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0
 

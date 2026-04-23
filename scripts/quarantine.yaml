@@ -54,12 +54,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/OCT-3708"
 
 - scenarios:
-    - sample.bluetooth.fast_pair.locator_tag.*
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-  comment: "Needs alignment to work with IronSide SE"
-
-- scenarios:
     - sample.bluetooth.mesh_dfu_distributor
     - sample.bluetooth.mesh_dfu_distributor.dfu_ext_flash
     - sample.bluetooth.mesh_dfu_distributor.settings_ext_flash
