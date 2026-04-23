@@ -166,6 +166,11 @@
 	memory-regions = <&cpuapp_dma_region>;
 };
 
+&adc {
+	status = "okay";
+	memory-regions = <&cpuapp_dma_region>;
+};
+
 &coresight {
 	pinctrl-0 = <&tpiu_default>;
 	pinctrl-names = "default";
