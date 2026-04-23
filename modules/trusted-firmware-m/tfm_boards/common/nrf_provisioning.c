@@ -16,7 +16,9 @@
 #include "nrf_provisioning.h"
 #include <identity_key.h>
 #include <tfm_spm_log.h>
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #include <pm_config.h>
+#endif
 #if defined(NRF53_SERIES) && (defined(PM_CPUNET_APP_ADDRESS) || defined(CONFIG_TFM_HAS_B0N))
 #include <dfu/pcd_common.h>
 #include <spu.h>
@@ -138,7 +140,7 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-#if defined(NRF53_SERIES) && defined(PM_CPUNET_APP_ADDRESS)
+#if defined(NRF53_SERIES) && (defined(PM_CPUNET_APP_ADDRESS) || defined(CONFIG_TFM_HAS_B0N))
 	/* Disable network core debug in here */
 	if (disable_netcore_debug() != TFM_PLAT_ERR_SUCCESS) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
