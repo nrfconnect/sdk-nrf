@@ -58,8 +58,6 @@ Not all of the nRF91 Series samples include a secure bootloader chain, but the o
 Trusted Firmware-M (TF-M)
 =========================
 
-.. include:: ../../../includes/pm_deprecation.txt
-
 Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
 It has replaced Secure Partition Manager as the solution used by |NCS| applications and samples.
 This means that when you build your application for board targets with the ``*/ns`` :ref:`variant <app_boards_names>`, TF-M is automatically included in the build.

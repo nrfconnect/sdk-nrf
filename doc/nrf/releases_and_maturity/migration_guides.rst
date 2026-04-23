@@ -14,6 +14,7 @@ Migration notes are also provided for major functionality updates.
    :glob:
    :caption: nRF Connect SDK version migration notes
 
+   migration/migration_guide_3.4
    migration/migration_guide_3.3
    migration/migration_guide_3.2
    migration/migration_guide_3.1

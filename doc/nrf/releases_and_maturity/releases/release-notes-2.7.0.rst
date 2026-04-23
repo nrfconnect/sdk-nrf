@@ -32,7 +32,7 @@ Applications that are outside the SDK are not built with sysbuild by default.
 
 The deprecated methods are scheduled for removal after the next release.
 We recommend transitioning to the alternatives as soon as possible.
-Consult migration guides for `Migrating to the current hardware model`_ and `Migrating from multi-image builds to sysbuild`_.
+Consult migration guides for Migrating to the current hardware model and `Migrating from multi-image builds to sysbuild`_.
 Exercise caution when migrating production environments to the latest SDK.
 
 Added the following features as supported:
@@ -55,7 +55,7 @@ Added the following features as supported:
     This feature is showcased in the :ref:`fast_pair_locator_tag` sample.
   * Hardware model v2 (HWMv2), an improved extensible system for defining boards.
     This is the default boards definition system from this |NCS| release and onwards.
-    See `Migrating to the current hardware model`_.
+    See Migrating to the current hardware model.
   * :ref:`zephyr:sysbuild`, an improved and extensible system for multi-image build, replacing parent/child images.
     See `Migrating from multi-image builds to sysbuild`_.
   * Samples and applications that use short-range radio and run on multi-core SoCs were migrated to use the :ref:`ipc_radio` as the default image for the network/radio core.

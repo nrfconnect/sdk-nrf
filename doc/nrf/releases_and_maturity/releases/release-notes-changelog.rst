@@ -1,6 +1,6 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.2.99
+Changelog for |NCS| v3.3.99
 ###########################
 
 .. contents::
@@ -23,7 +23,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v3.2.0`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v3.3.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -131,7 +131,7 @@ Security
 Trusted Firmware-M (TF-M)
 -------------------------
 
-* Reading UICR.OTP using the :c:func:`tfm_platform_mem_read` function is now allowed on the nRF54L Series devices.
+|no_changes_yet_note|
 
 Protocols
 =========
@@ -288,11 +288,6 @@ DFU samples
 
 DECT NR+ samples
 ----------------
-
-|no_changes_yet_note|
-
-DFU samples
------------
 
 |no_changes_yet_note|
 
@@ -509,10 +504,6 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* :ref:`west_sbom` script:
-
-  * Added licence handling of the LLVM toolchain libraries.
-
 |no_changes_yet_note|
 
 Integrations
@@ -598,11 +589,6 @@ Additions specific to |NCS|
 |no_changes_yet_note|
 
 zcbor
-=====
-
-|no_changes_yet_note|
-
-cJSON
 =====
 
 |no_changes_yet_note|

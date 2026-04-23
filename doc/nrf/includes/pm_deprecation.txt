@@ -8,4 +8,4 @@
    For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the following pages:
 
    * :ref:`migration_partitions`
-   * :ref:`release_notes`
+   * :ref:`ncs_release_notes_330`
