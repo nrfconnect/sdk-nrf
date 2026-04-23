@@ -590,3 +590,13 @@
   platforms:
     - native_sim/native
   comment: "The dashboard does not support sysbuild images"
+
+- scenarios:
+    - crypto.secp256r1.mbedtls
+    - crypto.secp256r1.p256-m_raw
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+  comment: "Not supported in NCS"
