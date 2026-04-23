@@ -11,3 +11,5 @@ tests:
       - SNIPPET=wifi-ipv4
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
