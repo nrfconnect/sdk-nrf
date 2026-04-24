@@ -1,0 +1,8 @@
+name: nordic-ppr
+append:
+  EXTRA_DTC_OVERLAY_FILE: nordic-ppr.overlay
+
+boards:
+  /.*/nrf9251/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf9251_cpuapp.overlay
