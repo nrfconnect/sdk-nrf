@@ -20,12 +20,6 @@
 
 LOG_MODULE_DECLARE(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 
-static void report_decoding_error(uint8_t cmd_evt_id, void *data)
-{
-	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
-		    NRF_RPC_PACKET_TYPE_CMD);
-}
-
 static void bt_addr_le_is_bonded_rpc_handler(const struct nrf_rpc_group *group,
 					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
@@ -47,7 +41,7 @@ static void bt_addr_le_is_bonded_rpc_handler(const struct nrf_rpc_group *group,
 	return;
 
 decoding_error:
-	report_decoding_error(BT_ADDR_LE_IS_BONDED_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_ADDR_LE_IS_BONDED_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_addr_le_is_bonded, BT_ADDR_LE_IS_BONDED_CMD,
@@ -136,7 +130,7 @@ static void bt_hci_cmd_send_sync_rpc_handler(const struct nrf_rpc_group *group,
 	return;
 
 decoding_error:
-	report_decoding_error(BT_HCI_CMD_SEND_SYNC_RPC_CMD, hanler_data);
+	bt_rpc_report_decoding_error(BT_HCI_CMD_SEND_SYNC_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_hci_cmd_send_sync, BT_HCI_CMD_SEND_SYNC_RPC_CMD,

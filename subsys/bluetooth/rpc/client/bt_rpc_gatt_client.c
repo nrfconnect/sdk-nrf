@@ -82,12 +82,6 @@ const struct bt_gatt_attr *bt_rpc_decode_gatt_attr(struct nrf_rpc_cbor_ctx *ctx)
 	return bt_rpc_gatt_index_to_attr(attr_index);
 }
 
-static void report_decoding_error(uint8_t cmd_evt_id, void *data)
-{
-	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
-		    NRF_RPC_PACKET_TYPE_CMD);
-}
-
 ssize_t bt_gatt_attr_read(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 			  void *buf, uint16_t buf_len, uint16_t offset,
 			  const void *value, uint16_t value_len)
@@ -129,7 +123,7 @@ static void bt_gatt_complete_func_t_callback_rpc_handler(const struct nrf_rpc_gr
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_COMPLETE_FUNC_T_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_COMPLETE_FUNC_T_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_complete_func_t_callback,
@@ -167,7 +161,7 @@ static void bt_rpc_gatt_ccc_cfg_changed_cb_rpc_handler(const struct nrf_rpc_grou
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_CB_CCC_CFG_CHANGED_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_CB_CCC_CFG_CHANGED_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_ccc_cfg_changed_cb,
@@ -208,7 +202,7 @@ static void bt_rpc_gatt_ccc_cfg_write_cb_rpc_handler(const struct nrf_rpc_group 
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_CB_CCC_CFG_WRITE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_CB_CCC_CFG_WRITE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_ccc_cfg_write_cb,
@@ -247,7 +241,7 @@ static void bt_rpc_gatt_ccc_cfg_match_cb_rpc_handler(const struct nrf_rpc_group 
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_CB_CCC_CFG_MATCH_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_CB_CCC_CFG_MATCH_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_ccc_cfg_match_cb,
@@ -305,7 +299,7 @@ static void bt_rpc_gatt_attr_read_cb_rpc_handler(const struct nrf_rpc_group *gro
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_CB_ATTR_READ_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_CB_ATTR_READ_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_attr_read_cb, BT_RPC_GATT_CB_ATTR_READ_RPC_CMD,
@@ -351,7 +345,7 @@ static void bt_rpc_gatt_attr_write_cb_rpc_handler(const struct nrf_rpc_group *gr
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_CB_ATTR_WRITE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_CB_ATTR_WRITE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_attr_write_cb, BT_RPC_GATT_CB_ATTR_WRITE_RPC_CMD,
@@ -904,7 +898,7 @@ static void bt_gatt_indicate_func_t_callback_rpc_handler(const struct nrf_rpc_gr
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_INDICATE_FUNC_T_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_INDICATE_FUNC_T_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_indicate_func_t_callback,
@@ -931,7 +925,7 @@ static void bt_gatt_indicate_params_destroy_t_callback_rpc_handler(
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_INDICATE_PARAMS_DESTROY_T_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_INDICATE_PARAMS_DESTROY_T_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_indicate_params_destroy_t_callback,
@@ -998,7 +992,7 @@ static void bt_gatt_exchange_mtu_callback_rpc_handler(const struct nrf_rpc_group
 	return;
 
 decoding_error:
-	report_decoding_error(BT_GATT_EXCHANGE_MTU_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_EXCHANGE_MTU_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_exchange_mtu_callback,
@@ -1156,7 +1150,7 @@ static void bt_gatt_cb_att_mtu_update_call_rpc_handler(const struct nrf_rpc_grou
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_CB_ATT_MTU_UPDATE_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_CB_ATT_MTU_UPDATE_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_cb_att_mtu_update_call,
@@ -1264,7 +1258,7 @@ static void bt_gatt_discover_callback_rpc_handler(const struct nrf_rpc_group *gr
 decoding_done_with_error:
 	nrf_rpc_decoding_done_and_check(group, ctx);
 decoding_error:
-	report_decoding_error(BT_GATT_DISCOVER_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_DISCOVER_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_discover_callback, BT_GATT_DISCOVER_CALLBACK_RPC_CMD,
@@ -1351,7 +1345,7 @@ static void bt_gatt_read_callback_rpc_handler(const struct nrf_rpc_group *group,
 	return;
 
 decoding_error:
-	report_decoding_error(BT_GATT_READ_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_READ_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_read_callback, BT_GATT_READ_CALLBACK_RPC_CMD,
@@ -1409,7 +1403,7 @@ static void bt_gatt_write_callback_rpc_handler(const struct nrf_rpc_group *group
 	return;
 
 decoding_error:
-	report_decoding_error(BT_GATT_WRITE_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_WRITE_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_write_callback, BT_GATT_WRITE_CALLBACK_RPC_CMD,
@@ -1602,7 +1596,7 @@ static void bt_gatt_subscribe_params_notify_rpc_handler(const struct nrf_rpc_gro
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_SUBSCRIBE_PARAMS_NOTIFY_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_SUBSCRIBE_PARAMS_NOTIFY_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_subscribe_params_notify,
@@ -1648,7 +1642,7 @@ static void bt_gatt_subscribe_params_subscribe_rpc_handler(const struct nrf_rpc_
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_SUBSCRIBE_PARAMS_SUBSCRIBE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_SUBSCRIBE_PARAMS_SUBSCRIBE_RPC_CMD);
 }
 
 

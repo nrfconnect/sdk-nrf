@@ -292,4 +292,8 @@ struct bt_conn *bt_rpc_decode_bt_conn(struct nrf_rpc_cbor_ctx *ctx);
 NRF_RPC_CBKPROXY_HANDLER_DECL(bt_gatt_complete_func_t_encoder,
 		 (struct bt_conn *conn, void *user_data), (conn, user_data));
 
+#define bt_rpc_report_decoding_error(cmd_evt_id) \
+	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id, \
+		    NRF_RPC_PACKET_TYPE_CMD)
+
 #endif /* BT_RPC_COMMON_H_ */

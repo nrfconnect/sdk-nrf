@@ -22,12 +22,6 @@
 
 LOG_MODULE_DECLARE(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 
-static void report_decoding_error(uint8_t cmd_evt_id, void *data)
-{
-	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
-		    NRF_RPC_PACKET_TYPE_CMD);
-}
-
 struct bt_rpc_get_check_list_rpc_res {
 	size_t size;
 	uint8_t *data;
@@ -96,7 +90,7 @@ static void bt_ready_cb_t_callback_rpc_handler(const struct nrf_rpc_group *group
 
 	return;
 decoding_error:
-	report_decoding_error(BT_READY_CB_T_CALLBACK_RPC_EVT, handler_data);
+	bt_rpc_report_decoding_error(BT_READY_CB_T_CALLBACK_RPC_EVT);
 }
 
 NRF_RPC_CBOR_EVT_DECODER(bt_rpc_grp, bt_ready_cb_t_callback, BT_READY_CB_T_CALLBACK_RPC_EVT,
@@ -516,7 +510,7 @@ static void bt_le_scan_cb_t_callback_rpc_handler(const struct nrf_rpc_group *gro
 
 	return;
 decoding_error:
-	report_decoding_error(BT_LE_SCAN_CB_T_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_LE_SCAN_CB_T_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_scan_cb_t_callback, BT_LE_SCAN_CB_T_CALLBACK_RPC_CMD,
@@ -693,7 +687,7 @@ static void bt_le_ext_adv_cb_sent_callback_rpc_handler(const struct nrf_rpc_grou
 
 	return;
 decoding_error:
-	report_decoding_error(BT_LE_EXT_ADV_CB_SENT_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_LE_EXT_ADV_CB_SENT_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_cb_sent_callback,
@@ -729,7 +723,7 @@ static void bt_le_ext_adv_cb_connected_callback_rpc_handler(const struct nrf_rpc
 
 	return;
 decoding_error:
-	report_decoding_error(BT_LE_EXT_ADV_CB_CONNECTED_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_LE_EXT_ADV_CB_CONNECTED_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_cb_connected_callback,
@@ -762,7 +756,7 @@ static void bt_le_ext_adv_cb_scanned_callback_rpc_handler(const struct nrf_rpc_g
 
 	return;
 decoding_error:
-	report_decoding_error(BT_LE_EXT_ADV_CB_SCANNED_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_LE_EXT_ADV_CB_SCANNED_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_cb_scanned_callback,
@@ -1448,7 +1442,7 @@ static void per_adv_sync_cb_synced_rpc_handler(const struct nrf_rpc_group *group
 
 	return;
 decoding_error:
-	report_decoding_error(PER_ADV_SYNC_CB_SYNCED_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(PER_ADV_SYNC_CB_SYNCED_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, per_adv_sync_cb_synced, PER_ADV_SYNC_CB_SYNCED_RPC_CMD,
@@ -1515,7 +1509,7 @@ static void per_adv_sync_cb_term_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(PER_ADV_SYNC_CB_TERM_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(PER_ADV_SYNC_CB_TERM_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, per_adv_sync_cb_term, PER_ADV_SYNC_CB_TERM_RPC_CMD,
@@ -1561,7 +1555,7 @@ static void per_adv_sync_cb_recv_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(PER_ADV_SYNC_CB_RECV_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(PER_ADV_SYNC_CB_RECV_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, per_adv_sync_cb_recv, PER_ADV_SYNC_CB_RECV_RPC_CMD,
@@ -1599,7 +1593,7 @@ static void per_adv_sync_cb_state_changed_rpc_handler(const struct nrf_rpc_group
 
 	return;
 decoding_error:
-	report_decoding_error(PER_ADV_SYNC_CB_STATE_CHANGED_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(PER_ADV_SYNC_CB_STATE_CHANGED_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, per_adv_sync_cb_state_changed,
@@ -1693,7 +1687,7 @@ static void bt_le_scan_cb_recv_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_LE_SCAN_CB_RECV_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_LE_SCAN_CB_RECV_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_scan_cb_recv, BT_LE_SCAN_CB_RECV_RPC_CMD,
@@ -1993,7 +1987,7 @@ static void bt_foreach_bond_cb_callback_rpc_handler(const struct nrf_rpc_group *
 
 	return;
 decoding_error:
-	report_decoding_error(BT_FOREACH_BOND_CB_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_FOREACH_BOND_CB_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_foreach_bond_cb_callback,

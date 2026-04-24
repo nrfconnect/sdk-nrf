@@ -13,12 +13,6 @@
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc_cbor.h>
 
-static void report_decoding_error(uint8_t cmd_evt_id, void *data)
-{
-	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
-		    NRF_RPC_PACKET_TYPE_CMD);
-}
-
 static void bt_encrypt_le_rpc_handler(const struct nrf_rpc_group *group,
 				      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
@@ -45,7 +39,7 @@ static void bt_encrypt_le_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_ENCRYPT_LE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_ENCRYPT_LE_RPC_CMD);
 
 }
 
@@ -78,7 +72,7 @@ static void bt_encrypt_be_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_ENCRYPT_BE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_ENCRYPT_BE_RPC_CMD);
 
 }
 
@@ -121,7 +115,7 @@ static void bt_rand_rpc_handler(const struct nrf_rpc_group *group, struct nrf_rp
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RAND_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RAND_RPC_CMD);
 
 }
 
@@ -177,7 +171,7 @@ static void bt_ccm_encrypt_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CCM_ENCRYPT_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CCM_ENCRYPT_RPC_CMD);
 
 }
 
@@ -232,7 +226,7 @@ static void bt_ccm_decrypt_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CCM_DECRYPT_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CCM_DECRYPT_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_ccm_decrypt, BT_CCM_DECRYPT_RPC_CMD,
