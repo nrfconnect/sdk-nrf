@@ -119,7 +119,10 @@ void TemperatureSensor::ExternalTemperatureMeasurementReadHandler(
 
 	VerifyOrReturn(deviceProxy != nullptr && deviceProxy->ConnectionReady(), LOG_ERR("Device invalid"));
 
-	Controller::ReadAttribute<Clusters::TemperatureMeasurement::Attributes::MeasuredValue::TypeInfo>(
+	CHIP_ERROR err = Controller::ReadAttribute<
+		Clusters::TemperatureMeasurement::Attributes::MeasuredValue::TypeInfo>(
 		deviceProxy->GetExchangeManager(), deviceProxy->GetSecureSession().Value(), binding.remote, onSuccess,
 		onFailure);
+	VerifyOrReturn(err == CHIP_NO_ERROR,
+		       LOG_ERR("Read Temperature Sensor attribute failed: %" CHIP_ERROR_FORMAT, err.Format()));
 }

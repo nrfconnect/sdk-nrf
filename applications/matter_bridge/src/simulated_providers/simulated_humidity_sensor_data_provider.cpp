@@ -56,7 +56,7 @@ void SimulatedHumiditySensorDataProvider::TimerTimeoutCallback(k_timer *timer)
 		return;
 	}
 
-	DeviceLayer::PlatformMgr().ScheduleWork(
+	TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(
 		[](intptr_t p) {
 			SimulatedHumiditySensorDataProvider *provider =
 				reinterpret_cast<SimulatedHumiditySensorDataProvider *>(p);

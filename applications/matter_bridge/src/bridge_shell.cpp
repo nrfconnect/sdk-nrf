@@ -7,6 +7,8 @@
 #include "bridge_manager.h"
 #include "platform/ConfigurationManager.h"
 
+#include <lib/core/CHIPError.h>
+
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 #include "ble_bridged_device_factory.h"
 #include "ble_connectivity_manager.h"
@@ -50,7 +52,12 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 	CHIP_ERROR result = CHIP_NO_ERROR;
 
 	char uniqueID[chip::DeviceLayer::ConfigurationManager::kMaxUniqueIDLength];
-	chip::DeviceLayer::ConfigurationMgrImpl().GenerateUniqueId(uniqueID, sizeof(uniqueID));
+	CHIP_ERROR uniqueIdErr =
+		chip::DeviceLayer::ConfigurationMgrImpl().GenerateUniqueId(uniqueID, sizeof(uniqueID));
+	if (uniqueIdErr != CHIP_NO_ERROR) {
+		shell_fprintf(shell, SHELL_ERROR, "Failed to generate unique ID.\n");
+		return -EIO;
+	}
 
 #if defined(CONFIG_BRIDGED_DEVICE_BT)
 	int bleDeviceIndex = strtoul(argv[1], NULL, 0);
@@ -294,7 +301,12 @@ static int ScanBridgedDeviceHandler(const struct shell *shell, size_t argc, char
 {
 	shell_fprintf(shell, SHELL_INFO, "Scanning for %d s ...\n", CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS / 1000);
 
-	Nrf::BLEConnectivityManager::Instance().Scan(BluetoothScanResult, const_cast<struct shell *>(shell));
+	CHIP_ERROR scanErr =
+		Nrf::BLEConnectivityManager::Instance().Scan(BluetoothScanResult, const_cast<struct shell *>(shell));
+	if (scanErr != CHIP_NO_ERROR) {
+		shell_fprintf(shell, SHELL_ERROR, "Scan failed.\n");
+		return -EIO;
+	}
 
 	return 0;
 }

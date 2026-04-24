@@ -9,17 +9,20 @@
 #include "clusters/cluster_init.h"
 
 #include <app/EventLogging.h>
+#include <app/InteractionModelEngine.h>
+#include <app/clusters/basic-information/BasicInformationOptionalAttributes.h>
 #include <app/util/attribute-storage.h>
 #include <clusters/BasicInformation/Events.h>
 #include <clusters/BasicInformation/Metadata.h>
 #include <data-model-providers/codegen/CodegenDataModelProvider.h>
+#include <platform/CHIPDeviceLayer.h>
 
 using namespace chip;
 using namespace chip::app;
 
 namespace
 {
-RegisteredServerCluster<BasicInformationExtension> sBasicInformationExtension;
+LazyRegisteredServerCluster<BasicInformationExtension> sBasicInformationExtension;
 
 bool BasicInformationExtensionInit(void)
 {
@@ -32,7 +35,15 @@ bool BasicInformationExtensionInit(void)
 		return false;
 	}
 
-	registry.Unregister(interface);
+	TEMPORARY_RETURN_IGNORED registry.Unregister(interface);
+
+	Clusters::BasicInformationOptionalAttributesSet optionalAttributeSet;
+	DeviceLayer::DeviceInstanceInfoProvider *provider = DeviceLayer::GetDeviceInstanceInfoProvider();
+	VerifyOrDie(provider != nullptr);
+
+	sBasicInformationExtension.Create(optionalAttributeSet, *provider, DeviceLayer::ConfigurationMgr(),
+					  DeviceLayer::PlatformMgr(),
+					  InteractionModelEngine::GetInstance()->GetMinGuaranteedSubscriptionsPerFabric());
 
 	return registry.Register(sBasicInformationExtension.Registration()) == CHIP_NO_ERROR;
 }

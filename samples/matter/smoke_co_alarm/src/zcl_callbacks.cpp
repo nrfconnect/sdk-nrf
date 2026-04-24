@@ -44,19 +44,25 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 
 		if (state == PowerSource::PowerSourceStatusEnum::kActive) {
 			/* Wired source is active, we can switch into the SIT mode. */
-			chip::DeviceLayer::PlatformMgr().ScheduleWork(
+			CHIP_ERROR err = chip::DeviceLayer::PlatformMgr().ScheduleWork(
 				[](intptr_t arg) {
 					chip::app::ICDNotifier::GetInstance().NotifySITModeRequestNotification();
 				},
 				0);
+			if (err != CHIP_NO_ERROR) {
+				ChipLogError(Zcl, "ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format());
+			}
 			ChipLogProgress(Zcl, "Wired power source was activated, moving into the ICD SIT mode.");
 		} else {
 			/* Wired source is inactive, so we need to change mode into LIT to save power. */
-			chip::DeviceLayer::PlatformMgr().ScheduleWork(
+			CHIP_ERROR err = chip::DeviceLayer::PlatformMgr().ScheduleWork(
 				[](intptr_t arg) {
 					chip::app::ICDNotifier::GetInstance().NotifySITModeRequestWithdrawal();
 				},
 				0);
+			if (err != CHIP_NO_ERROR) {
+				ChipLogError(Zcl, "ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format());
+			}
 			ChipLogProgress(Zcl, "Wired power source was deactivated, moving into the ICD LIT mode.");
 		}
 	}
@@ -69,9 +75,12 @@ void emberAfPowerSourceClusterInitCallback(EndpointId endpoint)
 
 	if (wiredPowerSourceState == Clusters::PowerSource::PowerSourceStatusEnum::kActive) {
 		/* Request switching to SIT, as soon as it's possible. */
-		chip::DeviceLayer::PlatformMgr().ScheduleWork(
+		CHIP_ERROR err = chip::DeviceLayer::PlatformMgr().ScheduleWork(
 			[](intptr_t arg) { chip::app::ICDNotifier::GetInstance().NotifySITModeRequestNotification(); },
 			0);
+		if (err != CHIP_NO_ERROR) {
+			ChipLogError(Zcl, "ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format());
+		}
 	}
 }
 #endif /* CONFIG_CHIP_ICD_DSLS_SUPPORT */

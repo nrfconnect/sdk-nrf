@@ -23,7 +23,10 @@
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-objects.h>
-#include <app/DefaultTimerDelegate.h>
+#include <app/clusters/pressure-measurement-server/CodegenIntegration.h>
+#include <app/clusters/relative-humidity-measurement-server/CodegenIntegration.h>
+#include <app/clusters/temperature-measurement-server/CodegenIntegration.h>
+#include <platform/DefaultTimerDelegate.h>
 #include <app/server/Server.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
@@ -154,7 +157,6 @@ void AppTask::IdentifyTimerHandler()
 void AppTask::UpdateTemperatureClusterState()
 {
 	sensor_value temperature;
-	Protocols::InteractionModel::Status status;
 	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_AMBIENT_TEMP, &temperature);
 	if (result == 0) {
 		/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of
@@ -169,10 +171,10 @@ void AppTask::UpdateTemperatureClusterState()
 		}
 		LOG_DBG("New temperature measurement %d.%d *C", temperature.val1, temperature.val2);
 
-		status = Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Set(
+		CHIP_ERROR err = Clusters::TemperatureMeasurement::SetMeasuredValue(
 			kTemperatureMeasurementEndpointId, newValue);
-		if (status != Protocols::InteractionModel::Status::Success) {
-			LOG_ERR("Updating temperature measurement %x", to_underlying(status));
+		if (err != CHIP_NO_ERROR) {
+			LOG_ERR("Updating temperature measurement failed %" CHIP_ERROR_FORMAT, err.Format());
 		}
 	} else {
 		LOG_ERR("Getting temperature measurement data from BME688 failed with: %d", result);
@@ -182,7 +184,6 @@ void AppTask::UpdateTemperatureClusterState()
 void AppTask::UpdatePressureClusterState()
 {
 	sensor_value pressure;
-	Protocols::InteractionModel::Status status;
 	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_PRESS, &pressure);
 	if (result == 0) {
 		/* Defined by cluster pressure measured value = 10 x pressure in kPa with resolution of 0.1 kPa.
@@ -197,10 +198,9 @@ void AppTask::UpdatePressureClusterState()
 		}
 		LOG_DBG("New pressure measurement %d.%d kPa", pressure.val1, pressure.val2);
 
-		status = Clusters::PressureMeasurement::Attributes::MeasuredValue::Set(kPressureMeasurementEndpointId,
-										       newValue);
-		if (status != Protocols::InteractionModel::Status::Success) {
-			LOG_ERR("Updating pressure measurement %x", to_underlying(status));
+		CHIP_ERROR err = Clusters::PressureMeasurement::SetMeasuredValue(kPressureMeasurementEndpointId, newValue);
+		if (err != CHIP_NO_ERROR) {
+			LOG_ERR("Updating pressure measurement failed %" CHIP_ERROR_FORMAT, err.Format());
 		}
 	} else {
 		LOG_ERR("Getting pressure measurement data from BME688 failed with: %d", result);
@@ -210,7 +210,6 @@ void AppTask::UpdatePressureClusterState()
 void AppTask::UpdateRelativeHumidityClusterState()
 {
 	sensor_value humidity;
-	Protocols::InteractionModel::Status status;
 	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_HUMIDITY, &humidity);
 	if (result == 0) {
 		/* Defined by cluster humidity measured value = 100 x humidity in %RH with resolution of 0.01 %.
@@ -225,10 +224,10 @@ void AppTask::UpdateRelativeHumidityClusterState()
 		}
 		LOG_DBG("New humidity measurement %d.%d %%", humidity.val1, humidity.val2);
 
-		status = Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Set(
+		CHIP_ERROR err = Clusters::RelativeHumidityMeasurement::SetMeasuredValue(
 			kHumidityMeasurementEndpointId, newValue);
-		if (status != Protocols::InteractionModel::Status::Success) {
-			LOG_ERR("Updating relative humidity measurement %x", to_underlying(status));
+		if (err != CHIP_NO_ERROR) {
+			LOG_ERR("Updating relative humidity measurement failed %" CHIP_ERROR_FORMAT, err.Format());
 		}
 	} else {
 		LOG_ERR("Getting humidity measurement data from BME688 failed with: %d", result);

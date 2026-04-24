@@ -71,7 +71,8 @@ void SimulatedGenericSwitchDataProvider::TimerTimeoutCallback(k_timer *timer)
 
 	LOG_INF("SimulatedGenericSwitchDataProvider: Updated switch position to %d", provider->mCurrentSwitchPosition);
 
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange, reinterpret_cast<intptr_t>(provider));
+	TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange,
+								      reinterpret_cast<intptr_t>(provider));
 }
 
 void SimulatedGenericSwitchDataProvider::NotifyAttributeChange(intptr_t context)

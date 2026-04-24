@@ -12,7 +12,7 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/AttributeAccessInterfaceRegistry.h>
 #include <app/CommandHandlerInterfaceRegistry.h>
-#include <app/DefaultTimerDelegate.h>
+#include <platform/DefaultTimerDelegate.h>
 #include <app/clusters/identify-server/IdentifyCluster.h>
 #include <app/util/attribute-storage.h>
 #include <platform/ConfigurationManager.h>
@@ -113,7 +113,7 @@ public:
 	virtual ~MatterBridgedDevice()
 	{
 		if (mIdentifyCluster.IsConstructed()) {
-			chip::app::CodegenDataModelProvider::Instance().Registry().Unregister(
+			TEMPORARY_RETURN_IGNORED chip::app::CodegenDataModelProvider::Instance().Registry().Unregister(
 				&mIdentifyCluster.Cluster());
 			mIdentifyCluster.Destroy();
 		}

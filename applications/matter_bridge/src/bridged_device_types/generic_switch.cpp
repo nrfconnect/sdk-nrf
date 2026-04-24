@@ -114,8 +114,13 @@ CHIP_ERROR GenericSwitchDevice::HandleAttributeChange(chip::ClusterId clusterId,
 
 			/* The device supports only two positions, so non-zero means the switch was pressed. */
 			if (mCurrentPosition) {
-				Clusters::Switch::Attributes::CurrentPosition::Set(mEndpointId, mCurrentPosition);
-				Clusters::SwitchServer::Instance().OnInitialPress(mEndpointId, mCurrentPosition);
+				auto * switchCluster = Clusters::Switch::FindClusterOnEndpoint(mEndpointId);
+				VerifyOrReturnError(switchCluster != nullptr, CHIP_ERROR_NOT_FOUND);
+
+				err = switchCluster->SetCurrentPosition(mCurrentPosition);
+				VerifyOrReturnError(err == CHIP_NO_ERROR, err);
+
+				(void) switchCluster->OnInitialPress(mCurrentPosition);
 			}
 
 			break;

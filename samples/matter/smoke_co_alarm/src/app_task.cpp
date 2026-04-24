@@ -24,6 +24,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace ::chip;
 using namespace ::chip::app;
+using namespace ::chip::app::Clusters;
 using namespace ::chip::DeviceLayer;
 
 namespace
@@ -166,23 +167,19 @@ bool HandleSmokeCOTestEventTrigger(uint64_t eventTrigger)
 		break;
 	case SmokeCOTrigger::kForceMalfunction:
 		LOG_INF("Triggered hardware fault alert");
-		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetHardwareFaultAlert(AppTask::kSmokeCoAlarmEndpointId, true),
-				    false);
+		SmokeCoAlarmServer::Instance().SetHardwareFaultAlert(AppTask::kSmokeCoAlarmEndpointId, true);
 		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kForceLowBatteryCritical:
 		LOG_INF("Triggered low battery alert with critical severity");
-		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetBatteryAlert(
-					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kCritical),
-				    false);
+		SmokeCoAlarmServer::Instance().SetBatteryAlert(
+			AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kCritical);
 		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kForceEndOfLife:
 		LOG_INF("Triggered end of service alert");
-		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetEndOfServiceAlert(
-					    AppTask::kSmokeCoAlarmEndpointId,
-					    Clusters::SmokeCoAlarm::EndOfServiceEnum::kExpired),
-				    false);
+		SmokeCoAlarmServer::Instance().SetEndOfServiceAlert(
+			AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::EndOfServiceEnum::kExpired);
 		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kClearSmoke:
@@ -201,22 +198,19 @@ bool HandleSmokeCOTestEventTrigger(uint64_t eventTrigger)
 		break;
 	case SmokeCOTrigger::kClearMalfunction:
 		LOG_INF("Triggered end of hardware fault alert action");
-		VerifyOrReturnValue(
-			SmokeCoAlarmServer::Instance().SetHardwareFaultAlert(AppTask::kSmokeCoAlarmEndpointId, false), false);
+		SmokeCoAlarmServer::Instance().SetHardwareFaultAlert(AppTask::kSmokeCoAlarmEndpointId, false);
 		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kClearEndOfLife:
 		LOG_INF("Triggered end of end of service alert action");
-		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetEndOfServiceAlert(
-					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::EndOfServiceEnum::kNormal),
-				    false);
+		SmokeCoAlarmServer::Instance().SetEndOfServiceAlert(
+			AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::EndOfServiceEnum::kNormal);
 		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kClearBatteryLevelLow:
 		LOG_INF("Triggered end of low battery level alert action");
-		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetBatteryAlert(
-					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kNormal),
-				    false);
+		SmokeCoAlarmServer::Instance().SetBatteryAlert(
+			AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kNormal);
 		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kForceSmokeWarning:

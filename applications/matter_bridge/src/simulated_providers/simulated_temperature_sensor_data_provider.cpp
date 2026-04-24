@@ -56,7 +56,7 @@ void SimulatedTemperatureSensorDataProvider::TimerTimeoutCallback(k_timer *timer
 		return;
 	}
 
-	DeviceLayer::PlatformMgr().ScheduleWork(
+	TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(
 		[](intptr_t p) {
 			SimulatedTemperatureSensorDataProvider *provider =
 				reinterpret_cast<SimulatedTemperatureSensorDataProvider *>(p);

@@ -104,9 +104,10 @@ void BLEConnectivityManager::UpdateRecovery()
 		/* There is another provider to re-connect, schedule this operation. */
 		BLEBridgedDeviceProvider *providerToRecover =
 			Instance().mRecovery.GetProvider(&Instance().mRecovery.mListToReconnect);
-		DeviceLayer::PlatformMgr().ScheduleWork(
+		TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(
 			[](intptr_t context) {
-				Instance().Reconnect(reinterpret_cast<BLEBridgedDeviceProvider *>(context));
+				TEMPORARY_RETURN_IGNORED
+					Instance().Reconnect(reinterpret_cast<BLEBridgedDeviceProvider *>(context));
 			},
 			reinterpret_cast<intptr_t>(providerToRecover));
 		/* We have still a device to recover, keep the LostDevice state active */
@@ -185,7 +186,7 @@ exit:
 
 	if (!provider->IsInitiallyConnected()) {
 		/* Trigger the connection callback to inform the application that the connection procedure failed. */
-		provider->GetBLEBridgedDevice().mFirstConnectionCallback(
+		TEMPORARY_RETURN_IGNORED provider->GetBLEBridgedDevice().mFirstConnectionCallback(
 			false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
 	}
 
@@ -262,7 +263,7 @@ void BLEConnectivityManager::AuthenticationCancel(struct bt_conn *conn)
 
 	LOG_ERR("Pairing cancelled: %s\n", addr);
 
-	Instance().RemoveBLEProvider(*bt_conn_get_dst(conn));
+	TEMPORARY_RETURN_IGNORED Instance().RemoveBLEProvider(*bt_conn_get_dst(conn));
 }
 
 void BLEConnectivityManager::PasskeyEntry(struct bt_conn *conn)
@@ -320,7 +321,7 @@ void BLEConnectivityManager::PairingFailed(struct bt_conn *conn, enum bt_securit
 	/* Pairing finished, disable the Pairing state */
 	Instance().UpdateStateFlag(State::Pairing, false);
 
-	Instance().RemoveBLEProvider(*bt_conn_get_dst(conn));
+	TEMPORARY_RETURN_IGNORED Instance().RemoveBLEProvider(*bt_conn_get_dst(conn));
 }
 
 void BLEConnectivityManager::SetPincode(bt_addr_le_t addr, unsigned int pincode)
@@ -382,6 +383,7 @@ exit:
 					ctx->mProvider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
 				ctx->mProvider->ConfirmInitialConnection();
 				VerifyOrReturn(CHIP_NO_ERROR == err, bt_gatt_dm_data_release(ctx->mDiscoveryData);
+					       TEMPORARY_RETURN_IGNORED
 					       Instance().RemoveBLEProvider(ctx->mProvider->GetBtAddress()););
 			}
 
@@ -412,7 +414,7 @@ void BLEConnectivityManager::DiscoveryNotFound(bt_conn *conn, void *context)
 	BLEBridgedDeviceProvider *provider = reinterpret_cast<BLEBridgedDeviceProvider *>(context);
 	if (provider) {
 		if (!provider->IsInitiallyConnected()) {
-			provider->GetBLEBridgedDevice().mFirstConnectionCallback(
+			TEMPORARY_RETURN_IGNORED provider->GetBLEBridgedDevice().mFirstConnectionCallback(
 				false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
 		} else {
 			Instance().mRecovery.NotifyProviderToRecover(provider);
@@ -429,7 +431,7 @@ void BLEConnectivityManager::DiscoveryError(bt_conn *conn, int err, void *contex
 	BLEBridgedDeviceProvider *provider = reinterpret_cast<BLEBridgedDeviceProvider *>(context);
 
 	if (!provider->IsInitiallyConnected()) {
-		provider->GetBLEBridgedDevice().mFirstConnectionCallback(
+		TEMPORARY_RETURN_IGNORED provider->GetBLEBridgedDevice().mFirstConnectionCallback(
 			false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
 	}
 
@@ -595,7 +597,7 @@ void BLEConnectivityManager::Recovery::RemoveRecovered(BLEBridgedDeviceProvider 
 
 void BLEConnectivityManager::ReScanCallback(ScanResult &result, void *context)
 {
-	DeviceLayer::PlatformMgr().ScheduleWork(
+	CHIP_ERROR err = DeviceLayer::PlatformMgr().ScheduleWork(
 		[](intptr_t context) {
 			BLEBridgedDeviceProvider *provider;
 			ScanResult result = *reinterpret_cast<ScanResult *>(context);
@@ -635,15 +637,19 @@ void BLEConnectivityManager::ReScanCallback(ScanResult &result, void *context)
 				Instance().mRecovery.StartTimer();
 			} else {
 				provider = Instance().mRecovery.GetProvider(&Instance().mRecovery.mListToReconnect);
-				DeviceLayer::PlatformMgr().ScheduleWork(
+				TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(
 					[](intptr_t context) {
-						Instance().Reconnect(
+						TEMPORARY_RETURN_IGNORED Instance().Reconnect(
 							reinterpret_cast<BLEBridgedDeviceProvider *>(context));
 					},
 					reinterpret_cast<intptr_t>(provider));
 			}
 		},
 		reinterpret_cast<intptr_t>(&result));
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("Failed to schedule work (err %s)", ErrorStr(err));
+	}
+	return;
 }
 
 CHIP_ERROR BLEConnectivityManager::StopScan()
@@ -673,12 +679,13 @@ void BLEConnectivityManager::ScanTimeoutCallback(k_timer *timer)
 	/* Scanning has been finished, disable the Scanning state */
 	Instance().UpdateStateFlag(State::Scanning, false);
 
-	DeviceLayer::PlatformMgr().ScheduleWork(ScanTimeoutHandle, reinterpret_cast<intptr_t>(timer));
+	TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(ScanTimeoutHandle,
+								      reinterpret_cast<intptr_t>(timer));
 }
 
 void BLEConnectivityManager::ScanTimeoutHandle(intptr_t context)
 {
-	Instance().StopScan();
+	TEMPORARY_RETURN_IGNORED Instance().StopScan();
 
 	if (Instance().mRecovery.IsNeeded()) {
 		Instance().mRecovery.StartTimer();
@@ -695,7 +702,7 @@ CHIP_ERROR BLEConnectivityManager::Reconnect(BLEBridgedDeviceProvider *provider)
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 
-	StopScan();
+	ReturnErrorOnFailure(StopScan());
 
 	bt_conn *conn{};
 	bt_addr_le_t btAddress = provider->GetBtAddress();
@@ -746,7 +753,7 @@ CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, C
 #endif /* CONFIG_BT_SMP */
 
 	mRecovery.CancelTimer();
-	StopScan();
+	ReturnErrorOnFailure(StopScan());
 
 	bt_conn *conn{};
 	bt_addr_le_t btAddress = provider->GetBtAddress();
@@ -754,8 +761,11 @@ CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, C
 
 	if (!connParams) {
 		LOG_ERR("Failed to get conn params");
-		RemoveBLEProvider(btAddress);
-		return CHIP_ERROR_INTERNAL;
+		CHIP_ERROR err = RemoveBLEProvider(btAddress);
+		if (err != CHIP_NO_ERROR) {
+			LOG_ERR("Failed to remove BLE provider (err %s)", ErrorStr(err));
+		}
+		return err;
 	}
 
 #ifdef CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS
@@ -769,7 +779,11 @@ CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, C
 
 	if (err) {
 		LOG_ERR("Creating connection failed (err %d)", err);
-		RemoveBLEProvider(btAddress);
+		CHIP_ERROR chipError = RemoveBLEProvider(btAddress);
+		if (chipError != CHIP_NO_ERROR) {
+			LOG_ERR("Failed to remove BLE provider (err %s)", ErrorStr(chipError));
+			return chipError;
+		}
 		return System::MapErrorZephyr(err);
 	} else {
 		provider->SetConnectionObject(conn);
@@ -915,9 +929,13 @@ void BLEConnectivityManager::Recovery::TimerTimeoutCallback(k_timer *timer)
 		 * re-connected.*/
 		if (sys_slist_is_empty(&Instance().mRecovery.mListToReconnect) &&
 		    !sys_slist_is_empty(&Instance().mRecovery.mListToRecover)) {
-			DeviceLayer::PlatformMgr().ScheduleWork(
+			TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(
 				[](intptr_t context) {
-					Instance().Scan(ReScanCallback, nullptr, kRecoveryScanTimeoutMs);
+					CHIP_ERROR err =
+						Instance().Scan(ReScanCallback, nullptr, kRecoveryScanTimeoutMs);
+					if (err != CHIP_NO_ERROR) {
+						LOG_ERR("Scan failed (err %s)", ErrorStr(err));
+					}
 				},
 				0);
 		}

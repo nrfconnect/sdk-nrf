@@ -33,7 +33,7 @@ private:
 	constexpr static uint8_t kTagClosureGarageDoor = 0x05;
 
 	static void TimerTimeoutCallback(chip::System::Layer *systemLayer, void *appState);
-	void HandleTimer();
+	CHIP_ERROR HandleTimer();
 	Nrf::PWMDevice mPhysicalIndicator;
 	const pwm_dt_spec *mSpec;
 	bool mJustStarted = false;

@@ -75,7 +75,10 @@ enum mgmt_cb_return CommandHandler(uint32_t event, enum mgmt_cb_return, int32_t 
 
 enum mgmt_cb_return DfuStoppedHandler(uint32_t, enum mgmt_cb_return, int32_t *, uint16_t *, bool *, void *, size_t)
 {
-	DFUSync::GetInstance().Free(sDfuSyncMutexId);
+	CHIP_ERROR err = DFUSync::GetInstance().Free(sDfuSyncMutexId);
+	if (err != CHIP_NO_ERROR) {
+		ChipLogError(SoftwareUpdate, "Failed to release DFU sync mutex: %" CHIP_ERROR_FORMAT, err.Format());
+	}
 
 	return MGMT_CB_OK;
 }
@@ -156,8 +159,14 @@ void DFUOverSMP::StartServer()
 
 	/* Synchronize access to the advertising arbiter that normally runs on the CHIP thread. */
 	PlatformMgr().LockChipStack();
-	BLEAdvertisingArbiter::InsertRequest(mAdvertisingRequest);
+	CHIP_ERROR err = BLEAdvertisingArbiter::InsertRequest(mAdvertisingRequest);
 	PlatformMgr().UnlockChipStack();
+
+	if (err != CHIP_NO_ERROR) {
+		ChipLogError(SoftwareUpdate, "Failed to insert SMP BLE advertising request: %" CHIP_ERROR_FORMAT,
+			     err.Format());
+		return;
+	}
 
 	mIsStarted = true;
 	ChipLogProgress(DeviceLayer, "DFU over SMP started");
@@ -175,7 +184,10 @@ void DFUOverSMP::Disconnected(bt_conn *conn, uint8_t reason)
 
 	sDfuInProgress = false;
 
-	DFUSync::GetInstance().Free(sDfuSyncMutexId);
+	CHIP_ERROR err = DFUSync::GetInstance().Free(sDfuSyncMutexId);
+	if (err != CHIP_NO_ERROR) {
+		ChipLogError(SoftwareUpdate, "Failed to release DFU sync mutex: %" CHIP_ERROR_FORMAT, err.Format());
+	}
 }
 
 } /* namespace Nrf */
