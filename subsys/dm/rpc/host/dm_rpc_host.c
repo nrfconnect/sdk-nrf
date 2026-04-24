@@ -22,12 +22,6 @@ static struct ipc_ept ep;
 static K_SEM_DEFINE(bound_sem, 0, 1);
 static K_SEM_DEFINE(process_sem, 0, 1);
 
-static void report_decoding_error(uint8_t cmd_evt_id, void *data)
-{
-	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &dm_rpc_grp, cmd_evt_id,
-		    NRF_RPC_PACKET_TYPE_CMD);
-}
-
 static void dm_init_rpc_handler(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 				void *handler_data)
 {
@@ -35,7 +29,7 @@ static void dm_init_rpc_handler(const struct nrf_rpc_group *group, struct nrf_rp
 	struct dm_init_param dm_param;
 
 	if (!ser_decoding_done_and_check(group, ctx)) {
-		report_decoding_error(DM_INIT_RPC_CMD, handler_data);
+		dm_rpc_report_decoding_error(DM_INIT_RPC_CMD, handler_data);
 		return;
 	}
 
@@ -61,7 +55,7 @@ static void dm_request_add_rpc_handler(const struct nrf_rpc_group *group,
 	req.extra_window_time_us = ser_decode_uint(ctx);
 
 	if (!ser_decoding_done_and_check(group, ctx)) {
-		report_decoding_error(DM_REQUEST_ADD_RPC_CMD, handler_data);
+		dm_rpc_report_decoding_error(DM_REQUEST_ADD_RPC_CMD, handler_data);
 		return;
 	}
 

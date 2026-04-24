@@ -173,19 +173,11 @@ static struct bt_uuid *bt_uuid_cli_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_u
 	return (struct bt_uuid *)nrf_rpc_decode_buffer(ctx, uuid, sizeof(struct bt_uuid_128));
 }
 
-static void report_encoding_error(uint8_t cmd_evt_id)
-{
-	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
-		    NRF_RPC_PACKET_TYPE_CMD);
-}
+#define report_encoding_error(cmd_evt_id) \
+	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_SEND, &bt_rpc_grp, cmd_evt_id, \
+		    NRF_RPC_PACKET_TYPE_CMD)
 
 #endif /* CONFIG_BT_GATT_CLIENT */
-
-static void report_decoding_error(uint8_t cmd_evt_id, void *data)
-{
-	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
-		    NRF_RPC_PACKET_TYPE_CMD);
-}
 
 static int bt_rpc_gatt_start_service(uint8_t remote_service_index, size_t attr_count)
 {
@@ -246,7 +238,7 @@ static void bt_rpc_gatt_start_service_rpc_handler(const struct nrf_rpc_group *gr
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_START_SERVICE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_START_SERVICE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_start_service, BT_RPC_GATT_START_SERVICE_RPC_CMD,
@@ -438,7 +430,7 @@ static void bt_rpc_gatt_send_simple_attr_rpc_handler(const struct nrf_rpc_group 
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_SEND_SIMPLE_ATTR_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_SEND_SIMPLE_ATTR_RPC_CMD);
 }
 
 static int add_cep_attr(struct bt_gatt_attr *attr, uint16_t properties)
@@ -678,7 +670,7 @@ static void bt_rpc_gatt_send_desc_attr_rpc_handler(const struct nrf_rpc_group *g
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_SEND_DESC_ATTR_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_SEND_DESC_ATTR_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_send_desc_attr, BT_RPC_GATT_SEND_DESC_ATTR_RPC_CMD,
@@ -754,7 +746,7 @@ static void bt_rpc_gatt_service_unregister_rpc_handler(const struct nrf_rpc_grou
 	nrf_rpc_rsp_send_int(group, result);
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_SERVICE_UNREGISTER_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_SERVICE_UNREGISTER_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_service_unregister,
@@ -821,7 +813,7 @@ static void bt_gatt_notify_cb_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_NOTIFY_CB_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_NOTIFY_CB_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_notify_cb, BT_GATT_NOTIFY_CB_RPC_CMD,
@@ -909,7 +901,7 @@ static void bt_gatt_indicate_rpc_handler(const struct nrf_rpc_group *group,
 	return;
 decoding_error:
 	k_free(params);
-	report_decoding_error(BT_GATT_INDICATE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_INDICATE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_indicate, BT_GATT_INDICATE_RPC_CMD,
@@ -937,7 +929,7 @@ static void bt_gatt_is_subscribed_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_IS_SUBSCRIBED_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_IS_SUBSCRIBED_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_is_subscribed, BT_GATT_IS_SUBSCRIBED_RPC_CMD,
@@ -962,7 +954,7 @@ static void bt_gatt_get_mtu_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_GET_MTU_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_GET_MTU_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_get_mtu, BT_GATT_GET_MTU_RPC_CMD,
@@ -1029,7 +1021,7 @@ static void bt_gatt_exchange_mtu_rpc_handler(const struct nrf_rpc_group *group,
 decoding_error:
 	k_free(container);
 alloc_error:
-	report_decoding_error(BT_GATT_EXCHANGE_MTU_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_EXCHANGE_MTU_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_exchange_mtu, BT_GATT_EXCHANGE_MTU_RPC_CMD,
@@ -1056,7 +1048,7 @@ static void bt_gatt_attr_get_handle_rpc_handler(const struct nrf_rpc_group *grou
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_ATTR_GET_HANDLE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_ATTR_GET_HANDLE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_attr_get_handle, BT_GATT_ATTR_GET_HANDLE_RPC_CMD,
@@ -1206,7 +1198,7 @@ static void bt_gatt_discover_rpc_handler(const struct nrf_rpc_group *group,
 decoding_error:
 	k_free(container);
 alloc_error:
-	report_decoding_error(BT_GATT_DISCOVER_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_DISCOVER_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_discover, BT_GATT_DISCOVER_RPC_CMD,
@@ -1297,7 +1289,7 @@ static void bt_gatt_read_rpc_handler(const struct nrf_rpc_group *group,
 decoding_error:
 	k_free(container);
 alloc_error:
-	report_decoding_error(BT_GATT_READ_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_READ_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_read, BT_GATT_READ_RPC_CMD, bt_gatt_read_rpc_handler,
@@ -1368,7 +1360,7 @@ static void bt_gatt_write_rpc_handler(const struct nrf_rpc_group *group,
 decoding_error:
 	k_free(container);
 alloc_error:
-	report_decoding_error(BT_GATT_WRITE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_WRITE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_write, BT_GATT_WRITE_RPC_CMD,
@@ -1411,7 +1403,7 @@ static void bt_gatt_write_without_response_cb_rpc_handler(const struct nrf_rpc_g
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_WRITE_WITHOUT_RESPONSE_CB_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_WRITE_WITHOUT_RESPONSE_CB_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_write_without_response_cb,
@@ -1590,7 +1582,7 @@ decoding_error:
 		free_subscribe_container(container);
 	}
 alloc_error:
-	report_decoding_error(BT_GATT_SUBSCRIBE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_SUBSCRIBE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_subscribe, BT_GATT_SUBSCRIBE_RPC_CMD,
@@ -1636,7 +1628,7 @@ decoding_error:
 		free_subscribe_container(container);
 	}
 alloc_error:
-	report_decoding_error(BT_GATT_RESUBSCRIBE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_RESUBSCRIBE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_resubscribe, BT_GATT_RESUBSCRIBE_RPC_CMD,
@@ -1671,7 +1663,7 @@ static void bt_gatt_unsubscribe_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_UNSUBSCRIBE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_GATT_UNSUBSCRIBE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_unsubscribe, BT_GATT_UNSUBSCRIBE_RPC_CMD,
@@ -1717,7 +1709,7 @@ static void bt_rpc_gatt_subscribe_flag_update_rpc_handler(const struct nrf_rpc_g
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_SUBSCRIBE_FLAG_UPDATE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_GATT_SUBSCRIBE_FLAG_UPDATE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_subscribe_flag_update,

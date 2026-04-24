@@ -13,12 +13,6 @@
 #include <nrf_rpc/nrf_rpc_cbkproxy.h>
 #include <nrf_rpc_cbor.h>
 
-static void report_decoding_error(uint8_t cmd_evt_id, void *data)
-{
-	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
-		    NRF_RPC_PACKET_TYPE_CMD);
-}
-
 #define LOCK_CONN_INFO() k_mutex_lock(&bt_rpc_conn_mutex, K_FOREVER)
 #define UNLOCK_CONN_INFO() k_mutex_unlock(&bt_rpc_conn_mutex)
 
@@ -141,7 +135,7 @@ static void bt_conn_foreach_cb_callback_rpc_handler(const struct nrf_rpc_group *
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_FOREACH_CB_CALLBACK_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_FOREACH_CB_CALLBACK_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_foreach_cb_callback,
@@ -720,7 +714,7 @@ static void bt_conn_cb_connected_call_rpc_handler(const struct nrf_rpc_group *gr
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_CB_CONNECTED_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_CB_CONNECTED_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_connected_call, BT_CONN_CB_CONNECTED_CALL_RPC_CMD,
@@ -763,7 +757,7 @@ static void bt_conn_cb_disconnected_call_rpc_handler(const struct nrf_rpc_group 
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_CB_DISCONNECTED_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_CB_DISCONNECTED_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_disconnected_call,
@@ -846,7 +840,7 @@ static void bt_conn_cb_le_param_req_call_rpc_handler(const struct nrf_rpc_group 
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_CB_LE_PARAM_REQ_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_CB_LE_PARAM_REQ_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_le_param_req_call,
@@ -895,7 +889,7 @@ static void bt_conn_cb_le_param_updated_call_rpc_handler(const struct nrf_rpc_gr
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_CB_LE_PARAM_UPDATED_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_CB_LE_PARAM_UPDATED_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_le_param_updated_call,
@@ -945,7 +939,7 @@ static void bt_conn_cb_identity_resolved_call_rpc_handler(const struct nrf_rpc_g
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_CB_IDENTITY_RESOLVED_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_CB_IDENTITY_RESOLVED_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_identity_resolved_call,
@@ -994,7 +988,7 @@ static void bt_conn_cb_security_changed_call_rpc_handler(const struct nrf_rpc_gr
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_CB_SECURITY_CHANGED_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_CB_SECURITY_CHANGED_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_security_changed_call,
@@ -1043,7 +1037,7 @@ static void bt_conn_cb_remote_info_available_call_rpc_handler(const struct nrf_r
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_CB_REMOTE_INFO_AVAILABLE_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_CB_REMOTE_INFO_AVAILABLE_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_remote_info_available_call,
@@ -1089,7 +1083,7 @@ static void bt_conn_cb_le_phy_updated_call_rpc_handler(const struct nrf_rpc_grou
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_CB_LE_PHY_UPDATED_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_CB_LE_PHY_UPDATED_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_le_phy_updated_call,
@@ -1136,7 +1130,7 @@ static void bt_conn_cb_le_data_len_updated_call_rpc_handler(const struct nrf_rpc
 
 	return;
 decoding_error:
-	report_decoding_error(BT_CONN_CB_LE_DATA_LEN_UPDATED_CALL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_CONN_CB_LE_DATA_LEN_UPDATED_CALL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_le_data_len_updated_call,
@@ -1448,7 +1442,7 @@ static void bt_rpc_auth_cb_pairing_accept_rpc_handler(const struct nrf_rpc_group
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_PAIRING_ACCEPT_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_CB_PAIRING_ACCEPT_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_accept,
@@ -1478,7 +1472,7 @@ static void bt_rpc_auth_cb_passkey_display_rpc_handler(const struct nrf_rpc_grou
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_PASSKEY_DISPLAY_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_CB_PASSKEY_DISPLAY_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_passkey_display,
@@ -1505,7 +1499,7 @@ static void bt_rpc_auth_cb_passkey_entry_rpc_handler(const struct nrf_rpc_group 
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_PASSKEY_ENTRY_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_CB_PASSKEY_ENTRY_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_passkey_entry,
@@ -1534,7 +1528,7 @@ static void bt_rpc_auth_cb_passkey_confirm_rpc_handler(const struct nrf_rpc_grou
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_PASSKEY_CONFIRM_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_CB_PASSKEY_CONFIRM_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_passkey_confirm,
@@ -1564,7 +1558,7 @@ static void bt_rpc_auth_cb_oob_data_request_rpc_handler(const struct nrf_rpc_gro
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_OOB_DATA_REQUEST_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_CB_OOB_DATA_REQUEST_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_oob_data_request,
@@ -1590,7 +1584,7 @@ static void bt_rpc_auth_cb_cancel_rpc_handler(const struct nrf_rpc_group *group,
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_CANCEL_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_CB_CANCEL_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_cancel, BT_RPC_AUTH_CB_CANCEL_RPC_CMD,
@@ -1616,7 +1610,7 @@ static void bt_rpc_auth_cb_pairing_confirm_rpc_handler(const struct nrf_rpc_grou
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_PAIRING_CONFIRM_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_CB_PAIRING_CONFIRM_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_confirm,
@@ -1694,7 +1688,7 @@ static void bt_rpc_auth_info_cb_bond_deleted_rpc_handler(const struct nrf_rpc_gr
 	nrf_rpc_rsp_send_void(group);
 
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_INFO_CB_BOND_DELETED_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_INFO_CB_BOND_DELETED_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_info_cb_bond_deleted,
@@ -1726,7 +1720,7 @@ static void bt_rpc_auth_info_cb_pairing_complete_rpc_handler(const struct nrf_rp
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_INFO_CB_PAIRING_COMPLETE_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_INFO_CB_PAIRING_COMPLETE_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_info_cb_pairing_complete,
@@ -1758,7 +1752,7 @@ static void bt_rpc_auth_info_cb_pairing_failed_rpc_handler(const struct nrf_rpc_
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_INFO_CB_PAIRING_FAILED_RPC_CMD, handler_data);
+	bt_rpc_report_decoding_error(BT_RPC_AUTH_INFO_CB_PAIRING_FAILED_RPC_CMD);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_info_cb_pairing_failed,
