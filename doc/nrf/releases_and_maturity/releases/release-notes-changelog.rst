@@ -265,6 +265,11 @@ Bluetooth Mesh samples
     There are no :file:`overlay-dfu.conf` and :file:`sysbuild-dfu.conf` files anymore.
     DFU support is enabled as a suffixed configuration.
 
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * The partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` board target is not backward compatible with the previous versions of the sample.
+    This affects builds with support for the EMDS.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
