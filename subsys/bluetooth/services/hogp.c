@@ -215,13 +215,11 @@ static void repptr_array_free(struct bt_hogp_rep_info **repp)
  * It is used only for required characteristic.
  *
  * @param dm     Discovery object.
- * @param hogp   HOGP object.
  * @param uuid   UUID of the characteristic.
  *
- * @return Handle of the characteristic value of 0 if it cannot be found.
+ * @return Handle of the characteristic value or 0 if it cannot be found.
  */
 static uint16_t chrc_value_handle_by_uuid(struct bt_gatt_dm *dm,
-					  struct bt_hogp *hogp,
 					  const struct bt_uuid *uuid)
 {
 	const struct bt_gatt_dm_attr *gatt_chrc;
@@ -780,8 +778,7 @@ static int hid_sci_handles_assign(struct bt_gatt_dm *dm, struct bt_hogp *hogp)
 
 	__ASSERT_NO_MSG(hogp);
 
-	handle = chrc_value_handle_by_uuid(dm, hogp,
-					   BT_UUID_HIDS_SCI_INFO);
+	handle = chrc_value_handle_by_uuid(dm, BT_UUID_HIDS_SCI_INFO);
 	if (handle != 0) {
 		LOG_DBG("Found handle for SCI Info characteristic: 0x%x.", handle);
 	}
@@ -871,8 +868,7 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	LOG_DBG("Getting handles from HID service.");
 
 	/* Control Point Characteristic (Mandatory) */
-	handle = chrc_value_handle_by_uuid(dm, hogp,
-					   BT_UUID_HIDS_CTRL_POINT);
+	handle = chrc_value_handle_by_uuid(dm, BT_UUID_HIDS_CTRL_POINT);
 	if (handle == 0) {
 		LOG_ERR("Missing HIDS CP characteristic.");
 		return -EINVAL;
@@ -881,8 +877,7 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	hogp->handlers.cp = handle;
 
 	/* HID Information Characteristic (Mandatory) */
-	handle = chrc_value_handle_by_uuid(dm, hogp,
-					   BT_UUID_HIDS_INFO);
+	handle = chrc_value_handle_by_uuid(dm, BT_UUID_HIDS_INFO);
 	if (handle == 0) {
 		LOG_ERR("Missing HIDS Info characteristic.");
 		return -EINVAL;
@@ -891,8 +886,7 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	hogp->handlers.info = handle;
 
 	/* HID Report Map Characteristic (Mandatory)  */
-	handle = chrc_value_handle_by_uuid(dm, hogp,
-					   BT_UUID_HIDS_REPORT_MAP);
+	handle = chrc_value_handle_by_uuid(dm, BT_UUID_HIDS_REPORT_MAP);
 	if (handle == 0) {
 		LOG_ERR("Missing Report Map characteristic.");
 		return -EINVAL;
@@ -965,8 +959,7 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	/* HID Protocol Mode (Optional) */
 	if (boot_protocol_required) {
 		LOG_DBG("HIDS Protocol Mode characteristic required.");
-		handle = chrc_value_handle_by_uuid(dm, hogp,
-						   BT_UUID_HIDS_PROTOCOL_MODE);
+		handle = chrc_value_handle_by_uuid(dm, BT_UUID_HIDS_PROTOCOL_MODE);
 		if (handle == 0) {
 			LOG_ERR("Missing Protocol Mode characteristic.");
 			return -EINVAL;
