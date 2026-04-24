@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <zephyr/kernel_structs.h>
+#include <zephyr/sys/time_units.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/kernel.h>
@@ -92,16 +93,23 @@ static int send_info_data(const char *data, size_t data_len)
 	return 0;
 }
 
-static void send_system_description(void)
+static int send_system_description(void)
 {
+	int err;
 	/* Memory barrier to make sure that data is visible
 	 * before being accessed
 	 */
 	uint8_t ne = nrf_profiler_num_events;
+	static const char * const ev_info_start = "<ev_info_start>\n";
+	static const char * const ev_info_stop = "<ev_info_stop>\n";
+	static const char end_line = '\n';
 
 	__DMB();
-	char end_line = '\n';
-	int err = 0;
+
+	err = send_info_data(ev_info_start, strlen(ev_info_start));
+	if (err) {
+		return err;
+	}
 
 	for (size_t t = 0; ((t < ne) && !err); t++) {
 		err = send_info_data(descr[t], strlen(descr[t]));
@@ -109,17 +117,60 @@ static void send_system_description(void)
 			err = send_info_data(&end_line, 1);
 		}
 	}
-	if (!err) {
-		(void)send_info_data(&end_line, 1);
+	if (err) {
+		return err;
 	}
+
+	err = send_info_data(ev_info_stop, strlen(ev_info_stop));
+
+	return err;
+}
+
+static int send_system_configuration(void)
+{
+	char sys_clock_buf[13];
+	int temp_val;
+	int err;
+	static const char * const sys_config_start = "<sys_config_start>\n";
+	static const char * const sys_config_stop = "<sys_config_stop>\n";
+	static const char * const sys_clock_param_name = "sys_clock_hw_cycles_per_sec";
+
+	temp_val = snprintf(sys_clock_buf,
+						sizeof(sys_clock_buf),
+						",%" PRIu32 "\n",
+						sys_clock_hw_cycles_per_sec());
+	if ((temp_val < 0) || ((size_t)temp_val >= sizeof(sys_clock_buf))) {
+		return -ENOMEM;
+	}
+
+	err = send_info_data(sys_config_start, strlen(sys_config_start));
+	if (err) {
+		return err;
+	}
+
+	err = send_info_data(sys_clock_param_name, strlen(sys_clock_param_name));
+	if (err) {
+		return err;
+	}
+
+	err = send_info_data(sys_clock_buf, strlen(sys_clock_buf));
+	if (err) {
+		return err;
+	}
+
+	err = send_info_data(sys_config_stop, strlen(sys_config_stop));
+
+	return err;
 }
 
 static void nrf_profiler_nordic_thread_fn(void)
 {
-	while (atomic_get(&nrf_profiler_state) != STATE_TERMINATED) {
-		uint8_t read_data;
-		enum nordic_command command;
+	int ret_err;
+	uint8_t read_data;
+	enum nordic_command command;
+	static const char end_line = '\n';
 
+	while (atomic_get(&nrf_profiler_state) != STATE_TERMINATED) {
 		if (SEGGER_RTT_Read(
 		     CONFIG_NRF_PROFILER_NORDIC_RTT_CHANNEL_COMMANDS,
 		     &read_data, sizeof(read_data))) {
@@ -132,10 +183,16 @@ static void nrf_profiler_nordic_thread_fn(void)
 				atomic_cas(&nrf_profiler_state, STATE_ACTIVE, STATE_INACTIVE);
 				break;
 			case NORDIC_COMMAND_INFO:
-				send_system_description();
+				ret_err = send_system_description();
+				if (ret_err) {
+					break;
+				}
+				ret_err = send_system_configuration();
+				if (!ret_err) {
+					(void)send_info_data(&end_line, 1);
+				}
 				break;
 			default:
-				__ASSERT_NO_MSG(false);
 				break;
 			}
 		}

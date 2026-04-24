@@ -724,7 +724,17 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nrf_profiler` library:
+
+  * Added sending :kconfig:option:`CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC` through the info RTT channel as part of the system description.
+    This enables support for the nRF54L Series SoCs (:kconfig:option:`CONFIG_SOC_SERIES_NRF54L`) by providing accurate hardware clock information to the profiler host tools.
+    The hardware clock frequency varies between different SoCs, and the host tools require this information to correctly interpret the received timestamps.
+    This change breaks the backward compatibility between the library and host tools due to modifications in the info RTT channel string layout.
+    The nRF Profiler event descriptions are now sent within the ``<ev_info_start>`` and ``<ev_info_stop>`` markers.
+    System configuration details are now sent within the ``<sys_config_start>`` and ``<sys_config_stop>`` markers.
+    The system configuration details are formatted as a list of key-value data, for example, ``key1,value1``.
+    Subsequent entries are separated by newlines.
+    The value returned by the :c:func:`sys_clock_hw_cycles_per_sec` function is sent using the ``sys_clock_hw_cycles_per_sec`` key.
 
 Shell libraries
 ---------------

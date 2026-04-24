@@ -25,6 +25,12 @@ Configuration
 
 Since Application Event Manager events are converted to nRF Profiler events by the :ref:`app_event_manager_profiler_tracer`, you can configure the nRF Profiler to profile custom events or Application Event Manager events, or both.
 
+.. note::
+   Starting from |NCS| v3.4.0, the nRF Profiler library introduces a modified string layout for the Info RTT channel to support the nRF54L Series SoCs.
+   The library now provides also system configuration data, such as :kconfig:option:`CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC`, within specific markers to allow the host tools to perform accurate time unit conversions for nRF54L Series SoCs.
+   This modification breaks the backward compatibility with older host scripts.
+   To ensure proper behavior, use both the library and host tools from the same |NCS| release.
+
 Configuring for use with custom events
 ======================================
 
