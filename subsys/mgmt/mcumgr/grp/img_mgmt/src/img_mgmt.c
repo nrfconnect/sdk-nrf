@@ -65,6 +65,11 @@ BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
 	(PARTITION_OFFSET(label) == (PM_ADDRESS - PM_ADDRESS_OFFSET))
 
 #else /* ! USE_PARTITION_MANAGER */
+
+#ifdef CONFIG_FLASH_USES_MAPPED_PARTITION
+#define PARTITION_IS_RUNNING_APP_PARTITION(label)				\
+	DT_SAME_NODE(DT_CHOSEN(zephyr_code_partition), DT_NODELABEL(label))
+#else
 #ifndef CONFIG_FLASH_LOAD_OFFSET
 #error MCUmgr requires application to be built with CONFIG_FLASH_LOAD_OFFSET set \
 	to be able to figure out application running slot.
@@ -72,9 +77,11 @@ BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
 
 #define PARTITION_IS_RUNNING_APP_PARTITION(label)                                            \
 	DT_SAME_NODE(PARTITION_NODE_MTD(DT_CHOSEN(zephyr_code_partition)),                   \
-		PARTITION_MTD(label)) &&                                                     \
-	(PARTITION_OFFSET(label) <= CONFIG_FLASH_LOAD_OFFSET &&                              \
-	 PARTITION_OFFSET(label) + PARTITION_SIZE(label) > CONFIG_FLASH_LOAD_OFFSET)
+		PARTITION_MTD(label)) && (PARTITION_ADDRESS(label) <=                  \
+			(CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET) &&                  \
+		PARTITION_ADDRESS(label) + PARTITION_SIZE(label) >                     \
+			(CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET))
+#endif /* CONFIG_FLASH_USES_MAPPED_PARTITION */
 #endif /* USE_PARTITION_MANAGER */
 
 BUILD_ASSERT(sizeof(struct image_header) == IMAGE_HEADER_SIZE,
