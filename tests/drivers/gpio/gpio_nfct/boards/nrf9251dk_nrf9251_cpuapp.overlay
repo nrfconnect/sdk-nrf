@@ -12,11 +12,11 @@
 		compatible = "gpio-leds";
 
 		out_gpios: out_gpios {
-			gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
 		};
 
 		in_gpios: in_gpios {
-			gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
 		};
 	};
 };
@@ -31,6 +31,6 @@
 	owned-channels = <7>;
 };
 
-&gpio2 {
+&gpio1 {
 	status = "okay";
 };
