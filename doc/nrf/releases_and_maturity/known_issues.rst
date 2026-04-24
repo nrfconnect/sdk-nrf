@@ -4487,6 +4487,12 @@ DFU and FOTA
 
 The issues in this section are related to :ref:`app_dfu`.
 
+.. rst-class:: wontfix v3-3-0
+
+NCSDK-34883: Unable to transfer image using MTU (:kconfig:option:`CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE`) lower than 104
+  The SMP protocol expects to receive the full MCUboot image header (32 bytes) with the first image upload command.
+  If a lower value is used, the image upload will never start and an error is returned (``IMG_MGMT_ERR_INVALID_IMAGE_HEADER``).
+
 .. rst-class:: v3-3-0
 
 NCSDK-38905: The :ref:`mcuboot_with_encryption` sample does not work with nRF54LV10A
