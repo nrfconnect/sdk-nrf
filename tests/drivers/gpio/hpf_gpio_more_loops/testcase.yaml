@@ -43,7 +43,6 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
 
@@ -54,7 +53,6 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
 
@@ -65,7 +63,6 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -96,3 +93,30 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+
+  drivers.hpf.gpio.many_loops.lv10.icmsg:
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y
+    harness_config:
+      fixture: mspi_spis_loopback
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+
+  drivers.hpf.gpio.many_loops.lv10.icbmsg:
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG=y
+    harness_config:
+      fixture: mspi_spis_loopback
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+
+  drivers.hpf.gpio.many_loops.lv10.mbox:
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_MBOX=y
+    harness_config:
+      fixture: mspi_spis_loopback
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
