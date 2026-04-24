@@ -63,6 +63,8 @@ class ModelCreator:
         self.bufs = list()
         self.bcnt = 0
 
+        self.sec_per_timestamp_tick = self.config['ms_per_timestamp_tick'] / 1000
+
         self.logger = logging.getLogger('model_creator')
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(log_lvl)
@@ -112,8 +114,49 @@ class ModelCreator:
     def _timestamp_from_ticks(self, clock_ticks):
         ts_ticks_aggregated = self.timestamp_overflows * self.config['timestamp_raw_max']
         ts_ticks_aggregated += clock_ticks
-        ts_s = ts_ticks_aggregated * self.config['ms_per_timestamp_tick'] / 1000
+        ts_s = ts_ticks_aggregated * self.sec_per_timestamp_tick
         return ts_s
+
+    def decode_by_markers(self, data, start_marker, stop_marker):
+        ev_start_idx = data.find(start_marker)
+        ev_stop_idx = data.find(stop_marker)
+        ret_tab = ""
+
+        if ((ev_start_idx != -1) and (ev_stop_idx != -1) and (ev_start_idx <= ev_stop_idx)):
+            start_pos = ev_start_idx + len(start_marker)
+            #The newline character (\n) is always at the end - skip it - decrease last index by 1
+            if data[ev_stop_idx - 1] == '\n':
+                ev_stop_idx -= 1
+            ret_tab = data[start_pos:ev_stop_idx]
+        return ret_tab
+
+    def sys_config_decode_to_dict(self, data):
+
+        def sys_clock_hw_cycles_per_sec_decode(data):
+            temp_data = int(data, 10)
+            if temp_data <= 0:
+                raise ValueError(f"Incorrect value: {temp_data}. Value is expected to be bigger than 0.")
+            return temp_data
+
+        DECODE_MAP = {
+            "sys_clock_hw_cycles_per_sec":  sys_clock_hw_cycles_per_sec_decode
+        }
+        ret_dict = {}
+        items = data.strip().splitlines()
+
+        for item in items:
+            parts = item.split(',')
+            if len(parts) != 2:
+                continue
+            key, value = parts[0], parts[1]
+            try:
+                decoder = DECODE_MAP[key]
+                ret_dict[key] = decoder(value)
+            except KeyError:
+                self.logger.error(f"Unsupported parameter '{key}'")
+            except (TypeError, ValueError) as err:
+                self.logger.error(f"Received error: '{err}'")
+        return ret_dict
 
     def transmit_all_events_descriptions(self):
         while True:
@@ -128,8 +171,27 @@ class ModelCreator:
                     continue
                 self.logger.error(f"Receiving error: {err}. Exiting")
                 sys.exit()
-        desc_buf = bytes.decode()
-        f = StringIO(desc_buf)
+
+        ev_start_tag = '<ev_info_start>\n'
+        ev_stop_tag = '<ev_info_stop>\n'
+        sys_cfg_start_tag = '<sys_config_start>\n'
+        sys_cfg_stop_tag = '<sys_config_stop>\n'
+        sys_clock_hw_cycles_per_sec_tag = 'sys_clock_hw_cycles_per_sec'
+
+        in_data = bytes.decode()
+        ev_info = self.decode_by_markers(in_data, ev_start_tag, ev_stop_tag)
+        sys_config = self.decode_by_markers(in_data, sys_cfg_start_tag, sys_cfg_stop_tag)
+        sys_dict = self.sys_config_decode_to_dict(sys_config)
+
+        sys_clock_hw_cycles_per_sec = sys_dict.get(sys_clock_hw_cycles_per_sec_tag)
+        if sys_clock_hw_cycles_per_sec is not None:
+            self.sec_per_timestamp_tick = 1 / sys_clock_hw_cycles_per_sec
+        else:
+            self.logger.error(f"Value for key {sys_clock_hw_cycles_per_sec_tag} cannot be used or "
+                              f"key {sys_clock_hw_cycles_per_sec_tag} is not provided at all.")
+            sys.exit()
+
+        f = StringIO(ev_info)
         reader = csv.reader(f, delimiter=',')
         for row in reader:
             # Empty field is sent after last event description

@@ -761,6 +761,8 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * :ref:`nrf_profiler_script` script:
 
+  * Updated the scripts to use hardware clock information from SoC to enable accurate conversion from hardware clock cycles to seconds.
+    Refactored the parser to support the new RTT communication layout, including the handling of ``<ev_info_...>`` and ``<sys_config_...>`` data markers.
   * Fixed the ``ms_per_timestamp_tick`` parameter (defined in the :file: `rtt_nordic_config.py`) to accurately align with the system clock's frequency of the nRF52, nRF53, and nRF91 Series SoCs.
 
 Integrations
