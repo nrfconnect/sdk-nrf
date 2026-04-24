@@ -329,6 +329,7 @@ psa_status_t psa_cipher_finish(
 	uint8_t *output, size_t output_size, size_t *output_length)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
+	psa_status_t abort_status = PSA_ERROR_NOT_SUPPORTED;
 
 	if (operation ==  NULL || output == NULL || output_length == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -337,6 +338,15 @@ psa_status_t psa_cipher_finish(
 	status = psa_driver_wrapper_cipher_finish(operation, output, output_size, output_length);
 	if (status != PSA_SUCCESS) {
 		clear_all_enc_keys();
+	}
+
+	/** Calling psa_cipher_abort() here to make it possible to use another cipher operation
+	 *  after this finalization call.
+	 *  This approach follows the one used in PSA Core Oberon.
+	 */
+	abort_status = psa_cipher_abort(operation);
+	if (abort_status != PSA_SUCCESS) {
+		status = abort_status;
 	}
 
 	return status;
