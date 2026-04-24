@@ -1014,6 +1014,7 @@ static uint8_t rep_notify_process(struct bt_conn *conn,
 			       const void *data, uint16_t length)
 {
 	struct bt_hogp_rep_info *rep;
+	uint8_t err = 0;
 
 	rep = CONTAINER_OF(params,
 			   struct bt_hogp_rep_info,
@@ -1026,6 +1027,7 @@ static uint8_t rep_notify_process(struct bt_conn *conn,
 		LOG_WRN("Data size too big, truncating");
 		length = UINT8_MAX;
 	}
+
 	/* Zephyr uses the callback with data set to NULL to inform about the
 	 * subscription removal. Do not update the report size in that case.
 	 */
@@ -1033,7 +1035,18 @@ static uint8_t rep_notify_process(struct bt_conn *conn,
 		rep->size = (uint8_t)length;
 	}
 
-	return rep->notify_cb(rep->hogp, rep, 0, data);
+
+	err = rep->notify_cb(rep->hogp, rep, 0, data);
+
+	if (data == NULL) {
+		/* Zephyr uses the callback with data set to NULL to inform about the
+		 * subscription removal.
+		 * The notification callback can be safely cleared.
+		 */
+		rep->notify_cb = NULL;
+	}
+
+	return err;
 }
 
 int bt_hogp_rep_subscribe(struct bt_hogp *hogp,

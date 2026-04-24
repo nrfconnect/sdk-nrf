@@ -507,6 +507,10 @@ Bluetooth libraries and services
 
   * Fixed missing ATT write length validation in the GATT write handler for the Fast Pair Additional Data characteristic, used by the experimental Personalized Name extension (:kconfig:option:`CONFIG_BT_FAST_PAIR_PN`).
 
+* :ref:`hogp_readme` library:
+
+  * Fixed an issue where the :c:func:`bt_hogp_rep_unsubscribe` function did not clear the notification callback, which prevented the :c:func:`bt_hogp_rep_subscribe` function from succeeding after unsubscribing.
+
 Common Application Framework
 ----------------------------
 

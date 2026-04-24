@@ -38,7 +38,8 @@ struct bt_hogp_rep_info;
  * @param hogp   HOGP object.
  * @param rep    Report object.
  * @param err    ATT error code.
- * @param data   Pointer to the received data.
+ * @param data   Pointer to the received data or NULL to indicate
+ *               that the subscription has been cleared.
  *
  * @retval BT_GATT_ITER_STOP     Stop notification.
  * @retval BT_GATT_ITER_CONTINUE Continue notification.
@@ -406,6 +407,11 @@ int bt_hogp_rep_subscribe(struct bt_hogp *hogp,
 
 /**
  * @brief Remove the subscription for a selected report.
+ *
+ * When the subscription has been cleared the callback function
+ * will be called with data set to NULL.
+ * This will happen both on successful unsubscription as well as
+ * on CCC write error.
  *
  * @param hogp   HOGP object.
  * @param rep    Report object.
