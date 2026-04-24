@@ -612,6 +612,13 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
   * The SPDX output format from ``SPDX-2.2`` to ``SPDX-2.3``.
 
+* :ref:`nrf_profiler_script` script:
+
+  * Added multi-device synchronization support to the nRF Profiler host tools.
+    The :file:`data_collector.py` and :file:`real_time_plot.py` scripts accept the ``--sync`` argument (from ``1`` to ``10``, default: ``1``) to collect profiling data from multiple devices in lockstep.
+    When multiple devices are used, datasets are stored with an ``_<index>`` suffix.
+  * Updated the documentation with information about synchronized multi-device data collection.
+
 Integrations
 ============
 
@@ -709,3 +716,4 @@ Documentation
 =============
 
 |no_changes_yet_note|
+
