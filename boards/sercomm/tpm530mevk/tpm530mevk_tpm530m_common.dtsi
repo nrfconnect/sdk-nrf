@@ -107,4 +107,4 @@
 };
 
 /* Include default memory partition configuration file */
-#include <nordic/nrf91xx_partition.dtsi>
+#include "tpm530mevk_tpm530m_partition.dtsi"
