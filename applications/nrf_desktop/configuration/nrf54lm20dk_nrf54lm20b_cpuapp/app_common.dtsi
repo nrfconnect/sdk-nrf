@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+secondary_app_partition: &slot1_partition {};
+
 / {
 	/* Disable pwmleds and redefine them to align configuration with CAF LEDs requirements. */
 	/delete-node/ pwmleds;
