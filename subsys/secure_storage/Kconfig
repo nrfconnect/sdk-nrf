@@ -3,6 +3,8 @@
 
 # Secure storage subsystem integration into the nRF Connect SDK
 
+if SECURE_STORAGE
+
 # Add the HUK library as the default AEAD key provider when supported.
 # It provides the highest level of security.
 choice SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_PROVIDER
@@ -18,4 +20,9 @@ config SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_PROVIDER_HUK_LIBRARY
 
 endchoice # SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_PROVIDER
 
+config SECURE_STORAGE_ITS_TRANSFORM_AEAD_NONCE_PROVIDER_DEFAULT
+	select PSA_WANT_GENERATE_RANDOM if NRF_SECURITY
+
 rsource "compatibility/Kconfig"
+
+endif # SECURE_STORAGE
