@@ -18,6 +18,12 @@ The collected profiling data is stored as local files and can be processed later
 Other scripts are used for visualizing, processing, and analyzing the data or calculating statistics.
 These scripts rely on locally stored files created earlier.
 
+.. note::
+   Since the |NCS| v3.4.0 release, host scripts have been updated to support the nRF54L Series SoC.
+   To achieve this, the hardware clock frequency (:kconfig:option:`CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC`) is now sent from the SoC to the host tools over the existing Info RTT channel.
+   This change breaks backward compatibility between the :ref:`nrf_profiler` library and host tools due to modifications in the Info RTT channel string layout.
+   Ensure that you use the updated version of the scripts together with the corresponding library version.
+
 Requirements
 ************
 
