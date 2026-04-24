@@ -832,10 +832,8 @@ static void test_aes_ctr_crypt(mbedtls_svc_key_id_t key_id, const uint8_t *nonce
 	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher finish: key_id: %d, err: %d",
 		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
-	/** NOTE: Abort cipher currently unsupported (size-optimization) */
-
 	if (constant_memcmp(ciphertext, req_ciphertext, req_ciphertext_size) != 0) {
-		zassert_false(true, "AES CTR encrypted ciphertext mismathed");
+		zassert_false(true, "AES CTR encrypted ciphertext mismatched");
 	}
 
 	/* Test out decryption */
@@ -852,15 +850,13 @@ static void test_aes_ctr_crypt(mbedtls_svc_key_id_t key_id, const uint8_t *nonce
 	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher update: key_id: %d, err: %d",
 		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
-	err = psa_cipher_finish(&operation, ciphertext + out_length,
-				ARRAY_SIZE(ciphertext) -  + out_length, &out_length);
+	err = psa_cipher_finish(&operation, plaintext + out_length,
+				ARRAY_SIZE(plaintext) - out_length, &out_length);
 	zassert_equal(err, PSA_SUCCESS, "Failed to do AES CTR cipher finish: key_id: %d, err: %d",
 		      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), err);
 
-	/** NOTE: Abort cipher currently unsupported (size-optimization) */
-
-	if (constant_memcmp(ciphertext, req_ciphertext, req_ciphertext_size) != 0) {
-		zassert_false(true, "AES CTR encrypted ciphertext mismathed");
+	if (constant_memcmp(plaintext, req_plaintext, req_plaintext_size) != 0) {
+		zassert_false(true, "AES CTR decrypted plaintext mismatched");
 	}
 }
 
