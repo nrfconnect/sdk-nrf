@@ -197,7 +197,7 @@ Please provide one of following: CONF_FILES")
       set(board_combined ${board_combined}@${BOARD_REVISION})
     endif()
 
-    set(board_combined ${board_combined}${BOARD_QUALIFIERS})
+    set(board_combined ${board_combined}/${BOARD_QUALIFIERS})
     parse_board_components(board_combined board_name board_revision board_qualifiers)
   endif()
 

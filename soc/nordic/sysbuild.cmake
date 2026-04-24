@@ -3,7 +3,7 @@
 
 if(SB_CONFIG_VPR_LAUNCHER)
   set(launcher_core "cpuapp")
-  string(REPLACE "/" ";" launcher_quals ${BOARD_QUALIFIERS})
+  string(REPLACE "/" ";" launcher_quals ";${BOARD_QUALIFIERS}")
   list(LENGTH launcher_quals launcher_quals_len)
   list(GET launcher_quals 1 launcher_soc)
   list(GET launcher_quals 2 launcher_vpr)
