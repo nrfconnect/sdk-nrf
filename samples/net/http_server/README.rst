@@ -199,6 +199,7 @@ The sample includes pre-configured configuration files for the development kits 
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - For the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - For the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - For the Thingy:91.
+* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - For the nRF7120 DK.
 
 Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
 
