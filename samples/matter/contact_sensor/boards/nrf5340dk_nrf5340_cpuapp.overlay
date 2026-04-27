@@ -4,7 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf5340_cpuapp_partitions.dtsi>
 #include <zephyr/dt-bindings/ipc_service/static_vrings.h>
+
+/* Set IPC thread priority to the highest value to not collide with other threads. */
+&ipc0 {
+	zephyr,priority = <0 PRIO_COOP>;
+};
 
 / {
 	chosen {
@@ -12,9 +18,8 @@
 	};
 };
 
-/* Set IPC thread priority to the highest value to not collide with other threads. */
-&ipc0 {
-	zephyr,priority = <0 PRIO_COOP>;
+&mx25r64 {
+	status = "okay";
 };
 
 /* Disable unused peripherals to reduce power consumption */

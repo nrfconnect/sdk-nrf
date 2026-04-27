@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf52840_partitions.dtsi>
+
 / {
 	/*
 	 * By default, PWM module is only configured for led0 (LED1 on the board).

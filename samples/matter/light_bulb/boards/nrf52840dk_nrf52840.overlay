@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf52840_partitions.dtsi>
+
 / {
 	chosen {
 		nordic,pm-ext-flash = &mx25r64;
@@ -45,6 +47,10 @@
 			low-power-enable;
 		};
 	};
+};
+
+&mx25r64 {
+	status = "okay";
 };
 
 /* Disable unused peripherals to reduce power consumption */

@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf54l15_cpuapp_ns_partitions.dtsi>
+
 / {
 	aliases {
 		/* Configure PWM module for led1 (LED2 on the board) */
@@ -29,16 +31,6 @@
 			pwms = <&pwm20 2 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 		};
 	};
-};
-
-/* restore full RRAM and SRAM space - by default some parts are dedicated to FLRP */
-&cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(1524)>;
-};
-
-&cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(256)>;
-	ranges = <0x0 0x20000000 0x40000>;
 };
 
 &mx25r64 {

@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf54lm20_cpuapp_partitions.dtsi>
+
 / {
 	chosen {
 		nordic,pm-ext-flash = &mx25r64;
@@ -21,13 +23,6 @@
 		pwm_led1: pwm_led_1 {
 			pwms = <&pwm20 1 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 		};
-	};
-};
-
-&rram_controller {
-	cpuapp_rram: rram@0 {
-		reg = <0x0 DT_SIZE_K(2036)>;
-		ranges = <0x0 0x0 DT_SIZE_K(2036)>;
 	};
 };
 

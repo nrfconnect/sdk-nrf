@@ -15,7 +15,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
-      - nrf7002dk/nrf5340/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
@@ -24,7 +23,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
-      - nrf7002dk/nrf5340/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.manufacturer_specific.nrf7002eb2.debug:

@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf52840_partitions.dtsi>
+
 / {
 	/*
 	 * Configure LED2 and LED3 to show the state of the

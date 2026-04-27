@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -70,6 +70,59 @@
 /* Set IPC thread priority to the highest value to not collide with other threads. */
 &ipc0 {
 	zephyr,priority = <0 PRIO_COOP>;
+};
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(32)>;
+		};
+
+		slot0_partition: partition@8000 {
+			label = "image-0";
+			reg = <0x00008000 DT_SIZE_K(956)>;
+		};
+
+		factory_data_partition: partition@f7000 {
+			label = "factory-data";
+			reg = <0x000f7000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 DT_SIZE_K(32)>;
+		};
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x00000000 DT_SIZE_K(956)>;
+		};
+
+		slot3_partition: partition@ef000 {
+			label = "image-3";
+			reg = <0x000ef000 DT_SIZE_K(224)>;
+		};
+	};
 };
 
 &i2c1 {

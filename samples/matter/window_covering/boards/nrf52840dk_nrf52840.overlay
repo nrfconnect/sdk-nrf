@@ -1,15 +1,16 @@
-/* Copyright (c) 2021 Nordic Semiconductor ASA
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+#include <samples/matter/nrf52840_partitions.dtsi>
 
 / {
 	chosen {
 		nordic,pm-ext-flash = &mx25r64;
 	};
-};
 
-/ {
 	/*
 	 * Configure LED2 and LED3 to show the state of the
 	 * window cover,by using the LED's brightness level.

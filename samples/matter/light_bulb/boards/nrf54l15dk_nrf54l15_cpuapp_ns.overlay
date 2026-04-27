@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf54l15_cpuapp_ns_partitions.dtsi>
+
 / {
 	aliases {
 		/* Configure PWM module for led1 (LED2 on the board) */

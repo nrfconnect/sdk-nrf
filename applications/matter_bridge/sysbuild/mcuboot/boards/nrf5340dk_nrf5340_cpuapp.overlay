@@ -4,11 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf5340_cpuapp_partitions.dtsi>
+
 / {
 	chosen {
-		nordic,pm-ext-flash = &mx25r64;
 		zephyr,code-partition = &boot_partition;
+		nordic,pm-ext-flash = &mx25r64;
 	};
+};
+
+&mx25r64 {
+	status = "okay";
 };
 
 /* Disable GPIO forwarder for nRF7002 EK compatibility */

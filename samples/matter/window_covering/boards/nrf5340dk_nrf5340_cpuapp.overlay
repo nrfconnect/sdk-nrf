@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf5340_cpuapp_partitions.dtsi>
 #include <zephyr/dt-bindings/ipc_service/static_vrings.h>
 
 / {

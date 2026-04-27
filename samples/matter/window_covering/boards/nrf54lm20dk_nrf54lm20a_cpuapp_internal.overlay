@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf54lm20_cpuapp_internal_partitions.dtsi>
+
 / {
 	aliases {
 		/* Configure PWM module for led1 (LED2 on the board) */
@@ -23,13 +25,6 @@
 		pwm_led2: pwm_led_2 {
 			pwms = <&pwm20 2 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 		};
-	};
-};
-
-&rram_controller {
-	cpuapp_rram: rram@0 {
-		reg = <0x0 DT_SIZE_K(2036)>;
-		ranges = <0x0 0x0 DT_SIZE_K(2036)>;
 	};
 };
 
@@ -53,10 +48,6 @@
 			low-power-enable;
 		};
 	};
-};
-
-&mx25r64 {
-	status = "disabled";
 };
 
 &wdt31 {
