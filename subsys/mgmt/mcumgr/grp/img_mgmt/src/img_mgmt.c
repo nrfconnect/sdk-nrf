@@ -67,20 +67,28 @@ BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
 #else /* ! USE_PARTITION_MANAGER */
 
 #ifdef CONFIG_FLASH_USES_MAPPED_PARTITION
-#define PARTITION_IS_RUNNING_APP_PARTITION(label)				\
-	DT_SAME_NODE(DT_CHOSEN(zephyr_code_partition), DT_NODELABEL(label))
+#define PARTITION_IS_RUNNING_APP_PARTITION(label)                                                  \
+	DT_SAME_NODE(PARTITION_NODE_MTD(DT_CHOSEN(zephyr_code_partition)),                         \
+		     PARTITION_MTD(label)) &&                                                      \
+		(PARTITION_ADDRESS(label) <=                                                       \
+			 PARTITION_NODE_ADDRESS(DT_CHOSEN(zephyr_code_partition)) &&               \
+		 PARTITION_ADDRESS(label) + PARTITION_SIZE(label) >=                               \
+			 PARTITION_NODE_ADDRESS(DT_CHOSEN(zephyr_code_partition)) +                \
+				 PARTITION_NODE_SIZE(DT_CHOSEN(zephyr_code_partition)))
+
 #else
 #ifndef CONFIG_FLASH_LOAD_OFFSET
 #error MCUmgr requires application to be built with CONFIG_FLASH_LOAD_OFFSET set \
 	to be able to figure out application running slot.
 #endif
 
-#define PARTITION_IS_RUNNING_APP_PARTITION(label)                                            \
-	DT_SAME_NODE(PARTITION_NODE_MTD(DT_CHOSEN(zephyr_code_partition)),                   \
-		PARTITION_MTD(label)) && (PARTITION_ADDRESS(label) <=                  \
-			(CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET) &&                  \
-		PARTITION_ADDRESS(label) + PARTITION_SIZE(label) >                     \
-			(CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET))
+#define PARTITION_IS_RUNNING_APP_PARTITION(label)                                                  \
+	DT_SAME_NODE(PARTITION_NODE_MTD(DT_CHOSEN(zephyr_code_partition)),                         \
+		     PARTITION_MTD(label)) &&                                                      \
+		(PARTITION_ADDRESS(label) <=                                                       \
+			 (CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET) &&                 \
+		 PARTITION_ADDRESS(label) + PARTITION_SIZE(label) >                                \
+			 (CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET))
 #endif /* CONFIG_FLASH_USES_MAPPED_PARTITION */
 #endif /* USE_PARTITION_MANAGER */
 
