@@ -106,6 +106,7 @@ static int lenAlenC_chachapoly(size_t aadsz, size_t datasz, uint8_t *out)
 static int sx_aead_create_chacha20poly1305(struct sxaead *aead_ctx, const struct sxkeyref *key,
 					   const uint8_t *nonce, const uint32_t dir, size_t tagsz)
 {
+	int err;
 
 	if (key->sz != SX_CHACHAPOLY_KEY_SZ) {
 		return SX_ERR_INVALID_KEY_SZ;
@@ -114,6 +115,13 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *aead_ctx, const struct
 	/* ChaCha20Poly1305 doesn't use countermeasures */
 	aead_ctx->has_countermeasures = false;
 	aead_ctx->key = key;
+
+	if (key->prepare_key) {
+		err = key->prepare_key(key->user_data);
+		if (err != SX_OK) {
+			return err;
+		}
+	}
 
 	aead_ctx->cfg = &ba417chachapolycfg;
 
@@ -148,11 +156,21 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *cipher_ctx, struct s
 					const uint8_t *counter, const uint8_t *nonce,
 					const uint32_t dir)
 {
+	int err;
+
 	if (key->sz != SX_CHACHAPOLY_KEY_SZ) {
 		return SX_ERR_INVALID_KEY_SZ;
 	}
 
 	cipher_ctx->key = key;
+
+	if (key->prepare_key) {
+		err = key->prepare_key(key->user_data);
+		if (err != SX_OK) {
+			return err;
+		}
+	}
+
 	cipher_ctx->cfg = &ba417chacha20cfg;
 
 	sx_cmdma_newcmd(&cipher_ctx->dma, cipher_ctx->descs, BA417_MODE_CHACHA20 | dir,
