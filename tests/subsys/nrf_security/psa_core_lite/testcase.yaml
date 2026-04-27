@@ -153,3 +153,17 @@ tests:
       - sysbuild
     extra_args: >
       EXTRA_CONF_FILE="ecdsa.conf;ecdh_hkdf.conf;mac.conf;encrypt.conf"
+  # PSA core lite: ECDSA + ECDH + HKDF + MAC + encrypt
+  psa_core_lite.ecdsa.ecdh_hkdf.mac.encrypt:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      EXTRA_CONF_FILE="lite.conf;ecdsa.conf;ecdh_hkdf.conf;mac.conf;encrypt.conf"

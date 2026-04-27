@@ -57,4 +57,19 @@
 #define VERIFY_ALG_CTR(_alg) \
 	(IS_ENABLED(PSA_WANT_ALG_CTR) && _alg == PSA_ALG_CTR)
 
+/* Macros to verify different key derivation algorithms */
+
+#define VERIFY_ALG_HKDF(_alg) \
+	(IS_ENABLED(PSA_WANT_ALG_HKDF) && PSA_ALG_IS_HKDF(_alg))
+
+/* Macros to verify different key agreement algorithms */
+
+#define VERIFY_ALG_ECDH(_alg) \
+	(IS_ENABLED(PSA_WANT_ALG_ECDH) && _alg == PSA_ALG_ECDH)
+
+/* Macros to verify different MAC algorithms */
+
+#define VERIFY_ALG_HMAC(_alg) \
+	(IS_ENABLED(PSA_WANT_ALG_HMAC) && _alg == PSA_ALG_HMAC(PSA_ALG_SHA_512))
+
 #endif /* PSA_CORE_LITE_H_ */

@@ -45,15 +45,28 @@ config PSA_CORE_LITE_PUB_KEY_MAX_SIZE
 			PSA_WANT_ECC_TWISTED_EDWARDS_255
 	default 0
 
+config PSA_CORE_LITE_PRIV_KEY_MAX_SIZE
+	int
+	default 32 if PSA_WANT_ALG_ECDH && PSA_WANT_ECC_MONTGOMERY_255
+	default 0
+
 config PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE
 	bool
 	default y
-	depends on PSA_WANT_ALG_CTR || PSA_WANT_ALG_AES_KW
+	depends on \
+		PSA_WANT_ALG_CTR    || \
+		PSA_WANT_ALG_AES_KW || \
+		PSA_WANT_ALG_HKDF   || \
+		PSA_WANT_ALG_HMAC
 
 config PSA_CORE_LITE_AES_KEY_MAX_SIZE
 	int
 	default 32 if PSA_WANT_AES_KEY_SIZE_256
 	default 16 if PSA_WANT_AES_KEY_SIZE_128
 	default 0
+
+config PSA_CORE_LITE_MAX_VOLATILE_KEYS_COUNT
+	int
+	default 1
 
 endif # PSA_CORE_LITE
