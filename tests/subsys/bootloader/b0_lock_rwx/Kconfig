@@ -4,6 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config TEST_IMMUTABLE_REGION
+	int
+	default 3
+	default 2 if SOC_NRF54LS05B
+
+config TEST_ADDITIONAL_REGION
+	int
+	default 4
+
 config TEST_B0_LOCK_READS
 	bool "Test read prevention"
 	help
@@ -11,15 +20,11 @@ config TEST_B0_LOCK_READS
 	  implies portion of the memory cannot be accessed at all.
 	  In case this symbol isn't selected, tests against writes are performed.
 
-config TEST_B0_LOCK_REGION
-	int "Region number"
-	range 3 4
-	default 3
-	help
-	  Region 3 is used for NSIB protection. Other one for MCUBoot.
-
 config TEST_B0_LOCK_USE_S1
 	bool "MCUBoot is running from S1 image for the test"
+
+config TEST_MCUBOOT_ALONE
+	bool "b0 absent"
 
 menu "Zephyr"
 source "Kconfig.zephyr"

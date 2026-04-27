@@ -188,6 +188,7 @@ class NcsProvision(WestCommand):
                 "nrf54l05", "nrf54l10", "nrf54l15",
                 "nrf54lm20a", "nrf54lm20b",
                 "nrf54lv10a",
+                "nrf54ls05b",
                 "nrf54h20"
             ],
             default="nrf54l15",

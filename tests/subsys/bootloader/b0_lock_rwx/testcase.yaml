@@ -32,7 +32,6 @@ tests:
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
-      - CONFIG_TEST_B0_LOCK_REGION=4
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -43,6 +42,27 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+
+  mcuboot.rwx:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=n
+      - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=n
+      - SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES=n
+      - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - CONFIG_TEST_MCUBOOT_ALONE=y
+      - CONFIG_NRFX_RRAMC=y
+      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0x16000
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
   b0.mcuboot.rwx:
     extra_args:
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
@@ -51,7 +71,6 @@ tests:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
-      - CONFIG_TEST_B0_LOCK_REGION=4
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -69,7 +88,6 @@ tests:
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
-      - CONFIG_TEST_B0_LOCK_REGION=4
       - CONFIG_TEST_B0_LOCK_USE_S1=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -90,7 +108,6 @@ tests:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
-      - CONFIG_TEST_B0_LOCK_REGION=4
       - CONFIG_TEST_B0_LOCK_USE_S1=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -108,7 +125,6 @@ tests:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
-      - CONFIG_TEST_B0_LOCK_REGION=4
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -126,7 +142,6 @@ tests:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
-      - CONFIG_TEST_B0_LOCK_REGION=4
       - CONFIG_TEST_B0_LOCK_USE_S1=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
