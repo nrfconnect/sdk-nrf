@@ -46,6 +46,14 @@
 		compatible = "zephyr,psa-crypto-rng";
 		status = "okay";
 	};
+
+	pwmleds {
+		compatible = "pwm-leds";
+
+		pwm_led0: pwm_led_0 {
+			pwms = <&pwm130 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+	};
 };
 
 &gpio0 {
