@@ -261,6 +261,10 @@ Bluetooth Mesh samples
   * The partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` board target is not backward compatible with the previous versions of the sample.
     This affects builds with support of point-to-point Device Firmware Update (DFU) over the Simple Management Protocol (SMP).
 
+  * Updated the approach to build the sample with point-to-point Device Firmware Update (DFU) over the Simple Management Protocol (SMP).
+    There are no :file:`overlay-dfu.conf` and :file:`sysbuild-dfu.conf` files anymore.
+    DFU support is enabled as a suffixed configuration.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
