@@ -1,0 +1,14 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Adjust RAM Size for TF-M */
+&sram0_s {
+	reg = <0x20000000 DT_SIZE_K(104)>;	/* 104 KB — TF-M */
+};
+
+&sram0_ns {
+	reg = <0x2001a000 DT_SIZE_K(408)>;	/* 408 KB — App */
+};

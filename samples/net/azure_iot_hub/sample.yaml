@@ -7,12 +7,14 @@ tests:
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - native_sim
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -24,11 +26,13 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     extra_args: EXTRA_CONF_FILE=dps.conf
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
