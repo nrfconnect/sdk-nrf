@@ -81,7 +81,16 @@ function(provision application prefix_name)
     set(mcuboot_counters_slots --mcuboot-counters-slots ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
   endif()
 
-  if(SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE AND SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE)
+  if(SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE)
+    if(NOT SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE)
+      message(FATAL_ERROR
+        "SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE is enabled but "
+        "SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE is empty. The "
+        "attestation token would not contain a PSA certificate reference. "
+        "Set SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE to a valid "
+        "<EAN-13>-<5-digit certificate ID> string for this platform, or "
+        "disable SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE.")
+    endif()
     set(psa_certificate_reference --psa-certificate-reference ${SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE})
   endif()
 
