@@ -1212,13 +1212,15 @@ void otPlatRadioSetMacKey(otInstance *aInstance, uint8_t aKeyIdMode, uint8_t aKe
 #endif
 
 	uint8_t key_id_mode = aKeyIdMode >> 3;
+	uint8_t prev_key_id = 0;
+	uint8_t next_key_id = 0;
 
 	if (key_id_mode == 1) {
 		__ASSERT_NO_MSG(NRF_802154_SECURITY_KEY_STORAGE_SIZE >= 3);
 
 		/* aKeyId in range: (1, 0x80) means valid keys */
-		uint8_t prev_key_id = aKeyId == 1 ? 0x80 : aKeyId - 1;
-		uint8_t next_key_id = aKeyId == 0x80 ? 1 : aKeyId + 1;
+		prev_key_id = aKeyId == 1 ? 0x80 : aKeyId - 1;
+		next_key_id = aKeyId == 0x80 ? 1 : aKeyId + 1;
 
 		nrf_802154_security_key_remove_all();
 
