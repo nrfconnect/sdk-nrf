@@ -20,6 +20,12 @@ extern "C" {
 	((0x4 << 28) | ((access & 0xF) << 24) | ((domain & 0xFF) << 16) | ((usage & 0xFF) << 8) |  \
 	 (generation & 0xF))
 
+/* [DEPRECATED] Backward-compatibility alias for the renamed macro.
+ * Slated for removal in a future release. New code must use NRF_PLATFORM_PSA_KEY_ID().
+ */
+#define HALTIUM_PLATFORM_PSA_KEY_ID(access, domain, usage, generation)                             \
+	NRF_PLATFORM_PSA_KEY_ID(access, domain, usage, generation)
+
 /* Key access rights */
 #define ACCESS_INTERNAL 0x0
 #define ACCESS_LOCAL	0x1
