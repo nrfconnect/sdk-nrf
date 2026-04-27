@@ -5,51 +5,31 @@
  */
 
 /* Rebalance secure/non-secure subpartitions to fit larger mesh light NS image.
- * Aligned slot0/slot1 addresses and sizes to MCUboot defaults
- * (nrf5340_cpuapp_partition.dtsi): each slot is 0x74000 (464 KB).
- * Secure: 192 KB, Non-secure: 272 KB.
+ * MCUboot is removed; slot0 starts at 0x0 and spans 928 KB (0xe8000).
+ * Secure: 128 KB, Non-secure: 800 KB.
  */
 
+/delete-node/ &boot_partition;
 /delete-node/ &slot0_partition;
-/delete-node/ &slot1_partition;
 
 &flash0 {
 	partitions {
-		slot0_partition: partition@10000 {
+		slot0_partition: partition@0 {
 			compatible = "fixed-subpartitions";
 			label = "image-0";
-			reg = <0x10000 0x74000>;
-			ranges = <0x0 0x10000 0x74000>;
+			reg = <0x00000000 0xe8000>;
+			ranges = <0x0 0x0 0xe8000>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
 			slot0_s_partition: partition@0 {
 				label = "image-0-secure";
-				reg = <0x0 0x30000>;
+				reg = <0x00000000 0x20000>;
 			};
 
-			slot0_ns_partition: partition@30000 {
+			slot0_ns_partition: partition@20000 {
 				label = "image-0-nonsecure";
-				reg = <0x30000 0x44000>;
-			};
-		};
-
-		slot1_partition: partition@84000 {
-			compatible = "fixed-subpartitions";
-			label = "image-1";
-			reg = <0x84000 0x74000>;
-			ranges = <0x0 0x84000 0x74000>;
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			slot1_s_partition: partition@0 {
-				label = "image-1-secure";
-				reg = <0x0 0x30000>;
-			};
-
-			slot1_ns_partition: partition@30000 {
-				label = "image-1-nonsecure";
-				reg = <0x30000 0x44000>;
+				reg = <0x00020000 0xc8000>;
 			};
 		};
 	};

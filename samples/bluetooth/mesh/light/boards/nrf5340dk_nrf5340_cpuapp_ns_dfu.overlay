@@ -1,0 +1,56 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Rebalance secure/non-secure subpartitions to fit larger mesh light NS image.
+ * Aligned slot0/slot1 addresses and sizes to MCUboot defaults
+ * (nrf5340_cpuapp_partition.dtsi): each slot is 0x74000 (464 KB).
+ * Secure: 192 KB, Non-secure: 272 KB.
+ */
+
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+
+&flash0 {
+	partitions {
+		slot0_partition: partition@10000 {
+			compatible = "fixed-subpartitions";
+			label = "image-0";
+			reg = <0x10000 0x74000>;
+			ranges = <0x0 0x10000 0x74000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				label = "image-0-secure";
+				reg = <0x0 0x30000>;
+			};
+
+			slot0_ns_partition: partition@30000 {
+				label = "image-0-nonsecure";
+				reg = <0x30000 0x44000>;
+			};
+		};
+
+		slot1_partition: partition@84000 {
+			compatible = "fixed-subpartitions";
+			label = "image-1";
+			reg = <0x84000 0x74000>;
+			ranges = <0x0 0x84000 0x74000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot1_s_partition: partition@0 {
+				label = "image-1-secure";
+				reg = <0x0 0x30000>;
+			};
+
+			slot1_ns_partition: partition@30000 {
+				label = "image-1-nonsecure";
+				reg = <0x30000 0x44000>;
+			};
+		};
+	};
+};
