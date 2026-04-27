@@ -601,3 +601,7 @@ Documentation
   * Description of the MRAM auto-powerdown tradeoff in the :ref:`ug_nrf54h20_pm_optimization` documentation page.
   * MSD disable step in the :ref:`ug_nrf54h20_gs` guide.
   * MRAM11 Ironside SE update limitations in the :ref:`ug_nrf54h20_ironside_update` and :ref:`ug_nrf54h20_ironside_services` documentation pages.
+
+Updated:
+
+  * The :ref:`ug_nrf54h20_architecture_lifecycle` documentation page, expanding the description of the LCS states.

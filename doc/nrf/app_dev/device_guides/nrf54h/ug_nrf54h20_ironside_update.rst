@@ -63,7 +63,7 @@ Limitations
 
    A URoT (|ISE|) update image must be stored in MRAM11.
    The update cannot be performed with the image placed in MRAM10.
-   See :ref:`ug_nrf54h20_architecture_memory` for the MRAMM10 and MRAMM11 layout.
+   See :ref:`ug_nrf54h20_architecture_memory` for the MRAM10 and MRAM11 layout.
 
 |ISE| supports being updated in the following ways:
 
@@ -174,7 +174,7 @@ Architecture
 ************
 
 The |ISE| update process starts when the application firmware invokes the :ref:`update service <ug_nrf54h20_ironside_se_update_service>` with the address of where the update release package has been written in MRAM.
-The package must lie in MRAMM11 as described in :ref:`ug_nrf54h20_ironside_se_update_limitations`.
+The package must lie in MRAM11 as described in :ref:`ug_nrf54h20_ironside_se_update_limitations`.
 
 .. _ug_nrf54h20_ironside_se_update_architecture_app:
 
@@ -183,7 +183,7 @@ Application procedure
 
 The following describes the process for an |ISE| update from the point of view of the application:
 
-1. MRAMM11 is updated with the |ISE| update image (see :ref:`ug_nrf54h20_ironside_se_update_limitations`).
+1. MRAM11 is updated with the |ISE| update image (see :ref:`ug_nrf54h20_ironside_se_update_limitations`).
 #. It calls the |ISE| update service with the update image location.
 #. It verifies that the update request is acknowledged.
 #. It triggers a reset.
