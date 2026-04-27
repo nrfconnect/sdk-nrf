@@ -238,19 +238,17 @@ static int validate_prediction(const struct nrf_cloud_pgps_prediction *p, uint16
 			       uint32_t gps_time_of_day, uint16_t period_min, bool exact,
 			       bool margin)
 {
-	int err = 0;
-
 	/* validate that this prediction was actually updated and matches */
 	if ((p->schema_version != NRF_CLOUD_AGNSS_BIN_SCHEMA_VERSION) ||
 	    (p->time_type != NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK) || (p->time_count != 1)) {
 		LOG_ERR("invalid prediction header");
-		err = -EINVAL;
+		return -EINVAL;
 	} else if (exact && (p->time.date_day != gps_day)) {
 		LOG_ERR("prediction day:%u, expected:%u", p->time.date_day, gps_day);
-		err = -EINVAL;
+		return -EINVAL;
 	} else if (exact && (p->time.time_full_s != gps_time_of_day)) {
 		LOG_ERR("prediction time:%u, expected:%u", p->time.time_full_s, gps_time_of_day);
-		err = -EINVAL;
+		return -EINVAL;
 	}
 
 	int64_t gps_sec = npgps_gps_day_time_to_sec(gps_day, gps_time_of_day);
@@ -265,16 +263,16 @@ static int validate_prediction(const struct nrf_cloud_pgps_prediction *p, uint16
 		LOG_ERR("prediction does not contain desired time; "
 			"start:%d, cur:%d, end:%d",
 			(int32_t)pred_sec, (int32_t)gps_sec, (int32_t)end_sec);
-		err = -EINVAL;
+		return -EINVAL;
 	}
 
 	if ((p->ephemeris_type != NRF_CLOUD_AGNSS_GPS_EPHEMERIDES) ||
 	    (p->ephemeris_count != NRF_CLOUD_PGPS_NUM_SV)) {
 		LOG_ERR("ephemeris header bad:%u, %u", p->ephemeris_type, p->ephemeris_count);
-		err = -EINVAL;
+		return -EINVAL;
 	}
 
-	if (exact && !err) {
+	if (exact) {
 		uint32_t expected_sentinel;
 		uint32_t stored_sentinel;
 
@@ -284,13 +282,13 @@ static int validate_prediction(const struct nrf_cloud_pgps_prediction *p, uint16
 			LOG_ERR("prediction at:%p has stored_sentinel:0x%08X, "
 				"expected:0x%08X",
 				p, stored_sentinel, expected_sentinel);
-			err = -EINVAL;
+			return -EINVAL;
 		}
 	}
-	if (!err) {
-		print_time_details("prediction:", pred_sec, p->time.date_day, p->time.time_full_s);
-	}
-	return err;
+
+	print_time_details("prediction:", pred_sec, p->time.date_day, p->time.time_full_s);
+
+	return 0;
 }
 
 static int validate_stored_predictions(uint16_t *first_bad_day, uint32_t *first_bad_time)
