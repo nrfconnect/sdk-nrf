@@ -17,10 +17,11 @@ zephyr_library_include_directories(
 )
 
 target_sources_ifdef(CONFIG_AUDIO_SOURCE_USB app PRIVATE
-  audio_usb.c
-  audio_usb_init.c
-)
-
+                     ${CMAKE_CURRENT_SOURCE_DIR}/audio_usb.c)
+target_sources_ifdef(CONFIG_AUDIO_USB_FEEDBACK app PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/audio_usb_feedback.c)
+target_sources_ifdef(CONFIG_AUDIO_SOURCE_USB app PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/audio_usb_init.c)
 target_sources_ifdef(CONFIG_NRF5340_AUDIO_CS47L63_DRIVER app PRIVATE
   hw_codec.c
 )

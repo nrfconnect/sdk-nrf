@@ -532,6 +532,7 @@ int audio_system_init(void)
 	}
 
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
+	/* Can not have bidirectional with feedback as there are too few endpoints on the nRF5340 */
 	bool host_in = IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL);
 	/* TODO: OCT-3116 Change when microphone-only support (headset with only an audio source)
 	 * is added
