@@ -6,6 +6,6 @@
 
 #include "nrf9251dk_nrf9251_common.dtsi"
 
-&timer137 {
+&timer133 {
 	interrupts = <435 (NRF_DEFAULT_IRQ_PRIORITY + 1)>;
 };
