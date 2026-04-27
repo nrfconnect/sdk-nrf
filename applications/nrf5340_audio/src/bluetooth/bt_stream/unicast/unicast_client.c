@@ -356,10 +356,10 @@ static bool stream_in_group_check(struct bt_cap_stream *stream, void *user_data)
 
 	if (stream == server_stream) {
 		/* Found the stream in the group, stop iterating */
-		return true;
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 /**
@@ -936,7 +936,7 @@ static bool new_pres_dly_us_set(struct bt_cap_stream *stream, void *user_data)
 
 	stream->bap_stream.qos->pd = *new_pres_dly_us;
 
-	return false;
+	return true;
 }
 
 static void stream_configured_cb(struct bt_bap_stream *stream,
@@ -1110,10 +1110,10 @@ static bool all_streams_released_check(struct bt_cap_stream *stream, void *user_
 	if (stream->bap_stream.ep != NULL) {
 		LOG_DBG("stream %p is not released", stream);
 		/* Found a stream that is not released, will stop iterating */
-		return true;
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 static void stream_released_cb(struct bt_bap_stream *stream)
@@ -1300,7 +1300,7 @@ static bool first_source_location_get(struct bt_cap_stream *stream, void *user_d
 
 	if (stream == NULL || user_data == NULL) {
 		LOG_ERR("Invalid parameters");
-		return false;
+		return true;
 	}
 
 	enum bt_audio_location *locations = (enum bt_audio_location *)user_data;
@@ -1315,7 +1315,7 @@ static bool first_source_location_get(struct bt_cap_stream *stream, void *user_d
 
 	if ((dir != BT_AUDIO_DIR_SOURCE) || (idx.lvl1 != 0) || (idx.lvl2 != 0) || (idx.lvl3 != 0)) {
 		/* Not the first source stream, continue searching */
-		return false;
+		return true;
 	}
 
 	ret = bt_audio_codec_cfg_get_chan_allocation(stream->bap_stream.codec_cfg, locations,
@@ -1326,7 +1326,7 @@ static bool first_source_location_get(struct bt_cap_stream *stream, void *user_d
 	}
 
 	/* Found the first source stream, stop iterating */
-	return true;
+	return false;
 }
 
 int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_location *locations)
@@ -1681,12 +1681,12 @@ static bool add_to_stop_params(struct bt_cap_stream *stream, void *user_data)
 
 	if (stream->bap_stream.ep == NULL) {
 		/* Stream already released */
-		return false;
+		return true;
 	}
 
 	param->streams[param->count++] = stream;
 
-	return false;
+	return true;
 }
 
 static bool server_connected_check(struct bt_cap_stream *stream, void *user_data)
@@ -1698,16 +1698,16 @@ static bool server_connected_check(struct bt_cap_stream *stream, void *user_data
 	ret = srv_store_from_stream_get(&stream->bap_stream, &server);
 	if (ret) {
 		LOG_ERR("Failed to get server from stream: %d", ret);
-		return false;
+		return true;
 	}
 
 	if (server && is_connected(server->conn)) {
 		*connected_server_found = true;
 		/* Found a connected server, will stop iterating */
-		return true;
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 int unicast_client_stop(uint8_t cig_index)

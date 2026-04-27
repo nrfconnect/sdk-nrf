@@ -561,13 +561,13 @@ static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_da
 		/* The existing stream is not in the same group as the incoming stream */
 		LOG_ERR("Existing stream not in same group as incoming stream");
 		ctx->ret = -EINVAL;
-		return true;
+		return false;
 	}
 
 	if (pres_dly_stream_ignore(&(existing_stream->bap_stream), ctx->incoming_stream)) {
 		/* Do not consider this stream. Continue parsing */
 		LOG_DBG("Ignoring existing stream");
-		return false;
+		return true;
 	}
 
 	/* All already running streams in the same direction and in the
@@ -581,13 +581,13 @@ static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_da
 		LOG_ERR("Illegal value. Pres delays do not match: %u != %u",
 			*ctx->existing_pres_dly_us_check, *ctx->existing_pres_dly_us);
 		ctx->ret = -EINVAL;
-		return true;
+		return false;
 	}
 
 	if (*ctx->existing_pres_dly_us == 0) {
 		LOG_ERR("Existing presentation delay is zero");
 		ctx->ret = -EINVAL;
-		return true;
+		return false;
 	}
 
 	if (IN_RANGE(*ctx->existing_pres_dly_us, ctx->incoming_qos->pd_min,
@@ -595,7 +595,7 @@ static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_da
 		*ctx->computed_pres_dly_us = *ctx->existing_pres_dly_us;
 		LOG_INF("Existing pres delay is within the incoming stream QoS range");
 		ctx->existing_pres_dly_already_in_range = true;
-		return true;
+		return false;
 	}
 
 	*ctx->group_reconfig_needed = true;
@@ -603,11 +603,12 @@ static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_da
 
 	ctx->ret = pres_delay_compute(ctx->common_qos, &existing_stream->bap_stream.ep->qos_pref);
 	if (ctx->ret) {
-		return true;
+		LOG_ERR("Failed to compute common presentation delay: %d", ctx->ret);
+		return false;
 	}
 
 	/* Continue iteration */
-	return false;
+	return true;
 }
 
 /* Find the presentation delay. Needs to be the same within a CIG for a given direction */
