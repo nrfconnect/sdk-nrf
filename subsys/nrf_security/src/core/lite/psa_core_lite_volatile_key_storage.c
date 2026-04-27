@@ -19,7 +19,7 @@ typedef struct {
 	uint32_t occupied;
 } psa_lite_key_slot_entry_t;
 
-static psa_lite_key_slot_entry_t g_key_slots[PSA_LITE_MAX_KEYS_SUPPORTED] = {};
+static psa_lite_key_slot_entry_t g_key_slots[CONFIG_PSA_CORE_LITE_MAX_VOLATILE_KEYS_COUNT] = {};
 
 void psa_lite_free_key_slot(mbedtls_svc_key_id_t key_id)
 {
@@ -47,10 +47,10 @@ psa_status_t psa_lite_get_key_slot(mbedtls_svc_key_id_t *key_id, psa_lite_key_sl
 		return PSA_SUCCESS;
 	}
 
-	for (size_t key_cntr = 0; key_cntr < PSA_LITE_MAX_KEYS_SUPPORTED; key_cntr++) {
-		if (g_key_slots[key_cntr].occupied == PSA_LITE_FALSE) {
-			g_key_slots[key_cntr].occupied = PSA_LITE_TRUE;
-			*key_id = key_cntr + PSA_LITE_KEY_ID_MIN;
+	for (size_t cntr = 0; cntr < CONFIG_PSA_CORE_LITE_MAX_VOLATILE_KEYS_COUNT; cntr++) {
+		if (g_key_slots[cntr].occupied == PSA_LITE_FALSE) {
+			g_key_slots[cntr].occupied = PSA_LITE_TRUE;
+			*key_id = cntr + PSA_LITE_KEY_ID_MIN;
 			*slot = &g_key_slots[*key_id - PSA_LITE_KEY_ID_MIN].slot;
 			return PSA_SUCCESS;
 		}

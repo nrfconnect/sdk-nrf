@@ -22,6 +22,8 @@
 #define PSA_CORE_LITE_KEY_WRAP_BLOCK_SIZE			8u
 #define PSA_CORE_LITE_KEY_WRAP_INTEGRITY_CHECK_REG_SIZE		PSA_CORE_LITE_KEY_WRAP_BLOCK_SIZE
 
+#define PSA_CORE_LITE_KEY_DERIVATION_OUTPUT			-1
+
 #if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
 #include "cracen_psa.h"
 psa_status_t silex_statuscodes_to_psa(int ret);
@@ -32,7 +34,9 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 	psa_key_attributes_t *attributes, uint8_t *key_buffer,
 	size_t key_buffer_size, size_t *key_buffer_length);
 
-static psa_status_t get_kmu_key(mbedtls_svc_key_id_t key_id, psa_lite_key_slot_t *key_slot)
+static psa_status_t get_kmu_key(mbedtls_svc_key_id_t key_id,
+				psa_lite_key_slot_t *key_slot,
+				size_t key_buffer_size)
 {
 	psa_status_t status;
 	psa_key_lifetime_t lifetime;
@@ -43,11 +47,20 @@ static psa_status_t get_kmu_key(mbedtls_svc_key_id_t key_id, psa_lite_key_slot_t
 		return status;
 	}
 
+	/** Note: it is not possible to use sizeof(key_slot->key) here since
+	 *  buffer size can be larger than KMU push area size for public keys,
+	 *  so using it for private keys leads to PSA_ERROR_BUFFER_TOO_SMALL error.
+	 */
 	return cracen_kmu_get_builtin_key(slot_number, &key_slot->key_attributes,
-					  key_slot->key, sizeof(key_slot->key),
+					  key_slot->key, key_buffer_size,
 					  &key_slot->key_size);
 }
 #endif
+
+static inline void clear_all_volatile_keys(void)
+{
+	psa_lite_free_all_key_slots();
+}
 
 /* Signature validation algorithms */
 
@@ -81,7 +94,7 @@ psa_status_t psa_verify_hash(
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	status = get_kmu_key(key_id, &pub_key_slot);
+	status = get_kmu_key(key_id, &pub_key_slot, CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -125,7 +138,7 @@ psa_status_t psa_verify_message(
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	status = get_kmu_key(key_id, &pub_key_slot);
+	status = get_kmu_key(key_id, &pub_key_slot, CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -216,20 +229,16 @@ psa_status_t psa_hash_compute(
 
 #if defined(PSA_WANT_ALG_CTR)
 
-static psa_status_t get_enc_key(
-	mbedtls_svc_key_id_t key_id, psa_algorithm_t alg,
-	psa_lite_key_slot_t **key_slot)
+static psa_status_t get_enc_key(mbedtls_svc_key_id_t key_id,
+				     psa_algorithm_t alg,
+				     psa_lite_key_slot_t **key_slot)
 {
-	if (!VERIFY_ALG_CTR(alg) || !psa_lite_key_id_is_volatile(key_id)) {
+	if (!VERIFY_ALG_CTR(alg) ||
+	    !psa_lite_key_id_is_volatile(key_id)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
 	return psa_lite_get_key_slot(&key_id, key_slot);
-}
-
-static inline void clear_all_enc_keys(void)
-{
-	psa_lite_free_all_key_slots();
 }
 
 psa_status_t psa_cipher_encrypt_setup(
@@ -244,7 +253,7 @@ psa_status_t psa_cipher_encrypt_setup(
 
 	status = get_enc_key(key, alg, &key_slot);
 	if (status != PSA_SUCCESS) {
-		clear_all_enc_keys();
+		clear_all_volatile_keys();
 		return status;
 	}
 
@@ -254,7 +263,7 @@ psa_status_t psa_cipher_encrypt_setup(
 							 key_slot->key_size,
 							 alg);
 	if (status != PSA_SUCCESS) {
-		clear_all_enc_keys();
+		clear_all_volatile_keys();
 	}
 
 	return status;
@@ -272,7 +281,7 @@ psa_status_t psa_cipher_decrypt_setup(
 
 	status = get_enc_key(key, alg, &key_slot);
 	if (status != PSA_SUCCESS) {
-		clear_all_enc_keys();
+		clear_all_volatile_keys();
 		return status;
 	}
 
@@ -282,7 +291,7 @@ psa_status_t psa_cipher_decrypt_setup(
 							 key_slot->key_size,
 							 alg);
 	if (status != PSA_SUCCESS) {
-		clear_all_enc_keys();
+		clear_all_volatile_keys();
 	}
 
 	return status;
@@ -299,7 +308,7 @@ psa_status_t psa_cipher_set_iv(
 
 	status = psa_driver_wrapper_cipher_set_iv(operation, iv, iv_length);
 	if (status != PSA_SUCCESS) {
-		clear_all_enc_keys();
+		clear_all_volatile_keys();
 	}
 
 	return status;
@@ -318,7 +327,7 @@ psa_status_t psa_cipher_update(
 	status = psa_driver_wrapper_cipher_update(operation, input, input_length,
 						  output, output_size, output_length);
 	if (status != PSA_SUCCESS) {
-		clear_all_enc_keys();
+		clear_all_volatile_keys();
 	}
 
 	return status;
@@ -337,7 +346,7 @@ psa_status_t psa_cipher_finish(
 
 	status = psa_driver_wrapper_cipher_finish(operation, output, output_size, output_length);
 	if (status != PSA_SUCCESS) {
-		clear_all_enc_keys();
+		clear_all_volatile_keys();
 	}
 
 	/** Calling psa_cipher_abort() here to make it possible to use another cipher operation
@@ -362,7 +371,7 @@ psa_status_t psa_cipher_abort(psa_cipher_operation_t *operation)
 
 	status = psa_driver_wrapper_cipher_abort(operation);
 	if (status != PSA_SUCCESS) {
-		clear_all_enc_keys();
+		clear_all_volatile_keys();
 	}
 
 	return status;
@@ -489,7 +498,8 @@ psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
 
 	*key = MBEDTLS_SVC_KEY_ID_INIT;
 
-	status = get_kmu_key(wrapping_key, &wrapping_key_slot);
+	status = get_kmu_key(wrapping_key, &wrapping_key_slot,
+			     CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE);
 	if (status != PSA_SUCCESS) {
 		safe_memzero(&wrapping_key_slot, sizeof(wrapping_key_slot));
 		return status;
@@ -533,6 +543,363 @@ error:
 }
 
 #endif /* PSA_WANT_ALG_AES_KW */
+
+/* Key derivation */
+
+#if defined(PSA_WANT_ALG_HKDF)
+
+psa_status_t psa_key_derivation_setup(psa_key_derivation_operation_t *operation,
+				      psa_algorithm_t alg)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_algorithm_t kdf_alg;
+
+	if (operation == NULL ||
+	    PSA_ALG_IS_RAW_KEY_AGREEMENT(alg)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (PSA_ALG_IS_KEY_AGREEMENT(alg)) {
+		kdf_alg = PSA_ALG_KEY_AGREEMENT_GET_KDF(alg);
+	} else if (PSA_ALG_IS_KEY_DERIVATION(alg)) {
+		/* Pure key derivation algorithm (without key agreement is not supported) */
+		return PSA_ERROR_NOT_SUPPORTED;
+	} else {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = psa_driver_wrapper_key_derivation_setup(operation, kdf_alg);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	/* Note: the following algorithm will be used later (by psa_key_derivation_key_agreement) */
+	operation->MBEDTLS_PRIVATE(alg) = alg;
+
+	if (VERIFY_ALG_HKDF(kdf_alg)) {
+		/* length of output keying material in octets (RFC5869) */
+		operation->MBEDTLS_PRIVATE(capacity) = 255 * PSA_HASH_LENGTH(kdf_alg);
+	} else {
+		operation->MBEDTLS_PRIVATE(capacity) = PSA_KEY_DERIVATION_UNLIMITED_CAPACITY;
+	}
+
+	return PSA_SUCCESS;
+}
+
+static psa_status_t psa_key_derivation_check_state(psa_key_derivation_operation_t *operation,
+						   int step)
+{
+	psa_algorithm_t alg = operation->MBEDTLS_PRIVATE(alg);
+
+	if (!PSA_ALG_IS_KEY_AGREEMENT(alg) &&
+	    !PSA_ALG_IS_HKDF(PSA_ALG_KEY_AGREEMENT_GET_KDF(alg))) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	switch (step) {
+	case PSA_KEY_DERIVATION_INPUT_SECRET:
+		if (operation->MBEDTLS_PRIVATE(secret_set)) {
+			return PSA_ERROR_BAD_STATE;
+		}
+		operation->MBEDTLS_PRIVATE(secret_set) = 1;
+		break;
+
+	case PSA_KEY_DERIVATION_INPUT_INFO:
+		if (operation->MBEDTLS_PRIVATE(info_set)) {
+			return PSA_ERROR_BAD_STATE;
+		}
+		operation->MBEDTLS_PRIVATE(info_set) = 1;
+		break;
+
+	case PSA_CORE_LITE_KEY_DERIVATION_OUTPUT:
+		if (!operation->MBEDTLS_PRIVATE(secret_set) ||
+		    !operation->MBEDTLS_PRIVATE(info_set)) {
+			return PSA_ERROR_BAD_STATE;
+		}
+		operation->MBEDTLS_PRIVATE(no_input) = 1;
+		break;
+
+	default:
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	return PSA_SUCCESS;
+}
+
+static inline int psa_key_lifetime_is_external(psa_key_lifetime_t lifetime)
+{
+	return PSA_KEY_LIFETIME_GET_LOCATION(lifetime) != PSA_KEY_LOCATION_LOCAL_STORAGE;
+}
+
+psa_status_t psa_key_derivation_key_agreement(psa_key_derivation_operation_t *operation,
+					      psa_key_derivation_step_t step,
+					      mbedtls_svc_key_id_t private_key,
+					      const uint8_t *peer_key,
+					      size_t peer_key_length)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_lite_key_slot_t key_slot;
+	psa_algorithm_t ka_alg;
+	uint8_t shared_secret[PSA_RAW_KEY_AGREEMENT_OUTPUT_MAX_SIZE] = {};
+	size_t shared_secret_length = 0;
+
+	if (operation == NULL || peer_key == NULL || step != PSA_KEY_DERIVATION_INPUT_SECRET) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = psa_key_derivation_check_state(operation, step);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+	ka_alg = PSA_ALG_KEY_AGREEMENT_GET_BASE(operation->MBEDTLS_PRIVATE(alg));
+
+	if (!VERIFY_ALG_ECDH(ka_alg)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	status = get_kmu_key(private_key, &key_slot, CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE);
+	if (status != PSA_SUCCESS) {
+		safe_memzero(&key_slot, sizeof(key_slot));
+		clear_all_volatile_keys();
+		return status;
+	}
+
+	/* Step 1: run the secret agreement algorithm to generate the shared secret. */
+	status = psa_driver_wrapper_key_agreement(
+		&key_slot.key_attributes, key_slot.key, key_slot.key_size,
+		ka_alg,
+		peer_key, peer_key_length,
+		shared_secret, sizeof(shared_secret), &shared_secret_length);
+
+	safe_memzero(&key_slot, sizeof(key_slot));
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+		goto exit;
+	}
+
+	/* Step 2: set up the key derivation to generate key material from
+	 * the shared secret. A shared secret is permitted wherever a key
+	 * of type DERIVE is permitted.
+	 */
+	status = psa_driver_wrapper_key_derivation_input_bytes(operation, step,
+							       shared_secret,
+							       shared_secret_length);
+
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+	}
+exit:
+	safe_memzero(shared_secret, sizeof(shared_secret));
+	return status;
+}
+
+psa_status_t psa_key_derivation_input_bytes(psa_key_derivation_operation_t *operation,
+					    psa_key_derivation_step_t step,
+					    const uint8_t *data,
+					    size_t data_length)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	if (step != PSA_KEY_DERIVATION_INPUT_INFO) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = psa_key_derivation_check_state(operation, step);
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+		return status;
+	}
+
+	status = psa_driver_wrapper_key_derivation_input_bytes(operation, step, data, data_length);
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+	}
+
+	return status;
+}
+
+psa_status_t psa_key_derivation_output_key(const psa_key_attributes_t *attributes,
+					   psa_key_derivation_operation_t *operation,
+					   mbedtls_svc_key_id_t *key)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_lite_key_slot_t *key_slot;
+	psa_key_type_t key_type;
+	size_t key_bits;
+	size_t key_bytes;
+
+	if (attributes == NULL || key == NULL || operation == NULL ||
+	    psa_get_key_bits(attributes) == 0 ||
+	    PSA_KEY_TYPE_IS_PUBLIC_KEY(attributes->MBEDTLS_PRIVATE(type))) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	key_bits = psa_get_key_bits(attributes);
+	key_bytes = PSA_BITS_TO_BYTES(key_bits);
+	key_type = attributes->MBEDTLS_PRIVATE(type);
+	*key = MBEDTLS_SVC_KEY_ID_INIT;
+
+	if (PSA_KEY_TYPE_IS_UNSTRUCTURED(key_type) &&
+	    !psa_key_lifetime_is_external(attributes->MBEDTLS_PRIVATE(lifetime))) {
+		if (key_bits % 8 != 0) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+	} else {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	status = psa_key_derivation_check_state(operation, PSA_CORE_LITE_KEY_DERIVATION_OUTPUT);
+	if (status != PSA_SUCCESS) {
+		goto error;
+	}
+
+	status = psa_lite_get_key_slot(key, &key_slot);
+	if (status != PSA_SUCCESS) {
+		goto error;
+	}
+
+	if (key_bytes <= operation->MBEDTLS_PRIVATE(capacity)) {
+		status = psa_driver_wrapper_key_derivation_output_bytes(operation,
+									key_slot->key,
+									key_bytes);
+		operation->MBEDTLS_PRIVATE(capacity) -= key_bytes;
+		if (status != PSA_SUCCESS) {
+			goto error;
+		}
+	} else {
+		status = PSA_ERROR_INSUFFICIENT_DATA;
+		operation->MBEDTLS_PRIVATE(capacity) = 0;
+		goto error;
+	}
+
+	key_slot->key_attributes = *attributes;
+	key_slot->key_size = key_bytes;
+
+	return status;
+error:
+	clear_all_volatile_keys();
+	return status;
+}
+
+psa_status_t psa_key_derivation_abort(psa_key_derivation_operation_t *operation)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	if (operation == NULL) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = psa_driver_wrapper_key_derivation_abort(operation);
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+	}
+	safe_memzero(operation, sizeof(psa_key_derivation_operation_t));
+
+	return status;
+}
+
+#endif /* PSA_WANT_ALG_HKDF */
+
+/* MAC */
+
+#if defined(PSA_WANT_ALG_HMAC)
+
+static inline psa_status_t get_mac_key(mbedtls_svc_key_id_t key_id,
+				       psa_algorithm_t alg,
+				       psa_lite_key_slot_t **key_slot)
+{
+	if (!VERIFY_ALG_HMAC(alg) ||
+	    !psa_lite_key_id_is_volatile(key_id)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	return psa_lite_get_key_slot(&key_id, key_slot);
+}
+
+psa_status_t psa_mac_verify(mbedtls_svc_key_id_t key,
+			    psa_algorithm_t alg,
+			    const uint8_t *input,
+			    size_t input_length,
+			    const uint8_t *mac,
+			    size_t mac_length)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_lite_key_slot_t *key_slot;
+	psa_key_type_t key_type;
+	size_t key_bits;
+	size_t operation_mac_size;
+	uint8_t actual_mac[PSA_MAC_MAX_SIZE];
+	size_t actual_mac_length;
+
+	if (input == NULL || mac == NULL || !PSA_ALG_IS_HMAC(alg)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = get_mac_key(key, alg, &key_slot);
+	if (status != PSA_SUCCESS) {
+		goto error;
+	}
+
+	key_type = psa_get_key_type(&key_slot->key_attributes);
+	key_bits = psa_get_key_bits(&key_slot->key_attributes);
+
+	if (key_type != PSA_KEY_TYPE_HMAC) {
+		status = PSA_ERROR_INVALID_ARGUMENT;
+		goto error;
+	}
+	operation_mac_size = PSA_MAC_LENGTH(key_type, key_bits, alg);
+
+	if (operation_mac_size > PSA_MAC_MAX_SIZE) {
+		/*  Note from Oberon PSA Core:
+		 *
+		 *  PSA_MAC_LENGTH returns the correct length even for a MAC algorithm
+		 *  that is disabled in the compile-time configuration. The result can
+		 *  therefore be larger than PSA_MAC_MAX_SIZE, which does take the
+		 *  configuration into account. In this case, force a return of
+		 *  PSA_ERROR_NOT_SUPPORTED here. Otherwise psa_mac_verify(), or
+		 *  psa_mac_compute(mac_size=PSA_MAC_MAX_SIZE), would return
+		 *  PSA_ERROR_BUFFER_TOO_SMALL for an unsupported algorithm whose MAC size
+		 *  is larger than PSA_MAC_MAX_SIZE, which is misleading and which breaks
+		 *  systematically generated tests.
+		 */
+		status = PSA_ERROR_NOT_SUPPORTED;
+		goto error;
+	}
+
+	status = psa_driver_wrapper_mac_compute(&key_slot->key_attributes,
+						key_slot->key, key_slot->key_size,
+						alg,
+						input, input_length,
+						actual_mac, operation_mac_size,
+						&actual_mac_length);
+
+	if (status != PSA_SUCCESS) {
+		goto error;
+	}
+
+	if (mac_length != actual_mac_length) {
+		status = PSA_ERROR_INVALID_SIGNATURE;
+		goto error;
+	}
+
+	if (constant_memcmp(mac, actual_mac, actual_mac_length) != 0) {
+		status = PSA_ERROR_INVALID_SIGNATURE;
+		goto error;
+	}
+
+	safe_memzero(actual_mac, sizeof(actual_mac));
+	return status;
+
+error:
+	safe_memzero(actual_mac, sizeof(actual_mac));
+	clear_all_volatile_keys();
+	actual_mac_length = sizeof(actual_mac);
+	operation_mac_size = 0;
+
+	return status;
+}
+
+#endif /* PSA_WANT_ALG_HMAC */
 
 /* Initialization function */
 

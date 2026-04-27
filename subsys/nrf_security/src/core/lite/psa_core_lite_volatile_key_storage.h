@@ -21,13 +21,19 @@
 #error "FW encryption requires either AES-256 or AES-128 being enabled"
 #endif
 
-#define PSA_LITE_KEY_MAX_SIZE	MAX(CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE, \
-				    CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE)
+#if CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE == 0 && \
+    defined(PSA_WANT_ALG_ECDH)
+#error "No valid algorithm for key agreement"
+#endif
 
-#define PSA_LITE_MAX_KEYS_SUPPORTED	1u
+#define PSA_LITE_KEY_MAX_SIZE	MAX(CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE,       \
+				    MAX(CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE,   \
+					CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE))
+
 #define PSA_LITE_KEY_ID_NULL		PSA_KEY_ID_NULL
 #define PSA_LITE_KEY_ID_MIN		PSA_KEY_ID_VENDOR_MIN
-#define PSA_LITE_KEY_ID_MAX		PSA_LITE_KEY_ID_MIN + PSA_LITE_MAX_KEYS_SUPPORTED - 1u
+#define PSA_LITE_KEY_ID_MAX		PSA_LITE_KEY_ID_MIN + \
+					CONFIG_PSA_CORE_LITE_MAX_VOLATILE_KEYS_COUNT - 1u
 
 typedef struct {
 	psa_key_attributes_t key_attributes;
