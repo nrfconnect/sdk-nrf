@@ -1277,7 +1277,7 @@
 .. _`Ranging Profile Specification`: https://files.bluetooth.com/download/rap_v1-0/
 .. _`Ranging Service Specification`: https://files.bluetooth.com/download/ras_v1-0/
 
-.. _`Bluetooth SIG's Qualification Process`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/
+.. _`Bluetooth SIG's Qualification Process`: https://www.bluetooth.com/develop-with-bluetooth/qualify/
 .. _`Launch Studio`: https://qualification.bluetooth.com/
 .. _`Profile Tuning Suite (PTS)`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/qualification-test-tools/profile-tuning-suite/
 .. _`Bluetooth Qualification Listing`: https://launchstudio.bluetooth.com/Listings/Search/
@@ -1288,6 +1288,11 @@
 .. _`Bluetooth product types`: https://support.bluetooth.com/hc/en-us/articles/360049018712/
 .. _`PRD and DPD`: https://www.bluetooth.com/download/prd_dpd_resolutions/
 .. _`Create a subset of a design`: https://qualification.support.bluetooth.com/hc/en-us/articles/27694580618637-Create-a-Subset-of-a-Design
+.. _`Qualification Quick Start Guide`: https://www.bluetooth.com/bluetooth-qualification-process-quick-start-guide/
+.. _`Qualification Program Reference Document`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/QPRD/out/en/index-en.html
+.. _`QPRD section 3.2.2.2`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/QPRD/out/en/index-en.html#UUID-5b5e9584-8af4-b02c-1198-96be8369ac0b
+.. _`QPRD section 3.2.2.1`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/QPRD/out/en/index-en.html#UUID-c53ac674-5f92-d4b9-a8dc-4f3fcfe80067
+.. _`Qualified products`: https://www.bluetooth.com/qualified-products/
 
 .. _`Bluetooth Mesh model specification`: https://www.bluetooth.com/specifications/specs/mmdl-1-1/
 .. _`Bluetooth Mesh protocol specification`: https://www.bluetooth.com/specifications/specs/mshprt-1-1/
