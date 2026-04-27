@@ -15,6 +15,7 @@
 #include "config_event.h"
 #include "hid_event.h"
 #include "dfu_lock.h"
+#include <zephyr/devicetree.h>
 #include <caf/events/ble_common_event.h>
 #include <caf/events/power_manager_event.h>
 
@@ -65,44 +66,25 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
  * and point to the flash area where the new DFU image should be placed. Otherwise, if
  * dynamic information is required, the function dfu_slot_id_get() should be extended
  * to support the new bootloader mode. To support the dynamic resolution for the MCUboot
- * bootloader, the user must define the MCUBOOT_PRIMARY_SLOT_ID and MCUBOOT_SECONDARY_SLOT_ID
- * macros.
+ * bootloader, the user must define the SLOT_0_ID and SLOT_1_ID macros.
  */
 #define BUILD_TIME_DFU_SLOT_ID_INFO_IS_AVAILABLE                   \
 	 ((IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT) &&                \
 	  !IS_ENABLED(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)) || \
 	 IS_ENABLED(CONFIG_SECURE_BOOT))
 
-#if CONFIG_SECURE_BOOT
-	BUILD_ASSERT(IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED),
-		     "B0 bootloader supported only with Partition Manager");
+#if CONFIG_PARTITION_MANAGER_ENABLED
 	#include <pm_config.h>
-	#include <fw_info.h>
-	#define BOOTLOADER_NAME "B0"
-	#if PM_ADDRESS == PM_S0_IMAGE_ADDRESS
-		#define DFU_SLOT_ID PM_S1_IMAGE_ID
-	#elif PM_ADDRESS == PM_S1_IMAGE_ADDRESS
-		#define DFU_SLOT_ID PM_S0_IMAGE_ID
-	#else
-		#error Missing partition definitions.
-	#endif
-#elif CONFIG_BOOTLOADER_MCUBOOT
-	#include <zephyr/dfu/mcuboot.h>
-	#if CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
-		#define BOOTLOADER_NAME "MCUBOOT+XIP"
-	#else
-		#define BOOTLOADER_NAME "MCUBOOT"
-	#endif
 
-	#if CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD
-		/* The RAM load requires the code partition to be defined in DTS. */
-		BUILD_ASSERT(!IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED) &&
-			     IS_ENABLED(CONFIG_USE_DT_CODE_PARTITION));
-	#endif
-
-	#if CONFIG_PARTITION_MANAGER_ENABLED
-		#include <pm_config.h>
-
+	#if CONFIG_SECURE_BOOT
+		#define CODE_PARTITION_ADDR       PM_ADDRESS
+		#define SLOT_0_ADDR               PM_S0_IMAGE_ADDRESS
+		#define SLOT_1_ADDR               PM_S1_IMAGE_ADDRESS
+		#define SLOT_0_END                (PM_S0_IMAGE_ADDRESS + PM_S0_IMAGE_SIZE)
+		#define SLOT_1_END                (PM_S1_IMAGE_ADDRESS + PM_S1_IMAGE_SIZE)
+		#define SLOT_0_ID                 PM_S0_IMAGE_ID
+		#define SLOT_1_ID                 PM_S1_IMAGE_ID
+	#elif CONFIG_BOOTLOADER_MCUBOOT
 		#ifdef PM_MCUBOOT_SECONDARY_PAD_SIZE
 			BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
 		#endif
@@ -113,64 +95,94 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 			#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE)
 		#endif
 
-		#define MCUBOOT_PRIMARY_SLOT_ID   PM_MCUBOOT_PRIMARY_ID
-		#define MCUBOOT_SECONDARY_SLOT_ID PM_MCUBOOT_SECONDARY_ID
-
-		#if (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_PRIMARY_ADDRESS
-			#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
-		#elif (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_SECONDARY_ADDRESS
-			#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
-		#else
-			#error Missing partition definitions.
-		#endif
-	#elif CONFIG_USE_DT_CODE_PARTITION
-		#include <zephyr/devicetree.h>
-
-		#define CODE_PARTITION_NODE    DT_CHOSEN(zephyr_code_partition)
-		#define MCUBOOT_PRIMARY_NODE   DT_NODELABEL(slot0_partition)
-		#define MCUBOOT_SECONDARY_NODE DT_NODELABEL(slot1_partition)
-
-		BUILD_ASSERT(DT_PARTITION_EXISTS(MCUBOOT_PRIMARY_NODE),
-			     "Missing primary partition definition in DTS.");
-		BUILD_ASSERT(DT_PARTITION_EXISTS(MCUBOOT_SECONDARY_NODE),
-			     "Missing secondary partition definition in DTS.");
-
-		#define NVM_ADDRESS(node) DT_PARTITION_ADDR(node)
-		#define CODE_PARTITION_START_ADDR    NVM_ADDRESS(CODE_PARTITION_NODE)
-		#define MCUBOOT_PRIMARY_START_ADDR   NVM_ADDRESS(MCUBOOT_PRIMARY_NODE)
-		#define MCUBOOT_SECONDARY_START_ADDR NVM_ADDRESS(MCUBOOT_SECONDARY_NODE)
-		#define MCUBOOT_PRIMARY_END_ADDR     (MCUBOOT_PRIMARY_START_ADDR + \
-						      DT_REG_SIZE(MCUBOOT_PRIMARY_NODE))
-		#define MCUBOOT_SECONDARY_END_ADDR   (MCUBOOT_SECONDARY_START_ADDR + \
-						      DT_REG_SIZE(MCUBOOT_SECONDARY_NODE))
-
-		#if MCUBOOT_PRIMARY_START_ADDR == MCUBOOT_SECONDARY_START_ADDR
-			#error Primary and secondary partitions cannot have the same address.
-		#endif
-
-		#define MCUBOOT_PRIMARY_SLOT_ID   DT_PARTITION_ID(MCUBOOT_PRIMARY_NODE)
-		#define MCUBOOT_SECONDARY_SLOT_ID DT_PARTITION_ID(MCUBOOT_SECONDARY_NODE)
-
-		#if BUILD_TIME_DFU_SLOT_ID_INFO_IS_AVAILABLE
-			/* Use range check to allow for placing MCUboot header in a separate
-			 * partition,so the application code partition is not an alias for the
-			 * MCUboot partition, but a subpartition of the MCUboot partition.
-			 */
-			#if (CODE_PARTITION_START_ADDR >= MCUBOOT_PRIMARY_START_ADDR) && \
-			(CODE_PARTITION_START_ADDR < MCUBOOT_PRIMARY_END_ADDR)
-				#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
-			#elif (CODE_PARTITION_START_ADDR >= MCUBOOT_SECONDARY_START_ADDR) && \
-			(CODE_PARTITION_START_ADDR < MCUBOOT_SECONDARY_END_ADDR)
-				#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
-			#else
-				#error Missing partition definitions in DTS.
-			#endif
-		#endif
+		#define CODE_PARTITION_ADDR       (PM_ADDRESS - PM_ADDRESS_OFFSET)
+		#define SLOT_0_ADDR               PM_MCUBOOT_PRIMARY_ADDRESS
+		#define SLOT_1_ADDR               PM_MCUBOOT_SECONDARY_ADDRESS
+		#define SLOT_0_END                (PM_MCUBOOT_PRIMARY_ADDRESS + \
+						   PM_MCUBOOT_PRIMARY_SIZE)
+		#define SLOT_1_END                (PM_MCUBOOT_SECONDARY_ADDRESS + \
+						   PM_MCUBOOT_SECONDARY_SIZE)
+		#define SLOT_0_ID                 PM_MCUBOOT_PRIMARY_ID
+		#define SLOT_1_ID                 PM_MCUBOOT_SECONDARY_ID
 	#else
-		#error Unsupported partitioning scheme.
+		#error Bootloader not supported.
+	#endif
+
+#elif CONFIG_USE_DT_CODE_PARTITION
+	BUILD_ASSERT(DT_HAS_CHOSEN(zephyr_code_partition),
+		     "Missing 'zephyr,code-partition' in /chosen.");
+
+	#define CODE_PARTITION_NODE DT_CHOSEN(zephyr_code_partition)
+
+	#if CONFIG_SECURE_BOOT
+		#define SLOT_0_DT_NODELABEL s0_partition
+		#define SLOT_1_DT_NODELABEL s1_partition
+	#elif CONFIG_BOOTLOADER_MCUBOOT
+		#define SLOT_0_DT_NODELABEL slot0_partition
+		#define SLOT_1_DT_NODELABEL slot1_partition
+	#else
+		#error Bootloader not supported.
+	#endif
+
+	#define SLOT_0_NODE DT_NODELABEL(SLOT_0_DT_NODELABEL)
+	#define SLOT_1_NODE DT_NODELABEL(SLOT_1_DT_NODELABEL)
+
+	BUILD_ASSERT(DT_PARTITION_EXISTS(CODE_PARTITION_NODE),
+		     "The 'zephyr,code-partition' node is not a valid partition.");
+	BUILD_ASSERT(DT_PARTITION_EXISTS(SLOT_0_NODE),
+		     "Missing '" STRINGIFY(SLOT_0_DT_NODELABEL) "' partition definition in DTS.");
+	BUILD_ASSERT(DT_PARTITION_EXISTS(SLOT_1_NODE),
+		     "Missing '" STRINGIFY(SLOT_1_DT_NODELABEL) "' partition definition in DTS.");
+
+	#define CODE_PARTITION_ADDR      DT_PARTITION_ADDR(CODE_PARTITION_NODE)
+	#define SLOT_0_ADDR              DT_PARTITION_ADDR(SLOT_0_NODE)
+	#define SLOT_1_ADDR              DT_PARTITION_ADDR(SLOT_1_NODE)
+	#define SLOT_0_END               (DT_PARTITION_ADDR(SLOT_0_NODE) + DT_REG_SIZE(SLOT_0_NODE))
+	#define SLOT_1_END               (DT_PARTITION_ADDR(SLOT_1_NODE) + DT_REG_SIZE(SLOT_1_NODE))
+	#define SLOT_0_ID                DT_PARTITION_ID(SLOT_0_NODE)
+	#define SLOT_1_ID                DT_PARTITION_ID(SLOT_1_NODE)
+
+#else
+	#error Unsupported partitioning scheme.
+#endif
+
+#if CONFIG_SECURE_BOOT
+	#include <fw_info.h>
+	#define BOOTLOADER_NAME "B0"
+#elif CONFIG_BOOTLOADER_MCUBOOT
+	#include <zephyr/dfu/mcuboot.h>
+	#if CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+		#define BOOTLOADER_NAME "MCUBOOT+XIP"
+	#else
+		#define BOOTLOADER_NAME "MCUBOOT"
+	#endif
+	#if CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD
+		/* The RAM load requires the code partition to be defined in DTS. */
+		BUILD_ASSERT(!IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED) &&
+			     IS_ENABLED(CONFIG_USE_DT_CODE_PARTITION));
 	#endif
 #else
 	#error Bootloader not supported.
+#endif
+
+#if SLOT_0_ID == SLOT_1_ID
+	#error "DFU slots cannot share a flash area ID."
+#endif
+
+#if BUILD_TIME_DFU_SLOT_ID_INFO_IS_AVAILABLE
+	/* Use range check to allow for placing MCUboot header in a separate
+	 * partition,so the application code partition is not an alias for the
+	 * MCUboot partition, but a subpartition of the MCUboot partition.
+	 */
+	#if (CODE_PARTITION_ADDR >= SLOT_0_ADDR) && \
+	    (CODE_PARTITION_ADDR <  SLOT_0_END)
+		#define DFU_SLOT_ID SLOT_1_ID
+	#elif (CODE_PARTITION_ADDR >= SLOT_1_ADDR) && \
+	      (CODE_PARTITION_ADDR <  SLOT_1_END)
+		#define DFU_SLOT_ID SLOT_0_ID
+	#else
+		#error "Missing partition definitions in DTS."
+	#endif
 #endif
 
 static struct k_work_delayable dfu_timeout;
@@ -249,11 +261,11 @@ static uint8_t dfu_slot_id_get(void)
 	BUILD_ASSERT(IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT));
 
 	active_slot_id = boot_fetch_active_slot();
-	__ASSERT_NO_MSG((active_slot_id == MCUBOOT_PRIMARY_SLOT_ID) ||
-			(active_slot_id == MCUBOOT_SECONDARY_SLOT_ID));
+	__ASSERT_NO_MSG((active_slot_id == SLOT_0_ID) ||
+			(active_slot_id == SLOT_1_ID));
 
-	return (active_slot_id == MCUBOOT_SECONDARY_SLOT_ID) ?
-		MCUBOOT_PRIMARY_SLOT_ID : MCUBOOT_SECONDARY_SLOT_ID;
+	return (active_slot_id == SLOT_1_ID) ?
+		SLOT_0_ID : SLOT_1_ID;
 #endif
 }
 
@@ -770,11 +782,11 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 	const struct fw_info *info;
 	uint8_t flash_area_id;
 
-	if (dfu_slot_id_get() == PM_S1_IMAGE_ID) {
-		info = fw_info_find(PM_S0_IMAGE_ADDRESS);
+	if (dfu_slot_id_get() == SLOT_1_ID) {
+		info = fw_info_find(SLOT_0_ADDR);
 		flash_area_id = 0;
 	} else {
-		info = fw_info_find(PM_S1_IMAGE_ADDRESS);
+		info = fw_info_find(SLOT_1_ADDR);
 		flash_area_id = 1;
 	}
 
@@ -828,12 +840,12 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 	uint8_t flash_area_id;
 	uint8_t bank_header_area_id;
 
-	if (dfu_slot_id_get() == MCUBOOT_SECONDARY_SLOT_ID) {
+	if (dfu_slot_id_get() == SLOT_1_ID) {
 		flash_area_id = 0;
-		bank_header_area_id = MCUBOOT_PRIMARY_SLOT_ID;
+		bank_header_area_id = SLOT_0_ID;
 	} else {
 		flash_area_id = 1;
-		bank_header_area_id = MCUBOOT_SECONDARY_SLOT_ID;
+		bank_header_area_id = SLOT_1_ID;
 	}
 
 	int err = boot_read_bank_header(bank_header_area_id, &header,
