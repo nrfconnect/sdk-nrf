@@ -93,7 +93,7 @@ if(SB_CONFIG_SECURE_BOOT)
       )
 
       include(image_flasher.cmake)
-      add_image_flasher(NAME app_provision HEX_FILE "${CMAKE_BINARY_DIR}/app_provision.hex")
+      add_image_flasher(NAME app_provision HEX_FILE "${CMAKE_BINARY_DIR}/app_provision.hex" ERASE_MODE none)
     endif()
 
     set_target_properties(b0 PROPERTIES

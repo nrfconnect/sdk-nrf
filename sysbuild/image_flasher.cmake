@@ -5,11 +5,11 @@
 #
 
 # Usage:
-#   add_image_flasher(NAME <name> HEX_FILE <hex_file>)
+#   add_image_flasher(NAME <name> HEX_FILE <hex_file> [BASE_IMAGE <image>] [ERASE_MODE <mode>])
 #
 # Adds a sysbuild image which will flash the hex file when `west flash` is invoked.
 function(add_image_flasher)
-  set(single_args NAME HEX_FILE BASE_IMAGE)
+  set(single_args NAME HEX_FILE BASE_IMAGE ERASE_MODE)
   cmake_parse_arguments(args "" "${single_args}" "" ${ARGN})
 
   if(NOT args_NAME)
@@ -24,6 +24,14 @@ function(add_image_flasher)
 
   set(${args_NAME}_HEX_FILE "${args_HEX_FILE}" CACHE FILEPATH "Hex file to flash" FORCE)
   set(IMAGE_FLASHER_DEFAULT_IMAGE ${DEFAULT_IMAGE} CACHE STRING "Default image" FORCE)
+
+  if(args_ERASE_MODE)
+    set(VALID_ERASE_MODES none ranges all)
+    if(NOT args_ERASE_MODE IN_LIST VALID_ERASE_MODES)
+      message(FATAL_ERROR "ERASE_MODE must be one of: none, ranges, all")
+    endif()
+    set(${args_NAME}_IMAGE_FLASHER_ERASE_MODE "${args_ERASE_MODE}" CACHE STRING "Erase mode" FORCE)
+  endif()
 
   ExternalZephyrProject_Add(
     APPLICATION ${args_NAME}

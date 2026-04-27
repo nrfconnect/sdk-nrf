@@ -19,15 +19,11 @@ add_custom_target(runners_yaml_props_target)
 # Fetch hex file to flash from sysbuild
 zephyr_get(hex_file_to_flash SYSBUILD LOCAL VAR HEX_FILE)
 zephyr_get(base_image SYSBUILD LOCAL VAR IMAGE_FLASHER_SPECIFIC_IMAGE)
+zephyr_get(erase_mode SYSBUILD LOCAL VAR IMAGE_FLASHER_ERASE_MODE)
 
 if(NOT base_image)
   zephyr_get(base_image SYSBUILD GLOBAL VAR IMAGE_FLASHER_DEFAULT_IMAGE)
 endif()
-
-# Set hex_file property to point to the hex file
-set_target_properties(runners_yaml_props_target PROPERTIES
-  hex_file "${hex_file_to_flash}"
-)
 
 # Override the runners.yaml path to use CMAKE_CURRENT_BINARY_DIR/zephyr instead of
 # PROJECT_BINARY_DIR, this ensures runners.yaml is generated at <build>/softdevice/zephyr where
@@ -44,10 +40,21 @@ zephyr_file_copy(${base_image_binary_dir}/edt.pickle ${PROJECT_BINARY_DIR}/edt.p
 )
 import_kconfig(CONFIG_ ${base_image_binary_dir}/.config)
 
+# Allow erase mode to be set so UICR-targeted hex files can be written without a range-erase.
+if(erase_mode)
+  board_runner_args(nrfutil "--erase-mode=${erase_mode}")
+  board_runner_args(nrfjprog "--erase-mode=${erase_mode}")
+endif()
+
 # Manually include board configuration to enable automatic runners.yaml generation
 foreach(dir ${BOARD_DIRECTORIES})
   include(${dir}/board.cmake OPTIONAL)
 endforeach()
+
+# Set hex_file property to point to the hex file
+set_target_properties(runners_yaml_props_target PROPERTIES
+  hex_file "${hex_file_to_flash}"
+)
 
 # Include flash support to automatically generate runners.yaml
 include(${ZEPHYR_BASE}/cmake/flash/CMakeLists.txt)
