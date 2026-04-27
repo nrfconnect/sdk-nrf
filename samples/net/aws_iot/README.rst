@@ -154,12 +154,17 @@ The sample includes pre-configured configuration files for the development kits 
 * :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
 * :file:`boards/nrf54l15dk_nrf54l15_cpuapp.conf` - Configuration file for the nRF54L15 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
+* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
 
 The following configuration and DTS overlay files are included to host the MCUboot secondary image slot on external flash for the nRF7002 DK:
 
 * :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` - DTS overlay file for the application image.
 * :file:`sysbuild/mcuboot/nrf7002dk_nrf5340_cpuapp.overlay` - DTS overlay file for the MCUboot image.
 * :file:`sysbuild/mcuboot/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the MCUboot image.
+
+The following DTS overlay file is included to increase the non-secure RAM partition size to provide more memory for the application:
+
+* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.overlay` - DTS overlay file for the nRF7120 DK.
 
 Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
 Files that are located under the :file:`/sysbuild/mcuboot` folder are used to configure the MCUboot image.
