@@ -58,3 +58,15 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Needs alignment to work with IronSide SE"
+
+- scenarios:
+    - sample.bluetooth.mesh_dfu_distributor
+    - sample.bluetooth.mesh_dfu_distributor.dfu_ext_flash
+    - sample.bluetooth.mesh_dfu_distributor.settings_ext_flash
+    - sample.bluetooth.mesh_dfu_distributor.smp_bt_auth
+    - sample.bluetooth.mesh_dfu_target
+    - sample.bluetooth.mesh_dfu_target.dfu_ext_flash
+    - sample.bluetooth.mesh_dfu_target.settings_ext_flash
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36963"
