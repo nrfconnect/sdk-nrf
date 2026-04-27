@@ -174,13 +174,15 @@ static int input(bt_mesh_input_action_t action, uint8_t size)
 	return 0;
 }
 
-static void prov_complete(uint16_t net_idx, uint16_t addr)
+static void prov_complete(uint16_t net_idx, uint16_t elem_addr)
 {
-	LOG_DBG("net_idx 0x%04x addr 0x%04x", net_idx, addr);
+	LOG_DBG("net_idx 0x%04x addr 0x%04x", net_idx, elem_addr);
+
+	addr = elem_addr;
 
 	net.net_idx = net_idx,
-	net.local = addr;
-	net.dst = addr;
+	net.local = elem_addr;
+	net.dst = elem_addr;
 
 	tester_send(BTP_SERVICE_ID_MESH, MESH_EV_PROVISIONED, CONTROLLER_INDEX,
 		    NULL, 0);
@@ -240,7 +242,7 @@ static void init(uint8_t *data, uint16_t len)
 
 	comp = model_handler_init();
 	err = bt_mesh_init(&prov, comp);
-	if (err) {
+	if (err && err != -EALREADY) {
 		status = BTP_STATUS_FAILED;
 	}
 
@@ -260,16 +262,19 @@ static void start(uint8_t *data, uint16_t len)
 		settings_load();
 	}
 
-	if (addr) {
-		err = bt_mesh_provision(net_key, net_key_idx, flags, iv_index,
-					addr, dev_key);
-		if (err && err != -EALREADY) {
-			status = BTP_STATUS_FAILED;
-		}
-	} else {
-		err = bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
-		if (err && err != -EALREADY) {
-			status = BTP_STATUS_FAILED;
+	/* Node already in a network (flash or current session): do not re-open PB-ADV. */
+	if (!bt_mesh_is_provisioned()) {
+		if (addr) {
+			err = bt_mesh_provision(net_key, net_key_idx, flags, iv_index,
+						addr, dev_key);
+			if (err && err != -EALREADY) {
+				status = BTP_STATUS_FAILED;
+			}
+		} else {
+			err = bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
+			if (err && err != -EALREADY) {
+				status = BTP_STATUS_FAILED;
+			}
 		}
 	}
 
@@ -280,6 +285,8 @@ static void start(uint8_t *data, uint16_t len)
 static void reset(uint8_t *data, uint16_t len)
 {
 	LOG_DBG("");
+
+	addr = 0U;
 
 	bt_mesh_reset();
 
