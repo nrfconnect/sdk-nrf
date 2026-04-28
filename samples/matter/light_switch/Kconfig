@@ -33,16 +33,15 @@ config OPENTHREAD_DEFAULT_TX_POWER
 
 endif # OPENTHREAD
 
-if BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EB2
+if SHIELD_NRF7002EB2
 
 config CHIP_WIFI
 	default y
-	select DEPRECATED if SOC_SERIES_NRF53
 
 config NRF_WIFI_LOW_POWER
 	default y
 
-endif # BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EB2
+endif # SHIELD_NRF7002EB2
 
 # Enable Read Client functionality for all build configurations.
 config CHIP_ENABLE_READ_CLIENT

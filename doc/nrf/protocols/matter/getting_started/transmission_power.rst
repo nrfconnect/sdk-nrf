@@ -26,8 +26,6 @@ The following table lists the default TX power values.
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf5340dk                | 3                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                                         | nrf7002dk                | 3                                                    | 0                                                               |
-|                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf21540dk               | 20                                                   | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf54l15dk               | 8                                                    | 0                                                               |
@@ -37,8 +35,6 @@ The following table lists the default TX power values.
 | :ref:`Light Switch (SED) <matter_light_switch_sample>`                  | nrf52840dk               | 0                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf5340dk                | 0                                                    | 0                                                               |
-|                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                                         | nrf7002dk                | 0                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf21540dk               | 0                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
@@ -50,8 +46,6 @@ The following table lists the default TX power values.
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf5340dk                | 0                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                                         | nrf7002dk                | 0                                                    | 0                                                               |
-|                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf21540dk               | 0                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf54l15dk               | 0                                                    | 0                                                               |
@@ -62,8 +56,6 @@ The following table lists the default TX power values.
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf5340dk                | 8                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                                         | nrf7002dk                | 3                                                    | 0                                                               |
-|                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf54l15dk               | 8                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf54lm20dk              | 8                                                    | 0                                                               |
@@ -71,8 +63,6 @@ The following table lists the default TX power values.
 | :ref:`Template (MTD) <matter_template_sample>`                          | nrf52840dk               | 8                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf5340dk                | 3                                                    | 0                                                               |
-|                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                                         | nrf7002dk                | 3                                                    | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 |                                                                         | nrf21540dk               | 20                                                   | 0                                                               |
 |                                                                         +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
@@ -148,8 +138,6 @@ The maximum value of 20 dBm is only recommended for devices that are using :ref:
 +--------------------------+-----------------------------------------------------------------------------+
 | nrf5340dk                | -40 to +3                                                                   |
 +--------------------------+-----------------------------------------------------------------------------+
-| nrf7002dk                | -40 to +3                                                                   |
-+--------------------------+-----------------------------------------------------------------------------+
 | nrf21540dk               | -40 to +20 (:ref:`more information <ug_matter_gs_transmission_power_fem>`)  |
 +--------------------------+-----------------------------------------------------------------------------+
 | nrf54l15dk               | -8 to +8                                                                    |
@@ -205,8 +193,6 @@ The following table lists the minimum and maximum output power values in dBm for
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
 | nrf5340dk                | -40 to +3 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
-| nrf7002dk                | -40 to +3 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
-+--------------------------+-----------------------------------------------------------------------------------------------------------------+
 | nrf54l15dk               | -8 to +8 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_8` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_8`)    |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
 | nrf54lm20dk              | -8 to +8 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_8` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_8`)    |
@@ -228,11 +214,7 @@ You can do this by either editing the :file:`prj.conf` file or building the samp
 
       To build a Matter sample with a custom Bluetooth LE TX power in the nRF Connect for VS Code IDE, add the desired :kconfig:option:`CONFIG_BT_CTLR_TX_PWR` Kconfig option for the network core to the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
       To build for the network core, make sure to add the ``childImageName_`` parameter between ``-D`` and the name of the Kconfig option.
-      The parameter name varies depending on the devices you are building for.
-      For example:
-
-      * If you want to build for Thread devices for the ``nrf5340dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dipc_radio_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
-      * If you want to build for Wi-Fi® devices for the ``nrf7002dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dhci_ipc_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
+      For example, if you want to build for Thread devices using the ``nrf5340dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dipc_radio_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
 
       See `nRF Connect for VS Code extension pack <How to work with build configurations_>`_ documentation for more information.
 
@@ -240,21 +222,11 @@ You can do this by either editing the :file:`prj.conf` file or building the samp
 
       To build a Matter sample with a custom Bluetooth LE TX power from the command line, add the desired :kconfig:option:`CONFIG_BT_CTLR_TX_PWR` Kconfig option for the network core to the build command.
       To build for the network core, make sure to add the ``childImageName_`` parameter between ``-D`` and the name of the Kconfig option.
-      The parameter name varies depending on the devices you are building for.
-      For example:
-
-      * If you want to build for Thread devices for the ``nrf5340dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, run the following command:
+      For example, if you want to build for Thread devices using the ``nrf5340dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, run the following command:
 
         .. code-block:: console
 
            west build -b nrf5340dk/nrf5340/cpuapp -- -Dipc_radio_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y
-
-      * If you want to build for Wi-Fi® devices for the ``nrf7002dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, run the following command:
-
-        .. code-block:: console
-
-           west build -b nrf7002dk/nrf5340/cpuapp -- -Dhci_ipc_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y
-
 ..
 
 .. _ug_matter_gs_transmission_power_wifi:

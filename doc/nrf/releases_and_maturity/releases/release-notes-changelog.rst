@@ -331,7 +331,10 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Removed support for the nRF7002 DK and nRF5340 DK used with the nRF7002 EK shield from all Matter samples, as this configuration was deprecated in |NCS| v3.2.0.
+  The removal is mainly due to the very limited non-volatile memory available for application code.
+  As an alternative, use the nRF54LM20A or nRF54LM20B SoC with the nRF7002-EB II shield.
+  This combination provides significantly more non-volatile memory for Matter over Wi-Fi applications.
 
 Networking samples
 ------------------

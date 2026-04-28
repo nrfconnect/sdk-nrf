@@ -1397,8 +1397,6 @@ The following table indicates the software maturity levels of the support for ea
 Matter features support
 ***********************
 
-.. include:: /includes/matter/wifi_nrf5340_deprecation.txt
-
 The following table indicates the software maturity levels of the support for each Matter feature:
 
 .. toggle::

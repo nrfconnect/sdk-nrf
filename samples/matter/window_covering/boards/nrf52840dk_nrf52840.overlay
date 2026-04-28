@@ -31,6 +31,10 @@
 	};
 };
 
+&mx25r64 {
+	status = "okay";
+};
+
 /* Disable unused peripherals to reduce power consumption */
 &adc {
 	status = "disabled";

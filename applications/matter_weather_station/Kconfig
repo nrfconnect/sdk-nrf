@@ -47,17 +47,6 @@ config CHIP_ENABLE_ICD_SUPPORT
 
 endif # OPENTHREAD
 
-if SHIELD_NRF7002EB
-
-config CHIP_WIFI
-	default y
-	select DEPRECATED if SOC_SERIES_NRF53
-
-config NRF_WIFI_LOW_POWER
-	default y
-
-endif # SHIELD_NRF7002EB
-
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.features"
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.defaults"
 source "$(ZEPHYR_NRF_MODULE_DIR)/samples/matter/common/src/Kconfig"

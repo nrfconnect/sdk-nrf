@@ -76,6 +76,21 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.light_bulb.nrf7002eb2.ffs:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y
+      - CONFIG_CHIP_ROTATING_DEVICE_ID=y
+      - CONFIG_CHIP_DEVICE_TYPE=257
+      - light_bulb_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.light_bulb.debug.nrf21540ek:
     sysbuild: true
     build_only: true

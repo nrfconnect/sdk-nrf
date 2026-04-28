@@ -472,61 +472,12 @@ Configuring the number of Bluetooth LE bridged devices
 
          .. tabs::
 
-            .. group-tab:: Matter bridge over Wi-Fi
-
-               You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
-               The default number of Bluetooth LE connections that you can select using the default configuration is ``10`` for Matter, which effectively means 9 bridged devices.
-
-               To enable up to 20 Bluetooth LE connections (19 bridged devices) using reduced buffer sizes:
-
-               .. tabs::
-
-                  .. group-tab:: |nRFVSC|
-
-                     Add ``-Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek`` to :guilabel:`Extra CMake arguments` in your build configuration.
-
-                  .. group-tab:: Command line
-
-                     Run the following command in the project directory:
-
-                     .. parsed-literal::
-                        :class: highlight
-
-                        west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek
-
             .. group-tab:: Matter bridge over Thread
 
                You cannot increase the default number of Bluetooth LE connections in this configuration using overlays.
                This is because the configuration uses both Thread and Bluetooth LE protocols, and limited RAM memory.
                You can still increase the number of connections by modifying the board files and decreasing the buffer sizes.
                The default number of connections is ``8``, which effectively means 7 bridged devices.
-
-      .. group-tab:: nRF70 DKs
-
-         The nRF70 Series supports the Matter bridge over Wi-Fi configuration.
-
-         .. tabs::
-
-            .. group-tab:: Matter bridge over Wi-Fi
-
-               You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
-
-               To enable up to 20 Bluetooth LE connections (19 bridged devices) using reduced buffer sizes:
-
-               .. tabs::
-
-                  .. group-tab:: |nRFVSC|
-
-                     Add ``-DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf"`` to :guilabel:`Extra CMake arguments` in your build configuration.
-
-                  .. group-tab:: Command line
-
-                     Run the following command in the project directory:
-
-                     .. parsed-literal::
-                        :class: highlight
-
-                        west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="bt_max_connections_net.conf"
 
       .. group-tab:: nRF54LM20 DKs
 

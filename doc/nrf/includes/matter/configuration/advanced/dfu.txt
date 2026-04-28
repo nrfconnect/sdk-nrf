@@ -21,7 +21,6 @@ Device firmware upgrade support
 
    * nRF52840 DK
    * nRF5340 DK
-   * nRF7002 DK
    * nRF54L10 DK
 
    You can run DFU without external flash memory on the nRF54L15 and nRF54LM20 DKs using the :ref:`mcuboot_image_compression` feature.
