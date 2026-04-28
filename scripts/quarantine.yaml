@@ -59,3 +59,9 @@
   platforms:
     - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38898"
+
+- scenarios:
+    - sample.bluetooth.nrf_auraconfig.build
+  platforms:
+    - nrf5340_audio_dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/OCT-3708"
