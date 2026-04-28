@@ -883,6 +883,7 @@ int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client)
 	}
 
 	client->sock = sock;
+	client->cc.fd = sock;
 
 	return 0;
 }
