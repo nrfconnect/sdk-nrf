@@ -1,7 +1,3 @@
-config AUDIO_DEV
-	int
-	default 1
-
 config LC3_BITRATE_MIN
 	int
 	default 32000

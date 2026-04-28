@@ -13,6 +13,8 @@ common:
     - sysbuild
     - bluetooth
     - ci_samples_bluetooth
+    - ci_applications_nrf5340_audio
+    - ci_tests_nrf5340_audio
 tests:
   sample.bluetooth.nrf_auraconfig.build:
     extra_args: []

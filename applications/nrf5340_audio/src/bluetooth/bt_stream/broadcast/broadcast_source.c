@@ -824,7 +824,8 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 	}
 
 	if (!initialized) {
-		ret = bt_le_audio_tx_init(bt_le_audio_tx);
+		/* A broadcast source is the Bluetooth central device */
+		ret = bt_le_audio_tx_init(bt_le_audio_tx, true);
 		if (ret != 0) {
 			LOG_ERR("Failed to initialize LE Audio TX: %d", ret);
 			return ret;

@@ -82,6 +82,8 @@ struct bt_le_audio_tx_ctx {
 	bool ts_last_us_valid;
 	/* Should the data in the next function call be flushed */
 	bool flush_next;
+	/* This device is Bluetooth clock master (central/unicast client or broadcast source) */
+	bool is_ble_clock_master;
 };
 
 #define BT_LE_AUDIO_TX_DEFINE(name)                                                                \
@@ -144,11 +146,14 @@ int bt_le_audio_tx_stream_sent(struct bt_le_audio_tx_ctx *ctx, struct stream_ind
  * @brief	Initializes the TX path for ISO transmission.
  *
  * @param[in]	ctx		Pointer to TX context.
+ * @param[in]	is_clock_master	Set to true if this device is a Bluetooth central,
+ *				(Unicast client) or Broadcast source,
+ *				false = peripheral (unicast server) or Broadcast sink.
  *
  * @retval	-EINVAL		@p ctx is NULL or required configuration is missing.
  * @retval	0		Success.
  */
-int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx);
+int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx, bool is_clock_master);
 
 /**
  * @}

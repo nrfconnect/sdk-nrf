@@ -470,17 +470,15 @@ static int tx_controller_sync_and_correct(struct bt_le_audio_tx_ctx *ctx,
 			LOG_DBG("TX clock corrected by (%lld us). Early", ctx->corr_diff_us);
 			ctx->ts_ctlr_esti_us_valid = false;
 		} else {
-			if (CONFIG_AUDIO_DEV == HEADSET) {
-				LOG_DBG("TX clock has been drift adjusted by (%lld us)",
-					ctx->corr_diff_us);
-				ctx->ts_ctlr_esti_us_valid = true;
-			}
-
-			if (CONFIG_AUDIO_DEV == GATEWAY) {
+			if (ctx->is_ble_clock_master) {
 				/* The gateway is the Bluetooth central. This shall not happen */
 				LOG_ERR("TX clock has been drift adjusted by (%lld us)",
 					ctx->corr_diff_us);
 				ctx->ts_ctlr_esti_us_valid = false;
+			} else {
+				LOG_DBG("TX clock has been drift adjusted by (%lld us)",
+					ctx->corr_diff_us);
+				ctx->ts_ctlr_esti_us_valid = true;
 			}
 		}
 
@@ -658,7 +656,7 @@ int bt_le_audio_tx_stream_sent(struct bt_le_audio_tx_ctx *ctx, struct stream_ind
 	return 0;
 }
 
-int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx)
+int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx, bool is_clock_master)
 {
 	if (ctx == NULL || ctx->iso_tx_pool == NULL) {
 		return -EINVAL;
@@ -669,6 +667,7 @@ int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx)
 	(void)memset(ctx, 0, sizeof(*ctx));
 
 	ctx->iso_tx_pool = tmp;
+	ctx->is_ble_clock_master = is_clock_master;
 
 	for (int i = 0; i < GROUP_MAX; i++) {
 		for (int j = 0; j < SUBGROUP_MAX; j++) {

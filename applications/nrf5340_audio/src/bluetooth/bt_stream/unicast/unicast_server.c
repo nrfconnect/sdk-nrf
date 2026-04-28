@@ -817,7 +817,8 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		ret = bt_le_audio_tx_init(bt_le_audio_tx);
+		/* A unicast server is the Bluetooth peripheral device */
+		ret = bt_le_audio_tx_init(bt_le_audio_tx, false);
 		if (ret) {
 			LOG_ERR("Failed to initialize LE Audio TX: %d", ret);
 			return ret;

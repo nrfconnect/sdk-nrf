@@ -470,7 +470,7 @@ ZTEST(audio_tx, test_bad_parameters_tx_init)
 	/* Verifies argument validation for NULL input pointers. */
 	int ret;
 
-	ret = bt_le_audio_tx_init(NULL);
+	ret = bt_le_audio_tx_init(NULL, true);
 	zassert_equal(-EINVAL, ret, "ret %d", ret);
 }
 
@@ -565,7 +565,10 @@ static void before_fn(void *f)
 	audio_sync_timer_capture_fake.return_val = 0;
 
 	FFF_RESET_HISTORY();
-	zassert_equal(0, bt_le_audio_tx_init(audio_tx_ctx));
+	/* Initialize the TX context as a Bluetooth central device
+	 * At current time, this only impacts print options.
+	 */
+	zassert_equal(0, bt_le_audio_tx_init(audio_tx_ctx, true));
 }
 
 ZTEST_SUITE(audio_tx, NULL, NULL, before_fn, NULL, NULL);

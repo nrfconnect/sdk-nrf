@@ -1967,7 +1967,8 @@ int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		ret = bt_le_audio_tx_init(bt_le_audio_tx);
+		/* A unicast client is the Bluetooth central device */
+		ret = bt_le_audio_tx_init(bt_le_audio_tx, true);
 		if (ret) {
 			LOG_ERR("Failed to initialize LE Audio TX: %d", ret);
 			srv_store_unlock();

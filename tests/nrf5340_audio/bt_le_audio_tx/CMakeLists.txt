@@ -27,8 +27,3 @@ target_include_directories(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/
   ${ZEPHYR_NRF_MODULE_DIR}/include
 )
-
-target_compile_options(app PRIVATE
-  -DHEADSET=1
-  -DGATEWAY=2
-)
