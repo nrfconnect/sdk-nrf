@@ -12,7 +12,6 @@ kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_SPM)
 # PSA core configurations
 kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_CLIENT)
 kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_C)
-kconfig_check_and_set_base(MBEDTLS_USE_PSA_CRYPTO)
 kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)
 kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
 

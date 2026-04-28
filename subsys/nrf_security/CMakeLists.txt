@@ -28,9 +28,8 @@ if(CONFIG_SSF_SERVER_PSA_CRYPTO_SERVICE_ENABLED)
   set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER     True)
 else()
   # MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER must be disabled for Zephyr
-  # builds or when MBEDTLS_USE_PSA_CRYPTO is enabled (e.g. for TLS/DTLS
-  # and x.509 support) Note: This configuration is internal and may be
-  # removed with a new mbed TLS version
+  # builds or e.g. TLS/DTLS and x.509 support)
+  # Note: This configuration is internal and may be removed with a new mbed TLS version
   set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER     False)
 endif()
 

@@ -67,9 +67,6 @@ set(MBEDTLS_PLATFORM_PRINTF_ALT                     True)
 # Set the a define stating that KEY_ID encodes owner
 set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER  True)
 
-# Set the a _usage_ of PSA crypto to false for TF-M image build
-set(CONFIG_MBEDTLS_USE_PSA_CRYPTO                   False)
-
 # By setting CONFIG_BUILD_WITH_TFM to false, the nrf_security will make a
 # complete build with all libraries and a full mbedcrypto library for linking.
 set(CONFIG_BUILD_WITH_TFM                           False)

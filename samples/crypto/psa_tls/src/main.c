@@ -42,12 +42,10 @@ int main(void)
 
 	LOG_INF("PSA TLS app started");
 
-#if defined(MBEDTLS_USE_PSA_CRYPTO)
 	err = psa_crypto_init();
 	if (err < 0) {
 		return APP_ERROR;
 	}
-#endif
 
 	err = tls_set_credentials();
 	if (err < 0) {
