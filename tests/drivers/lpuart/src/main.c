@@ -238,6 +238,8 @@ ZTEST(test_lpuart_stress, test_stress)
 	k_timer_stop(&kill_timer);
 	zassert_equal(err, 0, NULL);
 	zassert_false(test_err, NULL);
+	/* Detect premature kill packet. */
+	zassert_true(rx_cnt > 100);
 	zassert_equal(tx_req_cnt, tx_done_cnt, NULL);
 
 	k_msleep(100);
