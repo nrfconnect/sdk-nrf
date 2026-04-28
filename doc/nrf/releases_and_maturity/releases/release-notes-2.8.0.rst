@@ -1239,7 +1239,7 @@ Modem libraries
   * Added the :c:func:`modem_key_mgmt_clear` function to delete all credentials associated with a security tag.
   * Updated the :c:func:`modem_key_mgmt_read()` function to return the actual size buffer required to read the certificate if the size provided is too small.
 
-* :ref:`pdn_readme` library:
+* PDN library:
 
   * Added the event ``PDN_EVENT_CTX_DESTROYED`` to indicate when a PDP context is destroyed.
     This happens when the modem is switched to minimum functionality mode (``CFUN=0``).

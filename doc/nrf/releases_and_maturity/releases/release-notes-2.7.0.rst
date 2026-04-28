@@ -1085,7 +1085,7 @@ Modem libraries
     * Location data details for event :c:enum:`LOCATION_EVT_RESULT_UNKNOWN`.
     * Sending GNSS coordinates to nRF Cloud when the :kconfig:option:`CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND` Kconfig option is set.
 
-* :ref:`pdn_readme` library:
+* PDN library:
 
   * Updated the ``dns4_pri``, ``dns4_sec``, and ``ipv4_mtu`` parameters of the :c:func:`pdn_dynamic_params_get` function to be optional.
     If the MTU is not reported by the SIM card, the ``ipv4_mtu`` parameter is set to zero.

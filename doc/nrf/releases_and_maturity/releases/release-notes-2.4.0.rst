@@ -755,9 +755,9 @@ Modem libraries
     * The deprecated function ``nrf_modem_lib_shutdown_wait``.
     * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_TRACE_ENABLED``.
 
-* :ref:`pdn_readme` library:
+* PDN library:
 
-  * Updated the library to use ePCO mode if the Kconfig option :kconfig:option:`CONFIG_PDN_LEGACY_PCO` is not enabled.
+  * Updated the library to use ePCO mode if the Kconfig option ``CONFIG_PDN_LEGACY_PCO`` is not enabled.
 
   * Fixed:
 
@@ -831,7 +831,7 @@ Libraries for networking
     * :file:`lwm2m_client_utils_location.h` includes new API for location assistance to register application callback to receive result codes from location assistance.
     * :file:`lwm2m_client_utils_location.h` by removing deprecated confirmable parameters from location assistance APIs.
 
-* :ref:`pdn_readme` library:
+* PDN library:
 
   * Added the event ``PDN_EVENT_NETWORK_DETACH`` to indicate a full network detach.
 

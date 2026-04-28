@@ -148,7 +148,6 @@
 /doc/nrf/libraries/modem/modem_jwt.rst    @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/modem/modem_key_mgmt.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/ntn.rst          @nrfconnect/ncs-iot-oulu-tampere-doc
-/doc/nrf/libraries/modem/pdn.rst          @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/sms.rst          @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/modem/uicc_lwm2m.rst   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/zzhc.rst         @nrfconnect/ncs-doc-leads
@@ -411,7 +410,6 @@
 /lib/ntn/                                 @nrfconnect/ncs-modem-tre
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
 /lib/pcm_stream_channel_modifier/         @nrfconnect/ncs-audio
-/lib/pdn/                                 @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/qos/                                 @nrfconnect/ncs-cia
 /lib/ram_pwrdn/                           @MarekPorwisz
 /lib/sample_rate_converter/               @nrfconnect/ncs-audio

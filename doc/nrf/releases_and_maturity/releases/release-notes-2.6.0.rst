@@ -1157,7 +1157,7 @@ Modem libraries
 
     * Updated the library by making the used GPIO to be configurable using devicetree.
 
-* :ref:`pdn_readme` library:
+* PDN library:
 
    * Added the :c:func:`pdn_dynamic_params_get` function to retrieve dynamic parameters of an active PDN connection.
    * Updated the library to add PDP auto configuration to the :c:enumerator:`LTE_LC_FUNC_MODE_POWER_OFF` event.

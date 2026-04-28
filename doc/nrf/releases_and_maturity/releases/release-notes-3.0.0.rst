@@ -1164,7 +1164,7 @@ Modem libraries
 
 * Deprecated the AT parameters library.
 
-* :ref:`pdn_readme` library:
+* PDN library:
 
   * Deprecated the :c:func:`pdn_dynamic_params_get` function.
     Use the new function :c:func:`pdn_dynamic_info_get` instead.

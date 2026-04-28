@@ -99,7 +99,6 @@ ci_samples_net: &ci_net
     - nrf/lib/modem_info/
     - nrf/lib/modem_key_mgmt/
     - nrf/lib/nrf_modem_lib/
-    - nrf/lib/pdn/
     - nrf/modules/cjson/
     - nrf/modules/trusted-firmware-m/
     - nrf/samples/net/
@@ -433,7 +432,6 @@ ci_samples_cellular:
     - nrf/lib/modem_key_mgmt/
     - nrf/lib/nrf_modem_lib/
     - nrf/lib/ntn/
-    - nrf/lib/pdn/
     - nrf/lib/sms/
     - nrf/lib/wave_gen/
     - nrf/modules/cjson/
@@ -1009,7 +1007,6 @@ ci_tests_subsys_nfc:
 ci_tests_lib_nrf_modem_lib:
   files:
     - nrf/lib/nrf_modem_lib/
-    - nrf/lib/pdn/
     - nrf/tests/lib/nrf_modem_lib/
     - nrf/tests/mocks/nrf_modem_at/
     - zephyr/subsys/net/
@@ -1223,7 +1220,6 @@ ci_tests_lib_pcm_stream_channel_modifier:
 
 ci_tests_lib_pdn:
   files:
-    - nrf/lib/pdn/
     - nrf/tests/lib/
 
 ci_tests_lib_ram_pwrdn:

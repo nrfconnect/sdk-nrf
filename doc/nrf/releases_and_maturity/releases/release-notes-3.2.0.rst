@@ -796,11 +796,11 @@ Cellular samples
     * Support for NTN NB-IoT to the ``link sysmode`` and ``link edrx`` commands.
     * Support for Non-Terrestrial Network (NTN) helper functionality using the ``ntn`` command.
 
-  * Updated the PDN connection management to use the PDN functionality in the :ref:`lte_lc_readme` library instead of the :ref:`pdn_readme` library.
+  * Updated the PDN connection management to use the PDN functionality in the :ref:`lte_lc_readme` library instead of the PDN library.
 
 * :ref:`pdn_sample` sample:
 
-  * Updated the PDN functionality to use the PDN management in the :ref:`lte_lc_readme` library instead of the :ref:`pdn_readme` library.
+  * Updated the PDN functionality to use the PDN management in the :ref:`lte_lc_readme` library instead of the PDN library.
 
 * :ref:`gnss_sample` sample:
 
@@ -1001,7 +1001,7 @@ Binary libraries
 
   * Updated the glue layer to manage PDN connections using the PDN management functionality in the :ref:`lte_lc_readme` library when the :kconfig:option:`CONFIG_LTE_LC_PDN_MODULE` Kconfig option is enabled, or direct AT commands otherwise.
 
-  * Removed the dependency on the deprecated :ref:`pdn_readme` library.
+  * Removed the dependency on the deprecated PDN library.
 
 Bluetooth libraries and services
 --------------------------------
@@ -1064,7 +1064,7 @@ Modem libraries
   * Added the :c:func:`nrf_modem_lib_trace_peek_at` function to the :c:struct:`nrf_modem_lib_trace_backend` interface to peek trace data at a byte offset without consuming it.
     Support for this API has been added to the flash trace backend.
 
-  * Updated the PDN functionality to use the PDN management in the :ref:`lte_lc_readme` library instead of the :ref:`pdn_readme` library.
+  * Updated the PDN functionality to use the PDN management in the :ref:`lte_lc_readme` library instead of the PDN library.
 
   * Removed the deprecated ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`` Kconfig option.
 
@@ -1072,7 +1072,7 @@ Modem libraries
 
   * Fixed an issue where an unquoted string parameter in the middle of a response would not be parsed correctly.
 
-* :ref:`pdn_readme`:
+* PDN library:
 
   * Deprecated the library.
     Use the PDN management functionality in the :ref:`lte_lc_readme` library instead.
@@ -1185,7 +1185,7 @@ Memfault integration
     Previously, this option had no default value.
   * Simplified the options for ``CONFIG_MEMFAULT_NCS_DEVICE_ID_*``, which sets the Memfault Device Serial. The default is now :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID`, which uses the :ref:`lib_hw_id` library to provide a unique device ID.
     See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
-  * The LTE-related integration to obtain PDN information and events through the PDN management functionality in the :ref:`lte_lc_readme` library instead of the :ref:`pdn_readme` library.
+  * The LTE-related integration to obtain PDN information and events through the PDN management functionality in the :ref:`lte_lc_readme` library instead of the PDN library.
 
 * Removed a metric for tracking the unused stack of the Bluetooth TX thread (``ncs_bt_tx_unused_stack``).
   This thread has been removed in Zephyr v3.7.0.

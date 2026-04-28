@@ -399,7 +399,7 @@ PDN library
 
 .. toggle::
 
-   * The :ref:`pdn_readme` library has been deprecated in favor of the PDN management functionality provided by the :ref:`lte_lc_readme` library and will be removed in a future |NCS| release.
+   * The PDN library has been deprecated in favor of the PDN management functionality provided by the :ref:`lte_lc_readme` library and will be removed in a future |NCS| release.
 
      To migrate your application to use LTE link control PDN management instead of the PDN library, complete the following steps:
 

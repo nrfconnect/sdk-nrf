@@ -717,14 +717,14 @@ Modem libraries
 
   * Fixed an issue that would cause AT command responses like ``+CNCEC_EMM`` with underscore to be filtered out.
 
-* :ref:`pdn_readme` library:
+* PDN library:
 
   * Added:
 
     * Support for setting multiple event callbacks for the default PDP context.
     * The :c:func:`pdn_default_ctx_cb_dereg` function to deregister a callback for the default PDP context.
     * The :c:func:`pdn_esm_strerror` function to retrieve a textual description of an ESM error reason.
-      The function is compiled when :kconfig:option:`CONFIG_PDN_ESM_STRERROR` Kconfig option is enabled.
+      The function is compiled when ``CONFIG_PDN_ESM_STRERROR`` Kconfig option is enabled.
 
   * Updated:
 

@@ -135,7 +135,7 @@ Additional configuration*
 
 Check and configure the following library options that are used by the application:
 
-* :kconfig:option:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the Access Point Name (APN).
+* :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_APN` - Used for manual configuration of the Access Point Name (APN).
 * :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
 
 Configuration files*

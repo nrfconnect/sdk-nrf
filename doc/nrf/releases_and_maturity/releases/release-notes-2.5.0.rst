@@ -959,7 +959,7 @@ Modem libraries
     * The ``agps_request`` member of the :c:struct:`location_event_data` structure has been renamed to :c:member:`location_event_data.agnss_request`.
     * The ``location_agps_data_process()`` function has been renamed to :c:func:`location_agnss_data_process`.
 
-* :ref:`pdn_readme` library:
+* PDN library:
 
   * Added the :c:enumerator:`PDN_EVENT_APN_RATE_CONTROL_ON` and :c:enumerator:`PDN_EVENT_APN_RATE_CONTROL_OFF` events to report on the status of APN rate control.
   * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.

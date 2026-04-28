@@ -102,9 +102,9 @@ nRF9160
 
   * :ref:`pdn_sample` sample:
 
-    * Demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the :ref:`pdn_readme` library.
+    * Demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the PDN library.
 
-  * :ref:`pdn_readme` library:
+  * PDN library:
 
     * Manages Packet Data Protocol (PDP) contexts and PDN connections.
 
@@ -413,7 +413,7 @@ Modem library
   * GNSS socket API is now deprecated.
 
 * PDN socket API is deprecated.
-  The functionality has been replaced by the :ref:`pdn_readme` library.
+  The functionality has been replaced by the PDN library.
 
 Crypto
 ++++++

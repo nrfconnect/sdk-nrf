@@ -471,6 +471,9 @@ Modem libraries
     This requires ``cpuapp_cpucell_ipc_shm_ctrl``, ``cpuapp_cpucell_ipc_shm_heap``, and ``cpucell_cpuapp_ipc_shm_heap`` partitions to be defined in the devicetree.
   * Use a separate ``cpucell_cpuapp_ipc_shm_trace`` partition for modem tracing instead of splitting the ``cpucell_cpuapp_ipc_shm_heap`` partition.
 
+* Removed the deprecated PDN library.
+  Use the PDN management functionality in the :ref:`lte_lc_readme` library instead.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

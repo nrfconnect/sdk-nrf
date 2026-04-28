@@ -81,9 +81,9 @@ The following table explains some of these differences:
       To use a static SIM card, you may need to instruct the modem to use a specific Access Point Name (APN).
       This can be carried out by setting the following options:
 
-      * :kconfig:option:`CONFIG_PDN_DEFAULTS_OVERRIDE` - Used to override the default PDP context configuration.
+      * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULTS_OVERRIDE` - Used to override the default PDP context configuration.
         Set the option to ``y`` to override the default PDP context configuration.
-      * :kconfig:option:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN.
+      * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_APN` - Used for manual configuration of the APN.
         An example is ``apn.example.com``.
 
       To verify that you have properly set up the AP and given a static IP, perform the following:
