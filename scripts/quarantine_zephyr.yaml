@@ -116,6 +116,8 @@
 
 - scenarios:
     - bluetooth.shell.shell_br
+    - bluetooth.shell.shell_br.accept_conn_as_central
+    - bluetooth.shell.shell_br.did
   platforms:
     - qemu_cortex_m3/ti_lm3s6965
   comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89488"
