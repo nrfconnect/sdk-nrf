@@ -102,7 +102,7 @@ int nrfc_dtls_setup(int sock)
 	err = zsock_setsockopt(sock, SOL_TLS, TLS_DTLS_CID, &cid_option, sizeof(cid_option));
 	if (!err) {
 		cid_supported = true;
-	} else if ((err != EOPNOTSUPP) && (err != EINVAL)) {
+	} else if ((errno != EOPNOTSUPP) && (errno != EINVAL)) {
 		LOG_ERR("Error enabling connection ID: %d", -errno);
 		cid_supported = false;
 	} else {
@@ -116,7 +116,7 @@ int nrfc_dtls_setup(int sock)
 	LOG_DBG("  Set handshake timeout %d", timeout);
 	err = zsock_setsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEO, &timeout, sizeof(timeout));
 	if (!err) {
-	} else if ((err != EOPNOTSUPP) || (err != EINVAL)) {
+	} else if ((errno != EOPNOTSUPP) || (errno != EINVAL)) {
 		LOG_ERR("Error setting handshake timeout: %d", -errno);
 	}
 #endif

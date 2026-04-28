@@ -509,7 +509,10 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
-  * Fixed an issue where PEM private keys with CRLF line endings could not be decoded correctly for JWT signing used in nRF Cloud CoAP authentication.
+  * Fixed:
+
+    * An issue where PEM private keys with CRLF line endings could not be decoded correctly for JWT signing used in nRF Cloud CoAP authentication.
+    * A DTLS socket option setup to inspect ``errno`` after ``setsockopt()`` failures instead of comparing the return value to ``EOPNOTSUPP`` or ``EINVAL``, which could mishandle unsupported options during DTLS configuration.
 
   * Removed the nRF Cloud Alerts library.
     As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
