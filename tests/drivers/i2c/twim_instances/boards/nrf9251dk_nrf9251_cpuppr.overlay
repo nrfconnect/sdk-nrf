@@ -1,0 +1,83 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	i2c130_default_test: i2c130_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 4)>,
+				<NRF_PSEL(TWIM_SCL, 1, 0)>;
+		};
+	};
+
+	i2c130_sleep_test: i2c130_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 4)>,
+				<NRF_PSEL(TWIM_SCL, 1, 0)>;
+			low-power-enable;
+		};
+	};
+
+	i2c131_default_test: i2c131_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 3)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c131_sleep_test: i2c131_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 3)>;
+			low-power-enable;
+		};
+	};
+
+	i2c133_default_test: i2c133_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+				<NRF_PSEL(TWIM_SCL, 2, 0)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c133_sleep_test: i2c133_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+				<NRF_PSEL(TWIM_SCL, 2, 0)>;
+			low-power-enable;
+		};
+	};
+};
+
+&i2c130 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c130_default_test>;
+	pinctrl-1 = <&i2c130_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	zephyr,concat-buf-size = <512>;
+};
+
+&i2c131 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c131_default_test>;
+	pinctrl-1 = <&i2c131_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	zephyr,concat-buf-size = <512>;
+};
+
+/* i2c132 inaccessible due to console on uart132 */
+
+&i2c133 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c133_default_test>;
+	pinctrl-1 = <&i2c133_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	zephyr,concat-buf-size = <512>;
+};
