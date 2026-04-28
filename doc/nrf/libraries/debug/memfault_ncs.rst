@@ -119,7 +119,7 @@ For more details on each option, use ``menuconfig`` or ``guiconfig``, and see th
    The Memfault shell is enabled by default, using the UART interface.
    If :ref:`lib_at_host` library and the Memfault module are enabled simultaneously, both will not behave as expected, as they both require the same UART interface.
    Therefore, it is recommended to enable only one of these at a time.
-   To disable the Memfault shell, you need to disable the Kconfig options :kconfig:option:`CONFIG_MEMFAULT_SHELL` and :kconfig:option:`CONFIG_MEMFAULT_NRF_SHELL`.
+   To disable the Memfault shell, you need to disable the Kconfig option :kconfig:option:`CONFIG_MEMFAULT_SHELL`.
 
 Configuration options in |NCS|
 ==============================
