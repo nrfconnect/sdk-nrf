@@ -26,28 +26,19 @@
 		slot0_partition: partition@e000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0xe000 0x14f000>;
+			reg = <0xe000 0xa7000>;
+		};
+
+		slot1_partition: partition@b5000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0xb5000 0xa7000>;
 		};
 
 		storage_partition: partition@15d000 {
 			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x15d000 0x8000>;
-		};
-	};
-};
-
-&mx25r64 {
-	status = "okay";
-
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		slot1_partition: partition@0 {
-			label = "image-1";
-			reg = <0x0 0x14f000>;
 		};
 	};
 };

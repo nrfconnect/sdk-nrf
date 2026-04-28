@@ -4,35 +4,29 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		zephyr,code-partition = &boot_partition;
-	};
-};
-
 /delete-node/ &boot_partition;
 /delete-node/ &slot0_partition;
 /delete-node/ &slot1_partition;
 /delete-node/ &storage_partition;
 
-&cpuapp_rram {
+&flash0 {
 	partitions {
 		boot_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
-			reg = <0x0 0xe000>;
+			reg = <0x0 0xc000>;
 		};
 
-		slot0_partition: partition@e000 {
+		slot0_partition: partition@c000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0xe000 0x14f000>;
+			reg = <0xc000 0xec000>;
 		};
 
-		storage_partition: partition@15d000 {
+		storage_partition: partition@f8000 {
 			compatible = "zephyr,mapped-partition";
 			label = "storage";
-			reg = <0x15d000 0x8000>;
+			reg = <0xf8000 0x8000>;
 		};
 	};
 };
@@ -47,7 +41,7 @@
 
 		slot1_partition: partition@0 {
 			label = "image-1";
-			reg = <0x0 0x14f000>;
+			reg = <0x0 0xec000>;
 		};
 	};
 };
