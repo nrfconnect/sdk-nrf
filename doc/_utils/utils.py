@@ -140,6 +140,17 @@ def add_google_analytics(app: Sphinx, options: dict) -> None:
     options["add_gtm"] = True
     options["gtm_id"] = "GTM-WF4CVFX"
 
+def add_kapa_search(app: Sphinx) -> None:
+    """Add Kapa.ai search widget to a docset.
+
+    Args:
+        app: Sphinx instance.
+    """
+
+    app.add_css_file("css/kapa-widget.css")
+    app.add_js_file("js/kapa-widget.js")
+
+
 def add_announcement_banner(options: dict) -> None:
     """Add an announcement banner to the top of the page.
     Args:

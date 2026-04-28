@@ -79,4 +79,5 @@ def setup(app):
     app.add_css_file("css/matter.css")
 
     utils.add_google_analytics(app, html_theme_options)
+    utils.add_kapa_search(app)
     utils.add_announcement_banner(html_theme_options)
