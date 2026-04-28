@@ -188,7 +188,7 @@ static int send_gnss(const struct location_event_data * const loc_gnss)
  */
 static void on_location_update(const struct location_event_data * const location_data)
 {
-	LOG_INF("Location Updated: %.06f N %.06f W, accuracy: %.01f m, Method: %s",
+	LOG_INF("Location Updated: lat: %.06f, lon: %.06f, accuracy: %.01f m, Method: %s",
 		location_data->location.latitude,
 		location_data->location.longitude,
 		(double)location_data->location.accuracy,
