@@ -107,3 +107,46 @@ int cracen_get_rnd_in_range(const uint8_t *upper_limit, size_t upper_limit_sz, u
 	safe_memset(out, upper_limit_sz, 0, index);
 	return rnd_in_range_get_rnd(adjusted_out, rndsz, adjusted_upper_limit, msb_mask);
 }
+
+psa_status_t cracen_rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit,
+				 size_t retry_limit)
+{
+	size_t retries = 0;
+
+	/* Fill leading zeroes. */
+	while (upperlimit[0] == 0) {
+		*n = 0;
+		n++;
+		upperlimit++;
+		sz--;
+	}
+
+	uint8_t msb_mask;
+
+	for (msb_mask = 0xFF; upperlimit[0] & msb_mask; msb_mask <<= 1) {
+		;
+	}
+	msb_mask = ~msb_mask;
+
+	while (retries++ < retry_limit) {
+		psa_status_t status = cracen_get_random(NULL, n, sz);
+
+		if (status) {
+			return status;
+		}
+		n[0] &= msb_mask;
+
+		int ge = cracen_be_cmp(n, upperlimit, sz, 0);
+
+		if (ge == -1) {
+
+			bool is_zero = constant_memcmp_is_zero(n, sz);
+
+			if (is_zero == false) {
+				return PSA_SUCCESS;
+			}
+		}
+	}
+
+	return PSA_ERROR_INSUFFICIENT_ENTROPY;
+}

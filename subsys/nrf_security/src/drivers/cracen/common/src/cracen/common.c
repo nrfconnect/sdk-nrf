@@ -127,49 +127,6 @@ psa_status_t hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash
 	return (*sx_hash_algo == NOT_ENABLED_HASH_ALG) ? PSA_ERROR_NOT_SUPPORTED : PSA_SUCCESS;
 }
 
-psa_status_t cracen_rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit,
-				 size_t retry_limit)
-{
-	size_t retries = 0;
-
-	/* Fill leading zeroes. */
-	while (upperlimit[0] == 0) {
-		*n = 0;
-		n++;
-		upperlimit++;
-		sz--;
-	}
-
-	uint8_t msb_mask;
-
-	for (msb_mask = 0xFF; upperlimit[0] & msb_mask; msb_mask <<= 1) {
-		;
-	}
-	msb_mask = ~msb_mask;
-
-	while (retries++ < retry_limit) {
-		psa_status_t status = cracen_get_random(NULL, n, sz);
-
-		if (status) {
-			return status;
-		}
-		n[0] &= msb_mask;
-
-		int ge = cracen_be_cmp(n, upperlimit, sz, 0);
-
-		if (ge == -1) {
-
-			bool is_zero = constant_memcmp_is_zero(n, sz);
-
-			if (is_zero == false) {
-				return PSA_SUCCESS;
-			}
-		}
-	}
-
-	return PSA_ERROR_INSUFFICIENT_ENTROPY;
-}
-
 void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz)
 {
 	for (size_t i = 0; i < sz; i++, a++, b++) {
