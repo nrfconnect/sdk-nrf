@@ -236,7 +236,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
     extra_args:
-      - cli_SNIPPET="ot-logging;ot-zephyr-l2;zperf"
+      - cli_SNIPPET="ot-ci;ot-logging;ot-zephyr-l2;zperf"
       - EXTRA_CONF_FILE="extra_conf/l2_logging.conf;extra_conf/multiprotocol.conf"
       - FILE_SUFFIX=ble
     integration_platforms:
