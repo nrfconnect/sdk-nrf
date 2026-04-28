@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: ecbc745ca398363d241e71af35ce643c73cc6bd3
+      revision: 544950b66a38cde53c651a4259a76d392d390006
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -100,6 +100,7 @@ manifest:
           - lvgl
           - lz4
           - mipi-sys-t
+          - mldsa-native
           - nanopb
           - net-tools
           - nrf_hw_models
@@ -136,11 +137,11 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: 5bb86aeae32420e4f537e5cc390f7219a1bcf500
+      revision: 92d44566209a0d94a571cc7f71a4a7b9262f7602
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: fdca9eba5d6fd3fdfdf87196cb4d0d37a5529632
+      revision: 3a9005029dae919e3f6d9d4182465a8e2572cf9f
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
