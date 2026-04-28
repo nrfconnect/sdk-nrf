@@ -94,4 +94,5 @@ external_content_contents = [
 
 def setup(app):
     utils.add_google_analytics(app, html_theme_options)
+    utils.add_kapa_search(app)
     utils.add_announcement_banner(html_theme_options)
