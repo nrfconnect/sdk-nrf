@@ -11,6 +11,7 @@ config MCUMGR_GRP_IMG_NRF
 	depends on MCUMGR_GRP_IMG
 	default y if PARTITION_MANAGER_ENABLED
 	default y if MCUMGR_GRP_IMG_TOO_LARGE_BOOTLOADER_INFO
+	default y if NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY
 	help
 	  Enables use of an extended version of the image management implementation that adds
 	  Nordic-specific functionalities.
