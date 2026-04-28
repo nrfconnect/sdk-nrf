@@ -152,7 +152,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		ret = k_msgq_get(&audio_q_rx, (void *)&audio_frame_in, K_FOREVER);
 		ERR_CHK_MSG(ret, "Failed to get complete audio frame from RX queue");
 
-		if (likely(sw_codec_cfg.encoder.enabled)) {
+		if (likely(sw_codec_cfg.initialized && sw_codec_cfg.encoder.enabled)) {
 			audio_frame_out = net_buf_alloc(&audio_q_enc_pool, K_NO_WAIT);
 
 			if (unlikely(audio_frame_out == NULL)) {
@@ -200,6 +200,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 			ret = sw_codec_encode(audio_frame_in, audio_frame_out);
 			ERR_CHK_MSG(ret, "Encode failed");
+		} else {
+			LOG_INF_RATELIMIT("Encoder not initialized or enabled, data dropped");
 		}
 
 		net_buf_unref(audio_frame_in);
