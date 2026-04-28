@@ -39,9 +39,6 @@ config MBEDTLS_PSA_CRYPTO_STORAGE_C
 	help
 	  Corresponds to MBEDTLS_PSA_CRYPTO_STORAGE_C setting in mbed TLS config file.
 
-config MBEDTLS_USE_PSA_CRYPTO
-	default n if MBEDTLS_LEGACY_CRYPTO_C
-
 config MBEDTLS_PSA_KEY_SLOT_COUNT
 	int "Number of PSA key slots available"
 	default 32

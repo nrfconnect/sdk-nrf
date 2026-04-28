@@ -40,11 +40,11 @@ config MBEDTLS_OID_C
 
 config MBEDTLS_ASN1_WRITE_C
 	bool
-	default y if MBEDTLS_PEM_WRITE_C || MBEDTLS_USE_PSA_CRYPTO
+	default y if MBEDTLS_PEM_WRITE_C
 
 config MBEDTLS_ASN1_PARSE_C
 	bool
-	default y if MBEDTLS_PEM_PARSE_C || MBEDTLS_USE_PSA_CRYPTO
+	default y if MBEDTLS_PEM_PARSE_C
 
 # Platform configurations for _ALT defines
 config MBEDTLS_PLATFORM_EXIT_ALT
@@ -376,7 +376,6 @@ config MBEDTLS_ENTROPY_C
 
 menuconfig MBEDTLS_AES_C
 	bool "AES - Advanced Encryption Standard"
-	default y if !MBEDTLS_USE_PSA_CRYPTO
 	help
 	  This setting will enable AES block cipher, including ECB - Electronic Code Book.
 	  Enabling AES will provide a sub-menu which allows for fine grained
@@ -463,7 +462,6 @@ config MBEDTLS_CIPHER_MODE_XTS
 
 config MBEDTLS_CMAC_C
 	bool "AES-CMAC - AES Cipher-based Message Authentication Code mode for block ciphers"
-	default y if !MBEDTLS_USE_PSA_CRYPTO
 	imply PSA_WANT_ALG_CMAC
 	select PSA_WANT_ALG_ECB_NO_PADDING
 	imply PSA_WANT_KEY_TYPE_AES
@@ -477,7 +475,6 @@ menu "AEAD  - Authenticated Encryption with Associated Data"
 config MBEDTLS_CCM_C
 	bool "AES-CCM - AES Counter with CBC-MAC mode"
 	depends on MBEDTLS_AES_C
-	default y if !MBEDTLS_USE_PSA_CRYPTO
 	imply PSA_WANT_ALG_CCM
 	imply PSA_WANT_KEY_TYPE_AES
 	help
@@ -487,7 +484,6 @@ config MBEDTLS_CCM_C
 
 config MBEDTLS_GCM_C
 	bool "AES-GCM - AES Galois/Counter Mode support"
-	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	imply PSA_WANT_ALG_GCM
 	imply PSA_WANT_KEY_TYPE_AES
 	help
@@ -496,7 +492,6 @@ config MBEDTLS_GCM_C
 
 config MBEDTLS_CHACHA20_C
 	bool "CHACHA20 stream cipher support"
-	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	imply PSA_WANT_ALG_CHACHA20
 	imply PSA_WANT_ALG_CHACHA20_POLY1305
 	imply PSA_WANT_ALG_STREAM_CIPHER
@@ -506,7 +501,6 @@ config MBEDTLS_CHACHA20_C
 
 config MBEDTLS_POLY1305_C
 	bool "POLY1305 module support"
-	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	imply PSA_WANT_ALG_CHACHA20_POLY1305
 	help
 	  Enable the POLY1305 module.
@@ -515,7 +509,6 @@ config MBEDTLS_POLY1305_C
 config MBEDTLS_CHACHAPOLY_C
 	bool "CHACHA-POLY module support"
 	depends on (MBEDTLS_CHACHA20_C && MBEDTLS_POLY1305_C)
-	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	imply PSA_WANT_ALG_CHACHA20_POLY1305
 	help
 	  Enable the CHACHA-POLY module.
@@ -548,7 +541,6 @@ if MBEDTLS_ECP_C
 
 config MBEDTLS_ECDH_C
 	bool "ECDH  - Elliptic Curve Diffie-Hellman"
-	default y if !MBEDTLS_USE_PSA_CRYPTO
 	imply PSA_WANT_ALG_ECDH
 	help
 	  Enable the ECDH module.
@@ -556,7 +548,6 @@ config MBEDTLS_ECDH_C
 
 config MBEDTLS_ECDSA_C
 	bool "ECDSA - Elliptic Curve Digital Signature Algorithm"
-	default y if !MBEDTLS_USE_PSA_CRYPTO
 	imply PSA_WANT_ALG_ECDSA
 	help
 	  Enable the ECDSA module.
@@ -566,13 +557,11 @@ config MBEDTLS_ECDSA_DETERMINISTIC
 	bool "Deterministic ECDSA (RFC 6979)"
 	select MBEDTLS_HMAC_DRBG_C if !PSA_CRYPTO
 	depends on MBEDTLS_ECDSA_C
-	default y if !MBEDTLS_USE_PSA_CRYPTO
 	imply PSA_WANT_ALG_DETERMINISTIC_ECDSA
 	imply PSA_WANT_ALG_HMAC
 
 config MBEDTLS_ECJPAKE_C
 	bool "ECJPAKE - Elliptic curve J-PAKE"
-	default y if !MBEDTLS_USE_PSA_CRYPTO
 	imply PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
 	imply PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
 	imply PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
@@ -670,7 +659,6 @@ endif # MBEDTLS_ECP_C
 
 config MBEDTLS_HKDF_C
 	bool "HKDF support"
-	default y if !MBEDTLS_USE_PSA_CRYPTO
 	imply PSA_WANT_ALG_HMAC
 	imply PSA_WANT_ALG_HKDF
 	imply PSA_WANT_ALG_TLS12_PRF if MBEDTLS_TLS_LIBRARY
@@ -725,21 +713,18 @@ config MBEDTLS_MD5_C
 
 config MBEDTLS_SHA1_C
 	bool "SHA-1 hash functionality"
-	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	imply PSA_WANT_ALG_SHA_1
 	help
 	  SHA-1 hash functionality.
 
 config MBEDTLS_SHA224_C
 	bool "SHA-224 hash functionality"
-	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	imply PSA_WANT_ALG_SHA_224
 	help
 	  SHA-224 hash functionality.
 
 config MBEDTLS_SHA256_C
 	bool "SHA-256 hash functionality"
-	default y if !MBEDTLS_USE_PSA_CRYPTO
 	imply PSA_WANT_ALG_SHA_256
 	help
 	  SHA-256 hash functionality.
@@ -752,14 +737,12 @@ config MBEDTLS_SHA256_SMALLER
 config MBEDTLS_SHA384_C
 	bool "SHA-384 hash functionality"
 	select MBEDTLS_SHA512_C
-	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	imply PSA_WANT_ALG_SHA_384
 	help
 	  SHA-384 hash functionality.
 
 config MBEDTLS_SHA512_C
 	bool "SHA-512 hash functionality"
-	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	imply PSA_WANT_ALG_SHA_512
 	help
 	  SHA-512 hash functionality.
@@ -795,8 +778,8 @@ config MBEDTLS_MD_C
 
 config MBEDTLS_PK_C
 	bool "PK support"
-	default y if MBEDTLS_TLS_LIBRARY
-	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY if MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_ECP_C
+	default y if MBEDTLS_TLS_LIBRARY && \
+		(PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY || PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY)
 
 config MBEDTLS_PKCS5_C
 	bool "PKCS5 support"
