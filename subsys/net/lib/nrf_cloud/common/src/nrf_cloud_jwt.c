@@ -33,13 +33,13 @@ LOG_MODULE_REGISTER(nrf_cloud_jwt, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #define PRV_KEY_PEM_SZ	      (256)
 #define PRV_KEY_DER_START_IDX (36)
 
-static void remove_newlines(char *const str)
+static void remove_line_breaks(char *const str)
 {
 	size_t new;
 	size_t len = strlen(str);
 
 	for (size_t old = new = 0; old < len; ++old) {
-		if (str[old] != '\n') {
+		if ((str[old] != '\n') && (str[old] != '\r')) {
 			str[new++] = str[old];
 		}
 	}
@@ -75,7 +75,7 @@ static int strip_non_key_data(char *const str)
 	memmove(str, start, new_len);
 	str[new_len] = '\0';
 
-	remove_newlines(str);
+	remove_line_breaks(str);
 
 	return 0;
 }

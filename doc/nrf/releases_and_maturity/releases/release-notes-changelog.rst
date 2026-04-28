@@ -507,9 +507,13 @@ Libraries for networking
   * Removed dependency on the :ref:`lte_lc_readme` library.
     The :ref:`at_monitor_readme` library is now used for tracking network connectivity status.
 
-* Removed the nRF Cloud Alerts library.
-  As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
-  Memfault's Trace Events feature replaces the Alerts feature, as it provides equivalent functionality for event reporting, and it also adds enhanced debugging capabilities that were not available with Alerts.
+* :ref:`lib_nrf_cloud` library:
+
+  * Fixed an issue where PEM private keys with CRLF line endings could not be decoded correctly for JWT signing used in nRF Cloud CoAP authentication.
+
+  * Removed the nRF Cloud Alerts library.
+    As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
+    Memfault's Trace Events feature replaces the Alerts feature, as it provides equivalent functionality for event reporting, and it also adds enhanced debugging capabilities that were not available with Alerts.
 
 Libraries for NFC
 -----------------
