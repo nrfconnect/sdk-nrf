@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c130 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&i2c131 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&i2c133 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
