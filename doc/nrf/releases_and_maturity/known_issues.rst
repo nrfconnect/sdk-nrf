@@ -4520,6 +4520,9 @@ NCSDK-38824: Bluetooth LE SMP MCUmgr image erase request causes NMP timeout and 
 
   **Affected plafforms:** nRF54L Series devices
 
+  **Workaround:** To fix the issue, update the ``sdk-nrf`` repository by cherry-picking the commits with the following hash: ``9d348796552294e48e12084032a607bd339a6b65``.
+    The patch sets the value of the :kconfig:option:`CONFIG_FLASH_FILL_BUFFER_SIZ`` kconfig option to ``256`` and speeds up the emulated erase operations on RRAM.
+
 .. rst-class:: v3-2-0
 
 NCSDK-36692: In a single slot DFU, the firmware loader image can be erased using the ``SMP erase slot`` command issued in the firmware loader application
