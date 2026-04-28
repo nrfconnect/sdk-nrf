@@ -513,6 +513,7 @@ Libraries for networking
 
     * An issue where PEM private keys with CRLF line endings could not be decoded correctly for JWT signing used in nRF Cloud CoAP authentication.
     * A DTLS socket option setup to inspect ``errno`` after ``setsockopt()`` failures instead of comparing the return value to ``EOPNOTSUPP`` or ``EINVAL``, which could mishandle unsupported options during DTLS configuration.
+    * The DTLS handshake timeout configuration on native (non-modem) sockets by using ``TLS_DTLS_HANDSHAKE_TIMEOUT_MIN`` and ``TLS_DTLS_HANDSHAKE_TIMEOUT_MAX`` instead of the modem-only ``TLS_DTLS_HANDSHAKE_TIMEO`` option, avoiding handshake failures when connecting to nRF Cloud over Wi-Fi.
 
   * Removed the nRF Cloud Alerts library.
     As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.

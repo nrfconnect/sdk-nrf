@@ -111,14 +111,32 @@ int nrfc_dtls_setup(int sock)
 	}
 
 #if !defined(CONFIG_BOARD_NATIVE_SIM) && !defined(CONFIG_DECT)
+#if defined(CONFIG_NRF_MODEM_LIB)
 	int timeout = TLS_DTLS_HANDSHAKE_TIMEO_123S;
 
 	LOG_DBG("  Set handshake timeout %d", timeout);
 	err = zsock_setsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEO, &timeout, sizeof(timeout));
-	if (!err) {
-	} else if ((errno != EOPNOTSUPP) || (errno != EINVAL)) {
+	if (err && (errno != EOPNOTSUPP) && (errno != EINVAL)) {
 		LOG_ERR("Error setting handshake timeout: %d", -errno);
 	}
+#else
+	/* The timeouts are aligned with modem timeouts without optimization or analysis. */
+	uint32_t timeout_min_ms = 1 * MSEC_PER_SEC;
+	uint32_t timeout_max_ms = 123 * MSEC_PER_SEC;
+
+	LOG_DBG("  Set handshake timeout min/max: %u/%u ms", timeout_min_ms, timeout_max_ms);
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEOUT_MIN, &timeout_min_ms,
+			       sizeof(timeout_min_ms));
+	if (err && (errno != EOPNOTSUPP) && (errno != EINVAL)) {
+		LOG_ERR("Error setting handshake timeout minimum: %d", -errno);
+	}
+
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEOUT_MAX, &timeout_max_ms,
+			       sizeof(timeout_max_ms));
+	if (err && (errno != EOPNOTSUPP) && (errno != EINVAL)) {
+		LOG_ERR("Error setting handshake timeout maximum: %d", -errno);
+	}
+#endif /* CONFIG_NRF_MODEM_LIB */
 #endif
 
 	int verify = TLS_PEER_VERIFY_REQUIRED;
