@@ -8,10 +8,15 @@ if DEBUG_COREDUMP_BACKEND_OTHER
 
 choice DEBUG_COREDUMP_BACKEND_NRF
 	prompt "nRF core dump storage implementation"
-	default DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
+	default DEBUG_COREDUMP_BACKEND_NRF_NONE
 	help
 	  Select whether core dumps are written to on-chip non-volatile memory or to a
 	  dedicated SRAM region (survives soft reset, not power loss).
+
+config DEBUG_COREDUMP_BACKEND_NRF_NONE
+	bool "None"
+	help
+	  No nRF core dump backend selected.
 
 config DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
 	bool "Internal flash or RRAM (partition coredump_partition) [EXPERIMENTAL]"
