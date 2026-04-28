@@ -1,0 +1,13 @@
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Default configurations for networking subsystem in NCS
+
+if NETWORKING
+
+config NET_SOCKETS_ENABLE_DTLS
+	select PSA_WANT_GENERATE_RANDOM if NRF_SECURITY
+
+endif # NETWORKING
