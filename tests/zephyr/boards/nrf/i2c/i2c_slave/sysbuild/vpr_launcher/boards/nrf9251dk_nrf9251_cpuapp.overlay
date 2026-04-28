@@ -1,0 +1,57 @@
+/*
+ * Copyright 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	i2c130_default_alt: i2c130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 0)>;
+		};
+	};
+
+	i2c130_sleep_alt: i2c130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 0)>;
+			low-power-enable;
+		};
+	};
+
+	i2c131_default_alt: i2c131_default_alt {
+		group1 {
+			/* Temporary workaround as it is currently not possible
+			 * to configure pins for TWIS with pinctrl.
+			 */
+			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+				<NRF_PSEL(TWIM_SCL, 1, 1)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c131_sleep_alt: i2c131_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+				<NRF_PSEL(TWIM_SCL, 1, 1)>;
+			low-power-enable;
+		};
+	};
+};
+
+&i2c130 {
+	status = "reserved";
+	pinctrl-0 = <&i2c130_default_alt>;
+	pinctrl-1 = <&i2c130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&i2c131 {
+	status = "reserved";
+	pinctrl-0 = <&i2c131_default_alt>;
+	pinctrl-1 = <&i2c131_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	interrupt-parent = <&cpuppr_clic>;
+};
