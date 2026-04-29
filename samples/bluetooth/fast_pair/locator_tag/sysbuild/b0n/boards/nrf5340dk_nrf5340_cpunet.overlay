@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0n_partition;
+	};
+};
