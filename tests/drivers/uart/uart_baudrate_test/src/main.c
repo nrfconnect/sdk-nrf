@@ -43,7 +43,7 @@ static void uart_fifo_callback(const struct device *dev, void *user_data)
 }
 #endif
 
-static void check_timing(const struct gpio_dt_spec *gpio_dt, uint32_t baudrate)
+static void check_timing(uint32_t baudrate)
 {
 	uint64_t cycles_s_sys;
 	struct uart_config test_uart_config;
@@ -209,86 +209,86 @@ static void check_timing(const struct gpio_dt_spec *gpio_dt, uint32_t baudrate)
 
 ZTEST(uart_baudrate_test, test_08_2400)
 {
-	check_timing(&gpio_spec, 2400);
+	check_timing(2400);
 }
 
 ZTEST(uart_baudrate_test, test_09_4800)
 {
-	check_timing(&gpio_spec, 4800);
+	check_timing(4800);
 }
 
 ZTEST(uart_baudrate_test, test_10_9600)
 {
-	check_timing(&gpio_spec, 9600);
+	check_timing(9600);
 }
 
 ZTEST(uart_baudrate_test, test_11_14400)
 {
-	check_timing(&gpio_spec, 14400);
+	check_timing(14400);
 }
 ZTEST(uart_baudrate_test, test_12_19200)
 {
-	check_timing(&gpio_spec, 19200);
+	check_timing(19200);
 }
 
 ZTEST(uart_baudrate_test, test_13_38400)
 {
-	check_timing(&gpio_spec, 38400);
+	check_timing(38400);
 }
 
 ZTEST(uart_baudrate_test, test_14_57600)
 {
-	check_timing(&gpio_spec, 57600);
+	check_timing(57600);
 }
 
 ZTEST(uart_baudrate_test, test_15_115200)
 {
-	check_timing(&gpio_spec, 115200);
+	check_timing(115200);
 }
 
 ZTEST(uart_baudrate_test, test_16_230400)
 {
-	check_timing(&gpio_spec, 230400);
+	check_timing(230400);
 }
 
 ZTEST(uart_baudrate_test, test_17_460800)
 {
-	check_timing(&gpio_spec, 460800);
+	check_timing(460800);
 }
 
 ZTEST(uart_baudrate_test, test_18_576000)
 {
-	check_timing(&gpio_spec, 576000);
+	check_timing(576000);
 }
 
 ZTEST(uart_baudrate_test, test_19_921600)
 {
-	check_timing(&gpio_spec, 921600);
+	check_timing(921600);
 }
 
 ZTEST(uart_baudrate_test, test_20_1000000)
 {
-	check_timing(&gpio_spec, 1000000);
+	check_timing(1000000);
 }
 
 ZTEST(uart_baudrate_test, test_21_2000000)
 {
-	check_timing(&gpio_spec, 2000000);
+	check_timing(2000000);
 }
 
 ZTEST(uart_baudrate_test, test_22_3000000)
 {
-	check_timing(&gpio_spec, 3000000);
+	check_timing(3000000);
 }
 
 ZTEST(uart_baudrate_test, test_23_4000000)
 {
-	check_timing(&gpio_spec, 4000000);
+	check_timing(4000000);
 }
 
 ZTEST(uart_baudrate_test, test_24_8000000)
 {
-	check_timing(&gpio_spec, 8000000);
+	check_timing(8000000);
 }
 
 static void *uart_baudrate_test_setup(void)
