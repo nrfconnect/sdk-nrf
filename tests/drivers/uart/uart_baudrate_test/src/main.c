@@ -10,19 +10,24 @@
 #include <zephyr/kernel.h>
 #include <zephyr/ztest.h>
 #include <zephyr/drivers/gpio.h>
+#include <hal/nrf_gpio.h>
 #include <stdlib.h>
 #include <math.h>
 
+
+static NRF_GPIO_Type *gpio_port =
+	((NRF_GPIO_Type *)DT_REG_ADDR(DT_GPIO_CTLR(DT_PATH(zephyr_user), gpios)));
+static uint32_t pin_mask = BIT(DT_GPIO_PIN(DT_PATH(zephyr_user), gpios));
 static const struct gpio_dt_spec gpio_spec =
 	GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), gpios, 0);
 static const struct device *const uart_dev = DEVICE_DT_GET(DT_NODELABEL(dut));
 
-static const uint8_t tx_buf[1] = {0x00};
+static const uint8_t tx_buf[] = {0x00, 0x00};
 
-#define PIN_STATE_SIZE 16384
-static int pin_state[PIN_STATE_SIZE] = {};
+#define PIN_STATE_SIZE 32768
+static uint8_t pin_state[PIN_STATE_SIZE] = {};
 
-#define REPEAT_NUMBER 10
+#define REPEAT_NUMBER 3
 
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 static void uart_fifo_callback(const struct device *dev, void *user_data)
@@ -53,16 +58,18 @@ static void check_timing(uint32_t baudrate)
 	double gpio_read_time_us_mean;
 	int32_t start_index;
 	int32_t stop_index;
+	int32_t idle_found;
 	int32_t start_index_count_zero;
 	double bit_diviation_mean;
 	double symbol_diviation_mean;
+	bool once = true;
 	int key;
 
 	ret = uart_config_get(uart_dev, &test_uart_config);
 	zassert_equal(ret, 0, "uart_config_get: %d\n", ret);
 
 	test_uart_config.parity = UART_CFG_PARITY_EVEN;
-	test_uart_config.stop_bits = UART_CFG_STOP_BITS_2;
+	test_uart_config.stop_bits = UART_CFG_STOP_BITS_1;
 	test_uart_config.flow_ctrl = UART_CFG_FLOW_CTRL_NONE;
 	test_uart_config.baudrate = baudrate;
 	ret = uart_configure(uart_dev, &test_uart_config);
@@ -75,37 +82,11 @@ static void check_timing(uint32_t baudrate)
 	cycles_s_sys = (uint64_t)sys_clock_hw_cycles_per_sec();
 	TC_PRINT("Cycles: %llu cycles\n", cycles_s_sys);
 
-	/*
-	 * Measure time needed to read gpios
-	 */
-	gpio_read_time_us_mean = 0;
-	key = irq_lock();
-	for (uint32_t t = 0; t < REPEAT_NUMBER; ++t) {
-		cycle_start_time = k_cycle_get_32();
-		for (uint32_t i = 0; i < PIN_STATE_SIZE; ++i) {
-			pin_state[i] = gpio_pin_get_dt(&gpio_spec);
-		}
-		cycle_stop_time = k_cycle_get_32();
-		double gpio_read_time_us =
-			((cycle_stop_time - cycle_start_time) / (double)PIN_STATE_SIZE) *
-			(1e6 / cycles_s_sys);
-		gpio_read_time_us_mean += gpio_read_time_us;
-	}
-	irq_unlock(key);
-	gpio_read_time_us_mean /= (double)REPEAT_NUMBER;
-	TC_PRINT("GPIO get takes: %.2f us\n", gpio_read_time_us_mean);
-
 	double expected_bit_period_us = 1e6 / (double)baudrate;
 	double number_of_bits = 8;
 
 	number_of_bits += 1;
-	if (test_uart_config.stop_bits == UART_CFG_STOP_BITS_1) {
-		number_of_bits += 1;
-	} else if (test_uart_config.stop_bits == UART_CFG_STOP_BITS_2) {
-		number_of_bits += 2;
-	} else {
-		zassert_true(false, "Unsupported stop_bits: %d", test_uart_config.stop_bits);
-	}
+	/* Stop bit is 1 so it is not counted. */
 	if (test_uart_config.parity != UART_CFG_PARITY_NONE) {
 		number_of_bits += 1;
 	}
@@ -113,11 +94,6 @@ static void check_timing(uint32_t baudrate)
 
 	TC_PRINT("[%d] Expected symbol time: %.2f us, expected bit time: %.2f us\n", baudrate,
 		 expected_symbol_period_us, expected_bit_period_us);
-
-	if (expected_bit_period_us < gpio_read_time_us_mean) {
-		TC_PRINT("[%d] Not supported - gpio measurement is too slow.\n", baudrate);
-		ztest_test_skip();
-	}
 
 	start_index_count_zero = 0;
 	bit_diviation_mean = 0;
@@ -136,26 +112,49 @@ static void check_timing(uint32_t baudrate)
 		/*
 		 * Check gpio
 		 */
+
 		key = irq_lock();
+		cycle_start_time = k_cycle_get_32();
 		for (uint32_t i = 0; i < PIN_STATE_SIZE; ++i) {
-			pin_state[i] = gpio_pin_get_dt(&gpio_spec);
+			pin_state[i] = nrf_gpio_port_in_read(gpio_port) & pin_mask ? 1 : 0;
 		}
+		cycle_stop_time = k_cycle_get_32();
 		irq_unlock(key);
 
+		if (once) {
+			/* Calculate only for the first iteration. */
+			uint32_t t_us = k_cyc_to_us_ceil32(cycle_stop_time - cycle_start_time);
+
+			gpio_read_time_us_mean = (double)t_us / PIN_STATE_SIZE;
+			once = false;
+			TC_PRINT("GPIO get takes: %.2f us\n", gpio_read_time_us_mean);
+		}
+
+		if (expected_bit_period_us < gpio_read_time_us_mean) {
+			TC_PRINT("[%d] Not supported - gpio measurement is too slow.\n", baudrate);
+			ztest_test_skip();
+		}
+
 		/*
-		 * Find start of start bit and end of stop bit
+		 * Find start of start bit and end of stop bit. For higher baudrates it is
+		 * possible that first byte is already being transferred. In search for
+		 * byte start and end, start from searching for idle state between byte 0 and 1.
 		 */
 		start_index = -1;
 		stop_index = -1;
+		idle_found = -1;
 		for (uint32_t i = 0; i < PIN_STATE_SIZE; ++i) {
 			if (-1 == start_index) {
-				if (0 == pin_state[i]) {
+				if (1 == pin_state[i]) {
+					idle_found = 0;
+				} else if ((idle_found == 0) && (0 == pin_state[i])) {
 					start_index = i;
 				}
 			} else {
 				if (-1 == stop_index) {
 					if (1 == pin_state[i]) {
 						stop_index = i;
+						break;
 					}
 				} else {
 					zassert_true(1 == pin_state[i], "Unexpected low at %d\n",

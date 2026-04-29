@@ -8,7 +8,7 @@ source "Kconfig.zephyr"
 
 config TEST_ALLOWED_DEVIATION
 	int "Allowed deviation (%) for UART timing checks"
-	default 25
+	default 5
 	range 0 100
 	help
 	  Maximum allowed deviation (%) from the programmed values for the test to be
