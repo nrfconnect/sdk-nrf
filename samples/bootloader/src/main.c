@@ -12,7 +12,7 @@
 #if defined(CONFIG_FPROTECT)
 #include <fprotect.h>
 #else
-#ifndef CONFIG_SOC_SERIES_NRF54L
+#if !defined(CONFIG_SOC_SERIES_NRF54L) && !defined(CONFIG_SOC_SERIES_NRF71)
 #warning "FPROTECT not enabled, the bootloader will be unprotected."
 #endif
 #endif
@@ -25,6 +25,8 @@
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
+#elif defined(CONFIG_NRFX_MRAMC)
+#include <nrfx_mramc.h>
 #else
 #error "No NRFX memory backend selected"
 #endif
