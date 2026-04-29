@@ -1,0 +1,13 @@
+common:
+  tags:
+    - drivers
+    - gpio
+    - ci_tests_zephyr_drivers_gpio
+  depends_on: gpio
+  harness: ztest
+tests:
+  nrf.extended.drivers.gpio.gpio_nrf:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuppr
