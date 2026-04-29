@@ -13,10 +13,11 @@
 #include <zephyr/storage/flash_map.h>
 #endif
 #include <fw_info.h>
+#include <errno.h>
 #if defined(CONFIG_FPROTECT)
 #include <fprotect.h>
 #else
-#ifndef CONFIG_SOC_SERIES_NRF54L
+#if !defined(CONFIG_SOC_SERIES_NRF54L) && !defined(CONFIG_SOC_SERIES_NRF71)
 #warning "FPROTECT not enabled, the bootloader will be unprotected."
 #endif
 #endif
@@ -27,6 +28,8 @@
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
+#elif defined(CONFIG_NRFX_MRAMC)
+#include <nrfx_mramc.h>
 #else
 #error "No NRFX memory backend selected"
 #endif
@@ -89,6 +92,15 @@ static const uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_F
 static const uint32_t huk_flag_addr = PARTITION_ADDRESS(hw_unique_key_partition);
 #endif
 
+#if defined(CONFIG_NRFX_MRAMC)
+static int mramc_init(void)
+{
+	nrfx_mramc_config_t config = NRFX_MRAMC_DEFAULT_CONFIG();
+	int err = nrfx_mramc_init(&config, NULL);
+
+	return (err == -EALREADY) ? 0 : err;
+}
+#endif
 
 int load_huk(void)
 {
@@ -96,11 +108,18 @@ int load_huk(void)
 		/* Directly reading flag via CPU address space */
 		if (*(uint32_t *)huk_flag_addr == 0xFFFFFFFF) {
 			printk("First boot, expecting app to write HUK.\n");
-			/* Write done via NRFX API */
+			/* Write done via the memory-controller API. */
 #if defined(CONFIG_NRFX_NVMC)
 			nrfx_nvmc_word_write(huk_flag_addr, 0);
 #elif defined(CONFIG_NRFX_RRAMC)
 			nrfx_rramc_word_write(huk_flag_addr, 0);
+#elif defined(CONFIG_NRFX_MRAMC)
+			if (mramc_init() != 0) {
+				printk("Error: Cannot initialize MRAMC.\n");
+				k_panic();
+				return -1;
+			}
+			nrfx_mramc_word_write(huk_flag_addr, 0);
 #endif
 			return 0;
 		}
