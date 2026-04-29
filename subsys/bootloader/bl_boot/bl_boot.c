@@ -30,7 +30,8 @@
 #define BL_STORAGE_SIZE		PM_PROVISION_SIZE
 #else
 /* Address of storage as seen in processor address space */
-#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
+#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr) || \
+	DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf71_uicr)
 #define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
 #define BL_STORAGE_SIZE		DT_REG_SIZE(DT_NODELABEL(bl_storage))
 #else
