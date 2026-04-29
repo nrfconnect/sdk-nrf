@@ -1,0 +1,9 @@
+/*
+ * Single-stage (NSIB -> application) slot aliases for non-Partition-Manager
+ * builds. NSIB boots and validates the image in s0_partition/s1_partition; in a
+ * single-stage build these are the application slots, so alias them onto the
+ * board's slot0/slot1 partitions. (A two-stage build injects a full layout
+ * instead, where s0/s1 hold the MCUboot copies.)
+ */
+s0_partition: &slot0_partition {};
+s1_partition: &slot1_partition {};

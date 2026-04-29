@@ -101,6 +101,13 @@ if(SB_CONFIG_SECURE_BOOT)
         add_image_flasher(NAME bootconf HEX_FILE "${CMAKE_BINARY_DIR}/bootconf.hex" BASE_IMAGE b0)
         sysbuild_add_dependencies(FLASH bootconf b0)
       endif()
+
+      # Single-stage NSIB (no MCUboot): alias s0/s1 onto the application slots so
+      # bl_boot/bl_validation resolve the next-stage image from devicetree. A
+      # two-stage build injects a full layout overlay instead.
+      if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
+        add_overlay_dts(b0 ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/nsib-dts-slots.overlay)
+      endif()
     endif()
 
     set_target_properties(b0 PROPERTIES
@@ -150,8 +157,15 @@ if(SB_CONFIG_SECURE_BOOT)
           EXTRA_DTC_OVERLAY_FILE ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s1-partition.overlay
         )
 
+        add_overlay_dts(${DEFAULT_IMAGE}_s1_variant
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/nsib-dts-slots.overlay
+        )
+
         add_overlay_dts(${DEFAULT_IMAGE}
           ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay
+        )
+        add_overlay_dts(${DEFAULT_IMAGE}
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/nsib-dts-slots.overlay
         )
       endif()
     endif()
