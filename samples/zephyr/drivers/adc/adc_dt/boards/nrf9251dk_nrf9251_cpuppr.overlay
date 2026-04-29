@@ -5,7 +5,3 @@
  */
 
 #include "nrf9251dk_nrf9251_common.dtsi"
-
-&adc {
-	memory-regions = <&cpuapp_dma_region>;
-};
