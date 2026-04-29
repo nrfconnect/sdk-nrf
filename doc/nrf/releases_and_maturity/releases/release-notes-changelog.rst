@@ -511,6 +511,16 @@ Libraries for networking
   As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
   Memfault's Trace Events feature replaces the Alerts feature, as it provides equivalent functionality for event reporting, and it also adds enhanced debugging capabilities that were not available with Alerts.
 
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Updated the range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
+
+  * Fixed:
+
+    * An issue that caused predictions to be stored into incorrect index in flash, leading to an error when the affected predictions were used.
+    * An issue where the library tried to use predictions that had not yet been flushed to flash, leading to a prediction validation error.
+    * An issue where the library kept trying to use corrupted predictions.
+
 Libraries for NFC
 -----------------
 

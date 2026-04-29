@@ -632,6 +632,14 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 		return -ETIMEUNKNOWN;
 	} else if (cur_gps_sec > end_sec) {
 		if ((cur_gps_sec - end_sec) > PGPS_MARGIN_SEC) {
+			if (nrf_cloud_pgps_loading()) {
+				/* A download is already in progress; the old predictions
+				 * being expired is expected. Do not reset state or
+				 * loading_in_progress.
+				 */
+				LOG_INF("Loading in progress; ignoring expired old predictions");
+				return -ELOADING;
+			}
 			index.cur_pnum = 0xff;
 			state = PGPS_EXPIRED;
 			loading_in_progress = false; /* make sure we request it */
@@ -659,7 +667,28 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 			start_expiration_timer(pnum, cur_gps_sec);
 			return pnum;
 		}
-		return err;
+
+		/* The selected prediction failed validation. If we are not loading
+		 * new data, the stored predictions are corrupt or stale. Mark them as
+		 * expired so that a fresh download is triggered.
+		 */
+		if (!nrf_cloud_pgps_loading()) {
+			LOG_ERR("Prediction num:%u invalid; discarding all P-GPS data", pnum);
+			index.cur_pnum = 0xff;
+			state = PGPS_EXPIRED;
+			loading_in_progress = false;
+			return err;
+		}
+
+		/* During loading, the prediction pointer is set but the flash page may
+		 * not be flushed yet: stream_flash only commits a page when its buffer
+		 * is full (two 2048-byte predictions share one 4096-byte flash page).
+		 * The page will be flushed once the following prediction is stored, so
+		 * signal the caller to retry rather than treating this as an error.
+		 */
+		LOG_WRN("Prediction num:%u not yet readable; waiting for flash flush", pnum);
+		*prediction = NULL;
+		return -ELOADING;
 	}
 	if (nrf_cloud_pgps_loading()) {
 		LOG_WRN("Prediction num:%u not loaded yet", pnum);

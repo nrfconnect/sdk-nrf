@@ -27,8 +27,8 @@ config NRF_CLOUD_PGPS_REQUEST_UPON_INIT
 
 config NRF_CLOUD_PGPS_NUM_PREDICTIONS
 	int "Desired number of predictions"
-	range 2 42
-	default 42
+	range 2 40
+	default 40
 	help
 	  This value, together with the prediction period, determines the
 	  overall timespan that the GPS predictions will cover. The
@@ -37,7 +37,7 @@ config NRF_CLOUD_PGPS_NUM_PREDICTIONS
 
 config NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
 	int "Number of predictions remaining before fetching more"
-	range 0 40
+	range 0 38
 	default 0
 	help
 	  When set to 0, no attempt will be made to update the prediction
