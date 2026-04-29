@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires two loopbacks:
+ * - P1.00 - P1.01,
+ * - P2.03 - P2.09.
+ */
+
+&pinctrl {
+	i2c130_default_test: i2c130_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 0)>;
+		};
+	};
+
+	i2c130_sleep_test: i2c130_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+				<NRF_PSEL(TWIM_SCL, 1, 0)>;
+			low-power-enable;
+		};
+	};
+
+	i2c131_default_test: i2c131_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+				<NRF_PSEL(TWIM_SCL, 1, 1)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c131_sleep_test: i2c131_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+				<NRF_PSEL(TWIM_SCL, 1, 1)>;
+			low-power-enable;
+		};
+	};
+};
+
+&i2c130 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c130_default_test>;
+	pinctrl-1 = <&i2c130_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	zephyr,concat-buf-size = <256>;
+};
+
+&i2c131 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c131_default_test>;
+	pinctrl-1 = <&i2c131_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	zephyr,concat-buf-size = <256>;
+};
+
+/* i2c132 inaccessible due to cpuppr console on uart132 */
+
+/* i2c133 inaccessible due to cpuapp console on uart133 */
