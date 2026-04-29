@@ -139,7 +139,111 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+Fast Pair Locator Tag sample
+----------------------------
+
+.. toggle::
+
+   The :ref:`fast_pair_locator_tag` sample on nRF53 Series board targets (``nrf5340dk/nrf5340/cpuapp`` and ``thingy53/nrf5340/cpuapp``) has been migrated from the deprecated :ref:`partition_manager` static configuration to devicetree (DTS) for the partition layout.
+   With this change, all board targets supported by the sample now use DTS for partition definitions.
+   The ``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns`` board target variants have been removed from the sample.
+
+   If your application is based on the nRF53 Series MCUboot DFU configuration of this sample, start by applying the following generic Fast Pair migration steps that are common to all supported board targets:
+
+   * The PM-to-DTS migration steps described in the *Google Fast Pair* recommended changes of the :ref:`migration_3.3` guide.
+   * The partition overlay compatible migration described in the :ref:`migration_3.4_google_fast_pair` section of this guide.
+     This step is mandatory on nRF53 Series board targets and applies to both the application core overlay (``flash0``) and the network core overlay (``flash1``).
+     Without this migration, the network core image is linked at an invalid address and the firmware does not start.
+
+   In addition to the generic steps, the nRF53 Series DFU configuration with MCUboot in the overwrite mode requires the following unique adjustments:
+
+   1. Enable the multi-image update mode in your sysbuild configuration so that the application core and network core images are updated together through MCUboot:
+
+      .. code-block:: kconfig
+
+         SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE=y
+
+      See the :file:`sysbuild/configuration/<board_target>/sysbuild.conf` file from the :ref:`fast_pair_locator_tag` sample as an example.
+
+   #. Override the external flash node in the application core overlay to define the MCUboot secondary slot partitions there.
+      In the nRF53 Series DFU configuration, the secondary slots reside in the external QSPI flash (for example, ``mx25r64`` on the ``nrf5340dk/nrf5340/cpuapp`` board target) instead of the internal flash.
+      Set ``status = "okay"`` on the external flash node to make the chip's enabled state explicit in the overlay.
+      The upstream board devicetree does not set a ``status`` property on the chip node, so it is already treated as enabled by the devicetree-specification default.
+      The :file:`zephyr.dts` output therefore does not contain a ``status`` line for the chip unless the overlay sets one.
+      Stating ``status = "okay"`` explicitly follows the convention used by the other |NCS| samples that consume the chip's partitions and protects against any other overlay that might disable the chip before yours is applied.
+
+      Define the following partitions under the external flash node:
+
+      * ``slot1_partition`` (``image-1``) for the application core secondary slot.
+      * ``slot3_partition`` (``image-3``) for the network core secondary slot.
+
+      The size of ``slot3_partition`` must match the corresponding RAM-backed ``slot2_partition`` defined in the :file:`nrf/modules/mcuboot/flash_sim.overlay` file, which MCUboot uses to forward the network core image during DFU.
+
+      As a consequence of moving the secondary slots to external flash, the internal flash node (``flash0``) only needs to declare a single MCUboot slot partition (``slot0_partition``).
+      In the nRF52 and nRF54L Series board targets, the ``slot1_partition`` is also placed on the internal flash.
+      The remaining application core partitions (``boot_partition``, ``bt_fast_pair_partition``, and ``storage_partition``) stay on ``flash0`` as described in the generic migration steps.
+      See the :file:`configuration/boards/<board_target>.overlay` file in the sample for a complete example.
+
+   #. Define the network core partition layout under the network core flash node (``flash1``) in a sysbuild overlay shared by the network core images.
+      The layout consists of the following partitions:
+
+      * ``b0n_partition`` (``b0n``) for the secure bootloader on the network core.
+      * ``provision_partition`` (``b0-provision-data``), additionally aliased as ``bl_storage``, for the bootloader provisioning data.
+      * ``s0_partition`` (``image-0``) for the network core image slot.
+
+      Place this overlay in the :file:`sysbuild/ipc_radio/boards/<board_target>.overlay` file so that it is applied to the IPC radio image.
+      Size ``s0_partition`` so that the network core image fits within the RAM-backed ``slot2_partition`` of the :file:`nrf/modules/mcuboot/flash_sim.overlay` file.
+
+   #. Add a sysbuild image overlay for the B0N bootloader to reuse the same network core partition layout.
+      Create the :file:`sysbuild/b0n/boards/<board_target>.overlay` file that includes the IPC radio cpunet overlay and sets the ``zephyr,code-partition`` chosen node to ``b0n_partition``.
+      For example:
+
+      .. code-block:: devicetree
+
+         #include "../../ipc_radio/boards/<board_target>.overlay"
+
+         / {
+             chosen {
+                 zephyr,code-partition = &b0n_partition;
+             };
+         };
+
+      This mirrors the pattern used by the MCUboot image overlay on the application core: the layout is defined once in the application overlay and the bootloader image overlay only selects its own ``zephyr,code-partition``.
+
+      Enable the :kconfig:option:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option in the B0N image configuration file (:file:`sysbuild/b0n/prj.conf`) so that the B0N bootloader links into the DTS-defined ``b0n_partition``:
+
+      .. code-block:: kconfig
+
+         CONFIG_USE_DT_CODE_PARTITION=y
+
+   #. Adjust the MCUboot sysbuild image Kconfig configuration in the :file:`sysbuild/mcuboot/boards/<board_target>.conf` file to align MCUboot with the DTS partition layout:
+
+      .. code-block:: kconfig
+
+         CONFIG_BOOT_MAX_IMG_SECTORS_AUTO=n
+         CONFIG_BOOT_MAX_IMG_SECTORS=239
+
+         CONFIG_MCUBOOT_CHECK_HEADER_LOAD_ADDRESS=y
+         CONFIG_MCUBOOT_VERIFY_IMG_ADDRESS=n
+
+      * The :kconfig:option:`CONFIG_BOOT_MAX_IMG_SECTORS_AUTO` auto-compute cannot determine the erase block size of ``slot1_partition`` and ``slot3_partition``, because the ``nordic,qspi-nor`` binding used by ``mx25r64`` does not declare the ``erase-block-size`` property (the driver discovers it from SFDP at runtime).
+        Setting :kconfig:option:`CONFIG_BOOT_MAX_IMG_SECTORS` explicitly suppresses the resulting build warning and pins the value to the layout you defined under the external flash node.
+        The example value ``239`` corresponds to a 956 KB slot divided by the 4 KB QSPI sector size.
+
+      * Setting :kconfig:option:`CONFIG_MCUBOOT_CHECK_HEADER_LOAD_ADDRESS` makes MCUboot verify the secondary-slot image against the load address embedded in the image header, which is compatible with the DTS partition layout (the expected primary-slot range is derived from the DTS ``s0_partition`` node).
+        Its deprecated predecessor :kconfig:option:`CONFIG_MCUBOOT_VERIFY_IMG_ADDRESS` must be disabled explicitly, because it otherwise auto-defaults to ``y`` in the overwrite-only mode (:kconfig:option:`CONFIG_BOOT_UPGRADE_ONLY` set to ``y``).
+
+   .. note::
+      If you maintain field-deployed devices flashed with the v3.3.0 |NCS| release and need them to keep receiving DFU updates after the migration, size the partitions to match the legacy Partition Manager layout from v3.3.0:
+
+      * On ``flash0``, keep ``boot_partition``, ``slot0_partition``, ``bt_fast_pair_partition``, and ``storage_partition`` aligned with the legacy ``mcuboot``, ``mcuboot_primary``, ``bt_fast_pair``, and ``settings_storage`` partitions.
+      * On the external flash (for example, ``mx25r64``), size ``slot1_partition`` and ``slot3_partition`` to match the legacy ``mcuboot_secondary`` and ``mcuboot_secondary_1`` partitions.
+        For ``slot3_partition``, this means 256 KB (``DT_SIZE_K(256)``).
+      * On ``flash1``, place ``b0n_partition`` at offset ``0x0`` with size ``0x2580``, ``provision_partition`` at offset ``0x2580`` with size ``0x280``, and ``s0_partition`` at offset ``0x2800`` with size 246 KB (``DT_SIZE_K(246)``) to match the legacy ``b0n``, ``provision``, and ``app`` partitions of the network core.
+      * No additional override is required for the RAM-backed ``slot2_partition``: starting with |NCS| v3.4.0, the default 256 KB size defined in the :file:`nrf/modules/mcuboot/flash_sim.overlay` file already matches the legacy ``mcuboot_primary_1`` partition.
+
+      The :ref:`fast_pair_locator_tag` sample uses exactly this layout on both supported nRF53 Series board targets and can be used as a reference.
+      If backwards compatibility with v3.3.0 deployments is not required, you can adjust the partition sizes to your application's needs as long as each slot pair (``slot0_partition`` / ``slot1_partition`` and ``s0_partition`` / ``slot2_partition`` / ``slot3_partition``) remains internally consistent.
 
 Libraries
 =========
