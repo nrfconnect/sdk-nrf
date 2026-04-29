@@ -3,3 +3,5 @@
 		zephyr,code-partition = &b0_partition;
 	};
 };
+
+b0_partition: &boot_partition {};
