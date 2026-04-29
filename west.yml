@@ -78,40 +78,8 @@ manifest:
         # the zephyr project.
         #
         # Please keep this list sorted alphabetically.
-        name-allowlist:
-          - canopennode
-          - chre
-          - cmsis
-          - cmsis-dsp
-          - cmsis-nn
-          - cmsis_6
-          - edtt
-          - fatfs
-          - hal_nordic
-          - hal_st # required for ST sensors (unrelated to STM32 MCUs)
-          - hal_tdk # required for Invensense sensors such as ICM42670
-          - hal_wurthelektronik
-          - hostap
-          - liblc3
-          - libmetal
-          - libsbc
-          - littlefs
-          - loramac-node
-          - lvgl
-          - lz4
-          - mipi-sys-t
-          - nanopb
-          - net-tools
-          - nrf_hw_models
-          - nrf_wifi
-          - open-amp
-          - percepio
-          - picolibc
-          - segger
-          - tf-m-tests
+        name-blocklist:
           - uoscore-uedhoc
-          - zcbor
-          - zscilib
 
     # NCS repositories.
     #
