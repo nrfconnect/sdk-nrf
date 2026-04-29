@@ -59,6 +59,65 @@ Recommended changes
 
 The following changes are recommended for your application to work optimally after the migration.
 
+Build and configuration system
+==============================
+
+Nordic SoC platform symbols (Haltium / Lumos)
+---------------------------------------------
+
+.. toggle::
+
+   The internal *Haltium* and *Lumos* platform names have been removed from the Nordic SoC integration in favor of the explicit Zephyr ``SOC_SERIES_*`` symbols.
+   Old symbols, headers, and macros are kept as deprecated aliases for one release cycle and emit a deprecation warning at build time.
+   Update your application as follows:
+
+   * Kconfig options:
+
+     * Replace ``CONFIG_NRF_PLATFORM_HALTIUM`` with :kconfig:option:`CONFIG_SOC_SERIES_NRF54H` or :kconfig:option:`CONFIG_SOC_SERIES_NRF92` (whichever applies).
+     * Replace ``CONFIG_NRF_PLATFORM_LUMOS`` with :kconfig:option:`CONFIG_SOC_SERIES_NRF54L` or :kconfig:option:`CONFIG_SOC_SERIES_NRF71` (whichever applies).
+     * Replace ``SB_CONFIG_NRF_HALTIUM_GENERATE_UICR`` with :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR` in your :file:`sysbuild.conf` file.
+
+   * C headers (:file:`zephyr/soc/nordic/common/`):
+
+     * Replace ``#include <haltium_power.h>`` with ``#include <soc_power.h>``.
+     * Replace ``#include <haltium_pm_s2ram.h>`` with ``#include <soc_pm_s2ram.h>``.
+
+   * C macros:
+
+     * Replace ``HALTIUM_PLATFORM_PSA_KEY_ID(...)`` with ``NRF_PLATFORM_PSA_KEY_ID(...)`` from :file:`include/psa/nrf_platform_key_ids.h`.
+
+   The following table summarizes the renames:
+
+   .. list-table:: Haltium / Lumos platform symbol renames
+      :widths: 40 40 20
+      :header-rows: 1
+
+      * - Old name
+        - New name
+        - Type
+      * - ``CONFIG_NRF_PLATFORM_HALTIUM``
+        - :kconfig:option:`CONFIG_SOC_SERIES_NRF54H` or :kconfig:option:`CONFIG_SOC_SERIES_NRF92`
+        - Kconfig
+      * - ``CONFIG_NRF_PLATFORM_LUMOS``
+        - :kconfig:option:`CONFIG_SOC_SERIES_NRF54L` or :kconfig:option:`CONFIG_SOC_SERIES_NRF71`
+        - Kconfig
+      * - ``SB_CONFIG_NRF_HALTIUM_GENERATE_UICR``
+        - :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR`
+        - Sysbuild Kconfig
+      * - :file:`<haltium_power.h>`
+        - :file:`<soc_power.h>`
+        - Header
+      * - :file:`<haltium_pm_s2ram.h>`
+        - :file:`<soc_pm_s2ram.h>`
+        - Header
+      * - ``HALTIUM_PLATFORM_PSA_KEY_ID()``
+        - ``NRF_PLATFORM_PSA_KEY_ID()``
+        - Macro
+
+   .. note::
+      The MDK-defined ``HALTIUM_XXAA`` and ``LUMOS_XXAA`` preprocessor symbols are managed by the MDK release schedule and are not affected by this migration.
+      Code that needs to distinguish hardware should use the corresponding ``NRF54H_SERIES``, ``NRF92_SERIES``, ``NRF54L_SERIES``, or ``NRF7120_ENGA_XXAA`` defines instead.
+
 Samples and applications
 ========================
 

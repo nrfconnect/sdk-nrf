@@ -43,7 +43,31 @@ Board support
 Build and configuration system
 ==============================
 
-|no_changes_yet_note|
+* Removed the internal Haltium and Lumos platform abstractions from the Nordic SoC integration.
+  All references to ``NRF_PLATFORM_HALTIUM`` and ``NRF_PLATFORM_LUMOS`` have been replaced with explicit checks for ``SOC_SERIES_NRF54H``, ``SOC_SERIES_NRF92``, ``SOC_SERIES_NRF54L``, or ``SOC_SERIES_NRF71``.
+
+  * Renamed Kconfig options and headers:
+
+    * ``SB_CONFIG_NRF_HALTIUM_GENERATE_UICR`` to :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR`.
+    * The ``HALTIUM_PLATFORM_PSA_KEY_ID()`` macro to ``NRF_PLATFORM_PSA_KEY_ID()`` (in :file:`include/psa/nrf_platform_key_ids.h`).
+    * :file:`<haltium_power.h>` to :file:`<soc_power.h>`.
+    * :file:`<haltium_pm_s2ram.h>` to :file:`<soc_pm_s2ram.h>`.
+
+  * Deprecated Kconfig options and headers:
+
+    * The ``CONFIG_NRF_PLATFORM_HALTIUM`` Kconfig option.
+      Use :kconfig:option:`CONFIG_SOC_SERIES_NRF54H` or :kconfig:option:`CONFIG_SOC_SERIES_NRF92` instead.
+    * The ``CONFIG_NRF_PLATFORM_LUMOS`` Kconfig option.
+      Use :kconfig:option:`CONFIG_SOC_SERIES_NRF54L` or :kconfig:option:`CONFIG_SOC_SERIES_NRF71` instead.
+    * The ``SB_CONFIG_NRF_HALTIUM_GENERATE_UICR`` Kconfig option (alias for :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR`).
+    * The ``HALTIUM_PLATFORM_PSA_KEY_ID()`` macro (alias for ``NRF_PLATFORM_PSA_KEY_ID()``).
+    * The :file:`<haltium_power.h>` and :file:`<haltium_pm_s2ram.h>` headers, which forward to the new headers.
+
+  See :ref:`migration_3.4` for migration instructions.
+
+  The deprecated symbols, headers, and macros remain available with a deprecation warning and are scheduled for removal in a future release.
+
+* Consolidated the previously per-SoC :file:`soc_power.c` and :file:`soc_pm_s2ram.c` sources for the nRF54H and nRF92 Series in a single shared location under :file:`zephyr/soc/nordic/common/`.
 
 Bootloaders and DFU
 ===================

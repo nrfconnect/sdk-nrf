@@ -131,8 +131,15 @@ You must generate a PERIPHCONF blob at build time.
 The Zephyr build invokes the :file:`gen_uicr.py` script (:file:`soc/nordic/common/uicr/gen_uicr.py` in the Zephyr tree) using ``nrf-regtool`` in the |NCS|'s implementation of :ref:`configuration_system_overview_sysbuild`.
 When the following Kconfig options are set:
 
-  * :kconfig:option:`CONFIG_NRF_HALTIUM_GENERATE_UICR` to ``y``
-  * :kconfig:option:`CONFIG_NRF_HALTIUM_UICR_PERIPHCONF` to ``y``
+  * In the |NCS| versions v3.1.0 through v3.3.x:
+
+    * :kconfig:option:`CONFIG_NRF_HALTIUM_GENERATE_UICR` to ``y``
+    * :kconfig:option:`CONFIG_NRF_HALTIUM_UICR_PERIPHCONF` to ``y``
+
+  * In the |NCS| version 3.4.x and later:
+
+    * :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR` to ``y``
+    * :kconfig:option:`CONFIG_GEN_UICR_PERIPHCONF` to ``y``
 
 the script does the following:
 
