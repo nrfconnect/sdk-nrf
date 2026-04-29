@@ -513,7 +513,9 @@ For a complete list of |NCS| specific commits, run:
    git log --oneline manifest-rev ^7a3b253ced
 
 The current |NCS| release is based on Zephyr v2.4.0.
-See the :ref:`Zephyr v2.4.0 release notes <zephyr:zephyr_2.4>` for the list of changes.
+See the `Zephyr v2.4.0 release notes`_ for the list of changes.
+
+.. _Zephyr v2.4.0 release notes: https://docs.zephyrproject.org/2.4.0/releases/release-notes-2.4.html
 
 Additions specific to |NCS|
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

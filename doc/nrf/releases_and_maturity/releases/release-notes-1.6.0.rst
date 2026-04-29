@@ -487,7 +487,9 @@ For a complete list of |NCS| specific commits, run:
    git log --oneline manifest-rev ^v2.6.0-rc1
 
 The current |NCS| release is based on Zephyr v2.6.0-rc1.
-See the :ref:`zephyr:zephyr_2.6` Release Notes for an overview of the most important changes inherited from upstream Zephyr.
+See the `Zephyr v2.6.0 release notes`_ for an overview of the most important changes inherited from upstream Zephyr.
+
+.. _Zephyr v2.6.0 release notes: https://docs.zephyrproject.org/2.6.0/releases/release-notes-2.6.html
 
 Zephyr Workqueue API Migration
 ------------------------------
