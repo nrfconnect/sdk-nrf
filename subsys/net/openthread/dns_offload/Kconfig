@@ -1,0 +1,31 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config OPENTHREAD_ZEPHYR_DNS_OFFLOAD
+	bool "Zephyr DNS offload using OpenThread DNS client"
+	depends on NET_SOCKETS_OFFLOAD
+	depends on OPENTHREAD_DNS_CLIENT || OPENTHREAD_RPC_CLIENT
+	help
+	  Builds ot_dns_offload_register(), which registers a Zephyr DNS offload
+	  path that uses the OpenThread DNS client (IPv4 A via NAT64 first, then
+	  IPv6 AAAA) and returns IPv6-only results for getaddrinfo().
+
+if OPENTHREAD_ZEPHYR_DNS_OFFLOAD
+
+config OPENTHREAD_ZEPHYR_DNS_OFFLOAD_SYS_INIT
+	bool "Auto-register OpenThread DNS offload via SYS_INIT"
+	default y
+	help
+	  Automatically register the OpenThread DNS offload at system initialization
+	  by calling ot_dns_offload_register() via SYS_INIT.
+
+config OPENTHREAD_ZEPHYR_DNS_OFFLOAD_SYS_INIT_PRIORITY
+	int "OpenThread DNS offload SYS_INIT priority"
+	depends on OPENTHREAD_ZEPHYR_DNS_OFFLOAD_SYS_INIT
+	default 91
+	help
+	  Priority level for the SYS_INIT call that registers the OpenThread DNS
+	  offload.
+
+endif # OPENTHREAD_ZEPHYR_DNS_OFFLOAD
