@@ -6801,6 +6801,15 @@ NCSDK-6832: SMP Server sample fails upon initialization
 
   **Workaround:** Set :kconfig:option:`CONFIG_MAIN_STACK_SIZE` to ``2048``.
 
+NCSDK-37741: Increased System On All Idle current on nRF54L series SoCs
+  An increased current consumption of approximately 150 µA at 3 V is observed while in System On All Idle current mode and GRTC is sourced from LFXO.
+
+  **Workaround:** To fix the issue, cherry-pick commit from the upstream `Zephyr PR #104259`_.
+
+  **Affected platforms:** nRF54L15, nRF54L10, nRF54L05, nRF54LM20, nRF54LS05, nRF54LV10A
+
+.. rst-class:: v3-2-0 v3-2-1 v3-2-2 v3-2-3 v3-2-4
+
 .. _known_issues_other:
 
 Other issues
