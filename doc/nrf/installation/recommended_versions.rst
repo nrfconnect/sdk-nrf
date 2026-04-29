@@ -36,9 +36,9 @@ For OS support for additional software tools from Nordic Semiconductor, see :ref
   * - `Linux - Ubuntu 24.04 LTS`_
     - Built and tested with :ref:`Twister <running_unit_tests>`. Comprehensive testing with Nordic Semiconductor hardware.
     - Not supported.
-  * - `macOS 14`_
-    - Built and tested with :ref:`Twister <running_unit_tests>`.
+  * - `macOS 15`_
     - Only toolchain provided.
+    - Built and tested with :ref:`Twister <running_unit_tests>`.
 
 .. os_table_end
 
