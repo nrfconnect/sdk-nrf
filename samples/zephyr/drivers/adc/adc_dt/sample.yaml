@@ -13,7 +13,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf9251dk/nrf9251/cpuapp
-
+      - nrf9251dk/nrf9251/cpuppr
     harness: console
     timeout: 10
     harness_config:
