@@ -19,7 +19,7 @@ config SECURE_BOOT
 config SB_IMAGE_BOOT_OFFSET
 	hex
 	depends on !PARTITION_MANAGER_ENABLED
-	default 0x800 if SOC_SERIES_NRF54L
+	default 0x800 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	default 0x200 if SOC_SERIES_NRF53 || SOC_SERIES_NRF91
 	default 0x200 if SOC_SERIES_NRF52
 	help
@@ -83,7 +83,8 @@ menuconfig IS_SECURE_BOOTLOADER
 	select SECURE_BOOT_STORAGE
 	select USE_DT_CODE_PARTITION
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51
-	imply NRFX_NVMC if !SOC_SERIES_NRF54L
+	imply NRFX_MRAMC if SOC_SERIES_NRF71
+	imply NRFX_NVMC if !SOC_SERIES_NRF54L && !SOC_SERIES_NRF71
 	help
 	  This option is set by the first stage bootloader app to include all
 	  files and set all the options required.
@@ -116,6 +117,7 @@ config SB_DISABLE_SELF_RWX_SUPPORTED
 	default y if SOC_NRF54LV10A_CPUAPP || SOC_NRF54LC10A_CPUAPP
 	default y if SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP
 	default y if SOC_NRF54LS05B_CPUAPP
+	default y if SOC_SERIES_NRF71
 
 config SB_DISABLE_SELF_RWX
 	bool "Disable read and execution on self NVM"
@@ -142,6 +144,7 @@ config SB_DISABLE_NEXT_W
 	  NSIB disables writes on next stage in bootloading chain.
 	  It uses RRAMC's region 4 and is limited to 31KB for nRF54L15, nRF54L10 and nRF54L05
 	  and to 127KB for nRF54LV10a, nRF54LC10a and nRF54LM20 (A/B).
+	  On nRF71 it uses MRAMC's region 4.
 
 config SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
 	bool "HW monotonic version counter rollback protection (informative only, do not change)"
