@@ -469,11 +469,7 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	}
 
 #ifdef CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
-#if defined(CONFIG_NRFX_NVMC)
-	uint16_t stored_version;
-#elif defined(CONFIG_NRFX_RRAMC)
-	uint32_t stored_version;
-#endif
+	counter_t stored_version;
 
 	int err = get_monotonic_version(&stored_version);
 
