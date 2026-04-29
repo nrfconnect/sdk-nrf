@@ -1,0 +1,11 @@
+tests:
+  nrf.extended.drivers.gpio.get_direction:
+    tags:
+      - drivers
+      - gpio
+      - ci_tests_zephyr_drivers_gpio
+    harness: ztest
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuppr
