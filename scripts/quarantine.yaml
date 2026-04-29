@@ -52,3 +52,9 @@
   platforms:
     - nrf5340_audio_dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/OCT-3708"
+
+- scenarios:
+    - sample.bluetooth.fast_pair.locator_tag.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "Needs alignment to work with IronSide SE"
