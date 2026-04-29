@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &cpuapp_boot_partition;
+/delete-node/ &mpcconf_partition;
+/delete-node/ &periphconf_partition;
+
+&mram1x {
+	partitions {
+		/* Update the boot partition to reserve the final 0.5 kB for PERIPHCONF/MPCCONF */
+		cpuapp_boot_partition: boot_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x30000 (DT_SIZE_K(64) - 512)>;
+		};
+
+		/* UICR.MPCCONF blob. */
+		mpcconf_partition: partition@3fe00 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3fe00 48>;
+		};
+
+		/* UICR.PERIPHCONF blob (only used for MCUboot's configuration). */
+		periphconf_partition: partition@3fe30 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3fe30 464>;
+		};
+	};
+};

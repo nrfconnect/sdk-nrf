@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ */
+
+/*
+ * Standalone MCUboot DTS overlay for the serial recovery backward
+ * compatibility test on nrf54h20dk.
+ *
+ * This file is intentionally NOT including the v3.2-aligned application
+ * overlay (boards/nrf54h20dk_nrf54h20_cpuapp_larger_mcuboot.overlay):
+ *
+ *   - The application slot0 must live at 0x40000 to match the v3.2
+ *     MCUboot already provisioned on the device, so the application
+ *     overlay enforces the v3.2 layout (boot 0x30000/64K).
+ *
+ *   - The v3.3 MCUboot binary itself does not fit in 64K (overflows by
+ *     ~1.3K), but that does not matter because the MCUboot artifact
+ *     produced here is NEVER flashed; serial recovery only deploys the
+ *     application's signed image to slot0. Therefore MCUboot is allowed
+ *     to compile against the v3.3 default layout (boot 0x30000/72K)
+ *     to satisfy the linker.
+ *
+ * The bootchain DTS keeps the same UUID-VID/UUID-CID values so the
+ * application is signed with what v3.2 MCUboot expects.
+ */
+
+#include "../../../dts/nrf54h20dk_nrf54h20_bootchain.dtsi"
+
+/delete-node/ &cpuapp_boot_partition;
+/delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &cpuapp_slot1_partition;
+
+&mram1x {
+	partitions {
+		cpuapp_boot_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x30000 DT_SIZE_K(72)>;
+		};
+
+		cpuapp_slot0_partition: partition@42000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x42000 DT_SIZE_K(320)>;
+		};
+
+		cpuapp_slot1_partition: partition@100000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x100000 DT_SIZE_K(320)>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
+
+boot_partition: &cpuapp_boot_partition {
+	label = "mcuboot";
+};
+
+slot0_partition: &cpuapp_slot0_partition {
+	label = "image-0";
+};
+
+slot1_partition: &cpuapp_slot1_partition {
+	label = "image-1";
+};

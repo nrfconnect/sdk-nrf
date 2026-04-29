@@ -1,0 +1,53 @@
+common:
+  sysbuild: true
+  build_only: true
+  tags:
+    - mcumgr
+
+# nrf54h20dk direct_xip_withrevert:
+#   In v3.3 the merged-slot Direct XIP bootchain assigns a different UUID-CID
+#   per slot (nRF54H20_sample_merged_slot_0 / _1). v3.2 MCUboot expects the
+#   same CID "nRF54H20_sample_app" on both slots, so the v3.2-aligned values
+#   are restored in dts/nrf54h20dk_nrf54h20_bootchain_merged.dtsi.
+#   On main, the paired merged-slot memory-map DTS must also keep the current
+#   `zephyr,mapped-partition` node shape so sysbuild packaging and signing
+#   helpers accept the partition nodes.
+#
+# nrf54h20dk serial_recovery (FILE_SUFFIX=larger_mcuboot):
+#   v3.2 MCUboot already on the device uses a 64K boot partition with slot0
+#   at 0x40000, while v3.3 defaults to a 72K boot partition with slot0 at
+#   0x42000. The application overlay
+#   (boards/nrf54h20dk_nrf54h20_cpuapp_larger_mcuboot.overlay) pins slot0 to
+#   the v3.2 address so the signed image lands where v3.2 MCUboot will boot
+#   it.
+#
+# nrf54l15dk serial_recovery (FILE_SUFFIX=larger_mcuboot):
+#   v3.2 MCUboot uses an 80K boot partition (slot0 starts at 0x14800), but
+#   the v3.3 default larger_mcuboot conf bumped CONFIG_PM_PARTITION_SIZE_MCUBOOT
+#   to 0x16000 (88K) which shifts slot0 to 0x16800.
+#   nrf54l15dk_nrf54l15_cpuapp_larger_mcuboot.conf restores the v3.2-aligned
+#   value 0x14000. The v3.3 MCUboot binary (~68K) still fits in 80K.
+
+tests:
+  mcuboot.backward_compatibility.smp_svr.bt.nrf54h20dk.direct_xip_withrevert:
+    extra_args:
+      - FILE_SUFFIX="merged_slot"
+      - EXTRA_CONF_FILE="extra-bt.conf"
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
+      - mcuboot_CONFIG_MULTITHREADING=y
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  mcuboot.backward_compatibility.smp_svr.serial_recovery:
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_MCUBOOT_INDICATION_LED=y
+      - mcuboot_CONFIG_BOOT_SERIAL_NO_APPLICATION=y
+      - FILE_SUFFIX=larger_mcuboot
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
