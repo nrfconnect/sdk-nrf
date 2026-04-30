@@ -26,20 +26,20 @@
 #error "No valid algorithm for key agreement"
 #endif
 
-#define PSA_LITE_KEY_MAX_SIZE	MAX(CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE,       \
-				    MAX(CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE,   \
-					CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE))
+#define PSA_CORE_LITE_KEY_MAX_SIZE	MAX(CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE,   \
+					MAX(CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE,   \
+					    CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE))
 
-#define PSA_LITE_KEY_ID_NULL		PSA_KEY_ID_NULL
-#define PSA_LITE_KEY_ID_MIN		PSA_KEY_ID_VENDOR_MIN
-#define PSA_LITE_KEY_ID_MAX		PSA_LITE_KEY_ID_MIN + \
+#define PSA_CORE_LITE_KEY_ID_NULL	PSA_KEY_ID_NULL
+#define PSA_CORE_LITE_KEY_ID_MIN	PSA_KEY_ID_VENDOR_MIN
+#define PSA_CORE_LITE_KEY_ID_MAX	PSA_CORE_LITE_KEY_ID_MIN + \
 					CONFIG_PSA_CORE_LITE_MAX_VOLATILE_KEYS_COUNT - 1u
 
 typedef struct {
 	psa_key_attributes_t key_attributes;
-	uint8_t key[PSA_LITE_KEY_MAX_SIZE];
+	uint8_t key[PSA_CORE_LITE_KEY_MAX_SIZE];
 	size_t key_size;
-} psa_lite_key_slot_t;
+} psa_core_lite_key_slot_t;
 
 /**
  * @brief Check if provided key_id corresponds to volatile key.
@@ -49,21 +49,21 @@ typedef struct {
  * @retval true		Provided key is a volatile key.
  * @retval false	Provided key is not a volatile key.
  */
-static inline bool psa_lite_key_id_is_volatile(mbedtls_svc_key_id_t key_id)
+static inline bool psa_core_lite_key_id_is_volatile(mbedtls_svc_key_id_t key_id)
 {
-	return (key_id >= PSA_LITE_KEY_ID_MIN) && (key_id <= PSA_LITE_KEY_ID_MAX);
+	return (key_id >= PSA_CORE_LITE_KEY_ID_MIN) && (key_id <= PSA_CORE_LITE_KEY_ID_MAX);
 }
 
 /**
  * @brief Returns a pointer to the previously allocated volatile key slot or
  *	  allocates a new slot.
  *
- * @note If the provided key id is set to PSA_LITE_KEY_ID_NULL, a new
+ * @note If the provided key id is set to PSA_CORE_LITE_KEY_ID_NULL, a new
  *	 slot will be allocated and key id will be set to the value
  *	 corresponding to this slot.
  *
  * @param[in, out] key_id	Key id corresponding to the slot or id
- *				with PSA_LITE_KEY_ID_NULL value.
+ *				with PSA_CORE_LITE_KEY_ID_NULL value.
  * @param[out] slot		A pointer to the existing or newly allocated
  *				volatile key slot.
  *
@@ -72,18 +72,19 @@ static inline bool psa_lite_key_id_is_volatile(mbedtls_svc_key_id_t key_id)
  * @retval PSA_ERROR_DOES_NOT_EXIST
  * @retval PSA_ERROR_INSUFFICIENT_MEMORY
  */
-psa_status_t psa_lite_get_key_slot(mbedtls_svc_key_id_t *key_id, psa_lite_key_slot_t **slot);
+psa_status_t psa_core_lite_get_key_slot(mbedtls_svc_key_id_t *key_id,
+					psa_core_lite_key_slot_t **slot);
 
 /**
  * @brief Clears key slot that has been allocated for the specified key id.
  *
  * @param[in] key_id	Volatile key id that corresponds to the slot that must be cleared.
  */
-void psa_lite_free_key_slot(mbedtls_svc_key_id_t key_id);
+void psa_core_lite_free_key_slot(mbedtls_svc_key_id_t key_id);
 
 /**
  * @brief Clear all volatile key slots
  */
-void psa_lite_free_all_key_slots(void);
+void psa_core_lite_free_all_key_slots(void);
 
 #endif /* PSA_CORE_LITE_VOLATILE_KEY_STORAGE_H_ */
