@@ -328,6 +328,14 @@ Bluetooth Fast Pair samples
 
   Support for this target was already dropped during the IronSide SE migration in the |NCS| v3.1.0 release.
 
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Updated the UI thread handling for reference board targets with a speaker by moving the speaker control into the common indication thread.
+    The signaling is now done using the :ref:`zephyr:events` API.
+
+  * Fixed the ringing status indications with the green LED flashes for reference board targets.
+    A ringing status indication was often skipped during the motion detection event.
+
 Cellular samples
 ----------------
 

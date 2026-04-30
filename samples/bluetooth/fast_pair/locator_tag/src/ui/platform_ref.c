@@ -16,13 +16,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 
-#define BTN_ACTION_IND_LED_FLASH_SHORT_ON_MS		40
-#define BTN_ACTION_IND_LED_FLASH_SHORT_OFF_MS		200
-#define BTN_ACTION_IND_LED_FLASH_MID_ON_MS		500
-#define BTN_ACTION_IND_LED_FLASH_MID_OFF_MS		200
-#define BTN_ACTION_IND_LED_FLASH_LONG_ON_MS		1000
-#define BTN_ACTION_IND_LED_FLASH_LONG_OFF_MS		200
-
 /* In platforms with only LED indication, the added clearance off time visually separates
  * the button action indication from the previous LED state.
  * In platforms with speaker indication, the clearance off time is not needed as the button
@@ -31,17 +24,17 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
  * as the sound indication.
  */
 #ifdef CONFIG_APP_UI_USE_HW_SPEAKER
-#define BTN_ACTION_IND_LED_FLASH_CLEARANCE_OFF_MS	0
+#define IND_CLEARANCE_OFF_MS		0
 #else
-#define BTN_ACTION_IND_LED_FLASH_CLEARANCE_OFF_MS	250
+#define IND_CLEARANCE_OFF_MS		250
 #endif
 
-#define BTN_ACTION_IND_SPEAKER_BEEP_SHORT_ON_MS		20
-#define BTN_ACTION_IND_SPEAKER_BEEP_SHORT_OFF_MS	100
-#define BTN_ACTION_IND_SPEAKER_BEEP_MID_ON_MS		250
-#define BTN_ACTION_IND_SPEAKER_BEEP_MID_OFF_MS		100
-#define BTN_ACTION_IND_SPEAKER_BEEP_LONG_ON_MS		1000
-#define BTN_ACTION_IND_SPEAKER_BEEP_LONG_OFF_MS		100
+#define BTN_ACTION_IND_SHORT_ON_MS		40
+#define BTN_ACTION_IND_SHORT_OFF_MS		200
+#define BTN_ACTION_IND_MID_ON_MS		500
+#define BTN_ACTION_IND_MID_OFF_MS		200
+#define BTN_ACTION_IND_LONG_ON_MS		1000
+#define BTN_ACTION_IND_LONG_OFF_MS		200
 
 /* Reference LED hardware assignments. */
 #define LED_COLOR_RED				DK_LED1
@@ -52,8 +45,8 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 #define LED_RGB_DEF(...)			{__VA_ARGS__, LED_COLOR_NONE}
 #define LED_RGB_DEF_LEN				4
 
-
 #define LED_RINGING_STATUS			LED_COLOR_ID_GREEN
+#define LED_INDICATOR_STATUS			LED_COLOR_ID_GREEN
 
 /* Reference state status LEDs. */
 #define LED_PROVISIONED				LED_COLOR_ID_BLUE
@@ -65,11 +58,11 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 
 /* UI state status LEDs handling. */
 #define LED_BLINK_STATE_STATUS_ON_MS		500
-#define LED_THREAD_INTERVAL_MS			1000
-#define LED_THREAD_PRIORITY			K_PRIO_PREEMPT(0)
-#define LED_THREAD_STACK_SIZE			512
+#define INDICATION_THREAD_INTERVAL_MS		1000
+#define INDICATION_THREAD_PRIORITY		K_PRIO_PREEMPT(0)
+#define INDICATION_THREAD_STACK_SIZE		512
 #define LED_BLINK_STATE_RING_ON_OFF_MS		125
-#define LED_BLINK_STATE_RING_ON_OFF_CNT		4
+#define LED_BLINK_STATE_RING_ON_OFF_CNT		1
 
 /* Reference button hardware assignments. */
 #define BTN_MULTI_ACTION			DK_BTN1_MSK
@@ -84,6 +77,24 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 #define BTN_DFU_MODE_ENTER_START_MS		7000
 #define BTN_NOOP_LAST_START_MS			10000
 
+#define BTN_PRESS_FP_ADV_MODE_CHANGE_TIME	\
+	(BTN_FP_ADV_MODE_CHANGE_START_MS - BTN_NOOP_FIRST_START_MS)
+#define BTN_PRESS_ID_MODE_ENTER_TIME		\
+	(BTN_ID_MODE_ENTER_START_MS - BTN_FP_ADV_MODE_CHANGE_START_MS)
+#define BTN_PRESS_RECOVERY_MODE_ENTER_TIME	\
+	(BTN_RECOVERY_MODE_ENTER_START_MS - BTN_ID_MODE_ENTER_START_MS)
+#define BTN_PRESS_DFU_MODE_ENTER_TIME		\
+	(BTN_DFU_MODE_ENTER_START_MS - BTN_RECOVERY_MODE_ENTER_START_MS)
+#define BTN_PRESS_NOOP_LAST_TIME		\
+	(BTN_NOOP_LAST_START_MS - BTN_DFU_MODE_ENTER_START_MS)
+
+#define BTN_PRESS_MAX_TIME					\
+	MAX_FROM_LIST(BTN_PRESS_FP_ADV_MODE_CHANGE_TIME,	\
+		      BTN_PRESS_ID_MODE_ENTER_TIME,		\
+		      BTN_PRESS_RECOVERY_MODE_ENTER_TIME,	\
+		      BTN_PRESS_DFU_MODE_ENTER_TIME,		\
+		      BTN_PRESS_NOOP_LAST_TIME)
+
 #define BTN_RELEASE_DEF(_request, _start_ms, _ind_cnt, _ind_duration)	\
 	{								\
 		.request = _request,					\
@@ -93,27 +104,29 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_DBG);
 			.duration = _ind_duration},			\
 	}
 
-/* Flash request encoding */
-#define LED_FLASH_REQUEST_CNT_POS		0
-#define LED_FLASH_REQUEST_CNT_MASK		0xFF
-#define LED_FLASH_REQUEST_ON_MS_POS		8
-#define LED_FLASH_REQUEST_ON_MS_MASK		0xFFF
-#define LED_FLASH_REQUEST_OFF_MS_POS		20
-#define LED_FLASH_REQUEST_OFF_MS_MASK		0xFFF
+/* Indication request encoding */
+#define BTN_ACTION_IND_REQUEST_CNT_POS			0
+#define BTN_ACTION_IND_REQUEST_CNT_MASK			0xFF
+#define BTN_ACTION_IND_REQUEST_ON_MS_POS		8
+#define BTN_ACTION_IND_REQUEST_ON_MS_MASK		0xFFF
+#define BTN_ACTION_IND_REQUEST_OFF_MS_POS		20
+#define BTN_ACTION_IND_REQUEST_OFF_MS_MASK		0xFFF
 
-#define LED_FLASH_REQUEST_ENCODE(_cnt, _on_ms, _off_ms)					\
-	((((_cnt) & LED_FLASH_REQUEST_CNT_MASK) << LED_FLASH_REQUEST_CNT_POS) |		\
-	 (((_on_ms) & LED_FLASH_REQUEST_ON_MS_MASK) << LED_FLASH_REQUEST_ON_MS_POS) |	\
-	 (((_off_ms) & LED_FLASH_REQUEST_OFF_MS_MASK) << LED_FLASH_REQUEST_OFF_MS_POS))
+#define BTN_ACTION_IND_REQUEST_ENCODE(_cnt, _on_ms, _off_ms)					\
+	((((_cnt) & BTN_ACTION_IND_REQUEST_CNT_MASK) << BTN_ACTION_IND_REQUEST_CNT_POS) |	\
+	 (((_on_ms) & BTN_ACTION_IND_REQUEST_ON_MS_MASK) << BTN_ACTION_IND_REQUEST_ON_MS_POS) |	\
+	 (((_off_ms) & BTN_ACTION_IND_REQUEST_OFF_MS_MASK) << BTN_ACTION_IND_REQUEST_OFF_MS_POS))
 
+#define BTN_ACTION_IND_REQUEST_DECODE_CNT(req)		\
+	(((req) >> BTN_ACTION_IND_REQUEST_CNT_POS) & BTN_ACTION_IND_REQUEST_CNT_MASK)
+#define BTN_ACTION_IND_REQUEST_DECODE_ON_MS(req)	\
+	(((req) >> BTN_ACTION_IND_REQUEST_ON_MS_POS) & BTN_ACTION_IND_REQUEST_ON_MS_MASK)
+#define BTN_ACTION_IND_REQUEST_DECODE_OFF_MS(req)	\
+	(((req) >> BTN_ACTION_IND_REQUEST_OFF_MS_POS) & BTN_ACTION_IND_REQUEST_OFF_MS_MASK)
 
-#define LED_FLASH_REQUEST_DECODE_CNT(req)	\
-	(((req) >> LED_FLASH_REQUEST_CNT_POS) & LED_FLASH_REQUEST_CNT_MASK)
-#define LED_FLASH_REQUEST_DECODE_ON_MS(req)	\
-	(((req) >> LED_FLASH_REQUEST_ON_MS_POS) & LED_FLASH_REQUEST_ON_MS_MASK)
-#define LED_FLASH_REQUEST_DECODE_OFF_MS(req)	\
-	(((req) >> LED_FLASH_REQUEST_OFF_MS_POS) & LED_FLASH_REQUEST_OFF_MS_MASK)
-
+#define IND_EVENT_BTN_ACTION		BIT(0)
+#define IND_EVENT_RINGING_STATUS	BIT(1)
+#define IND_EVENT_MASK			(IND_EVENT_BTN_ACTION | IND_EVENT_RINGING_STATUS)
 
 struct ind_param {
 	/* Number of indications. */
@@ -139,7 +152,7 @@ enum led_color_id {
 	LED_COLOR_ID_COUNT,
 };
 
-/** Button action indicator pattern. */
+/* Button action indicator pattern. */
 struct btn_action_ind {
 	/* Number of indications. */
 	uint8_t cnt;
@@ -154,24 +167,24 @@ struct btn_action_ind {
 	} duration;
 };
 
-/** Button release action. */
+/* Button release action. */
 struct btn_release {
-	/** UI request which will be sent. */
+	/* UI request which will be sent. */
 	enum app_ui_request request;
 
-	/** Threshold from which this release action will be proceeded. */
+	/* Threshold from which this release action will be proceeded. */
 	uint32_t start_ms;
 
-	/** Indicator when the threshold will be reached. */
+	/* Indicator when the threshold will be reached. */
 	struct btn_action_ind action_ind;
 };
 
-/** State to LED ID map. */
+/* State to LED ID map. */
 struct led_state_id_map {
-	/** UI state on which the related LED should blink. */
+	/* UI state on which the related LED should blink. */
 	enum app_ui_state state;
 
-	/** UI state related LED. */
+	/* UI state related LED. */
 	enum led_color_id id;
 };
 
@@ -202,9 +215,12 @@ static const struct btn_release btn_release_actions[] = {
 			1,
 			BTN_ACTION_IND_DURATION_MID),
 };
+
+/* Last button release action is a no-op used to indicate the end of the button press sequence. */
+#define BTN_RELEASE_ACTION_COUNT	(ARRAY_SIZE(btn_release_actions) - 1)
+
 static void btn_press_beep_work_handle(struct k_work *w);
 static K_WORK_DELAYABLE_DEFINE(btn_press_beep_work, btn_press_beep_work_handle);
-static bool btn_pressed;
 
 static ATOMIC_DEFINE(ui_state_status, APP_UI_STATE_COUNT);
 static const struct led_state_id_map led_state_id_maps[] = {
@@ -216,48 +232,35 @@ static const struct led_state_id_map led_state_id_maps[] = {
 	{.state = APP_UI_STATE_MOTION_DETECTOR_ACTIVE,	.id = LED_MOTION_DETECTOR_ACTIVE},
 };
 
-static atomic_t led_flash_request = ATOMIC_INIT(0);
-static K_SEM_DEFINE(led_flash_request_sem, 0, 1);
+static K_EVENT_DEFINE(ind_events);
+static atomic_t btn_action_ind_request = ATOMIC_INIT(0);
 
-static atomic_val_t led_flash_request_encode(const struct ind_param *param)
+static atomic_val_t btn_action_ind_request_encode(const struct ind_param *param)
 {
 	__ASSERT_NO_MSG(param);
-	__ASSERT_NO_MSG(param->cnt <= LED_FLASH_REQUEST_CNT_MASK);
-	__ASSERT_NO_MSG(param->on_ms <= LED_FLASH_REQUEST_ON_MS_MASK);
-	__ASSERT_NO_MSG(param->off_ms <= LED_FLASH_REQUEST_OFF_MS_MASK);
+	__ASSERT_NO_MSG(param->cnt <= BTN_ACTION_IND_REQUEST_CNT_MASK);
+	__ASSERT_NO_MSG(param->on_ms <= BTN_ACTION_IND_REQUEST_ON_MS_MASK);
+	__ASSERT_NO_MSG(param->off_ms <= BTN_ACTION_IND_REQUEST_OFF_MS_MASK);
 
-	return LED_FLASH_REQUEST_ENCODE(param->cnt, param->on_ms, param->off_ms);
+	return BTN_ACTION_IND_REQUEST_ENCODE(param->cnt, param->on_ms, param->off_ms);
 }
 
-static struct ind_param led_flash_request_decode(atomic_val_t req)
+static struct ind_param btn_action_ind_request_decode(atomic_val_t req)
 {
 	struct ind_param param = {
-		.cnt = LED_FLASH_REQUEST_DECODE_CNT(req),
-		.on_ms = LED_FLASH_REQUEST_DECODE_ON_MS(req),
-		.off_ms = LED_FLASH_REQUEST_DECODE_OFF_MS(req),
+		.cnt = BTN_ACTION_IND_REQUEST_DECODE_CNT(req),
+		.on_ms = BTN_ACTION_IND_REQUEST_DECODE_ON_MS(req),
+		.off_ms = BTN_ACTION_IND_REQUEST_DECODE_OFF_MS(req),
 	};
 
 	return param;
 }
 
-static void led_flash_indicate_request(struct ind_param *param)
+static void btn_action_ind_request_set(struct ind_param *param)
 {
 	__ASSERT_NO_MSG(param);
 
-	atomic_set(&led_flash_request, led_flash_request_encode(param));
-	k_sem_give(&led_flash_request_sem);
-}
-
-static void speaker_beep_play(struct ind_param *param)
-{
-	__ASSERT_NO_MSG(param);
-
-	for (uint8_t i = 0; i < param->cnt; i++) {
-		app_ui_speaker_on();
-		k_msleep(param->on_ms);
-		app_ui_speaker_off();
-		k_msleep(param->off_ms);
-	}
+	atomic_set(&btn_action_ind_request, btn_action_ind_request_encode(param));
 }
 
 static uint32_t btn_work_timeout_get(int8_t idx)
@@ -275,33 +278,30 @@ static uint32_t btn_work_timeout_get(int8_t idx)
 
 static void btn_action_ind_handle(const struct btn_action_ind *req)
 {
-	struct ind_param param_led;
-	struct ind_param param_spk;
+	struct ind_param param;
 
 	switch (req->duration) {
 	case BTN_ACTION_IND_DURATION_SHORT:
-		param_led.on_ms = BTN_ACTION_IND_LED_FLASH_SHORT_ON_MS;
-		param_led.off_ms = BTN_ACTION_IND_LED_FLASH_SHORT_OFF_MS;
-		param_spk.on_ms = BTN_ACTION_IND_SPEAKER_BEEP_SHORT_ON_MS;
-		param_spk.off_ms = BTN_ACTION_IND_SPEAKER_BEEP_SHORT_OFF_MS;
+		param.on_ms = BTN_ACTION_IND_SHORT_ON_MS;
+		param.off_ms = BTN_ACTION_IND_SHORT_OFF_MS;
 		break;
 
 	case BTN_ACTION_IND_DURATION_MID:
-		param_led.on_ms = BTN_ACTION_IND_LED_FLASH_MID_ON_MS;
-		param_led.off_ms = BTN_ACTION_IND_LED_FLASH_MID_OFF_MS;
-		param_spk.on_ms = BTN_ACTION_IND_SPEAKER_BEEP_MID_ON_MS;
-		param_spk.off_ms = BTN_ACTION_IND_SPEAKER_BEEP_MID_OFF_MS;
+		param.on_ms = BTN_ACTION_IND_MID_ON_MS;
+		param.off_ms = BTN_ACTION_IND_MID_OFF_MS;
 		break;
 
 	case BTN_ACTION_IND_DURATION_LONG:
-		param_led.on_ms = BTN_ACTION_IND_LED_FLASH_LONG_ON_MS;
-		param_led.off_ms = BTN_ACTION_IND_LED_FLASH_LONG_OFF_MS;
-		param_spk.on_ms = BTN_ACTION_IND_SPEAKER_BEEP_LONG_ON_MS;
-		param_spk.off_ms = BTN_ACTION_IND_SPEAKER_BEEP_LONG_OFF_MS;
+		param.on_ms = BTN_ACTION_IND_LONG_ON_MS;
+		param.off_ms = BTN_ACTION_IND_LONG_OFF_MS;
 		break;
 
 	case BTN_ACTION_IND_DURATION_COUNT:
 		__ASSERT_NO_MSG(!req->cnt);
+		/* Post the button event to the indication thread
+		 * in order to stop other indications.
+		 */
+		k_event_post(&ind_events, IND_EVENT_BTN_ACTION);
 		return;
 
 	default:
@@ -309,14 +309,10 @@ static void btn_action_ind_handle(const struct btn_action_ind *req)
 		break;
 	}
 
-	param_led.cnt = req->cnt;
-	param_spk.cnt = req->cnt;
+	param.cnt = req->cnt;
 
-	led_flash_indicate_request(&param_led);
-
-	if (IS_ENABLED(CONFIG_APP_UI_USE_HW_SPEAKER)) {
-		speaker_beep_play(&param_spk);
-	}
+	btn_action_ind_request_set(&param);
+	k_event_post(&ind_events, IND_EVENT_BTN_ACTION);
 }
 
 static void btn_press_beep_work_handle(struct k_work *w)
@@ -339,9 +335,6 @@ static void btn_handle(uint32_t button_state, uint32_t has_changed)
 {
 	if (has_changed & BTN_MULTI_ACTION) {
 		if (button_state & BTN_MULTI_ACTION) {
-			/* On button press */
-			btn_pressed = true;
-
 			/* Schedule speaker notifications & btn_idx counting on each threshold. */
 			k_work_reschedule(&btn_press_beep_work,
 					  K_MSEC(btn_work_timeout_get(btn_idx + 1)));
@@ -351,8 +344,7 @@ static void btn_handle(uint32_t button_state, uint32_t has_changed)
 				app_ui_request_broadcast(APP_UI_REQUEST_RINGING_STOP);
 			}
 		} else {
-			/* On button release */
-			btn_pressed = false;
+			bool post_event;
 
 			/* Reference platform has only one button which is shared with the factory
 			 * reset action and also handled in the bootup_btn_handle function.
@@ -370,8 +362,14 @@ static void btn_handle(uint32_t button_state, uint32_t has_changed)
 				}
 			}
 
+			post_event = (btn_idx < BTN_RELEASE_ACTION_COUNT);
+
 			/* Action has been completed, consume. */
 			btn_idx = -1;
+
+			if (post_event) {
+				k_event_post(&ind_events, IND_EVENT_BTN_ACTION);
+			}
 		}
 	}
 }
@@ -411,38 +409,55 @@ static void led_drive(enum led_color_id color, bool active)
 	}
 }
 
-static void led_reset(void)
+static void speaker_state_set(bool active)
 {
-	dk_set_led(LED_COLOR_RED, false);
-	dk_set_led(LED_COLOR_GREEN, false);
-	dk_set_led(LED_COLOR_BLUE, false);
+	if (!IS_ENABLED(CONFIG_APP_UI_USE_HW_SPEAKER)) {
+		return;
+	}
+
+	if (active) {
+		app_ui_speaker_on();
+	} else {
+		app_ui_speaker_off();
+	}
 }
 
-static bool led_sleep_interruptible(uint32_t ms)
+static uint32_t indication_sleep_interruptible(uint32_t ms, uint32_t abort_mask)
 {
-	return k_sem_take(&led_flash_request_sem, K_MSEC(ms)) == 0;
+	__ASSERT_NO_MSG(abort_mask);
+
+	if (ms == 0) {
+		return 0;
+	}
+
+	return k_event_wait_safe(&ind_events, abort_mask, false, K_MSEC(ms));
 }
 
-static bool led_blink_interruptible(uint8_t color, struct ind_param *param)
+static uint32_t led_blink_interruptible(uint8_t color, struct ind_param *param, uint32_t abort_mask)
 {
 	__ASSERT_NO_MSG(param);
+	__ASSERT_NO_MSG(abort_mask);
+
+	uint32_t events;
 
 	for (uint8_t i = 0; i < param->cnt; i++) {
 		led_drive(color, true);
-		if (led_sleep_interruptible(param->on_ms)) {
+		events = indication_sleep_interruptible(param->on_ms, abort_mask);
+		if (events) {
 			led_drive(color, false);
-			return true;
+			return events;
 		}
 
 		led_drive(color, false);
-		if (led_sleep_interruptible(param->off_ms)) {
-			return true;
+		events = indication_sleep_interruptible(param->off_ms, abort_mask);
+		if (events) {
+			return events;
 		}
 	}
-	return false;
+	return 0;
 }
 
-static bool led_blink_once_interruptible(uint8_t color, uint32_t on_ms)
+static uint32_t led_blink_once_interruptible(uint8_t color, uint32_t on_ms, uint32_t abort_mask)
 {
 	struct ind_param param = {
 		.cnt = 1,
@@ -450,99 +465,199 @@ static bool led_blink_once_interruptible(uint8_t color, uint32_t on_ms)
 		.off_ms = 0
 	};
 
-	return led_blink_interruptible(color, &param);
+	return led_blink_interruptible(color, &param, abort_mask);
 }
 
-static void led_blink(uint8_t color, struct ind_param *param)
+static uint32_t led_speaker_indicate_interruptible(uint8_t color,
+						   struct ind_param *param,
+						   uint32_t abort_mask)
+{
+	__ASSERT_NO_MSG(param);
+	__ASSERT_NO_MSG(abort_mask);
+
+	uint32_t events;
+
+	for (uint8_t i = 0; i < param->cnt; i++) {
+		speaker_state_set(true);
+		led_drive(color, true);
+		events = indication_sleep_interruptible(param->on_ms, abort_mask);
+		if (events) {
+			speaker_state_set(false);
+			led_drive(color, false);
+			return events;
+		}
+
+		speaker_state_set(false);
+		led_drive(color, false);
+		events = indication_sleep_interruptible(param->off_ms, abort_mask);
+		if (events) {
+			return events;
+		}
+	}
+
+	return 0;
+}
+
+static void led_speaker_indicate(uint8_t color, struct ind_param *param)
 {
 	__ASSERT_NO_MSG(param);
 
 	for (uint8_t i = 0; i < param->cnt; i++) {
+		speaker_state_set(true);
 		led_drive(color, true);
 		k_msleep(param->on_ms);
+		speaker_state_set(false);
 		led_drive(color, false);
 		k_msleep(param->off_ms);
 	}
 }
 
-static void led_flash_indicate(struct ind_param *param)
+static void btn_ind_handle(struct ind_param *param)
 {
 	__ASSERT_NO_MSG(param);
 
-	/* Add clearance delay to visually separate
-	 * flash from the previous LED state.
-	 */
-	led_reset();
-	k_msleep(BTN_ACTION_IND_LED_FLASH_CLEARANCE_OFF_MS);
-	led_blink(LED_RINGING_STATUS, param);
+	led_speaker_indicate(LED_INDICATOR_STATUS, param);
 }
 
-/* Indicate button and ringing state
- * Return true if the indication was interrupted.
- */
-static bool led_flash_and_ring_status_indicate(void)
+static uint32_t ringing_indication_handle(bool add_clearance_delay)
 {
-	atomic_val_t req = atomic_clear(&led_flash_request);
-	struct ind_param param_btn;
-	struct ind_param param_ring = {
+	struct ind_param param = {
 		.cnt = LED_BLINK_STATE_RING_ON_OFF_CNT,
 		.on_ms = LED_BLINK_STATE_RING_ON_OFF_MS,
 		.off_ms = LED_BLINK_STATE_RING_ON_OFF_MS
 	};
+	uint32_t events;
 
-	if (req) {
-		param_btn = led_flash_request_decode(req);
-
-		/* In the rare event of semaphore not interrupting any signaling. */
-		k_sem_take(&led_flash_request_sem, K_NO_WAIT);
-		if (param_btn.cnt) {
-			led_flash_indicate(&param_btn);
+	/* Add clearance delay to visually separate
+	 * ringing indication from the previous LED state.
+	 */
+	if (add_clearance_delay) {
+		events = indication_sleep_interruptible(IND_CLEARANCE_OFF_MS, IND_EVENT_MASK);
+		if (events) {
+			return events;
 		}
 	}
 
-	if (btn_pressed) {
-		led_sleep_interruptible(LED_THREAD_INTERVAL_MS);
-		return true;
-	}
-
-	if (atomic_test_bit(ui_state_status, APP_UI_STATE_RINGING)) {
-		led_blink_interruptible(LED_RINGING_STATUS, &param_ring);
-		return true;
-	}
-
-	return false;
+	return led_speaker_indicate_interruptible(LED_RINGING_STATUS, &param, IND_EVENT_MASK);
 }
 
-static void led_thread_process(void)
+static uint32_t status_indication_handle(void)
 {
-	while (1) {
-		if (led_flash_and_ring_status_indicate()) {
-			continue;
+	uint32_t events;
+
+	for (uint8_t i = 0; i < ARRAY_SIZE(led_state_id_maps); i++) {
+		if (atomic_test_bit(ui_state_status, led_state_id_maps[i].state)) {
+			events = led_blink_once_interruptible(led_state_id_maps[i].id,
+							      LED_BLINK_STATE_STATUS_ON_MS,
+							      IND_EVENT_MASK);
+			if (events) {
+				return events;
+			}
 		}
+	}
 
-		bool interrupted = false;
+	return 0;
+}
 
-		for (uint8_t i = 0; i < ARRAY_SIZE(led_state_id_maps); i++) {
-			if (atomic_test_bit(ui_state_status, led_state_id_maps[i].state)) {
-				interrupted = led_blink_once_interruptible(led_state_id_maps[i].id,
-								LED_BLINK_STATE_STATUS_ON_MS);
-				if (interrupted) {
-					break;
-				}
+/* The button indication can not be interrupted by other indications.
+ * The indication checks if there is a button action request and starts the indication if there is.
+ * The release of the button allows to exit the indication.
+ * If the button is held for too long (up to noop), the indication exits automatically.
+ */
+static uint32_t btn_indication_process(uint32_t events, bool *restart)
+{
+	if (events & IND_EVENT_BTN_ACTION) {
+		atomic_val_t req = atomic_clear(&btn_action_ind_request);
+
+		if (req) {
+			struct ind_param param = btn_action_ind_request_decode(req);
+
+			btn_ind_handle(&param);
+		}
+	}
+
+	/* If button indication is in progress, then skip
+	 * the next indication processing.
+	 */
+	if ((btn_idx != -1) && (btn_idx < BTN_RELEASE_ACTION_COUNT)) {
+		*restart = true;
+		return indication_sleep_interruptible(BTN_PRESS_MAX_TIME, IND_EVENT_BTN_ACTION);
+	}
+
+	return events;
+}
+
+/* The ringing indication can be interrupted by the button indication.
+ * The indication checks if the ringing state is active and starts the indication if it is.
+ * When the first ring starts, the clearance delay is added to visually separate
+ * the ringing indication from the previous LED state.
+ */
+static uint32_t ringing_indication_process(uint32_t events, bool *restart)
+{
+	if (!atomic_test_bit(ui_state_status, APP_UI_STATE_RINGING)) {
+		return events;
+	}
+
+	bool add_clearance_delay = ((events & IND_EVENT_RINGING_STATUS) != 0);
+
+	events = ringing_indication_handle(add_clearance_delay);
+
+	if ((events & IND_EVENT_BTN_ACTION) || !(events & IND_EVENT_RINGING_STATUS)) {
+		*restart = true;
+	}
+
+	return events;
+}
+
+/* The status indication can be interrupted by the button or ringing indication.
+ * The indication does not need special conditions to start.
+ */
+static uint32_t status_indication_process(uint32_t events, bool *restart)
+{
+	events = status_indication_handle();
+	if (events) {
+		*restart = true;
+	}
+
+	return events;
+}
+
+/* Process the indications in the following order:
+ * 1. Button indication
+ * 2. Ringing indication
+ * 3. Status indication
+ */
+static void indication_thread_process(void)
+{
+	uint32_t (*const handlers[])(uint32_t, bool *) = {
+		btn_indication_process,
+		ringing_indication_process,
+		status_indication_process,
+	};
+
+	uint32_t events = 0;
+
+	while (1) {
+		bool restart = false;
+
+		for (uint8_t i = 0; i < ARRAY_SIZE(handlers); i++) {
+			events = handlers[i](events, &restart);
+			if (restart) {
+				break;
 			}
 		}
 
-		if (interrupted) {
+		if (restart) {
 			continue;
 		}
 
-		/* Idle wait: wakes on beep request or after the normal interval. */
-		led_sleep_interruptible(LED_THREAD_INTERVAL_MS);
+		events = indication_sleep_interruptible(INDICATION_THREAD_INTERVAL_MS,
+							IND_EVENT_MASK);
 	}
 }
 
-K_THREAD_DEFINE(led_thread_id, LED_THREAD_STACK_SIZE, led_thread_process,
-		NULL, NULL, NULL, LED_THREAD_PRIORITY, 0, 0);
+K_THREAD_DEFINE(indication_thread_id, INDICATION_THREAD_STACK_SIZE, indication_thread_process,
+		NULL, NULL, NULL, INDICATION_THREAD_PRIORITY, 0, 0);
 
 static void cancel_ringing_work_handle(struct k_work *w)
 {
@@ -554,11 +669,12 @@ static void cancel_ringing_work_handle(struct k_work *w)
 int app_ui_state_change_indicate(enum app_ui_state state, bool active)
 {
 	static K_WORK_DELAYABLE_DEFINE(cancel_ringing_work, cancel_ringing_work_handle);
+	bool was_active;
 
 	if (active) {
-		atomic_set_bit(ui_state_status, state);
+		was_active = atomic_test_and_set_bit(ui_state_status, state);
 	} else {
-		atomic_clear_bit(ui_state_status, state);
+		was_active = atomic_test_and_clear_bit(ui_state_status, state);
 	}
 
 	if (state == APP_UI_STATE_RINGING) {
@@ -569,8 +685,13 @@ int app_ui_state_change_indicate(enum app_ui_state state, bool active)
 		if (active && (btn_idx != -1)) {
 			k_work_reschedule(&cancel_ringing_work, K_MSEC(50));
 		} else {
-			if (IS_ENABLED(CONFIG_APP_UI_USE_HW_SPEAKER)) {
-				active ? app_ui_speaker_on() : app_ui_speaker_off();
+			if (was_active != active) {
+				uint32_t prev_events = k_event_post(&ind_events,
+								    IND_EVENT_RINGING_STATUS);
+				if (prev_events & IND_EVENT_RINGING_STATUS) {
+					LOG_WRN("Ringing status event was already posted.");
+					k_event_clear(&ind_events, IND_EVENT_RINGING_STATUS);
+				}
 			}
 		}
 	}
