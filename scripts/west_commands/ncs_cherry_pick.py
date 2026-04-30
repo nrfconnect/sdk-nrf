@@ -41,6 +41,9 @@ class Repo:
 
         self.branch_len = 0
 
+    def is_clean(self) -> bool:
+        return not self._get_status_()
+
     def get_upstream_log(self) -> list[dict]:
         return self.upstream_log
 
@@ -128,9 +131,12 @@ class Repo:
         self.branch_len += 1
         return True, []
 
+    def _get_status_(self) -> list[str]:
+        return self._run_cmd_('git', 'status', '--porcelain').splitlines()
+
     def _get_unmerged_paths_(self) -> list[str]:
         expr = re.compile('^(U\\D|\\DU) ')
-        lines = self._run_cmd_('git', 'status', '--porcelain').splitlines()
+        lines = self._get_status_()
         return [line[3:] for line in lines if expr.search(line) is not None]
 
     def _amend_commit_msg_(self, fmt: str):
@@ -657,6 +663,9 @@ class FakeRepo:
         self.applied: list[tuple[str, dict]] = []
         self.branch_len = 0
 
+    def is_clean(self) -> bool:
+        return True
+
     def get_upstream_log(self) -> list[dict]:
         return self.logs['upstream']
 
@@ -870,6 +879,9 @@ class NcsCherryPick(WestCommand):
                 args.upstream_branch,
                 args.downstream_branch,
             )
+
+        if not self.repo.is_clean():
+            raise CommandError(f'The {project.name} git repo at {project.abspath} is not clean')
 
         self.upstream_log = self.repo.get_upstream_log()
         self.downstream_log = self.repo.get_downstream_log()
