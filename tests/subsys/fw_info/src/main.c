@@ -95,6 +95,56 @@ ZTEST(test_fw_info, test_fw_info_invalidated)
 	zassert_equal(0, ret, "flash_write_failed %d", ret);
 }
 
+ZTEST(test_fw_info, test_fw_info_invalidate)
+{
+	/* We will write fw_info, valid, two pages from the beginning of partitions;
+	 * next fw_info_invalidate is called and we will check if invalidation was
+	 * done ok.
+	 */
+	const struct fw_info *target = (const struct fw_info *)(TEST_ADDRESS + ERASE_PAGE_SIZE * 2);
+	uint8_t intermediate[(sizeof(dummy_s1) + MAX_SUPPORTED_WBS - 1) & ~(MAX_SUPPORTED_WBS - 1)];
+	struct fw_info re_read_fw_info;
+	uint32_t wbs = flash_get_write_block_size(flash_dev);
+	const uint32_t zero = 0;
+	int ret;
+
+	/* Write a dummy upgrade to S1 */
+#ifndef NO_ERASE_NEEDED
+	ret = flash_erase(flash_dev, (off_t)target, ERASE_PAGE_SIZE);
+	zassert_equal(0, ret, "flash_erase failed %d", ret);
+#endif
+	memset(intermediate, 0, sizeof(intermediate));
+	memcpy(intermediate, &dummy_s1, sizeof(dummy_s1));
+	ret = flash_write(flash_dev, (off_t)target, intermediate,
+					(sizeof(dummy_s1) + wbs - 1) & ~(wbs - 1));
+	zassert_equal(0, ret, "flash_write failed %d", ret);
+	zassert_equal(CONFIG_FW_INFO_VALID_VAL, target->valid, "wrong valid value");
+
+	/* Now we should have the fw_info invalidated */
+	fw_info_invalidate(target);
+	/* Check the valid field against the valid literal */
+	zassert_not_equal(CONFIG_FW_INFO_VALID_VAL, target->valid,
+		"expected target to be invalidated 0x%x", target->valid);
+
+	/* We will read the entire fw_info to re_read_fw_info for comparison,
+	 * then .valid field will be set to CONFIG_FW_INFO_VALID_VAL, and the
+	 * intermediate buffer will be compared against dummy_s1. The comparison
+	 * should indicate no difference, as the only field that was supposed to
+	 * be touched by invalidation has been reset in intermediate buffer
+	 */
+	zassert_ok(flash_read(flash_dev, (uint32_t)target, &re_read_fw_info, sizeof(struct fw_info)),
+		"reading fw_info failed");
+
+	re_read_fw_info.valid = CONFIG_FW_INFO_VALID_VAL;
+
+	zassert_ok(memcmp(&dummy_s1, &re_read_fw_info, sizeof(struct fw_info)),
+		"modification spilled out of .valid");
+
+	/* Reset flash so test will enter the fw_info setup path on next run */
+	ret = flash_write(flash_dev, (off_t)target, &zero, sizeof(zero));
+	zassert_equal(0, ret, "flash_write_failed %d", ret);
+}
+
 
 ZTEST(test_fw_info, test_fw_info_find)
 {
