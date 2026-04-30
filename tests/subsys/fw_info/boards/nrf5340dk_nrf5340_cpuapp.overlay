@@ -9,3 +9,9 @@ b0_partition: &boot_partition {};
 s0_partition: &slot0_partition {};
 
 s1_partition: &slot1_partition {};
+
+/ {
+	chosen {
+		zephyr,code-partition = &s0_partition;
+	};
+};
