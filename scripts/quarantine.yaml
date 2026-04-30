@@ -60,13 +60,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36963"
 
 - scenarios:
-    - applications.nrf_desktop.zrelease
-    - applications.nrf_desktop.zrelease_keyboard
-  platforms:
-    - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39099"
-
-- scenarios:
     - sample.bluetooth.peripheral_lbs
     - sample.bluetooth.peripheral_lbs_no_security
     - sample.bluetooth.peripheral_power_profiling
