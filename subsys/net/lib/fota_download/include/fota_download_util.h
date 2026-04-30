@@ -75,6 +75,16 @@ int fota_download_util_download_start(const char *download_uri,
 				      enum dfu_target_image_type dfu_target_type, int sec_tag,
 				      fota_download_callback_t client_callback);
 
+/**@brief Set the MCUboot image pair index used by the next download.
+ *
+ * The value persists until overwritten, so callers that share this module
+ * across multiple images must set the index before every download.
+ * Defaults to 0. Has no effect for non-MCUboot image types.
+ *
+ * @param img_num MCUboot image pair index.
+ */
+void fota_download_util_set_image_num(int img_num);
+
 /**@brief Cancel active download process.
  *
  * @retval 0 If successful.

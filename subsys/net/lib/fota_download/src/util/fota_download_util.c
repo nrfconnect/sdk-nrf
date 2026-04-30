@@ -57,6 +57,7 @@ static char fota_host[CONFIG_FOTA_DOWNLOAD_HOST_NAME_LENGTH];
 static int fota_sec_tag = SEC_TAG_TLS_INVALID;
 static bool download_active;
 static enum dfu_target_image_type active_dfu_type;
+static int active_img_num;
 
 int fota_download_parse_dual_resource_locator(char *const file, bool s0_active,
 					      const char **selected_path)
@@ -178,10 +179,16 @@ static int download_url_parse(const char *uri)
 	return 0;
 }
 
+void fota_download_util_set_image_num(int img_num)
+{
+	active_img_num = img_num;
+}
+
 static void start_fota_download(struct k_work *work)
 {
 	int ret;
 
+	fota_download_set_img_num(active_img_num);
 	ret = fota_download_start_with_image_type(fota_host, fota_path, fota_sec_tag, 0, 0,
 						  active_dfu_type);
 	if (ret) {
