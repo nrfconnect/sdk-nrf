@@ -21,13 +21,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(le_audio_rx, CONFIG_LE_AUDIO_RX_LOG_LEVEL);
 
-struct rx_stats {
-	uint32_t recv_cnt;
-	uint32_t good_frame_cnt;
-	uint32_t bad_frame_cnt;
-	bool prev_bad_data;
-};
-
 static bool initialized;
 static struct k_thread audio_datapath_thread_data;
 static k_tid_t audio_datapath_thread_id;
@@ -100,42 +93,16 @@ static int audio_frame_add(struct net_buf *audio_frame, struct net_buf const *co
 }
 
 /* Callback for handling ISO RX */
-void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metadata *meta,
-			      uint8_t location_index)
+void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metadata *meta)
 {
 	int ret;
 	static struct net_buf *audio_frame;
-	static struct rx_stats rx_stats[CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX];
 	static uint32_t num_overruns;
 	static uint32_t num_thrown;
 
 	if (!initialized) {
 		ERR_CHK_MSG(-EPERM, "Data received but le_audio_rx is not initialized");
 	}
-
-	rx_stats[location_index].recv_cnt++;
-
-	if (meta->bad_data) {
-		rx_stats[location_index].bad_frame_cnt++;
-	} else {
-		rx_stats[location_index].good_frame_cnt++;
-	}
-
-	if ((rx_stats[location_index].recv_cnt % 100) == 0 && rx_stats[location_index].recv_cnt) {
-		/* NOTE: The string below is used by the Nordic CI system */
-		LOG_DBG("ISO RX SDUs: Loc: %d Total: %d Bad: %d", location_index,
-			rx_stats[location_index].recv_cnt, rx_stats[location_index].bad_frame_cnt);
-	}
-
-	if (meta->bad_data && !rx_stats[location_index].prev_bad_data) {
-		LOG_INF_RATELIMIT_RATE(1000,
-				       "Bad or 0 SDU: Loc: %u Total: %u Bad: %u. (Prints "
-				       "good->bad transition)",
-				       location_index, rx_stats[location_index].recv_cnt,
-				       rx_stats[location_index].bad_frame_cnt);
-	}
-
-	rx_stats[location_index].prev_bad_data = meta->bad_data;
 
 	if (stream_state_get() != STATE_STREAMING) {
 		/* Throw away data */
@@ -144,11 +111,6 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 			LOG_WRN("Not in streaming state (%d), thrown %d packet(s)",
 				stream_state_get(), num_thrown);
 		}
-		return;
-	}
-
-	if (location_index != 0 && (CONFIG_AUDIO_DEV == GATEWAY)) {
-		/* Only the first device will be used as mic input on gateway */
 		return;
 	}
 
