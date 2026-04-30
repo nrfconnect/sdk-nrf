@@ -296,7 +296,9 @@ Debug samples
 DFU samples
 -----------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
 
 DECT NR+ samples
 ----------------
