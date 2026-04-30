@@ -4,7 +4,7 @@ if BOOTLOADER_MCUBOOT
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
-	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91 || SOC_SERIES_NRF54L || SOC_SERIES_NRF54H
+	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91 || SOC_SERIES_NRF54L || SOC_SERIES_NRF54H || SOC_SERIES_NRF71
 	help
 	  This option can be enabled by the application and will ensure
 	  that the MCUBOOT_HW_DOWNGRADE_PREVENTION Kconfig option is
@@ -15,7 +15,7 @@ if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 	int "Number of available hardware counter slots"
 	default 240
-	range 2 288 if SOC_SERIES_NRF54L
+	range 2 288 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	range 2 300
 	depends on !SOC_SERIES_NRF54H
 	help
