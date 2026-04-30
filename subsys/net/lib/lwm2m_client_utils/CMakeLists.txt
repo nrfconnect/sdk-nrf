@@ -38,5 +38,9 @@ zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LTE_CONNEVAL lwm2m/lwm2m_
 zephyr_library_sources_ifdef(CONFIG_LWM2M_LOCATION_OBJ_SUPPORT lwm2m_obj_location_optional.c)
 zephyr_include_directories(lwm2m/include)
 
+if(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT AND CONFIG_MCUBOOT_BOOTUTIL_LIB)
+  zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+endif()
+
 # For strnlen()
 zephyr_library_compile_definitions(_POSIX_C_SOURCE=200809L)
