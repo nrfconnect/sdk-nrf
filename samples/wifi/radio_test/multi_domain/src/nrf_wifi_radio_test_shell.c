@@ -1175,8 +1175,27 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 	char *ptr = NULL;
 	unsigned long band, chan_num = 0;
 
+#ifdef CONFIG_NRF71_RADIO_TEST
 	band = strtoul(argv[1], &ptr, 10);
 	chan_num = strtoul(argv[2], &ptr, 10);
+#else
+	chan_num = strtoul(argv[1], &ptr, 10);
+	if (check_valid_chan_2g(chan_num)) {
+		band = NRF_WIFI_FREQ_BAND_2_4_GHZ;
+#ifndef CONFIG_NRF70_2_4G_ONLY
+	} else if (check_valid_chan_5g(chan_num)) {
+		band = NRF_WIFI_FREQ_BAND_5_GHZ;
+	} else if (check_valid_chan_6g(chan_num)) {
+		band = NRF_WIFI_FREQ_BAND_6_GHZ;
+#endif /* CONFIG_NRF70_2_4G_ONLY */
+	} else {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid channel number %lu\n",
+			      chan_num);
+		return -ENOEXEC;
+	}
+#endif /* CONFIG_NRF71_RADIO_TEST */
 
 	switch (band) {
 	case NRF_WIFI_FREQ_BAND_2_4_GHZ:
@@ -1202,7 +1221,7 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 		if (!check_valid_chan_6g(chan_num)) {
 			shell_fprintf(shell,
 				      SHELL_ERROR,
-				      "Invalid channel number %lu on 5G band\n",
+				      "Invalid channel number %lu on 6G band\n",
 				      chan_num);
 			return -ENOEXEC;
 		}
