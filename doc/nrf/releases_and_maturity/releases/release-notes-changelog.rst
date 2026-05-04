@@ -68,7 +68,9 @@ Developing with nRF54L Series
 Developing with nRF54H Series
 =============================
 
-|no_changes_yet_note|
+* Updated:
+
+   * MCUboot to support MRAM write protection for up to four images.
 
 Developing with nRF53 Series
 ============================
