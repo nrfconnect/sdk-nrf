@@ -765,6 +765,7 @@ BT_CONN_CB_DEFINE(conn_cb) = {
 
 static void cs_config_get(struct bt_le_cs_create_config_params *config_params)
 {
+	memset(config_params, 0, sizeof(struct bt_le_cs_create_config_params));
 	config_params->id = CS_CONFIG_ID;
 	config_params->mode = CS_CONFIG_MODE;
 	config_params->min_main_mode_steps = 2;
