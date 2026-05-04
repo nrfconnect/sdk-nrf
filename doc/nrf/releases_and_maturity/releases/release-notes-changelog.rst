@@ -279,7 +279,9 @@ nRF Audio (formerly nRF5340 Audio)
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Updated application configurations to change the non-volatile memory self-protection mechanism in the MCUboot image on the nRF54L board targets (:kconfig:option:`CONFIG_SOC_SERIES_NRF54L`).
+  The :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` Kconfig option is used instead of the :kconfig:option:`CONFIG_FPROTECT` to disable read, write and execute from the memory area that holds the MCUboot bootloader.
+  This is done to improve the protection of the MCUboot immutable bootloader code.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
