@@ -424,7 +424,7 @@ comment "Nordic addded RNG configuration"
 
 config PSA_WANT_GENERATE_RANDOM
 	bool "PSA RNG support" if !PSA_PROMPTLESS
-	default y if PSA_CRYPTO_ENABLE_ALL
+	default y if PSA_CRYPTO_ENABLE_ALL || ENTROPY_PSA_CRYPTO_RNG
 
 comment "Nordic added key types"
 
@@ -686,6 +686,3 @@ config PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE
 	bool "PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE" if !MBEDTLS_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
-
-config ENTROPY_PSA_CRYPTO_RNG
-	select PSA_WANT_GENERATE_RANDOM
