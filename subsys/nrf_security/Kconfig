@@ -38,23 +38,16 @@ config NRF_SECURITY
 	# of MCUBoot instead (CONFIG_BOOTLOADER_MCUBOOT).
 	select TFM_BL2_NOT_SUPPORTED if BUILD_WITH_TFM
 
-if NRF_SECURITY && !MBEDTLS
-# This file gets included only if MBEDTLS, but it defines options that we
-# make use of even when !MBEDTLS (such as MBEDTLS_PSA_CRYPTO_C).
-# Include it in this scenario to make said options available.
-rsource "$(ZEPHYR_BASE)/modules/mbedtls/Kconfig.tf-psa-crypto"
-endif
-
 # Include Nordic-only PSA configurations
 rsource "Kconfig.psa.nordic"
-
-config PSA_PROMPTLESS
-	bool
 
 if NRF_SECURITY
 
 # Include TLS/DTLS and x509 configurations
 rsource "Kconfig.tls"
+
+# Include TF-PSA-Crypto configurations
+rsource "Kconfig.tf-psa-crypto"
 
 # Include PSA Crypto configurations
 rsource "Kconfig.psa"

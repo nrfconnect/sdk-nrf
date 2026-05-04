@@ -88,8 +88,6 @@ else()
   nrf_security_debug("Building for pure Zephyr")
 endif()
 
-set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG  True)
-
 # Add library for crypto configs (NS/S-only build)
 # The name and intent of this comes from TF-M distribution
 add_library(psa_crypto_config INTERFACE)

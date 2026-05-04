@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Make sure that MBEDTLS_PSA_CRYPTO_RNG_SOURCE is available even when !MBEDTLS_PSA_CRYPTO_C
+# (when building TF-M) so that MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG is always enabled.
+# This is needed because without this symbol the Oberon PSA core defaults to legacy RNG.
+choice MBEDTLS_PSA_CRYPTO_RNG_SOURCE
+	prompt ""
+endchoice
+
+if !MBEDTLS
+# This file gets included only if MBEDTLS, but it defines options that we
+# make use of even when !MBEDTLS (such as MBEDTLS_PSA_CRYPTO_C).
+# Include it in this scenario to make said options available.
+rsource "$(ZEPHYR_BASE)/modules/mbedtls/Kconfig.tf-psa-crypto"
+endif

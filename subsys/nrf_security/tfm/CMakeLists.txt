@@ -77,9 +77,6 @@ set(CONFIG_BUILD_WITH_TFM                           False)
 # Enable the MBEDTLS_ENABLE_HEAP configuration since TF-M implements heap in crypto_init.c
 set(CONFIG_MBEDTLS_ENABLE_HEAP                      True)
 
-# Ensure that RNG is not usling legacy code
-set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG          True)
-
 # Ensure that PSA core is built inside TF-M image
 set(CONFIG_MBEDTLS_PSA_CRYPTO_C                     True)
 

@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PSA_PROMPTLESS
+	bool
+
 comment "Nordic-added meta types"
 
 config PSA_HAS_AEAD_SUPPORT
