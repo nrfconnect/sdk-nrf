@@ -37,7 +37,7 @@ Overview
 ********
 
 The sample uses a real temperature measurement only on the nRF54L15 TAG due to hardware limitations.
-On other targets, it simulates temperature measurement following the linearly increasing values from –20 to +20 Celsius degrees.
+On other targets, it simulates temperature measurement following the linearly increasing values from –10 to +30 Celsius degrees.
 The measurement results are updated every 10 s and after reaching the maximum value, the temperature drops to the minimum and starts to increase from the beginning.
 
 You can test the device remotely over a Thread network, which requires more devices.
