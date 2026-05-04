@@ -29,7 +29,7 @@
 	 */
 	partitions {
 		slot0_partition: partition@0 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00000000 0xe8000>;
 			ranges = <0x0 0x0 0xe8000>;
@@ -37,27 +37,32 @@
 			#size-cells = <1>;
 
 			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-secure";
 				reg = <0x00000000 0x20000>;
 			};
 
 			slot0_ns_partition: partition@20000 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-nonsecure";
 				reg = <0x00020000 0xc8000>;
 			};
 		};
 
 		tfm_ps_partition: partition@e8000 {
+			compatible = "zephyr,mapped-partition";
 			label = "tfm-ps";
 			reg = <0x000e8000 0x00004000>;
 		};
 
 		tfm_its_partition: partition@ec000 {
+			compatible = "zephyr,mapped-partition";
 			label = "tfm-its";
 			reg = <0x000ec000 0x00002000>;
 		};
 
 		tfm_otp_partition: partition@ee000 {
+			compatible = "zephyr,mapped-partition";
 			label = "tfm-otp";
 			reg = <0x000ee000 0x00002000>;
 		};
@@ -68,7 +73,7 @@
 		 * Sub-partitions keep NVS and EMDS regions independent.
 		 */
 		storage_partition: partition@f0000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x000f0000 DT_SIZE_K(64)>;
 			ranges = <0x0 0xf0000 DT_SIZE_K(64)>;
@@ -76,16 +81,19 @@
 			#size-cells = <1>;
 
 			nvs_storage: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "nvs-storage";
 				reg = <0x0 DT_SIZE_K(32)>;
 			};
 
 			emds_partition_0: partition@8000 {
+				compatible = "zephyr,mapped-partition";
 				label = "emds-0";
 				reg = <0x8000 DT_SIZE_K(16)>;
 			};
 
 			emds_partition_1: partition@c000 {
+				compatible = "zephyr,mapped-partition";
 				label = "emds-1";
 				reg = <0xc000 DT_SIZE_K(16)>;
 			};
