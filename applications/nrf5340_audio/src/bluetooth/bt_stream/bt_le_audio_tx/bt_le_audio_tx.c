@@ -538,7 +538,8 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		/* May happen if we are trying to send N streams, but N-X locations are available */
 		LOG_DBG("Number of locations (%u) more than number of streams (%u)", num_loc,
 			num_tx);
-	} else if (num_loc < num_tx) {
+	} else if ((num_loc < num_tx) && (num_loc != 1U)) {
+		/* If num_loc = 1, the same stream is sent to all locations */
 		LOG_ERR("Number of locations (%u) less than number of streams (%u)", num_loc,
 			num_tx);
 		return -EINVAL;
