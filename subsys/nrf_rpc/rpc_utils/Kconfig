@@ -51,6 +51,12 @@ config NRF_RPC_UTILS_SYSTEM_HEALTH
 	help
 	  Enables nRF RPC commands for getting the system health information.
 
+config NRF_RPC_UTILS_NESTED_CMD_TEST
+	bool "Nested command context test"
+	help
+	  Enables nRF RPC commands for testing that a command received while
+	  waiting for a response is handled in the same command context.
+
 if NRF_RPC_UTILS_SYSTEM_HEALTH && NRF_RPC_UTILS_SERVER
 
 config NRF_RPC_UTILS_WATCHDOG_PERIOD

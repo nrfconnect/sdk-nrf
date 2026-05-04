@@ -7,6 +7,7 @@
 #include <zephyr/shell/shell.h>
 #include <nrf_rpc/rpc_utils/crash_gen.h>
 #include <nrf_rpc/rpc_utils/dev_info.h>
+#include <nrf_rpc/rpc_utils/nested_cmd.h>
 #include <nrf_rpc/rpc_utils/remote_shell.h>
 #include <nrf_rpc/rpc_utils/system_health.h>
 #include <nrf_rpc.h>
@@ -119,6 +120,20 @@ static int cmd_system_health(const struct shell *sh, size_t argc, char *argv[])
 }
 #endif /* CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH */
 
+#if defined(CONFIG_NRF_RPC_UTILS_NESTED_CMD_TEST)
+static int cmd_nested_cmd(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (!nrf_rpc_utils_nested_cmd_test()) {
+		shell_error(sh, "Nested command test failed");
+		return -ENOEXEC;
+	}
+
+	shell_print(sh, "Nested command test passed");
+
+	return 0;
+}
+#endif /* CONFIG_NRF_RPC_UTILS_NESTED_CMD_TEST */
+
 static int cmd_rpc(const struct shell *sh, size_t argc, char *argv[])
 {
 	static bool enabled = true;
@@ -158,6 +173,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 #endif
 #if defined(CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH)
 	SHELL_CMD_ARG(system_health, NULL, "Get system health", cmd_system_health, 0, 0),
+#endif
+#if defined(CONFIG_NRF_RPC_UTILS_NESTED_CMD_TEST)
+	SHELL_CMD_ARG(nested_cmd, NULL, "Run nested command context test", cmd_nested_cmd, 1, 0),
 #endif
 	SHELL_CMD_ARG(control, NULL, "Control RPC subsystem ", cmd_rpc, 2, 0),
 	SHELL_SUBCMD_SET_END);
