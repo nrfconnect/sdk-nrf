@@ -17,8 +17,10 @@
 #include <zephyr/bluetooth/mesh.h>
 
 #include <zephyr/storage/flash_map.h>
+#include <zephyr/drivers/flash.h>
 
 #include <zephyr/dfu/mcuboot.h>
+#include <bootutil/bootutil_public.h>
 
 static struct bt_mesh_blob_io_flash *blob_flash_stream;
 static enum bt_mesh_dfu_effect img_effect = BT_MESH_DFU_EFFECT_NONE;
@@ -164,12 +166,82 @@ static int dfu_meta_check(struct bt_mesh_dfu_srv *srv,
 	return 0;
 }
 
+static int erase_trailer(void)
+{
+	struct boot_swap_state state;
+	const struct flash_area *fa;
+	const struct device *fdev;
+	const struct flash_parameters *fparam;
+	int err;
+
+	err = boot_read_swap_state_by_id(PARTITION_ID(slot1_partition), &state);
+	if (err) {
+		return err;
+	}
+
+	/* If the magic is unset, the trailer area is already clean. */
+	if (state.magic == BOOT_MAGIC_UNSET) {
+		return 0;
+	}
+
+	err = flash_area_open(PARTITION_ID(slot1_partition), &fa);
+	if (err) {
+		return err;
+	}
+
+	fdev = flash_area_get_device(fa);
+	fparam = flash_get_parameters(fdev);
+
+	if (flash_params_get_erase_cap(fparam) & FLASH_ERASE_C_EXPLICIT) {
+		/* Traditional flash: must erase the entire page containing
+		 * the trailer.
+		 */
+		struct flash_pages_info page;
+		off_t trailer_off;
+
+		err = flash_get_page_info_by_offs(fdev,
+						  fa->fa_off + fa->fa_size - 1,
+						  &page);
+		if (!err) {
+			trailer_off = page.start_offset - fa->fa_off;
+			err = flash_area_erase(fa, trailer_off, page.size);
+		}
+	} else {
+		/* RRAM/non-erase storage: can overwrite directly, so just
+		 * flatten the trailer area without erasing a full page.
+		 */
+		err = flash_area_flatten(fa,
+					fa->fa_size - BOOT_MAGIC_ALIGN_SIZE,
+					BOOT_MAGIC_ALIGN_SIZE);
+	}
+
+	flash_area_close(fa);
+	return err;
+}
+
 static int dfu_start(struct bt_mesh_dfu_srv *srv,
 		     const struct bt_mesh_dfu_img *img,
 		     struct net_buf_simple *metadata,
 		     const struct bt_mesh_blob_io **io)
 {
+	int err;
+
 	printk("Firmware upload started\n");
+
+	/* Clean the MCUboot image trailer at the end of slot1 before the
+	 * transfer begins. The BLOB I/O only erases pages it writes image
+	 * data to (and skips erase entirely on RRAM), so the trailer area
+	 * may contain stale data from a previous image. This causes
+	 * MCUboot to see BOOT_MAGIC_BAD and reject the swap request.
+	 * On traditional flash, the last page is erased; on RRAM, only the
+	 * magic bytes are overwritten. The operation is skipped if the
+	 * trailer is already clean.
+	 */
+	err = erase_trailer();
+	if (err) {
+		printk("Failed to erase slot1 trailer: %d\n", err);
+		return err;
+	}
 
 	*io = &blob_flash_stream->io;
 

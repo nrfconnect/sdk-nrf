@@ -19,3 +19,5 @@ target_sources(app PRIVATE ${app_sources}
 target_sources_ifdef(CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/smp_bt.c
 )
+
+target_link_libraries(app PRIVATE MCUBOOT_BOOTUTIL)
