@@ -16,26 +16,26 @@ logger = logging.getLogger(__name__)
 
 platform_with_mcuboot_uptime_range_map = {
     "nrf54h20dk/nrf54h20/cpuapp": range(9, 11),
-    "nrf54l15dk/nrf54l05/cpuapp": range(11, 13),
-    "nrf54l15dk/nrf54l10/cpuapp": range(11, 13),
-    "nrf54l15dk/nrf54l15/cpuapp": range(11, 13),
-    "nrf54lm20dk/nrf54lm20a/cpuapp": range(11, 13),
-    "nrf54lm20dk/nrf54lm20b/cpuapp": range(11, 13),
-    "nrf54ls05dk/nrf54ls05a/cpuapp": range(9, 13),
-    "nrf54ls05dk/nrf54ls05b/cpuapp": range(9, 13),
-    "nrf54lv10dk/nrf54lv10a/cpuapp": range(11, 13),
+    "nrf54l15dk/nrf54l05/cpuapp": range(11, 21),
+    "nrf54l15dk/nrf54l10/cpuapp": range(11, 21),
+    "nrf54l15dk/nrf54l15/cpuapp": range(11, 21),
+    "nrf54lm20dk/nrf54lm20a/cpuapp": range(11, 21),
+    "nrf54lm20dk/nrf54lm20b/cpuapp": range(11, 21),
+    "nrf54ls05dk/nrf54ls05a/cpuapp": range(9, 21),
+    "nrf54ls05dk/nrf54ls05b/cpuapp": range(9, 21),
+    "nrf54lv10dk/nrf54lv10a/cpuapp": range(11, 21),
 }
 
 platform_without_mcuboot_uptime_range_map = {
     "nrf54h20dk/nrf54h20/cpuapp": range(9, 11),
-    "nrf54l15dk/nrf54l05/cpuapp": range(9, 13),
-    "nrf54l15dk/nrf54l10/cpuapp": range(9, 13),
-    "nrf54l15dk/nrf54l15/cpuapp": range(9, 13),
-    "nrf54lm20dk/nrf54lm20a/cpuapp": range(11, 13),
-    "nrf54lm20dk/nrf54lm20b/cpuapp": range(11, 13),
-    "nrf54ls05dk/nrf54ls05a/cpuapp": range(9, 13),
-    "nrf54ls05dk/nrf54ls05b/cpuapp": range(9, 13),
-    "nrf54lv10dk/nrf54lv10a/cpuapp": range(11, 13),
+    "nrf54l15dk/nrf54l05/cpuapp": range(9, 21),
+    "nrf54l15dk/nrf54l10/cpuapp": range(9, 21),
+    "nrf54l15dk/nrf54l15/cpuapp": range(9, 21),
+    "nrf54lm20dk/nrf54lm20a/cpuapp": range(11, 21),
+    "nrf54lm20dk/nrf54lm20b/cpuapp": range(11, 21),
+    "nrf54ls05dk/nrf54ls05a/cpuapp": range(9, 21),
+    "nrf54ls05dk/nrf54ls05b/cpuapp": range(9, 21),
+    "nrf54lv10dk/nrf54lv10a/cpuapp": range(11, 21),
 }
 
 
