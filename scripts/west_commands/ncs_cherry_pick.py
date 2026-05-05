@@ -1167,7 +1167,7 @@ class NcsCherryPick(WestCommand):
         touching_shas = []
         touching_commits = []
         for p in unmerged_paths:
-            cs = self.downstream_file_index[p]
+            cs = self.downstream_file_index.get(p, [])
             for c in cs:
                 if c['sha'] in touching_shas or c['sha'] in revert_shas:
                     continue
@@ -1177,8 +1177,13 @@ class NcsCherryPick(WestCommand):
 
         # Only revert touching commits which are newer than the conflicting commit since it
         # can't conflict with a commit merged before it. Touching commits and conflicting
-        # commit are both from the same branch so we can compare the merge dates.
-        touching_commits = [c for c in touching_commits if c['order'] < commit['order']]
+        # commit must be from the same branch for this to be meaningful; when the conflicting
+        # commit is from upstream/PR (i.e. this was reached via the fallback from
+        # _resolve_cherry_pick_conflict_), 'order' lives in a different log space and the
+        # comparison is skipped.
+        downstream_shas = {c['sha'] for c in self.downstream_log}
+        if commit['sha'] in downstream_shas:
+            touching_commits = [c for c in touching_commits if c['order'] < commit['order']]
 
         assert touching_commits, 'Failed to resolve revert conflict'
 
@@ -1226,7 +1231,7 @@ class NcsCherryPick(WestCommand):
         touching_shas = []
         touching_commits = []
         for p in unmerged_paths:
-            cs = self.upstream_file_index[p]
+            cs = self.upstream_file_index.get(p, [])
             for c in cs:
                 if c['sha'] in touching_shas or c['sha'] in fromtree_shas:
                     continue
