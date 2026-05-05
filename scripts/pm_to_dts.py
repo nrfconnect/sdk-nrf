@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v0.07
+# v0.08
 
 import os
 import sys
@@ -255,11 +255,13 @@ def write_and_print(f, text):
     print(text, end='')
 
 
-def write_partition_node(f, indent, area, offset, subpartition_base_offset=0):
+def write_partition_node(f, indent, area, offset, subpartition_base_offset=0, add_compatible=True):
     """Write a flat (non-parent) partition node."""
     final_offset = offset - subpartition_base_offset
     node_str = f'{indent}{area[5]}{area[0]}: partition@{format(final_offset, "x")} {{\n'
     write_and_print(f, node_str)
+    if add_compatible:
+        write_and_print(f, f'{indent}\tcompatible = "zephyr,mapped-partition";\n')
     write_and_print(f, f'{indent}\tlabel = "{area[2]}";\n')
     reg_str = f'{indent}\treg = <0x{format(final_offset, "x")} '
     reg_str += f'0x{format(area[3], "x")}>;\n'
@@ -268,13 +270,23 @@ def write_partition_node(f, indent, area, offset, subpartition_base_offset=0):
 
 
 def write_parent_partition_node(
-    f, indent, area, offset, size, by_original_name, parent_children, subpartition_base_offset=0
+    f,
+    indent,
+    area,
+    offset,
+    size,
+    by_original_name,
+    parent_children,
+    subpartition_base_offset=0,
+    add_parent_compatible=True,
+    add_child_compatible=True,
 ):
-    """Write a parent partition node with fixed-subpartitions and child nodes."""
+    """Write a parent partition node with mapped-partition and child nodes."""
     final_offset = offset - subpartition_base_offset
     node_hdr = f'{indent}{area[5]}{area[0]}: partition@{format(final_offset, "x")} {{\n'
     write_and_print(f, node_hdr)
-    write_and_print(f, f'{indent}\tcompatible = "fixed-subpartitions";\n')
+    if add_parent_compatible:
+        write_and_print(f, f'{indent}\tcompatible = "zephyr,mapped-partition";\n')
     write_and_print(f, f'{indent}\tlabel = "{area[2]}";\n')
     reg_str = f'{indent}\treg = <0x{format(final_offset, "x")} '
     reg_str += f'{format_partition_size(size)}>;\n'
@@ -287,7 +299,7 @@ def write_parent_partition_node(
 
     child_indent = indent + '\t'
     child_names = order_subpartitions(parent_children, by_original_name)
-    for child_name in child_names:
+    for i, child_name in enumerate(child_names):
         child_area = by_original_name[child_name]
         child_offset = child_area[1] - area[1]
         child_node = (
@@ -295,11 +307,15 @@ def write_parent_partition_node(
             f'partition@{format(child_offset, "x")} {{\n'
         )
         write_and_print(f, child_node)
+        if add_child_compatible:
+            write_and_print(f, f'{child_indent}\tcompatible = "zephyr,mapped-partition";\n')
         write_and_print(f, f'{child_indent}\tlabel = "{child_area[2]}";\n')
         child_reg = f'{child_indent}\treg = <0x{format(child_offset, "x")} '
         child_reg += f'{format_partition_size(child_area[3])}>;\n'
         write_and_print(f, child_reg)
-        write_and_print(f, f'{child_indent}}};\n\n')
+        write_and_print(f, f'{child_indent}}};\n')
+        if i < len(child_names) - 1:
+            write_and_print(f, '\n')
 
     write_and_print(f, f'{indent}}};\n')
 
@@ -442,7 +458,7 @@ def main():
             flash_regions = external_flash_regions
         elif not region or region == 'flash_primary':
             flash_regions = internal_flash_regions
-        elif region in ('ram_flash', 'sram_primary'):
+        elif region in ('ram_flash', 'sram_primary', 'otp'):
             continue
         else:
             print(f'Unknown region: {region}')
@@ -538,6 +554,17 @@ def main():
                 internal_flash_regions[i][1] -= s0_pad_size
                 internal_flash_regions[i][3] += s0_pad_size
 
+    if b0_enabled:
+        remapped_regions = []
+        for area in internal_flash_regions:
+            if area[0] == 's0_partition':
+                area[5] += 'boot_partition: '
+                remapped_regions.append(area)
+            elif area[0] != 'boot_partition':
+                remapped_regions.append(area)
+
+        internal_flash_regions = remapped_regions
+
     # Sort CPUNET regions and handle duplicates
     if parsed_cpunet:
         odd_area_ref = ['']
@@ -582,6 +609,13 @@ def main():
     if parsed_cpunet:
         extend_partition(internal_flash_regions_cpunet)
 
+    # Normalize CPUNET partition addresses so output starts at 0x0.
+    if parsed_cpunet and internal_flash_regions_cpunet:
+        cpunet_base_offset = min(area[1] for area in internal_flash_regions_cpunet)
+        if cpunet_base_offset != 0:
+            for area in internal_flash_regions_cpunet:
+                area[1] -= cpunet_base_offset
+
     # Build parent-child maps for inside-based subpartitions.
     internal_parent_children = build_inside_relationships(internal_flash_regions)
     external_parent_children = build_inside_relationships(external_flash_regions)
@@ -623,7 +657,7 @@ def main():
                 slot0_hdr = f'{indent}slot0_partition: partition@'
                 slot0_node = f'{slot0_hdr}{format(subpartition_offset, "x")} {{\n'
                 write_and_print(f, slot0_node)
-                write_and_print(f, f'{indent}\tcompatible = "fixed-subpartitions";\n')
+                write_and_print(f, f'{indent}\tcompatible = "zephyr,mapped-partition";\n')
                 write_and_print(f, f'{indent}\tlabel = "image-0";\n')
                 slot0_reg = f'{indent}\treg = <0x{format(subpartition_offset, "x")} '
                 slot0_reg += f'0x{format(tfm_slot0_combined_size, "x")}>;\n'
@@ -667,7 +701,6 @@ def main():
         write_and_print(f, '&mx25r64 {\n')
         write_and_print(f, '\tpartitions {\n')
         write_and_print(f, '\t\tcompatible = "fixed-partitions";\n')
-        write_and_print(f, '\t\tranges;\n')
         write_and_print(f, '\t\t#address-cells = <1>;\n')
         write_and_print(f, '\t\t#size-cells = <1>;\n\n')
 
@@ -685,10 +718,18 @@ def main():
             parent_children = external_parent_children.get(area[6], [])
             if parent_children:
                 write_parent_partition_node(
-                    f, indent, area, area[1], area[3], external_by_original_name, parent_children
+                    f,
+                    indent,
+                    area,
+                    area[1],
+                    area[3],
+                    external_by_original_name,
+                    parent_children,
+                    add_parent_compatible=False,
+                    add_child_compatible=False,
                 )
             else:
-                write_partition_node(f, indent, area, area[1])
+                write_partition_node(f, indent, area, area[1], add_compatible=False)
 
             output_count += 1
 
@@ -719,7 +760,7 @@ def main():
                 final_offset = area[1]
                 node_hdr = f'{indent}{area[5]}{area[0]}: partition@{format(final_offset, "x")} {{\n'
                 write_and_print(f_net, node_hdr)
-                write_and_print(f_net, f'{indent}\tcompatible = "fixed-subpartitions";\n')
+                write_and_print(f_net, f'{indent}\tcompatible = "zephyr,mapped-partition";\n')
                 write_and_print(f_net, f'{indent}\tlabel = "{area[2]}";\n')
                 net_reg = f'{indent}\treg = <0x{format(final_offset, "x")} '
                 net_reg += f'{format_partition_size(area[3])}>;\n'
@@ -732,7 +773,7 @@ def main():
 
                 child_indent = indent + '\t'
                 child_names = order_subpartitions(parent_children, cpunet_by_original_name)
-                for child_name in child_names:
+                for i, child_name in enumerate(child_names):
                     child_area = cpunet_by_original_name[child_name]
                     child_offset = child_area[1] - area[1]
                     child_node = (
@@ -740,11 +781,16 @@ def main():
                         f'partition@{format(child_offset, "x")} {{\n'
                     )
                     write_and_print(f_net, child_node)
+                    write_and_print(
+                        f_net, f'{child_indent}\tcompatible = "zephyr,mapped-partition";\n'
+                    )
                     write_and_print(f_net, f'{child_indent}\tlabel = "{child_area[2]}";\n')
                     net_child_reg = f'{child_indent}\treg = <0x{format(child_offset, "x")} '
                     net_child_reg += f'{format_partition_size(child_area[3])}>;\n'
                     write_and_print(f_net, net_child_reg)
-                    write_and_print(f_net, f'{child_indent}}};\n\n')
+                    write_and_print(f_net, f'{child_indent}}};\n')
+                    if i < len(child_names) - 1:
+                        write_and_print(f_net, '\n')
 
                 write_and_print(f_net, f'{indent}}};\n')
             else:
