@@ -9,8 +9,9 @@ config HAS_HW_NRF_WIFI_KEYS
 
 config WIFI_KEYS_DRIVER
 	bool "Wi-Fi Keys driver"
+	default y
 	depends on HAS_HW_NRF_WIFI_KEYS
-	depends on PSA_CRYPTO_DRIVER_KMU_PUSH
+	imply PSA_CRYPTO_DRIVER_KMU_PUSH
 	help
 	  Driver for Wi-Fi security key management.
 	  This driver handles cryptographic keys for Wi-Fi security
