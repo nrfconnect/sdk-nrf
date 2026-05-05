@@ -1017,6 +1017,19 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set_config_bool(mcuboot CONFIG_NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION y)
     set_config_bool(mcuboot CONFIG_NRF_MPCCONF_API_IN_RAM y)
   endif()
+
+  if(SB_CONFIG_CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS)
+    foreach(image ${PRE_CMAKE_IMAGES})
+      set_config_bool(${image} CONFIG_CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS y)
+    endforeach()
+
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf54l_prot_ram_inv_slots.cmake)
+  else()
+    foreach(image ${PRE_CMAKE_IMAGES})
+      set_config_bool(${image} CONFIG_CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS n)
+    endforeach()
+  endif()
+
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
@@ -1098,10 +1111,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
         OUTPUT_FILE ${CMAKE_BINARY_DIR}/${SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME}
       )
     endif()
-  endif()
-
-  if(SB_CONFIG_KMU_INVALIDATE_PROTECTED_RAM_SLOTS)
-    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf54l_prot_ram_inv_slots.cmake)
   endif()
 
   if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
