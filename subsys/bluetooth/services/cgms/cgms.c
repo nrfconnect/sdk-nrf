@@ -269,6 +269,14 @@ static ssize_t racp_on_receive(struct bt_conn *conn,
 {
 	int rc;
 
+	if (offset != 0) {
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+
+	if (len > CGMS_RACP_MAX_LENGTH) {
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
+	}
+
 	rc = cgms_racp_recv_request(conn, buf, len);
 	if (rc < 0) {
 		LOG_WRN("Internal Error during RACP Handling: %d", rc);
