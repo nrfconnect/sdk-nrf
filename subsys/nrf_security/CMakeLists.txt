@@ -95,7 +95,7 @@ add_library(psa_crypto_config INTERFACE)
 target_compile_definitions(psa_crypto_config
   INTERFACE
     -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CONFIG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
+    -DTF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
 )
 
 # Add library for crypto configs (S-only or Secure image build)
@@ -106,8 +106,8 @@ add_library(psa_crypto_library_config INTERFACE)
 target_compile_definitions(psa_crypto_library_config
   INTERFACE
     -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CONFIG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
+    -DTF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
+    -DTF_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE}"
 )
 
 # Add a library for crypto includes for the PSA interface (NS, S-only and TF-M)

@@ -28,9 +28,9 @@ if(TARGET tfm_api_ns)
 endif()
 
 # Duplicates that can be removed
-#set(TFM_MBEDCRYPTO_CONFIG_PATH ${MBEDTLS_CONFIG_FILE})
-#set(TFM_MBEDCRYPTO_PSA_CRYPTO_CONFIG_PATH ${MBEDTLS_PSA_CRYPTO_CONFIG_FILE})
-#set(TFM_MBEDCRYPTO_PSA_CRYPTO_USER_CONFIG_PATH ${MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE})
+#set(TFM_MBEDCRYPTO_CONFIG_PATH ${CONFIG_MBEDTLS_CONFIG_FILE})
+#set(TFM_MBEDCRYPTO_PSA_CRYPTO_CONFIG_PATH ${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE})
+#set(TFM_MBEDCRYPTO_PSA_CRYPTO_USER_CONFIG_PATH ${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE})
 
 # Note: This is a duplicate from nrf_security/CMakeLists.txt
 #       with additions of the install-target for Oberon-psa-core includes
@@ -56,8 +56,8 @@ if(TARGET psa_crypto_config)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_CRYPTO_CONFIG True)
     target_compile_definitions(psa_crypto_config
         INTERFACE
-            MBEDTLS_CONFIG_FILE="${MBEDTLS_CONFIG_FILE}"
-            MBEDTLS_PSA_CRYPTO_CONFIG_FILE="${MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
+            MBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CONFIG_FILE}"
+            TF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
             # Give a signal that we are inside TF-M build to prevent check_config.h
             # complaining about lacking legacy features for Mbed TLS wrapper APIs, TLS/DTLS and X.509.
             INSIDE_TFM_BUILD
@@ -77,9 +77,9 @@ if(TARGET psa_crypto_library_config)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_CRYPTO_LIBRARY_CONFIG True)
     target_compile_definitions(psa_crypto_library_config
         INTERFACE
-            MBEDTLS_CONFIG_FILE="${MBEDTLS_CONFIG_FILE}"
-            MBEDTLS_PSA_CRYPTO_CONFIG_FILE="${MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
-            MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
+            MBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CONFIG_FILE}"
+            TF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
+            TF_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE}"
     )
 
     target_include_directories(psa_crypto_library_config
@@ -119,8 +119,8 @@ if(TARGET tfm_sprt)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_SPRT True)
     target_compile_definitions(tfm_sprt
         PRIVATE
-            MBEDTLS_CONFIG_FILE="${MBEDTLS_CONFIG_FILE}"
-            MBEDTLS_PSA_CRYPTO_CONFIG_FILE="${MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
+            MBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CONFIG_FILE}"
+            TF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
             INSIDE_TFM_BUILD
     )
 
