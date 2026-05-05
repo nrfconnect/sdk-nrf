@@ -641,12 +641,14 @@ static int fem_configure(bool rx, nrf_radio_mode_t mode,
 }
 #endif /* CONFIG_FEM */
 
-static void radio_start(bool rx, bool force_egu)
+static void radio_start(nrf_radio_task_t radio_task, bool force_egu)
 {
+	__ASSERT_NO_MSG(radio_task == NRF_RADIO_TASK_TXEN || radio_task == NRF_RADIO_TASK_RXEN);
+
 	if (IS_ENABLED(CONFIG_FEM) || force_egu) {
 		nrf_egu_task_trigger(RADIO_TEST_EGU, RADIO_TEST_EGU_TASK);
 	} else {
-		nrf_radio_task_trigger(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN);
+		nrf_radio_task_trigger(NRF_RADIO, radio_task);
 	}
 }
 
@@ -971,7 +973,7 @@ static void radio_unmodulated_tx_carrier_radio_setup(uint8_t mode, int8_t txpowe
 static void radio_unmodulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t channel)
 {
 	radio_unmodulated_tx_carrier_radio_setup(mode, txpower, channel, true);
-	radio_start(false, sweep_processing);
+	radio_start(NRF_RADIO_TASK_TXEN, sweep_processing);
 }
 
 static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t channel,
@@ -1030,7 +1032,7 @@ static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t cha
 	(void)fem_configure(false, mode, &fem);
 #endif /* CONFIG_FEM */
 
-	radio_start(false, false);
+	radio_start(NRF_RADIO_TASK_TXEN, false);
 }
 
 static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern pattern,
@@ -1071,7 +1073,7 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 	}
 #endif /* CONFIG_FEM */
 
-	radio_start(true, sweep_processing);
+	radio_start(NRF_RADIO_TASK_RXEN, sweep_processing);
 
 	if (rx_packet_num > 0) {
 		k_work_reschedule(&rx_timeout_work, K_SECONDS(CONFIG_RADIO_TEST_RX_TIMEOUT));
@@ -1462,9 +1464,9 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 216) */
 	} else if (event_type == NRF_TIMER_EVENT_COMPARE4) {
 		if (config->type == TX_SWEEP_WITH_SLEEP_MODULATED) {
-			radio_start(false, false);
+			radio_start(NRF_RADIO_TASK_TXEN, false);
 		} else {
-			radio_start(false, true);
+			radio_start(NRF_RADIO_TASK_TXEN, true);
 		}
 	} else {
 		/* Do nothing */
