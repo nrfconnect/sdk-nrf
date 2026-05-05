@@ -378,6 +378,7 @@ Peripheral samples
 
   * Updated the ``start_duty_cycle_modulated_tx`` command to accept an optional argument specifying the number of packets to transmit.
     If no additional argument is provided, the command works as before.
+  * Fixed an issue where the ``start_duty_cycle_modulated_tx`` command would not work correctly on nRF52 Series devices if the command was triggered more than once.
 
 PMIC samples
 ------------
