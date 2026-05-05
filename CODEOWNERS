@@ -573,6 +573,7 @@
 /samples/wifi/promiscuous/                @D-Triveni
 /samples/wifi/wfa_qt_app/                 @D-Triveni
 /samples/wifi/offloaded_raw_tx/           @kapbh @sachinthegreen
+/samples/wifi/nrf_cloud/                  @nrfconnect/ncs-bifrost
 
 /samples/app_event_manager/*.rst          @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /samples/app_event_manager_profiler_tracer/*.rst @nrfconnect/ncs-si-xcake-doc
@@ -692,6 +693,7 @@
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
 /samples/wifi/**/*.rst                    @nrfconnect/ncs-wifi-doc
 /samples/wifi/provisioning/softap/*.rst   @nrfconnect/ncs-cia-doc
+/samples/wifi/nrf_cloud/*.rst             @nrfconnect/ncs-bifrost @nrfconnect/ncs-nrf-cloud-doc
 /samples/zephyr/basic/blinky/             @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /samples/zephyr/bluetooth/                @nrfconnect/ncs-low-level-test
 /samples/zephyr/boards/nordic/            @nrfconnect/ncs-low-level-test
