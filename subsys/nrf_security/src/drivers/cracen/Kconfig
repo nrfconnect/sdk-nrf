@@ -74,6 +74,18 @@ config CRACEN_LIB_KMU
 	help
 	  The CRACEN KMU library.
 
+config CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS
+	bool "Provision protected RAM invalidation slots with nrfutil (informative only, do not change)"
+	help
+	  This option indicates that the protected RAM invalidation slots are provisioned
+	  using nrfutil. When enabled, the manual provisioning options below are hidden because
+	  provisioning is expected to be handled through sysbuild/nrfutil instead.
+	  This option is controlled by the KMU_INVALIDATE_PROTECTED_RAM_SLOTS sysbuild
+	  configuration option, so enable it in your sysbuild
+	  configuration rather than setting this symbol manually.
+
+if !CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS
+
 config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 	bool "Provision protected RAM invalidation slots on boot"
 	depends on CRACEN_LIB_KMU
@@ -95,6 +107,8 @@ config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
 	  populate the slots.
 	  This is meant to be used by a provisioning image that runs once before the application
 	  image is flashed. This is not meant to be used by user applications.
+
+endif # CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS
 
 config CRACEN_IKG
 	bool "CRACEN IKG"
