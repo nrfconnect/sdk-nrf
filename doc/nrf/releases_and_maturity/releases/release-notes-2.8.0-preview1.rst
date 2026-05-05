@@ -301,7 +301,7 @@ Machine learning
 Asset Tracker v2
 ----------------
 
-* Added a note that the Asset Tracker v2 application is in the maintenance mode and recommended to use the :ref:`nrf_cloud_multi_service` sample instead.
+* Added a note that the Asset Tracker v2 application is in the maintenance mode and recommended to use the nRF Cloud multi-service sample instead.
 
 Connectivity Bridge
 -------------------
@@ -535,16 +535,16 @@ Cellular samples
   * Added support for setting the FOTA update check interval using the config section in the shadow.
   * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Added:
 
-    * The :ref:`CONFIG_TEST_COUNTER_MULTIPLIER <CONFIG_TEST_COUNTER_MULTIPLIER>` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
+    * The :kconfig:option:`CONFIG_TEST_COUNTER_MULTIPLIER` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
     * A handler for new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON`` to stop sensors and location services.
     * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
     * The ``CONFIG_SEND_ONLINE_ALERT`` Kconfig option to enable calling the ``nrf_cloud_alert`` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
-    * The :ref:`CONFIG_POST_PROVISIONING_INTERVAL_M <CONFIG_POST_PROVISIONING_INTERVAL_M>` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
+    * The ``CONFIG_POST_PROVISIONING_INTERVAL_M`` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
 
   * Updated:
 

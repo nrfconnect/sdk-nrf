@@ -5,34 +5,22 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/led.h>
-#include <stdlib.h>
 
 #include "led_control.h"
 
-/* We implement, here, both 4-led and RGB LED control, but you may feel free to implement
- * whatever your board can support. You must make sure your board Device Tree Source or overlays
- * include a device marked as compatible with either the pwm-leds or gpio-leds driver in order to
- * use the LED driver provided by Zephyr, as we do here. Both the nRF9160dk, nRF9161dk and thingy91
- * have such devices defined in their default Device Tree Sources. See nrf9160dk_nrf9160_common.dts
- * nrf9161dk_nrf9161_common.dts and thingy91_nrf9160_common.dts.
+/* We implement, here, 4-LED control. You must make sure your board Device Tree Source or overlays
+ * include a device marked as compatible with the gpio-leds driver in order to use the LED driver
+ * provided by Zephyr, as we do here.
  */
 
-LOG_MODULE_REGISTER(led_control, CONFIG_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(led_control, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
-/* Find a Device Tree node compatible with either the pwm_leds or gpio_leds driver, depending on
- * what has been configured.
- */
-#if defined(CONFIG_LED_INDICATION_PWM)
-const static struct device *led_device = DEVICE_DT_GET_ANY(pwm_leds);
-#elif defined(CONFIG_LED_INDICATION_GPIO)
+/* Find a Device Tree node compatible with the gpio_leds driver. */
+#if defined(CONFIG_LED_INDICATION_GPIO)
 const static struct device *led_device = DEVICE_DT_GET_ANY(gpio_leds);
 #else
 const static struct device *led_device;
 #endif
-
-#define LED_RGB_R 0
-#define LED_RGB_G 1
-#define LED_RGB_B 2
 
 #define LED_4LED_1 0
 #define LED_4LED_2 1
@@ -56,20 +44,6 @@ static void led_set_4led(bool l1, bool l2, bool l3, bool l4)
 }
 
 /**
- * @brief If the LED mode is RGB, set the RGB values.
- *
- * @param r - LED Red channel.
- * @param g - LED Green channel.
- * @param b - LED Blue channel.
- */
-static void led_set_rgb(int r, int g, int b)
-{
-	led_set_brightness(led_device, LED_RGB_R, r);
-	led_set_brightness(led_device, LED_RGB_G, g);
-	led_set_brightness(led_device, LED_RGB_B, b);
-}
-
-/**
  * @brief Change the LEDs to a pattern that indicates success.
  *
  * @param frame_number - An integer used for basic animations.
@@ -79,10 +53,7 @@ static void led_pattern_success(int frame_number)
 	/* Square wave with period 12 frames and duty cycle 25% */
 	bool blink = (frame_number % 12) < 3;
 
-	if (IS_ENABLED(CONFIG_LED_INDICATOR_RGB)) {
-		/* Blink the green channel */
-		led_set_rgb(0, blink ? 100 : 0, 0);
-	} else if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
+	if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
 		/* Blink alternating diagonals on a 4LED square */
 		led_set_4led(blink, !blink, !blink, blink);
 	}
@@ -98,10 +69,7 @@ static void led_pattern_failure(int frame_number)
 	/* Square wave with period 20 frames and duty cycle 75% */
 	int blink = (frame_number % 20) < 15;
 
-	if (IS_ENABLED(CONFIG_LED_INDICATOR_RGB)) {
-		/* Blink red channel */
-		led_set_rgb(blink ? 100 : 0, 0, 0);
-	} else if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
+	if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
 		/* Blink all four LEDs */
 		led_set_4led(blink, blink, blink, blink);
 	}
@@ -114,13 +82,7 @@ static void led_pattern_failure(int frame_number)
  */
 static void led_pattern_idle(int frame_number)
 {
-	if (IS_ENABLED(CONFIG_LED_INDICATOR_RGB)) {
-		/* A triangle wave between 0 and 20 */
-		int breath = abs((frame_number % 40) - 20);
-
-		/* Breathe back and forth between cyan and pure blue */
-		led_set_rgb(0, breath, 20);
-	} else if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
+	if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
 		/* Square wave with period 40 frames and duty cycle 50% */
 		bool blink = (frame_number % 40) < 20;
 
@@ -138,13 +100,7 @@ static void led_pattern_idle(int frame_number)
  */
 static void led_pattern_waiting(int frame_number)
 {
-	if (IS_ENABLED(CONFIG_LED_INDICATOR_RGB)) {
-		/* A triangle wave between 0 and 10 */
-		int breath = abs((frame_number % 20) - 10);
-
-		/* Pulsating orange */
-		led_set_rgb(breath * 10, breath, 0);
-	} else if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
+	if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
 		/* Spin a single LED around the 4LED square */
 		led_set_4led((frame_number % 4) == 0,
 			     (frame_number % 4) == 1,
@@ -158,9 +114,7 @@ static void led_pattern_waiting(int frame_number)
  */
 static void led_pattern_disabled(void)
 {
-	if (IS_ENABLED(CONFIG_LED_INDICATOR_RGB)) {
-		led_set_rgb(0, 0, 0);
-	} else if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
+	if (IS_ENABLED(CONFIG_LED_INDICATOR_4LED)) {
 		led_set_4led(false, false, false, false);
 	}
 }

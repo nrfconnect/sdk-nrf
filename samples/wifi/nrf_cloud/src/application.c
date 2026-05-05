@@ -6,9 +6,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
-#if !defined(CONFIG_BOARD_NATIVE_SIM)
 #include <helpers/nrfx_reset_reason.h>
-#endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
 #include <date_time.h>
 #include <stdio.h>
 #include <net/nrf_cloud.h>
@@ -26,22 +24,15 @@
 #include "cloud_connection.h"
 #include "message_queue.h"
 #include "led_control.h"
-#include "at_commands.h"
 #include "shadow_config.h"
 #if IS_ENABLED(CONFIG_MEMFAULT) && IS_ENABLED(CONFIG_NRF_CLOUD_COAP)
 #include <memfault/core/trace_event.h>
 #endif
 
-LOG_MODULE_REGISTER(application, CONFIG_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(application, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
 /* Timer used to time the sensor sampling rate. */
 static K_TIMER_DEFINE(sensor_sample_timer, NULL, NULL);
-
-/* AT command request error handling */
-#define AT_CMD_REQUEST_ERR_FORMAT "Error while processing AT command request: %d"
-#define AT_CMD_REQUEST_ERR_MAX_LEN (sizeof(AT_CMD_REQUEST_ERR_FORMAT) + 20)
-BUILD_ASSERT(CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH >= AT_CMD_REQUEST_ERR_MAX_LEN,
-	     "Not enough AT command response buffer for printing error events.");
 
 /* Temperature alert limits. */
 #define TEMP_ALERT_LIMIT ((double)CONFIG_TEMP_ALERT_LIMIT)
@@ -134,55 +125,8 @@ static int send_sensor_sample(const char *const sensor, double value)
 
 #if defined(CONFIG_LOCATION_TRACKING)
 /**
- * @brief Transmit a collected GNSS sample to nRF Cloud.
- *
- * @param loc_gnss - GNSS location data.
- * @return int - 0 on success, negative error code otherwise.
- */
-static int send_gnss(const struct location_event_data * const loc_gnss)
-{
-	int ret;
-
-	if (!loc_gnss || (loc_gnss->method != LOCATION_METHOD_GNSS)) {
-		return -EINVAL;
-	}
-
-	struct nrf_cloud_gnss_data gnss_pvt = {
-		.type = NRF_CLOUD_GNSS_TYPE_PVT,
-		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
-		.pvt = {
-			.lon		= loc_gnss->location.longitude,
-			.lat		= loc_gnss->location.latitude,
-			.accuracy	= loc_gnss->location.accuracy,
-			.has_alt	= 0,
-			.has_speed	= 0,
-			.has_heading	= 0
-		}
-	};
-	MSG_OBJ_DEFINE(msg_obj);
-
-	/* Add the timestamp */
-	(void)date_time_now(&gnss_pvt.ts_ms);
-
-	/* Encode the location data into a device message */
-	ret = nrf_cloud_obj_gnss_msg_create(&msg_obj, &gnss_pvt);
-
-	if (ret == 0) {
-		/* Send the location message */
-		ret = send_device_message(&msg_obj);
-	}
-
-	return ret;
-}
-
-/**
  * @brief Callback to receive periodic location updates from location_tracking.c and forward them
  * to nRF Cloud.
- *
- * Note that cellular positioning (MCELL/Multi-Cell and SCELL/Single-Cell) is sent to nRF
- * Cloud automatically (since the Location library and nRF Cloud must work together to
- * determine them in the first place). GNSS positions, on the other hand, must be
- * sent manually, since they are determined entirely on-device.
  *
  * @param location_data - The received location update.
  *
@@ -194,97 +138,8 @@ static void on_location_update(const struct location_event_data * const location
 		location_data->location.longitude,
 		(double)location_data->location.accuracy,
 		location_method_str(location_data->method));
-
-	/* If the position update was derived using GNSS, send it onward to nRF Cloud. */
-	if (location_data->method == LOCATION_METHOD_GNSS) {
-		LOG_INF("GNSS Position Update! Sending to nRF Cloud...");
-		send_gnss(location_data);
-	}
 }
 #endif /* CONFIG_LOCATION_TRACKING */
-
-/**
- * @brief Receives general device messages from nRF Cloud, checks if they are AT command requests,
- * and performs them if so, transmitting the modem response back to nRF Cloud.
- *
- * Try sending {"appId":"MODEM", "messageType":"CMD", "data":"AT+CGMR"}
- * in the nRF Cloud Portal Terminal card.
- *
- * @param msg - The device message to check.
- */
-static void handle_at_cmd_requests(const struct nrf_cloud_data *const dev_msg)
-{
-	char *cmd;
-	NRF_CLOUD_OBJ_DEFINE(msg_obj, NRF_CLOUD_OBJ_TYPE__UNDEFINED);
-	int err = nrf_cloud_obj_input_decode(&msg_obj, dev_msg);
-
-	if (err) {
-		/* The message isn't JSON or otherwise couldn't be parsed. */
-		LOG_DBG("A general topic device message of length %d could not be parsed.",
-			dev_msg->len);
-		return;
-	}
-
-	/* Confirm app ID and message type */
-	err = nrf_cloud_obj_msg_check(&msg_obj, NRF_CLOUD_JSON_APPID_VAL_MODEM,
-				      NRF_CLOUD_JSON_MSG_TYPE_VAL_CMD);
-	if (err) {
-		goto cleanup;
-	}
-
-	/* Get the command string */
-	err = nrf_cloud_obj_str_get(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, &cmd);
-	if (err) {
-		/* Missing or invalid command value will be treated as a blank command */
-		cmd = "";
-	}
-
-	/* Execute the command and receive the result */
-	char *response = execute_at_cmd_request(cmd);
-
-	/* To re-use msg_obj for the response message we must first free its memory and
-	 * reset its state.
-	 * The cmd string will no longer be valid after msg_obj is freed.
-	 */
-	cmd = NULL;
-	/* Free the object's allocated memory */
-	err = nrf_cloud_obj_free(&msg_obj);
-	if (err) {
-		LOG_ERR("Failed to free AT CMD request");
-		return;
-	}
-
-	/* Reset the object's state */
-	err = nrf_cloud_obj_reset(&msg_obj);
-	if (err) {
-		LOG_ERR("Failed to reset AT CMD request message object for reuse");
-		return;
-	}
-
-	err = create_timestamped_device_message(&msg_obj, NRF_CLOUD_JSON_APPID_VAL_MODEM,
-						NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
-	if (err) {
-		return;
-	}
-
-	/* Populate response with command result */
-	err = nrf_cloud_obj_str_add(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, response, false);
-	if (err) {
-		LOG_ERR("Failed to populate AT CMD response with modem response data");
-		goto cleanup;
-	}
-
-	/* Send the response */
-	err = send_device_message(&msg_obj);
-	if (err) {
-		LOG_ERR("Failed to send AT CMD request response, error: %d", err);
-	}
-
-	return;
-
-cleanup:
-	(void)nrf_cloud_obj_free(&msg_obj);
-}
 
 /** @brief Check whether temperature is acceptable.
  * If the device exceeds a temperature limit, log a warning and send the temperature_alert
@@ -345,25 +200,16 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 
 static void print_reset_reason(void)
 {
-#if !defined(CONFIG_BOARD_NATIVE_SIM)
 	uint32_t reset_reason;
 
 	reset_reason = nrfx_reset_reason_get();
 	nrfx_reset_reason_clear(reset_reason);
 	LOG_INF("Reset reason: 0x%x", reset_reason);
-#endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
 }
 
 void main_application_thread_fn(void)
 {
 	print_reset_reason();
-
-	if (IS_ENABLED(CONFIG_AT_CMD_REQUESTS)) {
-		/* Register with connection.c to receive general device messages and check them for
-		 * AT command requests.
-		 */
-		register_general_dev_msg_handler(handle_at_cmd_requests);
-	}
 
 #if defined(CONFIG_DK_LIBRARY)
 	dk_buttons_init(button_handler);
@@ -375,14 +221,12 @@ void main_application_thread_fn(void)
 	/* Wait for the date and time to become known.
 	 * This is needed both for location services and for sensor sample timestamping.
 	 */
-#if !defined(CONFIG_BOARD_NATIVE_SIM)
-	LOG_INF("Waiting for modem to determine current date and time");
+	LOG_INF("Waiting for device to determine current date and time");
 	if (!await_date_time_known(K_SECONDS(CONFIG_DATE_TIME_ESTABLISHMENT_TIMEOUT_SECONDS))) {
 		LOG_WRN("Failed to determine valid date time. Proceeding anyways");
 	} else {
 		LOG_INF("Current date and time determined");
 	}
-#endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
 
 #if defined(CONFIG_LOCATION_TRACKING)
 	/* Begin tracking location at the configured interval. */

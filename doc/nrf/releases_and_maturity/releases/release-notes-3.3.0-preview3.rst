@@ -468,7 +468,7 @@ Cellular samples
     Enabling this option is necessary for using nRF Cloud Utils as an onboarding method.
   * Removed JITP from the shell commands and references from the sample documentation.
 
-* :ref:`nrf_cloud_mqtt_device_message` and :ref:`nrf_cloud_multi_service` samples:
+* :ref:`nrf_cloud_mqtt_device_message` and nRF Cloud multi-service samples:
 
   * Updated shadow handling by removing the shadow type ``Accepted`` and added ``Transform`` request event handling.
     Delta events can now handle error cases using the ``/shadow/update/delta/trim/err`` and ``/shadow/update/delta/full/err`` topics in nRF Cloud.

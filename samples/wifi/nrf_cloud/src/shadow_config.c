@@ -14,7 +14,7 @@
 #endif
 #include "application.h"
 
-LOG_MODULE_REGISTER(shadow_config, CONFIG_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(shadow_config, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
 #define TEST_COUNTER_EN	"counterEnable"
 

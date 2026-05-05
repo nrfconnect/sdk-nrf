@@ -157,7 +157,6 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
   * `nRF Cloud Provisioning Service`_
   * `nRF Cloud Auto-onboarding`_
   * `nRF Cloud device claiming`_
-  * :ref:`nrf_cloud_multi_service_provisioning_service`
   * :ref:`lib_nrf_provisioning`
 
 * Preconnect provisioning

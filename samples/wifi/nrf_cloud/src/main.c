@@ -10,10 +10,12 @@
 #include "cloud_connection.h"
 #include "message_queue.h"
 #include "led_control.h"
+#if defined(CONFIG_NRF_CLOUD_COAP)
 #include "fota_support_coap.h"
 #include "shadow_support_coap.h"
+#endif
 
-LOG_MODULE_REGISTER(main, CONFIG_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
 /* Here, we start the various threads that our application will run in */
 
@@ -63,7 +65,7 @@ int main(void)
 		protocol = "CoAP";
 	}
 
-	LOG_INF("nRF Cloud multi-service sample has started, version: %s, protocol: %s",
+	LOG_INF("Wi-Fi nRF Cloud sample has started, version: %s, protocol: %s",
 		CONFIG_APP_VERSION, protocol);
 
 	return 0;

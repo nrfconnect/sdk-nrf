@@ -445,7 +445,7 @@ Cellular samples
 
   * Updated the Wi-Fi configurations to reduce the RAM usage by about 25 kB.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Updated the Wi-Fi configurations to reduce the RAM usage by about 12 kB for an nRF91 Series DK and 25 kB for the Thingy:91 X.
 

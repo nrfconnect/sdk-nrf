@@ -104,7 +104,10 @@ Samples using the library
 The following |NCS| samples use this library:
 
 * :ref:`modem_shell_application`
-* :ref:`nrf_cloud_multi_service`
+* :ref:`nrf_cloud_coap_device_message`
+* :ref:`nrf_cloud_coap_cell_location`
+* :ref:`nrf_cloud_coap_fota_sample`
+* :ref:`wifi_nrf_cloud`
 
 Limitations
 ***********

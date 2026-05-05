@@ -7,9 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
-#if !defined(CONFIG_BOARD_NATIVE_SIM)
-#include <modem/location.h>
-#endif
 #include <date_time.h>
 #include <stdio.h>
 #include <net/nrf_cloud.h>
@@ -19,7 +16,7 @@
 #include "shadow_support_coap.h"
 #include "shadow_config.h"
 
-LOG_MODULE_REGISTER(shadow_support_coap, CONFIG_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(shadow_support_coap, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
 #define COAP_SHADOW_MAX_SIZE 512
 

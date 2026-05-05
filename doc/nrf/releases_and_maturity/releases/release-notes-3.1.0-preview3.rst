@@ -369,7 +369,7 @@ Cellular samples
 
   * Added ``ATE0`` and ``ATE1`` in AT command mode to handle echo off/on.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Added support for native simulator platform and updated the documentation accordingly.
 

@@ -806,7 +806,7 @@ Cellular samples
 
   * Added TLS support for connection to the SUPL server.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Fixed an issue where sporadically the application would get stuck waiting for the device to connect to the Internet, caused by an incorrect :ref:`Connection Manager <zephyr:conn_mgr_overview>` initialization.
   * Deprecated the sample.
