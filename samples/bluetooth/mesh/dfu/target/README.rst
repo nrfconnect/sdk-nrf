@@ -103,6 +103,9 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. note::
+   For the ``nrf52840dongle/nrf52840`` board target, use the merged :file:`/build/merged_nrf52840dongle_nrf52840.hex` file and follow the instructions in the :zephyr:board:`nrf52840dongle` documentation on how to create and flash a DFU package using ``nrfutil``.
+
 Testing
 =======
 
