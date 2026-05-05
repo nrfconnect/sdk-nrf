@@ -125,7 +125,7 @@ See the following documentation for an overview of which modem firmware versions
 * `Modem firmware compatibility matrix for the nRF9160 SoC`_
 
 Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
-See the `Programming nRF91 Series DK firmware` page for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -644,9 +644,9 @@ Cellular samples
 
 * Added support for the Thingy:91 X to the following samples:
 
-  * :ref:`nrf_cloud_rest_device_message`
-  * :ref:`nrf_cloud_rest_cell_location`
-  * :ref:`nrf_cloud_rest_fota`
+  * nRF Cloud REST Device Message sample
+  * nRF Cloud REST cellular location sample
+  * nRF Cloud REST FOTA sample
 
 * Deprecated the LTE Sensor Gateway sample.
   It is no longer maintained.
@@ -670,17 +670,17 @@ Cellular samples
     * The sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
     * The sample by enabling the :ref:`lib_at_shell` library to allow the nRF Cloud Utils to interface with the device.
 
-* :ref:`nrf_cloud_rest_device_message` sample:
+* Cellular: nRF Cloud REST Device Message sample:
 
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Removed Provisioning service and JITP.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* Cellular: nRF Cloud REST cellular location sample:
 
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Removed JITP.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* Cellular: nRF Cloud REST FOTA sample:
 
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Fixed SMP FOTA for the nRF9160 DK.

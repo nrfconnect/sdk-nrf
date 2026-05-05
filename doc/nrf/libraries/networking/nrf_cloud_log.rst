@@ -16,9 +16,8 @@ The logging backend can either use JSON encoding or `Dictionary-based Logging`_ 
 Overview
 ********
 
-This library provides an API for REST-, MQTT-, or CoAP-based applications to send logs to nRF Cloud.
+This library provides an API for MQTT- or CoAP-based applications to send logs to nRF Cloud.
 For MQTT- and CoAP-based applications, you can enable or disable logging as well as change the logging level remotely using the nRF Cloud portal or `nRF Cloud Patch Device State`_ REST API.
-For REST-based applications, the enabled state and logging level can be controlled at compile time or at run time on the device, but not from the cloud.
 
 Each JSON log message contains the following elements:
 
@@ -55,7 +54,7 @@ The sequence number is set to a monotonically-increasing value that resets to ``
 Supported backends
 ==================
 
-When so configured, this library includes a Zephyr logging backend that can transport log messages to nRF Cloud using REST, MQTT, or CoAP.
+When so configured, this library includes a Zephyr logging backend that can transport log messages to nRF Cloud using MQTT or CoAP.
 The logging backend can also use either JSON messages or dictionary-based compact binary messages.
 
 Multiple JSON log messages are sent together as a JSON array to the `d2c/bulk device message topic <nRF Cloud MQTT Topics_>`_.
@@ -70,7 +69,6 @@ Requirements
 ************
 
 The device must be connected to nRF Cloud before calling the :c:func:`nrf_cloud_log_send` function.
-The :c:func:`nrf_cloud_rest_log_send` function initiates the connection as needed.
 
 Configuration
 *************
@@ -82,7 +80,7 @@ To enable direct log messages or the logging backend, set the :kconfig:option:`C
 
 If only the first is enabled:
 
-* Calls to the direct log message functions :c:func:`nrf_cloud_log_send` and :c:func:`nrf_cloud_rest_log_send` send messages direct to nRF Cloud immediately.
+* Calls to the direct log message function :c:func:`nrf_cloud_log_send` send messages direct to nRF Cloud immediately.
 * The cloud logging backend is not available, and consequently, no Zephyr log messages are transmitted to the cloud.
 
 If only the second is enabled:
@@ -95,7 +93,6 @@ If both options are enabled, calls to the direct log message functions are passe
 Configure one of the following Kconfig options to select the data transport method:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_MQTT`
-* :kconfig:option:`CONFIG_NRF_CLOUD_REST`
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP`
 
 Configure the message encoding:
@@ -141,7 +138,7 @@ Usage
 To use this library, complete the following steps:
 
 1. Include the :file:`nrf_cloud_log.h` file.
-#. If the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_DIRECT` Kconfig option is enabled, call the :c:func:`nrf_cloud_log_send` function when connected to nRF Cloud using MQTT or CoAP, or call :c:func:`nrf_cloud_rest_log_send` when using REST.
+#. If the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_DIRECT` Kconfig option is enabled, call the :c:func:`nrf_cloud_log_send` function when connected to nRF Cloud using MQTT or CoAP.
 #. If the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_BACKEND` option is enabled, use the normal Zephyr logging macros :c:macro:`LOG_ERR`, :c:macro:`LOG_WRN`, :c:macro:`LOG_INF`, or :c:macro:`LOG_DBG`, as well as the ``_HEXDUMP_ forms``.
 
 Samples using the library
@@ -149,13 +146,8 @@ Samples using the library
 
 The following |NCS| samples use this library:
 
-* :ref:`nrf_cloud_multi_service`
-* :ref:`nrf_cloud_rest_device_message`
-
-Limitations
-***********
-
-For REST-based applications, you can disable or set a log level for logs only at compile time.
+* :ref:`nrf_cloud_mqtt_device_message`
+* :ref:`nrf_cloud_coap_device_message`
 
 Dependencies
 ************
@@ -163,7 +155,6 @@ Dependencies
 This library uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud`
-* :ref:`lib_nrf_cloud_rest`
 * :ref:`lib_nrf_cloud_coap`
 * :ref:`lib_date_time`
 

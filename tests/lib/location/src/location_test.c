@@ -16,9 +16,8 @@
 #include "cmock_nrf_modem_at.h"
 #include "cmock_nrf_modem_gnss.h"
 #include "cmock_modem_key_mgmt.h"
-#include "cmock_rest_client.h"
 #include "cmock_nrf_cloud.h"
-#include "cmock_nrf_cloud_rest.h"
+#include "cmock_nrf_cloud_coap.h"
 #include "cmock_nrf_cloud_agnss.h"
 #include "cmock_device.h"
 #include "cmock_net_if.h"
@@ -73,12 +72,8 @@ int net_mgmt_NET_REQUEST_WIFI_SCAN(
 
 #endif /* defined(CONFIG_LOCATION_METHOD_WIFI) */
 
-#define HTTPS_PORT 443
-
 static struct location_event_data test_location_event_data[5] = {0};
 static struct nrf_modem_gnss_pvt_data_frame test_pvt_data = {0};
-static struct rest_client_req_context rest_req_ctx = { 0 };
-static struct rest_client_resp_context rest_resp_ctx = { 0 };
 static int location_cb_occurred;
 static int location_cb_expected;
 static int location_cb_occurred_2;
@@ -125,30 +120,6 @@ static const char ncellmeas_resp_gci5[] =
 	"\"00011B08\",\"26295\",\"00B7\",65535,0,2300,9,62,30,150345527,0,0\r\n";
 #endif
 
-char http_resp[512];
-
-static const char http_resp_header_ok[] =
-	"HTTP/1.1 200 OK\r\n"
-	"Server: awselb/2.0\r\n"
-	"Date: Wed, 25 Aug 2021 04:50:34 GMT\r\n"
-	"Content-Type: application/json\r\n"
-	"Content-Length: 50\r\n"
-	"Connection: close\r\n"
-	"request-id: b17cd88c-8a7d-424c-a964-15a0e5d721d9\r\n"
-	"Access-Control-Allow-Origin: *\r\n"
-	"\r\n";
-
-static char http_resp_body[128];
-
-static const char http_resp_body_fmt[] =
-	"{\"location\":{\"lat\":%.06f,\"lng\":%.06f,\"accuracy\":%f}}\r\n";
-
-static char *const http_headers[] = {
-	"Content-Type: application/json\r\n",
-	"Connection: close\r\n",
-	/* Note: Content-length set according to payload in HTTP library */
-	NULL
-};
 
 /* at_monitor_dispatch() is implemented in at_monitor library and
  * we'll call it directly to fake received AT commands/notifications
@@ -171,27 +142,6 @@ static void helper_location_data_clear(void)
 {
 	memset(&test_location_event_data, 0, sizeof(test_location_event_data));
 	memset(&test_pvt_data, 0, sizeof(test_pvt_data));
-	memset(&rest_req_ctx, 0, sizeof(rest_req_ctx));
-	memset(&rest_resp_ctx, 0, sizeof(rest_resp_ctx));
-
-	/* Setting REST request and response parameters to default values */
-
-	/* Set some of the defaults that are set in rest_client_request_defaults_set() */
-	rest_req_ctx.connect_socket = 0;
-	rest_req_ctx.keep_alive = false;
-	rest_req_ctx.tls_peer_verify = REST_CLIENT_TLS_DEFAULT_PEER_VERIFY;
-	rest_req_ctx.timeout_ms = 1 * 1000;
-
-	/* Set variables that are handled in multicell location library when calling rest client */
-	rest_req_ctx.http_method = HTTP_POST;
-	rest_req_ctx.header_fields = (const char **)http_headers;
-	rest_req_ctx.resp_buff = http_resp;
-	rest_req_ctx.resp_buff_len = sizeof(http_resp);
-
-	rest_resp_ctx.total_response_len = strlen(http_resp);
-	rest_resp_ctx.response_len = strlen(http_resp + strlen(http_resp_header_ok));
-	rest_resp_ctx.response = http_resp + strlen(http_resp_header_ok);
-	rest_resp_ctx.http_status_code = REST_CLIENT_HTTP_STATUS_OK;
 }
 
 void setUp(void)
@@ -513,10 +463,9 @@ void test_location_method_str(void)
 
 char test_agnss_data[] = "test agnss data";
 
-int nrf_cloud_rest_agnss_data_get_Stub(
-	struct nrf_cloud_rest_context *const rest_ctx,
-	struct nrf_cloud_rest_agnss_request const *const request,
-	struct nrf_cloud_rest_agnss_result *const result,
+int nrf_cloud_coap_agnss_data_get_Stub(
+	struct nrf_cloud_coap_agnss_request const *const request,
+	struct nrf_cloud_coap_agnss_result *result,
 	int NumCalls)
 {
 	struct nrf_modem_gnss_agnss_data_frame test_agnss_request = {
@@ -536,12 +485,7 @@ int nrf_cloud_rest_agnss_data_get_Stub(
 		}
 	};
 
-	TEST_ASSERT_EQUAL(-1, rest_ctx->connect_socket);
-	TEST_ASSERT_EQUAL(false, rest_ctx->keep_alive);
-	TEST_ASSERT_EQUAL(NRF_CLOUD_REST_TIMEOUT_NONE, rest_ctx->timeout_ms);
-	TEST_ASSERT_EQUAL(0, rest_ctx->fragment_size);
-
-	TEST_ASSERT_EQUAL(NRF_CLOUD_REST_AGNSS_REQ_CUSTOM, request->type);
+	TEST_ASSERT_EQUAL(NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM, request->type);
 	TEST_ASSERT_EQUAL(false, request->filtered);
 	TEST_ASSERT_EQUAL(0, request->mask_angle);
 	/* TODO: request->net_info not checked at the moment but could be done */
@@ -567,7 +511,7 @@ int nrf_cloud_rest_agnss_data_get_Stub(
 		test_agnss_request.system[1].sv_mask_alm,
 		request->agnss_req->system[1].sv_mask_alm);
 
-	result->buf = test_agnss_data;
+	memcpy(result->buf, test_agnss_data, sizeof(test_agnss_data));
 	result->agnss_sz = sizeof(test_agnss_data);
 
 	return 0;
@@ -872,9 +816,9 @@ void test_location_gnss(void)
 
 	location_agnss_data_process(test_agnss_data, sizeof(test_agnss_data));
 #else
-	__cmock_nrf_cloud_rest_agnss_data_get_Stub(nrf_cloud_rest_agnss_data_get_Stub);
-	__cmock_nrf_cloud_agnss_process_ExpectAndReturn(
-		test_agnss_data, sizeof(test_agnss_data), 0);
+	__cmock_nrf_cloud_coap_agnss_data_get_Stub(nrf_cloud_coap_agnss_data_get_Stub);
+	__cmock_nrf_cloud_agnss_process_ExpectAndReturn(NULL, sizeof(test_agnss_data), 0);
+	__cmock_nrf_cloud_agnss_process_IgnoreArg_buf();
 #endif
 #endif
 
@@ -999,27 +943,23 @@ void test_location_gnss_location_request_timeout(void)
 
 /********* CELLULAR POSITIONING TESTS ***********************/
 
-void cellular_rest_req_resp_handle(int test_event_data_index)
+static struct nrf_cloud_location_result cellular_coap_result;
+
+void cellular_coap_req_resp_handle(int test_event_data_index)
 {
-	sprintf(http_resp_body, http_resp_body_fmt,
-		test_location_event_data[test_event_data_index].location.latitude,
-		test_location_event_data[test_event_data_index].location.longitude,
-		(double)test_location_event_data[test_event_data_index].location.accuracy);
+	cellular_coap_result.lat =
+		test_location_event_data[test_event_data_index].location.latitude;
+	cellular_coap_result.lon =
+		test_location_event_data[test_event_data_index].location.longitude;
+	cellular_coap_result.unc =
+		(uint32_t)test_location_event_data[test_event_data_index].location.accuracy;
+	cellular_coap_result.err = NRF_CLOUD_ERROR_NONE;
 
-	sprintf(http_resp, "%s%s", http_resp_header_ok, http_resp_body);
-
-	rest_resp_ctx.total_response_len = strlen(http_resp);
-	rest_resp_ctx.response_len = strlen(http_resp + strlen(http_resp_header_ok));
-	rest_resp_ctx.response = http_resp + strlen(http_resp_header_ok);
-
-	__cmock_rest_client_request_defaults_set_ExpectAnyArgs();
-	// TODO: We should verify rest_req_ctx
-	//__cmock_rest_client_request_ExpectWithArrayAndReturn(&rest_req_ctx, 1, NULL, 0, 0);
-	__cmock_rest_client_request_ExpectAndReturn(&rest_req_ctx, NULL, 0);
-	__cmock_rest_client_request_IgnoreArg_req_ctx();
-	__cmock_rest_client_request_IgnoreArg_resp_ctx();
-	__cmock_rest_client_request_ReturnMemThruPtr_resp_ctx(&rest_resp_ctx,
-		sizeof(rest_resp_ctx));
+	__cmock_nrf_cloud_coap_location_get_ExpectAndReturn(NULL, NULL, 0);
+	__cmock_nrf_cloud_coap_location_get_IgnoreArg_request();
+	__cmock_nrf_cloud_coap_location_get_IgnoreArg_result();
+	__cmock_nrf_cloud_coap_location_get_ReturnMemThruPtr_result(
+		&cellular_coap_result, sizeof(cellular_coap_result));
 }
 
 /* Test successful cellular location request utilizing external service.
@@ -1069,7 +1009,7 @@ void test_location_cellular(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
-	cellular_rest_req_resp_handle(location_cb_expected - 1);
+	cellular_coap_req_resp_handle(location_cb_expected - 1);
 
 	/* TODO: Add support for nRF Cloud */
 #endif
@@ -1190,7 +1130,7 @@ void test_location_cellular_timeout_during_1st_ncellmeas(void)
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", 0);
 
-	cellular_rest_req_resp_handle(location_cb_expected - 1);
+	cellular_coap_req_resp_handle(location_cb_expected - 1);
 
 	/* TODO: Add support for nRF Cloud */
 
@@ -1252,7 +1192,7 @@ void test_location_cellular_timeout_during_2nd_ncellmeas_backup_timeout(void)
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", 0);
 
-	cellular_rest_req_resp_handle(location_cb_expected - 1);
+	cellular_coap_req_resp_handle(location_cb_expected - 1);
 
 	/* scan_cellular.c has a backup timer of 2s which we need to wait */
 	k_sleep(K_MSEC(2200));
@@ -1299,7 +1239,7 @@ void test_location_wifi(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
-	cellular_rest_req_resp_handle(location_cb_expected - 1);
+	cellular_coap_req_resp_handle(location_cb_expected - 1);
 
 	/* TODO: Add support for nRF Cloud */
 
@@ -1774,7 +1714,7 @@ void test_location_request_default(void)
 	at_monitor_dispatch(ncellmeas_resp_gci1);
 	k_sleep(K_MSEC(1));
 
-	cellular_rest_req_resp_handle(location_cb_expected - 1);
+	cellular_coap_req_resp_handle(location_cb_expected - 1);
 
 	/* Although 5 cells are returned, we only request 4 including service cell so 3 GCI cells */
 	at_monitor_dispatch(ncellmeas_resp_gci5);
@@ -1890,7 +1830,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 	err = k_sem_take(&event_handler_called_sem_2, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(0, err);
 #endif
-	cellular_rest_req_resp_handle(location_cb_expected - 2);
+	cellular_coap_req_resp_handle(location_cb_expected - 2);
 
 	/* TODO: Add support for nRF Cloud */
 
@@ -2272,7 +2212,7 @@ void test_location_cellular_periodic(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
-	cellular_rest_req_resp_handle(0);
+	cellular_coap_req_resp_handle(0);
 
 	/* TODO: Add support for nRF Cloud */
 
@@ -2290,7 +2230,7 @@ void test_location_cellular_periodic(void)
 	TEST_ASSERT_EQUAL(0, err);
 	k_sleep(K_MSEC(1));
 
-	cellular_rest_req_resp_handle(1);
+	cellular_coap_req_resp_handle(1);
 
 	/* TODO: Add support for nRF Cloud */
 

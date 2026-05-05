@@ -8,10 +8,7 @@
 #include <zephyr/sys/util.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_fota_poll.h>
-#if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
-#endif
-#include <net/nrf_cloud_rest.h>
 #include <zephyr/logging/log.h>
 #include <net/fota_download.h>
 #include <fota_download_util.h>
@@ -57,8 +54,7 @@ static char const *fota_status_details = FOTA_STATUS_DETAILS_SUCCESS;
 /* Forward-declarations */
 static int handle_downloaded_image(struct nrf_cloud_fota_poll_ctx *ctx, bool cloud_disconnect);
 static int update_job_status(struct nrf_cloud_fota_poll_ctx *ctx);
-static int check_for_job(struct nrf_cloud_fota_poll_ctx *ctx,
-			 struct nrf_cloud_fota_job_info *const job_ref);
+static int check_for_job(struct nrf_cloud_fota_job_info *const job_ref);
 
 /****************************************************/
 /* Define wrappers for transport-specific functions */
@@ -69,60 +65,20 @@ static bool check_ctx(struct nrf_cloud_fota_poll_ctx *ctx)
 	if (!ctx || !ctx->reboot_fn) {
 		return false;
 	}
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_REST) && (!ctx->rest_ctx || !ctx->device_id)) {
-		return false;
-	}
 	return true;
-}
-
-static int fota_job_get(struct nrf_cloud_fota_poll_ctx *ctx,
-			struct nrf_cloud_fota_job_info *const job)
-{
-#if defined(CONFIG_NRF_CLOUD_REST)
-	return nrf_cloud_rest_fota_job_get(ctx->rest_ctx, ctx->device_id, job);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
-	return nrf_cloud_coap_fota_job_get(job);
-#endif
-	return -ENOTSUP;
-}
-
-static int fota_job_update(struct nrf_cloud_fota_poll_ctx *ctx, const char *const job_id,
-			   const enum nrf_cloud_fota_status status, const char *const details)
-{
-#if defined(CONFIG_NRF_CLOUD_REST)
-	return nrf_cloud_rest_fota_job_update(ctx->rest_ctx, ctx->device_id, job_id, status,
-					      details);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
-	return nrf_cloud_coap_fota_job_update(job_id, status, details);
-#endif
-	return -ENOTSUP;
 }
 
 static int disconnect(struct nrf_cloud_fota_poll_ctx *ctx)
 {
 	int err;
 
-#if defined(CONFIG_NRF_CLOUD_REST)
-	err = nrf_cloud_rest_disconnect(ctx->rest_ctx);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
 	err = nrf_cloud_coap_disconnect();
-#else
-	err = -ENOTSUP;
-#endif
+
 #if defined(CONFIG_LTE_LINK_CONTROL)
 	(void)lte_lc_power_off();
 #endif
 
 	return err;
-}
-
-static void cleanup(struct nrf_cloud_fota_job_info *const job_ref)
-{
-#if defined(CONFIG_NRF_CLOUD_REST)
-	nrf_cloud_rest_fota_job_free(job_ref);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
-	nrf_cloud_coap_fota_job_free(job_ref);
-#endif
 }
 
 static void fota_status_callback(struct nrf_cloud_fota_poll_ctx *ctx,
@@ -185,11 +141,11 @@ static void cancel_if_job_is_not_valid(struct nrf_cloud_fota_poll_ctx *ctx, uint
 		last_progress_threshold = current_progress_threshold;
 
 		/* Stop and do cleanup if the job has been canceled */
-		err = check_for_job(ctx, &job_current);
+		err = check_for_job(&job_current);
 		if (err == 1) {
 			LOG_ERR("No job available, canceling...");
 
-			cleanup(&job_current);
+			nrf_cloud_coap_fota_job_free(&job_current);
 			k_work_schedule(&ctx->cancel_work, K_SECONDS(1));
 		}
 	}
@@ -421,14 +377,13 @@ static bool validate_in_progress_job(void)
 	return false;
 }
 
-static int check_for_job(struct nrf_cloud_fota_poll_ctx *ctx,
-			 struct nrf_cloud_fota_job_info *const job_ref)
+static int check_for_job(struct nrf_cloud_fota_job_info *const job_ref)
 {
 	int err;
 
 	LOG_INF("Checking for FOTA job...");
 
-	err = fota_job_get(ctx, job_ref);
+	err = nrf_cloud_coap_fota_job_get(job_ref);
 	if (err == -ETIMEDOUT) {
 		LOG_WRN("FOTA job get timed out, error: %d", err);
 		return err;
@@ -453,8 +408,8 @@ static int update_job_status(struct nrf_cloud_fota_poll_ctx *ctx)
 
 	/* Send FOTA job status to nRF Cloud and, if successful, clear pending job in settings */
 	LOG_INF("Updating FOTA job status...");
-	err = fota_job_update(ctx, is_job_pending ? pending_job.id : job.id, fota_status,
-			      fota_status_details);
+	err = nrf_cloud_coap_fota_job_update(is_job_pending ? pending_job.id : job.id, fota_status,
+					fota_status_details);
 
 	pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_NONE;
 	pending_job.type = NRF_CLOUD_FOTA_TYPE__INVALID;
@@ -642,7 +597,7 @@ static void wait_after_job_update(void)
 {
 	/* Job operations can take up to 30s to be processed */
 	LOG_INF("Waiting %u seconds for job update to be processed by nRF Cloud...", JOB_WAIT_S);
-	cleanup(&job);
+	nrf_cloud_coap_fota_job_free(&job);
 	k_sleep(K_SECONDS(JOB_WAIT_S));
 }
 
@@ -679,18 +634,18 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 	}
 
 	/* Check for a new FOTA job */
-	err = check_for_job(ctx, &job);
+	err = check_for_job(&job);
 	if (err == -ETIMEDOUT) {
 		LOG_WRN("FOTA job check failed timed out, error: %d", err);
 
-		cleanup(&job);
+		nrf_cloud_coap_fota_job_free(&job);
 		return err;
 	} else if (err < 0) {
 		LOG_ERR("Failed to check for FOTA job, error: %d", err);
 		return IS_RECOVERABLE_NETWORK_ERR(err) ? err : -ENOTRECOVERABLE;
 	} else if (err > 0) {
 		/* No job. */
-		cleanup(&job);
+		nrf_cloud_coap_fota_job_free(&job);
 		return -EAGAIN;
 	}
 

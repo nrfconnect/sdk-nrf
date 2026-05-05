@@ -13,7 +13,6 @@ project(location_test)
 test_runner_generate(src/location_test.c)
 
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_key_mgmt.h)
-cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/rest_client.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_gnss.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
   FUNC_EXCLUDE ".*nrf_modem_at_printf"
@@ -25,7 +24,16 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud.h
   FUNC_EXCLUDE ".*nrf_cloud_obj_shadow_update"
 )
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud_agnss.h)
-cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud_rest.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud_coap.h
+  FUNC_EXCLUDE ".*nrf_cloud_coap_init"
+  FUNC_EXCLUDE ".*nrf_cloud_coap_connect"
+  FUNC_EXCLUDE ".*nrf_cloud_coap_pause"
+  FUNC_EXCLUDE ".*nrf_cloud_coap_resume"
+  FUNC_EXCLUDE ".*nrf_cloud_coap_disconnect"
+  FUNC_EXCLUDE ".*nrf_cloud_coap_keepopen_is_supported"
+  FUNC_EXCLUDE ".*nrf_cloud_coap_pgps_url_get"
+  WORD_EXCLUDE ".*pgps.*"
+)
 
 # Net and Wi-Fi management API mocking requires tricks as the headers have code structures
 # that CMock is not able to parse properly.
@@ -71,6 +79,7 @@ zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include)
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/include)
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/include)
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/net)
+zephyr_include_directories(${ZEPHYR_CJSON_MODULE_DIR})
 
 # The test uses double precision floating point numbers. This is not enabled by default in unity
 # unless we set the following define.

@@ -11,7 +11,8 @@ Cellular: GNSS
 
 This sample demonstrates how to use the :ref:`GNSS interface <nrfxlib:gnss_interface>` to control the `GNSS`_ module.
 It also shows how to improve fix speed and accuracy with the :ref:`lib_nrf_cloud_agnss` library and how to use the :ref:`lib_nrf_cloud_pgps` library.
-Assistance data is downloaded from nRF Cloud using `nRF Cloud's REST-based device API <nRF Cloud REST API_>`_.
+A-GNSS data is downloaded from nRF Cloud using nRF Cloud's `CoAP-based device API <nRF Cloud CoAP API_>`_.
+For P-GPS, the device requests a URL over CoAP and downloads the prediction file over HTTP.
 
 Requirements
 ************
@@ -74,10 +75,8 @@ The sample then displays the information in the terminal about the download proc
 Finally, after the download completes, the sample switches back to the previous display mode.
 
 .. note::
-   To download assistance data, your device must have a valid JWT signing key installed and registered with `nRF Cloud`_.
-
-   .. include:: /includes/nrf_cloud_rest_sample_requirements.txt
-       :start-after: requirement_keysign_moreinfo_start
+   To download assistance data, your device must be onboarded to nRF Cloud and have a valid certificate.
+   To onboard your device, install `nRF Cloud Utils`_ and follow the instructions in the README.
 
 Minimal assistance
 ==================
@@ -325,7 +324,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud_agnss`
 * :ref:`lib_nrf_cloud_pgps`
-* :ref:`lib_nrf_cloud_rest`
+* :ref:`lib_nrf_cloud_coap`
 * :ref:`supl_client`
 * :ref:`lib_at_host`
 

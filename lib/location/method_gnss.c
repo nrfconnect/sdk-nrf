@@ -16,12 +16,10 @@
 #include "location_utils.h"
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include "scan_cellular.h"
-#include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_agnss.h>
 #include <stdlib.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_pgps.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_COAP)
@@ -36,13 +34,12 @@
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
-/* Verify that MQTT, REST, CoAP or external service is enabled */
+/* Verify that MQTT, CoAP or external service is enabled */
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
-	IS_ENABLED(CONFIG_NRF_CLOUD_REST) ||
 	IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ||
 	IS_ENABLED(CONFIG_LOCATION_SERVICE_EXTERNAL),
-	"CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_REST, CONFIG_NRF_CLOUD_COAP or "
+	"CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_COAP or "
 	"CONFIG_LOCATION_SERVICE_EXTERNAL must be enabled");
 #endif
 
@@ -94,9 +91,8 @@ static struct k_work method_gnss_pvt_work;
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 static int64_t agnss_req_timestamp;
 #if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && \
-	(defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP)) && \
-	!defined(CONFIG_NRF_CLOUD_MQTT)
-static char agnss_rest_data_buf[NRF_CLOUD_AGNSS_MAX_DATA_SIZE];
+	defined(CONFIG_NRF_CLOUD_COAP) && !defined(CONFIG_NRF_CLOUD_MQTT)
+static char agnss_coap_data_buf[NRF_CLOUD_AGNSS_MAX_DATA_SIZE];
 #endif
 #endif
 
@@ -132,14 +128,6 @@ static struct nrf_modem_gnss_agnss_data_frame pgps_agnss_request = {
 	.system[0].sv_mask_ephe = 0xffffffff,
 	.system[0].sv_mask_alm = 0x00000000,
 };
-#endif
-
-#if defined(CONFIG_NRF_CLOUD_REST) && !defined(CONFIG_NRF_CLOUD_MQTT)
-#if (defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)) || \
-	(defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL))
-static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
-			      AGNSS_REQUEST_HTTPS_RESP_HEADER_SIZE];
-#endif
 #endif
 
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
@@ -262,31 +250,13 @@ static void method_gnss_nrf_cloud_agnss_request(void)
 	LOG_DBG("A-GNSS data requested");
 }
 
-#elif defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP)
+#elif defined(CONFIG_NRF_CLOUD_COAP)
 static void method_gnss_nrf_cloud_agnss_request(void)
 {
 	int err;
 
-#if defined(CONFIG_NRF_CLOUD_REST)
-	const char *jwt_buf;
-	struct nrf_cloud_rest_context rest_ctx = {
-		.connect_socket = -1,
-		.keep_alive = false,
-		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
-		.rx_buf = rest_api_recv_buf,
-		.rx_buf_len = sizeof(rest_api_recv_buf),
-		.fragment_size = 0
-	};
-
-	jwt_buf = location_utils_nrf_cloud_jwt_generate();
-	if (jwt_buf == NULL) {
-		return;
-	}
-	rest_ctx.auth = (char *)jwt_buf;
-#endif
-
-	struct nrf_cloud_rest_agnss_request request = {
-		NRF_CLOUD_REST_AGNSS_REQ_CUSTOM,
+	struct nrf_cloud_coap_agnss_request request = {
+		NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM,
 		&agnss_request,
 		NULL,
 		false,
@@ -313,16 +283,13 @@ static void method_gnss_nrf_cloud_agnss_request(void)
 		request.net_info = &net_info;
 	}
 
-	struct nrf_cloud_rest_agnss_result result = {
-		agnss_rest_data_buf,
-		sizeof(agnss_rest_data_buf),
+	struct nrf_cloud_coap_agnss_result result = {
+		agnss_coap_data_buf,
+		sizeof(agnss_coap_data_buf),
 		0};
 
-#if defined(CONFIG_NRF_CLOUD_REST)
-	err = nrf_cloud_rest_agnss_data_get(&rest_ctx, &request, &result);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
 	err = nrf_cloud_coap_agnss_data_get(&request, &result);
-#endif
+
 	if (err) {
 		LOG_ERR("nRF Cloud A-GNSS request failed, error: %d", err);
 		return;
@@ -345,7 +312,7 @@ static void method_gnss_nrf_cloud_agnss_request(void)
 	}
 #endif
 }
-#endif /* #elif defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP) */
+#endif /* defined(CONFIG_NRF_CLOUD_COAP) */
 #endif /* defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
@@ -354,29 +321,10 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 {
 	int err;
 
-	struct nrf_cloud_rest_pgps_request request = {
+	struct nrf_cloud_coap_pgps_request request = {
 		.pgps_req = &pgps_request
 	};
 
-#if defined(CONFIG_NRF_CLOUD_REST)
-	const char *jwt_buf;
-	struct nrf_cloud_rest_context rest_ctx = {
-		.connect_socket = -1,
-		.keep_alive = false,
-		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
-		.rx_buf = rest_api_recv_buf,
-		.rx_buf_len = sizeof(rest_api_recv_buf),
-		.fragment_size = 0
-	};
-
-	jwt_buf = location_utils_nrf_cloud_jwt_generate();
-	if (jwt_buf == NULL) {
-		return;
-	}
-	rest_ctx.auth = (char *)jwt_buf;
-
-	err = nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
 	struct nrf_cloud_pgps_result file_location = {0};
 	static char host[64];
 	static char path[128];
@@ -389,7 +337,7 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 	file_location.path_sz = sizeof(path);
 
 	err = nrf_cloud_coap_pgps_url_get(&request, &file_location);
-#endif
+
 	if (err) {
 		nrf_cloud_pgps_request_reset();
 		LOG_ERR("nRF Cloud P-GPS request failed, error: %d", err);
@@ -398,11 +346,8 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 
 	LOG_DBG("P-GPS data requested");
 
-#if defined(CONFIG_NRF_CLOUD_REST)
-	err = nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
 	err = nrf_cloud_pgps_update(&file_location);
-#endif
+
 	if (err) {
 		nrf_cloud_pgps_request_reset();
 		LOG_ERR("P-GPS data processing failed, error: %d", err);
@@ -861,13 +806,11 @@ static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pv
 
 #if defined(CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND)
 
-#if defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_NRF_CLOUD_REST)
-
+#if defined(CONFIG_NRF_CLOUD_MQTT)
 static int method_gnss_nrf_cloud_json_send(char *body)
 {
 	int err;
 
-#if defined(CONFIG_NRF_CLOUD_MQTT)
 	struct nrf_cloud_tx_data mqtt_msg = {
 		.data.ptr = body,
 		.data.len = strlen(body),
@@ -879,28 +822,7 @@ static int method_gnss_nrf_cloud_json_send(char *body)
 	if (err) {
 		LOG_ERR("MQTT: location data sending failed: %d", err);
 	}
-#elif defined(CONFIG_NRF_CLOUD_REST)
-#define REST_DETAILS_RX_BUF_SZ 300 /* No payload in a response, "just" headers */
-	static char rx_buf[REST_DETAILS_RX_BUF_SZ];
-	static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
-	static struct nrf_cloud_rest_context rest_ctx = {
-		.connect_socket = -1,
-		.keep_alive = false,
-		.rx_buf = rx_buf,
-		.rx_buf_len = sizeof(rx_buf),
-		.fragment_size = 0
-	};
 
-	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
-	if (err == 0) {
-		err = nrf_cloud_rest_send_device_message(&rest_ctx, device_id, body, false, NULL);
-		if (err) {
-			LOG_ERR("REST: location data sending failed: %d", err);
-		}
-	} else {
-		LOG_ERR("Failed to get device ID, error: %d", err);
-	}
-#endif
 	return err;
 }
 #endif
@@ -936,7 +858,7 @@ static void method_gnss_nrf_cloud_pos_send(struct nrf_modem_gnss_pvt_data_frame 
 
 	gnss_data.ts_ms = timeutil_timegm64(&time) * 1000 + pvt_data->datetime.ms;
 
-#if defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_NRF_CLOUD_REST)
+#if defined(CONFIG_NRF_CLOUD_MQTT)
 	char *json_str = NULL;
 	cJSON *gnss_data_obj = NULL;
 

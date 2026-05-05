@@ -64,7 +64,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See the `Programming nRF91 Series DK firmware` page for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -353,11 +353,11 @@ nRF9160 samples
 
 * Added:
 
-  * :ref:`nrf_cloud_rest_device_message` sample, demonstrating how to send an arbitrary device message with the nRF Cloud REST API.
+  * Cellular: nRF Cloud REST Device Message sample.
   * :ref:`modem_callbacks_sample` sample, showcasing initialization and de-initialization callbacks.
   * :ref:`nrf_cloud_multi_service` sample, demonstrating a simple but robust integration of location services, FOTA, sensor sampling, and more.
   * Shell functionality to HTTP Update samples.
-  * :ref:`nrf_cloud_rest_cell_location` sample, demonstrating how to use the :ref:`lib_nrf_cloud_rest` library to perform cellular positioning requests.
+  * Cellular: nRF Cloud REST cellular location sample.
   * :ref:`ciphersuites` sample, demonstrating how to use TLS cipher suites.
 
 * Secure Partition Manager (rather than TF-M) is enabled by default for the applications and samples that support Thingy:91.
@@ -395,7 +395,7 @@ nRF9160 samples
       * When disabling of UART is requested either by a shell command or by a button press, modem traces are disabled before disabling UART1.
       * When the UART1 is re-enabled (either after timer expiry or button press), the modem traces are also re-enabled.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* Cellular: nRF Cloud REST FOTA sample:
 
   * Enabled building of bootloader FOTA update files.
   * Corrected handling of the bootloader FOTA updates.
@@ -652,7 +652,7 @@ Modem libraries
     * Current system time is attached to the ``location_datetime`` parameter of the location request response with Wi-Fi and cellular methods.
       The timestamp comes from the moment of scanning or neighbor measurements.
     * Removed dependency on the :ref:`lib_modem_jwt` library.
-      The :ref:`lib_location` library now selects :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` when using :kconfig:option:`CONFIG_NRF_CLOUD_REST`.
+      The :ref:`lib_location` library now selects ``CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT`` when using ``CONFIG_NRF_CLOUD_REST``.
 
   * Removed support for Skyhook.
 
@@ -692,7 +692,7 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-* :ref:`lib_nrf_cloud_rest` library:
+* nRF Cloud REST library:
 
   * Added JSON Web Token (JWT) autogeneration feature.
     If enabled, the nRF Cloud REST library automatically generates a JWT if none is provided by the user when making REST requests.
@@ -702,7 +702,7 @@ Libraries for networking
     * Centralized error handling.
     * Error return values.
     * For cellular positioning responses, the type is now set based on the ``fulfilledWith`` response from the nRF Cloud.
-    * nRF Cloud error codes are now parsed and set in the :c:struct:`nrf_cloud_rest_context` structure.
+    * nRF Cloud error codes are now parsed and set in the ``nrf_cloud_rest_context`` structure.
 
 * Download client library:
 

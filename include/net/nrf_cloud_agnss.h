@@ -14,6 +14,7 @@
 #include <zephyr/kernel.h>
 #include <nrf_modem_gnss.h>
 #include <net/nrf_cloud.h>
+#include <modem/lte_lc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +22,7 @@ extern "C" {
 
 /**
  * Maximum size of assistance data in bytes when all assistance data types are received.
- * Can be used to set the buffer size for REST and CoAP.
+ * Can be used to set the buffer size for CoAP.
  */
 #define NRF_CLOUD_AGNSS_MAX_DATA_SIZE 4096
 

@@ -79,7 +79,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See the `Programming nRF91 Series DK firmware` page for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -472,7 +472,7 @@ nRF9160 samples
   * Removed A-GPS and P-GPS processing.
     It is now handled by the :ref:`lib_nrf_cloud` library.
 
-* Renamed the nRF9160: nRF Cloud REST cellular position sample to :ref:`nrf_cloud_rest_cell_location` sample.
+* Renamed the nRF9160: nRF Cloud REST cellular position sample to nRF Cloud REST cellular location sample.
   Sample files are moved from ``samples/nrf9160/nrf_cloud_rest_cell_pos`` to ``samples/nrf9160/nrf_cloud_rest_cell_location``.
 
 Trusted Firmware-M (TF-M) samples
@@ -777,9 +777,9 @@ Libraries for networking
 
   * Added an error code :c:enumerator:`FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL` to indicate that the source of error is not network related.
 
-* :ref:`lib_nrf_cloud_rest` library:
+* nRF Cloud REST library:
 
-  * Updated by replacing the ``nrf_cloud_rest_cell_pos_get()`` function with :c:func:`nrf_cloud_rest_location_get`.
+  * Updated by replacing the ``nrf_cloud_rest_cell_pos_get()`` function with ``nrf_cloud_rest_location_get``.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 

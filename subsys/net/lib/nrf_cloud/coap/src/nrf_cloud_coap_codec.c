@@ -387,7 +387,7 @@ int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result, 
 }
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
-int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const request, uint8_t *buf,
+int coap_codec_agnss_encode(struct nrf_cloud_coap_agnss_request const *const request, uint8_t *buf,
 			    size_t *len, enum coap_content_format fmt)
 {
 	__ASSERT_NO_MSG(request != NULL);
@@ -427,7 +427,7 @@ int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const req
 		LOG_DBG("No net_info provided.");
 	}
 
-	if (request->type == NRF_CLOUD_REST_AGNSS_REQ_CUSTOM) {
+	if (request->type == NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM) {
 		cnt = nrf_cloud_agnss_type_array_get(request->agnss_req, types, ARRAY_SIZE(types));
 		t->agnss_req_types_int_count = cnt;
 		input.agnss_req_types_present = true;
@@ -459,7 +459,7 @@ int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const req
 	return ret;
 }
 
-int coap_codec_agnss_resp_decode(struct nrf_cloud_rest_agnss_result *result, const uint8_t *buf,
+int coap_codec_agnss_resp_decode(struct nrf_cloud_coap_agnss_result *result, const uint8_t *buf,
 				 size_t len, enum coap_content_format fmt)
 {
 	__ASSERT_NO_MSG(result != NULL);
@@ -498,7 +498,7 @@ int coap_codec_agnss_resp_decode(struct nrf_cloud_rest_agnss_result *result, con
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-int coap_codec_pgps_encode(struct nrf_cloud_rest_pgps_request const *const request, uint8_t *buf,
+int coap_codec_pgps_encode(struct nrf_cloud_coap_pgps_request const *const request, uint8_t *buf,
 			   size_t *len, enum coap_content_format fmt)
 {
 	__ASSERT_NO_MSG(request != NULL);
@@ -605,7 +605,7 @@ int coap_codec_fota_resp_decode(struct nrf_cloud_fota_job_info *job, const uint8
 		memcpy(buf_copy, buf, len);
 		buf_copy[len] = '\0';
 
-		int err = nrf_cloud_rest_fota_execution_decode(buf_copy, job);
+		int err = nrf_cloud_coap_fota_execution_decode(buf_copy, job);
 
 		nrf_cloud_free(buf_copy);
 		return err;

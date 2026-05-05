@@ -524,7 +524,7 @@ Cellular samples
   * :ref:`lwm2m_client`
   * :ref:`modem_shell_application`
   * :ref:`nrf_cloud_multi_service`
-  * :ref:`nrf_cloud_rest_fota`
+  * nRF Cloud REST FOTA sample
 
 * :ref:`modem_shell_application` sample:
 

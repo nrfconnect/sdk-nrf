@@ -7,12 +7,6 @@
 #ifndef _SMP_RESET_H_
 #define _SMP_RESET_H_
 
-#if defined(CONFIG_NRF_CLOUD_FOTA_SMP) && defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS)
-#define SMP_FOTA_ENABLED 1
-#else
-#define SMP_FOTA_ENABLED 0
-#endif
-
 /**
  * @brief Reset the nRF52840 for SMP FOTA.
  */

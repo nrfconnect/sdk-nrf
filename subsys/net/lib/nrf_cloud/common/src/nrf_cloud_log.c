@@ -49,22 +49,15 @@ void nrf_cloud_log_init(void)
 	}
 }
 
-void nrf_cloud_log_init_context_internal(void *rest_ctx, const char *dev_id, int log_level,
-					 uint32_t src_id, const char *src_name, uint8_t dom_id,
-					 int64_t ts, struct nrf_cloud_log_context *context)
+void nrf_cloud_log_init_context_internal(int log_level, uint32_t src_id, const char *src_name,
+					 uint8_t dom_id, int64_t ts,
+					 struct nrf_cloud_log_context *context)
 {
-	context->rest_ctx = rest_ctx;
 	context->level = log_level;
 	context->src_id = src_id;
 	context->src_name = src_name;
 	context->dom_id = dom_id;
 	context->sequence = atomic_inc(&log_sequence);
-
-	if (dev_id) {
-		strncpy(context->device_id, dev_id, NRF_CLOUD_CLIENT_ID_MAX_LEN);
-	} else {
-		context->device_id[0] = '\0';
-	}
 
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		context->ts = ts + starting_timestamp;
@@ -102,7 +95,7 @@ void nrf_cloud_log_inject_internal(int log_level, const char *fmt, va_list ap)
 
 #else  /* !CONFIG_NRF_CLOUD_LOG_BACKEND */
 int nrf_cloud_log_format_internal(struct nrf_cloud_log_context *context, char *buf,
-				  struct nrf_cloud_tx_data *output, void *ctx, const char *dev_id,
+				  struct nrf_cloud_tx_data *output,
 				  int log_level, const char *fmt, va_list ap)
 {
 	__ASSERT_NO_MSG(context != NULL);
@@ -114,7 +107,7 @@ int nrf_cloud_log_format_internal(struct nrf_cloud_log_context *context, char *b
 	/* Idempotent so is OK to call every time. */
 	nrf_cloud_log_init();
 
-	nrf_cloud_log_init_context_internal(ctx, dev_id, log_level, 0, "nrf_cloud_log",
+	nrf_cloud_log_init_context_internal(log_level, 0, "nrf_cloud_log",
 					    Z_LOG_LOCAL_DOMAIN_ID, k_uptime_get(), context);
 
 	vsnprintfcb(buf, CONFIG_NRF_CLOUD_LOG_BUF_SIZE - 1, fmt, ap);

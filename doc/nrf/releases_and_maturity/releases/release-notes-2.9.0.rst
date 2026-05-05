@@ -94,7 +94,7 @@ See the following documentation for an overview of which modem firmware versions
 * `Modem firmware compatibility matrix for the nRF9160 SoC`_
 
 Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
-See the `Programming nRF91 Series DK firmware` page for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -430,9 +430,9 @@ Cellular samples
 
 * Updated the :kconfig:option:`CONFIG_NRF_CLOUD_CHECK_CREDENTIALS` Kconfig option to be optional and enabled by default for the following samples:
 
-  * :ref:`nrf_cloud_rest_cell_location`
-  * :ref:`nrf_cloud_rest_device_message`
-  * :ref:`nrf_cloud_rest_fota`
+  * nRF Cloud REST cellular location sample
+  * nRF Cloud REST Device Message sample
+  * nRF Cloud REST FOTA sample
 
 * :ref:`location_sample` sample:
 

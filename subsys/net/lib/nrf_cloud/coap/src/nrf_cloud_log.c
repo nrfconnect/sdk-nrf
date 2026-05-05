@@ -49,7 +49,7 @@ int nrf_cloud_log_send(int log_level, const char *fmt, ...)
 
 	/* Send it directly to the cloud. */
 	va_start(ap, fmt);
-	err = nrf_cloud_log_format_internal(&context, buf, &output, NULL, NULL, log_level, fmt, ap);
+	err = nrf_cloud_log_format_internal(&context, buf, &output, log_level, fmt, ap);
 	va_end(ap);
 	if (err) {
 		return err;

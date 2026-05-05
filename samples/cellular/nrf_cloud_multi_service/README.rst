@@ -1193,7 +1193,7 @@ You can provision and onboard your device in one of the following ways:
 
 * Using auto-onboarding, as follows:
 
-   The nRF Cloud Provisioning Service auto-onboarding is compatible with CoAP, REST and MQTT connectivity with nRF Cloud.
+   The nRF Cloud Provisioning Service auto-onboarding is compatible with CoAP and MQTT connectivity with nRF Cloud.
 
    With this method, use the `Serial Terminal app`_ and the nRF Cloud portal.
    The recommended format of the device ID used in the nRF Cloud portal is UUID and not the 'nrf-\ *IMEI*\ ' format.

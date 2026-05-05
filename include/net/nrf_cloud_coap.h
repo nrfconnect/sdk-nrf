@@ -11,12 +11,20 @@
  * @brief Module to provide nRF Cloud CoAP API
  */
 
-#include <net/nrf_cloud_rest.h>
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
+#else
+/* Forward declaration so struct nrf_cloud_coap_agnss_request compiles
+ * in CoAP-only configurations that do not enable A-GNSS.
+ */
+struct nrf_modem_gnss_agnss_data_frame;
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
+#else
+/* Forward declarations so nrf_cloud_coap_pgps_url_get compiles without CONFIG_NRF_CLOUD_PGPS */
+struct nrf_cloud_coap_pgps_request;
+struct nrf_cloud_pgps_result;
 #endif
 #include <net/nrf_cloud_codec.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
@@ -35,6 +43,63 @@ struct coap_client_option {};
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/** @brief nRF Cloud AGNSS CoAP request types */
+enum nrf_cloud_coap_agnss_req_type {
+	/** Request all assistance data */
+	NRF_CLOUD_COAP_AGNSS_REQ_ASSISTANCE,
+	/** Request only location (NRF_CLOUD_AGNSS_LOCATION) */
+	NRF_CLOUD_COAP_AGNSS_REQ_LOCATION,
+	/** Request the data specified by nrf_modem_gnss_agnss_data_frame */
+	NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM
+};
+
+/** @brief Data required for nRF Cloud Assisted GNSS (A-GNSS) request over CoAP */
+struct nrf_cloud_coap_agnss_request {
+	enum nrf_cloud_coap_agnss_req_type type;
+	/** Required for custom request type (NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM) */
+	struct nrf_modem_gnss_agnss_data_frame *agnss_req;
+	/** Optional; provide network info or set to NULL. The cloud cannot
+	 * provide location assistance data if network info is NULL.
+	 */
+	struct lte_lc_cells_info *net_info;
+	/** Reduce set of ephemerides to only those visible at current
+	 * location.  This reduces the overall size of the download, but
+	 * may increase fix times towards the end of the validity period
+	 * and/or if the device is actively traveling long distances.
+	 */
+	bool filtered;
+	/** Constrain the set of ephemerides to only those currently
+	 *  visible at or above the specified elevation threshold
+	 *  angle in degrees. Range is 0 to 90.  Set to
+	 *  NRF_CLOUD_AGNSS_MASK_ANGLE_NONE to exclude from request.
+	 */
+	uint8_t mask_angle;
+};
+
+/** @brief nRF Cloud Assisted GNSS (A-GNSS) result */
+struct nrf_cloud_coap_agnss_result {
+	/** User-provided buffer to hold AGNSS data */
+	char *buf;
+	/** Size of user-provided buffer */
+	size_t buf_sz;
+	/** Size of the AGNSS data copied into buffer */
+	size_t agnss_sz;
+};
+
+/** @brief Data required for nRF Cloud location request */
+struct nrf_cloud_coap_location_request {
+	/** Cellular network information used in request */
+	struct lte_lc_cells_info *cell_info;
+	/** Wi-Fi network information used in request.
+	 * The minimum number of access points required by nRF Cloud is
+	 * defined by NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN. Access points with
+	 * a local MAC address will not be included in the request.
+	 */
+	struct wifi_scan_info *wifi_info;
+	/** Optionally specify do_reply, hi_conf, and fallback */
+	const struct nrf_cloud_location_config *config;
+};
 
 /**
  * @defgroup nrf_cloud_coap nRF CoAP API
@@ -196,8 +261,8 @@ int nrf_cloud_coap_disconnect(void);
  *           Positive values are cloud-side errors (CoAP result codes)
  *           defined in zephyr/net/coap.h.
  */
-int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *const request,
-				  struct nrf_cloud_rest_agnss_result *result);
+int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_coap_agnss_request const *const request,
+				  struct nrf_cloud_coap_agnss_result *result);
 
 /**
  * @brief Request URL for nRF Cloud Predicted GPS (P-GPS) data.
@@ -215,7 +280,7 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
  *           Positive values are cloud-side errors (CoAP result codes)
  *           defined in zephyr/net/coap.h.
  */
-int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const request,
+int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_coap_pgps_request const *const request,
 				 struct nrf_cloud_pgps_result *file_location);
 
 /**
@@ -316,7 +381,7 @@ int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data * const gnss, 
  *           Positive values are cloud-side errors (CoAP result codes)
  *           defined in zephyr/net/coap.h.
  */
-int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *const request,
+int nrf_cloud_coap_location_get(struct nrf_cloud_coap_location_request const *const request,
 				struct nrf_cloud_location_result *const result);
 
 /**

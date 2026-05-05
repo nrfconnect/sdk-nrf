@@ -16,17 +16,15 @@ menu "Transport"
 
 rsource "Kconfig.nrf_cloud_mqtt"
 
-rsource "Kconfig.nrf_cloud_rest"
-
-if NRF_CLOUD_MQTT || NRF_CLOUD_REST
+if NRF_CLOUD_MQTT
 
 config NRF_CLOUD_HOST_NAME
 	string "nRF Cloud server hostname"
 	default "mqtt.nrfcloud.com"
 	help
-	  Used for MQTT and JITP performed with REST
+	  Used for MQTT
 
-endif # NRF_CLOUD_MQTT || NRF_CLOUD_REST
+endif # NRF_CLOUD_MQTT
 
 rsource "Kconfig.nrf_cloud_coap"
 
@@ -38,7 +36,7 @@ config NRF_CLOUD_SEC_TAG
 	int "Security tag to use for nRF Cloud connection"
 	default 16842753
 
-if NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
+if NRF_CLOUD_MQTT || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
 
 config NRF_CLOUD_PROVISION_CERTIFICATES
 	bool "Install credentials for nRF Cloud connection"
@@ -97,7 +95,7 @@ config NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED
 	select TLS_CREDENTIALS
 endchoice
 
-endif # NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
+endif # NRF_CLOUD_MQTT || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
 
 config NRF_CLOUD_JWT_SOURCE_CUSTOM
 	bool "Custom JWT creation and signing"
@@ -175,7 +173,7 @@ config NRF_CLOUD_COAP_DOWNLOADS
 config NRF_CLOUD_HTTPS_DOWNLOADS
 	bool "HTTPS"
 	help
-	  Use HTTPS to download files for FOTA and P-GPS.
+	  Use HTTPS to download files for FOTA and P-GPS over MQTT.
 
 endchoice
 

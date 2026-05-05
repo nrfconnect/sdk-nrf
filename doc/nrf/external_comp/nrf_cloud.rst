@@ -38,10 +38,6 @@ You can use the services offered by nRF Cloud in the following scenarios:
 
   The website or application interacts with the `nRF Cloud REST API`_ to display device data and manage it in a customized way.
 
-* Device connected to nRF Cloud over REST.
-
-  The device uses the services by interacting with the `nRF Cloud REST API`_.
-
 * Device connected to a customer cloud service in a suitable manner.
 
   The services can be used from the customer cloud service that communicates over REST to interact with the `nRF Cloud REST API`_ in a proxy configuration.
@@ -94,7 +90,7 @@ Before running the script, you must install and run firmware on the device that 
 
 If the device already contains certificates, delete the old certificates from the device by adding the ``--delete`` option.
 
-Choosing a protocol: CoAP, MQTT or REST
+Choosing a protocol: CoAP and MQTT
 ***************************************
 
 When choosing a protocol, consider the following:
@@ -105,11 +101,9 @@ When choosing a protocol, consider the following:
 * What are the network data usage requirements for the device?
 * What are the carrier's network settings (NAT timeout, eDRX/PSM) and how will the settings affect device behavior?
 
-MQTT has a higher (data/power) cost to set up a connection than CoAP or REST.
-However, the data size of an MQTT publish event is smaller than a comparable REST transaction.
-The data size of a CoAP transfer can be the smallest of all.
+MQTT has a higher (data/power) cost to set up a connection than CoAP.
+The data size of a CoAP transfer is smaller than in MQTT.
 MQTT may be preferred if a device is able to maintain a connection to the broker and sends/receives data frequently.
-REST may be preferred if a device sends data infrequently or does not need to receive unsolicited data from the cloud.
 CoAP may be preferred if a device sends data infrequently, does not need to receive unsolicited data from the cloud, and must use the least amount of cellular data and the least amount of power.
 
 CoAP overview
@@ -120,15 +114,6 @@ CoAP overview
 * For authentication, the device must send a JSON Web Token (JWT) with the initial connection.
   The JWT is approximately 450 bytes.
 * Each CoAP transaction contains a CoAP header and API-specific payload.
-
-REST overview
-=============
-
-* The device initiates a TLS connection to nRF Cloud.
-* nRF Cloud supports a connection keep-alive/idle time of 60 seconds for REST API sockets.
-* For authentication, the device must send a JSON Web Token (JWT) with each REST transaction.
-  The JWT is approximately 450 bytes, but can be larger depending on the claims.
-* Each REST transaction contains HTTP headers, including the JWT, and any API specific payload.
 
 MQTT overview
 =============
@@ -142,7 +127,7 @@ MQTT overview
 Security
 ********
 
-A device can successfully connect to `nRF Cloud`_ using CoAP or REST if the following requirements are met:
+A device can successfully connect to `nRF Cloud`_ using CoAP if the following requirements are met:
 
 * The device contains a correct x509 CA certificate, and private key.
 * The public key derived from the private key is registered with an nRF Cloud account.
@@ -177,7 +162,7 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
 
 * Preconnect provisioning
 
-  This is supported by CoAP, MQTT, and REST connections.
+  This is supported by CoAP and MQTT connections.
 
   1. Run the `device_credentials_installer.py`_ Python script to create and install credentials on the device:
 
@@ -197,7 +182,7 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
 |NCS| library support
 *********************
 
-The |NCS| provides the :ref:`lib_nrf_cloud` library, which if enabled, allows you to connect your devices to nRF Cloud and use the update, location, and connectivity services using MQTT or REST.
+The |NCS| provides the :ref:`lib_nrf_cloud` library, which if enabled, allows you to connect your devices to nRF Cloud and use the update, location, and connectivity services using MQTT or CoAP.
 
 For more information on the various services, see the following documentation:
 
@@ -213,21 +198,19 @@ Applications and samples
 
 The following sample demonstrates nRF Cloud-specific functionality using CoAP:
 
-* :ref:`nrf_cloud_multi_service`
-* :ref:`modem_shell_application`
+* :ref:`nrf_cloud_coap_device_message`
+* :ref:`nrf_cloud_coap_cell_location`
+* :ref:`nrf_cloud_coap_fota_sample`
 
 The following sample demonstrates nRF Cloud-specific functionality using MQTT:
 
-* :ref:`nrf_cloud_multi_service`
-
-The following samples demonstrate nRF Cloud-specific functionality using REST:
-
-* :ref:`nrf_cloud_rest_fota`
-* :ref:`nrf_cloud_rest_device_message`
-* :ref:`nrf_cloud_rest_cell_location`
+* :ref:`nrf_cloud_mqtt_device_message`
+* :ref:`nrf_cloud_mqtt_cell_location`
+* :ref:`nrf_cloud_mqtt_fota`
 
 Other related samples and applications that use nRF Cloud services:
 
 * :ref:`gnss_sample`
 * :ref:`modem_shell_application`
 * :ref:`location_sample`
+* :ref:`nrf_provisioning_sample`

@@ -36,9 +36,7 @@ The supported location methods are as follows:
   * A-GNSS and P-GPS are managed with :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgps`.
   * The application may also use some other source for the data and use :c:func:`location_agnss_data_process` and :c:func:`location_pgps_data_process` to pass the data to the Location library.
   * The data format of A-GNSS or P-GPS must be as received from :ref:`lib_nrf_cloud_agnss`.
-  * The data transport method for :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
-    If different transport is desired for different location methods, (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) and (:kconfig:option:`CONFIG_NRF_CLOUD_REST`) can be enabled simultaneously. In such a case, MQTT takes
-    precedence as the transport method of GNSS assistance data.
+  * You can configure the data transport method for :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgps` to be either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or CoAP (:kconfig:option:`CONFIG_NRF_CLOUD_COAP`).
   * Note that acquiring GNSS fix only starts when LTE connection, more specifically Radio Resource Control (RRC) connection, is idle.
     Also, if A-GNSS is not used and Power Saving Mode (PSM) is enabled, the Location library will wait for the modem to enter PSM.
   * Selectable location accuracy (low/normal/high).
@@ -76,7 +74,7 @@ Here are details related to the services handling cell information for cellular 
 
   * Services can be handled by the application by enabling the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option, in which case rest of the service configurations are ignored.
   * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-  * You can configure the data transport method for the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
+  * You can configure the data transport method for the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or CoAP (:kconfig:option:`CONFIG_NRF_CLOUD_COAP`).
 
 Diagrams
 ========
@@ -192,7 +190,7 @@ nRF Cloud certificates
 ======================
 
 When using nRF Cloud for any location data, you must have the certificate provisioned.
-An nRF91 Series DK comes pre-provisioned with certificates for nRF Cloud.
+To provision and onboard your device, install `nRF Cloud Utils`_ and follow the instructions in the README.
 
 Location service accounts
 =========================
@@ -269,7 +267,7 @@ Configuring the obstructed visibility detection is always a tradeoff between pow
 
 To enable the transport method, set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option and select one of the following options:
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_ if :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is not set.
+* :kconfig:option:`CONFIG_NRF_CLOUD_COAP` - Uses CoAP transport to communicate with `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
 
 Both cellular and Wi-Fi location services are handled externally by the application or selected using the runtime configuration, in which case you must first configure the available services.
@@ -384,7 +382,7 @@ This library uses the following |NCS| libraries:
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_agnss`
 * :ref:`lib_nrf_cloud_pgps`
-* :ref:`lib_nrf_cloud_rest`
+* :ref:`lib_nrf_cloud_coap`
 
 It uses the following `sdk-nrfxlib`_ library:
 

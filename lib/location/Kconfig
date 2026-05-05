@@ -95,7 +95,7 @@ config LOCATION_METHOD_GNSS_PRIORITIZE_QZSS_ASSISTANCE
 config LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND
 	bool "Send GNSS coordinates to nRF Cloud"
 	depends on !LOCATION_SERVICE_EXTERNAL
-	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT || NRF_CLOUD_COAP
+	depends on NRF_CLOUD_MQTT || NRF_CLOUD_COAP
 	help
 	  Send GNSS coordinates to nRF Cloud.
 
@@ -154,9 +154,8 @@ config LOCATION_SERVICE_CLOUD_RECV_BUF_SIZE
 config LOCATION_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
 	default y if !LOCATION_SERVICE_EXTERNAL
-	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT || NRF_CLOUD_COAP
+	depends on NRF_CLOUD_MQTT || NRF_CLOUD_COAP
 	select NRF_CLOUD_LOCATION if NRF_CLOUD_MQTT
-	select NRF_CLOUD_REST_AUTOGEN_JWT if NRF_CLOUD_REST
 	help
 	  Use nRF Cloud location service.
 

@@ -14,9 +14,6 @@
 #endif
 #include <zephyr/sys/sys_getopt.h>
 #include <net/nrf_cloud.h>
-#if defined(CONFIG_NRF_CLOUD_REST)
-#include <net/nrf_cloud_rest.h>
-#endif
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #endif
@@ -184,27 +181,6 @@ static int location_cloud_send(char *body)
 	ret = nrf_cloud_coap_json_message_send(body, false, true);
 	if (ret) {
 		mosh_error("CoAP: location data sending failed");
-	}
-#elif defined(CONFIG_NRF_CLOUD_REST)
-#define REST_DETAILS_RX_BUF_SZ 300 /* No payload in a response, "just" headers */
-	static char rx_buf[REST_DETAILS_RX_BUF_SZ];
-	static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
-	static struct nrf_cloud_rest_context rest_ctx = {
-		.connect_socket = -1,
-		.keep_alive = false,
-		.rx_buf = rx_buf,
-		.rx_buf_len = sizeof(rx_buf),
-		.fragment_size = 0
-	};
-
-	ret = nrf_cloud_client_id_get(device_id, sizeof(device_id));
-	if (ret == 0) {
-		ret = nrf_cloud_rest_send_device_message(&rest_ctx, device_id, body, false, NULL);
-		if (ret) {
-			mosh_error("REST: location data sending failed: %d", ret);
-		}
-	} else {
-		mosh_error("Failed to get device ID, error: %d", ret);
 	}
 #else
 	ret = -EOPNOTSUPP;

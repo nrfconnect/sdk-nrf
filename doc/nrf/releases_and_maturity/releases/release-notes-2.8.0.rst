@@ -87,7 +87,7 @@ Added the following features as experimental:
 * nRF Cloud:
 
   * SMP FOTA, which allows updating a companion device such as an nRF52 Series device running MCUboot from a FOTA image received by an nRF91 Series device from the cloud.
-    This is showcased in the sample :ref:`nrf_cloud_rest_fota`.
+    This is showcased in the Cellular: nRF Cloud REST FOTA sample.
 
 * Bootloaders and DFU:
 
@@ -145,7 +145,7 @@ See the following documentation for an overview of which modem firmware versions
 * `Modem firmware compatibility matrix for the nRF9160 SoC`_
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See the `Programming nRF91 Series DK firmware` page for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -764,7 +764,7 @@ Cellular samples
   * Added ``link modem`` command for initializing and shutting down the modem.
   * Updated to use the :ref:`at_parser_readme` library instead of the AT command parser library.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* Cellular: nRF Cloud REST FOTA sample:
 
   * Added:
 
@@ -797,7 +797,7 @@ Cellular samples
   * Fixed an issue where the accepted shadow was not marked as received because the config section did not yet exist in the shadow.
   * Removed redundant logging that is now done by the :ref:`lib_nrf_cloud` library.
 
-* :ref:`nrf_cloud_rest_device_message` sample:
+* Cellular: nRF Cloud REST Device Message sample:
 
   * Added:
 
@@ -812,7 +812,7 @@ Cellular samples
 
   * Removed redundant logging that is now done by the :ref:`lib_nrf_cloud` library.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* Cellular: nRF Cloud REST cellular location sample:
 
   * Removed redundant logging that is now done by the :ref:`lib_nrf_cloud` library.
 
@@ -1275,9 +1275,9 @@ Libraries for networking
   * Fixed an issue where a failed delta update for the modem would not clear the state and blocks future delta updates.
     This only occurred when an LwM2M Firmware object was used in push mode.
 
-* :ref:`lib_nrf_cloud_rest` library:
+* nRF Cloud REST library:
 
-  * Added the function :c:func:`nrf_cloud_rest_shadow_transform_request` to request shadow data using a JSONata expression.
+  * Added the function ``nrf_cloud_rest_shadow_transform_request`` to request shadow data using a JSONata expression.
 
 * :ref:`lib_nrf_cloud` library:
 
@@ -1339,7 +1339,7 @@ Libraries for networking
 
   * Fixed:
 
-    * A hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
+    * A hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the ``nrf_cloud_rest_agnss_request`` structure is NULL.
     * An issue where certain CoAP functions would return zero, indicating success, even though there was an error.
 
   * Removed the experimental status (:kconfig:option:`CONFIG_EXPERIMENTAL`) from the :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option.

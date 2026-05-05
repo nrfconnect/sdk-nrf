@@ -6,7 +6,7 @@ menu "Logging"
 
 menuconfig NRF_CLOUD_LOG_BACKEND
 	bool "nRF Cloud logging system"
-	depends on NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_COAP
+	depends on NRF_CLOUD_MQTT || NRF_CLOUD_COAP
 	depends on LOG_MODE_DEFERRED
 	depends on !LOG_MODE_MINIMAL
 	select RING_BUFFER
@@ -41,7 +41,7 @@ endif # NRF_CLOUD_LOG_BACKEND
 config NRF_CLOUD_LOG_DIRECT
 	bool "nRF Cloud direct logging"
 	default y
-	depends on NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_COAP
+	depends on NRF_CLOUD_MQTT || NRF_CLOUD_COAP
 	select CBPRINTF_LIBC_SUBSTS if !NRF_CLOUD_LOG_BACKEND
 	help
 	  Enable direct log message transfer to the cloud. If
