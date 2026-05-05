@@ -1,0 +1,13 @@
+common:
+  tags:
+    - kernel
+    - ci_tests_zephyr_kernel_sleep
+  platform_allow:
+    - nrf9251dk/nrf9251/cpuapp
+    - nrf9251dk/nrf9251/cpuppr
+    - nrf9251dk/nrf9251/cpuppr/xip
+  timeout: 45
+tests:
+  nrf.extended.kernel.common.timing:
+    extra_configs:
+      - CONFIG_SPEED_OPTIMIZATIONS=y
