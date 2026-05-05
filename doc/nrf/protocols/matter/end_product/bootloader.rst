@@ -39,14 +39,23 @@ Partition layout
 
 .. include:: ../../../includes/pm_deprecation.txt
 
-Each application that uses MCUboot must use :ref:`partition_manager` to define partitions of the flash memory.
-This is needed for the bootloader to know where the current and the new firmware images are located in the flash.
+A bootloader is a critical component in a Matter device, ensuring secure firmware updates and authenticating new application images.
+All Nordic Matter samples in the |NCS| use MCUboot as the primary bootloader, with configuration and partitioning adapted to application and device needs.
+
+.. _ug_matter_hw_requirements_partition_dts_reference:
 
 Consider the following when defining partitions for your end product:
 
-* There are multiple ways to define partitions using Partition Manager.
-  For example, each :ref:`Matter sample <matter_samples>` provides a :file:`pm_static_dfu.yml` file (one for each configuration) that statically defines the partition layout.
-  See :ref:`ug_matter_hw_requirements_layouts` to confirm the reference partition layout for each supported platform.
+* Use the default partition layout for your target SoC by including the base partition file :file:`<soc_name>_cpuapp_partitions.dtsi` located under the :file:`nrf/dts/samples/matter` directory.
+  Include the base partition file in your :file:`boards/<board_name>.overlay` board file using the following line:
+
+  .. code-block:: dts
+
+     #include "<samples/matter/<soc_name>_cpuapp_partitions.dtsi>"
+
+* To modify the partition layout, copy the whole content of the base partition file to your :file:`boards/<board_name>.overlay` board file and modify the partitions as needed.
+  See :ref:`ug_matter_device_optimizing_memory_configuration` to learn how to adjust the partition sizes.
+
 * Given the size of the Matter stack, it is usually not possible to fit both the primary and the secondary slot in the internal flash in order to store the current and the new firmware image, respectively.
   Instead, you should use the :ref:`external flash <ug_bootloader_external_flash>` to host the secondary slot.
 
@@ -58,8 +67,109 @@ Consider the following when defining partitions for your end product:
   This means that performing DFU from one firmware version to another using different partition sizes might not be possible, and you cannot change the partition sizes without reprogramming the device.
   Trying to perform DFU between applications that use incompatible partition sizes can result in unwanted application behavior, depending on which partitions are overlapping.
   In some cases, this might corrupt some partitions; in others, this can lead to a DFU failure.
-* The MCUboot requires its `mcuboot_primary` and `mcuboot_secondary` partitions to be located under offsets being aligned to the 4 kB flash page size.
+* The MCUboot requires its ``slot0_partition`` and ``slot1_partition`` partitions to be located under offsets being aligned to the 4 kB flash page size.
   Selecting offset values that are not aligned to 4 kB for these partitions will lead to erase failures, and result in a DFU failure.
+
+Partition names
+===============
+
+The following tables summarize the partitions by target.
+
+**nRF52840 DK**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 45 27
+
+   * - Devicetree node label
+     - Purpose
+     - Location
+   * - ``boot_partition``
+     - MCUboot bootloader.
+     - SoC internal flash
+   * - ``slot0_partition`` (``image-0``)
+     - Primary application image (includes MCUboot swap metadata inside the region).
+     - SoC internal flash
+   * - ``factory_data_partition``
+     - Matter factory data.
+     - SoC internal flash
+   * - ``storage_partition`` (``storage``)
+     - Non-volatile settings Zephyr settings storage.
+     - SoC internal flash
+   * - ``slot1_partition`` (``image-1``)
+     - Secondary application slot for MCUboot DFU.
+     - External QSPI flash (``mx25r64``)
+
+**nRF5340 DK & Nordic Thingy:53** (application core and external flash; network core uses ``flash1``)
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 45 27
+
+   * - Devicetree node label
+     - Purpose
+     - Location
+   * - ``boot_partition``
+     - MCUboot bootloader.
+     - Application core internal flash
+   * - ``slot0_partition`` (``image-0``)
+     - Primary application image (includes MCUboot swap metadata inside the region).
+     - Application core internal flash
+   * - ``factory_data_partition``
+     - Matter factory data.
+     - Application core internal flash
+   * - ``storage_partition``
+     - Non-volatile settings Zephyr settings storage.
+     - Application core internal flash
+   * - ``slot1_partition`` (``image-1``)
+     - Secondary application slot for MCUboot DFU.
+     - External QSPI (``mx25r64``)
+   * - ``slot3_partition`` (``image-3``)
+     - Network core image update slot.
+     - External QSPI (``mx25r64``)
+   * - ``b0n_partition``
+     - Immutable first-stage network core loader (B0n).
+     - Network core flash (``flash1``)
+   * - ``provision_partition``
+     - B0n provisioning key storage.
+     - Network core flash
+   * - ``s0_partition`` (``image-0`` on cpunet)
+     - Network core firmware.
+     - Network core flash
+
+**nRF54L15 & nRF54L10 & nRF54LM20 DKs**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 45 27
+
+   * - Devicetree node label
+     - Purpose
+     - Location
+   * - ``boot_partition``
+     - MCUboot.
+     - RRAM (``cpuapp_rram``)
+   * - ``slot0_partition``
+     - Primary image.
+     - RRAM
+   * - ``slot1_partition``
+     - Secondary application slot for MCUboot DFU.
+     - External QSPI (``mx25r64``) or RRAM for internal builds
+   * - ``factory_data_partition``
+     - Matter factory data.
+     - RRAM
+   * - ``storage_partition``
+     - Non-volatile settings Zephyr settings storage.
+     - RRAM
+   * - ``slot0_s_partition``
+     - TF-M secure application (TF-M code).
+     - RRAM
+   * - ``slot0_ns_partition``
+     - TF-M non-secure application (User application).
+     - RRAM
+   * - ``tfm_storage_partition`` with ``tfm_its_partition``, ``tfm_otp_partition``, ``tfm_ps_partition``
+     - TF-M secure storage partitions (TF-M builds only).
+     - RRAM
 
 Settings partition
 ==================

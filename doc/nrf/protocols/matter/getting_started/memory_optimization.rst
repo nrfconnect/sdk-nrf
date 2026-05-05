@@ -152,7 +152,7 @@ To do this, you need to set the following in your application :file:`prj.conf` f
     CONFIG_SETTINGS_SHELL=y
 
 The NVS Settings usage may change during the device's lifetime.
-The ``settings_storage`` partition can only be changed by reflashing the Matter device.
+The ``storage_partition`` partition can only be changed by reflashing the Matter device.
 This means that it cannot be altered through DFU (Device Firmware Update).
 Because of this, you need to be careful when setting the partition, and should allocate some free space to ensure that it can accommodate more data in the future.
 The data used within this partition may increase with updates to Matter and the |NCS|.
@@ -306,6 +306,8 @@ You will see statistics similar to the following ones, although the number of th
 You can read the peak usage measurement for each thread and learn about the total size of the stack, and unused bytes.
 You can adjust the stack values for your application using estimations based on these measurements.
 
+.. _ug_matter_device_optimizing_memory_configuration:
+
 Configuring memory usage
 ========================
 
@@ -324,27 +326,26 @@ Settings usage
     Because of this, you need to be careful when setting the partition, and should allocate some free space to ensure that it can accommodate more data in the future.
     The data used within this partition may increase with updates to Matter and the |NCS|.
 
-To adjust the settings usage, you need to modify the :file:`pm_static` file related to your target board.
-For example, to modify the ``settings_storage`` partition in the :ref:`Matter Template <matter_template_sample>` sample for the ``nrf52840dk/nrf52840`` target, complete the following steps:
+To adjust the settings usage, you need to modify the :file:`boards/<board_name>.overlay` board file related to your target board.
+For example, to modify the ``storage_partition`` partition in the :ref:`Matter Template <matter_template_sample>` sample for the ``nrf54l15dk/nrf54l15/cpuapp`` target, complete the following steps:
 
-1. Locate the :file:`pm_static_nrf52840dk_nrf52840.yml` in the sample directory
-#. Locate the ``settings_storage`` partition within the ``pm_static`` file.
+1. Locate the base partition for the ``nrf54l15dk/nrf54l15/cpuapp`` board target file :file:`nrf54l15_cpuapp_partitions.dtsi` located under the :file:`nrf/dts/samples/matter` directory.
+2. Copy the content of this file to your :file:`boards/nrf54l15dk_nrf54l15_cpuapp.overlay` board file.
+#. In your :file:`boards/nrf54l15dk_nrf54l15_cpuapp.overlay` board file, locate the ``storage_partition`` partition.
 
    For example:
 
-   .. code-block:: console
+   .. code-block:: dts
 
-       settings_storage:
-           address: 0xf8000
-           size: 0x8000
-           region: flash_primary
+		storage_partition: partition@173000 {
+			label = "storage";
+			reg = <0x00173000 DT_SIZE_K(40)>;
+		};
 
-#. Modify the ``size`` value.
+#. Modify the ``reg`` value to adjust the size of the ``storage_partition`` partition.
 #. Align all other partitions to not overlap any memory regions.
-
-   To learn more about how to configure partitions in the :file:`pm_static` file, see the :ref:`partition_manager` documentation.
 #. Align the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option value to the used NVS sectors.
-   Each target in |NCS| Matter samples uses 4 kB NVS sectors, so you can divide the ``settings_storage`` partition size by 4096 (0x1000) to get the value you need to set for the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option.
+   Each target in |NCS| Matter samples uses 4 kB NVS sectors, so you can divide the ``storage_partition`` partition size by 4096 (0x1000) to get the value you need to set for the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option.
 
 To learn more about partitioning, see the :ref:`ug_matter_device_bootloader_partition_layout` guide.
 

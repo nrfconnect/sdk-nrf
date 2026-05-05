@@ -152,7 +152,7 @@ Matter Settings shell commands
 ------------------------------
 
 You can enable the Matter Settings shell commands to monitor the current usage of the Zephyr Settings using :ref:`NVS (Non-Volatile Storage) <zephyr:nvs_api>` or :ref:`ZMS (Zephyr Memory Storage) <zephyr:zms_api>` backends.
-These commands are useful for verifying that the ``settings`` partition has the proper size and meets the application requirements.
+These commands are useful for verifying that the ``storage_partition`` partition has the proper size and meets the application requirements.
 
 To enable the Matter Settings shell module, set the :option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL` Kconfig option to ``y``.
 

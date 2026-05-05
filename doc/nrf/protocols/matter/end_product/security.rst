@@ -43,7 +43,7 @@ For more information, see :ref:`ug_tfm_supported_services_profiles`.
 Matter sample partition layout
 ==============================
 
-To configure the partition layout for your application, you can edit the :file:`pm_static_nrf54l15dk_nrf54l15_cpuapp_ns.yml` file that is available in each sample directory.
+To configure the partition layout for your application, you can edit the :file:`boards/nrf54l15dk_nrf54l15_cpuapp.overlay` board file that is available in each sample directory.
 To read more about the TF-M partitioning, see :ref:`ug_tfm_partition_alignment_requirements`.
 While using TF-M, the application partition size and available RAM space for the application is lower than without TF-M.
 You must keep this in mind and calculate the available space for the application partition.
