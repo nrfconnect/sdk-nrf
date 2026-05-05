@@ -738,7 +738,7 @@ int nrf_cloud_print_details(void);
  * Some information is only available after the device is connected.
  * When using MQTT, the tenant will be printed.
  *
- * When using CoAP and REST, there is no further information to print.
+ * When using CoAP, there is no further information to print.
  *
  * @return A negative value indicates an error.
  */
@@ -997,7 +997,7 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char * const jwt_buf, size_t j
 /**
  * @brief Process/validate a pending FOTA update job. Typically the job
  *        information is read from non-volatile storage on startup. This function
- *        is intended to be used by custom REST-based FOTA implementations.
+ *        is intended to be used by custom FOTA implementations.
  *        It is called internally if @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled.
  *        For pending NRF_CLOUD_FOTA_MODEM_DELTA jobs the modem library must
  *        be initialized before calling this function, otherwise the job will
@@ -1064,7 +1064,7 @@ int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_ty
 
 /**
  * @brief Set the flash device used for full modem FOTA updates.
- *        This function is intended to be used by custom REST-based FOTA implementations.
+ *        This function is intended to be used by custom FOTA implementations.
  *        It is called internally when @ref nrf_cloud_init is executed if
  *        @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled. It can be called before @ref nrf_cloud_init
  *        if required by the application.
@@ -1080,7 +1080,7 @@ int nrf_cloud_fota_fmfu_dev_set(const struct dfu_target_fmfu_fdev *const fmfu_de
 /**
  * @brief Install a full modem update from flash. If successful,
  *        reboot the device or reinit the modem to complete the update.
- *        This function is intended to be used by custom REST-based FOTA implementations.
+ *        This function is intended to be used by custom FOTA implementations.
  *        If @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled,
  *        call @ref nrf_cloud_fota_pending_job_validate
  *        to install a downloaded NRF_CLOUD_FOTA_MODEM_FULL update after the
@@ -1103,10 +1103,8 @@ bool nrf_cloud_fota_is_type_modem(const enum nrf_cloud_fota_type type);
 
 /**
  * @brief Determine if the specified FOTA type is enabled by the
- *        configuration. This function returns false if both @kconfig{CONFIG_NRF_CLOUD_FOTA}
- *        and @kconfig{CONFIG_NRF_CLOUD_REST} are disabled.
- *        REST-based applications are responsible for implementing FOTA updates
- *        for all configured types.
+ *        configuration. This function returns false if @kconfig{CONFIG_NRF_CLOUD_FOTA}
+ *        is disabled.
  *
  * @param[in] type Fota type.
  *

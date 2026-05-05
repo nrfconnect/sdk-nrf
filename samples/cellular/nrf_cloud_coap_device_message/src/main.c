@@ -115,7 +115,7 @@ static int send_message(const char *const msg)
 	/* Send the message to nRF Cloud */
 	ret = nrf_cloud_coap_json_message_send(msg, false, true);
 	if (ret) {
-		LOG_ERR("Failed to send device message via REST: %d", ret);
+		LOG_ERR("Failed to send device message via CoAP: %d", ret);
 	} else {
 		LOG_INF("Message sent");
 	}

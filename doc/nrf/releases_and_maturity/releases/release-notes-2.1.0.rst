@@ -66,7 +66,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See the `Programming nRF91 Series DK firmware` page for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -532,7 +532,7 @@ nRF9160 samples
 
   * Fixed an issue with connection initialization that would cause delta modem FOTA updates to hang and would require manual reset.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* Cellular: nRF Cloud REST FOTA sample:
 
   * Added support for full modem FOTA updates.
 
@@ -826,7 +826,7 @@ Libraries for networking
 
     * An issue that caused the application to receive multiple disconnect events.
     * An issue that prevented full modem FOTA updates to be installed during library initialization.
-    * An issue that caused the :c:func:`nrf_cloud_client_id_get` function to fail if both :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` and :kconfig:option:`CONFIG_NRF_CLOUD_REST` were enabled.
+    * An issue that caused the :c:func:`nrf_cloud_client_id_get` function to fail if both :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` and ``CONFIG_NRF_CLOUD_REST`` were enabled.
 
 * Multicell location library:
 
@@ -849,9 +849,9 @@ Libraries for networking
 
   * Removed ``CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT`` and ``CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT`` Kconfig options.
 
-* :ref:`lib_nrf_cloud_rest` library:
+* nRF Cloud REST library:
 
-  * Updated the :c:func:`nrf_cloud_rest_send_location` function to accept a :c:struct:`nrf_cloud_gnss_data` pointer instead of an NMEA sentence.
+  * Updated the ``nrf_cloud_rest_send_location`` function to accept a :c:struct:`nrf_cloud_gnss_data` pointer instead of an NMEA sentence.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 

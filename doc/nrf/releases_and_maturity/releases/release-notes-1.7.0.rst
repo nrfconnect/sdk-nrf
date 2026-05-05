@@ -56,7 +56,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See the `Programming nRF91 Series DK firmware` page for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Known issues
 ************
@@ -75,7 +75,7 @@ nRF9160
 
   * :ref:`at_monitor_readme` library that lets you reschedule and dispatch AT notifications from the Modem library AT interface to AT monitors.
   * :ref:`at_monitor_sample` sample that shows the usage of the :ref:`at_monitor_readme` library.
-  * :ref:`lib_nrf_cloud_rest` library that enables devices to use nRF Cloud's REST-based device API.
+  * nRF Cloud REST library that enables devices to use nRF Cloud's REST-based device API.
 
 * Updated:
 

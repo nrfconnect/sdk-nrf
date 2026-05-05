@@ -25,9 +25,6 @@ If it is not, follow the instructions in `Device on-boarding <location_onboardin
 
 See also the requirements in :ref:`lib_location` library document.
 
-.. note::
-   .. include:: /includes/nrf_cloud_rest_sample_requirements.txt
-
 Overview
 ********
 

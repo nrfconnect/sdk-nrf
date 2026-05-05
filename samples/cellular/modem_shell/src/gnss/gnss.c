@@ -27,8 +27,6 @@
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 #include <stdlib.h>
-#include <modem/modem_jwt.h>
-#include <net/nrf_cloud_rest.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #endif
@@ -56,13 +54,12 @@ BUILD_ASSERT(false, "nRF Cloud assistance and SUPL library cannot be enabled at 
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
-/* Verify that nRF Cloud MQTT, REST or COAP, or LwM2M is enabled */
+/* Verify that nRF Cloud MQTT, COAP or LwM2M is enabled */
 BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
-	     IS_ENABLED(CONFIG_NRF_CLOUD_REST) ||
 	     IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ||
 	     IS_ENABLED(CONFIG_MOSH_CLOUD_LWM2M),
-	     "CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_REST or CONFIG_NRF_CLOUD_COAP "
-	     "transport, or CONFIG_MOSH_CLOUD_LWM2M must be enabled");
+	     "CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_COAP transport, "
+	     "or CONFIG_MOSH_CLOUD_LWM2M must be enabled");
 #endif
 
 #define GNSS_DATA_HANDLER_THREAD_STACK_SIZE 1536
@@ -116,22 +113,6 @@ static struct gps_pgps_request pgps_request;
 static struct k_work get_pgps_data_work;
 #endif /* !CONFIG_NRF_CLOUD_MQTT */
 #endif /* CONFIG_NRF_CLOUD_PGPS */
-
-#if defined(CONFIG_NRF_CLOUD_AGNSS) && defined(CONFIG_NRF_CLOUD_REST) && \
-	!defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
-#define AGNSS_USES_REST
-#endif
-
-#if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_NRF_CLOUD_REST) && \
-	!defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-#define PGPS_USES_REST
-#endif
-
-#if defined(AGNSS_USES_REST) || defined(PGPS_USES_REST)
-/* JWT and receive buffers will be needed if either A-GNSS or P-GPS uses REST. */
-static char jwt_buf[600];
-static char rx_buf[2048];
-#endif
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME)
 static bool gnss_filtered_ephemerides_enabled;
@@ -700,30 +681,13 @@ static void get_agnss_data(struct k_work *item)
 	} else if (err) {
 		mosh_error("GNSS: Failed to request A-GNSS data, error: %d", err);
 	}
-#else /* REST and CoAP */
-#if defined(CONFIG_NRF_CLOUD_REST)
-	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
-	if (err) {
-		mosh_error("GNSS: Failed to generate JWT, error: %d", err);
-		return;
-	}
-
-	struct nrf_cloud_rest_context rest_ctx = {
-		.connect_socket = -1,
-		.keep_alive = false,
-		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
-		.auth = jwt_buf,
-		.rx_buf = rx_buf,
-		.rx_buf_len = sizeof(rx_buf),
-	};
-#endif
-
-	struct nrf_cloud_rest_agnss_request request = {
-		.type = NRF_CLOUD_REST_AGNSS_REQ_CUSTOM,
+#else /* CoAP */
+	struct nrf_cloud_coap_agnss_request request = {
+		.type = NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM,
 		.agnss_req = &agnss_request,
 	};
 
-	struct nrf_cloud_rest_agnss_result result = {
+	struct nrf_cloud_coap_agnss_result result = {
 		.buf = agnss_data_buf,
 		.buf_sz = sizeof(agnss_data_buf),
 	};
@@ -746,11 +710,7 @@ static void get_agnss_data(struct k_work *item)
 		request.net_info = &net_info;
 	}
 
-#if defined(CONFIG_NRF_CLOUD_REST)
-	err = nrf_cloud_rest_agnss_data_get(&rest_ctx, &request, &result);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
 	err = nrf_cloud_coap_agnss_data_get(&request, &result);
-#endif
 	if (err) {
 		mosh_error("GNSS: Failed to get A-GNSS data, error: %d", err);
 		return;
@@ -919,28 +879,10 @@ static void get_pgps_data_work_fn(struct k_work *work)
 #else /* !CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS */
 	mosh_print("GNSS: Getting P-GPS predictions from nRF Cloud...");
 
-	struct nrf_cloud_rest_pgps_request request = {
+	struct nrf_cloud_coap_pgps_request request = {
 		.pgps_req = &pgps_request
 	};
 
-#if defined(CONFIG_NRF_CLOUD_REST)
-	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
-	if (err) {
-		mosh_error("GNSS: Failed to generate JWT, error: %d", err);
-		return;
-	}
-
-	struct nrf_cloud_rest_context rest_ctx = {
-		.connect_socket = -1,
-		.keep_alive = false,
-		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
-		.auth = jwt_buf,
-		.rx_buf = rx_buf,
-		.rx_buf_len = sizeof(rx_buf),
-	};
-
-	err = nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
 	struct nrf_cloud_pgps_result file_location = {0};
 
 	static char host[64];
@@ -956,7 +898,6 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 	err = nrf_cloud_coap_pgps_url_get(&request, &file_location);
 
-#endif
 	if (err) {
 		mosh_error("GNSS: Failed to get P-GPS data, error: %d", err);
 
@@ -967,11 +908,7 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 	mosh_print("GNSS: Processing P-GPS response");
 
-#if defined(CONFIG_NRF_CLOUD_REST)
-	err = nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
 	err = nrf_cloud_pgps_update(&file_location);
-#endif
 	if (err) {
 		mosh_error("GNSS: Failed to process P-GPS response, error: %d", err);
 
@@ -1377,8 +1314,6 @@ int gnss_set_agnss_filtered_ephemerides(bool enable)
 	gnss_filtered_ephemerides_enabled = enable;
 	return 0;
 #else
-	mosh_error("GNSS: A-GNSS filtered ephemerides are only supported with nRF Cloud REST-only "
-		   "configuration.");
 	return -EOPNOTSUPP;
 #endif
 }

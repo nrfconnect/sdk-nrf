@@ -124,8 +124,7 @@ int nrf_cloud_credentials_configured_check(void)
 		return -EIO;
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ||
-	    IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
 		if (!cs.ca) {
 			LOG_ERR("CA Certificate not found in sec tag %d", cs.sec_tag);
 			ret = -ENOTSUP;
@@ -144,10 +143,10 @@ int nrf_cloud_credentials_configured_check(void)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
 		if (!cs.ca_aws && cs.ca_coap) {
 			/* There is a CA, but not large enough to be correct */
-			LOG_WRN("Connection using MQTT or REST may fail as the size of the CA "
+			LOG_WRN("Connection using MQTT may fail as the size of the CA "
 				"cert indicates it is a CoAP root CA.");
 			ret = -ENOPROTOOPT;
 		}

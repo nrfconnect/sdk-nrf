@@ -136,9 +136,6 @@ int nrf_cloud_print_details(void)
 #elif defined(CONFIG_NRF_CLOUD_COAP)
 	protocol = "CoAP";
 	host_name = CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME;
-#elif defined(CONFIG_NRF_CLOUD_REST)
-	protocol = "REST";
-	host_name = CONFIG_NRF_CLOUD_REST_HOST_NAME;
 #endif
 #if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
 	download_protocol = "CoAP";

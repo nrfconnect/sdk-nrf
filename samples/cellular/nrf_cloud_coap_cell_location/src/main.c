@@ -60,7 +60,7 @@ static void handle_cloud_location_request(const struct lte_lc_cells_info *cell_i
 {
 	int err = 0;
 	struct nrf_cloud_location_result cell_pos_result = {0};
-	const struct nrf_cloud_rest_location_request cell_pos_req = {
+	const struct nrf_cloud_coap_location_request cell_pos_req = {
 		.config = &config,
 		.cell_info = (struct lte_lc_cells_info *)cell_info,
 	};

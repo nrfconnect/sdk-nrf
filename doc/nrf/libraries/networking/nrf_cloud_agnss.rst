@@ -31,7 +31,7 @@ Configuration
 To enable this library, set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option and configure the following options:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS`
-* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT`, :kconfig:option:`CONFIG_NRF_CLOUD_REST`, or :kconfig:option:`CONFIG_NRF_CLOUD_COAP`
+* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:option:`CONFIG_NRF_CLOUD_COAP`
 
 See :ref:`configure_application` for information on how to change configuration options.
 
@@ -44,8 +44,6 @@ A-GNSS data can be requested using one of the following methods:
 * By requesting all the available assistance data.
 
 If :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is enabled, the :c:func:`nrf_cloud_agnss_request` function is used to request by type, and the :c:func:`nrf_cloud_agnss_request_all` function is used to return all available assistance data.
-
-If :kconfig:option:`CONFIG_NRF_CLOUD_REST` is enabled, the :c:func:`nrf_cloud_rest_agnss_data_get` function is used to request A-GNSS data.
 
 If :kconfig:option:`CONFIG_NRF_CLOUD_COAP` is enabled, the :c:func:`nrf_cloud_coap_agnss_data_get` function is used to request A-GNSS data.
 

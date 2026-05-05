@@ -8,8 +8,6 @@
  * (They are set as follows because we are mocking respective APIs)
  */
 #define CONFIG_NRF_CLOUD_AGNSS 1
-#define CONFIG_NRF_CLOUD_REST 1
-#define CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE 1700
 
 #define CONFIG_NET_PKT_TIMESTAMP 1
 #define CONFIG_NET_NATIVE 1

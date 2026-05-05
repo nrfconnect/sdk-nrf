@@ -908,10 +908,10 @@ CONFIG_MOSH_PPP
 CONFIG_MOSH_REST
    Enable REST client feature in modem shell.
 
-.. _CONFIG_MOSH_CLOUD_REST:
+.. _CONFIG_MOSH_CLOUD_COAP:
 
-CONFIG_MOSH_CLOUD_REST
-   Enable nRF Cloud REST feature in modem shell.
+CONFIG_MOSH_CLOUD_COAP
+   Enable nRF Cloud CoAP connection feature in modem shell.
 
 .. _CONFIG_MOSH_CLOUD_MQTT:
 

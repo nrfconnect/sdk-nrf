@@ -383,9 +383,6 @@ mapping_topics:
   - nrf/samples/cellular.html: ["lte"]
   - nrf/samples/cellular/*.html: ["lte"]
   - nrf/samples/cellular/nrf_cloud_multi_service/README.html: ["nrf-cloud"]
-  - nrf/samples/cellular/nrf_cloud_rest_device_message/README.html: ["nrf-cloud"]
-  - nrf/samples/cellular/nrf_cloud_rest_cell_location/README.html: ["nrf-cloud"]
-  - nrf/samples/cellular/nrf_cloud_rest_fota/README.html: ["nrf-cloud"]
   - nrf/samples/cellular/modem_shell/README.html: ["at-commands"]
   - nrf/samples/cellular/at_client/README.html: ["at-commands"]
   - nrf/samples/dect/*.html: ["dect-nr+"]
@@ -426,7 +423,6 @@ mapping_topics:
   - nrf/libraries/networking/nrf_cloud_location.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_cloud_log.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_cloud_pgps.html: ["nrf-cloud"]
-  - nrf/libraries/networking/nrf_cloud_rest.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_provisioning.html: ["at-commands"]
   - nrf/libraries/networking/softap_wifi_provision.html: ["wifi", "nrf70-series", "nrf7002",
                                                           "nrf7001", "nrf7000"]

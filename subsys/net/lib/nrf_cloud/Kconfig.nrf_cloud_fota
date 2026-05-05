@@ -47,14 +47,15 @@ config FOTA_USE_NRF_CLOUD_SETTINGS_AREA
 	  built with CONFIG_NRF_CLOUD_FOTA enabled.
 
 config NRF_CLOUD_FOTA_POLL
-	bool "FOTA job polling helpers (REST/CoAP)"
+	bool "FOTA job polling helpers (CoAP)"
 	depends on !NRF_CLOUD_FOTA
+	depends on NRF_CLOUD_COAP
 	depends on FOTA_DOWNLOAD
 	select FOTA_DOWNLOAD_PROGRESS_EVT
 	help
 	  When enabled, nRF Cloud FOTA job polling helpers will be built.  These
 	  functions make it easy to request, download, and handle modem, boot,
-	  and application FOTA updates when using the REST or CoAP interfaces
+	  and application FOTA updates when using the CoAP interfaces
 	  to nRF Cloud.
 if NRF_CLOUD_FOTA_POLL
 
@@ -78,7 +79,6 @@ config FOTA_SETTINGS_KEY_PENDING_JOB
 
 config FOTA_DL_TIMEOUT_MIN
 	int "The time (minutes) allotted for a FOTA download to complete"
-	default REST_FOTA_DL_TIMEOUT_MIN if NRF_CLOUD_REST
 	default 15
 	help
 	  If the FOTA download does not complete in the allotted time,
@@ -95,13 +95,6 @@ config NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE
 	depends on FOTA_DOWNLOAD
 	range 128 1900
 	default 1700
-if NRF_CLOUD_REST
-
-config REST_FOTA_DL_TIMEOUT_MIN
-	int "The time (minutes) allotted for a FOTA download to complete"
-	default 30
-
-endif # NRF_CLOUD_REST
 
 menuconfig NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
 	bool "Full modem FOTA updates"
@@ -135,7 +128,7 @@ config NRF_CLOUD_FOTA_SMP
 
 config NRF_CLOUD_FOTA_TRANSPORT_ENABLED
 	bool
-	default y if (NRF_CLOUD_REST || NRF_CLOUD_COAP || NRF_CLOUD_FOTA)
+	default y if (NRF_CLOUD_COAP || NRF_CLOUD_FOTA)
 	help
 	  This symbol is y when a FOTA transport type is enabled in the configuration.
 

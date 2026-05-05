@@ -13,13 +13,13 @@ The current implementation supports the following technologies:
 
 * GNSS, TEMP, and other application-specific sensor data
 * Cellular and Wi-Fi® location data
-* TLS-secured MQTT, TLS-secured REST, or DTLS-secured CoAP as the communication protocol
-* JSON as the data format for MQTT and REST
+* TLS-secured MQTT or DTLS-secured CoAP as the communication protocol
+* JSON as the data format for MQTT
 * CBOR and JSON as the data format for CoAP
 
 .. note::
    The remainder of this document describes the nRF Cloud library's MQTT connectivity support.
-   See the :ref:`lib_nrf_cloud_rest` library and the :ref:`lib_nrf_cloud_coap` library for other connectivity options.
+   See the :ref:`lib_nrf_cloud_coap` library for extended information on CoAP connectivity.
 
 .. _lib_nrf_cloud_init:
 
@@ -118,7 +118,7 @@ Firmware over-the-air (FOTA) updates
 The nRF Cloud library supports FOTA updates for your nRF91 Series device.
 The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` Kconfig option is enabled by default when :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is set.
 This enables FOTA functionality in the application.
-FOTA support for applications using CoAP or REST is enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` Kconfig option.
+FOTA support for applications using CoAP is enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` Kconfig option.
 
 nRF Cloud FOTA enables the following additional features and libraries:
 
@@ -222,7 +222,6 @@ The following enhancements to this library can be used to interact with `nRF Clo
 * Assisted GNSS - :ref:`lib_nrf_cloud_agnss`
 * Predicted GPS - :ref:`lib_nrf_cloud_pgps`
 * Cellular Positioning - :ref:`lib_nrf_cloud_cell_pos`
-* nRF Cloud REST  - :ref:`lib_nrf_cloud_rest`
 
 .. _nrf_cloud_api:
 
@@ -248,7 +247,7 @@ nRF Cloud common definitions
 
 .. doxygengroup:: nrf_cloud_defs
 
-nRF Cloud FOTA poll for REST and CoAP
+nRF Cloud FOTA poll for CoAP
 ****************************************
 
 | Header file: :file:`include/net/nrf_cloud_fota_poll.h`

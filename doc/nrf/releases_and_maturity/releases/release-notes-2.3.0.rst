@@ -74,7 +74,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See the `Programming nRF91 Series DK firmware` page for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -499,7 +499,7 @@ nRF9160 samples
     * Timeout command-line arguments for the ``location get`` command changed from integers in milliseconds to floating-point values in seconds.
     * Replaced deprecated LwM2M API calls with calls to new functions.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* Cellular: nRF Cloud REST cellular location sample:
 
   * Added the usage of GCI search option if running modem firmware v1.3.4.
   * Updated the sample to wait for RRC idle mode before requesting neighbor cell measurements.
@@ -535,7 +535,7 @@ nRF9160 samples
 
   * Updated the sample to use a partition in external flash for full modem FOTA updates.
 
-* :ref:`nrf_cloud_rest_device_message` sample:
+* Cellular: nRF Cloud REST Device Message sample:
 
   * Added sending an alert to nRF Cloud on boot.
 
@@ -546,7 +546,7 @@ nRF9160 samples
   * nRF9160: Simple MQTT sample.
     This is now replaced by a new :ref:`mqtt_sample` sample that supports Wi-Fi and LTE connectivity.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* Cellular: nRF Cloud REST FOTA sample:
 
   * Updated:
 
@@ -856,9 +856,9 @@ Libraries for networking
 
   * Removed location events and event handlers.
 
-* :ref:`lib_nrf_cloud_rest` library:
+* nRF Cloud REST library:
 
-  * Added the :c:func:`nrf_cloud_rest_device_status_message_send` function to send the device status information as an nRF Cloud device message.
+  * Added the ``nrf_cloud_rest_device_status_message_send`` function to send the device status information as an nRF Cloud device message.
 
 Libraries for NFC
 -----------------

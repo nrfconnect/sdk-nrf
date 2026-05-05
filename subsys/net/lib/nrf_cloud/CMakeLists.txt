@@ -71,7 +71,6 @@ zephyr_library_sources_ifdef(
   common/src/nrf_cloud_fota_common.c
   common/src/nrf_cloud_fota_poll.c
 )
-zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_REST rest/src/nrf_cloud_rest.c)
 zephyr_library_sources_ifdef(
   CONFIG_NRF_CLOUD_COAP
   coap/src/nrf_cloud_coap.c
@@ -95,5 +94,4 @@ endif()
 if(CONFIG_NRF_CLOUD_LOG_DIRECT)
   zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_COAP coap/src/nrf_cloud_log.c)
   zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_MQTT mqtt/src/nrf_cloud_log.c)
-  zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_REST rest/src/nrf_cloud_log.c)
 endif()

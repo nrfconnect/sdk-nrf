@@ -98,11 +98,10 @@ ZTEST(nrf_cloud_fota_common_test, test_nrf_cloud_fota_is_type_enabled)
 ZTEST(nrf_cloud_fota_common_test, test_nrf_cloud_fota_is_type_enabled_invalid)
 {
 	Z_TEST_SKIP_IFDEF(CONFIG_NRF_CLOUD_FOTA);
-	Z_TEST_SKIP_IFDEF(CONFIG_NRF_CLOUD_REST);
 
 	zassert_false(nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_APPLICATION),
 		      "return should be false when "
-		      "CONFIG_NRF_CLOUD_FOTA and CONFIG_NRF_CLOUD_REST are disabled");
+		      "CONFIG_NRF_CLOUD_FOTA is disabled");
 }
 
 /* Verify that nrf_cloud_bootloader_fota_slot_set fails and the BL status flags are not

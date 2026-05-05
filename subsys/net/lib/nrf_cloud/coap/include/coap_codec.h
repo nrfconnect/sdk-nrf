@@ -9,8 +9,8 @@
 
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_pgps.h>
-#include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_location.h>
+#include <net/nrf_cloud_coap.h>
 #include <modem/lte_lc.h>
 
 #define RC_FMT "%u.%02u"
@@ -51,14 +51,14 @@ int coap_codec_ground_fix_req_encode(struct lte_lc_cells_info const *const cell_
 int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result,
 				      const uint8_t *buf, size_t len, enum coap_content_format fmt);
 
-int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const request,
+int coap_codec_agnss_encode(struct nrf_cloud_coap_agnss_request const *const request,
 			   uint8_t *buf, size_t *len,
-			   enum coap_content_format fm);
+			   enum coap_content_format fmt);
 
-int coap_codec_agnss_resp_decode(struct nrf_cloud_rest_agnss_result *result,
+int coap_codec_agnss_resp_decode(struct nrf_cloud_coap_agnss_result *result,
 				const uint8_t *buf, size_t len, enum coap_content_format fmt);
 
-int coap_codec_pgps_encode(struct nrf_cloud_rest_pgps_request const *const request,
+int coap_codec_pgps_encode(struct nrf_cloud_coap_pgps_request const *const request,
 			   uint8_t *buf, size_t *len,
 			   enum coap_content_format fmt);
 

@@ -9,10 +9,8 @@
 
 /** @file nrf_cloud_fota_poll.h
  * @brief Module to provide nRF Cloud FOTA assistance for applications
- *        connecting to nRF Cloud using REST or CoAP.
+ *        connecting to nRF Cloud using CoAP.
  */
-
-#include <net/nrf_cloud_rest.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,7 +47,6 @@ typedef void (*nrf_cloud_fota_poll_handler_t)(enum nrf_cloud_fota_status status,
 
 struct nrf_cloud_fota_poll_ctx {
 	/* Internal variables */
-	struct nrf_cloud_rest_context *rest_ctx;
 	struct k_work_delayable timeout_work;
 	struct k_work_delayable cancel_work;
 	bool is_nonblocking;

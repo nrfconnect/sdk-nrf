@@ -11,12 +11,59 @@
 #include <modem/location.h>
 #include <modem/nrf_modem_lib.h>
 #include <date_time.h>
+#include <net/nrf_cloud.h>
+#include <net/nrf_cloud_defs.h>
+#include <net/nrf_cloud_coap.h>
 
 static K_SEM_DEFINE(location_event, 0, 1);
 
 static K_SEM_DEFINE(lte_connected, 0, 1);
 
 static K_SEM_DEFINE(time_update_finished, 0, 1);
+
+/* nRF Cloud device ID */
+static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
+
+static bool cred_check(struct nrf_cloud_credentials_status *const cs)
+{
+	int ret = 0;
+
+	ret = nrf_cloud_credentials_check(cs);
+	if (ret) {
+		printk("nRF Cloud credentials check failed, error: %d\n", ret);
+		return false;
+	}
+
+	/* Since this sample uses CoAP, we need two credentials:
+	 *  - a CA for the TLS connections
+	 *  - a private key to sign the JWT
+	 */
+
+	if (!cs->ca || !cs->ca_coap || !cs->prv_key) {
+		printk("Missing required nRF Cloud credential(s) in sec tag %u:\n", cs->sec_tag);
+	}
+	if (!cs->ca || !cs->ca_coap) {
+		printk("\t-CA Cert\n");
+	}
+	if (!cs->prv_key) {
+		printk("\t-Private Key\n");
+	}
+
+	return (cs->ca && cs->ca_coap && cs->prv_key);
+}
+
+static void await_credentials(void)
+{
+	struct nrf_cloud_credentials_status cs;
+
+	while (!cred_check(&cs)) {
+		printk("Waiting for credentials to be installed...\n");
+		printk("Press the reset button once the credentials are installed\n");
+		k_sleep(K_FOREVER);
+	}
+
+	printk("nRF Cloud credentials detected!\n");
+}
 
 static void date_time_evt_handler(const struct date_time_evt *evt)
 {
@@ -235,24 +282,31 @@ static void location_gnss_periodic_get(void)
 	}
 }
 
-int main(void)
+static int setup(void)
 {
-	int err;
+	int err = 0;
 
-	printk("Location sample started\n\n");
-
+	/* Init modem */
 	err = nrf_modem_lib_init();
 	if (err) {
-		printk("Modem library initialization failed, error: %d\n", err);
+		printk("ERROR: Failed to initialize modem library: 0x%X\n", err);
+		return -EFAULT;
+	}
+
+	/* Ensure device has credentials installed before proceeding */
+	await_credentials();
+
+	/* Get the device ID */
+	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
+	if (err) {
+		printk("Failed to get device ID, error: %d\n", err);
 		return err;
 	}
 
-	if (IS_ENABLED(CONFIG_DATE_TIME)) {
-		/* Registering early for date_time event handler to avoid missing
-		 * the first event after LTE is connected.
-		 */
-		date_time_register_handler(date_time_evt_handler);
-	}
+	/* Registering early for date_time event handler to avoid missing
+	 * the first event after LTE is connected.
+	 */
+	date_time_register_handler(date_time_evt_handler);
 
 	printk("Connecting to LTE...\n");
 
@@ -262,16 +316,42 @@ int main(void)
 
 	k_sem_take(&lte_connected, K_FOREVER);
 
+	/* nRF Cloud CoAP requires login */
+	err = nrf_cloud_coap_init();
+	if (err) {
+		printk("Failed to initialize CoAP client: %d\n", err);
+		return err;
+	}
+
+	err = nrf_cloud_coap_connect(NULL);
+	if (err) {
+		printk("Connecting to nRF Cloud failed, error: %d\n", err);
+		return err;
+	}
+
+	return 0;
+}
+
+int main(void)
+{
+	int err;
+
+	printk("Location sample started\n\n");
+
+	err = setup();
+	if (err) {
+		printk("ERROR: Setup failed, stopping.\n");
+		return err;
+	}
+
 	/* A-GNSS/P-GPS needs to know the current time. */
-	if (IS_ENABLED(CONFIG_DATE_TIME)) {
-		printk("Waiting for current time\n");
+	printk("Waiting for current time\n");
 
-		/* Wait for an event from the Date Time library. */
-		k_sem_take(&time_update_finished, K_MINUTES(10));
+	/* Wait for an event from the Date Time library. */
+	k_sem_take(&time_update_finished, K_MINUTES(10));
 
-		if (!date_time_is_valid()) {
-			printk("Failed to get current time. Continuing anyway.\n");
-		}
+	if (!date_time_is_valid()) {
+		printk("Failed to get current time. Continuing anyway.\n");
 	}
 
 	err = location_init(location_event_handler);

@@ -2658,7 +2658,7 @@ OCT-3265: Test with nRF5340 DK as sink will cause the I2S to interfere with othe
 
 .. rst-class:: v3-1-1 v3-1-0
 
-OCT-3432: Selecting 32 bit (``CONFIG_AUDIO_BIT_DEPTH_32`` = `y`) as the I2S input on gateway might cause choppy audio
+OCT-3432: Selecting 32 bit (``CONFIG_AUDIO_BIT_DEPTH_32`` = ``y``) as the I2S input on gateway might cause choppy audio
   Using 32-bit I2S input requires significantly more buffer handling and CPU time.
   Depending on the configuration, this might overload the system and cause I2S RX overruns.
 
@@ -3481,7 +3481,7 @@ Cellular samples
 
 .. rst-class:: v3-1-1 v3-1-0
 
-IRIS-10159: nRF Cloud logging not working in the :ref:`nrf_cloud_rest_device_message` sample
+IRIS-10159: nRF Cloud logging not working in the Cellular: nRF Cloud REST Device Message sample
   The sample does not react to runtime log level setting from the cloud side.
   This will be resolved in the next release.
 
@@ -3489,7 +3489,7 @@ IRIS-10159: nRF Cloud logging not working in the :ref:`nrf_cloud_rest_device_mes
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
-NCSDK-30050: The :ref:`nrf_cloud_rest_fota` sample with experimental SMP FOTA support enabled crashes with a secure fault
+NCSDK-30050: The Cellular: nRF Cloud REST FOTA sample with experimental SMP FOTA support enabled crashes with a secure fault
   This happens approximately one out of five times during an SMP FOTA update.
 
 .. rst-class:: v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0
@@ -3511,7 +3511,7 @@ IRIS-7398: The :ref:`nrf_cloud_multi_service` sample does not support using the 
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
-IRIS-7381: :ref:`nrf_cloud_rest_cell_location` sample might attempt to take a neighbor cell measurement when a measurement is already in progress
+IRIS-7381: Cellular: nRF Cloud REST cellular location sample might attempt to take a neighbor cell measurement when a measurement is already in progress
   If cell information changes during a neighbor cell measurement, the sample will attempt to start a new measurement, resulting in warning and error log messages.
 
   **Affected platforms:** nRF9160, nRF9161

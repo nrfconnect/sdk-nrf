@@ -167,7 +167,7 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 			       nrf_cloud_location_response_t cb);
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
-/** @brief Process location data received from nRF Cloud over MQTT or REST.
+/** @brief Process location data received from nRF Cloud over MQTT.
  *
  * @param buf Data received from nRF Cloud.
  * @param result Parsed results.

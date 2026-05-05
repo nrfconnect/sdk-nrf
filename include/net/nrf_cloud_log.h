@@ -17,8 +17,6 @@
 extern "C" {
 #endif
 
-struct nrf_cloud_rest_context;
-
 /**
  * @defgroup nrf_cloud_log nRF Cloud Log
  * @{
@@ -29,18 +27,6 @@ struct nrf_cloud_rest_context;
  * the date_time library is ready.
  */
 void nrf_cloud_log_init(void);
-
-/**
- * @brief Set REST context for logging subsystem.
- *
- * Tell REST-based logger the REST context and device_id for later
- * use when outputting a log. This is used by the nRF Cloud logs backend
- * when CONFIG_NRF_CLOUD_LOG_BACKEND=y.
- *
- * @param[in] ctx REST context to use.
- * @param[in] dev_id Device ID to send message on behalf of.
- */
-void nrf_cloud_log_rest_context_set(struct nrf_cloud_rest_context *ctx, const char *dev_id);
 
 /**
  * @brief Set the logging level.
@@ -67,7 +53,7 @@ void nrf_cloud_log_level_set(int level);
  * eliminating unnecessary processing of log messages.
  *
  * When CONFIG_NRF_CLOUD_LOG_DIRECT=y, the log enable state determines whether
- * calls to nrf_cloud_log_send() or nrf_cloud_rest_log_send() will succeed.
+ * calls to nrf_cloud_log_send() will succeed.
  * This will conserve power by not transmitting log messages when not needed.
  *
  * @param[in] enable Set true to send logs to the cloud, false to disable.
@@ -128,23 +114,6 @@ bool nrf_cloud_is_dict_logging_enabled(void);
  */
 int nrf_cloud_log_send(int log_level, const char *fmt, ...);
 #endif /* CONFIG_NRF_CLOUD_MQTT || CONFIG_NRF_CLOUD_COAP */
-
-#if defined(CONFIG_NRF_CLOUD_REST) || defined(__DOXYGEN__)
-/**
- * @brief Directly log to the cloud. This does not use the Zephyr logging
- * system if CONFIG_NRF_CLOUD_LOG_BACKEND is disabled. Otherwise, it is passed to
- * the logging system.
- *
- * @param ctx REST interface context to use to send log message.
- * @param dev_id Device id to use when sending the log message via REST.
- * @param log_level The log level for this message; dropped if above set log level.
- * @param fmt Format string.
- * @param ... Format arguments.
- * @return 0 if log line is successfully sent, otherwise, a negative error number.
- */
-int nrf_cloud_rest_log_send(struct nrf_cloud_rest_context *ctx, const char *dev_id,
-			     int log_level, const char *fmt, ...);
-#endif /* CONFIG_NRF_CLOUD_REST || __DOXYGEN__ */
 
 #else /* CONFIG_NRF_CLOUD_LOG_DIRECT */
 #define nrf_cloud_log_send(log_level, fmt, ...) (0)

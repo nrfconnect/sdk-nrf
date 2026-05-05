@@ -22,7 +22,9 @@
 #include <date_time.h>
 
 #include <dk_buttons_and_leds.h>
+#ifdef CONFIG_NRF_CLOUD_FOTA_SMP
 #include "smp_reset.h"
+#endif
 
 #define COAP_SHADOW_MAX_SIZE 512
 
@@ -67,7 +69,7 @@ static void sample_reboot(enum nrf_cloud_fota_reboot_status status);
 static struct nrf_cloud_fota_poll_ctx fota_ctx = {
 	.device_id = device_id,
 	.reboot_fn = sample_reboot,
-#if SMP_FOTA_ENABLED
+#ifdef CONFIG_NRF_CLOUD_FOTA_SMP
 	.smp_reset_cb = nrf52840_reset_api
 #endif
 };
@@ -109,7 +111,7 @@ static void send_device_status(void)
 		.modem = 1,
 		.application = 1,
 		.modem_full = fota_ctx.full_modem_fota_supported,
-		.smp = SMP_FOTA_ENABLED
+		.smp = IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_SMP)
 	};
 
 	struct nrf_cloud_svc_info svc_inf = {

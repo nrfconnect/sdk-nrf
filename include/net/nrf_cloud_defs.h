@@ -106,8 +106,6 @@
 #define NRF_CLOUD_JSON_PGPS_GPS_TIME		"startGpsTimeOfDaySeconds"
 #define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST	0
 #define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH	1
-#define NRF_CLOUD_PGPS_RCV_REST_HOST		"host"
-#define NRF_CLOUD_PGPS_RCV_REST_PATH		"path"
 
 /* A-GNSS */
 #define NRF_CLOUD_JSON_KEY_ELEVATION_MASK	"mask"
@@ -120,21 +118,20 @@
 #define NRF_CLOUD_FOTA_TYPE_APP			"APP"
 #define NRF_CLOUD_FOTA_TYPE_SMP			"SMP"
 #define NRF_CLOUD_FOTA_TYPE_CUSTOM		"CUSTOM"
-#define NRF_CLOUD_FOTA_REST_KEY_JOB_DOC		"jobDocument"
-#define NRF_CLOUD_FOTA_REST_KEY_JOB_ID		"jobId"
-#define NRF_CLOUD_FOTA_REST_KEY_PATH		"path"
-#define NRF_CLOUD_FOTA_REST_KEY_HOST		"host"
-#define NRF_CLOUD_FOTA_REST_KEY_TYPE		"firmwareType"
-#define NRF_CLOUD_FOTA_REST_KEY_SIZE		"fileSize"
-#define NRF_CLOUD_FOTA_REST_KEY_VER		"version"
+#define NRF_CLOUD_FOTA_COAP_KEY_JOB_DOC		"jobDocument"
+#define NRF_CLOUD_FOTA_COAP_KEY_JOB_ID		"jobId"
+#define NRF_CLOUD_FOTA_COAP_KEY_PATH		"path"
+#define NRF_CLOUD_FOTA_COAP_KEY_HOST		"host"
+#define NRF_CLOUD_FOTA_COAP_KEY_TYPE		"firmwareType"
+#define NRF_CLOUD_FOTA_COAP_KEY_SIZE		"fileSize"
+#define NRF_CLOUD_FOTA_COAP_KEY_VER		"version"
 /** Current FOTA version number */
 #define NRF_CLOUD_FOTA_VER			2
 
-/* REST */
-#define NRF_CLOUD_REST_ERROR_CODE_KEY		"code"
-#define NRF_CLOUD_REST_ERROR_MSG_KEY		"message"
-#define NRF_CLOUD_REST_TOPIC_KEY		"topic"
-#define NRF_CLOUD_REST_MSG_KEY			"message"
+#define NRF_CLOUD_ERROR_CODE_KEY		"code"
+#define NRF_CLOUD_ERROR_MSG_KEY			"message"
+#define NRF_CLOUD_TOPIC_KEY			"topic"
+#define NRF_CLOUD_MSG_KEY			"message"
 
 /* GNSS - PVT */
 #define NRF_CLOUD_JSON_GNSS_PVT_KEY_LAT		"lat"
@@ -223,7 +220,6 @@
 #define NRF_CLOUD_JSON_VAL_TOPIC_BIN		"/bin"
 #define NRF_CLOUD_JSON_VAL_PROTO_MQTT		"MQTT"
 #define NRF_CLOUD_JSON_VAL_PROTO_COAP		"CoAP"
-#define NRF_CLOUD_JSON_VAL_PROTO_REST		"REST"
 #define NRF_CLOUD_JSON_VAL_METHOD_LTE		"LTE"
 #define NRF_CLOUD_JSON_VAL_METHOD_WIFI		"Wi-Fi"
 #define NRF_CLOUD_JSON_VAL_METHOD_DECT		"DECT NR+"

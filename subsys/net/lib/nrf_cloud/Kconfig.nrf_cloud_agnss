@@ -15,7 +15,7 @@ config NRF_CLOUD_AGNSS_FILTERED_RUNTIME
 	bool "Allow runtime control of filtered ephemerides mode"
 	depends on NRF_CLOUD_AGNSS_FILTERED
 	help
-	  Allow runtime settings in nrf_cloud_rest_agnss_request structure
+	  Allow runtime settings in nrf_cloud_coap_agnss_request structure
 	  to configure filtered mode and related elevation mask. Otherwise,
 	  NRF_CLOUD_AGNSS_FILTERED and NRF_CLOUD_AGNSS_ELEVATION_MASK set
 	  the request parameters directly.

@@ -45,7 +45,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See the `Programming nRF91 Series DK firmware` page for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Known issues
 ************
@@ -96,7 +96,7 @@ Bluetooth mesh
 --------------
 
 * Updated several samples and libraries.
-  For details, see `Bluetooth mesh samples`_ and `Bluetooth libraries`, respectively.
+  For details, see ``Bluetooth mesh samples``_ and ``Bluetooth libraries``, respectively.
 
 Matter
 ------
@@ -342,7 +342,7 @@ nRF9160 samples
 
 * Added:
 
-  * :ref:`nrf_cloud_rest_fota` sample, demonstrating how to perform FOTA updates with the nRF Cloud REST API.
+  * Cellular: nRF Cloud REST FOTA sample,
 
 * :ref:`https_client` sample:
 
@@ -585,7 +585,7 @@ Libraries for networking
   * Changed :c:func:`nrf_cloud_pgps_init` to limit allowable :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` to an even number, and limited :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` to this value minus 2.
   * Updated the signature of :c:func:`npgps_download_start` to accept an integer parameter specifying the PDN ID, which replaces the parameter used to specify the APN.
 
-* :ref:`lib_nrf_cloud_rest` library:
+* nRF Cloud REST library:
 
   * Added functions :c:func:`nrf_cloud_rest_shadow_state_update` and :c:func:`nrf_cloud_rest_shadow_service_info_update`.
     They enable device shadow updates using REST.

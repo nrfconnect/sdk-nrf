@@ -18,6 +18,9 @@
 struct nrf_modem_gnss_agnss_data_frame;
 #endif
 #include "nrf_cloud_agnss_schema_v1.h"
+#if defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_location.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -109,6 +112,16 @@ struct nrf_cloud_pgps_result {
 	/** Size of user-provided path buffer */
 	size_t path_sz;
 };
+
+#if defined(CONFIG_NRF_CLOUD_COAP)
+/** @brief Data required for nRF Cloud Predicted GPS (P-GPS) request */
+struct nrf_cloud_coap_pgps_request {
+	/** Data to be included in the P-GPS request. To omit an item
+	 * use the appropriate `NRF_CLOUD_PGPS_REQ_NO_` define.
+	 */
+	const struct gps_pgps_request *pgps_req;
+};
+#endif /* CONFIG_NRF_CLOUD_COAP */
 
 /** @brief P-GPS error code: current time unknown. */
 #define ETIMEUNKNOWN	8000
@@ -309,7 +322,7 @@ int nrf_cloud_pgps_finish_update(void);
  */
 void nrf_cloud_pgps_request_reset(void);
 
-/** @brief Processes binary P-GPS data received from nRF Cloud over MQTT or REST.
+/** @brief Processes binary P-GPS data received from nRF Cloud.
  *
  * @param buf Pointer to data received from nRF Cloud.
  * @param buf_len Buffer size of data to be processed.

@@ -74,14 +74,6 @@ config MOSH_REST
 	help
 	  REST client for sending and receiving simple REST requests/responses.
 
-config MOSH_CLOUD_REST
-	bool "nRFCloud commands over REST"
-	default y
-	select NRF_CLOUD_REST
-	select MODEM_JWT
-	select NRF_CLOUD_AGNSS_FILTERED if NRF_CLOUD_AGNSS && !NRF_CLOUD_MQTT
-	select NRF_CLOUD_AGNSS_FILTERED_RUNTIME if NRF_CLOUD_AGNSS && !NRF_CLOUD_MQTT
-
 config MOSH_CLOUD_MQTT
 	bool "MQTT connection to nRF Cloud"
 	select NRF_CLOUD_MQTT
@@ -126,7 +118,7 @@ config MOSH_PRINT_BUFFER_SIZE
 
 config MOSH_COMMON_WORKQUEUE_STACK_SIZE
 	int "Common workqueue stack size"
-	default 7168 if MOSH_CLOUD_REST || MOSH_CLOUD_MQTT
+	default 7168 if MOSH_CLOUD_MQTT
 	default 6144 if MOSH_STARTUP_CMDS && MOSH_CURL
 	default 4096
 

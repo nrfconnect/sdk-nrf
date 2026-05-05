@@ -11,7 +11,6 @@
 #include <zephyr/logging/log_output.h>
 #include <zephyr/logging/log_backend.h>
 #include <zephyr/sys/ring_buffer.h>
-#include <zephyr/sys/base64.h>
 #include <date_time.h>
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_mem.h"
@@ -19,8 +18,6 @@
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_log_internal.h"
 #include "nrf_cloud_coap_transport.h"
-#include "nrf_cloud_client_id.h"
-#include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_coap.h>
 #include <net/nrf_cloud_log.h>
 
@@ -33,9 +30,6 @@ LOG_MODULE_REGISTER(nrf_cloud_log_backend, CONFIG_NRF_CLOUD_LOG_LOG_LEVEL);
 
 /** Special value indicating the source of this log entry could not be determined */
 #define UNKNOWN_LOG_SOURCE UINT32_MAX
-
-/** Topic for dictionary (binary) logging. */
-#define TOPIC_FMT "d/%s/d2c/bin"
 
 static void logger_init(const struct log_backend *const backend);
 static void logger_process(const struct log_backend *const backend, union log_msg_generic *msg);
@@ -77,8 +71,6 @@ static uint8_t log_buf[CONFIG_NRF_CLOUD_LOG_BUF_SIZE + 1];
 static uint32_t log_format_current = CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DEFAULT;
 static uint32_t log_output_flags = LOG_OUTPUT_FLAG_CRLF_NONE;
 static int num_msgs;
-static struct nrf_cloud_rest_context *rest_ctx;
-static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN];
 
 /* Define array of log source names that could generate new log messages as a side effect
  * of sending other log messages to the cloud. We should filter out these log sources
@@ -92,13 +84,6 @@ static const char *const filtered_modules[] = {
 	"net_mqtt_dec",
 	"net_mqtt_rx",
 	"net_mqtt",
-#endif
-#if defined(CONFIG_NRF_CLOUD_REST)
-	"nrf_cloud_rest",
-	"nrf_cloud_jwt",
-	"rest_client",
-	"net_http",
-	"net_http_client",
 #endif
 #if defined(CONFIG_NRF_CLOUD_COAP)
 	"nrf_cloud_coap",
@@ -194,17 +179,6 @@ void nrf_cloud_log_backend_enable_internal(bool enable)
 	}
 }
 
-void nrf_cloud_log_rest_context_set(struct nrf_cloud_rest_context *ctx, const char *dev_id)
-{
-#if defined(CONFIG_NRF_CLOUD_LOG_BACKEND)
-	rest_ctx = ctx;
-	strncpy(device_id, dev_id, NRF_CLOUD_CLIENT_ID_MAX_LEN);
-#else
-	ARG_UNUSED(ctx);
-	ARG_UNUSED(dev_id);
-#endif
-}
-
 static uint32_t get_source_id(void *source_data, uint8_t dom_id)
 {
 	if (IS_ENABLED(CONFIG_LOG_MULTIDOMAIN) && (dom_id != Z_LOG_LOCAL_DOMAIN_ID)) {
@@ -267,8 +241,7 @@ static void logger_process(const struct log_backend *const backend, union log_ms
 		src_id != UNKNOWN_LOG_SOURCE ? log_source_name_get(dom_id, src_id) : NULL;
 	int64_t ts = log_output_timestamp_to_us(log_msg_get_timestamp(&msg->log)) / 1000U;
 
-	nrf_cloud_log_init_context_internal(rest_ctx, device_id, level, src_id, src_name, dom_id,
-					    ts, &log_context);
+	nrf_cloud_log_init_context_internal(level, src_id, src_name, dom_id, ts, &log_context);
 
 	log_output_func = log_format_func_t_get(log_format_current);
 	log_output_func(&log_nrf_cloud_output, &msg->log, log_output_flags);
@@ -291,27 +264,10 @@ static void logger_panic(const struct log_backend *const backend)
 
 static int logger_is_ready(const struct log_backend *const backend)
 {
-	static bool printed;
-
 	ARG_UNUSED(backend);
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
 		if (nfsm_get_current_state() != STATE_DC_CONNECTED) {
 			return -EBUSY;
-		}
-	}
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
-		if (log_context.rest_ctx == NULL) {
-			if (rest_ctx) {
-				log_context.rest_ctx = rest_ctx;
-				LOG_DBG("rest_ctx set");
-				printed = false;
-			} else {
-				if (!printed) {
-					printed = true;
-					LOG_WRN("rest_ctx is NULL");
-				}
-				return -EBUSY;
-			}
 		}
 	}
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP) && !nrf_cloud_coap_is_connected()) {
@@ -353,75 +309,13 @@ static void logger_notify(const struct log_backend *const backend, enum log_back
 	}
 }
 
-static int convert_to_quoted_base64(const uint8_t *in_ptr, size_t in_sz, uint8_t **out_ptr,
-				    size_t *out_sz)
-{
-	int err;
-	size_t blen;
-
-	/* Determine buffer size needed -- blen will include 1 byte for null terminator */
-	(void)base64_encode(NULL, 0, &blen, in_ptr, in_sz);
-	*out_sz = blen + 2;
-
-	*out_ptr = nrf_cloud_malloc(*out_sz);
-	if (*out_ptr == NULL) {
-		return -ENOMEM;
-	}
-	(*out_ptr)[0] = '\"';
-	err = base64_encode(&((*out_ptr)[1]), blen, &blen, in_ptr, in_sz);
-	if (err) {
-		nrf_cloud_free(*out_ptr);
-		*out_ptr = NULL;
-		return err;
-	}
-	(*out_ptr)[*out_sz - 2] = '\"';
-	(*out_ptr)[*out_sz - 1] = '\0';
-	(*out_sz)--;
-
-	return 0;
-}
-
-static char *get_dict_topic(void)
-{
-	int err;
-	const char *client_id_ptr;
-	size_t client_id_len;
-	char *topic;
-	size_t topic_len;
-
-	err = nrf_cloud_client_id_ptr_get(&client_id_ptr);
-	if (err) {
-		LOG_ERR("Unable to get client_id: %d", err);
-		return NULL;
-	};
-	client_id_len = strlen(client_id_ptr);
-
-	topic_len = client_id_len + sizeof(TOPIC_FMT);
-	topic = nrf_cloud_malloc(topic_len + 1);
-	if (!topic) {
-		LOG_ERR("Memory allocation failed for topic");
-		return NULL;
-	}
-
-	err = snprintk(topic, topic_len, TOPIC_FMT, client_id_ptr);
-	if (err < 0 || err >= topic_len) {
-		LOG_ERR("Could not format topic");
-		nrf_cloud_free(topic);
-		return NULL;
-	}
-	return topic;
-}
-
 static int send_ring_buffer(void)
 {
 	int err = 0;
 	int ret = 0;
 	uint32_t stored;
-	char *topic = NULL;
 	uint8_t *log_rb_ptr;
 	uint32_t log_rb_len;
-	uint8_t *log_b64_ptr = NULL;
-	uint32_t log_b64_len;
 	struct nrf_cloud_data output_data;
 
 	/* The bulk topic requires the multiple JSON messages to be placed in
@@ -442,25 +336,11 @@ static int send_ring_buffer(void)
 	if (!log_rb_len) {
 		goto cleanup;
 	}
-	if ((log_format_current == LOG_OUTPUT_DICT) && IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
-		topic = get_dict_topic();
-		if (!topic) {
-			goto cleanup;
-		}
-		err = convert_to_quoted_base64(log_rb_ptr, log_rb_len, &log_b64_ptr, &log_b64_len);
-		if (err) {
-			goto cleanup;
-		}
-		LOG_DBG("topic:   %s", topic);
-		LOG_DBG("payload: %s", (const char *)log_b64_ptr);
-		output_data.ptr = log_b64_ptr;
-		output_data.len = log_b64_len;
-	} else {
-		/* Send ring buffer contents as is -- JSON or raw binary. */
-		log_rb_ptr[log_rb_len] = '\0';
-		output_data.ptr = log_rb_ptr;
-		output_data.len = log_rb_len;
-	}
+
+	/* Send ring buffer contents as is -- JSON or raw binary. */
+	log_rb_ptr[log_rb_len] = '\0';
+	output_data.ptr = log_rb_ptr;
+	output_data.len = log_rb_len;
 
 	LOG_DBG("Ready to transmit %zd bytes...", output_data.len);
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
@@ -472,21 +352,6 @@ static int send_ring_buffer(void)
 			.data.len = output_data.len};
 
 		err = nrf_cloud_send(&output);
-	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
-		do {
-			/* If no topic provided, use d2c/bulk, otherwise use topic. */
-			err = nrf_cloud_rest_send_device_message(log_context.rest_ctx,
-								 log_context.device_id,
-								 output_data.ptr, !topic, topic);
-			if (err) {
-				LOG_ERR("Error sending message:%d", err);
-				if (err != -EBUSY) {
-					LOG_ERR("Data: %s, len: %zd", (const char *)output_data.ptr,
-						output_data.len);
-				}
-				k_sleep(K_MSEC(100));
-			}
-		} while (err == -EBUSY);
 	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
 		if (log_format_current == LOG_OUTPUT_TEXT) {
 			err = nrf_cloud_coap_json_message_send(output_data.ptr, true, true);
@@ -513,12 +378,6 @@ cleanup:
 	if (ret) {
 		LOG_ERR("Error finishing ring buffer: %d", ret);
 		err = ret;
-	}
-	if (log_b64_ptr) {
-		nrf_cloud_free(log_b64_ptr);
-	}
-	if (topic) {
-		nrf_cloud_free(topic);
 	}
 
 	return err;

@@ -77,11 +77,7 @@ static const char *const sensor_type_str[] = {
 /* Max length of a NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT message */
 #define NRF_CLOUD_JSON_MSG_MAX_LEN_DISCONNECT 200
 
-#if defined(CONFIG_NRF_CLOUD_REST)
-#define API_VER			     "/v1"
-#define API_FOTA_JOB_EXEC	     "/fota-job-executions"
-#define API_UPDATE_FOTA_URL_TEMPLATE (API_VER API_FOTA_JOB_EXEC "/%s/%s")
-#elif defined(CONFIG_NRF_CLOUD_COAP)
+#if defined(CONFIG_NRF_CLOUD_COAP)
 #define API_FOTA_JOB_EXEC	     "fota/exec"
 #define API_UPDATE_FOTA_URL_TEMPLATE (API_FOTA_JOB_EXEC "/%s")
 #else
@@ -104,8 +100,6 @@ static const char *const job_status_strings[] = {
 /* Define a string representing the network protocol we are using. */
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 #define NRF_CLOUD_JSON_VAL_CFGD_PROTO_VAL NRF_CLOUD_JSON_VAL_PROTO_MQTT
-#elif defined(CONFIG_NRF_CLOUD_REST)
-#define NRF_CLOUD_JSON_VAL_CFGD_PROTO_VAL NRF_CLOUD_JSON_VAL_PROTO_REST
 #elif defined(CONFIG_NRF_CLOUD_COAP)
 #define NRF_CLOUD_JSON_VAL_CFGD_PROTO_VAL NRF_CLOUD_JSON_VAL_PROTO_COAP
 #else
@@ -549,7 +543,7 @@ int nrf_cloud_encode_message(const char *app_id, double value, const char *str_v
 	}
 
 	if (topic != NULL) {
-		ret = nrf_cloud_obj_str_add(&root_obj, NRF_CLOUD_REST_TOPIC_KEY, topic, false);
+		ret = nrf_cloud_obj_str_add(&root_obj, NRF_CLOUD_TOPIC_KEY, topic, false);
 	}
 
 	/* Init the DATA message with provided app ID */
@@ -564,7 +558,7 @@ int nrf_cloud_encode_message(const char *app_id, double value, const char *str_v
 	}
 
 	/* Add the message to the root object */
-	ret += nrf_cloud_obj_object_add(&root_obj, NRF_CLOUD_REST_MSG_KEY, &msg_obj, false);
+	ret += nrf_cloud_obj_object_add(&root_obj, NRF_CLOUD_MSG_KEY, &msg_obj, false);
 	if (ret) {
 		ret = -ENOMEM;
 		goto cleanup;
@@ -1408,9 +1402,6 @@ int nrf_cloud_fota_job_update_create(const char *const device_id, const char *co
 
 	/* Format API URL with device and job ID */
 	buff_sz = sizeof(API_UPDATE_FOTA_URL_TEMPLATE) +
-#if defined(CONFIG_NRF_CLOUD_REST)
-		  strlen(device_id) +
-#endif
 		  strlen(job_id);
 	update->url = nrf_cloud_malloc(buff_sz);
 	if (!update->url) {
@@ -1419,9 +1410,6 @@ int nrf_cloud_fota_job_update_create(const char *const device_id, const char *co
 	}
 
 	ret = snprintk(update->url, buff_sz, API_UPDATE_FOTA_URL_TEMPLATE,
-#if defined(CONFIG_NRF_CLOUD_REST)
-		       device_id, /* CoAP does not need this parameter */
-#endif
 		       job_id);
 	if ((ret < 0) || (ret >= buff_sz)) {
 		LOG_ERR("Could not format URL");
@@ -1726,7 +1714,7 @@ int nrf_cloud_obj_fota_ble_job_update_create(struct nrf_cloud_obj *const obj,
 }
 #endif
 
-int nrf_cloud_rest_fota_execution_decode(const char *const response,
+int nrf_cloud_coap_fota_execution_decode(const char *const response,
 					 struct nrf_cloud_fota_job_info *const job)
 {
 	if (!response || !job) {
@@ -1741,8 +1729,8 @@ int nrf_cloud_rest_fota_execution_decode(const char *const response,
 	cJSON *size_obj;
 
 	cJSON *resp_obj = cJSON_Parse(response);
-	cJSON *job_doc = cJSON_GetObjectItem(resp_obj, NRF_CLOUD_FOTA_REST_KEY_JOB_DOC);
-	cJSON *id_obj = cJSON_GetObjectItem(resp_obj, NRF_CLOUD_FOTA_REST_KEY_JOB_ID);
+	cJSON *job_doc = cJSON_GetObjectItem(resp_obj, NRF_CLOUD_FOTA_COAP_KEY_JOB_DOC);
+	cJSON *id_obj = cJSON_GetObjectItem(resp_obj, NRF_CLOUD_FOTA_COAP_KEY_JOB_ID);
 
 	memset(job, 0, sizeof(*job));
 
@@ -1751,10 +1739,10 @@ int nrf_cloud_rest_fota_execution_decode(const char *const response,
 		goto err_cleanup;
 	}
 
-	path_obj = cJSON_GetObjectItem(job_doc, NRF_CLOUD_FOTA_REST_KEY_PATH);
-	host_obj = cJSON_GetObjectItem(job_doc, NRF_CLOUD_FOTA_REST_KEY_HOST);
-	type_obj = cJSON_GetObjectItem(job_doc, NRF_CLOUD_FOTA_REST_KEY_TYPE);
-	size_obj = cJSON_GetObjectItem(job_doc, NRF_CLOUD_FOTA_REST_KEY_SIZE);
+	path_obj = cJSON_GetObjectItem(job_doc, NRF_CLOUD_FOTA_COAP_KEY_PATH);
+	host_obj = cJSON_GetObjectItem(job_doc, NRF_CLOUD_FOTA_COAP_KEY_HOST);
+	type_obj = cJSON_GetObjectItem(job_doc, NRF_CLOUD_FOTA_COAP_KEY_TYPE);
+	size_obj = cJSON_GetObjectItem(job_doc, NRF_CLOUD_FOTA_COAP_KEY_SIZE);
 
 	if (!id_obj || !path_obj || !host_obj || !type_obj || !size_obj) {
 		ret = -EPROTO;
@@ -2474,15 +2462,6 @@ int nrf_cloud_location_response_decode(const char *const buf,
 		return 1;
 	}
 
-	/* First, check to see if this is a REST payload, which is not wrapped in
-	 * an nRF Cloud MQTT message
-	 */
-	ret = nrf_cloud_parse_location_json(loc_obj, result);
-	if (ret == 0) {
-		goto cleanup;
-	}
-
-	/* Clear the error flag and check for MQTT payload format */
 	result->err = NRF_CLOUD_ERROR_NONE;
 	ret = 1;
 
@@ -2534,50 +2513,6 @@ cleanup:
 			result->err = NRF_CLOUD_ERROR_UNKNOWN;
 		}
 	}
-
-	return ret;
-}
-
-int nrf_cloud_rest_error_decode(const char *const buf, enum nrf_cloud_error *const err)
-{
-	int ret = -ENOMSG;
-	cJSON *root_obj;
-	cJSON *err_obj;
-	char *msg = NULL;
-
-	if ((buf == NULL) || (err == NULL)) {
-		return -EINVAL;
-	}
-
-	*err = NRF_CLOUD_ERROR_NONE;
-
-	root_obj = cJSON_Parse(buf);
-	if (!root_obj) {
-		LOG_DBG("No JSON found in REST response");
-		return ret;
-	}
-
-	/* Some responses are only an array of strings */
-	if (cJSON_IsArray(root_obj) && (json_array_str_get(root_obj, 0, &msg) == 0)) {
-		goto cleanup;
-	}
-
-	/* Check for a message string. Ignore return, just for debug printing */
-	(void)get_string_from_obj(root_obj, NRF_CLOUD_REST_ERROR_MSG_KEY, &msg);
-
-	/* Get the error code */
-	err_obj = cJSON_GetObjectItem(root_obj, NRF_CLOUD_REST_ERROR_CODE_KEY);
-	if (cJSON_IsNumber(err_obj)) {
-		ret = 0;
-		*err = (enum nrf_cloud_error)cJSON_GetNumberValue(err_obj);
-	}
-
-cleanup:
-	if (msg) {
-		LOG_ERR("REST error msg: %s", msg);
-	}
-
-	cJSON_Delete(root_obj);
 
 	return ret;
 }
@@ -2995,29 +2930,17 @@ int nrf_cloud_pgps_response_decode(const char *const response,
 		goto cleanup;
 	}
 
-	/* MQTT response is an array, REST is key/value map */
-	if (cJSON_IsArray(rsp_obj)) {
-		if (json_array_str_get(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
-		    json_array_str_get(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
-			LOG_ERR("Invalid P-GPS array response format");
-			err = -EPROTO;
-			goto cleanup;
-		}
-	} else if (get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_HOST, &host_ptr) ||
-		   get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_PATH, &path_ptr)) {
-		enum nrf_cloud_error nrf_err;
+	/* MQTT response is an array */
+	if (!cJSON_IsArray(rsp_obj)) {
+		LOG_ERR("Invalid P-GPS response format");
+		err = -EPROTO;
+		goto cleanup;
+	}
 
-		/* Check for a potential P-GPS JSON error message from nRF Cloud */
-		err = nrf_cloud_error_msg_decode(response, NRF_CLOUD_JSON_APPID_VAL_PGPS,
-						 NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
-		if (!err) {
-			LOG_ERR("nRF Cloud returned P-GPS error: %d", nrf_err);
-			err = -EFAULT;
-		} else {
-			LOG_ERR("Invalid P-GPS response format");
-			err = -EPROTO;
-		}
-
+	if (json_array_str_get(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
+	    json_array_str_get(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
+		LOG_ERR("Invalid P-GPS array response format");
+		err = -EPROTO;
 		goto cleanup;
 	}
 
@@ -3087,95 +3010,6 @@ cleanup:
 	return -ENOMEM;
 }
 #endif /* CONFIG_NRF_CLOUD_PGPS */
-
-int nrf_cloud_json_to_url_params_convert(char *const buf, const size_t buf_size,
-					 const cJSON *const obj)
-{
-	if (!obj || !buf || !buf_size) {
-		return -EINVAL;
-	}
-
-	int ret = 0;
-	size_t pos = 0;
-	size_t remain = buf_size;
-	cJSON *child = NULL;
-
-	cJSON_ArrayForEach(child, obj)
-	{
-		char prefix = ((pos == 0) ? '?' : '&');
-
-		/* Only handle bool, number (int), string, and (int) array types */
-		if (cJSON_IsBool(child)) {
-			ret = snprintk(&buf[pos], remain, "%c%s=%s", prefix, child->string,
-				       cJSON_IsTrue(child) ? "true" : "false");
-		} else if (cJSON_IsNumber(child)) {
-			ret = snprintk(&buf[pos], remain, "%c%s=%d", prefix, child->string,
-				       child->valueint);
-		} else if (cJSON_IsString(child)) {
-			/* Assume that the string is URL-compatible */
-			ret = snprintk(&buf[pos], remain, "%c%s=%s", prefix, child->string,
-				       child->valuestring);
-		} else if (cJSON_IsArray(child)) {
-			int cnt = 0;
-			cJSON *array_item = NULL;
-
-			cJSON_ArrayForEach(array_item, child)
-			{
-				if (!cJSON_IsNumber(array_item)) {
-					return -ENOTSUP;
-				}
-
-				if (cnt == 0) {
-					/* On the first item, add the key string */
-					ret = snprintk(&buf[pos], remain, "%c%s=", prefix,
-						       child->string);
-				} else {
-					/* For additional items, add a comma */
-					ret = snprintk(&buf[pos], remain, "%c", ',');
-				}
-
-				if ((ret > 0) && (ret < remain)) {
-					remain -= ret;
-					pos += ret;
-				} else {
-					return -E2BIG;
-				}
-
-				/* Add the integer value */
-				ret = snprintk(&buf[pos], remain, "%d", array_item->valueint);
-
-				if ((ret > 0) && (ret < remain)) {
-					remain -= ret;
-					pos += ret;
-					++cnt;
-				} else {
-					return -E2BIG;
-				}
-			}
-
-			/* Check next child item, pos and remain values already updated */
-			continue;
-		} else {
-			return -ENOTSUP;
-		}
-
-		if ((ret > 0) && (ret < remain)) {
-			remain -= ret;
-			pos += ret;
-		} else if (ret == 0) {
-			return -EIO;
-		} else {
-			return -E2BIG;
-		}
-	}
-
-	/* Return an error if no data was added */
-	if (remain == buf_size) {
-		return -ENOMSG;
-	}
-
-	return 0;
-}
 
 int nrf_cloud_ground_fix_url_encode(char *buf, size_t size, const char *base,
 				    const struct nrf_cloud_location_config *config)

@@ -343,7 +343,15 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* Removed all nRF Cloud REST samples as the nRF Cloud REST library has been removed.
+
+* :ref:`gnss_sample` sample:
+
+  * Updated to use the :ref:`lib_nrf_cloud_coap` library instead of the removed nRF Cloud REST library.
+
+* :ref:`modem_shell_application` sample:
+
+  * Updated to use the :ref:`lib_nrf_cloud_coap` library instead of the removed nRF Cloud REST library.
 
 Cryptography samples
 --------------------
@@ -578,9 +586,12 @@ Libraries for networking
     * The DTLS handshake timeout configuration on native (non-modem) sockets by using ``TLS_DTLS_HANDSHAKE_TIMEOUT_MIN`` and ``TLS_DTLS_HANDSHAKE_TIMEOUT_MAX`` instead of the modem-only ``TLS_DTLS_HANDSHAKE_TIMEO`` option, avoiding handshake failures when connecting to nRF Cloud over Wi-Fi.
     * The internal CoAP client socket descriptor not being updated immediately after a new DTLS socket was connected, which could leave ``client->cc.fd`` stale during reconnect and interfere with CoAP polling, receive, and retransmit paths.
 
-  * Removed the nRF Cloud Alerts library.
+  * Removed:
+
+  * The nRF Cloud Alerts library.
     As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
     `Memfault's Trace Events <Memfault: Error Tracking with Trace Events_>`_ feature replaces the Alerts feature, as it provides equivalent functionality for event reporting, and it also adds enhanced debugging capabilities that were not available with Alerts.
+  * The nRF Cloud REST library.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 

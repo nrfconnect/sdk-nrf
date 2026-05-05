@@ -30,22 +30,18 @@ struct nrf_cloud_log_context {
 	int64_t ts;
 	/** Monotonically increasing sequence number */
 	unsigned int sequence;
-	/** When using REST, this points to the context structure */
-	void *rest_ctx;
-	/** When using REST, this is the device_id making the REST connection */
-	char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 };
 
 void nrf_cloud_log_backend_enable_internal(bool enable);
 
-void nrf_cloud_log_init_context_internal(void *rest_ctx, const char *dev_id, int log_level,
-					 uint32_t src_id, const char *src_name, uint8_t dom_id,
-					 int64_t ts, struct nrf_cloud_log_context *context);
+void nrf_cloud_log_init_context_internal(int log_level, uint32_t src_id, const char *src_name,
+					 uint8_t dom_id, int64_t ts,
+					 struct nrf_cloud_log_context *context);
 
 void nrf_cloud_log_inject_internal(int log_level, const char *fmt, va_list ap);
 
 int nrf_cloud_log_format_internal(struct nrf_cloud_log_context *context, char *buf,
-				  struct nrf_cloud_tx_data *output, void *ctx, const char *dev_id,
+				  struct nrf_cloud_tx_data *output,
 				  int log_level, const char *fmt, va_list ap);
 
 #ifdef __cplusplus

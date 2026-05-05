@@ -12,7 +12,6 @@
 #include <date_time.h>
 #include <dk_buttons_and_leds.h>
 #include <net/nrf_cloud.h>
-#include <net/nrf_cloud_rest.h>
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif
@@ -68,7 +67,7 @@ static int agnss_err;
 
 static void get_agnss_callback(const struct coap_client_response_data *data, void *user_data)
 {
-	struct nrf_cloud_rest_agnss_result *result = user_data;
+	struct nrf_cloud_coap_agnss_result *result = user_data;
 
 	if (!result) {
 		LOG_ERR("Cannot process result");
@@ -92,8 +91,8 @@ static void get_agnss_callback(const struct coap_client_response_data *data, voi
 	}
 }
 
-int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *const request,
-				 struct nrf_cloud_rest_agnss_result *result)
+int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_coap_agnss_request const *const request,
+				 struct nrf_cloud_coap_agnss_result *result)
 {
 	__ASSERT_NO_MSG(request != NULL);
 	__ASSERT_NO_MSG(result != NULL);
@@ -168,7 +167,7 @@ static void get_pgps_callback(const struct coap_client_response_data *data, void
 	}
 }
 
-int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const request,
+int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_coap_pgps_request const *const request,
 				struct nrf_cloud_pgps_result *file_location)
 {
 	__ASSERT_NO_MSG(request != NULL);
@@ -454,7 +453,7 @@ static void get_location_callback(const struct coap_client_response_data *data, 
 	}
 }
 
-int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *const request,
+int nrf_cloud_coap_location_get(struct nrf_cloud_coap_location_request const *const request,
 				struct nrf_cloud_location_result *const result)
 {
 	__ASSERT_NO_MSG(request != NULL);

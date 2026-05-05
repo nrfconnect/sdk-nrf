@@ -784,7 +784,7 @@ Cellular samples
     Use the sample from `Serial Modem`_ instead.
   * The deprecated LTE Sensor Gateway sample.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* Cellular: nRF Cloud REST cellular location sample:
 
   * Added runtime setting of the log level for the nRF Cloud logging feature.
 
@@ -1110,7 +1110,7 @@ Libraries for networking
 
   * Fixed multiple bugs and enhanced error handling.
 
-* :ref:`lib_nrf_cloud_rest` library:
+* nRF Cloud REST library:
 
   * Deprecated the library.
     Use the :ref:`lib_nrf_cloud_coap` library instead.

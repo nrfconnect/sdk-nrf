@@ -263,8 +263,7 @@ int main(void)
 		mosh_print_reset_reason();
 	}
 
-#if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_MQTT) || \
-	defined(CONFIG_NRF_CLOUD_COAP)
+#if defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_NRF_CLOUD_COAP)
 #if defined(CONFIG_MOSH_IPERF3)
 	/* Due to iperf3, we cannot let nrf cloud lib to initialize cJSON lib to be
 	 * using kernel heap allocations (i.e. k_ prepending functions).

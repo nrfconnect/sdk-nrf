@@ -8,21 +8,17 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <modem/modem_info.h>
-#include <modem/modem_jwt.h>
-#include <net/nrf_cloud_rest.h>
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif /* CONFIG_NRF_CLOUD_PGPS */
+#include <net/nrf_cloud_coap.h>
 
 #include "assistance.h"
 
 LOG_MODULE_DECLARE(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
-
-static char jwt_buf[600];
-static char rx_buf[2048];
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 static char agnss_data_buf[NRF_CLOUD_AGNSS_MAX_DATA_SIZE];
@@ -38,6 +34,7 @@ static struct k_work inject_pgps_data_work;
 
 static struct k_work_q *work_q;
 static volatile bool assistance_active;
+static bool coap_connected;
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
@@ -97,34 +94,26 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 	LOG_INF("Sending request for P-GPS predictions to nRF Cloud...");
 
-	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
-	if (err) {
-		LOG_ERR("Failed to generate JWT, error: %d", err);
-
-		goto exit;
-	}
-
-	struct nrf_cloud_rest_context rest_ctx = {
-		.connect_socket = -1,
-		.keep_alive = false,
-		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
-		.auth = jwt_buf,
-		.rx_buf = rx_buf,
-		.rx_buf_len = sizeof(rx_buf),
-		.fragment_size = 0, /* Defaults to CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE when 0 */
-		.status = 0,
-		.response = NULL,
-		.response_len = 0,
-		.total_response_len = 0
-	};
-
-	struct nrf_cloud_rest_pgps_request request = {
+	struct nrf_cloud_coap_pgps_request request = {
 		.pgps_req = &pgps_request
 	};
 
-	err = nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
+	struct nrf_cloud_pgps_result file_location = {0};
+
+	static char host[64];
+	static char path[128];
+
+	memset(host, 0, sizeof(host));
+	memset(path, 0, sizeof(path));
+
+	file_location.host = host;
+	file_location.host_sz = sizeof(host);
+	file_location.path = path;
+	file_location.path_sz = sizeof(path);
+
+	err = nrf_cloud_coap_pgps_url_get(&request, &file_location);
 	if (err) {
-		LOG_ERR("Failed to send P-GPS request, error: %d", err);
+		LOG_ERR("GNSS: Failed to get P-GPS data, error: %d", err);
 
 		nrf_cloud_pgps_request_reset();
 
@@ -133,7 +122,7 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 	LOG_INF("Processing P-GPS response");
 
-	err = nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
+	err = nrf_cloud_pgps_update(&file_location);
 	if (err) {
 		LOG_ERR("Failed to process P-GPS response, error: %d", err);
 
@@ -144,6 +133,14 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 	LOG_INF("P-GPS response processed");
 
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		LOG_ERR("Failed to request current prediction, error: %d", err);
+
+		goto exit;
+	}
+
+	LOG_INF("P-GPS predictions requested");
 exit:
 	assistance_active = false;
 }
@@ -226,6 +223,13 @@ int assistance_init(struct k_work_q *assistance_work_q)
 {
 	work_q = assistance_work_q;
 
+	int err = nrf_cloud_coap_init();
+
+	if (err) {
+		LOG_ERR("Failed to initialize nRF Cloud CoAP client: %d", err);
+		return err;
+	}
+
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	k_work_init(&get_pgps_data_work, get_pgps_data_work_fn);
 	k_work_init(&inject_pgps_data_work, inject_pgps_data_work_fn);
@@ -250,6 +254,15 @@ int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 {
 	int err = 0;
 
+	if (!coap_connected) {
+		err = nrf_cloud_coap_connect(NULL);
+		if (err) {
+			LOG_ERR("Connecting to nRF Cloud failed: %d", err);
+			return err;
+		}
+		coap_connected = true;
+	}
+
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	/* Store the A-GNSS data request for P-GPS use. */
 	memcpy(&agnss_need, agnss_request, sizeof(agnss_need));
@@ -270,50 +283,23 @@ int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 	assistance_active = true;
 
-	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
-	if (err) {
-		LOG_ERR("Failed to generate JWT, error: %d", err);
-		goto agnss_exit;
-	}
-
-	struct nrf_cloud_rest_context rest_ctx = {
-		.connect_socket = -1,
-		.keep_alive = false,
-		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
-		.auth = jwt_buf,
-		.rx_buf = rx_buf,
-		.rx_buf_len = sizeof(rx_buf),
-		.fragment_size = 0, /* Defaults to CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE when 0 */
-		.status = 0,
-		.response = NULL,
-		.response_len = 0,
-		.total_response_len = 0
-	};
-
-	struct nrf_cloud_rest_agnss_request request = {
-		.type = NRF_CLOUD_REST_AGNSS_REQ_CUSTOM,
-		.agnss_req = agnss_request,
-		.net_info = NULL,
+	struct nrf_cloud_coap_agnss_request request = {
+		NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM,
+		agnss_request,
+		NULL,
 #if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME)
-		.filtered = true,
+		true,
 		/* Note: if you change the mask angle here, you may want to
 		 * also change it to match in gnss_init_and_start() in main.c.
 		 */
-		.mask_angle = CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK
-		/* Note: if CONFIG_NRF_CLOUD_AGNSS_FILTERED is enabled but
-		 * CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME is not,
-		 * the nrf_cloud_rest library will set the above fields to
-		 * true and CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK respectively.
-		 * When CONFIG_NRF_CLOUD_AGNSS_FILTERED is disabled, it will
-		 * set them to false and 0.
-		 */
+		CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK
 #endif
 	};
 
-	struct nrf_cloud_rest_agnss_result result = {
-		.buf = agnss_data_buf,
-		.buf_sz = sizeof(agnss_data_buf),
-		.agnss_sz = 0
+	struct nrf_cloud_coap_agnss_result result = {
+		agnss_data_buf,
+		sizeof(agnss_data_buf),
+		0
 	};
 
 	struct lte_lc_cells_info net_info = { 0 };
@@ -334,7 +320,7 @@ int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 			agnss_request->system[i].sv_mask_alm);
 	}
 
-	err = nrf_cloud_rest_agnss_data_get(&rest_ctx, &request, &result);
+	err = nrf_cloud_coap_agnss_data_get(&request, &result);
 	if (err) {
 		LOG_ERR("Failed to get A-GNSS data, error: %d", err);
 		goto agnss_exit;

@@ -358,9 +358,9 @@ Cellular samples
 
 * Added support for the Thingy:91 X to the following samples:
 
-  * :ref:`nrf_cloud_rest_device_message`
-  * :ref:`nrf_cloud_rest_cell_location`
-  * :ref:`nrf_cloud_rest_fota`
+  * nRF Cloud REST Device Message sample
+  * nRF Cloud REST cellular location sample
+  * nRF Cloud REST FOTA sample
 
 * Deprecated the LTE Sensor Gateway sample.
   It is no longer maintained.
@@ -377,16 +377,16 @@ Cellular samples
 
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
 
-* :ref:`nrf_cloud_rest_device_message` sample:
+* Cellular: nRF Cloud REST Device Message sample:
 
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Removed Provisioning service and JITP.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* Cellular: nRF Cloud REST cellular location sample:
 
   * Removed JITP.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* Cellular: nRF Cloud REST FOTA sample:
 
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Fixed SMP FOTA for the nRF9160 DK.

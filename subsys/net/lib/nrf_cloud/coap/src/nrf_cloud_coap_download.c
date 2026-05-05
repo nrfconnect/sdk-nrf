@@ -137,17 +137,19 @@ end:
 
 int nrf_cloud_download_start_internal(struct nrf_cloud_download_data *const dl)
 {
-	static char proxy_uri[CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH];
+	static char proxy_uri[CONFIG_NRF_CLOUD_COAP_PROXY_URI_LENGTH];
 #if defined(CONFIG_FOTA_DOWNLOAD) && defined(CONFIG_NRF_CLOUD_FOTA_TYPE_BOOT_SUPPORTED)
 	char buf[CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH];
 #endif
 	const char *file_path = dl->path;
 	int ret = 0;
+#if defined(CONFIG_FOTA_DOWNLOAD)
 	struct downloader_host_cfg host_cfg = {
 		.cid = true,
 		.auth_cb = handle_coap_auth,
 		.proxy_uri = proxy_uri,
 	};
+#endif
 
 	if (ret) {
 		LOG_ERR("Failed to initialize CoAP download, error: %d", ret);
@@ -177,11 +179,15 @@ int nrf_cloud_download_start_internal(struct nrf_cloud_download_data *const dl)
 	const char *file = "proxy";
 
 	if (dl->type == NRF_CLOUD_DL_TYPE_FOTA) {
+#if defined(CONFIG_FOTA_DOWNLOAD)
 		return fota_download_with_host_cfg(
 			host, file,
 			dl->dl_host_conf.sec_tag_count ? dl->dl_host_conf.sec_tag_list[0] : -1,
 			dl->dl_host_conf.pdn_id, dl->dl_host_conf.range_override,
 			dl->fota.expected_type, &host_cfg);
+#else
+		return -ENOTSUP;
+#endif
 	} else {
 		/* If not downloading FOTA, use downloader directly */
 		dl->dl_host_conf.cid = true;

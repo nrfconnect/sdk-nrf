@@ -29,7 +29,6 @@ tests:
     extra_configs:
       - CONFIG_NRF_CLOUD_FOTA=n
       - CONFIG_FOTA_DOWNLOAD=n
-      - CONFIG_NRF_CLOUD_REST=n
       - CONFIG_MCUBOOT_IMG_MANAGER=n
       - CONFIG_IMG_MANAGER=n
       - CONFIG_STREAM_FLASH_ERASE=n

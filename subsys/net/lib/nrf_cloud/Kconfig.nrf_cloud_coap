@@ -85,6 +85,12 @@ config NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST
 config COAP_CLIENT_MAX_PATH_LENGTH
 	default 128
 
+# The JWT authentication URI_QUERY options (mver, cver) exceed Zephyr's default of 13.
+# Samples that download via CoAP (P-GPS, FOTA) require larger values; see BUILD_ASSERTs
+# in nrf_cloud_coap_download.c.
+config COAP_EXTENDED_OPTIONS_LEN_VALUE
+	default 40
+
 # When Memfault uploads via nRF Cloud CoAP, larger block/message sizes reduce the number
 # of CoAP messages needed to send large payloads (e.g. flash-backed coredumps).
 # Scoped to MEMFAULT_USE_NRF_CLOUD_COAP to avoid increasing static CoAP client buffer
@@ -94,6 +100,13 @@ config COAP_CLIENT_BLOCK_SIZE
 
 config COAP_CLIENT_MESSAGE_SIZE
 	default 1024 if MEMFAULT_USE_NRF_CLOUD_COAP
+
+config NRF_CLOUD_COAP_PROXY_URI_LENGTH
+	int "Size of buffer used for CoAP proxy URI"
+	default FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH if FOTA_DOWNLOAD
+	default 512
+	help
+	  Size of the static buffer used to hold the CoAP proxy URI during downloads.
 
 module = NRF_CLOUD_COAP
 module-str = nRF Cloud COAP

@@ -133,7 +133,7 @@ Credentials are missing on the configured sec tag:
 
 .. note::
 
-   CoAP connections require a different root CA certificate compared to REST and MQTT.
+   CoAP connections require a different root CA certificate compared to MQTT.
    It is possible to provision both certificates on the same sec tag.
 
    .. code-block:: console
