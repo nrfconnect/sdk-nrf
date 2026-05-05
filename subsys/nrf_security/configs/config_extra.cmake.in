@@ -19,9 +19,9 @@ set(NRF_DIR              ${NRF_DIR}                              CACHE STRING "N
 set(TFM_BOARDS_NRF_DIR   ${NRF_DIR}/modules/trusted-firmware-m/tfm_boards CACHE STRING "tfm_boards folder")
 
 # This file is populated with the Mbed TLS config file names
-set(MBEDTLS_CONFIG_FILE                 ${CONFIG_MBEDTLS_CONFIG_FILE}                   CACHE STRING "Mbed TLS Config file")
-set(MBEDTLS_PSA_CRYPTO_CONFIG_FILE      ${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}        CACHE STRING "PSA Crypto config file (PSA_WANT)")
-set(MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE ${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}   CACHE STRING "PSA Crypto config file (PSA_NEED)")
+set(CONFIG_MBEDTLS_CONFIG_FILE            ${CONFIG_MBEDTLS_CONFIG_FILE}              CACHE STRING "Mbed TLS config file")
+set(CONFIG_TF_PSA_CRYPTO_CONFIG_FILE      ${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}        CACHE STRING "TF-PSA-Crypto config file (PSA_WANT)")
+set(CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE ${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE}   CACHE STRING "TF-PSA-Crypto user config file (PSA_NEED)")
 
 # This file is populated with the generated include-folders for PSA interface (for main app, ns-services) as
 # well as the include-folder for library build of the crypto toolbo with or without TF-M
