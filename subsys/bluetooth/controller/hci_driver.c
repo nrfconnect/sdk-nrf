@@ -921,7 +921,12 @@ static void configure_supported_features(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)) {
-		sdc_support_extended_feature_set();
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			sdc_support_extended_feature_set_central();
+		}
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			sdc_support_extended_feature_set_peripheral();
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_LE_FLUSHABLE_ACL_DATA)) {
