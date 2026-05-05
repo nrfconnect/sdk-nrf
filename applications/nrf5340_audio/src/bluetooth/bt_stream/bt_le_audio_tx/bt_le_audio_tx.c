@@ -536,11 +536,20 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		/* May happen if we are trying to send N streams, but N-X locations are available */
 		LOG_DBG("Number of locations (%u) more than number of streams (%u)", num_loc,
 			num_tx);
-	} else if ((num_loc < num_tx) && (num_loc != 1U)) {
-		/* If num_loc = 1, the same stream is sent to all locations */
-		LOG_ERR("Number of locations (%u) less than number of streams (%u)", num_loc,
-			num_tx);
-		return -EINVAL;
+	} else if (num_loc < num_tx) {
+		if (num_loc != 1U) {
+			LOG_ERR("If number of locations (%u) is less than number of streams (%u) "
+				"it must be 1. Single loc. sent to all streams.",
+				num_loc, num_tx);
+			return -EINVAL;
+		}
+
+		if (!IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
+			LOG_ERR("Num locations (%u) sent to all streams (%u)."
+				"CONFIG_MONO_TO_ALL_RECEIVERS must be enabled",
+				num_loc, num_tx);
+			return -EINVAL;
+		}
 	}
 
 	uint32_t common_interval_us = 0U;
