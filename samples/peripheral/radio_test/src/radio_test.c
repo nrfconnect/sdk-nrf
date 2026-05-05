@@ -544,15 +544,20 @@ static void radio_ppi_config(bool rx)
 {
 	endpoints_clear();
 
-	nrfx_gppi_ep_attach(nrf_egu_event_address_get(RADIO_TEST_EGU, RADIO_TEST_EGU_EVENT),
-			    ppi_radio_start);
-	nrfx_gppi_ep_attach(nrf_radio_task_address_get(NRF_RADIO,
-					   rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN),
-			    ppi_radio_start);
+	int err;
+
+	err = nrfx_gppi_ep_attach(nrf_egu_event_address_get(RADIO_TEST_EGU, RADIO_TEST_EGU_EVENT),
+				  ppi_radio_start);
+	__ASSERT_NO_MSG(err == 0);
+	err = nrfx_gppi_ep_attach(nrf_radio_task_address_get(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN
+									   : NRF_RADIO_TASK_TXEN),
+				  ppi_radio_start);
+	__ASSERT_NO_MSG(err == 0);
 	atomic_set_bit(&endpoint_state, (rx ? ENDPOINT_EGU_RADIO_RX : ENDPOINT_EGU_RADIO_TX));
 
-	nrfx_gppi_ep_attach(nrf_timer_task_address_get(timer.p_reg, NRF_TIMER_TASK_START),
-			    ppi_radio_start);
+	err = nrfx_gppi_ep_attach(nrf_timer_task_address_get(timer.p_reg, NRF_TIMER_TASK_START),
+				  ppi_radio_start);
+	__ASSERT_NO_MSG(err == 0);
 	atomic_set_bit(&endpoint_state, ENDPOINT_FORK_EGU_TIMER);
 
 	nrfx_gppi_conn_enable(ppi_radio_start);
@@ -563,11 +568,15 @@ static void radio_ppi_tx_reconfigure(void)
 	nrfx_gppi_conn_disable(ppi_radio_start);
 
 	endpoints_clear();
+	int err;
 
-	nrfx_gppi_ep_attach(nrf_timer_event_address_get(timer.p_reg, NRF_TIMER_EVENT_COMPARE1),
-			    ppi_radio_start);
-	nrfx_gppi_ep_attach(nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN),
-			    ppi_radio_start);
+	err = nrfx_gppi_ep_attach(
+		nrf_timer_event_address_get(timer.p_reg, NRF_TIMER_EVENT_COMPARE1),
+		ppi_radio_start);
+	__ASSERT_NO_MSG(err == 0);
+	err = nrfx_gppi_ep_attach(nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN),
+				  ppi_radio_start);
+	__ASSERT_NO_MSG(err == 0);
 	atomic_set_bit(&endpoint_state, ENDPOINT_TIMER_RADIO_TX);
 
 	nrfx_gppi_conn_enable(ppi_radio_start);
