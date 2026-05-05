@@ -99,9 +99,14 @@ static void timer_compare_interrupt_handler(int32_t id, uint64_t expire_time, vo
 {
 	uint32_t timer_value = nrfx_timer_capture_get(&test_timer, NRF_TIMER_CC_CHANNEL0);
 
-	test_timer_values[interval_counter] = timer_value;
-
-	interval_counter++;
+	/* Safety limit, after the required intervals have been captured
+	 * the GRTC timer still runs (until stopped), these excessive intervals
+	 * could not be collected, as the will go outside
+	 * of the intervals buffer bounds
+	 */
+	if (interval_counter < TIMER_VALUES_HOLD_BUFFER_SIZE) {
+		test_timer_values[interval_counter++] = timer_value;
+	}
 }
 
 int setup_lfclk_accuracy_test(void)
@@ -180,12 +185,9 @@ int main(void)
 
 	nrfx_gppi_conn_disable(tst_timers_control.gppi_handle);
 
-#if defined(CONFIG_SOC_NRF54H20)
-	/* ToDo: Fails on Lumoses */
 	nrfx_gppi_conn_free(tst_timers_control.grtc_compare_event_address,
 			    tst_timers_control.timer_capture_task_address,
 			    tst_timers_control.gppi_handle);
-#endif
 	return 0;
 }
 
