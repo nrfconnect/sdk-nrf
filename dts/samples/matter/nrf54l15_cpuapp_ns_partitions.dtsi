@@ -44,7 +44,7 @@
 		boot_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
-			reg = <0x0 DT_SIZE_K(32)>;
+			reg = <0x0 DT_SIZE_K(52)>;
 		};
 
 		slot0_partition: partition@d000 {
