@@ -264,7 +264,7 @@
    When using any other DK, the Toolchain Manager installation is recommended for the |NCS| v1.9.x and earlier versions.
 
 .. |ATv2_maintenance_note| replace:: The Asset Tracker v2 application is in maintenance mode.
-   For new projects, it is recommended to use the :ref:`nrf_cloud_multi_service` sample instead.
+   For new projects, it is recommended to use one of the cellular nRF Cloud samples instead: :ref:`nrf_cloud_mqtt_device_message`, :ref:`nrf_cloud_mqtt_cell_location`, :ref:`nrf_cloud_mqtt_fota`, :ref:`nrf_cloud_coap_device_message`, :ref:`nrf_cloud_coap_cell_location`, or :ref:`nrf_cloud_coap_fota_sample`.
 
 .. |filter_samples_by_board| replace:: If you want to list samples available for one or more specific boards, `use the nRF Connect for Visual Studio Code extension to filter them <Browse samples_>`_.
 

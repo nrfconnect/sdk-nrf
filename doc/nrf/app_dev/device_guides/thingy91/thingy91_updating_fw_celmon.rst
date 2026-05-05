@@ -11,10 +11,6 @@ Updating the Thingy:91 firmware using nRF Connect for Desktop apps
 Thingy:91 (v1.5.0 or earlier) comes preloaded with the nRF9160: Asset Tracker firmware and modem firmware on the nRF9160 :term:`System in Package (SiP)`, and the Connectivity bridge application firmware on the nRF52840 :term:`System on Chip (SoC)` that enable the device to use the environment sensors and track the device using :term:`Global Positioning System (GPS)`.
 The data is transmitted to nRF Cloud.
 
-.. tip::
-   For a more compact nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
-   See the :ref:`building_pgming` section for more information.
-
 You can update the application and modem firmware on a Thingy:91 through a :term:`Universal Serial Bus (USB)` cable using MCUboot.
 MCUboot is a secure bootloader that is used to update applications if you do not have an external debugger.
 The board enters MCUboot mode if you press one of the following buttons while the Thingy:91 is being powered on (using **SW1**):

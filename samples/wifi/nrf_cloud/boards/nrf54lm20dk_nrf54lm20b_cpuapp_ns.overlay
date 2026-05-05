@@ -1,0 +1,92 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &slot0_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &slot0_ns_partition;
+/delete-node/ &storage_partition;
+/delete-node/ &sram0_ns;
+
+&cpuapp_rram {
+	partitions {
+		slot0_s_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0-secure";
+			reg = <0x0 0x24000>;
+		};
+
+		tfm_storage_partition: partition@24000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-storage";
+			reg = <0x24000 DT_SIZE_K(32)>;
+			ranges = <0x0 0x24000 DT_SIZE_K(32)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			tfm_its_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-its";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+
+			tfm_otp_partition: partition@2000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-otp";
+				reg = <0x2000 DT_SIZE_K(8)>;
+			};
+
+			tfm_ps_partition: partition@4000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-ps";
+				reg = <0x4000 DT_SIZE_K(16)>;
+			};
+		};
+
+		slot0_ns_partition: partition@2c000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0-nonsecure";
+			reg = <0x2c000 0x1cf000>;
+		};
+
+		nonsecure_storage: partition@1fb000 {
+			compatible = "zephyr,mapped-partition";
+			label = "nonsecure-storage";
+			reg = <0x1fb000 DT_SIZE_K(8)>;
+			ranges = <0x0 0x1fb000 DT_SIZE_K(8)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			storage_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "storage";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+		};
+	};
+};
+
+/*
+ * TrustZone SRAM split. TF-M occupies the low 48 KiB (0xc000) of cpuapp SRAM;
+ * the NS application therefore starts at 0x20000000 + 0xc000 = 0x2000c000.
+ *
+ * nRF54LM20B has 512 KiB of SRAM but only 511 KiB (0x7fe40 bytes) is physically
+ * accessible. NS SRAM = 0x7fe40 - 0xc000 = 0x73e40 bytes.
+ */
+&sram0_s {
+	reg = <0x0 0xc000>;
+	ranges = <0x0 0x0 0xc000>;
+};
+
+&cpuapp_sram {
+	sram0_ns: image_ns@c000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0xc000 0x73e40>;
+		ranges = <0x0 0xc000 0x73e40>;
+	};
+};

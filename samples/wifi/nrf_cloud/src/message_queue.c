@@ -17,7 +17,7 @@
 
 #include "led_control.h"
 
-LOG_MODULE_REGISTER(message_queue, CONFIG_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(message_queue, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
 /* Message Queue for enqueing outgoing messages during offline periods. */
 K_MSGQ_DEFINE(device_message_queue,

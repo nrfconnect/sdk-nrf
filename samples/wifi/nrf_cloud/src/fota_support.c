@@ -10,29 +10,11 @@
 #include "fota_support.h"
 #include "sample_reboot.h"
 
-LOG_MODULE_REGISTER(fota_support, CONFIG_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(fota_support, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
 void on_fota_downloaded(void)
 {
 	sample_reboot_normal();
-}
-
-struct dfu_target_fmfu_fdev * get_full_modem_fota_fdev(void)
-{
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)) {
-		static struct dfu_target_fmfu_fdev ext_flash_dev = {
-			.size = 0,
-			.offset = 0,
-			/* CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION is enabled,
-			 * so no need to specify the flash device here
-			 */
-			.dev = NULL
-		};
-
-		return &ext_flash_dev;
-	}
-
-	return NULL;
 }
 
 /* You may notice there is no logic to actually receive/download/apply FOTA updates.

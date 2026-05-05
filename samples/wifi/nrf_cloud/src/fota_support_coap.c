@@ -5,8 +5,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <modem/nrf_modem_lib.h>
-#include <nrf_modem_at.h>
 #include <zephyr/settings/settings.h>
 #include <net/nrf_cloud.h>
 #include <zephyr/logging/log.h>
@@ -18,7 +16,7 @@
 #include "fota_support_coap.h"
 #include "sample_reboot.h"
 
-LOG_MODULE_REGISTER(fota_support_coap, CONFIG_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(fota_support_coap, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
 #define FOTA_THREAD_DELAY_S 10
 

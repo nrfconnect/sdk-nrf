@@ -398,6 +398,7 @@ Cellular samples
 
   * All nRF Cloud REST samples as the nRF Cloud REST library has been removed.
   * Usage of nRF Cloud logging in samples as the feature is being sunset.
+  * The Cellular: nRF Cloud multi-service sample.
 
 * :ref:`gnss_sample` sample:
 
@@ -562,7 +563,8 @@ Thread samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`wifi_nrf_cloud` sample, refactored from the former Cellular: nRF Cloud multi-service sample.
+  This sample targets the nRF7002 Wi-Fi companion IC, using Wi-Fi as the transport instead of LTE.
 
 Other samples
 -------------

@@ -4,10 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "Multi Service Sample Settings"
+menu "Wi-Fi nRF Cloud sample settings"
 
 config APP_VERSION
-	string "Multi Service Sample version"
+	string "Wi-Fi nRF Cloud sample version"
 	default "1.0.0"
 
 config CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS
@@ -25,10 +25,10 @@ config CLOUD_READY_TIMEOUT_SECONDS
 	  timeout, the sample will reset its connection and try again.
 
 config DATE_TIME_ESTABLISHMENT_TIMEOUT_SECONDS
-	int "Modem date and time establishment timeout (seconds)"
+	int "Date and time establishment timeout (seconds)"
 	default 300
 	help
-	  The sample will wait this many seconds for the modem to determine the
+	  The sample will wait this many seconds for the device to determine the
 	  current date and time before giving up and moving on.
 
 config APPLICATION_THREAD_STACK_SIZE
@@ -91,8 +91,7 @@ menuconfig LOCATION_TRACKING
 	bool "Location tracking service"
 	default y
 	help
-	  Uses GNSS, LTE, and/or Wi-Fi information to determine and report device
-	  location.
+	  Uses Wi-Fi information to determine and report device location.
 
 if LOCATION_TRACKING
 
@@ -102,38 +101,7 @@ config LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS
 	help
 	  Sets the location sampling interval in seconds.
 
-config LOCATION_TRACKING_GNSS
-	bool "Use GNSS method for location tracking"
-	default y
-	depends on LOCATION_METHOD_GNSS
-	help
-	  Disable all location tracking methods to completely disable location tracking.
-
-config LOCATION_TRACKING_CELLULAR
-	bool "Use cellular method for location tracking"
-	default y
-	depends on LOCATION_METHOD_CELLULAR
-	help
-	  Disable all location tracking methods to completely disable location tracking.
-
-config LOCATION_TRACKING_WIFI
-	bool "Use Wi-Fi method for location tracking"
-	depends on LOCATION_METHOD_WIFI
-	help
-	  Requires the use of an nRF7002 companion chip.
-	  Disable all location tracking methods to completely disable location tracking.
-
 endif
-
-config TEMP_DATA_USE_SENSOR
-	bool "Use genuine temperature data"
-	depends on BOARD_THINGY91_NRF9160_NS || BOARD_THINGY91X_NRF9151_NS
-	default y if BOARD_THINGY91_NRF9160_NS || BOARD_THINGY91X_NRF9151_NS
-	select SENSOR
-	select BME680
-	help
-	  Sets whether to take genuine temperature measurements from a
-	  connected BME680 sensor, or just simulate sensor data.
 
 config TEMP_TRACKING
 	bool "Track temperature"
@@ -150,15 +118,8 @@ config TEMP_ALERT_LIMIT
 
 choice
 	prompt "LED indication"
-	default LED_INDICATION_PWM if BOARD_THINGY91_NRF9160_NS || BOARD_THINGY91X_NRF9151_NS
-	default LED_INDICATION_GPIO if BOARD_NRF9160DK_NRF9160_NS || BOARD_NRF9161DK_NRF9161_NS || $(dt_compat_enabled,gpio-leds)
+	default LED_INDICATION_GPIO if $(dt_compat_enabled,gpio-leds)
 	default LED_INDICATION_DISABLED
-
-config LED_INDICATION_PWM
-	bool "Enable LED indication using the pwm-leds driver"
-	select LED
-	select LED_PWM
-	select PWM
 
 config LED_INDICATION_GPIO
 	bool "Enable LED indication using the gpio-leds driver"
@@ -173,13 +134,8 @@ endchoice
 choice
 	prompt "LED indication LED type"
 	depends on !LED_INDICATION_DISABLED
-	default LED_INDICATOR_RGB if (BOARD_THINGY91_NRF9160_NS || BOARD_THINGY91X_NRF9151_NS) && LED_INDICATION_PWM
 	default LED_INDICATOR_4LED if !LED_INDICATION_DISABLED
 	default LED_INDICATOR_NONE
-
-config LED_INDICATOR_RGB
-	bool "A single RGB LED"
-	depends on LED_INDICATION_PWM
 
 config LED_INDICATOR_4LED
 	bool "Four binary LEDs"
@@ -201,17 +157,6 @@ config LED_CONTINUOUS_INDICATION
 	depends on !LED_INDICATION_DISABLED
 	default y
 
-config GNSS_FIX_TIMEOUT_SECONDS
-	int "GNSS Fix timeout"
-	default 40
-	help
-	  On each location sample, try for this long to achieve a GNSS fix
-	  before falling back to cellular positioning.
-	  Set this to 20 or so seconds below the sensor sample interval so
-	  that there is time left over to perform cellular positioning.
-	  Otherwise, location samples may occur at a longer interval than
-	  requested.
-
 config TEST_COUNTER
 	bool "Sets whether the test counter is enabled"
 	help
@@ -224,26 +169,6 @@ config TEST_COUNTER_MULTIPLIER
 	help
 	  This is a way to increase the number of device messages sent by the sample.
 	  It is useful for load testing.
-
-config AT_CMD_REQUESTS
-	bool "Enables remote execution of AT commands using device messages"
-	depends on !NRF_CLOUD_COAP
-	default y
-
-config AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH
-	int "Max length (in bytes) for Modem responses during AT command requests"
-	help
-	  Responses to modem AT commands are stored in a buffer of this length before being sent to
-	  nRF Cloud. If a response from the modem exceeds this length, it will be dropped, and an
-	  error code sent in its place (-NRF_E2BIG). Cannot be less than 40 bytes.
-	default 200
-
-config POST_PROVISIONING_INTERVAL_M
-	int "Delay in minutes between provisioning checks once connected"
-	default 30
-	help
-	  Use a slower rate to check for provisioning after we have successfully connected.
-	  Until then use CONFIG_NRF_PROVISIONING_INTERVAL_S.
 
 if NRF_CLOUD_COAP
 
@@ -312,12 +237,12 @@ endif
 endmenu
 
 if NRF_CLOUD_MQTT
-module-str = MQTT Multi Service
+module-str = MQTT nRF Cloud
 endif
 if NRF_CLOUD_COAP
-module-str = CoAP Multi Service
+module-str = CoAP nRF Cloud
 endif
-module = MULTI_SERVICE
+module = WIFI_NRF_CLOUD
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 menu "Zephyr Kernel"
