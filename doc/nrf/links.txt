@@ -420,6 +420,8 @@
 
 .. _`PSA Certified Nordic Products`: https://www.nordicsemi.com/Products/Technologies/Security/Certifications?lang=en#infotabs
 
+.. _`Nordic Semiconductor quality management`: https://www.nordicsemi.com/Quality-Management
+
 .. #### Source: www.nordicsemi.com/Events/, https://www.nordicsemi.com/Resources/, https://webinars.nordicsemi.com/events
 
 .. _`nRF Connect SDK v3.2.0 webinar`:
