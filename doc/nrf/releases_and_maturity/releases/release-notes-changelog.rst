@@ -63,7 +63,11 @@ Developing with nRF70 Series
 Developing with nRF54L Series
 =============================
 
-|no_changes_yet_note|
+* Added:
+
+  * The :kconfig:option:`CONFIG_SB_CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS` sysbuild Kconfig option to populate the Key Management Unit (KMU) slots for invalidation of the CRACEN-protected RAM using nrfutil.
+    This option requires ``nrfutil device`` version 2.15.4 or later to work.
+    When enabled, the :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT` and :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT` Kconfig options become unavailable, as they implement the same feature through alternative provisioning paths.
 
 Developing with nRF54H Series
 =============================
