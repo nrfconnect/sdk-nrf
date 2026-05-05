@@ -282,7 +282,9 @@ function(zephyr_mcuboot_tasks)
     # just signed one does not.
     # Only NRF54L gets the HMAC-SHA512, other remain with previously used
     # SHA256.
-    if(CONFIG_SOC_SERIES_NRF54L AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)
+    if(CONFIG_SOC_SERIES_NRF54L AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 AND
+      NOT CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256
+    )
       set(imgtool_encrypt_extra_args --hmac-sha 512)
     endif()
   endif()
