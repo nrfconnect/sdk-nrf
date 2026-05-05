@@ -15,8 +15,6 @@
 
 LOG_MODULE_DECLARE(cgms, CONFIG_BT_CGMS_LOG_LEVEL);
 
-#define CGMS_RACP_LENGTH 20
-
 #define RACP_Q_STACK_SIZE 2048
 #define RACP_Q_PRIORITY 1
 K_THREAD_STACK_DEFINE(racp_q_stack_area, RACP_Q_STACK_SIZE);
@@ -79,7 +77,7 @@ struct racp_task {
 	struct k_work item;
 	struct bt_conn *peer;
 	struct net_buf_simple req;
-	uint8_t req_buf[CGMS_RACP_LENGTH];
+	uint8_t req_buf[CGMS_RACP_MAX_LENGTH];
 };
 
 static struct cgms_meas_db_entry cgms_meas_db_entry_pool[RECORD_NUM];
@@ -105,7 +103,7 @@ static struct cgms_meas_db_entry *entry_alloc(void)
 
 static int generic_handler(struct bt_conn *peer, uint8_t opcode, uint8_t response_code)
 {
-	NET_BUF_SIMPLE_DEFINE(rsp, CGMS_RACP_LENGTH);
+	NET_BUF_SIMPLE_DEFINE(rsp, CGMS_RACP_MAX_LENGTH);
 
 	net_buf_simple_add_u8(&rsp, RACP_OPCODE_RESPONSE_CODE);
 	net_buf_simple_add_u8(&rsp, RACP_OPERATOR_NULL);
@@ -273,7 +271,7 @@ static int report_num_recs_all_handler(struct bt_conn *peer)
 	uint16_t count = 0;
 	sys_snode_t *record_node;
 
-	NET_BUF_SIMPLE_DEFINE(rsp, CGMS_RACP_LENGTH);
+	NET_BUF_SIMPLE_DEFINE(rsp, CGMS_RACP_MAX_LENGTH);
 
 	if (!sys_slist_is_empty(&database)) {
 		SYS_SLIST_FOR_EACH_NODE(&database, record_node) {
@@ -297,7 +295,7 @@ static int report_num_recs_greater_or_equal_handler(struct bt_conn *peer,
 	struct cgms_meas_db_entry *entry;
 	sys_snode_t *record_node;
 
-	NET_BUF_SIMPLE_DEFINE(rsp, CGMS_RACP_LENGTH);
+	NET_BUF_SIMPLE_DEFINE(rsp, CGMS_RACP_MAX_LENGTH);
 
 	if (operand->len < 3) {
 		return generic_handler(peer, RACP_OPCODE_REPORT_RECS,
@@ -434,6 +432,10 @@ int cgms_racp_recv_request(struct bt_conn *peer, const uint8_t *req_data, uint16
 	}
 
 	/* For other requests, prepare the data and submit to workqueue. */
+	if (req_len > sizeof(report_record_task.req_buf)) {
+		return -EMSGSIZE;
+	}
+
 	report_record_task.peer = peer;
 	memcpy(report_record_task.req_buf, req_data, req_len);
 	net_buf_simple_init_with_data(&report_record_task.req, report_record_task.req_buf, req_len);

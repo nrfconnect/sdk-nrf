@@ -15,6 +15,9 @@
 extern "C" {
 #endif
 
+/* Maximum byte length of a RACP characteristic write. */
+#define CGMS_RACP_MAX_LENGTH 20
+
 /* Continuous Glucose Monitoring feature */
 enum cgms_feat {
 	CGMS_FEAT_CALIBRATION_SUPPORTED = BIT(0),
