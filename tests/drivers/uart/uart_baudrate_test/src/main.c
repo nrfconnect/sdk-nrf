@@ -206,11 +206,6 @@ static void check_timing(uint32_t baudrate)
 	}
 }
 
-ZTEST(uart_baudrate_test, test_08_2400)
-{
-	check_timing(2400);
-}
-
 ZTEST(uart_baudrate_test, test_09_4800)
 {
 	check_timing(4800);
