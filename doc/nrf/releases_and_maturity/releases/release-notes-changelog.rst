@@ -279,6 +279,14 @@ Bluetooth Mesh samples
   * The partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` board target is not backward compatible with the previous versions of the sample.
     This affects builds with support for the EMDS.
 
+* :ref:`ble_mesh_dfu_distributor` sample:
+
+  * The partition layout for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets is not backward compatible with the previous versions of the sample.
+
+* :ref:`ble_mesh_dfu_target` sample:
+
+  * The partition layout for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets is not backward compatible with the previous versions of the sample.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
