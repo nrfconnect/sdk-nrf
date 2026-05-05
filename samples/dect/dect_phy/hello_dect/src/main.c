@@ -188,6 +188,11 @@ static void on_test_rf_tx_cw_ctrl(const struct nrf_modem_dect_phy_test_rf_tx_cw_
 	LOG_WRN("Unexpectedly in %s\n", (__func__));
 }
 
+static void on_reject(const struct nrf_modem_dect_phy_reject_event *evt)
+{
+	LOG_WRN("Unexpectedly in %s\n", (__func__));
+}
+
 static void dect_phy_event_handler(const struct nrf_modem_dect_phy_event *evt)
 {
 	modem_time = evt->time;
@@ -252,6 +257,9 @@ static void dect_phy_event_handler(const struct nrf_modem_dect_phy_event *evt)
 		break;
 	case NRF_MODEM_DECT_PHY_EVT_TEST_RF_TX_CW_CONTROL_CONFIG:
 		on_test_rf_tx_cw_ctrl(&evt->test_rf_tx_cw_control);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_REJECT:
+		on_reject(&evt->reject);
 		break;
 	}
 }
