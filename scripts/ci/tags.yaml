@@ -1890,6 +1890,11 @@ ci_tests_zephyr_drivers_clock_control:
     - nrf/tests/zephyr/drivers/clock_control/
     - zephyr/tests/drivers/clock_control/
 
+ci_tests_zephyr_kernel_sleep:
+  files:
+    - nrf/tests/zephyr/kernel/sleep/
+    - zephyr/tests/kernel/sleep/
+
 ci_tests_zephyr_kernel_timer_timer_behavior:
   files:
     - nrf/tests/zephyr/kernel/timer/timer_behavior/

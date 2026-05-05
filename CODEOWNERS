@@ -1026,6 +1026,7 @@
 /tests/zephyr/drivers/timer/              @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/uart/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/watchdog/           @nrfconnect/ncs-low-level-test
+/tests/zephyr/kernel/sleep/				  @nrfconnect/ncs-low-level-test
 /tests/zephyr/kernel/timer/timer_behavior/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/modules/tf-m/regression/    @nrfconnect/ncs-aegir
 /tests/zephyr/subsys/sd/                  @nrfconnect/ncs-low-level-test
