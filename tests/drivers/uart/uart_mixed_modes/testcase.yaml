@@ -101,8 +101,10 @@ tests:
   drivers.uart.async_int.nrf54lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - CONFIG_TEST_ASYNC_AND_INT=y
       - CONFIG_UART_ASYNC_API=y
@@ -115,8 +117,10 @@ tests:
   drivers.uart.async_poll.nrf54lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - CONFIG_TEST_ASYNC_AND_POLL=y
       - CONFIG_UART_ASYNC_API=y
@@ -127,8 +131,10 @@ tests:
   drivers.uart.int_poll.nrf54lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - CONFIG_TEST_INT_AND_POLL=y
       - CONFIG_UART_ASYNC_API=n

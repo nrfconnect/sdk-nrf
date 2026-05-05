@@ -480,6 +480,31 @@ tests:
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
 
+  sample.benchmarks.peripheral_stress_test.nrf54lc10:
+    filter: not CONFIG_COVERAGE
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - ".*ADC thread has completed"
+        - ".*Counter thread has completed"
+        - ".*GPIO thread has completed"
+        - ".*TEMP thread has completed"
+        - ".*Timer thread has completed"
+        - ".*WDT thread has completed"
+        - ".*CPU load thread has completed"
+        - ".*Bluetooth init OK"
+        - ".*all \\d{1,} threads have completed"
+    extra_args:
+      - CONFIG_CAN=n
+      - CONFIG_FLASH=n
+      - CONFIG_I2S=n
+      - CONFIG_PWM=n
+    platform_allow:
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+    integration_platforms:
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+
   sample.benchmarks.peripheral_stress_test.nrf54lv10.mcuboot:
     filter: not CONFIG_COVERAGE
     harness_config:
@@ -508,7 +533,11 @@ tests:
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
 
+<<<<<<< HEAD
   sample.benchmarks.peripheral_stress_test.nrf54lv10.mcuboot.lto:
+=======
+  sample.benchmarks.peripheral_stress_test.nrf54lc10.mcuboot:
+>>>>>>> 3a7cd5152a (tests: enable nrf54lc10dk)
     filter: not CONFIG_COVERAGE
     harness_config:
       type: multi_line
@@ -531,9 +560,16 @@ tests:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       # Disabled FPROTECT does not affect benchmarks
       - mcuboot_CONFIG_FPROTECT=n
+<<<<<<< HEAD
       - CONFIG_LTO=y
       - CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+=======
+    platform_allow:
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+    integration_platforms:
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+>>>>>>> 3a7cd5152a (tests: enable nrf54lc10dk)

@@ -10,6 +10,8 @@ tests:
   nrf.extended.tests.drivers.mbox_error_cases.nrf54l:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args: SNIPPET=nordic-flpr

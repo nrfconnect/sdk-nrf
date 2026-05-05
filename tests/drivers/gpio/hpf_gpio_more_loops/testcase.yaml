@@ -43,6 +43,11 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+<<<<<<< Updated upstream
+=======
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+>>>>>>> Stashed changes
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
 
@@ -53,6 +58,11 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+<<<<<<< Updated upstream
+=======
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+>>>>>>> Stashed changes
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
 
@@ -63,6 +73,11 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+<<<<<<< Updated upstream
+=======
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+>>>>>>> Stashed changes
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp

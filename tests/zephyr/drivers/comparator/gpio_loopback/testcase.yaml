@@ -7,9 +7,11 @@ common:
     - ci_tests_zephyr_drivers_comparator
   platform_allow:
     - nrf54lv10dk/nrf54lv10a/cpuapp
+    - nrf54lc10dk/nrf54lc10a/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp/ns
   integration_platforms:
     - nrf54lv10dk/nrf54lv10a/cpuapp
+    - nrf54lc10dk/nrf54lc10a/cpuapp
 tests:
   nrf.extended.drivers.comparator.gpio_loopback.nrf_comp:
     extra_args:

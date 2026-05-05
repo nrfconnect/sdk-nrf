@@ -34,6 +34,10 @@ boards:
     append:
       EXTRA_CONF_FILE: boards/nrf54lv10dk_nrf54lv10a_cpuapp.conf
       EXTRA_DTC_OVERLAY_FILE: boards/nrf54lv10dk_nrf54lv10a_cpuapp.overlay
+  nrf54lc10dk/nrf54lc10a/cpuapp:
+    append:
+      EXTRA_CONF_FILE: boards/nrf54lc10dk_nrf54lc10a_cpuapp.conf
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54lc10dk_nrf54lc10a_cpuapp.overlay
   nrf54ls05dk/nrf54ls05b/cpuapp:
     append:
       EXTRA_CONF_FILE: boards/nrf54ls05dk_nrf54ls05b_cpuapp.conf
