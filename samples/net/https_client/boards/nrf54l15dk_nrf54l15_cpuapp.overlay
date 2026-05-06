@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
 &rram_controller {
 	/delete-node/ cpuflpr_sram;
 	/delete-node/ cpuflpr_rram;
@@ -18,4 +23,18 @@
 /* Adjust the cpuapp_rram to include the freed up cpuflpr_rram */
 &cpuapp_rram {
 	reg = <0x0 DT_SIZE_K(1524)>;
+
+	partitions {
+		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x0 0x17b000>;
+		};
+
+		storage_partition: partition@17b000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x17b000 0x2000>;
+		};
+	};
 };
