@@ -9,6 +9,8 @@ Getting started with Matter
 
 Read pages in this section and watch the video to start working with Matter using Nordic Semiconductor's SoCs and tools in both the |NCS| and Zephyr.
 
+If you want to go through a hands-on online training to familiarize yourself with Matter development, enroll in the `Matter Fundamentals course`_ in the `Nordic Developer Academy`_.
+
 The following video showcases several aspects of the Matter setup, discussed in detail on the following pages.
 
 .. raw:: html
