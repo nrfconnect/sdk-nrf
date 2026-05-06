@@ -36,7 +36,6 @@ static struct rf_rx_pkt_s ack_packet;
 static uint8_t temp_tx_pkt[RF_PSDU_MAX_SIZE];
 
 static inline void rf_rx_pool_init(void);
-static void rf_rx_pool_clear(void);
 
 static void rf_tx_finished_fn(struct k_work *work)
 {
@@ -125,14 +124,6 @@ void rf_init(void)
 #if CONFIG_PTT_ANTENNA_DIVERSITY
 	configure_antenna_diversity();
 #endif
-}
-
-void rf_uninit(void)
-{
-	/* free packets and marks them as free */
-	rf_rx_pool_clear();
-	ack_packet = (struct rf_rx_pkt_s){ 0 };
-	nrf_802154_deinit();
 }
 
 #if CONFIG_PTT_ANTENNA_DIVERSITY
@@ -511,18 +502,5 @@ static inline void rf_rx_pool_init(void)
 {
 	for (uint8_t i = 0; i < RF_RX_POOL_N; i++) {
 		rf_rx_pool[i] = (struct rf_rx_pkt_s){ 0 };
-	}
-}
-
-static void rf_rx_pool_clear(void)
-{
-	struct rf_rx_pkt_s *rx_pkt = NULL;
-
-	for (uint8_t i = 0; i < RF_RX_POOL_N; i++) {
-		rx_pkt = &rf_rx_pool[i];
-		if (rx_pkt->data != NULL) {
-			nrf_802154_buffer_free_raw(rx_pkt->rf_buf);
-			rx_pkt->data = NULL;
-		}
 	}
 }

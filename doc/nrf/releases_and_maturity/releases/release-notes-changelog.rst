@@ -368,6 +368,10 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
+* :ref:`802154_phy_test` sample:
+
+  * Removed unused functions from the :file:`rf_proc.c` file and the :file:`rf_proc.h` header file.
+
 * :ref:`radio_test` sample:
 
   * Added:

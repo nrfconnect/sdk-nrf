@@ -32,14 +32,6 @@
  */
 void rf_init(void);
 
-/** @brief NRF radio driver deinitialization
- *
- *  @param none
- *
- *  @return none
- */
-void rf_uninit(void);
-
 /** @brief Thread function for Radio handling
  *
  *  @param none
