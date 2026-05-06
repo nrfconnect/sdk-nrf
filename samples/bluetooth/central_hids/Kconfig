@@ -13,4 +13,24 @@ config ZMS
 config NVS
 	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
 
+config SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX
+	bool "Continuous report receiving"
+	default y
+	help
+	  Enable the continuous report receiving feature in the central HIDS sample.
+	  The sample will automatically enter continuous report receiving mode if it detects
+	  a high rate of incoming HID reports.
+
+config SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE
+	int "Continuous RX mode: print statistics every N HID reports"
+	depends on SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX
+	depends on PRINTK
+	default 1000
+	range 1 1000000
+	help
+	  While continuous report receiving is active and the sample is in continuous report receiving
+	  mode, the sample prints a short summary
+	  every CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE notifications,
+	  instead of logging every payload.
+
 source "Kconfig.zephyr"

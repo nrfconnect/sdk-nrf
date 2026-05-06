@@ -45,6 +45,24 @@ If any boot reports are detected, the behavior depends on if they are boot mouse
       * If a boot mouse report is detected, the sample subscribes to it.
       * If a boot keyboard report is detected, the sample subscribes to its input report, and the sample functionality of changing the CAPSLOCK LED is enabled (**Button 0** and **Button 2**).
 
+Continuous report receiving
+===========================
+
+The continuous report receiving feature is enabled by default.
+You can toggle it off using the :option:`CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX` Kconfig option.
+
+If the connected device sends GATT notifications with HID input reports fast enough, the sample automatically enters the continuous report receiving mode.
+
+In that mode, the sample stops printing every notification payload on the UART.
+It prints a short summary every :option:`CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE` reports, allowing you to assess the quality of the communication.
+
+* Enter - After each group of 10 reports, if their time span is shorter than one second, the continuous mode turns on.
+* Exit - If no report is received for 500 milliseconds, the continuous mode turns off and per-notification logging resumes.
+
+To test the continuous report receiving feature, run the :ref:`peripheral_hids_mouse` sample with the :option:`CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING` Kconfig option enabled.
+After pairing, hold one of the buttons on the DK that is running the :ref:`peripheral_hids_mouse` for more than two seconds to enter the continuous report sending mode.
+The central will then automatically enter the continuous report receiving mode.
+
 User interface
 **************
 
@@ -97,6 +115,19 @@ User interface
         Switch to the "Alternative button functions" mode.
         In this mode, the buttons have different functionalities than in the normal mode.
         The available functionalities depend on the sample configuration and are printed in the terminal window after button press.
+
+Configuration
+*************
+
+|config|
+
+Configuration options
+=====================
+
+The following sample-specific Kconfig options are used in this sample (defined in :file:`samples/bluetooth/central_hids/Kconfig`):
+
+.. options-from-kconfig::
+   :show-type:
 
 Building and Running
 ********************

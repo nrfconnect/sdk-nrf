@@ -9,6 +9,7 @@
 #include <zephyr/types.h>
 #include <stddef.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 
@@ -65,15 +66,130 @@ enum button_functions_mode {
 	BUTTON_FUNCTIONS_MODE_ALTERNATIVE_1
 };
 
+#ifndef CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE
+/* Define used to satisfy the compiler when continuous report receiving is not enabled */
+#define CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE 1000
+#endif
+
+/**
+ * Entrance into continuous receive mode: after every
+ * CONT_REPORT_RX_ENTRANCE_SAMPLE_REPORTS notifications we measure how long that batch took;
+ * if it is shorter than CONTINUOUS_REPORT_RECEIVING_ENTRANCE_THRESHOLD_MS,
+ * we enable continuous mode.
+ */
+#define CONT_REPORT_RX_ENTRANCE_SAMPLE_REPORTS 10
+#define CONTINUOUS_REPORT_RECEIVING_ENTRANCE_THRESHOLD_MS 1000
+
+/**
+ * Exit from continuous receive mode: if no report is received for
+ * CONTINUOUS_REPORT_RECEIVING_EXIT_THRESHOLD_MS milliseconds,
+ * continuous rx mode will be automatically disabled.
+ */
+#define CONTINUOUS_REPORT_RECEIVING_EXIT_THRESHOLD_MS 500
+
+/**
+ * Reports are considered to be within the expected window if the absolute difference between
+ * the report interval and the connection interval is less than this value.
+ * The sample tracks how many reports are received outside this expected time window,
+ * both above and below the threshold.
+ */
+#define CONTINUOUS_REPORT_RECEIVING_WINDOW_DELTA_US 200
+
 static struct bt_conn *default_conn;
 static struct bt_hogp hogp;
 static struct bt_conn *auth_conn;
 static uint8_t capslock_state;
 static enum button_functions_mode button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
 
+static atomic_t cont_report_rx_on = ATOMIC_INIT(0);
+static uint32_t cont_report_rx_previous_report_cycles;
+static uint32_t cont_report_rx_interval_us;
+static uint32_t cont_report_rx_max_interval_us;
+static uint32_t cont_report_rx_min_interval_us = UINT32_MAX;
+static uint32_t cont_report_rx_above_window_count;
+static uint32_t cont_report_rx_below_window_count;
+
+static uint32_t report_batch_start_cycles;
+static uint32_t report_cnt;
+
 static void hids_on_ready(struct k_work *work);
 static K_WORK_DEFINE(hids_ready_work, hids_on_ready);
 
+static void cont_report_rx_exit_work_fn(struct k_work *work);
+K_WORK_DELAYABLE_DEFINE(cont_report_rx_exit_work,
+			cont_report_rx_exit_work_fn);
+
+static void cont_report_rx_data_reset(uint32_t batch_start_cycles)
+{
+	cont_report_rx_max_interval_us = 0;
+	cont_report_rx_min_interval_us = UINT32_MAX;
+	cont_report_rx_above_window_count = 0;
+	cont_report_rx_below_window_count = 0;
+
+	cont_report_rx_previous_report_cycles = 0;
+	report_batch_start_cycles = batch_start_cycles;
+	report_cnt = 0;
+}
+
+static void cont_report_rx_stats_print(uint32_t batch_end_cycles)
+{
+	if (report_cnt == 0) {
+		return;
+	}
+
+	uint32_t avg_interval_us;
+	uint32_t total_time_us =
+		k_cyc_to_us_floor32(batch_end_cycles - report_batch_start_cycles);
+
+	printk("\nReceived %" PRIu32 " reports, in %" PRIu32 " us\n", report_cnt,
+	       total_time_us);
+
+	if (total_time_us > 0) {
+		printk("HID Report rate: %" PRIu32 " reports/s\n",
+			(uint32_t)(report_cnt * 1000000 / total_time_us));
+	}
+
+	avg_interval_us = total_time_us / report_cnt;
+	printk("Average report interval: %" PRIu32 " us, max %" PRIu32 " us, min %" PRIu32
+	       " us\n",
+	       avg_interval_us,
+	       cont_report_rx_max_interval_us,
+	       cont_report_rx_min_interval_us);
+
+	if (cont_report_rx_interval_us > 0) {
+		printk("Expected report interval: %" PRIu32 " us\n", cont_report_rx_interval_us);
+		printk("Intervals above %" PRIu32 " us: %" PRIu32 "\n",
+		       cont_report_rx_interval_us
+			       + CONTINUOUS_REPORT_RECEIVING_WINDOW_DELTA_US,
+		       cont_report_rx_above_window_count);
+		printk("Intervals below %" PRIu32 " us: %" PRIu32 "\n",
+		       cont_report_rx_interval_us
+			       - CONTINUOUS_REPORT_RECEIVING_WINDOW_DELTA_US,
+		       cont_report_rx_below_window_count);
+	}
+}
+
+static void cont_report_rx_exit_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	/* Lock the scheduler to prevent race conditions leading to unexpected printed results
+	 * and potential errors.
+	 * printk uses deferred logging, so we will spent a relatively short time locked.
+	 */
+	k_sched_lock();
+	cont_report_rx_stats_print(cont_report_rx_previous_report_cycles);
+
+	atomic_set(&cont_report_rx_on, 0);
+	printk("\nContinuous report receiving disabled due to prolonged inactivity\n");
+	k_sched_unlock();
+}
+
+static void cont_report_rx_exit_reschedule(void)
+{
+	(void)k_work_reschedule(&cont_report_rx_exit_work,
+			       K_MSEC(CONTINUOUS_REPORT_RECEIVING_EXIT_THRESHOLD_MS));
+}
 
 static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match,
@@ -218,6 +334,25 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 
 	printk("Connected: %s\n", addr);
 
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX)
+	    && (conn == default_conn)) {
+		struct bt_conn_info conn_info;
+
+		err = bt_conn_get_info(conn, &conn_info);
+		if (!err) {
+			printk("Connection interval: %" PRIu32 " us\n", conn_info.le.interval_us);
+			/** Currently connection interval is equal to expected report interval
+			 *  This will however not be the case if subrating is enabled.
+			 */
+			cont_report_rx_interval_us = conn_info.le.interval_us;
+			printk("Expected report interval: %" PRIu32 " us\n",
+			       cont_report_rx_interval_us);
+		} else {
+			printk("Failed to get connection interval (err %d)\n", err);
+			cont_report_rx_interval_us = 0;
+		}
+	}
+
 	err = bt_conn_set_security(conn, BT_SECURITY_L2);
 	if (err) {
 		printk("Failed to set security: %d\n", err);
@@ -250,6 +385,12 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		return;
 	}
 
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX)) {
+		atomic_set(&cont_report_rx_on, 0);
+		(void) k_work_cancel_delayable(&cont_report_rx_exit_work);
+		cont_report_rx_data_reset(0);
+	}
+
 	bt_conn_unref(default_conn);
 	default_conn = NULL;
 
@@ -277,10 +418,33 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	gatt_discover(conn);
 }
 
+#ifdef CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX
+static void le_param_updated(struct bt_conn *conn, uint16_t interval,
+			      uint16_t latency, uint16_t timeout)
+{
+	ARG_UNUSED(latency);
+	ARG_UNUSED(timeout);
+
+	if (conn != default_conn) {
+		return;
+	}
+
+	cont_report_rx_stats_print(cont_report_rx_previous_report_cycles);
+
+	cont_report_rx_data_reset(cont_report_rx_previous_report_cycles);
+	cont_report_rx_interval_us = BT_CONN_INTERVAL_TO_US(interval);
+	printk("Connection interval updated to %" PRIu32 " us\n",
+	       cont_report_rx_interval_us);
+}
+#endif
+
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 	.disconnected     = disconnected,
-	.security_changed = security_changed
+	.security_changed = security_changed,
+#ifdef CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX
+	.le_param_updated = le_param_updated,
+#endif
 };
 
 static void scan_init(void)
@@ -309,17 +473,114 @@ static void scan_init(void)
 	}
 }
 
+static bool cont_report_rx_entrance_check(uint32_t now)
+{
+	static uint32_t rep_cnt;
+	static uint32_t batch_start_cycles;
+
+	if (rep_cnt == 0) {
+		batch_start_cycles = now;
+		rep_cnt++;
+		return false;
+	}
+
+	rep_cnt++;
+	if (rep_cnt >= CONT_REPORT_RX_ENTRANCE_SAMPLE_REPORTS) {
+		/*
+		 * Note: theoretically we could hit this condition if a notification is
+		 * received right after the HW timer wrapped around, but this is extremely
+		 * unlikely and the consequences are negligible. No extra check keeps the
+		 * code simpler.
+		 */
+		rep_cnt = 0;
+		if (k_cyc_to_ms_floor32(now - batch_start_cycles)
+		    < CONTINUOUS_REPORT_RECEIVING_ENTRANCE_THRESHOLD_MS) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static void cont_report_rx_work(uint32_t now, uint32_t last)
+{
+	if (report_cnt == 0) {
+		/* First report in the batch - nothing to do */
+		report_cnt++;
+		return;
+	}
+
+	report_cnt++;
+	uint32_t time_elapsed = k_cyc_to_us_floor32(now - last);
+
+	if (time_elapsed > cont_report_rx_max_interval_us) {
+		cont_report_rx_max_interval_us = time_elapsed;
+	}
+	if (time_elapsed < cont_report_rx_min_interval_us) {
+		cont_report_rx_min_interval_us = time_elapsed;
+	}
+	if (cont_report_rx_interval_us > 0) {
+		if (time_elapsed > cont_report_rx_interval_us
+					+ CONTINUOUS_REPORT_RECEIVING_WINDOW_DELTA_US) {
+			cont_report_rx_above_window_count++;
+		}
+		if (time_elapsed < cont_report_rx_interval_us
+					   - CONTINUOUS_REPORT_RECEIVING_WINDOW_DELTA_US) {
+			cont_report_rx_below_window_count++;
+		}
+	}
+
+	if (report_cnt >=
+		CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE) {
+		cont_report_rx_stats_print(now);
+		cont_report_rx_data_reset(now);
+	}
+
+	cont_report_rx_exit_reschedule();
+}
+
+static void cont_report_rx_tasks(void)
+{
+	uint32_t now = k_cycle_get_32();
+	uint32_t last = cont_report_rx_previous_report_cycles;
+
+	cont_report_rx_previous_report_cycles = now;
+
+	if (atomic_get(&cont_report_rx_on)) {
+		cont_report_rx_work(now, last);
+	} else {
+		if (cont_report_rx_entrance_check(now)) {
+			printk("Continuous report receiving enabled due to"
+				" short time interval between notifications.\n"
+				"Expected report interval: %" PRIu32 " us\n",
+				cont_report_rx_interval_us);
+			cont_report_rx_data_reset(now);
+			atomic_set(&cont_report_rx_on, 1);
+			cont_report_rx_exit_reschedule();
+		}
+	}
+}
+
 static uint8_t hogp_notify_cb(struct bt_hogp *hogp,
 			     struct bt_hogp_rep_info *rep,
 			     uint8_t err,
 			     const uint8_t *data)
 {
-	uint8_t size = bt_hogp_rep_size(rep);
-	uint8_t i;
-
 	if (!data) {
 		return BT_GATT_ITER_STOP;
 	}
+
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX)) {
+		cont_report_rx_tasks();
+
+		if (atomic_get(&cont_report_rx_on)) {
+			return BT_GATT_ITER_CONTINUE;
+		}
+	}
+
+	uint8_t i;
+	uint8_t size = bt_hogp_rep_size(rep);
+
 	printk("Notification, id: %u, size: %u, data:",
 	       bt_hogp_rep_id(rep),
 	       size);
@@ -327,6 +588,7 @@ static uint8_t hogp_notify_cb(struct bt_hogp *hogp,
 		printk(" 0x%x", data[i]);
 	}
 	printk("\n");
+
 	return BT_GATT_ITER_CONTINUE;
 }
 
@@ -335,12 +597,21 @@ static uint8_t hogp_boot_mouse_report(struct bt_hogp *hogp,
 				     uint8_t err,
 				     const uint8_t *data)
 {
-	uint8_t size = bt_hogp_rep_size(rep);
-	uint8_t i;
-
 	if (!data) {
 		return BT_GATT_ITER_STOP;
 	}
+
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX)) {
+		cont_report_rx_tasks();
+
+		if (atomic_get(&cont_report_rx_on)) {
+			return BT_GATT_ITER_CONTINUE;
+		}
+	}
+
+	uint8_t size = bt_hogp_rep_size(rep);
+	uint8_t i;
+
 	printk("Notification, mouse boot, size: %u, data:", size);
 	for (i = 0; i < size; ++i) {
 		printk(" 0x%x", data[i]);
@@ -354,12 +625,21 @@ static uint8_t hogp_boot_kbd_report(struct bt_hogp *hogp,
 				   uint8_t err,
 				   const uint8_t *data)
 {
-	uint8_t size = bt_hogp_rep_size(rep);
-	uint8_t i;
-
 	if (!data) {
 		return BT_GATT_ITER_STOP;
 	}
+
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX)) {
+		cont_report_rx_tasks();
+
+		if (atomic_get(&cont_report_rx_on)) {
+			return BT_GATT_ITER_CONTINUE;
+		}
+	}
+
+	uint8_t size = bt_hogp_rep_size(rep);
+	uint8_t i;
+
 	printk("Notification, keyboard boot, size: %u, data:", size);
 	for (i = 0; i < size; ++i) {
 		printk(" 0x%x", data[i]);
