@@ -87,7 +87,7 @@ static int tls_set_credentials_from_ps(void)
 	}
 
 	int err = tls_credential_add(SERVER_CERTIFICATE_TAG,
-				     TLS_CREDENTIAL_SERVER_CERTIFICATE,
+				     TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
 				     server_cert_buf, cred_len);
 	if (err < 0) {
 		LOG_ERR("Failed to register Server certificate from"

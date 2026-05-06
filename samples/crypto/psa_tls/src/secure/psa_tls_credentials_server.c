@@ -20,7 +20,7 @@ int tls_set_credentials(void)
 	LOG_INF("Registering Server certificate and key");
 
 	int err = tls_credential_add(SERVER_CERTIFICATE_TAG,
-				     TLS_CREDENTIAL_SERVER_CERTIFICATE,
+				     TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
 				     server_certificate,
 				     sizeof(server_certificate));
 	if (err < 0) {

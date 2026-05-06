@@ -51,7 +51,7 @@ int credentials_provision(void)
 	}
 
 	ret = tls_credential_add(CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG,
-				 TLS_CREDENTIAL_SERVER_CERTIFICATE,
+				 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
 				 server_certificate,
 				 sizeof(server_certificate));
 	if (ret == -EEXIST) {

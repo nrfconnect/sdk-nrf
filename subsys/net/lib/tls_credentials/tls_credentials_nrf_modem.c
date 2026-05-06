@@ -77,7 +77,7 @@ static enum modem_key_mgmt_cred_type modem_key_mgmt_type_get(enum tls_credential
 	switch (type) {
 	case TLS_CREDENTIAL_CA_CERTIFICATE:
 		return MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN;
-	case TLS_CREDENTIAL_SERVER_CERTIFICATE:
+	case TLS_CREDENTIAL_PUBLIC_CERTIFICATE:
 		return MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT;
 	case TLS_CREDENTIAL_PRIVATE_KEY:
 		return MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT;
@@ -92,7 +92,7 @@ static enum tls_credential_type tls_credential_type_get(enum modem_key_mgmt_cred
 	case MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN:
 		return TLS_CREDENTIAL_CA_CERTIFICATE;
 	case MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT:
-		return TLS_CREDENTIAL_SERVER_CERTIFICATE;
+		return TLS_CREDENTIAL_PUBLIC_CERTIFICATE;
 	case MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT:
 		return TLS_CREDENTIAL_PRIVATE_KEY;
 	default:

@@ -61,7 +61,7 @@ enum tls_credential_type desh_cmng_to_tls_cred(enum desh_cmng_type type)
 	case DESH_AT_CMNG_TYPE_CA_CERT:
 		return TLS_CREDENTIAL_CA_CERTIFICATE;
 	case DESH_AT_CMNG_TYPE_CLIENT_CERT:
-		return TLS_CREDENTIAL_SERVER_CERTIFICATE;
+		return TLS_CREDENTIAL_PUBLIC_CERTIFICATE;
 	case DESH_AT_CMNG_TYPE_CLIENT_KEY:
 		return TLS_CREDENTIAL_PRIVATE_KEY;
 	case DESH_AT_CMNG_TYPE_PSK:

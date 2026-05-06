@@ -46,11 +46,11 @@ ZTEST(tls_credentials, test_00_init_import_list_public_api)
 	/* The server certificate and private key cannot be accessed, instead returning EACCESS. */
 	modem_key_mgmt_read_fake.return_val = -EACCES;
 
-	zassert_equal(tls_credential_get(1, TLS_CREDENTIAL_SERVER_CERTIFICATE, cred, &len),
+	zassert_equal(tls_credential_get(1, TLS_CREDENTIAL_PUBLIC_CERTIFICATE, cred, &len),
 		      -EACCES);
 	zassert_equal(tls_credential_get(1, TLS_CREDENTIAL_PRIVATE_KEY, cred, &len), -EACCES);
 
-	zassert_equal(tls_credential_get(2, TLS_CREDENTIAL_SERVER_CERTIFICATE, cred, &len),
+	zassert_equal(tls_credential_get(2, TLS_CREDENTIAL_PUBLIC_CERTIFICATE, cred, &len),
 		      -EACCES);
 	zassert_equal(tls_credential_get(2, TLS_CREDENTIAL_PRIVATE_KEY, cred, &len), -EACCES);
 }
@@ -61,10 +61,10 @@ ZTEST(tls_credentials, test_00_init_import_list_internal_api)
 	zassert_not_null(credential_get(101, TLS_CREDENTIAL_CA_CERTIFICATE));
 	zassert_not_null(credential_get(103, TLS_CREDENTIAL_CA_CERTIFICATE));
 
-	zassert_not_null(credential_get(1, TLS_CREDENTIAL_SERVER_CERTIFICATE));
+	zassert_not_null(credential_get(1, TLS_CREDENTIAL_PUBLIC_CERTIFICATE));
 	zassert_not_null(credential_get(1, TLS_CREDENTIAL_PRIVATE_KEY));
 
-	zassert_not_null(credential_get(2, TLS_CREDENTIAL_SERVER_CERTIFICATE));
+	zassert_not_null(credential_get(2, TLS_CREDENTIAL_PUBLIC_CERTIFICATE));
 	zassert_not_null(credential_get(2, TLS_CREDENTIAL_PRIVATE_KEY));
 }
 
@@ -94,7 +94,7 @@ ZTEST(tls_credentials, test_00_init_import_list_internal_api_iterator)
 	cred = credential_next_get(1, NULL);
 	zassert_not_null(cred);
 	zassert_equal(cred->tag, 1);
-	zassert_equal(cred->type, TLS_CREDENTIAL_SERVER_CERTIFICATE);
+	zassert_equal(cred->type, TLS_CREDENTIAL_PUBLIC_CERTIFICATE);
 	cred = credential_next_get(1, cred);
 	zassert_not_null(cred);
 	zassert_equal(cred->tag, 1);
@@ -108,7 +108,7 @@ ZTEST(tls_credentials, test_00_init_import_list_internal_api_iterator)
 	cred = credential_next_get(2, cred);
 	zassert_not_null(cred);
 	zassert_equal(cred->tag, 2);
-	zassert_equal(cred->type, TLS_CREDENTIAL_SERVER_CERTIFICATE);
+	zassert_equal(cred->type, TLS_CREDENTIAL_PUBLIC_CERTIFICATE);
 }
 
 /* base64(bin("B9BAC15641653CAE2B5151DCBD0C40DDCDF19125950FA2475977437EA35F7A45")) */

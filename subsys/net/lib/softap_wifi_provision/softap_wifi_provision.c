@@ -520,7 +520,7 @@ static int certificate_register(void)
 	}
 
 	ret = tls_credential_add(CONFIG_SOFTAP_WIFI_PROVISION_CERTIFICATE_SEC_TAG,
-				 TLS_CREDENTIAL_SERVER_CERTIFICATE,
+				 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
 				 server_certificate,
 				 sizeof(server_certificate));
 	if (ret == -EEXIST) {

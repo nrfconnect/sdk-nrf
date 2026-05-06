@@ -175,7 +175,7 @@ static int certificates_provision(void)
 
 	if (sizeof(device_certificate) > 1) {
 		err = tls_credential_add(CONFIG_MQTT_HELPER_SEC_TAG,
-					 TLS_CREDENTIAL_SERVER_CERTIFICATE,
+					 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
 					 device_certificate,
 					 sizeof(device_certificate));
 		if (err == -EEXIST) {
@@ -221,7 +221,7 @@ static int certificates_provision(void)
 
 	if (sizeof(device_certificate_2) > 1) {
 		err = tls_credential_add(CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG,
-					 TLS_CREDENTIAL_SERVER_CERTIFICATE,
+					 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
 					 device_certificate_2,
 					 sizeof(device_certificate_2));
 		if (err == -EEXIST) {
