@@ -22,7 +22,7 @@ if(TARGET tfm_api_ns)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_API_NS True)
     target_include_directories(tfm_api_ns
             PUBLIC
-                    ${OBERON_PSA_CORE_PATH}/include
+                    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
                     ${INTERFACE_INC_DIR}/crypto_keys
     )
 endif()
@@ -38,14 +38,14 @@ if(TARGET psa_interface)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_INTERFACE True)
     target_include_directories(psa_interface
         INTERFACE
-            ${NRF_SECURITY_ROOT}/include
-            $<BUILD_INTERFACE:${OBERON_PSA_CORE_PATH}/include>
+            ${NRF_SECURITY_DIR}/include
+            $<BUILD_INTERFACE:${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include>
             # Oberon library
-            ${OBERON_PSA_CORE_PATH}/library
+            ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library
             # Mbed TLS (mbedcrypto) PSA headers
-            ${ARM_MBEDTLS_PATH}/library
-            ${ARM_MBEDTLS_PATH}/include
-            ${ARM_MBEDTLS_PATH}/include/library
+            ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
+            ${ZEPHYR_MBEDTLS_MODULE_DIR}/include
+            ${ZEPHYR_MBEDTLS_MODULE_DIR}/include/library
     )
 endif()
 
@@ -66,8 +66,8 @@ if(TARGET psa_crypto_config)
     target_include_directories(psa_crypto_config
         INTERFACE
             ${PSA_CRYPTO_CONFIG_INTERFACE_PATH}
-            ${NRF_SECURITY_ROOT}/include
-            ${OBERON_PSA_CORE_PATH}/include
+            ${NRF_SECURITY_DIR}/include
+            ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
             ${NRF_DIR}/include/tfm
     )
 endif()
@@ -85,8 +85,8 @@ if(TARGET psa_crypto_library_config)
     target_include_directories(psa_crypto_library_config
         INTERFACE
             ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
-            ${NRF_SECURITY_ROOT}/include
-            ${OBERON_PSA_CORE_PATH}/include
+            ${NRF_SECURITY_DIR}/include
+            ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
             ${NRF_DIR}/include/tfm
     )
 
@@ -111,7 +111,7 @@ if(TARGET ${MBEDTLS_TARGET_PREFIX}mbedcrypto)
     target_include_directories(${MBEDTLS_TARGET_PREFIX}mbedcrypto
         PUBLIC
             # The following is required for psa/error.h
-            $<BUILD_INTERFACE:${OBERON_PSA_CORE_PATH}/include>
+            $<BUILD_INTERFACE:${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include>
     )
 endif()
 

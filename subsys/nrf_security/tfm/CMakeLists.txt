@@ -5,7 +5,7 @@
 #
 include(${TFM_EXTRA_CONFIG_PATH})
 
-include(${NRF_SECURITY_ROOT}/cmake/extensions.cmake)
+include(${NRF_SECURITY_DIR}/cmake/extensions.cmake)
 
 # Prefix targets as expected from TF-M
 set(mbedcrypto_target ${MBEDTLS_TARGET_PREFIX}mbedcrypto)
@@ -18,7 +18,7 @@ set(BUILD_INSIDE_TFM True)
 #   Variables transferred from Zephyr to nRF Security TF-M build includes:
 #   - <build>/zephyr/.configc
 #   - GCC_M_CPU
-#   - ARM_MBEDTLS_PATH
+#   - ZEPHYR_MBEDTLS_MODULE_DIR
 #   - autoconf.h
 separate_arguments(NRF_SECURITY_SETTINGS)
 
@@ -84,9 +84,9 @@ if("${PROJECT_NAME}" STREQUAL "Bootloader")
 endif()
 
 # common.cmake has a function that can compute binary paths
-include(${NRFXLIB_DIR}/common.cmake)
+include(${ZEPHYR_NRFXLIB_MODULE_DIR}/common.cmake)
 
-add_subdirectory(${NRFXLIB_DIR}/crypto ${CMAKE_CURRENT_BINARY_DIR}/nrf_security_crypto)
+add_subdirectory(${ZEPHYR_NRFXLIB_MODULE_DIR}/crypto ${CMAKE_CURRENT_BINARY_DIR}/nrf_security_crypto)
 
 # Add nrf_security libraries
-add_subdirectory(${NRF_SECURITY_ROOT}/src ${CMAKE_CURRENT_BINARY_DIR}/nrf_security_src)
+add_subdirectory(${NRF_SECURITY_DIR}/src ${CMAKE_CURRENT_BINARY_DIR}/nrf_security_src)

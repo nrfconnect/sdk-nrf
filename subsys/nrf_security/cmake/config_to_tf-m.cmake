@@ -10,7 +10,7 @@ set_property(TARGET zephyr_property_target
     PROPERTY TFM_CMAKE_OPTIONS
       -DNRF_SECURITY_SETTINGS=\"ZEPHYR_DOTCONFIG=${DOTCONFIG}
                                 GCC_M_CPU=${GCC_M_CPU}
-                                ARM_MBEDTLS_PATH=${ARM_MBEDTLS_PATH}
+                                ZEPHYR_MBEDTLS_MODULE_DIR=${ZEPHYR_MBEDTLS_MODULE_DIR}
                                 ZEPHYR_AUTOCONF=${AUTOCONF_H}\"
 )
 

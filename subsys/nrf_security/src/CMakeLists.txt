@@ -14,7 +14,7 @@
 # used inside a TF-M build.
 
 # The interface is only generated in the NS image if TF-M is used
-include(${NRF_SECURITY_ROOT}/cmake/generate_configs.cmake)
+include(${NRF_SECURITY_DIR}/cmake/generate_configs.cmake)
 generate_mbedcrypto_interface_configs()
 generate_mbedcrypto_library_configs()
 
@@ -27,7 +27,7 @@ string(REPLACE "/" "\\/" PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX ${PSA_CRYPTO_CON
 target_include_directories(psa_crypto_config
   INTERFACE
     ${PSA_CRYPTO_CONFIG_INTERFACE_PATH}
-    ${NRF_SECURITY_ROOT}/include
+    ${NRF_SECURITY_DIR}/include
 )
 
 # Add fallback include folders from Mbed TLS for driver context structures
@@ -35,7 +35,7 @@ target_include_directories(psa_crypto_config
 if(NOT (CMAKE_BUILD_WITH_TFM OR CONFIG_MBEDTLS_PSA_CRYPTO_C))
 target_include_directories(psa_crypto_config
   INTERFACE
-    ${OBERON_PSA_CORE_PATH}/include
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
 )
 endif()
 
@@ -53,17 +53,17 @@ endif()
 target_include_directories(psa_crypto_library_config
   INTERFACE
     ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
-    ${NRF_SECURITY_ROOT}/include
+    ${NRF_SECURITY_DIR}/include
     # This is needed for the oberon_check_unsupported.h
-    ${OBERON_PSA_CORE_PATH}/oberon/drivers
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/oberon/drivers
 )
 
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
-  list(APPEND src_crypto ${OBERON_PSA_CORE_PATH}/platform/memory_buffer_alloc.c)
+  list(APPEND src_crypto ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/platform/memory_buffer_alloc.c)
 endif()
 
 if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM AND NOT BUILD_INSIDE_TFM)
-  append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library
+  append_with_prefix(src_crypto ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
     pem.c
     pkcs12.c
     pkcs5.c
@@ -101,7 +101,7 @@ endif()
 nrf_security_add_zephyr_options(${mbedcrypto_target})
 
 # Base mbed TLS files (not in drivers or builtin's)
-append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
+append_with_prefix(src_crypto_base ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
   asn1parse.c
   asn1write.c
   base64.c
@@ -117,7 +117,7 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
 # Legacy APIs were missing files added by Oberon PSA core (not built in
 # certain instances. This adds the same platform support as the Oberon PSA core)
 if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_C)
-  append_with_prefix(src_crypto_base  ${OBERON_PSA_CORE_PATH}/library/
+  append_with_prefix(src_crypto_base  ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library/
     platform.c
     platform_util.c
   )
@@ -126,7 +126,7 @@ endif()
 
 # Add threading support for PSA core (if enabled)
 include(${CMAKE_CURRENT_LIST_DIR}/threading/threading.cmake)
-include(${NRF_SECURITY_ROOT}/src/utils/nrf_security_utils.cmake)
+include(${NRF_SECURITY_DIR}/src/utils/nrf_security_utils.cmake)
 
 # Add base library with files required by all drivers/backends.
 add_library(mbedcrypto_base
@@ -205,7 +205,7 @@ if(CONFIG_NEWLIB_LIBC)
 endif()
 
 if(CONFIG_MBEDTLS_X509_LIBRARY)
-  append_with_prefix(src_x509 ${ARM_MBEDTLS_PATH}/library
+  append_with_prefix(src_x509 ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
     pkcs7.c
     x509.c
     x509_create.c
@@ -236,7 +236,7 @@ endif()
 # Library for TLS protocol support
 if(CONFIG_MBEDTLS_TLS_LIBRARY)
   # TLS files
-  append_with_prefix(src_tls ${ARM_MBEDTLS_PATH}/library
+  append_with_prefix(src_tls ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
     debug.c
     net_sockets.c
     ssl_cache.c
@@ -256,7 +256,7 @@ if(CONFIG_MBEDTLS_TLS_LIBRARY)
 
   if(CONFIG_MBEDTLS_DEBUG)
     list(APPEND src_tls
-      ${ARM_MBEDTLS_PATH}/library/ssl_debug_helpers_generated.c
+      ${ZEPHYR_MBEDTLS_MODULE_DIR}/library/ssl_debug_helpers_generated.c
     )
   endif()
 

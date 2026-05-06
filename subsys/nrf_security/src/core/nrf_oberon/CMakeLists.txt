@@ -4,12 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_CORE_PATH}/library/
+append_with_prefix(src_crypto_core_oberon ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library/
   platform.c
   platform_util.c
 )
 
-append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_CORE_PATH}/library/
+append_with_prefix(src_crypto_core_oberon ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library/
   psa_crypto.c
   psa_crypto_client.c
   psa_crypto_slot_management.c
@@ -23,13 +23,13 @@ add_library(psa_core STATIC
 # Add the nordic version of psa_crypto_driver_wrappers with the core (out of tree)
 target_sources(psa_core
   PRIVATE
-    ${NRF_SECURITY_ROOT}/src/psa_crypto_driver_wrappers.c
+    ${NRF_SECURITY_DIR}/src/psa_crypto_driver_wrappers.c
 )
 
 if(CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
   target_sources(psa_core
     PRIVATE
-      ${NRF_SECURITY_ROOT}/src/mbedtls_psa_platform.c
+      ${NRF_SECURITY_DIR}/src/mbedtls_psa_platform.c
   )
 endif()
 

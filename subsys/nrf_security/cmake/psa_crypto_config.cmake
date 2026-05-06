@@ -522,6 +522,6 @@ kconfig_check_and_set_base_int(MBEDTLS_PSA_KEY_SLOT_COUNT)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_STATIC_KEY_SLOTS)
 
 # Generate the PSA config file (default nrf-psa-crypto-config.h)
-configure_file(${NRF_SECURITY_ROOT}/configs/psa_crypto_config.h.template
+configure_file(${NRF_SECURITY_DIR}/configs/psa_crypto_config.h.template
   ${generated_include_path}/${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE}
 )

@@ -11,12 +11,12 @@ set(PSA_CRYPTO_EXTERNAL_CORE                  ON    CACHE BOOL      "Enable buil
 # This file is populated with paths needed building nrf_security with and without TF-M
 # It is added to circumvent issues with install-targets inside TF-M and to unify the
 # CMake code with Zephyr builds
-set(NRFXLIB_DIR          ${ZEPHYR_NRFXLIB_MODULE_DIR}            CACHE STRING "nrfxlib folder")
-set(NRF_SECURITY_ROOT    ${NRF_DIR}/subsys/nrf_security          CACHE STRING "nrf_security root folder")
-set(OBERON_PSA_CORE_PATH ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}  CACHE STRING "oberon-psa-core folder")
-set(ARM_MBEDTLS_PATH     ${ZEPHYR_MBEDTLS_MODULE_DIR}            CACHE STRING "Mbed TLS folder")
-set(NRF_DIR              ${NRF_DIR}                              CACHE STRING "NRF folder")
-set(TFM_BOARDS_NRF_DIR   ${NRF_DIR}/modules/trusted-firmware-m/tfm_boards CACHE STRING "tfm_boards folder")
+set(NRF_DIR                              ${NRF_DIR}                                        CACHE STRING "nrf folder")
+set(NRF_SECURITY_DIR                     ${NRF_DIR}/subsys/nrf_security                    CACHE STRING "nrf_security folder")
+set(TFM_BOARDS_NRF_DIR                   ${NRF_DIR}/modules/trusted-firmware-m/tfm_boards  CACHE STRING "tfm_boards folder")
+set(ZEPHYR_NRFXLIB_MODULE_DIR            ${ZEPHYR_NRFXLIB_MODULE_DIR}                      CACHE STRING "nrfxlib folder")
+set(ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR  ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}            CACHE STRING "oberon-psa-crypto folder")
+set(ZEPHYR_MBEDTLS_MODULE_DIR            ${ZEPHYR_MBEDTLS_MODULE_DIR}                      CACHE STRING "mbedtls folder")
 
 # This file is populated with the Mbed TLS config file names
 set(CONFIG_MBEDTLS_CONFIG_FILE            ${CONFIG_MBEDTLS_CONFIG_FILE}              CACHE STRING "Mbed TLS config file")

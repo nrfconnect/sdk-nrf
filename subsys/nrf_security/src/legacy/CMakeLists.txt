@@ -6,7 +6,7 @@
 
 # Legacy APIs missing driver support or APIs assumed to be
 # deprecated with more PSA API awareness.
-append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
+append_with_prefix(src_crypto_legacy ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
   sha1.c
   sha256.c
   sha512.c
@@ -20,7 +20,7 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
 # These files are used only as a convenience until PSA Crypto APIs are standarized
 if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR CONFIG_OBERON_BACKEND OR CONFIG_CC3XX_BACKEND OR
    CONFIG_PSA_CRYPTO_DRIVER_OBERON OR CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
-  append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
+  append_with_prefix(src_crypto_legacy ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
     block_cipher.c
     aes.c
     cmac.c
@@ -47,7 +47,7 @@ if(CONFIG_OBERON_BACKEND OR CONFIG_PSA_CRYPTO_DRIVER_OBERON)
   )
 else()
   list(APPEND src_crypto_legacy
-    ${ARM_MBEDTLS_PATH}/library/ecdsa.c
+    ${ZEPHYR_MBEDTLS_MODULE_DIR}/library/ecdsa.c
   )
 endif()
 
@@ -62,13 +62,13 @@ endif()
 
 
 if(CONFIG_HAS_HW_NRF_CC310)
-append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
+append_with_prefix(src_crypto_legacy ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
   gcm.c
 )
 endif()
 
 # Legacy files should only be added in certain configurations
-append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
+append_with_prefix(src_crypto_legacy ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
   ctr_drbg.c
   entropy.c
 )
@@ -83,7 +83,7 @@ endif()
 
 # Legacy Files needed when Oberon is disabled
 if(NOT CONFIG_OBERON_BACKEND)
-  append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
+  append_with_prefix(src_crypto_legacy ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
     chacha20.c
     poly1305.c
     ecjpake.c
