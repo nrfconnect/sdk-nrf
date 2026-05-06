@@ -13,7 +13,7 @@ common:
 
 tests:
   sample.vpr_offloading.local:
-    platform_allow:
+    platform_allow: &offloading_local_platforms
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -27,16 +27,18 @@ tests:
       - CONFIG_IPC_SERVICE=n
     extra_args:
       - SB_CONFIG_PARTITION_MANAGER=n
+
   sample.vpr_offloading.flpr:
     extra_args:
       - SB_CONFIG_PARTITION_MANAGER=n
       - SB_CONFIG_RUN_FLPRCORE=y
-    platform_allow:
+    platform_allow: &offloading_flpr_platforms
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+
   sample.vpr_offloading.ppr:
     extra_args:
       - SB_CONFIG_RUN_PPRCORE=y
@@ -45,3 +47,47 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+
+  sample.vpr_offloading.local.current_measurement:
+    tags:
+      - ppk_power_measure
+    platform_allow: *offloading_local_platforms
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_configs:
+      - CONFIG_SAMPLE_LOCAL_TEMP_MONITOR=y
+      - CONFIG_SAMPLE_LOCAL_LED_CONTROL=y
+      - CONFIG_NRFX_SPIM=y
+      - CONFIG_IPC_SERVICE=n
+    extra_args:
+      - SB_CONFIG_PARTITION_MANAGER=n
+    harness: pytest
+    harness_config: &current_meas_harness_cfg
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_current_vpr_offload"
+
+  sample.vpr_offloading.flpr.current_measurement:
+    tags:
+      - ppk_power_measure
+    platform_allow: *offloading_flpr_platforms
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_PARTITION_MANAGER=n
+      - SB_CONFIG_RUN_FLPRCORE=y
+    harness: pytest
+    harness_config: *current_meas_harness_cfg
+
+  sample.vpr_offloading.ppr.current_measurement:
+    tags:
+      - ppk_power_measure
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_RUN_PPRCORE=y
+      - vpr_offloading_SNIPPET=nordic-ppr
+    harness: pytest
+    harness_config: *current_meas_harness_cfg
