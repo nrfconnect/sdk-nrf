@@ -5,33 +5,39 @@
  */
 
 &cpuapp_rram {
+	/* Redefine the "partitions" DTS node. */
 	/delete-node/ partitions;
 
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(20)>;
 		};
 
 		slot0_partition: partition@5000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x5000 DT_SIZE_K(236)>;
 		};
 
 		slot1_partition: partition@40000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0x40000 DT_SIZE_K(236)>;
 		};
 
 		bt_fast_pair_partition: partition@7b000 {
+			compatible = "zephyr,mapped-partition";
 			reg = <0x7b000 DT_SIZE_K(4)>;
 		};
 
 		storage_partition: partition@7c000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x7c000 DT_SIZE_K(12)>;
 		};

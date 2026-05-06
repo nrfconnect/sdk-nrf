@@ -56,34 +56,39 @@
 	/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
 	reg = <0x0 DT_SIZE_K(1524)>;
 
+	/* Redefine the "partitions" DTS node. */
 	/delete-node/ partitions;
 
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(28)>;
 		};
 
 		slot0_partition: partition@7000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x7000 DT_SIZE_K(736)>;
 		};
 
 		slot1_partition: partition@bf000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0xbf000 DT_SIZE_K(736)>;
 		};
 
 		bt_fast_pair_partition: partition@177000 {
-			label = "bt_fast_pair";
+			compatible = "zephyr,mapped-partition";
 			reg = <0x177000 DT_SIZE_K(4)>;
 		};
 
 		storage_partition: partition@178000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x178000 DT_SIZE_K(20)>;
 		};
