@@ -17,6 +17,7 @@ if [ ! -f /jlink/license_processed ] && [ ! -f /usr/bin/JLinkExe ] ; then
         echo "Failed to read answer, assuming no."
         echo "To install manually, run:"
         echo "    env ACCEPT_JLINK_LICENSE=1 /jlink/install.sh"
+        export ACCEPT_JLINK_LICENSE=0
         break
       fi
     done
