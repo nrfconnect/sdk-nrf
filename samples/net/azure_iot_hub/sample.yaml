@@ -29,7 +29,7 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
-    extra_args: OVERLAY_CONFIG=overlay-dps.conf
+    extra_args: EXTRA_CONF_FILE=dps.conf
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:
@@ -64,7 +64,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     extra_args:
       - azure_iot_hub_SHIELD="nrf7002eb2"
-      - OVERLAY_CONFIG=overlay-dps.conf
+      - EXTRA_CONF_FILE=dps.conf
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:

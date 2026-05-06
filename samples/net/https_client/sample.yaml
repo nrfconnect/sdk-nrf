@@ -35,7 +35,7 @@ tests:
   sample.net.https_client.lte.tfm-mbedtls:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG="overlay-tfm-nrf91.conf"
+    extra_args: EXTRA_CONF_FILE="overlay-tfm-nrf91.conf"
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     platform_allow:
@@ -49,7 +49,7 @@ tests:
   sample.net.https_client.lte.pdn-ipv4:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG="overlay-pdn-nrf91-ipv4.conf"
+    extra_args: EXTRA_CONF_FILE="overlay-pdn-nrf91-ipv4.conf"
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns

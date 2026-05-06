@@ -34,7 +34,7 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_net
-    extra_args: EXTRA_CONF_FILE=overlay-tls-nrf7002.conf
+    extra_args: EXTRA_CONF_FILE=tls-nrf7002.conf
   sample.net.mqtt.nrf7002ek.wifi:
     sysbuild: true
     build_only: true
@@ -61,7 +61,7 @@ tests:
       - ci_samples_net
     extra_args:
       - mqtt_SHIELD="nrf7002ek"
-      - mqtt_EXTRA_CONF_FILE=overlay-tls-nrf7002.conf
+      - mqtt_EXTRA_CONF_FILE=tls-nrf7002.conf
   sample.net.mqtt.nrf54h20.wifi:
     sysbuild: true
     build_only: true
@@ -95,7 +95,7 @@ tests:
     extra_args:
       - mqtt_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
       - mqtt_SNIPPET=nrf70-wifi
-      - mqtt_EXTRA_CONF_FILE=overlay-tls-nrf54l-nrf70.conf
+      - mqtt_EXTRA_CONF_FILE=tls-nrf54l-nrf70.conf
       - CONFIG_HEAP_MEM_POOL_SIZE=35000
   sample.net.mqtt.nrf54l15_nrf7002eb2.wifi:
     sysbuild: true
@@ -119,7 +119,7 @@ tests:
     extra_args:
       - mqtt_SHIELD="nrf7002eb2"
       - mqtt_SNIPPET=nrf70-wifi
-      - mqtt_EXTRA_CONF_FILE=overlay-tls-nrf54l-nrf70.conf
+      - mqtt_EXTRA_CONF_FILE=tls-nrf54l-nrf70.conf
       - CONFIG_HEAP_MEM_POOL_SIZE=35000
   sample.net.mqtt.nrf54lm20_nrf7002eb2.wifi:
     sysbuild: true
@@ -145,7 +145,7 @@ tests:
       - ci_samples_net
     extra_args:
       - mqtt_SHIELD="nrf7002eb2"
-      - EXTRA_CONF_FILE=overlay-tls-nrf54l-nrf70.conf
+      - EXTRA_CONF_FILE=tls-nrf54l-nrf70.conf
   sample.net.mqtt.nrf91.tls:
     sysbuild: true
     build_only: true
