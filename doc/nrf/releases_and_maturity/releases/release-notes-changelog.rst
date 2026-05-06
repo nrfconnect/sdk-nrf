@@ -90,7 +90,7 @@ Developing with nRF70 Series
 Developing with nRF54L Series
 =============================
 
-|no_changes_yet_note|
+* Updated builds without Partition Manager to generate the :file:`bootconf.hex` file when |NSIB| is used as the bootloader.
 
 Developing with nRF54H Series
 =============================
