@@ -420,6 +420,9 @@ Networking samples
 
 * :ref:`azure_iot_hub` sample:
 
+  * Removed Partition Manager dependency for all Wi-Fi targets.
+    Flash and SRAM partitions are supplied via Devicetree overlays instead.
+
   * Added support for the nRF54LM20 DK with the nRF7002-EB II shield.
 
 NFC samples

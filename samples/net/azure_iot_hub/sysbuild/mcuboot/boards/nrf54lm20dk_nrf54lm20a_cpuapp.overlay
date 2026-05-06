@@ -3,10 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * MCUboot runs as its own Zephyr image; it does not inherit the application
- * board overlay. PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY requires chosen
- * nordic,pm-ext-flash and the external NOR enabled here (see also
- * boards/nrf7002dk_nrf5340_cpuapp.overlay).
+ * MCUboot image uses the ``cpuapp`` board target; it does not inherit the NS
+ * application overlay. Flash layout here must match
+ * ``boards/nrf54lm20dk_nrf54lm20a_cpuapp_ns.overlay`` (boot, TF-M storage,
+ * image-0 on RRAM, image-1 on mx25r64, storage) so the bootloader reads the
+ * primary slot at 0x18000, not the default cpuapp slot at 0x10000.
  */
 
 / {
@@ -16,6 +17,81 @@
 	};
 };
 
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 0xd800>;
+		};
+
+		tfm_storage_partition: partition@e000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-storage";
+			reg = <0xe000 DT_SIZE_K(40)>;
+			ranges = <0x0 0xe000 DT_SIZE_K(40)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			tfm_its_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-its";
+				reg = <0x0 DT_SIZE_K(16)>;
+			};
+
+			tfm_otp_partition: partition@4000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-otp";
+				reg = <0x4000 DT_SIZE_K(8)>;
+			};
+
+			tfm_ps_partition: partition@6000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-ps";
+				reg = <0x6000 DT_SIZE_K(16)>;
+			};
+		};
+
+		/* Single image-0 span (signed S+NS bundle); same size/offset as NS app. */
+		slot0_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x18000 0x1e3000>;
+		};
+
+		nonsecure_storage: partition@1fb000 {
+			compatible = "zephyr,mapped-partition";
+			label = "nonsecure-storage";
+			reg = <0x1fb000 DT_SIZE_K(8)>;
+			ranges = <0x0 0x1fb000 DT_SIZE_K(8)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			storage_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "storage";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+		};
+	};
+};
+
 &mx25r64 {
 	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x0 0x1e3000>;
+		};
+	};
 };
