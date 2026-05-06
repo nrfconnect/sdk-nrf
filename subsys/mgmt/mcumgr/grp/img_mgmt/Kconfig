@@ -29,3 +29,12 @@ config MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE
 endif # MCUMGR_GRP_IMG_NRF
 
 endmenu
+
+if MCUMGR_GRP_IMG && SOC_FLASH_NRF_RRAM
+
+# Ensure that flash_flatten is done in chunks that are large enough for keeping speed performance on RRAM devices
+# Perfectly, this value should be set to the value of (NRF_RRAM_WRITE_BUFFER_SIZE * 16).
+configdefault FLASH_FILL_BUFFER_SIZE
+	default 256
+
+endif # MCUMGR_GRP_IMG && SOC_FLASH_NRF_RRAM
