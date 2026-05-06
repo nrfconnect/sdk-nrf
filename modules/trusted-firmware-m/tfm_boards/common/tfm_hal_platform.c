@@ -29,6 +29,10 @@
 #include "exception_info.h"
 #include "tfm_arch.h"
 
+#if defined(NRF_LOG_MEMORY_PROTECTION_SAU_MPC)
+#include <log_memory_protection.h>
+#endif /* NRF_LOG_MEMORY_PROTECTION_SAU_MPC */
+
 #if defined(TFM_PARTITION_CRYPTO)
 static enum tfm_hal_status_t crypto_platform_init(void)
 {
@@ -155,6 +159,10 @@ enum tfm_hal_status_t tfm_hal_platform_init(void)
 #endif /* defined(NRF_PROVISIONING) */
 
 	log_pin_security_configuration();
+
+#if defined(NRF_LOG_MEMORY_PROTECTION_SAU_MPC)
+	log_memory_protection_sau_mpc();
+#endif /* NRF_LOG_MEMORY_PROTECTION_SAU_MPC */
 
 	return TFM_HAL_SUCCESS;
 }

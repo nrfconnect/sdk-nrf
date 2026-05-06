@@ -137,6 +137,16 @@ if(${TFM_PARTITION_CRYPTO})
   target_link_libraries(platform_s PRIVATE tfm_psa_rot_partition_crypto)
 endif()
 
+if(NRF_LOG_MEMORY_PROTECTION_SAU_MPC)
+  target_compile_definitions(platform_s PUBLIC NRF_LOG_MEMORY_PROTECTION_SAU_MPC)
+  target_sources(platform_s PRIVATE src/log_memory_protection_sau_mpc.c)
+endif()
+
+if(NRF_LOG_MEMORY_PROTECTION_MPU_SPU)
+  target_compile_definitions(platform_s PUBLIC NRF_LOG_MEMORY_PROTECTION_MPU_SPU)
+  target_sources(platform_s PRIVATE src/log_memory_protection_mpu_spu.c)
+endif()
+
 if(NRF_ALLOW_NON_SECURE_RESET)
   target_compile_definitions(platform_s PUBLIC NRF_ALLOW_NON_SECURE_RESET)
 endif()
@@ -204,10 +214,6 @@ if(TFM_PARTITION_PLATFORM)
     ${src_dir}/tfm_platform_system.c
     ${src_dir}/tfm_ioctl_s_api.c
   )
-endif()
-
-if(LOG_MEMORY_PROTECTION)
-  target_sources(platform_s PRIVATE src/log_memory_protection.c)
 endif()
 
 if(PSA_CRYPTO_EXTERNAL_CORE)
