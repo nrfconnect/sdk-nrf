@@ -12,7 +12,7 @@
     - sample.benchmark.coremark.flash_and_run.nrf7120
   platforms:
     - nrf7120dk/nrf7120/cpuapp
-  comment: "Upmerge regression - jira TBD."
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38741"
 
 - scenarios:
     - sample.dect.dect_shell.nrf_cloud_mqtt
