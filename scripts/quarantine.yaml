@@ -96,3 +96,9 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39211"
+
+- scenarios:
+    - mcuboot.upgrade.serial_recovery_no_bootable_app
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39216"
