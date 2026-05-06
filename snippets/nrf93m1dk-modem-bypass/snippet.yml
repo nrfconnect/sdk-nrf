@@ -1,0 +1,7 @@
+name: nrf93m1dk-modem-bypass
+
+boards:
+  /nrf93m1dk.*/nrf54l15/cpuapp.*/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nrf93m1dk_modem_bypas.overlay
+      EXTRA_CONF_FILE: nrf93m1dk_modem_bypas.conf

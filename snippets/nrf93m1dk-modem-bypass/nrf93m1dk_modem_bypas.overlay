@@ -1,0 +1,73 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
+ * This overlay is used to enable the nRF93M1DK in a modem-bypass mode where
+ * modem is powered on a boot and UART switch is controlled to route the
+ * modem's main UART to the VCOM1 port on the on-board debugger.
+ */
+
+
+/*
+ * UART routing switch:
+ * control IO have a pull-down resistor that defaults to bypass mode, so delete the control GPIO
+ */
+/delete-node/ &modem_uart_switch;
+
+/*
+ * Enable the modem, so the power-domain is enabled
+ */
+&modem {
+	status = "okay";
+};
+
+
+/*
+ * Activate POWERKEY:
+ * Driver powerkey on boot, so the modem boots when DC power is enabled
+ */
+&gpio1 {
+	/* Remove the default powerkey config so I can redefine it */
+	/delete-node/ modem-powerkey;
+
+	modem_powerkey_on {
+		gpio-hog;
+		gpios = <13 GPIO_ACTIVE_HIGH>;
+		output-high;
+	};
+};
+
+
+/*
+ * Modem DCDC control:
+ * When board boots, wait 500ms before enabling the power for modem.
+ * Then wait another 500ms while the powerkey is active to trigger modem boot up.
+ */
+&modem_dcdc {
+	off-on-delay-us = <500000>;
+	startup-delay-us = <500000>;
+};
+
+
+/*
+ * Release powerkey:
+ * After modem is booted up, release the powerkey.
+ */
+/ {
+	/* Dummy regulator that switch powerkey off,
+	 * This runs after gpio-hog switched the powerkey-on and power-domain enabled the DC power.
+	 * The powerdomain driver have startup-delay that is enough for the powerkey.
+	 * This depends on CONFIG_REGULATOR_FIXED_INIT_PRIORITY being higher than
+	 * CONFIG_POWER_DOMAIN_GPIO_INIT_PRIORITY.
+	 */
+	modem_powerkey_off: modem_powerkey_off {
+		compatible = "regulator-fixed";
+		status = "okay";
+		regulator-name = "modem_powerkey";
+		enable-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+		regulator-boot-off;
+	};
+};
