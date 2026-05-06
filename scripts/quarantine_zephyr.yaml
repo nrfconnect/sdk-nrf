@@ -435,6 +435,7 @@
     - kernel.common.tls
     - kernel.timer.timer
     - libraries.encoding.jwt.rsa.psa
+    - libraries.hash_map.cxx.djb2
     - libraries.heap.hardening_full
     - net.coap.server.common
     - net.http.server.common
