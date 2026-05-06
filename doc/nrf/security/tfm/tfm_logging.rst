@@ -10,6 +10,14 @@ TF-M logging
 
 TF-M employs two UART interfaces for logging: one for the :ref:`Secure Processing Environment<app_boards_spe_nspe>` (including MCUboot and TF-M), and one for the :ref:`Non-Secure Processing Environment<app_boards_spe_nspe>` (including user application).
 
+Enabling TF-M logging
+*********************
+
+To enable TF-M logging in the |NCS|:
+
+1. :ref:`Configure the UART backend<ug_logging_backends_uart>`.
+2. Make sure you are using :ref:`one of the recommended tools<test_and_optimize>` for displaying the UART output.
+
 By default, the logs from Nordic Semiconductor's Development Kits (DKs) arrive on different serial ports on the host PC.
 
 .. note::
@@ -19,8 +27,6 @@ The UART instances can vary by device family:
 
 * nRF5340 and nRF91 Series: The application typically uses the UART instance ``0`` (``uart0``), and TF-M uses the UART instance ``1`` (``uart1``) by default.
 * nRF54L Series devices that support TF-M: The application typically uses the UART instance ``20`` (``uart20``), and TF-M uses the UART instance ``30`` (``uart30``) by default.
-
-For more information about the logging in the |NCS|, see :ref:`ug_logging`.
 
 Configuring logging to the same UART as the application
 *******************************************************
@@ -47,6 +53,18 @@ See :ref:`zephyr:set-devicetree-overlays` in the Zephyr documentation for more i
 
 .. note::
    When TF-M and the user application use the same UART, TF-M disables logging after it has booted and re-enables it again only to log a fatal error.
+
+Configuring TF-M memory configuration logs
+******************************************
+
+.. note::
+   This option is available only on :ref:`nRF54L Series devices that support TF-M <ug_tfm_building_board_targets>`.
+
+During the TF-M initialization, you can print the non-secure memory layout configuration.
+To enable this feature, set the :kconfig:option:`CONFIG_TFM_LOG_NS_MEMORY_LAYOUT` Kconfig option.
+
+When enabled, TF-M logs the configuration of the Secure Attribution Unit (SAU) and the Memory Protection Controller (MPC).
+The output covers address ranges of the non-secure memory regions, both volatile and non-volatile; the rest of the memory is secure by default.
 
 Disabling logging
 *****************

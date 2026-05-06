@@ -371,6 +371,16 @@ config TFM_NFCT_PINS_AS_GPIOS
 	  TF-M configures these pins as GPIOS when the NFCT peripheral is not
 	  enabled in the device-tree of the target.
 
+config TFM_LOG_NS_MEMORY_LAYOUT
+	bool "Print non-secure memory layout on initialization"
+	depends on !TFM_LOG_LEVEL_SILENCE
+	depends on SOC_SERIES_NRF54L
+	help
+	  This option activates the logic to print the configuration of SAU and MPC
+	  during the initialization of TF-M. The logic targets address ranges
+	  of the non-secure memory regions (both volatile and non-volatile).
+	  The rest of the memory is secure by default.
+
 config TFM_SECURE_UART
 	bool "TF-M configure UART instance as secure peripheral"
 	default y if !TFM_LOG_LEVEL_SILENCE

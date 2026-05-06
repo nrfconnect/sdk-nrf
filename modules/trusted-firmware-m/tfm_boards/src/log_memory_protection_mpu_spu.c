@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <log_memory_protection.h>
 #include <cmsis.h>
 #include <tfm_log.h>
 #include <mpu_armv8m_drv.h>
@@ -112,7 +113,7 @@ void log_memory_protection_of_spu(void)
 	log_memory_protection_of_spu_ram();
 }
 
-void log_memory_protection(void)
+void log_memory_protection_mpu_spu(void)
 {
 	log_memory_protection_of_mpu();
 	log_memory_protection_of_spu();
