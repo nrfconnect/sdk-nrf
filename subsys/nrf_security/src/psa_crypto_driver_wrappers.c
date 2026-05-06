@@ -1451,7 +1451,7 @@ psa_status_t psa_driver_wrapper_xof_setup(psa_xof_operation_t *operation, psa_al
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
 	status = oberon_xof_setup(&operation->ctx.oberon_xof_ctx, alg);
 	if (status == PSA_SUCCESS) {
-		operation->id = OBERON_DRIVER_ID;
+		operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 	}
 	return status;
 #endif /* PSA_NEED_OBERON_XOF_DRIVER */
@@ -1468,7 +1468,7 @@ psa_status_t psa_driver_wrapper_xof_set_context(psa_xof_operation_t *operation,
 	switch (operation->id) {
 
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
-	case OBERON_DRIVER_ID:
+	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_xof_set_context(&operation->ctx.oberon_xof_ctx, context,
 					      context_length);
 #endif /* PSA_NEED_OBERON_XOF_DRIVER */
@@ -1486,7 +1486,7 @@ psa_status_t psa_driver_wrapper_xof_update(psa_xof_operation_t *operation, const
 	switch (operation->id) {
 
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
-	case OBERON_DRIVER_ID:
+	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_xof_update(&operation->ctx.oberon_xof_ctx, input, input_length);
 #endif /* PSA_NEED_OBERON_XOF_DRIVER */
 
@@ -1503,7 +1503,7 @@ psa_status_t psa_driver_wrapper_xof_output(psa_xof_operation_t *operation, uint8
 	switch (operation->id) {
 
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
-	case OBERON_DRIVER_ID:
+	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_xof_output(&operation->ctx.oberon_xof_ctx, output, output_length);
 #endif /* PSA_NEED_OBERON_XOF_DRIVER */
 
@@ -1519,7 +1519,7 @@ psa_status_t psa_driver_wrapper_xof_abort(psa_xof_operation_t *operation)
 	switch (operation->id) {
 
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
-	case OBERON_DRIVER_ID:
+	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_xof_abort(&operation->ctx.oberon_xof_ctx);
 #endif /* PSA_NEED_OBERON_XOF_DRIVER */
 
