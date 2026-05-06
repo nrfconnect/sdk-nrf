@@ -277,29 +277,39 @@ int nct_tenant_id_get(char *cur_tenant, const int cur_tenant_len)
 
 void nct_set_topic_prefix(const char *topic_prefix)
 {
-	char *end_of_stage = strchr(topic_prefix, '/');
-	int len;
+	const char *end_of_stage = strchr(topic_prefix, '/');
+	size_t total_len;
+	size_t stage_len;
+	size_t tenant_len;
 
-	if (end_of_stage) {
-		len = end_of_stage - topic_prefix;
-		if (len >= sizeof(stage)) {
-			LOG_WRN("Truncating copy of stage string length "
-				"from %d to %zd",
-				len, sizeof(stage));
-			len = sizeof(stage) - 1;
-		}
-		memcpy(stage, topic_prefix, len);
-		stage[len] = '\0';
-		len = strlen(topic_prefix) - len - 2; /* skip both / */
-		if (len >= sizeof(tenant)) {
-			LOG_WRN("Truncating copy of tenant id string length "
-				"from %d to %zd",
-				len, sizeof(tenant));
-			len = sizeof(tenant) - 1;
-		}
-		memcpy(tenant, end_of_stage + 1, len);
-		tenant[len] = '\0';
+	if (!end_of_stage) {
+		return;
 	}
+
+	total_len = strlen(topic_prefix);
+	stage_len = (size_t)(end_of_stage - topic_prefix);
+
+	if (total_len < stage_len + 2) {
+		LOG_ERR("Malformed topic prefix");
+		return;
+	}
+
+	if (stage_len >= sizeof(stage)) {
+		LOG_WRN("Truncating copy of stage string length from %zu to %zu",
+			stage_len, sizeof(stage) - 1);
+		stage_len = sizeof(stage) - 1;
+	}
+	memcpy(stage, topic_prefix, stage_len);
+	stage[stage_len] = '\0';
+
+	tenant_len = total_len - stage_len - 2;
+	if (tenant_len >= sizeof(tenant)) {
+		LOG_WRN("Truncating copy of tenant id string length from %zu to %zu",
+			tenant_len, sizeof(tenant) - 1);
+		tenant_len = sizeof(tenant) - 1;
+	}
+	memcpy(tenant, end_of_stage + 1, tenant_len);
+	tenant[tenant_len] = '\0';
 }
 
 static int allocate_and_format_topic(struct mqtt_utf8 *const topic,
