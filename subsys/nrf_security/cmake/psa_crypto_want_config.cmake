@@ -139,6 +139,6 @@ kconfig_check_and_set_base_to_one(PSA_WANT_ALG_AES_KWP)
 kconfig_check_and_set_base_int(PSA_MAX_RSA_KEY_BITS)
 
 # Create the Mbed TLS PSA crypto config file (Contains all the PSA_WANT definitions)
-configure_file(${NRF_SECURITY_ROOT}/configs/psa_crypto_want_config.h.template
+configure_file(${NRF_SECURITY_DIR}/configs/psa_crypto_want_config.h.template
   ${generated_include_path}/${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}
 )

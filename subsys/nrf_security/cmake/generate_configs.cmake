@@ -46,13 +46,13 @@ macro(generate_mbedcrypto_interface_configs)
 
     # Generate MBEDCRYPTO_CONFIG_FILE
     if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
-      include(${NRF_SECURITY_ROOT}/cmake/legacy_crypto_config.cmake)
+      include(${NRF_SECURITY_DIR}/cmake/legacy_crypto_config.cmake)
     else()
-      include(${NRF_SECURITY_ROOT}/cmake/nrf_config.cmake)
+      include(${NRF_SECURITY_DIR}/cmake/nrf_config.cmake)
     endif()
 
     # Generate the PSA_CRYPTO_CONFIG_FILE (PSA_WANT_XXXX configurations)
-    include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_want_config.cmake)
+    include(${NRF_SECURITY_DIR}/cmake/psa_crypto_want_config.cmake)
 
     # Note: Interface doesn't need PSA_CRYPTO_USER_CONFIG_FILE
 
@@ -127,16 +127,16 @@ macro(generate_mbedcrypto_library_configs)
 
     # Generate MBEDCRYPTO_CONFIG_FILE
     if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
-      include(${NRF_SECURITY_ROOT}/cmake/legacy_crypto_config.cmake)
+      include(${NRF_SECURITY_DIR}/cmake/legacy_crypto_config.cmake)
     else()
-      include(${NRF_SECURITY_ROOT}/cmake/nrf_config.cmake)
+      include(${NRF_SECURITY_DIR}/cmake/nrf_config.cmake)
     endif()
 
     # Generate the PSA_CRYPTO_CONFIG_FILE (PSA_WANT_XXXX configurations)
-    include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_want_config.cmake)
+    include(${NRF_SECURITY_DIR}/cmake/psa_crypto_want_config.cmake)
 
     # Generate the PSA_CRYPTO_USER_CONFIG_FILE (PSA_NEED configurations)
-    include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_config.cmake)
+    include(${NRF_SECURITY_DIR}/cmake/psa_crypto_config.cmake)
 
     # Restore the backup configurations
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_C)

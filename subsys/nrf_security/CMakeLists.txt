@@ -35,7 +35,7 @@ endif()
 
 if(CONFIG_BUILD_WITH_TFM)
   # Execute Cmake logic to forward configurations to TF-M build
-  include(${NRF_SECURITY_ROOT}/cmake/config_to_tf-m.cmake)
+  include(${NRF_SECURITY_DIR}/cmake/config_to_tf-m.cmake)
 endif()
 
 if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
@@ -44,7 +44,7 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
 
   # Add replacement platform.c for NS build
   list(APPEND src_zephyr
-    ${ARM_MBEDTLS_PATH}/library/platform.c
+    ${ZEPHYR_MBEDTLS_MODULE_DIR}/library/platform.c
   )
 
   # The current version of the mbed TLS deliverables requires mbedcrypto built
@@ -119,16 +119,16 @@ add_library(psa_interface INTERFACE)
 target_include_directories(psa_interface
   INTERFACE
     # Oberon PSA headers
-    ${OBERON_PSA_CORE_PATH}/include
-    ${OBERON_PSA_CORE_PATH}/library
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library
     # Mbed TLS (mbedcrypto) PSA headers
-    ${ARM_MBEDTLS_PATH}/library
-    ${ARM_MBEDTLS_PATH}/include
-    ${ARM_MBEDTLS_PATH}/include/library
+    ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
+    ${ZEPHYR_MBEDTLS_MODULE_DIR}/include
+    ${ZEPHYR_MBEDTLS_MODULE_DIR}/include/library
 )
 
 # Finally adding the crypto lib
-add_subdirectory(${NRFXLIB_DIR}/crypto crypto_copy)
+add_subdirectory(${ZEPHYR_NRFXLIB_MODULE_DIR}/crypto crypto_copy)
 
 # Add mbed TLS Libraries
 add_subdirectory(src)

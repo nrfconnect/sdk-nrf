@@ -5,32 +5,32 @@ endif()
 
 install(
   FILES
-      ${OBERON_PSA_CORE_PATH}/include/psa/build_info.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_adjust_auto_enabled.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_adjust_config_key_pair_types.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_adjust_config_synonyms.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_compat.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_driver_common.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_extra.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_legacy.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_platform.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_se_driver.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_sizes.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_struct.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_types.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_values.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/build_info.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_adjust_auto_enabled.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_adjust_config_key_pair_types.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_adjust_config_synonyms.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_compat.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_driver_common.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_extra.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_legacy.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_platform.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_se_driver.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_sizes.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_struct.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_types.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_values.h
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto.h
       # The driver contexts are taken from nrf_security
-      ${NRF_SECURITY_ROOT}/include/psa/crypto_driver_contexts_key_derivation.h
-      ${NRF_SECURITY_ROOT}/include/psa/crypto_driver_contexts_primitives.h
-      ${NRF_SECURITY_ROOT}/include/psa/crypto_driver_contexts_composites.h
+      ${NRF_SECURITY_DIR}/include/psa/crypto_driver_contexts_key_derivation.h
+      ${NRF_SECURITY_DIR}/include/psa/crypto_driver_contexts_primitives.h
+      ${NRF_SECURITY_DIR}/include/psa/crypto_driver_contexts_composites.h
   DESTINATION ${INSTALL_INTERFACE_INC_DIR}/psa
 )
 
 install(
   FILES
-    ${OBERON_PSA_CORE_PATH}/include/mbedtls/build_info.h
-    ${OBERON_PSA_CORE_PATH}/include/mbedtls/config_psa.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/mbedtls/build_info.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/mbedtls/config_psa.h
   DESTINATION
     ${INSTALL_INTERFACE_INC_DIR}/mbedtls
 )

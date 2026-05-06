@@ -269,6 +269,6 @@ kconfig_check_and_set_base_depends(MBEDTLS_SHA224_C
   MBEDTLS_SHA256_C
 )
 
-configure_file(${NRF_SECURITY_ROOT}/configs/legacy_crypto_config.h.template
+configure_file(${NRF_SECURITY_DIR}/configs/legacy_crypto_config.h.template
   ${generated_include_path}/${CONFIG_MBEDTLS_CONFIG_FILE}
 )

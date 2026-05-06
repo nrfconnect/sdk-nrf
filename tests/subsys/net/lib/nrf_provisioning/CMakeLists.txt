@@ -80,7 +80,7 @@ set(includes
   "include/" # Must be included first to redefine functions as non-static-inline
   "${ZEPHYR_NRF_MODULE_DIR}/include/"
   "${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/"
-  "${NRFXLIB_DIR}/nrf_modem/include/"
+  "${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/"
   "${ZEPHYR_BASE}/include/"
   "src/"
 )

@@ -30,7 +30,7 @@ endif()
 
 if(CONFIG_MBEDTLS_ENTROPY_POLL)
   list(APPEND src_zephyr
-    ${NRF_SECURITY_ROOT}/src/zephyr/entropy_poll.c
+    ${NRF_SECURITY_DIR}/src/zephyr/entropy_poll.c
   )
 endif()
 
