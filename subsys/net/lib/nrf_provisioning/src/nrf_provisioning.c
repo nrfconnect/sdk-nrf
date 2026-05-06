@@ -105,8 +105,9 @@ static void on_modem_cfun(int mode, void *ctx)
 {
 	ARG_UNUSED(ctx);
 
-	/* Subscribe to +CGEV notifications when the modem enters a connected functional
+	/* Subscribe to +CGEV and %XTIME notifications when the modem enters a connected functional
 	 * mode. +CGEV is required for tracking PDN connectivity state.
+	 * %XTIME is required to ensure modem time is valid before provisioning starts.
 	 */
 	if (mode == LTE_LC_FUNC_MODE_NORMAL || mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
 		int err;
@@ -115,6 +116,12 @@ static void on_modem_cfun(int mode, void *ctx)
 		err = nrf_modem_at_printf("AT+CGEREP=1");
 		if (err) {
 			__ASSERT(false, "Failed to subscribe to +CGEREP=1, err %d", err);
+			event_data.type = NRF_PROVISIONING_EVENT_FATAL_ERROR;
+			callback_local(&event_data);
+		}
+		err = nrf_modem_at_printf("AT%%XTIME=1");
+		if (err) {
+			__ASSERT(false, "Failed to subscribe to %%XTIME=1, err %d", err);
 			event_data.type = NRF_PROVISIONING_EVENT_FATAL_ERROR;
 			callback_local(&event_data);
 		}
