@@ -20,6 +20,7 @@ config NRF54LM20DONGLE_MCUMGR_RESET
 	select RETAINED_MEM
 	select RETENTION
 	select RETENTION_BOOT_MODE
+	select UART_MCUMGR
 	select ZCBOR
 	help
 	  Enables the support for MCUmgr reset command sent over a dedicated
