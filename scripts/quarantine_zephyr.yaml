@@ -253,6 +253,13 @@
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39122"
 
+- scenarios:
+    - sample.edk.app
+    - sample.llext.shell
+  platforms:
+    - nrf9160dk/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39227"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
