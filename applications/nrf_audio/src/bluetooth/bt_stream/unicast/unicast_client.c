@@ -1005,8 +1005,12 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 	    group_reconfigure_needed) {
 		LOG_INF("Stream QoS PD: %d, prev group PD: %d, new PD %d", stream->qos->pd,
 			existing_pres_dly_us, new_pres_dly_us);
-		bt_cap_unicast_group_foreach_stream(unicast_group, new_pres_dly_us_set,
-						    &new_pres_dly_us);
+		ret = bt_cap_unicast_group_foreach_stream(unicast_group, new_pres_dly_us_set,
+							  &new_pres_dly_us);
+		if (ret) {
+			LOG_ERR("Failed to update presentation delay for unicast group: %d", ret);
+			return;
+		}
 	}
 
 	le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, stream->conn, stream, dir);
