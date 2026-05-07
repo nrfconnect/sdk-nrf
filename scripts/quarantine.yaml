@@ -97,9 +97,3 @@
   platforms:
     - nrf52840dk/nrf52840
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39216"
-
-- scenarios:
-    - nrf.extended.sample.basic.blinky
-  platforms:
-    - nrf54lm20dongle/nrf54lm20b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39226"
