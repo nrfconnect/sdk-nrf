@@ -89,9 +89,12 @@ add_library(${mbedcrypto_target}
 )
 
 target_link_libraries(${mbedcrypto_target}
-  INTERFACE
+  PUBLIC
     psa_crypto_config_chosen
     psa_interface
+  PRIVATE
+    $<TARGET_NAME_IF_EXISTS:platform_s>
+    nrf_security_utils
 )
 
 if(CONFIG_PSA_SSF_CRYPTO_CLIENT)
@@ -128,22 +131,10 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/threading/threading.cmake)
 include(${NRF_SECURITY_DIR}/src/utils/nrf_security_utils.cmake)
 
-# Add base library with files required by all drivers/backends.
-add_library(mbedcrypto_base
-  STATIC
+target_sources(${mbedcrypto_target}
+  PRIVATE
     ${src_crypto_base}
 )
-
-target_link_libraries(mbedcrypto_base
-  PRIVATE
-    psa_crypto_config_chosen
-    $<TARGET_NAME_IF_EXISTS:platform_s>
-    nrf_security_utils
-  PUBLIC
-    psa_interface
-)
-
-nrf_security_add_zephyr_options(mbedcrypto_base)
 
 # Misusing the psa_crypto_config and psa_crypto_library_config awareness to
 # set compiler-flags to ensure right floating-point types are set
@@ -173,11 +164,6 @@ if(LINKER_CP_OPTION)
 )
 endif()
 
-target_link_libraries(${mbedcrypto_target}
-  PRIVATE
-    mbedcrypto_base
-)
-
 # Add PSA core
 if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
   add_subdirectory(core)
@@ -191,17 +177,9 @@ if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR (CONFIG_NRF_OBERON AND CONFIG_BUILD_WITH_TF
   add_subdirectory(legacy)
 endif()
 
-# In TF-M build, a psa_interface lib is created and we must inherit its settings
-set_property(TARGET ${mbedcrypto_target}
-  APPEND PROPERTY
-    PRIVATE_LINK_LIBRARIES
-      $<TARGET_NAME_IF_EXISTS:psa_interface>
-)
-
 # NEWLIB requires linking with the C library
 if(CONFIG_NEWLIB_LIBC)
   target_link_libraries(${mbedcrypto_target} PRIVATE -lc)
-  target_link_libraries(mbedcrypto_base PRIVATE -lc)
 endif()
 
 if(CONFIG_MBEDTLS_X509_LIBRARY)
@@ -226,7 +204,6 @@ if(CONFIG_MBEDTLS_X509_LIBRARY)
     PRIVATE
       psa_crypto_config_chosen
       ${mbedcrypto_target}
-      mbedcrypto_base
   )
 
   nrf_security_add_zephyr_options(mbedx509)
@@ -269,7 +246,6 @@ if(CONFIG_MBEDTLS_TLS_LIBRARY)
       psa_crypto_config_chosen
       mbedx509
       ${mbedcrypto_target}
-      mbedcrypto_base
   )
 
   nrf_security_add_zephyr_options(mbedtls)

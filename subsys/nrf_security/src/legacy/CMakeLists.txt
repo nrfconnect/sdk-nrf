@@ -111,7 +111,7 @@ if(DEFINED src_crypto_legacy)
 endif()
 
 if(DEFINED src_crypto_legacy_base)
-  target_sources(mbedcrypto_base
+  target_sources(${mbedcrypto_target}
     PRIVATE
       ${src_crypto_legacy_base}
   )
@@ -141,7 +141,7 @@ if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C AND CONFIG_CC3XX_BACKEND)
 endif()
 
 if(TARGET nrf_cc3xx_core_imported)
-  # nrf_cc3xx needs functionality from mbedcrypto_base
+  # nrf_cc3xx needs functionality from mbedcrypto
   target_link_libraries(nrf_cc3xx_core_imported
     INTERFACE
       psa_crypto_config_chosen
