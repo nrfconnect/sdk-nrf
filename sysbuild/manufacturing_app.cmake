@@ -20,9 +20,5 @@ if(SB_CONFIG_NRF_MANUFACTURING_APP)
     IMAGE_CONF_SCRIPT ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/image_configurations/manufacturing_app_image_default.cmake
   )
 
-  if(SB_CONFIG_PARTITION_MANAGER)
-    set_target_properties(${image} PROPERTIES BUILD_ONLY true)
-  endif()
-
   UpdateableImage_Add(APPLICATION manufacturing_app)
 endif()
