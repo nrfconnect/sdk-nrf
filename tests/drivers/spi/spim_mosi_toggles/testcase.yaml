@@ -3,11 +3,11 @@ common:
   tags:
     - ci_build
     - ci_tests_drivers_spi
+  harness: console
 
 tests:
 
   drivers.spi.spim_mosi_toggles:
-    harness: console
     harness_config:
       fixture: hpf_mspi_spi_loopback
       type: multi_line
@@ -17,14 +17,24 @@ tests:
         - "Test passed"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  drivers.spi.spim_mosi_toggles.lm20:
+    harness_config:
+      fixture: spim_mosi_toggles
+      type: multi_line
+      ordered: true
+      regex:
+        - "SPIM MOSI toggling test on"
+        - "Test passed"
+    platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
 
   drivers.spi.spim_mosi_toggles.slow:
-    harness: console
     harness_config:
       fixture: gpio_loopback
       type: multi_line
