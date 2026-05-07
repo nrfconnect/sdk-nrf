@@ -1,4 +1,4 @@
-nRF Connect SDK: sdk-nrf dummy change 8
+nRF Connect SDK: sdk-nrf dummy change 9
 ########################
 
 .. contents::
