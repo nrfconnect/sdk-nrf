@@ -46,7 +46,6 @@ target_link_libraries(cracen_psa_driver
   PRIVATE
     psa_crypto_library_config
     psa_interface
-    mbedcrypto_base
     nrf_security_utils
 )
 

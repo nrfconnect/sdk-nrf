@@ -47,7 +47,7 @@ target_compile_definitions(psa_core
 target_link_libraries(psa_core
   PRIVATE
     psa_crypto_library_config
-    mbedcrypto_base
+    psa_interface
     nrf_security_utils
 )
 
