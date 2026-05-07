@@ -97,12 +97,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39216"
 
 - scenarios:
-    - sample.bluetooth.central_uart
-  platforms:
-    - nrf54lm20dongle/nrf54lm20b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39225"
-
-- scenarios:
     - nrf.extended.sample.basic.blinky
   platforms:
     - nrf54lm20dongle/nrf54lm20b/cpuapp
