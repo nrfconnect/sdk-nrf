@@ -42,12 +42,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38475"
 
 - scenarios:
-    - sample.mcuboot_with_encryption
-  platforms:
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38898"
-
-- scenarios:
     - sample.bluetooth.mesh_dfu_distributor
     - sample.bluetooth.mesh_dfu_distributor.dfu_ext_flash
     - sample.bluetooth.mesh_dfu_distributor.settings_ext_flash
