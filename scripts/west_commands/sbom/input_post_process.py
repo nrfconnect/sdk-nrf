@@ -16,9 +16,13 @@ from data_structure import Data, FileInfo, Package
 def remove_duplicates(data: Data):
     '''Remove duplicated entries in data.files list.'''
     def is_not_visited(file: FileInfo):
-        if file.file_path in visited:
+        try:
+            file_entry = file.file_path.resolve()
+        except OSError:
+            file_entry = file.file_path
+        if file_entry in visited:
             return False
-        visited.add(file.file_path)
+        visited.add(file_entry)
         return True
     visited = set()
     data.files = list(filter(is_not_visited, data.files))

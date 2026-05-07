@@ -39,6 +39,13 @@ EXTERNAL_FILE_RE = re.compile(
 detected_files = dict()
 dir_search_done = set()
 
+def is_file_check(file: Path) -> bool:
+    try:
+        return file.is_file()
+    except OSError:
+        log.dbg(f'Exception reading file "{file}": {traceback.format_exc()}',
+                level=log.VERBOSE_VERY)
+        return False
 
 def parse_license_file(file: Path):
     try:
@@ -80,7 +87,7 @@ def load_external_globs() -> 'list[tuple[str,set[str]]]':
                 level=log.VERBOSE_VERY)
         return external_globs
     for file in listdir:
-        if (file.is_file() and EXTERNAL_FILE_RE.search(file.name) is not None):
+        if (is_file_check(file) and EXTERNAL_FILE_RE.search(file.name) is not None):
             parsed = parse_license_file(file)
             if parsed is None:
                 continue
@@ -107,7 +114,7 @@ def search_dir(directory: Path):
                 level=log.VERBOSE_VERY)
         listdir = list()
     for file in listdir:
-        if (file.is_file() and EXTERNAL_FILE_RE.search(file.name) is not None):
+        if (is_file_check(file) and EXTERNAL_FILE_RE.search(file.name) is not None):
             parsed = parse_license_file(file)
             if parsed is None:
                 continue
