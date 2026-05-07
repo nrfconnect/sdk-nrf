@@ -30,7 +30,8 @@ void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *pEsf)
 
 ZTEST(fprotect_test, test_writing_to_app_image)
 {
-	static uint8_t val[] = {0xba, 0x53, 0xba, 0x11};
+	/* Any random data for writing */
+	static uint8_t val[16];
 
 	printf("Perform a legal flash write to show that it is supported\n");
 	int err = flash_write(STORAGE_AREA_DEVICE, STORAGE_AREA_ADDRESS, val, sizeof(val));
