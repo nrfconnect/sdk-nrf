@@ -64,6 +64,16 @@ static void check_timing(uint32_t baudrate)
 	double symbol_diviation_mean;
 	bool once = true;
 	int key;
+	uint32_t uart_freq = NRF_PERIPH_GET_FREQUENCY(DT_NODELABEL(dut));
+	uint32_t accepted_deviation = CONFIG_TEST_ALLOWED_DEVIATION;
+
+	/* Baudrate register has only top 16 bits implemented so if baudrate is
+	 * significantly lower than the peripheral frequency, accuracy of the baudrate
+	 * decreases.
+	 */
+	if (uart_freq / 10000) {
+		accepted_deviation += 5;
+	}
 
 	ret = uart_config_get(uart_dev, &test_uart_config);
 	zassert_equal(ret, 0, "uart_config_get: %d\n", ret);
@@ -195,12 +205,12 @@ static void check_timing(uint32_t baudrate)
 		 uart_dev->name, baudrate, symbol_diviation_mean, bit_diviation_mean);
 
 	if (start_index_count_zero == 0) {
-		zassert_true(symbol_diviation_mean <= (double)CONFIG_TEST_ALLOWED_DEVIATION,
-			     "Symbol diviation %0.f%%  higher than %d%%\n", symbol_diviation_mean,
-			     CONFIG_TEST_ALLOWED_DEVIATION);
-		zassert_true(bit_diviation_mean <= (double)CONFIG_TEST_ALLOWED_DEVIATION,
-			     "Bit diviation %0.f%% higher than %d%%\n", bit_diviation_mean,
-			     CONFIG_TEST_ALLOWED_DEVIATION);
+		zassert_true(symbol_diviation_mean <= (double)accepted_deviation,
+			     "Symbol diviation %0.f%%  higher than %d%%\n",
+			     symbol_diviation_mean, accepted_deviation);
+		zassert_true(bit_diviation_mean <= (double)accepted_deviation,
+			     "Bit diviation %0.f%% higher than %d%%\n",
+			     bit_diviation_mean, accepted_deviation);
 	} else {
 		TC_PRINT("Not checking diviation due to lost start of start bit\n");
 	}
