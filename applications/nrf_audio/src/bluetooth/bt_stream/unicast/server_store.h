@@ -68,13 +68,13 @@ struct client_supp_configs {
 };
 
 /**
- * @brief	Function for bt_bap_unicast_group_foreach_stream().
+ * @brief	Function for bt_bap_unicast_group_foreach_server().
  *
  * @param[in]	server		The audio server.
  * @param[in]	user_data	User data.
  *
- * @retval	false	Continue iterating.
- * @retval	true	Stop iterating.
+ * @retval	true	Continue iterating.
+ * @retval	false	Stop iterating.
  */
 typedef bool (*srv_store_foreach_func_t)(struct server_store *server, void *user_data);
 
