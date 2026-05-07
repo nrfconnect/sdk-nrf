@@ -3,6 +3,7 @@ common:
   build_only: true
   tags:
     - mcuboot
+    - ci_tests_subsys_bootloader
 
 # Application name changed back to "mcuboot_update"
 # Partition Manager re-enabled

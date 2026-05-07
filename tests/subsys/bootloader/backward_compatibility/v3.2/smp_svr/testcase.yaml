@@ -3,6 +3,7 @@ common:
   build_only: true
   tags:
     - mcumgr
+    - ci_tests_subsys_bootloader
 
 # nrf54h20dk direct_xip_withrevert:
 #   In v3.3 the merged-slot Direct XIP bootchain assigns a different UUID-CID

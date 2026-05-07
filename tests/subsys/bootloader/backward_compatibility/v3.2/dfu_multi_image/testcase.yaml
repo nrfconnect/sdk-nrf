@@ -3,6 +3,7 @@ common:
   build_only: true
   tags:
     - mcuboot
+    - ci_tests_subsys_bootloader
 
 # Reduced code size for mcuboot for nRF54H20
 # Incompatibility introduced in commit ae3449e
