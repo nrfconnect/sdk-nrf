@@ -596,8 +596,10 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 				       &last_successful_bap_stream, &tx_info);
 
 	if (sent_streams == 0U) {
-		/* If nothing was sent, do not continue with timestamp handling */
-		LOG_ERR("No streams were sent");
+		/* If nothing was sent, do not continue with timestamp handling
+		 * Info is printed in tx_streams_send().
+		 */
+		LOG_DBG("No streams were sent");
 		return -EIO;
 	}
 
