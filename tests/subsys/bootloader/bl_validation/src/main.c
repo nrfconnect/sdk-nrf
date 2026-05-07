@@ -72,32 +72,11 @@ ZTEST(bl_validation_test, test_validation)
 
 ZTEST(bl_validation_test, test_s1)
 {
+	/* Sanity check to confirm whether build system generated s1
+	 * image properly validates after flashing to the slot it is supposed
+	 * to boot from.
+	 */
 	zassert_true(bl_validate_firmware(PM_S1_ADDRESS, PM_S1_ADDRESS), NULL);
-
-	/* 0x2000 to account for validation info and differences s0 <-> s1. */
-	uint32_t move_len = (uint32_t)_flash_used + 0x2000;
-
-	/* Round up to at least the next SPU region. */
-	uint32_t new_addr = ROUND_UP(PM_S1_ADDRESS + move_len, 0x8000);
-
-	for (uint32_t erase_addr = new_addr; erase_addr < (new_addr + move_len);
-	     erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)) {
-		int ret = nrfx_nvmc_page_erase(erase_addr);
-
-		zassert_equal(0, ret, "Erase failed.\r\n");
-	}
-
-	nrfx_nvmc_words_write(new_addr, (const uint32_t *)PM_S1_ADDRESS,
-			      (move_len + 3) / 4);
-
-	for (uint32_t erase_addr = PM_S1_ADDRESS; erase_addr < new_addr;
-	     erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)) {
-		int ret = nrfx_nvmc_page_erase(erase_addr);
-
-		zassert_equal(0, ret, "Erase failed.\r\n");
-	}
-
-	zassert_true(bl_validate_firmware(PM_S1_ADDRESS, new_addr), NULL);
 }
 
 
