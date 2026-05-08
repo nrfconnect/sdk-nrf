@@ -155,8 +155,35 @@ The MCUboot target will then use the :ref:`zephyr:settings_api` subsystem in Zep
 Using a dedicated partition for full modem upgrades
 ===================================================
 
-External flash partitions require the chosen node ``nordic,pm-ext-flash`` to be set to the external flash device in devicetree, see :ref:`partition_manager` for details.
-When ``nordic,pm-ext-flash`` is set, the :ref:`partition_manager` will add the partition ``fmfu_storage`` to the external flash region.
+**With Partition Manager** (:kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED`):
+
+Set the chosen node ``nordic,pm-ext-flash`` to the external flash device in devicetree.
+The Partition Manager will then create the ``fmfu_storage`` partition automatically in the external flash region.
+See :ref:`partition_manager` for details.
+
+**Without Partition Manager** (DTS-based partitioning):
+
+Define a fixed partition in devicetree and set the ``fmfu_storage`` chosen property to point to it:
+
+.. code-block:: devicetree
+
+   / {
+       chosen {
+           fmfu_storage = &fmfu_storage;
+       };
+   };
+
+   &your_external_flash {
+       partitions {
+           compatible = "fixed-partitions";
+           #address-cells = <1>;
+           #size-cells = <1>;
+
+           fmfu_storage: partition@0 {
+               reg = <0x0 0x400000>;
+           };
+       };
+   };
 
 
 API documentation
