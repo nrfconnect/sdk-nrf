@@ -42,6 +42,7 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE="overlay-softbank.conf"
       - SB_EXTRA_CONF_FILE="sysbuild-softbank.conf"
+      - EXTRA_DTC_OVERLAY_FILE="bootloader.overlay"
     tags:
       - ci_build
       - sysbuild
@@ -58,6 +59,7 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE="overlay-lgu.conf"
       - SB_EXTRA_CONF_FILE="sysbuild-lgu.conf"
+      - EXTRA_DTC_OVERLAY_FILE="bootloader.overlay"
     tags:
       - ci_build
       - sysbuild

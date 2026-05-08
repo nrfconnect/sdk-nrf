@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <samples/cellular/nrf91_no_bootloader_partitions.dtsi>
+
+/ {
+	chosen {
+		nordic,lwm2m-carrier-partition = &lwm2m_carrier_partition;
+		zephyr,settings-partition = &settings_storage_partition;
+	};
+};
+
+&storage_partition {
+	compatible = "zephyr,mapped-partition";
+	label = "storage";
+	reg = <0x000f8000 0x8000>;
+	ranges = <0x0 0x000f8000 0x8000>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	lwm2m_carrier_partition: partition@0 {
+		compatible = "zephyr,mapped-partition";
+		label = "lwm2m-carrier";
+		reg = <0x00000000 0x3000>;
+	};
+
+	settings_storage_partition: partition@3000 {
+		compatible = "zephyr,mapped-partition";
+		label = "settings-storage";
+		reg = <0x00003000 0x5000>;
+	};
+};
+
+#include <samples/cellular/nrf91_sram_partitions.dtsi>
