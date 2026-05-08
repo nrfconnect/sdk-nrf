@@ -11,6 +11,7 @@
 #include <zephyr/usb/class/usbd_uac2.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/net_buf.h>
+#include <string.h>
 #include <audio_defines.h>
 
 #include "macros_common.h"
@@ -86,6 +87,8 @@ static void terminal_update_cb(const struct device *dev, uint8_t terminal, bool 
 		LOG_WRN("Unknown terminal ID: %d", terminal);
 		return;
 	}
+
+	LOG_DBG("Terminal %d %s", terminal, enabled ? "enabled" : "disabled");
 }
 
 static void usb_send_cb(const struct device *dev, void *user_data)

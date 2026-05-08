@@ -12,6 +12,7 @@
 #include <../subsys/bluetooth/audio/bap_stream.h>
 #include <bluetooth/hci_vs_sdc.h>
 #include <audio_defines.h>
+#include <sdc_hci.h>
 
 #include "zbus_common.h"
 #include "audio_sync_timer.h"
@@ -23,6 +24,17 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 		 ZBUS_MSG_INIT(0));
 
 #define HANDLE_INVALID 0xFFFF
+
+#define TX_MARGIN_MIN_US CONFIG_NRF_AUDIO_TX_TGT_LEAD_TIME_US
+#if (TX_MARGIN_MIN_US <= HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US)
+#error "TX_MARGIN_MIN_US must be higher than HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US"
+#endif
+
+/* The maximum time allowed before an SDU is flushed.
+ * The common_interval is added to this value.
+ * Must be higher than TX_MARGIN_MIN_US
+ */
+#define TX_MARGIN_MAX_US 4700
 
 /* Maximum allowed time deviation for calling tx_send.
  * E.g. 0.2 = 20 % deviation from the common interval
@@ -64,11 +76,12 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
  * @return		0 if successful, error otherwise.
  */
 static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap_stream *cap_stream,
-			   struct bt_le_audio_tx_ctx *ctx, struct tx_inf *tx_info, uint32_t ts_tx,
-			   bool send_ts_tx)
+			   struct bt_le_audio_tx_ctx *ctx, struct tx_inf *tx_info)
 {
 	int ret;
 	struct net_buf *buf;
+
+	bool send_ts_tx = ctx->ts_ctlr_esti_us_valid;
 
 	/* net_buf_alloc allocates buffers for APP->NET transfer over HCI RPMsg,
 	 * but when these buffers are released it is not guaranteed that the
@@ -88,6 +101,7 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 				(void *)&cap_stream->bap_stream);
 			tx_info->hci_wrn_printed = true;
 		}
+
 		return -ENOMEM;
 	}
 
@@ -106,7 +120,7 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 	atomic_inc(&tx_info->iso_tx_pool_alloc);
 
 	if (send_ts_tx) {
-		ret = bt_cap_stream_send_ts(cap_stream, buf, 0U, ts_tx);
+		ret = bt_cap_stream_send_ts(cap_stream, buf, 0U, ctx->ts_ctlr_esti_us);
 	} else {
 		ret = bt_cap_stream_send(cap_stream, buf, 0U);
 	}
@@ -119,6 +133,12 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 		net_buf_unref(buf);
 		(void)atomic_dec(&tx_info->iso_tx_pool_alloc);
 		return ret;
+	} else {
+		if (ctx->last_data_status == STATUS_NOT_SET && send_ts_tx) {
+			ctx->last_data_status = STATUS_SENT_WITH_TS;
+		} else if (ctx->last_data_status == STATUS_NOT_SET && !send_ts_tx) {
+			ctx->last_data_status = STATUS_SENT_WITHOUT_TS;
+		}
 	}
 
 	return 0;
@@ -253,6 +273,7 @@ static int tx_precheck(struct le_audio_tx_info const *const tx, uint8_t num_tx,
 			LOG_ERR("Not all channels have the same ISO interval");
 			return -EINVAL;
 		}
+
 		*common_interval_us = bap_stream->qos->interval;
 	}
 
@@ -349,8 +370,7 @@ static uint8_t tx_streams_send(struct bt_le_audio_tx_ctx *ctx,
 		/* Check if same audio is sent to all locations */
 		if (num_loc == 1U) {
 			ret = iso_stream_send(audio_frame->data, data_size_pr_stream,
-					      tx[i].cap_stream, ctx, tx_info, ctx->ts_ctlr_esti_us,
-					      ctx->ts_ctlr_esti_us_valid);
+					      tx[i].cap_stream, ctx, tx_info);
 		} else {
 			if (unlikely(tx[i].audio_location >= num_loc)) {
 				LOG_ERR("audio_location (%u) out of bounds (num_loc: %u) for "
@@ -362,8 +382,7 @@ static uint8_t tx_streams_send(struct bt_le_audio_tx_ctx *ctx,
 
 			ret = iso_stream_send(audio_frame->data +
 						      (tx[i].audio_location * data_size_pr_stream),
-					      data_size_pr_stream, tx[i].cap_stream, ctx, tx_info,
-					      ctx->ts_ctlr_esti_us, ctx->ts_ctlr_esti_us_valid);
+					      data_size_pr_stream, tx[i].cap_stream, ctx, tx_info);
 		}
 
 		if (ret != 0) {
@@ -381,25 +400,6 @@ static uint8_t tx_streams_send(struct bt_le_audio_tx_ctx *ctx,
 	return sent_streams;
 }
 
-static int tx_ts_prepare(struct bt_le_audio_tx_ctx *ctx, uint32_t common_interval_us)
-{
-	/* Increment the tx timestamp with the interval.
-	 * Designed for overflow.
-	 * If this TX function is called too fast or slow, the estimate will deteriorate more
-	 * quickly.
-	 */
-	ctx->ts_ctlr_esti_us += common_interval_us;
-	if (ctx->flush_next) {
-		LOG_DBG("Flushed %u us of audio data to maintain timestamp sync with controller",
-			common_interval_us);
-		ctx->flush_next = false;
-		ctx->ts_ctlr_esti_us_valid = false;
-		return -ECANCELED;
-	}
-
-	return 0;
-}
-
 static int tx_controller_sync_and_correct(struct bt_le_audio_tx_ctx *ctx,
 					  const struct bt_bap_stream *last_successful_bap_stream,
 					  uint32_t common_interval_us, uint32_t ts_now_us,
@@ -407,86 +407,102 @@ static int tx_controller_sync_and_correct(struct bt_le_audio_tx_ctx *ctx,
 {
 	int ret;
 	uint32_t ts_ctlr_real_us = 0U;
+	bool sync_required = false;
 
-	ctx->corr_diff_us = 0U;
+	int64_t corr_diff_us = 0U;
 
-	/* If the timestamp is not valid or it has been more than TX_TS_RESYNC_US since the last
-	 * timestamp, we re-acquire a timestamp from the controller.
-	 */
-	if (!ctx->ts_ctlr_esti_us_valid ||
-	    ((uint32_t)(ctx->ts_ctlr_esti_us - ctx->ts_ctlr_real_us_last) >= TX_TS_RESYNC_US) ||
-	    ((uint32_t)(ts_now_us - ctx->ts_last_us) >= TX_TS_RESYNC_US)) {
-
-		ret = controller_ts_tx_get(last_successful_bap_stream, &ts_ctlr_real_us, tx_info);
-		if (ret != 0) {
-			LOG_ERR("Failed to get timestamp after sending: %d", ret);
-			return ret;
-		}
-
-		ctx->corr_diff_us = (int64_t)ts_ctlr_real_us - (int64_t)ctx->ts_ctlr_esti_us;
-		LOG_DBG_RATELIMIT_RATE(1000U, "TX clock correction: %lld us real %u esti %u",
-				       ctx->corr_diff_us, ts_ctlr_real_us, ctx->ts_ctlr_esti_us);
-
-		if ((uint32_t)(ts_now_us - ctx->ts_last_correction) < TX_TS_RESYNC_US) {
-			ctx->subsequent_rapid_corrections++;
-		} else {
-			ctx->subsequent_rapid_corrections = 0U;
-		}
-
-		if (ctx->subsequent_rapid_corrections > SUBSEQUENT_RAPID_CORRECTIONS_LIMIT) {
-			LOG_ERR_RATELIMIT_RATE(1000U, "%d subsequent time corrections",
-					       ctx->subsequent_rapid_corrections);
-		}
-
-		/* There are several options which can occur at this point:
-		 *
-		 * - corr_diff_us == 0: The estimate is correct, no correction needed.
-		 *
-		 * - corr_diff_us >> 0: Data was given to this module too slow/late.
-		 * Hence, the controller schedules sending for the next ISO
-		 * interval. An empty packet will be sent on air.
-		 *
-		 * - corr_diff_us << 0: Data was given to this module too fast/early.
-		 *
-		 * - corr_diff_us > or < 0: This means that the estimate has gotten a small
-		 * correction. As a central/gateway/unicast client/broadcast source, the
-		 * clocks shall be running in lockstep and this should never happen. As a
-		 * peripheral/headset/unicast server/broadcast sink, this will occur to
-		 * correct for drift.
-		 */
-
-		const int64_t half_common_interval_us = (int64_t)common_interval_us / 2;
-
-		if (ctx->corr_diff_us == 0) {
-			/* No correction needed, the estimate is correct. */
-			LOG_DBG("TX clock no adjustment needed (%lld us)", ctx->corr_diff_us);
-			ctx->ts_ctlr_esti_us_valid = true;
-		} else if (ctx->corr_diff_us > half_common_interval_us) {
-			LOG_DBG("TX clock corrected by (%lld us). Late: Empty packet(s) on air",
-				ctx->corr_diff_us);
-			ctx->ts_ctlr_esti_us_valid = false;
-			*status = -ETIMEDOUT;
-		} else if (ctx->corr_diff_us < -half_common_interval_us) {
-			LOG_DBG("TX clock corrected by (%lld us). Early", ctx->corr_diff_us);
-			ctx->ts_ctlr_esti_us_valid = false;
-		} else {
-			if (ctx->is_ble_clock_master) {
-				/* The gateway is the Bluetooth central. This shall not happen */
-				LOG_ERR("TX clock has been drift adjusted by (%lld us)",
-					ctx->corr_diff_us);
-				ctx->ts_ctlr_esti_us_valid = false;
-			} else {
-				LOG_DBG("TX clock has been drift adjusted by (%lld us)",
-					ctx->corr_diff_us);
-				ctx->ts_ctlr_esti_us_valid = true;
-			}
-		}
-
-		ctx->ts_ctlr_real_us_last = ts_ctlr_real_us;
-		/* Update the estimate to the real (most current) value */
-		ctx->ts_ctlr_esti_us = ts_ctlr_real_us;
-		ctx->ts_last_correction = ts_now_us;
+	/* Timestamp is invalid: send with no timestamp and re-sync */
+	if (!ctx->ts_ctlr_esti_us_valid) {
+		sync_required = true;
 	}
+
+	/* Time since last correction over limit: send with no timestamp and re-sync.
+	 * This is required on the headset/peripheral/broadcast sink side to compensate
+	 * for clock drift compared to the gateway/central/broadcast source.
+	 */
+	if ((uint32_t)(ctx->ts_ctlr_esti_us - ctx->ts_ctlr_real_us_last) >= TX_TS_RESYNC_US) {
+		sync_required = true;
+	}
+
+	/* Same as above. Checks against current time. */
+	if ((uint32_t)(ts_now_us - ctx->ts_last_us) >= TX_TS_RESYNC_US) {
+		sync_required = true;
+	}
+
+	if (!sync_required) {
+		return 0;
+	}
+
+	ret = controller_ts_tx_get(last_successful_bap_stream, &ts_ctlr_real_us, tx_info);
+	if (ret != 0) {
+		LOG_ERR("Failed to get timestamp after sending: %d", ret);
+		return ret;
+	}
+
+	corr_diff_us = (int64_t)ts_ctlr_real_us - (int64_t)ctx->ts_ctlr_esti_us;
+
+	if ((uint32_t)(ts_now_us - ctx->ts_last_correction) < TX_TS_RESYNC_US) {
+		ctx->subsequent_rapid_corrections++;
+	} else {
+		ctx->subsequent_rapid_corrections = 0U;
+	}
+
+	if (ctx->subsequent_rapid_corrections > SUBSEQUENT_RAPID_CORRECTIONS_LIMIT) {
+		LOG_ERR_RATELIMIT_RATE(1000U, "%d subsequent time corrections",
+				       ctx->subsequent_rapid_corrections);
+	}
+
+	/* There are several options which can occur at this point:
+	 *
+	 * - corr_diff_us == 0: The estimate is correct, no correction needed.
+	 *
+	 * - corr_diff_us >> 0: Data was given to this module too slow/late.
+	 * Hence, the controller schedules sending for the next ISO
+	 * interval. An empty packet will be sent on air.
+	 *
+	 * - corr_diff_us << 0: Data was given to this module too fast/early.
+	 *
+	 * - corr_diff_us > or < 0: This means that the estimate has gotten a small
+	 * correction. As a central/gateway/unicast client/broadcast source, the
+	 * clocks shall be running in lockstep and this should never happen. As a
+	 * peripheral/headset/unicast server/broadcast sink, this will occur to
+	 * correct for drift.
+	 */
+
+	const int64_t half_common_interval_us = (int64_t)common_interval_us / 2;
+
+	if (corr_diff_us == 0) {
+		/* No correction needed, the estimate is correct. */
+		LOG_DBG_RATELIMIT("TX clock no adj (%lld us)", corr_diff_us);
+		ctx->ts_ctlr_esti_us_valid = true;
+
+	} else if (corr_diff_us > half_common_interval_us) {
+		LOG_DBG("TX clock corrected by (%lld us). Late: Empty packet(s) on air",
+			corr_diff_us);
+
+		ctx->ts_ctlr_esti_us_valid = false;
+		*status = -ETIMEDOUT;
+
+	} else if (corr_diff_us < -half_common_interval_us) {
+		LOG_DBG("TX clock corrected by (%lld us). Early", corr_diff_us);
+		ctx->ts_ctlr_esti_us_valid = false;
+	} else {
+		/* Ts corrected by some small factor*/
+		if (ctx->is_ble_clock_master) {
+			/* The gateway is the Bluetooth central. This shall not happen */
+			LOG_ERR("TX clock has been drift adjusted by (%lld us)", corr_diff_us);
+			ctx->ts_ctlr_esti_us_valid = false;
+		} else {
+			LOG_DBG("TX clock has been drift adjusted by (%lld us)", corr_diff_us);
+			ctx->ts_ctlr_esti_us_valid = true;
+		}
+	}
+
+	ctx->corr_diff_us = corr_diff_us;
+	ctx->ts_ctlr_real_us_last = ts_ctlr_real_us;
+	/* Update the estimate to the real (most current) value */
+	ctx->ts_ctlr_esti_us = ts_ctlr_real_us;
+	ctx->ts_last_correction = ts_now_us;
 
 	return 0;
 }
@@ -504,9 +520,6 @@ static void tx_publish_sdu_ref_and_finalize(struct bt_le_audio_tx_ctx *ctx, uint
 	if (ret != 0) {
 		LOG_WRN("Failed to publish timestamp: %d", ret);
 	}
-
-	ctx->ts_last_us = ts_now_us;
-	ctx->ts_last_us_valid = true;
 }
 
 int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *const audio_frame,
@@ -519,6 +532,8 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	if (unlikely(ctx == NULL || tx == NULL || num_tx == 0U || audio_frame == NULL)) {
 		return -EINVAL;
 	}
+
+	ctx->last_data_status = STATUS_NOT_SET;
 
 	ret = tx_entries_validate(tx, num_tx);
 	if (ret != 0) {
@@ -581,16 +596,61 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		return -EINVAL;
 	}
 
-	ret = tx_ts_prepare(ctx, common_interval_us);
-	if (ret != 0) {
-		return ret;
-	}
-
-	LOG_DBG_RATELIMIT_RATE(1000, "tx %d valid %d", num_tx, ctx->ts_ctlr_esti_us_valid);
-
 	uint32_t ts_now_us = audio_sync_timer_capture();
 
 	tx_call_interval_check(ctx, ts_now_us, common_interval_us);
+
+	ctx->ts_last_us = ts_now_us;
+	ctx->ts_last_us_valid = true;
+	ctx->ts_ctlr_esti_us += common_interval_us;
+
+	if (ctx->ts_ctlr_esti_us_valid) {
+
+		/* A large positive time diff:
+		 *	Too fast/too much data -> Throw
+		 * A small positive time diff or negative:
+		 *	Too slow/not enough data -> Skip SDU
+		 */
+		int32_t time_diff_us = (int32_t)(ctx->ts_ctlr_esti_us - ts_now_us);
+
+		LOG_DBG_RATELIMIT_RATE(1000, "Time diff to controller timestamp: %d us",
+				       time_diff_us);
+
+		/* The time diffs below will be too large at times if the audio source is not
+		 * synced to the BLE master clock. This will be the case for syncronous USB, where
+		 * the USB host (often a PC) will provide data slightly faster or slower than the
+		 * BLE master clock. I2S or asynchronous USB will not have this issue.
+		 */
+
+		if (time_diff_us < TX_MARGIN_MIN_US) {
+			/* If the diff is below the margin:
+			 *	Data provided too slow. Increase TS by
+			 *	an extra interval, get one empty SDU on air per location.
+			 */
+			LOG_INF("Data provided too slow. May happen for sync USB. time_diff_us:"
+				" %d(not in range : %u - %u) ",
+				time_diff_us, TX_MARGIN_MAX_US + common_interval_us,
+				TX_MARGIN_MIN_US);
+
+			ctx->ts_ctlr_esti_us += common_interval_us;
+			ctx->last_data_status = STATUS_UNDERRUN_EMPTY_SDU_ON_AIR;
+
+		} else if (time_diff_us > (TX_MARGIN_MAX_US + common_interval_us)) {
+
+			/* Data provided too fast. Will need to flush this data */
+			LOG_INF("Data provided too fast. May happen for sync USB. time_diff_us: "
+				" %d (not in range: %u - %u)",
+				time_diff_us, TX_MARGIN_MAX_US + common_interval_us,
+				TX_MARGIN_MIN_US);
+
+			ctx->last_data_status = STATUS_OVERRUN_FLUSHED;
+			return -ECANCELED;
+		}
+
+		/* If ts_ctlr_esti_us_valid is false, this means we shall send with no timestamp.
+		 * This can lead to tx_sync_get returning a timestamp which is +1 or +2 intervals.
+		 */
+	}
 
 	sent_streams = tx_streams_send(ctx, audio_frame, tx, num_tx, num_loc, data_size_pr_stream,
 				       &last_successful_bap_stream, &tx_info);
@@ -608,21 +668,11 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		return -EIO;
 	}
 
-	/* Get the current (wall clock) time */
-	ts_now_us = audio_sync_timer_capture();
-
 	ret = tx_controller_sync_and_correct(ctx, last_successful_bap_stream, common_interval_us,
 					     ts_now_us, tx_info, &status);
+
 	if (ret != 0) {
 		return ret;
-	}
-
-	if ((int32_t)(ts_now_us - ctx->ts_ctlr_esti_us) > 0) {
-		LOG_WRN("Curr time ahead of ctlr time. Flush %u us of data. "
-			"Now: %u us, ctlr: %u us",
-			common_interval_us, ts_now_us, ctx->ts_ctlr_esti_us);
-		ctx->flush_next = true;
-		ctx->ts_ctlr_esti_us_valid = false;
 	}
 
 	tx_publish_sdu_ref_and_finalize(ctx, ts_now_us);
