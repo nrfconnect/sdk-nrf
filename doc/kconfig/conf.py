@@ -44,9 +44,9 @@ html_show_sphinx = False
 
 html_theme_options = {
     "docset": "kconfig", "docsets": utils.ALL_DOCSETS,
-    "prev_next_buttons_location": None
+    "prev_next_buttons_location": None,
+    "logo_url": "https://docs.nordicsemi.com"
 }
-
 # Options for external_content -------------------------------------------------
 
 external_content_contents = [
