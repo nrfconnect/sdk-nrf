@@ -99,21 +99,26 @@ BT_LE_AUDIO_TX_DEFINE(audio_tx_ctx);
 	meta->locations = 0x07;                                                                    \
 	static const uint8_t chan_to_send = 3U;
 
-static void internals_verify(int64_t corr_diff_us, bool ts_ctlr_esti_valid,
-			     uint32_t ts_ctlr_esti_us, bool flush_next)
+static void internals_verify_impl(int64_t corr_diff_us, bool ts_ctlr_esti_valid,
+				  uint32_t ts_ctlr_esti_us,
+				  enum bt_le_audio_tx_last_data_status last_data_status, int line)
 {
 	struct bt_le_audio_tx_ctx *ctx = (struct bt_le_audio_tx_ctx *)audio_tx_ctx;
 
-	zassert_equal(ctx->corr_diff_us, corr_diff_us, "corr_diff_us %lld expected %lld",
-		      ctx->corr_diff_us, corr_diff_us);
+	zassert_equal(ctx->corr_diff_us, corr_diff_us, "corr_diff_us %lld expected %lld, line: %d",
+		      ctx->corr_diff_us, corr_diff_us, line);
 	zassert_equal(ctx->ts_ctlr_esti_us_valid, ts_ctlr_esti_valid,
-		      "ts_ctlr_esti_valid %d expected %d", ctx->ts_ctlr_esti_us_valid,
-		      ts_ctlr_esti_valid);
-	zassert_equal(ctx->ts_ctlr_esti_us, ts_ctlr_esti_us, "ts_ctlr_esti_us %u expected %u",
-		      ctx->ts_ctlr_esti_us, ts_ctlr_esti_us);
-	zassert_equal(ctx->flush_next, flush_next, "flush_next %d expected %d", ctx->flush_next,
-		      flush_next);
+		      "ts_ctlr_esti_valid %d expected %d, line: %d", ctx->ts_ctlr_esti_us_valid,
+		      ts_ctlr_esti_valid, line);
+	zassert_equal(ctx->ts_ctlr_esti_us, ts_ctlr_esti_us,
+		      "ts_ctlr_esti_us %u expected %u, line: %d", ctx->ts_ctlr_esti_us,
+		      ts_ctlr_esti_us, line);
+	zassert_equal(ctx->last_data_status, last_data_status,
+		      "last_data_status %d expected %d, line: %d", ctx->last_data_status,
+		      last_data_status, line);
 }
+
+#define internals_verify(...) internals_verify_impl(__VA_ARGS__, __LINE__)
 
 static void call_tx_sent(struct le_audio_tx_info *tx, uint8_t num_streams)
 {
@@ -146,7 +151,7 @@ ZTEST(audio_tx, test_tx_send_basic_1_stream)
 	zassert_equal(1U, zbus_chan_pub_fake.call_count);
 
 	call_tx_sent(tx, 1U);
-	internals_verify(0, true, 10000U, false);
+	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
 	net_buf_unref(dummy_audio_frame);
 }
@@ -170,7 +175,7 @@ ZTEST(audio_tx, test_tx_send_basic_2_streams)
 	zassert_equal(1U, zbus_chan_pub_fake.call_count);
 
 	call_tx_sent(tx, 2U);
-	internals_verify(0, true, 10000U, false);
+	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
 	net_buf_unref(dummy_audio_frame);
 }
@@ -194,7 +199,7 @@ ZTEST(audio_tx, test_tx_send_basic_3_streams)
 	zassert_equal(1U, zbus_chan_pub_fake.call_count);
 
 	call_tx_sent(tx, 3U);
-	internals_verify(0, true, 10000U, false);
+	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
 	net_buf_unref(dummy_audio_frame);
 }
@@ -207,86 +212,25 @@ ZTEST(audio_tx, test_tx_send_bad_parameters)
 
 	ret = bt_le_audio_tx_send(NULL, dummy_audio_frame, tx, chan_to_send);
 	zassert_equal(-EINVAL, ret, "ret %d", ret);
+	internals_verify(0, false, 0, STATUS_NOT_SET);
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, NULL, tx, chan_to_send);
 	zassert_equal(-EINVAL, ret, "ret %d", ret);
+	internals_verify(0, false, 0, STATUS_NOT_SET);
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, NULL, chan_to_send);
 	zassert_equal(-EINVAL, ret, "ret %d", ret);
+	internals_verify(0, false, 0, STATUS_NOT_SET);
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, 5);
 	zassert_equal(-EINVAL, ret, "ret %d", ret);
+	internals_verify(0, false, 0, STATUS_NOT_SET);
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, 0);
 	zassert_equal(-EINVAL, ret, "ret %d", ret);
+	internals_verify(0, false, 0, STATUS_NOT_SET);
 
 	call_tx_sent(tx, chan_to_send);
-
-	net_buf_unref(dummy_audio_frame);
-}
-
-ZTEST(audio_tx, test_tx_send_too_late)
-{
-	int ret;
-
-	TEST_SETUP_2_STREAMS;
-
-	audio_sync_timer_capture_fake.return_val = UINT32_MAX - 20500U;
-	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = UINT32_MAX - 20000U;
-
-	/* Data is submitted way too late */
-	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
-	zassert_equal(-ETIMEDOUT, ret, "ret %d", ret);
-	zassert_equal(2U, bt_cap_stream_send_fake.call_count, "%d",
-		      bt_cap_stream_send_fake.call_count);
-	zassert_equal(0U, bt_cap_stream_send_ts_fake.call_count);
-
-	zassert_equal(1U, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
-	zassert_equal(1U, zbus_chan_pub_fake.call_count);
-	call_tx_sent(tx, chan_to_send);
-	internals_verify(UINT32_MAX - 30000U, false, UINT32_MAX - 20000U, false);
-
-	audio_sync_timer_capture_fake.return_val = UINT32_MAX - 10500U;
-	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = UINT32_MAX - 10000U;
-
-	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
-	zassert_equal(0, ret, "ret %d", ret);
-	zassert_equal(4U, bt_cap_stream_send_fake.call_count, "%d",
-		      bt_cap_stream_send_fake.call_count);
-	zassert_equal(0U, bt_cap_stream_send_ts_fake.call_count);
-
-	zassert_equal(2U, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
-	zassert_equal(2U, zbus_chan_pub_fake.call_count);
-	call_tx_sent(tx, chan_to_send);
-	internals_verify(0, true, UINT32_MAX - 10000U, false);
-
-	audio_sync_timer_capture_fake.return_val = UINT32_MAX - 500U;
-	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = UINT32_MAX - 0U;
-
-	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
-	zassert_equal(0, ret, "ret %d", ret);
-	zassert_equal(4U, bt_cap_stream_send_fake.call_count, "%d",
-		      bt_cap_stream_send_fake.call_count);
-	zassert_equal(2U, bt_cap_stream_send_ts_fake.call_count);
-
-	zassert_equal(2U, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
-	zassert_equal(3U, zbus_chan_pub_fake.call_count);
-	call_tx_sent(tx, chan_to_send);
-	internals_verify(0, true, UINT32_MAX - 0U, false);
-
-	audio_sync_timer_capture_fake.return_val = UINT32_MAX + 9500U;
-	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = UINT32_MAX + 10000U;
-
-	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
-	zassert_equal(0, ret, "ret %d", ret);
-	zassert_equal(4U, bt_cap_stream_send_fake.call_count, "%d",
-		      bt_cap_stream_send_fake.call_count);
-	zassert_equal(4U, bt_cap_stream_send_ts_fake.call_count);
-
-	zassert_equal(2U, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
-	zassert_equal(4U, zbus_chan_pub_fake.call_count);
-	call_tx_sent(tx, chan_to_send);
-	internals_verify(0, true, UINT32_MAX + 10000U, false);
 
 	net_buf_unref(dummy_audio_frame);
 }
@@ -304,8 +248,8 @@ ZTEST(audio_tx, test_tx_send_many)
 	const uint32_t NUM_ITER = 430000U;
 	uint32_t read_tx_ts_calls = 0U;
 
-	for (uint32_t i = 0U; i < NUM_ITER; i++) {
-		if (i % 100U == 0U) {
+	for (uint32_t i = 0; i < NUM_ITER; i++) {
+		if (i % 100 == 0) {
 			read_tx_ts_calls++;
 		}
 
@@ -328,7 +272,11 @@ ZTEST(audio_tx, test_tx_send_many)
 		zassert_equal(read_tx_ts_calls, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
 		zassert_equal(i + 1U, zbus_chan_pub_fake.call_count);
 		call_tx_sent(tx, chan_to_send);
-		internals_verify(0U, true, (i + 1U) * 10000U, false);
+		if (i == 0) {
+			internals_verify(0, true, (i + 1U) * 10000U, STATUS_SENT_WITHOUT_TS);
+		} else {
+			internals_verify(0, true, (i + 1U) * 10000U, STATUS_SENT_WITH_TS);
+		}
 	}
 
 	net_buf_unref(dummy_audio_frame);
@@ -353,7 +301,7 @@ ZTEST(audio_tx, test_tx_test_api_call_too_slow)
 	zassert_equal(1, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
 	zassert_equal(1, zbus_chan_pub_fake.call_count);
 	call_tx_sent(tx, chan_to_send);
-	internals_verify(0, true, 10000U, false);
+	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
 	/* Simulate that we called too late */
 	audio_sync_timer_capture_fake.return_val = 13000U;
@@ -368,7 +316,7 @@ ZTEST(audio_tx, test_tx_test_api_call_too_slow)
 	zassert_equal(2, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
 	zassert_equal(2, zbus_chan_pub_fake.call_count);
 	call_tx_sent(tx, chan_to_send);
-	internals_verify(0, true, 20000U, false);
+	internals_verify(0, true, 20000U, STATUS_SENT_WITHOUT_TS);
 }
 
 ZTEST(audio_tx, test_tx_test_api_call_too_fast)
@@ -390,7 +338,7 @@ ZTEST(audio_tx, test_tx_test_api_call_too_fast)
 	zassert_equal(1, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
 	zassert_equal(1, zbus_chan_pub_fake.call_count);
 	call_tx_sent(tx, chan_to_send);
-	internals_verify(0, true, 10000U, false);
+	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
 	/* Simulate that we called too fast */
 	audio_sync_timer_capture_fake.return_val = 7000U;
@@ -405,7 +353,7 @@ ZTEST(audio_tx, test_tx_test_api_call_too_fast)
 	zassert_equal(2, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
 	zassert_equal(2, zbus_chan_pub_fake.call_count);
 	call_tx_sent(tx, chan_to_send);
-	internals_verify(0, true, 20000U, false);
+	internals_verify(0, true, 20000U, STATUS_SENT_WITHOUT_TS);
 }
 
 /* Test for what happens when the controller returns drifted timestamps*/
@@ -420,7 +368,7 @@ ZTEST(audio_tx, test_tx_send_send_too_fast)
 	TEST_SETUP_2_STREAMS;
 
 	audio_sync_timer_capture_fake.return_val = 10000U;
-	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 5000U;
+	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
 	zassert_equal(0, ret, "ret %d", ret);
@@ -431,11 +379,62 @@ ZTEST(audio_tx, test_tx_send_send_too_fast)
 	zassert_equal(1U, zbus_chan_pub_fake.call_count);
 
 	call_tx_sent(tx, chan_to_send);
-	internals_verify(-5000, false, 5000U, true);
+	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
-	/* Call send again immediately, should trigger flush */
+	audio_sync_timer_capture_fake.return_val = 20000U;
+	/* Inject that the controller timestamp estimate is ahead */
+	audio_tx_ctx->ts_ctlr_esti_us = 25500;
+
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
 	zassert_equal(-ECANCELED, ret, "ret %d", ret);
+	zassert_equal(2U, bt_cap_stream_send_fake.call_count);
+	zassert_equal(0U, bt_cap_stream_send_ts_fake.call_count);
+
+	zassert_equal(1U, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
+	zassert_equal(1, zbus_chan_pub_fake.call_count);
+
+	call_tx_sent(tx, chan_to_send);
+	internals_verify(0, true, 35500, STATUS_OVERRUN_FLUSHED);
+
+	net_buf_unref(dummy_audio_frame);
+}
+
+ZTEST(audio_tx, test_tx_send_too_slow)
+{
+	int ret;
+
+	TEST_SETUP_2_STREAMS;
+
+	audio_sync_timer_capture_fake.return_val = 10000U;
+	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
+
+	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
+	zassert_equal(0, ret, "ret %d", ret);
+	zassert_equal(2U, bt_cap_stream_send_fake.call_count);
+	zassert_equal(0U, bt_cap_stream_send_ts_fake.call_count);
+
+	zassert_equal(1U, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
+	zassert_equal(1U, zbus_chan_pub_fake.call_count);
+
+	call_tx_sent(tx, chan_to_send);
+	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
+
+	audio_sync_timer_capture_fake.return_val = 20000U;
+	/* Inject that the controller timestamp estimate is ahead */
+	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 11000U;
+	audio_tx_ctx->ts_ctlr_esti_us = 11000;
+
+	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
+	zassert_equal(0, ret, "ret %d", ret);
+	zassert_equal(2, bt_cap_stream_send_fake.call_count);
+	zassert_equal(2, bt_cap_stream_send_ts_fake.call_count);
+
+	zassert_equal(1, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
+	zassert_equal(2, zbus_chan_pub_fake.call_count);
+
+	call_tx_sent(tx, chan_to_send);
+	/*  The timestamp is increased by two intervals to get NULL SDU on air */
+	internals_verify(0, true, 31000, STATUS_UNDERRUN_EMPTY_SDU_ON_AIR);
 
 	net_buf_unref(dummy_audio_frame);
 }
@@ -460,7 +459,7 @@ ZTEST(audio_tx, test_tx_send_send_uncommon_channels)
 	zassert_equal(1U, zbus_chan_pub_fake.call_count);
 
 	call_tx_sent(tx, 2U);
-	internals_verify(0, true, 10000U, false);
+	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
 	net_buf_unref(dummy_audio_frame);
 }
