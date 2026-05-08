@@ -7,10 +7,4 @@
 #ifndef PSA_CRYPTO_DRIVER_CONFIG_H
 #define PSA_CRYPTO_DRIVER_CONFIG_H
 
-#if defined(TF_PSA_CRYPTO_CONFIG_FILE)
-#include TF_PSA_CRYPTO_CONFIG_FILE
-#else
-#include "psa/crypto_config.h"
-#endif
-
 #endif /* PSA_CRYPTO_DRIVER_CONFIG_H */

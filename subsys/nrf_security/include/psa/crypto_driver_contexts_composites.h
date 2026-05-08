@@ -25,7 +25,7 @@
 #ifndef PSA_CRYPTO_DRIVER_CONTEXTS_COMPOSITES_H
 #define PSA_CRYPTO_DRIVER_CONTEXTS_COMPOSITES_H
 
-#include "oberon_psa_common.h"
+#include <tf_psa_crypto_common.h>
 
 #include "psa/crypto_driver_common.h"
 
@@ -86,8 +86,8 @@ typedef union {
  * them in order to avoid building errors. We don't use these at all
  * in the Oberon PSA core, the int type was chosen arbitrarily.
  */
-typedef int psa_driver_sign_hash_interruptible_context_t;
-typedef int psa_driver_verify_hash_interruptible_context_t;
+typedef struct { int dummy; } psa_driver_sign_hash_interruptible_context_t;
+typedef struct { int dummy; } psa_driver_verify_hash_interruptible_context_t;
 
 #endif /* PSA_CRYPTO_DRIVER_CONTEXTS_COMPOSITES_H */
 /* End of automatically generated file. */

@@ -4,12 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-append_with_prefix(src_crypto_core_oberon ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library/
+append_with_prefix(src_crypto_core_oberon ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/platform/
   platform.c
   platform_util.c
 )
 
-append_with_prefix(src_crypto_core_oberon ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library/
+append_with_prefix(src_crypto_core_oberon ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/utilities
+  constant_time.c
+)
+
+append_with_prefix(src_crypto_core_oberon ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/core/
   psa_crypto.c
   psa_crypto_client.c
   psa_crypto_slot_management.c

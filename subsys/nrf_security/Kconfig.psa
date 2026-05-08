@@ -29,8 +29,8 @@ menu "PSA API support"
 config MBEDTLS_PSA_CRYPTO_SPM
 	bool
 	help
-	  Configation that enables alternate naming of mbedcrypto symbols in
-	  scope of TF-M build (Prefixes with mbedcrypto__)
+	  Configation that enables alternate naming of PSA Crypto symbols in
+	  scope of TF-M secure build (prefixes with mbedcrypto__).
 
 config MBEDTLS_PSA_CRYPTO_STORAGE_C
 	bool "PSA storage for persistent keys"

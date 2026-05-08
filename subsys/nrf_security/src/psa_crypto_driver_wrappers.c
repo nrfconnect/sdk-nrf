@@ -10,10 +10,9 @@
  *  Warning: This file will be auto-generated in the future.
  */
 
-#include "common.h"
-#include "psa_crypto_core.h"
-#include "psa_crypto_driver_wrappers.h"
-#include <string.h>
+#include <tf_psa_crypto_common.h>
+#include <psa_crypto_core.h>
+#include <psa_crypto_driver_wrappers.h>
 
 #if defined(MBEDTLS_PSA_CRYPTO_C)
 
@@ -2573,8 +2572,7 @@ psa_status_t psa_driver_wrapper_encapsulate(const psa_key_attributes_t *attribut
 					    size_t *output_key_length, uint8_t *ciphertext,
 					    size_t ciphertext_size, size_t *ciphertext_length)
 {
-	psa_status_t status;
-	(void)status;
+	psa_status_t status __attribute__((unused));
 	psa_key_location_t location =
 		 PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
@@ -2622,8 +2620,7 @@ psa_status_t psa_driver_wrapper_decapsulate(const psa_key_attributes_t *attribut
 					    uint8_t *output_key, size_t output_key_size,
 					    size_t *output_key_length)
 {
-	psa_status_t status;
-	(void)status;
+	psa_status_t status __attribute__((unused));
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
