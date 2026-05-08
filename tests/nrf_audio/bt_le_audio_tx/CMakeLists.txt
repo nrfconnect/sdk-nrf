@@ -26,4 +26,5 @@ target_include_directories(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/include
   ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf_audio/fakes/
   ${ZEPHYR_NRF_MODULE_DIR}/include
+  ${ZEPHYR_NRFXLIB_MODULE_DIR}/softdevice_controller/include
 )

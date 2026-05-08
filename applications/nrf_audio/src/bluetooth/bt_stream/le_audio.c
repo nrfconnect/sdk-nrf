@@ -55,6 +55,8 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
 		return -EINVAL;
 	}
 
+	/* A valid packet will always have a valid timestamp from the Softdevice Controller*/
+
 	if (!(info->flags & BT_ISO_FLAGS_VALID) ||
 	    audio_frame->len != bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg)) {
 		meta->bad_data = meta->locations;
