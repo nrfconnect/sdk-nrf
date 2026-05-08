@@ -237,6 +237,23 @@ The following boards are defined in the :file:`nrf/boards/nordic/` folder.
 |                   |            |                                                          | ``thingy91x/nrf5340/cpunet``                                              |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
 
+.. _nrf_boards:
+
+Board documentation in sdk-nrf
+******************************
+
+Out of the :ref:`app_boards_names_nrf`, the following boards have dedicated definition pages:
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   ../boards/nordic/*/doc/index
+
+.. note::
+
+   Some of these board definitions may move to the sdk-zephyr repository in a future release.
+
 .. _shield_names_nrf:
 
 Shields included in sdk-nrf

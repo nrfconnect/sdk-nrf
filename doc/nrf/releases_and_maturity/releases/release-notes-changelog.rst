@@ -692,3 +692,5 @@ Documentation
 Updated:
 
   * The :ref:`ug_nrf54h20_architecture_lifecycle` documentation page, expanding the description of the LCS states.
+  * The :ref:`app_boards` documentation page by moving the pages with board definitions under the :ref:`nrf_boards` section.
+    This update removes the Supported boards section from the top level of the |NCS| documentation.

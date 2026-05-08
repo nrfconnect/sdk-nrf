@@ -44,7 +44,6 @@ Varied reference designs
 
    gsg_guides
    installation
-   boards
    app_dev
    test_and_optimize
    security
