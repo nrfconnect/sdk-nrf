@@ -22,10 +22,8 @@
 LOG_MODULE_REGISTER(le_audio_rx, CONFIG_LE_AUDIO_RX_LOG_LEVEL);
 
 struct rx_stats {
-	uint32_t recv_cnt;
-	uint32_t good_frame_cnt;
-	uint32_t bad_frame_cnt;
-	bool prev_bad_data;
+	uint64_t good_frame_cnt;
+	uint64_t bad_or_empty_frame_cnt;
 };
 
 static bool initialized;
@@ -109,33 +107,37 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 	static uint32_t num_overruns;
 	static uint32_t num_thrown;
 
+	__ASSERT_NO_MSG(audio_frame_rx != NULL);
+	__ASSERT_NO_MSG(meta != NULL);
+
 	if (!initialized) {
 		ERR_CHK_MSG(-EPERM, "Data received but le_audio_rx is not initialized");
 	}
 
-	rx_stats[location_index].recv_cnt++;
-
 	if (meta->bad_data) {
-		rx_stats[location_index].bad_frame_cnt++;
+		rx_stats[location_index].bad_or_empty_frame_cnt++;
 	} else {
 		rx_stats[location_index].good_frame_cnt++;
 	}
 
-	if ((rx_stats[location_index].recv_cnt % 100) == 0 && rx_stats[location_index].recv_cnt) {
+	uint64_t total_frames = rx_stats[location_index].good_frame_cnt +
+				rx_stats[location_index].bad_or_empty_frame_cnt;
+	double bad_frame_percentage =
+		(total_frames > 0) ? (((double)rx_stats[location_index].bad_or_empty_frame_cnt /
+				       total_frames) *
+				      100)
+				   : 0.0;
+
+	if ((total_frames % 100) == 0 && (total_frames != 0)) {
 		/* NOTE: The string below is used by the Nordic CI system */
-		LOG_DBG("ISO RX SDUs: Loc: %d Total: %d Bad: %d", location_index,
-			rx_stats[location_index].recv_cnt, rx_stats[location_index].bad_frame_cnt);
+		LOG_DBG("ISO RX SDUs: Loc: %u Total: %llu Bad: %llu", location_index, total_frames,
+			rx_stats[location_index].bad_or_empty_frame_cnt);
 	}
 
-	if (meta->bad_data && !rx_stats[location_index].prev_bad_data) {
-		LOG_INF_RATELIMIT_RATE(1000,
-				       "Bad or 0 SDU: Loc: %u Total: %u Bad: %u. (Prints "
-				       "good->bad transition)",
-				       location_index, rx_stats[location_index].recv_cnt,
-				       rx_stats[location_index].bad_frame_cnt);
-	}
-
-	rx_stats[location_index].prev_bad_data = meta->bad_data;
+	LOG_DBG_RATELIMIT_RATE(
+		10000, "Bad or 0 SDU: Loc: %u Total: %llu Empty/bad: %llu (%2.3f %%)",
+		location_index, total_frames, rx_stats[location_index].bad_or_empty_frame_cnt,
+		bad_frame_percentage);
 
 	if (stream_state_get() != STATE_STREAMING) {
 		/* Throw away data */
@@ -264,6 +266,10 @@ check_send:
  */
 static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 {
+	ARG_UNUSED(dummy1);
+	ARG_UNUSED(dummy2);
+	ARG_UNUSED(dummy3);
+
 	int ret;
 	struct net_buf *audio_frame = NULL;
 

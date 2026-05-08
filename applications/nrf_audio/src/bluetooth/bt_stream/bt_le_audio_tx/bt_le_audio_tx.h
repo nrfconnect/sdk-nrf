@@ -55,6 +55,14 @@ struct bt_le_audio_tx_ctx;
 
 #define TX_BUF_NUM (GROUP_MAX * SUBGROUP_MAX * TX_STREAMS_MAX * HCI_ISO_BUF_PER_CHAN)
 
+enum bt_le_audio_tx_last_data_status {
+	STATUS_NOT_SET = 0,		  /* Initial status */
+	STATUS_SENT_WITH_TS,		  /* Data sent with timestamp */
+	STATUS_SENT_WITHOUT_TS,		  /* Data sent without timestamp */
+	STATUS_OVERRUN_FLUSHED,		  /* Data overrun, flushed */
+	STATUS_UNDERRUN_EMPTY_SDU_ON_AIR, /* Data underrun, empty SDU on air */
+};
+
 struct tx_inf {
 	uint16_t iso_conn_handle;
 	struct bt_iso_tx_info iso_tx;
@@ -80,10 +88,10 @@ struct bt_le_audio_tx_ctx {
 	/* The previous "now" timestamp and validity */
 	uint32_t ts_last_us;
 	bool ts_last_us_valid;
-	/* Should the data in the next function call be flushed */
-	bool flush_next;
 	/* This device is Bluetooth clock master (central/unicast client or broadcast source) */
 	bool is_ble_clock_master;
+	/* Status of the last submitted data */
+	enum bt_le_audio_tx_last_data_status last_data_status;
 };
 
 #define BT_LE_AUDIO_TX_DEFINE(name)                                                                \
@@ -124,9 +132,9 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
  * @param[in]	ctx		Pointer to TX context.
  * @param[in]	stream_idx	Stream index.
  *
+ * @retval	0		Success.
  * @retval	-EINVAL		ctx is NULL or the module has not been initialized.
  * @retval      -ESPIPE		stream_idx is out of bounds.
- * @retval	0		Success.
  */
 int bt_le_audio_tx_stream_started(struct bt_le_audio_tx_ctx *ctx, struct stream_index stream_idx);
 
@@ -136,9 +144,9 @@ int bt_le_audio_tx_stream_started(struct bt_le_audio_tx_ctx *ctx, struct stream_
  * @param[in]	ctx		Pointer to TX context.
  * @param[in]	stream_idx	Stream index.
  *
+ * @retval	0		Success.
  * @retval	-EINVAL		ctx is NULL or the module has not been initialized.
  * @retval      -ESPIPE		stream_idx is out of bounds.
- * @retval	0		Success.
  */
 int bt_le_audio_tx_stream_sent(struct bt_le_audio_tx_ctx *ctx, struct stream_index stream_idx);
 
@@ -150,8 +158,8 @@ int bt_le_audio_tx_stream_sent(struct bt_le_audio_tx_ctx *ctx, struct stream_ind
  *				(Unicast client) or Broadcast source,
  *				false = peripheral (unicast server) or Broadcast sink.
  *
- * @retval	-EINVAL		@p ctx is NULL or required configuration is missing.
  * @retval	0		Success.
+ * @retval	-EINVAL		@p ctx is NULL or required configuration is missing.
  */
 int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx, bool is_clock_master);
 
