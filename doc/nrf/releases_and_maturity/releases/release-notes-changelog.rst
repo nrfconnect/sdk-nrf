@@ -598,6 +598,7 @@ Bluetooth libraries and services
 * :ref:`hogp_readme` library:
 
   * Fixed an issue where the :c:func:`bt_hogp_rep_unsubscribe` function did not clear the notification callback, which prevented the :c:func:`bt_hogp_rep_subscribe` function from succeeding after unsubscribing.
+  * Added support for Bluetooth HID Shorter Connection Intervals (SCI) on the HID device and HID host sides (:kconfig:option:`CONFIG_BT_HIDS_SCI`, :kconfig:option:`CONFIG_BT_HOGP_SCI`).
 
 Common Application Framework
 ----------------------------

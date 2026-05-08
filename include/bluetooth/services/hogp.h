@@ -143,6 +143,54 @@ struct bt_hogp_init_params {
  */
 struct bt_hogp_rep_info;
 
+/** @brief Callback function that is called when the HID SCI mode changed GATT
+ *         notification is received.
+ *
+ * @param conn Connection object.
+ * @param mode New SCI mode value.
+ */
+typedef void (*bt_hogp_sci_mode_changed_cb)(struct bt_conn *conn,
+					    enum bt_hids_sci_mode_value mode);
+
+/**
+ * @brief Callback function that is called when a HID SCI mode read is completed.
+ *
+ * @param hogp HOGP object.
+ * @param err  ATT error code.
+ * @param mode SCI mode value.
+ */
+typedef void (*bt_hogp_sci_mode_read_cb)(struct bt_hogp *hogp, int err,
+			       enum bt_hids_sci_mode_value mode);
+
+/** @brief SCI mode data.
+ *
+ * This structure is defined here as it is needed in the bt_hogp structure definition.
+ * Do not use any of the fields here directly.
+ */
+struct bt_hogp_sci_mode_data {
+	/** Function to call when the SCI mode is changed (@ref bt_hogp_sci_mode_subscribe). */
+	bt_hogp_sci_mode_changed_cb notify_cb;
+
+	/** Notify params. */
+	struct bt_gatt_subscribe_params notify_params;
+
+	/** One-shot read callback for @ref bt_hogp_sci_mode_read. */
+	bt_hogp_sci_mode_read_cb read_cb;
+};
+
+/** @brief SCI Information.
+ */
+struct bt_hogp_sci_info {
+	/** Minimum supported connection interval in units of 125us. */
+	uint8_t min_supported_conn_interval_125us;
+
+	/** Number of connection interval groups. */
+	uint8_t num_groups;
+
+	/** Connection interval groups. */
+	struct bt_conn_le_min_conn_interval_group groups[BT_CONN_LE_MAX_CONN_INTERVAL_GROUPS];
+};
+
 /**
  * @brief HOGP object.
  *
@@ -157,6 +205,15 @@ struct bt_hogp {
 	struct bt_conn *conn;
 	/** HIDS client information. */
 	struct bt_hids_info info_val;
+
+#if defined(CONFIG_BT_HOGP_SCI)
+	/** HID SCI Mode data. */
+	struct bt_hogp_sci_mode_data sci_mode_data;
+
+	/** Cached HID SCI Information. */
+	struct bt_hogp_sci_info sci_info;
+#endif
+
 	/** Handlers for descriptors */
 	struct bt_hogp_handlers {
 		/** Protocol Mode Characteristic value handle. */
@@ -167,6 +224,14 @@ struct bt_hogp {
 		uint16_t info;
 		/** HID Control Point Characteristic handle. */
 		uint16_t cp;
+#if defined(CONFIG_BT_HOGP_SCI)
+		/** HID SCI Information Characteristic handle. */
+		uint16_t sci_info;
+		/** HID SCI Mode Characteristic handle. */
+		uint16_t sci_mode;
+		/** HID SCI Mode CCC handle. */
+		uint16_t sci_mode_ccc;
+#endif
 	} handlers;
 	/**
 	 * @brief Callback for HIDS client ready
@@ -193,6 +258,7 @@ struct bt_hogp {
 	 * @sa bt_hogp::read_params_sem
 	 */
 	struct bt_gatt_read_params read_params;
+
 	/**
 	 * @brief The semaphore for common read parameters protection.
 	 *
@@ -530,6 +596,91 @@ int bt_hogp_suspend(struct bt_hogp *hogp);
  */
 int bt_hogp_exit_suspend(struct bt_hogp *hogp);
 
+/**
+ * @brief Check if the HID device supports SCI.
+ *
+ * @note This function will return false both if the HID information does
+ *       not contain the SCI supported flag as well as if an error occurred
+ *       during the HID SCI initialization.
+ *
+ * @param hogp HOGP object.
+ *
+ * @return true if the HID device supports SCI, false otherwise.
+ */
+bool bt_hogp_sci_supported(const struct bt_hogp *hogp);
+
+/**
+ * @brief Check if the HID device supports SCI Low Power mode.
+ *
+ * @param hogp HOGP object.
+ *
+ * @return true if the HID device supports SCI Low Power mode, false otherwise.
+ */
+bool bt_hogp_sci_low_power_mode_supported(const struct bt_hogp *hogp);
+
+/**
+ * @brief Read the current HID SCI mode from the HID device.
+ * @param hogp HOGP object.
+ * @param func Callback invoked when read completes.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int bt_hogp_sci_mode_read(struct bt_hogp *hogp, bt_hogp_sci_mode_read_cb func);
+
+/**
+ * @brief Request HID SCI mode activation.
+ *
+ * This function is used to request that the HID device enters a specific
+ * HID SCI mode.
+ *
+ * @param hogp HOGP object.
+ * @param mode HID SCI mode to enable
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int bt_hogp_sci_mode_req(struct bt_hogp *hogp, enum bt_hids_sci_mode_value mode);
+
+/**
+ * @brief Subscribe to HID SCI mode changed notifications.
+ *
+ * @param hogp HOGP object.
+ * @param func Function to call when the SCI mode changes.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int bt_hogp_sci_mode_subscribe(struct bt_hogp *hogp, bt_hogp_sci_mode_changed_cb func);
+
+/**
+ * @brief Unsubscribe from SCI mode changed notifications.
+ *
+ * @param hogp HOGP object.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int bt_hogp_sci_mode_unsubscribe(struct bt_hogp *hogp);
+
+/**
+ * @brief Get the cached HID SCI Information.
+ *
+ * This function fills the SCI Information structure with the cached SCI Information.
+ * It does not generate any traffic on the radio.
+ * The SCI Information is read once after connection to the HID device and cached
+ * in the HOGP object.
+ *
+ * @param hogp HOGP object.
+ * @param sci_info Pointer to the SCI Information structure to fill.
+ *
+ * @retval 0 If the operation was successful.
+ * @retval -ENOTSUP The HID SCI Device does not support mandatory connection intervals.
+ *                  The sci_info will be filled with values and usable.
+ *                  It is up to the upper layer what to do with this information.
+ * @retval -EINVAL The passed parameters are invalid.
+ */
+int bt_hogp_sci_info_get(struct bt_hogp *hogp, struct bt_hogp_sci_info *sci_info);
 
 /**
  * @brief Get the connection object from the HIDS client.

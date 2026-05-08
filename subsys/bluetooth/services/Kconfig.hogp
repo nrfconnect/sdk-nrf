@@ -12,6 +12,11 @@ menuconfig BT_HOGP
 
 if BT_HOGP
 
+config BT_HOGP_SCI
+	bool "HID Shorter Connection Intervals (SCI) support in HOGP"
+	depends on BT_SHORTER_CONNECTION_INTERVALS
+	select EXPERIMENTAL
+
 module = BT_HOGP
 module-str = HIDS Client
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
