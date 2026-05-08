@@ -11,7 +11,9 @@
 #include <dfu/dfu_target_stream.h>
 #include <dfu/dfu_target_full_modem.h>
 #include <zephyr/storage/flash_map.h>
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #include <flash_map_pm.h>
+#endif
 
 LOG_MODULE_REGISTER(dfu_target_full_modem, CONFIG_DFU_TARGET_LOG_LEVEL);
 
@@ -44,6 +46,7 @@ int dfu_target_full_modem_cfg(const struct dfu_target_full_modem_params *params)
 	dfu_params.dev = &flash_dev;
 
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION)
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 	const struct flash_area *fa;
 	int err;
 
@@ -55,7 +58,22 @@ int dfu_target_full_modem_cfg(const struct dfu_target_full_modem_params *params)
 	flash_dev.dev = fa->fa_dev;
 	flash_dev.offset = fa->fa_off;
 	flash_dev.size = fa->fa_size;
+
+#else /* !CONFIG_PARTITION_MANAGER_ENABLED */
+
+#if DT_HAS_CHOSEN(nordic, fmfu_storage)
+#define FMFU_PARTITION DT_CHOSEN(nordic, fmfu_storage_partition)
 #else
+#define FMFU_PARTITION DT_NODELABEL(fmfu_storage_partition)
+#endif
+
+	flash_dev.dev = PARTITION_NODE_DEVICE(FMFU_PARTITION);
+	flash_dev.offset = PARTITION_NODE_OFFSET(FMFU_PARTITION);
+	flash_dev.size = PARTITION_NODE_SIZE(FMFU_PARTITION);
+
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
+
+#else /* !CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION */
 	flash_dev = *params->dev;
 #endif
 

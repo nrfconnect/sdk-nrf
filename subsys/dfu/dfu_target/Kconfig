@@ -117,10 +117,18 @@ config DFU_TARGET_FULL_MODEM_EXT_FLASH_SIZE
 	default 0x400000 if SOC_SERIES_NRF91
 
 config DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION
-	default PM_EXTERNAL_FLASH_ENABLED
+	default PM_EXTERNAL_FLASH_ENABLED if PARTITION_MANAGER_ENABLED
+	default $(dt_chosen_enabled,fmfu_storage)
 	depends on DFU_TARGET_FULL_MODEM
-	select PM_PARTITION_REGION_FMFU_STORAGE_EXTERNAL
+	select PM_PARTITION_REGION_FMFU_STORAGE_EXTERNAL if PARTITION_MANAGER_ENABLED
 	bool "Use a dedicated FMFU partition on the external flash device"
+	help
+	  When Partition Manager is enabled, the ``fmfu_storage`` partition is created
+	  automatically, if ``nordic,pm-ext-flash`` is set to an external flash device.
+
+	  When Partition Manager is disabled, the application must define a
+	  fixed partition in devicetree and set the ``fmfu_storage`` chosen
+	  property to point to it.
 
 config DFU_TARGET_CUSTOM
 	bool "Custom application-controlled update support"
