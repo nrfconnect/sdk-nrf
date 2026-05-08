@@ -267,12 +267,14 @@ def perform_dfu(pid, vid, serial_number, image, chip, logging):
             sys.exit(1)
 
     # Assemble DFU update command:
-    command = (
-        f"nrfutil device program --serial-number {serial_number} --firmware {image}"
-    )
+    command = [
+        "nrfutil", "device", "program",
+        "--serial-number", serial_number,
+        "--firmware", image,
+    ]
 
     logging.debug(f"Executing command: {command}")
-    os.system(command)
+    __import__("subprocess").run(command, check=False)
 
 
 def detect_family_from_zip(zip_file, logging):
