@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/types.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
@@ -18,6 +19,7 @@
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/uuid.h>
+#include <zephyr/net_buf.h>
 
 #include <bluetooth/services/hids.h>
 
@@ -48,6 +50,63 @@
 	(BT_GATT_PERM_READ | BT_GATT_PERM_WRITE)                     \
 	)
 
+#if defined(CONFIG_BT_HIDS_SCI)
+
+/** Expands to CONFIG_BT_HIDS_SCI_{mode}{suffix} via token pasting.
+ *  Example: CONFIG_BT_HIDS_SCI_DEFAULT_INTERVAL_MIN_125US.
+ */
+#define HIDS_SCI_KCONFIG(mode, suffix) CONFIG_BT_HIDS_SCI_##mode##suffix
+
+/** Expands to a static const struct bt_conn_le_conn_rate_param for the given mode.
+ *  BUILD_ASSERTs mirror Zephyr @c le_conn_rate_common_params_valid() in
+ *  @c conn.c (Core 6.2 Vol 4 Part E §7.8.154) plus Link Layer supervision pacing
+ *  (Vol 6 Part B §§4.5.1–4.5.2).
+ */
+#define HIDS_SCI_DEFINE_CONN_RATE_PARAM(name, mode) \
+	BUILD_ASSERT( \
+		HIDS_SCI_KCONFIG(mode, _SUBRATE_MAX) * \
+		(1 + HIDS_SCI_KCONFIG(mode, _MAX_LATENCY)) \
+		<= 500, \
+		"HIDS SCI " #mode ": Core connSubrate*(latency+1) must be <= 500"); \
+	BUILD_ASSERT(HIDS_SCI_KCONFIG(mode, _CONTINUATION_NUM) \
+		< HIDS_SCI_KCONFIG(mode, _SUBRATE_MAX), \
+		"HIDS SCI " #mode ": continuation number must be less than subrate maximum"); \
+	BUILD_ASSERT( \
+		HIDS_SCI_KCONFIG(mode, _SUPERVISION_TIMEOUT_10MS) * 10000 > \
+		(uint64_t)(1 + HIDS_SCI_KCONFIG(mode, _MAX_LATENCY)) * \
+		HIDS_SCI_KCONFIG(mode, _SUBRATE_MAX) * \
+		HIDS_SCI_KCONFIG(mode, _INTERVAL_MAX_125US) * 250, \
+		"HIDS SCI " #mode ": supervision timeout must exceed " \
+		"2*(1+latency)*subrate*interval (Vol 6 Part B §4.5.2)"); \
+	static const struct bt_conn_le_conn_rate_param (name) = { \
+		.interval_min_125us = (uint16_t)HIDS_SCI_KCONFIG(mode, _INTERVAL_MIN_125US), \
+		.interval_max_125us = (uint16_t)HIDS_SCI_KCONFIG(mode, _INTERVAL_MAX_125US), \
+		.subrate_min = (uint16_t)HIDS_SCI_KCONFIG(mode, _SUBRATE_MIN), \
+		.subrate_max = (uint16_t)HIDS_SCI_KCONFIG(mode, _SUBRATE_MAX), \
+		.max_latency = (uint16_t)HIDS_SCI_KCONFIG(mode, _MAX_LATENCY), \
+		.continuation_number = (uint16_t)HIDS_SCI_KCONFIG( \
+			mode, _CONTINUATION_NUM), \
+		.supervision_timeout_10ms = (uint16_t)HIDS_SCI_KCONFIG( \
+			mode, _SUPERVISION_TIMEOUT_10MS), \
+		.min_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MIN_125US, \
+		.max_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MAX_125US, \
+	}
+
+HIDS_SCI_DEFINE_CONN_RATE_PARAM(hids_sci_conn_rate_default, DEFAULT);
+HIDS_SCI_DEFINE_CONN_RATE_PARAM(hids_sci_conn_rate_fast, FAST);
+#if defined(CONFIG_BT_HIDS_SCI_LOW_POWER_MODE)
+HIDS_SCI_DEFINE_CONN_RATE_PARAM(hids_sci_conn_rate_low_power, LOW_POWER);
+#endif
+HIDS_SCI_DEFINE_CONN_RATE_PARAM(hids_sci_conn_rate_full_range, FULL_RANGE);
+
+/* TODO: Currently only a single HID service supporting SCI is supported.
+ * Fix this in NCSDK-38984
+ *
+ * A pointer to the HID service is stored to be able to notify the service about
+ * SCI mode changes and make sure that only one SCI-supporting HID service is present.
+ */
+static struct bt_hids *sci_mode_hids_obj;
+#endif /* CONFIG_BT_HIDS_SCI */
 
 LOG_MODULE_REGISTER(bt_hids, CONFIG_BT_HIDS_LOG_LEVEL);
 
@@ -55,6 +114,21 @@ int bt_hids_connected(struct bt_hids *hids_obj, struct bt_conn *conn)
 {
 	__ASSERT_NO_MSG(conn != NULL);
 	__ASSERT_NO_MSG(hids_obj != NULL);
+
+#if defined(CONFIG_BT_HIDS_SCI)
+	/* TODO: NCSDK-38983: Remove this loop once multiple connections are supported */
+	for (size_t i = 0; i < bt_conn_ctx_count(hids_obj->conn_ctx); i++) {
+		const struct bt_conn_ctx *ctx =
+			bt_conn_ctx_get_by_id(hids_obj->conn_ctx, i);
+
+		if (ctx) {
+			LOG_WRN("Currently only one connection "
+				"per HID service supporting SCI is supported. "
+				"Using HID SCI modes might produce unexpected results.");
+			bt_conn_ctx_release(hids_obj->conn_ctx, ctx->data);
+		}
+	}
+#endif
 
 	struct bt_hids_conn_data *conn_data =
 		bt_conn_ctx_alloc(hids_obj->conn_ctx, conn);
@@ -91,6 +165,10 @@ int bt_hids_connected(struct bt_hids *hids_obj, struct bt_conn *conn)
 		conn_data->feat_rep_ctx +=
 		    hids_obj->outp_rep_group.reports[i].size;
 	}
+
+#if defined(CONFIG_BT_HIDS_SCI)
+	conn_data->sci_mode = BT_HIDS_SCI_MODE_NONE;
+#endif
 
 	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
 
@@ -701,6 +779,301 @@ static ssize_t hids_info_read(struct bt_conn *conn,
 				 BT_HIDS_INFORMATION_LEN);
 }
 
+#if defined(CONFIG_BT_HIDS_SCI)
+static ssize_t hid_sci_information_load(struct net_buf_simple *sbuf)
+{
+	int err = 0;
+
+	struct bt_conn_le_min_conn_interval_info sci_info;
+
+	err = bt_conn_le_read_min_conn_interval_groups(&sci_info);
+
+	if (err) {
+		LOG_ERR("Failed to read connection interval info: %d", err);
+		switch (err) {
+		case -ENOMEM:
+		case -ENOBUFS:
+			return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
+		default:
+			return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		}
+	}
+
+	if (sci_info.num_groups > BT_HIDS_SCI_INFORMATION_MAX_GROUPS) {
+		LOG_WRN("Number of connection interval groups exceeds max allowed group count "
+			"in SCI Information: %u > %u. Truncating to %u groups.",
+			sci_info.num_groups, BT_HIDS_SCI_INFORMATION_MAX_GROUPS,
+			BT_HIDS_SCI_INFORMATION_MAX_GROUPS);
+		sci_info.num_groups = BT_HIDS_SCI_INFORMATION_MAX_GROUPS;
+	}
+
+	net_buf_simple_add_u8(sbuf, (uint8_t)(sci_info.min_supported_conn_interval_us
+					      / BT_HCI_LE_SCI_INTERVAL_UNIT_US));
+	LOG_DBG("min_supported_conn_interval_us: %u",
+	       sci_info.min_supported_conn_interval_us);
+	net_buf_simple_add_u8(sbuf, sci_info.num_groups);
+	LOG_DBG("num_groups: %u", sci_info.num_groups);
+
+	for (size_t i = 0; i < sci_info.num_groups; i++) {
+		net_buf_simple_add_le16(sbuf, sci_info.groups[i].min_125us);
+		LOG_DBG("group[%zu] min_125us: %u",
+		       i,
+		       sci_info.groups[i].min_125us);
+		net_buf_simple_add_le16(sbuf, sci_info.groups[i].max_125us);
+		LOG_DBG("group[%zu] max_125us: %u",
+		       i,
+		       sci_info.groups[i].max_125us);
+		net_buf_simple_add_le16(sbuf, sci_info.groups[i].stride_125us);
+		LOG_DBG("group[%zu] stride_125us: %u",
+		       i,
+		       sci_info.groups[i].stride_125us);
+	}
+
+	return (ssize_t)sbuf->len;
+}
+
+static ssize_t hids_sci_info_read(struct bt_conn *conn,
+	struct bt_gatt_attr const *attr, void *buf,
+	uint16_t len, uint16_t offset)
+{
+	LOG_DBG("Reading from HID SCI information characteristic.");
+
+	NET_BUF_SIMPLE_DEFINE(sci_sbuf, BT_HIDS_SCI_INFORMATION_MAX_LEN);
+	ssize_t sci_info_len = 0;
+
+	sci_info_len = hid_sci_information_load(&sci_sbuf);
+
+	if (sci_info_len < 0) {
+		LOG_ERR("Failed to load SCI information");
+		return sci_info_len;
+	}
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, sci_sbuf.data, sci_info_len);
+}
+
+static ssize_t hids_sci_mode_read(struct bt_conn *conn,
+				  struct bt_gatt_attr const *attr,
+				  void *buf, uint16_t len,
+				  uint16_t offset)
+{
+	LOG_DBG("Reading from SCI Mode characteristic.");
+
+	if (!sci_mode_hids_obj) {
+		LOG_ERR("No HID service found");
+		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
+	}
+
+	ssize_t ret_len;
+
+	struct bt_hids_conn_data *conn_data =
+		bt_conn_ctx_get(sci_mode_hids_obj->conn_ctx, conn);
+
+	if (!conn_data) {
+		LOG_ERR("The context was not found");
+		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
+	}
+
+	ret_len = bt_gatt_attr_read(conn, attr, buf, len, offset, &conn_data->sci_mode,
+				 sizeof(uint8_t));
+
+	bt_conn_ctx_release(sci_mode_hids_obj->conn_ctx, (void *)conn_data);
+
+	return ret_len;
+
+}
+
+static void hids_sci_mode_ccc_changed(struct bt_gatt_attr const *attr, uint16_t value)
+{
+	LOG_DBG("SCI Mode CCCD has changed.");
+
+	if (value == BT_GATT_CCC_NOTIFY) {
+		LOG_DBG("Notification for SCI Mode has been turned on");
+	} else {
+		LOG_DBG("Notification for SCI Mode has been turned off");
+	}
+}
+
+static const struct bt_conn_le_conn_rate_param *get_sci_conn_rate_param_for_mode(
+	enum bt_hids_sci_mode_value mode)
+{
+	switch (mode) {
+	case BT_HIDS_SCI_MODE_DEFAULT:
+		return &hids_sci_conn_rate_default;
+	case BT_HIDS_SCI_MODE_FAST:
+		return &hids_sci_conn_rate_fast;
+#if defined(CONFIG_BT_HIDS_SCI_LOW_POWER_MODE)
+	case BT_HIDS_SCI_MODE_LOW_POWER:
+		return &hids_sci_conn_rate_low_power;
+#endif
+	case BT_HIDS_SCI_MODE_FULL_RANGE:
+		return &hids_sci_conn_rate_full_range;
+	default:
+		LOG_ERR("Invalid SCI mode: %d", mode);
+		return NULL;
+	}
+}
+
+int bt_hids_sci_mode_get(struct bt_conn *conn, enum bt_hids_sci_mode_value *mode)
+{
+	if (conn == NULL || mode == NULL) {
+		return -EINVAL;
+	}
+
+	if (sci_mode_hids_obj == NULL) {
+		LOG_ERR("No HID service found");
+		return -ENOENT;
+	}
+
+	struct bt_hids_conn_data *conn_data = bt_conn_ctx_get(sci_mode_hids_obj->conn_ctx, conn);
+
+	if (!conn_data) {
+		LOG_WRN("The context was not found");
+		return -ENOENT;
+	}
+
+	*mode = conn_data->sci_mode;
+
+	bt_conn_ctx_release(sci_mode_hids_obj->conn_ctx, (void *)conn_data);
+
+	return 0;
+}
+
+int bt_hids_sci_mode_change_request(struct bt_conn *conn,
+				 enum bt_hids_sci_mode_value mode)
+{
+	struct bt_conn_le_conn_rate_param const *params = NULL;
+	int err = 0;
+
+	if (conn == NULL) {
+		return -EINVAL;
+	}
+
+	if (sci_mode_hids_obj == NULL) {
+		LOG_ERR("No HID service found");
+		return -ENOENT;
+	}
+
+	struct bt_hids_conn_data *conn_data = bt_conn_ctx_get(sci_mode_hids_obj->conn_ctx, conn);
+
+	if (!conn_data) {
+		LOG_WRN("The context was not found");
+		return -ENOENT;
+	}
+
+	params = get_sci_conn_rate_param_for_mode(mode);
+	if (params == NULL) {
+		bt_conn_ctx_release(sci_mode_hids_obj->conn_ctx, (void *)conn_data);
+		return -EINVAL;
+	}
+
+	err = bt_conn_le_conn_rate_request(conn, params);
+
+	if (err) {
+		LOG_ERR("SCI conn rate request failed (%d)", err);
+	}
+
+	bt_conn_ctx_release(sci_mode_hids_obj->conn_ctx, (void *)conn_data);
+
+	return err;
+}
+
+bool bt_hids_sci_mode_validate(enum bt_hids_sci_mode_value mode,
+			       const struct bt_conn_le_conn_rate_changed *params)
+{
+	const struct bt_conn_le_conn_rate_param *mode_params =
+		get_sci_conn_rate_param_for_mode(mode);
+
+	if (params == NULL || mode_params == NULL) {
+		return false;
+	}
+
+	const uint64_t interval_min_us =
+		(uint64_t)mode_params->interval_min_125us * 125;
+	const uint64_t interval_max_us =
+		(uint64_t)mode_params->interval_max_125us * 125;
+
+	if (params->interval_us < interval_min_us || params->interval_us > interval_max_us) {
+		LOG_WRN("Interval: %u us is outside allowed range %llu-%llu us for mode %d",
+			params->interval_us, (unsigned long long)interval_min_us,
+			(unsigned long long)interval_max_us, mode);
+		return false;
+	}
+
+	if (params->subrate_factor < mode_params->subrate_min ||
+	    params->subrate_factor > mode_params->subrate_max) {
+		LOG_WRN("Subrate factor: %u is outside allowed range %u-%u for mode %d",
+			params->subrate_factor, mode_params->subrate_min,
+			mode_params->subrate_max, mode);
+		return false;
+	}
+
+	if (params->peripheral_latency > mode_params->max_latency) {
+		LOG_WRN("Peripheral latency: %u is outside allowed range 0-%u for mode %d",
+			params->peripheral_latency, mode_params->max_latency, mode);
+		return false;
+	}
+
+	return true;
+}
+
+static void sci_mode_update_notify(struct bt_hids *hids_obj, struct bt_conn *conn,
+				   uint8_t mode)
+{
+	int err = 0;
+	struct bt_gatt_attr *sci_mode_attr =
+		&hids_obj->gp.svc.attrs[hids_obj->sci_mode_data.att_ind];
+
+	if (bt_gatt_is_subscribed(conn, sci_mode_attr, BT_GATT_CCC_NOTIFY)) {
+		err = bt_gatt_notify(conn, sci_mode_attr, &mode, sizeof(mode));
+		if (err) {
+			LOG_ERR("Failed to notify SCI mode update: %d", err);
+		}
+	}
+}
+
+int bt_hids_sci_mode_updated(struct bt_conn *conn, enum bt_hids_sci_mode_value mode)
+{
+	int err = 0;
+
+	if (!sci_mode_hids_obj) {
+		LOG_WRN("SCI mode updated, but no HID service found");
+		return -ENOENT;
+	}
+	if (conn == NULL) {
+		return -EINVAL;
+	}
+
+	if (mode != BT_HIDS_SCI_MODE_NONE
+	   && mode != BT_HIDS_SCI_MODE_DEFAULT
+	   && mode != BT_HIDS_SCI_MODE_FAST
+#if defined(CONFIG_BT_HIDS_SCI_LOW_POWER_MODE)
+	   && mode != BT_HIDS_SCI_MODE_LOW_POWER
+#endif
+	   && mode != BT_HIDS_SCI_MODE_FULL_RANGE) {
+		LOG_ERR("Invalid SCI mode: %d", mode);
+		return -EINVAL;
+	}
+
+	struct bt_hids_conn_data *conn_data =
+		bt_conn_ctx_get(sci_mode_hids_obj->conn_ctx, conn);
+	if (!conn_data) {
+		LOG_ERR("The context was not found");
+		return -ENOENT;
+	}
+
+	if (conn_data->sci_mode != mode) {
+		conn_data->sci_mode = mode;
+		LOG_DBG("SCI mode updated to: %d", conn_data->sci_mode);
+
+		sci_mode_update_notify(sci_mode_hids_obj, conn, (uint8_t) conn_data->sci_mode);
+	}
+
+	bt_conn_ctx_release(sci_mode_hids_obj->conn_ctx, (void *)conn_data);
+
+	return err;
+}
+#endif
+
 static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 				     struct bt_gatt_attr const *attr,
 				     void const *buf, uint16_t len,
@@ -709,6 +1082,7 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 	LOG_DBG("Writing to Control Point characteristic.");
 
 	struct bt_hids_cp *cp = (struct bt_hids_cp *)attr->user_data;
+	ssize_t ret = 0;
 
 	uint8_t *cur_cp = &cp->value;
 	uint8_t const *new_cp = (uint8_t const *)buf;
@@ -722,35 +1096,55 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 	}
 
 	switch (*new_cp) {
-	case BT_HIDS_CONTROL_POINT_SUSPEND:
-		if (cp->evt_handler) {
-			cp->evt_handler(BT_HIDS_CP_EVT_HOST_SUSP);
+	case BT_HIDS_CP_EVT_HOST_SUSP:
+	case BT_HIDS_CP_EVT_HOST_EXIT_SUSP:
+		if (cp->conn_evt_handler) {
+			cp->conn_evt_handler(*new_cp, conn);
+		} else if (cp->evt_handler) {
+			cp->evt_handler(*new_cp);
 		}
 		break;
-	case BT_HIDS_CONTROL_POINT_EXIT_SUSPEND:
-		if (cp->evt_handler) {
-			cp->evt_handler(BT_HIDS_CP_EVT_HOST_EXIT_SUSP);
+#if defined(CONFIG_BT_HIDS_SCI)
+	case BT_HIDS_CP_EVT_HOST_SCI_DEFAULT_REQ:
+	case BT_HIDS_CP_EVT_HOST_SCI_FAST_REQ:
+#if defined(CONFIG_BT_HIDS_SCI_LOW_POWER_MODE)
+	case BT_HIDS_CP_EVT_HOST_SCI_LOW_POWER_REQ:
+#endif
+	case BT_HIDS_CP_EVT_HOST_SCI_FULL_RANGE_REQ:
+		if (cp->conn_evt_handler) {
+			cp->conn_evt_handler(*new_cp, conn);
 		}
-		break;
+#endif
+
 	default:
 		return BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
 	}
 
-	*cur_cp = *new_cp;
+	if (ret == BT_GATT_ERR(BT_ATT_ERR_SUCCESS)) {
+		*cur_cp = *new_cp;
+		ret = len;
+	}
 
-	return len;
+	return ret;
 }
 
 static uint8_t hid_information_encode(uint8_t *buffer,
 				      struct bt_hids_info const *hid_info)
 {
 	uint8_t len = 0;
+	uint8_t flags_extra = 0;
+#if defined(CONFIG_BT_HIDS_SCI)
+	flags_extra |= BT_HIDS_SCI_SUPPORTED;
+#endif
+#if defined(CONFIG_BT_HIDS_SCI_LOW_POWER_MODE)
+	flags_extra |= BT_HIDS_SCI_LOW_POWER_MODE_SUPPORTED;
+#endif
 
 	sys_put_le16(hid_info->bcd_hid, buffer);
 	len += sizeof(uint16_t);
 
 	buffer[len++] = hid_info->b_country_code;
-	buffer[len++] = hid_info->flags;
+	buffer[len++] = hid_info->flags | flags_extra;
 
 	__ASSERT(len == BT_HIDS_INFORMATION_LEN,
 		 "HIDS Information encoding failed");
@@ -900,13 +1294,30 @@ int bt_hids_init(struct bt_hids *hids_obj,
 {
 	LOG_DBG("Initializing HIDS.");
 
+	int err = 0;
+
+#if defined(CONFIG_BT_HIDS_SCI)
+	if (sci_mode_hids_obj) {
+		/* TODO: NCSDK-38984: This should be fixed,
+		 * more services should be allowed
+		 */
+		LOG_ERR("Currently only one HID service supporting SCI is supported");
+		bt_gatt_pool_free(&hids_obj->gp);
+		return -EALREADY;
+	}
+#endif
+
 	if (init_param->rep_map.size > BT_ATT_MAX_ATTRIBUTE_LEN) {
 		LOG_WRN("Report map size exceeds max ATT attribute length");
 		return -EMSGSIZE;
 	}
 
 	hids_obj->pm.evt_handler = init_param->pm_evt_handler;
-	hids_obj->cp.evt_handler = init_param->cp_evt_handler;
+	if (init_param->cp_evt_handler) {
+		LOG_WRN("cp_evt_handler is deprecated, use conn_cp_evt_handler instead");
+		hids_obj->cp.evt_handler = init_param->cp_evt_handler;
+	}
+	hids_obj->cp.conn_evt_handler = init_param->conn_cp_evt_handler;
 
 	/* Register primary service. */
 	BT_GATT_POOL_SVC(&hids_obj->gp, BT_UUID_HIDS);
@@ -1017,8 +1428,47 @@ int bt_hids_init(struct bt_hids *hids_obj,
 			  HIDS_GATT_PERM_DEFAULT & GATT_PERM_WRITE_MASK,
 			  NULL, hids_ctrl_point_write, &hids_obj->cp);
 
+#if defined(CONFIG_BT_HIDS_SCI)
+	/* Register HID SCI Information characteristic and its descriptor.
+	 * Note this characteristic does not contain valid data for now,
+	 * as this function is called before bt_enable()
+	 * Thus, there is no way to acquire the supported connection intervals.
+	 * The value of the SCI Information will be updated on the first attempt
+	 * to read from the characteristic.
+	 */
+	BT_GATT_POOL_CHRC(&hids_obj->gp,
+			  BT_UUID_HIDS_SCI_INFO,
+			  BT_GATT_CHRC_READ,
+			  HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
+			  hids_sci_info_read, NULL, NULL);
+
+	/* Register HID SCI Mode Characteristic, its descriptor and CCC. */
+	BT_GATT_POOL_CHRC(&hids_obj->gp,
+			  BT_UUID_HIDS_SCI_MODE,
+			  BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
+			  HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
+			  hids_sci_mode_read, NULL, NULL);
+
+	hids_obj->sci_mode_data.att_ind = hids_obj->gp.svc.attr_count - 1;
+	BT_GATT_POOL_CCC(&hids_obj->gp,
+			 hids_obj->sci_mode_data.ccc,
+			 hids_sci_mode_ccc_changed,
+			 HIDS_GATT_PERM_DEFAULT);
+
+	sci_mode_hids_obj = hids_obj;
+#endif
+
 	/* Register HIDS attributes in GATT database. */
-	return bt_gatt_service_register(&hids_obj->gp.svc);
+	err = bt_gatt_service_register(&hids_obj->gp.svc);
+	if (err) {
+#if defined(CONFIG_BT_HIDS_SCI)
+		sci_mode_hids_obj = NULL;
+#endif
+		bt_gatt_pool_free(&hids_obj->gp);
+		return err;
+	}
+
+	return err;
 }
 
 int bt_hids_uninit(struct bt_hids *hids_obj)
@@ -1044,6 +1494,12 @@ int bt_hids_uninit(struct bt_hids *hids_obj)
 	memset(hids_obj, 0, sizeof(*hids_obj));
 	hids_obj->gp.svc.attrs = attr_start;
 	hids_obj->conn_ctx = conn_ctx;
+
+#if defined(CONFIG_BT_HIDS_SCI)
+	if (sci_mode_hids_obj == hids_obj) {
+		sci_mode_hids_obj = NULL;
+	}
+#endif
 
 	return 0;
 }
