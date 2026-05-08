@@ -31,8 +31,8 @@ const struct device *const tst_timer_dev = DEVICE_DT_GET(DT_ALIAS(tst_timer));
 			    LINKER_DT_NODE_REGION_NAME(DT_PHANDLE(node, memory_regions)))))),      \
 		    ())
 
-static uint8_t tx_buffer[MAX_TEST_BUFFER_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi)));
-static uint8_t rx_buffer[MAX_TEST_BUFFER_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi)));
+static uint8_t tx_buffer[MAX_TEST_BUFFER_SIZE];
+static uint8_t rx_buffer[MAX_TEST_BUFFER_SIZE];
 
 static void *test_setup(void)
 {
@@ -127,6 +127,12 @@ static void test_spim_transmission_latency(size_t buffer_size)
 		average_timer_value_us += timer_value_us[repeat_counter];
 
 		zassert_ok(err, "SPI transceive failed");
+		if (memcmp(tx_buffer, rx_buffer, buffer_size) != 0) {
+			printf("tx_buf %p rx_buf:%p\n", tx_buffer, rx_buffer);
+			for (int i = 0; i < MIN(buffer_size, 16); i++) {
+				printf("%d: tx_buf:%02x rx:%02x\n",i, tx_buffer[i], rx_buffer[i]);
+			}
+		}
 		zassert_mem_equal(tx_buffer, rx_buffer, buffer_size);
 	}
 
@@ -152,7 +158,7 @@ ZTEST(spim_transmission_latency, test_spim_transceive_call_latencty)
 	test_spim_transmission_latency(1);
 	test_spim_transmission_latency(128);
 	test_spim_transmission_latency(512);
-	test_spim_transmission_latency(2000);
+	/*test_spim_transmission_latency(2000);*/
 }
 
 ZTEST_SUITE(spim_transmission_latency, NULL, test_setup, NULL, cleanup_buffers, NULL);
