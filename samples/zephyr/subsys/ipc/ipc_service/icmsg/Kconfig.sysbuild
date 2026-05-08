@@ -9,3 +9,5 @@ config REMOTE_BOARD
 	default "$(BOARD)/nrf54lv10a/cpuflpr" if SOC_NRF54LV10A_CPUAPP
 	default "$(BOARD)/nrf54lm20a/cpuflpr" if SOC_NRF54LM20A_CPUAPP
 	default "$(BOARD)/nrf54lm20b/cpuflpr" if SOC_NRF54LM20B_CPUAPP
+	default "$(BOARD)/nrf54h20/cpuppr" if SOC_NRF54H20_CPUAPP
+	default "$(BOARD)/nrf9251/cpuppr" if SOC_NRF9251_CPUAPP
