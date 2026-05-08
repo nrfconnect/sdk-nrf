@@ -42,26 +42,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38475"
 
 - scenarios:
-    - sample.bluetooth.mesh_dfu_distributor
-    - sample.bluetooth.mesh_dfu_distributor.dfu_ext_flash
-    - sample.bluetooth.mesh_dfu_distributor.settings_ext_flash
-    - sample.bluetooth.mesh_dfu_distributor.smp_bt_auth
-    - sample.bluetooth.mesh_dfu_target
-    - sample.bluetooth.mesh_dfu_target.dfu_ext_flash
-    - sample.bluetooth.mesh_dfu_target.settings_ext_flash
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36963"
-
-- scenarios:
-    - sample.bluetooth.mesh_dfu_distributor
-    - sample.bluetooth.mesh_dfu_distributor.smp_bt_auth
-    - sample.bluetooth.mesh_dfu_target
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36963"
-
-- scenarios:
     - sample.bluetooth.peripheral_lbs
     - sample.bluetooth.peripheral_lbs_no_security
     - sample.bluetooth.peripheral_power_profiling
