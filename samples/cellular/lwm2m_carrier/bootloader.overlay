@@ -1,0 +1,74 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &slot0_partition;
+
+&flash0 {
+	/*
+	 * Replace single slot0 with boot, slot0 and slot1. (Keep storage_partition the same).
+	 *
+	 * 0x0000_0000  MCUboot                        ( 65 kB)
+	 * 0x0000_c000  Primary area                   (448 kB)
+	 *   0x0000_c000  Primary secure image         ( 32 kB)
+	 *   0x0001_8000  Primary non-secure image     (416 kB)
+	 * 0x0007_5000  Secondary area                 (448 kB)
+	 *    0x0007_5000  Secondary secure image      ( 32 kB)
+	 *    0x0008_1000  Secondary non-secure image  (416 kB)
+	 */
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x00000000 0x10000>;
+		};
+
+		slot0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x10000 0x70000>;
+			ranges = <0x0 0x10000 0x70000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x0 0x8000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x8000 0x68000>;
+			};
+		};
+
+		slot1_partition: partition@80000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x80000 0x70000>;
+			ranges = <0x0 0x80000 0x70000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot1_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-1-secure";
+				reg = <0x0 0x8000>;
+			};
+
+			slot1_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-1-nonsecure";
+				reg = <0x8000 0x68000>;
+			};
+		};
+	};
+};
