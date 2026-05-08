@@ -228,3 +228,11 @@ tests:
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     timeout: 20
+  sample.ipc.ipc_service.nrf9251dk_cpuapp_cpuppr_icmsg:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - ipc_service_SNIPPET=nordic-ppr
+    timeout: 20
