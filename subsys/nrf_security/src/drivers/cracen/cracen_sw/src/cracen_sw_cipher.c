@@ -460,15 +460,15 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 		return PSA_SUCCESS;
 	}
 
-	if (output == NULL || output_size < input_length + operation->unprocessed_input_bytes) {
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-
 	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
 		if (operation->alg == PSA_ALG_CTR) {
 			return cracen_sw_aes_ctr_update(operation, input, input_length, output,
 							output_size, output_length);
 		}
+	}
+
+	if (output == NULL || output_size < input_length + operation->unprocessed_input_bytes) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES) ||
