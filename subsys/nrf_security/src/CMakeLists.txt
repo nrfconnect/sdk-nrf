@@ -58,35 +58,11 @@ target_include_directories(psa_crypto_library_config
     ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/oberon/drivers
 )
 
-if(CONFIG_MBEDTLS_ENABLE_HEAP)
-  list(APPEND src_crypto ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/platform/memory_buffer_alloc.c)
-endif()
-
-if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM AND NOT BUILD_INSIDE_TFM)
-  append_with_prefix(src_crypto ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
-    pem.c
-    pkcs12.c
-    pkcs5.c
-    pkparse.c
-    pkwrite.c
-    dhm.c
-    cipher.c
-    cipher_wrap.c
-    md.c
-    pk.c
-    pk_ecc.c
-    pk_wrap.c
-    pkwrite.c
-    psa_util.c
-  )
-
-endif()
-
-# Library for mbed TLS crypto toolbox functionality
 add_library(${mbedcrypto_target}
   STATIC
-    ${src_crypto}
 )
+
+add_subdirectory(tf-psa-crypto)
 
 target_link_libraries(${mbedcrypto_target}
   PUBLIC
@@ -103,38 +79,9 @@ endif()
 
 nrf_security_add_zephyr_options(${mbedcrypto_target})
 
-# Base mbed TLS files (not in drivers or builtin's)
-append_with_prefix(src_crypto_base ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
-  asn1parse.c
-  asn1write.c
-  base64.c
-  bignum.c
-  bignum_core.c
-  nist_kw.c
-  oid.c
-  padlock.c
-  version.c
-  constant_time.c
-)
-
-# Legacy APIs were missing files added by Oberon PSA core (not built in
-# certain instances. This adds the same platform support as the Oberon PSA core)
-if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_C)
-  append_with_prefix(src_crypto_base  ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library/
-    platform.c
-    platform_util.c
-  )
-endif()
-
-
 # Add threading support for PSA core (if enabled)
 include(${CMAKE_CURRENT_LIST_DIR}/threading/threading.cmake)
 include(${NRF_SECURITY_DIR}/src/utils/nrf_security_utils.cmake)
-
-target_sources(${mbedcrypto_target}
-  PRIVATE
-    ${src_crypto_base}
-)
 
 # Misusing the psa_crypto_config and psa_crypto_library_config awareness to
 # set compiler-flags to ensure right floating-point types are set

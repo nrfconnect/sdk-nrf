@@ -16,11 +16,8 @@
  */
 
 /* Copied from mbed TLS, modified to contain GF(2^128) operation only */
-
-#include "common.h"
+#include <tf_psa_crypto_common.h>
 #include "gcm_ext.h"
-
-#include <string.h>
 
 static inline void gcm_gen_table_rightshift(uint64_t dst[2], const uint64_t src[2])
 {

@@ -94,7 +94,6 @@ add_library(psa_crypto_config INTERFACE)
 # Add config files required for PSA crypto interface
 target_compile_definitions(psa_crypto_config
   INTERFACE
-    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CONFIG_FILE}"
     -DTF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
 )
 
@@ -105,7 +104,6 @@ add_library(psa_crypto_library_config INTERFACE)
 # Add config files required for PSA core
 target_compile_definitions(psa_crypto_library_config
   INTERFACE
-    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CONFIG_FILE}"
     -DTF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
     -DTF_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE}"
 )
@@ -114,17 +112,13 @@ target_compile_definitions(psa_crypto_library_config
 # The name and intent of this comes from TF-M distribution
 add_library(psa_interface INTERFACE)
 
-# Add the includes from nrf_security, Oberon PSA core, and Arm Mbed TLS
-# to the psa_interface library
 target_include_directories(psa_interface
   INTERFACE
-    # Oberon PSA headers
     ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
     ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library
-    # Mbed TLS (mbedcrypto) PSA headers
-    ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
-    ${ZEPHYR_MBEDTLS_MODULE_DIR}/include
-    ${ZEPHYR_MBEDTLS_MODULE_DIR}/include/library
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/core/
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/dispatch/
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/platform/
 )
 
 # Finally adding the crypto lib

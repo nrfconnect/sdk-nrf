@@ -14,7 +14,7 @@
  *  Link: https://github.com/Mbed-TLS/TF-PSA-Crypto/blob/development/drivers/builtin/src/poly1305.c
  */
 
-#include "common.h"
+#include <tf_psa_crypto_common.h>
 #include "poly1305_ext.h"
 
 #define POLY1305_BLOCK_SIZE_BYTES (16U)
