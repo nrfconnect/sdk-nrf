@@ -1,0 +1,72 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+# Kconfig variable template for one HID SCI mode. Set before sourcing:
+#   MODE              Symbol segment, e.g. DEFAULT, FAST, LOW_POWER, FULL_RANGE
+#   MODE_PRETTY       Label for prompts (e.g. Default, Fast, Low_Power, Full_Range)
+#   sci_interval_min_default
+#                     — min interval (125 us units) default; range low is always 3
+#   sci_interval_max_default
+#                     — max interval (125 us units) default
+#   sci_subrate_min_default, sci_subrate_max_default
+#   sci_max_peripheral_latency_default
+#   sci_continuation_number_default
+#   sci_supervision_timeout_10ms_default
+#
+
+menu "HID SCI: $(MODE_PRETTY) mode"
+
+config BT_HIDS_SCI_$(MODE)_INTERVAL_MIN_125US
+	int "Minimum connection interval (125 microsecond units)"
+	default $(sci_interval_min_default)
+	range 3 32000
+	help
+	  Minimum connection interval in 125 microsecond units (LE connection interval
+	  quantum), matching struct bt_conn_le_conn_rate_param.interval_min_125us.
+
+config BT_HIDS_SCI_$(MODE)_INTERVAL_MAX_125US
+	int "Maximum connection interval (125 microsecond units)"
+	default $(sci_interval_max_default)
+	range BT_HIDS_SCI_$(MODE)_INTERVAL_MIN_125US 32000
+	help
+	  Maximum connection interval in 125 microsecond units (LE connection interval
+	  quantum), matching struct bt_conn_le_conn_rate_param.interval_max_125us.
+
+config BT_HIDS_SCI_$(MODE)_SUBRATE_MIN
+	int "Subrate factor minimum"
+	default $(sci_subrate_min_default)
+	range 1 500
+	help
+	  Minimum subrate factor for SCI $(MODE_PRETTY) mode.
+
+config BT_HIDS_SCI_$(MODE)_SUBRATE_MAX
+	int "Subrate factor maximum"
+	default $(sci_subrate_max_default)
+	range BT_HIDS_SCI_$(MODE)_SUBRATE_MIN 500
+	help
+	  Maximum subrate factor for SCI $(MODE_PRETTY) mode.
+
+config BT_HIDS_SCI_$(MODE)_MAX_LATENCY
+	int "Maximum peripheral latency"
+	default $(sci_max_peripheral_latency_default)
+	range 0 499
+	help
+	  Maximum peripheral latency for SCI $(MODE_PRETTY) mode.
+
+config BT_HIDS_SCI_$(MODE)_CONTINUATION_NUM
+	int "Continuation number"
+	default $(sci_continuation_number_default)
+	range 0 499
+	help
+	  Continuation number for SCI $(MODE_PRETTY) mode.
+
+config BT_HIDS_SCI_$(MODE)_SUPERVISION_TIMEOUT_10MS
+	int "Supervision timeout (units of 10 ms)"
+	default $(sci_supervision_timeout_10ms_default)
+	range 10 3200
+	help
+	  Link supervision timeout for SCI $(MODE_PRETTY) mode.
+
+endmenu

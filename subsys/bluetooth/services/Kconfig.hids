@@ -68,6 +68,8 @@ config BT_HIDS_DEFAULT_PERM_RW_AUTHEN
 
 endchoice
 
+rsource "Kconfig.hids.sci"
+
 module = BT_HIDS
 module-str = HIDS
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

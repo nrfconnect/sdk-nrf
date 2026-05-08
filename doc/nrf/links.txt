@@ -1286,7 +1286,7 @@
 
 .. _`Join Bluetooth SIG`: https://www.bluetooth.com/develop-with-bluetooth/join/
 
-.. _`HID Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245140
+.. _`HID Service Specification`: https://www.bluetooth.com/specifications/specs/hid-service-specification/
 .. _`Battery Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245138
 .. _`Bluetooth Low Energy RF PHY Test Specification`: https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=225827
 .. _`Bond Management Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=293524
