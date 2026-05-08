@@ -273,6 +273,185 @@ static void hids_prep_error(struct bt_hogp *hogp, int err)
 	}
 }
 
+#if defined(CONFIG_BT_HOGP_SCI)
+static void invalidate_sci_handles(struct bt_hogp *hogp)
+{
+	hogp->handlers.sci_info = 0;
+	hogp->handlers.sci_mode = 0;
+	hogp->handlers.sci_mode_ccc = 0;
+}
+
+/**
+ * @brief HIDS SCI information read
+ *
+ * HIDS SCI information read is automatically started after connection to HID server.
+ *
+ * @param conn   Connection handler.
+ * @param err    Read ATT error code.
+ * @param params Notification parameters structure - the pointer
+ *               to the structure provided to read function.
+ * @param data   Pointer to the data buffer.
+ * @param length The size of the received data.
+ *
+ * @retval BT_GATT_ITER_STOP     Stop notification
+ * @retval BT_GATT_ITER_CONTINUE Continue notification
+ */
+static uint8_t hid_sci_info_read_process(struct bt_conn *conn, uint8_t err,
+					 struct bt_gatt_read_params *params,
+					 const void *data, uint16_t length);
+
+static int hid_sci_info_read_start(struct bt_hogp *hogp)
+{
+	int err = 0;
+	struct bt_gatt_read_params *params;
+
+	__ASSERT_NO_MSG(hogp);
+	/* This function is only called from pm_read_process, the check was already done there */
+	__ASSERT_NO_MSG(hogp->handlers.sci_info != 0);
+
+	LOG_DBG("HID SCI information read start");
+	params = &hogp->read_params;
+	params->func = hid_sci_info_read_process;
+	params->handle_count  = 1;
+	params->single.handle = hogp->handlers.sci_info;
+	params->single.offset = 0;
+	err = bt_gatt_read(hogp->conn, params);
+	if (err) {
+		LOG_ERR("HID SCI information read error (err: %d)", err);
+	}
+	return err;
+}
+
+static bool interval_in_conn_group(uint32_t interval_us,
+				   const struct bt_conn_le_min_conn_interval_group *group)
+{
+	uint32_t interval_125us = interval_us / 125;
+
+	return interval_125us >= group->min_125us && interval_125us <= group->max_125us &&
+		(interval_125us - group->min_125us) % group->stride_125us == 0;
+}
+
+static bool hid_sci_info_supported_intervals_present(const struct bt_hogp_sci_info *sci_info)
+{
+	/** According to HID over GATT Profile specification Table 7.2 the
+	 *  support of 1.25ms, 2.5 ms and 5ms is mandatory for a HID device
+	 *  supporting HID SCI.
+	 */
+	bool interval_1_25ms_present = false;
+	bool interval_2_5ms_present = false;
+	bool interval_5ms_present = false;
+
+	for (size_t i = 0; i < sci_info->num_groups; i++) {
+		if (sci_info->groups[i].stride_125us == 0) {
+			LOG_ERR("SCI Information group %d has a stride of 0", i);
+			continue;
+		}
+
+		if (interval_in_conn_group(1250,
+					   &sci_info->groups[i])) {
+			interval_1_25ms_present = true;
+		}
+		if (interval_in_conn_group(2500,
+					   &sci_info->groups[i])) {
+			interval_2_5ms_present = true;
+		}
+		if (interval_in_conn_group(5000,
+					   &sci_info->groups[i])) {
+			interval_5ms_present = true;
+		}
+	}
+
+	if (!interval_1_25ms_present) {
+		LOG_ERR("HID SCI Device does not support mandatory 1.25ms connection interval");
+	}
+
+	if (!interval_2_5ms_present) {
+		LOG_ERR("HID SCI Device does not support mandatory 2.5ms connection interval");
+	}
+
+	if (!interval_5ms_present) {
+		LOG_ERR("HID SCI Device does not support mandatory 5ms connection interval");
+	}
+
+	return interval_1_25ms_present && interval_2_5ms_present && interval_5ms_present;
+}
+
+static uint8_t hid_sci_info_read_process(struct bt_conn *conn, uint8_t err,
+					 struct bt_gatt_read_params *params,
+					 const void *data, uint16_t length)
+{
+	struct bt_hogp *hogp;
+	const uint8_t *bdata = data;
+
+	hogp = CONTAINER_OF(params, struct bt_hogp, read_params);
+
+	if (err) {
+		LOG_ERR("HID SCI information read error");
+		hids_prep_error(hogp, err);
+		invalidate_sci_handles(hogp);
+		return BT_GATT_ITER_STOP;
+	}
+	if ((length < BT_HIDS_SCI_INFORMATION_MIN_LEN || length > BT_HIDS_SCI_INFORMATION_MAX_LEN)
+	    || !data) {
+		LOG_ERR("Unexpected HID SCI information size: %u", length);
+		hids_prep_error(hogp, -ENOTSUP);
+		invalidate_sci_handles(hogp);
+		return BT_GATT_ITER_STOP;
+	}
+
+	hogp->sci_info.min_supported_conn_interval_125us = bdata[0];
+	hogp->sci_info.num_groups = bdata[1];
+	LOG_DBG("HID SCI information: min_supported_conn_interval_125us: %u, num_groups: %u",
+		hogp->sci_info.min_supported_conn_interval_125us, hogp->sci_info.num_groups);
+
+	if (hogp->sci_info.num_groups > BT_HIDS_SCI_INFORMATION_MAX_GROUPS) {
+		LOG_ERR("Number of connection interval groups exceeds max allowed group count "
+			"in SCI Information: %u > %u",
+			hogp->sci_info.num_groups, BT_HIDS_SCI_INFORMATION_MAX_GROUPS);
+		hids_prep_error(hogp, -EMSGSIZE);
+		invalidate_sci_handles(hogp);
+		return BT_GATT_ITER_STOP;
+	}
+
+
+	size_t offset = sizeof(hogp->sci_info.min_supported_conn_interval_125us)
+			+ sizeof(hogp->sci_info.num_groups);
+	size_t group_size = sizeof(uint16_t) * 3;
+	size_t expected_length = offset + hogp->sci_info.num_groups * group_size;
+
+	if (length < expected_length) {
+		LOG_ERR("Data is too short to contain all the SCI information");
+		hids_prep_error(hogp, -EMSGSIZE);
+		return BT_GATT_ITER_STOP;
+	}
+
+	for (size_t i = 0; i < hogp->sci_info.num_groups; i++) {
+		hogp->sci_info.groups[i].min_125us = sys_get_le16(&bdata[offset]);
+		offset += sizeof(uint16_t);
+		hogp->sci_info.groups[i].max_125us = sys_get_le16(&bdata[offset]);
+		offset += sizeof(uint16_t);
+		hogp->sci_info.groups[i].stride_125us = sys_get_le16(&bdata[offset]);
+		offset += sizeof(uint16_t);
+		LOG_DBG(" HID SCI information: group[%zu]: min_125us: %u, max_125us: %u, "
+			"stride_125us: %u", i, hogp->sci_info.groups[i].min_125us,
+			hogp->sci_info.groups[i].max_125us, hogp->sci_info.groups[i].stride_125us);
+	}
+
+	LOG_DBG("Read SCI Information success");
+
+	/* Do not break the flow if the supported intervals are not present.
+	 * Let the application decide what to do with this information.
+	 * This code is here only for logging purposes.
+	 */
+	(void) hid_sci_info_supported_intervals_present(&hogp->sci_info);
+
+	hids_mark_ready(hogp);
+
+	return BT_GATT_ITER_STOP;
+}
+
+#endif
+
 /**
  * @brief Process protocol mode read
  *
@@ -348,6 +527,22 @@ static uint8_t pm_read_process(struct bt_conn *conn, uint8_t err,
 
 	hogp->pm = (enum bt_hids_pm)((uint8_t *)data)[0];
 	LOG_DBG("Read PM success: %d", (int)hogp->pm);
+
+#if defined(CONFIG_BT_HOGP_SCI)
+	if (hogp->handlers.sci_info != 0) {
+		int err;
+
+		err = hid_sci_info_read_start(hogp);
+		if (err) {
+			hids_prep_error(hogp, err);
+		}
+
+		return BT_GATT_ITER_STOP;
+	}
+
+	LOG_DBG("Device ready without SCI information characteristic");
+#endif
+
 	hids_mark_ready(hogp);
 	return BT_GATT_ITER_STOP;
 }
@@ -530,6 +725,13 @@ static uint8_t hid_info_read_process(struct bt_conn *conn, uint8_t err,
 	LOG_DBG("  bCountryCode: 0x%x", hogp->info_val.b_country_code);
 	LOG_DBG("  Flags: 0x%x", hogp->info_val.flags);
 
+#if defined(CONFIG_BT_HOGP_SCI)
+	if (!(hogp->info_val.flags & BT_HIDS_SCI_SUPPORTED)) {
+		LOG_DBG("HID device does not support SCI");
+		invalidate_sci_handles(hogp);
+	}
+#endif /* CONFIG_BT_HOGP_SCI */
+
 	err = repref_read_start(hogp, 0);
 	if (err) {
 		hids_prep_error(hogp, err);
@@ -567,6 +769,72 @@ static int post_discovery_start(struct bt_hogp *hogp)
 
 	return 0;
 }
+
+#if defined(CONFIG_BT_HOGP_SCI)
+static int hid_sci_handles_assign(struct bt_gatt_dm *dm, struct bt_hogp *hogp)
+{
+	uint16_t handle;
+	const struct bt_gatt_dm_attr *gatt_chrc;
+	const struct bt_gatt_dm_attr *gatt_desc;
+	const struct bt_gatt_chrc *chrc_val;
+
+	__ASSERT_NO_MSG(hogp);
+
+	handle = chrc_value_handle_by_uuid(dm, hogp,
+					   BT_UUID_HIDS_SCI_INFO);
+	if (handle != 0) {
+		LOG_DBG("Found handle for SCI Info characteristic: 0x%x.", handle);
+	}
+
+	hogp->handlers.sci_info = handle;
+
+	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_HIDS_SCI_MODE);
+
+	/* Valid case - HID service simply does not support SCI. */
+	if (!gatt_chrc && hogp->handlers.sci_info == 0) {
+		LOG_INF("SCI characteristics not found on HID service. "
+			"SCI will not be supported.");
+		return 0;
+	}
+
+	if (!gatt_chrc || hogp->handlers.sci_info == 0) {
+		LOG_ERR("Invalid SCI configuration on HID service."
+			"Characteristics partially missing.");
+		return -EINVAL;
+	}
+
+	chrc_val = bt_gatt_dm_attr_chrc_val(gatt_chrc);
+	__ASSERT_NO_MSG(chrc_val);
+	if ((chrc_val->properties & BT_GATT_CHRC_READ) == 0U) {
+		LOG_ERR("SCI Mode characteristic missing read property.");
+		return -EINVAL;
+	}
+	if ((chrc_val->properties & BT_GATT_CHRC_NOTIFY) == 0U) {
+		LOG_ERR("SCI Mode characteristic missing notify property.");
+		return -EINVAL;
+	}
+
+	LOG_DBG("SCI Mode characteristic found.");
+	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_HIDS_SCI_MODE);
+	if (!gatt_desc) {
+		LOG_ERR("SCI Mode characteristic value not found.");
+		return -EINVAL;
+	}
+
+	LOG_DBG("SCI Mode characteristic desc found.");
+	hogp->handlers.sci_mode = gatt_desc->handle;
+	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_GATT_CCC);
+	if (!gatt_desc) {
+		LOG_ERR("SCI Mode CCC descriptor not found.");
+		return -EINVAL;
+	}
+
+	LOG_DBG("SCI Mode CCC descriptor found.");
+	hogp->handlers.sci_mode_ccc = gatt_desc->handle;
+
+	return 0;
+}
+#endif
 
 /**
  * @brief Auxiliary internal function for handles assign
@@ -631,6 +899,16 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	}
 	LOG_DBG("Found handle for Report Map characteristic: 0x%x.", handle);
 	hogp->handlers.rep_map = handle;
+
+#if defined(CONFIG_BT_HOGP_SCI)
+	/* HID SCI Info Characteristic  */
+	ret = hid_sci_handles_assign(dm, hogp);
+	if (ret) {
+		LOG_ERR("Failed to assign SCI handles: %d", ret);
+		LOG_WRN("HID SCI will not be supported.");
+		invalidate_sci_handles(hogp);
+	}
+#endif
 
 	/* If we have any of the boot report - protocol mode is mandatory,
 	 * otherwise optional, but it does not make any sense to keep it
@@ -799,6 +1077,11 @@ void bt_hogp_release(struct bt_hogp *hogp)
 	}
 	LOG_DBG("Report memory released, entities used: %u",
 		k_mem_slab_num_used_get(&bt_hogp_reports_mem));
+
+#if defined(CONFIG_BT_HOGP_SCI)
+	memset(&hogp->sci_info, 0, sizeof(hogp->sci_info));
+	hogp->sci_mode_data.read_cb = NULL;
+#endif
 
 	memset(&hogp->info_val, 0, sizeof(hogp->info_val));
 	memset(&hogp->handlers, 0, sizeof(hogp->handlers));
@@ -1049,6 +1332,40 @@ static uint8_t rep_notify_process(struct bt_conn *conn,
 	return err;
 }
 
+#if defined(CONFIG_BT_HOGP_SCI)
+static uint8_t sci_mode_notify_process(struct bt_conn *conn,
+				       struct bt_gatt_subscribe_params *params,
+				       const void *data, uint16_t length)
+{
+	const uint8_t *bdata = data;
+	struct bt_hogp_sci_mode_data *sci_mode_data;
+
+	sci_mode_data = CONTAINER_OF(params,
+				struct bt_hogp_sci_mode_data,
+				notify_params);
+
+	if (data == NULL) {
+		/* data==NULL means that the client was unsubscribed from SCI mode notifications */
+		sci_mode_data->notify_cb = NULL;
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (!sci_mode_data->notify_cb) {
+		LOG_ERR("No notification callback present");
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (length != sizeof(uint8_t)) {
+		LOG_ERR("Unexpected SCI mode notification size: %u", length);
+		return BT_GATT_ITER_STOP;
+	}
+
+	sci_mode_data->notify_cb(conn, (enum bt_hids_sci_mode_value) bdata[0]);
+
+	return BT_GATT_ITER_CONTINUE;
+}
+#endif
+
 int bt_hogp_rep_subscribe(struct bt_hogp *hogp,
 			  struct bt_hogp_rep_info *rep,
 			  bt_hogp_read_cb func)
@@ -1095,6 +1412,59 @@ int bt_hogp_rep_unsubscribe(struct bt_hogp *hogp,
 	}
 	return bt_gatt_unsubscribe(hogp->conn, &rep->notify_params);
 }
+
+#if defined(CONFIG_BT_HOGP_SCI)
+int bt_hogp_sci_mode_subscribe(struct bt_hogp *hogp, bt_hogp_sci_mode_changed_cb func)
+{
+	int err;
+	struct bt_gatt_subscribe_params *params;
+
+	if (!hogp || !func) {
+		return -EINVAL;
+	}
+
+	if (hogp->handlers.sci_mode == 0U) {
+		LOG_ERR("HID device does not support SCI");
+		return -ENOTSUP;
+	}
+
+	if (hogp->sci_mode_data.notify_cb) {
+		return -EALREADY;
+	}
+
+	hogp->sci_mode_data.notify_cb = func;
+
+	params = &hogp->sci_mode_data.notify_params;
+	params->notify = sci_mode_notify_process;
+	params->value = BT_GATT_CCC_NOTIFY;
+	params->value_handle = hogp->handlers.sci_mode;
+	params->ccc_handle = hogp->handlers.sci_mode_ccc;
+	atomic_set_bit(params->flags, BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
+
+	err = bt_gatt_subscribe(hogp->conn, params);
+	if (err) {
+		LOG_ERR("Report notification subscribe error: %d.", err);
+		hogp->sci_mode_data.notify_cb = NULL;
+		return err;
+	}
+	LOG_DBG("SCI mode subscribed.");
+	return err;
+}
+
+int bt_hogp_sci_mode_unsubscribe(struct bt_hogp *hogp)
+{
+	if (!hogp) {
+		return -EINVAL;
+	}
+
+	if (hogp->handlers.sci_mode == 0U) {
+		LOG_ERR("HID device does not support SCI");
+		return -ENOTSUP;
+	}
+
+	return bt_gatt_unsubscribe(hogp->conn, &hogp->sci_mode_data.notify_params);
+}
+#endif
 
 /**
  * @brief Process map read
@@ -1252,7 +1622,7 @@ int bt_hogp_pm_write(struct bt_hogp *hogp, enum bt_hids_pm pm)
 int bt_hogp_suspend(struct bt_hogp *hogp)
 {
 	int err;
-	uint8_t data[] = {BT_HIDS_CONTROL_POINT_SUSPEND};
+	uint8_t data[] = {(uint8_t)BT_HIDS_CP_EVT_HOST_SUSP};
 
 	err = bt_gatt_write_without_response(hogp->conn,
 					     hogp->handlers.cp,
@@ -1265,7 +1635,7 @@ int bt_hogp_suspend(struct bt_hogp *hogp)
 int bt_hogp_exit_suspend(struct bt_hogp *hogp)
 {
 	int err;
-	uint8_t data[] = {BT_HIDS_CONTROL_POINT_EXIT_SUSPEND};
+	uint8_t data[] = {(uint8_t)BT_HIDS_CP_EVT_HOST_EXIT_SUSP};
 
 	err = bt_gatt_write_without_response(hogp->conn,
 					     hogp->handlers.cp,
@@ -1274,6 +1644,168 @@ int bt_hogp_exit_suspend(struct bt_hogp *hogp)
 					     false);
 	return err;
 }
+
+#if defined(CONFIG_BT_HOGP_SCI)
+bool bt_hogp_sci_supported(const struct bt_hogp *hogp)
+{
+	return (hogp->handlers.sci_info != 0U) && (hogp->handlers.sci_mode != 0U)
+		&& (hogp->handlers.sci_mode_ccc != 0U);
+}
+
+bool bt_hogp_sci_low_power_mode_supported(const struct bt_hogp *hogp)
+{
+	if (bt_hogp_sci_supported(hogp)) {
+		return (hogp->info_val.flags & BT_HIDS_SCI_LOW_POWER_MODE_SUPPORTED) != 0U;
+	}
+
+	return false;
+}
+
+static uint8_t sci_mode_read_process(struct bt_conn *conn, uint8_t err,
+					 struct bt_gatt_read_params *params,
+					 const void *data, uint16_t length)
+{
+	(void)conn;
+
+	struct bt_hogp *hogp;
+	struct bt_hogp_sci_mode_data *sci_mode_data;
+	const uint8_t *bdata = data;
+
+	hogp = CONTAINER_OF(params, struct bt_hogp, read_params);
+	sci_mode_data = &hogp->sci_mode_data;
+
+	k_sem_give(&hogp->read_params_sem);
+
+	if (!sci_mode_data->read_cb) {
+		LOG_ERR("No SCI mode read callback present");
+		return BT_GATT_ITER_STOP;
+	}
+
+	bt_hogp_sci_mode_read_cb cb = sci_mode_data->read_cb;
+
+
+	if (err) {
+		LOG_ERR("HID SCI mode read error");
+		cb(hogp, err, BT_HIDS_SCI_MODE_NONE);
+		return BT_GATT_ITER_STOP;
+	}
+	if (length != sizeof(uint8_t) || !data) {
+		LOG_ERR("Unexpected HID SCI mode size: %u", length);
+		cb(hogp, -ENOTSUP, BT_HIDS_SCI_MODE_NONE);
+		return BT_GATT_ITER_STOP;
+	}
+
+	cb(hogp, err, (enum bt_hids_sci_mode_value)bdata[0]);
+
+	sci_mode_data->read_cb = NULL;
+
+	return BT_GATT_ITER_STOP;
+
+}
+
+int bt_hogp_sci_mode_read(struct bt_hogp *hogp, bt_hogp_sci_mode_read_cb func)
+{
+	int err;
+	struct bt_gatt_read_params *params;
+
+	if (!hogp || !func) {
+		return -EINVAL;
+	}
+
+	if (hogp->handlers.sci_mode == 0U || hogp->handlers.sci_mode_ccc == 0U) {
+		LOG_ERR("SCI mode handles not assigned");
+		return -ENOTSUP;
+	}
+
+	err = k_sem_take(&hogp->read_params_sem, K_FOREVER);
+	if (err) {
+		return err;
+	}
+
+	if (hogp->sci_mode_data.read_cb != NULL) {
+		k_sem_give(&hogp->read_params_sem);
+		return -EBUSY;
+	}
+
+	params = &hogp->read_params;
+	hogp->sci_mode_data.read_cb = func;
+	params->func = sci_mode_read_process;
+	params->handle_count = 1;
+	params->single.handle = hogp->handlers.sci_mode;
+	params->single.offset = 0;
+
+	err = bt_gatt_read(hogp->conn, params);
+
+	if (err) {
+		hogp->sci_mode_data.read_cb = NULL;
+		k_sem_give(&hogp->read_params_sem);
+		return err;
+	}
+
+	return 0;
+}
+
+int bt_hogp_sci_mode_req(struct bt_hogp *hogp, enum bt_hids_sci_mode_value mode)
+{
+	uint8_t data = (uint8_t)BT_HIDS_CP_EVT_HOST_SCI_DEFAULT_REQ;
+
+	if (!hogp) {
+		return -EINVAL;
+	}
+
+	if (hogp->handlers.sci_mode == 0U) {
+		LOG_ERR("HID Device does not support SCI");
+		return -ENOTSUP;
+	}
+
+	switch (mode) {
+	case BT_HIDS_SCI_MODE_DEFAULT:
+		data = (uint8_t)BT_HIDS_CP_EVT_HOST_SCI_DEFAULT_REQ;
+		break;
+	case BT_HIDS_SCI_MODE_FAST:
+		data = (uint8_t)BT_HIDS_CP_EVT_HOST_SCI_FAST_REQ;
+		break;
+	case BT_HIDS_SCI_MODE_LOW_POWER:
+		if (!bt_hogp_sci_low_power_mode_supported(hogp)) {
+			LOG_ERR("HID Device does not support SCI Low Power mode");
+			return -ENOTSUP;
+		}
+		data = (uint8_t)BT_HIDS_CP_EVT_HOST_SCI_LOW_POWER_REQ;
+		break;
+	case BT_HIDS_SCI_MODE_FULL_RANGE:
+		data = (uint8_t)BT_HIDS_CP_EVT_HOST_SCI_FULL_RANGE_REQ;
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	return bt_gatt_write_without_response(hogp->conn,
+					      hogp->handlers.cp,
+					      &data,
+					      sizeof(data),
+					      false);
+}
+
+int bt_hogp_sci_info_get(struct bt_hogp *hogp, struct bt_hogp_sci_info *sci_info)
+{
+	if (!hogp || !sci_info) {
+		return -EINVAL;
+	}
+
+	if (hogp->handlers.sci_info == 0U) {
+		LOG_ERR("SCI information handle not assigned");
+		return -EINVAL;
+	}
+
+	memcpy(sci_info, &hogp->sci_info, sizeof(hogp->sci_info));
+
+	if (!hid_sci_info_supported_intervals_present(&hogp->sci_info)) {
+		return -ENOTSUP;
+	}
+
+	return 0;
+}
+#endif
 
 struct bt_conn *bt_hogp_conn(const struct bt_hogp *hogp)
 {
