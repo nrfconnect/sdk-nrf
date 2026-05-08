@@ -9,25 +9,26 @@
  */
 
 #include <math.h>
-#include <stdlib.h>
+#include <string.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <zephyr/sys/byteorder.h>
-#include <zephyr/sys/reboot.h>
-#include <zephyr/bluetooth/cs.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/conn.h>
+
+#include <zephyr/bluetooth/cs.h>
+
 #include <bluetooth/scan.h>
-#include <bluetooth/services/ras.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/cs_de.h>
+#include <bluetooth/services/ras.h>
+
+#include <cs_samples_common.h>
 
 #include <dk_buttons_and_leds.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
-
-#define CON_STATUS_LED DK_LED1
 
 #define CS_CONFIG_ID 0
 
@@ -55,20 +56,14 @@ BUILD_ASSERT(false, "Invalid ranging mode");
 #define CHANNEL_INDEX_OFFSET (2)
 #define TONE_QI_OK_TONE_COUNT_THRESHOLD (15)
 
-static K_SEM_DEFINE(sem_remote_capabilities_obtained, 0, 1);
-static K_SEM_DEFINE(sem_config_created, 0, 1);
-static K_SEM_DEFINE(sem_cs_security_enabled, 0, 1);
-static K_SEM_DEFINE(sem_connected, 0, 1);
 static K_SEM_DEFINE(sem_discovery_done, 0, 1);
 static K_SEM_DEFINE(sem_mtu_exchange_done, 0, 1);
-static K_SEM_DEFINE(sem_security, 0, 1);
 static K_SEM_DEFINE(sem_ras_features, 0, 1);
 static K_SEM_DEFINE(sem_local_steps, 1, 1);
 static K_SEM_DEFINE(sem_distance_estimate_updated, 0, 1);
 
 static K_MUTEX_DEFINE(distance_estimate_buffer_mutex);
 
-static struct bt_conn *connection;
 NET_BUF_SIMPLE_DEFINE_STATIC(latest_local_steps, LOCAL_PROCEDURE_MEM);
 NET_BUF_SIMPLE_DEFINE_STATIC(latest_peer_steps, BT_RAS_PROCEDURE_MEM);
 static int32_t most_recent_local_ranging_counter = PROCEDURE_COUNTER_NONE;
@@ -82,8 +77,6 @@ struct distance_estimate_buffer {
 };
 
 static struct distance_estimate_buffer distance_estimate_buffers[MAX_AP];
-
-static struct bt_conn_le_cs_config cs_config;
 
 static uint16_t m_n_iqs[CONFIG_BT_RAS_MAX_ANTENNA_PATHS][CS_DE_NUM_CHANNELS];
 static cs_de_report_t m_cs_de_report;
@@ -104,29 +97,6 @@ static void store_distance_estimates_in_buffer(cs_de_dist_estimates_t *p_estimat
 	}
 
 	k_mutex_unlock(&distance_estimate_buffer_mutex);
-}
-
-static int float_cmp(const void *a, const void *b)
-{
-	float fa = *(const float *)a;
-	float fb = *(const float *)b;
-
-	return (fa > fb) - (fa < fb);
-}
-
-static float median_inplace(int count, float *values)
-{
-	if (count == 0) {
-		return NAN;
-	}
-
-	qsort(values, count, sizeof(float), float_cmp);
-
-	if (count % 2 == 0) {
-		return (values[count/2] + values[count/2 - 1]) / 2;
-	} else {
-		return values[count/2];
-	}
 }
 
 static cs_de_dist_estimates_t get_distance(uint8_t ap)
@@ -163,9 +133,9 @@ static cs_de_dist_estimates_t get_distance(uint8_t ap)
 
 	k_mutex_unlock(&distance_estimate_buffer_mutex);
 
-	averaged_result.ifft = median_inplace(num_ifft, temp_ifft);
-	averaged_result.phase_slope = median_inplace(num_phase_slope, temp_phase_slope);
-	averaged_result.rtt = median_inplace(num_rtt, temp_rtt);
+	averaged_result.ifft = common_median_inplace(num_ifft, temp_ifft);
+	averaged_result.phase_slope = common_median_inplace(num_phase_slope, temp_phase_slope);
+	averaged_result.rtt = common_median_inplace(num_rtt, temp_rtt);
 
 	return averaged_result;
 }
@@ -513,178 +483,10 @@ static struct bt_gatt_dm_cb discovery_cb = {
 	.error_found = discovery_error_found_cb,
 };
 
-static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	if (err) {
-		LOG_ERR("Security failed: %s level %u err %d %s", addr, level, err,
-			bt_security_err_to_str(err));
-		return;
-	}
-
-	LOG_INF("Security changed: %s level %u", addr, level);
-	k_sem_give(&sem_security);
-}
-
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
 	/* Ignore peer parameter preferences. */
 	return false;
-}
-
-static void connected_cb(struct bt_conn *conn, uint8_t err)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-	LOG_INF("Connected to %s (err 0x%02X)", addr, err);
-
-	if (err) {
-		bt_conn_unref(conn);
-		connection = NULL;
-	} else {
-		connection = bt_conn_ref(conn);
-
-		k_sem_give(&sem_connected);
-
-		dk_set_led_on(CON_STATUS_LED);
-	}
-}
-
-static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
-{
-	LOG_INF("Disconnected (reason 0x%02X)", reason);
-
-	bt_conn_unref(conn);
-	connection = NULL;
-	dk_set_led_off(CON_STATUS_LED);
-
-	sys_reboot(SYS_REBOOT_COLD);
-}
-
-static void remote_capabilities_cb(struct bt_conn *conn,
-				   uint8_t status,
-				   struct bt_conn_le_cs_capabilities *params)
-{
-	ARG_UNUSED(conn);
-	ARG_UNUSED(params);
-
-	if (status == BT_HCI_ERR_SUCCESS) {
-		LOG_INF("CS capability exchange completed.");
-		k_sem_give(&sem_remote_capabilities_obtained);
-	} else {
-		LOG_WRN("CS capability exchange failed. (HCI status 0x%02x)", status);
-	}
-}
-
-static void config_create_cb(struct bt_conn *conn, uint8_t status,
-			     struct bt_conn_le_cs_config *config)
-{
-	ARG_UNUSED(conn);
-
-	if (status == BT_HCI_ERR_SUCCESS) {
-		cs_config = *config;
-
-		const char *mode_str[5] = {"Unused", "1 (RTT)", "2 (PBR)", "3 (RTT + PBR)",
-					   "Invalid"};
-		const char *role_str[3] = {"Initiator", "Reflector", "Invalid"};
-		const char *rtt_type_str[8] = {
-			"AA only",	 "32-bit sounding", "96-bit sounding", "32-bit random",
-			"64-bit random", "96-bit random",   "128-bit random",  "Invalid"};
-		const char *phy_str[4] = {"Invalid", "LE 1M PHY", "LE 2M PHY", "LE 2M 2BT PHY"};
-		const char *chsel_type_str[3] = {"Algorithm #3b", "Algorithm #3c", "Invalid"};
-		const char *ch3c_shape_str[3] = {"Hat shape", "X shape", "Invalid"};
-
-		uint8_t mode_idx = config->mode > 0 && config->mode < 4 ? config->mode : 4;
-		uint8_t role_idx = MIN(config->role, 2);
-		uint8_t rtt_type_idx = MIN(config->rtt_type, 7);
-		uint8_t phy_idx = config->cs_sync_phy > 0 && config->cs_sync_phy < 4
-					  ? config->cs_sync_phy
-					  : 0;
-		uint8_t chsel_type_idx = MIN(config->channel_selection_type, 2);
-		uint8_t ch3c_shape_idx = MIN(config->ch3c_shape, 2);
-
-		LOG_INF("CS config creation complete.\n"
-			" - id: %u\n"
-			" - mode: %s\n"
-			" - min_main_mode_steps: %u\n"
-			" - max_main_mode_steps: %u\n"
-			" - main_mode_repetition: %u\n"
-			" - mode_0_steps: %u\n"
-			" - role: %s\n"
-			" - rtt_type: %s\n"
-			" - cs_sync_phy: %s\n"
-			" - channel_map_repetition: %u\n"
-			" - channel_selection_type: %s\n"
-			" - ch3c_shape: %s\n"
-			" - ch3c_jump: %u\n"
-			" - t_ip1_time_us: %u\n"
-			" - t_ip2_time_us: %u\n"
-			" - t_fcs_time_us: %u\n"
-			" - t_pm_time_us: %u\n"
-			" - channel_map: 0x%08X%08X%04X\n",
-			config->id, mode_str[mode_idx],
-			config->min_main_mode_steps, config->max_main_mode_steps,
-			config->main_mode_repetition, config->mode_0_steps, role_str[role_idx],
-			rtt_type_str[rtt_type_idx], phy_str[phy_idx],
-			config->channel_map_repetition, chsel_type_str[chsel_type_idx],
-			ch3c_shape_str[ch3c_shape_idx], config->ch3c_jump, config->t_ip1_time_us,
-			config->t_ip2_time_us, config->t_fcs_time_us, config->t_pm_time_us,
-			sys_get_le32(&config->channel_map[6]),
-			sys_get_le32(&config->channel_map[2]),
-			sys_get_le16(&config->channel_map[0]));
-
-		k_sem_give(&sem_config_created);
-	} else {
-		LOG_WRN("CS config creation failed. (HCI status 0x%02x)", status);
-	}
-}
-
-static void security_enable_cb(struct bt_conn *conn, uint8_t status)
-{
-	ARG_UNUSED(conn);
-
-	if (status == BT_HCI_ERR_SUCCESS) {
-		LOG_INF("CS security enabled.");
-		k_sem_give(&sem_cs_security_enabled);
-	} else {
-		LOG_WRN("CS security enable failed. (HCI status 0x%02x)", status);
-	}
-}
-
-static void procedure_enable_cb(struct bt_conn *conn,
-				uint8_t status,
-				struct bt_conn_le_cs_procedure_enable_complete *params)
-{
-	ARG_UNUSED(conn);
-
-	if (status == BT_HCI_ERR_SUCCESS) {
-		if (params->state == 1) {
-			LOG_INF("CS procedures enabled:\n"
-				" - config ID: %u\n"
-				" - antenna configuration index: %u\n"
-				" - TX power: %d dbm\n"
-				" - subevent length: %u us\n"
-				" - subevents per event: %u\n"
-				" - subevent interval: %u\n"
-				" - event interval: %u\n"
-				" - procedure interval: %u\n"
-				" - procedure count: %u\n"
-				" - maximum procedure length: %u",
-				params->config_id, params->tone_antenna_config_selection,
-				params->selected_tx_power, params->subevent_len,
-				params->subevents_per_event, params->subevent_interval,
-				params->event_interval, params->procedure_interval,
-				params->procedure_count, params->max_procedure_len);
-		} else {
-			LOG_INF("CS procedures disabled.");
-		}
-	} else {
-		LOG_WRN("CS procedures enable failed. (HCI status 0x%02x)", status);
-	}
 }
 
 void ras_features_read_cb(struct bt_conn *conn, uint32_t feature_bits, int err)
@@ -699,35 +501,8 @@ void ras_features_read_cb(struct bt_conn *conn, uint32_t feature_bits, int err)
 	k_sem_give(&sem_ras_features);
 }
 
-static void scan_filter_match(struct bt_scan_device_info *device_info,
-			      struct bt_scan_filter_match *filter_match, bool connectable)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
-
-	LOG_INF("Filters matched. Address: %s connectable: %d", addr, connectable);
-}
-
-static void scan_connecting_error(struct bt_scan_device_info *device_info)
-{
-	int err;
-
-	LOG_INF("Connecting failed, restarting scanning");
-
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
-	if (err) {
-		LOG_ERR("Failed to restart scanning (err %i)", err);
-		return;
-	}
-}
-
-static void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn)
-{
-	LOG_INF("Connecting");
-}
-
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, scan_connecting);
+BT_SCAN_CB_INIT(scan_cb, common_scan_filter_match, NULL, common_scan_connecting_error,
+		common_scan_connecting);
 
 static int scan_init(struct bt_scan_init_param *p_param)
 {
@@ -752,14 +527,14 @@ static int scan_init(struct bt_scan_init_param *p_param)
 }
 
 BT_CONN_CB_DEFINE(conn_cb) = {
-	.connected = connected_cb,
-	.disconnected = disconnected_cb,
+	.connected = common_connected_cb,
+	.disconnected = common_disconnected_cb,
 	.le_param_req = le_param_req,
-	.security_changed = security_changed,
-	.le_cs_read_remote_capabilities_complete = remote_capabilities_cb,
-	.le_cs_config_complete = config_create_cb,
-	.le_cs_security_enable_complete = security_enable_cb,
-	.le_cs_procedure_enable_complete = procedure_enable_cb,
+	.security_changed = common_security_changed_cb,
+	.le_cs_read_remote_capabilities_complete = common_remote_capabilities_cb,
+	.le_cs_config_complete = common_config_create_cb,
+	.le_cs_security_enable_complete = common_cs_security_enable_cb,
+	.le_cs_procedure_enable_complete = common_procedure_enable_cb,
 	.le_cs_subevent_data_available = subevent_result_cb,
 };
 

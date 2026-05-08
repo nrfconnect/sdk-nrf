@@ -9,9 +9,9 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(channel_sound_ras_initiator)
 
-FILE(GLOB app_sources src/*.c)
 # NORDIC SDK APP START
-target_sources(app PRIVATE
-  ${app_sources}
-)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/channel_sounding/common)
+
+target_sources(app PRIVATE src/main.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/channel_sounding/common/src/cs_samples_common.c)
 # NORDIC SDK APP END

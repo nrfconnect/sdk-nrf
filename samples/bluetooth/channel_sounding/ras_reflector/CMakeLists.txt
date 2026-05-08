@@ -9,7 +9,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(channel_sounding_ras_reflector)
 
 # NORDIC SDK APP START
-target_sources(app PRIVATE
-  src/main.c
-)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/channel_sounding/common)
+
+target_sources(app PRIVATE src/main.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/channel_sounding/common/src/cs_samples_common.c)
 # NORDIC SDK APP END

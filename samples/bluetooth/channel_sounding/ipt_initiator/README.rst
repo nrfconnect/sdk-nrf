@@ -133,20 +133,20 @@ After programming the sample to your development kit, you can test it by connect
 #. Wait until the scanner detects the Peripheral.
    In the terminal window, check for information similar to the following::
 
-      *** Booting nRF Connect SDK v3.2.99-d0824283f866 ***
-      *** Using Zephyr OS v4.3.99-2925b3840984 ***
+      *** Booting nRF Connect SDK v3.2.99-4dc52e0d80a6 ***
+      *** Using Zephyr OS v4.4.0-2b3d25313ec3 ***
       I: Starting Channel Sounding IPT Initiator Sample
       I: SoftDevice Controller build revision:
-      I: 36 9c e5 98 e5 71 0a a0 |6....q..
-      I: 2d b9 89 96 6b 15 65 4b |-...k.eK
-      I: d6 e8 4a ac             |..J.
+      I: 10 7f 81 88 e0 eb fc fc |........
+      I: 53 3c 0e d3 0f e7 d0 4f |S<.....O
+      I: 0c 64 24 fc             |.d$.
       I: HW Platform: Nordic Semiconductor (0x0002)
       I: HW Variant: nRF54Lx (0x0005)
-      I: Firmware: Standard Bluetooth controller (0x00) Version 54.58780 Build 175236504
+      I: Firmware: Standard Bluetooth controller (0x00) Version 16.33151 Build 4243316872
       I: HCI transport: SDC
       I: Identity: E6:BA:C9:31:51:DB (random)
-      I: HCI: version 6.2 (0x10) revision 0x30a9, manufacturer 0x0059
-      I: LMP: version 6.2 (0x10) subver 0x30a9
+      I: HCI: version 6.2 (0x10) revision 0x30b8, manufacturer 0x0059
+      I: LMP: version 6.2 (0x10) subver 0x30b8
       I: Filters matched. Address: D2:CE:07:7E:40:79 (random) connectable: 1
       I: Connecting
       I: Connected to D2:CE:07:7E:40:79 (random) (err 0x00)
@@ -214,17 +214,15 @@ After programming the sample to your development kit, you can test it by connect
       - procedure interval: 2
       - procedure count: 0
       - maximum procedure length: 12
-      I: Distance estimates: median: 0.60m, update: 0.60m, time_delta: 0ms
-      I: Distance estimates: median: 0.60m, update: 0.59m, time_delta: 30ms
-      I: Distance estimates: median: 0.59m, update: 0.59m, time_delta: 30ms
-      I: Distance estimates: median: 0.60m, update: 0.60m, time_delta: 30ms
-      I: Distance estimates: median: 0.60m, update: 0.60m, time_delta: 30ms
-      I: Distance estimates: median: 0.60m, update: 0.58m, time_delta: 30ms
-      I: Distance estimates: median: 0.59m, update: 0.59m, time_delta: 30ms
-      I: Distance estimates: median: 0.59m, update: 0.59m, time_delta: 30ms
-      I: Distance estimates: median: 0.59m, update: 0.59m, time_delta: 30ms
-      I: Distance estimates: median: 0.59m, update: 0.59m, time_delta: 30ms
-      I: Distance estimates: median: 0.59m, update: 0.59m, time_delta: 30ms
+      I: Distance estimates: median: 1.34m, update: 1.34m, time_delta: 0ms
+      I: Distance estimates: median: 1.35m, update: 1.35m, time_delta: 30ms
+      I: Distance estimates: median: 1.35m, update: 1.35m, time_delta: 30ms
+      I: Distance estimates: median: 1.35m, update: 1.34m, time_delta: 30ms
+      I: Distance estimates: median: 1.35m, update: 1.35m, time_delta: 30ms
+      I: Distance estimates: median: 1.35m, update: 1.36m, time_delta: 30ms
+      I: Distance estimates: median: 1.35m, update: 1.34m, time_delta: 30ms
+      I: Distance estimates: median: 1.35m, update: 1.34m, time_delta: 30ms
+      I: Distance estimates: median: 1.34m, update: 1.34m, time_delta: 30ms
 
 
 Dependencies
