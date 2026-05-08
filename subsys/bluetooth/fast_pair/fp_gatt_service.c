@@ -784,9 +784,13 @@ static ssize_t write_additional_data(struct bt_conn *conn,
 {
 	/* The only expected Additional Data write is with Personalized Name. fp_keys module will
 	 * return an error if it receives Personalized Name store request in inappropriate state.
+	 *
+	 * The decoded payload is at most FP_STORAGE_PN_BUF_LEN - 1 bytes (the maximum
+	 * Personalized Name length), with one extra byte reserved for the NULL terminator
+	 * appended below.
 	 */
-	size_t data_len = len - FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN;
-	uint8_t decoded_data[data_len + sizeof(char)];
+	uint8_t decoded_data[FP_STORAGE_PN_BUF_LEN];
+	size_t data_len;
 	int err = 0;
 	ssize_t res = len;
 
@@ -807,6 +811,25 @@ static ssize_t write_additional_data(struct bt_conn *conn,
 		goto finish;
 	}
 
+	/* Validate the ATT write length before any arithmetic on it: a value below the
+	 * header length would underflow the unsigned data_len computation below, and a value
+	 * above the buffer capacity would overflow the decoded_data buffer.
+	 */
+	if (len <= FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN) {
+		LOG_WRN("Invalid length: len=%" PRIu16 " (Additional Data)", len);
+		res = BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
+		goto finish;
+	}
+
+	if (len > FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN + sizeof(decoded_data) - 1) {
+		LOG_WRN("Length exceeds buffer capacity: len=%" PRIu16 " (Additional Data)", len);
+		LOG_WRN("Align the CONFIG_BT_FAST_PAIR_STORAGE_PN_LEN_MAX Kconfig to support "
+			"longer Personalized Name");
+		res = BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
+		goto finish;
+	}
+
+	/* Decode the encrypted field in the Additional Data payload. */
 	err = fp_keys_additional_data_decode(conn, decoded_data, buf, len);
 	if (err) {
 		LOG_WRN("Decrypt failed: err=%d (Additional Data)", err);
@@ -815,6 +838,7 @@ static ssize_t write_additional_data(struct bt_conn *conn,
 	}
 
 	/* Received data is assumed to be a Personalized Name string. Terminate the string. */
+	data_len = len - FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN;
 	decoded_data[data_len] = '\0';
 
 	LOG_DBG("Received following Personalized Name: %s (Additional Data)", decoded_data);
