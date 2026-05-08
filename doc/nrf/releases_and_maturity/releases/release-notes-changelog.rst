@@ -469,7 +469,9 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`bt_fast_pair_readme` library:
+
+  * Fixed missing ATT write length validation in the GATT write handler for the Fast Pair Additional Data characteristic, used by the experimental Personalized Name extension (:kconfig:option:`CONFIG_BT_FAST_PAIR_PN`).
 
 Common Application Framework
 ----------------------------
