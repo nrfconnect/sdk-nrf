@@ -68,22 +68,6 @@ config MBEDTLS_PSA_CRYPTO_CONFIG
 	bool
 	default y
 
-config TF_PSA_CRYPTO_CONFIG_FILE
-	string
-	default "nrf-psa-crypto-config.h"
-	help
-	  Name of the base TF-PSA-Crypto configuration file.
-	  Used for PSA_WANT_* configurations.
-	  This file is auto-generated with the values of the relevant Kconfig options.
-
-config TF_PSA_CRYPTO_USER_CONFIG_FILE
-	string
-	default "nrf-psa-crypto-user-config.h"
-	help
-	  Name of the additional TF-PSA-Crypto configuration file.
-	  Used for PSA_NEED_* configurations.
-	  This file is auto-generated with the values of the relevant Kconfig options.
-
 config MBEDTLS_ENABLE_HEAP
 	bool "Global heap for mbed TLS"
 	help
