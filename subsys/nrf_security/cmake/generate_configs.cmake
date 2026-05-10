@@ -47,7 +47,7 @@ macro(generate_mbedcrypto_interface_configs)
     # Generate MBEDCRYPTO_CONFIG_FILE
     if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
       include(${NRF_SECURITY_DIR}/cmake/legacy_crypto_config.cmake)
-    else()
+    elseif(CONFIG_MBEDTLS)
       include(${NRF_SECURITY_DIR}/cmake/nrf_config.cmake)
     endif()
 
@@ -125,10 +125,7 @@ macro(generate_mbedcrypto_library_configs)
       set(CONFIG_MBEDTLS_SSL_CONTEXT_SERIALIZATION False)
     endif()
 
-    # Generate MBEDCRYPTO_CONFIG_FILE
-    if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
-      include(${NRF_SECURITY_DIR}/cmake/legacy_crypto_config.cmake)
-    else()
+    if(CONFIG_MBEDTLS)
       include(${NRF_SECURITY_DIR}/cmake/nrf_config.cmake)
     endif()
 
