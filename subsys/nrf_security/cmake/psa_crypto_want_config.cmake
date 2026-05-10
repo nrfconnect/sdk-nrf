@@ -4,9 +4,26 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_CLIENT)
 
-# Convert all PSA_WANT_XXXX Kconfig variables for Mbed TLS (strip CONFIG_)
+kconfig_check_and_set_base_to_one(MBEDTLS_ASN1_PARSE_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_ASN1_WRITE_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_BASE64_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_MD_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
+kconfig_check_and_set_base_int(MBEDTLS_MPI_MAX_SIZE)
+kconfig_check_and_set_base_int(MBEDTLS_MPI_WINDOW_SIZE)
+kconfig_check_and_set_base_to_one(MBEDTLS_PEM_PARSE_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_PEM_WRITE_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_MEMORY)
+kconfig_check_and_set_base_to_one(MBEDTLS_PK_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_PK_PARSE_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_PK_WRITE_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_PKCS5_C)
+kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_ALT)
+kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_C)
 
 kconfig_check_and_set_base_to_one(PSA_WANT_AES_KEY_SIZE_128)
 kconfig_check_and_set_base_to_one(PSA_WANT_AES_KEY_SIZE_192)
@@ -135,8 +152,6 @@ kconfig_check_and_set_base_to_one(PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA)
 kconfig_check_and_set_base_to_one(PSA_WANT_ALG_HASH_ML_DSA)
 kconfig_check_and_set_base_to_one(PSA_WANT_ALG_AES_KW)
 kconfig_check_and_set_base_to_one(PSA_WANT_ALG_AES_KWP)
-
-kconfig_check_and_set_base_int(PSA_MAX_RSA_KEY_BITS)
 
 # Create the Mbed TLS PSA crypto config file (Contains all the PSA_WANT definitions)
 configure_file(${NRF_SECURITY_DIR}/configs/psa_crypto_want_config.h.template

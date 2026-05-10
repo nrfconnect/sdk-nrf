@@ -8,11 +8,19 @@
 #ifndef PSA_CRYPTO_USER_CONFIG_H
 #define PSA_CRYPTO_USER_CONFIG_H
 
-/* PSA Core implementation */
-#cmakedefine PSA_CORE_OBERON                                    @PSA_CORE_OBERON@
+/* PSA core configuration */
+#cmakedefine MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
+#cmakedefine MBEDTLS_PSA_CRYPTO_DRIVERS                         @MBEDTLS_PSA_CRYPTO_DRIVERS@
+#cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+#cmakedefine MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+#cmakedefine MBEDTLS_PSA_CRYPTO_STORAGE_C
+#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOTS
+#cmakedefine MBEDTLS_PSA_KEY_SLOT_COUNT                         @MBEDTLS_PSA_KEY_SLOT_COUNT@
 
-#cmakedefine MBEDTLS_THREADING_ALT
+/* TF-M */
+#cmakedefine MBEDTLS_PSA_CRYPTO_SPM
 
+/* RSA */
 #cmakedefine PSA_MAX_RSA_KEY_BITS @PSA_MAX_RSA_KEY_BITS@
 
 /*
@@ -507,16 +515,6 @@
 #cmakedefine PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND           @PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND@
 #cmakedefine PSA_NEED_CRACEN_RNG_NO_ENTROPY_WORKAROUND          @PSA_NEED_CRACEN_RNG_NO_ENTROPY_WORKAROUND@
 #cmakedefine PSA_NEED_CRACEN_ECC_KEY_GEN_PKE                    @PSA_NEED_CRACEN_ECC_KEY_GEN_PKE@
-
-/* PSA and drivers */
-#cmakedefine MBEDTLS_PSA_CRYPTO_C
-#cmakedefine MBEDTLS_PSA_CRYPTO_STORAGE_C
-/* MBEDTLS_PSA_CRYPTO_DRIVERS is defined to 1 by TF-M's build system. */
-#cmakedefine MBEDTLS_PSA_CRYPTO_DRIVERS                         @MBEDTLS_PSA_CRYPTO_DRIVERS@
-#cmakedefine MBEDTLS_PSA_CRYPTO_CLIENT
-#cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
-#cmakedefine MBEDTLS_PSA_KEY_SLOT_COUNT                         @MBEDTLS_PSA_KEY_SLOT_COUNT@
-#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOTS                       @MBEDTLS_PSA_STATIC_KEY_SLOTS@
 
 #include <oberon_check_unsupported.h>
 
