@@ -16,25 +16,9 @@
  * not used
  */
 
-/* TF-M */
-#cmakedefine MBEDTLS_PSA_CRYPTO_SPM
-
-/* PSA core configurations */
-#cmakedefine MBEDTLS_PSA_CRYPTO_CLIENT
-#cmakedefine MBEDTLS_PSA_CRYPTO_C
-#cmakedefine MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
-/* Avoid redefinition as TF-M defines this on the command line */
-#ifndef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
-#cmakedefine MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
-#endif
-
 /* Platform */
-#cmakedefine MBEDTLS_PLATFORM_C
-#cmakedefine MBEDTLS_PLATFORM_MEMORY
 #cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
-#cmakedefine MBEDTLS_MEMORY_BUFFER_ALLOC_C
 #cmakedefine MBEDTLS_DEBUG_C
-#cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 
 /* Platform configurations for _ALT defines */
 #cmakedefine MBEDTLS_PLATFORM_EXIT_ALT
@@ -76,23 +60,11 @@
 #cmakedefine MBEDTLS_ENTROPY_MAX_SOURCES                        @MBEDTLS_ENTROPY_MAX_SOURCES@
 #cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
 
-/* Platform configurations for Mbed TLS APIs*/
-#cmakedefine MBEDTLS_BASE64_C
-#cmakedefine MBEDTLS_OID_C
-#cmakedefine MBEDTLS_ASN1_PARSE_C
-#cmakedefine MBEDTLS_ASN1_WRITE_C
-
 /* Ensure these are not enabled internal in NS build */
 #if !defined(MBEDTLS_PSA_CRYPTO_SPM) && !defined(INSIDE_TFM_BUILD)
 
 /* Legacy configurations for Mbed TLS APIs */
 #cmakedefine MBEDTLS_CIPHER_C
-#cmakedefine MBEDTLS_MD_C
-#cmakedefine MBEDTLS_PK_C
-#cmakedefine MBEDTLS_PK_WRITE_C
-#cmakedefine MBEDTLS_PK_PARSE_C
-#cmakedefine MBEDTLS_PEM_PARSE_C
-#cmakedefine MBEDTLS_PEM_WRITE_C
 
 /* TLS/DTLS configurations */
 #cmakedefine MBEDTLS_SSL_ALL_ALERT_MESSAGES
@@ -156,10 +128,6 @@
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED
 
 #endif /* !defined(MBEDTLS_PSA_CRYPTO_SPM) && !defined(INSIDE_TFM_BUILD) */
-
-/* Controlling some MPI sizes */
-#cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@ /**< Maximum window size used. */
-#cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@ /**< Maximum number of bytes for usable MPIs. */
 
 #if CONFIG_MBEDTLS_CMAC_ALT
 /* NCSDK-24838 */

@@ -6,22 +6,9 @@
 # Convert all platform and TLS/DTLS and X.509 Kconfig variables for Mbed TLS
 # (strip CONFIG_)
 
-# TF-M
-kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_SPM)
-
-# PSA core configurations
-kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_CLIENT)
-kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_C)
-kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)
-kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
-
 # Platform
-kconfig_check_and_set_base(MBEDTLS_PLATFORM_C)
-kconfig_check_and_set_base(MBEDTLS_PLATFORM_MEMORY)
 kconfig_check_and_set_base(MBEDTLS_NO_PLATFORM_ENTROPY)
-kconfig_check_and_set_base(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
 kconfig_check_and_set_base(MBEDTLS_DEBUG_C)
-kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
 
 # Platform configurations for _ALT defines
 kconfig_check_and_set_base(MBEDTLS_PLATFORM_EXIT_ALT)
@@ -65,25 +52,11 @@ kconfig_check_and_set_base(MBEDTLS_ENTROPY_FORCE_SHA256)
 kconfig_check_and_set_base(MBEDTLS_NO_PLATFORM_ENTROPY)
 kconfig_check_and_set_base_int(MBEDTLS_ENTROPY_MAX_SOURCES)
 
-# Still required for some things in psa_util?
-kconfig_check_and_set_base(MBEDTLS_MD_C)
-
 # Guard against setting legacy configurations in TF-M image
 if(NOT MBEDTLS_PSA_CRYPTO_SPM)
-  # Platform configuration
-  kconfig_check_and_set_base(MBEDTLS_ASN1_PARSE_C)
-  kconfig_check_and_set_base(MBEDTLS_ASN1_WRITE_C)
-  kconfig_check_and_set_base(MBEDTLS_BASE64_C)
-  kconfig_check_and_set_base(MBEDTLS_OID_C)
 
   # PKI configurations
   kconfig_check_and_set_base(MBEDTLS_CIPHER_C)
-  kconfig_check_and_set_base(MBEDTLS_PK_C)
-  kconfig_check_and_set_base(MBEDTLS_PKCS5_C)
-  kconfig_check_and_set_base(MBEDTLS_PK_PARSE_C)
-  kconfig_check_and_set_base(MBEDTLS_PK_WRITE_C)
-  kconfig_check_and_set_base(MBEDTLS_PEM_PARSE_C)
-  kconfig_check_and_set_base(MBEDTLS_PEM_WRITE_C)
 
   # TLS/DTLS configurations
   kconfig_check_and_set_base(MBEDTLS_SSL_ALL_ALERT_MESSAGES)
@@ -124,9 +97,6 @@ if(NOT MBEDTLS_PSA_CRYPTO_SPM)
   kconfig_check_and_set_base_int(MBEDTLS_SSL_OUT_CONTENT_LEN)
   kconfig_check_and_set_base(MBEDTLS_SSL_CIPHERSUITES)
   kconfig_check_and_set_base(MBEDTLS_SSL_EXTENDED_MASTER_SECRET)
-
-  kconfig_check_and_set_base_int(MBEDTLS_MPI_WINDOW_SIZE)
-  kconfig_check_and_set_base_int(MBEDTLS_MPI_MAX_SIZE)
 
   # x509 configurations
   kconfig_check_and_set_base(MBEDTLS_X509_RSASSA_PSS_SUPPORT)

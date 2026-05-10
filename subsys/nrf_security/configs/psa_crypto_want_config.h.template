@@ -8,6 +8,25 @@
 #ifndef PSA_CRYPTO_CONFIG_H
 #define PSA_CRYPTO_CONFIG_H
 
+#cmakedefine MBEDTLS_PSA_CRYPTO_C
+#cmakedefine MBEDTLS_PSA_CRYPTO_CLIENT
+
+#cmakedefine MBEDTLS_ASN1_PARSE_C
+#cmakedefine MBEDTLS_ASN1_WRITE_C
+#cmakedefine MBEDTLS_BASE64_C
+#cmakedefine MBEDTLS_MD_C
+#cmakedefine MBEDTLS_MEMORY_BUFFER_ALLOC_C
+#cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@
+#cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@
+#cmakedefine MBEDTLS_PEM_PARSE_C
+#cmakedefine MBEDTLS_PEM_WRITE_C
+#cmakedefine MBEDTLS_PLATFORM_C
+#cmakedefine MBEDTLS_PLATFORM_MEMORY
+#cmakedefine MBEDTLS_PK_C
+#cmakedefine MBEDTLS_PK_PARSE_C
+#cmakedefine MBEDTLS_PK_WRITE_C
+#cmakedefine MBEDTLS_PKCS5_C
+#cmakedefine MBEDTLS_THREADING_ALT
 #cmakedefine MBEDTLS_THREADING_C
 
 #cmakedefine PSA_WANT_AES_KEY_SIZE_128                          @PSA_WANT_AES_KEY_SIZE_128@
