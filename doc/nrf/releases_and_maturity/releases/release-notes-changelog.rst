@@ -132,7 +132,7 @@ Security
 
   * Issues with incorrect support status on the :ref:`ug_crypto_supported_features` page:
 
-    * The :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` Kconfig option was incorrectly listed as supported for SoCs with Arm CryptoCell CC310.
+    * The :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` Kconfig option is now correctly listed as unsupported for SoCs with Arm CryptoCell CC310.
     * The tables for supported AES key wrapping algorithms for nRF54L Series devices now list the nRF54LS05 device (not supported in the CRACEN driver; experimental in the nrf_oberon driver).
 
 * Removed:

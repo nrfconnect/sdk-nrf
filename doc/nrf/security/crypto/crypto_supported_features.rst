@@ -4627,7 +4627,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
 
             .. note::
-              CRACEN only supports a 96-bit IV for AES GCM.
+
+               CRACEN only supports a 96-bit IV for AES GCM.
 
    .. tab:: nRF54L Series
 
@@ -10920,9 +10921,6 @@ The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configur
 Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported AES key sizes.
 
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
-
-.. note::
-   CRACEN only supports a 96-bit IV for AES GCM.
 
 .. tabs::
 
