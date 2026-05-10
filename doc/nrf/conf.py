@@ -57,6 +57,8 @@ extensions = [
     "page_filter",
     "sphinxcontrib.plantuml",
     "sphinxcontrib.programoutput",
+    "sphinxcontrib.jquery"  
+    
 ]
 
 linkcheck_ignore = [
@@ -91,7 +93,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
 
-html_theme_options = {"docset": "nrf", "docsets": utils.ALL_DOCSETS}
+html_theme_options = {"docset": "nrf", "docsets": utils.ALL_DOCSETS, "logo_url": "https://docs.nordicsemi.com/"}
 
 # Options for intersphinx ------------------------------------------------------
 
