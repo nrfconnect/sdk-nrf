@@ -155,8 +155,6 @@ if(NOT MBEDTLS_PSA_CRYPTO_SPM)
   kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)
 endif()
 
-kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_CONFIG)
-
 # Generate the Mbed TLS config file (default nrf-config.h)
 configure_file(${NRF_SECURITY_DIR}/configs/nrf-config.h.template
   ${generated_include_path}/${CONFIG_MBEDTLS_CONFIG_FILE}

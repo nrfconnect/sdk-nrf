@@ -157,8 +157,6 @@
 
 #endif /* !defined(MBEDTLS_PSA_CRYPTO_SPM) && !defined(INSIDE_TFM_BUILD) */
 
-#cmakedefine MBEDTLS_PSA_CRYPTO_CONFIG
-
 /* Controlling some MPI sizes */
 #cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@ /**< Maximum window size used. */
 #cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@ /**< Maximum number of bytes for usable MPIs. */

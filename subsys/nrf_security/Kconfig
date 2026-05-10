@@ -64,10 +64,6 @@ config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 config MBEDTLS_CONFIG_FILE
 	default "nrf-config.h"
 
-config MBEDTLS_PSA_CRYPTO_CONFIG
-	bool
-	default y
-
 config MBEDTLS_ENABLE_HEAP
 	bool "Global heap for mbed TLS"
 	help
