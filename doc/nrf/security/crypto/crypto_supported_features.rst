@@ -3955,6 +3955,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
+                 - nRF54LS05
                * - AES Key wrap (AES-KW)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KW`
                  - Experimental
@@ -3963,6 +3964,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
+                 - --
                * - AES Key wrap with Padding (AES-KWP)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
                  - Experimental
@@ -3971,6 +3973,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
+                 - --
 
             .. note::
 
@@ -3993,6 +3996,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
+                 - nRF54LS05
                * - AES Key wrap (AES-KW)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KW`
                  - Experimental
@@ -4001,8 +4005,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - AES Key wrap with Padding (AES-KWP)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
