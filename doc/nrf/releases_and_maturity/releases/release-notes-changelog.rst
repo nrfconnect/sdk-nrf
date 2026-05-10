@@ -128,6 +128,12 @@ Security
     :kconfig:option:`CONFIG_NRF_SECURITY` is now promptless and auto-enabled indirectly by :kconfig:option:`CONFIG_PSA_CRYPTO`.
   * Approach to store keys in the KMU so that AEAD algorithms with non-default (shortened) tag lengths are supported.
 
+* Fixed:
+
+  * Issues with incorrect support status on the :ref:`ug_crypto_supported_features` page:
+
+    * The :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` Kconfig option was incorrectly listed as supported for SoCs with Arm CryptoCell CC310.
+
 * Removed:
 
   * The following Kconfig options:

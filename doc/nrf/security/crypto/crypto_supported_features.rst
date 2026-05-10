@@ -4485,7 +4485,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - GCM
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
-                 - Supported
+                 - --
                * - ChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
                  - Supported
@@ -4495,7 +4495,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310; there is no hardware support for GCM on CC310.
+               :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310.
 
          .. tab:: nrf_oberon
 
@@ -4776,10 +4776,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - GCM
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
                * - ChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
                  - Supported
@@ -4792,6 +4792,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+
+            .. note::
+
+               :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310.
 
          .. tab:: nrf_oberon
 
@@ -4859,8 +4863,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Kconfig option
                  - Supported AEAD algorithms
                * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_AEAD_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` (limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310, no hardware support for GCM on CC310)
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM` (limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
 
          .. tab:: nrf_oberon
@@ -4893,7 +4896,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported AEAD algorithms
                * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_AEAD_DRIVER`
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` (limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310, no hardware support for GCM on CC310)
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
 
          .. tab:: nrf_oberon
@@ -4958,8 +4961,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Kconfig option
                  - Supported AEAD algorithms
                * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_AEAD_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` (limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310, no hardware support for GCM on CC310)
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM` (limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
 
          .. tab:: nrf_oberon
