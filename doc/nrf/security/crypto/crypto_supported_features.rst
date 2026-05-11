@@ -9278,9 +9278,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - SPAKE2+ for Matter
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
                * - SRP-6
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                  - Experimental
@@ -9318,7 +9318,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - SPAKE2+ for Matter
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
-                 - Experimental
+                 - Supported
                * - SRP-6
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                  - Experimental
@@ -9425,12 +9425,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SPAKE2+ for Matter
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                  - --
                * - SRP-6
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
@@ -9522,13 +9522,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - SPAKE2+ for Matter
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SRP-6
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                  - Experimental
@@ -9613,10 +9613,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - SPAKE2+ for Matter
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SRP-6
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                  - Experimental
