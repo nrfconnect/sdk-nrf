@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="970px" height="289px" viewBox="10 15 970 289" xml:space="preserve">
+	<style type="text/css">
+	<![CDATA[
+		.pad    { fill: #b0bec5; }
+		.open   { fill: #0077c8; }
+		.open-light { fill: #00a9ce; }
+		.closed { fill: #0033a0; }
+		.divln  { stroke: #ffffff; stroke-width: 1.5; fill: none; }
+		.t-head { fill: #ffffff; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; }
+		.t-sub  { fill: #ffffff; font-family: Arial, sans-serif; font-size: 11px; }
+		.t-note { fill: #ffffff; font-family: Arial, sans-serif; font-size: 10px; font-style: italic; }
+		.s-lbl  { fill: #333f48; font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; }
+		.a-solid{ stroke: #008bab; stroke-width: 1.5; fill: none; }
+		.a-dash { stroke: #008bab; stroke-width: 1.5; fill: none; stroke-dasharray: 6,4; }
+		.a-head { fill: #008bab; }
+		.lbl    { fill: #333f48; font-family: Arial, sans-serif; font-size: 11px; }
+		.lbl-i  { fill: #333f48; font-family: Arial, sans-serif; font-size: 10px; font-style: italic; }
+		.title  { fill: #333f48; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; }
+	]]>
+	</style>
+	<defs>
+		<clipPath id="lh1"><rect x="0"   y="104" width="155" height="120"/></clipPath>
+		<clipPath id="rh1"><rect x="155" y="104" width="200" height="120"/></clipPath>
+		<clipPath id="lh2"><rect x="0"   y="104" width="490" height="120"/></clipPath>
+		<clipPath id="rh2"><rect x="490" y="104" width="200" height="120"/></clipPath>
+		<clipPath id="lh3"><rect x="0"   y="104" width="835" height="120"/></clipPath>
+		<clipPath id="rh3"><rect x="835" y="104" width="200" height="120"/></clipPath>
+		<linearGradient id="spe-debug-gradient" gradientUnits="userSpaceOnUse"
+		                x1="490" y1="127" x2="578" y2="215">
+			<stop offset="0%" stop-color="#0077c8"/>
+			<stop offset="100%" stop-color="#00a9ce"/>
+		</linearGradient>
+		<marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+			<polygon points="0 0, 8 3, 0 6" class="a-head"/>
+		</marker>
+		<marker id="arr-dash" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+			<polygon points="0 0, 8 3, 0 6" class="a-head"/>
+		</marker>
+	</defs>
+
+	<text x="490" y="35" class="title" text-anchor="middle">Secure AP-Protect</text>
+	<text x="490" y="48" class="lbl-i" text-anchor="middle">Initial state depends on device UICR and Kconfig defaults (see configuration tables below)</text>
+
+	<!-- State 1: NSPE open (Debug open), SPE closed (Debug blocked) -->
+	<ellipse cx="155" cy="169" rx="130" ry="47" class="pad"/>
+	<ellipse cx="155" cy="169" rx="125" ry="42" class="open"   clip-path="url(#lh1)"/>
+	<ellipse cx="155" cy="169" rx="125" ry="42" class="closed" clip-path="url(#rh1)"/>
+	<line x1="155" y1="122" x2="155" y2="216" class="divln"/>
+	<text x="155" y="103" class="s-lbl"  text-anchor="middle">AP-Protect disabled</text>
+	<text x="155" y="117" class="s-lbl"  text-anchor="middle">Secure AP-Protect enabled</text>
+	<text x="93"  y="162" class="t-head" text-anchor="middle">NSPE</text>
+	<text x="93"  y="176" class="t-sub"  text-anchor="middle">Debug open</text>
+	<text x="217" y="162" class="t-head" text-anchor="middle">SPE</text>
+	<text x="217" y="176" class="t-sub"  text-anchor="middle">Debug blocked</text>
+
+	<!-- State 2: NSPE open (Debug open), SPE open (Debug open) -->
+	<ellipse cx="490" cy="169" rx="130" ry="47" class="pad"/>
+	<ellipse cx="490" cy="169" rx="125" ry="42" class="open" clip-path="url(#lh2)"/>
+	<ellipse cx="490" cy="169" rx="125" ry="42" fill="url(#spe-debug-gradient)" clip-path="url(#rh2)"/>
+	<line x1="490" y1="122" x2="490" y2="216" class="divln"/>
+	<text x="490" y="103" class="s-lbl"  text-anchor="middle">AP-Protect disabled</text>
+	<text x="490" y="117" class="s-lbl"  text-anchor="middle">Secure AP-Protect disabled</text>
+	<text x="420" y="162" class="t-head" text-anchor="middle">NSPE</text>
+	<text x="420" y="176" class="t-sub"  text-anchor="middle">Debug open</text>
+	<text x="545" y="155" class="t-head" text-anchor="middle">SPE</text>
+	<text x="545" y="169" class="t-sub"  text-anchor="middle">Debug open</text>
+	<text x="545" y="182" class="t-note" text-anchor="middle">(temporarily</text>
+	<text x="545" y="194" class="t-note" text-anchor="middle">or permanently)</text>
+
+	<!-- State 3: AP/Secure AP disabled, both debug blocked -->
+	<ellipse cx="835" cy="169" rx="130" ry="47" class="pad"/>
+	<ellipse cx="835" cy="169" rx="125" ry="42" class="closed" clip-path="url(#lh3)"/>
+	<ellipse cx="835" cy="169" rx="125" ry="42" class="closed" clip-path="url(#rh3)"/>
+	<line x1="835" y1="122" x2="835" y2="216" class="divln"/>
+	<text x="835" y="103" class="s-lbl"  text-anchor="middle">AP-Protect enabled</text>
+	<text x="835" y="117" class="s-lbl"  text-anchor="middle">Secure AP-Protect enabled</text>
+	<text x="770" y="162" class="t-head" text-anchor="middle">NSPE</text>
+	<text x="770" y="176" class="t-sub"  text-anchor="middle">Debug blocked</text>
+	<text x="900" y="162" class="t-head" text-anchor="middle">SPE</text>
+	<text x="900" y="176" class="t-sub"  text-anchor="middle">Debug blocked</text>
+
+	<!-- A1: State 1 to State 2 -->
+	<path d="M 280,156 Q 322,99 365,156" class="a-solid" marker-end="url(#arr)"/>
+	<text x="322" y="79" class="lbl" text-anchor="middle">ERASEALL through CTRL-AP</text>
+	<text x="322" y="92" class="lbl" text-anchor="middle">+ Configure UICR to allow debugging</text>
+	<text x="322" y="105" class="lbl" text-anchor="middle">(device specific)</text>
+
+	<!-- A2: State 2 to State 1 (dashed, any reset) -->
+	<path d="M 365,182 Q 322,236 280,182" class="a-dash" marker-end="url(#arr-dash)"/>
+	<text x="322" y="192" class="lbl" text-anchor="middle">Any reset</text>
+	<text x="322" y="225" class="lbl-i" text-anchor="middle">(When SPE open</text>
+	<text x="322" y="238" class="lbl-i" text-anchor="middle">temporarily)</text>
+
+	<!-- A3: State 2 to State 3 -->
+	<path d="M 615,156 Q 662,99 710,156" class="a-solid" marker-end="url(#arr)"/>
+	<text x="662" y="79" class="lbl" text-anchor="middle">Configure UICR to disallow debugging</text>
+	<text x="662" y="92" class="lbl" text-anchor="middle">(device specific)</text>
+	<text x="662" y="105" class="lbl" text-anchor="middle">+ Any reset</text>
+
+	<!-- A4: State 3 to State 1 (big arc below all states) -->
+	<path d="M 835,216 Q 495,303 155,216" class="a-solid" marker-end="url(#arr)"/>
+	<text x="495" y="278" class="lbl" text-anchor="middle">Configure UICR to allow NSPE and disallow SPE debugging (device specific)</text>
+	<text x="495" y="291" class="lbl" text-anchor="middle">+ Any reset</text>
+</svg>

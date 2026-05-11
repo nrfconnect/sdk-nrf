@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="620px" height="225px" viewBox="0 0 620 225" xml:space="preserve">
+	<style type="text/css">
+	<![CDATA[
+		.s-dark  { fill: #0033a0; }
+		.s-mid   { fill: #0077c8; }
+		.t-head  { fill: #ffffff; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; }
+		.t-sub   { fill: #ffffff; font-family: Arial, sans-serif; font-size: 12px; }
+		.t-note  { fill: #ffffff; font-family: Arial, sans-serif; font-size: 11px; font-style: italic; }
+		.a-solid { stroke: #008bab; stroke-width: 1.5; fill: none; }
+		.a-head  { fill: #008bab; }
+		.lbl     { fill: #333f48; font-family: Arial, sans-serif; font-size: 11px; }
+		.title   { fill: #333f48; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; }
+	]]>
+	</style>
+	<defs>
+		<marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+			<polygon points="0 0, 8 3, 0 6" class="a-head"/>
+		</marker>
+	</defs>
+
+	<text x="310" y="27" class="title" text-anchor="middle">AP-Protect controlled by hardware</text>
+
+	<ellipse cx="155" cy="125" rx="130" ry="42" class="s-mid"/>
+	<text x="155" y="112" class="t-head" text-anchor="middle">Disabled</text>
+	<text x="155" y="127" class="t-sub"  text-anchor="middle">Debug open</text>
+	<text x="155" y="141" class="t-note" text-anchor="middle">(default)</text>
+
+	<ellipse cx="465" cy="125" rx="130" ry="42" class="s-dark"/>
+	<text x="465" y="119" class="t-head" text-anchor="middle">Enabled</text>
+	<text x="465" y="135" class="t-sub"  text-anchor="middle">Debug blocked</text>
+
+	<path d="M 239,93 Q 310,36 381,93" class="a-solid" marker-end="url(#arr)"/>
+	<text x="310" y="50" class="lbl" text-anchor="middle">Write Enabled to UICR.APPROTECT + Any reset</text>
+
+	<path d="M 381,157 Q 310,214 239,157" class="a-solid" marker-end="url(#arr)"/>
+	<text x="310" y="202" class="lbl" text-anchor="middle">ERASEALL through CTRL-AP</text>
+	<text x="310" y="216" class="lbl" text-anchor="middle">(erases flash, RAM, and UICR)</text>
+</svg>
