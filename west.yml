@@ -103,7 +103,6 @@ manifest:
           - nanopb
           - net-tools
           - nrf_hw_models
-          - nrf_wifi
           - open-amp
           - percepio
           - picolibc
@@ -237,6 +236,9 @@ manifest:
       revision: ae9f21960477636720a72ced869a6c342d502484
       groups:
         - doc-internal
+    - name: nrf_wifi
+      revision: 1a4e59f4c6685877f6bff08bb1812bf9318da6d2
+      path: modules/lib/nrf_wifi
 
     # Other third-party repositories.
     - name: cmock
