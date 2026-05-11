@@ -2161,7 +2161,7 @@ The options are grouped by Series and drivers available for the device Series, a
 .. note::
    Key size configuration is supported as described in `AES key size configuration`_, for all algorithms except the stream cipher.
 
-   The :ref:`nrf_security_drivers_cc3xx` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310 (nrf_cc310).
+   The :ref:`nrf_security_drivers_cc3xx` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310.
 
 .. tabs::
 
