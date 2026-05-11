@@ -146,6 +146,69 @@ Libraries
 
 This section describes the changes related to libraries.
 
+.. _migration_3.4_google_fast_pair:
+
+Google Fast Pair
+----------------
+
+.. toggle::
+
+   For applications and samples using the :ref:`bt_fast_pair_readme` library:
+
+   * The devicetree (DTS) partition overlays of the Fast Pair samples and Fast Pair-enabled board targets have been migrated from the legacy ``fixed-partitions`` compatible string to the new ``zephyr,mapped-partition`` compatible string introduced in Zephyr.
+     The new layout matches the output of the Partition Manager-to-DTS helper script (:file:`scripts/pm_to_dts.py`) and aligns the Fast Pair sample overlays with the partition binding convention adopted by the rest of the Zephyr SoC devicetree.
+
+     If your application uses a Fast Pair DTS partition overlay derived from earlier |NCS| releases, update each :file:`<board_target>.overlay` file as follows:
+
+     * On the ``partitions`` grouping node, replace the ``compatible = "fixed-partitions";`` property with an empty ``ranges;`` property.
+     * On every child partition node (for example, ``boot_partition``, ``slot0_partition``, ``slot1_partition``, ``bt_fast_pair_partition``, and ``storage_partition``), add the ``compatible = "zephyr,mapped-partition";`` property.
+
+     For example, replace the following overlay snippet:
+
+     .. code-block:: devicetree
+
+        partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            slot0_partition: partition@0 {
+                label = "image-0";
+                reg = <0x0 DT_SIZE_K(996)>;
+            };
+        };
+
+     With the following:
+
+     .. code-block:: devicetree
+
+        partitions {
+            ranges;
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            slot0_partition: partition@0 {
+                compatible = "zephyr,mapped-partition";
+                label = "image-0";
+                reg = <0x0 DT_SIZE_K(996)>;
+            };
+        };
+
+     Refer to the partition overlays under the :file:`nrf/samples/bluetooth/fast_pair/locator_tag/` and :file:`nrf/samples/bluetooth/fast_pair/input_device/` sample directories for complete examples of the updated layout.
+
+     .. important::
+        This migration is mandatory on nRF53 Series board targets.
+        Recent Zephyr updates added a ``ranges`` translation to the ``flash1`` SoC node (network core flash), so ``DT_REG_ADDR()`` on partition nodes now returns their bus address rather than their in-flash offset.
+        With the legacy ``fixed-partitions`` compatible, the Zephyr linker still uses ``CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET`` to place the network core code partition, which double-counts the ``flash1`` base.
+        As a result, the network core image is linked at an address outside the valid flash range and ``nrfutil`` rejects programming with the following message:
+
+        .. code-block:: console
+
+           Device error: Address range 0x02008800..0x020262ac is outside the memory ranges defined for programming through the Network core (Generic)
+
+        Switching to ``zephyr,mapped-partition`` makes the linker derive the network core code partition's load address directly from ``DT_REG_ADDR(zephyr_code_partition)``, which yields the correct bus address and avoids the double-counting.
+        On the application core, where ``flash0`` uses identity ``ranges``, both compatibles produce the same addresses, but updating the overlays is still recommended for consistency.
+
 nRF Cloud library
 -----------------
 
