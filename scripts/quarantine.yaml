@@ -99,4 +99,20 @@
     - drivers.audio.pdm_loopback.nrf9251.audiopll.48khz
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
+
+- scenarios:
+    - drivers.spim_latency_16Mbps_fast_loopback
+  platforms:
+    - nrf9251dk/nrf9251/cpuapp
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9468"
+
+- scenarios:
+    - drivers.uart.uart_fifo_flush.fast
+    - drivers.uart.uart_latency.async.fast
+    - drivers.uart.uart_latency.int_driven.fast
+    - drivers.uart.uart_latency.poll.fast
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
