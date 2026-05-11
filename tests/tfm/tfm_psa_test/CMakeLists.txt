@@ -119,6 +119,7 @@ ExternalProject_Add(tfm_psa_arch_test_app
                 -DT_COSE_PATH=${CONFIG_TFM_T_COSE_PATH}
                 -DCMAKE_BUILD_TYPE=${tfm_ns_CMAKE_BUILD_TYPE}
                 -DTEST_PSA_API=${TEST_PSA_API}
+                -DZEPHYR_BASE=${ZEPHYR_BASE}
                 -DZEPHYR_NRF_MODULE_DIR=${ZEPHYR_NRF_MODULE_DIR}
                 -DTFM_BOARDS_NRF_DIR=${TFM_BOARDS_NRF_DIR}
                 -DNRF_CONFIG_CPU_FREQ_MHZ=${CONFIG_TFM_CPU_FREQ_MHZ}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2021 - 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -35,38 +35,41 @@
 #endif /* NRF_NS_SECONDARY */
 #define NS_IMAGE_PRIMARY_PARTITION_OFFSET (PM_TFM_NONSECURE_ADDRESS)
 #else
-/* DTS-based partition offsets. */
+/* DTS-based partition offsets. code-partitions[0] is the primary slot;
+ * code-partitions[1], when present, is the secondary slot.
+ */
+#define S_IMAGE_PRIMARY_PARTITION_OFFSET                                                           \
+	TFM_DT_REG_ADDR(TFM_DT_PHANDLE_BY_IDX(TFM_DT_INST(0, nordic_tz_secure), code_partitions, 0))
 #ifdef NRF_NS_SECONDARY
-#define S_IMAGE_PRIMARY_PARTITION_OFFSET   TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
-#define S_IMAGE_SECONDARY_PARTITION_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot1_partition))
-#else
-#define S_IMAGE_PRIMARY_PARTITION_OFFSET   TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
-#endif /* NRF_NS_SECONDARY */
-#define NS_IMAGE_PRIMARY_PARTITION_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_ns_partition))
+#define S_IMAGE_SECONDARY_PARTITION_OFFSET                                                         \
+	TFM_DT_REG_ADDR(TFM_DT_PHANDLE_BY_IDX(TFM_DT_INST(0, nordic_tz_secure), code_partitions, 1))
+#endif
+
+#define NS_IMAGE_PRIMARY_PARTITION_OFFSET                                                          \
+	TFM_DT_REG_ADDR(                                                                           \
+		TFM_DT_PHANDLE_BY_IDX(TFM_DT_INST(0, nordic_tz_nonsecure), code_partitions, 0))
 #endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 #else
 #error "Execute from secondary partition is not supported!"
 #endif /* !defined(LINK_TO_SECONDARY_PARTITION) */
 
-/* Secure regions */
+/* Secure code lives after the MCUboot header. TFM_MCUBOOT_OFFSET is the
+ * MCUboot header size (CONFIG_TFM_MCUBOOT_HEADER_SIZE, 0 on non-MCUboot
+ * builds): it is added to the slot start and subtracted from the slot
+ * size to skip over the header.
+ */
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #define S_CODE_START (PM_TFM_OFFSET)
 #define S_CODE_SIZE  (PM_TFM_SIZE)
-#elif TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot0_s_partition))
-/* When slot0_partition is the combined MCUboot slot containing sub-partitions,
- * use slot0_s_partition for the secure-only size and start address.
- * BL2_HEADER_SIZE (= CONFIG_ROM_START_OFFSET, 0x200 with MCUboot) skips the
- * MCUboot header at the start of the combined slot. BL2_HEADER_SIZE is also
- * used by target_cfg.c to locate the NS vector table, keeping both in sync.
- * This is a bit of a hack to get around handing the offset manually in TF-m.
- */
-#define S_CODE_START (TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_s_partition)) + \
-		      TFM_MCUBOOT_OFFSET)
-#define S_CODE_SIZE  (TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_s_partition)) - \
-		      TFM_MCUBOOT_OFFSET)
 #else
-#define S_CODE_START TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
-#define S_CODE_SIZE  TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_partition))
+#define S_CODE_START                                                                               \
+	(TFM_DT_REG_ADDR(                                                                          \
+		 TFM_DT_PHANDLE_BY_IDX(TFM_DT_INST(0, nordic_tz_secure), code_partitions, 0)) +    \
+	 TFM_MCUBOOT_OFFSET)
+#define S_CODE_SIZE                                                                                \
+	(TFM_DT_REG_SIZE(                                                                          \
+		 TFM_DT_PHANDLE_BY_IDX(TFM_DT_INST(0, nordic_tz_secure), code_partitions, 0)) -    \
+	 TFM_MCUBOOT_OFFSET)
 #endif
 #define S_CODE_LIMIT (S_CODE_START + S_CODE_SIZE - 1)
 
@@ -123,13 +126,20 @@
 
 #endif /* CONFIG_CPU_HAS_NRF_IDAU */
 
-/* Non-secure regions */
+/* Non-Secure code. Unlike S_CODE_*, no MCUboot header offset is
+ * applied here: the MCUboot header sits at the start of the secure
+ * slot and is already accounted for by S_CODE_START.
+ */
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #define NS_CODE_START (PM_APP_OFFSET)
 #define NS_CODE_SIZE  (PM_APP_SIZE)
 #else
-#define NS_CODE_START TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_ns_partition))
-#define NS_CODE_SIZE  TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_ns_partition))
+#define NS_CODE_START                                                                              \
+	TFM_DT_REG_ADDR(                                                                           \
+		TFM_DT_PHANDLE_BY_IDX(TFM_DT_INST(0, nordic_tz_nonsecure), code_partitions, 0))
+#define NS_CODE_SIZE                                                                               \
+	TFM_DT_REG_SIZE(                                                                           \
+		TFM_DT_PHANDLE_BY_IDX(TFM_DT_INST(0, nordic_tz_nonsecure), code_partitions, 0))
 #endif
 #define NS_CODE_LIMIT (NS_CODE_START + NS_CODE_SIZE - 1)
 
