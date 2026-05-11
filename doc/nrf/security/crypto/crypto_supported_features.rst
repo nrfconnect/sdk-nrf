@@ -264,104 +264,104 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - LMS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - XMSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - XMSS-MT Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA-44
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA-65
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA-87
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM-768
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM-1024
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ASCON
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
                  - Experimental
@@ -539,64 +539,64 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
-                 - Supported
+                 - Experimental
                * - LMS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY`
-                 - Supported
+                 - Experimental
                * - XMSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
-                 - Supported
+                 - Experimental
                * - XMSS-MT Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
-                 - Supported
+                 - Experimental
                * - ML-DSA-44
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - Supported
+                 - Experimental
                * - ML-DSA-65
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - Supported
+                 - Experimental
                * - ML-DSA-87
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - Supported
+                 - Experimental
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
-                 - Supported
+                 - Experimental
                * - ML-DSA Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
-                 - Supported
+                 - Experimental
                * - ML-DSA Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
-                 - Supported
+                 - Experimental
                * - ML-DSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
-                 - Supported
+                 - Experimental
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - Supported
+                 - Experimental
                * - ML-KEM-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - Supported
+                 - Experimental
                * - ML-KEM-768
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - Supported
+                 - Experimental
                * - ML-KEM-1024
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
-                 - Supported
+                 - Experimental
                * - ML-KEM Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
-                 - Supported
+                 - Experimental
                * - ML-KEM Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
-                 - Supported
+                 - Experimental
                * - ML-KEM Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
-                 - Supported
+                 - Experimental
                * - ML-KEM Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
-                 - Supported
+                 - Experimental
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                 - Supported
+                 - Experimental
                * - ASCON
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
                  - Experimental
@@ -1211,184 +1211,184 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - LMS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - XMSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - XMSS-MT Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA-44
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA-65
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA-87
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM-768
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM-1024
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - WPA3-SAE PT key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
                  - Experimental
@@ -1729,124 +1729,124 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - LMS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - XMSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - XMSS-MT Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA-44
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA-65
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA-87
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM-768
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM-1024
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ASCON
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
                  - Experimental
