@@ -116,3 +116,10 @@
     - nrf9251dk@0.1.0/nrf9251/cpuflpr
     - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
+
+- scenarios:
+    - nrf.extended.drivers.spi.direct_xfer
+    - nrf.extended.drivers.spi.direct_xfer.no_prealloc
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
