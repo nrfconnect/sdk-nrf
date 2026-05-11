@@ -46,5 +46,6 @@ config SOC_NRF54LV10A_CPUFLPR
 	  NRF54LV10A CPUFLPR
 
 config SOC
+	default "nrf54ls05a" if SOC_NRF54LS05A
 	default "nrf54ls05b" if SOC_NRF54LS05B
 	default "nrf54lv10a" if SOC_NRF54LV10A
