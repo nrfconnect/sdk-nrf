@@ -56,7 +56,7 @@ static bool ref_used;
 static double ref_latitude;
 static double ref_longitude;
 
-K_MSGQ_DEFINE(nmea_queue, sizeof(struct nrf_modem_gnss_nmea_data_frame *), 10, 4);
+K_MSGQ_DEFINE(nmea_queue, sizeof(struct nrf_modem_gnss_nmea_data_frame *), 15, 4);
 static K_SEM_DEFINE(pvt_data_sem, 0, 1);
 static K_SEM_DEFINE(time_sem, 0, 1);
 
