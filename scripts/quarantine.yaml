@@ -135,3 +135,15 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
+
+- scenarios:
+    - nrf.extended.drivers.uart.async_dual
+    - nrf.extended.drivers.uart.async_dual.busy_sim
+    - nrf.extended.drivers.uart.async_dual.no_tx_chopped
+    - nrf.extended.drivers.uart.async_dual.pm_runtime
+    - nrf.extended.drivers.uart.async_dual.pm_runtime.busy_sim
+    - nrf.extended.drivers.uart.async_dual.pm_runtime.explicit
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+    - nrf9251dk@0.1.0/nrf9251/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
