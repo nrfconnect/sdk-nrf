@@ -64,6 +64,18 @@
 	IF_ENABLED(TFM_DT_PROP_EXISTS(node_id, data_partitions),                                   \
 		   (TFM_DT_FOREACH_PROP_ELEM(node_id, data_partitions,                              \
 					     TFM_DT_PROP_ELEM_REG_SIZE)))
+
+/* TF-M derives the TrustZone-M flash layout from two devicetree
+ * descriptor nodes ("nordic,tz-secure" / "nordic,tz-nonsecure") that
+ * point at the board's existing "zephyr,mapped-partition" leaves via
+ * code-partitions / data-partitions phandle lists.
+ */
+#if !defined(DT_COMPAT_HAS_OKAY_nordic_tz_secure)
+#error "TF-M cannot derive the secure flash layout: the board's NS partition dtsi is missing a 'nordic,tz-secure' descriptor."
+#endif
+#if !defined(DT_COMPAT_HAS_OKAY_nordic_tz_nonsecure)
+#error "TF-M cannot derive the non-secure flash layout: the board's NS partition dtsi is missing a 'nordic,tz-nonsecure' descriptor."
+#endif
 #endif
 
 /* This header file is included from linker scatter file as well, where only a
