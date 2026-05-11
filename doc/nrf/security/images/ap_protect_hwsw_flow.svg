@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="900px" height="250px" viewBox="0 29 900 250" xml:space="preserve">
+	<style type="text/css">
+	<![CDATA[
+		.s-dark  { fill: #0033a0; }
+		.s-mid   { fill: #0077c8; }
+		.s-light { fill: #00a9ce; }
+		.t-head  { fill: #ffffff; font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; }
+		.t-sub   { fill: #ffffff; font-family: Arial, sans-serif; font-size: 11px; }
+		.t-note  { fill: #ffffff; font-family: Arial, sans-serif; font-size: 10px; font-style: italic; }
+		.a-solid { stroke: #008bab; stroke-width: 1.5; fill: none; }
+		.a-dash  { stroke: #008bab; stroke-width: 1.5; fill: none; stroke-dasharray: 6,4; }
+		.a-head  { fill: #008bab; }
+		.lbl     { fill: #333f48; font-family: Arial, sans-serif; font-size: 11px; }
+		.title   { fill: #333f48; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; }
+	]]>
+	</style>
+	<defs>
+		<marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+			<polygon points="0 0, 8 3, 0 6" class="a-head"/>
+		</marker>
+		<marker id="arr-dash" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+			<polygon points="0 0, 8 3, 0 6" class="a-head"/>
+		</marker>
+	</defs>
+
+	<text x="450" y="53" class="title" text-anchor="middle">AP-Protect controlled by hardware and software</text>
+
+	<ellipse cx="130" cy="160" rx="110" ry="40" class="s-dark"/>
+	<text x="130" y="149" class="t-head" text-anchor="middle">Enabled</text>
+	<text x="130" y="163" class="t-sub"  text-anchor="middle">Debug blocked</text>
+	<text x="130" y="176" class="t-note" text-anchor="middle">(default)</text>
+
+	<ellipse cx="450" cy="160" rx="150" ry="40" class="s-mid"/>
+	<text x="450" y="151" class="t-head" text-anchor="middle">Temporarily disabled</text>
+	<text x="450" y="165" class="t-sub"  text-anchor="middle">Debug open</text>
+	<text x="450" y="178" class="t-note" text-anchor="middle">(re-enables on reset)</text>
+
+	<ellipse cx="770" cy="160" rx="110" ry="40" class="s-light"/>
+	<text x="770" y="153" class="t-head" text-anchor="middle">Permanently disabled</text>
+	<text x="770" y="168" class="t-sub"  text-anchor="middle">Debug open after reset</text>
+
+	<path d="M 234,147 Q 271,90 308,147" class="a-solid" marker-end="url(#arr)"/>
+	<text x="271" y="96" class="lbl" text-anchor="middle">ERASEALL through CTRL-AP</text>
+
+	<path d="M 308,173 Q 271,228 234,173" class="a-dash" marker-end="url(#arr-dash)"/>
+	<text x="271" y="179" class="lbl" text-anchor="middle">Any reset</text>
+
+	<path d="M 592,147 Q 629,90 666,147" class="a-solid" marker-end="url(#arr)"/>
+	<text x="629" y="90" class="lbl" text-anchor="middle">Configure UICR.APPROTECT</text>
+	<text x="629" y="103" class="lbl" text-anchor="middle">+ Configure Kconfig and flash firmware</text>
+
+	<path d="M 770,200 Q 450,258 130,200" class="a-solid" marker-end="url(#arr)"/>
+	<text x="450" y="258" class="lbl" text-anchor="middle">Write Enabled to UICR.APPROTECT + Any reset</text>
+</svg>
