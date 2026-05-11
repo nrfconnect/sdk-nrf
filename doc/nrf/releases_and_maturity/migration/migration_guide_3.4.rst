@@ -52,6 +52,10 @@ Matter
 
      For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`migration_partitions` page.
 
+   * The :ref:`matter_window_covering_sample` sample now uses the Thread Sleepy End Device (SED) device type by default.
+     You can enable the Thread Synchronized Sleepy End Device (SSED) device type as an optional feature.
+     To enable the Thread SSED support, add the ``-DEXTRA_CONF_FILE=ssed.conf`` extra argument to the build command.
+
 .. _migration_3.4_recommended:
 
 Recommended changes

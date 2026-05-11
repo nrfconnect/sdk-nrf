@@ -11,13 +11,31 @@ tests:
     build_only: true
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.window_cover.debug.ssed:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE=ssed.conf
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.window_cover.release:
@@ -26,6 +44,27 @@ tests:
     extra_args:
       - FILE_SUFFIX=release
     integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.window_cover.release.ssed:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=release
+      - EXTRA_CONF_FILE=ssed.conf
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
@@ -43,6 +82,30 @@ tests:
       - CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
       - CONFIG_CHIP_ENABLE_PAIRING_AUTOSTART=y
     integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.window_cover.release.power_consumption.ssed:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=release
+      - EXTRA_CONF_FILE=ssed.conf
+      - CONFIG_NCS_SAMPLE_MATTER_LEDS=n
+      - CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
+      - CONFIG_CHIP_ENABLE_PAIRING_AUTOSTART=y
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:

@@ -61,7 +61,7 @@ The following table lists variants and extensions available out of the box for e
       - SED
       - SED
       - MED
-      - SSED
+      - SED, SSED (optional)
       - MED
       - SED
       - SED
@@ -69,7 +69,7 @@ The following table lists variants and extensions available out of the box for e
       - FTD
     * - :ref:`ICD mode <ug_matter_device_low_power_icd>`
       - Not supported
-      - SIT
+      - SIT, LIT (optional)
       - SIT
       - Not supported
       - SIT

@@ -23,7 +23,7 @@ Matter: Window covering
 
 This sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a window covering device.
 
-.. include:: /includes/matter/introduction/sleep_thread_ssed_sit.txt
+.. include:: /includes/matter/introduction/sleep_thread_sed_sit.txt
 
 Requirements
 ************
@@ -50,11 +50,14 @@ Window covering features
 
 The window covering sample implements the following features:
 
-* :ref:`SSED device type <matter_window_covering_sample_ssed>` - The window cover operates as a Thread Synchronized Sleepy End Device (SSED).
+* :ref:`SSED device type <matter_window_covering_sample_ssed>` - The window cover can operate as a Thread Synchronized Sleepy End Device (SSED).
 
 .. _matter_window_covering_sample_ssed:
 
 .. include:: /includes/matter/overview/ssed.txt
+
+You can enable the Thread Synchronized Sleepy End Device (SSED) support by adding an extra argument to the build command.
+For details, see the :ref:`Thread SSED support <matter_window_covering_sample_ssed_support>` section.
 
 Configuration
 *************
@@ -73,6 +76,31 @@ Advanced configuration options
 .. include:: /includes/matter/configuration/advanced/factory_data.txt
 .. include:: /includes/matter/configuration/advanced/custom_board.txt
 .. include:: /includes/matter/configuration/advanced/internal_memory.txt
+
+.. _matter_window_covering_sample_ssed_support:
+
+Thread SSED support
+-------------------
+
+.. toggle::
+
+   You have the following two ways to enable the Thread SSED support:
+
+   .. tabs::
+
+      .. group-tab:: |nRFVSC|
+
+         Add ``-DEXTRA_CONF_FILE=ssed.conf`` to :guilabel:`Extra CMake arguments` in your build configuration.
+
+      .. group-tab:: Command line
+
+         Run the following command with *board_target* replaced with the board target name:
+
+         .. parsed-literal::
+            :class: highlight
+
+            west build -b *board_target* -p -- -DEXTRA_CONF_FILE=ssed.conf
+
 
 User interface
 **************
