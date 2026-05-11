@@ -323,22 +323,16 @@
 /include/bluetooth/gatt_pool.h            @nrfconnect/ncs-si-muffin
 /include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /include/bluetooth/scan.h                 @nrfconnect/ncs-blenders @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/ams_client.h  @nrfconnect/ncs-blenders
-/include/bluetooth/services/ancs_client.h @nrfconnect/ncs-blenders
-/include/bluetooth/services/bas_client.h  @nrfconnect/ncs-blenders
-/include/bluetooth/services/bms.h         @nrfconnect/ncs-blenders
-/include/bluetooth/services/cgms.h        @nrfconnect/ncs-blenders
-/include/bluetooth/services/ddfs.h        @nrfconnect/ncs-blenders
-/include/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel
+/include/bluetooth/services/              @nrfconnect/ncs-blenders
+/include/bluetooth/services/dfu_smp.h     @nrfconnect/ncs-eris
 /include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/services/hids.h        @nrfconnect/ncs-si-xcake
-/include/bluetooth/services/hrs_client.h  @nrfconnect/ncs-blenders
-/include/bluetooth/services/lbs.h         @nrfconnect/ncs-blenders
-/include/bluetooth/services/mds.h         @nrfconnect/ncs-blenders
-/include/bluetooth/services/nus_client.h  @nrfconnect/ncs-blenders
-/include/bluetooth/services/nus.h         @nrfconnect/ncs-blenders
-/include/bluetooth/services/rscs.h        @nrfconnect/ncs-blenders
-/include/bluetooth/services/throughput.h  @nrfconnect/ncs-blenders
+/include/bluetooth/services/hogp.h        @nrfconnect/ncs-si-xcake
+/include/bluetooth/services/latency.h     @nrfconnect/ncs-dragoon
+/include/bluetooth/services/latency_client.h @nrfconnect/ncs-dragoon
+/include/bluetooth/services/ras.h         @nrfconnect/ncs-dragoon
+/include/bluetooth/services/wifi_provisioning.h @wentong-li @bama-nordic
+/include/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel
 /include/nrf_lcs/                         @nrfconnect/ncs-eris
 /include/caf/                             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /include/debug/                           @nrfconnect/ncs-co-drivers
@@ -820,12 +814,15 @@
 /subsys/bluetooth/host_extensions/        @nrfconnect/ncs-dragoon
 /subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
 /subsys/bluetooth/rpc/                    @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
-/subsys/bluetooth/services/ams_client.c   @nrfconnect/ncs-blenders
-/subsys/bluetooth/services/ancs_client.c  @nrfconnect/ncs-blenders
-/subsys/bluetooth/fast_pair/              @nrfconnect/ncs-si-bluebagel
+/subsys/bluetooth/services/               @nrfconnect/ncs-blenders
+/subsys/bluetooth/services/dfu_smp.c      @nrfconnect/ncs-eris
+/subsys/bluetooth/services/hids.c         @nrfconnect/ncs-si-xcake
+/subsys/bluetooth/services/hogp.c         @nrfconnect/ncs-si-xcake
+/subsys/bluetooth/services/latency.c      @nrfconnect/ncs-dragoon
+/subsys/bluetooth/services/latency_client.c @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/ras/           @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
-/subsys/bluetooth/services/hids.c         @nrfconnect/ncs-si-xcake
+/subsys/bluetooth/fast_pair/              @nrfconnect/ncs-si-bluebagel
 /subsys/bootloader/                       @nrfconnect/ncs-eris
 /subsys/caf/                              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /subsys/debug/                            @nordic-krch
