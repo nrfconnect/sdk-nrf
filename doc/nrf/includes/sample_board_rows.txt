@@ -346,3 +346,27 @@
 .. nrf7120dk_nrf7120_cpuflpr
 
 | nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuflpr`` |
+
+.. nrf9251dk_nrf9251_cpuapp
+
+| nRF9251 DK |   | nrf9251dk | ``nrf9251dk/nrf9251/cpuapp`` |
+
+.. nrf9251dk_nrf9251_cpuapp_ns
+
+| nRF9251 DK |   | nrf9251dk | ``nrf9251dk/nrf9251/cpuapp/ns`` |
+
+.. nrf9251dk_nrf9251_cpuflpr
+
+| nRF9251 DK |   | nrf9251dk | ``nrf9251dk/nrf9251/cpuflpr`` |
+
+.. nrf9251dk_nrf9251_cpuflpr_xip
+
+| nRF9251 DK |   | nrf9251dk | ``nrf9251dk/nrf9251/cpuflpr/xip`` |
+
+.. nrf9251dk_nrf9251_cpuppr
+
+| nRF9251 DK |   | nrf9251dk | ``nrf9251dk/nrf9251/cpuppr`` |
+
+.. nrf9251dk_nrf9251_cpuppr_xip
+
+| nRF9251 DK |   | nrf9251dk | ``nrf9251dk/nrf9251/cpuppr/xip`` |
