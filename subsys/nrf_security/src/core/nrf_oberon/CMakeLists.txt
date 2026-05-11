@@ -20,27 +20,18 @@ append_with_prefix(src_crypto_core_oberon ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}
   psa_crypto_storage.c
 )
 
-add_library(psa_core STATIC
-    ${src_crypto_core_oberon}
-)
-
-# Add the nordic version of psa_crypto_driver_wrappers with the core (out of tree)
-target_sources(psa_core
-  PRIVATE
-    ${NRF_SECURITY_DIR}/src/psa_crypto_driver_wrappers.c
+append_with_prefix(src_crypto_core_oberon ${NRF_SECURITY_DIR}/src/
+  psa_crypto_driver_wrappers.c
 )
 
 if(CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
-  target_sources(psa_core
-    PRIVATE
-      ${NRF_SECURITY_DIR}/src/mbedtls_psa_platform.c
+  append_with_prefix(src_crypto_core_oberon ${NRF_SECURITY_DIR}/src/
+    mbedtls_psa_platform.c
   )
 endif()
 
-target_link_libraries(psa_core
-  PRIVATE
-    psa_crypto_library_config
-    psa_interface
+add_library(psa_core STATIC
+    ${src_crypto_core_oberon}
 )
 
 target_compile_definitions(psa_core

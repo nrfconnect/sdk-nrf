@@ -14,6 +14,13 @@ kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_STORAGE_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_STATIC_KEY_SLOTS)
 kconfig_check_and_set_base_int(MBEDTLS_PSA_KEY_SLOT_COUNT)
 
+# Platform _ALT
+kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_EXIT_ALT)
+kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_FPRINTF_ALT)
+kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_PRINTF_ALT)
+kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT)
+kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_SNPRINTF_ALT)
+
 # TF-M
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_SPM)
 

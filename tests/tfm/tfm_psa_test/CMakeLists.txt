@@ -87,6 +87,26 @@ set_property(TARGET zephyr_property_target
              -DTEST_PSA_API=${TEST_PSA_API}
 )
 
+set(INSTALL_INTERFACE_INC_DIR ${CMAKE_BINARY_DIR}/tfm/api_ns/interface/include)
+
+file(
+  COPY
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_compat.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_driver_common.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_extra.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_platform.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_sizes.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_struct.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_types.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto_values.h
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include/psa/crypto.h
+    ${NRF_SECURITY_DIR}/include/psa/crypto_driver_contexts_key_derivation.h
+    ${NRF_SECURITY_DIR}/include/psa/crypto_driver_contexts_primitives.h
+    ${NRF_SECURITY_DIR}/include/psa/crypto_driver_contexts_composites.h
+  DESTINATION
+    ${INSTALL_INTERFACE_INC_DIR}/psa
+)
+
 include(ExternalProject)
 
 if(CONFIG_DEBUG_OPTIMIZATIONS)

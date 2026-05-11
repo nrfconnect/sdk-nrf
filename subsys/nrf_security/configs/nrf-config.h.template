@@ -20,14 +20,6 @@
 #cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
 #cmakedefine MBEDTLS_DEBUG_C
 
-/* Platform configurations for _ALT defines */
-#cmakedefine MBEDTLS_PLATFORM_EXIT_ALT
-#cmakedefine MBEDTLS_PLATFORM_FPRINTF_ALT
-#cmakedefine MBEDTLS_PLATFORM_PRINTF_ALT
-#cmakedefine MBEDTLS_PLATFORM_SNPRINTF_ALT
-#cmakedefine MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT
-#cmakedefine MBEDTLS_ENTROPY_HARDWARE_ALT
-
 /* Legacy configurations for _ALT defines */
 #cmakedefine MBEDTLS_AES_SETKEY_ENC_ALT
 #cmakedefine MBEDTLS_AES_SETKEY_DEC_ALT
