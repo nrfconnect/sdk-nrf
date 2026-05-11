@@ -44,7 +44,7 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
 
   # Add replacement platform.c for NS build
   list(APPEND src_zephyr
-    ${ZEPHYR_MBEDTLS_MODULE_DIR}/library/platform.c
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/platform/platform.c
   )
 
   # The current version of the mbed TLS deliverables requires mbedcrypto built
@@ -54,10 +54,7 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
 
   get_cmake_property(all_vars VARIABLES)
 
-  # 1. Non-secure should not build the PSA core or drivers
-  set(CONFIG_MBEDTLS_PSA_CRYPTO_C               False)
-
-  # 2. Enable OBERON_BACKEND, disable CC3XX_BACKEND
+  # Enable OBERON_BACKEND, disable CC3XX_BACKEND
   set(CONFIG_NRF_OBERON                         True)
   set(CONFIG_OBERON_BACKEND                     True)
   set(CONFIG_CC3XX_BACKEND                      False)
@@ -66,7 +63,7 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
   set(CONFIG_NRF_CC3XX_PLATFORM                 False)
   set(CONFIG_PSA_CRYPTO_DRIVER_CC3XX            False)
 
-  # 3. Special case: _ALT in CC3XX, not in OBERON (set  to False)
+  # Special case: _ALT in CC3XX, not in OBERON (set  to False)
   set(CONFIG_MBEDTLS_AES_ALT                    False)
   set(CONFIG_MBEDTLS_CCM_ALT                    False)
   set(CONFIG_MBEDTLS_CHACHAPOLY_ALT             False)
@@ -76,11 +73,11 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
   set(CONFIG_MBEDTLS_DHM_ALT                    False)
   set(CONFIG_MBEDTLS_RSA_ALT                    False)
 
-  # 4. Special case: _ALT in ECJPAKE (only in OBERON, set to True)
-  #    Only has effect if ECJPAKE is enabled
+  # Special case: _ALT in ECJPAKE (only in OBERON, set to True)
+  # Only has effect if ECJPAKE is enabled
   set(CONFIG_MBEDTLS_ECJPAKE_ALT                True)
 
-  # 5. Special case: Handle platform specific configurations
+  # Special case: Handle platform specific configurations
   set(CONFIG_MBEDTLS_PLATFORM_EXIT_ALT                 False)
   set(CONFIG_MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT       False)
 else()
@@ -112,14 +109,7 @@ target_compile_definitions(psa_crypto_library_config
 # The name and intent of this comes from TF-M distribution
 add_library(psa_interface INTERFACE)
 
-target_include_directories(psa_interface
-  INTERFACE
-    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
-    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library
-    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/core/
-    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/dispatch/
-    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/platform/
-)
+include(cmake/psa_interface_include_directories.cmake)
 
 # Finally adding the crypto lib
 add_subdirectory(${ZEPHYR_NRFXLIB_MODULE_DIR}/crypto crypto_copy)

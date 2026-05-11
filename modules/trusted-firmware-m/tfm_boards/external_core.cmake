@@ -27,26 +27,9 @@ if(TARGET tfm_api_ns)
     )
 endif()
 
-# Duplicates that can be removed
-#set(TFM_MBEDCRYPTO_CONFIG_PATH ${CONFIG_MBEDTLS_CONFIG_FILE})
-#set(TFM_MBEDCRYPTO_PSA_CRYPTO_CONFIG_PATH ${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE})
-#set(TFM_MBEDCRYPTO_PSA_CRYPTO_USER_CONFIG_PATH ${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE})
-
-# Note: This is a duplicate from nrf_security/CMakeLists.txt
-#       with additions of the install-target for Oberon-psa-core includes
 if(TARGET psa_interface)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_INTERFACE True)
-    target_include_directories(psa_interface
-        INTERFACE
-            ${NRF_SECURITY_DIR}/include
-            $<BUILD_INTERFACE:${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include>
-            # Oberon library
-            ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library
-            # Mbed TLS (mbedcrypto) PSA headers
-            ${ZEPHYR_MBEDTLS_MODULE_DIR}/library
-            ${ZEPHYR_MBEDTLS_MODULE_DIR}/include
-            ${ZEPHYR_MBEDTLS_MODULE_DIR}/include/library
-    )
+    include(${NRF_SECURITY_DIR}/cmake/psa_interface_include_directories.cmake)
 endif()
 
 # Constructing config libraries in partition/crypto/CMakeLists.txt

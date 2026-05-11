@@ -119,8 +119,7 @@ endif()
 # Add drivers (for legacy and PSA crypto build)
 add_subdirectory(drivers)
 
-# Add legacy Mbed TLS APIs
-if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR (CONFIG_NRF_OBERON AND CONFIG_BUILD_WITH_TFM))
+if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
   add_subdirectory(legacy)
 endif()
 
