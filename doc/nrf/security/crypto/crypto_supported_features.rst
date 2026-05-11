@@ -3346,6 +3346,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - WPA3-SAE hash-to-element
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
+                 - --
+                 - --
+                 - --
 
    .. tab:: nRF53 Series
 
@@ -3392,6 +3397,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - SP 800-108 HMAC counter mode
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_HMAC`
                  - Supported
+               * - WPA3-SAE hash-to-element
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
+                 - --
 
    .. tab:: nRF54H Series
 
@@ -3443,7 +3451,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - SP 800-108 HMAC counter mode
                  - ``PSA_WANT_ALG_SP800_108_COUNTER_HMAC``
                  - --
-
+               * - WPA3-SAE hash-to-element
+                 - ``PSA_WANT_ALG_WPA3_SAE_H2E``
+                 - --
 
    .. tab:: nRF54L Series
 
@@ -3556,6 +3566,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Experimental
                  - --
+               * - WPA3-SAE hash-to-element
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
 
          .. tab:: nrf_oberon
 
@@ -3662,6 +3681,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - WPA3-SAE hash-to-element
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
    .. tab:: nRF91 Series
 
@@ -3741,6 +3769,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - WPA3-SAE hash-to-element
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
+                 - --
+                 - --
+                 - --
+                 - --
 
 Key derivation function driver
 ------------------------------
@@ -9370,10 +9404,6 @@ The options are grouped by Series and drivers available for the device Series, a
                * - WPA3-SAE GDH
                  - ``PSA_WANT_ALG_WPA3_SAE_GDH``
                  - --
-               * - WPA3-SAE hash-to-element
-                 - ``PSA_WANT_ALG_WPA3_SAE_H2E``
-                 - --
-
 
    .. tab:: nRF54L Series
 
@@ -9468,15 +9498,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - --
-               * - WPA3-SAE hash-to-element
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - --
 
          .. tab:: nrf_oberon
 
@@ -9558,15 +9579,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - WPA3-SAE GDH
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - WPA3-SAE hash-to-element
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
                  - Experimental
                  - Experimental
                  - Experimental
