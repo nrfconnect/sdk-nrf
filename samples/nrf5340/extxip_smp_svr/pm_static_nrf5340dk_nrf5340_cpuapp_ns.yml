@@ -150,6 +150,12 @@ settings_storage:
   end_address: 0x100000
   region: flash_primary
   size: 0x10000
+nonsecure_storage:
+  address: 0xf0000
+  end_address: 0x100000
+  region: flash_primary
+  size: 0x10000
+  span: [settings_storage]
 sram_primary:
   address: 0x20010000
   end_address: 0x20070000
