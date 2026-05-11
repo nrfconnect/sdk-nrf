@@ -12,6 +12,7 @@ add_library(platform_ns STATIC)
 set(partition_includes
     ${TFM_BOARDS_NRF_DIR}/partition
     ${CMAKE_BINARY_DIR}/../zephyr/include/generated
+    ${ZEPHYR_BASE}/include
 )
 
 set(board_includes
