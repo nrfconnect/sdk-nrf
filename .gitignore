@@ -68,3 +68,4 @@ SysbuildKconfigBasic.txt
 SysbuildKconfigBasicNoModules.txt
 TextEncoding.txt
 YAMLLint.txt
+**/.DS_Store
