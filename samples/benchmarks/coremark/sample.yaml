@@ -29,32 +29,13 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20dk/nrf54lm20b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54ls05dk/nrf54ls05a/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms: *coremark_platforms
 
   sample.benchmark.coremark.flash_and_run:
     build_only: false
     platform_allow: *coremark_platforms
     integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20dk/nrf54lm20b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54ls05dk/nrf54ls05a/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
     harness: console
     harness_config:
       ordered: false
@@ -85,19 +66,19 @@ tests:
     platform_allow: *coremark_platforms
     integration_platforms:
       - nrf52840dk/nrf52840
-      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=heap_memory
 
   sample.benchmark.coremark.static_memory:
     platform_allow: *coremark_platforms
     integration_platforms:
       - nrf52840dk/nrf52840
-      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=static_memory
 
   sample.benchmark.coremark.multiple_threads:
     platform_allow: *coremark_platforms
     integration_platforms:
       - nrf52840dk/nrf52840
-      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=multiple_threads

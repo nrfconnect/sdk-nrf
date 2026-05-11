@@ -36,10 +36,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54ls05dk/nrf54ls05a/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms: *peripheral_uart_platforms
     harness: console
     harness_config:
       type: multi_line
@@ -60,6 +57,9 @@ tests:
 
   sample.bluetooth.peripheral_uart_minimal:
     platform_allow:
+      - nrf52833dk/nrf52820
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+    integration_platforms:
       - nrf52833dk/nrf52820
     extra_args: FILE_SUFFIX=minimal
 
