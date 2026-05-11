@@ -147,3 +147,10 @@
     - nrf9251dk@0.1.0/nrf9251/cpuapp
     - nrf9251dk@0.1.0/nrf9251/cpuppr
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
+
+- scenarios:
+    - nrf.extended.boards.nrf.mram_latency
+  platforms:
+    - nrf9251dk/nrf9251/cpuapp
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9454"
