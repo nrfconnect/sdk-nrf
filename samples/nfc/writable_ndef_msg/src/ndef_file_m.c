@@ -16,7 +16,6 @@
 #include <zephyr/kernel.h>
 #include <soc.h>
 #include <zephyr/device.h>
-#include <zephyr/kvss/nvs.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/uri_msg.h>
 #include <zephyr/storage/flash_map.h>
