@@ -8118,9 +8118,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - SHAKE128 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
                  - Experimental
@@ -8128,14 +8128,14 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - SHAKE256 192 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - SHAKE256 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - Supported
@@ -8243,16 +8243,16 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
-                 - Supported
+                 - Experimental
                * - SHAKE128 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
                  - Experimental
                * - SHAKE256 192 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
-                 - Supported
+                 - Experimental
                * - SHAKE256 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
-                 - Supported
+                 - Experimental
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - Supported
@@ -8427,48 +8427,48 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                * - SHAKE128 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                * - SHAKE256 192 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                * - SHAKE256 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
-                 - Experimental
-                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
                  - --
 
          .. tab:: nrf_oberon
@@ -8569,13 +8569,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - SHAKE128 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
                  - Experimental
@@ -8587,22 +8587,22 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - SHAKE256 192 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - SHAKE256 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - Supported
@@ -8793,10 +8793,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - SHAKE128 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
                  - Experimental
@@ -8805,16 +8805,16 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - SHAKE256 192 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - SHAKE256 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - Supported

@@ -137,6 +137,8 @@ Security
     * The post-quantum cryptography algorithms for nrf_oberon under Key types and key management are now correctly listed as experimental instead of supported.
     * The SPAKE2+ for Matter is now correctly listed as supported instead of experimental.
     * The WPA3-SAE hash-to-element algorithm is now correctly listed as a KDF algorithm, not a PAKE algorithm.
+    * The SHA-256/192 and SHAKE hashing algorithms are now correctly listed as not supported in the CRACEN driver and Experimental in the nrf_oberon driver.
+      The only exception is the SHAKE256 512 bits algorithm, which is supported in the both the CRACEN and nrf_oberon drivers.
 
 * Removed:
 
