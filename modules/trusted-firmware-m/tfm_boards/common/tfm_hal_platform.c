@@ -28,6 +28,7 @@
 #include "config_tfm.h"
 #include "exception_info.h"
 #include "tfm_arch.h"
+#include "partition_check.h"
 
 #if defined(NRF_LOG_MEMORY_PROTECTION_SAU_MPC)
 #include <log_memory_protection.h>
@@ -127,6 +128,9 @@ static void log_pin_security_configuration(void)
 enum tfm_hal_status_t tfm_hal_platform_init(void)
 {
 	enum tfm_hal_status_t status;
+
+	/* Verify the TrustZone partition layout declared in devicetree. */
+	tfm_tz_partition_check();
 
 	status = tfm_hal_platform_common_init();
 	if (status != TFM_HAL_SUCCESS) {
