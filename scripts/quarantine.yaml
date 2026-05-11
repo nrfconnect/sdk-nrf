@@ -90,3 +90,13 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9403"
+
+- scenarios:
+    - drivers.audio.pdm_loopback.nrf54h20.1000khz
+    - drivers.audio.pdm_loopback.nrf54h20.1600khz
+    - drivers.audio.pdm_loopback.nrf54h20.no_dmm
+    - drivers.audio.pdm_loopback.nrf9251.audiopll.44k1hz
+    - drivers.audio.pdm_loopback.nrf9251.audiopll.48khz
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
