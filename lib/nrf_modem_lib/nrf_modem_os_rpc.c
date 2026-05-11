@@ -130,10 +130,10 @@ int nrf_modem_os_rpc_cellcore_boot(void)
 	uint8_t *msg = (uint8_t *)&params;
 	size_t msg_size = sizeof(params);
 
-	/* Don't wait as this is not yet supported. */
 	bool cpu_wait = false;
 
-	return ironside_se_cpuconf(NRF_PROCESSOR_CELLCORE, NULL, cpu_wait, msg, msg_size);
+	/* TODO: Replace hardcoded value when a define is available. */
+	return ironside_se_cpuconf(4, NULL, cpu_wait, msg, msg_size);
 #else
 	/* Without IronSide SE, cellcore is booted by the SDFW. */
 	return 0;
