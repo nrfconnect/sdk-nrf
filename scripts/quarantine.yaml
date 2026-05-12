@@ -203,6 +203,8 @@
     - subsys.west_debug.normal
     - subsys.west_debug.thread_info
     - subsys.west_flash
+    - sample.event_manager_proxy.nrf9251dk_cpuapp_cpuppr
+    - sample.ipc.ipc_service.nrf9251dk_cpuapp_cpuppr_icmsg
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "Missing modem support"
