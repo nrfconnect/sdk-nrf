@@ -228,18 +228,13 @@ An example implementation of the :c:func:`MatterPostAttributeChangeCallback` tha
    void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &attributePath, uint8_t type,
                    uint16_t size, uint8_t *value)
    {
-         if (attributePath.mClusterId == DoorLock::Id &&
-             attributePath.mAttributeId == DoorLock::Attributes::LockState::Id) {
-           /* Post events only if current lock state is different than given */
-           switch (*value) {
-           case to_underlying(DlLockState::kLocked):
-                 /* Lock the physical door lock. */
-                 break;
-           case to_underlying(DlLockState::kUnlocked):
-               /* Unlock the physical door lock. */
-                 break;
-           default:
-                 break;
+         if (attributePath.mClusterId == OnOff::Id &&
+             attributePath.mAttributeId == OnOff::Attributes::OnOff::Id) {
+           /* Post events only if current light state is different than given */
+           if (*value) {
+             /* Turn on the physical light. */
+           } else {
+             /* Turn off the physical light. */
            }
          }
    }

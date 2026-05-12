@@ -100,16 +100,8 @@ For this design, the Wi-Fi driver on the application core communicates with the 
 Switchable Matter over Wi-Fi and Matter over Thread
 ===================================================
 
-.. |Third Button| replace:: **Button 2** on the nRF54LM20 DK
-
 In this design, the Matter stack, the OpenThread stack, the Wi-Fi stack, and the Bluetooth LE stack run on a single SoC.
-
-.. include:: ../../../../../samples/matter/lock/README.rst
-   :start-after: matter_door_lock_sample_thread_wifi_switch_desc_start
-   :end-before: matter_door_lock_sample_thread_wifi_switch_desc_end
-
-For an example of how this design works, see the :ref:`matter_lock_sample_wifi_thread_switching` feature in the Matter door lock sample.
-
+For an example of how this design works, see the `nRF Door Lock and Access Control Add-on`_.
 This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt

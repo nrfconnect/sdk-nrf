@@ -442,6 +442,9 @@ Matter samples
     The removal is mainly due to the very limited non-volatile memory available for application code.
     As an alternative, use the nRF54LM20A or nRF54LM20B SoC with the nRF7002-EB II shield.
     This combination provides significantly more non-volatile memory for Matter over Wi-Fi applications.
+  * The implementation of the Matter Door lock sample has been relocated to the `nRF Door Lock and Access Control Add-on`_, that is |NCS| extension.
+    The add-on is an extensible solution offering additional features and expanded integration capabilities.
+    It enables the development of not only Matter-compliant door locks, but also those supporting Aliro and hybrid Matter and Aliro combined functionalities, thereby facilitating the design of versatile smart lock solutions.
 
 Networking samples
 ------------------

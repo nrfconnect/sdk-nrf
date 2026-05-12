@@ -72,18 +72,3 @@ To add support for a Bluetooth LE service implemented in the |NCS|, complete the
       CHIP_ERROR InsertRequest(Request & request);
 
    This adds the service to the Arbiter queue.
-
-.. _ug_matter_device_adding_bt_services_example:
-
-Example: Bluetooth LE with Nordic UART Service implementation
-=============================================================
-
-The :ref:`Matter door lock sample <matter_lock_sample>` provides an optional configuration of :ref:`matter_lock_sample_ble_nus`, which you can use as an example implementation of a Bluetooth LE service.
-Once enabled, you can use this configuration to declare NUS commands specific to the door lock sample and use them to control the device remotely through Bluetooth LE.
-
-The following steps correspond to the implementation steps above, with the NUS as example:
-
-1. *Check the documentation:* The NUS characteristics are listed on the :ref:`nus_service_readme` documentation page.
-#. *Add the application code that instantiates and fills the struct:* Using the information from the documentation page, `bt_nus_service.cpp`_ and `bt_nus_service.h`_ are created.
-   The ``Init`` method in the CPP file contains the implementation of the Bluetooth LE Arbiter's ``Request`` structure.
-#. *Add the application code that calls the ``InsertRequest`` function:* In the CPP file, the service is started with the call to ``StartServer``, which contains a reference to ``InsertRequest``.
