@@ -23,10 +23,6 @@ kconfig_check_and_set_base(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
 kconfig_check_and_set_base(MBEDTLS_DEBUG_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
 
-# Threading configurations for CryptoCell and locally built PSA core
-kconfig_check_and_set_base(MBEDTLS_THREADING_C)
-kconfig_check_and_set_base(MBEDTLS_THREADING_ALT)
-
 # Platform configurations for _ALT defines
 kconfig_check_and_set_base(MBEDTLS_PLATFORM_EXIT_ALT)
 kconfig_check_and_set_base(MBEDTLS_PLATFORM_FPRINTF_ALT)

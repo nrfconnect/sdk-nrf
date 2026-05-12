@@ -59,14 +59,7 @@ target_include_directories(psa_crypto_library_config
 )
 
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
-  if(CONFIG_BUILD_WITH_TFM)
-    # Add replacement for memory_buffer_alloc.c for NS build
-    list(APPEND src_crypto ${NRF_SECURITY_ROOT}/src/legacy/memory_buffer_alloc.c)
-  else()
-    # Both secure only builds and TF-M builds use the implementation from MbedTLS.
-    # This currently doesn't do a mutex on heap access.
-    list(APPEND src_crypto ${ARM_MBEDTLS_PATH}/library/memory_buffer_alloc.c)
-  endif()
+  list(APPEND src_crypto ${OBERON_PSA_CORE_PATH}/platform/memory_buffer_alloc.c)
 endif()
 
 if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM AND NOT BUILD_INSIDE_TFM)

@@ -8,6 +8,8 @@
 #ifndef PSA_CRYPTO_CONFIG_H
 #define PSA_CRYPTO_CONFIG_H
 
+#cmakedefine MBEDTLS_THREADING_C
+
 #cmakedefine PSA_WANT_AES_KEY_SIZE_128                          @PSA_WANT_AES_KEY_SIZE_128@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_192                          @PSA_WANT_AES_KEY_SIZE_192@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_256                          @PSA_WANT_AES_KEY_SIZE_256@

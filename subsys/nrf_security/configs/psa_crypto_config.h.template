@@ -11,6 +11,8 @@
 /* PSA Core implementation */
 #cmakedefine PSA_CORE_OBERON                                    @PSA_CORE_OBERON@
 
+#cmakedefine MBEDTLS_THREADING_ALT
+
 #cmakedefine PSA_MAX_RSA_KEY_BITS @PSA_MAX_RSA_KEY_BITS@
 
 /*
