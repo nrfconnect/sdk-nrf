@@ -139,6 +139,7 @@
     - nrf.extended.sample.boards.nrf.clock_control.global_hsfll.req_low_freq_n
     - nrf.extended.sample.boards.nrf.clock_control.lfclk
     - nrf.extended.sample.boards.nrf.clock_control.uart133
+    - drivers.spim_pan
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
@@ -168,3 +169,60 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuppr
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
+
+- scenarios:
+    - benchmarks.early_logging
+    - drivers.adc.adc_sequence
+    - drivers.counter.alarm
+    - drivers.flash.multicore_soc_flash
+    - drivers.grtc.test_grtc_after_reset_pin
+    - drivers.hwinfo.reset_cause
+    - drivers.i2c.rtio_loopback
+    - drivers.pwm.pwm_events
+    - drivers.spi.bitbang
+    - drivers.spi.spim_mosi_toggles.slow
+    - drivers.timer.grtc_multiple_access
+    - drivers.timer.grtc_timer_lfrc.nrf54h
+    - drivers.watchdog
+    - drivers.watchdog.cpu_lockup_reset.h20
+    - drivers.watchdog.soft_reset.h20
+    - drivers.watchdog.wdt_variables.default
+    - nrf.extended.sample.basic.blinky
+    - nrf.extended.sample.drivers.adc.adc_dt
+    - subsys.west_debug.normal
+    - subsys.west_debug.thread_info
+    - subsys.west_flash
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "Missing modem support"
+
+- scenarios:
+    - drivers.counter.basic_api
+    - drivers.watchdog.wdt_instances
+    - nrf.extended.drivers.watchdog.wdt_variables.default
+    - subsys.west_debug.normal
+    - subsys.west_debug.thread_info
+    - subsys.west_flash
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
+    - nrf9251dk@0.1.0/nrf9251/cpuppr/xip
+  comment: "Missing modem support"
+
+- scenarios:
+    - drivers.spi.spim_instances
+    - drivers.watchdog.wdt_instances
+    - drivers.adc.accuracy.ref_volt.nrf9251
+    - drivers.adc
+    - drivers.adc_error_cases
+    - drivers.counter.basic_api
+    - drivers.counter.nrf_rtc
+    - drivers.watchdog.wdt_variables.default
+    - drivers.counter.alarm
+    - drivers.i2c.rtio_loopback
+    - subsys.west_debug.normal
+    - subsys.west_debug.thread_info
+    - subsys.west_flash
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuppr
+  comment: "Missing modem support"
