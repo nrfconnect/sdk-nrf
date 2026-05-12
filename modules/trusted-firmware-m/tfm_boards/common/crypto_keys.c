@@ -11,7 +11,7 @@
 #include "tfm_builtin_key_ids.h"
 #include "tfm_builtin_key_loader.h"
 #include "psa_manifest/pid.h"
-#include "tfm_spm_log.h"
+#include "tfm_log.h"
 
 #ifdef CONFIG_HW_UNIQUE_KEY
 #include <hw_unique_key.h>
@@ -37,7 +37,7 @@ static enum tfm_plat_err_t tfm_plat_get_huk(const void *ctx, uint8_t *buf, size_
 					   buf_len);
 
 	if (err != HW_UNIQUE_KEY_SUCCESS) {
-		SPMLOG_DBGMSGVAL("hw_unique_key_derive_key err: ", err);
+		VERBOSE("hw_unique_key_derive_key err: 0x%08x\r\n", (unsigned int)err);
 
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
@@ -64,7 +64,7 @@ static enum tfm_plat_err_t tfm_plat_get_iak(const void *ctx, uint8_t *buf, size_
 
 	err = identity_key_read(buf);
 	if (err != IDENTITY_KEY_SUCCESS) {
-		SPMLOG_DBGMSGVAL("identity_key_read err: ", err);
+		VERBOSE("identity_key_read err: 0x%08x\r\n", (unsigned int)err);
 
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
