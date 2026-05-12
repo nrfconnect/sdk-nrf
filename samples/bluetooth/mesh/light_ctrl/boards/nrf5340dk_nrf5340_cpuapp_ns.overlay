@@ -37,6 +37,21 @@
 	};
 };
 
+/ {
+	/delete-node/ nordic-tz-secure;
+	/delete-node/ nordic-tz-nonsecure;
+
+	nordic-tz-secure {
+		compatible = "nordic,tz-secure";
+		code-partitions = <&slot0_s_partition>;
+	};
+
+	nordic-tz-nonsecure {
+		compatible = "nordic,tz-nonsecure";
+		code-partitions = <&slot0_ns_partition>;
+	};
+};
+
 &pwm0 {
 	status = "okay";
 	pinctrl-0 = <&pwm0_default_alt>;
