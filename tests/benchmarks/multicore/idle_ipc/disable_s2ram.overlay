@@ -1,3 +1,11 @@
 &s2ram {
 	status = "disabled";
 };
+
+&idle_cache_disabled {
+	status = "disabled";
+};
+
+&idle_cache_retained {
+	status = "disabled";
+};
