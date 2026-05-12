@@ -42,26 +42,30 @@
 /* These partition sizes assume no FLPR area in RRAM */
 &cpuapp_rram {
 	partitions {
-		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(64)>;
 		};
 
 		slot0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x10000 DT_SIZE_K(200)>;
 		};
 
 		slot1_partition: partition@42000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0x42000 DT_SIZE_K(200)>;
 		};
 
 		storage_partition: partition@74000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x74000 DT_SIZE_K(36)>;
 		};
@@ -75,26 +79,30 @@
 /* These partition sizes assume no FLPR area in RRAM */
 &cpuapp_rram {
 	partitions {
-		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(64)>;
 		};
 
 		slot0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x10000 DT_SIZE_K(456)>;
 		};
 
 		slot1_partition: partition@82000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0x82000 DT_SIZE_K(456)>;
 		};
 
 		storage_partition: partition@f4000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0xf4000 DT_SIZE_K(36)>;
 		};
@@ -103,26 +111,30 @@
 {% elif soc == "nrf54l15" %}
 &cpuapp_rram {
 	partitions {
-		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(64)>;
 		};
 
 		slot0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x10000 DT_SIZE_K(664)>;
 		};
 
 		slot1_partition: partition@b6000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0xb6000 DT_SIZE_K(664)>;
 		};
 
 		storage_partition: partition@15c000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x15c000 DT_SIZE_K(36)>;
 		};
@@ -155,12 +167,12 @@
 
 &cpuflpr_rram {
 	partitions {
-		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
 
 		cpuflpr_code_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x0 DT_SIZE_K(96)>;
 		};
