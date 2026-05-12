@@ -19,7 +19,7 @@
 #include "tfm_hal_platform_common.h"
 #include "cmsis.h"
 #include "uart_stdout.h"
-#include "tfm_spm_log.h"
+#include "tfm_log.h"
 
 #ifdef CONFIG_HW_UNIQUE_KEY
 #include "hw_unique_key.h"
@@ -53,13 +53,14 @@ static enum tfm_hal_status_t crypto_platform_init(void)
 
 #ifdef CONFIG_HW_UNIQUE_KEY_RANDOM
 	if (!hw_unique_key_are_any_written()) {
-		SPMLOG_INFMSG("Writing random Hardware Unique Keys to the KMU.\r\n");
+		INFO("Writing random Hardware Unique Keys to the KMU.\r\n");
 		err = hw_unique_key_write_random();
 		if (err != HW_UNIQUE_KEY_SUCCESS) {
-			SPMLOG_DBGMSGVAL("hw_unique_key_write_random failed with error code:", err);
+			VERBOSE("hw_unique_key_write_random failed with error code: 0x%08x\r\n",
+				(unsigned int)err);
 			return TFM_HAL_ERROR_BAD_STATE;
 		}
-		SPMLOG_INFMSG("Success\r\n");
+		INFO("Success\r\n");
 	}
 #endif /* CONFIG_HW_UNIQUE_KEY_RANDOM */
 	(void)err;
@@ -95,12 +96,12 @@ static void maybe_log_for_gpio_port(uint32_t gpio_port, uint32_t secure_pin_mask
 		return;
 	}
 
-	SPMLOG_INFMSG("Pins have been configured as secure.\r\n");
-	SPMLOG_INFMSGVAL("GPIO port: ", gpio_port);
+	INFO("Pins have been configured as secure.\r\n");
+	INFO("GPIO port: 0x%08x\r\n", (unsigned int)gpio_port);
 
 	for (int i = 0; i < 32; i++) {
 		if (secure_pin_mask & (1 << i)) {
-			SPMLOG_INFMSGVAL("Pin: ", i);
+			INFO("Pin: 0x%08x\r\n", (unsigned int)i);
 		}
 	}
 }
@@ -115,7 +116,7 @@ static void log_pin_security_configuration(void)
 	maybe_log_for_gpio_port(1, CONFIG_NRF_GPIO1_PIN_MASK_SECURE);
 #endif
 #if !CONFIG_NRF_GPIO0_PIN_MASK_SECURE && !CONFIG_NRF_GPIO1_PIN_MASK_SECURE
-	SPMLOG_INFMSG("All pins have been configured as non-secure\r\n");
+	INFO("All pins have been configured as non-secure\r\n");
 #endif
 }
 
@@ -147,8 +148,8 @@ enum tfm_hal_status_t tfm_hal_platform_init(void)
 	enum tfm_security_lifecycle_t lcs = tfm_attest_hal_get_security_lifecycle();
 
 	if (lcs != TFM_SLC_PSA_ROT_PROVISIONING && lcs != TFM_SLC_SECURED) {
-		SPMLOG_ERRMSGVAL("Invalid LCS: ", lcs);
-		SPMLOG_DBGMSG("Ensure that the device has been provisioned.\r\n");
+		ERROR("Invalid LCS: 0x%08x\r\n", (unsigned int)lcs);
+		VERBOSE("Ensure that the device has been provisioned.\r\n");
 		return TFM_HAL_ERROR_BAD_STATE;
 	}
 #endif /* defined(NRF_PROVISIONING) */

@@ -7,7 +7,7 @@
 #include <psa/crypto.h>
 #include <stdint.h>
 
-#include "tfm_sp_log.h"
+#include "tfm_log_unpriv.h"
 
 #include "nrfx_gpiote.h"
 #include "hal/nrf_egu.h"
@@ -229,14 +229,14 @@ static void spp_signals_process(psa_signal_t signals)
 	if (signals & TFM_TIMER_N_IRQ_SIGNAL) {
 		m_timer_count++;
 
-		LOG_INFFMT("IRQ: TIMER count: %d\r\n", m_timer_count);
+		INFO_UNPRIV("IRQ: TIMER count: %d\r\n", m_timer_count);
 
 		psa_reset_signal(TFM_TIMER_N_IRQ_SIGNAL);
 	}
 	if (signals & TFM_GPIOTE_N_IRQ_SIGNAL) {
 		m_button_count++;
 
-		LOG_INFFMT("IRQ: GPIOTE0 count: %d\r\n", m_button_count);
+		INFO_UNPRIV("IRQ: GPIOTE0 count: %d\r\n", m_button_count);
 
 		psa_reset_signal(TFM_GPIOTE_N_IRQ_SIGNAL);
 	}
