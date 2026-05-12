@@ -123,3 +123,15 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuppr
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
+
+- scenarios:
+    - nrf.extended.sample.boards.nrf.clock_control.audiopll
+    - nrf.extended.sample.boards.nrf.clock_control.cpuapp_hsfll
+    - nrf.extended.sample.boards.nrf.clock_control.fll16m
+    - nrf.extended.sample.boards.nrf.clock_control.global_hsfll
+    - nrf.extended.sample.boards.nrf.clock_control.global_hsfll.req_low_freq_n
+    - nrf.extended.sample.boards.nrf.clock_control.lfclk
+    - nrf.extended.sample.boards.nrf.clock_control.uart133
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
