@@ -313,6 +313,7 @@ class FakeRepo:
         #   03 upstream_pr_2
         #   04 branch
         #   05 upstream_pr_0
+        #   06 upstream_pr_3
         self.logs = {
             'upstream': [
                 {
@@ -427,6 +428,21 @@ class FakeRepo:
                 },
             ],
             'downstream': [
+                {
+                    # Conflicts with PR3, file e touched only by downstream
+                    'sha': '0104000000000000000000000000000000000000',
+                    'subject': 'file e touched only by downstream',
+                    'sauce': 'nrf noup',
+                    'files': [
+                        {
+                            'file': 'e',
+                            'lines': 5,
+                            'conflicts': [
+                                '0600000000000000000000000000000000000000',
+                            ],
+                        },
+                    ],
+                },
                 {
                     # Pair with 0102. Filtered with it by _filter_reverted_commits_.
                     'sha': '0103000000000000000000000000000000000000',
@@ -578,6 +594,20 @@ class FakeRepo:
                             'depends': [
                                 '0003000000000000000000000000000000000000',
                             ],
+                        },
+                    ],
+                },
+            ],
+            'upstream_pr_3': [
+                {
+                    # PR3. Conflicts with file e touched only by downstream.
+                    'sha': '0600000000000000000000000000000000000000',
+                    'pr-number': 3,
+                    'subject': 'conflict with file e',
+                    'files': [
+                        {
+                            'file': 'e',
+                            'lines': 6,
                         },
                     ],
                 },

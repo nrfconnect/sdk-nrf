@@ -149,6 +149,25 @@ fake_repo_tests = [
             'pick 01010000000000000000 # [nrf noup] modify a more downstream',
         ],
     ],
+    [
+        # Cherry pick PR which conflicts with file only touched only by downstream
+        [
+            'west',
+            'ncs-cherry-pick',
+            '--test',
+            '-p',
+            'testbranch',
+            '--pr-number',
+            '3',
+        ],
+        [
+            'revert 0104000000000000 # file e touched only by downstream',
+            'pick 0600000000000000 # conflict with file e',
+        ],
+        [
+            'pick 01040000000000000000 # [nrf noup] file e touched only by downstream',
+        ],
+    ],
 ]
 
 
