@@ -6,15 +6,14 @@
 
 &sram0 {
 	/*
-	 * 0x2000_0000  Secure RAM                   (  32 kB)
-	 * 0x2000_8000  Non-secure RAM area          ( 224 kB)
-	 *   0x2000_8000  Modem shared area          (  18 kB)
-	 *     0x2000_8000  control                  (1832 B)
-	 *     0x2000_8728  app -> cell              (8408 B)
-	 *     0x2000_a800  cell -> app              (   8 kB)
-	 *   0x2000_c800  Application RAM            ( 206 kB)
+	 * 0x2000_0000  Secure RAM                      (   32 kB)
+	 * 0x2000_8000  Non-secure RAM area             (  224 kB)
+	 *   0x2000_8000  Modem shared area             ( 17768 B)
+	 *     0x2000_8000  control                     (  1256 B)
+	 *     0x2000_8728  app -> cell                 (  8408 B)
+	 *     0x2000_a800  cell -> app                 (    8 kB)
+	 *   0x2000_c800  Application RAM               (211608 B)
 	 */
-
 	sram0_s: sram@0 {
 		reg = <0x0 0x8000>;
 	};
@@ -28,30 +27,30 @@
 		/* Must be in first 128 kB of RAM. */
 		sram0_ns_modem: sram0_ns@0 {
 			/* Modem (shared) memory */
-			reg = <0x0 0x4800>;
+			reg = <0x0 0x4568>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x0 0x4800>;
+			ranges = <0x0 0x0 0x4568>;
 
 			cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
 				/* Modem IPC control */
-				reg = <0x0 0x728>;
+				reg = <0x0 0x4e8>;
 			};
 
-			cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+			cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@4e8 {
 				/* Modem IPC transmit */
-				reg = <0x728 0x20d8>;
+				reg = <0x4e8 0x2080>;
 			};
 
-			cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@2800 {
+			cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@2568 {
 				/* Modem IPC receive */
-				reg = <0x2800 0x2000>;
+				reg = <0x2568 0x2000>;
 			};
 		};
 
-		sram0_ns_app: sram0_ns@4800 {
+		sram0_ns_app: sram0_ns@4568 {
 			/* Non-Secure application memory */
-			reg = <0x4800 0x33800>;
+			reg = <0x4568 0x33a98>;
 		};
 	};
 };
