@@ -404,7 +404,7 @@ Matter samples
 
 * :ref:`matter_lock_sample`:
 
-  * Added support for the :ref:`matter_lock_sample_wifi_thread_switching` in the nRF54LM20 DK with the nRF7002-EB II shield attached.
+  * Added support for the Thread and Wi-Fi switching section in the nRF54LM20 DK with the nRF7002-EB II shield attached.
 
 * :ref:`matter_light_bulb_sample`:
 

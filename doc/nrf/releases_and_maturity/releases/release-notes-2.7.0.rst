@@ -828,7 +828,7 @@ Matter samples
     * Support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
     * Door lock access manager module.
       The module is used to implement support for refined handling and persistent storage of PIN codes.
-    * The :ref:`matter_lock_scheduled_timed_access` feature.
+    * The Scheduled timed access feature.
 
 * :ref:`matter_template_sample` sample:
 

@@ -31,12 +31,6 @@
 - name: template_certification
   zap_file: samples/matter/common/src/certification/thread_platform/thread_certification.zap
 
-# lock
-- name: lock
-  zap_file: samples/matter/lock/src/default_zap/lock.zap
-- name: lock
-  zap_file: samples/matter/lock/src/schedules_zap/lock.zap
-
 # Smoke CO Alarm
 - name: smoke_co_alarm
   zap_file: samples/matter/smoke_co_alarm/src/default_zap/smoke_co_alarm.zap
