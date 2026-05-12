@@ -241,6 +241,28 @@ const bt_addr_le_t *bt_conn_get_dst(const struct bt_conn *conn)
 	}
 }
 
+/* Note: The Zephyr implementation of `bt_conn_dst_tmp_str()` supports multiple connection types
+ * (BR/EDR, SCO, LE, ISO). Currently, the RPC implementation is LE-only, so the function
+ * definition is simplified. The `bt_conn` struct as defined here and in `conn_internal.h` are not
+ * identical, so an identical definition of `bt_conn_dst_tmp_str()` cannot be used.
+ */
+struct bt_conn_tmp_str bt_conn_dst_tmp_str(const struct bt_conn *conn)
+{
+	struct bt_conn_tmp_str val = {0};
+	const bt_addr_le_t *dst;
+
+	if (conn == NULL) {
+		return val;
+	}
+
+	dst = bt_conn_get_dst(conn);
+	if (dst != NULL) {
+		(void)bt_addr_le_to_str(dst, val.str, sizeof(val.str));
+	}
+
+	return val;
+}
+
 uint8_t bt_conn_index(const struct bt_conn *conn)
 {
 	return get_conn_index(conn);
