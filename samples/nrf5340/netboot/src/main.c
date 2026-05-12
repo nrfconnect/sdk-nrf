@@ -89,7 +89,7 @@ int main(void)
 		err = pcd_find_fw_version();
 		if (err < 0) {
 			printk("Unable to find valid firmware version %d\n\r", err);
-			pcd_fw_copy_invalidate();
+			goto failure;
 		}
 		pcd_done();
 
