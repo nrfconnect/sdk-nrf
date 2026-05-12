@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if PSA_CRYPTO_CLIENT
+if PSA_CRYPTO
 
 config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 	bool
@@ -73,4 +73,4 @@ config PSA_CRYPTO_DRIVER_ALG_PRNG_TEST
 
 endmenu # PSA API support
 
-endif # PSA_CRYPTO_CLIENT
+endif # PSA_CRYPTO
