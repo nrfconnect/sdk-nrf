@@ -442,6 +442,10 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_transmitter_test_v2 = 1;
 #endif
 
+#if defined(CONFIG_BT_CTLR_DTM_HCI_RX_V3)
+	cmds->hci_le_receiver_test_v3 = 1;
+#endif
+
 #if defined(CONFIG_BT_CTLR_DTM_HCI_TX_V3)
 	cmds->hci_le_transmitter_test_v3 = 1;
 #endif
@@ -1570,6 +1574,10 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_le_receiver_test_v1((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_LE_RECEIVER_TEST_V2:
 		return sdc_hci_cmd_le_receiver_test_v2((void *)cmd_params);
+#if defined(CONFIG_BT_CTLR_DTM_HCI_RX_V3)
+	case SDC_HCI_OPCODE_CMD_LE_RECEIVER_TEST_V3:
+		return sdc_hci_cmd_le_receiver_test_v3((void *)cmd_params);
+#endif /* CONFIG_BT_CTLR_DTM_HCI_RX_V3 */
 	case SDC_HCI_OPCODE_CMD_LE_TRANSMITTER_TEST_V1:
 		return sdc_hci_cmd_le_transmitter_test_v1((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_LE_TRANSMITTER_TEST_V2:
