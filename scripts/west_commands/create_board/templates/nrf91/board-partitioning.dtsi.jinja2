@@ -13,17 +13,18 @@
  */
 &flash0 {
 	partitions {
-		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(64)>;
 		};
 
 		slot0_partition: partition@10000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x10000 DT_SIZE_K(468)>;
 			ranges = <0x0 0x10000 DT_SIZE_K(468)>;
@@ -31,18 +32,20 @@
 			#size-cells = <1>;
 
 			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-secure";
 				reg = <0x0 DT_SIZE_K(256)>;
 			};
 
 			slot0_ns_partition: partition@40000 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-nonsecure";
 				reg = <0x40000 DT_SIZE_K(212)>;
 			};
 		};
 
 		slot1_partition: partition@85000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0x85000 DT_SIZE_K(256)>;
 			ranges = <0x0 0x85000 DT_SIZE_K(256)>;
@@ -50,18 +53,20 @@
 			#size-cells = <1>;
 
 			slot1_s_partition: partition@0 {
-				compatible = "fixed-subpartitions";
+				compatible = "zephyr,mapped-partition";
 				label = "image-1-secure";
 				reg = <0x0 DT_SIZE_K(256)>;
 			};
 
 			slot1_ns_partition: partition@40000 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-1-nonsecure";
 				reg = <0x40000 DT_SIZE_K(212)>;
 			};
 		};
 
 		storage_partition: partition@fa000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0xfa000 DT_SIZE_K(24)>;
 		};
