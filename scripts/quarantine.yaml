@@ -161,3 +161,10 @@
     - nrf9251dk/nrf9251/cpuapp
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9454"
+
+- scenarios:
+    - nrf.extended.drivers.gpio.get_direction
+    - nrf.extended.drivers.gpio.gpio_nrf
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
