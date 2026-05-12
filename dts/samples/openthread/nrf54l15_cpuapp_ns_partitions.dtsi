@@ -15,7 +15,7 @@
 	ranges = <0x0 0x13000 0x2d000>;
 };
 
-&slot0_partition {
+&slot0_s_partition {
 	reg = <0x00000000 0x40000>;
 };
 
