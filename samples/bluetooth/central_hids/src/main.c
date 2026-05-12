@@ -25,6 +25,12 @@
 
 #include <zephyr/settings/settings.h>
 
+#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L)
+#define BUTTON_NUM_FOR_BOARD(button) (button)
+#else
+#define BUTTON_NUM_FOR_BOARD(button) ((button) + 1)
+#endif
+
 /**
  * Switch between boot protocol and report protocol mode.
  */
@@ -49,10 +55,21 @@
 #define KEY_PAIRING_ACCEPT DK_BTN1_MSK
 #define KEY_PAIRING_REJECT DK_BTN2_MSK
 
+/** Key used to enter/exit alternative button function mode (toggle on same DK button). */
+#define KEY_ALTERNATIVE_FUNCTIONS_NUM  DK_BTN4
+#define KEY_ALTERNATIVE_FUNCTIONS_MASK DK_BTN4_MSK
+
+enum button_functions_mode {
+	BUTTON_FUNCTIONS_MODE_DEFAULT,
+	BUTTON_FUNCTIONS_MODE_AUTHENTICATION,
+	BUTTON_FUNCTIONS_MODE_ALTERNATIVE_1
+};
+
 static struct bt_conn *default_conn;
 static struct bt_hogp hogp;
 static struct bt_conn *auth_conn;
 static uint8_t capslock_state;
+static enum button_functions_mode button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
 
 static void hids_on_ready(struct k_work *work);
 static K_WORK_DEFINE(hids_ready_work, hids_on_ready);
@@ -219,6 +236,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	if (auth_conn) {
 		bt_conn_unref(auth_conn);
 		auth_conn = NULL;
+		button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
 	}
 
 	printk("Disconnected: %s, reason 0x%02x %s\n", addr, reason, bt_hci_err_to_str(reason));
@@ -541,25 +559,22 @@ static void num_comp_reply(bool accept)
 
 	bt_conn_unref(auth_conn);
 	auth_conn = NULL;
+	button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
 }
 
-
-static void button_handler(uint32_t button_state, uint32_t has_changed)
+static void button_authentication_mode_handler(uint32_t button)
 {
-	uint32_t button = button_state & has_changed;
+	__ASSERT(auth_conn, "No authentication connection");
 
-	if (auth_conn) {
-		if (button & KEY_PAIRING_ACCEPT) {
-			num_comp_reply(true);
-		}
-
-		if (button & KEY_PAIRING_REJECT) {
-			num_comp_reply(false);
-		}
-
-		return;
+	if (button & KEY_PAIRING_ACCEPT) {
+		num_comp_reply(true);
+	} else if (button & KEY_PAIRING_REJECT) {
+		num_comp_reply(false);
 	}
+}
 
+static void button_default_mode_handler(uint32_t button)
+{
 	if (button & KEY_BOOTMODE_MASK) {
 		button_bootmode();
 	}
@@ -568,6 +583,44 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	}
 	if (button & KEY_CAPSLOCK_RSP_MASK) {
 		button_capslock_rsp();
+	}
+	if (button & KEY_ALTERNATIVE_FUNCTIONS_MASK) {
+		button_functions_mode = BUTTON_FUNCTIONS_MODE_ALTERNATIVE_1;
+		printk("Alternative button functions activated.\n");
+
+		/* Print the available alternative button functions here. */
+
+		printk("Button %d: exit alternative button functions\n",
+		       BUTTON_NUM_FOR_BOARD(KEY_ALTERNATIVE_FUNCTIONS_NUM));
+	}
+}
+
+static void button_alternative_1_mode_handler(uint32_t button)
+{
+	if (button & KEY_ALTERNATIVE_FUNCTIONS_MASK) {
+		button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
+		printk("Alternative button functions deactivated.\n");
+	}
+}
+
+static void button_handler(uint32_t button_state, uint32_t has_changed)
+{
+	uint32_t button = button_state & has_changed;
+
+	switch (button_functions_mode) {
+	case BUTTON_FUNCTIONS_MODE_AUTHENTICATION:
+		button_authentication_mode_handler(button);
+		break;
+	case BUTTON_FUNCTIONS_MODE_DEFAULT:
+		button_default_mode_handler(button);
+		break;
+	case BUTTON_FUNCTIONS_MODE_ALTERNATIVE_1:
+		button_alternative_1_mode_handler(button);
+		break;
+	default:
+		printk("Unknown button functions mode: %u\n", (unsigned int) button_functions_mode);
+		button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
+		break;
 	}
 }
 
@@ -587,6 +640,7 @@ static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	auth_conn = bt_conn_ref(conn);
+	button_functions_mode = BUTTON_FUNCTIONS_MODE_AUTHENTICATION;
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 

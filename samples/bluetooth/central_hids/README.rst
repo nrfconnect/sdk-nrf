@@ -69,6 +69,11 @@ User interface
          This function is available only if the connected HID has boot keyboard reports.
          It always writes CAPSLOCK information to the boot report, even if Report Protocol Mode is selected.
 
+      Button 4:
+        Switch to the "Alternative button functions" mode.
+        In this mode, the buttons have different functionalities than in the normal mode.
+        The available functionalities depend on the sample configuration and are printed in the terminal window after button press.
+
    .. group-tab:: nRF54 DKs
 
       Button 0:
@@ -87,6 +92,11 @@ User interface
          Toggle the CAPSLOCK LED on the connected keyboard using Write with response.
          This function is available only if the connected HID has boot keyboard reports.
          It always writes CAPSLOCK information to the boot report, even if Report Protocol Mode is selected.
+
+      Button 3:
+        Switch to the "Alternative button functions" mode.
+        In this mode, the buttons have different functionalities than in the normal mode.
+        The available functionalities depend on the sample configuration and are printed in the terminal window after button press.
 
 Building and Running
 ********************
