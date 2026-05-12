@@ -72,10 +72,10 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
-
 * Added support for the new LCS API to control bootloader behavior.
   When this API is enabled, the bootloader can skip signature verification in early LCS states and abort the boot process in the decommissioned state.
+
+* Fixed DTS support for nRF5340 network core images when :ref:`b0n <bootloader>` was enabled.
 
 Developing with nRF91 Series
 ============================
