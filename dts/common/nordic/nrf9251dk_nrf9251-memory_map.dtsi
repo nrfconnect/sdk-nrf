@@ -96,12 +96,12 @@
 
 		cpuapp_slot0_partition: partition@322000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x322000 DT_SIZE_K(336)>;
+			reg = <0x322000 DT_SIZE_K(380)>;
 		};
 
-		cpuapp_slot1_partition: partition@376000 {
+		cpuapp_slot1_partition: partition@381000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x376000 DT_SIZE_K(424)>;
+			reg = <0x381000 DT_SIZE_K(380)>;
 		};
 
 		cpuppr_code_partition: partition@3e0000 {
