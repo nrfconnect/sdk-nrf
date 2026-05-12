@@ -8,6 +8,8 @@
 # PSA Core implementation
 kconfig_check_and_set_base_to_one(PSA_CORE_OBERON)
 
+kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_ALT)
+
 # Convert CRACEN driver configuration
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_CRACEN)
 kconfig_check_and_set_base_to_one(PSA_NEED_CRACEN_CCM_AES)
