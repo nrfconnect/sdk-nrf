@@ -15,7 +15,7 @@
 #include <nrf_cc3xx_platform_identity_key.h>
 #include "nrf_provisioning.h"
 #include <identity_key.h>
-#include <tfm_spm_log.h>
+#include <tfm_log.h>
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #include <pm_config.h>
 #endif
@@ -68,7 +68,7 @@ static enum tfm_plat_err_t disable_netcore_debug(void)
 	}
 
 	if (!pcd_read_cmd_done()) {
-		SPMLOG_ERRMSG("Failed to lock debug in network core.");
+		ERROR("Failed to lock debug in network core.");
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
@@ -117,14 +117,14 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 
 	/* The Hardware Unique Keys should be already written */
 	if (!hw_unique_key_are_any_written()) {
-		SPMLOG_ERRMSG("This device has not been provisioned with Hardware Unique Keys.");
+		ERROR("This device has not been provisioned with Hardware Unique Keys.");
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
 #ifdef TFM_PARTITION_INITIAL_ATTESTATION
 	/* The Initial Attestation key should be already written */
 	if (!identity_key_is_written()) {
-		SPMLOG_ERRMSG(
+		ERROR(
 			"This device has not been provisioned with an Initial Attestation Key.");
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
@@ -200,6 +200,6 @@ static bool dummy_key_is_present(void)
 void tfm_plat_provisioning_check_for_dummy_keys(void)
 {
 	if (dummy_key_is_present()) {
-		SPMLOG_ERRMSG("This device was provisioned with dummy keys and is NOT secure.");
+		ERROR("This device was provisioned with dummy keys and is NOT secure.");
 	}
 }
