@@ -28,7 +28,7 @@ endchoice
 
 config PSA_CRYPTO_PROVIDER_CUSTOM
 	depends on !BUILD_WITH_TFM
-	select MBEDTLS_PSA_CRYPTO_C
+	select MBEDTLS_PSA_CRYPTO_C if !PSA_SSF_CRYPTO_CLIENT
 
 config NRF_SECURITY
 	def_bool y
