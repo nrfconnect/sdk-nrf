@@ -38,7 +38,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     # Get the partition node and pick size from it.
     dt_chosen(code_partition_path PROPERTY "zephyr,code-partition" TARGET ${application})
     dt_partition_size(slot_size PATH "${code_partition_path}" TARGET ${application} REQUIRED)
-    dt_partition_addr(slot_address PATH "${code_partition_path}" TARGET ${application} REQUIRED)
+    dt_partition_addr(slot_address PATH "${code_partition_path}" TARGET ${application} REQUIRED ABSOLUTE)
     # Header size is picked from the image that is being signed.
     sysbuild_get(header_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_ROM_START_OFFSET KCONFIG)
 
