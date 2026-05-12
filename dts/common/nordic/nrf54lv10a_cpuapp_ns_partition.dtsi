@@ -36,6 +36,10 @@
 
 &cpuapp_rram {
 	partitions {
+<<<<<<< HEAD
+=======
+		ranges;
+>>>>>>> b608bba27b (dts: nordic: nrf54lv10a: Migrate to zephyr,mapped-partition)
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
@@ -46,7 +50,11 @@
 		 * header flash_layout.h of the relevant platform. Any updates in the layout
 		 * need to happen both in the flash_layout.h and in this file at the same time.
 		 */
+<<<<<<< HEAD
 		slot0_partition: partition@0 {
+=======
+		slot0_s_partition: partition@0 {
+>>>>>>> b608bba27b (dts: nordic: nrf54lv10a: Migrate to zephyr,mapped-partition)
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x0000000 DT_SIZE_K(384)>;
