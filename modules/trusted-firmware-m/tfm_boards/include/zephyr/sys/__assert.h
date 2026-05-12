@@ -16,7 +16,7 @@
  */
 
 #include <zephyr/autoconf.h>
-#include "tfm_sp_log.h"
+#include "tfm_log.h"
 #include "utilities.h"
 
 #ifdef CONFIG_ASSERT
@@ -37,7 +37,7 @@
 #define _STRINGIFY(s) #s
 
 #if defined(__ASSERT_VERBOSE)
-#define __ASSERT_PRINT(fmt, ...) printf(fmt, ##__VA_ARGS__)
+#define __ASSERT_PRINT(fmt, ...) INFO(fmt, ##__VA_ARGS__)
 #else
 #define __ASSERT_PRINT(fmt, ...)
 #endif

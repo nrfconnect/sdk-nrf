@@ -22,12 +22,10 @@ target_include_directories(psa_crypto_library_config
 )
 
 if(BUILD_INSIDE_TFM)
-  # This gives access to cmsis, nrfx and mdk and the tfm_sp_log used by 
-  # __assert.h
+  # This gives access to cmsis, nrfx and mdk.
   target_link_libraries(nrf_security_utils
     PUBLIC
       platform_s
-      tfm_sp_log
       tfm_psa_rot_partition_crypto
   )
 else()

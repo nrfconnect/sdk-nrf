@@ -5,7 +5,6 @@
  */
 
 #include "cmsis.h"
-#include "tfm_spm_log.h"
 #include "config_tfm.h"
 #include "exception_info.h"
 #include "nrf_exception_info.h"
