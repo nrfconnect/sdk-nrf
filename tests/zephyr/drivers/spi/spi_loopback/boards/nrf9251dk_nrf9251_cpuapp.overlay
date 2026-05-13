@@ -39,6 +39,7 @@
 	overrun-character = <0x00>;
 	zephyr,pm-device-runtime-auto;
 	status = "okay";
+	memory-regions = <&cpuapp_dma_region>;
 
 	slow@0 {
 		compatible = "test-spi-loopback-slow";
@@ -65,8 +66,4 @@
 
 &gpiote130 {
 	status = "okay";
-};
-
-&spi130 {
-	memory-regions = <&cpuapp_dma_region>;
 };

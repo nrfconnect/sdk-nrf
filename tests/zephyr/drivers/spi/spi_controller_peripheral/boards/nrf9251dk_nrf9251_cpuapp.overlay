@@ -71,6 +71,7 @@
 	overrun-character = <0x00>;
 	cs-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
 	zephyr,pm-device-runtime-auto;
+	memory-regions = <&cpuapp_dma_region>;
 
 	dut_spi_dt: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
@@ -89,12 +90,5 @@ dut_spis: &spi131 {
 	/delete-property/ rx-delay-supported;
 	/delete-property/ rx-delay;
 	zephyr,pm-device-runtime-auto;
-};
-
-&spi130 {
-	memory-regions = <&cpuapp_dma_region>;
-};
-
-&dut_spis {
 	memory-regions = <&cpuapp_dma_region>;
 };

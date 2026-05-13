@@ -71,6 +71,7 @@
 	pinctrl-names = "default", "sleep";
 	overrun-character = <0x00>;
 	cs-gpios = <&gpio2 1 GPIO_ACTIVE_LOW>;
+	memory-regions = <&cpuapp_dma_region>;
 
 	dut_spi_dt: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
@@ -88,12 +89,5 @@ dut_spis: &spi131 {
 	pinctrl-names = "default", "sleep";
 	/delete-property/ rx-delay-supported;
 	/delete-property/ rx-delay;
-};
-
-&spi130 {
-	memory-regions = <&cpuapp_dma_region>;
-};
-
-dut_spis: &spi131 {
 	memory-regions = <&cpuapp_dma_region>;
 };
