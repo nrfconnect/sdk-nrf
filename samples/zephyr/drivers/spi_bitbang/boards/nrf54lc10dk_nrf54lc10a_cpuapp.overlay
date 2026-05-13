@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Test requires loopback between P1.04 and P1.05
+ * (Pins chosen to avoid DK buttons and LEDs on nRF54LC10 DK.)
+ */
+
+/ {
+	spibb0: spibb0 {
+		compatible = "zephyr,spi-bitbang";
+		status = "okay";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		clk-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
+		mosi-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
+		miso-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+		cs-gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
+	};
+};
