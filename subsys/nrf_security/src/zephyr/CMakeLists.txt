@@ -28,12 +28,6 @@ if(CONFIG_MBEDTLS_ENABLE_HEAP)
   )
 endif()
 
-if(CONFIG_MBEDTLS_ENTROPY_POLL)
-  list(APPEND src_zephyr
-    ${NRF_SECURITY_DIR}/src/zephyr/entropy_poll.c
-  )
-endif()
-
 if(CONFIG_PSA_CRYPTO_SYS_INIT)
   # Include a late initialization of psa_crypto_init just-in-case
   list(APPEND src_zephyr

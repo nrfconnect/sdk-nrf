@@ -7,7 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/entropy.h>
-#include <entropy_poll.h>
 
 #include "psa/crypto.h"
 
