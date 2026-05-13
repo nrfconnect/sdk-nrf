@@ -5,3 +5,11 @@
  */
 
 #include "nrf9251dk_nrf9251_cpuapp.overlay"
+
+&spi130 {
+	/delete-property/ memory-regions;
+};
+
+&dut_spis {
+	/delete-property/ memory-regions;
+};
