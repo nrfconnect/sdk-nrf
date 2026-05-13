@@ -22,6 +22,8 @@ tests:
     harness_config:
       pytest_root:
         - "pytest/tests.py::test_grtc_after_reset_system"
+      pytest_args:
+        - "--limits-path=${ZEPHYR_BASE}/../nrf/tests/drivers/grtc/grtc_reset/pytest/limits.json"
 
   drivers.grtc.test_grtc_after_reset_pin:
     platform_allow:
@@ -40,6 +42,9 @@ tests:
     harness_config:
       pytest_root:
         - "pytest/tests.py::test_grtc_after_reset_pin"
+      pytest_args:
+        - "--limits-path=${ZEPHYR_BASE}/../nrf/tests/drivers/grtc/grtc_reset/pytest/limits.json"
+
 
   drivers.grtc.test_mcuboot_grtc_no_uninit:
     platform_allow:
@@ -60,6 +65,8 @@ tests:
     harness_config:
       pytest_root:
         - "pytest/tests.py::test_mcuboot_grtc_no_uninit"
+      pytest_args:
+        - "--limits-path=${ZEPHYR_BASE}/../nrf/tests/drivers/grtc/grtc_reset/pytest/limits.json"
 
   drivers.grtc.test_mcuboot_grtc_uninit:
     platform_allow:
@@ -82,3 +89,5 @@ tests:
     harness_config:
       pytest_root:
         - "pytest/tests.py::test_mcuboot_grtc_uninit"
+      pytest_args:
+        - "--limits-path=${ZEPHYR_BASE}/../nrf/tests/drivers/grtc/grtc_reset/pytest/limits.json"

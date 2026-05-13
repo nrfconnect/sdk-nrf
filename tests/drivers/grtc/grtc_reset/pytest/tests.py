@@ -4,7 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+import json
 import logging
+import os
 import re
 import subprocess
 import time
@@ -14,34 +16,9 @@ from twister_harness import DeviceAdapter
 logger = logging.getLogger(__name__)
 
 
-platform_with_mcuboot_uptime_range_map = {
-    "nrf54h20dk/nrf54h20/cpuapp": range(9, 11),
-    "nrf54l15dk/nrf54l05/cpuapp": range(11, 21),
-    "nrf54l15dk/nrf54l10/cpuapp": range(11, 21),
-    "nrf54l15dk/nrf54l15/cpuapp": range(11, 21),
-    "nrf54lm20dk/nrf54lm20a/cpuapp": range(11, 21),
-    "nrf54lm20dk/nrf54lm20b/cpuapp": range(11, 21),
-    "nrf54ls05dk/nrf54ls05a/cpuapp": range(9, 21),
-    "nrf54ls05dk/nrf54ls05b/cpuapp": range(9, 21),
-    "nrf54lv10dk/nrf54lv10a/cpuapp": range(11, 21),
-    "nrf9251dk/nrf9251/cpuapp": range(9, 21),
-}
-
-platform_without_mcuboot_uptime_range_map = {
-    "nrf54h20dk/nrf54h20/cpuapp": range(9, 11),
-    "nrf54l15dk/nrf54l05/cpuapp": range(9, 21),
-    "nrf54l15dk/nrf54l10/cpuapp": range(9, 21),
-    "nrf54l15dk/nrf54l15/cpuapp": range(9, 21),
-    "nrf54lm20dk/nrf54lm20a/cpuapp": range(11, 21),
-    "nrf54lm20dk/nrf54lm20b/cpuapp": range(11, 21),
-    "nrf54ls05dk/nrf54ls05a/cpuapp": range(9, 21),
-    "nrf54ls05dk/nrf54ls05b/cpuapp": range(9, 21),
-    "nrf54lv10dk/nrf54lv10a/cpuapp": range(11, 21),
-    "nrf9251dk/nrf9251/cpuapp": range(9, 21),
-}
-
-
-def get_uptime_range(dut: DeviceAdapter, has_mcuboot: bool = False) -> range:
+def get_uptime_range(dut: DeviceAdapter, limits_path: str, has_mcuboot: bool = False) -> range:
+    with open(limits_path, encoding='utf-8') as file:
+        limits_data = json.load(file)
     platform = dut.device_config.platform
     at_index = platform.find("@")
     if at_index != -1:
@@ -49,12 +26,12 @@ def get_uptime_range(dut: DeviceAdapter, has_mcuboot: bool = False) -> range:
         if slash_index != -1:
             platform = platform[:at_index] + platform[slash_index:]
     if has_mcuboot:
-        range_obj = platform_with_mcuboot_uptime_range_map.get(platform)
+        range_list = limits_data["platform_with_mcuboot_uptime_range_map"].get(platform)
     else:
-        range_obj = platform_without_mcuboot_uptime_range_map.get(platform)
-    if range_obj is None:
+        range_list = limits_data["platform_without_mcuboot_uptime_range_map"].get(platform)
+    if range_list is None:
         raise ValueError(f"Unsupported platform {platform}, missing uptime range definition")
-    return range_obj
+    return range(range_list[0], range_list[1])
 
 
 def reset_dut(dut: DeviceAdapter, reset_kind: str = "RESET_PIN"):
@@ -90,35 +67,35 @@ def reset_dut_and_get_cycle_and_uptime(dut: DeviceAdapter, reset_kind: str) -> t
     return get_cycle_and_uptime_from_logs(dut)
 
 
-def test_grtc_after_reset_system(dut: DeviceAdapter):
+def test_grtc_after_reset_system(dut: DeviceAdapter, limits_path: str):
     time.sleep(3)
     cycle_start, uptime_start = reset_dut_and_get_cycle_and_uptime(dut, reset_kind="RESET_PIN")
-    assert uptime_start in get_uptime_range(dut)
+    assert uptime_start in get_uptime_range(dut, limits_path)
     cycle_after_reset, uptime_after_reset = reset_dut_and_get_cycle_and_uptime(
         dut, reset_kind="RESET_SYSTEM"
     )
     assert cycle_after_reset > cycle_start
-    assert uptime_after_reset in get_uptime_range(dut)
+    assert uptime_after_reset in get_uptime_range(dut, limits_path)
 
 
-def test_grtc_after_reset_pin(dut: DeviceAdapter):
+def test_grtc_after_reset_pin(dut: DeviceAdapter, limits_path: str):
     time.sleep(3)
     cycle_start, uptime_start = reset_dut_and_get_cycle_and_uptime(dut, reset_kind="RESET_PIN")
-    assert uptime_start in get_uptime_range(dut)
+    assert uptime_start in get_uptime_range(dut, limits_path)
     cycle_after_reset, uptime_after_reset = reset_dut_and_get_cycle_and_uptime(
         dut, reset_kind="RESET_PIN"
     )
     assert abs(cycle_after_reset - cycle_start) < cycle_start / 2
-    assert uptime_after_reset in get_uptime_range(dut)
+    assert uptime_after_reset in get_uptime_range(dut, limits_path)
 
 
-def test_mcuboot_grtc_uninit(dut: DeviceAdapter):
+def test_mcuboot_grtc_uninit(dut: DeviceAdapter, limits_path: str):
     time.sleep(3)
     _, uptime = reset_dut_and_get_cycle_and_uptime(dut, reset_kind="RESET_PIN")
-    assert uptime in get_uptime_range(dut, has_mcuboot=False)
+    assert uptime in get_uptime_range(dut, limits_path, has_mcuboot=True)
 
 
-def test_mcuboot_grtc_no_uninit(dut: DeviceAdapter):
+def test_mcuboot_grtc_no_uninit(dut: DeviceAdapter, limits_path: str):
     time.sleep(3)
     _, uptime = reset_dut_and_get_cycle_and_uptime(dut, reset_kind="RESET_PIN")
-    assert uptime in get_uptime_range(dut, has_mcuboot=True)
+    assert uptime in get_uptime_range(dut, limits_path, has_mcuboot=True)
