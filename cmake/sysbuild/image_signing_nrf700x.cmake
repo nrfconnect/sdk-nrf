@@ -30,7 +30,10 @@ function(nrf7x_signing_tasks input output_hex output_bin dependencies)
 
   # Fetch devicetree details for flash and slot information
   dt_chosen(flash_node TARGET ${DEFAULT_IMAGE} PROPERTY "zephyr,flash")
-  dt_nodelabel(slot0_flash TARGET ${DEFAULT_IMAGE} NODELABEL "slot0_partition" REQUIRED)
+  dt_nodelabel(slot0_flash TARGET ${DEFAULT_IMAGE} NODELABEL "slot0_partition")
+  if(NOT slot0_flash)
+    dt_nodelabel(slot0_flash TARGET ${DEFAULT_IMAGE} NODELABEL "slot0_s_partition" REQUIRED)
+  endif()
   dt_prop(slot_size TARGET ${DEFAULT_IMAGE} PATH "${slot0_flash}" PROPERTY "reg" INDEX 1 REQUIRED)
   dt_prop(write_block_size TARGET ${DEFAULT_IMAGE} PATH "${flash_node}" PROPERTY "write-block-size")
 
