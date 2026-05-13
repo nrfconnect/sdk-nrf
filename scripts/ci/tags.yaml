@@ -748,11 +748,11 @@ ci_applications_nrf_desktop:
     - zephyr/subsys/storage/
     - zephyr/subsys/usb/
 
-ci_applications_nrf5340_audio:
+ci_applications_nrf_audio:
   files:
     - modules/lib/cmsis-dsp/
     - nrf/applications/ipc_radio/
-    - nrf/applications/nrf5340_audio/
+    - nrf/applications/nrf_audio/
     - nrf/lib/pcm_mix/
     - nrf/lib/pcm_stream_channel_modifier/
     - nrf/lib/sample_rate_converter/
@@ -1291,11 +1291,11 @@ ci_tests_unity:
     - ncs/test/cmock/
     - test/cmock/
 
-ci_tests_nrf5340_audio:
+ci_tests_nrf_audio:
   files:
     - modules/lib/cmsis-dsp/
-    - nrf/applications/nrf5340_audio/
-    - nrf/tests/nrf5340_audio/
+    - nrf/applications/nrf_audio/
+    - nrf/tests/nrf_audio/
     - nrfxlib/lc3/
 
 ci_tests_modules_lib_zcbor:

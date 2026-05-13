@@ -418,7 +418,7 @@ nRF5340 Audio
     This makes debugging high CPU load situations easier in the application.
     The threshold for high CPU load is set in :file:`peripherals.c` using the ``CPU_LOAD_HIGH_THRESHOLD_PERCENT`` macro.
   * :kconfig:option:`CONFIG_SPEED_OPTIMIZATIONS` to enable compiler speed optimizations for the application.
-  * Support for multiple independent coordinated sets in the :ref:`unicast client app<nrf53_audio_unicast_client_app>`.
+  * Support for multiple independent coordinated sets in the :ref:`unicast client app<nrf_audio_unicast_client_app>`.
     When all the devices in a coordinated set are disconnected, the SIRK is cleared, allowing a new unicast group to be formed with a new SIRK without the need to restart the application.
   * SIRK generation based on the username when using the :file:`buildprog.py` Python script for the nRF5340 Audio unicast client sample.
     The SIRK is generated using parts of the SHA-256 hash of the username, aiming to obtain a unique but consistent SIRK across runs for the same username.
@@ -453,7 +453,7 @@ nRF5340 Audio
     Hence, the applications use the same process as other Bluetooth projects.
     See :ref:`app_bootloaders` for information on how to set up DFU for their requirements.
   * The note about missing support in |nRFVSC|.
-    The section about programming using standard methods now lists the steps for |nRFVSC| and the command line from the :ref:`nrf53_audio_app_building` document.
+    The section about programming using standard methods now lists the steps for |nRFVSC| and the command line from the :ref:`nrf_audio_app_building` document.
     This is because, with the latest release of |nRFVSC|, you can build and program the nRF5340 Audio application using the |nRFVSC| GUI.
 
 nRF Desktop

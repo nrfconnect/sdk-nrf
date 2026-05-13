@@ -353,8 +353,8 @@ nRF5340 Audio
 
   * The power module has been refactored to use the upstream Zephyr INA23X sensor driver.
   * BIS headsets can now switch between two broadcast sources (two hardcoded broadcast names).
-  * :ref:`nrf53_audio_app_ui` and "Testing the default CIS mode" sections in the application documentation with information about using **VOL** buttons to switch headset channels.
-  * :ref:`nrf53_audio_app_requirements` section in the application documentation by moving the information about the nRF5340 Audio DK to `Nordic Semiconductor Infocenter`_, under `nRF5340 Audio DK Hardware`_.
+  * :ref:`nrf_audio_app_ui` and "Testing the default CIS mode" sections in the application documentation with information about using **VOL** buttons to switch headset channels.
+  * :ref:`nrf_audio_app_requirements` section in the application documentation by moving the information about the nRF5340 Audio DK to `Nordic Semiconductor Infocenter`_, under `nRF5340 Audio DK Hardware`_.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -878,21 +878,21 @@ Other libraries
 ---------------
 
 * Added the :ref:`lib_pcm_mix` library.
-  This was previously a component of the :ref:`nrf53_audio_app` application, now moved to :file:`lib/pcm_mix`.
+  This was previously a component of the :ref:`nrf_audio_app` application, now moved to :file:`lib/pcm_mix`.
 
 * :ref:`lib_contin_array` library:
 
-  * Updated by separating the library from the :ref:`nrf53_audio_app` application and moving it to :file:`lib/contin_array`.
+  * Updated by separating the library from the :ref:`nrf_audio_app` application and moving it to :file:`lib/contin_array`.
     Updated code and documentation accordingly.
 
 * :ref:`lib_pcm_stream_channel_modifier` library:
 
-  * Updated by separating the library from the :ref:`nrf53_audio_app` application and moving it to :file:`lib/pcm_stream_channel_modifier`.
+  * Updated by separating the library from the :ref:`nrf_audio_app` application and moving it to :file:`lib/pcm_stream_channel_modifier`.
     Updated code and documentation accordingly.
 
 * :ref:`lib_data_fifo` library:
 
-  * Updated by separating the library from the :ref:`nrf53_audio_app` application and moving it to :file:`lib/data_fifo`.
+  * Updated by separating the library from the :ref:`nrf_audio_app` application and moving it to :file:`lib/data_fifo`.
     Updated code and documentation accordingly.
 
 * :ref:`QoS` library:

@@ -300,7 +300,7 @@ nRF5340 Audio
 
 * Updated:
 
-  * The documentation for :ref:`nrf53_audio_app_building` with cross-links and additional information, based on user feedback.
+  * The documentation for :ref:`nrf_audio_app_building` with cross-links and additional information, based on user feedback.
   * The calculation in ``audio_datapath.num_blks_in_fifo`` to consider wrapping.
 
 nRF Desktop

@@ -790,19 +790,19 @@ LwM2M
    * For LwM2M applications, replace the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DTLS_CID` Kconfig option with :kconfig:option:`CONFIG_LWM2M_DTLS_CID`.
 
 
-.. _nrf5340_audio_migration_notes:
+.. _nrf_audio_migration_notes:
 
 nRF5340 Audio applications
 --------------------------
 
 .. toggle::
 
-   * The :ref:`nrf53_audio_app` have changed the default controller from the LE Audio controller for nRF5340 library to Nordic Semiconductor's standard :ref:`ug_ble_controller_softdevice` (:ref:`softdevice_controller_iso`).
+   * The :ref:`nrf_audio_app` have changed the default controller from the LE Audio controller for nRF5340 library to Nordic Semiconductor's standard :ref:`ug_ble_controller_softdevice` (:ref:`softdevice_controller_iso`).
      :ref:`ug_ble_controller_softdevice` is included and built automatically.
      For |NCS| 2.6.0, tests have been run and issues documented as before for the previously used LE Audio controller for nRF5340 library.
      However, the LE Audio controller for nRF5340 library is marked as deprecated, it will be removed soon, and there will be no new features or fixes to this controller.
      Make sure to remove references to LE Audio controller for nRF5340 from your application and transition to the new controller.
-     There should be no negative impact on performance of the nRF5340 Audio applications with the :ref:`ug_ble_controller_softdevice`.
+     There should be no negative impact on performance of the nRF Audio applications with the :ref:`ug_ble_controller_softdevice`.
      This change enables the use of standard |NCS| tools and procedures for building, configuring and DFU.
 
 Bluetooth® Mesh

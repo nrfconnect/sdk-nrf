@@ -214,14 +214,14 @@
 
 .. |nrf5340_mesh_sample_note| replace:: For nRF5340 and Thingy:53, the extended advertiser has to be set manually for the network core, because the Bluetooth® Low Energy does not know that the Bluetooth Mesh is enabled when built for this core. This is already done for this sample by setting ``CONFIG_BT_EXT_ADV=y`` for the network core.
 
-.. |nrf5340_audio_external_devices_note| replace:: Nordic Semiconductor seeks to provide seamless interoperability with as many LE Audio devices as possible.
+.. |nrf_audio_external_devices_note| replace:: Nordic Semiconductor seeks to provide seamless interoperability with as many LE Audio devices as possible.
    However, vendors have reached different levels of maturity in their implementation.
    Also, different platforms have different methods of connecting, pairing, and streaming.
    For these reasons, providing a general guide on how to test with external devices is challenging.
    The suggested approach is to test with Nordic Semiconductor devices on both sides first to verify basic functionalities and get familiar with the solution before using custom devices.
    Contact `Technical Support team <DevZone_>`_ if you need assistance.
 
-.. |usb_known_issues| replace:: Make sure to check the :ref:`nRF5340 Audio application known issue OCT-2154 <known_issues_nrf5340audio>` related to intermittent audio stream on the headset when using USB audio interface on macOS.
+.. |usb_known_issues| replace:: Make sure to check the :ref:`nRF Audio application known issue OCT-2154 <known_issues_nrf_audio>` related to intermittent audio stream on the headset when using USB audio interface on macOS.
 
 .. |trusted_execution| replace:: nRF5340 and nRF9160
 

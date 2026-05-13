@@ -235,14 +235,14 @@ nRF5340 Audio
 * Added:
 
   * The :ref:`Audio application API documentation <audio_api>` page.
-  * The :ref:`nrf53_audio_app_config_audio_app_options` page.
+  * The :ref:`nrf_audio_app_config_audio_app_options` page.
   * The API documentation in the header files listed on the :ref:`audio_api` page.
   * Ability to connect by address as a unicast client.
 
 * Updated:
 
   * The power measurements to be disabled by default in ``debug`` builds.
-    To enable power measurements, set the :kconfig:option:`CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file.
+    To enable power measurements, set the :kconfig:option:`CONFIG_NRF_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
   * The audio application targeting the :zephyr:board:`nrf5340dk` to use pins **P1.5** to **P1.9** for the I2S interface instead of **P0.13** to **P0.17**.
     This change was made to avoid conflicts with the onboard peripherals on the nRF5340 DK.
   * The API documentation in the header files listed on the :ref:`audio_api` page.

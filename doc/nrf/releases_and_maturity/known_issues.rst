@@ -2622,12 +2622,12 @@ NCSDK-14117: Build fails for nRF52840DK in the ``prj_b0_wwcb`` configuration
 Reconnection issues on some operating systems
   On some operating systems, the :ref:`nrf_desktop` application is unable to reconnect to a Bluetooth host.
 
-.. _known_issues_nrf5340audio:
+.. _known_issues_nrf_audio:
 
-nRF5340 Audio
-=============
+nRF Audio (formerly nRF5340 Audio)
+==================================
 
-The issues in this section are related to the :ref:`nrf53_audio_app` application.
+The issues in this section are related to the :ref:`nrf_audio_app` application.
 
 .. rst-class:: v3-3-0 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
@@ -2700,7 +2700,7 @@ OCT-2070: Detection issues with USB-C to USB-C connection
 
 OCT-2154: USB audio interface does not work correctly on macOS
   The audio stream is intermittent on the headset side after connecting the gateway to a Mac computer and starting the audio stream.
-  This issue occurs sporadically after building the nRF5340 Audio application with the default USB port as the audio source.
+  This issue occurs sporadically after building the nRF Audio application with the default USB port as the audio source.
 
   **Affected platforms:** nRF5340 Audio DK
 
@@ -2877,10 +2877,10 @@ OCT-3248: A race condition between capturing timers and the RTC tick resetting t
 
   **Affected platforms:** nRF5340 Audio DK
 
-Controller subsystem for nRF5340 Audio
---------------------------------------
+Controller subsystem for nRF Audio
+----------------------------------
 
-The following known issues apply to the LE Audio subsystem (NET core controller) for nRF5340 used in the nRF5340 Audio application.
+The following known issues apply to the LE Audio subsystem (NET core controller) for nRF5340 used in the nRF Audio application.
 
 .. rst-class:: v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0
 

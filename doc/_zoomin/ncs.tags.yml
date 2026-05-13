@@ -363,8 +363,8 @@ mapping_topics:
   - nrf/applications/connectivity_bridge/README.html: ["lte"]
   - nrf/applications/matter_bridge/*.html: ["matter", "wifi"]
   - nrf/applications/nrf_desktop/*.html: ["ble"]
-  - nrf/applications/nrf5340_audio/index.html: ["ble", "nrf5340"]
-  - nrf/applications/nrf5340_audio/doc/*.html: ["ble", "nrf5340"]
+  - nrf/applications/nrf_audio/index.html: ["ble", "nrf5340"]
+  - nrf/applications/nrf_audio/doc/*.html: ["ble", "nrf5340"]
   - nrf/applications/matter_weather_station/README.html: ["matter", "thingy53"]
   - nrf/samples.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                        "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",

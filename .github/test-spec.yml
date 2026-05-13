@@ -51,8 +51,8 @@
   - "samples/cellular/lwm2m_client/**/*"
 
 "CI-audio-test":
-  - "applications/nrf5340_audio/**/*"
-  - "tests/nrf5340_audio/**/*"
+  - "applications/nrf_audio/**/*"
+  - "tests/nrf_audio/**/*"
   - "tests/lib/contin_array/**/*"
   - "tests/lib/pcm_mix/**/*"
   - "tests/lib/data_fifo/**/*"

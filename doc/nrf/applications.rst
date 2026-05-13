@@ -30,7 +30,7 @@ Applications are also available through the `nRF Connect SDK Add-ons`_, a curate
    ../../applications/connectivity_bridge/README
    ../../applications/ipc_radio/README
    ../../applications/matter_bridge/README
-   ../../applications/nrf5340_audio/index
+   ../../applications/nrf_audio/index
    ../../applications/nrf_desktop/README
    ../../applications/machine_learning/README
    ../../applications/hpf/hpf

@@ -60,14 +60,14 @@ Samples and applications using short-range radio
 
    The samples previously built for those cores are no longer used in the default builds: :zephyr:code-sample:`bluetooth_hci_ipc`, :zephyr:code-sample:`nrf_ieee802154_rpmsg`, ``nRF5340: Multiprotocol RPMsg``, and :ref:`ble_rpc_host`.
 
-.. _nrf5340_audio_migration_notes_2.7:
+.. _nrf_audio_migration_notes_2.7:
 
 nRF5340 Audio applications
 --------------------------
 
 .. toggle::
 
-   * The :ref:`nrf53_audio_app` has removed all references to bt_ll_acs_nrf53 and will now only support the default controller :ref:`ug_ble_controller_softdevice` (:ref:`softdevice_controller_iso`).
+   * The :ref:`nrf_audio_app` has removed all references to bt_ll_acs_nrf53 and will now only support the default controller :ref:`ug_ble_controller_softdevice` (:ref:`softdevice_controller_iso`).
      :ref:`ug_ble_controller_softdevice` is included and built automatically.
      Make sure to remove references to LE Audio controller for nRF5340 from your application and transition to the new controller.
 

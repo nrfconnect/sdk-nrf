@@ -87,7 +87,7 @@ Usage in samples
 ================
 
 Most :ref:`Bluetooth LE samples <ble_samples>` in the |NCS|, including the :ref:`bt_mesh_samples`, can use either Bluetooth LE Controller.
-Exceptions are the :ref:`ble_llpm` sample, which requires the SoftDevice Controller that supports LLPM, and the :ref:`nrf53_audio_app`, which require the SoftDevice Controller that supports :ref:`LE Isochronous Channels <nrfxlib:softdevice_controller_iso>`.
+Exceptions are the :ref:`ble_llpm` sample, which requires the SoftDevice Controller that supports LLPM, and the :ref:`nrf_audio_app`, which require the SoftDevice Controller that supports :ref:`LE Isochronous Channels <nrfxlib:softdevice_controller_iso>`.
 
 By default, all samples are currently configured to use SoftDevice Controller.
 To use the Zephyr Bluetooth LE Controller instead, use the :ref:`bt-ll-sw-split <zephyr:snippet-bt-ll-sw-split>` snippet (see :ref:`app_build_snippets`) and make sure to build from a clean build directory.

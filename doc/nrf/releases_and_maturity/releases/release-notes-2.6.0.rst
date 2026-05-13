@@ -105,7 +105,7 @@ Improved:
 
 * Bluetooth LE Audio:
 
-  * The application nRF5340 Audio is now called :ref:`nrf53_audio_app` and it has been refactored, expanded, and improved, using Nordic Semiconductor's :ref:`softdevice_controller` instead of the previous dedicated LE Audio Controller subsystem.
+  * The application nRF Audio is now called :ref:`nrf_audio_app` and it has been refactored, expanded, and improved, using Nordic Semiconductor's :ref:`softdevice_controller` instead of the previous dedicated LE Audio Controller subsystem.
     This application is still of experimental maturity.
 
 * Matter:
@@ -517,7 +517,7 @@ nRF5340 Audio applications
 
   * LE Audio controller for nRF5340 from v3424 to v18929.
   * The default controller has been changed from the LE Audio controller for nRF5340 library to the :ref:`ug_ble_controller_softdevice`.
-    See the :ref:`nRF5340 Audio applications <nrf5340_audio_migration_notes>` section in the :ref:`migration_2.6` for information about how this affects your application.
+    See the :ref:`nRF Audio applications <nrf_audio_migration_notes>` section in the :ref:`migration_2.6` for information about how this affects your application.
   * Sending of the ISO data, which is now done in a single file :file:`bt_le_audio_tx`.
   * Application structure, which is now split into four separate, generic applications with separate :file:`main.c` files.
   * Advertising process by reverting back to slower advertising after a short burst (1.28 s) of directed advertising.
