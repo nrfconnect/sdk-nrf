@@ -4,6 +4,8 @@ tests:
   sample.cellular.location:
     sysbuild: true
     build_only: true
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE=overlay-no-pm-partition.overlay
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
@@ -21,7 +23,9 @@ tests:
   sample.cellular.location.pgps:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-pgps.conf
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-pgps.conf
+      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps-partition.overlay
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:
@@ -43,6 +47,7 @@ tests:
       - nrf9161dk/nrf9161/ns
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
+      - EXTRA_DTC_OVERLAY_FILE=overlay-no-pm-wifi-partition.overlay
       - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
@@ -61,6 +66,7 @@ tests:
       - nrf9161dk/nrf9161/ns
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
+      - EXTRA_DTC_OVERLAY_FILE=overlay-no-pm-wifi-partition.overlay
       - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
       - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
       - SB_CONFIG_WIFI_NRF70=y
@@ -77,7 +83,9 @@ tests:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
       - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID=y
-    extra_args: location_SNIPPET="nrf91-modem-trace-uart"
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE=overlay-no-pm-partition.overlay
+      - location_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:

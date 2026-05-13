@@ -1,0 +1,108 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * DTS overlay adding the P-GPS flash partition for nRF91xx DKs
+ * (nrf9151dk, nrf9160dk, nrf9161dk) when Partition Manager is disabled.
+ *
+ * Flash layout (nRF9160 with 1MB internal flash):
+ *   0x00000000..0x000e0000  slot0_partition (image-0, 896 KB)
+ *     0x00000000..0x00008000    slot0_s_partition (secure, 32 KB)
+ *     0x00008000..0x000e0000    slot0_ns_partition (non-secure, 864 KB)
+ *
+ *   0x000e0000..0x00100000  storage_partition (128 KB, non-secure, TF-M attribution window)
+ *     0x000e0000..0x000e2000    settings_partition (Zephyr settings, 8 KB)
+ *     0x000e2000..0x000f6000    pgps_partition (P-GPS data, 80 KB)
+ *
+ * In no-Partition Manager builds with TF-M, the storage_partition parent node defines
+ * the non-secure flash attribution window. TF-M uses TFM_DT_NODELABEL(storage_partition)
+ * to mark the entire 128 KB window non-secure via SPU. Child partitions (settings_partition
+ * and pgps_partition) are application-level partitioning within that non-secure window,
+ * selected via chosen nodes. This allows P-GPS storage and Zephyr settings to coexist
+ * and be writable from non-secure code without TF-M attribution issues.
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Define Secure and Non-Secure areas explicitly. */
+		slot0_partition: partition@0 {
+			label = "image-0";
+			reg = <0x00000000 0x000e0000>;
+			ranges = <0x0 0x00000000 0x000e0000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x00000000 0x00008000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x00008000 0x000d8000>;
+			};
+		};
+
+		storage_partition: partition@e0000 {
+			label = "storage";
+			reg = <0x000e0000 0x00020000>;
+			ranges = <0x0 0x000e0000 0x00020000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			settings_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "settings";
+				reg = <0x00000000 0x00002000>;
+			};
+
+			pgps_partition: partition@2000 {
+				compatible = "zephyr,mapped-partition";
+				label = "pgps";
+				reg = <0x00002000 0x00014000>;
+			};
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,settings-partition = &settings_partition;
+		nordic,pgps-partition = &pgps_partition;
+	};
+};
+
+&sram0_ns_modem {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ranges = <0x0 0x0 0xa000>;
+
+	cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+		reg = <0x0 0x728>;
+	};
+
+	cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+		reg = <0x728 0x20d8>;
+	};
+
+	cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@2800 {
+		reg = <0x2800 0x2000>;
+	};
+};

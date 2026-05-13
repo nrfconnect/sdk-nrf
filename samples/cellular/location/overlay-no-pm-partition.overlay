@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * DTS overlay for no-Partition-Manager builds without P-GPS storage partition.
+ *
+ * Provides:
+ * - nrf_modem_lib shared-memory node labels required in no-PM mode.
+ *
+ * Keep flash partitions board-defined in this overlay. Replacing flash partition
+ * layouts here causes platform-specific sysbuild/MCUboot failures on Thingy boards.
+ */
+
+&sram0_ns_modem {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ranges = <0x0 0x0 0xa000>;
+
+	cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+		reg = <0x0 0x728>;
+	};
+
+	cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+		reg = <0x728 0x20d8>;
+	};
+
+	cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@2800 {
+		reg = <0x2800 0x2000>;
+	};
+
+	cpucell_cpuapp_ipc_shm_trace: sram0_ns_modem@4800 {
+		reg = <0x4800 0x5800>;
+	};
+};
