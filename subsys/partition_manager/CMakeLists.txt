@@ -122,7 +122,13 @@ if(CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP)
 endif()
 
 if(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
-  ncs_add_partition_manager_config(pm.yml.pgps)
+  # Only let PM manage the PGPS partition when no DTS chosen node is present.
+  # When ncs,pgps-partition is defined in DTS, the library uses that directly
+  # and PM must not create a conflicting pgps partition.
+  dt_chosen(pgps_dt_partition PROPERTY "ncs,pgps-partition")
+  if(NOT pgps_dt_partition)
+    ncs_add_partition_manager_config(pm.yml.pgps)
+  endif()
 endif()
 
 if(CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION)
