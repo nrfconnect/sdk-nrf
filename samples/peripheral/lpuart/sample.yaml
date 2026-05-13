@@ -27,6 +27,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - nrf54l15dk/nrf54l05/cpuapp
@@ -35,6 +36,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     platform_exclude: native_sim
     tags: ppk_power_measure
     harness: pytest
@@ -59,8 +61,10 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_configs:
       - CONFIG_ASSERT=y
       - CONFIG_CONSOLE=y
@@ -93,6 +97,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -108,6 +113,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     tags: ppk_power_measure
     harness: pytest
     harness_config:
@@ -137,6 +143,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -152,6 +159,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     harness: console
     harness_config:
       fixture: gpio_loopback
