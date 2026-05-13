@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	/* Test requirements:
+	 * out-gpios[0] wire connected with in-gpios[0],
+	 * out-gpios[1] wire connected with in-gpios[1],
+	 * etc.
+	 * Output-input GPIO pair must have identical active level flag.
+	 *
+	 * nRF54LV10 overlay uses P1.16/P1.10 (out) and P0.4/P1.11 (in). On nRF54LC10
+	 * DK, P0.4 is a button and P1.10/P1.11 conflict with LEDs; use two P1 pairs.
+	 */
+	zephyr,user {
+		out-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>, <&gpio1 2 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>, <&gpio1 3 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpiote20 {
+	status = "okay";
+};
