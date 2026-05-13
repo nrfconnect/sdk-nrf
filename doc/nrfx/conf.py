@@ -71,3 +71,5 @@ external_content_contents = [
 def setup(app):
     utils.add_google_analytics(app, html_theme_options)
     utils.add_announcement_banner(html_theme_options)
+    html_theme_options["set_default_announcement"] = False
+    html_theme_options["default_announcement_message"] = ""
