@@ -17,8 +17,10 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     harness_config:
       pytest_root:
         - "pytest/tests.py::test_grtc_after_reset_system"
@@ -34,9 +36,11 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     harness_config:
       pytest_root:
         - "pytest/tests.py::test_grtc_after_reset_pin"
@@ -52,9 +56,11 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
     harness_config:
@@ -72,9 +78,11 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - mcuboot_CONFIG_NRF_GRTC_TIMER_STOP_AT_UNINIT=y
