@@ -92,7 +92,7 @@ partition-size=0x1000
 rsource "Kconfig.template.partition_config"
 endif
 
-if NRF_CLOUD_PGPS_STORAGE_PARTITION
+if NRF_CLOUD_PGPS_STORAGE_PARTITION && PARTITION_MANAGER_ENABLED
 partition=PGPS
 partition-size=NRF_CLOUD_PGPS_PARTITION_SIZE
 rsource "Kconfig.template.partition_config"
