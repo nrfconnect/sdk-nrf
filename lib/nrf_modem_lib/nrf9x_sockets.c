@@ -51,7 +51,14 @@ static struct nrf_sock_ctx {
 	int nrf_fd; /* nRF socket descriptor. */
 	int zvfs_fd; /* ZVFS socket descriptor. */
 	struct k_mutex *lock; /* Mutex associated with the socket. */
-	struct k_poll_signal poll; /* poll() signal. */
+	struct {
+		struct k_poll_signal signal; /* Offloaded poll() signal. */
+		short events; /* Active offloaded poll() event mask. */
+		short modem_events; /* Event mask currently registered in modem callback. */
+		bool waiting; /* Offloaded poll() is waiting on this socket. */
+		bool registered; /* Internal modem poll callback is registered. */
+		struct socket_ncs_pollcb app_cb; /* App poll callback. */
+	} poll;
 	struct socket_ncs_sendcb sendcb; /* Send callback. */
 } offload_ctx[NRF_MODEM_MAX_SOCKET_COUNT];
 
@@ -91,6 +98,11 @@ static void release_ctx(struct nrf_sock_ctx *ctx)
 	ctx->nrf_fd = -1;
 	ctx->lock = NULL;
 	ctx->zvfs_fd = -1;
+	ctx->poll.events = 0;
+	ctx->poll.modem_events = 0;
+	ctx->poll.waiting = false;
+	ctx->poll.registered = false;
+	memset(&ctx->poll.app_cb, 0, sizeof(ctx->poll.app_cb));
 	memset(&ctx->sendcb, 0, sizeof(ctx->sendcb));
 
 	k_mutex_unlock(&ctx_lock);
@@ -520,6 +532,96 @@ static void sendcb(const struct nrf_modem_sendcb_params *nrf_params)
 	ctx->sendcb.callback(&params);
 }
 
+static void pollcb(struct nrf_pollfd *pollfd)
+{
+	struct nrf_sock_ctx *ctx;
+	const short always_events = NRF_POLLHUP | NRF_POLLERR | NRF_POLLNVAL;
+	short poll_events, app_events;
+
+	ctx = find_ctx(pollfd->fd);
+	if (!ctx) {
+		return;
+	}
+
+	poll_events = ctx->poll.events | always_events;
+	app_events = ctx->poll.app_cb.events | always_events;
+
+	/* Match against the events indicated in poll(). */
+	if (ctx->poll.waiting && (pollfd->revents & poll_events)) {
+		k_poll_signal_raise(&ctx->poll.signal, pollfd->revents);
+	}
+
+	/* Match against the events indicated in SO_POLLCB. */
+	if (ctx->poll.app_cb.callback && (pollfd->revents & app_events)) {
+		struct socket_ncs_pollcb_params params = {
+			.fd = ctx->zvfs_fd,
+			.events = ctx->poll.app_cb.events,
+			.revents = pollfd->revents,
+		};
+
+		/* Call the application-registered callback. */
+		ctx->poll.app_cb.callback(&params);
+
+		/* Clear the callback if indicated as one-shot. */
+		if (ctx->poll.app_cb.oneshot) {
+			memset(&ctx->poll.app_cb, 0, sizeof(ctx->poll.app_cb));
+		}
+	}
+}
+
+static int nrf9x_pollcb_set(struct nrf_sock_ctx *ctx, short events, bool force)
+{
+	int err = 0;
+	struct nrf_modem_pollcb pcb = {
+		.callback = pollcb,
+		.events = events,
+		.oneshot = false,
+	};
+
+	if (!events) {
+		if (!ctx->poll.registered) {
+			return 0;
+		}
+
+		/* Remove the poll callback from the modem. */
+		err = nrf_setsockopt(ctx->nrf_fd, NRF_SOL_SOCKET, NRF_SO_POLLCB, NULL, 0);
+		if (!err) {
+			ctx->poll.registered = false;
+			ctx->poll.modem_events = 0;
+		}
+		return err;
+	}
+
+	if (!force && ctx->poll.registered && (ctx->poll.modem_events == events)) {
+		/* Registration already matches; skip to avoid unnecessary modem interaction. */
+		return 0;
+	}
+
+	err = nrf_setsockopt(ctx->nrf_fd, NRF_SOL_SOCKET, NRF_SO_POLLCB, &pcb, sizeof(pcb));
+	if (!err) {
+		ctx->poll.registered = true;
+		ctx->poll.modem_events = events;
+	}
+
+	return err;
+}
+
+static int nrf9x_pollcb_sync(struct nrf_sock_ctx *ctx, bool force)
+{
+	/* The event mask must cover both users: poll() and SO_POLLCB. */
+	short events = 0;
+
+	if (ctx->poll.waiting) {
+		events |= ctx->poll.events;
+	}
+
+	if (ctx->poll.app_cb.callback) {
+		events |= ctx->poll.app_cb.events;
+	}
+
+	return nrf9x_pollcb_set(ctx, events, force);
+}
+
 static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 					   const void *optval, net_socklen_t optlen)
 {
@@ -546,6 +648,28 @@ static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 
 		errno = EOPNOTSUPP;
 		return -1;
+	}
+
+	if ((level == ZSOCK_SOL_SOCKET) && (optname == SO_POLLCB)) {
+		if ((optval && optlen != sizeof(struct socket_ncs_pollcb)) || (!optval && optlen != 0)) {
+			errno = EINVAL;
+			return -1;
+		}
+
+		if (optval) {
+			const struct socket_ncs_pollcb *pollcb_opt = optval;
+
+			if (!pollcb_opt->callback) {
+				errno = EINVAL;
+				return -1;
+			}
+
+			ctx->poll.app_cb = *pollcb_opt;
+		} else {
+			memset(&ctx->poll.app_cb, 0, sizeof(ctx->poll.app_cb));
+		}
+
+		return nrf9x_pollcb_sync(ctx, optval != NULL);
 	}
 
 	if (z_to_nrf_optname(level, optname, &nrf_optname) < 0) {
@@ -916,41 +1040,30 @@ static int nrf9x_socket_offload_fcntl(int fd, int cmd, va_list args)
 	return retval;
 }
 
-static void pollcb(struct nrf_pollfd *pollfd)
-{
-	struct nrf_sock_ctx *ctx;
-
-	ctx = find_ctx(pollfd->fd);
-	if (!ctx) {
-		return;
-	}
-
-	k_poll_signal_raise(&ctx->poll, pollfd->revents);
-}
-
 static int nrf9x_poll_prepare(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
 			      struct k_poll_event **pev, struct k_poll_event *pev_end)
 {
 	int err;
 	int flags;
 	unsigned int signaled;
-	int fd = OBJ_TO_SD(ctx);
-	struct nrf_modem_pollcb pcb = {
-		.callback = pollcb,
-		.events = pfd->events,
-		.oneshot = true, /* callback invoked only once */
-	};
 
 	if (*pev == pev_end) {
 		errno = ENOMEM;
 		return -1;
 	}
 
-	k_poll_signal_init(&ctx->poll);
-	k_poll_event_init(*pev, K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY, &ctx->poll);
+	k_poll_signal_init(&ctx->poll.signal);
+	k_poll_event_init(*pev, K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY, &ctx->poll.signal);
 
-	err = nrf_setsockopt(fd, NRF_SOL_SOCKET, NRF_SO_POLLCB, &pcb, sizeof(pcb));
+	ctx->poll.events = pfd->events;
+	ctx->poll.waiting = true;
+
+	/* Force re-apply even if mask is unchanged to evaluate readiness, ensuring already-pending
+	 * data wakes poll() immediately.
+	 */
+	err = nrf9x_pollcb_sync(ctx, true);
 	if (err) {
+		ctx->poll.waiting = false;
 		return -1;
 	}
 
@@ -959,8 +1072,7 @@ static int nrf9x_poll_prepare(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd
 
 	signaled = 0;
 	flags = 0;
-
-	k_poll_signal_check(&ctx->poll, &signaled, &flags);
+	k_poll_signal_check(&ctx->poll.signal, &signaled, &flags);
 	if (!signaled) {
 		return 0;
 	}
@@ -974,13 +1086,24 @@ static int nrf9x_poll_update(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd,
 {
 	int flags;
 	unsigned int signaled;
+	int err;
 
 	(*pev)++;
+
+	ctx->poll.waiting = false;
+
+	/* Poll wait finished; update the event mask in the active modem callback or remove
+	 * altogether if SO_POLLCB is not in use.
+	 */
+	err = nrf9x_pollcb_sync(ctx, false);
+	if (err) {
+		return -1;
+	}
 
 	signaled = 0;
 	flags = 0;
 
-	k_poll_signal_check(&ctx->poll, &signaled, &flags);
+	k_poll_signal_check(&ctx->poll.signal, &signaled, &flags);
 	if (!signaled) {
 		return 0;
 	}
