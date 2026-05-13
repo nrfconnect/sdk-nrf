@@ -29,6 +29,8 @@
 #cmakedefine MBEDTLS_THREADING_ALT
 #cmakedefine MBEDTLS_THREADING_C
 
+#cmakedefine MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+
 #cmakedefine PSA_WANT_AES_KEY_SIZE_128                          @PSA_WANT_AES_KEY_SIZE_128@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_192                          @PSA_WANT_AES_KEY_SIZE_192@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_256                          @PSA_WANT_AES_KEY_SIZE_256@
