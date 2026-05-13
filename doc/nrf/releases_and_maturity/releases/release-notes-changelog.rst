@@ -299,6 +299,19 @@ Bluetooth samples
 * Added:
 
   * The :ref:`channel_sounding_ipt_initiator` and :ref:`channel_sounding_ipt_reflector` samples to demonstrate how to use the Bluetooth Channel Sounding (CS) Inline Phase Correction Term Transfer (IPT) feature.
+  * Support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` board target in the following samples:
+
+    * :ref:`bluetooth_conn_time_synchronization`
+    * :ref:`direct_test_mode`
+    * :ref:`ble_event_trigger`
+    * :ref:`bluetooth_iso_combined_bis_cis`
+    * :ref:`bluetooth_isochronous_time_synchronization`
+    * :ref:`ble_llpm`
+    * :ref:`bt_peripheral_with_multiple_identities`
+    * :ref:`bluetooth_radio_coex_1wire_sample`
+    * :ref:`ble_radio_notification_conn_cb`
+    * :ref:`bt_scanning_while_connecting`
+    * :ref:`ble_subrating`
 
 Bluetooth Mesh samples
 ----------------------
