@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Required loopback between:
+ * GPIO P1.11 and P1.8 (GRTC fast; P1.8 is the dedicated fast output on this DK).
+ * (nRF54LV10 uses P1.9; on nRF54LC10 DK, P1.9 is a button.)
+ */
+
+/ {
+	zephyr,user {
+		gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;  /* Connect to dedicated GRTC output */
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&grtc {
+	pinctrl-0 = <&grtc_default>;
+	pinctrl-1 = <&grtc_sleep>;
+	pinctrl-names = "default", "sleep";
+	clkout-fast-frequency-hz = <32000>;  /* 16 MHz / (250 * 2) */
+};
