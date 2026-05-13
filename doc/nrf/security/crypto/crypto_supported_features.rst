@@ -11688,6 +11688,8 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
          .. tab:: CRACEN
 
             .. note::
+               :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED` does not support scalar blinding for Montgomery curve multiplication (X25519, X448).
+
                nRF54L15, nRF54L10, and nRF54L05 do not support countermeasures for Montgomery curve multiplication (X25519, X448), EdDSA base point multiplication, and Edwards point multiplication.
 
             .. list-table:: Side-channel countermeasures support (CRACEN driver) - nRF54L Series
@@ -11719,10 +11721,10 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
                  - Supported
                  - Supported
                * - ECC extended (Montgomery/Edwards)
-                 - :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED`
-                 - -- (see note above)
-                 - -- (see note above)
-                 - -- (see note above)
+                 - :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED` (see note above)
+                 - --
+                 - --
+                 - --
                  - Supported
                  - Supported
                  - Supported
