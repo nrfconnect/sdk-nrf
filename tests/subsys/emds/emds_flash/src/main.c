@@ -154,7 +154,7 @@ snapshot_make(const struct emds_partition *partition,
 	zassert_ok(flash_area_write(partition->fa, metadata_off, &metadata, sizeof(metadata)),
 		   "Failed to write metadata to flash area");
 
-	data_len = ROUND_UP(data_len, sizeof(uint32_t));
+	data_len = ROUND_UP(data_len, partition->fp->write_block_size);
 	zassert_ok(flash_area_write(partition->fa, metadata.data_instance_off, data, data_len),
 		   "Failed to write data to flash area");
 
@@ -531,7 +531,7 @@ ZTEST(emds_flash, test_allocation_if_data_garbaged)
 	};
 	const struct flash_area *fa = partition[partition_index].fa;
 	const struct flash_parameters *fp = partition[partition_index].fp;
-	uint8_t garbage[sizeof(struct emds_data_entry)];
+	uint8_t garbage[EMDS_FLASH_BLOCK_SIZE];
 	int rc;
 
 	for (int i = 0; i < sizeof(garbage); i++) {
@@ -539,7 +539,7 @@ ZTEST(emds_flash, test_allocation_if_data_garbaged)
 	}
 
 	zassert_ok(flash_area_write(fa, 0, &garbage, sizeof(garbage)),
-		   "Failed to write garbage into metadata flash area");
+		   "Failed to write garbage into data flash area");
 
 	rc = emds_flash_allocate_snapshot(&partition[partition_index], NULL, &allocated_snapshot,
 					  100);
