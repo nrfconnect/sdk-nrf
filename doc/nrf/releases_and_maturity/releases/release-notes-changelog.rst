@@ -446,10 +446,20 @@ Matter samples
 Networking samples
 ------------------
 
-* :ref:`azure_iot_hub` sample:
+* Removed Partition Manager for all Wi-Fi targets from the following samples:
 
-  * Removed Partition Manager dependency for all Wi-Fi targets.
-    Flash and SRAM partitions are supplied via Devicetree overlays instead.
+  * :ref:`mqtt_sample` sample
+  * :ref:`udp_sample` sample
+  * :ref:`net_coap_client_sample` sample
+  * :ref:`download_sample` sample
+  * :ref:`https_client` sample
+  * :ref:`http_server` sample
+  * :ref:`aws_iot` sample
+  * :ref:`azure_iot_hub` sample
+
+  Flash and SRAM partitions are supplied using devicetree overlays instead.
+
+* :ref:`azure_iot_hub` sample:
 
   * Added support for the nRF54LM20 DK with the nRF7002-EB II shield.
 
