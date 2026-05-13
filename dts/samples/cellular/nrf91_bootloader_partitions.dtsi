@@ -1,0 +1,85 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	/*
+	 * 0x0000_0000  MCUboot                        ( 32 kB)
+	 * 0x0000_8000  Primary area                   (492 kB)
+	 *   0x0000_8000  Primary secure image         ( 32 kB)
+	 *   0x0001_0000  Primary non-secure image     (460 kB)
+	 * 0x0008_3000  Secondary area                 (492 kB)
+	 *    0x0008_3000  Secondary secure image      ( 32 kB)
+	 *    0x0008_b000  Secondary non-secure image  (460 kB)
+	 * 0x000f_e000 Settings storage                (  8 kB)
+	 */
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x00000000 0x8000>;
+		};
+
+		slot0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x0000c000 0x7b000>;
+			ranges = <0x0 0x0000c000 0x7b000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x00000000 0x8000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x00008000 0x73000>;
+			};
+		};
+
+		slot1_partition: partition@83000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x00083000 0x7b000>;
+			ranges = <0x0 0x00083000 0x7b000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot1_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-1-secure";
+				reg = <0x00000000 0x8000>;
+			};
+
+			slot1_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-1-nonsecure";
+				reg = <0x00008000 0x73000>;
+			};
+		};
+
+		storage_partition: partition@fe000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000fe000 0x2000>;
+		};
+	};
+};

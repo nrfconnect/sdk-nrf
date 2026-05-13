@@ -12,7 +12,6 @@
 	 *   0x0003_0000  Primary secure image       ( 32 kB)
 	 *   0x0003_8000  Primary non-secure image   (800 kB)
 	 */
-
 	partitions {
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
@@ -63,7 +62,6 @@
 	 * 0x004d_0000  Settings                      (    8 kB)
 	 * 0x004d_2000  Free                          (27832 kB)
 	 */
-
 	partitions {
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
@@ -98,7 +96,7 @@
 			reg = <0x004d0000 0x2000>;
 		};
 
-		external_flash_partition: partition@4d20000 {
+		external_flash_partition: partition@4d2000 {
 			label = "external_flash";
 			reg = <0x0004d2000 0x1b2e000>;
 		};

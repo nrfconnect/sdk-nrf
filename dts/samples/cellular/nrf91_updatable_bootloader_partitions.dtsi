@@ -1,0 +1,63 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	/*
+	 * 0x0000_0000  MCUboot                      ( 32 kB)
+	 * 0x0000_8000  Primary updatable MCUboot    ( 80 kB)
+	 * 0x0001_c000  Secondary updatable MCUboot  ( 80 kB)
+	 * 0x0003_0000  Primary image area           (832 kB)
+	 *   0x0003_0000  Primary secure image       ( 32 kB)
+	 *   0x0003_8000  Primary non-secure image   (800 kB)
+	 */
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		b0_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0x8000>;
+		};
+
+		s0_partition: partition@8000 {
+			label = "mcuboot-0";
+			reg = <0x00008000 0x14000>;
+		};
+
+		s1_partition: partition@1c000 {
+			label = "mcuboot-1";
+			reg = <0x0001c000 0x14000>;
+		};
+
+		slot0_partition: partition@30000 {
+			compatible = "fixed-subpartitions";
+			label = "image-0";
+			reg = <0x00030000 0xd0000>;
+			ranges = <0x0 0x00030000 0xd0000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				label = "image-0-secure";
+				reg = <0x00000000 0x8000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				label = "image-0-nonsecure";
+				reg = <0x00008000 0xc8000>;
+			};
+		};
+	};
+};

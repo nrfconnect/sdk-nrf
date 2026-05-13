@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * 0x0000_0000  Secondary image area          (  832 kB)
+ *   0x0000_0000  Secondary secure image      (   32 kB)
+ *   0x0000_8000  Secondary non-secure image  (  800 kB)
+ * 0x000d_0000  Full Modem Firmware Update    ( 4096 kB)
+ * 0x004d_0000  Settings                      (    8 kB)
+ * 0x004d_2000  Free                          (27832 kB)
+ */
+partitions {
+	compatible = "fixed-partitions";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	slot1_partition: partition@0 {
+		compatible = "fixed-subpartitions";
+		label = "image-1";
+		reg = <0x00000000 0xd0000>;
+		ranges = <0x0 0x00000 0xd0000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_s_partition: partition@0 {
+			label = "image-1-secure";
+			reg = <0x00000000 0x8000>;
+		};
+
+		slot1_ns_partition: partition@8000 {
+			label = "image-1-nonsecure";
+			reg = <0x00008000 0xc8000>;
+		};
+	};
+
+	fmfu_storage_partition: partition@d0000 {
+		label = "fmfu_storage";
+		reg = <0x000d0000 0x400000>;
+	};
+
+	storage_partition: partition@4d0000 {
+		label = "settings_storage";
+		reg = <0x004d0000 0x2000>;
+	};
+
+	external_flash_partition: partition@4d2000 {
+		label = "external_flash";
+		reg = <0x0004d2000 0x1b2e000>;
+	};
+};
