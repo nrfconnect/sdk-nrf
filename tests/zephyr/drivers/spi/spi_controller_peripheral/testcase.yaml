@@ -13,6 +13,7 @@ common:
     - nrf54ls05dk/nrf54ls05b/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    - nrf54lc10dk/nrf54lc10a/cpuapp
     - nrf9251dk/nrf9251/cpuapp
     - nrf9251dk/nrf9251/cpuppr
 
@@ -23,6 +24,7 @@ tests:
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/250khz.overlay"
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   nrf.extended.drivers.spi.spi_mode1:
     extra_configs:
@@ -30,6 +32,7 @@ tests:
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/500khz.overlay"
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   nrf.extended.drivers.spi.spi_mode2:
     extra_configs:
@@ -37,6 +40,7 @@ tests:
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/1mhz.overlay"
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   nrf.extended.drivers.spi.spi_mode3:
     extra_configs:
@@ -44,6 +48,7 @@ tests:
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/2mhz.overlay"
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   nrf.extended.drivers.spi.spi_1M333333Hz:
     extra_configs:
@@ -51,6 +56,7 @@ tests:
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/1m333333hz.overlay"
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   nrf.extended.drivers.spi.spi_2M666666Hz:
     extra_configs:
@@ -58,6 +64,7 @@ tests:
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/2m666666hz.overlay"
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   nrf.extended.drivers.spi.spi_4MHz:
     extra_configs:
@@ -65,6 +72,7 @@ tests:
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/4mhz.overlay"
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   nrf.extended.drivers.spi.spi_8MHz:
     extra_configs:
@@ -72,6 +80,7 @@ tests:
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/8mhz.overlay"
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   # No Fast SPI instance on nrf54ls05a/b
   # No Fast SPI instance on nrf54lv10a, nor nrf54lc10a
@@ -83,6 +92,7 @@ tests:
       - CONFIG_PM_DEVICE_RUNTIME=y
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   nrf.extended.drivers.spi.direct_xfer:
     extra_configs:
