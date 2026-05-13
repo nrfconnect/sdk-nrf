@@ -108,4 +108,19 @@
 	};
 };
 
+/ {
+	/* Only the internal-flash slot is described here; slot1, fmfu_storage
+	 * and storage live on external flash and are outside TF-M's purview.
+	 */
+	nordic-tz-secure {
+		compatible = "nordic,tz-secure";
+		code-partitions = <&slot0_s_partition>;
+	};
+
+	nordic-tz-nonsecure {
+		compatible = "nordic,tz-nonsecure";
+		code-partitions = <&slot0_ns_partition>;
+	};
+};
+
 #include <common/nordic/nrf91_partition_sram.dtsi>
