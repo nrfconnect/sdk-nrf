@@ -11,6 +11,5 @@
 };
 
 &adc {
-	memory-regions = <&cpuapp_dma_region>;
 	status = "okay";
 };

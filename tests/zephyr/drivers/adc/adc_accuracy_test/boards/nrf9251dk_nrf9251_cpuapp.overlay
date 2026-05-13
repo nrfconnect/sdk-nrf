@@ -19,7 +19,6 @@
 &adc {
 	#address-cells = <1>;
 	#size-cells = <0>;
-	memory-regions = <&cpuapp_dma_region>;
 	status = "okay";
 
 	channel@0 {
