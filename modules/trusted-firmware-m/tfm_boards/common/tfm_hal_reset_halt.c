@@ -32,8 +32,9 @@ void tfm_hal_system_halt(void)
 	}
 }
 
-void tfm_hal_system_reset(void)
+void tfm_hal_system_reset(uint32_t sw_reset_syn_value)
 {
+	(void) sw_reset_syn_value;
 #if NRF_ALLOW_NON_SECURE_FAULT_HANDLING
 	ns_fault_service_call_handler();
 #endif
