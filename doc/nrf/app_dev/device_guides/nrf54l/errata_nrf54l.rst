@@ -16,6 +16,8 @@ nRF54L Series Errata documents contain descriptions of identified hardware anoma
 * `nRF54L15 Errata`_
 * `nRF54LM20A Errata`_
 * `nRF54LM20B Errata`_
+* `nRF54LS05A Errata`_
+* `nRF54LS05B Errata`_
 
 Some of the anomalies can be fixed by applying workarounds directly in the software components, requiring minimal or zero effort from the end user.
 Refer to the following table for the current workaround list:
@@ -342,5 +344,111 @@ Refer to the following table for the current workaround list:
            - Not implemented
            - Not implemented
 
+   .. tab:: nRF54LS05A / nRF54LS05B
+
+      .. list-table:: Anomaly workaround status
+         :header-rows: 1
+         :align: left
+         :widths: auto
+
+         * - Anomaly ID
+           - nRF54LS05A
+           - nRF54LS05B
+         * - 1
+           - Not applicable
+           - Not applicable
+         * - 6
+           - Not applicable
+           - Not applicable
+         * - 7
+           - **Enabled**
+           - **Enabled**
+         * - 8
+           - **Enabled**
+           - **Enabled**
+         * - 16
+           - Not applicable
+           - Not applicable
+         * - 17
+           - Not applicable
+           - Not applicable
+         * - 18
+           - Not applicable
+           - Not applicable
+         * - 20
+           - Not implemented
+           - Not implemented
+         * - 21
+           - Not applicable
+           - Not applicable
+         * - 22
+           - Not applicable
+           - Not applicable
+         * - 23
+           - Not applicable
+           - Not applicable
+         * - 24
+           - Not applicable
+           - Not applicable
+         * - 25
+           - Not applicable
+           - Not applicable
+         * - 26
+           - Not applicable
+           - Not applicable
+         * - 30
+           - Available when ``CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION=y`` :sup:`1` :sup:`2`
+           - Available when ``CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION=y`` :sup:`1` :sup:`2`
+         * - 31
+           - Not applicable
+           - Not applicable
+         * - 32
+           - Not applicable
+           - Not applicable
+         * - 37
+           - **Enabled**
+           - **Enabled**
+         * - 39
+           - **Enabled**
+           - **Enabled**
+         * - 41
+           - Not applicable
+           - Not applicable
+         * - 44
+           - Not implemented
+           - Not implemented
+         * - 47
+           - Not applicable
+           - Not applicable
+         * - 48
+           - Not applicable
+           - Not applicable
+         * - 49
+           - Not implemented
+           - Not implemented
+         * - 50
+           - Not applicable
+           - Not applicable
+         * - 59
+           - Not implemented
+           - Not implemented
+         * - 63
+           - Not implemented
+           - Not implemented
+         * - 69
+           - **Enabled**
+           - **Enabled**
+         * - 102
+           - Not applicable
+           - Not applicable
+         * - 104
+           - Not applicable
+           - Not applicable
+         * - 105
+           - Not implemented
+           - Not implemented
+
 :sup:`1` You can set the anomaly workaround appliance frequency using the :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION_PERIOD` Kconfig option.
 Its value must be tuned in accordance to application-specific operating temperature and expected power consumption.
+
+:sup:`2` Enabling the :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION` Kconfig option on the nRF54LS05 SoC causes application to go into bus fault, which is already a recognized known issue (see the NRFX-9318 item in the `known issues page on the main branch`_).
