@@ -13,8 +13,14 @@
 #define INTERNAL_TIMER_FREQ    16000000UL
 #define INTERNAL_TIMER_CC      (INTERNAL_TIMER_FREQ / SAADC_SAMPLE_FREQUENCY)
 
+#if NRF_SAADC_HAS_CH_GAIN
+#define TEST_SAADC_CHANNEL_GAIN .gain = NRF_SAADC_GAIN1,
+#else
+#define TEST_SAADC_CHANNEL_GAIN
+#endif
+
 const nrf_saadc_channel_config_t test_channel_config = {
-	.gain = NRF_SAADC_GAIN1,
+	TEST_SAADC_CHANNEL_GAIN
 	.reference = NRF_SAADC_REFERENCE_INTERNAL,
 	.acq_time = 5,
 	.mode = NRF_SAADC_MODE_SINGLE_ENDED,
