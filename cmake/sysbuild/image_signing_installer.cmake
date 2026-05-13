@@ -64,7 +64,10 @@ dt_chosen(flash_node TARGET ${installer_image} PROPERTY "zephyr,flash")
 dt_prop(write_block_size TARGET ${installer_image} PATH "${flash_node}" PROPERTY
   "write-block-size"
 )
-dt_nodelabel(slot0_path TARGET ${installer_image} NODELABEL "slot0_partition" REQUIRED)
+dt_nodelabel(slot0_path TARGET ${installer_image} NODELABEL "slot0_partition")
+if(NOT slot0_path)
+  dt_nodelabel(slot0_path TARGET ${installer_image} NODELABEL "slot0_s_partition" REQUIRED)
+endif()
 dt_partition_addr(slot0_addr PATH "${slot0_path}" TARGET ${installer_image} REQUIRED)
 dt_reg_size(slot0_size TARGET ${installer_image} PATH ${slot0_path})
 
