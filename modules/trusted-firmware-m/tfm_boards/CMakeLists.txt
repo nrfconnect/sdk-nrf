@@ -220,7 +220,7 @@ install(FILES ns/CMakeLists.txt
 )
 
 if(TFM_PARTITION_PLATFORM)
-  file(COPY board/device_cfg.h board/RTE_Device.h
+  install(FILES board/device_cfg.h board/RTE_Device.h
     DESTINATION ${INSTALL_INTERFACE_INC_DIR}
   )
 endif()
@@ -233,10 +233,8 @@ if((NRF_SOC_VARIANT MATCHES "nrf54l1[05]") OR
    (NRF_SOC_VARIANT MATCHES "nrf54lv10a") OR
    (NRF_SOC_VARIANT MATCHES "nrf54lm20[ab]") OR
    (NRF_SOC_VARIANT MATCHES "nrf7120"))
-  file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h
-    DESTINATION ${INSTALL_INTERFACE_INC_DIR}
-  )
-  file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_kmu.h
+  install(FILES ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h
+                ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_kmu.h
     DESTINATION ${INSTALL_INTERFACE_INC_DIR}
   )
 endif()
