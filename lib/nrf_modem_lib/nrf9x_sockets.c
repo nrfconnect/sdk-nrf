@@ -52,6 +52,7 @@ static struct nrf_sock_ctx {
 	int zvfs_fd; /* ZVFS socket descriptor. */
 	struct k_mutex *lock; /* Mutex associated with the socket. */
 	struct k_poll_signal poll; /* poll() signal. */
+	struct socket_ncs_pollcb pollcb; /* Poll callback (owned by the app). */
 	struct socket_ncs_sendcb sendcb; /* Send callback. */
 } offload_ctx[NRF_MODEM_MAX_SOCKET_COUNT];
 
@@ -91,6 +92,7 @@ static void release_ctx(struct nrf_sock_ctx *ctx)
 	ctx->nrf_fd = -1;
 	ctx->lock = NULL;
 	ctx->zvfs_fd = -1;
+	memset(&ctx->pollcb, 0, sizeof(ctx->pollcb));
 	memset(&ctx->sendcb, 0, sizeof(ctx->sendcb));
 
 	k_mutex_unlock(&ctx_lock);
@@ -244,6 +246,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 			break;
 		case SO_SENDCB:
 			*nrf_out_optname = NRF_SO_SENDCB;
+			break;
+		case SO_POLLCB:
+			*nrf_out_optname = NRF_SO_POLLCB;
 			break;
 		default:
 			retval = -1;
@@ -520,6 +525,27 @@ static void sendcb(const struct nrf_modem_sendcb_params *nrf_params)
 	ctx->sendcb.callback(&params);
 }
 
+static void pollcb(struct nrf_pollfd *pollfd)
+{
+	struct nrf_sock_ctx *ctx;
+	struct socket_ncs_pollcb_params params;
+
+	ctx = find_ctx(pollfd->fd);
+	if (!ctx || !ctx->pollcb.callback) {
+		return;
+	}
+
+	params.fd = ctx->zvfs_fd;
+	params.events = ctx->pollcb.events;
+	params.revents = pollfd->revents;
+
+	ctx->pollcb.callback(&params);
+
+	if (ctx->pollcb.oneshot) {
+		memset(&ctx->pollcb, 0, sizeof(ctx->pollcb));
+	}
+}
+
 static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 					   const void *optval, net_socklen_t optlen)
 {
@@ -534,6 +560,9 @@ static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 	nrf_socklen_t nrf_optlen = optlen;
 	static struct nrf_modem_sendcb offload_sendcb = {
 		.callback = sendcb,
+	};
+	static struct nrf_modem_pollcb offload_pollcb = {
+		.callback = pollcb,
 	};
 
 	if ((level == ZSOCK_SOL_SOCKET) && (optname == ZSOCK_SO_BINDTODEVICE)) {
@@ -571,6 +600,24 @@ static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 			nrf_optlen = sizeof(struct socket_ncs_sendcb);
 		} else {
 			memset(&ctx->sendcb, 0, sizeof(ctx->sendcb));
+		}
+	} else if ((level == ZSOCK_SOL_SOCKET) && (optname == SO_POLLCB)) {
+		if (optval != NULL) {
+			const struct socket_ncs_pollcb *pollcb_opt = optval;
+
+			if (optlen != sizeof(struct socket_ncs_pollcb) ||
+			    !pollcb_opt->callback) {
+				errno = EINVAL;
+				return -1;
+			}
+
+			ctx->pollcb = *pollcb_opt;
+			offload_pollcb.events = pollcb_opt->events;
+			offload_pollcb.oneshot = pollcb_opt->oneshot;
+			nrf_optval = &offload_pollcb;
+			nrf_optlen = sizeof(offload_pollcb);
+		} else {
+			memset(&ctx->pollcb, 0, sizeof(ctx->pollcb));
 		}
 	}
 
@@ -916,7 +963,7 @@ static int nrf9x_socket_offload_fcntl(int fd, int cmd, va_list args)
 	return retval;
 }
 
-static void pollcb(struct nrf_pollfd *pollfd)
+static void pollcb_internal(struct nrf_pollfd *pollfd)
 {
 	struct nrf_sock_ctx *ctx;
 
@@ -936,7 +983,7 @@ static int nrf9x_poll_prepare(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd
 	unsigned int signaled;
 	int fd = OBJ_TO_SD(ctx);
 	struct nrf_modem_pollcb pcb = {
-		.callback = pollcb,
+		.callback = pollcb_internal,
 		.events = pfd->events,
 		.oneshot = true, /* callback invoked only once */
 	};
@@ -948,6 +995,9 @@ static int nrf9x_poll_prepare(struct nrf_sock_ctx *ctx, struct zsock_pollfd *pfd
 
 	k_poll_signal_init(&ctx->poll);
 	k_poll_event_init(*pev, K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY, &ctx->poll);
+
+	/* Remove any application-defined poll callbacks, as it will be overwritten in the modem. */
+	memset(&ctx->pollcb, 0, sizeof(ctx->pollcb));
 
 	err = nrf_setsockopt(fd, NRF_SOL_SOCKET, NRF_SO_POLLCB, &pcb, sizeof(pcb));
 	if (err) {
