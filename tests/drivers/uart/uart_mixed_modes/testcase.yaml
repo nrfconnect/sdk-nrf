@@ -136,6 +136,38 @@ tests:
       - CONFIG_UART_20_INTERRUPT_DRIVEN=y
       - CONFIG_UART_21_INTERRUPT_DRIVEN=n
 
+  drivers.uart.async_int.nrf54lc10:
+    platform_allow:
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+    extra_args:
+      - CONFIG_TEST_ASYNC_AND_INT=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_20_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_20_ASYNC=y
+      - CONFIG_UART_21_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_21_ASYNC=n
+
+  drivers.uart.async_poll.nrf54lc10:
+    platform_allow:
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+    extra_args:
+      - CONFIG_TEST_ASYNC_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_20_ASYNC=y
+      - CONFIG_UART_21_ASYNC=n
+
+  drivers.uart.int_poll.nrf54lc10:
+    platform_allow:
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+    extra_args:
+      - CONFIG_TEST_INT_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=n
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_20_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_21_INTERRUPT_DRIVEN=n
+
   drivers.uart.async_int.nrf5340dk:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
