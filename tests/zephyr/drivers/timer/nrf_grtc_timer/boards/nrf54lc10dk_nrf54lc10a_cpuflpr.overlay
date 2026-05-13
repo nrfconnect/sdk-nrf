@@ -1,0 +1,38 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Aligned with zephyr/tests/drivers/timer/nrf_grtc_timer/boards/nrf54l15dk_nrf54l15_cpuflpr.overlay */
+
+&grtc {
+	/*interrupts = <226 2>;*/
+};
+
+test_timer: &timer21 {
+	status = "okay";
+	/*interrupts = <203 2>;*/
+};
+
+&timer20 {
+	status = "okay";
+	interrupts = <202 0>;
+};
+
+&timer00 {
+	status = "okay";
+	prescaler = <0>;
+};
+
+/ {
+	chosen {
+		zephyr,cpu-load-counter = &timer00;
+	};
+
+	busy-sim {
+		compatible = "vnd,busy-sim";
+		status = "okay";
+		counter = <&timer20>;
+	};
+};
