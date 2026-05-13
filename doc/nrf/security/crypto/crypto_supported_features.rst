@@ -11704,6 +11704,7 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
+                 - nRF54LS05
                * - ECC scalar randomization
                  - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
                  - Supported
@@ -11712,6 +11713,7 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
                  - Supported
                  - Supported
                  - Supported
+                 - --
                * - ECC projective coordinate randomization
                  - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
                  - Supported
@@ -11720,6 +11722,7 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
                  - Supported
                  - Supported
                  - Supported
+                 - --
                * - ECC extended (Montgomery/Edwards)
                  - :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED` (see note above)
                  - --
@@ -11728,6 +11731,7 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
                  - Supported
                  - Supported
                  - Supported
+                 - --
                * - RSA exponent randomization
                  - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
                  - Supported
@@ -11736,6 +11740,7 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
                  - Supported
                  - Supported
                  - Supported
+                 - --
                * - RSA modulus randomization
                  - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
                  - Supported
@@ -11744,3 +11749,4 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
                  - Supported
                  - Supported
                  - Supported
+                 - --
