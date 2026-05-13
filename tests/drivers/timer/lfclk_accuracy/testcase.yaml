@@ -21,8 +21,10 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - CONFIG_TEST_GRTC_TIMER_INTERVAL_US=4000
       - CONFIG_TEST_DURATION_MS=20000
@@ -38,8 +40,10 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
       - CONFIG_TEST_GRTC_TIMER_INTERVAL_US=4000
