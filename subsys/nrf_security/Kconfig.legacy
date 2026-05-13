@@ -40,11 +40,11 @@ config MBEDTLS_OID_C
 
 config MBEDTLS_ASN1_WRITE_C
 	bool
-	default y if MBEDTLS_PEM_WRITE_C
+	default y if MBEDTLS_PEM_WRITE_C || MBEDTLS_PK_WRITE_C
 
 config MBEDTLS_ASN1_PARSE_C
 	bool
-	default y if MBEDTLS_PEM_PARSE_C
+	default y if MBEDTLS_PEM_PARSE_C || MBEDTLS_PK_PARSE_C
 
 # Platform configurations for _ALT defines
 config MBEDTLS_PLATFORM_EXIT_ALT
