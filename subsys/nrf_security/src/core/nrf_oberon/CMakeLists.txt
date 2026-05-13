@@ -46,6 +46,17 @@ target_link_libraries(psa_core
     nrf_security_utils
 )
 
+if(BUILD_INSIDE_TFM AND CRYPTO_TFM_BUILTIN_KEYS_DRIVER)
+  # psa_crypto.c includes "tfm_builtin_key_loader.h" which
+  # lives in TF-M's secure_fw/partitions/crypto/psa_driver_api/,
+  # which is exported PUBLIC by crypto_service_tfpsacrypto — but psa_core
+  # does not link against it. Add the include path directly.
+  target_include_directories(psa_core
+    PRIVATE
+      ${CMAKE_SOURCE_DIR}/secure_fw/partitions/crypto/psa_driver_api
+  )
+endif()
+
 nrf_security_add_zephyr_options_library(psa_core)
 
 target_link_libraries(${mbedcrypto_target}
