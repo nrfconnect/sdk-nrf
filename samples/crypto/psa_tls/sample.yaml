@@ -198,6 +198,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -213,6 +214,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -237,6 +239,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -252,6 +255,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -277,6 +281,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -292,6 +297,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -316,6 +322,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -331,6 +338,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -355,6 +363,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -369,6 +378,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -393,6 +403,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -407,6 +418,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -432,6 +444,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -446,6 +459,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -470,6 +484,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -484,6 +499,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -508,6 +524,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -523,6 +540,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -547,6 +565,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -562,6 +581,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
@@ -589,6 +609,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
@@ -602,6 +623,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
@@ -624,6 +646,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
@@ -637,6 +660,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
