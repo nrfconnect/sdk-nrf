@@ -5,3 +5,11 @@
  */
 
 #include "nrf9251dk_nrf9251_cpuapp.overlay"
+
+&uart130 {
+	/delete-property/ memory-regions;
+};
+
+&uart120 {
+	/delete-property/ memory-regions;
+};

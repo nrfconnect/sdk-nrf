@@ -9,3 +9,11 @@
 &timer133 {
 	interrupts = <435 (NRF_DEFAULT_IRQ_PRIORITY + 1)>;
 };
+
+&dut {
+	/delete-property/ memory-regions;
+};
+
+&dut_aux {
+	/delete-property/ memory-regions;
+};
