@@ -21,6 +21,7 @@
 #include "bt_mgmt.h"
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
+#include "rx_stats.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_server, CONFIG_UNICAST_SERVER_LOG_LEVEL);
@@ -311,6 +312,7 @@ static int lc3_stop_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp
 static int lc3_release_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp)
 {
 	enum bt_audio_dir dir;
+	(void)rx_stats_stream_clear(stream);
 
 	dir = le_audio_stream_dir_get(stream);
 	if (dir <= 0) {
@@ -355,7 +357,9 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		return;
 	}
 
-	receive_cb(audio_frame, &meta, 0);
+	(void)rx_stats_stream_recv(stream, meta);
+
+	receive_cb(audio_frame, &meta);
 }
 #endif /* (CONFIG_BT_AUDIO_RX) */
 
@@ -403,6 +407,7 @@ static void stream_disabled_cb(struct bt_bap_stream *stream)
 static void stream_started_cb(struct bt_bap_stream *stream)
 {
 	enum bt_audio_dir dir;
+	(void)rx_stats_stream_start(stream);
 
 	dir = le_audio_stream_dir_get(stream);
 	if (dir <= 0) {

@@ -26,6 +26,7 @@
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
 #include "server_store.h"
+#include "rx_stats.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
@@ -81,7 +82,7 @@ static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn 
 	ERR_CHK(ret);
 }
 
-static int stream_idx_get(struct bt_bap_stream *stream, struct stream_index *idx)
+static int stream_index_get(struct bt_bap_stream *stream, struct stream_index *idx)
 {
 	int ret;
 	struct bt_iso_info info;
@@ -918,7 +919,7 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 	}
 
 	if (state == BT_BAP_EP_STATE_STREAMING) {
-		ret = stream_idx_get(stream, &idx);
+		ret = stream_index_get(stream, &idx);
 		if (ret) {
 			LOG_ERR("%s: Failed to get stream index: %d", __func__, ret);
 			return;
@@ -1027,6 +1028,8 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 	int ret;
 	enum bt_audio_dir dir;
 
+	(void)rx_stats_stream_start(stream);
+
 	dir = le_audio_stream_dir_get(stream);
 	if (dir <= 0) {
 		LOG_ERR("Failed to get dir of stream %p", (void *)stream);
@@ -1035,7 +1038,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 	struct stream_index idx = {0};
 
-	ret = stream_idx_get(stream, &idx);
+	ret = stream_index_get(stream, &idx);
 	if (ret) {
 		LOG_ERR("%s: Failed to get stream index: %d", __func__, ret);
 		return;
@@ -1121,6 +1124,7 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 	int ret;
 
 	LOG_DBG("Audio Stream %p released", (void *)stream);
+	(void)rx_stats_stream_clear(stream);
 
 	/* Check if unicast_group_recreate has been requested */
 	if (unicast_group_created == false) {
@@ -1160,15 +1164,22 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		return;
 	}
 
+	(void)rx_stats_stream_recv(stream, meta);
+
 	struct stream_index idx;
 
-	ret = stream_idx_get(stream, &idx);
+	ret = stream_index_get(stream, &idx);
 	if (ret) {
 		LOG_ERR("%s: Failed to get stream index: %d", __func__, ret);
 		return;
 	}
 
-	receive_cb(audio_frame, &meta, idx.lvl3);
+	if (idx.lvl3 != 0) {
+		/* Only the first device will be used as mic input on gateway */
+		return;
+	}
+
+	receive_cb(audio_frame, &meta);
 }
 #endif /* (CONFIG_BT_AUDIO_RX) */
 
@@ -1307,7 +1318,7 @@ static bool first_source_location_get(struct bt_cap_stream *stream, void *user_d
 
 	dir = le_audio_stream_dir_get(&stream->bap_stream);
 
-	ret = stream_idx_get(&stream->bap_stream, &idx);
+	ret = stream_index_get(&stream->bap_stream, &idx);
 	if (ret) {
 		LOG_ERR("Failed to get stream index: %d", ret);
 		return ret;
@@ -1834,8 +1845,8 @@ static bool unicast_send_info_populate(struct server_store *server, void *user_d
 		info->tx[info->num_active_streams].cap_stream = &server->snk.cap_streams[i];
 
 		/* Set index */
-		ret = stream_idx_get(&server->snk.cap_streams[i].bap_stream,
-				     &info->tx[info->num_active_streams].idx);
+		ret = stream_index_get(&server->snk.cap_streams[i].bap_stream,
+				       &info->tx[info->num_active_streams].idx);
 		if (ret) {
 			LOG_ERR("%s: Failed to get stream index: %d", __func__, ret);
 			return false;

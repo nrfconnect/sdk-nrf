@@ -25,12 +25,10 @@
 /**
  * @brief	Data handler when ISO data has been received.
  *
- * @param[in]	audio_frame_rx	Pointer to the audio buffer.
+ * @param[in]	audio_frame_rx	Pointer to the audio buffer with metadata.
  * @param[in]	meta		Pointer to the audio metadata.
- * @param[in]	location_index	Which location is received.
  */
-void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metadata *meta,
-			      uint8_t location_index);
+void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metadata *meta);
 
 /**
  * @brief	Initialize the receive audio path.

@@ -61,10 +61,8 @@
  *
  * @param	audio_frame	Pointer to audio buffer.
  * @param	meta		Pointer to audio metadata.
- * @param	location_index	Audio location index.
  */
-typedef void (*le_audio_receive_cb)(struct net_buf *audio_frame, struct audio_metadata *meta,
-				    uint8_t location_index);
+typedef void (*le_audio_receive_cb)(struct net_buf *audio_frame, struct audio_metadata *meta);
 
 /**
  * @brief Stream index structure for identifying audio streams.

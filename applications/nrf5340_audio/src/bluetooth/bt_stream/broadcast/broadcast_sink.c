@@ -22,6 +22,7 @@
 #include "zbus_common.h"
 #include "device_location.h"
 #include "audio_defines.h"
+#include "rx_stats.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(broadcast_sink, CONFIG_BROADCAST_SINK_LOG_LEVEL);
@@ -220,6 +221,7 @@ static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 
 static void stream_started_cb(struct bt_bap_stream *stream)
 {
+	(void)rx_stats_stream_start(stream);
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
 	sync_stream_cnt++;
 
@@ -230,6 +232,8 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
+	(void)rx_stats_stream_clear(stream);
+
 	if (sync_stream_cnt == 0) {
 		LOG_WRN("Stream stopped, but no streams are currently synced");
 		return;
@@ -290,7 +294,9 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		return;
 	}
 
-	receive_cb(audio_frame, &meta, stream_index_get(stream));
+	(void)rx_stats_stream_recv(stream, meta);
+
+	receive_cb(audio_frame, &meta);
 }
 
 static struct bt_bap_stream_ops stream_ops = {
