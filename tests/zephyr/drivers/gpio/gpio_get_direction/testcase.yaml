@@ -7,5 +7,6 @@ tests:
     harness: ztest
     platform_allow:
       - nrf9251dk/nrf9251/cpuppr
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf9251dk/nrf9251/cpuppr
