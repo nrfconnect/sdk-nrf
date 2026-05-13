@@ -13,7 +13,7 @@
 #include <samples/cellular/nrf91_immutable_bootloader_partitions.dtsi>
 
 /* External flash device is disabled by default */
-&gd25wb256 {
+&mx25r64 {
 	status = "okay";
 
 	partitions {
