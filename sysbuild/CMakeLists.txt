@@ -512,6 +512,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           # driver for the default image and MCUboot
           set_config_bool(${DEFAULT_IMAGE} CONFIG_NORDIC_QSPI_NOR y)
           set_config_bool(${DEFAULT_IMAGE} CONFIG_NORDIC_QSPI_NOR_XIP y)
+          set_config_bool(${DEFAULT_IMAGE} CONFIG_NORDIC_QSPI_NOR_XIP_FLASH_SCHED_LOCK y)
           set_config_bool(mcuboot CONFIG_NORDIC_QSPI_NOR y)
           set_config_bool(mcuboot CONFIG_NORDIC_QSPI_NOR_XIP y)
         endif()
