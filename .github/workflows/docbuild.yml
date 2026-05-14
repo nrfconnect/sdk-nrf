@@ -29,12 +29,12 @@ jobs:
 
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: ncs/nrf
           fetch-depth: 0
       - name: cache-pip
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-doc-pip
@@ -50,7 +50,7 @@ jobs:
       - name: Install base dependencies
         working-directory: ncs
         run: |
-          sudo pip3 install -U setuptools wheel pip
+          sudo pip3 install -U --ignore-installed setuptools wheel pip
           pip3 install -r nrf/scripts/requirements-base.txt
 
       - name: West init and update
@@ -102,7 +102,7 @@ jobs:
 
       - name: Store
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docs
           path: |

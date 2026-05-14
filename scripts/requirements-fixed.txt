@@ -90,7 +90,7 @@ sh==1.14.1
 six==1.15.0
 snowballstemmer==2.1.0
 sortedcontainers==2.3.0
-sphinx-rtd-theme==0.5.1
+sphinx-rtd-theme>=2.0,<3
 sphinx-tabs==2.0.0
 sphinxcontrib-applehelp==1.0.2
 sphinxcontrib-devhelp==1.0.2
