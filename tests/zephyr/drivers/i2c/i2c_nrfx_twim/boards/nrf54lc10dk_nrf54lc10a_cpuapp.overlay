@@ -1,0 +1,62 @@
+/*
+ * Short SDA to SDA and SCL to SCL (nRF54LC10 DK: avoid P1.8 / P1.9 — buttons / GRTC):
+ * SDA = P1.11 and P1.13
+ * SCL = P1.12 and P1.14
+ */
+
+/ {
+	aliases {
+		i2c-controller = &i2c20;
+		i2c-controller-target = &i2c21;
+	};
+};
+
+&pinctrl {
+	i2c20_default: i2c20_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 11)>,
+				<NRF_PSEL(TWIM_SCL, 1, 12)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c20_sleep: i2c20_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 11)>,
+				<NRF_PSEL(TWIM_SCL, 1, 12)>;
+			low-power-enable;
+		};
+	};
+
+	i2c21_default: i2c21_default {
+		group1 {
+			psels = <NRF_PSEL(TWIS_SDA, 1, 13)>,
+				<NRF_PSEL(TWIS_SCL, 1, 14)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c21_sleep: i2c21_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIS_SDA, 1, 13)>,
+				<NRF_PSEL(TWIS_SCL, 1, 14)>;
+			low-power-enable;
+		};
+	};
+};
+
+&i2c20 {
+	pinctrl-0 = <&i2c20_default>;
+	pinctrl-1 = <&i2c20_sleep>;
+	pinctrl-names = "default", "sleep";
+	zephyr,concat-buf-size = <256>;
+	status = "okay";
+};
+
+&i2c21 {
+	compatible = "nordic,nrf-twis";
+	pinctrl-0 = <&i2c21_default>;
+	pinctrl-1 = <&i2c21_sleep>;
+	pinctrl-names = "default", "sleep";
+	status = "okay";
+};
