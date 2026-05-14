@@ -354,7 +354,7 @@ Cellular samples
 * Added:
 
   * The :ref:`nrf_cloud_coap_cell_location` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for nRF Cloud's cellular location service.
-  * The :ref:`nrf_cloud_coap_fota_sample` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for FOTA updates.
+  * The Cellular: nRF Cloud CoAP FOTA sample to demonstrate how to use the `nRF Cloud CoAP API`_ for FOTA updates.
   * The :ref:`nrf_cloud_coap_device_message` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for device messages.
 
 * Cellular: nRF Cloud REST cellular location sample:

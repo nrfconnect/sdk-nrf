@@ -249,7 +249,7 @@
 .. _`Memfault firmware SDK`: https://github.com/memfault/memfault-firmware-sdk
 .. _`Memfault firmware SDK changelog`: https://github.com/memfault/memfault-firmware-sdk/blob/master/CHANGELOG.md
 .. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
-
+.. _`Memfault firmware SDK nRF91 series sample app`: https://github.com/memfault/memfault-firmware-sdk/tree/master/examples/nrf-connect-sdk/nrf9160/memfault_demo_app
 
 .. _`Zephyr hostap fork`: https://github.com/zephyrproject-rtos/hostap
 

@@ -199,7 +199,6 @@ The following sample demonstrates nRF Cloud-specific functionality using CoAP:
 
 * :ref:`nrf_cloud_coap_device_message`
 * :ref:`nrf_cloud_coap_cell_location`
-* :ref:`nrf_cloud_coap_fota_sample`
 
 The following sample demonstrates nRF Cloud-specific functionality using MQTT:
 

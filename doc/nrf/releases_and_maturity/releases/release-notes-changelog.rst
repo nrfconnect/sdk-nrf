@@ -375,6 +375,7 @@ Cellular samples
 
   * All nRF Cloud REST samples as the nRF Cloud REST library has been removed.
   * Usage of nRF Cloud logging in samples as the feature is being sunset.
+  * The Cellular: nRF Cloud CoAP FOTA sample in favor of the `Memfault firmware SDK nRF91 series sample app`_, which supports FOTA over HTTP and CoAP.
 
 * :ref:`gnss_sample` sample:
 
