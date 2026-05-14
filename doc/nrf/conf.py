@@ -55,6 +55,7 @@ extensions = [
     "notfound.extension",
     "ncs_tool_versions",
     "page_filter",
+    "sphinxcontrib.jquery"
 ]
 
 linkcheck_ignore = [
@@ -89,8 +90,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
 
-html_theme_options = {"docset": "nrf", "docsets": utils.ALL_DOCSETS}
-
+html_theme_options = {"docset": "nrf", "docsets": utils.ALL_DOCSETS, "logo_url": "https://docs.nordicsemi.com/"}
 # Options for intersphinx ------------------------------------------------------
 
 intersphinx_mapping = dict()
@@ -228,3 +228,5 @@ def setup(app):
 
     utils.add_google_analytics(app, html_theme_options)
     utils.add_announcement_banner(html_theme_options)
+    html_theme_options["set_default_announcement"] = False
+    html_theme_options["default_announcement_message"] = ""
