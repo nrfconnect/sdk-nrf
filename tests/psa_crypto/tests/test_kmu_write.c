@@ -24,7 +24,7 @@ LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
  *		Global variables/defines for the kmu write test
  */
 
-static psa_key_handle_t key_handle;
+static psa_key_id_t key_id;
 #define KMU_SLOT_NUM 125
 /*
  *This is a sample public key for testing purposes only.
@@ -53,9 +53,9 @@ int write_key_to_kmu(void)
 				 PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 					 PSA_KEY_PERSISTENCE_DEFAULT, PSA_KEY_LOCATION_CRACEN_KMU));
 	psa_set_key_id(&key_attributes,
-		PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, KMU_SLOT_NUM));
+		PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, KMU_SLOT_NUM));
 
-	status = psa_import_key(&key_attributes, m_pub_key, sizeof(m_pub_key), &key_handle);
+	status = psa_import_key(&key_attributes, m_pub_key, sizeof(m_pub_key), &key_id);
 	if (status != PSA_SUCCESS) {
 		return APP_ERROR;
 	}

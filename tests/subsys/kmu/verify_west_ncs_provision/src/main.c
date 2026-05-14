@@ -25,8 +25,8 @@
 #define UROT_PUBKEY_1		228
 #define UROT_PUBKEY_0		226
 
-#define MK_PSA_KEY_HANDLE(key) \
-	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, key)
+#define MK_PSA_KEY_ID(key) \
+	PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, key)
 
 uint8_t signature_default[] = {
 	0x2e, 0x89, 0x14, 0x67, 0x34, 0x61, 0x7c, 0x9f,
@@ -89,7 +89,7 @@ int main(void)
 		return 0;
 	}
 
-	status = test_verify_key(MK_PSA_KEY_HANDLE(UROT_PUBKEY_0), signature_default,
+	status = test_verify_key(MK_PSA_KEY_ID(UROT_PUBKEY_0), signature_default,
 			sizeof(signature_default), test_message, sizeof(test_message));
 	if (status == PSA_SUCCESS) {
 		printk("Default key verified\n");
@@ -97,7 +97,7 @@ int main(void)
 		printk("Default key failed\n");
 	}
 
-	status = test_verify_key(MK_PSA_KEY_HANDLE(UROT_PUBKEY_1), signature_1,
+	status = test_verify_key(MK_PSA_KEY_ID(UROT_PUBKEY_1), signature_1,
 			sizeof(signature_1), test_message, sizeof(test_message));
 	if (status == PSA_SUCCESS) {
 		printk("Key 1 verified\n");
@@ -105,7 +105,7 @@ int main(void)
 		printk("Key 1 failed\n");
 	}
 
-	status = test_verify_key(MK_PSA_KEY_HANDLE(UROT_PUBKEY_2), signature_2,
+	status = test_verify_key(MK_PSA_KEY_ID(UROT_PUBKEY_2), signature_2,
 			sizeof(signature_2), test_message, sizeof(test_message));
 	if (status == PSA_SUCCESS) {
 		printk("Key 2 verified\n");

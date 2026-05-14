@@ -75,7 +75,7 @@ static otError getKeyRef(otCryptoKeyRef *aInputKeyRef, psa_key_attributes_t *aAt
 	 * convert it one by one. Keys starts from 1, so we need to decrease it by 1 to get the
 	 * correct slot.
 	 */
-	*aInputKeyRef = PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(
+	*aInputKeyRef = PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(
 		CRACEN_KMU_KEY_USAGE_SCHEME_RAW,
 		CONFIG_OPENTHREAD_KMU_SLOT_START +
 			(*aInputKeyRef - CONFIG_OPENTHREAD_PSA_ITS_NVM_OFFSET) - 1);

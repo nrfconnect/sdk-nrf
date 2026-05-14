@@ -17,7 +17,7 @@ LOG_MODULE_REGISTER(sb_crypto, CONFIG_SB_CRYPTO_LOG_LEVEL);
 
 /* List of KMU stored key ids available for NSIB */
 #define MAKE_PSA_KMU_KEY_ID(id) \
-	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, id)
+	PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, id)
 
 static psa_key_id_t kmu_key_ids[] =  {
 	MAKE_PSA_KMU_KEY_ID(242),

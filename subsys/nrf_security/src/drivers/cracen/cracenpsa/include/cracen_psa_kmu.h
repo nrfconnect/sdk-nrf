@@ -51,8 +51,12 @@ typedef uint64_t psa_drv_slot_number_t;
  *
  * @return PSA key handle value.
  */
-#define PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(scheme, slot_id)                                       \
+#define PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(scheme, slot_id)                                       \
 	(0x7fff0000 | ((scheme) << 12) | ((slot_id)&0xff))
+
+/** @deprecated Use @ref PSA_KEY_ID_FROM_CRACEN_KMU_SLOT instead. */
+#define PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(scheme, slot_id) \
+	PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(scheme, slot_id)
 
 /** @brief Retrieve key usage scheme from PSA key ID.
  *

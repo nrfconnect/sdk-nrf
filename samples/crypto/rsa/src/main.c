@@ -50,8 +50,8 @@ static char m_plain_text[NRF_CRYPTO_EXAMPLE_RSA_TEXT_SIZE] = {
 static char m_signature[NRF_CRYPTO_EXAMPLE_RSA_SIGNATURE_SIZE];
 static char m_hash[32];
 
-static psa_key_id_t keypair_handle;
-static psa_key_id_t pub_key_handle;
+static psa_key_id_t key_pair_id;
+static psa_key_id_t pub_key_id;
 /* ====================================================================== */
 
 int crypto_init(void)
@@ -72,13 +72,13 @@ int crypto_finish(void)
 	psa_status_t status;
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(keypair_handle);
+	status = psa_destroy_key(key_pair_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	status = psa_destroy_key(pub_key_handle);
+	status = psa_destroy_key(pub_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -107,7 +107,7 @@ int import_rsa_keypair(void)
 	 * we can use it to signing/verification the key handle.
 	 */
 	status = psa_import_key(&key_attributes, private_key_der, sizeof(private_key_der),
-				&keypair_handle);
+				&key_pair_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_import_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -135,7 +135,7 @@ int import_rsa_pub_key(void)
 	psa_set_key_bits(&key_attributes, 4096);
 
 	status = psa_import_key(&key_attributes, public_key_der, sizeof(public_key_der),
-				&pub_key_handle);
+				&pub_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_import_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -165,7 +165,7 @@ int sign_message_rsa(void)
 	}
 
 	/* Sign the hash using RSA */
-	status = psa_sign_hash(keypair_handle, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256), m_hash,
+	status = psa_sign_hash(key_pair_id, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256), m_hash,
 			       sizeof(m_hash), m_signature, sizeof(m_signature), &olen);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_sign_hash failed! (Error: %d)", status);
@@ -187,7 +187,7 @@ int verify_message_rsa(void)
 	LOG_INF("Verifying RSA signature...");
 
 	/* Verify the hash */
-	status = psa_verify_hash(pub_key_handle, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256), m_hash,
+	status = psa_verify_hash(pub_key_id, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256), m_hash,
 				 sizeof(m_hash), m_signature, sizeof(m_signature));
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_verify_hash failed! (Error: %d)", status);

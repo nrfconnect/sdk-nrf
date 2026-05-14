@@ -56,7 +56,7 @@ To identify that the KMU is used as a persistent storage backend for a specific 
        |
        | Keys that are read-only due to policy restrictions, rather than physical limitations, should not have this persistence level.
    * - ``key_id`` (``psa_set_key_id``)
-     - | ``PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(kmu_usage_scheme, kmu_slot_nr)``
+     - | ``PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(kmu_usage_scheme, kmu_slot_nr)``
        |
        | For ``kmu_usage_scheme`` values, see :ref:`ug_kmu_guides_key_usage_schemes`.
        |

@@ -42,7 +42,6 @@ static uint8_t m_plain_text[NRF_CRYPTO_TEST_IKG_TEXT_SIZE] = {
 
 static uint8_t m_pub_key[NRF_CRYPTO_EXAMPLE_ECDSA_PUBLIC_KEY_SIZE];
 static uint8_t m_signature[NRF_CRYPTO_TEST_IKG_SIGNATURE_SIZE];
-static psa_key_handle_t key_handle;
 static psa_key_id_t key_id;
 /* ====================================================================== */
 
@@ -53,9 +52,9 @@ int get_identity_key(void)
 	psa_status_t status;
 	size_t data_length;
 
-	key_handle = mbedtls_svc_key_id_make(0, identity_key_id);
+	key_id = mbedtls_svc_key_id_make(0, identity_key_id);
 
-	status = psa_export_public_key(key_handle,
+	status = psa_export_public_key(key_id,
 		m_pub_key,
 		sizeof(m_pub_key),
 		&data_length);
