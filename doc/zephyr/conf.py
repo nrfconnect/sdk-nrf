@@ -100,6 +100,9 @@ warnings_filter_silent = True
 
 kconfig_generate_db = False
 
+# -- Options for zephyr.domain -------------------------------------------------
+zephyr_hw_features_vendor_filter = ["nordic"]
+
 # -- Options for zephyr.gh_utils -----------------------------------------------
 
 gh_link_version = "main" if version.endswith("99") else f"v{version}"
