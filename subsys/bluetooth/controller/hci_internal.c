@@ -671,6 +671,11 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #endif /* CONFIG_BT_CENTRAL */
 	cmds->hci_le_read_minimum_supported_connection_interval = 1;
 #endif /* CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS */
+
+#if defined(CONFIG_BT_CTLR_LE_FLUSHABLE_ACL_DATA)
+	cmds->hci_read_automatic_flush_timeout = 1;
+	cmds->hci_write_automatic_flush_timeout = 1;
+#endif /* CONFIG_BT_CTLR_LE_FLUSHABLE_ACL_DATA */
 }
 
 #if defined(CONFIG_BT_HCI_VS)
