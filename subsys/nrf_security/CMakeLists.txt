@@ -63,20 +63,6 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
   set(CONFIG_NRF_CC3XX_PLATFORM                 False)
   set(CONFIG_PSA_CRYPTO_DRIVER_CC3XX            False)
 
-  # Special case: _ALT in CC3XX, not in OBERON (set  to False)
-  set(CONFIG_MBEDTLS_AES_ALT                    False)
-  set(CONFIG_MBEDTLS_CCM_ALT                    False)
-  set(CONFIG_MBEDTLS_CHACHAPOLY_ALT             False)
-  set(CONFIG_MBEDTLS_CMAC_ALT                   False)
-  set(CONFIG_MBEDTLS_ECP_ALT                    False)
-  set(CONFIG_MBEDTLS_GCM_ALT                    False)
-  set(CONFIG_MBEDTLS_DHM_ALT                    False)
-  set(CONFIG_MBEDTLS_RSA_ALT                    False)
-
-  # Special case: _ALT in ECJPAKE (only in OBERON, set to True)
-  # Only has effect if ECJPAKE is enabled
-  set(CONFIG_MBEDTLS_ECJPAKE_ALT                True)
-
   # Special case: Handle platform specific configurations
   set(CONFIG_MBEDTLS_PLATFORM_EXIT_ALT                 False)
   set(CONFIG_MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT       False)

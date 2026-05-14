@@ -4353,11 +4353,6 @@ it is (2^48 - 1), our restriction is :  (int - 0xFFFF - 0xF).*/
 #define MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME
 #endif
 
-#if CONFIG_MBEDTLS_CMAC_ALT
-/* NCSDK-24838 */
-#define MBEDTLS_CIPHER_MODE_CBC
-#endif
-
 /** \} name SECTION: Module configuration options */
 
 #endif /* LEGACY_CRYPTO_CONFIG_H */
