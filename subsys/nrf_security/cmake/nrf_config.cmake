@@ -7,40 +7,7 @@
 # (strip CONFIG_)
 
 # Platform
-kconfig_check_and_set_base(MBEDTLS_NO_PLATFORM_ENTROPY)
 kconfig_check_and_set_base(MBEDTLS_DEBUG_C)
-
-# Legacy configurations for _ALT defines
-kconfig_check_and_set_base(MBEDTLS_AES_SETKEY_ENC_ALT)
-kconfig_check_and_set_base(MBEDTLS_AES_SETKEY_DEC_ALT)
-kconfig_check_and_set_base(MBEDTLS_AES_ENCRYPT_ALT)
-kconfig_check_and_set_base(MBEDTLS_AES_DECRYPT_ALT)
-kconfig_check_and_set_base(MBEDTLS_AES_ALT)
-kconfig_check_and_set_base(MBEDTLS_CMAC_ALT)
-kconfig_check_and_set_base(MBEDTLS_CCM_ALT)
-kconfig_check_and_set_base(MBEDTLS_GCM_ALT)
-kconfig_check_and_set_base(MBEDTLS_CHACHA20_ALT)
-kconfig_check_and_set_base(MBEDTLS_POLY1305_ALT)
-kconfig_check_and_set_base(MBEDTLS_CHACHAPOLY_ALT)
-kconfig_check_and_set_base(MBEDTLS_DHM_ALT)
-kconfig_check_and_set_base(MBEDTLS_ECP_ALT)
-kconfig_check_and_set_base(MBEDTLS_ECDH_GEN_PUBLIC_ALT)
-kconfig_check_and_set_base(MBEDTLS_ECDH_COMPUTE_SHARED_ALT)
-kconfig_check_and_set_base(MBEDTLS_ECDSA_GENKEY_ALT)
-kconfig_check_and_set_base(MBEDTLS_ECDSA_SIGN_ALT)
-kconfig_check_and_set_base(MBEDTLS_ECDSA_VERIFY_ALT)
-kconfig_check_and_set_base(MBEDTLS_ECJPAKE_ALT)
-kconfig_check_and_set_base(MBEDTLS_RSA_ALT)
-kconfig_check_and_set_base(MBEDTLS_SHA1_ALT)
-kconfig_check_and_set_base(MBEDTLS_SHA224_ALT)
-kconfig_check_and_set_base(MBEDTLS_SHA256_ALT)
-kconfig_check_and_set_base(MBEDTLS_SHA384_ALT)
-kconfig_check_and_set_base(MBEDTLS_SHA512_ALT)
-
-# Legacy configurations for RNG
-kconfig_check_and_set_base(MBEDTLS_ENTROPY_FORCE_SHA256)
-kconfig_check_and_set_base(MBEDTLS_NO_PLATFORM_ENTROPY)
-kconfig_check_and_set_base_int(MBEDTLS_ENTROPY_MAX_SOURCES)
 
 # Guard against setting legacy configurations in TF-M image
 if(NOT MBEDTLS_PSA_CRYPTO_SPM)
@@ -99,19 +66,11 @@ if(NOT MBEDTLS_PSA_CRYPTO_SPM)
   kconfig_check_and_set_base(MBEDTLS_X509_CSR_WRITE_C)
   kconfig_check_and_set_base(MBEDTLS_PKCS7_C)
 
-  # KRKNWK-20181
-  kconfig_check_and_set_base(MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME)
-
   # TLS key exchange
   kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_PSK_ENABLED)
-  kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED)
   kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED)
-  kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED)
-  kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_DHE_RSA_ENABLED)
   kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED)
   kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED)
-  kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED)
-  kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED)
   kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)
 endif()
 

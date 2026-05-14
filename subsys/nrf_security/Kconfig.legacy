@@ -34,10 +34,6 @@ config MBEDTLS_BASE64_C
 	bool
 	default y
 
-config MBEDTLS_OID_C
-	bool
-	default y
-
 config MBEDTLS_ASN1_WRITE_C
 	bool
 	default y if MBEDTLS_PEM_WRITE_C || MBEDTLS_PK_WRITE_C
@@ -69,161 +65,6 @@ config MBEDTLS_THREADING_ALT
 	default y if CC3XX_BACKEND || MBEDTLS_PSA_CRYPTO_C
 	depends on !BUILD_WITH_TFM
 	depends on MBEDTLS_THREADING_C
-
-# Legacy configurations for _ALT defines
-config MBEDTLS_AES_SETKEY_ENC_ALT
-	bool
-	depends on OBERON_ONLY_ENABLED
-	default y
-
-config MBEDTLS_AES_SETKEY_DEC_ALT
-	bool
-	depends on OBERON_ONLY_ENABLED
-	default y
-
-config MBEDTLS_AES_ENCRYPT_ALT
-	bool
-	depends on OBERON_ONLY_ENABLED
-	default y
-
-config MBEDTLS_AES_DECRYPT_ALT
-	bool
-	depends on OBERON_ONLY_ENABLED
-	default y
-
-config MBEDTLS_AES_ALT
-	bool
-	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_CMAC_ALT
-	bool
-	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_CCM_ALT
-	bool
-	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_GCM_ALT
-	bool
-	depends on CC312_BACKEND || \
-		   (PSA_CRYPTO_DRIVER_CC3XX && HAS_HW_NRF_CC312)
-	default y
-
-config MBEDTLS_CHACHA20_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_POLY1305_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_CHACHAPOLY_ALT
-	bool
-	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-	depends on MBEDTLS_CHACHA20_ALT
-
-config MBEDTLS_DHM_ALT
-	bool
-	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_ECP_ALT
-	bool
-	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_ECDH_GEN_PUBLIC_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_ECDH_COMPUTE_SHARED_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_ECDSA_GENKEY_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_ECDSA_SIGN_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_ECDSA_VERIFY_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_ECJPAKE_ALT
-	bool
-	depends on OBERON_ONLY_ENABLED
-	default y
-
-config MBEDTLS_RSA_ALT
-	bool
-	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_SHA1_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_SHA224_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_SHA256_ALT
-	bool
-	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
-		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-	default y
-
-config MBEDTLS_SHA384_ALT
-	bool
-
-config MBEDTLS_SHA512_ALT
-	bool
-
-# Legacy configurations required for RNG in Legacy and PSA scope
-
-config MBEDTLS_ENTROPY_FORCE_SHA256
-	bool
-	default y
-	help
-	  Enforcing usage of SHA-256 for concatenating entropy from multiple sources
-	  by default.
-
-config MBEDTLS_ENTROPY_MAX_SOURCES
-	int
-	default 1
-	help
-	  Max entropy sources (Defaults to 1)
-
-config MBEDTLS_NO_PLATFORM_ENTROPY
-	bool
-	default y
-
-# End items required for non CryptoCell RNG in PSA scope
 
 # Prompt-less configuration to state what is missing
 
@@ -804,9 +645,5 @@ config MBEDTLS_PEM_PARSE_C
 config MBEDTLS_PEM_WRITE_C
 	bool "Support writing PEM files"
 	select MBEDTLS_BASE64_C
-
-config MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME
-	bool
-	depends on WIFI_NM_WPA_SUPPLICANT
 
 endmenu # Legacy mbed TLS crypto APIs

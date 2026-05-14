@@ -47,7 +47,6 @@ set(CONFIG_MBEDTLS_PSA_CRYPTO_SPM                   True)
 # Additional TF-M settings when application has enabled legacy MBedTLS APIs.
 # TF-M should not be configured using these settings so force them off.
 set(CONFIG_MBEDTLS_LEGACY_CRYPTO_C                  False)
-set(CONFIG_MBEDTLS_NO_PLATFORM_ENTROPY              False)
 set(CONFIG_MBEDTLS_MD_C                             False)
 
 # Platform cannot be selected when building for TF-M, because TF-M itself has
