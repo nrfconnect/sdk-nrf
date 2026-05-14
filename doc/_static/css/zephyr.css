@@ -13,7 +13,7 @@
   flex: 0 0 auto;
   width: 150px;
   text-align: center;
-  margin: 1rem;
+  margin: 0.5rem;
 }
 
 .grid-item a {
@@ -33,6 +33,7 @@
 .grid-item h2 {
   font-size: 1rem;
   color: #fff;
+  max-width: none;
 }
 
 .grid-item img {
@@ -53,4 +54,15 @@
   line-height: 1.5;
   font-size: 3rem;
   color: white;
+}
+.rst-content .highlight  {
+background: #f8f9f9!important;
+}
+.rst-content dl > dt {
+    margin-left: 0;
+    max-width: 85%;
+    }
+.rst-content h1 code, .rst-content h1 .literal, .rst-content h1 span.pre {
+    font-size: 31px;
+    padding-top: 5px;
 }
