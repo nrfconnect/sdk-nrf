@@ -131,7 +131,7 @@ function(provision application prefix_name)
     endif()
 
     dt_nodelabel(bl_storage_path NODELABEL bl_storage REQUIRED TARGET ${bl_storage_target})
-    dt_reg_addr(provision_address PATH "${bl_storage_path}" TARGET ${bl_storage_target})
+    dt_partition_addr(provision_address PATH "${bl_storage_path}" TARGET ${bl_storage_target} ABSOLUTE REQUIRED)
     dt_reg_size(provision_size PATH "${bl_storage_path}" TARGET ${bl_storage_target})
   endif()
 
