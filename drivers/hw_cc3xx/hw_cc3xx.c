@@ -17,6 +17,31 @@
 
 #if CONFIG_HW_CC3XX
 
+#if defined(CONFIG_MBEDTLS_THREADING_C)
+#include <mbedtls/threading.h>
+
+extern nrf_cc3xx_platform_mutex_t nrf_cc3xx_platform_heap_mutex;
+extern nrf_cc3xx_platform_mutex_t nrf_cc3xx_platform_key_slot_mutex;
+extern nrf_cc3xx_platform_mutex_t nrf_cc3xx_platform_psa_globaldata_mutex;
+extern nrf_cc3xx_platform_mutex_t nrf_cc3xx_platform_psa_rngdata_mutex;
+
+mbedtls_threading_mutex_t mbedtls_threading_key_slot_mutex;
+mbedtls_threading_mutex_t mbedtls_threading_psa_globaldata_mutex;
+mbedtls_threading_mutex_t mbedtls_threading_psa_rngdata_mutex;
+mbedtls_threading_mutex_t mbedtls_threading_heap_mutex;
+
+static void cc3xx_sync_mbedtls_mutexes(void)
+{
+	mbedtls_threading_key_slot_mutex.MBEDTLS_PRIVATE(mutex) = nrf_cc3xx_platform_key_slot_mutex;
+	mbedtls_threading_psa_globaldata_mutex.MBEDTLS_PRIVATE(mutex) =
+		nrf_cc3xx_platform_psa_globaldata_mutex;
+	mbedtls_threading_psa_rngdata_mutex.MBEDTLS_PRIVATE(mutex) =
+		nrf_cc3xx_platform_psa_rngdata_mutex;
+	mbedtls_threading_heap_mutex.MBEDTLS_PRIVATE(mutex) = nrf_cc3xx_platform_heap_mutex;
+}
+
+#endif
+
 static int hw_cc3xx_init_internal(void)
 {
 
@@ -45,6 +70,11 @@ static int hw_cc3xx_init(void)
 
 	/* Set the RTOS mutex APIs */
 	nrf_cc3xx_platform_mutex_init();
+
+#if defined(CONFIG_MBEDTLS_THREADING_C)
+	/* Sync the Mbed TLS mutexes with the platform mutexes */
+	cc3xx_sync_mbedtls_mutexes();
+#endif
 
 	/* Enable the hardware */
 	res = hw_cc3xx_init_internal();
