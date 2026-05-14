@@ -4,8 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Required loopbacks:
- * P5.02 <-> P5.04
+/* SPIM120 is a high-speed peripheral in the fast global domain (PD_GD_FAST).
+ * Its signals are routed through CTRLSEL=3 on port P5 (the fast peripheral port):
+ *   P5.1 -> SCK, P5.2 -> MOSI, P5.4 -> MISO, P5.5 -> CSN.
+ * SPIM120 DMA needs a buffer in the fast-domain RAM (dma_fast_region).
+ *
+ * Required loopbacks:
+ *   P5.02 <-> P5.04
  */
 
 / {
@@ -21,17 +26,17 @@
 &pinctrl {
 	spi120_default: spi120_default {
 		group1 {
-			psels = <NRF_PSEL(SPIM_SCK, 5, 1)>,
-				<NRF_PSEL(SPIM_MISO, 5, 2)>,
-				<NRF_PSEL(SPIM_MOSI, 5, 4)>;
+			psels = <NRF_PSEL(SPIM_SCK,  5, 1)>,
+				<NRF_PSEL(SPIM_MOSI, 5, 2)>,
+				<NRF_PSEL(SPIM_MISO, 5, 4)>;
 		};
 	};
 
 	spi120_sleep: spi120_sleep {
 		group1 {
-			psels = <NRF_PSEL(SPIM_SCK, 5, 1)>,
-				<NRF_PSEL(SPIM_MISO, 5, 2)>,
-				<NRF_PSEL(SPIM_MOSI, 5, 4)>;
+			psels = <NRF_PSEL(SPIM_SCK,  5, 1)>,
+				<NRF_PSEL(SPIM_MOSI, 5, 2)>,
+				<NRF_PSEL(SPIM_MISO, 5, 4)>;
 			low-power-enable;
 		};
 	};

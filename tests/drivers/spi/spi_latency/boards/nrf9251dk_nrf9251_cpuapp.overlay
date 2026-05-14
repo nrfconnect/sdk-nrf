@@ -59,6 +59,10 @@
 	status = "okay";
 };
 
+&gpio2 {
+	status = "okay";
+};
+
 /* Disable EXMIF node if it's added to the board definition later. */
 
 &timer130 {
