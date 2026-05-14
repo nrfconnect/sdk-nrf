@@ -39,7 +39,7 @@ static uint8_t m_signature[NRF_CRYPTO_EXAMPLE_EDDSA_SIGNATURE_SIZE] = {
 	0x6f, 0x16, 0x7b, 0xa8, 0x58, 0x7f, 0xc2, 0x86, 0xbb, 0x5e, 0x8d, 0x46, 0xef,
 	0xf0, 0x58, 0x41, 0xe5, 0xac, 0x42, 0x2c, 0xd1, 0xed, 0x29, 0x74, 0x0e
 };
-static psa_key_handle_t key_handle;
+static psa_key_id_t key_id;
 /* ====================================================================== */
 
 
@@ -49,12 +49,12 @@ int get_eddsa_pub_key(void)
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_status_t status;
 
-	key_handle = PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(
+	key_id = PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(
 		CRACEN_KMU_KEY_USAGE_SCHEME_RAW, KMU_SLOT_NUM);
 
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
 
-	status = psa_get_key_attributes(key_handle, &attr);
+	status = psa_get_key_attributes(key_id, &attr);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -75,7 +75,7 @@ int verify_message_kmu(void)
 	}
 
 	/* Verify the signature of the message */
-	status = psa_verify_message(key_handle,
+	status = psa_verify_message(key_id,
 		PSA_ALG_PURE_EDDSA,
 		m_plain_text,
 		sizeof(m_plain_text),

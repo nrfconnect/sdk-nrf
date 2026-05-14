@@ -268,7 +268,7 @@ psa_status_t cracen_provision_prot_ram_inv_slots(void)
 	 * the provisioning call.
 	 */
 	psa_set_key_id(&key_attributes,
-		       mbedtls_svc_key_id_make(0, PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(
+		       mbedtls_svc_key_id_make(0, PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(
 							  CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED,
 							  PROTECTED_RAM_INVALIDATION_DATA_SLOT1)));
 

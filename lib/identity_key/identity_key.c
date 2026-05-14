@@ -23,7 +23,7 @@ LOG_MODULE_REGISTER(identity_key);
 static int generate_random_secp256r1_private_key(uint8_t *key_buff)
 {
 	psa_status_t status;
-	psa_key_handle_t key_handle;
+	psa_key_id_t key_id;
 	size_t olen;
 
 	/* Initialize PSA Crypto */
@@ -44,13 +44,13 @@ static int generate_random_secp256r1_private_key(uint8_t *key_buff)
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
 	psa_set_key_bits(&key_attributes, IDENTITY_KEY_SIZE_BYTES * 8);
 
-	status = psa_generate_key(&key_attributes, &key_handle);
+	status = psa_generate_key(&key_attributes, &key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_ERR("psa_generate_key failed! Error: %d", status);
 		return -IDENTITY_KEY_ERR_GENERATION_FAILED;
 	}
 
-	status = psa_export_key(key_handle, key_buff, IDENTITY_KEY_SIZE_BYTES, &olen);
+	status = psa_export_key(key_id, key_buff, IDENTITY_KEY_SIZE_BYTES, &olen);
 	if (status != PSA_SUCCESS) {
 		LOG_ERR("psa_export_key failed! Error: %d", status);
 		return -IDENTITY_KEY_ERR_GENERATION_FAILED;
@@ -61,7 +61,7 @@ static int generate_random_secp256r1_private_key(uint8_t *key_buff)
 		return -IDENTITY_KEY_ERR_GENERATION_FAILED;
 	}
 
-	status = psa_destroy_key(key_handle);
+	status = psa_destroy_key(key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_ERR("psa_destroy_key failed! Error: %d", status);
 		return -IDENTITY_KEY_ERR_GENERATION_FAILED;

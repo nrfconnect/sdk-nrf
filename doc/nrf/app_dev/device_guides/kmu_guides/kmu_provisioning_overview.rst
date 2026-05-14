@@ -381,7 +381,7 @@ The following example shows how the PSA key attribute values are converted when 
       psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_VERIFY_HASH);
       psa_set_key_lifetime(&attr, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
           CRACEN_KEY_PERSISTENCE_REVOKABLE, PSA_KEY_LOCATION_CRACEN_KMU));
-      psa_set_key_id(&attr, PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(
+      psa_set_key_id(&attr, PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(
           CRACEN_KMU_KEY_USAGE_SCHEME_RAW, 226));
 
 #. The CRACEN driver :c:func:`convert_from_psa_attributes` function converts these PSA attributes to the following :c:struct:`kmu_metadata` field values:

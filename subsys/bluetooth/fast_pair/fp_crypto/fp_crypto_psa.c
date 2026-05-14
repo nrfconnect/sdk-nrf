@@ -217,7 +217,7 @@ static psa_key_id_t import_ecdh_priv_key(const uint8_t *data)
 }
 
 int fp_crypto_psa_ecdh_shared_secret(uint8_t *secret_key, const uint8_t *public_key,
-				     psa_key_handle_t priv_key_id)
+				     psa_key_id_t priv_key_id)
 {
 	/* Marker of the uncompressed binary format for a point on an elliptic curve. */
 	static const uint8_t uncompressed_format_marker = 0x04;
@@ -252,7 +252,7 @@ int fp_crypto_ecdh_shared_secret(uint8_t *secret_key, const uint8_t *public_key,
 {
 
 	int err = 0;
-	psa_key_handle_t priv_key_id;
+	psa_key_id_t priv_key_id;
 	psa_status_t status;
 
 	priv_key_id = import_ecdh_priv_key(private_key);

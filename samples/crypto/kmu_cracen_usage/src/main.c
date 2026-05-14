@@ -38,7 +38,7 @@ static sample_key_entry_t m_sample_keys[SAMPLE_MAX_KEY_COUNT] = {
 	 */
 	{
 		/* The key requires 1 KMU slot */
-		.key_id = PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED,
+		.key_id = PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED,
 						       PSA_KEY_ID_USER_MIN),
 		.supported_operations = {
 			.gen_key_cb = NULL,
@@ -47,7 +47,7 @@ static sample_key_entry_t m_sample_keys[SAMPLE_MAX_KEY_COUNT] = {
 	},
 	{
 		/* The key requires 2 KMU slots */
-		.key_id = PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW,
+		.key_id = PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW,
 						       PSA_KEY_ID_USER_MIN + 1),
 		.supported_operations = {
 			.gen_key_cb = NULL,
@@ -62,7 +62,7 @@ static sample_key_entry_t m_sample_keys[SAMPLE_MAX_KEY_COUNT] = {
 		/* The key requires 1 KMU slot + 2 additional slots
 		 *are required since the key is encrypted
 		 */
-		.key_id = PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED,
+		.key_id = PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED,
 						       PSA_KEY_ID_USER_MIN + 3),
 		.supported_operations = {
 			.gen_key_cb = key_operations_generate_aes_key,
@@ -71,7 +71,7 @@ static sample_key_entry_t m_sample_keys[SAMPLE_MAX_KEY_COUNT] = {
 	},
 	{
 		/* The key requires 2 KMU slots */
-		.key_id = PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW,
+		.key_id = PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW,
 						       PSA_KEY_ID_USER_MIN + 6),
 		.supported_operations = {
 			.gen_key_cb = key_operations_generate_ecdsa_key_pair,

@@ -43,7 +43,7 @@ static uint8_t key_buf[SAMPLE_KEY_BUFFER_SIZE];
 static size_t key_len;
 
 #if defined(CONFIG_SAMPLE_AES_KW_KMU_DEMO)
-static psa_key_id_t enc_key_id = PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(
+static psa_key_id_t enc_key_id = PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(
 				 CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, PSA_KEY_ID_USER_MIN);
 #else
 static psa_key_id_t enc_key_id;
