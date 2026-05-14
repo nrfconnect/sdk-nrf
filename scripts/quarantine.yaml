@@ -292,3 +292,21 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuppr/xip
   comment: "Missing modem support"
+
+- scenarios:
+    - drivers.gpio.gpio_nfct
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39364"
+
+- scenarios:
+    - sample.bluetooth.peripheral_with_multiple_identities
+  platforms:
+    - nrf54ls05dk@0.2.0/nrf54ls05a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39365"
+
+- scenarios:
+    - sample.bluetooth.iso_time_sync
+  platforms:
+    - nrf54ls05dk@0.2.0/nrf54ls05a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39366"
