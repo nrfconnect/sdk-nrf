@@ -38,7 +38,7 @@
 				compatible = "soc-nv-flash";
 				erase-block-size = <4096>;
 				write-block-size = <4>;
-				reg = <0x00000000 DT_SIZE_K(224)>;
+				reg = <0x00000000 DT_SIZE_K(256)>;
 
 				partitions {
 					compatible = "fixed-partitions";
@@ -52,7 +52,7 @@
 					 */
 					slot2_partition: partition@0 {
 						label = "image-2";
-						reg = <0x00000000 DT_SIZE_K(224)>;
+						reg = <0x00000000 DT_SIZE_K(256)>;
 					};
 				};
 			};
