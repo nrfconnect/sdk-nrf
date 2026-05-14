@@ -309,9 +309,7 @@ Bluetooth samples
     * :ref:`direct_test_mode`
     * :ref:`ble_event_trigger`
     * :ref:`bluetooth_iso_combined_bis_cis`
-    * :ref:`bluetooth_isochronous_time_synchronization`
     * :ref:`ble_llpm`
-    * :ref:`bt_peripheral_with_multiple_identities`
     * :ref:`bluetooth_radio_coex_1wire_sample`
     * :ref:`ble_radio_notification_conn_cb`
     * :ref:`bt_scanning_while_connecting`
