@@ -192,6 +192,7 @@
     - subsys.west_debug.normal
     - subsys.west_debug.thread_info
     - subsys.west_flash
+    - nrf.extended.sample.subsys.settings.nvs
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "Missing modem support"
