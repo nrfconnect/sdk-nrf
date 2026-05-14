@@ -176,6 +176,8 @@
     - drivers.counter.alarm
     - drivers.flash.multicore_soc_flash
     - drivers.grtc.test_grtc_after_reset_pin
+    - drivers.grtc.test_mcuboot_grtc_no_uninit
+    - drivers.grtc.test_mcuboot_grtc_uninit
     - drivers.hwinfo.reset_cause
     - drivers.i2c.rtio_loopback
     - drivers.pwm.pwm_events
@@ -187,12 +189,20 @@
     - drivers.watchdog.cpu_lockup_reset.h20
     - drivers.watchdog.soft_reset.h20
     - drivers.watchdog.wdt_variables.default
+    - nrf.extended.drivers.flash.negative_tests
+    - nrf.extended.drivers.hwinfo.reset_cause
+    - nrf.extended.drivers.watchdog.wdt_variables.default
     - nrf.extended.sample.basic.blinky
     - nrf.extended.sample.drivers.adc.adc_dt
+    - nrf.extended.sample.drivers.adc.adc_sequence
+    - nrf.extended.sample.drivers.counter.alarm
+    - nrf.extended.sample.drivers.i2c.rtio_loopback
+    - nrf.extended.sample.drivers.spi.bitbang
+    - nrf.extended.sample.drivers.watchdog
+    - nrf.extended.sample.subsys.settings.nvs
     - subsys.west_debug.normal
     - subsys.west_debug.thread_info
     - subsys.west_flash
-    - nrf.extended.sample.subsys.settings.nvs
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "Missing modem support"
@@ -211,19 +221,74 @@
   comment: "Missing modem support"
 
 - scenarios:
-    - drivers.spi.spim_instances
-    - drivers.watchdog.wdt_instances
-    - drivers.adc.accuracy.ref_volt.nrf9251
     - drivers.adc
+    - drivers.adc.accuracy.ref_volt.nrf9251
     - drivers.adc_error_cases
+    - drivers.counter.alarm
     - drivers.counter.basic_api
     - drivers.counter.nrf_rtc
-    - drivers.watchdog.wdt_variables.default
-    - drivers.counter.alarm
+    - drivers.gpio.gpio_more_loops
+    - drivers.gpio.gpio_nfct
     - drivers.i2c.rtio_loopback
+    - drivers.i2c.twim_instances
+    - drivers.spi.spim_instances
+    - drivers.watchdog.wdt_instances
+    - drivers.watchdog.wdt_variables.default
+    - nrf.extended.boards.nrf.i2c.i2c_slave
+    - nrf.extended.drivers.adc
+    - nrf.extended.drivers.adc.accuracy.ref_volt.nrf9251
+    - nrf.extended.drivers.adc_error_cases
+    - nrf.extended.drivers.counter.basic_api
+    - nrf.extended.drivers.counter.nrf_rtc
+    - nrf.extended.drivers.gpio.hogs
+    - nrf.extended.drivers.i2c.nrfx_twim_async_api
+    - nrf.extended.drivers.i2c.target_api.single_role
+    - nrf.extended.drivers.pwm.pwm_api
+    - nrf.extended.drivers.spi.dt_spec
+    - nrf.extended.drivers.spi.pm_runtime
+    - nrf.extended.drivers.spi.spi_1M333333Hz
+    - nrf.extended.drivers.spi.spi_2M666666Hz
+    - nrf.extended.drivers.spi.spi_4MHz
+    - nrf.extended.drivers.spi.spi_8MHz
+    - nrf.extended.drivers.spi.spi_error_cases
+    - nrf.extended.drivers.spi.spi_mode0
+    - nrf.extended.drivers.spi.spi_mode1
+    - nrf.extended.drivers.spi.spi_mode2
+    - nrf.extended.drivers.spi.spi_mode3
+    - nrf.extended.drivers.timer.nrf_grtc_timer
+    - nrf.extended.drivers.timer.nrf_grtc_timer.no_assert
+    - nrf.extended.drivers.uart.async_api
+    - nrf.extended.drivers.watchdog.wdt_variables.default
+    - nrf.extended.sample.drivers.adc.adc_dt
+    - nrf.extended.sample.drivers.adc.adc_sequence
+    - nrf.extended.sample.drivers.counter.alarm
+    - nrf.extended.sample.drivers.i2c.rtio_loopback
+    - nrf.extended.sample.drivers.spi.bitbang
+    - nrf.extended.tests.drivers.mbox_error_cases
     - subsys.west_debug.normal
     - subsys.west_debug.thread_info
     - subsys.west_flash
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuppr
+  comment: "Missing modem support"
+
+- scenarios:
+    - nrf.extended.drivers.counter.basic_api
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
+  comment: "Missing modem support"
+
+- scenarios:
+    - nrf.extended.kernel.timer.timer
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr
+  comment: "Missing modem support"
+
+- scenarios:
+    - nrf.extended.drivers.spi.loopback
+    - nrf.extended.drivers.spi.nrf_pm_runtime
+    - nrf.extended.drivers.uart.async_api
+    - nrf.extended.kernel.timer.timer
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuppr/xip
   comment: "Missing modem support"
