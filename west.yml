@@ -110,6 +110,7 @@ manifest:
           - picolibc
           - segger
           - tf-m-tests
+          - tf-psa-crypto
           - uoscore-uedhoc
           - zcbor
           - zscilib
