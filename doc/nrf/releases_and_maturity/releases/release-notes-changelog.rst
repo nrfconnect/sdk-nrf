@@ -351,6 +351,9 @@ DFU samples
 -----------
 
 * Added the :ref:`encrypted_bootloader` sample that demonstrates how to secure device firmware update (DFU) with image encryption enabled for both the application and MCUboot.
+* Updated:
+
+  * The :ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
 
 DECT NR+ samples
 ----------------
