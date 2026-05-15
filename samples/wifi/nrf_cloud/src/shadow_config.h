@@ -24,16 +24,20 @@ void shadow_config_cloud_connected(void);
 int shadow_config_reported_send(void);
 
 /**
- * @brief Process an incoming delta event.
- *
- * @retval 0	   Success, accept the delta.
- * @retval -EBADF  Invalid config data, reject the delta.
- * @retval -ENOMSG The provided data did not contain JSON or a config section.
- * @retval -EAGAIN Ignore delta event until the transform shadow is received. MQTT only.
- * @retval -EINVAL Error; Invalid parameter.
- * @retval -ENOMEM Error; out of memory.
+ * @brief Callback to add the current device configuration to a JSON object.
+ *        Pass to @ref nrf_cloud_shadow_config_delta_process.
  */
-int shadow_config_delta_process(struct nrf_cloud_obj *const delta_obj);
+int shadow_config_add_cfg_data(struct nrf_cloud_obj *const cfg_obj);
+
+/**
+ * @brief Callback to process and apply an incoming device configuration from a JSON object.
+ *        Pass to @ref nrf_cloud_shadow_config_delta_process.
+ *
+ * @retval 0       Success, accept the config.
+ * @retval -EBADF  Invalid config data, reject the delta.
+ * @retval -ENOMSG Expected key not found in the config object.
+ */
+int shadow_config_process_cfg(struct nrf_cloud_obj *const cfg_obj);
 
 /**
  * @brief Process an incoming transform shadow event.

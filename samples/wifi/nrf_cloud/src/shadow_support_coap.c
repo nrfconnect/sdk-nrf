@@ -44,7 +44,9 @@ static int process_delta(struct nrf_cloud_data *const delta)
 	/* There is an application specific shadow delta to process.
 	 * This application only needs to deal with the configuration section.
 	 */
-	err = shadow_config_delta_process(&delta_obj);
+	err = nrf_cloud_shadow_config_delta_process(&delta_obj,
+						    shadow_config_process_cfg,
+						    shadow_config_add_cfg_data);
 	if (err == -EBADF) {
 		LOG_INF("Rejecting shadow delta");
 		update_desired = true;

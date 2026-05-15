@@ -455,6 +455,26 @@ int nrf_cloud_obj_bulk_add(struct nrf_cloud_obj *const bulk, struct nrf_cloud_ob
 int nrf_cloud_obj_ts_add(struct nrf_cloud_obj *const obj, const int64_t time_ms);
 
 /**
+ * @brief Initialize an nRF Cloud device message object with the current timestamp.
+ *
+ * @details Combines @ref nrf_cloud_obj_msg_init and @ref nrf_cloud_obj_ts_add using the
+ *          current system time. On success, memory is allocated for the object;
+ *          call @ref nrf_cloud_obj_free when done.
+ *          For CoAP builds, @p msg_type is ignored (set to NULL internally).
+ *
+ * @param[out] obj      Object to initialize.
+ * @param[in]  app_id   Application ID string for the message.
+ * @param[in]  msg_type Message type string (ignored for CoAP).
+ *
+ * @retval -EINVAL  Invalid parameter.
+ * @retval -ETIME   Failed to obtain current timestamp.
+ * @retval -ENOMEM  Out of memory.
+ * @retval 0        Success.
+ */
+int nrf_cloud_obj_msg_ts_init(struct nrf_cloud_obj *const obj, const char *const app_id,
+			      const char *const msg_type);
+
+/**
  * @brief Add a key string and number value to the provided object.
  *
  * @param[out] obj Object to contain key and value.
@@ -836,6 +856,26 @@ int nrf_cloud_error_msg_decode(const char * const buf,
  */
 int nrf_cloud_obj_shadow_delta_response_encode(struct nrf_cloud_obj *const delta_state_obj,
 					       bool accept);
+
+/**
+ * @brief Process a shadow config delta using application-provided callbacks.
+ *
+ * Extracts the "config" object from @p delta_obj, calls @p process_cfg to apply it,
+ * and on rejection (-EBADF) repopulates it via @p add_cfg_data before reinserting it
+ * into @p delta_obj so the caller can send a shadow response.
+ *
+ * @param[in,out] delta_obj    The "state" object from a shadow delta.
+ * @param[in]     process_cfg  Callback to apply the received config; returns -EBADF to reject.
+ * @param[in]     add_cfg_data Callback to populate a replacement config object on rejection.
+ *
+ * @retval 0        Config applied successfully.
+ * @retval -EINVAL  Invalid parameter.
+ * @retval -ENOMSG  No config found in delta.
+ * @retval -ENOMEM  Failed to reconstruct delta object.
+ */
+int nrf_cloud_shadow_config_delta_process(struct nrf_cloud_obj *const delta_obj,
+					  int (*process_cfg)(struct nrf_cloud_obj *cfg_obj),
+					  int (*add_cfg_data)(struct nrf_cloud_obj *cfg_obj));
 
 /** @} */
 

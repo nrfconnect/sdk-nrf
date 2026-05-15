@@ -115,41 +115,6 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
  * @param msg_type - The messageType for the device message
  * @return int - 0 on success, negative error code otherwise.
  */
-static int create_timestamped_device_message(struct nrf_cloud_obj *const msg,
-					     const char *const appid,
-					     const char *const msg_type)
-{
-	int err;
-	int64_t timestamp;
-
-	/* Acquire timestamp */
-	err = date_time_now(&timestamp);
-	if (err) {
-		LOG_ERR("Failed to obtain current time, error %d", err);
-		return -ETIME;
-	}
-
-	/* Create message object */
-	err = nrf_cloud_obj_msg_init(msg, appid,
-				     IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ? NULL : msg_type);
-	if (err) {
-		LOG_ERR("Failed to initialize message with appid %s and msg type %s",
-			appid, msg_type);
-		return err;
-	}
-
-	/* Add timestamp to message object */
-	err = nrf_cloud_obj_ts_add(msg, timestamp);
-	if (err) {
-		LOG_ERR("Failed to add timestamp to data message with appid %s and msg type %s",
-			appid, msg_type);
-		nrf_cloud_obj_free(msg);
-		return err;
-	}
-
-	return 0;
-}
-
 static int send_message(struct nrf_cloud_obj *msg)
 {
 	int ret = 0;
@@ -187,7 +152,7 @@ static void send_message_on_button(void)
 	NRF_CLOUD_OBJ_JSON_DEFINE(msg_obj);
 
 	/* Create a timestamped message container object for the button press event. */
-	ret = create_timestamped_device_message(&msg_obj, NRF_CLOUD_JSON_APPID_VAL_BTN,
+	ret = nrf_cloud_obj_msg_ts_init(&msg_obj, NRF_CLOUD_JSON_APPID_VAL_BTN,
 						NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
 	if (ret) {
 		LOG_ERR("Failed to create button press message object, error: %d", ret);
@@ -230,7 +195,7 @@ static int send_hello_world_msg(void)
 	}
 
 	/* Create a timestamped message container object for the string press event. */
-	err = create_timestamped_device_message(&msg_obj, CUSTOM_TOPICM_FMT,
+	err = nrf_cloud_obj_msg_ts_init(&msg_obj, CUSTOM_TOPICM_FMT,
 						NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
 	if (err) {
 		LOG_ERR("Failed to create Hello World message object, error: %d", err);
@@ -259,7 +224,7 @@ static int send_hello_world_msg(void)
 
 static void print_reset_reason(void)
 {
-	int reset_reason = 0;
+	uint32_t reset_reason = 0;
 
 	reset_reason = nrfx_reset_reason_get();
 	nrfx_reset_reason_clear(reset_reason);
