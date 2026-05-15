@@ -4,3 +4,15 @@
 # To have an empty list use:
 # - scenarios:
 #     - None
+
+- scenarios:
+    - nrf5340_audio.bt_le_audio_tx
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39377"
+
+- scenarios:
+    - nrf_provisioning.unittest_scheduled
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39378"
