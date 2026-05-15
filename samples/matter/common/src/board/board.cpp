@@ -13,7 +13,7 @@
 
 #include <zephyr/logging/log.h>
 
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_CHIP_DFU_OVER_BT_SMP
 #include "dfu/smp/dfu_over_smp.h"
 #endif
 
@@ -278,7 +278,7 @@ void Board::StartBLEAdvertisementHandler(const ButtonAction &action)
 	if (action == ButtonAction::Pressed) {
 		if (sInstance.mState == DeviceState::DeviceProvisioned) {
 /* In this case we need to run only Bluetooth LE SMP advertising if it is available */
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_CHIP_DFU_OVER_BT_SMP
 			GetDFUOverSMP().StartServer();
 #else
 			LOG_INF("Software update is disabled");
