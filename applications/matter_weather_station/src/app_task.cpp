@@ -17,7 +17,7 @@
 #include "board/led_widget.h"
 #include "clusters/identify.h"
 
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_CHIP_DFU_OVER_BT_SMP
 #include "dfu/smp/dfu_over_smp.h"
 #endif
 
@@ -372,7 +372,7 @@ void AppTask::UpdateLedState()
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_CHIP_DFU_OVER_BT_SMP
 	ReturnErrorOnFailure(
 		Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = []() -> CHIP_ERROR {
 			Nrf::GetDFUOverSMP().StartServer();

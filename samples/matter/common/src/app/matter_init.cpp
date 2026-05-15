@@ -23,7 +23,7 @@
 #include "dfu/ota/ota_util.h"
 #endif
 
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_CHIP_DFU_OVER_BT_SMP
 #include "dfu/smp/dfu_over_smp.h"
 #endif
 
@@ -265,7 +265,7 @@ void DoInitChipServer(intptr_t /* unused */)
 	Nrf::Matter::OtaConfirmNewImage();
 #endif
 
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_CHIP_DFU_OVER_BT_SMP
 	/* Initialize DFU over SMP */
 	Nrf::GetDFUOverSMP().Init();
 	Nrf::GetDFUOverSMP().ConfirmNewImage();
