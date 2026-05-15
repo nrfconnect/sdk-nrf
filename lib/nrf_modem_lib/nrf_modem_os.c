@@ -250,6 +250,12 @@ bool nrf_modem_os_is_in_isr(void)
 	return k_is_in_isr();
 }
 
+uintptr_t nrf_modem_os_thread_id_get(void)
+{
+	/* A non-zero thread ID */
+	return (uintptr_t)k_current_get();
+}
+
 static struct k_sem nrf_modem_os_sems[NRF_MODEM_OS_NUM_SEM_REQUIRED];
 
 int nrf_modem_os_sem_init(void **sem,
