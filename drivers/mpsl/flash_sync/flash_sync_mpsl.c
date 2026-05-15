@@ -57,6 +57,10 @@ struct mpsl_context {
 
 static struct mpsl_context _context;
 
+/* The get_timeslot_time_us() is supported only for nRF52 and nRF53 series. Check for existence
+ * of timer0 node in the device tree is enough to figure out whether the function is supported.
+ */
+#if DT_NODE_EXISTS(DT_NODELABEL(timer0))
 /**
  * Get time in microseconds since the beginning of the timeslot.
  *
@@ -64,17 +68,10 @@ static struct mpsl_context _context;
  */
 static uint32_t get_timeslot_time_us(void)
 {
-#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
-	nrf_timer_task_trigger(NRF_TIMER10, NRF_TIMER_TASK_CAPTURE0);
-	return nrf_timer_cc_get(NRF_TIMER10, NRF_TIMER_CC_CHANNEL0);
-#elif CONFIG_SOC_NRF54H20
-	/* Unused */
-	return 0;
-#else
-	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_CAPTURE0);
-	return nrf_timer_cc_get(NRF_TIMER0, NRF_TIMER_CC_CHANNEL0);
-#endif /* CONFIG_SOC_COMPATIBLE_NRF54LX */
+	nrf_timer_task_trigger(MPSL_TIMER0, NRF_TIMER_TASK_CAPTURE0);
+	return nrf_timer_cc_get(MPSL_TIMER0, NRF_TIMER_CC_CHANNEL0);
 }
+#endif /* DT_NODE_EXISTS(DT_NODELABEL(timer0)) */
 
 static void reschedule_next_timeslot(void)
 {
@@ -246,19 +243,22 @@ void nrf_flash_sync_get_timestamp_begin(void)
 
 bool nrf_flash_sync_check_time_limit(uint32_t iteration)
 {
-#if defined(CONFIG_SOC_COMPATIBLE_NRF54LX) || defined(CONFIG_SOC_NRF54H20)
+#if DT_NODE_EXISTS(DT_NODELABEL(timer0))
+	/* The get_timeslot_time_us() is supported only for nRF52 and nRF53 series. Check for
+	 * existence of timer0 node in the device tree is enough to figure out whether the function
+	 * is supported.
+	 */
+	uint32_t now_us = get_timeslot_time_us();
+	uint32_t time_per_iteration_us = now_us / iteration;
+
+	return now_us + time_per_iteration_us >= _context.request_length_us;
+#else
 	/* The time taken in a previous write is not a predictor of the time taken
 	 * for the next write. Writing the same value as is already stored is much
 	 * faster than writing a different value. If the first few writes are fast
 	 * and the later ones are slow we may get an overstay assert. The configured
 	 * event length is only guaranteed to fit one write block.
 	 */
-
-	(void)get_timeslot_time_us; /* Needed to avoid build time warning: unused static function*/
 	return true;
-#else
-	uint32_t now_us = get_timeslot_time_us();
-	uint32_t time_per_iteration_us = now_us / iteration;
-	return now_us + time_per_iteration_us >= _context.request_length_us;
-#endif /* CONFIG_SOC_COMPATIBLE_NRF54LX || CONFIG_SOC_NRF54H20 */
+#endif /* DT_NODE_EXISTS(DT_NODELABEL(timer0)) */
 }
