@@ -34,6 +34,9 @@ endif() # CONFIG_SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY
 
 if(ncs_secure_storage_src)
   zephyr_library()
-  zephyr_library_link_libraries_ifdef(CONFIG_MBEDTLS mbedTLS)
+  if(CONFIG_TF_PSA_CRYPTO_BUILTIN)
+    # Inherit tfpsacrypto's private include directories for access to psa_crypto_driver_wrappers.h.
+    zephyr_library_include_directories($<TARGET_PROPERTY:tfpsacrypto,INCLUDE_DIRECTORIES>)
+  endif()
   zephyr_library_sources(${ncs_secure_storage_src})
 endif()
