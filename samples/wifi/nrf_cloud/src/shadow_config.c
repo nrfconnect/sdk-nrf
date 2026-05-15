@@ -8,6 +8,7 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <net/nrf_cloud_defs.h>
 
+#include <net/nrf_cloud_codec.h>
 #include "shadow_config.h"
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include "shadow_support_coap.h"
@@ -21,13 +22,13 @@ LOG_MODULE_REGISTER(shadow_config, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 /* Flag to indicate that the transform shadow data has been received (MQTT only) */
 static bool transform_rcvd;
 
-static int add_cfg_data(struct nrf_cloud_obj *const cfg_obj)
+int shadow_config_add_cfg_data(struct nrf_cloud_obj *const cfg_obj)
 {
 	/* Add the test counter state */
 	return nrf_cloud_obj_bool_add(cfg_obj, TEST_COUNTER_EN, test_counter_enable_get(), false);
 }
 
-static int process_cfg(struct nrf_cloud_obj *const cfg_obj)
+int shadow_config_process_cfg(struct nrf_cloud_obj *const cfg_obj)
 {
 	bool val;
 	int err = nrf_cloud_obj_bool_get(cfg_obj, TEST_COUNTER_EN, &val);
@@ -64,7 +65,7 @@ static int send_config(void)
 	}
 
 	/* Add the supported configuration data */
-	err = add_cfg_data(&cfg_obj);
+	err = shadow_config_add_cfg_data(&cfg_obj);
 	if (err) {
 		goto cleanup;
 	}
@@ -133,49 +134,6 @@ int shadow_config_reported_send(void)
 	return err;
 }
 
-int shadow_config_delta_process(struct nrf_cloud_obj *const delta_obj)
-{
-	if (!delta_obj) {
-		return -EINVAL;
-	}
-
-	if ((delta_obj->type != NRF_CLOUD_OBJ_TYPE_JSON) || !delta_obj->json) {
-		/* No state JSON */
-		return -ENOMSG;
-	}
-
-	int err;
-
-	NRF_CLOUD_OBJ_JSON_DEFINE(cfg_obj);
-
-	/* Get the config object */
-	err = nrf_cloud_obj_object_detach(delta_obj, NRF_CLOUD_JSON_KEY_CFG, &cfg_obj);
-	if (err == -ENODEV) {
-		/* No config in the delta */
-		return -ENOMSG;
-	}
-
-	/* Process the configuration */
-	err = process_cfg(&cfg_obj);
-
-	if (err == -EBADF) {
-		/* Clear incoming config and replace it with a good one */
-		nrf_cloud_obj_free(&cfg_obj);
-		nrf_cloud_obj_init(&cfg_obj);
-		if (add_cfg_data(&cfg_obj)) {
-			LOG_ERR("Failed to create delta response");
-		}
-	}
-
-	/* Add the config object back into the state so the response can be sent */
-	if (nrf_cloud_obj_object_add(delta_obj, NRF_CLOUD_JSON_KEY_CFG, &cfg_obj, false)) {
-		nrf_cloud_obj_free(&cfg_obj);
-		return -ENOMEM;
-	}
-
-	return err;
-}
-
 int shadow_config_transform_process(struct nrf_cloud_obj *const transform_obj)
 {
 	if (!transform_obj) {
@@ -190,5 +148,5 @@ int shadow_config_transform_process(struct nrf_cloud_obj *const transform_obj)
 		return -ENOMSG;
 	}
 
-	return process_cfg(transform_obj);
+	return shadow_config_process_cfg(transform_obj);
 }

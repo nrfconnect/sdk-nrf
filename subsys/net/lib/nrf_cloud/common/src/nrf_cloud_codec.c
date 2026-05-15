@@ -5,6 +5,7 @@
  */
 
 #include <math.h>
+#include <date_time.h>
 #include <net/nrf_cloud_codec.h>
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_codec_internal.h"
@@ -459,6 +460,37 @@ int nrf_cloud_obj_ts_add(struct nrf_cloud_obj *const obj, const int64_t time_ms)
 	}
 
 	return -ENOTSUP;
+}
+
+int nrf_cloud_obj_msg_ts_init(struct nrf_cloud_obj *const obj, const char *const app_id,
+			      const char *const msg_type)
+{
+	int err;
+	int64_t timestamp;
+
+	err = date_time_now(&timestamp);
+	if (err) {
+		LOG_ERR("Failed to obtain current time, error %d", err);
+		return -ETIME;
+	}
+
+	err = nrf_cloud_obj_msg_init(obj, app_id,
+				     IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ? NULL : msg_type);
+	if (err) {
+		LOG_ERR("Failed to initialize message with appid %s and msg type %s",
+			app_id, msg_type);
+		return err;
+	}
+
+	err = nrf_cloud_obj_ts_add(obj, timestamp);
+	if (err) {
+		LOG_ERR("Failed to add timestamp to message with appid %s and msg type %s",
+			app_id, msg_type);
+		nrf_cloud_obj_free(obj);
+		return err;
+	}
+
+	return 0;
 }
 
 static cJSON *data_obj_get(cJSON *const root_obj)
@@ -1120,6 +1152,51 @@ cleanup:
 	return err;
 }
 #endif
+
+int nrf_cloud_shadow_config_delta_process(struct nrf_cloud_obj *const delta_obj,
+					  int (*process_cfg)(struct nrf_cloud_obj *cfg_obj),
+					  int (*add_cfg_data)(struct nrf_cloud_obj *cfg_obj))
+{
+	if (!delta_obj || !process_cfg || !add_cfg_data) {
+		return -EINVAL;
+	}
+
+	if ((delta_obj->type != NRF_CLOUD_OBJ_TYPE_JSON) || !delta_obj->json) {
+		/* No state JSON */
+		return -ENOMSG;
+	}
+
+	int err;
+
+	NRF_CLOUD_OBJ_JSON_DEFINE(cfg_obj);
+
+	/* Get the config object */
+	err = nrf_cloud_obj_object_detach(delta_obj, NRF_CLOUD_JSON_KEY_CFG, &cfg_obj);
+	if (err == -ENODEV) {
+		/* No config in the delta */
+		return -ENOMSG;
+	}
+
+	/* Process the configuration */
+	err = process_cfg(&cfg_obj);
+
+	if (err == -EBADF) {
+		/* Clear incoming config and replace it with a good one */
+		nrf_cloud_obj_free(&cfg_obj);
+		nrf_cloud_obj_init(&cfg_obj);
+		if (add_cfg_data(&cfg_obj)) {
+			LOG_ERR("Failed to create delta response");
+		}
+	}
+
+	/* Add the config object back into the state so the response can be sent */
+	if (nrf_cloud_obj_object_add(delta_obj, NRF_CLOUD_JSON_KEY_CFG, &cfg_obj, false)) {
+		nrf_cloud_obj_free(&cfg_obj);
+		return -ENOMEM;
+	}
+
+	return err;
+}
 
 int nrf_cloud_obj_shadow_delta_response_encode(struct nrf_cloud_obj *const delta_state_obj,
 					       bool accept)

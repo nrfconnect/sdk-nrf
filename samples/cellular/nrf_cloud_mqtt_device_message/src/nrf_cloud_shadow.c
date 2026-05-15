@@ -20,7 +20,7 @@ static bool transform_rcvd;
 /* Sample variable to demonstrate shadow configuration update */
 static bool test_active;
 
-int add_cfg_data(struct nrf_cloud_obj *const cfg_obj)
+static int add_cfg_data(struct nrf_cloud_obj *const cfg_obj)
 {
 	/* Add the test_active configuration variable */
 	return nrf_cloud_obj_bool_add(cfg_obj, TEST_ACTIVE, test_active, false);
@@ -113,49 +113,6 @@ int shadow_config_reported_send(void)
 	return err;
 }
 
-static int shadow_config_delta_process(struct nrf_cloud_obj *const delta_obj)
-{
-	if (!delta_obj) {
-		return -EINVAL;
-	}
-
-	if ((delta_obj->type != NRF_CLOUD_OBJ_TYPE_JSON) || !delta_obj->json) {
-		/* No state JSON */
-		return -ENOMSG;
-	}
-
-	int err;
-
-	NRF_CLOUD_OBJ_JSON_DEFINE(cfg_obj);
-
-	/* Get the config object */
-	err = nrf_cloud_obj_object_detach(delta_obj, NRF_CLOUD_JSON_KEY_CFG, &cfg_obj);
-	if (err == -ENODEV) {
-		/* No config in the delta */
-		return -ENOMSG;
-	}
-
-	/* Process the configuration */
-	err = process_cfg(&cfg_obj);
-
-	if (err == -EBADF) {
-		/* Clear incoming config and replace it with a good one */
-		nrf_cloud_obj_free(&cfg_obj);
-		nrf_cloud_obj_init(&cfg_obj);
-		if (add_cfg_data(&cfg_obj)) {
-			LOG_ERR("Failed to create delta response");
-		}
-	}
-
-	/* Add the config object back into the state so the response can be sent */
-	if (nrf_cloud_obj_object_add(delta_obj, NRF_CLOUD_JSON_KEY_CFG, &cfg_obj, false)) {
-		nrf_cloud_obj_free(&cfg_obj);
-		return -ENOMEM;
-	}
-
-	return err;
-}
-
 static int shadow_config_transform_process(struct nrf_cloud_obj *const transform_obj)
 {
 	if (!transform_obj) {
@@ -201,7 +158,8 @@ void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 		LOG_INF("Shadow Delta received");
 		bool accept = true;
 
-		err = shadow_config_delta_process(&shadow->delta->state);
+		err = nrf_cloud_shadow_config_delta_process(&shadow->delta->state,
+							    process_cfg, add_cfg_data);
 		if (err == -EBADF) {
 			LOG_INF("Rejecting shadow delta");
 			accept = false;

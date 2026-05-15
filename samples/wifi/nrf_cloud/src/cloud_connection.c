@@ -361,7 +361,9 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 		LOG_INF("Shadow Delta received");
 		bool accept = true;
 
-		err = shadow_config_delta_process(&shadow->delta->state);
+		err = nrf_cloud_shadow_config_delta_process(&shadow->delta->state,
+							    shadow_config_process_cfg,
+							    shadow_config_add_cfg_data);
 		if (err == -EBADF) {
 			LOG_INF("Rejecting shadow delta");
 			accept = false;

@@ -52,41 +52,6 @@ static bool test_counter_enabled;
  * @param msg_type - The messageType for the device message
  * @return int - 0 on success, negative error code otherwise.
  */
-static int create_timestamped_device_message(struct nrf_cloud_obj *const msg,
-					     const char *const appid,
-					     const char *const msg_type)
-{
-	int err;
-	int64_t timestamp;
-
-	/* Acquire timestamp */
-	err = date_time_now(&timestamp);
-	if (err) {
-		LOG_ERR("Failed to obtain current time, error %d", err);
-		return -ETIME;
-	}
-
-	/* Create message object */
-	err = nrf_cloud_obj_msg_init(msg, appid,
-				     IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ? NULL : msg_type);
-	if (err) {
-		LOG_ERR("Failed to initialize message with appid %s and msg type %s",
-			appid, msg_type);
-		return err;
-	}
-
-	/* Add timestamp to message object */
-	err = nrf_cloud_obj_ts_add(msg, timestamp);
-	if (err) {
-		LOG_ERR("Failed to add timestamp to data message with appid %s and msg type %s",
-			appid, msg_type);
-		nrf_cloud_obj_free(msg);
-		return err;
-	}
-
-	return 0;
-}
-
 /**
  * @brief Transmit a collected sensor sample to nRF Cloud.
  *
@@ -101,7 +66,7 @@ static int send_sensor_sample(const char *const sensor, double value)
 	MSG_OBJ_DEFINE(msg_obj);
 
 	/* Create a timestamped message container object for the sensor sample. */
-	ret = create_timestamped_device_message(&msg_obj, sensor,
+	ret = nrf_cloud_obj_msg_ts_init(&msg_obj, sensor,
 						NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
 	if (ret) {
 		return -EINVAL;
