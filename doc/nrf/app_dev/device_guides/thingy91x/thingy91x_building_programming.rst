@@ -19,7 +19,6 @@ The build targets of interest for Thingy:91 X in the |NCS| are as follows:
 |                                  | ``thingy91x/nrf9151/ns``        |
 +----------------------------------+---------------------------------+
 | nRF5340 SoC - Application core   | ``thingy91x/nrf5340/cpuapp``    |
-|                                  | ``thingy91x/nrf5340/cpuapp/ns`` |
 +----------------------------------+---------------------------------+
 | nRF5340 SoC - Network core       | ``thingy91x/nrf5340/cpunet``    |
 +----------------------------------+---------------------------------+
