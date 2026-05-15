@@ -8,8 +8,7 @@ Wi-Fi: nRF Cloud
    :depth: 2
 
 The nRF Cloud sample demonstrates an nRF Cloud application running on nRF70 Series and nRF71 Series hardware, using Wi-Fi® as the transport.
-It integrates Wi-Fi-based location services, Memfault Trace Events, periodic sensor sampling, and more.
-
+It integrates Wi-Fi-based location services, periodic sensor sampling, and more.
 It also demonstrates how to build connected, error-tolerant applications using Zephyr's ``conn_mgr`` connectivity management framework.
 
 .. _wifi_nrf_cloud_requirements:
@@ -121,7 +120,6 @@ It performs the following major tasks:
 * Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.
 * Sends sensor sample and location device messages to the :ref:`wifi_nrf_cloud_device_message_queue`.
 * Prints temperature alerts.
-* Sends Memfault Trace Events when temperature limits are exceeded.
 
 .. note::
    Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
