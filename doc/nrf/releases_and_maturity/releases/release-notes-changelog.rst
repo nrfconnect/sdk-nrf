@@ -357,8 +357,13 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Updated the UI thread handling for reference board targets with a speaker by moving the speaker control into the common indication thread.
-    The signaling is now done using the :ref:`zephyr:events` API.
+  * Updated:
+
+    * UI thread handling for reference board targets with a speaker by moving the speaker control into the common indication thread.
+      The signaling is now done using the :ref:`zephyr:events` API.
+    * The configuration of the non-volatile memory self-protection mechanism in the MCUboot image on the nRF54L board targets.
+      The :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` Kconfig option now replaces the :kconfig:option:`CONFIG_FPROTECT`, which is associated with the :ref:`fprotect_readme` library.
+      The new mechanism uses a dedicated RRAMC region to disable read, write, and execute access to the MCUboot partition right before jumping to the application image.
 
   * Fixed the ringing status indications with the green LED flashes for reference board targets.
     A ringing status indication was often skipped during the motion detection event.
