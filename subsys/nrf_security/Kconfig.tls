@@ -4,12 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig MBEDTLS_X509_LIBRARY
-	bool "Create mbed TLS x509 library"
+config MBEDTLS_X509_LIBRARY
+	bool
 	select MBEDTLS_PK_C
 	default y if PSA_CRYPTO && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
-	help
-	  Create the mbed x509 library for handling of certificates.
 
 if MBEDTLS_X509_LIBRARY
 
@@ -84,15 +82,12 @@ config MBEDTLS_PKCS7_C
 
 endif # MBEDTLS_X509_LIBRARY
 
-menuconfig MBEDTLS_TLS_LIBRARY
-	bool "Create mbed TLS transport layer security library"
+config MBEDTLS_TLS_LIBRARY
+	bool
 	select MBEDTLS_X509_LIBRARY
 	imply PSA_WANT_ALG_TLS12_PRF
 	imply PSA_WANT_ALG_TLS12_PSK_TO_MS
 	default y if NET_SOCKETS_SOCKOPT_TLS
-	help
-	  Create the mbed SSL/TLS library in addition to the mbed crypto
-	  library.
 
 if MBEDTLS_TLS_LIBRARY
 

@@ -19,9 +19,6 @@
 /* Platform */
 #cmakedefine MBEDTLS_DEBUG_C
 
-/* Ensure these are not enabled internal in NS build */
-#if !defined(MBEDTLS_PSA_CRYPTO_SPM) && !defined(INSIDE_TFM_BUILD)
-
 /* Legacy configurations for Mbed TLS APIs */
 #cmakedefine MBEDTLS_CIPHER_C
 
@@ -80,7 +77,5 @@
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED
-
-#endif /* !defined(MBEDTLS_PSA_CRYPTO_SPM) && !defined(INSIDE_TFM_BUILD) */
 
 #endif /* MBEDTLS_CONFIG_FILE_H */

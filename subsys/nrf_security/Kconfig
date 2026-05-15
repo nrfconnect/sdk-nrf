@@ -104,9 +104,6 @@ config SSF_SERVER_PSA_CRYPTO_SERVICE_ENABLED
 
 endif # NRF_SECURITY
 
-menu "Zephyr legacy configurations"
-	depends on MBEDTLS_LIBRARY_NRF_SECURITY
-
 config MBEDTLS_TLS_VERSION_1_2
 	bool "Support for TLS 1.2 (DTLS 1.2)"
 	select PSA_WANT_ALG_SHA_1
@@ -199,22 +196,5 @@ config MBEDTLS_ENTROPY_ENABLED
 
 config MBEDTLS_GENPRIME_ENABLED
 	bool "Prime-number generation code"
-
-endmenu # Zephyr legacy configurations
-
-#
-# Provide a new choice to override the mbedtls_external library completely
-# and not have to provide a "dummy" path for the implementation
-#
-choice MBEDTLS_IMPLEMENTATION
-	default MBEDTLS_LIBRARY_NRF_SECURITY
-
-config MBEDTLS_LIBRARY_NRF_SECURITY
-	bool "Use nRF Security mbedTLS version"
-	depends on NRF_SECURITY
-	help
-	  Use Mbed TLS library from Nordic provided security backend
-
-endchoice
 
 endmenu

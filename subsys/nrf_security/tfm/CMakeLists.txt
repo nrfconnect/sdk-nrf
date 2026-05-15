@@ -73,6 +73,9 @@ set(CONFIG_MBEDTLS_ENABLE_HEAP                      True)
 # Ensure that PSA core is built inside TF-M image
 set(CONFIG_MBEDTLS_PSA_CRYPTO_C                     True)
 
+# TF-M has nothing to do with Mbed TLS
+set(CONFIG_MBEDTLS False)
+
 if("${PROJECT_NAME}" STREQUAL "Bootloader")
   set(CONFIG_MBEDTLS_RSA_C          True)
   set(CONFIG_MBEDTLS_PKCS1_V21      True)

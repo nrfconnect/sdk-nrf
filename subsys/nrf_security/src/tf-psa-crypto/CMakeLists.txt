@@ -10,6 +10,7 @@ if(CONFIG_MBEDTLS_MEMORY_BUFFER_ALLOC_C)
   )
 endif()
 
+# Build TF-PSA-Crypto files when not building the TF-M S image.
 if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
 
   append_with_prefix(src_crypto ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/utilities
@@ -48,12 +49,35 @@ if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
     psa_util.c
   )
 
+  # Add some TF-PSA-Crypto source files only when building client-only images
+  # (TF-M NS, PSA_SSF_CRYPTO_CLIENT).
+  # In other cases they are built as part of the PSA Crypto core, but when
+  # building client-only images the functions these files implement are not
+  # made available so we need their implementation in this image.
+  if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_C)
+    append_with_prefix(src_crypto ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/platform
+      platform_util.c
+    )
+    append_with_prefix(src_crypto ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/utilities
+      constant_time.c
+    )
+  endif()
+
   target_include_directories(${mbedcrypto_target}
-    PRIVATE
+    PUBLIC # public because needed by Mbed TLS which links to mbedcrypto via tfpsacrypto ALIAS below
       ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/utilities
       ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/legacy_sub/include
       ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/legacy_sub/src
   )
+endif()
+
+if(CONFIG_MBEDTLS)
+  if(NOT (CONFIG_MBEDTLS_BUILTIN AND CONFIG_TF_PSA_CRYPTO_CUSTOM))
+    message(FATAL_ERROR "Invalid Mbed TLS/TF-PSA-Crypto configuration.")
+  endif()
+  # Mbed TLS has a hard dependency on there being a tfpsacrypto library.
+  # Making it as an alias to mbedcrypto works well.
+  add_library(tfpsacrypto ALIAS ${mbedcrypto_target})
 endif()
 
 target_sources(${mbedcrypto_target} PRIVATE ${src_crypto})
