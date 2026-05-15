@@ -36,7 +36,7 @@ add_library(psa_core STATIC
 
 target_compile_definitions(psa_core
   PRIVATE
-    BUILDING_MBEDTLS_CRYPTO
+    BUILDING_PSA_CRYPTO # for Secure Storage
 )
 
 target_link_libraries(psa_core
