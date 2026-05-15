@@ -22,13 +22,7 @@
  */
 #define CRACEN_ECC_PUBKEY_UNCOMPRESSED (0x04)
 
-/* Cracen supports max 521 bits curves, the private key for such a curve
- * is 66 bytes. The public key in PSA APIs is stored with the
- * the uncompressed representation which means that it has 0x4
- * as the first byte and then the X and Y coordinates, so the
- * public key max size is 1 + 2 * CRACEN_MAX_ECC_PRIV_KEY_BYTES.
- */
-#define CRACEN_MAC_ECC_PRIVKEY_BYTES (66)
+#define CRACEN_MAC_ECC_PRIVKEY_BYTES (PSA_BITS_TO_BYTES(PSA_VENDOR_ECC_MAX_CURVE_BITS))
 #define CRACEN_X25519_KEY_SIZE_BYTES (32)
 #define CRACEN_X448_KEY_SIZE_BYTES   (56)
 
