@@ -234,26 +234,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38955"
 
 - scenarios:
-    - wifi.build.ap
-    - wifi.build.crypto_alt
-    - wifi.build.crypto_enterprise
-    - wifi.build.crypto_psa
-    - wifi.build.disable_advanced_feat
-    - wifi.build.dpp
-    - wifi.build.enterprise_runtime
-    - wifi.build.hostapd_ap
-    - wifi.build.hostapd_ap_enterprise
-    - wifi.build.hostapd_dpp
-    - wifi.build.hostapd_wps
-    - wifi.build.p2p
-    - wifi.build.roaming
-    - wifi.build.wpa3
-    - wifi.build.wps
-  platforms:
-    - native_sim/native
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39122"
-
-- scenarios:
     - sample.edk.app
     - sample.llext.shell
   platforms:
