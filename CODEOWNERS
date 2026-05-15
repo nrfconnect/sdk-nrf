@@ -951,7 +951,7 @@
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/                   @nrfconnect/ncs-eris
-/tests/nrf_audio/                     @nrfconnect/ncs-audio @nordic-auko
+/tests/nrf_audio/                     @nrfconnect/ncs-audio
 /tests/psa_crypto/                        @nrfconnect/ncs-aegir
 /tests/subsys/app_event_manager/          @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/app_protect/                @nrfconnect/ncs-low-level-test
