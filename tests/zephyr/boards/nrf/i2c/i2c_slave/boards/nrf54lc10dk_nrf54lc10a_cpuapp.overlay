@@ -1,5 +1,6 @@
 /*
- * Two loopbacks are required (nRF54LC10 DK: avoid P1.8 — button2 / GRTC fast clock; P1.9 — button1):
+ * Two loopbacks are required
+ * (nRF54LC10 DK: avoid P1.8 — button2 / GRTC fast clock; P1.9 — button1):
  * P1.11 - P1.13 (SDA)
  * P1.12 - P1.14 (SCL)
  */
