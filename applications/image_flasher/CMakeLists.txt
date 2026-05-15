@@ -49,6 +49,11 @@ set_target_properties(runners_yaml_props_target PROPERTIES
   hex_file "${hex_file_to_flash}"
 )
 
+# Setting the byproduct so that a merged hex file can be created (in sysbuild)
+set(BYPRODUCT_KERNEL_HEX_NAME "${hex_file_to_flash}"
+  CACHE FILEPATH "Hex file being flashed" FORCE
+)
+
 # Include flash support to automatically generate runners.yaml
 include(${ZEPHYR_BASE}/cmake/flash/CMakeLists.txt)
 

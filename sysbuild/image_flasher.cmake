@@ -22,6 +22,7 @@ function(add_image_flasher)
     message(FATAL_ERROR "Unknown arguments specified: ${args_UNPARSED_ARGUMENTS}")
   endif()
 
+  set(${args_NAME}_SKIP_LOADING_BYPRODUCTS y CACHE INTERNAL "Skip sysbuild byproduct handling")
   set(${args_NAME}_HEX_FILE "${args_HEX_FILE}" CACHE FILEPATH "Hex file to flash" FORCE)
   set(IMAGE_FLASHER_DEFAULT_IMAGE ${DEFAULT_IMAGE} CACHE STRING "Default image" FORCE)
 
