@@ -38,4 +38,3 @@ endif()
 # NORDIC SDK APP END
 
 zephyr_include_directories(src)
-zephyr_include_directories(config)

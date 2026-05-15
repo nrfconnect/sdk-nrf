@@ -25,9 +25,6 @@
 #include "message_queue.h"
 #include "led_control.h"
 #include "shadow_config.h"
-#if IS_ENABLED(CONFIG_MEMFAULT) && IS_ENABLED(CONFIG_NRF_CLOUD_COAP)
-#include <memfault/core/trace_event.h>
-#endif
 
 LOG_MODULE_REGISTER(application, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
@@ -142,13 +139,12 @@ static void on_location_update(const struct location_event_data * const location
 #endif /* CONFIG_LOCATION_TRACKING */
 
 /** @brief Check whether temperature is acceptable.
- * If the device exceeds a temperature limit, log a warning and send the temperature_alert
- * Trace Event one time (when Memfault with CoAP is enabled).
+ * If the device exceeds a temperature limit, log a warning.
  * Once the temperature falls below a lower limit, re-enable the temperature alert
- * so it will be sent if the limit is exceeded again.
+ * so it will be logged if the limit is exceeded again.
  *
- * The difference between the two limits should be sufficient to prevent sending
- * a new Trace Event if the temperature value oscillates between two nearby values.
+ * The difference between the two limits should be sufficient to prevent logging
+ * a new alert if the temperature value oscillates between two nearby values.
  *
  * @param temp - The current device temperature.
  */
@@ -160,13 +156,6 @@ static void monitor_temperature(double temp)
 		temperature_alert_active = true;
 		LOG_INF("Temperature limit %f C exceeded: now %f C.",
 			TEMP_ALERT_LIMIT, temp);
-		#if defined(CONFIG_MEMFAULT) && defined(CONFIG_NRF_CLOUD_COAP)
-			/* When using nRF Cloud powered by Memfault, send a Trace Event when the
-			 * temperature limit is exceeded.
-			 */
-			MEMFAULT_TRACE_EVENT_WITH_LOG(temperature_alert,
-				"Alert! Temperature is: %.2f C", temp);
-		#endif
 	} else if ((temp < TEMP_ALERT_LOWER_LIMIT) && temperature_alert_active) {
 		temperature_alert_active = false;
 		LOG_INF("Temperature now below limit: %f C.", temp);
