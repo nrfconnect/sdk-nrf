@@ -77,6 +77,10 @@ Bootloaders and DFU
 
 * Fixed DTS support for nRF5340 network core images when :ref:`b0n <bootloader>` was enabled.
 
+* Fixed a possible race condition when code executes in place from external Quad Serial Peripheral Interface (QSPI) flash while an incoming firmware image is written to the same device.
+  Added the :kconfig:option:`CONFIG_NORDIC_QSPI_NOR_XIP_FLASH_SCHED_LOCK` Kconfig option. This option serializes flash program and erase operations with other threads when XIP from that flash is enabled.
+  Sysbuild enables this option automatically for sysbuild-based projects that use the :ref:`QSPI XIP split image <qspi_xip_split_image>` feature.
+
 Developing with nRF91 Series
 ============================
 
