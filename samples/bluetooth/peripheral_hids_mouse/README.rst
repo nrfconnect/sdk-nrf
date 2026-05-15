@@ -32,6 +32,8 @@ Mouse clicks are not simulated.
 This sample exposes the HID GATT Service.
 It uses a report map for a generic mouse.
 
+.. _peripheral_hids_mouse_user_interface:
+
 User interface
 **************
 
@@ -117,6 +119,18 @@ Because of that it is not recommended for production.
 
 .. note::
    If MITM protection based on passkey display is enabled (:option:`CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM`) and you want to pair the device with a computer running MacOS, set the :kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_AUTHEN` Kconfig option to ``y``.
+
+.. _peripheral_hids_mouse_continuous_tx:
+
+Continuous report sending
+-------------------------
+
+The :option:`CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING` Kconfig option enables sending HID input reports informing about mouse motion at roughly one for each connection interval.
+The feature is enabled if a button is pressed and held for more than two seconds.
+It is disabled as soon as all buttons are released.
+
+For best results, only allow a single central connection (set both :kconfig:option:`CONFIG_BT_MAX_CONN` and :kconfig:option:`CONFIG_BT_HIDS_MAX_CLIENT_COUNT` to ``1``).
+Otherwise, more reports will be skipped or delayed due to other radio traffic, such as advertising events or interfering connection events from other centrals.
 
 Bluetooth direct advertising
 ----------------------------

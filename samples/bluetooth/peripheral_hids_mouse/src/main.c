@@ -25,6 +25,7 @@
 
 #include <zephyr/bluetooth/services/bas.h>
 #include <bluetooth/services/hids.h>
+#include <bluetooth/radio_notification_cb.h>
 #include <zephyr/bluetooth/services/dis.h>
 #include <dk_buttons_and_leds.h>
 
@@ -55,6 +56,8 @@
 #define INPUT_REP_REF_MOVEMENT_ID   2
 /* Id of reference to Mouse Input Report containing media player data. */
 #define INPUT_REP_REF_MPLAYER_ID    3
+/* Time to hold a button press to enter continuous report sending mode. */
+#define CONT_REPORT_ENTER_BUTTON_PRESS_TIME_MS 2000
 
 /* HIDs queue size. */
 #define HIDS_QUEUE_SIZE 10
@@ -119,6 +122,12 @@ static const struct bt_data sd[] = {
 static struct conn_mode {
 	struct bt_conn *conn;
 	bool in_boot_mode;
+#if CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING
+	/** Number of pending reports to send.
+	 *  Only up to two at a time should be kept in the continuous report sending mode.
+	 */
+	atomic_t cont_report_tx_pending_reports;
+#endif
 } conn_mode[CONFIG_BT_HIDS_MAX_CLIENT_COUNT];
 
 static bool is_adv_running;
@@ -137,6 +146,16 @@ K_MSGQ_DEFINE(mitm_queue,
 	      4);
 
 static void advertising_continue(void);
+
+#if CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING
+/** Control for continuous report sending feature */
+static atomic_t cont_report_tx_on = ATOMIC_INIT(0);
+
+static void continuous_report_tx_start(struct k_work *work);
+
+static K_WORK_DELAYABLE_DEFINE(continuous_report_tx_start_work,
+			       continuous_report_tx_start);
+#endif /* CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING */
 
 #if CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING
 static void bond_find(const struct bt_bond_info *info, void *user_data)
@@ -313,7 +332,9 @@ static void insert_conn_object(struct bt_conn *conn)
 		if (!conn_mode[i].conn) {
 			conn_mode[i].conn = conn;
 			conn_mode[i].in_boot_mode = false;
-
+#if CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING
+			atomic_set(&conn_mode[i].cont_report_tx_pending_reports, 0);
+#endif
 			return;
 		}
 	}
@@ -424,7 +445,6 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.security_changed = security_changed,
 #endif /* CONFIG_SAMPLE_BT_HIDS_SECURITY */
 };
-
 
 static void hids_pm_evt_handler(enum bt_hids_pm_evt evt,
 				struct bt_conn *conn)
@@ -578,50 +598,72 @@ static void hid_init(void)
 	__ASSERT(err == 0, "HIDS initialization failed\n");
 }
 
+#if CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING
+static void report_sent(struct bt_conn *conn, void *user_data);
+#endif
+
+static int mouse_movement_send_single(int16_t x_delta, int16_t y_delta,
+				      struct conn_mode *mode, bool cont_tx_mode)
+{
+	int err = 0;
+	bt_gatt_complete_func_t report_sent_cb = NULL;
+
+#if CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING
+	if (cont_tx_mode) {
+		report_sent_cb = report_sent;
+	}
+#endif
+
+	if (mode->in_boot_mode) {
+		int8_t x_delta_sat = MAX(MIN(x_delta, SCHAR_MAX), SCHAR_MIN);
+		int8_t y_delta_sat = MAX(MIN(y_delta, SCHAR_MAX), SCHAR_MIN);
+
+		err = bt_hids_boot_mouse_inp_rep_send(&hids_obj,
+						      mode->conn,
+						      NULL,
+						      x_delta_sat,
+						      y_delta_sat,
+						      report_sent_cb);
+	} else {
+		uint8_t x_buff[2];
+		uint8_t y_buff[2];
+		uint8_t buffer[INPUT_REP_MOVEMENT_LEN];
+
+		int16_t x = MAX(MIN(x_delta, 0x07ff), -0x07ff);
+		int16_t y = MAX(MIN(y_delta, 0x07ff), -0x07ff);
+
+		/* Convert to little-endian. */
+		sys_put_le16(x, x_buff);
+		sys_put_le16(y, y_buff);
+
+		/* Encode report. */
+		BUILD_ASSERT(sizeof(buffer) == 3,
+				 "Only 2 axis, 12-bit each, are supported");
+
+		buffer[0] = x_buff[0];
+		buffer[1] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
+		buffer[2] = (y_buff[1] << 4) | (y_buff[0] >> 4);
+
+		err = bt_hids_inp_rep_send(&hids_obj, mode->conn,
+					   INPUT_REP_MOVEMENT_INDEX,
+					   buffer, sizeof(buffer), report_sent_cb);
+	}
+
+	if (err) {
+		printk("Failed to send report: %d\n", err);
+	}
+
+	return err;
+}
 
 static void mouse_movement_send(int16_t x_delta, int16_t y_delta)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
-
 		if (!conn_mode[i].conn) {
 			continue;
 		}
 
-		if (conn_mode[i].in_boot_mode) {
-			x_delta = MAX(MIN(x_delta, SCHAR_MAX), SCHAR_MIN);
-			y_delta = MAX(MIN(y_delta, SCHAR_MAX), SCHAR_MIN);
-
-			bt_hids_boot_mouse_inp_rep_send(&hids_obj,
-							     conn_mode[i].conn,
-							     NULL,
-							     (int8_t) x_delta,
-							     (int8_t) y_delta,
-							     NULL);
-		} else {
-			uint8_t x_buff[2];
-			uint8_t y_buff[2];
-			uint8_t buffer[INPUT_REP_MOVEMENT_LEN];
-
-			int16_t x = MAX(MIN(x_delta, 0x07ff), -0x07ff);
-			int16_t y = MAX(MIN(y_delta, 0x07ff), -0x07ff);
-
-			/* Convert to little-endian. */
-			sys_put_le16(x, x_buff);
-			sys_put_le16(y, y_buff);
-
-			/* Encode report. */
-			BUILD_ASSERT(sizeof(buffer) == 3,
-					 "Only 2 axis, 12-bit each, are supported");
-
-			buffer[0] = x_buff[0];
-			buffer[1] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
-			buffer[2] = (y_buff[1] << 4) | (y_buff[0] >> 4);
-
-
-			bt_hids_inp_rep_send(&hids_obj, conn_mode[i].conn,
-						  INPUT_REP_MOVEMENT_INDEX,
-						  buffer, sizeof(buffer), NULL);
-		}
+		(void) mouse_movement_send_single(x_delta, y_delta, &conn_mode[i], false);
 	}
 }
 
@@ -634,6 +676,127 @@ static void mouse_handler(struct k_work *work)
 		mouse_movement_send(pos.x_val, pos.y_val);
 	}
 }
+
+#if CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING
+static struct mouse_pos buttons_to_mouse_pos(uint32_t buttons)
+{
+	struct mouse_pos pos;
+
+	pos.x_val = 0;
+	pos.y_val = 0;
+
+	if (buttons & KEY_LEFT_MASK) {
+		pos.x_val -= MOVEMENT_SPEED;
+	}
+	if (buttons & KEY_UP_MASK) {
+		pos.y_val -= MOVEMENT_SPEED;
+	}
+	if (buttons & KEY_RIGHT_MASK) {
+		pos.x_val += MOVEMENT_SPEED;
+	}
+	if (buttons & KEY_DOWN_MASK) {
+		pos.y_val += MOVEMENT_SPEED;
+	}
+
+	return pos;
+}
+
+static void cont_report_tx(struct bt_conn *conn)
+{
+	if (!atomic_get(&cont_report_tx_on)) {
+		return;
+	}
+
+	size_t i = 0;
+	struct conn_mode *mode = NULL;
+
+	for (i = 0; i < ARRAY_SIZE(conn_mode); i++) {
+		if (conn_mode[i].conn == conn) {
+			mode = &conn_mode[i];
+			break;
+		}
+	}
+
+	if (!mode) {
+		printk("Connection mode not found for connection");
+		return;
+	}
+
+	/** Allow up to 2 unACKed report in flight so the next prep can still schedule
+	 *  the next report while the previous one is awaiting the report_sent callback.
+	 *  With CONFIG_BT_ATT_SENT_CB_AFTER_TX=y the callback for a TX in connection event X
+	 *  arrives in connection event X+1.
+	 *  If more than one report is pending, the next report will be skipped so that
+	 *  the pipeline won't be filled up.
+	 */
+	if (atomic_get(&mode->cont_report_tx_pending_reports) >= 2) {
+		return;
+	}
+
+	struct mouse_pos pos = buttons_to_mouse_pos(dk_get_buttons());
+
+	int err = mouse_movement_send_single(pos.x_val, pos.y_val, mode, true);
+
+	if (!err) {
+		atomic_inc(&mode->cont_report_tx_pending_reports);
+	}
+}
+
+static void report_sent(struct bt_conn *conn, void *user_data)
+{
+	struct conn_mode *mode = NULL;
+
+	for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
+		if (conn_mode[i].conn == conn) {
+			mode = &conn_mode[i];
+			break;
+		}
+	}
+
+	if (!mode) {
+		printk("Connection mode not found for connection");
+		return;
+	}
+
+	atomic_dec(&mode->cont_report_tx_pending_reports);
+
+	if (!IS_ENABLED(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB)) {
+		cont_report_tx(conn);
+	}
+}
+
+#if CONFIG_BT_RADIO_NOTIFICATION_CONN_CB
+static void radio_notification_conn_cb(struct bt_conn *conn)
+{
+	cont_report_tx(conn);
+}
+
+static const struct bt_radio_notification_conn_cb radio_notification_conn_callbacks = {
+	.prepare = radio_notification_conn_cb,
+};
+#endif /* CONFIG_BT_RADIO_NOTIFICATION_CONN_CB */
+
+static void continuous_report_tx_start(struct k_work *work)
+{
+	atomic_set(&cont_report_tx_on, 1);
+
+	printk("Starting continuous report sending\n");
+
+	if (!IS_ENABLED(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB)) {
+		/** At the start of continuous report sending,
+		 *  send two reports to each connected device.
+		 *  This will ensure that a report is sent each
+		 *  connection event.
+		 */
+		for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
+			if (conn_mode[i].conn) {
+				cont_report_tx(conn_mode[i].conn);
+				cont_report_tx(conn_mode[i].conn);
+			}
+		}
+	}
+}
+#endif /* CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING */
 
 #if defined(CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
@@ -820,6 +983,20 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 		data_to_send = true;
 	}
 
+#if CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING
+	if (button_state != 0) {
+		if (atomic_get(&cont_report_tx_on) == 0) {
+			(void) k_work_schedule(&continuous_report_tx_start_work,
+					       K_MSEC(CONT_REPORT_ENTER_BUTTON_PRESS_TIME_MS));
+		}
+	} else {
+		(void) k_work_cancel_delayable(&continuous_report_tx_start_work);
+		if (atomic_clear(&cont_report_tx_on)) {
+			printk("Continuous report sending stopped\n");
+		}
+	}
+#endif
+
 	if (data_to_send) {
 		int err;
 
@@ -891,10 +1068,22 @@ int main(void)
 		return 0;
 	}
 
+#if defined(CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING) && \
+	defined(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB)
+	err = bt_radio_notification_conn_cb_register
+		(&radio_notification_conn_callbacks,
+		 CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING_PREPARE_DISTANCE_US);
+	if (err) {
+		printk("Failed registering radio notification callback (err %d)\n", err);
+		return 0;
+	}
+#endif
+
 	printk("Bluetooth initialized\n");
 
 	k_work_init(&hids_work, mouse_handler);
 	k_work_init(&adv_work, advertising_process);
+
 #if CONFIG_SAMPLE_BT_DIRECTED_ADVERTISING
 	k_work_init_delayable(&low_duty_directed_adv_timeout_work,
 			      low_duty_directed_adv_timeout_handler);
