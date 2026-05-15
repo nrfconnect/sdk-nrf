@@ -5,26 +5,26 @@
  */
 
 /* Test requires loopbacks:
- * TX-RX: P1.04 - P1.11
- * RTS-CTS: P2.03 - P2.09
+ * TX-RX: P2.03 - P2.09
+ * RTS-CTS: P1.08 - P1.09 (connected with NFCT antena)
  */
 
 &pinctrl {
 	uart130_alt_default: uart130_alt_default {
 		group1 {
-			psels = <NRF_PSEL(UART_RX, 1, 4)>;
+			psels = <NRF_PSEL(UART_RX, 2, 3)>;
 			bias-pull-up;
 		};
 
 		group2 {
-			psels = <NRF_PSEL(UART_RTS, 2, 3)>;
+			psels = <NRF_PSEL(UART_RTS, 1, 8)>;
 		};
 	};
 
 	uart130_alt_sleep: uart130_alt_sleep {
 		group1 {
-			psels = <NRF_PSEL(UART_RX, 1, 4)>,
-				<NRF_PSEL(UART_RTS, 2, 3)>;
+			psels = <NRF_PSEL(UART_RX, 2, 3)>,
+				<NRF_PSEL(UART_RTS, 1, 8)>;
 			low-power-enable;
 			bias-pull-up;
 		};
@@ -32,23 +32,27 @@
 
 	uart131_alt_default: uart131_alt_default {
 		group1 {
-			psels = <NRF_PSEL(UART_TX, 1, 11)>;
+			psels = <NRF_PSEL(UART_TX, 2, 9)>;
 		};
 
 		group2 {
-			psels = <NRF_PSEL(UART_CTS, 2, 9)>;
+			psels = <NRF_PSEL(UART_CTS, 1, 9)>;
 			bias-pull-up;
 		};
 	};
 
 	uart131_alt_sleep: uart131_alt_sleep {
 		group1 {
-			psels = <NRF_PSEL(UART_TX, 1, 11)>,
-				<NRF_PSEL(UART_CTS, 2, 9)>;
+			psels = <NRF_PSEL(UART_TX, 2, 9)>,
+				<NRF_PSEL(UART_CTS, 1, 9)>;
 			low-power-enable;
 			bias-pull-up;
 		};
 	};
+};
+
+&uicr {
+	nfct-pins-as-gpios;
 };
 
 &timer130 {
