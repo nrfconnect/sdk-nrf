@@ -200,6 +200,7 @@
     - nrf.extended.sample.drivers.spi.bitbang
     - nrf.extended.sample.drivers.watchdog
     - nrf.extended.sample.subsys.settings.nvs
+    - nrf.extended.sample.subsys.settings.zms
     - subsys.west_debug.normal
     - subsys.west_debug.thread_info
     - subsys.west_flash
