@@ -90,8 +90,10 @@ There are two types of protection mechanisms:
   For sizes exceeding 31 kB, both regions 3 and 4 are used, provided that MCUboot is configured standalone (without NSIB).
   To enable the protection mechanism for sizes between 31 kB and 62 kB, configure the :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS` Kconfig option.
 
-FPROTECT is enabled by default on the nR54L platform.
+FPROTECT is enabled by default on the nRF54L platform.
 The build system automatically selects the appropriate setup based on the inclusion of NSIB and MCUboot.
+
+For a boot-chain-oriented description of UICR :file:`bootconf.hex`, RRAMC self-RWX disabling, and when FPROTECT combined regions are still appropriate, see :ref:`ug_bootloader_nrf54l_memory_protection`.
 
 RAM cleanup
 ***********
