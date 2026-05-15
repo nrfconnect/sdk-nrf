@@ -32,7 +32,7 @@ if(CONFIG_PWM)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/pwm/pwm_device.cpp)
 endif()
 
-if(CONFIG_MCUMGR_TRANSPORT_BT)
+if(CONFIG_CHIP_DFU_OVER_BT_SMP)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/dfu/smp/dfu_over_smp.cpp)
     zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
 endif()

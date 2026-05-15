@@ -79,7 +79,7 @@ void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChan
 #ifndef CONFIG_NCS_SAMPLE_MATTER_CUSTOM_BLUETOOTH_ADVERTISING
 				if (Nrf::GetBoard().GetDeviceState() == Nrf::DeviceState::DeviceProvisioned) {
 /* In this case we need to run only Bluetooth LE SMP advertising if it is available */
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_CHIP_DFU_OVER_BT_SMP
 					GetDFUOverSMP().StartServer();
 #else
 					LOG_INF("Software update is disabled");
