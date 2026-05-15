@@ -37,7 +37,7 @@ static void _check_inputs(uint32_t value)
 	bool current;
 	bool expected;
 
-	LOG_DBG("_check_inputs(%d)", value);
+	TC_PRINT("_check_inputs(0x%x)\n", value);
 
 	/* Wait a bit to stabilize logic level. */
 	k_sleep(PROPAGATION_DELAY_MS);
@@ -45,8 +45,8 @@ static void _check_inputs(uint32_t value)
 	for (uint8_t i = 0; i < npairs; i++) {
 		current = gpio_pin_get_dt(&in_pins[i]);
 		expected = value & BIT(i);
-		LOG_DBG("_check_inputs L[%d]: current: %d, expected: %d", i, current, expected);
-		zassert_equal(current, expected,
+		TC_PRINT("_check_inputs L[%d]: current: %d, expected: %d\n", i, current, expected);
+		zexpect_equal(current, expected,
 			"IN[%d] = %d, while expected %d", i, current, expected);
 	}
 }
@@ -59,13 +59,13 @@ static void _gpio_pin_set_dt_and_check(uint32_t value)
 	int out_state;
 	int rc;
 
-	LOG_DBG("_gpio_pin_set_dt_and_check(%d)", value);
+	LOG_DBG("_gpio_pin_set_dt_and_check(0x%x)\n", value);
 
 	for (uint8_t i = 0; i < npairs; i++) {
 		out_state = (value & BIT(i)) >> i;
 		rc = gpio_pin_set_dt(&out_pins[i], out_state);
-		LOG_DBG("_gpio_pin_set_dt_and_check: setting OUT[%d] to %d", i, out_state);
-		zassert_equal(rc, 0, "gpio_pin_set_dt(OUT[%d], %d) failed", i, out_state);
+		LOG_DBG("_gpio_pin_set_dt_and_check: setting OUT[%d] to %d\n", i, out_state);
+		zexpect_equal(rc, 0, "gpio_pin_set_dt(OUT[%d], %d) failed", i, out_state);
 	}
 
 	/* Check inputs. */
@@ -105,25 +105,25 @@ static void *suite_setup(void)
 #if defined CONFIG_TEST_CHECK_PULLS
 	for (i = 0; i < npairs; i++) {
 		rc = gpio_pin_configure_dt(&in_pins[i], GPIO_INPUT | GPIO_PULL_UP);
-		zassert_equal(rc, 0, "IN[%d] config failed", i);
+		zexpect_equal(rc, 0, "IN[%d] config failed\n", i);
 	}
+	TC_PRINT("Check pull up.\n");
 	_check_inputs(0b11111111111111111111111111111111);
-	TC_PRINT("Input pull up works.\n");
 
 	for (i = 0; i < npairs; i++) {
 		rc = gpio_pin_configure_dt(&in_pins[i], GPIO_INPUT | GPIO_PULL_DOWN);
-		zassert_equal(rc, 0, "IN[%d] config failed", i);
+		zexpect_equal(rc, 0, "IN[%d] config failed\n", i);
 	}
+	TC_PRINT("Check pull down.\n");
 	_check_inputs(0b00000000000000000000000000000000);
-	TC_PRINT("Input pull down works.\n");
 #endif
 
 	for (i = 0; i < npairs; i++) {
 		rc = gpio_pin_configure_dt(&in_pins[i], GPIO_INPUT);
-		zassert_equal(rc, 0, "IN[%d] config failed", i);
+		zexpect_equal(rc, 0, "IN[%d] config failed", i);
 		rc = gpio_pin_configure_dt(&out_pins[i], GPIO_OUTPUT);
-		zassert_equal(rc, 0, "OUT[%d] config failed", i);
-		LOG_DBG("IN[%d] - OUT[%d] were configured", i, i);
+		zexpect_equal(rc, 0, "OUT[%d] config failed", i);
+		LOG_DBG("IN[%d] - OUT[%d] were configured\n", i, i);
 	}
 
 	return NULL;
