@@ -86,10 +86,6 @@ See :ref:`app_boards_names` for the complete list of boards and board targets su
      - PCA20065
      - :ref:`thingy91x <ug_thingy91x>`
      - ``thingy91x/nrf9151/ns``
-   * - Thingy:91 X
-     - PCA20065
-     - :ref:`thingy91x <ug_thingy91x>`
-     - ``thingy91x/nrf5340/cpuapp/ns``
 
 .. _ug_tfm_building_secure_services:
 

@@ -7,6 +7,3 @@ board:
       variants:
         - name: ns
     - name: nrf5340
-      variants:
-        - name: ns
-          cpucluster: 'cpuapp'
