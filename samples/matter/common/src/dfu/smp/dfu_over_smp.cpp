@@ -14,10 +14,9 @@
 #error "DFU over SMP requires MCUmgr IMG and OS groups"
 #endif
 
-#include "dfu/ota/ota_util.h"
-
 #include <platform/CHIPDeviceLayer.h>
 #include <platform/nrfconnect/DFUSync.h>
+#include <platform/nrfconnect/ExternalFlashManager.h>
 
 #include <lib/support/logging/CHIPLogging.h>
 

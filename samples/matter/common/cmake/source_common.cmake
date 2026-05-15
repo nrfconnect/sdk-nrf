@@ -24,7 +24,7 @@ target_sources(app PRIVATE
 zephyr_linker_sources(SECTIONS ${MATTER_COMMONS_SRC_DIR}/clusters/cluster_init.ld)
 
 # Set specific sources that depend on Kconfigs
-if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)
+if(CONFIG_CHIP_OTA_REQUESTOR)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/dfu/ota/ota_util.cpp)
 endif()
 
