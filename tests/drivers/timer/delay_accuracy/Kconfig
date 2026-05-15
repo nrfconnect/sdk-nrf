@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_TOLERANCE_PERCENT
+	int "Accepted tolerance in percent"
+	default 1
+	help
+	  When set to the value of 1 then test will pass if difference
+	  between actual timer count and expected timer count is less
+	  than one percent.
+
+config TEST_TIMER_FREQUENCY_MHZ
+	int "Timer frequency in MHz"
+	default 4
+	help
+	  This value must take into account hardware limitations.
+	  Calculations are int32_t based and may overflow on devices
+	  with low accuracy or high frequency of the timer.
+
+source "Kconfig.zephyr"
