@@ -10,4 +10,4 @@ zephyr_library_sources(
     app_jwt.c
 )
 
-zephyr_link_libraries_ifdef(CONFIG_MBEDTLS mbedTLS)
+zephyr_link_libraries_ifdef(CONFIG_TF_PSA_CRYPTO_BUILTIN tfpsacrypto)

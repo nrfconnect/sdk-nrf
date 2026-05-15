@@ -11,7 +11,7 @@
 
 #include <zephyr/secure_storage/its/transform.h>
 #include <mbedtls/platform_util.h>
-#include <../library/psa_crypto_driver_wrappers.h>
+#include <psa_crypto_driver_wrappers.h>
 
 BUILD_ASSERT(CONFIG_SECURE_STORAGE_ITS_TRANSFORM_OUTPUT_OVERHEAD ==
 	     sizeof(uint32_t) - sizeof(secure_storage_packed_create_flags_t) + sizeof(size_t) + 28);
