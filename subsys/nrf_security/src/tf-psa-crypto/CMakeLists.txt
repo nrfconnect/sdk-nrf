@@ -25,12 +25,8 @@ if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
   append_with_prefix(src_crypto ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/legacy_sub/src
     bignum.c
     bignum_core.c
-    ccm.c
-    cipher.c
-    cipher_wrap.c
     ecp.c
     ecp_curves.c
-    gcm.c
     psa_util_internal.c
   )
 
@@ -60,6 +56,22 @@ if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
     )
     append_with_prefix(src_crypto ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/utilities
       constant_time.c
+    )
+  endif()
+
+  if(CONFIG_MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS)
+    append_with_prefix(src_crypto ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/legacy_sub/src
+      aes.c
+      cipher.c
+      cipher_wrap.c
+      ccm.c
+      gcm.c
+      md5.c
+      rsa.c
+      rsa_alt_helpers.c
+      sha1.c
+      sha256.c
+      sha512.c
     )
   endif()
 

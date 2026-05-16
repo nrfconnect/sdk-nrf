@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MBEDTLS_SHA256_C
+	bool "SHA-256 hash functionality [DEPRECATED]"
+	select DEPRECATED
+	select PSA_WANT_ALG_SHA_256
+
+config MBEDTLS_SHA256_SMALLER
+	bool "Use smaller SHA-256 implementation"
+	depends on PSA_WANT_ALG_SHA_256
+	default y
+
+config MBEDTLS_BIGNUM_C
+	bool "Prime number generation [DEPRECATED]"
+	select DEPRECATED
+
+config MBEDTLS_RSA_C
+	bool "RSA - Rivest-Shamir-Adleman cryptosystem [DEPRECATED]"
+	select DEPRECATED
+	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT
+	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT
+	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE
+	select PSA_WANT_RSA_KEY_SIZE_2048
+
+if MBEDTLS_RSA_C
+
+comment "RSA Encoding Selection"
+
+config MBEDTLS_GENPRIME
+	bool
+	default y
+	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE
+
+config MBEDTLS_PKCS1_V15
+	bool "PKCS1 v1.5 support"
+	default y
+	select PSA_WANT_ALG_RSA_PKCS1V15_CRYPT
+	select PSA_WANT_ALG_RSA_PKCS1V15_SIGN
+
+config MBEDTLS_PKCS1_V21
+	bool "PKCS1 v2.1 support"
+	default y
+	select PSA_WANT_ALG_RSA_PSS
+	select PSA_WANT_ALG_RSA_OAEP
+
+endif # MBEDTLS_RSA_C
