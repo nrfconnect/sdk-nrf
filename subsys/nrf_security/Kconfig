@@ -52,7 +52,8 @@ rsource "Kconfig.tf-psa-crypto"
 # Include PSA Crypto configurations
 rsource "Kconfig.psa"
 
-# Include Legacy mbed TLS configurations
+# Include legacy Mbed TLS configurations
+rsource "Kconfig.tf-psa-crypto.deprecated"
 rsource "Kconfig.legacy"
 
 config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS

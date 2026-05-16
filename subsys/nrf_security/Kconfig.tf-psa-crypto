@@ -18,6 +18,9 @@ configdefault TF_PSA_CRYPTO_CONFIG_FILE
 configdefault TF_PSA_CRYPTO_USER_CONFIG_FILE
 	default "nrf-psa-crypto-user-config.h"
 
+config MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+	select DEPRECATED
+
 # Make sure that MBEDTLS_PSA_CRYPTO_RNG_SOURCE is available even when !MBEDTLS_PSA_CRYPTO_C
 # (when building TF-M) so that MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG is always enabled.
 # This is needed because without this symbol the Oberon PSA core defaults to legacy RNG.

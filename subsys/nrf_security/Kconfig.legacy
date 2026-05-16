@@ -504,41 +504,6 @@ config MBEDTLS_HKDF_C
 	  Enable HKDF support.
 	  MBEDTLS_HKDF_C setting in mbed TLS config file.
 
-config MBEDTLS_RSA_C
-	bool "RSA - Rivest-Shamir-Adleman cryptosystem"
-	imply PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT
-	imply PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT
-	imply PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE
-	imply PSA_WANT_RSA_KEY_SIZE_2048
-	help
-	  Enable RSA cryptosystem support.
-	  MBEDTLS_RSA_C setting in mbed TLS config file.
-
-if MBEDTLS_RSA_C
-
-comment "RSA Encoding Selection"
-
-config MBEDTLS_GENPRIME
-	bool
-	default y
-	imply PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE
-
-config MBEDTLS_PKCS1_V15
-	bool "PKCS1 v1.5 support"
-	default y
-	imply PSA_WANT_ALG_RSA_PKCS1V15_CRYPT
-	imply PSA_WANT_ALG_RSA_PKCS1V15_SIGN
-	imply PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW
-
-config MBEDTLS_PKCS1_V21
-	bool "PKCS1 v2.1 support"
-	default y
-	imply PSA_WANT_ALG_RSA_PSS
-	imply PSA_WANT_ALG_RSA_PSS_ANY_SALT
-	imply PSA_WANT_ALG_RSA_OAEP
-
-endif # MBEDTLS_RSA_C
-
 menu "SHA - Secure Hash Algorithm"
 
 config MBEDTLS_MD5_C
@@ -559,17 +524,6 @@ config MBEDTLS_SHA224_C
 	imply PSA_WANT_ALG_SHA_224
 	help
 	  SHA-224 hash functionality.
-
-config MBEDTLS_SHA256_C
-	bool "SHA-256 hash functionality"
-	imply PSA_WANT_ALG_SHA_256
-	help
-	  SHA-256 hash functionality.
-
-config MBEDTLS_SHA256_SMALLER
-	bool "Use smaller SHA-256 implementation"
-	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
-	depends on MBEDTLS_SHA256_C
 
 config MBEDTLS_SHA384_C
 	bool "SHA-384 hash functionality"
