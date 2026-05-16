@@ -63,9 +63,7 @@
 #cmakedefine PSA_WANT_ALG_RSA_OAEP                              @PSA_WANT_ALG_RSA_OAEP@
 #cmakedefine PSA_WANT_ALG_RSA_PKCS1V15_CRYPT                    @PSA_WANT_ALG_RSA_PKCS1V15_CRYPT@
 #cmakedefine PSA_WANT_ALG_RSA_PKCS1V15_SIGN                     @PSA_WANT_ALG_RSA_PKCS1V15_SIGN@
-#cmakedefine PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW                 @PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW@
 #cmakedefine PSA_WANT_ALG_RSA_PSS                               @PSA_WANT_ALG_RSA_PSS@
-#cmakedefine PSA_WANT_ALG_RSA_PSS_ANY_SALT                      @PSA_WANT_ALG_RSA_PSS_ANY_SALT@
 #cmakedefine PSA_WANT_ALG_SHA3_224                              @PSA_WANT_ALG_SHA3_224@
 #cmakedefine PSA_WANT_ALG_SHA3_256                              @PSA_WANT_ALG_SHA3_256@
 #cmakedefine PSA_WANT_ALG_SHA3_384                              @PSA_WANT_ALG_SHA3_384@
