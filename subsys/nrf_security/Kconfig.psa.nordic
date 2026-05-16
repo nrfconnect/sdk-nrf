@@ -39,9 +39,7 @@ config PSA_HAS_ASYM_SIGN_SUPPORT
 		   PSA_WANT_ALG_ED448PH                 || \
 		   PSA_WANT_ALG_PURE_EDDSA              || \
 		   PSA_WANT_ALG_RSA_PKCS1V15_SIGN	|| \
-		   PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW   || \
 		   PSA_WANT_ALG_RSA_PSS                 || \
-		   PSA_WANT_ALG_RSA_PSS_ANY_SALT        || \
 		   PSA_WANT_ALG_HSS                     || \
 		   PSA_WANT_ALG_LMS                     || \
 		   PSA_WANT_ALG_XMSS                    || \
@@ -254,14 +252,6 @@ config PSA_WANT_ALG_ML_KEM
 
 config PSA_WANT_ALG_PURE_EDDSA
 	bool "PSA PURE_EDDSA support" if !PSA_PROMPTLESS
-
-config PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW
-	bool "PSA RSA raw PKCS#1 v1.5 message signature support, without hashing)" if !PSA_PROMPTLESS
-	default y if PSA_CRYPTO_ENABLE_ALL
-
-config PSA_WANT_ALG_RSA_PSS_ANY_SALT
-	bool "PSA RSA PSS message signature support, any salt length" if !PSA_PROMPTLESS
-	default y if PSA_CRYPTO_ENABLE_ALL
 
 config PSA_WANT_ALG_SHA_256_192
 	bool "PSA SHA-256/192 support" if !PSA_PROMPTLESS

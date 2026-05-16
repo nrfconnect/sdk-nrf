@@ -5071,14 +5071,8 @@ The options are grouped by Series and drivers available for the device Series, a
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
-               * - RSA raw PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
-                 - Supported
                * - RSA PSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                 - Supported
-               * - RSA PSS any salt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                  - Supported
                * - HSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
@@ -5142,18 +5136,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-               * - RSA raw PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
-                 - Supported
-                 - Supported
-                 - Supported
                * - RSA PSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA PSS any salt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                  - Supported
                  - Supported
                  - Supported
@@ -5234,14 +5218,8 @@ The options are grouped by Series and drivers available for the device Series, a
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
-               * - RSA raw PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
-                 - Supported
                * - RSA PSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                 - Supported
-               * - RSA PSS any salt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                  - Supported
                * - HSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
@@ -5289,14 +5267,8 @@ The options are grouped by Series and drivers available for the device Series, a
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
-               * - RSA raw PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
-                 - Supported
                * - RSA PSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                 - Supported
-               * - RSA PSS any salt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                  - Supported
                * - HSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
@@ -5326,7 +5298,6 @@ The options are grouped by Series and drivers available for the device Series, a
             .. note::
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA` is limited to ECC curve types secp224r1, secp256r1, and secp384r1.
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA` is limited to ECC curve type Ed25519.
-               - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT` does not support RSA key pair generation.
 
    .. tab:: nRF54H Series
 
@@ -5369,14 +5340,8 @@ The options are grouped by Series and drivers available for the device Series, a
                * - RSA PKCS#1 v1.5 sign
                  - ``PSA_WANT_ALG_RSA_PKCS1V15_SIGN``
                  - --
-               * - RSA raw PKCS#1 v1.5 sign
-                 - ``PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW``
-                 - --
                * - RSA PSS
                  - ``PSA_WANT_ALG_RSA_PSS``
-                 - --
-               * - RSA PSS any salt
-                 - ``PSA_WANT_ALG_RSA_PSS_ANY_SALT``
                  - --
                * - HSS
                  - ``PSA_WANT_ALG_HSS``
@@ -5478,15 +5443,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Experimental
                  - --
-               * - RSA raw PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
                * - RSA PSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
                  - Supported
@@ -5495,15 +5451,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Experimental
-                 - --
-               * - RSA PSS any salt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
                  - --
                * - HSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
@@ -5629,26 +5576,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-               * - RSA raw PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
                * - RSA PSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA PSS any salt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                  - Supported
                  - Supported
                  - Supported
@@ -5732,7 +5661,6 @@ The options are grouped by Series and drivers available for the device Series, a
             .. note::
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA` is limited to ECC curve types secp224r1, secp256r1, and secp384r1.
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA` is limited to ECC curve type Ed25519.
-               - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT` does not support RSA key pair generation.
 
    .. tab:: nRF91 Series
 
@@ -5794,20 +5722,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-               * - RSA raw PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
                * - RSA PSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA PSS any salt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                  - Supported
                  - Supported
                  - Supported
@@ -5897,20 +5813,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-               * - RSA raw PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
                * - RSA PSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA PSS any salt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                  - Supported
                  - Supported
                  - Supported
@@ -5967,7 +5871,6 @@ The options are grouped by Series and drivers available for the device Series, a
             .. note::
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA` is limited to ECC curve types secp224r1, secp256r1, and secp384r1.
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA` is limited to ECC curve type Ed25519.
-               - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT` does not support RSA key pair generation.
 
 Asymmetric signature driver
 ---------------------------
@@ -5997,9 +5900,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
 
          .. tab:: nrf_oberon
 
@@ -6015,9 +5916,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA` (limited to ECC curve type Ed25519)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT` (does not support RSA key pair generation)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_LMS`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
@@ -6044,9 +5943,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
 
          .. tab:: nrf_oberon
 
@@ -6062,9 +5959,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA` (limited to ECC curve type Ed25519)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT` (does not support RSA key pair generation)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_LMS`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
@@ -6109,9 +6004,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA` (limited to ECC curve type Ed25519)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT` (does not support RSA key pair generation)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_LMS`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
@@ -6138,9 +6031,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
 
          .. tab:: nrf_oberon
 
@@ -6156,9 +6047,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA` (limited to ECC curve type Ed25519)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT` (does not support RSA key pair generation)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_LMS`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
