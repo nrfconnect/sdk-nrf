@@ -21,6 +21,31 @@
  * should be used when the system is in this state.
  */
 
+/* Locate the coredump storage region. Two options are supported:
+ *
+ *   1. Partition Manager (legacy): PARTITION_*(MEMFAULT_STORAGE) macros resolve
+ *      via <pm_config.h> when CONFIG_PARTITION_MANAGER_ENABLED=y.
+ *   2. Devicetree (NCS 3.4+): a fixed-partition labelled
+ *      "memfault_coredump_partition" under the internal flash controller. This
+ *      matches the label used by the upstream memfault-firmware-sdk RRAM/MRAM
+ *      backends.
+ */
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+#include <pm_config.h>
+#define MFLT_STORAGE_OFFSET PARTITION_OFFSET(MEMFAULT_STORAGE)
+#define MFLT_STORAGE_SIZE   PARTITION_SIZE(MEMFAULT_STORAGE)
+#define MFLT_STORAGE_FA_ID  PARTITION_ID(MEMFAULT_STORAGE)
+#else
+#define MFLT_STORAGE_NODE DT_NODELABEL(memfault_coredump_partition)
+BUILD_ASSERT(DT_NODE_EXISTS(MFLT_STORAGE_NODE),
+	     "memfault_coredump_partition not defined in devicetree. "
+	     "Add the memfault-coredump snippet (-S memfault-coredump) or a DT "
+	     "overlay defining a fixed-partition labelled memfault_coredump_partition.");
+#define MFLT_STORAGE_OFFSET DT_REG_ADDR(MFLT_STORAGE_NODE)
+#define MFLT_STORAGE_SIZE   DT_REG_SIZE(MFLT_STORAGE_NODE)
+#define MFLT_STORAGE_FA_ID  DT_FIXED_PARTITION_ID(MFLT_STORAGE_NODE)
+#endif
+
 /* Note: While the system is running, flash writes for the nRF (soc_flash_nrf.c)
  *	 may be asynchronous so we use a static to track when a coredump clear
  *	 request has been issued.
@@ -30,7 +55,7 @@ static bool last_coredump_cleared;
 void memfault_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info)
 {
 	*info = (sMfltCoredumpStorageInfo) {
-		.size = PARTITION_SIZE(MEMFAULT_STORAGE),
+		.size = MFLT_STORAGE_SIZE,
 	};
 }
 
@@ -53,7 +78,7 @@ bool memfault_platform_coredump_storage_read(uint32_t offset, void *data, size_t
 	}
 
 	/* Note: internal flash is memory mapped so we can just memcpy it out */
-	const uint32_t address = PARTITION_OFFSET(MEMFAULT_STORAGE) + offset;
+	const uint32_t address = MFLT_STORAGE_OFFSET + offset;
 
 	memcpy(data, (void *)address, read_len);
 	return true;
@@ -75,7 +100,7 @@ bool memfault_platform_coredump_storage_erase(uint32_t offset, size_t erase_size
 	}
 
 	for (size_t page = offset; page < erase_size; page += page_size) {
-		const uint32_t address = PARTITION_OFFSET(MEMFAULT_STORAGE) + page;
+		const uint32_t address = MFLT_STORAGE_OFFSET + page;
 
 		nrfx_nvmc_page_erase(address);
 	}
@@ -88,7 +113,7 @@ bool memfault_platform_coredump_storage_erase(uint32_t offset, size_t erase_size
  */
 bool memfault_platform_coredump_storage_buffered_write(sCoredumpWorkingBuffer *blk)
 {
-	const uint32_t start_addr = PARTITION_OFFSET(MEMFAULT_STORAGE);
+	const uint32_t start_addr = MFLT_STORAGE_OFFSET;
 	const uint32_t addr = start_addr + blk->write_offset;
 
 	if (!prv_op_within_flash_bounds(blk->write_offset, MEMFAULT_COREDUMP_STORAGE_WRITE_SIZE)) {
@@ -122,7 +147,7 @@ void memfault_platform_coredump_storage_clear(void)
 	const struct flash_area *flash_area;
 	int err;
 
-	err = flash_area_open(PARTITION_ID(MEMFAULT_STORAGE), &flash_area);
+	err = flash_area_open(MFLT_STORAGE_FA_ID, &flash_area);
 	if (err) {
 		MEMFAULT_LOG_ERROR("Unable to open coredump storage: 0x%x", err);
 		return;

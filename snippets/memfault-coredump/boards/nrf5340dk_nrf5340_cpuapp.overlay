@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Shrink the default 32 kB storage partition and append a 16 kB memfault
+ * coredump partition at the end of internal flash.
+ *
+ *   0x000f8000  storage_partition           (16 kB)
+ *   0x000fc000  memfault_coredump_partition (16 kB)
+ */
+
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		storage_partition: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f8000 0x00004000>;
+		};
+
+		memfault_coredump_partition: partition@fc000 {
+			compatible = "zephyr,mapped-partition";
+			label = "memfault_coredump_partition";
+			reg = <0x000fc000 0x00004000>;
+		};
+	};
+};

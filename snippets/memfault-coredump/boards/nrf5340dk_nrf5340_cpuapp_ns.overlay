@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* See nrf5340dk_nrf5340_cpuapp.overlay for the layout rationale. */
+
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		storage_partition: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f8000 0x00004000>;
+		};
+
+		memfault_coredump_partition: partition@fc000 {
+			compatible = "zephyr,mapped-partition";
+			label = "memfault_coredump_partition";
+			reg = <0x000fc000 0x00004000>;
+		};
+	};
+};

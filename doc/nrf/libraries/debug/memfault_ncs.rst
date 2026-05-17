@@ -137,6 +137,33 @@ The Kconfig options for Memfault that are defined in |NCS| provide some addition
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS`
 
+Flash-backed coredump storage
+-----------------------------
+
+When :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabled, the storage region is resolved at build time using one of the following sources:
+
+* **Partition Manager** (legacy): When :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` is ``y``, a ``MEMFAULT_STORAGE`` partition is generated automatically. The size defaults to 64 kB and can be overridden with :kconfig:option:`CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE`.
+* **Devicetree** (NCS 3.4+ recommended): When Partition Manager is disabled, the backend locates a fixed partition labelled ``memfault_coredump_partition`` under the internal flash controller.
+
+The easiest way to enable the devicetree path is the :ref:`snippet-memfault-coredump` snippet, which supplies a per-board overlay defining the partition:
+
+.. code-block:: console
+
+   west build -b <board> -S memfault-coredump <application>
+
+For boards not covered by the snippet, add a node similar to the following to your application overlay:
+
+.. code-block:: dts
+
+   &flash0 {
+       partitions {
+           memfault_coredump_partition: partition@fc000 {
+               label = "memfault_coredump_partition";
+               reg = <0x000fc000 0x4000>;
+           };
+       };
+   };
+
 The |NCS| integration of `Memfault SDK`_ provides default values for some metadata that is required to identify the firmware when it is sent to Memfault cloud.
 You can control the defaults by using the configuration options below:
 

@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Thingy:91 X (nRF9151) has its devicetree layout in
+ * boards/nordic/thingy91x/thingy91x_nrf9151_partition.dtsi. The internal
+ * flash is fully consumed by slot0_partition; the secondary slot lives on
+ * external flash. Shrink the non-secure image area by 16 kB to free space
+ * for a memfault coredump partition at the end of internal flash.
+ *
+ *   slot0_partition  0x00030000 - 0x000fc000   (shrunk from 832 kB to 816 kB)
+ *     slot0_s        +0x00000   - +0x08000     (32 kB, unchanged)
+ *     slot0_ns       +0x08000   - +0xcc000     (784 kB, was 800 kB)
+ *   memfault_coredump_partition  0x000fc000 - 0x00100000  (16 kB)
+ */
+
+/delete-node/ &slot0_partition;
+
+&flash0 {
+	partitions {
+		slot0_partition: partition@30000 {
+			compatible = "fixed-subpartitions";
+			label = "image-0";
+			reg = <0x00030000 0xcc000>;
+			ranges = <0x0 0x00030000 0xcc000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				label = "image-0-secure";
+				reg = <0x00000000 0x8000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				label = "image-0-nonsecure";
+				reg = <0x00008000 0xc4000>;
+			};
+		};
+
+		memfault_coredump_partition: partition@fc000 {
+			label = "memfault_coredump_partition";
+			reg = <0x000fc000 0x00004000>;
+		};
+	};
+};
