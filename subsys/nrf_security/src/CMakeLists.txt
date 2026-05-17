@@ -119,10 +119,6 @@ endif()
 # Add drivers (for legacy and PSA crypto build)
 add_subdirectory(drivers)
 
-if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
-  add_subdirectory(legacy)
-endif()
-
 # NEWLIB requires linking with the C library
 if(CONFIG_NEWLIB_LIBC)
   target_link_libraries(${mbedcrypto_target} PRIVATE -lc)

@@ -6,18 +6,6 @@
 
 menu "nRF Security"
 
-config NORDIC_SECURITY_BACKEND
-	bool "Use nRF Security with Mbed TLS legacy crypto APIs support"
-	depends on SOC_FAMILY_NORDIC_NRF
-	select PSA_CRYPTO
-	select MBEDTLS_LEGACY_CRYPTO_C
-	select OBERON_BACKEND if BUILD_WITH_TFM
-	help
-	  Using this configuration enables legacy support for mbed TLS APIs
-	  This configuration is not to be used for PSA API support.
-	  Note that this will enable nrf_oberon by default. Multiple backends is
-	  not supported.
-
 config PSA_CRYPTO
 	default y if DT_HAS_ZEPHYR_PSA_CRYPTO_RNG_ENABLED \
 		&& !IS_BOOTLOADER_IMG && GEN_ISR_TABLES

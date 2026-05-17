@@ -5023,8 +5023,8 @@ NCSDK-25144: Enabling Kconfig option :kconfig:option:`CONFIG_SECURE_BOOT_CRYPTO`
 
 .. rst-class:: v2-4-3 v2-4-2 v2-4-1 v2-4-0
 
-NCSDK-22091: Selecting both :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` and :kconfig:option:`CONFIG_PSA_CORE` causes a build failure
-  Selecting both :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` and :kconfig:option:`CONFIG_PSA_CORE` results in a build failure due to undefined references to different structs.
+NCSDK-22091: Selecting both ``CONFIG_NORDIC_SECURITY_BACKEND`` and :kconfig:option:`CONFIG_PSA_CORE` causes a build failure
+  Selecting both ``CONFIG_NORDIC_SECURITY_BACKEND`` and :kconfig:option:`CONFIG_PSA_CORE` results in a build failure due to undefined references to different structs.
 
   **Workaround:** Manually define ``PSA_CORE_BUILTIN`` in the file :file:`nrf_security/configs/legacy_crypto_config.h.template`.
 

@@ -12,7 +12,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 
-#if defined(CONFIG_MBEDTLS_PSA_CRYPTO_CLIENT) && !defined(CONFIG_MBEDTLS_BUILTIN)
+#if defined(CONFIG_PSA_CRYPTO) && !defined(CONFIG_TF_PSA_CRYPTO_BUILTIN)
 
 #include "psa/crypto.h"
 
