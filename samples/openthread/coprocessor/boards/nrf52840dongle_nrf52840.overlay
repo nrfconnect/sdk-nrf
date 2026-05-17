@@ -16,6 +16,19 @@
 	};
 
 	chosen {
-		zephyr,ot-uart = &board_cdc_acm_uart;
+		/*
+		 * The USB CDC ACM serial backend only registers multiple instances
+		 * for console, shell, and mcumgr chosen UARTs. Reuse the mcumgr slot
+		 * so the OT transport gets its own CDC ACM function.
+		 */
+		zephyr,uart-mcumgr = &ot_cdc_acm_uart;
+		/* Keep OT Spinel traffic off the board console CDC ACM port. */
+		zephyr,ot-uart = &ot_cdc_acm_uart;
+	};
+};
+
+&zephyr_udc0 {
+	ot_cdc_acm_uart: ot_cdc_acm_uart {
+		compatible = "zephyr,cdc-acm-uart";
 	};
 };
