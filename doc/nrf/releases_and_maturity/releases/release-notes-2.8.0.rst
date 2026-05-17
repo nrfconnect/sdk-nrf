@@ -340,7 +340,7 @@ Security
   * TF-M support for the :zephyr:board:`nrf54l15dk` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``), replacing the nRF54L15 PDK (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
   * The ``west ncs-provision`` command, which allows to provision signature verification keys to the nRF54L15 SoC over the J-Link interface.
 
-* Deprecated legacy Mbed TLS crypto toolbox APIs that are enabled when the :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` Kconfig option is set.
+* Deprecated legacy Mbed TLS crypto toolbox APIs that are enabled when the ``CONFIG_NORDIC_SECURITY_BACKEND`` Kconfig option is set.
   Use the nRF Security (enabled with the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option) and PSA crypto APIs instead.
 
 Protocols

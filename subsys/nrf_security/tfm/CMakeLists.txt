@@ -44,11 +44,6 @@ import_kconfig(CONFIG_ ${ZEPHYR_DOTCONFIG})
 # prefixed names for mbedcrypto symbols (mbedcrypto__)
 set(CONFIG_MBEDTLS_PSA_CRYPTO_SPM                   True)
 
-# Additional TF-M settings when application has enabled legacy MBedTLS APIs.
-# TF-M should not be configured using these settings so force them off.
-set(CONFIG_MBEDTLS_LEGACY_CRYPTO_C                  False)
-set(CONFIG_MBEDTLS_MD_C                             False)
-
 # Platform cannot be selected when building for TF-M, because TF-M itself has
 # control of the CryptoCell. Therefore, specifically for building TF-M we
 # enable it manually.

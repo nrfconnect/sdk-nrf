@@ -642,7 +642,7 @@ For C++ elements:
 Kconfig
 =======
 
-Link to library Kconfig options using :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND`.
+Link to library Kconfig options using :kconfig:option:`CONFIG_SECURE_STORAGE`.
 
 For more information on how to link to application-specific configuration options, see :ref:`Configuration options <sample_config_options>`.
 Example: :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>`.

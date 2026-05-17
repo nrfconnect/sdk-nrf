@@ -44,10 +44,7 @@ macro(generate_mbedcrypto_interface_configs)
     # Empty out previous versions of interface config-files
     file(REMOVE_RECURSE ${generated_include_path})
 
-    # Generate MBEDCRYPTO_CONFIG_FILE
-    if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
-      include(${NRF_SECURITY_DIR}/cmake/legacy_crypto_config.cmake)
-    elseif(CONFIG_MBEDTLS)
+    if(CONFIG_MBEDTLS)
       include(${NRF_SECURITY_DIR}/cmake/nrf_config.cmake)
     endif()
 

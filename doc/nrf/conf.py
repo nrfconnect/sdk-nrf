@@ -7,7 +7,6 @@
 # nrf documentation build configuration file
 
 import os
-import re
 import sys
 from pathlib import Path
 
@@ -21,6 +20,7 @@ import utils
 
 ZEPHYR_BASE = utils.get_projdir("zephyr")
 MCUBOOT_BASE = utils.get_projdir("mcuboot")
+MBEDTLS_BASE = NRF_BASE / ".." / "modules" / "crypto" / "mbedtls"
 
 # General configuration --------------------------------------------------------
 
@@ -143,17 +143,11 @@ doxyrunner_projects = {
 # create mbedtls config header (needed for Doxygen)
 _doxyrunner_outdir.mkdir(exist_ok=True, parents=True)
 
-fin_path = NRF_BASE / "subsys" / "nrf_security" / "configs" / "legacy_crypto_config.h.template"
+fin_path = MBEDTLS_BASE / "include" / "mbedtls" / "mbedtls_config.h"
 fout_path = _doxyrunner_outdir / "mbedtls_doxygen_config.h"
 
 with open(fin_path) as fin, open(fout_path, "w") as fout:
-    fout.write(
-        re.sub(
-            r"#cmakedefine ([A-Z0-9_-]+)",
-            r"#define \1",
-            fin.read()
-        )
-    )
+    fout.write(fin.read())
 
 # -- Options for doxybridge plugin ---------------------------------------------
 

@@ -31,8 +31,6 @@ Deprecation of legacy crypto support
 
 The following changes have been made to the legacy crypto support with the deprecation announcement:
 
-* Enabling the Kconfig option :kconfig:option:`CONFIG_NRF_SECURITY` replaces using the Kconfig option :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` to enable the legacy crypto support.
-  Setting :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` also enables :kconfig:option:`CONFIG_MBEDTLS_LEGACY_CRYPTO_C`, which shows a deprecation warning in the build output.
 * The legacy Mbed TLS APIs no longer support the glued functionality.
 * Legacy configurations no longer have an effect on the configurations for the secure image of a TF-M build.
 
@@ -115,8 +113,6 @@ To configure AES cipher modes, set the following Kconfig options:
 +--------------+----------------------------------------------------+----------------------------------------+
 | CBC          | :kconfig:option:`CONFIG_MBEDTLS_CIPHER_MODE_CBC`   |                                        |
 +--------------+----------------------------------------------------+----------------------------------------+
-| XTS          | :kconfig:option:`CONFIG_MBEDTLS_CIPHER_MODE_XTS`   | nrf_oberon only                        |
-+--------------+----------------------------------------------------+----------------------------------------+
 
 .. note::
    AES cipher modes are dependent on enabling AES core support according to `AES configuration`_.
@@ -169,8 +165,6 @@ Feature support
 CMAC configuration
 ******************
 
-To configure Cipher-based Message Authentication Code (CMAC) support, set the :kconfig:option:`CONFIG_MBEDTLS_CMAC_C` Kconfig option.
-
 Feature support
 ===============
 
@@ -204,12 +198,6 @@ To configure Authenticated Encryption with Associated Data (AEAD), set the follo
 | AES CCM/CCM* | :kconfig:option:`CONFIG_MBEDTLS_CCM_C`         |                                         |
 +--------------+------------------------------------------------+-----------------------------------------+
 | AES GCM      | :kconfig:option:`CONFIG_MBEDTLS_GCM_C`         | nrf_oberon or nrf_cc312                 |
-+--------------+------------------------------------------------+-----------------------------------------+
-| ChaCha20     | :kconfig:option:`CONFIG_MBEDTLS_CHACHA20_C`    |                                         |
-+--------------+------------------------------------------------+-----------------------------------------+
-| Poly1305     | :kconfig:option:`CONFIG_MBEDTLS_POLY1305_C`    |                                         |
-+--------------+------------------------------------------------+-----------------------------------------+
-| ChaCha-Poly  | :kconfig:option:`CONFIG_MBEDTLS_CHACHAPOLY_C`  | Requires `Poly1305` and `ChaCha20`      |
 +--------------+------------------------------------------------+-----------------------------------------+
 
 .. note::
@@ -267,8 +255,6 @@ Feature support
 DHM configurations
 ******************
 
-To configure Diffie-Hellman-Merkle (DHM) support, set the :kconfig:option:`CONFIG_MBEDTLS_DHM_C` Kconfig option.
-
 Feature support
 ===============
 
@@ -325,14 +311,6 @@ Feature support
 
 ECDH configurations
 *******************
-
-To configure Elliptic Curve Diffie-Hellman (ECDH) support, set the :kconfig:option:`CONFIG_MBEDTLS_ECDH_C` Kconfig option.
-
-+--------------+---------------------------------------------+
-| Algorithm    | Configurations                              |
-+==============+=============================================+
-| ECDH         | :kconfig:option:`CONFIG_MBEDTLS_ECDH_C`     |
-+--------------+---------------------------------------------+
 
 .. note::
    * ECDH support depends on `ECC Configurations`_ being enabled.
@@ -420,14 +398,6 @@ Feature support
 ECJPAKE configurations
 **********************
 
-To configure Elliptic Curve, Password Authenticated Key Exchange by Juggling (ECJPAKE) support, set the :kconfig:option:`CONFIG_MBEDTLS_ECJPAKE_C` Kconfig option.
-
-+--------------+----------------------------------------------+
-| Algorithm    | Configurations                               |
-+==============+==============================================+
-| ECJPAKE      | :kconfig:option:`CONFIG_MBEDTLS_ECJPAKE_C`   |
-+--------------+----------------------------------------------+
-
 .. note::
    ECJPAKE support depends upon `ECC Configurations`_ being enabled.
 
@@ -449,26 +419,6 @@ ECC curves configurations
 *************************
 
 It is possible to configure the curves that should be supported in the system depending on the backend selected.
-
-The following curves can be enabled:
-
-+-----------------------------+------------------------------------------------------------+--------------------------+
-| Curve                       | Configurations                                             | Note                     |
-+=============================+============================================================+==========================+
-| NIST secp224r1              | :kconfig:option:`CONFIG_MBEDTLS_ECP_DP_SECP224R1_ENABLED`  |                          |
-+-----------------------------+------------------------------------------------------------+--------------------------+
-| NIST secp256r1              | :kconfig:option:`CONFIG_MBEDTLS_ECP_DP_SECP256R1_ENABLED`  |                          |
-+-----------------------------+------------------------------------------------------------+--------------------------+
-| NIST secp384r1              | :kconfig:option:`CONFIG_MBEDTLS_ECP_DP_SECP384R1_ENABLED`  |                          |
-+-----------------------------+------------------------------------------------------------+--------------------------+
-| NIST secp521r1              | :kconfig:option:`CONFIG_MBEDTLS_ECP_DP_SECP521R1_ENABLED`  |                          |
-+-----------------------------+------------------------------------------------------------+--------------------------+
-| Koblitz secp224k1           | :kconfig:option:`CONFIG_MBEDTLS_ECP_DP_SECP224K1_ENABLED`  |                          |
-+-----------------------------+------------------------------------------------------------+--------------------------+
-| Koblitz secp256k1           | :kconfig:option:`CONFIG_MBEDTLS_ECP_DP_SECP256K1_ENABLED`  |                          |
-+-----------------------------+------------------------------------------------------------+--------------------------+
-| Curve25519                  | :kconfig:option:`CONFIG_MBEDTLS_ECP_DP_CURVE25519_ENABLED` |                          |
-+-----------------------------+------------------------------------------------------------+--------------------------+
 
 .. note::
    * The :ref:`nrf_oberon_readme` only supports ECC curve secp224r1 and secp256r1.
@@ -520,13 +470,7 @@ To configure the Secure Hash algorithms, set the following Kconfig options:
 +--------------+--------------------+---------------------------------------------+
 | Algorithm    | Support            | Backend selection                           |
 +==============+====================+=============================================+
-| SHA-1        |                    | :kconfig:option:`CONFIG_MBEDTLS_SHA1_C`     |
-+--------------+--------------------+---------------------------------------------+
-| SHA-224      |                    | :kconfig:option:`CONFIG_MBEDTLS_SHA224_C`   |
-+--------------+--------------------+---------------------------------------------+
 | SHA-256      |                    | :kconfig:option:`CONFIG_MBEDTLS_SHA256_C`   |
-+--------------+--------------------+---------------------------------------------+
-| SHA-384      |                    | :kconfig:option:`CONFIG_MBEDTLS_SHA384_C`   |
 +--------------+--------------------+---------------------------------------------+
 | SHA-512      |                    | :kconfig:option:`CONFIG_MBEDTLS_SHA512_C`   |
 +--------------+--------------------+---------------------------------------------+

@@ -138,36 +138,6 @@ config MBEDTLS_MPI_MAX_SIZE
 config MBEDTLS_ENTROPY_C
 	default y
 
-config MBEDTLS_CIPHER_MODE_CBC
-	default n
-
-config MBEDTLS_CIPHER_MODE_CTR
-	default n
-
-config MBEDTLS_CHACHA20_C
-	default n
-
-config MBEDTLS_POLY1305_C
-	default n
-
-config MBEDTLS_CHACHAPOLY_C
-	default n
-
-config MBEDTLS_DHM_C
-	default n
-
-config MBEDTLS_RSA_C
-	default n
-
-config MBEDTLS_SHA512_C
-	default n
-
-config MBEDTLS_GCM_C
-	default n
-
-config MBEDTLS_CIPHER_MODE_XTS
-	default n
-
 if !(OPENTHREAD_BORDER_AGENT || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS || OPENTHREAD_BLE_TCAT)
 
 config MBEDTLS_SSL_SRV_C
