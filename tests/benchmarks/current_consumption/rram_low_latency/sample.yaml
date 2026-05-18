@@ -15,6 +15,7 @@ common:
     - nrf54ls05dk/nrf54ls05a/cpuapp
     - nrf54ls05dk/nrf54ls05b/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
+    - nrf54lc10dk/nrf54lc10a/cpuapp
   integration_platforms:
     - nrf54l15dk/nrf54l15/cpuapp
 tests:
