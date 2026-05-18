@@ -199,13 +199,16 @@
     - nrf.extended.sample.drivers.i2c.rtio_loopback
     - nrf.extended.sample.drivers.spi.bitbang
     - nrf.extended.sample.drivers.watchdog
+    - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92
+    - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_no_multithreading
+    - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_remote_no_multithreading
     - nrf.extended.sample.subsys.settings.nvs
     - nrf.extended.sample.subsys.settings.zms
+    - sample.event_manager_proxy.nrf9251dk_cpuapp_cpuppr
+    - sample.ipc.ipc_service.nrf9251dk_cpuapp_cpuppr_icmsg
     - subsys.west_debug.normal
     - subsys.west_debug.thread_info
     - subsys.west_flash
-    - sample.event_manager_proxy.nrf9251dk_cpuapp_cpuppr
-    - sample.ipc.ipc_service.nrf9251dk_cpuapp_cpuppr_icmsg
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "Missing modem support"
