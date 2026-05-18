@@ -146,4 +146,21 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+nRF Cloud library
+-----------------
+
+.. toggle::
+
+   * The default value of the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC` choice has changed from :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` to the device UUID.
+     On an nRF9160 device, the new default is :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID`.
+     On the nRF91x1 and future SoCs, the new default is :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID`.
+
+     If your application relied on the previous IMEI-based default without setting it explicitly in the :file:`prj.conf` file, the device will connect to nRF Cloud with a different client ID after the upgrade and appear as a new, unprovisioned device.
+     To preserve the previous behavior, add the following line to your :file:`prj.conf` file:
+
+     .. code-block:: cfg
+
+        CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI=y
+
+     The :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` Kconfig options are deprecated but kept functional for fleet operators with IMEI-provisioned devices already in the field.
+     New applications should use the UUID default to match the device ID that the nRF Cloud provisioning tools generate.

@@ -33,7 +33,19 @@ if MEMFAULT_NCS_DEVICE_INFO_BUILTIN
 
 choice
 	prompt "Memfault device ID generation method"
+	default MEMFAULT_NCS_DEVICE_ID_NRF_CLOUD if NRF_CLOUD
 	default MEMFAULT_NCS_DEVICE_ID_HW_ID
+
+config MEMFAULT_NCS_DEVICE_ID_NRF_CLOUD
+	bool "Use the nRF Cloud client ID as Memfault device ID"
+	depends on NRF_CLOUD
+	help
+	  Use the same device ID that the nRF Cloud library announces to nRF Cloud
+	  (resolved from CONFIG_NRF_CLOUD_CLIENT_ID_SRC_*). Memfault stays agnostic
+	  about the underlying source — whichever source nRF Cloud is configured
+	  to use (UUID, IMEI, hardware ID, compile-time, runtime), Memfault
+	  reports the same string. Pick this option when the same device should
+	  appear under a single identity across both nRF Cloud and Memfault.
 
 config MEMFAULT_NCS_DEVICE_ID_IMEI
 	bool "Use IMEI as Memfault device ID [DEPRECATED]"

@@ -15,12 +15,10 @@
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
 #include <hw_id.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID)
-#include <string.h>
-#endif
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
+#include <string.h>
 #include <zephyr/logging/log.h>
 #include "nrf_cloud_client_id.h"
 #include "nrf_cloud_transport.h"
