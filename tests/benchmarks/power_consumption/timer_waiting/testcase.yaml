@@ -25,6 +25,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54l_16M.overlay"
 
