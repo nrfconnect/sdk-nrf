@@ -1146,6 +1146,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   # If the network core image is enabled on nRF53, ensure it is flashed before the main application
   if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
     sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
+
+    if(SB_CONFIG_SECURE_BOOT_NETCORE)
+      # Also ensure b0n is flashed before the network core image
+      sysbuild_add_dependencies(FLASH ${SB_CONFIG_NETCORE_IMAGE_NAME} b0n)
+    endif()
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_APPCORE AND NOT SB_CONFIG_PARTITION_MANAGER)
