@@ -74,12 +74,14 @@
 
 		cpuapp_dma_region: memory@2fc10000 {
 			compatible = "zephyr,memory-region";
-			reg = <0x2fc10000 DT_SIZE_K(16)>;
+			reg = <0x2fc10000 DT_SIZE_K(15)>;
 			status = "disabled";
 			#memory-region-cells = <0>;
 			zephyr,memory-region = "DMA_RAM31_APP";
 			zephyr,memory-attr = <DT_MEM_DMA>;
 		};
+
+		/* 0x2fc13c00 - 0x2fc14000 reserved for Cellular core. */
 	};
 };
 
