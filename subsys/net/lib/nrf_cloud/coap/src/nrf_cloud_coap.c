@@ -226,35 +226,72 @@ give_and_return:
 }
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
+static void nrf_cloud_coap_result_code_cb(const struct coap_client_response_data *data, void *user)
+{
+	/* Store the raw CoAP result code via the caller-provided pointer.
+	 * Any 2.xx is success; negative is a transport error (e.g. -ETIMEDOUT on CON
+	 * exhaustion); >=128 (COAP_RESPONSE_CODE_BAD_REQUEST) is a server-side error.
+	 */
+	*(int *)user = data->result_code;
+}
+
 int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len, bool confirmable)
 {
 	int err = 0;
+	int result = 0;
 
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
 	}
 
 	err = nrf_cloud_coap_post(COAP_D2C_RAW_RSC, NULL, buf, buf_len,
-				  COAP_CONTENT_FORMAT_APP_OCTET_STREAM, confirmable, NULL, NULL);
-	if (err) {
+				  COAP_CONTENT_FORMAT_APP_OCTET_STREAM, confirmable,
+				  nrf_cloud_coap_result_code_cb, &result);
+	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
+		return err;
 	}
+
+	err = result;
+	if (result < 0) {
+		LOG_ERR("Send failed: %d", result);
+	} else if (result >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+		LOG_RESULT_CODE_ERR("Error from server:", result);
+	} else {
+		/* 2.xx or 0: success */
+		err = 0;
+	}
+
 	return err;
 }
 
-int nrf_cloud_coap_bin_log_send(const uint8_t * const buf, size_t buf_len, bool confirmable)
+int nrf_cloud_coap_bin_log_send(const uint8_t *const buf, size_t buf_len, bool confirmable)
 {
 	int err = 0;
+	int result = 0;
 
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
 	}
 
 	err = nrf_cloud_coap_post(COAP_D2C_BIN_RSC, NULL, buf, buf_len,
-				  COAP_CONTENT_FORMAT_APP_OCTET_STREAM, confirmable, NULL, NULL);
-	if (err) {
+				  COAP_CONTENT_FORMAT_APP_OCTET_STREAM, confirmable,
+				  nrf_cloud_coap_result_code_cb, &result);
+	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
+		return err;
 	}
+
+	err = result;
+	if (result < 0) {
+		LOG_ERR("Send failed: %d", result);
+	} else if (result >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+		LOG_RESULT_CODE_ERR("Error from server:", result);
+	} else {
+		/* 2.xx or 0: success */
+		err = 0;
+	}
+
 	return err;
 }
 
@@ -282,6 +319,7 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj, bool confirmable)
 	}
 
 	int err = 0;
+	int result = 0;
 	bool enc = false;
 	const char *resource = bulk ? COAP_D2C_BULK_RSC : COAP_D2C_RSC;
 
@@ -302,11 +340,23 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj, bool confirmable)
 				  obj->encoded_data.ptr, obj->encoded_data.len,
 				  (obj->type == NRF_CLOUD_OBJ_TYPE_COAP_CBOR) ?
 				   COAP_CONTENT_FORMAT_APP_CBOR : COAP_CONTENT_FORMAT_APP_JSON,
-				  confirmable, NULL, NULL);
-	if (err) {
+				  confirmable, nrf_cloud_coap_result_code_cb, &result);
+	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
+		goto free_and_return;
 	}
 
+	err = result;
+	if (result < 0) {
+		LOG_ERR("Send failed: %d", result);
+	} else if (result >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+		LOG_RESULT_CODE_ERR("Error from server:", result);
+	} else {
+		/* 2.xx or 0: success */
+		err = 0;
+	}
+
+free_and_return:
 	if (enc) {
 		nrf_cloud_obj_cloud_encoded_free(obj);
 	}
@@ -323,6 +373,7 @@ int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms, 
 	int64_t ts = (ts_ms == NRF_CLOUD_NO_TIMESTAMP) ? get_ts() : ts_ms;
 	static uint8_t buffer[SENSOR_SEND_CBOR_MAX_SIZE];
 	size_t len = sizeof(buffer);
+	int result = 0;
 	int err;
 
 	err = coap_codec_sensor_encode(app_id, value, ts, buffer, &len,
@@ -331,13 +382,25 @@ int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms, 
 		LOG_ERR("Unable to encode sensor data: %d", err);
 		return err;
 	}
+
 	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len,
-				  COAP_CONTENT_FORMAT_APP_CBOR, confirmable, NULL, NULL);
+				  COAP_CONTENT_FORMAT_APP_CBOR, confirmable,
+				  nrf_cloud_coap_result_code_cb, &result);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
-	} else if (err > 0) {
-		LOG_RESULT_CODE_ERR("Error from server:", err);
+		return err;
 	}
+
+	err = result;
+	if (result < 0) {
+		LOG_ERR("Send failed: %d", result);
+	} else if (result >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+		LOG_RESULT_CODE_ERR("Error from server:", result);
+	} else {
+		/* 2.xx or 0: success */
+		err = 0;
+	}
+
 	return err;
 }
 
@@ -351,6 +414,7 @@ int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool js
 	uint8_t buffer[MESSAGE_SEND_CBOR_MAX_SIZE];
 	size_t len = sizeof(buffer);
 	int err;
+	int result = 0;
 	struct nrf_cloud_obj_coap_cbor msg = {
 		.app_id		= (char *)app_id,
 		.type		= NRF_CLOUD_DATA_TYPE_STR,
@@ -368,11 +432,20 @@ int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool js
 	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len,
 				  json ? COAP_CONTENT_FORMAT_APP_JSON :
 					 COAP_CONTENT_FORMAT_APP_CBOR,
-				  confirmable, NULL, NULL);
+				  confirmable, nrf_cloud_coap_result_code_cb, &result);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
-	} else if (err > 0) {
-		LOG_RESULT_CODE_ERR("Error from server:", err);
+		return err;
+	}
+
+	err = result;
+	if (result < 0) {
+		LOG_ERR("Send failed: %d", result);
+	} else if (result >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+		LOG_RESULT_CODE_ERR("Error from server:", result);
+	} else {
+		/* 2.xx or 0: success */
+		err = 0;
 	}
 	return err;
 }
@@ -385,6 +458,7 @@ int nrf_cloud_coap_json_message_send(const char *message, bool bulk, bool confir
 	size_t len = strlen(message);
 	const char *resource = bulk ? COAP_D2C_BULK_RSC : COAP_D2C_RSC;
 	int err;
+	int result = 0;
 
 	if (!resource) {
 		return -EINVAL;
@@ -392,12 +466,22 @@ int nrf_cloud_coap_json_message_send(const char *message, bool bulk, bool confir
 	err = nrf_cloud_coap_post(resource,
 				  NULL, message, len,
 				  COAP_CONTENT_FORMAT_APP_JSON,
-				  confirmable, NULL, NULL);
+				  confirmable, nrf_cloud_coap_result_code_cb, &result);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
-	} else if (err > 0) {
-		LOG_RESULT_CODE_ERR("Error from server:", err);
+		return err;
 	}
+
+	err = result;
+	if (result < 0) {
+		LOG_ERR("Send failed: %d", result);
+	} else if (result >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+		LOG_RESULT_CODE_ERR("Error from server:", result);
+	} else {
+		/* 2.xx or 0: success */
+		err = 0;
+	}
+
 	return err;
 }
 
@@ -411,6 +495,7 @@ int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data *gnss, bool co
 	static uint8_t buffer[LOCATION_SEND_CBOR_MAX_SIZE];
 	size_t len = sizeof(buffer);
 	int err;
+	int result = 0;
 
 	if (gnss->type != NRF_CLOUD_GNSS_TYPE_PVT) {
 		LOG_ERR("Only PVT format is supported");
@@ -422,13 +507,23 @@ int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data *gnss, bool co
 		LOG_ERR("Unable to encode GNSS PVT data: %d", err);
 		return err;
 	}
-	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len,
-				  COAP_CONTENT_FORMAT_APP_CBOR, confirmable, NULL, NULL);
+	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len, COAP_CONTENT_FORMAT_APP_CBOR,
+				  confirmable, nrf_cloud_coap_result_code_cb, &result);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
-	} else if (err > 0) {
-		LOG_RESULT_CODE_ERR("Error from server:", err);
+		return err;
 	}
+
+	err = result;
+	if (result < 0) {
+		LOG_ERR("Send failed: %d", result);
+	} else if (result >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+		LOG_RESULT_CODE_ERR("Error from server:", result);
+	} else {
+		/* 2.xx or 0: success */
+		err = 0;
+	}
+
 	return err;
 }
 
