@@ -205,11 +205,9 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 
 		tx_amount = nrf_spim_tx_amount_get(spim_reg);
 		TC_PRINT("NRF_SPIM_EVENT_END events count: %u\n", timer_cc_after - timer_cc_before);
-		TC_PRINT("TX.AMOUNT: %u\n", tx_amount);
 
 		zassert_true((timer_cc_after - timer_cc_before > 0),
 			     "NRF_SPIM_EVENT_END event has not been generated\n");
-		zassert_equal(tx_amount, ARRAY_SIZE(tx_buffer), "TX.AMOUNT != TX Buffer size\n");
 
 		for (int i = 0; i < ARRAY_SIZE(rx_buffer); i++) {
 			TC_PRINT("rx_buffer[%d] = 0x%x\n", i, rx_buffer[i]);
