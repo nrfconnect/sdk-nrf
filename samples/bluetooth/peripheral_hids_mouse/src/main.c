@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/kernel.h>
@@ -127,6 +128,17 @@ static struct conn_mode {
 	 *  Only up to two at a time should be kept in the continuous report sending mode.
 	 */
 	atomic_t cont_report_tx_pending_reports;
+
+	/** Incremented once per radio prepare callback; used to measure
+	 *  GATT notification sent latency.
+	 */
+	uint32_t cont_report_tx_seq;
+
+	/** Reports which were not sent on the nearest connection interval. */
+	uint32_t cont_report_tx_delayed_reps;
+
+	/** Intervals in which no report was sent to avoid filling up the pipeline. */
+	uint32_t cont_report_tx_skipped;
 #endif
 } conn_mode[CONFIG_BT_HIDS_MAX_CLIENT_COUNT];
 
@@ -607,10 +619,12 @@ static int mouse_movement_send_single(int16_t x_delta, int16_t y_delta,
 {
 	int err = 0;
 	bt_gatt_complete_func_t report_sent_cb = NULL;
+	void *user_data = NULL;
 
 #if CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING
 	if (cont_tx_mode) {
 		report_sent_cb = report_sent;
+		user_data = (void *) mode->cont_report_tx_seq;
 	}
 #endif
 
@@ -644,9 +658,10 @@ static int mouse_movement_send_single(int16_t x_delta, int16_t y_delta,
 		buffer[1] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
 		buffer[2] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
-		err = bt_hids_inp_rep_send(&hids_obj, mode->conn,
-					   INPUT_REP_MOVEMENT_INDEX,
-					   buffer, sizeof(buffer), report_sent_cb);
+		err = bt_hids_inp_rep_send_userdata(&hids_obj, mode->conn,
+						    INPUT_REP_MOVEMENT_INDEX,
+						    buffer, sizeof(buffer), report_sent_cb,
+						    user_data);
 	}
 
 	if (err) {
@@ -722,6 +737,8 @@ static void cont_report_tx(struct bt_conn *conn)
 		return;
 	}
 
+	mode->cont_report_tx_seq++;
+
 	/** Allow up to 2 unACKed report in flight so the next prep can still schedule
 	 *  the next report while the previous one is awaiting the report_sent callback.
 	 *  With CONFIG_BT_ATT_SENT_CB_AFTER_TX=y the callback for a TX in connection event X
@@ -730,6 +747,7 @@ static void cont_report_tx(struct bt_conn *conn)
 	 *  the pipeline won't be filled up.
 	 */
 	if (atomic_get(&mode->cont_report_tx_pending_reports) >= 2) {
+		mode->cont_report_tx_skipped++;
 		return;
 	}
 
@@ -758,10 +776,75 @@ static void report_sent(struct bt_conn *conn, void *user_data)
 		return;
 	}
 
+	if (user_data != NULL) {
+		uint32_t current_seq = mode->cont_report_tx_seq;
+		uint32_t original_seq = (uint32_t)user_data;
+
+		if (current_seq - original_seq > 1) {
+			mode->cont_report_tx_delayed_reps++;
+		}
+	}
+
 	atomic_dec(&mode->cont_report_tx_pending_reports);
 
 	if (!IS_ENABLED(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB)) {
 		cont_report_tx(conn);
+	}
+}
+
+static void continuous_report_tx_start(struct k_work *work)
+{
+	atomic_set(&cont_report_tx_on, 1);
+
+	printk("Starting continuous report sending\n");
+
+	for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
+		if (conn_mode[i].conn) {
+			conn_mode[i].cont_report_tx_seq = 0;
+			conn_mode[i].cont_report_tx_delayed_reps = 0;
+			conn_mode[i].cont_report_tx_skipped = 0;
+			/*
+			 * At the start of continuous report sending,
+			 * send two reports to each connected device.
+			 * This will ensure that a report is sent each
+			 * connection event.
+			 */
+			if (!IS_ENABLED(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB)) {
+				cont_report_tx(conn_mode[i].conn);
+				cont_report_tx(conn_mode[i].conn);
+			}
+		}
+	}
+}
+
+static void continuous_report_tx_stop(void)
+{
+	if (!atomic_clear(&cont_report_tx_on)) {
+		return;
+	}
+
+	printk("Continuous report sending stopped\n");
+
+	/* Report statistics are only available
+	 * on platforms that support radio notification connection callbacks.
+	 */
+	if (IS_ENABLED(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB)) {
+		for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
+			if (conn_mode[i].conn) {
+				printk("Connection %zu statistics:\n", i);
+				printk(" Overall connection intervals: %" PRIu32 "\n",
+					conn_mode[i].cont_report_tx_seq);
+				/* Delayed report statistics are not available in boot mode */
+				if (!conn_mode[i].in_boot_mode) {
+					printk(" Delayed HID reports "
+						"(retransmissions): %" PRIu32 "\n",
+						conn_mode[i].cont_report_tx_delayed_reps);
+				}
+				printk(" Skipped connection intervals: %" PRIu32 "\n",
+					conn_mode[i].cont_report_tx_skipped);
+				printk("\n");
+			}
+		}
 	}
 }
 
@@ -775,27 +858,6 @@ static const struct bt_radio_notification_conn_cb radio_notification_conn_callba
 	.prepare = radio_notification_conn_cb,
 };
 #endif /* CONFIG_BT_RADIO_NOTIFICATION_CONN_CB */
-
-static void continuous_report_tx_start(struct k_work *work)
-{
-	atomic_set(&cont_report_tx_on, 1);
-
-	printk("Starting continuous report sending\n");
-
-	if (!IS_ENABLED(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB)) {
-		/** At the start of continuous report sending,
-		 *  send two reports to each connected device.
-		 *  This will ensure that a report is sent each
-		 *  connection event.
-		 */
-		for (size_t i = 0; i < ARRAY_SIZE(conn_mode); i++) {
-			if (conn_mode[i].conn) {
-				cont_report_tx(conn_mode[i].conn);
-				cont_report_tx(conn_mode[i].conn);
-			}
-		}
-	}
-}
 #endif /* CONFIG_SAMPLE_BT_HIDS_CONTINUOUS_REPORT_SENDING */
 
 #if defined(CONFIG_SAMPLE_BT_HIDS_SECURITY_MITM)
@@ -937,7 +999,6 @@ static void num_comp_reply(bool accept)
 	k_sched_unlock();
 }
 
-
 void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	bool data_to_send = false;
@@ -991,9 +1052,7 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 		}
 	} else {
 		(void) k_work_cancel_delayable(&continuous_report_tx_start_work);
-		if (atomic_clear(&cont_report_tx_on)) {
-			printk("Continuous report sending stopped\n");
-		}
+		continuous_report_tx_stop();
 	}
 #endif
 
