@@ -18,6 +18,7 @@ common:
     - nrf54ls05dk/nrf54ls05a/cpuapp # Device do NOT have low power SPI30
     - nrf54ls05dk/nrf54ls05b/cpuapp # Device do NOT have low power SPI30
     - nrf54lv10dk/nrf54lv10a/cpuapp # Must NOT be powered from 3V
+    - nrf54lc10dk/nrf54lc10a/cpuapp # Must NOT be powered from 3V
 
 tests:
   benchmarks.current_consumption.spis_floating: {}
