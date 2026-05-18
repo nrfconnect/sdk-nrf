@@ -14,7 +14,6 @@
 #include <nrfx_twis.h>
 
 #include <zephyr/drivers/counter.h>
-#include <dk_buttons_and_leds.h>
 
 #include <zephyr/ztest.h>
 
@@ -161,9 +160,7 @@ static void *test_setup(void)
 	int ret;
 
 	zassert_true(device_is_ready(fixture.dev), "TWIM device is not ready");
-	zassert_equal(dk_leds_init(), 0, "DK leds init failed");
 
-	dk_set_led_off(DK_LED1);
 	zassert_equal(0, nrfx_twis_init(&twis, &config, i2s_slave_handler),
 		      "TWIS initialization failed");
 
@@ -227,11 +224,9 @@ static void test_i2c_read_latency(size_t buffer_size, uint8_t i2c_speed_setting)
 	for (uint32_t repeat_counter = 0; repeat_counter < MEASUREMENT_REPEATS; repeat_counter++) {
 		memset(fixture.slave_buffer, 0, buffer_size);
 		counter_reset(tst_timer_dev);
-		dk_set_led_on(DK_LED1);
 		counter_start(tst_timer_dev);
 		ret = i2c_read(fixture.dev, fixture.master_buffer, buffer_size, fixture.addr);
 		counter_get_value(tst_timer_dev, &tst_timer_value);
-		dk_set_led_off(DK_LED1);
 		counter_stop(tst_timer_dev);
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
@@ -275,11 +270,9 @@ static void test_i2c_write_latency(size_t buffer_size, uint8_t i2c_speed_setting
 	for (uint32_t repeat_counter = 0; repeat_counter < MEASUREMENT_REPEATS; repeat_counter++) {
 		memset(fixture.slave_buffer, 0, buffer_size);
 		counter_reset(tst_timer_dev);
-		dk_set_led_on(DK_LED1);
 		counter_start(tst_timer_dev);
 		ret = i2c_write(fixture.dev, fixture.master_buffer, buffer_size, fixture.addr);
 		counter_get_value(tst_timer_dev, &tst_timer_value);
-		dk_set_led_off(DK_LED1);
 		counter_stop(tst_timer_dev);
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
