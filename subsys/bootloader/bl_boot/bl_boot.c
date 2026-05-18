@@ -30,8 +30,8 @@
 #define BL_STORAGE_SIZE		PM_PROVISION_SIZE
 #else
 /* Address of storage as seen in processor address space */
-#define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
-#define BL_STORAGE_SIZE		DT_REG_SIZE(DT_NODELABEL(bl_storage))
+#define BL_STORAGE_ADDRESS	FIXED_PARTITION_ADDRESS(bl_storage)
+#define BL_STORAGE_SIZE		FIXED_PARTITION_SIZE(bl_storage)
 #endif
 
 
