@@ -60,6 +60,12 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA)
   zephyr_library_sources_ifndef(CONFIG_HOSTAP_CRYPTO_ENTERPRISE
     ${HOSTAP_SRC_BASE}/crypto/tls_none.c
   )
+
+  zephyr_library_sources_ifndef(CONFIG_PSA_WANT_ALG_HKDF
+    ${HOSTAP_SRC_BASE}/crypto/sha256-kdf.c
+    ${HOSTAP_SRC_BASE}/crypto/sha384-kdf.c
+    ${HOSTAP_SRC_BASE}/crypto/sha512-kdf.c
+  )
 endif()
 
 if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_PSA)
@@ -88,6 +94,8 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_PSA)
 
   zephyr_library_sources_ifndef(CONFIG_PSA_WANT_ALG_HKDF
     ${HOSTAP_SRC_BASE}/crypto/sha256-kdf.c
+    ${HOSTAP_SRC_BASE}/crypto/sha384-kdf.c
+    ${HOSTAP_SRC_BASE}/crypto/sha512-kdf.c
   )
 
   if(CONFIG_HOSTAP_CRYPTO_WPA3_PSA)
