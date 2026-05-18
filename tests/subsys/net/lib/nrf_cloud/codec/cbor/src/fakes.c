@@ -19,7 +19,7 @@
  *   - nrf_cloud_calloc / nrf_cloud_free / nrf_cloud_malloc  (link-time deps)
  *
  * The remaining symbols (nrf_cloud_encode_message, nrf_cloud_error_msg_decode,
- * nrf_cloud_rest_fota_execution_decode) are only reachable via JSON paths that
+ * nrf_cloud_coap_fota_execution_decode) are only reachable via JSON paths that
  * the CBOR tests do not exercise; they are stubbed out with safe no-op or
  * error-returning implementations so that the linker is satisfied.
  *
@@ -89,7 +89,7 @@ int nrf_cloud_error_msg_decode(const char *const buf, const char *const app_id,
 	return -ENOENT;
 }
 
-int nrf_cloud_rest_fota_execution_decode(const char *const response,
+int nrf_cloud_coap_fota_execution_decode(const char *const response,
 					 struct nrf_cloud_fota_job_info *const job)
 {
 	ARG_UNUSED(response);
@@ -99,7 +99,7 @@ int nrf_cloud_rest_fota_execution_decode(const char *const response,
 
 /* -------------------------------------------------------------------------
  * nrf_cloud_agnss_type_array_get — called in the CBOR path of
- * coap_codec_agnss_encode when type == NRF_CLOUD_REST_AGNSS_REQ_CUSTOM.
+ * coap_codec_agnss_encode when type == NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM.
  *
  * The real implementation parses an nrf_modem_gnss_agnss_data_frame bitmask
  * and fills in an array of nrf_cloud_agnss_type values.  For unit testing
