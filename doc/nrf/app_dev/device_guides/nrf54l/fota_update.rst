@@ -27,6 +27,9 @@ For more information about introducing immutable MCUboot bootloader, refer to :r
 FOTA over Bluetooth Low Energy
 ******************************
 
+.. note::
+   |bluetooth_fota_note|
+
 .. fota_upgrades_over_ble_intro_start
 
 FOTA updates are supported using MCUmgr's Simple Management Protocol (SMP) over Bluetooth®.

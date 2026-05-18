@@ -66,6 +66,10 @@
 
 .. |open_terminal_window_with_environment| replace:: Start the :ref:`toolchain environment <using_toolchain_environment>` in a terminal window.
 
+.. |bluetooth_fota_note| replace:: The Bluetooth LE FOTA method is suited for local, proximity-based updates.
+   For production fleet management where you need to manage update rollouts across large production fleets, target specific device cohorts, monitor update progress, and roll back on failure, you can use nRF Cloud powered by Memfault to manage FOTA updates remotely from the cloud.
+   See `nRF Cloud FOTA`_ for further details on nRF Cloud FOTA.
+
 .. ### Board shortcuts
 
 .. |nRF5340DKnoref| replace:: nRF5340 DK board (PCA10095)
