@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Enable uart132 for tracing. */
+&uart132 {
+	status = "okay";
+	current-speed = <1000000>;
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+/ {
+	chosen {
+		nordic,modem-trace-uart = &uart132;
+	};
+};
+
+/* Enable the trace signal on the application bellboard. */
+&cpuapp_bellboard {
+	nordic,interrupt-mapping = <0xe3042041 0>;
+};
+
+/delete-node/ &cpuapp_cpucell_ipc_shm_ctrl;
+/delete-node/ &cpuapp_cpucell_ipc_shm_heap;
+/delete-node/ &cpucell_cpuapp_ipc_shm_heap;
+
+/* Reduce size of application RAM to make room for trace. */
+&cpuapp_ram0x_sram {
+	reg = <0x2f000000 DT_SIZE_K(332)>;
+	ranges = <0x0 0x2f000000 0x53000>;
+};
+
+/ {
+	reserved-memory {
+		/* Move IPC shared memory and add trace region. */
+		cpuapp_cpucell_ipc_shm_ctrl: memory@2f053000 {
+			reg = <0x2f053000 DT_SIZE_K(4)>;
+		};
+
+		cpuapp_cpucell_ipc_shm_heap: memory@2f054000 {
+			reg = <0x2f054000 DT_SIZE_K(16)>;
+		};
+
+		cpucell_cpuapp_ipc_shm_heap: memory@2f058000 {
+			reg = <0x2f058000 DT_SIZE_K(16)>;
+		};
+
+		cpucell_cpuapp_ipc_shm_trace: memory@2f05c000 {
+			reg = <0x2f05c000 DT_SIZE_K(16)>;
+		};
+	};
+};

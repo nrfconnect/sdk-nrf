@@ -1,0 +1,13 @@
+name: nrf92-modem-trace-uart
+append:
+  EXTRA_CONF_FILE: modem-trace-uart-common.conf
+
+boards:
+  /.*/nrf9251/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: modem-trace-uart-nrf9251.overlay
+      EXTRA_CONF_FILE: modem-trace-uart-nrf9251.conf
+  /.*/nrf9280/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: modem-trace-uart-nrf9280.overlay
+      EXTRA_CONF_FILE: modem-trace-uart-nrf9280.conf
