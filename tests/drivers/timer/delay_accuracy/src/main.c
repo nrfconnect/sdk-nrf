@@ -41,9 +41,13 @@ static void *suite_setup(void)
 
 static void test_k_msleep(int32_t ms)
 {
+	int key;
+
+	key = irq_lock();
 	nrfx_timer_clear(&test_timer);
 	k_msleep(ms);
 	nrfx_timer_capture(&test_timer, NRF_TIMER_CC_CHANNEL0);
+	irq_unlock(key);
 	uint32_t pulses = nrfx_timer_capture_get(&test_timer, NRF_TIMER_CC_CHANNEL0);
 	uint32_t expected_pulses = nrfx_timer_ms_to_ticks(&test_timer, ms);
 	/* Instead of using floating numbers, scale up by 100.
@@ -60,9 +64,13 @@ static void test_k_msleep(int32_t ms)
 
 static void test_k_busy_wait(int32_t ms)
 {
+	int key;
+
+	key = irq_lock();
 	nrfx_timer_clear(&test_timer);
 	k_busy_wait(ms * 1000);
 	nrfx_timer_capture(&test_timer, NRF_TIMER_CC_CHANNEL0);
+	irq_unlock(key);
 	uint32_t pulses = nrfx_timer_capture_get(&test_timer, NRF_TIMER_CC_CHANNEL0);
 	uint32_t expected_pulses = nrfx_timer_ms_to_ticks(&test_timer, ms);
 	uint32_t diff_percent_x100 = abs(expected_pulses - pulses) * 100 * 100 / expected_pulses;
