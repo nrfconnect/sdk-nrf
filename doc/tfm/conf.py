@@ -38,6 +38,7 @@ extensions = [
     "sphinxcontrib.plantuml",
     "sphinx_tabs.tabs",
     "zephyr.external_content",
+
 ]
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
@@ -68,6 +69,8 @@ html_theme_options = {
     "docset": "tfm",
     "docsets": utils.ALL_DOCSETS,
     "subtitle": "nRF Connect SDK",
+    "collapse_navigation": False,
+    "logo_url": "https://docs.nordicsemi.com/"
 }
 
 # Options for autosectionlabel -------------------------------------------------
