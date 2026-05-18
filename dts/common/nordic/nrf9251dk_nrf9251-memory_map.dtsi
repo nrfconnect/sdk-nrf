@@ -13,18 +13,18 @@
 		ranges;
 
 		/* IPC Ctrl */
-		cpuapp_cpucell_ipc_shm_ctrl: memory@2f051000 {
-			reg = <0x2f051000 DT_SIZE_K(4)>;
+		cpuapp_cpucell_ipc_shm_ctrl: memory@2f057000 {
+			reg = <0x2f057000 DT_SIZE_K(4)>;
 		};
 
 		/* IPC TX heap, user defined */
-		cpuapp_cpucell_ipc_shm_heap: memory@2f052000 {
-			reg = <0x2f052000 DT_SIZE_K(16)>;
+		cpuapp_cpucell_ipc_shm_heap: memory@2f058000 {
+			reg = <0x2f058000 DT_SIZE_K(16)>;
 		};
 
 		/* IPC RX heap, user defined */
-		cpucell_cpuapp_ipc_shm_heap: memory@2f056000 {
-			reg = <0x2f056000 DT_SIZE_K(16)>;
+		cpucell_cpuapp_ipc_shm_heap: memory@2f05c000 {
+			reg = <0x2f05c000 DT_SIZE_K(16)>;
 		};
 
 		cpuapp_cpusys_ipc_shm: memory@2f88f600 {

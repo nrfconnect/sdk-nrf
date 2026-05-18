@@ -219,10 +219,10 @@
 
 		cpuapp_ram0x_sram: sram@2f000000 {
 			compatible = "mmio-sram";
-			reg = <0x2f000000 DT_SIZE_K(384)>;
+			reg = <0x2f000000 DT_SIZE_K(348)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x2f000000 0x60000>;
+			ranges = <0x0 0x2f000000 0x57000>;
 		};
 
 		cpuflpr_tcm_sram: sram@2f890000 {
