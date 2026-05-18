@@ -81,34 +81,36 @@ Refer to the `Adding a device to your account`_ section of the nRF Cloud documen
 Configuration options for device ID
 ===================================
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` - If you enable this option, the ID is automatically generated using a prefix and the modem's IMEI (``<prefix><IMEI>``).
-  This is the default.
-  You can configure the prefix by using :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
-  The default format of the prefix is ``nrf-`` and it is valid only for Nordic devices such as Thingy:91, Thingy:91 X, or an nRF91 Series DK.
-  For custom hardware, use a prefix other than ``nrf-`` by modifying :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
+The recommended source is the device UUID, which matches the device ID that nRF Cloud provisioning tools default to.
+The library selects one of two UUID retrieval paths depending on the target SoC, so most applications can leave the default unchanged.
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - If you enable this option, the ID is automatically generated using the modem's 128-bit internal UUID, which results in a 36 character string of hexadecimal values in the 8-4-4-4-12 UUID format.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - Default on an nRF9160 device.
+  The ID is the modem's internal UUID, extracted from the ``iss`` claim of a modem-signed JWT.
+  This path is required on an nRF9160 device to remain compatible with field devices provisioned through older nrfcloud-utils flows, which derived the device ID from the same JWT ``iss`` value.
+  Selecting this option automatically enables :kconfig:option:`CONFIG_MODEM_JWT`.
+  Requires modem firmware v1.3.0 or later.
 
-  * This option requires modem firmware v1.3.0 or higher.
-  * This option is required when using `auto-onboarding <nRF Cloud Auto-onboarding_>`_.
-  * This option only takes effect if the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option is also enabled.
-    If the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option is not set to ``y``, the default :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` Kconfig option will be selected instead.
-
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID` - Similar to :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` but gets the device UUID from the modem by using the ``AT%DEVICEUUID`` command and not using JWT.
-  This option is only supported by the following modem firmware:
-
-  * mfw_nrf91x1 (v2.0.0 or later)
-  * mfw_nrf9151-ntn
-  * mfw-nr+_nrf91x1 (v2.0.0 or later)
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID` - Default on the nRF91x1 and future SoCs.
+  The ID is the modem's device UUID, retrieved using the ``AT%DEVICEUUID`` command.
+  This path does not depend on :kconfig:option:`CONFIG_MODEM_JWT`, which reduces the code size in MQTT-only builds.
+  Supported by mfw_nrf91x1 (v2.0.0 or later), mfw_nrf9151-ntn, and mfw-nr+_nrf91x1 (v2.0.0 or later).
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` - If you enable this option, the ID is set at compile time using the value specified by :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID`.
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` - If you enable this option, the ID is automatically generated using a unique hardware ID (for example, a MAC address).
-  You can choose the required hardware ID using the ``HW_ID_LIBRARY_SOURCE`` Kconfig choice.
-  See the :ref:`lib_hw_id` library documentation for details.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` - If you enable this option, the ID is set at runtime using the :c:func:`nrf_cloud_client_id_runtime_set` function.
+  If the nRF Cloud library is used directly, you can also set the NULL-terminated ID string in the :c:struct:`nrf_cloud_init_param` structure when calling the :c:func:`nrf_cloud_init` function.
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` - If you enable this option, the ID is set at runtime.
-  If the nRF Cloud library is used directly, set the NULL-terminated ID string in the :c:struct:`nrf_cloud_init_param` structure when calling the :c:func:`nrf_cloud_init` function.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` - Deprecated.
+  Use the default UUID source for new applications.
+  If you enable this option, the ID is generated using a prefix and the modem's IMEI (``<prefix><IMEI>``).
+  Fleet operators with IMEI-provisioned devices already in the field can continue to use this option.
+  The prefix is configured with :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` and defaults to ``nrf-``, which is reserved for Nordic devices such as the Thingy:91, Thingy:91 X, and nRF91 Series DK.
+  For custom hardware, set :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` to a different value to avoid using the reserved ``nrf-`` prefix.
+
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` - Deprecated.
+  Use the default UUID source for new applications.
+  If you enable this option, the ID is generated using a unique hardware ID (for example, a MAC address).
+  See the :ref:`lib_hw_id` library documentation for details.
 
 .. _lib_nrf_cloud_fota:
 

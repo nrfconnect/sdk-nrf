@@ -22,6 +22,10 @@
 #include <zephyr/net/wifi.h>
 #endif /* defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC) */
 
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NRF_CLOUD)
+#include <net/nrf_cloud.h>
+#endif
+
 #include <memfault/core/build_info.h>
 #include <memfault/core/compiler.h>
 #include <memfault/core/platform/device_info.h>
@@ -71,6 +75,8 @@ BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC) > 1,
 static char device_serial[HW_ID_LEN + 1];
 #elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI)
 static char device_serial[15 + 1]; /* IMEI is 15 characters, NET_MAC is 12 characters */
+#elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NRF_CLOUD)
+static char device_serial[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 #elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_STATIC)
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_DEVICE_ID) > 1, "The device ID must be configured");
 static char device_serial[] = CONFIG_MEMFAULT_NCS_DEVICE_ID;
@@ -203,6 +209,18 @@ static int device_info_init(void)
 
 	return 0;
 }
+#elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NRF_CLOUD)
+static int device_info_init(void)
+{
+	int err = nrf_cloud_client_id_get(device_serial, sizeof(device_serial));
+
+	if (err) {
+		LOG_ERR("Failed to get nRF Cloud client ID, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
 #elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
 static int device_info_init(void)
 {
@@ -248,7 +266,8 @@ static int init(void)
 	}
 
 #if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI) || \
-	defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
+	defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC) || \
+	defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NRF_CLOUD)
 	err = device_info_init();
 	if (err) {
 		LOG_ERR("Device info initialization failed, error: %d", err);

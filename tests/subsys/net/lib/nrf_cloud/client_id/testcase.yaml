@@ -31,7 +31,6 @@ tests:
     extra_args:
       - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI=n
       - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID=y
-      - CONFIG_MODEM_JWT=y
     tags:
       - sysbuild
       - ci_tests_subsys_net

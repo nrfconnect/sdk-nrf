@@ -652,6 +652,19 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
+  * Updated:
+
+    * By changing the default device ID source from :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` to the device UUID.
+      On an nRF9160 device the default is now :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID`, which reads the UUID from the JWT ``iss`` claim and preserves compatibility with field devices provisioned through older nrfcloud-utils flows.
+      On the nRF91x1 and future SoCs, the default is :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID`, which reads the UUID using ``AT%DEVICEUUID`` without pulling in :kconfig:option:`CONFIG_MODEM_JWT`.
+      Each option is constrained to its target SoC at the Kconfig level.
+      See the :ref:`migration_3.4` for the impact on existing devices that relied on the previous IMEI default.
+
+  * Deprecated:
+
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` Kconfig options.
+      Use the default UUID source for new applications.
+
   * Fixed:
 
     * An issue where PEM private keys with CRLF line endings could not be decoded correctly for JWT signing used in nRF Cloud CoAP authentication.

@@ -806,7 +806,7 @@ You can enable support for this service by building the sample as follows:
 |board_target|
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_provisioning_service` for instructions on how to provision your device with the Provisioning Service.
-The device is identified using its UUID rather than its IMEI, since both overlays set the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` Kconfig option.
+The device is identified using its UUID, which is the default device ID source on the nRF91 Series devices.
 
 .. _nrf_cloud_multi_service_building_wifi_scan:
 

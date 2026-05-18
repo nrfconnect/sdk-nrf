@@ -152,7 +152,8 @@ ZTEST(nrf_cloud_client_id_test, test_08_nrf_cloud_client_id_get_good)
 	ret = strncmp(buf, CONFIG_NRF_CLOUD_CLIENT_ID,
 		      strlen(CONFIG_NRF_CLOUD_CLIENT_ID));
 	zassert_equal(ret, 0, "Unexpected miscompare on compile time client id");
-#elif IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
+#elif IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID) || \
+	IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID)
 	zassert_equal(strlen(buf), UUID_LEN, "Unexpected length of UUID id");
 #elif IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
 	/* TODO: check length returned depending on CONFIG_HW_ID_LIBRARY_SOURCE */
