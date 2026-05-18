@@ -827,3 +827,8 @@ out:
 }
 
 #endif /* #if CONFIG_OPENTHREAD_ECDSA */
+
+void mbedtls_ssl_conf_rng(void)
+{
+	/* FIXME: need to recompile the OT library without usage of this function */
+}
