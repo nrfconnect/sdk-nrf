@@ -315,6 +315,16 @@ Bluetooth samples
     * :ref:`bt_scanning_while_connecting`
     * :ref:`ble_subrating`
 
+* :ref:`peripheral_hids_mouse` sample:
+
+  * Added support for continuous HID report sending (one report notification for each connection interval) as well as statistics for continuous report sending.
+
+* :ref:`bluetooth_central_hids` sample:
+
+  * Added continuous receive mode when a high report rate is detected, with periodic statistics for each batch of received reports for timing quality assessment (for use with continuous sending on a HID peripheral).
+  * The sample now uses deferred logging to reduce the overhead of logging.
+    This may cause messages to be delayed up to around 100 ms.
+
 Bluetooth Mesh samples
 ----------------------
 
