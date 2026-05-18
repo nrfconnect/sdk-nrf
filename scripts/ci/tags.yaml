@@ -1150,6 +1150,12 @@ ci_tests_lib_qos:
     - nrf/lib/qos/
     - nrf/tests/lib/qos/
 
+ci_tests_lib_nrf_802154_callbacks_dispatcher:
+  files:
+    - nrf/lib/nrf_802154_callbacks_dispatcher/
+    - nrf/tests/lib/nrf_802154_callbacks_dispatcher/
+    - nrfxlib/nrf_802154/common/include/
+
 ci_tests_lib_pcm_mix:
   files:
     - nrf/lib/pcm_mix/
