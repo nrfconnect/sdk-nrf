@@ -1,0 +1,12 @@
+tests:
+  lib.nrf_802154_callbacks_dispatcher:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - nrf_802154_callbacks_dispatcher
+      - ci_build
+      - sysbuild
+      - ci_tests_lib_nrf_802154_callbacks_dispatcher
