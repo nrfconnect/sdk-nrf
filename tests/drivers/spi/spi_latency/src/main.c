@@ -10,7 +10,6 @@
 #include <nrfx_spim.h>
 #include <zephyr/linker/devicetree_regions.h>
 #include <zephyr/drivers/counter.h>
-#include <dk_buttons_and_leds.h>
 #include <math.h>
 
 #define TEST_TIMER_COUNT_TIME_LIMIT_MS 500
@@ -37,7 +36,6 @@ static uint8_t rx_buffer[MAX_TEST_BUFFER_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABE
 static void *test_setup(void)
 {
 	zassert_true(spi_is_ready_dt(&spim_spec), "SPIM device is not ready");
-	zassert_equal(dk_leds_init(), 0, "DK leds init failed");
 
 	return NULL;
 }
@@ -116,11 +114,9 @@ static void test_spim_transmission_latency(size_t buffer_size)
 	for (uint32_t repeat_counter = 0; repeat_counter < MEASUREMENT_REPEATS; repeat_counter++) {
 		memset(rx_buffer, 0xFF, buffer_size);
 		counter_reset(tst_timer_dev);
-		dk_set_led_on(DK_LED1);
 		counter_start(tst_timer_dev);
 		err = spi_transceive_dt(&spim_spec, &tx_spi_buf_set, &rx_spi_buf_set);
 		counter_get_value(tst_timer_dev, &tst_timer_value);
-		dk_set_led_off(DK_LED1);
 		counter_stop(tst_timer_dev);
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
