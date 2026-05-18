@@ -23,6 +23,9 @@ See the :ref:`app_dfu` page for general Device Firmware Update (DFU) information
 FOTA over Bluetooth Low Energy
 ******************************
 
+.. note::
+   |bluetooth_fota_note|
+
 .. fota_upgrades_over_ble_intro_start
 
 FOTA updates are supported using MCUmgr's Simple Management Protocol (SMP) over Bluetooth.

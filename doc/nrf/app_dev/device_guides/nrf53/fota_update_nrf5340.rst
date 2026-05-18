@@ -16,6 +16,9 @@ FOTA updates with nRF5340 DK
 FOTA over Bluetooth Low Energy
 ******************************
 
+.. note::
+   |bluetooth_fota_note|
+
 .. include:: /app_dev/device_guides/nrf52/fota_update.rst
    :start-after: fota_upgrades_over_ble_intro_start
    :end-before: fota_upgrades_over_ble_intro_end
