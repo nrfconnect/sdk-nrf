@@ -29,6 +29,7 @@ The Bluetooth Mesh technology is covered by the following set of specifications:
 * `Basic Scene Selector NLC Profile`_ v1.0.1
 * `Dimming Control NLC Profile`_ v1.0.1
 * `Energy Monitor NLC Profile`_ v1.0.1
+* `HVAC Integration NLC Profile`_ v1.0
 * `Occupancy Sensor NLC Profile`_ v1.0.1
 
 Bluetooth Mesh in the |NCS| supports all mandatory features and almost all optional features of the `Bluetooth Mesh protocol specification`_.
