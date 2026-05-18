@@ -113,15 +113,18 @@ struct nrf_cloud_pgps_result {
 	size_t path_sz;
 };
 
-#if defined(CONFIG_NRF_CLOUD_COAP)
-/** @brief Data required for nRF Cloud Predicted GPS (P-GPS) request */
+/** @brief Data required for nRF Cloud Predicted GPS (P-GPS) request.
+ *
+ * Defined here unconditionally so callers can construct a P-GPS request
+ * via @ref nrf_cloud_coap_pgps_url_get without depending on the full
+ * CoAP transport machinery being enabled.
+ */
 struct nrf_cloud_coap_pgps_request {
 	/** Data to be included in the P-GPS request. To omit an item
 	 * use the appropriate `NRF_CLOUD_PGPS_REQ_NO_` define.
 	 */
 	const struct gps_pgps_request *pgps_req;
 };
-#endif /* CONFIG_NRF_CLOUD_COAP */
 
 /** @brief P-GPS error code: current time unknown. */
 #define ETIMEUNKNOWN	8000

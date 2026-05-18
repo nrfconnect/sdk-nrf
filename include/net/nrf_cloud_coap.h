@@ -27,15 +27,18 @@ struct nrf_cloud_coap_pgps_request;
 struct nrf_cloud_pgps_result;
 #endif
 #include <net/nrf_cloud_codec.h>
-#if defined(CONFIG_NRF_CLOUD_COAP)
+/* <zephyr/net/coap.h> is always available and provides
+ * enum coap_content_format. <zephyr/net/coap_client.h> requires
+ * CONFIG_COAP_CLIENT_* symbols that only exist when CoAP client is
+ * enabled, so it is only pulled in when this library is built with
+ * CoAP support.
+ */
 #include <zephyr/net/coap.h>
+#if defined(CONFIG_NRF_CLOUD_COAP)
 #include <zephyr/net/coap_client.h>
 #else
 /* Work around missing Kconfigs upstream in coap_client.h */
 #define coap_client_response_cb_t void *
-enum coap_content_format {
-	dummy
-};
 struct coap_client {};
 struct coap_client_option {};
 #endif

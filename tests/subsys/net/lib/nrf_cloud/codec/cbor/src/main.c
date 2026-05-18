@@ -41,8 +41,9 @@
  */
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_location.h>   /* lte_lc.h, wifi_location_common.h, nrf_cloud.h */
-#include <net/nrf_cloud_rest.h>        /* nrf_cloud_rest_agnss_request/result */
 #include <net/nrf_cloud_pgps.h>        /* nrf_cloud_pgps_result, gps_pgps_request */
+/* nrf_cloud_coap_agnss_request/result, nrf_cloud_coap_pgps_request */
+#include <net/nrf_cloud_coap.h>
 #include <nrf_modem_gnss.h>            /* struct nrf_modem_gnss_agnss_data_frame */
 #include <zephyr/net/coap.h>           /* COAP_CONTENT_FORMAT_* */
 #include "coap_codec.h"
@@ -486,8 +487,8 @@ ZTEST(coap_cbor_agnss, test_encode_custom_type)
 	 * because our stub ignores the content and returns fixed types.
 	 */
 	struct nrf_modem_gnss_agnss_data_frame agnss_data = {0};
-	struct nrf_cloud_rest_agnss_request request = {
-		.type = NRF_CLOUD_REST_AGNSS_REQ_CUSTOM,
+	struct nrf_cloud_coap_agnss_request request = {
+		.type = NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM,
 		.agnss_req = &agnss_data,
 		.net_info = NULL,
 		.filtered = false,
@@ -514,8 +515,8 @@ ZTEST(coap_cbor_agnss, test_encode_with_net_info_and_filter)
 			.rsrp = 50,  /* != LTE_LC_CELL_RSRP_INVALID */
 		},
 	};
-	struct nrf_cloud_rest_agnss_request request = {
-		.type = NRF_CLOUD_REST_AGNSS_REQ_CUSTOM,
+	struct nrf_cloud_coap_agnss_request request = {
+		.type = NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM,
 		.agnss_req = &agnss_data,
 		.net_info = &net_info,
 		.filtered = true,
@@ -533,8 +534,8 @@ ZTEST(coap_cbor_agnss, test_encode_non_custom_type_returns_enotsup)
 	uint8_t buf[AGNSS_GET_CBOR_MAX_SIZE];
 	size_t len = sizeof(buf);
 	struct nrf_modem_gnss_agnss_data_frame agnss_data = {0};
-	struct nrf_cloud_rest_agnss_request request = {
-		.type = NRF_CLOUD_REST_AGNSS_REQ_ASSISTANCE,  /* not CUSTOM */
+	struct nrf_cloud_coap_agnss_request request = {
+		.type = NRF_CLOUD_COAP_AGNSS_REQ_ASSISTANCE,  /* not CUSTOM */
 		.agnss_req = &agnss_data,
 	};
 
@@ -548,8 +549,8 @@ ZTEST(coap_cbor_agnss, test_encode_invalid_fmt_returns_enotsup)
 	uint8_t buf[AGNSS_GET_CBOR_MAX_SIZE];
 	size_t len = sizeof(buf);
 	struct nrf_modem_gnss_agnss_data_frame agnss_data = {0};
-	struct nrf_cloud_rest_agnss_request request = {
-		.type = NRF_CLOUD_REST_AGNSS_REQ_CUSTOM,
+	struct nrf_cloud_coap_agnss_request request = {
+		.type = NRF_CLOUD_COAP_AGNSS_REQ_CUSTOM,
 		.agnss_req = &agnss_data,
 	};
 
@@ -562,7 +563,7 @@ ZTEST(coap_cbor_agnss, test_decode_cbor_fmt_returns_enotsup)
 	/* A-GNSS responses are binary octet-stream, not CBOR.
 	 * Passing CBOR format must return -ENOTSUP.
 	 */
-	struct nrf_cloud_rest_agnss_result result = {0};
+	struct nrf_cloud_coap_agnss_result result = {0};
 	const uint8_t dummy[] = {0x01, 0x02};
 
 	zassert_equal(coap_codec_agnss_resp_decode(&result, dummy, sizeof(dummy),
@@ -576,7 +577,7 @@ ZTEST(coap_cbor_agnss, test_decode_octet_stream)
 	 */
 	static const uint8_t payload[] = {0xDE, 0xAD, 0xBE, 0xEF, 0x01, 0x02, 0x03, 0x04};
 	uint8_t out[sizeof(payload)];
-	struct nrf_cloud_rest_agnss_result result = {
+	struct nrf_cloud_coap_agnss_result result = {
 		.buf = out,
 		.buf_sz = sizeof(out),
 	};
@@ -592,7 +593,7 @@ ZTEST(coap_cbor_agnss, test_decode_octet_stream_truncated)
 	/* When result->buf_sz < response length the data is truncated to buf_sz. */
 	static const uint8_t payload[] = {0x01, 0x02, 0x03, 0x04, 0x05};
 	uint8_t out[3];
-	struct nrf_cloud_rest_agnss_result result = {
+	struct nrf_cloud_coap_agnss_result result = {
 		.buf = out,
 		.buf_sz = sizeof(out),
 	};
@@ -621,7 +622,7 @@ ZTEST(coap_cbor_pgps, test_encode_valid)
 		.gps_day = 3000,
 		.gps_time_of_day = 43200,
 	};
-	struct nrf_cloud_rest_pgps_request request = {
+	struct nrf_cloud_coap_pgps_request request = {
 		.pgps_req = &pgps_req,
 	};
 
@@ -642,7 +643,7 @@ ZTEST(coap_cbor_pgps, test_encode_invalid_fmt_returns_enotsup)
 		.gps_day = 1,
 		.gps_time_of_day = 0,
 	};
-	struct nrf_cloud_rest_pgps_request request = {.pgps_req = &pgps_req};
+	struct nrf_cloud_coap_pgps_request request = {.pgps_req = &pgps_req};
 
 	zassert_equal(coap_codec_pgps_encode(&request, buf, &len,
 					     COAP_CONTENT_FORMAT_APP_JSON), -ENOTSUP);
@@ -658,7 +659,7 @@ ZTEST(coap_cbor_pgps, test_encode_buf_too_small)
 		.gps_day = 3000,
 		.gps_time_of_day = 43200,
 	};
-	struct nrf_cloud_rest_pgps_request request = {.pgps_req = &pgps_req};
+	struct nrf_cloud_coap_pgps_request request = {.pgps_req = &pgps_req};
 
 	zassert_equal(coap_codec_pgps_encode(&request, buf, &len,
 					     COAP_CONTENT_FORMAT_APP_CBOR), -EINVAL);
