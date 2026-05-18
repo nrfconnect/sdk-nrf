@@ -1324,6 +1324,7 @@
 .. _`Basic Scene Selector NLC Profile`: https://www.bluetooth.com/specifications/specs/bssnlcp-1-0-1/
 .. _`Dimming Control NLC Profile`: https://www.bluetooth.com/specifications/specs/dicnlcp-1-0-1/
 .. _`Energy Monitor NLC Profile`: https://www.bluetooth.com/specifications/specs/enmnlcp-1-0-1/
+.. _`HVAC Integration NLC Profile`: https://www.bluetooth.com/specifications/specs/hvac-integration-nlc-profile/
 .. _`Occupancy Sensor NLC Profile`: https://www.bluetooth.com/specifications/specs/ocsnlcp-1-0-1/
 .. _`Bluetooth Mesh model overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
 .. _`Bluetooth Mesh glossary`: https://www.bluetooth.com/learn-about-bluetooth/recent-enhancements/mesh/mesh-glossary/
