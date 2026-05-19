@@ -140,6 +140,61 @@ struct dult_bt_adv_data {
 int dult_bt_adv_data_fill(const struct dult_user *user, struct bt_data *bt_adv_data,
 			  uint8_t *buf, size_t buf_size, const struct dult_bt_adv_data *adv_data);
 
+/** DULT Accessory Non-Owner Service (ANOS) callback structure. */
+struct dult_bt_anos_cb {
+	/** @brief Verify whether a connection may access ANOS opcodes.
+	 *
+	 *  This callback is OPTIONAL.
+	 *
+	 *  The ANOS by default verifies the opcode access in the following way:
+	 *  - Checks if the opcode is supported (defined by the DULT specification), otherwise
+	 *    rejects with the Invalid_command status.
+	 *  - Checks if the DULT user is in the  @ref DULT_NEAR_OWNER_STATE_MODE_SEPARATED state,
+	 *    otherwise rejects with the Invalid_command status.
+	 *  - Checks if the opcode precondition is met, otherwise rejects with the status
+	 *    specific to the opcode specification.
+	 *
+	 *  By implementing this callback, the network can customize the opcode access verification
+	 *  in the following way:
+	 *  - Checks if the opcode is supported (defined by the network specification), otherwise
+	 *    rejects with the Invalid_command status.
+	 *  - Checks if the opcode is in the Non-owner Control group and the DULT user is in the
+	 *    @ref DULT_NEAR_OWNER_STATE_MODE_SEPARATED state, otherwise rejects with the
+	 *    Invalid_command status.
+	 *  - Checks if the opcode precondition is met, otherwise rejects with the status
+	 *    specific to the opcode specification.
+	 *  - Checks if the access_verify callback allows the access, otherwise rejects with the
+	 *    Invalid_state status.
+	 *
+	 *  Granting the access to opcodes outside of the @ref DULT_NEAR_OWNER_STATE_MODE_SEPARATED
+	 *  state is a deviation from the DULT specification; ensure the policy matches the network
+	 *  specification implemented on top of DULT.
+	 *
+	 *  This callback can be used to grant access to ANOS opcodes related to the Accessory
+	 *  Information opcode group for the purposes of the accessory association with the owner
+	 *  device.
+	 *
+	 *  @param[in] conn Pointer to the Bluetooth connection.
+	 *
+	 *  @return true to grant access to ANOS opcodes, false to deny it.
+	 */
+	bool (*access_verify)(struct bt_conn *conn);
+};
+
+/** @brief Register DULT Bluetooth ANOS callback structure.
+ *
+ *  Registering this callback structure is OPTIONAL.
+ *
+ *  This function must be called after registering the DULT user with @ref dult_user_register
+ *  and before enabling DULT with @ref dult_enable function.
+ *
+ *  @param[in] user	User structure used to authenticate the user.
+ *  @param[in] cb	DULT Bluetooth ANOS callback structure.
+ *
+ *  @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int dult_bt_anos_cb_register(const struct dult_user *user, const struct dult_bt_anos_cb *cb);
+
 #ifdef __cplusplus
 }
 #endif
