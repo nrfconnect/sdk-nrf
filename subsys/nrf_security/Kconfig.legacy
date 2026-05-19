@@ -22,7 +22,7 @@ config MBEDTLS_MEMORY_BUFFER_ALLOC_C
 
 config MBEDTLS_THREADING_C
 	bool "Threading support for Mbed TLS and PSA crypto"
-	default y if CC3XX_BACKEND || MBEDTLS_PSA_CRYPTO_C
+	default y if MBEDTLS_PSA_CRYPTO_C
 	depends on MULTITHREADING
 	help
 	  Threading support is used when PSA crypto is built locally or
@@ -57,50 +57,14 @@ config MBEDTLS_PLATFORM_SNPRINTF_ALT
 
 config MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT
 	bool
-	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y if HW_CC3XX || PSA_CRYPTO_DRIVER_CC3XX
 	depends on !BUILD_WITH_TFM
 
 config MBEDTLS_THREADING_ALT
 	bool
-	default y if CC3XX_BACKEND || MBEDTLS_PSA_CRYPTO_C
+	default y if HW_CC3XX || MBEDTLS_PSA_CRYPTO_C
 	depends on !BUILD_WITH_TFM
 	depends on MBEDTLS_THREADING_C
-
-# Prompt-less configuration to state what is missing
-
-config CC310_ONLY_PSA_ENABLED
-	bool
-	default y
-	depends on HAS_HW_NRF_CC310 && !PSA_CRYPTO_DRIVER_OBERON
-
-config CC312_ONLY_PSA_ENABLED
-	bool
-	default y
-	depends on HAS_HW_NRF_CC312 && !PSA_CRYPTO_DRIVER_OBERON
-
-config CC310_ONLY_ENABLED
-	bool
-	default y
-	depends on (CC310_BACKEND && !OBERON_BACKEND) || \
-		   CC310_ONLY_PSA_ENABLED
-
-config CC312_ONLY_ENABLED
-	bool
-	default y
-	depends on (CC312_BACKEND && !OBERON_BACKEND) || \
-		   CC312_ONLY_PSA_ENABLED
-
-config OBERON_ONLY_PSA_ENABLED
-	bool
-	default y
-	depends on (PSA_CRYPTO_DRIVER_OBERON && !PSA_CRYPTO_DRIVER_CC3XX && !PSA_CRYPTO_DRIVER_CRACEN) && \
-		   !CC3XX_BACKEND
-
-config OBERON_ONLY_ENABLED
-	bool
-	default y
-	depends on (OBERON_BACKEND && !CC3XX_BACKEND) || \
-		    OBERON_ONLY_PSA_ENABLED
 
 menu "Legacy mbed TLS crypto APIs"
 
@@ -115,56 +79,9 @@ config MBEDTLS_MPI_WINDOW_SIZE
 
 config MBEDTLS_MPI_MAX_SIZE
 	int
-	prompt "Maximum number of bytes for usable MPIs." if !(CC312_BACKEND || CC310_BACKEND)
-	default 256 if CC310_BACKEND
-	default 384 if CC312_BACKEND
+	prompt "Maximum number of bytes for usable MPIs."
 	default 384 # Needed to support RSA 3072
 	range 256 2048
-
-
-if MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
-
-config CC310_BACKEND
-	bool
-	depends on HAS_HW_NRF_CC310 && !BUILD_WITH_TFM && \
-		   (PSA_CRYPTO_DRIVER_CC3XX || CC3XX_BACKEND)
-	default y
-	help
-	  Convenience configuration to state explicitly that CryptoCell CC310 is enabled.
-
-config CC312_BACKEND
-	bool
-	depends on HAS_HW_NRF_CC312 && !BUILD_WITH_TFM && \
-		   (PSA_CRYPTO_DRIVER_CC3XX || CC3XX_BACKEND)
-	default y
-	help
-	  Convenience configuration to state explicitly that CryptoCell CC312 is enabled.
-
-config CC3XX_BACKEND_FORCED
-	bool
-
-config OBERON_BACKEND_FORCED
-	bool
-
-config CC3XX_BACKEND
-	bool
-	depends on HAS_HW_NRF_CC3XX && !OBERON_BACKEND_FORCED
-	prompt "Configuration to enable CryptoCell CC3XX for legacy mbed TLS APIs"
-	help
-	  This configuration enables legacy mbed TLS APIs using cc3xx.
-	  PSA_CRYPTO_DRIVER_CC3XX should be used instead, and will replace this once
-	  PSA crypto APIs are standardized.
-
-config OBERON_BACKEND
-	bool "Configuration to enable nrf_oberon for legacy mbed TLS APIs"
-	select NRF_OBERON
-	depends on !(CC3XX_BACKEND_FORCED || CC3XX_BACKEND)
-	help
-	  This configuration enables legacy mbed TLS APIs using nrf_oberon.
-	  PSA_CRYPTO_DRIVER_OBERON should be used instead and will replace this once
-	  PSA crypto APIs are standardized.
-
-endif # MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
 
 config MBEDTLS_MD_C
 	bool "MD support"

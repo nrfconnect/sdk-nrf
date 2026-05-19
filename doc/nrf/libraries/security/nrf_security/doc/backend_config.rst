@@ -47,19 +47,6 @@ These legacy crypto backends are provided as *alternative implementations* of th
 
 The legacy crypto configuration only allows one backend to be enabled at the same time.
 
-The following table lists the available legacy crypto backends with their respective Kconfig options and the corresponding hardware platforms.
-
-+-----------------------------------------------+-----------------------------------------+----------------------------------------------------------+
-|                Driver library                 |          Legacy crypto backend          |               Supported hardware platforms               |
-+===============================================+=========================================+==========================================================+
-| :ref:`nrf_cc3xx_mbedcrypto_readme`            | :kconfig:option:`CONFIG_CC3XX_BACKEND`  | nRF52840, nRF5340, nRF91 Series devices                  |
-+-----------------------------------------------+-----------------------------------------+----------------------------------------------------------+
-| :ref:`nrf_oberon <nrfxlib:nrf_oberon_readme>` | :kconfig:option:`CONFIG_OBERON_BACKEND` | nRF devices with Arm Cortex®-M0, -M4, or -M33 processors |
-+-----------------------------------------------+-----------------------------------------+----------------------------------------------------------+
-
-.. note::
-   Enabling the CryptoCell by using :kconfig:option:`CONFIG_CC3XX_BACKEND` in a non-secure image of a TF-M build will have no effect.
-
 AES configuration
 *****************
 

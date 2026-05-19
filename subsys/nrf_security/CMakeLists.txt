@@ -49,17 +49,10 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
 
   # The current version of the mbed TLS deliverables requires mbedcrypto built
   # and linked in the NS image (e.g. for mbedtls and mbedx509 library).
-  # If CC3XX_BACKEND is enabled, configurations need to be converted to
-  # OBERON_BACKEND (enabled by default).
 
   get_cmake_property(all_vars VARIABLES)
 
-  # Enable OBERON_BACKEND, disable CC3XX_BACKEND
   set(CONFIG_NRF_OBERON                         True)
-  set(CONFIG_OBERON_BACKEND                     True)
-  set(CONFIG_CC3XX_BACKEND                      False)
-  set(CONFIG_CC310_BACKEND                      False)
-  set(CONFIG_CC312_BACKEND                      False)
   set(CONFIG_NRF_CC3XX_PLATFORM                 False)
   set(CONFIG_PSA_CRYPTO_DRIVER_CC3XX            False)
 
