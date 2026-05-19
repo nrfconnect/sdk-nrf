@@ -247,7 +247,7 @@ tests:
       - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
       - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
       - SB_CONFIG_BOOT_ENCRYPTION=y
-      - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
       - FILE_SUFFIX=larger_mcuboot
 
   sample.dfu.smp_svr.nrf_compress.encryption_ecdsa_p256:
