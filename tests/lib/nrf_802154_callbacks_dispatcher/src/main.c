@@ -6,8 +6,8 @@
 
 #include <string.h>
 
+#include <net/nrf_802154_callbacks_dispatcher.h>
 #include <nrf_802154_callouts.h>
-#include <nrf_802154_callbacks_dispatcher.h>
 #include <nrf_802154_types.h>
 #include <zephyr/ztest.h>
 

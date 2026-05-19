@@ -20,7 +20,6 @@ target_sources(app PRIVATE
 )
 
 zephyr_include_directories(
-  ${dispatcher_lib_dir}
   ${CMAKE_CURRENT_SOURCE_DIR}/stubs
   ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_802154/common/include
 )
