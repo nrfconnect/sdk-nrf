@@ -248,10 +248,6 @@ enum nrf_cloud_sensor {
 	NRF_CLOUD_SENSOR_AIR_QUAL,
 	/** The RSPR data obtained from the modem. */
 	NRF_CLOUD_LTE_LINK_RSRP,
-	/** Log messages generated on the device. */
-	NRF_CLOUD_LOG,
-	/** Log messages generated on the device in dictionary (binary) format. */
-	NRF_CLOUD_DICTIONARY_LOG,
 	/** The descriptive DEVICE data indicating its status. */
 	NRF_CLOUD_DEVICE_INFO,
 	/** The light sensor on the device. */
@@ -270,12 +266,6 @@ enum nrf_cloud_topic_type {
 	 */
 	NRF_CLOUD_TOPIC_BULK,
 	/** Endpoint used to publish binary data to nRF Cloud for certain services.
-	 *  One example is dictionary formatted logs enabled by
-	 *  @kconfig{CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY}, which enables the
-	 *  Zephyr option @kconfig{CONFIG_LOG_DICTIONARY_SUPPORT}. Binary data published to
-	 *  this topic should be prefixed by the binary header structure defined in
-	 *  nrf_cloud_codec.h - struct nrf_cloud_bin_hdr.  A unique format value
-	 *  should be included to distinguish this data from binary logging.
 	 */
 	NRF_CLOUD_TOPIC_BIN,
 	/** Endpoint used to request device shadow data using a transform (JSONata expression). */
@@ -475,10 +465,6 @@ struct nrf_cloud_svc_info_ui {
 	uint8_t air_pressure:1;
 	/** RSRP */
 	uint8_t rsrp:1;
-	/** Logs */
-	uint8_t log:1;
-	/** Dictionary (binary) Logs */
-	uint8_t dictionary_log:1;
 	/** Air Quality */
 	uint8_t air_quality:1;
 
@@ -633,13 +619,6 @@ struct nrf_cloud_gnss_data {
  *  cloud side. This data is stored in the device shadow.
  */
 struct nrf_cloud_ctrl_data {
-	/** If 0: None - the nrf_cloud library logging backend is disabled.
-	 *     4: LOG_DBG (least urgent) and all levels below are sent to the cloud.
-	 *     3: LOG_INF and all levels below are sent to the cloud.
-	 *     2: LOG_WRN and all levels below are sent to the cloud.
-	 *     1: only LOG_ERR (most urgent) is sent to the cloud.
-	 */
-	int log_level;
 	/** If true, Memfault's chunks will start uploading to nRF Cloud.
 	 *  If false, the upload is disabled.
 	 */

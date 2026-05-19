@@ -12,7 +12,6 @@
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <helpers/nrfx_reset_reason.h>
 #include <net/nrf_cloud.h>
-#include <net/nrf_cloud_log.h>
 #include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud_coap.h>
 #include <zephyr/logging/log.h>
@@ -51,9 +50,6 @@ static K_EVENT_DEFINE(connection_events);
 
 /* nRF Cloud device ID */
 static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
-
-#define COAP_SHADOW_MAX_SIZE 512
-
 
 static bool cred_check(struct nrf_cloud_credentials_status *const cs)
 {
@@ -138,7 +134,7 @@ static void send_message_on_button(void)
 
 	(void)send_message("{\"appId\":\"BUTTON\", \"messageType\":\"DATA\", \"data\":\"1\"}");
 
-	(void)nrf_cloud_log_send(LOG_LEVEL_INF, "Button pressed %u times", ++count);
+	LOG_INF("Button pressed %u times", ++count);
 }
 
 static void print_reset_reason(void)
@@ -148,13 +144,6 @@ static void print_reset_reason(void)
 	reset_reason = nrfx_reset_reason_get();
 	nrfx_reset_reason_clear(reset_reason);
 	LOG_INF("Reset reason: 0x%x", reset_reason);
-}
-
-static void report_startup(void)
-{
-	(void)nrf_cloud_log_send(LOG_LEVEL_INF,
-				 SAMPLE_SIGNON_FMT,
-				 APP_VERSION_STRING);
 }
 
 static int send_hello_world_msg(void)
@@ -206,183 +195,6 @@ static void modem_time_wait(void)
 	LOG_INF("Network time obtained");
 }
 
-
-static int shadow_support_coap_obj_send(struct nrf_cloud_obj *const shadow_obj, const bool reported)
-{
-	/* Encode the data for the cloud */
-	int err = nrf_cloud_obj_cloud_encode(shadow_obj);
-
-	/* Free the object */
-	(void)nrf_cloud_obj_free(shadow_obj);
-
-	if (!err) {
-		/* Send the encoded data */
-		if (!reported) {
-			err = nrf_cloud_coap_shadow_desired_update(shadow_obj->encoded_data.ptr);
-		} else {
-			err = nrf_cloud_coap_shadow_state_update(shadow_obj->encoded_data.ptr);
-		}
-	} else {
-		LOG_ERR("Failed to encode cloud data, err: %d", err);
-		return err;
-	}
-
-	/* Free the encoded data */
-	(void)nrf_cloud_obj_cloud_encoded_free(shadow_obj);
-
-	return err;
-}
-
-static void send_initial_log_level(void)
-{
-	NRF_CLOUD_OBJ_JSON_DEFINE(root_obj);
-	NRF_CLOUD_OBJ_JSON_DEFINE(ctrl_obj);
-	int err;
-
-	err = nrf_cloud_obj_init(&root_obj);
-	if (err) {
-		LOG_ERR("Failed to initialize root object: %d", err);
-		goto cleanup;
-	}
-
-	err = nrf_cloud_obj_init(&ctrl_obj);
-	if (err) {
-		LOG_ERR("Failed to initialize config object: %d", err);
-		(void)nrf_cloud_obj_free(&root_obj);
-		goto cleanup;
-	}
-
-	/* Create the config object */
-	err = nrf_cloud_obj_num_add(&ctrl_obj, NRF_CLOUD_JSON_KEY_LOG,
-		(double)nrf_cloud_log_control_get(), false);
-		if (err) {
-			LOG_ERR("Failed to add reported log level, error: %d", err);
-			goto cleanup;
-		}
-
-	/* Add the config object to the root object */
-	err = nrf_cloud_obj_object_add(&root_obj, NRF_CLOUD_JSON_KEY_CTRL, &ctrl_obj, false);
-	if (err) {
-		LOG_ERR("Failed to add config object to root object: %d", err);
-		goto cleanup;
-	}
-
-	/* Send the initial config */
-	err = shadow_support_coap_obj_send(&root_obj, true);
-	if (err) {
-		LOG_ERR("Failed to send initial config, error: %d", err);
-	} else {
-		LOG_INF("Initial config sent");
-	}
-cleanup:
-	(void)nrf_cloud_obj_free(&ctrl_obj);
-	(void)nrf_cloud_obj_free(&root_obj);
-}
-
-static void check_desired_log_level(void)
-{
-	/* Ensure the reported section gets sent once */
-	static bool reported_sent;
-	/* Only request full shadow the first time */
-	static bool request_delta;
-	char buf[COAP_SHADOW_MAX_SIZE] = {0};
-	size_t buf_len = sizeof(buf);
-	double desired_log_level = -1;
-	bool update_reported = false;
-	struct nrf_cloud_data in_data = {
-		.ptr = buf
-	};
-	struct nrf_cloud_obj delta_obj = {0};
-	int err;
-
-	LOG_INF("Checking for shadow delta...");
-	err = nrf_cloud_coap_shadow_get(buf, &buf_len, false, COAP_CONTENT_FORMAT_APP_JSON);
-	if (err == -EACCES) {
-		LOG_DBG("Not connected yet.");
-		goto exit;
-	} else if (err) {
-		LOG_ERR("Failed to request shadow delta: %d", err);
-		goto exit;
-	}
-	LOG_DBG("Shadow: len:%zd, %s", strnlen(buf, buf_len), buf);
-	request_delta = true;
-	in_data.len = buf_len;
-
-	if (strnlen(buf, buf_len) == 0) {
-		LOG_DBG("No shadow delta available");
-		goto exit;
-	}
-
-	/* Convert string into nrf_cloud_obj */
-	err = nrf_cloud_coap_shadow_delta_process(&in_data, &delta_obj);
-	if (err < 0) {
-		LOG_ERR("Failed to process shadow delta, err: %d", err);
-		goto exit;
-	} else if (err == 0) {
-		/* No application specific delta data */
-		goto exit;
-	}
-
-	NRF_CLOUD_OBJ_JSON_DEFINE(ctrl_obj);
-
-	/* Get the config object */
-	err = nrf_cloud_obj_object_detach(&delta_obj, NRF_CLOUD_JSON_KEY_CTRL, &ctrl_obj);
-	if (err == -ENODEV) {
-		/* No config in the delta */
-		goto exit;
-	}
-
-	/* Process incoming config */
-	(void) nrf_cloud_obj_num_get(&ctrl_obj, NRF_CLOUD_JSON_KEY_LOG, &desired_log_level);
-
-	/* Validate desired log level */
-	LOG_INF("Desired log level: %d", (int)desired_log_level);
-
-	if (desired_log_level < LOG_LEVEL_NONE || desired_log_level > LOG_LEVEL_DBG) {
-		LOG_ERR("Invalid desired log level: %d", (int)desired_log_level);
-		desired_log_level = CONFIG_NRF_CLOUD_COAP_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL;
-	} else {
-		update_reported = (desired_log_level != nrf_cloud_log_control_get());
-	}
-	nrf_cloud_log_control_set(desired_log_level);
-
-	/* Create config object for response */
-	/* Note: this is simpler than trying to handle unsupported entries directly. */
-	nrf_cloud_obj_free(&ctrl_obj);
-	nrf_cloud_obj_init(&ctrl_obj);
-	err = nrf_cloud_obj_num_add(&ctrl_obj, NRF_CLOUD_JSON_KEY_LOG,
-				    desired_log_level, false);
-	if (err) {
-		LOG_ERR("Failed to add reported log level, error: %d", err);
-		goto exit;
-	}
-
-	/* Add current config data */
-	if (nrf_cloud_obj_object_add(&delta_obj, NRF_CLOUD_JSON_KEY_CFG, &ctrl_obj, false)) {
-		goto exit;
-	}
-
-	/* Send Shadow update */
-	if (update_reported || !reported_sent) {
-		err = shadow_support_coap_obj_send(&delta_obj, update_reported);
-
-		if (err) {
-			LOG_ERR("Failed to send updated shadow delta, error: %d", err);
-		} else {
-			reported_sent = true;
-			LOG_INF("Updated shadow delta sent");
-		}
-	}
-exit:
-	/* Free the objects */
-	nrf_cloud_obj_free(&ctrl_obj);
-	nrf_cloud_obj_free(&delta_obj);
-
-	/* If the reported section was not sent, send the initial log level */
-	if (!reported_sent) {
-		send_initial_log_level();
-	}
-}
 
 static int setup(void)
 {
@@ -445,11 +257,6 @@ static int setup(void)
 		return 0;
 	}
 
-    /* Initialize the nRF Cloud logging subsystem */
-	nrf_cloud_log_init();
-
-	check_desired_log_level();
-
 	return 0;
 }
 
@@ -499,13 +306,9 @@ int main(void)
 		return 0;
 	}
 
-	/* Log message to the cloud. */
-	report_startup();
-
 	err = send_hello_world_msg();
 
 	while (1) {
 		send_message_on_button();
-		check_desired_log_level();
 	}
 }

@@ -57,58 +57,6 @@ config NRF_CLOUD_SEND_SERVICE_INFO_FOTA
 	    NRF_CLOUD_FOTA_TYPE_MODEM_DELTA_SUPPORTED
 	    NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED
 
-menuconfig NRF_CLOUD_SEND_SERVICE_INFO_UI
-	bool "Send UI service info initial connection [DEPRECATED]"
-	select DEPRECATED
-	help
-	  This option is deprecated.
-	  nRF Cloud no longer uses the UI section in the shadow.
-	  Cards are displayed based on the messages sent by the device.
-
-if NRF_CLOUD_SEND_SERVICE_INFO_UI
-
-config NRF_CLOUD_ENABLE_SVC_INF_UI_MAP
-	bool "Map card on nRF Cloud [DEPRECATED]"
-	select DEPRECATED
-	default y
-
-config NRF_CLOUD_ENABLE_SVC_INF_UI_RSRP
-	bool "RSRP card on nRF Cloud [DEPRECATED]"
-	select DEPRECATED
-	default y if NRF_MODEM_LIB
-
-config NRF_CLOUD_ENABLE_SVC_INF_UI_LOGS
-	bool "Log card on nRF Cloud [DEPRECATED]"
-	select DEPRECATED
-	default y if NRF_CLOUD_LOG_TEXT_LOGGING_ENABLED
-
-config NRF_CLOUD_ENABLE_SVC_INF_UI_BIN_LOGS
-	bool "Binary (dictionary-based) log card on nRF Cloud [DEPRECATED]"
-	select DEPRECATED
-	default y if NRF_CLOUD_LOG_DICTIONARY_LOGGING_ENABLED
-
-config NRF_CLOUD_ENABLE_SVC_INF_UI_TEMP
-	bool "Temperature card on nRF Cloud [DEPRECATED]"
-	select DEPRECATED
-
-config NRF_CLOUD_ENABLE_SVC_INF_UI_HUMID
-	bool "Humidity card on nRF Cloud [DEPRECATED]"
-	select DEPRECATED
-
-config NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_PRESSURE
-	bool "Air pressure card on nRF Cloud [DEPRECATED]"
-	select DEPRECATED
-
-config NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_QUALITY
-	bool "Air quality card on nRF Cloud [DEPRECATED]"
-	select DEPRECATED
-
-config NRF_CLOUD_ENABLE_SVC_INF_UI_ORIENTATION
-	bool "Orientation (flip) card on nRF Cloud [DEPRECATED]"
-	select DEPRECATED
-
-endif # NRF_CLOUD_SEND_SERVICE_INFO_UI
-
 endif # NRF_CLOUD_MQTT || NRF_CLOUD_COAP
 
 config NRF_CLOUD_SEND_SHADOW_INFO

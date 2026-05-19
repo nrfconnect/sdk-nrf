@@ -13,7 +13,6 @@
 #include <helpers/nrfx_reset_reason.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
-#include <net/nrf_cloud_log.h>
 #include <net/nrf_cloud_defs.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
@@ -205,8 +204,7 @@ static void send_message_on_button(void)
 	}
 
 	(void)send_message(&msg_obj);
-
-	(void)nrf_cloud_log_send(LOG_LEVEL_INF, "Button pressed %u times", ++count);
+	count++;
 	LOG_INF("Sent button press message with count: %u", count);
 }
 
@@ -266,20 +264,6 @@ static void print_reset_reason(void)
 	reset_reason = nrfx_reset_reason_get();
 	nrfx_reset_reason_clear(reset_reason);
 	LOG_INF("Reset reason: 0x%x", reset_reason);
-}
-
-static void report_startup(void)
-{
-	int err = 0;
-	const char *protocol = "MQTT";
-
-	err = nrf_cloud_log_send(LOG_LEVEL_INF,
-				SAMPLE_SIGNON_FMT,
-				APP_VERSION_STRING,
-				protocol);
-	if (err) {
-		LOG_ERR("Error sending direct log to cloud: %d", err);
-	}
 }
 
 static void modem_time_wait(void)
@@ -450,10 +434,6 @@ static int setup(void)
 		return false;
 	}
 
-	/* Initialize the nRF Cloud logging subsystem */
-	nrf_cloud_log_init();
-	nrf_cloud_log_control_set(CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL);
-
 	return 0;
 }
 
@@ -502,9 +482,6 @@ int main(void)
 		LOG_ERR("Setup failed, stopping.");
 		return 0;
 	}
-
-	/* Log message to nRF Cloud. */
-	report_startup();
 
 	/* Send Hello World message to nRF Cloud */
 	err = send_hello_world_msg();

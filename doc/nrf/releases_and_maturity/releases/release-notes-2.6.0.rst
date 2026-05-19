@@ -1242,7 +1242,7 @@ Libraries for networking
 
     * The cbor code has been regenerated with zcbor 0.8.1 and adapted to API changes in zcbor 0.8.x.
 
-* :ref:`lib_nrf_cloud_log` library:
+* nRF Cloud Logging library library:
 
   * Added:
 

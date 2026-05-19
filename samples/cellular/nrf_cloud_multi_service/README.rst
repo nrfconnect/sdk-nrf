@@ -55,7 +55,6 @@ This sample implements or demonstrates the following features:
 * Minimal LED status indication using the `Zephyr LED API`_.
 * Definition of a user config Trace Event (``temperature_alert``).
 * Transmission of an Alert Trace Event whenever a specified temperature limit is exceeded.
-* Optional transmission of log messages to the cloud using the :ref:`lib_nrf_cloud_log` library.
 * Experimental support for Wi-Fi connectivity.
 
 .. _nrf_cloud_multi_service_structure_and_theory_of_operation:
@@ -117,7 +116,6 @@ If more than :ref:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES <CONFIG_MAX_CONSECUTIVE_
 
 Most messages sent to nRF Cloud by this sample are sent using the message queue, but the following are sent directly:
 
-* Logs using the :ref:`lib_nrf_cloud_log` library.
 * `Device shadow <nRF Cloud Device Shadows_>`_ updates.
 * Ground fix requests from the :ref:`lib_location` library.
 
@@ -1031,22 +1029,6 @@ From now on, these credentials will automatically be used when the configured ne
 
 See the :ref:`Wi-Fi shell sample documentation <wifi_shell_sample>` for more details on the ``wifi`` commands.
 
-Building with nRF Cloud logging support
-=======================================
-
-To enable transmission of `logs <Zephyr Logging_>`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` library, add the following parameter to your build command:
-
-``-DEXTRA_CONF_FILE=overlay_nrfcloud_logging.conf``
-
-This overlay enables transmission of `logs <Zephyr Logging_>`_ to nRF Cloud.
-Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` Kconfig option to the log level of messages to send to nRF Cloud, such as ``4`` for debug log messages.
-
-The overlay selects the :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT` Kconfig option that enables log messages in JSON format.
-You can read JSON log messages in real-time in the nRF Cloud user interface.
-However, because JSON logs are large, you may want to edit the overlay file to change to using dictionary logging.
-Deselect the :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT` Kconfig option and select :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY` instead.
-See `Dictionary-based Logging`_ to learn how dictionary-based logging works, how the dictionary is built, and how to decode the binary log output.
-
 .. _nrf_cloud_multi_service_minimal:
 
 Building with minimal services
@@ -1513,7 +1495,6 @@ This sample uses the following |NCS| libraries and drivers:
 * :ref:`lib_location`
 * :ref:`lib_at_host`
 * :ref:`lte_lc_readme`
-* :ref:`lib_nrf_cloud_log`
 
 It uses the following `sdk-nrfxlib`_ library:
 

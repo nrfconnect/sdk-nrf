@@ -371,7 +371,10 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-* Removed all nRF Cloud REST samples as the nRF Cloud REST library has been removed.
+* Removed:
+
+  * All nRF Cloud REST samples as the nRF Cloud REST library has been removed.
+  * Usage of nRF Cloud logging in samples as the feature is being sunset.
 
 * :ref:`gnss_sample` sample:
 
@@ -647,6 +650,7 @@ Libraries for networking
     As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
     `Memfault's Trace Events <Memfault: Error Tracking with Trace Events_>`_ feature replaces the Alerts feature, as it provides equivalent functionality for event reporting, and it also adds enhanced debugging capabilities that were not available with Alerts.
   * The nRF Cloud REST library.
+  * The nRF Cloud logging library.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 

@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
-#include <net/nrf_cloud_log.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #endif
@@ -384,21 +383,6 @@ void main_application_thread_fn(void)
 		LOG_INF("Current date and time determined");
 	}
 #endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
-
-	const char *protocol = "";
-
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
-		protocol = "MQTT";
-	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
-		protocol = "CoAP";
-	}
-	nrf_cloud_log_init();
-	nrf_cloud_log_control_set(CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL);
-	/* Send a direct log to the nRF Cloud web portal indicating the sample has started up. */
-	(void)nrf_cloud_log_send(LOG_LEVEL_INF,
-				 "nRF Cloud multi-service sample has started, "
-				 "version: %s, protocol: %s",
-				 CONFIG_APP_VERSION, protocol);
 
 #if defined(CONFIG_LOCATION_TRACKING)
 	/* Begin tracking location at the configured interval. */

@@ -10,9 +10,6 @@ Cellular: nRF Cloud CoAP device message
 The nRF Cloud CoAP device message sample demonstrates how to use the `nRF Cloud CoAP API`_ to send `device messages <nRF Cloud Device Messages_>`_.
 Every button press sends a message to nRF Cloud.
 
-The sample uses the :ref:`lib_nrf_cloud_log` library.
-When a button is pressed, it sends a log message indicating the sample version.
-
 Requirements
 ************
 
@@ -150,16 +147,6 @@ The network carrier does not provide date and time
    The sample requires the network carrier to provide date and time to the modem.
    Without a valid date and time, the modem cannot generate JWTs with an expiration time.
 
-nRF Cloud logging
-=================
-
-To enable `Zephyr Logging`_ in nRF Cloud using the :ref:`lib_nrf_cloud_log` library, add the following parameter to your build command:
-
-``-DEXTRA_CONF_FILE=nrfcloud_logging.conf``
-
-This KConfig fragment allows the sample and various subsystems that have logging enabled to send their logs to nRF Cloud.
-Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` option to the log level of messages to be sent to nRF Cloud, such as ``4`` for debug log messages.
-
 Querying device messages over REST API
 **************************************
 
@@ -172,7 +159,6 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_coap`
-* :ref:`lib_nrf_cloud_log`
 * :ref:`lib_modem_jwt`
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`modem_info_readme`
