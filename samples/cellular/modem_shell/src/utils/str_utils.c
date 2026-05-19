@@ -108,6 +108,9 @@ void agnss_data_flags_str_get(char *flags_string, uint32_t data_flags)
 	if (data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST) {
 		(void)strcat(flags_string, "int | ");
 	}
+	if (data_flags & NRF_MODEM_GNSS_AGNSS_GGTO_REQUEST) {
+		(void)strcat(flags_string, "ggto | ");
+	}
 
 	len = strlen(flags_string);
 	if (len == 0) {
@@ -128,6 +131,9 @@ const char *gnss_system_str_get(uint8_t system_id)
 
 	case NRF_MODEM_GNSS_SYSTEM_QZSS:
 		return "QZSS";
+
+	case NRF_MODEM_GNSS_SYSTEM_GAL:
+		return "GAL";
 
 	default:
 		return "unknown";
