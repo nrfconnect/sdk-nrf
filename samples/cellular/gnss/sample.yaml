@@ -92,6 +92,7 @@ tests:
       - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
       - EXTRA_CONF_FILE=overlay-pgps.conf
+      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
       - gnss_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
