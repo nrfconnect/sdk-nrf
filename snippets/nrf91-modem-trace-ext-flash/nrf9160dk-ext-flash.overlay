@@ -7,6 +7,17 @@
 &mx25r64 {
 	status = "okay";
 	mxicy,mx25r-power-mode = "high-performance";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		modem_trace: partition@0 {
+			label = "modem_trace";
+			reg = <0x00000000 0x400000>;
+		};
+	};
 };
 
 / {
