@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		nordic,pgps_partition = &pgps_partition;
+		zephyr,settings_partition = &settings_storage_partition;
+	};
+};
+
+/delete-node/ &slot0_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x00000000 0xe4000>;
+			ranges = <0x0 0x00000000 0xe4000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x00000000 0x8000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x00008000 0xdc000>;
+			};
+		};
+
+		storage_partition: partition@e4000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000e4000 0x1c000>;
+			ranges = <0x0 0x000e4000 0x1c000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			pgps_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "pgps";
+				reg = <0x00000000 0x14000>;
+			};
+
+			settings_storage_partition: partition@14000 {
+				compatible = "zephyr,mapped-partition";
+				label = "settings-storage";
+				reg = <0x000014000 0x8000>;
+			};
+		};
+	};
+};
