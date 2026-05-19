@@ -78,8 +78,9 @@ endif()
 # Link to imported libraries for Oberon APIs.
 target_link_libraries(oberon_psa_driver
   PRIVATE
-    mbedcrypto_oberon_mbedtls_imported
     mbedcrypto_oberon_imported
+    psa_crypto_config_chosen
+    ${mbedcrypto_target}
 )
 
 # Link psa_core with this driver
@@ -88,10 +89,5 @@ target_link_libraries(psa_core
     oberon_psa_driver
 )
 
-target_link_libraries(mbedcrypto_oberon_mbedtls_imported
-  INTERFACE
-    psa_crypto_config_chosen
-    ${mbedcrypto_target}
-)
 
 nrf_security_add_zephyr_options_library(oberon_psa_driver)
