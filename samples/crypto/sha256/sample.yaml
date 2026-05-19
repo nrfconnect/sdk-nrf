@@ -119,6 +119,19 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf52840dk/nrf52840
       - nrf54h20dk/nrf54h20/cpuapp
+  sample.nrf_security.sha256.integration.rsa:
+    build_only: true
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
   sample.sha256.cracen.crypto_service:
     sysbuild: true
     tags:
