@@ -322,6 +322,16 @@ void m_assert_handler(const char *const file, const uint32_t line)
 }
 
 #else /* !IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
+
+#if defined(CONFIG_LOG)
+char *mpsl_get_assertion_message(const char *const file, const uint32_t line)
+{
+	(void)file;
+	(void)line;
+	return "unknown";
+}
+#endif /* CONFIG_LOG */
+
 static void m_assert_handler(const char *const file, const uint32_t line)
 {
 	volatile char assert_file_id[11] = { 0 };
@@ -332,7 +342,8 @@ static void m_assert_handler(const char *const file, const uint32_t line)
 #if defined(CONFIG_ASSERT) && defined(CONFIG_ASSERT_VERBOSE) && !defined(CONFIG_ASSERT_NO_MSG_INFO)
 	__ASSERT(false, "MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
-	LOG_ERR("MPSL ASSERT: %s, %d", (char *)assert_file_id, assert_line);
+	LOG_ERR("MPSL ASSERT: %s, %d, reason: %s", (char *)assert_file_id, assert_line,
+		mpsl_get_assertion_message(file, line));
 	k_oops();
 #elif defined(CONFIG_PRINTK)
 	printk("MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
