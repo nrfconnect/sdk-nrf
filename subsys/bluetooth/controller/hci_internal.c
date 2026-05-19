@@ -387,7 +387,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_advertising_data = 1;
 	cmds->hci_le_set_scan_response_data = 1;
 	cmds->hci_le_set_advertising_enable = 1;
+#if defined(CONFIG_BT_CTLR_SDC_DATA_RELATED_ADDRESS_CHANGES)
 	cmds->hci_le_set_data_related_address_changes = 1;
+#endif
 #endif
 
 #if defined(CONFIG_BT_OBSERVER)
@@ -955,8 +957,10 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_ENABLE:
 		return sdc_hci_cmd_le_set_adv_enable((void *)cmd_params);
 
+#if defined(CONFIG_BT_CTLR_SDC_DATA_RELATED_ADDRESS_CHANGES)
 	case SDC_HCI_OPCODE_CMD_LE_SET_DATA_RELATED_ADDRESS_CHANGES:
 		return sdc_hci_cmd_le_set_data_related_address_changes((void *)cmd_params);
+#endif
 #endif
 
 #if defined(CONFIG_BT_OBSERVER)
