@@ -12,6 +12,7 @@
 #include <zephyr/bluetooth/gatt.h>
 
 #include <dult/dult.h>
+#include <dult/bt.h>
 #include "dult_battery.h"
 #include "dult_bt_anos.h"
 #include "dult_user.h"
@@ -145,6 +146,7 @@ static const struct bt_gatt_attr *anos_chrc_indicate_attr;
 static enum anos_sound_state anos_sound_state;
 static struct bt_conn *sound_conn;
 static const struct dult_bt_anos_sound_cb *anos_sound_cb;
+static const struct dult_bt_anos_cb *anos_cb;
 
 static bool is_mtu_sufficient(struct bt_conn *conn, uint16_t data_len)
 {
@@ -652,6 +654,7 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 	uint16_t opcode_write;
 	const struct anos_opcode_entry *entry;
 	const struct dult_user *dult_user;
+	bool anos_access_verify_cb_present = anos_cb && anos_cb->access_verify;
 
 	if (!dult_user_is_ready()) {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
@@ -685,8 +688,10 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 	opcode_write = sys_get_le16(buf);
 	LOG_DBG("Received following opcode: %#05X (Accessory non-owner write)", opcode_write);
 
-	/* The DULT specification mandates the Invalid_command status for any
-	 * opcode outside the defined set.
+	/* Reject opcodes that are not defined by the DULT specification early,
+	 * without consulting the access_verify callback. The DULT specification
+	 * mandates the Invalid_command status for any opcode outside the
+	 * defined set.
 	 */
 	entry = opcode_entry_get(opcode_write);
 	if (!entry) {
@@ -696,10 +701,21 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 			ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND);
 	}
 
-	/* Reject every opcode outside the separated near-owner state, as mandated
-	 * by the DULT specification.
-	 */
-	if (!near_owner_state_is_separated()) {
+	if (anos_access_verify_cb_present) {
+		/* The Non-owner Control opcodes always remain gated on the separated near-owner
+		 * state.
+		 */
+		if ((entry->group == DULT_BT_ANOS_OPCODE_GROUP_NON_OWNER_CONTROL) &&
+		    !near_owner_state_is_separated()) {
+			LOG_WRN("Non-owner control blocked outside separated state: opcode=%#05X "
+				"(Accessory non-owner write)",
+				opcode_write);
+			return write_accessory_non_owner_reject(
+				conn, attr, opcode_write, len,
+				ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND);
+		}
+	} else if (!near_owner_state_is_separated()) {
+		/* Reject every opcode outside the separated state. */
 		LOG_WRN("Invalid near-owner state mode: opcode=%#05X (Accessory non-owner write)",
 			opcode_write);
 		return write_accessory_non_owner_reject(
@@ -717,6 +733,16 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 			return write_accessory_non_owner_reject(conn, attr, opcode_write, len,
 								status);
 		}
+	}
+
+	/* The OPTIONAL access_verify callback is the last gate before the opcode is processed. */
+	if (anos_access_verify_cb_present && !anos_cb->access_verify(conn)) {
+		LOG_WRN("ANOS access denied by access_verify callback: opcode=%#05X "
+			"(Accessory non-owner write)",
+			opcode_write);
+		return write_accessory_non_owner_reject(
+			conn, attr, opcode_write, len,
+			ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_STATE);
 	}
 
 	err = entry->process(conn, attr, dult_user);
@@ -865,6 +891,31 @@ void dult_bt_anos_sound_cb_register(const struct dult_bt_anos_sound_cb *cb)
 	anos_sound_cb = cb;
 }
 
+int dult_bt_anos_cb_register(const struct dult_user *user, const struct dult_bt_anos_cb *cb)
+{
+	if (!user || !cb || !cb->access_verify) {
+		return -EINVAL;
+	}
+
+	if (dult_user_is_ready()) {
+		LOG_ERR("DULT ANOS: module must be disabled to register callbacks");
+		return -EACCES;
+	}
+
+	if (!dult_user_is_registered(user)) {
+		return -EACCES;
+	}
+
+	if (anos_cb) {
+		LOG_ERR("DULT ANOS: callback already registered");
+		return -EALREADY;
+	}
+
+	anos_cb = cb;
+
+	return 0;
+}
+
 int dult_bt_anos_enable(void)
 {
 	if (!anos_chrc_indicate_attr) {
@@ -901,6 +952,8 @@ int dult_bt_anos_reset(void)
 
 		sound_state_reset();
 	}
+
+	anos_cb = NULL;
 
 	return 0;
 }
