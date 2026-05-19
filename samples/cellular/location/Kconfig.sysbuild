@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n
+
 config WIFI_NRF70
 	default y if BOARD_THINGY91X_NRF9151_NS
 
