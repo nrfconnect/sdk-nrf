@@ -748,6 +748,13 @@ config BT_CTLR_SDC_RF_PATH_COMPENSATION
 	help
 	  Support for LE RF Path Compensation
 
+config BT_CTLR_SDC_ISO_TEST
+	bool "LE ISO Test commands"
+	depends on BT_CTLR_ISO
+	default y if BT_HCI_RAW || BT_ISO_TEST_PARAMS
+	help
+	  Support for LE ISO test HCI commands
+
 config BT_CTLR_DTM
 	select EXPERIMENTAL
 
