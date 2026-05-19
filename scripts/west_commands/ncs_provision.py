@@ -226,7 +226,7 @@ class NcsProvision(WestCommand):
             choices=[
                 "nrf54l05", "nrf54l10", "nrf54l15",
                 "nrf54lm20a", "nrf54lm20b",
-                "nrf54lv10a",
+                "nrf54lv10a", "nrf54lc10a",
                 "nrf54ls05b",
                 "nrf7120",
                 "nrf54h20"
