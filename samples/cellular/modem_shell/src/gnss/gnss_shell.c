@@ -160,6 +160,14 @@ static int cmd_gnss_config_system(const struct shell *shell, size_t argc, char *
 		system_mask |= 0x4;
 	}
 
+	/* GAL (optional) */
+	if (argc > 2) {
+		value = atoi(argv[2]);
+		if (value == 1) {
+			system_mask |= 0x8;
+		}
+	}
+
 	return gnss_set_system_mask(system_mask) == 0 ? 0 : -ENOEXEC;
 }
 
@@ -206,7 +214,7 @@ static int cmd_gnss_config_use_case(const struct shell *shell, size_t argc, char
 		0 : -ENOEXEC;
 }
 
-static int cmd_gnss_config_nmea(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_config_nmea_mask(const struct shell *shell, size_t argc, char **argv)
 {
 	uint8_t value;
 	uint16_t nmea_mask;
@@ -225,6 +233,26 @@ static int cmd_gnss_config_nmea(const struct shell *shell, size_t argc, char **a
 	return gnss_set_nmea_mask(nmea_mask) == 0 ? 0 : -ENOEXEC;
 }
 
+static int cmd_gnss_config_nmea_talker_standard(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_set_nmea_talker_mode(GNSS_NMEA_TALKER_MODE_STANDARD) == 0 ? 0 : -ENOEXEC;
+}
+
+static int cmd_gnss_config_nmea_talker_gp_only(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_set_nmea_talker_mode(GNSS_NMEA_TALKER_MODE_GP_ONLY) == 0 ? 0 : -ENOEXEC;
+}
+
+static int cmd_gnss_config_nmea_qzss_standard(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_set_nmea_qzss_mode(GNSS_NMEA_QZSS_MODE_STANDARD) == 0 ? 0 : -ENOEXEC;
+}
+
+static int cmd_gnss_config_nmea_qzss_custom(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_set_nmea_qzss_mode(GNSS_NMEA_QZSS_MODE_CUSTOM) == 0 ? 0 : -ENOEXEC;
+}
+
 static int cmd_gnss_config_powersave_off(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_DISABLED) == 0 ? 0 : -ENOEXEC;
@@ -240,33 +268,20 @@ static int cmd_gnss_config_powersave_power(const struct shell *shell, size_t arg
 	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_POWER) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_config_qzss_nmea_standard(const struct shell *shell, size_t argc, char **argv)
-{
-	return gnss_set_qzss_nmea_mode(GNSS_QZSS_NMEA_MODE_STANDARD) == 0 ? 0 : -ENOEXEC;
-}
-
-static int cmd_gnss_config_qzss_nmea_custom(const struct shell *shell, size_t argc, char **argv)
-{
-	return gnss_set_qzss_nmea_mode(GNSS_QZSS_NMEA_MODE_CUSTOM) == 0 ? 0 : -ENOEXEC;
-}
-
 static int cmd_gnss_config_qzss_mask(const struct shell *shell, size_t argc, char **argv)
 {
-	int value;
-	uint16_t qzss_mask;
-	uint16_t qzss_mask_bit;
+	int err = 0;
+	uint32_t mask;
 
-	qzss_mask = 0;
-	qzss_mask_bit = 1;
-	for (int i = 0; i < 10; i++) {
-		value = atoi(argv[i + 1]);
-		if (value == 1) {
-			qzss_mask |= qzss_mask_bit;
-		}
-		qzss_mask_bit = qzss_mask_bit << 1;
+	mask = shell_strtoul(argv[1], 16, &err);
+
+	if (err || mask > 0x3ff) {
+		mosh_error("mask: invalid mask value %s", argv[1]);
+
+		return -ENOEXEC;
 	}
 
-	return gnss_set_qzss_mask(qzss_mask) == 0 ? 0 : -ENOEXEC;
+	return gnss_set_qzss_mask(mask) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_config_timing_rtc(const struct shell *shell, size_t argc, char **argv)
@@ -423,10 +438,12 @@ static int cmd_gnss_agnss_filter(const struct shell *shell, size_t argc, char **
 	bool time_enabled;
 	bool pos_enabled;
 	bool int_enabled;
+	bool ggto_enabled;
 
-	if (argc != 9) {
+	if (argc != 10) {
 		mosh_error("filter: wrong parameter count");
-		mosh_print("filter: <ephe> <alm> <utc> <klob> <neq> <time> <pos> <integrity>");
+		mosh_print("filter: <ephe> <alm> <utc> <klob> <neq> <time> <pos> <integrity> "
+			   "<ggto>");
 		mosh_print("ephe:\n  0 = disabled\n  1 = enabled");
 		mosh_print("alm:\n  0 = disabled\n  1 = enabled");
 		mosh_print("utc:\n  0 = disabled\n  1 = enabled");
@@ -435,6 +452,7 @@ static int cmd_gnss_agnss_filter(const struct shell *shell, size_t argc, char **
 		mosh_print("time:\n  0 = disabled\n  1 = enabled");
 		mosh_print("pos:\n  0 = disabled\n  1 = enabled");
 		mosh_print("integrity:\n  0 = disabled\n  1 = enabled");
+		mosh_print("ggto:\n  0 = disabled\n  1 = enabled");
 		return -EINVAL;
 	}
 
@@ -446,10 +464,12 @@ static int cmd_gnss_agnss_filter(const struct shell *shell, size_t argc, char **
 	time_enabled = atoi(argv[6]) == 1 ? true : false;
 	pos_enabled = atoi(argv[7]) == 1 ? true : false;
 	int_enabled = atoi(argv[8]) == 1 ? true : false;
+	ggto_enabled = atoi(argv[9]) == 1 ? true : false;
 
-	return gnss_set_agnss_data_enabled(ephe_enabled, alm_enabled, utc_enabled,
-					   klob_enabled, neq_enabled, time_enabled,
-					   pos_enabled, int_enabled) == 0 ? 0 : -ENOEXEC;
+	return gnss_set_agnss_data_enabled(
+		ephe_enabled, alm_enabled, utc_enabled,
+		klob_enabled, neq_enabled, time_enabled,
+		pos_enabled, int_enabled, ggto_enabled) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_1pps_enable(const struct shell *shell, size_t argc, char **argv)
@@ -748,21 +768,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	sub_gnss_config_qzss_nmea,
-	SHELL_CMD_ARG(standard, NULL, "Standard NMEA reporting.",
-		      cmd_gnss_config_qzss_nmea_standard, 1, 0),
-	SHELL_CMD_ARG(custom, NULL, "Custom NMEA reporting (default).",
-		      cmd_gnss_config_qzss_nmea_custom, 1, 0),
-	SHELL_SUBCMD_SET_END
-);
-
-SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_config_qzss,
-	SHELL_CMD(nmea, &sub_gnss_config_qzss_nmea, "QZSS NMEA mode.", mosh_print_help_shell),
 	SHELL_CMD_ARG(mask, NULL,
-		      "<193> <194> <195> <196> <197> <198> <199> <200> <201> <202>\n"
-		      "QZSS NMEA mask for PRNs 193...202. 0 = disabled, 1 = enabled.",
-		      cmd_gnss_config_qzss_mask, 11, 0),
+		      "<bitmask in hex>\n"
+		      "QZSS PRN mask. Bits 0...9 when set correspond to PRNs 193...202 being "
+		      "enabled. The bitmask is given in hex, for example \"3ff\" to enable all "
+		      "10 QZSS PRNs.",
+		      cmd_gnss_config_qzss_mask, 2, 0),
 	SHELL_SUBCMD_SET_END
 );
 
@@ -774,11 +786,41 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_gnss_config_nmea_talker,
+	SHELL_CMD_ARG(standard, NULL, "Standard talker mode. Use GP/GA/GN etc.",
+		      cmd_gnss_config_nmea_talker_standard, 1, 0),
+	SHELL_CMD_ARG(gp_only, NULL, "GP only talker mode. No output for other systems.",
+		      cmd_gnss_config_nmea_talker_gp_only, 1, 0),
+	SHELL_SUBCMD_SET_END
+);
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_gnss_config_nmea_qzss,
+	SHELL_CMD_ARG(standard, NULL, "Standard NMEA mode. QZSS satellites not reported.",
+		      cmd_gnss_config_nmea_qzss_standard, 1, 0),
+	SHELL_CMD_ARG(custom, NULL, "Custom NMEA mode. QZSS reported as PRNs 193...202 (default).",
+		      cmd_gnss_config_nmea_qzss_custom, 1, 0),
+	SHELL_SUBCMD_SET_END
+);
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_gnss_config_nmea,
+	SHELL_CMD_ARG(mask, NULL,
+		      "<GGA enabled> <GLL enabled> <GSA enabled> <GSV enabled> <RMC enabled>\n"
+		      "NMEA mask. 0 = disabled, 1 = enabled (default all enabled).",
+		      cmd_gnss_config_nmea_mask, 6, 0),
+	SHELL_CMD(talker, &sub_gnss_config_nmea_talker, "NMEA talker configuration.",
+		  mosh_print_help_shell),
+	SHELL_CMD(qzss, &sub_gnss_config_nmea_qzss, "QZSS NMEA mode.", mosh_print_help_shell),
+	SHELL_SUBCMD_SET_END
+);
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_config,
 	SHELL_CMD_ARG(system, NULL,
-		      "<QZSS enabled>\n"
+		      "<QZSS enabled> [GAL enabled]\n"
 		      "System mask. 0 = disabled, 1 = enabled. GPS L1 C/A is always enabled.",
-		      cmd_gnss_config_system, 2, 0),
+		      cmd_gnss_config_system, 2, 2),
 	SHELL_CMD(elevation, NULL, "<angle>\nElevation threshold angle.",
 		  cmd_gnss_config_elevation),
 	SHELL_CMD_ARG(use_case, NULL,
@@ -786,10 +828,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "Use case configuration. 0 = option disabled, 1 = option enabled "
 		      "(default all disabled).",
 		      cmd_gnss_config_use_case, 3, 0),
-	SHELL_CMD_ARG(nmea, NULL,
-		      "<GGA enabled> <GLL enabled> <GSA enabled> <GSV enabled> <RMC enabled>\n"
-		      "NMEA mask. 0 = disabled, 1 = enabled (default all enabled).",
-		      cmd_gnss_config_nmea, 6, 0),
+	SHELL_CMD(nmea, &sub_gnss_config_nmea, "NMEA configuration.", mosh_print_help_shell),
 	SHELL_CMD(powersave, &sub_gnss_config_powersave, "Continuous tracking power saving mode.",
 		  mosh_print_help_shell),
 	SHELL_CMD(qzss, &sub_gnss_config_qzss, "QZSS configuration.", mosh_print_help_shell),
@@ -836,7 +875,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 				    "server.",
 		      cmd_gnss_agnss_inject, 1, 1),
 	SHELL_CMD(filter, NULL,
-		  "<ephe> <alm> <utc> <klob> <neq> <time> <pos> <integrity>\nSet filter for "
+		  "<ephe> <alm> <utc> <klob> <neq> <time> <pos> <integrity> <ggto>\nSet filter for "
 		  "allowed A-GNSS data. 0 = disabled, 1 = enabled (default all enabled).",
 		  cmd_gnss_agnss_filter),
 	SHELL_CMD(filtephem, &sub_gnss_agnss_filtered,

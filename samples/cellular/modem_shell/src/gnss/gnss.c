@@ -96,6 +96,7 @@ static bool agnss_inject_neq = true;
 static bool agnss_inject_time = true;
 static bool agnss_inject_pos = true;
 static bool agnss_inject_int = true;
+static bool agnss_inject_ggto = true;
 #endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_SUPL_CLIENT_LIB */
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
@@ -128,7 +129,7 @@ struct event_item {
 	void    *data;
 };
 
-K_MSGQ_DEFINE(gnss_event_msgq, sizeof(struct event_item), 10, 4);
+K_MSGQ_DEFINE(gnss_event_msgq, sizeof(struct event_item), 30, 4);
 
 /* Output configuration */
 static uint8_t pvt_output_level = 2;
@@ -233,6 +234,7 @@ static void gnss_event_handler(int event_id)
 	err = k_msgq_put(&gnss_event_msgq, &event, K_NO_WAIT);
 	if (err) {
 		/* Failed to put event into queue */
+		mosh_warn("GNSS: Event msgq full");
 		k_free(event.data);
 	}
 }
@@ -629,6 +631,10 @@ static void get_filtered_agnss_request(struct nrf_modem_gnss_agnss_data_frame *a
 	if (agnss_inject_int) {
 		agnss_request->data_flags |=
 			agnss_need.data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST;
+	}
+	if (agnss_inject_ggto) {
+		agnss_request->data_flags |=
+			agnss_need.data_flags & NRF_MODEM_GNSS_AGNSS_GGTO_REQUEST;
 	}
 }
 
@@ -1358,6 +1364,66 @@ int gnss_set_nmea_mask(uint16_t nmea_mask)
 	return err;
 }
 
+int gnss_set_nmea_talker_mode(enum gnss_nmea_talker_mode talker_mode)
+{
+	int err;
+	uint8_t mode;
+
+	gnss_api_init();
+
+	switch (talker_mode) {
+	case GNSS_NMEA_TALKER_MODE_STANDARD:
+		mode = NRF_MODEM_GNSS_NMEA_TALKER_MODE_STANDARD;
+		break;
+
+	case GNSS_NMEA_TALKER_MODE_GP_ONLY:
+		mode = NRF_MODEM_GNSS_NMEA_TALKER_MODE_GP_ONLY;
+		break;
+
+	default:
+		mosh_error("GNSS: Invalid NMEA talker mode value %d", talker_mode);
+		return -EINVAL;
+	}
+
+	err = nrf_modem_gnss_nmea_talker_mode_set(mode);
+	if (err) {
+		mosh_error("GNSS: Failed to set NMEA talker mode, error: %d (%s)",
+			   err, gnss_err_to_str(err));
+	}
+
+	return err;
+}
+
+int gnss_set_nmea_qzss_mode(enum gnss_nmea_qzss_mode nmea_mode)
+{
+	int err;
+	uint8_t mode;
+
+	gnss_api_init();
+
+	switch (nmea_mode) {
+	case GNSS_NMEA_QZSS_MODE_STANDARD:
+		mode = NRF_MODEM_GNSS_QZSS_NMEA_MODE_STANDARD;
+		break;
+
+	case GNSS_NMEA_QZSS_MODE_CUSTOM:
+		mode = NRF_MODEM_GNSS_QZSS_NMEA_MODE_CUSTOM;
+		break;
+
+	default:
+		mosh_error("GNSS: Invalid QZSS NMEA mode value %d", nmea_mode);
+		return -EINVAL;
+	}
+
+	err = nrf_modem_gnss_qzss_nmea_mode_set(mode);
+	if (err) {
+		mosh_error("GNSS: Failed to set QZSS NMEA mode, error: %d (%s)",
+			   err, gnss_err_to_str(err));
+	}
+
+	return err;
+}
+
 int gnss_set_priority_time_windows(bool value)
 {
 	int err;
@@ -1406,36 +1472,6 @@ int gnss_set_dynamics_mode(enum gnss_dynamics_mode mode)
 	err = nrf_modem_gnss_dyn_mode_change(dynamics_mode);
 	if (err) {
 		mosh_error("GNSS: Failed to change dynamics mode, error: %d (%s)",
-			   err, gnss_err_to_str(err));
-	}
-
-	return err;
-}
-
-int gnss_set_qzss_nmea_mode(enum gnss_qzss_nmea_mode mode)
-{
-	int err;
-	uint8_t nmea_mode;
-
-	gnss_api_init();
-
-	switch (mode) {
-	case GNSS_QZSS_NMEA_MODE_STANDARD:
-		nmea_mode = NRF_MODEM_GNSS_QZSS_NMEA_MODE_STANDARD;
-		break;
-
-	case GNSS_QZSS_NMEA_MODE_CUSTOM:
-		nmea_mode = NRF_MODEM_GNSS_QZSS_NMEA_MODE_CUSTOM;
-		break;
-
-	default:
-		mosh_error("GNSS: Invalid QZSS NMEA mode value %d", mode);
-		return -EINVAL;
-	}
-
-	err = nrf_modem_gnss_qzss_nmea_mode_set(nmea_mode);
-	if (err) {
-		mosh_error("GNSS: Failed to set QZSS NMEA mode, error: %d (%s)",
 			   err, gnss_err_to_str(err));
 	}
 
@@ -1518,8 +1554,8 @@ int gnss_set_timing_source(enum gnss_timing_source source)
 	return err;
 }
 
-int gnss_set_agnss_data_enabled(bool ephe, bool alm, bool utc, bool klob,
-				bool neq, bool time, bool pos, bool integrity)
+int gnss_set_agnss_data_enabled(bool ephe, bool alm, bool utc, bool klob, bool neq,
+				bool time, bool pos, bool integrity, bool ggto)
 {
 #if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
 	agnss_inject_ephe = ephe;
@@ -1530,6 +1566,7 @@ int gnss_set_agnss_data_enabled(bool ephe, bool alm, bool utc, bool klob,
 	agnss_inject_time = time;
 	agnss_inject_pos = pos;
 	agnss_inject_int = integrity;
+	agnss_inject_ggto = ggto;
 
 	return 0;
 #else
@@ -1552,25 +1589,11 @@ int gnss_set_agnss_automatic(bool value)
 #endif
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGNSS)
-static bool qzss_assistance_is_supported(void)
-{
-	char resp[32];
-
-	if (nrf_modem_at_cmd(resp, sizeof(resp), "AT+CGMM") == 0) {
-		/* nRF9160 does not support QZSS assistance, while nRF91x1 do. */
-		if (strstr(resp, "nRF9160") != NULL) {
-			return false;
-		}
-	}
-
-	return true;
-}
-#endif /* CONFIG_NRF_CLOUD_AGNSS */
-
 int gnss_inject_agnss_data(void)
 {
 #if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
+	uint8_t system_count = 0;
+
 	gnss_api_init();
 
 	/* Pretend modem requested all A-GNSS data */
@@ -1581,18 +1604,27 @@ int gnss_inject_agnss_data(void)
 		NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST |
 		NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST |
 		NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST;
-	agnss_need.system_count = 1;
-	agnss_need.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
-	agnss_need.system[0].sv_mask_ephe = 0xffffffff;
-	agnss_need.system[0].sv_mask_alm = 0xffffffff;
+	agnss_need.system[system_count].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
+	agnss_need.system[system_count].sv_mask_ephe = 0xffffffffu;
+	agnss_need.system[system_count].sv_mask_alm = 0xffffffffu;
+	system_count++;
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
-	if (qzss_assistance_is_supported()) {
-		agnss_need.system_count = 2;
-		agnss_need.system[1].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
-		agnss_need.system[1].sv_mask_ephe = 0x3ff;
-		agnss_need.system[1].sv_mask_alm = 0x3ff;
-	}
-#endif
+#if !defined(CONFIG_SOC_NRF9160)
+	agnss_need.system[system_count].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
+	agnss_need.system[system_count].sv_mask_ephe = 0x3ffu;
+	agnss_need.system[system_count].sv_mask_alm = 0x3ffu;
+	system_count++;
+#endif /* !CONFIG_SOC_NRF9160 */
+#if defined(CONFIG_SOC_SERIES_NRF92)
+	agnss_need.data_flags |= NRF_MODEM_GNSS_AGNSS_GGTO_REQUEST;
+	agnss_need.system[system_count].system_id = NRF_MODEM_GNSS_SYSTEM_GAL;
+	agnss_need.system[system_count].sv_mask_ephe = 0xfffffffffu;
+	agnss_need.system[system_count].sv_mask_alm = 0xfffffffffu;
+	system_count++;
+#endif /* CONFIG_SOC_SERIES_NRF92 */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
+
+	agnss_need.system_count = system_count;
 
 	k_work_submit_to_queue(&mosh_common_work_q, &get_agnss_data_work);
 
@@ -1687,6 +1719,8 @@ int gnss_get_agnss_expiry(void)
 	mosh_print("Integrity:  %s", expiry_string);
 	get_expiry_string(expiry_string, sizeof(expiry_string), agnss_expiry.position_expiry);
 	mosh_print("Position:   %s", expiry_string);
+	get_expiry_string(expiry_string, sizeof(expiry_string), agnss_expiry.ggto_expiry);
+	mosh_print("GGTO:       %s", expiry_string);
 
 	for (int i = 0; i < agnss_expiry.sv_count; i++) {
 		system_string = gnss_system_str_get(agnss_expiry.sv[i].system_id);

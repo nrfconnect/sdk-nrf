@@ -34,11 +34,16 @@ enum gnss_timing_source {
 	GNSS_TIMING_SOURCE_TCXO
 };
 
-enum gnss_qzss_nmea_mode {
+enum gnss_nmea_talker_mode {
+	GNSS_NMEA_TALKER_MODE_STANDARD,
+	GNSS_NMEA_TALKER_MODE_GP_ONLY
+};
+
+enum gnss_nmea_qzss_mode {
 	/** Standard NMEA PRN reporting. */
-	GNSS_QZSS_NMEA_MODE_STANDARD,
+	GNSS_NMEA_QZSS_MODE_STANDARD,
 	/** Custom NMEA PRN reporting (PRN IDs 193...202 used for QZSS satellites). */
-	GNSS_QZSS_NMEA_MODE_CUSTOM
+	GNSS_NMEA_QZSS_MODE_CUSTOM
 };
 
 struct gnss_1pps_mode {
@@ -233,6 +238,28 @@ int gnss_set_use_case(bool low_accuracy_enabled, bool scheduled_downloads_disabl
 int gnss_set_nmea_mask(uint16_t nmea_mask);
 
 /**
+ * @brief Sets the NMEA talker mode. In standard mode, talker IDs GP/GA/GN etc. are used.
+ *        In GP only mode, only the GP talker ID is used and other systems are not reported.
+ *
+ * @param talker_mode NMEA talker mode.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_set_nmea_talker_mode(enum gnss_nmea_talker_mode talker_mode);
+
+/**
+ * @brief Sets the QZSS NMEA mode. In standard NMEA mode QZSS satellites are not reported.
+ *        In custom NMEA mode QZSS satellites are reported using PRN IDs 193...202.
+ *
+ * @param nmea_mode QZSS NMEA mode.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_set_nmea_qzss_mode(enum gnss_nmea_qzss_mode nmea_mode);
+
+/**
  * @brief Enables/disables priority time window requests.
  *
  * When priority time windows are enabled, GNSS requests longer RF time windows
@@ -259,20 +286,9 @@ int gnss_set_priority_time_windows(bool value);
 int gnss_set_dynamics_mode(enum gnss_dynamics_mode mode);
 
 /**
- * @brief Sets the QZSS NMEA mode. In standard NMEA mode QZSS satellites are not reported.
- *        In custom NMEA mode QZSS satellites are reported using PRN IDs 193...202.
- *
- * @param nmea_mode QZSS NMEA mode.
- *
- * @retval 0 if the operation was successful.
- *         Otherwise, a (negative) error code is returned.
- */
-int gnss_set_qzss_nmea_mode(enum gnss_qzss_nmea_mode nmea_mode);
-
-/**
  * @brief Sets the QZSS PRN mask.
  *
- * @param mask Bits 0 to 9 when set correspond to PRNs 193...202 being enabled.
+ * @param mask Bits 0 to 9 when set correspond to QZSS PRNs 193...202 being enabled.
  *             Bits 10...15 are reserved.
  *
  * @retval 0 if the operation was successful.
@@ -312,12 +328,13 @@ int gnss_set_timing_source(enum gnss_timing_source source);
  * @param time True if system time is enabled, false if not.
  * @param pos True if position is enabled, false if not.
  * @param integrity True if integrity data is enabled, false if not.
+ * @param ggto True if GGTO data is enabled, false if not.
  *
  * @retval 0 if the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int gnss_set_agnss_data_enabled(bool ephe, bool alm, bool utc, bool klob,
-				bool neq, bool time, bool pos, bool integrity);
+int gnss_set_agnss_data_enabled(bool ephe, bool alm, bool utc, bool klob, bool neq,
+				bool time, bool pos, bool integrity, bool ggto);
 
 /**
  * @brief Sets whether A-GNSS data is automatically fetched whenever requested
