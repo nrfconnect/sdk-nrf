@@ -575,8 +575,10 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #endif
 
 #if defined(CONFIG_BT_CTLR_LE_POWER_CONTROL) || defined(CONFIG_BT_CTLR_ADV_EXT)
+#if defined(CONFIG_BT_CTLR_SDC_RF_PATH_COMPENSATION)
 	cmds->hci_le_read_rf_path_compensation = 1;
 	cmds->hci_le_write_rf_path_compensation = 1;
+#endif
 #endif
 
 #if defined(CONFIG_BT_CTLR_SCA_UPDATE)
@@ -1261,12 +1263,14 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 #endif
 
 #if defined(CONFIG_BT_CTLR_LE_POWER_CONTROL) || defined(CONFIG_BT_CTLR_ADV_EXT)
+#if defined(CONFIG_BT_CTLR_SDC_RF_PATH_COMPENSATION)
 	case SDC_HCI_OPCODE_CMD_LE_READ_RF_PATH_COMPENSATION:
 		*param_length_out += sizeof(sdc_hci_cmd_le_read_rf_path_compensation_return_t);
 		return sdc_hci_cmd_le_read_rf_path_compensation((void *)event_out_params);
 
 	case SDC_HCI_OPCODE_CMD_LE_WRITE_RF_PATH_COMPENSATION:
 		return sdc_hci_cmd_le_write_rf_path_compensation((void *)cmd_params);
+#endif
 #endif
 
 #if defined(CONFIG_BT_CTLR_SYNC_TRANSFER_SENDER)

@@ -741,6 +741,13 @@ config BT_CTLR_SDC_DATA_RELATED_ADDRESS_CHANGES
 	help
 	  Support for LE Set Data Related Address Changes command
 
+config BT_CTLR_SDC_RF_PATH_COMPENSATION
+	bool "RF Path Compensation"
+	depends on BT_CTLR_LE_POWER_CONTROL || BT_CTLR_ADV_EXT
+	default y if BT_HCI_RAW
+	help
+	  Support for LE RF Path Compensation
+
 config BT_CTLR_DTM
 	select EXPERIMENTAL
 
