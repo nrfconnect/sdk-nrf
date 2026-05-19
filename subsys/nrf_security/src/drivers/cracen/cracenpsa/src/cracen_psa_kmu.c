@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <nrfx.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen/lib_kmu.h>
 #include <nrf_security_mutexes.h>

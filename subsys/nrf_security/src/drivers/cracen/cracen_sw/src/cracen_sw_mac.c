@@ -8,7 +8,7 @@
 #include <psa/crypto_values.h>
 #include <string.h>
 #include <zephyr/sys/__assert.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <cracen_psa_primitives.h>
 #include <cracen_sw_mac_cmac.h>
 #include <internal/mac/cracen_mac_hmac.h>

@@ -8,7 +8,7 @@
 #include <internal/ecc/cracen_ecc_helpers.h>
 
 #include <cracen/common.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <silexpk/sxops/eccweierstrass.h>
 

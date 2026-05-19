@@ -73,6 +73,15 @@
  * @file crypto_driver_contexts_key_derivation.h
  */
 
+/**
+ * @defgroup nrf_security_mem_helpers Generic Memory Helpers
+ * @brief Constant-time memory utilities
+ *
+ * Provides @c constant_memcmp, @c constant_memcmp_is_zero,
+ * @c constant_select_bin, @c safe_memset, @c safe_memzero, and
+ * @c memcpy_check_non_zero.
+ */
+
 /** @} */
 
 /** @} */

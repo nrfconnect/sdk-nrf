@@ -9,7 +9,7 @@
 #include <cracen_psa_sign_verify.h>
 
 #include <cracen/common.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>

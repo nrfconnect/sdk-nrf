@@ -9,7 +9,6 @@
 #include <cracen_psa.h>
 #include <cracen_psa_kmu.h>
 #include <cracen_psa_key_ids.h>
-#include <cracen/mem_helpers.h>
 #include <string.h>
 #include <util/util_macro.h>
 

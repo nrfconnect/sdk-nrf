@@ -36,7 +36,7 @@
 #include <silexpk/ed25519.h>
 #include <cracen/ec_helpers.h>
 #include <sxsymcrypt/hash.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen/common.h>
 

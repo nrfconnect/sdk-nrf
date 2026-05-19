@@ -8,7 +8,7 @@
 
 #include <cracen/common.h>
 #include <internal/ecc/cracen_ecc_helpers.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
