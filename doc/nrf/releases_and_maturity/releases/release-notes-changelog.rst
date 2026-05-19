@@ -658,6 +658,10 @@ Libraries for networking
     * An issue where the library tried to use predictions that had not yet been flushed to flash, leading to a prediction validation error.
     * An issue where the library kept trying to use corrupted predictions.
 
+* :ref:`nrf_802154_callbacks_dispatcher` library:
+
+  * Updated the status from experimental to supported.
+
 Libraries for NFC
 -----------------
 
