@@ -179,11 +179,8 @@ Only 2 options are supported by this sample:
 .. note::
    To create the new Composition Data and see the :c:enum:`BT_MESH_DFU_EFFECT_UNPROV` effect, you can, for example, turn off the Friend feature in the :file:`prj.conf` file by setting the :kconfig:option:`CONFIG_BT_MESH_FRIEND` option to ``n``.
 
-In this sample, the device flash is split into partitions using the :ref:`partition_manager`.
+In this sample, the device flash is split into partitions using DTS overlays.
 When the DFU transfer starts, the sample stores the new firmware at the MCUboot secondary slot using the :ref:`zephyr:flash_map_api`.
-
-.. note::
-   For the :zephyr:board:`nrf52840dongle`, the sample has a static partition management file :file:`pm_static_nrf52840dongle_nrf52840.yml` to reserve the space for the `nRF5 SDK Bootloader`_.
 
 When the DFU transfer ends, the sample requests the MCUboot to replace slot-0 with slot-1 and reboots the device.
 The MCUboot performs the validation of the image located at slot-1.

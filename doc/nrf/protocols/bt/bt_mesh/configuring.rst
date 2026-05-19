@@ -68,8 +68,6 @@ The provided values are meant as suggestions only, and should be individually ad
 * :kconfig:option:`CONFIG_HWINFO` - Enables the hardware information driver.
   The hardware information driver must be enabled to perform provisioning of the device.
   See the UUID section of :ref:`bt_mesh_dk_prov`.
-* :kconfig:option:`CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE` - Sets the size of the partition used for settings storage.
-  Use the option to increase the size if necessary.
 * :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` - Enables partial erase on supported hardware platforms.
   Partial erase allows the flash page erase operation to be split into several small chunks preventing longer CPU stalls.
   This improves responsiveness of a mesh node during the defragmentation of storage areas used by the settings subsystem.
