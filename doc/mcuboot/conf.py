@@ -33,7 +33,8 @@ extensions = [
     "zephyr.kconfig",
     "sphinx.ext.intersphinx",
     "recommonmark",
-    "zephyr.external_content"
+    "zephyr.external_content",
+    "sphinxcontrib.jquery"
 ]
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
@@ -58,6 +59,8 @@ html_theme_options = {
     "docset": "mcuboot",
     "docsets": utils.ALL_DOCSETS,
     "subtitle": "nRF Connect SDK",
+    "collapse_navigation": False,
+    "logo_url": "https://docs.nordicsemi.com"
 }
 
 # Options for intersphinx ------------------------------------------------------
@@ -91,3 +94,5 @@ external_content_contents = [
 def setup(app):
     utils.add_google_analytics(app, html_theme_options)
     utils.add_announcement_banner(html_theme_options)
+    html_theme_options["set_default_announcement"] = False
+    html_theme_options["default_announcement_message"] = ""

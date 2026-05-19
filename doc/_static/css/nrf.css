@@ -107,6 +107,7 @@
   color: #000;
   border-top: none;
   background: transparent;
+  max-width: calc(100% - var(--ncs-right-toc-width));
 }
 
 #versions-select {
