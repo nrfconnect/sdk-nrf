@@ -11,11 +11,13 @@
 #include <zephyr/sys/__assert.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <mpsl.h>
+#include <mpsl_asserts.h>
 #include <mpsl_timeslot.h>
 #include <mpsl/mpsl_assert.h>
 #include <mpsl/mpsl_work.h>
 #include "multithreading_lock.h"
 #include <nrfx.h>
+#include <stdlib.h>
 #if defined(NRF_TRUSTZONE_NONSECURE)
 #include "tfm_platform_api.h"
 #include "tfm_ioctl_core_api.h"
@@ -322,6 +324,23 @@ void m_assert_handler(const char *const file, const uint32_t line)
 }
 
 #else /* !IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
+
+#if defined(CONFIG_LOG)
+const char *mpsl_get_assertion_message(const char *const file, const uint32_t line)
+{
+	uint32_t file_id = atoi(file);
+
+	for (uint32_t i = 0; i < ARRAY_SIZE(mpsl_assert_messages); i++) {
+		if (mpsl_assert_messages[i].file_id == file_id &&
+		    mpsl_assert_messages[i].line == line) {
+			return mpsl_assert_messages[i].assert_msg;
+		}
+	}
+
+	return NULL;
+}
+#endif /* CONFIG_LOG */
+
 static void m_assert_handler(const char *const file, const uint32_t line)
 {
 	volatile char assert_file_id[11] = { 0 };
@@ -333,6 +352,11 @@ static void m_assert_handler(const char *const file, const uint32_t line)
 	__ASSERT(false, "MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
 	LOG_ERR("MPSL ASSERT: %s, %d", (char *)assert_file_id, assert_line);
+	const char *failure_reason_msg =
+		mpsl_get_assertion_message(file, line);
+	if (failure_reason_msg) {
+		LOG_ERR("ASSERT REASON: %s", failure_reason_msg);
+	}
 	k_oops();
 #elif defined(CONFIG_PRINTK)
 	printk("MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
