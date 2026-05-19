@@ -6,6 +6,17 @@
 
 &gd25wb256 {
 	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		fmfu_storage_partition: partition@0 {
+			label = "modem_trace";
+			reg = <0x00000000 0x400000>;
+		};
+	};
 };
 
 / {
@@ -13,8 +24,7 @@
 		ext-flash = &gd25wb256;
 	};
 
-	/* Configure partition manager to use gd25wb256 as the external flash */
 	chosen {
-		nordic,pm-ext-flash = &gd25wb256;
+		nordic,fmfu-storage-partition = &fmfu_storage_partition;
 	};
 };

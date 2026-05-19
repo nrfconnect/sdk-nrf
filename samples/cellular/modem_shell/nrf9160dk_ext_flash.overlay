@@ -24,6 +24,17 @@
 			    30 b0 30 b0 f7 c4 d5 5c 00 be 29 ff f0 d0 ff ff];
 		size = <67108864>;
 		mxicy,mx25r-power-mode = "high-performance";
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			fmfu_storage_partition: partition@0 {
+				label = "modem_trace";
+				reg = <0x00000000 0x400000>;
+			};
+		};
 	};
 };
 
@@ -32,8 +43,7 @@
 		ext-flash = &mx25r64;
 	};
 
-	/* Configure partition manager to use mx25r64 as the external flash */
 	chosen {
-		nordic,pm-ext-flash = &mx25r64;
+		nordic,fmfu-storage-partition = &fmfu_storage_partition;
 	};
 };
