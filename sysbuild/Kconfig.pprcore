@@ -4,13 +4,13 @@
 
 config SUPPORT_PPRCORE
 	bool
-	default y if SOC_NRF54H20_CPUAPP
+	default y if SOC_NRF54H20_CPUAPP || SOC_NRF9251_CPUAPP
 
 if SUPPORT_PPRCORE
 
 config PPRCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
 	string
-	default "cpuppr" if SOC_NRF54H20_CPUAPP
+	default "cpuppr" if SOC_NRF54H20_CPUAPP || SOC_NRF9251_CPUAPP
 
 menu "Peripheral processor core (PPR) configuration"
 	depends on SUPPORT_PPRCORE
