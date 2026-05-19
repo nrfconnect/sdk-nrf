@@ -18,7 +18,6 @@ target_sources(app PRIVATE src/application.c)
 target_sources(app PRIVATE src/cloud_connection.c)
 target_sources(app PRIVATE src/message_queue.c)
 target_sources(app PRIVATE src/temperature.c)
-target_sources(app PRIVATE src/fota_support.c)
 target_sources(app PRIVATE src/led_control.c)
 target_sources(app PRIVATE src/sample_reboot.c)
 target_sources(app PRIVATE src/shadow_config.c)
@@ -29,10 +28,6 @@ endif()
 
 if(CONFIG_COAP_SHADOW)
   target_sources(app PRIVATE src/shadow_support_coap.c)
-endif()
-
-if(CONFIG_COAP_FOTA)
-  target_sources(app PRIVATE src/fota_support_coap.c)
 endif()
 
 # NORDIC SDK APP END

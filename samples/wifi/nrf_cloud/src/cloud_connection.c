@@ -14,10 +14,8 @@
 #include <net/nrf_cloud_codec.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
-#include "fota_support_coap.h"
 #endif
 #include "cloud_connection.h"
-#include "fota_support.h"
 #include "location_tracking.h"
 #include "led_control.h"
 #include "shadow_config.h"
@@ -223,7 +221,7 @@ static void network_disconnected(void)
 	int err = nrf_cloud_coap_pause();
 
 	if ((err < 0) && (err != -EBADF)) {
-		/* -EBADF means it was disconnected, for example by FOTA. */
+		/* -EBADF means it was disconnected. */
 		LOG_ERR("Error pausing connection: %d", err);
 	}
 #endif
@@ -510,28 +508,6 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		handle_shadow_event(nrf_cloud_evt->shadow);
 		break;
 	}
-	case NRF_CLOUD_EVT_FOTA_START:
-		LOG_DBG("NRF_CLOUD_EVT_FOTA_START");
-		break;
-	case NRF_CLOUD_EVT_FOTA_DONE: {
-		enum nrf_cloud_fota_type fota_type = NRF_CLOUD_FOTA_TYPE__INVALID;
-
-		if (nrf_cloud_evt->data.ptr) {
-			fota_type = *((enum nrf_cloud_fota_type *) nrf_cloud_evt->data.ptr);
-		}
-
-		LOG_DBG("NRF_CLOUD_EVT_FOTA_DONE, FOTA type: %s",
-			fota_type == NRF_CLOUD_FOTA_APPLICATION	  ?		"Application"	:
-			fota_type == NRF_CLOUD_FOTA_BOOTLOADER	  ?		"Bootloader"	:
-										"Invalid");
-
-		/* Notify fota_support of the completed download. */
-		on_fota_downloaded();
-		break;
-	}
-	case NRF_CLOUD_EVT_FOTA_ERROR:
-		LOG_DBG("NRF_CLOUD_EVT_FOTA_ERROR");
-		break;
 	default:
 		LOG_DBG("Unknown event type: %d", nrf_cloud_evt->type);
 		break;
@@ -567,13 +543,6 @@ static int setup_cloud(void)
 	}
 
 #elif defined(CONFIG_NRF_CLOUD_COAP)
-#if defined(CONFIG_COAP_FOTA)
-	err = coap_fota_init();
-	if (err) {
-		LOG_ERR("Error initializing FOTA: %d", err);
-		return err;
-	}
-#endif /* CONFIG_COAP_FOTA */
 	err = nrf_cloud_coap_init();
 	if (err) {
 		LOG_ERR("Failed to initialize CoAP client: %d", err);

@@ -34,8 +34,6 @@ This sample implements or demonstrates the following features:
 
 * Error-tolerant use of the nRF Cloud CoAP API using the :ref:`lib_nrf_cloud_coap` library.
 * Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`lib_nrf_cloud` library.
-* Support for `Firmware-Over-The-Air (FOTA) update service <nRF Cloud Getting Started FOTA documentation_>`_ using the `nRF Cloud`_ portal (not yet supported for nRF7x devices).
-* Support for the `nRF Cloud Provisioning Service`_ using the :ref:`lib_nrf_provisioning` library (not yet supported for nRF7x devices).
 * Periodic Wi-Fi location tracking by scanning nearby access points and submitting them to nRF Cloud, using the :ref:`lib_location` library.
 * Fake temperature measurements.
 * Transmission of sensor samples to the nRF Cloud portal as `nRF Cloud Device Messages`_.
@@ -60,10 +58,8 @@ This file starts three primary threads, each with a distinct function:
 
 :file:`src/main.c` also optionally starts a fourth thread, the ``led_thread``, which animates any onboard LEDs if :ref:`wifi_nrf_cloud_led_status_indication` is enabled.
 
-When using CoAP, two additional threads start:
-
-* The CoAP FOTA job checking thread (``coap_fota``, :file:`src/fota_support_coap.c`) runs the :ref:`wifi_nrf_cloud_coap_fota_loop` which periodically asks nRF Cloud for any pending FOTA job.
-* The CoAP shadow delta checking thread (``coap_shadow``, :file:`src/shadow_support_coap.c`) runs the :ref:`wifi_nrf_cloud_coap_shadow_loop` which periodically asks nRF Cloud for any shadow changes.
+When using CoAP, one additional thread starts:
+The CoAP shadow delta checking thread (``coap_shadow``, :file:`src/shadow_support_coap.c`) runs the :ref:`wifi_nrf_cloud_coap_shadow_loop` which periodically asks nRF Cloud for any shadow changes.
 
 .. _wifi_nrf_cloud_cloud_connection_loop:
 
@@ -124,21 +120,6 @@ It performs the following major tasks:
 .. note::
    Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
 
-.. _wifi_nrf_cloud_coap_fota_loop:
-
-CoAP FOTA job check loop
-========================
-
-The nRF Cloud CoAP service provides device-initiated communication with the server.
-Server to device communication is only in response to a device request, which means the device polls for asynchronous changes to server resources.
-The CoAP FOTA job checking thread performs the following tasks:
-
-* Checks the settings storage area to see if the device has recently rebooted after performing a FOTA update.
-* If it had recently rebooted, it sends the results of the FOTA update to the server with the :c:func:`nrf_cloud_coap_fota_job_update` function.
-* Checks for a new FOTA job with the :c:func:`nrf_cloud_coap_fota_job_get` function.
-* If one is available, it downloads the update using HTTPS, saves the job information in settings, then reboots the device.
-* If the download was unsuccessful, it notifies the server with the :c:func:`nrf_cloud_coap_fota_job_update` function.
-
 .. _wifi_nrf_cloud_coap_shadow_loop:
 
 CoAP shadow delta checking loop
@@ -150,18 +131,6 @@ The CoAP shadow delta checking thread performs the following tasks:
 * Parse and process the JSON shadow delta document.
 * If a change is received, the thread sends the change back with the :c:func:`nrf_cloud_coap_shadow_state_update` function.
   This is necessary to prevent the device from unnecessarily receiving the same shadow delta the next time through the loop.
-
-.. _wifi_nrf_cloud_fota:
-
-FOTA
-====
-
-When using MQTT, FOTA support is implemented by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` option.
-Applications must still reboot after FOTA download completion and update the `Device Shadow <nRF Cloud Device Shadows_>`_ to reflect FOTA support—both handled in :file:`src/fota_support.c` and :file:`src/cloud_connection.c`.
-
-.. note::
-   FOTA is not yet supported for nRF7x devices.
-   :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` is disabled in the default configuration.
 
 .. _wifi_nrf_cloud_temperature_sensing:
 
@@ -499,7 +468,6 @@ Then, complete the following steps for each device you wish to onboard:
 
    This script also installs any nRF Cloud root CA certificates required in a single chain to the :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG` security tag (``sec_tag``).
    CoAP connections use one root CA certificate, whereas HTTPS and MQTT use another.
-   Devices using CoAP need both installed, since HTTPS is used for FOTA on CoAP devices.
 
    If the script succeeds, you should see the following output:
 

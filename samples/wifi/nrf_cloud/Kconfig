@@ -172,35 +172,6 @@ config TEST_COUNTER_MULTIPLIER
 
 if NRF_CLOUD_COAP
 
-menuconfig COAP_FOTA
-	bool "FOTA service when using CoAP to connect to nRF Cloud"
-	select FOTA_DOWNLOAD
-	select FOTA_DOWNLOAD_PROGRESS_EVT
-	select IMG_ERASE_PROGRESSIVELY
-	select DFU_TARGET
-	select DOWNLOADER
-	select REBOOT
-	select CJSON_LIB
-	select SETTINGS
-	default y
-
-if COAP_FOTA
-
-config COAP_FOTA_JOB_CHECK_RATE_MINUTES
-	int "FOTA job check interval (minutes)"
-	default 60
-	help
-	  Sets the time to wait between each request to get any pending FOTA job.
-
-config COAP_FOTA_THREAD_STACK_SIZE
-	int "CoAP FOTA Thread Stack Size (bytes)"
-	default 2048
-	help
-	  Sets the stack size (in bytes) for the CoAP FOTA thread of the
-	  sample.
-
-endif
-
 menuconfig COAP_SHADOW
 	bool "Updating shadow service"
 	default y
