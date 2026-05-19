@@ -595,7 +595,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 
 #if defined(CONFIG_BT_CTLR_CENTRAL_ISO)
 	cmds->hci_le_set_cig_parameters = 1;
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	cmds->hci_le_set_cig_parameters_test = 1;
+#endif
 	cmds->hci_le_create_cis = 1;
 	cmds->hci_le_remove_cig = 1;
 #endif
@@ -609,7 +611,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 
 #if defined(CONFIG_BT_CTLR_ADV_ISO)
 	cmds->hci_le_create_big = 1;
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	cmds->hci_le_create_big_test = 1;
+#endif
 	cmds->hci_le_terminate_big = 1;
 #endif
 
@@ -621,18 +625,22 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_ISO)
 	cmds->hci_le_setup_iso_data_path = 1;
 	cmds->hci_le_remove_iso_data_path = 1;
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	cmds->hci_le_iso_test_end = 1;
 	cmds->hci_le_iso_read_test_counters = 1;
+#endif
 	cmds->hci_le_read_iso_link_quality = 1;
 #endif
 
 #if defined(CONFIG_BT_CTLR_ISO_TX_BUFFERS)
 	cmds->hci_le_read_buffer_size_v2 = 1;
 	cmds->hci_le_read_iso_tx_sync = 1;
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	cmds->hci_le_iso_transmit_test = 1;
 #endif
+#endif
 
-#if defined(CONFIG_BT_CTLR_ISO_RX_BUFFERS)
+#if defined(CONFIG_BT_CTLR_ISO_RX_BUFFERS) && defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	cmds->hci_le_iso_receive_test = 1;
 #endif
 
@@ -1341,6 +1349,7 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 
 		return status;
 	}
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	case SDC_HCI_OPCODE_CMD_LE_SET_CIG_PARAMS_TEST: {
 		sdc_hci_cmd_le_set_cig_params_test_return_t *p_cig_params_test_ret =
 			(sdc_hci_cmd_le_set_cig_params_test_return_t *)event_out_params;
@@ -1355,6 +1364,7 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 
 		return status;
 	}
+#endif /* CONFIG_BT_CTLR_SDC_ISO_TEST */
 
 	case SDC_HCI_OPCODE_CMD_LE_CREATE_CIS:
 		return sdc_hci_cmd_le_create_cis((sdc_hci_cmd_le_create_cis_t const *)cmd_params);
@@ -1380,9 +1390,11 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 #ifdef CONFIG_BT_CTLR_ADV_ISO
 	case SDC_HCI_OPCODE_CMD_LE_CREATE_BIG:
 		return sdc_hci_cmd_le_create_big((sdc_hci_cmd_le_create_big_t const *)cmd_params);
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	case SDC_HCI_OPCODE_CMD_LE_CREATE_BIG_TEST:
 		return sdc_hci_cmd_le_create_big_test(
 			(sdc_hci_cmd_le_create_big_test_t const *)cmd_params);
+#endif
 	case SDC_HCI_OPCODE_CMD_LE_TERMINATE_BIG:
 		return sdc_hci_cmd_le_terminate_big(
 			(sdc_hci_cmd_le_terminate_big_t const *)cmd_params);
@@ -1400,14 +1412,16 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 			(sdc_hci_cmd_le_read_iso_tx_sync_t const *)cmd_params,
 			(sdc_hci_cmd_le_read_iso_tx_sync_return_t *)event_out_params);
 
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	case SDC_HCI_OPCODE_CMD_LE_ISO_TRANSMIT_TEST:
 		*param_length_out += sizeof(sdc_hci_cmd_le_iso_transmit_test_return_t);
 		return sdc_hci_cmd_le_iso_transmit_test(
 			(sdc_hci_cmd_le_iso_transmit_test_t const *)cmd_params,
 			(sdc_hci_cmd_le_iso_transmit_test_return_t *)event_out_params);
+#endif /* CONFIG_BT_CTLR_SDC_ISO_TEST */
 #endif /* CONFIG_BT_CTLR_ISO_TX_BUFFERS */
 
-#if defined(CONFIG_BT_CTLR_ISO_RX_BUFFERS)
+#if defined(CONFIG_BT_CTLR_ISO_RX_BUFFERS) && defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	case SDC_HCI_OPCODE_CMD_LE_ISO_RECEIVE_TEST:
 		*param_length_out += sizeof(sdc_hci_cmd_le_iso_receive_test_return_t);
 		return sdc_hci_cmd_le_iso_receive_test(
@@ -1416,11 +1430,13 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 #endif
 
 #if defined(CONFIG_BT_CTLR_ISO)
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	case SDC_HCI_OPCODE_CMD_LE_ISO_READ_TEST_COUNTERS:
 		*param_length_out += sizeof(sdc_hci_cmd_le_iso_read_test_counters_return_t);
 		return sdc_hci_cmd_le_iso_read_test_counters(
 			(sdc_hci_cmd_le_iso_read_test_counters_t const *)cmd_params,
 			(sdc_hci_cmd_le_iso_read_test_counters_return_t *)event_out_params);
+#endif /* CONFIG_BT_CTLR_SDC_ISO_TEST */
 
 	case SDC_HCI_OPCODE_CMD_LE_SETUP_ISO_DATA_PATH:
 		*param_length_out += sizeof(sdc_hci_cmd_le_setup_iso_data_path_return_t);
@@ -1434,11 +1450,13 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 			(sdc_hci_cmd_le_remove_iso_data_path_t const *)cmd_params,
 			(sdc_hci_cmd_le_remove_iso_data_path_return_t *)event_out_params);
 
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TEST)
 	case SDC_HCI_OPCODE_CMD_LE_ISO_TEST_END:
 		*param_length_out += sizeof(sdc_hci_cmd_le_iso_test_end_return_t);
 		return sdc_hci_cmd_le_iso_test_end(
 			(sdc_hci_cmd_le_iso_test_end_t const *)cmd_params,
 			(sdc_hci_cmd_le_iso_test_end_return_t *)event_out_params);
+#endif /* CONFIG_BT_CTLR_SDC_ISO_TEST */
 
 	case SDC_HCI_OPCODE_CMD_LE_READ_ISO_LINK_QUALITY:
 		*param_length_out += sizeof(sdc_hci_cmd_le_read_iso_link_quality_return_t);
