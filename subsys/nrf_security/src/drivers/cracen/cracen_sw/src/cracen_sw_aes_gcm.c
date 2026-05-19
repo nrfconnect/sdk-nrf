@@ -12,7 +12,7 @@
  * [MGV] 4.1, pp. 12-13, to enhance speed without using too much memory.
  */
 
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <stdbool.h>

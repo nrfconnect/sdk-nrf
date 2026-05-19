@@ -9,7 +9,7 @@
 #include "crypmasterregs.h"
 #include "hw.h"
 #include "cmdma.h"
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 
 int sx_cm_load_mask(uint32_t csprng_value)
 {

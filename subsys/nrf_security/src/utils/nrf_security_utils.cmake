@@ -8,6 +8,7 @@ add_library(nrf_security_utils STATIC
   ${CMAKE_CURRENT_LIST_DIR}/nrf_security_mutexes.c
   ${CMAKE_CURRENT_LIST_DIR}/nrf_security_events.c
   ${CMAKE_CURRENT_LIST_DIR}/nrf_security_core.c
+  ${CMAKE_CURRENT_LIST_DIR}/nrf_security_mem_helpers.c
 )
 
 target_include_directories(psa_crypto_config

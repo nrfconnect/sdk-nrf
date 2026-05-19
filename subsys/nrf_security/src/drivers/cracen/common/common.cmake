@@ -14,7 +14,6 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen/hardware/hardware.c
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen/common.c
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen/cracen_rndinrange.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/cracen/mem_helpers.c
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen/ec_helpers.c
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen/prng_pool.c
 )

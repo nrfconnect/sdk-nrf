@@ -11,7 +11,7 @@
 #include <stddef.h>
 #include <cracen/statuscodes.h>
 #include <cracen/common.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <silexpk/core.h>
 #include <sxsymcrypt/internal.h>
 

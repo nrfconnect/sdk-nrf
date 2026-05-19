@@ -6,10 +6,7 @@
 
 #include "psa_core_lite_volatile_key_storage.h"
 #include <psa/crypto.h>
-
-#if defined(CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
-#include <cracen/mem_helpers.h>
-#endif
+#include <nrf_security_mem_helpers.h>
 
 #define PSA_CORE_LITE_TRUE	0xA5FFA5FF
 #define PSA_CORE_LITE_FALSE	0u

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <zephyr/sys/util.h>
 
 int constant_memcmp(const void *s1, const void *s2, size_t n)

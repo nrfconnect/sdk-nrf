@@ -20,7 +20,7 @@
 #include "ba414_status.h"
 #include <silexpk/iomem.h>
 #include <cracen/statuscodes.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include "../../include/sx_regs.h"
 #include <silexpk/cmddefs/rsa.h>
 #include <silexpk/cmddefs/modmath.h>

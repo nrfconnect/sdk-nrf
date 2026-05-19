@@ -16,7 +16,7 @@
 #include <sxsymcrypt/chachapoly.h>
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <zephyr/sys/__assert.h>
 #include <cracen/common.h>

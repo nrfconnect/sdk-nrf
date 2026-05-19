@@ -17,7 +17,7 @@
 #include <cracen/statuscodes.h>
 #include <zephyr/sys/__assert.h>
 #include <cracen/common.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include "cracen_psa_primitives.h"
 
 _Static_assert(SX_HASH_MAX_ENABLED_BLOCK_SIZE != 1,

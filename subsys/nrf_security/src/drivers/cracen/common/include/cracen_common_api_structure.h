@@ -71,15 +71,6 @@
  */
 
 /**
- * @defgroup cracen_mem_helpers CRACEN Memory Helpers
- * @brief Constant-time memory utilities
- *
- * Provides @c constant_memcmp, @c constant_memcmp_is_zero,
- * @c constant_select_bin, @c safe_memset, @c safe_memzero, and
- * @c memcpy_check_non_zero.
- */
-
-/**
  * @defgroup cracen_membarriers CRACEN Memory Barriers
  * @brief Compiler and CPU memory barrier utilities
  *

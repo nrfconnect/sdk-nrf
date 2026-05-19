@@ -8,6 +8,7 @@
 #include <zephyr/sys/util.h>
 #include <psa/crypto.h>
 #include <psa_crypto_driver_wrappers.h>
+#include <nrf_security_mem_helpers.h>
 
 #if defined(CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE)
 #include "psa_core_lite_volatile_key_storage.h"

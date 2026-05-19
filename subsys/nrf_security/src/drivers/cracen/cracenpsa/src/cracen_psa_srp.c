@@ -10,7 +10,7 @@
 #include <cracen/common.h>
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
-#include <cracen/mem_helpers.h>
+#include <nrf_security_mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <psa/crypto.h>
 #include <string.h>
