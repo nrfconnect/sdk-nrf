@@ -43,7 +43,7 @@ choice MCUBOOT_MODE
 endchoice
 
 choice BOOT_SIGNATURE_TYPE
-	default BOOT_SIGNATURE_TYPE_RSA
+	default BOOT_SIGNATURE_TYPE_ECDSA_P256
 endchoice
 
 config SECURE_BOOT_NETCORE
