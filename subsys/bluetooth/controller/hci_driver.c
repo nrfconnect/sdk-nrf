@@ -333,6 +333,16 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 }
 
 #else /* !IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
+
+#if defined(CONFIG_LOG)
+char *sdc_get_assertion_message(const char *const file, const uint32_t line)
+{
+	(void)file;
+	(void)line;
+	return "unknown";
+}
+#endif /* CONFIG_LOG */
+
 void sdc_assertion_handler(const char *const file, const uint32_t line)
 {
 	volatile char assert_file_id[11] = { 0 };
@@ -344,7 +354,8 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 	__ASSERT(false, "SoftDevice Controller ASSERT: %s, %d\n",
 		(char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
-	LOG_ERR("SoftDevice Controller ASSERT: %s, %d", (char *)assert_file_id, assert_line);
+	LOG_ERR("SoftDevice Controller ASSERT: %s, %d, reason: %s", (char *)assert_file_id,
+		assert_line, sdc_get_assertion_message(file, line));
 	k_oops();
 #elif defined(CONFIG_PRINTK)
 	printk("SoftDevice Controller ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
