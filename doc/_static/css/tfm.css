@@ -13,7 +13,7 @@
   flex: 0 0 auto;
   width: 150px;
   text-align: center;
-  margin: 1rem;
+  margin:  0.5rem;
 }
 
 .grid-item a {
@@ -32,6 +32,8 @@
 .grid-item h2 {
   font-size: 1rem;
   color: #fff;
+  margin-top: 10px;
+  max-width: none;  
 }
 
 .grid-item img {
@@ -46,6 +48,7 @@
 .grid-item p {
   font-size: 0.9rem;
   margin-top: 0.5rem;
+  max-width: none; 
 }
 
 .grid-icon {
