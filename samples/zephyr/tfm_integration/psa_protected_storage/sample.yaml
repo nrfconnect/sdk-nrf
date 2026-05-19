@@ -2,7 +2,12 @@ sample:
   description: Protected Storage API sample
   name: PSA Protected Storage
 common:
-  tags: psa
+  tags:
+    - psa
+    - trusted-firmware-m
+    - mcuboot
+    - ci_samples_zephyr_tfm_integration
+
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp/ns
     - nrf54lm20dk/nrf54lm20b/cpuapp/ns
@@ -24,7 +29,4 @@ common:
       - "Removing UID1"
 
 tests:
-  sample.tfm.protected_storage:
-    tags:
-      - trusted-firmware-m
-      - mcuboot
+  nrf.extended.sample.tfm.protected_storage: {}
