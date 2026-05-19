@@ -17,9 +17,11 @@
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/util.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <zephyr/sys/__assert.h>
 
 #include <sdc.h>
+#include <sdc_asserts.h>
 #include <sdc_soc.h>
 #include <sdc_hci.h>
 #include <sdc_hci_vs.h>
@@ -333,6 +335,23 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 }
 
 #else /* !IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
+
+#if defined(CONFIG_LOG)
+const char *sdc_get_assertion_message(const char *const file, const uint32_t line)
+{
+	uint32_t file_id = atoi(file);
+
+	for (uint32_t i = 0; i < ARRAY_SIZE(sdc_assert_messages); i++) {
+		if (sdc_assert_messages[i].file_id == file_id &&
+		    sdc_assert_messages[i].line == line) {
+			return sdc_assert_messages[i].assert_msg;
+		}
+	}
+
+	return NULL;
+}
+#endif /* CONFIG_LOG */
+
 void sdc_assertion_handler(const char *const file, const uint32_t line)
 {
 	volatile char assert_file_id[11] = { 0 };
@@ -345,6 +364,11 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 		(char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
 	LOG_ERR("SoftDevice Controller ASSERT: %s, %d", (char *)assert_file_id, assert_line);
+	const char *failure_reason_msg =
+		sdc_get_assertion_message((char *)assert_file_id, assert_line);
+	if (failure_reason_msg) {
+		LOG_ERR("ASSERT REASON: %s", failure_reason_msg);
+	}
 	k_oops();
 #elif defined(CONFIG_PRINTK)
 	printk("SoftDevice Controller ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
