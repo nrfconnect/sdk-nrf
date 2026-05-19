@@ -29,5 +29,5 @@ For :ref:`ZMS <zephyr:zms_api>` backend:
 
 The sector size depends on the flash memory layout.
 
-Apart from this, the allocated partitions are managed by the :ref:`partition_manager`.
-It is required that the size of the partition allocated by the partition manager must be equal to the memory size configured for the settings subsystem.
+Apart from this, the allocated partitions are defined in a devicetree (DTS) overlay file.
+The size of the ``storage_partition`` node defined in the DTS overlay must be equal to the memory size configured for the settings subsystem.
