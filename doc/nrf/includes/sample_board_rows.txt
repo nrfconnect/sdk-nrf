@@ -283,6 +283,18 @@
 
 | nRF54LV10 DK | PCA10188 | :ref:`nrf54lv10dk <board_nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuflpr`` |
 
+.. nrf54lc10dk_nrf54lc10a_cpuapp
+
+| nRF54LC10 DK | PCA10226 | nrf54lc10dk | ``nrf54lc10dk/nrf54lc10a/cpuapp`` |
+
+.. nrf54lc10dk_nrf54lc10a_cpuapp_ns
+
+| nRF54LC10 DK | PCA10226 | nrf54lc10dk | ``nrf54lc10dk/nrf54lc10a/cpuapp/ns`` |
+
+.. nrf54lc10dk_nrf54lc10a_cpuflpr
+
+| nRF54LC10 DK | PCA10226 | nrf54lc10dk | ``nrf54lc10dk/nrf54lc10a/cpuflpr`` |
+
 .. nrf54lm20pdk_nrf54lm20a_cpuapp
 
 | nRF54LM20 PDK |   | nrf54lm20pdk | ``nrf54lm20pdk/nrf54lm20a/cpuapp`` |
