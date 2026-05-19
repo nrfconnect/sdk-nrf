@@ -2,6 +2,7 @@ common:
   tags:
     - trusted-firmware-m
     - mcuboot
+    - ci_samples_zephyr_tfm_integration
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp/ns
     - nrf54lm20dk/nrf54lm20b/cpuapp/ns
@@ -21,9 +22,9 @@ sample:
   name: "TFM Secure Partition Sample"
 
 tests:
-  sample.tfm.secure_partition.ipc:
+  nrf.extended.sample.tfm.secure_partition.ipc:
     extra_configs:
       - CONFIG_TFM_IPC=y
-  sample.tfm.secure_partition.sfn:
+  nrf.extended.sample.tfm.secure_partition.sfn:
     extra_configs:
       - CONFIG_TFM_SFN=y
