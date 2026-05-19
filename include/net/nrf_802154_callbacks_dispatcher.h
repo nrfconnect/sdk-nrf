@@ -4,8 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef NRF_802154_CALLBACKS_DISPATCHER_H
-#define NRF_802154_CALLBACKS_DISPATCHER_H
+#ifndef NRF_802154_CALLBACKS_DISPATCHER_H__
+#define NRF_802154_CALLBACKS_DISPATCHER_H__
+
+/** @file nrf_802154_callbacks_dispatcher.h
+ * @brief nRF IEEE 802.15.4 radio driver callbacks dispatcher API.
+ */
+
+/**
+ * @defgroup nrf_802154_callbacks_dispatcher nRF IEEE 802.15.4 radio driver callbacks dispatcher
+ * library
+ * @{
+ * @brief Dispatch nRF IEEE 802.15.4 radio driver callbacks to the active protocol client.
+ */
 
 #include <nrf_802154_const.h>
 #include <nrf_802154_types.h>
@@ -21,6 +32,7 @@ extern "C" {
 /** Invalid client index (no active client). */
 #define NRF_802154_CALLBACKS_DISPATCHER_INDEX_NONE UINT32_MAX
 
+/** @brief Radio addresses applied after a client switch. */
 struct nrf_802154_radio_client_config {
 	uint8_t pan_id[PAN_ID_SIZE];
 	uint8_t short_address[SHORT_ADDRESS_SIZE];
@@ -50,43 +62,38 @@ struct nrf_802154_callbacks {
 #endif
 };
 
-/**
- * @brief Entry for static registration in the iterable section.
- */
+/** @brief Static registration entry in the iterable linker section. */
 struct nrf_802154_cb_dispatch_entry {
-	/* Unique name for this registration (e.g. openthread). */
+	/** Client name (for example ``openthread``). */
 	const char *name;
-	/* Variable of type struct nrf_802154_callbacks. */
+	/** Client callbacks table. */
 	const struct nrf_802154_callbacks *callbacks;
-	/* Whether the configuration has been saved. */
+	/** Whether the configuration has been saved. */
 	bool saved_configuration;
-	/* Extended address in format of
-	 * 0x00:0x01:0x02:0x03:0x04:0x05:0x06:0x07.
-	 */
+	/** Extended address. */
 	uint8_t ext_address[EXTENDED_ADDRESS_SIZE];
-	/* Short address in format of 0x0000. */
+	/** Short address. */
 	uint16_t short_address;
-	/* PAN ID in little-endian byte format expected by nrf_802154_pan_id_* APIs. */
+	/** PAN ID in little-endian byte format. */
 	uint8_t pan_id[PAN_ID_SIZE];
 };
 
-/** Helper to stringify after argument expansion */
+/** Helper to stringify after argument expansion. */
 #define NRF_802154_CALLBACKS_DISPATCHER_NAME_STR(x) #x
-#define NRF_802154_CALLBACKS_DISPATCHER_NAME_STR_EXPAND(x)                                         \
+#define NRF_802154_CALLBACKS_DISPATCHER_NAME_STR_EXPAND(x)                                 \
 	NRF_802154_CALLBACKS_DISPATCHER_NAME_STR(x)
 
 /**
- * @brief Statically register a client.
+ * @brief Statically register an IEEE 802.15.4 radio driver client.
  *
- * Place this macro in file scope (e.g. in your protocol's radio driver implementation file).
+ * Place this macro in file scope (for example in a protocol radio implementation file).
  *
- * @param _entry_name Unique name for this registration (e.g. openthread).
- * Pass the same string to nrf_802154_callbacks_dispatcher_switch() function to
- * switch to this client's callbacks.
- * @param _callbacks_var Variable of type struct nrf_802154_callbacks.
+ * @param _entry_name Unique name for this registration (for example ``openthread``).
+ *                    Pass the same string to @ref nrf_802154_callbacks_dispatcher_switch.
+ * @param _callbacks_var Variable of type @ref nrf_802154_callbacks.
  */
-#define NRF_802154_CALLBACKS_DISPATCHER_REGISTER(_entry_name, _callbacks_var)                      \
-	static STRUCT_SECTION_ITERABLE(nrf_802154_cb_dispatch_entry, _entry_name) = {              \
+#define NRF_802154_CALLBACKS_DISPATCHER_REGISTER(_entry_name, _callbacks_var)              \
+	static STRUCT_SECTION_ITERABLE(nrf_802154_cb_dispatch_entry, _entry_name) = {          \
 		.name = NRF_802154_CALLBACKS_DISPATCHER_NAME_STR_EXPAND(_entry_name),              \
 		.callbacks = &(_callbacks_var),                                                    \
 		.saved_configuration = false,                                                      \
@@ -96,9 +103,11 @@ struct nrf_802154_cb_dispatch_entry {
 	}
 
 /**
- * @brief Switch callbacks to the new client.
+ * @brief Switch the active IEEE 802.15.4 radio driver client.
  *
- * @param name New client name (same name used in REGISTER).
+ * @param name New client name (same as the @p _entry_name used in
+ *             @ref NRF_802154_CALLBACKS_DISPATCHER_REGISTER), or NULL to deactivate.
+ *
  * @retval 0 Success.
  * @retval -EINVAL Name not found.
  */
@@ -108,4 +117,8 @@ int nrf_802154_callbacks_dispatcher_switch(const char *name);
 }
 #endif
 
-#endif /* NRF_802154_CALLBACKS_DISPATCHER_H */
+/**
+ * @}
+ */
+
+#endif /* NRF_802154_CALLBACKS_DISPATCHER_H__ */

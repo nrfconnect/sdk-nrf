@@ -41,7 +41,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #include "nrf_802154_const.h"
 
 #ifdef CONFIG_NRF_802154_CALLBACKS_DISPATCHER
-#include <nrf_802154_callbacks_dispatcher.h>
+#include <net/nrf_802154_callbacks_dispatcher.h>
 #endif /* CONFIG_NRF_802154_CALLBACKS_DISPATCHER */
 
 #if defined(CONFIG_NRF_802154_SER_HOST)
