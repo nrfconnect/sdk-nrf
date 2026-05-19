@@ -1,3 +1,11 @@
 name: nrf91-modem-trace-ram
 append:
   EXTRA_CONF_FILE: modem-trace-ram.conf
+
+boards:
+  /.*/tpm530m/.*/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: modem-trace-ram-nrf91.overlay
+  /.*/nrf91[0-9][0-9]/.*/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: modem-trace-ram-nrf91.overlay
