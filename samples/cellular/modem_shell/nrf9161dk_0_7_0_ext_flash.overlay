@@ -8,7 +8,7 @@
 
 / {
 	chosen {
-		nordic,pm-ext-flash = &gd25lb256;
+		nordic,fmfu-storage-partition = &fmfu_storage_partition;
 	};
 
 	aliases {
@@ -18,4 +18,15 @@
 
 &gd25lb256 {
 	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		fmfu_storage_partition: partition@0 {
+			label = "modem_trace";
+			reg = <0x00000000 0x400000>;
+		};
+	};
 };
