@@ -734,6 +734,13 @@ config BT_CTLR_SDC_ENABLE_LOWEST_FRAME_SPACE
 	  Note: This option forces ACL connections to always use the same
 	  TX and RX PHY.
 
+config BT_CTLR_SDC_DATA_RELATED_ADDRESS_CHANGES
+	bool "Data Related Address Changes"
+	depends on BT_BROADCASTER
+	default y if BT_HCI_RAW
+	help
+	  Support for LE Set Data Related Address Changes command
+
 config BT_CTLR_DTM
 	select EXPERIMENTAL
 
