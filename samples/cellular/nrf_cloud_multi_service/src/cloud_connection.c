@@ -12,7 +12,6 @@
 #include <date_time.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
-#include <net/nrf_cloud_log.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #include "fota_support_coap.h"

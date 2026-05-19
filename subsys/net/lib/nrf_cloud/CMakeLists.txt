@@ -6,14 +6,12 @@
 zephyr_library()
 zephyr_library_sources(
   common/src/nrf_cloud_codec_internal.c
-  common/src/nrf_cloud_log.c
   common/src/nrf_cloud_codec.c
   common/src/nrf_cloud_mem.c
   common/src/nrf_cloud_client_id.c
   common/src/nrf_cloud_sec_tag.c
   common/src/nrf_cloud_info.c
 )
-zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_LOG_BACKEND common/src/nrf_cloud_log_backend.c)
 zephyr_library_sources_ifdef(CONFIG_MODEM_JWT common/src/nrf_cloud_jwt.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM common/src/nrf_cloud_jwt.c)
 zephyr_library_sources_ifdef(
@@ -89,9 +87,4 @@ zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES common/src/
 zephyr_include_directories(include common/include coap/include mqtt/include coap/generated/include)
 if(CONFIG_MCUBOOT_IMG_MANAGER)
   zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
-endif()
-
-if(CONFIG_NRF_CLOUD_LOG_DIRECT)
-  zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_COAP coap/src/nrf_cloud_log.c)
-  zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_MQTT mqtt/src/nrf_cloud_log.c)
 endif()

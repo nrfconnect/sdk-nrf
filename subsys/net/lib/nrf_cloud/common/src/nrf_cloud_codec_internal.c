@@ -7,10 +7,7 @@
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_mem.h"
 #include <net/nrf_cloud_codec.h>
-#include "nrf_cloud_log_internal.h"
 #include <net/nrf_cloud_location.h>
-#include <net/nrf_cloud_log.h>
-#include <zephyr/logging/log_output.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
@@ -67,8 +64,6 @@ static const char *const sensor_type_str[] = {
 	[NRF_CLOUD_SENSOR_AIR_PRESS] = NRF_CLOUD_JSON_APPID_VAL_AIR_PRESS,
 	[NRF_CLOUD_SENSOR_AIR_QUAL] = NRF_CLOUD_JSON_APPID_VAL_AIR_QUAL,
 	[NRF_CLOUD_LTE_LINK_RSRP] = NRF_CLOUD_JSON_APPID_VAL_RSRP,
-	[NRF_CLOUD_LOG] = NRF_CLOUD_JSON_APPID_VAL_LOG,
-	[NRF_CLOUD_DICTIONARY_LOG] = NRF_CLOUD_JSON_APPID_VAL_DICTIONARY_LOG,
 	[NRF_CLOUD_DEVICE_INFO] = NRF_CLOUD_JSON_APPID_VAL_DEVICE,
 	[NRF_CLOUD_SENSOR_LIGHT] = NRF_CLOUD_JSON_APPID_VAL_LIGHT,
 };
@@ -278,23 +273,16 @@ int nrf_cloud_device_control_encode_internal(cJSON *const obj,
 	cJSON *ctrl_obj = cJSON_CreateObject();
 
 	if (data) {
-		if (!cJSON_AddNumberToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_LOG,
-						 data->log_level)) {
-			ret = -ENOMEM;
-		}
 #if (CONFIG_MEMFAULT)
-		if (!ret && json_add_bool_cs(ctrl_obj, NRF_CLOUD_JSON_KEY_MEMFAULT,
+		if (json_add_bool_cs(ctrl_obj, NRF_CLOUD_JSON_KEY_MEMFAULT,
 					     data->memfault_enabled)) {
 			ret = -ENOMEM;
 		}
 #endif /* CONFIG_MEMFAULT */
 	} else {
 		/* If data is NULL, add null to control object */
-		if (!cJSON_AddNullToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_LOG)) {
-			ret = -ENOMEM;
-		}
 #if (CONFIG_MEMFAULT)
-		if (!ret && !cJSON_AddNullToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_MEMFAULT)) {
+		if (!cJSON_AddNullToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_MEMFAULT)) {
 			ret = -ENOMEM;
 		}
 #endif /* CONFIG_MEMFAULT */
@@ -395,7 +383,6 @@ int nrf_cloud_shadow_control_decode(struct nrf_cloud_obj *const ctrl_obj,
 	__ASSERT_NO_MSG(ctrl_obj->type == NRF_CLOUD_OBJ_TYPE_JSON);
 	__ASSERT_NO_MSG(data != NULL);
 
-	cJSON *log_obj = NULL;
 #if (CONFIG_MEMFAULT)
 	cJSON *memfault_obj = NULL;
 
@@ -409,23 +396,6 @@ int nrf_cloud_shadow_control_decode(struct nrf_cloud_obj *const ctrl_obj,
 		return -EINVAL;
 	}
 #endif /* CONFIG_MEMFAULT */
-
-	log_obj = cJSON_GetObjectItem(ctrl_obj->json, NRF_CLOUD_JSON_KEY_LOG);
-	if (log_obj == NULL) {
-		LOG_DBG(NRF_CLOUD_JSON_KEY_LOG " not found");
-	} else if (cJSON_IsNumber(log_obj)) {
-		int val = (int)cJSON_GetNumberValue(log_obj);
-
-		if (((val < ((int)LOG_LEVEL_NONE)) || (val > LOG_LEVEL_DBG))) {
-			LOG_WRN("Invalid value specified for log_level: %d", val);
-			return -EINVAL;
-		}
-
-		data->log_level = val;
-	} else {
-		LOG_WRN(NRF_CLOUD_JSON_KEY_LOG " is not a number");
-		return -EINVAL;
-	}
 
 	return 0;
 }
@@ -1188,11 +1158,6 @@ int nrf_cloud_enabled_info_sections_json_encode(cJSON *const obj, const char *co
 		}
 		if (ret) {
 			return -ENOMEM;
-		}
-
-		/* The UI section is no longer used by the cloud, remove it */
-		if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI)) {
-			(void)nrf_cloud_encode_service_info_ui(NULL, svc_inf_obj);
 		}
 	}
 
@@ -3073,74 +3038,12 @@ int nrf_cloud_ground_fix_url_encode(char *buf, size_t size, const char *base,
 	return 0;
 }
 
-static int encode_json_log(struct nrf_cloud_log_context *ctx, uint8_t *buf, size_t size,
-			   struct nrf_cloud_data *output)
-{
-	int ret;
-	cJSON *root_obj = cJSON_CreateObject();
-
-	if (root_obj == NULL) {
-		return -ENOMEM;
-	}
-
-	ret = !cJSON_AddStringToObjectCS(root_obj, NRF_CLOUD_JSON_APPID_KEY,
-					 NRF_CLOUD_JSON_APPID_VAL_LOG);
-	if (ctx != NULL) {
-		ret += !cJSON_AddNumberToObjectCS(root_obj, NRF_CLOUD_JSON_LOG_KEY_DOMAIN,
-						  ctx->dom_id);
-		ret += !cJSON_AddNumberToObjectCS(root_obj, NRF_CLOUD_JSON_LOG_KEY_LEVEL,
-						  ctx->level);
-		if (ctx->src_name != NULL) {
-			ret += !cJSON_AddStringToObjectCS(root_obj, NRF_CLOUD_JSON_LOG_KEY_SOURCE,
-							  ctx->src_name);
-		}
-		if (ctx->ts > 0) {
-			ret += !cJSON_AddNumberToObjectCS(root_obj, NRF_CLOUD_MSG_TIMESTAMP_KEY,
-							  ctx->ts);
-		}
-		if (!ctx->ts || IS_ENABLED(CONFIG_NRF_CLOUD_LOG_SEQ_ALWAYS)) {
-			ret += !cJSON_AddNumberToObjectCS(root_obj, NRF_CLOUD_JSON_LOG_KEY_SEQUENCE,
-							  ctx->sequence);
-		}
-	}
-
-	ret += !cJSON_AddStringToObjectCS(root_obj, NRF_CLOUD_JSON_LOG_KEY_MESSAGE,
-					  (const char *)buf);
-	if (ret != 0) {
-		cJSON_Delete(root_obj);
-		return -ENOMEM;
-	}
-
-	char *buffer = cJSON_PrintUnformatted(root_obj);
-
-	cJSON_Delete(root_obj);
-
-	if (buffer == NULL) {
-		return -ENOMEM;
-	}
-
-	output->ptr = buffer;
-	output->len = strlen(buffer);
-	return 0;
-}
-
-int nrf_cloud_log_json_encode(struct nrf_cloud_log_context *ctx, uint8_t *buf, size_t size,
-			      struct nrf_cloud_data *output)
-{
-	__ASSERT_NO_MSG(ctx != NULL);
-	__ASSERT_NO_MSG(buf != NULL);
-	__ASSERT_NO_MSG(output != NULL);
-
-	return encode_json_log(ctx, buf, size, output);
-}
-
 void nrf_cloud_device_control_get(struct nrf_cloud_ctrl_data *const ctrl)
 {
 	if (!ctrl) {
 		return;
 	}
 
-	ctrl->log_level = nrf_cloud_log_control_get();
 #if (CONFIG_MEMFAULT)
 	ctrl->memfault_enabled = memfault_zephyr_port_periodic_upload_enabled();
 #else
@@ -3410,12 +3313,6 @@ int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const inp
 
 	/* Diff cloud/device control settings */
 	if (ctrl_status != NRF_CLOUD_CTRL_REJECT) {
-
-		if (device_ctrl.log_level != cloud_ctrl.log_level) {
-			ctrl_status = NRF_CLOUD_CTRL_REPLY;
-			nrf_cloud_log_control_set(cloud_ctrl.log_level);
-		}
-
 		if (device_ctrl.memfault_enabled != cloud_ctrl.memfault_enabled) {
 			ctrl_status = NRF_CLOUD_CTRL_REPLY;
 #if (CONFIG_MEMFAULT)

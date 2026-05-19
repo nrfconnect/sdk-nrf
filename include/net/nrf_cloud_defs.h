@@ -33,8 +33,6 @@
 #define NRF_CLOUD_JSON_APPID_VAL_RSRP		"RSRP"
 #define NRF_CLOUD_JSON_APPID_VAL_LIGHT		"LIGHT"
 #define NRF_CLOUD_JSON_APPID_VAL_MODEM		"MODEM"
-#define NRF_CLOUD_JSON_APPID_VAL_LOG		"LOG"
-#define NRF_CLOUD_JSON_APPID_VAL_DICTIONARY_LOG	"DICTLOG"
 
 /* Message type */
 #define NRF_CLOUD_JSON_MSG_TYPE_KEY		"messageType"
@@ -145,13 +143,6 @@
 #define NRF_CLOUD_DEVICE_JSON_KEY_NET_INF	"networkInfo"
 #define NRF_CLOUD_DEVICE_JSON_KEY_SIM_INF	"simInfo"
 #define NRF_CLOUD_DEVICE_JSON_KEY_DEV_INF	"deviceInfo"
-
-/* Logs */
-#define NRF_CLOUD_JSON_LOG_KEY_SEQUENCE		"seq"
-#define NRF_CLOUD_JSON_LOG_KEY_DOMAIN		"dom"
-#define NRF_CLOUD_JSON_LOG_KEY_SOURCE		"src"
-#define NRF_CLOUD_JSON_LOG_KEY_LEVEL		"lvl"
-#define NRF_CLOUD_JSON_LOG_KEY_MESSAGE		"msg"
 
 /* Settings Module */
 /** nRF Cloud's string identifier for persistent settings */

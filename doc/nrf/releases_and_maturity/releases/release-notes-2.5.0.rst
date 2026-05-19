@@ -564,7 +564,7 @@ Cellular samples (renamed from nRF9160 samples)
   * Renamed Cellular: nRF Cloud MQTT multi-service to :ref:`nrf_cloud_multi_service`.
   * Added:
 
-    * Documentation for using the nRF Cloud Alert and :ref:`lib_nrf_cloud_log` libraries.
+    * Documentation for using the nRF Cloud Alert and nRF Cloud Logging library libraries.
     * The :file:`overlay_coap.conf` file and made changes to the sample to enable the use of CoAP instead of MQTT to connect with nRF Cloud.
     * An overlay that allows the sample to be used with Wi-Fi instead of LTE (MQTT only).
     * Reporting of device and connection info to the device shadow.
@@ -980,7 +980,7 @@ Libraries for networking
   * :ref:`lib_nrf_provisioning` library for device provisioning.
   * :ref:`lib_nrf_cloud_coap` library for accessing nRF Cloud services using CoAP.
 
-* :ref:`lib_nrf_cloud_log` library:
+* nRF Cloud Logging library library:
 
   * Added:
 

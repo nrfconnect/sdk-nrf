@@ -6,7 +6,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
-#include <net/nrf_cloud_log.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud.h>
 #include "nrf_cloud_shadow.h"

@@ -1344,7 +1344,7 @@ Libraries for networking
 
   * Removed the experimental status (:kconfig:option:`CONFIG_EXPERIMENTAL`) from the :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option.
 
-* :ref:`lib_nrf_cloud_log` library:
+* nRF Cloud Logging library library:
 
   * Added:
 

@@ -1119,7 +1119,7 @@ Libraries for networking
   * Fixed an issue where a failed delta update for the modem would not clear the state and blocks future delta updates.
     This only occurred when an LwM2M Firmware object was used in push mode.
 
-* :ref:`lib_nrf_cloud_log` library:
+* nRF Cloud Logging library library:
 
   * Added:
 

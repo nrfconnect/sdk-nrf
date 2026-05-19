@@ -11,7 +11,6 @@
 #include "nrf_cloud_transport.h"
 #include <zephyr/kernel.h>
 #include <net/nrf_cloud_codec.h>
-#include <net/nrf_cloud_log.h>
 #include <zephyr/logging/log.h>
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>

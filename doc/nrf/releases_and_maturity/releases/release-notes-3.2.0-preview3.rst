@@ -781,7 +781,7 @@ Libraries for networking
 
   * Fixed occasional message truncation notifying that the download was complete.
 
-* :ref:`lib_nrf_cloud_log` library:
+* nRF Cloud Logging library library:
 
   * Updated by adding a missing CONFIG prefix.
 

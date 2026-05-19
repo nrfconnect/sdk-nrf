@@ -131,8 +131,6 @@ rsource "Kconfig.nrf_cloud_fota"
 
 rsource "Kconfig.nrf_cloud_location"
 
-rsource "Kconfig.nrf_cloud_log"
-
 rsource "Kconfig.nrf_cloud_shadow_info"
 
 config NRF_CLOUD_PRINT_DETAILS
