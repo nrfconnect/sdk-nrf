@@ -107,6 +107,7 @@ tests:
     platform_allow: *modem_shell_platform_allow
     extra_args:
       - EXTRA_CONF_FILE=overlay-app_fota.conf
+      - DTC_OVERLAY_FILE=nrf91_bootloader.overlay
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
     tags:
       - ci_build
@@ -144,7 +145,9 @@ tests:
   sample.cellular.modem_shell.carrier:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-carrier.conf
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-carrier.conf
+      - EXTRA_DTC_OVERLAY_FILE=overlay-carrier.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -180,7 +183,9 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
-    extra_args: EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf"
+    extra_args:
+      - EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf"
+      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -190,7 +195,9 @@ tests:
   sample.cellular.modem_shell.pgps:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-pgps.conf
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-pgps.conf
+      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -200,7 +207,9 @@ tests:
   sample.cellular.modem_shell.pgps_coap:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-pgps.conf
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-pgps.conf
+      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -228,6 +237,7 @@ tests:
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
       - EXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf;overlay-nrf700x-wifi-scan-only.conf"
+      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     integration_platforms: *modem_shell_integration_platforms
@@ -333,7 +343,7 @@ tests:
     build_only: true
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
-    extra_args: EXTRA_CONF_FILE="overlay-modem-trace-ram.conf"
+    extra_args: modem_shell_SNIPPET="nrf91-modem-trace-ram"
     tags:
       - ci_build
       - sysbuild
