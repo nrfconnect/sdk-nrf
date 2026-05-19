@@ -104,6 +104,10 @@ See :ref:`configure_application` for information on how to change configuration 
 
    SUPL client library v0.8.0 or later is required when picolibc is used.
 
+.. note::
+
+   SUPL client library usage with the :ref:`lib_nrf_cloud_coap` library enabled is not supported.
+
 Resource initialization and ownership
 =====================================
 
