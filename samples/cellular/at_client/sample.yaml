@@ -42,4 +42,3 @@ tests:
       - ci_samples_cellular
     extra_args:
       - at_client_SNIPPET=nrf91-modem-trace-uart
-      - EXTRA_DTC_OVERLAY_FILE=trace.overlay
