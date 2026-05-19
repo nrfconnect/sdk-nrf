@@ -43,6 +43,60 @@ The context data is then used to store the values of HIDS characteristics.
 These values are unique for each connected peer.
 While sending notifications, you can also target a specific client by providing the connection instance that is associated with it.
 
+HID Shorter Connection Intervals (SCI) support
+**********************************************
+
+The HID Shorter Connection Intervals (SCI) feature lets an HID host request shorter Bluetooth LE connection intervals for lower input latency.
+This is done by requesting a specific HID SCI mode from the HID device.
+Each mode specifies a set of connection parameters that the HID host can request.
+The specific parameter values are device-dependent.
+
+This feature is in experimental state.
+
+There are four HID SCI modes:
+
+* Default
+* Fast
+* Low Power (optional)
+* Full Range
+
+Each HID SCI mode has dedicated Kconfig options for connection interval, subrate, peripheral latency, and supervision timeout.
+The default values follow the recommendations of the HID over GATT Profile specification.
+
+Use the :kconfig:option:`CONFIG_BT_HIDS_SCI` Kconfig option to enable HID SCI on a HID device.
+
+The feature requires the Zephyr :kconfig:option:`CONFIG_BT_SHORTER_CONNECTION_INTERVALS` option.
+
+.. note::
+   Currently, only one HID service can be present on a HID device supporting HID SCI.
+   An attempt to initialize a second HID service will result in an error.
+
+.. note::
+   Currently, only one HID host can be connected to a HID device supporting HID SCI.
+   Connecting a second HID host may cause unexpected results.
+
+Additional Kconfig options:
+
+* :kconfig:option:`CONFIG_BT_HIDS_SCI_LOW_POWER_MODE` - Enable HID SCI Low Power mode support.
+
+Application integration
+-----------------------
+
+The HID host requests an HID SCI mode through the HID Control Point characteristic.
+This starts the SCI mode change process, which consists of the following steps:
+
+1. Register :c:member:`bt_hids_init_param.conn_cp_evt_handler` during HIDS initialization.
+   The library invokes this callback with the matching :c:enum:`bt_hids_cp_evt` event and the connection object when the HID host writes an SCI mode request to the Control Point characteristic.
+   The deprecated :c:member:`bt_hids_init_param.cp_evt_handler` callback is not invoked for SCI mode requests.
+#. Inside the callback, the application can perform any additional necessary actions, such as performing Frame Space Update.
+#. Call the :c:func:`bt_hids_sci_mode_change_request` function to request connection parameters for the target :c:enum:`bt_hids_sci_mode_value`.
+   The application should track the pending mode (for example, in per-connection context data) until the connection rate change completes.
+#. In the :c:member:`bt_conn_cb.conn_rate_changed` callback, call the :c:func:`bt_hids_sci_mode_validate` function with the pending mode and the new connection parameters.
+   If the validation succeeds, call the :c:func:`bt_hids_sci_mode_updated` function to update the cached SCI mode and notify the subscribed HID hosts.
+   If the validation fails, the application decides how to recover (for example, ignore the event or try another mode).
+
+See the :ref:`peripheral_hids_mouse` and :ref:`peripheral_hids_keyboard` samples (HID SCI configuration) for a reference implementation.
+
 Report masking
 **************
 
