@@ -25,19 +25,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
-        with:
-          path: ncs/nrf
-          fetch-depth: 0
+      - name: Checkout sources
+        uses: nordicbuilder/action-checkout-west-update@main
+
       - name: cache-pip
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-doc-pip
+
       - name: Install packages
         run: |
           sudo apt update
@@ -51,20 +52,30 @@ jobs:
       - name: Install Python dependencies
         working-directory: ncs
         run: |
-          sudo pip3 install -U setuptools wheel pip
-          pip3 install -r nrf/doc/requirements.txt
+          pip install -r nrf/doc/requirements.txt
 
-      - name: West init and update
+      - name: West zephyr-export
         working-directory: ncs
         run: |
-          west init -l nrf
-          west update
           west zephyr-export
 
       - name: Build documentation
         working-directory: ncs/nrf
         run: |
-          cmake -GNinja -Bdoc/_build -Sdoc
+          rm -rf doc/_build
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BUILD_CONF="-DNO_DTS_BINDINGS=ON"
+            SPHINXOPTS_VAL="-j auto --keep-going -T"
+          else
+            BUILD_CONF=""
+            SPHINXOPTS_VAL="-j auto -W --keep-going -T"
+          fi
+
+          cmake -GNinja -Bdoc/_build -Sdoc \
+            -DSPHINXOPTS="${SPHINXOPTS_VAL}" \
+            -DSPHINXOPTS_EXTRA="-q" \
+            ${BUILD_CONF}
           ninja -C doc/_build
 
       - name: Prepare archive
@@ -76,6 +87,7 @@ jobs:
 
           # Create documentation upload files
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            VERSION="pr-${{ github.event.number }}"
             echo "publish2 dev PR-${{ github.event.number }} ${ARCHIVE}" > "${MONITOR}"
             echo "${{ github.event.number }}" > pr.txt
           else
@@ -106,7 +118,7 @@ jobs:
 
       - name: Store
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docs
           path: |
