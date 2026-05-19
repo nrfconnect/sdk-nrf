@@ -26,6 +26,8 @@ Use the following Kconfig options to configure the library:
 * :kconfig:option:`CONFIG_BT_HOGP_REPORTS_MAX` - Set the maximum number of total reports supported by the library.
 
   The report memory is shared with all HIDS Client objects, so set this option to the maximum total number of reports supported by the application.
+* :kconfig:option:`CONFIG_BT_HOGP_SCI` - Enable HID Shorter Connection Intervals (SCI) support in the HIDS client.
+  Requires :kconfig:option:`CONFIG_BT_SHORTER_CONNECTION_INTERVALS`.
 
 Usage
 *****
@@ -113,6 +115,24 @@ To suspend or resume the connected device, call the following functions:
 * :c:func:`bt_hogp_suspend` - Suspend the connected device.
 * :c:func:`bt_hogp_exit_suspend` - Resume the connected device.
 
+HID Shorter Connection Intervals (SCI)
+======================================
+
+When the :kconfig:option:`CONFIG_BT_HOGP_SCI` Kconfig option is enabled, the client discovers the HID SCI Information and HID SCI mode characteristics if the peer exposes them.
+
+After the client is ready, use the :c:func:`bt_hogp_sci_supported` function to check whether the peer supports SCI.
+If the mandatory interval validation fails during SCI Information read, the client still becomes ready, but this function returns ``false``.
+
+This feature is in an experimental state.
+
+The following functions are needed for host side SCI interaction:
+
+* :c:func:`bt_hogp_sci_mode_req` - Request the HID device to enter a specific SCI mode (writes the HID Control Point characteristic).
+* :c:func:`bt_hogp_sci_mode_read` - Read the current SCI mode from the HID device.
+* :c:func:`bt_hogp_sci_mode_subscribe` and :c:func:`bt_hogp_sci_mode_unsubscribe` - Enable or disable SCI mode change notifications.
+
+Call the :c:func:`bt_hogp_sci_low_power_mode_supported` function before requesting Low Power mode using :c:func:`bt_hogp_sci_mode_req`.
+
 Samples using the library
 *************************
 
@@ -135,7 +155,9 @@ The structure is fully defined to allow the application to allocate the memory f
 Dependencies
 ************
 
-There are no dependencies for using this library.
+This library uses :ref:`gatt_dm_readme`.
+
+When SCI support is enabled, the :kconfig:option:`CONFIG_BT_SHORTER_CONNECTION_INTERVALS` Kconfig option must also be enabled in the application.
 
 API documentation
 *****************
