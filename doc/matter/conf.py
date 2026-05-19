@@ -48,6 +48,8 @@ html_theme_options = {
     "docset": "matter",
     "docsets": utils.ALL_DOCSETS,
     "subtitle": "nRF Connect SDK",
+    "collapse_navigation": False,
+    "logo_url": "https://docs.nordicsemi.com"
 }
 
 # Options for external_content -------------------------------------------------
@@ -72,3 +74,5 @@ def setup(app):
 
     utils.add_google_analytics(app, html_theme_options)
     utils.add_announcement_banner(html_theme_options)
+    html_theme_options["set_default_announcement"] = False
+    html_theme_options["default_announcement_message"] = ""
