@@ -100,6 +100,37 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39364"
 
 - scenarios:
+    - sample.cellular.nidd
+    - sample.cellular.uicc_lwm2m
+    - sample.cellular.modem_shell_modem_uart_trace
+    - sample.cellular.modem_shell.thingy91
+    - sample.cellular.lwm2m_client
+    - sample.cellular.nrf_cloud_multi_service.mqtt.provisioning.trace
+    - sample.cellular.location
+    - sample.cellular.nrf_cloud_multi_service.mqtt
+    - sample.debug.memfault
+    - sample.debug.memfault.etb
+    - sample.net.mqtt.nrf91.tls
+    - sample.sensor.bh1749
+    - sample.sensor.bme68x.polling
+  platforms:
+    - thingy91/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39450"
+
+- scenarios:
+    - applications.nrf_desktop.zrelease
+  platforms:
+    - nrf52820dongle/nrf52820
+    - nrf52833dk/nrf52820
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39450"
+
+- scenarios:
+    - sample.nrf7002_eb.thingy53.shell
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39450"
+
+- scenarios:
     - nrf.extended.drivers.clock.nrf_clock_control
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
