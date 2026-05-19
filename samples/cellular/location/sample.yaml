@@ -21,7 +21,9 @@ tests:
   sample.cellular.location.pgps:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-pgps.conf
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-pgps.conf
+      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:
