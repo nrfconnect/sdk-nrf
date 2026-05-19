@@ -97,11 +97,6 @@ static uint8_t ed25519ph_pubkey[ED25519_PUBKEY_SIZE] = {
 	0xeb, 0xf8, 0x19, 0x68, 0x34, 0x67, 0xe2, 0xbf
 };
 
-/* Ed25518ph test message (used only by hash test) */
-static uint8_t ed25519ph_msg[3] = {
-	0x61, 0x62, 0x63
-};
-
 /* SHA-512 Hash of message '0x61, 0x62, 0x63' (hex input, 3 octets)*/
 static uint8_t ed25519ph_hash[SHA512_HASH_SIZE] = {
 	0xdd, 0xaf, 0x35, 0xa1, 0x93, 0x61, 0x7a, 0xba, 0xcc, 0x41, 0x73, 0x49,
@@ -319,6 +314,8 @@ static uint8_t aes_ctr_derived_key_ciphertext[16] = {
 	0x13, 0x9f, 0x64, 0x0f, 0x56, 0xae, 0x51, 0xe5,
 	0x29, 0xea, 0x60, 0x4e, 0x57, 0xf3, 0xa9, 0x49,
 };
+
+extern void test_hash(void);
 
 /* Not yet standard API for key locking */
 psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id);
@@ -880,50 +877,8 @@ static void test_ecdsa_secp384r1_verify_hash(mbedtls_svc_key_id_t key_id)
 		      KMU_GET_SLOT_ID(key_id), err);
 }
 
-static void test_hash_compute(psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-			      uint8_t *hash, size_t hash_size)
-{
-	psa_status_t err;
-	size_t hash_length;
-	uint8_t calculated_hash[SHA512_HASH_SIZE];
 
-	err = psa_hash_compute(alg, input, input_length, calculated_hash, hash_size, &hash_length);
-	zassert_equal(err, PSA_SUCCESS, "Failed to hash Alg: %d, Err: %d", alg, err);
-	zassert_equal(hash_size, hash_length, "Hash size mismatch. Got %d, expected %d",
-		      hash_length, hash_size);
 
-	if (constant_memcmp(calculated_hash, hash, hash_size) != 0) {
-		zassert_false(true, "Hash calculate mismatched results");
-	}
-}
-
-static void test_hash_incremental(psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-				  uint8_t *hash, size_t hash_size)
-{
-	psa_status_t err;
-	size_t hash_length;
-	uint8_t calculated_hash[SHA512_HASH_SIZE];
-	psa_hash_operation_t operation = PSA_HASH_OPERATION_INIT;
-
-	err = psa_hash_setup(&operation, alg);
-	zassert_equal(err, PSA_SUCCESS, "Failed to setup hash Alg: %d, Err: %d", alg, err);
-
-	err = psa_hash_update(&operation, input, input_length);
-	zassert_equal(err, PSA_SUCCESS, "Failed to update hash Alg: %d, Err: %d", alg, err);
-
-	err = psa_hash_finish(&operation, calculated_hash, hash_size, &hash_length);
-	zassert_equal(err, PSA_SUCCESS, "Failed to finish hash Alg: %d, Err: %d", alg, err);
-
-	err = psa_hash_abort(&operation);
-	zassert_equal(err, PSA_SUCCESS, "Failed to abort hash Alg: %d, Err: %d", alg, err);
-
-	zassert_equal(hash_size, hash_length, "Hash size mismatch. Got %d, expected %d",
-		      hash_length, hash_size);
-
-	if (constant_memcmp(calculated_hash, hash, hash_size) != 0) {
-		zassert_false(true, "Hash incremental mismathed results");
-	}
-}
 
 /**
  * @brief Function to test AES CTR encrypt/decrypt with a volatile key
@@ -1149,50 +1104,7 @@ static void test_verify(void)
 
 }
 
-static void test_hash(void)
-{
-	bool ran_hash = false;
 
-	if (IS_ENABLED(PSA_WANT_ALG_SHA_256)) {
-		psa_algorithm_t alg = PSA_ALG_SHA_256;
-
-		test_hash_compute(alg, ecdsa_secp256r1_msg, ARRAY_SIZE(ecdsa_secp256r1_msg),
-				  ecdsa_secp256r1_hash, SHA256_HASH_SIZE);
-
-
-		test_hash_incremental(alg, ecdsa_secp256r1_msg, ARRAY_SIZE(ecdsa_secp256r1_msg),
-				  ecdsa_secp256r1_hash, SHA256_HASH_SIZE);
-
-		ran_hash = true;
-	}
-
-	if (IS_ENABLED(PSA_WANT_ALG_SHA_384)) {
-		psa_algorithm_t alg = PSA_ALG_SHA_384;
-
-		test_hash_compute(alg, ecdsa_secp384r1_msg, ARRAY_SIZE(ecdsa_secp384r1_msg),
-				  ecdsa_secp384r1_hash, SHA384_HASH_SIZE);
-
-
-		test_hash_incremental(alg, ecdsa_secp384r1_msg, ARRAY_SIZE(ecdsa_secp384r1_msg),
-				  ecdsa_secp384r1_hash, SHA384_HASH_SIZE);
-
-		ran_hash = true;
-	}
-
-	if (IS_ENABLED(PSA_WANT_ALG_SHA_512)) {
-		psa_algorithm_t alg = PSA_ALG_SHA_512;
-
-		test_hash_compute(alg, ed25519ph_msg, ARRAY_SIZE(ed25519ph_msg),
-				  ed25519ph_hash, SHA512_HASH_SIZE);
-
-		test_hash_incremental(alg, ed25519ph_msg, ARRAY_SIZE(ed25519ph_msg),
-				  ed25519ph_hash, SHA512_HASH_SIZE);
-
-		ran_hash = true;
-	}
-
-	zassert_true(ran_hash, "Did not run any hash calculation, check configs!");
-}
 
 static void test_kw(void)
 {
@@ -1448,52 +1360,63 @@ void test_invalid_kmu(void)
 
 void test_main(void)
 {
-	/* Provisioning key(s) is a requirement for running all tests*/
-	provision_keys();
+	bool ran_tests = false;
+
+	/* Provisioning key(s) is a requirement for running tests*/
+	if (IS_ENABLED(PSA_NEED_CRACEN_KMU_DRIVER)) {
+		provision_keys();
+		ran_tests = true;
+	}
 
 	/* Verify is required to be run in these tests */
 	if (IS_ENABLED_ANY(PSA_WANT_ALG_PURE_EDDSA, PSA_WANT_ALG_ED25519PH,
 			   PSA_WANT_ALG_DETERMINISTIC_ECDSA, PSA_WANT_ALG_ECDSA)) {
 		test_verify();
-	} else {
-		zassert_false(true, "No configuration to run verify signature!");
-		return;
+		ran_tests = true;
 	}
 
 	/* + Hashing if verify-hash strategy ECDSA or Ed25519ph */
-	if (IS_ENABLED_ANY(PSA_WANT_ALG_SHA_256, PSA_WANT_ALG_SHA_512,
-			   PSA_WANT_ALG_SHA_384)) {
+	if (IS_ENABLED(PSA_CORE_LITE_HAS_HASH)) {
 		test_hash();
+		ran_tests = true;
 	}
 
 	/* + Test key unwrapping without padding (optional added feature) */
 	if (IS_ENABLED_ANY(PSA_WANT_ALG_AES_KW)) {
 		test_kw();
+		ran_tests = true;
 	}
 
 	/* + Test any encryption (optional added feature) */
 	if (IS_ENABLED_ANY(PSA_WANT_ALG_CTR)) {
 		test_crypt();
+		ran_tests = true;
 	}
 
 	/* + Test any key derivation (optional added feature) */
 	if (IS_ENABLED_ANY(PSA_WANT_ALG_HMAC)) {
 		test_mac();
+		ran_tests = true;
 	}
 
 	/* + Test Generate random (optional added feature )*/
 	if (IS_ENABLED(PSA_WANT_GENERATE_RANDOM)) {
 		test_generate_random();
+		ran_tests = true;
 	}
 
-	/* Test revocation (required feature) */
-	test_revoke_keys();
+	if (IS_ENABLED(PSA_NEED_CRACEN_KMU_DRIVER)) {
+		/* Test revocation (required feature) */
+		test_revoke_keys();
 
-	/* Test locking (on read-only keys, required feature) */
-	test_lock_keys();
+		/* Test locking (on read-only keys, required feature) */
+		test_lock_keys();
 
-	/* Test invalid key operations*/
-	test_invalid_kmu();
+		/* Test invalid key operations*/
+		test_invalid_kmu();
 
-	zassert_true(true, "");
+		ran_tests = true;
+	}
+
+	zassert_true(ran_tests, "psa_core_lite unit test did not run (check config)");
 }

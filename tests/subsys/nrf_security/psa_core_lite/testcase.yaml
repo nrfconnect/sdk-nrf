@@ -27,6 +27,22 @@ tests:
       - sysbuild
     extra_args: >
       EXTRA_CONF_FILE="lite.conf;ecdsa.conf"
+  # PSA core lite: RSA
+  psa_core_lite.rsa:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      EXTRA_CONF_FILE="lite.conf;rsa.conf"
   # Oberon PSA crypto: Ed25519
   psa_core_oberon.ed25519:
     sysbuild: true
@@ -55,6 +71,22 @@ tests:
       - sysbuild
     extra_args: >
       EXTRA_CONF_FILE="ecdsa.conf"
+  # Oberon PSA crypto: RSA
+  psa_core_oberon.rsa:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      EXTRA_CONF_FILE="rsa.conf"
   # PSA core lite: Ed25519 + AES-KW + encrypt + RNG
   psa_core_lite.ed25519.aes_kw.encrypt.rng:
     sysbuild: true
