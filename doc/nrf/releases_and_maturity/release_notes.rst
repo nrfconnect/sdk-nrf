@@ -19,6 +19,7 @@ This page is included only in the latest documentation, because it might contain
    :maxdepth: 1
    :caption: Subpages:
 
+   releases/release-notes-3.3.1
    releases/release-notes-3.3.0
    releases/release-notes-3.3.0-preview3
    releases/release-notes-3.3.0-preview2
@@ -50,12 +51,12 @@ This page is included only in the latest documentation, because it might contain
    releases/release-notes-2.7.99-cs2
    releases/release-notes-2.7.99-cs1
    releases/release-notes-2.7.0
+   releases/release-notes-2.6.99-cs2
+   releases/release-notes-2.6.99-cs1
    releases/release-notes-2.6.5
    releases/release-notes-2.6.4
    releases/release-notes-2.6.3
    releases/release-notes-2.6.2
-   releases/release-notes-2.6.99-cs2
-   releases/release-notes-2.6.99-cs1
    releases/release-notes-2.6.1
    releases/release-notes-2.6.0
    releases/release-notes-2.5.3

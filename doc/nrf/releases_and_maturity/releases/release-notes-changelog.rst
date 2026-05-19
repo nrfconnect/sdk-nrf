@@ -65,7 +65,7 @@ Developing with nRF70 Series
 Developing with nRF54L Series
 =============================
 
-* Updated builds without Partition Manager to generate the :file:`bootconf.hex` file when |NSIB| is used as the bootloader.
+|no_changes_yet_note|
 
 Developing with nRF54H Series
 =============================
@@ -237,9 +237,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-* Added:
-
-  * The :ref:`channel_sounding_ipt_initiator` and :ref:`channel_sounding_ipt_reflector` samples to demonstrate how to use the Bluetooth Channel Sounding (CS) Inline Phase Correction Term Transfer (IPT) feature.
+|no_changes_yet_note|
 
 Bluetooth Mesh samples
 ----------------------
@@ -329,9 +327,7 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-* :ref:`radio_test` sample:
-
-  * Added the ``set_channel_sequence_hopping_mode`` shell command that allows for setting the hopping mode for the channel sequence.
+|no_changes_yet_note|
 
 PMIC samples
 ------------
