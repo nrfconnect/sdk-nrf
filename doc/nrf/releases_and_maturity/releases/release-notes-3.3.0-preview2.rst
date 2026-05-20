@@ -246,7 +246,7 @@ Matter bridge
 -------------
 
 * Updated partitions mapping for the nRF7002 DK in the application.
-  See the :ref:`migration guide <migration_3.3_required>` for more information.
+  See the :ref:`migration notes <migration_3.3_required>` for more information.
 
 nRF5340 Audio
 -------------
@@ -471,7 +471,7 @@ Matter samples
 
   * The documentation for all Matter samples and applications to make it more consistent and easier to maintain and read.
   * Partitions mapping for the nRF7002 DK in all Matter samples.
-    See the :ref:`migration guide <migration_3.3_required>` for more information.
+    See the :ref:`migration notes <migration_3.3_required>` for more information.
 
 * :ref:`matter_manufacturer_specific_sample`:
 

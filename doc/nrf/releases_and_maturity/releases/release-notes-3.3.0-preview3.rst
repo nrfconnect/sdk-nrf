@@ -271,7 +271,7 @@ Matter bridge
 -------------
 
 * Updated partitions mapping for the nRF7002 DK in the application.
-  See the :ref:`migration guide <migration_3.3_required>` for more information.
+  See the :ref:`migration notes <migration_3.3_required>` for more information.
 * Removed the ``onoff_plug`` snippet from the application.
   To build the application with the ``onoff_plug`` functionality, use the :file:`overlay-onoff_plug.conf` configuration overlay file.
 
@@ -540,7 +540,7 @@ Matter samples
 
   * The documentation for all Matter samples and applications to make it more consistent and easier to maintain and read.
   * Partitions mapping for the nRF7002 DK in all Matter samples.
-    See the :ref:`migration guide <migration_3.3_required>` for more information.
+    See the :ref:`migration notes <migration_3.3_required>` for more information.
 
 * :ref:`matter_light_switch_sample`:
 
@@ -636,7 +636,7 @@ Thread samples
   * :ref:`coap_server_sample`
 
 * Removed all application-specific snippets from the Thread samples.
-  Refer to the :ref:`migration guide <migration_3.3_required>` to see the list of changes.
+  Refer to the :ref:`migration notes <migration_3.3_required>` to see the list of changes.
 
 Wi-Fi samples
 -------------

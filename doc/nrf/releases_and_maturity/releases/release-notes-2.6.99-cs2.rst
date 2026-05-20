@@ -146,7 +146,7 @@ Documentation
 * Added:
 
   * The :ref:`ug_nrf54h` section.
-  * The `Migration guide for nRF Connect SDK v2.6.99_cs2 for v2.4.99-cs3 users`_ section.
+  * The `Migration notes for nRF Connect SDK v2.6.99_cs2 for v2.4.99-cs3 users`_ section.
 
 * Updated the table listing the :ref:`boards included in sdk-zephyr <app_boards_names_zephyr>` with the nRF54H20 DK board.
 

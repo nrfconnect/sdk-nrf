@@ -34,7 +34,7 @@ Highlights
 * Added nRF Cloud Location Services support in the AVSystem's Coiote LwM2M Server.
 * Added power consumption optimization for poor satellite coverage when using GNSS.
 
-A :ref:`migration guide <ncs_2.0.0_migration>` is available for users moving from |NCS| v1.x to v2.x.
+:ref:`Migration notes <ncs_2.0.0_migration>` are available for users moving from |NCS| v1.x to v2.x.
 
 Sign up for the `nRF Connect SDK v2.0.0 webinar`_ to learn more about the new features.
 

@@ -95,7 +95,7 @@ See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1`_ for the list of issues
 Migration notes
 ***************
 
-See the `Migration guide for nRF Connect SDK v2.9.0-nRF54H20-1`_ for the changes required or recommended when migrating your nRF54H Series application from |NCS| v2.8.0 to |NCS| v2.9.0-nRF54H20-1.
+See the `Migration notes for nRF Connect SDK v2.9.0-nRF54H20-1`_ for the changes required or recommended when migrating your nRF54H Series application from |NCS| v2.8.0 to |NCS| v2.9.0-nRF54H20-1.
 
 .. _ncs_release_notes_290-nrf54h20-1_changelog:
 
