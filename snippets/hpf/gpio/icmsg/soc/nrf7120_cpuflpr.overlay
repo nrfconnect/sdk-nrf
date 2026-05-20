@@ -5,19 +5,17 @@
  */
 
 / {
-	soc {
-		reserved-memory {
-			#address-cells = <1>;
-			#size-cells = <1>;
-			ranges;
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
 
-			sram_tx: memory@20080000 {
-				reg = <0x20080000 0x0800>;
-			};
+		sram_tx: memory@20080000 {
+			reg = <0x20080000 0x0800>;
+		};
 
-			sram_rx: memory@20080800 {
-				reg = <0x20080800 0x0800>;
-			};
+		sram_rx: memory@20080800 {
+			reg = <0x20080800 0x0800>;
 		};
 	};
 
