@@ -106,3 +106,27 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9465"
+
+- scenarios:
+    - sample.benchmarks.peripheral_stress_test.nrf54lv10_lc10
+    - benchmarks.current_consumption.beacon_vs_vdd
+    - benchmarks.current_consumption.beacon_vs_vdd.nrf54l_lfrc
+    - benchmarks.current_consumptaion.beacon_idle.nrf54l.lfrc
+    - benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot
+    - benchmarks.current_consumption.beacon_idle.nrf54l
+    - benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot.lto
+  platforms:
+    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp
+  comment: "no MPSL for nrf54lc10 at the moment"
+
+- scenarios:
+    - nrf.extended.drivers.counter.basic_api
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9630"
+
+- scenarios:
+    - drivers.timer.grtc_timer_lfrc.nrf54h
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
