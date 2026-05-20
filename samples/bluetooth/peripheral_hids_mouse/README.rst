@@ -147,6 +147,10 @@ The high-duty cycle directed advertising has a timeout of 1.28 seconds defined b
 If the timeout occurs, the device starts directed advertising to the next bonded peer.
 If all bonding information is used and there is still no connection, the regular advertising starts.
 
+.. include:: /samples/bluetooth/peripheral_hids_keyboard/README.rst
+   :start-after: peripheral_hids_hid_sci_start
+   :end-before: peripheral_hids_hid_sci_end
+
 Building and running
 ********************
 
@@ -158,6 +162,8 @@ Building and running
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
 .. include:: /includes/ipc_radio_conf.txt
+
+To build the sample with HID SCI support, use ``-DFILE_SUFFIX=hid_sci``.
 
 .. _peripheral_hids_mouse_bt_rpc_build:
 

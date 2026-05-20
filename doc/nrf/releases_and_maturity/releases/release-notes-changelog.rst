@@ -321,7 +321,11 @@ Bluetooth samples
 
 * :ref:`peripheral_hids_mouse` sample:
 
-  * Added support for continuous HID report sending (one report notification for each connection interval) as well as statistics for continuous report sending.
+* Added:
+
+  * Support for continuous HID report sending (one report notification for each connection interval) as well as statistics for continuous report sending.
+  * A configuration with support for the HID Shorter Connection Intervals (SCI).
+    It is enabled with the ``hid_sci`` suffix.
 
 * :ref:`bluetooth_central_hids` sample:
 
