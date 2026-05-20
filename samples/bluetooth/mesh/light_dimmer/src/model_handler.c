@@ -221,7 +221,6 @@ static void scene_button_handler(struct scene_btn_ctx *ctx, bool pressed)
 static void button_handler_cb(uint32_t pressed, uint32_t changed)
 {
 	if (!bt_mesh_is_provisioned()) {
-		LOG_ERR("Node is not provisioned");
 		return;
 	}
 

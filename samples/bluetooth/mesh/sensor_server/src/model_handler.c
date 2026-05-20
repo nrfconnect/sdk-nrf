@@ -934,7 +934,6 @@ static void motion_button_handler(bool pressed)
 static void button_handler_cb(uint32_t pressed, uint32_t changed)
 {
 	if (!bt_mesh_is_provisioned()) {
-		printk("Node is not provisioned");
 		return;
 	}
 
