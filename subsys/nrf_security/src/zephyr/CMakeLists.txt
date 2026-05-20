@@ -72,6 +72,10 @@ endif()
 # Add the generic mbedtls_external library to interface with zephyr
 add_library(mbedtls_external INTERFACE)
 
+target_include_directories(mbedtls_external INTERFACE
+  ${ZEPHYR_MBEDTLS_MODULE_DIR}/include
+)
+
 # Link to the NSPE versions of the libraries providing TLS/DTLS and x509 APIs
 if(TARGET mbedtls)
   target_link_libraries(mbedtls_external INTERFACE mbedtls)
