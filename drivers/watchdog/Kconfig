@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_GSWDT
+	bool "Nordic Global Software Watchdog Timer (GSWDT) driver"
+	depends on SOC_SERIES_NRF54H || SOC_SERIES_NRF92
+	select MBOX
+	select WATCHDOG
+	help
+	  This option enables the Nordic Global Software Watchdog Timer
+	  (GSWDT) driver.
+
+if NRF_GSWDT
+
+module = NRF_GSWDT
+module-str = NRF_GSWDT
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif

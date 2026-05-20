@@ -304,6 +304,7 @@
 /drivers/sensor/sensor_stub/              @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /drivers/wifi/nrf71/                      @krish2718 @sachinthegreen
 /include/drivers/wifi/nrf71/              @kapbh @krish2718 @sachinthegreen
+/drivers/watchdog/                        @nrfconnect/ncs-co-drivers @lstnl
 
 # Devicetree
 /dts/                                     @nrfconnect/ncs-co-drivers

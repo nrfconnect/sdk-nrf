@@ -28,3 +28,10 @@ tests:
       - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+  nrf.extended.sample.drivers.watchdog.gswdt:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_configs:
+      - CONFIG_NRF_GSWDT=y

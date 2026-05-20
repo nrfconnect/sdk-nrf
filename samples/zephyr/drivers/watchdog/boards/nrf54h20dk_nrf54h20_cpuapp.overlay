@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		watchdog0 = &cpuapp_gswdt;
+	};
+
+	cpuapp_gswdt: cpuapp_gswdt {
+		compatible = "nordic,nrf-gswdt";
+		mbox = <&cpuapp_cpusys_gswdt_mbox>;
+		status = "okay";
+	};
+};
+
+&cpuapp_cpusys_gswdt_mbox {
+	status = "okay";
+};
