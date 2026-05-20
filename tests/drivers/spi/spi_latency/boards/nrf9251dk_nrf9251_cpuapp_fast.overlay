@@ -22,16 +22,17 @@
 	spi120_default: spi120_default {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 5, 1)>,
-				<NRF_PSEL(SPIM_MISO, 5, 2)>,
-				<NRF_PSEL(SPIM_MOSI, 5, 4)>;
+				<NRF_PSEL(SPIM_MISO, 5, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 5, 2)>;
+			nordic,drive-mode = <NRF_DRIVE_E0E1>;
 		};
 	};
 
 	spi120_sleep: spi120_sleep {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 5, 1)>,
-				<NRF_PSEL(SPIM_MISO, 5, 2)>,
-				<NRF_PSEL(SPIM_MOSI, 5, 4)>;
+				<NRF_PSEL(SPIM_MISO, 5, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 5, 2)>;
 			low-power-enable;
 		};
 	};
