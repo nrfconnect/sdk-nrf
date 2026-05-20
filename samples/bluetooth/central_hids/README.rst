@@ -92,6 +92,11 @@ User interface
         In this mode, the buttons have different functionalities than in the normal mode.
         The available functionalities depend on the sample configuration and are printed in the terminal window after button press.
 
+        Currently the following functionalities are available:
+
+        * **Button 2**: Request the next HID SCI mode. Only available if :kconfig:option:`CONFIG_BT_HOGP_SCI` is enabled.
+        * **Button 4**: Exit the "Alternative button functions" mode.
+
    .. group-tab:: nRF54 DKs
 
       Button 0:
@@ -116,6 +121,12 @@ User interface
         In this mode, the buttons have different functionalities than in the normal mode.
         The available functionalities depend on the sample configuration and are printed in the terminal window after button press.
 
+        Currently the following functionalities are available:
+
+        * **Button 1**: Request the next HID SCI mode. Only available if :kconfig:option:`CONFIG_BT_HOGP_SCI` is enabled.
+        * **Button 3**: Exit the "Alternative button functions" mode.
+
+
 Configuration
 *************
 
@@ -135,6 +146,8 @@ Building and Running
 
 .. include:: /includes/build_and_run_ns.txt
 
+To build the sample with HID SCI support, build with ``-DFILE_SUFFIX=hid_sci``
+
 Testing
 =======
 
@@ -151,6 +164,7 @@ Testing with another development kit
       1. |connect_terminal_specific|
       #. Reset the kit.
       #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
+      #. If you see "NFC configuration done" on the peripheral kit, press **Button 4** on the peripheral kit in order for it to start advertising.
       #. When connected, press **Button 1** on both devices to confirm the passkey value used for bonding, or press **Button 2** to reject it.
       #. Wait until the HIDS keyboard is detected by the central.
          All detected descriptors are listed.
@@ -194,6 +208,7 @@ Testing with another development kit
       1. |connect_terminal_specific|
       #. Reset the kit.
       #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
+      #. If you see "NFC configuration done" on the peripheral kit, press **Button 3** on the peripheral kit in order for it to start advertising.
       #. When connected, press **Button 0** on both devices to confirm the passkey value used for bonding, or press **Button 1** to reject it.
       #. Wait until the HIDS keyboard is detected by the central.
          All detected descriptors are listed.
@@ -331,6 +346,57 @@ Testing with Bluetooth Low Energy app
          Change any of the values and note that the kit logs the change.
       #. Press **Button 1** on the kit and observe that the **Protocol Mode** value changes from ``01`` to ``00``.
       #. Press **Button 0** and **Button 2** one after another and observe that the **Boot Keyboard Output Report** value toggles between ``00`` and ``02``.
+
+Testing with HID SCI support
+----------------------------
+
+To test the sample with HID SCI support, both the central and the peripheral must be built with ``-DFILE_SUFFIX=hid_sci``.
+
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. |connect_terminal_specific|
+      #. Reset the kit.
+      #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
+      #. If you see "NFC configuration done" on the peripheral kit, press **Button 4** on the peripheral kit in order for it to start advertising.
+      #. When connected, press **Button 1** on both devices to confirm the passkey value used for bonding, or press **Button 2** to reject it.
+      #. Wait until the HIDS keyboard is detected by the central.
+         Check for information similar to the following::
+
+            HIDS is ready to work
+            Subscribe in report id: 1
+            Subscribe in boot keyboard report
+      #. Press **Button 4** on the central kit to enter the "Alternative button functions" mode.
+      #. Press **Button 2** on the central kit and wait for the SCI mode to change to DEFAULT.
+      #. Cycle through the HID SCI modes by pressing **Button 2** on the central kit.
+         The HID SCI mode will change to FAST, LOW POWER, FULL RANGE, and DEFAULT again.
+         You might need to wait a few seconds for the mode to change each time.
+         You will see a message similar to the following::
+
+            SCI mode changed notification received, new mode: <mode_name>
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_terminal_specific|
+      #. Reset the kit.
+      #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
+      #. If you see "NFC configuration done" on the peripheral kit, press **Button 3** on the peripheral kit in order for it to start advertising.
+      #. When connected, press **Button 0** on both devices to confirm the passkey value used for bonding, or press **Button 1** to reject it.
+      #. Wait until the HIDS keyboard is detected by the central.
+         Check for information similar to the following::
+
+            HIDS is ready to work
+            Subscribe in report id: 1
+            Subscribe in boot keyboard report
+      #. Press **Button 3** on the central kit to enter the "Alternative button functions" mode.
+      #. Press **Button 1** on the central kit and wait for the SCI mode to change to DEFAULT.
+      #. Cycle through the HID SCI modes by pressing **Button 1** on the central kit.
+         The HID SCI mode will change to FAST, LOW POWER, FULL RANGE, and DEFAULT again.
+         You might need to wait a few seconds for the mode to change each time.
+         You will see a message similar to the following::
+
+            SCI mode changed notification received, new mode: <mode_name>
 
 Dependencies
 *************

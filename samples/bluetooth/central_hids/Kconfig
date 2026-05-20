@@ -34,3 +34,9 @@ config SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE
 	  instead of logging every payload.
 
 source "Kconfig.zephyr"
+
+if BT_HOGP_SCI
+
+rsource "Kconfig.sci"
+
+endif # BT_HOGP_SCI

@@ -60,6 +60,10 @@
 #define KEY_ALTERNATIVE_FUNCTIONS_NUM  DK_BTN4
 #define KEY_ALTERNATIVE_FUNCTIONS_MASK DK_BTN4_MSK
 
+/* Key used to request next SCI mode */
+#define KEY_ALTERNATIVE_1_SCI_MODE_NEXT_NUM DK_BTN2
+#define KEY_ALTERNATIVE_1_SCI_MODE_NEXT_MASK DK_BTN2_MSK
+
 enum button_functions_mode {
 	BUTTON_FUNCTIONS_MODE_DEFAULT,
 	BUTTON_FUNCTIONS_MODE_AUTHENTICATION,
@@ -95,11 +99,28 @@ enum button_functions_mode {
  */
 #define CONTINUOUS_REPORT_RECEIVING_WINDOW_DELTA_US 200
 
+#define HID_SCI_MODE_CHANGE_TIMEOUT_MS 10000
+
+#ifdef CONFIG_BT_HOGP_SCI
+
+BUILD_ASSERT(CONFIG_CENTRAL_HIDS_SCI_SUBRATE_MAX * (1 + CONFIG_CENTRAL_HIDS_SCI_MAX_LATENCY) <=
+		     500,
+	     "Core connSubrate*(latency+1) must be <= 500");
+BUILD_ASSERT(CONFIG_CENTRAL_HIDS_SCI_CONTINUATION_NUM < CONFIG_CENTRAL_HIDS_SCI_SUBRATE_MAX,
+	     "continuation number must be less than subrate maximum");
+BUILD_ASSERT(CONFIG_CENTRAL_HIDS_SCI_SUPERVISION_TIMEOUT_10MS * 10000ULL >
+		     (uint64_t)(1 + CONFIG_CENTRAL_HIDS_SCI_MAX_LATENCY) *
+			     CONFIG_CENTRAL_HIDS_SCI_SUBRATE_MAX *
+			     CONFIG_CENTRAL_HIDS_SCI_INTERVAL_MAX_125US * 250,
+	     "supervision timeout must exceed 2*(1+latency)*subrate*interval");
+#endif
+
 static struct bt_conn *default_conn;
 static struct bt_hogp hogp;
 static struct bt_conn *auth_conn;
 static uint8_t capslock_state;
 static enum button_functions_mode button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
+static enum bt_hids_sci_mode_value sci_mode_requested = BT_HIDS_SCI_MODE_NONE;
 
 static atomic_t cont_report_rx_on = ATOMIC_INIT(0);
 static uint32_t cont_report_rx_previous_report_cycles;
@@ -114,6 +135,9 @@ static uint32_t report_cnt;
 
 static void hids_on_ready(struct k_work *work);
 static K_WORK_DEFINE(hids_ready_work, hids_on_ready);
+
+static void sci_mode_change_timeout_fn(struct k_work *work);
+static K_WORK_DELAYABLE_DEFINE(sci_mode_change_timeout, sci_mode_change_timeout_fn);
 
 static void cont_report_rx_exit_work_fn(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(cont_report_rx_exit_work,
@@ -157,7 +181,7 @@ static void cont_report_rx_stats_print(uint32_t batch_end_cycles)
 	       cont_report_rx_min_interval_us);
 
 	if (cont_report_rx_interval_us > 0) {
-		printk("Expected report interval: %" PRIu32 " us\n", cont_report_rx_interval_us);
+		printk("Report interval: %" PRIu32 " us\n", cont_report_rx_interval_us);
 		printk("Intervals above %" PRIu32 " us: %" PRIu32 "\n",
 		       cont_report_rx_interval_us
 			       + CONTINUOUS_REPORT_RECEIVING_WINDOW_DELTA_US,
@@ -393,6 +417,10 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	bt_conn_unref(default_conn);
 	default_conn = NULL;
+	if (IS_ENABLED(CONFIG_BT_HOGP_SCI) && sci_mode_requested != BT_HIDS_SCI_MODE_NONE) {
+		(void) k_work_cancel_delayable(&sci_mode_change_timeout);
+		sci_mode_requested = BT_HIDS_SCI_MODE_NONE;
+	}
 
 	/* This demo doesn't require active scan */
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
@@ -429,13 +457,55 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval,
 		return;
 	}
 
-	cont_report_rx_stats_print(cont_report_rx_previous_report_cycles);
+	if (atomic_get(&cont_report_rx_on)) {
+		cont_report_rx_stats_print(cont_report_rx_previous_report_cycles);
+	}
 
 	cont_report_rx_data_reset(cont_report_rx_previous_report_cycles);
 	cont_report_rx_interval_us = BT_CONN_INTERVAL_TO_US(interval);
 	printk("Connection interval updated to %" PRIu32 " us\n",
 	       cont_report_rx_interval_us);
 }
+
+#if CONFIG_BT_HOGP_SCI
+static uint32_t conn_rate_effective_report_interval_us(uint32_t interval_us, uint16_t subrate,
+						       uint16_t continuation_number)
+{
+	__ASSERT(subrate > 0, "Subrate must be greater than 0");
+
+	uint32_t events_per_period = continuation_number + 1U;
+
+	if (events_per_period > subrate) {
+		events_per_period = subrate;
+	}
+
+	return (interval_us * subrate) / events_per_period;
+}
+
+static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
+	const struct bt_conn_le_conn_rate_changed *params)
+{
+	ARG_UNUSED(status);
+
+	if (conn != default_conn) {
+		return;
+	}
+
+	if (atomic_get(&cont_report_rx_on)) {
+		cont_report_rx_stats_print(cont_report_rx_previous_report_cycles);
+	}
+	cont_report_rx_data_reset(cont_report_rx_previous_report_cycles);
+	printk("Connection rate changed: interval %u us, subrate factor %u, "
+	       "continuation number %u\n",
+	       params->interval_us, params->subrate_factor,
+	       params->continuation_number);
+	cont_report_rx_interval_us = conn_rate_effective_report_interval_us(params->interval_us,
+		params->subrate_factor, params->continuation_number);
+	printk("Expected report interval: %u us\n",
+	       cont_report_rx_interval_us);
+}
+#endif
+
 #endif
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
@@ -444,6 +514,9 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.security_changed = security_changed,
 #ifdef CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX
 	.le_param_updated = le_param_updated,
+#ifdef CONFIG_BT_HOGP_SCI
+	.conn_rate_changed = conn_rate_changed,
+#endif
 #endif
 };
 
@@ -653,6 +726,44 @@ static void hogp_ready_cb(struct bt_hogp *hogp)
 	k_work_submit(&hids_ready_work);
 }
 
+static const char *sci_mode_to_string(enum bt_hids_sci_mode_value mode)
+{
+	switch (mode) {
+	case BT_HIDS_SCI_MODE_NONE:
+		return "NONE";
+	case BT_HIDS_SCI_MODE_DEFAULT:
+		return "DEFAULT";
+	case BT_HIDS_SCI_MODE_FAST:
+		return "FAST";
+	case BT_HIDS_SCI_MODE_LOW_POWER:
+		return "LOW_POWER";
+	case BT_HIDS_SCI_MODE_FULL_RANGE:
+		return "FULL_RANGE";
+	}
+
+	return "UNKNOWN";
+}
+
+static void sci_mode_change_timeout_fn(struct k_work *work)
+{
+	printk("SCI mode change timeout occurred.\n");
+	sci_mode_requested = BT_HIDS_SCI_MODE_NONE;
+}
+
+static void sci_mode_notify_cb(struct bt_conn *conn, const uint8_t mode)
+{
+	const char *mode_str = sci_mode_to_string(mode);
+
+	printk("SCI mode changed notification received, new mode: %s\n", mode_str);
+
+	if (mode == sci_mode_requested) {
+		(void) k_work_cancel_delayable(&sci_mode_change_timeout);
+		sci_mode_requested = BT_HIDS_SCI_MODE_NONE;
+	} else {
+		printk("The new SCI mode does not match the requested one\n");
+	}
+}
+
 static void hids_on_ready(struct k_work *work)
 {
 	int err;
@@ -688,6 +799,13 @@ static void hids_on_ready(struct k_work *work)
 						   hogp_boot_mouse_report);
 		if (err) {
 			printk("Subscribe error (%d)\n", err);
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_HOGP_SCI)) {
+		err = bt_hogp_sci_mode_subscribe(&hogp, sci_mode_notify_cb);
+		if (err) {
+			printk("SCI mode subscribe error (%d)\n", err);
 		}
 	}
 }
@@ -842,6 +960,116 @@ static void num_comp_reply(bool accept)
 	button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
 }
 
+#ifdef CONFIG_BT_HOGP_SCI
+static int set_default_conn_rate(void)
+{
+	int err;
+	uint16_t local_min_interval_us;
+	uint16_t interval_min_125us = CONFIG_CENTRAL_HIDS_SCI_INTERVAL_MIN_125US;
+
+	err = bt_conn_le_read_min_conn_interval(&local_min_interval_us);
+	if (err) {
+		printk("Failed to read min conn interval (err %d)\n", err);
+	}
+
+	if (!err && interval_min_125us < local_min_interval_us / 125U) {
+		printk("Configured minimum connection interval (%u) is below controller "
+		       "minimum %u; using %u\n",
+		       interval_min_125us, local_min_interval_us / 125U,
+		       local_min_interval_us / 125U);
+
+		interval_min_125us = local_min_interval_us / 125U;
+		if (interval_min_125us > CONFIG_CENTRAL_HIDS_SCI_INTERVAL_MAX_125US) {
+			printk("ERROR: controller connection interval minimum is larger "
+			       "than configured maximum (%u > %u)!\n",
+			       interval_min_125us, CONFIG_CENTRAL_HIDS_SCI_INTERVAL_MAX_125US);
+			return -EINVAL;
+		}
+	}
+
+	const struct bt_conn_le_conn_rate_param params = {
+		.interval_min_125us = interval_min_125us,
+		.interval_max_125us = CONFIG_CENTRAL_HIDS_SCI_INTERVAL_MAX_125US,
+		.subrate_min = CONFIG_CENTRAL_HIDS_SCI_SUBRATE_MIN,
+		.subrate_max = CONFIG_CENTRAL_HIDS_SCI_SUBRATE_MAX,
+		.max_latency = CONFIG_CENTRAL_HIDS_SCI_MAX_LATENCY,
+		.continuation_number = CONFIG_CENTRAL_HIDS_SCI_CONTINUATION_NUM,
+		.supervision_timeout_10ms = CONFIG_CENTRAL_HIDS_SCI_SUPERVISION_TIMEOUT_10MS,
+		.min_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MIN_125US,
+		.max_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MAX_125US,
+	};
+
+	return bt_conn_le_conn_rate_set_defaults(&params);
+}
+#endif
+
+static void button_sci_mode_next(void)
+{
+	static uint8_t sci_mode_idx;
+	static const uint8_t mode_val[] = {
+		BT_HIDS_SCI_MODE_DEFAULT,
+		BT_HIDS_SCI_MODE_FAST,
+		BT_HIDS_SCI_MODE_LOW_POWER,
+		BT_HIDS_SCI_MODE_FULL_RANGE,
+	};
+	int err = 0;
+
+	if (!bt_hogp_ready_check(&hogp)) {
+		printk("HID device not ready\n");
+		return;
+	}
+
+	if (!bt_hogp_sci_supported(&hogp)) {
+		printk("HID device does not support SCI\n");
+		return;
+	}
+
+	if (sci_mode_requested != BT_HIDS_SCI_MODE_NONE) {
+		printk("SCI mode request already in progress!\n");
+		return;
+	}
+
+	switch (mode_val[sci_mode_idx]) {
+	case BT_HIDS_SCI_MODE_DEFAULT:
+		printk("Sending SCI DEFAULT mode request\n");
+		break;
+	case BT_HIDS_SCI_MODE_FAST:
+		printk("Sending SCI FAST mode request\n");
+		break;
+	case BT_HIDS_SCI_MODE_LOW_POWER:
+		if (!bt_hogp_sci_low_power_mode_supported(&hogp)) {
+			printk("The connected Device doesn't support the SCI LOW POWER mode\n");
+			err = -ENOTSUP;
+			break;
+		}
+		printk("Sending SCI LOW POWER mode request\n");
+		break;
+	case BT_HIDS_SCI_MODE_FULL_RANGE:
+		printk("Sending SCI FULL RANGE mode request\n");
+		break;
+	default:
+		/* Should never get here */
+		__ASSERT(0, "Unknown SCI mode");
+		return;
+	}
+
+	if (!err) {
+		err = bt_hogp_sci_mode_req(&hogp, mode_val[sci_mode_idx]);
+	}
+
+	if (!err) {
+		printk("Sent %s SCI mode request to the device\n",
+		       sci_mode_to_string(mode_val[sci_mode_idx]));
+		sci_mode_requested = mode_val[sci_mode_idx];
+		(void) k_work_schedule(&sci_mode_change_timeout,
+				       K_MSEC(HID_SCI_MODE_CHANGE_TIMEOUT_MS));
+	} else {
+		printk("SCI mode request failed (err: %d)\n", err);
+	}
+
+	sci_mode_idx = (sci_mode_idx + 1) % ARRAY_SIZE(mode_val);
+}
+
 static void button_authentication_mode_handler(uint32_t button)
 {
 	__ASSERT(auth_conn, "No authentication connection");
@@ -868,16 +1096,21 @@ static void button_default_mode_handler(uint32_t button)
 		button_functions_mode = BUTTON_FUNCTIONS_MODE_ALTERNATIVE_1;
 		printk("Alternative button functions activated.\n");
 
-		/* Print the available alternative button functions here. */
-
-		printk("Button %d: exit alternative button functions\n",
+		if (IS_ENABLED(CONFIG_BT_HOGP_SCI)) {
+			printk("Button %d: Next SCI mode\n",
+			       BUTTON_NUM_FOR_BOARD(KEY_ALTERNATIVE_1_SCI_MODE_NEXT_NUM));
+		}
+		printk("Button %d: Exit alternative button functions\n",
 		       BUTTON_NUM_FOR_BOARD(KEY_ALTERNATIVE_FUNCTIONS_NUM));
 	}
 }
 
 static void button_alternative_1_mode_handler(uint32_t button)
 {
-	if (button & KEY_ALTERNATIVE_FUNCTIONS_MASK) {
+	if (IS_ENABLED(CONFIG_BT_HOGP_SCI) &&
+	    (button & KEY_ALTERNATIVE_1_SCI_MODE_NEXT_MASK)) {
+		button_sci_mode_next();
+	} else if (button & KEY_ALTERNATIVE_FUNCTIONS_MASK) {
 		button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
 		printk("Alternative button functions deactivated.\n");
 	}
@@ -1003,6 +1236,14 @@ int main(void)
 	}
 
 	printk("Bluetooth initialized\n");
+
+#ifdef CONFIG_BT_HOGP_SCI
+	err = set_default_conn_rate();
+	if (err) {
+		printk("Failed to set the default connection rate (err %d)\n", err);
+		return 0;
+	}
+#endif
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
