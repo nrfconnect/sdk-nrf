@@ -8,6 +8,7 @@
 	reserved-memory {
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		sram_rx: memory@2003b400 {
 			reg = <0x2003b400 0x07f0>;
