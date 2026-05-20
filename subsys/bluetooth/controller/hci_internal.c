@@ -426,7 +426,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_encrypt = 1;
 #endif
 
+#if !defined(CONFIG_BT_HOST_CRYPTO_PRNG)
 	cmds->hci_le_rand = 1;
+#endif
 
 #if defined(CONFIG_BT_CTLR_LE_ENC) && defined(CONFIG_BT_CENTRAL)
 	cmds->hci_le_enable_encryption = 1;
@@ -1033,9 +1035,11 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_le_encrypt((void *)cmd_params, (void *)event_out_params);
 #endif
 
+#if !defined(CONFIG_BT_HOST_CRYPTO_PRNG)
 	case SDC_HCI_OPCODE_CMD_LE_RAND:
 		*param_length_out += sizeof(sdc_hci_cmd_le_rand_return_t);
 		return sdc_hci_cmd_le_rand((void *)event_out_params);
+#endif
 
 #if defined(CONFIG_BT_CENTRAL)
 	case SDC_HCI_OPCODE_CMD_LE_ENABLE_ENCRYPTION:
