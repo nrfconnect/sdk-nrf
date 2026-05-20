@@ -378,10 +378,18 @@ static int broker_init(struct net_sockaddr_storage *broker,
 		       struct mqtt_helper_conn_params *conn_params)
 {
 	int err;
+	bool resolved = false;
 	struct zsock_addrinfo *result;
 	struct zsock_addrinfo *addr;
 	struct zsock_addrinfo hints = {
-		.ai_socktype = NET_SOCK_STREAM
+		.ai_socktype = NET_SOCK_STREAM,
+#if defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4)
+		.ai_family = NET_AF_UNSPEC,
+#elif defined(CONFIG_NET_IPV6)
+		.ai_family = NET_AF_INET6,
+#else
+		.ai_family = NET_AF_INET,
+#endif
 	};
 	char addr_str[NET_IPV6_ADDR_LEN];
 
@@ -402,6 +410,7 @@ static int broker_init(struct net_sockaddr_storage *broker,
 	addr = result;
 
 	while (addr != NULL) {
+#if defined(CONFIG_NET_IPV6)
 		if (addr->ai_family == NET_AF_INET6) {
 			struct net_sockaddr_in6 *broker6 = ((struct net_sockaddr_in6 *)broker);
 
@@ -414,8 +423,14 @@ static int broker_init(struct net_sockaddr_storage *broker,
 					addr_str, sizeof(addr_str));
 			LOG_DBG("IPv6 Address found %s (%s)", addr_str,
 				net_family2str(addr->ai_family));
+
+			resolved = true;
+
 			break;
-		} else if (addr->ai_family == NET_AF_INET) {
+		}
+#endif /* CONFIG_NET_IPV6 */
+
+		if (addr->ai_family == NET_AF_INET) {
 			struct net_sockaddr_in *broker4 = ((struct net_sockaddr_in *)broker);
 
 			net_ipaddr_copy(&broker4->sin_addr,
@@ -427,17 +442,27 @@ static int broker_init(struct net_sockaddr_storage *broker,
 					addr_str, sizeof(addr_str));
 			LOG_DBG("IPv4 Address found %s (%s)", addr_str,
 				net_family2str(addr->ai_family));
+
+			resolved = true;
+
 			break;
-		} else {
-			LOG_DBG("Unknown address family %d", (unsigned int)addr->ai_family);
 		}
+
+		LOG_DBG("Skipping unsupported address family %d",
+			(unsigned int)addr->ai_family);
 
 		addr = addr->ai_next;
 	}
 
 	zsock_freeaddrinfo(result);
 
-	return err;
+	if (!resolved) {
+		LOG_ERR("No usable address returned for %s", conn_params->hostname.ptr);
+
+		return -ENOENT;
+	}
+
+	return 0;
 }
 
 static int client_connect(struct mqtt_helper_conn_params *conn_params)
