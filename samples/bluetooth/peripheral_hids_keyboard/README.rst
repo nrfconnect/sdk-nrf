@@ -138,6 +138,18 @@ The following sample-specific Kconfig options are used in this sample (defined i
 .. options-from-kconfig::
    :show-type:
 
+.. peripheral_hids_hid_sci_start
+
+HID Shorter Connection Intervals (SCI)
+--------------------------------------
+
+If you build the sample with ``-DFILE_SUFFIX=hid_sci``, support for HID Shorter Connection Intervals (SCI) is enabled.
+This feature allows the device to enter a specific HID SCI mode when requested by the central.
+The HID SCI modes are sets of connection parameters that you can use to optimize the connection for a specific use case.
+For example, the FAST mode is used to achieve the shortest connection intervals, allowing for minimum latency and maximum throughput.
+
+.. peripheral_hids_hid_sci_end
+
 Setup
 =====
 
@@ -153,6 +165,8 @@ Building and running
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
 .. include:: /includes/ipc_radio_conf.txt
+
+To build the sample with HID SCI support, use ``-DFILE_SUFFIX=hid_sci``.
 
 Testing
 =======

@@ -107,3 +107,16 @@ tests:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
+  sample.bluetooth.peripheral_hids_mouse.hid_sci:
+    harness: console
+    extra_args: FILE_SUFFIX=hid_sci
+    integration_platforms:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
