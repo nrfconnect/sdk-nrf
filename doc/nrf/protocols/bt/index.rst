@@ -11,6 +11,7 @@ Nordic Semiconductor products support the power efficient Bluetooth LE protocol.
 The |NCS| provides a qualified Bluetooth core stack, profiles, and application examples for typical use cases.
 
 If you want to go through an online training course to familiarize yourself with Bluetooth Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
+The `Designing low-power Bluetooth LE products course`_ in the `Nordic Developer Academy`_ provides a comprehensive guide on low-power optimization for Bluetooth LE products.
 
 The following section describes Bluetooth solution areas and architecture, as well as the Bluetooth Mesh protocol.
 It also includes guidelines on how to qualify a product that uses Bluetooth technology.

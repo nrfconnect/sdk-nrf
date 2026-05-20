@@ -1220,6 +1220,7 @@
 .. _`Cellular IoT Fundamentals course`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/
 .. _`Power saving techniques`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/lessons/lesson-1-cellular-fundamentals/topic/lesson-1-power-saving-techniques/
 .. _`Bluetooth LE Fundamentals course`: https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/
+.. _`Designing low-power Bluetooth LE products course`: https://academy.nordicsemi.com/courses/designing-low-power-bluetooth-le-products/
 .. _`Wi-Fi Fundamentals course`: https://academy.nordicsemi.com/courses/wi-fi-fundamentals/
 .. _`Matter Fundamentals course`: https://academy.nordicsemi.com/courses/matter-fundamentals/
 
