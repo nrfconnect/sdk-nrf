@@ -66,3 +66,7 @@
 		};
 	};
 };
+
+&cpuapp_wifi {
+	status = "okay";
+};
