@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if WIFI
+zephyr_library()
 
-rsource "nrf71/Kconfig"
-rsource "nrf92/Kconfig"
-
-endif # WIFI
+zephyr_library_sources(nrf92.c)

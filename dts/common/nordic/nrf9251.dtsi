@@ -289,6 +289,11 @@
 				compatible = "nordic,nrf-resetinfo";
 				reg = <0x1e000 0x1000>;
 			};
+
+			cpuapp_wifi: cpuapp_wifi {
+				compatible = "nordic,nrf92-wifi";
+				status = "disabled";
+			};
 		};
 
 		tdd_peripherals: peripheral@bf000000 {
