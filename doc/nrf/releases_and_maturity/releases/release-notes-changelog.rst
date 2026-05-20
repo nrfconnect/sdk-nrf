@@ -184,7 +184,11 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth® LE
 -------------
 
-|no_changes_yet_note|
+* Added the following Kconfig options to enable support for certain HCI commands:
+
+  * :kconfig:option:`CONFIG_BT_CTLR_SDC_DATA_RELATED_ADDRESS_CHANGES`
+  * :kconfig:option:`CONFIG_BT_CTLR_SDC_RF_PATH_COMPENSATION`
+  * :kconfig:option:`CONFIG_BT_CTLR_SDC_ISO_TEST`
 
 Bluetooth Mesh
 --------------
