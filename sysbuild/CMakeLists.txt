@@ -476,6 +476,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
        OR SB_CONFIG_SOC_SERIES_NRF54H OR SB_CONFIG_QSPI_XIP_SPLIT_IMAGE
        # TF-M NS builds require signing tfm_merged.hex, not zephyr.hex.
        OR SB_CONFIG_BOARD_IS_NON_SECURE)
+      if(SB_CONFIG_BOARD_IS_NON_SECURE)
+        set_config_bool(mcuboot CONFIG_BASE_BOARD_IS_NON_SECURE y)
+      else()
+        set_config_bool(mcuboot CONFIG_BASE_BOARD_IS_NON_SECURE n)
+      endif()
+
       # Use NCS signing script with support for PM or direct XIP (NCS specific features)
       if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
         set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)

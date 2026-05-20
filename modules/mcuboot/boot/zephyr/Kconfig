@@ -243,3 +243,6 @@ config FIND_NEXT_SLOT_HOOK_BOOT_REQ
 	help
 	  This will read the image preference from the bootloader requests
 	  module and if found, alter the Direct XIP slot selection.
+
+config BASE_BOARD_IS_NON_SECURE
+	bool "Base board target is non-secure (informative only, do not change)"
