@@ -49,14 +49,14 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To use the UART overlay for increasing the transfer speed, add the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag to your build.
+To use the UART overlay for increasing the transfer speed, add the ``-DEXTRA_DTC_OVERLAY_FILE=uart.overlay`` flag to your build.
 See :ref:`cmake_options` for instructions on how to add this flag.
 When building on the command line add the UART overlay in the following way, depending on the DK you are using:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board_target* -- -DDTC_OVERLAY_FILE=uart.overlay
+   west build -b *board_target* -- -DEXTRA_DTC_OVERLAY_FILE=uart.overlay
 
 |board_target|
 
@@ -80,7 +80,7 @@ After programming the sample to your development kit, test it by performing the 
 
             python update_modem.py mfw_nrf91x1_2.0.0.zip /dev/ttyACM0 *115200*
 
-         * For the baud rate valid for the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag, use the following command:
+         * For the baud rate valid for the ``-DEXTRA_DTC_OVERLAY_FILE=uart.overlay`` flag, use the following command:
 
          .. parsed-literal::
             :class: highlight
@@ -97,7 +97,7 @@ After programming the sample to your development kit, test it by performing the 
 
             python update_modem.py mfw_nrf9160_1.3.5.zip /dev/ttyACM0 *115200*
 
-         * For the baud rate valid for the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag, use the following command:
+         * For the baud rate valid for the ``-DEXTRA_DTC_OVERLAY_FILE=uart.overlay`` flag, use the following command:
 
          .. parsed-literal::
             :class: highlight
