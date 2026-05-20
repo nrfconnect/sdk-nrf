@@ -18,6 +18,9 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
 #include <sample_usbd.h>
+#if defined(CONFIG_TEST_USB_AND_SYSTEMOFF)
+#include <zephyr/sys/poweroff.h>
+#endif
 
 LOG_MODULE_REGISTER(idle_usb, LOG_LEVEL_INF);
 
@@ -230,5 +233,9 @@ int main(void)
 
 	LOG_INF("Good night");
 	gpio_pin_set_dt(&led, 0);
+#if defined(CONFIG_TEST_USB_AND_SYSTEMOFF)
+	sys_poweroff();
+#else
 	k_sleep(K_FOREVER);
+#endif
 }
