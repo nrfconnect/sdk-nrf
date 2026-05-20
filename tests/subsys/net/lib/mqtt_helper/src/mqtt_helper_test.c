@@ -51,6 +51,17 @@ extern void mqtt_helper_poll_loop(void);
 extern void on_publish(const struct mqtt_evt *mqtt_evt);
 extern char payload_buf[];
 
+/* Fake addrinfo entries returned from the mocked zsock_getaddrinfo(). */
+static struct net_sockaddr_in test_sockaddr_in = {
+	.sin_family = NET_AF_INET,
+};
+static struct zsock_addrinfo test_addrinfo = {
+	.ai_family = NET_AF_INET,
+	.ai_addr = (struct net_sockaddr *)&test_sockaddr_in,
+	.ai_addrlen = sizeof(test_sockaddr_in),
+	.ai_next = NULL,
+};
+
 /* Semaphores used by tests to wait for a certain callbacks */
 static K_SEM_DEFINE(connack_success_sem, 0, 1);
 static K_SEM_DEFINE(connack_failed_sem, 0, 1);
@@ -273,12 +284,7 @@ void test_mqtt_helper_connect_when_disconnected(void)
 			.size = TEST_DEVICE_ID_LEN,
 		},
 	};
-
-	/* Make getddrinfo return a pointer that points to NULL. Otherwise the unit under test
-	 * would be dereferencing uninitialized memory location. The behavior of the unit
-	 * under test for when non-NULL values are returned is out of scope of this test.
-	 */
-	struct zsock_addrinfo *test_res = NULL;
+	struct zsock_addrinfo *test_res = &test_addrinfo;
 
 	__cmock_zsock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
 	__cmock_zsock_getaddrinfo_IgnoreArg_host();
@@ -286,6 +292,7 @@ void test_mqtt_helper_connect_when_disconnected(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
+	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
 
@@ -298,15 +305,7 @@ void test_mqtt_helper_connect_when_disconnected(void)
 void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 {
 	struct mqtt_helper_conn_params conn_params_dummy;
-
-	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
-	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -2);
-
-	/* Make getddrinfo return a pointer that points to NULL. Otherwise the unit under test
-	 * would be dereferencing uninitialized memory location. The behavior of the unit
-	 * under test for when non-NULL values are returned is out of scope of this test.
-	 */
-	struct zsock_addrinfo *test_res = NULL;
+	struct zsock_addrinfo *test_res = &test_addrinfo;
 
 	__cmock_zsock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
 	__cmock_zsock_getaddrinfo_IgnoreArg_host();
@@ -314,9 +313,13 @@ void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
+	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
+	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
+	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -ENOENT);
+
 	mqtt_state = MQTT_STATE_DISCONNECTED;
 
-	TEST_ASSERT_EQUAL(-2, mqtt_helper_connect(&conn_params_dummy));
+	TEST_ASSERT_EQUAL(-ENOENT, mqtt_helper_connect(&conn_params_dummy));
 	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
 }
 

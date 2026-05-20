@@ -676,6 +676,10 @@ Libraries for networking
 
   * Updated the status from experimental to supported.
 
+* :ref:`lib_mqtt_helper` library:
+
+  * Fixed an issue where the library could overflow the broker address buffer if an IPv6 address was returned by the DNS resolver while the :kconfig:option:`CONFIG_NET_IPV6` Kconfig option was disabled.
+
 Libraries for NFC
 -----------------
 
