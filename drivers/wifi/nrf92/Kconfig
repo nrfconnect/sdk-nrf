@@ -1,0 +1,41 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config WIFI_NRF92
+	bool "nRF92 Wi-Fi driver"
+	depends on WIFI
+	depends on NRF_MODEM_LIB
+	select NET_L2_WIFI_MGMT
+	help
+	  nRF92 Wi-Fi driver supporting scanning of Wi-Fi APs.
+
+if WIFI_NRF92
+
+config WIFI_NRF92_IGNORE_PROBES
+	bool "Ignore probes"
+	help
+	  Ignore probes and scan only beacons.
+
+config WIFI_NRF92_IGNORE_LOCAL_ADDR
+	bool "Ignore locally administered MAC addresses"
+	default y
+	help
+	  Ignore locally administered MAC addresses in the scan results.
+
+config WIFI_NRF92_INCREASE_MAX_GAIN
+	bool "Increase maximum RF gain in the Wi-Fi receiver"
+	help
+	  Enhance the sensitivity of the Wi-Fi receiver by increasing the maximum RF gain,
+	  allowing for detection of weaker signals. This action may increase the current
+	  consumption and susceptibility to interference.
+
+config WIFI_NRF92_OFFLINE_PROCESSING
+	bool "Offline processing"
+	default y
+	help
+	  Enable offline processing of beacon or probe response frames that cannot be processed
+	  in real-time due to cycle budget constraints.
+
+endif # WIFI_NRF92

@@ -25,6 +25,7 @@
 		zephyr,console = &uart133;
 		zephyr,shell-uart = &uart133;
 		zephyr,uart-mcumgr = &uart133;
+		zephyr,wifi = &cpuapp_wifi;
 	};
 
 	aliases {
