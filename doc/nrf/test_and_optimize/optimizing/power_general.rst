@@ -176,7 +176,12 @@ Protocol-specific recommendations
 
 Besides applying `General recommendations`_, read the following subsections for more information on how to optimize specific subsystems.
 
-Bluetooth® Mesh
+Bluetooth® LE
+=============
+
+The `Designing low-power Bluetooth LE products course`_ in the `Nordic Developer Academy`_ provides a comprehensive guide on low-power optimization for Bluetooth LE products.
+
+Bluetooth Mesh
 ===============
 
 The Bluetooth Mesh protocol offers the :ref:`ug_bt_mesh_configuring_lpn` feature for optimizing the power consumption of the Bluetooth Mesh devices.
