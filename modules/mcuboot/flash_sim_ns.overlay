@@ -1,0 +1,2 @@
+#define NS_PARTITION_LAYOUT
+#include "flash_sim.overlay"

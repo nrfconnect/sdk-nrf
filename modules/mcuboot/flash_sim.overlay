@@ -14,9 +14,15 @@
  */
 
 / {
+	/*
+	 * Non-secure is excluded from changing the chosen SRAM node, as images specify a memory
+	 * region in RAM that is dedicated to the non-secure image, thus no offset is needed.
+	 */
+#ifndef NS_PARTITION_LAYOUT
 	chosen {
 		zephyr,sram = &sram0_offset_for_dfu;
 	};
+#endif
 
 	soc {
 		/*
