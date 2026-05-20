@@ -5,9 +5,13 @@
  */
 
 #include "psa_core_lite.h"
-#include "psa_core_lite_volatile_key_storage.h"
+#include <zephyr/sys/util.h>
 #include <psa/crypto.h>
 #include <psa_crypto_driver_wrappers.h>
+
+#if defined(CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE)
+#include "psa_core_lite_volatile_key_storage.h"
+#endif
 
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 #include <cracen_psa_kmu.h>
@@ -57,10 +61,12 @@ static psa_status_t get_kmu_key(mbedtls_svc_key_id_t key_id,
 }
 #endif
 
+#if defined(CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE)
 static inline void clear_all_volatile_keys(void)
 {
 	psa_core_lite_free_all_key_slots();
 }
+#endif
 
 /* Signature validation algorithms */
 

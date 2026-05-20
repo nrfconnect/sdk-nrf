@@ -6,6 +6,7 @@
 #ifndef PSA_CORE_LITE_H_
 #define PSA_CORE_LITE_H_
 
+#include <zephyr/sys/util.h>
 #include "util/util_macro.h"
 #include <psa/crypto.h>
 
@@ -71,5 +72,32 @@
 
 #define VERIFY_ALG_HMAC(_alg) \
 	(IS_ENABLED(PSA_WANT_ALG_HMAC) && _alg == PSA_ALG_HMAC(PSA_ALG_SHA_512))
+
+/* Macros to verify configuration */
+
+#if CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE == 0 && \
+    defined(CONFIG_PSA_CORE_LITE_HAS_VERIFY_SIGNATURE)
+#error "No valid algorithm for signature validation"
+#endif
+
+#if CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE == 0 && \
+    defined(PSA_WANT_ALG_CTR)
+#error "FW encryption requires either AES-256 or AES-128 being enabled"
+#endif
+
+#if CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE == 0 && \
+    defined(PSA_WANT_ALG_ECDH)
+#error "No valid algorithm for key agreement"
+#endif
+
+#define PSA_CORE_LITE_KEY_MAX_SIZE	MAX(CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE,   \
+					MAX(CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE,   \
+					    CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE))
+
+typedef struct {
+	psa_key_attributes_t key_attributes;
+	uint8_t key[PSA_CORE_LITE_KEY_MAX_SIZE];
+	size_t key_size;
+} psa_core_lite_key_slot_t;
 
 #endif /* PSA_CORE_LITE_H_ */
