@@ -14,14 +14,7 @@ target_include_directories(app PRIVATE inc)
 target_sources(app PRIVATE
   src/nrf_wifi_radio_test_main.c
   src/nrf_wifi_radio_test_shell.c
+  src/nrf_wifi_radio_ficr_shell.c
+  src/ficr_prog.c
 )
-
-if(CONFIG_NRF71_RADIO_TEST)
-  target_link_libraries(app PRIVATE nrf71_wifi_radio_test_headers)
-else()
-  target_sources(app PRIVATE
-    src/nrf_wifi_radio_ficr_shell.c
-    src/ficr_prog.c
-  )
-  target_link_libraries(app PRIVATE nrf-wifi-osal)
-endif()
+target_link_libraries(app PRIVATE nrf-wifi-osal)
