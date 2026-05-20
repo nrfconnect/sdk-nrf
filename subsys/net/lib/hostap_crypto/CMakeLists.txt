@@ -34,7 +34,9 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA)
 
   zephyr_library_sources(
     ${MBEDTLS_REMOVED_MODULES_PATH}/des.c
+    ${MBEDTLS_REMOVED_MODULES_PATH}/dhm.c
     ${HOSTAP_SRC_BASE}/crypto/crypto_mbedtls_alt.c
+    ${HOSTAP_BASE}/port/mbedtls/supp_psa_api.c
     ${HOSTAP_SRC_BASE}/crypto/rc4.c
     ${HOSTAP_SRC_BASE}/crypto/aes-wrap.c
     ${HOSTAP_SRC_BASE}/crypto/aes-unwrap.c
@@ -81,6 +83,7 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_PSA)
 
   zephyr_library_sources(
     ${MBEDTLS_REMOVED_MODULES_PATH}/des.c
+    ${MBEDTLS_REMOVED_MODULES_PATH}/dhm.c
     ${HOSTAP_SRC_BASE}/crypto/aes-wrap.c
     ${HOSTAP_SRC_BASE}/crypto/aes-unwrap.c
     ${HOSTAP_SRC_BASE}/crypto/aes-internal-dec.c
@@ -110,9 +113,9 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_PSA)
 endif()
 
 if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA OR DEFINED CONFIG_HOSTAP_CRYPTO_ALT_PSA)
-  set_source_files_properties(
-    ${MBEDTLS_REMOVED_MODULES_PATH}/des.c
-    PROPERTIES COMPILE_DEFINITIONS
-    "TF_PSA_CRYPTO_CONFIG_CHECK_BYPASS;MBEDTLS_DES_C"
+  zephyr_library_compile_definitions(
+    MBEDTLS_DES_C
+    MBEDTLS_DHM_C
   )
+  zephyr_include_directories(${ZEPHYR_MBEDTLS_MODULE_DIR}/include)
 endif()

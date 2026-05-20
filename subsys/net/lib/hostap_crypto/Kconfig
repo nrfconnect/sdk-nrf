@@ -28,6 +28,7 @@ config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 	# Enable for non-TF-M builds to keep it simple, no overhead
 	select PSA_WANT_GENERATE_RANDOM
 	select MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+	select MBEDTLS_BIGNUM_C
 	select MBEDTLS_MD_C
 	select MBEDTLS_HMAC_DRBG_C
 	select MBEDTLS_SHA256_C
@@ -48,12 +49,13 @@ config HOSTAP_CRYPTO_ALT_PSA
 	select PSA_CRYPTO
 	# HostAP mbedtls alt still uses legacy MPI/cipher symbols from TF-PSA-Crypto.
 	select MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
-	select PSA_WANT_GENERATE_RANDOM
+	select MBEDTLS_BIGNUM_C
 	select MBEDTLS_PK_C
 	select MBEDTLS_PK_PARSE_C
 	select MBEDTLS_MD_C
 	select MBEDTLS_PK_WRITE_C
 	select MBEDTLS_ENABLE_HEAP
+	select PSA_WANT_GENERATE_RANDOM
 	select PSA_WANT_ALG_HMAC
 	select PSA_WANT_ALG_CMAC
 	select PSA_WANT_ALG_ECB_NO_PADDING
