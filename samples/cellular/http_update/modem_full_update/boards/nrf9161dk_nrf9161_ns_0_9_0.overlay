@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/cellular/nrf91_no_bootloader_partitions.dtsi>
+
+#include <samples/cellular/nrf91_sram_partitions.dtsi>
+
 &gd25wb256 {
 	status = "okay";
 };
@@ -11,10 +15,5 @@
 / {
 	aliases {
 		ext-flash = &gd25wb256;
-	};
-
-	/* Configure partition manager to use gd25wb256 as the external flash */
-	chosen {
-		nordic,pm-ext-flash = &gd25wb256;
 	};
 };
