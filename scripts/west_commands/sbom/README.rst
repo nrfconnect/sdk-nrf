@@ -237,7 +237,7 @@ You can specify the format of the report output using the ``output`` argument.
   The :file:`sbom_report.html` file is generated in your build directory
   (the first one if you specify more than one build directory).
 
-* To generate an SPDX 2.2 format report (for CRA/EO 14028/FDA compliance):
+* To generate an SPDX 2.3 format report (for CRA/EO 14028/FDA compliance):
 
   .. parsed-literal::
      :class: highlight
@@ -247,13 +247,16 @@ You can specify the format of the report output using the ``output`` argument.
   The SPDX report groups files into packages and includes:
 
   * Package supplier information (auto-detected from git URLs or specified via ``--package-supplier``)
-  * Component name, version, and download location
+  * Component name, version, and ``PackageDownloadLocation`` (``git+<url>@<sha>`` for git-resolved packages)
+  * ``PackageHomePage`` for browsable project links
   * Package URLs (PURLs) for unique package identification
   * Common Platform Enumeration (CPE) identifiers when specified via ``--package-cpe``
   * Dependency relationships showing supply chain connections
   * File checksums and license information
+  * ``PrimaryPackagePurpose`` (``APPLICATION``, ``SOURCE``, or ``OTHER``) auto-detected for each package
+  * ``BuiltDate`` on the application package, taken from the newest build-artifact timestamp
 
-  SPDX 2.2 is currently the supported machine-readable standardized output format.
+  SPDX 2.3 is the supported machine-readable standardized output format.
 
   This format meets requirements from:
 
