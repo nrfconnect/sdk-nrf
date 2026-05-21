@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
-
 config PARTITION_MANAGER
 	default n
 
@@ -14,3 +12,5 @@ config NRF_DEFAULT_IPC_RADIO
 
 config NETCORE_IPC_RADIO_IEEE802154
 	default y
+
+source "share/sysbuild/Kconfig"
