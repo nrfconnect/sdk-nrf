@@ -114,13 +114,15 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9465"
 
 - scenarios:
-    - sample.benchmarks.peripheral_stress_test.nrf54lv10_lc10
+    - benchmarks.current_consumption.beacon_idle.nrf54l
+    - benchmarks.current_consumption.beacon_idle.nrf54l.lfrc
     - benchmarks.current_consumption.beacon_vs_vdd
     - benchmarks.current_consumption.beacon_vs_vdd.nrf54l_lfrc
-    - benchmarks.current_consumptaion.beacon_idle.nrf54l.lfrc
     - benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot
-    - benchmarks.current_consumption.beacon_idle.nrf54l
     - benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot.lto
+    - sample.benchmarks.peripheral_stress_test.nrf54lv10_lc10
+    - sample.benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot
+    - sample.benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot.lto
   platforms:
     - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp
   comment: "no MPSL for nrf54lc10 at the moment"
