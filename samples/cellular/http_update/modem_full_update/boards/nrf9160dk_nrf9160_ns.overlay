@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/cellular/nrf91_no_bootloader_partitions.dtsi>
+
+#include <samples/cellular/nrf91_sram_partitions.dtsi>
+
 &mx25r64 {
 	status = "okay";
 };
@@ -11,10 +15,5 @@
 / {
 	aliases {
 		ext-flash = &mx25r64;
-	};
-
-	/* Configure partition manager to use mx25r64 as the external flash */
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
 	};
 };
