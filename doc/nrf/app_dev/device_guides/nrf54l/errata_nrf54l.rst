@@ -16,6 +16,7 @@ nRF54L Series Errata documents contain descriptions of identified hardware anoma
 * `nRF54L15 Errata`_
 * `nRF54LM20A Errata`_
 * `nRF54LM20B Errata`_
+* `nRF54LV10A Errata`_
 * `nRF54LS05A Errata`_
 * `nRF54LS05B Errata`_
 
@@ -343,6 +344,78 @@ Refer to the following table for the current workaround list:
          * - 105
            - Not implemented
            - Not implemented
+
+   .. tab:: nRF54LV10A
+
+      .. list-table:: Anomaly workaround status
+         :header-rows: 1
+         :align: left
+         :widths: auto
+
+         * - Anomaly ID
+           - Status
+         * - 1
+           - Not applicable
+         * - 6
+           - Not applicable
+         * - 7
+           - **Enabled**
+         * - 8
+           - **Enabled**
+         * - 16
+           - Not applicable
+         * - 17
+           - Not applicable
+         * - 18
+           - Not applicable
+         * - 20
+           - Not implemented
+         * - 21
+           - Not applicable
+         * - 22
+           - Not applicable
+         * - 23
+           - Not applicable
+         * - 24
+           - Not applicable
+         * - 25
+           - Not applicable
+         * - 26
+           - Not applicable
+         * - 30
+           - Available when ``CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION=y`` :sup:`1`
+         * - 31
+           - Not applicable
+         * - 32
+           - Not applicable
+         * - 37
+           - **Enabled**
+         * - 39
+           - Not applicable
+         * - 41
+           - Not applicable
+         * - 44
+           - Not implemented
+         * - 47
+           - Not applicable
+         * - 48
+           - Not applicable
+         * - 49
+           - Not implemented
+         * - 50
+           - Not applicable
+         * - 59
+           - Not applicable
+         * - 63
+           - Not implemented
+         * - 69
+           - **Enabled**
+         * - 102
+           - Not implemented
+         * - 104
+           - Not applicable
+         * - 105
+           - Not applicable
 
    .. tab:: nRF54LS05A / nRF54LS05B
 
