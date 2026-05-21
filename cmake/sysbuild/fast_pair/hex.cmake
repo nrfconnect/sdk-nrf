@@ -114,7 +114,19 @@ function(fast_pair_hex_dts)
     ALL
     DEPENDS
     "${fp_provisioning_data_hex}"
-    )
+  )
+
+    if(SB_CONFIG_MERGED_HEX_FILES)
+      set(board_target)
+      sysbuild_get(board_target IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BOARD_TARGET KCONFIG)
+      string(REPLACE "/" "_" board_target ${board_target})
+      string(REPLACE "@" "_" board_target ${board_target})
+
+      set_property(GLOBAL APPEND
+        PROPERTY sysbuild_merged_hex_dependencies_${board_target} ${fp_partition_name}_target
+      )
+    endif()
+#message(WARNING "added ${fp_partition_name}_target to sysbuild_merged_hex_dependencies_${board_target}")
 endfunction()
 
 function(fast_pair_device_model_warning)

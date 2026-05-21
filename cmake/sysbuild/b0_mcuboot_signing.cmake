@@ -168,9 +168,21 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
 
   if(byproducts)
     add_custom_target(${application}_signed_packaged_target
-        ALL DEPENDS
-        ${byproducts}
-        )
+      ALL DEPENDS
+      ${byproducts}
+    )
+
+    if(SB_CONFIG_MERGED_HEX_FILES)
+      set(board_target)
+      sysbuild_get(board_target IMAGE ${application} VAR CONFIG_BOARD_TARGET KCONFIG)
+      string(REPLACE "/" "_" board_target ${board_target})
+      string(REPLACE "@" "_" board_target ${board_target})
+
+      set_property(GLOBAL APPEND
+        PROPERTY sysbuild_merged_hex_dependencies_${board_target}
+          ${application}_signed_packaged_target
+      )
+    endif()
 
     list(APPEND signed_targets ${application}_signed_packaged_target)
     set(signed_targets ${signed_targets} PARENT_SCOPE)

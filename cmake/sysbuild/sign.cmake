@@ -287,6 +287,17 @@ function(b0_sign_image slot cpunet_target)
     )
   endif()
 
+  if(SB_CONFIG_MERGED_HEX_FILES)
+    set(board_target)
+    sysbuild_get(board_target IMAGE ${target_name} VAR CONFIG_BOARD_TARGET KCONFIG)
+    string(REPLACE "/" "_" board_target ${board_target})
+    string(REPLACE "@" "_" board_target ${board_target})
+
+    set_property(GLOBAL APPEND
+      PROPERTY sysbuild_merged_hex_dependencies_${board_target} ${slot}_signature_file_target
+    )
+  endif()
+
   cmake_path(GET signed_hex FILENAME signed_hex_filename)
   cmake_path(GET to_sign FILENAME to_sign_filename)
   set(validation_comment "Creating validation for ${to_sign_filename}, storing to ${signed_hex_filename}")
