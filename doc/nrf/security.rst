@@ -64,7 +64,7 @@ Expand the following section to see the table listing versions of different secu
        - 3.6.6
      * - v3.2.0 (up to v3.2.4)
        - v2.2.0
-       - v23.1.1+20
+       - |ironside_se_ver|
        - 3.6.5
      * - v3.1.0, v3.1.1
        - v2.1.2
