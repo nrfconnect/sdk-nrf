@@ -8,9 +8,9 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/net/lwm2m.h>
 #include <zephyr/net/lwm2m_path.h>
+#include <zephyr/storage/flash_map.h>
 #include <ncs_version.h>
 
-#include "pm_config.h"
 #include "lwm2m_app_utils.h"
 
 #ifdef CONFIG_SOC_SERIES_NRF91
@@ -21,7 +21,8 @@
 LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 
 #define CLIENT_MODEL_NUMBER CONFIG_BOARD
-#define CLIENT_FLASH_SIZE PM_MCUBOOT_SECONDARY_SIZE
+
+#define CLIENT_FLASH_SIZE PARTITION_NODE_SIZE(DT_NODELABEL(slot1_partition))
 
 #define UTC_OFFSET_STR_LEN 7 /* '+00:00' + '\0' = 7 */
 #define TIMEZONE_STR_LEN 33 /* Longest: 'America/Argentina/ComodRivadavia' + '\0' = 33 */
