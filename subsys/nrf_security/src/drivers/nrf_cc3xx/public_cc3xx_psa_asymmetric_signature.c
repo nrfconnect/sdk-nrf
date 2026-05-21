@@ -61,11 +61,6 @@ psa_status_t cc3xx_verify_hash(const psa_key_attributes_t *attributes, const uin
 			       size_t hash_length, const uint8_t *signature,
 			       size_t signature_length)
 {
-	if (alg != PSA_ALG_RSA_PKCS1V15_SIGN_RAW &&
-	    hash_length != PSA_HASH_LENGTH(PSA_ALG_SIGN_GET_HASH(alg))) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
 	if (!PSA_KEY_TYPE_IS_ASYMMETRIC(psa_get_key_type(attributes))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
