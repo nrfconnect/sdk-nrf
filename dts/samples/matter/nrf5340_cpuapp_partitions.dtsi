@@ -54,9 +54,10 @@
 			reg = <0x00000000 DT_SIZE_K(956)>;
 		};
 
+		/* Must match modules/mcuboot/flash_sim.overlay slot2_partition (image-2). */
 		slot3_partition: partition@ef000 {
 			label = "image-3";
-			reg = <0x000ef000 DT_SIZE_K(224)>;
+			reg = <0x000ef000 DT_SIZE_K(256)>;
 		};
 	};
 };

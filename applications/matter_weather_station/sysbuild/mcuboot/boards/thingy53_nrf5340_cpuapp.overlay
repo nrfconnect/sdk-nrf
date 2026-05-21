@@ -7,6 +7,11 @@
 #include <zephyr/dt-bindings/ipc_service/static_vrings.h>
 
 / {
+	chosen {
+		/* app.overlay is not applied to sysbuild mcuboot; must set here. */
+		zephyr,code-partition = &boot_partition;
+	};
+
 	zephyr,user {
 		battery-charge-gpios = <&gpio1 0 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 	};
@@ -124,7 +129,7 @@
 
 		slot3_partition: partition@e0000 {
 			label = "image-3";
-			reg = <0xe0000 DT_SIZE_K(224)>;
+			reg = <0xe0000 DT_SIZE_K(256)>;
 		};
 	};
 };
