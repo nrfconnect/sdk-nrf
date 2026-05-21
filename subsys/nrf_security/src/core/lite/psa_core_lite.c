@@ -10,16 +10,12 @@
 #include <psa_crypto_driver_wrappers.h>
 #include <nrf_security_mem_helpers.h>
 
-#if defined(CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE)
+#if CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE
 #include "psa_core_lite_volatile_key_storage.h"
 #endif
 
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#if PSA_NEED_CRACEN_KMU_DRIVER
 #include <cracen_psa_kmu.h>
-#endif
-
-#ifdef CONFIG_PSA_CRYPTO_DRIVER_CRACEN
-#include <cracen/mem_helpers.h>
 #include <internal/ecc/cracen_eddsa.h>
 #endif
 
@@ -29,24 +25,42 @@
 
 #define PSA_CORE_LITE_KEY_DERIVATION_OUTPUT			-1
 
-#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
+#if CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS
 #include "cracen_psa.h"
 psa_status_t silex_statuscodes_to_psa(int ret);
 #endif
 
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#if PSA_NEED_CRACEN_KMU_DRIVER
 psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 	psa_key_attributes_t *attributes, uint8_t *key_buffer,
 	size_t key_buffer_size, size_t *key_buffer_length);
+#endif
 
-static psa_status_t get_kmu_key(mbedtls_svc_key_id_t key_id,
-				psa_core_lite_key_slot_t *key_slot,
-				size_t key_buffer_size)
+static psa_status_t get_key_buffer(mbedtls_svc_key_id_t key_id,
+				   psa_core_lite_key_slot_t *key_slot,
+				   size_t key_buffer_size)
 {
 	psa_status_t status;
+
+#if CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE
+	psa_core_lite_key_slot_t *temp_slot;
+
+	if (psa_core_lite_key_id_is_volatile(key_id)) {
+		/* The key is an RSA key imported and stored in volatile key store */
+		status = psa_core_lite_get_key_slot(&key_id, &temp_slot);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		memcpy(key_slot, temp_slot, sizeof(psa_core_lite_key_slot_t));
+
+		return PSA_SUCCESS;
+	}
+#endif /* CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE */
+
+#if PSA_NEED_CRACEN_KMU_DRIVER
 	psa_key_lifetime_t lifetime;
 	psa_drv_slot_number_t slot_number;
-
 	status = cracen_kmu_get_key_slot(key_id, &lifetime, &slot_number);
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -59,10 +73,12 @@ static psa_status_t get_kmu_key(mbedtls_svc_key_id_t key_id,
 	return cracen_kmu_get_builtin_key(slot_number, &key_slot->key_attributes,
 					  key_slot->key, key_buffer_size,
 					  &key_slot->key_size);
-}
-#endif
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 
-#if defined(CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE)
+	return PSA_ERROR_DOES_NOT_EXIST;
+}
+
+#if CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE
 static inline void clear_all_volatile_keys(void)
 {
 	psa_core_lite_free_all_key_slots();
@@ -71,22 +87,14 @@ static inline void clear_all_volatile_keys(void)
 
 /* Signature validation algorithms */
 
-#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS) && \
-	(defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA))
-/* We don't support Ed25519 + ECDSA as the only supported verification is
- * Ed25519 when PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS is used
- */
-#error PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS with ECDSA is invalid!
-#endif
-
-#if defined(CONFIG_PSA_CORE_LITE_HAS_VERIFY_HASH)
+#if CONFIG_PSA_CORE_LITE_HAS_VERIFY_HASH
 
 psa_status_t psa_verify_hash(
 	mbedtls_svc_key_id_t key_id, psa_algorithm_t alg, const uint8_t *hash, size_t hash_length,
 	const uint8_t *signature, size_t signature_length)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
-	psa_core_lite_key_slot_t pub_key_slot;
+	psa_core_lite_key_slot_t pub_key_slot = {0};
 
 	if (hash == NULL || signature == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -97,16 +105,18 @@ psa_status_t psa_verify_hash(
 		VERIFY_ALG_ECDSA_SECP_R1_256(alg),
 		VERIFY_ALG_ECDSA_SECP_R1_384(alg),
 		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_256(alg),
-		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_384(alg))) {
+		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_384(alg),
+		VERIFY_ALG_RSA_PSS(alg),
+		VERIFY_ALG_RSA_PKCS1V15(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	status = get_kmu_key(key_id, &pub_key_slot, CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE);
+	status = get_key_buffer(key_id, &pub_key_slot, CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
-#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
+#if CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS
 	int cracen_status = cracen_ed25519ph_verify(pub_key_slot.key, hash, hash_length,
 						    signature, false);
 
@@ -117,12 +127,12 @@ psa_status_t psa_verify_hash(
 							   pub_key_slot.key_size, alg,
 							   hash, hash_length, NULL, 0, signature,
 							   signature_length);
-#endif
+#endif /* CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS */
 }
 
 #endif /* CONFIG_PSA_CORE_LITE_HAS_VERIFY_HASH  */
 
-#if defined(CONFIG_PSA_CORE_LITE_HAS_VERIFY_MESSAGE)
+#if CONFIG_PSA_CORE_LITE_HAS_VERIFY_MESSAGE
 
 psa_status_t psa_verify_message(
 	mbedtls_svc_key_id_t key_id, psa_algorithm_t alg,
@@ -130,7 +140,7 @@ psa_status_t psa_verify_message(
 	const uint8_t *signature, size_t signature_length)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
-	psa_core_lite_key_slot_t pub_key_slot;
+	psa_core_lite_key_slot_t pub_key_slot = {0};
 
 	if (input == NULL || signature == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -141,15 +151,17 @@ psa_status_t psa_verify_message(
 		VERIFY_ALG_ECDSA_SECP_R1_256(alg),
 		VERIFY_ALG_ECDSA_SECP_R1_384(alg),
 		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_256(alg),
-		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_384(alg))) {
+		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_384(alg),
+		VERIFY_ALG_RSA_PSS(alg),
+		VERIFY_ALG_RSA_PKCS1V15(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	status = get_kmu_key(key_id, &pub_key_slot, CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE);
+	status = get_key_buffer(key_id, &pub_key_slot, CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
+#if CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS
 	int cracen_status = cracen_ed25519_verify(pub_key_slot.key, input, input_length, signature);
 
 	return silex_statuscodes_to_psa(cracen_status);
@@ -159,14 +171,14 @@ psa_status_t psa_verify_message(
 							      pub_key_slot.key_size, alg,
 							      input, input_length, NULL, 0,
 							      signature, signature_length);
-#endif
+#endif /* CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS */
 }
 
 #endif /* CONFIG_PSA_CORE_LITE_HAS_VERIFY_MESSAGE  */
 
 /* Hash algorithms */
 
-#if defined(PSA_WANT_ALG_SHA_256) || defined(PSA_WANT_ALG_SHA_384) || defined(PSA_WANT_ALG_SHA_512)
+#if CONFIG_PSA_CORE_LITE_HAS_HASH
 
 psa_status_t psa_hash_setup(psa_hash_operation_t *operation, psa_algorithm_t alg)
 {
@@ -230,11 +242,11 @@ psa_status_t psa_hash_compute(
 					       hash, hash_size, hash_length);
 }
 
-#endif /* PSA_WANT_ALG_SHA_256 || PSA_WANT_ALG_SHA_384 || PSA_WANT_ALG_SHA_512 */
+#endif /* PSA_CORE_LITE_HAS_HASH */
 
 /* Encryption algorithms */
 
-#if defined(PSA_WANT_ALG_CTR)
+#if PSA_WANT_ALG_CTR
 
 static psa_status_t get_enc_key(mbedtls_svc_key_id_t key_id,
 				     psa_algorithm_t alg,
@@ -388,7 +400,7 @@ psa_status_t psa_cipher_abort(psa_cipher_operation_t *operation)
 
 /* Random function */
 
-#if defined(PSA_WANT_GENERATE_RANDOM)
+#if PSA_WANT_GENERATE_RANDOM
 
 psa_status_t psa_generate_random(uint8_t *output, size_t output_size)
 {
@@ -405,16 +417,28 @@ psa_status_t psa_generate_random(uint8_t *output, size_t output_size)
 
 /* Key management */
 
-#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
-
 psa_status_t psa_get_key_attributes(
 	mbedtls_svc_key_id_t key_id, psa_key_attributes_t *attributes)
 {
-
 	psa_status_t status;
+
+#if CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE
+	if (psa_core_lite_key_id_is_volatile(key_id)) {
+		psa_core_lite_key_slot_t *key_slot;
+
+		status = psa_core_lite_get_key_slot(&key_id, &key_slot);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		memcpy(attributes, &key_slot->key_attributes, sizeof(psa_key_attributes_t));
+		return PSA_SUCCESS;
+	}
+#endif
+
+#if PSA_NEED_CRACEN_KMU_DRIVER
 	psa_key_lifetime_t lifetime;
 	psa_drv_slot_number_t slot_number;
-
 	status = cracen_kmu_get_key_slot(key_id, &lifetime, &slot_number);
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -431,33 +455,71 @@ psa_status_t psa_get_key_attributes(
 	}
 
 	return status;
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
+
+	return PSA_ERROR_NOT_SUPPORTED;
 }
+
+#if CONFIG_PSA_CORE_LITE_HAS_RSA
+
+psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
+				const uint8_t *data, size_t data_length,
+				mbedtls_svc_key_id_t *key)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_core_lite_key_slot_t *key_slot;
+	psa_algorithm_t alg = psa_get_key_algorithm(attributes);
+	*key = MBEDTLS_SVC_KEY_ID_INIT;
+
+	/* Key import is limited to RSA keys which can't be stored in KMU */
+	if (!UTIL_CONCAT_OR(VERIFY_ALG_RSA_PSS(alg),
+			    VERIFY_ALG_RSA_PKCS1V15(alg))) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	status = psa_core_lite_get_key_slot(key, &key_slot);
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+		return status;
+	}
+
+	memcpy(&key_slot->key_attributes, attributes, sizeof(psa_key_attributes_t));
+	memcpy(&key_slot->key, data, data_length);
+	key_slot->key_size = data_length;
+
+	return PSA_SUCCESS;
+}
+
+#endif /* CONFIG_PSA_CORE_LITE_HAS_RSA */
 
 psa_status_t psa_destroy_key(mbedtls_svc_key_id_t key_id)
 {
-	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
-	psa_key_attributes_t attr;
-
-#if defined(CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE)
+#if CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE
 	if (psa_core_lite_key_id_is_volatile(key_id)) {
 		psa_core_lite_free_key_slot(key_id);
 		return PSA_SUCCESS;
 	}
 #endif /* CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE */
 
+#if PSA_NEED_CRACEN_KMU_DRIVER
+	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
+	psa_key_attributes_t attr;
 	status = psa_get_key_attributes(key_id, &attr);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
 	return psa_driver_wrapper_destroy_builtin_key(&attr);
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
+
+	return PSA_ERROR_NOT_SUPPORTED;
 }
 
 psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id)
 {
+#if PSA_NEED_CRACEN_KMU_DRIVER
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
 	psa_key_attributes_t attr;
-
 	status = psa_get_key_attributes(key_id, &attr);
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -465,6 +527,9 @@ psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id)
 
 	/* Generalize to psa_driver_wrapper_lock_key */
 	return cracen_kmu_block(&attr);
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
+
+	return PSA_ERROR_NOT_SUPPORTED;
 }
 
 psa_status_t psa_purge_key(mbedtls_svc_key_id_t key_id)
@@ -474,11 +539,9 @@ psa_status_t psa_purge_key(mbedtls_svc_key_id_t key_id)
 	return PSA_SUCCESS;
 }
 
-#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
-
 /* Key wrapping */
 
-#if defined(PSA_WANT_ALG_AES_KW)
+#if PSA_WANT_ALG_AES_KW
 
 psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
 			    mbedtls_svc_key_id_t wrapping_key,
@@ -505,7 +568,7 @@ psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
 
 	*key = MBEDTLS_SVC_KEY_ID_INIT;
 
-	status = get_kmu_key(wrapping_key, &wrapping_key_slot,
+	status = get_key_buffer(wrapping_key, &wrapping_key_slot,
 			     CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE);
 	if (status != PSA_SUCCESS) {
 		safe_memzero(&wrapping_key_slot, sizeof(wrapping_key_slot));
@@ -553,7 +616,7 @@ error:
 
 /* Key derivation */
 
-#if defined(PSA_WANT_ALG_HKDF)
+#if PSA_WANT_ALG_HKDF
 
 psa_status_t psa_key_derivation_setup(psa_key_derivation_operation_t *operation,
 				      psa_algorithm_t alg)
@@ -664,7 +727,7 @@ psa_status_t psa_key_derivation_key_agreement(psa_key_derivation_operation_t *op
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	status = get_kmu_key(private_key, &key_slot, CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE);
+	status = get_key_buffer(private_key, &key_slot, CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE);
 	if (status != PSA_SUCCESS) {
 		safe_memzero(&key_slot, sizeof(key_slot));
 		clear_all_volatile_keys();
@@ -809,7 +872,7 @@ psa_status_t psa_key_derivation_abort(psa_key_derivation_operation_t *operation)
 
 /* MAC */
 
-#if defined(PSA_WANT_ALG_HMAC)
+#if PSA_WANT_ALG_HMAC
 
 static inline psa_status_t get_mac_key(mbedtls_svc_key_id_t key_id,
 				       psa_algorithm_t alg,

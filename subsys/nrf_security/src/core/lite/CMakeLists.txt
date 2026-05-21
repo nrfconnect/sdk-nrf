@@ -7,6 +7,7 @@
 add_library(psa_core STATIC
   psa_core_lite.c
   ${NRF_SECURITY_DIR}/src/psa_crypto_driver_wrappers.c
+  ${NRF_SECURITY_DIR}/src/utils/nrf_security_mem_helpers.c
 )
 
 if(CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
@@ -20,6 +21,13 @@ if(CONFIG_PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE)
   target_sources(psa_core
     PRIVATE
       psa_core_lite_volatile_key_storage.c
+  )
+endif()
+
+if(CONFIG_PSA_CRYPTO_DRIVER_OBERON)
+  target_sources(psa_core
+    PRIVATE
+      psa_core_lite_verify_msg.c
   )
 endif()
 

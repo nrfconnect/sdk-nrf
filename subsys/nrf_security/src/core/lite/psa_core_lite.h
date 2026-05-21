@@ -42,6 +42,16 @@
 				       PSA_WANT_ECC_SECP_R1_384),		\
 			PSA_ALG_ECDSA_IS_DETERMINISTIC(_alg))
 
+#define VERIFY_ALG_RSA_PSS(_alg)						\
+	UTIL_CONCAT_AND(							\
+		IS_ENABLED(PSA_WANT_ALG_RSA_PSS),				\
+		PSA_ALG_IS_RSA_PSS(_alg))
+
+#define VERIFY_ALG_RSA_PKCS1V15(_alg)						\
+	UTIL_CONCAT_AND(							\
+		IS_ENABLED(PSA_WANT_ALG_RSA_PKCS1V15_SIGN),			\
+		PSA_ALG_IS_RSA_PKCS1V15_SIGN(_alg))
+
 /* Macros to verify different hash algorithms */
 
 #define VERIFY_ALG_SHA_256(_alg) \
