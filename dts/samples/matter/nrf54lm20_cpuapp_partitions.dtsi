@@ -39,7 +39,7 @@
 		storage_partition: partition@1f1000 {
 			compatible = "zephyr,mapped-partition";
 			label = "storage";
-			reg = <0x001f1000 DT_SIZE_K(40)>;
+			reg = <0x001f1000 DT_SIZE_K(48)>;
 		};
 	};
 };
