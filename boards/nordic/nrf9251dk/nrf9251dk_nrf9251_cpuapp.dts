@@ -75,7 +75,7 @@
 	 *  - Bell 14: cpuflpr
 	 *  - Bells 24, 25, 29, 31: cpucell
 	 */
-	nordic,interrupt-mapping = <0xa3046041 0>;
+	nordic,interrupt-mapping = <0xa3006041 0>;
 };
 
 &cpuppr_vpr {
