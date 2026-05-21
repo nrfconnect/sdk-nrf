@@ -32,7 +32,6 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "sphinx.ext.intersphinx",
-    "sphinxcontrib.jquery",
     "sphinxcontrib.mscgen",
     "inventory_builder",
     "warnings_filter",
@@ -60,7 +59,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
 
-html_theme_options = {"docset": "nrfxlib", "docsets": utils.ALL_DOCSETS, "logo_url": "https://docs.nordicsemi.com/"}
+html_theme_options = {"docset": "nrfxlib", "docsets": utils.ALL_DOCSETS}
 
 # Options for intersphinx ------------------------------------------------------
 

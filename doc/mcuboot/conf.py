@@ -34,7 +34,6 @@ extensions = [
     "sphinx.ext.intersphinx",
     "recommonmark",
     "sphinx_markdown_tables",
-    "sphinxcontrib.jquery",
     "zephyr.external_content"
 ]
 source_suffix = [".rst", ".md"]
@@ -60,8 +59,6 @@ html_theme_options = {
     "docset": "mcuboot",
     "docsets": utils.ALL_DOCSETS,
     "subtitle": "nRF Connect SDK",
-    "collapse_navigation": False,
-    "logo_url": "https://docs.nordicsemi.com"
 }
 
 # Options for intersphinx ------------------------------------------------------
