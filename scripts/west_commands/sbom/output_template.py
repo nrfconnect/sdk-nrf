@@ -65,6 +65,19 @@ def timestamp() -> str:
     return datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
 
+def get_ncs_version() -> 'str|None':
+    '''NCS version from the repo's root VERSION file, or None if missing.'''
+    try:
+        version_file = Path(__file__).resolve().parents[3] / 'VERSION'
+        if version_file.is_file():
+            value = version_file.read_text(encoding='utf-8').strip()
+            if value:
+                return value
+    except Exception:
+        pass
+    return None
+
+
 def data_to_dict(data: Data, output_directory: Path) -> dict:
     '''Convert object to dict by copying public attributes to a new dictionary.'''
     result = dict()
@@ -78,6 +91,8 @@ def data_to_dict(data: Data, output_directory: Path) -> dict:
         'relative_path': lambda file: relative_path(file, output_directory),
         'timestamp': timestamp
     }
+    ncs_version = get_ncs_version()
+    result['ncs_version_suffix'] = f'-{ncs_version}' if ncs_version else ''
     return result
 
 

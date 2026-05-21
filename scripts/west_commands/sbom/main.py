@@ -7,6 +7,7 @@
 Main entry point for the script.
 '''
 
+from datetime import datetime, timezone
 from pathlib import Path
 
 import cache_database_detector
@@ -63,7 +64,7 @@ def _run_pipeline():
         func(data, optional)
         log.dbg(f'DETECTOR: Done in {t}s')
 
-    output_pre_process.pre_process(data)
+    output_pre_process.pre_process(data, built_date=_compute_built_date())
 
     for generator_name, generator in generators.items():
         output_file = args.__dict__[f'output_{generator_name}']
@@ -71,6 +72,35 @@ def _run_pipeline():
             t = dbg_time(f'GENERATOR: {generator_name}')
             output_template.generate(data, output_file, Path(__file__).parent / generator)
             log.dbg(f'GENERATOR: Done in {t}s')
+
+
+def _compute_built_date() -> 'str|None':
+    '''Newest mtime across *.map and zephyr/runners.yaml as UTC ISO 8601,
+    or None when no artifact exists.'''
+    if not args.build_dir:
+        return None
+    mtimes = []
+    for entry in args.build_dir:
+        build_dir = Path(entry[0])
+        targets = entry[1:] or [input_build.DEFAULT_TARGET]
+        for target_with_map in targets:
+            target_name, separator, map_name = target_with_map.partition(':')
+            if separator:
+                map_file = build_dir / map_name
+            else:
+                map_file = (build_dir / target_name).with_suffix('.map')
+            if map_file.exists():
+                mtimes.append(map_file.stat().st_mtime)
+        runners_yaml = build_dir / 'zephyr' / 'runners.yaml'
+        if runners_yaml.exists():
+            mtimes.append(runners_yaml.stat().st_mtime)
+    if not mtimes:
+        return None
+    return (
+        datetime.fromtimestamp(max(mtimes), tz=timezone.utc)
+        .isoformat(timespec='seconds')
+        .replace('+00:00', 'Z')
+    )
 
 
 def _target_maps_present(build_dir: Path, targets: list[str]) -> bool:
