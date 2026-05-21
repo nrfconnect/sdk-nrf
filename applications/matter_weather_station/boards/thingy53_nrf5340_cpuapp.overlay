@@ -124,7 +124,7 @@
 
 		slot3_partition: partition@e0000 {
 			label = "image-3";
-			reg = <0xe0000 DT_SIZE_K(224)>;
+			reg = <0xe0000 DT_SIZE_K(256)>;
 		};
 	};
 };
