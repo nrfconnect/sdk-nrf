@@ -11639,3 +11639,37 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
                  - Supported
                  - Supported
                  - --
+
+   .. tab:: nRF54H Series
+
+      The following table lists the supported side-channel countermeasures for nRF54H Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. note::
+               On the nRF54H20 SoC, countermeasures configuration is part of the |ISE| firmware and cannot be customized.
+
+            .. list-table:: Side-channel countermeasures support (CRACEN driver) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Countermeasure
+                 - Configuration option
+                 - nRF54H20
+               * - ECC scalar randomization
+                 - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
+                 - Enabled in |ISE| 23.7.0 or later
+               * - ECC projective coordinate randomization
+                 - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
+                 - Enabled in |ISE| 23.7.0 or later
+               * - ECC extended (Montgomery/Edwards)
+                 - :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED`
+                 - --
+               * - RSA exponent randomization
+                 - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
+                 - --
+               * - RSA modulus randomization
+                 - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
+                 - --
