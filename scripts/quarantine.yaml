@@ -128,6 +128,24 @@
   comment: "no MPSL for nrf54lc10 at the moment"
 
 - scenarios:
+    - nrf.extended.drivers.clock.clock_control_onoff
+    - nrf.extended.drivers.clock.nrf5_clock_calibration
+    - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_available
+    - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_no_wait
+    - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_stable
+    - nrf.extended.drivers.clock.nrf_lf_clock_start_synth_available
+    - nrf.extended.drivers.clock.nrf_lf_clock_start_synth_no_wait
+    - nrf.extended.drivers.clock.nrf_lf_clock_start_synth_stable
+    - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_available
+    - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_no_wait
+    - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_stable
+    - nrf.extended.drivers.comparator.gpio_loopback.nrf_comp
+    - nrf.extended.drivers.comparator.gpio_loopback.nrf_lpcomp
+  platforms:
+    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
+  comment: "no TFM for nrf54lc10 at the moment"
+
+- scenarios:
     - nrf.extended.drivers.counter.basic_api
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
