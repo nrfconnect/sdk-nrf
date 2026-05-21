@@ -83,6 +83,11 @@ int bt_hids_connected(struct bt_hids *hids_obj, struct bt_conn *conn)
 		    hids_obj->inp_rep_group.reports[i].size;
 	}
 
+	__ASSERT(conn_data->outp_rep_ctx <=
+		 (uint8_t *)conn_data +
+		 bt_conn_ctx_block_size_get(hids_obj->conn_ctx),
+		 "Input report context overflows its slab block");
+
 	/* Assign feature report context. */
 	conn_data->feat_rep_ctx = conn_data->outp_rep_ctx;
 	cnt = MIN(hids_obj->outp_rep_group.cnt, ARRAY_SIZE(hids_obj->outp_rep_group.reports));
@@ -90,6 +95,31 @@ int bt_hids_connected(struct bt_hids *hids_obj, struct bt_conn *conn)
 	for (size_t i = 0; i < cnt; i++) {
 		conn_data->feat_rep_ctx +=
 		    hids_obj->outp_rep_group.reports[i].size;
+	}
+
+	__ASSERT(conn_data->feat_rep_ctx <=
+		 (uint8_t *)conn_data +
+		 bt_conn_ctx_block_size_get(hids_obj->conn_ctx),
+		 "Output report context overflows its slab block");
+
+	if (IS_ENABLED(CONFIG_ASSERT)) {
+		/*
+		 * Calculate the total size of feature report so we
+		 * can check for SLAB block overflow
+		 */
+		cnt = MIN(hids_obj->feat_rep_group.cnt,
+			  ARRAY_SIZE(hids_obj->feat_rep_group.reports));
+
+		size_t feat_rep_size = 0;
+		for (size_t i = 0; i < cnt; i++) {
+			feat_rep_size +=
+				hids_obj->feat_rep_group.reports[i].size;
+		}
+
+		__ASSERT(conn_data->feat_rep_ctx + feat_rep_size <=
+			 (uint8_t *)conn_data +
+			 bt_conn_ctx_block_size_get(hids_obj->conn_ctx),
+			 "Feature report context overflows its slab block");
 	}
 
 	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
