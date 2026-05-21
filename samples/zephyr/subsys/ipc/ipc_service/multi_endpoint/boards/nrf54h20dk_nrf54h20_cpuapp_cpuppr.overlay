@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &ipc0;
+
+/ {
+	chosen {
+		/delete-property/ zephyr,bt-hci;
+		/delete-property/ nordic,802154-spinel-ipc;
+	};
+
+	reserved-memory {
+		/delete-node/ cpuapp_cpuppr_ipc_shm;
+		/delete-node/ cpuppr_cpuapp_ipc_shm;
+
+		cpuapp_cpuppr_ipc_shm_a: memory@2fc0f000 {
+			reg = <0x2fc0f000 DT_SIZE_K(1)>;
+		};
+
+		cpuapp_cpuppr_ipc_shm_b: memory@2fc0f400 {
+			reg = <0x2fc0f400 DT_SIZE_K(1)>;
+		};
+
+		cpuppr_cpuapp_ipc_shm_a: memory@2fc0f800 {
+			reg = <0x2fc0f800 DT_SIZE_K(1)>;
+		};
+
+		cpuppr_cpuapp_ipc_shm_b: memory@2fc0fc00 {
+			reg = <0x2fc0fc00 DT_SIZE_K(1)>;
+		};
+	};
+
+	ipc {
+		cpuapp_cpuppr_ipc_b: ipc-2-13-b {
+			compatible = "zephyr,ipc-icbmsg";
+			dcache-alignment = <32>;
+			mboxes = <&cpuapp_bellboard 12>,
+				 <&cpuppr_vevif 15>;
+			tx-blocks = <32>;
+			rx-blocks = <32>;
+		};
+	};
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+	/* The following bells on this bellboard are rang by these cores
+	 *  - Bell 0: cpusec
+	 *  - Bell 6: cpusys
+	 *  - Bell 12, 13: cpuppr
+	 *  - Bell 14: cpuflpr
+	 *  - Bells 24, 25, 29, 31: cpucell
+	 */
+	nordic,interrupt-mapping = <0xa3007041 0x0>;
+};
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+ipc0: &cpuapp_cpuppr_ipc {
+	status = "okay";
+	compatible = "zephyr,ipc-icbmsg";
+	tx-region = <&cpuapp_cpuppr_ipc_shm_a>;
+	rx-region = <&cpuppr_cpuapp_ipc_shm_a>;
+	tx-blocks = <32>;
+	rx-blocks = <32>;
+};
+
+ipc1: &cpuapp_cpuppr_ipc_b {
+	status = "okay";
+	mbox-names = "rx", "tx";
+	tx-region = <&cpuapp_cpuppr_ipc_shm_b>;
+	rx-region = <&cpuppr_cpuapp_ipc_shm_b>;
+};

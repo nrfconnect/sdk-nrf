@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	reserved-memory {
+		/delete-node/ cpuapp_cpuppr_ipc_shm;
+		/delete-node/ cpuppr_cpuapp_ipc_shm;
+
+		cpuapp_cpuppr_ipc_shm_a: memory@2fc0f000 {
+			reg = <0x2fc0f000 DT_SIZE_K(1)>;
+		};
+
+		cpuapp_cpuppr_ipc_shm_b: memory@2fc0f400 {
+			reg = <0x2fc0f400 DT_SIZE_K(1)>;
+		};
+
+		cpuppr_cpuapp_ipc_shm_a: memory@2fc0f800 {
+			reg = <0x2fc0f800 DT_SIZE_K(1)>;
+		};
+
+		cpuppr_cpuapp_ipc_shm_b: memory@2fc0fc00 {
+			reg = <0x2fc0fc00 DT_SIZE_K(1)>;
+		};
+	};
+
+	ipc {
+		cpuapp_cpuppr_ipc_b: ipc-2-13-b {
+			/* Can't use ICMsg because it supports
+			 * only one endpoint per instance.
+			 */
+			compatible = "zephyr,ipc-icbmsg";
+			dcache-alignment = <32>;
+			mboxes = <&cpuapp_bellboard 12>,
+				 <&cpuppr_vevif 15>;
+			tx-blocks = <32>;
+			rx-blocks = <32>;
+		};
+	};
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+ipc0: &cpuapp_cpuppr_ipc {
+	status = "okay";
+	compatible = "zephyr,ipc-icbmsg";
+	tx-region = <&cpuppr_cpuapp_ipc_shm_a>;
+	rx-region = <&cpuapp_cpuppr_ipc_shm_a>;
+	tx-blocks = <32>;
+	rx-blocks = <32>;
+};
+
+ipc1: &cpuapp_cpuppr_ipc_b {
+	status = "okay";
+	mbox-names = "tx", "rx";
+	tx-region = <&cpuppr_cpuapp_ipc_shm_b>;
+	rx-region = <&cpuapp_cpuppr_ipc_shm_b>;
+};

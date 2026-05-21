@@ -1,0 +1,36 @@
+sample:
+  name: IPC Service example integration (icbmsg multi endpoint backend)
+common:
+  sysbuild: true
+  tags:
+    - ipc
+    - ci_samples_zephyr_subsys_ipc_ipc_service_multi_endpoint
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: false
+    regex:
+      - "IPC-service HOST \\[INST 0 - ENDP A\\] demo started"
+      - "IPC-service HOST \\[INST 0 - ENDP B\\] demo started"
+      - "IPC-service HOST \\[INST 1\\] demo started"
+      - "IPC-service HOST \\[INST 0 - ENDP A\\] demo ended\\."
+      - "IPC-service HOST \\[INST 0 - ENDP B\\] demo ended\\."
+      - "IPC-service HOST \\[INST 1\\] demo ended\\."
+tests:
+  nrf.extended.sample.ipc.multi_endpoint.nrf9251_app_ppr:
+    extra_args:
+      - multi_endpoint_SNIPPET=nordic-ppr
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+
+  nrf.extended.sample.ipc.multi_endpoint.nrf54h20_app_ppr:
+    extra_args:
+      - multi_endpoint_SNIPPET=nordic-ppr
+      - multi_endpoint_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_cpuppr.overlay"
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr.conf
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
