@@ -42,6 +42,19 @@ add_custom_target(bootconf_target
   DEPENDS ${bootconf_hex}
 )
 
+if(SB_CONFIG_MERGED_HEX_FILES)
+  set(board_target)
+  sysbuild_get(board_target IMAGE b0 VAR CONFIG_BOARD_TARGET KCONFIG)
+  string(REPLACE "/" "_" board_target ${board_target})
+  string(REPLACE "@" "_" board_target ${board_target})
+
+  set_property(GLOBAL APPEND
+    PROPERTY sysbuild_merged_hex_dependencies_${board_target} bootconf_target
+  )
+
+  set(board_target)
+endif()
+
 if(SB_CONFIG_PARTITION_MANAGER)
   set_property(
     GLOBAL PROPERTY

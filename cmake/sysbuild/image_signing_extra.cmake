@@ -238,6 +238,20 @@ if(num_binaries GREATER 0)
 
     add_custom_target(extra_img_${extra_image_number}_target ALL DEPENDS ${output_hex})
 
+    if(SB_CONFIG_MERGED_HEX_FILES)
+      set(board_target)
+      sysbuild_get(board_target IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BOARD_TARGET KCONFIG)
+      string(REPLACE "/" "_" board_target ${board_target})
+      string(REPLACE "@" "_" board_target ${board_target})
+
+      set_property(GLOBAL APPEND
+        PROPERTY sysbuild_merged_hex_dependencies_${board_target}
+          extra_img_${extra_image_number}_target
+      )
+
+      set(board_target)
+    endif()
+
     set_property(GLOBAL PROPERTY ${image_name}_PM_HEX_FILE ${output_hex})
     set_property(GLOBAL PROPERTY ${image_name}_PM_TARGET extra_img_${extra_image_number}_target)
 

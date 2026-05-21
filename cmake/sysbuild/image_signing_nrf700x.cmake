@@ -95,6 +95,17 @@ function(nrf7x_signing_tasks input output_hex output_bin dependencies)
     )
   endif()
 
+  if(SB_CONFIG_MERGED_HEX_FILES)
+    set(board_target)
+    sysbuild_get(board_target IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BOARD_TARGET KCONFIG)
+    string(REPLACE "/" "_" board_target ${board_target})
+    string(REPLACE "@" "_" board_target ${board_target})
+
+    set_property(GLOBAL APPEND
+      PROPERTY sysbuild_merged_hex_dependencies_${board_target} nrf70_wifi_fw_patch_signed_target
+    )
+  endif()
+
   add_custom_command(OUTPUT ${output_hex}
     COMMAND
     ${imgtool_sign} ${imgtool_args} ${input} ${output_hex}
