@@ -268,13 +268,7 @@ int scan_wifi_init(void)
 	int ret;
 #endif
 
-	wifi_iface = NULL;
-#if defined(CONFIG_WIFI_NRF70)
 	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
-#else
-	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_location_wifi));
-#endif
-
 	if (!wifi_dev) {
 		LOG_ERR("Wi-Fi device not found");
 		return -ENODEV;

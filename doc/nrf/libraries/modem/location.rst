@@ -230,7 +230,7 @@ The chosen Wi-Fi device needs to be set in devicetree:
 .. code-block:: devicetree
 
     chosen {
-      ncs,location-wifi = &mywifi;
+            zephyr,wifi = &mywifi;
     };
 
 Configure the following options to enable location methods of your choice:
