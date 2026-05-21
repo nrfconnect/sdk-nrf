@@ -8,6 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/settings/settings.h>
 #include <zephyr/shell/shell.h>
 
 #include "fuel_gauge.h"
@@ -27,6 +28,8 @@ static const char *const battery_model_str[] = {[BATTERY_TYPE_ALKALINE_AA] = "Al
 
 int main(void)
 {
+	int err;
+
 	if (IS_ENABLED(CONFIG_BATTERY_MODEL_ALKALINE_AA)) {
 		battery_model = BATTERY_TYPE_ALKALINE_AA;
 	} else if (IS_ENABLED(CONFIG_BATTERY_MODEL_ALKALINE_AAA)) {
@@ -51,13 +54,19 @@ int main(void)
 		return 0;
 	}
 
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		err = settings_subsys_init();
+		if (err < 0) {
+			printk("Settings subsystem could not be initialized.\n");
+		}
+	}
+
 	printk("PMIC device ok\n");
 
 	while (1) {
 		if (!fuel_gauge_initialized) {
-			int err;
-
-			err = fuel_gauge_init(vbat, battery_model);
+			err = fuel_gauge_init(
+				vbat, battery_model, battery_model_str[battery_model]);
 			if (err < 0) {
 				printk("Could not initialise fuel gauge.\n");
 				return 0;

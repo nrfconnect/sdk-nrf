@@ -21,7 +21,7 @@ enum battery_type {
 	BATTERY_TYPE_LITHIUM_CR2032,
 };
 
-int fuel_gauge_init(const struct device *vbat, enum battery_type battery);
+int fuel_gauge_init(const struct device *vbat, enum battery_type battery, const char *batt_name);
 
 int fuel_gauge_update(const struct device *vbat);
 
