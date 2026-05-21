@@ -46,6 +46,52 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Enclave (IronSide SE) v23.7.0+30
+================================================
+
+Added
+-----
+
+* Added ``ironside_se_mpcconf_radioram_access()`` to the MPCCONF service API, enabling access to the radio domain RAM from the application core for bootloader purposes.
+
+Updated
+-------
+
+* IronSide SE resilience against MRAM corruption is improved, as secure domain CPU bus faults now trigger snapshot recovery. (NCSDK-37077)
+  Corruption in other file systems used by IronSide SE will also trigger snapshot recovery.
+
+* IronSide SE now re-requests snapshot recovery during boot if SDROM reports that snapshot recovery failed. (NCSDK-38309)
+
+Fixed
+-----
+
+* Adaptive body biasing (ABB) is now enabled before the system frequency is increased. (NCSDK-39151)
+  Operating at high frequencies without ABB violated the system specifications at extreme temperature corners and could lead to resets during boot.
+
+* The Global Resource Control (GRC) active power domain is now forced to remain always on.
+  This incurs a negligible increase in current consumption, but is expected to fix a corner case issue where the device would hang until reset.
+
+* Renamed IronSide Secure Element to IronSide Secure Enclave, aligning with the standard terminology.
+
+IronSide Secure Enclave (IronSide SE) v23.6.0+29
+================================================
+
+Added
+-----
+
+* Support for ``UICR.SNAPSHOT_REGIONS`` to configure user-defined snapshot regions.
+  This is only relevant when snapshot is enabled and configured in OTP.
+* L2CACHE can now be disabled with PERIPHCONF to mitigate HMPAN-234 and HMPAN-242.
+  The L2CACHE is enabled by default. (NCSDK-38144)
+
+Updated
+-------
+
+* The secure domain clock frequency now matches the application domain clock frequency.
+  Previously the secure domain always ran at 64 MHz, but it now matches the application domain frequency, which is at least 64 MHz and usually much higher.
+  This change is expected to significantly improve the IronSide SE CPU and cryptographic accelerator performance. (NCSDK-38284)
+* CRACEN ECC operation countermeasures are now enabled (``CONFIG_CRACEN_ECC_COUNTERMEASURES=y``). (NCSDK-38269)
+
 IronSide Secure Element (IronSide SE) v23.5.0+28
 ================================================
 
