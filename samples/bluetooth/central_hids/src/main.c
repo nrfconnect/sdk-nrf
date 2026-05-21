@@ -60,6 +60,10 @@
 #define KEY_ALTERNATIVE_FUNCTIONS_NUM  DK_BTN4
 #define KEY_ALTERNATIVE_FUNCTIONS_MASK DK_BTN4_MSK
 
+/* Key used to resume scanning */
+#define KEY_ALTERNATIVE_1_SCANNING_RESUME_NUM DK_BTN1
+#define KEY_ALTERNATIVE_1_SCANNING_RESUME_MASK DK_BTN1_MSK
+
 /* Key used to request next SCI mode */
 #define KEY_ALTERNATIVE_1_SCI_MODE_NEXT_NUM DK_BTN2
 #define KEY_ALTERNATIVE_1_SCI_MODE_NEXT_MASK DK_BTN2_MSK
@@ -99,6 +103,17 @@ enum button_functions_mode {
  */
 #define CONTINUOUS_REPORT_RECEIVING_WINDOW_DELTA_US 200
 
+#define PERIPHERAL_SLOT_COUNT CONFIG_SAMPLE_BT_CENTRAL_HIDS_PERIPHERAL_COUNT
+
+#if PERIPHERAL_SLOT_COUNT > 1
+#define PRINT_PERIPH_INDEX_STR(idx) printk("Peripheral %zu: ", (idx))
+#define PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots_arr) \
+	PRINT_PERIPH_INDEX_STR((size_t)((slot) - (slots_arr)))
+#else
+#define PRINT_PERIPH_INDEX_STR(idx)
+#define PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots_arr) (void) (slot)
+#endif
+
 #define HID_SCI_MODE_CHANGE_TIMEOUT_MS 10000
 
 #ifdef CONFIG_BT_HOGP_SCI
@@ -119,6 +134,14 @@ BUILD_ASSERT(CONFIG_SAMPLE_CENTRAL_HIDS_SCI_SUPERVISION_TIMEOUT_10MS * 10000ULL 
 
 static struct bt_conn *default_conn;
 static struct bt_hogp hogp;
+
+struct peripheral_slot {
+	struct bt_conn *conn;
+	struct bt_hogp hogp;
+	struct k_work hids_ready_work;
+};
+
+static struct peripheral_slot slots[PERIPHERAL_SLOT_COUNT];
 static struct bt_conn *auth_conn;
 static uint8_t capslock_state;
 static enum button_functions_mode button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
@@ -136,7 +159,6 @@ static uint32_t report_batch_start_cycles;
 static uint32_t report_cnt;
 
 static void hids_on_ready(struct k_work *work);
-static K_WORK_DEFINE(hids_ready_work, hids_on_ready);
 
 static void sci_mode_change_timeout_fn(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(sci_mode_change_timeout, sci_mode_change_timeout_fn);
@@ -217,6 +239,100 @@ static void cont_report_rx_exit_reschedule(void)
 			       K_MSEC(CONTINUOUS_REPORT_RECEIVING_EXIT_THRESHOLD_MS));
 }
 
+static struct peripheral_slot *slot_by_conn(struct bt_conn *conn)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(slots); i++) {
+		if (slots[i].conn == conn) {
+			return &slots[i];
+		}
+	}
+
+	return NULL;
+}
+
+static unsigned int active_connection_count(void)
+{
+	unsigned int n = 0;
+
+	for (size_t i = 0; i < ARRAY_SIZE(slots); i++) {
+		if (slots[i].conn) {
+			n++;
+		}
+	}
+
+	return n;
+}
+
+static struct peripheral_slot *slot_alloc_for_connection(struct bt_conn *conn)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(slots); i++) {
+		if (!slots[i].conn) {
+			slots[i].conn = bt_conn_ref(conn);
+			return &slots[i];
+		}
+	}
+
+	return NULL;
+}
+
+static void scanning_resume(void)
+{
+	int err;
+
+	if (active_connection_count() < PERIPHERAL_SLOT_COUNT) {
+		err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+		if (!err) {
+			printk("\nScanning successfully started\n");
+		} else if (err != -EALREADY) {
+			printk("\nScanning failed to start (err %d)\n", err);
+		}
+	}
+}
+
+#if PERIPHERAL_SLOT_COUNT > 1
+static bool peer_acl_exists(const bt_addr_le_t *peer)
+{
+	struct bt_conn *existing;
+
+	existing = bt_conn_lookup_addr_le(BT_ID_DEFAULT, peer);
+	if (!existing) {
+		return false;
+	}
+
+	bt_conn_unref(existing);
+	return true;
+}
+#endif
+
+static void try_connect(struct bt_scan_device_info *device_info,
+			bool connectable)
+{
+	int err;
+	struct bt_conn *conn = NULL;
+
+	if (!connectable || active_connection_count() >= PERIPHERAL_SLOT_COUNT) {
+		return;
+	}
+
+	bt_scan_stop();
+
+	err = bt_conn_le_create(device_info->recv_info->addr, BT_CONN_LE_CREATE_CONN,
+				device_info->conn_param, &conn);
+	if (err) {
+		printk("Connecting failed\n");
+		scanning_resume();
+		return;
+	}
+
+	struct peripheral_slot *slot = slot_alloc_for_connection(conn);
+
+	if (!slot) {
+		printk("No free peripheral slot; disconnecting\n");
+		bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	}
+	bt_conn_unref(conn);
+}
+
 static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match,
 			      bool connectable)
@@ -238,40 +354,52 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	printk("Filters matched on UUID 0x%04x.\nAddress: %s connectable: %s\n",
 		BT_UUID_16(uuid)->val,
 		addr, connectable ? "yes" : "no");
+
+#if PERIPHERAL_SLOT_COUNT > 1
+	if (peer_acl_exists(device_info->recv_info->addr)) {
+		return;
+	}
+#endif
+
+	try_connect(device_info, connectable);
 }
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
 	printk("Connecting failed\n");
+	scanning_resume();
 }
 
 static void scan_connecting(struct bt_scan_device_info *device_info,
 			    struct bt_conn *conn)
 {
-	default_conn = bt_conn_ref(conn);
+	struct peripheral_slot *slot = slot_alloc_for_connection(conn);
+
+	if (!slot) {
+		printk("No free peripheral slot; disconnecting\n");
+		bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	}
 }
 /** .. include_startingpoint_scan_rst */
 static void scan_filter_no_match(struct bt_scan_device_info *device_info,
 				 bool connectable)
 {
-	int err;
-	struct bt_conn *conn = NULL;
 	char addr[BT_ADDR_LE_STR_LEN];
+
+	ARG_UNUSED(connectable);
+
+#if PERIPHERAL_SLOT_COUNT > 1
+	if (peer_acl_exists(device_info->recv_info->addr)) {
+		return;
+	}
+#endif
 
 	if (device_info->recv_info->adv_type == BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
 		bt_addr_le_to_str(device_info->recv_info->addr, addr,
 				  sizeof(addr));
 		printk("Direct advertising received from %s\n", addr);
-		bt_scan_stop();
 
-		err = bt_conn_le_create(device_info->recv_info->addr,
-					BT_CONN_LE_CREATE_CONN,
-					device_info->conn_param, &conn);
-
-		if (!err) {
-			default_conn = bt_conn_ref(conn);
-			bt_conn_unref(conn);
-		}
+		try_connect(device_info, true);
 	}
 }
 /** .. include_endpoint_scan_rst */
@@ -281,13 +409,19 @@ BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
 static void discovery_completed_cb(struct bt_gatt_dm *dm,
 				   void *context)
 {
+	struct peripheral_slot *slot = context;
 	int err;
+
+	if (slot == NULL) {
+		printk("Discovery completed, but peripheral slot is NULL\n");
+		return;
+	}
 
 	printk("The discovery procedure succeeded\n");
 
 	bt_gatt_dm_data_print(dm);
 
-	err = bt_hogp_handles_assign(dm, &hogp);
+	err = bt_hogp_handles_assign(dm, &slot->hogp);
 	if (err) {
 		printk("Could not init HIDS client object, error: %d\n", err);
 	}
@@ -320,15 +454,17 @@ static const struct bt_gatt_dm_cb discovery_cb = {
 
 static void gatt_discover(struct bt_conn *conn)
 {
+	struct peripheral_slot *slot = slot_by_conn(conn);
 	int err;
 
-	if (conn != default_conn) {
+	if (!slot) {
+		printk("Peripheral slot is NULL\n");
 		return;
 	}
 
-	err = bt_gatt_dm_start(conn, BT_UUID_HIDS, &discovery_cb, NULL);
+	err = bt_gatt_dm_start(conn, BT_UUID_HIDS, &discovery_cb, slot);
 	if (err) {
-		printk("could not start the discovery procedure, error "
+		printk("Could not start the discovery procedure, error "
 			"code: %d\n", err);
 	}
 }
@@ -337,22 +473,17 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 {
 	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
+	struct peripheral_slot *slot = slot_by_conn(conn);
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (conn_err) {
 		printk("Failed to connect to %s, 0x%02x %s\n", addr, conn_err,
 		       bt_hci_err_to_str(conn_err));
-		if (conn == default_conn) {
-			bt_conn_unref(default_conn);
-			default_conn = NULL;
-
-			/* This demo doesn't require active scan */
-			err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-			if (err) {
-				printk("Scanning failed to start (err %d)\n",
-				       err);
-			}
+		if (slot) {
+			bt_conn_unref(slot->conn);
+			slot->conn = NULL;
+			scanning_resume();
 		}
 
 		return;
@@ -360,8 +491,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 
 	printk("Connected: %s\n", addr);
 
-	if (IS_ENABLED(CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX)
-	    && (conn == default_conn)) {
+	if (IS_ENABLED(CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX) && slot) {
 		struct bt_conn_info conn_info;
 
 		err = bt_conn_get_info(conn, &conn_info);
@@ -390,11 +520,11 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
-	int err;
+	struct peripheral_slot *slot = slot_by_conn(conn);
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	if (auth_conn) {
+	if (auth_conn == conn) {
 		bt_conn_unref(auth_conn);
 		auth_conn = NULL;
 		button_functions_mode = BUTTON_FUNCTIONS_MODE_DEFAULT;
@@ -402,33 +532,30 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	printk("Disconnected: %s, reason 0x%02x %s\n", addr, reason, bt_hci_err_to_str(reason));
 
-	if (bt_hogp_assign_check(&hogp)) {
-		printk("HIDS client active - releasing");
-		bt_hogp_release(&hogp);
-	}
-
-	if (default_conn != conn) {
+	if (!slot) {
 		return;
 	}
 
 	if (IS_ENABLED(CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX)) {
 		atomic_set(&cont_report_rx_on, 0);
-		(void) k_work_cancel_delayable(&cont_report_rx_exit_work);
+		(void)k_work_cancel_delayable(&cont_report_rx_exit_work);
 		cont_report_rx_data_reset(0);
 	}
 
-	bt_conn_unref(default_conn);
-	default_conn = NULL;
 	if (IS_ENABLED(CONFIG_BT_HOGP_SCI) && sci_mode_requested != BT_HIDS_SCI_MODE_NONE) {
 		(void) k_work_cancel_delayable(&sci_mode_change_timeout);
 		sci_mode_requested = BT_HIDS_SCI_MODE_NONE;
 	}
 
-	/* This demo doesn't require active scan */
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-	if (err) {
-		printk("Scanning failed to start (err %d)\n", err);
+	if (bt_hogp_assign_check(&slot->hogp)) {
+		printk("HIDS client active - releasing");
+		bt_hogp_release(&slot->hogp);
 	}
+
+	bt_conn_unref(slot->conn);
+	slot->conn = NULL;
+
+	scanning_resume();
 }
 
 static void security_changed(struct bt_conn *conn, bt_security_t level,
@@ -440,22 +567,23 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 
 	if (!err) {
 		printk("Security changed: %s level %u\n", addr, level);
+		gatt_discover(conn);
 	} else {
 		printk("Security failed: %s level %u err %d %s\n", addr, level, err,
 		       bt_security_err_to_str(err));
 	}
-
-	gatt_discover(conn);
 }
 
 #ifdef CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX
 static void le_param_updated(struct bt_conn *conn, uint16_t interval,
 			      uint16_t latency, uint16_t timeout)
 {
+	struct peripheral_slot *slot = slot_by_conn(conn);
+
 	ARG_UNUSED(latency);
 	ARG_UNUSED(timeout);
 
-	if (conn != default_conn) {
+	if (!slot) {
 		return;
 	}
 
@@ -527,7 +655,10 @@ static void scan_init(void)
 	int err;
 
 	struct bt_scan_init_param scan_init = {
-		.connect_if_match = 1,
+		/* Manual connect on filter match avoids duplicate connection attempts when a
+		 * peripheral keeps advertising after the central connects.
+		 */
+		.connect_if_match = false,
 		.scan_param = NULL,
 		.conn_param = BT_LE_CONN_PARAM_DEFAULT
 	};
@@ -641,6 +772,8 @@ static uint8_t hogp_notify_cb(struct bt_hogp *hogp,
 			     uint8_t err,
 			     const uint8_t *data)
 {
+	struct peripheral_slot *slot = CONTAINER_OF(hogp, struct peripheral_slot, hogp);
+
 	if (!data) {
 		return BT_GATT_ITER_STOP;
 	}
@@ -656,6 +789,7 @@ static uint8_t hogp_notify_cb(struct bt_hogp *hogp,
 	uint8_t i;
 	uint8_t size = bt_hogp_rep_size(rep);
 
+	PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots);
 	printk("Notification, id: %u, size: %u, data:",
 	       bt_hogp_rep_id(rep),
 	       size);
@@ -672,6 +806,10 @@ static uint8_t hogp_boot_mouse_report(struct bt_hogp *hogp,
 				     uint8_t err,
 				     const uint8_t *data)
 {
+	struct peripheral_slot *slot = CONTAINER_OF(hogp, struct peripheral_slot, hogp);
+
+	ARG_UNUSED(err);
+
 	if (!data) {
 		return BT_GATT_ITER_STOP;
 	}
@@ -687,6 +825,7 @@ static uint8_t hogp_boot_mouse_report(struct bt_hogp *hogp,
 	uint8_t size = bt_hogp_rep_size(rep);
 	uint8_t i;
 
+	PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots);
 	printk("Notification, mouse boot, size: %u, data:", size);
 	for (i = 0; i < size; ++i) {
 		printk(" 0x%x", data[i]);
@@ -700,6 +839,10 @@ static uint8_t hogp_boot_kbd_report(struct bt_hogp *hogp,
 				   uint8_t err,
 				   const uint8_t *data)
 {
+	struct peripheral_slot *slot = CONTAINER_OF(hogp, struct peripheral_slot, hogp);
+
+	ARG_UNUSED(err);
+
 	if (!data) {
 		return BT_GATT_ITER_STOP;
 	}
@@ -715,6 +858,7 @@ static uint8_t hogp_boot_kbd_report(struct bt_hogp *hogp,
 	uint8_t size = bt_hogp_rep_size(rep);
 	uint8_t i;
 
+	PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots);
 	printk("Notification, keyboard boot, size: %u, data:", size);
 	for (i = 0; i < size; ++i) {
 		printk(" 0x%x", data[i]);
@@ -725,7 +869,9 @@ static uint8_t hogp_boot_kbd_report(struct bt_hogp *hogp,
 
 static void hogp_ready_cb(struct bt_hogp *hogp)
 {
-	k_work_submit(&hids_ready_work);
+	struct peripheral_slot *slot = CONTAINER_OF(hogp, struct peripheral_slot, hogp);
+
+	k_work_submit(&slot->hids_ready_work);
 }
 
 static const char *sci_mode_to_string(enum bt_hids_sci_mode_value mode)
@@ -768,37 +914,39 @@ static void sci_mode_notify_cb(struct bt_conn *conn, const uint8_t mode)
 
 static void hids_on_ready(struct k_work *work)
 {
+	struct peripheral_slot *slot = CONTAINER_OF(work, struct peripheral_slot, hids_ready_work);
+	struct bt_hogp *hogp = &slot->hogp;
 	int err;
 	struct bt_hogp_rep_info *rep = NULL;
 
 	printk("HIDS is ready to work\n");
 
-	while (NULL != (rep = bt_hogp_rep_next(&hogp, rep))) {
+	while (NULL != (rep = bt_hogp_rep_next(hogp, rep))) {
 		if (bt_hogp_rep_type(rep) ==
 		    BT_HIDS_REPORT_TYPE_INPUT) {
 			printk("Subscribe to report id: %u\n",
 			       bt_hogp_rep_id(rep));
-			err = bt_hogp_rep_subscribe(&hogp, rep,
+			err = bt_hogp_rep_subscribe(hogp, rep,
 							   hogp_notify_cb);
 			if (err) {
 				printk("Subscribe error (%d)\n", err);
 			}
 		}
 	}
-	if (hogp.rep_boot.kbd_inp) {
+	if (hogp->rep_boot.kbd_inp) {
 		printk("Subscribe to boot keyboard report\n");
-		err = bt_hogp_rep_subscribe(&hogp,
-						   hogp.rep_boot.kbd_inp,
-						   hogp_boot_kbd_report);
+		err = bt_hogp_rep_subscribe(hogp,
+					   hogp->rep_boot.kbd_inp,
+					   hogp_boot_kbd_report);
 		if (err) {
 			printk("Subscribe error (%d)\n", err);
 		}
 	}
-	if (hogp.rep_boot.mouse_inp) {
+	if (hogp->rep_boot.mouse_inp) {
 		printk("Subscribe to boot mouse report\n");
-		err = bt_hogp_rep_subscribe(&hogp,
-						   hogp.rep_boot.mouse_inp,
-						   hogp_boot_mouse_report);
+		err = bt_hogp_rep_subscribe(hogp,
+					   hogp->rep_boot.mouse_inp,
+					   hogp_boot_mouse_report);
 		if (err) {
 			printk("Subscribe error (%d)\n", err);
 		}
@@ -834,18 +982,34 @@ static const struct bt_hogp_init_params hogp_init_params = {
 
 static void button_bootmode(void)
 {
-	if (!bt_hogp_ready_check(&hogp)) {
-		printk("HID device not ready\n");
-		return;
-	}
 	int err;
-	enum bt_hids_pm pm = bt_hogp_pm_get(&hogp);
-	enum bt_hids_pm new_pm = ((pm == BT_HIDS_PM_BOOT) ? BT_HIDS_PM_REPORT : BT_HIDS_PM_BOOT);
+	bool any_device_ready = false;
 
-	printk("Setting protocol mode: %s\n", (new_pm == BT_HIDS_PM_BOOT) ? "BOOT" : "REPORT");
-	err = bt_hogp_pm_write(&hogp, new_pm);
-	if (err) {
-		printk("Cannot change protocol mode (err %d)\n", err);
+	for (size_t i = 0; i < ARRAY_SIZE(slots); i++) {
+		struct bt_hogp *hogp = &slots[i].hogp;
+		enum bt_hids_pm pm;
+		enum bt_hids_pm new_pm;
+
+		if (!bt_hogp_ready_check(hogp)) {
+			continue;
+		}
+
+		any_device_ready = true;
+		pm = bt_hogp_pm_get(hogp);
+		new_pm = ((pm == BT_HIDS_PM_BOOT) ? BT_HIDS_PM_REPORT : BT_HIDS_PM_BOOT);
+
+		PRINT_PERIPH_INDEX_STR(i);
+		printk("Setting protocol mode: %s\n",
+		       (new_pm == BT_HIDS_PM_BOOT) ? "BOOT" : "REPORT");
+		err = bt_hogp_pm_write(hogp, new_pm);
+		if (err) {
+			PRINT_PERIPH_INDEX_STR(i);
+			printk("Cannot change protocol mode, err: %d\n", err);
+		}
+	}
+
+	if (!any_device_ready) {
+		printk("No HID device ready\n");
 	}
 }
 
@@ -853,6 +1017,9 @@ static void hidc_write_cb(struct bt_hogp *hidc,
 			  struct bt_hogp_rep_info *rep,
 			  uint8_t err)
 {
+	struct peripheral_slot *slot = CONTAINER_OF(hidc, struct peripheral_slot, hogp);
+
+	PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots);
 	printk("Caps lock sent\n");
 }
 
@@ -860,30 +1027,54 @@ static void button_capslock(void)
 {
 	int err;
 	uint8_t data;
+	bool any_device_ready = false;
+	bool any_keyboard_out = false;
 
-	if (!bt_hogp_ready_check(&hogp)) {
-		printk("HID device not ready\n");
-		return;
-	}
-	if (!hogp.rep_boot.kbd_out) {
-		printk("HID device does not have Keyboard OUT report\n");
-		return;
-	}
-	if (bt_hogp_pm_get(&hogp) != BT_HIDS_PM_BOOT) {
-		printk("This function works only in BOOT Report mode\n");
-		return;
-	}
 	capslock_state = capslock_state ? 0 : 1;
 	data = capslock_state ? 0x02 : 0;
-	err = bt_hogp_rep_write_wo_rsp(&hogp, hogp.rep_boot.kbd_out,
-				       &data, sizeof(data),
-				       hidc_write_cb);
 
-	if (err) {
-		printk("Keyboard data write error (err: %d)\n", err);
+	for (size_t i = 0; i < ARRAY_SIZE(slots); i++) {
+		struct bt_hogp *hogp = &slots[i].hogp;
+
+		if (!bt_hogp_ready_check(hogp)) {
+			continue;
+		}
+
+		any_device_ready = true;
+
+		if (!hogp->rep_boot.kbd_out) {
+			continue;
+		}
+
+		any_keyboard_out = true;
+
+		if (bt_hogp_pm_get(hogp) != BT_HIDS_PM_BOOT) {
+			PRINT_PERIPH_INDEX_STR(i);
+			printk("This function works only in BOOT Report mode\n");
+			continue;
+		}
+
+		err = bt_hogp_rep_write_wo_rsp(hogp, hogp->rep_boot.kbd_out,
+					       &data, sizeof(data),
+					       hidc_write_cb);
+
+		if (!err) {
+			PRINT_PERIPH_INDEX_STR(i);
+			printk("Caps lock sent, val: 0x%x\n", data);
+		} else {
+			PRINT_PERIPH_INDEX_STR(i);
+			printk("Keyboard data write error, err: %d\n", err);
+		}
+	}
+
+	if (!any_device_ready) {
+		printk("No HID device ready\n");
 		return;
 	}
-	printk("Caps lock send (val: 0x%x)\n", data);
+
+	if (!any_keyboard_out) {
+		printk("No HID device with keyboard OUT report\n");
+	}
 }
 
 
@@ -892,6 +1083,10 @@ static uint8_t capslock_read_cb(struct bt_hogp *hogp,
 			     uint8_t err,
 			     const uint8_t *data)
 {
+	struct peripheral_slot *slot = CONTAINER_OF(hogp, struct peripheral_slot, hogp);
+
+	PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots);
+
 	if (err) {
 		printk("Capslock read error (err: %u)\n", err);
 		return BT_GATT_ITER_STOP;
@@ -912,7 +1107,9 @@ static void capslock_write_cb(struct bt_hogp *hogp,
 			      uint8_t err)
 {
 	int ret;
+	struct peripheral_slot *slot = CONTAINER_OF(hogp, struct peripheral_slot, hogp);
 
+	PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots);
 	printk("Capslock write result: %u\n", err);
 
 	ret = bt_hogp_rep_read(hogp, rep, capslock_read_cb);
@@ -924,26 +1121,38 @@ static void capslock_write_cb(struct bt_hogp *hogp,
 
 static void button_capslock_rsp(void)
 {
-	if (!bt_hogp_ready_check(&hogp)) {
-		printk("HID device not ready\n");
-		return;
-	}
-	if (!hogp.rep_boot.kbd_out) {
-		printk("HID device does not have Keyboard OUT report\n");
-		return;
-	}
 	int err;
 	uint8_t data;
 
 	capslock_state = capslock_state ? 0 : 1;
 	data = capslock_state ? 0x02 : 0;
-	err = bt_hogp_rep_write(&hogp, hogp.rep_boot.kbd_out, capslock_write_cb,
-				&data, sizeof(data));
-	if (err) {
-		printk("Keyboard data write error (err: %d)\n", err);
-		return;
+
+	for (size_t i = 0; i < ARRAY_SIZE(slots); i++) {
+		struct bt_hogp *hogp = &slots[i].hogp;
+
+		if (!bt_hogp_ready_check(hogp)) {
+			PRINT_PERIPH_INDEX_STR(i);
+			printk("HID device not ready\n");
+			continue;
+		}
+
+		if (!hogp->rep_boot.kbd_out) {
+			PRINT_PERIPH_INDEX_STR(i);
+			printk("HID device missing keyboard OUT report\n");
+			continue;
+		}
+
+		err = bt_hogp_rep_write(hogp, hogp->rep_boot.kbd_out, capslock_write_cb,
+					&data, sizeof(data));
+		if (err) {
+			PRINT_PERIPH_INDEX_STR(i);
+			printk("Keyboard data write error, err: %d\n", err);
+			continue;
+		}
+
+		PRINT_PERIPH_INDEX_STR(i);
+		printk("Caps lock send using write with response, val: 0x%x\n", data);
 	}
-	printk("Caps lock send using write with response (val: 0x%x)\n", data);
 }
 
 
@@ -1103,14 +1312,20 @@ static void button_default_mode_handler(uint32_t button)
 			printk("Button %d: Next SCI mode\n",
 			       BUTTON_NUM_FOR_BOARD(KEY_ALTERNATIVE_1_SCI_MODE_NEXT_NUM));
 		}
-		printk("Button %d: Exit alternative button functions\n",
+
+		printk("Button %d: resume scanning\n",
+		       BUTTON_NUM_FOR_BOARD(KEY_ALTERNATIVE_1_SCANNING_RESUME_NUM));
+
+		printk("Button %d: exit alternative button functions\n",
 		       BUTTON_NUM_FOR_BOARD(KEY_ALTERNATIVE_FUNCTIONS_NUM));
 	}
 }
 
 static void button_alternative_1_mode_handler(uint32_t button)
 {
-	if (IS_ENABLED(CONFIG_BT_HOGP_SCI) &&
+	if (button & KEY_ALTERNATIVE_1_SCANNING_RESUME_MASK) {
+		scanning_resume();
+	} else if (IS_ENABLED(CONFIG_BT_HOGP_SCI) &&
 	    (button & KEY_ALTERNATIVE_1_SCI_MODE_NEXT_MASK)) {
 		button_sci_mode_next();
 	} else if (button & KEY_ALTERNATIVE_FUNCTIONS_MASK) {
@@ -1218,7 +1433,10 @@ int main(void)
 
 	printk("Starting Bluetooth Central HIDS sample\n");
 
-	bt_hogp_init(&hogp, &hogp_init_params);
+	for (size_t i = 0; i < ARRAY_SIZE(slots); i++) {
+		bt_hogp_init(&slots[i].hogp, &hogp_init_params);
+		k_work_init(&slots[i].hids_ready_work, hids_on_ready);
+	}
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
@@ -1260,12 +1478,6 @@ int main(void)
 		return 0;
 	}
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-	if (err) {
-		printk("Scanning failed to start (err %d)\n", err);
-		return 0;
-	}
-
-	printk("Scanning successfully started\n");
+	scanning_resume();
 	return 0;
 }

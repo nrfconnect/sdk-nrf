@@ -334,6 +334,7 @@ Bluetooth samples
     * Continuous receive mode when a high report rate is detected, with periodic statistics for each batch of received reports for timing quality assessment (for use with continuous sending on a HID peripheral).
     * A configuration with support for the HID Shorter Connection Intervals (SCI) on the HID host side.
       It is enabled with the ``hid_sci`` suffix.
+    * Support for connecting multiple HID peripherals.
 
   * Updated the sample to use deferred logging to reduce the overhead of logging.
     This may cause messages to be delayed up to around 100 ms.
