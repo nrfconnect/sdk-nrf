@@ -1,6 +1,6 @@
 # Document Information
 
-SPDXVersion: SPDX-2.2
+SPDXVersion: SPDX-2.3
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: west-ncs-sbom-report
@@ -8,7 +8,7 @@ DocumentNamespace: http://spdx.org/spdxdocs/west-ncs-sbom-{{report_uuid}}
 
 # Creation Info
 
-Creator: Tool: west-ncs-sbom
+Creator: Tool: west-ncs-sbom{{ncs_version_suffix}}
 Created: {{func.timestamp()}}
 CreatorComment:<text>Generated with west-ncs-sbom. For details, see https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/introduction.html#licenses.</text>
 
@@ -42,18 +42,29 @@ PackageSupplier: Organization: {{package.supplier}}
 {% else -%}
 PackageSupplier: NOASSERTION
 {% endif -%}
+{% if package.purl and package.url and package.version -%}
+PackageDownloadLocation: git+{{package.url}}@{{package.version}}
+{% else -%}
 PackageDownloadLocation: {{package.url or 'NONE'}}
+{% endif -%}
+{% if package.browser_url -%}
+PackageHomePage: {{package.browser_url}}
+{% endif -%}
 {% if package.purl -%}
 ExternalRef: PACKAGE-MANAGER purl {{package.purl}}
 {% endif -%}
 {% if package.cpe -%}
 ExternalRef: SECURITY cpe23Type {{package.cpe}}
 {% endif -%}
+{% if package.primary_package_purpose -%}
+PrimaryPackagePurpose: {{package.primary_package_purpose}}
+{% endif -%}
+{% if package.built_date -%}
+BuiltDate: {{package.built_date}}
+{% endif -%}
 FilesAnalyzed: {{'true' if package_files else 'false'}}
 {% if package_files -%}
 PackageVerificationCode: {{package_files | verification_code}}
-{% else -%}
-PackageVerificationCode: NOASSERTION
 {% endif -%}
 PackageLicenseConcluded: NOASSERTION
 PackageLicenseInfoFromFiles: NOASSERTION
@@ -69,7 +80,7 @@ FileChecksum: SHA1: {{file.sha1}}
 {% if file.local_modifications -%}
 FileComment: <text>This file is modified locally.</text>
 {% endif -%}
-LicenseConcluded: {{ file.license_expr | adjust_identifier if file.license_expr != '' else 'NOASSERTION' }}
+LicenseConcluded: {{ file.license_expr_friendly if file.license_expr_friendly != '' else 'NOASSERTION' }}
 LicenseInfoInFile: NOASSERTION
 FileCopyrightText: NOASSERTION
 
