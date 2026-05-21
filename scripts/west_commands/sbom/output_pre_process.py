@@ -13,8 +13,10 @@ from license_utils import get_license, get_spdx_license_expr_info, is_spdx_licen
 DEPENDENCY_PLACEHOLDER_ID = 'DEPENDENCY-INFORMATION-UNAVAILABLE'
 
 
-def pre_process(data: Data):
-    '''Do pre-processing of data for simpler usage by the output modules.'''
+def pre_process(data: Data, built_date: 'str|None' = None):
+    '''Do pre-processing of data for simpler usage by the output modules.
+    built_date (UTC ISO 8601 or None) is stamped on application packages.
+    '''
     # Sort files
     data.files.sort(key=lambda f: f.file_path)
     # Convert list of licenses to license expression for each file
@@ -72,6 +74,10 @@ def pre_process(data: Data):
                     lic.friendly_id = id
                 used_licenses[id] = lic
     data.licenses = used_licenses
+    # Pre-compute friendly-cased license expression so the SPDX LicenseConcluded matches the casing
+    for file in data.files:
+        lic = data.licenses.get(file.license_expr)
+        file.license_expr_friendly = lic.friendly_id if lic is not None else file.license_expr
     # Sort licenses
     def lic_reorder(id: str):
         lic: License | LicenseExpr = data.licenses[id]
@@ -116,6 +122,7 @@ def pre_process(data: Data):
     files_by_package = group_files_by_package(data)
     assign_application_dependencies(data, files_by_package)
     add_dependency_placeholder_if_needed(data)
+    assign_primary_package_purpose(data, files_by_package, built_date)
     data.packages_sorted = sorted(data.packages.keys())
 
 
@@ -136,6 +143,8 @@ def assign_application_dependencies(data: Data, files_by_package: dict):
     for package_id in application_packages:
         if package_id not in data.packages:
             continue
+        if data.packages[package_id].url is not None:
+            continue
         deps = sorted(pkg for pkg in data.packages if pkg not in ('', package_id))
         data.packages[package_id].dependencies = deps
 
@@ -154,6 +163,45 @@ def packages_for_roots(roots: 'set[str]', files_by_package: dict) -> 'set[str]':
             if pkg_id in packages:
                 break
     return packages
+
+
+def assign_primary_package_purpose(data: Data, files_by_package: dict,
+                                   built_date: 'str|None' = None):
+    '''Set Package.primary_package_purpose and (for APPLICATION) Package.built_date.
+      DEPENDENCY_PLACEHOLDER_ID                                -> OTHER
+      no-URL package with files under data.application_roots   -> APPLICATION
+      package.purl set (git-resolved)                          -> SOURCE
+      otherwise                                                -> omit (left as None)
+
+    Only no-URL packages can be APPLICATION: they hold the build-specific
+    generated artifacts that uniquely identify this build.
+    '''
+    application_pkgs = packages_for_roots(data.application_roots, files_by_package)
+    app_name = application_name(data.application_roots)
+    for pkg_id, package in data.packages.items():
+        if pkg_id == DEPENDENCY_PLACEHOLDER_ID:
+            package.primary_package_purpose = 'OTHER'
+        elif pkg_id in application_pkgs and package.url is None:
+            package.primary_package_purpose = 'APPLICATION'
+            if built_date is not None:
+                package.built_date = built_date
+            if package.name is None and app_name:
+                package.name = app_name
+        elif package.purl:
+            package.primary_package_purpose = 'SOURCE'
+
+
+def application_name(application_roots: 'set[str]') -> 'str|None':
+    '''Application name derived from the application root path.
+
+    Returns the last path component of the first application root (e.g.
+    "temperature_sensor" from "nrf/samples/matter/temperature_sensor").
+    '''
+    for root in sorted(application_roots):
+        name = root.rstrip('/').rsplit('/', 1)[-1]
+        if name:
+            return name
+    return None
 
 
 def add_dependency_placeholder_if_needed(data: Data):

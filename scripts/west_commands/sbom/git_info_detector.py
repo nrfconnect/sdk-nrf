@@ -14,6 +14,10 @@ from west import log
 
                                                     # FileInfo is used.
 
+_manifest_projects: 'dict[Path, object]' = {}
+_self_repo_path: 'Path|None' = None
+_self_repo_version: 'str|None' = None
+
 
 def split_lines(text: str) -> 'tuple[str]':
     '''Split input text into stripped lines removing empty lines.'''
@@ -127,6 +131,80 @@ def get_sha(absolute_path: Path) -> 'str|None':
     return output if (len(output) == 40) and (error_code == 0) else None
 
 
+def get_toplevel(absolute_path: Path) -> 'Path|None':
+    '''Returns the resolved git toplevel directory at `absolute_path`.'''
+    output, error_code = command_execute(args.git, 'rev-parse', '--show-toplevel',
+                                         cwd=absolute_path, return_error_code=True,
+                                         allow_stderr=True)
+    if error_code != 0:
+        return None
+    line = output.strip()
+    if not line:
+        return None
+    try:
+        return Path(line).resolve()
+    except OSError:
+        return None
+
+
+def upstream_url(project) -> 'str|None':
+    '''Returns userdata.ncs.upstream-url for a manifest project.'''
+    userdata = getattr(project, 'userdata', None)
+    if not isinstance(userdata, dict):
+        return None
+    ncs = userdata.get('ncs')
+    if not isinstance(ncs, dict):
+        return None
+    url = ncs.get('upstream-url')
+    return url.strip() if isinstance(url, str) and url.strip() else None
+
+
+def read_version(version_file: Path) -> 'str|None':
+    '''Returns "MAJOR.MINOR.PATCH" from `version_file` when PATCH != 99.
+
+    Expects the single-line "X.Y.Z" form used by sdk-nrf / sdk-nrf-bm.
+    Returns None on missing file, unparseable content, or PATCH == 99
+    (development snapshot — caller should fall back to the git SHA).
+    '''
+    try:
+        text = version_file.read_text(encoding='utf-8').strip()
+    except OSError:
+        return None
+    match = re.match(r'^(\d+)\.(\d+)\.(\d+)$', text)
+    if not match:
+        return None
+    major, minor, patch = (int(x) for x in match.groups())
+    return None if patch == 99 else f'{major}.{minor}.{patch}'
+
+
+def load_manifest():
+    '''Populate the module-level manifest caches consulted by detect_dir.'''
+    global _manifest_projects, _self_repo_path, _self_repo_version
+    _manifest_projects = {}
+    _self_repo_path = None
+    _self_repo_version = None
+    try:
+        from west.manifest import Manifest
+        manifest = Manifest.from_topdir()
+    except Exception:
+        return
+    for project in manifest.projects:
+        abspath = getattr(project, 'abspath', None)
+        if not abspath:
+            continue
+        try:
+            key = Path(abspath).resolve()
+        except OSError:
+            continue
+        if getattr(project, 'url', None):
+            _manifest_projects[key] = project
+        elif _self_repo_path is None:
+            # by west convention projects[0] is the manifest repo.
+            _self_repo_path = key
+    if _self_repo_path is not None:
+        _self_repo_version = read_version(_self_repo_path / 'VERSION')
+
+
 def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
     '''Read input file content and try to detect licenses by its content.'''
     files = func_args[0]
@@ -140,6 +218,13 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
     relative_path = Path(files_to_assign[0].file_rel_path).parent
     git_sha = get_sha(absolute_path)
     git_origin = get_origin(absolute_path, relative_path)
+    repo = get_toplevel(absolute_path)
+    project = _manifest_projects.get(repo) if repo is not None else None
+    if project is not None:
+        git_origin = project.url
+        git_sha = project.revision or git_sha
+    elif _self_repo_version is not None and repo == _self_repo_path:
+        git_sha = _self_repo_version
     if (git_sha is not None) and (git_origin is not None):
         package_id = f'git#{git_origin}#{git_sha}'.upper()
         output, error_code = command_execute(args.git, 'status', '--porcelain', '--ignored',
@@ -165,6 +250,8 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         if git_origin and git_sha:
             package.purl = git_url_to_purl(git_origin, git_sha)
             package.supplier = args.package_supplier or extract_supplier_from_url(git_origin)
+        if project is not None:
+            package.browser_url = upstream_url(project)
         if args.package_cpe:
             package.cpe = args.package_cpe
         data.packages[package_id] = package
@@ -195,9 +282,12 @@ def detect(data: Data, optional: bool):
     ''' Fill "data" with version information obtained with the "git". '''
 
     check_external_tools()
+    load_manifest()
 
     group_by_dir = {}
     for file in data.files:
+        if '.git' in file.file_rel_path.parts:
+            continue
         dir_name = str(file.file_rel_path.parent)
         if dir_name not in group_by_dir:
             group_by_dir[dir_name] = ([], data)

@@ -39,6 +39,7 @@ class FileInfo(DataBaseClass):
     file_rel_path: Path
     licenses: 'set[str]' = set()
     license_expr: str
+    license_expr_friendly: str = ''
     package: 'str' = ''
     local_modifications: bool = False
     sha1: str
@@ -70,15 +71,17 @@ class License(DataBaseClass):
 class Package(DataBaseClass):
     ''' Contains package information
     Attributes:
-        id             ID of this package
-        name           User friendly name
-        url            URL pointing to the source of this package
-        version        Version string of this package
-        browser_url    URL that can be opened in a web browser
-        supplier       Supplier name
-        purl           Package URL (PURL) identifier
-        cpe            Common Platform Enumeration (CPE) identifier
-        dependencies   List of package IDs this package depends on
+        id                      ID of this package
+        name                    User friendly name
+        url                     URL pointing to the source of this package
+        version                 Version string of this package
+        browser_url             URL that can be opened in a web browser
+        supplier                Supplier name
+        purl                    Package URL (PURL) identifier
+        cpe                     Common Platform Enumeration (CPE) identifier
+        dependencies            List of package IDs this package depends on
+        primary_package_purpose Estimate of the most likely package usage; None to omit
+        built_date              Actual date the package was built; None to omit
     '''
     id: str = ''
     name: 'str|None' = None
@@ -89,6 +92,8 @@ class Package(DataBaseClass):
     purl: 'str|None' = None
     cpe: 'str|None' = None
     dependencies: 'list[str]' = list()
+    primary_package_purpose: 'str|None' = None
+    built_date: 'str|None' = None
 
 
 class LicenseExpr(DataBaseClass):
