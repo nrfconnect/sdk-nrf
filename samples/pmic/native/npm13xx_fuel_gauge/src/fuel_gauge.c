@@ -4,21 +4,26 @@
  */
 
 #include <stdlib.h>
+#include <math.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/drivers/sensor/npm13xx_charger.h>
+#include <zephyr/settings/settings.h>
+#include <zephyr/shell/shell.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/util.h>
 
 #include <nrf_fuel_gauge.h>
 
+#define SETTINGS_KEY "fuel_gauge_state"
+
 /* nPM13xx CHARGER.BCHGCHARGESTATUS register bitmasks */
 #define NPM13XX_CHG_STATUS_COMPLETE_MASK BIT(1)
-#define NPM13XX_CHG_STATUS_TRICKLE_MASK  BIT(2)
-#define NPM13XX_CHG_STATUS_CC_MASK       BIT(3)
-#define NPM13XX_CHG_STATUS_CV_MASK       BIT(4)
+#define NPM13XX_CHG_STATUS_TRICKLE_MASK	 BIT(2)
+#define NPM13XX_CHG_STATUS_CC_MASK	 BIT(3)
+#define NPM13XX_CHG_STATUS_CV_MASK	 BIT(4)
 
 static int64_t ref_time;
 
@@ -29,6 +34,9 @@ static const struct battery_model battery_model = {
 #include "battery_model_20mAh.inc"
 #endif
 };
+
+static bool store_state;
+static uint8_t fuel_gauge_state_buf[1024];
 
 static int read_sensors(const struct device *charger, float *voltage, float *current, float *temp,
 			int32_t *chg_status)
@@ -68,7 +76,11 @@ static int charge_status_inform(int32_t chg_status)
 		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_TRICKLE;
 	} else if (chg_status & NPM13XX_CHG_STATUS_CC_MASK) {
 		printk("Constant current charging\n");
-		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_CC;
+		/* Using NRF_FUEL_GAUGE_CHARGE_STATE_CC_LIMITED instead of
+		 * NRF_FUEL_GAUGE_CHARGE_STATE_CC because the charge current may be limited. This
+		 * can be confirmed by checking the VBUS status register, etc.
+		 */
+		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_CC_LIMITED;
 	} else if (chg_status & NPM13XX_CHG_STATUS_CV_MASK) {
 		printk("Constant voltage charging\n");
 		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_CV;
@@ -84,11 +96,8 @@ static int charge_status_inform(int32_t chg_status)
 int fuel_gauge_init(const struct device *charger)
 {
 	struct sensor_value value;
-	struct nrf_fuel_gauge_init_parameters parameters = {
-		.model = &battery_model,
-		.opt_params = NULL,
-		.state = NULL,
-	};
+	struct nrf_fuel_gauge_init_parameters parameters =
+		NRF_FUEL_GAUGE_DEFAULT_INIT_PARAMETERS_SECONDARY(0.0f, 0.0f, 0.0f, &battery_model);
 	float max_charge_current;
 	float term_charge_current;
 	int32_t chg_status;
@@ -109,6 +118,20 @@ int fuel_gauge_init(const struct device *charger)
 	sensor_channel_get(charger, SENSOR_CHAN_GAUGE_DESIRED_CHARGING_CURRENT, &value);
 	max_charge_current = (float)value.val1 + ((float)value.val2 / 1000000);
 	term_charge_current = max_charge_current / 10.f;
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		ssize_t len;
+
+		len = settings_load_one(SETTINGS_KEY, fuel_gauge_state_buf,
+					sizeof(fuel_gauge_state_buf));
+		if (len == nrf_fuel_gauge_state_size) {
+			parameters.state = fuel_gauge_state_buf;
+			parameters.state_size = len;
+			printk("Previous fuel gauge state loaded\n");
+		} else {
+			printk("No previous fuel gauge state found, starting fresh\n");
+		}
+	}
 
 	ret = nrf_fuel_gauge_init(&parameters, NULL);
 	if (ret < 0) {
@@ -147,10 +170,12 @@ int fuel_gauge_update(const struct device *charger, bool vbus_connected)
 {
 	static int32_t chg_status_prev;
 
+	struct nrf_fuel_gauge_state_info state_info;
 	float voltage;
 	float current;
 	float temp;
 	float soc;
+	float soh;
 	float tte;
 	float ttf;
 	float delta;
@@ -187,12 +212,73 @@ int fuel_gauge_update(const struct device *charger, bool vbus_connected)
 	/* Zephyr sensor API convention for Gauge current is negative=discharging,
 	 * while nrf_fuel_gauge lib expects the opposite negative=charging
 	 */
-	soc = nrf_fuel_gauge_process(voltage, -current, temp, delta, NULL);
-	tte = nrf_fuel_gauge_tte_get();
-	ttf = nrf_fuel_gauge_ttf_get();
+	current = -current;
+	ret = nrf_fuel_gauge_process(voltage, current, temp, delta, &soc, &state_info);
+	if (ret < 0) {
+		printk("Error: Fuel gauge process failed\n");
+		return ret;
+	}
+	ret = nrf_fuel_gauge_soh_get(&soh);
+	if (ret < 0) {
+		printk("Error: Could not get SOH\n");
+	}
+	if (current >= 0.0f) {
+		/* Discharging */
+		ret = nrf_fuel_gauge_tte_get(&tte);
+		if (ret < 0) {
+			printk("Error: Could not get TTE\n");
+		}
+		ttf = NAN;
+	} else {
+		/* Charging */
+		ret = nrf_fuel_gauge_ttf_get(&ttf);
+		if (ret < 0) {
+			printk("Error: Could not get TTE\n");
+		}
+		tte = NAN;
+	}
 
-	printk("V: %.3f, I: %.3f, T: %.2f, ", (double)voltage, (double)current, (double)temp);
-	printk("SoC: %.2f, TTE: %.0f, TTF: %.0f\n", (double)soc, (double)tte, (double)ttf);
+	printk("V: %.3f, I: %.3f, T: %.2f, SoC: %.2f, TTE: %.0f, TTF: %.0f, SoH: %.2f, Cycles: %d, "
+	       "Chg: %.2f\n",
+	       (double)voltage, (double)current, (double)temp, (double)soc, (double)tte,
+	       (double)ttf, (double)soh, state_info.cycle_count,
+	       (double)state_info.cycle_count_cumulative_mah);
+
+	if (IS_ENABLED(CONFIG_SETTINGS) && store_state) {
+		store_state = false;
+
+		ret = nrf_fuel_gauge_state_get(fuel_gauge_state_buf, sizeof(fuel_gauge_state_buf));
+		if (ret < 0) {
+			printk("Error: Could not get fuel gauge state\n");
+			return ret;
+		}
+
+		ret = settings_save_one(SETTINGS_KEY, fuel_gauge_state_buf,
+					nrf_fuel_gauge_state_size);
+		if (ret < 0) {
+			printk("Error: Could not store fuel gauge state\n");
+			return ret;
+		}
+
+		printk("Fuel gauge state stored\n");
+	}
 
 	return 0;
 }
+
+#if CONFIG_SHELL
+static int cmd_fuel_gauge_state_store(const struct shell *sh, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	shell_print(sh, "Storing state after next update");
+	store_state = true;
+
+	return 0;
+}
+
+SHELL_COND_CMD_ARG_REGISTER(IS_ENABLED(CONFIG_SETTINGS), fuel_gauge_state_store, NULL,
+			    "Store battery state after next iteration", cmd_fuel_gauge_state_store,
+			    1, 0);
+#endif /* CONFIG_SHELL */
