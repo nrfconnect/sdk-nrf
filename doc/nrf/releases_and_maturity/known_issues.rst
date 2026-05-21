@@ -6819,6 +6819,15 @@ NCSDK-37741: Increased System On All Idle current on nRF54L series SoCs
 
 .. rst-class:: v3-2-0 v3-2-1 v3-2-2 v3-2-3 v3-2-4
 
+.. rst-class:: v3-3-0 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
+
+NRFX-9318: A Bus Fault is triggered in an application when the :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION` Kconfig option is enabled
+  on an nRF54LS05 device
+  If  the :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION` Kconfig option is enabled on an nRF54LS05 device,
+  a Bus Fault is triggered in the application after start.
+
+  **Affected platforms:** nRF54LS0
+
 .. _known_issues_other:
 
 Other issues
