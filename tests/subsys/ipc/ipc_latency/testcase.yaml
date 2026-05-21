@@ -2,7 +2,7 @@ common:
   tags:
     - subsys
     - ipc
-    - ci_tests_subsys_nfc
+    - ci_tests_subsys_ipc
   harness: ztest
   sysbuild: true
 
