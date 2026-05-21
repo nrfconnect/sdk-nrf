@@ -16,6 +16,7 @@ config NVS
 config SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX
 	bool "Continuous report receiving"
 	default y
+	depends on SAMPLE_BT_CENTRAL_HIDS_PERIPHERAL_COUNT = 1
 	help
 	  Enable the continuous report receiving feature in the central HIDS sample.
 	  The sample will automatically enter continuous report receiving mode if it detects
@@ -32,6 +33,21 @@ config SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE
 	  continuous report receiving mode, the sample prints a short summary
 	  every CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE notifications,
 	  instead of logging every payload.
+
+config SAMPLE_BT_CENTRAL_HIDS_PERIPHERAL_COUNT
+	int "Maximum simultaneous HID peripheral connections"
+	range 1 2
+	default 1
+	help
+	  Number of HID GATT server peripherals this central may connect to at the
+	  same time. When set to 2, Bluetooth pairing/connection limits are
+	  raised accordingly (see default BT_MAX_CONN and BT_MAX_PAIRED in this file).
+
+configdefault BT_MAX_CONN
+	default SAMPLE_BT_CENTRAL_HIDS_PERIPHERAL_COUNT
+
+configdefault BT_MAX_PAIRED
+	default SAMPLE_BT_CENTRAL_HIDS_PERIPHERAL_COUNT
 
 if BT_HOGP_SCI
 
