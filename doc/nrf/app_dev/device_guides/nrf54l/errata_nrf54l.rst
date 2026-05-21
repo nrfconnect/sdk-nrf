@@ -264,8 +264,8 @@ Refer to the following table for the current workaround list:
            - **Enabled**
            - **Enabled**
          * - 16
-           - **Enabled**
-           - **Enabled**
+           - Not applicable
+           - Not applicable
          * - 17
            - Not applicable
            - Not applicable
