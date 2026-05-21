@@ -41,6 +41,9 @@ You can also change the battery model at compile time by selecting the type of b
 | :kconfig:option:`CONFIG_BATTERY_MODEL_LITHIUM_CR2032` | Lithium CR2032 coin cell                  |
 +-------------------------------------------------------+-------------------------------------------+
 
+When the Zephyr Settings subsystem is enabled, the sample also demonstrates how to store the fuel gauge state in non-volatile memory and restore it on boot.
+You can store the fuel gauge state using the shell command described in `Testing`_.
+
 .. _npm2100_fuel_gauge_wiring:
 
 Wiring
@@ -156,6 +159,26 @@ Use the same shell command to change the active battery type:
 
    $ battery_model Lithium_CR2032
    Fuel gauge initialised for Lithium CR2032 battery.
+
+To store the fuel gauge state in non-volatile memory, use the following shell command:
+
+.. code-block:: console
+
+   $ fuel_gauge_state_store
+   Storing state after next update
+
+The fuel gauge state will be stored in non-volatile memory after the next measurement has been performed, and restored on the next boot.
+The state is stored for each battery type, so changing the battery type with the ``battery_model`` command will not affect the stored state of other battery types.
+Use the following shell commands to view the stored state and clear it, using Alkaline AA as an example:
+
+.. code-block:: console
+
+   $ settings list
+   fuel_gauge_state/Alkaline AAA
+   fuel_gauge_state/Alkaline AA
+   $ settings delete fuel_gauge_state/Alkaline\ AA
+   $ settings list
+   fuel_gauge_state/Alkaline AAA
 
 Dependencies
 ************
