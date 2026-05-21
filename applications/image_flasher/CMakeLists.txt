@@ -29,15 +29,29 @@ endif()
 # west expects it
 set(PROJECT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/zephyr)
 
-# Copy over Kconfig and dts files from the main image
+# Done as a 2-step operation to avoid CI Kconfig compliance issue
+set(soc_nrf CONFIG_SOC)
+string(APPEND soc_nrf _NRF)
+
+# Copy over Kconfig and dts configuration from the main image
 set(base_image_binary_dir ${PROJECT_BINARY_DIR}/../../${base_image}/zephyr)
-zephyr_file_copy(${base_image_binary_dir}/.config ${PROJECT_BINARY_DIR}/.config
+
+add_custom_target(${base_image}_kconfig)
+import_kconfig(CONFIG_ ${base_image_binary_dir}/.config TARGET ${base_image}_kconfig)
+get_target_property(${base_image}_kconfig_keys ${base_image}_kconfig kconfigs)
+list(FILTER ${base_image}_kconfig_keys INCLUDE REGEX
+  "^${soc_nrf}|^CONFIG_SOC_SERIES|^CONFIG_SOC_FAMILY|^CONFIG_BOARD_"
+)
+foreach(key ${${base_image}_kconfig_keys})
+  get_target_property(value ${base_image}_kconfig ${key})
+  list(APPEND image_flasher_config "${key}=${value}\n")
+endforeach()
+
+file(WRITE ${PROJECT_BINARY_DIR}/.config.new ${image_flasher_config})
+zephyr_file_copy(${PROJECT_BINARY_DIR}/.config.new ${PROJECT_BINARY_DIR}/.config
   ONLY_IF_DIFFERENT
 )
-zephyr_file_copy(${base_image_binary_dir}/edt.pickle ${PROJECT_BINARY_DIR}/edt.pickle
-  ONLY_IF_DIFFERENT
-)
-import_kconfig(CONFIG_ ${base_image_binary_dir}/.config)
+import_kconfig(CONFIG_ ${PROJECT_BINARY_DIR}/.config)
 
 # Manually include board configuration to enable automatic runners.yaml generation
 foreach(dir ${BOARD_DIRECTORIES})
