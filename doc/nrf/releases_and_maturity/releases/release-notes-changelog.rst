@@ -647,6 +647,10 @@ Modem libraries
     This requires ``cpuapp_cpucell_ipc_shm_ctrl``, ``cpuapp_cpucell_ipc_shm_heap``, and ``cpucell_cpuapp_ipc_shm_heap`` partitions to be defined in the devicetree.
   * Use a separate ``cpucell_cpuapp_ipc_shm_trace`` partition for modem tracing instead of splitting the ``cpucell_cpuapp_ipc_shm_heap`` partition.
 
+* :ref:`lib_location` library:
+
+  * Updated the library to always use the chosen ``zephyr,wifi`` node instead of ``ncs,location-wifi`` to find the used Wi-Fi device.
+
 * Removed the deprecated PDN library.
   Use the PDN management functionality in the :ref:`lte_lc_readme` library instead.
 

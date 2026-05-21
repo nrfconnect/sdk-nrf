@@ -56,6 +56,24 @@ Matter
      You can enable the Thread Synchronized Sleepy End Device (SSED) device type as an optional feature.
      To enable the Thread SSED support, add the ``-DEXTRA_CONF_FILE=ssed.conf`` extra argument to the build command.
 
+Libraries
+=========
+
+This section describes the changes related to libraries.
+
+.. toggle::
+
+   * :ref:`lib_location` library:
+
+     * The library now always uses the chosen ``zephyr,wifi`` node to find the used Wi-Fi device.
+       If your application uses the deprecated ``ncs,location-wifi`` node, you need to change it to use the ``zephyr,wifi`` node instead:
+
+       .. code-block:: dts
+
+        chosen {
+                zephyr,wifi = &mywifi;
+        };
+
 .. _migration_3.4_recommended:
 
 Recommended changes
