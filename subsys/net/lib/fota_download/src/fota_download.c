@@ -11,6 +11,7 @@
 #include <net/downloader.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
+#include <zephyr/devicetree.h>
 
 #include "fota_download_util.h"
 
@@ -18,14 +19,26 @@
 #include <pm_config.h>
 #endif
 
-#if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
-/* MCUBoot support is required */
+#if defined(CONFIG_DFU_TARGET_MCUBOOT)
 #include <fw_info.h>
 #if CONFIG_TRUSTED_EXECUTION_NONSECURE
 #include <tfm/tfm_ioctl_api.h>
 #endif
 #include <dfu/dfu_target_mcuboot.h>
+
+#if defined(PM_S0_ADDRESS) && defined(PM_S1_ADDRESS)
+#define S0_ADDRESS PM_S0_ADDRESS
+#define S1_ADDRESS PM_S1_ADDRESS
+#elif DT_NODE_EXISTS(DT_NODELABEL(s0_partition)) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition))
+BUILD_ASSERT(DT_REG_SIZE(DT_NODELABEL(s0_partition)) != 0);
+BUILD_ASSERT(DT_REG_SIZE(DT_NODELABEL(s1_partition)) != 0);
+#define S0_ADDRESS DT_REG_ADDR(DT_NODELABEL(s0_partition))
+#define S1_ADDRESS DT_REG_ADDR(DT_NODELABEL(s1_partition))
 #endif
+#if defined(S0_ADDRESS) && defined(S1_ADDRESS)
+BUILD_ASSERT(S0_ADDRESS != S1_ADDRESS);
+#endif
+#endif /* CONFIG_DFU_TARGET_MCUBOOT */
 
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
@@ -425,7 +438,7 @@ stop_and_clear_flags:
 
 int fota_download_b1_file_parse(char *s0_s1_files)
 {
-#if !defined(PM_S1_ADDRESS)
+#if !defined(S1_ADDRESS)
 	return -EOPNOTSUPP;
 #endif
 	/* B1 upgrade is supported, check what B1 slot is active,
@@ -461,7 +474,7 @@ int fota_download_b1_file_parse(char *s0_s1_files)
 	return 0;
 }
 
-#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE) && defined(PM_S1_ADDRESS)
+#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE) && defined(S1_ADDRESS)
 static int read_s0_active(uint32_t s0_address, uint32_t s1_address,
 			  bool *const s0_active)
 {
@@ -492,18 +505,18 @@ static int read_s0_active(uint32_t s0_address, uint32_t s1_address,
 
 int fota_download_s0_active_get(bool *const s0_active)
 {
-#ifdef PM_S1_ADDRESS
+#ifdef S1_ADDRESS
 	int err;
 
 #ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
-	err = tfm_platform_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active);
+	err = tfm_platform_s0_active(S0_ADDRESS, S1_ADDRESS, s0_active);
 #else /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
-	err = read_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active);
+	err = read_s0_active(S0_ADDRESS, S1_ADDRESS, s0_active);
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 	return err;
-#else /* PM_S1_ADDRESS */
+#else /* S1_ADDRESS */
 	return -ENOENT;
-#endif /* PM_S1_ADDRESS */
+#endif /* S1_ADDRESS */
 }
 
 int fota_download_any(const char *host, const char *file, const int *sec_tag_list,
@@ -585,7 +598,7 @@ int fota_download(const char *host, const char *file,
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
 
-#ifdef PM_S1_ADDRESS
+#ifdef S1_ADDRESS
 	/* Need a modifiable copy of the filename for splitting */
 	static char file_buf[CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH];
 
@@ -600,7 +613,7 @@ int fota_download(const char *host, const char *file,
 		atomic_clear_bit(&flags, FLAG_DOWNLOADING);
 		return err;
 	}
-#endif /* PM_S1_ADDRESS */
+#endif /* S1_ADDRESS */
 
 	img_type_expected = expected_type;
 
