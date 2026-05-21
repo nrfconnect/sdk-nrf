@@ -298,7 +298,7 @@ static bool check_and_handle_is_host_using_legacy_and_extended_commands(uint8_t 
 		break;
 #endif /* CONFIG_BT_BROADCASTER || CONFIG_BT_OBSERVER || CONFIG_BT_CENTRAL */
 
-#if defined(CONFIG_BT_OBSERVER)
+#if defined(CONFIG_BT_OBSERVER) && !defined(CONFIG_BT_HCI_HOST)
 	case SDC_HCI_OPCODE_CMD_LE_READ_ADV_PHYSICAL_CHANNEL_TX_POWER:
 		/* Legacy command which generates a command complete with exactly one byte payload.
 		 */
@@ -306,7 +306,7 @@ static bool check_and_handle_is_host_using_legacy_and_extended_commands(uint8_t 
 		event_out_params[0] = 0;
 		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_LEGACY;
 		break;
-#endif /* CONFIG_BT_OBSERVER */
+#endif /* defined(CONFIG_BT_OBSERVER) && !defined(CONFIG_BT_HCI_HOST) */
 
 	case SDC_HCI_OPCODE_CMD_CB_RESET:
 		type_of_adv_cmd_used_since_reset = ADV_COMMAND_TYPE_NONE;
@@ -383,7 +383,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 
 #if defined(CONFIG_BT_BROADCASTER)
 	cmds->hci_le_set_advertising_parameters = 1;
+#if !defined(CONFIG_BT_HCI_HOST)
 	cmds->hci_le_read_advertising_physical_channel_tx_power = 1;
+#endif
 	cmds->hci_le_set_advertising_data = 1;
 	cmds->hci_le_set_scan_response_data = 1;
 	cmds->hci_le_set_advertising_enable = 1;
@@ -403,7 +405,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #endif
 
 #if defined(CONFIG_BT_CTLR_FILTER_ACCEPT_LIST)
+#if !defined(CONFIG_BT_HCI_HOST)
 	cmds->hci_le_read_filter_accept_list_size = 1;
+#endif
 	cmds->hci_le_clear_filter_accept_list = 1;
 	cmds->hci_le_add_device_to_filter_accept_list = 1;
 	cmds->hci_le_remove_device_from_filter_accept_list = 1;
@@ -418,7 +422,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #endif
 
 #if defined(CONFIG_BT_CONN)
+#if !defined(CONFIG_BT_HCI_HOST)
 	cmds->hci_le_read_channel_map = 1;
+#endif
 	cmds->hci_le_read_remote_features = 1;
 #endif
 
@@ -468,7 +474,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 
 #if defined(CONFIG_BT_CTLR_DATA_LENGTH)
 	cmds->hci_le_set_data_length = 1;
+#if !defined(CONFIG_BT_HCI_HOST)
 	cmds->hci_le_read_suggested_default_data_length = 1;
+#endif
 	cmds->hci_le_write_suggested_default_data_length = 1;
 #endif
 
@@ -500,9 +508,13 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_extended_scan_response_data = 1;
 	cmds->hci_le_set_extended_advertising_enable = 1;
 	cmds->hci_le_read_maximum_advertising_data_length = 1;
+#if !defined(CONFIG_BT_HCI_HOST)
 	cmds->hci_le_read_number_of_supported_advertising_sets = 1;
+#endif
 	cmds->hci_le_remove_advertising_set = 1;
+#if !defined(CONFIG_BT_HCI_HOST)
 	cmds->hci_le_clear_advertising_sets = 1;
+#endif /* !defined(CONFIG_BT_HCI_HOST) */
 #if defined(CONFIG_BT_PER_ADV)
 	cmds->hci_le_set_periodic_advertising_parameters = 1;
 	cmds->hci_le_set_periodic_advertising_data = 1;
@@ -529,7 +541,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_add_device_to_periodic_advertiser_list = 1;
 	cmds->hci_le_remove_device_from_periodic_advertiser_list = 1;
 	cmds->hci_le_clear_periodic_advertiser_list = 1;
+#if !defined(CONFIG_BT_HCI_HOST)
 	cmds->hci_le_read_periodic_advertiser_list_size = 1;
+#endif
 	cmds->hci_le_set_periodic_advertising_receive_enable = 1;
 #endif
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
@@ -592,7 +606,9 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 
 #if defined(CONFIG_BT_CTLR_SET_HOST_FEATURE)
 	cmds->hci_le_set_host_feature = 1;
+#if !defined(CONFIG_BT_HCI_HOST)
 	cmds->hci_le_set_host_feature_v2 = 1;
+#endif
 #endif
 
 #if defined(CONFIG_BT_CTLR_CENTRAL_ISO)
@@ -958,10 +974,12 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_PARAMS:
 		return sdc_hci_cmd_le_set_adv_params((void *)cmd_params);
 
+#if !defined(CONFIG_BT_HCI_HOST)
 	case SDC_HCI_OPCODE_CMD_LE_READ_ADV_PHYSICAL_CHANNEL_TX_POWER:
 		*param_length_out +=
 				sizeof(sdc_hci_cmd_le_read_adv_physical_channel_tx_power_return_t);
 		return sdc_hci_cmd_le_read_adv_physical_channel_tx_power((void *)event_out_params);
+#endif
 
 	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_DATA:
 		return sdc_hci_cmd_le_set_adv_data((void *)cmd_params);
@@ -995,9 +1013,11 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 #endif
 
 #if defined(CONFIG_BT_CTLR_FILTER_ACCEPT_LIST)
+#if !defined(CONFIG_BT_HCI_HOST)
 	case SDC_HCI_OPCODE_CMD_LE_READ_FILTER_ACCEPT_LIST_SIZE:
 		*param_length_out += sizeof(sdc_hci_cmd_le_read_filter_accept_list_size_return_t);
 		return sdc_hci_cmd_le_read_filter_accept_list_size((void *)event_out_params);
+#endif
 
 	case SDC_HCI_OPCODE_CMD_LE_CLEAR_FILTER_ACCEPT_LIST:
 		return sdc_hci_cmd_le_clear_filter_accept_list();
@@ -1020,10 +1040,12 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 #endif
 
 #if defined(CONFIG_BT_CONN)
+#if !defined(CONFIG_BT_HCI_HOST)
 	case SDC_HCI_OPCODE_CMD_LE_READ_CHANNEL_MAP:
 		*param_length_out += sizeof(sdc_hci_cmd_le_read_channel_map_return_t);
 		return sdc_hci_cmd_le_read_channel_map((void *)cmd_params,
 						       (void *)event_out_params);
+#endif
 
 	case SDC_HCI_OPCODE_CMD_LE_READ_REMOTE_FEATURES:
 		return sdc_hci_cmd_le_read_remote_features((void *)cmd_params);
@@ -1070,10 +1092,12 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		*param_length_out += sizeof(sdc_hci_cmd_le_set_data_length_return_t);
 		return sdc_hci_cmd_le_set_data_length((void *)cmd_params, (void *)event_out_params);
 
+#if !defined(CONFIG_BT_HCI_HOST)
 	case SDC_HCI_OPCODE_CMD_LE_READ_SUGGESTED_DEFAULT_DATA_LENGTH:
 		*param_length_out +=
 				sizeof(sdc_hci_cmd_le_read_suggested_default_data_length_return_t);
 		return sdc_hci_cmd_le_read_suggested_default_data_length((void *)event_out_params);
+#endif
 
 	case SDC_HCI_OPCODE_CMD_LE_WRITE_SUGGESTED_DEFAULT_DATA_LENGTH:
 		return sdc_hci_cmd_le_write_suggested_default_data_length((void *)cmd_params);
@@ -1147,16 +1171,20 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		*param_length_out += sizeof(sdc_hci_cmd_le_read_max_adv_data_length_return_t);
 		return sdc_hci_cmd_le_read_max_adv_data_length((void *)event_out_params);
 
+#if !defined(CONFIG_BT_HCI_HOST)
 	case SDC_HCI_OPCODE_CMD_LE_READ_NUMBER_OF_SUPPORTED_ADV_SETS:
 		*param_length_out +=
 				sizeof(sdc_hci_cmd_le_read_number_of_supported_adv_sets_return_t);
 		return sdc_hci_cmd_le_read_number_of_supported_adv_sets((void *)event_out_params);
+#endif
 
 	case SDC_HCI_OPCODE_CMD_LE_REMOVE_ADV_SET:
 		return sdc_hci_cmd_le_remove_adv_set((void *)cmd_params);
 
+#if !defined(CONFIG_BT_HCI_HOST)
 	case SDC_HCI_OPCODE_CMD_LE_CLEAR_ADV_SETS:
 		return sdc_hci_cmd_le_clear_adv_sets();
+#endif /* !defined(CONFIG_BT_HCI_HOST) */
 
 #if defined(CONFIG_BT_PER_ADV)
 	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_PARAMS:
@@ -1203,10 +1231,12 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_CLEAR_PERIODIC_ADV_LIST:
 		return sdc_hci_cmd_le_clear_periodic_adv_list();
 
+#if !defined(CONFIG_BT_HCI_HOST)
 	case SDC_HCI_OPCODE_CMD_LE_READ_PERIODIC_ADV_LIST_SIZE:
 		*param_length_out +=
 				sizeof(sdc_hci_cmd_le_read_periodic_adv_list_size_return_t);
 		return sdc_hci_cmd_le_read_periodic_adv_list_size((void *)event_out_params);
+#endif /* !defined(CONFIG_BT_HCI_HOST) */
 #endif /* CONFIG_BT_PER_ADV_SYNC */
 #endif /* CONFIG_BT_CTLR_ADV_EXT */
 
@@ -1475,9 +1505,11 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_SET_HOST_FEATURE:
 		return sdc_hci_cmd_le_set_host_feature(
 			(sdc_hci_cmd_le_set_host_feature_t const *)cmd_params);
+#if !defined(CONFIG_BT_HCI_HOST)
 	case SDC_HCI_OPCODE_CMD_LE_SET_HOST_FEATURE_V2:
 		return sdc_hci_cmd_le_set_host_feature_v2(
 			(sdc_hci_cmd_le_set_host_feature_v2_t const *)cmd_params);
+#endif
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
