@@ -8,27 +8,54 @@ if PSA_CORE_LITE
 
 config PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS
 	bool "Optimized Ed25519 (only) support for NSIB usage"
+	depends on \
+		!PSA_CORE_LITE_HAS_ECDSA && \
+		!PSA_CORE_LITE_HAS_RSA
 	help
 	  This configuration calls low-level APIs in CRACEN for Ed25519 instead of
 	  going through PSA crypto driver wrappers APIs. This optimization limits
 	  supported algorithms for signature verification to only Pure Ed25519 and
 	  Ed25519ph.
 
-config PSA_CORE_LITE_HAS_VERIFY_MESSAGE
+config PSA_CORE_LITE_HAS_ECDSA
 	bool
 	default y
 	depends on \
 		PSA_WANT_ALG_ECDSA || \
-		PSA_WANT_ALG_DETERMINISTIC_ECDSA || \
-		PSA_WANT_ALG_PURE_EDDSA
+		PSA_WANT_ALG_DETERMINISTIC_ECDSA
+
+config PSA_CORE_LITE_HAS_RSA
+	bool
+	default y
+	depends on \
+		PSA_WANT_ALG_RSA_PSS || \
+		PSA_WANT_ALG_RSA_PKCS1V15_SIGN
+
+config PSA_CORE_LITE_HAS_HASH
+	bool
+	default y
+	depends on \
+		PSA_WANT_ALG_SHA_256 || \
+		PSA_WANT_ALG_SHA_384 || \
+		PSA_WANT_ALG_SHA_512
+
+config PSA_CORE_LITE_HAS_VERIFY_MESSAGE
+	bool
+	default y
+	depends on \
+		PSA_CORE_LITE_HAS_ECDSA || \
+		PSA_WANT_ALG_PURE_EDDSA || \
+		PSA_WANT_ALG_RSA_PSS || \
+		PSA_WANT_ALG_RSA_PKCS1V15_SIGN
 
 config PSA_CORE_LITE_HAS_VERIFY_HASH
 	bool
 	default y
 	depends on \
-		PSA_WANT_ALG_ECDSA || \
-		PSA_WANT_ALG_DETERMINISTIC_ECDSA || \
-		PSA_WANT_ALG_ED25519PH
+		PSA_CORE_LITE_HAS_ECDSA || \
+		PSA_WANT_ALG_ED25519PH || \
+		PSA_WANT_ALG_RSA_PSS || \
+		PSA_WANT_ALG_RSA_PKCS1V15_SIGN
 
 config PSA_CORE_LITE_HAS_VERIFY_SIGNATURE
 	bool
@@ -37,6 +64,10 @@ config PSA_CORE_LITE_HAS_VERIFY_SIGNATURE
 
 config PSA_CORE_LITE_PUB_KEY_MAX_SIZE
 	int
+	default 398 if (PSA_WANT_ALG_RSA_PSS || PSA_WANT_ALG_RSA_PKCS1V15_SIGN) && \
+			PSA_WANT_RSA_KEY_SIZE_3072
+	default 270 if (PSA_WANT_ALG_RSA_PSS || PSA_WANT_ALG_RSA_PKCS1V15_SIGN) && \
+			PSA_WANT_RSA_KEY_SIZE_2048
 	default 97 if (PSA_WANT_ALG_ECDSA || PSA_WANT_ALG_DETERMINISTIC_ECDSA) && \
 			PSA_WANT_ECC_SECP_R1_384
 	default 65 if (PSA_WANT_ALG_ECDSA || PSA_WANT_ALG_DETERMINISTIC_ECDSA) && \
@@ -60,10 +91,11 @@ config PSA_CORE_LITE_HAS_VOLATILE_KEY_STORAGE
 	bool
 	default y
 	depends on \
-		PSA_WANT_ALG_CTR    || \
+		PSA_WANT_ALG_CTR || \
 		PSA_WANT_ALG_AES_KW || \
-		PSA_WANT_ALG_HKDF   || \
-		PSA_WANT_ALG_HMAC
+		PSA_WANT_ALG_HKDF || \
+		PSA_WANT_ALG_HMAC || \
+		PSA_CORE_LITE_HAS_RSA
 
 config PSA_CORE_LITE_MAX_VOLATILE_KEYS_COUNT
 	int

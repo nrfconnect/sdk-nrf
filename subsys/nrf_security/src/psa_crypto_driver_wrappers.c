@@ -318,7 +318,7 @@ psa_status_t psa_driver_wrapper_verify_message_with_context(
 		break;
 	}
 
-#if defined(CONFIG_PSA_CORE_LITE)
+#if defined(CONFIG_PSA_CORE_LITE) && !defined(PSA_NEED_OBERON_RSA_ANY_VERIFY)
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
 	/* Call back to the core with psa_verify_message_builtin.
