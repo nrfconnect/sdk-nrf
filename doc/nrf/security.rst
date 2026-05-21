@@ -21,7 +21,7 @@ The |NCS| |release| allows you to develop applications with the following versio
        - Mbed TLS version
      * - |release|
        - v2.2.2
-       - v23.5.0+28
+       - |ironside_se_ver|
        - 3.6.6
      * - Upcoming release (currently on the ``main`` branch of `sdk-nrf`_)
        - |tf-m_ver|
@@ -60,7 +60,7 @@ Expand the following section to see the table listing versions of different secu
        - 3.6.6
      * - v3.2.0
        - v2.2.0
-       - v23.1.1+20
+       - |ironside_se_ver|
        - 3.6.5
      * - v3.1.0, v3.1.1
        - v2.1.2
