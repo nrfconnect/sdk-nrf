@@ -23,7 +23,23 @@ The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_ or an `nPM1
 Overview
 ********
 
-This sample allows to calculate the state of charge, time to empty, and time to full information from a battery on the development kit connected to the nPM1300 or nPM1304 PMIC.
+This sample allows to calculate the state of charge, time to empty, time to full, and state of health information from a battery on the development kit connected to the nPM1300 or nPM1304 PMIC.
+
+State of health is calculated based on battery charge cycles.
+This is a slow process.
+For testing purposes, you can accelerate the process as follows:
+
+* Use a battery model with a very low capacity that can be charged quickly, such as the 20 mAh model included in the nPM1304 version of this sample.
+* Configure the charging current to be as high as possible within the limits of your battery or as high as the PMIC allows when using a power supply or battery emulator instead of an actual battery.
+* Begin charging at state of charge less than 70%, and ensure that the charging cycle completes by reaching the configured termination voltage and termination current.
+* Ensure that charging completes before the battery state of charge reaches 100%, either by using a battery emulator, or configure the charger termination voltage to be lower than the modeled battery termination voltage.
+* Repeat the charging cycles at least two times to see any change in state of health.
+  The state of health will only decrease when the state of charge is less than 100% when charging completes.
+
+The state of health will also be calculated during partial charge cycles, but this is a slower process compared to full charge cycles.
+
+When the Zephyr Settings subsystem is enabled, the sample also demonstrates how to store the fuel gauge state in non-volatile memory and restore it on boot.
+You can store the fuel gauge state using a shell command described in `Testing`_.
 
 .. _npm13xx_fuel_gauge_wiring:
 
@@ -124,7 +140,7 @@ You can use either the nRF Connect for VS Code extension or the command line.
 
       .. code-block:: bash
 
-         west build -b nrf54l15dk/nrf54l15/cpuapp samples/pmic/native/npm13xx_fuel_gauge -- -DEXTRA_DTC_OVERLAY=npm1300.overlay
+         west build -b nrf54l15dk/nrf54l15/cpuapp samples/pmic/native/npm13xx_fuel_gauge -- -DEXTRA_DTC_OVERLAY_FILE=npm1300.overlay
 
 Testing
 *******
@@ -139,7 +155,7 @@ If the initialization was successful, the terminal displays the following messag
 .. code-block:: console
 
    PMIC device ok
-   V: 4.101, I: 0.000, T: 23.06, SoC: 93.09, TTE: nan, TTF: nan
+   V: 4.101, I: 0.000, T: 23.06, SoC: 93.09, TTE: nan, TTF: nan, SoH: 100.00, Cycles: 0, Chg: 0.00
 
 .. _table::
    :widths: auto
@@ -153,7 +169,27 @@ If the initialization was successful, the terminal displays the following messag
    SoC     State of Charge  Percent
    TTE     Time to Empty    Seconds (may be NaN)
    TTF     Time to Full     Seconds (may be NaN)
+   SoH     State of health  Percent (maximum available battery capacity)
+   Cycles  Charge cycles    Integer
+   Chg     Charged energy   milliAmpHours (resets after a full charge cycle)
    ======  ===============  ==================================================
+
+To store the fuel gauge state in non-volatile memory, use the following shell command:
+
+.. code-block:: console
+
+   $ fuel_gauge_state_store
+   Storing state after next update
+
+The fuel gauge state will be stored in non-volatile memory after the next measurement has been performed, and restored on the next boot.
+Use the following shell commands to view the stored state and clear it:
+
+.. code-block:: console
+
+   $ settings list
+   fuel_gauge_state
+   $ settings delete fuel_gauge_state
+   $ settings list
 
 Dependencies
 ************

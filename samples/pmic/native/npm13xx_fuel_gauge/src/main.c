@@ -8,16 +8,17 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/mfd/npm13xx.h>
 #include <zephyr/drivers/sensor.h>
+#include <zephyr/settings/settings.h>
 #include <zephyr/sys/printk.h>
 
 #include "fuel_gauge.h"
 
-#define SLEEP_TIME_MS 1000
+#define SLEEP_TIME_MS 500
 
 #if DT_NODE_EXISTS(DT_NODELABEL(npm1300_ek_pmic))
-#define NPM13XX_DEVICE(dev) DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_ ## dev))
+#define NPM13XX_DEVICE(dev) DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_##dev))
 #elif DT_NODE_EXISTS(DT_NODELABEL(npm1304_ek_pmic))
-#define NPM13XX_DEVICE(dev) DEVICE_DT_GET(DT_NODELABEL(npm1304_ek_ ## dev))
+#define NPM13XX_DEVICE(dev) DEVICE_DT_GET(DT_NODELABEL(npm1304_ek_##dev))
 #else
 #error "neither npm1300 nor npm1304 found in devicetree"
 #endif
@@ -53,6 +54,13 @@ int main(void)
 		return 0;
 	}
 
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		err = settings_subsys_init();
+		if (err < 0) {
+			printk("Settings subsystem could not be initialized.\n");
+		}
+	}
+
 	if (fuel_gauge_init(charger) < 0) {
 		printk("Could not initialise fuel gauge.\n");
 		return 0;
@@ -61,8 +69,7 @@ int main(void)
 	static struct gpio_callback event_cb;
 
 	gpio_init_callback(&event_cb, event_callback,
-				   BIT(NPM13XX_EVENT_VBUS_DETECTED) |
-				   BIT(NPM13XX_EVENT_VBUS_REMOVED));
+			   BIT(NPM13XX_EVENT_VBUS_DETECTED) | BIT(NPM13XX_EVENT_VBUS_REMOVED));
 
 	err = mfd_npm13xx_add_callback(pmic, &event_cb);
 	if (err) {
@@ -84,6 +91,13 @@ int main(void)
 
 	while (1) {
 		fuel_gauge_update(charger, vbus_connected);
+
+		/* Using constant sleep time to keep the sample simple.
+		 * In a real application, the interval can be long when the battery is discharging
+		 * at a slow rate. Reduce the interval during periods of higher discharge current
+		 * (relative to the battery size). Also use shorter intervals during charging to
+		 * facilitate state-of-health estimation.
+		 */
 		k_msleep(SLEEP_TIME_MS);
 	}
 }

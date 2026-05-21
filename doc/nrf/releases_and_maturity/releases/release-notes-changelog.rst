@@ -530,7 +530,8 @@ Peripheral samples
 PMIC samples
 ------------
 
-|no_changes_yet_note|
+* Updated the :ref:`npm13xx_fuel_gauge` :ref:`npm2100_fuel_gauge` samples to use :ref:`nrfxlib:nrf_fuel_gauge` v2.0.0, and added support for state storage.
+  The :ref:`npm13xx_fuel_gauge` uses the new state-of-health feature in the :ref:`nrfxlib:nrf_fuel_gauge` v2.0.0.
 
 Protocol serialization samples
 ------------------------------
