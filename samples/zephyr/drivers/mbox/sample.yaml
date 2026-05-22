@@ -10,6 +10,7 @@ tests:
   nrf.extended.sample.drivers.mbox.nrf54l:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args: mbox_SNIPPET=nordic-flpr
@@ -25,6 +26,7 @@ tests:
   nrf.extended.sample.drivers.mbox.nrf54l_no_multithreading:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
@@ -43,6 +45,7 @@ tests:
   nrf.extended.sample.drivers.mbox.nrf54l_remote_no_multithreading:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
