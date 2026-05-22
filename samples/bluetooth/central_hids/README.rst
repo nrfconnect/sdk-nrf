@@ -50,7 +50,6 @@ Continuous report receiving
 
 The continuous report receiving feature is enabled by default.
 You can toggle it off using the :option:`CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX` Kconfig option.
-Currently, it is only available if :kconfig:option:`CONFIG_SAMPLE_BT_CENTRAL_HIDS_PERIPHERAL_COUNT` is set to ``1`` (only one peripheral can be connected at a time).
 
 If the connected device sends GATT notifications with HID input reports fast enough, the sample automatically enters the continuous report receiving mode.
 
