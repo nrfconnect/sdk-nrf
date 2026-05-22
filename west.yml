@@ -159,7 +159,7 @@ manifest:
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
-      revision: ba0487c40eb2b57676676604b4c17526790dbc94
+      revision: 2deff6bec6560a250c62c2def6531fe6937356d3
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
