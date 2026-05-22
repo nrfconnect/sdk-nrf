@@ -53,41 +53,6 @@ jobs:
             azcopy cp ncs "$NCS_DOC_STORAGE_URL?$NCS_DOC_SAS_MAIN" --recursive=true
           fi
 
-
-      - name: Upload Zoomin documentation
-        if: >
-          github.event.workflow_run.event == 'push' &&
-          github.event.workflow_run.head_repository.full_name == github.repository
-        run: |
-          # trust server
-          mkdir -p ~/.ssh
-          ssh-keyscan upload-v1.zoominsoftware.io >> ~/.ssh/known_hosts
-
-          # prepare key
-          echo "${{ secrets.NCS_ZOOMIN_KEY }}" | base64 -d > zoomin_key
-          chmod 600 zoomin_key
-
-          # upload files
-          for file in docs/*-apis-*.zip; do
-            sftp -v -i zoomin_key nordic@upload-v1.zoominsoftware.io <<EOF
-            cd docs-be.nordicsemi.com/doxygen/incoming
-            put ${file}
-            cd ../../../nordic-be-dev.zoominsoftware.io/doxygen/incoming
-            put ${file}
-            quit
-          EOF
-          done
-
-          for file in docs/ncs-*.zip; do
-            sftp -v -i zoomin_key nordic@upload-v1.zoominsoftware.io <<EOF
-            cd docs-be.nordicsemi.com/sphinx-html/incoming
-            put ${file}
-            cd ../../../nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
-            put ${file}
-            quit
-          EOF
-          done
-
       - name: Find Comment
         uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
         if: env.PR != ''
