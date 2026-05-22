@@ -11,9 +11,18 @@
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_partition;
+{% if soc == "nrf52840" or soc == "nrf52833" or soc == "nrf52820" or soc == "nrf52811" %}
+		zephyr,ieee802154 = &ieee802154;
+{% endif %}
 	};
 };
 
+{% if soc == "nrf52840" or soc == "nrf52833" or soc == "nrf52820" or soc == "nrf52811" %}
+&ieee802154 {
+	status = "okay";
+};
+
+{% endif %}
 &flash0 {
 	partitions {
 		#address-cells = <1>;
