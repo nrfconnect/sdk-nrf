@@ -90,11 +90,6 @@
     "UP007",    # https://docs.astral.sh/ruff/rules/non-pep604-annotation
     "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
 ]
-"./doc/_zoomin/footer_patch.py" = [
-    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
-]
 "./doc/internal/conf.py" = [
     "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
     "F821",     # https://docs.astral.sh/ruff/rules/undefined-name
@@ -732,7 +727,6 @@ exclude = [
     "./doc/_scripts/merge_search_indexes.py",
     "./doc/_utils/redirects.py",
     "./doc/_utils/utils.py",
-    "./doc/_zoomin/footer_patch.py",
     "./doc/kconfig/conf.py",
     "./doc/matter/conf.py",
     "./doc/mcuboot/conf.py",
