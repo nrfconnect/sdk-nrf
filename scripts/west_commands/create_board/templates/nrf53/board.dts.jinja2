@@ -13,6 +13,9 @@
 		zephyr,sram = &sram0_ns_app;
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_ns_partition;
+		zephyr,bt-hci = &bt_hci_ipc0;
+		nordic,802154-spinel-ipc = &ipc0;
+		zephyr,ieee802154 = &ieee802154;
 	};
 };
 {% else %}
@@ -31,9 +34,16 @@
 		zephyr,code-partition = &slot0_partition;
 		zephyr,sram-secure-partition = &sram0_s;
 		zephyr,sram-non-secure-partition = &sram0_ns;
+		zephyr,bt-hci = &bt_hci_ipc0;
+		nordic,802154-spinel-ipc = &ipc0;
+		zephyr,ieee802154 = &ieee802154;
 	};
 };
 {% endif %}
+
+&ieee802154 {
+	status = "okay";
+};
 
 #include "{{ board }}-cpuapp_partitioning.dtsi"
 #include "{{ board }}-shared_sram.dtsi"
@@ -51,7 +61,14 @@
 		zephyr,sram = &sram1;
 		zephyr,flash = &flash1;
 		zephyr,code-partition = &slot0_partition;
+		zephyr,bt-hci-ipc = &ipc0;
+		nordic,802154-spinel-ipc = &ipc0;
+		zephyr,ieee802154 = &ieee802154;
 	};
+};
+
+&ieee802154 {
+	status = "okay";
 };
 
 &flash1 {
