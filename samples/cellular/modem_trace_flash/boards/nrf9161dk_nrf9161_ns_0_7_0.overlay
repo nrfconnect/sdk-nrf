@@ -4,13 +4,34 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/cellular/nrf91_no_bootloader_partitions.dtsi>
+
+#include <samples/cellular/nrf91_sram_partitions.dtsi>
+
+/* Increase modem (shared) memory. */
+&sram0_ns_modem {
+	reg = <0x0 0x8800>;
+	ranges = <0x0 0x0 0x8800>;
+
+	cpucell_cpuapp_ipc_shm_trace: sram0_ns_modem@4800 {
+		/* Modem trace memory */
+		reg = <0x4800 0x4000>;
+	};
+};
+
+/* Delete Non-Secure application memory so we can move and shrink it. */
+/delete-node/ &sram0_ns_app;
+
+&sram0_ns {
+	sram0_ns_app: sram0_ns@8800 {
+		/* Redefine smaller Non-Secure application memory. */
+		reg = <0x8800 0x2f800>;
+	};
+};
+
 /delete-node/ &gd25wb256;
 
 / {
-	chosen {
-		nordic,pm-ext-flash = &gd25lb256;
-	};
-
 	aliases {
 		ext-flash = &gd25lb256;
 	};
@@ -18,6 +39,17 @@
 
 &gd25lb256 {
 	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		modem_trace: partition@0 {
+			label = "modem_trace";
+			reg = <0x00000000 0x400000>;
+		};
+	};
 };
 
 /* Enable UART1 at 1 megabaud for printing modem traces  */
