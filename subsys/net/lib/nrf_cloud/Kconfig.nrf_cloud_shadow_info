@@ -25,6 +25,17 @@ config NRF_CLOUD_SEND_DEVICE_STATUS
 	help
 	  Add "deviceInfo" section containing hardware and firmware version information.
 
+config NRF_CLOUD_SEND_DEVICE_INFO_BOOTLOADER_VERSION
+	bool "Send MCUboot (B1) fw_info version in deviceInfo"
+	depends on NRF_CLOUD_SEND_DEVICE_STATUS
+	depends on TRUSTED_EXECUTION_NONSECURE
+	depends on $(dt_nodelabel_enabled,s0_partition)
+	depends on $(dt_nodelabel_enabled,s1_partition)
+	select FW_INFO
+	help
+	  Add the "bootloaderVersion" field to deviceInfo using the fw_info version
+	  from the active B1 slot (s0_partition / s1_partition in devicetree).
+
 config NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK
 	bool "Send network status information on initial connection"
 	depends on MODEM_INFO
