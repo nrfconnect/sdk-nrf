@@ -2802,7 +2802,7 @@ The lists are organized by device Series and implementation.
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
               - Supported
             * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
               - --
