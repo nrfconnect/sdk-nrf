@@ -43,11 +43,18 @@ bool location_utils_is_lte_available(void)
 		return false;
 	}
 
-	/* Check whether a PDN bearer is active by searching for a string +CGACT: <cid>,<state> */
+	/* Check whether a PDN bearer is active by searching for a string +CGACT: <cid>,<state>.
+	 * If a PDN context with CID 0 (cellular profile 0) or CID 10 (cellular profile 1) is
+	 * active, then LTE networking is likely available.
+	 */
 	p = strstr(at_response_str, "+CGACT: 0,1");
 	if (p) {
-		/* If it is, then LTE networking is likely available. */
 		is_active = true;
+	} else {
+		p = strstr(at_response_str, "+CGACT: 10,1");
+		if (p) {
+			is_active = true;
+		}
 	}
 	return is_active;
 }

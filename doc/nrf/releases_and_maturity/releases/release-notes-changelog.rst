@@ -633,6 +633,10 @@ Security libraries
 Modem libraries
 ---------------
 
+* :ref:`lib_location` library:
+
+  * Fixed an issue where cloud location requests were not sent when cellular profile 1 was active.
+
 * :ref:`nrf_modem_lib_readme` library:
 
   * Added support for building for the nRF91 board without Partition Manager.
