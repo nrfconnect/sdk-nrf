@@ -8,4 +8,8 @@
 	aliases {
 		ext-flash = &flash_ext;
 	};
+
+	chosen {
+		nordic,fmfu-storage-partition = &fmfu_storage_partition;
+	};
 };
