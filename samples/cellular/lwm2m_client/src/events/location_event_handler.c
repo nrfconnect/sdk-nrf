@@ -40,10 +40,10 @@ static bool handle_ground_fix_location_event(bool send_back)
 }
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-static bool handle_pgps_data_request_event(void)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+static bool handle_pgnss_data_request_event(void)
 {
-	while (location_assistance_pgps_request_send(client_ctx) == -EAGAIN) {
+	while (location_assistance_pgnss_request_send(client_ctx) == -EAGAIN) {
 		k_sleep(REQUEST_WAIT_INTERVAL);
 	}
 	return true;
@@ -72,9 +72,9 @@ static bool event_handler(const struct app_event_header *eh)
 		return true;
 	}
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-	if (is_pgps_data_request_event(eh)) {
-		handle_pgps_data_request_event();
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+	if (is_pgnss_data_request_event(eh)) {
+		handle_pgnss_data_request_event();
 		return true;
 	}
 #endif
@@ -90,8 +90,8 @@ APP_EVENT_SUBSCRIBE(location_handler, gnss_agnss_request_event);
 APP_EVENT_SUBSCRIBE(location_handler, ground_fix_location_request_event);
 APP_EVENT_SUBSCRIBE(location_handler, ground_fix_location_inform_event);
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-APP_EVENT_SUBSCRIBE(location_handler, pgps_data_request_event);
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+APP_EVENT_SUBSCRIBE(location_handler, pgnss_data_request_event);
 #endif
 
 int location_event_handler_init(struct lwm2m_ctx *ctx)

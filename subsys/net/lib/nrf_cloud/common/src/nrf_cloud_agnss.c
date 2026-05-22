@@ -13,8 +13,8 @@
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud_agnss.h>
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
 #endif
 #include <stdio.h>
 #include <zephyr/logging/log.h>
@@ -331,8 +331,8 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 
 		processed.data_flags |= NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST;
 		copy_gps_utc(&gps_utc, agnss_data);
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-		nrf_cloud_pgps_set_leap_seconds(gps_utc.delta_tls);
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+		nrf_cloud_pgnss_set_leap_seconds(gps_utc.delta_tls);
 #endif
 		LOG_DBG("A-GNSS type: NRF_CLOUD_AGNSS_UTC_PARAMETERS");
 
@@ -346,8 +346,8 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 		if (agnss_data->type == NRF_CLOUD_AGNSS_GPS_EPHEMERIDES) {
 			processed.system[PROCESSED_SYSTEM_GPS].sv_mask_ephe |=
 				(1 << (agnss_data->ephemeris->sv_id - 1));
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-			if (agnss_data->ephemeris->health == NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH) {
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+			if (agnss_data->ephemeris->health == NRF_CLOUD_PGNSS_EMPTY_EPHEM_HEALTH) {
 				LOG_DBG("Skipping empty ephemeris for sv %u",
 					agnss_data->ephemeris->sv_id);
 				return 0;
@@ -420,8 +420,8 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 
 		processed.data_flags |= NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST;
 		copy_location(&location, agnss_data);
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-		nrf_cloud_pgps_set_location_normalized(location.latitude, location.longitude);
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+		nrf_cloud_pgnss_set_location_normalized(location.latitude, location.longitude);
 #endif
 		LOG_DBG("A-GNSS type: NRF_CLOUD_AGNSS_LOCATION");
 

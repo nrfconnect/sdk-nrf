@@ -11,4 +11,4 @@ pgps:
 #else
   inside: [nonsecure_storage]
 #endif
-  size: CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE
+  size: CONFIG_NRF_CLOUD_PGNSS_PARTITION_SIZE

@@ -71,7 +71,7 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
-  sample.cellular.gnss.integration_config_positioning_pgps_nrfcloud_ltem_nmea:
+  sample.cellular.gnss.integration_config_positioning_pgnss_nrfcloud_ltem_nmea:
     sysbuild: true
     build_only: true
     extra_configs:
@@ -89,7 +89,7 @@ tests:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
-      - EXTRA_CONF_FILE=overlay-pgps.conf
+      - EXTRA_CONF_FILE=overlay-pgnss.conf
       - gnss_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns

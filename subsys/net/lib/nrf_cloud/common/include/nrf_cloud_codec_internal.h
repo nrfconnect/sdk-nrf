@@ -14,10 +14,10 @@
 #include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif
 #if defined(CONFIG_NRF_MODEM)
@@ -36,7 +36,7 @@ extern "C" {
 enum nrf_cloud_rcv_topic {
 	NRF_CLOUD_RCV_TOPIC_GENERAL,
 	NRF_CLOUD_RCV_TOPIC_AGNSS,
-	NRF_CLOUD_RCV_TOPIC_PGPS,
+	NRF_CLOUD_RCV_TOPIC_PGNSS,
 	NRF_CLOUD_RCV_TOPIC_LOCATION,
 	/* Unknown/unhandled topic */
 	NRF_CLOUD_RCV_TOPIC_UNKNOWN
@@ -319,7 +319,7 @@ int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame *
 				    cJSON *const pvt_data_obj);
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGNSS)
 /** @brief Build A-GNSS type array based on request.
  */
 int nrf_cloud_agnss_type_array_get(const struct nrf_modem_gnss_agnss_data_frame *const request,
@@ -328,15 +328,15 @@ int nrf_cloud_agnss_type_array_get(const struct nrf_modem_gnss_agnss_data_frame 
 /** @brief Encode an A-GNSS request device message to be sent to nRF Cloud */
 int nrf_cloud_agnss_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame *const request,
 				    cJSON *const agnss_req_obj_out);
-#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-/** @brief Parse the PGPS response (MQTT) from nRF Cloud */
-int nrf_cloud_pgps_response_decode(const char *const response,
-				   struct nrf_cloud_pgps_result *const result);
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+/** @brief Parse the PGNSS response (MQTT) from nRF Cloud */
+int nrf_cloud_pgnss_response_decode(const char *const response,
+				   struct nrf_cloud_pgnss_result *const result);
 
-/** @brief Encode the data payload of an nRF Cloud P-GPS request into the provided object */
-int nrf_cloud_pgps_req_data_json_encode(const struct gps_pgps_request *const request,
+/** @brief Encode the data payload of an nRF Cloud PGNSS request into the provided object */
+int nrf_cloud_pgnss_req_data_json_encode(const struct gps_pgnss_request *const request,
 					cJSON *const data_obj_out);
 #endif
 

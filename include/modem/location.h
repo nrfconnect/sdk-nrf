@@ -14,8 +14,8 @@
 	defined(CONFIG_LOCATION_DATA_DETAILS)
 #include <nrf_modem_gnss.h>
 #endif
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
 #endif
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_METHOD_CELLULAR)
 #include <modem/lte_lc.h>
@@ -88,9 +88,9 @@ enum location_event_id {
 	 */
 	LOCATION_EVT_GNSS_ASSISTANCE_REQUEST,
 	/**
-	 * GNSS is requesting P-GPS data.
+	 * GNSS is requesting PGNSS data.
 	 *
-	 * Application should obtain the data and send it to location_pgps_data_process().
+	 * Application should obtain the data and send it to location_pgnss_data_process().
 	 */
 	LOCATION_EVT_GNSS_PREDICTION_REQUEST,
 	/**
@@ -334,12 +334,12 @@ struct location_event_data {
 		 */
 		struct nrf_modem_gnss_agnss_data_frame agnss_request;
 #endif
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGNSS)
 		/**
-		 * P-GPS notification data frame used by GNSS to let the application know it needs
+		 * PGNSS notification data frame used by GNSS to let the application know it needs
 		 * new assistance data, used with event @ref LOCATION_EVT_GNSS_PREDICTION_REQUEST.
 		 */
-		struct gps_pgps_request pgps_request;
+		struct gps_pgnss_request pgnss_request;
 #endif
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) &&\
 	(defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI))
@@ -422,7 +422,7 @@ struct location_gnss_config {
 	 *
 	 * @details If set to true, the library triggers GNSS priority mode if five consecutive PVT
 	 * messages indicate that GNSS is blocked by LTE idle mode operations. This is especially
-	 * helpful if A-GNSS or P-GPS is not enabled or downloading assistance data fails and GNSS
+	 * helpful if A-GNSS or PGNSS is not enabled or downloading assistance data fails and GNSS
 	 * module has to decode navigation data from the satellite broadcast. Priority mode is
 	 * disabled automatically after the first fix or after 40 seconds.
 	 *
@@ -712,15 +712,15 @@ const struct location_data_details *location_details_get(
 int location_agnss_data_process(const char *buf, size_t buf_len);
 
 /**
- * @brief Feed in P-GPS data to be processed by library.
+ * @brief Feed in PGNSS data to be processed by library.
  *
- * @details If Location library is not receiving P-GPS assistance data directly from nRF Cloud,
+ * @details If Location library is not receiving PGNSS assistance data directly from nRF Cloud,
  * it triggers the @ref LOCATION_EVT_GNSS_PREDICTION_REQUEST event when assistance is needed. Once
  * application has obtained the assistance data it can be handed over to Location library using this
  * function.
  *
- * Note that the data must be formatted similarly to the nRF Cloud P-GPS data, see for example
- * nrf_cloud_pgps_schema_v1.h.
+ * Note that the data must be formatted similarly to the nRF Cloud PGNSS data, see for example
+ * nrf_cloud_pgnss_schema_v1.h.
  *
  * @param[in] buf Data received.
  * @param[in] buf_len Buffer size of data to be processed.
@@ -729,7 +729,7 @@ int location_agnss_data_process(const char *buf, size_t buf_len);
  * @retval -EINVAL Given buffer is NULL or buffer length zero.
  * @retval -ENOTSUP @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is not set.
  */
-int location_pgps_data_process(const char *buf, size_t buf_len);
+int location_pgnss_data_process(const char *buf, size_t buf_len);
 
 /**
  * @brief Pass cloud location result to the library.

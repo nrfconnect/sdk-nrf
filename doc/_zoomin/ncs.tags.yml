@@ -421,7 +421,7 @@ mapping_topics:
   - nrf/libraries/networking/nrf_cloud_agnss.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_cloud_coap.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_cloud_location.html: ["nrf-cloud"]
-  - nrf/libraries/networking/nrf_cloud_pgps.html: ["nrf-cloud"]
+  - nrf/libraries/networking/nrf_cloud_pgnss.html: ["nrf-cloud"]
   - nrf/libraries/networking/nrf_provisioning.html: ["at-commands"]
   - nrf/libraries/networking/softap_wifi_provision.html: ["wifi", "nrf70-series", "nrf7002",
                                                           "nrf7001", "nrf7000"]

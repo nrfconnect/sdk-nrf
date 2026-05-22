@@ -164,3 +164,21 @@ nRF Cloud library
 
      The :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` Kconfig options are deprecated but kept functional for fleet operators with IMEI-provisioned devices already in the field.
      New applications should use the UUID default to match the device ID that the nRF Cloud provisioning tools generate.
+
+nRF Cloud PGNSS (formerly P-GPS)
+--------------------------------
+
+.. toggle::
+
+   The Predicted GPS (P-GPS) library and its public API have been renamed to Predicted GNSS (PGNSS) to align with the nRF Cloud API terminology.
+   The CoAP endpoint used to request predictions has been renamed from ``loc/pgps`` to ``loc/pgnss``.
+   The CBOR wire format is unchanged; only identifiers and the endpoint path have changed.
+   Old Kconfig options and the old header are kept as deprecated aliases for one release cycle and emit a deprecation warning at build time.
+   Update your application as follows:
+
+   * Kconfig options: replace ``CONFIG_NRF_CLOUD_PGPS*`` with the equivalent ``CONFIG_NRF_CLOUD_PGNSS*``.
+   * Headers: replace ``#include <net/nrf_cloud_pgps.h>`` with ``#include <net/nrf_cloud_pgnss.h>``.
+   * C symbols: replace the ``nrf_cloud_pgps_`` prefix with ``nrf_cloud_pgnss_`` on functions, structs, enums, and macros.
+   * Sample overlays: rename :file:`overlay-pgps.conf` to :file:`overlay-pgnss.conf` (or the equivalent for your sample).
+
+   The Partition Manager partition name (``pgps``) is preserved so that devices upgrading from previous releases retain access to predictions already stored in external flash.

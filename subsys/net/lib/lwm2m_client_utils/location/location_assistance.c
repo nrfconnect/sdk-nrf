@@ -30,8 +30,8 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define GROUND_FIX_PATHS_DEFAULT 6
 #define GROUND_FIX_PATHS_MAX 8
 
-#define PGPS_LOCATION_PATHS_DEFAULT 4
-#define PGPS_LOCATION_PATHS_MAX 5
+#define PGNSS_LOCATION_PATHS_DEFAULT 4
+#define PGNSS_LOCATION_PATHS_MAX 5
 
 #define AGNSS_LOCATION_PATHS_DEFAULT 7
 #define AGNSS_LOCATION_PATHS_MAX 8
@@ -45,10 +45,10 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #define GNSS_ASSIST_ASSIST_TYPE				0
 #define GNSS_ASSIST_AGNSS_MASK				1
-#define GNSS_ASSIST_PGPS_PRED_COUNT			2
-#define GNSS_ASSIST_PGPS_PRED_INTERVAL			3
-#define GNSS_ASSIST_PGPS_START_GPS_DAY			4
-#define GNSS_ASSIST_PGPS_START_GPS_TIME_OF_DAY		5
+#define GNSS_ASSIST_PGNSS_PRED_COUNT			2
+#define GNSS_ASSIST_PGNSS_PRED_INTERVAL			3
+#define GNSS_ASSIST_PGNSS_START_GPS_DAY			4
+#define GNSS_ASSIST_PGNSS_START_GPS_TIME_OF_DAY		5
 #define GNSS_ASSIST_ASSIST_DATA				6
 #define GNSS_ASSIST_RESULT_CODE				7
 #define GNSS_ASSIST_ELEVATION_MASK			8
@@ -63,11 +63,11 @@ static bool permanent_error;
 static location_assistance_result_code_cb_t result_code_cb;
 
 static int do_agnss_request_send(struct lwm2m_ctx *ctx);
-static int do_pgps_request_send(struct lwm2m_ctx *ctx);
+static int do_pgnss_request_send(struct lwm2m_ctx *ctx);
 static int do_ground_fix_request_send(struct lwm2m_ctx *ctx);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) ||                                    \
-	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
 static int gnss_assintace_request_prepare(void)
 {
 	if (permanent_error) {
@@ -110,10 +110,10 @@ static void location_assist_gnss_work_handler(struct k_work *work)
 		do_agnss_request_send(req_client_ctx);
 	}
 
-	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS) &&
-	    assist_type == ASSISTANCE_REQUEST_TYPE_PGPS) {
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS) &&
+	    assist_type == ASSISTANCE_REQUEST_TYPE_PGNSS) {
 		location_retry_timer_start(&gnss_retry_info);
-		do_pgps_request_send(req_client_ctx);
+		do_pgnss_request_send(req_client_ctx);
 	}
 }
 
@@ -384,32 +384,32 @@ int location_assistance_ground_fix_request_send(struct lwm2m_ctx *ctx)
 }
 #endif
 
-static int do_pgps_request_send(struct lwm2m_ctx *ctx)
+static int do_pgnss_request_send(struct lwm2m_ctx *ctx)
 {
-	int path_count = PGPS_LOCATION_PATHS_DEFAULT;
+	int path_count = PGNSS_LOCATION_PATHS_DEFAULT;
 
-	LOG_INF("Send P-GPS request");
-	location_assist_gnss_type_set(ASSISTANCE_REQUEST_TYPE_PGPS);
+	LOG_INF("Send PGNSS request");
+	location_assist_gnss_type_set(ASSISTANCE_REQUEST_TYPE_PGNSS);
 	gnss_assistance_prepare_download();
 	req_client_ctx = ctx;
 
-	if (location_assist_pgps_get_start_gps_day() != 0) {
+	if (location_assist_pgnss_get_start_gps_day() != 0) {
 		path_count++;
 	}
-	const struct lwm2m_obj_path send_path[PGPS_LOCATION_PATHS_MAX] = {
+	const struct lwm2m_obj_path send_path[PGNSS_LOCATION_PATHS_MAX] = {
 		LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_ASSIST_TYPE),
-		LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_PGPS_PRED_COUNT),
-		LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_PGPS_PRED_INTERVAL),
-		LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_PGPS_START_GPS_TIME_OF_DAY),
-		LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_PGPS_START_GPS_DAY)
+		LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_PGNSS_PRED_COUNT),
+		LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_PGNSS_PRED_INTERVAL),
+		LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_PGNSS_START_GPS_TIME_OF_DAY),
+		LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_PGNSS_START_GPS_DAY)
 	};
 
 	/* Send Request to server */
 	return lwm2m_send_cb(ctx, send_path, path_count, NULL);
 }
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-int location_assistance_pgps_request_send(struct lwm2m_ctx *ctx)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+int location_assistance_pgnss_request_send(struct lwm2m_ctx *ctx)
 {
 	int ret;
 
@@ -418,14 +418,14 @@ int location_assistance_pgps_request_send(struct lwm2m_ctx *ctx)
 		return ret;
 	}
 
-	return do_pgps_request_send(ctx);
+	return do_pgnss_request_send(ctx);
 }
 #endif
 
 void location_assistance_retry_init(bool enable_resend)
 {
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) ||
-	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)) {
+	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)) {
 		location_retry_timer_cancel(&gnss_retry_info);
 		gnss_retry_info.retry_seconds = 0;
 		gnss_retry_info.temp_error = false;
@@ -450,7 +450,7 @@ void location_assistance_set_result_code_cb(location_assistance_result_code_cb_t
 static int location_assistance_init(void)
 {
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) ||
-	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)) {
+	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)) {
 		k_work_init_delayable(&gnss_retry_info.worker,
 				      location_assist_gnss_work_handler);
 		gnss_retry_info.retry_seconds = 0;

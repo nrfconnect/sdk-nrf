@@ -295,7 +295,7 @@ Enhancements to GNSS
 When GNSS has not been in use for a while or if the device is in relatively weak signaling conditions, it might take longer to acquire a fix.
 To improve this, Nordic Semiconductor has implemented the following methods for acquiring a fix in a shorter time:
 
-* A-GNSS or P-GPS or a combination of both
+* A-GNSS or PGNSS or a combination of both
 * Low accuracy mode
 
 Assisted GNSS (A-GNSS)
@@ -312,15 +312,15 @@ Starting from modem firmware v2.0.0, GNSS supports assistance data also for QZSS
 nRF Cloud can provide assistance data for both GPS and QZSS.
 See :ref:`nrfxlib:gnss_int_agps_data` for more information about the retrieval of A-GNSS data.
 
-Predicted GPS (P-GPS)
----------------------
+Predicted GNSS (PGNSS)
+----------------------
 
-P-GPS is a form of assistance, where the device can download predicted satellite ephemerides data for several days into the future.
+PGNSS is a form of assistance, where the device can download predicted satellite ephemerides data for several days into the future.
 Normally, devices connect to the cellular network approximately every two hours for up-to-date satellite ephemeris information or they download the ephemeris data from the acquired satellites.
-P-GPS enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
-Note that P-GPS requires more memory compared to regular A-GNSS.
+PGNSS enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
+Note that PGNSS requires more memory compared to regular A-GNSS.
 
-Also, note that due to satellite clock inaccuracies, not all functional satellites will have ephemerides data valid when nearing the end of the prediction period in the downloaded P-GPS package.
+Also, note that due to satellite clock inaccuracies, not all functional satellites will have ephemerides data valid when nearing the end of the prediction period in the downloaded PGNSS package.
 This means that the number of satellites having valid predicted ephemerides reduces in number roughly after ten days.
 Hence, the GNSS module needs to download the ephemeris data from the satellite broadcast if no predicted ephemeris is found for that satellite to be able to use the satellite.
 
@@ -350,7 +350,7 @@ Samples using GNSS in |NCS|
 There are many examples in |NCS| that use GNSS.
 Following is a list of the samples and applications with some information about the GNSS usage:
 
-* The :ref:`gnss_sample` sample does not use assistance by default but can be configured to use nRF Cloud A-GNSS, P-GPS, or a combination of both.
+* The :ref:`gnss_sample` sample does not use assistance by default but can be configured to use nRF Cloud A-GNSS, PGNSS, or a combination of both.
   The sample displays tracking and fix information as well as NMEA strings in the serial console.
-* The :ref:`location_sample` sample uses GNSS through the :ref:`lib_location` with nRF Cloud A-GNSS, P-GPS, or a combination of both.
-* The :ref:`modem_shell_application` sample has various usages of GNSS through different APIs with or without nRF Cloud A-GNSS and P-GPS.
+* The :ref:`location_sample` sample uses GNSS through the :ref:`lib_location` with nRF Cloud A-GNSS, PGNSS, or a combination of both.
+* The :ref:`modem_shell_application` sample has various usages of GNSS through different APIs with or without nRF Cloud A-GNSS and PGNSS.

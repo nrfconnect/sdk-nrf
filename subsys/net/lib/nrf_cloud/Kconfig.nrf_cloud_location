@@ -59,9 +59,9 @@ endmenu
 
 rsource "Kconfig.nrf_cloud_agnss"
 
-rsource "Kconfig.nrf_cloud_pgps"
+rsource "Kconfig.nrf_cloud_pgnss"
 
-if NRF_CLOUD_AGNSS || NRF_CLOUD_PGPS
+if NRF_CLOUD_AGNSS || NRF_CLOUD_PGNSS
 
 module = NRF_CLOUD_GPS
 module-str = nRF Cloud GPS Assistance

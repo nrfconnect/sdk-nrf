@@ -11,8 +11,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
-#include "zcbor_decode.h"
-#include "pgps_decode.h"
+#include "zcbor_encode.h"
+#include "pgnss_encode.h"
 #include "zcbor_print.h"
 
 #if DEFAULT_MAX_QTY != 10
@@ -30,30 +30,35 @@
 		}                                                                                  \
 	} while (0)
 
-static bool decode_pgps_resp(zcbor_state_t *state, struct pgps_resp *result);
+static bool encode_pgnss_req(zcbor_state_t *state, const struct pgnss_req *input);
 
-static bool decode_pgps_resp(zcbor_state_t *state, struct pgps_resp *result)
+static bool encode_pgnss_req(zcbor_state_t *state, const struct pgnss_req *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = (((zcbor_map_start_decode(state) &&
-		      (((((zcbor_uint32_expect(state, (1)))) &&
-			 (zcbor_tstr_decode(state, (&(*result).pgps_resp_host)))) &&
-			(((zcbor_uint32_expect(state, (2)))) &&
-			 (zcbor_tstr_decode(state, (&(*result).pgps_resp_path))))) ||
-		       (zcbor_list_map_end_force_decode(state), false)) &&
-		      zcbor_map_end_decode(state))));
+	bool res = (((
+		zcbor_map_start_encode(state, 4) &&
+		(((((zcbor_uint32_put(state, (1)))) &&
+		   (zcbor_uint32_encode(state, (&(*input).pgnss_req_predictionCount)))) &&
+		  (((zcbor_uint32_put(state, (2)))) &&
+		   (zcbor_uint32_encode(state, (&(*input).pgnss_req_predictionIntervalMinutes)))) &&
+		  (((zcbor_uint32_put(state, (3)))) &&
+		   (zcbor_uint32_encode(state, (&(*input).pgnss_req_startGPSDay)))) &&
+		  (((zcbor_uint32_put(state, (4)))) &&
+		   (zcbor_uint32_encode(state, (&(*input).pgnss_req_startGPSTimeOfDaySeconds))))) ||
+		 (zcbor_list_map_end_force_encode(state), false)) &&
+		zcbor_map_end_encode(state, 4))));
 
 	log_result(state, res, __func__);
 	return res;
 }
 
-int cbor_decode_pgps_resp(const uint8_t *payload, size_t payload_len, struct pgps_resp *result,
+int cbor_encode_pgnss_req(uint8_t *payload, size_t payload_len, const struct pgnss_req *input,
 			  size_t *payload_len_out)
 {
 	zcbor_state_t states[3];
 
-	return zcbor_entry_function(payload, payload_len, (void *)result, payload_len_out, states,
-				    (zcbor_decoder_t *)decode_pgps_resp,
+	return zcbor_entry_function(payload, payload_len, (void *)input, payload_len_out, states,
+				    (zcbor_decoder_t *)encode_pgnss_req,
 				    sizeof(states) / sizeof(zcbor_state_t), 1);
 }

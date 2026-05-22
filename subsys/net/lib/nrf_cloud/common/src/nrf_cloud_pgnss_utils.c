@@ -7,24 +7,29 @@
 #include <zephyr/kernel.h>
 #include <stdlib.h>
 
-#include <net/nrf_cloud_pgps.h>
+#include <net/nrf_cloud_pgnss.h>
 #include <zephyr/settings/settings.h>
 #include <date_time.h>
 
 #include "nrf_cloud_transport.h"
-#include "nrf_cloud_pgps_schema_v1.h"
-#include "nrf_cloud_pgps_utils.h"
+#include "nrf_cloud_pgnss_schema_v1.h"
+#include "nrf_cloud_pgnss_utils.h"
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_download.h"
 
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_DECLARE(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
+LOG_MODULE_DECLARE(nrf_cloud_pgnss, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
-#define SOCKET_RETRIES		  CONFIG_NRF_CLOUD_PGPS_SOCKET_RETRIES
+#define SOCKET_RETRIES		  CONFIG_NRF_CLOUD_PGNSS_SOCKET_RETRIES
+/* Settings namespace and key names are preserved from the legacy PGPS name to
+ * keep stored predictions readable across the rename. Renaming the keys would
+ * invalidate cached PGNSS predictions on every device upgrading from a release
+ * built before this rename.
+ */
 #define SETTINGS_NAME		  "nrf_cloud_pgps"
-#define SETTINGS_KEY_PGPS_HEADER  "pgps_header"
-#define SETTINGS_FULL_PGPS_HEADER SETTINGS_NAME "/" SETTINGS_KEY_PGPS_HEADER
+#define SETTINGS_KEY_PGNSS_HEADER  "pgps_header"
+#define SETTINGS_FULL_PGNSS_HEADER SETTINGS_NAME "/" SETTINGS_KEY_PGNSS_HEADER
 #define SETTINGS_KEY_LOCATION	  "location"
 #define SETTINGS_FULL_LOCATION	  SETTINGS_NAME "/" SETTINGS_KEY_LOCATION
 #define SETTINGS_KEY_LEAP_SEC	  "g2u_leap_sec"
@@ -43,7 +48,7 @@ static int num_blocks;
 /* todo: get the correct values from somewhere */
 static int gps_leap_seconds = GPS_TO_UTC_LEAP_SECONDS;
 static struct gps_location saved_location;
-static struct nrf_cloud_pgps_header saved_header;
+static struct nrf_cloud_pgnss_header saved_header;
 
 static K_SEM_DEFINE(dl_active, 1, 1);
 
@@ -58,12 +63,12 @@ static struct downloader_cfg dl_cfg = {
 
 static int sec_tag_list[1];
 static int socket_retries_left;
-static npgps_buffer_handler_t buffer_handler;
-static npgps_eot_handler_t eot_handler;
+static npgnss_buffer_handler_t buffer_handler;
+static npgnss_eot_handler_t eot_handler;
 
 static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb, void *cb_arg);
 
-SETTINGS_STATIC_HANDLER_DEFINE(nrf_cloud_pgps, SETTINGS_NAME, NULL, settings_set, NULL, NULL);
+SETTINGS_STATIC_HANDLER_DEFINE(nrf_cloud_pgnss, SETTINGS_NAME, NULL, settings_set, NULL, NULL);
 
 static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb, void *cb_arg)
 {
@@ -73,10 +78,10 @@ static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb
 
 	LOG_DBG("Settings key:%s, size:%d", key, len_rd);
 
-	if (!strncmp(key, SETTINGS_KEY_PGPS_HEADER, strlen(SETTINGS_KEY_PGPS_HEADER)) &&
+	if (!strncmp(key, SETTINGS_KEY_PGNSS_HEADER, strlen(SETTINGS_KEY_PGNSS_HEADER)) &&
 	    (len_rd == sizeof(saved_header))) {
 		if (read_cb(cb_arg, (void *)&saved_header, len_rd) == len_rd) {
-			LOG_DBG("Read pgps_header: count:%u, period:%u, day:%d, time:%d",
+			LOG_DBG("Read pgnss_header: count:%u, period:%u, day:%d, time:%d",
 				saved_header.prediction_count, saved_header.prediction_period_min,
 				saved_header.gps_day, saved_header.gps_time_of_day);
 			return 0;
@@ -100,7 +105,7 @@ static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb
 	return -ENOTSUP;
 }
 
-int npgps_download_lock(void)
+int npgnss_download_lock(void)
 {
 	int err = k_sem_take(&dl_active, K_NO_WAIT);
 
@@ -112,22 +117,22 @@ int npgps_download_lock(void)
 	return err;
 }
 
-void npgps_download_unlock(void)
+void npgnss_download_unlock(void)
 {
 	k_sem_give(&dl_active);
 	LOG_DBG("dl_active unlocked");
 }
 
-int npgps_save_header(struct nrf_cloud_pgps_header *header)
+int npgnss_save_header(struct nrf_cloud_pgnss_header *header)
 {
 	int ret = 0;
 
-	LOG_DBG("Saving pgps header");
-	ret = settings_save_one(SETTINGS_FULL_PGPS_HEADER, header, sizeof(*header));
+	LOG_DBG("Saving pgnss header");
+	ret = settings_save_one(SETTINGS_FULL_PGNSS_HEADER, header, sizeof(*header));
 	return ret;
 }
 
-const struct nrf_cloud_pgps_header *npgps_get_saved_header(void)
+const struct nrf_cloud_pgnss_header *npgnss_get_saved_header(void)
 {
 	return &saved_header;
 }
@@ -143,7 +148,7 @@ static int save_location(void)
 	return ret;
 }
 
-const struct gps_location *npgps_get_saved_location(void)
+const struct gps_location *npgnss_get_saved_location(void)
 {
 	return &saved_location;
 }
@@ -158,7 +163,7 @@ static int save_leap_sec(void)
 	return ret;
 }
 
-int npgps_settings_init(void)
+int npgnss_settings_init(void)
 {
 	int ret = 0;
 
@@ -167,18 +172,18 @@ int npgps_settings_init(void)
 		LOG_ERR("Settings init failed:%d", ret);
 		return ret;
 	}
-	ret = settings_load_subtree(settings_handler_nrf_cloud_pgps.name);
+	ret = settings_load_subtree(settings_handler_nrf_cloud_pgnss.name);
 	if (ret) {
 		LOG_ERR("Cannot load settings:%d", ret);
 	}
 	return ret;
 }
 
-void nrf_cloud_pgps_set_location_normalized(int32_t latitude, int32_t longitude)
+void nrf_cloud_pgnss_set_location_normalized(int32_t latitude, int32_t longitude)
 {
 	int64_t sec;
 
-	if (npgps_get_time(&sec, NULL, NULL)) {
+	if (npgnss_get_time(&sec, NULL, NULL)) {
 		sec = saved_location.gps_sec; /* could not get time; use prev */
 	}
 
@@ -192,7 +197,7 @@ void nrf_cloud_pgps_set_location_normalized(int32_t latitude, int32_t longitude)
 	}
 }
 
-void nrf_cloud_pgps_set_location(double latitude, double longitude)
+void nrf_cloud_pgnss_set_location(double latitude, double longitude)
 {
 	int32_t lat;
 	int32_t lng;
@@ -200,10 +205,10 @@ void nrf_cloud_pgps_set_location(double latitude, double longitude)
 	lat = LAT_DEG_TO_DEV_UNITS(latitude);
 	lng = LNG_DEG_TO_DEV_UNITS(longitude);
 
-	nrf_cloud_pgps_set_location_normalized(lat, lng);
+	nrf_cloud_pgnss_set_location_normalized(lat, lng);
 }
 
-void nrf_cloud_pgps_clear_location(void)
+void nrf_cloud_pgnss_clear_location(void)
 {
 	if (saved_location.gps_sec) {
 		saved_location.gps_sec = 0;
@@ -211,7 +216,7 @@ void nrf_cloud_pgps_clear_location(void)
 	}
 }
 
-void nrf_cloud_pgps_set_leap_seconds(int leap_seconds)
+void nrf_cloud_pgnss_set_leap_seconds(int leap_seconds)
 {
 	if (gps_leap_seconds != leap_seconds) {
 		gps_leap_seconds = leap_seconds;
@@ -234,25 +239,25 @@ static int64_t utc_to_gps_sec(const int64_t utc, int16_t *gps_time_ms)
 	return gps_sec;
 }
 
-int64_t npgps_gps_day_time_to_sec(uint16_t gps_day, uint32_t gps_time_of_day)
+int64_t npgnss_gps_day_time_to_sec(uint16_t gps_day, uint32_t gps_time_of_day)
 {
 	int64_t gps_sec = (int64_t)gps_day * SEC_PER_DAY + gps_time_of_day;
 
-#if PGPS_DEBUG
+#if PGNSS_DEBUG
 	LOG_DBG("Converted GPS day:%u, time of day:%u to GPS sec:%d", gps_day, gps_time_of_day,
 		(int32_t)gps_sec);
 #endif
 	return gps_sec;
 }
 
-void npgps_gps_sec_to_day_time(int64_t gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_day)
+void npgnss_gps_sec_to_day_time(int64_t gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_day)
 {
 	uint16_t day;
 	uint32_t time;
 
 	day = (uint16_t)(gps_sec / SEC_PER_DAY);
 	time = (uint32_t)(gps_sec - (day * SEC_PER_DAY));
-#if PGPS_DEBUG
+#if PGNSS_DEBUG
 	LOG_DBG("Converted GPS sec:%d to day:%u, time of day:%u, week:%u", (int32_t)gps_sec, day,
 		time, (uint16_t)(day / DAYS_PER_WEEK));
 #endif
@@ -264,7 +269,7 @@ void npgps_gps_sec_to_day_time(int64_t gps_sec, uint16_t *gps_day, uint32_t *gps
 	}
 }
 
-int npgps_get_shifted_time(int64_t *gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_day,
+int npgnss_get_shifted_time(int64_t *gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_day,
 			   uint32_t shift)
 {
 	int64_t now;
@@ -274,7 +279,7 @@ int npgps_get_shifted_time(int64_t *gps_sec, uint16_t *gps_day, uint32_t *gps_ti
 	if (!err) {
 		now += (int64_t)shift * MSEC_PER_SEC;
 		now = utc_to_gps_sec(now, NULL);
-		npgps_gps_sec_to_day_time(now, gps_day, gps_time_of_day);
+		npgnss_gps_sec_to_day_time(now, gps_day, gps_time_of_day);
 		if (gps_sec != NULL) {
 			*gps_sec = now;
 		}
@@ -282,9 +287,9 @@ int npgps_get_shifted_time(int64_t *gps_sec, uint16_t *gps_day, uint32_t *gps_ti
 	return err;
 }
 
-int npgps_get_time(int64_t *gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_day)
+int npgnss_get_time(int64_t *gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_day)
 {
-	return npgps_get_shifted_time(gps_sec, gps_day, gps_time_of_day, 0);
+	return npgnss_get_shifted_time(gps_sec, gps_day, gps_time_of_day, 0);
 }
 
 int ngps_block_pool_init(uint32_t base_address, int num)
@@ -294,7 +299,7 @@ int ngps_block_pool_init(uint32_t base_address, int num)
 	return 0;
 }
 
-int npgps_alloc_block(void)
+int npgnss_alloc_block(void)
 {
 	int idx;
 
@@ -313,7 +318,7 @@ int npgps_alloc_block(void)
 	return idx;
 }
 
-void npgps_undo_alloc_block(int block)
+void npgnss_undo_alloc_block(int block)
 {
 	if (!pool.block_used[block]) {
 		return;
@@ -322,11 +327,11 @@ void npgps_undo_alloc_block(int block)
 		pool.block_used[block] = false;
 		pool.first_free = block;
 	} else {
-		npgps_free_block(block);
+		npgnss_free_block(block);
 	}
 }
 
-void npgps_free_block(int block)
+void npgnss_free_block(int block)
 {
 	LOG_DBG("free:%d", block);
 	if (pool.first_free < 0) {
@@ -335,7 +340,7 @@ void npgps_free_block(int block)
 	pool.block_used[block] = false;
 }
 
-int npgps_get_block_extent(int store_block)
+int npgnss_get_block_extent(int store_block)
 {
 	/* Start counting from 1, because the first block has already been marked as being used. */
 	int len = 1;
@@ -353,7 +358,7 @@ int npgps_get_block_extent(int store_block)
 	return len;
 }
 
-void npgps_reset_block_pool(void)
+void npgnss_reset_block_pool(void)
 {
 	int i;
 
@@ -364,14 +369,14 @@ void npgps_reset_block_pool(void)
 	}
 }
 
-void npgps_mark_block_used(int block, bool used)
+void npgnss_mark_block_used(int block, bool used)
 {
 	__ASSERT((block >= 0) && (block < num_blocks), "block %d out of range", block);
 	pool.block_used[block] = used;
 	LOG_DBG("mark idx:%d = %u", block, used);
 }
 
-void npgps_print_blocks(void)
+void npgnss_print_blocks(void)
 {
 	char map[num_blocks + 1];
 	int i;
@@ -384,7 +389,7 @@ void npgps_print_blocks(void)
 	LOG_DBG("map:%s", map);
 }
 
-int npgps_num_free(void)
+int npgnss_num_free(void)
 {
 	int num = 0;
 
@@ -396,7 +401,7 @@ int npgps_num_free(void)
 	return num;
 }
 
-int npgps_find_first_free(int from_block)
+int npgnss_find_first_free(int from_block)
 {
 	int i;
 	int start = from_block;
@@ -413,7 +418,7 @@ int npgps_find_first_free(int from_block)
 	return pool.first_free;
 }
 
-int npgps_offset_to_block(uint32_t offset)
+int npgnss_offset_to_block(uint32_t offset)
 {
 	int block = offset / BLOCK_SIZE;
 
@@ -424,7 +429,7 @@ int npgps_offset_to_block(uint32_t offset)
 	return block;
 }
 
-uint32_t npgps_block_to_offset(int block)
+uint32_t npgnss_block_to_offset(int block)
 {
 	if ((block < 0) || (block >= num_blocks)) {
 		LOG_ERR("invalid block:%d", block);
@@ -433,7 +438,7 @@ uint32_t npgps_block_to_offset(int block)
 	return block * BLOCK_SIZE;
 }
 
-int npgps_pointer_to_block(uint8_t *p)
+int npgnss_pointer_to_block(uint8_t *p)
 {
 	int ret = (uint32_t)(p - block_pool_base) / BLOCK_SIZE;
 
@@ -444,7 +449,7 @@ int npgps_pointer_to_block(uint8_t *p)
 	return ret;
 }
 
-void *npgps_block_to_pointer(int block)
+void *npgnss_block_to_pointer(int block)
 {
 	void *ret;
 
@@ -458,7 +463,7 @@ void *npgps_block_to_pointer(int block)
 	return ret;
 }
 
-int npgps_download_init(npgps_buffer_handler_t buf_handler, npgps_eot_handler_t end_handler)
+int npgnss_download_init(npgnss_buffer_handler_t buf_handler, npgnss_eot_handler_t end_handler)
 {
 	__ASSERT(buf_handler != NULL, "Must specify buffer handler");
 	__ASSERT(end_handler != NULL, "Must specify end of transfer handler");
@@ -468,7 +473,7 @@ int npgps_download_init(npgps_buffer_handler_t buf_handler, npgps_eot_handler_t 
 	return downloader_init(&dl, &dl_cfg);
 }
 
-int npgps_download_start(const char *host, const char *file, int sec_tag, uint8_t pdn_id,
+int npgnss_download_start(const char *host, const char *file, int sec_tag, uint8_t pdn_id,
 			 size_t fragment_size)
 {
 	int err;
@@ -509,7 +514,7 @@ int npgps_download_start(const char *host, const char *file, int sec_tag, uint8_
 
 	err = nrf_cloud_download_start(&cloud_dl);
 	if (err) {
-		LOG_ERR("Failed to start P-GPS download, error: %d", err);
+		LOG_ERR("Failed to start PGNSS download, error: %d", err);
 		eot_handler(err); /* Let requester know so it can clean up. */
 	}
 

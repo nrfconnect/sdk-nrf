@@ -22,10 +22,10 @@
 #include "ground_fix_decode.h"
 #include "agnss_encode_types.h"
 #include "agnss_encode.h"
-#include "pgps_encode_types.h"
-#include "pgps_encode.h"
-#include "pgps_decode_types.h"
-#include "pgps_decode.h"
+#include "pgnss_encode_types.h"
+#include "pgnss_encode.h"
+#include "pgnss_decode_types.h"
+#include "pgnss_decode.h"
 #include "msg_encode_types.h"
 #include "msg_encode.h"
 #include "coap_codec.h"
@@ -497,34 +497,34 @@ int coap_codec_agnss_resp_decode(struct nrf_cloud_coap_agnss_result *result, con
 }
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-int coap_codec_pgps_encode(struct nrf_cloud_coap_pgps_request const *const request, uint8_t *buf,
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+int coap_codec_pgnss_encode(struct nrf_cloud_coap_pgnss_request const *const request, uint8_t *buf,
 			   size_t *len, enum coap_content_format fmt)
 {
 	__ASSERT_NO_MSG(request != NULL);
-	__ASSERT_NO_MSG(request->pgps_req != NULL);
+	__ASSERT_NO_MSG(request->pgnss_req != NULL);
 	__ASSERT_NO_MSG(buf != NULL);
 	__ASSERT_NO_MSG(len != NULL);
 
 	if (fmt != COAP_CONTENT_FORMAT_APP_CBOR) {
-		LOG_ERR("Invalid format for P-GPS: %d", fmt);
+		LOG_ERR("Invalid format for PGNSS: %d", fmt);
 		return -ENOTSUP;
 	}
 
 	int ret;
-	struct pgps_req input;
+	struct pgnss_req input;
 	size_t out_len;
 
 	memset(&input, 0, sizeof(input));
 
-	input.pgps_req_predictionCount = request->pgps_req->prediction_count;
-	input.pgps_req_predictionIntervalMinutes = request->pgps_req->prediction_period_min;
-	input.pgps_req_startGPSDay = request->pgps_req->gps_day;
-	input.pgps_req_startGPSTimeOfDaySeconds = request->pgps_req->gps_time_of_day;
+	input.pgnss_req_predictionCount = request->pgnss_req->prediction_count;
+	input.pgnss_req_predictionIntervalMinutes = request->pgnss_req->prediction_period_min;
+	input.pgnss_req_startGPSDay = request->pgnss_req->gps_day;
+	input.pgnss_req_startGPSTimeOfDaySeconds = request->pgnss_req->gps_time_of_day;
 
-	ret = cbor_encode_pgps_req(buf, *len, &input, &out_len);
+	ret = cbor_encode_pgnss_req(buf, *len, &input, &out_len);
 	if (ret) {
-		LOG_ERR("Error %d encoding P-GPS req", ret);
+		LOG_ERR("Error %d encoding PGNSS req", ret);
 		ret = -EINVAL;
 		*len = 0;
 	} else {
@@ -534,7 +534,7 @@ int coap_codec_pgps_encode(struct nrf_cloud_coap_pgps_request const *const reque
 	return ret;
 }
 
-int coap_codec_pgps_resp_decode(struct nrf_cloud_pgps_result *result, const uint8_t *buf,
+int coap_codec_pgnss_resp_decode(struct nrf_cloud_pgnss_result *result, const uint8_t *buf,
 				size_t len, enum coap_content_format fmt)
 {
 	__ASSERT_NO_MSG(result != NULL);
@@ -544,47 +544,47 @@ int coap_codec_pgps_resp_decode(struct nrf_cloud_pgps_result *result, const uint
 	if (fmt == COAP_CONTENT_FORMAT_APP_JSON) {
 		enum nrf_cloud_error nrf_err;
 
-		/* Check for a potential P-GPS JSON error message from nRF Cloud */
-		err = nrf_cloud_error_msg_decode(buf, NRF_CLOUD_JSON_APPID_VAL_PGPS,
+		/* Check for a potential PGNSS JSON error message from nRF Cloud */
+		err = nrf_cloud_error_msg_decode(buf, NRF_CLOUD_JSON_APPID_VAL_PGNSS,
 						 NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
 		if (!err) {
-			LOG_ERR("nRF Cloud returned P-GPS error: %d", nrf_err);
+			LOG_ERR("nRF Cloud returned PGNSS error: %d", nrf_err);
 			return -EFAULT;
 		}
-		LOG_ERR("Invalid P-GPS response format");
+		LOG_ERR("Invalid PGNSS response format");
 		return -EPROTO;
 	}
 	if (fmt != COAP_CONTENT_FORMAT_APP_CBOR) {
-		LOG_ERR("Invalid format for P-GPS: %d", fmt);
+		LOG_ERR("Invalid format for PGNSS: %d", fmt);
 		return -ENOTSUP;
 	}
 
-	struct pgps_resp resp;
+	struct pgnss_resp resp;
 	size_t resp_len;
 
-	err = cbor_decode_pgps_resp(buf, len, &resp, &resp_len);
+	err = cbor_decode_pgnss_resp(buf, len, &resp, &resp_len);
 	if (!err && (resp_len != len)) {
 		LOG_WRN("Different response length: expected:%zd, decoded:%zd", len, resp_len);
 	}
 	if (err) {
-		LOG_ERR("Error decoding P-GPS CBOR response: %d", err);
+		LOG_ERR("Error decoding PGNSS CBOR response: %d", err);
 		return -EINVAL;
 	}
 
-	strncpy(result->host, resp.pgps_resp_host.value, result->host_sz);
-	if (result->host_sz > resp.pgps_resp_host.len) {
-		result->host[resp.pgps_resp_host.len] = '\0';
+	strncpy(result->host, resp.pgnss_resp_host.value, result->host_sz);
+	if (result->host_sz > resp.pgnss_resp_host.len) {
+		result->host[resp.pgnss_resp_host.len] = '\0';
 	}
-	result->host_sz = resp.pgps_resp_host.len;
-	strncpy(result->path, resp.pgps_resp_path.value, result->path_sz);
-	if (result->path_sz > resp.pgps_resp_path.len) {
-		result->path[resp.pgps_resp_path.len] = '\0';
+	result->host_sz = resp.pgnss_resp_host.len;
+	strncpy(result->path, resp.pgnss_resp_path.value, result->path_sz);
+	if (result->path_sz > resp.pgnss_resp_path.len) {
+		result->path[resp.pgnss_resp_path.len] = '\0';
 	}
-	result->path_sz = resp.pgps_resp_path.len;
+	result->path_sz = resp.pgnss_resp_path.len;
 
 	return err;
 }
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 int coap_codec_fota_resp_decode(struct nrf_cloud_fota_job_info *job, const uint8_t *buf, size_t len,
 				enum coap_content_format fmt)

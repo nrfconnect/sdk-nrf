@@ -10,8 +10,8 @@
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <nrf_modem_gnss.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 #include <modem/lte_lc.h>
@@ -23,8 +23,8 @@
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame *agnss_req);
 #endif
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req);
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+void location_srv_ext_pgnss_handle(const struct gps_pgnss_request *pgnss_req);
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI)
 void location_srv_ext_cloud_location_handle(

@@ -36,18 +36,18 @@ if(CONFIG_NRF_CLOUD_AGNSS)
 endif()
 
 zephyr_library_sources_ifdef(
-  CONFIG_NRF_CLOUD_PGPS
-  common/src/nrf_cloud_pgps.c
-  common/src/nrf_cloud_pgps_utils.c
+  CONFIG_NRF_CLOUD_PGNSS
+  common/src/nrf_cloud_pgnss.c
+  common/src/nrf_cloud_pgnss_utils.c
   # this is on purpose, P-GPS uses some AGNSS functions, even if AGNSS is not enabled
   common/src/nrf_cloud_agnss.c
   common/src/nrf_cloud_agnss_utils.c
 )
 
-if(CONFIG_NRF_CLOUD_PGPS)
+if(CONFIG_NRF_CLOUD_PGNSS)
   zephyr_library_sources_ifdef(
     CONFIG_NRF_CLOUD_MQTT
-    mqtt/src/nrf_cloud_pgps.c)
+    mqtt/src/nrf_cloud_pgnss.c)
 endif()
 
 if(CONFIG_NRF_CLOUD_LOCATION)
@@ -79,8 +79,8 @@ zephyr_library_sources_ifdef(
   coap/generated/src/ground_fix_encode.c
   coap/generated/src/ground_fix_decode.c
   coap/generated/src/msg_encode.c
-  coap/generated/src/pgps_decode.c
-  coap/generated/src/pgps_encode.c
+  coap/generated/src/pgnss_decode.c
+  coap/generated/src/pgnss_encode.c
   common/src/nrf_cloud_dns.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS common/src/nrf_cloud_credentials.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES common/src/nrf_cloud_credentials.c)

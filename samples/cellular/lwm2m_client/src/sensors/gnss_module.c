@@ -11,9 +11,9 @@
 #include <net/lwm2m_client_utils_location.h>
 #include "location_events.h"
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
 #include <net/lwm2m_client_utils_location.h>
-#include <net/nrf_cloud_pgps.h>
+#include <net/nrf_cloud_pgnss.h>
 #include "location_events.h"
 #endif
 
@@ -25,50 +25,50 @@ LOG_MODULE_REGISTER(gnss_module, CONFIG_APP_LOG_LEVEL);
 
 static struct nrf_modem_gnss_pvt_data_frame pvt_data;
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) || \
-defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
 static struct nrf_modem_gnss_agnss_data_frame agnss_req;
 #endif
 static bool running;
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-void pgps_handler(struct nrf_cloud_pgps_event *event)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+void pgnss_handler(struct nrf_cloud_pgnss_event *event)
 {
 	int err;
 
 	switch (event->type) {
-	case PGPS_EVT_INIT:
-		LOG_DBG("PGPS_EVT_INIT");
+	case PGNSS_EVT_INIT:
+		LOG_DBG("PGNSS_EVT_INIT");
 		break;
-	case PGPS_EVT_UNAVAILABLE:
-		LOG_DBG("PGPS_EVT_UNAVAILABLE");
+	case PGNSS_EVT_UNAVAILABLE:
+		LOG_DBG("PGNSS_EVT_UNAVAILABLE");
 		break;
-	case PGPS_EVT_LOADING:
-		LOG_DBG("PGPS_EVT_LOADING");
+	case PGNSS_EVT_LOADING:
+		LOG_DBG("PGNSS_EVT_LOADING");
 		break;
-	case PGPS_EVT_READY:
-		LOG_DBG("PGPS_EVT_READY");
+	case PGNSS_EVT_READY:
+		LOG_DBG("PGNSS_EVT_READY");
 		break;
-	case PGPS_EVT_AVAILABLE:
-		LOG_DBG("PGPS_EVT_AVAILABLE");
-		err = nrf_cloud_pgps_inject(event->prediction, &agnss_req);
+	case PGNSS_EVT_AVAILABLE:
+		LOG_DBG("PGNSS_EVT_AVAILABLE");
+		err = nrf_cloud_pgnss_inject(event->prediction, &agnss_req);
 		if (err) {
 			LOG_ERR("Unable to send prediction to modem: %d", err);
 		}
 
-		err = nrf_cloud_pgps_preemptive_updates();
+		err = nrf_cloud_pgnss_preemptive_updates();
 		if (err) {
 			LOG_ERR("Error requesting updates: %d", err);
 		}
 		break;
-	case PGPS_EVT_REQUEST: {
-		LOG_DBG("PGPS_EVT_REQUEST");
-		struct pgps_data_request_event *event = new_pgps_data_request_event();
+	case PGNSS_EVT_REQUEST: {
+		LOG_DBG("PGNSS_EVT_REQUEST");
+		struct pgnss_data_request_event *event = new_pgnss_data_request_event();
 
 		APP_EVENT_SUBMIT(event);
 	}
 		break;
 	default:
-		LOG_WRN("Unknown P-GPS event");
+		LOG_WRN("Unknown PGNSS event");
 		break;
 	}
 }
@@ -96,7 +96,7 @@ static void gnss_event_handler(int event_id)
 		}
 	case NRF_MODEM_GNSS_EVT_AGNSS_REQ: {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) || \
-defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
 		LOG_INF("GPS requests A-GNSS Data. Sending request to LwM2M server");
 		err = nrf_modem_gnss_read(&agnss_req, sizeof(agnss_req),
 					  NRF_MODEM_GNSS_DATA_AGNSS_REQ);
@@ -178,20 +178,20 @@ int start_gnss(void)
 		return -EALREADY;
 	}
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-	struct nrf_cloud_pgps_init_param param = {
-		.event_handler = pgps_handler,
-		/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+	struct nrf_cloud_pgnss_init_param param = {
+		.event_handler = pgnss_handler,
+		/* storage is defined by CONFIG_NRF_CLOUD_PGNSS_STORAGE */
 		.storage_base = 0u,
 		.storage_size = 0u
 	};
 
-	err = nrf_cloud_pgps_init(&param);
+	err = nrf_cloud_pgnss_init(&param);
 
 	if (err) {
-		LOG_ERR("nrf_cloud_pgps_init: %d", err);
+		LOG_ERR("nrf_cloud_pgnss_init: %d", err);
 	}
-	nrf_cloud_pgps_notify_prediction();
+	nrf_cloud_pgnss_notify_prediction();
 #endif
 
 	err = nrf_modem_gnss_start();

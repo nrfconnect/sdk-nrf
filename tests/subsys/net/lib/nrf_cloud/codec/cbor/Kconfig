@@ -15,7 +15,7 @@ config NRF_CLOUD_LOG_LEVEL
 config NRF_CLOUD_COAP_LOG_LEVEL
 	default 0
 
-# Enable AGNSS and PGPS so the corresponding code paths in
+# Enable AGNSS and PGNSS so the corresponding code paths in
 # nrf_cloud_coap_codec.c (guarded by these CONFIG_* symbols) are
 # compiled into the test binary.  The actual library .c files that
 # would be pulled in by these symbols are excluded from the build via
@@ -24,7 +24,7 @@ config NRF_CLOUD_COAP_LOG_LEVEL
 config NRF_CLOUD_AGNSS
 	default y
 
-config NRF_CLOUD_PGPS
+config NRF_CLOUD_PGNSS
 	default y
 
 source "Kconfig.zephyr"

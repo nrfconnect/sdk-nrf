@@ -151,42 +151,42 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS
 	  A-GNSS assistance data is requested from lwm2m server and fed to the GNSS module
 	  after the data has been received.
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
-	bool "Use location based on P-GPS"
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS
+	bool "Use location based on PGNSS"
 	help
-	  P-GPS assistance data is requested from lwm2m server and fed to the GNSS module
+	  PGNSS assistance data is requested from lwm2m server and fed to the GNSS module
 	  after the data has been received.
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_PREDICTION_COUNT
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS_PREDICTION_COUNT
 	int "Number of predictions to be requested"
 	default 42
 	range 1 168
-	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS
 	help
 	  Default values give 6 predictions per day for a week. Depends on the starting day
 	  and the prediction interval.
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_PREDICTION_INTERVAL
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS_PREDICTION_INTERVAL
 	int "Interval between predictions in minutes"
 	default 240
 	range 120 480
-	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS
 	help
 	  By default, 240 (4 hours) is used. Valid values are: 120, 240, 360, 480
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_STARTING_DAY
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS_STARTING_DAY
 	int "Starting day of the predictions as GPS day"
 	default 0
-	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS
 	help
 	  Do not override if you are not sure about the date. By default, the value
 	  is not provided to the server and the current GPS day is used.
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_STARTING_TIME
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS_STARTING_TIME
 	int "Starting time of the day of predictions"
 	default 0
 	range 0 86399
-	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS
 	help
 	  The starting time of the predictions.
 

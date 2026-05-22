@@ -121,7 +121,7 @@ if(CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP)
   ncs_add_partition_manager_config(pm.yml.memfault)
 endif()
 
-if(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
+if(CONFIG_NRF_CLOUD_PGNSS_STORAGE_PARTITION)
   ncs_add_partition_manager_config(pm.yml.pgps)
 endif()
 

@@ -11,9 +11,9 @@
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 #include <net/nrf_cloud_coap.h>
 
 #include "assistance.h"
@@ -24,13 +24,13 @@ LOG_MODULE_DECLARE(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
 static char agnss_data_buf[NRF_CLOUD_AGNSS_MAX_DATA_SIZE];
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
 static struct nrf_modem_gnss_agnss_data_frame agnss_need;
-static struct gps_pgps_request pgps_request;
-static struct nrf_cloud_pgps_prediction *prediction;
-static struct k_work get_pgps_data_work;
-static struct k_work inject_pgps_data_work;
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+static struct gps_pgnss_request pgnss_request;
+static struct nrf_cloud_pgnss_prediction *prediction;
+static struct k_work get_pgnss_data_work;
+static struct k_work inject_pgnss_data_work;
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 static struct k_work_q *work_q;
 static volatile bool assistance_active;
@@ -83,8 +83,8 @@ static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
 }
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-static void get_pgps_data_work_fn(struct k_work *work)
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+static void get_pgnss_data_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
@@ -92,13 +92,13 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 	assistance_active = true;
 
-	LOG_INF("Sending request for P-GPS predictions to nRF Cloud...");
+	LOG_INF("Sending request for PGNSS predictions to nRF Cloud...");
 
-	struct nrf_cloud_coap_pgps_request request = {
-		.pgps_req = &pgps_request
+	struct nrf_cloud_coap_pgnss_request request = {
+		.pgnss_req = &pgnss_request
 	};
 
-	struct nrf_cloud_pgps_result file_location = {0};
+	struct nrf_cloud_pgnss_result file_location = {0};
 
 	static char host[64];
 	static char path[128];
@@ -111,41 +111,41 @@ static void get_pgps_data_work_fn(struct k_work *work)
 	file_location.path = path;
 	file_location.path_sz = sizeof(path);
 
-	err = nrf_cloud_coap_pgps_url_get(&request, &file_location);
+	err = nrf_cloud_coap_pgnss_url_get(&request, &file_location);
 	if (err) {
-		LOG_ERR("GNSS: Failed to get P-GPS data, error: %d", err);
+		LOG_ERR("GNSS: Failed to get PGNSS data, error: %d", err);
 
-		nrf_cloud_pgps_request_reset();
+		nrf_cloud_pgnss_request_reset();
 
 		goto exit;
 	}
 
-	LOG_INF("Processing P-GPS response");
+	LOG_INF("Processing PGNSS response");
 
-	err = nrf_cloud_pgps_update(&file_location);
+	err = nrf_cloud_pgnss_update(&file_location);
 	if (err) {
-		LOG_ERR("Failed to process P-GPS response, error: %d", err);
+		LOG_ERR("Failed to process PGNSS response, error: %d", err);
 
-		nrf_cloud_pgps_request_reset();
+		nrf_cloud_pgnss_request_reset();
 
 		goto exit;
 	}
 
-	LOG_INF("P-GPS response processed");
+	LOG_INF("PGNSS response processed");
 
-	err = nrf_cloud_pgps_notify_prediction();
+	err = nrf_cloud_pgnss_notify_prediction();
 	if (err) {
 		LOG_ERR("Failed to request current prediction, error: %d", err);
 
 		goto exit;
 	}
 
-	LOG_INF("P-GPS predictions requested");
+	LOG_INF("PGNSS predictions requested");
 exit:
 	assistance_active = false;
 }
 
-static void inject_pgps_data_work_fn(struct k_work *work)
+static void inject_pgnss_data_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
@@ -153,43 +153,43 @@ static void inject_pgps_data_work_fn(struct k_work *work)
 
 	assistance_active = true;
 
-	LOG_INF("Injecting P-GPS ephemerides");
+	LOG_INF("Injecting PGNSS ephemerides");
 
-	err = nrf_cloud_pgps_inject(prediction, &agnss_need);
+	err = nrf_cloud_pgnss_inject(prediction, &agnss_need);
 	if (err) {
-		LOG_ERR("Failed to inject P-GPS ephemerides");
+		LOG_ERR("Failed to inject PGNSS ephemerides");
 	}
 
-	err = nrf_cloud_pgps_preemptive_updates();
+	err = nrf_cloud_pgnss_preemptive_updates();
 	if (err) {
-		LOG_ERR("Failed to request P-GPS updates");
+		LOG_ERR("Failed to request PGNSS updates");
 	}
 
 	assistance_active = false;
 }
 
-static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
+static void pgnss_event_handler(struct nrf_cloud_pgnss_event *event)
 {
 	switch (event->type) {
-	case PGPS_EVT_AVAILABLE:
+	case PGNSS_EVT_AVAILABLE:
 		prediction = event->prediction;
 
-		k_work_submit_to_queue(work_q, &inject_pgps_data_work);
+		k_work_submit_to_queue(work_q, &inject_pgnss_data_work);
 		break;
 
-	case PGPS_EVT_REQUEST:
-		memcpy(&pgps_request, event->request, sizeof(pgps_request));
+	case PGNSS_EVT_REQUEST:
+		memcpy(&pgnss_request, event->request, sizeof(pgnss_request));
 
-		k_work_submit_to_queue(work_q, &get_pgps_data_work);
+		k_work_submit_to_queue(work_q, &get_pgnss_data_work);
 		break;
 
-	case PGPS_EVT_LOADING:
-		LOG_INF("Loading P-GPS predictions");
+	case PGNSS_EVT_LOADING:
+		LOG_INF("Loading PGNSS predictions");
 		assistance_active = true;
 		break;
 
-	case PGPS_EVT_READY:
-		LOG_INF("P-GPS predictions ready");
+	case PGNSS_EVT_READY:
+		LOG_INF("PGNSS predictions ready");
 		assistance_active = false;
 		break;
 
@@ -198,7 +198,7 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		break;
 	}
 }
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 static const char *get_system_string(uint8_t system_id)
@@ -230,22 +230,22 @@ int assistance_init(struct k_work_q *assistance_work_q)
 		return err;
 	}
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	k_work_init(&get_pgps_data_work, get_pgps_data_work_fn);
-	k_work_init(&inject_pgps_data_work, inject_pgps_data_work_fn);
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+	k_work_init(&get_pgnss_data_work, get_pgnss_data_work_fn);
+	k_work_init(&inject_pgnss_data_work, inject_pgnss_data_work_fn);
 
-	struct nrf_cloud_pgps_init_param pgps_param = {
-		.event_handler = pgps_event_handler,
-		/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+	struct nrf_cloud_pgnss_init_param pgnss_param = {
+		.event_handler = pgnss_event_handler,
+		/* storage is defined by CONFIG_NRF_CLOUD_PGNSS_STORAGE */
 		.storage_base = 0u,
 		.storage_size = 0u
 	};
 
-	if (nrf_cloud_pgps_init(&pgps_param) != 0) {
-		LOG_ERR("Failed to initialize P-GPS");
+	if (nrf_cloud_pgnss_init(&pgnss_param) != 0) {
+		LOG_ERR("Failed to initialize PGNSS");
 		return -1;
 	}
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 	return 0;
 }
@@ -263,23 +263,23 @@ int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 		coap_connected = true;
 	}
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	/* Store the A-GNSS data request for P-GPS use. */
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+	/* Store the A-GNSS data request for PGNSS use. */
 	memcpy(&agnss_need, agnss_request, sizeof(agnss_need));
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 	if (!agnss_request->data_flags) {
-		/* No assistance needed from A-GNSS, skip directly to P-GPS. */
-		nrf_cloud_pgps_notify_prediction();
+		/* No assistance needed from A-GNSS, skip directly to PGNSS. */
+		nrf_cloud_pgnss_notify_prediction();
 		return 0;
 	}
 
-	/* P-GPS will handle GPS ephemerides, so skip those. */
+	/* PGNSS will handle GPS ephemerides, so skip those. */
 	agnss_request->system[0].sv_mask_ephe = 0;
-	/* GPS almanacs are not needed with P-GPS, so skip those. */
+	/* GPS almanacs are not needed with PGNSS, so skip those. */
 	agnss_request->system[0].sv_mask_alm = 0;
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 	assistance_active = true;
 
@@ -340,9 +340,9 @@ agnss_exit:
 	assistance_active = false;
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	nrf_cloud_pgps_notify_prediction();
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+	nrf_cloud_pgnss_notify_prediction();
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 	return err;
 }

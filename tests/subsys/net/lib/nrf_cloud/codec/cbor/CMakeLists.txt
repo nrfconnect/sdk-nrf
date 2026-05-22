@@ -20,8 +20,8 @@ target_sources(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/coap/src/nrf_cloud_coap_codec.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/coap/generated/src/msg_encode.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/coap/generated/src/agnss_encode.c
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/coap/generated/src/pgps_encode.c
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/coap/generated/src/pgps_decode.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/coap/generated/src/pgnss_encode.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/coap/generated/src/pgnss_decode.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/coap/generated/src/ground_fix_encode.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/coap/generated/src/ground_fix_decode.c
 )
@@ -37,7 +37,7 @@ target_include_directories(app PRIVATE
   ${ZEPHYR_CJSON_MODULE_DIR}
 )
 
-# Enabling NRF_CLOUD_AGNSS / NRF_CLOUD_PGPS in Kconfig causes the nRF
+# Enabling NRF_CLOUD_AGNSS / NRF_CLOUD_PGNSS in Kconfig causes the nRF
 # Cloud library CMakeLists to be added and a number of helper sources
 # to be compiled.  Those sources reference Kconfig symbols that are
 # only generated when the full NRF_CLOUD subsystem is enabled, which
@@ -56,8 +56,8 @@ set_source_files_properties(
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/src/nrf_cloud_info.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/src/nrf_cloud_agnss.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/src/nrf_cloud_agnss_utils.c
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/src/nrf_cloud_pgps.c
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/src/nrf_cloud_pgps_utils.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/src/nrf_cloud_pgnss.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/src/nrf_cloud_pgnss_utils.c
   DIRECTORY ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/
   PROPERTIES HEADER_FILE_ONLY ON
 )

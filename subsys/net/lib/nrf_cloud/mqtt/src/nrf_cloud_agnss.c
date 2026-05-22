@@ -23,7 +23,7 @@ static bool qzss_assistance_is_supported(void)
 
 int nrf_cloud_agnss_request_all(void)
 {
-	const uint32_t mask = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ? 0u : 0xFFFFFFFFu;
+	const uint32_t mask = IS_ENABLED(CONFIG_NRF_CLOUD_PGNSS) ? 0u : 0xFFFFFFFFu;
 	struct nrf_modem_gnss_agnss_data_frame request = {
 		.data_flags = NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST |
 			      NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST |

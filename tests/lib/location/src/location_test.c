@@ -1443,12 +1443,12 @@ void test_error_cancel_no_operation(void)
 #endif
 }
 
-/* Test PGPS data processing not supported. */
-void test_location_pgps_data_process_fail_notsup(void)
+/* Test PGNSS data processing not supported. */
+void test_location_pgnss_data_process_fail_notsup(void)
 {
 	int err;
 
-	err = location_pgps_data_process("testi", 6);
+	err = location_pgnss_data_process("testi", 6);
 	TEST_ASSERT_EQUAL(-ENOTSUP, err);
 }
 

@@ -19,7 +19,7 @@ To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
 The library adds support for four objects related to location assistance:
 
-* GNSS Assistance object (ID 33625) for requesting and handling A-GNSS and P-GPS assistance data.
+* GNSS Assistance object (ID 33625) for requesting and handling A-GNSS and PGNSS assistance data.
 * Ground Fix Location object (ID 33626) for requesting and storing estimated cell and Wi-Fi®-based location.
 * Visible Wi-Fi Access Point object (ID 33627) for storing nearby Wi-Fi Access Point information.
 * ECID-Signal Measurement Information object (ID 10256) for storing the cell neighborhood information.
@@ -41,7 +41,7 @@ There are four different supported methods of obtaining the location assistance:
   The LwM2M Server then sends the location request to nRF Cloud, which responds with the location data.
 * Query of A-GNSS assistance data - The A-GNSS assistance data is queried from nRF Cloud and provided back to the device through the LwM2M Server.
   The A-GNSS assistance data is then provided to the GNSS module for obtaining the position fix faster.
-* Query of P-GPS predictions - The P-GPS predictions are queried from nRF Cloud and provided back to the device through the LwM2M Server.
+* Query of PGNSS predictions - The PGNSS predictions are queried from nRF Cloud and provided back to the device through the LwM2M Server.
   The predictions are stored in the device flash and injected to the GNSS module when needed.
 
 API usage
@@ -103,19 +103,19 @@ With filtered A-GNSS, the satellites below the given angle above the ground are 
 You can set the angle to a degree `[0 - 90]` using the :c:func:`location_assist_agnss_set_elevation_mask` function.
 Setting the degree to `–1` disables filtering, which is the default setting.
 
-.. _location_assistance_pgps_lwm2m:
+.. _location_assistance_pgnss_lwm2m:
 
-P-GPS assistance
+PGNSS assistance
 ================
 
-When using P-GPS assistance, the device requests predictions for the satellites for a near future.
-P-GPS does not use information about current cell at all.
+When using PGNSS assistance, the device requests predictions for the satellites for a near future.
+PGNSS does not use information about current cell at all.
 It stores the information about satellites and injects the data to the GNSS module when needed.
-When using P-GPS, external flash is necessary as each prediction needs 2 kB of memory.
+When using PGNSS, external flash is necessary as each prediction needs 2 kB of memory.
 
-When requesting for P-GPS assistance data, the device can set the P-GPS resources.
+When requesting for PGNSS assistance data, the device can set the PGNSS resources.
 If default values are used in the resources, predictions are requested for one week (42 predictions, 7 days, 4 hours between predictions).
-When the resources have been set, the :c:func:`location_assistance_pgps_request_send` function sends the request to the server.
+When the resources have been set, the :c:func:`location_assistance_pgnss_request_send` function sends the request to the server.
 
 Result codes and automatic resend
 =================================
@@ -138,12 +138,12 @@ The library has a callback handler for the result code.
 You can set your own callback with the :c:func:`location_assistance_set_result_code_cb` function.
 It is called whenever the request has been handled.
 
-Using A-GNSS and P-GPS simultaneously
+Using A-GNSS and PGNSS simultaneously
 =====================================
 
-A-GNSS and P-GPS can be used simultaneously.
+A-GNSS and PGNSS can be used simultaneously.
 However, only one active request at a time for the object is allowed.
-The functions :c:func:`location_assistance_agnss_set_mask`, :c:func:`location_assistance_agnss_request_send` and :c:func:`location_assistance_pgps_request_send` return ``-EAGAIN`` if there is an active request.
+The functions :c:func:`location_assistance_agnss_set_mask`, :c:func:`location_assistance_agnss_request_send` and :c:func:`location_assistance_pgnss_request_send` return ``-EAGAIN`` if there is an active request.
 In such case, the device must resend the request after the previous request has been handled.
 
 
@@ -158,7 +158,7 @@ To enable location assistance, set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfi
 Following are the other important library options:
 
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS` -  nRF Cloud provides A-GNSS assistance data and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M Server.
-* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS` -  nRF Cloud provides P-GPS predictions and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M Server.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS` -  nRF Cloud provides PGNSS predictions and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M Server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL` -  nRF Cloud provides estimated location based on currently attached cell and its neighborhood.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT` - Enable support for connectivity monitoring utilities.
   Provides data about the current cell and network the device has connected to.

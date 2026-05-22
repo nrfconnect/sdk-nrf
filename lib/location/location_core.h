@@ -69,8 +69,8 @@ void location_core_event_cb_timeout(void);
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
 void location_core_event_cb_agnss_request(const struct nrf_modem_gnss_agnss_data_frame *request);
 #endif
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
-void location_core_event_cb_pgps_request(const struct gps_pgps_request *request);
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGNSS)
+void location_core_event_cb_pgnss_request(const struct gps_pgnss_request *request);
 #endif
 
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)

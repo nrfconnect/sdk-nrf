@@ -7,14 +7,14 @@
  * Generated with a --default-max-qty of 10
  */
 
-#ifndef PGPS_DECODE_H__
-#define PGPS_DECODE_H__
+#ifndef PGNSS_DECODE_H__
+#define PGNSS_DECODE_H__
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
-#include "pgps_decode_types.h"
+#include "pgnss_decode_types.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,11 +24,11 @@ extern "C" {
 #error "The type file was generated with a different default_max_qty than this file"
 #endif
 
-int cbor_decode_pgps_resp(const uint8_t *payload, size_t payload_len, struct pgps_resp *result,
-			  size_t *payload_len_out);
+int cbor_decode_pgnss_resp(const uint8_t *payload, size_t payload_len, struct pgnss_resp *result,
+			   size_t *payload_len_out);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* PGPS_DECODE_H__ */
+#endif /* PGNSS_DECODE_H__ */

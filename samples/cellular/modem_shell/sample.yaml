@@ -164,32 +164,32 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
-  sample.cellular.modem_shell.lwm2m_pgps:
+  sample.cellular.modem_shell.lwm2m_pgnss:
     sysbuild: true
     build_only: true
     extra_configs:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
-    extra_args: EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf"
+    extra_args: EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgnss.conf;overlay-pgnss.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
       - ci_build
       - sysbuild
       - ci_samples_cellular
-  sample.cellular.modem_shell.pgps:
+  sample.cellular.modem_shell.pgnss:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-pgps.conf
+    extra_args: EXTRA_CONF_FILE=overlay-pgnss.conf
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
       - ci_build
       - sysbuild
       - ci_samples_cellular
-  sample.cellular.modem_shell.pgps_coap:
+  sample.cellular.modem_shell.pgnss_coap:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-pgps.conf
+    extra_args: EXTRA_CONF_FILE=overlay-pgnss.conf
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -208,15 +208,15 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
-  sample.cellular.modem_shell.location_service_ext_pgps_nrf7002ek_wifi:
+  sample.cellular.modem_shell.location_service_ext_pgnss_nrf7002ek_wifi:
     sysbuild: true
     build_only: true
     extra_configs:
       - CONFIG_LOCATION_SERVICE_EXTERNAL=y
-      - CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
+      - CONFIG_NRF_CLOUD_PGNSS_TRANSPORT_NONE=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf;overlay-nrf700x-wifi-scan-only.conf"
+      - EXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgnss.conf;overlay-nrf700x-wifi-scan-only.conf"
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     integration_platforms: *modem_shell_integration_platforms

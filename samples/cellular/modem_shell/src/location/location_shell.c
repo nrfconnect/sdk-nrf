@@ -362,16 +362,16 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		break;
 	}
 #endif
-#if defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
 	case LOCATION_EVT_GNSS_PREDICTION_REQUEST:
 		mosh_print(
-			"P-GPS request from Location library "
+			"PGNSS request from Location library "
 			"(prediction count: %d validity time: %d gps day: %d time of day: %d)",
-			event_data->pgps_request.prediction_count,
-			event_data->pgps_request.prediction_period_min,
-			event_data->pgps_request.gps_day,
-			event_data->pgps_request.gps_time_of_day);
-		location_srv_ext_pgps_handle(&event_data->pgps_request);
+			event_data->pgnss_request.prediction_count,
+			event_data->pgnss_request.prediction_period_min,
+			event_data->pgnss_request.gps_day,
+			event_data->pgnss_request.gps_time_of_day);
+		location_srv_ext_pgnss_handle(&event_data->pgnss_request);
 		break;
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI)

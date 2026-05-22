@@ -108,7 +108,7 @@ static void location_event_handler(const struct location_event_data *event_data)
 		break;
 
 	case LOCATION_EVT_GNSS_PREDICTION_REQUEST:
-		LOG_DBG("Getting location assistance requested (P-GPS)");
+		LOG_DBG("Getting location assistance requested (PGNSS)");
 		break;
 
 	case LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST:

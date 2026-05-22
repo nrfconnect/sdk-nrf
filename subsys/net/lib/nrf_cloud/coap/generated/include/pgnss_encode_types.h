@@ -7,8 +7,8 @@
  * Generated with a --default-max-qty of 10
  */
 
-#ifndef PGPS_ENCODE_TYPES_H__
-#define PGPS_ENCODE_TYPES_H__
+#ifndef PGNSS_ENCODE_TYPES_H__
+#define PGNSS_ENCODE_TYPES_H__
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -27,15 +27,15 @@ extern "C" {
  */
 #define DEFAULT_MAX_QTY 10
 
-struct pgps_req {
-	uint32_t pgps_req_predictionCount;
-	uint32_t pgps_req_predictionIntervalMinutes;
-	uint32_t pgps_req_startGPSDay;
-	uint32_t pgps_req_startGPSTimeOfDaySeconds;
+struct pgnss_req {
+	uint32_t pgnss_req_predictionCount;
+	uint32_t pgnss_req_predictionIntervalMinutes;
+	uint32_t pgnss_req_startGPSDay;
+	uint32_t pgnss_req_startGPSTimeOfDaySeconds;
 };
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* PGPS_ENCODE_TYPES_H__ */
+#endif /* PGNSS_ENCODE_TYPES_H__ */

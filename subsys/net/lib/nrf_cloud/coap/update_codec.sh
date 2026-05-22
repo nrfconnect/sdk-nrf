@@ -55,11 +55,11 @@ if [ $? -ne 0 ]; then
 	exit
 fi
 
-zcbor code -c cddl/nrf_cloud_coap_pgps.cddl       --default-max-qty 10 -e \
-	-t pgps_req \
-	--oc generated/src/pgps_encode.c \
-	--oh generated/include/pgps_encode.h \
-	--oht generated/include/pgps_encode_types.h \
+zcbor code -c cddl/nrf_cloud_coap_pgnss.cddl       --default-max-qty 10 -e \
+	-t pgnss_req \
+	--oc generated/src/pgnss_encode.c \
+	--oh generated/include/pgnss_encode.h \
+	--oht generated/include/pgnss_encode_types.h \
 	--file-header "$HDR"
 
 if [ $? -ne 0 ]; then
@@ -67,11 +67,11 @@ if [ $? -ne 0 ]; then
 	exit
 fi
 
-zcbor code -c cddl/nrf_cloud_coap_pgps.cddl       --default-max-qty 10 -d \
-	-t pgps_resp \
-	--oc generated/src/pgps_decode.c \
-	--oh generated/include/pgps_decode.h \
-	--oht generated/include/pgps_decode_types.h \
+zcbor code -c cddl/nrf_cloud_coap_pgnss.cddl       --default-max-qty 10 -d \
+	-t pgnss_resp \
+	--oc generated/src/pgnss_decode.c \
+	--oh generated/include/pgnss_decode.h \
+	--oht generated/include/pgnss_decode_types.h \
 	--file-header "$HDR"
 
 if [ $? -ne 0 ]; then
@@ -92,16 +92,16 @@ git add cddl/*.cddl
 # zcbor code -c cddl/nrf_cloud_coap_ground_fix.cddl \
 # 	-c cddl/nrf_cloud_coap_device_msg.cddl \
 # 	-c cddl/nrf_cloud_coap_agnss.cddl \
-# 	-c cddl/nrf_cloud_coap_pgps.cddl \
+# 	-c cddl/nrf_cloud_coap_pgnss.cddl \
 # 	--default-max-qty 10 -e \
-# 	-t ground_fix_req message_out agnss_req pgps_req \
+# 	-t ground_fix_req message_out agnss_req pgnss_req \
 # 	--oc generated/src/coap_encode.c \
 # 	--oh generated/include/coap_encode.h \
 # 	--oht generated/include/coap_encode_types.h
 # zcbor code -c cddl/nrf_cloud_coap_ground_fix.cddl \
-# 	-c cddl/nrf_cloud_coap_pgps.cddl \
+# 	-c cddl/nrf_cloud_coap_pgnss.cddl \
 # 	--default-max-qty 10 -d \
-# 	-t ground_fix_resp pgps_resp \
+# 	-t ground_fix_resp pgnss_resp \
 # 	--oc generated/src/coap_decode.c \
 # 	--oh generated/include/coap_decode.h \
 # 	--oht generated/include/coap_decode_types.h

@@ -7,8 +7,8 @@
  * Generated with a --default-max-qty of 10
  */
 
-#ifndef PGPS_DECODE_TYPES_H__
-#define PGPS_DECODE_TYPES_H__
+#ifndef PGNSS_DECODE_TYPES_H__
+#define PGNSS_DECODE_TYPES_H__
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -28,13 +28,13 @@ extern "C" {
  */
 #define DEFAULT_MAX_QTY 10
 
-struct pgps_resp {
-	struct zcbor_string pgps_resp_host;
-	struct zcbor_string pgps_resp_path;
+struct pgnss_resp {
+	struct zcbor_string pgnss_resp_host;
+	struct zcbor_string pgnss_resp_path;
 };
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* PGPS_DECODE_TYPES_H__ */
+#endif /* PGNSS_DECODE_TYPES_H__ */

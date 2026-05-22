@@ -64,7 +64,7 @@ The configuration files are in the |sample path| directory.
 The following files are available:
 
 * :file:`overlay-nrf700x-wifi-scan-only.conf` - Config overlay for nRF7002 Wi-Fi chip support.
-* :file:`overlay-pgps.conf` - Config overlay for P-GPS support.
+* :file:`overlay-pgnss.conf` - Config overlay for PGNSS support.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -96,15 +96,15 @@ See :ref:`cmake_options` for more instructions on how to add these options.
    The Thingy:91 X build supports Wi-Fi by default.
    You need not add any overlays.
 
-P-GPS support
+PGNSS support
 =============
 
-To build the Location sample with P-GPS support, use the following commands:
+To build the Location sample with PGNSS support, use the following commands:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-pgps.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-pgnss.conf
 
 |board_target|
 

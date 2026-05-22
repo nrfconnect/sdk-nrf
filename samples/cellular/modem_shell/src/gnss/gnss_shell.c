@@ -423,9 +423,9 @@ static int cmd_gnss_agnss_ref_altitude(const struct shell *shell, size_t argc, c
 		NRF_MODEM_GNSS_AGNSS_LOCATION) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_pgps_enable(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_pgnss_enable(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_enable_pgps() == 0 ? 0 : -ENOEXEC;
+	return gnss_enable_pgnss() == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_agnss_filter(const struct shell *shell, size_t argc, char **argv)
@@ -889,9 +889,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	sub_gnss_pgps,
-	SHELL_CMD_ARG(enable, NULL, "Enable P-GPS.",
-		      cmd_gnss_pgps_enable, 1, 0),
+	sub_gnss_pgnss,
+	SHELL_CMD_ARG(enable, NULL, "Enable PGNSS.",
+		      cmd_gnss_pgnss_enable, 1, 0),
 	SHELL_SUBCMD_SET_END
 );
 
@@ -918,7 +918,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  mosh_print_help_shell),
 	SHELL_CMD(agnss, &sub_gnss_agnss, "A-GNSS configuration and commands.",
 		  mosh_print_help_shell),
-	SHELL_CMD(pgps, &sub_gnss_pgps, "P-GPS commands.", mosh_print_help_shell),
+	SHELL_CMD(pgnss, &sub_gnss_pgnss, "PGNSS commands.", mosh_print_help_shell),
 	SHELL_CMD(1pps, &sub_gnss_1pps, "1PPS control.", mosh_print_help_shell),
 	SHELL_CMD(output, NULL, "<pvt level> <nmea level> <event level>\nSet output levels.",
 		  cmd_gnss_output),

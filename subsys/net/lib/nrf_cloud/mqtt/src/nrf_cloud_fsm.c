@@ -15,8 +15,8 @@
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
 #endif
 
 LOG_MODULE_REGISTER(nrf_cloud_fsm, CONFIG_NRF_CLOUD_LOG_LEVEL);
@@ -636,36 +636,36 @@ static void agnss_process(const char *const buf, const size_t buf_len)
 		LOG_DBG("A-GNSS data processed");
 	}
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	/* If both A-GNSS and P-GPS are enabled, everything but ephemerides and almanacs
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+	/* If both A-GNSS and PGNSS are enabled, everything but ephemerides and almanacs
 	 * are handled by A-GNSS.
 	 * In this configuration it is important to check, after receiving A-GNSS data,
 	 * whether any further assistance is needed by the modem for ephemerides,
-	 * which would come from P-GPS (usually, in stored predictions in flash).
+	 * which would come from PGNSS (usually, in stored predictions in flash).
 	 */
 	if (ret == 0) {
-		ret = nrf_cloud_pgps_notify_prediction();
+		ret = nrf_cloud_pgnss_notify_prediction();
 		if (ret) {
-			LOG_ERR("Error requesting P-GPS notification: %d", ret);
+			LOG_ERR("Error requesting PGNSS notification: %d", ret);
 		}
 	}
 #endif
 #endif
 }
 
-static void pgps_process(const char *const buf, const size_t buf_len)
+static void pgnss_process(const char *const buf, const size_t buf_len)
 {
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	int ret = nrf_cloud_pgps_process(buf, buf_len);
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+	int ret = nrf_cloud_pgnss_process(buf, buf_len);
 
 	if (ret) {
 		struct nrf_cloud_evt evt = {.type = NRF_CLOUD_EVT_ERROR,
-					    .status = NRF_CLOUD_ERR_STATUS_PGPS_PROC};
+					    .status = NRF_CLOUD_ERR_STATUS_PGNSS_PROC};
 
-		LOG_ERR("Error processing P-GPS data: %d", ret);
+		LOG_ERR("Error processing PGNSS data: %d", ret);
 		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
 	} else {
-		LOG_DBG("P-GPS data processed");
+		LOG_DBG("PGNSS data processed");
 	}
 #endif
 }
@@ -716,8 +716,8 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 	case NRF_CLOUD_RCV_TOPIC_AGNSS:
 		agnss_process(cloud_evt.data.ptr, cloud_evt.data.len);
 		return 0;
-	case NRF_CLOUD_RCV_TOPIC_PGPS:
-		pgps_process(cloud_evt.data.ptr, cloud_evt.data.len);
+	case NRF_CLOUD_RCV_TOPIC_PGNSS:
+		pgnss_process(cloud_evt.data.ptr, cloud_evt.data.len);
 		return 0;
 	case NRF_CLOUD_RCV_TOPIC_LOCATION:
 		if (location_process(cloud_evt.data.ptr) == 0) {

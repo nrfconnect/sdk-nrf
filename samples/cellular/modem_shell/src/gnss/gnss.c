@@ -15,7 +15,7 @@
 #include <nrf_modem_gnss.h>
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) || \
-	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
 #include <net/lwm2m_client_utils_location.h>
 #include "cloud_lwm2m.h"
 #endif
@@ -25,7 +25,7 @@
 #include <lwm2m_carrier.h>
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGNSS)
 #include <stdlib.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
@@ -33,10 +33,10 @@
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
-#endif /* CONFIG_NRF_CLOUD_PGPS */
-#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGNSS */
 
 #if defined(CONFIG_SUPL_CLIENT_LIB)
 #include <supl_session.h>
@@ -48,12 +48,12 @@
 #include "str_utils.h"
 #include "gnss.h"
 
-#if (defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)) && \
+#if (defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGNSS)) && \
 	defined(CONFIG_SUPL_CLIENT_LIB)
 BUILD_ASSERT(false, "nRF Cloud assistance and SUPL library cannot be enabled at the same time");
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGNSS)
 /* Verify that nRF Cloud MQTT, COAP or LwM2M is enabled */
 BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
 	     IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ||
@@ -104,16 +104,16 @@ static bool agnss_inject_ggto = true;
 static char agnss_data_buf[NRF_CLOUD_AGNSS_MAX_DATA_SIZE];
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-static bool pgps_enabled;
-static struct nrf_cloud_pgps_prediction *prediction;
-static struct k_work inject_pgps_data_work;
-static struct k_work notify_pgps_prediction_work;
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+static bool pgnss_enabled;
+static struct nrf_cloud_pgnss_prediction *prediction;
+static struct k_work inject_pgnss_data_work;
+static struct k_work notify_pgnss_prediction_work;
 #if !defined(CONFIG_NRF_CLOUD_MQTT)
-static struct gps_pgps_request pgps_request;
-static struct k_work get_pgps_data_work;
+static struct gps_pgnss_request pgnss_request;
+static struct k_work get_pgnss_data_work;
 #endif /* !CONFIG_NRF_CLOUD_MQTT */
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME)
 static bool gnss_filtered_ephemerides_enabled;
@@ -439,10 +439,10 @@ static void data_handler_thread_fn(void)
 			}
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-			if (pgps_enabled && agnss_data_frame->system[0].sv_mask_ephe != 0x0) {
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+			if (pgnss_enabled && agnss_data_frame->system[0].sv_mask_ephe != 0x0) {
 				k_work_submit_to_queue(&mosh_common_work_q,
-						       &notify_pgps_prediction_work);
+						       &notify_pgnss_prediction_work);
 			}
 #endif
 			break;
@@ -509,7 +509,7 @@ static int gnss_enable_all_nmeas(void)
 }
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) || \
-	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
 static void assistance_result_cb(uint16_t object_id, int32_t result_code)
 {
 	if (object_id != GNSS_ASSIST_OBJECT_ID) {
@@ -855,41 +855,41 @@ static void handle_timeout_work_fn(struct k_work *item)
 	}
 }
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
 #if !defined(CONFIG_NRF_CLOUD_MQTT)
-static void get_pgps_data_work_fn(struct k_work *work)
+static void get_pgnss_data_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
 	int err;
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-	mosh_print("GNSS: Getting P-GPS predictions from LwM2M...");
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+	mosh_print("GNSS: Getting PGNSS predictions from LwM2M...");
 
 	location_assistance_set_result_code_cb(assistance_result_cb);
-	err = location_assist_pgps_set_prediction_count(pgps_request.prediction_count);
-	err |= location_assist_pgps_set_prediction_interval(pgps_request.prediction_period_min);
-	location_assist_pgps_set_start_gps_day(pgps_request.gps_day);
-	err |= location_assist_pgps_set_start_time(pgps_request.gps_time_of_day);
+	err = location_assist_pgnss_set_prediction_count(pgnss_request.prediction_count);
+	err |= location_assist_pgnss_set_prediction_interval(pgnss_request.prediction_period_min);
+	location_assist_pgnss_set_start_gps_day(pgnss_request.gps_day);
+	err |= location_assist_pgnss_set_start_time(pgnss_request.gps_time_of_day);
 	if (err) {
-		mosh_error("GNSS: Failed to set P-GPS request parameters");
+		mosh_error("GNSS: Failed to set PGNSS request parameters");
 		return;
 	}
 
-	err = location_assistance_pgps_request_send(cloud_lwm2m_client_ctx_get());
+	err = location_assistance_pgnss_request_send(cloud_lwm2m_client_ctx_get());
 	if (err) {
-		mosh_error("GNSS: Failed to request P-GPS data, err: %d", err);
+		mosh_error("GNSS: Failed to request PGNSS data, err: %d", err);
 	} else {
-		mosh_print("GNSS: P-GPS predictions requested");
+		mosh_print("GNSS: PGNSS predictions requested");
 	}
-#else /* !CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS */
-	mosh_print("GNSS: Getting P-GPS predictions from nRF Cloud...");
+#else /* !CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS */
+	mosh_print("GNSS: Getting PGNSS predictions from nRF Cloud...");
 
-	struct nrf_cloud_coap_pgps_request request = {
-		.pgps_req = &pgps_request
+	struct nrf_cloud_coap_pgnss_request request = {
+		.pgnss_req = &pgnss_request
 	};
 
-	struct nrf_cloud_pgps_result file_location = {0};
+	struct nrf_cloud_pgnss_result file_location = {0};
 
 	static char host[64];
 	static char path[128];
@@ -902,42 +902,42 @@ static void get_pgps_data_work_fn(struct k_work *work)
 	file_location.path = path;
 	file_location.path_sz = sizeof(path);
 
-	err = nrf_cloud_coap_pgps_url_get(&request, &file_location);
+	err = nrf_cloud_coap_pgnss_url_get(&request, &file_location);
 
 	if (err) {
-		mosh_error("GNSS: Failed to get P-GPS data, error: %d", err);
+		mosh_error("GNSS: Failed to get PGNSS data, error: %d", err);
 
-		nrf_cloud_pgps_request_reset();
+		nrf_cloud_pgnss_request_reset();
 
 		return;
 	}
 
-	mosh_print("GNSS: Processing P-GPS response");
+	mosh_print("GNSS: Processing PGNSS response");
 
-	err = nrf_cloud_pgps_update(&file_location);
+	err = nrf_cloud_pgnss_update(&file_location);
 	if (err) {
-		mosh_error("GNSS: Failed to process P-GPS response, error: %d", err);
+		mosh_error("GNSS: Failed to process PGNSS response, error: %d", err);
 
-		nrf_cloud_pgps_request_reset();
+		nrf_cloud_pgnss_request_reset();
 
 		return;
 	}
 
-	mosh_print("GNSS: P-GPS response processed");
+	mosh_print("GNSS: PGNSS response processed");
 
-	err = nrf_cloud_pgps_notify_prediction();
+	err = nrf_cloud_pgnss_notify_prediction();
 	if (err) {
 		mosh_error("GNSS: Failed to request current prediction, error: %d", err);
 
 		return;
 	}
 
-	mosh_print("GNSS: P-GPS predictions requested");
-#endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS */
+	mosh_print("GNSS: PGNSS predictions requested");
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS */
 }
 #endif /* !CONFIG_NRF_CLOUD_MQTT */
 
-static void inject_pgps_data_work_fn(struct k_work *work)
+static void inject_pgnss_data_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
@@ -945,46 +945,46 @@ static void inject_pgps_data_work_fn(struct k_work *work)
 
 	mosh_print("GNSS: Injecting ephemerides to modem...");
 
-	err = nrf_cloud_pgps_inject(prediction, &agnss_need);
+	err = nrf_cloud_pgnss_inject(prediction, &agnss_need);
 	if (err) {
 		mosh_error("GNSS: Failed to inject ephemerides to modem");
 	}
 
-	err = nrf_cloud_pgps_preemptive_updates();
+	err = nrf_cloud_pgnss_preemptive_updates();
 	if (err) {
 		mosh_error("GNSS: Failed to request preduction updates");
 	}
 }
 
-static void notify_pgps_prediction_work_fn(struct k_work *work)
+static void notify_pgnss_prediction_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
 	int err;
 
-	err = nrf_cloud_pgps_notify_prediction();
+	err = nrf_cloud_pgnss_notify_prediction();
 	if (err) {
-		mosh_error("GNSS: Failed to notify P-GPS predictions");
+		mosh_error("GNSS: Failed to notify PGNSS predictions");
 	}
 }
 
-static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
+static void pgnss_event_handler(struct nrf_cloud_pgnss_event *event)
 {
 	switch (event->type) {
-	case PGPS_EVT_READY:
-	case PGPS_EVT_AVAILABLE:
+	case PGNSS_EVT_READY:
+	case PGNSS_EVT_AVAILABLE:
 		if (event->prediction != NULL) {
 			prediction = event->prediction;
 
-			k_work_submit_to_queue(&mosh_common_work_q, &inject_pgps_data_work);
+			k_work_submit_to_queue(&mosh_common_work_q, &inject_pgnss_data_work);
 		}
 		break;
 
 #if !defined(CONFIG_NRF_CLOUD_MQTT)
-	case PGPS_EVT_REQUEST:
-		memcpy(&pgps_request, event->request, sizeof(pgps_request));
+	case PGNSS_EVT_REQUEST:
+		memcpy(&pgnss_request, event->request, sizeof(pgnss_request));
 
-		k_work_submit_to_queue(&mosh_common_work_q, &get_pgps_data_work);
+		k_work_submit_to_queue(&mosh_common_work_q, &get_pgnss_data_work);
 		break;
 #endif
 
@@ -993,7 +993,7 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		break;
 	}
 }
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 static void gnss_api_init(void)
 {
@@ -1636,45 +1636,45 @@ int gnss_inject_agnss_data(void)
 #endif
 }
 
-int gnss_enable_pgps(void)
+int gnss_enable_pgnss(void)
 {
-#if defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
 	int err;
 
-	if (pgps_enabled) {
-		mosh_error("GNSS: P-GPS already enabled");
+	if (pgnss_enabled) {
+		mosh_error("GNSS: PGNSS already enabled");
 		return -EPERM;
 	}
 
 	gnss_api_init();
 
 #if !defined(CONFIG_NRF_CLOUD_MQTT)
-	k_work_init(&get_pgps_data_work, get_pgps_data_work_fn);
+	k_work_init(&get_pgnss_data_work, get_pgnss_data_work_fn);
 #endif
-	k_work_init(&inject_pgps_data_work, inject_pgps_data_work_fn);
-	k_work_init(&notify_pgps_prediction_work, notify_pgps_prediction_work_fn);
+	k_work_init(&inject_pgnss_data_work, inject_pgnss_data_work_fn);
+	k_work_init(&notify_pgnss_prediction_work, notify_pgnss_prediction_work_fn);
 
-	struct nrf_cloud_pgps_init_param pgps_param = {
-		.event_handler = pgps_event_handler,
-		/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+	struct nrf_cloud_pgnss_init_param pgnss_param = {
+		.event_handler = pgnss_event_handler,
+		/* storage is defined by CONFIG_NRF_CLOUD_PGNSS_STORAGE */
 		.storage_base = 0u,
 		.storage_size = 0u
 	};
 
-	err = nrf_cloud_pgps_init(&pgps_param);
+	err = nrf_cloud_pgnss_init(&pgnss_param);
 	if (err == -EACCES) {
 		mosh_error("GNSS: Not connected to nRF Cloud");
 		return err;
 	} else if (err) {
-		mosh_error("GNSS: Failed to initialize P-GPS, error: %d", err);
+		mosh_error("GNSS: Failed to initialize PGNSS, error: %d", err);
 		return err;
 	}
 
-	pgps_enabled = true;
+	pgnss_enabled = true;
 
 	return 0;
 #else
-	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_PGPS for P-GPS support");
+	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_PGNSS for PGNSS support");
 	return -EOPNOTSUPP;
 #endif
 }

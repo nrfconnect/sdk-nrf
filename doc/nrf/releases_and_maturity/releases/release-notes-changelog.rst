@@ -696,9 +696,17 @@ Libraries for networking
   * The nRF Cloud REST library.
   * The nRF Cloud logging library.
 
-* :ref:`lib_nrf_cloud_pgps` library:
+* :ref:`lib_nrf_cloud_pgnss` library (formerly nRF Cloud P-GPS):
 
-  * Updated the range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
+  * Updated:
+
+    * By renaming the library from Predicted GPS (P-GPS) to Predicted GNSS (PGNSS) to align with the nRF Cloud API terminology.
+      All Kconfig options, C symbols, and the public header have been renamed from ``*PGPS*`` to ``*PGNSS*``.
+      The CoAP endpoint used to request predictions has been renamed from ``loc/pgps`` to ``loc/pgnss``; the CBOR wire format is unchanged.
+      The :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` Kconfig option and the :file:`<net/nrf_cloud_pgps.h>` header are kept as deprecated aliases.
+      The Partition Manager partition name (``pgps``) is preserved for upgrade compatibility with devices that already store predictions in external flash.
+      See :ref:`migration_3.4` for application-side migration steps.
+    * The range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGNSS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGNSS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
 
   * Fixed:
 

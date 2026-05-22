@@ -19,12 +19,12 @@
  */
 struct nrf_modem_gnss_agnss_data_frame;
 #endif
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
 #else
-/* Forward declarations so nrf_cloud_coap_pgps_url_get compiles without CONFIG_NRF_CLOUD_PGPS */
-struct nrf_cloud_coap_pgps_request;
-struct nrf_cloud_pgps_result;
+/* Forward declarations so nrf_cloud_coap_pgnss_url_get compiles without CONFIG_NRF_CLOUD_PGNSS */
+struct nrf_cloud_coap_pgnss_request;
+struct nrf_cloud_pgnss_result;
 #endif
 #include <net/nrf_cloud_codec.h>
 /* <zephyr/net/coap.h> is always available and provides
@@ -268,10 +268,10 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_coap_agnss_request const *con
 				  struct nrf_cloud_coap_agnss_result *result);
 
 /**
- * @brief Request URL for nRF Cloud Predicted GPS (P-GPS) data.
+ * @brief Request URL for nRF Cloud Predicted GPS (PGNSS) data.
  *
  *  After a successful call to this function, pass the file_location to
- *  nrf_cloud_pgps_update(), which then downloads and processes the file's binary P-GPS data.
+ *  nrf_cloud_pgnss_update(), which then downloads and processes the file's binary PGNSS data.
  *
  * @param[in]     request       Data to be provided in API call.
  * @param[in,out] file_location Structure that will contain the host and path to
@@ -283,8 +283,8 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_coap_agnss_request const *con
  *           Positive values are cloud-side errors (CoAP result codes)
  *           defined in zephyr/net/coap.h.
  */
-int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_coap_pgps_request const *const request,
-				 struct nrf_cloud_pgps_result *file_location);
+int nrf_cloud_coap_pgnss_url_get(struct nrf_cloud_coap_pgnss_request const *const request,
+				 struct nrf_cloud_pgnss_result *file_location);
 
 /**
  * @brief Send a sensor value to nRF Cloud.

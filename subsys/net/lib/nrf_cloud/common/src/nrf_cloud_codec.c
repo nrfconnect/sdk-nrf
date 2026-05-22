@@ -1093,9 +1093,9 @@ int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 	);
 }
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-int nrf_cloud_obj_pgps_request_create(struct nrf_cloud_obj *const obj,
-				      const struct gps_pgps_request *const request)
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+int nrf_cloud_obj_pgnss_request_create(struct nrf_cloud_obj *const obj,
+				      const struct gps_pgnss_request *const request)
 {
 	if (!request || !obj) {
 		return -EINVAL;
@@ -1109,7 +1109,7 @@ int nrf_cloud_obj_pgps_request_create(struct nrf_cloud_obj *const obj,
 	NRF_CLOUD_OBJ_DEFINE(data_obj, obj->type);
 
 	/* Add the app ID, message type */
-	err = nrf_cloud_obj_msg_init(obj, NRF_CLOUD_JSON_APPID_VAL_PGPS,
+	err = nrf_cloud_obj_msg_init(obj, NRF_CLOUD_JSON_APPID_VAL_PGNSS,
 				     NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
 	if (err) {
 		goto cleanup;
@@ -1122,20 +1122,20 @@ int nrf_cloud_obj_pgps_request_create(struct nrf_cloud_obj *const obj,
 
 	switch (obj->type) {
 	case NRF_CLOUD_OBJ_TYPE_JSON: {
-		/* Encode the P-GPS data */
-		err = nrf_cloud_pgps_req_data_json_encode(request, data_obj.json);
+		/* Encode the PGNSS data */
+		err = nrf_cloud_pgnss_req_data_json_encode(request, data_obj.json);
 		if (err) {
-			LOG_ERR("Failed to encode P-GPS request data, error: %d", err);
+			LOG_ERR("Failed to encode PGNSS request data, error: %d", err);
 			goto cleanup;
 		}
 
-		/* Add data object to the P-GPS request object */
+		/* Add data object to the PGNSS request object */
 		err = nrf_cloud_obj_object_add(obj, NRF_CLOUD_JSON_DATA_KEY, &data_obj, false);
 		if (err) {
 			goto cleanup;
 		}
 
-		/* The data object now belongs to the P-GPS request object */
+		/* The data object now belongs to the PGNSS request object */
 
 		break;
 	}

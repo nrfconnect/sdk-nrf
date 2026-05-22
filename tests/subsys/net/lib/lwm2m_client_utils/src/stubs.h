@@ -64,9 +64,9 @@ DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, struct lte_lc_ncellmeas_params *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_psm_param_set_seconds, int, int);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_agnss_process, const char *, size_t);
-DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_begin_update);
-DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_process_update, uint8_t *, size_t);
-DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_finish_update);
+DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgnss_begin_update);
+DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgnss_process_update, uint8_t *, size_t);
+DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgnss_finish_update);
 DECLARE_FAKE_VALUE_FUNC(int, settings_load_subtree, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, settings_register, struct settings_handler *);
 DECLARE_FAKE_VALUE_FUNC(int, settings_subsys_init);
@@ -159,9 +159,9 @@ DECLARE_FAKE_VOID_FUNC(boot_write_img_confirmed);
 	FUNC(lte_lc_neighbor_cell_measurement)          \
 	FUNC(lte_lc_psm_param_set_seconds)              \
 	FUNC(nrf_cloud_agnss_process)			\
-	FUNC(nrf_cloud_pgps_begin_update)		\
-	FUNC(nrf_cloud_pgps_process_update)		\
-	FUNC(nrf_cloud_pgps_finish_update)		\
+	FUNC(nrf_cloud_pgnss_begin_update)		\
+	FUNC(nrf_cloud_pgnss_process_update)		\
+	FUNC(nrf_cloud_pgnss_finish_update)		\
 	FUNC(settings_load_subtree)                     \
 	FUNC(settings_register)                         \
 	FUNC(settings_subsys_init)                      \

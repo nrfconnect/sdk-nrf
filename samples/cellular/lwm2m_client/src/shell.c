@@ -16,7 +16,7 @@
 static int cmd_gnss(const struct shell *sh, size_t argc, char **argv)
 {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) ||                                    \
-	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
 	shell_print(sh, "Starting GNSS\n");
 	start_gnss();
 	return 0;

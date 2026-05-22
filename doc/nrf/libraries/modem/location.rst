@@ -9,7 +9,7 @@ Location
 
 The Location library provides functionality for retrieving the location of a device using different positioning methods such as:
 
-* GNSS satellite positioning including Assisted GNSS (A-GNSS) and Predicted GPS (P-GPS) data.
+* GNSS satellite positioning including Assisted GNSS (A-GNSS) and Predicted GNSS (PGNSS) data.
 * Cellular positioning.
 * Wi-Fi® positioning.
 
@@ -22,7 +22,7 @@ If a method fails to provide the location, the library performs a fallback to th
 
 Both cellular and Wi-Fi positioning detect the base stations and use web services for retrieving the location.
 GNSS positioning uses satellites to compute the location of the device.
-This library can use the assistance data (A-GNSS and P-GPS) to find the satellites faster.
+This library can use the assistance data (A-GNSS and PGNSS) to find the satellites faster.
 
 Implementation
 ==============
@@ -33,10 +33,10 @@ The supported location methods are as follows:
 * GNSS positioning
 
   * Uses :ref:`GNSS interface <gnss_interface>` for getting the location.
-  * A-GNSS and P-GPS are managed with :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgps`.
-  * The application may also use some other source for the data and use :c:func:`location_agnss_data_process` and :c:func:`location_pgps_data_process` to pass the data to the Location library.
-  * The data format of A-GNSS or P-GPS must be as received from :ref:`lib_nrf_cloud_agnss`.
-  * You can configure the data transport method for :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgps` to be either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or CoAP (:kconfig:option:`CONFIG_NRF_CLOUD_COAP`).
+  * A-GNSS and PGNSS are managed with :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgnss`.
+  * The application may also use some other source for the data and use :c:func:`location_agnss_data_process` and :c:func:`location_pgnss_data_process` to pass the data to the Location library.
+  * The data format of A-GNSS or PGNSS must be as received from :ref:`lib_nrf_cloud_agnss`.
+  * You can configure the data transport method for :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgnss` to be either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or CoAP (:kconfig:option:`CONFIG_NRF_CLOUD_COAP`).
   * Note that acquiring GNSS fix only starts when LTE connection, more specifically Radio Resource Control (RRC) connection, is idle.
     Also, if A-GNSS is not used and Power Saving Mode (PSM) is enabled, the Location library will wait for the modem to enter PSM.
   * Selectable location accuracy (low/normal/high).
@@ -195,7 +195,7 @@ To provision and onboard your device, install `nRF Cloud Utils`_ and follow the 
 Location service accounts
 =========================
 
-To use the location services that provide A-GNSS, P-GPS, cellular, or Wi-Fi positioning data, see the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ documentation for setting up your account and getting the required credentials for authentication.
+To use the location services that provide A-GNSS, PGNSS, cellular, or Wi-Fi positioning data, see the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ documentation for setting up your account and getting the required credentials for authentication.
 
 You can configure the required credentials for the location services using Kconfig options.
 
@@ -240,15 +240,15 @@ Configure the following options to enable location methods of your choice:
 * :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI` - Enables Wi-Fi location method.
 
 For external GNSS assistance data usage, set the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option.
-It enables A-GNSS and P-GPS data retrieval, and cellular cell information and Wi-Fi APs sending to an external source, implemented separately by the application.
+It enables A-GNSS and PGNSS data retrieval, and cellular cell information and Wi-Fi APs sending to an external source, implemented separately by the application.
 If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST`, :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` or :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` event when additional information is needed.
-Once the application has obtained necessary information, it must call the :c:func:`location_agnss_data_process`, the :c:func:`location_pgps_data_process`, or the :c:func:`location_cloud_location_ext_result_set` function, respectively, to feed it into the library.
+Once the application has obtained necessary information, it must call the :c:func:`location_agnss_data_process`, the :c:func:`location_pgnss_data_process`, or the :c:func:`location_cloud_location_ext_result_set` function, respectively, to feed it into the library.
 
 Set the following Kconfig options to retrieve GNSS assistance data from `nRF Cloud`_:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD` - Enables `nRF Cloud`_ support.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS` - Enables A-GNSS data retrieval from `nRF Cloud`_.
-* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGNSS` - Enables PGNSS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS_FILTERED` - Reduces assistance size by only downloading ephemerides for visible satellites.
   See :ref:`agnss_filtered_ephemerides` for more details.
 
@@ -380,7 +380,7 @@ This library uses the following |NCS| libraries:
 * :ref:`lte_lc_readme`
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_agnss`
-* :ref:`lib_nrf_cloud_pgps`
+* :ref:`lib_nrf_cloud_pgnss`
 * :ref:`lib_nrf_cloud_coap`
 
 It uses the following `sdk-nrfxlib`_ library:

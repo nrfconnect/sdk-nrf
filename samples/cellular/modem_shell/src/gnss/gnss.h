@@ -356,12 +356,12 @@ int gnss_set_agnss_automatic(bool value);
 int gnss_inject_agnss_data(void);
 
 /**
- * @brief Enables P-GPS. Once enabled, P-GPS remains enabled until reboot.
+ * @brief Enables PGNSS. Once enabled, PGNSS remains enabled until reboot.
  *
  * @retval 0 if the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int gnss_enable_pgps(void);
+int gnss_enable_pgnss(void);
 
 /**
  * @brief Queries A-GNSS data expiry information from GNSS.

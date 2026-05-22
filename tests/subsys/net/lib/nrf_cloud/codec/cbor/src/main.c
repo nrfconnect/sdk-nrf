@@ -41,8 +41,8 @@
  */
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_location.h>   /* lte_lc.h, wifi_location_common.h, nrf_cloud.h */
-#include <net/nrf_cloud_pgps.h>        /* nrf_cloud_pgps_result, gps_pgps_request */
-/* nrf_cloud_coap_agnss_request/result, nrf_cloud_coap_pgps_request */
+#include <net/nrf_cloud_pgnss.h>        /* nrf_cloud_pgnss_result, gps_pgnss_request */
+/* nrf_cloud_coap_agnss_request/result, nrf_cloud_coap_pgnss_request */
 #include <net/nrf_cloud_coap.h>
 #include <nrf_modem_gnss.h>            /* struct nrf_modem_gnss_agnss_data_frame */
 #include <zephyr/net/coap.h>           /* COAP_CONTENT_FORMAT_* */
@@ -605,79 +605,79 @@ ZTEST(coap_cbor_agnss, test_decode_octet_stream_truncated)
 }
 
 /* =========================================================================
- * SUITE: coap_cbor_pgps
- * Tests for coap_codec_pgps_encode() and coap_codec_pgps_resp_decode().
+ * SUITE: coap_cbor_pgnss
+ * Tests for coap_codec_pgnss_encode() and coap_codec_pgnss_resp_decode().
  * =========================================================================
  */
 
-ZTEST_SUITE(coap_cbor_pgps, NULL, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(coap_cbor_pgnss, NULL, NULL, NULL, NULL, NULL);
 
-ZTEST(coap_cbor_pgps, test_encode_valid)
+ZTEST(coap_cbor_pgnss, test_encode_valid)
 {
-	uint8_t buf[PGPS_URL_GET_CBOR_MAX_SIZE];
+	uint8_t buf[PGNSS_URL_GET_CBOR_MAX_SIZE];
 	size_t len = sizeof(buf);
-	struct gps_pgps_request pgps_req = {
+	struct gps_pgnss_request pgnss_req = {
 		.prediction_count = 42,
 		.prediction_period_min = 240,
 		.gps_day = 3000,
 		.gps_time_of_day = 43200,
 	};
-	struct nrf_cloud_coap_pgps_request request = {
-		.pgps_req = &pgps_req,
+	struct nrf_cloud_coap_pgnss_request request = {
+		.pgnss_req = &pgnss_req,
 	};
 
-	zassert_equal(coap_codec_pgps_encode(&request, buf, &len,
+	zassert_equal(coap_codec_pgnss_encode(&request, buf, &len,
 					     COAP_CONTENT_FORMAT_APP_CBOR), 0);
 	zassert_true(len > 0);
 	zassert_true(len <= sizeof(buf));
 }
 
-ZTEST(coap_cbor_pgps, test_encode_invalid_fmt_returns_enotsup)
+ZTEST(coap_cbor_pgnss, test_encode_invalid_fmt_returns_enotsup)
 {
-	/* P-GPS encode only supports CBOR */
-	uint8_t buf[PGPS_URL_GET_CBOR_MAX_SIZE];
+	/* PGNSS encode only supports CBOR */
+	uint8_t buf[PGNSS_URL_GET_CBOR_MAX_SIZE];
 	size_t len = sizeof(buf);
-	struct gps_pgps_request pgps_req = {
+	struct gps_pgnss_request pgnss_req = {
 		.prediction_count = 1,
 		.prediction_period_min = 120,
 		.gps_day = 1,
 		.gps_time_of_day = 0,
 	};
-	struct nrf_cloud_coap_pgps_request request = {.pgps_req = &pgps_req};
+	struct nrf_cloud_coap_pgnss_request request = {.pgnss_req = &pgnss_req};
 
-	zassert_equal(coap_codec_pgps_encode(&request, buf, &len,
+	zassert_equal(coap_codec_pgnss_encode(&request, buf, &len,
 					     COAP_CONTENT_FORMAT_APP_JSON), -ENOTSUP);
 }
 
-ZTEST(coap_cbor_pgps, test_encode_buf_too_small)
+ZTEST(coap_cbor_pgnss, test_encode_buf_too_small)
 {
 	uint8_t buf[1];
 	size_t len = sizeof(buf);
-	struct gps_pgps_request pgps_req = {
+	struct gps_pgnss_request pgnss_req = {
 		.prediction_count = 42,
 		.prediction_period_min = 240,
 		.gps_day = 3000,
 		.gps_time_of_day = 43200,
 	};
-	struct nrf_cloud_coap_pgps_request request = {.pgps_req = &pgps_req};
+	struct nrf_cloud_coap_pgnss_request request = {.pgnss_req = &pgnss_req};
 
-	zassert_equal(coap_codec_pgps_encode(&request, buf, &len,
+	zassert_equal(coap_codec_pgnss_encode(&request, buf, &len,
 					     COAP_CONTENT_FORMAT_APP_CBOR), -EINVAL);
 	zassert_equal(len, 0);
 }
 
 /*
- * Hand-crafted CBOR for a pgps_resp, mirroring a real nRF Cloud P-GPS response:
+ * Hand-crafted CBOR for a pgnss_resp, mirroring a real nRF Cloud PGNSS response:
  *   { 1: "pgnss.nrfcloud.com", 2: "public/15131-0_15135-72000.bin" }
  *
- * Key mapping (from CDDL / pgps_decode.c):
+ * Key mapping (from CDDL / pgnss_decode.c):
  *   1 → host (tstr), 2 → path (tstr)
  *
  * CBOR encoding:
  *   host (18 bytes): major type 3 + len 18 → 0x72
  *   path (30 bytes): major type 3 + additional info 24 → 0x78 0x1E
  */
-static const uint8_t pgps_resp_cbor[] = {
+static const uint8_t pgnss_resp_cbor[] = {
 	0xA2,                                           /* map(2)        */
 	0x01,                                           /* key 1         */
 	0x72,                                           /* tstr(18)      */
@@ -692,38 +692,38 @@ static const uint8_t pgps_resp_cbor[] = {
 	0x30, 0x30, 0x30, 0x2E, 0x62, 0x69, 0x6E,      /*  000.bin"     */
 };
 
-#define TEST_PGPS_HOST "pgnss.nrfcloud.com"
-#define TEST_PGPS_PATH "public/15131-0_15135-72000.bin"
+#define TEST_PGNSS_HOST "pgnss.nrfcloud.com"
+#define TEST_PGNSS_PATH "public/15131-0_15135-72000.bin"
 
-ZTEST(coap_cbor_pgps, test_decode_valid)
+ZTEST(coap_cbor_pgnss, test_decode_valid)
 {
 	char host[32] = {0};
 	char path[32] = {0};
-	struct nrf_cloud_pgps_result result = {
+	struct nrf_cloud_pgnss_result result = {
 		.host = host,
 		.host_sz = sizeof(host),
 		.path = path,
 		.path_sz = sizeof(path),
 	};
 
-	zassert_equal(coap_codec_pgps_resp_decode(&result, pgps_resp_cbor,
-						  sizeof(pgps_resp_cbor),
+	zassert_equal(coap_codec_pgnss_resp_decode(&result, pgnss_resp_cbor,
+						  sizeof(pgnss_resp_cbor),
 						  COAP_CONTENT_FORMAT_APP_CBOR), 0);
 
-	zassert_mem_equal(result.host, TEST_PGPS_HOST, strlen(TEST_PGPS_HOST));
-	zassert_mem_equal(result.path, TEST_PGPS_PATH, strlen(TEST_PGPS_PATH));
-	zassert_equal(result.host_sz, strlen(TEST_PGPS_HOST));
-	zassert_equal(result.path_sz, strlen(TEST_PGPS_PATH));
+	zassert_mem_equal(result.host, TEST_PGNSS_HOST, strlen(TEST_PGNSS_HOST));
+	zassert_mem_equal(result.path, TEST_PGNSS_PATH, strlen(TEST_PGNSS_PATH));
+	zassert_equal(result.host_sz, strlen(TEST_PGNSS_HOST));
+	zassert_equal(result.path_sz, strlen(TEST_PGNSS_PATH));
 }
 
-ZTEST(coap_cbor_pgps, test_decode_invalid_fmt)
+ZTEST(coap_cbor_pgnss, test_decode_invalid_fmt)
 {
 	/* JSON format: nrf_cloud_error_msg_decode stub returns -ENOENT
 	 * → the function returns -EPROTO.
 	 */
 	char host[32] = {0};
 	char path[32] = {0};
-	struct nrf_cloud_pgps_result result = {
+	struct nrf_cloud_pgnss_result result = {
 		.host = host,
 		.host_sz = sizeof(host),
 		.path = path,
@@ -731,15 +731,15 @@ ZTEST(coap_cbor_pgps, test_decode_invalid_fmt)
 	};
 	const uint8_t dummy[] = {0x01};
 
-	zassert_equal(coap_codec_pgps_resp_decode(&result, dummy, sizeof(dummy),
+	zassert_equal(coap_codec_pgnss_resp_decode(&result, dummy, sizeof(dummy),
 						  COAP_CONTENT_FORMAT_APP_JSON), -EPROTO);
 }
 
-ZTEST(coap_cbor_pgps, test_decode_malformed_cbor)
+ZTEST(coap_cbor_pgnss, test_decode_malformed_cbor)
 {
 	char host[32] = {0};
 	char path[32] = {0};
-	struct nrf_cloud_pgps_result result = {
+	struct nrf_cloud_pgnss_result result = {
 		.host = host,
 		.host_sz = sizeof(host),
 		.path = path,
@@ -747,7 +747,7 @@ ZTEST(coap_cbor_pgps, test_decode_malformed_cbor)
 	};
 	const uint8_t garbage[] = {0xFF, 0xAA, 0xBB};
 
-	zassert_equal(coap_codec_pgps_resp_decode(&result, garbage, sizeof(garbage),
+	zassert_equal(coap_codec_pgnss_resp_decode(&result, garbage, sizeof(garbage),
 						  COAP_CONTENT_FORMAT_APP_CBOR), -EINVAL);
 }
 

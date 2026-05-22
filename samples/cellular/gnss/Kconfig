@@ -95,10 +95,10 @@ if !GNSS_SAMPLE_ASSISTANCE_NONE
 
 config GNSS_SAMPLE_LTE_ON_DEMAND
 	bool "LTE is activated only when needed to fetch A-GNSS data"
-	depends on !NRF_CLOUD_PGPS
+	depends on !NRF_CLOUD_PGNSS
 	help
 	  Activates LTE only when it is needed to fetch A-GNSS data. This is not supported when
-	  P-GPS is enabled.
+	  PGNSS is enabled.
 
 endif # !GNSS_SAMPLE_ASSISTANCE_NONE
 

@@ -72,7 +72,7 @@ If your application was built using the |NCS|, you must define partitions using 
 The built-in partition definitions can be found in the :file:`nrf/subsys/partition_manager` folder, and the file names start with ``pm.yml``.
 The files that have ``external_flash`` as their region support storing partitions in the external flash.
 You can also find the configuration option required to place the partition in the external flash region in those files.
-For example, the :file:`pm.yml.pgps` file has an option (:kconfig:option:`CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL`) to place the P-GPS partition in external flash:
+For example, the :file:`pm.yml.pgps` file has an option (:kconfig:option:`CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL`) to place the PGNSS partition in external flash:
 
 .. code-block:: c
 
@@ -81,6 +81,6 @@ For example, the :file:`pm.yml.pgps` file has an option (:kconfig:option:`CONFIG
    #else
      inside: [nonsecure_storage]
    #endif
-     size: CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE
+     size: CONFIG_NRF_CLOUD_PGNSS_PARTITION_SIZE
 
-You can also change the size of the partition with the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE` Kconfig option.
+You can also change the size of the partition with the :kconfig:option:`CONFIG_NRF_CLOUD_PGNSS_PARTITION_SIZE` Kconfig option.

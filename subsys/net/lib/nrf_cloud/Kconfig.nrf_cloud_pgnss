@@ -1,0 +1,174 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_CLOUD_PGNSS
+	bool "nRF Cloud Predicted GNSS (PGNSS)"
+	depends on MODEM_INFO
+	depends on MODEM_INFO_ADD_NETWORK
+	depends on DATE_TIME
+	imply DOWNLOADER
+	select STREAM_FLASH_ERASE
+	select SETTINGS
+	select CJSON_LIB
+
+if NRF_CLOUD_PGNSS
+
+config NRF_CLOUD_PGNSS_REQUEST_UPON_INIT
+	bool "Request required PGNSS data upon initialization"
+	default y
+	help
+	  If this option is enabled, the PGNSS library init function will
+	  request PGNSS data from the cloud for three reasons:
+	  if no PGNSS data has previously been stored to flash,
+	  if only some of the predictions are in storage,
+	  or if the replacement threshold is reached.
+
+config NRF_CLOUD_PGNSS_NUM_PREDICTIONS
+	int "Desired number of predictions"
+	range 2 40
+	default 40
+	help
+	  This value, together with the prediction period, determines the
+	  overall timespan that the GPS predictions will cover. The
+	  default values allows for one week of predictions. Odd numbers
+	  are not allowed.
+
+config NRF_CLOUD_PGNSS_REPLACEMENT_THRESHOLD
+	int "Number of predictions remaining before fetching more"
+	range 0 38
+	default 0
+	help
+	  When set to 0, no attempt will be made to update the prediction
+	  set from the cloud until all predictions have expired. When set
+	  to an even number less than or equal to
+	  NRF_CLOUD_PGNSS_NUM_PREDICTIONS - 2, any expired predictions will be
+	  replaced with predictions following the last remaining valid
+	  prediction. Odd numbers are not allowed.
+
+config NRF_CLOUD_PGNSS_DOWNLOAD_FRAGMENT_SIZE
+	int "Fragment size for PGNSS downloads"
+	range 128 1500
+	default 1500
+	help
+	  Due to the finite size of the nrf9160 modem's TLS buffer, this
+	  value needs to be small enough to leave room for the HTTP
+	  headers.
+
+choice NRF_CLOUD_PGNSS_TRANSPORT
+	prompt "nRF Cloud PGNSS transport for requests and responses"
+	default NRF_CLOUD_PGNSS_TRANSPORT_MQTT if NRF_CLOUD_MQTT
+	default NRF_CLOUD_PGNSS_TRANSPORT_NONE
+
+config NRF_CLOUD_PGNSS_TRANSPORT_NONE
+	bool "Application-provided transport"
+	help
+	  Enabling this option will make the nRF Cloud PGNSS library not request
+	  or receive data from nRF Cloud when its APIs are called. This will
+	  instead let it be up to the user to request, receive and process PGNSS
+	  data.
+
+config NRF_CLOUD_PGNSS_TRANSPORT_MQTT
+	bool "MQTT transport"
+	depends on NRF_CLOUD_MQTT
+	depends on NRF_CLOUD_PGNSS_DOWNLOAD_TRANSPORT_HTTP
+	help
+	  Use nRF Cloud library's MQTT implementation to send requests for PGNSS
+	  data and receive responses. Responses indicate where the device can
+	  download predictions from, using the NRF_CLOUD_PGNSS_DOWNLOAD_TRANSPORT.
+
+endchoice # NRF_CLOUD_PGNSS_TRANSPORT
+
+choice NRF_CLOUD_PGNSS_DOWNLOAD_TRANSPORT
+	prompt "nRF Cloud PGNSS download transport"
+	default NRF_CLOUD_PGNSS_DOWNLOAD_TRANSPORT_HTTP
+
+config NRF_CLOUD_PGNSS_DOWNLOAD_TRANSPORT_HTTP
+	bool "Transport PGNSS prediction data over HTTP(S)"
+	help
+	  Enabling this option will make the nRF Cloud PGNSS library use the
+	  downloader library to download prediction data.
+
+config NRF_CLOUD_PGNSS_DOWNLOAD_TRANSPORT_CUSTOM
+	bool "Transport PGNSS data using application-supplied transport"
+	help
+	  Enabling this option bypasses the built-in HTTP(S) transport and
+	  replaces it with an application-specific transport for downloading
+	  prediction data.
+
+endchoice # NRF_CLOUD_PGNSS_DOWNLOAD_TRANSPORT
+
+config NRF_CLOUD_PGNSS_SOCKET_RETRIES
+	int "Number of times to retry a PGNSS download"
+	default 2
+	help
+	  This sets the maximum number of times to retry a download.
+
+choice NRF_CLOUD_PGNSS_STORAGE
+	prompt "nRF Cloud PGNSS persistent storage location"
+#TODO: Add MCUBOOT_BOOTLOADER_MODE_RAM_LOAD once included via next upmerge
+	default NRF_CLOUD_PGNSS_STORAGE_PARTITION if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP || MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	default NRF_CLOUD_PGNSS_STORAGE_MCUBOOT_SECONDARY if BOARD_THINGY91_NRF9160_NS
+	help
+	  The PGNSS subsystem requires a contiguous section of flash memory in
+	  which to store predictions. The amount required is 2048 bytes times
+	  the number of predictions set by NRF_CLOUD_PGNSS_NUM_PREDICTIONS.
+	  If mcuboot DFU is enabled, default to NRF_CLOUD_PGNSS_STORAGE_PARTITION.
+	  Otherwise, PGNSS will prevent a successful mcuboot update, causing it
+	  to revert to the previous image.
+
+config NRF_CLOUD_PGNSS_STORAGE_PARTITION
+	bool "Define PGNSS subsystem flash partition"
+	help
+	  If set, allocates flash for storing predictions.
+
+config NRF_CLOUD_PGNSS_STORAGE_MCUBOOT_SECONDARY
+	bool "Reuse MCUboot secondary partition for PGNSS storage"
+	depends on BOOTLOADER_MCUBOOT
+	depends on IMG_MANAGER
+#TODO: Add MCUBOOT_BOOTLOADER_MODE_RAM_LOAD once included via next upmerge
+	depends on !MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP && !MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	help
+	  If set, use the secondary MCUboot partition to also store PGNSS data.
+	  Note that when a FOTA job executes, this data will be lost and will
+	  have to be downloaded again after the FOTA job is complete. This is
+	  not compatible with FOTA updates of MUCboot itself, which is possible
+	  when SECURE_BOOT is enabled.
+
+config NRF_CLOUD_PGNSS_STORAGE_CUSTOM
+	bool "Use application-provided location and size in flash"
+	help
+	  The application is responsible for providing the location in flash
+	  in which to store PGNSS data.  The location must be aligned to a
+	  flash page boundary (4096 bytes), and the size must be at least 2048
+	  bytes times NRF_CLOUD_PGNSS_NUM_PREDICTIONS.
+
+endchoice # NRF_CLOUD_PGNSS_STORAGE
+
+if NRF_CLOUD_PGNSS_STORAGE_PARTITION
+
+config NRF_CLOUD_PGNSS_PARTITION_SIZE
+	hex "Size of flash partition for PGNSS data storage"
+	default 0x15000
+	help
+	  This must be at least 2048 bytes times NRF_CLOUD_PGNSS_NUM_PREDICTIONS.
+
+config NRF_CLOUD_PGNSS_PARTITION_ALIGN
+	hex "Align PGNSS partition to flash block boundary"
+	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
+
+endif # NRF_CLOUD_PGNSS_STORAGE_PARTITION
+
+endif # NRF_CLOUD_PGNSS
+
+config NRF_CLOUD_PGPS
+	bool "[DEPRECATED] Use NRF_CLOUD_PGNSS"
+	select DEPRECATED
+	select NRF_CLOUD_PGNSS
+	help
+	  Deprecated alias for NRF_CLOUD_PGNSS. The library was renamed from
+	  PGPS (Predicted GPS) to PGNSS (Predicted GNSS) to align with the
+	  nRF Cloud API terminology. Selecting this option enables
+	  NRF_CLOUD_PGNSS. Update your prj.conf to use NRF_CLOUD_PGNSS
+	  directly; this symbol will be removed in a future release.

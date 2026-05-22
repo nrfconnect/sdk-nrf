@@ -222,7 +222,7 @@ Location services
 The following enhancements to this library can be used to interact with `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_:
 
 * Assisted GNSS - :ref:`lib_nrf_cloud_agnss`
-* Predicted GPS - :ref:`lib_nrf_cloud_pgps`
+* Predicted GNSS - :ref:`lib_nrf_cloud_pgnss`
 * Cellular Positioning - :ref:`lib_nrf_cloud_cell_pos`
 
 .. _nrf_cloud_api:

@@ -754,7 +754,7 @@ Glossary
    Preconnect provisioning
       The process of securely generating and storing credentials in a device, then uploading a device ID and device certificate to a cloud account so that the device is ready to connect to the cloud.
 
-   Predicted GPS (P-GPS)
+   Predicted GNSS (PGNSS)
       A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix, where the device can download predicted satellite Ephemerides data for several days into the future.
       It enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
       It is available through :term:`nRF Cloud`.

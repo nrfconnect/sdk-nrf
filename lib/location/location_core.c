@@ -489,23 +489,23 @@ void location_core_event_cb_agnss_request(const struct nrf_modem_gnss_agnss_data
 }
 #endif
 
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
-void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGNSS)
+void location_core_event_cb_pgnss_request(const struct gps_pgnss_request *request)
 {
-	struct location_event_data pgps_request_event_data = {
+	struct location_event_data pgnss_request_event_data = {
 		.id = LOCATION_EVT_GNSS_PREDICTION_REQUEST,
 		.method = LOCATION_METHOD_GNSS,
-		.pgps_request = *request
+		.pgnss_request = *request
 	};
 
-	LOG_DBG("Request P-GPS data from application: "
+	LOG_DBG("Request PGNSS data from application: "
 		"prediction_count %d, prediction_period_min %d, gps_day %d, time_of_day %d",
 		request->prediction_count,
 		request->prediction_period_min,
 		request->gps_day,
 		request->gps_time_of_day);
 
-	location_utils_event_dispatch(&pgps_request_event_data);
+	location_utils_event_dispatch(&pgnss_request_event_data);
 }
 #endif
 

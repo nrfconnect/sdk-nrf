@@ -31,8 +31,8 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud_coap.h
   FUNC_EXCLUDE ".*nrf_cloud_coap_resume"
   FUNC_EXCLUDE ".*nrf_cloud_coap_disconnect"
   FUNC_EXCLUDE ".*nrf_cloud_coap_keepopen_is_supported"
-  FUNC_EXCLUDE ".*nrf_cloud_coap_pgps_url_get"
-  WORD_EXCLUDE ".*pgps.*"
+  FUNC_EXCLUDE ".*nrf_cloud_coap_pgnss_url_get"
+  WORD_EXCLUDE ".*pgnss.*"
 )
 
 # Net and Wi-Fi management API mocking requires tricks as the headers have code structures

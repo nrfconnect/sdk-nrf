@@ -86,7 +86,7 @@ config COAP_CLIENT_MAX_PATH_LENGTH
 	default 128
 
 # The JWT authentication URI_QUERY options (mver, cver) exceed Zephyr's default of 13.
-# Samples that download via CoAP (P-GPS, FOTA) require larger values; see BUILD_ASSERTs
+# Samples that download via CoAP (PGNSS, FOTA) require larger values; see BUILD_ASSERTs
 # in nrf_cloud_coap_download.c.
 config COAP_EXTENDED_OPTIONS_LEN_VALUE
 	default 40

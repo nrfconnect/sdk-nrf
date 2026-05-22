@@ -20,8 +20,8 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-#include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
 #endif
 #include "gnss_assistance_obj.h"
 
@@ -31,10 +31,10 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 /* Location Assistance resource IDs */
 #define GNSS_ASSIST_ASSIST_TYPE				0
 #define GNSS_ASSIST_AGNSS_MASK				1
-#define GNSS_ASSIST_PGPS_PRED_COUNT			2
-#define GNSS_ASSIST_PGPS_PRED_INTERVAL			3
-#define GNSS_ASSIST_PGPS_START_GPS_DAY			4
-#define GNSS_ASSIST_PGPS_START_GPS_TIME_OF_DAY		5
+#define GNSS_ASSIST_PGNSS_PRED_COUNT			2
+#define GNSS_ASSIST_PGNSS_PRED_INTERVAL			3
+#define GNSS_ASSIST_PGNSS_START_GPS_DAY			4
+#define GNSS_ASSIST_PGNSS_START_GPS_TIME_OF_DAY		5
 #define GNSS_ASSIST_ASSIST_DATA				6
 #define GNSS_ASSIST_RESULT_CODE				7
 #define GNSS_ASSIST_ELEVATION_MASK			8
@@ -51,10 +51,10 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 static int32_t assist_type;
 static uint32_t agnss_mask;
-static int32_t pgps_pred_count;
-static int32_t pgps_pred_interval;
-static int32_t pgps_start_gps_day;
-static int32_t pgps_start_gps_time_of_day;
+static int32_t pgnss_pred_count;
+static int32_t pgnss_pred_interval;
+static int32_t pgnss_start_gps_day;
+static int32_t pgnss_start_gps_time_of_day;
 static int32_t result;
 static int32_t satellite_elevation_mask;
 
@@ -80,10 +80,10 @@ static struct lwm2m_engine_obj gnss_assistance;
 static struct lwm2m_engine_obj_field fields[] = {
 	OBJ_FIELD_DATA(GNSS_ASSIST_ASSIST_TYPE, R, S32),
 	OBJ_FIELD_DATA(GNSS_ASSIST_AGNSS_MASK, R_OPT, U32),
-	OBJ_FIELD_DATA(GNSS_ASSIST_PGPS_PRED_COUNT, R_OPT, S32),
-	OBJ_FIELD_DATA(GNSS_ASSIST_PGPS_PRED_INTERVAL, R_OPT, S32),
-	OBJ_FIELD_DATA(GNSS_ASSIST_PGPS_START_GPS_DAY, R_OPT, S32),
-	OBJ_FIELD_DATA(GNSS_ASSIST_PGPS_START_GPS_TIME_OF_DAY, R_OPT, S32),
+	OBJ_FIELD_DATA(GNSS_ASSIST_PGNSS_PRED_COUNT, R_OPT, S32),
+	OBJ_FIELD_DATA(GNSS_ASSIST_PGNSS_PRED_INTERVAL, R_OPT, S32),
+	OBJ_FIELD_DATA(GNSS_ASSIST_PGNSS_START_GPS_DAY, R_OPT, S32),
+	OBJ_FIELD_DATA(GNSS_ASSIST_PGNSS_START_GPS_TIME_OF_DAY, R_OPT, S32),
 	OBJ_FIELD_DATA(GNSS_ASSIST_ASSIST_DATA, W, OPAQUE),
 	OBJ_FIELD_DATA(GNSS_ASSIST_RESULT_CODE, W, S32),
 	OBJ_FIELD_DATA(GNSS_ASSIST_ELEVATION_MASK, R_OPT, S32)
@@ -128,32 +128,32 @@ static int gnss_assist_write_agnss(uint8_t *data, uint16_t data_len, bool last_b
 }
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-static int gnss_assist_write_pgps(uint8_t *data, uint16_t data_len, bool last_block,
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+static int gnss_assist_write_pgnss(uint8_t *data, uint16_t data_len, bool last_block,
 				  uint32_t bytes_downloaded)
 {
 	int err;
 
 	if (bytes_downloaded == 0) {
-		err = nrf_cloud_pgps_begin_update();
+		err = nrf_cloud_pgnss_begin_update();
 
 		if (err) {
-			LOG_ERR("Unable to begin P-GPS update, error: %d", err);
+			LOG_ERR("Unable to begin PGNSS update, error: %d", err);
 			return err;
 		}
 	}
 
-	err = nrf_cloud_pgps_process_update(data, data_len);
+	err = nrf_cloud_pgnss_process_update(data, data_len);
 
 	if (err) {
-		LOG_ERR("Unable to process P-GPS data, error: %d", err);
-		nrf_cloud_pgps_finish_update();
+		LOG_ERR("Unable to process PGNSS data, error: %d", err);
+		nrf_cloud_pgnss_finish_update();
 		return err;
 	}
 
 	if (last_block) {
-		LOG_INF("P-GPS data processed");
-		err = nrf_cloud_pgps_finish_update();
+		LOG_INF("PGNSS data processed");
+		err = nrf_cloud_pgnss_finish_update();
 	}
 
 	return err;
@@ -172,9 +172,9 @@ static int gnss_assist_write_cb(uint16_t obj_inst_id, uint16_t res_id,
 	}
 #endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-	if (assist_type == ASSISTANCE_REQUEST_TYPE_PGPS) {
-		err = gnss_assist_write_pgps(data, data_len, last_block, bytes_downloaded);
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+	if (assist_type == ASSISTANCE_REQUEST_TYPE_PGNSS) {
+		err = gnss_assist_write_pgnss(data, data_len, last_block, bytes_downloaded);
 	}
 #endif
 
@@ -187,7 +187,7 @@ static int gnss_assist_write_cb(uint16_t obj_inst_id, uint16_t res_id,
 
 	if (err) {
 		LOG_ERR("Error writing %s assistance data (%d)",
-			(assist_type == ASSISTANCE_REQUEST_TYPE_AGNSS) ? "A-GNSS" : "P-GPS", err);
+			(assist_type == ASSISTANCE_REQUEST_TYPE_AGNSS) ? "A-GNSS" : "PGNSS", err);
 	}
 
 	return err;
@@ -274,53 +274,53 @@ int32_t location_assist_agnss_get_elevation_mask(void)
 }
 #endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS*/
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-int location_assist_pgps_set_prediction_count(int32_t predictions)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+int location_assist_pgnss_set_prediction_count(int32_t predictions)
 {
 	if (predictions < PREDICTION_COUNT_MIN || predictions > PREDICTION_COUNT_MAX) {
 		return -EINVAL;
 	}
 
-	pgps_pred_count = predictions;
+	pgnss_pred_count = predictions;
 	return 0;
 }
 
-int location_assist_pgps_set_prediction_interval(int32_t interval)
+int location_assist_pgnss_set_prediction_interval(int32_t interval)
 {
 	if (interval < PREDICTION_INTERVAL_MIN || interval > PREDICTION_INTERVAL_MAX ||
 	    interval % PREDICTION_INTERVAL_MIN != 0) {
 		return -EINVAL;
 	}
 
-	pgps_pred_interval = interval;
+	pgnss_pred_interval = interval;
 	return 0;
 }
 
-void location_assist_pgps_set_start_gps_day(int32_t gps_day)
+void location_assist_pgnss_set_start_gps_day(int32_t gps_day)
 {
-	pgps_start_gps_day = gps_day;
+	pgnss_start_gps_day = gps_day;
 }
 
-int location_assist_pgps_set_start_time(int32_t start_time)
+int location_assist_pgnss_set_start_time(int32_t start_time)
 {
 	if (start_time < 0 || start_time > START_TIME_MAX) {
 		return -EINVAL;
 	}
 
-	pgps_start_gps_time_of_day = start_time;
+	pgnss_start_gps_time_of_day = start_time;
 	return 0;
 }
 
-int location_assist_pgps_get_start_gps_day(void)
+int location_assist_pgnss_get_start_gps_day(void)
 {
-	return pgps_start_gps_day;
+	return pgnss_start_gps_day;
 }
 #endif
 
 int location_assist_gnss_type_set(int assistance_type)
 {
 	if (assistance_type != ASSISTANCE_REQUEST_TYPE_AGNSS &&
-	    assistance_type != ASSISTANCE_REQUEST_TYPE_PGPS) {
+	    assistance_type != ASSISTANCE_REQUEST_TYPE_PGNSS) {
 		return -EINVAL;
 	}
 
@@ -346,11 +346,11 @@ static struct lwm2m_engine_obj_inst *gnss_assist_create(uint16_t obj_inst_id)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 	satellite_elevation_mask = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_ELEVATION_MASK;
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-	pgps_pred_count = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_PREDICTION_COUNT;
-	pgps_pred_interval = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_PREDICTION_INTERVAL;
-	pgps_start_gps_day = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_STARTING_DAY;
-	pgps_start_gps_time_of_day = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_STARTING_TIME;
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS)
+	pgnss_pred_count = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS_PREDICTION_COUNT;
+	pgnss_pred_interval = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS_PREDICTION_INTERVAL;
+	pgnss_start_gps_day = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS_STARTING_DAY;
+	pgnss_start_gps_time_of_day = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGNSS_STARTING_TIME;
 #endif
 
 	/* initialize instance resource data */
@@ -358,14 +358,14 @@ static struct lwm2m_engine_obj_inst *gnss_assist_create(uint16_t obj_inst_id)
 			  &assist_type, sizeof(assist_type));
 	INIT_OBJ_RES_DATA(GNSS_ASSIST_AGNSS_MASK, res, i, res_inst, j,
 			  &agnss_mask, sizeof(agnss_mask));
-	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGPS_PRED_COUNT, res, i, res_inst, j,
-			  &pgps_pred_count, sizeof(pgps_pred_count));
-	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGPS_PRED_INTERVAL, res, i, res_inst, j,
-			  &pgps_pred_interval, sizeof(pgps_pred_interval));
-	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGPS_START_GPS_DAY, res, i, res_inst, j,
-			  &pgps_start_gps_day, sizeof(pgps_start_gps_day));
-	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGPS_START_GPS_TIME_OF_DAY, res, i, res_inst, j,
-			  &pgps_start_gps_time_of_day, sizeof(pgps_start_gps_time_of_day));
+	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGNSS_PRED_COUNT, res, i, res_inst, j,
+			  &pgnss_pred_count, sizeof(pgnss_pred_count));
+	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGNSS_PRED_INTERVAL, res, i, res_inst, j,
+			  &pgnss_pred_interval, sizeof(pgnss_pred_interval));
+	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGNSS_START_GPS_DAY, res, i, res_inst, j,
+			  &pgnss_start_gps_day, sizeof(pgnss_start_gps_day));
+	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGNSS_START_GPS_TIME_OF_DAY, res, i, res_inst, j,
+			  &pgnss_start_gps_time_of_day, sizeof(pgnss_start_gps_time_of_day));
 	INIT_OBJ_RES_OPT(GNSS_ASSIST_ASSIST_DATA, res, i, res_inst, j, 1, false, true, NULL,
 			 get_assist_buf, NULL, gnss_assist_write_cb, NULL);
 	INIT_OBJ_RES(GNSS_ASSIST_RESULT_CODE, res, i, res_inst, j, 1, false, true, &result,

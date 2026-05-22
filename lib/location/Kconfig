@@ -162,9 +162,9 @@ config LOCATION_SERVICE_NRF_CLOUD
 endif # LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
 
 config LOCATION_SERVICE_EXTERNAL
-	bool "Requesting A-GNSS, P-GPS, LTE neighbor cell and Wi-Fi access point data is handled by the application outside of Location library"
+	bool "Requesting A-GNSS, PGNSS, LTE neighbor cell and Wi-Fi access point data is handled by the application outside of Location library"
 	help
-	  Allow application to download the A-GNSS and P-GPS data and merely feed it to
+	  Allow application to download the A-GNSS and PGNSS data and merely feed it to
 	  Location library for processing.
 	  Also, allow application to send cellular neighbor cell and Wi-Fi access point information
 	  to a cloud service and respond to the Location library with the outcome.

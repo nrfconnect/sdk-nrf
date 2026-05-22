@@ -36,7 +36,7 @@ config NRF_CLOUD_SEC_TAG
 	int "Security tag to use for nRF Cloud connection"
 	default 16842753
 
-if NRF_CLOUD_MQTT || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
+if NRF_CLOUD_MQTT || NRF_CLOUD_PGNSS || MODEM_JWT || NRF_CLOUD_COAP
 
 config NRF_CLOUD_PROVISION_CERTIFICATES
 	bool "Install credentials for nRF Cloud connection"
@@ -95,7 +95,7 @@ config NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED
 	select TLS_CREDENTIALS
 endchoice
 
-endif # NRF_CLOUD_MQTT || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
+endif # NRF_CLOUD_MQTT || NRF_CLOUD_PGNSS || MODEM_JWT || NRF_CLOUD_COAP
 
 config NRF_CLOUD_JWT_SOURCE_CUSTOM
 	bool "Custom JWT creation and signing"
@@ -150,9 +150,9 @@ config NRF_CLOUD_VERBOSE_DETAILS
 config NRF_CLOUD_DOWNLOADS
 	bool
 	default y
-	depends on NRF_CLOUD_FOTA || NRF_CLOUD_PGPS || NRF_CLOUD_FOTA_POLL
+	depends on NRF_CLOUD_FOTA || NRF_CLOUD_PGNSS || NRF_CLOUD_FOTA_POLL
 	help
-	  Enable nRF Cloud file downloads for FOTA and P-GPS.
+	  Enable nRF Cloud file downloads for FOTA and PGNSS.
 
 choice NRF_CLOUD_DOWNLOADS_PROTOCOL
 	prompt "nRF Cloud file download protocol"
@@ -164,14 +164,14 @@ config NRF_CLOUD_COAP_DOWNLOADS
 	depends on NRF_CLOUD_COAP
 	select DOWNLOADER_TRANSPORT_COAP
 	help
-	  Use nRF Cloud CoAP's proxy download resource to download files for FOTA and P-GPS.
+	  Use nRF Cloud CoAP's proxy download resource to download files for FOTA and PGNSS.
 	  When enabled, the Kconfig option COAP_EXTENDED_OPTIONS_LEN_VALUE must be increased
-	  from the default value. Safe values are 80 for P-GPS and 192 for FOTA.
+	  from the default value. Safe values are 80 for PGNSS and 192 for FOTA.
 
 config NRF_CLOUD_HTTPS_DOWNLOADS
 	bool "HTTPS"
 	help
-	  Use HTTPS to download files for FOTA and P-GPS over MQTT.
+	  Use HTTPS to download files for FOTA and PGNSS over MQTT.
 
 endchoice
 

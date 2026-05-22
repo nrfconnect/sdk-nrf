@@ -122,7 +122,7 @@ static void location_event_handler(const struct location_event_data *event_data)
 		break;
 
 	case LOCATION_EVT_GNSS_PREDICTION_REQUEST:
-		printk("Getting location assistance requested (P-GPS). Not doing anything.\n\n");
+		printk("Getting location assistance requested (PGNSS). Not doing anything.\n\n");
 		break;
 
 	default:
@@ -344,7 +344,7 @@ int main(void)
 		return err;
 	}
 
-	/* A-GNSS/P-GPS needs to know the current time. */
+	/* A-GNSS/PGNSS needs to know the current time. */
 	printk("Waiting for current time\n");
 
 	/* Wait for an event from the Date Time library. */

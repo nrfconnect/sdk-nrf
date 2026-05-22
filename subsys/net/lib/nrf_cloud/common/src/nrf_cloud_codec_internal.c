@@ -2726,7 +2726,7 @@ int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame *
 }
 #endif /* CONFIG_NRF_MODEM */
 
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGNSS)
 int nrf_cloud_agnss_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame *const request,
 				    cJSON *const agnss_req_obj_out)
 {
@@ -2892,11 +2892,11 @@ int nrf_cloud_agnss_type_array_get(const struct nrf_modem_gnss_agnss_data_frame 
 
 	return cnt;
 }
-#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-int nrf_cloud_pgps_response_decode(const char *const response,
-				   struct nrf_cloud_pgps_result *const result)
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+int nrf_cloud_pgnss_response_decode(const char *const response,
+				   struct nrf_cloud_pgnss_result *const result)
 {
 	if (!response || !result || !result->host || !result->host_sz || !result->path ||
 	    !result->path_sz) {
@@ -2909,21 +2909,21 @@ int nrf_cloud_pgps_response_decode(const char *const response,
 	cJSON *rsp_obj = cJSON_Parse(response);
 
 	if (!rsp_obj) {
-		LOG_ERR("P-GPS response does not contain valid JSON");
+		LOG_ERR("PGNSS response does not contain valid JSON");
 		err = -EBADMSG;
 		goto cleanup;
 	}
 
 	/* MQTT response is an array */
 	if (!cJSON_IsArray(rsp_obj)) {
-		LOG_ERR("Invalid P-GPS response format");
+		LOG_ERR("Invalid PGNSS response format");
 		err = -EPROTO;
 		goto cleanup;
 	}
 
-	if (json_array_str_get(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
-	    json_array_str_get(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
-		LOG_ERR("Invalid P-GPS array response format");
+	if (json_array_str_get(rsp_obj, NRF_CLOUD_PGNSS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
+	    json_array_str_get(rsp_obj, NRF_CLOUD_PGNSS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
+		LOG_ERR("Invalid PGNSS array response format");
 		err = -EPROTO;
 		goto cleanup;
 	}
@@ -2951,33 +2951,33 @@ cleanup:
 	return err;
 }
 
-int nrf_cloud_pgps_req_data_json_encode(const struct gps_pgps_request *const request,
+int nrf_cloud_pgnss_req_data_json_encode(const struct gps_pgnss_request *const request,
 					cJSON *const data_obj_out)
 {
 	if (!request || !data_obj_out) {
 		return -EINVAL;
 	}
 
-	if ((request->prediction_count != NRF_CLOUD_PGPS_REQ_NO_COUNT) &&
-	    !cJSON_AddNumberToObjectCS(data_obj_out, NRF_CLOUD_JSON_PGPS_PRED_COUNT,
+	if ((request->prediction_count != NRF_CLOUD_PGNSS_REQ_NO_COUNT) &&
+	    !cJSON_AddNumberToObjectCS(data_obj_out, NRF_CLOUD_JSON_PGNSS_PRED_COUNT,
 				       request->prediction_count)) {
 		goto cleanup;
 	}
 
-	if ((request->prediction_period_min != NRF_CLOUD_PGPS_REQ_NO_INTERVAL) &&
-	    !cJSON_AddNumberToObjectCS(data_obj_out, NRF_CLOUD_JSON_PGPS_INT_MIN,
+	if ((request->prediction_period_min != NRF_CLOUD_PGNSS_REQ_NO_INTERVAL) &&
+	    !cJSON_AddNumberToObjectCS(data_obj_out, NRF_CLOUD_JSON_PGNSS_INT_MIN,
 				       request->prediction_period_min)) {
 		goto cleanup;
 	}
 
-	if ((request->gps_day != NRF_CLOUD_PGPS_REQ_NO_GPS_DAY) &&
-	    !cJSON_AddNumberToObjectCS(data_obj_out, NRF_CLOUD_JSON_PGPS_GPS_DAY,
+	if ((request->gps_day != NRF_CLOUD_PGNSS_REQ_NO_GPS_DAY) &&
+	    !cJSON_AddNumberToObjectCS(data_obj_out, NRF_CLOUD_JSON_PGNSS_GPS_DAY,
 				       request->gps_day)) {
 		goto cleanup;
 	}
 
-	if ((request->gps_time_of_day != NRF_CLOUD_PGPS_REQ_NO_GPS_TOD) &&
-	    !cJSON_AddNumberToObjectCS(data_obj_out, NRF_CLOUD_JSON_PGPS_GPS_TIME,
+	if ((request->gps_time_of_day != NRF_CLOUD_PGNSS_REQ_NO_GPS_TOD) &&
+	    !cJSON_AddNumberToObjectCS(data_obj_out, NRF_CLOUD_JSON_PGNSS_GPS_TIME,
 				       request->gps_time_of_day)) {
 		goto cleanup;
 	}
@@ -2986,14 +2986,14 @@ int nrf_cloud_pgps_req_data_json_encode(const struct gps_pgps_request *const req
 
 cleanup:
 	/* On failure, remove any items added to the provided object */
-	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGPS_PRED_COUNT);
-	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGPS_INT_MIN);
-	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGPS_GPS_DAY);
-	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGPS_GPS_TIME);
+	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGNSS_PRED_COUNT);
+	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGNSS_INT_MIN);
+	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGNSS_GPS_DAY);
+	cJSON_DeleteItemFromObject(data_obj_out, NRF_CLOUD_JSON_PGNSS_GPS_TIME);
 
 	return -ENOMEM;
 }
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 int nrf_cloud_ground_fix_url_encode(char *buf, size_t size, const char *base,
 				    const struct nrf_cloud_location_config *config)

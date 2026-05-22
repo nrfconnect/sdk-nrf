@@ -7,7 +7,7 @@
 #include <cJSON.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_agnss.h>
-#include <net/nrf_cloud_pgps.h>
+#include <net/nrf_cloud_pgnss.h>
 #include <net/nrf_cloud_location.h>
 #include <net/nrf_cloud_codec.h>
 #include <modem/location.h>
@@ -33,38 +33,38 @@ void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame 
 }
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
 
-void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req)
+void location_srv_ext_pgnss_handle(const struct gps_pgnss_request *pgnss_req)
 {
 	int err = 0;
-	NRF_CLOUD_OBJ_JSON_DEFINE(pgps_obj);
+	NRF_CLOUD_OBJ_JSON_DEFINE(pgnss_obj);
 
-	err = nrf_cloud_obj_pgps_request_create(&pgps_obj, pgps_req);
+	err = nrf_cloud_obj_pgnss_request_create(&pgnss_obj, pgnss_req);
 	if (err) {
-		mosh_error("Could not create P-GPS request message, error: %d", err);
+		mosh_error("Could not create PGNSS request message, error: %d", err);
 		goto cleanup;
 	}
 
 	struct nrf_cloud_tx_data mqtt_msg = {
-		.obj = &pgps_obj,
+		.obj = &pgnss_obj,
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
 	};
 
 	err = nrf_cloud_send(&mqtt_msg);
 	if (!err) {
-		mosh_print("P-GPS data requested");
+		mosh_print("PGNSS data requested");
 	}
 
 cleanup:
-	(void)nrf_cloud_obj_free(&pgps_obj);
+	(void)nrf_cloud_obj_free(&pgnss_obj);
 
 	if (err) {
-		mosh_error("nRF Cloud P-GPS request failed, error: %d", err);
+		mosh_error("nRF Cloud PGNSS request failed, error: %d", err);
 	}
 }
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI)
 static void location_srv_ext_nrf_cloud_location_ready_cb(

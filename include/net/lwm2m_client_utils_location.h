@@ -91,13 +91,13 @@ int location_assistance_agnss_request_send(struct lwm2m_ctx *ctx);
 int location_assistance_ground_fix_request_send(struct lwm2m_ctx *ctx);
 
 /**
- * @brief Send the P-GPS assistance request to LwM2M Server
+ * @brief Send the PGNSS assistance request to LwM2M Server
  *
  * @param ctx LwM2M client context for sending the data.
  * @return Returns a negative error code (errno.h) indicating
  *         reason of failure or 0 for success.
  */
-int location_assistance_pgps_request_send(struct lwm2m_ctx *ctx);
+int location_assistance_pgnss_request_send(struct lwm2m_ctx *ctx);
 
 /**
  * @brief Initialize the location assistance library resend handler.
@@ -142,22 +142,22 @@ void location_assist_agnss_set_elevation_mask(int32_t elevation_mask);
 int32_t location_assist_agnss_get_elevation_mask(void);
 
 /**
- * @brief Set prediction count for the P-GPS query
+ * @brief Set prediction count for the PGNSS query
  *
  * @param predictions Number of predictions requested
  * @return Returns a negative error code (errno.h) indicating
  *         reason of failure or 0 for success.
  */
-int location_assist_pgps_set_prediction_count(int32_t predictions);
+int location_assist_pgnss_set_prediction_count(int32_t predictions);
 
 /**
- * @brief Set prediction interval as minutes for the P-GPS query
+ * @brief Set prediction interval as minutes for the PGNSS query
  *
  * @param interval Time in minutes between each query
  * @return Returns a negative error code (errno.h) indicating
  *         reason of failure or 0 for success.
  */
-int location_assist_pgps_set_prediction_interval(int32_t interval);
+int location_assist_pgnss_set_prediction_interval(int32_t interval);
 
 /**
  * @brief Set starting GPS day as days since GPS epoch. Setting the day as 0,
@@ -165,14 +165,14 @@ int location_assist_pgps_set_prediction_interval(int32_t interval);
  *
  * @param gps_day Day as a GPS days since GPS epoch.
  */
-void location_assist_pgps_set_start_gps_day(int32_t gps_day);
+void location_assist_pgnss_set_start_gps_day(int32_t gps_day);
 
 /**
  * @brief Get the GPS start day stored currently in the resource.
  *
  * @return Returns the currently stored value for GPS start day.
  */
-int32_t location_assist_pgps_get_start_gps_day(void);
+int32_t location_assist_pgnss_get_start_gps_day(void);
 
 /**
  * @brief Set the GPS start time in seconds.
@@ -181,7 +181,7 @@ int32_t location_assist_pgps_get_start_gps_day(void);
  * @return Returns a negative error code (errno.h) indicating
  *         reason of failure or 0 for success.
  */
-int location_assist_pgps_set_start_time(int32_t start_time);
+int location_assist_pgnss_set_start_time(int32_t start_time);
 
 /**
  * @brief Get the result code of the location request.

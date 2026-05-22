@@ -171,37 +171,37 @@ ZTEST(lwm2m_client_utils_location_assistance, test_agnss_send)
 		      last_result_code);
 }
 
-ZTEST(lwm2m_client_utils_location_assistance, test_pgps_send)
+ZTEST(lwm2m_client_utils_location_assistance, test_pgnss_send)
 {
 	int rc;
 	uint8_t buf[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 
 	setup();
 
-	rc = location_assistance_pgps_request_send(&client_ctx);
+	rc = location_assistance_pgnss_request_send(&client_ctx);
 	zassert_equal(rc, 0, "Error %d", rc);
 	zassert_equal(lwm2m_send_cb_fake.call_count, 1, "Request not sent");
 
 	gnss_result_set(LOCATION_ASSIST_RESULT_CODE_OK);
 	gnss_assist_data_write(buf, 8);
 	zassert_equal(last_result_code, LOCATION_ASSIST_RESULT_CODE_OK, "Wrong result");
-	zassert_equal(nrf_cloud_pgps_finish_update_fake.call_count, 1, "Data not processed");
+	zassert_equal(nrf_cloud_pgnss_finish_update_fake.call_count, 1, "Data not processed");
 	/* Test Timeout + 1 retry*/
-	rc = location_assistance_pgps_request_send(&client_ctx);
+	rc = location_assistance_pgnss_request_send(&client_ctx);
 	zassert_equal(rc, 0, "Error %d", rc);
 	zassert_equal(lwm2m_send_cb_fake.call_count, 2, "Request not sent");
 	k_sleep(K_SECONDS(SERVER_RETRY_TIMEOT));
 	zassert_equal(last_result_code, LOCATION_ASSIST_RESULT_CODE_NO_RESP_ERR, "Wrong result %d",
 		      last_result_code);
 	zassert_equal(lwm2m_send_cb_fake.call_count, 3, "Request not sent");
-	rc = location_assistance_pgps_request_send(&client_ctx);
+	rc = location_assistance_pgnss_request_send(&client_ctx);
 	zassert_equal(rc, 0, "Error %d", rc);
 	zassert_equal(lwm2m_send_cb_fake.call_count, 4, "Request not sent");
 
 	gnss_assist_data_write(buf, 8);
 	gnss_result_set(LOCATION_ASSIST_RESULT_CODE_OK);
 	zassert_equal(last_result_code, LOCATION_ASSIST_RESULT_CODE_OK, "Wrong result");
-	zassert_equal(nrf_cloud_pgps_finish_update_fake.call_count, 2, "Data not processed");
+	zassert_equal(nrf_cloud_pgnss_finish_update_fake.call_count, 2, "Data not processed");
 }
 
 ZTEST(lwm2m_client_utils_location_assistance, test_simultaneous_send)
@@ -218,7 +218,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_simultaneous_send)
 	zassert_equal(rc, 0, "Error %d", rc);
 	zassert_equal(lwm2m_send_cb_fake.call_count, 1, "Request not sent");
 
-	rc = location_assistance_pgps_request_send(&client_ctx);
+	rc = location_assistance_pgnss_request_send(&client_ctx);
 	zassert_equal(rc, -EAGAIN, "Error %d", rc);
 
 	gnss_assist_data_write(buf, 8);
@@ -226,13 +226,13 @@ ZTEST(lwm2m_client_utils_location_assistance, test_simultaneous_send)
 	zassert_equal(last_result_code, LOCATION_ASSIST_RESULT_CODE_OK, "Wrong result");
 	zassert_equal(nrf_cloud_agnss_process_fake.call_count, 1, "Data not processed");
 
-	rc = location_assistance_pgps_request_send(&client_ctx);
+	rc = location_assistance_pgnss_request_send(&client_ctx);
 	zassert_equal(rc, 0, "Error %d", rc);
 	zassert_equal(lwm2m_send_cb_fake.call_count, 2, "Request not sent");
 	gnss_assist_data_write(buf, 8);
 	gnss_result_set(LOCATION_ASSIST_RESULT_CODE_OK);
 	zassert_equal(last_result_code, LOCATION_ASSIST_RESULT_CODE_OK, "Wrong result");
-	zassert_equal(nrf_cloud_pgps_finish_update_fake.call_count, 1, "Data not processed");
+	zassert_equal(nrf_cloud_pgnss_finish_update_fake.call_count, 1, "Data not processed");
 }
 
 ZTEST(lwm2m_client_utils_location_assistance, test_ground_fix_send)
@@ -316,7 +316,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_temporary_failure)
 	gnss_result_set(LOCATION_ASSIST_RESULT_CODE_OK);
 	zassert_equal(last_result_code, LOCATION_ASSIST_RESULT_CODE_OK, "Wrong result");
 	zassert_equal(nrf_cloud_agnss_process_fake.call_count, 1, "Data not processed %d",
-		      nrf_cloud_pgps_finish_update_fake.call_count);
+		      nrf_cloud_pgnss_finish_update_fake.call_count);
 	/* Test Timeout with 1 retry */
 	rc = location_assistance_agnss_set_mask(&agnss_req);
 	zassert_equal(rc, 0, "Error %d", rc);

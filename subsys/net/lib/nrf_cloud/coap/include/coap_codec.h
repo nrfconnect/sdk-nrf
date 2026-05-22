@@ -8,7 +8,7 @@
 #define COAP_CODEC_H_
 
 #include <net/nrf_cloud.h>
-#include <net/nrf_cloud_pgps.h>
+#include <net/nrf_cloud_pgnss.h>
 #include <net/nrf_cloud_location.h>
 #include <net/nrf_cloud_coap.h>
 #include <modem/lte_lc.h>
@@ -19,7 +19,7 @@
 #define LOCATION_GET_CBOR_MAX_SIZE 1024
 #define LOCATION_SEND_CBOR_MAX_SIZE 96
 #define AGNSS_GET_CBOR_MAX_SIZE 64
-#define PGPS_URL_GET_CBOR_MAX_SIZE 64
+#define PGNSS_URL_GET_CBOR_MAX_SIZE 64
 #define SENSOR_SEND_CBOR_MAX_SIZE 64
 #define MESSAGE_SEND_CBOR_MAX_SIZE 256
 
@@ -58,11 +58,11 @@ int coap_codec_agnss_encode(struct nrf_cloud_coap_agnss_request const *const req
 int coap_codec_agnss_resp_decode(struct nrf_cloud_coap_agnss_result *result,
 				const uint8_t *buf, size_t len, enum coap_content_format fmt);
 
-int coap_codec_pgps_encode(struct nrf_cloud_coap_pgps_request const *const request,
+int coap_codec_pgnss_encode(struct nrf_cloud_coap_pgnss_request const *const request,
 			   uint8_t *buf, size_t *len,
 			   enum coap_content_format fmt);
 
-int coap_codec_pgps_resp_decode(struct nrf_cloud_pgps_result *result,
+int coap_codec_pgnss_resp_decode(struct nrf_cloud_pgnss_result *result,
 				const uint8_t *buf, size_t len, enum coap_content_format fmt);
 
 int coap_codec_fota_resp_decode(struct nrf_cloud_fota_job_info *job,

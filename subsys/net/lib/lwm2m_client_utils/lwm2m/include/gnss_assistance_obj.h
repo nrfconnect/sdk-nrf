@@ -9,7 +9,7 @@
 
 /* Assistance types */
 #define ASSISTANCE_REQUEST_TYPE_AGNSS			0
-#define ASSISTANCE_REQUEST_TYPE_PGPS			1
+#define ASSISTANCE_REQUEST_TYPE_PGNSS			1
 
 typedef void (*gnss_assistance_get_result_code_cb_t)(int32_t result_code);
 void gnss_assistance_set_result_code_cb(gnss_assistance_get_result_code_cb_t cb);

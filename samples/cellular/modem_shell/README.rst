@@ -1197,16 +1197,16 @@ For example:
 
 |board_target|
 
-P-GPS support
+PGNSS support
 =============
 
-To build the MoSh sample with P-GPS support, use the ``-DEXTRA_CONF_FILE=overlay-pgps.conf`` option.
+To build the MoSh sample with PGNSS support, use the ``-DEXTRA_CONF_FILE=overlay-pgnss.conf`` option.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-pgps.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-pgnss.conf
 
 |board_target|
 
@@ -1253,13 +1253,13 @@ For example:
 
 |board_target|
 
-To add P-GPS on top of that, use the ``-DEXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf"``, ``-DCONFIG_LOCATION_SERVICE_EXTERNAL=y`` and ``-DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y`` options.
+To add PGNSS on top of that, use the ``-DEXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgnss.conf"``, ``-DCONFIG_LOCATION_SERVICE_EXTERNAL=y`` and ``-DCONFIG_NRF_CLOUD_PGNSS_TRANSPORT_NONE=y`` options.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y -DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgnss.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y -DCONFIG_NRF_CLOUD_PGNSS_TRANSPORT_NONE=y
 
 |board_target|
 
@@ -1403,7 +1403,7 @@ You can build the MoSh sample with different LwM2M configurations:
 
   * To build the MoSh sample with the default LwM2M configuration, use the ``-DEXTRA_CONF_FILE=overlay-lwm2m.conf`` option and set the used Pre-Shared-Key (PSK) using :kconfig:option:`CONFIG_MOSH_LWM2M_PSK` Kconfig option.
   * To enable bootstrapping, use the optional overlay file :file:`overlay-lwm2m_bootstrap.conf`.
-  * To enable P-GPS support, use the optional overlay files :file:`overlay-lwm2m_pgps.conf` and :file:`overlay-pgps.conf`.
+  * To enable PGNSS support, use the optional overlay files :file:`overlay-lwm2m_pgnss.conf` and :file:`overlay-pgnss.conf`.
 
 To build the sample with LwM2M support, use the following command:
 
@@ -1413,12 +1413,12 @@ To build the sample with LwM2M support, use the following command:
    west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-lwm2m.conf -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
 
 
-To also enable P-GPS, use the following command:
+To also enable PGNSS, use the following command:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf" -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgnss.conf;overlay-pgnss.conf" -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
 
 |board_target|
 

@@ -10,9 +10,9 @@ Cellular: GNSS
    :depth: 2
 
 This sample demonstrates how to use the :ref:`GNSS interface <nrfxlib:gnss_interface>` to control the `GNSS`_ module.
-It also shows how to improve fix speed and accuracy with the :ref:`lib_nrf_cloud_agnss` library and how to use the :ref:`lib_nrf_cloud_pgps` library.
+It also shows how to improve fix speed and accuracy with the :ref:`lib_nrf_cloud_agnss` library and how to use the :ref:`lib_nrf_cloud_pgnss` library.
 A-GNSS data is downloaded from nRF Cloud using nRF Cloud's `CoAP-based device API <nRF Cloud CoAP API_>`_.
-For P-GPS, the device requests a URL over CoAP and downloads the prediction file over HTTP.
+For PGNSS, the device requests a URL over CoAP and downloads the prediction file over HTTP.
 
 Requirements
 ************
@@ -63,10 +63,10 @@ By default, the sample displays information from both PVT and NMEA strings.
 You can also configure the sample to run in NMEA-only output mode, where only the NMEA strings are displayed in the console.
 In the NMEA-only output mode, you can visualize the data from the GNSS using a third-party tool.
 
-A-GNSS and P-GPS
+A-GNSS and PGNSS
 ================
 
-When support for A-GNSS or P-GPS, or both, is enabled, a :ref:`Zephyr workqueue <zephyr:workqueues_v2>` is used for downloading the assistance data.
+When support for A-GNSS or PGNSS, or both, is enabled, a :ref:`Zephyr workqueue <zephyr:workqueues_v2>` is used for downloading the assistance data.
 Downloading the data can take some time.
 The workqueue ensures that the main thread is not blocked during the operation.
 
@@ -304,7 +304,7 @@ After programming the sample and all the prerequisites to the development kit, t
 
    #. Observe that the samples displays the time to fix for each fix.
 
-   If A-GNSS and/or P-GPS support is enabled:
+   If A-GNSS and/or PGNSS support is enabled:
 
    a. Observe that the following message is displayed in the terminal emulator immediately after the device boots:
 
@@ -314,7 +314,7 @@ After programming the sample and all the prerequisites to the development kit, t
 
    #. Observe the following actions in the terminal emulator:
 
-      i. The sample downloads the requested assistance data if needed (with P-GPS, the data may already be available in the flash memory).
+      i. The sample downloads the requested assistance data if needed (with PGNSS, the data may already be available in the flash memory).
       #. The sample continues after the download has completed.
 
 Dependencies
@@ -323,7 +323,7 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud_agnss`
-* :ref:`lib_nrf_cloud_pgps`
+* :ref:`lib_nrf_cloud_pgnss`
 * :ref:`lib_nrf_cloud_coap`
 * :ref:`supl_client`
 * :ref:`lib_at_host`

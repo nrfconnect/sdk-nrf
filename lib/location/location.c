@@ -11,8 +11,8 @@
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
 #endif
 
 #include "location_core.h"
@@ -351,11 +351,11 @@ int location_agnss_data_process(const char *buf, size_t buf_len)
 		LOG_ERR("A-GNSS data processing failed, error: %d", err);
 	}
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	/* Ephemerides are handled by P-GPS, so request the P-GPS library to inject current
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+	/* Ephemerides are handled by PGNSS, so request the PGNSS library to inject current
 	 * ephemerides as well.
 	 */
-	nrf_cloud_pgps_notify_prediction();
+	nrf_cloud_pgnss_notify_prediction();
 #endif
 
 	return err;
@@ -363,29 +363,29 @@ int location_agnss_data_process(const char *buf, size_t buf_len)
 	return -ENOTSUP;
 }
 
-int location_pgps_data_process(const char *buf, size_t buf_len)
+int location_pgnss_data_process(const char *buf, size_t buf_len)
 {
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGNSS)
 	int err;
 
 	if (!buf) {
-		LOG_ERR("P-GPS data buffer cannot be a NULL pointer.");
+		LOG_ERR("PGNSS data buffer cannot be a NULL pointer.");
 		return -EINVAL;
 	}
 
 	if (!buf_len) {
-		LOG_ERR("P-GPS data buffer length cannot be zero.");
+		LOG_ERR("PGNSS data buffer length cannot be zero.");
 		return -EINVAL;
 	}
 
-	err = nrf_cloud_pgps_process(buf, buf_len);
+	err = nrf_cloud_pgnss_process(buf, buf_len);
 	if (err) {
-		nrf_cloud_pgps_request_reset();
-		LOG_ERR("P-GPS data processing failed, error: %d", err);
+		nrf_cloud_pgnss_request_reset();
+		LOG_ERR("PGNSS data processing failed, error: %d", err);
 	}
 
 	return err;
-#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_NRF_CLOUD_PGNSS */
 	return -ENOTSUP;
 }
 

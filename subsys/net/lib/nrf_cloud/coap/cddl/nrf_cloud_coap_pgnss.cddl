@@ -4,10 +4,10 @@
 ; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 ;
 ; ************
-; PGPS Request
+; PGNSS Request
 ; ************
 
-pgps_req = {
+pgnss_req = {
 	predictionCount => uint,
 	predictionIntervalMinutes => uint,
 	startGPSDay => uint,
@@ -20,10 +20,10 @@ startGPSDay = 3
 startGPSTimeOfDaySeconds = 4
 
 ; *************
-; PGPS Response
+; PGNSS Response
 ; *************
 
-pgps_resp = {
+pgnss_resp = {
 	host => tstr,
 	path => tstr
 }

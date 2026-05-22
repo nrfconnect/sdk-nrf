@@ -15,8 +15,8 @@
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+#include <net/nrf_cloud_pgnss.h>
 #endif
 #include <net/nrf_cloud_coap.h>
 #include "nrf_cloud_coap_transport.h"
@@ -29,7 +29,7 @@
 LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 
 #define COAP_AGNSS_RSC "loc/agnss"
-#define COAP_PGPS_RSC "loc/pgps"
+#define COAP_PGNSS_RSC "loc/pgnss"
 #define COAP_GND_FIX_RSC "loc/ground-fix"
 #define COAP_FOTA_GET_RSC "fota/exec/current"
 #define COAP_SHDW_RSC "state"
@@ -151,24 +151,24 @@ give_and_return:
 }
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-static int pgps_err;
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+static int pgnss_err;
 
-static void get_pgps_callback(const struct coap_client_response_data *data, void *user)
+static void get_pgnss_callback(const struct coap_client_response_data *data, void *user)
 {
 	if (data->result_code != COAP_RESPONSE_CODE_CONTENT) {
-		pgps_err = data->result_code;
+		pgnss_err = data->result_code;
 		if (data->payload_len) {
 			LOG_ERR("Unexpected response: %.*s", data->payload_len, data->payload);
 		}
 	} else {
-		pgps_err = coap_codec_pgps_resp_decode(user, data->payload, data->payload_len,
+		pgnss_err = coap_codec_pgnss_resp_decode(user, data->payload, data->payload_len,
 						       COAP_CONTENT_FORMAT_APP_CBOR);
 	}
 }
 
-int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_coap_pgps_request const *const request,
-				struct nrf_cloud_pgps_result *file_location)
+int nrf_cloud_coap_pgnss_url_get(struct nrf_cloud_coap_pgnss_request const *const request,
+				struct nrf_cloud_pgnss_result *file_location)
 {
 	__ASSERT_NO_MSG(request != NULL);
 	__ASSERT_NO_MSG(file_location != NULL);
@@ -176,30 +176,30 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_coap_pgps_request const *const 
 		return -EACCES;
 	}
 
-	static uint8_t buffer[PGPS_URL_GET_CBOR_MAX_SIZE];
+	static uint8_t buffer[PGNSS_URL_GET_CBOR_MAX_SIZE];
 	size_t len = sizeof(buffer);
 	int err;
 
 	/* Take the semaphore before modifying the static buffer */
 	(void)k_sem_take(&coap_transfer_sem, K_FOREVER);
 
-	err = coap_codec_pgps_encode(request, buffer, &len,
+	err = coap_codec_pgnss_encode(request, buffer, &len,
 				     COAP_CONTENT_FORMAT_APP_CBOR);
 	if (err) {
-		LOG_ERR("Unable to encode P-GPS request: %d", err);
+		LOG_ERR("Unable to encode PGNSS request: %d", err);
 		goto give_and_return;
 	}
 
-	pgps_err = 0;
+	pgnss_err = 0;
 
-	err = nrf_cloud_coap_fetch(COAP_PGPS_RSC, NULL,
+	err = nrf_cloud_coap_fetch(COAP_PGNSS_RSC, NULL,
 				   buffer, len, COAP_CONTENT_FORMAT_APP_CBOR,
-				   COAP_CONTENT_FORMAT_APP_CBOR, true, get_pgps_callback,
+				   COAP_CONTENT_FORMAT_APP_CBOR, true, get_pgnss_callback,
 				   file_location);
 
 	/* Check for CoAP transfer errors */
 	if (err == -EAGAIN) {
-		LOG_ERR("Timeout waiting for P-GPS URL");
+		LOG_ERR("Timeout waiting for PGNSS URL");
 		goto give_and_return;
 	} else if (err) {
 		LOG_ERR("CoAP client error: %d", err);
@@ -207,23 +207,23 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_coap_pgps_request const *const 
 	}
 
 	/* Use the callback error as the return value */
-	err = pgps_err;
+	err = pgnss_err;
 
 	/* Check for callback errors */
-	if (pgps_err > 0) {
-		LOG_RESULT_CODE_ERR("Error getting P-GPS URL; result code:", pgps_err);
-	} else if (pgps_err < 0) {
-		LOG_ERR("P-GPS response decoding error: %d", pgps_err);
+	if (pgnss_err > 0) {
+		LOG_RESULT_CODE_ERR("Error getting PGNSS URL; result code:", pgnss_err);
+	} else if (pgnss_err < 0) {
+		LOG_ERR("PGNSS response decoding error: %d", pgnss_err);
 	} else {
 		/* No callback error: success */
-		LOG_DBG("Got P-GPS URL");
+		LOG_DBG("Got PGNSS URL");
 	}
 
 give_and_return:
 	k_sem_give(&coap_transfer_sem);
 	return err;
 }
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 static void nrf_cloud_coap_result_code_cb(const struct coap_client_response_data *data, void *user)
 {

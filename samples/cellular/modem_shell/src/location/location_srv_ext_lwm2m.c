@@ -69,7 +69,7 @@ exit:
 }
 #endif /* CONFIG_LOCATION_METHOD_CELLULAR */
 
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGNSS)
 static void location_srv_ext_gnss_assistance_result_handle(int32_t result_code)
 {
 	switch (result_code) {
@@ -85,10 +85,10 @@ static void location_srv_ext_gnss_assistance_result_handle(int32_t result_code)
 		break;
 	}
 }
-#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGNSS */
 
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_NRF_CLOUD_AGNSS) || \
-	defined(CONFIG_NRF_CLOUD_PGPS)
+	defined(CONFIG_NRF_CLOUD_PGNSS)
 static void location_srv_ext_assistance_result_cb(uint16_t object_id, int32_t result_code)
 {
 	switch (object_id) {
@@ -98,17 +98,17 @@ static void location_srv_ext_assistance_result_cb(uint16_t object_id, int32_t re
 		break;
 #endif /* CONFIG_LOCATION_METHOD_CELLULAR */
 
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGNSS)
 	case GNSS_ASSIST_OBJECT_ID:
 		location_srv_ext_gnss_assistance_result_handle(result_code);
 		break;
-#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGNSS */
 
 	default:
 		break;
 	}
 }
-#endif /* CONFIG_LOCATION_METHOD_CELLULAR || CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_LOCATION_METHOD_CELLULAR || CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame *agnss_req)
@@ -126,7 +126,7 @@ void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame 
 
 	while ((err = location_assistance_agnss_request_send(cloud_lwm2m_client_ctx_get())) ==
 	       -EAGAIN) {
-		/* LwM2M client utils library is currently handling a P-GPS data request, need to
+		/* LwM2M client utils library is currently handling a PGNSS data request, need to
 		 * wait until it has been completed.
 		 */
 		k_sleep(K_SECONDS(1));
@@ -137,28 +137,28 @@ void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame 
 }
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req)
+#if defined(CONFIG_NRF_CLOUD_PGNSS)
+void location_srv_ext_pgnss_handle(const struct gps_pgnss_request *pgnss_req)
 {
 	int err = -1;
 
 	if (!cloud_lwm2m_is_connected()) {
-		mosh_error("LwM2M not connected, can't request P-GPS data");
+		mosh_error("LwM2M not connected, can't request PGNSS data");
 		return;
 	}
 
 	location_assistance_set_result_code_cb(location_srv_ext_assistance_result_cb);
 
-	err = location_assist_pgps_set_prediction_count(pgps_req->prediction_count);
-	err |= location_assist_pgps_set_prediction_interval(pgps_req->prediction_period_min);
-	location_assist_pgps_set_start_gps_day(pgps_req->gps_day);
-	err |= location_assist_pgps_set_start_time(pgps_req->gps_time_of_day);
+	err = location_assist_pgnss_set_prediction_count(pgnss_req->prediction_count);
+	err |= location_assist_pgnss_set_prediction_interval(pgnss_req->prediction_period_min);
+	location_assist_pgnss_set_start_gps_day(pgnss_req->gps_day);
+	err |= location_assist_pgnss_set_start_time(pgnss_req->gps_time_of_day);
 	if (err) {
-		mosh_error("Failed to set P-GPS request parameters");
+		mosh_error("Failed to set PGNSS request parameters");
 		return;
 	}
 
-	while ((err = location_assistance_pgps_request_send(cloud_lwm2m_client_ctx_get())) ==
+	while ((err = location_assistance_pgnss_request_send(cloud_lwm2m_client_ctx_get())) ==
 	       -EAGAIN) {
 		/* LwM2M client utils library is currently handling an A-GNSS data request, need to
 		 * wait until it has been completed.
@@ -166,10 +166,10 @@ void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req)
 		k_sleep(K_SECONDS(1));
 	}
 	if (err) {
-		mosh_error("Failed to request P-GPS data, err: %d", err);
+		mosh_error("Failed to request PGNSS data, err: %d", err);
 	}
 }
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_PGNSS */
 
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 void location_srv_ext_cellular_handle(

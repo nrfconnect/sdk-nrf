@@ -84,7 +84,7 @@ int nrf_cloud_error_msg_decode(const char *const buf, const char *const app_id,
 	ARG_UNUSED(msg_type);
 	ARG_UNUSED(err);
 	/* Return non-zero: signals "no JSON error message found", which causes
-	 * the callers (ground_fix / agnss / pgps decode) to return -EPROTO.
+	 * the callers (ground_fix / agnss / pgnss decode) to return -EPROTO.
 	 */
 	return -ENOENT;
 }
