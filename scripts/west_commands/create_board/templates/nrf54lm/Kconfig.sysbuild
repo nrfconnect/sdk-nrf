@@ -1,0 +1,2 @@
+config PARTITION_MANAGER
+	default n
