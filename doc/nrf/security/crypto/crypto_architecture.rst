@@ -56,7 +56,7 @@ Implementations in the |NCS|
 
 The |NCS| follows the PSA Crypto standard through two major API implementations: Oberon PSA Crypto and TF-M Crypto Service.
 They are designed for use without and with Trusted Firmware-M (TF-M), respectively, and have different security requirements.
-Additionally, the |NCS| includes the nRF54H20-specific IronSide Secure Element implementation.
+Additionally, the |NCS| includes the nRF54H20-specific IronSide Secure Enclave implementation.
 
 All implementations are designed for use on Nordic Semiconductor's Arm cores and are based on the `sdk-oberon-psa-crypto`_ library, which offers a lightweight PSA Crypto API implementation optimized for resource-constrained microcontrollers.
 On cores other than Nordic Semiconductor's Arm ones, TF-PSA-Crypto from Zephyr is the default PSA Crypto implementation.
@@ -166,10 +166,10 @@ For more information about the storage integration for the TF-M Crypto Service i
 
 .. _ug_crypto_architecture_implementation_standards_ironside:
 
-IronSide Secure Element implementation
+IronSide Secure Enclave implementation
 ======================================
 
-The IronSide Secure Element (|ISE|) implementation provides a PSA Crypto API interface for applications running on nRF54H20.
+The IronSide Secure Enclave (|ISE|) implementation provides a PSA Crypto API interface for applications running on nRF54H20.
 
 .. figure:: ../images/psa_crypto_api_ironside.svg
    :alt: IronSide SE implementation
@@ -182,7 +182,7 @@ It is designed to provide a robust Root of Trust (RoT) and offload cryptographic
 The firmware implements the cryptographic operations using the existing Oberon PSA Core and the CRACEN driver.
 
 The firmware is provided by Nordic Semiconductor independently from the |NCS| release cycle.
-For more information, see the :ref:`IronSide Secure Element <ug_nrf54h20_ironside>` page.
+For more information, see the :ref:`IronSide Secure Enclave <ug_nrf54h20_ironside>` page.
 
 Driver selection in the |ISE| implementation
 --------------------------------------------

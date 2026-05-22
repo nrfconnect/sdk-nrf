@@ -92,7 +92,7 @@ Updated
   This change is expected to significantly improve the IronSide SE CPU and cryptographic accelerator performance. (NCSDK-38284)
 * CRACEN ECC operation countermeasures are now enabled (``CONFIG_CRACEN_ECC_COUNTERMEASURES=y``). (NCSDK-38269)
 
-IronSide Secure Element (IronSide SE) v23.5.0+28
+IronSide Secure Enclave (IronSide SE) v23.5.0+28
 ================================================
 
 Added
@@ -103,7 +103,7 @@ Added
   The snapshot functionality must be enabled and configured in OTP before using these APIs. (NCSDK-37077)
 * IronSide SE now automatically performs a snapshot recovery operation when an error is detected in a system-critical region. (NCSDK-37077)
 
-IronSide Secure Element (IronSide SE) v23.4.0+27
+IronSide Secure Enclave (IronSide SE) v23.4.0+27
 ================================================
 
 Added
@@ -120,7 +120,7 @@ Updated
 
 * Support for managing MRAMC110.CONFIGNVR.PAGE[1] through UICR.PERIPHCONF and the PERIPHCONF service, allowing for permission management (for example, setting MRAM10 NVR page 1 as read-only). (NCSDK-35891)
 
-IronSide Secure Element (IronSide SE) v23.3.0+26
+IronSide Secure Enclave (IronSide SE) v23.3.0+26
 =================================================
 
 Added
@@ -134,7 +134,7 @@ Fixed
 
 * ``psa_hash_compare``, ``psa_verify_message``, and ``psa_mac_verify`` now support overlapping buffers as mandated by the PSA Crypto API specification. (NCSDK-34253)
 
-IronSide Secure Element (IronSide SE) v23.2.1+25
+IronSide Secure Enclave (IronSide SE) v23.2.1+25
 ================================================
 
 Added
@@ -157,7 +157,7 @@ Fixed
 * An issue with corrupted temperature measurements when sampled too soon after boot.
 * PSA Vendor key ID ``0x7fffc001`` now refers to the correct IAK per local domain. (NRFX-8427)
 
-IronSide Secure Element (IronSide SE) v23.1.2+21
+IronSide Secure Enclave (IronSide SE) v23.1.2+21
 ================================================
 
 Fixed
@@ -170,7 +170,7 @@ Updated
 
 * Reduced MRAM latency when requesting ``no latency`` while MRAM was powered off by powering MRAM on immediately. (NRFX-8740)
 
-IronSide Secure Element (IronSide SE) v23.1.1+20
+IronSide Secure Enclave (IronSide SE) v23.1.1+20
 ================================================
 
 Fixed
@@ -180,7 +180,7 @@ Fixed
   This improves L2 cache performance in some situations and reduces it in others.
 * Fixed an unintentional behavior of ``psa_copy_key()`` when used to create a revocable key. (NCSDK-36369)
 
-IronSide Secure Element (IronSide SE) v23.1.0+19
+IronSide Secure Enclave (IronSide SE) v23.1.0+19
 ================================================
 
 Added
@@ -214,7 +214,7 @@ Updated
 * SysCtrl updated to v6.0.1.
 * SysCtrl has updated calibration thresholds for LFRC.
 
-IronSide Secure Element (IronSide SE) v23.0.2+17
+IronSide Secure Enclave (IronSide SE) v23.0.2+17
 ================================================
 
 Added
@@ -226,7 +226,7 @@ Added
   For more information, see :ref:`ug_crypto_supported_features`.
 
 
-IronSide Secure Element (IronSide SE) v23.0.1+16
+IronSide Secure Enclave (IronSide SE) v23.0.1+16
 ================================================
 
 Changed
@@ -248,7 +248,7 @@ Fixed
 
 * EXMIF XIP region is now accessible. (NCSDK-35256)
 
-IronSide Secure Element (IronSide SE) v23.0.0+15
+IronSide Secure Enclave (IronSide SE) v23.0.0+15
 ================================================
 
 Added
@@ -342,7 +342,7 @@ Removed
 
 * NRFS DVFS service support.
 
-IronSide Secure Element (IronSide SE) v22.2.0+14
+IronSide Secure Enclave (IronSide SE) v22.2.0+14
 ================================================
 
 Added
@@ -362,12 +362,12 @@ Removed
 
 * Temperature subscription
 
-IronSide Secure Element (IronSide SE) v22.1.0+13
+IronSide Secure Enclave (IronSide SE) v22.1.0+13
 ================================================
 
 * Added support for configuring TDD (CoreSight++) from local domains. (NCSDK-33486)
 
-IronSide Secure Element (IronSide SE) v22.0.4+12
+IronSide Secure Enclave (IronSide SE) v22.0.4+12
 ================================================
 
 Fixed
@@ -382,7 +382,7 @@ Updated
 
 * sysctrl to 5.0.1: stability improvements.
 
-IronSide Secure Element (IronSide SE) v22.0.3+11
+IronSide Secure Enclave (IronSide SE) v22.0.3+11
 ================================================
 
 Fixed
@@ -396,18 +396,18 @@ Fixed
 
 * The default owner ID of some peripherals, where previously it was set to SECURE or SYSCTRL instead of APPLICATION. (NCSDK-34187)
 
-IronSide Secure Element (IronSide SE) v22.0.2+10
+IronSide Secure Enclave (IronSide SE) v22.0.2+10
 ================================================
 
 * Fixed missing CIPHER support in the PSA crypto service.
 
-IronSide Secure Element (IronSide SE) v22.0.1+9
+IronSide Secure Enclave (IronSide SE) v22.0.1+9
 ===============================================
 
 No functional change.
 Version bump to verify update with live versions.
 
-IronSide Secure Element (IronSide SE) v22.0.0+8
+IronSide Secure Enclave (IronSide SE) v22.0.0+8
 ===============================================
 
 Added
@@ -429,13 +429,13 @@ Updated
   This means that all peripherals and split-ownership registers are accessible by the application core, PPR and FLPR by default.
   Use ``UICR.PERIPHCONF`` to grant the radio core access to global domain peripherals.
 
-IronSide Secure Element (IronSide SE) v21.1.1
+IronSide Secure Enclave (IronSide SE) v21.1.1
 =============================================
 
 * Updated to not require CHIDX values to be set when configuring ``PPIB_SUBSCRIBE_SEND`` or ``PPIB_PUBLISH_RECEIVE`` through ``PERIPHCONF``.
 * Fixed an issue where the application core was booted despite the presence of boot errors.
 
-IronSide Secure Element (IronSide SE) v21.1.0
+IronSide Secure Enclave (IronSide SE) v21.1.0
 =============================================
 
 Added
@@ -473,7 +473,7 @@ Updated
 * IPC communication code optimization (Zephyr IPC service used directly without additional queue).
 * Fixed higher power consumption when clock switcher changed to LFRC.
 
-IronSide Secure Element (IronSide SE) v21.0.1
+IronSide Secure Enclave (IronSide SE) v21.0.1
 =============================================
 
 Added
@@ -493,7 +493,7 @@ Fixed
 * The application core is now started in halted mode when IronSide SE detects errors in the UICR or BICR. (NCSDK-33306)
   This allows recovery from such errors by writing correct values using a debugger.
 
-IronSide Secure Element (IronSide SE) v21.0.0
+IronSide Secure Enclave (IronSide SE) v21.0.0
 =============================================
 
 Added
@@ -520,7 +520,7 @@ Fixed
 
 * An issue that set the CTRLAP.BOOTSTATUS firmware sequence number always to zero. (NCSDK-33265)
 
-IronSide Secure Element (IronSide SE) v20.1.0
+IronSide Secure Enclave (IronSide SE) v20.1.0
 =============================================
 
 Added
@@ -558,7 +558,7 @@ Updated
 
 * ``EXTRAVERSION`` is now included in ``SICR.TBS.x.VERSION``.
 
-IronSide Secure Element (IronSide SE) v20.0.1
+IronSide Secure Enclave (IronSide SE) v20.0.1
 =============================================
 
 Updated
@@ -573,7 +573,7 @@ Removed
 * Initializing TDD on system boot as it is not retained.
 * Initializing P6 and P7 pins to be EXMIF/TPIU to prevent unacceptable output states.
 
-IronSide Secure Element (IronSide SE) v20.0.0
+IronSide Secure Enclave (IronSide SE) v20.0.0
 =============================================
 
 This is the first release that is based on the new Secure Domain firmware architecture.
