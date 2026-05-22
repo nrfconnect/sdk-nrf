@@ -28,7 +28,7 @@ void tearDown(void)
 {
 }
 
-static int initialize_fuel_gauge(float vbat, float ibat, float tbat, void *state)
+static int initialize_fuel_gauge(float vbat, float ibat, float tbat, void *state, size_t state_size)
 {
 	struct nrf_fuel_gauge_config_parameters opt_params;
 	const struct nrf_fuel_gauge_init_parameters params = {
@@ -42,8 +42,11 @@ static int initialize_fuel_gauge(float vbat, float ibat, float tbat, void *state
 #endif
 		.opt_params = &opt_params,
 		.state = state,
+		.state_size = state_size,
+		.lock_func = NULL,
 	};
 	float v0;
+	int err;
 
 	(void)battery_primary;
 	(void)battery_secondary;
@@ -52,7 +55,11 @@ static int initialize_fuel_gauge(float vbat, float ibat, float tbat, void *state
 	TEST_ASSERT_TRUE(strlen(nrf_fuel_gauge_build_date) > 0);
 	TEST_ASSERT_TRUE(nrf_fuel_gauge_state_size > 0);
 
-	nrf_fuel_gauge_opt_params_default_get(&opt_params);
+	err = nrf_fuel_gauge_config_params_default_get(&opt_params);
+	if (err < 0) {
+		return err;
+	}
+
 	opt_params.tte_min_time = 0.0f;
 
 	return nrf_fuel_gauge_init(&params, &v0);
@@ -62,7 +69,7 @@ void test_nrf_fuel_gauge_init(void)
 {
 	int err;
 
-	err = initialize_fuel_gauge(4.2f, 0.0f, 25.0f, NULL);
+	err = initialize_fuel_gauge(4.2f, 0.0f, 25.0f, NULL, 0);
 	TEST_ASSERT_EQUAL(0, err);
 }
 
@@ -71,6 +78,7 @@ void test_nrf_fuel_gauge_sanity_discharge(void)
 	struct nrf_fuel_gauge_state_info state_info;
 	float soc_begin;
 	float soc_end;
+	float soc;
 	float tte;
 	float ttf;
 	float temperature;
@@ -100,10 +108,11 @@ void test_nrf_fuel_gauge_sanity_discharge(void)
 	current = 0.08f;
 	time_step = 60.0f;
 
-	err = initialize_fuel_gauge(voltage, current, temperature, NULL);
+	err = initialize_fuel_gauge(voltage, current, temperature, NULL, 0);
 	TEST_ASSERT_EQUAL(0, err);
 
-	(void)nrf_fuel_gauge_process(voltage, current, temperature, time_step, &state_info);
+	err = nrf_fuel_gauge_process(voltage, current, temperature, time_step, &soc, &state_info);
+	TEST_ASSERT_EQUAL(0, err);
 	soc_begin = state_info.soc_raw;
 	soc_end = soc_begin;
 
@@ -114,24 +123,30 @@ void test_nrf_fuel_gauge_sanity_discharge(void)
 
 	for (int i = 0; i < ((voltage_begin - voltage_end) / voltage_step); ++i) {
 		voltage -= voltage_step;
-		(void)nrf_fuel_gauge_process(voltage, current, temperature, time_step, &state_info);
+		err = nrf_fuel_gauge_process(voltage, current, temperature, time_step, &soc,
+					     &state_info);
+		TEST_ASSERT_EQUAL(0, err);
 		soc_end = state_info.soc_raw;
 		TEST_ASSERT_FALSE(isnan(soc_end));
 		TEST_ASSERT_FALSE(signbit(soc_end));
 
 		if (IS_ENABLED(CONFIG_NRF_FUEL_GAUGE_VARIANT_SECONDARY_CELL) && i > 100) {
 			/* Expect "time-to-empty" to become valid after a few cycles */
-			tte = nrf_fuel_gauge_tte_get();
+			err = nrf_fuel_gauge_tte_get(&tte);
+			TEST_ASSERT_EQUAL(0, err);
 			TEST_ASSERT_FALSE(isnan(tte));
 		} else if (IS_ENABLED(CONFIG_NRF_FUEL_GAUGE_VARIANT_PRIMARY_CELL)) {
 			/* Always NAN for primary cell */
-			ttf = nrf_fuel_gauge_ttf_get();
+			err = nrf_fuel_gauge_ttf_get(&ttf);
+			TEST_ASSERT_EQUAL(0, err);
 			TEST_ASSERT_TRUE(isnan(ttf));
 		}
 
-		/* Don't expect time-to-full to be valid when discharging */
-		ttf = nrf_fuel_gauge_ttf_get();
-		TEST_ASSERT_TRUE(isnan(ttf));
+		if (IS_ENABLED(CONFIG_NRF_FUEL_GAUGE_VARIANT_SECONDARY_CELL)) {
+			/* Don't expect time-to-full to be valid when discharging */
+			err = nrf_fuel_gauge_ttf_get(&ttf);
+			TEST_ASSERT_NOT_EQUAL(0, err);
+		}
 	}
 
 	TEST_ASSERT_TRUE(soc_end < soc_begin);
@@ -148,6 +163,7 @@ void test_nrf_fuel_gauge_sanity_state_resume(void)
 	float voltage;
 	float voltage_saved;
 	float soc_saved[100];
+	float soc;
 	int step_count;
 	int err;
 
@@ -177,17 +193,23 @@ void test_nrf_fuel_gauge_sanity_state_resume(void)
 	TEST_ASSERT_TRUE((step_count / 2) > ARRAY_SIZE(soc_saved));
 	TEST_ASSERT_TRUE(sizeof(state_memory) >= nrf_fuel_gauge_state_size);
 
-	err = initialize_fuel_gauge(voltage, current, temperature, NULL);
+	err = initialize_fuel_gauge(voltage, current, temperature, NULL, 0);
 	TEST_ASSERT_EQUAL(0, err);
 
 	/* Run for a while to fill filters */
 	for (int i = 0; i < step_count / 2; ++i) {
 		voltage -= voltage_step;
-		(void)nrf_fuel_gauge_process(voltage, current, temperature, time_step, &state_info);
+		err = nrf_fuel_gauge_process(voltage, current, temperature, time_step, &soc,
+					     &state_info);
+		TEST_ASSERT_EQUAL(0, err);
 	}
 
 	/* Store state */
 	err = nrf_fuel_gauge_state_get(state_memory, sizeof(state_memory));
+	TEST_ASSERT_EQUAL(0, err);
+
+	/* Validate state */
+	err = nrf_fuel_gauge_state_compatible_check(state_memory, sizeof(state_memory));
 	TEST_ASSERT_EQUAL(0, err);
 
 	voltage_saved = voltage;
@@ -195,24 +217,32 @@ void test_nrf_fuel_gauge_sanity_state_resume(void)
 	/* Fill comparison vector */
 	for (int i = 0; i < ARRAY_SIZE(soc_saved); ++i) {
 		voltage -= voltage_step;
-		(void)nrf_fuel_gauge_process(voltage, current, temperature, time_step, &state_info);
+		err = nrf_fuel_gauge_process(voltage, current, temperature, time_step, &soc,
+					     &state_info);
+		TEST_ASSERT_EQUAL(0, err);
 		soc_saved[i] = state_info.soc_raw;
 	}
 
 	/* Re-init from previous state memory */
-	err = initialize_fuel_gauge(voltage, current, temperature, state_memory);
+	err = initialize_fuel_gauge(voltage, current, temperature, state_memory,
+				    nrf_fuel_gauge_state_size);
 	TEST_ASSERT_EQUAL(0, err);
 	voltage = voltage_saved;
 
 	/* Compare with previous run */
 	for (int i = 0; i < ARRAY_SIZE(soc_saved); ++i) {
-		float soc;
-
 		voltage -= voltage_step;
-		(void)nrf_fuel_gauge_process(voltage, current, temperature, time_step, &state_info);
+		err = nrf_fuel_gauge_process(voltage, current, temperature, time_step, &soc,
+					     &state_info);
+		TEST_ASSERT_EQUAL(0, err);
 		soc = state_info.soc_raw;
 		TEST_ASSERT_EQUAL_FLOAT(soc_saved[i], soc);
 	}
+
+	/* Corrupt state memory and verify that compatibility check fails */
+	state_memory[nrf_fuel_gauge_state_size / 2] ^= 0xFF;
+	err = nrf_fuel_gauge_state_compatible_check(state_memory, sizeof(state_memory));
+	TEST_ASSERT_NOT_EQUAL(0, err);
 }
 
 void test_nrf_fuel_gauge_sanity_charge(void)
@@ -220,6 +250,7 @@ void test_nrf_fuel_gauge_sanity_charge(void)
 	struct nrf_fuel_gauge_state_info state_info;
 	float soc_begin;
 	float soc_end;
+	float soc;
 	float ttf;
 	float temperature;
 	float init_current;
@@ -248,10 +279,12 @@ void test_nrf_fuel_gauge_sanity_charge(void)
 	charge_current = -0.1f;
 	time_step = 60.0f;
 
-	err = initialize_fuel_gauge(voltage, init_current, temperature, NULL);
+	err = initialize_fuel_gauge(voltage, init_current, temperature, NULL, 0);
 	TEST_ASSERT_EQUAL(0, err);
 
-	(void)nrf_fuel_gauge_process(voltage, init_current, temperature, time_step, &state_info);
+	err = nrf_fuel_gauge_process(voltage, init_current, temperature, time_step, &soc,
+				     &state_info);
+	TEST_ASSERT_EQUAL(0, err);
 	soc_begin = state_info.soc_raw;
 	soc_end = soc_begin;
 
@@ -280,15 +313,17 @@ void test_nrf_fuel_gauge_sanity_charge(void)
 
 	for (int i = 0; i < (fabsf(voltage_begin - voltage_end) / voltage_step); ++i) {
 		voltage += voltage_step;
-		(void)nrf_fuel_gauge_process(voltage, charge_current, temperature, time_step,
+		err = nrf_fuel_gauge_process(voltage, charge_current, temperature, time_step, &soc,
 					     &state_info);
+		TEST_ASSERT_EQUAL(0, err);
 		soc_end = state_info.soc_raw;
 		TEST_ASSERT_FALSE(isnan(soc_end));
 		TEST_ASSERT_FALSE(signbit(soc_end));
 
 		/* Expect time-to-full to be valid after 1 iteration */
 		if (i > 0) {
-			ttf = nrf_fuel_gauge_ttf_get();
+			err = nrf_fuel_gauge_ttf_get(&ttf);
+			TEST_ASSERT_EQUAL(0, err);
 			TEST_ASSERT_TRUE(!isnan(ttf));
 			TEST_ASSERT_TRUE(ttf > 0.0f);
 		}
@@ -313,6 +348,7 @@ void test_nrf_fuel_gauge_temp_range(void)
 	float temperature = 25.0f;
 	float current = 0.08f;
 	float time_step = 60.0f;
+	float soc;
 	int err;
 
 	if (IS_ENABLED(CONFIG_NRF_FUEL_GAUGE_VARIANT_PRIMARY_CELL)) {
@@ -324,11 +360,12 @@ void test_nrf_fuel_gauge_temp_range(void)
 	TEST_ASSERT_FALSE(isnan(model_temp_max));
 	TEST_ASSERT_TRUE(model_temp_min < model_temp_max);
 
-	err = initialize_fuel_gauge(voltage, current, temperature, NULL);
+	err = initialize_fuel_gauge(voltage, current, temperature, NULL, 0);
 	TEST_ASSERT_EQUAL(0, err);
 
 	for (float t = temp_range_begin; t <= temp_range_end; t += temp_step_size) {
-		(void)nrf_fuel_gauge_process(voltage, current, t, time_step, &state_info);
+		err = nrf_fuel_gauge_process(voltage, current, t, time_step, &soc, &state_info);
+		TEST_ASSERT_EQUAL(0, err);
 		if (t < model_temp_min) {
 			TEST_ASSERT_TRUE(state_info.T_truncated == model_temp_min);
 		} else if (t > model_temp_max) {
@@ -347,22 +384,23 @@ void test_nrf_fuel_gauge_linking(void)
 		.t0 = 25.0f,
 		.model = &battery_secondary,
 		.state = NULL,
+		.lock_func = NULL,
 	};
+	struct nrf_fuel_gauge_config_parameters config_params;
 	float v0;
+	float val;
 
 	(void)nrf_fuel_gauge_init(&params, &v0);
-	(void)nrf_fuel_gauge_process(4.2f, 0.07f, 25.0f, 60.0f, NULL);
+	(void)nrf_fuel_gauge_process(4.2f, 0.07f, 25.0f, 60.0f, &val, NULL);
 	(void)nrf_fuel_gauge_idle_set(4.2f, 25.0f, 0.0f);
-	(void)nrf_fuel_gauge_tte_get();
-	(void)nrf_fuel_gauge_ttf_get();
+	(void)nrf_fuel_gauge_tte_get(&val);
+	(void)nrf_fuel_gauge_ttf_get(&val);
+	(void)nrf_fuel_gauge_soc_get(&val);
 	(void)nrf_fuel_gauge_ext_state_update(NRF_FUEL_GAUGE_EXT_STATE_INFO_VBUS_CONNECTED, NULL);
 	(void)nrf_fuel_gauge_state_get(NULL, 0);
-	(void)nrf_fuel_gauge_param_adjust(&(struct nrf_fuel_gauge_runtime_parameters){
-		.a = 0.0f,
-		.b = 0.0f,
-		.c = 0.0f,
-		.d = 0.0f,
-	});
+	(void)nrf_fuel_gauge_config_params_default_get(&config_params);
+	(void)nrf_fuel_gauge_config_params_current_get(&config_params);
+	(void)nrf_fuel_gauge_state_compatible_check(NULL, 0);
 }
 
 void test_nrf_fuel_gauge_variant(void)
