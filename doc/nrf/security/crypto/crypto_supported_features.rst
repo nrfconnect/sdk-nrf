@@ -610,7 +610,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -2312,7 +2312,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -2848,7 +2848,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -3410,7 +3410,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -4198,7 +4198,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -4636,7 +4636,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -5337,7 +5337,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -6810,7 +6810,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -7669,7 +7669,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -8269,7 +8269,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -9369,7 +9369,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -10394,7 +10394,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -10702,7 +10702,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
@@ -11041,7 +11041,7 @@ The options are grouped by Series and drivers available for the device Series, a
          .. tab:: CRACEN
 
             The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
-            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Enclave firmware <ug_crypto_architecture_implementation_standards_ironside>`.
 
             The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
