@@ -12,6 +12,9 @@ zephyr_library_sources(
   common/src/nrf_cloud_sec_tag.c
   common/src/nrf_cloud_info.c
 )
+zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_SEND_DEVICE_INFO_BOOTLOADER_VERSION
+  common/src/nrf_cloud_bootloader_version.c
+)
 zephyr_library_sources_ifdef(CONFIG_MODEM_JWT common/src/nrf_cloud_jwt.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM common/src/nrf_cloud_jwt.c)
 zephyr_library_sources_ifdef(

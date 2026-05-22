@@ -5,6 +5,7 @@
  */
 
 #include "nrf_cloud_codec_internal.h"
+#include "nrf_cloud_bootloader_version.h"
 #include "nrf_cloud_mem.h"
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_location.h>
@@ -993,6 +994,23 @@ static int encode_modem_info_json_object(struct modem_param_info *modem, cJSON *
 			}
 		}
 #endif /* CONFIG_NRF_CLOUD_FOTA_SMP */
+
+#if defined(CONFIG_NRF_CLOUD_SEND_DEVICE_INFO_BOOTLOADER_VERSION)
+		if (!ret) {
+			char bl_ver[12];
+
+			ret = nrf_cloud_bootloader_version_string_get(bl_ver, sizeof(bl_ver));
+			if (ret) {
+				LOG_ERR("nrf_cloud_bootloader_version_string_get, err: %d", ret);
+				cJSON_Delete(device_obj);
+				return ret;
+			}
+
+			ret = !cJSON_AddStringToObjectCS(device_obj,
+							 NRF_CLOUD_JSON_KEY_BOOTLOADER_VER,
+							 bl_ver);
+		}
+#endif /* CONFIG_NRF_CLOUD_SEND_DEVICE_INFO_BOOTLOADER_VERSION */
 
 		if (ret) {
 			cJSON_Delete(device_obj);

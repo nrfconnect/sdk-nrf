@@ -179,6 +179,7 @@
 #define NRF_CLOUD_JSON_KEY_KEEPALIVE		"keepalive"
 #define NRF_CLOUD_JSON_KEY_CONN			"connection"
 #define NRF_CLOUD_JSON_KEY_APP_VER		"appVersion"
+#define NRF_CLOUD_JSON_KEY_BOOTLOADER_VER	"bootloaderVersion"
 #define NRF_CLOUD_JSON_KEY_SMP_APP_VER		"smpDevAppVer"
 #define NRF_CLOUD_JSON_KEY_CONN_INFO		"connectionInfo"
 #define NRF_CLOUD_JSON_KEY_PROTOCOL		"protocol"
