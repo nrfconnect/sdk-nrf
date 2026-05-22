@@ -28,7 +28,7 @@ To use the PSA Crypto API in your application, enable the following Kconfig opti
 * For the :ref:`Oberon PSA Crypto implementation <ug_crypto_architecture_implementation_standards_oberon>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option.
 * For the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` Kconfig options.
   For more information, see :ref:`ug_tfm_building_secure_services`.
-* For the :ref:`IronSide Secure Element implementation <ug_crypto_architecture_implementation_standards_ironside>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option on the nRF54H20's :ref:`ug_nrf54h20_architecture_cpu_appcore`.
+* For the :ref:`IronSide Secure Enclave implementation <ug_crypto_architecture_implementation_standards_ironside>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option on the nRF54H20's :ref:`ug_nrf54h20_architecture_cpu_appcore`.
 
 .. _psa_crypto_support_single_driver:
 
@@ -61,7 +61,7 @@ The nrf_oberon driver may then be disabled by using the Kconfig option :kconfig:
 .. note::
    - On nRF54L Series devices, CRACEN is the only source of entropy.
      Therefore, it is not possible to disable the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option when the Zephyr entropy driver is enabled.
-   - On nRF54H20, the IronSide Secure Element firmware relies on the CRACEN driver.
+   - On nRF54H20, the IronSide Secure Enclave firmware relies on the CRACEN driver.
      However, you do not need to enable the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option when the program the firmware bundle onto the :ref:`Secure Domain <ug_nrf54h20_secure_domain>`.
      For more information, see the :ref:`ug_nrf54h20_ironside` page.
 
