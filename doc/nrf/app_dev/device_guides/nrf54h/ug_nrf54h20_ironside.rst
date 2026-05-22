@@ -18,6 +18,7 @@ The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <u
 * :ref:`Update service <ug_nrf54h20_ironside_se_update_service>`
 * PSA Crypto service (:ref:`ug_crypto_architecture_implementation_standards_ironside`)
 * PSA Internal Trusted Storage service (:ref:`ug_nrf54h20_ironside_se_secure_storage`)
+* :ref:`Snapshot services <ug_nrf54h20_ironside_se_snapshot>`
 
 .. toctree::
    :maxdepth: 2
@@ -27,5 +28,6 @@ The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <u
    ug_nrf54h20_ironside_global_resources
    ug_nrf54h20_ironside_protect
    ug_nrf54h20_ironside_secure_storage
+   ug_nrf54h20_ironside_snapshot
    ug_nrf54h20_ironside_boot
    ug_nrf54h20_ironside_services
