@@ -1031,6 +1031,7 @@
 .. _`AP-Protect for nRF54LV10A`: https://docs.nordicsemi.com/bundle/ps_nrf54LV10A/page/ctrl-ap.html
 .. _`AP-Protect for nRF54LM20A`: https://docs.nordicsemi.com/bundle/ps_nrf54LM20A/page/ctrl-ap.html
 .. _`AP-Protect for nRF54L15`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/ctrl-ap.html
+.. _`AP-Protect for nRF54LS05A`: https://docs.nordicsemi.com/bundle/ps_nrf54LS05A/page/ctrl-ap.html
 .. _`AP-Protect for nRF5340`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/debugandtrace.html#ariaid-title9
 .. _`AP-Protect for nRF52840`:
 .. _`access port protection mechanism`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/dif.html#ariaid-title3
