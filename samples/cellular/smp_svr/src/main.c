@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <pm_config.h>
 #include <zephyr/kernel.h>
 #include <zephyr/stats/stats.h>
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/dfu/mcuboot.h>
+#include <zephyr/storage/flash_map.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(app_smp_svr, CONFIG_LOG_DEFAULT_LEVEL);
@@ -19,7 +19,7 @@ static void image_validation(void)
 	char buf[255];
 	struct mcuboot_img_header header;
 
-	boot_read_bank_header(PM_MCUBOOT_PRIMARY_ID, &header, sizeof(header));
+	boot_read_bank_header(PARTITION_ID(slot0_partition), &header, sizeof(header));
 	snprintk(buf, sizeof(buf), "%d.%d.%d-%d", header.h.v1.sem_ver.major,
 		 header.h.v1.sem_ver.minor, header.h.v1.sem_ver.revision,
 		 header.h.v1.sem_ver.build_num);

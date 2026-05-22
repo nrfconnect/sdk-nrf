@@ -48,11 +48,6 @@ MCUboot configuration
 
 The MCUboot configuration is enabled automatically at build.
 
-Partition management
---------------------
-
-The sample has a static partition management file :file:`pm_static_nrf9160dk_nrf52480.yml` to enable MCUboot secondary slot usage, which is a requirement.
-
 Building
 ********
 
