@@ -92,6 +92,32 @@ products:
                 ram: 96
                 flash: 96
                 xip: true
+  - series: nrf54lm
+    socs:
+      - name: nrf54lm20a
+        variants:
+          - name: paaa
+            cores:
+              - name: cpuapp
+                arch: arm
+                ram: 511
+                flash: 920
+              - name: cpuflpr
+                arch: riscv
+                ram: 96
+                flash: 96
+      - name: nrf54lm20b
+        variants:
+          - name: paaa
+            cores:
+              - name: cpuapp
+                arch: arm
+                ram: 511
+                flash: 920
+              - name: cpuflpr
+                arch: riscv
+                ram: 96
+                flash: 96
   - series: nrf91
     socs:
       - name: nrf9131
