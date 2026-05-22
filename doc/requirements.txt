@@ -17,11 +17,12 @@ recommonmark                    # |     |         |   X    |    X    |         |
 sphinx~=8.1                     # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
 sphinx-autobuild                # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
 sphinx-copybutton               # |  X  |         |        |         |         |      |   X    |
-sphinx-ncs-theme<1.1            # |  X  |         |        |         |         |      |        |
+sphinx-ncs-theme<2.1            # |  X  |         |        |         |         |      |        |
 sphinx-notfound-page>=1.0.0     # |  X  |         |        |         |         |      |   X    |
 sphinx-tabs>=3.4                # |  X  |         |        |         |         |      |   X    |
 sphinx-togglebutton             # |  X  |         |        |         |         |      |   X    |
 sphinx_markdown_tables          # |     |         |   X    |         |         |      |        |
 sphinxcontrib-mscgen            # |  X  |         |        |         |    X    |      |        |
 sphinxcontrib-plantuml>=0.27    # |     |         |        |         |         |  X   |        |
+sphinxcontrib.jquery            # |  X  |         |   X    |    X    |    X    |  X   |        |
 west>=1.0.0                     # |     |         |        |         |         |      |   X    |
