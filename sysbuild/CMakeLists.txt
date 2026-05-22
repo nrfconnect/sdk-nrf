@@ -990,6 +990,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20.cmake"
          CACHE INTERNAL "MCUboot signing script" FORCE)
     endforeach()
+  elseif(SB_CONFIG_MCUBOOT_SYSBUILD_SIGN)
+    UpdateableImage_Get(images ALL)
+    foreach(image ${images})
+      set(${image}_SIGNING_SCRIPT
+        "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_use_sysbuild_flasher.cmake"
+         CACHE INTERNAL "MCUboot signing script" FORCE)
+    endforeach()
   endif()
 
   if(SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF)
@@ -1109,6 +1116,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   if(SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY AND SB_CONFIG_SOC_NRF54H20)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_nrf54h20.cmake)
+  elseif(SB_CONFIG_MCUBOOT_SYSBUILD_SIGN)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/sign_sysbuild.cmake)
   endif()
 
   if(SB_CONFIG_FIRMWARE_LOADER_UPDATE)
@@ -1192,7 +1201,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   endif()
 
   # If the network core image is enabled on nRF53, ensure it is flashed before the main application
-  if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
+  if(NOT SB_CONFIG_MCUBOOT_SYSBUILD_SIGN AND SB_CONFIG_SUPPORT_NETCORE AND
+    NOT SB_CONFIG_NETCORE_NONE)
     sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
 
     if(SB_CONFIG_SECURE_BOOT_NETCORE)
@@ -1201,7 +1211,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     endif()
   endif()
 
-  if(SB_CONFIG_SECURE_BOOT_APPCORE AND NOT SB_CONFIG_PARTITION_MANAGER)
+  if(NOT SB_CONFIG_MCUBOOT_SYSBUILD_SIGN AND SB_CONFIG_SECURE_BOOT_APPCORE AND
+    NOT SB_CONFIG_PARTITION_MANAGER)
     sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} b0)
     sysbuild_add_dependencies(FLASH app_provision b0)
   endif()
@@ -1260,5 +1271,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/nrf70.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/dfu_extra_images.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/bt_fast_pair.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/matter.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/dfu_signing_sysbuild_flasher.cmake)
 
 store_ncs_vars()
