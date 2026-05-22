@@ -12,7 +12,10 @@
 #include <nrfx_nvmc.h>
 #include <zephyr/linker/linker-defs.h>
 #include <zephyr/devicetree.h>
+#include <zephyr/storage/flash_map.h>
 
+#define S0_SLOT_ADDRESS		PARTITION_ADDRESS(s0_image)
+#define S1_SLOT_ADDRESS		PARTITION_ADDRESS(s1_image)
 
 ZTEST(bl_validation_test, test_key_looping)
 {
@@ -29,16 +32,16 @@ ZTEST(bl_validation_test, test_key_looping)
  */
 ZTEST(bl_validation_test, test_validation)
 {
-	zassert_true(bl_validate_firmware(PM_ADDRESS, PM_ADDRESS),
+	zassert_true(bl_validate_firmware(S0_SLOT_ADDRESS, S0_SLOT_ADDRESS),
 		"Fail 1. Failed to validate current app.\r\n");
-	zassert_false(bl_validate_firmware(PM_ADDRESS, PM_ADDRESS + 0x200),
+	zassert_false(bl_validate_firmware(S0_SLOT_ADDRESS, S0_SLOT_ADDRESS + 0x200),
 		"Fail 2. Incorrectly validated app with wrong offset.\r\n");
 
 	/* 0x1000 to account for validation info. */
 	uint32_t copy_len = (uint32_t)_flash_used + 1000;
 
 	/* Round up to at least the next SPU region. */
-	uint32_t new_addr = ROUND_UP(PM_ADDRESS + copy_len, 0x8000);
+	uint32_t new_addr = ROUND_UP(S0_SLOT_ADDRESS + copy_len, 0x8000);
 
 	for (uint32_t erase_addr = new_addr; erase_addr < (new_addr + copy_len);
 	     erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)) {
@@ -46,13 +49,13 @@ ZTEST(bl_validation_test, test_validation)
 
 		zassert_equal(0, ret, "Erase failed.\r\n");
 	}
-	nrfx_nvmc_words_write(new_addr, (const uint32_t *)PM_ADDRESS,
+	nrfx_nvmc_words_write(new_addr, (const uint32_t *)S0_SLOT_ADDRESS,
 		(copy_len + 3) / 4);
 
-	zassert_true(bl_validate_firmware(PM_ADDRESS, new_addr),
+	zassert_true(bl_validate_firmware(S0_SLOT_ADDRESS, new_addr),
 		"Fail 3. Failed to validate displaced app.\r\n");
 
-	zassert_false(bl_validate_firmware(PM_ADDRESS + 0x300, new_addr),
+	zassert_false(bl_validate_firmware(S0_SLOT_ADDRESS + 0x300, new_addr),
 		"Fail 4. Incorrectly validated copy against wrong addr.\r\n");
 
 	uint32_t mangle_addr = new_addr + 0x300;
@@ -65,7 +68,7 @@ ZTEST(bl_validation_test, test_validation)
 	zassert_equal(0, *(uint32_t *)mangle_addr,
 		"Unable to mangle, word was not written to 0. \r\n");
 
-	zassert_false(bl_validate_firmware(PM_ADDRESS, new_addr),
+	zassert_false(bl_validate_firmware(S0_SLOT_ADDRESS, new_addr),
 		"Fail 5. Incorrectly validated mangled app.\r\n");
 }
 
@@ -76,7 +79,7 @@ ZTEST(bl_validation_test, test_s1)
 	 * image properly validates after flashing to the slot it is supposed
 	 * to boot from.
 	 */
-	zassert_true(bl_validate_firmware(PM_S1_ADDRESS, PM_S1_ADDRESS), NULL);
+	zassert_true(bl_validate_firmware(S1_SLOT_ADDRESS, S1_SLOT_ADDRESS), NULL);
 }
 
 
