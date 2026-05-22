@@ -4,30 +4,26 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "app_aliases_common.dtsi"
+
 / {
-	chosen {
-		zephyr,console = &uart00;
-	};
-};
+	soc {
+		reserved-memory {
+			#address-cells = <1>;
+			#size-cells = <1>;
 
-&cpuflpr_sram {
-	cpuflpr_sram_code_data: sram@0 {
-		compatible = "mmio-sram";
-		reg = <0x0 DT_SIZE_K(116)>;
-		#address-cells = <1>;
-		#size-cells = <1>;
-	};
-};
+			cpuflpr_code_partition: image@3de000 {
+				/* FLPR core code partition */
+				reg = <0x3de000 DT_SIZE_K(116)>;
+			};
+		};
 
-&cpuflpr_mram {
-	partitions {
-		ranges;
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		cpuflpr_code_partition: partition@0 {
-			compatible = "zephyr,mapped-partition";
-			reg = <0x0 DT_SIZE_K(116)>;
+		cpuflpr_sram_code_data: memory@200e0000 {
+			compatible = "mmio-sram";
+			reg = <0x200e0000 DT_SIZE_K(116)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x200e0000 DT_SIZE_K(116)>;
 		};
 	};
 };
@@ -43,7 +39,7 @@
 	source-memory = <&cpuflpr_code_partition>;
 };
 
-&uart00 {
+&cpuapp_vevif_tx {
 	status = "okay";
 };
 
