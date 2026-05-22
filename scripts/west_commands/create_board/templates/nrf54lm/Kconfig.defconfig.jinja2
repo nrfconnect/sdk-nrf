@@ -1,0 +1,6 @@
+if CONFIG_SOC_{{ soc | upper }}_CPUAPP
+
+config HW_STACK_PROTECTION
+	default ARCH_HAS_STACK_PROTECTION
+
+endif # CONFIG_SOC_{{ soc | upper }}_CPUAPP
