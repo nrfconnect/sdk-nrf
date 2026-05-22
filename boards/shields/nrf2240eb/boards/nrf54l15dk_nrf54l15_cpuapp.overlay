@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Pin mapping suitable for use nRF2240-EK PCA63564 with nRF54L15DK.
- * The nRF2240-EK in Port P0.
+/* Pin mapping suitable for use nRF2240EB PCA63564 with nRF54L15DK.
+ * The nRF2240EB in Port P0.
  *
  * Important:
  * On the nRF54L15 Development Kit pins P0.00...P0.03 are
@@ -15,7 +15,7 @@
  * "nRF Connect for Desktop" bundle can be used for this purpose.
  *
  * On the nRF54L15 Development Kit pin P0.04 is connected also to "Button 3".
- * Please do not press this button while the firmware nRF2240-EK containing
+ * Please do not press this button while the firmware nRF2240EB containing
  * the code with this shield is running.
  */
 
@@ -42,16 +42,16 @@
 		reg = <0x30>;
 	};
 
-	/* The nPM1300 on the nRF2240EK is used to supply power to the nRF2240 device. */
-	nrf2240ek_pmic: pmic@6b {
+	/* The nPM1300 on the nRF2240EB is used to supply power to the nRF2240 device. */
+	nrf2240eb_pmic: pmic@6b {
 		compatible = "nordic,npm1300";
 		status = "okay";
 		reg = <0x6b>;
 
-		nrf2240ek_pmic_charger: charger {
+		nrf2240eb_pmic_charger: charger {
 			compatible = "nordic,npm1300-charger";
 			status = "okay";
-			/* When objects are placed close to the PCB antenna of the nRF2240EK shield
+			/* When objects are placed close to the PCB antenna of the nRF2240EB shield
 			 * the supply voltage drops on the nRF2240 power supply pin VDDPALDO were
 			 * observed. As a workaround the current limit on VBUS of the PMIC
 			 * is increased.

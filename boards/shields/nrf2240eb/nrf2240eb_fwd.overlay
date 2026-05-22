@@ -5,7 +5,7 @@
  */
 
 /* The direct use of SHIELD=nrf2240_fwd is no more necessary and deprecated.
- * Please use just -DSHIELD=nrf2240ek or -D<app_image>_SHIELD=nrf2240ek.
+ * Please use just -DSHIELD=nrf2240eb or -D<app_image>_SHIELD=nrf2240eb.
  * For multi-core devices appropriate overlay for the shield will be picked
  * by the build system automatically.
  */

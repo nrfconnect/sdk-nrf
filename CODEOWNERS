@@ -58,7 +58,7 @@
 **/shields/                               @nrfconnect/ncs-co-build-system
 
 /boards/shields/nrf2220ek/                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
-/boards/shields/nrf2240ek/                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
+/boards/shields/nrf2240eb/                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
 /boards/shields/nrf21540ek/               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
 
 /boards/shields/pca63566/doc/*.rst        @nrfconnect/ncs-doc-leads
