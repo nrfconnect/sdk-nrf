@@ -1,7 +1,7 @@
 .. _ug_bt_mesh_fota:
 
-Performing Device Firmware Updates (DFU) in Bluetooth Mesh
-##########################################################
+Device Firmware Updates (DFU) in Bluetooth Mesh
+###############################################
 
 The |NCS| supports two DFU methods when updating your firmware over-the-air (FOTA) for your Bluetooth® Mesh devices and applications.
 
@@ -12,5 +12,6 @@ The |NCS| supports two DFU methods when updating your firmware over-the-air (FOT
    :maxdepth: 1
    :caption: Subpages:
 
+   dfu_conf
    dfu_over_bt_mesh
    dfu_over_ble
