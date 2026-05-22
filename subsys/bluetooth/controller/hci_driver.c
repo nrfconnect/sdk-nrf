@@ -531,10 +531,9 @@ static int data_packet_process(const struct device *dev, uint8_t *hci_buf)
 		return -ENOMEM;
 	}
 
-	LOG_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle,
-	       pb, bc, len);
+	LOG_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle, pb, bc, len);
 
-	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
+	mpsl_memcpy(net_buf_add(data_buf, len + sizeof(*hdr)), &hci_buf[0], len + sizeof(*hdr));
 
 	struct hci_driver_data *driver_data = dev->data;
 
@@ -562,7 +561,7 @@ static int iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
 		return -ENOMEM;
 	}
 
-	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
+	mpsl_memcpy(net_buf_add(data_buf, len + sizeof(*hdr)), &hci_buf[0], len + sizeof(*hdr));
 
 	struct hci_driver_data *driver_data = dev->data;
 
@@ -667,7 +666,8 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 		return -ENOBUFS;
 	}
 
-	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
+	mpsl_memcpy(net_buf_add(evt_buf, hdr->len + sizeof(*hdr)), &hci_buf[0],
+		    hdr->len + sizeof(*hdr));
 
 	struct hci_driver_data *driver_data = dev->data;
 
