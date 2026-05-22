@@ -85,7 +85,7 @@ Developing with nRF54H Series
 
 * Added:
 
-  * Support for configuring Memory Privilege Controllers (MPCs) using UICR.MPCCONF and the MPCCONF service in the IronSide Secure Element (IronSide SE) binary firmware (from IronSide SE v23.4.0+27).
+  * Support for configuring Memory Privilege Controllers (MPCs) using UICR.MPCCONF and the MPCCONF service in the IronSide Secure Enclave (IronSide SE) binary firmware (from IronSide SE v23.4.0+27).
   * Support in MCUboot for using the new IronSide SE services to write protect the MRAM code partitions of MCUboot and the images it boots.
   * A document describing the merged slot update strategy for nRF54H20 devices, allowing simultaneous updates of both application cores (APP and RAD) in a single update operation.
     For more information, see :ref:`ug_nrf54h20_partitioning_merged`.

@@ -54,8 +54,8 @@
 			<text x="34.34" y="140.68" class="st7">Implementations <tspan x="14.47" dy="1.2em" class="st8">in the nRF Connect SDK</tspan></text>		</g>
 		<g id="shape165-22" transform="translate(366.412,-9.75394)">
 			<title>Nordic Red.165</title>
-			<desc>IronSide Secure Element</desc>
+			<desc>IronSide Secure Enclave</desc>
 			<rect x="0" y="125.333" width="144.487" height="32.8222" class="st1"/>
-			<text x="11.1" y="145.04" class="st3">IronSide Secure Element</text>		</g>
+			<text x="11.1" y="145.04" class="st3">IronSide Secure Enclave</text>		</g>
 	</g>
 </svg>
