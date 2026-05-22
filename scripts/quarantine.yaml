@@ -156,3 +156,10 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
+
+- scenarios:
+    - sample.net.http_server.lte
+    - sample.net.http_server.lte.tls
+  platforms:
+    - thingy91/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39486"
