@@ -3,7 +3,14 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 menu "MCUboot configuration"
-	depends on BOOTLOADER_MCUBOOT
+
+config MCUBOOT_SYSBUILD_SIGN
+	bool "Sign image using sysbuild-based script"
+	depends on BUILD_OUTPUT_HEX
+	depends on BUILD_OUTPUT_BIN
+	depends on !MCUBOOT_SIGN_MERGED_BINARY
+	depends on !PARTITION_MANAGER
+	depends on !MERGED_HEX_FILES
 
 config MCUBOOT_SIGN_MERGED_BINARY
 	bool "Sign single, merged update package [EXPERIMENTAL]"
