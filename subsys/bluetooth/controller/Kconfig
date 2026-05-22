@@ -737,21 +737,19 @@ config BT_CTLR_SDC_ENABLE_LOWEST_FRAME_SPACE
 config BT_CTLR_SDC_DATA_RELATED_ADDRESS_CHANGES
 	bool "Data Related Address Changes"
 	depends on BT_BROADCASTER
-	default y if BT_HCI_RAW
 	help
 	  Support for LE Set Data Related Address Changes command
 
 config BT_CTLR_SDC_RF_PATH_COMPENSATION
 	bool "RF Path Compensation"
 	depends on BT_CTLR_LE_POWER_CONTROL || BT_CTLR_ADV_EXT
-	default y if BT_HCI_RAW
 	help
 	  Support for LE RF Path Compensation
 
 config BT_CTLR_SDC_ISO_TEST
 	bool "LE ISO Test commands"
 	depends on BT_CTLR_ISO
-	default y if BT_HCI_RAW || BT_ISO_TEST_PARAMS
+	default y if BT_ISO_TEST_PARAMS
 	help
 	  Support for LE ISO test HCI commands
 
