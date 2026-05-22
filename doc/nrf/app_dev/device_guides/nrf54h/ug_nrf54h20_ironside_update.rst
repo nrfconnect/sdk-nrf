@@ -86,7 +86,7 @@ Manual update
 
     The |NCS| defines the west ``ncs-ironside-se-update`` command to update |ISE| firmware on a device via the debugger.
 
-    This command takes the nRF54H20 Ironside SE binaries ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them):
+    This command takes the nRF54H20 IronSide SE binaries ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them):
 
     .. code-block:: console
 
