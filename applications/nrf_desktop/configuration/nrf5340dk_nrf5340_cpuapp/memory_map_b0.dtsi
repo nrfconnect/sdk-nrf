@@ -24,13 +24,16 @@
 			reg = <0x8000 DT_SIZE_K(4)>;
 		};
 
-		s0_partition: partition@9000 {
+		/* Define 'slot0_partition' and 'slot1_partition' as additional labels.
+		 * This keeps compatibility with the Partition Manager.
+		 */
+		slot0_partition: s0_partition: partition@9000 {
 			compatible = "zephyr,mapped-partition";
 			label = "b0-image-0";
 			reg = <0x9000 DT_SIZE_K(488)>;
 		};
 
-		s1_partition: partition@83000 {
+		slot1_partition: s1_partition: partition@83000 {
 			compatible = "zephyr,mapped-partition";
 			label = "b0-image-1";
 			reg = <0x83000 DT_SIZE_K(488)>;
