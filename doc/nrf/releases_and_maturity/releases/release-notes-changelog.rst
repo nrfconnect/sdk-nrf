@@ -682,6 +682,10 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` Kconfig options.
       Use the default UUID source for new applications.
 
+  * Added:
+
+    * Added the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_INFO_BOOTLOADER_VERSION` Kconfig option to include the active MCUboot (B1) ``fw_info`` version as ``bootloaderVersion`` in ``deviceInfo``.
+
   * Fixed:
 
     * An issue where PEM private keys with CRLF line endings could not be decoded correctly for JWT signing used in nRF Cloud CoAP authentication.
