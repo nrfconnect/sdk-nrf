@@ -2707,7 +2707,7 @@ The lists are organized by device Series and implementation.
               - --
               - --
               - --
-            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+            * - :ref:`IronSide Secure Enclave <ug_crypto_architecture_implementation_standards_ironside>`
               - --
               - --
               - --
@@ -2734,7 +2734,7 @@ The lists are organized by device Series and implementation.
               - Supported
             * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
               - Experimental
-            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+            * - :ref:`IronSide Secure Enclave <ug_crypto_architecture_implementation_standards_ironside>`
               - --
 
       .. tab:: nRF54H Series
@@ -2756,7 +2756,7 @@ The lists are organized by device Series and implementation.
               - --
             * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
               - --
-            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+            * - :ref:`IronSide Secure Enclave <ug_crypto_architecture_implementation_standards_ironside>`
               - Supported
 
       .. tab:: nRF54L Series
@@ -2813,7 +2813,7 @@ The lists are organized by device Series and implementation.
               - Experimental
               - --
               - --
-            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+            * - :ref:`IronSide Secure Enclave <ug_crypto_architecture_implementation_standards_ironside>`
               - --
               - --
               - --
@@ -2857,7 +2857,7 @@ The lists are organized by device Series and implementation.
               - Experimental
               - Experimental
               - Experimental
-            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+            * - :ref:`IronSide Secure Enclave <ug_crypto_architecture_implementation_standards_ironside>`
               - --
               - --
               - --
