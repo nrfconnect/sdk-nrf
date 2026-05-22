@@ -63,7 +63,6 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
-      - thingy91/nrf9160/ns
     tags:
       - ci_build
       - sysbuild
@@ -78,7 +77,6 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
-      - thingy91/nrf9160/ns
     extra_args: EXTRA_CONF_FILE=overlay-tls-nrf91.conf
     tags:
       - ci_build
