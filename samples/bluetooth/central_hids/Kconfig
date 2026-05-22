@@ -16,7 +16,6 @@ config NVS
 config SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX
 	bool "Continuous report receiving"
 	default y
-	depends on SAMPLE_BT_CENTRAL_HIDS_PERIPHERAL_COUNT = 1
 	help
 	  Enable the continuous report receiving feature in the central HIDS sample.
 	  The sample will automatically enter continuous report receiving mode if it detects
