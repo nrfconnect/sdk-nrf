@@ -820,7 +820,7 @@ Matter samples
 
 * :ref:`matter_light_bulb_sample` sample:
 
-  * Added support for :ref:`matter_light_bulb_aws_iot_integration` in the nRF54LM20 DK with the nRF7002-EB II shield attached.
+  * Added support for the AWS IoT integration in the nRF54LM20 DK with the nRF7002-EB II shield attached.
 
 Networking samples
 ------------------

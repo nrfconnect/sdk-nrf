@@ -29,10 +29,6 @@ target_include_directories(app PRIVATE
   ${ZAP_PARENT_DIR}
 )
 
-if(CONFIG_AWS_IOT_INTEGRATION)
-  add_subdirectory(src/aws_iot_integration)
-endif()
-
 target_sources(app PRIVATE
   src/app_task.cpp
   src/main.cpp

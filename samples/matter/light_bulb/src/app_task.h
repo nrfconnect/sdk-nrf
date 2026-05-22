@@ -44,9 +44,5 @@ private:
 	static void ActionInitiated(Nrf::PWMDevice::Action_t action, int32_t actor);
 	static void ActionCompleted(Nrf::PWMDevice::Action_t action, int32_t actor);
 
-#ifdef CONFIG_AWS_IOT_INTEGRATION
-	static bool AWSIntegrationCallback(struct aws_iot_integration_cb_data *data);
-#endif
-
 	Nrf::PWMDevice mPWMDevice;
 };
