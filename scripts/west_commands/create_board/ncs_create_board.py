@@ -188,8 +188,8 @@ class NcsCreateBoard(WestCommand):
 
         # nrf53 specific files
         if series == "nrf53":
-            tmpl = env.get_template("board-cpuapp_partitioning.dtsi.jinja2")
-            with open(out_dir / f"{ input['board'] }-cpuapp_partitioning.dtsi", "w") as f:
+            tmpl = env.get_template("board_cpuapp-partitioning.dtsi.jinja2")
+            with open(out_dir / f"{ input['board'] }_cpuapp-partitioning.dtsi", "w") as f:
                 f.write(tmpl.render(config))
 
             tmpl = TEMPLATE_DIR / series / "board-shared_sram.dtsi"
