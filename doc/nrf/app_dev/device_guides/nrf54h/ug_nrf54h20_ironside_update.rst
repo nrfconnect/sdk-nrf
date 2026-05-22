@@ -108,6 +108,7 @@ The manual update process involves the following steps:
 Updating manually using nRF Util
 --------------------------------
 
+
 To update |ISE|, you can use nRF Util instead of ``west ncs-ironside-se-update``.
 To use nRF Util for the update, you must install the nRF Util `device` command v2.14.0 or higher.
 See `Installing specific versions of nRF Util commands`_ for more information.

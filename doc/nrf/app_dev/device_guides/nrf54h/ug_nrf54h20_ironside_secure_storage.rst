@@ -45,7 +45,7 @@ Access control
 --------------
 
 * *Domain Isolation*: Secure storage regions are not accessible by local domains directly.
-* *Ironside Exclusive Access*: Only the |ISE| can access the secure storage regions.
+* *IronSide Exclusive Access*: Only the |ISE| can access the secure storage regions.
 * *Domain Separation*: Each local domain can only access its own secure storage data, ensuring isolation between different domains.
 
 Data protection

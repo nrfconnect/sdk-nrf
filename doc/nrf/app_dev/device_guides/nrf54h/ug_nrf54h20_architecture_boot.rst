@@ -37,7 +37,7 @@ Cold boot features
 The nRF54H20 boot sequence has two key features:
 
 * An immutable boot ROM provides the initial :term:`Root of Trust (RoT)`.
-  This boot ROM is responsible for verifying the IronSide Secure Element (IronSide SE) signature before allowing the code to be executed.
+  This boot ROM is responsible for verifying the IronSide Secure Enclave (IronSide SE) signature before allowing the code to be executed.
 * The Secure Domain acts as the boot master in the system.
   It completes the allocation of all the global resources before any other local domain is allowed to execute.
   This order of operation is needed for robustness and security of the system.

@@ -1,9 +1,9 @@
 .. _ug_nrf54h20_ironside:
 
-IronSide Secure Element
+IronSide Secure Enclave
 #######################
 
-The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` of the nRF54H20 SoC that provides security features based on the :ref:`PSA Certified Security Framework <ug_psa_certified_api_overview>`.
+The IronSide Secure Enclave (|ISE|) is a firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` of the nRF54H20 SoC that provides security features based on the :ref:`PSA Certified Security Framework <ug_psa_certified_api_overview>`.
 
 |ISE| provides the following features:
 
