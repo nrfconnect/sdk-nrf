@@ -675,7 +675,7 @@ nRF54L Series
 
       This command issues the ``ERASEALL`` command.
       Make sure to wait for the command to be completed.
-      On this device, this command also programs a piece of firmware that corresponds to setting :kconfig:option:`CONFIG_NRF_APPROTECT_DISABLE` and :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_DISABLE` to ``y``.
+      On this device, this command also programs a piece of firmware that corresponds to selecting :kconfig:option:`CONFIG_NRF_APPROTECT_DISABLE` and :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_DISABLE`.
 
       **Keeping AP-Protect disabled after hard reset:**
 
@@ -765,9 +765,9 @@ nRF54L Series
          :start-after: .. nrf54l15_approtect_tab_start
          :end-before: .. nrf54l15_approtect_tab_end
 
-   .. tab:: nRF54LM20
+   .. tab:: nRF54LM20A
 
-      .. list-table:: nRF54LM20 AP-Protect support
+      .. list-table:: nRF54LM20A AP-Protect support
          :header-rows: 1
          :align: center
          :widths: auto
@@ -780,6 +780,34 @@ nRF54L Series
            - ✔
            - ✔
            - `AP-Protect for nRF54LM20A`_
+
+      .. include:: ./ap_protect.rst
+         :start-after: .. nrf54l15_approtect_tab_kconfigs_standard_start
+         :end-before: .. nrf54l15_approtect_tab_kconfigs_standard_end
+
+      .. include:: ./ap_protect.rst
+         :start-after: .. nrf54l15_approtect_tab_kconfigs_secure_start
+         :end-before: .. nrf54l15_approtect_tab_kconfigs_secure_end
+
+      .. include:: ./ap_protect.rst
+         :start-after: .. nrf54l15_approtect_tab_start
+         :end-before: .. nrf54l15_approtect_tab_end
+
+   .. tab:: nRF54LM20B
+
+      .. list-table:: nRF54LM20B AP-Protect support
+         :header-rows: 1
+         :align: center
+         :widths: auto
+
+         * - AP-Protect (hardware only)
+           - AP-Protect (hardware and software)
+           - Secure AP-Protect
+           - Hardware documentation
+         * - ✗
+           - ✔
+           - ✔
+           - `AP-Protect for nRF54LM20B <AP-Protect for nRF54LM20A_>`_
 
       .. include:: ./ap_protect.rst
          :start-after: .. nrf54l15_approtect_tab_kconfigs_standard_start
@@ -821,9 +849,9 @@ nRF54L Series
          :start-after: .. nrf54l15_approtect_tab_start
          :end-before: .. nrf54l15_approtect_tab_end
 
-   .. tab:: nRF54LS05
+   .. tab:: nRF54LS05A
 
-      .. list-table:: nRF54LS05 AP-Protect support
+      .. list-table:: nRF54LS05A AP-Protect support
          :header-rows: 1
          :align: center
          :widths: auto
@@ -835,7 +863,7 @@ nRF54L Series
          * - ✗
            - ✔
            - ✗
-           - *Documentation not yet available*
+           - `AP-Protect for nRF54LS05A`_
 
       .. note::
          This device supports ``UICR.ERASEPROTECT``, which might prevent the ``ERASEALL`` command from executing when AP-Protect is enabled.
@@ -843,7 +871,7 @@ nRF54L Series
 
       **Configuring AP-Protect on the software side:**
 
-      The following Kconfig options configure AP-Protect on the software side on nRF54LS05 in the |NCS|:
+      The following Kconfig options configure AP-Protect on the software side on nRF54LS05A in the |NCS|:
 
       .. include:: ./ap_protect.rst
          :start-after: .. nrf54l15_approtect_tab_kconfigs_standard_start
@@ -871,7 +899,84 @@ nRF54L Series
 
       This command issues the ``ERASEALL`` command.
       Make sure to wait for the command to be completed.
-      On this device, this command also programs a piece of firmware that corresponds to setting :kconfig:option:`CONFIG_NRF_APPROTECT_DISABLE` to ``y``.
+      On this device, this command also programs a piece of firmware that corresponds to selecting :kconfig:option:`CONFIG_NRF_APPROTECT_DISABLE`.
+
+      **Keeping AP-Protect disabled after hard reset:**
+
+      If you want to keep the AP-Protect disabled after hard reset, you must flash firmware that opens the `debugger signals in Tamper Controller <nRF54L15 Debugger signals_>`_.
+      In the |NCS|, :kconfig:option:`CONFIG_NRF_APPROTECT_DISABLE` (enabled by default) handles the software unlock.
+
+      **Forcing AP-Protect to be disabled after hard reset:**
+
+      To force AP-Protect to be disabled after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
+
+      .. code-block:: console
+
+         nrfutil device recover
+
+      The device is automatically unlocked after erase.
+
+      **Production programming:**
+
+      For the devices that are in a production environment, it is highly recommended to lock the ``UICR.APPROTECT`` register to prevent unauthorized access to the device. If the access port protection is configured this way, it cannot be disabled without erasing the non-volatile memory.
+
+      Check also the following documentation pages for more information:
+
+      * `Disabling AP-Protect on nRF54L`_
+      * `Enabling device protection on nRF54L`_
+      * `Checking AP-Protect status on nRF54L`_
+
+   .. tab:: nRF54LS05B
+
+      .. list-table:: nRF54LS05B AP-Protect support
+         :header-rows: 1
+         :align: center
+         :widths: auto
+
+         * - AP-Protect (hardware only)
+           - AP-Protect (hardware and software)
+           - Secure AP-Protect
+           - Hardware documentation
+         * - ✗
+           - ✔
+           - ✗
+           - `AP-Protect for nRF54LS05B <AP-Protect for nRF54LS05A_>`_
+
+      .. note::
+         This device supports ``UICR.ERASEPROTECT``, which might prevent the ``ERASEALL`` command from executing when AP-Protect is enabled.
+         See hardware documentation for more information.
+
+      **Configuring AP-Protect on the software side:**
+
+      The following Kconfig options configure AP-Protect on the software side on nRF54LS05B in the |NCS|:
+
+      .. include:: ./ap_protect.rst
+         :start-after: .. nrf54l15_approtect_tab_kconfigs_standard_start
+         :end-before: .. nrf54l15_approtect_tab_kconfigs_standard_end
+
+      **Enabling AP-Protect on the hardware side:**
+
+      To enable AP-Protect on the hardware side, write ``Enabled`` to ``UICR.APPROTECT`` using the following nRF Util command:
+
+      .. code-block:: console
+
+         nrfutil device protection-set All
+
+      This set of commands enables AP-Protect on the hardware side and hard resets the device.
+
+      For more information about the ``nrfutil device protection-set`` command, see `Configuring readback protection`_ in the nRF Util documentation.
+
+      **Disabling AP-Protect:**
+
+      To disable AP-Protect, run the following nRF Util command:
+
+      .. code-block:: console
+
+         nrfutil device recover
+
+      This command issues the ``ERASEALL`` command.
+      Make sure to wait for the command to be completed.
+      On this device, this command also programs a piece of firmware that corresponds to selecting :kconfig:option:`CONFIG_NRF_APPROTECT_DISABLE`.
 
       **Keeping AP-Protect disabled after hard reset:**
 
