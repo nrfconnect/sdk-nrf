@@ -158,7 +158,8 @@ class NcsCreateBoard(WestCommand):
 
         # board-level files
         tmpl = TEMPLATE_DIR / series / "pre_dt_board.cmake"
-        shutil.copy(tmpl, out_dir)
+        if tmpl.exists():
+            shutil.copy(tmpl, out_dir)
 
         tmpl = TEMPLATE_DIR / series / "board-pinctrl.dtsi"
         shutil.copy(tmpl, out_dir / f"{ input['board'] }-pinctrl.dtsi")

@@ -13,6 +13,7 @@
 		zephyr,sram = &cpuapp_sram;
 		zephyr,flash = &cpuapp_rram;
 		zephyr,flash-controller = &rram_controller;
+		zephyr,ieee802154 = &ieee802154;
 	};
 };
 
@@ -34,13 +35,31 @@
 {% endif %}
 };
 
-{% if soc == "nrf54l05" %}
-&cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(500)>;
+&radio {
+	status = "okay";
+};
+
+&ieee802154 {
+	status = "okay";
+};
+
+&temp {
+	status = "okay";
+};
+
+&clock {
+	status = "okay";
 };
 
 /* These partition sizes assume no FLPR area in RRAM */
 &cpuapp_rram {
+{% if soc == "nrf54l05" %}
+	reg = <0x0 DT_SIZE_K(500)>;
+
+{% elif soc == "nrf54l10" %}
+	reg = <0x0 DT_SIZE_K(1012)>;
+
+{% endif %}
 	partitions {
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -49,9 +68,14 @@
 		boot_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
-			reg = <0x0 DT_SIZE_K(64)>;
+			/*
+			 * MCUBoot partition is set to 62k to allow FPROTECT to be enabled by
+			 * default.
+                         */
+			reg = <0x0 DT_SIZE_K(62)>;
 		};
 
+{% if soc == "nrf54l05" %}
 		slot0_partition: partition@10000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
@@ -69,26 +93,7 @@
 			label = "storage";
 			reg = <0x74000 DT_SIZE_K(36)>;
 		};
-	};
-};
 {% elif soc == "nrf54l10" %}
-&cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(1012)>;
-};
-
-/* These partition sizes assume no FLPR area in RRAM */
-&cpuapp_rram {
-	partitions {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges;
-
-		boot_partition: partition@0 {
-			compatible = "zephyr,mapped-partition";
-			label = "mcuboot";
-			reg = <0x0 DT_SIZE_K(64)>;
-		};
-
 		slot0_partition: partition@10000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
@@ -106,41 +111,27 @@
 			label = "storage";
 			reg = <0xf4000 DT_SIZE_K(36)>;
 		};
-	};
-};
 {% elif soc == "nrf54l15" %}
-&cpuapp_rram {
-	partitions {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges;
-
-		boot_partition: partition@0 {
-			compatible = "zephyr,mapped-partition";
-			label = "mcuboot";
-			reg = <0x0 DT_SIZE_K(64)>;
-		};
-
 		slot0_partition: partition@10000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0x10000 DT_SIZE_K(664)>;
+			reg = <0x10000 DT_SIZE_K(712)>;
 		};
 
-		slot1_partition: partition@b6000 {
+		slot1_partition: partition@c2000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-1";
-			reg = <0xb6000 DT_SIZE_K(664)>;
+			reg = <0xc2000 DT_SIZE_K(712)>;
 		};
 
-		storage_partition: partition@15c000 {
+		storage_partition: partition@174000 {
 			compatible = "zephyr,mapped-partition";
 			label = "storage";
-			reg = <0x15c000 DT_SIZE_K(36)>;
+			reg = <0x174000 DT_SIZE_K(36)>;
 		};
+{% endif %}
 	};
 };
-{% endif %}
 {% else %}
 {% if not target['xip'] %}
 /dts-v1/;
