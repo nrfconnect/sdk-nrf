@@ -473,6 +473,7 @@ Matter samples
   * The implementation of the Matter Door lock sample has been relocated to the `nRF Door Lock and Access Control Add-on`_, that is |NCS| extension.
     The add-on is an extensible solution offering additional features and expanded integration capabilities.
     It enables the development of not only Matter-compliant door locks, but also those supporting Aliro and hybrid Matter and Aliro combined functionalities, thereby facilitating the design of versatile smart lock solutions.
+  * The AWS IoT integration variant from the :ref:`matter_light_bulb_sample` sample.
 
 Networking samples
 ------------------

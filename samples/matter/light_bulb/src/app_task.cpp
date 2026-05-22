@@ -6,10 +6,6 @@
 
 #include "app_task.h"
 
-#ifdef CONFIG_AWS_IOT_INTEGRATION
-#include "aws_iot_integration.h"
-#endif
-
 #include "app/matter_init.h"
 #include "app/task_executor.h"
 
@@ -97,36 +93,6 @@ void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChan
 		});
 	}
 }
-
-#ifdef CONFIG_AWS_IOT_INTEGRATION
-bool AppTask::AWSIntegrationCallback(struct aws_iot_integration_cb_data *data)
-{
-	LOG_INF("Attribute change requested from AWS IoT: %d", data->value);
-
-	Protocols::InteractionModel::Status status;
-
-	VerifyOrDie(data->error == 0);
-
-	if (data->attribute_id == ATTRIBUTE_ID_ONOFF) {
-		/* write the new on/off value */
-		status = Clusters::OnOff::Attributes::OnOff::Set(kLightEndpointId, data->value);
-		if (status != Protocols::InteractionModel::Status::Success) {
-			LOG_ERR("Updating on/off cluster failed: %x", to_underlying(status));
-			return false;
-		}
-	} else if (data->attribute_id == ATTRIBUTE_ID_LEVEL_CONTROL) {
-		/* write the current level */
-		status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, data->value);
-
-		if (status != Protocols::InteractionModel::Status::Success) {
-			LOG_ERR("Updating level cluster failed: %x", to_underlying(status));
-			return false;
-		}
-	}
-
-	return true;
-}
-#endif /* CONFIG_AWS_IOT_INTEGRATION */
 
 #if defined(CONFIG_PWM)
 void AppTask::ActionInitiated(Nrf::PWMDevice::Action_t action, int32_t actor)
@@ -229,14 +195,6 @@ CHIP_ERROR AppTask::Init()
 	/* Register Matter event handler that controls the connectivity status LED based on the captured Matter network
 	 * state. */
 	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
-
-#ifdef CONFIG_AWS_IOT_INTEGRATION
-	int retAws = aws_iot_integration_register_callback(AWSIntegrationCallback);
-	if (retAws) {
-		LOG_ERR("aws_iot_integration_register_callback() failed");
-		return chip::System::MapErrorZephyr(retAws);
-	}
-#endif
 
 	ReturnErrorOnFailure(sIdentifyCluster.Init());
 

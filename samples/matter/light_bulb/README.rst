@@ -31,9 +31,6 @@ This light bulb sample demonstrates the usage of the :ref:`Matter <ug_matter>` a
     This sample is self-contained and can be tested on its own.
     However, it is required when testing the :ref:`Matter light switch <matter_light_switch_sample>` sample.
 
-The sample can also communicate with `AWS IoT Core`_ over a Wi-Fi network using the nRF54LM20 DK with the nRF7002-EB II shield attached.
-For more details, see the :ref:`matter_light_bulb_aws_iot` section.
-
 Requirements
 ************
 
@@ -63,41 +60,6 @@ The light bulb sample implements the following features:
 
 * OnOff - The light bulb can be turned on and off.
 * LevelControl - The light bulb can be dimmed to a specific level.
-* `AWS IoT integration`_ - The light bulb can be configured to communicate with `AWS IoT Core`_ to control attributes in supported clusters on the device.
-
-Use the ``click to show`` toggle to expand the content.
-
-.. _matter_light_bulb_aws_iot_integration:
-
-AWS IoT integration
--------------------
-
-.. toggle::
-
-   The sample can be configured to communicate with `AWS IoT Core`_ to control attributes in supported clusters on the device.
-   After a connection has been established, the sample will mirror these attributes in the AWS IoT shadow document.
-   This makes it possible to remotely control the device using the `AWS IoT Device Shadow Service`_.
-   The supported attributes are ``OnOff`` from the ``OnOff`` cluster and ``CurrentLevel`` from the ``LevelControl`` cluster.
-
-   The following figure illustrates the relationship between the AWS IoT integration layer and the light bulb sample:
-
-   .. figure:: /images/aws_matter_integration.svg
-      :alt: Sample implementation of the AWS IoT integration layer
-
-      AWS IoT integration layer implementation diagram
-
-   The following figure illustrates the interaction with the AWS IoT shadow Service:
-
-   .. figure:: /images/aws_matter_interaction.svg
-      :alt: Interaction with the AWS IoT shadow service
-
-      AWS IoT Shadow and Matter interaction diagram
-
-   .. note::
-
-      The AWS IoT integration is available only for the nRF54LM20 DK with the nRF7002-EB II shield attached.
-
-.. _matter_light_bulb_aws_iot:
 
 Configuration
 *************
@@ -118,53 +80,6 @@ Advanced configuration options
 .. include:: /includes/matter/configuration/advanced/factory_data.txt
 .. include:: /includes/matter/configuration/advanced/custom_board.txt
 .. include:: /includes/matter/configuration/advanced/internal_memory.txt
-
-AWS IoT setup and configuration
--------------------------------
-
-.. toggle::
-
-   To set up an AWS IoT instance and configure the sample, complete the following steps:
-
-   1. Complete the setup and configuration described in the :ref:`lib_aws_iot` documentation to get the host name, device ID, and certificates used in the connection.
-   #. Set the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` and :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` Kconfig options in the :file:`overlay-aws-iot-integration.conf` file.
-   #. Import the certificates to the :file:`light_bulb/src/aws_iot_integration/certs` folder.
-
-      The certificates will vary in size depending on the method you chose when generating the certificates.
-      Due to this, you might need to increase the value of the :kconfig:option:`CONFIG_MBEDTLS_SSL_OUT_CONTENT_LEN` option to be able to establish a connection.
-   #. |open_terminal_window_with_environment|
-   #. Build the sample:
-
-      .. tabs::
-
-         .. group-tab:: |nRFVSC|
-
-            Add ``-DSB_CONFIG_WIFI_NRF70=y -Dlight_bulb_SHIELD=nrf7002eb2 -DEXTRA_CONF_FILE=overlay-aws-iot-integration.conf`` to :guilabel:`Extra CMake arguments` in your build configuration.
-
-         .. group-tab:: Command line
-
-            .. code-block:: console
-
-               west build -p -b nrf54lm20dk/nrf54lm20b/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dlight_bulb_SHIELD=nrf7002eb2 -DEXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
-
-   #. Flash the firmware and boot the sample.
-   #. |connect_kit|
-   #. |connect_terminal_ANSI|
-   #. Commission the device to the Matter network.
-   #. Observe that the device automatically connects to AWS IoT when an IP is obtained and the device is able to maintain the connection.
-   #. Use the following bash function to populate the desired section of the shadow:
-
-      .. code-block:: console
-
-         function aws-update-desired() {
-               aws iot-data update-thing-shadow --cli-binary-format raw-in-base64-out --thing-name my-thing --payload "{\"state\":{\"desired\":{\"onoff\":$1,\"level_control\":$2}}}" "output.txt"
-         }
-
-      You can also use ``aws-update-desired 0 0``, or ``aws-update-desired 1 128 (onoff, levelcontrol)``.
-      Alternatively, you can alter the device shadow directly through the `AWS IoT console`_.
-
-   #. Observe that the light bulb changes state.
-      The local changes to the attributes always take precedence over what is set in the shadow's desired state.
 
 User interface
 **************
