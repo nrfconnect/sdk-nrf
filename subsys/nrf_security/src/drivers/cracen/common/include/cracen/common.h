@@ -29,6 +29,13 @@
 #define CRACEN_PSA_IS_KEY_FLAG(flag, attr) ((flag) == (psa_get_key_usage_flags((attr)) & (flag)))
 #define CRACEN_PSA_IS_KEY_TYPE(flag, attr) ((flag) == (psa_get_key_type((attr)) & (flag)))
 
+#if defined(__has_builtin) && __has_builtin(__builtin_abs)
+#define cracen_abs(x) __builtin_abs(x)
+#else
+#define cracen_abs(x) ((x) < 0 ? -(x) : (x))
+#endif
+
+
 typedef struct {
 	uint8_t slot_number;
 	uint8_t owner_id;
