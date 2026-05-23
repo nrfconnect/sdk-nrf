@@ -734,11 +734,11 @@ psa_status_t cracen_ecc_h2e_sswu(sx_pk_req *req, psa_ecc_family_t curve_family,
 
 	if (z_int < 0) {
 		safe_memzero(zero_t_gx1_x_buf, sx_pk_curve_opsize(sx_curve));
-		cracen_be_add(zero_t_gx1_x_buf, sx_pk_curve_opsize(sx_curve), abs(z_int));
+		cracen_be_add(zero_t_gx1_x_buf, sx_pk_curve_opsize(sx_curve), cracen_abs(z_int));
 		cracen_be_sub(sx_pk_curve_prime(sx_curve), zero_t_gx1_x_buf, z_buf,
 			      sx_pk_curve_opsize(sx_curve));
 	} else {
-		cracen_be_add(z_buf, sx_pk_curve_opsize(sx_curve), abs(z_int));
+		cracen_be_add(z_buf, sx_pk_curve_opsize(sx_curve), cracen_abs(z_int));
 	}
 
 	sx_const_op modulo = {.sz = sx_pk_curve_opsize(sx_curve),
