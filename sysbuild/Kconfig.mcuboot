@@ -11,6 +11,7 @@ config MCUBOOT_SYSBUILD_SIGN
 	depends on !MCUBOOT_SIGN_MERGED_BINARY
 	depends on !PARTITION_MANAGER
 	depends on !MERGED_HEX_FILES
+	default y if BOOTLOADER_MCUBOOT
 
 config MCUBOOT_SIGN_MERGED_BINARY
 	bool "Sign single, merged update package [EXPERIMENTAL]"
