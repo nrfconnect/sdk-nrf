@@ -25,11 +25,18 @@
 #include <lwm2m_engine.h>
 #include <zephyr/net/coap.h>
 #include <modem/modem_info.h>
-#include <pm_config.h>
 #include <zephyr/sys/reboot.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
+
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
+#include <pm_config.h>
+#define MCUBOOT_PRIMARY_ID PM_MCUBOOT_PRIMARY_ID
+#else /* !CONFIG_PARTITION_MANAGER_ENABLED */
+#include <zephyr/storage/flash_map.h>
+#define MCUBOOT_PRIMARY_ID PARTITION_ID(slot0_partition)
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 #define BYTE_PROGRESS_STEP (1024 * 10)
 
@@ -1298,7 +1305,7 @@ static void lwm2m_adv_app_firmware_versions_set(void)
 
 	path = LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, application_obj_id,
 			 LWM2M_ADV_FOTA_CURRENT_VERSION_ID);
-	boot_read_bank_header(PM_MCUBOOT_PRIMARY_ID, &header, sizeof(header));
+	boot_read_bank_header(MCUBOOT_PRIMARY_ID, &header, sizeof(header));
 	snprintk(buf, sizeof(buf), "%d.%d.%d-%d", header.h.v1.sem_ver.major,
 		 header.h.v1.sem_ver.minor, header.h.v1.sem_ver.revision,
 		 header.h.v1.sem_ver.build_num);
