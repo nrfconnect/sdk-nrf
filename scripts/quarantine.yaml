@@ -100,18 +100,25 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39364"
 
 - scenarios:
-    - sample.cellular.nidd
-    - sample.cellular.uicc_lwm2m
-    - sample.cellular.modem_shell_modem_uart_trace
-    - sample.cellular.modem_shell.thingy91
-    - sample.cellular.lwm2m_client
-    - sample.cellular.nrf_cloud_multi_service.mqtt.provisioning.trace
     - sample.cellular.location
+    - sample.cellular.lwm2m_client
+    - sample.cellular.modem_shell.thingy91
+    - sample.cellular.modem_shell_modem_uart_trace
+    - sample.cellular.nidd
+    - sample.cellular.nrf_cloud_multi_service.coap
     - sample.cellular.nrf_cloud_multi_service.mqtt
+    - sample.cellular.nrf_cloud_multi_service.mqtt.provisioning.trace
+    - sample.cellular.udp
+    - sample.cellular.uicc_lwm2m
     - sample.debug.memfault
     - sample.debug.memfault.etb
+    - sample.net.aws_iot
+    - sample.net.coap_client
+    - sample.net.mqtt
     - sample.net.mqtt.nrf91.tls
+    - sample.net.udp
     - sample.sensor.bh1749
+    - sample.sensor.bme68x.i2c
     - sample.sensor.bme68x.polling
   platforms:
     - thingy91/nrf9160/ns
