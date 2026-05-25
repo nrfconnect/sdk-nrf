@@ -56,9 +56,6 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
   set(CONFIG_NRF_CC3XX_PLATFORM                 False)
   set(CONFIG_PSA_CRYPTO_DRIVER_CC3XX            False)
 
-  # Special case: Handle platform specific configurations
-  set(CONFIG_MBEDTLS_PLATFORM_EXIT_ALT                 False)
-  set(CONFIG_MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT       False)
 else()
   nrf_security_debug("Building for pure Zephyr")
 endif()
