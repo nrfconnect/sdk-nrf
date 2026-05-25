@@ -42,7 +42,6 @@ rsource "Kconfig.psa"
 
 # Include legacy Mbed TLS configurations
 rsource "Kconfig.tf-psa-crypto.deprecated"
-rsource "Kconfig.legacy"
 
 config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 	bool
@@ -78,7 +77,6 @@ config MBEDTLS_HEAP_SIZE
 
 config MBEDTLS_MEMORY_DEBUG
 	bool "Mbed TLS memory debug"
-	depends on MBEDTLS_MEMORY_BUFFER_ALLOC_C
 	help
 	  Enable debugging of buffer allocator memory issues. Automatically
 	  prints (to stderr) all (fatal) messages on memory allocation
