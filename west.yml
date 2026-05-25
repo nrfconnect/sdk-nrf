@@ -122,7 +122,7 @@ manifest:
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
-      revision: 63b3fa8bab483d021dd8c09a581887b039aa9e8a
+      revision: 1f19f0b23e42205bab5f34ace335fffa5e7d32ff
       userdata:
         ncs:
           upstream-url: https://github.com/Wi-FiQuickTrack/Wi-FiQuickTrack-ControlAppC
