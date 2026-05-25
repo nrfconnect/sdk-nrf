@@ -12,29 +12,33 @@
 	/delete-node/ partitions;
 
 	partitions {
-		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		/* Significantly increase the size of the MCUboot partition to make it fit
 		 * for the LLVM configuration variant.
 		 */
 		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(48)>;
 		};
 
 		slot0_partition: partition@c000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0xc000 DT_SIZE_K(984)>;
 		};
 
 		slot1_partition: partition@102000 {
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0x102000 DT_SIZE_K(984)>;
 		};
 
 		storage_partition: partition@1f8000 {
+			compatible = "zephyr,mapped-partition";
 			label = "storage";
 			reg = <0x1f8000 DT_SIZE_K(20)>;
 		};
