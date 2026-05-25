@@ -4,22 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# We use MBEDTLS_BUILTIN, but with nrf_security we bring our own TF-PSA-Crypto (Oberon PSA Crypto).
-choice TF_PSA_CRYPTO_IMPLEMENTATION
-	default TF_PSA_CRYPTO_CUSTOM
-endchoice
-
-config TF_PSA_CRYPTO_MODULE_DIR
-	default "${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}"
-
-configdefault TF_PSA_CRYPTO_CONFIG_FILE
-	default "nrf-psa-crypto-config.h"
-
-configdefault TF_PSA_CRYPTO_USER_CONFIG_FILE
-	default "nrf-psa-crypto-user-config.h"
-
-config MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
-	select DEPRECATED
+rsource "Kconfig.tf-psa-crypto.defconfig"
 
 # Make sure that MBEDTLS_PSA_CRYPTO_RNG_SOURCE is available even when !MBEDTLS_PSA_CRYPTO_C
 # (when building TF-M) so that MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG is always enabled.
@@ -28,9 +13,64 @@ choice MBEDTLS_PSA_CRYPTO_RNG_SOURCE
 	prompt ""
 endchoice
 
+config MBEDTLS_THREADING_C
+	bool "Threading support for Mbed TLS and PSA crypto"
+	default y
+	depends on MULTITHREADING && MBEDTLS_PSA_CRYPTO_C
+	help
+	  Note: If this configuration is disabled then the PSA Crypto API
+	  isn't thread-safe. This is not used in the TF-M secure image.
+
+if MBEDTLS_THREADING_C
+
+config MBEDTLS_THREADING_ALT
+	bool
+	default y
+
+endif # MBEDTLS_THREADING_C
+
+config MBEDTLS_PLATFORM_MEMORY
+	bool
+	default y
+
+config MBEDTLS_PLATFORM_C
+	bool
+	default y
+
+config MBEDTLS_MEMORY_BUFFER_ALLOC_C
+	bool
+	default y
+
+config MBEDTLS_ASN1_WRITE_C
+	bool
+	default y if MBEDTLS_PEM_WRITE_C || MBEDTLS_PK_WRITE_C
+
+config MBEDTLS_PLATFORM_PRINTF_ALT
+	bool
+
+config MBEDTLS_MPI_WINDOW_SIZE
+	int
+	range 1 6
+	default 6
+	help
+	  Maximum window size used for modular exponentiation.
+	  The default value of 6 is set to match with the configuration used
+	  when building the CryptoCell runtime libraries.
+
+config MBEDTLS_MPI_MAX_SIZE
+	int "Maximum number of bytes for usable MPIs"
+	range 256 2048
+	default 384 # needed to support RSA 3072
+
+config MBEDTLS_PK_C
+	bool "PK support"
+	default y if (MBEDTLS_TLS_LIBRARY && \
+		(PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY || PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY)) || \
+		MBEDTLS_PK_PARSE_C || MBEDTLS_PK_WRITE_C
+
 if !MBEDTLS
-# This file gets included only if MBEDTLS, but it defines options that we
-# make use of even when !MBEDTLS (such as MBEDTLS_PSA_CRYPTO_C).
+# This file gets included only if MBEDTLS, but it defines TF-PSA-Crypto
+# Kconfig options that we make use of even when !MBEDTLS.
 # Include it in this scenario to make said options available.
 rsource "$(ZEPHYR_BASE)/modules/mbedtls/Kconfig.tf-psa-crypto"
 endif
