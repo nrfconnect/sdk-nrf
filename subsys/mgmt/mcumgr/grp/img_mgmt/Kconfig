@@ -37,4 +37,10 @@ if MCUMGR_GRP_IMG && SOC_FLASH_NRF_RRAM
 configdefault FLASH_FILL_BUFFER_SIZE
 	default 256
 
+# Ensure that buffering is setup for the target device to achieve the maximum RRAM write speed.
+configdefault NRF_RRAM_WRITE_BUFFER_SIZE
+	default 16 if SOC_NRF54LV10A || SOC_NRF54LC10A
+	default 8 if SOC_NRF54LS05A || SOC_NRF54LS05B
+	default 32
+
 endif # MCUMGR_GRP_IMG && SOC_FLASH_NRF_RRAM
