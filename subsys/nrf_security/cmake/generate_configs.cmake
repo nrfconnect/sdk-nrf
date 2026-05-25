@@ -17,7 +17,6 @@ macro(generate_mbedcrypto_interface_configs)
     kconfig_backup_current_config(CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
     kconfig_backup_current_config(CONFIG_MBEDTLS_PSA_CRYPTO_C)
     kconfig_backup_current_config(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)
-    kconfig_backup_current_config(CONFIG_MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT)
     kconfig_backup_current_config(CONFIG_MBEDTLS_THREADING_C)
     kconfig_backup_current_config(CONFIG_MBEDTLS_THREADING_ALT)
 
@@ -33,8 +32,6 @@ macro(generate_mbedcrypto_interface_configs)
     # CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER must be turned off because the TF-M interface
     # uses psa_key_id_t for the interface and not mbedtls_svc_key_id_t
     set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER False)
-    # CONFIG_MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT must be turned of because the NS world doesn't use it
-    set(CONFIG_MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT False)
     if(CONFIG_BUILD_WITH_TFM)
       # Disable threading for the PSA interface used in TF-M build (NS and S image)
       set(CONFIG_MBEDTLS_THREADING_C False)
@@ -57,7 +54,6 @@ macro(generate_mbedcrypto_interface_configs)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_C)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)
-    kconfig_restore_backup_config(CONFIG_MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_C)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_ALT)
 
