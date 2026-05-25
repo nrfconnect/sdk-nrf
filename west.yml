@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: a2bce9d3decd691d4748c2b0f9069845e0c08431
+      revision: ncs-v3.4.0-rc1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -130,7 +130,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: d2b3671987d1ca54492afe560c2444c3a9dc3000
+      revision: ncs-v3.4.0-rc1
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -139,19 +139,19 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: 92d44566209a0d94a571cc7f71a4a7b9262f7602
+      revision: ncs-v3.4.0-rc1
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: 3a9005029dae919e3f6d9d4182465a8e2572cf9f
+      revision: ncs-v3.4.0-rc1
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 45ab53a5b36e67c361af590bfbe02f6c508ff248
+      revision: v3.4.0-rc1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: e476105018a2bf2dd8f87bca30a8e766846b4048
+      revision: ncs-v3.4.0-rc1
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -159,7 +159,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 106cf3d26c6b3354fc2006aa71684a9905d1af64
+      revision: v3.4.0-rc1
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -178,7 +178,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 9306243073e63159d78929c43166f5aba8b342a1
+      revision: v3.4.0-rc1
       groups:
         - nrf-802154
     - name: dragoon
@@ -199,7 +199,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 85f9b6b0ae1d4ebe7036187211269bb13da70198
+      revision: v3.4.0-rc1
       groups:
         - find-my
     - name: azure-sdk-for-c
