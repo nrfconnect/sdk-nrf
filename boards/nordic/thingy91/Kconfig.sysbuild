@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config MCUBOOT_USE_ALL_AVAILABLE_RAM
+	default y
+
 choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT if !THINGY91_NO_PREDEFINED_LAYOUT
 endchoice

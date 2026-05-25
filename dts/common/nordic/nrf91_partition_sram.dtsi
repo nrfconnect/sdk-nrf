@@ -16,14 +16,14 @@
 	 */
 
 	sram0_s: sram@0 {
-		reg = <0x0 0x8000>;
+		reg = <0x0 0x10000>;
 	};
 
-	sram0_ns: sram@8000 {
-		reg = <0x8000 0x38000>;
+	sram0_ns: sram@10000 {
+		reg = <0x10000 0x30000>;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges = <0x0 0x8000 0x38000>;
+		ranges = <0x0 0x10000 0x38000>;
 
 		/* Must be in first 128 kB of RAM. */
 		sram0_ns_modem: sram0_ns@0 {
