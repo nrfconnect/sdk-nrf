@@ -4,6 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config MBEDTLS_CONFIG_FILE
+	depends on MBEDTLS
+	default "nrf-config.h"
+
 config MBEDTLS_X509_LIBRARY
 	bool
 	select MBEDTLS_PK_C

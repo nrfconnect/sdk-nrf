@@ -32,6 +32,13 @@ config MBEDTLS_PSA_CRYPTO_SPM
 	  Configation that enables alternate naming of PSA Crypto symbols in
 	  scope of TF-M secure build (prefixes with mbedcrypto__).
 
+config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
+	bool
+	default y if HAS_HW_NRF_CRACEN && PSA_CRYPTO_DRIVER_CRACEN
+	help
+	  Promptless option used to control if the PSA Crypto core
+	  should have support for builtin keys or not.
+
 config MBEDTLS_PSA_CRYPTO_STORAGE_C
 	bool "PSA storage for persistent keys"
 	default y if BUILD_WITH_TFM
