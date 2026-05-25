@@ -233,7 +233,10 @@ Thread
 Wi-Fi®
 ------
 
-|no_changes_yet_note|
+* Removed support for DES-encrypted private keys in Wi-Fi Enterprise (EAP-TLS) following the update to Mbed TLS 4.1.0/TF-PSA-Crypto 1.1.0 in |NCS|.
+  TF-PSA-Crypto no longer implements DES ciphers, therefore PKCS#8 client keys encrypted with DES-EDE3-CBC cannot be decrypted during the TLS handshake (including the FreeRADIUS ``rsa2k`` test certificates).
+  Use ``zephyr/samples/net/wifi/test_certs/rsa2k_no_des``, re-encrypt credentials with AES (PBES2), or use unencrypted keys when provisioning enterprise credentials.
+  See the :ref:`zephyr:wifi_mgmt` documentation for details.
 
 Applications
 ============
