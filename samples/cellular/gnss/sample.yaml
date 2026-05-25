@@ -8,10 +8,12 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
+      - nrf9251dk/nrf9251/cpuapp
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
+      - nrf9251dk/nrf9251/cpuapp
     tags:
       - ci_build
       - sysbuild
