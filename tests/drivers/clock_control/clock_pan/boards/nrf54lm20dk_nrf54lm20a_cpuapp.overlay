@@ -1,0 +1,7 @@
+tst_timer: &timer20 {
+	status = "okay";
+};
+
+&dppic20 {
+	status = "okay";
+};

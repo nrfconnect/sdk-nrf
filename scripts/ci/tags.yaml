@@ -1900,6 +1900,7 @@ ci_tests_zephyr_drivers_clock_control:
   files:
     - nrf/tests/zephyr/drivers/clock_control/
     - zephyr/tests/drivers/clock_control/
+    - nrf/tests/drivers/clock_control/
 
 ci_tests_zephyr_kernel_sleep:
   files:

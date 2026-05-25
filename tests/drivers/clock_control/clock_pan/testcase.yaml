@@ -1,0 +1,12 @@
+common:
+  tags:
+    - drivers
+    - clock_control
+    - ci_tests_zephyr_drivers_clock_control
+  platform_allow:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  integration_platforms:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+
+tests:
+  drivers.clock.hfclk24m_start: {}
