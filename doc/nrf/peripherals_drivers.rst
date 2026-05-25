@@ -13,3 +13,5 @@ Here you can find documentation for using supported hardware peripherals in the 
    :maxdepth: 1
    :caption: Subpages:
    :glob:
+
+   peripherals_drivers/spim
