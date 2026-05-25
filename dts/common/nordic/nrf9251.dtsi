@@ -209,6 +209,11 @@
 			#nordic,ficr-cells = <1>;
 		};
 
+		micr: micr@fff6000 {
+			compatible = "nordic,nrf-micr";
+			reg = <0xfff6000 (DT_SIZE_K(1) - 104)>;
+		};
+
 		cpuapp_tcm_sram: sram@22000000 {
 			compatible = "mmio-sram";
 			reg = <0x22000000 DT_SIZE_K(32)>;
