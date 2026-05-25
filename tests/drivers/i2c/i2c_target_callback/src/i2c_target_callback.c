@@ -126,7 +126,7 @@ ZTEST(i2c_target_callback, test_02_write_read_compare_with_delay)
 	 * Target pauses communication with clock stretching.
 	 */
 	cb_return_value = 0;
-	cb_delay_value = (CONFIG_I2C_NRFX_TRANSFER_TIMEOUT - 10) * 1000;
+	cb_delay_value = (CONFIG_I2C_NRFX_TRANSFER_TIMEOUT - 20) * 1000;
 
 	/* Read data from the target device. */
 	ret = i2c_read(dev_controller, data_rx, sizeof(data_rx), I2C_TARGET_ADDR);
