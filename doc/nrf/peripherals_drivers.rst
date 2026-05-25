@@ -13,3 +13,5 @@ The following pages describe how to use the supported hardware peripherals in th
    :maxdepth: 1
    :caption: Subpages:
    :glob:
+
+   peripherals_drivers/spim
