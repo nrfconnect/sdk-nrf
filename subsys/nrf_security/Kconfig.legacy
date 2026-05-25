@@ -43,22 +43,11 @@ config MBEDTLS_ASN1_PARSE_C
 	default y if MBEDTLS_PEM_PARSE_C || MBEDTLS_PK_PARSE_C
 
 # Platform configurations for _ALT defines
-config MBEDTLS_PLATFORM_EXIT_ALT
-	bool
-
-config MBEDTLS_PLATFORM_FPRINTF_ALT
-	bool
-
 config MBEDTLS_PLATFORM_PRINTF_ALT
 	bool
 
 config MBEDTLS_PLATFORM_SNPRINTF_ALT
 	bool
-
-config MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT
-	bool
-	default y if HW_CC3XX || PSA_CRYPTO_DRIVER_CC3XX
-	depends on !BUILD_WITH_TFM
 
 config MBEDTLS_THREADING_ALT
 	bool
