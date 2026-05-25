@@ -7,16 +7,16 @@
 # Secure storage subsystem configuration options
 
 menuconfig TRUSTED_STORAGE
-	bool "Trusted Storage"
+	bool "Trusted Storage [DEPRECATED]"
 	depends on !BUILD_WITH_TFM
 	depends on !DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED
+	select DEPRECATED
 	select MBEDTLS_PSA_CRYPTO_STORAGE_C
 	help
-	  The secure storage subsystem allows its users to store data in a
-	  secure way, ensuring data integrity and confidentiality by using AEAD
-	  algorithms. It supports several secure implementation back-ends to
-	  provide various levels of trust depending on the device security
-	  features.
+	  This option is deprecated. Use SECURE_STORAGE instead.
+	  If you have an existing installation that makes use of Trusted Storage
+	  with entries stored in non-volatile memory, you can switch to using Secure Storage
+	  without losing any data by enabling SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY.
 
 if TRUSTED_STORAGE
 module = TRUSTED_STORAGE
