@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# We use MBEDTLS_BUILTIN, but with nrf_security we bring our own TF-PSA-Crypto (Oberon PSA Crypto).
+choice TF_PSA_CRYPTO_IMPLEMENTATION
+	default TF_PSA_CRYPTO_CUSTOM
+endchoice
+
+configdefault TF_PSA_CRYPTO_MODULE_DIR
+	default "${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}"
+
+configdefault TF_PSA_CRYPTO_CONFIG_FILE
+	default "nrf-psa-crypto-config.h"
+
+configdefault TF_PSA_CRYPTO_USER_CONFIG_FILE
+	default "nrf-psa-crypto-user-config.h"
+
+configdefault MBEDTLS_BASE64_C
+	default y
+
+configdefault MBEDTLS_ASN1_PARSE_C
+	default y if MBEDTLS_PEM_PARSE_C || MBEDTLS_PK_PARSE_C

@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+	select DEPRECATED
+
 if MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
 
 config MBEDTLS_AES_C
