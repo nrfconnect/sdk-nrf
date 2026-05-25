@@ -22,7 +22,7 @@ static const struct gpio_dt_spec gpio_spec =
 	GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), gpios, 0);
 static const struct device *const uart_dev = DEVICE_DT_GET(DT_NODELABEL(dut));
 
-static const uint8_t tx_buf[] = {0x00, 0x00};
+static const uint8_t tx_buf[] = {0x00, 0x00, 0x00};
 
 #define PIN_STATE_SIZE 32768
 static uint8_t pin_state[PIN_STATE_SIZE] = {};
