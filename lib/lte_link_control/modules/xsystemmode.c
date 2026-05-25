@@ -65,15 +65,10 @@ static const char *const system_mode_params[] = {
 
 /* LTE preference to be passed using AT%XSYSTEMMMODE=<params>,<preference> */
 static const char system_mode_preference[] = {
-	/* No LTE preference, automatically selected by the modem. */
 	[LTE_LC_SYSTEM_MODE_PREFER_AUTO] = '0',
-	/* LTE-M has highest priority. */
 	[LTE_LC_SYSTEM_MODE_PREFER_LTEM] = '1',
-	/* NB-IoT has highest priority. */
 	[LTE_LC_SYSTEM_MODE_PREFER_NBIOT] = '2',
-	/* Equal priority, but prefer LTE-M. */
 	[LTE_LC_SYSTEM_MODE_PREFER_LTEM_PLMN_PRIO] = '3',
-	/* Equal priority, but prefer NB-IoT. */
 	[LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO] = '4',
 };
 

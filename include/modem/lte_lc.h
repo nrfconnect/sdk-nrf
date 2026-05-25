@@ -187,34 +187,24 @@ enum lte_lc_system_mode_preference {
 	LTE_LC_SYSTEM_MODE_PREFER_AUTO = 0,
 
 	/**
-	 * LTE-M is preferred over PLMN selection.
-	 *
-	 * The modem will prioritize to use LTE-M and switch over to a PLMN where LTE-M is available
-	 * whenever possible.
+	 * LTE-M preferred.
 	 */
 	LTE_LC_SYSTEM_MODE_PREFER_LTEM,
 
 	/**
-	 * NB-IoT is preferred over PLMN selection.
-	 *
-	 * The modem will prioritize to use NB-IoT and switch over to a PLMN where NB-IoT is
-	 * available whenever possible.
+	 * NB-IoT preferred.
 	 */
 	LTE_LC_SYSTEM_MODE_PREFER_NBIOT,
 
 	/**
-	 * LTE-M is preferred, but PLMN selection is more important.
-	 *
-	 * The modem will prioritize to stay on home network and switch over to NB-IoT if LTE-M is
-	 * not available.
+	 * Network selection priorities override system priority, but if the same network or
+	 * equal priority networks are found, LTE-M is preferred.
 	 */
 	LTE_LC_SYSTEM_MODE_PREFER_LTEM_PLMN_PRIO,
 
 	/**
-	 * NB-IoT is preferred, but PLMN selection is more important.
-	 *
-	 * The modem will prioritize to stay on home network and switch over to LTE-M if NB-IoT is
-	 * not available.
+	 * Network selection priorities override system priority, but if the same network or
+	 * equal priority networks are found, NB-IoT is preferred.
 	 */
 	LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO
 };
