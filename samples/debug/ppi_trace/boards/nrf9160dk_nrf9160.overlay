@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <samples/cellular/nrf91_no_bootloader_partitions.dtsi>
+
+#include <samples/cellular/nrf91_sram_partitions.dtsi>
+
 &rtc0 {
 	status = "okay";
 };
