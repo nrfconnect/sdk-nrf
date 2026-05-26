@@ -11,7 +11,7 @@
 #
 # To use:
 #
-#     1. Fill in the PROJECT_TAGS data below.
+#     1. Fill in the release tag data below.
 #
 #     2. Go to your nrf repository clone, and update your workspace
 #        to match the manifest you want to tag:
@@ -20,7 +20,7 @@
 #          git checkout $SDK_NRF_REVISION_YOU_WANT
 #          west update
 #
-#     3. Create tags matching PROJECT_TAGS:
+#     3. Create the configured tags:
 #
 #          ./scripts/tag_west_repos.sh tag-all
 #
@@ -34,26 +34,30 @@
 # ----------------------------------------------------------------------
 # Configure the tags by editing this section.
 
-declare -A PROJECT_TAGS
 declare -A UPSTREAM_REMOTES
 
-# Set the tag names for all the projects below.
+# Set the release tag once for all the projects below.
 #
-#     - keys are project names in west.yml
-#     - values are the tags you want to make
+#     - RELEASE_TAG_BASE should include the v prefix, e.g. v3.2.0
+#     - RELEASE_TAG_SUFFIX should be empty or something like -rc1
 #
-# nrfx/nRF/srcx repositories: vX.Y.Z(-rcN)
-PROJECT_TAGS[nrfxlib]=""
-PROJECT_TAGS[find-my]=""
-PROJECT_TAGS[matter]=""
-PROJECT_TAGS[nrf-802154]=""
+RELEASE_TAG_BASE=""
+RELEASE_TAG_SUFFIX=""
 
-# OSS repositories: ncs-vX.Y.Z(-rcN)
-PROJECT_TAGS[zephyr]=""
-PROJECT_TAGS[mcuboot]=""
-PROJECT_TAGS[trusted-firmware-m]=""
-PROJECT_TAGS[mbedtls]=""
-PROJECT_TAGS[oberon-psa-crypto]=""
+CORE_REPOSITORIES=(
+    nrfxlib
+    find-my
+    matter
+    nrf-802154
+)
+
+OSS_REPOSITORIES=(
+    zephyr
+    mcuboot
+    trusted-firmware-m
+    mbedtls
+    oberon-psa-crypto
+)
 
 # Upstream OSS remotes
 UPSTREAM_REMOTES[zephyr]="https://github.com/zephyrproject-rtos/zephyr"
@@ -81,6 +85,16 @@ has_remote() {
     else
         return 0
     fi
+}
+
+release_tag_names() {
+    if [ -z "$RELEASE_TAG_BASE" ]; then
+        echo "RELEASE_TAG_BASE is empty" 1>&2
+        return 1
+    fi
+
+    core_tag="${RELEASE_TAG_BASE}${RELEASE_TAG_SUFFIX}"
+    oss_tag="ncs-${RELEASE_TAG_BASE}${RELEASE_TAG_SUFFIX}"
 }
 
 tag() {
@@ -178,12 +192,7 @@ fetch_oss() {
     hline
     echo Fetching OSS repositories remotes
 
-    for project in "${!UPSTREAM_REMOTES[@]}"; do
-        if [ -z "${PROJECT_TAGS[$project]}" ]; then
-            echo "Skipping $project (not tagged)"
-            continue
-        fi
-
+    for project in "${OSS_REPOSITORIES[@]}"; do
         if ! has_remote "$project"; then
             echo "Remote not set for $project"
             continue
@@ -196,40 +205,50 @@ fetch_oss() {
 }
 
 tag_all() {
-    # Creates all the tags in the PROJECT_TAGS array.
+    # Creates all configured release tags.
+
+    release_tag_names || exit 1
 
     fetch_oss
 
     hline
     echo Tagging all repositories
 
-    for project in "${!PROJECT_TAGS[@]}"; do
-        if [ -z "${PROJECT_TAGS[$project]}" ]; then
-	    echo "Skipping $project (not tagged)"
-	    continue
-	fi
-        tag "$project" "${PROJECT_TAGS[$project]}"
+    for project in "${CORE_REPOSITORIES[@]}"; do
+        tag "$project" "$core_tag"
+    done
+
+    for project in "${OSS_REPOSITORIES[@]}"; do
+        tag "$project" "$oss_tag"
     done
 }
 
 push_all() {
-    # Pushes all the tags in the PROJECT_TAGS array
-    # to the main nrfconnect repositories on GitHub.
+    # Pushes all configured release tags to the main
+    # nrfconnect repositories on GitHub.
 
-    for project in "${!PROJECT_TAGS[@]}"; do
-        if [ -z "${PROJECT_TAGS[$project]}" ]; then
-	    echo "Skipping $project (not tagged)"
-	    continue
-	fi
-        push_tag "$project" "${PROJECT_TAGS[$project]}"
+    release_tag_names || exit 1
+
+    for project in "${CORE_REPOSITORIES[@]}"; do
+        push_tag "$project" "$core_tag"
+    done
+
+    for project in "${OSS_REPOSITORIES[@]}"; do
+        push_tag "$project" "$oss_tag"
     done
 }
 
 remove_all() {
-    # Removes all the tags in the PROJECT_TAGS array.
+    # Removes all configured release tags.
 
-    for project in "${!PROJECT_TAGS[@]}"; do
-        remove_tag "$project" "${PROJECT_TAGS[$project]}"
+    release_tag_names || exit 1
+
+    for project in "${CORE_REPOSITORIES[@]}"; do
+        remove_tag "$project" "$core_tag"
+    done
+
+    for project in "${OSS_REPOSITORIES[@]}"; do
+        remove_tag "$project" "$oss_tag"
     done
 }
 
