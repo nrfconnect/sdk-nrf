@@ -4,11 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <samples/cellular/nrf91_no_bootloader_partitions.dtsi>
+/ {
+	chosen {
+		nordic,memfault-coredump-partition = &memfault_coredump_partition;
+	};
+};
 
-#include <samples/cellular/nrf91_sram_partitions.dtsi>
-
-/* Increase modem (shared) memory. */
+/* Increase modem (shared) memory to add trace section. */
 &sram0_ns_modem {
 	reg = <0x0 0x8800>;
 	ranges = <0x0 0x0 0x8800>;
@@ -29,9 +31,7 @@
 	};
 };
 
-&gd25wb256 {
-	status = "okay";
-
+&flash_ext {
 	partitions {
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
@@ -46,11 +46,5 @@
 			label = "memfault_coredump_partition";
 			reg = <0x00400000 0x00002000>;
 		};
-	};
-};
-
-/ {
-	chosen {
-		nordic,memfault-coredump-partition = &memfault_coredump_partition;
 	};
 };
