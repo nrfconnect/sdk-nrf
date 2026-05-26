@@ -56,6 +56,8 @@ Bootloaders and DFU
 * Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
   See the :ref:`migration_3.5` for details.
 
+* Added the :ref:`ug_bootloader_nrf54l_memory_protection` documentation page to explaining the memory protection features of the bootloader on the nRF54L Series.
+
 Developing with nRF91 Series
 ============================
 
