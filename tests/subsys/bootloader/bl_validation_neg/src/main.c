@@ -12,9 +12,10 @@
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/util.h>
 #include <bl_storage.h>
-#include <fw_info.h>
 
-
+#define S0_SLOT_ADDRESS PARTITION_ADDRESS(s0_image)
+#define S0_SLOT_SIZE PARTITION_SIZE(s0_image)
+#define S1_SLOT_ADDRESS PARTITION_ADDRESS(s1_image)
 
 /* These symbols are defined in linker scripts. */
 extern const uint32_t _ext_apis_size[];
@@ -30,11 +31,11 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 	uint32_t copy_len = ROUND_UP((uint32_t)_flash_used, 4);
 
 	/* Round up to at least the next SPU region. */
-	uint32_t new_addr = ROUND_UP(PM_ADDRESS + (PM_SIZE / 2), 0x8000);
+	uint32_t new_addr = ROUND_UP(S0_SLOT_ADDRESS + (S0_SLOT_SIZE / 2), 0x8000);
 
 	const struct fw_info s1_info = {
 		.magic = {FIRMWARE_INFO_MAGIC},
-		.total_size = PM_S0_ADDRESS - PM_S1_ADDRESS,
+		.total_size = S0_SLOT_ADDRESS - S1_SLOT_ADDRESS,
 		.size = ((uint32_t)_flash_used),
 		.version = CONFIG_FW_INFO_FIRMWARE_VERSION + 1,
 		.address = new_addr,
@@ -45,15 +46,15 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 		.ext_api_request_num = 0,
 	};
 
-	const struct fw_info *s1_info_copied = fw_info_find(PM_S1_ADDRESS);
+	const struct fw_info *s1_info_copied = fw_info_find(S1_SLOT_ADDRESS);
 
 	if (s1_info_copied) {
 		/* Second boot */
 		zassert_not_equal(CONFIG_FW_INFO_VALID_VAL,
 			s1_info_copied->valid, "Failed to invalidate S1.\r\n");
-		zassert_equal((uint32_t)s1_info_copied, PM_S1_ADDRESS,
+		zassert_equal((uint32_t)s1_info_copied, S1_SLOT_ADDRESS,
 			"S1 info found at wrong address.\r\n");
-		int ret = nrfx_nvmc_page_erase(PM_S1_ADDRESS);
+		int ret = nrfx_nvmc_page_erase(S1_SLOT_ADDRESS);
 
 		zassert_equal(0, ret, "Erase failed.\r\n");
 	} else {
@@ -68,22 +69,22 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 
 			zassert_equal(0, ret, "Erase failed.\r\n");
 		}
-		nrfx_nvmc_words_write(new_addr, (const uint32_t *)PM_ADDRESS,
+		nrfx_nvmc_words_write(new_addr, (const uint32_t *)S0_SLOT_ADDRESS,
 			copy_len / 4);
 
 		/* Write to S1 */
-		nrfx_nvmc_words_write(PM_S1_ADDRESS, &s1_info,
+		nrfx_nvmc_words_write(S1_SLOT_ADDRESS, &s1_info,
 			ROUND_UP(sizeof(s1_info), 4) / 4);
 
-		zassert_mem_equal(&s1_info, (void *)PM_S1_ADDRESS,
+		zassert_mem_equal(&s1_info, (void *)S1_SLOT_ADDRESS,
 			sizeof(s1_info), "Failed to copy S1 info.\r\n");
 
-		s1_info_copied = fw_info_find(PM_S1_ADDRESS);
-		zassert_equal((uint32_t)s1_info_copied, PM_S1_ADDRESS,
+		s1_info_copied = fw_info_find(S1_SLOT_ADDRESS);
+		zassert_equal((uint32_t)s1_info_copied, S1_SLOT_ADDRESS,
 			"S1 info wrongly copied.\r\n");
 
 		/* Modify copied app's validation info */
-		memcpy(val_info_buf, (const uint32_t *)(PM_ADDRESS + copy_len),
+		memcpy(val_info_buf, (const uint32_t *)(S0_SLOT_ADDRESS + copy_len),
 			VAL_INFO_MAX_SIZE);
 
 		struct __packed {
@@ -111,7 +112,8 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 
 ZTEST(test_bl_validation_neg, test_validation_neg2)
 {
-#if PM_PROVISION_ADDRESS > 0xF00000
+	/* testcase.yaml nrf52 variant of test does not catch below regex */
+#ifndef CONFIG_SOC_SERIES_NRF52
 	uint32_t num_public_keys = num_public_keys_read();
 	bool any_valid = false;
 
@@ -133,6 +135,8 @@ ZTEST(test_bl_validation_neg, test_validation_neg2)
 		"keys.");
 	sys_reboot(0);
 	zassert_true(false, "should not come here.");
+#else
+	ztest_test_skip();
 #endif
 }
 
