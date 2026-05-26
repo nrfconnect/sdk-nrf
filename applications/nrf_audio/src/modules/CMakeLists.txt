@@ -5,10 +5,8 @@
 #
 
 target_sources(app PRIVATE
-  audio_i2s.c
   button_handler.c
   led.c
-  audio_sync_timer.c
   audio_clock.c
 )
 
@@ -16,9 +14,17 @@ zephyr_library_include_directories(
   ${ZEPHYR_BASE}/subsys/usb/device_next/class
 )
 
+target_sources_ifdef(CONFIG_AUDIO_SYNC_TIMER_USES_RTC app PRIVATE
+  audio_sync_timer.c
+)
+
 target_sources_ifdef(CONFIG_AUDIO_SOURCE_USB app PRIVATE
   audio_usb.c
   audio_usb_init.c
+)
+
+target_sources_ifdef(CONFIG_AUDIO_SOURCE_I2S app PRIVATE
+  audio_i2s.c
 )
 
 target_sources_ifdef(CONFIG_NRF_AUDIO_CS47L63_DRIVER app PRIVATE
