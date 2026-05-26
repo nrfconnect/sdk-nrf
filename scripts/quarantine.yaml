@@ -21,13 +21,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39226"
 
 - scenarios:
-    - nrf.extended.drivers.spi.direct_xfer
-    - nrf.extended.drivers.spi.direct_xfer.no_prealloc
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuppr
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
-
-- scenarios:
     - nrf.extended.drivers.uart.async_dual
     - nrf.extended.drivers.uart.async_dual.busy_sim
     - nrf.extended.drivers.uart.async_dual.pm_runtime
