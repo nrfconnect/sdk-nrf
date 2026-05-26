@@ -93,9 +93,9 @@ namespace app
 				namespace DatastoreNodeInformationEntryStruct
 				{
 					enum class Fields : uint8_t {
-						kNodeID = 1,
-						kFriendlyName = 2,
-						kCommissioningStatusEntry = 3,
+						kNodeID = 0,
+						kFriendlyName = 1,
+						kCommissioningStatusEntry = 2,
 					};
 
 					struct Type {
@@ -140,32 +140,6 @@ namespace app
 					using DecodableType = Type;
 
 				} // namespace DatastoreEndpointGroupIDEntryStruct
-				namespace DatastoreEndpointEntryStruct
-				{
-					enum class Fields : uint8_t {
-						kEndpointID = 0,
-						kNodeID = 1,
-						kFriendlyName = 2,
-						kStatusEntry = 3,
-					};
-
-					struct Type {
-					public:
-						chip::EndpointId endpointID = static_cast<chip::EndpointId>(0);
-						chip::NodeId nodeID = static_cast<chip::NodeId>(0);
-						chip::CharSpan friendlyName;
-						Structs::DatastoreStatusEntryStruct::Type statusEntry;
-
-						CHIP_ERROR Decode(TLV::TLVReader &reader);
-
-						static constexpr bool kIsFabricScoped = false;
-
-						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
-					};
-
-					using DecodableType = Type;
-
-				} // namespace DatastoreEndpointEntryStruct
 				namespace DatastoreBindingTargetStruct
 				{
 					enum class Fields : uint8_t {
@@ -323,10 +297,10 @@ namespace app
 				namespace DatastoreAdministratorInformationEntryStruct
 				{
 					enum class Fields : uint8_t {
-						kNodeID = 1,
-						kFriendlyName = 2,
-						kVendorID = 3,
-						kIcac = 4,
+						kNodeID = 0,
+						kFriendlyName = 1,
+						kVendorID = 2,
+						kIcac = 3,
 					};
 
 					struct Type {
@@ -346,6 +320,30 @@ namespace app
 					using DecodableType = Type;
 
 				} // namespace DatastoreAdministratorInformationEntryStruct
+				namespace DatastoreEndpointEntryStruct
+				{
+					enum class Fields : uint8_t {
+						kEndpointID = 0,
+						kNodeID = 1,
+						kFriendlyName = 2,
+					};
+
+					struct Type {
+					public:
+						chip::EndpointId endpointID = static_cast<chip::EndpointId>(0);
+						chip::NodeId nodeID = static_cast<chip::NodeId>(0);
+						chip::CharSpan friendlyName;
+
+						CHIP_ERROR Decode(TLV::TLVReader &reader);
+
+						static constexpr bool kIsFabricScoped = false;
+
+						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
+					};
+
+					using DecodableType = Type;
+
+				} // namespace DatastoreEndpointEntryStruct
 				namespace DatastoreGroupInformationEntryStruct
 				{
 					enum class Fields : uint8_t {
@@ -388,7 +386,6 @@ namespace app
 						kEpochStartTime1 = 5,
 						kEpochKey2 = 6,
 						kEpochStartTime2 = 7,
-						kGroupKeyMulticastPolicy = 8,
 					};
 
 					struct Type {
@@ -402,8 +399,6 @@ namespace app
 						DataModel::Nullable<uint64_t> epochStartTime1;
 						DataModel::Nullable<chip::ByteSpan> epochKey2;
 						DataModel::Nullable<uint64_t> epochStartTime2;
-						DatastoreGroupKeyMulticastPolicyEnum groupKeyMulticastPolicy =
-							static_cast<DatastoreGroupKeyMulticastPolicyEnum>(0);
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 

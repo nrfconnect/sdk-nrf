@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster WindowCovering (cluster code: 258/0x102)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

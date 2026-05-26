@@ -227,6 +227,27 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace TestEventTriggersEnabled
+				namespace DeviceLoadStatus
+				{
+					struct TypeInfo {
+						using Type = chip::app::Clusters::GeneralDiagnostics::Structs::
+							DeviceLoadStruct::Type;
+						using DecodableType = chip::app::Clusters::GeneralDiagnostics::Structs::
+							DeviceLoadStruct::DecodableType;
+						using DecodableArgType = const chip::app::Clusters::GeneralDiagnostics::
+							Structs::DeviceLoadStruct::DecodableType &;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::GeneralDiagnostics::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::DeviceLoadStatus::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace DeviceLoadStatus
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -303,6 +324,7 @@ namespace app
 							activeNetworkFaults;
 						Attributes::TestEventTriggersEnabled::TypeInfo::DecodableType
 							testEventTriggersEnabled = static_cast<bool>(0);
+						Attributes::DeviceLoadStatus::TypeInfo::DecodableType deviceLoadStatus;
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType

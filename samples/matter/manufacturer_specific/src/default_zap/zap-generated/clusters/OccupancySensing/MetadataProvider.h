@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster OccupancySensing (cluster code: 1030/0x406)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>
@@ -33,6 +32,8 @@ namespace app
 					return HoldTime::kMetadataEntry;
 				case HoldTimeLimits::Id:
 					return HoldTimeLimits::kMetadataEntry;
+				case PredictedOccupancy::Id:
+					return PredictedOccupancy::kMetadataEntry;
 				case PIROccupiedToUnoccupiedDelay::Id:
 					return PIROccupiedToUnoccupiedDelay::kMetadataEntry;
 				case PIRUnoccupiedToOccupiedDelay::Id:

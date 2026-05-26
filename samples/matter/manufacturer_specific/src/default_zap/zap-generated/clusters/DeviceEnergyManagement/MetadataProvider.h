@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster DeviceEnergyManagement (cluster code: 152/0x98)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

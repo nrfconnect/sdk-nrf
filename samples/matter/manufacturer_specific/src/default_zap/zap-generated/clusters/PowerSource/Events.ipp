@@ -69,7 +69,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace WiredFaultChange.
+				} // namespace WiredFaultChange
 				namespace BatFaultChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -104,7 +104,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace BatFaultChange.
+				} // namespace BatFaultChange
 				namespace BatChargeFaultChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -139,7 +139,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace BatChargeFaultChange.
+				} // namespace BatChargeFaultChange
 			} // namespace Events
 		} // namespace PowerSource
 	} // namespace Clusters

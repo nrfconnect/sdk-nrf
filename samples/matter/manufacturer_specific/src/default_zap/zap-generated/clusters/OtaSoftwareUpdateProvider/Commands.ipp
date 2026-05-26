@@ -92,7 +92,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace QueryImage.
+				} // namespace QueryImage
 				namespace QueryImageResponse
 				{
 
@@ -153,7 +153,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace QueryImageResponse.
+				} // namespace QueryImageResponse
 				namespace ApplyUpdateRequest
 				{
 
@@ -185,7 +185,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ApplyUpdateRequest.
+				} // namespace ApplyUpdateRequest
 				namespace ApplyUpdateResponse
 				{
 
@@ -219,7 +219,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ApplyUpdateResponse.
+				} // namespace ApplyUpdateResponse
 				namespace NotifyUpdateApplied
 				{
 
@@ -252,7 +252,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace NotifyUpdateApplied.
+				} // namespace NotifyUpdateApplied
 			} // namespace Commands
 		} // namespace OtaSoftwareUpdateProvider
 	} // namespace Clusters

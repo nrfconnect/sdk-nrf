@@ -77,7 +77,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LaunchContent.
+				} // namespace LaunchContent
 				namespace LaunchURL
 				{
 
@@ -114,7 +114,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LaunchURL.
+				} // namespace LaunchURL
 				namespace LauncherResponse
 				{
 
@@ -146,7 +146,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LauncherResponse.
+				} // namespace LauncherResponse
 			} // namespace Commands
 		} // namespace ContentLauncher
 	} // namespace Clusters

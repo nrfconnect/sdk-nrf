@@ -70,7 +70,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PingCountEvent.
+				} // namespace PingCountEvent
 			} // namespace Events
 		} // namespace SampleMei
 	} // namespace Clusters

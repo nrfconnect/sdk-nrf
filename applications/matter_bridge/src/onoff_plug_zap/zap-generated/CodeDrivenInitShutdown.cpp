@@ -19,6 +19,7 @@
 // This file is generated from codedriven-init-shutdown.cpp.zapt
 
 #include <app-common/zap-generated/ids/Clusters.h>
+#include <app/util/generic-callbacks.h>
 #include <zap-generated/CodeDrivenCallback.h>
 
 using namespace chip;
@@ -28,6 +29,9 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 	switch (clusterId) {
 	case app::Clusters::Identify::Id:
 		MatterIdentifyClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::Groups::Id:
+		MatterGroupsClusterInitCallback(endpoint);
 		break;
 	case app::Clusters::Descriptor::Id:
 		MatterDescriptorClusterInitCallback(endpoint);
@@ -40,6 +44,9 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 		break;
 	case app::Clusters::BasicInformation::Id:
 		MatterBasicInformationClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::OtaSoftwareUpdateRequestor::Id:
+		MatterOtaSoftwareUpdateRequestorClusterInitCallback(endpoint);
 		break;
 	case app::Clusters::GeneralCommissioning::Id:
 		MatterGeneralCommissioningClusterInitCallback(endpoint);
@@ -56,6 +63,12 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::WiFiNetworkDiagnostics::Id:
 		MatterWiFiNetworkDiagnosticsClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::BridgedDeviceBasicInformation::Id:
+		MatterBridgedDeviceBasicInformationClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::Switch::Id:
+		MatterSwitchClusterInitCallback(endpoint);
+		break;
 	case app::Clusters::AdministratorCommissioning::Id:
 		MatterAdministratorCommissioningClusterInitCallback(endpoint);
 		break;
@@ -65,50 +78,81 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::GroupKeyManagement::Id:
 		MatterGroupKeyManagementClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::ScenesManagement::Id:
+		MatterScenesManagementClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::TemperatureMeasurement::Id:
+		MatterTemperatureMeasurementClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::RelativeHumidityMeasurement::Id:
+		MatterRelativeHumidityMeasurementClusterInitCallback(endpoint);
+		break;
 	}
 }
 
-void MatterClusterServerShutdownCallback(EndpointId endpoint, ClusterId clusterId)
+void MatterClusterServerShutdownCallback(EndpointId endpoint, ClusterId clusterId,
+					 MatterClusterShutdownType shutdownType)
 {
 	switch (clusterId) {
 	case app::Clusters::Identify::Id:
-		MatterIdentifyClusterShutdownCallback(endpoint);
+		MatterIdentifyClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::Groups::Id:
+		MatterGroupsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::Descriptor::Id:
-		MatterDescriptorClusterShutdownCallback(endpoint);
+		MatterDescriptorClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::Binding::Id:
-		MatterBindingClusterShutdownCallback(endpoint);
+		MatterBindingClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::AccessControl::Id:
-		MatterAccessControlClusterShutdownCallback(endpoint);
+		MatterAccessControlClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::BasicInformation::Id:
-		MatterBasicInformationClusterShutdownCallback(endpoint);
+		MatterBasicInformationClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::OtaSoftwareUpdateRequestor::Id:
+		MatterOtaSoftwareUpdateRequestorClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::GeneralCommissioning::Id:
-		MatterGeneralCommissioningClusterShutdownCallback(endpoint);
+		MatterGeneralCommissioningClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::DiagnosticLogs::Id:
-		MatterDiagnosticLogsClusterShutdownCallback(endpoint);
+		MatterDiagnosticLogsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::GeneralDiagnostics::Id:
-		MatterGeneralDiagnosticsClusterShutdownCallback(endpoint);
+		MatterGeneralDiagnosticsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::SoftwareDiagnostics::Id:
-		MatterSoftwareDiagnosticsClusterShutdownCallback(endpoint);
+		MatterSoftwareDiagnosticsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::WiFiNetworkDiagnostics::Id:
-		MatterWiFiNetworkDiagnosticsClusterShutdownCallback(endpoint);
+		MatterWiFiNetworkDiagnosticsClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::BridgedDeviceBasicInformation::Id:
+		MatterBridgedDeviceBasicInformationClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::Switch::Id:
+		MatterSwitchClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::AdministratorCommissioning::Id:
-		MatterAdministratorCommissioningClusterShutdownCallback(endpoint);
+		MatterAdministratorCommissioningClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::OperationalCredentials::Id:
-		MatterOperationalCredentialsClusterShutdownCallback(endpoint);
+		MatterOperationalCredentialsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::GroupKeyManagement::Id:
-		MatterGroupKeyManagementClusterShutdownCallback(endpoint);
+		MatterGroupKeyManagementClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::ScenesManagement::Id:
+		MatterScenesManagementClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::TemperatureMeasurement::Id:
+		MatterTemperatureMeasurementClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::RelativeHumidityMeasurement::Id:
+		MatterRelativeHumidityMeasurementClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	}
 }

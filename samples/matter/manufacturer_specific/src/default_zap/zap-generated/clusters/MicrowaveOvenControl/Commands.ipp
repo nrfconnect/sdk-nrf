@@ -78,7 +78,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetCookingParameters.
+				} // namespace SetCookingParameters
 				namespace AddMoreTime
 				{
 
@@ -106,7 +106,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddMoreTime.
+				} // namespace AddMoreTime
 			} // namespace Commands
 		} // namespace MicrowaveOvenControl
 	} // namespace Clusters

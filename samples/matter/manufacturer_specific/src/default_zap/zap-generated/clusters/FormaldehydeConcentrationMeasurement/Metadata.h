@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster FormaldehydeConcentrationMeasurement (cluster code: 1067/0x42B)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>

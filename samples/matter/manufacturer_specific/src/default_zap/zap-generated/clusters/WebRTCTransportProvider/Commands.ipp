@@ -51,6 +51,8 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kMetadataEnabled),
 							       metadataEnabled);
 						encoder.Encode(to_underlying(Fields::kSFrameConfig), SFrameConfig);
+						encoder.Encode(to_underlying(Fields::kVideoStreams), videoStreams);
+						encoder.Encode(to_underlying(Fields::kAudioStreams), audioStreams);
 						return encoder.Finalize();
 					}
 
@@ -88,12 +90,18 @@ namespace app
 							} else if (__context_tag ==
 								   to_underlying(Fields::kSFrameConfig)) {
 								err = DataModel::Decode(reader, SFrameConfig);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kVideoStreams)) {
+								err = DataModel::Decode(reader, videoStreams);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kAudioStreams)) {
+								err = DataModel::Decode(reader, audioStreams);
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SolicitOffer.
+				} // namespace SolicitOffer
 				namespace SolicitOfferResponse
 				{
 
@@ -135,7 +143,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SolicitOfferResponse.
+				} // namespace SolicitOfferResponse
 				namespace ProvideOffer
 				{
 
@@ -156,6 +164,8 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kMetadataEnabled),
 							       metadataEnabled);
 						encoder.Encode(to_underlying(Fields::kSFrameConfig), SFrameConfig);
+						encoder.Encode(to_underlying(Fields::kVideoStreams), videoStreams);
+						encoder.Encode(to_underlying(Fields::kAudioStreams), audioStreams);
 						return encoder.Finalize();
 					}
 
@@ -198,12 +208,18 @@ namespace app
 							} else if (__context_tag ==
 								   to_underlying(Fields::kSFrameConfig)) {
 								err = DataModel::Decode(reader, SFrameConfig);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kVideoStreams)) {
+								err = DataModel::Decode(reader, videoStreams);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kAudioStreams)) {
+								err = DataModel::Decode(reader, audioStreams);
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProvideOffer.
+				} // namespace ProvideOffer
 				namespace ProvideOfferResponse
 				{
 
@@ -241,7 +257,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProvideOfferResponse.
+				} // namespace ProvideOfferResponse
 				namespace ProvideAnswer
 				{
 
@@ -274,7 +290,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProvideAnswer.
+				} // namespace ProvideAnswer
 				namespace ProvideICECandidates
 				{
 
@@ -308,7 +324,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProvideICECandidates.
+				} // namespace ProvideICECandidates
 				namespace EndSession
 				{
 
@@ -341,7 +357,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EndSession.
+				} // namespace EndSession
 			} // namespace Commands
 		} // namespace WebRTCTransportProvider
 	} // namespace Clusters

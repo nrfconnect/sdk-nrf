@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster WiFiNetworkManagement (cluster code: 1105/0x451)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

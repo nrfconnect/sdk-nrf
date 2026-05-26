@@ -58,7 +58,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PowerAdjustStart.
+				} // namespace PowerAdjustStart
 				namespace PowerAdjustEnd
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -97,7 +97,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PowerAdjustEnd.
+				} // namespace PowerAdjustEnd
 				namespace Paused
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -121,7 +121,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Paused.
+				} // namespace Paused
 				namespace Resumed
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -152,7 +152,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Resumed.
+				} // namespace Resumed
 			} // namespace Events
 		} // namespace DeviceEnergyManagement
 	} // namespace Clusters

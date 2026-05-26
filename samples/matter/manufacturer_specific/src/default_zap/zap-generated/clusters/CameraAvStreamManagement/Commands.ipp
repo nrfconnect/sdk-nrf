@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AudioStreamAllocate.
+				} // namespace AudioStreamAllocate
 				namespace AudioStreamAllocateResponse
 				{
 
@@ -108,7 +108,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AudioStreamAllocateResponse.
+				} // namespace AudioStreamAllocateResponse
 				namespace AudioStreamDeallocate
 				{
 
@@ -136,7 +136,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AudioStreamDeallocate.
+				} // namespace AudioStreamDeallocate
 				namespace VideoStreamAllocate
 				{
 
@@ -206,7 +206,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace VideoStreamAllocate.
+				} // namespace VideoStreamAllocate
 				namespace VideoStreamAllocateResponse
 				{
 
@@ -235,7 +235,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace VideoStreamAllocateResponse.
+				} // namespace VideoStreamAllocateResponse
 				namespace VideoStreamModify
 				{
 
@@ -272,7 +272,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace VideoStreamModify.
+				} // namespace VideoStreamModify
 				namespace VideoStreamDeallocate
 				{
 
@@ -300,7 +300,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace VideoStreamDeallocate.
+				} // namespace VideoStreamDeallocate
 				namespace SnapshotStreamAllocate
 				{
 
@@ -352,7 +352,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SnapshotStreamAllocate.
+				} // namespace SnapshotStreamAllocate
 				namespace SnapshotStreamAllocateResponse
 				{
 
@@ -382,7 +382,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SnapshotStreamAllocateResponse.
+				} // namespace SnapshotStreamAllocateResponse
 				namespace SnapshotStreamModify
 				{
 
@@ -420,7 +420,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SnapshotStreamModify.
+				} // namespace SnapshotStreamModify
 				namespace SnapshotStreamDeallocate
 				{
 
@@ -449,7 +449,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SnapshotStreamDeallocate.
+				} // namespace SnapshotStreamDeallocate
 				namespace SetStreamPriorities
 				{
 
@@ -478,7 +478,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetStreamPriorities.
+				} // namespace SetStreamPriorities
 				namespace CaptureSnapshot
 				{
 
@@ -512,7 +512,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CaptureSnapshot.
+				} // namespace CaptureSnapshot
 				namespace CaptureSnapshotResponse
 				{
 
@@ -549,7 +549,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CaptureSnapshotResponse.
+				} // namespace CaptureSnapshotResponse
 			} // namespace Commands
 		} // namespace CameraAvStreamManagement
 	} // namespace Clusters

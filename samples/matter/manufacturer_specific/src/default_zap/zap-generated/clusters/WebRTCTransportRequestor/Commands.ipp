@@ -74,7 +74,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Offer.
+				} // namespace Offer
 				namespace Answer
 				{
 
@@ -106,7 +106,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Answer.
+				} // namespace Answer
 				namespace ICECandidates
 				{
 
@@ -139,7 +139,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ICECandidates.
+				} // namespace ICECandidates
 				namespace End
 				{
 
@@ -171,7 +171,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace End.
+				} // namespace End
 			} // namespace Commands
 		} // namespace WebRTCTransportRequestor
 	} // namespace Clusters

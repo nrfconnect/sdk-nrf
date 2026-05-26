@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ContentAppMessage.
+				} // namespace ContentAppMessage
 				namespace ContentAppMessageResponse
 				{
 
@@ -101,7 +101,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ContentAppMessageResponse.
+				} // namespace ContentAppMessageResponse
 			} // namespace Commands
 		} // namespace ContentAppObserver
 	} // namespace Clusters

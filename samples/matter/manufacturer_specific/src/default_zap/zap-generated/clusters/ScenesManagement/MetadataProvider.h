@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster ScenesManagement (cluster code: 98/0x62)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

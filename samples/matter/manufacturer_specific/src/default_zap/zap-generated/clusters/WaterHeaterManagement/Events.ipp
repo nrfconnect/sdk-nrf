@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace BoostStarted.
+				} // namespace BoostStarted
 				namespace BoostEnded
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -89,7 +89,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace BoostEnded.
+				} // namespace BoostEnded
 			} // namespace Events
 		} // namespace WaterHeaterManagement
 	} // namespace Clusters

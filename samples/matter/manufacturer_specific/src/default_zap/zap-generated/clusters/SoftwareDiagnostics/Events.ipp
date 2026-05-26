@@ -75,7 +75,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SoftwareFault.
+				} // namespace SoftwareFault
 			} // namespace Events
 		} // namespace SoftwareDiagnostics
 	} // namespace Clusters

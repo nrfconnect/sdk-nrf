@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster LaundryDryerControls (cluster code: 74/0x4A)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

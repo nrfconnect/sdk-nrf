@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SelectOutput.
+				} // namespace SelectOutput
 				namespace RenameOutput
 				{
 
@@ -92,7 +92,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RenameOutput.
+				} // namespace RenameOutput
 			} // namespace Commands
 		} // namespace AudioOutput
 	} // namespace Clusters

@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster MicrowaveOvenMode (cluster code: 94/0x5E)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

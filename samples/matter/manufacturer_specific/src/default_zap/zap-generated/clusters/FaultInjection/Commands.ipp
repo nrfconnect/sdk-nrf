@@ -75,7 +75,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FailAtFault.
+				} // namespace FailAtFault
 				namespace FailRandomlyAtFault
 				{
 
@@ -110,7 +110,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FailRandomlyAtFault.
+				} // namespace FailRandomlyAtFault
 			} // namespace Commands
 		} // namespace FaultInjection
 	} // namespace Clusters

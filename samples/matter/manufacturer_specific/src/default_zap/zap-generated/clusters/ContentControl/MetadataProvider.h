@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster ContentControl (cluster code: 1295/0x50F)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

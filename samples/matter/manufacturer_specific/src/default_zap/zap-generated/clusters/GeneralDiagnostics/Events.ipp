@@ -69,7 +69,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace HardwareFaultChange.
+				} // namespace HardwareFaultChange
 				namespace RadioFaultChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -104,7 +104,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RadioFaultChange.
+				} // namespace RadioFaultChange
 				namespace NetworkFaultChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -139,7 +139,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace NetworkFaultChange.
+				} // namespace NetworkFaultChange
 				namespace BootReason
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -170,7 +170,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace BootReason.
+				} // namespace BootReason
 			} // namespace Events
 		} // namespace GeneralDiagnostics
 	} // namespace Clusters

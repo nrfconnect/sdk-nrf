@@ -47,6 +47,8 @@ namespace app
 						return DataModel::Decode(reader, holdTime);
 					case Attributes::HoldTimeLimits::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, holdTimeLimits);
+					case Attributes::PredictedOccupancy::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, predictedOccupancy);
 					case Attributes::PIROccupiedToUnoccupiedDelay::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, PIROccupiedToUnoccupiedDelay);
 					case Attributes::PIRUnoccupiedToOccupiedDelay::TypeInfo::GetAttributeId():

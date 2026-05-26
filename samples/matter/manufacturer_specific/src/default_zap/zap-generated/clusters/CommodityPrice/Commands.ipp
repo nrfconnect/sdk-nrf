@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetDetailedPriceRequest.
+				} // namespace GetDetailedPriceRequest
 				namespace GetDetailedPriceResponse
 				{
 
@@ -90,7 +90,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetDetailedPriceResponse.
+				} // namespace GetDetailedPriceResponse
 				namespace GetDetailedForecastRequest
 				{
 
@@ -118,7 +118,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetDetailedForecastRequest.
+				} // namespace GetDetailedForecastRequest
 				namespace GetDetailedForecastResponse
 				{
 
@@ -147,7 +147,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetDetailedForecastResponse.
+				} // namespace GetDetailedForecastResponse
 			} // namespace Commands
 		} // namespace CommodityPrice
 	} // namespace Clusters

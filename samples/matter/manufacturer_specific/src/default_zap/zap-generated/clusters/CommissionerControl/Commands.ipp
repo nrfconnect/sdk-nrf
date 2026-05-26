@@ -70,7 +70,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RequestCommissioningApproval.
+				} // namespace RequestCommissioningApproval
 				namespace CommissionNode
 				{
 
@@ -103,7 +103,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CommissionNode.
+				} // namespace CommissionNode
 				namespace ReverseOpenCommissioningWindow
 				{
 
@@ -150,7 +150,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ReverseOpenCommissioningWindow.
+				} // namespace ReverseOpenCommissioningWindow
 			} // namespace Commands
 		} // namespace CommissionerControl
 	} // namespace Clusters

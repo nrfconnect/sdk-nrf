@@ -58,7 +58,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UserButtonChanged.
+				} // namespace UserButtonChanged
 			} // namespace Events
 		} // namespace NordicDevKit
 	} // namespace Clusters

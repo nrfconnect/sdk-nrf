@@ -188,46 +188,6 @@ namespace app
 
 				} // namespace DatastoreEndpointGroupIDEntryStruct
 
-				namespace DatastoreEndpointEntryStruct
-				{
-					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
-					{
-						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
-						encoder.Encode(to_underlying(Fields::kEndpointID), endpointID);
-						encoder.Encode(to_underlying(Fields::kNodeID), nodeID);
-						encoder.Encode(to_underlying(Fields::kFriendlyName), friendlyName);
-						encoder.Encode(to_underlying(Fields::kStatusEntry), statusEntry);
-						return encoder.Finalize();
-					}
-
-					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader)
-					{
-						detail::StructDecodeIterator __iterator(reader);
-						while (true) {
-							uint8_t __context_tag = 0;
-							CHIP_ERROR err = __iterator.Next(__context_tag);
-							VerifyOrReturnError(err != CHIP_ERROR_END_OF_TLV,
-									    CHIP_NO_ERROR);
-							ReturnErrorOnFailure(err);
-
-							if (__context_tag == to_underlying(Fields::kEndpointID)) {
-								err = DataModel::Decode(reader, endpointID);
-							} else if (__context_tag == to_underlying(Fields::kNodeID)) {
-								err = DataModel::Decode(reader, nodeID);
-							} else if (__context_tag ==
-								   to_underlying(Fields::kFriendlyName)) {
-								err = DataModel::Decode(reader, friendlyName);
-							} else if (__context_tag ==
-								   to_underlying(Fields::kStatusEntry)) {
-								err = DataModel::Decode(reader, statusEntry);
-							}
-
-							ReturnErrorOnFailure(err);
-						}
-					}
-
-				} // namespace DatastoreEndpointEntryStruct
-
 				namespace DatastoreBindingTargetStruct
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -461,6 +421,42 @@ namespace app
 
 				} // namespace DatastoreAdministratorInformationEntryStruct
 
+				namespace DatastoreEndpointEntryStruct
+				{
+					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
+					{
+						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
+						encoder.Encode(to_underlying(Fields::kEndpointID), endpointID);
+						encoder.Encode(to_underlying(Fields::kNodeID), nodeID);
+						encoder.Encode(to_underlying(Fields::kFriendlyName), friendlyName);
+						return encoder.Finalize();
+					}
+
+					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader)
+					{
+						detail::StructDecodeIterator __iterator(reader);
+						while (true) {
+							uint8_t __context_tag = 0;
+							CHIP_ERROR err = __iterator.Next(__context_tag);
+							VerifyOrReturnError(err != CHIP_ERROR_END_OF_TLV,
+									    CHIP_NO_ERROR);
+							ReturnErrorOnFailure(err);
+
+							if (__context_tag == to_underlying(Fields::kEndpointID)) {
+								err = DataModel::Decode(reader, endpointID);
+							} else if (__context_tag == to_underlying(Fields::kNodeID)) {
+								err = DataModel::Decode(reader, nodeID);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kFriendlyName)) {
+								err = DataModel::Decode(reader, friendlyName);
+							}
+
+							ReturnErrorOnFailure(err);
+						}
+					}
+
+				} // namespace DatastoreEndpointEntryStruct
+
 				namespace DatastoreGroupInformationEntryStruct
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -528,8 +524,6 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kEpochKey2), epochKey2);
 						encoder.Encode(to_underlying(Fields::kEpochStartTime2),
 							       epochStartTime2);
-						encoder.Encode(to_underlying(Fields::kGroupKeyMulticastPolicy),
-							       groupKeyMulticastPolicy);
 						return encoder.Finalize();
 					}
 
@@ -563,10 +557,6 @@ namespace app
 							} else if (__context_tag ==
 								   to_underlying(Fields::kEpochStartTime2)) {
 								err = DataModel::Decode(reader, epochStartTime2);
-							} else if (__context_tag ==
-								   to_underlying(Fields::kGroupKeyMulticastPolicy)) {
-								err = DataModel::Decode(reader,
-											groupKeyMulticastPolicy);
 							}
 
 							ReturnErrorOnFailure(err);

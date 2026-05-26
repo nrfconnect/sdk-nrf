@@ -392,6 +392,20 @@ namespace app
 				return EnumType::kUnknownEnumValue;
 			}
 		}
+		static auto __attribute__((unused))
+		EnsureKnownEnumValue(Globals::SoftwareVersionCertificationStatusEnum val)
+		{
+			using EnumType = Globals::SoftwareVersionCertificationStatusEnum;
+			switch (val) {
+			case EnumType::kDevTest:
+			case EnumType::kProvisional:
+			case EnumType::kCertified:
+			case EnumType::kRevoked:
+				return val;
+			default:
+				return EnumType::kUnknownEnumValue;
+			}
+		}
 		static auto __attribute__((unused)) EnsureKnownEnumValue(Globals::StreamUsageEnum val)
 		{
 			using EnumType = Globals::StreamUsageEnum;

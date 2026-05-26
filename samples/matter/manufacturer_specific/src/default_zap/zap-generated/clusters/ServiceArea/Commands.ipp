@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SelectAreas.
+				} // namespace SelectAreas
 				namespace SelectAreasResponse
 				{
 
@@ -94,7 +94,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SelectAreasResponse.
+				} // namespace SelectAreasResponse
 				namespace SkipArea
 				{
 
@@ -122,7 +122,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SkipArea.
+				} // namespace SkipArea
 				namespace SkipAreaResponse
 				{
 
@@ -155,7 +155,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SkipAreaResponse.
+				} // namespace SkipAreaResponse
 			} // namespace Commands
 		} // namespace ServiceArea
 	} // namespace Clusters

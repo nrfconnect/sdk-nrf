@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Sleep.
+				} // namespace Sleep
 			} // namespace Commands
 		} // namespace LowPower
 	} // namespace Clusters

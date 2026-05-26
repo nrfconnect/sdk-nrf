@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Ping.
+				} // namespace Ping
 				namespace AddArgumentsResponse
 				{
 
@@ -85,7 +85,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddArgumentsResponse.
+				} // namespace AddArgumentsResponse
 				namespace AddArguments
 				{
 
@@ -116,7 +116,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddArguments.
+				} // namespace AddArguments
 			} // namespace Commands
 		} // namespace SampleMei
 	} // namespace Clusters

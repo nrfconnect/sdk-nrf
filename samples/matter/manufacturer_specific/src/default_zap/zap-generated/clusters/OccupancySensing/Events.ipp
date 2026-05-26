@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OccupancyChanged.
+				} // namespace OccupancyChanged
 			} // namespace Events
 		} // namespace OccupancySensing
 	} // namespace Clusters

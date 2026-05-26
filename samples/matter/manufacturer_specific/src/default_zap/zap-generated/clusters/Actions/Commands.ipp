@@ -64,7 +64,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace InstantAction.
+				} // namespace InstantAction
 				namespace InstantActionWithTransition
 				{
 
@@ -99,7 +99,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace InstantActionWithTransition.
+				} // namespace InstantActionWithTransition
 				namespace StartAction
 				{
 
@@ -130,7 +130,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StartAction.
+				} // namespace StartAction
 				namespace StartActionWithDuration
 				{
 
@@ -164,7 +164,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StartActionWithDuration.
+				} // namespace StartActionWithDuration
 				namespace StopAction
 				{
 
@@ -195,7 +195,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StopAction.
+				} // namespace StopAction
 				namespace PauseAction
 				{
 
@@ -226,7 +226,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PauseAction.
+				} // namespace PauseAction
 				namespace PauseActionWithDuration
 				{
 
@@ -260,7 +260,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PauseActionWithDuration.
+				} // namespace PauseActionWithDuration
 				namespace ResumeAction
 				{
 
@@ -291,7 +291,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ResumeAction.
+				} // namespace ResumeAction
 				namespace EnableAction
 				{
 
@@ -322,7 +322,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnableAction.
+				} // namespace EnableAction
 				namespace EnableActionWithDuration
 				{
 
@@ -356,7 +356,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnableActionWithDuration.
+				} // namespace EnableActionWithDuration
 				namespace DisableAction
 				{
 
@@ -387,7 +387,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace DisableAction.
+				} // namespace DisableAction
 				namespace DisableActionWithDuration
 				{
 
@@ -421,7 +421,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace DisableActionWithDuration.
+				} // namespace DisableActionWithDuration
 			} // namespace Commands
 		} // namespace Actions
 	} // namespace Clusters

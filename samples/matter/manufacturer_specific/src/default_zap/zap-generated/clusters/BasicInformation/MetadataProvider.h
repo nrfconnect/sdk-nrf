@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster BasicInformation (cluster code: 40/0x28)
-// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <optional>
@@ -69,8 +68,8 @@ namespace app
 					return SpecificationVersion::kMetadataEntry;
 				case MaxPathsPerInvoke::Id:
 					return MaxPathsPerInvoke::kMetadataEntry;
-				case RandomNumber::Id:
-					return RandomNumber::kMetadataEntry;
+				case DeviceLocation::Id:
+					return DeviceLocation::kMetadataEntry;
 				case ConfigurationVersion::Id:
 					return ConfigurationVersion::kMetadataEntry;
 				default:

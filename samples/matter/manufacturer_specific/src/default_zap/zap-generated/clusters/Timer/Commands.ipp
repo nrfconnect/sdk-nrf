@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTimer.
+				} // namespace SetTimer
 				namespace ResetTimer
 				{
 
@@ -84,7 +84,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ResetTimer.
+				} // namespace ResetTimer
 				namespace AddTime
 				{
 
@@ -112,7 +112,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddTime.
+				} // namespace AddTime
 				namespace ReduceTime
 				{
 
@@ -140,7 +140,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ReduceTime.
+				} // namespace ReduceTime
 			} // namespace Commands
 		} // namespace Timer
 	} // namespace Clusters

@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Open.
+				} // namespace Open
 				namespace Close
 				{
 
@@ -88,7 +88,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Close.
+				} // namespace Close
 			} // namespace Commands
 		} // namespace ValveConfigurationAndControl
 	} // namespace Clusters

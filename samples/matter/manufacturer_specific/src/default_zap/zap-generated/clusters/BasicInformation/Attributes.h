@@ -480,12 +480,18 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace MaxPathsPerInvoke
-				namespace RandomNumber
+				namespace DeviceLocation
 				{
 					struct TypeInfo {
-						using Type = uint16_t;
-						using DecodableType = uint16_t;
-						using DecodableArgType = uint16_t;
+						using Type = chip::app::DataModel::Nullable<
+							chip::app::Clusters::Globals::Structs::
+								LocationDescriptorStruct::Type>;
+						using DecodableType = chip::app::DataModel::Nullable<
+							chip::app::Clusters::Globals::Structs::
+								LocationDescriptorStruct::DecodableType>;
+						using DecodableArgType = const chip::app::DataModel::Nullable<
+							chip::app::Clusters::Globals::Structs::
+								LocationDescriptorStruct::DecodableType> &;
 
 						static constexpr ClusterId GetClusterId()
 						{
@@ -493,11 +499,11 @@ namespace app
 						}
 						static constexpr AttributeId GetAttributeId()
 						{
-							return Attributes::RandomNumber::Id;
+							return Attributes::DeviceLocation::Id;
 						}
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
-				} // namespace RandomNumber
+				} // namespace DeviceLocation
 				namespace ConfigurationVersion
 				{
 					struct TypeInfo {
@@ -610,8 +616,7 @@ namespace app
 							specificationVersion = static_cast<uint32_t>(0);
 						Attributes::MaxPathsPerInvoke::TypeInfo::DecodableType
 							maxPathsPerInvoke = static_cast<uint16_t>(0);
-						Attributes::RandomNumber::TypeInfo::DecodableType randomNumber =
-							static_cast<uint16_t>(0);
+						Attributes::DeviceLocation::TypeInfo::DecodableType deviceLocation;
 						Attributes::ConfigurationVersion::TypeInfo::DecodableType
 							configurationVersion = static_cast<uint32_t>(0);
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType

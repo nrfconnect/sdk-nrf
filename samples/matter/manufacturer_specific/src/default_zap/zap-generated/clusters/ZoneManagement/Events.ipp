@@ -69,7 +69,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ZoneTriggered.
+				} // namespace ZoneTriggered
 				namespace ZoneStopped
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -104,7 +104,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ZoneStopped.
+				} // namespace ZoneStopped
 			} // namespace Events
 		} // namespace ZoneManagement
 	} // namespace Clusters

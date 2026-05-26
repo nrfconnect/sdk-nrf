@@ -80,7 +80,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CommissioningRequestResult.
+				} // namespace CommissioningRequestResult
 			} // namespace Events
 		} // namespace CommissionerControl
 	} // namespace Clusters

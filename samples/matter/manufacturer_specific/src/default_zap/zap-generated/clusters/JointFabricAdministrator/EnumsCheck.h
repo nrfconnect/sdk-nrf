@@ -29,6 +29,22 @@ namespace app
 	namespace Clusters
 	{
 		static auto __attribute__((unused))
+		EnsureKnownEnumValue(JointFabricAdministrator::ICACCSRResponseStatusCodeEnum val)
+		{
+			using EnumType = JointFabricAdministrator::ICACCSRResponseStatusCodeEnum;
+			switch (val) {
+			case EnumType::kOk:
+			case EnumType::kBusy:
+			case EnumType::kPAKEParameterError:
+			case EnumType::kWindowNotOpen:
+			case EnumType::kVIDNotVerified:
+			case EnumType::kInvalidAdministratorFabricIndex:
+				return val;
+			default:
+				return EnumType::kUnknownEnumValue;
+			}
+		}
+		static auto __attribute__((unused))
 		EnsureKnownEnumValue(JointFabricAdministrator::ICACResponseStatusEnum val)
 		{
 			using EnumType = JointFabricAdministrator::ICACResponseStatusEnum;
@@ -36,20 +52,6 @@ namespace app
 			case EnumType::kOk:
 			case EnumType::kInvalidPublicKey:
 			case EnumType::kInvalidICAC:
-				return val;
-			default:
-				return EnumType::kUnknownEnumValue;
-			}
-		}
-		static auto __attribute__((unused)) EnsureKnownEnumValue(JointFabricAdministrator::StatusCodeEnum val)
-		{
-			using EnumType = JointFabricAdministrator::StatusCodeEnum;
-			switch (val) {
-			case EnumType::kBusy:
-			case EnumType::kPAKEParameterError:
-			case EnumType::kWindowNotOpen:
-			case EnumType::kVIDNotVerified:
-			case EnumType::kInvalidAdministratorFabricIndex:
 				return val;
 			default:
 				return EnumType::kUnknownEnumValue;

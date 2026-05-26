@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster TimeSynchronization (cluster code: 56/0x38)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>

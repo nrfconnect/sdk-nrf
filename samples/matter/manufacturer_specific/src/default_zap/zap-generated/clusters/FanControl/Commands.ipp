@@ -67,7 +67,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Step.
+				} // namespace Step
 			} // namespace Commands
 		} // namespace FanControl
 	} // namespace Clusters

@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace NetworkPassphraseRequest.
+				} // namespace NetworkPassphraseRequest
 				namespace NetworkPassphraseResponse
 				{
 
@@ -85,7 +85,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace NetworkPassphraseResponse.
+				} // namespace NetworkPassphraseResponse
 			} // namespace Commands
 		} // namespace WiFiNetworkManagement
 	} // namespace Clusters

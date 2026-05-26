@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster CameraAvStreamManagement (cluster code: 1361/0x551)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace CameraAvStreamManagement
 		{
 
-			inline constexpr uint32_t kRevision = 1;
+			inline constexpr uint32_t kRevision = 2;
 
 			namespace Attributes
 			{
@@ -320,6 +319,13 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kManage, Access::Privilege::kManage);
 				} // namespace StatusLightBrightness
+				namespace ImageRotationDiscreteAngles
+				{
+					inline constexpr DataModel::AttributeEntry
+						kMetadataEntry(ImageRotationDiscreteAngles::Id,
+							       BitFlags<DataModel::AttributeQualityFlags>(),
+							       Access::Privilege::kManage, Access::Privilege::kManage);
+				} // namespace ImageRotationDiscreteAngles
 				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
 					MaxContentBufferSize::kMetadataEntry,
 					MaxNetworkBandwidth::kMetadataEntry,

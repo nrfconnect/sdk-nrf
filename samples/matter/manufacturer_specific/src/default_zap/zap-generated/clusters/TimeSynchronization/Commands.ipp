@@ -69,7 +69,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetUTCTime.
+				} // namespace SetUTCTime
 				namespace SetTrustedTimeSource
 				{
 
@@ -100,7 +100,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTrustedTimeSource.
+				} // namespace SetTrustedTimeSource
 				namespace SetTimeZone
 				{
 
@@ -128,7 +128,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTimeZone.
+				} // namespace SetTimeZone
 				namespace SetTimeZoneResponse
 				{
 
@@ -159,7 +159,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTimeZoneResponse.
+				} // namespace SetTimeZoneResponse
 				namespace SetDSTOffset
 				{
 
@@ -187,7 +187,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetDSTOffset.
+				} // namespace SetDSTOffset
 				namespace SetDefaultNTP
 				{
 
@@ -215,7 +215,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetDefaultNTP.
+				} // namespace SetDefaultNTP
 			} // namespace Commands
 		} // namespace TimeSynchronization
 	} // namespace Clusters

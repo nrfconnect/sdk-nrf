@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster OvenMode (cluster code: 73/0x49)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace OvenMode
 		{
 
-			inline constexpr uint32_t kRevision = 1;
+			inline constexpr uint32_t kRevision = 2;
 
 			namespace Attributes
 			{

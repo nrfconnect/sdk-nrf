@@ -64,7 +64,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace NavigateTarget.
+				} // namespace NavigateTarget
 				namespace NavigateTargetResponse
 				{
 
@@ -96,7 +96,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace NavigateTargetResponse.
+				} // namespace NavigateTargetResponse
 			} // namespace Commands
 		} // namespace TargetNavigator
 	} // namespace Clusters

@@ -67,7 +67,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MPTZSetPosition.
+				} // namespace MPTZSetPosition
 				namespace MPTZRelativeMove
 				{
 
@@ -101,7 +101,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MPTZRelativeMove.
+				} // namespace MPTZRelativeMove
 				namespace MPTZMoveToPreset
 				{
 
@@ -129,7 +129,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MPTZMoveToPreset.
+				} // namespace MPTZMoveToPreset
 				namespace MPTZSavePreset
 				{
 
@@ -160,7 +160,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MPTZSavePreset.
+				} // namespace MPTZSavePreset
 				namespace MPTZRemovePreset
 				{
 
@@ -188,7 +188,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MPTZRemovePreset.
+				} // namespace MPTZRemovePreset
 				namespace DPTZSetViewport
 				{
 
@@ -219,7 +219,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace DPTZSetViewport.
+				} // namespace DPTZSetViewport
 				namespace DPTZRelativeMove
 				{
 
@@ -256,7 +256,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace DPTZRelativeMove.
+				} // namespace DPTZRelativeMove
 			} // namespace Commands
 		} // namespace CameraAvSettingsUserLevelManagement
 	} // namespace Clusters
