@@ -161,3 +161,12 @@
   platforms:
     - nrf52dk/nrf52832
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39503"
+
+- scenarios:
+    - sample.net.ocpp.tls
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39503"
