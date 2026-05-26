@@ -28,6 +28,14 @@
 #
 #          ./scripts/tag_west_repos.sh push-all
 #
+#     5. Create the configured branches:
+#
+#          ./scripts/tag_west_repos.sh branch-all
+#
+#     6. Push those branches to GitHub:
+#
+#          ./scripts/tag_west_repos.sh push-all-branches
+#
 # If you make a mistake and want to delete your local tags before
 # pushing them and starting over, run 'tag_west_repos.sh remove-all'.
 
@@ -95,6 +103,28 @@ release_tag_names() {
 
     core_tag="${RELEASE_TAG_BASE}${RELEASE_TAG_SUFFIX}"
     oss_tag="ncs-${RELEASE_TAG_BASE}${RELEASE_TAG_SUFFIX}"
+}
+
+branch_name_base() {
+    case "$RELEASE_TAG_BASE" in
+        "")
+            echo "RELEASE_TAG_BASE is empty" 1>&2
+            return 1
+            ;;
+        v*.*.*)
+            echo "${RELEASE_TAG_BASE%.*}"
+            ;;
+        *)
+            echo "RELEASE_TAG_BASE must have format vX.Y.Z" 1>&2
+            return 1
+            ;;
+    esac
+}
+
+release_branch_names() {
+    branch_base=$(branch_name_base) || return 1
+    core_branch="${branch_base}-branch"
+    oss_branch="ncs-${branch_base}-branch"
 }
 
 tag() {
@@ -186,6 +216,82 @@ remove_tag() {
     git -C "$local_path" tag -d "$tagname"
 }
 
+branch() {
+    # Synopsis:
+    #
+    #    branch <project-name> <branch-name>
+    #
+    # Create a branch named <branch-name> in the west.yml project named
+    # <project-name>, at the current manifest-rev.
+
+    project="$1"
+    branchname="$2"
+
+    if [ -z "$project" ] || [ -z "$branchname" ]; then
+	    echo "empty project or branchname" 1>&2
+	    return
+    fi
+
+    hline
+
+    sha=$(west list -f '{sha}' "$project")
+    local_path=$(west list -f '{abspath}' "$project")
+
+    echo "$project": creating branch "$branchname" for "$sha" in "$local_path"
+    git -C "$local_path" branch "$branchname" "$sha" || exit 1
+}
+
+push_branch() {
+    # Synopsis:
+    #
+    #   push_branch <project-name> <branch-name>
+    #
+    # Push the branch named <branch-name> into the remote URL
+    # for the west.yml project named <project-name>.
+
+    project="$1"
+    branchname="$2"
+
+    if [ -z "$project" ] || [ -z "$branchname" ]; then
+	    echo "empty project or branchname" 1>&2
+	    return
+    fi
+
+    hline
+
+    local_path=$(west list -f '{abspath}' "$project")
+    url=$(west list -f '{url}' "$project")
+
+    echo "$project": pushing branch "$branchname" to "$url"
+    git -C "$local_path" push "$url" "$branchname"
+    echo "$project": pushed branch "$url/tree/$branchname"
+}
+
+remove_branch() {
+    # Synopsis:
+    #
+    #   remove_branch <project-name> <branch-name>
+    #
+    # Locally delete the branch named <branch-name> in the
+    # west.yml project named <project-name>
+
+    project="$1"
+    branchname="$2"
+
+    if [ -z "$project" ] || [ -z "$branchname" ]; then
+	    echo "empty project or branchname" 1>&2
+	    return
+    fi
+
+    hline
+
+    local_path=$(west list -f '{abspath}' "$project")
+
+    echo "$project": removing branch "$branchname" in "$local_path"
+
+    git -C "$local_path" branch -D "$branchname"
+}
+
 fetch_oss() {
     # Fetches all OSS repositories remotes
 
@@ -252,6 +358,52 @@ remove_all() {
     done
 }
 
+branch_all() {
+    # Creates all configured release branches.
+
+    release_branch_names || exit 1
+
+    hline
+    echo Branching all repositories
+
+    for project in "${CORE_REPOSITORIES[@]}"; do
+        branch "$project" "$core_branch"
+    done
+
+    for project in "${OSS_REPOSITORIES[@]}"; do
+        branch "$project" "$oss_branch"
+    done
+}
+
+push_all_branches() {
+    # Pushes all configured release branches to the main
+    # nrfconnect repositories on GitHub.
+
+    release_branch_names || exit 1
+
+    for project in "${CORE_REPOSITORIES[@]}"; do
+        push_branch "$project" "$core_branch"
+    done
+
+    for project in "${OSS_REPOSITORIES[@]}"; do
+        push_branch "$project" "$oss_branch"
+    done
+}
+
+remove_all_branches() {
+    # Removes all configured release branches.
+
+    release_branch_names || exit 1
+
+    for project in "${CORE_REPOSITORIES[@]}"; do
+        remove_branch "$project" "$core_branch"
+    done
+
+    for project in "${OSS_REPOSITORIES[@]}"; do
+        remove_branch "$project" "$oss_branch"
+    done
+}
+
 command="$1"
 shift
 
@@ -269,9 +421,22 @@ case "$command" in
 	# Push tags created by 'tag-all' to the remote.
 	push_all
 	;;
+    branch-all)
+	# Create branches in all the repositories in the local working trees.
+	branch_all
+	;;
+    remove-all-branches)
+	# Remove any branches created by 'branch-all' from local repositories.
+	remove_all_branches
+	;;
+    push-all-branches)
+	# Push branches created by 'branch-all' to the remote.
+	push_all_branches
+	;;
     *)
 	echo unknown or missing command
 	echo example: \'"$SCRIPT" tag-all\'
-	echo all commands: tag-all remove-all push-all
+	echo all commands: tag-all remove-all push-all branch-all remove-all-branches \
+         push-all-branches
 	;;
 esac
