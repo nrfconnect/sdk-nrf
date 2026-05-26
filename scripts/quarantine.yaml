@@ -31,13 +31,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9628"
 
 - scenarios:
-    - nrf.extended.kernel.common.timing
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuppr
-    - nrf9251dk@0.1.0/nrf9251/cpuppr/xip
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
-
-- scenarios:
     - nrf.extended.sample.boards.nrf.clock_control.global_hsfll
     - nrf.extended.sample.boards.nrf.clock_control.global_hsfll.req_low_freq_n
     - nrf.extended.sample.boards.nrf.clock_control.lfclk
