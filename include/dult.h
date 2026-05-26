@@ -55,7 +55,7 @@ enum dult_accessory_capability {
 	DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_BLE_BIT_POS = 3,
 };
 
-/** DULT version. Used to describe the firmware version. */
+/** DULT version. Used to describe the firmware and network version. */
 struct dult_version {
 	/** Major version. */
 	uint16_t major;
@@ -91,6 +91,15 @@ struct dult_user {
 
 	/** Firmware version. */
 	struct dult_version firmware_version;
+
+	/** Network version.
+	 *
+	 *  When non-NULL, the value is returned in response to the
+	 *  OPTIONAL Get_Network_Version (0x000D) opcode of the Accessory
+	 *  Non-owner Service. When NULL, the opcode is reported as
+	 *  unsupported.
+	 */
+	const struct dult_version *network_version;
 };
 
 /** @brief Register DULT user.
