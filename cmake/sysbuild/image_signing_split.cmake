@@ -97,7 +97,7 @@ function(zephyr_mcuboot_tasks)
   if(NOT CONFIG_PARTITION_MANAGER_ENABLED)
     dt_chosen(code_partition_path PROPERTY "zephyr,code-partition")
     dt_partition_size(slot_size PATH "${code_partition_path}" REQUIRED)
-    dt_partition_addr(slot_address PATH "${code_partition_path}" REQUIRED)
+    dt_partition_addr(slot_address PATH "${code_partition_path}" REQUIRED ABSOLUTE)
     dt_nodelabel(slot0_partition_path NODELABEL "slot0_partition" REQUIRED)
     dt_nodelabel(slot1_partition_path NODELABEL "slot1_partition" REQUIRED)
 
@@ -128,6 +128,9 @@ function(zephyr_mcuboot_tasks)
       set(imgtool_internal_rom_command --rom-fixed ${slot_address})
       set(imgtool_external_rom_command --rom-fixed ${qspi_slot_address})
     endif()
+  elseif(NOT CONFIG_PARTITION_MANAGER_ENABLED AND CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS)
+    # Set ih_load_addr to the slot address using --rom-fixed for image matching.
+    set(imgtool_internal_rom_command --rom-fixed ${slot_address})
   endif()
 
   if(CONFIG_PARTITION_MANAGER_ENABLED)
