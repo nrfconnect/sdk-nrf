@@ -585,13 +585,16 @@ NRF = (
     ("libraries/others/flash_patch", "libraries/security/bootloader/flash_patch"), # Flash patch
     ("libraries/others/fprotect", "libraries/security/bootloader/fprotect"), # Hardware flash write protection
     ("libraries/others/fw_info", "libraries/security/bootloader/fw_info"), # Firmware information
-    ("libraries/nrf_security/index", "libraries/security/nrf_security/index"), # nRF Security (landing page in Security libraries)
-    ("libraries/nrf_security/doc/configuration", "libraries/security/nrf_security/doc/configuration"), # Configuration
+    ("libraries/nrf_security/index", "libraries/security/nrf_security"), # nRF Security (landing page in Security libraries)
+    ("libraries/security/nrf_security/index", "libraries/security/nrf_security"), # nRF Security (legacy index path)
+    ("libraries/nrf_security/doc/configuration", "libraries/security/nrf_security"), # Configuration (merged into landing page)
+    ("libraries/security/nrf_security/doc/configuration", "libraries/security/nrf_security"),
     ("libraries/nrf_security/doc/driver_config", "security/crypto/driver_config"), # Feature configurations and driver support (moved to security/crypto for v3.1.0)
     ("libraries/security/nrf_security/doc/driver_config", "security/crypto/driver_config"),
-    ("libraries/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security/index"), # User-provided Mbed TLS configuration header (removed in v3.1.0)
-    ("libraries/security/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security/index"), # User-provided Mbed TLS configuration header (removed in v3.1.0)
-    ("libraries/nrf_security/doc/backend_config", "libraries/security/nrf_security/doc/backend_config"), # Legacy configurations and supported features
+    ("libraries/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security"), # User-provided Mbed TLS configuration header (removed in v3.1.0)
+    ("libraries/security/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security"), # User-provided Mbed TLS configuration header (removed in v3.1.0)
+    ("libraries/nrf_security/doc/backend_config", "libraries/security/nrf_security"), # Legacy crypto configuration page removed
+    ("libraries/security/nrf_security/doc/backend_config", "libraries/security/nrf_security"), # Legacy crypto configuration page removed
     ("libraries/tfm/index", "libraries/security/tfm/index"), # TF-M libraries (landing)
     ("libraries/tfm/tfm_ioctl_api", "libraries/security/tfm/tfm_ioctl_api"), # TF-M input/output control (IOCTL)
     ("libraries/nrf_rpc/nrf_rpc_dev_info", "libraries/nrf_rpc/nrf_rpc_utils"), # Moved nRF RPC device information to nRF RPC utility commands library (v3.1.0)

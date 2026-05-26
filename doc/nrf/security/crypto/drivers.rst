@@ -14,7 +14,7 @@ The drivers are compatible with the :ref:`Oberon PSA Crypto <ug_crypto_architect
 Driver architecture within Oberon PSA Crypto
 ********************************************
 
-In the |NCS|, you manage and select the cryptographic drivers using the :ref:`nrf_security` library.
+In the |NCS|, you manage and select the cryptographic drivers using the :ref:`nrf_security` subsystem.
 nRF Security provides a unified interface for the :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>` implementation.
 It implements the driver wrapper role and determines which driver to use for each cryptographic operation.
 
@@ -310,7 +310,6 @@ These drivers provide low-level functionalities for hardware-accelerated cryptog
 
 * The :ref:`nrf_cc3xx_platform_readme` provides low-level functionality needed by the nrf_cc3xx mbedcrypto library.
 * The :ref:`nrf_cc3xx_mbedcrypto_readme` provides low-level integration with the Mbed TLS version provided in the |NCS|.
-  It also includes legacy crypto API functions from the Mbed TLS crypto toolbox (prefixed with ``mbedtls_``).
 
 The nrf_cc3xx driver provides support for the following algorithms:
 
@@ -330,8 +329,8 @@ nrf_cc3xx driver configuration
 
 For configuration details, see the following pages:
 
-* :ref:`psa_crypto_support` (both drivers)
-* :ref:`nrf_security_legacy_backend_config` (:ref:`nrf_cc3xx_mbedcrypto_readme` used as legacy backend)
+* :ref:`psa_crypto_support`
+* :ref:`nrf_cc3xx_mbedcrypto_readme`
 
 .. note::
       The :ref:`nrfxlib:crypto` in nrfxlib also include the :ref:`nrf_cc310_bl_readme`.
@@ -434,15 +433,12 @@ The nrf_oberon driver provides support for the following algorithms:
 * RSA (PKCS#1 v1.5 and v2.1) sign and encrypt
 * CTR_DRBG/HMAC_DRBG
 
-The nrf_oberon driver also provides Mbed TLS legacy crypto integration for selected features.
-
 nrf_oberon driver configuration
 -------------------------------
 
 For configuration details, see the following pages:
 
 * :ref:`psa_crypto_support`
-* :ref:`nrf_security_legacy_backend_config` (nrf_oberon used as legacy backend)
 
 .. _crypto_drivers_api_documentation:
 

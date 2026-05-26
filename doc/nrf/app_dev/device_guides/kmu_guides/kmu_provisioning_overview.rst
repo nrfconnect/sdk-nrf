@@ -56,7 +56,7 @@ See :ref:`configuring_kconfig` for information on how to set the required config
 
 Complete the following steps to configure KMU and CRACEN support in your application:
 
-1. Enable the nRF Security library by setting the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option to ``y``.
+1. Enable the nRF Security subsystem by enabling the :kconfig:option:`CONFIG_PSA_CRYPTO` Kconfig option.
 #. Enable the CRACEN driver by setting the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option to ``y``.
 #. Enable support for specific key usage schemes and cryptographic features.
    See :ref:`ug_kmu_guides_supported_key_types` and :ref:`nrf_security_drivers_config_features` for more information.

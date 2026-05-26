@@ -1491,9 +1491,9 @@ KRKNWK-9461/KRKNWK-9596 : Multiprotocol sample crashes with some smartphones
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7885: Throughput is lower when using CC310 nrf_security backend
-  A decrease of throughput of around 5-10% has been observed for the :ref:`CC310 nrf_security backend <nrf_security_backends_cc3xx>` when compared with :ref:`nrf_oberon <nrf_security_backends_oberon>` or the standard Mbed TLS backend.
+  A decrease of throughput of around 5-10% has been observed for the CC310 nrf_security backend when compared with nrf_oberon or the standard Mbed TLS backend.
   CC310 nrf_security backend is used by default for nRF52840 boards.
-  The source of throughput decrease is coupled to the cost of RTOS mutex locking when using the :ref:`CC310 nrf_security backend <nrf_security_backends_cc3xx>` when the APIs are called with shorter inputs.
+  The source of throughput decrease is coupled to the cost of RTOS mutex locking when using the CC310 nrf_security backend when the APIs are called with shorter inputs.
 
   **Affected platforms:** nRF52840
 
