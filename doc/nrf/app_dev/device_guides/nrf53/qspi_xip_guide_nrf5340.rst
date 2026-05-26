@@ -282,11 +282,6 @@ Indication of XIP performance
 
 The XIP code execution performance measurement was conducted to evaluate the expected performance in different operating conditions.
 
-The :ref:`nrf_machine_learning_app` application running on the nRF5340 DK was used for the testing.
-This particular application was used because its application design allows to move the Edge Impulse library to external memory.
-There is only one call to the library from the wrapper module, and therefore this call is used to measure the time of execution.
-Additional measurements of the current allowed to compare total energy used.
-
 The following table lists performance numbers that were measured under different operating conditions.
 
 .. note::

@@ -503,7 +503,7 @@ nRF Desktop
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-* Deprecated the :ref:`nrf_machine_learning_app` application.
+* Deprecated the nRF Machine Learning application.
   It is replaced by the Gesture Recognition application in `Edge AI Add-on for nRF Connect SDK`_.
 
 Samples
@@ -775,7 +775,7 @@ DFU samples
 Edge Impulse samples
 --------------------
 
-* Deprecated :ref:`ei_wrapper_sample` and :ref:`ei_data_forwarder_sample` samples.
+* Deprecated Edge Impulse: Wrapper and Edge Impulse: Data forwarder samples.
   Replaced by samples in `Edge AI Add-on for nRF Connect SDK`_.
 
 Enhanced ShockBurst samples
@@ -1095,7 +1095,7 @@ Other libraries
   * The ``nrf_802154_callbacks_dispatcher`` library for dispatching callbacks from the nRF IEEE 802.15.4 radio driver to the appropriate client.
     This library is useful if the application needs to use more than one nRF IEEE 802.15.4 radio driver client and each client has different callbacks implementations.
 
-* Deprecated the :ref:`ei_wrapper` library.
+* Deprecated the Edge Impulse wrapper library.
   Replaced by Edge Impulse SDK in `Edge AI Add-on for nRF Connect SDK`_.
 
 * :ref:`lib_hw_id` library:

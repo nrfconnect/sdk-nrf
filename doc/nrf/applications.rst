@@ -32,7 +32,6 @@ Applications are also available through the `nRF Connect SDK Add-ons`_, a curate
    ../../applications/matter_bridge/README
    ../../applications/nrf_audio/index
    ../../applications/nrf_desktop/README
-   ../../applications/machine_learning/README
    ../../applications/hpf/hpf
    ../../applications/matter_weather_station/README
    ../../applications/installer/README

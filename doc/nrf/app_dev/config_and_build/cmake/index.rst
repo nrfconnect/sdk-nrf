@@ -179,12 +179,6 @@ Examples of commands
      ..
 
      If the selected board does not support the selected build type, the build is interrupted.
-     For example, for the :ref:`nrf_machine_learning_app` application, if the ``nus`` build type is not supported by the selected board, the following notification appears:
-
-     .. code-block:: console
-
-        Configuration file for build type ``nus`` is missing.
-
   ..
 
 .. _cmake_options_images:

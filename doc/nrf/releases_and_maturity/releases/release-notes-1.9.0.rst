@@ -89,7 +89,7 @@ Application development
 * Updated:
 
   * :ref:`app_build_system` by adding information about default enabling of experimental Kconfig option and the generation of warnings when experimental features are selected.
-  * :ref:`ug_edge_impulse` by adding instructions on how to download a model from a public Edge Impulse project.
+  * Edge Impulse integration by adding instructions on how to download a model from a public Edge Impulse project.
   * :ref:`ug_nrf_cloud` by adding a section that describes and compares MQTT and REST.
 
 * Removed:
