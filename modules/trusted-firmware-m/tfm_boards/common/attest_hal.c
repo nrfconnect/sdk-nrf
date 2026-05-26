@@ -13,7 +13,6 @@
 #include "tfm_attest_hal.h"
 #include "tfm_plat_boot_seed.h"
 #include "tfm_plat_device_id.h"
-#include "tfm_strnlen.h"
 #include "nrf_provisioning.h"
 #include <bl_storage.h>
 
