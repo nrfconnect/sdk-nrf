@@ -13,7 +13,7 @@ The SDK supports the following PSA Crypto API implementations:
 
 For more information about these implementations, see the :ref:`ug_crypto_architecture` page.
 
-All cryptographic functionality is accessed through the :ref:`nrf_security` library, which integrates and configures the PSA Crypto implementation with various :ref:`cryptographic drivers <crypto_drivers>`.
+All cryptographic functionality is accessed through the :ref:`nrf_security` subsystem, which integrates and configures the PSA Crypto implementation with various :ref:`cryptographic drivers <crypto_drivers>`.
 
 For practical examples of cryptographic operations, see the :ref:`cryptography samples <crypto_samples>`.
 For more information about PSA Crypto within the broader context of the PSA Certified IoT Security Framework, see the :ref:`ug_psa_certified_api_overview` page.

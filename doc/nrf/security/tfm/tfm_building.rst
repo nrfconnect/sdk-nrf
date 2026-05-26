@@ -97,10 +97,9 @@ To enable the secure services in TF-M, you must use the :ref:`TF-M Crypto Servic
 
 Complete the following steps to enable the secure services in TF-M:
 
-1. Enable :kconfig:option:`CONFIG_NRF_SECURITY` to use the PSA Crypto APIs through :ref:`nRF Security <nrf_security>`.
-#. Enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
+1. Enable :kconfig:option:`CONFIG_PSA_CRYPTO` to use the PSA Crypto API through :ref:`nRF Security <nrf_security>`.
 #. :ref:`Configure PSA Crypto API <psa_crypto_support>` Kconfig options.
-#. Build the application with :ref:`tfm_minimal_build` or :ref:`tfm_configurable_build`.
+#. Build the application for a :ref:`board target supported by TF-M <ug_tfm_building_board_targets>` with :ref:`tfm_minimal_build` or :ref:`tfm_configurable_build`.
 
 After building the application, the TF-M secure image enables the use of the hardware acceleration, while the Kconfig configurations in the nRF Security subsystem control the features enabled in TF-M.
 

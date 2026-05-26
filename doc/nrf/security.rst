@@ -50,7 +50,7 @@ Expand the following section to see the table listing versions of different secu
        - TF-M version
        - IronSide Secure Enclave version
        - Mbed TLS version
-     * - Upcoming release (currently on the ``main`` branch of `sdk-nrf`_)
+     * - ``main`` branch of `sdk-nrf`_
        - |tf-m_ver|
        - |ironside_se_ver|
        - |mbed_tls_ver|
@@ -129,10 +129,10 @@ Some of them are documented in detail in other parts of this documentation, whil
       | - :doc:`MCUboot <mcuboot:design>`
   * - Cryptographic operations
     - The |NCS| follows the :ref:`PSA Crypto standard <ug_psa_certified_api_overview_crypto>` and provides :ref:`two different implementations <ug_crypto_architecture_implementation_standards>`, Oberon PSA Crypto and TF-M Crypto Service.
-      The :ref:`nrf_security` library acts as an orchestrator for the different cryptographic libraries available in the system.
+      The :ref:`nrf_security` subsystem acts as an orchestrator for the different cryptographic libraries available in the system.
       HW accelerated libraries are prioritized over SW libraries when both are enabled.
-    - :kconfig:option:`CONFIG_NRF_SECURITY` (:ref:`more info<psa_crypto_support>`)
-    - | - :ref:`nrf_security` library
+    - :kconfig:option:`CONFIG_PSA_CRYPTO` (:ref:`more info<psa_crypto_support>`)
+    - | - :ref:`nrf_security` subsystem
       | - :ref:`nrfxlib:crypto`
       | - :ref:`crypto_samples`
       | - :ref:`ug_kmu_guides`

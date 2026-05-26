@@ -22,7 +22,7 @@ For details, see the following sections.
 Cryptography
 ************
 
-The Thread stack uses the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` for cryptographic operations integrated in the nRF Security library.
+The Thread stack uses the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` for cryptographic operations integrated in the nRF Security subsystem.
 Both :ref:`ug_crypto_architecture_implementation_standards` are supported, but using TF-M Crypto Service is only possible with Trusted Firmware-M (TF-M).
 See :ref:`psa_crypto_support` and :ref:`ug_crypto_supported_features` for more information.
 

@@ -10,13 +10,10 @@ Configuring PSA Crypto API
 
 .. psa_crypto_support_def_start
 
-The PSA Crypto in the |NCS| provides secure crypto operations through standardized :ref:`Platform Security Architecture <ug_psa_certified_api_overview>`.
-Using :ref:`one of the two available implementations of the PSA Crypto API <ug_crypto_architecture_implementation_standards>`, the SDK implements the cryptographic features in software or using hardware accelerators, or both.
+The PSA Crypto API in the |NCS| provides secure crypto operations for Nordic Semiconductor's Arm cores through standardized :ref:`Platform Security Architecture <ug_psa_certified_api_overview>`.
+Using :ref:`one of the available implementations of the PSA Crypto API <ug_crypto_architecture_implementation_standards>`, the SDK implements the cryptographic features in software or using hardware accelerators, or both.
 
 .. psa_crypto_support_def_end
-
-.. note::
-   If you work with the Mbed TLS legacy crypto toolbox, see :ref:`legacy_crypto_support`.
 
 .. _psa_crypto_support_enable:
 
@@ -25,10 +22,12 @@ Enabling PSA Crypto API
 
 To use the PSA Crypto API in your application, enable the following Kconfig options depending on your chosen implementation:
 
-* For the :ref:`Oberon PSA Crypto implementation <ug_crypto_architecture_implementation_standards_oberon>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option.
-* For the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` Kconfig options.
-  For more information, see :ref:`ug_tfm_building_secure_services`.
-* For the :ref:`IronSide Secure Enclave implementation <ug_crypto_architecture_implementation_standards_ironside>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option on the nRF54H20's :ref:`ug_nrf54h20_architecture_cpu_appcore`.
+* For the :ref:`Oberon PSA Crypto implementation <ug_crypto_architecture_implementation_standards_oberon>`, enable the :kconfig:option:`CONFIG_PSA_CRYPTO` Kconfig option.
+* For the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`, enable the :kconfig:option:`CONFIG_PSA_CRYPTO` Kconfig options and make sure to build for an ``*/ns`` board target.
+  For more information, see :ref:`ug_tfm_building`.
+* For the :ref:`IronSide Secure Enclave implementation <ug_crypto_architecture_implementation_standards_ironside>`, enable the :kconfig:option:`CONFIG_PSA_CRYPTO` Kconfig option on the nRF54H20's :ref:`ug_nrf54h20_architecture_cpu_appcore`.
+
+When you use a Nordic Semiconductor's Arm core, the :kconfig:option:`CONFIG_PSA_CRYPTO` Kconfig option automatically enables the :ref:`nrf_security` subsystem.
 
 .. _psa_crypto_support_single_driver:
 
