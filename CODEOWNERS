@@ -31,7 +31,6 @@
 /applications/serial_modem/README.rst     @nrfconnect/ncs-modem-doc
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
 /applications/ipc_radio/                  @nrfconnect/ncs-si-muffin
-/applications/machine_learning/           @nrfconnect/ncs-si-muffin
 /applications/matter_bridge/              @nrfconnect/ncs-matter
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf_audio/              @nrfconnect/ncs-audio
@@ -42,7 +41,6 @@
 /applications/hpf/**/*.rst                @nrfconnect/ncs-lowlevel-doc
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
 /applications/ipc_radio/*.rst             @nrfconnect/ncs-si-muffin-doc
-/applications/machine_learning/*.rst      @nrfconnect/ncs-si-muffin-doc
 /applications/matter_bridge/**/*.rst      @nrfconnect/ncs-matter-doc
 /applications/matter_weather_station/*.rst @nrfconnect/ncs-matter-doc
 /applications/nrf_audio/**/*.rst      @nrfconnect/ncs-audio-doc
@@ -108,7 +106,6 @@
 /doc/nrf/external_comp/bt_fast_pair/      @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/external_comp/coremark.rst       @nrfconnect/ncs-blenders-doc
 /doc/nrf/external_comp/dult.rst           @nrfconnect/ncs-si-bluebagel-doc
-/doc/nrf/external_comp/edge_impulse.rst   @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/external_comp/memfault.rst       @nrfconnect/ncs-cia-doc
 /doc/nrf/external_comp/nrf_cloud.rst      @nrfconnect/ncs-nrf-cloud-doc
 /doc/nrf/gsg_guides.rst                   @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/ncs-wayland-doc
@@ -188,7 +185,6 @@
 /doc/nrf/libraries/others/dk_buttons_and_leds.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/dm.rst          @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/others/dult.rst        @nrfconnect/ncs-si-bluebagel-doc
-/doc/nrf/libraries/others/ei_wrapper.rst  @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/others/emds.rst        @nrfconnect/ncs-paladin-doc
 /doc/nrf/libraries/others/esb.rst         @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/event_manager_proxy.rst @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
@@ -247,7 +243,6 @@
 /doc/nrf/samples/debug.rst                @nrfconnect/ncs-cia-doc
 /doc/nrf/samples/dect.rst                 @nrfconnect/ncs-modem-doc
 /doc/nrf/samples/dfu.rst                  @nrfconnect/ncs-eris-doc
-/doc/nrf/samples/edge.rst                 @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/samples/esb.rst                  @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/samples/fast_pair.rst            @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/samples/gazell.rst               @nrfconnect/ncs-si-xcake-doc
@@ -390,7 +385,6 @@
 /lib/date_time/                           @nrfconnect/ncs-modem-tre
 /lib/dk_buttons_and_leds/                 @nrfconnect/ncs-si-muffin
 /lib/dtm_twowire/                         @nrfconnect/ncs-dragoon
-/lib/edge_impulse/                        @nrfconnect/ncs-si-muffin
 /lib/fatal_error/                         @nordic-krch
 /lib/fem_al/                              @nrfconnect/ncs-dragoon
 /lib/flash_patch/                         @nrfconnect/ncs-eris
@@ -522,7 +516,6 @@
 /samples/dect/hello_dect/                 @nrfconnect/ncs-dect-nr-plus
 /samples/dect/dect_shell/                 @nrfconnect/ncs-dect-nr-plus
 /samples/dfu/                             @nrfconnect/ncs-eris
-/samples/edge_impulse/                    @nrfconnect/ncs-si-muffin
 /samples/esb/                             @nrfconnect/ncs-si-xcake
 /samples/event_manager_proxy/             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /samples/gazell/                          @leewkb4567
@@ -667,7 +660,6 @@
 /samples/dfu/smp_svr/*.rst                @nrfconnect/ncs-eris-doc
 /samples/dfu/smp_svr_mini_boot/*.rst      @nrfconnect/ncs-eris-doc
 /samples/esb/**/*.rst                     @nrfconnect/ncs-si-xcake-doc
-/samples/edge_impulse/**/*.rst            @nrfconnect/ncs-si-muffin-doc
 /samples/event_manager_proxy/*.rst        @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /samples/gazell/**/*.rst                  @nrfconnect/ncs-si-xcake-doc
 /samples/hw_id/*.rst                      @nrfconnect/ncs-cia-doc
@@ -930,7 +922,6 @@
 /tests/lib/contin_array/                  @nrfconnect/ncs-audio
 /tests/lib/data_fifo/                     @nrfconnect/ncs-audio
 /tests/lib/date_time/                     @nrfconnect/ncs-modem-tre
-/tests/lib/edge_impulse/                  @nrfconnect/ncs-si-muffin
 /tests/lib/gcf_sms/                       @nrfconnect/ncs-modem
 /tests/lib/hw_unique_key*/                @nrfconnect/ncs-aegir
 /tests/lib/hw_id/                         @nrfconnect/ncs-cia

@@ -94,12 +94,12 @@ Applications and samples
 
 The following application uses the Edge Impulse integration in the |NCS|:
 
-* :ref:`nrf_machine_learning_app`
+* nRF Machine Learning
 
 The following samples demonstrate the Edge Impulse integration in the |NCS|:
 
-* :ref:`ei_wrapper_sample`
-* :ref:`ei_data_forwarder_sample`
+* Edge Impulse: Wrapper
+* Edge Impulse: Data forwarder
 
 Library support
 ***************
