@@ -24,6 +24,11 @@
 /* TF-M */
 #cmakedefine MBEDTLS_PSA_CRYPTO_SPM
 
+#if defined(__NRF_TFM__) && \
+    !defined(MBEDTLS_PLATFORM_NO_STD_FUNCTIONS)
+#define MBEDTLS_PLATFORM_NO_STD_FUNCTIONS
+#endif
+
 /* RSA */
 #cmakedefine PSA_MAX_RSA_KEY_BITS @PSA_MAX_RSA_KEY_BITS@
 
