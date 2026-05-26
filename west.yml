@@ -139,11 +139,11 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: 92d44566209a0d94a571cc7f71a4a7b9262f7602
+      revision: 5b7ca76723b3aa77a9ab066e552fe0dca4975f45
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: 3a9005029dae919e3f6d9d4182465a8e2572cf9f
+      revision: ce39726a33b6263b8a006ba404f78b209be1806c
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
