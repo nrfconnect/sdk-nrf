@@ -561,7 +561,11 @@ static int tx_publish_sdu_ref_and_finalize(struct bt_le_audio_tx_ctx *ctx, uint3
 
 	msg.tx_sync_ts_us = ctx->ts_ctlr_esti_us;
 	msg.tx_sync_ts_us_valid = ctx->ts_ctlr_esti_us_valid;
+	#ifdef CONFIG_NRFX_CLOCK
 	msg.curr_ts_us = audio_sync_timer_capture();
+	#else
+	msg.curr_ts_us = ts_now_us;
+	#endif
 	msg.adjust = true;
 	msg.status = ctx->last_data_status;
 
