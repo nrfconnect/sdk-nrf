@@ -15,12 +15,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38328"
 
 - scenarios:
-    - kmu.west.provision.verify_keys_in_app
-  platforms:
-    - nrf54lm20dk/nrf54lm20b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39210"
-
-- scenarios:
     - sample.benchmark.coremark.multiple_threads
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
