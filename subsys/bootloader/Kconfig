@@ -222,6 +222,22 @@ config NCS_MCUBOOT_MANIFEST_IMAGE_INDEX
 
 endif # NCS_MCUBOOT_MANIFEST_UPDATES
 
+config NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS
+	bool "Set ih_load_addr using imgtool --rom-fixed when signing images"
+	depends on !MCUBOOT_BOOTLOADER_MODE_SINGLE_APP
+	depends on !MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+	depends on !MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	depends on !MCUBOOT_BOOTLOADER_MODE_RAM_LOAD
+	depends on !MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT
+	depends on !MCUBOOT_BOOTLOADER_MODE_SINGLE_APP_RAM_LOAD
+	default y
+	help
+	  When signing application images, pass the --rom-fixed imgtool argument with the
+	  absolute address of the zephyr,code-partition. This sets the ih_load_addr field and
+	  IMAGE_F_ROM_FIXED flag in the image header, which allows MCUboot to match an incoming
+	  update candidate to the correct primary slot when the secondary slot is shared between
+	  images. The image header is always plain text, so this also works for encrypted images.
+
 DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
 DT_NODELABEL_SECONDARY_PARTITION := secondary_app_partition
 DT_NODELABEL_SLOT1_PARTITION := slot1_partition

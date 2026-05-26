@@ -11,6 +11,7 @@
 # function to avoid polluting the top-level scope.
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/ironside_se_tlv.cmake)
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
 
 function(zephyr_runner_file type path)
   # Property magic which makes west flash choose the signed build
@@ -122,6 +123,15 @@ function(zephyr_mcuboot_tasks)
     cmake_path(APPEND APPLICATION_BINARY_DIR "zephyr" "edt.pickle" OUTPUT_VARIABLE edt_pickle)
     message(STATUS "Passing DTS-based MCUboot configuration: ${mcuboot_configs}")
     set(imgtool_args ${imgtool_args} --edt-config "${edt_pickle}")
+  endif()
+
+  # Set ih_load_addr to the code partition address using --rom-fixed.
+  # This allows MCUboot to match an update candidate to the primary slot when the
+  # secondary slot is shared, including for encrypted images.
+  if(CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS)
+    dt_chosen(code_partition PROPERTY "zephyr,code-partition")
+    dt_partition_addr(code_partition_address PATH "${code_partition}" ABSOLUTE REQUIRED)
+    set(imgtool_args ${imgtool_args} --rom-fixed ${code_partition_address})
   endif()
 
   # Extensionless prefix of any output file.

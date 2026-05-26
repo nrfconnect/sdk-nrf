@@ -493,6 +493,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
        OR SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT
        OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
        # Do not use the upstream mcuboot.cmake on new platforms.
+       OR SB_CONFIG_SOC_SERIES_NRF53
        OR SB_CONFIG_SOC_SERIES_NRF54L
        OR SB_CONFIG_SOC_SERIES_NRF54H OR SB_CONFIG_QSPI_XIP_SPLIT_IMAGE
        # TF-M NS builds require signing tfm_merged.hex, not zephyr.hex.
