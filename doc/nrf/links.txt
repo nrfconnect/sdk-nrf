@@ -185,9 +185,6 @@
 
 .. _`conversion example Pull Request`: https://github.com/zephyrproject-rtos/example-application/pull/58
 
-.. _`sdk-oberon-psa-crypto`: https://github.com/nrfconnect/sdk-oberon-psa-crypto
-.. _`Oberon PSA core changelog`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/CHANGELOG.md
-
 .. _`ISO 8601 date format`: https://www.iso.org/iso-8601-date-and-time-format.html
 .. _`X.509`: https://www.itu.int/rec/T-REC-X.509-201910-I/en
 
@@ -269,13 +266,18 @@
 .. _`nRF Connect SDK Add-ons`: https://nrfconnect.github.io/ncs-app-index/
 .. _`ncs-app-index`: https://github.com/nrfconnect/ncs-app-index
 
+.. _`sdk-oberon-psa-crypto`: https://github.com/nrfconnect/sdk-oberon-psa-crypto
+.. _`Oberon PSA core changelog`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/CHANGELOG.md
 .. _`crypto.h`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/include/psa/crypto.h
 .. _`crypto_struct.h`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/include/psa/crypto_struct.h
 .. _`psa_key_attributes_s`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/include/psa/crypto_struct.h#L286
+
+.. _`sdk-trusted-firmware-m`: https://github.com/nrfconnect/sdk-trusted-firmware-m/
 .. _`protected_storage.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/master/interface/include/psa/protected_storage.h
 .. _`initial_attestation.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/interface/include/psa/initial_attestation.h.in
 .. _`tfm_platform_api.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/interface/include/tfm_platform_api.h
 .. _`tfm_ioctl_core_api.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/platform/ext/target/nordic_nrf/common/core/services/include/tfm_ioctl_core_api.h
+
 .. _`tfm_ioctl_api.h`: https://github.com/nrfconnect/sdk-nrf/blob/main/include/tfm/tfm_ioctl_api.h
 
 .. ### Source: arm-software.github.io, armmbed.github.io

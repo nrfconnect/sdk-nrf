@@ -208,7 +208,7 @@
 /doc/nrf/libraries/others/uart_async_adapter.rst @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/others/wave_gen.rst    @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/security/bootloader/   @nrfconnect/ncs-eris-doc
-/doc/nrf/libraries/security/nrf_security/ @nrfconnect/ncs-aegir-doc
+/doc/nrf/libraries/security/nrf_security.rst @nrfconnect/ncs-aegir-doc
 /doc/nrf/libraries/security/tfm/          @nrfconnect/ncs-aegir-doc
 /doc/nrf/libraries/security/fatal_error.rst @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/security/hw_unique_key.rst @nrfconnect/ncs-aegir-doc

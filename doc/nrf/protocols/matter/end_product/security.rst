@@ -21,12 +21,13 @@ Cryptography
 
 Depending on the networking backend, the |NCS| Matter samples currently use the following APIs to implement cryptographic operations:
 
-* :ref:`PSA Cryptography API <psa_crypto_support>` for Thread networking.
+* :ref:`PSA Crypto API <psa_crypto_support>` for Thread networking.
   Both :ref:`ug_crypto_architecture_implementation_standards` are supported, but using TF-M Crypto Service is only possible with Trusted Firmware-M (TF-M).
-* :ref:`Legacy Mbed TLS crypto API <legacy_crypto_support>` for Wi-Fi® networking.
-  Support for PSA Cryptography API for the Wi-Fi backend is planned for a future release.
 
-Both APIs are integrated through the nRF Security library.
+.. note::
+   Support for the PSA Crypto API in the Wi-Fi backend is planned for a future release.
+
+Both APIs are integrated through the nRF Security subsystem.
 For an overview of the PSA Crypto API, see the :ref:`ug_crypto_architecture` page.
 For an overview of the cryptography layer configuration supported for each |NCS| Matter-enabled platform, see the :ref:`matter_platforms_security_support` section.
 
