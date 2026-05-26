@@ -374,4 +374,4 @@ Next steps
 Your environment is now set to use the |NCS| v2.6.99-cs2 with the nRF54H20 DK:
 
 * If you want to modify your existing custom applications previously developed for |NCS| v2.4.99-cs3 to be compatible with v2.6.99-cs2, consult :ref:`migration_cs3_to_2_6_99_cs2_app`.
-* If you want to build and program a sample application on your nRF54H20 DK, consult the building and programming section in the `nRF54H20 DK getting started guide for the nRF Connect SDK v2.6.99-cs2`_.
+* If you want to build and program a sample application on your nRF54H20 DK, consult the building and programming section in the :ref:`ug_nrf54h20_gs` guide.
