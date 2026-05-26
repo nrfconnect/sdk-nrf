@@ -698,7 +698,11 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
-  * Updated the range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
+  * Updated:
+
+    * The range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
+    * The CoAP endpoint used for requesting predictions has been renamed from ``loc/pgps`` to ``loc/pgnss``.
+      The CBOR wire format is unchanged.
 
   * Fixed:
 

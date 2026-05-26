@@ -29,7 +29,7 @@
 LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 
 #define COAP_AGNSS_RSC "loc/agnss"
-#define COAP_PGPS_RSC "loc/pgps"
+#define COAP_PGPS_RSC "loc/pgnss"
 #define COAP_GND_FIX_RSC "loc/ground-fix"
 #define COAP_FOTA_GET_RSC "fota/exec/current"
 #define COAP_SHDW_RSC "state"
