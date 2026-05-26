@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Pause.
+				} // namespace Pause
 				namespace Resume
 				{
 
@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Resume.
+				} // namespace Resume
 				namespace OperationalCommandResponse
 				{
 
@@ -110,7 +110,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OperationalCommandResponse.
+				} // namespace OperationalCommandResponse
 				namespace GoHome
 				{
 
@@ -133,7 +133,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GoHome.
+				} // namespace GoHome
 			} // namespace Commands
 		} // namespace RvcOperationalState
 	} // namespace Clusters

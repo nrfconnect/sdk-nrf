@@ -77,7 +77,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveToHue.
+				} // namespace MoveToHue
 				namespace MoveHue
 				{
 
@@ -117,7 +117,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveHue.
+				} // namespace MoveHue
 				namespace StepHue
 				{
 
@@ -161,7 +161,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StepHue.
+				} // namespace StepHue
 				namespace MoveToSaturation
 				{
 
@@ -202,7 +202,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveToSaturation.
+				} // namespace MoveToSaturation
 				namespace MoveSaturation
 				{
 
@@ -242,7 +242,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveSaturation.
+				} // namespace MoveSaturation
 				namespace StepSaturation
 				{
 
@@ -286,7 +286,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StepSaturation.
+				} // namespace StepSaturation
 				namespace MoveToHueAndSaturation
 				{
 
@@ -331,7 +331,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveToHueAndSaturation.
+				} // namespace MoveToHueAndSaturation
 				namespace MoveToColor
 				{
 
@@ -375,7 +375,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveToColor.
+				} // namespace MoveToColor
 				namespace MoveColor
 				{
 
@@ -415,7 +415,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveColor.
+				} // namespace MoveColor
 				namespace StepColor
 				{
 
@@ -459,7 +459,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StepColor.
+				} // namespace StepColor
 				namespace MoveToColorTemperature
 				{
 
@@ -502,7 +502,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveToColorTemperature.
+				} // namespace MoveToColorTemperature
 				namespace EnhancedMoveToHue
 				{
 
@@ -546,7 +546,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnhancedMoveToHue.
+				} // namespace EnhancedMoveToHue
 				namespace EnhancedMoveHue
 				{
 
@@ -586,7 +586,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnhancedMoveHue.
+				} // namespace EnhancedMoveHue
 				namespace EnhancedStepHue
 				{
 
@@ -630,7 +630,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnhancedStepHue.
+				} // namespace EnhancedStepHue
 				namespace EnhancedMoveToHueAndSaturation
 				{
 
@@ -675,7 +675,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnhancedMoveToHueAndSaturation.
+				} // namespace EnhancedMoveToHueAndSaturation
 				namespace ColorLoopSet
 				{
 
@@ -724,7 +724,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ColorLoopSet.
+				} // namespace ColorLoopSet
 				namespace StopMoveStep
 				{
 
@@ -757,7 +757,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StopMoveStep.
+				} // namespace StopMoveStep
 				namespace MoveColorTemperature
 				{
 
@@ -811,7 +811,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveColorTemperature.
+				} // namespace MoveColorTemperature
 				namespace StepColorTemperature
 				{
 
@@ -869,7 +869,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StepColorTemperature.
+				} // namespace StepColorTemperature
 			} // namespace Commands
 		} // namespace ColorControl
 	} // namespace Clusters

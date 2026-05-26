@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster CarbonMonoxideConcentrationMeasurement (cluster code: 1036/0x40C)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

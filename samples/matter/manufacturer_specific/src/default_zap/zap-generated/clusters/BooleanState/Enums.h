@@ -31,6 +31,11 @@ namespace app
 	{
 		namespace BooleanState
 		{
+
+			// Bitmap for Feature
+			enum class Feature : uint32_t {
+				kChangeEvent = 0x1,
+			};
 		} // namespace BooleanState
 	} // namespace Clusters
 } // namespace app

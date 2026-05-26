@@ -76,6 +76,8 @@ namespace app
 				kInvalidOptions = 0x09,
 				kInvalidStreamUsage = 0x0A,
 				kInvalidTime = 0x0B,
+				kInvalidPreRollLength = 0x0C,
+				kDuplicateStreamValues = 0x0D,
 				// All received enum values that are not listed above will be mapped
 				// to kUnknownEnumValue. This is a helper enum value that should only
 				// be used by code to process how it handles receiving and unknown
@@ -99,11 +101,12 @@ namespace app
 				kCommand = 0x00,
 				kMotion = 0x01,
 				kContinuous = 0x02,
+				kAmbientContext = 0x03,
 				// All received enum values that are not listed above will be mapped
 				// to kUnknownEnumValue. This is a helper enum value that should only
 				// be used by code to process how it handles receiving and unknown
 				// enum value. This specific should never be transmitted.
-				kUnknownEnumValue = 3,
+				kUnknownEnumValue = 4,
 			};
 
 			// Enum for TriggerActivationReasonEnum
@@ -111,11 +114,12 @@ namespace app
 				kUserInitiated = 0x00,
 				kAutomation = 0x01,
 				kEmergency = 0x02,
+				kDoorbellPressed = 0x03,
 				// All received enum values that are not listed above will be mapped
 				// to kUnknownEnumValue. This is a helper enum value that should only
 				// be used by code to process how it handles receiving and unknown
 				// enum value. This specific should never be transmitted.
-				kUnknownEnumValue = 3,
+				kUnknownEnumValue = 4,
 			};
 
 			// Bitmap for Feature

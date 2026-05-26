@@ -151,6 +151,7 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kThreshold), threshold);
 						encoder.Encode(to_underlying(Fields::kLabel), label);
 						encoder.Encode(to_underlying(Fields::kPredicted), predicted);
+						encoder.Encode(to_underlying(Fields::kExternalID), externalID);
 						return encoder.Finalize();
 					}
 
@@ -187,6 +188,9 @@ namespace app
 								err = DataModel::Decode(reader, label);
 							} else if (__context_tag == to_underlying(Fields::kPredicted)) {
 								err = DataModel::Decode(reader, predicted);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kExternalID)) {
+								err = DataModel::Decode(reader, externalID);
 							}
 
 							ReturnErrorOnFailure(err);

@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster FlowMeasurement (cluster code: 1028/0x404)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

@@ -80,7 +80,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StateTransition.
+				} // namespace StateTransition
 				namespace VersionApplied
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -116,7 +116,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace VersionApplied.
+				} // namespace VersionApplied
 				namespace DownloadError
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -165,7 +165,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace DownloadError.
+				} // namespace DownloadError
 			} // namespace Events
 		} // namespace OtaSoftwareUpdateRequestor
 	} // namespace Clusters

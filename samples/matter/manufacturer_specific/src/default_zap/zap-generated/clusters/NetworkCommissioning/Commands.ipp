@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ScanNetworks.
+				} // namespace ScanNetworks
 				namespace ScanNetworksResponse
 				{
 
@@ -108,7 +108,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ScanNetworksResponse.
+				} // namespace ScanNetworksResponse
 				namespace AddOrUpdateWiFiNetwork
 				{
 
@@ -159,7 +159,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddOrUpdateWiFiNetwork.
+				} // namespace AddOrUpdateWiFiNetwork
 				namespace AddOrUpdateThreadNetwork
 				{
 
@@ -193,7 +193,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddOrUpdateThreadNetwork.
+				} // namespace AddOrUpdateThreadNetwork
 				namespace RemoveNetwork
 				{
 
@@ -225,7 +225,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveNetwork.
+				} // namespace RemoveNetwork
 				namespace NetworkConfigResponse
 				{
 
@@ -271,7 +271,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace NetworkConfigResponse.
+				} // namespace NetworkConfigResponse
 				namespace ConnectNetwork
 				{
 
@@ -303,7 +303,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ConnectNetwork.
+				} // namespace ConnectNetwork
 				namespace ConnectNetworkResponse
 				{
 
@@ -340,7 +340,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ConnectNetworkResponse.
+				} // namespace ConnectNetworkResponse
 				namespace ReorderNetwork
 				{
 
@@ -376,7 +376,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ReorderNetwork.
+				} // namespace ReorderNetwork
 				namespace QueryIdentity
 				{
 
@@ -409,7 +409,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace QueryIdentity.
+				} // namespace QueryIdentity
 				namespace QueryIdentityResponse
 				{
 
@@ -443,7 +443,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace QueryIdentityResponse.
+				} // namespace QueryIdentityResponse
 			} // namespace Commands
 		} // namespace NetworkCommissioning
 	} // namespace Clusters

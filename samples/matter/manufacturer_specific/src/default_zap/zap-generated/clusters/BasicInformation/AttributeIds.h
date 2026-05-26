@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster BasicInformation (cluster code: 40/0x28)
-// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>
@@ -136,10 +135,10 @@ namespace app
 					inline constexpr AttributeId Id = 0x00000016;
 				} // namespace MaxPathsPerInvoke
 
-				namespace RandomNumber
+				namespace DeviceLocation
 				{
 					inline constexpr AttributeId Id = 0x00000017;
-				} // namespace RandomNumber
+				} // namespace DeviceLocation
 
 				namespace ConfigurationVersion
 				{

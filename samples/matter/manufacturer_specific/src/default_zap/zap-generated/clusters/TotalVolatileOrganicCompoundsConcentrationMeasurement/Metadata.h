@@ -21,7 +21,7 @@ namespace app
 		namespace TotalVolatileOrganicCompoundsConcentrationMeasurement
 		{
 
-			inline constexpr uint32_t kRevision = 3;
+			inline constexpr uint32_t kRevision = 5;
 
 			namespace Attributes
 			{

@@ -62,7 +62,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SuppressAlarm.
+				} // namespace SuppressAlarm
 				namespace EnableDisableAlarm
 				{
 
@@ -92,7 +92,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnableDisableAlarm.
+				} // namespace EnableDisableAlarm
 			} // namespace Commands
 		} // namespace BooleanStateConfiguration
 	} // namespace Clusters

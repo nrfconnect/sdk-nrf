@@ -64,7 +64,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LaunchApp.
+				} // namespace LaunchApp
 				namespace StopApp
 				{
 
@@ -92,7 +92,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StopApp.
+				} // namespace StopApp
 				namespace HideApp
 				{
 
@@ -120,7 +120,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace HideApp.
+				} // namespace HideApp
 				namespace LauncherResponse
 				{
 
@@ -152,7 +152,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LauncherResponse.
+				} // namespace LauncherResponse
 			} // namespace Commands
 		} // namespace ApplicationLauncher
 	} // namespace Clusters

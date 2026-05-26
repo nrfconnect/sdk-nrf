@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster WebRTCTransportRequestor (cluster code: 1364/0x554)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

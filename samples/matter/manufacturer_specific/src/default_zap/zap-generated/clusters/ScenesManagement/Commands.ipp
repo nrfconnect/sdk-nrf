@@ -78,7 +78,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddScene.
+				} // namespace AddScene
 				namespace AddSceneResponse
 				{
 
@@ -113,7 +113,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddSceneResponse.
+				} // namespace AddSceneResponse
 				namespace ViewScene
 				{
 
@@ -145,7 +145,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ViewScene.
+				} // namespace ViewScene
 				namespace ViewSceneResponse
 				{
 
@@ -193,7 +193,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ViewSceneResponse.
+				} // namespace ViewSceneResponse
 				namespace RemoveScene
 				{
 
@@ -225,7 +225,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveScene.
+				} // namespace RemoveScene
 				namespace RemoveSceneResponse
 				{
 
@@ -260,7 +260,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveSceneResponse.
+				} // namespace RemoveSceneResponse
 				namespace RemoveAllScenes
 				{
 
@@ -289,7 +289,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveAllScenes.
+				} // namespace RemoveAllScenes
 				namespace RemoveAllScenesResponse
 				{
 
@@ -321,7 +321,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveAllScenesResponse.
+				} // namespace RemoveAllScenesResponse
 				namespace StoreScene
 				{
 
@@ -353,7 +353,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StoreScene.
+				} // namespace StoreScene
 				namespace StoreSceneResponse
 				{
 
@@ -388,7 +388,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StoreSceneResponse.
+				} // namespace StoreSceneResponse
 				namespace RecallScene
 				{
 
@@ -424,7 +424,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RecallScene.
+				} // namespace RecallScene
 				namespace GetSceneMembership
 				{
 
@@ -453,7 +453,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetSceneMembership.
+				} // namespace GetSceneMembership
 				namespace GetSceneMembershipResponse
 				{
 
@@ -491,7 +491,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetSceneMembershipResponse.
+				} // namespace GetSceneMembershipResponse
 				namespace CopyScene
 				{
 
@@ -540,7 +540,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CopyScene.
+				} // namespace CopyScene
 				namespace CopySceneResponse
 				{
 
@@ -579,7 +579,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CopySceneResponse.
+				} // namespace CopySceneResponse
 			} // namespace Commands
 		} // namespace ScenesManagement
 	} // namespace Clusters

@@ -63,7 +63,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AllocatePushTransport.
+				} // namespace AllocatePushTransport
 				namespace AllocatePushTransportResponse
 				{
 
@@ -95,7 +95,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AllocatePushTransportResponse.
+				} // namespace AllocatePushTransportResponse
 				namespace DeallocatePushTransport
 				{
 
@@ -124,7 +124,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace DeallocatePushTransport.
+				} // namespace DeallocatePushTransport
 				namespace ModifyPushTransport
 				{
 
@@ -158,7 +158,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ModifyPushTransport.
+				} // namespace ModifyPushTransport
 				namespace SetTransportStatus
 				{
 
@@ -192,7 +192,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTransportStatus.
+				} // namespace SetTransportStatus
 				namespace ManuallyTriggerTransport
 				{
 
@@ -234,7 +234,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ManuallyTriggerTransport.
+				} // namespace ManuallyTriggerTransport
 				namespace FindTransport
 				{
 
@@ -263,7 +263,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FindTransport.
+				} // namespace FindTransport
 				namespace FindTransportResponse
 				{
 
@@ -296,7 +296,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FindTransportResponse.
+				} // namespace FindTransportResponse
 			} // namespace Commands
 		} // namespace PushAvStreamTransport
 	} // namespace Clusters

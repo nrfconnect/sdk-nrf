@@ -59,14 +59,12 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kGroupID), groupID);
 						encoder.Encode(to_underlying(Fields::kEndpoints), endpoints);
 						if (includeSensitive) {
-							encoder.Encode(to_underlying(Fields::kKeyID), keyID);
+							encoder.Encode(to_underlying(Fields::kKeySetID), keySetID);
 						}
 						encoder.Encode(to_underlying(Fields::kHasAuxiliaryACL),
 							       hasAuxiliaryACL);
-						if (includeSensitive) {
-							encoder.Encode(to_underlying(Fields::kExpiringKeyID),
-								       expiringKeyID);
-						}
+						encoder.Encode(to_underlying(Fields::kMcastAddrPolicy),
+							       mcastAddrPolicy);
 						if (aAccessingFabricIndex.HasValue()) {
 							encoder.Encode(to_underlying(Fields::kFabricIndex),
 								       fabricIndex);
@@ -89,14 +87,14 @@ namespace app
 								err = DataModel::Decode(reader, groupID);
 							} else if (__context_tag == to_underlying(Fields::kEndpoints)) {
 								err = DataModel::Decode(reader, endpoints);
-							} else if (__context_tag == to_underlying(Fields::kKeyID)) {
-								err = DataModel::Decode(reader, keyID);
+							} else if (__context_tag == to_underlying(Fields::kKeySetID)) {
+								err = DataModel::Decode(reader, keySetID);
 							} else if (__context_tag ==
 								   to_underlying(Fields::kHasAuxiliaryACL)) {
 								err = DataModel::Decode(reader, hasAuxiliaryACL);
 							} else if (__context_tag ==
-								   to_underlying(Fields::kExpiringKeyID)) {
-								err = DataModel::Decode(reader, expiringKeyID);
+								   to_underlying(Fields::kMcastAddrPolicy)) {
+								err = DataModel::Decode(reader, mcastAddrPolicy);
 							} else if (__context_tag ==
 								   to_underlying(Fields::kFabricIndex)) {
 								err = DataModel::Decode(reader, fabricIndex);

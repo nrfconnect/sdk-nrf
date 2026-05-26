@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster OccupancySensing (cluster code: 1030/0x406)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace OccupancySensing
 		{
 
-			inline constexpr uint32_t kRevision = 5;
+			inline constexpr uint32_t kRevision = 7;
 
 			namespace Attributes
 			{
@@ -61,6 +60,14 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace HoldTimeLimits
+				namespace PredictedOccupancy
+				{
+					inline constexpr DataModel::AttributeEntry kMetadataEntry(
+						PredictedOccupancy::Id,
+						BitFlags<DataModel::AttributeQualityFlags>(
+							DataModel::AttributeQualityFlags::kListAttribute),
+						Access::Privilege::kView, std::nullopt);
+				} // namespace PredictedOccupancy
 				namespace PIROccupiedToUnoccupiedDelay
 				{
 					inline constexpr DataModel::AttributeEntry

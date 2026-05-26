@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster Groupcast (cluster code: 101/0x65)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <lib/core/DataModelTypes.h>
@@ -39,15 +38,15 @@ namespace app
 					inline constexpr CommandId Id = 0x00000003;
 				} // namespace UpdateGroupKey
 
-				namespace ExpireGracePeriod
-				{
-					inline constexpr CommandId Id = 0x00000004;
-				} // namespace ExpireGracePeriod
-
 				namespace ConfigureAuxiliaryACL
 				{
-					inline constexpr CommandId Id = 0x00000005;
+					inline constexpr CommandId Id = 0x00000004;
 				} // namespace ConfigureAuxiliaryACL
+
+				namespace GroupcastTesting
+				{
+					inline constexpr CommandId Id = 0x00000005;
+				} // namespace GroupcastTesting
 
 				namespace LeaveGroupResponse
 				{

@@ -49,6 +49,12 @@ namespace app
 						ReturnErrorOnFailure(DataModel::Encode(
 							aWriter, TLV::ContextTag(Fields::kActivationReason),
 							activationReason));
+						ReturnErrorOnFailure(DataModel::Encode(
+							aWriter, TLV::ContextTag(Fields::kContainerType),
+							containerType));
+						ReturnErrorOnFailure(DataModel::Encode(
+							aWriter, TLV::ContextTag(Fields::kCMAFSessionNumber),
+							CMAFSessionNumber));
 						return aWriter.EndContainer(outer);
 					}
 
@@ -70,13 +76,19 @@ namespace app
 							} else if (__context_tag ==
 								   to_underlying(Fields::kActivationReason)) {
 								err = DataModel::Decode(reader, activationReason);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kContainerType)) {
+								err = DataModel::Decode(reader, containerType);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kCMAFSessionNumber)) {
+								err = DataModel::Decode(reader, CMAFSessionNumber);
 							} else {
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PushTransportBegin.
+				} // namespace PushTransportBegin
 				namespace PushTransportEnd
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -86,6 +98,12 @@ namespace app
 							aWriter.StartContainer(aTag, TLV::kTLVType_Structure, outer));
 						ReturnErrorOnFailure(DataModel::Encode(
 							aWriter, TLV::ContextTag(Fields::kConnectionID), connectionID));
+						ReturnErrorOnFailure(DataModel::Encode(
+							aWriter, TLV::ContextTag(Fields::kContainerType),
+							containerType));
+						ReturnErrorOnFailure(DataModel::Encode(
+							aWriter, TLV::ContextTag(Fields::kCMAFSessionNumber),
+							CMAFSessionNumber));
 						return aWriter.EndContainer(outer);
 					}
 
@@ -101,13 +119,19 @@ namespace app
 
 							if (__context_tag == to_underlying(Fields::kConnectionID)) {
 								err = DataModel::Decode(reader, connectionID);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kContainerType)) {
+								err = DataModel::Decode(reader, containerType);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kCMAFSessionNumber)) {
+								err = DataModel::Decode(reader, CMAFSessionNumber);
 							} else {
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PushTransportEnd.
+				} // namespace PushTransportEnd
 			} // namespace Events
 		} // namespace PushAvStreamTransport
 	} // namespace Clusters

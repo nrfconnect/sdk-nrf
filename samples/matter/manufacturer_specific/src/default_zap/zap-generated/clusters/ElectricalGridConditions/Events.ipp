@@ -67,7 +67,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CurrentConditionsChanged.
+				} // namespace CurrentConditionsChanged
 			} // namespace Events
 		} // namespace ElectricalGridConditions
 	} // namespace Clusters

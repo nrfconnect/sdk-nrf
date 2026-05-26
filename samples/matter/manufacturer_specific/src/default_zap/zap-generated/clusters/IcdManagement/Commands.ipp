@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RegisterClient.
+				} // namespace RegisterClient
 				namespace RegisterClientResponse
 				{
 
@@ -108,7 +108,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RegisterClientResponse.
+				} // namespace RegisterClientResponse
 				namespace UnregisterClient
 				{
 
@@ -142,7 +142,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UnregisterClient.
+				} // namespace UnregisterClient
 				namespace StayActiveRequest
 				{
 
@@ -172,7 +172,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StayActiveRequest.
+				} // namespace StayActiveRequest
 				namespace StayActiveResponse
 				{
 
@@ -203,7 +203,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StayActiveResponse.
+				} // namespace StayActiveResponse
 			} // namespace Commands
 		} // namespace IcdManagement
 	} // namespace Clusters

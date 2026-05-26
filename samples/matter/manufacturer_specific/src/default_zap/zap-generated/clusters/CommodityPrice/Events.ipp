@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PriceChange.
+				} // namespace PriceChange
 			} // namespace Events
 		} // namespace CommodityPrice
 	} // namespace Clusters

@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Play.
+				} // namespace Play
 				namespace Pause
 				{
 
@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Pause.
+				} // namespace Pause
 				namespace Stop
 				{
 
@@ -102,7 +102,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Stop.
+				} // namespace Stop
 				namespace StartOver
 				{
 
@@ -125,7 +125,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StartOver.
+				} // namespace StartOver
 				namespace Previous
 				{
 
@@ -148,7 +148,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Previous.
+				} // namespace Previous
 				namespace Next
 				{
 
@@ -171,7 +171,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Next.
+				} // namespace Next
 				namespace Rewind
 				{
 
@@ -201,7 +201,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Rewind.
+				} // namespace Rewind
 				namespace FastForward
 				{
 
@@ -231,7 +231,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FastForward.
+				} // namespace FastForward
 				namespace SkipForward
 				{
 
@@ -262,7 +262,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SkipForward.
+				} // namespace SkipForward
 				namespace SkipBackward
 				{
 
@@ -293,7 +293,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SkipBackward.
+				} // namespace SkipBackward
 				namespace PlaybackResponse
 				{
 
@@ -325,7 +325,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PlaybackResponse.
+				} // namespace PlaybackResponse
 				namespace Seek
 				{
 
@@ -353,7 +353,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Seek.
+				} // namespace Seek
 				namespace ActivateAudioTrack
 				{
 
@@ -386,7 +386,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ActivateAudioTrack.
+				} // namespace ActivateAudioTrack
 				namespace ActivateTextTrack
 				{
 
@@ -414,7 +414,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ActivateTextTrack.
+				} // namespace ActivateTextTrack
 				namespace DeactivateTextTrack
 				{
 
@@ -437,7 +437,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace DeactivateTextTrack.
+				} // namespace DeactivateTextTrack
 			} // namespace Commands
 		} // namespace MediaPlayback
 	} // namespace Clusters

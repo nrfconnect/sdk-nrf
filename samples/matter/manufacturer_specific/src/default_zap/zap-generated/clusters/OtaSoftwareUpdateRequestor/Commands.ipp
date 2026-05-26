@@ -77,7 +77,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AnnounceOTAProvider.
+				} // namespace AnnounceOTAProvider
 			} // namespace Commands
 		} // namespace OtaSoftwareUpdateRequestor
 	} // namespace Clusters

@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Stop.
+				} // namespace Stop
 				namespace Start
 				{
 
@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Start.
+				} // namespace Start
 				namespace OperationalCommandResponse
 				{
 
@@ -110,7 +110,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OperationalCommandResponse.
+				} // namespace OperationalCommandResponse
 			} // namespace Commands
 		} // namespace OvenCavityOperationalState
 	} // namespace Clusters

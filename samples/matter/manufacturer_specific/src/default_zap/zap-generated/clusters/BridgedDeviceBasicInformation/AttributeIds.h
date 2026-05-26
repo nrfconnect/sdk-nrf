@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster BridgedDeviceBasicInformation (cluster code: 57/0x39)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>
@@ -19,7 +18,7 @@ namespace app
 			{
 
 				// Total number of attributes supported by the cluster, including global attributes
-				inline constexpr uint32_t kAttributesCount = 23;
+				inline constexpr uint32_t kAttributesCount = 24;
 
 				namespace VendorName
 				{
@@ -105,6 +104,11 @@ namespace app
 				{
 					inline constexpr AttributeId Id = 0x00000014;
 				} // namespace ProductAppearance
+
+				namespace DeviceLocation
+				{
+					inline constexpr AttributeId Id = 0x00000017;
+				} // namespace DeviceLocation
 
 				namespace ConfigurationVersion
 				{

@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SendKey.
+				} // namespace SendKey
 				namespace SendKeyResponse
 				{
 
@@ -90,7 +90,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SendKeyResponse.
+				} // namespace SendKeyResponse
 			} // namespace Commands
 		} // namespace KeypadInput
 	} // namespace Clusters

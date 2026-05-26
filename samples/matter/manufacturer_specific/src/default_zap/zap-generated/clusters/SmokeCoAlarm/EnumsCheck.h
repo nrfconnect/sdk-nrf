@@ -77,6 +77,7 @@ namespace app
 			case EnumType::kEndOfService:
 			case EnumType::kInterconnectSmoke:
 			case EnumType::kInterconnectCO:
+			case EnumType::kInoperative:
 				return val;
 			default:
 				return EnumType::kUnknownEnumValue;

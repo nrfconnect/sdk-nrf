@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster DeviceEnergyManagement (cluster code: 152/0x98)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace DeviceEnergyManagement
 		{
 
-			inline constexpr uint32_t kRevision = 4;
+			inline constexpr uint32_t kRevision = 5;
 
 			namespace Attributes
 			{
@@ -82,6 +81,13 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace OptOutState
+				namespace PowerRangeAdjustment
+				{
+					inline constexpr DataModel::AttributeEntry
+						kMetadataEntry(PowerRangeAdjustment::Id,
+							       BitFlags<DataModel::AttributeQualityFlags>(),
+							       Access::Privilege::kView, std::nullopt);
+				} // namespace PowerRangeAdjustment
 				constexpr std::array<DataModel::AttributeEntry, 5> kMandatoryMetadata = {
 					ESAType::kMetadataEntry,     ESACanGenerate::kMetadataEntry,
 					ESAState::kMetadataEntry,    AbsMinPower::kMetadataEntry,
@@ -150,6 +156,20 @@ namespace app
 							       BitFlags<DataModel::CommandQualityFlags>(),
 							       Access::Privilege::kOperate);
 				} // namespace CancelRequest
+				namespace PowerRangeAdjustRequest
+				{
+					inline constexpr DataModel::AcceptedCommandEntry
+						kMetadataEntry(PowerRangeAdjustRequest::Id,
+							       BitFlags<DataModel::CommandQualityFlags>(),
+							       Access::Privilege::kOperate);
+				} // namespace PowerRangeAdjustRequest
+				namespace CancelPowerRangeAdjustRequest
+				{
+					inline constexpr DataModel::AcceptedCommandEntry
+						kMetadataEntry(CancelPowerRangeAdjustRequest::Id,
+							       BitFlags<DataModel::CommandQualityFlags>(),
+							       Access::Privilege::kOperate);
+				} // namespace CancelPowerRangeAdjustRequest
 
 			} // namespace Commands
 
@@ -179,6 +199,18 @@ namespace app
 						Access::Privilege::kView
 					};
 				} // namespace Resumed
+				namespace PowerRangeAdjustStart
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace PowerRangeAdjustStart
+				namespace PowerRangeAdjustEnd
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace PowerRangeAdjustEnd
 
 			} // namespace Events
 		} // namespace DeviceEnergyManagement

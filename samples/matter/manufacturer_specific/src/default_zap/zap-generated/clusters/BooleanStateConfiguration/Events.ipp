@@ -71,7 +71,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AlarmsStateChanged.
+				} // namespace AlarmsStateChanged
 				namespace SensorFault
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -102,7 +102,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SensorFault.
+				} // namespace SensorFault
 			} // namespace Events
 		} // namespace BooleanStateConfiguration
 	} // namespace Clusters

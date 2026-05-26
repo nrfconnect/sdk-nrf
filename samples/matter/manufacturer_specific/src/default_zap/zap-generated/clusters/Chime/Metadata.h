@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster Chime (cluster code: 1366/0x556)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace Chime
 		{
 
-			inline constexpr uint32_t kRevision = 1;
+			inline constexpr uint32_t kRevision = 2;
 
 			namespace Attributes
 			{
@@ -72,6 +71,12 @@ namespace app
 
 			namespace Events
 			{
+				namespace ChimeStartedPlaying
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ChimeStartedPlaying
 
 			} // namespace Events
 		} // namespace Chime

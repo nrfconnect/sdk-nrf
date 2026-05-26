@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster ValveConfigurationAndControl (cluster code: 129/0x81)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace ValveConfigurationAndControl
 		{
 
-			inline constexpr uint32_t kRevision = 2;
+			inline constexpr uint32_t kRevision = 1;
 
 			namespace Attributes
 			{

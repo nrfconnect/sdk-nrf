@@ -51,6 +51,8 @@ namespace app
 						return DataModel::Decode(reader, commissioningARL);
 					case Attributes::Arl::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, arl);
+					case Attributes::AuxiliaryACL::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, auxiliaryACL);
 					case Attributes::GeneratedCommandList::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, generatedCommandList);
 					case Attributes::AcceptedCommandList::TypeInfo::GetAttributeId():

@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster GroupKeyManagement (cluster code: 63/0x3F)
-// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace GroupKeyManagement
 		{
 
-			inline constexpr uint32_t kRevision = 2;
+			inline constexpr uint32_t kRevision = 3;
 
 			namespace Attributes
 			{
@@ -56,6 +55,14 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace MaxGroupKeysPerFabric
+				namespace GroupcastAdoption
+				{
+					inline constexpr DataModel::AttributeEntry kMetadataEntry(
+						GroupcastAdoption::Id,
+						BitFlags<DataModel::AttributeQualityFlags>(
+							DataModel::AttributeQualityFlags::kListAttribute),
+						Access::Privilege::kAdminister, Access::Privilege::kAdminister);
+				} // namespace GroupcastAdoption
 				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
 					GroupKeyMap::kMetadataEntry,
 					GroupTable::kMetadataEntry,

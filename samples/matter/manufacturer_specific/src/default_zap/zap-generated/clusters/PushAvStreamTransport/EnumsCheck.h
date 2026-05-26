@@ -74,6 +74,8 @@ namespace app
 			case EnumType::kInvalidOptions:
 			case EnumType::kInvalidStreamUsage:
 			case EnumType::kInvalidTime:
+			case EnumType::kInvalidPreRollLength:
+			case EnumType::kDuplicateStreamValues:
 				return val;
 			default:
 				return EnumType::kUnknownEnumValue;
@@ -98,6 +100,7 @@ namespace app
 			case EnumType::kCommand:
 			case EnumType::kMotion:
 			case EnumType::kContinuous:
+			case EnumType::kAmbientContext:
 				return val;
 			default:
 				return EnumType::kUnknownEnumValue;
@@ -111,6 +114,7 @@ namespace app
 			case EnumType::kUserInitiated:
 			case EnumType::kAutomation:
 			case EnumType::kEmergency:
+			case EnumType::kDoorbellPressed:
 				return val;
 			default:
 				return EnumType::kUnknownEnumValue;

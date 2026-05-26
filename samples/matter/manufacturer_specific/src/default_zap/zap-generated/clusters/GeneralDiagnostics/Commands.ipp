@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestEventTrigger.
+				} // namespace TestEventTrigger
 				namespace TimeSnapshot
 				{
 
@@ -88,7 +88,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TimeSnapshot.
+				} // namespace TimeSnapshot
 				namespace TimeSnapshotResponse
 				{
 
@@ -121,7 +121,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TimeSnapshotResponse.
+				} // namespace TimeSnapshotResponse
 				namespace PayloadTestRequest
 				{
 
@@ -155,7 +155,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PayloadTestRequest.
+				} // namespace PayloadTestRequest
 				namespace PayloadTestResponse
 				{
 
@@ -184,7 +184,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PayloadTestResponse.
+				} // namespace PayloadTestResponse
 			} // namespace Commands
 		} // namespace GeneralDiagnostics
 	} // namespace Clusters

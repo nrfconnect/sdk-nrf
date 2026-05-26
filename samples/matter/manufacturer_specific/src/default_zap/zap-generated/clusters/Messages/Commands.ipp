@@ -82,7 +82,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PresentMessagesRequest.
+				} // namespace PresentMessagesRequest
 				namespace CancelMessagesRequest
 				{
 
@@ -111,7 +111,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CancelMessagesRequest.
+				} // namespace CancelMessagesRequest
 			} // namespace Commands
 		} // namespace Messages
 	} // namespace Clusters

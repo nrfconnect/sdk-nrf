@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster CarbonDioxideConcentrationMeasurement (cluster code: 1037/0x40D)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace CarbonDioxideConcentrationMeasurement
 		{
 
-			inline constexpr uint32_t kRevision = 3;
+			inline constexpr uint32_t kRevision = 5;
 
 			namespace Attributes
 			{

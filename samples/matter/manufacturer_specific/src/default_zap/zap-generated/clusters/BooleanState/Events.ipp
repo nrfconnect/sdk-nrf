@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StateChange.
+				} // namespace StateChange
 			} // namespace Events
 		} // namespace BooleanState
 	} // namespace Clusters

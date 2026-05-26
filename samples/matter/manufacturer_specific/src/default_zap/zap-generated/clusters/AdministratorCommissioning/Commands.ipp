@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OpenCommissioningWindow.
+				} // namespace OpenCommissioningWindow
 				namespace OpenBasicCommissioningWindow
 				{
 
@@ -109,7 +109,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OpenBasicCommissioningWindow.
+				} // namespace OpenBasicCommissioningWindow
 				namespace RevokeCommissioning
 				{
 
@@ -132,7 +132,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RevokeCommissioning.
+				} // namespace RevokeCommissioning
 			} // namespace Commands
 		} // namespace AdministratorCommissioning
 	} // namespace Clusters

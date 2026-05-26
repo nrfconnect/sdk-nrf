@@ -71,7 +71,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RetrieveLogsRequest.
+				} // namespace RetrieveLogsRequest
 				namespace RetrieveLogsResponse
 				{
 
@@ -112,7 +112,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RetrieveLogsResponse.
+				} // namespace RetrieveLogsResponse
 			} // namespace Commands
 		} // namespace DiagnosticLogs
 	} // namespace Clusters

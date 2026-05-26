@@ -73,7 +73,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SystemModeChange.
+				} // namespace SystemModeChange
 				namespace LocalTemperatureChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -107,7 +107,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LocalTemperatureChange.
+				} // namespace LocalTemperatureChange
 				namespace OccupancyChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -146,7 +146,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OccupancyChange.
+				} // namespace OccupancyChange
 				namespace SetpointChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -193,7 +193,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetpointChange.
+				} // namespace SetpointChange
 				namespace RunningStateChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -232,7 +232,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RunningStateChange.
+				} // namespace RunningStateChange
 				namespace RunningModeChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -271,7 +271,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RunningModeChange.
+				} // namespace RunningModeChange
 				namespace ActiveScheduleChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -310,7 +310,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ActiveScheduleChange.
+				} // namespace ActiveScheduleChange
 				namespace ActivePresetChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -349,7 +349,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ActivePresetChange.
+				} // namespace ActivePresetChange
 			} // namespace Events
 		} // namespace Thermostat
 	} // namespace Clusters

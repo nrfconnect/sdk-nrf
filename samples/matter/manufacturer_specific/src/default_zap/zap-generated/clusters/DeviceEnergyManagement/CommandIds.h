@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster DeviceEnergyManagement (cluster code: 152/0x98)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <lib/core/DataModelTypes.h>
@@ -18,7 +17,7 @@ namespace app
 			{
 
 				// Total number of client to server commands supported by the cluster
-				inline constexpr uint32_t kAcceptedCommandsCount = 8;
+				inline constexpr uint32_t kAcceptedCommandsCount = 10;
 
 				// Total number of server to client commands supported by the cluster (response
 				// commands)
@@ -63,6 +62,16 @@ namespace app
 				{
 					inline constexpr CommandId Id = 0x00000007;
 				} // namespace CancelRequest
+
+				namespace PowerRangeAdjustRequest
+				{
+					inline constexpr CommandId Id = 0x00000008;
+				} // namespace PowerRangeAdjustRequest
+
+				namespace CancelPowerRangeAdjustRequest
+				{
+					inline constexpr CommandId Id = 0x00000009;
+				} // namespace CancelPowerRangeAdjustRequest
 
 			} // namespace Commands
 		} // namespace DeviceEnergyManagement

@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Stop.
+				} // namespace Stop
 				namespace MoveTo
 				{
 
@@ -90,7 +90,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveTo.
+				} // namespace MoveTo
 				namespace Calibrate
 				{
 
@@ -113,7 +113,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Calibrate.
+				} // namespace Calibrate
 			} // namespace Commands
 		} // namespace ClosureControl
 	} // namespace Clusters

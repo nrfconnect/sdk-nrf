@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster AccessControl (cluster code: 31/0x1F)
-// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <optional>
@@ -37,6 +36,8 @@ namespace app
 					return CommissioningARL::kMetadataEntry;
 				case Arl::Id:
 					return Arl::kMetadataEntry;
+				case AuxiliaryACL::Id:
+					return AuxiliaryACL::kMetadataEntry;
 				default:
 					return std::nullopt;
 				}

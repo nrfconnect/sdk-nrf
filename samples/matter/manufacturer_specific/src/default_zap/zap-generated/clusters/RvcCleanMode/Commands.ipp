@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ChangeToMode.
+				} // namespace ChangeToMode
 				namespace ChangeToModeResponse
 				{
 
@@ -94,7 +94,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ChangeToModeResponse.
+				} // namespace ChangeToModeResponse
 			} // namespace Commands
 		} // namespace RvcCleanMode
 	} // namespace Clusters

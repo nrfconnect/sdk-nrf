@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster SmokeCoAlarm (cluster code: 92/0x5C)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace SmokeCoAlarm
 		{
 
-			inline constexpr uint32_t kRevision = 1;
+			inline constexpr uint32_t kRevision = 2;
 
 			namespace Attributes
 			{
@@ -117,6 +116,13 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace ExpiryDate
+				namespace Unmounted
+				{
+					inline constexpr DataModel::AttributeEntry
+						kMetadataEntry(Unmounted::Id,
+							       BitFlags<DataModel::AttributeQualityFlags>(),
+							       Access::Privilege::kView, std::nullopt);
+				} // namespace Unmounted
 				constexpr std::array<DataModel::AttributeEntry, 5> kMandatoryMetadata = {
 					ExpressedState::kMetadataEntry,	   BatteryAlert::kMetadataEntry,
 					TestInProgress::kMetadataEntry,	   HardwareFaultAlert::kMetadataEntry,

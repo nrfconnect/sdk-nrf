@@ -64,7 +64,9 @@ namespace app
 			{
 				namespace PlayChimeSound
 				{
-					enum class Fields : uint8_t {};
+					enum class Fields : uint8_t {
+						kChimeID = 0,
+					};
 
 					struct Type {
 					public:
@@ -78,6 +80,8 @@ namespace app
 						{
 							return Clusters::Chime::Id;
 						}
+
+						Optional<uint8_t> chimeID;
 
 						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
 
@@ -97,6 +101,8 @@ namespace app
 							return Clusters::Chime::Id;
 						}
 						static constexpr bool kIsFabricScoped = false;
+
+						Optional<uint8_t> chimeID;
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 					};

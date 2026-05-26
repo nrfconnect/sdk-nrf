@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ResetCondition.
+				} // namespace ResetCondition
 			} // namespace Commands
 		} // namespace HepaFilterMonitoring
 	} // namespace Clusters

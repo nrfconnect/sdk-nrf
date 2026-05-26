@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MessageQueued.
+				} // namespace MessageQueued
 				namespace MessagePresented
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -96,7 +96,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MessagePresented.
+				} // namespace MessagePresented
 				namespace MessageComplete
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -143,7 +143,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MessageComplete.
+				} // namespace MessageComplete
 			} // namespace Events
 		} // namespace Messages
 	} // namespace Clusters

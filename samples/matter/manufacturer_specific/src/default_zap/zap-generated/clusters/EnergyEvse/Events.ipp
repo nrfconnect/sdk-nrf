@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EVConnected.
+				} // namespace EVConnected
 				namespace EVNotDetected
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -119,7 +119,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EVNotDetected.
+				} // namespace EVNotDetected
 				namespace EnergyTransferStarted
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -167,7 +167,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnergyTransferStarted.
+				} // namespace EnergyTransferStarted
 				namespace EnergyTransferStopped
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -218,7 +218,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnergyTransferStopped.
+				} // namespace EnergyTransferStopped
 				namespace Fault
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -266,7 +266,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Fault.
+				} // namespace Fault
 				namespace Rfid
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -297,7 +297,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Rfid.
+				} // namespace Rfid
 			} // namespace Events
 		} // namespace EnergyEvse
 	} // namespace Clusters

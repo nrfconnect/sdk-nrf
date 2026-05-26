@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Boost.
+				} // namespace Boost
 				namespace CancelBoost
 				{
 
@@ -84,7 +84,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CancelBoost.
+				} // namespace CancelBoost
 			} // namespace Commands
 		} // namespace WaterHeaterManagement
 	} // namespace Clusters

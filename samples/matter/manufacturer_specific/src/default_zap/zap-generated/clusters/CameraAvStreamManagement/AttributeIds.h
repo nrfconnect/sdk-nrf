@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster CameraAvStreamManagement (cluster code: 1361/0x551)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>
@@ -19,7 +18,7 @@ namespace app
 			{
 
 				// Total number of attributes supported by the cluster, including global attributes
-				inline constexpr uint32_t kAttributesCount = 46;
+				inline constexpr uint32_t kAttributesCount = 47;
 
 				namespace MaxConcurrentEncoders
 				{
@@ -225,6 +224,11 @@ namespace app
 				{
 					inline constexpr AttributeId Id = 0x00000028;
 				} // namespace StatusLightBrightness
+
+				namespace ImageRotationDiscreteAngles
+				{
+					inline constexpr AttributeId Id = 0x00000029;
+				} // namespace ImageRotationDiscreteAngles
 
 				namespace GeneratedCommandList
 				{

@@ -64,7 +64,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdatePIN.
+				} // namespace UpdatePIN
 				namespace ResetPIN
 				{
 
@@ -87,7 +87,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ResetPIN.
+				} // namespace ResetPIN
 				namespace ResetPINResponse
 				{
 
@@ -116,7 +116,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ResetPINResponse.
+				} // namespace ResetPINResponse
 				namespace Enable
 				{
 
@@ -139,7 +139,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Enable.
+				} // namespace Enable
 				namespace Disable
 				{
 
@@ -162,7 +162,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Disable.
+				} // namespace Disable
 				namespace AddBonusTime
 				{
 
@@ -193,7 +193,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddBonusTime.
+				} // namespace AddBonusTime
 				namespace SetScreenDailyTime
 				{
 
@@ -221,7 +221,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetScreenDailyTime.
+				} // namespace SetScreenDailyTime
 				namespace BlockUnratedContent
 				{
 
@@ -244,7 +244,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace BlockUnratedContent.
+				} // namespace BlockUnratedContent
 				namespace UnblockUnratedContent
 				{
 
@@ -267,7 +267,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UnblockUnratedContent.
+				} // namespace UnblockUnratedContent
 				namespace SetOnDemandRatingThreshold
 				{
 
@@ -295,7 +295,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetOnDemandRatingThreshold.
+				} // namespace SetOnDemandRatingThreshold
 				namespace SetScheduledContentRatingThreshold
 				{
 
@@ -323,7 +323,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetScheduledContentRatingThreshold.
+				} // namespace SetScheduledContentRatingThreshold
 				namespace AddBlockChannels
 				{
 
@@ -351,7 +351,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddBlockChannels.
+				} // namespace AddBlockChannels
 				namespace RemoveBlockChannels
 				{
 
@@ -379,7 +379,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveBlockChannels.
+				} // namespace RemoveBlockChannels
 				namespace AddBlockApplications
 				{
 
@@ -407,7 +407,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddBlockApplications.
+				} // namespace AddBlockApplications
 				namespace RemoveBlockApplications
 				{
 
@@ -435,7 +435,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveBlockApplications.
+				} // namespace RemoveBlockApplications
 				namespace SetBlockContentTimeWindow
 				{
 
@@ -463,7 +463,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetBlockContentTimeWindow.
+				} // namespace SetBlockContentTimeWindow
 				namespace RemoveBlockContentTimeWindow
 				{
 
@@ -493,7 +493,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveBlockContentTimeWindow.
+				} // namespace RemoveBlockContentTimeWindow
 			} // namespace Commands
 		} // namespace ContentControl
 	} // namespace Clusters

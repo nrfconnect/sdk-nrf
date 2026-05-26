@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ResetWatermarks.
+				} // namespace ResetWatermarks
 			} // namespace Commands
 		} // namespace SoftwareDiagnostics
 	} // namespace Clusters

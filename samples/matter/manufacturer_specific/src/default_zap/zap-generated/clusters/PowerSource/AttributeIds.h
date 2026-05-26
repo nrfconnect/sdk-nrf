@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster PowerSource (cluster code: 47/0x2F)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>

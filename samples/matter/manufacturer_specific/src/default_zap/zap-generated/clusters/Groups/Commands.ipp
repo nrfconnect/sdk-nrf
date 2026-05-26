@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddGroup.
+				} // namespace AddGroup
 				namespace AddGroupResponse
 				{
 
@@ -97,7 +97,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddGroupResponse.
+				} // namespace AddGroupResponse
 				namespace ViewGroup
 				{
 
@@ -126,7 +126,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ViewGroup.
+				} // namespace ViewGroup
 				namespace ViewGroupResponse
 				{
 
@@ -161,7 +161,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ViewGroupResponse.
+				} // namespace ViewGroupResponse
 				namespace GetGroupMembership
 				{
 
@@ -190,7 +190,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetGroupMembership.
+				} // namespace GetGroupMembership
 				namespace GetGroupMembershipResponse
 				{
 
@@ -222,7 +222,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetGroupMembershipResponse.
+				} // namespace GetGroupMembershipResponse
 				namespace RemoveGroup
 				{
 
@@ -251,7 +251,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveGroup.
+				} // namespace RemoveGroup
 				namespace RemoveGroupResponse
 				{
 
@@ -283,7 +283,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveGroupResponse.
+				} // namespace RemoveGroupResponse
 				namespace RemoveAllGroups
 				{
 
@@ -307,7 +307,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveAllGroups.
+				} // namespace RemoveAllGroups
 				namespace AddGroupIfIdentifying
 				{
 
@@ -339,7 +339,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddGroupIfIdentifying.
+				} // namespace AddGroupIfIdentifying
 			} // namespace Commands
 		} // namespace Groups
 	} // namespace Clusters

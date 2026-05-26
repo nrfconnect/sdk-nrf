@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Reset.
+				} // namespace Reset
 				namespace ModifyEnabledAlarms
 				{
 
@@ -89,7 +89,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ModifyEnabledAlarms.
+				} // namespace ModifyEnabledAlarms
 			} // namespace Commands
 		} // namespace DishwasherAlarm
 	} // namespace Clusters

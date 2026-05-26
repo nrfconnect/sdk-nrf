@@ -63,7 +63,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddNetwork.
+				} // namespace AddNetwork
 				namespace RemoveNetwork
 				{
 
@@ -91,7 +91,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveNetwork.
+				} // namespace RemoveNetwork
 				namespace GetOperationalDataset
 				{
 
@@ -119,7 +119,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetOperationalDataset.
+				} // namespace GetOperationalDataset
 				namespace OperationalDatasetResponse
 				{
 
@@ -150,7 +150,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OperationalDatasetResponse.
+				} // namespace OperationalDatasetResponse
 			} // namespace Commands
 		} // namespace ThreadNetworkDirectory
 	} // namespace Clusters

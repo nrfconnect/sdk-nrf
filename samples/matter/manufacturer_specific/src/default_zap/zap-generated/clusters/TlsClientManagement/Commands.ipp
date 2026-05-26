@@ -75,7 +75,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProvisionEndpoint.
+				} // namespace ProvisionEndpoint
 				namespace ProvisionEndpointResponse
 				{
 
@@ -104,7 +104,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProvisionEndpointResponse.
+				} // namespace ProvisionEndpointResponse
 				namespace FindEndpoint
 				{
 
@@ -133,7 +133,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FindEndpoint.
+				} // namespace FindEndpoint
 				namespace FindEndpointResponse
 				{
 
@@ -164,7 +164,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FindEndpointResponse.
+				} // namespace FindEndpointResponse
 				namespace RemoveEndpoint
 				{
 
@@ -193,7 +193,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveEndpoint.
+				} // namespace RemoveEndpoint
 			} // namespace Commands
 		} // namespace TlsClientManagement
 	} // namespace Clusters

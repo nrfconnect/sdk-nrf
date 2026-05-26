@@ -29,6 +29,18 @@ namespace app
 	namespace Clusters
 	{
 		static auto __attribute__((unused))
+		EnsureKnownEnumValue(GroupKeyManagement::GroupKeyMulticastPolicyEnum val)
+		{
+			using EnumType = GroupKeyManagement::GroupKeyMulticastPolicyEnum;
+			switch (val) {
+			case EnumType::kPerGroupID:
+			case EnumType::kAllNodes:
+				return val;
+			default:
+				return EnumType::kUnknownEnumValue;
+			}
+		}
+		static auto __attribute__((unused))
 		EnsureKnownEnumValue(GroupKeyManagement::GroupKeySecurityPolicyEnum val)
 		{
 			using EnumType = GroupKeyManagement::GroupKeySecurityPolicyEnum;
