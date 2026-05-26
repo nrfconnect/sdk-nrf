@@ -77,6 +77,8 @@ Bootloaders and DFU
 
 * Fixed DTS support for nRF5340 network core images when :ref:`b0n <bootloader>` was enabled.
 
+* Added :ref:`ug_bootloader_nrf54l_memory_protection` page to document the memory protection features of the bootloader on the nRF54L Series.
+
 Developing with nRF91 Series
 ============================
 
