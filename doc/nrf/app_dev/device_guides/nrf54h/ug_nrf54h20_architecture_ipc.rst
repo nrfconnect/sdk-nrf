@@ -199,5 +199,3 @@ Peripheral Processor (PPR)
 
 The Peripheral Processor (PPR) exposes IPC communication for its owner to manage its operations.
 The communication details depends on the PPR role in the system.
-
-In the :ref:`nrf_machine_learning_app` application, PPR uses an :ref:`event_manager_proxy` through IPC to extend the Event Manager framework running in the application core.

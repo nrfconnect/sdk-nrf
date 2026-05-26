@@ -286,7 +286,8 @@ nRF Desktop
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
+* Removed the deprecated nRF Machine Learning application.
+  The application is replaced by the Gesture Recognition application in `Edge AI Add-on for nRF Connect SDK`_.
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -436,7 +437,8 @@ DECT NR+ samples
 Edge Impulse samples
 --------------------
 
-|no_changes_yet_note|
+* Removed the deprecated Edge Impulse samples: Wrapper and Data forwarder.
+  The removed samples are replaced by samples in `Edge AI Add-on for nRF Connect SDK`_.
 
 Enhanced ShockBurst samples
 ---------------------------
@@ -799,7 +801,8 @@ Google Fast Pair integration
 Edge Impulse integration
 ------------------------
 
-|no_changes_yet_note|
+* Removed the deprecated Edge Impulse wrapper library.
+  The library is replaced by Edge Impulse integration in `Edge AI Add-on for nRF Connect SDK`_.
 
 Memfault integration
 --------------------

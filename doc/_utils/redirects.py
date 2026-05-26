@@ -456,7 +456,6 @@ NRF = (
     ("samples/cellular/nrf_provisioning/README", "samples/cellular/nrf_device_provisioning/README"),
     ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)
     ("samples/samples_crypto", "samples/crypto"), # Cryptography samples (landing)
-    ("samples/samples_edge", "samples/edge"), # Edge Impulse samples (landing)
     ("samples/samples_gazell", "samples/gazell"), # Gazell samples (landing)
     ("samples/samples_matter", "samples/matter"), # Matter samples (landing)
     ("samples/samples_nfc", "samples/nfc"), # NFC samples (landing)
@@ -602,7 +601,6 @@ NRF = (
     ("ecosystems_integrations", "integrations"), # Integrations (landing)
     ("ug_bt_fast_pair", "external_comp/bt_fast_pair/index"), # Google Fast Pair integration
     ("external_comp/bt_fast_pair", "external_comp/bt_fast_pair/index"),
-    ("ug_edge_impulse", "external_comp/edge_impulse"), # Edge Impulse integration
     ("ug_memfault", "external_comp/memfault"), # Memfault integration
     ("ug_nrf_cloud", "external_comp/nrf_cloud"), # Using nRF Cloud with the nRF Connect SDK
     ("ug_dev_model", "dev_model_and_contributions"), # Development model and contributions (landing)

@@ -634,7 +634,7 @@ Trusted Firmware-M (TF-M) samples
 Other samples
 -------------
 
-* :ref:`ei_wrapper_sample` sample:
+* Edge Impulse: Wrapper sample:
 
   * Updated the machine learning model (:kconfig:option:`CONFIG_EDGE_IMPULSE_URI`) to ensure compatibility with the new Zephyr version.
 

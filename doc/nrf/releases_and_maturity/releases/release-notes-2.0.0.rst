@@ -830,9 +830,9 @@ Other libraries
     * Renamed Profiler to nRF Profiler.
     * Updated versions of required python modules (pynrfjprog and matplotlib).
 
-* :ref:`ei_wrapper`:
+* Edge Impulse wrapper:
 
-    * Added :kconfig:option:`CONFIG_EI_WRAPPER_PROFILING` for logging time of classifier execution.
+    * Added ``CONFIG_EI_WRAPPER_PROFILING`` for logging time of classifier execution.
 
 * :ref:`lib_hw_unique_key` library:
 

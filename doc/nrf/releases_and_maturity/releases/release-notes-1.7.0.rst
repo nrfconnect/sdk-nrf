@@ -330,8 +330,8 @@ Common Application Framework (CAF)
 Edge Impulse
 ------------
 
-* Added support for Thingy:53 to :ref:`nrf_machine_learning_app`.
-* Added configuration for nRF52840 DK that supports data forwarder over NUS to :ref:`nrf_machine_learning_app`.
+* Added support for Thingy:53 to nRF Machine Learning.
+* Added configuration for nRF52840 DK that supports data forwarder over NUS to nRF Machine Learning.
 
 NFC
 ---
