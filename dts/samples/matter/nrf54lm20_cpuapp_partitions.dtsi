@@ -62,7 +62,7 @@
 			reg = <0x001e3000 DT_SIZE_K(132)>;
 		};
 
-		nrf70_wifi_fw_partition: nrf70_fw_partition: partition@1e3800 {
+		nrf70_wifi_fw_partition: partition@1e3800 {
 			label = "nrf70-wifi-fw";
 			reg = <0x001e3800 DT_SIZE_K(128)>;
 		};
