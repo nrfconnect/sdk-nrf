@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -268,7 +268,7 @@ static int handle_get_network_id(struct bt_conn *conn, const struct bt_gatt_attr
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static inline uint32_t firmware_version_encode(struct dult_firmware_version version)
+static inline uint32_t version_encode(struct dult_version version)
 {
 	return ((((uint32_t)(version.major) & 0xFFFF) << 16) |
 		(((uint32_t)(version.minor) & 0xFF) << 8) |
@@ -284,7 +284,7 @@ static int handle_get_firmware_version(struct bt_conn *conn, const struct bt_gat
 	NET_BUF_SIMPLE_DEFINE(buf, ANOS_CHRC_INDICATION_LEN(sizeof(uint32_t)));
 
 	net_buf_simple_add_le16(&buf, indication_opcode);
-	net_buf_simple_add_le32(&buf, firmware_version_encode(dult_user->firmware_version));
+	net_buf_simple_add_le32(&buf, version_encode(dult_user->firmware_version));
 
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
