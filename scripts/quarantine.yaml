@@ -39,13 +39,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
 
 - scenarios:
-    - nrf.extended.drivers.gpio.get_direction
-    - nrf.extended.drivers.gpio.gpio_nrf
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuppr
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
-
-- scenarios:
     - drivers.gpio.gpio_nfct
   platforms:
     - nrf7120dk/nrf7120/cpuapp
