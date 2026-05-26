@@ -16,6 +16,8 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   find_program(IMGTOOL imgtool.py HINTS ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/ NAMES imgtool NAMES_PER_DIR)
   set(keyfile "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}")
   string(CONFIGURE "${keyfile}" keyfile)
+  set(keyfile_enc "${SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE}")
+  string(CONFIGURE "${keyfile_enc}" keyfile_enc)
 
   # No imgtool, no signed binaries.
   if(NOT DEFINED IMGTOOL)
@@ -89,6 +91,31 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     set(imgtool_extra -k "${keyfile}" ${imgtool_extra})
   endif()
 
+  # Check if there is a bootloader configuration in the main image devicetree.
+  dt_comp_path(mcuboot_configs TARGET "${application}" COMPATIBLE "nordic,mcuboot")
+  if(mcuboot_configs)
+    cmake_path(APPEND application_image_dir "zephyr" "edt.pickle" OUTPUT_VARIABLE edt_pickle)
+    message(STATUS "Passing DTS-based MCUboot configuration: ${edt_pickle}")
+    set(imgtool_extra ${imgtool_extra} --edt-config "${edt_pickle}")
+  endif()
+
+  if(NOT "${keyfile_enc}" STREQUAL "")
+    if(SB_CONFIG_BOOT_ENCRYPTION_ALG_AES_256)
+      # Note: this overrides the default behavior of using AES-128
+      set(imgtool_extra ${imgtool_extra} --encrypt-keylen 256 --load-addr ${slot_address})
+    endif()
+
+    # Signature type determines key exchange scheme; ED25519 here means
+    # ECIES-X25519 is used. Default to HMAC-SHA512 for ECIES-X25519.
+    # Only .encrypted.bin file gets the ENCX25519/ENCX25519_SHA512, the
+    # just signed one does not.
+    # Only NRF54L gets the HMAC-SHA512, other remain with previously used
+    # SHA256.
+    if(SB_CONFIG_SOC_SERIES_NRF54L AND SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
+      set(imgtool_extra ${imgtool_extra} --hmac-sha 512)
+    endif()
+  endif()
+
   # Extensionless prefix of any output file.
   set(output ${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${application})
 
@@ -112,6 +139,12 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     list(APPEND bin_files ${output}.bin)
     set(bin_files ${bin_files} PARENT_SCOPE)
 
+    if(NOT "${keyfile_enc}" STREQUAL "")
+      set(imgtool_extra_bin ${imgtool_extra} --encrypt "${keyfile_enc}")
+    else()
+      set(imgtool_extra_bin ${imgtool_extra})
+    endif()
+
     add_custom_command(
       OUTPUT
       ${output}.bin # Signed hex with IMAGE_MAGIC located at secondary slot
@@ -121,7 +154,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
       # Hence, if a programmer is given this hex file, it will flash it
       # to the secondary slot, and upon reboot mcuboot will swap in the
       # contents of the hex file.
-      ${imgtool_sign} ${imgtool_extra} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
+      ${imgtool_sign} ${imgtool_extra_bin} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
 
       DEPENDS
       ${application}_extra_byproducts
