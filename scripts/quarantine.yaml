@@ -21,16 +21,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39226"
 
 - scenarios:
-    - drivers.uart.uart_fifo_flush.fast
-    - drivers.uart.uart_latency.async.fast
-    - drivers.uart.uart_latency.int_driven.fast
-    - drivers.uart.uart_latency.poll.fast
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuflpr
-    - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
-
-- scenarios:
     - nrf.extended.drivers.spi.direct_xfer
     - nrf.extended.drivers.spi.direct_xfer.no_prealloc
   platforms:
