@@ -27,8 +27,8 @@ tests:
       - sysbuild
     extra_args: >
       EXTRA_CONF_FILE="ecdsa.conf"
-  # PSA core lite: RSA
-  psa_core_lite.rsa:
+  # PSA core lite: RSA verify
+  psa_core_lite.rsa_verify:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -43,6 +43,22 @@ tests:
       - sysbuild
     extra_args: >
       EXTRA_CONF_FILE="rsa.conf"
+  # PSA core lite: RSA verify and decrypt
+  psa_core_lite.rsa_verify_and_decrypt:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      EXTRA_CONF_FILE="rsa_decrypt.conf"
   # PSA core lite: Ed25519 + AES-KW + encrypt + RNG
   psa_core_lite.ed25519.aes_kw.encrypt.rng:
     sysbuild: true
