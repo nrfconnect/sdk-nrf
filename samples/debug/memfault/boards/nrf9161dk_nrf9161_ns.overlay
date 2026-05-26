@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <samples/cellular/nrf91_no_bootloader_partitions.dtsi>
+
+#include <samples/cellular/nrf91_sram_partitions.dtsi>
+
+&gd25wb256 {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		memfault_coredump_partition: partition@fc000 {
+			label = "memfault_coredump_partition";
+			reg = <0x000fc000 0x00002000>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		nordic,memfault-coredump-partition = &memfault_coredump_partition;
+	};
+};
