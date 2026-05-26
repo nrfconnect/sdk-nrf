@@ -203,13 +203,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
 
 - scenarios:
-    - .*machine_learning.*
-    - .*edge_impulse.*
-  platforms:
-    - all
-  comment: "Infrastructure problems with downloading models"
-
-- scenarios:
     - sample.bluetooth.mesh.chat
     - sample.bluetooth.mesh.ble_and_mesh
     - sample.bluetooth.mesh.light_ctrl
