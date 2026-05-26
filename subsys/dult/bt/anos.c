@@ -39,6 +39,7 @@ enum anos_chrc_accessory_info_write_opcode {
 	ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_FIRMWARE_VERSION			= 0x00A,
 	ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_TYPE				= 0x00B,
 	ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_LEVEL				= 0x00C,
+	ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_NETWORK_VERSION			= 0x00D,
 };
 
 /* DULT opcodes for Non-owner control writes. */
@@ -275,18 +276,26 @@ static inline uint32_t version_encode(struct dult_version version)
 		((uint32_t)(version.revision) & 0xFF));
 }
 
-static int handle_get_firmware_version(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-				       const struct dult_user *dult_user)
+static int handle_get_version(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+			      enum anos_chrc_accessory_info_write_opcode write_opcode,
+			      const struct dult_version version)
 {
-	static const uint16_t indication_opcode =
-		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
-					ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_FIRMWARE_VERSION);
+	const uint16_t indication_opcode =
+		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(write_opcode);
 	NET_BUF_SIMPLE_DEFINE(buf, ANOS_CHRC_INDICATION_LEN(sizeof(uint32_t)));
 
 	net_buf_simple_add_le16(&buf, indication_opcode);
-	net_buf_simple_add_le32(&buf, version_encode(dult_user->firmware_version));
+	net_buf_simple_add_le32(&buf, version_encode(version));
 
 	return gatt_indicate(conn, attr, buf.data, buf.len);
+}
+
+static int handle_get_firmware_version(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+				       const struct dult_user *dult_user)
+{
+	return handle_get_version(conn, attr,
+				  ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_FIRMWARE_VERSION,
+				  dult_user->firmware_version);
 }
 
 static int handle_get_battery_type(struct bt_conn *conn, const struct bt_gatt_attr *attr)
@@ -321,6 +330,19 @@ static int handle_get_battery_level(struct bt_conn *conn, const struct bt_gatt_a
 	net_buf_simple_add_u8(&buf, dult_battery_level_encode());
 
 	return gatt_indicate(conn, attr, buf.data, buf.len);
+}
+
+static int handle_get_network_version(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+				      const struct dult_user *dult_user)
+{
+	/* Get_Network_Version is OPTIONAL per the DULT specification. */
+	if (!dult_user->network_version) {
+		return -ENOTSUP;
+	}
+
+	return handle_get_version(conn, attr,
+				  ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_NETWORK_VERSION,
+				  *dult_user->network_version);
 }
 
 static int command_response_send(struct bt_conn *conn, const struct bt_gatt_attr *attr,
@@ -602,6 +624,10 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 
 	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_LEVEL:
 		err = handle_get_battery_level(conn, attr);
+		break;
+
+	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_NETWORK_VERSION:
+		err = handle_get_network_version(conn, attr, dult_user);
 		break;
 
 	case ANOS_CHRC_NON_OWNER_CONTROL_WRITE_OPCODE_SOUND_START:
