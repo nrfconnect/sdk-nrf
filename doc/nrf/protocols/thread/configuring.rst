@@ -286,7 +286,7 @@ Cryptographic support
 =====================
 
 By default, the OpenThread stack uses the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` for cryptographic operations.
-The support is implemented through the nRF Security library, which provides hardware-accelerated cryptographic functionality on selected Nordic Semiconductor SoCs.
+The support is implemented through the nRF Security subsystem, which provides hardware-accelerated cryptographic functionality on selected Nordic Semiconductor SoCs.
 For more information, see the :ref:`psa_crypto_support` page.
 
 .. _ug_thread_configuring_mbedtls:

@@ -652,7 +652,7 @@ User guides
 nrfxlib
 -------
 
-* :ref:`nrf_security_readme` - updated :ref:`nrf_security_backend_config` and modified structure extensively to improve maintainability (restructured with better sections and headings)
+* :ref:`nrf_security_readme` - updated Configuring nRF Security with legacy crypto APIs and modified structure extensively to improve maintainability (restructured with better sections and headings)
 * :ref:`nrfxlib:mpsl` - updated with :ref:`nrfxlib:mpsl_fem`
 
 Known issues

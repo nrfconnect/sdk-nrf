@@ -58,8 +58,8 @@ The |NCS| follows the PSA Crypto standard through two major API implementations:
 They are designed for use without and with Trusted Firmware-M (TF-M), respectively, and have different security requirements.
 Additionally, the |NCS| includes the nRF54H20-specific IronSide Secure Element implementation.
 
-All implementations are based on the `sdk-oberon-psa-crypto`_ library, which offers a lightweight PSA Crypto API implementation optimized for resource-constrained microcontrollers.
-
+All implementations are designed for use on Nordic Semiconductor's Arm cores and are based on the `sdk-oberon-psa-crypto`_ library, which offers a lightweight PSA Crypto API implementation optimized for resource-constrained microcontrollers.
+On cores other than Nordic Semiconductor's Arm ones, TF-PSA-Crypto from Zephyr is the default PSA Crypto implementation.
 
 .. figure:: ../images/psa_crypto_api_overview.svg
    :alt: PSA Crypto API implementations in the |NCS|
@@ -67,12 +67,12 @@ All implementations are based on the `sdk-oberon-psa-crypto`_ library, which off
 
    PSA Crypto API implementations in the |NCS|
 
-.. note::
-   Depending on the implementation you are using, the |NCS| build system uses different versions of the PSA Crypto API.
+To configure your application to use one of these implementations, see :ref:`psa_crypto_support`.
+Depending on the implementation you are using, the |NCS| build system uses different versions of the PSA Crypto API.
 
-   .. ncs-include:: ../psa_certified_api_overview.rst
-      :start-after: psa_crypto_support_tfm_build_start
-      :end-before: psa_crypto_support_tfm_build_end
+.. ncs-include:: ../psa_certified_api_overview.rst
+   :start-after: psa_crypto_support_tfm_build_start
+   :end-before: psa_crypto_support_tfm_build_end
 
 .. _ug_crypto_architecture_implementation_standards_oberon:
 

@@ -35,169 +35,90 @@ TLS version support
 ===================
 
 The sample supports both TLS v1.2 and TLS v1.3.
+
 See the following table for the support overview for each compatible board target.
 The table mirrors the test setup used for TLS verification.
 
-.. tabs::
+.. list-table::
+   :header-rows: 1
+   :widths: auto
 
-   .. tab:: TLS v1.2
-
-      .. list-table::
-         :header-rows: 1
-         :widths: auto
-
-         * - Board target
-           - Backend
-           - CMSE supported
-           - DTLS supported
-           - Limitations
-           - Comments
-         * - ``nrf52840dk/nrf52840``
-             ``nrf9160dk/nrf9160``
-             ``nrf9151dk/nrf9151``
-           - :ref:`Mbed TLS legacy nrf_cc3xx backend <nrf_security_backends_cc3xx>`
-           - No
-           - No
-           - AES256, AES-GCM, SHA-512
-           -
-         * - ``nrf52840dk/nrf52840``
-             ``nrf9160dk/nrf9160``
-             ``nrf9151dk/nrf9151``
-           - :ref:`Mbed TLS legacy oberon backend<nrf_security_backends_oberon>`
-           - No
-           - No
-           -
-           -
-         * - ``nrf52840dk/nrf52840``
-           - :ref:`PSA Crypto nrf_cc3xx driver<nrf_security_drivers_cc3xx>`
-           - No (secure only)
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf9160dk/nrf9160``
-             ``nrf9151dk/nrf9151``
-           - :ref:`PSA Crypto nrf_cc3xx driver<nrf_security_drivers_cc3xx>`
-           - Yes
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf5340dk/nrf5340/cpuapp``
-           - :ref:`Mbed TLS legacy nrf_cc3xx backend <nrf_security_backends_cc3xx>`
-           - No
-           - No
-           -
-           -
-         * - ``nrf5340dk/nrf5340/cpuapp``
-           - :ref:`Mbed TLS legacy nrf_oberon backend<nrf_security_backends_oberon>`
-           - No
-           - No
-           -
-           -
-         * - ``nrf5340dk/nrf5340/cpuapp``
-           - :ref:`PSA Crypto nrf_cc3xx driver<nrf_security_drivers_cc3xx>`
-           - Yes
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf54l15dk/nrf54l15/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - Yes
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf54l15dk/nrf54l10/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - No
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf54lm20dk/nrf54lm20a/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - No
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf54lv10dk/nrf54lv10a/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - No
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf54ls05dk/nrf54ls05b/cpuapp``
-           - :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-           - No
-           - Yes
-           - RSA not supported
-           - No support for CRACEN
-         * - ``nrf54h20dk/nrf54h20/cpuapp``
-             ``nrf54h20dk/nrf54h20/cpurad``
-           - SSF Crypto (`CONFIG_PSA_SSF_CRYPTO_CLIENT`_)
-           - No
-           - Yes
-           - RSA not supported
-           -
-         * - ``nrf7120dk/nrf7120/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - No
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-
-   .. tab:: TLS v1.3
-
-      .. list-table::
-         :header-rows: 1
-         :widths: auto
-
-         * - Board target
-           - Backend
-           - CMSE supported
-           - DTLS supported
-           - Limitations
-           - Comments
-         * - ``nrf54l15dk/nrf54l15/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - Yes
-           - No
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf54l15dk/nrf54l10/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - No
-           - No
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf54lm20dk/nrf54lm20a/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - No
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf54lv10dk/nrf54lv10a/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - No
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-         * - ``nrf54ls05dk/nrf54ls05b/cpuapp``
-           - :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
-           - No
-           - Yes
-           - RSA not supported
-           - No support for CRACEN
-         * - ``nrf54h20dk/nrf54h20/cpuapp``
-             ``nrf54h20dk/nrf54h20/cpurad``
-           - SSF Crypto (`CONFIG_PSA_SSF_CRYPTO_CLIENT`_)
-           - No
-           - No
-           - RSA not supported
-           -
-         * - ``nrf7120dk/nrf7120/cpuapp``
-           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
-           - No
-           - Yes
-           - RSA not supported
-           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
+   * - Board target
+     - Backend
+     - :ref:`CMSE <ug_tfm_security_by_separation>` supported
+     - DTLS supported
+     - Limitations
+     - Comments
+   * - ``nrf52840dk/nrf52840``
+     - | TLS v1.2: :ref:`nrf_cc3xx <nrf_security_drivers_cc3xx>` and :ref:`nrf_oberon <nrf_security_drivers_oberon>`
+       | TLS v1.3: :ref:`nrf_oberon <nrf_security_drivers_oberon>`
+     - No (secure only)
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     -
+     -
+   * - | ``nrf9160dk/nrf9160``
+       | ``nrf9151dk/nrf9151``
+       | ``nrf5340dk/nrf5340/cpuapp``
+     - | TLS v1.2: :ref:`nrf_cc3xx <nrf_security_drivers_cc3xx>` and :ref:`nrf_oberon <nrf_security_drivers_oberon>`
+       | TLS v1.3: :ref:`nrf_oberon <nrf_security_drivers_oberon>`
+     - Yes
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     -
+     -
+   * - ``nrf54l15dk/nrf54l15/cpuapp``
+     - :ref:`CRACEN <nrf_security_drivers_cracen>`
+     - Yes
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     -
+     -
+   * - ``nrf54l15dk/nrf54l10/cpuapp``
+     - :ref:`CRACEN <nrf_security_drivers_cracen>`
+     - Yes
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     -
+     -
+   * - | ``nrf54lm20dk/nrf54lm20a/cpuapp``
+       | ``nrf54lm20dk/nrf54lm20b/cpuapp``
+     - :ref:`CRACEN <nrf_security_drivers_cracen>`
+     - Yes
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     -
+     -
+   * - ``nrf54lv10dk/nrf54lv10a/cpuapp``
+     - :ref:`CRACEN <nrf_security_drivers_cracen>`
+     - Yes
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     -
+     -
+   * - | ``nrf54ls05dk/nrf54ls05a/cpuapp``
+       | ``nrf54ls05dk/nrf54ls05b/cpuapp``
+     - :ref:`nrf_oberon <nrf_security_drivers_oberon>`
+     - No
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     -
+     - No support for CRACEN
+   * - | ``nrf54h20dk/nrf54h20/cpuapp``
+       | ``nrf54h20dk/nrf54h20/cpurad``
+     - SSF Crypto (`CONFIG_PSA_SSF_CRYPTO_CLIENT`_)
+     - Yes
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     - RSA not supported
+     -
+   * - ``nrf7120dk/nrf7120/cpuapp``
+     - :ref:`CRACEN <nrf_security_drivers_cracen>`
+     - No
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     - RSA not supported
+     - Also supports :ref:`nrf_oberon <nrf_security_drivers_oberon>`
 
 .. _crypto_tls_suites:
 
@@ -213,38 +134,12 @@ Cipher suites not listed may still work but have not been verified.
 
       Supported rsa_ciphers suites:
 
-      * AES128-GCM-SHA256
-      * AES128-SHA
-      * AES128-SHA256
-      * AES256-GCM-SHA384
-      * AES256-SHA
-      * AES256-SHA256
-      * DHE-RSA-AES128-CCM
-      * DHE-RSA-AES128-GCM-SHA256
-      * DHE-RSA-AES128-SHA
-      * DHE-RSA-AES128-SHA256
-      * DHE-RSA-AES256-GCM-SHA384
-      * DHE-RSA-AES256-SHA
-      * DHE-RSA-AES256-SHA256
-      * DHE-RSA-CHACHA20-POLY1305
       * ECDHE-RSA-AES128-GCM-SHA256
       * ECDHE-RSA-AES128-SHA
       * ECDHE-RSA-AES128-SHA256
       * ECDHE-RSA-AES256-GCM-SHA384
       * ECDHE-RSA-AES256-SHA
       * ECDHE-RSA-AES256-SHA384
-      * ECDHE-RSA-CHACHA20-POLY1305
-
-      Supported rsa_ciphers_cc310_legacy suites (AES256 and GCM removed):
-
-      * AES128-SHA
-      * AES128-SHA256
-      * DHE-RSA-AES128-CCM
-      * DHE-RSA-AES128-SHA
-      * DHE-RSA-AES128-SHA256
-      * DHE-RSA-CHACHA20-POLY1305
-      * ECDHE-RSA-AES128-SHA
-      * ECDHE-RSA-AES128-SHA256
       * ECDHE-RSA-CHACHA20-POLY1305
 
       Supported ecdsa_ciphers suites:
@@ -264,19 +159,9 @@ Cipher suites not listed may still work but have not been verified.
       * ECDHE-PSK-AES256-CBC-SHA384
       * ECDHE-PSK-CHACHA20-POLY1305
 
-      Supported ecdsa_ciphers_cc310_legacy suites (AES256 and GCM removed):
-
-      * ECDHE-ECDSA-AES128-SHA
-      * ECDHE-ECDSA-AES128-SHA256
-      * ECDHE-ECDSA-AES128-CCM8
-      * ECDHE-ECDSA-AES128-CCM
-      * ECDHE-ECDSA-CHACHA20-POLY1305
-      * ECDHE-PSK-AES128-CBC-SHA256
-      * ECDHE-PSK-CHACHA20-POLY1305
-
    .. tab:: TLS v1.3
 
-      Supported ecdsa_ciphers_tls_13 suites:
+      Supported rsa_ciphers and ecdsa_ciphers_tls_13 suites:
 
       * TLS_CHACHA20_POLY1305_SHA256
       * TLS_AES_256_GCM_SHA384
@@ -284,12 +169,11 @@ Cipher suites not listed may still work but have not been verified.
       * TLS_AES_128_CCM_SHA256
       * TLS_AES_128_CCM_8_SHA256
 
-AES256 is supported on all compatible board targets with the CMSE enabled because it enables :ref:`both nrf_cc3xx and nrf_oberon as backends<nrf_security_backends_oberon>` for devices with Arm CryptoCell.
+AES256 is supported on all compatible board targets with the CMSE enabled because it enables :ref:`both nrf_cc3xx and nrf_oberon as backends<ug_crypto_supported_features_signature_algorithms>` for devices with Arm CryptoCell.
 
 The following combinations are *not* supported:
 
-* RSA is not supported in applications that use the PSA Crypto configuration (which includes the CMSE).
-* AES CCM-256 and AES GCM are not supported for nRF52840 and for the nRF91 Series devices when using the :ref:`nrf_cc3xx legacy <nrf_security_backends_cc3xx>` crypto configuration.
+* AES CCM-256 and AES GCM are not supported for nRF52840 and for the nRF91 Series devices when using the :ref:`nrf_cc3xx <ug_crypto_supported_features_aead_algorithms>` crypto configuration.
 
 Configuration options
 *********************
@@ -313,9 +197,10 @@ Certificates when running with CMSE
 When the sample is compiled for the ``*/ns`` :ref:`variant <app_boards_names>` of the board, that is, with TF-M enabled, it stores its TLS certificates and keys in TF-M's :ref:`Protected Storage <tfm_partition_ps>`.
 During the sample initialization, the certificates and keys are fetched from Protected Storage and kept in non-secure RAM for use during every subsequent TLS handshake.
 
-.. note::
-   Currently, applications with CMSE enabled only support ECDSA certificates.
-   This is automatically enforced in the configuration files for board targets with CMSE enabled (``*/ns`` :ref:`variant <app_boards_names>`).
+When the sample is compiled with RSA certificates:
+
+* For the TLS v1.3, the RSA-PSS standard is enforced, as this is the only supported RSA implementation in the TLS v1.3.
+* For the TLS v1.2, RSA-PKCS#1 v1.5 is the default standard.
 
 TAP adapter
 ===========

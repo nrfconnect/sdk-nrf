@@ -19,7 +19,6 @@ To use the library to request a JWT, complete the following steps:
    * :kconfig:option:`CONFIG_APP_JWT`
    * :kconfig:option:`CONFIG_APP_JWT_VERIFY_SIGNATURE`
    * :kconfig:option:`CONFIG_APP_JWT_PRINT_EXPORTED_PUBKEY_DER`
-   * :kconfig:option:`CONFIG_NRF_SECURITY`
 
 #. Modify the Key ID used by the library as an IAK key depending on your supported platform keys.
 #. Generate a signing key pair if you do not want to use the IAK Key.

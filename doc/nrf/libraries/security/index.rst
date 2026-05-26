@@ -9,6 +9,5 @@ Security libraries
    :caption: Subpages:
 
    bootloader/index
-   nrf_security/index
    tfm/index
    *
