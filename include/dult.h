@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -55,15 +55,15 @@ enum dult_accessory_capability {
 	DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_BLE_BIT_POS = 3,
 };
 
-/** DULT firmware version. */
-struct dult_firmware_version {
-	/** Major firmware version. */
+/** DULT version. Used to describe the firmware version. */
+struct dult_version {
+	/** Major version. */
 	uint16_t major;
 
-	/** Minor firmware version. */
+	/** Minor version. */
 	uint8_t minor;
 
-	/** Firmware revision. */
+	/** Revision. */
 	uint8_t revision;
 };
 
@@ -90,7 +90,7 @@ struct dult_user {
 	enum dult_network_id network_id;
 
 	/** Firmware version. */
-	struct dult_firmware_version firmware_version;
+	struct dult_version firmware_version;
 };
 
 /** @brief Register DULT user.
