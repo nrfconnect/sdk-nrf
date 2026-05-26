@@ -2984,7 +2984,8 @@ OCX-238: The controller rejects CIS Requests with the same ``CIG_ID`` as a curre
 nRF Machine Learning
 ====================
 
-The issues in this section are related to the :ref:`nrf_machine_learning_app` application.
+The nRF Machine Learning application is removed in the |NCS| release v3.4.0 and replaced by the Gesture Recognition application in `Edge AI Add-on for nRF Connect SDK`_.
+This section covers issues related to the nRF Machine Learning application found in previous |NCS| releases.
 
 .. rst-class:: v3-2-2 v3-2-1 v3-2-0
 
@@ -3017,7 +3018,7 @@ NCSDK-13923: Device might crash during Bluetooth bonding
 
 .. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
 
-NCSDK-16644: :ref:`nrf_machine_learning_app` does not go to sleep and does not wake up on Thingy:53
+NCSDK-16644: nRF Machine Learning does not go to sleep and does not wake up on Thingy:53
   nRF Machine learning application on Thingy:53 does not sleep after a period of inactivity and does not wake up after an activity occurs.
 
   **Affected platforms:** Thingy:53
@@ -3987,7 +3988,7 @@ NCSDK-15707: Visual glitches when updating an RGB LED's color in :ref:`caf_leds`
   See :ref:`caf_leds` for more information.
 
   **Workaround:** Make sure your application includes the devicetree overlay file in which PWM period is decreased.
-  For example, include the following commit to solve the issue for the :ref:`nrf_machine_learning_app` application for Nordic Thingy:53: ``fa2b57cddbaacf393c77def5d0302e1a45138d21``.
+  For example, include the following commit to solve the issue for the nRF Machine Learning application for Nordic Thingy:53: ``fa2b57cddbaacf393c77def5d0302e1a45138d21``.
 
 .. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
 

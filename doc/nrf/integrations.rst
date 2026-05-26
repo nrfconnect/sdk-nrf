@@ -22,7 +22,6 @@ The following user guides describe available integrations:
    :caption: Subpages:
 
    external_comp/bt_fast_pair/index
-   external_comp/edge_impulse
    external_comp/memfault
    external_comp/avsystem
    external_comp/nrf_cloud

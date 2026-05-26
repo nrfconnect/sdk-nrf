@@ -565,14 +565,6 @@ ci_samples_esb:
     - nrfxlib/mpsl/
     - zephyr/soc/nordic/
 
-ci_samples_edge_impulse:
-  files:
-    - nrf/drivers/sensor/sensor_sim/
-    - nrf/lib/edge_impulse/
-    - nrf/lib/wave_gen/
-    - nrf/samples/edge_impulse/
-    - zephyr/soc/nordic/
-
 ci_tests_subsys_bootloader:
   files:
     - bootloader/mcuboot/
@@ -652,39 +644,6 @@ ci_tests_drivers_nrfx_integration_test:
     - modules/hal/nordic/nrfx/
     - nrf/tests/drivers/nrfx_integration_test/
     - zephyr/modules/hal_nordic/
-
-ci_applications_machine_learning:
-  files:
-    - nrf/applications/ipc_radio/
-    - nrf/applications/machine_learning/
-    - nrf/boards/shields/pca63565/
-    - nrf/boards/shields/pca63566/
-    - nrf/cmake/
-    - nrf/drivers/mpsl/
-    - nrf/drivers/sensor/sensor_sim/
-    - nrf/lib/edge_impulse/
-    - nrf/lib/wave_gen/
-    - nrf/samples/nrf5340/netboot/
-    - nrf/subsys/app_event_manager/
-    - nrf/subsys/bluetooth/
-    - nrf/subsys/bootloader/
-    - nrf/subsys/caf/
-    - nrf/subsys/event_manager_proxy/
-    - nrf/subsys/mpsl/
-    - nrf/subsys/pcd/
-    - nrf/sysbuild/
-    - zephyr/cmake/
-    - zephyr/drivers/sensor/adi/adxl362/
-    - zephyr/drivers/sensor/bosch/bme680/
-    - zephyr/drivers/sensor/bosch/bmi270/
-    - zephyr/drivers/sensor/bosch/bmm150/
-    - zephyr/drivers/sensor/voltage_divider/
-    - zephyr/share/
-    - zephyr/subsys/bluetooth/
-    - zephyr/subsys/ipc/
-    - zephyr/subsys/mgmt/
-    - zephyr/subsys/net/
-    - zephyr/subsys/usb/
 
 ci_applications_nrf_desktop:
   files:
@@ -1024,11 +983,6 @@ ci_tests_lib_nrf_modem_lib:
     - nrf/tests/mocks/nrf_modem_at/
     - nrfxlib/nrf_modem/
     - zephyr/subsys/net/
-
-ci_tests_lib_edge_impulse:
-  files:
-    - nrf/lib/edge_impulse/
-    - nrf/tests/lib/edge_impulse/
 
 ci_tests_drivers_timer:
   files:

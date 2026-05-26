@@ -335,8 +335,8 @@ Edge Impulse samples
 
 * Added support for the :zephyr:board:`nrf54h20dk` board target in the following samples:
 
-  * :ref:`ei_data_forwarder_sample`
-  * :ref:`ei_wrapper_sample`
+  * Edge Impulse: Data forwarder
+  * Edge Impulse: Wrapper
 
 Matter samples
 --------------

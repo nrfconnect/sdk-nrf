@@ -332,7 +332,7 @@ nRF Desktop
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-* Deprecated the :ref:`nrf_machine_learning_app` application.
+* Deprecated the nRF Machine Learning application.
   Replaced by the Gesture Recognition application in `Edge AI Add-on for nRF Connect SDK`_.
 
 Thingy:53: Matter weather station
@@ -438,7 +438,7 @@ DECT NR+ samples
 Edge Impulse samples
 --------------------
 
-* Deprecated :ref:`ei_wrapper_sample` and :ref:`ei_data_forwarder_sample` samples.
+* Deprecated Edge Impulse: Wrapper and Edge Impulse: Data forwarder samples.
   Replaced by samples in `Edge AI Add-on for nRF Connect SDK`_.
 
 Enhanced ShockBurst samples
@@ -694,7 +694,7 @@ Other libraries
 
   * Updated by renaming the ``CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC`` Kconfig option to :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS`.
 
-* Deprecated :ref:`ei_wrapper` library.
+* Deprecated Edge Impulse wrapper library.
   Replaced by Edge Impulse SDK in `Edge AI Add-on for nRF Connect SDK`_.
 
 * :ref:`emds_readme` library:

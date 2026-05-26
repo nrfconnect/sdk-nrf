@@ -23,7 +23,7 @@ Highlights
 * Added features available in Trusted Firmware-M (TF-M), which is supported for development with nRF5340 and nRF9160.
 * Integrated Apple Find My, supported for production.
 * Added development support for the Pelion Device Management library for LTE-M/NB-IoT and Thread.
-* Added the :ref:`nrf_machine_learning_app` application for Thingy:52, which further integrates Edge Impulse Machine Learning with the |NCS|.
+* Added the nRF Machine Learning application for Thingy:52, which further integrates Edge Impulse Machine Learning with the |NCS|.
 * Added support for all Thread 1.2 mandatory features for routers and end devices supported for development for the nRF52 family.
 * Integrated more complete support for Matter (Project CHIP) which is supported for development for nRF52840 and nRF5340.
 * Integrated Apple HomeKit ADK v5.3 and added development support for nRF52832 and nRF52833 for Bluetooth LE HomeKit accessories.
@@ -377,7 +377,7 @@ Crypto
 Edge Impulse
 ------------
 
-* Added the :ref:`nrf_machine_learning_app` application that integrates the Edge Impulse wrapper library with sensor sampling.
+* Added the nRF Machine Learning application that integrates the Edge Impulse wrapper library with sensor sampling.
 * Sample reference to a public pre-trained model.
 
 Pelion
@@ -627,7 +627,7 @@ Applications and samples
 
 * Edge Impulse
 
-   * Edge Impulse samples are now in a separate :ref:`edge_impulse_samples` section.
+   * Edge Impulse samples are now in a separate Edge Impulse samples section.
 
 * TF-M
 

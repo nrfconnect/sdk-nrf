@@ -177,9 +177,9 @@ nRF Machine Learning (Edge Impulse)
 
 * Added:
 
-  * Non-secure configuration for building :ref:`nrf_machine_learning_app` with :zephyr:board:`thingy53`.
-  * Secure configuration for building :ref:`nrf_machine_learning_app` with :zephyr:board:`nrf5340dk`.
-  * Power manager to the :ref:`nrf_machine_learning_app` application.
+  * Non-secure configuration for building nRF Machine Learning with :zephyr:board:`thingy53`.
+  * Secure configuration for building nRF Machine Learning with :zephyr:board:`nrf5340dk`.
+  * Power manager to the nRF Machine Learning application.
 
 * Updated:
 
@@ -649,7 +649,7 @@ Other libraries
   * Moved the Event Manager features responsible for profiling events into the :ref:`app_event_manager_profiler_tracer` module.
   * Added a sample showing the use of the nRF Profiler for Event Manager events.
 
-* :ref:`ei_wrapper` library:
+* Edge Impulse wrapper library:
 
   * Expanded API to provide information about input data sampling frequency, every label used by the machine learning model, and results associated with every label.
   * Removed FPU dependency.

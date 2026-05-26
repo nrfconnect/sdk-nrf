@@ -297,9 +297,9 @@ The following changes are relevant for all device families.
 Edge Impulse
 ------------
 
-* Added :ref:`ei_wrapper` library that runs the machine learning model.
-* Added :ref:`ei_wrapper_sample` sample that demonstrates the functionality of :ref:`ei_wrapper`.
-* Added :ref:`ei_data_forwarder_sample` sample that demonstrates the usage of `Edge Impulse's data forwarder`_ to provide sensor data to `Edge Impulse studio`_ when :ref:`ug_edge_impulse` respectively.
+* Added Edge Impulse wrapper library that runs the machine learning model.
+* Added Edge Impulse: Wrapper sample that demonstrates the functionality of the Edge Impulse wrapper.
+* Added Edge Impulse: Data forwarder sample that demonstrates the usage of `Edge Impulse's data forwarder`_ to provide sensor data to `Edge Impulse studio`_ when integrating Edge Impulse with the |NCS|.
 
 Trusted Firmware-M
 ------------------
@@ -963,7 +963,7 @@ In addition to documentation related to the changes listed above, the following 
   * :ref:`app_power_opt`
   * :ref:`ug_tfm`
   * :ref:`ug_radio_fem`
-  * :ref:`ug_edge_impulse`
+  * Edge Impulse integration
   * :ref:`ug_chip`
 * :ref:`ug_nrf9160` - Added information about TF-M, board revisions, and full modem firmware update.
 * :ref:`ug_nrf5340` - Added and updated information about:
