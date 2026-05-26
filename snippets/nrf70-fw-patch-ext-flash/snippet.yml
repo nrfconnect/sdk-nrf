@@ -8,3 +8,9 @@ boards:
   nrf7002dk/nrf5340/cpuapp:
     append:
       EXTRA_CONF_FILE: boards/nrf7002dk_nrf5340_cpuapp.conf
+  nrf54lm20dk/nrf54lm20a/cpuapp:
+    append:
+      EXTRA_CONF_FILE: boards/nrf54lm20dk_nrf54lm20a_cpuapp.conf
+  nrf54lm20dk/nrf54lm20b/cpuapp:
+    append:
+      EXTRA_CONF_FILE: boards/nrf54lm20dk_nrf54lm20b_cpuapp.conf
