@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf54l15dk_nrf54l15_cpuapp.overlay"
+
+/ {
+	bootchain {
+		b0_nsib {
+			compatible = "nordic,mcuboot";
+			partitions = <&b0_partition>;
+
+			images {
+				mcuboot {
+					compatible = "nordic,mcuboot-image";
+					image-index = <0>;
+					uuid-vid = "nordicsemi.com", "nordicsemi.com";
+					uuid-cid = "nRF54L15_sample_mcuboot_s0", "nRF54L15_sample_mcuboot_s1";
+					partitions = <&s0_partition &s1_partition>;
+				};
+			};
+		};
+
+		b1_mcuboot {
+			compatible = "nordic,mcuboot";
+			uuid-vid-required;
+			uuid-cid-required;
+			partitions = <&s0_partition &s1_partition>;
+
+			images {
+				app {
+					compatible = "nordic,mcuboot-image";
+					image-index = <0>;
+					uuid-vid = "nordicsemi.com", "nordicsemi.com";
+					uuid-cid = "nRF54L15_sample_app", "nRF54L15_sample_app";
+					partitions = <&slot0_partition &slot1_partition>;
+				};
+
+				mcuboot {
+					compatible = "nordic,mcuboot-image";
+					image-index = <1>;
+					uuid-vid = "nordicsemi.com", "nordicsemi.com";
+					uuid-cid = "nRF54L15_sample_mcuboot_s0", "nRF54L15_sample_mcuboot_s1";
+					partitions = <&slot1_partition &slot1_partition>;
+				};
+			};
+		};
+	};
+};

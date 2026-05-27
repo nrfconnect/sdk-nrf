@@ -1,0 +1,27 @@
+sample:
+  description: Encrypted MCUboot update sample
+  name: Encrypted MCUboot SMP Server sample
+common:
+  sysbuild: true
+  tags:
+    - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
+
+tests:
+  sample.dfu.encrypted_mcuboot.load_addr:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - encryption
+    extra_args:
+
+  sample.dfu.encrypted_mcuboot.uuid:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - encryption
+    extra_args:
+      - FILE_SUFFIX=uuid
