@@ -56,6 +56,7 @@ tests:
     extra_args:
       - FILE_SUFFIX=bootloaders
       - CONFIG_DEBUG_OPTIMIZATIONS=y
+      - CONFIG_TFM_CMAKE_BUILD_TYPE_MINSIZEREL=y
   sample.tfm.hello_world.full:
     sysbuild: true
     tags:
