@@ -1,0 +1,28 @@
+name: memfault-coredump
+append:
+  EXTRA_CONF_FILE: memfault-coredump.conf
+boards:
+  nrf52840dk/nrf52840:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf52840dk_nrf52840.overlay
+  nrf5340dk/nrf5340/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf5340dk_nrf5340_cpuapp.overlay
+  nrf5340dk/nrf5340/cpuapp/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf5340dk_nrf5340_cpuapp_ns.overlay
+  nrf9160dk/nrf9160/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf9160dk_nrf9160_ns.overlay
+  nrf9151dk/nrf9151/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf9151dk_nrf9151_ns.overlay
+  nrf9161dk/nrf9161/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf9161dk_nrf9161_ns.overlay
+  thingy91/nrf9160/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/thingy91_nrf9160_ns.overlay
+  thingy91x/nrf9151/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/thingy91x_nrf9151_ns.overlay

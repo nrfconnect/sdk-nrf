@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Carve a 64 kB memfault coredump partition out of the application-reserved
+ * region at the end of internal flash. The default nrf52840 layout reserves
+ * the storage partition at 0x000f8000-0x00100000 (32 kB). Shrink it to 16 kB
+ * and place memfault_coredump_partition immediately after.
+ *
+ *   0x000f8000  storage_partition           (16 kB)
+ *   0x000fc000  memfault_coredump_partition (16 kB)
+ *
+ * Adjust the layout to taste in your own overlay if you need different sizes.
+ */
+
+/ {
+	chosen {
+		nordic,memfault-coredump-partition = &memfault_coredump_partition;
+	};
+};
+
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		storage_partition: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f8000 0x00004000>;
+		};
+
+		memfault_coredump_partition: partition@fc000 {
+			compatible = "zephyr,mapped-partition";
+			label = "memfault_coredump_partition";
+			reg = <0x000fc000 0x00004000>;
+		};
+	};
+};
