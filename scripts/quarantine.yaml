@@ -123,3 +123,9 @@
   platforms:
     - nrf52dk/nrf52832
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39503"
+
+- scenarios:
+    - benchmarks.multicore.idle_gpio.nrf54h20dk_cpuapp_cpuppr.s2ram.wakeup_from_uart_pins
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39563"
