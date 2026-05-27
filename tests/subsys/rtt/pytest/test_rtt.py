@@ -87,6 +87,9 @@ def test_rtt_logging(dut: DeviceAdapter):
         'nrf54lv10dk/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
         },
+        'nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp': {
+            'device': 'NRF54LV10A_M33',
+        },
         'nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns': {
             'device': 'NRF54LV10A_M33',
         },
