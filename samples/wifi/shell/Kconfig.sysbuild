@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PARTITION_MANAGER
+	default n if (!BOARD_THINGY53 && !BOARD_NRF54LM20DK && !BOARD_THINGY91X_NRF5340_CPUAPP)
+
+source "share/sysbuild/Kconfig"
