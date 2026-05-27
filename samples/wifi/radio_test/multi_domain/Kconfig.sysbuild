@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n if !BOARD_THINGY53
 
 config SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST
 	bool
