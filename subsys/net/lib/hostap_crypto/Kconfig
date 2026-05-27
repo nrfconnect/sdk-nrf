@@ -109,6 +109,8 @@ config HOSTAP_CRYPTO_ENTERPRISE
 	select MBEDTLS_TLS_VERSION_1_2
 	select MBEDTLS_RSA_C
 	select MBEDTLS_SSL_SERVER_NAME_INDICATION
+	# for "rsa3k" test certs
+	select PSA_WANT_RSA_KEY_SIZE_3072
 
 endif
 
