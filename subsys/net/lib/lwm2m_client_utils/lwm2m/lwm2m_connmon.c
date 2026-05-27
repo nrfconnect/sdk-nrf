@@ -41,7 +41,7 @@ LOG_MODULE_REGISTER(lwm2m_connmon, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 static struct modem_param_info modem_param;
 static struct k_work modem_data_work;
 static struct k_work modem_signal_work;
-static int32_t modem_rsrp;
+static int16_t modem_rsrp;
 
 static char *ip_addr[IP_ADDR_LENGTH];
 static char *apn[APN_LENGTH];
@@ -121,7 +121,7 @@ static void modem_signal_handler(char rsrp_value)
 		return;
 	}
 
-	modem_rsrp = (int8_t)RSRP_IDX_TO_DBM(rsrp_value);
+	modem_rsrp = RSRP_IDX_TO_DBM(rsrp_value);
 	k_work_submit(&modem_signal_work);
 }
 
