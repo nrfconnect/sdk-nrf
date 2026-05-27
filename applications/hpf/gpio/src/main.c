@@ -43,7 +43,7 @@ static const uint8_t pin_to_vio_map[] = {
 #define VIO_PORT 2
 #define VIO_PIN_OFFSET 0
 
-#elif defined(CONFIG_SOC_NRF54LV10A)
+#elif defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
 static const uint8_t pin_to_vio_map[] = {
 	4,  /* Physical pin 15 */
 	0,  /* Physical pin 16 */
