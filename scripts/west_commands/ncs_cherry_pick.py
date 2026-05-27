@@ -72,15 +72,22 @@ class Repo:
         pr_head_sha = self._get_remote_head_sha_(self.upstream_url, f'pull/{pr_number}/head')
         pr_base_sha = self._get_merge_base_(self.upstream_head_sha, pr_head_sha)
 
-        if pr_base_sha not in self.upstream_log_sha_map:
-            raise CommandError(f'PR number {pr_number} is from before latest upmerge')
-
         pr_log = self._parse_commit_range_(pr_base_sha, pr_head_sha)
 
         # Track which PR the commits came from. Used to amend the commit message when cherry
         # picked.
         for commit in pr_log:
             commit['pr-number'] = pr_number
+
+        if pr_base_sha in self.upstream_log_sha_map:
+            # PR merge base is after latest upmerge.
+            return pr_log
+
+        # PR merge base is from before latest upmerge. Validate PR has not been merged already.
+        old_upstream_log = self._parse_commit_range_(pr_base_sha, self.merge_base_sha)
+        for commit in pr_log:
+            if self._commit_is_in_log_(commit, old_upstream_log):
+                raise CommandError(f'PR number {pr_number} was merged before latest upmerge')
 
         return pr_log
 
@@ -130,6 +137,24 @@ class Repo:
 
         self.branch_len += 1
         return True, []
+
+    def _find_commit_in_log_(self, commit: dict, commit_log: list[dict]) -> dict | None:
+        for c in commit_log:
+            if commit['subject'] != c['subject']:
+                continue
+
+            c_files = {(f['file'], f['lines']) for f in c['files']}
+            commit_files = {(f['file'], f['lines']) for f in commit['files']}
+
+            if c_files != commit_files:
+                continue
+
+            return c
+
+        return None
+
+    def _commit_is_in_log_(self, commit: dict, commit_log: list[dict]) -> bool:
+        return self._find_commit_in_log_(commit, commit_log) is not None
 
     def _get_status_(self) -> list[str]:
         return self._run_cmd_('git', 'status', '--porcelain').splitlines()
