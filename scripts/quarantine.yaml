@@ -45,19 +45,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39364"
 
 - scenarios:
-    - applications.nrf_desktop.zrelease
-  platforms:
-    - nrf52820dongle/nrf52820
-    - nrf52833dk/nrf52820
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39450"
-
-- scenarios:
-    - sample.nrf7002_eb.thingy53.shell
-  platforms:
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39450"
-
-- scenarios:
     - sample.tfm.psa_template
     - tfm.psa_test_initial_attestation_lvl1
     - tfm.psa_test_initial_attestation_lvl2
