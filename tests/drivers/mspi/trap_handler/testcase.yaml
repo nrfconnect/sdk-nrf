@@ -37,9 +37,10 @@ tests:
       - hpf_mspi_CONFIG_ASSERT=y
       - hpf_mspi_CONFIG_ASSERT_TEST=y
       - hpf_mspi_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/mspi/trap_handler/boards/nrf54lm20dk_nrf54lm20_cpuflpr_memory.overlay"
-  drivers.mspi.hpf_trap_handler.lv10:
+  drivers.mspi.hpf_trap_handler.lv10_lc10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
