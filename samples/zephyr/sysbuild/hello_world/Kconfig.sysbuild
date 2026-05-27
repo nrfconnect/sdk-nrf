@@ -7,6 +7,7 @@ config PARTITION_MANAGER
 config REMOTE_BOARD
 	string
 	default "$(BOARD)/nrf54lv10a/cpuflpr" if SOC_NRF54LV10A_CPUAPP
+	default "$(BOARD)/nrf54lc10a/cpuflpr" if SOC_NRF54LC10A_CPUAPP
 	default "$(BOARD)/nrf7120/cpuflpr" if SOC_NRF7120_ENGA_CPUAPP
 
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
