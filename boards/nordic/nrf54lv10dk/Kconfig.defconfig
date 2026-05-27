@@ -8,9 +8,6 @@ DT_CHOSEN_Z_SRAM_PARTITION := zephyr,sram-secure-partition
 config HAS_BT_CTLR
 	default BT
 
-config SOC_NRF54LX_SKIP_GLITCHDETECTOR_DISABLE
-	default y
-
 config NRF_RRAM_WRITE_BUFFER_SIZE
 	default 16
 
