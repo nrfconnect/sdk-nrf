@@ -66,7 +66,7 @@ static const uint8_t pin_to_vio_map[HPF_MSPI_PIN_COUNT] = {
 };
 #define VIO_PIN_OFFSET 0
 
-#elif defined(CONFIG_SOC_NRF54LV10A)
+#elif defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
 static const uint8_t pin_to_vio_map[HPF_MSPI_PIN_COUNT] = {
 	4,  /* Physical pin 15 */
 	0,  /* Physical pin 16 */
@@ -224,7 +224,7 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 	nrf_vpr_csr_vio_config_t vio_config = {
 		.input_sel = false,
 #if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B) || \
-	defined(CONFIG_SOC_NRF54LV10A)
+	defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
 		.stop_cnt = false,
 #else
 		.stop_cnt = true,
@@ -496,7 +496,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 
 		/* Set unshifted parts of OUT to high state */
 #if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B) || \
-	defined(CONFIG_SOC_NRF54LV10A)
+	defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
 		nrf_csr_write(VPRCSR_NORDIC_OUTUB,
 			      BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ1)]) |
 			      BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ2)]) |

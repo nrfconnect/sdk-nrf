@@ -43,7 +43,7 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define HPF_MSPI_DATA_LINE_CNT_MAX 8
 #define HPF_MSPI_CS_LINE_CNT_MAX 5
 #define MAX_MSPI_DUMMY_CLOCKS 59
-#elif defined(CONFIG_SOC_NRF54LV10A)
+#elif defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
 #define HPF_MSPI_PORT_NUMBER	1  /* Physical port number */
 #define HPF_MSPI_SCK_PIN_NUMBER 16 /* Physical pin number on port 1 */
 
