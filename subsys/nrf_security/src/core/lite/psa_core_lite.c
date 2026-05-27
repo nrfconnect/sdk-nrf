@@ -398,6 +398,46 @@ psa_status_t psa_cipher_abort(psa_cipher_operation_t *operation)
 
 #endif /* PSA_WANT_ALG_CTR */
 
+#if CONFIG_PSA_CORE_LITE_HAS_RSA_DECRYPT
+
+psa_status_t psa_asymmetric_decrypt(
+	mbedtls_svc_key_id_t key_id, psa_algorithm_t alg,
+	const uint8_t *input, size_t input_length, const uint8_t *salt, size_t salt_length,
+	uint8_t *output, size_t output_size, size_t *output_length)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_core_lite_key_slot_t key_slot = {0};
+
+	if (input == NULL || output == NULL || output_length == NULL ||
+	    (salt == NULL && salt_length != 0)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (!VERIFY_ALG_RSA_OAEP(alg)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	status = get_key_buffer(key_id, &key_slot, CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE);
+	if (status != PSA_SUCCESS) {
+		safe_memzero(&key_slot, sizeof(key_slot));
+		clear_all_volatile_keys();
+		return status;
+	}
+
+	status = psa_driver_wrapper_asymmetric_decrypt(&key_slot.key_attributes, key_slot.key,
+						       key_slot.key_size, alg,
+						       input, input_length, salt, salt_length,
+						       output, output_size, output_length);
+	safe_memzero(&key_slot, sizeof(key_slot));
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+	}
+
+	return status;
+}
+
+#endif /* CONFIG_PSA_CORE_LITE_HAS_RSA_DECRYPT */
+
 /* Random function */
 
 #if PSA_WANT_GENERATE_RANDOM
@@ -478,7 +518,8 @@ psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
 
 	/* Key import is limited to RSA keys which can't be stored in KMU */
 	if (!UTIL_CONCAT_OR(VERIFY_ALG_RSA_PSS(alg),
-			    VERIFY_ALG_RSA_PKCS1V15(alg))) {
+			    VERIFY_ALG_RSA_PKCS1V15(alg),
+			    VERIFY_ALG_RSA_OAEP(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 

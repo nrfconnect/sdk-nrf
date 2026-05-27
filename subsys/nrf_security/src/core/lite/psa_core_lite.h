@@ -52,6 +52,11 @@
 		IS_ENABLED(PSA_WANT_ALG_RSA_PKCS1V15_SIGN),			\
 		PSA_ALG_IS_RSA_PKCS1V15_SIGN(_alg))
 
+#define VERIFY_ALG_RSA_OAEP(_alg)						\
+	UTIL_CONCAT_AND(							\
+		IS_ENABLED(PSA_WANT_ALG_RSA_OAEP),				\
+		PSA_ALG_IS_RSA_OAEP(_alg))
+
 /* Macros to verify different hash algorithms */
 
 #define VERIFY_ALG_SHA_256(_alg) \
