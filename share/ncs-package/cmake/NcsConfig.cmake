@@ -14,5 +14,16 @@ endif()
 set(VERSION_TYPE NCS)
 set(VERSION_FILE ${NRF_DIR}/VERSION)
 include(${ZEPHYR_BASE}/cmake/modules/version.cmake)
+
+foreach(type file IN ZIP_LISTS VERSION_TYPE VERSION_FILE)
+  if(NOT EXISTS ${file})
+    break()
+  endif()
+  file(READ ${file} ver)
+
+  string(REGEX MATCH "VERSION_METADATA = ([a-z0-9\.\-]*)" _ ${ver})
+  set(${type}_VERSION_METADATA ${CMAKE_MATCH_1})
+endforeach()
+
 set(VERSION_TYPE)
 set(VERSION_FILE)
