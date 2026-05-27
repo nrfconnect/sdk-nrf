@@ -314,8 +314,10 @@ add_dependencies(zephyr-all zephyr-devicetree)
 #-------------------------------------------------------------------------------
 # docset: nrf
 
-file(READ "${NRF_BASE}/VERSION" NRF_VERSION)
-string(STRIP ${NRF_VERSION} NRF_VERSION)
+set(VERSION_FILE "${NRF_BASE}/VERSION")
+set(VERSION_TYPE "NCS")
+include(version)
+set(NRF_VERSION ${NCS_VERSION_STRING})
 
 add_docset(nrf ${NRF_VERSION})
 add_doxygen_docset(nrf ${NRF_BASE} ${NRF_VERSION})
