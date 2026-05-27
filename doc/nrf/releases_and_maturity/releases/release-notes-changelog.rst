@@ -628,7 +628,8 @@ The current |NCS| main branch is based on revision ``684c9e8f32`` of Zephyr.
 Additions specific to |NCS|
 ---------------------------
 
-|no_changes_yet_note|
+* Updated the :file:`VERSION` file to follow the common version format structure.
+  The common version file format structure is extended with a ``VERSION_METADATA`` field for |NCS|.
 
 zcbor
 =====
