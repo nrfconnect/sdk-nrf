@@ -1,0 +1,122 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Devicetree-based partition layout for the nrf9161dk_nrf9161_ns target, used
+ * when CONFIG_PARTITION_MANAGER_ENABLED=n. Mirrors the layout adopted by the
+ * cellular at_client sample (see samples/cellular/at_client/boards/) and
+ * carves a 16 kB memfault_coredump_partition from the storage region.
+ *
+ *   0x0000_0000  image-0                      (960 kB)
+ *     +0x0000    image-0-secure               ( 32 kB)
+ *     +0x8000    image-0-nonsecure            (928 kB)
+ *   0x000f_8000  storage                      ( 32 kB)
+ *     +0x0000    settings-storage             ( 16 kB)
+ *     +0x4000    memfault_coredump_partition  ( 16 kB)
+ */
+
+/ {
+	chosen {
+		zephyr,settings-partition = &settings_storage_partition;
+		nordic,memfault-coredump-partition = &memfault_coredump_partition;
+	};
+};
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &storage_partition;
+/delete-node/ &sram0_s;
+/delete-node/ &sram0_ns;
+
+&flash0 {
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x0 0xf8000>;
+			ranges = <0x0 0x0 0xf8000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x0 0x8000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x8000 0xf0000>;
+			};
+		};
+
+		storage_partition: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f8000 0x8000>;
+			ranges = <0x0 0x000f8000 0x8000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			settings_storage_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "settings-storage";
+				reg = <0x00000000 0x4000>;
+			};
+
+			memfault_coredump_partition: partition@4000 {
+				compatible = "zephyr,mapped-partition";
+				label = "memfault_coredump_partition";
+				reg = <0x00004000 0x4000>;
+			};
+		};
+	};
+};
+
+&sram0 {
+	sram0_s: sram@0 {
+		reg = <0x0 0x8000>;
+	};
+
+	sram0_ns: sram@8000 {
+		reg = <0x8000 0x38000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x8000 0x38000>;
+
+		sram0_ns_modem: sram0_ns@0 {
+			reg = <0x0 0x4800>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x0 0x4800>;
+
+			cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+				reg = <0x0 0x728>;
+			};
+
+			cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+				reg = <0x728 0x20d8>;
+			};
+
+			cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@2800 {
+				reg = <0x2800 0x2000>;
+			};
+		};
+
+		sram0_ns_app: sram0_ns@4800 {
+			reg = <0x4800 0x33800>;
+		};
+	};
+};

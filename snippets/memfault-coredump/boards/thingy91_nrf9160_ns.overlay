@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Thingy:91 (nRF9160) already ships a devicetree partition layout in
+ * boards/nordic/thingy91/thingy91_nrf9160_partition.dtsi. The default layout
+ * leaves an 8 kB gap between the scratch partition (ends at 0x000fc000) and
+ * the storage partition (starts at 0x000fe000). Place a memfault coredump
+ * partition there.
+ */
+
+/ {
+	chosen {
+		nordic,memfault-coredump-partition = &memfault_coredump_partition;
+	};
+};
+
+&flash0 {
+	partitions {
+		memfault_coredump_partition: partition@fc000 {
+			compatible = "zephyr,mapped-partition";
+			label = "memfault_coredump_partition";
+			reg = <0x000fc000 0x00002000>;
+		};
+	};
+};

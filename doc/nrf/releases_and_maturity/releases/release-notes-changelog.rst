@@ -800,7 +800,11 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-|no_changes_yet_note|
+* Added:
+
+  * Devicetree support for the internal flash coredump backend (:kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`).
+    The backend now locates its storage from a fixed partition labeled ``memfault_coredump_partition`` when Partition Manager is disabled, while continuing to support Partition Manager when enabled.
+  * The :ref:`snippet-memfault-coredump` snippet that supplies a board-specific partition overlay for flash-backed coredump storage on common DKs and Thingy:91 or Thingy:91 X.
 
 AVSystem integration
 --------------------
