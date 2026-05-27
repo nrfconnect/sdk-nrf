@@ -11,6 +11,11 @@ add_library(nrf_security_utils STATIC
   ${CMAKE_CURRENT_LIST_DIR}/nrf_security_mem_helpers.c
 )
 
+target_include_directories(nrf_security_utils
+  PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}
+)
+
 target_include_directories(psa_crypto_config
   INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}
