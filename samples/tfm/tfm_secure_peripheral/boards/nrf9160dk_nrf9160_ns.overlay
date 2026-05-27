@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/cellular/nrf91_crypto_partitions.dtsi>
+
+#include <samples/cellular/nrf91_sram_crypto_partitions.dtsi>
+
 &pinctrl {
 	spi3_default: spi3_default {
 		group1 {
