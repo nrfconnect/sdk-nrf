@@ -47,6 +47,12 @@ static const char *dl_host;
 static const char *dl_file;
 static uint32_t dl_host_hash;
 static uint32_t dl_file_hash;
+static uint32_t dl_proxy_uri_hash;
+/* Set by fota_download_with_host_cfg() to signal that the caller populated the
+ * transport-specific fields of dl_host_cfg (proxy_uri, cid, auth_cb). Cleared after
+ * each download is started so that the next non-proxy entry point resets them.
+ */
+static bool dl_host_cfg_provided;
 
 static struct downloader dl;
 static int downloader_callback(const struct downloader_evt *event);
@@ -311,6 +317,7 @@ static int downloader_callback(const struct downloader_evt *event)
 		/* Download completed, clear hashes to prevent resuming on the next download */
 		dl_host_hash = 0;
 		dl_file_hash = 0;
+		dl_proxy_uri_hash = 0;
 
 		atomic_clear_bit(&flags, FLAG_DOWNLOADING);
 		atomic_set_bit(&flags, FLAG_STOPPED);
@@ -530,14 +537,18 @@ static void set_host_and_file(char const *const host, char const *const file)
 {
 	uint32_t host_hash;
 	uint32_t file_hash;
+	uint32_t proxy_uri_hash = 0;
 
 	host_hash = sys_hash32(host, strlen(host));
 	file_hash = sys_hash32(file, strlen(file));
 
-	LOG_DBG("URI checksums %d,%d,%d,%d\r\n", host_hash, file_hash, dl_host_hash, dl_file_hash);
+	if (dl_host_cfg.proxy_uri != NULL) {
+		proxy_uri_hash = sys_hash32(dl_host_cfg.proxy_uri, strlen(dl_host_cfg.proxy_uri));
+	}
 
 	/* Verify if the URI is same as last time, if not, prevent resuming. */
-	if (dl_host_hash != host_hash || dl_file_hash != file_hash) {
+	if (dl_host_hash != host_hash || dl_file_hash != file_hash ||
+	    dl_proxy_uri_hash != proxy_uri_hash) {
 		atomic_set_bit(&flags, FLAG_NEW_URI);
 	} else {
 		atomic_clear_bit(&flags, FLAG_NEW_URI);
@@ -545,6 +556,7 @@ static void set_host_and_file(char const *const host, char const *const file)
 
 	dl_host_hash = host_hash;
 	dl_file_hash = file_hash;
+	dl_proxy_uri_hash = proxy_uri_hash;
 
 	dl_host = host;
 	dl_file = file;
@@ -556,6 +568,7 @@ int fota_download_with_host_cfg(const char *host, const char *file,
 				const struct downloader_host_cfg *host_cfg)
 {
 	dl_host_cfg = *host_cfg;
+	dl_host_cfg_provided = true;
 	LOG_DBG("Downloading %s/%s", host, file);
 	return fota_download_start_with_image_type(host, file, sec_tag,
 						   pdn_id, fragment_size, expected_type);
@@ -565,6 +578,13 @@ int fota_download(const char *host, const char *file,
 	const int *sec_tag_list, uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size,
 	const enum dfu_target_image_type expected_type)
 {
+
+	/* Consume the flag unconditionally so a rejected call below can't leave it set for the
+	 * next download.
+	 */
+	bool host_cfg_provided = dl_host_cfg_provided;
+
+	dl_host_cfg_provided = false;
 
 	if (host == NULL || file == NULL || callback == NULL) {
 		return -EINVAL;
@@ -576,6 +596,19 @@ int fota_download(const char *host, const char *file,
 
 	int err;
 	static int sec_tag_list_copy[CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX];
+
+	/* Non-proxy entry points don't populate the transport-specific fields of dl_host_cfg.
+	 * Reset them to a known baseline so a previous fota_download_with_host_cfg() call can't
+	 * leave a stale proxy_uri that corrupts the resume decision in set_host_and_file(), nor
+	 * leak CoAP-only state (proxy_uri/cid/auth_cb) into a subsequent non-proxy download.
+	 * Persisted fields set elsewhere (if_name, set_native_tls) are left untouched.
+	 */
+	if (!host_cfg_provided) {
+		dl_host_cfg.proxy_uri = NULL;
+		dl_host_cfg.cid = false;
+		dl_host_cfg.auth_cb = NULL;
+	}
+
 	dl_host_cfg.pdn_id = pdn_id;
 	dl_host_cfg.range_override = fragment_size;
 
