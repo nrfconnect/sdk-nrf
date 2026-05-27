@@ -1,0 +1,38 @@
+sample:
+  description: Encrypted MCUboot update sample
+  name: Encrypted MCUboot SMP Server sample
+common:
+  sysbuild: true
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: false
+    regex:
+      - "Firmware version .*"
+      - "Booting .*"
+      - "Starting .*bootloader"
+      - "Jumping to the .*image slot"
+      - "build time"
+  timeout: 15
+  tags:
+    - mcuboot_with_encryption
+    - ci_samples_dfu
+
+tests:
+  sample.dfu.encrypted_mcuboot.load_addr:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - encryption
+
+  sample.dfu.encrypted_mcuboot.uuid:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - encryption
+    extra_args:
+      - FILE_SUFFIX=uuid

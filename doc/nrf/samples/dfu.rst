@@ -44,6 +44,7 @@ The following categories of samples are available:
 
    ../../../samples/mcuboot/*/README
    ../../../samples/dfu/mcuboot_with_encryption/README
+   ../../../samples/dfu/encrypted_bootloader/README
    ../../../samples/dfu/smp_svr_mini_boot/README
    ../../../samples/dfu/compressed_update/README
 

@@ -47,7 +47,6 @@ Build and configuration system
 
 Bootloaders and DFU
 ===================
-
 * Added the hidden :kconfig:option:`CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256` to select HMAC-SHA256 with X25519 for compatibility with existing projects that use it.
   The option is hidden and requires addition of Kconfig override in your project.
   This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
@@ -342,7 +341,7 @@ Debug samples
 DFU samples
 -----------
 
-|no_changes_yet_note|
+* Added the :ref:`encrypted_bootloader` sample that demonstrates how to secure device firmware update (DFU) with image encryption enabled for both the application and MCUboot.
 
 DECT NR+ samples
 ----------------
