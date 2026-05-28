@@ -7,6 +7,8 @@
 / {
 	aliases {
 		i2s-node0 = &i2s0;
+		mck-timer = &timer0;
+		lrck-timer = &timer1;
 	};
 
 	zephyr,user {
