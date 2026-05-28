@@ -110,7 +110,9 @@ enum button_functions_mode {
 #if PERIPHERAL_SLOT_COUNT > 1
 #define PRINT_PERIPH_INDEX_STR(idx) printk("Peripheral %zu: ", (idx))
 #define PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots_arr) \
-	PRINT_PERIPH_INDEX_STR(PERIPHERAL_SLOT_INDEX(slot, slots_arr))
+	(slot != NULL) ? \
+	PRINT_PERIPH_INDEX_STR(PERIPHERAL_SLOT_INDEX(slot, slots_arr)) : \
+	printk("Unknown peripheral: ")
 #else
 #define PRINT_PERIPH_INDEX_STR(idx)
 #define PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots_arr) (void) (slot)
@@ -679,6 +681,41 @@ static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
 
 #endif
 
+static void frame_space_updated(struct bt_conn *conn,
+				const struct bt_conn_le_frame_space_updated *params)
+{
+	struct peripheral_slot *slot = slot_by_conn(conn);
+
+	PRINT_PERIPH_INDEX_STR_FOR_SLOT(slot, slots);
+
+	if (params->status == BT_HCI_ERR_SUCCESS) {
+		printk("Frame space updated: %" PRIu16 " us, PHYs: 0x%02" PRIx8
+		       ", spacing types: 0x%04" PRIx16 "\n",
+		       params->frame_space, params->phys, params->spacing_types);
+	} else {
+		printk("Frame space update failed (HCI status 0x%02" PRIx8 " %s)\n",
+		       params->status, bt_hci_err_to_str(params->status));
+	}
+}
+
+static void select_lowest_frame_space(struct bt_conn *conn)
+{
+	int err;
+	static const struct bt_conn_le_frame_space_update_param params = {
+		.phys = BT_HCI_LE_FRAME_SPACE_UPDATE_PHY_2M_MASK,
+		.spacing_types = BT_CONN_LE_FRAME_SPACE_TYPES_MASK_ACL_IFS,
+		.frame_space_min = 0,
+		.frame_space_max = 150,
+	};
+
+	printk("Requesting frame space update\n");
+
+	err = bt_conn_le_frame_space_update(conn, &params);
+	if (err) {
+		printk("Frame space update request failed (err %d)\n", err);
+	}
+}
+
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 	.disconnected     = disconnected,
@@ -688,6 +725,9 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 #ifdef CONFIG_BT_HOGP_SCI
 	.conn_rate_changed = conn_rate_changed,
 #endif
+#endif
+#if defined(CONFIG_BT_FRAME_SPACE_UPDATE)
+	.frame_space_updated = frame_space_updated,
 #endif
 };
 
@@ -1018,6 +1058,14 @@ static void hids_on_ready(struct k_work *work)
 		if (err) {
 			printk("SCI mode subscribe error (%d)\n", err);
 		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_FRAME_SPACE_UPDATE)) {
+		select_lowest_frame_space(slot->conn);
+	} else {
+		/* Unused */
+		(void) select_lowest_frame_space;
+		(void) frame_space_updated;
 	}
 }
 
