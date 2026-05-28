@@ -70,7 +70,7 @@ To connect your DK to the nPM2100 EK, complete the following steps:
          * Set switch **SW9** ("nRF power source") to position "VDD".
          * Set switch **SW10** ("VEXT -> VnRF") to position "ON".
 
-      .. group-tab:: nRF54L15 DK
+      .. group-tab:: nRF54L Series DK
 
          * Remove jumper from **P6** ("VDDM CURRENT MEASURE").
 
@@ -83,7 +83,7 @@ To connect your DK to the nPM2100 EK, complete the following steps:
       * - nPM2100 EK pins
         - nRF52840 DK pins
         - nRF5340 DK pins
-        - nRF54L15 DK pins
+        - nRF54L Series DK pins
       * - SDA
         - P0.26
         - P1.02
