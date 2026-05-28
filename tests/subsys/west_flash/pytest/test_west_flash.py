@@ -46,7 +46,7 @@ def print_output(outs, errs):
             logger.error(f"{err}")
 
 
-def run_communicate_check(cmd: str, input: str, expected: str):
+def run_communicate_check(cmd: str, input: str, expected: str, timeout: float):
     logger.info(f"Executing:\n{cmd}")
     proc = subprocess.Popen(
         cmd.split(),
@@ -62,7 +62,7 @@ def run_communicate_check(cmd: str, input: str, expected: str):
     logger.info("Try to communicate with the process.")
 
     try:
-        outs, errs = proc.communicate(input=input, timeout=5.0)
+        outs, errs = proc.communicate(input=input, timeout=timeout)
     except subprocess.TimeoutExpired:
         logger.error("TimeoutExpired")
         _kill(proc)
@@ -108,13 +108,25 @@ def test_west_flash(dut: DeviceAdapter):
     if "nrf9251dk" in dut.device_config.platform:
         expected = r"O\.K\."
     run_communicate_check(
-        cmd,
-        None,
-        expected,
+        cmd=cmd,
+        input=None,
+        expected=expected,
+        timeout=15.0,
     )
+
+    if ("ppr" in dut.device_config.platform) or ("flpr" in dut.device_config.platform):
+        ### Do manual pinreset as west flash resets RISC V core only
+        cmd_reset = f"nrfutil device reset --reset-kind RESET_PIN --serial-number {SEGGER_ID}"
+        expected = r".*"
+        run_communicate_check(
+            cmd=cmd_reset,
+            input=None,
+            expected=expected,
+            timeout=3.0,
+        )
 
     ### Check that code is executed
     dut.readlines_until(
-        regex=r'.*<inf> west_flash: 5: Hello from',
+        regex=r'.*<inf> .*west_flash: 5: Hello from',
         timeout=LOG_TIMEOUT,
     )
