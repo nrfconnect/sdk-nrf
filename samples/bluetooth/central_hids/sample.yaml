@@ -54,3 +54,18 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args: FILE_SUFFIX=hid_sci
+  sample.bluetooth.central_hids.hid_sci_two_periphs:
+    sysbuild: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - FILE_SUFFIX=hid_sci
+      - EXTRA_CONF_FILE=hid-sci-two-periphs.conf
