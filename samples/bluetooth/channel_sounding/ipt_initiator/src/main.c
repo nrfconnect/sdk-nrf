@@ -149,6 +149,12 @@ static void distance_estimates_update(void)
 static void pcts_parse(uint8_t channel_index,
 		       struct bt_hci_le_cs_step_data_tone_info *local_tone_info)
 {
+	if (channel_index < CHANNEL_INDEX_OFFSET ||
+		channel_index > CHANNEL_INDEX_OFFSET + CS_DE_NUM_CHANNELS) {
+		LOG_WRN("Invalid channel index: %u", channel_index);
+		return;
+	}
+
 	struct bt_le_cs_iq_sample local_iq =
 		bt_le_cs_parse_pct(local_tone_info[0].phase_correction_term);
 
