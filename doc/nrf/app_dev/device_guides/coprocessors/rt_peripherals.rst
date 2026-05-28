@@ -9,7 +9,7 @@ Real-time peripherals
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, and nRF54LV10A devices.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, nRF54LC10A, and nRF54LV10A devices.
 
 .. contents::
    :local:
@@ -114,6 +114,9 @@ The interrupt line triggered varies depending on the System on Chip (SoC):
    * - nRF54LM20 FLPR
      - 31
 
+   * - nRF54LC10A FLPR
+     - 31
+
    * - nRF54LV10A FLPR
      - 31
 
@@ -143,7 +146,7 @@ See the following table for pin mapping between GPIO and VIO for specific target
 
    * - VIO pin number
      - Corresponding GPIO pin for nRF54L15/nRF54LM20
-     - Corresponding GPIO pin for nRF54LV10A
+     - Corresponding GPIO pin for nRF54LC10A/nRF54LV10A
 
    * - 0
      - P2.01
