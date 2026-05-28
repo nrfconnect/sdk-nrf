@@ -1,16 +1,11 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-# Workaround for not being able to have commas in macro arguments
-DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
-DT_CHOSEN_Z_SRAM_PARTITION := zephyr,sram-secure-partition
-
 config HAS_BT_CTLR
 	default BT
 
-config NRF_RRAM_WRITE_BUFFER_SIZE
-	default 16
-	range 0 16
+config HW_STACK_PROTECTION
+	default ARCH_HAS_STACK_PROTECTION
 
 if BOARD_NRF54LV10DK_NRF54LV10A_CPUAPP_NS
 
