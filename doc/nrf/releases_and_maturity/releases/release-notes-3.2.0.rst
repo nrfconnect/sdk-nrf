@@ -170,7 +170,7 @@ See `known issues for nRF Connect SDK v3.2.0`_ for the list of issues valid for 
 Migration notes
 ***************
 
-See the `Migration guide for nRF Connect SDK v3.2.0`_ for the changes required or recommended when migrating your application from |NCS| v3.1.0 to |NCS| v3.2.0.
+See the `Migration notes for nRF Connect SDK v3.2.0`_ for the changes required or recommended when migrating your application from |NCS| v3.1.0 to |NCS| v3.2.0.
 
 .. _ncs_release_notes_320_changelog:
 
@@ -400,7 +400,7 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
     For example, to enable a specific cluster or its attribute, the new model requires calling a dedicated delegate and registering the cluster in a source code.
     The code-driven approach is not yet fully implemented for all the available clusters, but the coverage will be increasing and it is used for the newly created clusters.
     The new model is meant to be backward compatible with the previous configuration based on the ZAP files and the ZAP-generated code, until the code-driven approach is fully implemented for all the available clusters.
-    See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
+    See the `Migration notes for nRF Connect SDK v3.2.0`_ for more information.
   * The :ref:`ug_matter_gs_tools_matter_west_commands_sync` to synchronize the ZAP and :file:`zcl.json` files after updating the ZAP tool version.
   * The check to all :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool` that verify whether ZAP tool sandbox permissions are correctly set.
     In case of detecting incorrect permissions, the command prompts the user to accept automatically updating the permissions to required ones.
@@ -408,7 +408,7 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 * Updated the :ref:`ug_matter_gs_tools_matter_west_commands_append` to accept ``--clusters`` argument instead of ``new_clusters`` argument.
 
 * Removed dependencies on Nordic DK-specific configurations in Matter configurations.
-  See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
+  See the `Migration notes for nRF Connect SDK v3.2.0`_ for more information.
 
 Thread
 ------
@@ -489,7 +489,7 @@ nRF Desktop
     These configurations use the MCUboot bootloader in direct-XIP mode and a merged image slot that combines both the application and radio core images.
     They provide the same feature set as the SUIT-based configuration released in |NCS| v3.0.0.
     Support for the ``nrf54h20dk/nrf54h20/cpuapp`` board target in the nRF Desktop application has been removed in |NCS| v3.1.0, because the nRF54H20 configurations relied on the SUIT solution, also removed in the same release.
-    For guidance on how to migrate an nRF Desktop application from SUIT to IronSide SE, see the nRF Desktop section in the `Migration guide for nRF Connect SDK v3.2.0`_.
+    For guidance on how to migrate an nRF Desktop application from SUIT to IronSide SE, see the nRF Desktop section in the `Migration notes for nRF Connect SDK v3.2.0`_.
   * Support for the DTS-based memory layout in the :ref:`nrf_desktop_dfu` when using the MCUboot bootloader.
   * Experimental support of the ``ram_load`` and ``release_ram_load`` configuration variants for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
     These variants use the MCUboot bootloader in its experimental RAM load mode and support firmware updates using the :ref:`nrf_desktop_dfu`.
@@ -1184,7 +1184,7 @@ Memfault integration
   * The :kconfig:option:`CONFIG_MEMFAULT_NCS_FW_VERSION` Kconfig option now has a default value set from a :file:`VERSION` file, if present in the application root directory.
     Previously, this option had no default value.
   * Simplified the options for ``CONFIG_MEMFAULT_NCS_DEVICE_ID_*``, which sets the Memfault Device Serial. The default is now :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID`, which uses the :ref:`lib_hw_id` library to provide a unique device ID.
-    See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
+    See the `Migration notes for nRF Connect SDK v3.2.0`_ for more information.
   * The LTE-related integration to obtain PDN information and events through the PDN management functionality in the :ref:`lte_lc_readme` library instead of the PDN library.
 
 * Removed a metric for tracking the unused stack of the Bluetooth TX thread (``ncs_bt_tx_unused_stack``).
