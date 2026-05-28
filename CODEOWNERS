@@ -758,6 +758,9 @@
 /scripts/vale/                            @francescoser
 /scripts/esb_sniffer/                     @nrfconnect/ncs-si-xcake
 /scripts/matter/                          @nrfconnect/ncs-matter
+/scripts/runners/nrf_common_next.py       @nrfconnect/ncs-ci
+/scripts/runners/nrfutil_next.py          @nrfconnect/ncs-ci
+/scripts/ci/nrf_undef_kconfig_allowlist.txt @nrfconnect/ncs-co-build-system
 
 /scripts/docker/*.rst                     @nrfconnect/ncs-doc-leads
 /scripts/hid_configurator/*.rst           @nrfconnect/ncs-si-xcake-doc
@@ -771,8 +774,6 @@
 /scripts/shell/ble_console/**/*.rst       @nrfconnect/ncs-doc-leads
 /scripts/west_commands/sbom/*.rst         @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /scripts/esb_sniffer/*.rst                @nrfconnect/ncs-si-xcake-doc
-/scripts/runners/nrf_common_next.py       @nrfconnect/ncs-ci
-/scripts/runners/nrfutil_next.py          @nrfconnect/ncs-ci
 
 # Share
 /share/                                   @nrfconnect/ncs-co-build-system
