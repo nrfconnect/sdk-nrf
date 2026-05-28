@@ -704,6 +704,7 @@ int nrf_cloud_coap_fota_job_update(const char *const job_id,
 
 	struct nrf_cloud_fota_job_update update;
 	int err;
+	int result = 0;
 
 	err = nrf_cloud_fota_job_update_create(NULL, job_id, status, details, &update);
 	if (err) {
@@ -711,9 +712,24 @@ int nrf_cloud_coap_fota_job_update(const char *const job_id,
 		return err;
 	}
 	err = nrf_cloud_coap_patch(update.url, NULL, update.payload, strlen(update.payload),
-				   COAP_CONTENT_FORMAT_APP_JSON, true, NULL, NULL);
+				   COAP_CONTENT_FORMAT_APP_JSON, true,
+				   nrf_cloud_coap_result_code_cb, &result);
 
 	nrf_cloud_fota_job_update_free(&update);
+
+	if (err < 0) {
+		LOG_ERR("Failed to send PATCH request: %d", err);
+		return err;
+	}
+	err = result;
+	if (result < 0) {
+		LOG_ERR("FOTA job update failed: %d", result);
+	} else if (result >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+		LOG_RESULT_CODE_ERR("Error from server:", result);
+	} else {
+		/* 2.xx or 0: success */
+		err = 0;
+	}
 
 	return err;
 }
@@ -814,6 +830,7 @@ give_and_return:
 static int shadow_update(const char * const resource, const char * const shadow_json)
 {
 	int err;
+	int result = 0;
 
 	__ASSERT_NO_MSG(shadow_json != NULL);
 	if (!nrf_cloud_coap_is_connected()) {
@@ -822,12 +839,23 @@ static int shadow_update(const char * const resource, const char * const shadow_
 
 	err = nrf_cloud_coap_patch(resource, NULL, (uint8_t *)shadow_json,
 				   strlen(shadow_json),
-				   COAP_CONTENT_FORMAT_APP_JSON, true, NULL, NULL);
+				   COAP_CONTENT_FORMAT_APP_JSON, true,
+				   nrf_cloud_coap_result_code_cb, &result);
 	if (err < 0) {
-		LOG_ERR("Failed to send PATCH request: %d", err);
-	} else if (err > 0) {
-		LOG_RESULT_CODE_ERR("Error from server:", err);
+		LOG_ERR("Failed to send shadow update request: %d", err);
+		return err;
 	}
+	err = result;
+	if (result < 0) {
+		LOG_ERR("Shadow update failed: %d", result);
+	} else if (result >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+		LOG_RESULT_CODE_ERR("Error from server:", result);
+		err = -EIO;
+	} else {
+		/* 2.xx or 0: success */
+		err = 0;
+	}
+
 	return err;
 }
 
