@@ -1,0 +1,5 @@
+{% if target['core'] == 'cpuapp' %}
+CONFIG_ARM_MPU=y
+{% else %}
+CONFIG_XIP=n
+{% endif %}
