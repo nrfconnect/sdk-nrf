@@ -14,6 +14,7 @@
 #include <zephyr/types.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/reboot.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/cs.h>
 #include <zephyr/bluetooth/conn.h>
 #include <bluetooth/scan.h>
@@ -198,6 +199,7 @@ static void subevent_steps_parse(struct bt_conn_le_cs_subevent_result *result)
 
 static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subevent_result *result)
 {
+	ARG_UNUSED(conn);
 	static int64_t prev_ts = -1;
 	static uint32_t prev_procedure_counter = UINT16_MAX + 1;
 
@@ -469,6 +471,7 @@ static void procedure_enable_cb(struct bt_conn *conn, uint8_t status,
 static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match, bool connectable)
 {
+	ARG_UNUSED(filter_match);
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	(void)bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
@@ -478,6 +481,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
+	ARG_UNUSED(device_info);
 	int err;
 
 	LOG_INF("Connecting failed, restarting scanning");
@@ -491,6 +495,8 @@ static void scan_connecting_error(struct bt_scan_device_info *device_info)
 
 static void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn)
 {
+	ARG_UNUSED(device_info);
+	ARG_UNUSED(conn);
 	LOG_INF("Connecting");
 }
 
@@ -517,7 +523,6 @@ static int scan_init(struct bt_scan_init_param *p_param)
 
 	return 0;
 }
-
 
 BT_CONN_CB_DEFINE(conn_cb) = {
 	.connected = connected_cb,
@@ -587,6 +592,7 @@ int main(void)
 		LOG_ERR("Failed to encrypt connection (err %d)", err);
 		return 0;
 	}
+
 	k_sem_take(&sem_security, K_FOREVER);
 
 	const struct bt_le_cs_set_default_settings_param default_settings = {
@@ -622,6 +628,7 @@ int main(void)
 		LOG_ERR("Failed to create CS config (err %d)", err);
 		return 0;
 	}
+
 	k_sem_take(&sem_config_created, K_FOREVER);
 
 	err = bt_le_cs_security_enable(connection);

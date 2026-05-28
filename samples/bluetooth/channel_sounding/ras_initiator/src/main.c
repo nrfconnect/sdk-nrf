@@ -14,6 +14,7 @@
 #include <zephyr/types.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/reboot.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/cs.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/conn.h>
@@ -199,8 +200,8 @@ static void extract_pcts(cs_de_report_t *p_report, uint8_t channel_index,
 	for (uint8_t tone_index = 0; tone_index < p_report->n_ap; tone_index++) {
 		int antenna_path = bt_le_cs_get_antenna_path(p_report->n_ap,
 							     antenna_permutation_index, tone_index);
-		if (antenna_path < 0) {
-			LOG_WRN("Invalid antenna path.");
+		if (antenna_path < 0 || antenna_path > MAX_AP) {
+			LOG_WRN("Invalid antenna path: %d", antenna_path);
 			return;
 		}
 
@@ -390,6 +391,8 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 
 static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subevent_result *result)
 {
+	ARG_UNUSED(conn);
+
 	if (dropped_ranging_counter == result->header.procedure_counter) {
 		return;
 	}
@@ -440,6 +443,7 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 
 static void ranging_data_ready_cb(struct bt_conn *conn, uint16_t ranging_counter)
 {
+	ARG_UNUSED(conn);
 	LOG_DBG("Ranging data ready %i", ranging_counter);
 
 	if (ranging_counter == most_recent_local_ranging_counter) {
@@ -457,12 +461,15 @@ static void ranging_data_ready_cb(struct bt_conn *conn, uint16_t ranging_counter
 
 static void ranging_data_overwritten_cb(struct bt_conn *conn, uint16_t ranging_counter)
 {
+	ARG_UNUSED(conn);
 	LOG_INF("Ranging data overwritten %i", ranging_counter);
 }
 
 static void mtu_exchange_cb(struct bt_conn *conn, uint8_t err,
 			    struct bt_gatt_exchange_params *params)
 {
+	ARG_UNUSED(params);
+
 	if (err) {
 		LOG_ERR("MTU exchange failed (err %d)", err);
 		return;
@@ -474,6 +481,8 @@ static void mtu_exchange_cb(struct bt_conn *conn, uint8_t err,
 
 static void discovery_completed_cb(struct bt_gatt_dm *dm, void *context)
 {
+	ARG_UNUSED(context);
+
 	int err;
 
 	LOG_INF("The discovery procedure succeeded");
@@ -497,12 +506,18 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm, void *context)
 
 static void discovery_service_not_found_cb(struct bt_conn *conn, void *context)
 {
+	ARG_UNUSED(conn);
+	ARG_UNUSED(context);
+
 	LOG_INF("The service could not be found during the discovery, disconnecting");
 	bt_conn_disconnect(connection, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 }
 
 static void discovery_error_found_cb(struct bt_conn *conn, int err, void *context)
 {
+	ARG_UNUSED(conn);
+	ARG_UNUSED(context);
+
 	LOG_INF("The discovery procedure failed (err %d)", err);
 	bt_conn_disconnect(connection, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 }
@@ -532,6 +547,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
 	/* Ignore peer parameter preferences. */
+	ARG_UNUSED(conn);
+	ARG_UNUSED(param);
 	return false;
 }
 
@@ -689,6 +706,8 @@ static void procedure_enable_cb(struct bt_conn *conn,
 
 void ras_features_read_cb(struct bt_conn *conn, uint32_t feature_bits, int err)
 {
+	ARG_UNUSED(conn);
+
 	if (err) {
 		LOG_WRN("Error while reading RAS feature bits (err %d)", err);
 	} else {
@@ -702,6 +721,7 @@ void ras_features_read_cb(struct bt_conn *conn, uint32_t feature_bits, int err)
 static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match, bool connectable)
 {
+	ARG_UNUSED(filter_match);
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
@@ -711,6 +731,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
+	ARG_UNUSED(device_info);
 	int err;
 
 	LOG_INF("Connecting failed, restarting scanning");
@@ -724,6 +745,8 @@ static void scan_connecting_error(struct bt_scan_device_info *device_info)
 
 static void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn)
 {
+	ARG_UNUSED(device_info);
+	ARG_UNUSED(conn);
 	LOG_INF("Connecting");
 }
 
