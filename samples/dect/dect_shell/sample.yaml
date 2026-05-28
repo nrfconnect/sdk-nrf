@@ -16,10 +16,16 @@ tests:
   sample.dect.dect_shell.ft_sink:
     extra_args: FILE_SUFFIX=sm
   sample.dect.dect_shell.iperf3_tx:
-    extra_args: EXTRA_CONF_FILE="iperf3-common.conf;iperf3-tx.conf"
+    extra_args:
+      - EXTRA_CONF_FILE="iperf3-common.conf;iperf3-tx.conf"
+      - EXTRA_DTC_OVERLAY_FILE="iperf3-tx.overlay"
   sample.dect.dect_shell.iperf3_rx:
-    extra_args: EXTRA_CONF_FILE="iperf3-common.conf;iperf3-rx.conf"
+    extra_args:
+      - EXTRA_CONF_FILE="iperf3-common.conf;iperf3-rx.conf"
+      - EXTRA_DTC_OVERLAY_FILE="iperf3-rx.overlay"
   sample.dect.dect_shell.nrf_cloud_mqtt:
     extra_args: EXTRA_CONF_FILE="nrf_cloud_mqtt.conf"
   sample.dect.dect_shell.nrf_cloud_coap:
-    extra_args: EXTRA_CONF_FILE="nrf_cloud_coap.conf"
+    extra_args:
+      - EXTRA_CONF_FILE="nrf_cloud_coap.conf"
+      - DTC_OVERLAY_FILE="nrf_cloud_coap.overlay"
