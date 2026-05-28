@@ -25,14 +25,20 @@ function(add_image_flasher)
   set(${args_NAME}_HEX_FILE "${args_HEX_FILE}" CACHE FILEPATH "Hex file to flash" FORCE)
   set(IMAGE_FLASHER_DEFAULT_IMAGE ${DEFAULT_IMAGE} CACHE STRING "Default image" FORCE)
 
+  if(args_BASE_IMAGE)
+    set(${args_NAME}_IMAGE_FLASHER_SPECIFIC_IMAGE ${args_BASE_IMAGE} CACHE STRING "Base image" FORCE)
+    get_target_property(image_flasher_target_board ${args_BASE_IMAGE} BOARD)
+
+    if(image_flasher_target_board)
+      set(image_flasher_target_board BOARD ${image_flasher_target_board})
+    endif()
+  endif()
+
   ExternalZephyrProject_Add(
     APPLICATION ${args_NAME}
     SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/applications/image_flasher
+    ${image_flasher_target_board}
   )
-
-  if(args_BASE_IMAGE)
-    set(${args_NAME}_IMAGE_FLASHER_SPECIFIC_IMAGE ${args_BASE_IMAGE} CACHE STRING "Base image" FORCE)
-  endif()
 
   # Must be configured after the default image as the default image Kconfig and dts files are
   # copied.
