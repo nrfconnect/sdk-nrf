@@ -193,7 +193,7 @@ Connectivity bridge
 High-Performance Framework (HPF)
 --------------------------------
 
-|no_changes_yet_note|
+* Added support for the nRF54LC10A SoC.
 
 IPC radio firmware
 ------------------
