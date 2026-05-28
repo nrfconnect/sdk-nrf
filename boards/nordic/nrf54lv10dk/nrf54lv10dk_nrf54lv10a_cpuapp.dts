@@ -15,7 +15,6 @@
 	chosen {
 		zephyr,code-partition = &slot0_partition;
 		zephyr,sram = &cpuapp_sram;
-		zephyr,bt-hci = &bt_hci_sdc;
 	};
 };
 
