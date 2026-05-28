@@ -12,7 +12,7 @@ tests:
       - ci_crypto
       - ci_tests_crypto
     extra_args: >
-      EXTRA_CONF_FILE="lite.conf;eddsa.conf"
+      EXTRA_CONF_FILE="eddsa.conf"
   # PSA core lite: ECDSA
   psa_core_lite.ecdsa:
     sysbuild: true
@@ -26,53 +26,9 @@ tests:
       - ci_tests_crypto
       - sysbuild
     extra_args: >
-      EXTRA_CONF_FILE="lite.conf;ecdsa.conf"
+      EXTRA_CONF_FILE="ecdsa.conf"
   # PSA core lite: RSA
   psa_core_lite.rsa:
-    sysbuild: true
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf5340dk/nrf5340/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf5340dk/nrf5340/cpuapp
-    tags:
-      - crypto
-      - ci_crypto
-      - ci_tests_crypto
-      - sysbuild
-    extra_args: >
-      EXTRA_CONF_FILE="lite.conf;rsa.conf"
-  # Oberon PSA crypto: Ed25519
-  psa_core_oberon.ed25519:
-    sysbuild: true
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - crypto
-      - ci_crypto
-      - ci_tests_crypto
-      - sysbuild
-    extra_args: >
-      EXTRA_CONF_FILE="eddsa.conf"
-  # Oberon PSA crypto: ECDSA
-  psa_core_oberon.ecdsa:
-    sysbuild: true
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - crypto
-      - ci_crypto
-      - ci_tests_crypto
-      - sysbuild
-    extra_args: >
-      EXTRA_CONF_FILE="ecdsa.conf"
-  # Oberon PSA crypto: RSA
-  psa_core_oberon.rsa:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -100,37 +56,9 @@ tests:
       - ci_crypto
       - ci_tests_crypto
     extra_args: >
-      EXTRA_CONF_FILE="lite.conf;eddsa.conf;key_wrap.conf;encrypt.conf;rng.conf"
+      EXTRA_CONF_FILE="eddsa.conf;key_wrap.conf;encrypt.conf;rng.conf"
   # PSA core lite: ECDSA + AES-KW + encrypt + RNG
   psa_core_lite.ecdsa.aes_kw.encrypt.rng:
-    sysbuild: true
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - crypto
-      - ci_crypto
-      - ci_tests_crypto
-      - sysbuild
-    extra_args: >
-      EXTRA_CONF_FILE="lite.conf;ecdsa.conf;key_wrap.conf;encrypt.conf;rng.conf"
-  # Oberon PSA crypto: Ed25519 + AES-KW + encrypt + RNG
-  psa_core_oberon.ed25519.aes_kw.encrypt.rng:
-    sysbuild: true
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - crypto
-      - ci_crypto
-      - ci_tests_crypto
-      - sysbuild
-    extra_args: >
-      EXTRA_CONF_FILE="eddsa.conf;key_wrap.conf;encrypt.conf;rng.conf"
-  # ECDSA + Oberon PSA crypto: ECDSA + AES-KW + encrypt + RNG
-  psa_core_oberon.ecdsa.aes_kw.encrypt.rng:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -156,35 +84,7 @@ tests:
       - ci_tests_crypto
       - sysbuild
     extra_args: >
-      EXTRA_CONF_FILE="lite.conf;ecdsa.conf;key_wrap.conf;encrypt.conf"
-  # Oberon PSA crypto: ECDSA + AES-KW + encrypt
-  psa_core_oberon.ecdsa.aes_kw.encrypt:
-    sysbuild: true
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - crypto
-      - ci_crypto
-      - ci_tests_crypto
-      - sysbuild
-    extra_args: >
       EXTRA_CONF_FILE="ecdsa.conf;key_wrap.conf;encrypt.conf"
-  # Oberon PSA crypto: ECDSA + ECDH + HKDF + MAC + encrypt
-  psa_core_oberon.ecdsa.ecdh_hkdf.mac.encrypt:
-    sysbuild: true
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - crypto
-      - ci_crypto
-      - ci_tests_crypto
-      - sysbuild
-    extra_args: >
-      EXTRA_CONF_FILE="ecdsa.conf;ecdh_hkdf.conf;mac.conf;encrypt.conf"
   # PSA core lite: ECDSA + ECDH + HKDF + MAC + encrypt
   psa_core_lite.ecdsa.ecdh_hkdf.mac.encrypt:
     sysbuild: true
@@ -198,4 +98,4 @@ tests:
       - ci_tests_crypto
       - sysbuild
     extra_args: >
-      EXTRA_CONF_FILE="lite.conf;ecdsa.conf;ecdh_hkdf.conf;mac.conf;encrypt.conf"
+      EXTRA_CONF_FILE="ecdsa.conf;ecdh_hkdf.conf;mac.conf;encrypt.conf"
