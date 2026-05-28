@@ -34,7 +34,8 @@ extensions = [
     "sphinx.ext.intersphinx",
     "recommonmark",
     "sphinx_markdown_tables",
-    "zephyr.external_content"
+    "zephyr.external_content",
+    "sphinxcontrib.jquery"
 ]
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
