@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* larger TX buffer for reception */
+
+/delete-node/ &sram0_ns_modem;
+/delete-node/ &sram0_ns_app;
+
+&sram0_ns {
+	sram0_ns_modem: sram0_ns@0 {
+		/* Modem (shared) memory */
+		reg = <0x0 0x9f28>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x0 0x9f28>;
+
+		cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+			/* Modem IPC control */
+			reg = <0x0 0x728>;
+		};
+
+		cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+			/* Modem IPC transmit */
+			reg = <0x728 0x8000>;
+		};
+
+		cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@1f28 {
+			/* Modem IPC receive */
+			reg = <0x8728 0x1800>;
+		};
+	};
+
+	sram0_ns_app: sram0_ns@9f28 {
+		/* Non-Secure application memory */
+		reg = <0x9f28 0x2e0d8>;
+	};
+};
