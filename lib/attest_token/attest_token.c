@@ -4,19 +4,29 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <string.h>
-#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <nrf_modem_at.h>
-#include <modem/nrf_modem_lib.h>
+#include <string.h>
+
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <zephyr/sys/base64.h>
+
 #include <zcbor_common.h>
 #include <zcbor_decode.h>
-#include <modem/modem_attest_token.h>
+#include <attest_token.h>
+
+#if defined(CONFIG_ATTEST_TOKEN_BACKEND_MODEM)
+#include "attest_token_modem.h"
+#elif defined(CONFIG_ATTEST_TOKEN_BACKEND_APP)
+#include "attest_token_app.h"
+#else
+#error "No attestation token backend selected"
+#endif
+
+LOG_MODULE_REGISTER(attest_token, CONFIG_ATTEST_TOKEN_LOG_LEVEL);
 
 #define BASE64_PAD_CHAR '='
-#define AT_ATTEST_CMD "AT%ATTESTTOKEN"
 
 /* UUID v4 hypen locations with respect to the original byte array */
 #define UUID_HYPHEN_POS_1 (8 / 2)
@@ -24,75 +34,16 @@
 #define UUID_HYPHEN_POS_3 (16 / 2)
 #define UUID_HYPHEN_POS_4 (20 / 2)
 
-int modem_attest_token_get(struct nrf_attestation_token *const token)
+int attest_token_get(struct nrf_attestation_token *const token)
 {
-	int ret = 0;
-	size_t attest_sz;
-	size_t cose_sz;
-	bool attest_alloc = false;
-	/* Maximum response length is 200 bytes */
-	char attest[128] = {0};
-	char cose[128] = {0};
-
-	if (!token) {
-		return -EINVAL;
-	} else if ((token->attest && !token->attest_sz) ||
-		   (token->cose && !token->cose_sz)) {
-		return -EBADF;
-	}
-
-	/* Execute AT command to get attestation token */
-	ret = nrf_modem_at_scanf(AT_ATTEST_CMD,
-		"%%ATTESTTOKEN: \"%127[^.].%127[^\"]\"", attest, cose);
-	if (ret != 2) {
-		return -EBADMSG;
-	}
-
-	ret = 0;
-
-	attest_sz = strlen(attest) + 1;
-	cose_sz = strlen(cose) + 1;
-
-	/* Ensure provided buffers are large enough */
-	if (((token->attest) && (token->attest_sz < attest_sz)) ||
-	    ((token->cose) && (token->cose_sz < cose_sz))) {
-		return -EMSGSIZE;
-	}
-
-	/* Allocate if not provided */
-	if (!token->attest) {
-		token->attest = k_calloc(attest_sz, 1);
-		if (!token->attest) {
-			ret = -ENOMEM;
-			goto cleanup;
-		}
-		attest_alloc = true;
-		token->attest_sz = attest_sz;
-	}
-	if (!token->cose) {
-		token->cose = k_calloc(cose_sz, 1);
-		if (!token->cose) {
-			ret = -ENOMEM;
-			goto cleanup;
-		}
-		token->cose_sz = cose_sz;
-	}
-
-	/* Copy token contents */
-	memcpy(token->attest, attest, attest_sz);
-	memcpy(token->cose, cose, cose_sz);
-
-cleanup:
-	if (ret && attest_alloc) {
-		k_free(token->attest);
-		token->attest = NULL;
-		token->attest_sz = 0;
-	}
-
-	return ret;
+#if defined(CONFIG_ATTEST_TOKEN_BACKEND_MODEM)
+	return attest_token_modem_get(token);
+#else
+	return attest_token_app_get(token);
+#endif
 }
 
-void modem_attest_token_free(struct nrf_attestation_token *const token)
+void attest_token_free(struct nrf_attestation_token *const token)
 {
 	if (!token) {
 		return;
@@ -109,7 +60,7 @@ void modem_attest_token_free(struct nrf_attestation_token *const token)
 	}
 }
 
-#if defined(CONFIG_MODEM_ATTEST_TOKEN_PARSING)
+#if defined(CONFIG_ATTEST_TOKEN_PARSING)
 static int base64_url_unformat(char *const base64url_string)
 {
 	if (base64url_string == NULL) {
@@ -244,8 +195,8 @@ static int get_attest_data(zcbor_state_t *state,
 	return -EBADMSG;
 }
 
-int modem_attest_token_parse(struct nrf_attestation_token const *const token_in,
-			     struct nrf_attestation_data *const data_out)
+int attest_token_parse(struct nrf_attestation_token const *const token_in,
+		       struct nrf_attestation_data *const data_out)
 {
 	if (!token_in || !data_out || !token_in->attest) {
 		return -EINVAL;
@@ -308,8 +259,8 @@ static int format_uuid(const char * const bytes_in, const size_t bytes_sz,
 	return 0;
 }
 
-int modem_attest_token_get_uuids(struct nrf_device_uuid *dev,
-				 struct nrf_modem_fw_uuid *mfw)
+int attest_token_get_uuids(struct nrf_device_uuid *dev,
+			   struct nrf_modem_fw_uuid *mfw)
 {
 	if ((dev == NULL) && (mfw == NULL)) {
 		return -EINVAL;
@@ -320,13 +271,13 @@ int modem_attest_token_get_uuids(struct nrf_device_uuid *dev,
 	struct nrf_attestation_data a_data;
 
 	memset(&a_tok, 0, sizeof(a_tok));
-	err = modem_attest_token_get(&a_tok);
+	err = attest_token_get(&a_tok);
 	if (err) {
 		return err;
 	}
 
 	memset(&a_data, 0, sizeof(a_data));
-	err = modem_attest_token_parse(&a_tok, &a_data);
+	err = attest_token_parse(&a_tok, &a_data);
 	if (err) {
 		goto cleanup;
 	}
@@ -348,7 +299,7 @@ int modem_attest_token_get_uuids(struct nrf_device_uuid *dev,
 	}
 
 cleanup:
-	modem_attest_token_free(&a_tok);
+	attest_token_free(&a_tok);
 
 	if (err) {
 		if (dev) {
@@ -361,4 +312,4 @@ cleanup:
 
 	return err;
 }
-#endif
+#endif /* CONFIG_ATTEST_TOKEN_PARSING */

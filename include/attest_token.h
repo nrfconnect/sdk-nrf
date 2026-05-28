@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef MODEM_ATTEST_TOKEN_H__
-#define MODEM_ATTEST_TOKEN_H__
+#ifndef ATTEST_TOKEN_H__
+#define ATTEST_TOKEN_H__
 
 #include <zephyr/types.h>
 
@@ -14,10 +14,10 @@ extern "C" {
 #endif
 
 /**
- * @file modem_attest_token.h
+ * @file attest_token.h
  *
- * @brief Modem attestation token and parsing.
- * @defgroup modem_attest_token Modem attestation token
+ * @brief Device attestation token generation and parsing.
+ * @defgroup attest_token Attestation token
  * @{
  *
  */
@@ -85,22 +85,22 @@ struct nrf_modem_fw_uuid {
  * the base64url attestation string and base64url COSE string will be stored
  * in the supplied struct.
  * This function will allocate memory for the strings if buffers are not
- * provided by the user.  In that case, the user is responsible for freeing
- * the memory by calling @ref modem_attest_token_free.
+ * provided by the user. In that case, the user is responsible for freeing
+ * the memory by calling @ref attest_token_free.
  *
  * @param[in,out] token Pointer to struct containing attestation token strings.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int modem_attest_token_get(struct nrf_attestation_token *const token);
+int attest_token_get(struct nrf_attestation_token *const token);
 
 /**
- * @brief Frees the memory allocated by @ref modem_attest_token_get.
+ * @brief Frees the memory allocated by @ref attest_token_get.
  *
  * @param[in] token Pointer to attestation token.
  */
-void modem_attest_token_free(struct nrf_attestation_token *const token);
+void attest_token_free(struct nrf_attestation_token *const token);
 
 /**
  * @brief Parses attestation token.
@@ -111,8 +111,8 @@ void modem_attest_token_free(struct nrf_attestation_token *const token);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int modem_attest_token_parse(struct nrf_attestation_token const *const token_in,
-			     struct nrf_attestation_data *const data_out);
+int attest_token_parse(struct nrf_attestation_token const *const token_in,
+		       struct nrf_attestation_data *const data_out);
 
 /**
  * @brief Gets the device and/or modem firmware UUID from the modem
@@ -126,8 +126,8 @@ int modem_attest_token_parse(struct nrf_attestation_token const *const token_in,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int modem_attest_token_get_uuids(struct nrf_device_uuid *dev,
-				 struct nrf_modem_fw_uuid *mfw);
+int attest_token_get_uuids(struct nrf_device_uuid *dev,
+			   struct nrf_modem_fw_uuid *mfw);
 
 /** @} */
 
@@ -135,4 +135,4 @@ int modem_attest_token_get_uuids(struct nrf_device_uuid *dev,
 }
 #endif
 
-#endif /* MODEM_ATTEST_TOKEN_H__ */
+#endif /* ATTEST_TOKEN_H__ */

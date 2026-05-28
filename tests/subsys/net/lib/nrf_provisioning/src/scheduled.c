@@ -20,7 +20,7 @@
 #include <ncs_version.h>
 
 #include "cmock_lte_lc.h"
-#include "cmock_modem_attest_token.h"
+#include "cmock_attest_token.h"
 #include "cmock_modem_key_mgmt.h"
 #include "cmock_modem_info.h"
 #include "cmock_nrf_modem_lib.h"
@@ -270,8 +270,8 @@ void test_provisioning_init_should_start_provisioning(void)
 
 		case 1: /* Device not found/claimed */
 			__cmock_rest_client_request_ExpectAnyArgsAndReturn(0);
-			__cmock_modem_attest_token_get_ExpectAnyArgsAndReturn(0);
-			__cmock_modem_attest_token_free_ExpectAnyArgs();
+			__cmock_attest_token_get_ExpectAnyArgsAndReturn(0);
+			__cmock_attest_token_free_ExpectAnyArgs();
 			__cmock_rest_client_request_AddCallback(
 				rest_client_request_not_found_cb);
 			wait_for_provisioning_event(

@@ -16,7 +16,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include <zephyr/shell/shell.h>
 #include <net/nrf_provisioning.h>
-#include <modem/modem_attest_token.h>
+#include <attest_token.h>
 
 #define NRF_PROVISIONING_HELP_CMD "nRF Provisioning commands"
 #define NRF_PROVISIONING_HELP_NOW "Do provisioning now"
@@ -48,13 +48,13 @@ static int cmd_token(const struct shell *sh, size_t argc, char **argv)
 	struct nrf_attestation_token token = { 0 };
 	int rc;
 
-	rc = modem_attest_token_get(&token);
+	rc = attest_token_get(&token);
 	if (rc) {
 		shell_print(sh, "Failed to get token, err %d\n", rc);
 		return -ENOEXEC;
 	}
 	shell_print(sh, "%.*s.%.*s\n", token.attest_sz, token.attest, token.cose_sz, token.cose);
-	modem_attest_token_free(&token);
+	attest_token_free(&token);
 	return 0;
 }
 
@@ -63,7 +63,7 @@ static int cmd_uuid(const struct shell *sh, size_t argc, char **argv)
 	int rc;
 	struct nrf_device_uuid dev;
 
-	rc = modem_attest_token_get_uuids(&dev, NULL);
+	rc = attest_token_get_uuids(&dev, NULL);
 	if (rc) {
 		shell_print(sh, "Failed to get UUID, err %d\n", rc);
 		return -ENOEXEC;

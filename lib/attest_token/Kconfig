@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig ATTEST_TOKEN
+	bool "Attestation token library"
+	help
+	  Device attestation token library. The backend is selected automatically based on the
+	  target:
+	    - nRF91 Series: modem backend (AT%ATTESTTOKEN command).
+	    - nRF92 Series: application core backend (PSA crypto + IronSide SE).
+
+if ATTEST_TOKEN
+
+config ATTEST_TOKEN_BACKEND_MODEM
+	bool
+	default y if SOC_SERIES_NRF91
+	depends on NRF_MODEM_LIB
+	help
+	  Use the modem attestation token backend.
+
+config ATTEST_TOKEN_BACKEND_APP
+	bool
+	default y if SOC_SERIES_NRF92
+	depends on HAS_IRONSIDE_SE
+	select BASE64
+	select PSA_CRYPTO
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
+	select PSA_WANT_ALG_ECDSA
+	select PSA_WANT_ECC_SECP_R1_256
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_GENERATE_RANDOM
+	help
+	  Use the application core attestation token backend.
+
+config ATTEST_TOKEN_PARSING
+	bool "Parsing of the attestation token"
+	default y
+	select ZCBOR
+	select BASE64
+	help
+	  Enable attest_token_parse() and attest_token_get_uuids() functions, which decode the CBOR
+	  payload of the attestation token to extract the device UUID, firmware UUID, nonce,
+	  device type, and message type.
+
+module=ATTEST_TOKEN
+module-str=Attestation Token
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # ATTEST_TOKEN
