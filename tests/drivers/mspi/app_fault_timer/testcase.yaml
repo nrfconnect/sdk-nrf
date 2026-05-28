@@ -18,6 +18,7 @@ tests:
   drivers.mspi.hpf_app_fault_timer.emul_mspi_dev:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
