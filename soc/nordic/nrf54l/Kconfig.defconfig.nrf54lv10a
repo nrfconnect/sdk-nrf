@@ -1,0 +1,7 @@
+if SOC_NRF54LV10A_CPUAPP
+
+config NRF_RRAM_WRITE_BUFFER_SIZE
+	default 16
+	range 0 16
+
+endif # SOC_NRF54LV10A_CPUAPP

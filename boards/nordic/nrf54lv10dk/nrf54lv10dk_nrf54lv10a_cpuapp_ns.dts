@@ -17,7 +17,6 @@
 	chosen {
 		zephyr,code-partition = &slot0_ns_partition;
 		zephyr,sram = &sram0_ns;
-		zephyr,bt-hci = &bt_hci_sdc;
 		zephyr,entropy = &psa_rng;
 	};
 
