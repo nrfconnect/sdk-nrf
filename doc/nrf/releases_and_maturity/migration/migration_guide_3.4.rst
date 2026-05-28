@@ -1,7 +1,9 @@
+:orphan:
+
 .. _migration_3.4:
 
-Migration notes for |NCS| v3.4.0 (Working draft)
-################################################
+Migration notes for |NCS| v3.4.0
+################################
 
 .. contents::
    :local:

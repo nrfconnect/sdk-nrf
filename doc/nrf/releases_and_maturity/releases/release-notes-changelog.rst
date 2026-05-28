@@ -1,16 +1,15 @@
+:orphan:
+
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.3.99
+Changelog for |NCS| v3.4.99
 ###########################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -23,7 +22,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v3.3.0`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v3.4.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -589,7 +588,6 @@ Libraries for networking
 * :ref:`lib_nrf_cloud_agnss` library:
 
   * Fixed an issue with parsing invalid payloads.
-
 
 Libraries for NFC
 -----------------
