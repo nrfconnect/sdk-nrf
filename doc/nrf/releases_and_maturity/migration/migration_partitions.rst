@@ -1,3 +1,5 @@
+:orphan:
+
 .. _migration_partitions:
 
 Migrating partition configuration from Partition Manager to devicetree (DTS)

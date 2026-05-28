@@ -191,7 +191,7 @@ Matter fork
 +++++++++++
 
 * Removed dependencies on Nordic DK-specific configurations in Matter configurations.
-  See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
+  See the `Migration notes for nRF Connect SDK v3.2.0`_ for more information.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
