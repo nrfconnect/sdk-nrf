@@ -41,7 +41,6 @@ static K_SEM_DEFINE(sem_subevent_results_parsed, 0, 1);
 static K_SEM_DEFINE(sem_distance_estimate_updated, 1, 1);
 
 static struct bt_conn *connection;
-static struct bt_conn_le_cs_config cs_config;
 
 /* Store local initiator IQs in this union.
  * The size is based on requirements of cs_de_ifft.
@@ -362,7 +361,6 @@ static void config_create_cb(struct bt_conn *conn, uint8_t status,
 	ARG_UNUSED(conn);
 
 	if (status == BT_HCI_ERR_SUCCESS) {
-		cs_config = *config;
 
 		const char *mode_str[5] = {"Unused", "1 (RTT)", "2 (PBR)", "3 (RTT + PBR)",
 					   "Invalid"};
