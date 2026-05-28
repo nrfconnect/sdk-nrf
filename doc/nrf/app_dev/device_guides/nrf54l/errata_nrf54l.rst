@@ -21,6 +21,25 @@ nRF54L Series Errata documents contain descriptions of identified hardware anoma
 * `nRF54LS05B Errata`_
 
 Some of the anomalies can be fixed by applying workarounds directly in the software components, requiring minimal or zero effort from the end user.
+
+Errata status definitions
+*************************
+
+Not applicable
+   The anomaly is not applicable for the given device.
+
+Not implemented
+   The anomaly is applicable for the given device but the workaround is not implemented in the |NCS|.
+
+Enabled
+   The workaround is implemented and enabled by default.
+
+Available
+   The workaround is implemented, but specific action is required to enable it. Refer to the provided information on how to enable the workaround.
+
+Errata workaround status per device
+***********************************
+
 Refer to the following table for the current workaround list:
 
 .. tabs::
