@@ -710,16 +710,23 @@ To build the DeSh sample with iperf3 support, for example:
 
 PT (or FT without the sink) device: DeSh with Zephyr's network management-based shell commands:
 
+nrf9151dk:
+
 .. code-block:: console
 
-   nrf9151dk:
-   west build -p -b nrf9151dk/nrf9151/ns
+   $ west build -p -b nrf9151dk/nrf9151/ns
 
-   With iperf3 support with TX optimized (usually acts as iperf3 client in PT device):
-   west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="iperf3-common.conf;iperf3-tx.conf"
+With iperf3 support with TX optimized (usually acts as iperf3 client in PT device):
 
-   With iperf3 support with RX optimized (usually acts as iperf3 server in FT device):
-   west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="iperf3-common.conf;iperf3-rx.conf"
+.. code-block:: console
+
+   $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="iperf3-common.conf;iperf3-tx.conf" -DEXTRA_DTC_OVERLAY_FILE="iperf3-tx.overlay"
+
+With iperf3 support with RX optimized (usually acts as iperf3 server in FT device):
+
+.. code-block:: console
+
+   $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="iperf3-common.conf;iperf3-rx.conf" -DEXTRA_DTC_OVERLAY_FILE="iperf3-rx.overlay"
 
 nRF Cloud
 =========
@@ -746,18 +753,20 @@ You can store certificates on the device using a custom AT%CMNG command (impleme
 MQTT
 ----
 
+nrf9151dk:
+
 .. code-block:: console
 
-   nrf9151dk:
    $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="nrf_cloud_mqtt.conf"
 
 CoAP
 ----
 
+nrf9151dk:
+
 .. code-block:: console
 
-   nrf9151dk:
-   $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="nrf_cloud_coap.conf"
+   $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="nrf_cloud_coap.conf -DDTC_OVERLAY_FILE="nrf_cloud_coap.overlay""
 
 .. note::
    System time is retrieved by using NTP.
