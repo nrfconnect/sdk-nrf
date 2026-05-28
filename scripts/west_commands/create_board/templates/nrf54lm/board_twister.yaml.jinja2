@@ -1,4 +1,4 @@
-identifier: {{ board }}/{{ soc }}/{{ target['core'] }}{{ '/xip' if target['xip'] }}
+identifier: {{ board }}/{{ soc }}/{{ target['core'] }}
 name: {{ board_desc }}
 vendor: {{ vendor }}
 arch: {{ target['arch'] }}
@@ -6,9 +6,5 @@ toolchain:
   - zephyr
 sysbuild: true
 ram: {{ target['ram'] }}
-{% if target['core'] == "cpuapp" %}
-flash: 920
-{% else %}
-flash: 96
-{% endif %}
+flash: {{ target['flash'] }}
 supported: []
