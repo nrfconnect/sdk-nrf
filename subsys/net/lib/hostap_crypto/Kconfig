@@ -26,6 +26,8 @@ config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 	select PSA_WANT_ALG_ECB_NO_PADDING
 	select PSA_WANT_ALG_HMAC
 	select PSA_WANT_KEY_TYPE_HMAC
+	select PSA_WANT_ALG_PBKDF2_HMAC
+	select PSA_WANT_KEY_TYPE_PASSWORD
 	select PSA_WANT_ALG_SHA_1
 	select PSA_WANT_ALG_SHA_256
 	# Enable for non-TF-M builds to keep it simple, no overhead
