@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <samples/cellular/nrf91_crypto_partitions.dtsi>
+
+/delete-node/ &sram0_s;
+/delete-node/ &sram0_ns;
+
+&sram0 {
+	/*
+	 * 0x2000_0000  Secure RAM                      (   56 kB)
+	 * 0x2000_e000  Non-secure RAM area             (  200 kB)
+	 *   0x2000_e000  Modem shared area             ( 20354 B)
+	 *     0x2000_e000  control                     (  1832 B)
+	 *     0x2000_e728  app -> cell                 (   12 kB)
+	 *     0x2001_1728  cell -> app                 (    6 kB)
+	 *   0x2001_2f28  Application RAM               (184536 B)
+	 */
+	sram0_s: sram@0 {
+		reg = <0x0 0xe000>;
+	};
+
+	sram0_ns: sram@e000 {
+		reg = <0xe000 0x32000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0xe000 0x32000>;
+
+		/* Must be in first 128 kB of RAM. */
+		sram0_ns_modem: sram0_ns@0 {
+			/* Modem (shared) memory */
+			reg = <0x0 0x4f28>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x0 0x4f28>;
+
+			cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+				/* Modem IPC control */
+				reg = <0x0 0x728>;
+			};
+
+			cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+				/* Modem IPC transmit */
+				reg = <0x728 0x3000>;
+			};
+
+			cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@3728 {
+				/* Modem IPC receive */
+				reg = <0x3728 0x1800>;
+			};
+		};
+
+		sram0_ns_app: sram0_ns@4f28 {
+			/* Non-Secure application memory */
+			reg = <0x4f28 0x2d0d8>;
+		};
+	};
+};
