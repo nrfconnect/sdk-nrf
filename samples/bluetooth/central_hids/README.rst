@@ -152,6 +152,8 @@ Building and Running
 
 To build the sample with HID SCI support, use ``-DFILE_SUFFIX=hid_sci``
 
+To build with HID SCI support and two peripherals, use ``-DFILE_SUFFIX=hid_sci`` together with ``-DEXTRA_CONF_FILE=hid-sci-two-periphs.conf``.
+
 Testing
 =======
 
