@@ -1,6 +1,5 @@
 {% if target['core'] == 'cpuapp' %}
 CONFIG_ARM_MPU=y
 {% else %}
-CONFIG_USE_DT_CODE_PARTITION=y
 CONFIG_XIP=n
 {% endif %}
