@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <sdc_hci.h>
 #include <sdc_hci_cmd_le.h>
 #include <sdc_hci_cmd_info_params.h>
 #include <zephyr/drivers/bluetooth.h>
@@ -87,6 +88,25 @@ int hci_internal_user_cmd_handler_register(const hci_internal_user_cmd_handler_t
  * @return Zero on success or (negative) error code otherwise.
  */
 int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out);
+
+/** @brief Acquire an HCI packet from the SoftDevice Controller.
+ *
+ * @param[out] packet_out   ACL packet pointer and length (ACL only).
+ * @param[out] out_buf      Buffer for event or ISO packets. May be NULL for ACL only.
+ * @param[in]  out_buf_len  Size of @p out_buf.
+ * @param[out] out_len      Length written to @p out_buf.
+ * @param[out] msg_type_out Type of HCI packet produced by the controller.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int hci_internal_acquire(sdc_hci_packet_info_t *packet_out,
+			 uint8_t *out_buf,
+			 uint16_t out_buf_len,
+			 uint16_t *out_len,
+			 sdc_hci_msg_type_t *msg_type_out);
+
+/** @brief Release an HCI packet previously obtained using @ref hci_internal_acquire(). */
+void hci_internal_msg_free(void);
 
 /** @brief Retrieve the list of supported commands configured for this build
  *

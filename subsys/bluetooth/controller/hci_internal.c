@@ -39,6 +39,7 @@ static bool padv_response_data_cmd_pending;
 #endif
 
 static hci_internal_user_cmd_handler_t user_cmd_handler;
+static bool cmd_complete_pending;
 
 static bool command_generates_command_complete_event(uint16_t hci_opcode)
 {
@@ -1959,29 +1960,64 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 	return 0;
 }
 
-int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out)
+int hci_internal_acquire(sdc_hci_packet_info_t *packet_out,
+			 uint8_t *out_buf,
+			 uint16_t out_buf_len,
+			 uint16_t *out_len,
+			 sdc_hci_msg_type_t *msg_type_out)
 {
 	if (cmd_complete_or_status.occurred) {
 		struct bt_hci_evt_hdr *evt_hdr = (void *)&cmd_complete_or_status.raw_event[0];
 
-		memcpy(msg_out,
-					 &cmd_complete_or_status.raw_event[0],
-					 evt_hdr->len + BT_HCI_EVT_HDR_SIZE);
-		cmd_complete_or_status.occurred = false;
-
+		packet_out->p_packet = &cmd_complete_or_status.raw_event[0];
+		packet_out->len = evt_hdr->len + BT_HCI_EVT_HDR_SIZE;
 		*msg_type_out = SDC_HCI_MSG_TYPE_EVT;
+		cmd_complete_pending = true;
 
 		return 0;
 	}
 
-	const int retval = sdc_hci_get(msg_out, (uint8_t *)msg_type_out);
+	const int retval = sdc_hci_acquire(packet_out, out_buf, out_buf_len, out_len,
+					     (uint8_t *)msg_type_out);
 
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
 	if (retval == 0 && *msg_type_out == SDC_HCI_MSG_TYPE_EVT
-		&& msg_out[0] == BT_HCI_EVT_CMD_COMPLETE) {
+	    && out_buf != NULL && out_buf[0] == BT_HCI_EVT_CMD_COMPLETE) {
 		padv_response_data_cmd_pending = false;
 	}
 #endif
 
 	return retval;
+}
+
+void hci_internal_msg_free(void)
+{
+	if (cmd_complete_pending) {
+		cmd_complete_or_status.occurred = false;
+		cmd_complete_pending = false;
+		return;
+	}
+
+	(void)sdc_hci_msg_free();
+}
+
+int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out)
+{
+	sdc_hci_packet_info_t packet_info;
+	uint16_t out_len;
+	int retval;
+
+	retval = hci_internal_acquire(&packet_info, msg_out, HCI_MSG_BUFFER_ISO_MAX_SIZE,
+				      &out_len, msg_type_out);
+	if (retval != 0) {
+		return retval;
+	}
+
+	if (*msg_type_out == SDC_HCI_MSG_TYPE_DATA) {
+		memcpy(msg_out, packet_info.p_packet, packet_info.len);
+	}
+
+	hci_internal_msg_free();
+
+	return 0;
 }

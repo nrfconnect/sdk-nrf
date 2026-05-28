@@ -41,13 +41,6 @@
 LOG_MODULE_REGISTER(bt_sdc_hci_driver);
 
 
-#if defined(CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT)
-#define HCI_RX_BUF_SIZE MAX(BT_BUF_RX_SIZE, \
-			BT_BUF_EVT_SIZE(CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE))
-#else
-#define HCI_RX_BUF_SIZE BT_BUF_RX_SIZE
-#endif
-
 #if defined(CONFIG_BT_CONN) && defined(CONFIG_BT_CENTRAL)
 
 #if CONFIG_BT_MAX_CONN > 1
@@ -387,11 +380,10 @@ static inline void receive_signal_raise(void)
 	mpsl_work_submit(&receive_work);
 }
 
-/** Storage for HCI packets from controller to host */
+/** Pending HCI packet from controller to host (no staging buffer). */
 static struct {
-	/* Buffer for the HCI packet. */
-	uint8_t buf[HCI_RX_BUF_SIZE];
-	/* Type of the HCI packet the buffer contains. */
+	const uint8_t *packet;
+	uint16_t len;
 	sdc_hci_msg_type_t type;
 } rx_hci_msg;
 
@@ -505,10 +497,10 @@ static int hci_driver_send(const struct device *dev, struct net_buf *buf)
 	return err;
 }
 
-static int data_packet_process(const struct device *dev, uint8_t *hci_buf)
+static int data_packet_process(const struct device *dev, const uint8_t *hci_pkt, uint16_t pkt_len)
 {
 	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_NO_WAIT);
-	struct bt_hci_acl_hdr *hdr = (void *)hci_buf;
+	struct bt_hci_acl_hdr *hdr = (void *)hci_pkt;
 	uint16_t hf, handle, len;
 	uint8_t flags, pb, bc;
 
@@ -524,17 +516,15 @@ static int data_packet_process(const struct device *dev, uint8_t *hci_buf)
 	pb = bt_acl_flags_pb(flags);
 	bc = bt_acl_flags_bc(flags);
 
-	if (len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %zu > %u",
-			len + sizeof(*hdr),
-			HCI_RX_BUF_SIZE);
+	if (pkt_len < len + sizeof(*hdr)) {
+		LOG_ERR("ACL packet length mismatch. %u < %zu", pkt_len, len + sizeof(*hdr));
 		return -ENOMEM;
 	}
 
 	LOG_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle,
 	       pb, bc, len);
 
-	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
+	net_buf_add_mem(data_buf, hci_pkt, len + sizeof(*hdr));
 
 	struct hci_driver_data *driver_data = dev->data;
 
@@ -543,10 +533,10 @@ static int data_packet_process(const struct device *dev, uint8_t *hci_buf)
 	return 0;
 }
 
-static int iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
+static int iso_data_packet_process(const struct device *dev, const uint8_t *hci_pkt, uint16_t pkt_len)
 {
 	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ISO_IN, K_NO_WAIT);
-	struct bt_hci_iso_hdr *hdr = (void *)hci_buf;
+	struct bt_hci_iso_hdr *hdr = (void *)hci_pkt;
 
 	uint16_t len = sys_le16_to_cpu(hdr->len);
 
@@ -555,14 +545,12 @@ static int iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
 		return -ENOBUFS;
 	}
 
-	if (len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %zu > %u",
-			len + sizeof(*hdr),
-			HCI_RX_BUF_SIZE);
+	if (pkt_len < len + sizeof(*hdr)) {
+		LOG_ERR("ISO packet length mismatch. %u < %zu", pkt_len, len + sizeof(*hdr));
 		return -ENOMEM;
 	}
 
-	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
+	net_buf_add_mem(data_buf, hci_pkt, len + sizeof(*hdr));
 
 	struct hci_driver_data *driver_data = dev->data;
 
@@ -619,34 +607,32 @@ static bool event_packet_is_discardable(const uint8_t *hci_buf)
 	}
 }
 
-static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
+static int event_packet_process(const struct device *dev, const uint8_t *hci_pkt, uint16_t pkt_len)
 {
-	bool discardable = event_packet_is_discardable(hci_buf);
-	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
+	bool discardable = event_packet_is_discardable(hci_pkt);
+	struct bt_hci_evt_hdr *hdr = (void *)hci_pkt;
 	struct net_buf *evt_buf;
 
-	if (hdr->len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %zu > %u",
-			hdr->len + sizeof(*hdr),
-			HCI_RX_BUF_SIZE);
+	if (pkt_len < hdr->len + sizeof(*hdr)) {
+		LOG_ERR("Event packet length mismatch. %u < %zu", pkt_len, hdr->len + sizeof(*hdr));
 		return -ENOMEM;
 	}
 
 	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
-		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
+		struct bt_hci_evt_le_meta_event *me = (void *)&hci_pkt[2];
 
 		LOG_DBG("LE Meta Event (0x%02x), len (%u)",
 		       me->subevent, hdr->len);
 	} else if (hdr->evt == BT_HCI_EVT_CMD_COMPLETE) {
-		struct bt_hci_evt_cmd_complete *cc = (void *)&hci_buf[2];
-		struct bt_hci_evt_cc_status *ccs = (void *)&hci_buf[5];
+		struct bt_hci_evt_cmd_complete *cc = (void *)&hci_pkt[2];
+		struct bt_hci_evt_cc_status *ccs = (void *)&hci_pkt[5];
 		uint16_t opcode = sys_le16_to_cpu(cc->opcode);
 
 		LOG_DBG("Command Complete (0x%04x) status: 0x%02x,"
 		       " ncmd: %u, len %u",
 		       opcode, ccs->status, cc->ncmd, hdr->len);
 	} else if (hdr->evt == BT_HCI_EVT_CMD_STATUS) {
-		struct bt_hci_evt_cmd_status *cs = (void *)&hci_buf[2];
+		struct bt_hci_evt_cmd_status *cs = (void *)&hci_pkt[2];
 		uint16_t opcode = sys_le16_to_cpu(cs->opcode);
 
 		LOG_DBG("Command Status (0x%04x) status: 0x%02x",
@@ -667,7 +653,7 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 		return -ENOBUFS;
 	}
 
-	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
+	net_buf_add_mem(evt_buf, hci_pkt, hdr->len + sizeof(*hdr));
 
 	struct hci_driver_data *driver_data = dev->data;
 
@@ -676,34 +662,57 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 	return 0;
 }
 
-static int fetch_hci_msg(uint8_t *p_hci_buffer, sdc_hci_msg_type_t *msg_type)
+static int fetch_hci_msg(uint8_t *out_buf, uint16_t out_buf_len)
 {
+	sdc_hci_packet_info_t packet_info;
+	uint16_t out_len = 0;
 	int errcode;
 
 	errcode = MULTITHREADING_LOCK_ACQUIRE();
 	if (!errcode) {
-		errcode = hci_internal_msg_get(p_hci_buffer, msg_type);
+		errcode = hci_internal_acquire(&packet_info, out_buf, out_buf_len, &out_len,
+					       &rx_hci_msg.type);
 		MULTITHREADING_LOCK_RELEASE();
+	}
+
+	if (!errcode) {
+		if (rx_hci_msg.type == SDC_HCI_MSG_TYPE_DATA) {
+			rx_hci_msg.packet = packet_info.p_packet;
+			rx_hci_msg.len = packet_info.len;
+		} else {
+			rx_hci_msg.packet = out_buf;
+			rx_hci_msg.len = out_len;
+		}
 	}
 
 	return errcode;
 }
 
-static int process_hci_msg(const struct device *dev, uint8_t *p_hci_buffer,
-			    sdc_hci_msg_type_t msg_type)
+static void release_hci_msg(void)
+{
+	(void)MULTITHREADING_LOCK_ACQUIRE();
+	hci_internal_msg_free();
+	MULTITHREADING_LOCK_RELEASE();
+
+	rx_hci_msg.type = SDC_HCI_MSG_TYPE_NONE;
+	rx_hci_msg.packet = NULL;
+	rx_hci_msg.len = 0;
+}
+
+static int process_hci_msg(const struct device *dev)
 {
 	int err;
 
-	if (msg_type == SDC_HCI_MSG_TYPE_EVT) {
-		err = event_packet_process(dev, p_hci_buffer);
-	} else if (msg_type == SDC_HCI_MSG_TYPE_DATA) {
-		err = data_packet_process(dev, p_hci_buffer);
-	} else if (msg_type == SDC_HCI_MSG_TYPE_ISO) {
-		err = iso_data_packet_process(dev, p_hci_buffer);
+	if (rx_hci_msg.type == SDC_HCI_MSG_TYPE_EVT) {
+		err = event_packet_process(dev, rx_hci_msg.packet, rx_hci_msg.len);
+	} else if (rx_hci_msg.type == SDC_HCI_MSG_TYPE_DATA) {
+		err = data_packet_process(dev, rx_hci_msg.packet, rx_hci_msg.len);
+	} else if (rx_hci_msg.type == SDC_HCI_MSG_TYPE_ISO) {
+		err = iso_data_packet_process(dev, rx_hci_msg.packet, rx_hci_msg.len);
 	} else {
 		if (!IS_ENABLED(CONFIG_BT_CTLR_SDC_SILENCE_UNEXPECTED_MSG_TYPE)) {
 			LOG_ERR("Unexpected msg_type: %u. This if-else needs a new branch",
-				msg_type);
+				rx_hci_msg.type);
 		}
 		err = 0;
 	}
@@ -714,14 +723,15 @@ static int process_hci_msg(const struct device *dev, uint8_t *p_hci_buffer,
 void hci_driver_receive_process(void)
 {
 	const struct device *dev = DEVICE_DT_GET(DT_DRV_INST(0));
+	uint8_t hci_scratch[MAX(BT_BUF_RX_SIZE, HCI_EVENT_PACKET_MAX_SIZE)];
 	int err;
 
 	if (rx_hci_msg.type == SDC_HCI_MSG_TYPE_NONE &&
-	    fetch_hci_msg(&rx_hci_msg.buf[0], &rx_hci_msg.type) != 0) {
+	    fetch_hci_msg(hci_scratch, sizeof(hci_scratch)) != 0) {
 		return;
 	}
 
-	err = process_hci_msg(dev, &rx_hci_msg.buf[0], rx_hci_msg.type);
+	err = process_hci_msg(dev);
 	if (err == -ENOBUFS) {
 		/* If we got -ENOBUFS, wait for the signal from the host. */
 		return;
@@ -730,7 +740,7 @@ void hci_driver_receive_process(void)
 		k_panic();
 	}
 
-	rx_hci_msg.type = SDC_HCI_MSG_TYPE_NONE;
+	release_hci_msg();
 
 	/* Let other threads of same priority run in between. */
 	receive_signal_raise();
