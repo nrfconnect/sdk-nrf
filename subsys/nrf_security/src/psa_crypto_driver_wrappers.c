@@ -3215,6 +3215,49 @@ psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context,
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
+psa_status_t psa_driver_wrapper_random_reseed(psa_driver_random_context_t *context,
+					      const uint8_t *perso, size_t perso_size)
+{
+#if defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
+	return oberon_ctr_drbg_random_reseed(&context->oberon_ctr_drbg_ctx, perso, perso_size);
+#elif defined(PSA_NEED_OBERON_HMAC_DRBG_DRIVER)
+	return oberon_hmac_drbg_random_reseed(&context->oberon_hmac_drbg_ctx, perso, perso_size);
+#endif
+
+	(void)context;
+	(void)perso;
+	(void)perso_size;
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t psa_driver_wrapper_random_deplete(psa_driver_random_context_t *context)
+{
+#if defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
+	return oberon_ctr_drbg_random_deplete(&context->oberon_ctr_drbg_ctx);
+#elif defined(PSA_NEED_OBERON_HMAC_DRBG_DRIVER)
+	return oberon_hmac_drbg_random_deplete(&context->oberon_hmac_drbg_ctx);
+#endif
+
+	(void)context;
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t psa_driver_wrapper_random_set_prediction_resistance(
+	psa_driver_random_context_t *context, unsigned int enabled)
+{
+#if defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
+	return oberon_ctr_drbg_random_set_prediction_resistance(&context->oberon_ctr_drbg_ctx,
+								enabled);
+#elif defined(PSA_NEED_OBERON_HMAC_DRBG_DRIVER)
+	return oberon_hmac_drbg_random_set_prediction_resistance(&context->oberon_hmac_drbg_ctx,
+								 enabled);
+#endif
+
+	(void)context;
+	(void)enabled;
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
 psa_status_t psa_driver_wrapper_free_random(psa_driver_random_context_t *context)
 {
 #if defined(PSA_NEED_CRACEN_CTR_DRBG_DRIVER)
