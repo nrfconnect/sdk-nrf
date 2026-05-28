@@ -13,7 +13,7 @@
 .. |ironside_se_ver| replace:: v23.5.0+28
 
 .. |mbed_tls_ver| replace:: 3.6.6
-.. |tf-m_ver| replace:: v2.2.2
+.. |tf-m_ver| replace:: v2.3.0
 
 .. ### Config shortcuts
 

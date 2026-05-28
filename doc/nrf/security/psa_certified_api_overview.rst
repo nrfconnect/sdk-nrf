@@ -128,8 +128,8 @@ Depending on the implementation you are using, the |NCS| build system can use di
    * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
      - `v1.4.0 <PSA Certified Crypto API 1.4.0_>`_
    * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
-     - `v1.4.0 <PSA Certified Crypto API 1.4.0_>`_
-   * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+     - `v1.4.1 <PSA Certified Crypto API 1.4.0_>`_
+   * - :ref:`IronSide Secure Enclave <ug_crypto_architecture_implementation_standards_ironside>`
      - `v1.3.1 <PSA Certified Crypto API 1.3.1_>`_
 
 .. psa_crypto_support_tfm_build_end
