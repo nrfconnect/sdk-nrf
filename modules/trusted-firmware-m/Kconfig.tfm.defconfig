@@ -46,7 +46,11 @@ endchoice
 
 config TFM_QCBOR_PATH
 	string
-	default "$(ZEPHYR_TRUSTED_FIRMWARE_M_MODULE_DIR)/../qcbor"
+	default "$(ZEPHYR_QCBOR_MODULE_DIR)"
+
+config TFM_T_COSE_PATH
+	string
+	default "$(ZEPHYR_T_COSE_MODULE_DIR)"
 
 config TFM_PARTITION_INITIAL_ATTESTATION
 	bool
