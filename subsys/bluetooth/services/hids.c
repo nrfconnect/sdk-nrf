@@ -115,21 +115,6 @@ int bt_hids_connected(struct bt_hids *hids_obj, struct bt_conn *conn)
 	__ASSERT_NO_MSG(conn != NULL);
 	__ASSERT_NO_MSG(hids_obj != NULL);
 
-#if defined(CONFIG_BT_HIDS_SCI)
-	/* TODO: NCSDK-38983: Remove this loop once multiple connections are supported */
-	for (size_t i = 0; i < bt_conn_ctx_count(hids_obj->conn_ctx); i++) {
-		const struct bt_conn_ctx *ctx =
-			bt_conn_ctx_get_by_id(hids_obj->conn_ctx, i);
-
-		if (ctx) {
-			LOG_WRN("Currently only one connection "
-				"per HID service supporting SCI is supported. "
-				"Using HID SCI modes might produce unexpected results.");
-			bt_conn_ctx_release(hids_obj->conn_ctx, ctx->data);
-		}
-	}
-#endif
-
 	struct bt_hids_conn_data *conn_data =
 		bt_conn_ctx_alloc(hids_obj->conn_ctx, conn);
 
