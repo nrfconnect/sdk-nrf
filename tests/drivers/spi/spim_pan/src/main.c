@@ -294,7 +294,7 @@ ZTEST(spim_pan, test_spim_mltpan_69_workaround)
 
 ZTEST(spim_pan, test_spim_hmpan_115_workaround)
 {
-	Z_TEST_SKIP_IFNDEF(CONFIG_SOC_NRF54H20);
+	Z_TEST_SKIP_IFDEF(CONFIG_SOC_SERIES_NRF54L);
 
 	int err;
 
