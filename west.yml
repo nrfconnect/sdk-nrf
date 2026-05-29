@@ -132,9 +132,9 @@ manifest:
       revision: d2b3671987d1ca54492afe560c2444c3a9dc3000
       path: bootloader/mcuboot
     - name: qcbor
-      url: https://github.com/laurencelundblade/QCBOR
-      revision: 751d36583a9ce1a640900c57e13c9b6b8f3a2ba2
+      repo-path: sdk-qcbor
       path: modules/tee/tf-m/qcbor
+      revision: bfe7b348dda29783c960d7a9cac05abecc4a22ed
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
