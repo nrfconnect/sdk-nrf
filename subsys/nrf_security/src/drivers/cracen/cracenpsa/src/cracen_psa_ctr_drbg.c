@@ -67,18 +67,17 @@ NRF_SECURITY_MUTEX_DEFINE(cracen_prng_trng_mutex);
  *
  * @return 0 on success, nonzero on failure.
  */
-static int trng_get_entropy(uint8_t *dst, int num_trng_bytes)
+static int trng_get_entropy(uint8_t *dst, size_t num_trng_bytes)
 {
-	int sx_err;
+	int sx_err = SX_ERR_RESET_NEEDED;
 	struct sx_trng trng;
-	int trng_chunk_size;
+	size_t trng_chunk_size;
 	bool loop_continue;
 
 	while (num_trng_bytes) {
 		/* The sx_trng_get function suggests to return <= 32 bytes at a time */
 		trng_chunk_size = MIN(num_trng_bytes, 32);
 
-		sx_err = SX_ERR_RESET_NEEDED;
 		loop_continue = true;
 		while (loop_continue) {
 			switch (sx_err) {
@@ -104,13 +103,15 @@ static int trng_get_entropy(uint8_t *dst, int num_trng_bytes)
 			}
 		}
 
-		(void)sx_trng_close(&trng);
-		if (sx_err != SX_OK) {
-			return sx_err;
-		}
-
 		num_trng_bytes -= trng_chunk_size;
 		dst += trng_chunk_size;
+
+		if (num_trng_bytes && sx_err == SX_OK) {
+			sx_err = SX_ERR_HW_PROCESSING;
+		} else {
+			(void)sx_trng_close(&trng);
+			return sx_err;
+		}
 	}
 
 	return SX_OK;
