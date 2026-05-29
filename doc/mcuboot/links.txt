@@ -13,15 +13,15 @@
 
 .. ### Source:  https://docs.nordicsemi.com/
 
-.. _`Immutable first-stage bootloader`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader.html#immutable-bootloader
-.. _`Second-stage upgradable bootloader`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader.html#upgradable-bootloader
-.. _`Secure bootloader chain`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader.html
-.. _`Enabling a bootloader chain using sysbuild`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_adding_sysbuild.html
-.. _`MCUboot and NSIB`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_mcuboot_nsib.html
-.. _`Partitioning device memory`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_partitioning.html
-.. _`Customizing the bootloader`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_config.html
-.. _`Signature keys`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/config_and_build/bootloaders/bootloader_signature_keys.html
-.. _`MCUboot output build files`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/config_and_build/output_build_files.html#mcuboot-output-build-files
+.. _`Immutable first-stage bootloader`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader.html#immutable-bootloader
+.. _`Second-stage upgradable bootloader`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader.html#upgradable-bootloader
+.. _`Secure bootloader chain`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader.html
+.. _`Enabling a bootloader chain using sysbuild`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_adding_sysbuild.html
+.. _`MCUboot and NSIB`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_mcuboot_nsib.html
+.. _`Partitioning device memory`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_partitioning.html
+.. _`Customizing the bootloader`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_config.html
+.. _`Signature keys`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/config_and_build/bootloaders/bootloader_signature_keys.html
+.. _`MCUboot output build files`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/app_dev/config_and_build/output_build_files.html#mcuboot-output-build-files
 
 .. ### Source: other
 
