@@ -28,3 +28,7 @@
 &gpio2 {
 	status = "okay";
 };
+
+&uart135 {
+	status = "disabled";
+};

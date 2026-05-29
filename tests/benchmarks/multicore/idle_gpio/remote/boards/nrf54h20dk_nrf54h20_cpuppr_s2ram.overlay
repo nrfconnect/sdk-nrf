@@ -6,16 +6,16 @@
 
 / {
 	aliases {
-		led3 = &led3;
+		led1 = &led1;
 		sw1 = &button1;
 	};
 
 	leds {
 		compatible = "gpio-leds";
 
-		led3: led_3 {
-			gpios = <&gpio9 3 GPIO_ACTIVE_HIGH>;
-			label = "Green LED 3";
+		led1: led_1 {
+			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
+			label = "Green LED 1";
 		};
 	};
 

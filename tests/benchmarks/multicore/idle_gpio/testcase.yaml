@@ -156,7 +156,8 @@ tests:
     extra_args:
       - FILE_SUFFIX=s2ram
       - EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins.overlay"
-      - SB_CONFIG_NETCORE_REMOTE_SLEEP_FOREVER=y
+      - SB_CONFIG_NETCORE_EMPTY=y
+      - empty_net_core_CONFIG_UART_CONSOLE=n
       - SB_CONFIG_PPRCORE_REMOTE=y
       - remote_EXTRA_DTC_OVERLAY_FILE="wakeup_from_uart_pins.overlay"
     harness: pytest
