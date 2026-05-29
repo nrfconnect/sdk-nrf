@@ -162,7 +162,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: eb8de081315bfea90657b0009846c72576607294
+      revision: pull/717/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -173,6 +173,8 @@ manifest:
           path: third_party/pigweed/repo
         - name: jsoncpp
           path: third_party/jsoncpp/repo
+        - name: uriparser
+          path: third_party/uriparser/repo
       userdata:
         ncs:
           upstream-url: https://github.com/project-chip/connectedhomeip
