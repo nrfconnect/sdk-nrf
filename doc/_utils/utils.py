@@ -129,13 +129,16 @@ def add_google_analytics(app: Sphinx, options: dict) -> None:
         options: HTML theme options
     """
 
-    app.add_js_file("js/gtm-insert.js")
+    # The Cookie Information consent script must load before Google Tag Manager
+    # so that it can register the default consent state for Google Consent Mode
+    # v2 (data-gcm-version) before any tags fire.
     app.add_js_file(
         "https://policy.app.cookieinformation.com/uc.js",
         id="CookieConsent",
         type="text/javascript",
-        **{"data-culture": "EN"},
+        **{"data-culture": "EN", "data-gcm-version": "2.0"},
     )
+    app.add_js_file("js/gtm-insert.js")
 
     options["add_gtm"] = True
     options["gtm_id"] = "GTM-WF4CVFX"
