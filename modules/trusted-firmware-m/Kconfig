@@ -550,7 +550,7 @@ config TFM_NRF_SYSTEM_OFF_SERVICE
 	bool "TF-M System OFF service [EXPERIMENTAL]"
 	depends on TFM_ISOLATION_LEVEL = 1
 	depends on TFM_SFN
-	depends on SOC_SERIES_NRF54L
+	depends on SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	depends on !RETAINED_MEM_NRF_RAM_CTRL
 	select EXPERIMENTAL
 	help
