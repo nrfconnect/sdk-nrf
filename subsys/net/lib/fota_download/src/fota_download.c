@@ -72,6 +72,7 @@ static uint8_t mcuboot_buf[CONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ] __aligned(
 #endif
 static enum dfu_target_image_type img_type;
 static enum dfu_target_image_type img_type_expected = DFU_TARGET_IMAGE_TYPE_ANY;
+static int dfu_img_num;
 enum flags_t {
 	FLAG_DOWNLOADING,
 	FLAG_FIRST_FRAGMENT,
@@ -83,6 +84,11 @@ enum flags_t {
 static atomic_t flags;
 static enum fota_download_error_cause error_state = FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR;
 static bool initialized;
+
+void fota_download_set_img_num(int num)
+{
+	dfu_img_num = num;
+}
 
 static void send_evt(enum fota_download_evt_id id)
 {
@@ -203,7 +209,7 @@ static int downloader_callback(const struct downloader_evt *event)
 				set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH);
 				err = -EPROTOTYPE;
 			} else {
-				err = dfu_target_init(img_type, 0, file_size,
+				err = dfu_target_init(img_type, dfu_img_num, file_size,
 						      dfu_target_callback_handler);
 				if (err == -EFBIG) {
 					LOG_ERR("Image too big");
@@ -239,7 +245,7 @@ static int downloader_callback(const struct downloader_evt *event)
 							FOTA_DOWNLOAD_ERROR_CAUSE_DFU);
 						goto error_and_close;
 					}
-					err = dfu_target_init(img_type, 0, file_size,
+					err = dfu_target_init(img_type, dfu_img_num, file_size,
 							      dfu_target_callback_handler);
 					if (err != 0) {
 						LOG_ERR("Failed to re-initialize target, err: %d",
@@ -305,7 +311,7 @@ static int downloader_callback(const struct downloader_evt *event)
 	case DOWNLOADER_EVT_DONE:
 		err = dfu_target_done(true);
 		if (err == 0 && IS_ENABLED(CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE)) {
-			err = dfu_target_schedule_update(0);
+			err = dfu_target_schedule_update(dfu_img_num);
 		}
 
 		if (err != 0) {

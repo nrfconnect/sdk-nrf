@@ -250,9 +250,25 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb);
 /**
  * @brief Initialize Image Update object
  *
+ * Equivalent to lwm2m_init_image_multi() with image_index 0.
+ *
  * @return Zero if success, negative error code otherwise.
  */
 int lwm2m_init_image(void);
+
+/**
+ * @brief Initialize Image Update object for a specific MCUboot image pair.
+ *
+ * Use this instead of lwm2m_init_image() in builds with more than one
+ * MCUboot image pair, where each running image must confirm its own
+ * primary slot. The application is responsible for passing the index of
+ * the image that is currently running.
+ *
+ * @param image_index MCUboot image pair index to confirm.
+ *
+ * @return Zero if success, negative error code otherwise.
+ */
+int lwm2m_init_image_multi(int image_index);
 
 #define LWM2M_OBJECT_CELLULAR_CONNECTIVITY_ID 10
 
@@ -345,6 +361,22 @@ lwm2m_engine_execute_cb_t lwm2m_adv_firmware_get_update_cb(uint16_t obj_inst_id)
 int lwm2m_adv_firmware_create_inst(const char *component,
 				   lwm2m_engine_set_data_cb_t write_callback,
 				   lwm2m_engine_execute_cb_t update_callback);
+
+/**
+ * @brief Pre-register an MCUboot image pair with the Advanced Firmware Update object.
+ *
+ * Call this before lwm2m_init_firmware_cb() for each MCUboot image pair to
+ * expose as an Advanced Firmware Update object instance. If no pair is
+ * registered, a single default instance ("application", img_num 0) is
+ * created.
+ *
+ * @param component Component name for the LWM2M_ADV_FOTA_COMPONENT_NAME_ID resource.
+ *                  The pointer must stay valid for the lifetime of the instance.
+ * @param img_num   MCUboot image pair index.
+ *
+ * @return Zero if success, negative error code otherwise.
+ */
+int lwm2m_adv_firmware_mcuboot_inst_add(const char *component, int img_num);
 
 #define LWM2M_OBJECT_ADV_FIRMWARE_ID 33629
 #define RESULT_ADV_FOTA_CANCELLED 10

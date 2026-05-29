@@ -27,6 +27,7 @@
 #include <modem/modem_info.h>
 #include <pm_config.h>
 #include <zephyr/sys/reboot.h>
+#include <bootutil/bootutil_public.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
@@ -42,13 +43,30 @@ LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
 #define FOTA_INSTANCE_COUNT CONFIG_LWM2M_CLIENT_UTILS_ADV_FOTA_INSTANCE_COUNT
 #define ENABLED_LWM2M_FIRMWARE_OBJECT LWM2M_OBJECT_ADV_FIRMWARE_ID
-static void lwm2m_adv_app_firmware_versions_set(void);
+static void lwm2m_adv_mcuboot_firmware_versions_set(int obj_id, uint8_t primary_area_id);
 static void lwm2m_adv_modem_firmware_versions_set(void);
 #else
 #define FOTA_INSTANCE_COUNT 1
 #define ENABLED_LWM2M_FIRMWARE_OBJECT LWM2M_OBJECT_FIRMWARE_ID
 static struct lwm2m_engine_res_inst pull_protocol_buff[FOTA_PULL_SUPPORTED_COUNT];
 #endif
+
+/* MCUboot primary partition IDs by image pair index */
+static const uint8_t mcuboot_primary_ids[] = {
+	PM_MCUBOOT_PRIMARY_ID,
+#ifdef PM_MCUBOOT_PRIMARY_1_ID
+	PM_MCUBOOT_PRIMARY_1_ID,
+#endif
+#ifdef PM_MCUBOOT_PRIMARY_2_ID
+	PM_MCUBOOT_PRIMARY_2_ID,
+#endif
+};
+
+struct mcuboot_pair {
+	const char *name;
+	int img_num;
+	int obj_id;
+};
 /* FOTA resource LWM2M_FOTA_UPDATE_PROTO_SUPPORT_ID  definition */
 #define FOTA_PULL_COAP 0
 #define FOTA_PULL_COAPS 1
@@ -81,7 +99,9 @@ static K_KERNEL_STACK_MEMBER(thread_stack,
 static uint16_t ongoing_obj_id;
 static uint8_t percent_downloaded;
 static uint32_t bytes_downloaded;
-static int application_obj_id;
+static struct mcuboot_pair mcuboot_pairs[FOTA_INSTANCE_COUNT];
+static uint8_t mcuboot_pair_count;
+static bool fw_initialized;
 static int modem_obj_id;
 static int smp_obj_id;
 static int target_image_type[FOTA_INSTANCE_COUNT];
@@ -538,6 +558,29 @@ static void update_work_handler(struct k_work *work)
 #endif
 }
 
+static int mcuboot_pair_lookup(uint16_t obj_inst_id)
+{
+	for (uint8_t i = 0; i < mcuboot_pair_count; i++) {
+		if (mcuboot_pairs[i].obj_id >= 0 &&
+		    mcuboot_pairs[i].obj_id == (int)obj_inst_id) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+static bool is_mcuboot_obj_id(uint16_t obj_inst_id)
+{
+	return mcuboot_pair_lookup(obj_inst_id) >= 0;
+}
+
+static int mcuboot_img_num_get(uint16_t obj_inst_id)
+{
+	int idx = mcuboot_pair_lookup(obj_inst_id);
+
+	return (idx >= 0) ? mcuboot_pairs[idx].img_num : 0;
+}
+
 static int firmware_instance_schedule(uint16_t obj_inst_id)
 {
 	int dfu_image_type;
@@ -550,7 +593,30 @@ static int firmware_instance_schedule(uint16_t obj_inst_id)
 		return -EACCES;
 	}
 
-	ret = fota_download_util_image_schedule(dfu_image_type);
+	if (dfu_image_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
+		int img_num;
+
+		if (IS_ENABLED(CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE)) {
+			/* target is already scheduled */
+			return 0;
+		}
+
+		img_num = mcuboot_img_num_get(obj_inst_id);
+
+		ret = fota_download_util_dfu_target_init(dfu_image_type);
+		if (ret) {
+			LOG_ERR("DFU target init fail err:%d", ret);
+			return -EACCES;
+		}
+		ret = dfu_target_init(dfu_image_type, img_num, 0, dfu_target_cb);
+		if (ret) {
+			LOG_ERR("DFU target init err:%d", ret);
+			return -EACCES;
+		}
+		ret = dfu_target_schedule_update(img_num);
+	} else {
+		ret = fota_download_util_image_schedule(dfu_image_type);
+	}
 
 	if (ret) {
 		LOG_ERR("DFU shedule fail err:%d", ret);
@@ -726,10 +792,13 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 	size_t skip = 0;
 	int ret = 0;
 	int image_type;
+	int img_num;
 
 	if (!data_len) {
 		return -EINVAL;
 	}
+
+	img_num = mcuboot_img_num_get(obj_inst_id);
 
 	if (offset < bytes_downloaded) {
 		LOG_DBG("Skipping already downloaded bytes");
@@ -764,7 +833,7 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 		/* Store Started DFU type */
 		target_image_type_store(obj_inst_id, image_type);
 		do {
-			ret = dfu_target_init(image_type, 0, total_size, dfu_target_cb);
+			ret = dfu_target_init(image_type, img_num, total_size, dfu_target_cb);
 			if (ret < 0) {
 				LOG_ERR("Failed to init DFU target, err: %d", ret);
 				goto cleanup;
@@ -842,7 +911,7 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 	/* Last write to flash should be flush write */
 	ret = dfu_target_done(true);
 	if (ret == 0 && IS_ENABLED(CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE)) {
-		ret = dfu_target_schedule_update(0);
+		ret = dfu_target_schedule_update(img_num);
 	}
 
 	if (ret < 0) {
@@ -959,8 +1028,9 @@ static int init_start_download(char *uri, uint16_t obj_instance)
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)) {
 		if (ongoing_obj_id == modem_obj_id) {
 			type = DFU_TARGET_IMAGE_TYPE_ANY_MODEM;
-		} else if (ongoing_obj_id == application_obj_id) {
+		} else if (is_mcuboot_obj_id(ongoing_obj_id)) {
 			type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
+			fota_download_util_set_image_num(mcuboot_img_num_get(ongoing_obj_id));
 		} else {
 			type = DFU_TARGET_IMAGE_TYPE_SMP;
 		}
@@ -1240,18 +1310,23 @@ static bool firmware_update_check_linked_instances(int instance_id, bool *reconn
 static void firmware_object_state_check(void)
 {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	uint8_t app_state, modem_state;
+	uint8_t modem_state;
 
-	app_state = get_state(application_obj_id);
-	modem_state = get_state(modem_obj_id);
+	for (uint8_t i = 0; i < mcuboot_pair_count; i++) {
+		int obj_id = mcuboot_pairs[i].obj_id;
 
-	if (app_state == STATE_DOWNLOADING) {
-		ongoing_obj_id = application_obj_id;
-		/* reset to state idle and result default */
-		/* Init DFU state */
-		set_result(application_obj_id, RESULT_DEFAULT);
+		if (obj_id < 0) {
+			continue;
+		}
+		if (get_state(obj_id) == STATE_DOWNLOADING) {
+			ongoing_obj_id = obj_id;
+			/* reset to state idle and result default */
+			/* Init DFU state */
+			set_result(obj_id, RESULT_DEFAULT);
+		}
 	}
 
+	modem_state = get_state(modem_obj_id);
 	if (modem_state == STATE_DOWNLOADING) {
 		ongoing_obj_id = modem_obj_id;
 		/* reset to state idle and result default */
@@ -1262,8 +1337,7 @@ static void firmware_object_state_check(void)
 		set_result(modem_obj_id, RESULT_UPDATE_FAILED);
 	}
 #if defined(CONFIG_DFU_TARGET_SMP)
-	app_state = get_state(smp_obj_id);
-	if (app_state == STATE_DOWNLOADING) {
+	if (get_state(smp_obj_id) == STATE_DOWNLOADING) {
 		ongoing_obj_id = smp_obj_id;
 		/* reset to state idle and result default */
 		/* Init DFU state */
@@ -1273,32 +1347,33 @@ static void firmware_object_state_check(void)
 #else
 	uint8_t object_state;
 	int dfu_image_type;
+	int obj_id = (mcuboot_pair_count > 0) ? mcuboot_pairs[0].obj_id : 0;
 
-	object_state = get_state(application_obj_id);
-	dfu_image_type = target_image_type_get(application_obj_id);
+	object_state = get_state(obj_id);
+	dfu_image_type = target_image_type_get(obj_id);
 
 	if (object_state == STATE_DOWNLOADING) {
-		ongoing_obj_id = application_obj_id;
+		ongoing_obj_id = obj_id;
 		/* reset to state idle and result default */
 		/* Init DFU state */
-		set_result(application_obj_id, RESULT_DEFAULT);
+		set_result(obj_id, RESULT_DEFAULT);
 	} else if (object_state == STATE_UPDATING &&
 		   (dfu_image_type & DFU_TARGET_IMAGE_TYPE_ANY_MODEM)) {
-		ongoing_obj_id = application_obj_id;
-		set_result(application_obj_id, RESULT_UPDATE_FAILED);
+		ongoing_obj_id = obj_id;
+		set_result(obj_id, RESULT_UPDATE_FAILED);
 	}
 #endif
 }
 #ifdef CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
-static void lwm2m_adv_app_firmware_versions_set(void)
+static void lwm2m_adv_mcuboot_firmware_versions_set(int obj_id, uint8_t primary_area_id)
 {
 	char buf[255];
 	struct lwm2m_obj_path path;
 	struct mcuboot_img_header header;
 
-	path = LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, application_obj_id,
+	path = LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, obj_id,
 			 LWM2M_ADV_FOTA_CURRENT_VERSION_ID);
-	boot_read_bank_header(PM_MCUBOOT_PRIMARY_ID, &header, sizeof(header));
+	boot_read_bank_header(primary_area_id, &header, sizeof(header));
 	snprintk(buf, sizeof(buf), "%d.%d.%d-%d", header.h.v1.sem_ver.major,
 		 header.h.v1.sem_ver.minor, header.h.v1.sem_ver.revision,
 		 header.h.v1.sem_ver.build_num);
@@ -1376,9 +1451,26 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 
 	smp_obj_id = -1;
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	application_obj_id = lwm2m_adv_firmware_create_inst(
-		"application", firmware_block_received_cb, firmware_update_cb);
-	lwm2m_firmware_object_setup_init(application_obj_id);
+	/* No pairs registered: fall back to a single default instance. */
+	if (mcuboot_pair_count == 0) {
+		mcuboot_pairs[0].name = "application";
+		mcuboot_pairs[0].img_num = 0;
+		mcuboot_pairs[0].obj_id = -1;
+		mcuboot_pair_count = 1;
+	}
+
+	for (uint8_t i = 0; i < mcuboot_pair_count; i++) {
+		int obj_id = lwm2m_adv_firmware_create_inst(
+			mcuboot_pairs[i].name, firmware_block_received_cb, firmware_update_cb);
+		if (obj_id < 0) {
+			LOG_ERR("MCUboot inst create failed: %d", obj_id);
+			return obj_id;
+		}
+		mcuboot_pairs[i].obj_id = obj_id;
+		lwm2m_firmware_object_setup_init(obj_id);
+		lwm2m_adv_mcuboot_firmware_versions_set(
+			obj_id, mcuboot_primary_ids[mcuboot_pairs[i].img_num]);
+	}
 
 	static char hw_buf[sizeof("modem:nRF91__ ____ ___ ")];
 
@@ -1390,7 +1482,6 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 	lwm2m_firmware_object_setup_init(modem_obj_id);
 
 	lwm2m_adv_modem_firmware_versions_set();
-	lwm2m_adv_app_firmware_versions_set();
 #if defined(CONFIG_DFU_TARGET_SMP)
 	smp_obj_id = lwm2m_adv_firmware_create_inst("smp", firmware_block_received_cb,
 						    firmware_update_cb);
@@ -1398,43 +1489,113 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 #endif
 
 #else
-	application_obj_id = modem_obj_id = 0;
+	if (mcuboot_pair_count == 0) {
+		mcuboot_pairs[0].name = "application";
+		mcuboot_pairs[0].img_num = 0;
+		mcuboot_pair_count = 1;
+	}
+	mcuboot_pairs[0].obj_id = 0;
+	modem_obj_id = 0;
 	lwm2m_firmware_object_setup_init(0);
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 	lwm2m_firmware_set_write_cb(firmware_block_received_cb);
 #endif
+	fw_initialized = true;
 	firmware_object_state_check();
 	return 0;
 }
 
-
-int lwm2m_init_image(void)
+int lwm2m_adv_firmware_mcuboot_inst_add(const char *component, int img_num)
 {
-	int ret = 0;
-	bool image_ok;
-	uint8_t state = get_state(application_obj_id);
-
-	image_ok = boot_is_img_confirmed();
-	LOG_INF("Image is%s confirmed OK", image_ok ? "" : " not");
-	if (!image_ok) {
-		ret = boot_write_img_confirmed();
-		if (ret) {
-			LOG_ERR("Couldn't confirm this image: %d", ret);
-			return ret;
-		}
-
-		LOG_INF("Marked image as OK");
-		if (state == STATE_UPDATING) {
-			LOG_INF("Firmware updated successfully");
-			set_result(application_obj_id, RESULT_SUCCESS);
-		}
-
-	} else {
-		if (state == STATE_UPDATING) {
-			LOG_INF("Firmware failed to be updated");
-			set_result(application_obj_id, RESULT_UPDATE_FAILED);
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
+	if (fw_initialized) {
+		return -EBUSY;
+	}
+	if (!component || img_num < 0 || img_num >= (int)ARRAY_SIZE(mcuboot_primary_ids)) {
+		return -EINVAL;
+	}
+	if (mcuboot_pair_count >= ARRAY_SIZE(mcuboot_pairs)) {
+		return -ENOMEM;
+	}
+	for (uint8_t i = 0; i < mcuboot_pair_count; i++) {
+		if (mcuboot_pairs[i].img_num == img_num) {
+			return -EALREADY;
 		}
 	}
 
-	return ret;
+	mcuboot_pairs[mcuboot_pair_count].name = component;
+	mcuboot_pairs[mcuboot_pair_count].img_num = img_num;
+	mcuboot_pairs[mcuboot_pair_count].obj_id = -1;
+	mcuboot_pair_count++;
+	return 0;
+#else
+	ARG_UNUSED(component);
+	ARG_UNUSED(img_num);
+	return -ENOTSUP;
+#endif
+}
+
+static bool is_slot_confirmed(uint8_t area_id)
+{
+	struct boot_swap_state state;
+
+	if (boot_read_swap_state_by_id(area_id, &state)) {
+		return false;
+	}
+	return state.magic == BOOT_MAGIC_UNSET || state.image_ok == BOOT_FLAG_SET;
+}
+
+int lwm2m_init_image_multi(int image_index)
+{
+	int ret;
+	bool image_ok;
+	int obj_id = -1;
+	uint8_t state;
+
+	if (image_index < 0 || image_index >= (int)ARRAY_SIZE(mcuboot_primary_ids)) {
+		return -EINVAL;
+	}
+
+	for (uint8_t i = 0; i < mcuboot_pair_count; i++) {
+		if (mcuboot_pairs[i].img_num == image_index) {
+			obj_id = mcuboot_pairs[i].obj_id;
+			break;
+		}
+	}
+	if (obj_id < 0) {
+		return -ENOENT;
+	}
+	state = get_state(obj_id);
+
+	/* boot_is_img_confirmed() always checks PM_MCUBOOT_PRIMARY_ID, check the
+	 * requested slot instead.
+	 */
+	image_ok = is_slot_confirmed(mcuboot_primary_ids[image_index]);
+
+	LOG_INF("Image %d is%s confirmed OK", image_index, image_ok ? "" : " not");
+	if (!image_ok) {
+		ret = boot_write_img_confirmed_multi(image_index);
+		if (ret) {
+			LOG_ERR("Couldn't confirm image %d: %d", image_index, ret);
+			return ret;
+		}
+
+		LOG_INF("Marked image %d as OK", image_index);
+		if (state == STATE_UPDATING) {
+			LOG_INF("Firmware updated successfully");
+			set_result(obj_id, RESULT_SUCCESS);
+		}
+		return 0;
+	}
+
+	if (state == STATE_UPDATING) {
+		LOG_INF("Firmware failed to be updated");
+		set_result(obj_id, RESULT_UPDATE_FAILED);
+	}
+	return 0;
+}
+
+int lwm2m_init_image(void)
+{
+	return lwm2m_init_image_multi(0);
 }
