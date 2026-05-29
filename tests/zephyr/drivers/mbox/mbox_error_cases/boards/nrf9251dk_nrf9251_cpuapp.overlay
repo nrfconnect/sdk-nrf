@@ -7,7 +7,7 @@
 	mbox-consumer {
 		compatible = "vnd,mbox-consumer";
 		mboxes = <&cpuppr_vevif 15>, <&cpuppr_vevif 32>,
-			 <&cpuapp_bellboard 18>, <&cpuapp_bellboard 32>;
+			 <&cpuapp_bellboard 13>, <&cpuapp_bellboard 32>;
 		mbox-names = "remote_valid", "remote_incorrect",
 			     "local_valid", "local_incorrect";
 	};
@@ -15,6 +15,14 @@
 
 &cpuapp_bellboard {
 	status = "okay";
+	/* The following bells on this bellboard are rang by these cores
+	 *  - Bell 0: cpusec
+	 *  - Bell 6: cpusys
+	 *  - Bell 13: cpuppr
+	 *  - Bell 14: cpuflpr
+	 *  - Bells 24, 25, 29, 31: cpucell
+	 */
+	nordic,interrupt-mapping = <0xa3006041 0>;
 };
 
 &cpuppr_vevif {

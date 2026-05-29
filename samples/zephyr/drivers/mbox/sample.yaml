@@ -74,7 +74,7 @@ tests:
       ordered: false
       regex:
         - "Ping \\(on channel 15\\)"
-        - "Pong \\(on channel 18\\)"
+        - "Pong \\(on channel 13\\)"
 
   nrf.extended.sample.drivers.mbox.nrf9251_app_flpr:
     platform_allow:
