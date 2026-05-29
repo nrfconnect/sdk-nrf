@@ -33,6 +33,8 @@ LOG_MODULE_REGISTER(coap_client_sample, CONFIG_COAP_CLIENT_SAMPLE_LOG_LEVEL);
 #define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
+#define MAX_CONSECUTIVE_BUSY_RETRIES 5
+
 /* Macro called upon a fatal error, reboots the device. */
 #define FATAL_ERROR()					\
 	LOG_ERR("Fatal error! Rebooting the device.");	\
@@ -113,6 +115,7 @@ static void response_cb(const struct coap_client_response_data *data, void *user
 static int periodic_coap_request_loop(void)
 {
 	int err, sock;
+	int consecutive_busy_retries = 0;
 	struct sockaddr_storage server = { 0 };
 	struct coap_client coap_client = { 0 };
 	struct coap_client_request req = {
@@ -151,9 +154,24 @@ static int periodic_coap_request_loop(void)
 		/* Send request */
 		err = coap_client_req(&coap_client, sock, (struct sockaddr *)&server, &req, NULL);
 		if (err) {
+			if (err == -EAGAIN) {
+				consecutive_busy_retries++;
+				if (consecutive_busy_retries >= MAX_CONSECUTIVE_BUSY_RETRIES) {
+					LOG_ERR("CoAP client busy after %d consecutive retries",
+						consecutive_busy_retries);
+					return err;
+				}
+
+				LOG_WRN("CoAP client busy, retrying later");
+				k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
+				continue;
+			}
+
 			LOG_ERR("Failed to send request: %d", err);
 			return err;
 		}
+
+		consecutive_busy_retries = 0;
 
 		LOG_INF("CoAP GET request sent sent to %s, resource: %s",
 			CONFIG_COAP_SAMPLE_SERVER_HOSTNAME, CONFIG_COAP_SAMPLE_RESOURCE);
