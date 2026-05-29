@@ -72,8 +72,7 @@ The feature requires the Zephyr :kconfig:option:`CONFIG_BT_SHORTER_CONNECTION_IN
    An attempt to initialize a second HID service will result in an error.
 
 .. note::
-   Currently, only one HID host can be connected to a HID device supporting HID SCI.
-   Connecting a second HID host may cause unexpected results.
+   In case of multiple HID hosts connected to a single HID device supporting HID SCI, a separate HID SCI mode as well as a separate set of connection parameters is used for each connected host.
 
 Additional Kconfig options:
 
