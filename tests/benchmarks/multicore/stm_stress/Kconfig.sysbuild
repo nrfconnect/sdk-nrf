@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice NETCORE
+
+config NETCORE_TESTAPP
+	bool "testapp image"
+
+endchoice
+
+if !NETCORE_NONE
+
+config NETCORE_IMAGE_NAME
+	default "testapp_cpunet" if NETCORE_TESTAPP
+
+config NETCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/stm_stress/testapp" if NETCORE_TESTAPP
+
+endif # !NETCORE_NONE
+
+config PPRCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
+	string
+	default "cpuppr/xip"
+
+choice PPRCORE
+
+config PPRCORE_TESTAPP
+	bool "testapp image"
+
+endchoice
+
+if !PPRCORE_NONE
+
+config PPRCORE_IMAGE_NAME
+	default "testapp_cpuppr" if PPRCORE_TESTAPP
+
+config PPRCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/stm_stress/testapp" if PPRCORE_TESTAPP
+
+endif # !PPRCORE_NONE
+
+choice FLPRCORE
+
+config FLPRCORE_TESTAPP
+	bool "testapp image"
+
+endchoice
+
+if !FLPRCORE_NONE
+
+config FLPRCORE_IMAGE_NAME
+	default "testapp_cpuflpr" if FLPRCORE_TESTAPP
+
+config FLPRCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/stm_stress/testapp" if FLPRCORE_TESTAPP
+
+endif # !FLPRCORE_NONE
+
+source "share/sysbuild/Kconfig"
