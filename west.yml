@@ -136,6 +136,10 @@ manifest:
       repo-path: sdk-qcbor
       path: modules/tee/tf-m/qcbor
       revision: bfe7b348dda29783c960d7a9cac05abecc4a22ed
+    - name: t_cose
+      repo-path: sdk-t_cose
+      path: modules/tee/tf-m/t_cose
+      revision: 024c4298f84a82409e0ac0e1d5c2e8ee22cca901
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
