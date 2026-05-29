@@ -218,7 +218,16 @@
 
 #endif /* PSA_API_TEST_IPC */
 
-/* These region definitions are only available with partition manager */
+/* Bootloader-owned flash regions. spu_region_is_bootloader_region() in the
+ * Nordic TF-M HAL uses these to skip the b0 / MCUboot / S0 / S1 SPU regions
+ * when TF-M re-applies its own secure attribution at boot. Those regions
+ * are already locked by the immutable bootloader (b0), so writing
+ * FLASHREGION[i].PERM trips NRFX_ASSERT(!LOCK) in nrfx -- silently a no-op
+ * in TF-M release builds, but a __BKPT/loop in TF-M debug builds.
+ *
+ * Define them from either Partition Manager (legacy) or devicetree
+ * (the post-migration default).
+ */
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #ifdef PM_MCUBOOT_ADDRESS
 #define REGION_MCUBOOT_ADDRESS	   PM_MCUBOOT_ADDRESS
@@ -236,6 +245,30 @@
 #define REGION_S1_ADDRESS     PM_S1_ADDRESS
 #define REGION_S1_LIMIT       PM_S1_END_ADDRESS - 1
 #endif
+#else /* !CONFIG_PARTITION_MANAGER_ENABLED -- DTS-based layout */
+#if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(boot_partition))
+#define REGION_MCUBOOT_ADDRESS TFM_DT_REG_ADDR(TFM_DT_NODELABEL(boot_partition))
+#define REGION_MCUBOOT_LIMIT   (REGION_MCUBOOT_ADDRESS + \
+				TFM_DT_REG_SIZE(TFM_DT_NODELABEL(boot_partition)) - 1)
+#endif
+#if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(b0_partition))
+#define REGION_B0_ADDRESS      TFM_DT_REG_ADDR(TFM_DT_NODELABEL(b0_partition))
+#define REGION_B0_LIMIT        (REGION_B0_ADDRESS + \
+				TFM_DT_REG_SIZE(TFM_DT_NODELABEL(b0_partition)) - 1)
+#endif
+#if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(s0_partition))
+#define REGION_S0_ADDRESS      TFM_DT_REG_ADDR(TFM_DT_NODELABEL(s0_partition))
+#define REGION_S0_LIMIT        (REGION_S0_ADDRESS + \
+				TFM_DT_REG_SIZE(TFM_DT_NODELABEL(s0_partition)) - 1)
+#endif
+#if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(s1_partition))
+#define REGION_S1_ADDRESS      TFM_DT_REG_ADDR(TFM_DT_NODELABEL(s1_partition))
+#define REGION_S1_LIMIT        (REGION_S1_ADDRESS + \
+				TFM_DT_REG_SIZE(TFM_DT_NODELABEL(s1_partition)) - 1)
+#endif
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
+
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #ifdef PM_PCD_SRAM_ADDRESS
 #define REGION_PCD_SRAM_ADDRESS	    PM_PCD_SRAM_ADDRESS
 #define REGION_PCD_SRAM_LIMIT       PM_PCD_SRAM_END_ADDRESS - 1
