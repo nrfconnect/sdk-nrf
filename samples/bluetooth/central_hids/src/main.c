@@ -214,7 +214,7 @@ static void cont_report_rx_stats_print(struct cont_rx_peripheral_slot *slot,
 	       slot->cont_report_rx_min_interval_us);
 
 	if (slot->cont_report_rx_interval_us > 0) {
-		printk("Report interval: %" PRIu32 " us\n",
+		printk("Expected report interval: %" PRIu32 " us\n",
 		       slot->cont_report_rx_interval_us);
 		printk("Intervals above %" PRIu32 " us: %" PRIu32 "\n",
 		       slot->cont_report_rx_interval_us
@@ -264,9 +264,9 @@ static struct peripheral_slot *slot_by_conn(struct bt_conn *conn)
 	return NULL;
 }
 
-static unsigned int active_connection_count(void)
+static size_t active_connection_count(void)
 {
-	unsigned int n = 0;
+	size_t n = 0;
 
 	for (size_t i = 0; i < ARRAY_SIZE(slots); i++) {
 		if (slots[i].conn) {
@@ -567,6 +567,8 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		slot->sci_mode_requested = BT_HIDS_SCI_MODE_NONE;
 	}
 
+	(void)k_work_cancel(&slot->hids_ready_work);
+
 	if (bt_hogp_assign_check(&slot->hogp)) {
 		printk("HIDS client active - releasing");
 		bt_hogp_release(&slot->hogp);
@@ -628,13 +630,20 @@ static uint32_t conn_rate_effective_report_interval_us(uint32_t interval_us, uin
 {
 	__ASSERT(subrate > 0, "Subrate must be greater than 0");
 
-	uint32_t events_per_period = continuation_number + 1U;
+	uint32_t effective_report_interval_us;
 
-	if (events_per_period > subrate) {
-		events_per_period = subrate;
+	/* Continuous HID reports with continuation number > 0 keep every underlying
+	 * connection event active, as a peripheral operating in continuous report
+	 * transmission mode will provide data on each connection event.
+	 * Continuation number 0 allows only one active event per subrate period.
+	 */
+	if (continuation_number == 0) {
+		effective_report_interval_us = interval_us * subrate;
+	} else {
+		effective_report_interval_us = interval_us;
 	}
 
-	return (interval_us * subrate) / events_per_period;
+	return effective_report_interval_us;
 }
 
 static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
