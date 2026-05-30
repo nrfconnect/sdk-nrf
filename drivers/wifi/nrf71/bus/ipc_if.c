@@ -14,6 +14,8 @@
  *   via tail write.
  */
 
+#include <errno.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -194,12 +196,28 @@ int ipc_send(ipc_ctx_t ctx, const void *data, int len)
 		}
 
 		/* TX path: send (addr, size, ack_addr) on IPC0 */
-		do {
-			status = wifi_ipc_host_tx_send(&wifi_host_tx,
-						       data,
-						       (size_t)len,
-						       ack_addr);
-		} while (status == WIFI_IPC_STATUS_BUSYQ_NOTREADY);
+		{
+			int64_t deadline = k_uptime_get() + CONFIG_NRF71_IPC_SEND_TIMEOUT_MS;
+
+			do {
+				status = wifi_ipc_host_tx_send(&wifi_host_tx,
+							       data,
+							       (size_t)len,
+							       ack_addr);
+				if (status != WIFI_IPC_STATUS_BUSYQ_NOTREADY) {
+					break;
+				}
+
+				if (k_uptime_get() >= deadline) {
+					LOG_ERR("IPC host TX timed out after %d ms",
+						CONFIG_NRF71_IPC_SEND_TIMEOUT_MS);
+					host_tx_ack_slot_free(ack_addr);
+					return -ETIMEDOUT;
+				}
+
+				k_usleep(CONFIG_NRF71_IPC_SEND_RETRY_INTERVAL_US);
+			} while (true);
+		}
 
 		if (status != WIFI_IPC_STATUS_OK) {
 			host_tx_ack_slot_free(ack_addr);
