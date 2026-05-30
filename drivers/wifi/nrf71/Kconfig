@@ -29,6 +29,28 @@ config IPC_SERVICE_BACKEND_ICMSG
 config IPC_SERVICE_BACKEND_ICMSG_WQ_STACK_SIZE
 	default 5600
 
+config NRF71_IPC_BIND_TIMEOUT_MS
+	int "IPC endpoint bind timeout (ms)"
+	default 30000
+	help
+	  Maximum time to wait for the IPC endpoint bound callback after
+	  registration. The Wi-Fi UMAC peer must register its endpoint before
+	  bind completes. On timeout ipc_register_rx_cb() fails.
+
+config NRF71_IPC_SEND_TIMEOUT_MS
+	int "IPC host TX send timeout (ms)"
+	default 5000
+	help
+	  Maximum time to wait for a transient IPC busy condition when sending
+	  a command or TX buffer after the endpoint is bound. On timeout
+	  ipc_send() returns -ETIMEDOUT.
+
+config NRF71_IPC_SEND_RETRY_INTERVAL_US
+	int "IPC host TX retry interval (us)"
+	default 100
+	help
+	  Delay between retries when the IPC busy queue is not ready.
+
 choice NRF71_OPER_MODES
 	bool "nRF70 operating modes"
 	default NRF71_SYSTEM_MODE if !WIFI_USAGE_MODE_SCAN_ONLY
