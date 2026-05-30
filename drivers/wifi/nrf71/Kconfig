@@ -14,6 +14,7 @@ menuconfig WIFI_NRF71
 	select IPC_SERVICE
 	select MBOX
 	select SPSC_PBUF
+	select SOC_NRF71_WIFI_BOOT if BUILD_WITH_TFM
 	default y
 	depends on DT_HAS_NORDIC_NRF7120_WIFI_ENABLED
 	help
