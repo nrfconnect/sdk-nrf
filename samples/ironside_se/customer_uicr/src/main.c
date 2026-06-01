@@ -13,11 +13,11 @@
 int main(void)
 {
 	printk("Printing all of CUSTOMER->UICR:\n");
-	for(int i = 0; i < CUSTOMER_LEN; i++) {
-		if(i%4 == 0) {
+	for (int i = 0; i < CUSTOMER_LEN; i++) {
+		if (i%4 == 0) {
 			printk("\n");
 		}
-		printk("%08x ",IRONSIDE_SE_UICR->CUSTOMER[i]);
+		printk("%08x ", IRONSIDE_SE_UICR->CUSTOMER[i]);
 	}
 
- }
+}
