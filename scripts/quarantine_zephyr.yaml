@@ -388,6 +388,7 @@
     - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
     - mgmt.mcumgr.os.info
     - mgmt.mcumgr.os.info.no_hooks
+    - multidut.basic
     - net.coap.server.common
     - net.http.server.common
     - net.http.server.crime
