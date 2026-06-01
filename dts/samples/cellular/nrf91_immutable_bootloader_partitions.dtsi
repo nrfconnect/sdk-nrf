@@ -19,34 +19,37 @@
 	 * 0x0002_8000  Primary image area           (416 kB)
 	 *   0x0002_8000  Primary secure image       ( 32 kB)
 	 *   0x0003_0000  Primary non-secure image   (384 kB)
-	 * 0x0009_0000  Secundary image area         (416 kB)
-	 *   0x0009_0000  Secundary secure image     ( 32 kB)
-	 *   0x0009_8000  Secundary non-secure image (384 kB)
+	 * 0x0009_0000  Secondary image area         (416 kB)
+	 *   0x0009_0000  Secondary secure image     ( 32 kB)
+	 *   0x0009_8000  Secondary non-secure image (384 kB)
 	 * 0x000f_8000  Settings storage             ( 32 kB)
 	 */
 
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 
 		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x00000000 0x8000>;
 		};
 
 		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot-0";
 			reg = <0x00008000 0x10000>;
 		};
 
 		s1_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot-1";
 			reg = <0x00018000 0x10000>;
 		};
 
 		slot0_partition: partition@28000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00028000 0x68000>;
 			ranges = <0x0 0x00028000 0x68000>;
@@ -54,18 +57,20 @@
 			#size-cells = <1>;
 
 			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-secure";
 				reg = <0x00000000 0x8000>;
 			};
 
 			slot0_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-nonsecure";
 				reg = <0x00008000 0x60000>;
 			};
 		};
 
 		slot1_partition: partition@90000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "image-1";
 			reg = <0x00090000 0x68000>;
 			ranges = <0x0 0x00090000 0x68000>;
@@ -73,11 +78,13 @@
 			#size-cells = <1>;
 
 			slot1_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-1-secure";
 				reg = <0x00000000 0x8000>;
 			};
 
 			slot1_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-1-nonsecure";
 				reg = <0x00008000 0x60000>;
 			};
