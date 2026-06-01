@@ -212,7 +212,7 @@ Build and configuration system
 
 * Removed support for the deprecated multi-image builds (parent-child images) functionality.
   All |NCS| projects must now use :ref:`sysbuild`.
-  See :ref:`child_parent_to_sysbuild_migration` for an overview of differences with parent-child image and how to migrate.
+  See the Migrating to sysbuild user guide for an overview of differences with parent-child image and how to migrate.
 * Updated:
 
   * The default runner for the ``west flash`` command to `nRF Util`_ instead of ``nrfjprog`` that is part of the archived `nRF Command Line Tools`_.

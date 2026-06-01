@@ -127,7 +127,7 @@ To enable Wi-Fi coexistence on the nRF70 Series device, complete the following s
    The second element is the pin number on that port.
 
 #. On the nRF5340, also apply the same devicetree node mentioned in **Step 1** to the network core using the sysbuild build system.
-   For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
+   For more information, see the Migrating to sysbuild page.
    To apply the overlay to the correct network core image, create an overlay file named :file:`sysbuild/\ *image_name*\ /boards/nrf5340dk_nrf5340_cpunet.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
 
    The *image_name* value is ``ipc_radio`` (:ref:`ipc_radio`), which represents all applications with support for the combination of both 802.15.4 and Bluetooth.
@@ -208,7 +208,7 @@ To enable the generic three-wire coexistence, complete the following steps:
 
 #. On nRF53 devices, also apply the same devicetree node mentioned in **Step 1** to the network core using sysbuild.
    To apply the overlay to the correct network core image, create an overlay file named :file:`sysbuild/\ *image_name*\ /boards/nrf5340dk_nrf5340_cpunet.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
-   For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
+   For more information, see the Migrating to sysbuild page.
 
    The *image_name* value is ``ipc_radio``, which represents all applications with support for the combination of both 802.15.4 and Bluetooth.
    To configure your application, use the following sysbuild configurations:

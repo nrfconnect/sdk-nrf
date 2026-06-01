@@ -22,7 +22,7 @@ Updated |NCS| toolchain
 
 Sysbuild
   A new build system was recently introduced in the |NCS|.
-  For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` user guide.
+  For more information, see the Migrating to sysbuild user guide.
 
 Hardware Model v2
   The hardware model was introduced in the |NCS| v2.7.0.
@@ -53,7 +53,7 @@ General
 
    * Sysbuild
      A new build system was recently introduced in |NCS|
-     For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` user guide.
+     For more information, see the Migrating to sysbuild user guide.
 
    * Hardware Model v2
      The hardware model was introduced in the |NCS| v2.7.0.
@@ -568,7 +568,7 @@ Applications using build types
 
      * With the inheritance of Zephyr's :ref:`sysbuild in the |NCS| <configuration_system_overview_sysbuild>`, the multi-image builds are deprecated.
        If your application uses parent and child images, it is recommended to migrate your application to sysbuild before the multi-image builds are removed in one of the upcoming |NCS| releases.
-       See :ref:`child_parent_to_sysbuild_migration`.
+       See the Migrating to sysbuild guide.
        See the :ref:`documentation in Zephyr <zephyr:sysbuild>` for more information about sysbuild.
 
 Matter
