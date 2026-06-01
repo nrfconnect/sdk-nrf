@@ -22,6 +22,7 @@
 #include "nrf_802154_sl_ant_div.h"
 
 #include "rf_proc.h"
+#include "rf/ptt_rf.h"
 
 #include "ptt.h"
 
@@ -243,14 +244,7 @@ void nrf_802154_transmit_failed(uint8_t *frame, nrf_802154_tx_error_t error,
 
 	LOG_INF("tx failed error %d!", error);
 
-	/* mapping nrf_802154 errors into PTT RF errors */
-	if (error == NRF_802154_TX_ERROR_INVALID_ACK) {
-		rf_tx_failed_info.tx_error = PTT_RF_TX_ERROR_INVALID_ACK_FCS;
-	} else if (error == NRF_802154_TX_ERROR_NO_ACK) {
-		rf_tx_failed_info.tx_error = PTT_RF_TX_ERROR_NO_ACK;
-	} else {
-		rf_tx_failed_info.tx_error = PTT_RF_TX_ERROR_OPERATION_FAILED;
-	}
+	rf_tx_failed_info.tx_error = ptt_rf_map_nrf_tx_error(error);
 
 	k_work_submit(&rf_tx_failed_info.work);
 }
@@ -451,24 +445,21 @@ int8_t ptt_rf_rssi_last_get_ext(void)
 	return nrf_802154_rssi_last_get();
 }
 
-bool ptt_rf_send_packet_ext(const uint8_t *pkt, ptt_pkt_len_t len, bool cca)
+nrf_802154_tx_error_t ptt_rf_send_packet_ext(const uint8_t *pkt, ptt_pkt_len_t len, bool cca)
 {
-	bool ret = false;
-
 	if ((pkt == NULL) || (len > RF_PSDU_MAX_SIZE - RF_FCS_SIZE)) {
-		ret = false;
-	} else {
-		/* temp_tx_pkt is protected inside ptt rf by locking mechanism */
-		temp_tx_pkt[0] = len + RF_FCS_SIZE;
-		memcpy(&temp_tx_pkt[RF_PSDU_START], pkt, len);
-		const nrf_802154_transmit_metadata_t metadata = {
-			.frame_props = NRF_802154_TRANSMITTED_FRAME_PROPS_DEFAULT_INIT,
-			.cca = cca
-		};
-		ret = nrf_802154_transmit_raw(temp_tx_pkt, &metadata) == NRF_802154_TX_ERROR_NONE;
+		return NRF_802154_TX_ERROR_INVALID_REQUEST;
 	}
 
-	return ret;
+	/* temp_tx_pkt is protected inside ptt rf by locking mechanism */
+	temp_tx_pkt[0] = len + RF_FCS_SIZE;
+	memcpy(&temp_tx_pkt[RF_PSDU_START], pkt, len);
+	const nrf_802154_transmit_metadata_t metadata = {
+		.frame_props = NRF_802154_TRANSMITTED_FRAME_PROPS_DEFAULT_INIT,
+		.cca = cca
+	};
+
+	return nrf_802154_transmit_raw(temp_tx_pkt, &metadata);
 }
 
 bool ptt_rf_modulated_stream_ext(const uint8_t *pkt, ptt_pkt_len_t len)
