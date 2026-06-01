@@ -489,6 +489,12 @@
   - "subsys/net/lib/hostap_crypto/**/*"
   - "boards/shields/nrf7002eb2/**/*"
 
+"CI-wifi-net-samples":
+  - "samples/net/mqtt/**/*"
+  - "samples/net/coap_client/**/*"
+  - "subsys/net/lib/mqtt_helper/**/*"
+  - "subsys/net/lib/hostap_crypto/**/*"
+
 "CI-cloud-test":
   - "include/caf/**/*"
   - "include/date_time.h"
