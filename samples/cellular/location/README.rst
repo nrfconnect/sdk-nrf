@@ -21,7 +21,7 @@ The sample supports the following development kits:
 
 The sample requires an `nRF Cloud`_ account.
 Your device must be onboarded to nRF Cloud.
-If it is not, follow the instructions in `Device on-boarding <location_onboarding>`_.
+If it is not, follow the instructions in :ref:`Device on-boarding <location_onboarding>`.
 
 See also the requirements in :ref:`lib_location` library document.
 
@@ -32,6 +32,11 @@ The Location sample retrieves the location multiple times to illustrate the diff
 Each individual location request has been implemented in a separate function within the sample.
 In addition to the :ref:`lib_location` library, this sample uses :ref:`lte_lc_readme` to control the LTE connection.
 
+Configuration
+*************
+
+|config|
+
 .. _location_onboarding:
 
 Setup
@@ -40,11 +45,6 @@ Setup
 You must onboard your device to nRF Cloud for this sample to function.
 You only need to do this once for each device.
 To onboard your device, install `nRF Cloud Utils`_ and follow the instructions in the README.
-
-Configuration
-*************
-
-|config|
 
 Additional configuration
 ========================
