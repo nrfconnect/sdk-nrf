@@ -20,6 +20,7 @@ enum ptt_ret {
 	PTT_RET_INVALID_COMMAND, /**< invalid command*/
 	PTT_RET_NO_FREE_SLOT, /**< no free slots in a pool */
 	PTT_RET_BUSY, /**< resource is busy */
+	PTT_RET_TX_FAILED, /**< synchronous TX rejected by radio driver */
 };
 
 #endif /* PTT_ERRORS_H__ */

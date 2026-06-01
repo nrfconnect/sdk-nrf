@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 
+#include "nrf_802154_types.h"
 #include "ptt_types.h"
 
 /** @brief Provides library RF module with a received packet
@@ -104,7 +105,9 @@ extern bool ptt_rf_continuous_carrier_ext(void);
 /* external provided function to start sending modulated carrier on current radio */
 extern bool ptt_rf_modulated_stream_ext(const uint8_t *pkt, ptt_pkt_len_t len);
 /* external provided function to send a packet on current radio */
-extern bool ptt_rf_send_packet_ext(const uint8_t *pkt, ptt_pkt_len_t len, bool cca);
+extern nrf_802154_tx_error_t ptt_rf_send_packet_ext(const uint8_t *pkt,
+						    ptt_pkt_len_t len,
+						    bool cca);
 /* external provided function to verify if the channel is clear */
 extern bool ptt_rf_cca_ext(uint8_t mode);
 /* external provided function to detects the maximum energy for a given time */
