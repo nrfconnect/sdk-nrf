@@ -526,14 +526,14 @@
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
 /samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-bifrost
 /samples/nfc/                             @nrfconnect/ncs-radio-sw
+/samples/nrf5340/empty_app_core/          @nrfconnect/ncs-si-muffin
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-eris
 /samples/nrf5340/netboot_deprecated_pm/   @nrfconnect/ncs-eris
 /samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
+/samples/nrf5340/remote_shell/            @nrfconnect/ncs-si-muffin
 /samples/nrf_rpc/                         @nrfconnect/ncs-blenders
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
-/samples/nrf5340/empty_app_core/          @nrfconnect/ncs-si-muffin
-/samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
 /samples/nrf54h20/empty_app_core/         @nrfconnect/ncs-aurora
 /samples/nrf54h20/idle_relocated_tcm/     @nrfconnect/ncs-si-muffin
 /samples/nrf54h20/radio_loader/           @nrfconnect/ncs-si-muffin
