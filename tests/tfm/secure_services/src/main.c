@@ -5,11 +5,29 @@
  */
 
  #include <zephyr/ztest.h>
+ #include <zephyr/devicetree.h>
  #include <tfm_ns_interface.h>
  #include <tfm_ioctl_api.h>
+#if USE_PARTITION_MANAGER
  #include <pm_config.h>
+#endif
 
  #include <hal/nrf_gpio.h>
+
+#if USE_PARTITION_MANAGER
+#define TEST_SRAM_BASE       CONFIG_PM_SRAM_BASE
+#define TEST_SRAM_NS_ADDRESS PM_SRAM_ADDRESS
+#define TEST_SRAM_S_ADDRESS  PM_TFM_SRAM_ADDRESS
+#define TEST_NS_FLASH_ADDR   PM_ADDRESS
+#else
+
+#define TEST_SRAM_BASE       DT_REG_ADDR(DT_NODELABEL(sram0))
+#define TEST_SRAM_NS_ADDRESS (DT_REG_ADDR(DT_NODELABEL(sram0)) + \
+			      DT_REG_ADDR(DT_NODELABEL(sram0_ns)))
+#define TEST_SRAM_S_ADDRESS  (DT_REG_ADDR(DT_NODELABEL(sram0)) + \
+			      DT_REG_ADDR(DT_NODELABEL(sram0_s)))
+#define TEST_NS_FLASH_ADDR   DT_REG_ADDR(DT_NODELABEL(slot0_ns_partition))
+#endif
 
 ZTEST_SUITE(test_secure_service, NULL, NULL, NULL, NULL, NULL);
 
@@ -18,13 +36,13 @@ static bool is_secure(intptr_t ptr)
 	/* We can not use 'arm_cmse_addr_is_secure here since this firmware
 	 * is built as non secure.
 	 */
-	if (ptr >= CONFIG_PM_SRAM_BASE) {
+	if (ptr >= TEST_SRAM_BASE) {
 		/* Check if RAM address is secure */
-		return ptr < PM_SRAM_ADDRESS;
+		return ptr < TEST_SRAM_NS_ADDRESS;
 	}
 
 	/* Check if flash address is secure */
-	return ptr < PM_ADDRESS;
+	return ptr < TEST_NS_FLASH_ADDR;
 }
 
 ZTEST(test_secure_service, test_tfm_read_service)
@@ -34,7 +52,7 @@ ZTEST(test_secure_service, test_tfm_read_service)
 
 	uint8_t output[4];
 	uint8_t data_length = sizeof(output);
-	void *secure_ptr = (size_t *)PM_TFM_SRAM_ADDRESS;
+	void *secure_ptr = (size_t *)TEST_SRAM_S_ADDRESS;
 
 	uint32_t err = 0;
 	enum tfm_platform_err_t plt_err;
