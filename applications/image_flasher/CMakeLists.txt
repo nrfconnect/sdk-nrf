@@ -44,7 +44,12 @@ list(FILTER ${base_image}_kconfig_keys INCLUDE REGEX
 )
 foreach(key ${${base_image}_kconfig_keys})
   get_target_property(value ${base_image}_kconfig ${key})
-  list(APPEND image_flasher_config "${key}=${value}\n")
+
+  if(${value} MATCHES "^((\-?([0-9])+)|(0x([0-9A-Fa-f])+)|y|n)$")
+    list(APPEND image_flasher_config "${key}=${value}\n")
+  else()
+    list(APPEND image_flasher_config "${key}=\"${value}\"\n")
+  endif()
 endforeach()
 
 file(WRITE ${PROJECT_BINARY_DIR}/.config.new ${image_flasher_config})
