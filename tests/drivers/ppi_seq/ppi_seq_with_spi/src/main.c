@@ -234,6 +234,9 @@ static void spim_init(bool use_hw_ss)
 
 	/* CS configure. */
 	if (use_hw_ss) {
+#if NRF_GPIO_HAS_RETENTION_SETCLEAR
+		nrf_gpio_pin_retain_disable(ss_pin);
+#endif
 		nrf_gpio_pin_set(ss_pin);
 		nrf_gpio_cfg_output(ss_pin);
 		nrf_spim_csn_configure(spim_data.spim.p_reg, ss_pin, NRF_SPIM_CSN_POL_LOW, 32);
