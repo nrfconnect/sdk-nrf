@@ -5,8 +5,10 @@
  */
 
 /* Test requires loopbacks:
- * - between P1.11 and P1.10.
- * - between P1.12 and P1.13,
+ * - between P0.00 and P0.01
+ * - between P0.06 and P0.07
+ * - between P0.08 and P0.09
+ * - between P0.10 and P0.11
  */
 
 &pinctrl {
@@ -78,18 +80,4 @@ tester: &spi131 {
 	memory-regions = <&cpuapp_dma_region>;
 	/delete-property/ rx-delay-supported;
 	/delete-property/ rx-delay;
-};
-
-&dppic130 {
-	status = "okay";
-
-	owned-channels = <1>;
-	source-channels = <1>;
-};
-
-&dppic133 {
-	status = "okay";
-
-	owned-channels = <0 1 2 3 4 5 6 7>;
-	sink-channels = <1>;
 };
