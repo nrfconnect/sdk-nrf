@@ -152,13 +152,13 @@ No changes are needed to the programming command:
 With other tools
 ^^^^^^^^^^^^^^^^
 
-You must use the :file:`merged.hex` file instead of the :file:`zephyr.hex` file to choose the program image explicitly.
+You must use the :file:`merged_<board_target>.hex` file(s) instead of the :file:`zephyr.hex` file to choose the program image explicitly, :kconfig:option:`SB_CONFIG_MERGED_HEX_FILES` must be enabled for this.
 
 For example, for nRF Util:
 
 .. code-block:: console
 
-   nrfutil device program --x-family nrf53 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,qspi_erase_mode=ERASE_ALL,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/merged.hex
+   nrfutil device program --x-family nrf53 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,qspi_erase_mode=ERASE_ALL,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/merged_<board_target>.hex
 
 Updating firmware patches
 =========================
