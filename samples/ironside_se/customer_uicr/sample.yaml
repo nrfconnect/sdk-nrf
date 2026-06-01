@@ -1,0 +1,26 @@
+sample:
+  name: CUSTOMER UICR Sample
+  description: |
+    Sample demonstrating UICR.CUSTOMER to store persistent data.
+    The sample adds a customer.bin file to the uicr image, which
+    will then build with the customer data as part of the uicr.hex.
+
+common:
+  sysbuild: true
+  harness: console
+  harness_config:
+    type: multi_line
+    regex:
+      # deadbeef as the word we write and then the UICR magic words
+      - ".*deadbeef bd2328a8 bd2328a8 bd2328a8 .*"
+
+tests:
+  samples.customer_uicr.nrf54h20dk:
+    tags:
+      - sysbuild
+      - ci_samples_sdfw
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    timeout: 7
