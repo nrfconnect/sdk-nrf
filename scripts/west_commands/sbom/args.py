@@ -70,6 +70,7 @@ class ArgsClass:
     output_spdx: 'str|None'
     package_supplier: 'str|None'
     package_cpe: 'str|None'
+    package_download_format: str
     debug_build_input_cache: 'str|None'
 
 
@@ -149,6 +150,11 @@ def add_arguments(parser: argparse.ArgumentParser):
     parser.add_argument('--package-cpe', default=None,
                         help='Set the Common Platform Enumeration (CPE) identifier for packages '
                              '(for CRA/EO/FDA compliance). Format: cpe:2.3:...')
+    parser.add_argument('--package-download-format', default='git',
+                        choices=('git', 'github-archive'),
+                        help='Format for the SPDX PackageDownloadLocation field. '
+                             '"git" (default) emits "git+<url>@<version>". '
+                             '"github-archive" emits a GitHub archive zip URL. ')
     # Hidden arguments (for debug purposes only)
     parser.add_argument('--debug-build-input-cache', default=None, help=argparse.SUPPRESS)
 

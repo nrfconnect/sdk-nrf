@@ -71,6 +71,15 @@ def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
             return result
 
 
+def is_sha(rev: str) -> bool:
+    '''Returns True if and only if `rev` looks like a full 40-byte git SHA.'''
+    try:
+        int(rev, 16)
+    except ValueError:
+        return False
+    return len(rev) == 40
+
+
 process_executor = None
 thread_executor = None
 

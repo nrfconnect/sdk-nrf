@@ -42,11 +42,8 @@ PackageSupplier: Organization: {{package.supplier}}
 {% else -%}
 PackageSupplier: NOASSERTION
 {% endif -%}
-{% if package.purl and package.url and package.version -%}
-PackageDownloadLocation: git+{{package.url}}@{{package.version}}
-{% else -%}
-PackageDownloadLocation: {{package.url or 'NONE'}}
-{% endif -%}
+PackageDownloadLocation: {{func.download_location(package)}}
+
 {% if package.browser_url -%}
 PackageHomePage: {{package.browser_url}}
 {% endif -%}
