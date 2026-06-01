@@ -229,9 +229,7 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |
 +--------------+--------------------------------+----------------------------------------------------------------------+
 | MCUboot      | overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                                       |
-|              |                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                    |
 |              |                                | * ``thingy53/nrf5340/cpuapp``                                        |
-|              |                                | * ``thingy53/nrf5340/cpuapp/ns``                                     |
 +--------------+--------------------------------+----------------------------------------------------------------------+
 
 Signature algorithm
@@ -250,9 +248,7 @@ The configuration of the signature algorithm and the public key storage solution
 | RSA-2048                       | * ``nrf52dk/nrf52832`` (only ``release`` configuration)              | Bootloader partition      | SW calculation,           |
 |                                | * ``nrf52833dk/nrf52833`` (only ``release`` configuration)           |                           | Signature derived from    |
 |                                | * ``nrf5340dk/nrf5340/cpuapp``                                       |                           | image hash                |
-|                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                    |                           |                           |
 |                                | * ``thingy53/nrf5340/cpuapp``                                        |                           |                           |
-|                                | * ``thingy53/nrf5340/cpuapp/ns``                                     |                           |                           |
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
 | ECDSA-P256                     | * ``nrf52840dk/nrf52840``                                            | Bootloader partition      | HW-accelerated            |
 |                                |                                                                      |                           | (Cryptocell 310),         |
@@ -679,7 +675,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/fast_pair/locator_tag`
 
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/build_and_run.txt
 
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`

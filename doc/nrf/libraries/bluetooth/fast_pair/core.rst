@@ -167,17 +167,7 @@ This allows a Fast Pair Seeker to control the security re-establishment.
 Partition Manager (deprecated)
 ------------------------------
 
-.. note::
-   The :ref:`partition_manager` script is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
-
-   This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
-   It is recommended that all new designs using Nordic devices, excluding the nRF91 Series devices, are built with DTS instead of Partition Manager.
-   Partition Manager will be removed from the |NCS| by the end of 2026 from the main branch.
-
-   For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`release_notes` page.
-
-   The only exception from these migration guidelines in the context of the Fast Pair sample support is the nRF53 Series DFU configuration with MCUboot in the overwrite mode (for example, the ``nrf5340dk/nrf5340/cpuapp`` board target in the :ref:`fast_pair_locator_tag` sample).
-   This particular configuration is not yet deprecated, as the DTS alternative is not yet available.
+.. include:: /includes/pm_deprecation.txt
 
 The Fast Pair provisioning data is preprogrammed to a dedicated flash memory partition.
 

@@ -389,6 +389,9 @@ Bluetooth Fast Pair samples
 
   * Updated:
 
+    * The configuration of the nRF53 Series board targets (``nrf5340dk/nrf5340/cpuapp`` and ``thingy53/nrf5340/cpuapp``) by migrating from the deprecated :ref:`partition_manager` to the devicetree (DTS) solution that is used for defining the partition layout.
+      The new DTS partition layout is aligned with the :ref:`partition_manager` layout from |NCS| v3.3.0 to preserve DFU backwards compatibility with the v3.3.0 deployments.
+      All board targets supported by the sample now use DTS for partition definitions.
     * UI thread handling for reference board targets with a speaker by moving the speaker control into the common indication thread.
       The signaling is now done using the :ref:`zephyr:events` API.
     * The configuration of the non-volatile memory self-protection mechanism in the MCUboot image on the nRF54L board targets.
@@ -397,6 +400,8 @@ Bluetooth Fast Pair samples
 
   * Fixed the ringing status indications with the green LED flashes for reference board targets.
     A ringing status indication was often skipped during the motion detection event.
+
+  * Removed the ``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns`` board target variants from the sample's configuration.
 
 Cellular samples
 ----------------
@@ -809,7 +814,8 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+* Updated the :ref:`Google Fast Pair integration guide<ug_bt_fast_pair_integration>` to reflect that all supported board targets use devicetree (DTS) for partition definitions.
+  The :ref:`partition_manager` no longer has any Fast Pair-specific exception and is fully deprecated for the supported Fast Pair project configurations.
 
 Edge Impulse integration
 ------------------------

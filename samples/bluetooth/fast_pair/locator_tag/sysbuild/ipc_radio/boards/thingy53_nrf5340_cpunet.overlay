@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&flash1 {
+	/* Redefine the "partitions" DTS node. */
+	/delete-node/ partitions;
+
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * The b0n_partition and provision_partition addresses and sizes
+		 * are aligned with the legacy Partition Manager b0n and provision
+		 * partitions to keep DFU update packages backwards compatible.
+		 */
+		b0n_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0n";
+			reg = <0x0 0x2580>;
+		};
+
+		bl_storage: provision_partition: partition@2580 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0-provision-data";
+			reg = <0x2580 0x280>;
+		};
+
+		/*
+		 * The size of this partition is constrained by the RAM-backed
+		 * flash simulator that MCUboot uses to forward network core
+		 * images (see flash_sim.overlay). The slot2_partition there
+		 * is 256 KB, matching the legacy Partition Manager
+		 * mcuboot_primary_1 partition. The s0_partition size matches
+		 * the legacy app/ipc_radio partition (246 KB), which leaves
+		 * room for the MCUboot image header in slot2 during DFU.
+		 */
+		s0_partition: partition@2800 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x2800 DT_SIZE_K(246)>;
+		};
+	};
+};
