@@ -189,42 +189,42 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
      - IoT devices
      - `overlay-iot-devices.conf`_
      - IoT devices
-     - ``TCP-TX: 6.1 Mbps``
-       ``TCP-RX: 2.1 Mbps``
-       ``UDP-TX: 5.5 Mbps``
-       ``UDP-RX: 15.1 Mbps``
+     - ``TCP-TX: 8.3 Mbps``
+       ``TCP-RX: 6.5 Mbps``
+       ``UDP-TX: 6.3 Mbps``
+       ``UDP-RX: 22.9 Mbps``
    * - :abbr:`STA (Station)` mode
      - Memory optimized :abbr:`STA (Station)` mode
      - `overlay-memory-optimized.conf`_
      - Sensors with low data requirements
-     - ``TCP-TX: 4.7 Mbps``
-       ``TCP-RX: 5.7 Mbps``
-       ``UDP-TX: 5.5 Mbps``
-       ``UDP-RX: 15.2 Mbps``
+     - ``TCP-TX: 6 Mbps``
+       ``TCP-RX: 8.1 Mbps``
+       ``UDP-TX: 6.3 Mbps``
+       ``UDP-RX: 23.6 Mbps``
    * - :abbr:`STA (Station)` mode
      - High performance :abbr:`STA (Station)` mode
      - `overlay-high-performance.conf`_
      - High data rate IoT devices
-     - ``TCP-TX: 7.3 Mbps``
-       ``TCP-RX: 9.4 Mbps``
-       ``UDP-TX: 10.6 Mbps``
-       ``UDP-RX: 16.6 Mbps``
+     - ``TCP-TX: 11.2 Mbps``
+       ``TCP-RX: 12.1 Mbps``
+       ``UDP-TX: 16.4 Mbps``
+       ``UDP-RX: 22.5 Mbps``
    * - :abbr:`STA (Station)` mode
      - TX prioritized :abbr:`STA (Station)` mode
      - `overlay-tx-prio.conf`_
      - Sensors with high data rate
-     - ``TCP-TX: 6.9 Mbps``
-       ``TCP-RX: 6.3 Mbps``
-       ``UDP-TX: 10.7 Mbps``
-       ``UDP-RX: 15.9 Mbps``
+     - ``TCP-TX: 9.5 Mbps``
+       ``TCP-RX: 8.1 Mbps``
+       ``UDP-TX: 17.8 Mbps``
+       ``UDP-RX: 21.1 Mbps``
    * - :abbr:`STA (Station)` mode
      - RX prioritized :abbr:`STA (Station)` mode
      - `overlay-rx-prio.conf`_
      - Display devices streaming data
-     - ``TCP-TX: 5.6 Mbps``
-       ``TCP-RX: 6.9 Mbps``
-       ``UDP-TX: 8.3 Mbps``
-       ``UDP-RX: 18.6 Mbps``
+     - ``TCP-TX: 7.4 Mbps``
+       ``TCP-RX: 8.9 Mbps``
+       ``UDP-TX: 9.3 Mbps``
+       ``UDP-RX: 23.5 Mbps``
 
 .. note::
    The measured throughputs, as shown in the table above, are based on tests conducted using the nRF7002 DK.
