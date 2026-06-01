@@ -40,17 +40,3 @@ sample_spi: &spi130 {
 	frequency = <8000000>;
 	rtc = <&rtc130>;
 };
-
-&dppic130 {
-	status = "okay";
-	owned-channels = <4>;
-	/* RTC130->SPI130 */
-	source-channels = <4>;
-};
-
-&dppic133 {
-	status = "okay";
-	owned-channels = <4>;
-	/* SPI130<-RTC130/GRTC */
-	sink-channels = <4>;
-};
