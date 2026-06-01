@@ -247,7 +247,7 @@ You can specify the format of the report output using the ``output`` argument.
   The SPDX report groups files into packages and includes:
 
   * Package supplier information (auto-detected from git URLs or specified via ``--package-supplier``)
-  * Component name, version, and ``PackageDownloadLocation`` (``git+<url>@<sha>`` for git-resolved packages)
+  * Component name, version, and ``PackageDownloadLocation`` (``git+<url>@<sha>`` for git-resolved packages; use ``--package-download-format github-archive`` to emit a GitHub archive zip URL instead)
   * ``PackageHomePage`` for browsable project links
   * Package URLs (PURLs) for unique package identification
   * Common Platform Enumeration (CPE) identifiers when specified via ``--package-cpe``
