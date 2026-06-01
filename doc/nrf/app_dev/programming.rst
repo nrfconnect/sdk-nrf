@@ -12,7 +12,8 @@ Programming an application
 
 |application_sample_definition|
 
-To program the :ref:`output build files <app_build_output_files>` to your device, which in most of the cases will be :file:`zephyr.hex` or :file:`merged.hex`, use the steps for the development environment.
+To program the :ref:`output build files <app_build_output_files>` to your device, use the steps for your development environment.
+In most cases, the relevant file is :file:`zephyr.hex` or :file:`merged_<board_target>.hex`.
 
 .. |exceptions_step| replace:: Make sure you are familiar with :ref:`programming_hw`.
 
