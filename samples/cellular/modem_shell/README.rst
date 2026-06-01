@@ -1187,15 +1187,9 @@ The following is an example for the nRF9161 DK:
 LwM2M carrier library support
 =============================
 
-To build the MoSh sample with LwM2M carrier library support, use the ``-DEXTRA_CONF_FILE=overlay-carrier.conf`` option.
-For example:
+.. |application_sample_name| replace:: Modem Shell sample
 
-.. parsed-literal::
-   :class: highlight
-
-   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-carrier.conf
-
-|board_target|
+.. include:: /includes/lwm2m_carrier_library.txt
 
 P-GPS support
 =============
