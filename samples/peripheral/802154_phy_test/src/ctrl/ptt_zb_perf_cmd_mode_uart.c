@@ -166,6 +166,8 @@ static enum ptt_ret cmd_uart_r_set_rx_antenna(void);
 /* "ltx" command routine */
 static enum ptt_ret cmd_uart_l_tx(void);
 static void cmd_uart_l_tx_process_next_packet(void);
+static void cmd_uart_l_tx_handle_sync_tx_failed(ptt_evt_id_t sender_event_id,
+						nrf_802154_tx_error_t sync_tx_error);
 static void cmd_uart_l_tx_delay(ptt_evt_id_t timer_evt_id);
 static void cmd_uart_l_tx_process_ack(ptt_evt_id_t evt_id);
 static void cmd_uart_l_tx_finished(ptt_evt_id_t evt_id);
@@ -2023,6 +2025,23 @@ static void cmd_uart_l_tx_process_next_packet(void)
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 }
 
+static void cmd_uart_l_tx_handle_sync_tx_failed(ptt_evt_id_t sender_event_id,
+						nrf_802154_tx_error_t sync_tx_error)
+{
+	PTT_TRACE_FUNC_ENTER_WITH_EVT(sender_event_id);
+
+	ptt_rf_tx_error_t ptt_tx_error = ptt_rf_map_nrf_tx_error(sync_tx_error);
+
+	ptt_event_set_ctx_data(sender_event_id, PTT_CAST_TO_UINT8_P(&ptt_tx_error),
+			       sizeof(ptt_tx_error));
+	cmd_uart_send_rsp_ltx_failed(sender_event_id);
+	cmd_change_uart_cmd_state(CMD_UART_STATE_LTX);
+	cmd_uart_l_tx_process_next_packet();
+	ptt_event_free(sender_event_id);
+
+	PTT_TRACE_FUNC_EXIT();
+}
+
 static void cmd_uart_l_tx_delay(ptt_evt_id_t timer_evt_id)
 {
 	PTT_TRACE_FUNC_ENTER_WITH_EVT(timer_evt_id);
@@ -2055,10 +2074,16 @@ static void cmd_uart_l_tx_delay(ptt_evt_id_t timer_evt_id)
 		ret = ptt_event_alloc(&sender_event_id);
 
 		if (ret == PTT_RET_SUCCESS) {
-			cmd_change_uart_cmd_state(CMD_UART_STATE_LTX_WAITING_FOR_ACK);
-			ret = ptt_rf_send_packet(sender_event_id, ltx_payload->arr, payload_len);
+			nrf_802154_tx_error_t sync_tx_error = NRF_802154_TX_ERROR_NONE;
 
-			if (ret != PTT_RET_SUCCESS) {
+			ret = ptt_rf_send_packet(sender_event_id, ltx_payload->arr, payload_len,
+						 &sync_tx_error);
+
+			if (ret == PTT_RET_SUCCESS) {
+				cmd_change_uart_cmd_state(CMD_UART_STATE_LTX_WAITING_FOR_ACK);
+			} else if (ret == PTT_RET_TX_FAILED) {
+				cmd_uart_l_tx_handle_sync_tx_failed(sender_event_id, sync_tx_error);
+			} else {
 				PTT_TRACE("%s: ptt_rf_send_packet returns %d, aborting ltx\n",
 					  __func__, ret);
 				ptt_event_free(sender_event_id);

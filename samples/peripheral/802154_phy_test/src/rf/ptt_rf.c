@@ -308,7 +308,24 @@ enum ptt_ret ptt_rf_rssi_last_get(ptt_evt_id_t evt_id, ptt_rssi_t *rssi)
 	return ret;
 }
 
-enum ptt_ret ptt_rf_send_packet(ptt_evt_id_t evt_id, const uint8_t *pkt, ptt_pkt_len_t len)
+ptt_rf_tx_error_t ptt_rf_map_nrf_tx_error(nrf_802154_tx_error_t error)
+{
+	switch (error) {
+	case NRF_802154_TX_ERROR_NONE:
+		return PTT_RF_TX_ERROR_NONE;
+	case NRF_802154_TX_ERROR_INVALID_ACK:
+		return PTT_RF_TX_ERROR_INVALID_ACK_FCS;
+	case NRF_802154_TX_ERROR_NO_ACK:
+		return PTT_RF_TX_ERROR_NO_ACK;
+	default:
+		return PTT_RF_TX_ERROR_OPERATION_FAILED;
+	}
+}
+
+enum ptt_ret ptt_rf_send_packet(ptt_evt_id_t evt_id,
+				const uint8_t *pkt,
+				ptt_pkt_len_t len,
+				nrf_802154_tx_error_t *p_sync_tx_error)
 {
 	enum ptt_ret ret = PTT_RET_SUCCESS;
 
@@ -318,9 +335,17 @@ enum ptt_ret ptt_rf_send_packet(ptt_evt_id_t evt_id, const uint8_t *pkt, ptt_pkt
 		}
 
 		if (ret == PTT_RET_SUCCESS) {
+			nrf_802154_tx_error_t tx_error;
+
 			/* will be unlocked inside ptt_rf_tx_finished/ptt_rf_tx_failed functions */
-			if (false == ptt_rf_send_packet_ext(pkt, len, ptt_rf_ctx.cca_on_tx)) {
-				ret = PTT_RET_BUSY;
+			tx_error = ptt_rf_send_packet_ext(pkt, len, ptt_rf_ctx.cca_on_tx);
+
+			if (tx_error != NRF_802154_TX_ERROR_NONE) {
+				if (p_sync_tx_error != NULL) {
+					*p_sync_tx_error = tx_error;
+				}
+
+				ret = PTT_RET_TX_FAILED;
 			}
 		}
 
