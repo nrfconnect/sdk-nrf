@@ -322,6 +322,7 @@
     - drivers.gpio.build
     - filesystem.lib_link
     - kernel.common
+    - kernel.common.lto
     - kernel.common.lto.singlethreaded
     - kernel.common.minimallibc
     - kernel.common.misra
