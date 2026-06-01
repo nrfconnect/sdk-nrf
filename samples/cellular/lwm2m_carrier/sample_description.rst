@@ -105,6 +105,8 @@ The following files are available:
   For more information, see the :ref:`lwm2m_carrier_dependent` section of the :ref:`liblwm2m_carrier_readme` documentation.
 * :file:`overlay-lgu.conf` and :file:`sysbuild-lgu.conf` - Enable configurations for LG U+.
   For more information, see the :ref:`lwm2m_carrier_dependent` section of the :ref:`liblwm2m_carrier_readme` documentation.
+* :file:`bootloader.overlay` - Partition changes to enable application updates.
+  Required for LG U+ and SoftBank.
 
 The sample can either be configured by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
 
@@ -138,7 +140,7 @@ Example of building with the SoftBank configuration:
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-softbank.conf -DSB_CONF_FILE=sysbuild-softbank.conf
+   west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-softbank.conf -DSB_CONF_FILE=sysbuild-softbank.conf -DEXTRA_DTC_OVERLAY_FILE="bootloader.overlay"
 
 |board_target|
 
