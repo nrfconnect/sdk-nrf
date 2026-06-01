@@ -5,7 +5,7 @@
 #
 
 config PARTITION_MANAGER
-	default n if !BOARD_THINGY53 && !BOARD_IS_NON_SECURE
+	default n if !BOARD_THINGY53
 
 config NRF_RADIO_LOADER
 	default y if SOC_NRF54H20
