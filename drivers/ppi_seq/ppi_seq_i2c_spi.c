@@ -273,6 +273,10 @@ static int ppi_seq_spi_init(const struct device *dev)
 	} else {
 		nrf_gpio_pin_set(ss_pin);
 	}
+
+#if NRF_GPIO_HAS_RETENTION_SETCLEAR
+	nrf_gpio_pin_retain_disable(ss_pin);
+#endif
 	nrf_gpio_cfg_output(ss_pin);
 	nrf_spim_csn_configure(config->nrfx_dev.spim->p_reg, ss_pin, ss_pol, ss_dur);
 
