@@ -116,7 +116,10 @@ To program the nRF5340 DK from the command line, use either west or :ref:`nRF Ut
 
       To build and program a sysbuild HEX file, follow the instructions in :ref:`programming_cmd` for the application core sample.
 
-      To program the multi-image HEX file, you can use west or nRF Util.
+      To program the multi-image HEX files, you can use west or nRF Util.
+
+      .. note::
+            To generate merged HEX files, you must enable the  :kconfig:option:`SB_CONFIG_MERGED_HEX_FILES` sysbuild Kconfig option.
 
       .. tabs::
 
@@ -134,8 +137,8 @@ To program the nRF5340 DK from the command line, use either west or :ref:`nRF Ut
 
             .. code-block:: console
 
-               nrfutil device program --firmware merged_CPUNET.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
-               nrfutil device program --firmware merged.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
+               nrfutil device program --firmware merged_<board>_nrf5340_cpunet.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
+               nrfutil device program --firmware merged_<board>_nrf5340_cpuapp.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
 
             .. note::
                  The ``--verify`` command confirms that the writing operation has succeeded.
