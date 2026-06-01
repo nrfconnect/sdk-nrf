@@ -13,27 +13,30 @@
 	 *   0x0003_8000  Primary non-secure image   (800 kB)
 	 */
 	partitions {
-		compatible = "fixed-partitions";
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
 
 		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x00000000 0x8000>;
 		};
 
 		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot-0";
 			reg = <0x00008000 0x14000>;
 		};
 
 		s1_partition: partition@1c000 {
+			compatible = "zephyr,mapped-partition";
 			label = "mcuboot-1";
 			reg = <0x0001c000 0x14000>;
 		};
 
 		slot0_partition: partition@30000 {
-			compatible = "fixed-subpartitions";
+			compatible = "zephyr,mapped-partition";
 			label = "image-0";
 			reg = <0x00030000 0xd0000>;
 			ranges = <0x0 0x00030000 0xd0000>;
@@ -41,11 +44,13 @@
 			#size-cells = <1>;
 
 			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-secure";
 				reg = <0x00000000 0x8000>;
 			};
 
 			slot0_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
 				label = "image-0-nonsecure";
 				reg = <0x00008000 0xc8000>;
 			};
