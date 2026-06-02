@@ -39,6 +39,6 @@ sample_spi: &spi130 {
 	pinctrl-names = "default";
 	overrun-character = <0x00>;
 	cs-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
-	frequency = <8000000>;
+	frequency = <DT_FREQ_M(8)>;
 	rtc = <&rtc130>;
 };

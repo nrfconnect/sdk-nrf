@@ -21,6 +21,13 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
   sample.peripheral.ppi_seq_spi.ppr:
     harness: console
     harness_config:
@@ -33,6 +40,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - SB_CONFIG_PPRCORE_REMOTE=y
       - ppi_seq_spi_CONFIG_NRFX_GPPI=y
