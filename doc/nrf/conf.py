@@ -73,7 +73,7 @@ linkcheck_ignore = [
     "https://portal.azure.com/",
     # requires login
     "https://threadgroup.atlassian.net/wiki/spaces/",
-    # used as example in doxygen
+    # used as an example in doxygen
     "https://google.com:443",
 ]
 
