@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_rram {
+	/delete-node/ partitions;
+
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x0 DT_SIZE_K(32)>;
+		};
+
+		/* Max RWX protection range for nRF54LV10 is 127k,
+		 * but currently the alignment to 4k is needed in
+		 * offset and size
+		 * RRAM does not require the alignment, but the software
+		 * is still not ready to drop pages.
+		 */
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x8000 DT_SIZE_K(124)>;
+		};
+
+		s1_partition: partition@27000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x27000 DT_SIZE_K(124)>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &s0_partition;
+	};
+};

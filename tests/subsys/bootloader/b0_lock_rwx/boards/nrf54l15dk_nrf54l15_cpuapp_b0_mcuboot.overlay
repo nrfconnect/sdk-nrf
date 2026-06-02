@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_rram {
+	/delete-node/ partitions;
+
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x0 DT_SIZE_K(32)>;
+		};
+
+		/* In this configuration s0/s1 will be occupied by MCUboot
+		 * and it will try to set RWX lock that, on nrf54l15, can
+		 * lock up to 31k of continuous regions. That is why
+		 * these partitions are sized at 31k.
+		 * Alignment is still set at the 4k boundaries, due to how
+		 * MCUboot does the update of the other MCUboot instance,
+		 * and requires page alignment.
+		 */
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x8000 DT_SIZE_K(31)>;
+		};
+
+		s1_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x10000 DT_SIZE_K(31)>;
+		};
+
+		slot0_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x18000 DT_SIZE_K(128)>;
+		};
+
+		slot1_partition: partition@38000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x38000 DT_SIZE_K(128)>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &slot0_partition;
+	};
+};
