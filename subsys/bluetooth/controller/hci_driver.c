@@ -33,6 +33,9 @@
 #include "hci_internal.h"
 #include "radio_nrf5_txp.h"
 #include "cs_antenna_switch.h"
+#if defined(CONFIG_BT_EXT_ADV)
+#include "util_hci_evt.h"
+#endif
 
 #define DT_DRV_COMPAT nordic_bt_hci_sdc
 
@@ -382,6 +385,10 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 #endif /* IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
 
 static struct k_work receive_work;
+#if defined(CONFIG_BT_EXT_ADV)
+static struct hci_ext_adv_discard_ctx ext_adv_discard;
+#endif
+
 static inline void receive_signal_raise(void)
 {
 	mpsl_work_submit(&receive_work);
@@ -622,7 +629,7 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 {
 	bool discardable = event_packet_is_discardable(hci_buf);
 	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
-	struct net_buf *evt_buf;
+	struct net_buf *evt_buf = NULL;
 
 	if (hdr->len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
 		LOG_ERR("Event buffer too small. %zu > %u",
@@ -630,6 +637,18 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 			HCI_RX_BUF_SIZE);
 		return -ENOMEM;
 	}
+
+#if defined(CONFIG_BT_EXT_ADV)
+	if (hci_ext_adv_report_process(&ext_adv_discard, hci_buf, hdr->len + sizeof(*hdr),
+						&evt_buf)) {
+		if (evt_buf != NULL) {
+			struct hci_driver_data *driver_data = dev->data;
+
+			(void)driver_data->recv_func(dev, evt_buf);
+		}
+		return 0;
+	}
+#endif
 
 	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
 		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
@@ -1314,6 +1333,10 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 	LOG_DBG("Open");
 
 	k_work_init(&receive_work, receive_work_handler);
+
+#if defined(CONFIG_BT_EXT_ADV)
+	ext_adv_discard = (struct hci_ext_adv_discard_ctx){0};
+#endif
 
 	uint8_t build_revision[SDC_BUILD_REVISION_SIZE];
 
