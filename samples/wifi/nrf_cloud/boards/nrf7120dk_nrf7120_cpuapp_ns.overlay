@@ -10,24 +10,3 @@
 		ncs,location-wifi = &wlan0;
 	};
 };
-
-/delete-node/ &sram0_ns;
-
-/*
- * TrustZone SRAM split. TF-M occupies the low 104 KiB (0x1a000) of cpuapp_sram;
- * the NS application gets the remaining 408 KiB starting at offset 0x1a000.
- * All addresses are offsets within cpuapp_sram (base 0x20000000).
- */
-&sram0_s {
-	reg = <0x0 DT_SIZE_K(104)>;
-	ranges = <0x0 0x0 DT_SIZE_K(104)>;
-};
-
-&cpuapp_sram {
-	sram0_ns: image_ns@1a000 {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		reg = <0x1a000 DT_SIZE_K(408)>;
-		ranges = <0x0 0x1a000 DT_SIZE_K(408)>;
-	};
-};
