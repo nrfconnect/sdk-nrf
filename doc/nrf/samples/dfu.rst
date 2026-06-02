@@ -19,8 +19,7 @@ The following categories of samples are available:
 |filter_samples_by_board|
 
 .. note::
-   The :ref:`nrf_smp_svr_sample` sample shows the default settings for DFU, and is
-   recommended as a starting point.
+   The :ref:`nrf_smp_svr_sample` sample shows the default settings for DFU, and is recommended as a starting point.
 
 .. toctree::
    :maxdepth: 1
