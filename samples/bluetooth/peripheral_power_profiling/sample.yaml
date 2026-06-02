@@ -36,6 +36,8 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
@@ -57,6 +59,8 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
@@ -178,6 +182,8 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
@@ -261,6 +267,8 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     harness: console
     harness_config:
       type: multi_line
@@ -286,6 +294,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
