@@ -1231,6 +1231,10 @@
 
 .. _Bootloaders and DFU/FOTA: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-8-bootloaders-and-dfu-fota/
 
+.. ### Source: nordicsemi.academy
+
+.. _`mqtt.nordicsemi.academy`: https://mqtt.nordicsemi.academy
+
 .. ### Source: devzone.nordicsemi.com, https://blog.nordicsemi.com/
 
 .. _`DevZone`: https://devzone.nordicsemi.com/
@@ -1841,8 +1845,6 @@
 .. ### Source: mosquitto
 
 .. _`Mosquitto`: https://mosquitto.org/
-.. _`mosquitto.org server CA`: https://test.mosquitto.org/ssl/mosquitto.org.crt
-.. _`test.mosquitto.org`: https://test.mosquitto.org
 
 .. ### Source: visualstudio.com
 
