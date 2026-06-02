@@ -83,19 +83,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39450"
 
 - scenarios:
-    - sample.tfm.psa_template
-    - tfm.psa_test_initial_attestation_lvl1
-    - tfm.psa_test_initial_attestation_lvl2
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9151dk/nrf9151/ns
-    - nrf9160dk/nrf9160/ns
-    - nrf9160dk@0.14.0/nrf9160/ns
-    - nrf9161dk@0.9.0/nrf9161/ns
-    - nrf9161dk/nrf9161/ns
-  comment: "NCSDK-30608 - Incompatible with Mbed TLS v4, unquarantine with TF-M v2.3.0"
-
-- scenarios:
     - nrf.extended.drivers.clock.nrf_clock_control
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
