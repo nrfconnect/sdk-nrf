@@ -642,7 +642,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 				" %d (not in range: %u - %u)",
 				time_diff_us, TX_MARGIN_MAX_US + common_interval_us,
 				TX_MARGIN_MIN_US);
-
+			ctx->ts_ctlr_esti_us -= common_interval_us;
 			ctx->last_data_status = STATUS_OVERRUN_FLUSHED;
 			return -ECANCELED;
 		}

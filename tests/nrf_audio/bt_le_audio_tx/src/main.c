@@ -394,7 +394,8 @@ ZTEST(audio_tx, test_tx_send_send_too_fast)
 	zassert_equal(1, zbus_chan_pub_fake.call_count);
 
 	call_tx_sent(tx, chan_to_send);
-	internals_verify(0, true, 35500, STATUS_OVERRUN_FLUSHED);
+	/* Since we did not send anything, ts should not change*/
+	internals_verify(0, true, 25500, STATUS_OVERRUN_FLUSHED);
 
 	net_buf_unref(dummy_audio_frame);
 }
