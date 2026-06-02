@@ -77,12 +77,13 @@ extern void rtc_pretick_rtc0_isr_hook(void);
 #define MPSL_BUILD_ASSERT_COUNTER_NODE_NOT_OKAY(node)                                              \
 	BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(node)),                                 \
 		     "MPSL reserves " #node " on this SoC. Please disable this node in device tree")
-FOR_EACH(MPSL_BUILD_ASSERT_COUNTER_NODE_NOT_OKAY, (;),
-	 MPSL_INIT_SOC_COUNTER_RESERVED_NODES)
+FOR_EACH_NONEMPTY_TERM(MPSL_BUILD_ASSERT_COUNTER_NODE_NOT_OKAY, (;),
+		       MPSL_INIT_SOC_COUNTER_RESERVED_NODES)
+
 #undef MPSL_BUILD_ASSERT_COUNTER_NODE_NOT_OKAY
 #else
 #error "Counter DTS nodes reserved for MPSL are missing"
-#endif
+#endif /* MPSL_INIT_SOC_COUNTER_RESERVED_NODES */
 #endif /* IS_ENABLED(CONFIG_COUNTER) */
 
 #if IS_ENABLED(CONFIG_NRFX_GRTC)
