@@ -26,7 +26,7 @@ Overview
 *********
 
 The sample connects to either LTE or Wi-Fi, depending on the board for which the sample is compiled.
-Subsequently, the sample connects to a configured MQTT server (default is `test.mosquitto.org`_), where it publishes messages to the topic ``<clientID>/my/publish/topic``.
+Subsequently, the sample connects to a configured MQTT server (default is `mqtt.nordicsemi.academy`_), where it publishes messages to the topic ``<clientID>/my/publish/topic``.
 You can also trigger message publication by pressing any of the buttons on the board.
 
 The sample also subscribes to the topic ``<clientID>/my/subscribe/topic``, and receives any message published to that topic.
@@ -65,7 +65,7 @@ CONFIG_MQTT_SAMPLE_TRANSPORT_RECONNECTION_TIMEOUT_SECONDS - Transport reconnecti
 
 CONFIG_MQTT_SAMPLE_TRANSPORT_BROKER_HOSTNAME - MQTT broker hostname
 	This configuration sets the MQTT broker hostname.
-	Default is `test.mosquitto.org`_.
+	Default is `mqtt.nordicsemi.academy`_.
 
 .. _CONFIG_MQTT_SAMPLE_TRANSPORT_CLIENT_ID:
 
@@ -174,20 +174,19 @@ The following serial UART output is displayed in the terminal emulator using a W
 
 .. code-block:: console
 
-      *** Booting Zephyr OS build v2.4.0-ncs1-rc1-6-g45f2d5cf8ea4  ***
-      [00:00:00.394,744] <inf> network: Bringing network interface up and connecting to the network
-      [00:00:12.736,297] <inf> network: Network connectivity established
-      [00:00:17.997,253] <inf> transport: Connected to MQTT broker
-      [00:00:18.007,049] <inf> transport: Hostname: test.mosquitto.org
-      [00:00:18.009,981] <inf> transport: Client ID: F4CE37111350
-      [00:00:18.013,519] <inf> transport: Port: 8883
-      [00:00:18.018,341] <inf> transport: TLS: Yes
-      [00:00:18.078,521] <inf> transport: Subscribed to topic F4CE37111350/my/subscribe/topic
-      [00:01:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 61458" on topic: "F4CE37111350/my/publish/topic"
-      [00:02:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 121458" on topic: "F4CE37111350/my/publish/topic"
-      [00:03:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 181458" on topic: "F4CE37111350/my/publish/topic"
-      [00:04:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 241458" on topic: "F4CE37111350/my/publish/topic"
-      [00:05:01.475,982] <inf> transport: Publishing message: "Hello MQTT! Current uptime is: 301459" on topic: "F4CE37111350/my/publish/topic"
+      *** Booting nRF Connect SDK v3.3.99-9f4253219f47 ***
+      *** Using Zephyr OS v4.4.0-87d1e3e7a91b ***
+      [00:00:21.857,699] <inf> network: Network connectivity established
+      [00:00:27.564,666] <inf> transport: Connected to MQTT broker
+      [00:00:27.572,907] <inf> transport: Hostname: mqtt.nordicsemi.academy
+      [00:00:27.581,897] <inf> transport: Client ID: FDD48749D4664F20
+      [00:00:27.590,359] <inf> transport: Port: 8883
+      [00:00:27.597,360] <inf> transport: TLS: Yes
+      [00:00:27.604,201] <inf> transport: Subscribing to: FDD48749D4664F20/my/subscribe/topic
+      [00:00:27.662,768] <inf> transport: Subscribed to topic FDD48749D4664F20/my/subscribe/topic
+      [00:01:00.349,003] <inf> transport: Published message: "Hello MQTT! Current uptime is: 60347" on topic: "FDD48749D4664F20/my/publish/topic"
+      [00:02:00.349,144] <inf> transport: Published message: "Hello MQTT! Current uptime is: 120347" on topic: "FDD48749D4664F20/my/publish/topic"
+      [00:03:00.349,350] <inf> transport: Published message: "Hello MQTT! Current uptime is: 180348" on topic: "FDD48749D4664F20/my/publish/topic"
 
 .. _mqtt_sample_output_IPv6:
 
@@ -200,8 +199,8 @@ The sample output showing IPv6, but for a different build configuration using LT
       [00:00:00.286,621] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_UNINIT --> MQTT_STATE_DISCONNECTED
       [00:00:00.310,028] <dbg> mqtt_helper: mqtt_helper_poll_loop: Waiting for connection_poll_sem
       [00:00:04.224,426] <inf> network: Network connectivity established
-      [00:00:09.233,612] <dbg> mqtt_helper: broker_init: Resolving IP address for test.mosquitto.org
-      [00:00:10.541,839] <dbg> mqtt_helper: broker_init: IPv6 Address found 2001:41d0:1:925e::1 (AF_INET6)
+      [00:00:09.233,612] <dbg> mqtt_helper: broker_init: Resolving IP address for mqtt.nordicsemi.academy
+      [00:00:10.541,839] <dbg> mqtt_helper: broker_init: IPv6 Address found 2001:8c0:5140:c8:88ee:a88e:d2f4:9eee (AF_INET6)
       [00:00:10.541,900] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_DISCONNECTED --> MQTT_STATE_TRANSPORT_CONNECTING
       [00:00:13.747,406] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_TRANSPORT_CONNECTING --> MQTT_STATE_TRANSPORT_CONNECTED
       [00:00:13.747,467] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_TRANSPORT_CONNECTED --> MQTT_STATE_CONNECTING
@@ -213,7 +212,7 @@ The sample output showing IPv6, but for a different build configuration using LT
       [00:00:14.370,727] <dbg> mqtt_helper: mqtt_evt_handler: MQTT mqtt_client connected
       [00:00:14.370,788] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_CONNECTING --> MQTT_STATE_CONNECTED
       [00:00:14.370,788] <inf> transport: Connected to MQTT broker
-      [00:00:14.370,819] <inf> transport: Hostname: test.mosquitto.org
+      [00:00:14.370,819] <inf> transport: Hostname: mqtt.nordicsemi.academy
       [00:00:14.370,849] <inf> transport: Client ID: 350457791735879
       [00:00:14.370,880] <inf> transport: Port: 8883
       [00:00:14.370,880] <inf> transport: TLS: Yes
