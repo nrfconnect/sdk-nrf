@@ -68,4 +68,8 @@ config MODEM_INFO_ADD_DEVICE
 	help
 	  Add the device information to outgoing deviceInfo device messages.
 
+module=MODEM_INFO
+module-str=nRF91 modem information library
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
 endif # MODEM_INFO
