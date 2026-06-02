@@ -128,13 +128,13 @@ static void gpio_init(uint32_t pin)
 {
 	nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_PULLUP);
 	nrf_gpiote_event_configure(NRF_GPIOTE_N, NRF_GPIOTE_CHANNEL, pin,
-								GPIOTE_CONFIG_POLARITY_HiToLo);
+								NRF_GPIOTE_POLARITY_HITOLO);
 
 	nrf_gpiote_event_enable(NRF_GPIOTE_N, NRF_GPIOTE_CHANNEL);
 
 #if defined(CONFIG_SOC_SERIES_NRF54L) || defined(CONFIG_SOC_SERIES_NRF71)
-	nrf_gpiote_int_group_enable(NRF_GPIOTE_N, 0x1,
-				    GPIOTE_INTENSET1_PORT0SECURE_Msk | (1 << NRF_GPIOTE_CHANNEL));
+	nrf_gpiote_int_group_enable(NRF_GPIOTE_N, NRF_GPIOTE_IRQ_GROUP,
+				    NRF_GPIOTE_INT_PORT_MASK | NRFX_BIT(NRF_GPIOTE_CHANNEL));
 #else
 	nrf_gpiote_int_enable(NRF_GPIOTE_N, NRFX_BIT(NRF_GPIOTE_CHANNEL));
 #endif

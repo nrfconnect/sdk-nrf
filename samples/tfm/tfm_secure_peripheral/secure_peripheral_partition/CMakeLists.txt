@@ -27,7 +27,6 @@ target_include_directories(tfm_app_rot_partition_spp
     PUBLIC
         .
         ${HAL_NORDIC_PATH}/nrfx
-        ${HAL_NORDIC_PATH}/nrfx/mdk
         ${HAL_NORDIC_PATH}/nrfx/drivers/include
 )
 
