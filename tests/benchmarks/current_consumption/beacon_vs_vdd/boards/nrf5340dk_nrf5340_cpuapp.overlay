@@ -1,3 +1,7 @@
 &uart0 {
 	hw-flow-control;
 };
+
+&vregmain {
+	regulator-initial-mode = <NRF5X_REG_MODE_LDO>;
+};

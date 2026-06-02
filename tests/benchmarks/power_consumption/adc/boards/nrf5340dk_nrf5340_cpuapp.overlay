@@ -20,3 +20,7 @@
 		zephyr,input-positive = <NRF_SAADC_AIN1>;
 	};
 };
+
+&vregmain {
+	regulator-initial-mode = <NRF5X_REG_MODE_LDO>;
+};

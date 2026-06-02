@@ -60,3 +60,7 @@
 	led-pre = <500>;
 	zephyr,pm-device-runtime-auto;
 };
+
+&vregmain {
+	regulator-initial-mode = <NRF5X_REG_MODE_LDO>;
+};
