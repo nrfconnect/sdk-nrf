@@ -4,54 +4,33 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/delete-node/ &slot0_partition;
 /delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
 /delete-node/ &slot1_partition;
-/delete-node/ &storage_partition;
 /delete-node/ &tfm_its_partition;
 /delete-node/ &tfm_otp_partition;
 /delete-node/ &tfm_ps_partition;
+/delete-node/ &storage_partition;
 
 &flash0 {
 	partitions {
-		boot_partition: partition@0 {
+		slot0_s_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
-			label = "mcuboot";
-			reg = <0x0 0xc000>;
+			label = "image-0-secure";
+			reg = <0x0 0x20000>;
 		};
 
-		slot0_partition: partition@c000 {
+		slot0_ns_partition: partition@20000 {
 			compatible = "zephyr,mapped-partition";
-			label = "image-0";
-			reg = <0xc000 0x70000>;
-			ranges = <0x0 0xc000 0x70000>;
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			slot0_s_partition: partition@0 {
-				compatible = "zephyr,mapped-partition";
-				label = "image-0-secure";
-				reg = <0x0 0x40000>;
-			};
-
-			slot0_ns_partition: partition@40000 {
-				compatible = "zephyr,mapped-partition";
-				label = "image-0-nonsecure";
-				reg = <0x40000 0x30000>;
-			};
+			label = "image-0-nonsecure";
+			reg = <0x20000 0xd2000>;
 		};
 
-		slot1_partition: partition@7c000 {
-			compatible = "zephyr,mapped-partition";
-			label = "image-1";
-			reg = <0x7c000 0x70000>;
-		};
-
-		nonsecure_storage: partition@f0000 {
+		nonsecure_storage: partition@f2000 {
 			compatible = "zephyr,mapped-partition";
 			label = "nonsecure-storage";
-			reg = <0xf0000 DT_SIZE_K(8)>;
-			ranges = <0x0 0xf0000 DT_SIZE_K(8)>;
+			reg = <0xf2000 DT_SIZE_K(8)>;
+			ranges = <0x0 0xf2000 DT_SIZE_K(8)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
@@ -89,4 +68,17 @@
 			};
 		};
 	};
+};
+
+&sram0_s {
+	reg = <0x0 0xc000>;
+};
+
+&sram0_ns {
+	reg = <0xc000 0x74000>;
+	ranges = <0x0 0xc000 0x74000>;
+};
+
+&sram0_ns_app {
+	reg = <0x0 0x64000>;
 };
