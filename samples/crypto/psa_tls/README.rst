@@ -189,7 +189,7 @@ Certificates
 
 The sample supports certificates signed with either ECDSA or RSA.
 The sample uses ECDSA certificates by default.
-Set the :option:`CONFIG_PSA_TLS_CERTIFICATE_TYPE_RSA` option to ``y`` to make the sample use RSA certificates.
+Set the :option:`CONFIG_SAMPLE_PSA_TLS_CERTIFICATE_TYPE_RSA` option to ``y`` to make the sample use RSA certificates.
 
 Certificates when running with CMSE
 -----------------------------------
