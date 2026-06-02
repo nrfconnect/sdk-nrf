@@ -62,20 +62,6 @@
   comment: "no HPF for nrf54lc10 at the moment"
 
 - scenarios:
-    - benchmarks.current_consumption.beacon_idle.nrf54l
-    - benchmarks.current_consumption.beacon_idle.nrf54l.lfrc
-    - benchmarks.current_consumption.beacon_vs_vdd
-    - benchmarks.current_consumption.beacon_vs_vdd.nrf54l_lfrc
-    - benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot
-    - benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot.lto
-    - sample.benchmarks.peripheral_stress_test.nrf54lv10_lc10
-    - sample.benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot
-    - sample.benchmarks.peripheral_stress_test.nrf54lv10_lc10.mcuboot.lto
-  platforms:
-    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp
-  comment: "no MPSL for nrf54lc10 at the moment"
-
-- scenarios:
     - nrf.extended.drivers.clock.clock_control_onoff
     - nrf.extended.drivers.clock.nrf5_clock_calibration
     - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_available
@@ -89,6 +75,8 @@
     - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_stable
     - nrf.extended.drivers.comparator.gpio_loopback.nrf_comp
     - nrf.extended.drivers.comparator.gpio_loopback.nrf_lpcomp
+    - sample.bluetooth.peripheral_lbs
+    - sample.bluetooth.peripheral_uart
   platforms:
     - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
   comment: "no TFM for nrf54lc10 at the moment"
