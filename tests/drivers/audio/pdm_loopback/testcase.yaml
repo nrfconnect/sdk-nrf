@@ -77,7 +77,6 @@ tests:
   drivers.audio.pdm_loopback.nrf54h20.1000khz:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
@@ -85,10 +84,26 @@ tests:
   drivers.audio.pdm_loopback.nrf54h20.1600khz:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
+      - CONFIG_TEST_PDM_SAMPLING_TIME=10
+      - CONFIG_TEST_USE_DMM=y
+  drivers.audio.pdm_loopback.nrf92.1000khz:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=20000
+      - CONFIG_TEST_PDM_SAMPLING_TIME=10
+      - CONFIG_TEST_USE_DMM=y
+  drivers.audio.pdm_loopback.nrf92.1600khz:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=32000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
       - CONFIG_TEST_USE_DMM=y
