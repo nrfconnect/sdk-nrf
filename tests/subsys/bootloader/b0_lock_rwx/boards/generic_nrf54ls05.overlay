@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Control identifiers to define before inclusion, to indicate what
+ * bootloaders are used with the project:
+ * - TEST_WITH_B0 -- to enable B0 as bootloader
+ * - TEST_WITH_MCUBOOT -- to enable MCUboot as primary or secondary
+ *                        bootloader.
+ *
+ * Sysbuild images should define ONE of the below, before including
+ * the overlay from this boards directory:
+ *  - THIS_IS_B0_IMAGE -- indicates B0 overlay
+ *  - THIS_IS_MCUBOOT_IMAGE -- indicates MCUboot image overlay
+ *
+ * Note that there is not APP indicating image, as it is default one.
+ */
+
+&cpuapp_rram {
+	/delete-node/ partitions;
+
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x0 DT_SIZE_K(88)>;
+		};
+
+		a_partition: partition@16000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x16000 DT_SIZE_K(100)>;
+		};
+
+		b_partition: partition@2f000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x2f000 DT_SIZE_K(100)>;
+		};
+
+		c_partition: partition@48000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x48000 DT_SIZE_K(100)>;
+		};
+
+		d_partition: partition@61000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x61000 DT_SIZE_K(100)>;
+		};
+	};
+};
+
+#if defined(TEST_WITH_B0) && !defined(TEST_WITH_MCUBOOT)
+/* With B0 and MCUboot there is b0 + s0 + s1 + slot0 + slot1 layout */
+s0_partition: &c_partition {};
+s1_partition: &d_partition {};
+#elif defined(TEST_WITH_B0) && defined(TEST_WITH_MCUBOOT)
+/* With B0 only there is b0 + s0 + s1 layout */
+s0_partition: &a_partition {};
+s1_partition: &b_partition {};
+slot0_partition: &c_partition {};
+slot1_partition: &d_partition {};
+#elif !defined(TEST_WITH_B0) && defined(TEST_WITH_MCUBOOT)
+boot_partition: &b0_partition {};
+slot0_partition: &c_partition {};
+slot1_partition: &d_partition {};
+#endif
+
+/ {
+	chosen {
+#if defined(THIS_IS_B0_IMAGE)
+		zephyr,code-partition = &b0_partition;
+#elif defined(TEST_WITH_B0) && \
+      (!defined(TEST_WITH_MCUBOOT) && !defined(THIS_IS_B0_IMAGE) || \
+       defined(TEST_WITH_MCUBOOT) && defined(THIS_IS_MCUBOOT_IMAGE))
+/* Either MCUboot or application directly controlled by B0 */
+		zephyr,code-partition = &s0_partition;
+#elif defined(THIS_IS_MCUBOOT_IMAGE) && !defined(TEST_WITH_B0)
+		zephyr,code-partition = &boot_partition;
+#else /* This is application image */
+		zephyr,code-partition = &slot0_partition;
+#endif
+	};
+};

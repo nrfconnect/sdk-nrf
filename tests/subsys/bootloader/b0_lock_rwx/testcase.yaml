@@ -2,10 +2,13 @@ common:
   sysbuild: true
   tags:
     - b0
+    - dts
     - ci_tests_subsys_bootloader
 
 tests:
   b0.w:
+    extra_args:
+      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -16,6 +19,7 @@ tests:
     extra_args:
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - CONFIG_TEST_B0_LOCK_READS=y
+      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -28,10 +32,12 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
   b0.mcuboot.w:
     extra_args:
+      - FILE_SUFFIX=b0_mcuboot
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -42,9 +48,9 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
-
   mcuboot.rwx:
     extra_args:
+      - FILE_SUFFIX=mcuboot
       - SB_CONFIG_SECURE_BOOT_APPCORE=n
       - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=n
       - SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES=n
@@ -52,7 +58,6 @@ tests:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - CONFIG_TEST_MCUBOOT_ALONE=y
       - CONFIG_NRFX_RRAMC=y
-      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0x16000
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -65,12 +70,14 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
   b0.mcuboot.rwx:
     extra_args:
+      - FILE_SUFFIX=b0_mcuboot
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
+      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -83,12 +90,14 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
   b0.mcuboot.s1.w:
     extra_args:
+      - FILE_SUFFIX=b0_mcuboot
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_USE_S1=y
+      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -101,6 +110,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
   b0.mcuboot.s1.rwx:
     extra_args:
+      - FILE_SUFFIX=b0_mcuboot
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
@@ -109,6 +119,7 @@ tests:
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
       - CONFIG_TEST_B0_LOCK_USE_S1=y
+      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -121,10 +132,12 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
   b0.mcuboot.rwx.b0_did_not_lock:
     extra_args:
+      - FILE_SUFFIX=b0_mcuboot
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
+      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -137,12 +150,14 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
   b0.mcuboot.s1.rwx.b0_did_not_lock:
     extra_args:
+      - FILE_SUFFIX=b0_mcuboot
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
       - CONFIG_TEST_B0_LOCK_USE_S1=y
+      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
