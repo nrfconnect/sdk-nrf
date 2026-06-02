@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -48,80 +48,36 @@
 	};
 };
 
-&exmif {
-	status = "disabled";
+&gpio6 {
+	status = "okay";
+};
+
+&gpio7 {
+	status = "okay";
 };
 
 &dma_fast_region {
 	status = "okay";
 };
 
-&nfct {
-	status = "disabled";
-	nfct-pins-as-gpios;
-};
-
-&gpiote130 {
-	nonsecure-channels = <7>;
-	child-owned-channels = <7>;
-};
-
-&gpio6 {
-	status = "reserved";
-};
-
-&gpio7 {
-	status = "reserved";
-};
-
 &spi120 {
-	status = "reserved";
+	status = "okay";
 	pinctrl-0 = <&spi120_default_test>;
 	pinctrl-1 = <&spi120_sleep_test>;
 	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
 	memory-regions = <&dma_fast_region>;
-	interrupt-parent = <&cpuflpr_clic>;
 };
 
 &spi121 {
-	status = "reserved";
+	status = "okay";
 	pinctrl-0 = <&spi121_default_test>;
 	pinctrl-1 = <&spi121_sleep_test>;
 	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
 	memory-regions = <&dma_fast_region>;
-	interrupt-parent = <&cpuflpr_clic>;
 };
 
-&spi130 {
-	status = "reserved";
-	interrupt-parent = <&cpuppr_clic>;
-};
-
-&spi131 {
-	status = "reserved";
-	interrupt-parent = <&cpuppr_clic>;
-};
-
-&spi132 {
-	status = "reserved";
-	interrupt-parent = <&cpuppr_clic>;
-};
-
-&spi133 {
-	status = "reserved";
-	interrupt-parent = <&cpuppr_clic>;
-};
-
-&spi134 {
-	status = "reserved";
-	interrupt-parent = <&cpuppr_clic>;
-};
-
-/* spi135 inaccessible due to cpuppr console on uart135 */
-
-/* spi136 inaccessible due to cpuapp console on uart136 */
-
-&spi137 {
-	status = "reserved";
-	interrupt-parent = <&cpuppr_clic>;
+&uart120 {
+	status = "disabled";
 };
