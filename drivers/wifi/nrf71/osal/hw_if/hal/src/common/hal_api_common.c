@@ -112,9 +112,13 @@ void nrf_wifi_hal_proc_ctx_set(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 
 void nrf_wifi_hal_dev_rem(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 {
-	nrf_wifi_osal_tasklet_kill(hal_dev_ctx->recovery_tasklet);
-	nrf_wifi_osal_tasklet_free(hal_dev_ctx->recovery_tasklet);
-	nrf_wifi_osal_spinlock_free(hal_dev_ctx->lock_recovery);
+	if (hal_dev_ctx->recovery_tasklet) {
+		nrf_wifi_osal_tasklet_kill(hal_dev_ctx->recovery_tasklet);
+		nrf_wifi_osal_tasklet_free(hal_dev_ctx->recovery_tasklet);
+	}
+	if (hal_dev_ctx->lock_recovery) {
+		nrf_wifi_osal_spinlock_free(hal_dev_ctx->lock_recovery);
+	}
 
 	nrf_wifi_osal_tasklet_kill(hal_dev_ctx->event_tasklet);
 
