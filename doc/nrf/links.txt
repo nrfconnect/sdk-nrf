@@ -1617,24 +1617,24 @@
 .. _`Memfault registration page`: https://app.nrfcloud.com/#/register
 .. _`Memfault Dashboards`: https://app.memfault.com
 
-.. _`Memfault Docs`: https://docs.memfault.com/
-.. _`Memfault SDK`: https://docs.memfault.com/docs/embedded/introduction/
-.. _`Memfault nRF Connect SDK integration guide`: https://docs.memfault.com/docs/mcu/nrf-connect-sdk-guide
-.. _`create a new project in Memfault`: https://docs.memfault.com/docs/platform/projects-and-fleets#creating-a-new-project
-.. _`Memfault Terminology`: https://docs.memfault.com/docs/platform/memfault-terminology/
-.. _`Memfault: Collecting Device Metrics`: https://docs.memfault.com/docs/embedded/metrics-api
-.. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
-.. _`Memfault Demo CLI`: https://docs.memfault.com/docs/mcu/demo-cli/
-.. _`Memfault Server-Side Developer Mode`: https://docs.memfault.com/docs/platform/rate-limiting#server-side-developer-mode
+.. _`Memfault Docs`: https://docs.nrfcloud.com/
+.. _`Memfault SDK`: https://docs.nrfcloud.com/docs/embedded/introduction/
+.. _`Memfault nRF Connect SDK integration guide`: https://docs.nrfcloud.com/docs/mcu/nordic-nrf-connect-sdk-guide
+.. _`create a new project in Memfault`: https://docs.nrfcloud.com/docs/platform/projects-and-fleets#creating-a-new-project
+.. _`Memfault Terminology`: https://docs.nrfcloud.com/docs/platform/terminology
+.. _`Memfault: Collecting Device Metrics`: https://docs.nrfcloud.com/docs/platform/introduction#device-metrics
+.. _`Memfault: Error Tracking with Trace Events`: https://docs.nrfcloud.com/docs/reference/reference-alerts-migration
+.. _`Memfault Demo CLI`: https://docs.nrfcloud.com/docs/mcu/demo-cli/
+.. _`Memfault Server-Side Developer Mode`: https://docs.nrfcloud.com/docs/platform/rate-limiting#server-side-developer-mode
 
-.. _`Memfault debugging`: https://docs.memfault.com/docs/platform/introduction#debugging
-.. _`Memfault OTA`: https://docs.memfault.com/docs/platform/introduction#ota
-.. _`Memfault monitoring`: https://docs.memfault.com/docs/platform/introduction#metrics
-.. _`Memfault introduction`: https://docs.memfault.com/docs/platform/introduction
+.. _`Memfault debugging`: https://docs.nrfcloud.com/docs/platform/introduction#debugging
+.. _`Memfault OTA`: https://docs.nrfcloud.com/docs/platform/introduction#ota
+.. _`Memfault monitoring`: https://docs.nrfcloud.com/docs/platform/introduction#metrics
+.. _`Memfault introduction`: https://docs.nrfcloud.com/docs/platform/introduction
 
-.. _`Memfault MCU Guide`: https://docs.memfault.com/docs/mcu/introduction
-.. _`Memfault: Reboot tracking`: https://docs.memfault.com/docs/mcu/reboot-reason-tracking
-.. _`Memfault: Coredumps`: https://docs.memfault.com/docs/mcu/coredumps
+.. _`Memfault MCU Guide`: https://docs.nrfcloud.com/docs/mcu/introduction
+.. _`Memfault: Reboot tracking`: https://docs.nrfcloud.com/docs/mcu/reboot-reason-tracking
+.. _`Memfault: Coredumps`: https://docs.nrfcloud.com/docs/mcu/coredumps
 
 .. ### Source: *.nrfcloud.com, https://docs.nordicsemi.com/bundle/nrf-cloud/
 
@@ -1644,33 +1644,33 @@
 .. _`Provision Devices`: https://nrfcloud.com/#/provision-devices
 
 .. _`nRF Cloud documentation`:
-.. _`nRF Connect for Cloud documentation`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/index.html
-.. _`Adding a device to your account`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/GettingStarted.html#adding-a-device-to-your-account
-.. _`nRF Cloud Device Messages`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/MessagesAndAlerts/DeviceMessages.html
-.. _`nRF Cloud Device ID`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Properties/DeviceId.html
-.. _`nRF Cloud Device Shadows`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Properties/Shadows.html
-.. _`nRF Cloud Security`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Security/Security.html
-.. _`nRF Cloud Auto-onboarding`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#auto-onboarding
-.. _`nRF Cloud device claiming`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ClaimingDevices/ClaimingDeviceOwnershipPortal.html
-.. _`nRF Cloud Preconnect Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#preconnect-onboarding
+.. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/docs/nrfcloud/introduction
+.. _`Adding a device to your account`: https://docs.nrfcloud.com/docs/nrfcloud/getting-started#adding-a-device-to-your-account
+.. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/docs/nrfcloud/device-messages
+.. _`nRF Cloud Device ID`: https://docs.nrfcloud.com/docs/nrfcloud/device-id
+.. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/docs/nrfcloud/device-shadow
+.. _`nRF Cloud Security`: https://docs.nrfcloud.com/docs/nrfcloud/device-security
+.. _`nRF Cloud Auto-onboarding`: https://docs.nrfcloud.com/docs/nrfcloud/onboarding#auto-onboarding
+.. _`nRF Cloud device claiming`: https://docs.nrfcloud.com/docs/nrfcloud/claiming-device-ownership-portal
+.. _`nRF Cloud Preconnect Provisioning`: https://docs.nrfcloud.com/docs/nrfcloud/onboarding#preconnect-onboarding
 .. _`nRF Cloud Onboarding`:
-.. _`nRF Cloud Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ProvisioningOverview.html
-.. _`nRF Cloud FOTA`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTAOverview.html
-.. _`nRF Cloud MQTT FOTA`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTAOverview.html#mqtt-job-execution-notifications
-.. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTATutorial.html
-.. _`Securely generating credentials`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Security/Credentials.html
-.. _`nRF Cloud provisioning configuration`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ProvisioningConfiguration/ProvisioningConfigurationPortal.html
-.. _`nRF Cloud Provisioning Service`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ProvisioningOverview.html
-.. _`nRF Cloud Verifying device authenticity`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/IdentityService/VerifyAttestationToken.html
-.. _`nRF Cloud Generating attestation tokens`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/IdentityService/VerifyAttestationToken.html#generating-attestation-tokens
+.. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/docs/nrfcloud/provisioning-overview
+.. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/docs/nrfcloud/fota-overview
+.. _`nRF Cloud MQTT FOTA`: https://docs.nrfcloud.com/docs/nrfcloud/fota-overview#mqtt-job-execution-notifications
+.. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/docs/nrfcloud/fota-tutorial
+.. _`Securely generating credentials`: https://docs.nrfcloud.com/docs/nrfcloud/device-credentials
+.. _`nRF Cloud provisioning configuration`: https://docs.nrfcloud.com/docs/nrfcloud/provisioning-configuration-portal
+.. _`nRF Cloud Provisioning Service`: https://docs.nrfcloud.com/docs/nrfcloud/provisioning-overview
+.. _`nRF Cloud Verifying device authenticity`: https://docs.nrfcloud.com/docs/nrfcloud/verify-attestation-token
+.. _`nRF Cloud Generating attestation tokens`: https://docs.nrfcloud.com/docs/nrfcloud/verify-attestation-token#generating-attestation-tokens
 
 
 .. _`nRF Cloud REST API`:
-.. _`nRF Connect for Cloud REST API`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/REST/RESTOverview.html
-.. _`nRF Cloud REST API key`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/REST/RESTOverview.html#api-key
-.. _`nRF Cloud Location Services documentation`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/LocationServices/LSOverview.html
-.. _`nRF Cloud MQTT API`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/MQTT/MQTTOverview.html
-.. _`nRF Cloud MQTT Topics`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/MQTT/Topics.html
+.. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/docs/nrfcloud/rest-overview
+.. _`nRF Cloud REST API key`: https://docs.nrfcloud.com/docs/nrfcloud/rest-overview#api-key
+.. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/docs/platform/location-services
+.. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/docs/nrfcloud/mqtt-overview
+.. _`nRF Cloud MQTT Topics`: https://docs.nrfcloud.com/docs/nrfcloud/mqtt-topics
 
 .. _`nRF Cloud REST API (v1)`: https://api.nrfcloud.com/v1
 .. _`nRF Cloud Patch Device State`:
@@ -1679,7 +1679,7 @@
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 .. _`nRF Cloud REST API ProvisionDevices`: https://api.nrfcloud.com/v1#tag/IP-Devices/operation/ProvisionDevices
 .. _`nRF Cloud RegisterPublicKeys Endpoint`: https://api.nrfcloud.com/v1/#operation/RegisterPublicKeys
-.. _`nRF Cloud CoAP API`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/CoAP/CoAPOverview.html
+.. _`nRF Cloud CoAP API`: https://docs.nrfcloud.com/docs/nrfcloud/coap-overview
 
 .. _`Bulk Onboard Devices`:
 .. _`nRF Cloud Portal Bulk Onboard Devices`: https://nrfcloud.com/#/add-device/bulk
