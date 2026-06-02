@@ -21,7 +21,7 @@
 #include <zephyr/types.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(modem_info);
+LOG_MODULE_REGISTER(modem_info, CONFIG_MODEM_INFO_LOG_LEVEL);
 
 #define INVALID_DESCRIPTOR	-1
 
@@ -876,7 +876,7 @@ int modem_info_get_rsrp(int *val)
 	}
 
 	if (*val == CELL_RSRP_INVALID) {
-		LOG_WRN("No valid RSRP");
+		LOG_DBG("No valid RSRP");
 		return -ENOENT;
 	}
 
