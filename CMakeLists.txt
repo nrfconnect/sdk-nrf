@@ -24,6 +24,7 @@ endforeach()
 include(cmake/extensions.cmake)
 include(cmake/version.cmake)
 include(cmake/version_app.cmake)
+include(cmake/device_support.cmake)
 include(cmake/hpf.cmake)
 
 zephyr_include_directories(include)
