@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	spi21_default_alt: spi21_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 4)>,
+				<NRF_PSEL(SPIM_MISO, 1, 5)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 6)>;
+		};
+	};
+
+	spi21_sleep_alt: spi21_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 4)>,
+				<NRF_PSEL(SPIM_MISO, 1, 5)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 6)>;
+			low-power-enable;
+		};
+	};
+};
+
+sample_spi: &spi21 {
+	compatible = "nordic,ppi-seq-spi";
+	status = "okay";
+	pinctrl-0 = <&spi21_default_alt>;
+	pinctrl-1 = <&spi21_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	cs-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+	frequency = <DT_FREQ_M(8)>;
+};
