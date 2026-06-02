@@ -15,6 +15,16 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38328"
 
 - scenarios:
+    - sample.debug.memfault.sample.debug.memfault
+    - sample.debug.memfault.etb.sample.debug.memfault.etb
+    - sample.debug.memfault.modem_trace_to_memfault
+    - sample.debug.memfault.etb
+  platforms:
+    - nrf9151dk/nrf9151/ns
+    - nrf9161dk/nrf9161/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38328"
+
+- scenarios:
     - nrf.extended.sample.basic.blinky
   platforms:
     - nrf54lm20dongle/nrf54lm20b/cpuapp
