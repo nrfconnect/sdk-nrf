@@ -12,7 +12,7 @@
 #include <ncs_commit.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(modem_info_params);
+LOG_MODULE_DECLARE(modem_info, CONFIG_MODEM_INFO_LOG_LEVEL);
 
 int modem_info_params_init(struct modem_param_info *modem)
 {
