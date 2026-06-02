@@ -66,6 +66,47 @@ psa_status_t cc3xx_verify_hash(const psa_key_attributes_t *attributes, const uin
 	}
 
 	if (IS_ENABLED(PSA_NEED_CC3XX_ECDSA) && PSA_ALG_IS_ECDSA(alg)) {
+		/*
+		 * The function cc3xx_internal_ecdsa_verify() requires the hash_alg
+		 * to be part of the algorithm. Since the function is only used by
+		 * cc3xx and we know that only SHA-1 and SHA-2 is supported, we can
+		 * check the hash length to determine the hash algorithm. Note that
+		 * SHA-384 and SHA-512 are not supported in cc3xx, but since we always
+		 * call cc3xx_internal_ecdsa_verify() with do_hashing=false it's safe
+		 * to use them.
+		 */
+		if (PSA_ALG_SIGN_GET_HASH(alg) == PSA_ALG_NONE) {
+			switch (hash_length) {
+#if PSA_WANT_ALG_SHA_1
+			case 20:
+				alg = PSA_ALG_ECDSA(PSA_ALG_SHA_1);
+				break;
+#endif
+#if PSA_WANT_ALG_SHA_224
+			case 28:
+				alg = PSA_ALG_ECDSA(PSA_ALG_SHA_224);
+				break;
+#endif
+#if PSA_WANT_ALG_SHA_256
+			case 32:
+				alg = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
+				break;
+#endif
+#if PSA_WANT_ALG_SHA_384
+			case 48:
+				alg = PSA_ALG_ECDSA(PSA_ALG_SHA_384);
+				break;
+#endif
+#if PSA_WANT_ALG_SHA_512
+			case 64:
+				alg = PSA_ALG_ECDSA(PSA_ALG_SHA_512);
+				break;
+#endif
+			default:
+				return PSA_ERROR_NOT_SUPPORTED;
+			}
+		}
+
 		return cc3xx_internal_ecdsa_verify(attributes, key, key_length, alg, hash,
 						   hash_length, signature, signature_length, false);
 	} else if (IS_ENABLED(PSA_NEED_CC3XX_RSA_SIGN) &&
