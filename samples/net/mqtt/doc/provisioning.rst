@@ -11,8 +11,8 @@ Provisioning
 
    This section is relevant only if you build the sample with TLS enabled.
 
-The server CA for the default MQTT broker (`test.mosquitto.org`_) is provisioned to the network stack at runtime prior to establishing a connection to the server.
-The server CA (:file:`ca-cert.pem`) is located in :file:`src/modules/transport/certs/`.
+The server CA for the default MQTT broker (`mqtt.nordicsemi.academy`_) is provisioned to the network stack at runtime before establishing a connection to the server.
+The server CA (:file:`ca-cert.pem`) is located in the :file:`src/modules/transport/credentials/` folder.
 Ensure that if the server is changed, the CA needs to be updated as well.
 
 To retrieve the server CA for a different MQTT broker, use the following command:
@@ -36,8 +36,8 @@ To turn off runtime credential provisioning, disable either of the following Kco
 
 The CA is provisioned to the security tag set by the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` Kconfig option.
 
-By default, the established TLS connection to the default MQTT broker (`test.mosquitto.org`_) does not require client authentication, which removes the need to provision client certificate and private key to the network stack.
+By default, the established TLS connection to the default MQTT broker (`mqtt.nordicsemi.academy`_) does not require a client authentication, which removes the need to provision a client certificate and private key to the network stack.
 If the client certificate and private key has been generated for a server connection, the credentials must be provisioned the same way as the server CA.
-This occurs automatically when including the corresponding files :file:`src/modules/transport/certs/client-cert.pem` and :file:`src/modules/transport/certs/private-key.pem`.
+This occurs automatically when including the corresponding files :file:`src/modules/transport/credentials/client-cert.pem` and :file:`src/modules/transport/credentials/private-key.pem`.
 
 .. include:: /includes/cert-flashing.txt
