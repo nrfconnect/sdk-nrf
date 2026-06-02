@@ -55,13 +55,12 @@ Explore MCUboot functionality using the samples provided.
 Note that some samples are located in the `sdk-nrf`_ repository, while others are in `sdk-zephyr`_.
 All supported samples are regularly tested to ensure reliability.
 
-It is recommended to begin with the :zephyr:code-sample:`smp-svr` sample and use :ref:`zephyr:mcu_mgr` for interaction from a host.
+It is recommended to begin with the :ref:`nrf_smp_svr_sample` sample and use :ref:`zephyr:mcu_mgr` for interaction from a host.
 This setup supports both UART and Bluetooth® LE connections.
 
-The following samples are supported:
+See the :ref:`supported DFU samples <dfu_samples>` in `sdk-nrf`_.
 
-* :zephyr:code-sample:`smp-svr`
-* :zephyr:code-sample:`with_mcuboot`
+Additionally, MCUboot supports the :zephyr:code-sample:`smp-svr` and :zephyr:code-sample:`with_mcuboot` samples in `sdk-zephyr`_.
 
 .. rst-class:: numbered-step
 
