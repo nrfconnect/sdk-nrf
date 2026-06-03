@@ -49,8 +49,17 @@
 	};
 };
 
+&hfxo {
+	status = "okay";
+};
+
 /* Used as trigger by the PPI sequencer. */
-&rtc130 {
+&timer131 {
+	status = "reserved";
+};
+
+/* Used as PPI sequencer notifier. */
+&timer132 {
 	status = "reserved";
 };
 
@@ -67,7 +76,8 @@ dut: &spi130 {
 	memory-regions = <&cpuapp_dma_region>;
 	cs-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
 	frequency = <DT_FREQ_M(8)>;
-	rtc = <&rtc130>;
+	timer = <&timer131>;
+	timer-notifier = <&timer132>;
 };
 
 tester: &spi131 {

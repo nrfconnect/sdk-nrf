@@ -5,8 +5,8 @@
  */
 
 /* Test requires loopbacks:
- * - between P1.11 and P1.10.
- * - between P1.12 and P1.13,
+ * - between P1.12 and P1.13
+ * - between P1.10 and P1.11
  */
 
 &pinctrl {
@@ -52,7 +52,7 @@ dut: &i2c21 {
 	pinctrl-0 = <&i2c21_default_alt>;
 	pinctrl-1 = <&i2c21_sleep_alt>;
 	pinctrl-names = "default", "sleep";
-	clock-frequency = <400000>;
+	clock-frequency = <I2C_BITRATE_FAST>;
 };
 
 tester: &i2c22 {

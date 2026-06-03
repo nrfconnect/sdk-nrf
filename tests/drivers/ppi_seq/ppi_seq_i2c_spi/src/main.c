@@ -397,6 +397,7 @@ static void test_single_run(void)
 
 	/* If TIMER is used for triggering then enable HFXO to ensure clock accuracy. */
 #if DT_NODE_HAS_PROP(DUT_NODE, timer)
+#ifdef CONFIG_CLOCK_CONTROL_NRF
 	struct onoff_client cli;
 
 	sys_notify_init_spinwait(&cli.notify);
@@ -407,7 +408,15 @@ static void test_single_run(void)
 		/* pend until clock is up and running */
 	}
 	zassert_ok(rv);
-#endif
+#elif CONFIG_CLOCK_CONTROL_NRF54H_HFXO
+	const struct device *hfxo = DEVICE_DT_GET(DT_NODELABEL(hfxo));
+
+	rv = nrf_clock_control_request_sync(hfxo, NULL, K_MSEC(1000));
+	zassert_ok(rv);
+#else
+	zassert_ok(false, "Should not get here.");
+#endif /* CONFIG_CLOCK_CONTROL_NRF / CONFIG_CLOCK_CONTROL_NRF54H_HFXO */
+#endif /* DT_NODE_HAS_PROP(DUT_NODE, timer) */
 
 	if (DT_NODE_HAS_PROP(DUT_NODE, timer_notifier)) {
 		uint32_t bytes = IS_ENABLED(TEST_I2C) ? 2 * (XFER_RX_LEN + XFER_TX_LEN) : XFER_LEN;
@@ -464,8 +473,13 @@ static void test_single_run(void)
 		       delta);
 
 #if DT_NODE_HAS_PROP(DUT_NODE, timer)
+#ifdef CONFIG_CLOCK_CONTROL_NRF
 	rv = onoff_release(z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF));
-#endif
+#elif CONFIG_CLOCK_CONTROL_NRF54H_HFXO
+	rv = nrf_clock_control_release(hfxo, NULL);
+
+#endif /* CONFIG_CLOCK_CONTROL_NRF / CONFIG_CLOCK_CONTROL_NRF54H_HFXO */
+#endif /* DT_NODE_HAS_PROP(DUT_NODE, timer) */
 }
 
 ZTEST(ppi_seq_twim, test_single_run)

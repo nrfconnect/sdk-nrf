@@ -10,49 +10,80 @@ common:
     - ci_tests_drivers_ppi_seq
 tests:
   drivers.ppi_seq_i2c_spi.i2c:
-    depends_on: i2c
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
   drivers.ppi_seq_i2c_spi.spi_timer_trigger:
-    depends_on: spi
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_spi_timer.overlay"
+      - FILE_SUFFIX="spi_timer"
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-  drivers.ppi_seq_i2c_spi.spi_extra_op:
-    depends_on: spi
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+  drivers.ppi_seq_i2c_spi.spi_timer_extra_op:
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_spi_timer_extra_op.overlay"
+      - FILE_SUFFIX="spi_timer_extra_op"
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
   drivers.ppi_seq_i2c_spi.spi_timer_notifier:
-    depends_on: spi
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_spi_timer_notifier.overlay"
+      - FILE_SUFFIX="spi_timer_notifier"
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
   drivers.ppi_seq_i2c_spi.i2c_timer_notifier_counter:
-    depends_on: i2c
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_i2c_timer_notifier_counter.overlay"
+      - FILE_SUFFIX="i2c_timer_notifier_counter"
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
   drivers.ppi_seq_i2c_spi.spi_rtc:
-    depends_on: spi
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_spi_rtc.overlay"
+      - FILE_SUFFIX="spi_rtc"
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
