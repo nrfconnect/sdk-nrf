@@ -570,6 +570,8 @@ static psa_status_t end_provisioning(void)
 static psa_status_t get_kmu_slot_count(kmu_metadata metadata, const psa_key_attributes_t *key_attr,
 				       unsigned int *slot_count)
 {
+	psa_key_type_t key_type = psa_get_key_type(key_attr);
+
 	switch (metadata.size) {
 	case METADATA_ALG_KEY_BITS_128:
 		*slot_count = 1;
@@ -577,8 +579,8 @@ static psa_status_t get_kmu_slot_count(kmu_metadata metadata, const psa_key_attr
 	case METADATA_ALG_KEY_BITS_192:
 	case METADATA_ALG_KEY_BITS_255:
 	case METADATA_ALG_KEY_BITS_256:
-		if (psa_get_key_type(key_attr) ==
-			PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA) &&
+		    key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
 			*slot_count = 4;
 		} else {
 			*slot_count = 2;
@@ -588,8 +590,8 @@ static psa_status_t get_kmu_slot_count(kmu_metadata metadata, const psa_key_attr
 		*slot_count = 3;
 		break;
 	case METADATA_ALG_KEY_BITS_384:
-		if (psa_get_key_type(key_attr) ==
-			PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA) &&
+		    key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
 			*slot_count = 6;
 		} else {
 			*slot_count = 3;
@@ -900,6 +902,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 {
 	int kmu_slot;
 	psa_algorithm_t key_algorithm;
+	psa_key_type_t key_type;
 
 	memset(metadata, 0, sizeof(*metadata));
 	metadata->metadata_version = 0;
@@ -937,11 +940,13 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		key_algorithm = PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(key_algorithm);
 	}
 
+	key_type = psa_get_key_type(key_attr);
+
 	switch (key_algorithm) {
 #ifdef PSA_NEED_CRACEN_AES_KW
 	case PSA_ALG_KW:
 		metadata->algorithm = METADATA_ALG_KW;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+		if (key_type != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -949,7 +954,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_AES_KWP
 	case PSA_ALG_KWP:
 		metadata->algorithm = METADATA_ALG_KWP;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+		if (key_type != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -957,7 +962,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20
 	case PSA_ALG_STREAM_CIPHER:
 		metadata->algorithm = METADATA_ALG_CHACHA20;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_CHACHA20) {
+		if (key_type != PSA_KEY_TYPE_CHACHA20) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -965,7 +970,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_CHACHA20_POLY1305
 	case PSA_ALG_CHACHA20_POLY1305:
 		metadata->algorithm = METADATA_ALG_CHACHA20_POLY1305;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_CHACHA20) {
+		if (key_type != PSA_KEY_TYPE_CHACHA20) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -973,7 +978,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_GCM_AES
 	case PSA_ALG_GCM:
 		metadata->algorithm = METADATA_ALG_AES_GCM;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+		if (key_type != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -981,7 +986,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_CCM_AES
 	case PSA_ALG_CCM:
 		metadata->algorithm = METADATA_ALG_AES_CCM;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+		if (key_type != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -989,7 +994,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_ECB_NO_PADDING_AES
 	case PSA_ALG_ECB_NO_PADDING:
 		metadata->algorithm = METADATA_ALG_AES_ECB;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+		if (key_type != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -997,7 +1002,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_CTR_AES
 	case PSA_ALG_CTR:
 		metadata->algorithm = METADATA_ALG_AES_CTR;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+		if (key_type != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -1005,7 +1010,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_CBC_NO_PADDING_AES
 	case PSA_ALG_CBC_NO_PADDING:
 		metadata->algorithm = METADATA_ALG_AES_CBC;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+		if (key_type != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -1013,7 +1018,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC
 	case PSA_ALG_SP800_108_COUNTER_CMAC:
 		metadata->algorithm = METADATA_ALG_SP800_108_COUNTER_CMAC;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+		if (key_type != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -1021,7 +1026,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_CMAC
 	case PSA_ALG_CMAC:
 		metadata->algorithm = METADATA_ALG_CMAC;
-		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+		if (key_type != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
@@ -1029,13 +1034,11 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #endif /* PSA_NEED_CRACEN_CMAC */
 #ifdef PSA_NEED_CRACEN_ED25519PH
 	case PSA_ALG_ED25519PH:
-		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
-		    PSA_ECC_FAMILY_TWISTED_EDWARDS) {
+		if (PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) != PSA_ECC_FAMILY_TWISTED_EDWARDS) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		/* Don't support private keys that are only used for verify */
-		if (!can_sign(key_attr) &&
-		    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(key_attr))) {
+		if (!can_sign(key_attr) && PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_ED25519PH;
@@ -1043,13 +1046,13 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #endif /* PSA_NEED_CRACEN_ED25519PH */
 #ifdef PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS
 	case PSA_ALG_PURE_EDDSA:
-		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
+		if (PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) !=
 		    PSA_ECC_FAMILY_TWISTED_EDWARDS) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		/* Don't support private keys that are only used for verify */
 		if (!can_sign(key_attr) &&
-		    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(key_attr))) {
+		    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_ED25519;
@@ -1059,14 +1062,14 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 	case PSA_ALG_ECDSA(PSA_ALG_ANY_HASH):
 	case PSA_ALG_ECDSA(PSA_ALG_SHA_256):
 	case PSA_ALG_ECDSA(PSA_ALG_SHA_384):
-		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
+		if (PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) !=
 		    PSA_ECC_FAMILY_SECP_R1) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 
 		/* Don't support private keys that are only used for verify */
 		if (!can_sign(key_attr) &&
-		    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(key_attr))) {
+		    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_ECDSA;
@@ -1074,7 +1077,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #endif /* PSA_NEED_CRACEN_ECDSA */
 #ifdef PSA_NEED_CRACEN_HMAC
 	case PSA_ALG_HMAC(PSA_ALG_SHA_256):
-		if (!can_sign(key_attr) && PSA_ALG_IS_HMAC(psa_get_key_type(key_attr))) {
+		if (!can_sign(key_attr) && PSA_ALG_IS_HMAC(key_type)) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_HMAC;
@@ -1083,10 +1086,8 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_ECDH
 	case PSA_ALG_ECDH:
 		if (!can_derive(key_attr) ||
-		    (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
-			     PSA_ECC_FAMILY_SECP_R1 &&
-		     PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
-			     PSA_ECC_FAMILY_MONTGOMERY)) {
+		    (PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) != PSA_ECC_FAMILY_SECP_R1 &&
+		     PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) != PSA_ECC_FAMILY_MONTGOMERY)) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_ECDH;
@@ -1412,6 +1413,7 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 {
 	kmu_metadata metadata;
 	psa_status_t psa_status;
+	psa_key_type_t key_type;
 	size_t opaque_key_size;
 
 	psa_status = read_primary_slot_metadata(slot_number, &metadata);
@@ -1446,9 +1448,11 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 		return psa_status;
 	}
 
+	key_type = psa_get_key_type(attributes);
+
 	if (key_buffer_size >= opaque_key_size) {
-		if (psa_get_key_type(attributes) ==
-		    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA) &&
+		    key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
 			*key_buffer = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 			key_buffer++;
 			key_buffer_size--;
@@ -1471,12 +1475,13 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 	}
 
 	/* ECC keys are getting loading into the key buffer like volatile keys */
-	if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
+	    PSA_KEY_TYPE_IS_ECC(key_type)) {
 		return push_kmu_key_to_ram(key_buffer, key_buffer_size);
 	}
 
 	/* HMAC keys are getting loading into the key buffer like volatile keys */
-	if (psa_get_key_type(attributes) == PSA_KEY_TYPE_HMAC) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HMAC) && key_type == PSA_KEY_TYPE_HMAC) {
 		return push_kmu_key_to_ram(key_buffer, key_buffer_size);
 	}
 

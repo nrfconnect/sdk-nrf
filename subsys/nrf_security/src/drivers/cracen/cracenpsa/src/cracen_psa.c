@@ -48,13 +48,14 @@ psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size
 	}
 
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
-		if (PSA_KEY_TYPE_IS_ECC(key_type)) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
+		    PSA_KEY_TYPE_IS_ECC(key_type)) {
 			if (key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
 				*key_size = PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE(key_type, key_bits);
 			} else {
 				*key_size = PSA_BITS_TO_BYTES(key_bits);
 			}
-		} else if (key_type == PSA_KEY_TYPE_HMAC) {
+		} else if (IS_ENABLED(PSA_NEED_CRACEN_HMAC) && key_type == PSA_KEY_TYPE_HMAC) {
 			*key_size = PSA_BITS_TO_BYTES(key_bits);
 		} else {
 			*key_size = sizeof(kmu_opaque_key_buffer);

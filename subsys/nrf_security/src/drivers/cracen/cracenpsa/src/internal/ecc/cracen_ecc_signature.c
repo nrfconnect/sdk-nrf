@@ -267,11 +267,11 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 {
 	size_t curvesz = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 	psa_status_t psa_status;
+	psa_key_type_t key_type = psa_get_key_type(attributes);
 	int sx_status;
 
-	psa_status = cracen_ecc_get_ecurve_from_psa(
-		PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes)),
-		psa_get_key_bits(attributes), sicurve);
+	psa_status = cracen_ecc_get_ecurve_from_psa(PSA_KEY_TYPE_ECC_GET_FAMILY(key_type),
+						    psa_get_key_bits(attributes), sicurve);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
@@ -291,7 +291,7 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255) &&
 	    (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH)) {
-		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
+		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
 			memcpy(pubkey_buffer, key_buffer, key_buffer_size);
 			return PSA_SUCCESS;
 		}
@@ -301,7 +301,7 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448) &&
 	    (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED448PH)) {
-		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
+		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
 			memcpy(pubkey_buffer, key_buffer, key_buffer_size);
 			return PSA_SUCCESS;
 		}
@@ -309,27 +309,26 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||
-	    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_K1) ||
-	    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_BRAINPOOL_P_R1)) {
-		if (PSA_ALG_IS_ECDSA(alg)) {
-			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
-				/* public keys must start with 0x04(uncompressed header)
-				 * and must have double the size of the EC curve plus 1
-				 * (from 0x04)
-				 */
-				if ((key_buffer[0] != CRACEN_ECC_PUBKEY_UNCOMPRESSED) ||
-				    ((2 * curvesz + 1) != key_buffer_size)) {
-					return PSA_ERROR_INVALID_ARGUMENT;
-				}
-
-				/* key_buffer + 1 to skip the 0x4 flag in the first byte */
-				memcpy(pubkey_buffer, key_buffer + 1, key_buffer_size - 1);
-				return PSA_SUCCESS;
-
-			} else {
-				sx_status = ecc_genpubkey(key_buffer, pubkey_buffer, *sicurve);
+	if ((IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||
+	     IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_K1) ||
+	     IS_ENABLED(PSA_NEED_CRACEN_ECDSA_BRAINPOOL_P_R1)) &&
+	    PSA_ALG_IS_ECDSA(alg)) {
+		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
+			/* public keys must start with 0x04(uncompressed header)
+			 * and must have double the size of the EC curve plus 1
+			 * (from 0x04)
+			 */
+			if ((key_buffer[0] != CRACEN_ECC_PUBKEY_UNCOMPRESSED) ||
+			    ((2 * curvesz + 1) != key_buffer_size)) {
+				return PSA_ERROR_INVALID_ARGUMENT;
 			}
+
+			/* key_buffer + 1 to skip the 0x4 flag in the first byte */
+			memcpy(pubkey_buffer, key_buffer + 1, key_buffer_size - 1);
+			return PSA_SUCCESS;
+
+		} else {
+			sx_status = ecc_genpubkey(key_buffer, pubkey_buffer, *sicurve);
 		}
 	}
 	return silex_statuscodes_to_psa(sx_status);
@@ -361,7 +360,7 @@ psa_status_t cracen_signature_ecc_verify(bool is_message,
 	const struct sx_pk_ecurve *curve = NULL;
 
 	psa_status = cracen_signature_prepare_ec_pubkey(key_buffer, key_buffer_size, &curve, alg,
-							   attributes, pubkey_buffer);
+							attributes, pubkey_buffer);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
