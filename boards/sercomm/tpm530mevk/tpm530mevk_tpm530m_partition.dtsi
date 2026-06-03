@@ -6,9 +6,10 @@
 
 &flash0 {
 	/*
-	 * 0x0000_c000  Primary area                 (1024 kB)
-	 *   0x0000_c000  Primary secure image       (  32 kB)
-	 *   0x0001_8000  Primary non-secure image   ( 992 kB)
+	 * 0x0000_0000  Primary area			(992 kB)
+	 *   0x0000_0000  Primary secure image		( 32 kB)
+	 *   0x0000_8000  Primary non-secure image	(960 kB)
+	 * 0x000f_8000  Settings storage		( 32 kB)
 	 */
 	partitions {
 		ranges;
@@ -18,22 +19,28 @@
 		slot0_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0x0 0x100000>;
-			ranges = <0x0 0x0 0x100000>;
+			reg = <0x00000000 0xf8000>;
+			ranges = <0x0 0x00000000 0xf8000>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
 			slot0_s_partition: partition@0 {
 				compatible = "zephyr,mapped-partition";
 				label = "image-0-secure";
-				reg = <0x0 0x8000>;
+				reg = <0x00000000 0x8000>;
 			};
 
 			slot0_ns_partition: partition@8000 {
 				compatible = "zephyr,mapped-partition";
 				label = "image-0-nonsecure";
-				reg = <0x8000 0xf8000>;
+				reg = <0x00008000 0xf0000>;
 			};
+		};
+
+		storage_partition: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f8000 0x8000>;
 		};
 	};
 };
