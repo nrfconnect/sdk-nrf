@@ -10,7 +10,6 @@ Script to build and program the nRF Audio project to multiple devices
 """
 
 import argparse
-import getpass
 import json
 import os
 import re
@@ -56,7 +55,16 @@ TARGET_DEBUG_FOLDER = "build_debug"
 
 DEFAULT_SIRK = "NRF5340_TWS_DEMO"
 
-MAX_USER_NAME_LEN = 248 - len('\0')
+ALT_BROADCAST_NAME_SUFFIX = "_ALT"
+MAX_USER_NAME_LEN = 248 -len(ALT_BROADCAST_NAME_SUFFIX) -len('\0')
+
+
+def __custom_bt_name_check(name):
+    if not name or not name.strip():
+        raise argparse.ArgumentTypeError("Custom Bluetooth device name cannot be blank")
+    if len(name) > MAX_USER_NAME_LEN:
+        raise argparse.ArgumentTypeError(f"Custom Bluetooth device name cannot be longer than {MAX_USER_NAME_LEN} characters")
+    return name
 
 
 def __print_add_color(status):
@@ -137,17 +145,10 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
     if options.nrf21540:
         device_flag += " -Dnrf_audio_SHIELD=nrf21540ek"
         device_flag += " -Dipc_radio_SHIELD=nrf21540ek"
-    if options.custom_bt_name is not None and options.user_bt_name:
-        raise Exception(
-            "User BT name option is invalid when custom BT name is set")
     if options.custom_bt_name is not None:
-        custom_bt_name = "_".join(options.custom_bt_name)[
-            :MAX_USER_NAME_LEN].upper()
-        device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + custom_bt_name + "\\\""
-    if options.user_bt_name:
-        user_specific_bt_name = (
-            "AUDIO_DEV_" + getpass.getuser())[:MAX_USER_NAME_LEN].upper()
-        device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + user_specific_bt_name + "\\\""
+        device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + options.custom_bt_name + "\\\""
+        device_flag += " -DCONFIG_BT_AUDIO_BROADCAST_NAME=\\\"" + options.custom_bt_name + "\\\""
+        device_flag += " -DCONFIG_BT_AUDIO_BROADCAST_NAME_ALT=\\\"" + options.custom_bt_name + ALT_BROADCAST_NAME_SUFFIX + "\\\""
     if options.transport == Transport.broadcast.name:
         if device == AudioDevice.headset:
             overlay_flag = f" -DEXTRA_CONF_FILE={BROADCAST_SINK_OVERLAY}"
@@ -316,19 +317,14 @@ def __main():
     parser.add_argument(
         "-cn",
         "--custom_bt_name",
-        nargs='*',
+        type=__custom_bt_name_check,
         dest="custom_bt_name",
         default=None,
-        help="Use custom Bluetooth device name",
-    )
-    parser.add_argument(
-        "-u",
-        "--user_bt_name",
-        action="store_true",
-        dest="user_bt_name",
-        default=False,
-        help="Set to generate a user specific Bluetooth device name.\
-              Note that this will put the computer user name on air in clear text",
+        metavar="NAME_PART",
+        help="Use custom Bluetooth device and/or broadcast name."
+         " NOTE: Updating this requires a pristine build."
+         " NOTE: Convenience option,"
+         " the correct way is to set the name in the project configuration files.",
     )
     parser.add_argument(
         "-t",
