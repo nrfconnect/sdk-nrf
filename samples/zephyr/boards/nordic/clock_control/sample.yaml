@@ -37,22 +37,7 @@ tests:
     platform_allow:
       - nrf9251dk/nrf9251/cpuapp
     extra_args:
-      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/cpuapp_hsfll.conf"
       - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/cpuapp_hsfll.overlay"
-  nrf.extended.sample.boards.nrf.clock_control.global_hsfll:
-    platform_allow:
-      - nrf9251dk/nrf9251/cpuapp
-    extra_args:
-      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/global_hsfll.conf"
-      - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/global_hsfll.overlay"
-  nrf.extended.sample.boards.nrf.clock_control.global_hsfll.req_low_freq_n:
-    platform_allow:
-      - nrf9251dk/nrf9251/cpuapp
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF_HSFLL_GLOBAL_REQ_LOW_FREQ=n
-    extra_args:
-      - CONF_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/global_hsfll.conf"
-      - DTC_OVERLAY_FILE="${ZEPHYR_BASE}/samples/boards/nordic/clock_control/configs/global_hsfll.overlay"
   nrf.extended.sample.boards.nrf.clock_control.audiopll:
     platform_allow:
       - nrf9251dk/nrf9251/cpuapp

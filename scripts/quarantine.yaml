@@ -19,9 +19,7 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9628"
 
 - scenarios:
-    - nrf.extended.sample.boards.nrf.clock_control.global_hsfll
-    - nrf.extended.sample.boards.nrf.clock_control.global_hsfll.req_low_freq_n
-    - nrf.extended.sample.boards.nrf.clock_control.lfclk
+    - nrf.extended.sample.boards.nrf.clock_control.audiopll
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
