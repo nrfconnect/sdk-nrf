@@ -1,0 +1,85 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires loopbacks:
+ * - between P0.06 and P0.07
+ * - between P0.00 and P0.01
+ */
+
+&pinctrl {
+	i2c130_default_alt: i2c130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 6)>,
+				<NRF_PSEL(TWIM_SCL, 0, 0)>;
+		};
+	};
+
+	i2c130_sleep_alt: i2c130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 6)>,
+				<NRF_PSEL(TWIM_SCL, 0, 0)>;
+			low-power-enable;
+		};
+	};
+
+	i2c131_default_alt: i2c131_default_alt {
+		group1 {
+			/* Temporary workaround as it is currently not possible
+			 * to configure pins for TWIS with pinctrl.
+			 */
+			psels = <NRF_PSEL(TWIM_SDA, 0, 7)>,
+				<NRF_PSEL(TWIM_SCL, 0, 1)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c131_sleep_alt: i2c131_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 7)>,
+				<NRF_PSEL(TWIM_SCL, 0, 1)>;
+			low-power-enable;
+		};
+	};
+};
+
+&hfxo {
+	status = "okay";
+};
+
+/* Timer used for triggering tasks in the PPI sequencer. */
+&timer131 {
+	status = "reserved";
+};
+
+/* Timer used for counting end events in the PPI sequencer. */
+&timer132 {
+	status = "reserved";
+};
+
+test_timer: &timer130 {
+	status = "reserved";
+};
+
+dut: &i2c130 {
+	compatible = "nordic,ppi-seq-i2c";
+	status = "okay";
+	pinctrl-0 = <&i2c130_default_alt>;
+	pinctrl-1 = <&i2c130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	clock-frequency = <I2C_BITRATE_FAST>;
+	memory-regions = <&cpuapp_dma_region>;
+	timer = <&timer131>;
+	timer-notifier = <&timer132>;
+};
+
+tester: &i2c131 {
+	compatible = "nordic,nrf-twis";
+	status = "reserved";
+	pinctrl-0 = <&i2c131_default_alt>;
+	pinctrl-1 = <&i2c131_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};

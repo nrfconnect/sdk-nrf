@@ -49,8 +49,19 @@
 	};
 };
 
+&hfxo {
+	status = "okay";
+};
+
+&grtc {
+	/delete-property/ child-owned-channels;
+	/delete-property/ nonsecure-channels;
+	owned-channels = <0 4 5 6>;
+	extended-channels = <0>;
+};
+
 /* Used as trigger by the PPI sequencer. */
-&rtc130 {
+&timer131 {
 	status = "reserved";
 };
 
@@ -67,7 +78,8 @@ dut: &spi130 {
 	memory-regions = <&cpuapp_dma_region>;
 	cs-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
 	frequency = <DT_FREQ_M(8)>;
-	rtc = <&rtc130>;
+	timer = <&timer131>;
+	extra-transfers = <50>;
 };
 
 tester: &spi131 {

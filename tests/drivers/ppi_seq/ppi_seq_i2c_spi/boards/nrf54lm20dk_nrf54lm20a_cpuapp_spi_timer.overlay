@@ -5,10 +5,10 @@
  */
 
 /* Test requires loopbacks:
- * - between P1.3 and P1.4.
- * - between P1.13 and P1.14,
- * - between P1.23 and P1.24,
- * - between P1.30 and P1.31,
+ * - between P1.03 and P1.04
+ * - between P1.13 and P1.14
+ * - between P1.23 and P1.24
+ * - between P1.30 and P1.31
  */
 
 &pinctrl {
@@ -65,7 +65,7 @@ dut: &spi21 {
 	pinctrl-1 = <&spi21_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	cs-gpios = <&gpio1 30 GPIO_ACTIVE_LOW>;
-	frequency = <8000000>;
+	frequency = <DT_FREQ_M(8)>;
 	timer = <&timer22>;
 };
 
