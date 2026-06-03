@@ -141,15 +141,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
 
 - scenarios:
-    - sample.bluetooth.mesh.chat
-    - sample.bluetooth.mesh.ble_and_mesh
-    - sample.bluetooth.mesh.light_ctrl
-    - sample.bluetooth.mesh.sensor_server
-  platforms:
-    - nrf52dk/nrf52832
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39503"
-
-- scenarios:
     - sample.debug.memfault
     - sample.debug.memfault.etb
   platforms:
