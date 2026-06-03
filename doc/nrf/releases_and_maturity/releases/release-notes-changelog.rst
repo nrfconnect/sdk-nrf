@@ -916,7 +916,7 @@ The current |NCS| main branch is based on revision ``684c9e8f32`` of Zephyr.
 Additions specific to |NCS|
 ---------------------------
 
-|no_changes_yet_note|
+* Added the :file:`release.yaml` file with device classification support overview.
 
 zcbor
 =====
