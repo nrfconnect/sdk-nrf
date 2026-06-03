@@ -148,3 +148,17 @@
   platforms:
     - nrf52dk/nrf52832
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39503"
+
+- scenarios:
+    - sample.debug.memfault.etb
+  platforms:
+    - nrf9161dk@0.9.0/nrf9161/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39678"
+
+- scenarios:
+    - sample.debug.memfault
+    - sample.debug.memfault.etb
+    - sample.debug.memfault.modem_trace_to_memfault
+  platforms:
+    - nrf9151dk/nrf9151/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39678"
