@@ -33,12 +33,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
 
 - scenarios:
-    - drivers.gpio.gpio_nfct
-  platforms:
-    - nrf7120dk/nrf7120/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39364"
-
-- scenarios:
     - nrf.extended.drivers.clock.nrf_clock_control
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
