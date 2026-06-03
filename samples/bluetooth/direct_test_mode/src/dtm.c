@@ -2163,23 +2163,25 @@ int dtm_setup_set_cte_mode(enum dtm_cte_type type, uint8_t time)
 	switch (type) {
 	case DTM_CTE_TYPE_AOA:
 		dtm_inst.cte_info.mode = DTM_CTE_MODE_AOA;
+		cte_info |= ((0 & CTEINFO_TYPE_MASK) << CTEINFO_TYPE_POS);
 		break;
 
 	case DTM_CTE_TYPE_AOD_1US:
 		dtm_inst.cte_info.mode = DTM_CTE_MODE_AOD;
 		dtm_inst.cte_info.slot = DTM_CTE_SLOT_1US;
+		cte_info |= ((1 & CTEINFO_TYPE_MASK) << CTEINFO_TYPE_POS);
 		break;
 
 	case DTM_CTE_TYPE_AOD_2US:
 		dtm_inst.cte_info.mode = DTM_CTE_MODE_AOD;
 		dtm_inst.cte_info.slot = DTM_CTE_SLOT_2US;
+		cte_info |= ((2 & CTEINFO_TYPE_MASK) << CTEINFO_TYPE_POS);
 		break;
 
 	default:
 		return -EINVAL;
 	}
 
-	cte_info |= ((dtm_inst.cte_info.mode & CTEINFO_TYPE_MASK) << CTEINFO_TYPE_POS);
 	dtm_inst.cte_info.info = cte_info;
 
 	return 0;
