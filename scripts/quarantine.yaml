@@ -150,8 +150,10 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39503"
 
 - scenarios:
+    - sample.debug.memfault
     - sample.debug.memfault.etb
   platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf9161dk@0.9.0/nrf9161/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39678"
 
