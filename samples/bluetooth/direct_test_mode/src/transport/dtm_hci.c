@@ -171,8 +171,7 @@ static int cte_set(uint8_t cte_len, uint8_t cte_type,
 
 	switch (cte_type) {
 	case BT_HCI_LE_AOA_CTE:
-		err = dtm_setup_set_cte_mode(DTM_CTE_TYPE_AOA, cte_len);
-		break;
+		return dtm_setup_set_cte_mode(DTM_CTE_TYPE_AOA, cte_len);
 
 	case BT_HCI_LE_AOD_CTE_1US:
 		err = dtm_setup_set_cte_mode(DTM_CTE_TYPE_AOD_1US, cte_len);
@@ -624,7 +623,7 @@ static int hci_tx_test(uint16_t opcode, const uint8_t *data)
 	}
 
 	if ((cte_len != 0) &&
-		(phy != BT_HCI_LE_TX_PHY_CODED_S8) && (phy != BT_HCI_LE_TX_PHY_CODED_S2)) {
+		((phy == BT_HCI_LE_TX_PHY_CODED_S8) || (phy == BT_HCI_LE_TX_PHY_CODED_S2))) {
 		return base_cc_evt(opcode, BT_HCI_ERR_CMD_DISALLOWED);
 	}
 
