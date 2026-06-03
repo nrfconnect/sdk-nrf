@@ -375,7 +375,13 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-|no_changes_yet_note|
+SPI drivers
+-----------
+
+* SPIM:
+
+  * RTIO based device driver for SPIM has been introduced. This device driver is selected if
+    :kconfig:option:`CONFIG_SPI_RTIO` is enabled.
 
 Wi-Fi drivers
 -------------
