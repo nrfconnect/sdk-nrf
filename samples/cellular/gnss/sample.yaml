@@ -37,7 +37,9 @@ tests:
       - CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE="23.77588976"
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
-    extra_args: gnss_SNIPPET="nrf91-modem-trace-uart"
+    extra_args:
+      - gnss_SNIPPET="nrf91-modem-trace-uart"
+      - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:
@@ -64,7 +66,9 @@ tests:
       - CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE="23.77588976"
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
-    extra_args: gnss_SNIPPET="nrf91-modem-trace-uart"
+    extra_args:
+      - gnss_SNIPPET="nrf91-modem-trace-uart"
+      - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:
@@ -94,6 +98,7 @@ tests:
       - EXTRA_CONF_FILE=overlay-pgps.conf
       - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
       - gnss_SNIPPET="nrf91-modem-trace-uart"
+      - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:
@@ -120,7 +125,9 @@ tests:
       - CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE="23.77588976"
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
-    extra_args: gnss_SNIPPET="nrf91-modem-trace-uart"
+    extra_args:
+      - gnss_SNIPPET="nrf91-modem-trace-uart"
+      - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:

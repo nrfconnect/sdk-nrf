@@ -78,7 +78,9 @@ tests:
     extra_configs:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
-    extra_args: location_SNIPPET="nrf91-modem-trace-uart"
+    extra_args:
+      - location_SNIPPET="nrf91-modem-trace-uart"
+      - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:

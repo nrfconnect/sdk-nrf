@@ -535,7 +535,9 @@ tests:
     extra_configs:
       - CONFIG_LTE_NETWORK_MODE_LTE_M=y
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
-    extra_args: modem_shell_SNIPPET="nrf91-modem-trace-uart"
+    extra_args:
+      - modem_shell_SNIPPET="nrf91-modem-trace-uart"
+      - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:
