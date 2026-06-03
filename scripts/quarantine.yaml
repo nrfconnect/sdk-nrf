@@ -15,12 +15,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38328"
 
 - scenarios:
-    - nrf.extended.sample.basic.blinky
-  platforms:
-    - nrf54lm20dongle/nrf54lm20b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39226"
-
-- scenarios:
     - nrf.extended.drivers.uart.async_dual
     - nrf.extended.drivers.uart.async_dual.busy_sim
     - nrf.extended.drivers.uart.async_dual.pm_runtime
