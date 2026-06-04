@@ -382,3 +382,7 @@
 .. nrf9251dk_nrf9251_cpuppr_xip
 
 | nRF9251 DK |   | nrf9251dk | ``nrf9251dk/nrf9251/cpuppr/xip`` |
+
+.. nrf93m1dk_nrf54l15_cpuapp
+
+| nRF93M1 DK |   | nrf93m1dk | ``nrf93m1dk/nrf54l15/cpuapp`` |
