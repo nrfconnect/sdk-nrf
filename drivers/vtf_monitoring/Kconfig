@@ -13,8 +13,21 @@ menuconfig VTF_MONITORING
 
 if VTF_MONITORING
 
-config VTF_DIE_TEMP_MONITOR
+menuconfig VTF_DIE_TEMP_MONITOR
 	bool "Monitor die temperature"
+	depends on HAS_HW_NRF_TEMP
+	select SENSOR
+	select TEMP_NRF5
+
+if VTF_DIE_TEMP_MONITOR
+
+config VTF_DIE_TEMP_MONITOR_INTERVAL_MS
+	int "Die temperature measurement interval (ms)"
+	default 10000
+	help
+	  Interval between die temperature measurements in milliseconds.
+
+endif # VTF_DIE_TEMP_MONITOR
 
 config VTF_FREQ_OFFSET_MONITOR
 	bool "Monitor frequency offset"
