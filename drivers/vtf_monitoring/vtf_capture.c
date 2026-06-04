@@ -12,10 +12,16 @@
 #include <zephyr/logging/log.h>
 #include "vtf_monitoring.h"
 
+#ifdef CONFIG_DIE_TEMP_MONITOR
+#include "temperature_monitor.h"
+#endif
+
 LOG_MODULE_REGISTER(vtf_capture, CONFIG_VTF_LOG_LEVEL);
 
-VTF_CHANNEL_DEFINE(vtf_channel_die_temp, VTF_CH_DIE_TEMP, NULL, NULL, VTF_SAMPLE_TYPE_INT,
-		   i32, CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE);
+VTF_CHANNEL_DEFINE(vtf_channel_die_temp, VTF_CH_DIE_TEMP,
+		   COND_CODE_1(CONFIG_DIE_TEMP_MONITOR, (die_temp_sample), (NULL)),
+		   COND_CODE_1(CONFIG_DIE_TEMP_MONITOR, (die_temp_init), (NULL)),
+		   VTF_SAMPLE_TYPE_INT, i32, CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE);
 
 VTF_CHANNEL_DEFINE(vtf_channel_battery_voltage, VTF_CH_BATTERY_VOLTAGE, NULL, NULL,
 		   VTF_SAMPLE_TYPE_INT, i32, CONFIG_VTF_BATTERY_VOLTAGE_DEFAULT_VALUE);

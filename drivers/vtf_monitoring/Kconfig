@@ -6,6 +6,20 @@
 
 config DIE_TEMP_MONITOR
 	bool "Monitor die temperature"
+	depends on HAS_HW_NRF_TEMP
+	select VTF_MONITORING
+	select SENSOR
+	select TEMP_NRF5
+
+if DIE_TEMP_MONITOR
+
+config DIE_TEMP_MONITOR_INTERVAL_MS
+	int "Die temperature measurement interval (ms)"
+	default 10000
+	help
+	  Interval between die temperature measurements in milliseconds.
+
+endif # DIE_TEMP_MONITOR
 
 config FREQ_OFFSET_MONITOR_ENABLE
 	bool "Monitor frequency offset"
@@ -33,7 +47,7 @@ config VTF_DIE_TEMP_DEFAULT_VALUE
 	int "Die temperature default value (centi-degC)"
 	default 2500
 	help
-	  Default value when DIE_TEMP_MONITOR_ENABLE=n. 2500 = 25.00 C.
+	  Default value when DIE_TEMP_MONITOR=n. 2500 = 25.00 C.
 
 config VTF_BATTERY_VOLTAGE_DEFAULT_VALUE
 	int "Battery voltage default value (mV)"
