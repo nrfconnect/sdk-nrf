@@ -269,6 +269,7 @@
 /doc/nrf/samples/net.rst                  @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/nfc.rst                  @nrfconnect/ncs-radio-sw
 /doc/nrf/samples/nrf5340.rst              @nrfconnect/ncs-doc-leads
+/doc/nrf/samples/nrf93m1dk.rst            @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/other.rst                @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/openthread/*.rst         @nrfconnect/ncs-terahertz-doc
 /doc/nrf/samples/peripheral.rst           @nrfconnect/ncs-radio-sw-doc
@@ -564,6 +565,7 @@
 /samples/nrf54h20/empty_app_core/         @nrfconnect/ncs-aurora
 /samples/nrf54h20/idle_relocated_tcm/     @nrfconnect/ncs-si-muffin
 /samples/nrf54h20/radio_loader/           @nrfconnect/ncs-si-muffin
+/samples/nrf93m1dk/                       @nrfconnect/ncs-lr-slm @SeppoTakalo @hiltunent
 /samples/ironside_se/                     @nrfconnect/ncs-aurora
 /samples/nrf_profiler/                    @nrfconnect/ncs-si-xcake
 /samples/nrf_rpc/protocols_serialization/ @nrfconnect/ncs-protocols-serialization
@@ -700,6 +702,7 @@
 /samples/mpsl/**/*.rst                    @nrfconnect/ncs-dragoon-doc
 /samples/net/**/*.rst                     @nrfconnect/ncs-cia-doc
 /samples/net/coap_client/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
+/samples/nrf93m1dk/**/*.rst 		  @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/nfc/**/*.rst                     @nrfconnect/ncs-radio-sw
 /samples/nrf54h20/idle_relocated_tcm/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/empty_app_core/*.rst     @nrfconnect/ncs-si-muffin-doc

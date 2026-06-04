@@ -1,0 +1,16 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Switch control have pull-down that defaults to bypass mode, so delete the control GPIO */
+/delete-node/ &modem_uart_switch;
+
+&modem {
+	status = "okay";
+};
+
+&modem_dcdc {
+	startup-delay-us = <500000>; /* wait for 500ms to stabilize dcdc supply */
+};

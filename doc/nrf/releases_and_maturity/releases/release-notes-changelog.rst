@@ -429,6 +429,14 @@ nRF5340 samples
 
 |no_changes_yet_note|
 
+nRF93M1 DK samples
+------------------
+
+* Added:
+
+  * The :ref:`nrf93m1dk_modem_bypass` sample that forwards the nRF93M1 modem UART to the USB CDC-ACM VCOM port for direct AT command access from a host PC.
+  * The :ref:`nrf93m1dk_ppp_shell` sample that establishes a PPP connection between the nRF54L15 host core and the nRF93M1 modem over CMUX, with shell-driven network management and zperf support.
+
 Peripheral samples
 ------------------
 
