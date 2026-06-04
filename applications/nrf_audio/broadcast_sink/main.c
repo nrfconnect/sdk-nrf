@@ -373,7 +373,7 @@ static void bt_mgmt_msg_sub_thread(void)
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL,
 							 BRDCAST_ID_NOT_USED);
 				if (ret) {
-					if (ret == -EALREADY) {
+					if (ret != -EALREADY) {
 						LOG_ERR("Failed to restart scanning: %d", ret);
 					}
 
