@@ -1,0 +1,17 @@
+sample:
+  name: nRF93M1 DK PPP shell
+  description: |
+    Sample that establishes a PPP connection between the nRF54L15 host core and
+    the nRF93M1 modem over CMUX, providing shell access to network utilities
+    including zperf performance testing.
+tests:
+  sample.nrf93m1dk.ppp_shell:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf93m1dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf93m1dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - ci_samples_nrf93m1dk

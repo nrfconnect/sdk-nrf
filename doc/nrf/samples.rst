@@ -60,6 +60,7 @@ General information about samples in the |NCS|
    samples/net
    samples/nfc
    samples/nrf5340
+   samples/nrf93m1dk
    samples/peripheral
    samples/pmic
    samples/serialization
