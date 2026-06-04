@@ -521,6 +521,10 @@ config PSA_WANT_KEY_TYPE_XCHACHA20
 	bool "PSA XCHACHA20 key type support" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
 
+# redefinition to expand the `depends on` to XChaCha20 too
+config PSA_WANT_ALG_STREAM_CIPHER
+	depends on PSA_WANT_KEY_TYPE_XCHACHA20
+
 config PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY
 	bool "PSA HSS public key support" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
@@ -647,9 +651,6 @@ config PSA_WANT_KEY_TYPE_ASCON
 	bool "ASCON key support" if !PSA_PROMPTLESS
 	help
 	  ASCON key support.
-
-config PSA_WANT_ALG_STREAM_CIPHER
-	select PSA_WANT_KEY_TYPE_CHACHA20
 
 config PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
 	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
