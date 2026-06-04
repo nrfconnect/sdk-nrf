@@ -201,6 +201,28 @@ static bool pac_parse(struct bt_data *data, struct bt_bap_lc3_preset *preset,
 		 */
 		uint16_t lc3_min_frame_length = sys_get_le16(data->data);
 		uint16_t lc3_max_frame_length = sys_get_le16(data->data + sizeof(uint16_t));
+		int frame_dur_us = 0;
+
+		ret = le_audio_duration_us_get(&preset->codec_cfg, &frame_dur_us);
+		if (ret) {
+			LOG_WRN("Failed to get frame duration: %d", ret);
+			memset(preset, 0, sizeof(struct bt_bap_lc3_preset));
+			return false;
+		}
+
+		lc3_min_frame_length =
+			MAX(lc3_min_frame_length,
+			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, frame_dur_us));
+		lc3_max_frame_length =
+			MIN(lc3_max_frame_length,
+			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, frame_dur_us));
+
+		if (lc3_max_frame_length < lc3_min_frame_length) {
+			LOG_DBG("No overlapping frame length range after clamping: [%u, %u]",
+				lc3_min_frame_length, lc3_max_frame_length);
+			memset(preset, 0, sizeof(struct bt_bap_lc3_preset));
+			return false;
+		}
 
 		int preset_octets_per_frame = 0;
 
