@@ -55,8 +55,9 @@ int crypto_init(void)
 
 	/* Initialize PSA Crypto */
 	status = psa_crypto_init();
-	if (status != PSA_SUCCESS)
+	if (status != PSA_SUCCESS) {
 		return APP_ERROR;
+	}
 
 	return APP_SUCCESS;
 }
