@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig VTF_MONITORING
+	bool "Subsystem to monitor VTF"
+	help
+	  Enable the VTF (Voltage-Temperature-Frequency) monitoring.
+	  Each enabled channel collects live data through its own
+	  work item.
+
+if VTF_MONITORING
+
+config VTF_DIE_TEMP_MONITOR
+	bool "Monitor die temperature"
+
+config VTF_FREQ_OFFSET_MONITOR
+	bool "Monitor frequency offset"
+
+config VTF_BATTERY_VOLTAGE_MONITOR
+	bool "Monitor battery voltage"
+
+config VTF_LOG_LEVEL
+	int "Logging level in VTF monitoring system"
+	default LOG_DEFAULT_LEVEL
+	depends on LOG
+	help
+	  Sets the logging level for VTF monitoring.
+
+config VTF_DIE_TEMP_DEFAULT_VALUE
+	int "Die temperature default value (centi-degC)"
+	default 2500
+	help
+	  Default value when VTF_DIE_TEMP_MONITOR=n. 2500 = 25.00 C.
+
+config VTF_BATTERY_VOLTAGE_DEFAULT_VALUE
+	int "Battery voltage default value (mV)"
+	default 3300
+	help
+	  Default value when VTF_BATTERY_VOLTAGE_MONITOR=n. 3300 = 3.3 V.
+
+config VTF_FREQ_OFFSET_DEFAULT_VALUE
+	int "Frequency offset default value (ppm)"
+	default 100
+	help
+	  Default value when VTF_FREQ_OFFSET_MONITOR=n. 100 = 100 ppm.
+
+config VTF_SNAPSHOT_INTERVAL_MS
+	int "Snapshot interval (ms)"
+	default 10000
+	help
+	  How often a snapshot is captured from every
+	  enabled channel.
+
+endif # VTF_MONITORING

@@ -311,6 +311,7 @@
 /drivers/sensor/pmw3360/                  @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-xcake
 /drivers/sensor/sensor_sim/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /drivers/sensor/sensor_stub/              @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
+/drivers/vtf_monitoring/                  @nrfconnect/ncs-malago
 /drivers/wifi/nrf71/                      @krish2718 @sachinthegreen
 /drivers/wifi/nrf92/                      @nrfconnect/ncs-modem-tre
 /include/drivers/wifi/nrf71/              @kapbh @krish2718 @sachinthegreen
@@ -360,6 +361,7 @@
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/ppi_seq/                 @nrfconnect/ncs-ll-izera
+/include/drivers/vtf_monitoring/          @nrfconnect/ncs-malago
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/dt-bindings/misc/nordic-domain-id-nrf9220.h @tervonenja
