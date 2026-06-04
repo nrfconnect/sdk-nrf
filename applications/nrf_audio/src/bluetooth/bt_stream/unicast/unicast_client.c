@@ -851,6 +851,20 @@ static void discover_cb_source(struct bt_conn *conn, int err, struct server_stor
 	}
 }
 
+static bool server_is_not_waiting_for_disc_check(struct server_store *server, void *user_data)
+{
+	ARG_UNUSED(user_data);
+
+	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+		LOG_DBG("Server %s is still waiting for discovery to complete", server->name);
+		/* Stop iterating */
+		return false;
+	}
+
+	/* Continue iterating */
+	return true;
+}
+
 static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 {
 	int ret;
@@ -894,6 +908,16 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 
 	if (!playing_state) {
 		/* Since we are not in a playing state we return before starting the new streams */
+		srv_store_unlock();
+		return;
+	}
+
+	ret = srv_store_foreach_server(server_is_not_waiting_for_disc_check, NULL);
+
+	if (ret == -ECANCELED) {
+		/* If any of the servers are still waiting for discovery to complete, we should not
+		 * start the streams yet
+		 */
 		srv_store_unlock();
 		return;
 	}
