@@ -583,10 +583,6 @@ int cracen_ecdsa_verify_digest(const uint8_t *pubkey, const uint8_t *digest, con
 	digest2op(digest, digestsz, inputs.h.addr, opsz);
 	sx_pk_run(&req);
 	status = sx_pk_wait(&req);
-	if (status != SX_OK) {
-		sx_pk_release_req(&req);
-		return status;
-	}
 	sx_pk_release_req(&req);
 
 	return status;

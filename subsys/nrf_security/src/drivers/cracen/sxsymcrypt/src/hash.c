@@ -238,14 +238,12 @@ int sx_hash_status(struct sxhash *hash_ctx)
 	int status;
 
 	status = sx_cmdma_check();
-	if (status == SX_ERR_HW_PROCESSING) {
-		return status;
-	}
 
 #if CONFIG_DCACHE
-	sys_cache_data_invd_range((void *)&hash_ctx->extramem, sizeof(hash_ctx->extramem));
+	if (status != SX_ERR_HW_PROCESSING) {
+		sys_cache_data_invd_range((void *)&hash_ctx->extramem, sizeof(hash_ctx->extramem));
+	}
 #endif
-
 	return status;
 }
 
