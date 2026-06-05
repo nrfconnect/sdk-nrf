@@ -9,10 +9,9 @@ common:
     type: multi_line
     regex:
       - "Instance opened"
-      - "IPC endpoint bound"
       - "Endpoint registered"
       - "Waiting for binding"
-      - "Binding done"
+      - "IPC endpoint bound"
       - "Message 0 sent"
       - "Message 0 received"
       - "Message 1 sent"
@@ -26,7 +25,7 @@ common:
       - "Instance opened"
       - "Endpoint registered"
       - "Waiting for binding"
-      - "Binding done"
+      - "IPC endpoint bound"
       - "Message 2 sent"
       - "Message 2 received"
 
