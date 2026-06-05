@@ -38,3 +38,11 @@
 		};
 	};
 };
+
+&spi00 {
+	status = "disabled";
+};
+
+&mx25r64 {
+	status = "disabled";
+};
