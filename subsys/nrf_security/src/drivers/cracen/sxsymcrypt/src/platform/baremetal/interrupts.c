@@ -83,13 +83,13 @@ void cracen_isr_handler(void *i)
 
 static uint32_t cracen_wait_for_interrupt(nrf_security_event_t event)
 {
-	uint32_t ret = nrf_security_event_wait(event, 0xFFFFFFFF);
+	uint32_t ret = nrf_security_event_wait(event, UINT32_MAX);
 
 	/* sx_hw_reserve, sx_hw_release, and sx_pk_acquire_hw have
 	 * assured single usage of CRACEN so there should be no race
 	 * condition between reading this event and clearing it.
 	 */
-	nrf_security_event_clear(event, 0xFFFFFFFF);
+	nrf_security_event_clear(event, UINT32_MAX);
 
 	return ret;
 }
