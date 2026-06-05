@@ -437,6 +437,7 @@
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
 /include/tfm/                             @nrfconnect/ncs-aegir
 /include/dult.h                           @nrfconnect/ncs-si-bluebagel
+/include/dult/                            @nrfconnect/ncs-si-bluebagel
 /include/accel_to_angle/                  @nrfconnect/ncs-si-bluebagel
 /include/wave_gen.h                       @nrfconnect/ncs-si-muffin
 /include/wifi_kmu/                        @adrianiainlam
