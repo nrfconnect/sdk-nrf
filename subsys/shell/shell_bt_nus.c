@@ -173,6 +173,14 @@ void shell_bt_nus_disable(void)
 			(const struct shell_bt_nus *)shell_transport_bt_nus.ctx;
 
 	bt_nus->ctrl_blk->conn = NULL;
+	ring_buf_reset(bt_nus->tx_ringbuf);
+	ring_buf_reset(bt_nus->rx_ringbuf);
+
+	if (atomic_clear(&bt_nus->ctrl_blk->tx_busy) != 0) {
+		bt_nus->ctrl_blk->handler(SHELL_TRANSPORT_EVT_TX_RDY,
+					  bt_nus->ctrl_blk->context);
+	}
+
 	k_sem_give(&shell_bt_nus_ready);
 }
 
