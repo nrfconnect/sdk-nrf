@@ -1,8 +1,82 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &tfm_ps_partition;
+
+&flash0 {
+	partitions {
+		slot0_s_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0-secure";
+			reg = <0x0 0x48000>;
+		};
+
+		slot0_ns_partition: partition@48000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0-nonsecure";
+			reg = <0x48000 0xac000>;
+		};
+
+		tfm_storage_partition: partition@f4000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-storage";
+			reg = <0xf4000 DT_SIZE_K(48)>;
+			ranges = <0x0 0xf4000 DT_SIZE_K(48)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			tfm_its_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-its";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+
+			tfm_otp_partition: partition@4000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-otp";
+				reg = <0x4000 DT_SIZE_K(8)>;
+			};
+
+			tfm_ps_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-ps";
+				reg = <0x8000 DT_SIZE_K(16)>;
+			};
+		};
+	};
+};
+
+/*
+ * TrustZone SRAM split mirroring the Partition Manager layout for this test:
+ * - Secure image RAM (&sram0_s) gets 192 KiB (0x30000) at the base of SRAM.
+ * - Non-secure RAM begins at 0x20030000 and spans 0x50000 (320 KiB) which
+ *   includes the 64 KiB sram0_shared region used for app/network-core IPC
+ *   (see nrf5340_shared_sram_partition.dtsi); the NS application portion
+ *   (&sram0_ns_app) gets the remaining 256 KiB.
+ */
+&sram0_s {
+	reg = <0x0 0x30000>;
+};
+
+&sram0_ns {
+	reg = <0x30000 0x50000>;
+	ranges = <0x0 0x30000 0x50000>;
+};
+
+&sram0_ns_app {
+	reg = <0x0 0x40000>;
+};
+
 &uart0 {
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
