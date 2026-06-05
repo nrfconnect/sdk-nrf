@@ -1,8 +1,10 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+#include "../partitions/thingy91_nrf52840_memory_map.dtsi"
 
 / {
 	dp0 {
@@ -32,6 +34,7 @@
 		zephyr,uart-mcumgr = &rtt0;
 		zephyr,bt-mon-uart = &rtt0;
 		zephyr,bt-c2h-uart = &rtt0;
+		zephyr,code-partition = &slot0_partition;
 	};
 };
 
