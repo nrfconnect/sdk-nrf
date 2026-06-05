@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../../partitions/thingy91_nrf52840_memory_map.dtsi"
+
 / {
 	chosen {
 		zephyr,code-partition = &boot_partition;
