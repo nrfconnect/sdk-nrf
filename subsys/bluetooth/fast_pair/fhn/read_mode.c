@@ -12,7 +12,7 @@ LOG_MODULE_REGISTER(fp_fhn_read_mode, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 #include <bluetooth/fast_pair/fast_pair.h>
 #include <bluetooth/fast_pair/fhn/fhn.h>
-#include <dult.h>
+#include <dult/dult.h>
 
 #include "fp_fhn_auth.h"
 #include "fp_fhn_callbacks.h"

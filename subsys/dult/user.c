@@ -9,7 +9,7 @@
 #include <zephyr/sys/atomic.h>
 #include <errno.h>
 
-#include <dult.h>
+#include <dult/dult.h>
 #include "dult_battery.h"
 #include "dult_bt_anos.h"
 #include "dult_id.h"

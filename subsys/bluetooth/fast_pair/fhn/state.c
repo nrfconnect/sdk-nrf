@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(fp_fhn_state, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_crypto.h"
 #include "fp_storage_eik.h"
 
-#include "dult.h"
+#include <dult/dult.h>
 #include "fp_fhn_dult_integration.h"
 
 /* Byte length and offset of fields used to generate the FHN frame. */

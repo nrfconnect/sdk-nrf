@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <zephyr/sys/slist.h>
 
-#include "dult.h"
+#include <dult/dult.h>
 #include "dult_near_owner_state.h"
 #include "dult_user.h"
 

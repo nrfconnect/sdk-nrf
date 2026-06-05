@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "dult.h"
+#include <dult/dult.h>
 
 /**
  * @defgroup dult_near_owner_state Detecting Unwanted Location Trackers near owner state

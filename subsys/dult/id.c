@@ -9,7 +9,7 @@
 
 #include <zephyr/kernel.h>
 
-#include "dult.h"
+#include <dult/dult.h>
 #include "dult_user.h"
 
 #include <zephyr/logging/log.h>

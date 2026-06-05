@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "dult.h"
+#include <dult/dult.h>
 
 /**
  * @defgroup dult_motion_detector Detecting Unwanted Location Trackers motion detector
