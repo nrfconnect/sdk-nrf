@@ -69,14 +69,16 @@ int unicast_client_config_get(struct bt_bap_stream *stream, uint32_t *bitrate,
 			      uint32_t *sampling_rate_hz);
 
 /**
- * @brief	Get the current audio locations used by the unicast client.
+ * @brief	Get the current audio locations and number of channels used by the unicast client.
  *
- * @param[out]	locations	Pointer to store the audio locations bitmask.
- * @param[in]	dir		Direction of the streams in question.
+ * @param[out]	locations     Pointer to store the audio locations bitmask.
+ * @param[in]	num_channels  Number of channels, can be more than bits set in location due to a
+ *                            mono channel being represented by location 0x00000000.
+ * @param[in]	dir           Direction of the streams in question.
  *
  * @return	0 for success, error otherwise.
  */
-int unicast_client_locations_get(uint32_t *locations, enum bt_audio_dir dir);
+int unicast_client_locations_get(uint32_t *locations, uint8_t *num_channels, enum bt_audio_dir dir);
 
 /**
  * @brief	Start service discovery for a Bluetooth LE Audio unicast (CIS) server.

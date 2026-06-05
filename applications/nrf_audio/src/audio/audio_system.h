@@ -85,12 +85,11 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
 /**
  * @brief	Set the number of channels for the encoder based on the given audio locations.
  *
- * @param[in]	locations	Audio locations bitmask.
- *
- * @retval	-EINVAL	Invalid number of channels derived from locations.
- * @retval	0	On success.
+ * @param[in]	locations     Audio locations bitmask.
+ * @param[in]	num_channels  Number of channels, can be more than bits set in location due to a
+ *                            mono channel being represented by location 0x00000000.
  */
-int audio_system_encoder_num_ch_set(uint32_t locations);
+void audio_system_encoder_num_ch_set(uint32_t locations, uint8_t num_channels);
 
 /**
  * @brief	Decode data and then add it to TX FIFO buffer.
@@ -110,6 +109,13 @@ void audio_system_start(void);
  * @brief	Stop all activities related to audio.
  */
 void audio_system_stop(void);
+
+/**
+ * @brief	Get number of encoder channels.
+ *
+ * @return	Number of encoder channels.
+ */
+int audio_system_encoder_num_ch_get(void);
 
 /**
  * @brief	Get number of decoder channels.
