@@ -737,11 +737,14 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	receive_cb = recv_cb;
 
-	/* For this application, we create one sink endpoint for each location */
-	unicast_server_params.snk_cnt = POPCOUNT(location);
-	if (unicast_server_params.snk_cnt == 0) {
-		LOG_ERR("No sink endpoint requested");
-		return -EINVAL;
+	/* For this application, we create one sink endpoint for each location.
+	 * Note that a mono location == 0, hence will always have at least one
+	 * endpoint.
+	 */
+	if (location == BT_AUDIO_LOCATION_MONO_AUDIO) {
+		unicast_server_params.snk_cnt = 1;
+	} else {
+		unicast_server_params.snk_cnt = POPCOUNT(location);
 	}
 
 	if (unicast_server_params.snk_cnt > CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT) {
@@ -794,7 +797,10 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		}
 	}
 
-	if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
+	if (location == BT_AUDIO_LOCATION_MONO_AUDIO) {
+		/* This is only for testing the headset can handle a mono location */
+		csip_param.rank = CSIP_HL_RANK;
+	} else if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
 		csip_param.rank = CSIP_HL_RANK;
 	} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
 		csip_param.rank = CSIP_HR_RANK;

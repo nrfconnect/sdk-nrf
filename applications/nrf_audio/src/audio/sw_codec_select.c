@@ -111,14 +111,16 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		uint8_t inter_buf[PCM_NUM_BYTES_MONO];
 		uint8_t src_buf[PCM_NUM_BYTES_MONO];
 		uint8_t chan_in_num, chan_out_num;
-		uint8_t chan_out = 0;
+		uint8_t chan_in = 0;
+		uint8_t in_shift, out_shift;
 		uint8_t *inter_out;
 		uint8_t *enc_in = audio_frame_in->data;
 		uint8_t *enc_out = audio_frame_out->data;
 		size_t enc_in_size = 0;
-		uint16_t bytes_written;
+		uint16_t bytes_written = 0;
 		uint32_t loc_in = 0;
 		uint32_t loc_out = 0;
+		bool run_encoder = true;
 
 		LOG_DBG("LC3 encoder module");
 
@@ -146,34 +148,35 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 
 		if (meta_in->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
 			loc_in = 1;
+			in_shift = 0;
 		} else {
 			loc_in = meta_in->locations;
+			in_shift = 1;
 		}
 
 		if (meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
-			/* Set output to be the lowest set location in meta_in->locations */
 			loc_out = 1;
-			while (loc_out && !(meta_in->locations & loc_out)) {
-				loc_out <<= 1;
-			}
+			out_shift = 0;
 		} else {
 			loc_out = meta_out->locations;
+			out_shift = 1;
 		}
 
-		if (unlikely(loc_out == 0 || loc_in == 0)) {
-			LOG_ERR("No common output location with input");
-			LOG_ERR("Input locations:  0x%08x", meta_in->locations);
-			LOG_ERR("Output locations: 0x%08x", meta_out->locations);
-			return -EINVAL;
-		}
+		/* Encode only the common channel(s) between the
+		 * input and output locations.
+		 */
+		while (loc_in && loc_out) {
+			if (!(loc_out & loc_in & 0x01)) {
+				loc_in >>= in_shift;
+				loc_out >>= out_shift;
+				continue;
+			}
 
-		/* Encode only the common channel(s) between the input and output locations. */
-		while (loc_out && loc_in) {
-			if (loc_out & loc_in & 0x01) {
+			if (run_encoder) {
 				if (meta_in->interleaved) {
 					ret = pscm_deinterleave(audio_frame_in->data,
 								audio_frame_in->len, chan_in_num,
-								chan_out,
+								chan_in,
 								meta_in->carried_bits_per_sample,
 								inter_buf, sizeof(inter_buf));
 					ERR_CHK_MSG(ret, "Encode: Failed de-interleaving");
@@ -181,46 +184,53 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 					inter_out = inter_buf;
 				} else {
 					inter_out = (uint8_t *)audio_frame_in->data +
-						    (meta_in->bytes_per_location * chan_out);
+						    (meta_in->bytes_per_location * chan_in);
 				}
 
 				ret = sw_codec_sample_rate_convert(
-					&encoder_converters[chan_out], meta_in->sample_rate_hz,
+					&encoder_converters[chan_in], meta_in->sample_rate_hz,
 					meta_out->sample_rate_hz, inter_out,
 					meta_in->bytes_per_location, src_buf, (char **)&enc_in,
 					&enc_in_size);
 				ERR_CHK_MSG(ret, "Encode: Sample rate conversion failed");
 
 				ret = sw_codec_lc3_enc_run(
-					enc_in, enc_in_size, meta_out->bitrate_bps, chan_out,
+					enc_in, enc_in_size, meta_out->bitrate_bps, chan_in,
 					meta_in->bytes_per_location, enc_out, &bytes_written);
 				ERR_CHK_MSG(ret, "Encode failed");
 
-				enc_out += bytes_written;
+				net_buf_add(audio_frame_out, bytes_written);
 
-				LOG_DBG("Completed LC3 encode of ch: %d", chan_out);
+				if (meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
+					break;
+				}
+
+				if ((IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS) &&
+				     (chan_in_num == 1) && (chan_out_num > 1)) ||
+				    (meta_in->locations == BT_AUDIO_LOCATION_MONO_AUDIO)) {
+					run_encoder = false;
+				} else {
+					enc_out += bytes_written;
+				}
+
+			} else {
+				LOG_DBG("Copying encoded data for ch: %d", chan_in);
+
+				/* If run_encoder is false, we just copy the encoded
+				 * data to the output.
+				 */
+				net_buf_add_mem(audio_frame_out, enc_out, bytes_written);
 			}
 
-			chan_out += loc_out & 0x01;
+			chan_in += loc_out & 0x01;
+			loc_in >>= in_shift;
+			loc_out >>= out_shift;
 
-			loc_in >>= 1;
-			loc_out >>= 1;
-		}
-
-		if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS) && (m_config.encoder.num_ch > 1)) {
-			/* Duplicate the mono encoded data to all output locations */
-			size_t single_chan_size = bytes_written;
-
-			for (uint8_t ch = 1; ch < m_config.encoder.num_ch; ch++) {
-				memcpy(audio_frame_out->data + (ch * single_chan_size),
-				       audio_frame_out->data, single_chan_size);
-			}
+			LOG_DBG("Completed LC3 encode of ch: %d", chan_in);
 		}
 
 		meta_out->bytes_per_location = bytes_written;
 		meta_out->locations &= meta_in->locations;
-		net_buf_add(audio_frame_out,
-			    meta_out->bytes_per_location * audio_metadata_num_loc_get(meta_out));
 
 		return 0;
 #endif /* (CONFIG_SW_CODEC_LC3) */
@@ -260,11 +270,13 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		uint8_t *src_out = src_buf;
 		uint8_t chan_in, chan_out;
 		uint8_t chans_out_num;
+		uint8_t in_shift, out_shift;
 		uint8_t *inter_in = dec_out_buf;
 		uint16_t bytes_written;
 		uint32_t loc_in, loc_out;
 		uint32_t bad_data_mask;
 		size_t inter_in_size = 0;
+		bool dec_flag, run_decoder = true;
 
 		if (meta_in->data_coding != LC3 || meta_out->data_coding != PCM) {
 			LOG_ERR("LC3 decoder module has incorrect input or output data type: in = "
@@ -274,7 +286,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		}
 
 		if (audio_frame_in->len <
-		    meta_in->bytes_per_location * audio_metadata_num_loc_get(meta_in)) {
+		    (meta_in->bytes_per_location * audio_metadata_num_loc_get(meta_in))) {
 			LOG_ERR("Decoder input frame too small: %d (< %d)", audio_frame_in->len,
 				(meta_in->bytes_per_location *
 				 audio_metadata_num_loc_get(meta_in)));
@@ -289,24 +301,24 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 			return -EINVAL;
 		}
 
-		/* If input is only one channel and not mono_audio and the output
-		 * is mono_audio we will set loc_out to 0xFFFF to accept any location
-		 */
-		if (meta_in->locations != BT_AUDIO_LOCATION_MONO_AUDIO &&
-		    meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO &&
-		    audio_metadata_num_loc_get(meta_in) == 1) {
-			loc_out = 0xFFFF;
-			loc_in = meta_in->locations;
-		} else if (meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO &&
-			   meta_in->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
+		if (meta_in->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
 			loc_in = 1;
-			loc_out = 1;
-		} else if (meta_out->locations & meta_in->locations) {
-			loc_in = meta_in->locations;
-			loc_out = meta_out->locations;
+			in_shift = 0;
+			dec_flag = false;
 		} else {
-			LOG_ERR("No common output location with input");
-			return -EINVAL;
+			loc_in = meta_in->locations;
+			in_shift = 1;
+			dec_flag = true;
+		}
+
+		if (meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
+			loc_out = 1;
+			out_shift = 0;
+
+			LOG_WRN("Decoder mono output");
+		} else {
+			loc_out = meta_out->locations;
+			out_shift = 1;
 		}
 
 		if (!meta_out->interleaved) {
@@ -329,9 +341,17 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		 * These will be put in the first channel or channels and the location
 		 * will indicate which channel(s) they are. Prior to playout (I2S or TDM)
 		 * all other channels can be zeroed.
+		 * If the input is mono , write the decoded output to all the output locations.
 		 */
 		while (loc_in && loc_out) {
-			if (loc_out & loc_in & 0x01) {
+			if (!(loc_out & loc_in & 0x01)) {
+				bad_data_mask <<= in_shift;
+				loc_in >>= in_shift;
+				loc_out >>= out_shift;
+				continue;
+			}
+
+			if (run_decoder) {
 				data_in = (uint8_t *)audio_frame_in->data +
 					  (meta_in->bytes_per_location * chan_in);
 
@@ -347,29 +367,33 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 					(char **)&inter_in, &inter_in_size);
 				ERR_CHK_MSG(ret, "Decode: Sample rate converter failed");
 
-				if (meta_out->interleaved) {
-					ret = pscm_interleave(inter_in, inter_in_size, chan_out,
-							      meta_out->carried_bits_per_sample,
-							      audio_frame_out->data,
-							      audio_frame_out->size, chans_out_num);
-					ERR_CHK_MSG(ret, "Decode: Interleave failed");
+				run_decoder = dec_flag;
+				chan_in += loc_in & 0x01;
+			}
+
+			if (meta_out->interleaved) {
+				ret = pscm_interleave(inter_in, inter_in_size, chan_out,
+						      meta_out->carried_bits_per_sample,
+						      audio_frame_out->data, audio_frame_out->size,
+						      chans_out_num);
+				ERR_CHK_MSG(ret, "Decode: Interleave failed");
+			} else {
+				if (IS_ENABLED(CONFIG_SAMPLE_RATE_CONVERTER) &&
+				    meta_in->sample_rate_hz != meta_out->sample_rate_hz) {
+					src_out += bytes_written;
 				} else {
-					if (IS_ENABLED(CONFIG_SAMPLE_RATE_CONVERTER) &&
-					    meta_in->sample_rate_hz != meta_out->sample_rate_hz) {
-						src_out += inter_in_size;
-					} else {
-						dec_out += inter_in_size;
-					}
+					dec_out += bytes_written;
 				}
 			}
 
-			bad_data_mask <<= 1;
+			if (loc_out == BT_AUDIO_LOCATION_MONO_AUDIO) {
+				break;
+			}
 
-			chan_in += loc_in & 0x01;
 			chan_out += loc_out & 0x01;
-
-			loc_in >>= 1;
-			loc_out >>= 1;
+			bad_data_mask <<= in_shift;
+			loc_in >>= in_shift;
+			loc_out >>= out_shift;
 		}
 
 		meta_out->bytes_per_location = inter_in_size;

@@ -520,8 +520,8 @@ static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir d
 		return;
 	}
 
-	if (loc & BT_AUDIO_LOCATION_FRONT_LEFT && loc & BT_AUDIO_LOCATION_FRONT_RIGHT &&
-	    dir == BT_AUDIO_DIR_SINK) {
+	if ((loc & BT_AUDIO_LOCATION_FRONT_LEFT) && (loc & BT_AUDIO_LOCATION_FRONT_RIGHT) &&
+	    (dir == BT_AUDIO_DIR_SINK)) {
 		LOG_INF("Both front left and right channel locations are set, stereo device found");
 
 		ret = srv_store_location_set(
@@ -538,14 +538,32 @@ static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir d
 		return;
 	}
 
-	if ((loc & BT_AUDIO_LOCATION_FRONT_LEFT) || (loc & BT_AUDIO_LOCATION_BACK_LEFT) ||
-	    (loc & BT_AUDIO_LOCATION_FRONT_LEFT_OF_CENTER) || (loc & BT_AUDIO_LOCATION_SIDE_LEFT) ||
-	    (loc & BT_AUDIO_LOCATION_TOP_FRONT_LEFT) || (loc & BT_AUDIO_LOCATION_TOP_BACK_LEFT) ||
-	    (loc & BT_AUDIO_LOCATION_TOP_SIDE_LEFT) ||
-	    (loc & BT_AUDIO_LOCATION_BOTTOM_FRONT_LEFT) ||
-	    (loc & BT_AUDIO_LOCATION_FRONT_LEFT_WIDE) || (loc & BT_AUDIO_LOCATION_LEFT_SURROUND) ||
-	    (loc == BT_AUDIO_LOCATION_MONO_AUDIO)) {
-		ret = srv_store_location_set(conn, dir, BT_AUDIO_LOCATION_FRONT_LEFT);
+	if ((loc == BT_AUDIO_LOCATION_MONO_AUDIO) || (loc & BT_AUDIO_LOCATION_FRONT_CENTER) ||
+	    (loc & BT_AUDIO_LOCATION_LOW_FREQ_EFFECTS_1) || (loc & BT_AUDIO_LOCATION_BACK_CENTER) ||
+	    (loc & BT_AUDIO_LOCATION_LOW_FREQ_EFFECTS_2) ||
+	    (loc & BT_AUDIO_LOCATION_TOP_FRONT_CENTER) || (loc & BT_AUDIO_LOCATION_TOP_CENTER) ||
+	    (loc & BT_AUDIO_LOCATION_TOP_BACK_CENTER) ||
+	    (loc & BT_AUDIO_LOCATION_BOTTOM_FRONT_CENTER)) {
+		ret = srv_store_location_set(conn, dir, loc);
+		if (ret) {
+			LOG_ERR("Failed to set location for conn %p, dir %d, loc %d: %d",
+				(void *)conn, dir, loc, ret);
+			srv_store_unlock();
+			return;
+		}
+
+		server->name = "MONO";
+
+	} else if ((loc & BT_AUDIO_LOCATION_FRONT_LEFT) || (loc & BT_AUDIO_LOCATION_BACK_LEFT) ||
+		   (loc & BT_AUDIO_LOCATION_FRONT_LEFT_OF_CENTER) ||
+		   (loc & BT_AUDIO_LOCATION_SIDE_LEFT) ||
+		   (loc & BT_AUDIO_LOCATION_TOP_FRONT_LEFT) ||
+		   (loc & BT_AUDIO_LOCATION_TOP_BACK_LEFT) ||
+		   (loc & BT_AUDIO_LOCATION_TOP_SIDE_LEFT) ||
+		   (loc & BT_AUDIO_LOCATION_BOTTOM_FRONT_LEFT) ||
+		   (loc & BT_AUDIO_LOCATION_FRONT_LEFT_WIDE) ||
+		   (loc & BT_AUDIO_LOCATION_LEFT_SURROUND)) {
+		ret = srv_store_location_set(conn, dir, loc);
 		if (ret) {
 			LOG_ERR("Failed to set location for conn %p, dir %d, loc %d: %d",
 				(void *)conn, dir, loc, ret);
@@ -564,7 +582,7 @@ static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir d
 		   (loc & BT_AUDIO_LOCATION_BOTTOM_FRONT_RIGHT) ||
 		   (loc & BT_AUDIO_LOCATION_FRONT_RIGHT_WIDE) ||
 		   (loc & BT_AUDIO_LOCATION_RIGHT_SURROUND)) {
-		ret = srv_store_location_set(conn, dir, BT_AUDIO_LOCATION_FRONT_RIGHT);
+		ret = srv_store_location_set(conn, dir, loc);
 		if (ret) {
 			LOG_ERR("Failed to set location for conn %p, dir %d, loc %d: %d",
 				(void *)conn, dir, loc, ret);

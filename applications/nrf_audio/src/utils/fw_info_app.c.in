@@ -39,11 +39,6 @@ int fw_info_app_print(void)
 
 	device_location_get(&location);
 
-	if (location == BT_AUDIO_LOCATION_MONO_AUDIO){
-		LOG_ERR("HEADSET location %s is not supported", bt_audio_location_bit_to_str(location));
-		return -EINVAL;
-	}
-
 	for (int i = 0; i < (CHAR_BIT * sizeof(enum bt_audio_location)); i++) {
 		if (location & BIT(i)) {
 			LOG_INF(COLOR_CYAN "HEADSET location: %s" COLOR_RESET, bt_audio_location_bit_to_str(BIT(i)));
