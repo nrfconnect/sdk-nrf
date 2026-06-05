@@ -3304,6 +3304,9 @@ psa_status_t psa_driver_wrapper_destroy_builtin_key(const psa_key_attributes_t *
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 		return cracen_destroy_key(attributes);
 #endif
+	default:
+		/* For compliance */
+		break;
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
