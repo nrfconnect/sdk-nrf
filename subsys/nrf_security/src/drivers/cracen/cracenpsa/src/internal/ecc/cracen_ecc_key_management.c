@@ -164,6 +164,8 @@ psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attributes,
 			} else if (key_size_bytes == 56) {
 				/* X448 */
 				decode_scalar_448(&workmem[0]);
+			} else {
+				/* For compliance */
 			}
 		}
 

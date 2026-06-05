@@ -51,6 +51,8 @@ static int cracen_signature_set_hashalgo_from_digestsz(const struct sxhashalg **
 		}
 	} else if (status != SX_OK) {
 		return status;
+	} else {
+		/* For compliance */
 	}
 	/* if status == SX_OK */
 	if (sx_hash_get_alg_digestsz(*hashalg) != digestsz) {

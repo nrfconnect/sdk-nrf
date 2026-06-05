@@ -314,6 +314,9 @@ static psa_key_type_t alg_to_key_type(psa_algorithm_t alg)
 	case PSA_ALG_CHACHA20_POLY1305:
 		IF_ENABLED(PSA_NEED_CRACEN_CHACHA20_POLY1305, (return PSA_KEY_TYPE_CHACHA20));
 		break;
+	default:
+		/* For compliance */
+		break;
 	}
 
 	return PSA_KEY_TYPE_NONE;
@@ -333,6 +336,9 @@ static bool is_nonce_length_supported(psa_algorithm_t alg, size_t nonce_length)
 	case PSA_ALG_CHACHA20_POLY1305:
 		IF_ENABLED(PSA_NEED_CRACEN_CHACHA20_POLY1305,
 			   (return nonce_length == SX_CHACHAPOLY_IV_SZ));
+		break;
+	default:
+		/*For compliance */
 		break;
 	}
 

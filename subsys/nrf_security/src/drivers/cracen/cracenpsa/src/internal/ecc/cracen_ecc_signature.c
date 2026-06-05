@@ -134,6 +134,8 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 			status = cracen_ecdsa_sign_digest(&privkey, ecurve, input,
 							  input_length, signature);
 		}
+	} else {
+		/* For compliance */
 	}
 
 	return silex_statuscodes_to_psa(status);
