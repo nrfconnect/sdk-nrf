@@ -1,0 +1,9 @@
+/ {
+	reserved-memory {
+		/delete-node/ memory@2f88f800;
+
+		cpuapp_forbidden_area: memory@2f88f800 {
+			reg = <0x2f88f800 0x80>;
+		};
+	};
+};

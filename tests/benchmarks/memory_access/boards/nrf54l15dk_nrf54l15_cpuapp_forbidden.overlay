@@ -1,0 +1,10 @@
+/ {
+	soc {
+		/delete-node/ ficr@ffc000;
+
+		cpuapp_forbidden_area: ficr@ffc000 {
+			reg = <0xffc000 0x1000>;
+			#nordic,ficr-cells = <0x1>;
+		};
+	};
+};
