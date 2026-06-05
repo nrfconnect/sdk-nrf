@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n if SOC_SERIES_NRF91
+
 config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	default y if BOARD_NRF5340DK_NRF5340_CPUAPP
 
