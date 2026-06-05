@@ -32,7 +32,7 @@ psa_status_t do_rounds(psa_pake_operation_t *server, psa_pake_operation_t *clien
 					  PSA_PAKE_STEP_ZK_PUBLIC, PSA_PAKE_STEP_ZK_PROOF};
 	uint8_t buffer[128];
 	size_t outlen;
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 
 	/* Server provides data to client */
 	for (uint32_t i = 0; i < ARRAY_SIZE(round1_steps); i++) {
