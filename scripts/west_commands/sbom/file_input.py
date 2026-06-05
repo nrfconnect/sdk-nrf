@@ -32,8 +32,8 @@ def glob_with_abs_patterns(path: Path, glob: str) -> Generator:
         if glob_path.is_absolute():
             m = GLOB_PATTERN_START.search(glob)
             if m is None:
-                return (glob_path, )
-            parent = Path(glob[:m.start() + 1]).parent
+                return (glob_path,)
+            parent = Path(glob[: m.start() + 1]).parent
             relative = glob_path.relative_to(parent)
             return tuple(parent.glob(str(relative)))
         else:
@@ -74,6 +74,20 @@ def generate_input(data: Data):
             joiner = '", "'
             data.inputs.append(f'Files: "{joiner.join(globs)}" (relative to "{cwd}")')
             r = resolve_globs(cwd, globs)
+            full_set.update(r)
+
+    if args.input_dir is not None:
+        cwd = Path('.').resolve()
+        for input_dir in args.input_dir:
+            dir_path = Path(input_dir)
+            data.inputs.append(f'Directory (recursive): "{input_dir}"')
+            resolved_dir = dir_path if dir_path.is_absolute() else (cwd / dir_path)
+            if not resolved_dir.is_dir():
+                log.err(f'Input directory "{input_dir}" does not exist.')
+                raise SbomException('Invalid input')
+            r = {f for f in resolved_dir.glob('**/*') if f.is_file()}
+            if len(r) == 0:
+                log.wrn(f'Input directory "{input_dir}" is empty.')
             full_set.update(r)
 
     if args.input_list_file is not None:
