@@ -153,6 +153,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		ERR_CHK_MSG(ret, "Failed to get complete audio frame from RX queue");
 
 		if (likely(sw_codec_cfg.initialized && sw_codec_cfg.encoder.enabled)) {
+
 			audio_frame_out = net_buf_alloc(&audio_q_enc_pool, K_NO_WAIT);
 
 			if (unlikely(audio_frame_out == NULL)) {
@@ -176,7 +177,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			meta_out->bytes_per_location =
 				(meta_out->bitrate_bps * meta_out->data_len_us) / 8000000;
 			meta_out->interleaved = false;
-			meta_out->locations = sw_codec_cfg.encoder.audio_loc;
+			meta_out->locations = BT_AUDIO_LOCATION_MONO_AUDIO;
 
 			if (unlikely(test_tone_size)) {
 				/* Test tone takes over audio stream */
@@ -203,7 +204,6 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		} else {
 			LOG_INF_RATELIMIT("Encoder not initialized or enabled, data dropped");
 		}
-
 		net_buf_unref(audio_frame_in);
 
 		/* Print block usage - reduced overhead */
@@ -218,7 +218,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			net_buf_unref(audio_frame_out);
 		}
 
-		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
+			STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}
 }
 
@@ -342,7 +342,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 	}
 
 	if (IS_ENABLED(CONFIG_AUDIO_SOURCE_USB) && !audio_usb_is_mic_enabled()) {
-		LOG_INF_RATELIMIT("Microphone not enabled, dropping data");
+		LOG_DBG_RATELIMIT("Microphone not enabled, dropping data");
 		return 0;
 	}
 
