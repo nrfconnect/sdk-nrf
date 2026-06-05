@@ -19,4 +19,7 @@ config COMP_DATA_LAYOUT_ARRAY
 
 endchoice
 
+config PARTITION_MANAGER
+	default n
+
 source "share/sysbuild/Kconfig"
