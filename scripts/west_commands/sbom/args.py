@@ -54,6 +54,7 @@ class ArgsClass:
     # command arguments
     build_dir: 'list[list[str]]|None'
     input_files: 'list[list[str]]|None'
+    input_dir: 'list[str]|None'
     input_list_file: 'list[str]|None'
     license_detectors: 'list[str]'
     optional_license_detectors: 'set[str]'
@@ -100,6 +101,9 @@ def add_arguments(parser: argparse.ArgumentParser):
                              'You can start argument with the exclamation mark to exclude file '
                              'that were already found starting from the last "--input-files". '
                              'You can provide this option more than once.')
+    parser.add_argument('--input-dir', action='append',
+                        help='Input directory. All files inside the directory are added '
+                             'recursively. You can provide this option more than once.')
     parser.add_argument('--input-list-file', action='append',
                         help='Reads list of files from a file. Works the same as "--input-files". '
                              'with arguments from each line of the file.'
@@ -194,6 +198,7 @@ def init_args(allowed_detectors: dict):
     # Use default build directory if exists and there is no other input
     if (args.build_dir is None
             and (args.input_files is None or len(args.input_files) == 0)
+            and (args.input_dir is None or len(args.input_dir) == 0)
             and (args.input_list_file is None or len(args.input_list_file) == 0)):
         # Avoid circular import by importing lazily
         import importlib

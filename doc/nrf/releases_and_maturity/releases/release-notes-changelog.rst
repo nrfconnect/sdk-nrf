@@ -620,6 +620,8 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 * Added:
 
   * ``--package-download-format`` option to control the SPDX PackageDownloadLocation format.
+  * ``--input-dir`` option to the :ref:`west ncs-sbom <west_sbom>` command.
+    It recursively adds all files in the given directory to the report, equivalent to ``--input-files DIR/**/*``.
 
 * Updated:
 
