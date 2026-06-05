@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Workaround: For nrf54l15dk_nrf54l15_cpuapp_ns there is no default
+ * slot1_partition in Zephyr. However for nrf54l15dk_nrf54l15_cpuapp
+ * default dts this partition is available and it must be redefined.
+ * This cause that we must remove slot1_partition only for
+ * nrf54l15dk/nrf54l15/cpuapp target while compiling firmware for
+ * nrf54l15dk/nrf54l15/cpuapp/ns together with MCUboot.
+ */
+/delete-node/ &slot1_partition;
+
+#include <samples/matter/nrf54l15_cpuapp_tfm_base_partitions.dtsi>
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+};

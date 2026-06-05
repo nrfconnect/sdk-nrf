@@ -50,7 +50,6 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -59,7 +58,6 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -85,7 +83,6 @@ tests:
       - CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS=y
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -94,11 +91,29 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.template.tfm:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=tfm
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+  sample.matter.template.tfm.smp_dfu:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=tfm
+      - CONFIG_CHIP_DFU_OVER_BT_SMP=y
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
   sample.matter.template.nrf7002eb2.smp_dfu:
     sysbuild: true
     build_only: true
