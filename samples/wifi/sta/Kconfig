@@ -8,6 +8,12 @@ source "Kconfig.zephyr"
 
 menu "Nordic Sta sample"
 
+config SAMPLE_STA_LED_SUPPORT
+	bool "LED support"
+	default y
+	help
+	  Enable LED indication for Wi-Fi connection and disconnection events.
+
 config CONNECTION_IDLE_TIMEOUT
 	int "Time to be waited for a station to connect"
 	default 30
