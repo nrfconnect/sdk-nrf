@@ -23,7 +23,6 @@ static void ep_bound_callback(void *priv)
 
 static void ep_unbound_callback(void *priv)
 {
-	printk("IPC endpoint unbounded\n");
 	k_sem_give(&endpoint_unbound_sem);
 }
 
@@ -75,7 +74,7 @@ static void configure_ipc(struct ipc_ept *endpoint)
 	if (ret) {
 		printk("IPC timeout occurred while waiting for endpoint bound\n");
 	} else {
-		printk("Binding done\n");
+		printk("IPC endpoint bound\n");
 	}
 
 	k_msleep(10);
@@ -90,6 +89,7 @@ int main(void)
 
 	while (1) {
 		if (k_sem_take(&endpoint_unbound_sem, K_NO_WAIT) == 0) {
+			printk("Endpoint unbounded\n");
 			printk("Reconnecting\n");
 			configure_ipc(&test_endpoint);
 		}

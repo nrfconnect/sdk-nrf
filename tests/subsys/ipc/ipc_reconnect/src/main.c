@@ -35,12 +35,12 @@ static void prepare_test_data(uint8_t *test_data, size_t len)
 static void ep_bound_callback(void *priv)
 {
 	k_sem_give(&endpoint_bound_sem);
-	printk("IPC endpoint bound\n");
+
 }
 
 static void ep_unbound_callback(void *priv)
 {
-	printk("IPC endpoint unboun\n");
+
 }
 
 static void ep_recv_callback(const void *data, size_t len, void *priv)
@@ -87,7 +87,7 @@ static void configure_ipc(struct ipc_ept *endpoint)
 	if (ret) {
 		printk("IPC timeout occurred while waiting for endpoint bound\n");
 	} else {
-		printk("Binding done\n");
+		printk("IPC endpoint bound\n");
 	}
 
 	k_msleep(10);
