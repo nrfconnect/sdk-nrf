@@ -40,8 +40,8 @@ static uint32_t sDfuSyncMutexId;
 
 namespace
 {
-enum mgmt_cb_return UploadConfirmHandler(uint32_t, enum mgmt_cb_return, int32_t *rc, uint16_t *,
-					 bool *, void *data, size_t)
+enum mgmt_cb_return UploadConfirmHandler(uint32_t, enum mgmt_cb_return, int32_t *rc, uint16_t *, bool *, void *data,
+					 size_t)
 {
 	const img_mgmt_upload_check &imgData = *static_cast<img_mgmt_upload_check *>(data);
 	IgnoreUnusedVariable(imgData);
@@ -62,8 +62,7 @@ enum mgmt_cb_return UploadConfirmHandler(uint32_t, enum mgmt_cb_return, int32_t 
 	return MGMT_CB_OK;
 }
 
-enum mgmt_cb_return CommandHandler(uint32_t event, enum mgmt_cb_return, int32_t *, uint16_t *,
-				   bool *, void *, size_t)
+enum mgmt_cb_return CommandHandler(uint32_t event, enum mgmt_cb_return, int32_t *, uint16_t *, bool *, void *, size_t)
 {
 	if (event == MGMT_EVT_OP_CMD_RECV) {
 		ExternalFlashManager::GetInstance().DoAction(ExternalFlashManager::Action::WAKE_UP);
@@ -74,8 +73,7 @@ enum mgmt_cb_return CommandHandler(uint32_t event, enum mgmt_cb_return, int32_t 
 	return MGMT_CB_OK;
 }
 
-enum mgmt_cb_return DfuStoppedHandler(uint32_t, enum mgmt_cb_return, int32_t *, uint16_t *,
-				      bool *, void *, size_t)
+enum mgmt_cb_return DfuStoppedHandler(uint32_t, enum mgmt_cb_return, int32_t *, uint16_t *, bool *, void *, size_t)
 {
 	DFUSync::GetInstance().Free(sDfuSyncMutexId);
 
@@ -138,7 +136,12 @@ void DFUOverSMP::ConfirmNewImage()
 {
 	/* Check if the image is run in the REVERT mode and eventually */
 	/* confirm it to prevent reverting on the next boot. */
-	VerifyOrReturn(mcuboot_swap_type() == BOOT_SWAP_TYPE_REVERT);
+	VerifyOrReturn(mcuboot_swap_type() == BOOT_SWAP_TYPE_REVERT
+#if CONFIG_BUILD_WITH_TFM
+		       /* While using TF-M, the swap type is NONE. */
+		       || mcuboot_swap_type() == BOOT_SWAP_TYPE_NONE
+#endif
+	);
 
 	if (boot_write_img_confirmed()) {
 		ChipLogError(SoftwareUpdate, "Failed to confirm firmware image, it will be reverted on the next boot");

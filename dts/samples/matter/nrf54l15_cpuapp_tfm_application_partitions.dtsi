@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/matter/nrf54l15_cpuapp_tfm_base_partitions.dtsi>
+
 /delete-node/ &sram0_s;
 /delete-node/ &sram0_ns;
+
+/* Adjust SRAM for memory-optimized TF-M */
 
 &cpuapp_sram {
 	sram0_s: image_s@0 {
@@ -23,56 +27,37 @@
 	};
 };
 
-/delete-node/ &slot0_partition;
-/delete-node/ &storage_partition;
+/* Cleanup the default partitioning for Application and TF-M */
+
 /delete-node/ &slot0_ns_partition;
 /delete-node/ &tfm_its_partition;
 /delete-node/ &tfm_otp_partition;
 /delete-node/ &tfm_ps_partition;
 
+/* Specify secure and nonsecure partitions within the slot0_partition which is
+ * defined in the tfm_base_partitions file.
+ */
+
+&slot0_partition {
+	slot0_s_partition: partition@0 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-secure";
+		reg = <0x0 DT_SIZE_K(128)>;
+	};
+
+	slot0_ns_partition: partition@20000 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-nonsecure";
+		reg = <0x00020000 DT_SIZE_K(1268)>;
+	};
+};
+
 &cpuapp_rram {
 	partitions {
-		ranges;
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		boot_partition: partition@0 {
-			compatible = "zephyr,mapped-partition";
-			label = "mcuboot";
-			reg = <0x0 DT_SIZE_K(52)>;
-		};
-
-		slot0_partition: partition@d000 {
-			compatible = "zephyr,mapped-partition";
-			label = "image-0";
-			reg = <0xd000 DT_SIZE_K(1396)>;
-			ranges = <0x0 0xd000 DT_SIZE_K(1396)>;
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			slot0_s_partition: partition@0 {
-				compatible = "zephyr,mapped-partition";
-				label = "image-0-secure";
-				reg = <0x0 DT_SIZE_K(128)>;
-			};
-
-			slot0_ns_partition: partition@20000 {
-				compatible = "zephyr,mapped-partition";
-				label = "image-0-nonsecure";
-				reg = <0x00020000 DT_SIZE_K(1268)>;
-			};
-		};
-
 		factory_data_partition: partition@16a000 {
 			compatible = "zephyr,mapped-partition";
 			label = "factory-data";
 			reg = <0x0016a000 DT_SIZE_K(4)>;
-		};
-
-		storage_partition: partition@16b000 {
-			compatible = "zephyr,mapped-partition";
-			label = "storage";
-			reg = <0x0016b000 DT_SIZE_K(40)>;
 		};
 
 		tfm_storage_partition: partition@175000 {
@@ -100,21 +85,6 @@
 				label = "tfm-ps";
 				reg = <0x4000 DT_SIZE_K(16)>;
 			};
-		};
-	};
-};
-
-&mx25r64 {
-	status = "okay";
-
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		slot1_partition: partition@0 {
-			label = "image-1";
-			reg = <0x00000000 DT_SIZE_K(1396)>;
 		};
 	};
 };

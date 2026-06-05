@@ -13,7 +13,6 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -21,10 +20,18 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.manufacturer_specific.tfm:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=tfm
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
   sample.matter.manufacturer_specific.nrf7002eb2.debug:
     sysbuild: true
     build_only: true
