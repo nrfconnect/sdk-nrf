@@ -139,19 +139,3 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
-
-- scenarios:
-    - sample.debug.memfault
-    - sample.debug.memfault.etb
-  platforms:
-    - nrf9160dk@0.14.0/nrf9160/ns
-    - nrf9161dk@0.9.0/nrf9161/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39678"
-
-- scenarios:
-    - sample.debug.memfault
-    - sample.debug.memfault.etb
-    - sample.debug.memfault.modem_trace_to_memfault
-  platforms:
-    - nrf9151dk/nrf9151/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39678"
