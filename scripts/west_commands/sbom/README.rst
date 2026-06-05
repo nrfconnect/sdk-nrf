@@ -205,6 +205,23 @@ You can also mix them, for example, to generate a report for the application and
 
      --input-files '**/*.c' '!**/main.c'
 
+* Provide an input directory whose files are all analyzed recursively:
+
+  .. parsed-literal::
+     :class: highlight
+
+     --input-dir *directory*
+
+  This is equivalent to ``--input-files`` with the ``directory/**/*`` glob.
+  All files inside the directory and its subdirectories are added.
+  You can use this option more than once.
+
+  For example, to analyze all files under an absolute path:
+
+  .. code-block:: bash
+
+     --input-dir /nordicsemi/somedir
+
 * Read a list of input files from a file:
 
   .. parsed-literal::
