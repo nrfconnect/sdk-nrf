@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n if SOC_SERIES_NRF91
+
 if SOC_SERIES_NRF54L
 
 config MCUBOOT_GENERATE_DEFAULT_KEY_FILE
