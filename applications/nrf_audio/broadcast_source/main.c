@@ -141,12 +141,12 @@ static void button_msg_sub_thread(void)
 		case BUTTON_PLAY_PAUSE:
 			if (strm_state == STATE_STREAMING) {
 				ret = broadcast_source_stop(0);
-				if (ret) {
+				if (ret != 0) {
 					LOG_WRN("Failed to stop broadcaster: %d", ret);
 				}
 			} else if (strm_state == STATE_PAUSED) {
 				ret = broadcast_source_start(0, ext_adv);
-				if (ret) {
+				if (ret != 0) {
 					LOG_WRN("Failed to start broadcaster: %d", ret);
 				}
 			} else {
@@ -163,7 +163,7 @@ static void button_msg_sub_thread(void)
 				}
 
 				ret = audio_system_encode_test_tone_step();
-				if (ret) {
+				if (ret != 0) {
 					LOG_WRN("Failed to play test tone, ret: %d", ret);
 				}
 
@@ -259,7 +259,7 @@ static int zbus_subscribers_create(void)
 		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(button_msg_sub_thread_id, "Msg_sub_btn");
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to create button_msg thread");
 		return ret;
 	}
@@ -269,13 +269,13 @@ static int zbus_subscribers_create(void)
 		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "Msg_sub_LE_Audio");
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to create le_audio_msg thread");
 		return ret;
 	}
 
 	ret = zbus_chan_add_obs(&sdu_ref_chan, &sdu_ref_msg_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to add timestamp listener");
 		return ret;
 	}
@@ -305,7 +305,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		ext_adv = msg->ext_adv;
 
 		ret = broadcast_source_start(msg->index, ext_adv);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Failed to start broadcaster: %d", ret);
 		}
 
@@ -333,19 +333,19 @@ static int zbus_link_producers_observers(void)
 	}
 
 	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to add button sub");
 		return ret;
 	}
 
 	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to add le_audio sub");
 		return ret;
 	}
 
 	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to add bt_mgmt listener");
 		return ret;
 	}
@@ -404,7 +404,7 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 
 	ret = bt_mgmt_manufacturer_uuid_populate(ext_adv_data->uuid_buf,
 						 CONFIG_BT_DEVICE_MANUFACTURER_ID);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to add adv data with manufacturer ID: %d", ret);
 		return ret;
 	}
@@ -581,9 +581,9 @@ int main(void)
 	ret = audio_system_init();
 	ERR_CHK(ret);
 
-	ret = audio_system_encoder_num_ch_set(BT_AUDIO_LOCATION_FRONT_LEFT |
-					      BT_AUDIO_LOCATION_FRONT_RIGHT);
-	ERR_CHK(ret);
+	uint32_t locations = BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
+
+	audio_system_encoder_num_ch_set(locations, POPCOUNT(locations));
 
 	ret = zbus_subscribers_create();
 	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
