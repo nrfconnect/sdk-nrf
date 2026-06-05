@@ -4,14 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "../../../partitions/thingy91x_nrf5340_cpuapp_memory_map.dtsi"
+
 / {
 	chosen {
 		zephyr,code-partition = &boot_partition;
-	};
-};
-
-&zephyr_udc0 {
-	cdc_acm_uart0: cdc_acm_uart0 {
-		compatible = "zephyr,cdc-acm-uart";
 	};
 };
