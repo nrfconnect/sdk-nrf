@@ -1750,11 +1750,13 @@
 .. _`Google Home integration with Matter`: https://developers.home.google.com/matter
 .. _`Works with Google Home`: https://developers.home.google.com/matter/certification#wwgh_certification
 
-.. ### Source: ubuntu.com
+.. ### Source: ubuntu.com and debian.org
 
 .. _`Linux - Ubuntu 24.04 LTS`: https://releases.ubuntu.com/24.04/
 .. _`Linux - Ubuntu 22.04 LTS`: https://releases.ubuntu.com/22.04/
 .. _`Linux - Ubuntu 20.04 LTS`: https://releases.ubuntu.com/20.04/
+
+.. _`Linux - Debian 12`: https://www.debian.org/releases/oldstable/
 
 .. ### Source: bugs.launchpad.net
 
