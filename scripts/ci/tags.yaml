@@ -1356,6 +1356,10 @@ ci_tests_benchmarks_early_logging:
     - zephyr/drivers/serial/
     - nrf/tests/benchmark/early_logging/
 
+ci_tests_benchmarks_memory:
+  files:
+    - nrf/tests/benchmarks/memory_access
+
 ci_tests_drivers_hpf:
   files:
     - nrf/applications/hpf/
