@@ -483,7 +483,10 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* Added:
+
+  * ``--input-dir`` option to the :ref:`west ncs-sbom <west_sbom>` command.
+  It recursively adds all files in the given directory to the report, equivalent to ``--input-files DIR/**/*``
 
 Integrations
 ============
