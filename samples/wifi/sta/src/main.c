@@ -21,7 +21,6 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
-#include <zephyr/net/ethernet_mgmt.h>
 
 #ifdef CONFIG_WIFI_READY_LIB
 #include <net/wifi_ready.h>
@@ -40,9 +39,12 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 
 #define WIFI_SHELL_MODULE "wifi"
 
+#ifdef CONFIG_MAC_CONFIG_SUPPORT
+#include <zephyr/net/ethernet_mgmt.h>
 /* DTS node for the Wi-Fi interface - MAC address from local-mac-address property */
 #define WIFI_NODE DT_CHOSEN(zephyr_wifi)
 static const uint8_t wifi_mac_addr[6] = DT_PROP_OR(WIFI_NODE, local_mac_address, {0});
+#endif
 
 #define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT |		\
 				NET_EVENT_WIFI_DISCONNECT_RESULT)
@@ -231,6 +233,7 @@ int bytes_from_str(const char *str, uint8_t *bytes, size_t bytes_len)
 	return 0;
 }
 
+#ifdef CONFIG_MAC_CONFIG_SUPPORT
 static bool is_mac_addr_set(struct net_if *iface)
 {
 	struct net_linkaddr *linkaddr = net_if_get_link_addr(iface);
@@ -244,6 +247,7 @@ static bool is_mac_addr_set(struct net_if *iface)
 
 	return net_eth_is_addr_valid(&wifi_addr);
 }
+#endif /* CONFIG_MAC_CONFIG_SUPPORT */
 
 int start_app(void)
 {
@@ -281,6 +285,7 @@ int start_app(void)
 		CONFIG_NET_CONFIG_MY_IPV4_NETMASK,
 		CONFIG_NET_CONFIG_MY_IPV4_GW);
 
+#ifdef CONFIG_MAC_CONFIG_SUPPORT
 	/* Set MAC from DTS if interface has no valid MAC and DTS provides one */
 	if (!is_mac_addr_set(net_if_get_default())) {
 		if (!net_eth_is_addr_valid((struct net_eth_addr *)wifi_mac_addr)) {
@@ -353,6 +358,7 @@ int start_app(void)
 							net_if_get_link_addr(iface)->addr,
 							net_if_get_link_addr(iface)->len));
 	}
+#endif /* CONFIG_MAC_CONFIG_SUPPORT */
 
 	while (1) {
 #ifdef CONFIG_WIFI_READY_LIB
