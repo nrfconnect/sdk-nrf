@@ -11,7 +11,7 @@
 #include <zephyr/bluetooth/l2cap.h>
 #include <zephyr/bluetooth/gatt.h>
 
-#include <dult.h>
+#include <dult/dult.h>
 #include "dult_battery.h"
 #include "dult_bt_anos.h"
 #include "dult_user.h"
