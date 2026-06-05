@@ -294,7 +294,7 @@ static void create_aead_ccmheader(cracen_aead_operation_t *operation,
 		if (operation->ad_length < 0xFF00) {
 			cracen_writebe(&header[16], operation->ad_length, 2);
 			*header_length += 2;
-		} else if (operation->ad_length <= 0xFFFFFFFF) {
+		} else if (operation->ad_length <= UINT32_MAX) {
 			header[16] = 0xFF;
 			header[17] = 0xFE;
 			cracen_writebe(&header[18], operation->ad_length, 4);
