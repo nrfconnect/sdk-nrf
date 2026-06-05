@@ -66,10 +66,6 @@ This mobile application is also used to configure key bindings, and publication 
 
       After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button 0** on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs, while **Button 1** can be used to store and restore scenes on the network nodes.
 
-      .. note::
-        When running this sample on the :zephyr:board:`nrf52840dongle`, the scene selection functionality will not be available as the device only has one button.
-        The single button of the dongle will be used for dimming and the on/off functionality as described for **Button 0** in this documentation.
-
 Provisioning
 ============
 
