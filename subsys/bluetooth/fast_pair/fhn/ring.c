@@ -9,7 +9,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fp_fhn_ring, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
-#include <dult.h>
+#include <dult/dult.h>
 #include <bluetooth/fast_pair/fast_pair.h>
 
 #include "fp_activation.h"

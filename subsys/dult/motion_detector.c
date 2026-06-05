@@ -10,7 +10,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/random/random.h>
 
-#include "dult.h"
+#include <dult/dult.h>
 #include "dult_user.h"
 #include "dult_motion_detector.h"
 #include "dult_near_owner_state.h"

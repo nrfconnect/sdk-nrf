@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <dult.h>
+#include <dult/dult.h>
 
 /**
  * @defgroup fp_fhn_dult_integration Fast Pair FHN DULT integration
