@@ -12,3 +12,4 @@ project(nrf_wifi_sta)
 target_include_directories(app PUBLIC ${ZEPHYR_BASE}/subsys/net/ip)
 
 target_sources(app PRIVATE src/main.c)
+target_sources_ifdef(CONFIG_LED_SUPPORT app PRIVATE src/led.c)
