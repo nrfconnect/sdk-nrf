@@ -26,6 +26,23 @@
 /delete-node/ &tfm_otp_partition;
 /delete-node/ &storage_partition;
 
+/* Resolve bl_storage in the forwarded TF-M secure image. */
+/ {
+	soc {
+		uicr_bl: uicr@ff8000 {
+			compatible = "nordic,nrf-uicr";
+			reg = <0xff8000 0x1000>;
+			ranges = <0x0 0xff8000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			bl_storage: uicr@100 {
+				reg = <0x100 0x280>;
+			};
+		};
+	};
+};
+
 &flash0 {
 	partitions {
 		slot0_s_partition: partition@0 {
