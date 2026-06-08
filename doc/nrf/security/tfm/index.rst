@@ -35,6 +35,7 @@ For more information about TF-M, see the `Trusted Firmware-M documentation <TF-M
    tfm_architecture
    processing_environments
    tfm_building
+   tfm_partitioning
    tfm_services
    tfm_provisioning
    tfm_logging
