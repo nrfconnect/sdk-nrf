@@ -144,7 +144,7 @@ config SB_DISABLE_NEXT_W
 	  NSIB disables writes on next stage in bootloading chain.
 	  It uses RRAMC's region 4 and is limited to 31KB for nRF54L15, nRF54L10 and nRF54L05
 	  and to 127KB for nRF54LV10a, nRF54LC10a and nRF54LM20 (A/B).
-	  On nRF71 it uses MRAMC's region 4.
+	  On nRF71, it uses MRAMC's region 4 and REGION 5 chaining for up to 62KB per active slot.
 
 config SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
 	bool "HW monotonic version counter rollback protection (informative only, do not change)"

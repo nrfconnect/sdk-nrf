@@ -58,9 +58,12 @@
 #if defined(CONFIG_SOC_SERIES_NRF71)
 #include <hal/nrf_mramc.h>
 #define NVM_REGION_FOR_NEXT_W 4
+#define NVM_REGION_FOR_NEXT_W_SECOND 5
 #define NVM_REGION_SIZE_UNIT 0x400
 #define NVM_REGION_ADDRESS_RESOLUTION 0x400
-#define MAX_NEXT_W_SIZE (31 * 1024)
+/* SIZE field is 5 bits: 31 KiB per region, chained REGION[4]+[5] for up to 62 KiB. */
+#define NVM_REGION_MAX_SIZE_KB 31
+#define MAX_NEXT_W_SIZE (2 * NVM_REGION_MAX_SIZE_KB * 1024)
 #else
 #include <hal/nrf_rramc.h>
 #define NVM_REGION_FOR_NEXT_W 4
@@ -111,6 +114,35 @@ BUILD_ASSERT((S1_IMAGE_SIZE % NVM_REGION_SIZE_UNIT) == 0,
 
 BUILD_ASSERT(S1_IMAGE_SIZE <= MAX_NEXT_W_SIZE, "Size of S1 partition is too big for protection");
 
+#if defined(CONFIG_SOC_SERIES_NRF71)
+static int lock_mramc_region(uint8_t region, uint32_t address, uint32_t size_kb)
+{
+	nrf_mramc_region_config_t config = {
+		.read = true,
+		.write = false,
+		.execute = true,
+		.secure = true,
+		.write_once = false,
+		/* The next stage can still impose stricter protection by clearing R/X. */
+		.lock = true,
+		.size = size_kb,
+	};
+
+	nrf_mramc_region_address_set(NRF_MRAMC, region, address);
+	nrf_mramc_region_config_set(NRF_MRAMC, region, &config);
+	nrf_mramc_region_config_get(NRF_MRAMC, region, &config);
+
+	if (config.write) {
+		return -ENOSPC;
+	}
+	if (config.size != size_kb) {
+		return -ENOSPC;
+	}
+
+	return 0;
+}
+#endif
+
 static int disable_next_w(const uint32_t address)
 {
 	uint32_t region_size_kb = 0;
@@ -124,25 +156,26 @@ static int disable_next_w(const uint32_t address)
 	}
 
 #if defined(CONFIG_SOC_SERIES_NRF71)
-	nrf_mramc_region_config_t config = {
-		.read = true,
-		.write = false,
-		.execute = true,
-		.secure = true,
-		.write_once = false,
-		/* The next stage can still impose stricter protection by clearing R/X. */
-		.lock = true,
-		.size = region_size_kb,
-	};
+	/* REGION[4] protects the first (up to) 31 KiB of the active slot. */
+	uint32_t region4_size_kb = MIN(region_size_kb, NVM_REGION_MAX_SIZE_KB);
+	int err = lock_mramc_region(NVM_REGION_FOR_NEXT_W, address, region4_size_kb);
 
-	nrf_mramc_region_address_set(NRF_MRAMC, NVM_REGION_FOR_NEXT_W, address);
-	nrf_mramc_region_config_set(NRF_MRAMC, NVM_REGION_FOR_NEXT_W, &config);
-	nrf_mramc_region_config_get(NRF_MRAMC, NVM_REGION_FOR_NEXT_W, &config);
-	if (config.write) {
-		return -ENOSPC;
+	if (err) {
+		return err;
 	}
-	if (config.size != region_size_kb) {
-		return -ENOSPC;
+
+	/* When the slot is larger than one region, chain REGION[5] for the rest.
+	 * BUILD_ASSERT guarantees the remainder never exceeds a single region.
+	 */
+	if (region_size_kb > NVM_REGION_MAX_SIZE_KB) {
+		uint32_t region5_address = address + NVM_REGION_MAX_SIZE_KB * 1024;
+		uint32_t region5_size_kb = region_size_kb - NVM_REGION_MAX_SIZE_KB;
+
+		err = lock_mramc_region(NVM_REGION_FOR_NEXT_W_SECOND,
+					region5_address, region5_size_kb);
+		if (err) {
+			return err;
+		}
 	}
 #else
 	nrf_rramc_region_config_t config = {
