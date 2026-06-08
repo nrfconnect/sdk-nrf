@@ -1138,7 +1138,7 @@ static int hpf_mspi_init(const struct device *dev)
 	return ret;
 }
 
-static const struct mspi_driver_api drv_api = {
+static DEVICE_API(mspi, drv_api) = {
 	.config = api_config,
 	.dev_config = api_dev_config,
 	.get_channel_status = api_get_channel_status,
