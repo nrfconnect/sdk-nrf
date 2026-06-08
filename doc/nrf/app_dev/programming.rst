@@ -29,7 +29,8 @@ Selecting west runner
 
 Starting with the |NCS| v3.0.0, all Nordic Semiconductor :ref:`boards <app_boards>` are using the `nRF Util`_ as the default runner for the ``west flash`` command.
 This change ensures that the programming process is consistent across all boards.
-See the `build system section in the v3.0.0 migration notes <migration_notes_3.0_recommended_>`_ for more information.
+
+See the :ref:`build system section in the v3.0.0 migration notes <migration_3.0_recommended>` for more information.
 
 .. note::
 

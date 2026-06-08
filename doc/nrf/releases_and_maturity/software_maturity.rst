@@ -88,6 +88,8 @@ The deprecated API will be removed in one of future releases, no earlier than tw
 The experimental API can be removed without deprecation notification.
 Following :ref:`Zephyr's guidelines for API lifecycle <zephyr:api_lifecycle>`, the API documentation informs about the deprecation and attempts to use a deprecated API at build time will log a warning to the console.
 
+For information about LTS-specific handling of experimental and deprecated features, see :ref:`lts_releases`.
+
 .. _software_maturity_application:
 
 Application support

@@ -4,6 +4,10 @@
 nRF Security
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF Security subsystem (``nrf_security``) integrates cryptographic services for SoCs from Nordic Semiconductor.
 
 Overview
