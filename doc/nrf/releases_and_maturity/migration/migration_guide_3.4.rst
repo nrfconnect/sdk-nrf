@@ -26,10 +26,126 @@ Required changes
 
 The following changes are mandatory to make your application work in the same way as in previous releases.
 
+Partition Manager deprecation
+=============================
+
+.. toggle::
+
+   The :ref:`partition_manager` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
+
+   This functionality has been deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
+   It is recommended that all new designs using Nordic devices are built with DTS instead of Partition Manager.
+   Partition Manager will be removed from the |NCS| main branch by the end of 2026.
+
+   Samples, tests, and applications that previously relied on Partition Manager must now provide devicetree overlays that define the required flash and RAM partitions.
+   For cellular use cases, you can reuse the partition layouts from :file:`nrf/dts/samples/cellular/*.dtsi` by including the appropriate file in your board overlay.
+
+   For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`migration_partitions` page.
+
+Security
+========
+
+Removal of legacy PSA Crypto API
+--------------------------------
+
+.. toggle::
+
+   The Mbed TLS module was updated to v4.1.0 (from v3.6.6).
+
+   This change removed support for legacy, deprecated ``mbedcrypto`` APIs and related tests (prefixed with ``mbedtls_``).
+   As a consequence, the :ref:`nrf_security` subsystem was updated: Kconfig options related to Mbed TLS were rearranged and the outdated Kconfig options were removed.
+   The subsystem now uses the Mbed TLS integration from Zephyr as-is :kconfig:option:`CONFIG_MBEDTLS_BUILTIN`) while replacing upstream TF-PSA-Crypto with Oberon PSA Crypto (:kconfig:option:`CONFIG_TF_PSA_CRYPTO_CUSTOM`).
+
+   From this update onwards:
+
+   * Configure cryptographic features using :ref:`psa_crypto_support` and :ref:`ug_crypto_supported_features` instead of the legacy implementation.
+   * Enable :kconfig:option:`CONFIG_MBEDTLS` only if you use TLS or X.509.
+   * For cryptographic operations, enable only :kconfig:option:`CONFIG_PSA_CRYPTO`.
+
+   For an overview of the changes brought by this update in Mbed TLS and Zephyr, see the following pages:
+
+    * The Mbed TLS sections of the Zephyr v4.4 :ref:`release notes <zephyr_4.4>` and :ref:`migration guide <migration_4.4>`.
+    * Official Mbed TLS' `TF-PSA-Crypto migration guide <Migrating from Mbed TLS 3.x to TF-PSA-Crypto 1.0_>`_ and `Transitioning to the PSA API document <Transitioning to the PSA API_>`_.
+    * The release notes from upstream Mbed TLS:
+
+       * `Mbed TLS 4.0.0 release notes`_
+       * `TF-PSA-Crypto 1.0.0 release notes`_
+       * `Mbed TLS 4.1.0 release notes`_
+       * `TF-PSA-Crypto 1.1.0 release notes`_
+
+Build and configuration system
+==============================
+
+HAL global define deprecation
+-----------------------------
+
+.. toggle::
+
+   Global HAL defines are deprecated.
+   Do not reference the following global defines in code:
+
+   * ``NRF51``
+   * ``NRF51422_XXAA``
+   * ``NRF51422_XXAB``
+   * ``NRF51422_XXAC``
+   * ``NRF52805_XXAA``
+   * ``NRF52810_XXAA``
+   * ``NRF52811_XXAA``
+   * ``NRF52820_XXAA``
+   * ``NRF52832_XXAA``
+   * ``NRF52833_XXAA``
+   * ``NRF52840_XXAA``
+   * ``NRF5340_XXAA_APPLICATION``
+   * ``NRF5340_XXAA_NETWORK``
+   * ``NRF54H20_XXAA``
+   * ``NRF54L05_XXAA``
+   * ``DEVELOP_IN_NRF54L15``
+   * ``NRF54L10_XXAA``
+   * ``NRF54L15_XXAA``
+   * ``DEVELOP_IN_NRF54LM20B``
+   * ``NRF54LM20A_XXAA``
+   * ``NRF7120_ENGA_XXAA``
+   * ``NRF54LM20B_XXAA``
+   * ``NRF_FLPR``
+   * ``NRF9120_XXAA``
+   * ``NRF9160_XXAA``
+   * ``NRF_APPLICATION``
+   * ``NRF_RADIOCORE``
+   * ``NRF_PPR``
+   * ``ENABLE_APPROTECT``
+   * ``ENABLE_APPROTECT_USER_HANDLING``
+   * ``ENABLE_AUTHENTICATED_APPROTECT``
+   * ``ENABLE_SECURE_APPROTECT``
+   * ``ENABLE_SECUREAPPROTECT``
+   * ``ENABLE_SECURE_APPROTECT_USER_HANDLING``
+   * ``ENABLE_AUTHENTICATED_SECUREAPPROTECT``
+   * ``NRF_SKIP_FICR_NS_COPY_TO_RAM``
+   * ``NRF_CONFIG_CPU_FREQ_MHZ``
+   * ``NRF_SKIP_CLOCK_CONFIGURATION``
+   * ``NRF_DISABLE_FICR_TRIMCNF``
+   * ``NRF_SKIP_TAMPC_SETUP``
+   * ``NRF_SKIP_GLITCHDETECTOR_DISABLE``
+   * ``NRF54L_CONFIGURATION_56_ENABLE``
+
+   Use the corresponding Kconfig symbols instead.
+
 Samples and applications
 ========================
 
 This section describes the changes related to samples and applications.
+
+.. _nrf_audio_migration_3.4:
+
+nRF Audio (formerly nRF5340 Audio)
+----------------------------------
+
+.. toggle::
+
+   * The :file:`buildprog.py` script no longer supports the ``-u`` (user name) option.
+     Use the ``-cn`` (custom name) option instead.
+     The custom name is now used for both unicast and broadcast.
+     Changing this parameter requires a pristine build.
+     The option is intended as a convenience argument; set names through configuration options for persistent configuration.
 
 .. _matter_migration_3.4:
 
@@ -58,6 +174,15 @@ Matter
      You can enable the Thread Synchronized Sleepy End Device (SSED) device type as an optional feature.
      To enable the Thread SSED support, add the ``-DEXTRA_CONF_FILE=ssed.conf`` extra argument to the build command.
 
+Wi-Fi®
+------
+
+.. toggle::
+
+   * The Wi-Fi Enterprise snippet has changed.
+     Use the |NCS| ``nordic-wifi-enterprise`` snippet instead of Zephyr's ``wifi-enterprise`` snippet for Wi-Fi Enterprise builds.
+     The |NCS| snippet is available in :file:`snippets/nordic-wifi-enterprise`.
+
 .. _migration_3.4_recommended:
 
 Recommended changes
@@ -68,17 +193,19 @@ The following changes are recommended for your application to work optimally aft
 Build and configuration system
 ==============================
 
-* The Kconfig options :kconfig:option:`CONFIG_SRAM_SIZE` and :kconfig:option:`CONFIG_SRAM_BASE_ADDRESS` have been deprecated.
-  Use the devicetree ``zephyr.sram`` chosen node to specify which RAM node is used.
-  If you adjust either option manually, :kconfig:option:`CONFIG_SRAM_DEPRECATED_KCONFIG_SET` is set to indicate the deprecation.
-  However, applications will continue to build and work with this notice.
-  For the majority of cases, you should not change these values as they default to the values of the ``zephyr,sram`` chosen node.
-  If the code references these Kconfig options, you should update them.
-  No deprecation warning will be emitted when these values are referenced due to the Kconfig define generation process.
+.. toggle::
 
-  .. note::
-     This is listed in the recommended changes for this |NCS| release.
-     In the next |NCS| release, this will be a required change.
+   * The Kconfig options :kconfig:option:`CONFIG_SRAM_SIZE` and :kconfig:option:`CONFIG_SRAM_BASE_ADDRESS` have been deprecated.
+     Use the devicetree ``zephyr.sram`` chosen node to specify which RAM node is used.
+     If you adjust either option manually, :kconfig:option:`CONFIG_SRAM_DEPRECATED_KCONFIG_SET` is set to indicate the deprecation.
+     However, applications will continue to build and work, and a deprecation notice will be shown.
+     For the majority of cases, you should not change these values as they default to the values of the ``zephyr,sram`` chosen node.
+     If the code references these Kconfig options, you should update them.
+     No deprecation warning is emitted when these values are referenced, because of how Kconfig defines are generated.
+
+     .. note::
+        This is listed in the recommended changes for this |NCS| release.
+        In the next |NCS| release, this will be a required change.
 
 Nordic SoC platform symbols (Haltium / Lumos)
 ---------------------------------------------
@@ -147,6 +274,69 @@ Libraries
 =========
 
 This section describes the changes related to libraries.
+
+.. _migration_3.4_google_fast_pair:
+
+Google Fast Pair
+----------------
+
+.. toggle::
+
+   For applications and samples using the :ref:`bt_fast_pair_readme` library:
+
+   * The devicetree (DTS) partition overlays of the Fast Pair samples and Fast Pair-enabled board targets have been migrated from the legacy ``fixed-partitions`` compatible string to the new ``zephyr,mapped-partition`` compatible string introduced in Zephyr.
+     The new layout matches the output of the Partition Manager-to-DTS helper script (:file:`scripts/pm_to_dts.py`) and aligns the Fast Pair sample overlays with the partition binding convention adopted by the rest of the Zephyr SoC devicetree.
+
+     If your application uses a Fast Pair DTS partition overlay derived from earlier |NCS| releases, update each :file:`<board_target>.overlay` file as follows:
+
+     * On the ``partitions`` grouping node, replace the ``compatible = "fixed-partitions";`` property with an empty ``ranges;`` property.
+     * On every child partition node (for example, ``boot_partition``, ``slot0_partition``, ``slot1_partition``, ``bt_fast_pair_partition``, and ``storage_partition``), add the ``compatible = "zephyr,mapped-partition";`` property.
+
+     For example, replace the following overlay snippet:
+
+     .. code-block:: devicetree
+
+        partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            slot0_partition: partition@0 {
+                label = "image-0";
+                reg = <0x0 DT_SIZE_K(996)>;
+            };
+        };
+
+     With the following:
+
+     .. code-block:: devicetree
+
+        partitions {
+            ranges;
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            slot0_partition: partition@0 {
+                compatible = "zephyr,mapped-partition";
+                label = "image-0";
+                reg = <0x0 DT_SIZE_K(996)>;
+            };
+        };
+
+     Refer to the partition overlays under the :file:`nrf/samples/bluetooth/fast_pair/locator_tag/` and :file:`nrf/samples/bluetooth/fast_pair/input_device/` sample directories for complete examples of the updated layout.
+
+     .. important::
+        This migration is mandatory on nRF53 Series board targets.
+        Recent Zephyr updates added a ``ranges`` translation to the ``flash1`` SoC node (network core flash), so ``DT_REG_ADDR()`` on partition nodes now returns their bus address rather than their in-flash offset.
+        With the legacy ``fixed-partitions`` compatible, the Zephyr linker still uses ``CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET`` to place the network core code partition, which double-counts the ``flash1`` base.
+        As a result, the network core image is linked at an address outside the valid flash range and ``nrfutil`` rejects programming with the following message:
+
+        .. code-block:: console
+
+           Device error: Address range 0x02008800..0x020262ac is outside the memory ranges defined for programming through the Network core (Generic)
+
+        Switching to ``zephyr,mapped-partition`` makes the linker derive the network core code partition's load address directly from ``DT_REG_ADDR(zephyr_code_partition)``, which yields the correct bus address and avoids the double-counting.
+        On the application core, where ``flash0`` uses identity ``ranges``, both compatibles produce the same addresses, but updating the overlays is still recommended for consistency.
 
 nRF Cloud library
 -----------------

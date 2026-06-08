@@ -10,7 +10,7 @@ Migrating to the current hardware model
    :depth: 2
 
 .. note::
-   This migration guide is deprecated and will be removed in the future |NCS| release.
+   This document is deprecated and will be removed in the future |NCS| release.
 
 The *hardware model* refers to how SoCs and boards are named, defined, and used.
 Starting with |NCS| version 2.7.0, this model has been completely updated.
