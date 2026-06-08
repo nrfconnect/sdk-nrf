@@ -96,17 +96,10 @@ jobs:
       - name: Build documentation
         working-directory: ncs/nrf
         run: |
-          SPHINXOPTS_EXTRA="-q"
           if [[ "${{ github.event_name }}" == "push" ]]; then
             BUILD_CONF="-DDTS_BINDINGS=ON -DHW_FEATURES=ON"
           fi
-
-          # Enable the Kapa.ai widget for "latest" builds only (push to main)
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            SPHINXOPTS_EXTRA="${SPHINXOPTS_EXTRA} -t kapa"
-          fi
-
-          cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="${SPHINXOPTS_EXTRA}" ${BUILD_CONF}
+          cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-q" ${BUILD_CONF}
           ninja -C doc/_build
 
       - name: Check version
