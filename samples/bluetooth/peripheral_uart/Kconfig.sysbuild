@@ -7,6 +7,9 @@
 config PARTITION_MANAGER
 	default n
 
+config MERGED_HEX_FILES
+	default y if !SOC_SERIES_NRF54H
+
 config NRF_DEFAULT_IPC_RADIO
 	default y
 
