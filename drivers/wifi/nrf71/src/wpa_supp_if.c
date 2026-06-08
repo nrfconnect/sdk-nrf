@@ -1001,7 +1001,7 @@ static uint32_t spec_key_idx_to_crypto(uint32_t spec_key_idx)
 static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *key, size_t key_len,
 				     const unsigned char *addr, int key_idx, uint32_t db_id)
 {
-	wifi_keys_key_type_t type;
+	wifi_keys_type_t type;
 	psa_key_attributes_t attr;
 	psa_key_id_t key_id;
 	psa_status_t status;
@@ -1009,8 +1009,6 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 	uint32_t crypto_key_index;
 	bool is_broadcast = false;
 	unsigned char key_buf[32] = {0};
-	const unsigned char *key_for_import = key;
-	size_t import_len = 32;
 	size_t max_size;
 
 	/* Determine if this is a broadcast/group key or unicast/pairwise key */
@@ -1032,13 +1030,12 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 		return -EINVAL;
 	}
 
-	/* Pass crypto key_index (0-3) to wifi_keys; it maps to key[4]/mic_key[4] slots */
-	attr = wifi_keys_key_attributes_init(type, db_id, crypto_key_index);
+	max_size = is_mic_cipher_suite(suite) ? 16 : 32;
+
+	attr = wifi_keys_key_attributes_init(max_size);
 
 	LOG_DBG("%s: Importing key to PSA (suite: 0x%08x, type: %d, idx: %u, len: %u)",
 		__func__, suite, type, crypto_key_index, (unsigned int)key_len);
-
-	max_size = is_mic_cipher_suite(suite) ? 16 : 32;
 	/* Pad/copy up to max size for type: 16 bytes for MIC, 32 for ENC.
 	 * Pad with zeros if shorter.
 	 */
@@ -1050,11 +1047,27 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 			memset(key_buf + key_len, 0, max_size - key_len);
 		}
 	}
-	key_for_import = key_buf;
-	import_len = max_size;
 
-	/* Import key to PSA */
-	status = psa_import_key(&attr, key_for_import, import_len, &key_id);
+	wifi_keys_reverse_byte_order_in_place(key_buf, max_size);
+
+	uint32_t dest_address = wifi_keys_get_key_start_addr(type, db_id, crypto_key_index);
+
+	if (dest_address == WIFI_KEYS_ADDR_INVALID) {
+		LOG_ERR("%s: Invalid dest address for type %d, db %u, idx %u",
+			__func__, type, db_id, crypto_key_index);
+		return -EINVAL;
+	}
+
+	kmu_push_key_buffer_t kmu_push_buffer = {
+		.usage_mask = KMU_PUSH_USAGE_MASK_PUSH_IMMEDIATELY |
+			      KMU_PUSH_USAGE_MASK_DESTROY_AFTER,
+		.dest_address = dest_address,
+		.key_buffer = key_buf,
+		.buffer_size = max_size,
+	};
+
+	status = psa_import_key(&attr, (const uint8_t *)&kmu_push_buffer,
+				sizeof(kmu_push_buffer), &key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_ERR("%s: Failed to import key to PSA: %d", __func__, status);
 		return -EIO;
