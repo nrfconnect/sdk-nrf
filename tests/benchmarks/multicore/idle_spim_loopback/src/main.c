@@ -10,8 +10,8 @@ LOG_MODULE_REGISTER(idle_spim_loopback, LOG_LEVEL_INF);
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/spi.h>
-#include <zephyr/linker/devicetree_regions.h>
 #include <zephyr/pm/device_runtime.h>
+#include <dmm.h>
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
@@ -55,13 +55,8 @@ static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), 
 
 static const struct gpio_dt_spec pin_in = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_gpios);
 
-#define MEMORY_SECTION(node)                                                                       \
-	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                        \
-		    (__attribute__((__section__(                                                   \
-			    LINKER_DT_NODE_REGION_NAME(DT_PHANDLE(node, memory_regions)))))),      \
-		    ())
-
-static uint8_t spim_buffer[2 * CONFIG_DATA_FIELD] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
+static uint8_t spim_buffer[2 * CONFIG_DATA_FIELD]
+	DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
 
 /* Variables used to count edges on SPI CS */
 static struct gpio_callback gpio_input_cb_data;

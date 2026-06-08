@@ -9,8 +9,7 @@ LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/spi.h>
-#include <zephyr/linker/devicetree_regions.h>
-
+#include <dmm.h>
 
 #if CONFIG_TESTED_SPI_MODE == 0
 #define SPI_MODE (SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_LSB)
@@ -39,14 +38,8 @@ static const struct spi_config spis_config = {
 };
 #endif
 
-#define MEMORY_SECTION(node)                                                           \
-	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                \
-		    (__attribute__((__section__(                                               \
-			    LINKER_DT_NODE_REGION_NAME(DT_PHANDLE(node, memory_regions)))))),      \
-		    ())
-
-static uint8_t spim_buffer[32] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
-static uint8_t spis_buffer[32] MEMORY_SECTION(DT_NODELABEL(dut_spis));
+static uint8_t spim_buffer[32] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
+static uint8_t spis_buffer[32] DMM_MEMORY_SECTION(DT_NODELABEL(dut_spis));
 
 struct test_data {
 	int spim_alloc_idx;
