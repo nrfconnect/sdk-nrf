@@ -33,6 +33,11 @@ config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 	# Zephyr hostap always defines CONFIG_SHA384; wpa_gmk_to_gtk() uses
 	# sha384_prf() -> PSA_ALG_HMAC(PSA_ALG_SHA_384) for GMK/GTK derivation.
 	select PSA_WANT_ALG_SHA_384
+	# Zephyr hostap always defines CONFIG_SHA512; sha512_prf() needs
+	# PSA_ALG_HMAC(PSA_ALG_SHA_512) for SAE/FT and similar paths.
+	select PSA_WANT_ALG_SHA_512
+	# omac1_aes_vector_psa() imports PSA_KEY_TYPE_AES for CMAC/BIP.
+	select PSA_WANT_KEY_TYPE_AES
 	# Enable for non-TF-M builds to keep it simple, no overhead
 	select PSA_WANT_GENERATE_RANDOM
 	select MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
