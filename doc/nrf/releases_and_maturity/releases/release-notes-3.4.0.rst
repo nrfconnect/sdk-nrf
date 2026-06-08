@@ -90,7 +90,7 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-|no_changes_yet_note|
+* Updated :ref:`additional_nordic_sw_tools_os_support` with an entry for Linux - Debian 12 (ARM64 as Tier 1).
 
 Board support
 =============
@@ -107,8 +107,8 @@ Build and configuration system
 
     * ``SB_CONFIG_NRF_HALTIUM_GENERATE_UICR`` to :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR`.
     * The ``HALTIUM_PLATFORM_PSA_KEY_ID()`` macro to ``NRF_PLATFORM_PSA_KEY_ID()`` (in :file:`include/psa/nrf_platform_key_ids.h`).
-    * :file:`<haltium_power.h>` to :file:`<soc_power.h>`.
-    * :file:`<haltium_pm_s2ram.h>` to :file:`<soc_pm_s2ram.h>`.
+    * :file:`haltium_power.h` to :file:`soc_power.h`.
+    * :file:`haltium_pm_s2ram.h` to :file:`soc_pm_s2ram.h`.
 
   * Deprecated Kconfig options and headers:
 
@@ -118,7 +118,7 @@ Build and configuration system
       Use :kconfig:option:`CONFIG_SOC_SERIES_NRF54L` or :kconfig:option:`CONFIG_SOC_SERIES_NRF71` instead.
     * The ``SB_CONFIG_NRF_HALTIUM_GENERATE_UICR`` Kconfig option (alias for :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR`).
     * The ``HALTIUM_PLATFORM_PSA_KEY_ID()`` macro (alias for ``NRF_PLATFORM_PSA_KEY_ID()``).
-    * The :file:`<haltium_power.h>` and :file:`<haltium_pm_s2ram.h>` headers, which forward to the new headers.
+    * The :file:`haltium_power.h` and :file:`haltium_pm_s2ram.h` headers, which forward to the new headers.
 
   See :ref:`migration_3.4` for migration instructions.
 
@@ -152,9 +152,7 @@ Developing with nRF54L Series
 Developing with nRF54H Series
 =============================
 
-* Updated:
-
-   * MCUboot to support MRAM write protection for up to four images.
+* Updated MCUboot to support MRAM write protection for up to four images.
 
 Developing with nRF53 Series
 ============================
@@ -199,13 +197,13 @@ Developing with custom boards
 Security
 ========
 
-* Added:
+* Added support for the X25519 key pair storage in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_supported_key_types>`.
 
-  * Support for the X25519 key pair storage in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_supported_key_types>`.
+* Renamed IronSide Secure Element to IronSide Secure Enclave.
 
 * Updated:
 
-  * How the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_PSA_CRYPTO` interact with each other.
+  * How the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_PSA_CRYPTO` Kconfig options interact with each other.
     :kconfig:option:`CONFIG_NRF_SECURITY` is now promptless and auto-enabled indirectly by :kconfig:option:`CONFIG_PSA_CRYPTO`.
   * Approach to store keys in the KMU so that AEAD algorithms with non-default (shortened) tag lengths are supported.
 
@@ -219,18 +217,14 @@ Security
     * The SPAKE2+ for Matter is now correctly listed as supported instead of experimental.
     * The WPA3-SAE hash-to-element algorithm is now correctly listed as a KDF algorithm, not a PAKE algorithm.
     * The SHA-256/192 and SHAKE hashing algorithms are now correctly listed as not supported in the CRACEN driver and Experimental in the nrf_oberon driver.
-      The only exception is the SHAKE256 512 bits algorithm, which is supported in the both the CRACEN and nrf_oberon drivers.
+      The only exception is the SHAKE256 512 bits algorithm, which is supported in both the CRACEN and nrf_oberon drivers.
 
-* Removed:
-
-  * The following Kconfig options:
-
-    * ``CONFIG_NRF_SECURITY_ADVANCED``
+* Removed the Kconfig option ``CONFIG_NRF_SECURITY_ADVANCED``.
 
 Trusted Firmware-M (TF-M)
 -------------------------
 
-|no_changes_yet_note|
+* Updated to version 2.3.0.
 
 Protocols
 =========
@@ -250,7 +244,7 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-|no_changes_yet_note|
+* Added recommendations for sizing the persistent storage partitions to handle continuous storage of the replay protection list.
 
 DECT NR+
 --------
@@ -292,7 +286,7 @@ Wi-Fi®
 
 * Removed support for DES-encrypted private keys in Wi-Fi Enterprise (EAP-TLS) following the update to Mbed TLS 4.1.0/TF-PSA-Crypto 1.1.0 in |NCS|.
   TF-PSA-Crypto no longer implements DES ciphers, therefore PKCS#8 client keys encrypted with DES-EDE3-CBC cannot be decrypted during the TLS handshake (including the FreeRADIUS ``rsa2k`` test certificates).
-  Use ``zephyr/samples/net/wifi/test_certs/rsa2k_no_des``, re-encrypt credentials with AES (PBES2), or use unencrypted keys when provisioning enterprise credentials.
+  Use :file:`zephyr/samples/net/wifi/test_certs/rsa2k_no_des`, re-encrypt credentials with AES (PBES2), or use unencrypted keys when provisioning enterprise credentials.
   See the :ref:`zephyr:wifi_mgmt` documentation for details.
 
 Applications
@@ -326,15 +320,18 @@ nRF Audio (formerly nRF5340 Audio)
 * Renamed the application to nRF Audio from nRF5340 Audio.
 * Added:
 
-  * :kconfig:option:`CONFIG_BT_AUDIO_BROADCAST_BASE_PRINT` kconfig option to print the contents of the BASE when it is received.
+  * The :kconfig:option:`CONFIG_BT_AUDIO_BROADCAST_BASE_PRINT` Kconfig option to print the contents of the BASE when it is received.
     This option is intended for debugging purposes.
     It is only valid for the :ref:`broadcast sink application <nrf_audio_broadcast_sink_app>`.
 
   * :kconfig:option:`CONFIG_LTO` to enable link-time optimization for the application.
     It improves application performance and reduces code size.
 
-* Updated the call to :c:func:`hci_vs_sdc_iso_read_tx_timestamp` so that, when sending ISO data, it is performed at regular intervals instead of every SDU interval.
-  This change reduces the frequency of application-controller time synchronization, while significantly reducing processing overhead.
+* Updated:
+
+  * The call to :c:func:`hci_vs_sdc_iso_read_tx_timestamp` so that, when sending ISO data, it is performed at regular intervals instead of every SDU interval.
+    This change reduces the frequency of application-controller time synchronization, while significantly reducing processing overhead.
+  * The group creation in the :ref:`unicast client application <nrf_audio_unicast_client_app>` so that it waits until all connected devices have finished discovery.
 
 nRF Desktop
 -----------
@@ -383,11 +380,11 @@ Bluetooth samples
 
 * :ref:`peripheral_hids_mouse` sample:
 
-* Added:
+  * Added:
 
-  * Support for continuous HID report sending (one report notification for each connection interval) as well as statistics for continuous report sending.
-  * A configuration with support for the HID Shorter Connection Intervals (SCI).
-    It is enabled with the ``hid_sci`` suffix.
+    * Support for continuous HID report sending (one report notification for each connection interval) as well as statistics for continuous report sending.
+    * A configuration with support for the HID Shorter Connection Intervals (SCI).
+      It is enabled with the ``hid_sci`` suffix.
 
 * :ref:`bluetooth_central_hids` sample:
 
@@ -486,7 +483,7 @@ DFU samples
 
 * Updated:
 
-  * The ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
+  * The :ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
 
 DECT NR+ samples
 ----------------
@@ -592,7 +589,7 @@ Peripheral samples
 PMIC samples
 ------------
 
-* Updated the :ref:`npm13xx_fuel_gauge` :ref:`npm2100_fuel_gauge` samples to use :ref:`nrfxlib:nrf_fuel_gauge` v2.0.0, and added support for state storage.
+* Updated the :ref:`npm13xx_fuel_gauge` and :ref:`npm2100_fuel_gauge` samples to use :ref:`nrfxlib:nrf_fuel_gauge` v2.0.0, and added support for state storage.
   The :ref:`npm13xx_fuel_gauge` uses the new state-of-health feature in the :ref:`nrfxlib:nrf_fuel_gauge` v2.0.0.
 
 Protocol serialization samples
@@ -675,8 +672,8 @@ Bluetooth libraries and services
 
 * :ref:`hogp_readme` library:
 
-  * Fixed an issue where the :c:func:`bt_hogp_rep_unsubscribe` function did not clear the notification callback, which prevented the :c:func:`bt_hogp_rep_subscribe` function from succeeding after unsubscribing.
   * Added support for Bluetooth HID Shorter Connection Intervals (SCI) on the HID device and HID host sides (:kconfig:option:`CONFIG_BT_HIDS_SCI`, :kconfig:option:`CONFIG_BT_HOGP_SCI`).
+  * Fixed an issue where the :c:func:`bt_hogp_rep_unsubscribe` function did not clear the notification callback, which prevented the :c:func:`bt_hogp_rep_subscribe` function from succeeding after unsubscribing.
 
 Common Application Framework
 ----------------------------
@@ -714,7 +711,7 @@ Modem libraries
 
   * Added support for building for the nRF91 board without Partition Manager.
     This requires ``cpuapp_cpucell_ipc_shm_ctrl``, ``cpuapp_cpucell_ipc_shm_heap``, and ``cpucell_cpuapp_ipc_shm_heap`` partitions to be defined in the devicetree.
-  * Use a separate ``cpucell_cpuapp_ipc_shm_trace`` partition for modem tracing instead of splitting the ``cpucell_cpuapp_ipc_shm_heap`` partition.
+    Use a separate ``cpucell_cpuapp_ipc_shm_trace`` partition for modem tracing instead of splitting the ``cpucell_cpuapp_ipc_shm_heap`` partition.
 
 * Removed the deprecated PDN library.
   Use the PDN management functionality in the :ref:`lte_lc_readme` library instead.
@@ -738,6 +735,8 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
+  * Added the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_INFO_BOOTLOADER_VERSION` Kconfig option to include the active MCUboot (B1) ``fw_info`` version as ``bootloaderVersion`` in ``deviceInfo``.
+
   * Updated:
 
     * By changing the default device ID source from :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` to the device UUID.
@@ -751,10 +750,6 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` Kconfig options.
       Use the default UUID source for new applications.
 
-  * Added:
-
-    * Added the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_INFO_BOOTLOADER_VERSION` Kconfig option to include the active MCUboot (B1) ``fw_info`` version as ``bootloaderVersion`` in ``deviceInfo``.
-
   * Fixed:
 
     * An issue where PEM private keys with CRLF line endings could not be decoded correctly for JWT signing used in nRF Cloud CoAP authentication.
@@ -764,11 +759,11 @@ Libraries for networking
 
   * Removed:
 
-  * The nRF Cloud Alerts library.
-    As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
-    `Memfault's Trace Events <Memfault: Error Tracking with Trace Events_>`_ feature replaces the Alerts feature, as it provides equivalent functionality for event reporting, and it also adds enhanced debugging capabilities that were not available with Alerts.
-  * The nRF Cloud REST library.
-  * The nRF Cloud logging library.
+    * The nRF Cloud Alerts library.
+      As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
+      `Memfault's Trace Events <Memfault: Error Tracking with Trace Events_>`_ feature replaces the Alerts feature, as it provides equivalent functionality for event reporting, and it also adds enhanced debugging capabilities that were not available with Alerts.
+    * The nRF Cloud REST library.
+    * The nRF Cloud logging library.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
@@ -834,17 +829,17 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * :ref:`west_sbom` script:
 
-* Added:
+  * Added:
 
-  * Licence handling of the LLVM toolchain libraries.
-  * Support for hex only ``softdevice`` sysbuild domains.
-  * Updated the SPDX License List database to version 3.28.0.
+    * Licence handling of the LLVM toolchain libraries.
+    * Support for HEX-only ``softdevice`` sysbuild domains.
+    * Updated the SPDX License List database to version 3.28.0.
 
 * :ref:`nrf_profiler_script` script:
 
   * Updated the scripts to use hardware clock information from SoC to enable accurate conversion from hardware clock cycles to seconds.
     Refactored the parser to support the new RTT communication layout, including the handling of ``<ev_info_...>`` and ``<sys_config_...>`` data markers.
-  * Fixed the ``ms_per_timestamp_tick`` parameter (defined in the :file: `rtt_nordic_config.py`) to accurately align with the system clock's frequency of the nRF52, nRF53, and nRF91 Series SoCs.
+  * Fixed the ``ms_per_timestamp_tick`` parameter (defined in the :file:`rtt_nordic_config.py`) to accurately align with the system clock's frequency of the nRF52, nRF53, and nRF91 Series SoCs.
 
 Integrations
 ============
@@ -945,7 +940,7 @@ Documentation
 
   * Description of the MRAM auto-powerdown tradeoff in the :ref:`ug_nrf54h20_pm_optimization` documentation page.
   * MSD disable step in the :ref:`ug_nrf54h20_gs` guide.
-  * MRAM11 Ironside SE update limitations in the :ref:`ug_nrf54h20_ironside_update` and :ref:`ug_nrf54h20_ironside_services` documentation pages.
+  * MRAM11 IronSide SE update limitations in the :ref:`ug_nrf54h20_ironside_update` and :ref:`ug_nrf54h20_ironside_services` documentation pages.
 
 Updated:
 
