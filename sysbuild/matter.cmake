@@ -15,9 +15,14 @@ if(SB_CONFIG_ZEPHYR_CONNECTEDHOMEIP_MODULE AND SB_CONFIG_MATTER AND
   )
 
   if(SB_CONFIG_MERGED_HEX_FILES)
-    set(board_target)
-    sysbuild_get(board_target IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BOARD_TARGET KCONFIG)
+    if(DEFINED BOARD_REVISION)
+      set(board_target "${BOARD}@${BOARD_REVISION}${BOARD_QUALIFIERS}")
+    else()
+      set(board_target "${BOARD}${BOARD_QUALIFIERS}")
+    endif()
+
     string(REPLACE "/" "_" board_target ${board_target})
+    string(REPLACE "." "_" board_target ${board_target})
     string(REPLACE "@" "_" board_target ${board_target})
 
     set_property(GLOBAL APPEND
