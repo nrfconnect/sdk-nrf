@@ -51,6 +51,7 @@ Any 32 KB block that contains a ``slot0_ns_partition``, ``slot1_ns_partition``, 
 Secure partitions must not share a 32 KB block with any non-secure partition.
 In addition, the ``storage_partition`` must not share a 32 KB block with the ``slot0_ns_partition``.
 Any partitions that need to be accessed by the application must be part of (or included within) the storage partition.
+See :ref:`ug_tfm_partitioning` for more information.
 
 The SRAM has 8 KB blocks that can be marked as secure or non-secure.
 You need to add a specific block of non-secure memory that is shared with the modem as described in :ref:`devicetree_integration`.

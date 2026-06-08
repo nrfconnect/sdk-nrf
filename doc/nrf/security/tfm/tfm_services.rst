@@ -120,6 +120,9 @@ The RAM and flash usage of the ITS service are included in the ``tfm_secure`` pa
 The storage itself is a separate ``tfm_its`` partition.
 
 When using the :ref:`partition_manager`, you can configure the size of the ``tfm_its`` with the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE` Kconfig option.
+
+.. include:: /includes/pm_deprecation.txt
+
 The resulting partition is visible in the :file:`partitions.yml` file in the build directory:
 
 .. code-block:: console
