@@ -8,21 +8,20 @@ Information on the vulnerabilities is downloaded from a cache in Azure,
 and stored in the build environment.
 """
 
-from typing import List, Union
-from docutils import nodes
-from sphinx.util.docutils import SphinxDirective
-from sphinx.application import Sphinx
-from azure.storage.blob import ContainerClient
-from pathlib import Path
-from sphinx.util import logging
-from docutils.core import publish_doctree
-from docutils.nodes import system_message
 import io
-import requests
 import json
 import re
+from pathlib import Path
 
+import requests
+from azure.storage.blob import ContainerClient
+from docutils import nodes
+from docutils.core import publish_doctree
+from docutils.nodes import system_message
 from page_filter import FilterDropdown, read_versions
+from sphinx.application import Sphinx
+from sphinx.util import logging
+from sphinx.util.docutils import SphinxDirective
 
 __version__ = "0.1.0"
 
@@ -69,7 +68,7 @@ class VulnTable(SphinxDirective):
     """
 
     @staticmethod
-    def create_cve_links(cve_ids: str) -> List[nodes.Element]:
+    def create_cve_links(cve_ids: str) -> list[nodes.Element]:
         """Transform CVE IDs to links to the CVE database.
 
         Args:
@@ -107,13 +106,13 @@ class VulnTable(SphinxDirective):
         """
 
         refuri = self.env.app.builder.get_relative_uri("", Path(self.env.docname).name)
-        refuri += "#" + nodes.make_id(vuln["Summary"])
+        refuri += "#" + nodes.make_id("vuln-" + vuln["Vulnerability ID"])
         ref = nodes.reference(text=vuln["Vulnerability ID"], internal=True)
         ref["refdocname"] = self.env.docname
         ref["refuri"] = refuri
         return ref
 
-    def run(self) -> List[nodes.Element]:
+    def run(self) -> list[nodes.Element]:
         """Create a filterable table displaying information on vulnerabilities.
 
         Returns:
@@ -150,7 +149,10 @@ class VulnTable(SphinxDirective):
 
         # table body
         rows = []
-        vformat = lambda version: f"v{version.replace('.', '-')}"
+
+        def vformat(version):
+            return f"v{version.replace('.', '-')}"
+
         for vuln in cache["body"]:
             row = nodes.row()
             version_classes = list(map(vformat, vuln["Affected versions"]))
@@ -181,13 +183,28 @@ class VulnTable(SphinxDirective):
         tbody.extend(rows)
         tgroup += tbody
 
+        def create_version_tuple(v):
+            return v, v.replace("-", ".")
+
+        if versions := list(map(create_version_tuple, reversed(self.env.nrf_versions))):
+            version_select_dropdown = FilterDropdown(
+                "versions", versions, versions[0][0], container_element="section"
+            )
+        else:
+            version_select_dropdown = FilterDropdown(
+                "versions", versions, container_element="section"
+            )
+
         # Include an area filter
         all_areas = {area for vuln in cache["body"] for area in vuln["Area"]}
-        create_tuple = lambda c: (area_str(c), c)
+
+        def create_tuple(c):
+            return (area_str(c), c)
+
         content = list(map(create_tuple, all_areas))
         area_select_node = FilterDropdown("areas", content)
 
-        return [area_select_node, table]
+        return [version_select_dropdown, area_select_node, table]
 
 
 class VulnDetails(SphinxDirective):
@@ -236,9 +253,7 @@ class VulnDetails(SphinxDirective):
         match = re.search(locate_link_reg, text)
         while match:
             para += nodes.Text(match.group(1))
-            para += nodes.reference(
-                text=match.group(3), refuri=match.group(4), internal=False
-            )
+            para += nodes.reference(text=match.group(3), refuri=match.group(4), internal=False)
             text = match.group(5)
             match = re.search(locate_link_reg, text)
 
@@ -246,7 +261,7 @@ class VulnDetails(SphinxDirective):
         return nodes.list_item("", para)
 
     @staticmethod
-    def create_list_item(title: str, value: Union[str, List[str]]) -> nodes.Element:
+    def create_list_item(title: str, value: str | list[str]) -> nodes.Element:
         """Return a list item on the format <strong>title: </strong>value.
 
         If the value is a list, it is transformed to a comma separated string.
@@ -299,9 +314,7 @@ class VulnDetails(SphinxDirective):
 
         bulletlist = nodes.bullet_list()
         for description, value in vuln.items():
-            if description in ["Summary", "affected_version_classes"]:
-                continue
-            elif not value:
+            if description in ["Summary", "affected_version_classes"] or not value:
                 continue
             elif description == "CVE description":
                 bulletlist += VulnDetails.create_description(value)
@@ -326,9 +339,7 @@ class VulnDetails(SphinxDirective):
 
         # Check for formatting issues
         def has_issues(rst: str) -> bool:
-            tree = publish_doctree(
-                rst, settings_overrides={"warning_stream": io.StringIO()}
-            )
+            tree = publish_doctree(rst, settings_overrides={"warning_stream": io.StringIO()})
             return any([isinstance(child, system_message) for child in tree.children])
 
         if not has_issues(string):
@@ -337,7 +348,7 @@ class VulnDetails(SphinxDirective):
         # Remove last occurrence of odd enclosing formatting elements
         for element in ["``", "`", "**", "*"]:
             if string.count(element) % 2 != 0:
-                string = "".join(string.rsplit(element))
+                string = "".join(string.split(element))
         if not has_issues(string):
             return string
 
@@ -348,7 +359,7 @@ class VulnDetails(SphinxDirective):
 
         return fallback
 
-    def run(self) -> List[nodes.Element]:
+    def run(self) -> list[nodes.Element]:
         """Insert vulnerability details sections into the page.
 
         Information on the vulnerabilities must be present in
@@ -413,7 +424,7 @@ def download_vuln_table(app: Sphinx) -> None:
         local_cache = app.env.vuln_cache
     else:
         logger.info("No vulnerability cache found locally")
-        local_cache = None
+        local_cache = {}
 
     # Check internet connection
     try:
@@ -433,14 +444,17 @@ def download_vuln_table(app: Sphinx) -> None:
     )
 
     target = remote_files[0]
-    if local_cache and local_cache["md5"] == target.content_settings["content_md5"]:
+    if local_cache.get("md5") == target.content_settings["content_md5"]:
         logger.info("Up to date vulnerability table found in cache")
         return
 
     bc = cc.get_blob_client(target)
     res = bc.download_blob().content_as_text()
     app.env.vuln_cache = json.loads(res)
-    sort_func = lambda v: v["Vulnerability ID"]
+
+    def sort_func(v):
+        return v["Vulnerability ID"]
+
     app.env.vuln_cache["body"] = list(sorted(app.env.vuln_cache["body"], key=sort_func))
     app.env.vuln_cache["md5"] = target.content_settings["content_md5"]
     logger.info("Vulnerability table cached locally")
