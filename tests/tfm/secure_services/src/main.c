@@ -22,10 +22,8 @@
 #else
 
 #define TEST_SRAM_BASE       DT_REG_ADDR(DT_NODELABEL(sram0))
-#define TEST_SRAM_NS_ADDRESS (DT_REG_ADDR(DT_NODELABEL(sram0)) + \
-			      DT_REG_ADDR(DT_NODELABEL(sram0_ns)))
-#define TEST_SRAM_S_ADDRESS  (DT_REG_ADDR(DT_NODELABEL(sram0)) + \
-			      DT_REG_ADDR(DT_NODELABEL(sram0_s)))
+#define TEST_SRAM_NS_ADDRESS DT_REG_ADDR(DT_NODELABEL(sram0_ns))
+#define TEST_SRAM_S_ADDRESS  DT_REG_ADDR(DT_NODELABEL(sram0_s))
 #define TEST_NS_FLASH_ADDR   DT_REG_ADDR(DT_NODELABEL(slot0_ns_partition))
 #endif
 
