@@ -6,9 +6,9 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/spi.h>
-#include <zephyr/linker/devicetree_regions.h>
 #include <zephyr/devicetree/clocks.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#include <dmm.h>
 #include <zephyr/ztest.h>
 
 /* SPI MODE 0 */
@@ -21,14 +21,8 @@
 static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE);
 const struct device *const fll16m_dev = DEVICE_DT_GET(DT_NODELABEL(fll16m));
 
-#define MEMORY_SECTION(node)                                                                       \
-	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                        \
-		    (__attribute__((__section__(                                                   \
-			    LINKER_DT_NODE_REGION_NAME(DT_PHANDLE(node, memory_regions)))))),      \
-		    ())
-
-static uint8_t tx_buffer[TEST_BUFFER_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
-static uint8_t rx_buffer[TEST_BUFFER_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
+static uint8_t tx_buffer[TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
+static uint8_t rx_buffer[TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
 
 const struct nrf_clock_spec fll16m_open_loop_mode = {
 	.frequency = MHZ(16),

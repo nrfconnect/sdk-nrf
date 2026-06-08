@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/spi.h>
 #include <zephyr/ztest.h>
+#include <dmm.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(test);
@@ -27,12 +28,6 @@ typedef bool (*capability_func_t)(const struct device *dev);
 
 
 #define DATA_FIELD (16)
-
-#define MEMORY_SECTION(node)                                                                       \
-	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                        \
-		    (__attribute__((__section__(                                                   \
-			    LINKER_DT_NODE_REGION_NAME(DT_PHANDLE(node, memory_regions)))))),      \
-		    ())
 
 static struct spi_config default_spi_cfg = {
 	.frequency = 4000000,
@@ -80,7 +75,7 @@ static void test_all_instances(test_func_t func, capability_func_t capability_ch
  */
 static void test_transceive_data_instance(const struct device *dev)
 {
-	uint8_t spim_buffer[2 * DATA_FIELD] MEMORY_SECTION(DT_BUS(dev));
+	static uint8_t spim_buffer[2 * DATA_FIELD] DMM_MEMORY_SECTION(DT_BUS(dev));
 	int ret = 0;
 
 	/* SPI buffer sets */
