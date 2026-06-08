@@ -133,7 +133,7 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-* Added the :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
+|no_changes_yet_note|
 
 DECT NR+
 --------
@@ -173,10 +173,7 @@ Thread
 Wi-Fi®
 ------
 
-* Removed support for DES-encrypted private keys in Wi-Fi Enterprise (EAP-TLS) following the update to Mbed TLS 4.1.0/TF-PSA-Crypto 1.1.0 in |NCS|.
-  TF-PSA-Crypto no longer implements DES ciphers, therefore PKCS#8 client keys encrypted with DES-EDE3-CBC cannot be decrypted during the TLS handshake (including the FreeRADIUS ``rsa2k`` test certificates).
-  Use ``zephyr/samples/net/wifi/test_certs/rsa2k_no_des``, re-encrypt credentials with AES (PBES2), or use unencrypted keys when provisioning enterprise credentials.
-  See the :ref:`zephyr:wifi_mgmt` documentation for details.
+|no_changes_yet_note|
 
 Applications
 ============
@@ -216,8 +213,7 @@ nRF Desktop
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-* Removed the deprecated nRF Machine Learning application.
-  The application is replaced by the Gesture Recognition application in `Edge AI Add-on for nRF Connect SDK`_.
+|no_changes_yet_note|
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -259,10 +255,6 @@ Cryptography samples
 
 |no_changes_yet_note|
 
-* :ref:`crypto_tls` sample:
-
-  * Updated the TLS version support section after the Mbed TLS v4.1.0 update.
-
 Debug samples
 -------------
 
@@ -281,8 +273,7 @@ DECT NR+ samples
 Edge Impulse samples
 --------------------
 
-* Removed the deprecated Edge Impulse samples: Wrapper and Data forwarder.
-  The removed samples are replaced by samples in `Edge AI Add-on for nRF Connect SDK`_.
+|no_changes_yet_note|
 
 Enhanced ShockBurst samples
 ---------------------------
@@ -486,8 +477,7 @@ Google Fast Pair integration
 Edge Impulse integration
 ------------------------
 
-* Removed the deprecated Edge Impulse wrapper library.
-  The library is replaced by Edge Impulse integration in `Edge AI Add-on for nRF Connect SDK`_.
+|no_changes_yet_note|
 
 Memfault integration
 --------------------
@@ -523,18 +513,7 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* Fixed a possible infinite loop in the bootloader information sharing procedure when the Kconfig options :kconfig:option:`CONFIG_BOOT_SHARE_DATA_BOOTINFO` and :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION` are enabled.
-  Iterating boot-info security counters could spin forever if the :c:func:`boot_nv_security_counter_get` function failed for an image index (for example, backends that expose only one NV counter when :kconfig:option:`CONFIG_BOOT_IMAGE_NUMBER` is greater than one).
-
-* The following non-PSA Crypto implementations were deprecated:
-
-  * :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON`
-  * :kconfig:option:`CONFIG_BOOT_ECDSA_TINYCRYPT`
-  * :kconfig:option:`CONFIG_BOOT_ECDSA_CC310`
-  * :kconfig:option:`CONFIG_BOOT_ED25519_TINYCRYPT`
-  * :kconfig:option:`CONFIG_BOOT_ED25519_MBEDTLS`
-
-  Use their PSA Crypto counterparts instead.
+|no_changes_yet_note|
 
 * Fixed an issue where UICR was not provisioned with monotonic counter structures, when :kconfig:option`SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION` was enabled, MCUboot was the only bootloader, and Partition Manager was disabled.
 
@@ -565,9 +544,7 @@ The current |NCS| main branch is based on revision ``684c9e8f32`` of Zephyr.
 Additions specific to |NCS|
 ---------------------------
 
-* Added the :file:`release.yaml` file with device classification support overview.
-* Updated the :file:`VERSION` file to follow the common version format structure.
-  The common version file format structure is extended with a ``VERSION_METADATA`` field for |NCS|.
+|no_changes_yet_note|
 
 zcbor
 =====

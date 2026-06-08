@@ -16,7 +16,48 @@ To learn more, see :ref:`software_maturity`.
 Highlights
 **********
 
-|no_changes_yet_note|
+* The |NCS| v3.4.0 is based on Zephyr 4.4, Mbed TLS 4.1.0, and TF-M 2.3.
+
+  This release has long-term support (LTS) for a period of five years.
+  During this period, patch releases will provide updates for security vulnerabilities and critical bug fixes.
+  These patch releases should not contain breaking changes unless security fixes require them.
+
+  For more information about LTS scope and maintenance, see :ref:`lts_releases`.
+
+* The |NCS| v3.4.0 and its patch releases are the last |NCS| releases that include support for nRF52 Series devices.
+  The nRF52 Series devices are considered feature complete, and support for them will be removed from samples and applications in the development branch.
+
+Added the following features as experimental:
+
+* PMIC:
+
+  * The following battery health features have been added to Nordic's fuel gauge algorithm and the :ref:`fuel gauge sample <npm13xx_fuel_gauge>`:
+
+    * State-of-health tracking
+    * Cycle count tracking
+    * Automatic battery replacement detection
+
+* Bluetooth®:
+
+  * HID Shorter Connection Intervals (SCI) support on both the HID device side (:kconfig:option:`CONFIG_BT_HIDS_SCI`) and the HID host side (:kconfig:option:`CONFIG_BT_HOGP_SCI`).
+    This feature lets a Bluetooth LE HID host negotiate sub-7.5 ms connection intervals with a Bluetooth LE HID device for lower input latency in high-performance HID applications.
+
+Deprecated:
+
+* Deprecated features will not be removed from the LTS branch.
+  It is recommended that all new designs using Nordic devices exclude deprecated features for active development and deployment.
+
+* The Partition Manager is a component in the |NCS| that handles the flash memory partitioning at build time.
+  This functionality is now replaced by Zephyr's default devicetree-based flash partitioning when multi-image builds are involved.
+  It is recommended that all new designs using Nordic devices are to be built with DTS instead of Partition Manager.
+  Partition Manager will be removed from the |NCS| by the end of 2026 from the main branch.
+
+  Samples will be adapted to showcase the new way of allocating partitions within the v3.4.0 branch.
+  Such adaptations will also be reflected in the main for future releases.
+
+Toolchain:
+
+* The |NCS| toolchain is now based on the :ref:`Zephyr SDK v1.0.1 <zephyr:toolchain_zephyr_sdk>`, with GCC as the recommended compiler.
 
 Release tag
 ***********
@@ -28,7 +69,6 @@ To use this release, check out the tag in the manifest repository and run ``west
 See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v3.4.0`_.
-
 
 Integration test results
 ************************
@@ -90,7 +130,7 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-|no_changes_yet_note|
+* Updated :ref:`additional_nordic_sw_tools_os_support` with an entry for Linux - Debian 12 (ARM64 as Tier 1).
 
 Board support
 =============
@@ -107,8 +147,8 @@ Build and configuration system
 
     * ``SB_CONFIG_NRF_HALTIUM_GENERATE_UICR`` to :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR`.
     * The ``HALTIUM_PLATFORM_PSA_KEY_ID()`` macro to ``NRF_PLATFORM_PSA_KEY_ID()`` (in :file:`include/psa/nrf_platform_key_ids.h`).
-    * :file:`<haltium_power.h>` to :file:`<soc_power.h>`.
-    * :file:`<haltium_pm_s2ram.h>` to :file:`<soc_pm_s2ram.h>`.
+    * :file:`haltium_power.h` to :file:`soc_power.h`.
+    * :file:`haltium_pm_s2ram.h` to :file:`soc_pm_s2ram.h`.
 
   * Deprecated Kconfig options and headers:
 
@@ -118,9 +158,9 @@ Build and configuration system
       Use :kconfig:option:`CONFIG_SOC_SERIES_NRF54L` or :kconfig:option:`CONFIG_SOC_SERIES_NRF71` instead.
     * The ``SB_CONFIG_NRF_HALTIUM_GENERATE_UICR`` Kconfig option (alias for :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR`).
     * The ``HALTIUM_PLATFORM_PSA_KEY_ID()`` macro (alias for ``NRF_PLATFORM_PSA_KEY_ID()``).
-    * The :file:`<haltium_power.h>` and :file:`<haltium_pm_s2ram.h>` headers, which forward to the new headers.
+    * The :file:`haltium_power.h` and :file:`haltium_pm_s2ram.h` headers, which forward to the new headers.
 
-  See :ref:`migration_3.4` for migration instructions.
+  See `Migration notes for nRF Connect SDK v3.4.0`_ for migration instructions.
 
   The deprecated symbols, headers, and macros remain available with a deprecation warning and are scheduled for removal in a future release.
 
@@ -134,80 +174,54 @@ Bootloaders and DFU
 
 * Fixed DTS support for nRF5340 network core images when :ref:`b0n <bootloader>` was enabled.
 
+* Reworked the signing procedure for MCUboot images in sysbuild projects that use DTS-defined partitions.
+  Signed images now include the expected image address in the image header and the ``rom-fixed-flag`` value, which MCUboot uses to match each image candidate with the correct image target.
+  The signing procedure for images used with MCUboot direct-XIP mode remains unchanged.
+
 Developing with nRF91 Series
 ============================
 
-|no_changes_yet_note|
-
-Developing with nRF70 Series
-============================
-
-|no_changes_yet_note|
+* Updated the nRF91 Series device to configure partitions using the devicetree.
+  See :ref:`nrf91_dt_partitions` for more details.
 
 Developing with nRF54L Series
 =============================
 
+* Added the :kconfig:option:`CONFIG_SB_CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS` sysbuild Kconfig option.
+  This option populates the Key Management Unit (KMU) slots for invalidation of the CRACEN-protected RAM using nRF Util.
+  This option requires the ``device`` command v2.15.4 or later to work.
+  See `Installing and upgrading nRF Util commands`_ for more information.
+  When enabled, the :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT` and :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT` Kconfig options become unavailable, as they implement the same feature through alternative provisioning paths.
 * Updated builds without Partition Manager to generate the :file:`bootconf.hex` file when |NSIB| is used as the bootloader.
 
 Developing with nRF54H Series
 =============================
 
-* Updated:
-
-   * MCUboot to support MRAM write protection for up to four images.
-
-Developing with nRF53 Series
-============================
-
-|no_changes_yet_note|
-
-Developing with nRF52 Series
-============================
-
-|no_changes_yet_note|
-
-Developing with Thingy:91 X
-===========================
-
-|no_changes_yet_note|
-
-Developing with Thingy:91
-=========================
-
-|no_changes_yet_note|
-
-Developing with Thingy:53
-=========================
-
-|no_changes_yet_note|
-
-Developing with PMICs
-=====================
-
-|no_changes_yet_note|
-
-Developing with Front-End Modules
-=================================
-
-|no_changes_yet_note|
-
-Developing with custom boards
-=============================
-
-|no_changes_yet_note|
+* Updated MCUboot to support MRAM write protection for up to four images.
 
 Security
 ========
 
 * Added:
 
-  * Support for the X25519 key pair storage in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_supported_key_types>`.
+  * Support for X25519 key pair storage in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_supported_key_types>`.
+  * Documentation page about :ref:`TF-M memory partitioning <ug_tfm_partitioning>`.
 
 * Updated:
 
-  * How the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_PSA_CRYPTO` interact with each other.
+  * Renamed IronSide Secure Element to IronSide Secure Enclave.
+  * |ISE| to version 23.7.0+30.
+    For more information, see :ref:`abi_compatibility_ise_changelog`.
+  * Oberon PSA Crypto from v1.5.4 to v2.0.0.
+    The new version aligns with TF-PSA-Crypto v1.1.0.
+  * How the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_PSA_CRYPTO` Kconfig options interact with each other.
     :kconfig:option:`CONFIG_NRF_SECURITY` is now promptless and auto-enabled indirectly by :kconfig:option:`CONFIG_PSA_CRYPTO`.
   * Approach to store keys in the KMU so that AEAD algorithms with non-default (shortened) tag lengths are supported.
+  * The :ref:`ug_crypto_supported_features` page:
+
+    * The page now lists both nRF54LS05A and nRF54LS05B in the support tables.
+    * The CRACEN support status for nRF54LV10A for most of the algorithms changed from Experimental to Supported.
+    * The :ref:`ug_crypto_supported_features_countermeasures` section now includes information for nRF54H20.
 
 * Fixed:
 
@@ -218,19 +232,38 @@ Security
     * The post-quantum cryptography algorithms for nrf_oberon under Key types and key management are now correctly listed as experimental instead of supported.
     * The SPAKE2+ for Matter is now correctly listed as supported instead of experimental.
     * The WPA3-SAE hash-to-element algorithm is now correctly listed as a KDF algorithm, not a PAKE algorithm.
-    * The SHA-256/192 and SHAKE hashing algorithms are now correctly listed as not supported in the CRACEN driver and Experimental in the nrf_oberon driver.
-      The only exception is the SHAKE256 512 bits algorithm, which is supported in the both the CRACEN and nrf_oberon drivers.
+    * The SHA-256/192 and SHAKE hashing algorithms are now correctly listed as not supported in the CRACEN driver and experimental in the nrf_oberon driver.
+      The only exception is the SHAKE256 512 bits algorithm, which is supported in both the CRACEN and nrf_oberon drivers.
 
-* Removed:
+* Removed the ``CONFIG_NRF_SECURITY_ADVANCED`` Kconfig option.
 
-  * The following Kconfig options:
+Security libraries
+------------------
 
-    * ``CONFIG_NRF_SECURITY_ADVANCED``
+* :ref:`nrf_security_readme` library:
+
+  * Updated the documentation to one library page with sections for PSA Crypto, TLS and X.509, dependencies, and API documentation.
+    The page includes information about how :kconfig:option:`CONFIG_PSA_CRYPTO` and :kconfig:option:`CONFIG_MBEDTLS` are used after the Mbed TLS v4.1 update.
+
+  * Removed the configuration page for the deprecated legacy crypto backend (:file:`libraries/security/nrf_security/doc/backend_config`).
+    Configure cryptographic features using :ref:`psa_crypto_support` and :ref:`ug_crypto_supported_features` instead.
+
+Mbed TLS
+--------
+
+* Updated Mbed TLS to v4.1.0 (from v3.6.6):
+
+  * Removed support for legacy, deprecated Mbed TLS Crypto APIs and related tests.
+  * Rearranged Kconfig options related to Mbed TLS in various files under :ref:`nrf_security`.
+  * Removed outdated Kconfig options related to Mbed TLS in various files under :ref:`nrf_security`.
+  * :ref:`nrf_security` now uses the Mbed TLS integration from Zephyr as-is (:kconfig:option:`CONFIG_MBEDTLS_BUILTIN`) while replacing upstream TF-PSA-Crypto with Oberon PSA Crypto (:kconfig:option:`CONFIG_TF_PSA_CRYPTO_CUSTOM`).
+
+  For more information, see the `Migration notes for nRF Connect SDK v3.4.0`_.
 
 Trusted Firmware-M (TF-M)
 -------------------------
 
-|no_changes_yet_note|
+* Updated to version 2.3.0.
 
 Protocols
 =========
@@ -238,8 +271,8 @@ Protocols
 This section provides detailed lists of changes by :ref:`protocol <protocols>`.
 See `Samples`_ for lists of changes for the protocol-related samples.
 
-Bluetooth® LE
--------------
+Bluetooth LE
+------------
 
 * Added the following Kconfig options to enable support for certain HCI commands:
 
@@ -250,49 +283,21 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-|no_changes_yet_note|
+* Added:
 
-DECT NR+
---------
-
-|no_changes_yet_note|
-
-Enhanced ShockBurst (ESB)
--------------------------
-
-|no_changes_yet_note|
-
-Gazell
-------
-
-|no_changes_yet_note|
-
-Matter
-------
-
-|no_changes_yet_note|
-
-Matter fork
-+++++++++++
-
-|no_changes_yet_note|
-
-nRF IEEE 802.15.4 radio driver
-------------------------------
-
-|no_changes_yet_note|
-
-Thread
-------
-
-|no_changes_yet_note|
+  * The :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
+  * Recommendations for sizing the persistent storage partitions to handle continuous storage of the replay protection list.
 
 Wi-Fi®
 ------
 
-* Removed support for DES-encrypted private keys in Wi-Fi Enterprise (EAP-TLS) following the update to Mbed TLS 4.1.0/TF-PSA-Crypto 1.1.0 in |NCS|.
+* Added the ``nordic-wifi-enterprise`` snippet to be used for Wi-Fi enterprise.
+  For more information, see the `Migration notes for nRF Connect SDK v3.4.0`_.
+* Updated the hostap_crypto library to use a single backend, :kconfig:option:`CONFIG_HOSTAP_CRYPTO_ALT_PSA`, for all modes.
+  The older :kconfig:option:`CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA` backend has been removed.
+* Removed support for DES-encrypted private keys in Wi-Fi Enterprise (EAP-TLS) following the update to Mbed TLS 4.1.0/TF-PSA-Crypto 1.1.0 in the |NCS|.
   TF-PSA-Crypto no longer implements DES ciphers, therefore PKCS#8 client keys encrypted with DES-EDE3-CBC cannot be decrypted during the TLS handshake (including the FreeRADIUS ``rsa2k`` test certificates).
-  Use ``zephyr/samples/net/wifi/test_certs/rsa2k_no_des``, re-encrypt credentials with AES (PBES2), or use unencrypted keys when provisioning enterprise credentials.
+  Use :file:`zephyr/samples/net/wifi/test_certs/rsa2k_no_des`, re-encrypt credentials with AES (PBES2), or use unencrypted keys when provisioning enterprise credentials.
   See the :ref:`zephyr:wifi_mgmt` documentation for details.
 
 Applications
@@ -303,22 +308,12 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Connectivity bridge
 -------------------
 
-|no_changes_yet_note|
+* Updated to use devicetree (DTS) for defining NVM partitions instead of the deprecated :ref:`partition_manager`.
 
 High-Performance Framework (HPF)
 --------------------------------
 
 * Added support for the nRF54LV10A SoC in HPF MSPI.
-
-IPC radio firmware
-------------------
-
-|no_changes_yet_note|
-
-Matter bridge
--------------
-
-|no_changes_yet_note|
 
 nRF Audio (formerly nRF5340 Audio)
 ----------------------------------
@@ -326,37 +321,43 @@ nRF Audio (formerly nRF5340 Audio)
 * Renamed the application to nRF Audio from nRF5340 Audio.
 * Added:
 
-  * :kconfig:option:`CONFIG_BT_AUDIO_BROADCAST_BASE_PRINT` kconfig option to print the contents of the BASE when it is received.
+  * The :kconfig:option:`CONFIG_BT_AUDIO_BROADCAST_BASE_PRINT` Kconfig option to print the contents of the BASE when it is received.
     This option is intended for debugging purposes.
     It is only valid for the :ref:`broadcast sink application <nrf_audio_broadcast_sink_app>`.
 
   * :kconfig:option:`CONFIG_LTO` to enable link-time optimization for the application.
     It improves application performance and reduces code size.
 
-* Updated the call to :c:func:`hci_vs_sdc_iso_read_tx_timestamp` so that, when sending ISO data, it is performed at regular intervals instead of every SDU interval.
-  This change reduces the frequency of application-controller time synchronization, while significantly reducing processing overhead.
+* Updated:
+
+  * The call to :c:func:`hci_vs_sdc_iso_read_tx_timestamp` so that, when sending ISO data, it is performed at regular intervals instead of every SDU interval.
+    This change reduces the frequency of application-controller time synchronization, while significantly reducing processing overhead.
+  * The group creation in the :ref:`unicast client application <nrf_audio_unicast_client_app>` so that it waits until all connected devices have finished discovery.
+  * The unicast server (headset) now exposes its source endpoint as default.
+    This means that the unicast client (gateway) can choose whether to enable it or not.
+  * The :file:`buildprog.py` script no longer supports the ``-u`` (user name) option.
+    Use the ``-cn`` (custom name) option instead.
+    The custom name is now used for both unicast and broadcast.
+    Changing this parameter requires a pristine build.
+    The option is intended as a convenience argument.
+    Set names through configuration options for persistent configuration.
 
 nRF Desktop
 -----------
 
-* Updated application configurations to change the non-volatile memory self-protection mechanism in the MCUboot image on the nRF54L board targets (:kconfig:option:`CONFIG_SOC_SERIES_NRF54L`).
-  The :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` Kconfig option is used instead of the :kconfig:option:`CONFIG_FPROTECT` to disable read, write and execute from the memory area that holds the MCUboot bootloader.
-  This is done to improve the protection of the MCUboot immutable bootloader code.
+* Updated:
+
+  * The application configurations to use devicetree (DTS) for defining non-volatile memory partitions instead of the deprecated :ref:`partition_manager`.
+    This includes configuration of main application image and other sysbuild images built together with it (for example bootloader).
+  * The application configurations to change the non-volatile memory self-protection mechanism in the MCUboot image on the nRF54L board targets (:kconfig:option:`CONFIG_SOC_SERIES_NRF54L`).
+    The :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` Kconfig option is used instead of the :kconfig:option:`CONFIG_FPROTECT` to disable read, write, and execute from the memory area that holds the MCUboot bootloader.
+    This is done to improve the protection of the MCUboot immutable bootloader code.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
-
-Thingy:53: Matter weather station
----------------------------------
-
-|no_changes_yet_note|
-
-Installer (MCUboot Firmware Loader installer)
------------------------------------------------
-
-|no_changes_yet_note|
+* Removed the deprecated nRF Machine Learning application.
+  The application is replaced by the Gesture Recognition application in `Edge AI Add-on for nRF Connect SDK`_.
 
 Samples
 =======
@@ -383,11 +384,11 @@ Bluetooth samples
 
 * :ref:`peripheral_hids_mouse` sample:
 
-* Added:
+  * Added:
 
-  * Support for continuous HID report sending (one report notification for each connection interval) as well as statistics for continuous report sending.
-  * A configuration with support for the HID Shorter Connection Intervals (SCI).
-    It is enabled with the ``hid_sci`` suffix.
+    * Support for continuous HID report sending (one report notification for each connection interval) as well as statistics for continuous report sending.
+    * A configuration with support for the HID Shorter Connection Intervals (SCI).
+      It is enabled with the ``hid_sci`` suffix.
 
 * :ref:`bluetooth_central_hids` sample:
 
@@ -399,7 +400,18 @@ Bluetooth samples
     * Support for connecting multiple HID peripherals.
 
   * Updated the sample to use deferred logging to reduce the overhead of logging.
-    This may cause messages to be delayed up to around 100 ms.
+    This can cause messages to be delayed up to around 100 ms.
+
+* :ref:`direct_test_mode` sample:
+
+  * Updated the :ref:`nrfxlib:softdevice_controller` to run DTM commands.
+
+  * Removed:
+
+    * USB support.
+    * CTE receiver support.
+      CTE transmitter support is still available.
+    * Antenna switching support.
 
 Bluetooth Mesh samples
 ----------------------
@@ -431,17 +443,18 @@ Bluetooth Fast Pair samples
 
 * Updated the DTS overlays of the Fast Pair samples to use the new ``zephyr,mapped-partition`` compatible property for each partition node.
   The change aligns the board target overlays with the layout produced by the Partition Manager-to-DTS helper script (:file:`scripts/pm_to_dts.py`).
+  See the :ref:`migration_3.4_google_fast_pair` guide to learn how to align the DTS partition map in your project using the new property.
 
-* Removed the remaining ``nrf54h20dk/nrf54h20/cpuapp`` board target configurations from the following samples:
-
-  * :ref:`fast_pair_locator_tag`
-  * :ref:`fast_pair_input_device`
-
-  Updated the sample documentation to remove all references to the ``nrf54h20dk/nrf54h20/cpuapp`` board target, including descriptions of nRF54H-specific solutions such as the legacy SUIT DFU integration.
-
+* Removed the remaining ``nrf54h20dk/nrf54h20/cpuapp`` board target configurations from the Fast Pair samples.
+  Removed references to the ``nrf54h20dk/nrf54h20/cpuapp`` board target from the Fast Pair sample documentation, including descriptions of nRF54H-specific solutions such as the legacy SUIT DFU integration.
   Support for this target was already dropped during the IronSide SE migration in the |NCS| v3.1.0 release.
 
 * :ref:`fast_pair_locator_tag` sample:
+
+  * Added initial support for the nRF54L15 TAG (``nrf54l15tag/nrf54l15/cpuapp`` board target).
+    The ``nrf54l15tag/nrf54l15/cpuapp`` board target is a complete prototyping platform in a compact form factor.
+    It features the nRF54L15 SoC with additional sensors, RGB LED, button, and a battery.
+    The sample on this board target can closely represent a final product based on the nRF54L15 SoC.
 
   * Updated:
 
@@ -463,12 +476,17 @@ Cellular samples
   * Usage of nRF Cloud logging in samples as the feature is being sunset.
   * The Cellular: nRF Cloud multi-service sample.
 
+* :ref:`crypto_tls` sample:
+
+  * Updated the TLS version support section after the Mbed TLS v4.1.0 update.
+
 * :ref:`gnss_sample` sample:
 
   * Updated to use the :ref:`lib_nrf_cloud_coap` library instead of the removed nRF Cloud REST library.
 
 * :ref:`modem_shell_application` sample:
 
+  * Added devicetree overlays for data throughput testing.
   * Updated to use the :ref:`lib_nrf_cloud_coap` library instead of the removed nRF Cloud REST library.
 
 Cryptography samples
@@ -476,63 +494,32 @@ Cryptography samples
 
 * Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` board target to all samples, except :ref:`crypto_aes_kw`, :ref:`crypto_kmu_cracen_usage`, and :ref:`crypto_persistent_key`.
 
-Debug samples
--------------
-
-|no_changes_yet_note|
-
 DFU samples
 -----------
 
 * Updated:
 
-  * The ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
-
-DECT NR+ samples
-----------------
-
-|no_changes_yet_note|
+  * The :ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
 
 Edge Impulse samples
 --------------------
 
-|no_changes_yet_note|
-
-Enhanced ShockBurst samples
----------------------------
-
-|no_changes_yet_note|
-
-Gazell samples
---------------
-
-|no_changes_yet_note|
-
-|ISE| samples
--------------
-
-|no_changes_yet_note|
-
-Keys samples
-------------
-
-|no_changes_yet_note|
+* Removed the deprecated Edge Impulse samples: Wrapper and Data forwarder.
+  The removed samples are replaced by samples in `Edge AI Add-on for nRF Connect SDK`_.
 
 Matter samples
 --------------
 
-* Updated:
-
-  * The :ref:`matter_window_covering_sample` sample to use the Thread Sleepy End Device (SED) device type by default.
-    You can now enable the Thread Synchronized Sleepy End Device (SSED) device type as an optional feature.
+* Updated the :ref:`matter_window_covering_sample` sample to use the Thread Sleepy End Device (SED) device type by default.
+  You can now enable the Thread Synchronized Sleepy End Device (SSED) device type as an optional feature.
 
 * Removed:
 
-  * Support for the nRF7002 DK and nRF5340 DK used with the nRF7002 EK shield from all Matter samples, as this configuration was deprecated in |NCS| v3.2.0.
+  * Support for the nRF7002 DK and nRF5340 DK used with the nRF7002 EK shield from all Matter samples, as this configuration was deprecated in the |NCS| v3.2.0.
     The removal is mainly due to the very limited non-volatile memory available for application code.
     As an alternative, use the nRF54LM20A or nRF54LM20B SoC with the nRF7002-EB II shield.
     This combination provides significantly more non-volatile memory for Matter over Wi-Fi applications.
-  * The implementation of the Matter Door lock sample has been relocated to the `nRF Door Lock and Access Control Add-on`_, that is |NCS| extension.
+  * The implementation of the Matter Door lock sample has been relocated to the `nRF Door Lock and Access Control Add-on`_.
     The add-on is an extensible solution offering additional features and expanded integration capabilities.
     It enables the development of not only Matter-compliant door locks, but also those supporting Aliro and hybrid Matter and Aliro combined functionalities, thereby facilitating the design of versatile smart lock solutions.
   * The AWS IoT integration variant from the :ref:`matter_light_bulb_sample` sample.
@@ -553,19 +540,14 @@ Networking samples
 
   Flash and SRAM partitions are supplied using devicetree overlays instead.
 
+* :ref:`mqtt_sample` sample:
+
+  * Added the :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384` Kconfig option to the TLS overlay files, which is required by the CA certificate of ``mqtt.nordicsemi.academy``.
+  * Updated the default MQTT broker from ``test.mosquitto.org`` to ``mqtt.nordicsemi.academy`` because of recurring instability in the previous broker.
+
 * :ref:`azure_iot_hub` sample:
 
   * Added support for the nRF54LM20 DK with the nRF7002-EB II shield.
-
-NFC samples
------------
-
-|no_changes_yet_note|
-
-nRF5340 samples
----------------
-
-|no_changes_yet_note|
 
 Peripheral samples
 ------------------
@@ -592,38 +574,8 @@ Peripheral samples
 PMIC samples
 ------------
 
-* Updated the :ref:`npm13xx_fuel_gauge` :ref:`npm2100_fuel_gauge` samples to use :ref:`nrfxlib:nrf_fuel_gauge` v2.0.0, and added support for state storage.
+* Updated the :ref:`npm13xx_fuel_gauge` and :ref:`npm2100_fuel_gauge` samples to use :ref:`nrfxlib:nrf_fuel_gauge` v2.0.0, and added support for state storage.
   The :ref:`npm13xx_fuel_gauge` uses the new state-of-health feature in the :ref:`nrfxlib:nrf_fuel_gauge` v2.0.0.
-
-Protocol serialization samples
-------------------------------
-
-|no_changes_yet_note|
-
-SDFW samples
-------------
-
-|no_changes_yet_note|
-
-Sensor samples
---------------
-
-|no_changes_yet_note|
-
-SUIT samples
-------------
-
-|no_changes_yet_note|
-
-Trusted Firmware-M (TF-M) samples
----------------------------------
-
-|no_changes_yet_note|
-
-Thread samples
---------------
-
-|no_changes_yet_note|
 
 Wi-Fi samples
 -------------
@@ -631,27 +583,12 @@ Wi-Fi samples
 * Added the :ref:`wifi_nrf_cloud` sample, refactored from the former Cellular: nRF Cloud multi-service sample.
   This sample targets the nRF7002 Wi-Fi companion IC, using Wi-Fi as the transport instead of LTE.
 
-Other samples
--------------
-
-|no_changes_yet_note|
-
 Drivers
 =======
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* Fixed an issue where the low power UART may fail after a reset if the reset occurs during transmission.
-
-Wi-Fi drivers
--------------
-
-|no_changes_yet_note|
-
-Flash drivers
--------------
-
-|no_changes_yet_note|
+* Fixed an issue where the low power UART can fail after a reset if the reset occurs during transmission.
 
 Libraries
 =========
@@ -664,7 +601,7 @@ Binary libraries
 * :ref:`liblwm2m_carrier_readme` library:
 
   * Added support for building without Partition Manager.
-    This requires an ``lwm2m_carrier`` partition to be defined in devicetree.
+    This requires an ``lwm2m_carrier`` partition to be defined in the devicetree.
 
 Bluetooth libraries and services
 --------------------------------
@@ -675,36 +612,14 @@ Bluetooth libraries and services
 
 * :ref:`hogp_readme` library:
 
-  * Fixed an issue where the :c:func:`bt_hogp_rep_unsubscribe` function did not clear the notification callback, which prevented the :c:func:`bt_hogp_rep_subscribe` function from succeeding after unsubscribing.
   * Added support for Bluetooth HID Shorter Connection Intervals (SCI) on the HID device and HID host sides (:kconfig:option:`CONFIG_BT_HIDS_SCI`, :kconfig:option:`CONFIG_BT_HOGP_SCI`).
-
-Common Application Framework
-----------------------------
-
-|no_changes_yet_note|
-
-Debug libraries
----------------
-
-|no_changes_yet_note|
-
-DFU libraries
--------------
-
-|no_changes_yet_note|
-
-Gazell libraries
-----------------
-
-|no_changes_yet_note|
-
-Security libraries
-------------------
-
-|no_changes_yet_note|
+  * Fixed an issue where the :c:func:`bt_hogp_rep_unsubscribe` function did not clear the notification callback, which prevented the :c:func:`bt_hogp_rep_subscribe` function from succeeding after unsubscribing.
 
 Modem libraries
 ---------------
+
+* Removed the deprecated PDN library.
+  Use the PDN management functionality in the :ref:`lte_lc_readme` library instead.
 
 * :ref:`lib_location` library:
 
@@ -714,22 +629,18 @@ Modem libraries
 
   * Added support for building for the nRF91 board without Partition Manager.
     This requires ``cpuapp_cpucell_ipc_shm_ctrl``, ``cpuapp_cpucell_ipc_shm_heap``, and ``cpucell_cpuapp_ipc_shm_heap`` partitions to be defined in the devicetree.
-  * Use a separate ``cpucell_cpuapp_ipc_shm_trace`` partition for modem tracing instead of splitting the ``cpucell_cpuapp_ipc_shm_heap`` partition.
-
-* Removed the deprecated PDN library.
-  Use the PDN management functionality in the :ref:`lte_lc_readme` library instead.
+    Use a separate ``cpucell_cpuapp_ipc_shm_trace`` partition for modem tracing instead of splitting the ``cpucell_cpuapp_ipc_shm_heap`` partition.
 
 * :ref:`modem_info_readme` library:
 
   * Fixed a bug where supplying a very large buffer would cause a buffer overflow internally due to incorrect format string usage.
 
-Multiprotocol Service Layer libraries
--------------------------------------
-
-|no_changes_yet_note|
-
 Libraries for networking
 ------------------------
+
+* :ref:`lib_azure_fota` library:
+
+  * Fixed a potential NULL-pointer dereference that occurred when the device twin JSON parsers used the ``jobId``, ``fwUpdateStatus``, ``currentFwVersion``, ``pendingFwVersion``, ``host``, and ``path`` fields without verifying that the JSON nodes were strings.
 
 * :ref:`lib_nrf_provisioning` library:
 
@@ -738,22 +649,16 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
-  * Updated:
+  * Added the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_INFO_BOOTLOADER_VERSION` Kconfig option to include the active MCUboot (B1) ``fw_info`` version as ``bootloaderVersion`` in ``deviceInfo``.
 
-    * By changing the default device ID source from :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` to the device UUID.
-      On an nRF9160 device the default is now :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID`, which reads the UUID from the JWT ``iss`` claim and preserves compatibility with field devices provisioned through older nrfcloud-utils flows.
-      On the nRF91x1 and future SoCs, the default is :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID`, which reads the UUID using ``AT%DEVICEUUID`` without pulling in :kconfig:option:`CONFIG_MODEM_JWT`.
-      Each option is constrained to its target SoC at the Kconfig level.
-      See the :ref:`migration_3.4` for the impact on existing devices that relied on the previous IMEI default.
+  * Updated by changing the default device ID source from :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` to the device UUID.
+    On an nRF9160 device the default is now :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID`, which reads the UUID from the JWT ``iss`` claim and preserves compatibility with field devices provisioned through older nrfcloud-utils flows.
+    On the nRF91x1 and future SoCs, the default is :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID`, which reads the UUID using ``AT%DEVICEUUID`` without pulling in :kconfig:option:`CONFIG_MODEM_JWT`.
+    Each option is constrained to its target SoC at the Kconfig level.
+    See the `Migration notes for nRF Connect SDK v3.4.0`_ for the impact on existing devices that relied on the previous IMEI default.
 
-  * Deprecated:
-
-    * The :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` Kconfig options.
-      Use the default UUID source for new applications.
-
-  * Added:
-
-    * Added the :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_INFO_BOOTLOADER_VERSION` Kconfig option to include the active MCUboot (B1) ``fw_info`` version as ``bootloaderVersion`` in ``deviceInfo``.
+  * Deprecated the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` Kconfig options.
+    Use the default UUID source for new applications.
 
   * Fixed:
 
@@ -764,24 +669,24 @@ Libraries for networking
 
   * Removed:
 
-  * The nRF Cloud Alerts library.
-    As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
-    `Memfault's Trace Events <Memfault: Error Tracking with Trace Events_>`_ feature replaces the Alerts feature, as it provides equivalent functionality for event reporting, and it also adds enhanced debugging capabilities that were not available with Alerts.
-  * The nRF Cloud REST library.
-  * The nRF Cloud logging library.
+    * The nRF Cloud Alerts library.
+      As part of the migration to *nRF Cloud powered by Memfault*, the nRF Cloud Alerts feature is now redundant.
+      `Memfault's Trace Events <Memfault: Error Tracking with Trace Events_>`_ feature replaces the Alerts feature, as it provides equivalent functionality for event reporting, and it also adds enhanced debugging capabilities that were not available with Alerts.
+    * The nRF Cloud REST library.
+    * The nRF Cloud logging library.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
   * Updated:
 
     * The range for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig options to values supported by nRF Cloud.
-    * The CoAP endpoint used for requesting predictions has been renamed from ``loc/pgps`` to ``loc/pgnss``.
+    * The name of the CoAP endpoint used for requesting predictions from ``loc/pgps`` to ``loc/pgnss``.
       The CBOR wire format is unchanged.
 
   * Fixed:
 
-    * An issue that caused predictions to be stored into incorrect index in flash, leading to an error when the affected predictions were used.
-    * An issue where the library tried to use predictions that had not yet been flushed to flash, leading to a prediction validation error.
+    * An issue that caused predictions to be stored into an incorrect index in the flash memory, leading to an error when the affected predictions were used.
+    * An issue where the library tried to use predictions that had not yet been flushed to the flash memory, leading to a prediction validation error.
     * An issue where the library kept trying to use corrupted predictions.
 
 * :ref:`nrf_802154_callbacks_dispatcher` library:
@@ -791,16 +696,6 @@ Libraries for networking
 * :ref:`lib_mqtt_helper` library:
 
   * Fixed an issue where the library could overflow the broker address buffer if an IPv6 address was returned by the DNS resolver while the :kconfig:option:`CONFIG_NET_IPV6` Kconfig option was disabled.
-
-Libraries for NFC
------------------
-
-|no_changes_yet_note|
-
-nRF RPC libraries
------------------
-
-|no_changes_yet_note|
 
 Other libraries
 ---------------
@@ -817,10 +712,8 @@ Other libraries
     Subsequent entries are separated by newlines.
     The value returned by the :c:func:`sys_clock_hw_cycles_per_sec` function is sent using the ``sys_clock_hw_cycles_per_sec`` key.
 
-Shell libraries
----------------
-
-|no_changes_yet_note|
+* Removed the deprecated Edge Impulse wrapper library.
+  The library has been replaced by the Edge Impulse SDK in `Edge AI Add-on for nRF Connect SDK`_.
 
 sdk-nrfxlib
 -----------
@@ -834,32 +727,28 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * :ref:`west_sbom` script:
 
-* Added:
+  * Added:
 
-  * Licence handling of the LLVM toolchain libraries.
-  * Support for hex only ``softdevice`` sysbuild domains.
-  * Updated the SPDX License List database to version 3.28.0.
+    * License handling of the LLVM toolchain libraries.
+    * Support for HEX-only ``softdevice`` sysbuild domains.
+    * Updated the SPDX License List database to version 3.28.0.
 
 * :ref:`nrf_profiler_script` script:
 
   * Updated the scripts to use hardware clock information from SoC to enable accurate conversion from hardware clock cycles to seconds.
     Refactored the parser to support the new RTT communication layout, including the handling of ``<ev_info_...>`` and ``<sys_config_...>`` data markers.
-  * Fixed the ``ms_per_timestamp_tick`` parameter (defined in the :file: `rtt_nordic_config.py`) to accurately align with the system clock's frequency of the nRF52, nRF53, and nRF91 Series SoCs.
+  * Fixed the ``ms_per_timestamp_tick`` parameter (defined in the :file:`rtt_nordic_config.py`) to accurately align with the system clock's frequency of the nRF52, nRF53, and nRF91 Series SoCs.
 
 Integrations
 ============
 
 This section provides detailed lists of changes by :ref:`integration <integrations>`.
 
-Google Fast Pair integration
-----------------------------
-
-|no_changes_yet_note|
-
 Edge Impulse integration
 ------------------------
 
-|no_changes_yet_note|
+* Removed the deprecated Edge Impulse integration from the |NCS|.
+  The integration has been replaced by `Edge AI Add-on for nRF Connect SDK`_.
 
 Memfault integration
 --------------------
@@ -870,10 +759,8 @@ Memfault integration
     The backend now locates its storage from a fixed partition labeled ``memfault_coredump_partition`` when Partition Manager is disabled, while continuing to support Partition Manager when enabled.
   * The :ref:`snippet-memfault-coredump` snippet that supplies a board-specific partition overlay for flash-backed coredump storage on common DKs and Thingy:91 or Thingy:91 X.
 
-AVSystem integration
---------------------
-
-|no_changes_yet_note|
+* Updated Memfault to version 1.40.0.
+  See the `Memfault firmware SDK changelog`_ for details.
 
 nRF Cloud integration
 ---------------------
@@ -882,20 +769,10 @@ nRF Cloud integration
   This is done through Device Shadow updates.
   A new control variable is used.
 
-CoreMark integration
---------------------
-
-|no_changes_yet_note|
-
-DULT integration
-----------------
-
-|no_changes_yet_note|
-
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``8d14eebfe0b7402ebdf77ce1b99ba1a3793670e9``, with some |NCS| specific additions.
+The MCUboot fork in the |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``8d14eebfe0b7402ebdf77ce1b99ba1a3793670e9``, with some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
@@ -904,12 +781,27 @@ The following list summarizes both the main changes inherited from upstream MCUb
 * Fixed a possible infinite loop in the bootloader information sharing procedure when the Kconfig options :kconfig:option:`CONFIG_BOOT_SHARE_DATA_BOOTINFO` and :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION` are enabled.
   Iterating boot-info security counters could spin forever if the :c:func:`boot_nv_security_counter_get` function failed for an image index (for example, backends that expose only one NV counter when :kconfig:option:`CONFIG_BOOT_IMAGE_NUMBER` is greater than one).
 
+* The following non-PSA Crypto implementations were deprecated:
+
+  * :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON`
+  * :kconfig:option:`CONFIG_BOOT_ECDSA_TINYCRYPT`
+  * :kconfig:option:`CONFIG_BOOT_ECDSA_CC310`
+  * :kconfig:option:`CONFIG_BOOT_ED25519_TINYCRYPT`
+  * :kconfig:option:`CONFIG_BOOT_ED25519_MBEDTLS`
+
+  Use their PSA Crypto counterparts instead.
+
+* Updated image matching to use the explicit image address when :kconfig:option:`CONFIG_MCUBOOT_CHECK_HEADER_LOAD_ADDRESS` is enabled.
+  MCUboot now uses the ``ih_load_address`` field of the image header instead of the reset vector address, allowing it to match an incoming image to the correct partition even when the image is encrypted.
+  The new method is enabled by default when MCUboot is built with DTS partitioning.
+  Firmware must be signed with the ``imgtool.py sign --rom-fixed <partition_address>`` parameter, which is handled by the |NCS| signing procedures.
+
 Zephyr
 ======
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each nRF Connect SDK release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``684c9e8f32e4373a21098559f748f06915f950c9``, with some |NCS| specific additions.
+The Zephyr fork in the |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``684c9e8f32e4373a21098559f748f06915f950c9``, with some |NCS| specific additions.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
@@ -931,12 +823,9 @@ The current |NCS| main branch is based on revision ``684c9e8f32`` of Zephyr.
 Additions specific to |NCS|
 ---------------------------
 
-|no_changes_yet_note|
-
-zcbor
-=====
-
-|no_changes_yet_note|
+* Added the :file:`release.yaml` file with device classification support overview.
+* Updated the :file:`VERSION` file to follow the common version format structure.
+  The common version file format structure is extended with a ``VERSION_METADATA`` field for |NCS|.
 
 Documentation
 =============
@@ -945,10 +834,13 @@ Documentation
 
   * Description of the MRAM auto-powerdown tradeoff in the :ref:`ug_nrf54h20_pm_optimization` documentation page.
   * MSD disable step in the :ref:`ug_nrf54h20_gs` guide.
-  * MRAM11 Ironside SE update limitations in the :ref:`ug_nrf54h20_ironside_update` and :ref:`ug_nrf54h20_ironside_services` documentation pages.
+  * MRAM11 IronSide SE update limitations in the :ref:`ug_nrf54h20_ironside_update` and :ref:`ug_nrf54h20_ironside_services` documentation pages.
+  * The :ref:`ncs_release_model` documentation page.
+  * The :ref:`ug_nrf54h20_ironside_se_snapshot` documentation page for using IronSide SE snapshot features.
 
 Updated:
 
   * The :ref:`ug_nrf54h20_architecture_lifecycle` documentation page, expanding the description of the LCS states.
   * The :ref:`app_boards` documentation page by moving the pages with board definitions under the :ref:`nrf_boards` section.
     This update removes the Supported boards section from the top level of the |NCS| documentation.
+  * The :ref:`abi_compatibility` documentation page.

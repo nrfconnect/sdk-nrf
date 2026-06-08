@@ -697,7 +697,7 @@ Bluetooth libraries and services
         Deprecated FMDN Kconfig options remain available under the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` option tree.
       * The FMDN implementation directory has been renamed from :file:`subsys/bluetooth/services/fast_pair/fmdn/` to :file:`subsys/bluetooth/fast_pair/fhn/`.
 
-      See the `migration guide <Migration guide for nRF Connect SDK v3.3.0_>`_ for details.
+      See the `Migration notes <Migration notes for nRF Connect SDK v3.3.0_>`_ for details.
 
 * :ref:`bt_mesh_dk_prov` module:
 

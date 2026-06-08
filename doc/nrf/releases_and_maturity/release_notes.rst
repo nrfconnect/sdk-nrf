@@ -4,23 +4,19 @@ Release notes
 #############
 
 Each :ref:`release <dm-revisions>` of the |NCS| comes with its own release notes.
+For information about how releases are defined and documented, see :ref:`ncs_release_model`.
 
 Known issues for each release are listed on the `known issues page on the main branch`_.
 This page is included only in the latest documentation, because it might contain issues that are discovered after a release is tagged.
 
 .. note::
    A "99" at the end of the version number of this documentation indicates continuous updates on the main branch since the previous major.minor release.
-   When looking at this latest documentation, be aware of the following aspects:
-
-   * Changes between releases are tracked on the :ref:`ncs_release_notes_changelog` page, but the main branch might contain additional changes that are not listed on that page.
-   * The release note pages that are available in the latest documentation might differ slightly from the release notes that were included in the respective |NCS| release at its release date.
-     Therefore, to see the official version of the release notes for a specific |NCS| release, switch to the documentation for the corresponding |NCS| version using the selector in the upper left corner.
+   When looking at this latest documentation, be aware of the following aspect:
 
 .. toctree::
    :maxdepth: 1
    :caption: Subpages:
 
-   releases/release-notes-changelog
    releases/release-notes-3.4.0
    releases/release-notes-3.3.0
    releases/release-notes-3.3.0-preview3
