@@ -17,6 +17,7 @@
 
 #include "dect_mdm_common.h"
 #include "dect_mdm_rx.h"
+#include "dect_mdm_rx_pool.h"
 #include "dect_mdm_ctrl.h"
 #include "dect_mdm_ctrl_internal.h"
 
@@ -201,14 +202,16 @@ dect_mdm_ctrl_mdm_dlc_data_rx_ntf_cb(struct nrf_modem_dect_dlc_data_rx_ntf_cb_pa
 	struct net_pkt *rcv_pkt;
 	int ret;
 
-	/* Allocate net_pkt using Zephyr's internal memory pools - ISR safe with K_NO_WAIT */
-	/* Note: ctrl_data.iface is read without mutex here. This is safe because:
+	/* Allocate net_pkt using Zephyr's internal memory pools - ISR safe with K_NO_WAIT.
+	 * When CONFIG_DECT_MDM_RX_PRIVATE_POOL=y, allocation comes from a DECT-private
+	 * pool isolated from the global RX pools so eth0 RX cannot starve dect0 RX.
+	 *
+	 * Note: ctrl_data.iface is read without mutex here. This is safe because:
 	 * 1. This callback may be called from ISR context where mutex cannot be used
 	 * 2. ctrl_data.iface is set once during initialization (protected by mutex)
 	 *    and never changes afterward
 	 */
-	rcv_pkt = net_pkt_rx_alloc_with_buffer(ctrl_data.iface, params->data_len, AF_UNSPEC, 0,
-					       K_NO_WAIT);
+	rcv_pkt = dect_mdm_rx_pkt_alloc(ctrl_data.iface, params->data_len);
 	if (!rcv_pkt) {
 		printk("%s: RX packet allocation failed in ISR (len=%d), dropping\n", __func__,
 		       params->data_len);
