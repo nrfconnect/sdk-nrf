@@ -41,6 +41,8 @@ Updating the nRF54H20 SoC
 
 To update the nRF54H20 IronSide SE binaries to the latest version, see :ref:`ug_nrf54h20_ironside_se_update`.
 
+.. _abi_compatibility_ise_changelog:
+
 nRF54H20 IronSide SE binaries changelog
 ***************************************
 

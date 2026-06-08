@@ -201,7 +201,7 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-* Added the :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
+|no_changes_yet_note|
 
 DECT NR+
 --------
@@ -285,7 +285,6 @@ nRF Desktop
   * The ``release_fast_pair`` build type for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
     The configuration acts as a HID mouse with Fast Pair support.
     It uses MCUboot in direct-xip mode with software-based image signature verification.
-
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -385,6 +384,13 @@ DECT NR+ samples
 ----------------
 
 |no_changes_yet_note|
+
+
+Edge Impulse samples
+--------------------
+
+|no_changes_yet_note|
+
 
 Enhanced ShockBurst samples
 ---------------------------
@@ -639,6 +645,12 @@ Google Fast Pair integration
 ----------------------------
 
 * Removed the nRF53 Series-specific information from the :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide, following the removal of the nRF52 and nRF53 Series support from the Fast Pair samples.
+
+Edge Impulse integration
+------------------------
+
+|no_changes_yet_note|
+
 
 Memfault integration
 --------------------

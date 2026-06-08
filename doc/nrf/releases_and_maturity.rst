@@ -3,8 +3,9 @@
 Releases and maturity
 #####################
 
-The |NCS| receives regular releases, which introduce new components or fix issues in existing features.
+The |NCS| receives :ref:`regular releases <ncs_release_model>`, which introduce new components or fix issues in existing features.
 Every release consists of a combination of all included repositories at different revisions.
+Some releases also provide :ref:`long-term support <lts_releases>` for products that require long-term stability.
 
 The versioning scheme adopted is similar to `Semantic versioning`_, but with important semantic differences:
 
@@ -22,6 +23,7 @@ If an issue is found in a release after it has taken place, those issues are lis
    :maxdepth: 1
    :caption: Subpages:
 
+   releases_and_maturity/ncs_release_model
    releases_and_maturity/release_notes
    releases_and_maturity/migration_guides
    releases_and_maturity/repository_revisions
