@@ -10,6 +10,7 @@ Device firmware upgrade support
      In this case, the DFU can be done either using a smartphone application or a PC command-line tool.
      This protocol is not part of the Matter specification.
 
+   For detailed information about how to perform an update over Matter or Bluetooth LE, see :doc:`matter:nrfconnect_examples_software_update`.
    In both cases, the :ref:`MCUboot <mcuboot:mcuboot_wrapper>` secure bootloader is used to apply the new firmware image.
 
    The DFU over Matter is enabled by default.
