@@ -8,8 +8,8 @@
 #include <zephyr/ztest.h>
 #include <zephyr/drivers/spi.h>
 #include <nrfx_spim.h>
-#include <zephyr/linker/devicetree_regions.h>
 #include <zephyr/drivers/counter.h>
+#include <dmm.h>
 #include <math.h>
 
 #define TEST_TIMER_COUNT_TIME_LIMIT_MS 500
@@ -24,14 +24,8 @@
 static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi), SPI_MODE);
 const struct device *const tst_timer_dev = DEVICE_DT_GET(DT_ALIAS(tst_timer));
 
-#define MEMORY_SECTION(node)                                                                       \
-	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                        \
-		    (__attribute__((__section__(                                                   \
-			    LINKER_DT_NODE_REGION_NAME(DT_PHANDLE(node, memory_regions)))))),      \
-		    ())
-
-static uint8_t tx_buffer[MAX_TEST_BUFFER_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi)));
-static uint8_t rx_buffer[MAX_TEST_BUFFER_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi)));
+static uint8_t tx_buffer[MAX_TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi)));
+static uint8_t rx_buffer[MAX_TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi)));
 
 static void *test_setup(void)
 {
