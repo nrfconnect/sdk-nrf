@@ -9,7 +9,7 @@
 #include <zephyr/drivers/spi.h>
 #include <nrfx_spim.h>
 #include <nrfx_timer.h>
-#include <zephyr/linker/devicetree_regions.h>
+#include <dmm.h>
 
 #include <zephyr/drivers/counter.h>
 #include <helpers/nrfx_gppi.h>
@@ -35,15 +35,8 @@ static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), 
 NRF_SPIM_Type *spim_reg = (NRF_SPIM_Type *)DT_REG_ADDR(DUT_SPI_NODE);
 
 static nrfx_timer_t test_timer = NRFX_TIMER_INSTANCE(DT_REG_ADDR(DT_NODELABEL(tst_timer)));
-
-#define MEMORY_SECTION(node)                                                                       \
-	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                        \
-		    (__attribute__((__section__(                                                   \
-			    LINKER_DT_NODE_REGION_NAME(DT_PHANDLE(node, memory_regions)))))),      \
-		    ())
-
-static uint8_t tx_buffer[TEST_BUFFER_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
-static uint8_t rx_buffer[TEST_BUFFER_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
+static uint8_t tx_buffer[TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
+static uint8_t rx_buffer[TEST_BUFFER_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
 
 static void *test_setup(void)
 {
