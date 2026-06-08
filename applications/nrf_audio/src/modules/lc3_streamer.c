@@ -529,7 +529,7 @@ int lc3_streamer_init(void)
 
 	ret = lc3_file_init();
 	if (ret) {
-		LOG_ERR("Failed to initialize LC3 file module %d", ret);
+		LOG_WRN("Failed to initialize LC3 file module %d", ret);
 		return ret;
 	}
 

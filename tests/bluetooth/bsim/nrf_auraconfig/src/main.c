@@ -13,7 +13,34 @@
 #include <bs_types.h>
 
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_backend.h>
 LOG_MODULE_REGISTER(nac_test, CONFIG_NAC_TEST_LOG_LEVEL);
+
+static uint32_t log_err_count;
+static uint32_t log_dropped;
+
+static void log_backend_test_parser_process(const struct log_backend *const backend,
+					    union log_msg_generic *msg_generic)
+{
+	ARG_UNUSED(backend);
+
+	if (log_msg_get_level(&msg_generic->log) == LOG_LEVEL_ERR) {
+		log_err_count++;
+	}
+}
+
+static void log_backend_test_parser_dropped(const struct log_backend *const backend, uint32_t cnt)
+{
+	ARG_UNUSED(backend);
+	log_dropped += cnt;
+}
+
+static const struct log_backend_api log_backend_test_parser_api = {
+	.process = log_backend_test_parser_process,
+	.dropped = log_backend_test_parser_dropped,
+};
+
+LOG_BACKEND_DEFINE(log_backend_test_parser, log_backend_test_parser_api, true);
 
 extern enum bst_result_t bst_result;
 
@@ -112,6 +139,20 @@ void test_main(void)
 
 static void test_delete(void)
 {
+	if (log_err_count != 0) {
+		TEST_FAIL("%u <err> prints detected in nac test", log_err_count);
+		return;
+	}
+
+	if (log_dropped != 0) {
+		/* Dropped messages are not a problem in itself, but shows that
+		 * the logging system is being overloaded.
+		 * Does not catch overload in other logging backends.
+		 */
+		TEST_FAIL("%u log messages dropped in nac test", log_dropped);
+		return;
+	}
+
 	if (bst_result == In_progress) {
 		/* The nRF_Auraconfig sample won't stop by itself, so running == passing */
 		TEST_PASS();

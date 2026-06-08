@@ -146,7 +146,7 @@ int lc3_file_init(void)
 
 	ret = sd_card_init();
 	if (ret) {
-		LOG_ERR("Failed to initialize SD card: %d", ret);
+		LOG_WRN("Failed to initialize SD card: %d", ret);
 		return ret;
 	}
 
