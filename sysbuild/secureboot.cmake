@@ -112,7 +112,7 @@ if(SB_CONFIG_SECURE_BOOT)
 
       include(image_flasher.cmake)
       add_image_flasher(NAME app_provision HEX_FILE "${CMAKE_BINARY_DIR}/app_provision.hex" BASE_IMAGE b0)
-      if(SB_CONFIG_SOC_SERIES_NRF54L)
+      if(SB_CONFIG_SOC_SERIES_NRF54L OR SB_CONFIG_SOC_SERIES_NRF71)
         add_image_flasher(NAME bootconf HEX_FILE "${CMAKE_BINARY_DIR}/bootconf.hex" BASE_IMAGE b0)
         sysbuild_add_dependencies(FLASH bootconf b0)
       endif()
