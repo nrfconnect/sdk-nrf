@@ -627,8 +627,8 @@
 .. _`Repositories and revisions for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/introduction.html#repositories_and_revisions
 .. _`Repositories and revisions`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/introduction.html#repositories_and_revisions
 
-.. _`Modem library changelog for v3.3.1`: https://docs.nordicsemi.com/bundle/ncs-3.3.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v3.3.0`: https://nrfconnectdocs.nordicsemi.com/ncs/3.3.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
+.. _`Modem library changelog for v3.3.1`: https://nrfconnectdocs.nordicsemi.com/ncs/3.3.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
+.. _`Modem library changelog for v3.3.0`: https://docs.nordicsemi.com/bundle/ncs-3.3.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.2.4`: https://docs.nordicsemi.com/bundle/ncs-3.2.4/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.6.5`: https://docs.nordicsemi.com/bundle/ncs-2.6.5/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.2.3`: https://docs.nordicsemi.com/bundle/ncs-3.2.3/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
