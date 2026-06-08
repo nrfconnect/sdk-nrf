@@ -14,7 +14,7 @@ LOG_MODULE_REGISTER(spim_mosi_toggles, LOG_LEVEL_INF);
 #include <nrfx_gpiote.h>
 #include <gpiote_nrfx.h>
 #include <zephyr/drivers/spi.h>
-#include <zephyr/linker/devicetree_regions.h>
+#include <dmm.h>
 
 /* Number of bytes transmitted in single transaction. */
 #define TEST_DATA_SIZE 6
@@ -22,14 +22,7 @@ LOG_MODULE_REGISTER(spim_mosi_toggles, LOG_LEVEL_INF);
 #define SPI_MODE (SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB)
 
 static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE);
-
-#define MEMORY_SECTION(node)                                                                       \
-	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                        \
-		    (__attribute__((__section__(                                                   \
-			    LINKER_DT_NODE_REGION_NAME(DT_PHANDLE(node, memory_regions)))))),      \
-		    ())
-
-static uint8_t spim_buffer[2 * TEST_DATA_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
+static uint8_t spim_buffer[2 * TEST_DATA_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
 
 /* Variables used to count edges on SPI MOSI line. */
 #define CLOCK_INPUT_PIN	NRF_DT_GPIOS_TO_PSEL(DT_PATH(zephyr_user), test_gpios)
