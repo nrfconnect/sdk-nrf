@@ -10,6 +10,7 @@ import logging
 from pathlib import Path
 
 import pytest
+from parameters import get_edt_node
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
 from twister_harness_ext.utils.imgtool_wrapper import imgtool_keygen, imgtool_sign
@@ -43,6 +44,11 @@ def test_invalid_signature(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr, tes
 
     imgtool_params = tm.build_params.imgtool_params
     app_to_sign = tm.build_params.app_to_sign
+
+    if "54h20" in dut.device_config.platform:
+        edt_data = tm.build_params.app_build_dir / "zephyr" / "edt.pickle"
+        rom_fixed_addr = str(get_edt_node(edt_data, "cpuapp_slot0_partition").regs[0].addr)
+        imgtool_params.rom_fixed = rom_fixed_addr
 
     if "no_key" in test_option:
         imgtool_params.key_file = None
