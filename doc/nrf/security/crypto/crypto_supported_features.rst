@@ -119,7 +119,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - HMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
-                 - --
+                 - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - --
@@ -179,6 +179,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
+                 - --
+               * - WPA3-SAE PT key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                 - --
+               * - ASCON
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
                  - --
 
          .. tab:: nrf_oberon
@@ -362,6 +368,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+               * - WPA3-SAE PT key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ASCON
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
                  - Experimental
@@ -424,7 +435,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - HMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
-                 - --
+                 - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - --
@@ -484,6 +495,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
+                 - --
+               * - WPA3-SAE PT key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                 - --
+               * - ASCON
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
                  - --
 
          .. tab:: nrf_oberon
@@ -596,6 +613,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
+                 - Experimental
+               * - WPA3-SAE PT key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
                  - Experimental
                * - ASCON
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
@@ -760,7 +780,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - Chacha20
@@ -770,7 +790,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - ECC Key Pair Import
@@ -780,7 +800,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - ECC Key Pair Export
@@ -790,7 +810,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - ECC Key Pair Generate
@@ -800,7 +820,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - ECC Key Pair Derive
@@ -810,7 +830,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - ECC Public Key
@@ -820,7 +840,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - RSA Key Pair Import
@@ -830,7 +850,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - RSA Key Pair Export
@@ -840,7 +860,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - RSA Key Pair Generate
@@ -850,7 +870,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - RSA Key Pair Derive
@@ -860,7 +880,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - RSA Public Key
@@ -870,7 +890,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - XChaCha20
@@ -890,7 +910,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
-                - Experimental
+                - Supported
                 - --
                 - --
               * - HSS Public Key
@@ -1101,6 +1121,16 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
+                - --
+                - --
+              * - ASCON
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
 
@@ -1579,10 +1609,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - HMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - --
@@ -1699,6 +1729,18 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
+                 - --
+                 - --
+                 - --
+                 - --
+               * - WPA3-SAE key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                 - --
+                 - --
+                 - --
+                 - --
+               * - ASCON
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
                  - --
                  - --
                  - --
@@ -1920,6 +1962,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+               * - WPA3-SAE key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                * - ASCON
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
                  - Experimental
@@ -2005,6 +2053,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
 
    .. tab:: nRF53 Series
 
@@ -2076,6 +2126,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
 
    .. tab:: nRF54L Series
 
@@ -2149,6 +2201,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
 
    .. tab:: nRF91 Series
 
@@ -2220,6 +2273,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
 
 .. _ug_crypto_supported_features_cipher_modes:
 
@@ -2445,7 +2500,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - CBC no padding
@@ -2455,7 +2510,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - CBC PKCS#7 padding
@@ -2465,7 +2520,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - CTR
@@ -2475,7 +2530,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - CCM* no tag
@@ -2495,7 +2550,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
 
@@ -2979,7 +3034,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
 
@@ -3577,7 +3632,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - HKDF-Extract
@@ -3587,7 +3642,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - HKDF-Expand
@@ -3597,7 +3652,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - PBKDF2-HMAC
@@ -3607,7 +3662,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - PBKDF2-AES-CMAC-PRF-128
@@ -3617,7 +3672,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - TLS 1.2 PRF
@@ -3627,7 +3682,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - TLS 1.2 PSK to MS
@@ -3637,7 +3692,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - TLS 1.2 EC J-PAKE to PMS
@@ -3647,7 +3702,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SP 800-108r1 CMAC w/counter
@@ -3657,7 +3712,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SP 800-108 HMAC counter mode
@@ -3667,7 +3722,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - WPA3-SAE hash-to-element
@@ -4372,7 +4427,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
-                 - Experimental (with exceptions, see note)
+                 - Supported (with exceptions, see note)
                  - --
                  - --
                * - HMAC
@@ -4382,7 +4437,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
 
@@ -4661,6 +4716,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - XChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
                  - --
+               * - ASCON AEAD128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
+                 - --
 
             .. note::
 
@@ -4729,6 +4787,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - XChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+                 - --
+               * - ASCON AEAD128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
                  - --
 
          .. tab:: nrf_oberon
@@ -4822,7 +4883,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - GCM
@@ -4832,7 +4893,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
-                 - Experimental
+                 - Supported (with exceptions, see note)
                  - --
                  - --
                * - ChaCha20-Poly1305
@@ -4842,11 +4903,21 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - XChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+               * - ASCON AEAD128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
                  - --
                  - --
                  - --
@@ -4973,6 +5044,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+               * - ASCON AEAD128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
+                 - --
+                 - --
+                 - --
+                 - --
 
             .. note::
 
@@ -5060,6 +5137,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
 
    .. tab:: nRF53 Series
 
@@ -5093,6 +5171,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
 
    .. tab:: nRF54L Series
 
@@ -5126,6 +5205,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
 
    .. tab:: nRF91 Series
 
@@ -5158,6 +5238,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
 
 .. _ug_crypto_supported_features_signature_algorithms:
 
@@ -5528,7 +5609,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - ECDSA without hashing
@@ -5538,7 +5619,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - ECDSA (deterministic)
@@ -5548,7 +5629,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - PureEdDSA
@@ -5558,7 +5639,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - HashEdDSA Edwards25519
@@ -5568,7 +5649,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - HashEdDSA Edwards448
@@ -5578,7 +5659,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - RSA PKCS#1 v1.5 sign
@@ -5588,7 +5669,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - RSA PSS
@@ -5598,7 +5679,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - HSS
@@ -6361,7 +6442,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - RSA PKCS#1 v1.5 crypt
@@ -6371,7 +6452,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
 
@@ -6962,7 +7043,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - BrainpoolP256r1
@@ -6972,7 +7053,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - BrainpoolP320r1
@@ -6982,7 +7063,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - BrainpoolP384r1
@@ -6992,7 +7073,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - BrainpoolP512r1
@@ -7002,7 +7083,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Curve25519 (X25519)
@@ -7012,7 +7093,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Curve448 (X448)
@@ -7022,7 +7103,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Edwards25519 (Ed25519)
@@ -7032,7 +7113,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Edwards448 (Ed448)
@@ -7042,7 +7123,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - secp256k1
@@ -7052,7 +7133,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - secp224r1
@@ -7062,7 +7143,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - secp256r1
@@ -7072,7 +7153,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - secp384r1
@@ -7082,7 +7163,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - secp521r1
@@ -7092,7 +7173,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
 
@@ -7815,7 +7896,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - CTR-DRBG
@@ -7825,7 +7906,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - HMAC-DRBG
@@ -8163,6 +8244,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - --
+               * - ASCON HASH256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
+                 - --
 
          .. tab:: nrf_oberon
 
@@ -8307,6 +8391,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
+                 - --
+               * - ASCON HASH256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
                  - --
 
          .. tab:: nrf_oberon
@@ -8456,7 +8543,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SHA-224
@@ -8466,7 +8553,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SHA-256
@@ -8476,7 +8563,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SHA-384
@@ -8486,7 +8573,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SHA-512
@@ -8496,7 +8583,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SHA3-224
@@ -8506,7 +8593,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SHA3-256
@@ -8516,7 +8603,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SHA3-384
@@ -8526,7 +8613,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SHA3-512
@@ -8536,7 +8623,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SHA-256/192
@@ -8587,6 +8674,16 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - --
+                 - --
+               * - ASCON HASH256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
 
@@ -8859,6 +8956,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+               * - ASCON HASH256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
+                 - --
+                 - --
+                 - --
+                 - --
 
          .. tab:: nrf_oberon
 
@@ -9009,6 +9112,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
 
    .. tab:: nRF53 Series
 
@@ -9048,6 +9152,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
 
    .. tab:: nRF54L Series
 
@@ -9094,6 +9199,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
 
    .. tab:: nRF91 Series
 
@@ -9133,6 +9239,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
 
 .. _ug_crypto_supported_features_xof_algorithms:
 
@@ -9574,7 +9681,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SPAKE2+ with HMAC
@@ -9584,7 +9691,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SPAKE2+ with CMAC
@@ -9594,7 +9701,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - SPAKE2+ for Matter
@@ -10066,7 +10173,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Export
@@ -10076,7 +10183,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Generate
@@ -10086,7 +10193,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Derive
@@ -10096,7 +10203,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
 
@@ -10616,7 +10723,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Export
@@ -10626,7 +10733,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Generate
@@ -10636,7 +10743,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Derive
@@ -10646,7 +10753,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
 
@@ -10934,7 +11041,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Import
@@ -10944,7 +11051,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Export
@@ -10954,7 +11061,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - Derive
@@ -10964,7 +11071,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
 
@@ -11280,7 +11387,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
                * - 192 bits
@@ -11300,7 +11407,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Supported
                  - --
                  - --
 
