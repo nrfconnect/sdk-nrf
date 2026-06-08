@@ -1,0 +1,52 @@
+/*
+ * Two-stage (NSIB -> MCUboot -> application) partition layout for nRF7120
+ * without Partition Manager.
+ *
+ *   b0_partition      0x000000  32K    NSIB (boot_partition resized in place so
+ *                                      the b0_partition alias stays valid)
+ *   s0_partition      0x008000  62K    MCUboot copy 0  (NSIB-bootable; locked
+ *   s1_partition      0x018000  62K    MCUboot copy 1   immutable via MRAMC
+ *                                      REGION[4]+[5] for the active slot)
+ *   slot0_partition   0x028000  1392K  application image-0 (MCUboot primary)
+ *   slot1_partition   0x184000  1392K  application image-1 (MCUboot secondary)
+ *
+ * 2K gaps before s1 (0x017800) and slot0 (0x027800) keep the slots erase-block
+ * aligned. wifi_*_patch and storage partitions are left untouched. Literal hex
+ * (not DT_SIZE_K): the variant-image DTS flow does not preprocess.
+ */
+
+/* Shrink the NSIB region in place; b0_partition is an alias of boot_partition. */
+&boot_partition {
+	reg = <0x0 0x8000>;
+};
+
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+
+&cpuapp_mram {
+	partitions {
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot-0";
+			reg = <0x00008000 0xf800>;
+		};
+
+		s1_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot-1";
+			reg = <0x00018000 0xf800>;
+		};
+
+		slot0_partition: partition@28000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x00028000 0x15c000>;
+		};
+
+		slot1_partition: partition@184000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x00184000 0x15c000>;
+		};
+	};
+};

@@ -90,6 +90,21 @@ if(SB_CONFIG_SECURE_BOOT)
         "b0"
       )
     else()
+      # Two-stage secure boot (NSIB + MCUboot) without Partition Manager needs a
+      # per-board DTS partition layout, looked up by board target name so any SoC
+      # can add its own under sysbuild/overlays/nsib-dts-2stage/ with no code change.
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        string(REPLACE "/" "_" sb_board_norm "${BOARD}/${BOARD_QUALIFIERS}")
+        set(sb_two_stage_overlay
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/nsib-dts-2stage/${sb_board_norm}.overlay)
+        if(NOT EXISTS ${sb_two_stage_overlay})
+          message(FATAL_ERROR
+            "Two-stage secure boot (NSIB + MCUboot) without Partition Manager requires "
+            "a DTS partition layout for this board, but none was found.\n"
+            "Expected: ${sb_two_stage_overlay}")
+        endif()
+      endif()
+
       ExternalZephyrProject_Add(
         APPLICATION b0
         SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/bootloader
@@ -103,10 +118,12 @@ if(SB_CONFIG_SECURE_BOOT)
       endif()
 
       # Single-stage NSIB (no MCUboot): alias s0/s1 onto the application slots so
-      # bl_boot/bl_validation resolve the next-stage image from devicetree. A
-      # two-stage build injects a full layout overlay instead.
+      # bl_boot/bl_validation resolve the next-stage image from devicetree.
+      # Two-stage: apply the full layout so b0 sees the MCUboot copies as s0/s1.
       if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
         add_overlay_dts(b0 ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/nsib-dts-slots.overlay)
+      else()
+        add_overlay_dts(b0 ${sb_two_stage_overlay})
       endif()
     endif()
 
@@ -148,8 +165,14 @@ if(SB_CONFIG_SECURE_BOOT)
           SOURCE_APP mcuboot
           EXTRA_DTC_OVERLAY_FILE ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s1-partition.overlay
         )
+        add_overlay_dts(mcuboot_s1_variant ${sb_two_stage_overlay})
 
         add_overlay_dts(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay)
+        add_overlay_dts(mcuboot ${sb_two_stage_overlay})
+
+        # The application links into slot0_partition (image-0); apply the same
+        # layout so its slots resolve to the two-stage addresses.
+        add_overlay_dts(${DEFAULT_IMAGE} ${sb_two_stage_overlay})
       else()
         ExternalZephyrVariantProject_Add(
           APPLICATION ${DEFAULT_IMAGE}_s1_variant
