@@ -139,18 +139,3 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
-
-- scenarios:
-    - tfm.psa_test_initial_attestation_lvl1
-    - tfm.psa_test_initial_attestation_lvl2
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39766"
-
-- scenarios:
-    - sample.dfu.smp_svr.nrf_compress.encryption_ed25519
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54lm20dk/nrf54lm20b/cpuapp
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39892"
