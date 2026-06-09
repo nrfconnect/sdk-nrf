@@ -5,21 +5,24 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
+from typing import Literal
 
 from twister_harness import DeviceAdapter
 from twister_harness.helpers.utils import find_in_config
 
 from .helpers import normalize_path, run_command
 
+KEY_TYPES = Literal["UROT_PUBKEY", "BL_PUBKEY", "APP_PUBKEY"]
+POLICY_TYPES = Literal["revokable", "lock", "lock-last"]
 ZEPHYR_BASE = os.environ["ZEPHYR_BASE"]
 
 logger = logging.getLogger(__name__)
 
 
 def provision_keys_for_kmu(
-    keys: list[str] | str,
-    keyname: str = "UROT_PUBKEY",  # UROT_PUBKEY, BL_PUBKEY, APP_PUBKEY
-    policy: str | None = None,  # revokable, lock, lock-last (default)
+    keys: list[str | Path] | str | Path,
+    keyname: KEY_TYPES = "UROT_PUBKEY",
+    policy: KEY_TYPES | None = None,  # default: lock-last
     dev_id: str | None = None,
 ):
     """Provision keys for KMU using west ncs-provision upload command.
@@ -54,7 +57,7 @@ def provision_nsib(dut: DeviceAdapter) -> None:
     provision_keys_for_kmu(key_file, keyname="BL_PUBKEY", dev_id=dut.device_config.id)
 
 
-def get_keyname_for_mcuboot(sysbuild_config: Path) -> str:
+def get_keyname_for_mcuboot(sysbuild_config: Path) -> KEY_TYPES:
     """Get the keyname for MCUboot based on the build configuration."""
     keyname = "BL_PUBKEY"
     if any(

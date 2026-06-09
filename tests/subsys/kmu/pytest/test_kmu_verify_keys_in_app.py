@@ -9,7 +9,8 @@ from pathlib import Path
 import pytest
 from twister_harness import DeviceAdapter
 from twister_harness.helpers.utils import find_in_config, match_lines
-from twister_harness_ext.utils.common import provision_keys_for_kmu, reset_board
+from twister_harness_ext.utils.key_provisioning import provision_keys_for_kmu
+from twister_harness_ext.utils.common import reset_board
 from constant import APP_KEYS_FOR_KMU
 
 
