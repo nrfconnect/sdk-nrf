@@ -44,8 +44,8 @@
 		ranges;
 
 		softperipheral_ram: memory@2003c000 {
-			reg = <0x2003c000 0x4000>;
-			ranges = <0 0x2003c000 0x4000>;
+			reg = <0x2003c000 DT_SIZE_K(16)>;
+			ranges = <0 0x2003c000 DT_SIZE_K(16)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 

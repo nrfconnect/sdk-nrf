@@ -27,6 +27,8 @@
 			reg = <0x93000 DT_SIZE_K(324)>;
 		};
 
+		/* Gap from e4000 to 1c2400 (889 kB) */
+
 		boot_request: partition@0x1c2400 {
 			reg = <0x1c2400 16>;
 		};
