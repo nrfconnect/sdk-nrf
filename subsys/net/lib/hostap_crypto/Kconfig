@@ -109,10 +109,7 @@ if HOSTAP_CRYPTO_ALT_PSA
 config HOSTAP_CRYPTO_WPA3_PSA
 	bool "WPA3 PSA support"
 	depends on !SOC_SERIES_NRF54H && !WIFI_NM_WPA_SUPPLICANT_AP
-	# Off by default for enterprise: WPA3 SAE is personal-only and the PSA
-	# PAKE driver does not fit the already tight enterprise EAP-TLS budget.
-	# It can still be enabled explicitly on boards with spare RAM/flash.
-	default y if !SOC_SERIES_NRF54H && !HOSTAP_CRYPTO_ENTERPRISE
+	default y if !SOC_SERIES_NRF54H
 	select PSA_WANT_ALG_WPA3_SAE_FIXED
 	select PSA_WANT_ALG_WPA3_SAE_H2E
 	select PSA_WANT_KEY_TYPE_WPA3_SAE
