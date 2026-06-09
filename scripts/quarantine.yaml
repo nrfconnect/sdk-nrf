@@ -70,10 +70,3 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
-
-- scenarios:
-    - tfm.psa_test_initial_attestation_lvl1
-    - tfm.psa_test_initial_attestation_lvl2
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39766"
