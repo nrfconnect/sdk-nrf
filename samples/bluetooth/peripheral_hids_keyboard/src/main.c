@@ -365,11 +365,64 @@ static const char *sci_mode_to_string(enum bt_hids_sci_mode_value mode)
 	return "UNKNOWN";
 }
 
+static bool hid_sci_mode_try(size_t conn_idx,
+			     enum bt_hids_sci_mode_value mode,
+			     const struct bt_conn_le_conn_rate_changed *params)
+{
+	bool mode_updated = false;
+
+	if (bt_hids_sci_mode_validate(mode, params)) {
+		int err = bt_hids_sci_mode_updated(conn_mode[conn_idx].conn, mode);
+
+		if (!err) {
+			mode_updated = true;
+		}
+	}
+
+	return mode_updated;
+}
+
+static void find_valid_sci_mode(size_t conn_idx,
+				const struct bt_conn_le_conn_rate_changed *params)
+{
+	bool valid_mode_found = false;
+	static const enum bt_hids_sci_mode_value modes_to_try[] = {
+		BT_HIDS_SCI_MODE_FAST,
+		BT_HIDS_SCI_MODE_DEFAULT,
+		BT_HIDS_SCI_MODE_LOW_POWER,
+		BT_HIDS_SCI_MODE_FULL_RANGE,
+	};
+
+	printk("Attempting to find a valid SCI mode...\n");
+
+	for (size_t i = 0; i < ARRAY_SIZE(modes_to_try); i++) {
+		valid_mode_found = hid_sci_mode_try(conn_idx, modes_to_try[i], params);
+		if (valid_mode_found) {
+			printk("Updated to the found valid SCI mode: %s\n",
+			       sci_mode_to_string(modes_to_try[i]));
+			break;
+		}
+	}
+
+	if (!valid_mode_found) {
+		int err;
+
+		printk("No valid SCI mode found. Defaulting to NONE\n");
+		err = bt_hids_sci_mode_updated(conn_mode[conn_idx].conn, BT_HIDS_SCI_MODE_NONE);
+		if (!err) {
+			printk("SCI mode updated to: NONE for connection %zu\n", conn_idx);
+		} else {
+			printk("Failed to update SCI mode: %d\n", err);
+		}
+	}
+}
+
 static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
 			      const struct bt_conn_le_conn_rate_changed *params)
 {
 	size_t i;
 	enum bt_hids_sci_mode_value requested_sci_mode;
+	bool mode_ok = false;
 
 	for (i = 0; i < ARRAY_SIZE(conn_mode); i++) {
 		if (conn_mode[i].conn == conn) {
@@ -407,25 +460,43 @@ static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
 
 	/* In case a connection rate change is received without a prior HID SCI mode change request,
 	 * or if a HID SCI mode change was requested but the new connection rate parameters
-	 * are not valid for the requested mode,
-	 * this sample simply ignores the event and does not update the HID SCI mode.
-	 * In a real application a different approach might be chosen, e.g. cycling through the
-	 * available SCI modes to determine which mode the new parameters are compatible with,
-	 * or default to the FULL_RANGE mode.
+	 * are not valid for the requested mode, this sample first checks if the new parameters
+	 * are valid for the current SCI mode.
+	 * If not, it attempts to find a valid SCI mode by cycling through the available SCI modes
+	 * from the most restrictive (FAST) to the least restrictive (FULL_RANGE) mode.
+	 * If no valid SCI mode is found, the sample defaults to the NONE mode.
+	 *
+	 * In a real application a different approach might be chosen,
+	 * e.g. default to the FULL_RANGE mode right away.
 	 */
 	if (requested_sci_mode == BT_HIDS_SCI_MODE_NONE) {
 		printk("No pending HID SCI mode change request\n");
-	} else if (bt_hids_sci_mode_validate(requested_sci_mode, params)) {
-		int err = bt_hids_sci_mode_updated(conn, requested_sci_mode);
-
-		if (!err) {
-			printk("SCI mode updated to: %s for connection %zu\n",
-				   sci_mode_to_string(requested_sci_mode), i);
-		} else {
-			printk("Failed to update SCI mode: %d\n", err);
-		}
 	} else {
-		printk("Invalid SCI mode parameters for mode %d\n", requested_sci_mode);
+		mode_ok = hid_sci_mode_try(i, requested_sci_mode, params);
+	}
+
+	if (!mode_ok) {
+		enum bt_hids_sci_mode_value current_sci_mode;
+		int err = bt_hids_sci_mode_get(conn, &current_sci_mode);
+
+		if (err) {
+			printk("Failed to get current SCI mode: %d\n", err);
+		} else {
+			printk("Validating parameters for the current mode %s\n",
+			       sci_mode_to_string(current_sci_mode));
+
+			mode_ok = bt_hids_sci_mode_validate(current_sci_mode, params);
+
+			if (mode_ok) {
+				printk("Parameters are valid for the current mode. No action needed.\n");
+			} else {
+				printk("Invalid SCI mode parameters for current mode.\n");
+			}
+		}
+	}
+
+	if (!mode_ok) {
+		find_valid_sci_mode(i, params);
 	}
 }
 #endif
