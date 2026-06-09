@@ -142,6 +142,26 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+  sample.cellular.modem_shell.perf_test:
+    sysbuild: true
+    build_only: true
+    extra_args: modem_shell_SNIPPET="nrf91dk-perf-test"
+    integration_platforms: *modem_shell_integration_platforms
+    platform_allow: *modem_shell_platform_allow
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+  sample.cellular.modem_shell.perf_test_modem_trace_uart:
+    sysbuild: true
+    build_only: true
+    extra_args: modem_shell_SNIPPET="nrf91dk-perf-test-modem-trace-uart"
+    integration_platforms: *modem_shell_integration_platforms
+    platform_allow: *modem_shell_platform_allow
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
   sample.cellular.modem_shell.carrier:
     sysbuild: true
     build_only: true
