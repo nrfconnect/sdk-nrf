@@ -23,7 +23,7 @@ static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 
 	err = zsock_getaddrinfo(host_name, NULL, hints, &info);
 	if (err) {
-		LOG_DBG("getaddrinfo for %s, port: %d failed: %d, errno: %d", host_name, port, err,
+		LOG_ERR("getaddrinfo for %s, port: %d failed: %d, errno: %d", host_name, port, err,
 			errno);
 		return -EADDRNOTAVAIL;
 	}
@@ -59,7 +59,8 @@ static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 		int sock = connect_cb(sa);
 
 		if (sock < 0) {
-			LOG_DBG("Failed to connect to IP address %s. Error: %d", ip, sock);
+			LOG_WRN("Failed to connect to server %s via IP address %s, port %d."
+				"Error: %d", host_name, ip, port, sock);
 			continue;
 		}
 
