@@ -24,16 +24,8 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 
 #define HANDLE_INVALID 0xFFFF
 
-#define TX_MARGIN_MIN_US CONFIG_NRF_AUDIO_TX_TGT_LEAD_TIME_US
-#if (TX_MARGIN_MIN_US <= HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US)
-#error "TX_MARGIN_MIN_US must be higher than HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US"
-#endif
-
-/* The maximum time allowed before an SDU is flushed.
- * The common_interval is added to this value.
- * Must be higher than TX_MARGIN_MIN_US
- */
-#define TX_MARGIN_MAX_US 4700
+BUILD_ASSERT(CONFIG_NRF_AUDIO_TX_LEAD_TIME_MIN_US > HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US,
+	"CONFIG_NRF_AUDIO_TX_LEAD_TIME_MIN_US <= HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US");
 
 /* Maximum allowed time deviation for calling tx_send.
  * E.g. 0.2 = 20 % deviation from the common interval
@@ -679,29 +671,36 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		 * BLE master clock. I2S or asynchronous USB will not have this issue.
 		 */
 
-		if (time_diff_us < TX_MARGIN_MIN_US) {
+		if (time_diff_us < CONFIG_NRF_AUDIO_TX_LEAD_TIME_MIN_US) {
 			/* If the diff is below the margin:
 			 *	Data provided too slow. Increase TS by
 			 *	an extra interval, get one empty SDU on air per location.
 			 */
 			LOG_INF("Data provided too slow. May happen for sync USB. time_diff_us:"
 				" %d(not in range : %u - %u) ",
-				time_diff_us, TX_MARGIN_MAX_US + common_interval_us,
-				TX_MARGIN_MIN_US);
+				time_diff_us,
+				(uint32_t)(CONFIG_NRF_AUDIO_TX_LEAD_TIME_BASE_US +
+					 common_interval_us),
+				(uint32_t) CONFIG_NRF_AUDIO_TX_LEAD_TIME_MIN_US);
 
 			ctx->ts_ctlr_esti_us += common_interval_us;
 			ctx->last_data_status = STATUS_UNDERRUN_EMPTY_SDU_ON_AIR;
 
-		} else if (time_diff_us > (TX_MARGIN_MAX_US + common_interval_us)) {
+		} else if (time_diff_us >
+			   (CONFIG_NRF_AUDIO_TX_LEAD_TIME_BASE_US + common_interval_us)) {
 
 			/* Data provided too fast. Will need to flush this data */
 			LOG_INF("Data provided too fast. May happen for sync USB. time_diff_us: "
 				" %d (not in range: %u - %u)",
-				time_diff_us, TX_MARGIN_MAX_US + common_interval_us,
-				TX_MARGIN_MIN_US);
+				time_diff_us,
+				(uint32_t)(CONFIG_NRF_AUDIO_TX_LEAD_TIME_BASE_US +
+				common_interval_us),
+				(uint32_t) CONFIG_NRF_AUDIO_TX_LEAD_TIME_MIN_US);
 			ctx->ts_ctlr_esti_us -= common_interval_us;
 			ctx->last_data_status = STATUS_OVERRUN_FLUSHED;
 			goto finalize;
+		} else {
+			/* Do nothing. */
 		}
 
 		/* If ts_ctlr_esti_us_valid is false, this means we shall send with no timestamp.
