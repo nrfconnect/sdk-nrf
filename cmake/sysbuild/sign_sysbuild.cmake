@@ -14,9 +14,10 @@ include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/ironside_se_tlv.cmake)
 #   image_name: Name of the image to find the slot address and size for.
 #   slot_addr: Output variable to store the slot address.
 #   slot_size: Output variable to store the slot size.
+#   slot_abs_addr: Output variable to store the slot absolute address.
 #   alt_slot_abs_addr: Output variable to store the alternate slot address.
 #   is_variant: Output variable to store whether the image is a variant image.
-function(find_slot_addr_size image_name slot_addr slot_size alt_slot_abs_addr is_variant)
+function(find_slot_addr_size image_name slot_addr slot_size slot_abs_addr alt_slot_abs_addr is_variant)
   # If the mcuboot image is in the list of images, use it as the slotinfo image.
   if(mcuboot IN_LIST IMAGES)
     set(slotinfo_image mcuboot)
@@ -27,10 +28,15 @@ function(find_slot_addr_size image_name slot_addr slot_size alt_slot_abs_addr is
   dt_chosen(code_flash TARGET ${image_name} PROPERTY "zephyr,code-partition")
   dt_partition_addr(code_addr PATH "${code_flash}" TARGET ${image_name} ABSOLUTE REQUIRED)
   dt_partition_size(code_size PATH "${code_flash}" TARGET ${image_name})
-  math(EXPR code_end_addr "${code_addr} + ${code_size}")
+  math(EXPR code_end_addr "${code_addr} + ${code_size}" OUTPUT_FORMAT HEXADECIMAL)
 
   # Iterate over the updateable images to find the slot address and size.
-  MATH(EXPR updateable_images_index_max "${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES} - 1")
+  MATH(EXPR updateable_images_index_max
+    "${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES} + ${SB_CONFIG_MCUBOOT_ADDITIONAL_UPDATEABLE_IMAGES} - 1"
+  )
+  message(DEBUG "[${slotinfo_image}] Looking for slot info for image ${image_name} "
+    "code_addr: ${code_addr}, code_end_addr: ${code_end_addr}"
+  )
 
   foreach(image_index RANGE 0 ${updateable_images_index_max})
     math(EXPR slot_0 "${image_index} * 2")
@@ -43,7 +49,7 @@ function(find_slot_addr_size image_name slot_addr slot_size alt_slot_abs_addr is
     dt_partition_addr(slot0_abs_addr PATH "${slot0_path}" TARGET ${slotinfo_image} ABSOLUTE
       REQUIRED)
     dt_partition_size(slot0_size PATH "${slot0_path}" TARGET ${slotinfo_image})
-    math(EXPR slot0_abs_end_addr "${slot0_abs_addr} + ${slot0_size}")
+    math(EXPR slot0_abs_end_addr "${slot0_abs_addr} + ${slot0_size}" OUTPUT_FORMAT HEXADECIMAL)
 
     if(NOT SB_CONFIG_MCUBOOT_MODE_SINGLE_APP)
       dt_nodelabel(slot1_path TARGET ${slotinfo_image} NODELABEL "slot${slot_1}_partition" REQUIRED)
@@ -51,13 +57,18 @@ function(find_slot_addr_size image_name slot_addr slot_size alt_slot_abs_addr is
       dt_partition_addr(slot1_abs_addr PATH "${slot1_path}" TARGET ${slotinfo_image} ABSOLUTE
         REQUIRED)
       dt_partition_size(slot1_size PATH "${slot1_path}" TARGET ${slotinfo_image})
-      math(EXPR slot1_ebs_end_addr "${slot1_abs_addr} + ${slot1_size}")
+      math(EXPR slot1_ebs_end_addr "${slot1_abs_addr} + ${slot1_size}" OUTPUT_FORMAT HEXADECIMAL)
     endif()
+
+    message(DEBUG "  Checking slot${slot_0}_abs_addr: ${slot0_abs_addr}, "
+      "slot${slot_0}_abs_end_addr: ${slot0_abs_end_addr}"
+    )
 
     # Check if zephyr,code-partition is located within the slot<2 * i>_partition.
     # If so, deduce that the image is located inside the primary slot of image <i>.
     if(${code_addr} GREATER_EQUAL ${slot0_abs_addr} AND ${code_end_addr} LESS_EQUAL ${slot0_abs_end_addr})
       set(${slot_addr} ${slot0_addr} PARENT_SCOPE)
+      set(${slot_abs_addr} ${slot0_abs_addr} PARENT_SCOPE)
       set(${slot_size} ${slot0_size} PARENT_SCOPE)
       set(${is_variant} FALSE PARENT_SCOPE)
 
@@ -74,8 +85,13 @@ function(find_slot_addr_size image_name slot_addr slot_size alt_slot_abs_addr is
     # If so, deduce that the image is located inside the secondary slot of image <i>.
     # All variant images uses the secondary slots.
     if(NOT SB_CONFIG_MCUBOOT_MODE_SINGLE_APP)
+      message(DEBUG "  Checking slot${slot_1}_abs_addr: ${slot1_abs_addr}, "
+        "slot${slot_1}_ebs_end_addr: ${slot1_ebs_end_addr}"
+      )
+
       if(${code_addr} GREATER_EQUAL ${slot1_abs_addr} AND ${code_end_addr} LESS_EQUAL ${slot1_ebs_end_addr})
         set(${slot_addr} ${slot1_addr} PARENT_SCOPE)
+        set(${slot_abs_addr} ${slot1_abs_addr} PARENT_SCOPE)
         set(${slot_size} ${slot1_size} PARENT_SCOPE)
         set(${is_variant} TRUE PARENT_SCOPE)
 
@@ -223,9 +239,10 @@ function(mcuboot_sign_sysbuild main_image)
     if("${keyfile}" STREQUAL "")
       # No signature key file, no signed binaries. No error, though:
       # this is the documented behavior.
-      message(FATAL_ERROR "Neither CONFIG_MCUBOOT_GENERATE_UNSIGNED_IMAGE nor "
-                          "CONFIG_MCUBOOT_SIGNATURE_KEY_FILE are set for ${main_image} image, "
-                          "The script will not generate .hex files, required to program the image.")
+      message(WARNING "Neither CONFIG_MCUBOOT_GENERATE_UNSIGNED_IMAGE or "
+                      "CONFIG_MCUBOOT_SIGNATURE_KEY_FILE are set for image ${image}. "
+                      "The generated build will not be bootable by MCUboot unless it is signed "
+                      "manually/externally.")
     endif()
 
     foreach(file keyfile keyfile_enc)
@@ -308,7 +325,7 @@ function(mcuboot_sign_sysbuild main_image)
   # Fetch basic information from the DTS.
   ###
 
-  find_slot_addr_size(${main_image} slot_addr slot_size alt_slot_abs_addr is_variant_image)
+  find_slot_addr_size(${main_image} slot_addr slot_size slot_abs_addr alt_slot_abs_addr is_variant_image)
 
   ###
   # Handle downgrade prevention.
@@ -520,11 +537,15 @@ function(mcuboot_sign_sysbuild main_image)
   ###
 
   # Construct the signing command modifiers list.
-  if(SB_CONFIG_MCUBOOT_MODE_RAM_LOAD OR SB_CONFIG_MCUBOOT_MODE_RAM_LOAD_WITH_REVERT)
-    list(APPEND modifiers
-      "<null>" "--hex-addr ${slot0_addr}"
-      ".slot1" "--hex-addr ${slot1_addr}"
-    )
+  if(SB_CONFIG_MCUBOOT_MODE_SINGLE_APP)
+    set(imgtool_sign ${imgtool_sign} --hex-addr ${slot_abs_addr})
+  else()
+    if(SB_CONFIG_MCUBOOT_MODE_RAM_LOAD OR SB_CONFIG_MCUBOOT_MODE_RAM_LOAD_WITH_REVERT)
+      list(APPEND modifiers
+        "<null>" "--hex-addr ${slot_abs_addr}"
+        ".slot1" "--hex-addr ${alt_slot_abs_addr}"
+      )
+    endif()
   endif()
   if(NOT "${keyfile_enc}" STREQUAL "")
     list(APPEND modifiers
@@ -567,8 +588,15 @@ function(mcuboot_sign_sysbuild main_image)
 
     sysbuild_get(file_to_sign_hex IMAGE ${main_image} VAR RUNNERS_HEX_FILE_TO_SIGN CACHE)
     cmake_path(APPEND binary_dir "zephyr" ${file_to_sign_hex} OUTPUT_VARIABLE file_to_sign_hex)
-    sign_with_modifiers("${modifiers_hex}" "${imgtool_sign_str}" ${file_to_sign_hex} ${output}
-      imgtool_cmds_hex byproducts_hex)
+    if("${keyfile}" STREQUAL "")
+      # If there is no signing key - simply copy input binary to the output file.
+      list(APPEND imgtool_cmds_hex COMMAND ${CMAKE_COMMAND} -E copy "${file_to_sign_hex}"
+        "${output}.hex")
+      list(APPEND byproducts_hex "${output}.hex")
+    else()
+      sign_with_modifiers("${modifiers_hex}" "${imgtool_sign_str}" ${file_to_sign_hex} ${output}
+        imgtool_cmds_hex byproducts_hex)
+    endif()
     list(APPEND imgtool_cmds ${imgtool_cmds_hex})
     list(APPEND byproducts ${byproducts_hex})
   endif()
@@ -605,8 +633,15 @@ function(mcuboot_sign_sysbuild main_image)
 
     sysbuild_get(file_to_sign_bin IMAGE ${main_image} VAR RUNNERS_BIN_FILE_TO_SIGN CACHE)
     cmake_path(APPEND binary_dir "zephyr" ${file_to_sign_bin} OUTPUT_VARIABLE file_to_sign_bin)
-    sign_with_modifiers("${modifiers_bin}" "${imgtool_sign_str}" ${file_to_sign_bin} ${output}
-      imgtool_cmds_bin byproducts_bin)
+    if("${keyfile}" STREQUAL "")
+      # If there is no signing key - simply copy input binary to the output file.
+      list(APPEND imgtool_cmds_bin COMMAND ${CMAKE_COMMAND} -E copy "${file_to_sign_bin}"
+        "${output}.bin")
+      list(APPEND byproducts_bin "${output}.bin")
+    else()
+      sign_with_modifiers("${modifiers_bin}" "${imgtool_sign_str}" ${file_to_sign_bin} ${output}
+        imgtool_cmds_bin byproducts_bin)
+    endif()
     list(APPEND imgtool_cmds ${imgtool_cmds_bin})
     list(APPEND byproducts ${byproducts_bin})
   endif()
