@@ -225,6 +225,8 @@ Iperf3 is a tool for measuring data transfer performance both in uplink and down
 .. note::
    Some features, for example file operations and TCP option tuning, are not supported.
 
+See :ref:`performance_testing` for information on how to build the sample with the performance testing configuration.
+
 Examples
 --------
 
@@ -264,6 +266,8 @@ It is a part of MoSh and enables you to test the data download with a "standard"
 
 .. note::
    File operations are not supported.
+
+See :ref:`performance_testing` for information on how to build the sample with the performance testing configuration.
 
 Examples
 --------
@@ -487,14 +491,12 @@ Modem traces
 
 MoSh command: ``modem_trace``
 
-Enable the ``modem_trace`` command using the :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHELL_TRACE` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig options.
+Enable the ``modem_trace`` command using the :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHELL_TRACE` and a trace snippet.
+For more information on snippets, see :ref:`zephyr:using-snippets`.
 
 You can use the modem trace commands to control the trace functionality in the modem.
 See :ref:`modem_trace_module` for more information on how to configure modem tracing and the built-in trace backends available.
 See :ref:`modem_trace_shell_command` for details about the shell command.
-
-To enable modem traces with the flash backend, build with the ``nrf91-modem-trace-ext-flash`` snippet for an nRF91 Series DK that has external flash.
-For more information on snippets, see :ref:`zephyr:using-snippets`.
 
 GNSS
 ====
@@ -1481,6 +1483,31 @@ Example output with NTN library debug logging enabled:
    [00:00:02.565,734] <dbg> ntn: ntn_location_set: lat: 61.493776, lon: 23.775918, alt: 146.5 m, validity: 12 s
    [00:00:08.553,009] <dbg> ntn: ntn_location_set: lat: 61.493777, lon: 23.775916, alt: 147.2 m, validity: 12 s
    [00:00:13.555,145] <dbg> ntn: ntn_location_set: lat: 61.493779, lon: 23.775901, alt: 147.3 m, validity: 12 s
+
+.. _performance_testing:
+
+Performance testing
+===================
+
+For data throughput testing, increase the modemlib TX buffer size for maximum throughput by using the :file:`nrf91dk_perf_test.overlay` overlay file.
+
+.. note::
+   You cannot use the ``nrf91-modem-trace-uart`` snippet together with the :file:`nrf91dk_perf_test.overlay` overlay file.
+   Use the :file:`nrf91dk_perf_test_modem_trace_uart.overlay` overlay and :file:`nrf91dk_perf_test_modem_trace_uart.conf` config files for performance testing with modem tracing over UART instead.
+
+To build the sample with the performance testing configuration for the nRF9151 DK, use the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_DTC_OVERLAY_FILE=nrf91dk_perf_test.overlay
+
+To build the sample with the performance testing configuration and modem tracing over UART for the nRF9151 DK, use the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE=nrf91dk_perf_test_modem_trace_uart.conf -DEXTRA_DTC_OVERLAY_FILE=nrf91dk_perf_test_modem_trace_uart.overlay
 
 References
 **********
