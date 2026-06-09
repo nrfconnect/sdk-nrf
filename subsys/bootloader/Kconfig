@@ -123,12 +123,13 @@ config SB_DISABLE_SELF_RWX
 	bool "Disable read and execution on self NVM"
 	depends on SB_DISABLE_SELF_RWX_SUPPORTED && !FPROTECT_ALLOW_COMBINED_REGIONS
 	help
-	  Sets RRAMC's BOOTCONF region protection before jumping to application.
-	  It disables reads writes and execution memory area which holds NSIB.
+	  Sets the BOOTCONF region protection before jumping to application.
+	  It disables reads, writes and execution of the memory area which holds
+	  NSIB. Uses RRAMC's region on nRF54L and MRAMC's region on nRF71.
 
 config SB_DISABLE_SELF_RWX_SKIP_SIZE
 	hex
-	depends on SB_DISABLE_SELF_RWX
+	depends on SB_DISABLE_SELF_RWX || SB_DISABLE_NEXT_W
 	depends on !PARTITION_MANAGER_ENABLED
 	default SB_IMAGE_BOOT_OFFSET
 	help
