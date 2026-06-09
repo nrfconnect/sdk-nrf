@@ -47,21 +47,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9465"
 
 - scenarios:
-    - drivers.hpf.gpio.loopback.icbmsg
-    - drivers.hpf.gpio.loopback.icmsg
-    - drivers.hpf.gpio.loopback.mbox
-    - drivers.mspi.hpf_app_fault_timer.emul_mspi_dev
-    - drivers.mspi.error_cases.hpf
-    - drivers.mspi.mspi_with_spis.nrf54lv10_lc10.hpf
-    - drivers.mspi.hpf_trap_handler.lv10_lc10
-    - nrf.extended.sample.basic.blinky.hpf.gpio.icbmsg
-    - nrf.extended.sample.basic.blinky.hpf.gpio.icmsg
-    - nrf.extended.sample.basic.blinky.hpf.gpio.mbox
-  platforms:
-    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp
-  comment: "no HPF for nrf54lc10 at the moment"
-
-- scenarios:
     - nrf.extended.drivers.clock.clock_control_onoff
     - nrf.extended.drivers.clock.nrf5_clock_calibration
     - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_available
