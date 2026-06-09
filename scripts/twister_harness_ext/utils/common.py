@@ -10,14 +10,12 @@ import subprocess
 from pathlib import Path
 from typing import Literal
 
-from twister_harness.helpers.utils import find_in_config
-
 ERASE_MODE = Literal["ERASE_NONE", "ERASE_ALL", "ERASE_CTRL_AP", "ERASE_RANGES_TOUCHED_BY_FIRMWARE"]
 
 logger = logging.getLogger(__name__)
 
 
-def normalize_path(path: str | None) -> str:
+def normalize_path(path: str | None) -> str | None:
     if path is not None:
         path = os.path.expanduser(os.path.expandvars(path))
         path = os.path.normpath(os.path.abspath(path))
@@ -68,33 +66,3 @@ def flash_board(build_dir: Path | str, dev_id: str | None, erase: bool = False):
     if erase:
         command.extend(['--erase'])
     run_command(command)
-
-
-def get_keyname_for_mcuboot(sysbuild_config: Path) -> str:
-    keyname = "BL_PUBKEY"
-    if find_in_config(sysbuild_config, "SB_CONFIG_SECURE_BOOT_APPCORE") or find_in_config(
-        sysbuild_config, "SB_CONFIG_MCUBOOT_SIGNATURE_KMU_UROT_MAPPING"
-    ):
-        keyname = "UROT_PUBKEY"
-    return keyname
-
-
-def provision_keys_for_kmu(
-    keys: list[str] | str,
-    keyname: str = "UROT_PUBKEY",  # UROT_PUBKEY, BL_PUBKEY, APP_PUBKEY
-    policy: str | None = None,  # revokable, lock, lock-last (default)
-    dev_id: str | None = None,
-):
-    logger.info("Provision keys using west command.")
-    command = ['west', 'ncs-provision', 'upload', '--keyname', keyname]
-    if policy:
-        command += ['--policy', policy]
-    if dev_id:
-        command += ['--dev-id', dev_id]
-    if not isinstance(keys, list):
-        keys = [keys]
-    for key in keys:
-        command += ['--key', normalize_path(str(key))]
-
-    run_command(command)
-    logger.info("Keys provisioned successfully")
