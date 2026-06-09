@@ -112,6 +112,57 @@ class BuildParameters:
         """Post-initialization to update paths and imgtool parameters."""
         self._update_paths()
         self._update_imgtool()
+        #self._update_rom_fixed_address()
+
+    def _mcuboot_config_path(self) -> Path:
+        """Return path to the MCUboot Kconfig file for the current build."""
+        if self.sysbuild:
+            return self.build_dir / "mcuboot" / "zephyr" / ".config"
+        return self.build_dir / "mcuboot" / "zephyr" / ".config"
+
+    def _should_set_rom_fixed_address(self) -> bool:
+        """Return whether imgtool should pass --rom-fixed when signing the app."""
+        mcuboot_config = self._mcuboot_config_path()
+        if mcuboot_config.is_file() and find_in_config(
+            mcuboot_config, "CONFIG_MCUBOOT_CHECK_HEADER_LOAD_ADDRESS"
+        ) == "y":
+            return True
+        return find_in_config(
+            self.zephyr_config, "CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS"
+        ) == "y"
+
+    def _get_primary_slot_rom_fixed_address(self) -> str | None:
+        """Return the primary slot address for imgtool --rom-fixed."""
+        if self.pm_config.is_file():
+            addr = find_in_config(self.pm_config, "PM_MCUBOOT_PRIMARY_ADDRESS")
+            if addr:
+                return addr
+
+        edt_data = self.app_build_dir / "zephyr" / "edt.pickle"
+        if not edt_data.is_file():
+            return None
+
+        for label in ("cpuapp_slot0_partition", "slot0_partition"):
+            try:
+                node = get_edt_node(edt_data, label)
+            except KeyError:
+                continue
+            return hex(node.regs[0].addr)
+
+        return None
+
+    def _update_rom_fixed_address(self) -> None:
+        """Set ih_load_addr via --rom-fixed when MCUboot expects it in the image header."""
+        if not self._should_set_rom_fixed_address():
+            return
+
+        rom_fixed = self._get_primary_slot_rom_fixed_address()
+        if rom_fixed is None:
+            logger.warning("Could not determine primary slot address for --rom-fixed")
+            return
+
+        self.imgtool_params.rom_fixed = rom_fixed
+        logger.debug("Using --rom-fixed %s for application signing", rom_fixed)
 
     def _update_paths(self) -> None:
         """Update internal paths for MCUboot, app, and netcore images."""
