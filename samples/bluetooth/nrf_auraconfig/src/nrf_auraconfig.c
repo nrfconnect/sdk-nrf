@@ -116,6 +116,15 @@ struct subgroup_lc3_stream_info {
 static struct subgroup_lc3_stream_info lc3_stream_infos[CONFIG_BT_ISO_MAX_BIG]
 						       [CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
 
+struct bis_work_item {
+	struct k_work_delayable work;
+	struct stream_index stream_idx;
+};
+
+static struct bis_work_item bis_work_items[CONFIG_BT_ISO_MAX_BIG]
+					  [CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT]
+					  [CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
+
 /* Find the most significant 1 in bits, bits will not be 0. */
 static int8_t context_msb_one(uint16_t bits)
 {
@@ -345,12 +354,29 @@ static void stream_frame_get_and_send(struct stream_index stream_idx)
 			++loaded_count;
 		}
 	}
+
 	if (loaded_count == num_bis) {
 		subgroup_send(stream_idx);
 
 		for (int i = 0; i < num_bis; i++) {
 			bis_info->frame_loaded[i] = false;
 			bis_info->frame_ptrs[i] = NULL;
+		}
+	}
+}
+
+static void pending_k_work_flush(void)
+{
+	int ret;
+
+	for (int i = 0; i < CONFIG_BT_ISO_MAX_BIG; i++) {
+		for (int j = 0; j < CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT; j++) {
+			for (int k = 0; k < CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT; k++) {
+				ret = k_work_cancel_delayable(&bis_work_items[i][j][k].work);
+				if (ret != 0 && ret != -EINVAL) {
+					LOG_ERR("Failed to cancel BIS work: %d", ret);
+				}
+			}
 		}
 	}
 }
@@ -375,13 +401,6 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_STREAM_SENT:
 			LOG_DBG("LE_AUDIO_EVT_STREAM_SENT for stream BIG %d sub: %d BIS: %d",
 				msg.idx.lvl1, msg.idx.lvl2, msg.idx.lvl3);
-
-			if (sd_card_present) {
-				stream_frame_get_and_send(msg.idx);
-			} else {
-				stream_frame_dummy_get_and_send(msg.idx);
-			}
-
 			break;
 
 		case LE_AUDIO_EVT_STREAMING:
@@ -399,6 +418,9 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_NOT_STREAMING:
 			LOG_DBG("LE audio evt not_streaming");
 
+			/* Remove any pending BIS work items */
+			pending_k_work_flush();
+
 			break;
 
 		default:
@@ -410,6 +432,65 @@ static void le_audio_msg_sub_thread(void)
 		STACK_USAGE_PRINT("le_audio_msg_thread", &le_audio_msg_sub_thread_data);
 	}
 }
+
+static void bis_work_items_fn(struct k_work *work)
+{
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct bis_work_item *bis_item = CONTAINER_OF(dwork, struct bis_work_item, work);
+
+	if (sd_card_present) {
+		stream_frame_get_and_send(bis_item->stream_idx);
+	} else {
+		stream_frame_dummy_get_and_send(bis_item->stream_idx);
+	}
+}
+
+static void stream_queue_sdu_ref_update(const struct zbus_channel *chan)
+{
+	int ret;
+	uint32_t tx_sync_ts_us;
+	uint32_t curr_ts_us;
+	uint32_t time_to_next_send_us;
+	const struct sdu_ref_msg *msg;
+
+	msg = zbus_chan_const_msg(chan);
+	tx_sync_ts_us = msg->tx_sync_ts_us;
+	curr_ts_us = msg->curr_ts_us;
+
+	/* There will only be one codec configuration per subgroup */
+	struct bt_audio_codec_cfg *codec_cfg = &broadcast_param[msg->idx[0].lvl1]
+							.subgroups[msg->idx[0].lvl2]
+							.group_lc3_preset.codec_cfg;
+
+	struct lc3_stream_cfg cfg;
+
+	ret = le_audio_duration_us_get(codec_cfg, &cfg.frame_duration_us);
+	if (ret) {
+		LOG_ERR("Failed to get frame duration: %d", ret);
+	}
+
+	if (!msg->tx_sync_ts_us_valid || tx_sync_ts_us < curr_ts_us) {
+		LOG_WRN("TX sync timestamp is invalid");
+		time_to_next_send_us = cfg.frame_duration_us;
+	} else {
+		time_to_next_send_us = tx_sync_ts_us - (curr_ts_us);
+	}
+
+	for (uint8_t i = 0; i < msg->num_idx; i++) {
+		LOG_DBG("Scheduling send for stream BIG %d sub: %d BIS: %d", msg->idx[i].lvl1,
+			msg->idx[i].lvl2, msg->idx[i].lvl3);
+
+		ret = k_work_schedule(
+			&bis_work_items[msg->idx[i].lvl1][msg->idx[i].lvl2][msg->idx[i].lvl3].work,
+			K_USEC(time_to_next_send_us));
+
+		if (ret < 0) {
+			LOG_ERR("Failed to schedule BIS work: %d", ret);
+		}
+	}
+}
+
+ZBUS_LISTENER_DEFINE(sdu_ref_msg_listen, stream_queue_sdu_ref_update);
 
 /**
  * @brief	Create zbus subscriber threads.
@@ -491,6 +572,12 @@ static int zbus_link_producers_observers(void)
 				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add le_audio sub");
+		return ret;
+	}
+
+	ret = zbus_chan_add_obs(&sdu_ref_chan, &sdu_ref_msg_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add sdu_ref listener");
 		return ret;
 	}
 
@@ -728,6 +815,11 @@ void nrf_auraconfig_main(void)
 			for (int k = 0; k < CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT; k++) {
 				lc3_stream_infos[i][j].lc3_streamer_idx[k] =
 					LC3_STREAMER_INDEX_UNUSED;
+				bis_work_items[i][j][k].stream_idx.lvl1 = i;
+				bis_work_items[i][j][k].stream_idx.lvl2 = j;
+				bis_work_items[i][j][k].stream_idx.lvl3 = k;
+				k_work_init_delayable(&bis_work_items[i][j][k].work,
+						      bis_work_items_fn);
 			}
 		}
 	}

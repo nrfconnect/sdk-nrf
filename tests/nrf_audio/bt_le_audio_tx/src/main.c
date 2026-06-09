@@ -13,6 +13,7 @@
 #include "zbus_fakes/zbus_fakes.h"
 #include "application/application.h"
 #include "zbus_common.h"
+#include "audio_defines.h"
 
 DEFINE_FFF_GLOBALS;
 
@@ -100,8 +101,8 @@ BT_LE_AUDIO_TX_DEFINE(audio_tx_ctx);
 	static const uint8_t chan_to_send = 3U;
 
 static void internals_verify_impl(int64_t corr_diff_us, bool ts_ctlr_esti_valid,
-				  uint32_t ts_ctlr_esti_us,
-				  enum bt_le_audio_tx_last_data_status last_data_status, int line)
+				  uint32_t ts_ctlr_esti_us, enum tx_data_status last_data_status,
+				  int line)
 {
 	struct bt_le_audio_tx_ctx *ctx = (struct bt_le_audio_tx_ctx *)audio_tx_ctx;
 
@@ -386,12 +387,12 @@ ZTEST(audio_tx, test_tx_send_send_too_fast)
 	audio_tx_ctx->ts_ctlr_esti_us = 25500;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
-	zassert_equal(-ECANCELED, ret, "ret %d", ret);
+	zassert_equal(0, ret, "ret %d", ret);
 	zassert_equal(2U, bt_cap_stream_send_fake.call_count);
 	zassert_equal(0U, bt_cap_stream_send_ts_fake.call_count);
 
 	zassert_equal(1U, hci_vs_sdc_iso_read_tx_timestamp_fake.call_count);
-	zassert_equal(1, zbus_chan_pub_fake.call_count);
+	zassert_equal(2, zbus_chan_pub_fake.call_count);
 
 	call_tx_sent(tx, chan_to_send);
 	/* Since we did not send anything, ts should not change*/
