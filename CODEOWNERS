@@ -372,6 +372,7 @@
 /include/tfm/                             @nrfconnect/ncs-aegir
 /include/dult.h                           @nrfconnect/ncs-si-bluebagel
 /include/accel_to_angle/                  @nrfconnect/ncs-si-bluebagel
+/include/nrf_pulse_meas.h                 @nrfconnect/ncs-ll-izera
 
 # Libraries
 /lib/accel_to_angle/                      @nrfconnect/ncs-si-bluebagel
