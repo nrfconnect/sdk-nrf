@@ -14,4 +14,7 @@ config SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE
 
 endif
 
+config PARTITION_MANAGER
+	default n
+
 source "$(ZEPHYR_BASE)/share/sysbuild/Kconfig"
