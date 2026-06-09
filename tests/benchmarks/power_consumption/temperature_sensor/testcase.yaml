@@ -25,6 +25,19 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
 
+  benchmarks.power_consumption.temperature.ldo:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+    required_snippets:
+      - nordic-vregmain-ldo
+
   benchmarks.power_consumption.temperature.nrf54l_lfrc:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
