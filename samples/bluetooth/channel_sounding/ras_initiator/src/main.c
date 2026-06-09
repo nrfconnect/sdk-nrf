@@ -30,6 +30,7 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 
 #define CON_STATUS_LED DK_LED1
 
+#define REFLECTOR_NAME "Nordic CS Reflector"
 #define CS_CONFIG_ID 0
 
 #if defined(CONFIG_SAMPLE_RAS_INITIATOR_STEP_MODE_2_SUB_MODE_1)
@@ -761,13 +762,19 @@ static int scan_init(struct bt_scan_init_param *p_param)
 
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_RANGING_SERVICE);
 	if (err) {
-		LOG_ERR("Scanning filters cannot be set (err %d)", err);
+		LOG_ERR("Scanning filter for UUID cannot be set (err %d)", err);
 		return err;
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, REFLECTOR_NAME);
 	if (err) {
-		LOG_ERR("Filters cannot be turned on (err %d)", err);
+		LOG_ERR("Scanning filter for name cannot be set (err %d)", err);
+		return err;
+	}
+
+	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
+	if (err) {
+		LOG_ERR("Scan filters cannot be turned on (err %d)", err);
 		return err;
 	}
 
