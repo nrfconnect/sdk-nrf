@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: nordic-vregmain-ldo
+
+boards:
+  /.*/nrf5340/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
+  /.*/nrf54l05/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
+  /.*/nrf54l10/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
+  /.*/nrf54l15/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
+  /.*/nrf54lc10./cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
+  /.*/nrf54lm20./cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
+  /.*/nrf54ls05./cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
+  /.*/nrf54lv10./cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nordic-vregmain-ldo.overlay
