@@ -33,8 +33,10 @@
 			 */
 			cpuapp_slot0_partition: partition@800 {
 				compatible = "zephyr,mapped-partition";
-				reg = <0x800 DT_SIZE_K(326)>;
+				reg = <0x800 DT_SIZE_K(324)>;
 			};
+
+			/* Gap from 51800 to 52000 (2 kB) */
 
 			/* Radio code partition (variant 0). */
 			cpurad_slot0_partition: partition@52000 {
@@ -42,6 +44,8 @@
 				reg = <0x52000 DT_SIZE_K(328)>;
 			};
 		};
+
+		/* Gap from e4000 to 100000 (112 kB) */
 
 		/* Merged partition used by the MCUboot (variant 1). */
 		slot1_partition: partition@100000 {
@@ -56,8 +60,10 @@
 			 */
 			cpuapp_slot1_partition: partition@800 {
 				compatible = "zephyr,mapped-partition";
-				reg = <0x800 DT_SIZE_K(326)>;
+				reg = <0x800 DT_SIZE_K(324)>;
 			};
+
+			/* Gap from 51800 to 52000 (2 kB) */
 
 			/* Radio code partition (variant 1). */
 			cpurad_slot1_partition: partition@52000 {
@@ -65,6 +71,8 @@
 				reg = <0x52000 DT_SIZE_K(328)>;
 			};
 		};
+
+		/* Gap from 1a4000 to 1ad000 (36 kB) */
 
 		boot_request: partition@1ad000 {
 			compatible = "zephyr,mapped-partition";
