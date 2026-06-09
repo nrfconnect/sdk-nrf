@@ -107,7 +107,7 @@
 };
 
 /*
- * CPUAPP SRAM TrustZone split: TF-M uses the first 64 KiB (&sram0_s, reg 0x10000); the NS
+ * CPUAPP SRAM TrustZone split: TF-M uses the first 128 KiB (&sram0_s, reg 0x20000); the NS
  * workload uses the remainder (&sram0_ns). These sizes must match the TF-M platform RAM
  * layout for nRF54LM20.
  */
@@ -117,13 +117,13 @@
 };
 
 &sram0_s {
-	reg = <0x0 0x10000>;
-	ranges = <0x0 0x0 0x10000>;
+	reg = <0x0 0x20000>;
+	ranges = <0x0 0x0 0x20000>;
 };
 
 &sram0_ns {
-	reg = <0x10000 0x6fe40>;
-	ranges = <0x0 0x10000 0x6fe40>;
+	reg = <0x20000 0x5fe40>;
+	ranges = <0x0 0x20000 0x5fe40>;
 };
 
 /*
