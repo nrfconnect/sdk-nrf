@@ -1,0 +1,29 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: Nordic Nrf Pulse Measurement
+
+compatible: "nordic,nrf-pulse-meas"
+
+include: base.yaml
+
+properties:
+  gpiote-instance:
+    required: true
+    type: phandle
+    description: |
+      GPIOTE instance.
+
+  timer-instance:
+    required: true
+    type: phandle
+    description: |
+      Timer instance.
+
+  rising-pin:
+    type: int
+    required: true
+
+  falling-pin:
+    type: int
+    required: true

@@ -304,6 +304,7 @@
 /drivers/wifi/nrf71/                      @krish2718 @sachinthegreen
 /drivers/wifi/nrf92/                      @nrfconnect/ncs-modem-tre
 /include/drivers/wifi/nrf71/              @kapbh @krish2718 @sachinthegreen
+/drivers/nrf_pulse_meas/nrf_pulse_meas.c  @nrfconnect/ncs-ll-izera
 
 # Devicetree
 /dts/                                     @nrfconnect/ncs-co-drivers
