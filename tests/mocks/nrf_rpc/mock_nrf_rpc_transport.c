@@ -25,8 +25,13 @@ typedef struct mock_nrf_rpc_tr_ctx {
 	size_t num_expected;
 	size_t cur_expected;
 
-	mock_nrf_rpc_pkt_t *cur_response;
-	struct k_work response_work;
+	struct k_sem cb_sem;
+	struct k_thread cb_thread;
+	K_KERNEL_STACK_MEMBER(cb_thread_stack, CONFIG_MOCK_NRF_RPC_TR_CB_THREAD_STACK_SIZE);
+
+	struct k_msgq cb_msgq;
+	char cb_msgq_buffer[MAX_NUM_EXPECTED_PKTS * sizeof(mock_nrf_rpc_pkt_t)];
+
 } mock_nrf_rpc_tr_ctx_t;
 
 static void log_payload(const char *caption, const uint8_t *payload, size_t length)
@@ -45,19 +50,21 @@ static void log_payload(const char *caption, const uint8_t *payload, size_t leng
 		bin2hex(payload, printed_length, payload_str, sizeof(payload_str));
 		strcat(payload_str, "...");
 	}
-
-	printk("%s: %s of length %zu\n", caption, payload_str, length);
 }
 
-/* Asynchronous task to simulate reception of a response packet. */
-static void response_send(struct k_work *work)
+static void cb_thread(void *tr_ctx, void *b, void *c)
 {
-	mock_nrf_rpc_tr_ctx_t *ctx = CONTAINER_OF(work, mock_nrf_rpc_tr_ctx_t, response_work);
-	mock_nrf_rpc_pkt_t *response = ctx->cur_response;
+	ARG_UNUSED(b); ARG_UNUSED(c);
+	mock_nrf_rpc_pkt_t packet;
+	mock_nrf_rpc_tr_ctx_t* ctx = tr_ctx;
 
-	log_payload("Responding with nRF RPC packet", response->data, response->len);
-
-	ctx->receive_cb(ctx->transport, response->data, response->len, ctx->receive_ctx);
+	for (;;) {
+		k_msgq_get(&ctx->cb_msgq, &packet, K_FOREVER);
+		ctx->receive_cb(ctx->transport, packet.data, packet.len, ctx->receive_ctx);
+		if (ctx->num_expected == ctx->cur_expected) {
+			k_sem_give(&ctx->cb_sem);
+		}
+	}
 }
 
 static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t receive_cb,
@@ -69,7 +76,16 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	ctx->receive_cb = receive_cb;
 	ctx->receive_ctx = context;
 
-	k_work_init(&ctx->response_work, response_send);
+	k_sem_init(&ctx->cb_sem, 0, 1);
+
+	(void)k_thread_create(&ctx->cb_thread, ctx->cb_thread_stack,
+				K_KERNEL_STACK_SIZEOF(ctx->cb_thread_stack),
+				cb_thread,
+				ctx, NULL, NULL,
+				CONFIG_MOCK_NRF_RPC_TR_CB_THREAD_PRIO, 0, K_NO_WAIT);
+
+	k_msgq_init(&ctx->cb_msgq, ctx->cb_msgq_buffer,
+		sizeof(mock_nrf_rpc_pkt_t), MAX_NUM_EXPECTED_PKTS);
 
 	return 0;
 }
@@ -97,8 +113,7 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 
 	if (response->len > 0) {
 		/* nRF RPC can't handle a synchronous response, so send it asynchronously. */
-		ctx->cur_response = response;
-		zassert_true(k_work_submit(&ctx->response_work) >= 0);
+		zassert_true(k_msgq_put(&ctx->cb_msgq, response, K_NO_WAIT) == 0);
 	}
 
 	return 0;
@@ -140,7 +155,7 @@ void mock_nrf_rpc_tr_expect_add(mock_nrf_rpc_pkt_t expect, mock_nrf_rpc_pkt_t re
 	mock_nrf_rpc_tr_ctx_t *ctx = mock_nrf_rpc_tr.ctx;
 
 	zassert_true(ctx->num_expected < MAX_NUM_EXPECTED_PKTS,
-		     "No more nRF RPC expected packets can be defined");
+			 "No more nRF RPC expected packets can be defined");
 
 	ctx->expected[ctx->num_expected] = expect;
 	ctx->response[ctx->num_expected] = response;
@@ -151,9 +166,12 @@ void mock_nrf_rpc_tr_expect_done(void)
 {
 	mock_nrf_rpc_tr_ctx_t *ctx = mock_nrf_rpc_tr.ctx;
 
+	k_sem_take(&ctx->cb_sem, K_FOREVER);
+	k_sem_reset(&ctx->cb_sem);
+
 	zexpect_equal(ctx->cur_expected, ctx->num_expected,
-		      "%zu nRF RPC packets expected but not sent",
-		      ctx->num_expected - ctx->cur_expected);
+		"%zu nRF RPC packets expected but not sent",
+		ctx->num_expected - ctx->cur_expected);
 
 	ctx->num_expected = 0;
 	ctx->cur_expected = 0;
@@ -175,5 +193,5 @@ void mock_nrf_rpc_tr_receive(mock_nrf_rpc_pkt_t packet)
 
 	log_payload("Received nRF RPC packet", packet.data, packet.len);
 
-	ctx->receive_cb(ctx->transport, packet.data, packet.len, ctx->receive_ctx);
+	zassert_true(k_msgq_put(&ctx->cb_msgq, &packet, K_NO_WAIT) == 0);
 }

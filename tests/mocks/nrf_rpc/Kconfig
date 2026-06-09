@@ -18,4 +18,12 @@ config MOCK_NRF_RPC_TRANSPORT
 
 endchoice # NRF_RPC_TRANSPORT
 
+config MOCK_NRF_RPC_TR_CB_THREAD_STACK_SIZE
+	int "Stack size for the callback thread"
+	default 1024
+
+config MOCK_NRF_RPC_TR_CB_THREAD_PRIO
+	int "Priority for the callback thread"
+	default 5
+
 endif # MOCK_NRF_RPC
