@@ -167,7 +167,6 @@ void mock_nrf_rpc_tr_expect_done(void)
 	mock_nrf_rpc_tr_ctx_t *ctx = mock_nrf_rpc_tr.ctx;
 
 	k_sem_take(&ctx->cb_sem, K_FOREVER);
-	k_sem_reset(&ctx->cb_sem);
 
 	zexpect_equal(ctx->cur_expected, ctx->num_expected,
 		"%zu nRF RPC packets expected but not sent",
