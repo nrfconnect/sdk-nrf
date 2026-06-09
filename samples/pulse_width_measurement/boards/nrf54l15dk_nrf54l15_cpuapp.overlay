@@ -1,0 +1,21 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+&timer20 {
+	prescaler = <1>;
+	status = "okay";
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+/ {
+	pulse_width_meas: pulse-width-meas {
+		compatible = "nordic,nrf-pulse-meas";
+		status = "okay";
+		gpiote-instance = <&gpiote20>;
+		timer-instance = <&timer20>;
+		rising-pin = <41>;
+		falling-pin = <40>;
+	};
+};

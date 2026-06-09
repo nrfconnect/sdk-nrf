@@ -2037,3 +2037,7 @@ ci_samples_zephyr_tfm_integration:
   files:
     - nrf/samples/zephyr/tfm_integration/
     - zephyr/samples/tfm_integration/
+
+ci_samples_nrf_pulse_meas:
+  files:
+    - nrf/samples/nrf_pulse_meas/
