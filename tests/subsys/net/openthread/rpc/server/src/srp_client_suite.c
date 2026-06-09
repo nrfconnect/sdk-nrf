@@ -197,6 +197,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientIsRunning)
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_FALSE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_IS_RUNNING));
+	mock_nrf_rpc_tr_expect_done();
 
 	otSrpClientIsRunning_fake.return_val = true;
 
@@ -226,15 +227,15 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientSetCallback)
 {
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_SET_CALLBACK, CBOR_TRUE));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_not_null(otSrpClientSetCallback_fake.arg1_val);
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_SET_CALLBACK, CBOR_FALSE));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_is_null(otSrpClientSetCallback_fake.arg1_val);
-
-	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otSrpClientSetCallback_fake.call_count, 2);
 }
@@ -243,10 +244,9 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientDisableAutoStartMode)
 {
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_DISABLE_AUTO_START_MODE));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otSrpClientDisableAutoStartMode_fake.call_count, 1);
-
-	mock_nrf_rpc_tr_expect_done();
 }
 
 ZTEST(ot_rpc_srp_client, test_otSrpClientIsAutoStartModeEnabled)
@@ -255,6 +255,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientIsAutoStartModeEnabled)
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_FALSE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_IS_AUTO_START_MODE_ENABLED));
+	mock_nrf_rpc_tr_expect_done();
 
 	otSrpClientIsAutoStartModeEnabled_fake.return_val = true;
 
@@ -387,6 +388,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientSetHostAddresses)
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_SET_HOST_ADDRESSES, CBOR_UINT8(1),
 					CBOR_LIST(CBOR_IPV6_ADDR_1)));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otSrpClientSetHostAddresses_fake.arg2_val, 1);
 
@@ -397,6 +399,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientSetHostAddresses)
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_SET_HOST_ADDRESSES, CBOR_UINT8(2),
 					CBOR_LIST(CBOR_IPV6_ADDR_1, CBOR_IPV6_ADDR_2)));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otSrpClientSetHostAddresses_fake.arg2_val, 2);
 
@@ -409,6 +412,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientSetHostAddresses)
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_SET_HOST_ADDRESSES, CBOR_UINT8(3),
 					CBOR_LIST(CBOR_IPV6_ADDR_1, CBOR_IPV6_ADDR_2,
 						  CBOR_IPV6_ADDR_2)));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otSrpClientSetHostAddresses_fake.arg2_val, 3);
 
@@ -419,8 +423,6 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientSetHostAddresses)
 	zassert_mem_equal(&addr2, &addrs[2], OT_IP6_ADDRESS_SIZE);
 
 	zassert_equal(otSrpClientSetHostAddresses_fake.call_count, 3);
-
-	mock_nrf_rpc_tr_expect_done();
 }
 
 void verify_fields(otSrpClientService *service)
@@ -757,6 +759,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientRemoveService)
 					CBOR_UINT8(0), CBOR_UINT8(0), CBOR_SERVICE_NAME,
 					CBOR_INSTANCE_NAME, CBOR_EMPTY_LIST, CBOR_EMPTY_MAP,
 					CBOR_SERVICE_FIELDS));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(get_client_ids(ids, max_ids), 1);
 	zassert_equal(ids[0], 0xaaaabbbb);
@@ -765,6 +768,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientRemoveService)
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NOT_FOUND), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_REMOVE_SERVICE,
 					CBOR_UINT32(0xbeefbeef)));
+	mock_nrf_rpc_tr_expect_done();
 
 	otSrpClientRemoveService_fake.return_val = OT_ERROR_NONE;
 
@@ -772,10 +776,9 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientRemoveService)
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_REMOVE_SERVICE,
 					CBOR_UINT32(0xaaaabbbb)));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otSrpClientRemoveService_fake.call_count, 1);
-
-	mock_nrf_rpc_tr_expect_done();
 
 	/* Verify that successful request does not remove the service until callback is called */
 	zassert_equal(get_client_ids(ids, max_ids), 1);
@@ -795,6 +798,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientClearService)
 					CBOR_UINT8(0), CBOR_UINT8(0), CBOR_SERVICE_NAME,
 					CBOR_INSTANCE_NAME, CBOR_EMPTY_LIST, CBOR_EMPTY_MAP,
 					CBOR_SERVICE_FIELDS));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(get_client_ids(ids, max_ids), 1);
 	zassert_equal(ids[0], 0xaaaabbbb);
@@ -803,6 +807,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientClearService)
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NOT_FOUND), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_CLEAR_SERVICE,
 					CBOR_UINT32(0xbeefbeef)));
+	mock_nrf_rpc_tr_expect_done();
 
 	otSrpClientClearService_fake.return_val = OT_ERROR_NONE;
 
@@ -810,10 +815,9 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientClearService)
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_CLEAR_SERVICE,
 					CBOR_UINT32(0xaaaabbbb)));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otSrpClientClearService_fake.call_count, 1);
-
-	mock_nrf_rpc_tr_expect_done();
 
 	/* Verify that clearing does remove service immediately */
 	memset(ids, 0, sizeof(ids));
