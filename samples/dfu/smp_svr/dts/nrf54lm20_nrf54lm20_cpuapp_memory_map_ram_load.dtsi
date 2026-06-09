@@ -28,18 +28,18 @@
 		slot0_partition: partition@10000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0x10000 DT_SIZE_K(481)>;
+			reg = <0x10000 DT_SIZE_K(480)>;
 		};
 
-		/* Gap from 88400 to 88800 to ensure 2kB alignment */
+		/* Gap from 88000 to 88800 (2 kB) */
 
 		slot1_partition: partition@88800 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-1";
-			reg = <0x8f800 DT_SIZE_K(481)>;
+			reg = <0x88800 DT_SIZE_K(480)>;
 		};
 
-		/*0x100C00 to 0x1F8000 - unused */
+		/* Gap from 100800 to 1f8000 (990 kB) */
 
 		storage_partition: partition@1f8000 {
 			compatible = "zephyr,mapped-partition";
