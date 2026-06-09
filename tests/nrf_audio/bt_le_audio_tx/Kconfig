@@ -1,6 +1,14 @@
-config NRF_AUDIO_TX_TGT_LEAD_TIME_US
+config NRF_AUDIO_TX_LEAD_TIME_TGT_US
 	int
-	default 3000
+	default 2500
+
+config NRF_AUDIO_TX_LEAD_TIME_MIN_US
+	int
+	default 2000
+
+config NRF_AUDIO_TX_LEAD_TIME_BASE_US
+	int
+	default 4700
 
 config LC3_BITRATE_MIN
 	int

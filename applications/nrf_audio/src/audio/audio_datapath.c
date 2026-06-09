@@ -892,23 +892,22 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	}
 
 	if (print_count % 100 == 0) {
-		LOG_DBG("JIT diff: %lld us. Target: %d +/- %d", diff,
-			CONFIG_NRF_AUDIO_TX_TGT_LEAD_TIME_US,
-			CONFIG_NRF_AUDIO_TX_LEAD_TIME_DEVIATION_US);
+		LOG_DBG("JIT diff: %lld us. Target: %d", diff,
+			CONFIG_NRF_AUDIO_TX_LEAD_TIME_TGT_US);
 	}
+
 	print_count++;
 
 	/* If the data is sent too late/too slow, we don't copy in data. Instead,
 	 * blocks are dropped, which in turn will cause the controller to starve and
 	 * send a NULL PDU on air "gaining" an ISO interval of time. This means
 	 * we are again too fast, and drop blocks to come back to sync.
+	 * A factor is chosen * BLK_PERIOD_US to keep latency low,
+	 * whilst allowing for some jitter in the system.
 	 */
 
-	if (!IN_RANGE(diff,
-		      CONFIG_NRF_AUDIO_TX_TGT_LEAD_TIME_US -
-			      CONFIG_NRF_AUDIO_TX_LEAD_TIME_DEVIATION_US,
-		      CONFIG_NRF_AUDIO_TX_TGT_LEAD_TIME_US +
-			      CONFIG_NRF_AUDIO_TX_LEAD_TIME_DEVIATION_US)) {
+	if (!IN_RANGE(diff, CONFIG_NRF_AUDIO_TX_LEAD_TIME_MIN_US,
+		      CONFIG_NRF_AUDIO_TX_LEAD_TIME_MIN_US + (BLK_PERIOD_US * 6))) {
 		/* Drop next block to help with just-in-time */
 		atomic_set(&drop_next_block, true);
 		LOG_DBG("Dropped block to align with connection interval");
