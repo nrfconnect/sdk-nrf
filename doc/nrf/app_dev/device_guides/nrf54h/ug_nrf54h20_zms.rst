@@ -18,6 +18,18 @@ Enabling the ZMS module
    :start-after: 54h_section_enabling_start
    :end-before: 54h_section_enabling_end
 
+.. _ug_nrf54h20_zms_no_format_snapshot_recovery:
+
+Mounting provisioned ZMS areas without formatting
+*************************************************
+
+If the device is in a lifecycle state where its file systems are expected to already be formatted, mount ZMS file systems with no-format.
+This prevents reformatting the file system after the file system has been erased by corruption.
+
+If mounting with no-format in ZMS fails, request :ref:`IronSide SE snapshot recovery <ug_nrf54h20_ironside_se_snapshot_recovery>`.
+
+For information about mounting ZMS file systems with no-format, see :ref:`zephyr:zms_api`.
+
 Optimizing ZMS in your application
 **********************************
 
