@@ -13,6 +13,7 @@
 
 #define ZBUS_READ_TIMEOUT_MS	K_MSEC(100)
 #define ZBUS_ADD_OBS_TIMEOUT_MS K_MSEC(200)
+#define ZBUS_STREAMS_NUM_MAX	8
 
 /***** Messages for zbus ******/
 
@@ -48,14 +49,27 @@ struct le_audio_msg {
 	struct bt_bap_stream *stream;
 };
 
+enum tx_data_status {
+	STATUS_NOT_SET = 0,		  /* Initial status */
+	STATUS_SENT_WITH_TS,		  /* Data sent with timestamp */
+	STATUS_SENT_WITHOUT_TS,		  /* Data sent without timestamp */
+	STATUS_OVERRUN_FLUSHED,		  /* Data overrun, flushed */
+	STATUS_UNDERRUN_EMPTY_SDU_ON_AIR, /* Data underrun, empty SDU on air */
+	STATUS_ERROR,			  /* Error occurred (e.g. failed to send) */
+};
+
 /**
  * tx_sync_ts_us	The timestamp from get_tx_sync.
  * curr_ts_us		The current time. This must be in the controller frame of reference.
  */
 struct sdu_ref_msg {
 	uint32_t tx_sync_ts_us;
+	bool tx_sync_ts_us_valid;
 	uint32_t curr_ts_us;
+	enum tx_data_status status;
 	bool adjust;
+	struct stream_index idx[ZBUS_STREAMS_NUM_MAX];
+	uint8_t num_idx;
 };
 
 enum bt_mgmt_evt_type {
