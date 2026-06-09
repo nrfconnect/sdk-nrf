@@ -5,7 +5,7 @@
 #
 
 config PARTITION_MANAGER
-	default n if !BOARD_IS_NON_SECURE
+	default n
 
 config NRF_DEFAULT_IPC_RADIO
 	default y
