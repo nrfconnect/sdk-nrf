@@ -1,0 +1,40 @@
+# Tests/samples that intentionally remain on the legacy partition_manager flow.
+#
+# This file is the single source of truth for the "partition_manager_legacy"
+# flag in the partition-removal report (resources/pm_build_analyzer.py in the
+# test-ci-nrfconnect-cfg repo). Matching builds are shown in yellow and counted
+# separately in the report, instead of being treated as "still has a partition".
+#
+# ---------------------------------------------------------------------------
+# How to add a test/sample
+# ---------------------------------------------------------------------------
+# - Add ONE pattern per line.
+# - Each pattern is matched as a SUBSTRING of a build directory path, e.g.:
+#       <board>/<toolchain>/nrf/samples/bluetooth/peripheral_uart/sample.bluetooth.peripheral_uart
+# - Blank lines and lines starting with '#' are ignored.
+# - Matching is case-sensitive.
+#
+# Pick the pattern at the granularity you need:
+#       sample.bluetooth.peripheral_uart     # one scenario (the build-dir leaf)
+#       samples/bluetooth/peripheral_uart    # every scenario under a sample dir
+#       applications/nrf_desktop             # every scenario under an application
+#       thingy53                             # every build for a platform/board
+#
+# Keep this list as small as possible: remove entries as tests migrate off the
+# legacy partition_manager so the report reflects real progress.
+# ---------------------------------------------------------------------------
+
+thingy53
+applications.nrf_desktop.zdebug_partition_manager_mcuboot_direct_xip.uart
+applications.nrf_desktop.zdebug_partition_manager_mcuboot_single_app
+applications.nrf_desktop.zdebug_partition_manager_single_image.uart
+sample.find_my.locator_tag.pm_legacy.boot_max_img_sectors
+sample.find_my.locator_tag.pm_legacy
+sample.find_my.switchable_networks.pm_legacy.boot_max_img_sectors
+sample.find_my.switchable_networks.pm_legacy
+sample.bluetooth.fast_pair.input_device.pm_legacy
+test.bluetooth.fast_pair.locator_tag_legacy.fast_pair_api_legacy.pm_legacy
+sample.bluetooth.fast_pair.locator_tag.release/nrf5340dk_nrf5340_cpuapp
+sample.bluetooth.fast_pair.locator_tag.release/nrf5340dk_nrf5340_cpuapp_ns
+sample.bluetooth.fast_pair.locator_tag/nrf5340dk_nrf5340_cpuapp
+sample.bluetooth.fast_pair.locator_tag/nrf5340dk_nrf5340_cpuapp_ns
