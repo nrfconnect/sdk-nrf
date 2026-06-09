@@ -21,6 +21,10 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     tags:
       - bluetooth
       - ci_build
