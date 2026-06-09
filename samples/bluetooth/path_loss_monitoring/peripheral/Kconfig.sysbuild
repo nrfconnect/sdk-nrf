@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
-
 config NRF_DEFAULT_IPC_RADIO
 	default y
 
@@ -14,3 +12,5 @@ config NETCORE_IPC_RADIO_BT_HCI_IPC
 
 config PARTITION_MANAGER
 	default n
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
