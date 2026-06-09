@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf54lv10dk_nrf54lv10a_cpuapp.overlay"
+#include "nrf54lc10dk_nrf54lc10a_cpuapp.overlay"
 
 / {
 	/*
