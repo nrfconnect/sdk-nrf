@@ -1930,9 +1930,7 @@ int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_ind
 	}
 
 	ret = bt_le_audio_tx_send(bt_le_audio_tx, audio_frame, info.tx, info.num_active_streams);
-	if (ret == -ECANCELED || ret == -ETIMEDOUT) {
-		LOG_DBG("Adjusted audio TX: %d", ret);
-	} else if (ret) {
+	if (ret) {
 		srv_store_unlock();
 		return ret;
 	}

@@ -8,6 +8,7 @@
 
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/cap.h>
@@ -49,11 +50,47 @@ static struct bt_cap_stream cap_streams[CONFIG_BT_ISO_MAX_BIG]
 
 static struct bt_bap_lc3_preset lc3_preset = BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO;
 
-static bool initialized;
+static bool initialized[CONFIG_BT_ISO_MAX_BIG];
 static bool delete_broadcast_src[CONFIG_BT_ISO_MAX_BIG];
 static uint32_t stored_broadcast_id;
 
-BT_LE_AUDIO_TX_DEFINE(bt_le_audio_tx);
+/* Define one TX context per subgroup per BIG.
+ * Note: Nested LISTIFY is not supported by the C preprocessor due to
+ * blue-painting rules, so we use separate macros per BIG index.
+ */
+#define DEFINE_SG_CTX_BIG0(sg_idx, _) BT_LE_AUDIO_TX_DEFINE_INDEXED(tx_ctx, 0, sg_idx)
+LISTIFY(CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT, DEFINE_SG_CTX_BIG0, (;), ~);
+
+#if CONFIG_BT_ISO_MAX_BIG == 2
+#define DEFINE_SG_CTX_BIG1(sg_idx, _) BT_LE_AUDIO_TX_DEFINE_INDEXED(tx_ctx, 1, sg_idx)
+LISTIFY(CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT, DEFINE_SG_CTX_BIG1, (;), ~);
+#elif CONFIG_BT_ISO_MAX_BIG > 2
+#error Only up to 2 BIGs supported for static TX context allocation
+#endif
+
+#define SG_CTX_PTR_BIG0(sg_idx, _) (&tx_ctx_0_##sg_idx##_ctx)
+#define SG_CTX_PTR_BIG1(sg_idx, _) (&tx_ctx_1_##sg_idx##_ctx)
+
+static struct bt_le_audio_tx_ctx
+	*tx_ctx_arr[CONFIG_BT_ISO_MAX_BIG][CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT] = {
+		/* clang-format off */
+		{LISTIFY(CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT, SG_CTX_PTR_BIG0, (,), ~)},
+#if CONFIG_BT_ISO_MAX_BIG > 1
+		{LISTIFY(CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT, SG_CTX_PTR_BIG1, (,), ~)},
+#endif
+		/* clang-format on */
+};
+
+/* Helper to get context for a given BIG and subgroup */
+static struct bt_le_audio_tx_ctx *tx_ctx_get(uint8_t big_idx, uint8_t sg_idx)
+{
+	if (big_idx >= CONFIG_BT_ISO_MAX_BIG ||
+	    sg_idx >= CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT) {
+		return NULL;
+	}
+
+	return tx_ctx_arr[big_idx][sg_idx];
+}
 
 static int metadata_u8_add(uint8_t buffer[], uint8_t *index, uint8_t type, uint8_t value)
 {
@@ -115,7 +152,9 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 		le_audio_event_publish(LE_AUDIO_EVT_STREAM_SENT, &idx);
 	}
 
-	ERR_CHK(bt_le_audio_tx_stream_sent(bt_le_audio_tx, idx));
+	struct bt_le_audio_tx_ctx *ctx = tx_ctx_get(idx.lvl1, idx.lvl2);
+
+	ERR_CHK(bt_le_audio_tx_stream_sent(ctx, idx));
 }
 
 static void stream_started_cb(struct bt_bap_stream *stream)
@@ -128,7 +167,9 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 		return;
 	}
 
-	ERR_CHK(bt_le_audio_tx_stream_started(bt_le_audio_tx, idx));
+	struct bt_le_audio_tx_ctx *ctx = tx_ctx_get(idx.lvl1, idx.lvl2);
+
+	ERR_CHK(bt_le_audio_tx_stream_started(ctx, idx));
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, &idx);
 
@@ -666,13 +707,11 @@ int broadcast_source_send(struct net_buf const *const audio_frame, uint8_t big_i
 		return -ECANCELED;
 	}
 
-	ret = bt_le_audio_tx_send(bt_le_audio_tx, audio_frame, tx, num_active_streams);
+	struct bt_le_audio_tx_ctx *ctx = tx_ctx_get(big_index, subgroup_index);
+
+	ret = bt_le_audio_tx_send(ctx, audio_frame, tx, num_active_streams);
 	if (ret) {
-		if (ret == -ECANCELED || ret == -ETIMEDOUT) {
-			LOG_DBG("Adjusted audio TX: %d", ret);
-		} else {
-			return ret;
-		}
+		return ret;
 	}
 
 	return 0;
@@ -710,7 +749,7 @@ int broadcast_source_disable(uint8_t big_index)
 		broadcast_sources[big_index] = NULL;
 	}
 
-	initialized = false;
+	initialized[big_index] = false;
 
 	LOG_DBG("Broadcast source disabled");
 
@@ -823,15 +862,6 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 		return -EINVAL;
 	}
 
-	if (!initialized) {
-		/* A broadcast source is the Bluetooth central device */
-		ret = bt_le_audio_tx_init(bt_le_audio_tx, true);
-		if (ret != 0) {
-			LOG_ERR("Failed to initialize LE Audio TX: %d", ret);
-			return ret;
-		}
-	}
-
 	ret = bt_cap_initiator_register_cb(&cap_cbs);
 
 	if (ret == -EALREADY) {
@@ -847,12 +877,28 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 		return ret;
 	}
 
-	/* Register callbacks per stream */
-	for (size_t j = 0U; j < create_param[big_index].subgroup_count; j++) {
-		for (size_t k = 0; k < create_param[big_index].subgroup_params[j].stream_count;
-		     k++) {
+	for (size_t i = 0; i < create_param[big_index].subgroup_count; i++) {
+		if (!initialized[big_index]) {
+			struct bt_le_audio_tx_ctx *ctx = tx_ctx_get(big_index, i);
+
+			if (ctx == NULL) {
+				LOG_ERR("Failed to get context for BIG %d subgroup %d", big_index,
+					i);
+				return -EINVAL;
+			}
+
+			ret = bt_le_audio_tx_init(ctx, true);
+			if (ret != 0) {
+				LOG_ERR("Failed to initialize LE Audio TX: %d", ret);
+				return ret;
+			}
+		}
+
+		/* Register callbacks per stream */
+		for (size_t j = 0; j < create_param[big_index].subgroup_params[i].stream_count;
+		     j++) {
 			bt_cap_stream_ops_register(
-				create_param[big_index].subgroup_params[j].stream_params[k].stream,
+				create_param[big_index].subgroup_params[i].stream_params[j].stream,
 				&stream_ops);
 		}
 	}
@@ -864,7 +910,7 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 		return ret;
 	}
 
-	initialized = true;
+	initialized[big_index] = true;
 	LOG_INF("Created: %p %s", (void *)broadcast_sources[big_index],
 		broadcast_param->broadcast_name);
 

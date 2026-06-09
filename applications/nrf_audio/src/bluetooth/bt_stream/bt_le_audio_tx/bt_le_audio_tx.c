@@ -11,7 +11,6 @@
 #include <zephyr/zbus/zbus.h>
 #include <../subsys/bluetooth/audio/bap_stream.h>
 #include <bluetooth/hci_vs_sdc.h>
-#include <audio_defines.h>
 #include <sdc_hci.h>
 
 #include "zbus_common.h"
@@ -59,6 +58,31 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
  * to stabilize and potentially drop data to meet just-in-time requirements.
  */
 #define SUBSEQUENT_RAPID_CORRECTIONS_LIMIT 20U
+
+#define ISO_FLUSH_Q_STACK_SIZE 512
+
+BUILD_ASSERT(IS_ENABLED(CONFIG_BT_TX_PROCESSOR_THREAD), "BT_TX_PROCESSOR_THREAD must be enabled");
+
+#if CONFIG_BT_TX_PROCESSOR_THREAD_PRIO == K_LOWEST_APPLICATION_THREAD_PRIO
+#error "CONFIG_BT_TX_PROCESSOR_THREAD_PRIO must be set higher than K_LOWEST_APPLICATION_THREAD_PRIO"
+#endif
+#define ISO_FLUSH_Q_PRIORITY 0
+
+BUILD_ASSERT(ISO_FLUSH_Q_PRIORITY > CONFIG_BT_TX_PROCESSOR_THREAD_PRIO,
+	     "ISO_FLUSH_Q_PRIORITY must have a lower or equal priority than "
+	     "CONFIG_BT_TX_PROCESSOR_THREAD_PRIO");
+
+static const int prio_bt_tx = CONFIG_BT_TX_PROCESSOR_THREAD_PRIO;
+
+K_THREAD_STACK_DEFINE(iso_flush_work_q_stack_area, ISO_FLUSH_Q_STACK_SIZE);
+
+static struct k_work_q iso_flush_work_q;
+static struct k_work iso_flush_work;
+
+static void iso_flush_work_handler(struct k_work *work)
+{
+	(void)work;
+}
 
 /**
  * @brief Sends audio data over a single BAP stream.
@@ -292,6 +316,28 @@ static int controller_ts_tx_get(const struct bt_bap_stream *bap_stream, uint32_t
 		return ret;
 	}
 
+	/* The host may re-order ISO and command data. Hence, we flush the ISO data by executing
+	 * a workqueue which executes with lower priority than the BT TX processor.
+	 * See https://github.com/zephyrproject-rtos/zephyr/issues/110939.
+	 */
+	int prio_this = k_thread_priority_get(k_current_get());
+
+	LOG_DBG("Tx sync. Current prio: %d, BT TX processor prio: %d", prio_this, prio_bt_tx);
+
+	if (prio_this <= prio_bt_tx || prio_this < 0) {
+		ret = k_work_submit_to_queue(&iso_flush_work_q, &iso_flush_work);
+		if (ret < 0) {
+			LOG_WRN("Failed to submit ISO flush work: %d", ret);
+			return ret;
+		}
+
+		ret = k_work_queue_drain(&iso_flush_work_q, false);
+		if (ret < 0) {
+			LOG_ERR("Failed to drain ISO flush work return value: %d", ret);
+			return -EFAULT;
+		}
+	}
+
 	ret = get_tx_sync_sdc(tx_info->iso_conn_handle, &tx_info->iso_tx_readback);
 	if (ret != 0) {
 		LOG_ERR("Unable to get tx sync. ret: %d", ret);
@@ -364,8 +410,7 @@ static uint8_t tx_streams_send(struct bt_le_audio_tx_ctx *ctx,
 
 	for (int i = 0; i < num_tx; i++) {
 		const struct bt_bap_stream *bap_stream = &tx[i].cap_stream->bap_stream;
-		struct tx_inf *tx_info =
-			&ctx->tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
+		struct tx_inf *tx_info = &ctx->tx_info_arr[tx[i].idx.lvl3];
 
 		/* Check if same audio is sent to all locations */
 		if (num_loc == 1U) {
@@ -403,7 +448,7 @@ static uint8_t tx_streams_send(struct bt_le_audio_tx_ctx *ctx,
 static int tx_controller_sync_and_correct(struct bt_le_audio_tx_ctx *ctx,
 					  const struct bt_bap_stream *last_successful_bap_stream,
 					  uint32_t common_interval_us, uint32_t ts_now_us,
-					  struct tx_inf *tx_info, int *status)
+					  struct tx_inf *tx_info)
 {
 	int ret;
 	uint32_t ts_ctlr_real_us = 0U;
@@ -440,6 +485,8 @@ static int tx_controller_sync_and_correct(struct bt_le_audio_tx_ctx *ctx,
 	}
 
 	corr_diff_us = (int64_t)ts_ctlr_real_us - (int64_t)ctx->ts_ctlr_esti_us;
+	LOG_DBG("Controller timestamp sync required. Estimated: %u us, Real: %u us, Diff: %lld us",
+		ctx->ts_ctlr_esti_us, ts_ctlr_real_us, corr_diff_us);
 
 	if ((uint32_t)(ts_now_us - ctx->ts_last_correction) < TX_TS_RESYNC_US) {
 		ctx->subsequent_rapid_corrections++;
@@ -480,18 +527,17 @@ static int tx_controller_sync_and_correct(struct bt_le_audio_tx_ctx *ctx,
 		LOG_DBG("TX clock corrected by (%lld us). Late: Empty packet(s) on air",
 			corr_diff_us);
 
-		ctx->ts_ctlr_esti_us_valid = false;
-		*status = -ETIMEDOUT;
-
+		ctx->ts_ctlr_esti_us_valid = true;
 	} else if (corr_diff_us < -half_common_interval_us) {
 		LOG_DBG("TX clock corrected by (%lld us). Early", corr_diff_us);
-		ctx->ts_ctlr_esti_us_valid = false;
+		ctx->ts_ctlr_esti_us_valid = true;
 	} else {
 		/* Ts corrected by some small factor*/
 		if (ctx->is_ble_clock_master) {
 			/* The gateway is the Bluetooth central. This shall not happen */
 			LOG_ERR("TX clock has been drift adjusted by (%lld us)", corr_diff_us);
 			ctx->ts_ctlr_esti_us_valid = false;
+			return -EFAULT;
 		} else {
 			LOG_DBG("TX clock has been drift adjusted by (%lld us)", corr_diff_us);
 			ctx->ts_ctlr_esti_us_valid = true;
@@ -507,26 +553,37 @@ static int tx_controller_sync_and_correct(struct bt_le_audio_tx_ctx *ctx,
 	return 0;
 }
 
-static void tx_publish_sdu_ref_and_finalize(struct bt_le_audio_tx_ctx *ctx, uint32_t ts_now_us)
+static int tx_publish_sdu_ref_and_finalize(struct bt_le_audio_tx_ctx *ctx, uint32_t ts_now_us,
+					   struct le_audio_tx_info *tx, uint8_t num_tx)
 {
 	int ret;
 	struct sdu_ref_msg msg;
 
 	msg.tx_sync_ts_us = ctx->ts_ctlr_esti_us;
-	msg.curr_ts_us = ts_now_us;
+	msg.tx_sync_ts_us_valid = ctx->ts_ctlr_esti_us_valid;
+	msg.curr_ts_us = audio_sync_timer_capture();
 	msg.adjust = true;
+	msg.status = ctx->last_data_status;
+
+	/* Add stream indices */
+	msg.num_idx = num_tx;
+	for (uint8_t i = 0; i < num_tx; i++) {
+		msg.idx[i] = tx[i].idx;
+	}
 
 	ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
 	if (ret != 0) {
-		LOG_WRN("Failed to publish timestamp: %d", ret);
+		LOG_ERR("Failed to publish timestamp: %d", ret);
+		return ret;
 	}
+
+	return 0;
 }
 
 int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *const audio_frame,
 			struct le_audio_tx_info *tx, uint8_t num_tx)
 {
 	int ret;
-	int status = 0;
 	size_t data_size_pr_stream = 0U;
 
 	if (unlikely(ctx == NULL || tx == NULL || num_tx == 0U || audio_frame == NULL)) {
@@ -582,21 +639,21 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		return ret;
 	}
 
-	if (num_streaming_state == 0U) {
-		LOG_DBG("No streams are in streaming state");
-		return 0;
-	}
-
-	uint8_t sent_streams = 0U;
-	const struct bt_bap_stream *last_successful_bap_stream = NULL;
-	struct tx_inf *tx_info = NULL;
-
 	if (common_interval_us == 0U) {
 		LOG_ERR("common_interval is zero");
 		return -EINVAL;
 	}
 
 	uint32_t ts_now_us = audio_sync_timer_capture();
+
+	if (num_streaming_state == 0U) {
+		LOG_DBG("No streams are in streaming state");
+		goto finalize;
+	}
+
+	uint8_t sent_streams = 0U;
+	const struct bt_bap_stream *last_successful_bap_stream = NULL;
+	struct tx_inf *tx_info = NULL;
 
 	tx_call_interval_check(ctx, ts_now_us, common_interval_us);
 
@@ -644,7 +701,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 				TX_MARGIN_MIN_US);
 			ctx->ts_ctlr_esti_us -= common_interval_us;
 			ctx->last_data_status = STATUS_OVERRUN_FLUSHED;
-			return -ECANCELED;
+			goto finalize;
 		}
 
 		/* If ts_ctlr_esti_us_valid is false, this means we shall send with no timestamp.
@@ -669,14 +726,21 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 	}
 
 	ret = tx_controller_sync_and_correct(ctx, last_successful_bap_stream, common_interval_us,
-					     ts_now_us, tx_info, &status);
+					     ts_now_us, tx_info);
 
 	if (ret != 0) {
+		LOG_WRN("Failed to sync and correct with controller after sending: %d", ret);
 		return ret;
 	}
 
-	tx_publish_sdu_ref_and_finalize(ctx, ts_now_us);
-	return status;
+finalize:
+	ret = tx_publish_sdu_ref_and_finalize(ctx, ts_now_us, tx, num_tx);
+	if (ret != 0) {
+		LOG_ERR("Failed to publish SDU reference and finalize: %d", ret);
+		return ret;
+	}
+
+	return 0;
 }
 
 int bt_le_audio_tx_stream_started(struct bt_le_audio_tx_ctx *ctx, struct stream_index idx)
@@ -692,15 +756,15 @@ int bt_le_audio_tx_stream_started(struct bt_le_audio_tx_ctx *ctx, struct stream_
 		return ret;
 	}
 
-	(void)atomic_clear(&ctx->tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].iso_tx_pool_alloc);
+	(void)atomic_clear(&ctx->tx_info_arr[idx.lvl3].iso_tx_pool_alloc);
 
-	ctx->tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].hci_wrn_printed = false;
-	ctx->tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].iso_conn_handle = HANDLE_INVALID;
-	ctx->tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].iso_tx_readback.seq_num = 0U;
+	ctx->tx_info_arr[idx.lvl3].hci_wrn_printed = false;
+	ctx->tx_info_arr[idx.lvl3].iso_conn_handle = HANDLE_INVALID;
+	ctx->tx_info_arr[idx.lvl3].iso_tx_readback.seq_num = 0U;
 	return 0;
 }
 
-int bt_le_audio_tx_stream_sent(struct bt_le_audio_tx_ctx *ctx, struct stream_index stream_idx)
+int bt_le_audio_tx_stream_sent(struct bt_le_audio_tx_ctx *ctx, struct stream_index idx)
 {
 	int ret;
 
@@ -708,13 +772,12 @@ int bt_le_audio_tx_stream_sent(struct bt_le_audio_tx_ctx *ctx, struct stream_ind
 		return -EINVAL;
 	}
 
-	ret = verify_stream_idx(stream_idx);
+	ret = verify_stream_idx(idx);
 	if (ret != 0) {
 		return ret;
 	}
 
-	(void)atomic_dec(&ctx->tx_info_arr[stream_idx.lvl1][stream_idx.lvl2][stream_idx.lvl3]
-				  .iso_tx_pool_alloc);
+	(void)atomic_dec(&ctx->tx_info_arr[idx.lvl3].iso_tx_pool_alloc);
 	return 0;
 }
 
@@ -724,6 +787,8 @@ int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx, bool is_clock_master)
 		return -EINVAL;
 	}
 
+	static bool init_done;
+
 	struct net_buf_pool *tmp = ctx->iso_tx_pool;
 
 	(void)memset(ctx, 0, sizeof(*ctx));
@@ -731,13 +796,20 @@ int bt_le_audio_tx_init(struct bt_le_audio_tx_ctx *ctx, bool is_clock_master)
 	ctx->iso_tx_pool = tmp;
 	ctx->is_ble_clock_master = is_clock_master;
 
-	for (int i = 0; i < GROUP_MAX; i++) {
-		for (int j = 0; j < SUBGROUP_MAX; j++) {
-			for (int k = 0; k < TX_STREAMS_MAX; k++) {
-				ctx->tx_info_arr[i][j][k].iso_conn_handle = HANDLE_INVALID;
-			}
-		}
+	for (int i = 0; i < TX_STREAMS_MAX; i++) {
+		ctx->tx_info_arr[i].iso_conn_handle = HANDLE_INVALID;
 	}
+
+	if (!init_done) {
+		k_work_queue_init(&iso_flush_work_q);
+		k_work_init(&iso_flush_work, iso_flush_work_handler);
+
+		k_work_queue_start(&iso_flush_work_q, iso_flush_work_q_stack_area,
+				   K_THREAD_STACK_SIZEOF(iso_flush_work_q_stack_area),
+				   ISO_FLUSH_Q_PRIORITY, NULL);
+	}
+
+	init_done = true;
 
 	return 0;
 }
