@@ -5,10 +5,7 @@ common:
     - ppk_power_measure
     - bluetooth
   harness: pytest
-  harness_config:
-    fixture: ppk_power_measure
-    pytest_root:
-      - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_power_consumption_beacon_vs_supply_voltage"
+
 tests:
   benchmarks.current_consumption.beacon_vs_vdd:
     platform_allow:
@@ -22,9 +19,13 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_power_consumption_beacon_vs_supply_voltage"
 
-  benchmarks.current_consumption.beacon_vs_vdd.nrf54l_lfrc:
-    platform_allow:
+  benchmarks.current_consumption.beacon_vs_vdd.nrf54l.ldo:
+    platform_allow: &54l_test_platforms
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -34,8 +35,23 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+    required_snippets:
+      - nordic-vregmain-ldo
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_power_consumption_beacon_vs_supply_voltage_ldo"
+
+  benchmarks.current_consumption.beacon_vs_vdd.nrf54l.lfrc:
+    platform_allow: *54l_test_platforms
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_power_consumption_beacon_vs_supply_voltage"
 
   benchmarks.current_consumption.beacon_vs_vdd.with_netcore:
     platform_allow:
@@ -46,3 +62,7 @@ tests:
     extra_args:
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_power_consumption_beacon_vs_supply_voltage"
