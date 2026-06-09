@@ -400,7 +400,16 @@ static void test_single_run(void)
 	struct onoff_client cli;
 
 	sys_notify_init_spinwait(&cli.notify);
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	rv = onoff_request(z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF), &cli);
+#else
+	const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+								(nordic_nrf_clock_hfclk),
+								(nordic_nrf_clock_xo)));
+
+	rv = nrf_clock_control_request(dev, NULL, &cli);
+#endif
+
 	zassert_ok(rv);
 
 	while (sys_notify_fetch_result(&cli.notify, &rv)) {
@@ -464,7 +473,11 @@ static void test_single_run(void)
 		       delta);
 
 #if DT_NODE_HAS_PROP(DUT_NODE, timer)
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	rv = onoff_release(z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF));
+#else
+	rv = nrf_clock_control_release(dev, NULL);
+#endif
 #endif
 }
 
