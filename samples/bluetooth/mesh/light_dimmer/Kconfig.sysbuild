@@ -8,6 +8,7 @@ config NRF_DEFAULT_IPC_RADIO
 	default y
 
 config PARTITION_MANAGER
-	default n if !BOARD_THINGY53_NRF5340_CPUAPP
+	default y if BOARD_THINGY53_NRF5340_CPUAPP
+	default n
 
 source "share/sysbuild/Kconfig"
