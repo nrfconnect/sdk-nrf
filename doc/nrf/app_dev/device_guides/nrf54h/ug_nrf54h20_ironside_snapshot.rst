@@ -1,7 +1,7 @@
 .. _ug_nrf54h20_ironside_se_snapshot:
 
-Using IronSide SE snapshot services
-###################################
+IronSide SE snapshot services
+#############################
 
 .. contents::
    :local:
@@ -20,6 +20,12 @@ When corruption is detected in a captured region, |ISE| restores the affected MR
    For information about checking support on a device, see :ref:`ug_nrf54h20_ironside_se_snapshot_identify_support`.
 
 .. _ug_nrf54h20_ironside_se_snapshot_workflow:
+
+|ISE| version requirements
+**************************
+
+Use |ISE| v23.7.0+30 or later for snapshot deployments.
+For more information, see :ref:`abi_compatibility`.
 
 Snapshot workflow
 *****************
@@ -41,7 +47,7 @@ During runtime, snapshot behavior follows this flow:
 #. If MRAMC detects corruption during an MRAM read, |ISE| handles the MRAMC interrupt.
 #. If the corrupted address is inside a captured snapshot region, |ISE| requests automatic snapshot recovery from SDROM and resets the device.
 #. If the corrupted address is outside captured snapshot regions, |ISE| reports the address through the event report.
-#. Local-domain firmware can run integrity checks before reading MRAM content and request snapshot recovery when those checks fail.
+#. Local-domain firmware can run integrity checks before reading MRAM content and request a snapshot recovery when those checks fail.
 #. Local-domain firmware can read the boot report or event report and handle any application-specific recovery.
 
 .. _ug_nrf54h20_ironside_se_snapshot_protection_model:
@@ -76,7 +82,9 @@ Application integrity checks
 ============================
 
 MRAMC ECC cannot detect every corruption scenario.
-Any firmware that reads MRAM content must run integrity checks on MRAM before reading it and request snapshot recovery if the integrity check fails.
+Any firmware that reads MRAM content must run integrity checks on MRAM before reading it and request a snapshot recovery if the integrity check fails.
+If mounting with no-format in ZMS fails, request a snapshot recovery.
+For more information, see :ref:`ug_nrf54h20_zms_no_format_snapshot_recovery`.
 
 The System Controller (SysCtrl) ROM, SDROM, and |ISE| run integrity checks for the MRAM content that they read.
 Together, these checks verify the integrity of the following areas:
@@ -141,7 +149,10 @@ Common strategies include the following:
 * Cover all MRAM except areas that contain file systems.
 
 When a region is not covered by snapshot, you must provide your own recovery strategy.
-For example, corruption in a file system might require reformatting, while corruption in firmware might require device firmware update (DFU).
+For example, corruption in a file system might require reformatting or another application-specific recovery action, while corruption in firmware might require device firmware update (DFU).
+If the device is in a lifecycle state where its ZMS file systems are expected to already be formatted, mount them with no-format.
+If mounting with no-format fails, request a snapshot recovery.
+For more information, see :ref:`ug_nrf54h20_zms_no_format_snapshot_recovery`.
 
 .. _ug_nrf54h20_ironside_se_snapshot_external_memory:
 
@@ -295,13 +306,6 @@ Identify support in lifecycle state RoT or DEPLOYED
 To identify whether a device in lifecycle state ``RoT`` or ``DEPLOYED`` supports snapshot, check the |ISE| boot report in RAM.
 
 For the boot report fields that indicate snapshot support, see the :file:`zephyr/modules/hal_nordic/ironside/se/include/ironside/se/boot_report.h` header file.
-
-.. _ug_nrf54h20_ironside_se_snapshot_known_issues:
-
-Version requirements and known issues
-*************************************
-
-Use |ISE| v23.7.0+30 or later for snapshot deployments.
 
 Related documentation
 *********************
