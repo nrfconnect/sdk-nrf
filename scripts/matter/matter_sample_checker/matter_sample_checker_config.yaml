@@ -2,6 +2,7 @@
 # Copyright (c) 2026 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
 
 # NCS Matter Sample Checker Configuration
 # This file contains all the patterns, file lists, and rules used by the checker
@@ -47,6 +48,38 @@ documentation:
     line_pattern: "|NCS| |release| allows you"
   requirements:
     path: "doc/nrf/protocols/matter/getting_started/hw_requirements.rst"
+    skip_mappings:
+      nrf7002dk_nrf5340_cpuapp: "nRF7002 DK"
+    # board_id (overlay stem) -> RST display name for diagnostic RAM tabs / defaults
+    board_mappings:
+      nrf21540dk_nrf52840: "nRF52840 DK"
+      nrf52840dk_nrf52840: "nRF52840 DK"
+      nrf5340dk_nrf5340_cpuapp: "nRF5340 DK"
+      nrf5340dk_nrf5340_cpunet: "nRF5340 DK"
+      thingy53_nrf5340_cpuapp: "Nordic Thingy:53"
+      nrf54l15dk_nrf54l15_cpuapp: "nRF54L15 DK"
+      nrf54l15dk_nrf54l10_cpuapp: "nRF54L10 emulation on nRF54L15 DK"
+      nrf54lm20dk_nrf54lm20a_cpuapp: "nRF54LM20 DK"
+      nrf54lm20dk_nrf54lm20b_cpuapp: "nRF54LM20 DK"
+      nrf54l15dk_nrf54l15_cpuapp_internal: "nRF54L15 DK with internal memory only"
+      nrf54l15dk_nrf54l15_cpuapp_ns_tfm: "nRF54L15 DK with TF-M"
+      nrf54l15dk_nrf54l15_cpuapp_tfm: "nRF54L15 DK with TF-M"
+      nrf54l15tag_nrf54l15_cpuapp: "nRF54L15 TAG"
+      nrf54lm20dk_nrf54lm20a_cpuapp_internal: "nRF54LM20 DK with internal memory only"
+      nrf54lm20dk_nrf54lm20b_cpuapp_internal: "nRF54LM20 DK with internal memory only"
+    # board_id -> .. tab:: title under "Reference Matter memory layouts" when it differs from
+    # board_mappings
+    board_id_to_doc_flash_tab:
+      nrf54l15dk_nrf54l15_cpuapp_internal: "nRF54L15 DK with internal memory only"
+      nrf54l15dk_nrf54l15_cpuapp_ns_tfm: "nRF54L15 DK with TF-M"
+      nrf54l15dk_nrf54l15_cpuapp_tfm: "nRF54L15 DK with TF-M"
+      nrf54l15dk_nrf54l10_cpuapp: "nRF54L10 emulation on nRF54L15 DK"
+      nrf54lm20dk_nrf54lm20a_cpuapp_internal: "nRF54LM20 DK with internal memory only"
+      nrf54lm20dk_nrf54lm20b_cpuapp_internal: "nRF54LM20 DK with internal memory only"
+      nrf54l15tag_nrf54l15_cpuapp: "nRF54L15 DK with internal memory only"
+    # RST tab titles to skip when comparing flash tables to partition DTSI files
+    flash_doc_tabs_skip_dtsi_compare:
+      - "Nordic Thingy:53 (factory data)"
   link_txt:
     path: "doc/nrf/links.txt"
 
