@@ -428,7 +428,7 @@ Bluetooth samples
 
     * Support for the :ref:`nrfxlib:mpsl_fem` TX power split feature.
       The DTM command ``0x09`` for setting the transmitter power level takes into account the front-end module gain when this sample is built with support for front-end modules.
-      The vendor-specific commands for setting the SoC output power and the front-end module gain are not available when the :ref:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC <CONFIG_DTM_POWER_CONTROL_AUTOMATIC>` Kconfig option is enabled.
+      The vendor-specific commands for setting the SoC output power and the front-end module gain are not available when the ``CONFIG_DTM_POWER_CONTROL_AUTOMATIC`` Kconfig option is enabled.
     * Support for +1 dBm, +2 dBm, and +3 dBm output power on the nRF5340 DK.
 
   * Updated the handling of the hardware erratas.
