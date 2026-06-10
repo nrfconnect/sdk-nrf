@@ -44,6 +44,7 @@ config FPROTECT_BLOCK_SIZE
 	default NRF_BPROT_FLASH_REGION_SIZE if HAS_HW_NRF_BPROT
 	default NRF_ACL_FLASH_REGION_SIZE if HAS_HW_NRF_ACL
 	default NRF_RRAM_REGION_SIZE_UNIT if SOC_SERIES_NRF54L && FLASH
+	default NRF_MRAMC_REGION_SIZE_UNIT if SOC_SERIES_NRF71 && FLASH
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 
 menuconfig FPROTECT
@@ -54,8 +55,11 @@ menuconfig FPROTECT
 	default y if MCUBOOT && !SOC_SERIES_NRF54L
 	#enabled for nRF54L SoC's when MCUboot is the only one bootloader
 	select NRFX_RRAMC if SOC_SERIES_NRF54L
+	select NRFX_MRAMC if SOC_SERIES_NRF71
 	#allow utilization of both nRF54L SoC's RRAMC regions.
 	imply FPROTECT_ALLOW_COMBINED_REGIONS if MCUBOOT && SOC_SERIES_NRF54L && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1
+	#allow utilization of nRF71 SoC's MRAMC regions.
+	imply FPROTECT_ALLOW_COMBINED_REGIONS if MCUBOOT && SOC_SERIES_NRF71 && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1
 	help
 	  Enable the software library FPROTECT that may or may not be used
 	  by other systems to protect flash from writes and possibly also
@@ -83,10 +87,10 @@ config FPROTECT_APP
 	  'partition_manager_report' target.
 
 config FPROTECT_ALLOW_COMBINED_REGIONS
-	bool "Use both RRAMC_regions"
-	depends on SOC_SERIES_NRF54L && MCUBOOT
+	bool "Use multiple RRAMC/MRAMC regions"
+	depends on (SOC_SERIES_NRF54L || SOC_SERIES_NRF71) && MCUBOOT
 	help
-	  Intended for use with NRF54L series devices. Gives total of 62kB
-	  lockable memory.
+	  Intended for use with nRF54L and nRF71 series devices.
+	  Gives total of 62 kB lockable memory on nRF54L, or 93 kB on nRF71.
 
 endif # FPROTECT
