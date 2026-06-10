@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * MCUboot flash layout for the nRF91 build of tfm_psa_template. Shares the
+ * partition table with the application and B0 images via the included board
+ * overlay.
+ */
+
+#include "../../../boards/nrf9160dk_nrf9160_ns.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &s0_partition;
+	};
+};

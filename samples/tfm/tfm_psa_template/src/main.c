@@ -11,13 +11,8 @@
 #include "psa/initial_attestation.h"
 #include <tfm_ioctl_api.h>
 #include <zephyr/storage/flash_map.h>
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#define S0_ADDRESS PARTITION_ADDRESS(s0)
-#define S1_ADDRESS PARTITION_ADDRESS(s1)
-#else
 #define S0_ADDRESS PARTITION_ADDRESS(s0_partition)
 #define S1_ADDRESS PARTITION_ADDRESS(s1_partition)
-#endif
 #include <ctype.h>
 
 /* Define an example stats group; approximates seconds since boot. */
