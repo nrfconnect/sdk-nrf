@@ -17,8 +17,6 @@ common:
       - "Test suite 'PSA internal trusted storage NS interface tests.*' has.*PASSED"
       - "Test suite 'Crypto non-secure interface test.*' has.*PASSED"
       - "Test suite 'Platform Service Non-Secure interface tests.*' has.*PASSED"
-  extra_args:
-    - EXTRA_CONF_FILE=${ZEPHYR_BASE}/tests/modules/tf-m/regression/prj.conf
 
 tests:
   nrf.extended.tf-m.regression.ipc.lvl1:
