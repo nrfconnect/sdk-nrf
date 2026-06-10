@@ -9,7 +9,7 @@ if PSA_CRYPTO
 config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 	bool
 
-osource "modules/mbedtls/Kconfig.psa"
+rsource "Kconfig.psa.defconfig"
 
 rsource "src/core/Kconfig"
 
