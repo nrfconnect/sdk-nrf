@@ -192,6 +192,18 @@ static struct k_work_delayable sink_router_nbr_deleted_work;
 
 #endif
 static struct k_work_delayable dect_sink_rs_work;
+/* The sink solicits the upstream router (RS) to learn the delegated prefix.
+ * A whole RS burst can be lost - e.g. the SPI-attached W5500 throws
+ * TX-semaphore timeouts for the first seconds after link up, so the RS never
+ * leaves the driver, no RA arrives, and no prefix is learned. Zephyr's own
+ * RS retransmit (RS_COUNT bursts, one per CONFIG_NET_IPV6_RS_TIMEOUT) all
+ * fire within a few seconds of a single net_if_start_rs() call, i.e. still
+ * inside that failing window. Retry net_if_start_rs() at a coarser interval
+ * until a prefix is set or the attempt budget is exhausted.
+ */
+#define SINK_RS_RETRY_INTERVAL K_SECONDS(5)
+#define SINK_RS_MAX_ATTEMPTS   24
+static uint8_t sink_rs_attempts;
 #if defined(CONFIG_NET_DHCPV6)
 /* Delay DHCPv6 start so IPv6 link-local DAD completes before the first Solicit. */
 #define SINK_DHCPV6_START_DELAY_MS 5000
@@ -265,7 +277,11 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 
 			LOG_INF("SINK: starting router solicitation for iface %p",
 				iface_for_prefix);
-			net_if_start_rs(iface_for_prefix);
+			/* Reset the retry budget and let the RS work drive the
+			 * (re)solicitation so a dropped RS here is also retried.
+			 */
+			sink_rs_attempts = 0;
+			(void)k_work_reschedule(&dect_sink_rs_work, K_NO_WAIT);
 		}
 		break;
 	}
@@ -516,7 +532,10 @@ static void dect_net_l2_sink_net_if_mgmt_event_handler(struct net_mgmt_event_cal
 
 		/* Schedule router solicitation work to be run in a while.
 		 * We wait 20 seconds to have a chance to get RS initiated otherwise.
+		 * Reset the retry budget for this fresh up cycle; the work then
+		 * retries on its own until a prefix is learned (see handler).
 		 */
+		sink_rs_attempts = 0;
 		k_work_reschedule(&dect_sink_rs_work, K_SECONDS(20));
 		break;
 	}
@@ -532,6 +551,10 @@ static void dect_net_l2_sink_net_if_mgmt_event_handler(struct net_mgmt_event_cal
 		LOG_WRN("NET_EVENT_IF_DOWN: Sink networking iface (%p) is down", iface_for_prefix);
 		dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
 		sink_clear_prefix();
+
+		/* Stop any pending RS retries; a later IF_UP restarts the cycle. */
+		(void)k_work_cancel_delayable(&dect_sink_rs_work);
+		sink_rs_attempts = 0;
 
 #if defined(CONFIG_NET_DHCPV6)
 		(void)k_work_cancel_delayable(&sink_dhcpv6_start_work);
@@ -839,13 +862,32 @@ static void dect_net_l2_sink_rs_work_handler(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
-	if (iface_for_prefix && net_if_is_up(iface_for_prefix) &&
-	    !atomic_get(&sink_prefix_addr_set)) {
-		LOG_INF("SINK: RS work: starting RS for iface %p", iface_for_prefix);
+	if (iface_for_prefix == NULL || !net_if_is_up(iface_for_prefix)) {
+		return;
+	}
+
+	if (!atomic_get(&sink_prefix_addr_set)) {
+		if (sink_rs_attempts < SINK_RS_MAX_ATTEMPTS) {
+			sink_rs_attempts++;
+			LOG_INF("SINK: RS work: attempt %u/%u for iface %p",
+				sink_rs_attempts, SINK_RS_MAX_ATTEMPTS, iface_for_prefix);
 #if CONFIG_NET_L2_DECT_BR_IPV6_ETH_TX_PACING_MS > 0
-		k_msleep(CONFIG_NET_L2_DECT_BR_IPV6_ETH_TX_PACING_MS);
+			k_msleep(CONFIG_NET_L2_DECT_BR_IPV6_ETH_TX_PACING_MS);
 #endif
-		net_if_start_rs(iface_for_prefix);
+			net_if_start_rs(iface_for_prefix);
+
+			/* The RA may still be missing if this burst was dropped
+			 * (e.g. driver TX timeout). Reschedule; a later run is a
+			 * no-op once the prefix is set (NET_EVENT_IPV6_ROUTER_ADD).
+			 */
+			(void)k_work_reschedule(&dect_sink_rs_work, SINK_RS_RETRY_INTERVAL);
+		} else {
+			LOG_WRN("SINK: RS work: no prefix after %u attempts, giving up "
+				"for iface %p", sink_rs_attempts, iface_for_prefix);
+		}
+	} else {
+		/* Prefix learned: nothing left to solicit, stop retrying. */
+		sink_rs_attempts = 0;
 	}
 #if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
 	if (iface_for_prefix && net_if_is_up(iface_for_prefix)) {
