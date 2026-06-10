@@ -8,8 +8,8 @@ Bluetooth: Direct Test Mode
    :depth: 2
 
 This sample enables the Direct Test Mode functions described in `Bluetooth® Core Specification <Bluetooth Core Specification_>`_ (Vol. 6, Part F).
-The actual encoding of the test commands and events are described in sections 3.3 and 3.4, respectively, of Vol. 6, Part F of this specification document.
-The `Vendor-specific packet payload`_ section describes some vendor-specific commands that comply with the core specification.
+The actual encoding of the test commands and events is described in sections 3.3 and 3.4, respectively, of Vol. 6, Part F of this specification document.
+
 
 Requirements
 ************
@@ -38,305 +38,25 @@ The sample uses Direct Test Mode (DTM) to test the operation of the following fe
 * Packet error rate
 * Intermodulation performance
 
-Test procedures are defined in the document `Bluetooth Low Energy RF PHY Test Specification <Bluetooth Low Energy RF PHY Test Specification_>`_: Document number RF-PHY.TS.p15
+Test procedures are defined in the document `Bluetooth Low Energy RF PHY Test Specification <Bluetooth Low Energy RF PHY Test Specification_>`_.
 
 You can carry out conformance tests using dedicated test equipment, such as the Anritsu MT8852 or similar, with an nRF5 running the DTM sample set as device under test (DUT).
 
 Implementation
 ==============
 
-The DTM sample includes two parts:
+The sample uses the :ref:`dtm_twowire_to_hci_readme` library to convert between 2-wire UART commands and events and Bluetooth LE HCI commands and events.
+It also implements a transport module that uses Zephyr UART APIs to read and write 2-wire commands and events on the UART interface.
 
-* The Direct Test Mode library that manages the nRF radio and controls the standard DTM procedures.
-* A sample that provides an external interface to the library.
+The sample application in :file:`src/main.c` runs the following loop:
 
-You can find the source code of both parts in :file:`samples/bluetooth/direct_test_mode/src`.
-If you use the experimental HCI interface on the |nRF5340DKnoref|, you can find additional source code in :file:`samples/bluetooth/direct_test_mode/remote_hci/src` and :file:`samples/bluetooth/direct_test_mode/rpc`.
+1. Wait for a 2-wire UART command using the :c:func:`dtm_tw_transport_read` function.
+#. Call the :c:func:`dtm_tw_to_hci_process_tw_cmd` function.
 
-This sample contains a driver for a 2-wire UART interface and an experimental HCI UART interface.
-Unless otherwise stated, all following commands and references describe the 2-wire interface.
-The 2-wire driver maps two-octet commands and events to the DTM library, as specified by the Bluetooth Low Energy DTM specification.
-The HCI driver accepts HCI commands in H4 format and implements a minimal set of HCI commands usually sufficient to run DTM testing.
+   * If the result is a 2-wire event, send the event immediately on UART using the :c:func:`dtm_tw_transport_write` function.
+   * If the result is an HCI command, send it through ``bt_send()``, wait for the HCI event, generate the appropriate 2-wire event using the :c:func:`dtm_tw_to_hci_process_hci_event` function, then send the produced 2-wire event using :c:func:`dtm_tw_transport_write`.
 
-.. figure:: /images/bt_dtm_dut.svg
-   :alt: nRF5 with DTM as a DUT
-
-The implementation is self-contained and requires no Bluetooth Low Energy protocol stack for its operation.
-The MPU is initialized in the standard way.
-The DTM library function :c:func:`dtm_init` configures all interrupts, timers, and the radio.
-
-This sample may be extended with other interface implementations, such as an HCI interface, USB, or another interface required by the Upper Tester.
-The extension should be done by adding an appropriate interface implementation in the :file:`transport` directory.
-The transports must conform to the interface specified in the :file:`transport/dtm_transport.h` file.
-
-The interface to the Lower Tester uses the antenna connector of the chosen development kit.
-While in principle an aerial connection might be used, conformance tests cover the reading of the transmission power delivered by the DUT.
-For this reason, a coaxial connection between the DUT and the Lower Tester is employed for all conformance testing.
-
-DTM module interface
-====================
-
-The DTM module interface can be divided into the following three parts:
-
-* The :c:func:`dtm_init` initialization function
-* Setup functions:
-
-  * :c:func:`dtm_setup_reset`
-  * :c:func:`dtm_setup_set_phy`
-  * :c:func:`dtm_setup_set_modulation`
-  * :c:func:`dtm_setup_read_features`
-  * :c:func:`dtm_setup_read_max_supported_value`
-  * :c:func:`dtm_setup_set_cte_mode`
-  * :c:func:`dtm_setup_set_cte_slot`
-  * :c:func:`dtm_setup_set_antenna_params`
-  * :c:func:`dtm_setup_set_transmit_power`
-
-* Test functions:
-
-  * :c:func:`dtm_test_receive`
-  * :c:func:`dtm_test_transmit`
-  * :c:func:`dtm_test_end`
-
-The setup functions implement the DTM setup required by the Bluetooth Low Energy standard.
-The test functions implement the tests defined by the Bluetooth Low Energy standard.
-
-The sample is required to perform the following tasks:
-
-  *  To parse the relevant encoding format - UART or HCI - for the command, and to use the DTM module interface accordingly.
-  *  To interpret the return values of interface functions used in the DTM module, and to respond to the tester in the correct format.
-
-.. figure:: /images/bt_dtm_engine.svg
-   :alt: State machine overview of the DTM
-
-Supported PHYs
-==============
-
-The DTM sample supports all four PHYs specified in DTM, but not all devices support all the PHYs.
-
-.. list-table:: Supported PHYs
-   :header-rows: 1
-
-   * - PHY
-     - nRF5340
-   * - LE 1M
-     - Yes
-   * - LE 2M
-     - Yes
-   * - LE Coded S=8
-     - Yes
-   * - LE Coded S=2
-     - Yes
-
-TX output power
-===============
-
-This sample has several ways to set the device output power.
-The behavior of the commands vary depending on the hardware configuration and Kconfig options as follows:
-
-* DTM without front-end module support:
-
-   * The official ``0x09`` DTM command sets the SoC TX output power closest to the requested one when the exact power level is not supported.
-   * The ``SET_TX_POWER`` vendor-specific command sets the SoC TX output power.
-     You must use only the TX power values supported by your SoC.
-     See the actual values in the SoC Product Specification.
-
-* DTM with front-end module support:
-
-   * When the :ref:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC <CONFIG_DTM_POWER_CONTROL_AUTOMATIC>` Kconfig option is enabled (default), the official ``0x09`` DTM command sets the final output power to the desired, or the closest available value by configuring the SoC output power and the front-end module gain automatically.
-
-     .. note::
-        The returned output power using this command is valid only for channel 0.
-        If you perform the test on a different channel than the real output power measured by your tester device, it can be equal or less than the returned one.
-        This is because the DTM specification has a limitation when it assumes that output power is the same for all channels.
-        That is why the chosen output power might not be available for the given channel.
-
-   * When the :ref:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC <CONFIG_DTM_POWER_CONTROL_AUTOMATIC>` Kconfig option is disabled, the official ``0x09`` DTM command sets only the SoC output power.
-     These commands behave in the same way for the DTM without front-end module support.
-     Additionally, you can use following vendor-specific commands:
-
-      * The ``SET_TX_POWER`` command sets the SoC TX output power.
-      * The ``FEM_TX_POWER_CONTROL_SET`` command sets the front-end module gain.
-
-Bluetooth Direction Finding support
-===================================
-
-The DTM sample supports all Bluetooth Direction Finding modes specified in DTM.
-
-.. list-table:: Supported Bluetooth Direction Finding modes
-   :header-rows: 1
-
-   * - Direction Finding mode
-     - nRF5340
-   * - AoD 1 us slot
-     - Yes
-   * - AoD 2 us slot
-     - Yes
-   * - AoA
-     - Yes
-
-The following antenna switching patterns are possible:
-
-* 1, 2, 3, ..., N
-* 1, 2, 3, ..., N, N - 1, N - 2, ..., 1
-
-The application supports a maximum of 19 antennas in the direction finding mode.
-The radio can control up to eight GPIO pins for the purpose of controlling the external antenna switches used in direction finding.
-
-Antenna matrix configuration
-----------------------------
-
-To use this sample to test the Bluetooth Direction Finding feature, additional configuration of GPIOs is required to control the antenna array.
-An example of such configuration is provided in a devicetree overlay file :file:`nrf5340dk_nrf5340_cpunet.overlay`.
-
-The overlay file provides the information of the GPIOs to be used by the Radio peripheral to switch between antenna patches during the Constant Tone Extension (CTE) reception or transmission.
-At least one GPIO must be provided to enable antenna switching.
-
-The GPIOs are used by the radio peripheral in the order provided by the ``dfegpio#-gpios`` properties.
-The order is important because it has an impact to the mapping of the antenna switching patterns to GPIOs (see `Antenna patterns`_).
-
-To test Direction Finding, provide the following data related to antenna matrix design:
-
-* GPIO pins to ``dfegpio#-gpios`` properties in the :file:`nrf5340dk_nrf5340_cpunet.overlay` file.
-* The default antenna to be used to receive the PDU ``dfe-pdu-antenna`` property in the :file:`nrf5340dk_nrf5340_cpunet.overlay` file.
-
-.. note::
-   The PDU antenna is also used for the reference period transmission and reception.
-
-Antenna patterns
-----------------
-
-The antenna switching pattern is a binary number where each bit is applied to a particular antenna GPIO pin.
-For example, the pattern ``0x3`` means that antenna GPIOs at index ``0,1`` is set, while the next ones are left unset.
-
-This also means that, for example, when using four GPIOs, the pattern count cannot be greater than 16 and the maximum allowed value is 15.
-
-If the number of switch-sample periods is greater than the number of stored switching patterns, the radio loops back to the first pattern.
-
-The following table presents the patterns that you can use to switch antennas on the Nordic-designed antenna matrix:
-
-+--------+--------------+
-|Antenna | PATTERN[3:0] |
-+========+==============+
-| ANT_12 |  0 (0b0000)  |
-+--------+--------------+
-| ANT_10 |  1 (0b0001)  |
-+--------+--------------+
-| ANT_11 |  2 (0b0010)  |
-+--------+--------------+
-| RFU    |  3 (0b0011)  |
-+--------+--------------+
-| ANT_3  |  4 (0b0100)  |
-+--------+--------------+
-| ANT_1  |  5 (0b0101)  |
-+--------+--------------+
-| ANT_2  |  6 (0b0110)  |
-+--------+--------------+
-| RFU    |  7 (0b0111)  |
-+--------+--------------+
-| ANT_6  |  8 (0b1000)  |
-+--------+--------------+
-| ANT_4  |  9 (0b1001)  |
-+--------+--------------+
-| ANT_5  | 10 (0b1010)  |
-+--------+--------------+
-| RFU    | 11 (0b1011)  |
-+--------+--------------+
-| ANT_9  | 12 (0b1100)  |
-+--------+--------------+
-| ANT_7  | 13 (0b1101)  |
-+--------+--------------+
-| ANT_8  | 14 (0b1110)  |
-+--------+--------------+
-| RFU    | 15 (0b1111)  |
-+--------+--------------+
-
-Front-end module
-================
-
-.. include:: /includes/sample_dtm_radio_test_fem.txt
-
-You can configure the transmitted power gain, antenna output, and activation delay in FEMs using vendor-specific commands, see `Vendor-specific packet payload`_.
-
-.. note::
-   Each front-end module (FEM) has different capabilities and operating modes, so some commands may not be supported by a specific FEM and those supported may work differently on different FEMs.
-
-Skyworks front-end module
-=========================
-
-.. include:: /includes/sample_dtm_radio_test_skyworks.txt
-
-You can configure the antenna output and activation delay for the Skyworks front-end module (FEM) using vendor-specific commands, see `Vendor-specific packet payload`_.
-
-Vendor-specific packet payload
-==============================
-
-For the LE Uncoded PHYs, the Bluetooth Low Energy 2-wire UART DTM interface standard reserves the Packet Type, also called payload parameter, with binary value ``11`` for a Vendor Specific packet payload.
-
-The DTM command is interpreted as vendor-specific when the following conditions are met:
-
-* Its CMD field is set to Transmitter Test, binary ``10``.
-* Its PKT field is set to vendor-specific, binary ``11``.
-* The PHY is set to the LE Uncoded PHYs.
-
-Vendor-specific commands can be divided into different categories as follows:
-
-* If the **Length** field is set to ``0`` (symbol ``CARRIER_TEST``), an unmodulated carrier is turned on at the channel indicated by the **Frequency** field.
-  It remains turned on until a ``TEST_END`` or ``RESET`` command is issued.
-* If the **Length** field is set to ``1`` (symbol ``CARRIER_TEST_STUDIO``), the field value is used by the nRFgo Studio to indicate that an unmodulated carrier is turned on at the channel.
-  It remains turned on until a ``TEST_END`` or ``RESET`` command is issued.
-* If the **Length** field is set ``2`` (symbol ``SET_TX_POWER``), the **Frequency** field sets the TX power in dBm.
-  The valid TX power values are specified in the product specification of the SoC used, where ``0`` dBm is the reset value.
-  Only the six least significant bits will fit in the **Length** field.
-  The two most significant bits are calculated by the DTM module, assuming the maximum possible positive power value requested is 15 dBm.
-  This way, the available theoretical range of the TX power values set by this command is from ``-48`` dBm to ``15`` dBm.
-  The TX power can be modified only when no Transmitter Test or Receiver Test is running.
-* If the **Length** field is set to ``3`` (symbol ``FEM_ANTENNA_SELECT``), the **Frequency** field sets the front-end module (FEM) antenna output.
-  The valid values are:
-
-     * ``0`` - ANT1 enabled, ANT2 disabled
-     * ``1`` - ANT1 disabled, ANT2 enabled
-
-* If the **Length** field is set to ``4`` (symbol ``FEM_TX_POWER_CONTROL_SET``), the **Frequency** field sets the front-end module (FEM) TX power control value and is specific to the FEM type in use.
-  The valid gain values are specified in your product-specific front-end module (FEM).
-  For example, in the nRF21540 front-end module with GPIO interface, the tx power control range is 0 (POUTA) to 1 (POUTB).
-  For example, in the nRF21540 front-end module with GPIO/SPI, the tx power control range is 0 - 31 and is the value of TX_GAIN field of CONFREG0 register.
-* If the **Length** field is set to ``5`` (symbol ``FEM_ACTIVE_DELAY_SET``), the **Frequency** field sets the front-end module (FEM) activation delay in microseconds relative to the radio start.
-  By default, this value is set to ``radio ramp-up time - front-end module (FEM) TX/RX settling time``.
-* If the **Length** field is set to ``6`` (symbol ``FEM_DEFAULT_PARAMS_SET``) and the **Frequency** field to any value, the front-end module parameters, such as ``antenna output``, ``gain``, and ``delay``, are set to their default values.
-* All other values of **Frequency** and **Length** field are reserved.
-
-.. note::
-   Front-end module configuration parameters, such as ``antenna output``, ``gain``, and ``active delay``, are not set to their default values after the DTM reset command.
-   Testers, for example Anritsu MT8852, issue a reset command at the beginning of every test.
-   Therefore, you cannot run automated test scripts for front-end modules with other than the default parameters.
-
-   If you have changed the default parameters of the front-end module, you can restore them.
-   You can either send the ``FEM_DEFAULT_PARAMS_SET`` command or power cycle the front-end module.
-
-.. note::
-   When you build the DTM sample with support for front-end modules and the :ref:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC <CONFIG_DTM_POWER_CONTROL_AUTOMATIC>` Kconfig option is enabled, the following vendor-specific command are not available:
-
-   * ``SET_TX_POWER``
-   * ``FEM_TX_POWER_CONTROL_SET``
-
-   You can disable the :ref:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC <CONFIG_DTM_POWER_CONTROL_AUTOMATIC>` Kconfig option if you want to set the SoC output power and the front-end module gain by separate commands.
-   The official DTM command ``0x09`` for setting power level takes into account the SoC output power and the front-end module gain to set the total requested output power.
-
-The DTM-to-Serial adaptation layer
-==================================
-
-The :file:`dtm_uart_twowire.c` file is an implementation of the UART interface specified in the `Bluetooth Core Specification`_, Volume 6, Part F, Chapter 3.
-
-The :file:`dtm_hci.c` and :file:`hci_uart.c` files are an implementation of the HCI UART interface specified in the `Bluetooth Core Specification`_, Volume 4, Part A (the flow control can be configured by an overlay file).
-
-The default selection of UART pins is defined in :file:`zephyr/boards/arm/board_name/board_name.dts`.
-You can change the defaults using the symbols ``tx-pin`` and ``rx-pin`` in the DTS overlay file of the image at the project level.
-The configuration files for the :ref:`nrf5340_remote_shell` subimage are located in the :file:`sysbuild/remote_shell` directory.
-The HCI interface allows for a custom ``remote_hci`` image to be used with |nRF5340DKnoref|.
-
-.. note::
-   On the nRF5340 development kit, the physical UART interface of the application core is used for communication with the tester device.
-   This sample uses the :ref:`uart_ipc` for sending responses and receiving commands through the UART interface of the application core.
+This follows the conversion flow defined by the DTM conversion library.
 
 Debugging
 *********
@@ -348,6 +68,10 @@ Instead, they are printed by the RTT logger.
 If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
 For more information about debugging in the |NCS|, see :ref:`debugging`.
 
+.. note::
+   The default configuration disables all logging, so you need to enable the logging options to view the debug messages.
+   See the Configuration section for details.
+
 Configuration
 *************
 |config|
@@ -355,14 +79,27 @@ Configuration
 Configuration options
 =====================
 
-The following configuration parameters are associated with this sample:
+The default sample configuration is in the :file:`prj.conf` file.
 
-.. _CONFIG_DTM_POWER_CONTROL_AUTOMATIC:
+To enable RTT logging for this sample, set the following Kconfig options:
 
-CONFIG_DTM_POWER_CONTROL_AUTOMATIC - Automatic power control
-   Sets the SoC output power and the front-end module gain to achieve the TX output power requested by the user.
-   If the exact value cannot be achieved, power is set to the closest possible value.
-   If this option is disabled, you can set the SoC output power and the front-end module gain with the separate vendor-specific commands.
+.. code-block:: console
+
+  CONFIG_LOG=y
+  CONFIG_LOG_PRINTK=y
+  CONFIG_USE_SEGGER_RTT=y
+  CONFIG_LOG_BACKEND_RTT=y
+
+To set the log level for the transport module, set one of the following Kconfig options:
+
+* :kconfig:option:`CONFIG_DTM_TW_TRANSPORT_LOG_LEVEL_DBG` for log level DEBUG
+* :kconfig:option:`CONFIG_DTM_TW_TRANSPORT_LOG_LEVEL_INF` for log level INFO
+* :kconfig:option:`CONFIG_DTM_TW_TRANSPORT_LOG_LEVEL_WRN` for log level WARNING
+* :kconfig:option:`CONFIG_DTM_TW_TRANSPORT_LOG_LEVEL_ERR` for log level ERROR
+* :kconfig:option:`CONFIG_DTM_TW_TRANSPORT_LOG_LEVEL_OFF` to disable logging
+
+Further configuration options are available for the DTM 2-wire UART to HCI conversion library.
+See :ref:`dtm_twowire_to_hci_readme` for details.
 
 Building and running
 ********************
@@ -375,58 +112,10 @@ Building and running
    On the nRF5340 development kit, this sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
    The Remote IPC shell sample is built and programmed automatically by default.
 
-Disabling Direction Finding feature
-===================================
-
-To build the sample without support for the Direction Finding feature, use the following command for the correct *board_target*:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build samples/bluetooth/direct_test_mode -b *board_target* -- -DSB_CONFIG_DTM_NO_DFE=y
-
-Experimental HCI interface
-==========================
-
-To build the sample with an HCI interface, use the following command for the correct *board_target*:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build samples/bluetooth/direct_test_mode -b *board_target* -- -DFILE_SUFFIX=hci
-
-On the |nRF5340DKnoref|, you can build the sample with HCI interface with the ``remote_hci`` image using the same command.
-
-USB CDC ACM transport variant
-=============================
-
-On the nRF5340 and nRF54H20 development kits, you can build this sample configured to use the USB interface as a communication interface with the tester.
-
-Use the following command for nRF54H20:
-
-.. code-block:: console
-
-   west build samples/bluetooth/direct_test_mode -b nrf54h20dk/nrf54h20/cpurad -- -DFILE_SUFFIX=usb_54h20
-
-Use the following command for nRF5340:
-
-.. code-block:: console
-
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb_5340
-
-You can also build this sample with support for the front-end module.
-Use the following command:
-
-.. code-block:: console
-
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb_5340
-
-.. _dtm_testing:
-
 Testing
 =======
 
-After programming the sample to your development kit, you can test it in three ways, as described in the following chapters.
+After programming the sample to your development kit, you can test it in two main scenarios, as described in the following chapters.
 
 .. note::
    For the |nRF5340DKnoref|, see :ref:`logging_cpunet` for information about the COM terminals on which the logging output is available.
@@ -436,50 +125,68 @@ After programming the sample to your development kit, you can test it in three w
 Testing with a certified tester
 -------------------------------
 
-Conformance testing is performed using a certified tester.
-The setup depends on the tester used, and details about the test operation must be found in the tester documentation.
+Conformance testing is performed using a certified tester, such as Anritsu MT8852.
+The setup and test procedures depend on the tester used.
+Details about the test operation are available in the tester documentation.
+The tester handles sending DTM test commands and reading transmitted signals or sending received signals.
 
-The Application note `nAN34`_ describes two alternatives for setting up a production test with DTM using one of our old devices.
+The application note `nAN34`_ describes two alternatives for setting up a production test with DTM using one of our old devices.
 
 .. _direct_test_mode_testing_board:
 
 Testing with another development kit
 ------------------------------------
 
-1. Connect both development kits to the computer using a USB cable.
-   The computer assigns to the development kit a serial port.
-   |serial_port_number_list|
-#. Connect to both kits with a terminal emulator.
-   See `Direct Test Mode terminal connection`_ for the required settings.
-#. Start ``TRANSMITTER_TEST`` by sending the ``0x80 0x96`` DTM command to one of the connected development kits.
-   This command will trigger TX activity on the 2402 MHz frequency (1st channel) with ``10101010`` packet pattern and 37-byte packet length.
-#. Observe that you received the ``TEST_STATUS_EVENT`` packet in response with the SUCCESS status field: ``0x00 0x00``.
-#. Start ``RECEIVER_TEST`` by sending the ``0x40 0x96`` DTM command to the second development kit.
-   Command parameters are identical to the ones used for the ``TRANSMITTER_TEST`` command.
-#. Observe that you received the ``TEST_STATUS_EVENT`` packet in response with the SUCCESS status field: ``0x00 0x00``.
-#. Finish RX testing using the ``TEST_END DTM`` command by sending the ``0xC0 0x00`` packet.
-#. Observe that you received the ``PACKET_REPORTING_EVENT`` packet in response.
-   For example, the ``0xD6 0xAC`` message indicates that 22188 Radio packets have been received.
-#. Experiment with other combinations of commands and their parameters.
+To test with another development kit running the same sample, you need to send DTM 2-wire UART commands to the kits.
+You can send these commands using one of the following methods:
 
 .. _direct_test_mode_testing_app:
 
-Testing with Direct Test Mode app
----------------------------------
+Other testing options
+---------------------
 
-1. |connect_kit|
-#. Connect the kit with a terminal emulator that supports encoding and decoding in the HEX format.
-   See `Direct Test Mode terminal connection`_ for the required settings.
-#. Start the ``TRANSMITTER_TEST`` by sending the ``0x80 0x96`` DTM command to the connected development kit.
-   This command triggers TX activity on 2402 MHz frequency (1st channel) with ``10101010`` packet pattern and 37-byte packet length.
-#. Observe that you received the ``TEST_STATUS_EVENT`` packet in response with the SUCCESS status field: ``0x00 0x00``.
-#. Start the `Direct Test Mode app`_ in `nRF Connect for Desktop`_ and select the development kit to communicate with.
-#. Set the Receiver mode and 37th channel in the test configuration menu.
+**Option A: Using the Direct Test Mode app**
+
+The `Direct Test Mode app`_ in `nRF Connect for Desktop`_ generates and sends commands automatically.
+
+1. Connect both development kits to the computer using a USB cable.
+#. Start the `Direct Test Mode app`_ in `nRF Connect for Desktop`_ and select one of the development kits.
+#. Set the Transmitter mode and configure the test parameters (frequency, packet pattern, length, etc.).
+   For example, use channel 37 (2402 MHz) with ``10101010`` packet pattern and 37-byte packet length.
 #. Start the test.
-#. On the application chart, observe that the number of RX packets is increasing for the 2402 MHz channel.
-#. Stop the test.
-#. Swap roles.
-   Set the application to the RX mode and the connected development kit to the TX mode.
+   The app will send the ``TRANSMITTER_TEST`` command to the kit.
+#. Observe the ``TEST_STATUS_EVENT`` response with the SUCCESS status field.
+#. On the second kit, start the `Direct Test Mode app`_ and select it in the application.
+#. Set the Receiver mode with matching test parameters.
+#. Start the test.
+   The app will send the ``RECEIVER_TEST`` command to the kit.
+#. Observe the ``TEST_STATUS_EVENT`` response and the packet count increasing on the application chart.
+#. Stop the test on the receiver kit, and observe the ``PACKET_REPORTING_EVENT`` with the received packet count.
+#. Swap roles and repeat the test in the reverse direction.
+
+**Option B: Sending raw DTM commands**
+
+You can send raw DTM 2-wire UART commands using, for example, a serial terminal emulator.
+See `Direct Test Mode terminal connection`_ for the required serial port settings and command format.
+
+1. Connect both development kits to the computer using a USB cable.
+   The computer assigns to each development kit a serial port.
+   |serial_port_number_list|
+#. Connect both kits with a terminal emulator.
+   See `Direct Test Mode terminal connection`_ for the required settings.
+#. Start ``TRANSMITTER_TEST`` on one kit by sending the ``0x80 0x96`` DTM command.
+   This command will trigger TX activity on the 2402 MHz frequency (1st channel) with ``10101010`` packet pattern and 37-byte packet length.
+#. Observe that you received the ``TEST_STATUS_EVENT`` packet in response with the SUCCESS status field: ``0x00 0x00``.
+#. Start ``RECEIVER_TEST`` on the second kit by sending the ``0x40 0x96`` DTM command.
+   Command parameters are identical to the ones used for the ``TRANSMITTER_TEST`` command.
+#. Observe that you received the ``TEST_STATUS_EVENT`` packet in response with the SUCCESS status field: ``0x00 0x00``.
+#. Finish RX testing on the second kit using the ``TEST_END`` DTM command by sending the ``0xC0 0x00`` packet.
+#. Observe that you received the ``PACKET_REPORTING_EVENT`` packet in response, indicated by the most significant bit set to ``1``.
+   The other 15 bits of the event contain the number of received packets, which means you can subtract ``0x8000`` from the event (big endian) to get the packet count.
+   For example, the ``0xD6 0xAC`` message indicates that 22188 radio packets have been received.
+#. Experiment with other combinations of commands and their parameters.
+   The protocol is defined in `Bluetooth Core Specification <Bluetooth Core Specification_>`_ Vol. 6, Part F, 3 UART Test Interface.
+#. To test the reverse direction, swap the TX and RX roles between the two kits and repeat the process.
 
 Direct Test Mode terminal connection
 ------------------------------------
@@ -602,31 +309,20 @@ On Ubuntu, run:
 
       sudo echo -ne "\x00\x00" > /dev/serial/by-id/usb-SEGGER_J-Link_000683580193-if00
 
+Limitations
+***********
+
+This sample inherits the limitations of the DTM 2-wire UART to HCI conversion library.
+See :ref:`dtm_twowire_to_hci_readme` (section Limitations).
+
 Dependencies
 ************
 
 This sample uses the following |NCS| library:
 
-  * :ref:`fem_al_lib`
+* :ref:`dtm_twowire_to_hci_readme`
 
-This sample uses the following |NCS| driver:
+In addition, it uses the following Zephyr libraries:
 
-  * :ref:`uart_ipc`
-
-This sample has the following nrfx dependencies:
-
-  * :file:`nrfx/drivers/include/nrfx_timer.h`
-  * :file:`nrfx/hal/nrf_nvmc.h`
-  * :file:`nrfx/hal/nrf_radio.h`
-  * :file:`nrfx/helpers/nrfx_gppi.h`
-
-The sample also has the following nrfxlib dependency:
-
-  * :ref:`nrfxlib:mpsl_fem`
-
-In addition, it has the following Zephyr dependencies:
-
-* :ref:`zephyr:device_model_api`:
-
-   * :file:`drivers/clock_control.h`
-   * :file:`drivers/uart.h`
+* :ref:`zephyr:bluetooth_api`
+* :ref:`zephyr:uart_api`
