@@ -16,7 +16,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-bt_hci_ipc.conf
+    extra_args: EXTRA_CONF_FILE=bt_hci_ipc.conf
   applications.ipc_radio.hci.sysbuild:
     sysbuild: true
     build_only: true
@@ -30,7 +30,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-bt_hci_ipc.conf
+    extra_args: EXTRA_CONF_FILE=bt_hci_ipc.conf
   applications.ipc_radio.hci.nrf54h.sysbuild:
     sysbuild: true
     build_only: true
@@ -42,7 +42,7 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
     extra_args:
-      - EXTRA_CONF_FILE=overlay-bt_hci_ipc.conf
+      - EXTRA_CONF_FILE=bt_hci_ipc.conf
       - SB_CONFIG_PARTITION_MANAGER=n
   applications.ipc_radio.rpc:
     sysbuild: true
@@ -58,7 +58,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-bt_rpc.conf
+    extra_args: EXTRA_CONF_FILE=bt_rpc.conf
   applications.ipc_radio.rpc.sysbuild:
     sysbuild: true
     build_only: true
@@ -72,7 +72,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-bt_rpc.conf
+    extra_args: EXTRA_CONF_FILE=bt_rpc.conf
   applications.ipc_radio.rpc.nrf54h.sysbuild:
     sysbuild: true
     build_only: true
@@ -84,7 +84,7 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
     extra_args:
-      - EXTRA_CONF_FILE=overlay-bt_rpc.conf
+      - EXTRA_CONF_FILE=bt_rpc.conf
       - SB_CONFIG_PARTITION_MANAGER=n
   applications.ipc_radio.802154:
     sysbuild: true
@@ -99,7 +99,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-802154.conf
+    extra_args: EXTRA_CONF_FILE=802154.conf
   applications.ipc_radio.802154.sysbuild:
     sysbuild: true
     build_only: true
@@ -112,7 +112,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-802154.conf
+    extra_args: EXTRA_CONF_FILE=802154.conf
   applications.ipc_radio.hci802154:
     sysbuild: true
     build_only: true
@@ -127,7 +127,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE="overlay-bt_hci_ipc.conf;overlay-802154.conf"
+    extra_args: EXTRA_CONF_FILE="bt_hci_ipc.conf;802154.conf"
   applications.ipc_radio.hci802154.sysbuild:
     sysbuild: true
     build_only: true
@@ -141,4 +141,4 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE="overlay-bt_hci_ipc.conf;overlay-802154.conf"
+    extra_args: EXTRA_CONF_FILE="bt_hci_ipc.conf;802154.conf"
