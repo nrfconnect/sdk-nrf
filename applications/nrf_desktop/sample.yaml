@@ -342,3 +342,22 @@ tests:
       - SB_CONFIG_PARTITION_MANAGER=y
       - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS=256
     harness: console
+  applications.nrf_desktop.zdebug_partition_manager_b0:
+    build_only: true
+    platform_allow:
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - nrf52840dk/nrf52840
+    extra_args:
+      - SB_CONFIG_PARTITION_MANAGER=y
+  applications.nrf_desktop.zdebug_partition_manager_mcuboot_swap_qspi:
+    build_only: true
+    platform_allow:
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - nrf52840dk/nrf52840
+    extra_args:
+      - FILE_SUFFIX=mcuboot_qspi
+      - SB_CONFIG_PARTITION_MANAGER=y
+      - SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
+      - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS=2048
