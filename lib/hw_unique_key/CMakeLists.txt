@@ -6,7 +6,7 @@
 
 zephyr_library()
 
-if(CONFIG_CRACEN_KMU_HW_PRESENT)
+if(CONFIG_HAS_HW_NRF_CRACEN)
   zephyr_library_sources(hw_unique_key_cracen_kmu.c)
 else()
   zephyr_library_sources(hw_unique_key_cc3xx.c)
