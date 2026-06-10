@@ -99,6 +99,8 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientGetDefaultConfig)
 
 	config = otDnsClientGetDefaultConfig(NULL);
 
+	mock_nrf_rpc_tr_expect_done();
+
 	zassert_mem_equal(config->mServerSockAddr.mAddress.mFields.m8, &test_addr,
 			  OT_IP6_ADDRESS_SIZE);
 	zassert_equal(config->mServerSockAddr.mPort, DNS_PORT);
@@ -163,6 +165,8 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveAddress)
 	error = otDnsClientResolveAddress(NULL, DNS_HOSTNAME, ot_dns_resolve_cb, (void *)UINT32_MAX,
 					  &config);
 
+	mock_nrf_rpc_tr_expect_done();
+
 	zassert_equal(error, OT_ERROR_NONE);
 }
 
@@ -191,6 +195,8 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveIp4Address)
 
 	error = otDnsClientResolveIp4Address(NULL, DNS_HOSTNAME, ot_dns_resolve_cb,
 					     (void *)UINT32_MAX, &config);
+
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(error, OT_ERROR_NONE);
 }
