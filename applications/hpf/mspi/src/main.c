@@ -6,6 +6,8 @@
 
 #include "hrt/hrt.h"
 
+#include "hpf_pin_map.h"
+
 #include <zephyr/drivers/mspi.h>
 #include <zephyr/ipc/ipc_service.h>
 #include <zephyr/kernel.h>
@@ -48,57 +50,11 @@
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
-	defined(CONFIG_SOC_NRF54LM20B)
-
-static const uint8_t pin_to_vio_map[HPF_MSPI_PIN_COUNT] = {
-	4,  /* Physical pin 0 */
-	0,  /* Physical pin 1 */
-	1,  /* Physical pin 2 */
-	3,  /* Physical pin 3 */
-	2,  /* Physical pin 4 */
-	5,  /* Physical pin 5 */
-	6,  /* Physical pin 6 */
-	7,  /* Physical pin 7 */
-	8,  /* Physical pin 8 */
-	9,  /* Physical pin 9 */
-	10, /* Physical pin 10 */
-};
-#define VIO_PIN_OFFSET 0
-
-#elif defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
-static const uint8_t pin_to_vio_map[HPF_MSPI_PIN_COUNT] = {
-	4,  /* Physical pin 15 */
-	0,  /* Physical pin 16 */
-	1,  /* Physical pin 17 */
-	3,  /* Physical pin 18 */
-	2,  /* Physical pin 19 */
-	5,  /* Physical pin 20 */
-	6,  /* Physical pin 21 */
-	7,  /* Physical pin 22 */
-	8,  /* Physical pin 23 */
-	9,  /* Physical pin 24 */
-};
-#define VIO_PIN_OFFSET 15
-
-#else
-#error "Unsupported SoC for HPF MSPI"
-#endif
-
 #define DATA_LINE_INDEX(pinctr_fun) (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 
 #ifndef CONFIG_HPF_MSPI_IPC_NO_COPY
 BUILD_ASSERT(CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
 #endif
-
-static uint8_t gpio_pin_to_vio_index(uint16_t pin)
-{
-	/* Check if the pin and the port can be accessed by VIO. */
-	if ((pin >= VIO_PIN_OFFSET) && (pin < (VIO_PIN_OFFSET + HPF_MSPI_PIN_COUNT))) {
-		return pin_to_vio_map[pin - VIO_PIN_OFFSET];
-	}
-	return INVALID_VIO;
-}
 
 static const hrt_xfer_bus_widths_t io_modes[SUPPORTED_IO_MODES_COUNT] = {
 	{1, 1, 1, 1}, /* MSPI_IO_MODE_SINGLE */
@@ -401,9 +357,11 @@ static void config_pins(hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 		}
 
 		uint8_t pin_number = NRF_PIN_NUMBER_TO_PIN(psel);
-		uint8_t vio_pin = gpio_pin_to_vio_index(pin_number);
+		uint8_t port_number = NRF_PIN_NUMBER_TO_PORT(psel);
 
-		NRFX_ASSERT(vio_pin != INVALID_VIO);
+		uint8_t vio_pin = hpf_pin_map_to_vio_index(port_number, pin_number);
+
+		NRFX_ASSERT(vio_pin != HPF_PIN_MAP_VIO_PIN_INVALID);
 
 		if ((fun >= NRF_FUN_HPF_MSPI_CS0) && (fun <= NRF_FUN_HPF_MSPI_CS4)) {
 
