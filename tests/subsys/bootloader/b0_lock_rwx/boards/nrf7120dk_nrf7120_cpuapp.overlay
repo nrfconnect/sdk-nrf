@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Single-stage (NSIB -> application) layout for nRF7120, no Partition Manager.
+ *
+ * NSIB boots and validates the next-stage image from s0_partition, so this
+ * overlay defines b0/s0/s1 directly (mirroring the nRF54L reference overlay
+ * boards/nrf54lv10dk_nrf54lv10a_cpuapp.overlay). Unlike the nRF54L reference we
+ * do NOT '/delete-node/' the whole partitions node: the nRF7120 board defines
+ * Wi-Fi ROM-patch partitions (wifi_lmac_patch_partition / wifi_umac_patch_
+ * partition) referenced by phandle from the (enabled) &wicr node, so removing
+ * the node would leave dangling phandles and break the build. MRAM (not RRAM)
+ * and Wi-Fi are nRF7120-specific divergences from the nRF54L reference.
+ *
+ *   b0_partition  0x000000   30K     NSIB (aliased onto boot_partition)
+ *   s0_partition  0x010000   1440K   application (NSIB primary, code-partition)
+ *   s1_partition  0x178000   1440K   application copy (NSIB secondary)
+ *
+ * The two-stage (NSIB -> MCUboot -> application) layout is provided by the
+ * FILE_SUFFIX=b0_mcuboot overlays.
+ */
+
+b0_partition: &boot_partition {
+	reg = <0x0 DT_SIZE_K(30)>;
+};
+
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+
+&cpuapp_mram {
+	partitions {
+		s0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x10000 DT_SIZE_K(1440)>;
+		};
+
+		s1_partition: partition@178000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x178000 DT_SIZE_K(1440)>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &s0_partition;
+	};
+};
