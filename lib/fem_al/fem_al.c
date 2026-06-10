@@ -415,6 +415,11 @@ int fem_init(NRF_TIMER_Type *timer_instance, uint8_t compare_channel_mask)
 	NRF52_CONFIGURATION_256_PRESENT || NRF52_CONFIGURATION_257_PRESENT)
 static void apply_fem_errata_25X(nrf_radio_mode_t mode)
 {
+	if (!nrf52_configuration_254() && !nrf52_configuration_255() &&
+	    !nrf52_configuration_256() && !nrf52_configuration_257()) {
+		return;
+	}
+
 	static uint8_t old_mode = NRF_RADIO_MODE_NRF_1MBIT;
 
 	if (*(volatile uint32_t *) 0x10000330UL != 0xFFFFFFFFUL) {
@@ -454,8 +459,5 @@ static void apply_fem_errata_25X(nrf_radio_mode_t mode)
 
 void fem_errata_25X(nrf_radio_mode_t mode)
 {
-	if (nrf52_configuration_254() || nrf52_configuration_255() ||
-	    nrf52_configuration_256() || nrf52_configuration_257()) {
-		apply_fem_errata_25X(mode);
-	}
+	apply_fem_errata_25X(mode);
 }
