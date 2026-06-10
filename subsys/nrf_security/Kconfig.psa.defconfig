@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+configdefault PSA_WANT_ALG_HKDF
+	default y if \
+		(PSA_WANT_ALG_HKDF_EXTRACT || PSA_WANT_ALG_HKDF_EXPAND) && \
+		(PSA_CRYPTO_DRIVER_OBERON || PSA_CRYPTO_DRIVER_CRACEN)
