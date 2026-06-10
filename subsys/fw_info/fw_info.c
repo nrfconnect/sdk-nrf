@@ -14,6 +14,8 @@
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
+#elif defined(CONFIG_NRFX_MRAMC)
+#include <nrfx_mramc.h>
 #endif
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
@@ -222,6 +224,12 @@ void fw_info_invalidate(const struct fw_info *fw_info)
 		nrfx_nvmc_word_write((uint32_t)&(fw_info->valid), INVALID_VAL);
 #elif defined(CONFIG_NRFX_RRAMC)
 		nrfx_rramc_word_write((uint32_t)&(fw_info->valid), INVALID_VAL);
+#elif defined(CONFIG_NRFX_MRAMC)
+		/* Idempotent init sets the READYNEXT timeout so the DIRECT write commits. */
+		nrfx_mramc_config_t config = NRFX_MRAMC_DEFAULT_CONFIG();
+
+		(void)nrfx_mramc_init(&config, NULL);
+		nrfx_mramc_word_write((uint32_t)&(fw_info->valid), INVALID_VAL);
 #endif
 	}
 }
