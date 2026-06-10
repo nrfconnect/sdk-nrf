@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	cs_antenna_switch: cs-antenna-config {
+		status = "okay";
+		compatible = "nordic,bt-cs-antenna-switch";
+		ant-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>,
+			    <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		multiplexing-mode = <0>;
+	};
+};
+
+/* delete other nodes that drive the antenna pins so there is no duplicate access */
+/delete-node/ &sky13348;
+
+&gpio1 {
+	/delete-node/ antenna_switch_v1;
+	/delete-node/ antenna_switch_v2;
+};
