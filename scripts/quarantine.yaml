@@ -9,12 +9,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29460"
 
 - scenarios:
-    - sample.dect.dect_shell.nrf_cloud_mqtt
-  platforms:
-    - nrf9151dk/nrf9151/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-38328"
-
-- scenarios:
     - nrf.extended.drivers.uart.async_dual
     - nrf.extended.drivers.uart.async_dual.busy_sim
     - nrf.extended.drivers.uart.async_dual.pm_runtime
