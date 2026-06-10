@@ -11,4 +11,5 @@ project(hpf_mspi)
 
 hpf_assembly_install(app "${CMAKE_SOURCE_DIR}/src/hrt/hrt.c")
 
-target_sources(app PRIVATE src/main.c)
+target_include_directories(app PRIVATE ../common)
+target_sources(app PRIVATE src/main.c ../common/hpf_pin_map.c)
