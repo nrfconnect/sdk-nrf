@@ -111,15 +111,15 @@ You can find the configuration files in the application directory.
 
 The following files are available:
 
-* :file:`overlay-802154.conf` - Configuration file enabling IEEE 802.15.4.
-* :file:`overlay-bt_hci_ipc.conf` - Configuration file enabling Bluetooth Low Energy over HCI.
-* :file:`overlay-bt_rpc.conf` - Configuration file enabling Bluetooth Low Energy over RPC.
+* :file:`802154.conf` - Configuration file enabling IEEE 802.15.4.
+* :file:`bt_hci_ipc.conf` - Configuration file enabling Bluetooth Low Energy over HCI.
+* :file:`bt_rpc.conf` - Configuration file enabling Bluetooth Low Energy over RPC.
 
 .. note::
    When you use sysbuild to build an application which uses the IPC radio firmware as the network or radio core image, the preceding configuration files are added automatically to the IPC radio firmware.
    The selection of specific configuration files is determined by the sysbuild Kconfig.
 
-   For instance, the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154` sysbuild Kconfig option enables the :file:`overlay-802154.conf` configuration file to be used with the IPC radio firmware.
+   For instance, the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154` sysbuild Kconfig option enables the :file:`802154.conf` configuration file to be used with the IPC radio firmware.
 
 .. _ipc_radio_build_run:
 
