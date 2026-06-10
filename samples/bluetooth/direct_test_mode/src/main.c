@@ -1,46 +1,82 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/device.h>
-#include <zephyr/sys/printk.h>
-#include <zephyr/pm/device_runtime.h>
+#include <zephyr/kernel.h>
+#include <zephyr/bluetooth/buf.h>
+#include <zephyr/bluetooth/hci_raw.h>
 
-#include "transport/dtm_transport.h"
+#include <bluetooth/dtm_twowire/dtm_twowire_to_hci.h>
+
+#include "dtm_twowire_transport.h"
+
+static K_FIFO_DEFINE(hci_c2h_queue);
 
 int main(void)
 {
+	printk("Starting DTM sample\n");
+
 	int err;
-	union dtm_tr_packet cmd;
 
-	printk("Starting Direct Test Mode sample\n");
-
-#if defined(CONFIG_SOC_SERIES_NRF54H)
-	const struct device *dtm_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(ncs_dtm_uart));
-
-	if (dtm_uart != NULL) {
-		int ret = pm_device_runtime_get(dtm_uart);
-
-		if (ret < 0) {
-			printk("Failed to get DTM UART runtime PM: %d\n", ret);
-		}
-	}
-#endif /* defined(CONFIG_SOC_SERIES_NRF54H) */
-
-	err = dtm_tr_init();
+	err = dtm_tw_transport_init();
 	if (err) {
-		printk("Error initializing DTM transport: %d\n", err);
+		return err;
+	}
+
+	err = bt_enable_raw(&hci_c2h_queue);
+	if (err) {
 		return err;
 	}
 
 	for (;;) {
-		cmd = dtm_tr_get();
-		err = dtm_tr_process(cmd);
-		if (err) {
-			printk("Error processing command: %d\n", err);
-			return err;
+		const uint16_t tw_cmd = dtm_tw_transport_read();
+
+		printk("Received 2-wire command 0x%04X\n", tw_cmd);
+
+		uint16_t tw_event;
+		struct net_buf *p_hci_pkt = bt_buf_get_tx(BT_BUF_CMD, K_FOREVER, NULL, 0);
+
+		dtm_tw_to_hci_status_t status = dtm_tw_to_hci_process_tw_cmd(tw_cmd,
+									     p_hci_pkt,
+									     &tw_event);
+		switch (status) {
+		case DTM_TW_TO_HCI_STATUS_ERROR:
+			net_buf_unref(p_hci_pkt);
+			printk("Error processing 2-wire command 0x%04X\n", tw_cmd);
+			break;
+
+		case DTM_TW_TO_HCI_STATUS_TW_EVENT:
+			net_buf_unref(p_hci_pkt);
+			printk("Sending 2-wire event 0x%04X\n", tw_event);
+			dtm_tw_transport_write(tw_event);
+			break;
+
+		case DTM_TW_TO_HCI_STATUS_HCI_CMD:
+			printk("Sending HCI command to SDC\n");
+			err = bt_send(p_hci_pkt);
+			/* Note: bt_send unrefs the buffer on success */
+			if (err) {
+				net_buf_unref(p_hci_pkt);
+				return err;
+			}
+
+			p_hci_pkt = k_fifo_get(&hci_c2h_queue, K_FOREVER);
+			status = dtm_tw_to_hci_process_hci_event(tw_cmd,
+								 p_hci_pkt,
+								 &tw_event);
+			net_buf_unref(p_hci_pkt);
+			if (status == DTM_TW_TO_HCI_STATUS_TW_EVENT) {
+				dtm_tw_transport_write(tw_event);
+			}
+			break;
+
+		default:
+			net_buf_unref(p_hci_pkt);
+			printk("Unexpected status %d processing 2-wire command 0x%04X\n",
+			       status, tw_cmd);
+			break;
 		}
 	}
 }
