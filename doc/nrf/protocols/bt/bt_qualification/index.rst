@@ -89,6 +89,8 @@ Choose the DN that most closely matches your product features and requirements.
    You do not have to use every feature claimed in the product's qualification listing, but conversely you *must* claim every feature that you use.
    You can later add products in the same design listing (without paying any extra fee) that uses a previously unused feature from inherited design.
 
+For modified designs (with a DN or QDID) that do not require ICS Form changes, use good engineering practices to identify and run the mandatory test cases impacted by your modifications.
+
 Updating an existing product listing
 ====================================
 
