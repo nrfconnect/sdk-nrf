@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/dfu/mcuboot.h>
 #include <zephyr/kernel.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/reboot.h>
@@ -11,20 +12,18 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <nrf_modem_at.h>
+#include <memfault/components.h>
+#include <memfault/ports/zephyr/fota.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #include <net/nrf_cloud.h>
-#include <net/nrf_cloud_fota_poll.h>
 #include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud_coap.h>
 #include <net/fota_download.h>
 #include <date_time.h>
 
 #include <dk_buttons_and_leds.h>
-#ifdef CONFIG_NRF_CLOUD_FOTA_SMP
-#include "smp_reset.h"
-#endif
 
 #define COAP_SHADOW_MAX_SIZE 512
 
@@ -36,9 +35,6 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_fota_sample, CONFIG_NRF_CLOUD_COAP_FOTA_SAMPL
 #define LTE_LED_NUM	       CONFIG_COAP_FOTA_LTE_LED_NUM
 #define FOTA_CFG_INTERVAL "fotaInterval"
 #define INTERVAL_MINUTES_MAX   10080
-#define REBOOT_DELAY_REQUIRED 5
-#define REBOOT_DELAY_SUCCESS 10
-#define REBOOT_DELAY_ERROR 30
 #define LED_ON 1
 #define LED_OFF 0
 
@@ -63,16 +59,28 @@ static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 /* Modem info */
 static struct modem_param_info mdm_param;
 
-static void sample_reboot(enum nrf_cloud_fota_reboot_status status);
-
-/* FOTA support context */
-static struct nrf_cloud_fota_poll_ctx fota_ctx = {
-	.device_id = device_id,
-	.reboot_fn = sample_reboot,
-#ifdef CONFIG_NRF_CLOUD_FOTA_SMP
-	.smp_reset_cb = nrf52840_reset_api
-#endif
-};
+/* Custom FOTA download callback to power off LTE before rebooting to apply the
+ * update. Without this, the modem may count the cold reset as an unclean boot
+ * and temporarily disable LTE to protect itself.
+ */
+void memfault_fota_download_callback(const struct fota_download_evt *evt)
+{
+	switch (evt->id) {
+	case FOTA_DOWNLOAD_EVT_FINISHED:
+		LOG_INF("FOTA download complete, rebooting to apply update...");
+		(void)nrf_cloud_coap_disconnect();
+		(void)lte_lc_power_off();
+		LOG_PANIC(); // flush logs before rebooting
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	case FOTA_DOWNLOAD_EVT_ERROR:
+	case FOTA_DOWNLOAD_EVT_CANCELLED:
+		LOG_ERR("FOTA download error: %d", evt->id);
+		break;
+	default:
+		break;
+	}
+}
 
 static void modem_time_wait(void)
 {
@@ -99,238 +107,6 @@ static void get_modem_info(void)
 
 	if (err) {
 		LOG_WRN("Unable to obtain modem info, error: %d", err);
-	}
-}
-
-static void send_device_status(void)
-{
-	int err;
-	/* Enable FOTA for bootloader, modem, application and SMP (if enabled) */
-	struct nrf_cloud_svc_info_fota fota = {
-		.bootloader = 1,
-		.modem = 1,
-		.application = 1,
-		.modem_full = fota_ctx.full_modem_fota_supported,
-		.smp = IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_SMP)
-	};
-
-	struct nrf_cloud_svc_info svc_inf = {
-		.fota = &fota,
-	};
-
-	struct nrf_cloud_modem_info mdm_inf = {
-		/* Include all available modem info */
-		.device = NRF_CLOUD_INFO_SET,
-		.network = NRF_CLOUD_INFO_SET,
-		.sim = NRF_CLOUD_INFO_SET,
-		/* Use the modem info already obtained */
-		.mpi = &mdm_param,
-		/* Include the application version */
-		.application_version = APP_VERSION_STRING
-	};
-
-	struct nrf_cloud_device_status dev_status = {
-		.modem = &mdm_inf,
-		.svc = &svc_inf,
-		.conn_inf = NRF_CLOUD_INFO_SET
-	};
-
-	LOG_INF("Sending device status...");
-	err = nrf_cloud_coap_shadow_device_status_update(&dev_status);
-	if (err) {
-		LOG_ERR("Failed to send device status, FOTA not enabled; error: %d", err);
-	} else {
-		LOG_INF("FOTA enabled in device shadow");
-	}
-}
-
-static bool process_desired_check_rate(long desired_check_rate)
-{
-		if (desired_check_rate > INTERVAL_MINUTES_MAX) {
-			LOG_INF("Desired interval exceeds max value, setting to %d",
-				INTERVAL_MINUTES_MAX);
-			desired_check_rate = INTERVAL_MINUTES_MAX;
-		} else if (desired_check_rate <= 0) {
-			LOG_INF("Desired interval must be greater than zero, setting to %d",
-				CONFIG_COAP_FOTA_JOB_CHECK_RATE_MIN);
-			desired_check_rate = CONFIG_COAP_FOTA_JOB_CHECK_RATE_MIN;
-		}
-		/* Use the desired value */
-		fota_check_rate = (uint32_t)desired_check_rate;
-		/* Update the reported value if changed */
-		return (fota_check_rate != desired_check_rate);
-}
-
-int shadow_support_coap_obj_send(struct nrf_cloud_obj *const shadow_obj, const bool reported)
-{
-	/* Encode the data for the cloud */
-	int err = nrf_cloud_obj_cloud_encode(shadow_obj);
-
-	/* Free the object */
-	(void)nrf_cloud_obj_free(shadow_obj);
-
-	if (!err) {
-		/* Send the encoded data */
-		if (!reported) {
-			err = nrf_cloud_coap_shadow_desired_update(shadow_obj->encoded_data.ptr);
-		} else {
-			err = nrf_cloud_coap_shadow_state_update(shadow_obj->encoded_data.ptr);
-		}
-	} else {
-		LOG_ERR("Failed to encode cloud data, err: %d", err);
-		return err;
-	}
-
-	/* Free the encoded data */
-	(void)nrf_cloud_obj_cloud_encoded_free(shadow_obj);
-
-	return err;
-}
-
-static void send_initial_config(void)
-{
-	NRF_CLOUD_OBJ_JSON_DEFINE(root_obj);
-	NRF_CLOUD_OBJ_JSON_DEFINE(cfg_obj);
-	int err;
-
-	err = nrf_cloud_obj_init(&root_obj);
-	if (err) {
-		LOG_ERR("Failed to initialize root object: %d", err);
-		goto cleanup;
-	}
-
-	err = nrf_cloud_obj_init(&cfg_obj);
-	if (err) {
-		LOG_ERR("Failed to initialize config object: %d", err);
-		(void)nrf_cloud_obj_free(&root_obj);
-		goto cleanup;
-	}
-
-	/* Create the config object */
-	err = nrf_cloud_obj_num_add(&cfg_obj, FOTA_CFG_INTERVAL,
-				    (double)fota_check_rate, false);
-	if (err) {
-		LOG_ERR("Failed to add reported FOTA interval, error: %d", err);
-		goto cleanup;
-	}
-
-	/* Add the config object to the root object */
-	err = nrf_cloud_obj_object_add(&root_obj, NRF_CLOUD_JSON_KEY_CFG, &cfg_obj, false);
-	if (err) {
-		LOG_ERR("Failed to add config object to root object: %d", err);
-		goto cleanup;
-	}
-
-	/* Send the initial config */
-	err = shadow_support_coap_obj_send(&root_obj, true);
-	if (err) {
-		LOG_ERR("Failed to send initial config, error: %d", err);
-	} else {
-		LOG_INF("Initial config sent");
-	}
-cleanup:
-	(void)nrf_cloud_obj_free(&cfg_obj);
-	(void)nrf_cloud_obj_free(&root_obj);
-}
-
-static void check_config(void)
-{
-
-	/* Ensure the reported section gets sent once */
-	static bool reported_sent;
-	/* Only request full shadow the first time */
-	static bool request_delta;
-	char buf[COAP_SHADOW_MAX_SIZE] = {0};
-	size_t buf_len = sizeof(buf);
-	double desired_check_rate = 0;
-	bool update_reported = false;
-	struct nrf_cloud_data in_data = {
-		.ptr = buf
-	};
-	struct nrf_cloud_obj delta_obj = {0};
-	int err;
-
-	LOG_INF("Checking for shadow delta...");
-	err = nrf_cloud_coap_shadow_get(buf, &buf_len, false, COAP_CONTENT_FORMAT_APP_JSON);
-	if (err == -EACCES) {
-		LOG_DBG("Not connected yet.");
-		goto exit;
-	} else if (err) {
-		LOG_ERR("Failed to request shadow delta: %d", err);
-		goto exit;
-	}
-	LOG_DBG("Shadow: len:%zd, %s", strnlen(buf, buf_len), buf);
-	request_delta = true;
-	in_data.len = buf_len;
-
-	if (strnlen(buf, buf_len) == 0) {
-		LOG_DBG("No shadow delta available");
-		goto exit;
-	}
-
-	/* Convert string into nrf_cloud_obj */
-	err = nrf_cloud_coap_shadow_delta_process(&in_data, &delta_obj);
-	if (err < 0) {
-		LOG_ERR("Failed to process shadow delta, err: %d", err);
-		goto exit;
-	} else if (err == 0) {
-		/* No application specific delta data */
-		goto exit;
-	}
-
-	NRF_CLOUD_OBJ_JSON_DEFINE(cfg_obj);
-
-	/* Get the config object */
-	err = nrf_cloud_obj_object_detach(&delta_obj, NRF_CLOUD_JSON_KEY_CFG, &cfg_obj);
-	if (err == -ENODEV) {
-		/* No config in the delta */
-		goto exit;
-	}
-
-	/* Process incoming config */
-	err = nrf_cloud_obj_num_get(&cfg_obj, FOTA_CFG_INTERVAL, &desired_check_rate);
-	if (err) {
-		LOG_ERR("Failed to get desired FOTA interval, error: %d", err);
-	} else {
-		LOG_INF("Desired interval: %lf", desired_check_rate);
-		update_reported = process_desired_check_rate((long)desired_check_rate);
-	}
-
-	/* Create config object for response */
-	/* Note: this is simpler than trying to handle unsupported entries directly. */
-	nrf_cloud_obj_free(&cfg_obj);
-	nrf_cloud_obj_init(&cfg_obj);
-	err = nrf_cloud_obj_num_add(&cfg_obj, FOTA_CFG_INTERVAL,
-				    (double)fota_check_rate, false);
-	if (err) {
-		LOG_ERR("Failed to add reported FOTA interval, error: %d", err);
-		goto exit;
-	}
-
-	/* Add current config data */
-	if (nrf_cloud_obj_object_add(&delta_obj, NRF_CLOUD_JSON_KEY_CFG, &cfg_obj, false)) {
-		goto exit;
-	}
-
-	/* Send Shadow update */
-	if (update_reported || !reported_sent) {
-		err = shadow_support_coap_obj_send(&delta_obj, update_reported);
-
-		if (err) {
-			LOG_ERR("Failed to send updated shadow delta, error: %d", err);
-		} else {
-			reported_sent = true;
-			LOG_INF("Updated shadow delta sent");
-		}
-	}
-exit:
-	/* Free the objects */
-	nrf_cloud_obj_free(&cfg_obj);
-	nrf_cloud_obj_free(&delta_obj);
-
-	/* If the reported section was not sent, send the initial config */
-	if (!reported_sent) {
-		send_initial_config();
 	}
 }
 
@@ -409,7 +185,6 @@ static int init_led(void)
 static int init(void)
 {
 	int err = 0;
-	enum nrf_cloud_fota_type pending_job_type = NRF_CLOUD_FOTA_TYPE__INVALID;
 
 	err = init_led();
 	if (err) {
@@ -423,19 +198,13 @@ static int init(void)
 		return -EFAULT;
 	}
 
-	err = nrf_cloud_fota_poll_init(&fota_ctx);
-	if (err) {
-		LOG_ERR("FOTA support init failed: %d", err);
-		return err;
+	/* Confirm the running image so MCUBoot does not roll back after a
+	 * successful FOTA update reboot
+	 */
+	if (!boot_is_img_confirmed()) {
+		LOG_INF("Confirming OTA image");
+		boot_write_img_confirmed();
 	}
-
-	/* This function may perform a reboot if a FOTA update is in progress */
-	err = nrf_cloud_fota_poll_process_pending(&fota_ctx);
-	if (err < 0) {
-		LOG_ERR("Failed to process pending FOTA job, error: %d", err);
-		return err;
-	}
-	pending_job_type = (enum nrf_cloud_fota_type)err;
 
 	err = modem_info_init();
 	if (err) {
@@ -450,6 +219,8 @@ static int init(void)
 	} else {
 		LOG_WRN("Modem info params initialization failed, error: %d", err);
 	}
+
+	memfault_device_info_dump();
 
 	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
 	if (err) {
@@ -480,36 +251,6 @@ static int init(void)
 	modem_time_wait();
 
 	return err;
-}
-
-static void sample_reboot(enum nrf_cloud_fota_reboot_status status)
-{
-	int seconds;
-
-	switch (status) {
-	case FOTA_REBOOT_REQUIRED:
-		LOG_INF("Rebooting...");
-		seconds = REBOOT_DELAY_REQUIRED;
-		break;
-	case FOTA_REBOOT_SUCCESS:
-		seconds = REBOOT_DELAY_SUCCESS;
-		LOG_INF("Rebooting in %ds to complete FOTA update...", seconds);
-		break;
-	case FOTA_REBOOT_SYS_ERROR:
-	default:
-		seconds = REBOOT_DELAY_ERROR;
-		LOG_INF("Rebooting in %ds...", seconds);
-	}
-	(void)nrf_cloud_coap_disconnect();
-
-	/* We must do this before we reboot, otherwise we might trip LTE boot loop
-	 * prevention, and the modem will be temporarily disable itself.
-	 */
-	(void)lte_lc_power_off();
-
-	LOG_PANIC();
-	k_sleep(K_SECONDS(seconds));
-	sys_reboot(SYS_REBOOT_COLD);
 }
 
 /* Callback to track network connectivity */
@@ -570,30 +311,20 @@ int main(void)
 		return 0;
 	}
 
-	/* Send the device status which contains HW/FW version info,
-	 * details about the network connection, and FOTA service info.
-	 * The FOTA service info is required by nRF Cloud to enable FOTA
-	 * for the device.
-	 */
-	send_device_status();
-
 	while (1) {
 
-		/* Query for any pending FOTA jobs. If one is found, download and install
-		 * it. This is a blocking operation which can take a long time.
-		 * This function is likely to reboot in order to complete the FOTA update.
-		 */
-		err = nrf_cloud_fota_poll_process(&fota_ctx);
-		if (err == -ENOTRECOVERABLE) {
-			LOG_ERR("A fatal error occurred during FOTA processing");
-			sample_reboot(FOTA_REBOOT_SYS_ERROR);
-		} else if (err == -ENOENT) {
-			/* A job has finished, check again for another */
-			continue;
+		/* Check Memfault for a pending OTA update */
+		err = memfault_zephyr_fota_start();
+		if (err < 0) {
+			LOG_ERR("FOTA check failed: %d", err);
+		} else if (err == 0) {
+			LOG_INF("Device is up to date");
+		} else {
+			/* Download started. memfault_fota_download_callback() will
+			* reboot the device if the download completes successfully.
+			*/
+			LOG_INF("FOTA download started");
 		}
-
-		/* Check the configuration in the shadow to determine the FOTA check interval */
-		check_config();
 
 		LOG_INF("Checking for FOTA job in %d minute(s) or when button %d is pressed",
 			fota_check_rate, CONFIG_COAP_FOTA_BUTTON_EVT_NUM);
