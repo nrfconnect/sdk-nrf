@@ -18,25 +18,25 @@
 		boot_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
-			reg = <0x00000000 0x0000b000>;
+			reg = <0x0 DT_SIZE_K(44)>;
 		};
 
 		slot0_partition: partition@b000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0x0000b000 0x000c4000>;
+			reg = <0xb000 DT_SIZE_K(784)>;
 		};
 
 		slot1_partition: partition@cf000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-1";
-			reg = <0x000cf000 0x00086000>;
+			reg = <0xcf000 DT_SIZE_K(536)>;
 		};
 
 		storage_partition: partition@155000 {
 			compatible = "zephyr,mapped-partition";
 			label = "storage";
-			reg = <0x00155000 0x00010000>;
+			reg = <0x155000 DT_SIZE_K(64)>;
 		};
 	};
 };
