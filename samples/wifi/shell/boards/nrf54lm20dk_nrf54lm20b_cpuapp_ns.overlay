@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Reduce TF-M secure SRAM from 256 kB to 96 kB so the NS application
+ * has enough RAM for the Wi-Fi shell workload.
+ *
+ * TF-M RAM usage on nRF54LM20A is ~50 kB; 96 kB gives comfortable headroom.
+ * The NRF SDK reads S_DATA_SIZE / NS_DATA_SIZE directly from these DTS nodes
+ * when PARTITION_MANAGER is disabled (tfm_boards/partition/region_defs.h).
+ *
+ * Total usable SRAM: 508 kB (0x7f000).
+ *   sram0_s  (TF-M secure): 0x00000 .. 0x17fff  (96 kB)
+ *   sram0_ns (NS app):      0x18000 .. 0x7efff  (412 kB)
+ */
+
+&sram0_s {
+	reg = <0x0 DT_SIZE_K(96)>;
+	ranges = <0x0 0x0 DT_SIZE_K(96)>;
+};
+
+&sram0_ns {
+	reg = <DT_SIZE_K(96) DT_SIZE_K(412)>;
+	ranges = <0x0 DT_SIZE_K(96) DT_SIZE_K(412)>;
+};
