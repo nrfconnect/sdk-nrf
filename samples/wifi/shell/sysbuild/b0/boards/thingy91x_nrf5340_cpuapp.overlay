@@ -1,9 +1,14 @@
-/* Copyright (c) 2024 Nordic Semiconductor ASA
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <thingy91x_nrf53_wifi.dtsi>
+/* Define partition layout for b0 bootloader.
+ * This overlay replaces nrf/samples/bootloader/app.overlay (sysbuild DTC
+ * overlays replace, not append), so both the partition definitions and the
+ * chosen node from app.overlay must be present here.
+ */
 
 /delete-node/ &boot_partition;
 /delete-node/ &slot0_partition;
@@ -67,22 +72,8 @@
 	};
 };
 
-&usbd {
-	compatible = "nordic,nrf-usbd";
-	status = "okay";
-};
-
 / {
 	chosen {
-		zephyr,console = &cdc_acm_uart0;
-		zephyr,shell-uart = &cdc_acm_uart0;
-		zephyr,uart-mcumgr = &cdc_acm_uart0;
-		zephyr,bt-mon-uart = &cdc_acm_uart0;
-		zephyr,bt-c2h-uart = &cdc_acm_uart0;
-		nordic,pm-ext-flash = &flash_ext;
+		zephyr,code-partition = &b0_partition;
 	};
-};
-
-&rtt0 {
-	status = "disabled";
 };

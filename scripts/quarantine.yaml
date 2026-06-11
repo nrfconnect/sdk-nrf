@@ -77,9 +77,3 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39766"
-
-- scenarios:
-    - sample.nrf7002_ns.shell
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39827"
