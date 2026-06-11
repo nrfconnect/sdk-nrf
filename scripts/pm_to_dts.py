@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# v0.08
+# v0.09
 
 import os
 import sys
@@ -540,6 +540,23 @@ def main():
                 internal_flash_regions[i][1] -= mcuboot_pad_size
                 internal_flash_regions[i][3] += mcuboot_pad_size
                 break
+
+        if b0_enabled:
+            remapped_regions = []
+            for area in internal_flash_regions:
+                if area[0] == 's0_partition':
+                    area[5] += 'boot_partition: '
+                    area[1] -= s0_pad_size
+                    area[3] += s0_pad_size
+                    remapped_regions.append(area)
+                elif area[0] == 's1_partition':
+                    area[1] -= s0_pad_size
+                    area[3] += s0_pad_size
+                    remapped_regions.append(area)
+                elif area[0] != 'boot_partition':
+                    remapped_regions.append(area)
+
+            internal_flash_regions = remapped_regions
     elif (not mcuboot_enabled) and b0_enabled:
         for i, area in enumerate(internal_flash_regions):
             if area[0] == 'slot0_partition':
@@ -550,20 +567,6 @@ def main():
         for i, area in enumerate(internal_flash_regions):
             if area[0] == 'slot0_partition' or area[0] == 'app':
                 del internal_flash_regions[i]
-            elif area[0] == 's0_partition' or area[0] == 's1_partition':
-                internal_flash_regions[i][1] -= s0_pad_size
-                internal_flash_regions[i][3] += s0_pad_size
-
-    if b0_enabled:
-        remapped_regions = []
-        for area in internal_flash_regions:
-            if area[0] == 's0_partition':
-                area[5] += 'boot_partition: '
-                remapped_regions.append(area)
-            elif area[0] != 'boot_partition':
-                remapped_regions.append(area)
-
-        internal_flash_regions = remapped_regions
 
     # Sort CPUNET regions and handle duplicates
     if parsed_cpunet:
