@@ -9,6 +9,16 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29460"
 
 - scenarios:
+    - sample.mcuboot.*
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-XXX"
+
+- scenarios:
+    - applications.nrf_desktop.zdebug.uart
+  platforms:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-YYY"
+
+- scenarios:
     - nrf.extended.drivers.uart.async_dual
     - nrf.extended.drivers.uart.async_dual.busy_sim
     - nrf.extended.drivers.uart.async_dual.pm_runtime
