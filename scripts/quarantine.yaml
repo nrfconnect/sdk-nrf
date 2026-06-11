@@ -94,12 +94,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39824"
 
 - scenarios:
-    - sample.matter.template.debug
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39826"
-
-- scenarios:
     - sample.nrf7002_ns.shell
   platforms:
     - nrf7002dk/nrf5340/cpuapp/ns
