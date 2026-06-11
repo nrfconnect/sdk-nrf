@@ -52,7 +52,7 @@ See :ref:`app_boards_names` for the complete list of boards and board targets su
      - ``nrf9131ek/nrf9131/ns``
    * - nRF54LV10 DK
      - PCA10188
-     - ``nrf54lv10dk``
+     - :ref:`nrf54lv10dk<board_nrf54lv10dk>`
      - ``nrf54lv10dk/nrf54lv10a/cpuapp/ns``
    * - nRF54LM20 DK
      - PCA10184

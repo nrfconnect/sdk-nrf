@@ -119,7 +119,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - HMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
-                 - --
+                 - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - --
@@ -424,7 +424,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - HMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
-                 - --
+                 - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - --
@@ -1579,10 +1579,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - HMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - --

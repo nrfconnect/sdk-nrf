@@ -2790,7 +2790,7 @@ The lists are organized by device Series and implementation.
               - Supported
               - Supported
               - Supported
-              - Supported
+              - Experimental
               - --
               - --
             * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
@@ -2800,7 +2800,7 @@ The lists are organized by device Series and implementation.
               - Supported
               - Supported
               - Supported
-              - Supported
+              - Experimental
               - Supported
             * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
               - --
