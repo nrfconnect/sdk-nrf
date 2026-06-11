@@ -490,7 +490,7 @@ static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
 	}
 
 	if (status != BT_HCI_ERR_SUCCESS) {
-		printk("Connection %zu: Connection rate change failed: %s\n", i,
+		printk("Connection %zu: Connection rate change failed: 0x%02x %s\n", i, status,
 		       bt_hci_err_to_str(status));
 		return;
 	}
