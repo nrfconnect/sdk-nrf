@@ -10,7 +10,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(tfm_regression_test)
 
-include(${ZEPHYR_BASE}/tests/modules/tf-m/regression/CMakeLists.txt)
+include(${ZEPHYR_BASE}/tests/modules/tf-m/regression/test.cmake)
 
 # CONFIG_TFM_ITS_ENCRYPTED (ITS_ENCRYPTION) enables PSA_WANT_ALG_CHACHA20_POLY1305
 # which results in the ChaCha20* tests being enabled, but some of them (RFC7539 verification)
