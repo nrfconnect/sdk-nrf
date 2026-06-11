@@ -85,3 +85,10 @@
     - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
     - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39822"
+
+- scenarios:
+    - sample.debug.memfault
+    - sample.debug.memfault.etb
+  platforms:
+    - thingy91/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39824"
