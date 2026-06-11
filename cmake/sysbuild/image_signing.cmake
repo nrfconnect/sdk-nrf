@@ -457,6 +457,7 @@ function(zephyr_mcuboot_tasks)
   endif()
 
   set_property(GLOBAL APPEND PROPERTY extra_post_build_byproducts ${byproducts})
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_b0.cmake)
 endfunction()
 
 zephyr_mcuboot_tasks()
