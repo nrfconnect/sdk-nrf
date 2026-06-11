@@ -44,13 +44,14 @@ supported_socs = [
     "nrf54lm20a",
     "nrf54lm20b",
     "nrf54lv10a",
+    "nrf54lc10a",
     "nrf54ls05b",
 ]
 
 def get_max_size_kb(soc):
     if soc in ["nrf54l05", "nrf54l10", "nrf54l15"]:
         return 31
-    elif soc in ["nrf54lm20a", "nrf54lm20b", "nrf54lv10a"]:
+    elif soc in ["nrf54lm20a", "nrf54lm20b", "nrf54lv10a", "nrf54lc10a"]:
         return 127
     elif soc in ["nrf54ls05b"]:
         return 1023
