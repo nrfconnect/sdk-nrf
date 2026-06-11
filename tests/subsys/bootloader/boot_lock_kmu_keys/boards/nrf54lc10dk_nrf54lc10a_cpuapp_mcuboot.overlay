@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf54lc10dk_nrf54lc10a_cpuapp.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &slot0_partition;
+	};
+};
