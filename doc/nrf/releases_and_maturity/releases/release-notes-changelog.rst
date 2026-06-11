@@ -520,7 +520,7 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-|no_changes_yet_note|
+* Added support for the nRF54LC10A SoC.
 
 * Fixed an issue where UICR was not provisioned with monotonic counter structures, when :kconfig:option`SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION` was enabled, MCUboot was the only bootloader, and Partition Manager was disabled.
 
