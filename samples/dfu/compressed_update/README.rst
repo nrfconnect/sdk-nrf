@@ -132,5 +132,4 @@ The sample uses the following Zephyr library:
 
 It also uses the following |NCS| library:
 
-* :ref:`partition_manager`
 * :ref:`nrf_compression`
