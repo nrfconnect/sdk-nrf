@@ -412,10 +412,10 @@ static void transition_start(struct bt_mesh_light_ctrl_srv *srv,
 			     enum bt_mesh_light_ctrl_srv_state state,
 			     uint32_t fade_time)
 {
-	srv->state = state;
 	srv->fade.initial_light = light_get(srv);
-	srv->fade.duration = fade_time;
 	srv->fade.initial_centilux = centilux_get(srv);
+	srv->state = state;
+	srv->fade.duration = fade_time;
 
 	atomic_set_bit(&srv->flags, FLAG_TRANSITION);
 	if (!IS_ENABLED(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG) ||
