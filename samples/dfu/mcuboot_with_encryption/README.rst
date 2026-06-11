@@ -22,7 +22,7 @@ The sample supports the following development kits:
 
 .. note::
 
-   On the nRF54LV10 DK, the :zephyr:code-sample:`smp-svr` configuration is trimmed to fit the application slot size.
+   On the nRF54LV10 and nRF54LC10 DKs, the :zephyr:code-sample:`smp-svr` configuration is trimmed to fit the application slot size.
    For the nRF54L15 DK, an overlay is used to increase the size of the MCUboot partition.
    It is necessary because the enabled logging features require more space than the default partitioning provides.
 
