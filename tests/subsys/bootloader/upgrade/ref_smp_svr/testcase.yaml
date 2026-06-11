@@ -35,12 +35,14 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     harness_config:
       pytest_root:
         - "../pytest/test_upgrade.py"
@@ -60,11 +62,13 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     harness_config:
       pytest_root:
         - "../pytest/test_serial_recovery.py::test_serial_recovery_after_damaging_app"
@@ -86,6 +90,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
     harness_config:
@@ -129,6 +134,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     harness_config:
       pytest_root:
         - "../pytest/test_upgrade.py::test_upgrade_with_revert"
@@ -149,6 +155,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
@@ -173,6 +180,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
@@ -180,6 +188,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     harness_config:
@@ -213,6 +222,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
     tags:
@@ -236,6 +246,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
@@ -258,11 +269,13 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     tags:
       - encryption
     harness_config:
@@ -284,6 +297,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
@@ -300,6 +314,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -345,11 +360,13 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     tags: kmu
     harness_config:
       pytest_root:
@@ -364,6 +381,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     tags:
       - kmu
       - nsib
@@ -383,6 +401,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     tags: kmu
@@ -406,12 +425,14 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     harness_config:
       pytest_root:
         - "../pytest/test_nrf_compress.py"
@@ -446,6 +467,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
@@ -469,11 +491,13 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     tags:
       - encryption
       - nrf_compress
@@ -499,6 +523,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     harness_config:
@@ -521,6 +546,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     harness_config:
