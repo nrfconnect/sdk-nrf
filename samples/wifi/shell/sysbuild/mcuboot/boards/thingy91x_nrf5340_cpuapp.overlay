@@ -5,6 +5,8 @@
 
 /* modified to use external flash */
 
+#include "../../../boards/thingy91x_nrf5340_cpuapp_partitions.dtsi"
+
 &flash_ext {
 	status = "okay";
 };
@@ -15,6 +17,7 @@
 
 / {
 	chosen {
+		zephyr,code-partition = &s0_partition;
 		nordic,pm-ext-flash = &flash_ext;
 	};
 };

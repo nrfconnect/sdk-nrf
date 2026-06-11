@@ -4,6 +4,7 @@
  */
 
 #include <thingy91x_nrf53_wifi.dtsi>
+#include "thingy91x_nrf5340_cpuapp_partitions.dtsi"
 
 &usbd {
 	compatible = "nordic,nrf-usbd";

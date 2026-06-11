@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Shared flash partition layout for thingy91x/nrf5340/cpuapp with external
+ * flash (NRF53_EXTERNAL_FLASH variant).
+ * Matches thingy91x_nrf5340_pm_static_ext_flash_no_tfm.yml:
+ *
+ *   b0_partition    @ 0x000000  32 KB  b0 secure bootloader
+ *   s0_partition    @ 0x008000  80 KB  MCUboot slot 0 (b0 image 0)
+ *   s1_partition    @ 0x01c000  80 KB  MCUboot slot 1 (b0 image 1)
+ *   slot0_partition @ 0x030000 816 KB  Application primary (MCUboot image 0)
+ *   storage_partition @ 0xfc000  16 KB  Settings
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0";
+			reg = <0x0 DT_SIZE_K(32)>;
+		};
+
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0-image-0";
+			reg = <0x8000 DT_SIZE_K(80)>;
+		};
+
+		s1_partition: partition@1c000 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0-image-1";
+			reg = <0x1c000 DT_SIZE_K(80)>;
+		};
+
+		slot0_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x30000 DT_SIZE_K(816)>;
+		};
+
+		storage_partition: partition@fc000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0xfc000 DT_SIZE_K(16)>;
+		};
+	};
+};
+
+/* MCUboot secondary slot in external flash */
+&flash_ext {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x0 DT_SIZE_K(816)>;
+		};
+
+		slot3_partition: partition@cc000 {
+			label = "image-3";
+			reg = <0xcc000 DT_SIZE_K(256)>;
+		};
+	};
+};
