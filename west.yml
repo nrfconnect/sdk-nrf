@@ -224,7 +224,7 @@ manifest:
           upstream-sha: 1be6ca7253133a21a1e9fe0fbb4656e17d63a936
           compare-by-default: false
     - name: libmodem
-      revision: c2d94ec78bcbce67849004c6a766a03bb4f31d2a
+      revision: 9b2d0bb28af593c357d9dc8bfb10f80a08f57677
       groups:
         - libmodem
     - name: openthread
