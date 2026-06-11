@@ -115,6 +115,15 @@ set_property(TARGET zephyr_property_target
   -DTFM_INSTALL_TF_PSA_CRYPTO_HEADERS=OFF
 )
 
+zephyr_get(tfm_bl_storage_addr SYSBUILD LOCAL VAR TFM_BL_STORAGE_ADDR)
+
+if(tfm_bl_storage_addr AND "${tfm_bl_storage_addr}" GREATER "0")
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+      -DTFM_BL_STORAGE_ADDR=${tfm_bl_storage_addr}
+  )
+endif()
+
 if(CONFIG_TFM_PROFILE_TYPE_MINIMAL)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS

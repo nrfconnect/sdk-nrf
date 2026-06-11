@@ -1035,6 +1035,20 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
 
+function(${SYSBUILD_CURRENT_MODULE_NAME}_post_image_cmake)
+  cmake_parse_arguments(POST_IMAGE_CMAKE "" "IMAGE" "" ${ARGN})
+
+  if(SB_CONFIG_SECURE_BOOT_APPCORE AND SB_CONFIG_BOARD_IS_NON_SECURE AND
+    NOT SB_CONFIG_PARTITION_MANAGER AND "${POST_IMAGE_CMAKE_IMAGE}" STREQUAL "b0"
+  )
+    forward_bl_storage_addr(${DEFAULT_IMAGE})
+
+    if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
+      forward_bl_storage_addr(${DEFAULT_IMAGE}_s1_variant)
+    endif()
+  endif()
+endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_image_cmake)
+
 # Sysbuild function hooks used by nRF Connect SDK
 function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   cmake_parse_arguments(POST_CMAKE "" "" "IMAGES" ${ARGN})
@@ -1244,6 +1258,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/flprcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/pprcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/radio_loader.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/tfm_bl_storage.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/firmware_loader_radio.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/firmware_loader_installer.cmake)
