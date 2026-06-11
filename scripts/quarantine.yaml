@@ -79,13 +79,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39766"
 
 - scenarios:
-    - sample.debug.memfault
-    - sample.debug.memfault.etb
-  platforms:
-    - thingy91/nrf9160/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39824"
-
-- scenarios:
     - sample.nrf7002_ns.shell
   platforms:
     - nrf7002dk/nrf5340/cpuapp/ns
