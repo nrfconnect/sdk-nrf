@@ -23,6 +23,7 @@ tests:
 
   boot.mcuboot.kmu_keys_locked:
     extra_args:
+      - FILE_SUFFIX=mcuboot
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - mcuboot_CONFIG_BOOT_SIGNATURE_KMU_SLOTS=3
@@ -37,11 +38,11 @@ tests:
 
   boot.b0.mcuboot.kmu_keys_locked:
     extra_args:
+      - FILE_SUFFIX=b0_mcuboot
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - mcuboot_CONFIG_BOOT_SIGNATURE_KMU_SLOTS=3
-      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xc800
     tags:
       - b0
       - mcuboot
