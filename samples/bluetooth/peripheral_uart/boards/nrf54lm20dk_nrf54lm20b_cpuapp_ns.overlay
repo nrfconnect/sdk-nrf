@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/delete-node/ &slot0_partition;
+/delete-node/ &slot0_s_partition;
 /delete-node/ &tfm_ps_partition;
 /delete-node/ &tfm_its_partition;
 /delete-node/ &tfm_otp_partition;
