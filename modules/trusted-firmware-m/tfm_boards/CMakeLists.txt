@@ -29,6 +29,7 @@ target_compile_definitions(platform_s
   $<$<BOOL:${PLATFORM_DEFAULT_CRYPTO_KEYS}>:PLATFORM_DEFAULT_CRYPTO_KEYS>
   FIRMWARE_INFO_MAGIC=${FIRMWARE_INFO_MAGIC}
   EXT_API_MAGIC=${EXT_API_MAGIC}
+  TFM_BL_STORAGE_ADDR=${TFM_BL_STORAGE_ADDR}
 )
 
 target_include_directories(platform_s
