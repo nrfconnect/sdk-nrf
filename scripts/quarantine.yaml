@@ -141,7 +141,8 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
 
 - scenarios:
-    - sample.nrf7002_ns.shell
+    - tfm.psa_test_initial_attestation_lvl1
+    - tfm.psa_test_initial_attestation_lvl2
   platforms:
-    - nrf7002dk/nrf5340/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39827"
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39766"
