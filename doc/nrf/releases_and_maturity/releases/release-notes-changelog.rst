@@ -117,7 +117,7 @@ Developing with custom boards
 Security
 ========
 
-|no_changes_yet_note|
+* Added the :kconfig:option:`CONFIG_TFM_LOG_NS_MEMORY_LAYOUT` Kconfig option, which prints the configuration of SAU and MPC during the initialization of TF-M on the nRF54L Series devices.
 
 Trusted Firmware-M (TF-M)
 -------------------------
