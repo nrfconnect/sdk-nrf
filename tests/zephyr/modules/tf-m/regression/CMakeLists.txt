@@ -6,11 +6,13 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+# Loads ZEPHYR_BASE but not default Zephyr setup
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS version)
 
-project(tfm_regression_test)
-
+# Include existing CMakeLists.txt file which includes loading of full Zephyr setup
 include(${ZEPHYR_BASE}/tests/modules/tf-m/regression/CMakeLists.txt)
+
+project(tfm_regression_test_extended)
 
 # CONFIG_TFM_ITS_ENCRYPTED (ITS_ENCRYPTION) enables PSA_WANT_ALG_CHACHA20_POLY1305
 # which results in the ChaCha20* tests being enabled, but some of them (RFC7539 verification)
