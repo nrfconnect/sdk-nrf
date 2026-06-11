@@ -169,7 +169,7 @@ See `known issues for nRF Connect SDK v3.0.0`_ for the list of issues valid for 
 Migration notes
 ***************
 
-See the `Migration guide for nRF Connect SDK v3.0.0`_ for the changes required or recommended when migrating your application from |NCS| v2.9.0 to |NCS| v3.0.0.
+See the `Migration notes for nRF Connect SDK v3.0.0`_ for the changes required or recommended when migrating your application from |NCS| v2.9.0 to |NCS| v3.0.0.
 
 .. _ncs_release_notes_300_changelog:
 

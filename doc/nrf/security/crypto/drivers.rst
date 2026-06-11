@@ -251,7 +251,7 @@ Driver chaining in the |NCS|
 ----------------------------
 
 Driver chaining is handled in the |NCS| at runtime when you :ref:`enable multiple drivers at the same time <psa_crypto_support_multiple_drivers>` and then enable specific :ref:`nrf_oberon driver features in combination with driver features for hardware acceleration <nrf_security_drivers_config_features>`.
-The IronSide Secure Element implementation does not support driver chaining.
+The IronSide Secure Enclave implementation does not support driver chaining.
 
 Common driver chains supported in the nrf_oberon driver include the following cases:
 
@@ -282,7 +282,7 @@ Driver overview
 The following sections provide more details about the available cryptographic drivers.
 
 None of these drivers should be used directly.
-Use them only through nRF Security or through the dedicated firmware (CRACEN within IronSide Secure Element).
+Use them only through nRF Security or through the dedicated firmware (CRACEN within IronSide Secure Enclave).
 
 .. _crypto_drivers_cc3xx:
 .. _nrf_security_drivers_cc3xx:
@@ -366,7 +366,7 @@ The hardware peripheral is available on the following devices:
   For more information, see the :ref:`ug_kmu_guides_cracen_overview` page.
   For more information about the hardware peripheral, see the CRACEN hardware peripheral page in the device datasheets (for example, `nRF54L15 datasheet <nRF54L15 CRACEN_>`_).
 
-* nRF54H20 - On this platform, the IronSide Secure Element relies on the CRACEN driver and implements a fixed set of features and algorithms that cannot be changed by the user.
+* nRF54H20 - On this platform, the IronSide Secure Enclave relies on the CRACEN driver and implements a fixed set of features and algorithms that cannot be changed by the user.
   See :ref:`ug_crypto_supported_features` for the list of provided PSA Crypto directives.
   For more information, see the :ref:`ug_nrf54h20_secure_domain_cracen` and the :ref:`ug_nrf54h20_ironside` pages.
 

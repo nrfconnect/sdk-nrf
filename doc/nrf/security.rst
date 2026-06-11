@@ -11,17 +11,17 @@ The features are made available either as built-ins in modules, drivers, and sub
 
 The |NCS| |release| allows you to develop applications with the following versions of security components:
 
-.. list-table:: |NCS|, TF-M, IronSide Secure Element, and Mbed TLS versions
+.. list-table:: |NCS|, TF-M, IronSide Secure Enclave, and Mbed TLS versions
      :header-rows: 1
      :widths: auto
 
      * - |NCS| release
        - TF-M version
-       - IronSide Secure Element version
+       - IronSide Secure Enclave version
        - Mbed TLS version
      * - |release|
        - v2.2.2
-       - v23.5.0+28
+       - |ironside_se_ver|
        - 3.6.6
      * - Upcoming release (currently on the ``main`` branch of `sdk-nrf`_)
        - |tf-m_ver|
@@ -42,13 +42,13 @@ Expand the following section to see the table listing versions of different secu
 
       Similarly, not all `official Mbed TLS releases`_ are implemented by the |NCS| through the `sdk-mbedtls`_ repository.
 
-   .. list-table:: |NCS|, TF-M, IronSide Secure Element, and Mbed TLS versions
+   .. list-table:: |NCS|, TF-M, IronSide Secure Enclave, and Mbed TLS versions
      :header-rows: 1
      :widths: auto
 
      * - |NCS| release
        - TF-M version
-       - IronSide Secure Element version
+       - IronSide Secure Enclave version
        - Mbed TLS version
      * - Upcoming release (currently on the ``main`` branch of `sdk-nrf`_)
        - |tf-m_ver|
@@ -60,7 +60,7 @@ Expand the following section to see the table listing versions of different secu
        - 3.6.6
      * - v3.2.0
        - v2.2.0
-       - v23.1.1+20
+       - |ironside_se_ver|
        - 3.6.5
      * - v3.1.0, v3.1.1
        - v2.1.2
