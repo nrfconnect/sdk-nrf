@@ -106,6 +106,8 @@ if(SB_CONFIG_SECURE_BOOT)
     set_target_properties(b0 PROPERTIES
       IMAGE_CONF_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/image_configurations/b0_image_default.cmake
     )
+
+    sysbuild_add_dependencies(CONFIGURE ${DEFAULT_IMAGE} b0)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
