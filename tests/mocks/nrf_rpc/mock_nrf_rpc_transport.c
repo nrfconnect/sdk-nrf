@@ -28,12 +28,13 @@ typedef struct mock_nrf_rpc_tr_ctx {
 	size_t num_expected;
 	size_t cur_expected;
 
-	struct k_sem cb_sem;
-	struct k_thread cb_thread;
-	K_KERNEL_STACK_MEMBER(cb_thread_stack, CONFIG_MOCK_NRF_RPC_TR_CB_THREAD_STACK_SIZE);
-
 	struct k_msgq cb_msgq;
 	char cb_msgq_buffer[MAX_NUM_EXPECTED_PKTS * sizeof(mock_nrf_rpc_pkt_t)];
+
+	struct k_sem cb_sem;
+	struct k_thread cb_thread;
+
+	K_KERNEL_STACK_MEMBER(cb_thread_stack, CONFIG_MOCK_NRF_RPC_TR_CB_THREAD_STACK_SIZE);
 } mock_nrf_rpc_tr_ctx_t;
 
 static void log_payload(const char *caption, const uint8_t *payload, size_t length)
