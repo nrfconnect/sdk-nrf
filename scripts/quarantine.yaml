@@ -77,3 +77,11 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39766"
+
+- scenarios:
+    - sample.bluetooth.peripheral_nfc_pairing
+  platforms:
+    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp
+    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
+    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39822"
