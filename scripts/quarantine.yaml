@@ -92,3 +92,9 @@
   platforms:
     - thingy91/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39824"
+
+- scenarios:
+    - sample.matter.template.debug
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39826"
