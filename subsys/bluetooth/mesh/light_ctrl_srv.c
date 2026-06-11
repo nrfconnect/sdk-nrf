@@ -320,7 +320,11 @@ static uint16_t light_get(struct bt_mesh_light_ctrl_srv *srv)
 	uint16_t end = srv->cfg.light[srv->state];
 
 	/* Linear interpolation: */
-	return start + ((end - start) * curr) / srv->fade.duration;
+	if (end >= start) {
+		return start + ((uint32_t)(end - start) * curr) / srv->fade.duration;
+	}
+
+	return start - ((uint32_t)(start - end) * curr) / srv->fade.duration;
 }
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
@@ -340,7 +344,11 @@ static uint32_t centilux_get(struct bt_mesh_light_ctrl_srv *srv)
 	uint32_t init = srv->fade.initial_centilux;
 	uint32_t cfg = srv->cfg.centilux[srv->state];
 
-	return init + ((cfg - init) * delta) / srv->fade.duration;
+	if (cfg >= init) {
+		return init + ((cfg - init) * delta) / srv->fade.duration;
+	}
+
+	return init - ((init - cfg) * delta) / srv->fade.duration;
 }
 
 static float lux_getf(struct bt_mesh_light_ctrl_srv *srv)
