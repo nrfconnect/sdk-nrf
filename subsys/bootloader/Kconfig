@@ -113,7 +113,7 @@ config SB_INFINITE_LOOP_AFTER_RAM_CLEANUP
 config SB_DISABLE_SELF_RWX_SUPPORTED
 	bool
 	default y if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
-	default y if SOC_NRF54LV10A_CPUAPP
+	default y if SOC_NRF54LV10A_CPUAPP || SOC_NRF54LC10A_CPUAPP
 	default y if SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP
 	default y if SOC_NRF54LS05B_CPUAPP
 
@@ -141,7 +141,7 @@ config SB_DISABLE_NEXT_W
 	help
 	  NSIB disables writes on next stage in bootloading chain.
 	  It uses RRAMC's region 4 and is limited to 31KB for nRF54L15, nRF54L10 and nRF54L05
-	  and to 127KB for nRF54LV10a and nRF54LM20 (A/B).
+	  and to 127KB for nRF54LV10a, nRF54LC10a and nRF54LM20 (A/B).
 
 config SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
 	bool "HW monotonic version counter rollback protection (informative only, do not change)"
