@@ -18,6 +18,8 @@
 #include <pm_config.h>
 /* Address of storage as seen in processor address space */
 #define BL_STORAGE_ADDRESS	PM_PROVISION_ADDRESS
+#elif defined(TFM_BL_STORAGE_ADDR)
+#define BL_STORAGE_ADDRESS	TFM_BL_STORAGE_ADDR
 #else
 /* Address of storage as seen in processor address space */
 #define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
