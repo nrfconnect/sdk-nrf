@@ -85,7 +85,7 @@ int string_param_to_int(struct at_parser *parser, size_t idx, int *output, int b
 int plmn_param_string_to_mcc_mnc(struct at_parser *parser, size_t idx, int *mcc, int *mnc)
 {
 	int err;
-	char str_buf[7];
+	char str_buf[7] = {0};
 	size_t len = sizeof(str_buf);
 
 	err = at_parser_string_get(parser, idx, str_buf, &len);
@@ -94,7 +94,14 @@ int plmn_param_string_to_mcc_mnc(struct at_parser *parser, size_t idx, int *mcc,
 		return err;
 	}
 
-	str_buf[len] = '\0';
+	/* The MCC is 3 digits and the MNC is 2 or 3 digits, so a valid PLMN is 5 or 6
+	 * characters. Reject anything shorter, otherwise the fixed-offset parse below
+	 * would read past the end of the (network-controlled) field.
+	 */
+	if (len < 5) {
+		LOG_ERR("Invalid PLMN length: %zu", len);
+		return -EBADMSG;
+	}
 
 	/* Read MNC and store as integer. The MNC starts as the fourth character
 	 * in the string, following three characters long MCC.
