@@ -50,6 +50,7 @@ endfunction()
 # ALL:            Get images from all groups.
 # GROUP <group>:  Image update group.
 #                 Use "DEFAULT" to get the default group (including DEFAULT_IMAGE).
+# SIGNED:         Get only those images, that will be signed.
 function(UpdateableImage_Get outvar)
   set(all_images)
   set(group)

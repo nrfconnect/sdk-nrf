@@ -464,6 +464,10 @@ function(dfu_app_zip_package)
 
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
 
+    if(SB_CONFIG_MCUBOOT_SYSBUILD_SIGN)
+      list(APPEND signed_targets ${DEFAULT_IMAGE}_signed)
+    endif()
+
     generate_dfu_zip(
       OUTPUT ${CMAKE_BINARY_DIR}/dfu_application.zip
       BIN_FILES ${bin_files}
