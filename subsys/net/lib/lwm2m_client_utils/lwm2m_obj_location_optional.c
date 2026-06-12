@@ -15,10 +15,12 @@
 #define LOCATION_ALTITUDE_ID 2
 #define LOCATION_RADIUS_ID   3
 #define LOCATION_VELOCITY_ID 4
+#define LOCATION_SPEED_ID    6
 
 static double altitude;
 static double radius;
 static double velocity;
+static double speed;
 
 static int lwm2m_init_optional_location_res(void)
 {
@@ -39,6 +41,12 @@ static int lwm2m_init_optional_location_res(void)
 
 	path = LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_VELOCITY_ID);
 	ret = lwm2m_set_res_buf(&path, &velocity, sizeof(velocity), sizeof(velocity), 0);
+	if (ret < 0) {
+		return ret;
+	}
+
+	path = LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_SPEED_ID);
+	ret = lwm2m_set_res_buf(&path, &speed, sizeof(speed), sizeof(speed), 0);
 	if (ret < 0) {
 		return ret;
 	}
