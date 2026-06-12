@@ -52,24 +52,14 @@ class MatterSampleTestCase:
         except Exception as e:
             self.issue(str(e))
         finally:
-            if (
-                len([result for result in self.result if result.level == LEVELS["issue"]]) == 0
-                and len([result for result in self.result if result.level == LEVELS["warning"]])
-                == 0
-            ):
+            issue_count = sum(1 for result in self.result if result.level == LEVELS["issue"])
+            warning_count = sum(1 for result in self.result if result.level == LEVELS["warning"])
+            if issue_count == 0 and warning_count == 0:
                 self.info("✅ No issues found")
-            if len([result for result in self.result if result.level == LEVELS["issue"]]) > 0:
-                self.info(
-                    f"❌ {
-                        len([result for result in self.result if result.level == LEVELS['issue']])
-                    } Issues found"
-                )
-            if len([result for result in self.result if result.level == LEVELS["warning"]]) > 0:
-                self.info(
-                    f"⚠️ {
-                        len([result for result in self.result if result.level == LEVELS['warning']])
-                    } Warnings found"
-                )
+            if issue_count > 0:
+                self.info(f"❌ {issue_count} Issues found")
+            if warning_count > 0:
+                self.info(f"⚠️ {warning_count} Warnings found")
         return self.result
 
     def issue(self, message: str):
