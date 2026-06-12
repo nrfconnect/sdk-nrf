@@ -45,6 +45,32 @@ document.addEventListener("DOMContentLoaded", function () {
             el.addEventListener("click", openSearch);
         });
     };
+        // Position floating Kapa button (same as console test)
+        function applyKapaButtonPosition() {
+            var host = document.getElementById("kapa-widget-container");
+            if (!host || !host.shadowRoot) {
+                return false;
+            }
+
+            var style = host.shadowRoot.querySelector("style[data-ncs-kapa-position]");
+            if (!style) {
+                style = host.shadowRoot.appendChild(document.createElement("style"));
+                style.setAttribute("data-ncs-kapa-position", "1");
+            }
+
+            style.textContent =
+                "#kapa-button { right: -11px !important; bottom: 24px !important; }";
+            return true;
+        }
+
+        if (!applyKapaButtonPosition()) {
+            var attempts = 0;
+            var timer = setInterval(function () {
+                if (applyKapaButtonPosition() || ++attempts > 20) {
+                    clearInterval(timer);
+                }
+            }, 500);
+        }
 
     document.head.appendChild(script);
 });
