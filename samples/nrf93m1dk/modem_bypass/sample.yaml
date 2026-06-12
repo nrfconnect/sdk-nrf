@@ -1,0 +1,16 @@
+sample:
+  name: nRF93M1 DK modem bypass
+  description: |
+    Sample that puts the nRF93M1 modem UART in bypass mode, forwarding it to
+    the USB CDC-ACM VCOM port for direct AT command access from a host PC.
+tests:
+  sample.nrf93m1dk.modem_bypass:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf93m1dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf93m1dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - ci_samples_nrf93m1dk
