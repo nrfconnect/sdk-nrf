@@ -225,6 +225,8 @@ Iperf3 is a tool for measuring data transfer performance both in uplink and down
 .. note::
    Some features, for example file operations and TCP option tuning, are not supported.
 
+See :ref:`performance_testing` for information on how to build the sample with the performance testing configuration.
+
 Examples
 --------
 
@@ -264,6 +266,8 @@ It is a part of MoSh and enables you to test the data download with a "standard"
 
 .. note::
    File operations are not supported.
+
+See :ref:`performance_testing` for information on how to build the sample with the performance testing configuration.
 
 Examples
 --------
@@ -492,9 +496,6 @@ Enable the ``modem_trace`` command using the :kconfig:option:`CONFIG_NRF_MODEM_L
 You can use the modem trace commands to control the trace functionality in the modem.
 See :ref:`modem_trace_module` for more information on how to configure modem tracing and the built-in trace backends available.
 See :ref:`modem_trace_shell_command` for details about the shell command.
-
-To enable modem traces with the flash backend, build with the ``nrf91-modem-trace-ext-flash`` snippet for an nRF91 Series DK that has external flash.
-For more information on snippets, see :ref:`zephyr:using-snippets`.
 
 GNSS
 ====
@@ -1481,6 +1482,35 @@ Example output with NTN library debug logging enabled:
    [00:00:02.565,734] <dbg> ntn: ntn_location_set: lat: 61.493776, lon: 23.775918, alt: 146.5 m, validity: 12 s
    [00:00:08.553,009] <dbg> ntn: ntn_location_set: lat: 61.493777, lon: 23.775916, alt: 147.2 m, validity: 12 s
    [00:00:13.555,145] <dbg> ntn: ntn_location_set: lat: 61.493779, lon: 23.775901, alt: 147.3 m, validity: 12 s
+
+.. _performance_testing:
+
+Performance testing
+===================
+
+For data throughput testing, increase the modemlib TX buffer size for maximum throughput.
+The following two snippets are available for the nRF91 Series DKs to increase the buffer size:
+
+* ``nrf91dk-perf-test`` - Increases the modemlib TX buffer size to 22 kB.
+* ``nrf91dk-perf-test-modem-trace-uart`` - Increases the modemlib TX buffer size to 22 kB and enables modem tracing over UART.
+
+.. note::
+   You cannot use the ``nrf91-modem-trace-uart`` snippet together with the ``nrf91dk-perf-test`` snippet.
+   Use the ``nrf91dk-perf-test-modem-trace-uart`` snippet instead.
+
+To build the sample with the performance testing configuration for the nRF9151 DK, use the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -p -b nrf9151dk/nrf9151/ns -- -Dmodem_shell_SNIPPET="nrf91dk-perf-test"
+
+To build the sample with the performance testing configuration and modem tracing over UART for the nRF9151 DK, use the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -p -b nrf9151dk/nrf9151/ns -- -Dmodem_shell_SNIPPET="nrf91dk-perf-test-modem-trace-uart"
 
 References
 **********

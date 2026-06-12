@@ -1,0 +1,3 @@
+name: nrf91dk-perf-test
+append:
+  EXTRA_DTC_OVERLAY_FILE: perf-test.overlay
