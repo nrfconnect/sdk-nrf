@@ -66,6 +66,7 @@ static gnss_assistance_get_result_code_cb_t result_code_cb;
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 char *assist_buf;
+static size_t assist_buf_size;
 #endif
 static char assist_data[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 
@@ -107,6 +108,13 @@ static int gnss_assist_write_agnss(uint8_t *data, uint16_t data_len, bool last_b
 	int err;
 
 	if (assist_buf == NULL) {
+		return -ENOMEM;
+	}
+
+	if ((size_t)bytes_downloaded + data_len > assist_buf_size) {
+		LOG_ERR("A-GNSS data exceeds buffer size");
+		k_free(assist_buf);
+		assist_buf = NULL;
 		return -ENOMEM;
 	}
 
@@ -253,6 +261,7 @@ int location_assist_agnss_alloc_buf(size_t buf_size)
 		return -ENOMEM;
 	}
 
+	assist_buf_size = buf_size;
 	return 0;
 }
 
