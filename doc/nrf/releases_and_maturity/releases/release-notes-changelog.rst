@@ -50,6 +50,8 @@ Bootloaders and DFU
 
 |no_changes_yet_note|
 
+* Added :ref:`ug_bootloader_nrf54l_memory_protection` page to document the memory protection features of the bootloader on the nRF54L Series.
+
 Developing with nRF91 Series
 ============================
 
