@@ -20,9 +20,9 @@
 };
 
 /* Custom partition table providing TF-M secure / non-secure images and the
- * PS / ITS / OTP storage area required by the PSA test suites. No bootloader
- * (NSIB / MCUboot) is placed in front, matching what Partition Manager used
- * to produce for this test.
+ * PS / ITS / OTP storage area used by TF-M. No bootloader (NSIB / MCUboot)
+ * is placed in front, matching what Partition Manager used to produce for
+ * this test.
  */
 /delete-node/ &boot_partition;
 /delete-node/ &slot0_partition;
@@ -106,29 +106,3 @@
 
 /* SRAM split matching the non-minimal TF-M profile (88 kB secure). */
 #include <samples/cellular/nrf91_sram_crypto_partitions.dtsi>
-
-/* TF-M's bl_storage.c reads the provisioning data address from the
- * `bl_storage` DT nodelabel when neither Partition Manager nor a B0
- * forwarded TFM_BL_STORAGE_ADDR provides it. The nrf91 secure-side DTS
- * already defines this node, but `nrf91_ns.dtsi` does not, so expose it
- * here. The NS image never accesses UICR; this node is only used at
- * compile time by the TF-M secure build.
- */
-/ {
-	soc {
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		uicr_tfm: uicr@ff8000 {
-			compatible = "nordic,nrf-uicr";
-			reg = <0xff8000 0x1000>;
-			ranges = <0x0 0xff8000 0x1000>;
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			bl_storage: uicr@108 {
-				reg = <0x108 0x280>;
-			};
-		};
-	};
-};

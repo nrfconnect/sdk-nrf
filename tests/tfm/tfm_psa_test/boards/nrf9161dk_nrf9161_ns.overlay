@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 &uart0 {
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
@@ -16,4 +17,118 @@
 	/* Set to disabled in application, since TF-M will be using it. */
 	status = "disabled";
 	hw-flow-control;
+};
+
+/* Custom partition table providing TF-M secure / non-secure images and the
+ * PS / ITS / OTP storage area required by the PSA test suites. No bootloader
+ * (NSIB / MCUboot) is placed in front, matching what Partition Manager used
+ * to produce for this test.
+ */
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	/*
+	 * 0x0000_0000  Primary image area           (960 kB)
+	 *   0x0000_0000  Primary secure image       (256 kB)
+	 *   0x0004_0000  Primary non-secure image   (704 kB)
+	 * 0x000f_0000  TF-M storage area            ( 32 kB)
+	 *   0x000f_0000  TF-M Internal Trusted Stg  (  8 kB)
+	 *   0x000f_2000  TF-M OTP / NV counters     (  8 kB)
+	 *   0x000f_4000  TF-M Protected Storage     ( 16 kB)
+	 * 0x000f_8000  Settings storage             ( 32 kB)
+	 */
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x00000000 0xf0000>;
+			ranges = <0x0 0x00000000 0xf0000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x00000000 0x40000>;
+			};
+
+			slot0_ns_partition: partition@40000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x00040000 0xb0000>;
+			};
+		};
+
+		tfm_storage_partition: partition@f0000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-storage";
+			reg = <0x000f0000 DT_SIZE_K(32)>;
+			ranges = <0x0 0x000f0000 DT_SIZE_K(32)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			tfm_its_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-its";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+
+			tfm_otp_partition: partition@2000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-otp";
+				reg = <0x2000 DT_SIZE_K(8)>;
+			};
+
+			tfm_ps_partition: partition@4000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-ps";
+				reg = <0x4000 DT_SIZE_K(16)>;
+			};
+		};
+
+		storage_partition: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f8000 DT_SIZE_K(32)>;
+		};
+	};
+};
+
+/* SRAM split matching the non-minimal TF-M profile (88 kB secure). */
+#include <samples/cellular/nrf91_sram_crypto_partitions.dtsi>
+
+/* TF-M's bl_storage.c reads the provisioning data address from the
+ * `bl_storage` DT nodelabel when neither Partition Manager nor a B0
+ * forwarded TFM_BL_STORAGE_ADDR provides it. The nrf91 secure-side DTS
+ * already defines this node, but `nrf91_ns.dtsi` does not, so expose it
+ * here. The NS image never accesses UICR; this node is only used at
+ * compile time by the TF-M secure build.
+ */
+/ {
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		uicr_tfm: uicr@ff8000 {
+			compatible = "nordic,nrf-uicr";
+			reg = <0xff8000 0x1000>;
+			ranges = <0x0 0xff8000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			bl_storage: uicr@108 {
+				reg = <0x108 0x280>;
+			};
+		};
+	};
 };
