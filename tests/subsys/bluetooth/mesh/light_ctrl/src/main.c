@@ -624,6 +624,37 @@ ZTEST(light_ctrl_test, test_default_cfg)
 }
 
 /**
+ * Verify that transition_start() captures the current lightness level as the fade initial value
+ * rather than the target state's configured level. This tests the fix where srv->state was
+ * incorrectly updated before reading the initial light value.
+ */
+ZTEST(light_ctrl_test, test_fade_initial_light_capture)
+{
+	enable_ctrl();
+
+	/* Set distinct lightness levels for each state. */
+	light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_STANDBY] = 100;
+	light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_ON] = 50000;
+	light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_PROLONG] = 25000;
+
+	/* After enable_ctrl(), server is in STANDBY state with no active transition.
+	 * light_get() should return cfg.light[STANDBY] = 100.
+	 * When we turn on, transition_start should capture initial_light = 100 (not 50000).
+	 */
+	expect_turn_on_state_change();
+	bt_mesh_light_ctrl_srv_on(&light_ctrl_srv);
+
+	/* Verify initial_light was captured from the previous state (STANDBY=100),
+	 * not the target state (ON=50000).
+	 */
+	zassert_equal(light_ctrl_srv.fade.initial_light, 100,
+		      "Expected initial_light=100 (standby level), got: %d",
+		      light_ctrl_srv.fade.initial_light);
+	zassert_equal(light_ctrl_srv.state, LIGHT_CTRL_STATE_ON,
+		      "Expected state=ON after turn_on");
+}
+
+/**
  * Verify that PI Regulator keeps internal sum and its output within the range defined in
  * MeshMDLv1.0.1, table 6.53.
  */
@@ -1151,6 +1182,82 @@ ZTEST(light_ctrl_pi_reg_test, test_internal_sum_recalculation)
 	trigger_pi_reg(1, true);
 	zassert_equal(pi_reg_test_ctx.lightness, expected_lightness, "Expected: %d, got: %d",
 		      expected_lightness, pi_reg_test_ctx.lightness);
+}
+
+/**
+ * Verify that transition_start() captures the correct initial lightness when transitioning
+ * from ON to PROLONG (fade down). The initial value should be the ON level, not PROLONG level.
+ */
+ZTEST(light_ctrl_pi_reg_test, test_fade_initial_light_on_to_prolong)
+{
+	/* pi_reg_test_ctx is enabled, so lightness_srv_change_lvl won't check expectations. */
+	light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_STANDBY] = 0;
+	light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_ON] = 40000;
+	light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_PROLONG] = 15000;
+	light_ctrl_srv.cfg.fade_prolong = 5000;
+
+	/* Server is in ON state after setup_pi_reg(). Wait for transition to complete. */
+	wait_for_timeout(STATE_TIMER, K_MSEC(light_ctrl_srv.cfg.on + 1));
+
+	/* Now the state timer fired -> prolong() is called -> transition_start to PROLONG. */
+	zassert_equal(light_ctrl_srv.state, LIGHT_CTRL_STATE_PROLONG,
+		      "Expected state=PROLONG, got: %d", light_ctrl_srv.state);
+	zassert_equal(light_ctrl_srv.fade.initial_light, 40000,
+		      "Expected initial_light=40000 (ON level), got: %d",
+		      light_ctrl_srv.fade.initial_light);
+	zassert_equal(light_ctrl_srv.fade.duration, 5000,
+		      "Expected fade duration=5000, got: %d",
+		      light_ctrl_srv.fade.duration);
+}
+
+/**
+ * Verify that light_get() correctly interpolates when fading down (end < start) without
+ * unsigned underflow. This tests the fix for the arithmetic bug by exercising the regulator
+ * path which calls light_get() internally.
+ */
+ZTEST(light_ctrl_pi_reg_test, test_fade_interpolation_no_underflow)
+{
+	/* Configure a high ON level and lower PROLONG level to test fade-down. */
+	light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_ON] = 50000;
+	light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_PROLONG] = 10000;
+	light_ctrl_srv.cfg.fade_prolong = 500;
+	/* Use short ON time to avoid ambient light level timeout (20s) which would
+	 * reset measured lux to 0 and cause regulator to saturate.
+	 * Reschedule the already-running ON timer to fire sooner.
+	 */
+	light_ctrl_srv.cfg.on = 1000;
+	k_work_reschedule(&light_ctrl_srv.timer, K_MSEC(1000));
+
+	/* Server is in ON state after setup_pi_reg(). Start the regulator with ambient lux
+	 * matching the target so regulator output is minimal — this lets us observe light_get()
+	 * providing the floor value to the regulator.
+	 */
+	start_reg((float)light_ctrl_srv.cfg.centilux[LIGHT_CTRL_STATE_ON] * 0.01f);
+
+	/* Wait for ON timer to expire, which triggers prolong() -> transition to PROLONG.
+	 * This creates a fade-down: initial_light=50000, target=10000.
+	 */
+	wait_for_timeout(STATE_TIMER, K_MSEC(light_ctrl_srv.cfg.on + 1));
+
+	zassert_equal(light_ctrl_srv.state, LIGHT_CTRL_STATE_PROLONG,
+		      "Expected PROLONG state, got: %d", light_ctrl_srv.state);
+	zassert_equal(light_ctrl_srv.fade.initial_light, 50000,
+		      "Expected initial_light=50000, got: %d",
+		      light_ctrl_srv.fade.initial_light);
+
+	/* Trigger the regulator during the fade-down. The regulator calls light_get() internally.
+	 * If unsigned underflow occurs, light_get() would return a huge value (>50000) instead
+	 * of a value between 10000 and 50000.
+	 */
+	trigger_pi_reg(1, true);
+
+	/* The pi_reg_test_ctx.lightness should be reasonable (between PROLONG and ON levels).
+	 * Without the underflow fix, this would be a wrapped-around value > 50000.
+	 */
+	zassert_true(pi_reg_test_ctx.lightness <= 50000,
+		     "Lightness wrapped around (underflow): %d", pi_reg_test_ctx.lightness);
+	zassert_true(pi_reg_test_ctx.lightness >= 10000,
+		     "Lightness below target: %d", pi_reg_test_ctx.lightness);
 }
 
 ZTEST_SUITE(light_ctrl_test, NULL, NULL, setup, teardown, NULL);
