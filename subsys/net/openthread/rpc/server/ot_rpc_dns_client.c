@@ -450,14 +450,15 @@ static void resp_get_info(const struct nrf_rpc_group *group, struct nrf_rpc_cbor
 		return;
 	}
 
+	/* Clamp the peer-declared sizes to the local buffers to avoid a stack overflow. */
 	if (max_name_size) {
 		info.mHostNameBuffer = name;
-		info.mHostNameBufferSize = max_name_size;
+		info.mHostNameBufferSize = MIN(max_name_size, sizeof(name));
 	}
 
 	if (max_txt_size) {
 		info.mTxtData = txt;
-		info.mTxtDataSize = max_txt_size;
+		info.mTxtDataSize = MIN(max_txt_size, sizeof(txt));
 	}
 
 	ot_rpc_mutex_lock();
