@@ -264,7 +264,8 @@ Matter bridge
 nRF Audio (formerly nRF5340 Audio)
 ----------------------------------
 
-|no_changes_yet_note|
+ * Removed the "-u" option from buildprog. Use the "-cu" option instead.
+ * Updated so the "-cu" buildprog option also sets the broadcast and alternate broadcast names, in addition to the device name. This is only a convenice option, the correct way to set the names is through the project configuration files.
 
 nRF Desktop
 -----------
