@@ -755,9 +755,6 @@ config BT_CTLR_SDC_ISO_TEST
 	help
 	  Support for LE ISO test HCI commands
 
-config BT_CTLR_DTM
-	select EXPERIMENTAL
-
 config BT_CTLR_LE_FLUSHABLE_ACL_DATA
 	bool "LE Flushable ACL Data [EXPERIMENTAL]"
 	depends on BT_CTLR_EXTENDED_FEAT_SET
