@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUPPORT_MANUFACTURING_APP
+	bool
+	default y if SOC_NRF54LV10A_CPUAPP
+
+config NRF_MANUFACTURING_APP
+	bool "Manufacturing Application [EXPERIMENTAL]"
+	depends on SUPPORT_MANUFACTURING_APP
+	select EXPERIMENTAL
+	help
+	  Enable the manufacturing application that:
+	   - Generates IKG seed
+	   - Provisions PRoT keys
+	   - Transitions LCS up to SECURED state
+
+if NRF_MANUFACTURING_APP
+
+config NRF_MANUFACTURING_APP_BOARD
+	string
+	default "$(BOARD)/nrf54lv10a/cpuapp" if SOC_NRF54LV10A_CPUAPP
+	help
+	  Target board for the manufacturing application.
+
+config SUPPORT_MANUFACTURING_APP_DEFAULT
+	bool
+	default y
+
+choice NRF_MANUFACTURING_APP
+	prompt "Manufacturing application image"
+	default NRF_MANUFACTURING_APP_DEFAULT if SUPPORT_MANUFACTURING_APP_DEFAULT
+	default NRF_MANUFACTURING_APP_NONE
+
+config NRF_MANUFACTURING_APP_NONE
+	bool "None"
+	help
+	  Do not include a manufacturing application image in the build.
+
+config NRF_MANUFACTURING_APP_DEFAULT
+	bool "Default"
+	depends on SUPPORT_MANUFACTURING_APP_DEFAULT
+	help
+	  Include a default image as the manufacturing application image to use.
+
+endchoice # NRF_MANUFACTURING_APP
+
+config NRF_MANUFACTURING_APP_IMAGE_PATH
+	string
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/manufacturing_app" if NRF_MANUFACTURING_APP_DEFAULT
+	default "" if NRF_MANUFACTURING_APP_NONE
+	help
+	  Path to manufacturing application image.
+
+endif # NRF_MANUFACTURING_APP

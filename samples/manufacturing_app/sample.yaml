@@ -1,0 +1,12 @@
+sample:
+  description: >
+    Manufacturing application sample for nRF54LV10A.
+  name: Manufacturing Application
+common:
+  tags:
+    - keys
+    - manufacturing
+  platform_allow:
+    - nrf54lv10dk/nrf54lv10a/cpuapp
+  integration_platforms:
+    - nrf54lv10dk/nrf54lv10a/cpuapp

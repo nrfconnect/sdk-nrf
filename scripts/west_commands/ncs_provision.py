@@ -17,12 +17,13 @@ import generate_psa_key_attributes as psa_attr_generator
 import yaml
 from west.commands import WestCommand
 
-KEY_TYPES = ["UROT_PUBKEY", "BL_PUBKEY", "APP_PUBKEY", "PROT_RAM_INV_SLOTS"]
+KEY_TYPES = ["UROT_PUBKEY", "BL_PUBKEY", "APP_PUBKEY", "PROT_RAM_INV_SLOTS", "MANUFACTURING_APP_PUBKEY"]
 KMU_KEY_SLOTS: dict[str, list[int]] = {
     "UROT_PUBKEY": [226, 228, 230],
     "BL_PUBKEY": [242, 244, 246],
     "APP_PUBKEY": [202, 204, 206],
     "PROT_RAM_INV_SLOTS": [248],
+    "MANUFACTURING_APP_PUBKEY": [224],
 }
 ITS_KEY_SLOTS: dict[str, list[int]] = {
     "UROT_PUBKEY": [],

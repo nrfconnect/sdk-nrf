@@ -10,6 +10,9 @@
 #include <errno.h>
 #include <nrfx.h>
 #include <assert.h>
+#ifdef CONFIG_NRF_LCS_MEM_BL_STORAGE
+#include <nrf_lcs/nrf_lcs_mem.h>
+#endif
 
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
