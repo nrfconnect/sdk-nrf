@@ -10,7 +10,14 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/iterable_sections.h>
 
+#include <helpers/nrfx_gppi.h>
+#include <nrfx_timer.h>
+#include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
+
 #define I2S_DEV_NODE DT_ALIAS(i2s_node0)
+#define NRF_MCK_TIMER DT_REG_ADDR(DT_ALIAS(mck_timer))
+#define NRF_LRCK_TIMER DT_REG_ADDR(DT_ALIAS(lrck_timer))
 
 #define WORD_SIZE 16U
 #define NUMBER_OF_CHANNELS CONFIG_TEST_NUMBER_OF_I2S_CHANNELS
@@ -50,12 +57,7 @@ STRUCT_SECTION_ITERABLE(k_mem_slab, tx_0_mem_slab) =
 	Z_MEM_SLAB_INITIALIZER(tx_0_mem_slab, _k_mem_slab_buf_tx_0_mem_slab,
 				WB_UP(BLOCK_SIZE), NUM_BLOCKS);
 
-static volatile uint16_t count_mclk, count_lrck;
-static struct gpio_callback mclk_cb_data, lrck_cb_data;
-static const struct gpio_dt_spec gpio_mclk_spec =
-	GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), gpios, 0);
-static const struct gpio_dt_spec gpio_lrck_spec =
-	GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), gpios, 1);
+static volatile uint32_t count_mclk, count_lrck;
 
 static const struct device *dev_i2s;
 
@@ -85,21 +87,11 @@ static uint32_t expected_mclk =
 	(MCLK_FREQ / FRAME_CLK_FREQ) * (WORDS_COUNT / NUMBER_OF_CHANNELS) * EXPECTED_MCLK_SCALE;
 #endif
 
-/* ISR that couns falling edges on the MCLK signal. */
-static void gpio_mclk_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
-{
-	if (pins & BIT(gpio_mclk_spec.pin)) {
-		count_mclk++;
-	}
-}
+static nrfx_timer_t mck_timer_instance = NRFX_TIMER_INSTANCE(NRF_MCK_TIMER);
+static nrfx_timer_t lrck_timer_instance = NRFX_TIMER_INSTANCE(NRF_LRCK_TIMER);
 
-/* ISR that couns falling edges on the LRCK signal. */
-static void gpio_lrck_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
-{
-	if (pins & BIT(gpio_lrck_spec.pin)) {
-		count_lrck++;
-	}
-}
+#define MCK_INPUT_PIN NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(zephyr_user), gpios, 0)
+#define LRCK_INPUT_PIN NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(zephyr_user), gpios, 1)
 
 /* Fill in TX buffer with test samples. */
 static void fill_buf(int16_t *tx_block)
@@ -226,6 +218,10 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_BOTH)
 	ret = i2s_write(dev_i2s, tx_block, BLOCK_SIZE);
 	zassert_equal(ret, 0);
 
+	/* Clear clock cycles counters */
+	nrfx_timer_clear(&mck_timer_instance);
+	nrfx_timer_clear(&lrck_timer_instance);
+
 	TC_PRINT("TX starts\n");
 
 	ret = i2s_trigger(dev_i2s, I2S_DIR_BOTH, I2S_TRIGGER_START);
@@ -245,6 +241,14 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_BOTH)
 	ret = verify_buf((uint16_t *)rx_block[0]);
 	zassert_equal(ret, 0);
 	k_mem_slab_free(&rx_0_mem_slab, rx_block[0]);
+
+	/* Get number of I2S MCLK rising edges. */
+	nrfx_timer_capture(&mck_timer_instance, NRF_TIMER_CC_CHANNEL0);
+	count_mclk = nrfx_timer_capture_get(&mck_timer_instance, NRF_TIMER_CC_CHANNEL0);
+
+	/* Get number of I2S LRCLK rising edges. */
+	nrfx_timer_capture(&lrck_timer_instance, NRF_TIMER_CC_CHANNEL0);
+	count_lrck = nrfx_timer_capture_get(&lrck_timer_instance, NRF_TIMER_CC_CHANNEL0);
 
 	/* Verify number of falling edges on LRCK. */
 	zassert_true(count_lrck >= expected_lrck,
@@ -273,6 +277,9 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_RX)
 	ret = configure_stream(dev_i2s, I2S_DIR_RX);
 	zassert_equal(ret, TC_PASS);
 
+	/* Clear clock cycles counters */
+	nrfx_timer_clear(&mck_timer_instance);
+
 	ret = i2s_trigger(dev_i2s, I2S_DIR_RX, I2S_TRIGGER_START);
 	zassert_equal(ret, 0, "RX START trigger failed\n");
 
@@ -286,6 +293,10 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_RX)
 
 	/* Verify number of falling edges on MCLK */
 	uint32_t expected = FRAME_CLK_FREQ * NUMBER_OF_CHANNELS * WORD_SIZE * (TIMEOUT / 1000);
+
+	/* Get number of I2S MCLK rising edges. */
+	nrfx_timer_capture(&mck_timer_instance, NRF_TIMER_CC_CHANNEL0);
+	count_mclk = nrfx_timer_capture_get(&mck_timer_instance, NRF_TIMER_CC_CHANNEL0);
 
 	zassert_true(count_mclk >= expected,
 		"MCLK has %u falling edges, while at least %u is expected.",
@@ -319,6 +330,10 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_TX)
 	ret = i2s_write(dev_i2s, tx_block, BLOCK_SIZE);
 	zassert_equal(ret, 0);
 
+	/* Clear clock cycles counters */
+	nrfx_timer_clear(&mck_timer_instance);
+	nrfx_timer_clear(&lrck_timer_instance);
+
 	TC_PRINT("TX starts\n");
 
 	ret = i2s_trigger(dev_i2s, I2S_DIR_TX, I2S_TRIGGER_START);
@@ -331,13 +346,20 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_TX)
 	/* Wait until I2S finishes TX. */
 	k_msleep(1000);
 
+	/* Get number of I2S MCLK rising edges. */
+	nrfx_timer_capture(&mck_timer_instance, NRF_TIMER_CC_CHANNEL0);
+	count_mclk = nrfx_timer_capture_get(&mck_timer_instance, NRF_TIMER_CC_CHANNEL0);
+
+	/* Get number of I2S LRCLK rising edges. */
+	nrfx_timer_capture(&lrck_timer_instance, NRF_TIMER_CC_CHANNEL0);
+	count_lrck = nrfx_timer_capture_get(&lrck_timer_instance, NRF_TIMER_CC_CHANNEL0);
+
 	/* Verify number of falling edges on LRCK. */
 	zassert_true(count_lrck >= expected_lrck,
 		"LRCK has %u falling edges, while at least %u is expected.",
 		count_lrck, expected_lrck);
 
 	/* Verify number of falling edges on MCLK. */
-
 	zassert_true(count_mclk >= expected_mclk,
 		"MCLK has %u falling edges, while at least %u is expected.",
 		count_mclk, expected_mclk);
@@ -347,25 +369,63 @@ static void *suite_setup(void)
 {
 	int ret;
 
-	/* Configure GPIO used to count MCLK edges. */
-	ret = gpio_is_ready_dt(&gpio_mclk_spec);
-	zassert_equal(ret, true, "gpio_mclk_spec not ready (ret %d)", ret);
-	ret = gpio_pin_configure_dt(&gpio_mclk_spec, GPIO_INPUT);
-	zassert_equal(ret, 0, "failed to configure input pin gpio_mclk_spec (err %d)", ret);
-	ret = gpio_pin_interrupt_configure_dt(&gpio_mclk_spec, GPIO_INT_EDGE_FALLING);
-	zassert_equal(ret, 0, "failed to configure gpio_mclk_spec interrupt (err %d)", ret);
-	gpio_init_callback(&mclk_cb_data, gpio_mclk_isr, BIT(gpio_mclk_spec.pin));
-	gpio_add_callback(gpio_mclk_spec.port, &mclk_cb_data);
+	/* Configure GPIOTE. */
+	uint8_t gpiote_channel_mclk, gpiote_channel_lrclk;
+	nrfx_gpiote_t gpiote_instance =
+		GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(DT_PATH(zephyr_user), gpios));
 
-	/* Configure GPIO used to count LRCK edges. */
-	ret = gpio_is_ready_dt(&gpio_lrck_spec);
-	zassert_equal(ret, true, "gpio_lrck_spec not ready (ret %d)", ret);
-	ret = gpio_pin_configure_dt(&gpio_lrck_spec, GPIO_INPUT);
-	zassert_equal(ret, 0, "failed to configure input pin gpio_lrck_spec (err %d)", ret);
-	ret = gpio_pin_interrupt_configure_dt(&gpio_lrck_spec, GPIO_INT_EDGE_FALLING);
-	zassert_equal(ret, 0, "failed to configure gpio_lrck_spec interrupt (err %d)", ret);
-	gpio_init_callback(&lrck_cb_data, gpio_lrck_isr, BIT(gpio_lrck_spec.pin));
-	gpio_add_callback(gpio_lrck_spec.port, &lrck_cb_data);
+	nrfx_gpiote_trigger_config_t trigger_cfg = {
+		.trigger = NRFX_GPIOTE_TRIGGER_LOTOHI,
+	};
+
+	nrf_gpio_pin_pull_t pull_cfg = NRFX_GPIOTE_DEFAULT_PULL_CONFIG;
+
+	nrfx_gpiote_input_pin_config_t gpiote_cfg = {
+		.p_pull_config = &pull_cfg,
+		.p_trigger_config = &trigger_cfg,
+	};
+
+	ret = nrfx_gpiote_channel_alloc(&gpiote_instance, &gpiote_channel_mclk);
+	zassert_true(ret == 0, "MCLK GPIOTE channel allocation failed, return code = %d", ret);
+	trigger_cfg.p_in_channel = &gpiote_channel_mclk;
+	ret = nrfx_gpiote_input_configure(&gpiote_instance, MCK_INPUT_PIN, &gpiote_cfg);
+	zassert_true(ret == 0, "GPIOTE input configuration for MCK failed, return code = %d", ret);
+
+	ret = nrfx_gpiote_channel_alloc(&gpiote_instance, &gpiote_channel_lrclk);
+	zassert_true(ret == 0, "LRCK GPIOTE channel allocation failed, return code = %d", ret);
+	trigger_cfg.p_in_channel = &gpiote_channel_lrclk;
+	ret = nrfx_gpiote_input_configure(&gpiote_instance, LRCK_INPUT_PIN, &gpiote_cfg);
+	zassert_true(ret == 0, "GPIOTE input configuration for LRCK failed, return code = %d", ret);
+
+	nrfx_gpiote_trigger_enable(&gpiote_instance, MCK_INPUT_PIN, false);
+	nrfx_gpiote_trigger_enable(&gpiote_instance, LRCK_INPUT_PIN, false);
+	/* Configure Timer. */
+	nrfx_timer_config_t timer_config =
+		NRFX_TIMER_DEFAULT_CONFIG(NRFX_TIMER_BASE_FREQUENCY_GET(&mck_timer_instance));
+	timer_config.bit_width = NRF_TIMER_BIT_WIDTH_32;
+	timer_config.mode = NRF_TIMER_MODE_COUNTER;
+
+	ret = nrfx_timer_init(&mck_timer_instance, &timer_config, NULL);
+	zassert_true(ret == 0, "nrfx_timer_init() failed, ret = 0x%08X for mck_timer", ret);
+	ret = nrfx_timer_init(&lrck_timer_instance, &timer_config, NULL);
+	zassert_true(ret == 0, "nrfx_timer_init() failed, ret = 0x%08X for lrck_timer", ret);
+
+	nrfx_timer_enable(&mck_timer_instance);
+	nrfx_timer_enable(&lrck_timer_instance);
+
+	/* Configure GPPI from GPIOTEs to Timers. */
+	nrfx_gppi_handle_t mck_gppi_handle, lrck_gppi_handle;
+	uint32_t mck_eep = nrfx_gpiote_in_event_address_get(&gpiote_instance, MCK_INPUT_PIN);
+	uint32_t mck_tep = nrfx_timer_task_address_get(&mck_timer_instance, NRF_TIMER_TASK_COUNT);
+	uint32_t lrck_eep = nrfx_gpiote_in_event_address_get(&gpiote_instance, LRCK_INPUT_PIN);
+	uint32_t lrck_tep = nrfx_timer_task_address_get(&lrck_timer_instance, NRF_TIMER_TASK_COUNT);
+
+	ret = nrfx_gppi_conn_alloc(mck_eep, mck_tep, &mck_gppi_handle);
+	zassert_equal(ret, 0, "GPPI channel allocation for MCK failed, return code = %d", ret);
+	nrfx_gppi_conn_enable(mck_gppi_handle);
+	ret = nrfx_gppi_conn_alloc(lrck_eep, lrck_tep, &lrck_gppi_handle);
+	zassert_equal(ret, 0, "GPPI channel allocation for LRCK failed, return code = %d", ret);
+	nrfx_gppi_conn_enable(lrck_gppi_handle);
 
 	/* Check I2S Device. */
 	dev_i2s = DEVICE_DT_GET_OR_NULL(I2S_DEV_NODE);
