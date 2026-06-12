@@ -5,8 +5,25 @@
 #
 
 function(setup_nrf700x_xip_data)
-  dt_nodelabel(qspi_nodelabel TARGET ${DEFAULT_IMAGE} NODELABEL "qspi")
-  dt_reg_addr(qspi_xip_address TARGET ${DEFAULT_IMAGE} PATH "${qspi_nodelabel}" NAME "qspi_mm")
+  set(interface_xip_address 0)
+
+  dt_chosen(pm_ext_flash TARGET ${DEFAULT_IMAGE} PROPERTY "nordic,pm-ext-flash")
+
+  if(NOT DEFINED pm_ext_flash)
+    message(FATAL_ERROR
+      "nRF WiFi FW patch external flash: chosen node \"nordic,pm-ext-flash\" is not set")
+  endif()
+
+  get_filename_component(interface_path "${pm_ext_flash}" DIRECTORY)
+  dt_prop(interface_compat TARGET ${DEFAULT_IMAGE} PATH "${interface_path}" PROPERTY "compatible")
+  
+  if("nordic,nrf-qspi" IN_LIST interface_compat)
+    dt_reg_addr(interface_xip_address TARGET ${DEFAULT_IMAGE} PATH "${interface_path}" NAME "qspi_mm")
+  elseif("nordic,nrf-spim" IN_LIST interface_compat)
+    dt_reg_addr(interface_xip_address TARGET ${DEFAULT_IMAGE} PATH "${interface_path}" NAME "spi_mm")
+  else()
+    message(FATAL_ERROR "nRF WiFi FW patch external flash: no compatible interface found")
+  endif()
 
   set(NRF70_FW_BINS ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_wifi/bin/ncs)
 
@@ -58,7 +75,7 @@ function(setup_nrf700x_xip_data)
         ${NRF70_PATCH}
         ${CMAKE_BINARY_DIR}/nrf70.hex
         $<TARGET_PROPERTY:partition_manager,PM_NRF70_WIFI_FW_OFFSET>
-        ${qspi_xip_address}
+        ${interface_xip_address}
         VERBATIM
       )
   else()
@@ -75,7 +92,7 @@ function(setup_nrf700x_xip_data)
         ${NRF70_PATCH}
         ${CMAKE_BINARY_DIR}/nrf70.hex
         ${nrf70_wifi_fw_partition_addr}
-        ${qspi_xip_address}
+        ${interface_xip_address}
         VERBATIM
       )
   endif()

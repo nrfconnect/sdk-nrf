@@ -102,7 +102,7 @@ The partition node must use the node label ``nrf70_wifi_fw_partition`` (see the 
                    #address-cells = <1>;
                    #size-cells = <1>;
 
-                   nrf70_wifi_fw_partition: nrf70_fw_partition: partition@0 {
+                   nrf70_wifi_fw_partition: partition@0 {
                            reg = <0x0 0x20000>;
                    };
            };

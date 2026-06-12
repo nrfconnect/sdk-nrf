@@ -111,7 +111,7 @@ Ensure that the parent device, partition offsets, and sizes match your complete 
                    #address-cells = <1>;
                    #size-cells = <1>;
 
-                   nrf70_wifi_fw_partition: nrf70_fw_partition: partition@12f200 {
+                   nrf70_wifi_fw_partition: partition@12f200 {
                            reg = <0x12f200 0x20000>;
                    };
            };

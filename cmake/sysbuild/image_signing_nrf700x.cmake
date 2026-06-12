@@ -70,12 +70,21 @@ function(nrf7x_signing_tasks input output_hex output_bin dependencies)
     )
   endif()
 
+  # Same imgtool hash/signature options as the main app (image_signing.cmake); required for nRF54L
+  # ED25519 + SHA512 MCUboot.
+  set(imgtool_extra)
+  if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
+    list(APPEND imgtool_extra --pure)
+  elseif(SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512)
+    list(APPEND imgtool_extra --sha 512)
+  endif()
+
   if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-    set(imgtool_extra --security-counter ${CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
+    list(APPEND imgtool_extra --security-counter ${CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
   endif()
 
   if(NOT "${keyfile}" STREQUAL "")
-    set(imgtool_extra -k "${keyfile}" ${imgtool_extra})
+    list(APPEND imgtool_extra -k "${keyfile}")
   endif()
 
   set(imgtool_args ${imgtool_extra})
@@ -108,13 +117,13 @@ function(nrf7x_signing_tasks input output_hex output_bin dependencies)
 
   add_custom_command(OUTPUT ${output_hex}
     COMMAND
-    ${imgtool_sign} ${imgtool_args} ${input} ${output_hex}
+    ${imgtool_sign} ${imgtool_extra} ${input} ${output_hex}
     DEPENDS ${input} ${dependencies}
   )
 
   add_custom_command(OUTPUT ${output_bin}
     COMMAND
-    ${imgtool_sign} ${imgtool_args} ${input} ${output_bin}
+    ${imgtool_sign} ${imgtool_extra} ${input} ${output_bin}
     DEPENDS ${input} ${dependencies}
   )
 
@@ -123,6 +132,6 @@ function(nrf7x_signing_tasks input output_hex output_bin dependencies)
 #    list(APPEND byproducts ${output}.encrypted.hex)
 #
 #    set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-#      ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${unconfirmed_args})
+#      ${imgtool_sign} ${imgtool_extra} --encrypt "${keyfile_enc}" ${unconfirmed_args})
 #  endif()
 endfunction()
