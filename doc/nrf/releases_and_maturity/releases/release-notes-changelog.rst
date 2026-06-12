@@ -269,7 +269,7 @@ nRF Audio (formerly nRF5340 Audio)
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
