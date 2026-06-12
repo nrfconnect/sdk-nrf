@@ -516,6 +516,7 @@ foreach(d APP ${PM_DOMAINS})
   sysbuild_get(${image_name}_CONFIG_SOC_NRF54LM20A_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF54LM20A_CPUAPP KCONFIG)
   sysbuild_get(${image_name}_CONFIG_SOC_NRF54LM20B_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF54LM20B_CPUAPP KCONFIG)
   sysbuild_get(${image_name}_CONFIG_SOC_NRF54LV10A_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF54LV10A_CPUAPP KCONFIG)
+  sysbuild_get(${image_name}_CONFIG_SOC_NRF54LC10A_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF54LC10A_CPUAPP KCONFIG)
 
   if(${image_name}_CONFIG_SOC_SERIES_NRF91)
     # See nRF9160 Product Specification, chapter "UICR"
