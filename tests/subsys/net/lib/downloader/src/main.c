@@ -158,6 +158,32 @@
 "Location: https://server.com/path/to/file.end\r\n" \
 "\r\n\r\n"
 
+/* Redirect with no space after the colon in the Location header (legal: the
+ * space is optional OWS per RFC 7230). The target downgrades to plain http, so
+ * if the first character of the URL were dropped ("ttp://...") parse_protocol()
+ * would fall back to TLS (sec tags present) instead of TCP -- the socket fake
+ * asserts the reconnect uses TCP, catching that regression.
+ */
+#define HTTP_HDR_REDIRECT_NO_SPACE "HTTP/1.1 308 Permanent Redirect\r\n" \
+"Date: Wed, 29 Jan 2025 11:16:09 GMT\r\n" \
+"Content-Type: text/html\r\n" \
+"Content-Length: 164\r\n" \
+"Connection: keep-alive\r\n" \
+"Location:http://server.com/path/to/file.end\r\n" \
+"\r\n\r\n"
+
+/* Redirect whose Location has a valid protocol and host, but no file path.
+ * dl_parse_url_file() rejects it, exercising the file-parse error path in
+ * http_header_parse().
+ */
+#define HTTP_HDR_REDIRECT_BAD_LOCATION "HTTP/1.1 308 Permanent Redirect\r\n" \
+"Date: Wed, 29 Jan 2025 11:16:09 GMT\r\n" \
+"Content-Type: text/html\r\n" \
+"Content-Length: 164\r\n" \
+"Connection: keep-alive\r\n" \
+"Location: https://server.com\r\n" \
+"\r\n\r\n"
+
 #define PAYLOAD "This is the payload!"
 
 #define FD 0
@@ -984,6 +1010,65 @@ static ssize_t z_impl_zsock_recvfrom_http_redirect_and_close(
 	return strlen(HTTP_HDR_REDIRECT);
 }
 
+static ssize_t z_impl_zsock_recvfrom_http_redirect_no_space_and_close(
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
+{
+	switch (z_impl_zsock_recvfrom_fake.call_count) {
+	case 1:
+		memcpy(buf, HTTP_HDR_REDIRECT_NO_SPACE, strlen(HTTP_HDR_REDIRECT_NO_SPACE));
+		return strlen(HTTP_HDR_REDIRECT_NO_SPACE);
+	case 2:
+		/* connection closed */
+		return 0;
+	}
+
+	memcpy(buf, HTTP_HDR_REDIRECT_NO_SPACE, strlen(HTTP_HDR_REDIRECT_NO_SPACE));
+	return strlen(HTTP_HDR_REDIRECT_NO_SPACE);
+}
+
+static ssize_t z_impl_zsock_recvfrom_http_redirect_bad_location(
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
+{
+	memcpy(buf, HTTP_HDR_REDIRECT_BAD_LOCATION, strlen(HTTP_HDR_REDIRECT_BAD_LOCATION));
+	return strlen(HTTP_HDR_REDIRECT_BAD_LOCATION);
+}
+
+/* Fills the whole receive buffer with an unterminated (no final CRLFCRLF) but
+ * otherwise valid header, then delivers the terminator and payload. This drives
+ * http_header_parse() with buf_len == buf_size, exercising the partial-header
+ * backtracking at the very end of the buffer. Built under ASAN (NCS CI), the
+ * pre-fix out-of-bounds read at buf[buf_len] is caught here.
+ */
+static ssize_t z_impl_zsock_recvfrom_http_header_fills_buffer(
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
+{
+	static const char start[] = "HTTP/1.1 200 OK\r\nContent-Length: 20\r\n";
+
+	TEST_ASSERT_EQUAL(FD, sock);
+	TEST_ASSERT(sizeof(dl_buf) >= max_len);
+
+	switch (z_impl_zsock_recvfrom_fake.call_count) {
+	case 1:
+		/* Status line + Content-Length, then pad the rest of the buffer
+		 * with a single unterminated header line (no CRLF at the end) so
+		 * the header does not fit and parsing must wait for more data.
+		 */
+		TEST_ASSERT(max_len > strlen(start));
+		memcpy(buf, start, strlen(start));
+		memset((char *)buf + strlen(start), 'a', max_len - strlen(start));
+		return max_len;
+	case 2:
+		/* Terminate the padded line and the header, then the payload. */
+		memcpy(buf, "\r\n\r\n" PAYLOAD, strlen("\r\n\r\n" PAYLOAD));
+		return strlen("\r\n\r\n" PAYLOAD);
+	}
+
+	return 0;
+}
+
 int z_impl_zsock_socket_http_then_https(int family, int type, int proto)
 {
 	switch (z_impl_zsock_socket_fake.call_count) {
@@ -998,6 +1083,30 @@ int z_impl_zsock_socket_http_then_https(int family, int type, int proto)
 		RESET_FAKE(z_impl_zsock_setsockopt);
 		RESET_FAKE(z_impl_zsock_recvfrom);
 		z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_https_ok;
+		z_impl_zsock_recvfrom_fake.custom_fake =
+			z_impl_zsock_recvfrom_http_header_then_data;
+	}
+
+	return FD;
+}
+
+int z_impl_zsock_socket_https_then_http(int family, int type, int proto)
+{
+	switch (z_impl_zsock_socket_fake.call_count) {
+	case 1:
+		TEST_ASSERT_EQUAL(NET_SOCK_STREAM, type);
+		TEST_ASSERT_EQUAL(NET_IPPROTO_TLS_1_2, proto);
+		break;
+	case 2:
+	default:
+		/* The redirect target is plain http, so the reconnect must be
+		 * plain TCP. A dropped first URL character would land here as TLS.
+		 */
+		TEST_ASSERT_EQUAL(NET_SOCK_STREAM, type);
+		TEST_ASSERT_EQUAL(NET_IPPROTO_TCP, proto);
+		RESET_FAKE(z_impl_zsock_setsockopt);
+		RESET_FAKE(z_impl_zsock_recvfrom);
+		z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
 		z_impl_zsock_recvfrom_fake.custom_fake =
 			z_impl_zsock_recvfrom_http_header_then_data;
 	}
@@ -1394,6 +1503,34 @@ void test_downloader_get_http_partial_header(void)
 	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
 	z_impl_zsock_recvfrom_fake.custom_fake =
 		z_impl_zsock_recvfrom_http_partial_header_then_header_with_data;
+
+	err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* Regression: a partial header that completely fills the receive buffer must be
+ * handled without reading past the buffer (see http_header_parse() backtracking).
+ */
+void test_downloader_get_http_header_fills_buffer(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ipv6_fail_ipv4_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv4;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_http_ipv4_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv4_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_http_header_fills_buffer;
 
 	err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
 	TEST_ASSERT_EQUAL(0, err);
@@ -2580,6 +2717,63 @@ void test_downloader_http_redirect_to_https(void)
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
 
+}
+
+/* Regression: a redirect whose Location header has no space after the colon
+ * must still be followed (the first character of the URL must not be dropped).
+ */
+void test_downloader_http_redirect_no_space_location(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_https_then_http;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_https_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake =
+		z_impl_zsock_recvfrom_http_redirect_no_space_and_close;
+
+	err = downloader_get(&dl, &dl_host_conf_w_sec_tags, HTTPS_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* Regression: a redirect whose Location fails to parse (no file path) must
+ * report an error cleanly via the file-parse error path in http_header_parse().
+ */
+void test_downloader_http_redirect_bad_location(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_https_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_https_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_http_redirect_bad_location;
+
+	err = downloader_get(&dl, &dl_host_conf_w_sec_tags, HTTPS_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
 }
 
 void setUp(void)
