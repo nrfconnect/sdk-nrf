@@ -783,6 +783,7 @@
 
 # Snippets
 /snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
+/snippets/ci-shell/*.rst                  @nrfconnect/ncs-terahertz-doc
 /snippets/coverage_support/               @nrfconnect/ncs-low-level-test
 /snippets/hpf/                            @nrfconnect/ncs-ll-ursus
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
@@ -800,6 +801,7 @@
 /snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
 /snippets/wpa-supplicant-debug/           @krish2718 @sachinthegreen
 /snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
+/snippets/zperf/*.rst                     @nrfconnect/ncs-terahertz-doc
 
 # SoC
 /soc/nordic/                              @nrfconnect/ncs-code-owners
