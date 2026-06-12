@@ -50,81 +50,101 @@ The sample implements the following LwM2M objects:
    *  - LwM2M objects
       - Object ID
       - Thingy:91
+      - Thingy:91 X
       - nRF91 Series DK
    *  - LwM2M Server
       - 1
+      - Yes
       - Yes
       - Yes
    *  - Device
       - 3
       - Yes
       - Yes
+      - Yes
    *  - Connectivity Monitoring
       - 4
+      - Yes
       - Yes
       - Yes
    *  - FOTA
       - 5
       - Yes
       - Yes
+      - Yes
    *  - Location
       - 6
+      - Yes
       - Yes
       - Yes
    *  - Accelerometer
       - 3313
       - Yes
+      - No
       - Simulated
    *  - Color
       - 3335
       - Yes
+      - No
       - Simulated
    *  - Temperature
       - 3303
+      - Yes
       - Yes
       - Simulated
    *  - Pressure
       - 3323
       - Yes
+      - Yes
       - Simulated
    *  - Humidity
       - 3304
       - Yes
+      - Yes
       - Simulated
    *  - Generic Sensor
       - 3300
+      - Yes
       - Yes
       - Simulated
    *  - Light Control
       - 3311
       - Yes
       - Yes
+      - Yes
    *  - Push Button
       - 3347
+      - Yes
       - Yes
       - Yes
    *  - Buzzer
       - 3338
       - Yes
       - No
+      - No
    *  - On/Off Switch
       - 3342
+      - No
       - No
       - Yes
    *  - GNSS Assistance
       - 33625
       - Yes
       - Yes
+      - Yes
    *  - Ground Fix
       - 33626
+      - Yes
       - Yes
       - Yes
    *  - Visible Wi-Fi® Access Point
       - 33627
       - Yes
       - Yes
+      - Yes
    *  - Advanced Firmware Update
       - 33629
+      - Yes
       - Yes
       - Yes
 
@@ -580,7 +600,9 @@ Location assistance:
 
 * :file:`overlay-assist-agnss.conf` - Enables A-GNSS assistance.
 * :file:`overlay-assist-cell.conf` - Enables cell-based location assistance.
-* :file:`overlay-assist-pgps.conf` - Enables P-GPS assistance in the sample.
+* :file:`overlay-assist-pgps.conf` - Enables P-GPS assistance.
+  Requires :file:`overlay-assist-pgps.overlay` as an extra devicetree overlay to allocate a dedicated flash partition for P-GPS data.
+* :file:`overlay-assist-wifi.conf` - Enables Wi-Fi-based location assistance using the nRF7002 EK for Wi-Fi scanning.
 
 Location service requires `Coiote Device Management`_ server and LwM2M v1.1.
 
