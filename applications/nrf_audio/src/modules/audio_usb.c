@@ -335,6 +335,11 @@ static struct uac2_ops ops = {
 
 static struct usbd_context *audio_usbd;
 
+bool audio_usb_is_mic_enabled(void)
+{
+	return terminal_headset_in_enabled;
+}
+
 int audio_usb_start(struct k_msgq *audio_q_tx_in, struct k_msgq *audio_q_rx_in)
 {
 	if (audio_usbd == NULL) {
