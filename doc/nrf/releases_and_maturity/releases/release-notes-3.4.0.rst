@@ -197,12 +197,16 @@ Developing with custom boards
 Security
 ========
 
-* Added support for the X25519 key pair storage in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_supported_key_types>`.
+* Added:
+
+  * Support for X25519 key pair storage in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_supported_key_types>`.
 
 * Renamed IronSide Secure Element to IronSide Secure Enclave.
 
 * Updated:
 
+  * Oberon PSA Crypto from v1.5.4 to v2.0.0.
+    The new version aligns with TF-PSA-Crypto v1.1.0.
   * How the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_PSA_CRYPTO` Kconfig options interact with each other.
     :kconfig:option:`CONFIG_NRF_SECURITY` is now promptless and auto-enabled indirectly by :kconfig:option:`CONFIG_PSA_CRYPTO`.
   * Approach to store keys in the KMU so that AEAD algorithms with non-default (shortened) tag lengths are supported.
@@ -216,10 +220,54 @@ Security
     * The post-quantum cryptography algorithms for nrf_oberon under Key types and key management are now correctly listed as experimental instead of supported.
     * The SPAKE2+ for Matter is now correctly listed as supported instead of experimental.
     * The WPA3-SAE hash-to-element algorithm is now correctly listed as a KDF algorithm, not a PAKE algorithm.
-    * The SHA-256/192 and SHAKE hashing algorithms are now correctly listed as not supported in the CRACEN driver and Experimental in the nrf_oberon driver.
+    * The SHA-256/192 and SHAKE hashing algorithms are now correctly listed as not supported in the CRACEN driver and experimental in the nrf_oberon driver.
       The only exception is the SHAKE256 512 bits algorithm, which is supported in both the CRACEN and nrf_oberon drivers.
 
-* Removed the Kconfig option ``CONFIG_NRF_SECURITY_ADVANCED``.
+* Removed:
+
+  * The ``CONFIG_NRF_SECURITY_ADVANCED`` Kconfig option.
+
+Security libraries
+------------------
+
+* :ref:`nrf_security_readme` library:
+
+  * Updated:
+
+    * The documentation to one library page with sections for PSA Crypto, TLS and X.509, dependencies, and API documentation.
+      The page includes information about how :kconfig:option:`CONFIG_PSA_CRYPTO` and :kconfig:option:`CONFIG_MBEDTLS` are used after the Mbed TLS v4.1 update.
+
+  * Removed:
+
+    * The configuration page for the deprecated legacy crypto backend (:file:`libraries/security/nrf_security/doc/backend_config`).
+      Configure cryptographic features using :ref:`psa_crypto_support` and :ref:`ug_crypto_supported_features` instead.
+
+Mbed TLS
+--------
+
+* Updated Mbed TLS to v4.1.0 (from v3.6.6).
+  For an overview of the changes brought by this update in Mbed TLS and Zephyr, see the following pages:
+
+  * The Mbed TLS sections of the Zephyr v4.4 :ref:`release notes <zephyr_4.4>` and :ref:`migration guide <migration_4.4>`.
+
+  * The release notes from upstream Mbed TLS:
+
+    * https://github.com/Mbed-TLS/mbedtls/releases/tag/mbedtls-4.0.0
+    * https://github.com/Mbed-TLS/TF-PSA-Crypto/releases/tag/tf-psa-crypto-1.0.0
+    * https://github.com/Mbed-TLS/mbedtls/releases/tag/mbedtls-4.1.0
+    * https://github.com/Mbed-TLS/TF-PSA-Crypto/releases/tag/tf-psa-crypto-1.1.0
+
+  As part of this update, the following changes were made:
+
+  * Removed support for legacy, deprecated Mbed TLS Crypto APIs and related tests.
+  * Rearranged Kconfig options related to Mbed TLS in various files under :ref:`nrf_security`.
+  * Removed outdated Kconfig options related to Mbed TLS in various files under :ref:`nrf_security`.
+  * :ref:`nrf_security` now uses the Mbed TLS integration from Zephyr as-is (:kconfig:option:`CONFIG_MBEDTLS_BUILTIN`) while replacing upstream TF-PSA-Crypto with Oberon PSA Crypto (:kconfig:option:`CONFIG_TF_PSA_CRYPTO_CUSTOM`).
+
+  From this update onwards:
+
+  * Enable :kconfig:option:`CONFIG_MBEDTLS` only if you use TLS or X.509.
+  * For cryptographic operations, enable only :kconfig:option:`CONFIG_PSA_CRYPTO`.
 
 Trusted Firmware-M (TF-M)
 -------------------------
@@ -244,6 +292,7 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
+* Added the :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
 * Added recommendations for sizing the persistent storage partitions to handle continuous storage of the replay protection list.
 
 DECT NR+
@@ -297,7 +346,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Connectivity bridge
 -------------------
 
-|no_changes_yet_note|
+* Updated to use devicetree (DTS) for defining NVM partitions instead of the deprecated :ref:`partition_manager`.
 
 High-Performance Framework (HPF)
 --------------------------------
@@ -396,7 +445,20 @@ Bluetooth samples
     * Support for connecting multiple HID peripherals.
 
   * Updated the sample to use deferred logging to reduce the overhead of logging.
-    This may cause messages to be delayed up to around 100 ms.
+    This can cause messages to be delayed up to around 100 ms.
+
+* :ref:`direct_test_mode` sample:
+
+  * Updated:
+
+    * Use of the :ref:`nrfxlib:softdevice_controller` to run DTM commands.
+
+  * Removed:
+
+    * USB support.
+    * CTE receiver support.
+      CTE transmitter support is still available.
+    * Antenna switching support.
 
 Bluetooth Mesh samples
 ----------------------
@@ -459,6 +521,10 @@ Cellular samples
   * All nRF Cloud REST samples as the nRF Cloud REST library has been removed.
   * Usage of nRF Cloud logging in samples as the feature is being sunset.
   * The Cellular: nRF Cloud multi-service sample.
+
+* :ref:`crypto_tls` sample:
+
+  * Updated the TLS version support section after the Mbed TLS v4.1.0 update.
 
 * :ref:`gnss_sample` sample:
 
@@ -550,6 +616,16 @@ Networking samples
 
   Flash and SRAM partitions are supplied using devicetree overlays instead.
 
+* :ref:`mqtt_sample` sample:
+
+  * Added:
+
+    * The :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384` Kconfig option to the TLS overlay files, which is required by the CA certificate of ``mqtt.nordicsemi.academy``.
+
+  * Updated:
+
+    * The default MQTT broker from ``test.mosquitto.org`` to ``mqtt.nordicsemi.academy`` because of recurring instability in the previous broker.
+
 * :ref:`azure_iot_hub` sample:
 
   * Added support for the nRF54LM20 DK with the nRF7002-EB II shield.
@@ -638,7 +714,7 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* Fixed an issue where the low power UART may fail after a reset if the reset occurs during transmission.
+* Fixed an issue where the low power UART can fail after a reset if the reset occurs during transmission.
 
 Wi-Fi drivers
 -------------
@@ -695,11 +771,6 @@ Gazell libraries
 
 |no_changes_yet_note|
 
-Security libraries
-------------------
-
-|no_changes_yet_note|
-
 Modem libraries
 ---------------
 
@@ -727,6 +798,10 @@ Multiprotocol Service Layer libraries
 
 Libraries for networking
 ------------------------
+
+* :ref:`lib_azure_fota` library:
+
+  * Fixed a potential NULL-pointer dereference that occurred when the device twin JSON parsers used the ``jobId``, ``fwUpdateStatus``, ``currentFwVersion``, ``pendingFwVersion``, ``host``, and ``path`` fields without verifying that the JSON nodes were strings.
 
 * :ref:`lib_nrf_provisioning` library:
 
@@ -865,6 +940,11 @@ Memfault integration
     The backend now locates its storage from a fixed partition labeled ``memfault_coredump_partition`` when Partition Manager is disabled, while continuing to support Partition Manager when enabled.
   * The :ref:`snippet-memfault-coredump` snippet that supplies a board-specific partition overlay for flash-backed coredump storage on common DKs and Thingy:91 or Thingy:91 X.
 
+* Updated:
+
+  * Memfault to version 1.40.0.
+    See the `Memfault firmware SDK changelog`_ for details.
+
 AVSystem integration
 --------------------
 
@@ -941,6 +1021,7 @@ Documentation
   * Description of the MRAM auto-powerdown tradeoff in the :ref:`ug_nrf54h20_pm_optimization` documentation page.
   * MSD disable step in the :ref:`ug_nrf54h20_gs` guide.
   * MRAM11 IronSide SE update limitations in the :ref:`ug_nrf54h20_ironside_update` and :ref:`ug_nrf54h20_ironside_services` documentation pages.
+  * The :ref:`ug_nrf54h20_ironside_se_snapshot` documentation page for using IronSide SE snapshot features.
 
 Updated:
 

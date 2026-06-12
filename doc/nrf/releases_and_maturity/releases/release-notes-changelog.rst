@@ -133,7 +133,7 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-* Added the :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
+|no_changes_yet_note|
 
 DECT NR+
 --------

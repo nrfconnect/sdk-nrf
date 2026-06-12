@@ -401,7 +401,7 @@ Matter bridge
 
 * Added support for the nRF54LM20B SoC.
 * Updated partitions mapping for the nRF7002 DK in the application.
-  See the `migration guide <Migration guide for nRF Connect SDK v3.3.0_>`_ for more information.
+  See the `migration guide <Migration notes for nRF Connect SDK v3.3.0_>`_ for more information.
 * Removed the ``onoff_plug`` snippet from the application.
   To build the application with the ``onoff_plug`` functionality, use the :file:`overlay-onoff_plug.conf` configuration overlay file.
 
@@ -797,7 +797,7 @@ Matter samples
 
   * The documentation for all Matter samples and applications to make it more consistent and easier to maintain and read.
   * Partitions mapping for the nRF7002 DK in all Matter samples.
-    See the `migration guide <Migration guide for nRF Connect SDK v3.3.0_>`_ for more information.
+    See the `migration guide <Migration notes for nRF Connect SDK v3.3.0_>`_ for more information.
 
 * :ref:`matter_light_switch_sample` sample:
 
@@ -905,7 +905,7 @@ Thread samples
   * :ref:`coap_server_sample`
 
 * Removed all application-specific snippets from the Thread samples.
-  Refer to the `migration guide <Migration guide for nRF Connect SDK v3.3.0_>`_ to see the list of changes.
+  Refer to the `migration guide <Migration notes for nRF Connect SDK v3.3.0_>`_ to see the list of changes.
 
 Wi-Fi samples
 -------------
@@ -971,7 +971,7 @@ Bluetooth libraries and services
       * All Kconfig options have been renamed from ``CONFIG_BT_FAST_PAIR_FMDN_*`` to ``CONFIG_BT_FAST_PAIR_FHN_*``.
         Deprecated FMDN Kconfig options remain available under the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` option tree.
       * The FMDN implementation directory has been renamed from :file:`subsys/bluetooth/services/fast_pair/fmdn/` to :file:`subsys/bluetooth/fast_pair/fhn/`.
-        See the `migration guide <Migration guide for nRF Connect SDK v3.3.0_>`_ for details.
+        See the `migration guide <Migration notes for nRF Connect SDK v3.3.0_>`_ for details.
 
 * :ref:`bt_mesh_dk_prov` module:
 
