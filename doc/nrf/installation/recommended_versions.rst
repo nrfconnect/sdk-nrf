@@ -346,6 +346,10 @@ For firmware OS support, see :ref:`the table at the top of the page <supported_O
     - Not supported
     - Not supported
     - Not supported
+  * - `Linux - Debian 12`_ (see note)
+    - Not supported
+    - Not supported
+    - Tier 1
   * - `macOS 26`_
     - n/a
     - Tier 3
@@ -362,6 +366,10 @@ For firmware OS support, see :ref:`the table at the top of the page <supported_O
     - n/a
     - Tier 3
     - Tier 3
+
+.. note::
+
+   nRF Util for Linux Debian 12 does not support SDK toolchain management using the ``nrfutil sdk-manager`` command.
 
 Tier definitions
   .. toggle:: Support levels
