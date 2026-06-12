@@ -460,6 +460,11 @@ psa_status_t psa_get_key_attributes(
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
+void psa_reset_key_attributes(psa_key_attributes_t *attributes)
+{
+	safe_memzero(attributes, sizeof(psa_key_attributes_t));
+}
+
 #if CONFIG_PSA_CORE_LITE_HAS_RSA
 
 psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
