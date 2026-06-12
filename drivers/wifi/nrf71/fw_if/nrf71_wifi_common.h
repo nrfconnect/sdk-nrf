@@ -230,6 +230,8 @@ enum nrf_wifi_sys_commands {
 	NRF_WIFI_CMD_UPDATE_XO,
 	/** Command to configure LMAC tuning parameters */
 	NRF_WIFI_CMD_LMAC_TUNING_PARAMS,
+	/** command to configure MAC/PHY parameters in radio test mode */
+	NRF_WIFI_CMD_MAC_PARAM_UPDATE,
 };
 
 /**
@@ -776,6 +778,10 @@ struct rpu_conf_params {
 	unsigned short int capture_length;
 	/** Capture timeout in seconds */
 	unsigned short int capture_timeout;
+	/** ED threshold for OFDM dynamic capture (stored as 8-bit signed value) */
+	unsigned char ed_thresh_ofdm;
+	/** ED threshold for DSSS dynamic capture (stored as 8-bit signed value) */
+	unsigned char ed_thresh_dsss;
 	/** Configure WLAN to bypass regulatory */
 	unsigned char bypass_regulatory;
 	/** Two letter country code (00: Default for WORLD) */
@@ -802,6 +808,8 @@ struct rpu_conf_params {
 	unsigned int rf_params_addr[NUM_WIFI_PARAMS];
 	/** VTF buffer address */
 	unsigned int vtf_buffer_addr;
+	/** BSS check in RX filter: 0=disable, 1=enable */
+	unsigned char bss_check_enable;
 } __NRF_WIFI_PKD;
 
 /**
@@ -868,6 +876,18 @@ struct nrf_wifi_cmd_rx {
 	struct nrf_wifi_sys_head sys_head;
 	/** rx configuration parameters @ref rpu_conf_rx_radio_test_params */
 	struct rpu_conf_rx_radio_test_params conf;
+} __NRF_WIFI_PKD;
+
+/**
+ * @brief This structure defines the command used to configure different MAC/PHY
+ * parameters in radio test or rf test mode.
+ *
+ */
+struct nrf_wifi_cmd_mac_param_update {
+	/** UMAC header, @ref nrf_wifi_sys_head */
+	struct nrf_wifi_sys_head sys_head;
+	/** MAC/PHY configuration parameters @ref rpu_conf_params */
+	struct rpu_conf_params conf;
 } __NRF_WIFI_PKD;
 
 /**
@@ -1526,7 +1546,7 @@ struct nrf_wifi_cmd_gi_config {
 
 #define NRF_WIFI_LMAC_MAX_RX_BUFS 256
 
-
+#define HW_SLEEP_WITH_LP_RF 3
 #define HW_SLEEP_ENABLE 2
 #define SW_SLEEP_ENABLE 1
 #define SLEEP_DISABLE 0
@@ -1726,7 +1746,27 @@ enum nrf_wifi_rf_test {
 	NRF_WIFI_RF_TEST_XO_CALIB,
 	NRF_WIFI_RF_TEST_XO_TUNE,
 	NRF_WIFI_RF_TEST_GET_BAT_VOLT,
-	NRF_WIFI_SET_TEMP_VOLT_RECAL_PARAMS,
+    /* Internal but may be required to be called from host */
+	NRF_WIFI_RF_TEST_SET_REGS = 64,
+	NRF_WIFI_RF_TEST_READ_REGS,
+	NRF_WIFI_RF_TEST_SET_MEM,
+	NRF_WIFI_RF_TEST_READ_MEM,
+	NRF_WIFI_RF_TEST_PATCH_SETTINGS,
+	NRF_WIFI_RH_START,
+	NRF_WIFI_RH_STOP,
+	NRF_WIFI_RH_ONESHOT,
+	NRF_WIFI_RF_TEST_GET_STATS,
+	/* Internal */
+	NRF_WIFI_RF_PERFORM_CALIBRATION = 96,
+	NRF_WIFI_RF_APPLY_COMPENSATION,
+	NRF_WIFI_RF_READ_COMP_RESULTS,
+	NRF_WIFI_RF_TEST_ENABLE_VT_CALIB,
+	NRF_WIFI_RF_TEST_ENABLE_VT_COMP,
+	NRF_WIFI_RF_SET_CALIB_REGS,
+	NRF_WIFI_RF_TEST_ADPLL_CAP_NOT_LOCKED,
+	NRF_WIFI_RF_TEST_ADPLL_CAP_NORMAL,
+	/* Internal */
+	NRF_WIFI_SET_TEMP_VOLT_RECAL_PARAMS = 128,
 	NRF_WIFI_SET_CALIB_CTRL_PARAMS,
 	NRF_WIFI_SET_TX_POWER_CEILINGS,
 	NRF_WIFI_SET_TX_POWER_OFFSETS,
@@ -1737,21 +1777,6 @@ enum nrf_wifi_rf_test {
 	NRF_WIFI_SET_EVM_AFFECTED_CHANNELS,
 	NRF_WIFI_SET_ANTENNA_GAIN_PARAMS,
 	NRF_WIFI_SET_MULTIPATH_DET_PARAMS,
-	NRF_WIFI_RH_START,
-	NRF_WIFI_RH_STOP,
-	NRF_WIFI_RF_TEST_SET_REGS = 128,
-	NRF_WIFI_RF_TEST_READ_REGS,
-	NRF_WIFI_RF_TEST_SET_MEM,
-	NRF_WIFI_RF_TEST_READ_MEM,
-	NRF_WIFI_RF_PERFORM_CALIBRATION,
-	NRF_WIFI_RF_APPLY_COMPENSATION,
-	NRF_WIFI_RF_READ_COMP_RESULTS,
-	NRF_WIFI_RF_TEST_PATCH_SETTINGS,
-	NRF_WIFI_RF_TEST_ENABLE_VT_CALIB,
-	NRF_WIFI_RF_TEST_ENABLE_VT_COMP,
-	NRF_WIFI_RF_SET_CALIB_REGS,
-	NRF_WIFI_RF_TEST_ADPLL_CAP_PARAMS,
-	NRF_WIFI_RF_TEST_GET_STATS,
 	NRF_WIFI_RF_TEST_MAX,
 
 };
@@ -1768,7 +1793,24 @@ enum nrf_wifi_rf_test_event {
 	NRF_WIFI_RF_TEST_EVENT_XO_CALIB,
 	NRF_WIFI_RF_TEST_EVENT_XO_TUNE,
 	NRF_WIFI_RF_TEST_EVENT_GET_BAT_VOLT,
-	NRF_WIFI_EVENT_SET_TEMP_VOLT_RECAL_PARAMS,
+	NRF_WIFI_RF_TEST_EVENT_SET_REGS = 64,
+	NRF_WIFI_RF_TEST_EVENT_READ_REGS,
+	NRF_WIFI_RF_TEST_EVENT_SET_MEM,
+	NRF_WIFI_RF_TEST_EVENT_READ_MEM,
+	NRF_WIFI_RF_TEST_EVENT_PATCH_SETTINGS,
+	NRF_WIFI_RH_TEST_EVENT_START,
+	NRF_WIFI_RH_TEST_EVENT_STOP,
+	NRF_WIFI_RH_TEST_EVENT_ONESHOT,
+	NRF_WIFI_RF_TEST_EVENT_GET_STATS,
+	NRF_WIFI_RF_TEST_EVENT_PERFORM_CALIBRATION = 96,
+	NRF_WIFI_RF_TEST_EVENT_APPLY_COMPENSATION,
+	NRF_WIFI_RF_TEST_EVENT_READ_COMP_RESULTS,
+	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_CALIB,
+	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_COMP,
+	NRF_WIFI_RF_TEST_EVENT_SET_CALIB_REGS,
+	NRF_WIFI_RF_TEST_EVENT_ADPLL_CAP_NOT_LOCKED,
+	NRF_WIFI_RF_TEST_EVENT_ADPLL_CAP_NORMAL,
+	NRF_WIFI_EVENT_SET_TEMP_VOLT_RECAL_PARAMS = 128,
 	NRF_WIFI_EVENT_SET_CALIB_CTRL_PARAMS,
 	NRF_WIFI_EVENT_SET_TX_POWER_CEILINGS,
 	NRF_WIFI_EVENT_SET_TX_POWER_OFFSETS,
@@ -1779,28 +1821,18 @@ enum nrf_wifi_rf_test_event {
 	NRF_WIFI_EVENT_SET_EVM_AFFECTED_CHANNELS,
 	NRF_WIFI_EVENT_SET_ANTENNA_GAIN_PARAMS,
 	NRF_WIFI_EVENT_SET_MULTIPATH_DET_PARAMS,
-	NRF_WIFI_RH_TEST_EVENT_START,
-	NRF_WIFI_RH_TEST_EVENT_STOP,
-	NRF_WIFI_RF_TEST_EVENT_SET_REGS = 128,
-	NRF_WIFI_RF_TEST_EVENT_READ_REGS,
-	NRF_WIFI_RF_TEST_EVENT_SET_MEM,
-	NRF_WIFI_RF_TEST_EVENT_READ_MEM,
-	NRF_WIFI_RF_TEST_EVENT_PERFORM_CALIBRATION,
-	NRF_WIFI_RF_TEST_EVENT_APPLY_COMPENSATION,
-	NRF_WIFI_RF_TEST_EVENT_READ_COMP_RESULTS,
-	NRF_WIFI_RF_TEST_EVENT_PATCH_SETTINGS,
-	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_CALIB,
-	NRF_WIFI_RF_TEST_EVENT_ENABLE_VT_COMP,
-	NRF_WIFI_RF_TEST_EVENT_SET_CALIB_REGS,
-	NRF_WIFI_RF_TEST_EVENT_ADPLL_CAP_PARAMS,
-	NRF_WIFI_RF_TEST_EVENT_GET_STATS,
-	NRF_WIFI_RF_TEST_EVENT_MAX,
 
+	NRF_WIFI_RF_TEST_EVENT_MAX,
 };
 
 #define MAX_REGS_CONF 8
 #define MAX_MEM_CONF 8
 #define CAL_MEM_SIZE 2048
+
+#define NRF_WIFI_RF_TEST_RX_CAPTURE_MAX_SAMPLES 12256
+#define MIN_CAPTURE_LEN 0
+#define RX_CAPTURE_TIMEOUT_CONST 11
+#define CAPTURE_DURATION_IN_SEC 600
 
 /* Holds the RX capture related info */
 struct nrf_wifi_rf_test_capture_params {
@@ -1832,6 +1864,10 @@ struct nrf_wifi_rf_test_capture_params {
 	 * It supports 64dB range.The increment happens lineraly 2dB/step
 	 */
 	unsigned char bb_gain;
+
+	/* OFDM / DSSS ED thresholds in dBm for NRF_WIFI_RF_TEST_RX_DYN_PKT_CAP */
+	unsigned char ed_thresh_ofdm;
+	unsigned char ed_thresh_dsss;
 
 	/* address of the capture data */
 	unsigned int *capture_addr;
@@ -3089,6 +3125,17 @@ struct lmac_tuning_params {
 	unsigned int  offloadTXChecksum;
 	unsigned int offloadRXChecksum;
 	unsigned int  internal_recovery_enable;
+	unsigned int  ppmError;
+	unsigned int reSyncTime;
+	unsigned int syncTSF;
+	unsigned int raw_tx_inactivity_timer;
+	unsigned int adjustEDCACW;
+	unsigned int setCWforAC;
+	unsigned int ftm_delay;
+	unsigned int connection_inactivity_timer;
+	int tod_offset;
+	int toa_offset;
+	unsigned int clock_mode;
 	/* reserved for patching */
 	unsigned int reserved[16];
 } __NRF_WIFI_PKD;
@@ -3113,12 +3160,25 @@ struct nrf_wifi_set_adpll_capture_params {
 	/* Control for the ADPLL capture module */
 	unsigned char enabled;
 
+	/* Enable Trace data logging */
+	unsigned char enable_tracing;
+
 	/* Number of samples to be captured. */
 	unsigned short int cap_len;
 
 	/* address of the adpll capture data */
 	unsigned int *cap_addr;
 } __NRF_WIFI_PKD;
+
+/* ADPLL capture-related info */
+typedef struct nrf_wifi_adpll_capture_info {
+	unsigned char channel_num;
+	unsigned char freq_band;
+	unsigned char power_mode;
+	unsigned char status;
+	unsigned int *cap_addr;
+} __NRF_WIFI_PKD nrf_wifi_adpll_capture_info_t;
+
 /**
  * @}
  */

@@ -18,7 +18,6 @@
 #include "nrf71_wifi_rf.h"
 #include "nrf71_wifi_common.h"
 
-#define MAX_NRF_WIFI_UMAC_CMD_SIZE 400
 #define RPU_DATA_CMD_SIZE_MAX_TX 148
 /**
  * @brief The host can send the following commands to the RPU.
