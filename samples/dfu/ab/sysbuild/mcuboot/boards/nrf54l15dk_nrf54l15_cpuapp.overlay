@@ -4,4 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../nrf54l15dk_nrf54l15_cpuapp_common.dtsi"
+#include "../../../boards/nrf54l15dk_nrf54l15_cpuapp.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
