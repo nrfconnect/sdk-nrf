@@ -21,12 +21,14 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
-#include <zephyr/drivers/gpio.h>
-#include <zephyr/net/ethernet_mgmt.h>
 
 #ifdef CONFIG_WIFI_READY_LIB
 #include <net/wifi_ready.h>
 #endif /* CONFIG_WIFI_READY_LIB */
+
+#ifdef CONFIG_LED_SUPPORT
+#include "led.h"
+#endif /* CONFIG_LED_SUPPORT */
 
 #if defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
@@ -37,26 +39,18 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 
 #define WIFI_SHELL_MODULE "wifi"
 
+#ifdef CONFIG_MAC_CONFIG_SUPPORT
+#include <zephyr/net/ethernet_mgmt.h>
 /* DTS node for the Wi-Fi interface - MAC address from local-mac-address property */
 #define WIFI_NODE DT_CHOSEN(zephyr_wifi)
 static const uint8_t wifi_mac_addr[6] = DT_PROP_OR(WIFI_NODE, local_mac_address, {0});
+#endif
 
 #define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT |		\
 				NET_EVENT_WIFI_DISCONNECT_RESULT)
 
 #define MAX_SSID_LEN        32
 #define STATUS_POLLING_MS   300
-
-/* 1000 msec = 1 sec */
-#define LED_SLEEP_TIME_MS   100
-
-/* The devicetree node identifier for the "led0" alias. */
-#define LED0_NODE DT_ALIAS(led0)
-/*
- * A build error on this line means your board is unsupported.
- * See the sample documentation for information on how to fix this.
- */
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 static struct net_mgmt_event_callback net_shell_mgmt_cb;
@@ -78,35 +72,6 @@ static struct {
 		uint8_t all;
 	};
 } context;
-
-void toggle_led(void)
-{
-	int ret;
-
-	if (!device_is_ready(led.port)) {
-		LOG_ERR("LED device is not ready");
-		return;
-	}
-
-	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-	if (ret < 0) {
-		LOG_ERR("Error %d: failed to configure LED pin", ret);
-		return;
-	}
-
-	while (1) {
-		if (context.connected) {
-			gpio_pin_toggle_dt(&led);
-			k_msleep(LED_SLEEP_TIME_MS);
-		} else {
-			gpio_pin_set_dt(&led, 0);
-			k_msleep(LED_SLEEP_TIME_MS);
-		}
-	}
-}
-
-K_THREAD_DEFINE(led_thread_id, 1024, toggle_led, NULL, NULL, NULL,
-		7, 0, 0);
 
 static int cmd_wifi_status(void)
 {
@@ -158,6 +123,10 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 	} else {
 		LOG_INF("Connected");
 		context.connected = true;
+#ifdef CONFIG_LED_SUPPORT
+		led_set_connected(true);
+#endif /* CONFIG_LED_SUPPORT */
+
 	}
 
 	context.connect_result = true;
@@ -180,6 +149,9 @@ static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
 	} else {
 		LOG_INF("Received Disconnected");
 		context.connected = false;
+#ifdef CONFIG_LED_SUPPORT
+		led_set_connected(false);
+#endif /* CONFIG_LED_SUPPORT */
 	}
 
 	cmd_wifi_status();
@@ -261,6 +233,7 @@ int bytes_from_str(const char *str, uint8_t *bytes, size_t bytes_len)
 	return 0;
 }
 
+#ifdef CONFIG_MAC_CONFIG_SUPPORT
 static bool is_mac_addr_set(struct net_if *iface)
 {
 	struct net_linkaddr *linkaddr = net_if_get_link_addr(iface);
@@ -274,6 +247,7 @@ static bool is_mac_addr_set(struct net_if *iface)
 
 	return net_eth_is_addr_valid(&wifi_addr);
 }
+#endif /* CONFIG_MAC_CONFIG_SUPPORT */
 
 int start_app(void)
 {
@@ -311,6 +285,7 @@ int start_app(void)
 		CONFIG_NET_CONFIG_MY_IPV4_NETMASK,
 		CONFIG_NET_CONFIG_MY_IPV4_GW);
 
+#ifdef CONFIG_MAC_CONFIG_SUPPORT
 	/* Set MAC from DTS if interface has no valid MAC and DTS provides one */
 	if (!is_mac_addr_set(net_if_get_default())) {
 		if (!net_eth_is_addr_valid((struct net_eth_addr *)wifi_mac_addr)) {
@@ -383,6 +358,7 @@ int start_app(void)
 							net_if_get_link_addr(iface)->addr,
 							net_if_get_link_addr(iface)->len));
 	}
+#endif /* CONFIG_MAC_CONFIG_SUPPORT */
 
 	while (1) {
 #ifdef CONFIG_WIFI_READY_LIB
