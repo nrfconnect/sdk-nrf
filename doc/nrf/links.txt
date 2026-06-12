@@ -131,6 +131,7 @@
 .. _`nrfx API documentation`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/index.html
 .. _`nrfx 4.0 migration note`: https://docs.nordicsemi.com/bundle/nrfx_4.0.1/page/md_doc_nrfx_4_0_migration_guide.html
 .. _`nrfx NVMC driver`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/group_nrfx_nvmc.html
+.. _`nrfx SPIM driver`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/group_nrfx_spim.html
 .. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
 .. _`Changelog for nrfx 2.3.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-230---2020-08-19
 .. _`Changelog for nrfx 2.4.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-240---2020-11-13
@@ -251,6 +252,8 @@
 .. _`Zephyr hostap fork`: https://github.com/zephyrproject-rtos/hostap
 
 .. _`tfm_secure_peripheral_partition.yaml`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/tfm/tfm_secure_peripheral/secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in
+
+.. _`nrfx SPIM sample`: https://github.com/zephyrproject-rtos/hal_nordic/tree/master/nrfx/samples/src/nrfx_spim
 
 .. ### Source: github.io
 
@@ -542,6 +545,7 @@
 .. _`nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/cryptocell.html
 .. _`nRF9160 Key management unit`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/kmu.html
 .. _`nRF9160 OTP`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/kmu.html#kmu_otp
+.. _`nRF9160 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/spim.html
 
 .. _`nRF9160 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/nrf9160_board_controller.html
@@ -554,6 +558,7 @@
 .. _`nRF9161 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/gps.html
 .. _`nRF9161 DECT NR+ specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dect.html
 .. _`nRF9161 System Protection Unit`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/spu.html
+.. _`nRF9161 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/spim.html
 
 .. _`nRF9161 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9161 DK board control section in the nRF9161 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
@@ -563,6 +568,7 @@
 .. _`nRF9151 DECT NR+ specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dect.html
 .. _`nRF9151 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/gps.html
 .. _`nRF9151 Key management unit`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/kmu.html
+.. _`nRF9151 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/spim.html
 
 .. _`nRF9151 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9151 DK board control section in the nRF9151 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
@@ -616,14 +622,17 @@
 .. _`nRF54L15 RRAM programming parameters`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/_tmp/nrf54l15/autodita/RRAMC/parameters.rram_programming.html
 .. _`nRF54L15 CRACEN`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/cracen.html
 .. _`nRF54L15 Power and clock management`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/pmu.html
+.. _`nRF54L15 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/spim.html
 
 .. _`nRF54LM20A Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LM20A/page/keyfeatures_html5.html
 .. _`nRF54LM20 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lm20_dk/page/UG/nRF54LM20_DK/intro/intro.html
 .. _`nRF54LM20A Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lm20a/page/COMP/nrf54lm20a/nrf54lm20a_comp_matrix.html
+.. _`nRF54LM20A SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf54LM20A/page/spim.html
 
 .. _`nRF54LV10A Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LV10A/page/keyfeatures_html5.html
 .. _`nRF54LV10 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lv10_dk/page/UG/nRF54LV10_DK/intro/intro.html
 .. _`nRF54LV10 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lv10a/page/COMP/nrf54lv10a/nrf54lv10a_comp_matrix.html
+.. _`nRF54LV10A SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf54LV10A/page/spim.html
 
 .. _`nRF54LS05A/B Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LS05A/page/keyfeatures_html5.html
 
@@ -633,6 +642,7 @@
 .. _`nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/cryptocell.html
 .. _`nRF5340 Key management unit`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/kmu.html
 .. _`nRF5340 OTP`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/kmu.html#kmu_otp
+.. _`nRF5340 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/spim.html
 
 .. _`nRF5340 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf5340_dk/page/UG/dk/intro.html
 .. _`Execute in place page in the nRF5340 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/qspi.html#d1789e363
@@ -652,23 +662,30 @@
 .. _`nRF52840 DK Debug output`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dk/page/UG/dk/hw_debug_out.html
 .. _`nRF52840 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf52840/page/COMP/nrf52840/nrf52840_comp_matrix.html
 .. _`nRF52840 DK Access Control Lists`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/acl.html
+.. _`nRF52840 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/spim.html
 
 .. _`nRF52833 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52833&labelkey=product-specification
 .. _`nRF52833 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52833_dk/page/UG/dk/intro.html
+.. _`nRF52833 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf52833/page/spim.html
 
 .. _`nRF52 Series`: https://docs.nordicsemi.com/category/nrf-52-series
 .. _`nRF52832 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf52832/page/nrf52832_ps.html
 .. _`nRF52832 Temperature Sensor Electrical Specification`: https://docs.nordicsemi.com/bundle/ps_nrf52832/page/temp.html#d949e9367
+.. _`nRF52832 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf52832/page/spim.html
 
 .. _`nRF52 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52832_dk/page/UG/dk/intro.html
 
 .. _`nRF52820 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf52820/page/keyfeatures_html5.html
+.. _`nRF52820 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf52820/page/spim.html
 
 .. _`nRF52811 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52811&labelkey=product-specification
+.. _`nRF52811 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf52811/page/spim.html
 
 .. _`nRF52810 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52810&labelkey=product-specification
+.. _`nRF52810 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf52810/page/spim.html
 
 .. _`nRF52805 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52805&labelkey=product-specification
+.. _`nRF52805 SPIM`: https://docs.nordicsemi.com/bundle/ps_nrf52805/page/spim.html
 
 .. _`nRF21540`:
 .. _`nRF21540 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/intro.html
@@ -2109,7 +2126,15 @@
 .. _`BICR configuration example in DTS format`: https://github.com/nrfconnect/sdk-zephyr/blob/v3.7.99-ncs2/boards/nordic/nrf54h20dk/nrf54h20dk_bicr.dtsi
 .. _`BICR configuration example in JSON format`: https://github.com/nrfconnect/sdk-zephyr/blob/v4.0.99-ncs1/boards/nordic/nrf54h20dk/bicr.json
 
+.. _`Zephyr's device driver API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers
+.. _`Zephyr's pinctrl pin configuration`: https://docs.zephyrproject.org/latest/hardware/pinctrl/index.html#pin-configuration
+.. _`Zephyr's pinctrl API`: https://docs.zephyrproject.org/latest/doxygen/html/group__pinctrl__interface.html
+.. _`Zephyr's SPI driver API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/spi.h
+.. _`Zephyr's SPI RTIO driver API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/spi/rtio.h
+.. _`Zephyr's sensor driver API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/sensor.h
 .. _`Zephyr's nRF clock control API extensions`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/clock_control/nrf_clock_control.h
+.. _`Zephyr's SPI driver twister test`: https://github.com/nrfconnect/sdk-zephyr/tree/main/tests/drivers/spi/spi_loopback
+.. _`Zephyr's pressure sensor sample`: https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/sensor/pressure_interrupt
 .. _`clocks devicetree macro API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/devicetree/clocks.h
 
 .. _`nRF54H20 DK memory map`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf54h20dk/nrf54h20dk_nrf54h20-memory_map.dtsi
