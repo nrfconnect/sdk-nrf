@@ -582,7 +582,7 @@ int main(void)
 
 	struct bt_scan_init_param scan_params = {
 		.scan_param = NULL,
-		.conn_param = BT_LE_CONN_PARAM(6, 6, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
+		.conn_param = BT_LE_CONN_PARAM(12, 12, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
 		.connect_if_match = 1};
 
 	err = scan_init(&scan_params);
