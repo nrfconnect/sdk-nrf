@@ -538,7 +538,15 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* :ref:`west_sbom` script:
+
+* Added:
+
+  * ``--package-download-format`` option to control the SPDX PackageDownloadLocation format.
+
+* Updated:
+
+  * The SPDX output format from ``SPDX-2.2`` to ``SPDX-2.3``.
 
 Integrations
 ============

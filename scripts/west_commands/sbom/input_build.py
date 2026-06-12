@@ -267,7 +267,6 @@ def register_toolchain_for_build(data: Data, build_dir: Path):
     pkg_version = version or detect_toolchain_version(resolved) or 'UNKNOWN'
     package.id = f'TOOLCHAIN#{pkg_name.upper()}#{pkg_version.upper()}'
     package.name = pkg_name
-    package.url = str(resolved)
     package.version = pkg_version
     if args.package_supplier:
         package.supplier = args.package_supplier
