@@ -1,7 +1,6 @@
-# Copyright (c) 2022 Nordic Semiconductor
+# Copyright (c) 2025 Nordic Semiconductor
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 # Suppress "unique_unit_address_if_enabled" to handle the following overlaps:
-# - power@40000000 & clock@40000000 & hfclk@40000000 & lfclk@40000000 & bprot@40000000
-# - acl@4001e000 & flash-controller@4001e000
+# - power@10e000 & clock@X010e000 & xo@X010e000 & lfclk@X010e000
 list(APPEND EXTRA_DTC_FLAGS "-Wno-unique_unit_address_if_enabled")

@@ -11,6 +11,8 @@ tests:
     extra_args:
       - SB_EXTRA_CONF_FILE=sysbuild_kmu.conf
       - mcuboot_CONFIG_FPROTECT=n
+      - CONFIG_CLOCK_CONTROL_NRFX_XO=n
+      - mcuboot_CONFIG_CLOCK_CONTROL_NRFX_XO=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
