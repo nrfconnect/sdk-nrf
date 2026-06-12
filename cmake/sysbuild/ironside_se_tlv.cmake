@@ -42,6 +42,69 @@ function(generate_ironside_se_tlvs out_extra_imgtool_args)
   set(${out_extra_imgtool_args} "${extra_imgtool_args}" PARENT_SCOPE)
 endfunction()
 
+# Generate IronSide SE TLV artifacts to be included in the image metadata.
+# Expects to be called from a sysbuild-level image signing script.
+function(generate_ironside_se_tlvs_sysbuild image out_extra_imgtool_args out_extra_depends)
+  set(ironside_se_tlv_args)
+  set(ironside_se_tlv_depends)
+
+  set(image_has_periphconf)
+  set(image_periphconf_strip)
+  sysbuild_get(image_has_periphconf IMAGE ${image} VAR CONFIG_NRF_PERIPHCONF_SECTION KCONFIG)
+  sysbuild_get(image_periphconf_strip
+    IMAGE ${image} VAR CONFIG_NRF_PERIPHCONF_SECTION_STRIP KCONFIG
+  )
+
+  if(image_has_periphconf AND NOT image_periphconf_strip)
+    set(image_elf)
+    sysbuild_get(image_elf IMAGE ${image} VAR BYPRODUCT_KERNEL_ELF_NAME CACHE)
+    list(APPEND ironside_se_tlv_args --elf ${image_elf})
+    list(APPEND ironside_se_tlv_depends ${image_elf})
+  else()
+    return()
+  endif()
+
+  # The TLV contains an offset into the image data that is relative to the start
+  # of the firmware.
+  set(rom_start_offset)
+  sysbuild_get(rom_start_offset IMAGE ${image} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+  dt_chosen(code_partition PROPERTY "zephyr,code-partition" TARGET "${image}")
+  dt_partition_addr(slot_addr PATH "${code_partition}" TARGET "${image}" REQUIRED ABSOLUTE)
+  math(EXPR image_fw_base
+    "${slot_addr} + ${rom_start_offset}"
+    OUTPUT_FORMAT HEXADECIMAL
+  )
+
+  set(periphconf_tlv_bin ${CMAKE_BINARY_DIR}/${image}/zephyr/periphconf_tlv.bin)
+
+  list(APPEND ironside_se_tlv_args --image-fw-base ${image_fw_base})
+  list(APPEND ironside_se_tlv_args --periphconf-tlv-out "${periphconf_tlv_bin}")
+  list(APPEND extra_imgtool_args
+    --custom-tlv-file
+    ${SB_CONFIG_NCS_MCUBOOT_PERIPHCONF_TLV_ID}
+    "${periphconf_tlv_bin}"
+  )
+
+  add_custom_command(
+    OUTPUT ${periphconf_tlv_bin}
+    COMMAND ${PYTHON_EXECUTABLE}
+    ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/ironside_se_tlv.py
+    ${ironside_se_tlv_args}
+    DEPENDS
+    ${ironside_se_tlv_depends}
+  )
+  add_custom_target(
+    ironside_se_tlv_${image}
+    DEPENDS
+    ${periphconf_tlv_bin}
+    COMMENT "Generate IronSide SE TLVs"
+  )
+
+  string(STRIP "${extra_imgtool_args}" extra_imgtool_args)
+  set(${out_extra_imgtool_args} "${extra_imgtool_args}" PARENT_SCOPE)
+  set(${out_extra_depends} ironside_se_tlv_${image} ${periphconf_tlv_bin} PARENT_SCOPE)
+endfunction()
+
 # Generate IronSide SE TLV artifacts to be included in the image metadata, for merged images.
 # Expects to be called from the merged image signing script in Sysbuild.
 function(generate_ironside_se_tlvs_merged
@@ -132,7 +195,13 @@ function(add_ironside_se_tlv_conf_validate_targets prefix images)
       list(APPEND input_file_deps ${image_signed_hex})
     else()
       set(image_signed_bin)
-      sysbuild_get(image_signed_bin IMAGE ${image} VAR BYPRODUCT_KERNEL_SIGNED_BIN_NAME CACHE)
+      if(SB_CONFIG_MCUBOOT_SYSBUILD_SIGN)
+        sysbuild_get(kernel_bin IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+        sysbuild_get(app_dir IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
+        set(image_signed_bin "${app_dir}/zephyr/${kernel_bin}.signed.bin")
+      else()
+        sysbuild_get(image_signed_bin IMAGE ${image} VAR BYPRODUCT_KERNEL_SIGNED_BIN_NAME CACHE)
+      endif()
       if("${image_signed_bin}" STREQUAL "")
         message(WARNING
           "Image ${image} has PERIPHCONF TLV but neither HEX nor BIN outputs. "
