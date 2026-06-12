@@ -28,3 +28,7 @@
 	status = "okay";
 	owned-channels = <0>;
 };
+
+&vregmain {
+	regulator-initial-mode = <NRF5X_REG_MODE_LDO>;
+};

@@ -43,3 +43,7 @@ dut: &uart1 {
 	pinctrl-names = "default", "sleep";
 	hw-flow-control;
 };
+
+&vregmain {
+	regulator-initial-mode = <NRF5X_REG_MODE_LDO>;
+};
