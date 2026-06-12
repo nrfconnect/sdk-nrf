@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/delete-node/ &slot0_s_partition;
 /delete-node/ &storage_partition;
 
 &cpuapp_rram {

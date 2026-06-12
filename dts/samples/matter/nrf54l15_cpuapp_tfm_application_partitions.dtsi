@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/delete-node/ &slot0_s_partition;
+
 #include <samples/matter/nrf54l15_cpuapp_tfm_base_partitions.dtsi>
 
 /delete-node/ &sram0_s;
