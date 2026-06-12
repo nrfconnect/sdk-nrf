@@ -63,12 +63,14 @@ static void send(struct k_work *work)
 
 int main(void)
 {
-	IRQ_CONNECT(EGU_N_IRQn, EGU_INT_PRIO, egu_handler, NULL, 0);
-	nrf_egu_int_enable(NRF_EGU_N, NRF_EGU_INT_TRIGGERED0);
-	NVIC_EnableIRQ(EGU_N_IRQn);
-
 	k_work_init(&process_work, process);
 	k_work_init_delayable(&send_work, send);
+
+	IRQ_CONNECT(EGU_N_IRQn, EGU_INT_PRIO, egu_handler, NULL, 0);
+	nrf_egu_event_clear(NRF_EGU_N, NRF_EGU_EVENT_TRIGGERED0);
+	nrf_egu_int_enable(NRF_EGU_N, NRF_EGU_INT_TRIGGERED0);
+	NVIC_ClearPendingIRQ(EGU_N_IRQn);
+	NVIC_EnableIRQ(EGU_N_IRQn);
 
 	k_work_schedule(&send_work, K_NO_WAIT);
 
