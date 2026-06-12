@@ -19,6 +19,22 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+  sample.cellular.lwm2m_client.pgps:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE="overlay-avsystem.conf;overlay-assist-pgps.conf"
+      - EXTRA_DTC_OVERLAY_FILE=overlay-assist-pgps.overlay
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
   sample.cellular.lwm2m_client.afwu_extcpu:
     sysbuild: true
     build_only: true
