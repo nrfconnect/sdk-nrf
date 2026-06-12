@@ -25,11 +25,11 @@ Module events
 Configuration
 *************
 
-You can use this module for the following devices:
-
-* nRF52, nRF53, and nRF54 Series - To perform the firmware upgrade, you must enable the bootloader.
-  You can use the DFU module with either MCUboot or B0 bootloader.
-  For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
+To perform the firmware upgrade, you must enable the bootloader.
+You can use the DFU module with either MCUboot or B0 bootloader.
+For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
+Apart from proper bootloader configuration, you need to also specify memory layout.
+For more information, see the :ref:`nrf_desktop_memory_layout` section.
 
 To enable the DFU module, use the :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE` Kconfig option.
 It requires the transport option :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
@@ -81,16 +81,6 @@ For more details about the support of the MCUboot RAM load mode in the nRF Deskt
 
 .. note::
    DTS is the only supported partitioning method when you use the MCUboot bootloader in the RAM load mode.
-
-Partitioning methods
-====================
-
-The DFU module stores the update image received over the configuration channel to a dedicated memory partition.
-Due to this responsibility, it uses one of the supported partitioning methods to get the information about this partition location.
-
-The DFU module is compatible with the memory layout defined using the Partition Manager (PM).
-It is also compatible with the memory layout defined using the Devicetree Source (DTS) when you use it with the MCUboot bootloader.
-For more details about the memory layout methods, see the :ref:`nrf_desktop_memory_layout` documentation.
 
 Device identification information
 =================================

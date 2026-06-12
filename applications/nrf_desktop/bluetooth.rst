@@ -202,7 +202,7 @@ Apart from that, the following changes are applied in configurations that suppor
   These Kconfig options are configured to represent the Nordic device models that are intended for demonstration purposes.
 * The :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option is enabled in the main (default) image configuration.
   For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.
-* The static :ref:`partition_manager` configuration is modified to introduce a dedicated non-volatile memory partition used to store the Fast Pair provisioning data.
+* The :ref:`memory layout <nrf_desktop_memory_layout>` is modified to introduce a dedicated non-volatile memory partition used to store the Fast Pair provisioning data.
 * Bluetooth privacy feature (:kconfig:option:`CONFIG_BT_PRIVACY`) is enabled.
 * The fast and slow advertising intervals defined in the :ref:`nrf_desktop_ble_adv` are aligned with Fast Pair expectations.
 * The Bluetooth advertising filter accept list (:kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST`) is disabled to allow Fast Pair Seekers other than the bonded one to connect outside of the pairing mode.
