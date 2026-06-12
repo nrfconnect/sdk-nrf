@@ -408,6 +408,8 @@ static bool parse_reported_status(const char *msg)
 	job_id_obj = cJSON_GetObjectItemCaseSensitive(fw_obj, "jobId");
 	if (job_id_obj == NULL) {
 		LOG_WRN("No job ID found");
+	} else if (!cJSON_IsString(job_id_obj)) {
+		LOG_WRN("Invalid 'jobId' format received");
 	} else {
 		if (strlen(job_id_obj->valuestring) >=
 		    sizeof(reported_job_id)) {
@@ -424,8 +426,8 @@ static bool parse_reported_status(const char *msg)
 	/* Firmware update status object (fwUpdateStatus) */
 	fw_status_obj = cJSON_GetObjectItemCaseSensitive(fw_obj,
 							 "fwUpdateStatus");
-	if (fw_status_obj == NULL) {
-		LOG_DBG("No fwUpdateStatus object found");
+	if (!cJSON_IsString(fw_status_obj)) {
+		LOG_DBG("No valid fwUpdateStatus object found");
 		goto clean_exit;
 	}
 
@@ -435,8 +437,8 @@ static bool parse_reported_status(const char *msg)
 	/* Current firmware object (currentFwVersion) */
 	fw_current_obj = cJSON_GetObjectItemCaseSensitive(fw_obj,
 							 "currentFwVersion");
-	if (fw_current_obj == NULL) {
-		LOG_DBG("No currentFwVersion object found");
+	if (!cJSON_IsString(fw_current_obj)) {
+		LOG_DBG("No valid currentFwVersion object found");
 		goto clean_exit;
 	}
 
@@ -446,8 +448,8 @@ static bool parse_reported_status(const char *msg)
 	/* Pending firmware object (pendingFwVersion) */
 	fw_pending_obj = cJSON_GetObjectItemCaseSensitive(fw_obj,
 							 "pendingFwVersion");
-	if (fw_pending_obj == NULL) {
-		LOG_DBG("No pendingFwVersion object found");
+	if (!cJSON_IsString(fw_pending_obj)) {
+		LOG_DBG("No valid pendingFwVersion object found");
 		report_needed = true;
 		goto clean_exit;
 	}
@@ -558,6 +560,8 @@ static int extract_fw_details(const char *msg)
 	job_id_obj = cJSON_GetObjectItemCaseSensitive(fw_obj, "jobId");
 	if (job_id_obj == NULL) {
 		LOG_WRN("No job ID found");
+	} else if (!cJSON_IsString(job_id_obj)) {
+		LOG_WRN("Invalid 'jobId' format received");
 	} else {
 		if (strlen(job_id_obj->valuestring) >=
 		    sizeof(fota_object.job_id)) {
@@ -584,8 +588,8 @@ static int extract_fw_details(const char *msg)
 	/* Firmware image hostname */
 	fw_hostname_obj = cJSON_GetObjectItemCaseSensitive(fw_location_obj,
 							   "host");
-	if (fw_hostname_obj == NULL) {
-		LOG_DBG("No hostname object found");
+	if (!cJSON_IsString(fw_hostname_obj)) {
+		LOG_DBG("No valid hostname object found");
 		goto clean_exit;
 	}
 
@@ -602,8 +606,8 @@ static int extract_fw_details(const char *msg)
 
 	/* Firmware image file path */
 	fw_path_obj = cJSON_GetObjectItemCaseSensitive(fw_location_obj, "path");
-	if (fw_path_obj == NULL) {
-		LOG_DBG("No path object found");
+	if (!cJSON_IsString(fw_path_obj)) {
+		LOG_DBG("No valid path object found");
 		goto clean_exit;
 	}
 
