@@ -294,7 +294,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* Added the :ref:`throughput_many_to_one` sample.
 
 Bluetooth Mesh samples
 ----------------------
