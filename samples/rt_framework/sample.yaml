@@ -1,0 +1,64 @@
+sample:
+  description: App-domain real-time framework (TIMER + ZLI + GPIO + control plane)
+  name: App-domain RT framework
+
+tests:
+  # nRF54L: single-core SoC, MPSL shares the application core. BLE runs as the
+  # coexistence load.
+  sample.rt_framework:
+    sysbuild: false
+    build_only: true
+    tags:
+      - bluetooth
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+
+  sample.rt_framework.data_plane:
+    sysbuild: false
+    build_only: true
+    tags:
+      - bluetooth
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_configs:
+      - CONFIG_RT_FW_DATA_PLANE=y
+
+  # nRF54H20: multi-core SoC with a managed data cache. The RT component still
+  # runs only on the application core. The radio/MPSL live on the radio core, so
+  # the BLE coexistence load is not built here (single app-core image).
+  sample.rt_framework.nrf54h20:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  sample.rt_framework.nrf54h20.data_plane:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_configs:
+      - CONFIG_RT_FW_DATA_PLANE=y
+
+  # Build coverage for the explicit cache-maintenance path (sys_cache_*) on a
+  # target that has a data cache. Verifies the code and the cache-line
+  # alignment asserts compile. Actual cross-master visibility additionally
+  # needs board-specific memory placement (see README).
+  sample.rt_framework.nrf54h20.dma_visible:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_configs:
+      - CONFIG_RT_FW_DATA_PLANE=y
+      - CONFIG_RT_FW_SHARED_DMA_VISIBLE=y

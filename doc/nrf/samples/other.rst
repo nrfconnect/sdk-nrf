@@ -24,6 +24,7 @@ This section lists single |NCS| samples for various uses that are not part of ot
    ../../../samples/event_manager_proxy/README
    ../../../samples/hw_id/README
    ../../../samples/nrf_profiler/README
+   ../../../samples/rt_framework/README
    ../../../samples/ipc/*/README
    ../../../samples/mpsl/*/README
    ../../../samples/benchmarks/*/README
