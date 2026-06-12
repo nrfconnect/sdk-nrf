@@ -375,6 +375,14 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
+VTM drivers
+-----------
+
+* VTM_MONITORING:
+
+  * Monitoring system driver for battery voltage, temperature and frequency monitoring has been introduced. This device driver is selected if :kconfig:option:`CONFIG_VTF_MONITORING` is enabled.
+
+
 |no_changes_yet_note|
 
 Wi-Fi drivers
