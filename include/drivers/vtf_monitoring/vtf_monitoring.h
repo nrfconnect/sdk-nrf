@@ -11,6 +11,13 @@
 #include <stdint.h>
 #include <zephyr/sys/iterable_sections.h>
 
+/**
+ * @defgroup vtf_monitoring VTF monitoring
+ * @{
+ * @brief Driver to capture data to help ensure optimal performance of the Wi-Fi® system.
+ *
+ */
+
 /** Channel identifiers. Keep VTF_CH_COUNT last. */
 enum vtf_channel_id {
 	VTF_CH_BATTERY_VOLTAGE,
@@ -97,5 +104,9 @@ struct vtf_channel {
 		.default_type = (_type),                                                           \
 		.default_value._field = (_default),                                                \
 	}
+
+/**
+ * @}
+ */
 
 #endif /* _VTF_MONITORING_H_ */

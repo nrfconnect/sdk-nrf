@@ -439,6 +439,8 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
+* Added the :ref:`vtf_monitoring` for battery voltage, temperature, and frequency monitoring.
+
 SPI drivers
 -----------
 
