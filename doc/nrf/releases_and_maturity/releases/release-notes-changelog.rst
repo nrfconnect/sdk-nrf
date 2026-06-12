@@ -38,7 +38,8 @@ IDE, OS, and tool support
 Board support
 =============
 
-|no_changes_yet_note|
+* Added support for the :zephyr:board:`nrf93m1dk`, including a Zephyr cellular modem driver for the nRF93M1 Cat-1 bis LTE module.
+  The board uses the nRF93M1 module with the nRF54L15 as the host MCU.
 
 Build and configuration system
 ==============================
