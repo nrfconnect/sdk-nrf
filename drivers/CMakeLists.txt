@@ -6,6 +6,7 @@
 
 add_subdirectory(entropy)
 add_subdirectory(flash)
+add_subdirectory(nrf_pulse_meas)
 add_subdirectory(gpio)
 add_subdirectory(hw_cc3xx)
 if(CONFIG_SOC_NRF7120)

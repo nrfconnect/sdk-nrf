@@ -1,0 +1,17 @@
+sample:
+  description: Pulse width measurement sample application
+  name: Pulse width measurement
+common:
+  tags: ci_samples_nrf_pulse_meas
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+  harness: console
+  harness_config:
+    type: one_line
+    regex:
+      - "Test finished (.*)"
+tests:
+  sample.pulse_width_measurement:
+    tags: ci_samples_nrf_pulse_meas
