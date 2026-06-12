@@ -23,7 +23,6 @@ tests:
       # Fails without partition manager NCSDK-36828
       - SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE=y
       - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y
-      - SB_CONFIG_PARTITION_MANAGER=y
     platform_exclude:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
