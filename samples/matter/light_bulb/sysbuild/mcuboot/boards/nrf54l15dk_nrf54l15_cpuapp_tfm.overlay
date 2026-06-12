@@ -12,6 +12,7 @@
  * nrf54l15dk/nrf54l15/cpuapp/ns together with MCUboot.
  */
 /delete-node/ &slot1_partition;
+/delete-node/ &slot0_partition;
 
 #include <samples/matter/nrf54l15_cpuapp_tfm_base_partitions.dtsi>
 

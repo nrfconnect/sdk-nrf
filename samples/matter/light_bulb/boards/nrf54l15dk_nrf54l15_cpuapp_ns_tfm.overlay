@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <samples/matter/nrf54l15_cpuapp_tfm_base_partitions.dtsi>
 #include <samples/matter/nrf54l15_cpuapp_tfm_application_partitions.dtsi>
 
 / {
