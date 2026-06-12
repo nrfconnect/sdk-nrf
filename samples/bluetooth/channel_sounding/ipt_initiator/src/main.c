@@ -582,7 +582,7 @@ int main(void)
 
 	struct bt_scan_init_param scan_params = {
 		.scan_param = NULL,
-		.conn_param = BT_LE_CONN_PARAM(6, 6, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
+		.conn_param = BT_LE_CONN_PARAM(12, 12, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
 		.connect_if_match = 1};
 
 	err = scan_init(&scan_params);
@@ -680,6 +680,8 @@ int main(void)
 		return 0;
 	}
 
+	k_work_init(&distance_estimate_work, distance_estimate_work_handler);
+
 	struct bt_le_cs_procedure_enable_param params = {
 		.config_id = CS_CONFIG_ID,
 		.enable = 1,
@@ -690,7 +692,7 @@ int main(void)
 		LOG_ERR("Failed to enable CS procedures (err %d)", err);
 		return 0;
 	}
-	k_work_init(&distance_estimate_work, distance_estimate_work_handler);
+
 
 	return 0;
 }
