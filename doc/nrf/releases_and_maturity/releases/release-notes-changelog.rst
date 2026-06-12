@@ -526,7 +526,7 @@ Other libraries
 Shell libraries
 ---------------
 
-|no_changes_yet_note|
+* Fixed a potential lockup in the NUS shell transport after a Bluetooth disconnect.
 
 sdk-nrfxlib
 -----------
