@@ -910,7 +910,7 @@
 
 .. _`TF-M documentation`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/tfm/wrapper.html
 .. _`TF-M secure partition integration guide`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/tfm/integration_guide/services/tfm_secure_partition_addition.html
-.. _`TF-M Platform`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_platform_integration_guide.html
+.. _`TF-M Platform`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/tfm/integration_guide/services/tfm_platform_integration_guide.html
 .. _`TF-M ITS`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/tfm/integration_guide/services/tfm_its_integration_guide.html
 .. _`TF-M Crypto`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/tfm/integration_guide/services/tfm_crypto_integration_guide.html
 .. _`TF-M PS`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/tfm/integration_guide/services/tfm_ps_integration_guide.html
