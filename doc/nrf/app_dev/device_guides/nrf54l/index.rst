@@ -10,6 +10,9 @@ Developing with nRF54L Series
 
 .. include:: /includes/guides_complementary_to_app_dev.txt
 
+Before you start developing, install IronSide TrustZone on your device.
+For installation, signing, and reinstallation instructions, see :ref:`ug_nrf54l_ironside_tz_install`.
+
 Zephyr and the |NCS| provide support and contain board definitions for developing on the nRF54L Series devices.
 Refer to the following information for the list of supported development kits (DKs) and their related hardware and software documentation:
 
@@ -93,6 +96,7 @@ This self-paced course introduces the hardware architecture, functionality, capa
    :maxdepth: 2
    :caption: Subpages:
 
+   ironside_tz_install
    zms
    vpr_flpr
    building_nrf54l
