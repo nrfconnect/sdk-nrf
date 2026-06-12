@@ -62,6 +62,10 @@ function(zephyr_mcuboot_tasks)
   dt_chosen(flash_node PROPERTY "zephyr,flash")
   dt_nodelabel(slot0_flash NODELABEL "slot0_partition" REQUIRED)
   dt_reg_size(slot_size PATH "${slot0_flash}" REQUIRED)
+  # Absolute slot0 address is used to set ih_load_addr in the image header so
+  # that the MCUBOOT_CHECK_HEADER_LOAD_ADDRESS feature can verify the
+  # secondary-slot image is intended for the primary slot.
+  dt_partition_addr(slot0_partition_address PATH "${slot0_flash}" REQUIRED ABSOLUTE)
   dt_prop(write_block_size PATH "${flash_node}" PROPERTY "write-block-size")
 
   if(NOT write_block_size)
@@ -90,7 +94,7 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_rom_command)
     if(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY)
       # Use overwrite-only instead of swap upgrades.
-      set(imgtool_rom_command --overwrite-only --align 1)
+      set(imgtool_rom_command --overwrite-only --align 1 --rom-fixed ${slot0_partition_address})
     elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
            CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
       # RAM load requires setting the location of where to load the image to
@@ -124,7 +128,7 @@ function(zephyr_mcuboot_tasks)
       dt_reg_size(slot_size PATH "${code_partition}" REQUIRED)
       set(imgtool_rom_command --rom-fixed ${code_partition_offset} --align ${write_block_size})
     else()
-      set(imgtool_rom_command --align ${write_block_size})
+      set(imgtool_rom_command --align ${write_block_size} --rom-fixed ${slot0_partition_address})
     endif()
 
     # Set ih_load_addr to the code partition address using --rom-fixed.
