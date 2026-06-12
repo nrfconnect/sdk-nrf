@@ -32,6 +32,7 @@ tests:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - FILE_SUFFIX=secure_boot
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns

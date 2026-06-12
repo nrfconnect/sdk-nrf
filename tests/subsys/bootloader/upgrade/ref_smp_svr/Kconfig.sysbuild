@@ -6,6 +6,9 @@
 
 if BOARD_NRF5340DK_NRF5340_CPUAPP
 
+config PARTITION_MANAGER
+	default n if SOC_SERIES_NRF91
+
 config NRF_DEFAULT_EMPTY
 	default y
 

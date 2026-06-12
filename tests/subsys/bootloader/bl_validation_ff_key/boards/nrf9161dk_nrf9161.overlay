@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+b0_partition: &boot_partition {};
+
+s0_partition: &slot0_partition {};
+
+s1_partition: &slot1_partition {};

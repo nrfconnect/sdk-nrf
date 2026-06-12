@@ -59,6 +59,7 @@ tests:
         - "../pytest/test_downgrade_prevention.py::test_hw_downgrade_prevention_with_sign_version"
     extra_args:
       - SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
+      - FILE_SUFFIX=b0_s0_s1
 
   mcuboot.external_flash.upgrade.netcore:
     timeout: 900
