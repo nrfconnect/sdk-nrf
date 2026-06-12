@@ -809,7 +809,7 @@ static int nrf_cloud_coap_connect_host_cb(struct sockaddr *const addr)
 	sock = zsock_socket(addr->sa_family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
 
 	if (sock < 0) {
-		LOG_DBG("Failed to create CoAP socket, errno: %d", errno);
+		LOG_ERR("Failed to create CoAP socket, errno: %d", errno);
 		err = -ENOTSOCK;
 		goto out;
 	}
@@ -818,7 +818,7 @@ static int nrf_cloud_coap_connect_host_cb(struct sockaddr *const addr)
 
 	err = nrfc_dtls_setup(sock);
 	if (err < 0) {
-		LOG_DBG("Failed to initialize the DTLS client: %d", err);
+		LOG_ERR("Failed to initialize the DTLS client: %d", err);
 		err = -EPROTO;
 		goto out;
 	}
@@ -830,7 +830,7 @@ static int nrf_cloud_coap_connect_host_cb(struct sockaddr *const addr)
 
 	err = zsock_connect(sock, addr, addr_size);
 	if (err) {
-		LOG_DBG("Connect failed, errno: %d", errno);
+		LOG_WRN("DTLS connect failed, errno: %d", errno);
 		err = -ECONNREFUSED;
 		goto out;
 	}
