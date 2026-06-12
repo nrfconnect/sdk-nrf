@@ -1,4 +1,10 @@
-#include "../app_nrf5340_bt.overlay"
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../boards/nrf5340dk_nrf5340_cpuapp_nrf5340_bt.overlay"
 
 / {
 	chosen {

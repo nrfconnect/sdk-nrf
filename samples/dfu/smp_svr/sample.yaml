@@ -318,26 +318,10 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     harness_config: *bt_harness_config
 
-  sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash:
-    extra_args:
-      - OVERLAY_CONFIG="overlay-bt.conf"
-      - FILE_SUFFIX=ext_flash
-      - DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
-      - mcuboot_EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
-      - SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK=y
-      - SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    harness_config: *bt_harness_config
-
   sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts:
     extra_args:
       - OVERLAY_CONFIG="overlay-bt.conf"
       - FILE_SUFFIX=ext_flash_pure_dts
-      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
@@ -359,7 +343,8 @@ tests:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
       - OVERLAY_CONFIG="overlay-bt.conf"
       - FILE_SUFFIX=ext_encflash_pure_dts
-      - SB_CONFIG_PARTITION_MANAGER=n
+      - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS_AUTO=n
+      - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS=512
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
@@ -374,7 +359,6 @@ tests:
     extra_args:
       - OVERLAY_CONFIG="overlay-bt.conf"
       - FILE_SUFFIX=ext_flash_sqspi
-      - SB_CONFIG_PARTITION_MANAGER=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
