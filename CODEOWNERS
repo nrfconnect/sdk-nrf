@@ -114,6 +114,7 @@
 /doc/nrf/drivers/wifi.rst                 @nrfconnect/ncs-wifi-doc
 /doc/nrf/drivers/uart.rst                 @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/uart_nrf_sw_lpuart.rst   @nrfconnect/ncs-doc-leads
+/doc/nrf/drivers/vtf_monitoring.rst       @nrfconnect/ncs-wifi-doc
 /doc/nrf/external_comp/avsystem.rst       @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/external_comp/bt_fast_pair/      @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/external_comp/coremark.rst       @nrfconnect/ncs-blenders-doc
