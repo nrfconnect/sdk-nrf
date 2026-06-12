@@ -150,7 +150,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: f54b38275fd6267de698b47fd2bd3e7c34d5905e
+      revision: pull/2158/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -224,7 +224,7 @@ manifest:
           upstream-sha: 1be6ca7253133a21a1e9fe0fbb4656e17d63a936
           compare-by-default: false
     - name: libmodem
-      revision: 9b2d0bb28af593c357d9dc8bfb10f80a08f57677
+      revision: 0ec19cf151fc6a84fcdaa4664eeac92d9e5ad028
       groups:
         - libmodem
     - name: openthread
