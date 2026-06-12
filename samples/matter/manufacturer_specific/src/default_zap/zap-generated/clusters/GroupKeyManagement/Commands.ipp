@@ -62,7 +62,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace KeySetWrite.
+				} // namespace KeySetWrite
 				namespace KeySetRead
 				{
 
@@ -91,7 +91,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace KeySetRead.
+				} // namespace KeySetRead
 				namespace KeySetReadResponse
 				{
 
@@ -120,7 +120,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace KeySetReadResponse.
+				} // namespace KeySetReadResponse
 				namespace KeySetRemove
 				{
 
@@ -149,7 +149,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace KeySetRemove.
+				} // namespace KeySetRemove
 				namespace KeySetReadAllIndices
 				{
 
@@ -173,7 +173,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace KeySetReadAllIndices.
+				} // namespace KeySetReadAllIndices
 				namespace KeySetReadAllIndicesResponse
 				{
 
@@ -202,7 +202,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace KeySetReadAllIndicesResponse.
+				} // namespace KeySetReadAllIndicesResponse
 			} // namespace Commands
 		} // namespace GroupKeyManagement
 	} // namespace Clusters

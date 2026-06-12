@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SelfTestRequest.
+				} // namespace SelfTestRequest
 			} // namespace Commands
 		} // namespace SmokeCoAlarm
 	} // namespace Clusters

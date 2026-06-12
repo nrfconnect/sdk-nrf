@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MeasurementPeriodRanges.
+				} // namespace MeasurementPeriodRanges
 			} // namespace Events
 		} // namespace ElectricalPowerMeasurement
 	} // namespace Clusters

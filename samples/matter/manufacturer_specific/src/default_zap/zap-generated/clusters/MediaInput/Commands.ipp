@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SelectInput.
+				} // namespace SelectInput
 				namespace ShowInputStatus
 				{
 
@@ -84,7 +84,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ShowInputStatus.
+				} // namespace ShowInputStatus
 				namespace HideInputStatus
 				{
 
@@ -107,7 +107,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace HideInputStatus.
+				} // namespace HideInputStatus
 				namespace RenameInput
 				{
 
@@ -138,7 +138,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RenameInput.
+				} // namespace RenameInput
 			} // namespace Commands
 		} // namespace MediaInput
 	} // namespace Clusters

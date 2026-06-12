@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Disconnection.
+				} // namespace Disconnection
 				namespace AssociationFailure
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -103,7 +103,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AssociationFailure.
+				} // namespace AssociationFailure
 				namespace ConnectionStatus
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -135,7 +135,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ConnectionStatus.
+				} // namespace ConnectionStatus
 			} // namespace Events
 		} // namespace WiFiNetworkDiagnostics
 	} // namespace Clusters

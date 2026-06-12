@@ -42,11 +42,14 @@ namespace app
 						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
 						encoder.Encode(to_underlying(Fields::kGroupID), groupID);
 						encoder.Encode(to_underlying(Fields::kEndpoints), endpoints);
-						encoder.Encode(to_underlying(Fields::kKeyID), keyID);
+						encoder.Encode(to_underlying(Fields::kKeySetID), keySetID);
 						encoder.Encode(to_underlying(Fields::kKey), key);
-						encoder.Encode(to_underlying(Fields::kGracePeriod), gracePeriod);
 						encoder.Encode(to_underlying(Fields::kUseAuxiliaryACL),
 							       useAuxiliaryACL);
+						encoder.Encode(to_underlying(Fields::kReplaceEndpoints),
+							       replaceEndpoints);
+						encoder.Encode(to_underlying(Fields::kMcastAddrPolicy),
+							       mcastAddrPolicy);
 						return encoder.Finalize();
 					}
 
@@ -65,22 +68,25 @@ namespace app
 								err = DataModel::Decode(reader, groupID);
 							} else if (__context_tag == to_underlying(Fields::kEndpoints)) {
 								err = DataModel::Decode(reader, endpoints);
-							} else if (__context_tag == to_underlying(Fields::kKeyID)) {
-								err = DataModel::Decode(reader, keyID);
+							} else if (__context_tag == to_underlying(Fields::kKeySetID)) {
+								err = DataModel::Decode(reader, keySetID);
 							} else if (__context_tag == to_underlying(Fields::kKey)) {
 								err = DataModel::Decode(reader, key);
 							} else if (__context_tag ==
-								   to_underlying(Fields::kGracePeriod)) {
-								err = DataModel::Decode(reader, gracePeriod);
-							} else if (__context_tag ==
 								   to_underlying(Fields::kUseAuxiliaryACL)) {
 								err = DataModel::Decode(reader, useAuxiliaryACL);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kReplaceEndpoints)) {
+								err = DataModel::Decode(reader, replaceEndpoints);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kMcastAddrPolicy)) {
+								err = DataModel::Decode(reader, mcastAddrPolicy);
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace JoinGroup.
+				} // namespace JoinGroup
 				namespace LeaveGroup
 				{
 
@@ -112,7 +118,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LeaveGroup.
+				} // namespace LeaveGroup
 				namespace LeaveGroupResponse
 				{
 
@@ -122,7 +128,6 @@ namespace app
 						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
 						encoder.Encode(to_underlying(Fields::kGroupID), groupID);
 						encoder.Encode(to_underlying(Fields::kEndpoints), endpoints);
-						encoder.Encode(to_underlying(Fields::kListTooLarge), listTooLarge);
 						return encoder.Finalize();
 					}
 
@@ -140,15 +145,12 @@ namespace app
 								err = DataModel::Decode(reader, groupID);
 							} else if (__context_tag == to_underlying(Fields::kEndpoints)) {
 								err = DataModel::Decode(reader, endpoints);
-							} else if (__context_tag ==
-								   to_underlying(Fields::kListTooLarge)) {
-								err = DataModel::Decode(reader, listTooLarge);
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LeaveGroupResponse.
+				} // namespace LeaveGroupResponse
 				namespace UpdateGroupKey
 				{
 
@@ -156,9 +158,8 @@ namespace app
 					{
 						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
 						encoder.Encode(to_underlying(Fields::kGroupID), groupID);
-						encoder.Encode(to_underlying(Fields::kKeyID), keyID);
+						encoder.Encode(to_underlying(Fields::kKeySetID), keySetID);
 						encoder.Encode(to_underlying(Fields::kKey), key);
-						encoder.Encode(to_underlying(Fields::kGracePeriod), gracePeriod);
 						return encoder.Finalize();
 					}
 
@@ -175,48 +176,16 @@ namespace app
 
 							if (__context_tag == to_underlying(Fields::kGroupID)) {
 								err = DataModel::Decode(reader, groupID);
-							} else if (__context_tag == to_underlying(Fields::kKeyID)) {
-								err = DataModel::Decode(reader, keyID);
+							} else if (__context_tag == to_underlying(Fields::kKeySetID)) {
+								err = DataModel::Decode(reader, keySetID);
 							} else if (__context_tag == to_underlying(Fields::kKey)) {
 								err = DataModel::Decode(reader, key);
-							} else if (__context_tag ==
-								   to_underlying(Fields::kGracePeriod)) {
-								err = DataModel::Decode(reader, gracePeriod);
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdateGroupKey.
-				namespace ExpireGracePeriod
-				{
-
-					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
-					{
-						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
-						encoder.Encode(to_underlying(Fields::kGroupID), groupID);
-						return encoder.Finalize();
-					}
-
-					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader,
-									 FabricIndex aAccessingFabricIndex)
-					{
-						detail::StructDecodeIterator __iterator(reader);
-						while (true) {
-							uint8_t __context_tag = 0;
-							CHIP_ERROR err = __iterator.Next(__context_tag);
-							VerifyOrReturnError(err != CHIP_ERROR_END_OF_TLV,
-									    CHIP_NO_ERROR);
-							ReturnErrorOnFailure(err);
-
-							if (__context_tag == to_underlying(Fields::kGroupID)) {
-								err = DataModel::Decode(reader, groupID);
-							}
-
-							ReturnErrorOnFailure(err);
-						}
-					}
-				} // namespace ExpireGracePeriod.
+				} // namespace UpdateGroupKey
 				namespace ConfigureAuxiliaryACL
 				{
 
@@ -250,7 +219,41 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ConfigureAuxiliaryACL.
+				} // namespace ConfigureAuxiliaryACL
+				namespace GroupcastTesting
+				{
+
+					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
+					{
+						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
+						encoder.Encode(to_underlying(Fields::kTestOperation), testOperation);
+						encoder.Encode(to_underlying(Fields::kDurationSeconds),
+							       durationSeconds);
+						return encoder.Finalize();
+					}
+
+					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader,
+									 FabricIndex aAccessingFabricIndex)
+					{
+						detail::StructDecodeIterator __iterator(reader);
+						while (true) {
+							uint8_t __context_tag = 0;
+							CHIP_ERROR err = __iterator.Next(__context_tag);
+							VerifyOrReturnError(err != CHIP_ERROR_END_OF_TLV,
+									    CHIP_NO_ERROR);
+							ReturnErrorOnFailure(err);
+
+							if (__context_tag == to_underlying(Fields::kTestOperation)) {
+								err = DataModel::Decode(reader, testOperation);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kDurationSeconds)) {
+								err = DataModel::Decode(reader, durationSeconds);
+							}
+
+							ReturnErrorOnFailure(err);
+						}
+					}
+				} // namespace GroupcastTesting
 			} // namespace Commands
 		} // namespace Groupcast
 	} // namespace Clusters

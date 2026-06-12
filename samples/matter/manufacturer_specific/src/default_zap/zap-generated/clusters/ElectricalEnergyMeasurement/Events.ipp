@@ -72,7 +72,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CumulativeEnergyMeasured.
+				} // namespace CumulativeEnergyMeasured
 				namespace PeriodicEnergyMeasured
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -110,7 +110,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PeriodicEnergyMeasured.
+				} // namespace PeriodicEnergyMeasured
 			} // namespace Events
 		} // namespace ElectricalEnergyMeasurement
 	} // namespace Clusters

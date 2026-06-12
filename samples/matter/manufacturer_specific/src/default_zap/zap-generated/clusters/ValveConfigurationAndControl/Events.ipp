@@ -70,7 +70,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ValveStateChanged.
+				} // namespace ValveStateChanged
 				namespace ValveFault
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -101,7 +101,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ValveFault.
+				} // namespace ValveFault
 			} // namespace Events
 		} // namespace ValveConfigurationAndControl
 	} // namespace Clusters

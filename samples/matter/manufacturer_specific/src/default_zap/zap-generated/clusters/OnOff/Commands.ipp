@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Off.
+				} // namespace Off
 				namespace On
 				{
 
@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace On.
+				} // namespace On
 				namespace Toggle
 				{
 
@@ -102,7 +102,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Toggle.
+				} // namespace Toggle
 				namespace OffWithEffect
 				{
 
@@ -135,7 +135,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OffWithEffect.
+				} // namespace OffWithEffect
 				namespace OnWithRecallGlobalScene
 				{
 
@@ -158,7 +158,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OnWithRecallGlobalScene.
+				} // namespace OnWithRecallGlobalScene
 				namespace OnWithTimedOff
 				{
 
@@ -193,7 +193,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OnWithTimedOff.
+				} // namespace OnWithTimedOff
 			} // namespace Commands
 		} // namespace OnOff
 	} // namespace Clusters

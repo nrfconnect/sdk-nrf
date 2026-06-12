@@ -851,6 +851,24 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace StatusLightBrightness
+				namespace ImageRotationDiscreteAngles
+				{
+					struct TypeInfo {
+						using Type = uint16_t;
+						using DecodableType = uint16_t;
+						using DecodableArgType = uint16_t;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::CameraAvStreamManagement::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::ImageRotationDiscreteAngles::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace ImageRotationDiscreteAngles
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -995,6 +1013,8 @@ namespace app
 						Attributes::StatusLightBrightness::TypeInfo::DecodableType
 							statusLightBrightness = static_cast<
 								chip::app::Clusters::Globals::ThreeLevelAutoEnum>(0);
+						Attributes::ImageRotationDiscreteAngles::TypeInfo::DecodableType
+							imageRotationDiscreteAngles = static_cast<uint16_t>(0);
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType

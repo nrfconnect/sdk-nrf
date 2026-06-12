@@ -64,7 +64,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetSetupPIN.
+				} // namespace GetSetupPIN
 				namespace GetSetupPINResponse
 				{
 
@@ -93,7 +93,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetSetupPINResponse.
+				} // namespace GetSetupPINResponse
 				namespace Login
 				{
 
@@ -130,7 +130,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Login.
+				} // namespace Login
 				namespace Logout
 				{
 
@@ -159,7 +159,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Logout.
+				} // namespace Logout
 			} // namespace Commands
 		} // namespace AccountLogin
 	} // namespace Clusters

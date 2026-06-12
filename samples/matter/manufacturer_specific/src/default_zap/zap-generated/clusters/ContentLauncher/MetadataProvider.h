@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster ContentLauncher (cluster code: 1290/0x50A)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

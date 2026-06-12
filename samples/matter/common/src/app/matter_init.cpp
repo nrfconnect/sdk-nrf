@@ -195,7 +195,8 @@ CHIP_ERROR InitNetworkingStack()
 	error = ConfigureThreadRole();
 	VerifyOrReturnLogError(error == CHIP_NO_ERROR, error);
 
-	sThreadNetworkDriver.Init();
+	error = sThreadNetworkDriver.Init();
+	VerifyOrReturnLogError(error == CHIP_NO_ERROR, error);
 
 	return error;
 }
@@ -217,7 +218,8 @@ void UnlockOpenThreadTask(void)
 CHIP_ERROR InitNetworkingStack()
 {
 	if (sLocalInitData.mNetworkingInstance) {
-		sLocalInitData.mNetworkingInstance->Init();
+		CHIP_ERROR error = sLocalInitData.mNetworkingInstance->Init();
+		VerifyOrReturnError(error == CHIP_NO_ERROR, error);
 	}
 
 	return CHIP_NO_ERROR;
@@ -299,11 +301,12 @@ void DoInitChipServer(intptr_t /* unused */)
 	MutableByteSpan enableKey(enableKeyData);
 	sInitResult = sLocalInitData.mFactoryDataProvider->GetEnableKey(enableKey);
 	VerifyInitResultOrReturn(sInitResult, "GetEnableKey() failed");
-	Nrf::Matter::TestEventTrigger::Instance().SetEnableKey(enableKey);
+	sInitResult = Nrf::Matter::TestEventTrigger::Instance().SetEnableKey(enableKey);
 	VerifyInitResultOrReturn(sInitResult, "SetEnableKey() failed");
 #ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS
 	sLocalInitData.mServerInitParams->testEventTriggerDelegate = &Nrf::Matter::TestEventTrigger::Instance();
-	Nrf::Matter::DefaultTestEventTriggers::Register();
+	sInitResult = Nrf::Matter::DefaultTestEventTriggers::Register();
+	VerifyInitResultOrReturn(sInitResult, "DefaultTestEventTriggers::Register() failed");
 #endif /* CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS */
 #endif /* CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS */
 #else

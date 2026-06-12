@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster Groupcast (cluster code: 101/0x65)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>
@@ -27,6 +26,12 @@ namespace app
 					return Membership::kMetadataEntry;
 				case MaxMembershipCount::Id:
 					return MaxMembershipCount::kMetadataEntry;
+				case MaxMcastAddrCount::Id:
+					return MaxMcastAddrCount::kMetadataEntry;
+				case UsedMcastAddrCount::Id:
+					return UsedMcastAddrCount::kMetadataEntry;
+				case FabricUnderTest::Id:
+					return FabricUnderTest::kMetadataEntry;
 				default:
 					return std::nullopt;
 				}
@@ -44,10 +49,10 @@ namespace app
 					return LeaveGroup::kMetadataEntry;
 				case UpdateGroupKey::Id:
 					return UpdateGroupKey::kMetadataEntry;
-				case ExpireGracePeriod::Id:
-					return ExpireGracePeriod::kMetadataEntry;
 				case ConfigureAuxiliaryACL::Id:
 					return ConfigureAuxiliaryACL::kMetadataEntry;
+				case GroupcastTesting::Id:
+					return GroupcastTesting::kMetadataEntry;
 
 				default:
 					return std::nullopt;

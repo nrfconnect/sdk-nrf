@@ -19,6 +19,7 @@
 // This file is generated from codedriven-init-shutdown.cpp.zapt
 
 #include <app-common/zap-generated/ids/Clusters.h>
+#include <app/util/generic-callbacks.h>
 #include <zap-generated/CodeDrivenCallback.h>
 
 using namespace chip;
@@ -29,6 +30,9 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::Identify::Id:
 		MatterIdentifyClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::Groups::Id:
+		MatterGroupsClusterInitCallback(endpoint);
+		break;
 	case app::Clusters::Descriptor::Id:
 		MatterDescriptorClusterInitCallback(endpoint);
 		break;
@@ -37,6 +41,9 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 		break;
 	case app::Clusters::BasicInformation::Id:
 		MatterBasicInformationClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::OtaSoftwareUpdateRequestor::Id:
+		MatterOtaSoftwareUpdateRequestorClusterInitCallback(endpoint);
 		break;
 	case app::Clusters::LocalizationConfiguration::Id:
 		MatterLocalizationConfigurationClusterInitCallback(endpoint);
@@ -56,6 +63,12 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::SoftwareDiagnostics::Id:
 		MatterSoftwareDiagnosticsClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::ThreadNetworkDiagnostics::Id:
+		MatterThreadNetworkDiagnosticsClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::TimeSynchronization::Id:
+		MatterTimeSynchronizationClusterInitCallback(endpoint);
+		break;
 	case app::Clusters::AdministratorCommissioning::Id:
 		MatterAdministratorCommissioningClusterInitCallback(endpoint);
 		break;
@@ -65,50 +78,69 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::GroupKeyManagement::Id:
 		MatterGroupKeyManagementClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::IcdManagement::Id:
+		MatterIcdManagementClusterInitCallback(endpoint);
+		break;
 	}
 }
 
-void MatterClusterServerShutdownCallback(EndpointId endpoint, ClusterId clusterId)
+void MatterClusterServerShutdownCallback(EndpointId endpoint, ClusterId clusterId,
+					 MatterClusterShutdownType shutdownType)
 {
 	switch (clusterId) {
 	case app::Clusters::Identify::Id:
-		MatterIdentifyClusterShutdownCallback(endpoint);
+		MatterIdentifyClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::Groups::Id:
+		MatterGroupsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::Descriptor::Id:
-		MatterDescriptorClusterShutdownCallback(endpoint);
+		MatterDescriptorClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::AccessControl::Id:
-		MatterAccessControlClusterShutdownCallback(endpoint);
+		MatterAccessControlClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::BasicInformation::Id:
-		MatterBasicInformationClusterShutdownCallback(endpoint);
+		MatterBasicInformationClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::OtaSoftwareUpdateRequestor::Id:
+		MatterOtaSoftwareUpdateRequestorClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::LocalizationConfiguration::Id:
-		MatterLocalizationConfigurationClusterShutdownCallback(endpoint);
+		MatterLocalizationConfigurationClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::TimeFormatLocalization::Id:
-		MatterTimeFormatLocalizationClusterShutdownCallback(endpoint);
+		MatterTimeFormatLocalizationClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::GeneralCommissioning::Id:
-		MatterGeneralCommissioningClusterShutdownCallback(endpoint);
+		MatterGeneralCommissioningClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::DiagnosticLogs::Id:
-		MatterDiagnosticLogsClusterShutdownCallback(endpoint);
+		MatterDiagnosticLogsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::GeneralDiagnostics::Id:
-		MatterGeneralDiagnosticsClusterShutdownCallback(endpoint);
+		MatterGeneralDiagnosticsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::SoftwareDiagnostics::Id:
-		MatterSoftwareDiagnosticsClusterShutdownCallback(endpoint);
+		MatterSoftwareDiagnosticsClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::ThreadNetworkDiagnostics::Id:
+		MatterThreadNetworkDiagnosticsClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::TimeSynchronization::Id:
+		MatterTimeSynchronizationClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::AdministratorCommissioning::Id:
-		MatterAdministratorCommissioningClusterShutdownCallback(endpoint);
+		MatterAdministratorCommissioningClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::OperationalCredentials::Id:
-		MatterOperationalCredentialsClusterShutdownCallback(endpoint);
+		MatterOperationalCredentialsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::GroupKeyManagement::Id:
-		MatterGroupKeyManagementClusterShutdownCallback(endpoint);
+		MatterGroupKeyManagementClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::IcdManagement::Id:
+		MatterIcdManagementClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	}
 }

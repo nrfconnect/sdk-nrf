@@ -62,7 +62,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AttestationRequest.
+				} // namespace AttestationRequest
 				namespace AttestationResponse
 				{
 
@@ -98,7 +98,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AttestationResponse.
+				} // namespace AttestationResponse
 				namespace CertificateChainRequest
 				{
 
@@ -127,7 +127,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CertificateChainRequest.
+				} // namespace CertificateChainRequest
 				namespace CertificateChainResponse
 				{
 
@@ -156,7 +156,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CertificateChainResponse.
+				} // namespace CertificateChainResponse
 				namespace CSRRequest
 				{
 
@@ -188,7 +188,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CSRRequest.
+				} // namespace CSRRequest
 				namespace CSRResponse
 				{
 
@@ -222,7 +222,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CSRResponse.
+				} // namespace CSRResponse
 				namespace AddNOC
 				{
 
@@ -265,7 +265,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddNOC.
+				} // namespace AddNOC
 				namespace UpdateNOC
 				{
 
@@ -297,7 +297,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdateNOC.
+				} // namespace UpdateNOC
 				namespace NOCResponse
 				{
 
@@ -333,7 +333,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace NOCResponse.
+				} // namespace NOCResponse
 				namespace UpdateFabricLabel
 				{
 
@@ -362,7 +362,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdateFabricLabel.
+				} // namespace UpdateFabricLabel
 				namespace RemoveFabric
 				{
 
@@ -390,7 +390,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveFabric.
+				} // namespace RemoveFabric
 				namespace AddTrustedRootCertificate
 				{
 
@@ -420,7 +420,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddTrustedRootCertificate.
+				} // namespace AddTrustedRootCertificate
 				namespace SetVIDVerificationStatement
 				{
 
@@ -458,7 +458,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetVIDVerificationStatement.
+				} // namespace SetVIDVerificationStatement
 				namespace SignVIDVerificationRequest
 				{
 
@@ -491,7 +491,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SignVIDVerificationRequest.
+				} // namespace SignVIDVerificationRequest
 				namespace SignVIDVerificationResponse
 				{
 
@@ -528,7 +528,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SignVIDVerificationResponse.
+				} // namespace SignVIDVerificationResponse
 			} // namespace Commands
 		} // namespace OperationalCredentials
 	} // namespace Clusters

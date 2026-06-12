@@ -48,6 +48,55 @@ namespace app
 		{
 			namespace Events
 			{
+				namespace ChimeStartedPlaying
+				{
+					static constexpr PriorityLevel kPriorityLevel = PriorityLevel::Info;
+
+					enum class Fields : uint8_t {
+						kChimeID = 0,
+					};
+
+					struct Type {
+					public:
+						static constexpr PriorityLevel GetPriorityLevel()
+						{
+							return kPriorityLevel;
+						}
+						static constexpr EventId GetEventId()
+						{
+							return Events::ChimeStartedPlaying::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::Chime::Id;
+						}
+						static constexpr bool kIsFabricScoped = false;
+
+						uint8_t chimeID = static_cast<uint8_t>(0);
+
+						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
+					};
+
+					struct DecodableType {
+					public:
+						static constexpr PriorityLevel GetPriorityLevel()
+						{
+							return kPriorityLevel;
+						}
+						static constexpr EventId GetEventId()
+						{
+							return Events::ChimeStartedPlaying::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::Chime::Id;
+						}
+
+						uint8_t chimeID = static_cast<uint8_t>(0);
+
+						CHIP_ERROR Decode(TLV::TLVReader &reader);
+					};
+				} // namespace ChimeStartedPlaying
 			} // namespace Events
 		} // namespace Chime
 	} // namespace Clusters

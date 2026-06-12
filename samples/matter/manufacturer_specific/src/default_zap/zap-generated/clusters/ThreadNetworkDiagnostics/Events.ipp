@@ -66,7 +66,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ConnectionStatus.
+				} // namespace ConnectionStatus
 				namespace NetworkFaultChange
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -101,7 +101,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace NetworkFaultChange.
+				} // namespace NetworkFaultChange
 			} // namespace Events
 		} // namespace ThreadNetworkDiagnostics
 	} // namespace Clusters

@@ -67,7 +67,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTarget.
+				} // namespace SetTarget
 				namespace Step
 				{
 
@@ -102,7 +102,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Step.
+				} // namespace Step
 			} // namespace Commands
 		} // namespace ClosureDimension
 	} // namespace Clusters

@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ResetCounts.
+				} // namespace ResetCounts
 			} // namespace Commands
 		} // namespace ThreadNetworkDiagnostics
 	} // namespace Clusters

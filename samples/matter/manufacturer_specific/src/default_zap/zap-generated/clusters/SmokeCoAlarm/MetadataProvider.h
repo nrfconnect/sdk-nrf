@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster SmokeCoAlarm (cluster code: 92/0x5C)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>
@@ -49,6 +48,8 @@ namespace app
 					return SmokeSensitivityLevel::kMetadataEntry;
 				case ExpiryDate::Id:
 					return ExpiryDate::kMetadataEntry;
+				case Unmounted::Id:
+					return Unmounted::kMetadataEntry;
 				default:
 					return std::nullopt;
 				}

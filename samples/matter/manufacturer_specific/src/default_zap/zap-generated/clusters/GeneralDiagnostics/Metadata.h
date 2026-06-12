@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster GeneralDiagnostics (cluster code: 51/0x33)
-// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace GeneralDiagnostics
 		{
 
-			inline constexpr uint32_t kRevision = 2;
+			inline constexpr uint32_t kRevision = 3;
 
 			namespace Attributes
 			{
@@ -92,6 +91,13 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace TestEventTriggersEnabled
+				namespace DeviceLoadStatus
+				{
+					inline constexpr DataModel::AttributeEntry
+						kMetadataEntry(DeviceLoadStatus::Id,
+							       BitFlags<DataModel::AttributeQualityFlags>(),
+							       Access::Privilege::kView, std::nullopt);
+				} // namespace DeviceLoadStatus
 				constexpr std::array<DataModel::AttributeEntry, 3> kMandatoryMetadata = {
 					NetworkInterfaces::kMetadataEntry,
 					RebootCount::kMetadataEntry,

@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LockDoor.
+				} // namespace LockDoor
 				namespace UnlockDoor
 				{
 
@@ -89,7 +89,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UnlockDoor.
+				} // namespace UnlockDoor
 				namespace UnlockWithTimeout
 				{
 
@@ -120,7 +120,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UnlockWithTimeout.
+				} // namespace UnlockWithTimeout
 				namespace SetWeekDaySchedule
 				{
 
@@ -167,7 +167,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetWeekDaySchedule.
+				} // namespace SetWeekDaySchedule
 				namespace GetWeekDaySchedule
 				{
 
@@ -198,7 +198,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetWeekDaySchedule.
+				} // namespace GetWeekDaySchedule
 				namespace GetWeekDayScheduleResponse
 				{
 
@@ -249,7 +249,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetWeekDayScheduleResponse.
+				} // namespace GetWeekDayScheduleResponse
 				namespace ClearWeekDaySchedule
 				{
 
@@ -280,7 +280,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClearWeekDaySchedule.
+				} // namespace ClearWeekDaySchedule
 				namespace SetYearDaySchedule
 				{
 
@@ -319,7 +319,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetYearDaySchedule.
+				} // namespace SetYearDaySchedule
 				namespace GetYearDaySchedule
 				{
 
@@ -350,7 +350,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetYearDaySchedule.
+				} // namespace GetYearDaySchedule
 				namespace GetYearDayScheduleResponse
 				{
 
@@ -393,7 +393,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetYearDayScheduleResponse.
+				} // namespace GetYearDayScheduleResponse
 				namespace ClearYearDaySchedule
 				{
 
@@ -424,7 +424,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClearYearDaySchedule.
+				} // namespace ClearYearDaySchedule
 				namespace SetHolidaySchedule
 				{
 
@@ -464,7 +464,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetHolidaySchedule.
+				} // namespace SetHolidaySchedule
 				namespace GetHolidaySchedule
 				{
 
@@ -492,7 +492,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetHolidaySchedule.
+				} // namespace GetHolidaySchedule
 				namespace GetHolidayScheduleResponse
 				{
 
@@ -536,7 +536,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetHolidayScheduleResponse.
+				} // namespace GetHolidayScheduleResponse
 				namespace ClearHolidaySchedule
 				{
 
@@ -564,7 +564,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClearHolidaySchedule.
+				} // namespace ClearHolidaySchedule
 				namespace SetUser
 				{
 
@@ -613,7 +613,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetUser.
+				} // namespace SetUser
 				namespace GetUser
 				{
 
@@ -641,7 +641,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetUser.
+				} // namespace GetUser
 				namespace GetUserResponse
 				{
 
@@ -707,7 +707,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetUserResponse.
+				} // namespace GetUserResponse
 				namespace ClearUser
 				{
 
@@ -735,7 +735,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClearUser.
+				} // namespace ClearUser
 				namespace SetCredential
 				{
 
@@ -781,7 +781,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetCredential.
+				} // namespace SetCredential
 				namespace SetCredentialResponse
 				{
 
@@ -818,7 +818,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetCredentialResponse.
+				} // namespace SetCredentialResponse
 				namespace GetCredentialStatus
 				{
 
@@ -846,7 +846,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetCredentialStatus.
+				} // namespace GetCredentialStatus
 				namespace GetCredentialStatusResponse
 				{
 
@@ -899,7 +899,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetCredentialStatusResponse.
+				} // namespace GetCredentialStatusResponse
 				namespace ClearCredential
 				{
 
@@ -927,7 +927,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClearCredential.
+				} // namespace ClearCredential
 				namespace UnboltDoor
 				{
 
@@ -955,7 +955,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UnboltDoor.
+				} // namespace UnboltDoor
 				namespace SetAliroReaderConfig
 				{
 
@@ -998,7 +998,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetAliroReaderConfig.
+				} // namespace SetAliroReaderConfig
 				namespace ClearAliroReaderConfig
 				{
 
@@ -1021,7 +1021,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClearAliroReaderConfig.
+				} // namespace ClearAliroReaderConfig
 			} // namespace Commands
 		} // namespace DoorLock
 	} // namespace Clusters

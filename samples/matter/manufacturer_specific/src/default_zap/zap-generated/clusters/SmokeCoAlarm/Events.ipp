@@ -67,7 +67,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SmokeAlarm.
+				} // namespace SmokeAlarm
 				namespace COAlarm
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -100,7 +100,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace COAlarm.
+				} // namespace COAlarm
 				namespace LowBattery
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -133,7 +133,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LowBattery.
+				} // namespace LowBattery
 				namespace HardwareFault
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -157,7 +157,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace HardwareFault.
+				} // namespace HardwareFault
 				namespace EndOfService
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -181,7 +181,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EndOfService.
+				} // namespace EndOfService
 				namespace SelfTestComplete
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -205,7 +205,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SelfTestComplete.
+				} // namespace SelfTestComplete
 				namespace AlarmMuted
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -229,7 +229,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AlarmMuted.
+				} // namespace AlarmMuted
 				namespace MuteEnded
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -253,7 +253,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MuteEnded.
+				} // namespace MuteEnded
 				namespace InterconnectSmokeAlarm
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -286,7 +286,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace InterconnectSmokeAlarm.
+				} // namespace InterconnectSmokeAlarm
 				namespace InterconnectCOAlarm
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -319,7 +319,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace InterconnectCOAlarm.
+				} // namespace InterconnectCOAlarm
 				namespace AllClear
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -343,7 +343,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AllClear.
+				} // namespace AllClear
 			} // namespace Events
 		} // namespace SmokeCoAlarm
 	} // namespace Clusters

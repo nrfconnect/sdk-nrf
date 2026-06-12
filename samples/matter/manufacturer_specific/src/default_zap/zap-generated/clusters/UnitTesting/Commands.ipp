@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Test.
+				} // namespace Test
 				namespace TestSpecificResponse
 				{
 
@@ -85,7 +85,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestSpecificResponse.
+				} // namespace TestSpecificResponse
 				namespace TestNotHandled
 				{
 
@@ -108,7 +108,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestNotHandled.
+				} // namespace TestNotHandled
 				namespace TestAddArgumentsResponse
 				{
 
@@ -137,7 +137,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestAddArgumentsResponse.
+				} // namespace TestAddArgumentsResponse
 				namespace TestSpecific
 				{
 
@@ -160,7 +160,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestSpecific.
+				} // namespace TestSpecific
 				namespace TestSimpleArgumentResponse
 				{
 
@@ -189,7 +189,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestSimpleArgumentResponse.
+				} // namespace TestSimpleArgumentResponse
 				namespace TestUnknownCommand
 				{
 
@@ -212,7 +212,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestUnknownCommand.
+				} // namespace TestUnknownCommand
 				namespace TestStructArrayArgumentResponse
 				{
 
@@ -256,7 +256,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestStructArrayArgumentResponse.
+				} // namespace TestStructArrayArgumentResponse
 				namespace TestAddArguments
 				{
 
@@ -287,7 +287,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestAddArguments.
+				} // namespace TestAddArguments
 				namespace TestListInt8UReverseResponse
 				{
 
@@ -316,7 +316,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestListInt8UReverseResponse.
+				} // namespace TestListInt8UReverseResponse
 				namespace TestSimpleArgumentRequest
 				{
 
@@ -344,7 +344,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestSimpleArgumentRequest.
+				} // namespace TestSimpleArgumentRequest
 				namespace TestEnumsResponse
 				{
 
@@ -376,7 +376,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestEnumsResponse.
+				} // namespace TestEnumsResponse
 				namespace TestStructArrayArgumentRequest
 				{
 
@@ -419,7 +419,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestStructArrayArgumentRequest.
+				} // namespace TestStructArrayArgumentRequest
 				namespace TestNullableOptionalResponse
 				{
 
@@ -458,7 +458,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestNullableOptionalResponse.
+				} // namespace TestNullableOptionalResponse
 				namespace TestStructArgumentRequest
 				{
 
@@ -486,7 +486,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestStructArgumentRequest.
+				} // namespace TestStructArgumentRequest
 				namespace TestComplexNullableOptionalResponse
 				{
 
@@ -675,7 +675,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestComplexNullableOptionalResponse.
+				} // namespace TestComplexNullableOptionalResponse
 				namespace TestNestedStructArgumentRequest
 				{
 
@@ -703,7 +703,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestNestedStructArgumentRequest.
+				} // namespace TestNestedStructArgumentRequest
 				namespace BooleanResponse
 				{
 
@@ -732,7 +732,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace BooleanResponse.
+				} // namespace BooleanResponse
 				namespace TestListStructArgumentRequest
 				{
 
@@ -760,7 +760,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestListStructArgumentRequest.
+				} // namespace TestListStructArgumentRequest
 				namespace SimpleStructResponse
 				{
 
@@ -789,7 +789,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SimpleStructResponse.
+				} // namespace SimpleStructResponse
 				namespace TestListInt8UArgumentRequest
 				{
 
@@ -817,7 +817,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestListInt8UArgumentRequest.
+				} // namespace TestListInt8UArgumentRequest
 				namespace TestEmitTestEventResponse
 				{
 
@@ -846,7 +846,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestEmitTestEventResponse.
+				} // namespace TestEmitTestEventResponse
 				namespace TestNestedStructListArgumentRequest
 				{
 
@@ -874,7 +874,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestNestedStructListArgumentRequest.
+				} // namespace TestNestedStructListArgumentRequest
 				namespace TestEmitTestFabricScopedEventResponse
 				{
 
@@ -903,7 +903,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestEmitTestFabricScopedEventResponse.
+				} // namespace TestEmitTestFabricScopedEventResponse
 				namespace TestListNestedStructListArgumentRequest
 				{
 
@@ -931,7 +931,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestListNestedStructListArgumentRequest.
+				} // namespace TestListNestedStructListArgumentRequest
 				namespace TestBatchHelperResponse
 				{
 
@@ -960,7 +960,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestBatchHelperResponse.
+				} // namespace TestBatchHelperResponse
 				namespace TestListInt8UReverseRequest
 				{
 
@@ -988,7 +988,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestListInt8UReverseRequest.
+				} // namespace TestListInt8UReverseRequest
 				namespace StringEchoResponse
 				{
 
@@ -1017,7 +1017,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StringEchoResponse.
+				} // namespace StringEchoResponse
 				namespace TestEnumsRequest
 				{
 
@@ -1048,7 +1048,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestEnumsRequest.
+				} // namespace TestEnumsRequest
 				namespace GlobalEchoResponse
 				{
 
@@ -1080,7 +1080,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GlobalEchoResponse.
+				} // namespace GlobalEchoResponse
 				namespace TestNullableOptionalRequest
 				{
 
@@ -1108,7 +1108,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestNullableOptionalRequest.
+				} // namespace TestNullableOptionalRequest
 				namespace TestComplexNullableOptionalRequest
 				{
 
@@ -1184,7 +1184,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestComplexNullableOptionalRequest.
+				} // namespace TestComplexNullableOptionalRequest
 				namespace SimpleStructEchoRequest
 				{
 
@@ -1212,7 +1212,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SimpleStructEchoRequest.
+				} // namespace SimpleStructEchoRequest
 				namespace TimedInvokeRequest
 				{
 
@@ -1235,7 +1235,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TimedInvokeRequest.
+				} // namespace TimedInvokeRequest
 				namespace TestSimpleOptionalArgumentRequest
 				{
 
@@ -1263,7 +1263,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestSimpleOptionalArgumentRequest.
+				} // namespace TestSimpleOptionalArgumentRequest
 				namespace TestEmitTestEventRequest
 				{
 
@@ -1297,7 +1297,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestEmitTestEventRequest.
+				} // namespace TestEmitTestEventRequest
 				namespace TestEmitTestFabricScopedEventRequest
 				{
 
@@ -1325,7 +1325,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestEmitTestFabricScopedEventRequest.
+				} // namespace TestEmitTestFabricScopedEventRequest
 				namespace TestBatchHelperRequest
 				{
 
@@ -1365,7 +1365,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestBatchHelperRequest.
+				} // namespace TestBatchHelperRequest
 				namespace TestSecondBatchHelperRequest
 				{
 
@@ -1405,7 +1405,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestSecondBatchHelperRequest.
+				} // namespace TestSecondBatchHelperRequest
 				namespace StringEchoRequest
 				{
 
@@ -1433,7 +1433,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StringEchoRequest.
+				} // namespace StringEchoRequest
 				namespace GlobalEchoRequest
 				{
 
@@ -1464,7 +1464,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GlobalEchoRequest.
+				} // namespace GlobalEchoRequest
 				namespace TestCheckCommandFlags
 				{
 
@@ -1488,7 +1488,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestCheckCommandFlags.
+				} // namespace TestCheckCommandFlags
 				namespace TestDifferentVendorMeiRequest
 				{
 
@@ -1516,7 +1516,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestDifferentVendorMeiRequest.
+				} // namespace TestDifferentVendorMeiRequest
 				namespace TestDifferentVendorMeiResponse
 				{
 
@@ -1549,7 +1549,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TestDifferentVendorMeiResponse.
+				} // namespace TestDifferentVendorMeiResponse
 			} // namespace Commands
 		} // namespace UnitTesting
 	} // namespace Clusters

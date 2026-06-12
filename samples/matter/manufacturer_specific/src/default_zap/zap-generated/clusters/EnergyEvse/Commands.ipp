@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetTargetsResponse.
+				} // namespace GetTargetsResponse
 				namespace Disable
 				{
 
@@ -88,7 +88,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Disable.
+				} // namespace Disable
 				namespace EnableCharging
 				{
 
@@ -128,7 +128,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnableCharging.
+				} // namespace EnableCharging
 				namespace EnableDischarging
 				{
 
@@ -165,7 +165,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace EnableDischarging.
+				} // namespace EnableDischarging
 				namespace StartDiagnostics
 				{
 
@@ -188,7 +188,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StartDiagnostics.
+				} // namespace StartDiagnostics
 				namespace SetTargets
 				{
 
@@ -219,7 +219,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTargets.
+				} // namespace SetTargets
 				namespace GetTargets
 				{
 
@@ -242,7 +242,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetTargets.
+				} // namespace GetTargets
 				namespace ClearTargets
 				{
 
@@ -265,7 +265,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClearTargets.
+				} // namespace ClearTargets
 			} // namespace Commands
 		} // namespace EnergyEvse
 	} // namespace Clusters

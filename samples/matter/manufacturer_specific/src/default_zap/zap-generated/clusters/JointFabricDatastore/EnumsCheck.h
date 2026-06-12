@@ -47,7 +47,6 @@ namespace app
 			using EnumType = JointFabricDatastore::DatastoreAccessControlEntryPrivilegeEnum;
 			switch (val) {
 			case EnumType::kView:
-			case EnumType::kProxyView:
 			case EnumType::kOperate:
 			case EnumType::kManage:
 			case EnumType::kAdminister:

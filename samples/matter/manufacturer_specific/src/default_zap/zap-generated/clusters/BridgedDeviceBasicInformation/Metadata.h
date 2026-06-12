@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster BridgedDeviceBasicInformation (cluster code: 57/0x39)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace BridgedDeviceBasicInformation
 		{
 
-			inline constexpr uint32_t kRevision = 5;
+			inline constexpr uint32_t kRevision = 6;
 
 			namespace Attributes
 			{
@@ -145,6 +144,12 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace ProductAppearance
+				namespace DeviceLocation
+				{
+					inline constexpr DataModel::AttributeEntry kMetadataEntry(
+						DeviceLocation::Id, BitFlags<DataModel::AttributeQualityFlags>(),
+						Access::Privilege::kView, Access::Privilege::kAdminister);
+				} // namespace DeviceLocation
 				namespace ConfigurationVersion
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -152,9 +157,8 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace ConfigurationVersion
-				constexpr std::array<DataModel::AttributeEntry, 2> kMandatoryMetadata = {
+				constexpr std::array<DataModel::AttributeEntry, 1> kMandatoryMetadata = {
 					Reachable::kMetadataEntry,
-					UniqueID::kMetadataEntry,
 
 				};
 

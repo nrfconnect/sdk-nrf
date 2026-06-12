@@ -63,7 +63,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetTariffComponent.
+				} // namespace GetTariffComponent
 				namespace GetTariffComponentResponse
 				{
 
@@ -101,7 +101,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetTariffComponentResponse.
+				} // namespace GetTariffComponentResponse
 				namespace GetDayEntry
 				{
 
@@ -129,7 +129,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetDayEntry.
+				} // namespace GetDayEntry
 				namespace GetDayEntryResponse
 				{
 
@@ -158,7 +158,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetDayEntryResponse.
+				} // namespace GetDayEntryResponse
 			} // namespace Commands
 		} // namespace CommodityTariff
 	} // namespace Clusters

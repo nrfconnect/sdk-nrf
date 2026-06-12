@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetLED.
+				} // namespace SetLED
 			} // namespace Commands
 		} // namespace NordicDevKit
 	} // namespace Clusters

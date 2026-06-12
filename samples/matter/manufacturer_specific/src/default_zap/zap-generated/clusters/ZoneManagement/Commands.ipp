@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CreateTwoDCartesianZone.
+				} // namespace CreateTwoDCartesianZone
 				namespace CreateTwoDCartesianZoneResponse
 				{
 
@@ -90,7 +90,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CreateTwoDCartesianZoneResponse.
+				} // namespace CreateTwoDCartesianZoneResponse
 				namespace UpdateTwoDCartesianZone
 				{
 
@@ -121,7 +121,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdateTwoDCartesianZone.
+				} // namespace UpdateTwoDCartesianZone
 				namespace RemoveZone
 				{
 
@@ -149,7 +149,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveZone.
+				} // namespace RemoveZone
 				namespace CreateOrUpdateTrigger
 				{
 
@@ -177,7 +177,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CreateOrUpdateTrigger.
+				} // namespace CreateOrUpdateTrigger
 				namespace RemoveTrigger
 				{
 
@@ -205,7 +205,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveTrigger.
+				} // namespace RemoveTrigger
 			} // namespace Commands
 		} // namespace ZoneManagement
 	} // namespace Clusters

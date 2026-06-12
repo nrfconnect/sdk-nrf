@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster AccessControl (cluster code: 31/0x1F)
-// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace AccessControl
 		{
 
-			inline constexpr uint32_t kRevision = 2;
+			inline constexpr uint32_t kRevision = 3;
 
 			namespace Attributes
 			{
@@ -79,6 +78,14 @@ namespace app
 							DataModel::AttributeQualityFlags::kListAttribute),
 						Access::Privilege::kView, std::nullopt);
 				} // namespace Arl
+				namespace AuxiliaryACL
+				{
+					inline constexpr DataModel::AttributeEntry kMetadataEntry(
+						AuxiliaryACL::Id,
+						BitFlags<DataModel::AttributeQualityFlags>(
+							DataModel::AttributeQualityFlags::kListAttribute),
+						Access::Privilege::kAdminister, std::nullopt);
+				} // namespace AuxiliaryACL
 				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
 					Acl::kMetadataEntry,
 					SubjectsPerAccessControlEntry::kMetadataEntry,
@@ -123,6 +130,12 @@ namespace app
 						Access::Privilege::kAdminister
 					};
 				} // namespace FabricRestrictionReviewUpdate
+				namespace AuxiliaryAccessUpdated
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kAdminister
+					};
+				} // namespace AuxiliaryAccessUpdated
 
 			} // namespace Events
 		} // namespace AccessControl

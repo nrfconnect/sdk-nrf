@@ -19,6 +19,7 @@
 // This file is generated from codedriven-init-shutdown.cpp.zapt
 
 #include <app-common/zap-generated/ids/Clusters.h>
+#include <app/util/generic-callbacks.h>
 #include <zap-generated/CodeDrivenCallback.h>
 
 using namespace chip;
@@ -34,6 +35,9 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 		break;
 	case app::Clusters::BasicInformation::Id:
 		MatterBasicInformationClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::OtaSoftwareUpdateRequestor::Id:
+		MatterOtaSoftwareUpdateRequestorClusterInitCallback(endpoint);
 		break;
 	case app::Clusters::GeneralCommissioning::Id:
 		MatterGeneralCommissioningClusterInitCallback(endpoint);
@@ -53,32 +57,36 @@ void MatterClusterServerInitCallback(EndpointId endpoint, ClusterId clusterId)
 	}
 }
 
-void MatterClusterServerShutdownCallback(EndpointId endpoint, ClusterId clusterId)
+void MatterClusterServerShutdownCallback(EndpointId endpoint, ClusterId clusterId,
+					 MatterClusterShutdownType shutdownType)
 {
 	switch (clusterId) {
 	case app::Clusters::Descriptor::Id:
-		MatterDescriptorClusterShutdownCallback(endpoint);
+		MatterDescriptorClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::AccessControl::Id:
-		MatterAccessControlClusterShutdownCallback(endpoint);
+		MatterAccessControlClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::BasicInformation::Id:
-		MatterBasicInformationClusterShutdownCallback(endpoint);
+		MatterBasicInformationClusterShutdownCallback(endpoint, shutdownType);
+		break;
+	case app::Clusters::OtaSoftwareUpdateRequestor::Id:
+		MatterOtaSoftwareUpdateRequestorClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::GeneralCommissioning::Id:
-		MatterGeneralCommissioningClusterShutdownCallback(endpoint);
+		MatterGeneralCommissioningClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::GeneralDiagnostics::Id:
-		MatterGeneralDiagnosticsClusterShutdownCallback(endpoint);
+		MatterGeneralDiagnosticsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::AdministratorCommissioning::Id:
-		MatterAdministratorCommissioningClusterShutdownCallback(endpoint);
+		MatterAdministratorCommissioningClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::OperationalCredentials::Id:
-		MatterOperationalCredentialsClusterShutdownCallback(endpoint);
+		MatterOperationalCredentialsClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	case app::Clusters::GroupKeyManagement::Id:
-		MatterGroupKeyManagementClusterShutdownCallback(endpoint);
+		MatterGroupKeyManagementClusterShutdownCallback(endpoint, shutdownType);
 		break;
 	}
 }

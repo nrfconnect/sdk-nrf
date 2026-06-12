@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster BridgedDeviceBasicInformation (cluster code: 57/0x39)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>
@@ -58,6 +57,8 @@ namespace app
 					return UniqueID::kMetadataEntry;
 				case ProductAppearance::Id:
 					return ProductAppearance::kMetadataEntry;
+				case DeviceLocation::Id:
+					return DeviceLocation::kMetadataEntry;
 				case ConfigurationVersion::Id:
 					return ConfigurationVersion::kMetadataEntry;
 				default:

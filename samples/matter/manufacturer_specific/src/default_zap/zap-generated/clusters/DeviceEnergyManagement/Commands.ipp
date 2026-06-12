@@ -67,7 +67,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PowerAdjustRequest.
+				} // namespace PowerAdjustRequest
 				namespace CancelPowerAdjustRequest
 				{
 
@@ -90,7 +90,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CancelPowerAdjustRequest.
+				} // namespace CancelPowerAdjustRequest
 				namespace StartTimeAdjustRequest
 				{
 
@@ -123,7 +123,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StartTimeAdjustRequest.
+				} // namespace StartTimeAdjustRequest
 				namespace PauseRequest
 				{
 
@@ -154,7 +154,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace PauseRequest.
+				} // namespace PauseRequest
 				namespace ResumeRequest
 				{
 
@@ -177,7 +177,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ResumeRequest.
+				} // namespace ResumeRequest
 				namespace ModifyForecastRequest
 				{
 
@@ -213,7 +213,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ModifyForecastRequest.
+				} // namespace ModifyForecastRequest
 				namespace RequestConstraintBasedForecast
 				{
 
@@ -244,7 +244,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RequestConstraintBasedForecast.
+				} // namespace RequestConstraintBasedForecast
 				namespace CancelRequest
 				{
 
@@ -267,7 +267,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CancelRequest.
+				} // namespace CancelRequest
 			} // namespace Commands
 		} // namespace DeviceEnergyManagement
 	} // namespace Clusters

@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MfgSpecificPing.
+				} // namespace MfgSpecificPing
 				namespace GenerateRandom
 				{
 
@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GenerateRandom.
+				} // namespace GenerateRandom
 			} // namespace Commands
 		} // namespace BasicInformation
 	} // namespace Clusters

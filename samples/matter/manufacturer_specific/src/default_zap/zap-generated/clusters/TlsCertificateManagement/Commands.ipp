@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProvisionRootCertificate.
+				} // namespace ProvisionRootCertificate
 				namespace ProvisionRootCertificateResponse
 				{
 
@@ -94,7 +94,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProvisionRootCertificateResponse.
+				} // namespace ProvisionRootCertificateResponse
 				namespace FindRootCertificate
 				{
 
@@ -123,7 +123,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FindRootCertificate.
+				} // namespace FindRootCertificate
 				namespace FindRootCertificateResponse
 				{
 
@@ -155,7 +155,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FindRootCertificateResponse.
+				} // namespace FindRootCertificateResponse
 				namespace LookupRootCertificate
 				{
 
@@ -184,7 +184,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LookupRootCertificate.
+				} // namespace LookupRootCertificate
 				namespace LookupRootCertificateResponse
 				{
 
@@ -213,7 +213,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LookupRootCertificateResponse.
+				} // namespace LookupRootCertificateResponse
 				namespace RemoveRootCertificate
 				{
 
@@ -242,7 +242,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveRootCertificate.
+				} // namespace RemoveRootCertificate
 				namespace ClientCSR
 				{
 
@@ -274,7 +274,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClientCSR.
+				} // namespace ClientCSR
 				namespace ClientCSRResponse
 				{
 
@@ -310,7 +310,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClientCSRResponse.
+				} // namespace ClientCSRResponse
 				namespace ProvisionClientCertificate
 				{
 
@@ -350,7 +350,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProvisionClientCertificate.
+				} // namespace ProvisionClientCertificate
 				namespace FindClientCertificate
 				{
 
@@ -379,7 +379,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FindClientCertificate.
+				} // namespace FindClientCertificate
 				namespace FindClientCertificateResponse
 				{
 
@@ -411,7 +411,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace FindClientCertificateResponse.
+				} // namespace FindClientCertificateResponse
 				namespace LookupClientCertificate
 				{
 
@@ -440,7 +440,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LookupClientCertificate.
+				} // namespace LookupClientCertificate
 				namespace LookupClientCertificateResponse
 				{
 
@@ -469,7 +469,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LookupClientCertificateResponse.
+				} // namespace LookupClientCertificateResponse
 				namespace RemoveClientCertificate
 				{
 
@@ -498,7 +498,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveClientCertificate.
+				} // namespace RemoveClientCertificate
 			} // namespace Commands
 		} // namespace TlsCertificateManagement
 	} // namespace Clusters

@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster RefrigeratorAlarm (cluster code: 87/0x57)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

@@ -62,7 +62,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ReviewFabricRestrictions.
+				} // namespace ReviewFabricRestrictions
 				namespace ReviewFabricRestrictionsResponse
 				{
 
@@ -91,7 +91,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ReviewFabricRestrictionsResponse.
+				} // namespace ReviewFabricRestrictionsResponse
 			} // namespace Commands
 		} // namespace AccessControl
 	} // namespace Clusters

@@ -44,6 +44,7 @@ namespace app
 				kAudible = 0x2,
 				kAlarmSuppress = 0x4,
 				kSensitivityLevel = 0x8,
+				kFaultEvents = 0x10,
 			};
 
 			// Bitmap for SensorFaultBitmap
