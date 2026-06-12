@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Resource binding and ownership for the app-domain RT framework on the
+ * nRF54LM20 application core.
+ *
+ * The RT component selects its resources through the aliases / zephyr,user
+ * properties below and drives them directly via the nrfx HAL. TIMER20 and
+ * EGU20 are therefore kept "disabled" so no Zephyr/nrfx driver claims them:
+ * this is the explicit ownership boundary between Zephyr and the RT component.
+ *
+ * On nRF54L, MPSL reserves TIMER10 and runs its radio ISRs at the single ZLI
+ * priority on this same core, so TIMER20 / EGU20 are chosen as free instances.
+ * Re-verify the per-SoC MPSL reservations when porting to another target.
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	aliases {
+		rt-timer = &timer20;
+		rt-egu = &egu20;
+	};
+
+	zephyr,user {
+		/* P1.04: free connector pin toggled by the RT ISR. */
+		rt-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
+		/* P1.05: optional pin driven high for the RT ISR duration. */
+		rt-debug-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&timer20 {
+	status = "disabled";
+};
+
+&egu20 {
+	status = "disabled";
+};

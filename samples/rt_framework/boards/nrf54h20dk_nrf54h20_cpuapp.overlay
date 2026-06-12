@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Resource binding and ownership for the app-domain RT framework on the
+ * nRF54H20 application core:
+ *  - The RT time base / signaling use global-domain instances owned by the
+ *    application core (timer130, egu130).
+ *  - On nRF54H20 the Bluetooth controller / MPSL run on the radio core, so the
+ *    application-core ZLI does NOT share its NVIC priority with radio ISRs.
+ *  - Application-core ownership of a global peripheral driven directly through
+ *    the nrfx HAL is expressed with status = "reserved": the build routes the
+ *    IRQ and assigns ownership to cpuapp, but instantiates no Zephyr driver.
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	aliases {
+		rt-timer = &timer130;
+		rt-egu = &egu130;
+	};
+
+	zephyr,user {
+		/* Free P0 connector pins. Wire a probe here to observe the RT path.
+		 * Re-map to suit the actual board wiring.
+		 */
+		rt-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+		rt-debug-gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+/* Owned by the RT component, driven directly via the nrfx HAL. */
+&timer130 {
+	status = "reserved";
+};
+
+&egu130 {
+	status = "reserved";
+};
+
+&gpio0 {
+	status = "okay";
+};
