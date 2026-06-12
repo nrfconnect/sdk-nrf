@@ -10,4 +10,7 @@ config NRF_DEFAULT_IPC_RADIO
 config NETCORE_IPC_RADIO_BT_HCI_IPC
 	default y
 
+config PARTITION_MANAGER
+	default n
+
 source "share/sysbuild/Kconfig"
