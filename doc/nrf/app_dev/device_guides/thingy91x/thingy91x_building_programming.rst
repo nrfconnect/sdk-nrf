@@ -28,16 +28,16 @@ The build targets of interest for Thingy:91 X in the |NCS| are as follows:
 
 The following table shows the different types of build files that are generated and the different scenarios in which they are used:
 
-+--------------------------+----------------------------------------+----------------------------------------------------------------+
-| File                     | File format                            | Programming scenario                                           |
-+==========================+========================================+================================================================+
-|:file:`merged.hex`        | Full image, HEX format                 | Using an external debug probe and nrfutil device.              |
-+--------------------------+----------------------------------------+----------------------------------------------------------------+
-|:file:`zephyr.signed.hex` | MCUboot compatible image, HEX format   | Using the built-in bootloader and nrfutil device.              |
-+--------------------------+----------------------------------------+----------------------------------------------------------------+
-|:file:`app_update.bin`    | MCUboot compatible image, binary format|* Using the built-in bootloader and mcumgr command-line tool.   |
-|                          |                                        |* For FOTA updates.                                             |
-+--------------------------+----------------------------------------+----------------------------------------------------------------+
++----------------------------------+-----------------------------------------------+--------------------------------------------------------------------------+
+| File                             | File format                                   | Programming scenario                                                     |
++==================================+===============================================+==========================================================================+
+|:file:`merged_<board_target>.hex` | Full image (one per board target), HEX format | Using an external debug probe, nrfutil device and the `Programmer app`_. |
++----------------------------------+-----------------------------------------------+--------------------------------------------------------------------------+
+|:file:`zephyr.signed.hex`         | MCUboot compatible image, HEX format          | Using the built-in bootloader, nrfutil device and the `Programmer app`_. |
++----------------------------------+-----------------------------------------------+--------------------------------------------------------------------------+
+|:file:`zephyr.signed.bin`         | MCUboot compatible image, binary format       | * Using the built-in bootloader and mcumgr command-line tool.            |
+|                                  |                                               | * For FOTA updates.                                                      |
++----------------------------------+-----------------------------------------------+--------------------------------------------------------------------------+
 
 Programming onto Thingy:91 X
 ****************************
