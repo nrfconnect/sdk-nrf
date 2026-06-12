@@ -49,7 +49,7 @@
 
 # Boards
 /boards/nordic/nrf54l*/                   @nrfconnect/ncs-co-boards @kl-cruz
-/boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-xcake
+/boards/nordic/nrf52*/                    @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-xcake
 /boards/nordic/nrf92*/                    @nrfconnect/ncs-co-boards @tervonenja
 /boards/nordic/thingy91*/                 @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
 /boards/sercomm/                          @nrfconnect/ncs-co-boards @tokangas
@@ -69,9 +69,19 @@
 /doc/_static/                             @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /doc/_doxygen/                            @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /doc/_extensions/                         @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
+/doc/_scripts/                            @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
+/doc/_utils/                              @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
+/doc/internal/                            @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /doc/kconfig/                             @nrfconnect/ncs-doc-leads
 /doc/matter/                              @nrfconnect/ncs-matter-doc
 /doc/mcuboot/                             @nrfconnect/ncs-eris-doc
+/doc/nrf/conf.py                          @nrfconnect/ncs-doc-leads
+/doc/nrf/nrf.doxyfile.in                  @nrfconnect/ncs-doc-leads
+/doc/nrfx/nrfx.doxyfile.in                @nrfconnect/ncs-doc-leads
+/doc/nrfxlib/conf.py                      @nrfconnect/ncs-doc-leads
+/doc/nrfxlib/nrfxlib.doxyfile.in          @nrfconnect/ncs-doc-leads
+/doc/zephyr/conf.py                       @nrfconnect/ncs-doc-leads
+/doc/zephyr/zephyr.doxyfile.in            @nrfconnect/ncs-doc-leads
 /doc/nrf/*.rst                            @nrfconnect/ncs-doc-leads
 /doc/nrf/app_dev/                         @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc
 /doc/nrf/app_dev/bootloaders_dfu/         @nrfconnect/ncs-eris-doc
@@ -331,6 +341,11 @@
 /include/bluetooth/services/ras.h         @nrfconnect/ncs-dragoon
 /include/bluetooth/services/wifi_provisioning.h @wentong-li @bama-nordic
 /include/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel
+/include/bl_*.h                           @nrfconnect/ncs-eris
+/include/flash_map_pm.h                   @nrfconnect/ncs-eris
+/include/fprotect.h                       @nrfconnect/ncs-eris
+/include/fw_info.h                        @nrfconnect/ncs-eris
+/include/fw_info_bare.h                   @nrfconnect/ncs-eris
 /include/nrf_lcs/                         @nrfconnect/ncs-eris
 /include/caf/                             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /include/debug/                           @nrfconnect/ncs-co-drivers
@@ -570,6 +585,7 @@
 /samples/wifi/wfa_qt_app/                 @D-Triveni
 /samples/wifi/offloaded_raw_tx/           @kapbh @sachinthegreen
 /samples/wifi/nrf_cloud/                  @nrfconnect/ncs-bifrost
+/samples/wifi/thread_coex/                @D-Triveni
 
 /samples/app_event_manager/*.rst          @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /samples/app_event_manager_profiler_tracer/*.rst @nrfconnect/ncs-si-xcake-doc
@@ -724,6 +740,17 @@
 /scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/twister_ignore_sdk_zephyr.txt @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/twister_platforms_zephyr.yaml @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
+/scripts/ci/check_license.py              @carlescufi
+/scripts/ci/check_manifest_userdata.py    @carlescufi
+/scripts/ci/codeowners.py                 @carlescufi
+/scripts/ci/license_allow_list.yaml       @carlescufi
+/scripts/ci/requirements.txt              @carlescufi
+/scripts/get_pulls_in_range.py            @carlescufi
+/scripts/requirements.txt                 @carlescufi
+/scripts/tag_west_repos.sh                @nrfconnect/ncs-code-owners
+/scripts/tools-versions-darwin.yml        @jangalda-nsc @thst-nordic
+/scripts/tools-versions-linux.yml         @jangalda-nsc @thst-nordic
+/scripts/tools-versions-win10.yml         @jangalda-nsc @thst-nordic
 /scripts/quarantine*.yaml                 @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @nrfconnect/ncs-si-xcake
 /scripts/nrf_profiler/                    @nrfconnect/ncs-si-xcake
