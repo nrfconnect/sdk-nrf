@@ -294,7 +294,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target in the :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples.
 
 Bluetooth Mesh samples
 ----------------------
