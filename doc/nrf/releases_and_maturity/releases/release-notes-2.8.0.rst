@@ -264,7 +264,7 @@ Bootloaders and DFU
   * :ref:`QSPI XIP split image <qspi_xip_split_image>` support for the nRF52840 SoC and MCUboot's direct-xip mode.
   * Documentation for :ref:`mcuboot_image_compression`.
   * Documentation for :ref:`sysbuild_assigned_images_ids`.
-  * A section in the sysbuild-related migration guide about the migration of :ref:`child_parent_to_sysbuild_migration_qspi_xip` from child/parent image to sysbuild.
+  * A section in the sysbuild-related migration guide about the migration of Migrating to sysbuild user guide from child/parent image to sysbuild.
 
 * Updated the procedure for signing the application image built for booting by MCUboot in direct-xip mode with revert support.
   Now, the Intel HEX file of the application image automatically receives a confirmation flag.

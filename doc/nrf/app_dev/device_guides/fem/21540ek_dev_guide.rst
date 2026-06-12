@@ -68,7 +68,6 @@ The build system will automatically pick an overlay file enabling nRF21540 FEM o
 
 In this command, the ``ipc_radio`` image is used as default and builds the network core image with support for the combination of 802.15.4 and Bluetooth.
 The ``ipc_radio`` has been used since the build system migration to sysbuild.
-See :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
 Setting the correct sysbuild option enables support for 802.15.4 and Bluetooth :ref:`ipc_radio`.
 
 ``ipc_radio`` represents all applications with support for the combination of both 802.15.4 and Bluetooth.
