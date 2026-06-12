@@ -820,6 +820,13 @@ static void ot_rpc_cmd_srp_client_set_host_addresses(const struct nrf_rpc_group 
 		host_data.addresses = malloc(num * OT_IP6_ADDRESS_SIZE);
 	}
 
+	/* Check for allocation failure */
+	if (num > 0 && !host_data.addresses) {
+		host_data.addresses_num = 0;
+		error = OT_ERROR_NO_BUFS;
+		goto out;
+	}
+
 	host_data.addresses_num = num;
 
 	zcbor_list_start_decode(ctx->zs);
@@ -838,8 +845,9 @@ static void ot_rpc_cmd_srp_client_set_host_addresses(const struct nrf_rpc_group 
 
 	error = otSrpClientSetHostAddresses(openthread_get_default_instance(), host_data.addresses,
 					    index);
-	ot_rpc_mutex_unlock();
 
+out:
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
