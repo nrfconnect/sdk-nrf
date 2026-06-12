@@ -32,6 +32,13 @@
 struct usbd_context *audio_usbd_init_device(usbd_msg_cb_t msg_cb);
 
 /**
+ * @brief Check if the USB microphone (host input) is enabled.
+ *
+ * @return true if the USB microphone is enabled, false otherwise.
+ */
+bool audio_usb_is_mic_enabled(void);
+
+/**
  * @brief Set pointers to the queues to be used by the USB module and start sending/receiving data.
  *
  * @param queue_tx_in  Pointer to queue structure for tx.

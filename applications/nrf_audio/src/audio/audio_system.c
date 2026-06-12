@@ -341,6 +341,11 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 		return -EPERM;
 	}
 
+	if (IS_ENABLED(CONFIG_AUDIO_SOURCE_USB) && !audio_usb_is_mic_enabled()) {
+		LOG_INF_RATELIMIT("Microphone not enabled, dropping data");
+		return 0;
+	}
+
 	if (audio_frame_in == NULL) {
 		LOG_ERR("Buffer pointer is NULL");
 		return -EINVAL;
