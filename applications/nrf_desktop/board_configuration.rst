@@ -93,8 +93,9 @@ nRF52840 USB Dongle (``nrf52840dongle/nrf52840``) and nRF52833 USB Dongle (``nrf
       * Bluetooth uses Nordic Semiconductor's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * The configuration with the B0 bootloader is set as default for the ``nrf52840dongle/nrf52840`` board and with the MCUboot bootloader is set as default for the ``nrf52833dongle`` board.
-      * The nRF5 MBR partition (``nrf5_mbr``) added by the ``nrf52840dongle/nrf52840`` board is not used.
-        It is statically defined with address and size both set to zero to prevent Partition Manager from trying to place it dynamically.
+      * If building with Partition Manager, the nRF5 MBR partition (``nrf5_mbr``) is, by default, automatically added for the ``nrf52840dongle/nrf52840`` board.
+        The partition is not used by the nRF Desktop application.
+        Because of that, application configurations statically define the partition with address and size both set to zero to prevent Partition Manager from trying to place it dynamically.
         The application did not switch to the ``bare`` board variant to keep backwards compatibility.
 
 nRF52820 USB Dongle (``nrf52820dongle``)
