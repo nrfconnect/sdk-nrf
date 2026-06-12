@@ -341,7 +341,7 @@ Edge Impulse samples
 Enhanced ShockBurst samples
 ---------------------------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target in all samples.
 
 Gazell samples
 --------------
