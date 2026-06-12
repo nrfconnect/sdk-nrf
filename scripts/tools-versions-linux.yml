@@ -22,7 +22,7 @@ zephyr-sdk:
     - arm-zephyr-eabi
     - riscv64-zephyr-elf
 ccache:
-  version: 4.8.2
+  version: 4.12.3
 dfu_util:
   version: 0.9-1
 doxygen:
