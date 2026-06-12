@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires loopbacks:
+ * - between P0.06 and P0.07
+ * - between P0.00 and P0.01
+ */
+
+&pinctrl {
+	i2c130_default_alt: i2c130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 6)>,
+				<NRF_PSEL(TWIM_SCL, 0, 0)>;
+		};
+	};
+
+	i2c130_sleep_alt: i2c130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 6)>,
+				<NRF_PSEL(TWIM_SCL, 0, 0)>;
+			low-power-enable;
+		};
+	};
+
+	i2c131_default_alt: i2c131_default_alt {
+		group1 {
+			/* Temporary workaround as it is currently not possible
+			 * to configure pins for TWIS with pinctrl.
+			 */
+			psels = <NRF_PSEL(TWIM_SDA, 0, 7)>,
+				<NRF_PSEL(TWIM_SCL, 0, 1)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c131_sleep_alt: i2c131_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 6, 7)>,
+				<NRF_PSEL(TWIM_SCL, 0, 1)>;
+			low-power-enable;
+		};
+	};
+};
+
+test_timer: &timer130 {
+	status = "reserved";
+};
+
+&grtc {
+	/delete-property/ child-owned-channels;
+	/delete-property/ nonsecure-channels;
+	owned-channels = <0 4 5 6>;
+	extended-channels = <0>;
+};
+
+dut: &i2c130 {
+	compatible = "nordic,ppi-seq-i2c";
+	status = "okay";
+	pinctrl-0 = <&i2c130_default_alt>;
+	pinctrl-1 = <&i2c130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+tester: &i2c131 {
+	compatible = "nordic,nrf-twis";
+	status = "reserved";
+	pinctrl-0 = <&i2c131_default_alt>;
+	pinctrl-1 = <&i2c131_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
