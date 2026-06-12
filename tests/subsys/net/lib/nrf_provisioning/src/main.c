@@ -20,12 +20,12 @@
 #include <time.h>
 #include <ncs_version.h>
 
-#include "cmock_modem_attest_token.h"
 #include "cmock_modem_key_mgmt.h"
 #include "cmock_modem_info.h"
 #include "cmock_nrf_modem_lib.h"
 #include "cmock_nrf_modem_at.h"
 #include "cmock_nrf_provisioning_at.h"
+#include "cmock_attest_token.h"
 #include "cmock_rest_client.h"
 #include "cmock_settings.h"
 #include "cmock_nrf_provisioning_jwt.h"
@@ -1202,8 +1202,8 @@ void test_provisioning_event_failed_device_not_claimed(void)
 	__cmock_modem_info_init_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
-	__cmock_modem_attest_token_get_ExpectAnyArgsAndReturn(0);
-	__cmock_modem_attest_token_free_ExpectAnyArgs();
+	__cmock_attest_token_get_ExpectAnyArgsAndReturn(0);
+	__cmock_attest_token_free_ExpectAnyArgs();
 
 	__cmock_rest_client_request_defaults_set_Ignore();
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
@@ -1456,7 +1456,7 @@ void test_provisioning_event_lte_deactivation_activation(void)
 /*
  * - Test NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED with attestation token
  * - Verify that device not claimed error with token provides the token data
- * - Mock REST client to return 403 and modem_attest_token_get to provide token
+ * - Mock REST client to return 403 and attest_token_get to provide token
  */
 void test_provisioning_event_failed_device_not_claimed_with_token(void)
 {
@@ -1484,9 +1484,9 @@ void test_provisioning_event_failed_device_not_claimed_with_token(void)
 		strlen(tok_jwt_plain) + 1);
 
 	/* Mock attestation token retrieval */
-	__cmock_modem_attest_token_get_ExpectAnyArgsAndReturn(0);
-	__cmock_modem_attest_token_get_ReturnMemThruPtr_token(&test_token, sizeof(test_token));
-	__cmock_modem_attest_token_free_ExpectAnyArgs();
+	__cmock_attest_token_get_ExpectAnyArgsAndReturn(0);
+	__cmock_attest_token_get_ReturnMemThruPtr_token(&test_token, sizeof(test_token));
+	__cmock_attest_token_free_ExpectAnyArgs();
 
 	__cmock_rest_client_request_ExpectAnyArgsAndReturn(-EACCES);
 	__cmock_rest_client_request_AddCallback(rest_client_request_device_not_claimed);

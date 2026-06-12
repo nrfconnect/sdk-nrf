@@ -22,7 +22,7 @@
 #include <modem/at_monitor.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/nrf_modem_lib.h>
-#include <modem/modem_attest_token.h>
+#include <attest_token.h>
 #include <nrf_modem_at.h>
 #include <net/nrf_provisioning.h>
 #include <net/rest_client.h>
@@ -664,7 +664,7 @@ static void check_return_code_and_notify(int ret)
 			struct nrf_attestation_token token = { 0 };
 			int err;
 
-			err = modem_attest_token_get(&token);
+			err = attest_token_get(&token);
 			if (err) {
 				LOG_ERR("Failed to get token, err %d", err);
 				callback_local(&event_data);
@@ -672,7 +672,7 @@ static void check_return_code_and_notify(int ret)
 				event_data.token = &token;
 				callback_local(&event_data);
 
-				modem_attest_token_free(&token);
+				attest_token_free(&token);
 			}
 
 		} else {

@@ -495,6 +495,11 @@ Modem libraries
 
   * Updated the library to always use the chosen ``zephyr,wifi`` node instead of ``ncs,location-wifi`` to find the used Wi-Fi device.
 
+* Modem attestation token library:
+
+  * The library has been renamed.
+    Use the :ref:`lib_attest_token` library instead.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

@@ -8,7 +8,7 @@
 #define MODEM_JWT_H__
 
 #include <zephyr/types.h>
-#include <modem/modem_attest_token.h>
+#include <attest_token.h>
 
 #ifdef __cplusplus
 extern "C" {

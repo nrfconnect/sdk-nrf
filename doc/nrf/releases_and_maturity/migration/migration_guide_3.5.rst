@@ -49,6 +49,24 @@ This section describes the changes related to libraries.
                   zephyr,wifi = &mywifi;
           };
 
+   * The Modem attestation token library has been renamed to :ref:`lib_attest_token` library.
+
+     To migrate your application, complete the following steps:
+
+     #. Replace the Kconfig options:
+
+        * ``CONFIG_MODEM_ATTEST_TOKEN`` with :kconfig:option:`CONFIG_ATTEST_TOKEN`.
+        * ``CONFIG_MODEM_ATTEST_TOKEN_PARSING`` with :kconfig:option:`CONFIG_ATTEST_TOKEN_PARSING`.
+
+     #. Replace the :file:`modem/modem_attest_token.h` header file with :file:`attest_token.h`
+
+     #. Replace the API calls:
+
+        * ``modem_attest_token_get`` with :c:func:`attest_token_get`
+        * ``modem_attest_token_free`` with :c:func:`attest_token_free`
+        * ``modem_attest_token_parse`` with :c:func:`attest_token_parse`
+        * ``modem_attest_token_get_uuids`` with :c:func:`attest_token_get_uuids`
+
 Drivers
 =======
 

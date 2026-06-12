@@ -24,7 +24,7 @@
 #include <stddef.h>
 
 #include <modem/lte_lc.h>
-#include <modem/modem_attest_token.h>
+#include <attest_token.h>
 
 #ifdef __cplusplus
 extern "C" {

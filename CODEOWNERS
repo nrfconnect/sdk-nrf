@@ -143,7 +143,6 @@
 /doc/nrf/libraries/modem/location.rst     @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/modem/lte_lc.rst       @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/modem/modem_antenna.rst @nrfconnect/ncs-iot-positioning-doc
-/doc/nrf/libraries/modem/modem_attest_token.rst @nrfconnect/ncs-nrf-cloud-doc
 /doc/nrf/libraries/modem/modem_battery.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/modem_info.rst   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/modem_jwt.rst    @nrfconnect/ncs-iot-oulu-tampere-doc
@@ -180,6 +179,7 @@
 /doc/nrf/libraries/others/app_event_manager.rst @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/app_event_manager_profiler_tracer.rst @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/app_jwt.rst      @nrfconnect/ncs-modem-doc @ayla-nordicsemi
+/doc/nrf/libraries/others/attest_token.rst @nrfconnect/ncs-nrf-cloud-doc
 /doc/nrf/libraries/others/audio_module.rst @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/contin_array.rst @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/data_fifo.rst   @nrfconnect/ncs-audio-doc
@@ -314,6 +314,7 @@
 
 # Include
 /include/app_jwt.h                        @nrfconnect/ncs-modem @ayla-nordicsemi
+/include/attest_token.h                   @nrfconnect/ncs-modem
 /include/audio/                           @nrfconnect/ncs-audio
 /include/audio_module/                    @nrfconnect/ncs-audio
 /include/bluetooth/                       @nrfconnect/ncs-dragoon
@@ -381,6 +382,7 @@
 /lib/at_monitor/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/at_parser/                           @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/at_shell/                            @nrfconnect/ncs-cia
+/lib/attest_token/                        @nrfconnect/ncs-modem
 /lib/bin/                                 @nrfconnect/ncs-co-networking
 /lib/bin/lwm2m_carrier/                   @nrfconnect/ncs-carrier
 /lib/boot_banner/                         @nordicjm
@@ -401,7 +403,6 @@
 /lib/location/                            @nrfconnect/ncs-modem-tre
 /lib/lte_link_control/                    @nrfconnect/ncs-modem-tre
 /lib/modem_antenna/                       @nrfconnect/ncs-modem-tre
-/lib/modem_attest_token/                  @nrfconnect/ncs-modem
 /lib/modem_battery/                       @nrfconnect/ncs-modem
 /lib/modem_info/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/modem_jwt/                           @nrfconnect/ncs-iot-oulu @nrfconnect/ncs-modem

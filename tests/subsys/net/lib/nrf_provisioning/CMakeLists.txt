@@ -22,7 +22,7 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h
   WORD_EXCLUDE "__deprecated"
 )
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_key_mgmt.h)
-cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_attest_token.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/attest_token.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_info.h
   WORD_EXCLUDE "__deprecated"
 )

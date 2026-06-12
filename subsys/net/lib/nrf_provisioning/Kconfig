@@ -8,7 +8,7 @@ menuconfig NRF_PROVISIONING
 	bool "nRF Provisioning"
 	depends on NRF_MODEM_LIB
 	depends on SETTINGS
-	depends on MODEM_ATTEST_TOKEN
+	depends on ATTEST_TOKEN
 	imply FCB
 
 if NRF_PROVISIONING
