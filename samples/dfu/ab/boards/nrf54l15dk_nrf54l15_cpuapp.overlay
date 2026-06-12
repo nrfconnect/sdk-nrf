@@ -1,7 +1,68 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2025 - 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../sysbuild/nrf54l15dk_nrf54l15_cpuapp_common.dtsi"
+/ {
+	chosen {
+		nrf,bootloader-request = &boot_request;
+	};
+};
+
+/ {
+	cpuapp_sram@2003fff0 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2003fff0 0x10>;
+		zephyr,memory-region = "RetainedMem";
+		status = "okay";
+
+		retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			boot_request: boot_request@0 {
+				compatible = "zephyr,retention";
+				status = "okay";
+				reg = <0x0 0x10>;
+				prefix = [0b 01];
+				checksum = <4>;
+			};
+		};
+	};
+};
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 0x10800>;
+		};
+
+		slot0_partition: partition@11000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x11000 0xb3000>;
+		};
+
+		slot1_partition: partition@c4000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0xc4000 0xb3000>;
+		};
+
+		littlefs_storage: storage_partition: partition@177000 {
+			compatible = "zephyr,mapped-partition";
+			label = "littlefs-storage";
+			reg = <0x177000 0x6000>;
+		};
+	};
+};
