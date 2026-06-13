@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Define b0n partition layout for the b0n bootloader.
+ * This overlay replaces nrf/samples/nrf5340/netboot/app.overlay (sysbuild DTC
+ * overlays replace, not append), so both the partition definitions and the
+ * chosen node from app.overlay must be present here.
+ */
+#include <samples/matter/nrf5340_cpunet_partitions.dtsi>
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0n_partition;
+	};
+};
