@@ -565,6 +565,7 @@
 /samples/wifi/shell/                      @nrfconnect/ncs-co-networking @krish2718 @sachinthegreen @rado17
 /samples/wifi/sta/                        @D-Triveni @bama-nordic
 /samples/wifi/ble_coex/                   @muraliThokala @bama-nordic
+/samples/wifi/thread_coex/                @muraliThokala @bama-nordic
 /samples/wifi/shutdown/                   @krish2718 @sachinthegreen
 /samples/wifi/twt/                        @D-Triveni
 /samples/wifi/throughput/                 @D-Triveni
