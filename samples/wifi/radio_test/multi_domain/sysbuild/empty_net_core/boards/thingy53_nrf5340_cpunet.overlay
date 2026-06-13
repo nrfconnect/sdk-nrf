@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Define b0n partition layout so &s0_partition referenced by
+ * nrf/sysbuild/overlays/s0-partition.overlay resolves correctly.
+ */
+#include <samples/matter/nrf5340_cpunet_partitions.dtsi>
