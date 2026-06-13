@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Define b0n partition layout so &b0n_partition referenced by
+ * nrf/samples/nrf5340/netboot/app.overlay resolves correctly, and
+ * so that PCD can read s0_partition address for network core update.
+ */
+#include <samples/matter/nrf5340_cpunet_partitions.dtsi>
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0n_partition;
+	};
+};

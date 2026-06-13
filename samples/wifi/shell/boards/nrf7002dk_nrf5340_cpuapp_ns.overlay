@@ -1,0 +1,104 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Flash partition layout for nRF7002DK (nRF5340 cpuapp/ns) without MCUboot.
+ * PM is disabled; TF-M is the only S-mode component.
+ *
+ *   slot0_s_partition  @ 0x000000  144 KB  TF-M secure image
+ *   slot0_ns_partition @ 0x024000  816 KB  NS application image
+ *   nonsecure_storage  @ 0x0f0000    8 KB  Settings (NS-accessible)
+ *   tfm_storage        @ 0x0f4000   48 KB  TF-M ITS + OTP + PS
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &storage_partition;
+/delete-node/ &sram0_ns;
+
+&flash0 {
+	partitions {
+		slot0_s_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0-secure";
+			reg = <0x0 0x24000>;
+		};
+
+		slot0_ns_partition: partition@24000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0-nonsecure";
+			reg = <0x24000 0xcc000>;
+		};
+
+		nonsecure_storage: partition@f0000 {
+			compatible = "zephyr,mapped-partition";
+			label = "nonsecure-storage";
+			reg = <0xf0000 DT_SIZE_K(8)>;
+			ranges = <0x0 0xf0000 DT_SIZE_K(8)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			storage_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "storage";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+		};
+
+		tfm_storage_partition: partition@f4000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-storage";
+			reg = <0xf4000 DT_SIZE_K(48)>;
+			ranges = <0x0 0xf4000 DT_SIZE_K(48)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			tfm_its_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-its";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+
+			tfm_otp_partition: partition@4000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-otp";
+				reg = <0x4000 DT_SIZE_K(8)>;
+			};
+
+			tfm_ps_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-ps";
+				reg = <0x8000 DT_SIZE_K(16)>;
+			};
+		};
+	};
+};
+
+/*
+ * SRAM split: TF-M secure uses 48 KiB at base; NS app gets the rest.
+ * sram0_ns spans 0x74000 bytes; sram0_ns_app is 0x64000 (400 KiB) because the
+ * top 64 KiB (sram0_shared) is reserved for cpuapp/cpunet IPC.
+ */
+&sram0_s {
+	reg = <0x0 0xc000>;
+};
+
+&sram0 {
+	sram0_ns: sram@c000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0xc000 0x74000>;
+		ranges = <0x0 0xc000 0x74000>;
+
+		sram0_ns_app: sram0_ns@0 {
+			reg = <0x0 0x64000>;
+		};
+	};
+};

@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Shared flash partition layout for thingy53/nrf5340/cpuapp.
+ * Used by the main application overlay and the sysbuild mcuboot overlay.
+ *
+ * Internal flash (flash0):
+ *   boot_partition    @ 0x000000  64 KB  MCUboot
+ *   slot0_partition   @ 0x010000 896 KB  Image 0 primary
+ *   storage_partition @ 0x0f0000  64 KB  Settings
+ *
+ * External QSPI flash (mx25r64):
+ *   slot1_partition   @ 0x000000 896 KB  Image 0 secondary
+ *   slot3_partition   @ 0x0e0000 256 KB  Image 1 secondary (network core)
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x00010000 DT_SIZE_K(896)>;
+		};
+
+		storage_partition: partition@f0000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f0000 DT_SIZE_K(64)>;
+		};
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x00000000 DT_SIZE_K(896)>;
+		};
+
+		slot3_partition: partition@e0000 {
+			label = "image-3";
+			reg = <0x000e0000 DT_SIZE_K(256)>;
+		};
+	};
+};
