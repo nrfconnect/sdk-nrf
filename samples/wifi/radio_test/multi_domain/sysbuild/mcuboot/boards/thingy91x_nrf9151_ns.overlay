@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Partition layout is defined in board's thingy91x_nrf9151_partition.dtsi.
+ * Set MCUboot to boot from s0_partition (applied by s0-partition.overlay).
+ */
+
+/ {
+	chosen {
+		nordic,pm-ext-flash = &flash_ext;
+	};
+};
