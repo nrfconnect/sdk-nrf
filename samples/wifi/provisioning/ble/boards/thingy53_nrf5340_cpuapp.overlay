@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Override flash partitions to provide slot0_partition large enough for
+ * the ble provisioning app (~700 KB).
+ */
+#include "thingy53_nrf5340_cpuapp_partitions.dtsi"
