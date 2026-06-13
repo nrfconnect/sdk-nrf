@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: d0f6ceb707d5f93946c54b95c5edaf703ce461a0
+      revision: pull/4197/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -92,7 +92,6 @@ manifest:
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
-          - hostap
           - liblc3
           - libmetal
           - libsbc
@@ -283,7 +282,10 @@ manifest:
       revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
       groups:
         - benchmark
-
+    - name: hostap
+      repo-path: sdk-hostap
+      path: modules/lib/hostap
+      revision: dc22e8cf8dd03c8ff2bdde68002a4496525f6eb2
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.
