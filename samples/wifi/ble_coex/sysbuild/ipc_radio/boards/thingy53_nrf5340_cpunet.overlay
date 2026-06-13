@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Define netcore partition layout so &s0_partition referenced by
+ * nrf/sysbuild/overlays/s0-partition.overlay (applied as EXTRA_DTC_OVERLAY_FILE
+ * on top of this file) resolves correctly.
+ */
+#include <samples/matter/nrf5340_cpunet_partitions.dtsi>
