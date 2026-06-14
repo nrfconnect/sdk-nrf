@@ -261,7 +261,7 @@ static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t p
 			goto cleanup;
 		}
 
-		if (proto == NET_IPPROTO_TLS_1_2 && !is_ip_address(hostname)) {
+		if (!is_ip_address(hostname)) {
 			err = socket_ZSOCK_TLS_HOSTNAME_set(*fd, hostname);
 			if (err) {
 				goto cleanup;
