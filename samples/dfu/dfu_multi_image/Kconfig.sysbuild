@@ -17,4 +17,7 @@ endchoice
 
 endif # SOC_SERIES_NRF53
 
+config PARTITION_MANAGER
+	default n
+
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
