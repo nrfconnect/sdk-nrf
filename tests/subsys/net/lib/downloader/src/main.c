@@ -647,12 +647,18 @@ int z_impl_zsock_setsockopt_coaps_ok(int sock, int level, int optname, const voi
 		TEST_ASSERT_EQUAL_MEMORY(sec_tags, optval, sizeof(sec_tags));
 		break;
 	case 4:
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_HOSTNAME, optname);
+		TEST_ASSERT_EQUAL(strlen(HOSTNAME), optlen);
+		TEST_ASSERT_EQUAL_MEMORY(HOSTNAME, optval, strlen(HOSTNAME));
+		break;
+	case 5:
 		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
 		TEST_ASSERT_EQUAL(ZSOCK_SO_SNDTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
-	case 5:
+	case 6:
 		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
 		TEST_ASSERT_EQUAL(ZSOCK_SO_RCVTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
@@ -769,16 +775,22 @@ int z_impl_zsock_setsockopt_coaps_cid_ok(int sock, int level, int optname, const
 		break;
 	case 4:
 		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_HOSTNAME, optname);
+		TEST_ASSERT_EQUAL(strlen(HOSTNAME), optlen);
+		TEST_ASSERT_EQUAL_MEMORY(HOSTNAME, optval, strlen(HOSTNAME));
+		break;
+	case 5:
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
 		TEST_ASSERT_EQUAL(ZSOCK_TLS_DTLS_CID, optname);
 		TEST_ASSERT_EQUAL(sizeof(uint32_t), optlen);
 		break;
-	case 5:
+	case 6:
 		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
 		TEST_ASSERT_EQUAL(ZSOCK_SO_SNDTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
-	case 6:
+	case 7:
 		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
 		TEST_ASSERT_EQUAL(ZSOCK_SO_RCVTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
