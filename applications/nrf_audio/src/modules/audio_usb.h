@@ -25,36 +25,59 @@
 #error USB only supports 48kHz stereo
 #endif /* (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
 
-#define USB_BLOCK_SIZE_MULTI_CHAN                                                                  \
-	(((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000) *                  \
-	 MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS))
+#define USB_1MS_BLOCKS_NUM_MAX                                                                     \
+	((CONFIG_AUDIO_FRAME_DURATION_US / USEC_PER_MSEC) +                                        \
+	 (CONFIG_AUDIO_FRAME_DURATION_US % USEC_PER_MSEC ? 1 : 0))
+#define USB_BLOCK_1MS_MONO_SIZE                                                                    \
+	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS / MSEC_PER_SEC)
+#define USB_BLOCK_MULTI_CHAN_1MS_SIZE                                                              \
+	(USB_BLOCK_1MS_MONO_SIZE * MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS))
 
 struct usbd_context *audio_usbd_init_device(usbd_msg_cb_t msg_cb);
 
 /**
- * @brief Check if the USB microphone (host input) is enabled.
+ * @brief Get the state of the USB devices headphones out.
  *
- * @return true if the USB microphone is enabled, false otherwise.
+ * @return true: USB headphones out enabled.
+ *         false: USB headphones out disabled.
  */
-bool audio_usb_is_mic_enabled(void);
+bool audio_usb_headphones_out_enabled(void);
+
+/**
+ * @brief Get the state of the USB devices headset out.
+ *
+ * @return true: USB headset out enabled.
+ *         false: USB headset out disabled.
+ */
+bool audio_usb_headset_out_enabled(void);
+
+/**
+ * @brief Get the state of the USB devices headset in.
+ *
+ * @return true: USB headset in enabled.
+ *         false: USB headset in disabled.
+ */
+bool audio_usb_headset_in_enabled(void);
 
 /**
  * @brief Set pointers to the queues to be used by the USB module and start sending/receiving data.
  *
- * @param queue_tx_in  Pointer to queue structure for tx.
- * @param queue_rx_in  Pointer to queue structure for rx.
+ * @param audio_q_out_ptr  Pointer to queue structure for out.
+ * @param audio_q_in_ptr   Pointer to queue structure for in.
  *
  * @return 0 if successful, error otherwise
  */
-int audio_usb_start(struct k_msgq *queue_tx_in, struct k_msgq *queue_rx_in);
+int audio_usb_start(struct k_msgq *audio_q_out_ptr, struct k_msgq *audio_q_in_ptr);
 
 /**
  * @brief Stop sending/receiving data.
  *
  * @note The USB device will still be running, but all data sent to
  *       it will be discarded.
+ *
+ * @return 0 if successful, error otherwise
  */
-void audio_usb_stop(void);
+int audio_usb_stop(void);
 
 /**
  * @brief Stop and disable USB device.
@@ -69,7 +92,8 @@ int audio_usb_disable(void);
  * @param	host_in		If true, initializes USB as input (host in),
  * @param	host_out	If true, initializes USB as output (host out).
  *
- * @note If both @p host_in and @p host_out are true, USB is initialized as bidirectional (headset).
+ * @note If both @p host_in and @p host_out are true, USB is initialized as bidirectional
+ * (headset).
  *
  * @return 0 if successful, error otherwise.
  */
