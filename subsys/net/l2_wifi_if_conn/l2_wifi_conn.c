@@ -9,6 +9,7 @@ LOG_MODULE_REGISTER(l2_wifi_mgr_conn);
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
+#include <zephyr/sys/atomic.h>
 #include <net/l2_wifi_connect.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <supp_events.h>
@@ -105,20 +106,53 @@ static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-int net_l2_wifi_connect(struct conn_mgr_conn_binding *const binding)
+/* Work item used to defer the connect request onto wifi_conn_wq, so that the
+ * thread calling conn_mgr_if_connect() (application thread, the shell thread, or
+ * the conn_mgr_monitor thread in the auto-connect case) does not have to size
+ * its stack for the synchronous NET_REQUEST_WIFI_CONNECT_STORED -> supplicant
+ * call chain. This mirrors the disconnect path, which already runs on
+ * wifi_conn_wq.
+ */
+static atomic_t connect_in_progress;
+
+static void wifi_conn_req_work_handler(struct k_work *work)
 {
 	int rc;
 
-	ARG_UNUSED(binding);
+	ARG_UNUSED(work);
 
 	rc = net_mgmt(NET_REQUEST_WIFI_CONNECT_STORED, wifi_iface, NULL, 0);
-
 	if (rc) {
-		LOG_ERR("net management connect_stored request failed: %d\n", rc);
-		return -ENOEXEC;
+		LOG_ERR("net management connect_stored request failed: %d", rc);
+		/* connect() has already returned success to conn_mgr, so surface
+		 * the asynchronous failure through the connectivity event.
+		 */
+		net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, wifi_iface);
+		goto out;
 	}
 
-	return wifi_conn_timeout_schedule();
+	(void)wifi_conn_timeout_schedule();
+
+out:
+	atomic_clear(&connect_in_progress);
+}
+
+static K_WORK_DEFINE(wifi_conn_req_work, wifi_conn_req_work_handler);
+
+int net_l2_wifi_connect(struct conn_mgr_conn_binding *const binding)
+{
+	ARG_UNUSED(binding);
+
+	/* Coalesce duplicate requests, e.g. an explicit conn_mgr_all_if_connect()
+	 * racing with the auto-connect triggered when the iface comes admin-up.
+	 */
+	if (!atomic_cas(&connect_in_progress, 0, 1)) {
+		return 0;
+	}
+
+	k_work_submit_to_queue(&wifi_conn_wq, &wifi_conn_req_work);
+
+	return 0;
 }
 
 int net_l2_wifi_disconnect(struct conn_mgr_conn_binding *const binding)
