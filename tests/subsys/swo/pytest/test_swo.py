@@ -15,6 +15,10 @@ from twister_harness import DeviceAdapter
 
 logger = logging.getLogger(__name__)
 
+ROOT_DIR = Path(__file__).absolute().parents[0]
+BC_SWO_ENABLE = Path(ROOT_DIR, 'nrf54l15_dk_pca10156_0.10.0_swo_enable.json')
+BC_SWO_DEFAULT = Path(ROOT_DIR, 'nrf54l15_dk_pca10156_0.10.0_defaults.json')
+
 
 # Kill parent process and all child processes (if started)
 def _kill(proc):
@@ -24,6 +28,26 @@ def _kill(proc):
         proc.kill()
     except Exception as e:
         logger.exception(f"Could not kill JLinkSWOViewerCLExe - {e}")
+
+
+def _reconfigure_board_controller(segger_id: int, cfg_file: Path):
+    cmd_bc = [
+        'nrfutil',
+        'device',
+        'x-execute-batch',
+        '--traits',
+        'boardController',
+        '--serial-number',
+        segger_id,
+        '--batch-path',
+        cfg_file.as_posix(),
+    ]
+
+    logger.info(f"Executing:\n{cmd_bc}")
+    try:
+        subprocess.run(cmd_bc, shell=False, encoding='UTF-8')
+    except OSError as ose:
+        logger.exception(f"Unable to configure Board Controller\n{cmd_bc}\n{ose}")
 
 
 def test_swo_logging(dut: DeviceAdapter):
@@ -133,6 +157,11 @@ def test_swo_logging(dut: DeviceAdapter):
     # Wait a bit for the core to boot
     time.sleep(2)
 
+    # Enable SWO pin on Board Controller
+    # This is necessary on NRF54L15 PCA10156 in revision 0.10.0 and above
+    if "nrf54l15dk" in PLATFORM and "swo_handling" in dut.device_config.fixtures:
+        _reconfigure_board_controller(SEGGER_ID, BC_SWO_ENABLE)
+
     # use JLinkSWOViewerCLExe to collect logs
     cmd = f"JLinkSWOViewerCLExe -USB {SEGGER_ID}"
     cmd += f" -device {SWO_CONFIG[PLATFORM]['device']}"
@@ -161,6 +190,10 @@ def test_swo_logging(dut: DeviceAdapter):
         _kill(proc)
         outs, errs = proc.communicate()
         logger.info(f"{outs=}\n{errs=}")
+
+    # Restore default Board Controller configuration on NRF54L15 PCA10156
+    if "nrf54l15dk" in PLATFORM and "swo_handling" in dut.device_config.fixtures:
+        _reconfigure_board_controller(SEGGER_ID, BC_SWO_DEFAULT)
 
     # read logs
     with open(f"{log_filename}", errors="ignore") as log_file:
