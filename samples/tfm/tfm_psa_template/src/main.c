@@ -9,7 +9,9 @@
 #include <zephyr/sys/printk.h>
 #include <tfm_ns_interface.h>
 #include "psa/initial_attestation.h"
+#include <psa/crypto.h>
 #include <tfm_ioctl_api.h>
+#include <tfm_builtin_key_ids.h>
 #include <zephyr/storage/flash_map.h>
 #define S0_ADDRESS PARTITION_ADDRESS(s0_partition)
 #define S1_ADDRESS PARTITION_ADDRESS(s1_partition)
@@ -65,6 +67,12 @@ void dump_hex_ascii(const uint8_t *data, size_t size)
 	printk("\n");
 }
 
+/* get_fw_info() needs CONFIG_FW_INFO (from CONFIG_SECURE_BOOT) and an
+ * s1_partition. nRF54L has no non-secure backend for that read path, so
+ * CONFIG_SECURE_BOOT is off and this is compiled out there. The rest of the
+ * sample works the same on all targets.
+ */
+#if defined(CONFIG_FW_INFO) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition))
 static void get_fw_info_address(uint32_t fw_address)
 {
 	struct fw_info info;
@@ -108,6 +116,35 @@ static void get_fw_info(void)
 	get_fw_info_address(S1_ADDRESS);
 
 	printk("\nActive slot: %s\n", s0_active ? "S0" : "S1");
+}
+#endif /* defined(CONFIG_FW_INFO) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition)) */
+
+static void get_attestation_public_key(void)
+{
+	static uint8_t pub_key_buf[PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(256)];
+	size_t pub_key_size;
+	psa_status_t status;
+
+	printk("\nRequesting initial attestation public key.\n");
+
+	status = psa_crypto_init();
+
+	if (status) {
+		printk("psa_crypto_init (err %d)\n", status);
+		return;
+	}
+
+	status = psa_export_public_key(TFM_BUILTIN_KEY_ID_IAK, pub_key_buf,
+				       sizeof(pub_key_buf), &pub_key_size);
+
+	if (status) {
+		printk("psa_export_public_key (err %d)\n", status);
+	} else {
+		printk("Received initial attestation public key of %zu bytes.\n",
+		       pub_key_size);
+
+		dump_hex_ascii(pub_key_buf, pub_key_size);
+	}
 }
 
 static void get_attestation_token(void)
@@ -165,7 +202,10 @@ int main(void)
 	 */
 	printk("build time: " __DATE__ " " __TIME__ "\n");
 
+#if defined(CONFIG_FW_INFO) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition))
 	get_fw_info();
+#endif
+	get_attestation_public_key();
 	get_attestation_token();
 
 	/* The system work queue handles all incoming mcumgr requests.  Let the
