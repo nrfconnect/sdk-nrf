@@ -25,6 +25,7 @@
 # ---------------------------------------------------------------------------
 
 thingy53
+partition_manager
 applications.nrf_desktop.zdebug_partition_manager_mcuboot_direct_xip.uart
 applications.nrf_desktop.zdebug_partition_manager_mcuboot_single_app
 applications.nrf_desktop.zdebug_partition_manager_single_image.uart
