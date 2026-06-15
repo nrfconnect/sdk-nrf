@@ -101,6 +101,16 @@ def __print_dev_conf(device_list):
     print(table)
 
 
+def __sirk_is_valid(sirk):
+    if sirk == DEFAULT_SIRK:
+        raise ValueError("Default SIRK is not allowed. Please set a custom SIRK in the JSON file.")
+
+    if len(sirk) != 16:
+        raise ValueError("SIRK must be 16 characters long")
+
+    return True
+
+
 def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
                     pristine, options, sirk=""):
 
@@ -141,19 +151,17 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
     if options.transport == Transport.broadcast.name:
         if device == AudioDevice.headset:
             overlay_flag = f" -DEXTRA_CONF_FILE={BROADCAST_SINK_OVERLAY}"
+
+            if __sirk_is_valid(sirk):
+                device_flag += " -DCONFIG_BT_SET_IDENTITY_RESOLVING_KEY=\\\"" + sirk + "\\\""
         else:
             overlay_flag = f" -DEXTRA_CONF_FILE={BROADCAST_SOURCE_OVERLAY}"
     else:
         if device == AudioDevice.headset:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_SERVER_OVERLAY}"
 
-            if sirk == DEFAULT_SIRK:
-                raise ValueError("Default SIRK is not allowed. Please set a custom SIRK in the JSON file.")
-
-            if len(sirk) != 16:
-                raise ValueError("SIRK must be 16 characters long")
-
-            device_flag += " -DCONFIG_BT_SET_IDENTITY_RESOLVING_KEY=\\\"" + sirk + "\\\""
+            if __sirk_is_valid(sirk):
+                device_flag += " -DCONFIG_BT_SET_IDENTITY_RESOLVING_KEY=\\\"" + sirk + "\\\""
         else:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_CLIENT_OVERLAY}"
 
