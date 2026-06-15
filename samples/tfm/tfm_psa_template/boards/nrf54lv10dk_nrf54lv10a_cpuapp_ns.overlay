@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Replace the default cpuapp_ns partitions with the shared B0 + MCUboot + TF-M
+ * table.
+ */
+/delete-node/ &slot0_partition;
+/delete-node/ &slot0_ns_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &storage_partition;
+
+#include "../dts/nrf54lv10dk_nrf54lv10a_cpuapp_partitions.dtsi"
