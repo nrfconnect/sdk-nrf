@@ -14,6 +14,7 @@
 
 #include <zephyr/net/openthread.h>
 #include <zephyr/sys/slist.h>
+#include <zephyr/sys/math_extras.h>
 
 #include <zephyr/logging/log.h>
 
@@ -158,6 +159,12 @@ static const char **decode_subtypes(struct nrf_rpc_cbor_ctx *ctx, uint8_t subtyp
 	size_t index = 0;
 	size_t ptrs_size = sizeof(const char *) * (subtypes_num + 1);
 
+	/* The pointer array must fit in the provided buffer. */
+	if (ptrs_size > buffer_size) {
+		zcbor_error(ctx->zs, ZCBOR_ERR_UNKNOWN);
+		return NULL;
+	}
+
 	/* Prepare storage for array of pointers in the buffer */
 	buffer += ptrs_size;
 	buffer_size -= ptrs_size;
@@ -190,6 +197,7 @@ static otDnsTxtEntry *decode_txt_data(struct nrf_rpc_cbor_ctx *ctx, uint8_t entr
 	const void *rpc_buffer;
 	size_t rpc_buffer_size = 0;
 	size_t index = 0;
+	size_t array_size = (size_t)entries_num * sizeof(otDnsTxtEntry);
 
 	zcbor_map_start_decode(ctx->zs);
 
@@ -198,19 +206,37 @@ static otDnsTxtEntry *decode_txt_data(struct nrf_rpc_cbor_ctx *ctx, uint8_t entr
 		goto out;
 	}
 
-	buffer += entries_num * sizeof(otDnsTxtEntry);
+	/* The entry array itself must fit in the provided buffer. */
+	if (array_size > buffer_size) {
+		zcbor_error(ctx->zs, ZCBOR_ERR_UNKNOWN);
+		entries = NULL;
+		goto out;
+	}
+
+	buffer += array_size;
+	buffer_size -= array_size;
 
 	for (; index < entries_num; ++index) {
 		entries[index].mKey = decode_str(ctx, &buffer, &buffer_size);
 
 		rpc_buffer = nrf_rpc_decode_buffer_ptr_and_size(ctx, &rpc_buffer_size);
-		if (rpc_buffer) {
-			memcpy(buffer, rpc_buffer, rpc_buffer_size);
+		if (!rpc_buffer) {
+			entries[index].mValue = NULL;
+			entries[index].mValueLength = 0;
+			continue;
 		}
 
-		entries[index].mValue = rpc_buffer ? buffer : NULL;
+		if (rpc_buffer_size > buffer_size || rpc_buffer_size > UINT16_MAX) {
+			zcbor_error(ctx->zs, ZCBOR_ERR_UNKNOWN);
+			entries = NULL;
+			goto out;
+		}
+
+		memcpy(buffer, rpc_buffer, rpc_buffer_size);
+		entries[index].mValue = buffer;
 		entries[index].mValueLength = (uint16_t)rpc_buffer_size;
 		buffer += rpc_buffer_size;
+		buffer_size -= rpc_buffer_size;
 	}
 
 out:
@@ -251,7 +277,11 @@ static void ot_rpc_cmd_srp_client_add_service(const struct nrf_rpc_group *group,
 		goto out;
 	}
 
-	subtypes_buffer_size = nrf_rpc_decode_uint(ctx) + sizeof(uintptr_t) * (1 + subtypes_num);
+	if (size_add_overflow(nrf_rpc_decode_uint(ctx), sizeof(uintptr_t) * (1 + subtypes_num),
+			      &subtypes_buffer_size)) {
+		error = OT_ERROR_NO_BUFS;
+		goto out;
+	}
 
 	service->subtypes_buffer = malloc(subtypes_buffer_size);
 	if (!service->subtypes_buffer) {
@@ -259,8 +289,13 @@ static void ot_rpc_cmd_srp_client_add_service(const struct nrf_rpc_group *group,
 		goto out;
 	}
 
-	txt_data_size = nrf_rpc_decode_uint(ctx) + sizeof(otDnsTxtEntry) *
-			service->service.mNumTxtEntries;
+	if (size_add_overflow(nrf_rpc_decode_uint(ctx),
+			      sizeof(otDnsTxtEntry) * service->service.mNumTxtEntries,
+			      &txt_data_size)) {
+		error = OT_ERROR_NO_BUFS;
+		goto out;
+	}
+
 	if (txt_data_size) {
 		service->txt_buffer = malloc(txt_data_size);
 		if (!service->txt_buffer) {
@@ -286,7 +321,11 @@ static void ot_rpc_cmd_srp_client_add_service(const struct nrf_rpc_group *group,
 	service->service.mLease = nrf_rpc_decode_uint(ctx);
 	service->service.mKeyLease = nrf_rpc_decode_uint(ctx);
 
-	nrf_rpc_cbor_decoding_done(group, ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_SRP_CLIENT_ADD_SERVICE);
+		service_buffers_free(service);
+		return;
+	}
 
 	ot_rpc_mutex_lock();
 	error = otSrpClientAddService(openthread_get_default_instance(), &service->service);
@@ -812,12 +851,18 @@ static void ot_rpc_cmd_srp_client_set_host_addresses(const struct nrf_rpc_group 
 
 	ot_rpc_mutex_lock();
 
-	/* Check if more memory is needed */
-	if (host_data.addresses && (num > host_data.addresses_num)) {
+	if (num > host_data.addresses_num) {
+		otIp6Address *addresses = malloc(num * OT_IP6_ADDRESS_SIZE);
+
+		if (!addresses) {
+			nrf_rpc_cbor_decoding_done(group, ctx);
+			nrf_rpc_rsp_send_uint(group, OT_ERROR_NO_BUFS);
+			ot_rpc_mutex_unlock();
+			return;
+		}
+
 		free(host_data.addresses);
-		host_data.addresses = malloc(num * OT_IP6_ADDRESS_SIZE);
-	} else if (!host_data.addresses) {
-		host_data.addresses = malloc(num * OT_IP6_ADDRESS_SIZE);
+		host_data.addresses = addresses;
 	}
 
 	host_data.addresses_num = num;
