@@ -2023,8 +2023,8 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
-              - --
-              - --
+              - Supported\ :sup:`4`
+              - Supported\ :sup:`4`
               - --
               - --
               - --
