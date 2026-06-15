@@ -15,7 +15,9 @@ config L2_WIFI_CONN_WQ_STACK_SIZE
 	default 6144
 	help
 	  The workqueue stack size needs to be kept high to handle the
-	  disconnect case which invokes supplicant calls.
+	  disconnect case which invokes supplicant calls. The connect path also
+	  runs on this workqueue, so it must accommodate the connect call chain
+	  as well.
 
 config L2_WIFI_CONNECTIVITY_CONNECT_TIMEOUT_SECONDS
 	int "Connect timeout in seconds"
