@@ -234,7 +234,8 @@ Thread
 Wi-Fi®
 ------
 
-|no_changes_yet_note|
+* Updated the Connection Manager Wi-Fi connectivity layer to defer the connect request to its dedicated work queue (``wifi_conn_wq``) instead of running it synchronously in the context of the caller of :c:func:`conn_mgr_if_connect()`.
+  This allows the stacks of the application, shell, and Connection Manager monitor threads to be reduced, as they no longer need to accommodate the Wi-Fi connect call chain.
 
 Applications
 ============
