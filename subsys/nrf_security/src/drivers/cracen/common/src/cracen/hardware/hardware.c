@@ -155,7 +155,7 @@ int cracen_init(void)
 		goto exit;
 	}
 
-	if (IS_ENABLED(CONFIG_NRFX_KMU)) {
+	if (IS_ENABLED(CONFIG_NRFX_KMU) || IS_ENABLED(CONFIG_BUILD_WITH_TFM)) {
 		err = nrfx_kmu_init(NULL);
 		if (err != 0) {
 			status = PSA_ERROR_HARDWARE_FAILURE;

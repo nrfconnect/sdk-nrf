@@ -7,6 +7,7 @@
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
 #include <cracen_psa_kmu.h>
+#include <cracen/hardware.h>
 #include <hw_unique_key.h>
 #include "hw_unique_key_internal.h"
 
@@ -16,6 +17,10 @@ int hw_unique_key_derive_key(enum hw_unique_key_slot key_slot, const uint8_t *co
 {
 	psa_key_attributes_t mkek_attr = PSA_KEY_ATTRIBUTES_INIT;
 	psa_status_t status;
+
+	if (cracen_init() != PSA_SUCCESS) {
+		return -HW_UNIQUE_KEY_ERR_DERIVE_FAILED;
+	}
 
 	if (key_slot == HUK_KEYSLOT_MKEK) {
 		psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(0, CRACEN_BUILTIN_MKEK_ID));
@@ -68,6 +73,10 @@ bool hw_unique_key_are_any_written(void)
 	psa_drv_slot_number_t slot_number;
 	mbedtls_svc_key_id_t key_id;
 
+	if (cracen_init() != PSA_SUCCESS) {
+		return false;
+	}
+
 	key_id = mbedtls_svc_key_id_make(0, PSA_KEY_ID_FROM_CRACEN_KMU_SLOT(
 						CRACEN_KMU_KEY_USAGE_SCHEME_SEED,
 						CONFIG_CRACEN_IKG_SEED_KMU_SLOT));
@@ -81,6 +90,10 @@ int hw_unique_key_write(enum hw_unique_key_slot key_slot, const uint8_t *key)
 	size_t outlen;
 	psa_status_t status;
 	(void)key_slot;
+
+	if (cracen_init() != PSA_SUCCESS) {
+		return -HW_UNIQUE_KEY_ERR_WRITE_FAILED;
+	}
 
 	psa_key_attributes_t seed_attr = PSA_KEY_ATTRIBUTES_INIT;
 
@@ -111,6 +124,10 @@ int hw_unique_key_write_random(void)
 {
 	psa_status_t status;
 	uint8_t random_data[HUK_SIZE_BYTES];
+
+	if (cracen_init() != PSA_SUCCESS) {
+		return -HW_UNIQUE_KEY_ERR_GENERATION_FAILED;
+	}
 
 	status = cracen_get_random(NULL, random_data, sizeof(random_data));
 	if (status != PSA_SUCCESS) {
