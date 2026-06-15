@@ -1941,7 +1941,7 @@ The following table indicates the software maturity levels of the support for ea
             * - **Thread Coexistence**
               - Experimental
             * - **Wi-Fi Direct (P2P)**
-              - --
+              - Supported\ :sup:`1`
 
       .. tab:: nRF54H Series
          .. list-table:: Wi-Fi feature support
