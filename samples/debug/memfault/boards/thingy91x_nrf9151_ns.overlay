@@ -41,10 +41,44 @@
 			label = "modem_trace";
 			reg = <0x00000000 0x400000>;
 		};
+	};
+};
 
-		memfault_coredump_partition: partition@400000 {
+/* The internal-flash coredump backend (CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP)
+ * memory-maps the coredump partition and reads it with memcpy(), so it must live in
+ * internal flash (not on the external flash_ext). The internal flash is fully consumed
+ * by slot0_partition, so shrink the non-secure image area by 16 kB to free space for the
+ * coredump partition at the end of internal flash (mirrors the memfault-coredump snippet).
+ */
+/delete-node/ &slot0_partition;
+
+&flash0 {
+	partitions {
+		slot0_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x00030000 0xcc000>;
+			ranges = <0x0 0x00030000 0xcc000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x00000000 0x8000>;
+			};
+
+			slot0_ns_partition: partition@8000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x00008000 0xc4000>;
+			};
+		};
+
+		memfault_coredump_partition: partition@fc000 {
+			compatible = "zephyr,mapped-partition";
 			label = "memfault_coredump_partition";
-			reg = <0x00400000 0x00002000>;
+			reg = <0x000fc000 0x00004000>;
 		};
 	};
 };
