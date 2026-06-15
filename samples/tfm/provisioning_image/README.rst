@@ -23,13 +23,12 @@ The following development kits are supported:
 
 .. table-from-sample-yaml::
 
-The sample also requires the following libraries to generate and store the master key encryption key (MKEK) and the identity key into the key management unit (KMU):
-
- * :ref:`lib_hw_unique_key`
- * :ref:`lib_identity_key`
+The sample requires :ref:`lib_hw_unique_key`, and on nRF5340 and nRF91x also
+:ref:`lib_identity_key`. On nRF54L no separate identity key is stored; the IAK
+is sourced from CRACEN.
 
 .. note::
-   Once the required identity key is provisioned on the device, the UICR should not be erased by ERASEALL for example, as that removes the identity key from the system.
+   Once the device is provisioned, the OTP must not be erased (for example, by ``ERASEALL``), as this will erase the provisioned keys and lifecycle state.
 
 Overview
 ********
@@ -44,14 +43,24 @@ The sample performs the following operations:
 
 1. The device is verified to be in the Device Assembly and Test state.
 #. The device is transitioned to the PRoT Provisioning state.
-#. Random hardware unique keys (HUKs) are generated and stored in the key management unit (KMU).
-#. A random identity key of type secp256r1 is generated and stored in the KMU.
-#. The identity key is verified to be stored in the KMU.
+#. Hardware unique key (HUK) material is provisioned:
 
-The hardware unique keys (HUKs) include the master key encryption key (MKEK) and the master key for encrypting external storage (MEXT).
+   * On nRF5340 and nRF91x, random MKEK and MEXT keys are generated and stored in the
+     key management unit (KMU).
+   * On nRF54L, a random IKG seed is written to CRACEN KMU slots 183-185. MKEK, MEXT
+     and other HUK-derived keys are not stored; they are derived on demand by CRACEN
+     IKG from the seed.
 
-The identity key is stored in the KMU in encrypted form using the master key encryption key (MKEK).
-The identity key is used as the Initial Attestation Key (IAK) as described in the PSA security model.
+#. On nRF5340 and nRF91x only: a random secp256r1 identity key is generated and stored in
+   the KMU (encrypted with the MKEK) and used as the Initial Attestation Key (IAK).
+   On nRF54L the IAK is sourced from the CRACEN IKG identity key; no separate identity
+   key is written.
+#. The implementation ID is written to OTP.
+
+On nRF54L, b0 (NSIB) validates firmware against a key in CRACEN KMU rather than in the OTP
+PROVISION region used on nRF5340. The sysbuild generates a ``keyfile.json`` that
+``west flash --recover`` uses with ``nrfutil device x-provision-keys`` to write the NSIB
+Ed25519 public key to KMU slot 242 before b0 first runs.
 
 
 Configuration
@@ -67,10 +76,24 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+On nRF54L, use ``west flash --recover`` so the sysbuild-generated
+``keyfile.json`` is applied. The shared sample key under
+:file:`samples/tfm/common/keys/` is used by default:
+
+.. code-block:: console
+
+   west build -b nrf54l15dk/nrf54l15/cpuapp nrf/samples/tfm/provisioning_image -d build_provisioning_image
+   west flash --recover -d build_provisioning_image
+
+To use a different NSIB signing key, pass it with ``-DNSIB_KEY_FILE=<pem>``
+and set :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` to the same
+key when building ``tfm_psa_template``. Otherwise b0 will reject MCUboot with
+error ``-102`` (``ESIGINV``).
+
 Testing
 =======
 
-After programming the sample, the following output is displayed in the console:
+After programming the sample, the following output is displayed in the console on nRF5340 and nRF91x:
 
 .. code-block:: console
 
@@ -80,11 +103,23 @@ After programming the sample, the following output is displayed in the console:
     Writing the identity key to KMU
     Success!
 
-If an error occurs, the sample prints a message and raises a kernel panic.
+On nRF54L series, the identity key step is omitted:
+
+.. code-block:: console
+
+    Successfully verified PSA lifecycle state ASSEMBLY!
+    Successfully switched to PSA lifecycle state PROVISIONING!
+    Generating random HUK keys (including MKEK)
+    Success!
+
+If an error occurs, the sample logs a ``Failure: ...`` message describing the failed step and stops without printing ``Success!``.
 
 .. note::
-   The device cannot transition from the PRoT security lifecycle state **PRoT Provisioning** to the **Device Assembly and Test** state.
-   To reproduce the sample, you must program the device with the ``--erase`` option to erase the flash memory.
+   The device cannot transition from **PRoT Provisioning** back to
+   **Device Assembly and Test**. To re-run the sample, reset the OTP with
+   ``west flash --erase`` (nRF5340 and nRF91x) or ``west flash --recover``
+   (nRF54L). Both wipe all provisioned keys, so the full sequence must be
+   repeated.
 
 Dependencies
 ************
@@ -92,4 +127,4 @@ Dependencies
 The following libraries are used:
 
 * :ref:`lib_hw_unique_key`
-* :ref:`lib_identity_key`
+* :ref:`lib_identity_key` (nRF5340 and nRF91x only)

@@ -484,7 +484,13 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-|no_changes_yet_note|
+* :ref:`tfm_psa_template` sample:
+
+  * Added support for the nRF54L Series devices.
+
+* :ref:`provisioning_image` sample:
+
+  * Added support for the nRF54L Series devices.
 
 Thread samples
 --------------

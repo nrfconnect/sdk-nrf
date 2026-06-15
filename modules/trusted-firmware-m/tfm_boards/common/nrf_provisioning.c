@@ -9,12 +9,11 @@
 #include "tfm_platform_system.h"
 #include "tfm_attest_hal.h"
 #include "hw_unique_key.h"
-#include "nrfx_nvmc.h"
 #include <nrfx.h>
-#include <nrf_cc3xx_platform.h>
-#include <nrf_cc3xx_platform_identity_key.h>
 #include "nrf_provisioning.h"
+#if !defined(CONFIG_HAS_HW_NRF_CRACEN)
 #include <identity_key.h>
+#endif
 #include <tfm_log.h>
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #include <pm_config.h>
@@ -76,6 +75,52 @@ static enum tfm_plat_err_t disable_netcore_debug(void)
 }
 #endif /* NRF53_SERIES && PM_CPUNET_APP_ADDRESS */
 
+#if defined(CONFIG_SOC_SERIES_NRF54L) || defined(CONFIG_SOC_SERIES_NRF71)
+/* On nRF54L/nRF71 the debug policy lives in TAMPC PROTECT, not UICR.APPROTECT.
+ * verify_debug_disabled() only checks the current session; re-locking from reset
+ * is done by nrf54l_handle_approtect() in SystemInit, which requires approtect
+ * locking to be enabled at build time. Hence the guard below.
+ */
+#if !defined(ENABLE_APPROTECT) || !defined(ENABLE_SECUREAPPROTECT)
+#error "TFM_NRF_PROVISIONING on nRF54L (CRACEN) requires CONFIG_NRF_APPROTECT_LOCK and " \
+	"CONFIG_NRF_SECURE_APPROTECT_LOCK"
+#endif
+
+#define TAMPC_SIGNAL_CTRL_MASK(sig)                                                         \
+	(TAMPC_PROTECT_##sig##_CTRL_LOCK_Msk | TAMPC_PROTECT_##sig##_CTRL_VALUE_Msk)
+
+#define TAMPC_SIGNAL_CTRL_LOCKED_CLOSED(sig)                                                \
+	((TAMPC_PROTECT_##sig##_CTRL_LOCK_Enabled << TAMPC_PROTECT_##sig##_CTRL_LOCK_Pos) |  \
+	 (TAMPC_PROTECT_##sig##_CTRL_VALUE_Low << TAMPC_PROTECT_##sig##_CTRL_VALUE_Pos))
+
+/* Reads *ctrl once (volatile) and reports whether the signal is locked closed. */
+#define TAMPC_SIGNAL_IS_LOCKED_CLOSED(sig, ctrl)                                            \
+	((*(ctrl) & TAMPC_SIGNAL_CTRL_MASK(sig)) == TAMPC_SIGNAL_CTRL_LOCKED_CLOSED(sig))
+
+static enum tfm_plat_err_t verify_debug_disabled(void)
+{
+	/* Each TAMPC PROTECT signal latches once locked. Only advance to SECURED if
+	 * every debug signal is locked in the closed (debug-disabled) state.
+	 */
+	if (!TAMPC_SIGNAL_IS_LOCKED_CLOSED(DOMAIN_DBGEN,
+					   &NRF_TAMPC_S->PROTECT.DOMAIN[0].DBGEN.CTRL) ||
+	    !TAMPC_SIGNAL_IS_LOCKED_CLOSED(DOMAIN_NIDEN,
+					   &NRF_TAMPC_S->PROTECT.DOMAIN[0].NIDEN.CTRL) ||
+	    !TAMPC_SIGNAL_IS_LOCKED_CLOSED(DOMAIN_SPIDEN,
+					   &NRF_TAMPC_S->PROTECT.DOMAIN[0].SPIDEN.CTRL) ||
+	    !TAMPC_SIGNAL_IS_LOCKED_CLOSED(DOMAIN_SPNIDEN,
+					   &NRF_TAMPC_S->PROTECT.DOMAIN[0].SPNIDEN.CTRL) ||
+	    !TAMPC_SIGNAL_IS_LOCKED_CLOSED(AP_DBGEN, &NRF_TAMPC_S->PROTECT.AP[0].DBGEN.CTRL)) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+
+	return TFM_PLAT_ERR_SUCCESS;
+}
+
+#undef TAMPC_SIGNAL_IS_LOCKED_CLOSED
+#undef TAMPC_SIGNAL_CTRL_LOCKED_CLOSED
+#undef TAMPC_SIGNAL_CTRL_MASK
+#else
 static enum tfm_plat_err_t verify_debug_disabled(void)
 {
 	/* Ensures that APPROTECT and SECUREAPPROTECT are enabled upon the next reset */
@@ -86,6 +131,7 @@ static enum tfm_plat_err_t verify_debug_disabled(void)
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
+#endif
 
 enum tfm_plat_err_t tfm_plat_provisioning_is_required(bool *provisioning_required)
 {
@@ -121,8 +167,8 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-#ifdef TFM_PARTITION_INITIAL_ATTESTATION
-	/* The Initial Attestation key should be already written */
+#if defined(TFM_PARTITION_INITIAL_ATTESTATION) && !defined(CONFIG_HAS_HW_NRF_CRACEN)
+	/* The Initial Attestation key should be already written. */
 	if (!identity_key_is_written()) {
 		ERROR(
 			"This device has not been provisioned with an Initial Attestation Key.");
@@ -170,7 +216,7 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 
 static bool dummy_key_is_present(void)
 {
-#ifdef TFM_PARTITION_INITIAL_ATTESTATION
+#if defined(TFM_PARTITION_INITIAL_ATTESTATION) && !defined(CONFIG_HAS_HW_NRF_CRACEN)
 	uint8_t key[IDENTITY_KEY_SIZE_BYTES];
 	int err;
 

@@ -7,22 +7,48 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <string.h>
-#include <stdio.h>
 #include <hw_unique_key.h>
-#include <identity_key.h>
-#include <psa/crypto.h>
 #include <bl_storage.h>
 
 #include <config_implementation_id.h>
 
+#if defined(CONFIG_NRFX_RRAMC)
+#include <nrfx_rramc.h>
+#endif
+
+#if !defined(CONFIG_HAS_HW_NRF_CRACEN)
+#include <identity_key.h>
+#endif
+
 LOG_MODULE_REGISTER(provisioning_image, LOG_LEVEL_DBG);
 
-void provision_implementation_id(void)
-{
-	uint32_t num_words_to_write = 32 / 4;
+#define IMPLEMENTATION_ID_NUM_WORDS (sizeof(implementation_id_in_flash) / sizeof(uint32_t))
 
-	nrfx_nvmc_words_write((uint32_t)&BL_STORAGE->implementation_id, &implementation_id_in_flash,
-		num_words_to_write);
+int provision_implementation_id(void)
+{
+#if defined(CONFIG_NRFX_RRAMC)
+	/* BL_STORAGE is at the start of UICR OTP, so each field's OTP index
+	 * is its word offset from BL_STORAGE.
+	 */
+	const uint32_t base_index = ((uint32_t)&BL_STORAGE->implementation_id -
+				     (uint32_t)BL_STORAGE) / sizeof(uint32_t);
+
+	for (uint32_t i = 0; i < IMPLEMENTATION_ID_NUM_WORDS; i++) {
+		uint32_t word;
+
+		memcpy(&word, &implementation_id_in_flash[i * sizeof(word)],
+		       sizeof(word));
+		if (!nrfx_rramc_otp_word_write(base_index + i, word)) {
+			LOG_ERR("nrfx_rramc_otp_word_write failed at OTP index %u",
+				base_index + i);
+			return -1;
+		}
+	}
+#else
+	nrfx_nvmc_words_write((uint32_t)&BL_STORAGE->implementation_id,
+			      &implementation_id_in_flash, IMPLEMENTATION_ID_NUM_WORDS);
+#endif
+	return 0;
 }
 
 int main(void)
@@ -70,6 +96,7 @@ int main(void)
 		return 0;
 	}
 
+#if !defined(CONFIG_HAS_HW_NRF_CRACEN)
 	if (identity_key_is_written()) {
 		LOG_INF("Failure: Identity key slot already written. Exiting!");
 		return 0;
@@ -92,8 +119,13 @@ int main(void)
 		LOG_INF("Failure: Identity key is not written! Exiting!");
 		return 0;
 	}
+#endif /* !CONFIG_HAS_HW_NRF_CRACEN */
 
-	provision_implementation_id();
+	err = provision_implementation_id();
+	if (err != 0) {
+		LOG_INF("Failure: Writing implementation ID failed. Exiting!");
+		return 0;
+	}
 
 	LOG_INF("Success!");
 
