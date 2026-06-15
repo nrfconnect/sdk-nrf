@@ -44,6 +44,8 @@ config HOSTAP_CRYPTO_ALT_PSA
 	# Personal/WPS/P2P pull in the fuller PSA cipher/hash set. Enterprise
 	# keeps the lean set (it builds the mbedtls TLS stack on top) to stay
 	# within RAM/flash budgets, matching the old legacy backend.
+	# WPS encrypts settings with AES-128-CBC (no padding) via supp_psa_api.c.
+	select PSA_WANT_ALG_CBC_NO_PADDING if !HOSTAP_CRYPTO_ENTERPRISE
 	select PSA_WANT_ALG_CBC_PKCS7 if !HOSTAP_CRYPTO_ENTERPRISE
 	select PSA_ACCEL_CBC_MAC_AES_128 if !HOSTAP_CRYPTO_ENTERPRISE
 	select PSA_ACCEL_CBC_MAC_AES_192 if !HOSTAP_CRYPTO_ENTERPRISE
