@@ -275,6 +275,8 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
       math(EXPR start_offset "${start_offset} + ${start_offset_dts}")
       set(pad_header "--pad-header")
     endif()
+    # For nRF54H20 in a direct-xip mode use relative bounds due to backwards compatibility
+    # This is ensured by fetching component which determines `slot_addr` as relative values.
     set(imgtool_rom_command --rom-fixed ${slot_addr})
   elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
     if(CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER)
