@@ -12,4 +12,11 @@ choice WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION
 	default WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_NONE if !HOSTAP_CRYPTO_WPA3_PSA
 endchoice
 
+# HOSTAP_CRYPTO_ALT_PSA selects MBEDTLS_ENABLE_HEAP, so DH/MPI allocations
+# from the vendored dhm.c path use the TF-PSA static mbedtls heap rather than
+# libc calloc. WPS DH group 5 (1536-bit) needs well above the 512-byte Kconfig
+# default; 32 KiB covers DH and follow-on WPS crypto on nRF54LM20.
+config MBEDTLS_HEAP_SIZE
+	default 32768 if WIFI_NM_WPA_SUPPLICANT_WPS
+
 endif # WIFI_NM_WPA_SUPPLICANT && SOC_FAMILY_NORDIC_NRF && HOSTAP_CRYPTO_ALT_PSA
