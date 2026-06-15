@@ -1,0 +1,117 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * The TF-M secure storage (PS/ITS/OTP-NV-counters) is placed immediately after
+ * the bootloaders and below slot0_ns_partition. On nRF54L the SAU/MPC marks
+ * everything below the non-secure partition base (= slot0_ns_partition) as
+ * secure, so keeping tfm_storage_partition below that base means it is
+ * hardware-isolated from the non-secure application instead of relying solely
+ * on the authenticated-encryption of PS/ITS.
+ *
+ * Because tfm_storage_partition sits outside the MCUboot image slots, its
+ * contents survive firmware upgrades.
+ */
+&cpuapp_rram {
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0";
+			reg = <0x00000000 0x10000>;
+		};
+
+		s0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x00010000 0x10000>;
+		};
+
+		s1_partition: partition@20000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot_s1";
+			reg = <0x00020000 0x10000>;
+		};
+
+		tfm_storage_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-storage";
+			reg = <0x00030000 DT_SIZE_K(32)>;
+			ranges = <0x0 0x00030000 DT_SIZE_K(32)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			tfm_its_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-its";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
+
+			tfm_otp_partition: partition@2000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-otp";
+				reg = <0x2000 DT_SIZE_K(8)>;
+			};
+
+			tfm_ps_partition: partition@4000 {
+				compatible = "zephyr,mapped-partition";
+				label = "tfm-ps";
+				reg = <0x4000 DT_SIZE_K(16)>;
+			};
+		};
+
+		slot0_partition: partition@38000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x00038000 0x60000>;
+			ranges = <0x0 0x00038000 0x60000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x00000000 0x20000>;
+			};
+
+			slot0_ns_partition: partition@20000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x00020000 0x40000>;
+			};
+		};
+
+		slot1_partition: partition@98000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x00098000 0x60000>;
+			ranges = <0x0 0x00098000 0x60000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot1_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-1-secure";
+				reg = <0x00000000 0x20000>;
+			};
+
+			slot1_ns_partition: partition@20000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-1-nonsecure";
+				reg = <0x00020000 0x40000>;
+			};
+		};
+
+		storage_partition: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f8000 DT_SIZE_K(20)>;
+		};
+	};
+};

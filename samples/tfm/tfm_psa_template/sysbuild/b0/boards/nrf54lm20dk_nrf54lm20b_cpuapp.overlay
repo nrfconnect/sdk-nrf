@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * B0 (NSIB) flash layout for the nRF54LM20B build of tfm_psa_template. Shares
+ * the partition table with the application and MCUboot images.
+ */
+
+/* Replace the default cpuapp (secure) partitions with the shared table. */
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+#include "../../../dts/nrf54lm20dk_nrf54lm20_cpuapp_partitions.dtsi"
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0_partition;
+	};
+};
