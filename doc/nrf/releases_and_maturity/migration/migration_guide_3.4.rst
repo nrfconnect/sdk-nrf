@@ -48,7 +48,7 @@ Matter
 
         #include "<samples/matter/nrf54lm20_cpuapp_partitions.dtsi>"
 
-     After that, once the base is ready, you can modify partitions by using the |nRFVSC| with its `Devicetree language support`_ and the `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_, or manually edit the :file:`.overlay` file.
+     After that, once the base is ready, you can modify partitions by using the |nRFVSC| with its `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_, or manually edit the :file:`.overlay` file.
 
      For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`migration_partitions` page.
 
