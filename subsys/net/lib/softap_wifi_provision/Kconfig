@@ -5,8 +5,7 @@
 #
 
 menuconfig SOFTAP_WIFI_PROVISION
-	bool "SoftAP Wi-Fi provision library [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "SoftAP Wi-Fi provision library"
 	depends on NANOPB
 	depends on NRF70_AP_MODE
 	depends on WIFI_NM_WPA_SUPPLICANT_AP
