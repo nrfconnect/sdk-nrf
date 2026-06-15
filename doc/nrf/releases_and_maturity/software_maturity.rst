@@ -1959,7 +1959,7 @@ The following table indicates the software maturity levels of the support for ea
             * - **STA Mode**
               - Experimental\ :sup:`4`
             * - **Scan only (for location accuracy)**
-              - --
+              - Experimental\ :sup:`4`
             * - **SoftAP Mode (for Wi-Fi provisioning)**
               - --
             * - **TX injection Mode**
