@@ -9,7 +9,7 @@ menu "Network"
 
 config MQTT_SAMPLE_NETWORK_THREAD_STACK_SIZE
 	int "Thread stack size"
-	default 4096
+	default 768
 
 module = MQTT_SAMPLE_NETWORK
 module-str = Network
