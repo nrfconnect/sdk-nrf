@@ -51,4 +51,10 @@ if(DEFINED CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_DISABLED OR
     ${NRF70_PATCH}
     ${gen_dir}/nrf70.bin.inc
   )
+  # fw_load.c is added to the zephyr library via zephyr_library_sources(), so the
+  # zephyr library must also depend on the generated nrf70.bin.inc file to ensure
+  # correct build ordering (otherwise fw_load.c may be compiled before the .inc
+  # file is generated).
+  generate_unique_target_name_from_filename(${gen_dir}/nrf70.bin.inc _nrf70_gen_target)
+  add_dependencies(zephyr ${_nrf70_gen_target})
 endif()
