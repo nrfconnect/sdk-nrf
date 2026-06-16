@@ -61,12 +61,6 @@ config HOSTAP_CRYPTO_ALT_PSA
 	  HostAP mbedtls alt glue. This is the single backend for all Wi-Fi
 	  modes: WPA2/WPA3 personal, and with the enterprise and WPS/P2P
 	  options it also covers EAP and WPS/P2P.
-
-# Internal bignum WPA3 is incompatible with the PSA alt backend; defaults use
-# EXT when HOSTAP_CRYPTO_WPA3_PSA is enabled (see Kconfig.defconfig).
-config WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_INT
-	depends on !HOSTAP_CRYPTO_ALT_PSA
-
 if WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
 
 config HOSTAP_CRYPTO_ENTERPRISE
