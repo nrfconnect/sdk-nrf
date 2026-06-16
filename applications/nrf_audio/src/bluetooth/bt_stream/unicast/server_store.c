@@ -210,16 +210,15 @@ static bool pac_parse(struct bt_data *data, struct bt_bap_lc3_preset *preset,
 			return false;
 		}
 
-		if (!IN_RANGE(lc3_min_frame_length,
-			      LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, frame_dur_us),
-			      LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, frame_dur_us)) &&
-		    !IN_RANGE(lc3_max_frame_length,
-			      LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, frame_dur_us),
-			      LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, frame_dur_us))) {
+		if (lc3_min_frame_length >
+			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, frame_dur_us) ||
+		    lc3_max_frame_length <
+			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, frame_dur_us)) {
 			LOG_WRN("LC3 frame length %d - %d not in range [%d, %d], not possible to "
 				"find a preset that meets these capabilities",
-				lc3_min_frame_length, lc3_max_frame_length, CONFIG_LC3_BITRATE_MIN,
-				CONFIG_LC3_BITRATE_MAX);
+				lc3_min_frame_length, lc3_max_frame_length,
+				LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, frame_dur_us),
+				LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, frame_dur_us));
 			memset(preset, 0, sizeof(struct bt_bap_lc3_preset));
 			return false;
 		}
