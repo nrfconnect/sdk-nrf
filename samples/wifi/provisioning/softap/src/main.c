@@ -44,6 +44,7 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	case NET_EVENT_L4_CONNECTED:
 		LOG_INF("Network connected");
 
+#ifdef CONFIG_DK_LIBRARY
 		int ret = dk_set_led_on(DK_LED2);
 
 		if (ret) {
@@ -51,6 +52,7 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 			FATAL_ERROR();
 			return;
 		}
+#endif /* CONFIG_DK_LIBRARY */
 
 		/* Start the DHCPv4 client after the device is provisioned to a network.
 		 * This is needed to get a dynamic IPv4 address from the APs DHCPv4 server.
@@ -80,11 +82,11 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 /* Callback for softAP Wi-Fi provision library events. */
 static void softap_wifi_provision_handler(const struct softap_wifi_provision_evt *evt)
 {
-	int ret;
-
 	switch (evt->type) {
 	case SOFTAP_WIFI_PROVISION_EVT_STARTED:
 		LOG_INF("Provisioning started");
+#ifdef CONFIG_DK_LIBRARY
+		int ret;
 
 		ret = dk_set_led_on(DK_LED1);
 		if (ret) {
@@ -92,6 +94,7 @@ static void softap_wifi_provision_handler(const struct softap_wifi_provision_evt
 			FATAL_ERROR();
 			return;
 		}
+#endif /* CONFIG_DK_LIBRARY */
 
 		break;
 	case SOFTAP_WIFI_PROVISION_EVT_CLIENT_CONNECTED:
@@ -122,6 +125,7 @@ static void softap_wifi_provision_handler(const struct softap_wifi_provision_evt
 	}
 }
 
+#ifdef CONFIG_DK_LIBRARY
 static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if ((has_changed & DK_BTN1_MSK) && (button_states & DK_BTN1_MSK)) {
@@ -136,6 +140,7 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		}
 	}
 }
+#endif /* CONFIG_DK_LIBRARY */
 
 static int wifi_power_saving_disable(void)
 {
@@ -210,6 +215,7 @@ int main(void)
 
 	LOG_INF("SoftAP Wi-Fi provision sample started");
 
+#ifdef CONFIG_DK_LIBRARY
 	ret = dk_buttons_init(button_handler);
 	if (ret) {
 		LOG_ERR("dk_buttons_init, error: %d", ret);
@@ -223,6 +229,7 @@ int main(void)
 		FATAL_ERROR();
 		return ret;
 	}
+#endif /* CONFIG_DK_LIBRARY */
 
 	ret = softap_wifi_provision_init(softap_wifi_provision_handler);
 	if (ret) {
