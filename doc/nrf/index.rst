@@ -31,8 +31,9 @@ Remote observability
 Scalable and extensible
   The |NCS| is out-of-tree ready and can be used for projects and applications of all sizes and levels of complexity.
 
-Third-party integrations
+Third-party integrations and Add-ons
   The |NCS| provides integrations with third-party and Nordic products within the SDK, such as AWS, nRF Cloud, :ref:`Memfault (Remote Observability) <ug_memfault>` and more.
+  In addition to that, the |NCS| provides `Add-ons <nRF Connect SDK Add-ons_>`_ for specific areas or standards, such as Edge AI, Amazon Sidewalk, Zigbee, and more.
 
 Varied reference designs
   The |NCS| comes with advanced hardware reference designs for different use cases, ranging from nRF Desktop for Human Interface Devices to nRF Audio for audio devices based on Bluetooth LE Audio specifications.
