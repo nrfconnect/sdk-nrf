@@ -160,7 +160,7 @@ void mock_nrf_rpc_tr_expect_add(mock_nrf_rpc_pkt_t expect, mock_nrf_rpc_pkt_t re
 	mock_nrf_rpc_tr_ctx_t *ctx = mock_nrf_rpc_tr.ctx;
 
 	zassert_true(ctx->num_expected < MAX_NUM_EXPECTED_PKTS,
-		     "No more nRF RPC expected packets can be defined");
+		"No more nRF RPC expected packets can be defined");
 
 	ctx->expected[ctx->num_expected] = expect;
 	ctx->response[ctx->num_expected] = response;
