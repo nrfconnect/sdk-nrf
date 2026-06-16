@@ -339,6 +339,11 @@ class Filters:
             self.full_twister = True
             return
 
+        if not all("sample" in test_path or "tests" in test_path for test_path in tests):
+            logging.warning("Skipping test handling. Allowed when tests or samples were modified only. Revert to default")
+            self.full_twister = True
+            return
+
         if _options:
             logging.info(f'Potential test filters...({len(tests)} changed...)')
             if self.platforms:
