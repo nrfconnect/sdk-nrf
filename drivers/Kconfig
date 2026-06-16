@@ -7,6 +7,7 @@
 menu "Device Drivers"
 
 rsource "bluetooth/Kconfig"
+rsource "can/Kconfig"
 rsource "entropy/Kconfig"
 rsource "flash/Kconfig"
 rsource "gpio/Kconfig"
