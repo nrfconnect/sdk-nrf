@@ -57,6 +57,13 @@ config ESB_EVENT_IRQ_PRIORITY
 
 menu "Hardware selection (alter with care)"
 
+config ESB_NCS_BM
+	bool "ESB on NCS Bare Metal [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Enable when building ESB on NCS Bare Metal. Set this from the application
+	  or sample configuration to apply NCS Bare Metal specific ESB settings.
+
 choice ESB_SYS_TIMER
 	# defaults to match ESB_TIMER with MPSL_TIMER0
 	default ESB_SYS_TIMER0 if ESB_MPSL_TIMESLOT
@@ -64,6 +71,8 @@ choice ESB_SYS_TIMER
 	default ESB_SYS_TIMER020 if ESB_MPSL_TIMESLOT
 	default ESB_SYS_TIMER021 if $(dt_nodelabel_has_compat,timer021,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	default ESB_SYS_TIMER10 if $(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	# NCS Bare Metal strips timer nodes from Device Tree; select by SoC series.
+	default ESB_SYS_TIMER10 if ESB_NCS_BM && SOC_SERIES_NRF54L
 	default ESB_SYS_TIMER2
 	prompt "Timer to use for the ESB system timer"
 
@@ -94,7 +103,7 @@ config ESB_SYS_TIMER4
 
 config ESB_SYS_TIMER10
 	bool "TIMER10"
-	depends on $(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	depends on $(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER)) || (ESB_NCS_BM && SOC_SERIES_NRF54L)
 	select NRFX_TIMER
 
 config ESB_SYS_TIMER020
