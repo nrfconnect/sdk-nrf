@@ -1,3 +1,5 @@
+:orphan:
+
 .. _migration_3.0:
 
 Migration notes for |NCS| v3.0.0

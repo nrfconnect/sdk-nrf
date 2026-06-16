@@ -88,7 +88,7 @@ Build and configuration system
   * ``non-secure-callable``
 
   It is recommended to replace them with the new devicetree property: ``nordic,access``.
-  See the :ref:`migration guide <migration_2.8_recommended>` for more information.
+  See the :ref:`migration notes <migration_2.8_recommended>` for more information.
 
 * Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (:kconfig:option:`SB_SIGNING_KEY_FILE`) along with child image.
 
@@ -195,7 +195,7 @@ Bluetooth® LE
   * The Bluetooth HCI driver is now present as a devicetree node in the device tree.
     The SoftDevice Controller driver uses a devicetree node named ``bt_hci_sdc`` with a devicetree binding compatible with ``nordic,bt-hci-sdc``.
     The Zephyr Bluetooth LE Controller uses a devicetree node named ``bt_hci_controller`` with a devicetree binding compatible with ``zephyr,bt-hci-ll-sw-split``.
-    You need to update applications using the Zephyr Bluetooth Controller (see the :ref:`migration guide <migration_2.8>`).
+    You need to update applications using the Zephyr Bluetooth Controller (see the :ref:`migration notes <migration_2.8>`).
   * Host calls in GATT Discovery Manager (DM) callbacks are now scheduled in a workqueue.
     The :kconfig:option:`BT_GATT_DM_WORKQ_CHOICE` Kconfig option allows you to select the workqueue implementation.
     You can select either a workqueue specific to GATT DM (default) or the system workqueue.
@@ -213,7 +213,7 @@ Bluetooth Mesh
   To use the metadata, enable the :kconfig:option:`CONFIG_BT_MESH_LARGE_COMP_DATA_SRV` Kconfig option.
 
 * Removed the ``BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE`` Kconfig option, deprecated in the |NCS| v2.6.0, as the old APIs, based on the :c:struct:`sensor_value` type, are removed.
-  You need to update applications using the old APIs, as described in the :ref:`v2.6.0 migration guide <nrf_audio_migration_notes>`.
+  You need to update applications using the old APIs, as described in the :ref:`v2.6.0 migration notes <nrf_audio_migration_notes>`.
 
 DECT NR+
 --------
@@ -880,7 +880,7 @@ Modem libraries
    * The :ref:`at_parser_readme` library.
      The :ref:`at_parser_readme` is a library that parses AT command responses, notifications, and events.
      Compared to the deprecated AT command parser library, it does not allocate memory dynamically and has a smaller footprint.
-     For more information on how to transition from the AT command parser library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
+     For more information on how to transition from the AT command parser library to the :ref:`at_parser_readme` library, see the :ref:`migration notes <migration_2.8_recommended>`.
    * The :ref:`lib_uicc_lwm2m` library.
      This library reads the LwM2M bootstrap configuration from SIM.
 
@@ -891,7 +891,7 @@ Modem libraries
 
     * The AT command parser library in favor of the :ref:`at_parser_readme` library.
       The AT command parser library will be removed in a future version.
-      For more information on how to transition from the AT command parser library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
+      For more information on how to transition from the AT command parser library to the :ref:`at_parser_readme` library, see the :ref:`migration notes <migration_2.8_recommended>`.
     * The ``CONFIG_AT_CMD_PARSER``.
       This option will be removed in a future version.
 
@@ -917,7 +917,7 @@ Modem libraries
     * The library was reorganized into modules that are enabled through their respective Kconfig options.
       By default, the library now enables only the core features related to the network connectivity.
       This reorganization reduces flash memory consumption for applications that only use the core features of the library related to network connectivity.
-      For more information on how to update your project, see the :ref:`migration guide <migration_2.8_required>`.
+      For more information on how to update your project, see the :ref:`migration notes <migration_2.8_required>`.
 
       * The :c:func:`lte_lc_conn_eval_params_get` function now requires the new :kconfig:option:`CONFIG_LTE_LC_CONN_EVAL_MODULE` Kconfig option to be enabled.
       * The :c:enumerator:`LTE_LC_EVT_EDRX_UPDATE` event and the :c:func:`lte_lc_ptw_set`, :c:func:`lte_lc_edrx_param_set`, :c:func:`lte_lc_edrx_req`, and :c:func:`lte_lc_edrx_get` functions require the new :kconfig:option:`CONFIG_LTE_LC_EDRX_MODULE` Kconfig option to be enabled.
@@ -933,12 +933,12 @@ Modem libraries
       Use the :c:macro:`NRF_MODEM_LIB_ON_CFUN` macro instead.
     * The :c:func:`lte_lc_factory_reset` function.
       Use the ``AT%XFACTORYRESET`` AT command instead.
-      Refer to the :ref:`migration guide <migration_2.8>` for more details.
+      Refer to the :ref:`migration notes <migration_2.8>` for more details.
     * The :c:enum:`lte_lc_factory_reset_type` type.
     * The :c:func:`lte_lc_reduced_mobility_get` and :c:func:`lte_lc_reduced_mobility_set` functions.
-      Refer to the :ref:`migration guide <migration_2.8>` for more details.
+      Refer to the :ref:`migration notes <migration_2.8>` for more details.
     * The :c:enum:`lte_lc_reduced_mobility_mode` type.
-      Refer to the :ref:`migration guide <migration_2.8>` for more details.
+      Refer to the :ref:`migration notes <migration_2.8>` for more details.
 
   * Removed:
 

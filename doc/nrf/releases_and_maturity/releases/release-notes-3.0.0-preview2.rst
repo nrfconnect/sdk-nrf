@@ -53,7 +53,7 @@ Build and configuration system
   All |NCS| projects must now use :ref:`sysbuild`.
   See :ref:`child_parent_to_sysbuild_migration` for an overview of differences with parent-child image and how to migrate.
 * Updated the default runner for the ``west flash`` command to `nRF Util`_ instead of ``nrfjprog`` that is part of the archived `nRF Command Line Tools`_.
-  For more information, see the :ref:`build system section in the v3.0.0 migration guide <migration_3.0_recommended>` and the :ref:`programming_selecting_runner` section on the programming page.
+  For more information, see the :ref:`build system section in the v3.0.0 migration notes <migration_3.0_recommended>` and the :ref:`programming_selecting_runner` section on the programming page.
 
 Bootloaders and DFU
 ===================
@@ -791,7 +791,7 @@ Bluetooth libraries and services
     * The automatically generated ``bt_fast_pair`` partition definition (in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file) to work correctly when building with TF-M.
     * The behavior of the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
       The callback no longer reports the initial provisioning state after the Fast Pair subsystem is enabled with the :c:func:`bt_fast_pair_enable` function call.
-      See the :ref:`migration guide <migration_3.0_recommended>` for mandatory changes and the :ref:`ug_bt_fast_pair_gatt_service_fhn_info_callbacks_provisioning_state` section in the Fast Pair integration guide for the description on how to track the FMDN provisioning state with the new approach.
+      See the :ref:`migration notes <migration_3.0_recommended>` for mandatory changes and the :ref:`ug_bt_fast_pair_gatt_service_fhn_info_callbacks_provisioning_state` section in the Fast Pair integration guide for the description on how to track the FMDN provisioning state with the new approach.
 
   * Removed the sysbuild control over the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option that is defined in the main (default) image.
     Sysbuild no longer sets the value of this Kconfig option.
@@ -918,7 +918,7 @@ Libraries for networking
   * A backend for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` that stores the credentials in the modem, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_NRF_MODEM`.
 
 * Deprecated the Download client library.
-  See the :ref:`migration guide <migration_3.0_recommended>` for recommended changes.
+  See the :ref:`migration notes <migration_3.0_recommended>` for recommended changes.
 
 * Updated the following libraries to use the :ref:`lib_downloader` library instead of the Download client library:
 
