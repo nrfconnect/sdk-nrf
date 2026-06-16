@@ -1,16 +1,13 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.3.99
-###########################
+Changelog for |NCS| v3.5.0-preview1
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -271,11 +268,6 @@ nRF Desktop
 
 * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
 
-nRF Machine Learning (Edge Impulse)
------------------------------------
-
-|no_changes_yet_note|
-
 Thingy:53: Matter weather station
 ---------------------------------
 
@@ -332,11 +324,6 @@ DFU samples
 
 DECT NR+ samples
 ----------------
-
-|no_changes_yet_note|
-
-Edge Impulse samples
---------------------
 
 |no_changes_yet_note|
 
@@ -435,6 +422,11 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
+* Added:
+
+  * The :ref:`ppi_seq` driver for triggering periodic hardware tasks using PPI.
+  * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
+
 SPI drivers
 -----------
 
@@ -518,10 +510,7 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-* Added:
-
-  * The :ref:`ppi_seq` library for triggering periodic hardware tasks using PPI.
-  * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
+|no_changes_yet_note|
 
 Shell libraries
 ---------------
@@ -547,11 +536,6 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 
 Google Fast Pair integration
 ----------------------------
-
-|no_changes_yet_note|
-
-Edge Impulse integration
-------------------------
 
 |no_changes_yet_note|
 

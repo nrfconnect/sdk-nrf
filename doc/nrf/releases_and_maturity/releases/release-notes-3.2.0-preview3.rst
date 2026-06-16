@@ -191,7 +191,7 @@ Matter fork
 +++++++++++
 
 * Removed dependencies on Nordic DK-specific configurations in Matter configurations.
-  See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
+  See the `Migration notes for nRF Connect SDK v3.2.0`_ for more information.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
@@ -232,7 +232,7 @@ Matter bridge
 * Updated the application to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
   This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
   To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
-  See the :ref:`migration guide <migration_3.2_required>` for more information.
+  See the :ref:`migration notes <migration_3.2_required>` for more information.
 
 nRF5340 Audio
 -------------
@@ -535,7 +535,7 @@ Matter samples
   * All Matter over Wi-Fi samples and applications to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
     This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
     To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
-    See the :ref:`migration guide <migration_3.2_required>` for more information.
+    See the :ref:`migration notes <migration_3.2_required>` for more information.
   * All Matter samples that support low-power mode to use the :ref:`lib_ram_pwrdn` feature with the nRF54LM20 DK.
     This change resulted in decreasing the sleep current consumption by more than two uA.
 
@@ -720,7 +720,7 @@ Modem libraries
     * The type of the :c:member:`lte_lc_evt.modem_evt` field to :c:struct:`lte_lc_modem_evt`.
     * Replaced modem events ``LTE_LC_MODEM_EVT_CE_LEVEL_0``, ``LTE_LC_MODEM_EVT_CE_LEVEL_1``, ``LTE_LC_MODEM_EVT_CE_LEVEL_2`` and ``LTE_LC_MODEM_EVT_CE_LEVEL_3`` with the :c:enumerator:`LTE_LC_MODEM_EVT_CE_LEVEL` modem event.
     * The order of the ``LTE_LC_MODEM_EVT_SEARCH_DONE`` modem event, and registration and cell related events.
-      See the :ref:`migration guide <migration_3.2_required>` for more information.
+      See the :ref:`migration notes <migration_3.2_required>` for more information.
 
 * :ref:`nrf_modem_lib_readme` library:
 

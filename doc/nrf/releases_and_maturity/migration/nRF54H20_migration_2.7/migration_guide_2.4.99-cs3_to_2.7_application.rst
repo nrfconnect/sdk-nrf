@@ -224,7 +224,7 @@ Devicetree
     +-----------------------------+------------------------------------------------------+
     | ``nordic,bellboard-cpusec`` | Use node label ``cpusec_bellboard``.                 |
     +-----------------------------+------------------------------------------------------+
-    | ``nordic,tdd-etr-buffer``   | To be replaced in a later version of NCS.            |
+    | ``nordic,tdd-etr-buffer``   | To be replaced in a later version of |NCS|.          |
     +-----------------------------+------------------------------------------------------+
     | ``nrf,hsfll``               | Use node label ``cpuapp_hsfll`` or ``cpurad_hsfll``. |
     +-----------------------------+------------------------------------------------------+
@@ -526,7 +526,7 @@ Matter
 
 .. toggle::
 
-   With the inheritance of Zephyr's :ref:`sysbuild in the |NCS| <configuration_system_overview_sysbuild>`, some changes are provided to the Matter samples and applications:
+   With the inheritance of Zephyr's :ref:`sysbuild in the nRF Connect SDK <configuration_system_overview_sysbuild>`, some changes are provided to the Matter samples and applications:
 
      * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is deprecated and you need to use the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option instead to enable or disable creating the factory data set during building a Matter sample.
        To enable factory data support on your device, you still need to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` to ``y``.
@@ -647,7 +647,7 @@ Applications using build types
 
    For applications using child images:
 
-     * With the inheritance of Zephyr's :ref:`sysbuild in the |NCS| <configuration_system_overview_sysbuild>`, the multi-image builds are deprecated.
+     * With the inheritance of Zephyr's :ref:`sysbuild in the nRF Connect SDK <configuration_system_overview_sysbuild>`, the multi-image builds are deprecated.
        If your application uses parent and child images, it is recommended to migrate your application to sysbuild before the multi-image builds are removed in one of the upcoming |NCS| releases.
        See :ref:`child_parent_to_sysbuild_migration`.
        See the :ref:`documentation in Zephyr <zephyr:sysbuild>` for more information about sysbuild.

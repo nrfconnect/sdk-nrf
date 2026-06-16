@@ -115,7 +115,7 @@ For a full list of |NCS| and Matter versions, view the following table:
 .. important::
    For Matter over Thread samples, starting from |NCS| v2.6.0, the default cryptography API is Arm PSA Crypto API instead of Mbed TLS `mbedtls_` API, which was used in earlier versions.
    To :ref:`inherit Thread certification <ug_matter_device_certification_reqs_dependent>` from Nordic Semiconductor, you must use the PSA Crypto APIs.
-   See the :ref:`migration guide <migration_2.6>` to learn about all changes if you are migrating from an earlier version of the |NCS|.
+   See the :ref:`migration notes <migration_2.6>` to learn about all changes if you are migrating from an earlier version of the |NCS|.
 
 For more information about Matter compatibility, see :ref:`ug_matter_overview_dev_model_support` and :ref:`supported Matter features per SoC <software_maturity_protocol_matter>`.
 
