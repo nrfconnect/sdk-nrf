@@ -27,7 +27,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on:
+      - runs-on=${{ github.run_id }}
+      - runner=16cpu-linux-x64
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
