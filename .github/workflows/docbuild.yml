@@ -27,7 +27,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on:
+      - runs-on=${{ github.run_id }}
+      - runner=64cpu-linux-x64
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
@@ -63,7 +65,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install -y wget python3-pip git ninja-build graphviz lcov mscgen plantuml
-          sudo snap install yq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
           DOXYGEN_VERSION=$(yq ".doxygen.version" nrf/scripts/tools-versions-linux.yml)
           wget --no-verbose "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
           tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
