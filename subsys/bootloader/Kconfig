@@ -57,7 +57,7 @@ config PM_PARTITION_SIZE_PROVISION
 							 SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || \
 							 SOC_NRF54L10_CPUAPP || SOC_NRF54LV10A_CPUAPP || \
 							 SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP)
-help
+	help
 	  Flash space set aside for the PROVISION partition.
 
 config B0_MIN_PARTITION_SIZE
@@ -81,6 +81,7 @@ menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
 	select SECURE_BOOT_VALIDATION
 	select SECURE_BOOT_STORAGE
+	select USE_DT_CODE_PARTITION
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51
 	imply NRFX_NVMC if !SOC_SERIES_NRF54L
 	help
