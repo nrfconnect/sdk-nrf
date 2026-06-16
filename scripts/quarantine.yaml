@@ -83,3 +83,9 @@
   platforms:
     - nrf7002dk/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39827"
+
+- scenarios:
+    - nrf_audio.server_store
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39872"
