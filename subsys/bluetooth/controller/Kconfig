@@ -768,5 +768,11 @@ config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	  This option configures the LL_SOFTDEVICE initialization priority level. The priority
 	  must be lower than the CONFIG_MPSL_INIT_PRIORITY due to dependency on the MPSL library.
 
+config BT_CTLR_HCI_CUSTOM_EXTENSION
+	bool "Allow registering of custom HCI extensions"
+	help
+	  This option allows the registering of custom HCI command handlers.
+	  Multiple handlers can be registered from different sources.
+
 endmenu
 endif  # BT_LL_SOFTDEVICE

@@ -43,7 +43,6 @@
 #include "zephyr/logging/log.h"
 LOG_MODULE_REGISTER(bt_sdc_hci_driver);
 
-
 #if defined(CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT)
 #define HCI_RX_BUF_SIZE MAX(BT_BUF_RX_SIZE, \
 			BT_BUF_EVT_SIZE(CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE))
@@ -1583,6 +1582,13 @@ static int hci_driver_init(const struct device *dev)
 	if (err) {
 		return err;
 	}
+
+#if defined(CONFIG_BT_CTLR_HCI_CUSTOM_EXTENSION)
+	err = hci_internal_user_extension_handler_init();
+	if (err) {
+		return err;
+	}
+#endif
 
 	configure_supported_features();
 

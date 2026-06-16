@@ -39,6 +39,9 @@ static bool padv_response_data_cmd_pending;
 #endif
 
 static hci_internal_user_cmd_handler_t user_cmd_handler;
+#ifdef CONFIG_BT_CTLR_HCI_CUSTOM_EXTENSION
+static sys_slist_t cmd_handlers = SYS_SLIST_STATIC_INIT(&cmd_handlers);
+#endif
 
 static bool command_generates_command_complete_event(uint16_t hci_opcode)
 {
@@ -1838,6 +1841,45 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 }
 #endif /* CONFIG_BT_HCI_VS */
 
+#ifdef CONFIG_BT_CTLR_HCI_CUSTOM_EXTENSION
+static uint8_t sdc_hci_extension_hci_handler(uint8_t const *cmd, uint8_t *raw_event_out,
+					     uint8_t *param_length_out, bool *gives_cmd_status)
+{
+	struct hci_internal_user_extension_handler *handler;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&cmd_handlers, handler, node) {
+		if (handler->hci_handler) {
+			uint8_t err = handler->hci_handler(cmd, raw_event_out, param_length_out,
+							   gives_cmd_status);
+			if (err != BT_HCI_ERR_UNKNOWN_CMD) {
+				return err;
+			}
+		}
+	}
+	return BT_HCI_ERR_UNKNOWN_CMD;
+}
+
+void hci_internal_user_extension_handler_register(struct hci_internal_user_extension_handler *handler)
+{
+	sys_slist_append(&cmd_handlers, &handler->node);
+}
+
+int hci_internal_user_extension_handler_init(void)
+{
+	struct hci_internal_user_extension_handler *handler;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&cmd_handlers, handler, node) {
+		if (handler->init) {
+			int err = handler->init();
+			if (err != BT_HCI_ERR_SUCCESS) {
+				return err;
+			}
+		}
+	}
+	return BT_HCI_ERR_SUCCESS;
+}
+#endif
+
 static void cmd_put(uint8_t *cmd_in, uint8_t * const raw_event_out)
 {
 	uint8_t status = BT_HCI_ERR_UNKNOWN_CMD;
@@ -1854,6 +1896,13 @@ static void cmd_put(uint8_t *cmd_in, uint8_t * const raw_event_out)
 					  &return_param_length,
 					  &generate_command_status_event);
 	}
+
+#ifdef CONFIG_BT_CTLR_HCI_CUSTOM_EXTENSION
+	if (status == BT_HCI_ERR_UNKNOWN_CMD) {
+		status = sdc_hci_extension_hci_handler(cmd_in, raw_event_out, &return_param_length,
+						      &generate_command_status_event);
+	}
+#endif
 
 	if (status == BT_HCI_ERR_UNKNOWN_CMD) {
 

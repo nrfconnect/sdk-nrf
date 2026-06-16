@@ -13,9 +13,16 @@
 #include <sdc_hci_cmd_le.h>
 #include <sdc_hci_cmd_info_params.h>
 #include <zephyr/drivers/bluetooth.h>
+#include <zephyr/sys/slist.h>
 
 #ifndef HCI_INTERNAL_H__
 #define HCI_INTERNAL_H__
+
+#ifdef CONFIG_BT_CTLR_HCI_CUSTOM_EXTENSION
+#define HCI_INTERNAL_HCI_EXTENSION_INIT_PRIORITY 54
+BUILD_ASSERT(CONFIG_BT_LL_SOFTDEVICE_INIT_PRIORITY < HCI_INTERNAL_HCI_EXTENSION_INIT_PRIORITY,
+	     "HCI extensions need to be initialized after the SoftDevice Controller");
+#endif
 
 struct hci_driver_data {
 	bt_hci_recv_t recv_func;
@@ -23,8 +30,9 @@ struct hci_driver_data {
 
 /** @brief Send an HCI command packet to the SoftDevice Controller.
  *
- * If the application has provided a user handler, this handler get precedence
- * above the default HCI command handlers. See @ref hci_internal_user_cmd_handler_register.
+ * If the application has provided user handlers, these handlers get precedence
+ * above the default HCI command handlers. See @ref hci_internal_user_cmd_handler_register and
+ * @ref hci_internal_user_extension_handler_register.
  *
  * @param[in] cmd_in  HCI Command packet. The first byte in the buffer should correspond to
  *                    OpCode, as specified by the Bluetooth Core Specification.
@@ -67,10 +75,48 @@ typedef uint8_t (*hci_internal_user_cmd_handler_t)(uint8_t const *cmd,
  *
  * @note Only one handler can be registered.
  *
- * @param[in] handler
+ * @param[in] handler A user implementable HCI command handler.
  * @return Zero on success or (negative) error code otherwise
+ *
+ * @deprecated Use @ref hci_internal_user_extension_handler_register instead
  */
 int hci_internal_user_cmd_handler_register(const hci_internal_user_cmd_handler_t handler);
+
+#ifdef CONFIG_BT_CTLR_HCI_CUSTOM_EXTENSION
+struct hci_internal_user_extension_handler {
+	hci_internal_user_cmd_handler_t hci_handler;
+	int (*init)(void);
+	sys_snode_t node;
+};
+
+/** @brief Register a user handler for HCI commands.
+ *
+ * The user handler can be used to handle custom HCI commands.
+ *
+ * The user handler will have precedence over all other command handling.
+ * Therefore, the application needs to ensure it is not using opcodes that
+ * are used for other Bluetooth or vendor specific HCI commands.
+ * See sdc_hci_vs.h for the opcodes that are reserved.
+ * The extensions need to be registered before @ref hci_driver_init is called.
+ * It is suggested to call this function from a SYS_INIT with a priority of at least
+ * HCI_INTERNAL_HCI_EXTENSION_INIT_PRIORITY.
+ * The passed handler struct needs to have static lifetime.
+ *
+ * Multiple handlers can be registered. The order in which the handlers are called is not defined.
+ *
+ * @param[in] handler A pointer to a statically allocated extension handler struct.
+ */
+void hci_internal_user_extension_handler_register(struct hci_internal_user_extension_handler *handler);
+
+/** @brief Initialize all registered HCI extension handlers.
+ *
+ * Calls the @c init callback of each registered extension handler, if set.
+ * Initialization stops and the error is returned if any handler fails.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int hci_internal_user_extension_handler_init(void);
+#endif
 
 /** @brief Retrieve an HCI packet from the SoftDevice Controller.
  *
