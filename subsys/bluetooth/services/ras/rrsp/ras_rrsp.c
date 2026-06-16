@@ -326,7 +326,14 @@ static int rd_segment_send(struct bt_ras_rrsp *rrsp)
 	 * shall be used to fill the characteristic message.
 	 * An extra byte is reserved for the segment header
 	 */
-	uint16_t max_data_len = bt_gatt_get_mtu(rrsp->conn) - (4 + sizeof(struct ras_seg_header));
+	uint16_t mtu = bt_gatt_get_mtu(rrsp->conn);
+
+	if (mtu <= (4 + sizeof(struct ras_seg_header))) {
+		LOG_WRN("Invalid MTU: %d", mtu);
+		return -ENOTCONN;
+	}
+
+	uint16_t max_data_len = mtu - (4 + sizeof(struct ras_seg_header));
 
 	/* segment_buf is only accessed by the RRSP WQ, so is safe to reuse. */
 	net_buf_simple_reset(&segment_buf);
@@ -409,7 +416,14 @@ static void send_data_work_handler(struct k_work *work)
 
 	int err = rd_segment_send(rrsp);
 
-	if (err) {
+	if (err == -ENOTCONN) {
+		rrsp->streaming = false;
+		if (rrsp->active_buf) {
+			bt_ras_rd_buffer_release(rrsp->active_buf);
+			rrsp->active_buf = NULL;
+			rrsp->active_buf_read_cursor = 0;
+		}
+	} else if (err) {
 		/* Will keep retrying. */
 		LOG_WRN("Failed to send segment: %d", err);
 	}
