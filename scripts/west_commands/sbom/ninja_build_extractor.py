@@ -111,7 +111,9 @@ class NinjaBuildExtractor:
         Ignore targets which pollute the SBOM with unrelated headers.
         '''
         normalized = str(target).replace('\\', '/').lower()
-        return normalized.endswith(IGNORE_TARGETS)
+        if normalized.endswith(IGNORE_TARGETS):
+            return True
+        return '.git' in normalized.split('/')
 
     def detect_file_type(self, file: Path) -> FileType:
         '''
