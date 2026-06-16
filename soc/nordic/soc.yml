@@ -33,9 +33,11 @@ runners:
         groups:
           - qualifiers:
               - nrf54lc10a/cpuapp
+              - nrf54lc10a/cpuapp/ns
               - nrf54lc10a/cpuflpr
           - qualifiers:
               - nrf54lv10a/cpuapp
+              - nrf54lv10a/cpuapp/ns
               - nrf54lv10a/cpuflpr
           - qualifiers:
               - nrf54ls05a/cpuapp
@@ -53,9 +55,11 @@ runners:
         groups:
           - qualifiers:
               - nrf54lc10a/cpuapp
+              - nrf54lc10a/cpuapp/ns
               - nrf54lc10a/cpuflpr
           - qualifiers:
               - nrf54lv10a/cpuapp
+              - nrf54lv10a/cpuapp/ns
               - nrf54lv10a/cpuflpr
           - qualifiers:
               - nrf54ls05a/cpuapp
@@ -72,9 +76,11 @@ runners:
         groups:
           - qualifiers:
               - nrf54lc10a/cpuapp
+              - nrf54lc10a/cpuapp/ns
               - nrf54lc10a/cpuflpr
           - qualifiers:
               - nrf54lv10a/cpuapp
+              - nrf54lv10a/cpuapp/ns
               - nrf54lv10a/cpuflpr
           - qualifiers:
               - nrf54ls05a/cpuapp
