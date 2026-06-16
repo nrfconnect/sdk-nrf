@@ -119,8 +119,10 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
                  f"--sysbuild")
 
     if core == Core.app:
+        dest_folder = TARGET_AUDIO_BUILD_FOLDER / options.transport / device / core / build
         build_cmd += " --domain nrf_audio"
     elif core == Core.net:
+        dest_folder = TARGET_AUDIO_BUILD_FOLDER / core / build
         build_cmd += " --domain ipc_radio"
     else:
         raise Exception("Invalid core!")
@@ -170,12 +172,11 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
     if pristine:
         build_cmd += " --pristine"
 
-    dest_folder = TARGET_AUDIO_BUILD_FOLDER / options.transport / device / core / build
-
     return build_cmd, dest_folder, device_flag, release_flag, overlay_flag
 
 
 def __build_module(build_config, options, sirk=""):
+
     build_cmd, dest_folder, device_flag, release_flag, overlay_flag = __build_cmd_get(
         build_config.core,
         build_config.device,
