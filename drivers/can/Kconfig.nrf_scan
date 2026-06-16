@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CAN_NRF_SCAN
+	bool "nRF sCAN device driver"
+	default y
+	depends on DT_HAS_NORDIC_NRF_SCAN_ENABLED
+	select PINCTRL
