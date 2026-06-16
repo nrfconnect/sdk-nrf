@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+if SETTINGS
+
+config ZMS
+	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+config NVS
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+endif # SETTINGS
