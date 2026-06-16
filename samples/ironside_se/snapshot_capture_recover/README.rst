@@ -75,6 +75,60 @@ After programming the sample to your development kit, complete the following ste
 #. After ``SNAPSHOT_MAX_CYCLES`` boots, the sample enters a heartbeat loop and periodically logs MRAM read sweeps.
 #. Optionally, apply a strong magnet near the device while it is in the heartbeat loop and reset or wait for the next boot to observe |ISE| snapshot recovery after MRAM corruption.
 
+Power measurements
+******************
+
+The following measurements were obtained with ``VDDH`` set to 3.0 V and ``VDD_flash`` set to 1.8 V.
+The full boot sequence includes two snapshot captures and two snapshot recoveries.
+
+The following table lists the measured charge and duration for each operation.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Operation
+     - ``VDDH`` charge
+     - ``VDD_flash`` charge
+     - Duration
+   * - Full boot sequence
+     - 82.0 mC at 3.0 V
+     - 38.7 mC at 1.8 V
+     - 11.2 s
+   * - One snapshot capture
+     - 31.8 mC at 3.0 V
+     - 19.1 mC at 1.8 V
+     - 4.38 s
+   * - One snapshot recovery
+     - 8.67 mC at 3.0 V
+     - 0.58 mC at 1.8 V
+     - 1.12 s
+   * - Boot without capture or recovery
+     - 0.66 mC at 3.0 V
+     - Not measured
+     - 125 ms
+
+The following figures show the Power Profiler traces for the measured operations.
+
+.. figure:: images/snapshot_capture_recover_1.png
+   :alt: Power Profiler trace for the full boot sequence
+
+   Power Profiler trace for the full boot sequence.
+
+.. figure:: images/snapshot_capture_recover_2.png
+   :alt: Power Profiler trace for one snapshot capture
+
+   Power Profiler trace for one snapshot capture.
+
+.. figure:: images/snapshot_capture_recover_3.png
+   :alt: Power Profiler trace for one snapshot recovery
+
+   Power Profiler trace for one snapshot recovery.
+
+.. figure:: images/snapshot_capture_recover_4.png
+   :alt: Power Profiler trace for boot without capture or recovery
+
+   Power Profiler trace for boot without capture or recovery.
+
 Dependencies
 ************
 
