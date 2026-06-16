@@ -50,7 +50,7 @@ tests:
     harness_config:
       type: multi_line
       regex:
-        - "Starting single_slot sample"
+        - "Bluetooth initialized"
         - "Advertising successfully started"
   sample.dfu.single_slot.usb:
     tags:
