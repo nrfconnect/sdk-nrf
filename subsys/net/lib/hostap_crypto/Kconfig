@@ -56,6 +56,8 @@ config HOSTAP_CRYPTO_ALT_PSA
 	select PSA_WANT_ALG_SHA_224 if !HOSTAP_CRYPTO_ENTERPRISE
 	select PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128 if !HOSTAP_CRYPTO_ENTERPRISE
 	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY if !HOSTAP_CRYPTO_ENTERPRISE
+	# Internal SAE (SoftAP) still uses mbedtls ECP via crypto alt.
+	select MBEDTLS_ECP_C if WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_INT
 	help
 	  Crypto backend for the WPA supplicant built on PSA Crypto with the
 	  HostAP mbedtls alt glue. This is the single backend for all Wi-Fi
@@ -99,13 +101,12 @@ config HOSTAP_CRYPTO_ENTERPRISE
 
 endif
 
-# WPA3 over PSA is personal security only for now
 if HOSTAP_CRYPTO_ALT_PSA
 
 config HOSTAP_CRYPTO_WPA3_PSA
 	bool "WPA3 PSA support"
 	depends on !SOC_SERIES_NRF54H && !WIFI_NM_WPA_SUPPLICANT_AP
-	default y if !SOC_SERIES_NRF54H
+	default y if !SOC_SERIES_NRF54H && !WIFI_NM_WPA_SUPPLICANT_AP
 	select PSA_WANT_ALG_WPA3_SAE_FIXED
 	select PSA_WANT_ALG_WPA3_SAE_H2E
 	select PSA_WANT_KEY_TYPE_WPA3_SAE
