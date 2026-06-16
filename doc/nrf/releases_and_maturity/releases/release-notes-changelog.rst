@@ -393,6 +393,10 @@ DFU samples
 -----------
 
 * Added the :ref:`encrypted_bootloader` sample that demonstrates how to secure device firmware update (DFU) with image encryption enabled for both the application and MCUboot.
+* :ref:`single_slot_sample` sample:
+
+  * Added support for buttonless entry into firmware loader mode over Bluetooth LE by using the SMP MCUmgr reset command with boot-mode selection.
+    To build with this feature, append ``FILE_SUFFIX=ble_enter`` to the build command.
 * Updated:
 
   * The :ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
@@ -688,7 +692,7 @@ Debug libraries
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`lib_fw_loader_settings` library to pass the firmware loader Bluetooth advertising name from the main application to the firmware loader image using Settings storage.
 
 Gazell libraries
 ----------------
