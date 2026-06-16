@@ -48,6 +48,10 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
+* Added the hidden :kconfig:option:`CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256` to select HMAC-SHA256 with X25519 for compatibility with existing projects that use it.
+  The option is hidden and requires addition of Kconfig override in your project.
+  This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
+
 |no_changes_yet_note|
 
 Developing with nRF91 Series
@@ -269,7 +273,7 @@ nRF Audio (formerly nRF5340 Audio)
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -294,7 +298,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target in the :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples.
 
 Bluetooth Mesh samples
 ----------------------

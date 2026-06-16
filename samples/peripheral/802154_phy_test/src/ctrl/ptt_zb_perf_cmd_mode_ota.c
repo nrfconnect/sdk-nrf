@@ -877,7 +877,7 @@ static enum ptt_ret cmd_make_and_send_rf_packet(enum ptt_cmd cmd)
 		memcpy(&evt_data->arr[evt_data->len], ctx_data->arr, ctx_data->len);
 		evt_data->len += ctx_data->len;
 
-		ret = ptt_rf_send_packet(ota_cmd_evt, evt_data->arr, evt_data->len);
+		ret = ptt_rf_send_packet(ota_cmd_evt, evt_data->arr, evt_data->len, NULL);
 	}
 
 	return ret;

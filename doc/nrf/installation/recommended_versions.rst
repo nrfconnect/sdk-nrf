@@ -407,7 +407,7 @@ Use the latest available release for development.
 
 The extensions are available for download from the following websites:
 
-* |VSC| Marketplace, where the extensions are bundled as the `nRF Connect for VS Code Extension Pack`_.
+* |VSC| Marketplace, where you can install the main `nRF Connect for VS Code`_ extension to get the full set of extensions.
 * `Open VSX Registry`_, from where you can install the extensions separately to editors based on |VSC| and compatible with the VSIX format.
 
   .. note::

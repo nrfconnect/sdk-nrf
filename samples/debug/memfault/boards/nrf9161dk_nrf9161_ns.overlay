@@ -8,17 +8,24 @@
 
 #include <samples/cellular/nrf91_sram_partitions.dtsi>
 
-&gd25wb256 {
-	status = "okay";
+/* The internal-flash coredump backend (CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP)
+ * memory-maps the coredump partition and reads it with memcpy(), so it must live in
+ * internal flash (not on the external gd25wb256). Carve it out of the storage region.
+ */
+/delete-node/ &storage_partition;
 
+&flash0 {
 	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
+		storage_partition: partition@f8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f8000 0x00004000>;
+		};
 
 		memfault_coredump_partition: partition@fc000 {
+			compatible = "zephyr,mapped-partition";
 			label = "memfault_coredump_partition";
-			reg = <0x000fc000 0x00002000>;
+			reg = <0x000fc000 0x00004000>;
 		};
 	};
 };

@@ -42,11 +42,17 @@ endchoice
 if NRF_WIFI_PATCHES_EXT_FLASH_STORE
 config NRF_WIFI_FW_FLASH_CHUNK_SIZE
 	int "Chunk size for nRF70 FW patches to be read from external flash"
-	default 8192
+	default NRF70_PATCH_DL_CHUNK_SIZE
 	help
 	  Chunk size for nRF70 FW patches to be read from external flash.
 	  This option impacts the loading time of the nRF70 FW patches and
 	  RAM usage (heap) of the application.
+
+	  Each chunk read from flash is written to the RPU in a single SPI/QSPI
+	  transfer, so it must stay within the host EasyDMA MAXCNT and any DMA
+	  bounce region of the bus driver. It therefore defaults to
+	  NRF70_PATCH_DL_CHUNK_SIZE, which is sized for the most constrained
+	  supported SoC. Do not raise it above that limit.
 
 config NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
 	bool "Integrity check of nRF70 FW patches"

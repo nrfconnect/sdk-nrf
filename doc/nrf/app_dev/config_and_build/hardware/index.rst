@@ -5,10 +5,8 @@ Configuring devicetree
 
 |nRFVSC| is the recommended tool for editing :ref:`configure_application_hw`.
 The extension offers several layers of `Devicetree integration <Devicetree support overview_>`_, ranging from summarizing devicetree settings in a menu and providing devicetree language support in the editor, to the Devicetree Visual Editor, a GUI tool for editing devicetree files.
-Follow the steps in `How to create devicetree files`_ and use one of the following options to edit the :file:`.dts`, :file:`.dtsi`, and :file:`.overlay` files:
 
-* `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_
-* `Devicetree language support`_
+Follow the steps in `How to create devicetree files`_ in the extension documentation and use the `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_ to edit the :file:`.dts`, :file:`.dtsi`, and :file:`.overlay` files.
 
 Like Kconfig fragment files, devicetree files can also be provided as overlays.
 The devicetree overlay files use the :ref:`normalized board target name <app_boards_names>` and the file extension :file:`.overlay` (for example, ``nrf54h20dk/nrf54h20/cpuapp`` becomes :file:`nrf54h20dk_nrf54h20_cpuapp.overlay`).

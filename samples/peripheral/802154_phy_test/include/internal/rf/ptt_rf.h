@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 
+#include "nrf_802154_types.h"
 #include "ptt_config.h"
 #include "ctrl/ptt_events.h"
 #include "ptt_errors.h"
@@ -67,15 +68,28 @@ void ptt_rf_uninit(void);
  */
 void ptt_rf_reset(void);
 
+/** @brief Map nRF 802.15.4 driver TX error to PTT RF error code.
+ *
+ *  @param error - nRF 802.15.4 driver TX error code
+ *
+ *  @return ptt_rf_tx_error_t - corresponding PTT RF TX error code
+ */
+ptt_rf_tx_error_t ptt_rf_map_nrf_tx_error(nrf_802154_tx_error_t error);
+
 /** @brief Send a packet to a transmitter
  *
  *  @param evt_id - event id locking this transmission
  *  @param pkt - data to be transmitted
  *  @param len - length of the data
+ *  @param p_sync_tx_error - pointer to the variable to store the error code.
+ *                           Valid only when PTT_RET_TX_FAILED is returned.
  *
  *  @return enum ptt_ret - PTT_RET_SUCCESS or error
  */
-enum ptt_ret ptt_rf_send_packet(ptt_evt_id_t evt_id, const uint8_t *pkt, ptt_pkt_len_t len);
+enum ptt_ret ptt_rf_send_packet(ptt_evt_id_t evt_id,
+				const uint8_t *pkt,
+				ptt_pkt_len_t len,
+				nrf_802154_tx_error_t *p_sync_tx_error);
 
 /** @brief Set channel mask to radio driver
  *

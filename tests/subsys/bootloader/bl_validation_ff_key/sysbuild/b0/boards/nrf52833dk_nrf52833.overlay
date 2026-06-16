@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../../boards/nrf52833dk_nrf52833.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0_partition;
+	};
+};

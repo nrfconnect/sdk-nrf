@@ -51,11 +51,11 @@ Depending on your preferred development environment, install the following softw
       Additionally, install |VSC|:
 
       * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_ or `using this direct link <start VS Code walkthrough_>`_.
-      * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
+      * In |VSC|, the latest version of `nRF Connect for VS Code`_ with the related extensions.
         |nRFVSC| comes with its own bundled version of some of the nRF Util commands.
 
       .. note::
-         You can also use a different IDE compatible with the VSIX format and install the extensions that are part of the nRF Connect for VS Code Extension Pack from the `Open VSX Registry`_.
+         You can also use a different IDE compatible with the VSIX format and install the full set of extensions from the `Open VSX Registry`_.
          However, Nordic Semiconductor does not test editors other than |VSC| for compatibility with |nRFVSC|.
          While you are encouraged to report any issues you encounter on `DevZone`_, issues discovered in editors other than |VSC| and not reproducible in |VSC| will not be prioritized.
 

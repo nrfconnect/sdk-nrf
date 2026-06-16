@@ -228,7 +228,7 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 
 	http = (struct transport_params_http *)dl->transport_internal;
 
-	LOG_DBG("(partial) http header response:\n%.*s", buf_len, dl->cfg.buf);
+	LOG_HEXDUMP_DBG(dl->cfg.buf, buf_len, "(partial) http header response:");
 
 	p = strnstr(dl->cfg.buf, "\r\n\r\n", buf_len);
 	if (p) {
@@ -252,7 +252,7 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 			value = true;
 			continue;
 		}
-		dl->cfg.buf[i] = tolower(dl->cfg.buf[i]);
+		dl->cfg.buf[i] = tolower((unsigned char)dl->cfg.buf[i]);
 	}
 
 	/* Look for the status code just after "http/1.1 " */
@@ -278,8 +278,16 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 			if (q) {
 
 				/* Received entire line */
-				p += strlen("\r\nlocation: ");
+				p += strlen("\r\nlocation:");
 				*q = '\0';
+
+				/* Skip optional whitespace after the colon
+				 * (RFC 7230 OWS); the value (URI) is not
+				 * lowercased so it is matched as-is.
+				 */
+				while (*p == ' ' || *p == '\t') {
+					p++;
+				}
 
 				LOG_INF("Resource moved to %s", p);
 
@@ -298,7 +306,6 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 				err = dl_parse_url_file(p, dl->file, sizeof(dl->file));
 				if (err) {
 					LOG_ERR("Failed to parse filename, err %d, url %s", err, p);
-					k_mutex_unlock(&dl->mutex);
 					return -EBADMSG;
 				}
 
@@ -377,7 +384,7 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 		expected_status = (http->ranged || dl->progress) ? HTTP_RESPONSE_PARTIAL_CONTENT :
 								   HTTP_RESPONSE_OK;
 		if (http->header.status_code != expected_status) {
-			LOG_ERR("Unexpected HTTP response code %ld", http->header.status_code);
+			LOG_ERR("Unexpected HTTP response code %lu", http->header.status_code);
 			return -EBADMSG;
 		}
 
@@ -389,16 +396,17 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 		return parse_len;
 	}
 
-	q = dl->cfg.buf + buf_len;
 	/* We are still missing part of the header.
-	 * Return the lines (in number of bytes) that we have parsed.
+	 * Return the lines (in number of bytes) that we have parsed,
+	 * scanning backwards from the last received byte.
 	 */
+	q = dl->cfg.buf + buf_len - 1;
 	while (q > dl->cfg.buf && (*q != '\r') && (*q != '\n')) {
 		q--;
 	}
 
 	/* Keep \r and \n in the buffer in case it is part of the header ending. */
-	while (*(q - 1) == '\r' || *(q - 1) == '\n') {
+	while (q > dl->cfg.buf && (*(q - 1) == '\r' || *(q - 1) == '\n')) {
 		q--;
 	}
 

@@ -16,6 +16,15 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#if IS_ENABLED(CONFIG_BOARD_NRF9251DK_NRF9251_CPUAPP)
+#include <modem/nrf_modem_lib.h>
+#include <modem/lte_lc.h>
+#include <date_time.h>
+
+static K_SEM_DEFINE(lte_connected, 0, 1);
+static K_SEM_DEFINE(time_update_finished, 0, 1);
+#endif /* CONFIG_BOARD_NRF9251DK_NRF9251_CPUAPP */
+
 LOG_MODULE_REGISTER(jwt_sample, CONFIG_APPLICATION_JWT_LOG_LEVEL);
 
 #define JWT_AUDIENCE_STR "JSON web token for demonstration"
@@ -117,7 +126,7 @@ static int jwt_generate_simplified_token(uint32_t exp_time_s, char *out_buffer,
 	}
 
 	/**
-	 * Simplified token requies using a propriatary key for signing.
+	 * Simplified token requires using a proprietary key for signing.
 	 * The key needs to be generated before using its id for signing.
 	 * Key needs to be valid for signing messages and verifying message
 	 * signatures. It needs to be an ECDSA with a secp256r1 curve.
@@ -139,7 +148,7 @@ static int jwt_generate_simplified_token(uint32_t exp_time_s, char *out_buffer,
 					.jwt_buf = out_buffer,
 					.jwt_sz = out_buffer_size};
 
-	/* Simplified token requies using an expiration claim */
+	/* Simplified token requires using an expiration claim */
 	if (exp_time_s > APP_JWT_VALID_TIME_S_MAX) {
 		jwt.validity_s = APP_JWT_VALID_TIME_S_MAX;
 	} else if (exp_time_s == 0) {
@@ -148,7 +157,7 @@ static int jwt_generate_simplified_token(uint32_t exp_time_s, char *out_buffer,
 		jwt.validity_s = exp_time_s;
 	}
 
-	/* Simplified token requies using a subject claim */
+	/* Simplified token requires using a subject claim */
 	/* Subject: format: <hardware_id>.<16-random_bytes> */
 
 	if (0 == get_random_bytes_str(subject_random_str, RANDOM_STR_MAX_SIZE)) {
@@ -159,7 +168,7 @@ static int jwt_generate_simplified_token(uint32_t exp_time_s, char *out_buffer,
 
 	jwt.subject = token_subject_str;
 
-	/* JWT Claims that are not requiered are marked with a `0` */
+	/* JWT Claims that are not required are marked with a `0` */
 	jwt.json_token_id = 0;
 	jwt.audience = 0;
 	jwt.issuer = 0;
@@ -191,14 +200,14 @@ static int jwt_generate_full_token(uint32_t exp_time_s, char *out_buffer,
 	struct app_jwt_data jwt = {.sec_tag = 0,
 					.key_type = 0,
 					.alg = JWT_ALG_TYPE_ES256,
-					/* Full token requieres `kid` claim to its header */
+					/* Full token requires `kid` claim to its header */
 					.add_keyid_to_header = true,
-					/* Full token requieres `iat` claim */
+					/* Full token requires `iat` claim */
 					.add_timestamp = true,
 					.jwt_buf = out_buffer,
 					.jwt_sz = out_buffer_size};
 
-	/* Full token requieres `exp` claim */
+	/* Full token requires `exp` claim */
 	if (exp_time_s > APP_JWT_VALID_TIME_S_MAX) {
 		jwt.validity_s = APP_JWT_VALID_TIME_S_MAX;
 	} else if (exp_time_s == 0) {
@@ -207,7 +216,7 @@ static int jwt_generate_full_token(uint32_t exp_time_s, char *out_buffer,
 		jwt.validity_s = exp_time_s;
 	}
 
-	/* Full token requieres `sub`, `iss`, `jti` and `aud` claims */
+	/* Full token requires `sub`, `iss`, `jti` and `aud` claims */
 	/* Subject: format: "user_defined_string" , we use uuid as subject */
 
 	/* Use app_jwt API for UUID */
@@ -247,12 +256,76 @@ static int jwt_generate_full_token(uint32_t exp_time_s, char *out_buffer,
 	return err;
 }
 
+#if IS_ENABLED(CONFIG_BOARD_NRF9251DK_NRF9251_CPUAPP)
+static void lte_event_handler(const struct lte_lc_evt *const evt)
+{
+	switch (evt->type) {
+	case LTE_LC_EVT_NW_REG_STATUS:
+		if ((evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+		     (evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			LOG_INF("Connected to LTE");
+			k_sem_give(&lte_connected);
+		} else if (evt->nw_reg_status == LTE_LC_NW_REG_UICC_FAIL) {
+			LOG_WRN("UICC failure");
+			k_sem_reset(&lte_connected);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+static void date_time_evt_handler(const struct date_time_evt *evt)
+{
+	k_sem_give(&time_update_finished);
+}
+
+static void connect_and_wait_for_time(void)
+{
+	int err;
+
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_WRN("nrf_modem_lib_init() failed! (Error: %d)", err);
+		return;
+	}
+
+	lte_lc_register_handler(lte_event_handler);
+	date_time_register_handler(date_time_evt_handler);
+
+	LOG_INF("Connecting to LTE...");
+
+	lte_lc_normal();
+
+	err = k_sem_take(&lte_connected, K_MINUTES(5));
+	if (err) {
+		LOG_WRN("Failed to connect to LTE");
+		return;
+	}
+
+	LOG_INF("Waiting for current time...");
+
+	/* Wait for an event from the Date Time library. */
+	k_sem_take(&time_update_finished, K_MINUTES(1));
+
+	if (date_time_is_valid()) {
+		LOG_INF("Got current time");
+	} else {
+		LOG_WRN("Failed to get current time");
+	}
+}
+#endif /* CONFIG_BOARD_NRF9251DK_NRF9251_CPUAPP */
+
 int main(void)
 {
 	char jwt_str[APP_JWT_STR_MAX_LEN] = {0};
 	int ret = -1;
 
 	LOG_INF("Application JWT sample (%s)", CONFIG_BOARD);
+
+#if IS_ENABLED(CONFIG_BOARD_NRF9251DK_NRF9251_CPUAPP)
+	connect_and_wait_for_time();
+#endif
 
 	LOG_INF("Generating simplified JWT token");
 	ret = jwt_generate_simplified_token(APP_JWT_VALID_TIME_S_MAX, jwt_str,

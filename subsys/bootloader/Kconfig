@@ -258,4 +258,12 @@ config NCS_IS_VARIANT_IMAGE
 	  This option is set automatically based on devicetree partitions and should not require
 	  manual intervention.
 
+config NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256
+	bool
+	help
+	  Enforce HMAC-SHA256 in image signatures for compatibility with existing MCUboot.
+	  The option allows to override default behaviour for nRF54L series where HMAC-SHA512 is
+	  used. To use the override, add Kconfig entry to your projects Kconfig that sets the
+	  option to true.
+
 endmenu

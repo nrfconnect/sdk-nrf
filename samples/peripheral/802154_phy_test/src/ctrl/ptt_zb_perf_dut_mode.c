@@ -278,7 +278,7 @@ static enum ptt_ret dut_ping(void)
 
 	evt_data->len = ptt_proto_construct_header(p, PTT_CMD_ACK, PTT_EVENT_DATA_SIZE);
 
-	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len, NULL);
 
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 
@@ -350,7 +350,7 @@ static enum ptt_ret dut_get_power(void)
 	p[evt_data->len] = ptt_rf_get_power();
 	evt_data->len++;
 
-	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len, NULL);
 
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 
@@ -443,7 +443,7 @@ static enum ptt_ret dut_get_rx_antenna(void)
 	p[evt_data->len] = ptt_rf_get_rx_antenna();
 	evt_data->len++;
 
-	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len, NULL);
 
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 	return ret;
@@ -466,7 +466,7 @@ static enum ptt_ret dut_get_tx_antenna(void)
 	p[evt_data->len] = ptt_rf_get_tx_antenna();
 	evt_data->len++;
 
-	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len, NULL);
 
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 	return ret;
@@ -490,7 +490,7 @@ static enum ptt_ret dut_get_last_best_rx_antenna(void)
 	p[evt_data->len] = ptt_rf_get_last_rx_best_antenna();
 	evt_data->len++;
 
-	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len, NULL);
 
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 	return ret;
@@ -619,7 +619,7 @@ static void dut_end_rx_test(ptt_evt_id_t new_evt_id)
 			evt_data->len += dut_form_stat_report(&p[evt_data->len],
 							      PTT_EVENT_DATA_SIZE - evt_data->len);
 
-			ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+			ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len, NULL);
 		}
 	}
 
@@ -645,7 +645,7 @@ static enum ptt_ret dut_hw_version(void)
 	p[evt_data->len] = ptt_ctrl_get_hw_version();
 	evt_data->len++;
 
-	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len, NULL);
 
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 
@@ -669,7 +669,7 @@ static enum ptt_ret dut_sw_version(void)
 	p[evt_data->len] = ptt_ctrl_get_sw_version();
 	evt_data->len++;
 
-	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len, NULL);
 
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 

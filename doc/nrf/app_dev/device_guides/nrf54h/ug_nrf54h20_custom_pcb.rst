@@ -31,7 +31,7 @@ Use the PCB layouts and component values provided by Nordic Semiconductor, espec
 Prepare the configuration files for your custom board in the |NCS|
 ******************************************************************
 
-Use the `nRF Connect for VS Code Extension Pack`_ to generate a custom board skeleton.
+Use `nRF Connect for VS Code`_ with the related extensions to generate a custom board skeleton.
 
 Use the nRF54H20 DK board files found in :file:`sdk-zephyr/boards/nordic/nrf54h20dk` as a reference point for configuring your own custom board.
 

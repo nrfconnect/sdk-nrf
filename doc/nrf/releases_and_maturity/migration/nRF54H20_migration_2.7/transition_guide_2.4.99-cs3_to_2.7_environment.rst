@@ -77,7 +77,7 @@ You also need the following:
       #. Add the J-Link executable to the system path, on Linux and MacOS, or to the environment variables, on Windows, to run it from anywhere on the system.
 
 * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
-* In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
+* In |VSC|, the latest version of `nRF Connect for VS Code`_.
 * On Linux, the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
 
 Preliminary step

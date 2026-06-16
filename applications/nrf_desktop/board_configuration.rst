@@ -93,8 +93,9 @@ nRF52840 USB Dongle (``nrf52840dongle/nrf52840``) and nRF52833 USB Dongle (``nrf
       * Bluetooth uses Nordic Semiconductor's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * The configuration with the B0 bootloader is set as default for the ``nrf52840dongle/nrf52840`` board and with the MCUboot bootloader is set as default for the ``nrf52833dongle`` board.
-      * The nRF5 MBR partition (``nrf5_mbr``) added by the ``nrf52840dongle/nrf52840`` board is not used.
-        It is statically defined with address and size both set to zero to prevent Partition Manager from trying to place it dynamically.
+      * If building with Partition Manager, the nRF5 MBR partition (``nrf5_mbr``) is, by default, automatically added for the ``nrf52840dongle/nrf52840`` board.
+        The partition is not used by the nRF Desktop application.
+        Because of that, application configurations statically define the partition with address and size both set to zero to prevent Partition Manager from trying to place it dynamically.
         The application did not switch to the ``bare`` board variant to keep backwards compatibility.
 
 nRF52820 USB Dongle (``nrf52820dongle``)
@@ -202,6 +203,19 @@ Sample mouse or keyboard (``nrf54ls05dk/nrf54ls05b/cpuapp``)
         In the ``debug`` configurations, logs are provided through the UART.
       * The ``release`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
         The application image is verified using a pure ED25519 signature with software cryptography.
+
+Sample mouse (``nrf54lc10dk/nrf54lc10a/cpuapp``)
+      * The configuration uses the nRF54LC10 DK.
+      * The build types allow to build the application as a mouse.
+      * Inputs are simulated based on the hardware button presses.
+      * Only Bluetooth LE transport is enabled.
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+      * In ``debug`` configurations, logs are provided through the UART.
+      * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        All of the configurations enable hardware cryptography for the MCUboot bootloader.
+        The application image is verified using a pure ED25519 signature.
+        The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
+        For more details about KMU, see :ref:`ug_kmu_guides`.
 
 Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
       * The configuration uses the nRF54H20 DK.

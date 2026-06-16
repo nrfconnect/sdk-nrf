@@ -27,6 +27,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
@@ -35,6 +36,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     harness: console
   applications.nrf_desktop.zdebug:
     build_only: true
@@ -215,6 +217,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf52kbd/nrf52832
       - nrf52820dongle/nrf52820
@@ -227,6 +230,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args: FILE_SUFFIX=release
   applications.nrf_desktop.zrelease_fast_pair.keyboard:
     build_only: true
@@ -342,3 +346,22 @@ tests:
       - SB_CONFIG_PARTITION_MANAGER=y
       - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS=256
     harness: console
+  applications.nrf_desktop.zdebug_partition_manager_b0:
+    build_only: true
+    platform_allow:
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - nrf52840dk/nrf52840
+    extra_args:
+      - SB_CONFIG_PARTITION_MANAGER=y
+  applications.nrf_desktop.zdebug_partition_manager_mcuboot_swap_qspi:
+    build_only: true
+    platform_allow:
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - nrf52840dk/nrf52840
+    extra_args:
+      - FILE_SUFFIX=mcuboot_qspi
+      - SB_CONFIG_PARTITION_MANAGER=y
+      - SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
+      - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS=2048

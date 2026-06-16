@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <nrfx.h>
 #include <assert.h>
+#include <zephyr/devicetree.h>
 
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
@@ -22,7 +23,13 @@
 #define BL_STORAGE_ADDRESS	TFM_BL_STORAGE_ADDR
 #else
 /* Address of storage as seen in processor address space */
+#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
 #define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
+#else
+#include <zephyr/storage/flash_map.h>
+
+#define BL_STORAGE_ADDRESS	PARTITION_ADDRESS(bl_storage)
+#endif
 #endif
 
 const volatile struct bl_storage_data *const BL_STORAGE =

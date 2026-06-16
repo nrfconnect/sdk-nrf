@@ -36,8 +36,9 @@ When you choose ``thingy53/nrf5340/cpuapp`` or ``thingy53/nrf5340/cpuapp/ns`` as
 
 The build process generates firmware in two formats:
 
-* Intel Hex file (:file:`merged.hex` and :file:`merged_CPUNET.hex`) - Used with an external debug probe.
+* Intel HEX files (:file:`merged_<board_target>.hex`) - Used with an external debug probe.
   These file contains bootloaders and applications for each core.
+  :kconfig:option:`SB_CONFIG_MERGED_HEX_FILES` must be enabled for this feature.
 * Binary files (:file:`zephyr.signed.bin`), containing signed application firmwares for the application and network core, respectively.
   For convenience, the binary files are bundled in :file:`dfu_application.zip`, together with a manifest that describes them.
   You can use the binary files or the combined zip archive to update application firmware for both cores, with either MCUboot serial recovery or OTA DFU using Bluetooth® LE.

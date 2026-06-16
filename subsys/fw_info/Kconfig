@@ -19,6 +19,7 @@ config FW_INFO_API
 config FW_INFO_OFFSET
 	hex "The location of firmware info inside this firmware"
 	default 0x600 if SOC_SERIES_NRF54L
+	default 0x800 if SOC_SERIES_NRF92
 	default 0x200
 	help
 	  The location of firmware information inside the current firmware
