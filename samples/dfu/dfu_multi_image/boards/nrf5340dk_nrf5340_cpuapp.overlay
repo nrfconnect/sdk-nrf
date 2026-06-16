@@ -42,7 +42,7 @@
 		slot3_partition: partition@78000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-3";
-			reg = <0x78000 DT_SIZE_K(256)>;
+			reg = <0x78000 DT_SIZE_K(208)>;
 		};
 
 		dfu_multi_image_helper_partition: partition@b8000 {
