@@ -85,7 +85,7 @@ config GNSS_SAMPLE_ASSISTANCE_MINIMAL
 	bool "Use factory almanac, LTE network time and MCC based location"
 	select GNSS_SAMPLE_LTE_ON_DEMAND
 	select SETTINGS
-	select FCB
+	select NVS
 	select FLASH
 	select FLASH_MAP
 
