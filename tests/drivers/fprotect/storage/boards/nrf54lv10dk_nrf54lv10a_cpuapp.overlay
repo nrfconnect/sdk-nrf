@@ -7,13 +7,11 @@
 /delete-node/ &cpuapp_rram;
 
 &rram_controller {
-	reg = <0x5004b000 DT_SIZE_K(1524)>;
-
 	cpuapp_rram: rram@0 {
 		compatible = "soc-nv-flash";
 		erase-block-size = <DT_SIZE_K(4)>;
 		write-block-size = <0x10>;
-		reg = <0 DT_SIZE_K(1524)>;
+		reg = <0 DT_SIZE_K(1012)>;
 
 		partitions {
 			ranges;
@@ -26,10 +24,10 @@
 				reg = <0 DT_SIZE_K(54)>;
 			};
 
-			storage_partition: partition@175000 {
+			storage_partition: partition@f4000 {
 				compatible = "zephyr,mapped-partition";
 				label = "storage";
-				reg = <0x175000 DT_SIZE_K(32)>;
+				reg = <0xf4000 DT_SIZE_K(36)>;
 			};
 		};
 	};
