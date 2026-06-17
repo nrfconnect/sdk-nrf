@@ -96,12 +96,21 @@ function(zephyr_mcuboot_tasks)
 
   if(NOT CONFIG_PARTITION_MANAGER_ENABLED)
     dt_chosen(code_partition_path PROPERTY "zephyr,code-partition")
-    dt_partition_size(slot_size PATH "${code_partition_path}" REQUIRED)
-    dt_partition_addr(slot_address PATH "${code_partition_path}" REQUIRED ABSOLUTE)
     dt_nodelabel(slot0_partition_path NODELABEL "slot0_partition" REQUIRED)
     dt_nodelabel(slot1_partition_path NODELABEL "slot1_partition" REQUIRED)
     dt_nodelabel(slot0_ns_partition_path NODELABEL "slot0_ns_partition")
     dt_nodelabel(slot1_ns_partition_path NODELABEL "slot1_ns_partition")
+
+    # TF-M combined images are signed for the full slot0 partition (secure + NS).
+    # The MCUboot header is placed at slot0 start by --pad-header, so ih_load_addr
+    # must match slot0 and not the NS-only code partition.
+    if(CONFIG_BUILD_WITH_TFM)
+      dt_partition_size(slot_size PATH "${slot0_flash}" REQUIRED)
+      dt_partition_addr(slot_address PATH "${slot0_flash}" REQUIRED ABSOLUTE)
+    else()
+      dt_partition_size(slot_size PATH "${code_partition_path}" REQUIRED)
+      dt_partition_addr(slot_address PATH "${code_partition_path}" REQUIRED ABSOLUTE)
+    endif()
 
     if("${code_partition_path}" STREQUAL "${slot0_partition_path}" OR
        (slot0_ns_partition_path AND
