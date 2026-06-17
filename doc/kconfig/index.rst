@@ -22,3 +22,4 @@ The search results can be navigated page by page if the number of matches exceed
    :hidden:
 
    regex
+   kconfig_diff.rst
