@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Memory map for QSPI XIP split image with network core update.
+ * External slots: slot1 = app secondary, slot3 = netcore secondary,
+ * slot4/5 = QSPI XIP primary/secondary.
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x00010000 0x000d4000>;
+		};
+
+		storage_partition: partition@f0000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x000f0000 DT_SIZE_K(64)>;
+		};
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x00000000 0x000d4000>;
+		};
+
+		slot3_partition: partition@d4000 {
+			label = "image-3";
+			reg = <0x000d4000 DT_SIZE_K(256)>;
+		};
+
+		slot4_partition: partition@120000 {
+			label = "image-4";
+			reg = <0x00120000 DT_SIZE_K(256)>;
+		};
+
+		slot5_partition: partition@160000 {
+			label = "image-5";
+			reg = <0x00160000 DT_SIZE_K(256)>;
+		};
+	};
+};
