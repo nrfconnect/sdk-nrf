@@ -30,6 +30,8 @@ jobs:
     runs-on:
       - runs-on=${{ github.run_id }}
       - runner=16cpu-linux-x64
+      - volume=120gb
+      - family=c6id+m6id+r6id
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
