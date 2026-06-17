@@ -63,8 +63,8 @@ The configuration files are in the |sample path| directory.
 
 The following files are available:
 
-* :file:`overlay-nrf700x-wifi-scan-only.conf` - Config overlay for nRF7002 Wi-Fi chip support.
-* :file:`overlay-pgps.conf` - Config overlay for P-GPS support.
+* :file:`nrf700x-wifi-scan-only.conf` - Config overlay for nRF7002 Wi-Fi chip support.
+* :file:`pgps.conf` - Config overlay for P-GPS support.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -80,13 +80,13 @@ Building and running
 nRF91 Series DK with nRF7002 EK Wi-Fi support
 =============================================
 
-To build the sample with nRF91 Series DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek``, ``-DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf``, ``-DSB_CONFIG_WIFI_NRF70=y``, and ``-DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y`` options.
+To build the sample with an nRF91 Series DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek``, ``-DEXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf``, ``-DSB_CONFIG_WIFI_NRF70=y``, and ``-DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y`` options.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf -DSB_CONFIG_WIFI_NRF70=y -DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
+   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf -DSB_CONFIG_WIFI_NRF70=y -DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
 
 |board_target|
 
@@ -104,7 +104,7 @@ To build the Location sample with P-GPS support, use the following commands:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-pgps.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=pgps.conf -DEXTRA_DTC_OVERLAY_FILE=pgps.overlay
 
 |board_target|
 

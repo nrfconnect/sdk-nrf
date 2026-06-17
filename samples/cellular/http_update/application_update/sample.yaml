@@ -19,8 +19,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-carrier.conf
-      - EXTRA_DTC_OVERLAY_FILE=overlay-carrier.overlay
+      - EXTRA_CONF_FILE=carrier.conf
+      - EXTRA_DTC_OVERLAY_FILE=carrier.overlay
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - nrf9161dk/nrf9161/ns
