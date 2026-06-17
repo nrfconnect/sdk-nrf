@@ -179,9 +179,14 @@ static ssize_t ras_cp_write(struct bt_conn *conn, struct bt_gatt_attr const *att
 
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
-	if (!rrsp || k_work_is_pending(&rrsp->rascp_work) || len > RASCP_WRITE_MAX_LEN) {
+	if (!rrsp || k_work_is_pending(&rrsp->rascp_work)) {
 		LOG_DBG("Write rejected");
 		return BT_GATT_ERR(RAS_ATT_ERROR_WRITE_REQ_REJECTED);
+	}
+
+	if (len > RASCP_WRITE_MAX_LEN || len < RASCP_CMD_OPCODE_LEN) {
+		LOG_DBG("RAS CP write: Invalid length: %d", len);
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
 	}
 
 	memcpy(rrsp->rascp_cmd_buf, buf, len);
