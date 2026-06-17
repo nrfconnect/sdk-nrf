@@ -1874,12 +1874,12 @@ int hci_internal_user_extension_handler_init(void)
 		if (handler->init) {
 			int err = handler->init();
 
-			if (err != BT_HCI_ERR_SUCCESS) {
+			if (err) {
 				return err;
 			}
 		}
 	}
-	return BT_HCI_ERR_SUCCESS;
+	return 0;
 }
 #endif
 
