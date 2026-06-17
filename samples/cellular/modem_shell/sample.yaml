@@ -30,7 +30,7 @@ tests:
     build_only: true
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
-    extra_args: EXTRA_CONF_FILE=overlay-debug.conf
+    extra_args: EXTRA_CONF_FILE=debug.conf
     tags:
       - ci_build
       - sysbuild
@@ -42,7 +42,7 @@ tests:
     platform_allow: *modem_shell_platform_allow
     extra_configs:
       - CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND=y
-    extra_args: EXTRA_CONF_FILE=overlay-cloud_mqtt.conf
+    extra_args: EXTRA_CONF_FILE=cloud_mqtt.conf
     tags:
       - ci_build
       - sysbuild
@@ -52,7 +52,7 @@ tests:
     build_only: true
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
-    extra_args: EXTRA_CONF_FILE=overlay-non-offloading.conf
+    extra_args: EXTRA_CONF_FILE=non-offloading.conf
     tags:
       - ci_build
       - sysbuild
@@ -64,7 +64,7 @@ tests:
     platform_allow: *modem_shell_platform_allow
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -78,7 +78,7 @@ tests:
     platform_allow: *modem_shell_platform_allow
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
@@ -93,7 +93,7 @@ tests:
     platform_allow: *modem_shell_platform_allow
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE="overlay-nrf700x-wifi-scan-only.conf;overlay-debug.conf"
+      - EXTRA_CONF_FILE="nrf700x-wifi-scan-only.conf;debug.conf"
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -106,7 +106,7 @@ tests:
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     extra_args:
-      - EXTRA_CONF_FILE=overlay-app_fota.conf
+      - EXTRA_CONF_FILE=app_fota.conf
       - DTC_OVERLAY_FILE=nrf91_bootloader.overlay
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
     tags:
@@ -117,7 +117,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-modem_fota_full.conf
+      - EXTRA_CONF_FILE=modem_fota_full.conf
       - EXTRA_DTC_OVERLAY_FILE="nrf9160dk_ext_flash.overlay"
     integration_platforms:
       - nrf9160dk/nrf9160/ns
@@ -130,7 +130,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-modem_fota_full.conf
+      - EXTRA_CONF_FILE=modem_fota_full.conf
       - EXTRA_DTC_OVERLAY_FILE="nrf9161dk_ext_flash.overlay"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
@@ -168,8 +168,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-carrier.conf
-      - EXTRA_DTC_OVERLAY_FILE=overlay-carrier.overlay
+      - EXTRA_CONF_FILE=carrier.conf
+      - EXTRA_DTC_OVERLAY_FILE=carrier.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -181,7 +181,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
-    extra_args: EXTRA_CONF_FILE=overlay-lwm2m.conf
+    extra_args: EXTRA_CONF_FILE=lwm2m.conf
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -193,7 +193,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
-    extra_args: EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_bootstrap.conf"
+    extra_args: EXTRA_CONF_FILE="lwm2m.conf;lwm2m_bootstrap.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -206,8 +206,8 @@ tests:
     extra_configs:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
     extra_args:
-      - EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf"
-      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
+      - EXTRA_CONF_FILE="lwm2m.conf;lwm2m_pgps.conf;pgps.conf"
+      - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -218,8 +218,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-pgps.conf
-      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
+      - EXTRA_CONF_FILE=pgps.conf
+      - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -230,8 +230,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-pgps.conf
-      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
+      - EXTRA_CONF_FILE=pgps.conf
+      - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -243,7 +243,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_LOCATION_SERVICE_EXTERNAL=y
-    extra_args: EXTRA_CONF_FILE=overlay-cloud_mqtt.conf
+    extra_args: EXTRA_CONF_FILE=cloud_mqtt.conf
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -258,8 +258,8 @@ tests:
       - CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf;overlay-nrf700x-wifi-scan-only.conf"
-      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
+      - EXTRA_CONF_FILE="cloud_mqtt.conf;pgps.conf;nrf700x-wifi-scan-only.conf"
+      - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     integration_platforms: *modem_shell_integration_platforms
@@ -272,7 +272,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-ppp.conf
+      - EXTRA_CONF_FILE=ppp.conf
       - EXTRA_DTC_OVERLAY_FILE="ppp.overlay"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
@@ -284,7 +284,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-bt.conf
+      - EXTRA_CONF_FILE=bt.conf
       - EXTRA_DTC_OVERLAY_FILE="bt.overlay"
     integration_platforms:
       - nrf9160dk/nrf9160/ns
@@ -297,7 +297,7 @@ tests:
   sample.cellular.modem_shell.rtt:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-rtt.conf
+    extra_args: EXTRA_CONF_FILE=rtt.conf
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -325,7 +325,7 @@ tests:
     platform_allow:
       - thingy91x/nrf9151/ns
     extra_args:
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - EXTRA_DTC_OVERLAY_FILE=thingy91x_wifi.overlay
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
@@ -382,7 +382,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -400,7 +400,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -418,7 +418,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -464,7 +464,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -497,7 +497,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -542,7 +542,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-non-offloading.conf
+      - EXTRA_CONF_FILE=non-offloading.conf
       - modem_shell_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow

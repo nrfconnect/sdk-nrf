@@ -22,8 +22,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-pgps.conf
-      - EXTRA_DTC_OVERLAY_FILE=overlay-pgps.overlay
+      - EXTRA_CONF_FILE=pgps.conf
+      - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
     integration_platforms:
       - nrf9151dk/nrf9151/ns
     platform_allow:
@@ -45,7 +45,7 @@ tests:
       - nrf9161dk/nrf9161/ns
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -63,7 +63,7 @@ tests:
       - nrf9161dk/nrf9161/ns
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
       - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y

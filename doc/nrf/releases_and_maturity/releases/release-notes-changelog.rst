@@ -315,7 +315,12 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* Updated Kconfig configuration fragment and devicetree overlay naming by removing the ``overlay-`` prefix for the following samples:
+
+  * :ref:`gnss_sample`
+  * :ref:`http_application_update_sample`
+  * :ref:`location_sample`
+  * :ref:`modem_shell_application`
 
 Cryptography samples
 --------------------
