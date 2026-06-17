@@ -56,8 +56,6 @@ static void *tc_setup(void)
 
 static void tc_cleanup(void *f)
 {
-	mock_nrf_rpc_tr_expect_done();
-
 	memset(instance_buffer, 0, sizeof(instance_buffer));
 	memset(name_buffer, 0, sizeof(name_buffer));
 	memset(txt_data, 0, sizeof(txt_data));
@@ -100,6 +98,8 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientGetDefaultConfig)
 				   RPC_RSP(CBOR_DNS_QUERY_CONFIG));
 
 	config = otDnsClientGetDefaultConfig(NULL);
+
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_mem_equal(config->mServerSockAddr.mAddress.mFields.m8, &test_addr,
 			  OT_IP6_ADDRESS_SIZE);
@@ -165,6 +165,8 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveAddress)
 	error = otDnsClientResolveAddress(NULL, DNS_HOSTNAME, ot_dns_resolve_cb, (void *)UINT32_MAX,
 					  &config);
 
+	mock_nrf_rpc_tr_expect_done();
+
 	zassert_equal(error, OT_ERROR_NONE);
 }
 
@@ -193,6 +195,8 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveIp4Address)
 
 	error = otDnsClientResolveIp4Address(NULL, DNS_HOSTNAME, ot_dns_resolve_cb,
 					     (void *)UINT32_MAX, &config);
+
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(error, OT_ERROR_NONE);
 }
@@ -583,6 +587,8 @@ ZTEST(ot_rpc_dns_client, test_otDnsBrowseResponseGetServiceInfo)
 
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_BROWSE_RESPONSE_CB, OT_ERROR_NONE,
 				CBOR_UINT32(0xFACEFACE), CBOR_UINT32(UINT32_MAX), browse_cb_slot));
+
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(ot_dns_browse_cb_fake.call_count, 1);
 }
