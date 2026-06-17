@@ -21,13 +21,8 @@
 #define BUF_SIZE 256
 
 #ifdef CONFIG_SECURE_BOOT
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#define TEST_FPROTECT_BOOTLOADER_PROTECTED (PM_B0_ADDRESS + 0x800)
-#else
 #include <zephyr/storage/flash_map.h>
 #define TEST_FPROTECT_BOOTLOADER_PROTECTED (PARTITION_OFFSET(b0_partition) + 0x800)
-#endif
 #endif
 
 #define TEST_FPROTECT_WRITE_ADDR ROUND_UP( \
