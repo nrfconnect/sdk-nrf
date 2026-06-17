@@ -10,6 +10,7 @@ tests:
   mcuboot.kmu.west.provision.basic:
     timeout: 180
     platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -22,6 +23,7 @@ tests:
         - "../pytest/test_kmu_provision.py"
   mcuboot.kmu.west_flash_default_provision:
     platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
