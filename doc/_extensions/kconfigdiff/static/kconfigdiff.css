@@ -1,0 +1,78 @@
+/*
+ *
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ */
+
+/*
+ * Styling for the Kconfig diff extension (kconfigdiff).
+ *
+ * Entries are rendered git-diff style: whole symbols that were added or
+ * removed are tinted green/red, and for symbols present in both snapshots only
+ * the changed lines of each property are highlighted.
+ */
+
+.kconfigdiff {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 0.9rem;
+}
+
+.kconfigdiff-entry {
+    border: 1px solid #d0d7de;
+    border-left-width: 4px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.kconfigdiff-entry-new {
+    border-left-color: #2da44e;
+}
+
+.kconfigdiff-entry-removed {
+    border-left-color: #cf222e;
+}
+
+.kconfigdiff-entry-changed {
+    border-left-color: #d4a72c;
+}
+
+.kconfigdiff-entry-title {
+    margin: 0;
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid #d0d7de;
+    max-width: 100% !important;
+}
+
+.kconfigdiff-title-new {
+    background-color: #dafbe1;
+}
+
+.kconfigdiff-title-removed {
+    background-color: #ffebe9;
+}
+
+.kconfigdiff-title-changed {
+    background-color: #fff8c5;
+}
+
+.kconfigdiff-line {
+    margin: 0;
+    padding: 0 0.4rem;
+    white-space: pre-wrap;
+    border-left: 3px solid transparent;
+    max-width: fit-content !important;
+}
+
+.kconfigdiff-added {
+    background-color: #e6ffec;
+    border-left-color: #2da44e;
+}
+
+.kconfigdiff-removed {
+    background-color: #ffebe9;
+    border-left-color: #cf222e;
+}
