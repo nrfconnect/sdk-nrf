@@ -7,46 +7,18 @@
 from __future__ import annotations
 
 import logging
-import os
-import pickle
-import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.dts_helper import (
+    get_code_partition_address,
+    get_code_slot,
+    get_edt_node,
+)
 from twister_harness_ext.utils.imgtool_wrapper import ImgtoolParams
 
-# This is needed to load edt.pickle files.
-ZEPHYR_BASE = os.getenv("ZEPHYR_BASE", "")
-sys.path.insert(0, os.path.join(ZEPHYR_BASE, "scripts", "dts", "python-devicetree", "src"))
-from devicetree import edtlib  # type: ignore  # noqa: E402
-
 logger = logging.getLogger(__name__)
-
-
-def get_edt_node(edt_data: Path, node_label: str) -> edtlib.EDTNode:  # type: ignore
-    """Parse the EDT pickle file and return a node by its label.
-
-    Args:
-        edt_data (Path): Path to the EDT pickle file.
-        node_label (str): The label of the node to retrieve.
-
-    Returns:
-        devicetree.edtlib.EDTNode: The node corresponding to the given label.
-
-    Raises:
-        RuntimeError: If the loaded data does not have the expected structure.
-        KeyError: If the node label is not found in the EDT data.
-
-    """
-    with open(edt_data, "rb") as file:
-        data = pickle.load(file)
-    try:
-        return data.label2node[node_label]
-    except AttributeError as e:
-        raise RuntimeError("Unexpected structure in loaded EDT data") from e
-    except KeyError:
-        raise KeyError(f"Node label '{node_label}' not found in EDT data") from None
 
 
 @dataclass
@@ -58,6 +30,7 @@ class BuildParameters:
     zephyr_base: Path
     zephyr_config: Path
     pm_config: Path
+    pm: bool
     sysbuild: bool
     tfm: bool
     imgtool_params: ImgtoolParams
@@ -85,16 +58,17 @@ class BuildParameters:
             header_size = find_in_config(pm_config, "PM_MCUBOOT_PAD_SIZE")
             slot_size = find_in_config(pm_config, "PM_MCUBOOT_PRIMARY_SIZE")
         else:
-            # No PM used, thus take header size from app config and slot size from DTS
-            # (EDT representation)
-            header_size = find_in_config(zephyr_config, "CONFIG_ROM_START_OFFSET")
-            slot_size = str(get_edt_node(edt_data, "cpuapp_slot0_partition").regs[0].size)
+            if tfm:
+                header_size = find_in_config(zephyr_config, "CONFIG_TFM_MCUBOOT_HEADER_SIZE")
+            else:
+                header_size = find_in_config(zephyr_config, "CONFIG_ROM_START_OFFSET")
+            slot_size = str(get_code_slot(edt_data).regs[0].size)
         imgtool_params = ImgtoolParams(
             align=find_in_config(zephyr_config, "CONFIG_MCUBOOT_FLASH_WRITE_BLOCK_SIZE"),
             header_size=header_size,
             slot_size=slot_size,
             version=find_in_config(zephyr_config, "CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION"),
-            pad_header=pm,  # Pad header if PM is used
+            pad_header=pm or tfm,
         )
 
         return cls(
@@ -105,6 +79,7 @@ class BuildParameters:
             pm_config=pm_config,
             sysbuild=sysbuild,
             tfm=tfm,
+            pm=pm,
             imgtool_params=imgtool_params,
         )
 
@@ -124,9 +99,15 @@ class BuildParameters:
             sysbuild_config = self.build_dir / "zephyr" / ".config"
             self.net_core_name = find_in_config(sysbuild_config, "SB_CONFIG_NETCORE_IMAGE_NAME")
             self.netcore_to_sign = self.build_dir / f"signed_by_b0_{self.net_core_name}.bin"
-            self.mcuboot_secondary_app_to_sign = (
-                self.build_dir / "mcuboot_secondary_app" / "zephyr" / "zephyr.bin"
-            )
+            if self.pm:
+                self.mcuboot_secondary_app_to_sign = (
+                    self.build_dir / "mcuboot_secondary_app" / "zephyr" / "zephyr.bin"
+                )
+            else:
+                slot1_variant_dir = self.app_build_dir.with_name(
+                    self.app_build_dir.name + "_slot1_variant"
+                )
+                self.mcuboot_secondary_app_to_sign = slot1_variant_dir / "zephyr" / "zephyr.bin"
         else:
             self.app_to_sign = self.build_dir / "zephyr" / "app_to_sign.bin"
             self.netcore_to_sign = self.build_dir / "zephyr" / "net_core_app_to_sign.bin"
@@ -161,9 +142,7 @@ class BuildParameters:
 
         if not self.pm:
             edt_data = self.app_build_dir / "zephyr" / "edt.pickle"
-            self.imgtool_params.rom_fixed = get_partition_address(
-                edt_data, ["cpuapp_slot0_partition", "slot0_ns_partition", "slot0_partition"]
-            )
+            self.imgtool_params.rom_fixed = get_code_partition_address(edt_data)
 
     def update_params_for_netcore(self) -> None:
         """Update imgtool parameters for netcore image slot size."""
@@ -171,11 +150,14 @@ class BuildParameters:
             self.imgtool_params.slot_size = find_in_config(
                 self.pm_config, "PM_MCUBOOT_SECONDARY_1_SIZE"
             )
-        else:
+        elif self.pm_config.exists():
             cpunet_pm_config = self.build_dir / "pm_CPUNET.config"
             self.imgtool_params.slot_size = find_in_config(
                 cpunet_pm_config, f"PM_{self.net_core_name.upper()}_SIZE"
             )
+        else:
+            edt_data = self.build_dir / self.net_core_name / "zephyr" / "edt.pickle"
+            self.imgtool_params.slot_size = str(get_edt_node(edt_data, "s0_partition").regs[0].size)
 
     def _update_imgtool_next(self) -> None:
         """Update imgtool parameters for advanced signature and compression options."""
