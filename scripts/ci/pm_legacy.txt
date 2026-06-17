@@ -25,10 +25,7 @@
 # ---------------------------------------------------------------------------
 
 thingy53
-partition_manager
-applications.nrf_desktop.zdebug_partition_manager_mcuboot_direct_xip.uart
-applications.nrf_desktop.zdebug_partition_manager_mcuboot_single_app
-applications.nrf_desktop.zdebug_partition_manager_single_image.uart
+applications.nrf_desktop.zdebug_partition_manager
 sample.find_my.locator_tag.pm_legacy.boot_max_img_sectors
 sample.find_my.locator_tag.pm_legacy
 sample.find_my.switchable_networks.pm_legacy.boot_max_img_sectors
