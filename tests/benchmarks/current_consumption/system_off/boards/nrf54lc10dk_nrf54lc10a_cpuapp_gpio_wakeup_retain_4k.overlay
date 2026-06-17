@@ -1,0 +1,2 @@
+#include "nrf54lc10dk_nrf54lc10a_cpuapp_gpio_wakeup.overlay"
+#include "nrf54lc10dk_nrf54lc10a_cpuapp_retain_4k.overlay"
