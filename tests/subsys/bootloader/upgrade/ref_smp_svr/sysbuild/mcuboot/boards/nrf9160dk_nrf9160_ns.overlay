@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../dts/tfm_larger_mcuboot.dtsi"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
