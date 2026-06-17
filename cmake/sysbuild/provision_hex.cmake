@@ -131,7 +131,13 @@ function(provision application prefix_name)
     endif()
 
     dt_nodelabel(bl_storage_path NODELABEL bl_storage REQUIRED TARGET ${bl_storage_target})
-    dt_reg_addr(provision_address PATH "${bl_storage_path}" TARGET ${bl_storage_target})
+
+    if(${bl_storage_path} MATCHES /uicr)
+      dt_reg_addr(provision_address PATH "${bl_storage_path}" TARGET ${bl_storage_target})
+    else()
+      dt_partition_addr(provision_address PATH "${bl_storage_path}" TARGET ${bl_storage_target} ABSOLUTE REQUIRED)
+    endif()
+
     dt_reg_size(provision_size PATH "${bl_storage_path}" TARGET ${bl_storage_target})
   endif()
 
