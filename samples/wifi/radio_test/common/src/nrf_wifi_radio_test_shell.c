@@ -17,7 +17,7 @@
 #include <coex.h>
 #endif
 #endif /* CONFIG_NRF71_RADIO_TEST */
-#include <nrf_wifi_radio_test_shell.h>
+#include "nrf_wifi_radio_test_shell.h"
 #include "common/fmac_api_common.h"
 
 #ifndef CONFIG_NRF71_RADIO_TEST
