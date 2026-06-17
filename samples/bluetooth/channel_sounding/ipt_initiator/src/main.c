@@ -37,8 +37,6 @@ static K_SEM_DEFINE(sem_config_created, 0, 1);
 static K_SEM_DEFINE(sem_cs_security_enabled, 0, 1);
 static K_SEM_DEFINE(sem_connected, 0, 1);
 static K_SEM_DEFINE(sem_security, 0, 1);
-static K_SEM_DEFINE(sem_subevent_results_parsed, 0, 1);
-static K_SEM_DEFINE(sem_distance_estimate_updated, 1, 1);
 
 static struct bt_conn *connection;
 static struct bt_conn_le_cs_config cs_config;
@@ -67,6 +65,8 @@ struct distance_estimate_buffer {
 };
 
 static struct distance_estimate_buffer distance_estimate_buffer;
+
+static struct k_work distance_estimate_work;
 
 static void store_distance_estimate(float distance)
 {
@@ -117,7 +117,7 @@ static float get_filtered_distance(void)
 	return median_inplace(num_ifft, temp_ifft);
 }
 
-static void distance_estimates_update(void)
+static void distance_estimate_work_handler(struct k_work *work)
 {
 	for (uint8_t i = 0; i < CS_DE_NUM_CHANNELS; i++) {
 		LOG_DBG("iq[%d]: %.1f + j * %.1f", i, (double)iq.values[i].i,
@@ -144,7 +144,6 @@ static void distance_estimates_update(void)
 		LOG_INF("Distance estimates: median: %.2fm, update: %.2fm, time_delta: %lldms",
 			(double)distance_median, (double)distance_ifft, delta);
 	}
-	k_sem_give(&sem_distance_estimate_updated);
 }
 
 static void pcts_parse(uint8_t channel_index,
@@ -195,6 +194,7 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 {
 	static int64_t prev_ts = -1;
 	static uint32_t prev_procedure_counter = UINT16_MAX + 1;
+	static uint32_t dropped_procedure_counter = UINT16_MAX + 1;
 
 	int64_t now = k_uptime_get();
 	int64_t delta = 0;
@@ -224,8 +224,20 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 		return;
 	}
 
+	if (result->header.procedure_counter == dropped_procedure_counter) {
+		return;
+	}
+
+	if (k_work_is_pending(&distance_estimate_work)) {
+		LOG_DBG("Distance estimate work is pending."
+			"Dropping procedure counter: %u",
+			result->header.procedure_counter);
+
+		dropped_procedure_counter = result->header.procedure_counter;
+		return;
+	}
+
 	if (result->header.procedure_counter != prev_procedure_counter) {
-		k_sem_take(&sem_distance_estimate_updated, K_FOREVER);
 		memset(iq.scratch_mem, 0, sizeof(iq.scratch_mem));
 	}
 	prev_procedure_counter = result->header.procedure_counter;
@@ -236,7 +248,7 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 	 * run.
 	 */
 	if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_COMPLETE) {
-		k_sem_give(&sem_subevent_results_parsed);
+		k_work_submit(&distance_estimate_work);
 	}
 }
 
@@ -561,7 +573,7 @@ int main(void)
 
 	struct bt_scan_init_param scan_params = {
 		.scan_param = NULL,
-		.conn_param = BT_LE_CONN_PARAM(6, 6, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
+		.conn_param = BT_LE_CONN_PARAM(12, 12, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
 		.connect_if_match = 1};
 
 	err = scan_init(&scan_params);
@@ -657,6 +669,8 @@ int main(void)
 		return 0;
 	}
 
+	k_work_init(&distance_estimate_work, distance_estimate_work_handler);
+
 	struct bt_le_cs_procedure_enable_param params = {
 		.config_id = CS_CONFIG_ID,
 		.enable = 1,
@@ -668,10 +682,6 @@ int main(void)
 		return 0;
 	}
 
-	while (true) {
-		k_sem_take(&sem_subevent_results_parsed, K_FOREVER);
-		distance_estimates_update();
-	}
 
 	return 0;
 }
