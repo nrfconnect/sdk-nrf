@@ -274,6 +274,11 @@ static ssize_t ctrl_pt_write(struct bt_conn *conn,
 		return BT_GATT_ERR(BT_ATT_ERR_OPERATION_FAILED);
 	}
 
+	if (len < sizeof(op_code)) {
+		LOG_ERR("Invalid length of Write Request");
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
+	}
+
 	cp_proc = (uint8_t *) buf;
 	op_code = (enum bt_bms_op) cp_proc[0];
 	if (!ctrl_pt_op_code_validate(op_code)) {
