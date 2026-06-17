@@ -30,7 +30,7 @@ version = "&nbsp;"
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
-extensions = ["zephyr.kconfig", "zephyr.external_content"]
+extensions = ["zephyr.kconfig", "zephyr.external_content", "kconfigdiff"]
 
 # Options for HTML output ------------------------------------------------------
 
