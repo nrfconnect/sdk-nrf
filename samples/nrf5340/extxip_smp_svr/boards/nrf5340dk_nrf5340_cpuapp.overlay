@@ -1,5 +1,1 @@
-/ {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-};
+/* Application board overlay - memory map is applied via sysbuild.cmake */

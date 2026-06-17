@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Carlo Caione <ccaione@baylibre.com>
- * Copyright# Copyright (c) 2024 Nordic Semiconductor
+ * Copyright (c) 2024-2026 Nordic Semiconductor
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -19,38 +19,38 @@
 #include <zephyr/linker/linker-defs.h>
 #include <zephyr/linker/linker-tool.h>
 
-
 /* Let SystemInit() be called in place of z_arm_platform_init() by default. */
 PROVIDE(z_arm_platform_init = SystemInit);
 
 /*
- * nRF5340dk and thingy53 are shipping QSPI external flashes.
- * These memories are mapped beginning from 0x1000_0000 internal SoC memory
- * address. This addressing space can be used for XIP and direct data access.
+ * QSPI NOR is memory-mapped at 0x10000000 on nRF5340.
+ * Select the MCUboot slot for the QSPI XIP image based on the assigned image
+ * number and whether this is a variant (secondary slot) build.
  */
+#define QSPI_XIP_MM_BASE 0x10000000
+
+#if CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER == 1
+#if CONFIG_NCS_IS_VARIANT_IMAGE
+#define QSPI_XIP_SLOT_NODE DT_NODELABEL(slot3_partition)
+#else
+#define QSPI_XIP_SLOT_NODE DT_NODELABEL(slot2_partition)
+#endif
+#elif CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER == 2
+#if CONFIG_NCS_IS_VARIANT_IMAGE
+#define QSPI_XIP_SLOT_NODE DT_NODELABEL(slot5_partition)
+#else
+#define QSPI_XIP_SLOT_NODE DT_NODELABEL(slot4_partition)
+#endif
+#else
+#error "Unsupported CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER for linker_arm_extxip.ld"
+#endif
+
+#define EXTFLASH_ADDR (QSPI_XIP_MM_BASE + DT_REG_ADDR(QSPI_XIP_SLOT_NODE) + CONFIG_ROM_START_OFFSET)
+#define EXTFLASH_SIZE (DT_REG_SIZE(QSPI_XIP_SLOT_NODE) - CONFIG_ROM_START_OFFSET)
+
 MEMORY
 {
-#if CONFIG_NCS_IS_VARIANT_IMAGE
-     /* This maps in mcuboot_secondary_1 partition defined in pm_static_no_network_core_directxip.yml
-      * components for ORIGIN calculation:
-      *  - 0x10000000: offset of QSPI external memory in SoC memory mapping.
-      *  - 0xD4000: mcuboot_secondary_1 offset in QSPI external memory
-      *  - 0x200: image header size.
-      * The size of this region is size of mcuboot_secondary_1 reduced by the
-      * image header size.
-      */
-     EXTFLASH (wx) : ORIGIN = 0x100D4200, LENGTH = 0x3FE00
-#else
-     /* This maps in mcuboot_primary_2 partition defined in pm_static.yml
-      * components for ORIGIN calculation:
-      *  - 0x10000000: offset of QSPI external memory in SoC memory mapping.
-      *  - 0x120000: mcuboot_primary_2 offset in QSPI external memory
-      *  - 0x200: image header size.
-      * The size of this region is size of mcuboot_primary_2 reduced by the
-      * image header size.
-      */
-     EXTFLASH (wx) : ORIGIN = 0x10120200, LENGTH = 0x3FE00
-#endif
+	EXTFLASH (wx) : ORIGIN = EXTFLASH_ADDR, LENGTH = EXTFLASH_SIZE
 }
 
 #include <zephyr/arch/arm/cortex_m/scripts/linker.ld>
