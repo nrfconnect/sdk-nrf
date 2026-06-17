@@ -100,10 +100,16 @@ function(zephyr_mcuboot_tasks)
     dt_partition_addr(slot_address PATH "${code_partition_path}" REQUIRED ABSOLUTE)
     dt_nodelabel(slot0_partition_path NODELABEL "slot0_partition" REQUIRED)
     dt_nodelabel(slot1_partition_path NODELABEL "slot1_partition" REQUIRED)
+    dt_nodelabel(slot0_ns_partition_path NODELABEL "slot0_ns_partition")
+    dt_nodelabel(slot1_ns_partition_path NODELABEL "slot1_ns_partition")
 
-    if("${code_partition_path}" STREQUAL "${slot0_partition_path}")
+    if("${code_partition_path}" STREQUAL "${slot0_partition_path}" OR
+       (slot0_ns_partition_path AND
+        "${code_partition_path}" STREQUAL "${slot0_ns_partition_path}"))
       math(EXPR qspi_slot_number "${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} * 2")
-    elseif("${code_partition_path}" STREQUAL "${slot1_partition_path}")
+    elseif("${code_partition_path}" STREQUAL "${slot1_partition_path}" OR
+           (slot1_ns_partition_path AND
+            "${code_partition_path}" STREQUAL "${slot1_ns_partition_path}"))
       math(EXPR qspi_slot_number "${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} * 2 + 1")
     else()
       message(FATAL_ERROR "Cannot determine which slot this image resides on and unable to calculate the QSPI slot, please check your dts")
@@ -144,8 +150,15 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_internal_sign_sysbuild})
     set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_external_sign_sysbuild})
   else()
-    set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot_size} --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_internal_rom_command})
-    set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${qspi_slot_size} --pad-header --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_external_rom_command})
+    if(CONFIG_BUILD_WITH_TFM)
+      set(imgtool_header_size ${CONFIG_TFM_MCUBOOT_HEADER_SIZE})
+      set(imgtool_internal_pad_header --pad-header)
+    else()
+      set(imgtool_header_size ${CONFIG_ROM_START_OFFSET})
+      set(imgtool_internal_pad_header)
+    endif()
+    set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot_size} --header-size ${imgtool_header_size} ${imgtool_internal_pad_header} ${imgtool_internal_rom_command})
+    set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${qspi_slot_size} --pad-header --header-size ${imgtool_header_size} ${imgtool_external_rom_command})
   endif()
 
   # Arguments to imgtool.
