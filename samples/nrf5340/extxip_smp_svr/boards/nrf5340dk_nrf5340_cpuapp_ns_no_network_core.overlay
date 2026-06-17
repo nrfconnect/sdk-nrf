@@ -1,4 +1,10 @@
-#include "../dts/nrf5340_extxip_sram_tfm_ns.dtsi"
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Non-secure (TF-M) memory map for QSPI XIP split image without network core.
+ */
 
 /delete-node/ &boot_partition;
 /delete-node/ &slot0_partition;
@@ -78,14 +84,9 @@
 			reg = <0x000d4000 DT_SIZE_K(256)>;
 		};
 
-		slot4_partition: partition@120000 {
-			label = "image-4";
+		slot2_partition: partition@120000 {
+			label = "image-2";
 			reg = <0x00120000 DT_SIZE_K(256)>;
-		};
-
-		slot5_partition: partition@160000 {
-			label = "image-5";
-			reg = <0x00160000 DT_SIZE_K(256)>;
 		};
 	};
 };
