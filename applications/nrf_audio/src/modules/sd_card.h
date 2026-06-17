@@ -19,6 +19,11 @@
 
 #include <stddef.h>
 #include <zephyr/fs/fs.h>
+#include <zephyr/sys/util.h>
+
+#define SD_ROOT_PATH	"/SD:/"
+/* Round down to closest 4-byte boundary */
+#define SD_PATH_MAX_LEN ROUND_DOWN(CONFIG_FS_FATFS_MAX_LFN, 4)
 
 /**
  * @brief Find all files on SD card that match the given pattern.

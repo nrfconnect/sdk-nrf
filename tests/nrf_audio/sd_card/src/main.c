@@ -139,19 +139,17 @@ static void before_fn(void *fixture)
 }
 
 #define SD_FILECOUNT_MAX 1500
-/* Align at 4-byte boundary */
-#define SD_PATHLEN_MAX	 ROUND_DOWN(CONFIG_FS_FATFS_MAX_LFN, 4)
 
 ZTEST(sd_card, test_basic_files)
 {
 	int ret;
 
-	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATHLEN_MAX] = {'\0'};
+	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATH_MAX_LEN] = {'\0'};
 
 	ret = test_disk_populate(1, 2, 1, ".lc3");
 	zassert_true(ret >= 0, "test_disk_populate returned error, %u", ret);
 
-	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATHLEN_MAX, sd_paths_and_files, NULL,
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files, NULL,
 				       ".lc3");
 
 	zassert_true(ret >= 0, "sd_card_list_files_match returned error, %u", ret);
@@ -167,12 +165,12 @@ ZTEST(sd_card, test_basic_files_again)
 {
 	int ret;
 
-	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATHLEN_MAX] = {'\0'};
+	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATH_MAX_LEN] = {'\0'};
 
 	ret = test_disk_populate(1, 3, 1, ".lc3");
 	zassert_true(ret >= 0, "test_disk_populate returned error, %u", ret);
 
-	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATHLEN_MAX, sd_paths_and_files, NULL,
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files, NULL,
 				       ".lc3");
 
 	zassert_true(ret >= 0, "sd_card_list_files_match returned error, %u", ret);
@@ -183,7 +181,7 @@ ZTEST(sd_card, test_valid_files_and_dummy_files)
 {
 	int ret;
 
-	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATHLEN_MAX] = {'\0'};
+	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATH_MAX_LEN] = {'\0'};
 
 	ret = test_disk_populate(1, 2, 1, ".lc3");
 	zassert_true(ret >= 0, "test_disk_populate returned error, %u", ret);
@@ -191,19 +189,19 @@ ZTEST(sd_card, test_valid_files_and_dummy_files)
 	ret = test_disk_populate(1, 2, 1, ".dum");
 	zassert_true(ret >= 0, "test_disk_populate returned error, %u", ret);
 
-	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATHLEN_MAX, sd_paths_and_files, NULL,
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files, NULL,
 				       ".lc3");
 
 	zassert_true(ret >= 0, "sd_card_list_files_match returned error, %u", ret);
 	zassert_equal(2, ret, "Num files found mismatch, %u", ret);
 
-	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATHLEN_MAX, sd_paths_and_files, NULL,
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files, NULL,
 				       ".dum");
 
 	zassert_true(ret >= 0, "sd_card_list_files_match returned error, %u", ret);
 	zassert_equal(2, ret, "Num files found mismatch, %u", ret);
 
-	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATHLEN_MAX, sd_paths_and_files, NULL,
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files, NULL,
 				       ".nonexist");
 
 	zassert_true(ret >= 0, "sd_card_list_files_match returned error, %u", ret);
@@ -217,13 +215,13 @@ ZTEST(sd_card, test_deep_structure)
 	const uint8_t FILES_PER_DIR = 1;
 	const uint8_t SUBDIRS = 1;
 
-	static char sd_paths_and_files[10][SD_PATHLEN_MAX] = {'\0'};
+	static char sd_paths_and_files[10][SD_PATH_MAX_LEN] = {'\0'};
 
 	ret = test_disk_populate(NUM_LEVELS, FILES_PER_DIR, SUBDIRS, ".lc3");
 	zassert_true(ret >= 0, "test_disk_populate returned error, %u", ret);
 	uint32_t files_created = ret;
 
-	ret = sd_card_list_files_match(10, SD_PATHLEN_MAX, sd_paths_and_files, NULL, ".lc3");
+	ret = sd_card_list_files_match(10, SD_PATH_MAX_LEN, sd_paths_and_files, NULL, ".lc3");
 
 	zassert_true(ret >= 0, "sd_card_list_files_match returned error, %u", ret);
 	zassert_equal(files_created, ret, "Num files found mismatch, %u", ret);
@@ -236,13 +234,13 @@ ZTEST(sd_card, test_many_files)
 	const uint8_t FILES_PER_DIR = 50;
 	const uint8_t SUBDIRS = 4;
 
-	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATHLEN_MAX] = {'\0'};
+	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATH_MAX_LEN] = {'\0'};
 
 	ret = test_disk_populate(NUM_LEVELS, FILES_PER_DIR, SUBDIRS, ".lc3");
 	zassert_true(ret >= 0, "test_disk_populate returned error, %u", ret);
 	uint32_t files_created = ret;
 
-	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATHLEN_MAX, sd_paths_and_files, NULL,
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files, NULL,
 				       ".lc3");
 
 	zassert_true(ret >= 0, "sd_card_list_files_match returned error, %u", ret);
@@ -253,12 +251,12 @@ ZTEST(sd_card, test_with_start_path)
 {
 	int ret;
 
-	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATHLEN_MAX] = {'\0'};
+	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATH_MAX_LEN] = {'\0'};
 
 	ret = test_disk_populate(2, 1, 2, ".lc3");
 	zassert_true(ret >= 0, "test_disk_populate returned error, %u", ret);
 
-	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATHLEN_MAX, sd_paths_and_files,
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files,
 				       "dir_1", ".lc3");
 
 	zassert_true(ret >= 0, "sd_card_list_files_match returned error, %u", ret);
@@ -270,7 +268,7 @@ ZTEST(sd_card, test_with_start_path)
 	zassert_str_equal("dir_1/dir_1/file_0.lc3", sd_paths_and_files[2], "File mismatch: %s",
 			  sd_paths_and_files[0]);
 
-	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATHLEN_MAX, sd_paths_and_files,
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files,
 				       "dir_1/dir_0", ".lc3");
 
 	zassert_true(ret >= 0, "sd_card_list_files_match returned error, %u", ret);
@@ -278,6 +276,35 @@ ZTEST(sd_card, test_with_start_path)
 
 	zassert_str_equal("dir_1/dir_0/file_0.lc3", sd_paths_and_files[0], "File mismatch: %s",
 			  sd_paths_and_files[0]);
+}
+
+ZTEST(sd_card, test_too_long_path)
+{
+	int ret;
+	const size_t max_user_path_len = SD_PATH_MAX_LEN - strlen(SD_ROOT_PATH);
+
+	static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATH_MAX_LEN] = {'\0'};
+
+	/* Max path length accepted after SD root prefix (should not trigger length check). */
+	char long_pathname[SD_PATH_MAX_LEN] = {'\0'};
+
+	for (size_t i = 0; i < max_user_path_len; i++) {
+		long_pathname[i] = 'a';
+	}
+
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files,
+				       long_pathname, ".lc3");
+
+	zassert_equal(0, ret, "sd_card_list_files_match should pass, %d", ret);
+
+	/* Go one index too far */
+	long_pathname[max_user_path_len] = 'a';
+
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATH_MAX_LEN, sd_paths_and_files,
+				       long_pathname, ".lc3");
+
+	zassert_equal(-FR_INVALID_NAME, ret,
+		      "sd_card_list_files_match should fail for too long path, %d", ret);
 }
 
 ZTEST_SUITE(sd_card, NULL, setup_fn, before_fn, NULL, NULL);
