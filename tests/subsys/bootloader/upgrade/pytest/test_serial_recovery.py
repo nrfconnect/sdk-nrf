@@ -14,6 +14,7 @@ import time
 
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.dts_helper import get_code_partition_address
 from twister_harness_ext.utils.helpers import nrfutil_write, reset_board, retry
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
@@ -39,9 +40,12 @@ def test_serial_recovery_after_damaging_app(dut: DeviceAdapter, shell: Shell, mc
     dut.disconnect()
 
     logger.info("Damage the application by writing invalid data to the beginning of the image")
-    app_address = find_in_config(
-        dut.device_config.build_dir / "pm.config", "PM_MCUBOOT_PRIMARY_ADDRESS"
-    )
+    pm_config = tm.build_params.pm_config
+    if pm_config.exists():
+        app_address = find_in_config(pm_config, "PM_MCUBOOT_PRIMARY_ADDRESS")
+    else:
+        edt_data = dut.device_config.app_build_dir / "zephyr" / "edt.pickle"
+        app_address = get_code_partition_address(edt_data)
     nrfutil_write(str(app_address), "0xdeadbeef", dut.device_config.id)
     reset_board(dut.device_config.id)
     time.sleep(2)  # wait for the device to reset and enter serial recovery mode

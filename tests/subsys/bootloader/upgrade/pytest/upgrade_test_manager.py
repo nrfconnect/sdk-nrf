@@ -11,10 +11,12 @@ import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+import pytest
 from parameters import BuildParameters
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.shell import ShellMCUbootCommandParsed
-from twister_harness.helpers.utils import match_lines, match_no_lines
+from twister_harness.helpers.utils import find_in_config
+from twister_harness_ext.utils.dts_helper import get_code_partition_address
 from twister_harness_ext.utils.helpers import retry, timer
 from twister_harness_ext.utils.imgtool_wrapper import imgtool_sign
 
@@ -148,9 +150,24 @@ class UpgradeTestManager(ABC):
         self.build_params.imgtool_params.security_counter = value
         logger.debug(f"Hardware counter value set to {value}")
 
-    def generate_image(self, app_to_sign: Path | None = None, confirmed: bool = False) -> Path:
+    def generate_image(
+        self, app_to_sign: Path | None = None, confirmed: bool = False, rom_fixed: str | None = None
+    ) -> Path:
         """Sign application image with current version."""
         logger.info(f"Sign app with version {self.get_current_sign_version()}")
+
+        if rom_fixed:
+            self.build_params.imgtool_params.rom_fixed = rom_fixed
+        elif (
+            find_in_config(
+                self.build_params.zephyr_config, "CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS"
+            )
+            == "y"
+        ):
+            edt_data = self.build_params.app_build_dir / "zephyr" / "edt.pickle"
+            rom_fixed_addr = get_code_partition_address(edt_data)
+            self.build_params.imgtool_params.rom_fixed = rom_fixed_addr
+
         if not app_to_sign:
             app_to_sign = self.build_params.app_to_sign
         updated_app = imgtool_sign(
@@ -177,13 +194,21 @@ class UpgradeTestManager(ABC):
     def verify_after_reset(
         self, lines: list[str] | None = None, no_lines: list[str] | None = None
     ) -> None:
-        """Verify device output after reset."""
+        """Verify device output after reset.
+
+        Read the device output until the welcome string or a failure marker is
+        found. Entries in ``lines`` and ``no_lines`` are matched against the output
+        with :func:`fnmatch` (wrapped in ``*``).
+        """
         regex = f"{self.welcome_str}|Unable to find bootable image"
         output = self.dut.readlines_until(regex=regex, timeout=120)
         no_lines = no_lines or []
-        match_no_lines(output, no_lines + ["Unable to find bootable image"])
+        no_lines.append("Unable to find bootable image")
+        matcher = pytest.LineMatcher(output)
+        for line in no_lines:
+            matcher.no_fnmatch_line(f"*{line}*")
         if lines:
-            match_lines(output, lines)
+            matcher.fnmatch_lines([f"*{line}*" for line in lines])
 
     def verify_swap_in_boot_log(self, swap_type: str = "none", version: str | None = None):
         """Verify swap type and version in boot log after reset."""

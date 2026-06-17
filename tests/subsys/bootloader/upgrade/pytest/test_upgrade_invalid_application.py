@@ -51,12 +51,13 @@ def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, tmp_path: Path):
     lines = dut.readlines_until(regex="Hello World!", print_output=True, timeout=20)
     pytest.LineMatcher(lines).fnmatch_lines(["*Attempting to boot slot 1*", "*Firmware version 2*"])
 
-    # create an invalid binary file
+    edt_data = dut.device_config.app_build_dir / "zephyr" / "edt.pickle"
     s0_offset = get_partition_address(
-        dut.device_config.app_build_dir / "zephyr/edt.pickle",  # type: ignore
+        edt_data,
         "s0_partition",
         absolute=True,
     )
+
     invalid_bin_file = tmp_path / "blob.bin"
     invalid_hex_file = tmp_path / "blob.hex"
     create_dummy_file(invalid_bin_file, 30 * 1024)
