@@ -657,9 +657,30 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       if((NOT SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ECDSA AND SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256) OR (SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ECDSA AND NOT SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256))
         message(WARNING "MCUboot and secure boot (application core) are enabled but MCUboot signing key type is not set to ECDSA-P256, this is a non-optimal configuration if sharing of crypto functions is needed from b0 to MCUboot")
       endif()
+
+      if(NOT SB_CONFIG_PARTITION_MANAGER)
+        set(mcuboot_SIGNING_SCRIPT
+          "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_b0.cmake" CACHE INTERNAL
+          "b0 signing script" FORCE
+        )
+      endif()
     else()
       set_config_bool(${DEFAULT_IMAGE} CONFIG_SECURE_BOOT y)
       set_config_bool(${DEFAULT_IMAGE} CONFIG_FW_INFO y)
+
+      if(NOT SB_CONFIG_PARTITION_MANAGER)
+        set(${DEFAULT_IMAGE}_SIGNING_SCRIPT
+          "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_b0.cmake" CACHE INTERNAL
+          "b0 signing script" FORCE
+        )
+      endif()
+    endif()
+
+    if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE AND NOT SB_CONFIG_PARTITION_MANAGER)
+      set(${s1_image_name}_SIGNING_SCRIPT
+        "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_b0.cmake" CACHE INTERNAL
+        "b0 signing script" FORCE
+      )
     endif()
 
     if(SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER)
@@ -726,6 +747,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
     if(NOT SB_CONFIG_NETCORE_NONE)
       set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_SECURE_BOOT y)
+
+      if(NOT SB_CONFIG_PARTITION_MANAGER)
+        set(${SB_CONFIG_NETCORE_IMAGE_NAME}_SIGNING_SCRIPT
+          "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_b0.cmake" CACHE INTERNAL
+          "b0n signing script" FORCE
+        )
+      endif()
     endif()
 
     # Apply configuration for hashing
@@ -1118,6 +1146,16 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   # If the network core image is enabled on nRF53, ensure it is flashed before the main application
   if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
     sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
+
+    if(SB_CONFIG_SECURE_BOOT_NETCORE)
+      # Also ensure b0n is flashed before the network core image
+      sysbuild_add_dependencies(FLASH ${SB_CONFIG_NETCORE_IMAGE_NAME} b0n)
+    endif()
+  endif()
+
+  if(SB_CONFIG_SECURE_BOOT_APPCORE AND NOT SB_CONFIG_PARTITION_MANAGER)
+    sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} b0)
+    sysbuild_add_dependencies(FLASH app_provision b0)
   endif()
 
   foreach(image ${IMAGES})
