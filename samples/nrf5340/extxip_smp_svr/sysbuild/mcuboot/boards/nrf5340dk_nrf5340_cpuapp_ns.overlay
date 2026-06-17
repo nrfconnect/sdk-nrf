@@ -1,6 +1,11 @@
+/*
+ * Sysbuild does not select this file for MCUboot; see sysbuild.cmake.
+ */
+
+#include "../../../boards/nrf5340dk_nrf5340_cpuapp_ns.overlay"
+
 / {
 	chosen {
 		zephyr,code-partition = &boot_partition;
-		nordic,pm-ext-flash = &mx25r64;
 	};
 };
