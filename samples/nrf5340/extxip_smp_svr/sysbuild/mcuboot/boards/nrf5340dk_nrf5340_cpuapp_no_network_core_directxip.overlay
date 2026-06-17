@@ -1,0 +1,7 @@
+#include "../../../boards/nrf5340dk_nrf5340_cpuapp_no_network_core_directxip.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
