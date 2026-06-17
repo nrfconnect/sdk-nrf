@@ -5,13 +5,18 @@
  */
 
 #include <zephyr/ztest.h>
-#include <pm_config.h>
 #include <zephyr/device.h>
 #include <string.h>
 #include <zephyr/drivers/flash.h>
+#include <zephyr/storage/flash_map.h>
 
-#define STORAGE_LAST_WORD (PM_SETTINGS_STORAGE_END_ADDRESS - 4)
-#define IMAGE_LAST_WORD (PM_APP_END_ADDRESS - 4)
+#define STORAGE_PARTITION storage_partition
+#define SLOT0_PARTITION slot0_partition
+
+#define STORAGE_LAST_WORD (PARTITION_OFFSET(STORAGE_PARTITION) + \
+			   PARTITION_SIZE(STORAGE_PARTITION) - 4)
+#define IMAGE_LAST_WORD (PARTITION_OFFSET(SLOT0_PARTITION) + \
+			 PARTITION_SIZE(SLOT0_PARTITION) - 4)
 
 static uint32_t expected_fatal;
 static uint32_t actual_fatal;
@@ -29,7 +34,7 @@ ZTEST(fprotect_test, test_writing_to_app_image)
 	const struct device *flash_dev;
 	static uint8_t val[] = {0xba, 0x53, 0xba, 0x11};
 
-	flash_dev = DEVICE_DT_GET(DT_NODELABEL(PM_APP_DEV));
+	flash_dev = PARTITION_DEVICE(SLOT0_PARTITION);
 	zassert_true(device_is_ready(flash_dev), "Flash device not ready");
 
 	printf("Perform a legal flash write to show that it is supported\n");
