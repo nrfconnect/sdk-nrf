@@ -14,6 +14,7 @@ import pickle
 import sys
 from pathlib import Path
 from typing import Any
+from zipfile import ZIP_LZMA, ZipFile
 
 sys.path.insert(0, str(Path(__file__).parents[4] / "zephyr/scripts/kconfig"))
 
@@ -186,12 +187,18 @@ class _RefUnpickler(pickle.Unpickler):
 
 
 def load_file(path: Path | str):
-    with open(path, "rb") as f:
+    with (
+        ZipFile(path, "r", compression=ZIP_LZMA) as zip_file,
+        zip_file.open("kconfig.pickle", "r") as f,
+    ):
         return _RefUnpickler(f).load()
 
 
 def save_kconfig(
     path: Path | str, kconfig: kconfiglib.Kconfig, sysbuild_kconfig: kconfiglib.Kconfig
 ):
-    with open(path, "wb") as f:
+    with (
+        ZipFile(path, "w", compression=ZIP_LZMA) as zip_file,
+        zip_file.open("kconfig.pickle", "w") as f,
+    ):
         pickle.dump((flatten_kconfig(kconfig), flatten_kconfig(sysbuild_kconfig)), f)
