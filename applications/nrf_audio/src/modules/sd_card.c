@@ -26,9 +26,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sd_card, CONFIG_MODULE_SD_CARD_LOG_LEVEL);
 
-#define SD_ROOT_PATH	   "/SD:/"
-/* Round down to closest 4-byte boundary */
-#define PATH_MAX_LEN	   ROUND_DOWN(CONFIG_FS_FATFS_MAX_LFN, 4)
 #define SD_CARD_LEVELS_MAX 8
 #define SD_CARD_BUF_SIZE   700
 
@@ -44,6 +41,32 @@ static struct fs_mount_t mnt_pt = {
 	.type = FS_FATFS,
 	.fs_data = &fat_fs,
 };
+
+static bool path_append(char *dst, size_t dst_size, const char *src)
+{
+	size_t dst_len;
+	size_t src_len;
+	size_t remaining;
+
+	if (dst == NULL || src == NULL || dst_size == 0) {
+		return false;
+	}
+
+	dst_len = strnlen(dst, dst_size);
+	if (dst_len == dst_size) {
+		return false;
+	}
+
+	remaining = dst_size - dst_len - 1;
+	src_len = strnlen(src, remaining + 1);
+	if (src_len > remaining) {
+		return false;
+	}
+
+	memcpy(dst + dst_len, src, src_len);
+	dst[dst_len + src_len] = '\0';
+	return true;
+}
 
 /**
  * @brief	Replaces first carriage return or line feed with null terminator.
@@ -118,15 +141,27 @@ static int traverse_down(char const *const path, uint8_t curr_depth, uint16_t re
 		}
 
 		cr_lf_remove(token);
-		memset(slab_B_ptr, '\0', PATH_MAX_LEN);
+		memset(slab_B_ptr, '\0', SD_PATH_MAX_LEN);
 
 		if (path != NULL) {
-			strcat(slab_B_ptr, path);
+			if (!path_append(slab_B_ptr, SD_PATH_MAX_LEN, path)) {
+				LOG_ERR("Path is too long");
+				ret = -FR_INVALID_NAME;
+				goto cleanup;
+			}
 			cr_lf_remove(slab_B_ptr);
-			strcat(slab_B_ptr, "/");
+			if (!path_append(slab_B_ptr, SD_PATH_MAX_LEN, "/")) {
+				LOG_ERR("Path is too long");
+				ret = -FR_INVALID_NAME;
+				goto cleanup;
+			}
 		}
 
-		strcat(slab_B_ptr, token);
+		if (!path_append(slab_B_ptr, SD_PATH_MAX_LEN, token)) {
+			LOG_ERR("Path is too long");
+			ret = -FR_INVALID_NAME;
+			goto cleanup;
+		}
 
 		if (strstr(token, search_pattern) != NULL) {
 			if (num_files_added >= result_file_num_max) {
@@ -171,7 +206,7 @@ int sd_card_list_files_match(uint16_t result_file_num_max, uint16_t result_path_
 		return -EINVAL;
 	}
 
-	if (result_path_len_max == 0 || (result_path_len_max > PATH_MAX_LEN)) {
+	if (result_path_len_max == 0 || (result_path_len_max > SD_PATH_MAX_LEN)) {
 		return -EINVAL;
 	}
 
@@ -180,7 +215,7 @@ int sd_card_list_files_match(uint16_t result_file_num_max, uint16_t result_path_
 	}
 
 	char __aligned(4) buf_A[SD_CARD_BUF_SIZE * SD_CARD_LEVELS_MAX] = {'\0'};
-	char __aligned(4) buf_B[PATH_MAX_LEN * SD_CARD_LEVELS_MAX] = {'\0'};
+	char __aligned(4) buf_B[SD_PATH_MAX_LEN * SD_CARD_LEVELS_MAX] = {'\0'};
 
 	ret = k_mem_slab_init(&slab_A, buf_A, SD_CARD_BUF_SIZE, SD_CARD_LEVELS_MAX);
 	if (ret) {
@@ -188,7 +223,7 @@ int sd_card_list_files_match(uint16_t result_file_num_max, uint16_t result_path_
 		return ret;
 	}
 
-	ret = k_mem_slab_init(&slab_B, buf_B, PATH_MAX_LEN, SD_CARD_LEVELS_MAX);
+	ret = k_mem_slab_init(&slab_B, buf_B, SD_PATH_MAX_LEN, SD_CARD_LEVELS_MAX);
 	if (ret) {
 		LOG_ERR("Failed to init slab: %d", ret);
 		return ret;
@@ -208,7 +243,7 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool
 	int ret;
 	struct fs_dir_t dirp;
 	static struct fs_dirent entry;
-	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
+	char abs_path_name[SD_PATH_MAX_LEN + 1] = SD_ROOT_PATH;
 	size_t used_buf_size = 0;
 
 	if (!sd_init_success) {
@@ -223,12 +258,10 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool
 			return ret;
 		}
 	} else {
-		if (strlen(path) > PATH_MAX_LEN) {
+		if (!path_append(abs_path_name, sizeof(abs_path_name), path)) {
 			LOG_ERR("Path is too long");
 			return -FR_INVALID_NAME;
 		}
-
-		strcat(abs_path_name, path);
 
 		if (strchr(abs_path_name, '.')) {
 			/* Path contains a dot. Regarded as not a folder*/
@@ -290,19 +323,18 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool
 int sd_card_open_write_close(char const *const filename, char const *const data, size_t *size)
 {
 	int ret;
+
 	struct fs_file_t f_entry;
-	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
+	char abs_path_name[SD_PATH_MAX_LEN + 1] = SD_ROOT_PATH;
 
 	if (!sd_init_success) {
 		return -ENODEV;
 	}
 
-	if (strlen(filename) > PATH_MAX_LEN) {
+	if (!path_append(abs_path_name, sizeof(abs_path_name), filename)) {
 		LOG_ERR("Filename is too long");
 		return -ENAMETOOLONG;
 	}
-
-	strcat(abs_path_name, filename);
 	fs_file_t_init(&f_entry);
 
 	ret = fs_open(&f_entry, abs_path_name, FS_O_CREATE | FS_O_WRITE | FS_O_APPEND);
@@ -339,18 +371,16 @@ int sd_card_open_read_close(char const *const filename, char *const buf, size_t 
 {
 	int ret;
 	struct fs_file_t f_entry;
-	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
+	char abs_path_name[SD_PATH_MAX_LEN + 1] = SD_ROOT_PATH;
 
 	if (!sd_init_success) {
 		return -ENODEV;
 	}
 
-	if (strlen(filename) > PATH_MAX_LEN) {
+	if (!path_append(abs_path_name, sizeof(abs_path_name), filename)) {
 		LOG_ERR("Filename is too long");
 		return -FR_INVALID_NAME;
 	}
-
-	strcat(abs_path_name, filename);
 	fs_file_t_init(&f_entry);
 
 	ret = fs_open(&f_entry, abs_path_name, FS_O_READ);
@@ -382,24 +412,16 @@ int sd_card_open_read_close(char const *const filename, char *const buf, size_t 
 int sd_card_open(char const *const filename, struct fs_file_t *f_seg_read_entry)
 {
 	int ret;
-	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
-	size_t available_path_space = PATH_MAX_LEN - strlen(SD_ROOT_PATH);
+	char abs_path_name[SD_PATH_MAX_LEN + 1] = SD_ROOT_PATH;
 
 	if (!sd_init_success) {
 		return -ENODEV;
 	}
 
-	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
-		LOG_ERR("Filename is too long");
-		return -ENAMETOOLONG;
-	}
-
-	if ((strlen(abs_path_name) + strlen(filename)) > PATH_MAX_LEN) {
+	if (!path_append(abs_path_name, sizeof(abs_path_name), filename)) {
 		LOG_ERR("Filepath is too long");
 		return -EINVAL;
 	}
-
-	strncat(abs_path_name, filename, available_path_space);
 
 	LOG_INF("abs path name:\t%s", abs_path_name);
 
