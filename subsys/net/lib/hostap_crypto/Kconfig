@@ -56,8 +56,13 @@ config HOSTAP_CRYPTO_ALT_PSA
 	select PSA_WANT_ALG_SHA_224 if !HOSTAP_CRYPTO_ENTERPRISE
 	select PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128 if !HOSTAP_CRYPTO_ENTERPRISE
 	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY if !HOSTAP_CRYPTO_ENTERPRISE
-	# Internal SAE (SoftAP) still uses mbedtls ECP via crypto alt.
+	# Internal SAE (SoftAP) still uses mbedtls ECP via crypto alt. The EC
+	# math runs in mbedtls_ecp_mul()/mbedtls_mpi_exp_mod() (not PSA), so it
+	# needs the optimized P-256 software path; without these the SAE
+	# handshake is ~10x slower. WPA3 EXT uses PSA and is unaffected.
 	select MBEDTLS_ECP_C if WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_INT
+	select MBEDTLS_ECP_NIST_OPTIM if WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_INT
+	select MBEDTLS_HAVE_ASM if WIFI_NM_WPA_SUPPLICANT_WPA3_IMPLEMENTATION_INT
 	help
 	  Crypto backend for the WPA supplicant built on PSA Crypto with the
 	  HostAP mbedtls alt glue. This is the single backend for all Wi-Fi
