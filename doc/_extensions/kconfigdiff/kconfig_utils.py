@@ -204,24 +204,11 @@ def entry_name(sc) -> str:
     return f"{prefix}{sc.name}"
 
 
-def sc_fmt(sc):
-    prefix = os.environ["CONFIG_"]
-
-    if isinstance(sc, kconfiglib.Symbol):
-        if sc.nodes:
-            return f'{prefix}{sc.name}'
-    elif isinstance(sc, kconfiglib.Choice):
-        if not sc.name:
-            return "&ltchoice&gt"
-        return f'&ltchoice {prefix}{sc.name}&gt'
-
-    return kconfiglib.standard_sc_expr_str(sc)
-
-
 class KconfigEntryProperties:
     __slots__ = (
         "_node",
         "_sc",
+        "_kconfiglib",
         "name",
         "prompt",
         "type",
@@ -236,13 +223,18 @@ class KconfigEntryProperties:
         "choices",
     )
 
-    def __init__(self, node: kconfiglib.MenuNode, sc: SC):
+    def __init__(self, node: kconfiglib.MenuNode, sc: SC, kconfiglib_=None):
         self._node = node
         self._sc = sc
 
+        self._kconfiglib = kconfiglib
+
+        if kconfiglib_:
+            self._kconfiglib = kconfiglib_
+
         self.name = entry_name(sc)
         self.prompt = node.prompt[0] if node.prompt else ""
-        self.type = kconfiglib.TYPE_TO_STR[sc.type]
+        self.type = self._kconfiglib.TYPE_TO_STR[sc.type]
         self.help = node.help
         self.dependencies = self._init_deps()
         self.defaults = self._init_defaults()
@@ -253,68 +245,85 @@ class KconfigEntryProperties:
         self.ranges = self._init_ranges()
         self.choices = self._init_choices()
 
+    def sc_fmt(self, sc):
+        prefix = os.environ["CONFIG_"]
+
+        if isinstance(sc, self._kconfiglib.Symbol):
+            if sc.nodes:
+                return f'{prefix}{sc.name}'
+        elif isinstance(sc, self._kconfiglib.Choice):
+            if not sc.name:
+                return "&ltchoice&gt"
+            return f'&ltchoice {prefix}{sc.name}&gt'
+
+        return self._kconfiglib.standard_sc_expr_str(sc)
+
     def _init_deps(self) -> list[str]:
         deps = []
         if self._node.dep is not self._sc.kconfig.y:
-            deps = kconfiglib.expr_str(self._node.dep, sc_fmt)
+            deps = self._kconfiglib.expr_str(self._node.dep, self.sc_fmt)
         return deps
 
     def _init_defaults(self) -> list[str]:
         defaults = []
         for value, cond in self._node.orig_defaults:
-            fmt = kconfiglib.expr_str(value, sc_fmt)
+            fmt = self._kconfiglib.expr_str(value, self.sc_fmt)
             if cond is not self._sc.kconfig.y:
-                fmt += f" if {kconfiglib.expr_str(cond, sc_fmt)}"
+                fmt += f" if {self._kconfiglib.expr_str(cond, self.sc_fmt)}"
             defaults.append(fmt)
         return defaults
 
     def _init_selects(self) -> list[str]:
         selects = []
         for value, cond in self._node.orig_selects:
-            fmt = kconfiglib.expr_str(value, sc_fmt)
+            fmt = self._kconfiglib.expr_str(value, self.sc_fmt)
             if cond is not self._sc.kconfig.y:
-                fmt += f" if {kconfiglib.expr_str(cond, sc_fmt)}"
+                fmt += f" if {self._kconfiglib.expr_str(cond, self.sc_fmt)}"
             selects.append(fmt)
         return selects
 
     def _init_selected_by(self) -> list[str]:
         selected_by = []
-        if isinstance(self._sc, kconfiglib.Symbol) and self._sc.rev_dep != self._sc.kconfig.n:
-            for select in kconfiglib.split_expr(self._sc.rev_dep, kconfiglib.OR):
-                sym = kconfiglib.split_expr(select, kconfiglib.AND)[0]
+        if isinstance(self._sc, self._kconfiglib.Symbol) and self._sc.rev_dep != self._sc.kconfig.n:
+            for select in self._kconfiglib.split_expr(self._sc.rev_dep, self._kconfiglib.OR):
+                sym = self._kconfiglib.split_expr(select, self._kconfiglib.AND)[0]
                 selected_by.append(f"{entry_name(sym)}")
         return selected_by
 
     def _init_ranges(self) -> list[str]:
         ranges = list()
         for min_, max_, cond in self._node.orig_ranges:
-            fmt = f"[{kconfiglib.expr_str(min_, sc_fmt)}, {kconfiglib.expr_str(max_, sc_fmt)}]"
+            fmt = (f"[{self._kconfiglib.expr_str(min_, self.sc_fmt)}, "
+                   f"{self._kconfiglib.expr_str(max_, self.sc_fmt)}]")
             if cond is not self._sc.kconfig.y:
-                fmt += f" if {kconfiglib.expr_str(cond, sc_fmt)}"
+                fmt += f" if {self._kconfiglib.expr_str(cond, self.sc_fmt)}"
             ranges.append(fmt)
         return ranges
 
     def _init_choices(self) -> list[str]:
         choices = []
-        if isinstance(self._sc, kconfiglib.Choice):
+        if isinstance(self._sc, self._kconfiglib.Choice):
             for sym in self._sc.syms:
-                choices.append(kconfiglib.expr_str(sym, sc_fmt))
+                choices.append(self._kconfiglib.expr_str(sym, self.sc_fmt))
         return choices
 
     def _init_implies(self) -> list[str]:
         implies = []
         for value, cond in self._node.orig_implies:
-            fmt = kconfiglib.expr_str(value, sc_fmt)
+            fmt = self._kconfiglib.expr_str(value, self.sc_fmt)
             if cond is not self._sc.kconfig.y:
-                fmt += f" if {kconfiglib.expr_str(cond, sc_fmt)}"
+                fmt += f" if {self._kconfiglib.expr_str(cond, self.sc_fmt)}"
             implies.append(fmt)
         return implies
 
     def _init_implied_by(self) -> list[str]:
         implied_by = []
-        if isinstance(self._sc, kconfiglib.Symbol) and self._sc.weak_rev_dep != self._sc.kconfig.n:
-            for select in kconfiglib.split_expr(self._sc.weak_rev_dep, kconfiglib.OR):
-                sym = kconfiglib.split_expr(select, kconfiglib.AND)[0]
+        if (
+            isinstance(self._sc, self._kconfiglib.Symbol)
+            and self._sc.weak_rev_dep != self._sc.kconfig.n
+        ):
+            for select in self._kconfiglib.split_expr(self._sc.weak_rev_dep, self._kconfiglib.OR):
+                sym = self._kconfiglib.split_expr(select, self._kconfiglib.AND)[0]
                 implied_by.append(f"{entry_name(sym)}")
         return implied_by
 
@@ -338,7 +347,7 @@ class KconfigEntryProperties:
         )
 
 
-def fetch_prev_kconfig_file(version) -> tuple[kconfiglib.Kconfig, kconfiglib.Kconfig]:
+def fetch_prev_kconfig_file(version) -> tuple[kconfiglib.Kconfig, kconfiglib.Kconfig, kconfiglib]:
     url = KCONFIG_URL.format(version=version)
     with progress_message(f"Fetching kconfig from previous build, {url=}"):
         res = requests.get(url)
@@ -364,7 +373,7 @@ def diff_generator(
     )
 
     try:
-        kconfig_old, sysbuild_kconfig_old = fetch_prev_kconfig_file(version)
+        kconfig_old, sysbuild_kconfig_old, old_kconflib = fetch_prev_kconfig_file(version)
     except requests.exceptions.RequestException:
         logger.error("Failed to fetch old kconfig")
         return
@@ -386,11 +395,11 @@ def diff_generator(
                             to_del = i
                             break
                     else:
-                        yield KconfigEntryProperties(node, sc), None
+                        yield KconfigEntryProperties(node, sc, old_kconflib), None
                         continue
                 new_node, new_sc = new_items.pop(to_del)
                 yield (
-                    KconfigEntryProperties(node, sc),
+                    KconfigEntryProperties(node, sc, old_kconflib),
                     KconfigEntryProperties(new_node, new_sc),
                 )
                 continue
