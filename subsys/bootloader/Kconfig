@@ -246,10 +246,14 @@ DT_NODELABEL_SLOT1_PARTITION := slot1_partition
 config NCS_IS_VARIANT_IMAGE
 	bool
 	default y if "$(dt_nodelabel_exists,$(DT_NODELABEL_SECONDARY_PARTITION))" && \
+			"$(dt_partition_mtd,$(dt_nodelabel_path,$(DT_NODELABEL_SECONDARY_PARTITION)))" = \
+				"$(dt_partition_mtd,$(dt_chosen_path,$(DT_CHOSEN_Z_CODE_PARTITION)))" && \
 			"$(sub, \
 				$(dt_nodelabel_reg_addr_int,$(DT_NODELABEL_SECONDARY_PARTITION)), \
 				$(dt_chosen_reg_addr_int,$(DT_CHOSEN_Z_CODE_PARTITION)))" = 0
 	default y if "$(dt_nodelabel_exists,$(DT_NODELABEL_SLOT1_PARTITION))" && \
+			"$(dt_partition_mtd,$(dt_nodelabel_path,$(DT_NODELABEL_SLOT1_PARTITION)))" = \
+				"$(dt_partition_mtd,$(dt_chosen_path,$(DT_CHOSEN_Z_CODE_PARTITION)))" && \
 			"$(sub, \
 				$(dt_nodelabel_reg_addr_int,$(DT_NODELABEL_SLOT1_PARTITION)), \
 				$(dt_chosen_reg_addr_int,$(DT_CHOSEN_Z_CODE_PARTITION)))" = 0
