@@ -859,7 +859,9 @@ int bt_mesh_scheduler_srv_time_update(struct bt_mesh_scheduler_srv *srv)
 	}
 
 	for (uint8_t idx = 0; idx < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; ++idx) {
-		schedule_action(srv, idx);
+		if (is_entry_defined(srv, idx)) {
+			schedule_action(srv, idx);
+		}
 	}
 
 	run_scheduler(srv);
