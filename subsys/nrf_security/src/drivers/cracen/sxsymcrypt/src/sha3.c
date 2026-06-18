@@ -52,19 +52,61 @@ static size_t fips202_pad(uint8_t prefix, uint8_t suffix, size_t capacity, size_
 /** Byte to be added at the end of the padding for SHAKE. */
 #define SHAKE_MODE_SUFFIX 0x80
 
+/** Bit position of the output-length field in the BA418 cfgword. */
+#define SHA3_OUTLEN_SHIFT 8
+
+/*
+ * Maximum bytes we ever ask the BA418 to discard via a single DMA descriptor.
+ * The DMA size field is 24 bits (DMA_SZ_MASK), so 16 MiB-1 is the hard limit;
+ * cap at 64 KiB so one descriptor covers any realistic squeeze chain.
+ */
+#define XOF_MAX_DISCARD_PER_DESC   (1u << 16)
+
 #define SHA3_SAVE_CONTEXT	   (1 << 6)
 #define SHA3_SHAKE_ENABLE	   (1 << 4)
 #define SHA3_MODE(x)		   ((x) << 0)
-#define SHA3_MODE_SHAKE(x, outlen) ((x) | SHA3_SHAKE_ENABLE | ((outlen) << 8))
+#define SHA3_MODE_SHAKE(x, outlen) ((x) | SHA3_SHAKE_ENABLE | ((outlen) << SHA3_OUTLEN_SHIFT))
 #define SHA3_SW_PAD		   0
 
-static void shake256_digest(struct sxhash *hash_ctx, uint8_t *digest)
+static void shake_var_digest(struct sxhash *hash_ctx, size_t skip, uint8_t *out, size_t out_len)
 {
 	uint8_t *padding = (uint8_t *)&hash_ctx->extramem;
-	int padsz;
+	size_t capacity = hash_ctx->algo->statesz - hash_ctx->algo->blocksz;
+	size_t total_out = skip + out_len;
+	size_t padsz;
 
-	/* For SHAKE256, the capacity is 64 bytes. */
-	padsz = fips202_pad(SHAKE_MODE_PREFIX, SHAKE_MODE_SUFFIX, 64, hash_ctx->feedsz, padding);
+	padsz = fips202_pad(SHAKE_MODE_PREFIX, SHAKE_MODE_SUFFIX, capacity,
+			    hash_ctx->feedsz, padding);
+
+	ADD_INDESC_PRIV_RAW(hash_ctx->dma, OFFSET_EXTRAMEM(hash_ctx), padsz,
+			    hash_ctx->dmatags->data);
+
+	hash_ctx->dma.dmamem.cfg |= ((uint32_t)total_out << SHA3_OUTLEN_SHIFT);
+
+	/* Add DMA DISCARD descriptors to skip the already-emitted prefix. */
+	while (skip > 0) {
+		size_t discard_bytes = (skip > XOF_MAX_DISCARD_PER_DESC) ?
+					XOF_MAX_DISCARD_PER_DESC :
+					skip;
+
+		ADD_DISCARDDESC(hash_ctx->dma, discard_bytes);
+		skip -= discard_bytes;
+	}
+
+	ADD_OUTDESCA(hash_ctx->dma, out, out_len, CMDMA_BA418_BUS_MSK);
+}
+
+static void shake_digest(struct sxhash *hash_ctx, size_t skip, uint8_t *digest, size_t digest_sz)
+{
+	(void)skip;
+	(void)digest_sz;
+
+	uint8_t *padding = (uint8_t *)&hash_ctx->extramem;
+	int padsz;
+	size_t capacity = hash_ctx->algo->statesz - hash_ctx->algo->blocksz;
+
+	padsz = fips202_pad(SHAKE_MODE_PREFIX, SHAKE_MODE_SUFFIX, capacity, hash_ctx->feedsz,
+			    padding);
 
 	/* Use ADD_INDESC_PRIV_RAW instead of ADD_INDESC_PRIV.
 	 * BA418 hardware cannot work with ADD_INDESC_PRIV as BA418 does not
@@ -76,8 +118,11 @@ static void shake256_digest(struct sxhash *hash_ctx, uint8_t *digest)
 	ADD_OUTDESCA(hash_ctx->dma, digest, hash_ctx->algo->digestsz, CMDMA_BA413_BUS_MSK);
 }
 
-static void sha3_digest(struct sxhash *hash_ctx, uint8_t *digest)
+static void sha3_digest(struct sxhash *hash_ctx, size_t skip, uint8_t *digest, size_t digest_sz)
 {
+	(void)skip;
+	(void)digest_sz;
+
 	uint8_t *padding = (uint8_t *)&hash_ctx->extramem;
 	int padsz;
 
@@ -111,7 +156,7 @@ static int sx_hash_create_ba418(struct sxhash *hash_ctx, size_t csz)
 	return SX_OK;
 }
 
-static int sx_hash_create_ba418_shake256(struct sxhash *hash_ctx, size_t csz)
+static int sx_hash_create_ba418_shake(struct sxhash *hash_ctx, size_t csz)
 {
 	int status = sx_hash_create_ba418(hash_ctx, csz);
 
@@ -119,7 +164,20 @@ static int sx_hash_create_ba418_shake256(struct sxhash *hash_ctx, size_t csz)
 		return status;
 	}
 
-	hash_ctx->digest = shake256_digest;
+	hash_ctx->digest = shake_digest;
+
+	return status;
+}
+
+static int sx_hash_create_ba418_shake_xof(struct sxhash *hash_ctx, size_t csz)
+{
+	int status = sx_hash_create_ba418(hash_ctx, csz);
+
+	if (status != SX_OK) {
+		return status;
+	}
+
+	hash_ctx->digest = shake_var_digest;
 
 	return status;
 }
@@ -146,10 +204,28 @@ const struct sxhashalg sxhashalg_sha3_512 = {
 
 const struct sxhashalg sxhashalg_shake256_114 = {
 	SHA3_MODE_SHAKE(7, 114), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, 114,
-	SX_HASH_BLOCKSZ_SHA3_256, 200, 136, sx_hash_create_ba418_shake256
+	SX_HASH_BLOCKSZ_SHA3_256, 200, 136, sx_hash_create_ba418_shake
 };
 
 const struct sxhashalg sxhashalg_shake256_64 = {
 	SHA3_MODE_SHAKE(7, 64), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, 64,
-	SX_HASH_BLOCKSZ_SHA3_256, 200, 136, sx_hash_create_ba418_shake256
+	SX_HASH_BLOCKSZ_SHA3_256, 200, 136, sx_hash_create_ba418_shake
 };
+
+/** Variable-output SHAKE-128 XOF. */
+const struct sxhashalg sxhashalg_shake128 = {
+	SHA3_MODE_SHAKE(3, 0), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, 0,
+	SX_HASH_BLOCKSZ_SHAKE_128, 200, 168, sx_hash_create_ba418_shake_xof
+};
+
+/** Variable-output SHAKE-256 XOF. */
+const struct sxhashalg sxhashalg_shake256 = {
+	SHA3_MODE_SHAKE(7, 0), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, 0,
+	SX_HASH_BLOCKSZ_SHA3_256, 200, 136, sx_hash_create_ba418_shake_xof
+};
+
+bool sx_is_shake_alg(const struct sxhashalg *hashalg)
+{
+	return ((hashalg->cfgword ^ SHA3_MODE_SHAKE(7, 0)) == 0 ||
+		(hashalg->cfgword ^ SHA3_MODE_SHAKE(3, 0)) == 0);
+}

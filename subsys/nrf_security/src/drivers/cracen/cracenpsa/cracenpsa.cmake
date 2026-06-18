@@ -94,6 +94,12 @@ if(CONFIG_PSA_NEED_CRACEN_HASH_DRIVER)
   )
 endif()
 
+if(CONFIG_PSA_NEED_CRACEN_XOF_DRIVER)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_xof.c
+  )
+endif()
+
 if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER AND NOT CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_mac.c

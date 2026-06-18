@@ -160,6 +160,10 @@ config PSA_USE_CRACEN_HASH_DRIVER
 	bool "Cracen hash driver"
 	default y
 
+config PSA_USE_CRACEN_XOF_DRIVER
+	bool "Cracen XOF driver"
+	default y
+
 config PSA_USE_CRACEN_MAC_DRIVER
 	bool "Cracen MAC driver"
 	default y

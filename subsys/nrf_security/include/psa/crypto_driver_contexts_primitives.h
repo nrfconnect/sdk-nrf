@@ -87,6 +87,9 @@ typedef union {
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
 	oberon_xof_operation_t oberon_xof_ctx;
 #endif
+#if defined(PSA_NEED_CRACEN_XOF_DRIVER)
+	cracen_xof_operation_t cracen_xof_ctx;
+#endif
 } psa_driver_xof_context_t;
 
 #endif /* PSA_CRYPTO_DRIVER_CONTEXTS_PRIMITIVES_H */

@@ -181,6 +181,35 @@ int sx_hash_save_state(struct sxhash *c);
  */
 int sx_hash_digest(struct sxhash *c, uint8_t *digest);
 
+/** Starts the SHAKE XOF operation.
+ *
+ * This function is used to start the computation of the SHAKE digest,
+ * which has variable size.
+ * If used in context-saving approach, this function will compute the digest
+ * based on last computed state and last chunks of the message.
+ *
+ * The function will return immediately. The result will be transferred to
+ * \p digest only after the operation is successfully completed. The user shall
+ * check operation status with sx_hash_status() or sx_hash_wait().
+ *
+ * @param[in,out] c hash operation context.
+ * @param[in] skip bytes to discard (bytes already returned to caller).
+ * @param[out] digest result of the hash operation, user must allocate enough
+ *                    memory for it.
+ * @param[in] digest_sz number of new output bytes to produce.
+ *
+ * @return ::SX_OK
+ * @return ::SX_ERR_UNINITIALIZED_OBJ
+ *
+ * @pre - one of the sx_hash_create_*() functions must be called first
+ *
+ * @remark - the content of the input data buffers, provided with previous
+ *           calls to sx_hash_feed(), should not be changed until the operation
+ *           is completed. Checking the completion of an operation is done by
+ *           using sx_hash_wait() or sx_hash_status().
+ */
+int sx_hash_shake_digest(struct sxhash *c, size_t skip, uint8_t *digest, size_t digest_sz);
+
 /** Waits until the given hash operation has finished
  *
  * This function returns when the hash operation was successfully completed,

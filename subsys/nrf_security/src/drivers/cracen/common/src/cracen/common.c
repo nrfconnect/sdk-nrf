@@ -25,6 +25,7 @@
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
 #define NOT_ENABLED_HASH_ALG (0)
+#define NOT_ENABLED_XOF_ALG  (0)
 
 #define CRACEN_IKG_SEED_KMU_SLOT_COUNT 3u
 
@@ -127,6 +128,24 @@ psa_status_t hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash
 	}
 
 	return (*sx_hash_algo == NOT_ENABLED_HASH_ALG) ? PSA_ERROR_NOT_SUPPORTED : PSA_SUCCESS;
+}
+
+psa_status_t xof_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_xof_algo)
+{
+	*sx_xof_algo = NOT_ENABLED_XOF_ALG;
+
+	switch (alg) {
+	case PSA_ALG_SHAKE128:
+		IF_ENABLED(PSA_NEED_CRACEN_SHAKE128, (*sx_xof_algo = &sxhashalg_shake128));
+		break;
+	case PSA_ALG_SHAKE256:
+		IF_ENABLED(PSA_NEED_CRACEN_SHAKE256, (*sx_xof_algo = &sxhashalg_shake256));
+		break;
+	default:
+		return PSA_ALG_IS_XOF(alg) ? PSA_ERROR_NOT_SUPPORTED : PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	return (*sx_xof_algo == NOT_ENABLED_XOF_ALG) ? PSA_ERROR_NOT_SUPPORTED : PSA_SUCCESS;
 }
 
 void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz)

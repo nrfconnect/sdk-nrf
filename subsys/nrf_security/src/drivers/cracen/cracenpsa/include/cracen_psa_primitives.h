@@ -278,6 +278,15 @@ struct cracen_hash_operation_s {
 };
 typedef struct cracen_hash_operation_s cracen_hash_operation_t;
 
+/** XOF (Extendable Output Function) operation context. */
+struct cracen_xof_operation_s {
+	cracen_hash_operation_t hash_op;
+
+	/** Number of XOF output bytes already returned to the caller. */
+	size_t prev_squeezed;
+};
+typedef struct cracen_xof_operation_s cracen_xof_operation_t;
+
 /** Cipher operation context. */
 struct cracen_cipher_operation {
 	psa_algorithm_t alg;

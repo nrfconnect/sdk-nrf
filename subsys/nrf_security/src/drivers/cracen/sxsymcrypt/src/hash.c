@@ -83,8 +83,11 @@ static void sx_hash_pad(struct sxhash *hash_ctx)
 	 */
 }
 
-void sx_ba413_digest(struct sxhash *hash_ctx, uint8_t *digest)
+void sx_ba413_digest(struct sxhash *hash_ctx, size_t skip, uint8_t *digest, size_t digest_sz)
 {
+	(void)skip;
+	(void)digest_sz;
+
 	if (hash_ctx->totalfeedsz == 0) {
 		/* If we get here it means an empty message hash will be
 		 * generated. 4 dummy bytes will be added to hash, these bytes
@@ -224,7 +227,29 @@ int sx_hash_digest(struct sxhash *hash_ctx, uint8_t *digest)
 	if (hash_ctx->totalfeedsz != hash_ctx->feedsz) {
 		hash_ctx->dma.dmamem.cfg ^= hash_ctx->algo->resumecfg;
 	}
-	hash_ctx->digest(hash_ctx, digest);
+	hash_ctx->digest(hash_ctx, 0, digest, 0);
+
+	return start_hash_hw(hash_ctx);
+}
+
+int sx_hash_shake_digest(struct sxhash *hash_ctx, size_t skip, uint8_t *digest, size_t digest_sz)
+{
+	if (!hash_ctx->dma.hw_acquired) {
+		return SX_ERR_UNINITIALIZED_OBJ;
+	}
+
+	if (!sx_is_shake_alg(hash_ctx->algo)) {
+		return SX_ERR_INVALID_PARAM;
+	}
+
+	if (skip + digest_sz > SX_HASH_DIGESTSZ_SHAKE_MAX) {
+		return SX_ERR_TOO_BIG;
+	}
+
+	if (hash_ctx->totalfeedsz != hash_ctx->feedsz) {
+		hash_ctx->dma.dmamem.cfg ^= hash_ctx->algo->resumecfg;
+	}
+	hash_ctx->digest(hash_ctx, skip, digest, digest_sz);
 
 	return start_hash_hw(hash_ctx);
 }
