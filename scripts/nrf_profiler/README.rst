@@ -138,6 +138,16 @@ For example:
 
    python3 merge_data.py test_p sync_event_p test_c sync_event_c test_merged
 
+Optionally, use the ``-o <float>`` (``--offset``) argument to add a fixed time correction value to peripheral synchronization event timestamps before clock drift compensation.
+The offset is a floating-point value specified in microseconds.
+A positive value shifts peripheral sync timestamps forward on the time axis.
+When using GPIO for synchronization (Central: GPIO OUT → Peripheral: GPIO IRQ on edge), ``-3.6`` is the recommended offset value.
+For example:
+
+.. code-block:: console
+
+   python3 merge_data.py test_p sync_event_p test_c sync_event_c test_merged -o -3.6
+
 The newly created dataset (``test_merged``) contains the nRF Profiler events registered by both devices with compensated clock drift.
 You can use it  for visualization or calculating statistics.
 
