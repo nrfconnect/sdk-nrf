@@ -707,4 +707,64 @@ ZTEST(scheduler_action_planning, test_sched_cancel_imminent_action)
 		      "Unexpected event was triggered");
 }
 
+ZTEST(scheduler_action_planning, test_no_actions_not_rescheduled_on_time_update)
+{
+	/** Send a TURN_ON action to the sched srv in
+	 * element 1 of the mocked composition data.
+	 * Cancel the action by sending a new action with
+	 * the action set to NO_ACTIONS. Then call
+	 * bt_mesh_scheduler_srv_time_update to simulate
+	 * a time update from the Time Server.
+	 *
+	 * Expect the inactive entry to NOT be re-scheduled
+	 * and no events to be triggered.
+	 */
+
+	const struct bt_mesh_schedule_entry test_action = {
+		.year = BT_MESH_SCHEDULER_ANY_YEAR,
+		.month = ANY_MONTH,
+		.day = BT_MESH_SCHEDULER_ANY_DAY,
+		.hour = 0,
+		.minute = BT_MESH_SCHEDULER_ANY_MINUTE,
+		.second = BT_MESH_SCHEDULER_EVERY_15_SECONDS,
+		.day_of_week = ANY_DAY_OF_WEEK,
+		.action = BT_MESH_SCHEDULER_TURN_ON,
+		.transition_time = model_transition_encode(2500),
+		.scene_number = 1
+	};
+
+	action_put(&test_action, sched_mod_elem1);
+	k_sleep(K_SECONDS(1));
+
+	/* Verify entry is active before cancelling */
+	zassert_not_equal(sched_srv[0].active_bitmap & BIT(0), 0,
+			  "Entry should be active after scheduling TURN_ON");
+
+	const struct bt_mesh_schedule_entry test_action_inactive = {
+		.year = BT_MESH_SCHEDULER_ANY_YEAR,
+		.month = ANY_MONTH,
+		.day = BT_MESH_SCHEDULER_ANY_DAY,
+		.hour = 0,
+		.minute = BT_MESH_SCHEDULER_ANY_MINUTE,
+		.second = BT_MESH_SCHEDULER_EVERY_15_SECONDS,
+		.day_of_week = ANY_DAY_OF_WEEK,
+		.action = BT_MESH_SCHEDULER_NO_ACTIONS,
+		.transition_time = model_transition_encode(2500),
+		.scene_number = 1
+	};
+
+	action_put(&test_action_inactive, sched_mod_elem1);
+
+	/* Verify entry was removed from active bitmap after cancellation */
+	zassert_equal(sched_srv[0].active_bitmap & BIT(0), 0,
+		      "Entry should be inactive after setting NO_ACTIONS");
+
+	/* Simulate time update from Time Server */
+	bt_mesh_scheduler_srv_time_update(&sched_srv[0]);
+
+	/* Verify inactive entry was NOT re-added to active bitmap */
+	zassert_equal(sched_srv[0].active_bitmap & BIT(0), 0,
+		      "Inactive entry was re-scheduled after time update");
+}
+
 ZTEST_SUITE(scheduler_action_planning, NULL, NULL, tc_setup, tc_teardown, NULL);
