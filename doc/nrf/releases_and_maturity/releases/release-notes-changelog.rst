@@ -612,6 +612,12 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
   * The SPDX output format from ``SPDX-2.2`` to ``SPDX-2.3``.
 
+* :ref:`nrf_profiler_script` script:
+
+  * Added the ``-o <float>`` / ``--offset`` argument to the :file:`merge_data.py` script.
+    The argument accepts a floating-point peripheral synchronization event offset in microseconds and is applied before clock drift compensation.
+    This allows tuning merged results for the repeatable, constant delays.
+
 Integrations
 ============
 
@@ -709,3 +715,4 @@ Documentation
 =============
 
 |no_changes_yet_note|
+
