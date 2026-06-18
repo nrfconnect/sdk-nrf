@@ -18,7 +18,7 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
-  sample.cellular.nrf_cloud_coap_fota_fmfu:
+  sample.cellular.nrf_cloud_coap_fota_delta_modem_update:
     sysbuild: true
     build_only: true
     integration_platforms:
@@ -36,18 +36,4 @@ tests:
       - sysbuild
       - ci_samples_cellular
     extra_args:
-      - EXTRA_CONF_FILE=full_modem_fota.conf
-  sample.cellular.nrf_cloud_coap_fota_smp:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
-      - nrf9160dk/nrf9160/ns
-    platform_allow:
-      - nrf9160dk/nrf9160/ns
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_cellular
-    extra_args:
-      - EXTRA_CONF_FILE=smp_fota.conf
-      - EXTRA_DTC_OVERLAY_FILE=nrf9160dk_mcumgr_client_uart2.overlay
+      - EXTRA_CONF_FILE=delta_modem_fota.conf

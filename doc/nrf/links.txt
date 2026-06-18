@@ -1630,6 +1630,9 @@
 .. _`Memfault MCU Guide`: https://docs.nrfcloud.com/docs/mcu/introduction
 .. _`Memfault: Reboot tracking`: https://docs.nrfcloud.com/docs/mcu/reboot-reason-tracking
 .. _`Memfault: Coredumps`: https://docs.nrfcloud.com/docs/mcu/coredumps
+.. _`Memfault nRF Modem FOTA`: https://docs.nrfcloud.com/docs/mcu/nrf-modem-fota
+.. _`Memfault OTA Integration Guide`: https://docs.nrfcloud.com/docs/mcu/releases-integration-guide
+.. _`Memfault CLI tool`: https://docs.nrfcloud.com/docs/ci/install-memfault-cli
 
 .. ### Source: *.nrfcloud.com, https://docs.nordicsemi.com/bundle/nrf-cloud/
 
