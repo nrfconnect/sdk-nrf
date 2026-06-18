@@ -345,7 +345,7 @@
 "CI-matter-test":
   - "drivers/mpsl/**/*"
   - "drivers/hw_cc3xx/*"
-  - "drivers/wifi/**/*"
+  - "drivers/wifi/nrf_wifi/**/*"
   - "boards/shields/nrf7002eb2/**/*"
   - "modules/hostap/**/*"
   - "modules/lib/hostap/**/*"
