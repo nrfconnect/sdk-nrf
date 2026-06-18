@@ -14,7 +14,11 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 # Test a configuration file option has been given
 if(NOT DEFINED EXTRA_CONF_FILE)
-  message(FATAL_ERROR "No configuration file specified, set -- -DEXTRA_CONF_FILE=<configuration file>")
+  message(FATAL_ERROR "No conf file specified, set -- -DEXTRA_CONF_FILE=<configuration file> e.g.
+  -DEXTRA_CONF_FILE=unicast_client/unicast_client.conf,
+  -DEXTRA_CONF_FILE=unicast_server/unicast_server.conf,
+  -DEXTRA_CONF_FILE=broadcast_source/broadcast_source.conf,
+  -DEXTRA_CONF_FILE=broadcast_sink/broadcast_sink.conf\n")
 endif()
 
 project(nrf_audio)
