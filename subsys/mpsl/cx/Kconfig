@@ -6,6 +6,7 @@
 
 DT_COMPAT_CX_NRF70 := nordic,nrf7002-coex
 DT_COMPAT_CX_SOFTWARE := nordic,software-coex
+DT_COMPAT_CX_NRF71_COEX := nordic,nrf71-coex
 
 config MPSL_CX_ANY_SUPPORT
 	bool
@@ -24,6 +25,13 @@ config MPSL_CX_SOFTWARE_SUPPORT
 	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_SOFTWARE))
 	help
 	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,software-coex".
+
+config MPSL_CX_NRF71_COEX_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_NRF71_COEX))
+	help
+	  Indicates that the device tree contains a nrf_radio_coex node compatible with
+	  "nordic,nrf71-coex".
 
 config MPSL_CX
 	bool "Radio Coexistence interface support"
@@ -62,6 +70,15 @@ config MPSL_CX_NRF700X
 	bool "nRF700x Radio Coexistence"
 	help
 	  Radio Coexistence supporting nRF700x interface.
+
+config MPSL_CX_NRF71_COEX
+	bool "nRF71 COEXC Coexistence"
+	depends on MPSL_CX_NRF71_COEX_SUPPORT
+	depends on WIFI_NRF71
+	select NRF71_SR_COEX_DRIVER
+	help
+	  Radio Coexistence interface implementation for nRF71 Wi-Fi and
+	  short-range radio coexistence using the Coexistence Controller (COEXC).
 
 config MPSL_CX_3WIRE
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
