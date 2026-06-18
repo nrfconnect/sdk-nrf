@@ -9,24 +9,31 @@
 /delete-node/ &slot1_partition;
 /delete-node/ &storage_partition;
 
-&flash0 {
+&cpuapp_rram {
 	partitions {
 		boot_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
-			reg = <0x0 DT_SIZE_K(48)>;
+			reg = <0x0 DT_SIZE_K(66)>;
 		};
 
-		slot0_partition: partition@c000 {
+		slot0_partition: partition@11000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0xc000 DT_SIZE_K(488)>;
+			reg = <0x11000 DT_SIZE_K(460)>;
 		};
 
-		slot1_partition: partition@86000 {
+		slot1_partition: partition@84000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-1";
-			reg = <0x86000 DT_SIZE_K(488)>;
+			reg = <0x84000 DT_SIZE_K(460)>;
+		};
+
+		storage_partition: partition@f7000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0xf7000 DT_SIZE_K(24)>;
 		};
 	};
 };
+

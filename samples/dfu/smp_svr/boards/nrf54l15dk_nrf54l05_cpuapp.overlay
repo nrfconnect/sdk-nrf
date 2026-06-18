@@ -7,6 +7,7 @@
 /delete-node/ &boot_partition;
 /delete-node/ &slot0_partition;
 /delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
 
 &cpuapp_rram {
 	partitions {
@@ -16,16 +17,16 @@
 			reg = <0x0 DT_SIZE_K(66)>;
 		};
 
-		slot0_partition: partition@10800 {
+		slot0_partition: partition@11000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0x10800 DT_SIZE_K(216)>;
+			reg = <0x11000 DT_SIZE_K(216)>;
 		};
 
-		slot1_partition: partition@46800 {
+		slot1_partition: partition@47000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-1";
-			reg = <0x46800 DT_SIZE_K(216)>;
+			reg = <0x47000 DT_SIZE_K(216)>;
 		};
 	};
 };

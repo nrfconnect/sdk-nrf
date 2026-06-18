@@ -20,13 +20,19 @@
 		slot0_partition: partition@c000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0xc000 DT_SIZE_K(488)>;
+			reg = <0xc000 DT_SIZE_K(476)>;
 		};
 
-		slot1_partition: partition@86000 {
+		slot1_partition: partition@83000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-1";
-			reg = <0x86000 DT_SIZE_K(488)>;
+			reg = <0x83000 DT_SIZE_K(476)>;
+		};
+
+		storage_partition: partition@fa000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0xfa000 DT_SIZE_K(24)>;
 		};
 	};
 };
