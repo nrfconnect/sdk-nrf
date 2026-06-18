@@ -574,13 +574,4 @@ config TFM_HAS_B0N
 	bool "Network core bootloader present (informative only, do not change)"
 	depends on SOC_SERIES_NRF53
 
-config TFM_NRF_MRAMC_SERVICE
-	bool "TF-M MRAMC service"
-	default y if SOC_FLASH_NRF_MRAMC && BUILD_WITH_TFM
-	depends on SOC_NRF7120
-	help
-	  Provide a MRAMC service for the nRF7120 SoC.
-	  This service allows the non-secure application to request
-	  the system to configure MRAMC using a secure service call.
-
 endif # BUILD_WITH_TFM
