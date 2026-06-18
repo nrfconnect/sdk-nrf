@@ -155,7 +155,7 @@ After programming the sample to your development kit, you can test it by connect
       Remote CS capabilities:
       - num_config_supported: 1
       - max_consecutive_procedures_supported: 0
-      - num_antennas_supported: 1
+      - num_antennae_supported: 1
       - max_antenna_paths_supported: 1
       - initiator_supported: no
       - reflector_supported: yes
@@ -165,7 +165,7 @@ After programming the sample to your development kit, you can test it by connect
       - rtt_random_payload_precision: 150 ns (2)
       - rtt_aa_only_n: 30
       - rtt_sounding_n: 0
-      - rtt_random_payload_n: 30
+      - rtt_random_sequence_n: 30
       - phase_based_nadm_sounding_supported: no
       - phase_based_nadm_random_supported: no
       - cs_sync_2m_phy_supported: yes
@@ -180,7 +180,7 @@ After programming the sample to your development kit, you can test it by connect
       - t_sw_time: 0 us
       - tx_snr_capability: 0x00
       - t_ip2_ipt_times_supported: 0x007e
-      - t_sw_ipt_time_supported: 10 us
+      - t_sw_ipt_times_supported: 10 us
 
       I: CS config creation complete.
       - id: 0
