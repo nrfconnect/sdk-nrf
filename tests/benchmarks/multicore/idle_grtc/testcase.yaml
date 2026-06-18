@@ -15,7 +15,7 @@ tests:
     extra_args:
       - vpr_launcher_CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
       - vpr_launcher_EXTRA_CONF_FILE=${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_grtc/vpr_launcher.conf
-      - vpr_launcher_EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_grtc/boards/nrf54h20dk_nrf54h20_cpuapp.overlay
+      - vpr_launcher_EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_grtc/vpr_launcher.overlay
     harness: pytest
     harness_config:
       fixture: ppk_power_measure

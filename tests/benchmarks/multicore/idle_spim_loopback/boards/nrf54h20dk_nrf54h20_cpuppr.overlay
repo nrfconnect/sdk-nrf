@@ -27,28 +27,6 @@
 			label = "Green LED 0";
 		};
 	};
-
-	cpus {
-		power-states {
-			wait: wait {
-				compatible = "zephyr,power-state";
-				power-state-name = "standby";
-				substate-id = <0>;
-				min-residency-us = <20000>;
-			};
-
-			hibernate: hibernate {
-				compatible = "zephyr,power-state";
-				power-state-name = "suspend-to-ram";
-				substate-id = <0>;
-				min-residency-us = <400000>;
-			};
-		};
-	};
-};
-
-&cpu {
-	cpu-power-states = <&wait &hibernate>;
 };
 
 &gpio0 {
