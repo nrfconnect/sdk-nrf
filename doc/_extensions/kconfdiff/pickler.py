@@ -7,7 +7,8 @@ utilities for flattening the kconfig object so that it can be pickled.
 import pickle
 import sys
 from pathlib import Path
-from typing import Any
+from tempfile import TemporaryDirectory
+from typing import IO, Any
 from zipfile import ZIP_LZMA, ZipFile
 
 sys.path.insert(0, str(Path(__file__).parents[4] / "zephyr/scripts/kconfig"))
@@ -174,24 +175,44 @@ class _RefUnpickler(pickle.Unpickler):
     Sphinx build) those modules no longer define ``Ref``; redirect it here.
     """
 
+    def __init__(self, *k, kconflib=None, **kw):
+        super().__init__(*k, **kw)
+
+        if kconflib is None:
+            self.kconfiglib = kconfiglib
+            return
+
+        self.kconfiglib = kconflib
+
     def find_class(self, module: str, name: str):
+        if module == "kconfiglib":
+            return getattr(self.kconfiglib, name)
         if name == "Ref":
             return Ref
         return super().find_class(module, name)
 
 
-def load_file(path: Path | str):
+def load_file(path: Path | str | IO[bytes]):
     with (
         ZipFile(path, "r", compression=ZIP_LZMA) as zip_file,
-        zip_file.open("kconf.pickle", "r") as f,
+        TemporaryDirectory() as td,
     ):
-        kconf, sysbuild_kconf = _RefUnpickler(f).load()
-        return unflatten_kconf(kconf), unflatten_kconf(sysbuild_kconf)
+        kconfiglib_path = Path(td) / "old_kconfiglib.py"
+        with open(kconfiglib_path, "wb") as f:
+            f.write(zip_file.read("kconfiglib.py"))
+
+        sys.path.insert(0, str(td))
+        import old_kconfiglib
+
+        with zip_file.open("kconf.pickle", "r") as f:
+            kconf, sys_kconf = _RefUnpickler(f, kconflib=old_kconfiglib).load()
+        return unflatten_kconf(kconf), unflatten_kconf(sys_kconf), old_kconfiglib
 
 
 def save_kconfig(path: Path | str, kconf: kconfiglib.Kconfig, sysbuild_kconf: kconfiglib.Kconfig):
-    with (
-        ZipFile(path, "w", compression=ZIP_LZMA) as zip_file,
-        zip_file.open("kconf.pickle", "w") as f,
-    ):
-        pickle.dump((flatten_kconf(kconf), flatten_kconf(sysbuild_kconf)), f)
+    with ZipFile(path, "w", compression=ZIP_LZMA) as zip_file:
+        with zip_file.open("kconf.pickle", "w") as f:
+            pickle.dump((flatten_kconf(kconf), flatten_kconf(sysbuild_kconf)), f)
+        # store the kconfiglib.py file so that the pickle can be opened using
+        # the same version of kconfiglib
+        zip_file.write(kconfiglib.__file__, arcname="kconfiglib.py")
