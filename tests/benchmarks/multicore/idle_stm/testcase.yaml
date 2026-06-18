@@ -35,7 +35,6 @@ tests:
     extra_args:
       - idle_stm_CONF_FILE=prj_s2ram.conf
       - remote_rad_CONF_FILE=prj_s2ram.conf
-      - remote_ppr_CONF_FILE=prj_s2ram.conf
       - idle_stm_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_rad_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
@@ -61,7 +60,6 @@ tests:
     extra_args:
       - idle_stm_CONF_FILE=prj_s2ram.conf
       - remote_rad_CONF_FILE=prj_s2ram.conf
-      - remote_ppr_CONF_FILE=prj_s2ram.conf
     harness: console
     harness_config:
       type: multi_line
