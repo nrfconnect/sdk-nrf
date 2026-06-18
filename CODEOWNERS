@@ -1045,7 +1045,7 @@
 /tests/subsys/nrf_compress/               @nrfconnect/ncs-eris
 /tests/subsys/nrf_profiler/               @nrfconnect/ncs-si-xcake
 /tests/subsys/nrf_rpc/                    @nrfconnect/ncs-protocols-serialization
-/tests/subsys/nrf_security/psa_core_lite/ @nrfconnect/ncs-aegir
+/tests/subsys/nrf_security/               @nrfconnect/ncs-aegir
 /tests/subsys/partition_manager/region/   @nordicjm @tejlmand
 /tests/subsys/partition_manager/static_pm_file/ @nordicjm @tejlmand
 /tests/subsys/pcd/                        @nrfconnect/ncs-eris
