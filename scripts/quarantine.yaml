@@ -54,7 +54,9 @@
     - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_stable
     - nrf.extended.drivers.comparator.gpio_loopback.nrf_comp
     - nrf.extended.drivers.comparator.gpio_loopback.nrf_lpcomp
+    - nrf.extended.sample.bluetooth.*
     - sample.bluetooth.*
+    - sample.mpsl.timeslot
   platforms:
     - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
   comment: "no TFM for nrf54lc10 at the moment"
