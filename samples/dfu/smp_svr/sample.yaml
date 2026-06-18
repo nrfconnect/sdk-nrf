@@ -202,6 +202,7 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - FILE_SUFFIX=nsib
 
   sample.dfu.smp_svr.kmu.revocation:
     platform_allow:
