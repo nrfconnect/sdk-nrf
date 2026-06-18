@@ -8,6 +8,7 @@ if(CONFIG_MPSL_CX_3WIRE OR
   CONFIG_MPSL_CX_1WIRE OR
   CONFIG_MPSL_CX_BT_1WIRE OR
   CONFIG_MPSL_CX_NRF700X OR
+  CONFIG_MPSL_CX_NRF71_COEX OR
   CONFIG_MPSL_CX_SOFTWARE
 )
   zephyr_library()
@@ -16,6 +17,7 @@ if(CONFIG_MPSL_CX_3WIRE OR
   zephyr_library_sources_ifdef(CONFIG_MPSL_CX_BT_1WIRE 1wire/mpsl_cx_1wire.c)
   zephyr_library_sources_ifdef(CONFIG_MPSL_CX_1WIRE 1wire/mpsl_cx_1wire.c)
   zephyr_library_sources_ifdef(CONFIG_MPSL_CX_NRF700X nrf700x/mpsl_cx_nrf700x.c)
+  zephyr_library_sources_ifdef(CONFIG_MPSL_CX_NRF71_COEX nrf71_coex/mpsl_cx_nrf71_coex.c)
   zephyr_library_sources_ifdef(CONFIG_MPSL_CX_SOFTWARE_RPC software/mpsl_cx_software_rpc.c)
 endif()
 
