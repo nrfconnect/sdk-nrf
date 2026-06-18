@@ -14,3 +14,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuflpr
     extra_args:
       - vpr_launcher_CONFIG_SERIAL=n
+    harness: console
+    harness_config:
+      type: one_line
+      ordered: true
+      regex:
+        - "Test PASS"
