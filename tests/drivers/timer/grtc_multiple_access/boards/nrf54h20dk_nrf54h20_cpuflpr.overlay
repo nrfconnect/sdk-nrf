@@ -1,0 +1,5 @@
+/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */
+
+&grtc {
+	owned-channels = <5 6>;
+};
