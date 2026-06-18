@@ -323,6 +323,10 @@ Cellular samples
   * :ref:`location_sample`
   * :ref:`modem_shell_application`
 
+* :ref:`nrf_cloud_coap_fota_sample` sample:
+
+  * Updated the sample to use the new nRF Cloud CoAP FOTA API.
+
 Cryptography samples
 --------------------
 

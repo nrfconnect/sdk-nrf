@@ -11,8 +11,4 @@ project(nrf_cloud_fota_sample)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
-
-if(CONFIG_NRF_CLOUD_FOTA_SMP AND CONFIG_BOARD_NRF9160DK_NRF9160_NS)
-  target_sources(app PRIVATE src/smp_reset.c)
-endif()
 # NORDIC SDK APP END
