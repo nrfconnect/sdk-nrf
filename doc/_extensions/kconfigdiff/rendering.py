@@ -11,14 +11,16 @@ Docutils rendering for the ``kconfigdiff`` directive.
 """
 
 import difflib
-import os
+import logging
 from dataclasses import dataclass
+from pathlib import Path
 
 from docutils import nodes
 from sphinx.util.docutils import SphinxDirective
 
-from .kconfig_utils import KconfigEntryProperties, diff_generator
+from .kconfig_utils import KCONFIG_SAVE_FILE, KconfigEntryProperties, diff_generator
 
+logger = logging.Logger(__name__)
 DIFFER = difflib.Differ()
 
 
@@ -186,30 +188,37 @@ class KconfigDiffDirective(SphinxDirective):
     Usage::
 
         .. kconfigdiff:: old.pickle new.pickle
-
-    The two arguments are paths to the pickle files produced by this extension,
-    resolved relative to the document that uses the directive.
     """
 
-    required_arguments = 2
+    required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = False
     has_content = False
 
-    def _resolve(self, arg: str) -> str:
-        # Absolute paths are used verbatim; relative ones are resolved against
-        # the document that uses the directive.
-        if os.path.isabs(arg):
-            return arg
-        return self.env.relfn2path(arg)[1]
+    def _get_prev_version_num(self) -> str | None:
+        if len(self.env.nrf_versions) >= 2:
+            return self.env.nrf_versions[-2].replace("-", ".")[1:]
+        return None
 
     def run(self) -> list[nodes.Node]:
-        old_path = self._resolve(self.arguments[0])
-        new_path = self._resolve(self.arguments[1])
+        last_version = self._get_prev_version_num()
+        if last_version is None:
+            logger.error("Couldn't establish what was the previous build version")
+            return []
 
         root = nodes.container(classes=["kconfigdiff"])
-        for old, new in diff_generator(old_path, new_path):
+
+        def ordering(old, new):
+            return max((old, new), key=lambda x: x is not None)
+
+        outdir = Path(self.env.app.outdir)
+        for old, new in sorted(
+            diff_generator(last_version, outdir),
+            key=lambda p: ordering(*p).name,
+        ):
             node = ComparisonPair(old, new).render()
             if node is not None:
                 root += node
+
+        self.env.app.config.html_extra_path.append(outdir / KCONFIG_SAVE_FILE)
         return [root]
