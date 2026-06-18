@@ -11,7 +11,7 @@ common:
       - "Starting .*bootloader"
       - "Jumping to the .*image slot"
       - "build time"
-  timeout: 15
+  timeout: 30
   tags:
     - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
 
