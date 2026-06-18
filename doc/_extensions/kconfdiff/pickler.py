@@ -185,7 +185,8 @@ def load_file(path: Path | str):
         ZipFile(path, "r", compression=ZIP_LZMA) as zip_file,
         zip_file.open("kconf.pickle", "r") as f,
     ):
-        return _RefUnpickler(f).load()
+        kconf, sysbuild_kconf = _RefUnpickler(f).load()
+        return unflatten_kconf(kconf), unflatten_kconf(sysbuild_kconf)
 
 
 def save_kconfig(path: Path | str, kconf: kconfiglib.Kconfig, sysbuild_kconf: kconfiglib.Kconfig):

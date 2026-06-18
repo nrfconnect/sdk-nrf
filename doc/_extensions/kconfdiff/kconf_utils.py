@@ -1,4 +1,6 @@
 import argparse
+import io
+import logging
 import os
 import re
 import sys
@@ -9,7 +11,9 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import TypeAlias
 
+import requests
 from dotenv import load_dotenv
+from sphinx.util.display import progress_message
 
 from . import pickler
 
@@ -21,9 +25,13 @@ import list_boards
 import list_hardware
 import zephyr_module
 
+logger = logging.Logger(__name__)
 RESOURCES_DIR = Path(__file__).parent / "static"
 ZEPHYR_BASE = Path(__file__).parents[4] / "zephyr"
 NRF_BASE = Path(__file__).parents[3]
+
+KCONF_SAVE_FILE = "kconf.zip"
+KCONF_URL = f"https://ncsdoc.z6.web.core.windows.net/ncs/{{version}}/kconfig/{KCONF_SAVE_FILE}"
 
 MAX_ENTRY_LINE_CHANGE = 5
 
@@ -185,7 +193,7 @@ def kconf_node_generator(
                 yield node, sc
 
 
-def _entry_name(sc) -> str:
+def entry_name(sc) -> str:
     # TODO: Check this
     prefix = sc.kconfig.config_prefix if sc.kconfig else ""
     return f"{prefix}{sc.name}"
@@ -227,7 +235,7 @@ class KconfigEntryProperties:
         self._node = node
         self._sc = sc
 
-        self.name = sc.name
+        self.name = entry_name(sc)
         self.prompt = node.prompt[0] if node.prompt else ""
         self.type = kconfiglib.TYPE_TO_STR[sc.type]
         self.help = node.help
@@ -269,7 +277,7 @@ class KconfigEntryProperties:
         if isinstance(self._sc, kconfiglib.Symbol) and self._sc.rev_dep != self._sc.kconfig.n:
             for select in kconfiglib.split_expr(self._sc.rev_dep, kconfiglib.OR):
                 sym = kconfiglib.split_expr(select, kconfiglib.AND)[0]
-                selected_by.append(f"{_entry_name(sym)}")
+                selected_by.append(f"{entry_name(sym)}")
         return selected_by
 
     def _init_ranges(self) -> list[str]:
@@ -302,7 +310,7 @@ class KconfigEntryProperties:
         if isinstance(self._sc, kconfiglib.Symbol) and self._sc.weak_rev_dep != self._sc.kconfig.n:
             for select in kconfiglib.split_expr(self._sc.weak_rev_dep, kconfiglib.OR):
                 sym = kconfiglib.split_expr(select, kconfiglib.AND)[0]
-                implied_by.append(f"{_entry_name(sym)}")
+                implied_by.append(f"{entry_name(sym)}")
         return implied_by
 
     def __eq__(self, other: object) -> bool:
@@ -325,8 +333,18 @@ class KconfigEntryProperties:
         )
 
 
+def fetch_prev_kconf_file(version) -> tuple[kconfiglib.Kconfig, kconfiglib.Kconfig]:
+    url = KCONF_URL.format(version=version)
+    with progress_message(f"Fetching kconfig from previous build, {url=}"):
+        res = requests.get(url)
+        res.raise_for_status()
+
+        with io.BytesIO(res.content) as f:
+            return pickler.load_file(f)
+
+
 def diff_generator(
-    old: Path | str, new: Path | str
+    version: str, outdir: Path
 ) -> Generator[tuple[KconfigEntryProperties | None, KconfigEntryProperties | None], None, None]:
     """Yield ``(old, new)`` pairs of :class:`KconfigEntryProperties`.
 
@@ -334,41 +352,45 @@ def diff_generator(
     """
 
     def node_uid(node: kconfiglib.MenuNode, sc: SC) -> str:
-        return f"{_entry_name(sc)}/{node.filename}"
+        return f"{entry_name(sc)}/{node.filename}"
 
     new_map: dict[str, list[tuple[kconfiglib.MenuNode, kconfiglib.Symbol | kconfiglib.Choice]]] = (
         defaultdict(list)
     )
-    kconf_old_flat, sysbuild_kconf_old_flat = pickler.load_file(old)
-    kconf_old = pickler.unflatten_kconf(kconf_old_flat)
-    sysbuild_kconf_old = pickler.unflatten_kconf(sysbuild_kconf_old_flat)
 
-    kconf_flat, sysbuild_kconf_flat = pickler.load_file(new)
-    kconf = pickler.unflatten_kconf(kconf_flat)
-    sysbuild_kconf = pickler.unflatten_kconf(sysbuild_kconf_flat)
+    try:
+        kconf_old, sysbuild_kconf_old = fetch_prev_kconf_file(version)
+    except requests.exceptions.RequestException:
+        logger.error("Failed to fetch old kconfig")
+        return
 
-    for node, sc in kconf_node_generator([kconf, sysbuild_kconf]):
-        new_map[node_uid(node, sc)].append((node, sc))
+    with progress_message("Generating kconfig diff pairs"):
+        kconf, sysbuild_kconf, _ = kconfig_load([ZEPHYR_BASE, NRF_BASE])
 
-    for node, sc in kconf_node_generator([kconf_old, sysbuild_kconf_old]):
-        if new_items := new_map.get(node_uid(node, sc)):
-            to_del = None
-            if len(new_items) == 1:
-                to_del = 0
-            else:
-                for i, (new_node, _) in enumerate(new_items):
-                    if abs(new_node.linenr - node.linenr) < MAX_ENTRY_LINE_CHANGE:
-                        to_del = i
-                        break
+        for node, sc in kconf_node_generator([kconf, sysbuild_kconf]):
+            new_map[node_uid(node, sc)].append((node, sc))
+
+        for node, sc in kconf_node_generator([kconf_old, sysbuild_kconf_old]):
+            if new_items := new_map.get(node_uid(node, sc)):
+                to_del = None
+                if len(new_items) == 1:
+                    to_del = 0
                 else:
-                    yield KconfigEntryProperties(node, sc), None
-                    continue
-            new_node, new_sc = new_items.pop(to_del)
-            yield (
-                KconfigEntryProperties(node, sc),
-                KconfigEntryProperties(new_node, new_sc),
-            )
-            continue
+                    for i, (new_node, _) in enumerate(new_items):
+                        if abs(new_node.linenr - node.linenr) < MAX_ENTRY_LINE_CHANGE:
+                            to_del = i
+                            break
+                    else:
+                        yield KconfigEntryProperties(node, sc), None
+                        continue
+                new_node, new_sc = new_items.pop(to_del)
+                yield (
+                    KconfigEntryProperties(node, sc),
+                    KconfigEntryProperties(new_node, new_sc),
+                )
+                continue
 
-    for node, sc in chain(*new_map.values()):
-        yield None, KconfigEntryProperties(node, sc)
+        for node, sc in chain(*new_map.values()):
+            yield None, KconfigEntryProperties(node, sc)
+
+        pickler.save_kconfig(outdir / KCONF_SAVE_FILE, kconf, sysbuild_kconf)
