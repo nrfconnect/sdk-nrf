@@ -36,6 +36,7 @@
 
 #include "cracen_psa_sign_verify.h"
 #include "cracen_psa_hash.h"
+#include "cracen_psa_xof.h"
 #include "cracen_psa_cipher.h"
 #include "cracen_psa_asymmetric.h"
 #include "cracen_psa_aead.h"

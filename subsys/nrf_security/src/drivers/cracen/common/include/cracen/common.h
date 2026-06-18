@@ -46,6 +46,9 @@ __must_check psa_status_t silex_statuscodes_to_psa(int sx_status);
 __must_check psa_status_t
 hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo);
 
+__must_check psa_status_t
+xof_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_xof_algo);
+
 /**
  * @brief Use cracen_get_random up to generate a random number in the range [1, upperlimit).
  *

@@ -104,6 +104,10 @@
 #include "oberon_xof.h"
 #endif
 
+#ifdef PSA_NEED_CRACEN_XOF_DRIVER
+#include "cracen_psa_xof.h"
+#endif
+
 #ifdef PSA_NEED_OBERON_KEY_WRAP_DRIVER
 #include "oberon_key_wrap.h"
 #endif
@@ -1462,6 +1466,17 @@ psa_status_t psa_driver_wrapper_xof_setup(psa_xof_operation_t *operation, psa_al
 {
 	psa_status_t status;
 
+#if defined(PSA_NEED_CRACEN_XOF_DRIVER)
+	status = cracen_xof_setup(&operation->ctx.cracen_xof_ctx, alg);
+	if (status == PSA_SUCCESS) {
+		operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+	}
+
+	if (status != PSA_ERROR_NOT_SUPPORTED) {
+		return status;
+	}
+#endif /* PSA_NEED_CRACEN_XOF_DRIVER */
+
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
 	status = oberon_xof_setup(&operation->ctx.oberon_xof_ctx, alg);
 	if (status == PSA_SUCCESS) {
@@ -1481,6 +1496,12 @@ psa_status_t psa_driver_wrapper_xof_set_context(psa_xof_operation_t *operation,
 {
 	switch (operation->id) {
 
+#if defined(PSA_NEED_CRACEN_XOF_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_xof_set_context(&operation->ctx.cracen_xof_ctx, context,
+					      context_length);
+#endif /* PSA_NEED_CRACEN_XOF_DRIVER */
+
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_xof_set_context(&operation->ctx.oberon_xof_ctx, context,
@@ -1499,6 +1520,11 @@ psa_status_t psa_driver_wrapper_xof_update(psa_xof_operation_t *operation, const
 {
 	switch (operation->id) {
 
+#if defined(PSA_NEED_CRACEN_XOF_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_xof_update(&operation->ctx.cracen_xof_ctx, input, input_length);
+#endif /* PSA_NEED_CRACEN_XOF_DRIVER */
+
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_xof_update(&operation->ctx.oberon_xof_ctx, input, input_length);
@@ -1516,6 +1542,11 @@ psa_status_t psa_driver_wrapper_xof_output(psa_xof_operation_t *operation, uint8
 {
 	switch (operation->id) {
 
+#if defined(PSA_NEED_CRACEN_XOF_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_xof_output(&operation->ctx.cracen_xof_ctx, output, output_length);
+#endif /* PSA_NEED_CRACEN_XOF_DRIVER */
+
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_xof_output(&operation->ctx.oberon_xof_ctx, output, output_length);
@@ -1531,6 +1562,11 @@ psa_status_t psa_driver_wrapper_xof_output(psa_xof_operation_t *operation, uint8
 psa_status_t psa_driver_wrapper_xof_abort(psa_xof_operation_t *operation)
 {
 	switch (operation->id) {
+
+#if defined(PSA_NEED_CRACEN_XOF_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_xof_abort(&operation->ctx.cracen_xof_ctx);
+#endif /* PSA_NEED_CRACEN_XOF_DRIVER */
 
 #if defined(PSA_NEED_OBERON_XOF_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:

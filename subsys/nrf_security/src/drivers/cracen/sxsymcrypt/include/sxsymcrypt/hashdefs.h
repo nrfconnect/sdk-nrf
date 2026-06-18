@@ -22,6 +22,9 @@
 #define SX_HASH_DIGESTSZ_SHA3_224 28
 #define SX_HASH_DIGESTSZ_SHA2_224 28
 #define SX_HASH_DIGESTSZ_SHA1 20
+#define SX_HASH_DIGESTSZ_SHAKE_MAX 0xFFFF
+
+#define SX_HASH_BLOCKSZ_SHAKE_128 168
 
 #define SX_HASH_BLOCKSZ_SHA3_224 144
 #define SX_HASH_BLOCKSZ_SHA3_256 136
@@ -37,19 +40,25 @@
 /*
  * !!! ORDER MATTERS !!!
  */
-#if defined(PSA_NEED_CRACEN_SHA3_224)
+#if	defined(PSA_NEED_CRACEN_SHAKE128)
+#define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHAKE_128
+#elif	defined(PSA_NEED_CRACEN_SHA3_224)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_224
-#elif defined(PSA_NEED_CRACEN_SHA3_256) || defined(PSA_NEED_CRACEN_SHAKE256_512)
+#elif	defined(PSA_NEED_CRACEN_SHA3_256) || \
+	defined(PSA_NEED_CRACEN_SHAKE256_512) || \
+	defined(PSA_NEED_CRACEN_SHAKE256)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_256
-#elif defined(PSA_NEED_CRACEN_SHA_512) || defined(PSA_NEED_CRACEN_SHA_384)
+#elif	defined(PSA_NEED_CRACEN_SHA_512) || \
+	defined(PSA_NEED_CRACEN_SHA_384)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA2_512
-#elif defined(PSA_NEED_CRACEN_SHA3_384)
+#elif	defined(PSA_NEED_CRACEN_SHA3_384)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_384
-#elif defined(PSA_NEED_CRACEN_SHA3_512)
+#elif	defined(PSA_NEED_CRACEN_SHA3_512)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_512
-#elif defined(PSA_NEED_CRACEN_SHA_256) || defined(PSA_NEED_CRACEN_SHA_224)
+#elif	defined(PSA_NEED_CRACEN_SHA_256) || \
+	defined(PSA_NEED_CRACEN_SHA_224)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA2_256
-#elif defined(PSA_NEED_CRACEN_SHA_1)
+#elif	defined(PSA_NEED_CRACEN_SHA_1)
 /* SM3 has the same size but doesn't have a PSA_NEED yet */
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA1
 #else
@@ -64,17 +73,23 @@
  *
  * !!! ORDER MATTERS !!!
  */
-#if defined(PSA_NEED_CRACEN_SHA3_224)
+#if	defined(PSA_NEED_CRACEN_SHAKE128)
+#define SX_HASH_OPERATION_CONTEXT_SZ 368
+#elif	defined(PSA_NEED_CRACEN_SHA3_224)
 #define SX_HASH_OPERATION_CONTEXT_SZ 344
-#elif defined(PSA_NEED_CRACEN_SHA3_256) || defined(PSA_NEED_CRACEN_SHAKE256_512)
+#elif	defined(PSA_NEED_CRACEN_SHA3_256) || \
+	defined(PSA_NEED_CRACEN_SHAKE256_512) || \
+	defined(PSA_NEED_CRACEN_SHAKE256)
 #define SX_HASH_OPERATION_CONTEXT_SZ 336
-#elif defined(PSA_NEED_CRACEN_SHA3_384)
+#elif	defined(PSA_NEED_CRACEN_SHA3_384)
 #define SX_HASH_OPERATION_CONTEXT_SZ 304
-#elif defined(PSA_NEED_CRACEN_SHA3_512)
+#elif	defined(PSA_NEED_CRACEN_SHA3_512)
 #define SX_HASH_OPERATION_CONTEXT_SZ 272
-#elif defined(PSA_NEED_CRACEN_SHA_512) || defined(PSA_NEED_CRACEN_SHA_384)
+#elif	defined(PSA_NEED_CRACEN_SHA_512) || \
+	defined(PSA_NEED_CRACEN_SHA_384)
 #define SX_HASH_OPERATION_CONTEXT_SZ 208
-#elif defined(PSA_NEED_CRACEN_SHA_256) || defined(PSA_NEED_CRACEN_SHA_224)
+#elif	defined(PSA_NEED_CRACEN_SHA_256) || \
+	defined(PSA_NEED_CRACEN_SHA_224)
 /* SM3 has the same size but doesn't have a PSA_NEED yet */
 #define SX_HASH_OPERATION_CONTEXT_SZ 104
 #elif defined(PSA_NEED_CRACEN_SHA_1)
@@ -107,7 +122,7 @@ struct sxhash {
 	uint32_t cntindescs;
 	size_t totalfeedsz;
 	uint32_t feedsz;
-	void (*digest)(struct sxhash *c, uint8_t *digest);
+	void (*digest)(struct sxhash *c, size_t skip, uint8_t *digest, size_t digest_sz);
 	struct sx_dmactl dma;
 	struct sxdesc descs[7 + SX_EXTRA_IN_DESCS];
 	uint8_t extramem[SX_HASH_OPERATION_CONTEXT_SZ];
@@ -172,6 +187,9 @@ extern const struct sxhashalg sxhashalg_sha3_512;
 extern const struct sxhashalg sxhashalg_shake256_114;
 extern const struct sxhashalg sxhashalg_shake256_64;
 
+extern const struct sxhashalg sxhashalg_shake128;
+extern const struct sxhashalg sxhashalg_shake256;
+
 /** GM/T 0004-2012: SM3 cryptographic hash algorithm */
 extern const struct sxhashalg sxhashalg_sm3;
 
@@ -180,5 +198,15 @@ extern const struct sxhashalg sxhashalg_sm3;
 #define OFFSET_EXTRAMEM(c)  (sizeof((c)->dma.dmamem) + sizeof((c)->descs))
 
 #define CMDMA_BA418_BUS_MSK (3)
+
+/**
+ * @brief Checks if the provided algorithm is configured as SHAKE-128 or SHAKE-256 XOF.
+ *
+ * @param[in] hashalg Algorithm to check.
+ *
+ * @return true
+ * @return false
+ */
+bool sx_is_shake_alg(const struct sxhashalg *hashalg);
 
 #endif
