@@ -103,7 +103,7 @@ jobs:
         working-directory: ncs/nrf
         run: |
           if [[ "${{ github.event_name }}" == "push" ]]; then
-            BUILD_CONF="-DDTS_BINDINGS=ON -DHW_FEATURES=ON"
+            BUILD_CONF="-DDTS_BINDINGS=ON -DHW_FEATURES=ON -DKCONFIGDIFF=ON"
           fi
 
           cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-q" ${BUILD_CONF}

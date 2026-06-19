@@ -134,6 +134,19 @@ These options are enabled in CI when building the documentation before it is pub
 
 You can try them locally by enabling ``-DDTS_BINDINGS=ON`` and ``-DHW_FEATURES=ON``.
 
+.. _building_kconfig_diff:
+
+Building the Kconfig diff
+*************************
+
+The Kconfig Reference documentation set can include a :ref:`kconfig:kconfig_diff` page that lists the changes in Kconfig configuration options between the current tree and the previous |NCS| release.
+Generating this diff is disabled by default, because it loads the complete Kconfig tree and downloads the Kconfig snapshot of the previous release over the network.
+To enable it, set the ``KCONFIGDIFF`` CMake option to ``ON`` when generating the build files:
+
+.. code-block:: console
+
+   cmake -GNinja -S. -B_build -DKCONFIGDIFF=ON
+
 .. _testing_versions:
 
 Testing locally
