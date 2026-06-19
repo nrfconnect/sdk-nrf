@@ -16,6 +16,4 @@ else()
   else()
     zephyr_library_sources(hw_unique_key_cc3xx_kmu.c)
   endif()
-
-  ncs_add_partition_manager_config(pm.yml.huk_cc3xx)
 endif()

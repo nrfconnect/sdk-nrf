@@ -9,16 +9,9 @@
 #include <fprotect.h>
 #include <zephyr/storage/flash_map.h>
 
-#ifdef USE_PARTITION_MANAGER
-#include <pm_config.h>
-
-#define AREA_ADDRESS PM_ADDRESS
-#define AREA_SIZE PM_SIZE
-#else
 #define CODE_PARTITION DT_CHOSEN(zephyr_code_partition)
 #define AREA_ADDRESS PARTITION_NODE_OFFSET(CODE_PARTITION)
 #define AREA_SIZE PARTITION_NODE_SIZE(CODE_PARTITION)
-#endif
 
 #define PRIORITY_LEVEL 0 /* Locking should be performed as soon as possible */
 

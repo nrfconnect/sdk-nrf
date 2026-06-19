@@ -24,9 +24,4 @@
 	aliases {
 		ext-flash = &mx25r64;
 	};
-
-	/* Configure partition manager to use mx25r64 as the external flash */
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
 };

@@ -15,11 +15,7 @@
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
 #endif
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED) || USE_PARTITION_MANAGER
-#include <pm_config.h>
-/* Address of storage as seen in processor address space */
-#define BL_STORAGE_ADDRESS	PM_PROVISION_ADDRESS
-#elif defined(TFM_BL_STORAGE_ADDR)
+#if defined(TFM_BL_STORAGE_ADDR)
 #define BL_STORAGE_ADDRESS	TFM_BL_STORAGE_ADDR
 #else
 /* Address of storage as seen in processor address space */

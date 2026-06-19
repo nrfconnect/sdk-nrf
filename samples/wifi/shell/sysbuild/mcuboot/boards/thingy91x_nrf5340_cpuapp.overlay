@@ -78,6 +78,5 @@
 / {
 	chosen {
 		zephyr,code-partition = &s0_partition;
-		nordic,pm-ext-flash = &flash_ext;
 	};
 };

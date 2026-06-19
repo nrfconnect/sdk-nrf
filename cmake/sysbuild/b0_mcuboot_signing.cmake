@@ -31,55 +31,48 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
 
   set(slot_size)        # imgtool --slot-size
   set(header_size)      # imgtool --header-size
-  if(SB_CONFIG_PARTITION_MANAGER)
-    string(TOUPPER "${application}" application_uppercase)
-    set(slot_size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE>)
-    set(header_size ${SB_CONFIG_PM_MCUBOOT_PAD})
-    set(slot_address $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_ADDRESS>)
-  else()
-    # Get the partition node and pick size from it.
-    dt_chosen(code_partition_path PROPERTY "zephyr,code-partition" TARGET ${application})
-    dt_partition_size(slot_size PATH "${code_partition_path}" TARGET ${application} REQUIRED)
-    if(SB_CONFIG_SECURE_BOOT_APPCORE AND SB_CONFIG_BOOTLOADER_MCUBOOT)
-      b0_image_name(s1_variant_name)
-      if("${application}" STREQUAL "mcuboot")
-        dt_partition_addr(slot_address LABEL "s0_partition" TARGET ${application} ABSOLUTE REQUIRED)
-      elseif("${application}" STREQUAL "s1_image" OR "${application}" STREQUAL "${s1_variant_name}")
-        dt_partition_addr(slot_address LABEL "s1_partition" TARGET ${application} ABSOLUTE REQUIRED)
-      else()
-        dt_partition_addr(slot_address PATH "${code_partition_path}" TARGET ${application} REQUIRED ABSOLUTE)
-      endif()
+
+  # Get the partition node and pick size from it.
+  dt_chosen(code_partition_path PROPERTY "zephyr,code-partition" TARGET ${application})
+  dt_partition_size(slot_size PATH "${code_partition_path}" TARGET ${application} REQUIRED)
+  if(SB_CONFIG_SECURE_BOOT_APPCORE AND SB_CONFIG_BOOTLOADER_MCUBOOT)
+    if("${application}" STREQUAL "mcuboot")
+      dt_partition_addr(slot_address LABEL "s0_partition" TARGET ${application} ABSOLUTE REQUIRED)
+    elseif("${application}" STREQUAL "s1_image" OR "${application}" STREQUAL "mcuboot_s1_variant")
+      dt_partition_addr(slot_address LABEL "s1_partition" TARGET ${application} ABSOLUTE REQUIRED)
     else()
       dt_partition_addr(slot_address PATH "${code_partition_path}" TARGET ${application} REQUIRED ABSOLUTE)
     endif()
+  else()
+    dt_partition_addr(slot_address PATH "${code_partition_path}" TARGET ${application} REQUIRED ABSOLUTE)
+  endif()
 
-    # Header size is picked from the image that is being signed, as an offset for where executables
-    # starts within generated binary, which is represented by CONFIG_ROM_START_OFFSET.
-    # It is assumed that all that space, from the start of a binary to the CONFIG_ROM_START_OFFSET
-    # is available for the header, but the header will take only several bytes from the beginning
-    # of the binary; most of other bytes will be wasted, but that may happen due to VTOR alignment
-    # requirements, that mandate alignment of CONFIG_ROM_START_OFFSET.
-    # Whatever will be built for nRF5340 NETCORE, CONFIG_SOC_NRF5340_CPUNET=y, will have
-    # CONFIG_ROM_START_OFFSET=0, as MCUboot is never run on CPUNET; b0n is and it does not need
-    # the MCUboot image header for anything, so when image is transferred to CPUNET, the
-    # MCUboot image header is stripped in process.
-    # This means that we will have to "glue" the header in front of firmware image, and we can
-    # choose any size for it as long as we are able to fit all information in it.
-    # CONFIG_ROM_START_OFFSET=0, for application, is not helping, getting size from default
-    # image makes no sense, so the --header-size=auto will be used.
+  # Header size is picked from the image that is being signed, as an offset for where executables
+  # starts within generated binary, which is represented by CONFIG_ROM_START_OFFSET.
+  # It is assumed that all that space, from the start of a binary to the CONFIG_ROM_START_OFFSET
+  # is available for the header, but the header will take only several bytes from the beginning
+  # of the binary; most of other bytes will be wasted, but that may happen due to VTOR alignment
+  # requirements, that mandate alignment of CONFIG_ROM_START_OFFSET.
+  # Whatever will be built for nRF5340 NETCORE, CONFIG_SOC_NRF5340_CPUNET=y, will have
+  # CONFIG_ROM_START_OFFSET=0, as MCUboot is never run on CPUNET; b0n is and it does not need
+  # the MCUboot image header for anything, so when image is transferred to CPUNET, the
+  # MCUboot image header is stripped in process.
+  # This means that we will have to "glue" the header in front of firmware image, and we can
+  # choose any size for it as long as we are able to fit all information in it.
+  # CONFIG_ROM_START_OFFSET=0, for application, is not helping, getting size from default
+  # image makes no sense, so the --header-size=auto will be used.
 
-    # Do not bother picking header size from image that is for CPUNET
-    if("${prefix}" STREQUAL "CPUNET_")
-      set(header_size auto)
-    else()
-      sysbuild_get(header_size IMAGE ${application} VAR CONFIG_ROM_START_OFFSET KCONFIG)
-      if(${header_size} EQUAL 0)
-        sysbuild_get(build_with_tfm IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BUILD_WITH_TFM KCONFIG)
-        if(build_with_tfm)
-          sysbuild_get(header_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_TFM_MCUBOOT_HEADER_SIZE KCONFIG)
-        else()
-          message(WARNING "imgtool header size picked from ${application} is 0, check CONFIG_ROM_START_OFFSET value")
-        endif()
+  # Do not bother picking header size from image that is for CPUNET
+  if("${prefix}" STREQUAL "CPUNET_")
+    set(header_size auto)
+  else()
+    sysbuild_get(header_size IMAGE ${application} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+    if(${header_size} EQUAL 0)
+      sysbuild_get(build_with_tfm IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BUILD_WITH_TFM KCONFIG)
+      if(build_with_tfm)
+        sysbuild_get(header_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_TFM_MCUBOOT_HEADER_SIZE KCONFIG)
+      else()
+        message(WARNING "imgtool header size picked from ${application} is 0, check CONFIG_ROM_START_OFFSET value")
       endif()
     endif()
   endif()
@@ -90,9 +83,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   # CPUNET targets are special case and they require padding for either configuration,
   # as the header is not included neither in PM nor DTS builds and image starts exactly at
   # partition start address.
-  if(SB_CONFIG_PARTITION_MANAGER)
-    set(pad_header --pad-header)
-  elseif("${prefix}" STREQUAL "CPUNET_")
+  if("${prefix}" STREQUAL "CPUNET_")
     set(pad_header --pad-header)
   else()
     set(pad_header)
@@ -204,21 +195,6 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
       ${application_image_dir}/zephyr/.config
       ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.hex
       )
-
-    if(SB_CONFIG_PARTITION_MANAGER AND NOT prefix)
-      # Set the partition manager hex file and target
-      set_property(
-        GLOBAL PROPERTY
-        ${application}_PM_HEX_FILE
-        ${output}.hex
-      )
-
-      set_property(
-        GLOBAL PROPERTY
-        ${application}_PM_TARGET
-        ${application}_signed_packaged_target
-      )
-    endif()
   endif()
 
   # Add the west sign calls and their byproducts to the post-processing
@@ -267,26 +243,16 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
     # We also need slot, for signing sript.
     set(s0_partition_address)
     set(s1_partition_address)
-    if(SB_CONFIG_PARTITION_MANAGER)
-      set(s1_partition_address "$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>")
-      set(s0_partition_address "$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>")
-    else()
-      # The same DTS is used for all images, so the application selection does not
-      # matter here, so we just use the mcuboot
-      dt_partition_addr(s0_partition_address LABEL "s0_partition" TARGET mcuboot ABSOLUTE REQUIRED)
-      dt_partition_addr(s1_partition_address LABEL "s1_partition" TARGET mcuboot ABSOLUTE REQUIRED)
-    endif()
+
+    # The same DTS is used for all images, so the application selection does not
+    # matter here, so we just use the mcuboot
+    dt_partition_addr(s0_partition_address LABEL "s0_partition" TARGET mcuboot ABSOLUTE REQUIRED)
+    dt_partition_addr(s1_partition_address LABEL "s1_partition" TARGET mcuboot ABSOLUTE REQUIRED)
 
     # Signing the MCUboot image, secondary stage bootloader, that will be running from S1 slot.
     if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-      if(SB_CONFIG_PARTITION_MANAGER)
-        ncs_secure_boot_mcuboot_sign(s1_image "${bin_files}" "${signed_targets}" "")
-        set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=${s1_partition_address};signed_by_mcuboot_and_b0_s1_image.binslot=1")
-      else()
-        b0_image_name(s1_image_name)
-        ncs_secure_boot_mcuboot_sign(${s1_image_name} "${bin_files}" "${signed_targets}" "")
-        set(extra_bin_data "signed_by_mcuboot_and_b0_${s1_image_name}.binload_address=${s1_partition_address};signed_by_mcuboot_and_b0_${s1_image_name}.binslot=1")
-      endif()
+      ncs_secure_boot_mcuboot_sign(mcuboot_s1_variant "${bin_files}" "${signed_targets}" "")
+      set(extra_bin_data "signed_by_mcuboot_and_b0_mcuboot_s1_variant.binload_address=${s1_partition_address};signed_by_mcuboot_and_b0_mcuboot_s1_variant.binslot=1")
     endif()
 
     if(bin_files)
@@ -311,12 +277,7 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
-    if(SB_CONFIG_PARTITION_MANAGER)
-      get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
-      ncs_secure_boot_mcuboot_sign(${image_name} "${bin_files}" "${signed_targets}" CPUNET_)
-    else()
-      ncs_secure_boot_mcuboot_sign(${SB_CONFIG_NETCORE_IMAGE_NAME} "${bin_files}" "${signed_targets}" CPUNET_)
-    endif()
+    ncs_secure_boot_mcuboot_sign(${SB_CONFIG_NETCORE_IMAGE_NAME} "${bin_files}" "${signed_targets}" CPUNET_)
   endif()
 
   # Clear temp variables

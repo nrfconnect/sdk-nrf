@@ -7,12 +7,7 @@
 #include <soc.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
-#if USE_PARTITION_MANAGER
-#include <pm_config.h>
-#include <flash_map_pm.h>
-#else
 #include <zephyr/storage/flash_map.h>
-#endif
 #include <fw_info.h>
 #include <fprotect.h>
 #include <hal/nrf_clock.h>
@@ -23,12 +18,6 @@
 #include <hal/nrf_uarte.h>
 #include <hal/nrf_gpio.h>
 #endif
-#if USE_PARTITION_MANAGER
-#include <pm_config.h>
-/* Address of storage as seen in processor address space */
-#define BL_STORAGE_ADDRESS	PM_PROVISION_ADDRESS
-#define BL_STORAGE_SIZE		PM_PROVISION_SIZE
-#else
 /* Address of storage as seen in processor address space */
 #if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
 #define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
@@ -37,18 +26,9 @@
 #define BL_STORAGE_ADDRESS	PARTITION_ADDRESS(bl_storage)
 #define BL_STORAGE_SIZE		PARTITION_SIZE(bl_storage)
 #endif
-#endif
 
-#if USE_PARTITION_MANAGER
-#define RWX_PROTECTION_REGION	PM_B0_SIZE
-/* There is no skip with PM as we operate within image that does not
- * include MCUboot header.
- */
-#define RWX_SKIP_SIZE		0
-#else
 #define RWX_PROTECTION_REGION	PARTITION_SIZE(b0_partition)
 #define RWX_SKIP_SIZE		CONFIG_SB_DISABLE_SELF_RWX_SKIP_SIZE
-#endif
 
 #include <zephyr/linker/linker-defs.h>
 #define CLEANUP_RAM_GAP_START ((int)__ramfunc_region_start)
@@ -75,17 +55,10 @@
  * header is only used during DFU and is only left for compatibility. Without MCUBoot, the
  * header is not present.
  */
-#if USE_PARTITION_MANAGER
-#define S0_IMAGE_ADDRESS	(PM_S0_IMAGE_ADDRESS + RWX_SKIP_SIZE)
-#define S0_IMAGE_SIZE		(PM_S0_IMAGE_SIZE - RWX_SKIP_SIZE)
-#define S1_IMAGE_ADDRESS	(PM_S1_IMAGE_ADDRESS + RWX_SKIP_SIZE)
-#define S1_IMAGE_SIZE		(PM_S1_IMAGE_SIZE - RWX_SKIP_SIZE)
-#else
 #define S0_IMAGE_ADDRESS	(PARTITION_OFFSET(s0_partition) + RWX_SKIP_SIZE)
 #define S0_IMAGE_SIZE		(PARTITION_SIZE(s0_partition) - RWX_SKIP_SIZE)
 #define S1_IMAGE_ADDRESS	(PARTITION_OFFSET(s1_partition) + RWX_SKIP_SIZE)
 #define S1_IMAGE_SIZE		(PARTITION_SIZE(s1_partition) - RWX_SKIP_SIZE)
-#endif
 
 BUILD_ASSERT((S0_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
 	     "Start of S0 image region is not aligned - not possible to protect");

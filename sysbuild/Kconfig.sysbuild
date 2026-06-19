@@ -6,55 +6,6 @@
 
 # This file contains extra images which can be used with sysbuild based builds.
 
-menuconfig PARTITION_MANAGER
-	bool "Partition Manager [DEPRECATED]"
-	depends on SOC_SERIES_NRF52 || SOC_SERIES_NRF53 || SOC_SERIES_NRF91 || \
-		SOC_NRF54L05 || SOC_NRF54L10 || SOC_NRF54L15 || SOC_NRF54LM20A || \
-		SOC_NRF54LM20B_CPUAPP || SOC_NRF54LV10A || SOC_NRF54LS05B
-	depends on !EXTERNAL_CONFIGURED_NETCORE
-	select DEPRECATED
-
-if PARTITION_MANAGER
-
-config PM_MCUBOOT_PAD
-	hex "Memory reserved for MCUBOOT_PAD"
-	default 0x800 if SOC_SERIES_NRF54L
-	default 0x200
-	depends on BOOTLOADER_MCUBOOT
-	help
-	  MCUBOOT_PAD size in partition file.
-	  This value is default 0x200 but if using static partitions having a
-	  different padding size, then this value must be updated to correspond
-	  to the value in the static partition file.
-
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	bool "Place MCUboot secondary in external flash"
-	depends on BOOTLOADER_MCUBOOT
-	select MCUBOOT_NRF53_MULTI_IMAGE_UPDATE if NETCORE_APP_UPDATE
-	help
-	  Place the secondary partition of MCUboot in the external flash instead
-	  of the internal flash. This option should only be enabled by the user
-	  in sysbuild.
-
-config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
-	bool "Override external driver check"
-	help
-	  When enabled, will include all external flash stroage areas without
-	  being gated on the NORDIC_QSPI_NOR Kconfig, can be enabled to use
-	  non-QSPI external flash chips from partition manager.
-
-config PM_EXTERNAL_FLASH_LOGICAL_ADDR
-	hex "Logical address of external flash memory"
-	default 0x12000000 if SOC_SERIES_NRF52
-	default 0x10000000 if SOC_FAMILY_NORDIC_NRF
-	depends on PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	help
-	  Defines the logical address used by flashing tools and image merging
-	  utilities (for example, nrfutil, nrfjprog, or mergehex) to place data
-	  into external flash memory.
-
-endif # PARTITION_MANAGER
-
 config BUILD_OUTPUT_BIN
 	bool "Build a binary in BIN format"
 	default y

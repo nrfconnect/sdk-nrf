@@ -57,8 +57,6 @@ The |NCS| uses the same CMake build variables as Zephyr and they are compatible 
 
 For the complete list of build variables in Zephyr and more information about them, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
-.. include:: ../../../includes/pm_deprecation.txt
-
 The following table lists the most common ones used in the |NCS|:
 
 .. list-table:: Common build system variables in the |NCS|
@@ -101,10 +99,6 @@ The following table lists the most common ones used in the |NCS|:
      - Select one of the :ref:`zephyr:snippets` to add to the application firmware during the build.
      - | ``-S <name_of_snippet>`` (applies the snippet to all images)
        | ``-DSNIPPET=<name_of_snippet>`` (``-D<image_name>_SNIPPET=<name_of_snippet>`` for images)
-   * - :makevar:`PM_STATIC_YML_FILE`
-     - | Select a :ref:`static configuration file <ug_pm_static>` for the Partition Manager script.
-       | For applications that *do not* use multiple images, the static configuration can be selected with :makevar:`FILE_SUFFIX` (see above).
-     - ``-DPM_STATIC_YML_FILE=pm_static_<suffix>.yml``
 
 You can use these parameters in both |nRFVSC| and the command line.
 

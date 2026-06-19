@@ -13,9 +13,6 @@ The library wrapper is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib
 The library wrapper encapsulates the :c:func:`nrf_modem_init` and :c:func:`nrf_modem_shutdown` calls of the Modem library with :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` calls, respectively.
 The library wrapper eases the task of initializing the Modem library by automatically passing the size and address of all the shared memory regions of the Modem library to the :c:func:`nrf_modem_init` call.
 
-:ref:`partition_manager` is the component that reserves the RAM memory for the shared memory regions used by the Modem library.
-For more information, see :ref:`partition_mgr_integration`.
-
 The :kconfig:option:`CONFIG_NRF_MODEM_LIB_LOG_FW_VERSION_UUID` option can be enabled for printing logs of both FW version and UUID at the end of the library initialization step.
 
 When using the Modem library in |NCS|, the library must be initialized and shutdown using the :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` function calls, respectively.

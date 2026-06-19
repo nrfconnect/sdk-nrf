@@ -1,4 +1,0 @@
-config PARTITION_MANAGER
-	default y
-
-source "share/sysbuild/Kconfig"

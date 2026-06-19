@@ -20,10 +20,6 @@ config NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
 	default "cpunet" if (SOC_NRF5340_CPUAPP || BOARD_NRF5340BSIM_NRF5340_CPUAPP)
 	default "cpurad" if SOC_NRF54H20_CPUAPP
 
-config NETCORE_REMOTE_DOMAIN
-	string
-	default "CPUNET" if NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
-
 menu "Network core configuration"
 	depends on SUPPORT_NETCORE
 
@@ -150,10 +146,6 @@ config NETCORE_IMAGE_PATH
 	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/ipc_radio" if NETCORE_IPC_RADIO
 	help
 	  Source directory of netcore image.
-
-config NETCORE_IMAGE_DOMAIN
-	string
-	default NETCORE_REMOTE_DOMAIN
 
 config NETCORE_APP_UPDATE
 	bool "Network core updates"

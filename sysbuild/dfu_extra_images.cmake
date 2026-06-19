@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES AND NOT SB_CONFIG_PARTITION_MANAGER)
+if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES)
   include(image_flasher.cmake)
 
   foreach(i RANGE 1 ${SB_CONFIG_MCUBOOT_EXTRA_IMAGES})

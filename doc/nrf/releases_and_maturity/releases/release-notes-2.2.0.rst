@@ -883,7 +883,7 @@ Scripts
 
   * Updated the SPDX License List database to version 3.18.
 
-* :ref:`partition_manager`:
+* partition_manager:
 
   * Added:
 

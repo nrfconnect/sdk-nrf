@@ -1,6 +1,0 @@
-# Define used by partition_manager.py to deduce size of partition
-config PM_PARTITION_SIZE_$(partition)
-	hex "Memory reserved for $(partition)"
-	default $(partition-size)
-	help
-	  Memory set aside for the $(partition) partition.
