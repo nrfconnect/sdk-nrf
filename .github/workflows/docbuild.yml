@@ -104,7 +104,7 @@ jobs:
         run: |
           SPHINXOPTS_EXTRA="-q"
           if [[ "${{ github.event_name }}" == "push" ]]; then
-            BUILD_CONF="-DDTS_BINDINGS=ON -DHW_FEATURES=ON"
+            BUILD_CONF="-DDTS_BINDINGS=ON -DHW_FEATURES=ON -DKCONFIGDIFF=ON"
           fi
 
           # Enable the Kapa.ai widget for "latest" builds only (push to main)
