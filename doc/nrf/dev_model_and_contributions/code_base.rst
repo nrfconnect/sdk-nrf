@@ -156,16 +156,16 @@ All releases are accompanied by their respective :ref:`release_notes`.
 +================================+======================================================================================================================================+
 | ``MAJOR``                      | Introduces a large number of substantial changes across the board.                                                                   |
 |                                | Major version number is increased rarely.                                                                                            |
-|                                | Major releases are always accompanied by a :ref:`migration guide <migration_guides>`.                                                |
+|                                | Major releases are always accompanied by a :ref:`migration notes <migration_guides>`.                                                |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
 | ``MINOR``                      | Introduces one or more new functionalities.                                                                                          |
 |                                | Version number is increased every time a minor release is cut.                                                                       |
-|                                | Minor releases are the default types of an |NCS| release and usually are accompanied by a :ref:`migration guide <migration_guides>`. |
+|                                | Minor releases are the default types of an |NCS| release and usually are accompanied by a :ref:`migration notes <migration_guides>`. |
 |                                | The new functionalities may break existing APIs.                                                                                     |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
 | ``PATCH``                      | Introduces bug fixes or minor changes to the existing functionalities.                                                               |
 |                                | Patch releases only address functional issues and do not introduce new functionalities.                                              |
-|                                | Patch releases do not come with :ref:`migration guide <migration_guides>`.                                                           |
+|                                | Patch releases do not come with :ref:`migration notes <migration_guides>`.                                                           |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
 | ``MAJOR.MINOR.99``             | The ``99`` added at the end of the version number indicates that the version string is a point in between two releases.              |
 |                                | Such version does not belong to a release and corresponds to the current state of development.                                       |

@@ -710,7 +710,7 @@ Libraries for networking
   * A backend for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` that stores the credentials in the modem, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_NRF_MODEM`.
 
 * Deprecated the Download client library.
-  See the :ref:`migration guide <migration_3.0_recommended>` for recommended changes.
+  See the :ref:`migration notes <migration_3.0_recommended>` for recommended changes.
 
 * Updated the following libraries to use the :ref:`lib_downloader` library instead of the Download client library:
 

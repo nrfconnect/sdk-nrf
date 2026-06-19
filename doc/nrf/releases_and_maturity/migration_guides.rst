@@ -1,6 +1,6 @@
 .. _migration_guides:
 
-Migration guides
+Migration notes
 ################
 
 The |NCS| provides migration notes for all :ref:`major and minor releases <dm-revisions>` to assist user's transition from the previous release.
@@ -43,7 +43,7 @@ Migration notes are also provided for major functionality updates.
 .. toctree::
    :maxdepth: 1
    :glob:
-   :caption: General migration guides
+   :caption: General migration notes
 
    migration/migration_sysbuild
    migration/migration_partitions

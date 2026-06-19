@@ -24,7 +24,7 @@ This release introduces significant, potentially breaking, changes to the SDK:
 All samples and applications in the SDK have been migrated.
 Consult respective documentation as additional or changed parameters might be needed to build them successfully.
 Applications that are outside of the SDK and use custom-defined boards should not be affected by these changes.
-However, modifications might still be required as per the migration procedure described in `Migration guide for nRF Connect SDK v2.7.0`_.
+However, modifications might still be required as per the migration procedure described in `Migration notes for nRF Connect SDK v2.7.0`_.
 nRF Connect for VS Code users migrating to the latest version of the SDK might be affected.
 
 All samples and applications in the SDK are built with sysbuild by default.
@@ -149,7 +149,7 @@ For the list of issues valid for this release, navigate to `known issues page on
 Migration notes
 ***************
 
-See the `Migration guide for nRF Connect SDK v2.7.0`_ for the changes required or recommended when migrating your application from |NCS| v2.6.0 to |NCS| v2.7.0.
+See the `Migration notes for nRF Connect SDK v2.7.0`_ for the changes required or recommended when migrating your application from |NCS| v2.6.0 to |NCS| v2.7.0.
 
 .. _ncs_release_notes_270_changelog:
 
@@ -164,7 +164,7 @@ Build and configuration system
 * Added:
 
   * Documentation page about :ref:`companion components <companion_components>`, which are independent from the application and are included as separate firmware images.
-  * Documentation section about the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>` with related information in the :ref:`migration guide <migration_2.7_recommended>`.
+  * Documentation section about the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>` with related information in the :ref:`migration notes <migration_2.7_recommended>`.
   * Documentation section about :ref:`app_build_snippets`.
   * Documentation sections about :ref:`configuration_system_overview_sysbuild` and :ref:`sysbuild_enabled_ncs`.
 
@@ -307,7 +307,7 @@ Matter
 * Removed the :file:`Kconfig.mcuboot.defaults`, :file:`Kconfig.hci_ipc.defaults`, and :file:`Kconfig.multiprotocol_rpmsg.defaults` Kconfig files that stored the default configuration for the child images.
   This was done because of the :ref:`configuration_system_overview_sysbuild` integration and the child images deprecation.
   The configurations are now applied using the configuration files located in the sample's or application's directory.
-  For information on how to migrate an application from the previous to the current approach, see the :ref:`migration guide <migration_2.7>`.
+  For information on how to migrate an application from the previous to the current approach, see the :ref:`migration notes <migration_2.7>`.
 
 Matter fork
 +++++++++++

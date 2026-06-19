@@ -1,16 +1,13 @@
-.. _ncs_release_notes_changelog:
+.. _ncs_release_notes_350-preview1:
 
-Changelog for |NCS| v3.3.99
-###########################
+Changelog for |NCS| v3.5.0-preview1
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -47,10 +44,6 @@ Build and configuration system
 
 Bootloaders and DFU
 ===================
-
-* Added the hidden :kconfig:option:`CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256` to select HMAC-SHA256 with X25519 for compatibility with existing projects that use it.
-  The option is hidden and requires addition of Kconfig override in your project.
-  This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
 
 |no_changes_yet_note|
 
@@ -238,8 +231,7 @@ Thread
 Wi-Fi®
 ------
 
-* Updated the Connection Manager Wi-Fi connectivity layer to defer the connect request to its dedicated work queue (``wifi_conn_wq``) instead of running it synchronously in the context of the caller of :c:func:`conn_mgr_if_connect()`.
-  This allows the stacks of the application, shell, and Connection Manager monitor threads to be reduced, as they no longer need to accommodate the Wi-Fi connect call chain.
+|no_changes_yet_note|
 
 Applications
 ============
@@ -311,12 +303,7 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-* Updated Kconfig configuration fragment and devicetree overlay naming by removing the ``overlay-`` prefix for the following samples:
-
-  * :ref:`gnss_sample`
-  * :ref:`http_application_update_sample`
-  * :ref:`location_sample`
-  * :ref:`modem_shell_application`
+|no_changes_yet_note|
 
 Cryptography samples
 --------------------
@@ -337,6 +324,11 @@ DFU samples
 
 DECT NR+ samples
 ----------------
+
+|no_changes_yet_note|
+
+Edge Impulse samples
+--------------------
 
 |no_changes_yet_note|
 
@@ -437,9 +429,8 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
 * Added:
 
-  * The :ref:`ppi_seq` driver for triggering periodic hardware tasks using PPI.
+  * The :ref:`ppi_seq` library for triggering periodic hardware tasks using PPI.
   * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
-  * The :ref:`vtf_monitoring` for battery voltage, temperature, and frequency monitoring.
 
 SPI drivers
 -----------
@@ -589,7 +580,7 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* Added support for the nRF54LC10A SoC.
+|no_changes_yet_note|
 
 * The following non-PSA Crypto implementations were deprecated:
 
