@@ -1012,6 +1012,9 @@ static int handle_sensor_status(const struct bt_mesh_model *model, struct bt_mes
 		}
 
 		if (!type) {
+			if (len > buf->len) {
+				return -EINVAL;
+			}
 			net_buf_simple_pull(buf, len);
 			continue;
 		}

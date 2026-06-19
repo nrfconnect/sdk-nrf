@@ -162,7 +162,7 @@ static int handle_status(const struct bt_mesh_model *model, struct bt_mesh_msg_c
 			cli->cb->data(cli, ctx, type, value);
 		}
 
-		if (rsp && count <= rsp->count) {
+		if (rsp && count < rsp->count) {
 			memcpy(rsp->sensors[count].value, value,
 			       sizeof(struct bt_mesh_sensor_value) * type->channel_count);
 
