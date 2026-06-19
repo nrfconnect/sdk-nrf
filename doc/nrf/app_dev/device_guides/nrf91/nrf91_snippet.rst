@@ -32,13 +32,17 @@ On nRF91 Series devices, you can enable the following functionalities using snip
      - ``tfm-enable-share-uart``
      - :ref:`All nRF91 Series board targets <ug_nrf91>`
 
+You can only use the four trace snippets with applications that use the RAM layout defined in :file:`nrf/dts/samples/cellular/nrf91_sram_partitions.dtsi`.
+If you are using a different RAM layout, for example, to use more TF-M functionalities, you need to add the ``cpucell_cpuapp_ipc_shm_trace`` partition yourself and copy the configurations from the :file:`.conf` file in the snippet.
+See :ref:`devicetree_integration` for more information.
+
 .. _nrf91_modem_trace_ext_flash_snippet:
 
 nRF91 modem traces with flash backend using snippets
 ****************************************************
 
 The ``nrf91-modem-trace-ext-flash`` snippet enables modem tracing, the flash backend, and external flash and configures them to store modem traces to a dedicated partition on the external flash for supported boards.
-To change the partition size, the project needs to configure the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE` Kconfig option.
+If you want to use the external flash for other purposes, you need to define your own external flash partitions, including one named `modem_trace`.
 
 To enable modem traces with the flash backend, add the ``nrf91-modem-trace-ext-flash`` snippet to the :term:`build configuration`.
 You can do this in one of the following ways:
