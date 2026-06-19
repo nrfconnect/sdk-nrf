@@ -4,20 +4,59 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config REMOTE_BOARD
-	string "The board used for remote target"
-	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS
-	default "nrf7002dk/nrf5340/cpunet" if BOARD_NRF7002DK_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF5340_CPUAPP_NS
-	default "nrf54h20dk/nrf54h20/cpurad" if BOARD_NRF54H20DK_NRF54H20_CPUAPP
-	default "nrf54l15dk/nrf54l15/cpuflpr" if BOARD_NRF54L15DK_NRF54L15_CPUAPP
-	default "nrf54lm20dk/nrf54lm20a/cpuflpr" if BOARD_NRF54LM20DK_NRF54LM20A_CPUAPP
-	default "nrf54lm20dk/nrf54lm20b/cpuflpr" if BOARD_NRF54LM20DK_NRF54LM20B_CPUAPP
-	default "nrf54lv10dk/nrf54lv10a/cpuflpr" if BOARD_NRF54LV10DK_NRF54LV10A_CPUAPP
-	default "nrf54lc10dk/nrf54lc10a/cpuflpr" if BOARD_NRF54LC10DK_NRF54LC10A_CPUAPP
-	default "nrf7120dk/nrf7120/cpuflpr" if BOARD_NRF7120DK_NRF7120_CPUAPP
-	default "nrf9251dk/nrf9251/cpuppr" if BOARD_NRF9251DK_NRF9251_CPUAPP
+if SUPPORT_PPRCORE
 
-config PARTITION_MANAGER
-	default n
+choice PPRCORE
+	default PPRCORE_REMOTE if SOC_SERIES_NRF92
+	default PPRCORE_NONE
+
+config PPRCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config PPRCORE_IMAGE_NAME
+	default "remote" if PPRCORE_REMOTE
+
+config PPRCORE_IMAGE_PATH
+	default "${APP_DIR}/remote" if PPRCORE_REMOTE
+
+endif # SUPPORT_PPRCORE
+
+if SUPPORT_NETCORE
+
+choice NETCORE
+	default NETCORE_REMOTE
+
+config NETCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "remote" if NETCORE_REMOTE
+
+config NETCORE_IMAGE_PATH
+	default "${APP_DIR}/remote" if NETCORE_REMOTE
+
+endif # SUPPORT_NETCORE
+
+if SUPPORT_FLPRCORE && !SOC_SERIES_NRF92 && !SUPPORT_PPRCORE
+
+choice FLPRCORE
+	default FLPRCORE_REMOTE
+
+config FLPRCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config FLPRCORE_IMAGE_NAME
+	default "remote" if FLPRCORE_REMOTE
+
+config FLPRCORE_IMAGE_PATH
+	default "${APP_DIR}/remote" if FLPRCORE_REMOTE
+
+endif # SUPPORT_FLPRCORE && !SOC_SERIES_NRF92 && !SUPPORT_PPRCORE
 
 source "share/sysbuild/Kconfig"

@@ -2,9 +2,6 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-config PARTITION_MANAGER
-	default n
-
 config REMOTE_BOARD
 	string "Remote board"
 	default "$(BOARD)/nrf9251/cpuppr" if SOC_NRF9251_CPUAPP

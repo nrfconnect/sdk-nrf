@@ -876,7 +876,7 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* :ref:`partition_manager`:
+* partition_manager:
 
   * Fixed an issue that prevents an empty gap after a static partition for a region with the ``START_TO_END`` strategy.
 

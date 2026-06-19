@@ -13,12 +13,7 @@ function(b0_gen_keys)
 
   set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem)
   set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem PARENT_SCOPE)
-
-  if(CONFIG_PARTITION_MANAGER_ENABLED)
-    set(skip_size 0)
-  else()
-    set(skip_size ${CONFIG_SB_IMAGE_BOOT_OFFSET})
-  endif()
+  set(skip_size ${CONFIG_SB_IMAGE_BOOT_OFFSET})
 
   if(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ED25519)
     set(keygen_algorithm --algorithm ed25519)
@@ -74,19 +69,11 @@ function(b0_gen_keys)
   endif()
 
   # Public key file target is required for all signing options
-  if(SB_CONFIG_PARTITION_MANAGER)
-    add_custom_target(
-      signature_public_key_file_target
-      DEPENDS
-        ${SIGNATURE_PUBLIC_KEY_FILE}
-    )
-  else()
-    add_custom_target(
-      signature_public_key_file_target
-      DEPENDS
-        ${SIGNATURE_PUBLIC_KEY_FILE}
-    )
-  endif()
+  add_custom_target(
+    signature_public_key_file_target
+    DEPENDS
+      ${SIGNATURE_PUBLIC_KEY_FILE}
+  )
 endfunction()
 
 function(b0_sign_image slot cpunet_target)
@@ -100,9 +87,7 @@ function(b0_sign_image slot cpunet_target)
   sysbuild_get(${slot}_fw_info_magic_common IMAGE ${slot} VAR CONFIG_FW_INFO_MAGIC_COMMON KCONFIG)
   sysbuild_get(${slot}_sb_validation_info_magic IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_MAGIC KCONFIG)
 
-  if(SB_CONFIG_PARTITION_MANAGER)
-    set(skip_size 0)
-  elseif(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
+  if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
     set(skip_size 0)
   elseif(cpunet_target)
     set(skip_size 0)
@@ -272,20 +257,12 @@ function(b0_sign_image slot cpunet_target)
       )
   endif()
 
-  if(SB_CONFIG_PARTITION_MANAGER)
-    add_custom_target(
-      ${slot}_signature_file_target
-      DEPENDS
-      ${signature_file}
-    )
-  else()
-    add_custom_target(
-      ${slot}_signature_file_target
-      ALL
-      DEPENDS
-      ${signature_file}
-    )
-  endif()
+  add_custom_target(
+    ${slot}_signature_file_target
+    ALL
+    DEPENDS
+    ${signature_file}
+  )
 
   if(SB_CONFIG_MERGED_HEX_FILES)
     set(board_target)
@@ -335,24 +312,14 @@ function(b0_sign_image slot cpunet_target)
     USES_TERMINAL
     )
 
-  if(SB_CONFIG_PARTITION_MANAGER)
-    add_custom_target(
-      ${slot}_signed_kernel_hex_target
-      DEPENDS
+  add_custom_target(
+    ${slot}_signed_kernel_hex_target
+    ALL
+    DEPENDS
       ${signed_hex}
       ${slot}_signature_file_target
       signature_public_key_file_target
-    )
-  else()
-    add_custom_target(
-      ${slot}_signed_kernel_hex_target
-      ALL
-      DEPENDS
-        ${signed_hex}
-        ${slot}_signature_file_target
-        signature_public_key_file_target
-    )
-  endif()
+  )
 
   if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT OR cpunet_target)
     # Set hex file and target for the ${slot) (s0/s1) container partition.

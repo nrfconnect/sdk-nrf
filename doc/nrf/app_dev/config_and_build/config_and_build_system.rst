@@ -130,27 +130,6 @@ You can also select the Kconfig options and files when :ref:`cmake_options`.
 
 The :ref:`Kconfig Reference <configuration_options>` provides the documentation for each configuration option in the |NCS|.
 
-Memory layout configuration
----------------------------
-
-.. include:: ../../includes/pm_deprecation.txt
-
-The memory layout configuration is provided by the :ref:`partition_manager` script, specific to the |NCS|.
-
-The script must be enabled to provide the memory layout configuration.
-It is impacted by various elements, such as Kconfig configuration options or the presence of other images.
-Partition Manager ensures that all required partitions are in the correct place and have the correct size.
-
-If enabled, the memory layout can be controlled in the following ways:
-
-* Dynamically (default) - In this scenario, the layout is impacted by various elements, such as Kconfig configuration options or the presence of other images.
-  Partition Manager ensures that all required partitions are in the correct place and have the correct size.
-* Statically - In this scenario, you need to provide the static configuration.
-  See :ref:`ug_pm_static` for information about how to do this.
-
-After CMake has run, a :file:`partitions.yml` file with the memory layout will have been created in the :file:`build` directory.
-This process also creates a set of header files that provides defines, which can be used to refer to memory layout elements.
-
 .. _app_build_file_suffixes:
 
 Custom configurations

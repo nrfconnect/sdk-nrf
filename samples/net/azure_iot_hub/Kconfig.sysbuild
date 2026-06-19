@@ -14,7 +14,4 @@ config WIFI_NRF70
 		BOARD_NRF54LM20DK_NRF54LM20A_CPUAPP_NS || \
 		BOARD_NRF54LM20DK_NRF54LM20B_CPUAPP_NS
 
-config PARTITION_MANAGER
-	default n
-
 source "share/sysbuild/Kconfig"

@@ -1,13 +1,49 @@
 #
-# Copyright (c) 2023 Nordic Semiconductor ASA
+# Copyright (c) 2024 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config REMOTE_BOARD
-	string "The board used for remote target"
+if SUPPORT_PPRCORE
 
-config PARTITION_MANAGER
-	default n
+choice PPRCORE
+	default PPRCORE_NONE
+
+config PPRCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config PPRCORE_XIP_VARIANT
+	bool "pprcore XIP board variant"
+
+config PPRCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
+	default "cpuppr/xip" if PPRCORE_XIP_VARIANT
+
+config PPRCORE_IMAGE_NAME
+	default "remote" if PPRCORE_REMOTE
+
+config PPRCORE_IMAGE_PATH
+	default "${APP_DIR}/remote" if PPRCORE_REMOTE
+
+endif # SUPPORT_PPRCORE
+
+if SUPPORT_NETCORE
+
+choice NETCORE
+	default NETCORE_NONE
+
+config NETCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "remote" if NETCORE_REMOTE
+
+config NETCORE_IMAGE_PATH
+	default "${APP_DIR}/remote" if NETCORE_REMOTE
+
+endif # SUPPORT_NETCORE
 
 source "share/sysbuild/Kconfig"
