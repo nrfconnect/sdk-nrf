@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * The Bluetooth Mesh DFU distributor uses MCUboot with two image slots so it
+ * can receive and store a new firmware image before swapping. The default
+ * nRF7120 image slots (1440K each) are too large to leave room for both slots
+ * plus the settings storage, so the layout is redefined with smaller MCUboot
+ * and image-slot partitions. The Wi-Fi LMAC/UMAC ROM-patch partitions
+ * (0x2e0000 / 0x2f0000) and the "storage" partition (36K at the end of MRAM)
+ * keep their default board addresses.
+ */
+&cpuapp_mram {
+	/delete-node/ partitions;
+
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(56)>;
+		};
+
+		slot0_partition: partition@e000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0xe000 DT_SIZE_K(924)>;
+		};
+
+		slot1_partition: partition@f5000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0xf5000 DT_SIZE_K(924)>;
+		};
+
+		wifi_lmac_patch_partition: partition@2e0000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x2e0000 DT_SIZE_K(4)>;
+		};
+
+		wifi_umac_patch_partition: partition@2f0000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x2f0000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@300000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x300000 DT_SIZE_K(36)>;
+		};
+	};
+};

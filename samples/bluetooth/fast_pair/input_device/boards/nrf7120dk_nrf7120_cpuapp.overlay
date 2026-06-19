@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Google Fast Pair needs a dedicated bt_fast_pair_partition to hold the
+ * provisioned Model ID and Anti-Spoofing private key. The default nRF7120
+ * memory map (zephyr/dts/vendor/nordic/nrf7120_cpuapp_partition.dtsi) does not
+ * define such a partition, so the layout has to be redefined here.
+ *
+ * This sample is built without MCUboot, so there is a single application image
+ * (no boot/slot1 partitions). Only the application image and the Fast Pair
+ * partition are added; the Wi-Fi LMAC/UMAC ROM-patch partitions (0x2e0000 /
+ * 0x2f0000) and the "storage" partition (36K at the end of MRAM) keep their
+ * default board addresses.
+ */
+&cpuapp_mram {
+	/delete-node/ partitions;
+
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x0 DT_SIZE_K(2940)>;
+		};
+
+		bt_fast_pair_partition: partition@2df000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x2df000 DT_SIZE_K(4)>;
+		};
+
+		wifi_lmac_patch_partition: partition@2e0000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x2e0000 DT_SIZE_K(4)>;
+		};
+
+		wifi_umac_patch_partition: partition@2f0000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x2f0000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@300000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x300000 DT_SIZE_K(36)>;
+		};
+	};
+};
