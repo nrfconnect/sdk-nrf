@@ -68,6 +68,7 @@ If you want to go through a hands-on online training to familiarize yourself wit
 
    nrf91_features
    nrf91_board_controllers
+   nrf91_dt_partitions
    nrf91_cloud_connecting
    nrf91_dk_updating_fw_programmer
    nrf91_building
