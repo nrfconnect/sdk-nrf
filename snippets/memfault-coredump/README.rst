@@ -33,7 +33,5 @@ For other boards, add a ``zephyr,mapped-partition`` node under the internal flas
 Notes
 *****
 
-Set the :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` Kconfig option to ``n`` (for example, using a ``Kconfig.sysbuild`` fragment in your application) to disable Partition Manager.
-
 The nRF91 ``ns`` overlays redefine the full flash and modem-shared SRAM layout because disabling Partition Manager removes the TF-M and modem partition generation that the |NCS| would otherwise generate.
 The layouts mirror those used by the :ref:`at_client_sample` sample.

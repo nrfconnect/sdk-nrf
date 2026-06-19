@@ -73,42 +73,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 	  !IS_ENABLED(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)) || \
 	 IS_ENABLED(CONFIG_SECURE_BOOT))
 
-#if CONFIG_PARTITION_MANAGER_ENABLED
-	#include <pm_config.h>
-
-	#if CONFIG_SECURE_BOOT
-		#define CODE_PARTITION_ADDR       PM_ADDRESS
-		#define SLOT_0_ADDR               PM_S0_IMAGE_ADDRESS
-		#define SLOT_1_ADDR               PM_S1_IMAGE_ADDRESS
-		#define SLOT_0_END                (PM_S0_IMAGE_ADDRESS + PM_S0_IMAGE_SIZE)
-		#define SLOT_1_END                (PM_S1_IMAGE_ADDRESS + PM_S1_IMAGE_SIZE)
-		#define SLOT_0_ID                 PM_S0_IMAGE_ID
-		#define SLOT_1_ID                 PM_S1_IMAGE_ID
-	#elif CONFIG_BOOTLOADER_MCUBOOT
-		#ifdef PM_MCUBOOT_SECONDARY_PAD_SIZE
-			BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
-		#endif
-
-		#if CONFIG_BUILD_WITH_TFM
-			#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE + PM_TFM_SIZE)
-		#else
-			#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE)
-		#endif
-
-		#define CODE_PARTITION_ADDR       (PM_ADDRESS - PM_ADDRESS_OFFSET)
-		#define SLOT_0_ADDR               PM_MCUBOOT_PRIMARY_ADDRESS
-		#define SLOT_1_ADDR               PM_MCUBOOT_SECONDARY_ADDRESS
-		#define SLOT_0_END                (PM_MCUBOOT_PRIMARY_ADDRESS + \
-						   PM_MCUBOOT_PRIMARY_SIZE)
-		#define SLOT_1_END                (PM_MCUBOOT_SECONDARY_ADDRESS + \
-						   PM_MCUBOOT_SECONDARY_SIZE)
-		#define SLOT_0_ID                 PM_MCUBOOT_PRIMARY_ID
-		#define SLOT_1_ID                 PM_MCUBOOT_SECONDARY_ID
-	#else
-		#error Bootloader not supported.
-	#endif
-
-#elif CONFIG_USE_DT_CODE_PARTITION
 	BUILD_ASSERT(DT_HAS_CHOSEN(zephyr_code_partition),
 		     "Missing 'zephyr,code-partition' in /chosen.");
 
@@ -142,10 +106,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 	#define SLOT_0_ID                DT_PARTITION_ID(SLOT_0_NODE)
 	#define SLOT_1_ID                DT_PARTITION_ID(SLOT_1_NODE)
 
-#else
-	#error Unsupported partitioning scheme.
-#endif
-
 #if CONFIG_SECURE_BOOT
 	#include <fw_info.h>
 	#define BOOTLOADER_NAME "B0"
@@ -158,8 +118,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 	#endif
 	#if CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD
 		/* The RAM load requires the code partition to be defined in DTS. */
-		BUILD_ASSERT(!IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED) &&
-			     IS_ENABLED(CONFIG_USE_DT_CODE_PARTITION));
+		BUILD_ASSERT(IS_ENABLED(CONFIG_USE_DT_CODE_PARTITION));
 	#endif
 #else
 	#error Bootloader not supported.

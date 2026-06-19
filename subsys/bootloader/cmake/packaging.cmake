@@ -63,10 +63,9 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   endif()
 
   if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT)
-    b0_image_name(s1_image_name)
     list(APPEND dfu_multi_image_ids -2 -1)
-    list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_mcuboot.bin" "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${s1_image_name}.bin")
-    list(APPEND dfu_multi_image_targets mcuboot_extra_byproducts mcuboot_signed_kernel_hex_target ${s1_image_name}_extra_byproducts ${s1_image_name}_signed_kernel_hex_target mcuboot_signed_packaged_target ${s1_image_name}_signed_packaged_target)
+    list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_mcuboot.bin" "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_mcuboot_s1_variant.bin")
+    list(APPEND dfu_multi_image_targets mcuboot_extra_byproducts mcuboot_signed_kernel_hex_target mcuboot_s1_variant_extra_byproducts mcuboot_s1_variant_signed_kernel_hex_target mcuboot_signed_packaged_target mcuboot_s1_variant_signed_packaged_target)
   endif()
 
   if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES)

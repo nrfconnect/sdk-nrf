@@ -257,24 +257,6 @@ See the board overlay examples in the :ref:`fast_pair_input_device` and :ref:`fa
 .. note::
    The Fast Pair partition can be provisioned by the build system only if it is defined in the DTS configuration of the main (default) application image.
 
-Partition Manager (PM) (deprecated)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. include:: /includes/pm_deprecation.txt
-
-For devices that support :ref:`partition_manager`, the system also automatically creates the ``bt_fast_pair`` partition.
-The partition is defined in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file.
-
-.. note::
-   The dynamic generation of the ``bt_fast_pair`` partition definition is only supported if you enable the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in your application image.
-
-Alternatively, you can define the Fast Pair partition manually in the application's static Partition Manager configuration file.
-See the board examples in the :file:`tests/subsys/bluetooth/fast_pair/locator_tag_legacy/configuration` directory, which is a part of the test project for the deprecated (legacy) version of the :ref:`fast_pair_locator_tag` project.
-For more information about defining Partition Manager partitions, see the :ref:`Configuration <pm_configuration>` section of the :ref:`partition_manager` page.
-
-.. note::
-   The Fast Pair partition can be provisioned by the build system only if it is defined in the main (default) application domain.
-
 Sysbuild Kconfig configuration and provisioning data generation
 ---------------------------------------------------------------
 

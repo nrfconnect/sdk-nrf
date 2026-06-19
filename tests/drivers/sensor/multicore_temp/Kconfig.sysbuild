@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PARTITION_MANAGER
-	default n if !BOARD_IS_NON_SECURE
-
 config REMOTE_BOARD
 	string "The board used for remote target"
 

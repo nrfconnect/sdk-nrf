@@ -250,7 +250,7 @@ Documentation
 
   * nRF BLE Controller (experimental)
   * Multi-image build
-  * :ref:`partition_manager`
+  * partition_manager
   * :ref:`nrf_desktop`
   * :ref:`shell_bt_nus_readme`
 

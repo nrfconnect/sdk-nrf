@@ -72,8 +72,11 @@ function(provision application prefix_name)
 
     b0_sign_image(${application} ${cpunet_target})
     if(NOT cpunet_target AND SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-      b0_image_name(s1_image_name)
-      b0_sign_image(${s1_image_name} n)
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        b0_sign_image(mcuboot_s1_variant n)
+      else()
+        b0_sign_image(${DEFAULT_IMAGE}_s1_variant n)
+      endif()
     endif()
   endif()
 
@@ -87,23 +90,11 @@ function(provision application prefix_name)
 
   set(provision_address)
   set(provision_size)
-  if(SB_CONFIG_PARTITION_MANAGER)
-    set(provision_size ${CONFIG_PM_PARTITION_SIZE_PROVISION})
-    if(cpunet_target)
-      set(partition_manager_target partition_manager_CPUNET)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
-      set(s1_arg)
-    else()
-      set(partition_manager_target partition_manager)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
-      set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
-    endif()
 
-    if(CONFIG_SECURE_BOOT)
-      set(provision_address $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>)
-    else(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-      set(provision_address $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>)
-    endif()
+  if(cpunet_target)
+    dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET b0n ABSOLUTE REQUIRED)
+    set(s0_arg --s0-addr ${s0_slot_address})
+    set(s1_arg)
   else()
     if(CONFIG_SECURE_BOOT)
       if(cpunet_target)
@@ -137,6 +128,28 @@ function(provision application prefix_name)
 
     dt_reg_size(provision_size PATH "${bl_storage_path}" TARGET ${bl_storage_target})
   endif()
+
+  if(CONFIG_SECURE_BOOT)
+    if(cpunet_target)
+      # B0 is secure bootloader and we pick the address from its configuration.
+      set(bl_storage_target b0n)
+    else()
+      set(bl_storage_target b0)
+    endif()
+  else(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+    # This is MCUboot downgrade prevention, so we pick the address from MCUboot config.
+    set(bl_storage_target mcuboot)
+  endif()
+
+  dt_nodelabel(bl_storage_path NODELABEL bl_storage REQUIRED TARGET ${bl_storage_target})
+
+  if(${bl_storage_path} MATCHES /uicr)
+    dt_reg_addr(provision_address PATH "${bl_storage_path}" TARGET ${bl_storage_target})
+  else()
+    dt_partition_addr(provision_address PATH "${bl_storage_path}" TARGET ${bl_storage_target} ABSOLUTE REQUIRED)
+  endif()
+
+  dt_reg_size(provision_size PATH "${bl_storage_path}" TARGET ${bl_storage_target})
 
   if(CONFIG_SECURE_BOOT)
     add_custom_command(
@@ -190,55 +203,25 @@ function(provision application prefix_name)
     )
   endif()
 
-  if(SB_CONFIG_PARTITION_MANAGER)
-    add_custom_target(
-      ${prefix_name}provision_target
-      DEPENDS
-      ${PROVISION_HEX}
-      ${PROVISION_DEPENDS}
-    )
+  add_custom_target(
+    ${prefix_name}provision_target
+    ALL
+    DEPENDS
+    ${PROVISION_HEX}
+  )
 
-    get_property(
-      ${prefix_name}provision_set
-      GLOBAL PROPERTY ${prefix_name}provision_PM_HEX_FILE SET
-    )
-
-    if(NOT ${prefix_name}provision_set)
-      # Set hex file and target for the 'provision' placeholder partition.
-      # This includes the hex file (and its corresponding target) to the build.
-      set_property(
-        GLOBAL PROPERTY
-        ${prefix_name}provision_PM_HEX_FILE
-        ${PROVISION_HEX}
-      )
-
-      set_property(
-        GLOBAL PROPERTY
-        ${prefix_name}provision_PM_TARGET
-        ${prefix_name}provision_target
-      )
+  if(SB_CONFIG_MERGED_HEX_FILES)
+    if(cpunet_target)
+      sysbuild_get(board_target IMAGE b0n VAR CONFIG_BOARD_TARGET KCONFIG)
+    else()
+      sysbuild_get(board_target IMAGE b0 VAR CONFIG_BOARD_TARGET KCONFIG)
     endif()
-  else()
-    add_custom_target(
-      ${prefix_name}provision_target
-      ALL
-      DEPENDS
-      ${PROVISION_HEX}
+
+    string(REPLACE "/" "_" board_target ${board_target})
+    string(REPLACE "@" "_" board_target ${board_target})
+    set_property(GLOBAL APPEND
+      PROPERTY sysbuild_merged_hex_dependencies_${board_target} ${prefix_name}provision_target
     )
-
-    if(SB_CONFIG_MERGED_HEX_FILES)
-      if(cpunet_target)
-        sysbuild_get(board_target IMAGE b0n VAR CONFIG_BOARD_TARGET KCONFIG)
-      else()
-        sysbuild_get(board_target IMAGE b0 VAR CONFIG_BOARD_TARGET KCONFIG)
-      endif()
-
-      string(REPLACE "/" "_" board_target ${board_target})
-      string(REPLACE "@" "_" board_target ${board_target})
-      set_property(GLOBAL APPEND
-        PROPERTY sysbuild_merged_hex_dependencies_${board_target} ${prefix_name}provision_target
-      )
-    endif()
   endif()
 endfunction()
 
@@ -267,35 +250,33 @@ if(SB_CONFIG_SECURE_BOOT_NETCORE)
 
   provision("${main_app}" "net_")
 
-  if(NOT SB_CONFIG_PARTITION_MANAGER)
-    # b0n and provision data need to be merged into a single hex to allow for it to be flashed
-    # without one erasing the other, due to provision data being placed part the way in the b0n's
-    # sector which would result in erasing existing data with separate hex files
-    sysbuild_get(b0n_kernel_bin_name IMAGE b0n VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+  # b0n and provision data need to be merged into a single hex to allow for it to be flashed
+  # without one erasing the other, due to provision data being placed part the way in the b0n's
+  # sector which would result in erasing existing data with separate hex files
+  sysbuild_get(b0n_kernel_bin_name IMAGE b0n VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
 
-    add_custom_command(
-      OUTPUT
-        ${APPLICATION_BINARY_DIR}/b0n_provision_merged.hex
-      COMMAND
-        ${PYTHON_EXECUTABLE}
-        ${ZEPHYR_BASE}/scripts/build/mergehex.py
-        -o ${APPLICATION_BINARY_DIR}/b0n_provision_merged.hex
-        ${CMAKE_BINARY_DIR}/net_provision.hex
-        ${CMAKE_BINARY_DIR}/b0n/zephyr/${b0n_kernel_bin_name}.hex
-      DEPENDS
-        b0n_extra_byproducts
-        ${CMAKE_BINARY_DIR}/b0n/zephyr/${b0n_kernel_bin_name}.hex
-        net_provision_target
-        ${CMAKE_BINARY_DIR}/net_provision.hex
-      WORKING_DIRECTORY
-        ${APPLICATION_BINARY_DIR}
-    )
+  add_custom_command(
+    OUTPUT
+      ${APPLICATION_BINARY_DIR}/b0n_provision_merged.hex
+    COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_BASE}/scripts/build/mergehex.py
+      -o ${APPLICATION_BINARY_DIR}/b0n_provision_merged.hex
+      ${CMAKE_BINARY_DIR}/net_provision.hex
+      ${CMAKE_BINARY_DIR}/b0n/zephyr/${b0n_kernel_bin_name}.hex
+    DEPENDS
+      b0n_extra_byproducts
+      ${CMAKE_BINARY_DIR}/b0n/zephyr/${b0n_kernel_bin_name}.hex
+      net_provision_target
+      ${CMAKE_BINARY_DIR}/net_provision.hex
+    WORKING_DIRECTORY
+      ${APPLICATION_BINARY_DIR}
+  )
 
-    add_custom_target(
-      ${slot}_combined_app_provision_hex_target
-      ALL
-      DEPENDS
-        ${APPLICATION_BINARY_DIR}/b0n_provision_merged.hex
-    )
-  endif()
+  add_custom_target(
+    ${slot}_combined_app_provision_hex_target
+    ALL
+    DEPENDS
+      ${APPLICATION_BINARY_DIR}/b0n_provision_merged.hex
+  )
 endif()

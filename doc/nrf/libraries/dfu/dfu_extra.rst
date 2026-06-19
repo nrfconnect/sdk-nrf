@@ -45,13 +45,11 @@ Add extra binaries in your application's :file:`sysbuild.cmake` file:
 
       # Add extra binary to DFU packages
       dfu_extra_add_binary(
-          BINARY_PATH ${ext_fw}
-          NAME "ext_fw"
-          DEPENDS ext_fw_target
+        BINARY_PATH ${ext_fw}
+        NAME "ext_fw"
+        DEPENDS ext_fw_target
        )
    endif()
-
-.. include:: ../../includes/pm_deprecation.txt
 
 If an additional binary needs to be handled by MCUboot as updatable slots, adjust the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option, and make sure MCUboot partitions are defined correctly.
 

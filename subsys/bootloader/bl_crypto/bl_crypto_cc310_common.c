@@ -10,9 +10,6 @@
 #include <zephyr/toolchain.h>
 #include <nrfx.h>
 #include <nrf_cc310_bl_init.h>
-#if USE_PARTITION_MANAGER
-#include <pm_config.h>
-#endif
 
 #ifdef CONFIG_SOC_SERIES_NRF91
 #define NRF_CRYPTOCELL NRF_CRYPTOCELL_S

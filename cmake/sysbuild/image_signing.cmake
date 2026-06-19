@@ -69,99 +69,80 @@ function(zephyr_mcuboot_tasks)
     message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
   endif()
 
-  if(CONFIG_PARTITION_MANAGER_ENABLED)
-    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
-      # XIP image, need to use the fixed address for this slot
-      if(CONFIG_NCS_IS_VARIANT_IMAGE)
-        set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
-      else()
-        set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
-      endif()
-    endif()
+  set(imgtool_rom_command)
+  if(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY)
+    # Use overwrite-only instead of swap upgrades.
+    set(imgtool_rom_command --overwrite-only --align 1)
+  elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
+         CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+    # RAM load requires setting the location of where to load the image to
+    dt_chosen(chosen_ram PROPERTY "zephyr,sram")
+    dt_reg_addr(chosen_ram_address PATH ${chosen_ram})
+    dt_nodelabel(slot0_partition NODELABEL "slot0_partition" REQUIRED)
+    dt_reg_addr(slot0_partition_address PATH ${slot0_partition})
+    dt_nodelabel(slot1_partition NODELABEL "slot1_partition" REQUIRED)
+    dt_reg_addr(slot1_partition_address PATH ${slot1_partition})
 
-    # Split fields, imgtool_sign_sysbuild is stored in cache which will have fields updated by
-    # sysbuild, imgtool_sign must not be stored in cache because it would then prevent those fields
-    # from being updated without a pristine build
-    # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
-    # invalid if a static PM file is updated without pristine build
-    set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
-    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
-  else()
-    set(imgtool_rom_command)
-    if(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY)
-      # Use overwrite-only instead of swap upgrades.
-      set(imgtool_rom_command --overwrite-only --align 1)
-    elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
-           CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
-      # RAM load requires setting the location of where to load the image to
+    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)
+      set(imgtool_rom_command --align 1 --load-addr ${chosen_ram_address})
+    else() # CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT
+      set(imgtool_rom_command --align ${write_block_size} --load-addr ${chosen_ram_address})
+    endif()
+    set(imgtool_rom_command ${imgtool_rom_command} --hex-addr ${slot0_partition_address})
+    set(imgtool_rom_alt_slot_command ${imgtool_rom_command} --hex-addr ${slot1_partition_address})
+  elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_SINGLE_APP_RAM_LOAD)
+    dt_chosen(ram_load_dev PROPERTY "mcuboot,ram-load-dev")
+    if(DEFINED ram_load_dev)
+      dt_reg_addr(load_address PATH ${ram_load_dev})
+    else()
       dt_chosen(chosen_ram PROPERTY "zephyr,sram")
-      dt_reg_addr(chosen_ram_address PATH ${chosen_ram})
-      dt_nodelabel(slot0_partition NODELABEL "slot0_partition" REQUIRED)
-      dt_reg_addr(slot0_partition_address PATH ${slot0_partition})
-      dt_nodelabel(slot1_partition NODELABEL "slot1_partition" REQUIRED)
-      dt_reg_addr(slot1_partition_address PATH ${slot1_partition})
-
-      if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)
-        set(imgtool_rom_command --align 1 --load-addr ${chosen_ram_address})
-      else() # CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT
-        set(imgtool_rom_command --align ${write_block_size} --load-addr ${chosen_ram_address})
-      endif()
-      set(imgtool_rom_command ${imgtool_rom_command} --hex-addr ${slot0_partition_address})
-      set(imgtool_rom_alt_slot_command ${imgtool_rom_command} --hex-addr ${slot1_partition_address})
-    elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_SINGLE_APP_RAM_LOAD)
-      dt_chosen(ram_load_dev PROPERTY "mcuboot,ram-load-dev")
-      if(DEFINED ram_load_dev)
-        dt_reg_addr(load_address PATH ${ram_load_dev})
-      else()
-        dt_chosen(chosen_ram PROPERTY "zephyr,sram")
-        dt_reg_addr(load_address PATH ${chosen_ram})
-      endif()
-      set(imgtool_rom_command --align 1 --load-addr ${load_address})
-    elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR
-           CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
-      dt_chosen(code_partition PROPERTY "zephyr,code-partition")
-      dt_partition_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
-      dt_reg_size(slot_size PATH "${code_partition}" REQUIRED)
-      set(imgtool_rom_command --rom-fixed ${code_partition_offset} --align ${write_block_size})
-    else()
-      set(imgtool_rom_command --align ${write_block_size})
+      dt_reg_addr(load_address PATH ${chosen_ram})
     endif()
+    set(imgtool_rom_command --align 1 --load-addr ${load_address})
+  elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR
+         CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
+    dt_chosen(code_partition PROPERTY "zephyr,code-partition")
+    dt_partition_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
+    dt_reg_size(slot_size PATH "${code_partition}" REQUIRED)
+    set(imgtool_rom_command --rom-fixed ${code_partition_offset} --align ${write_block_size})
+  else()
+    set(imgtool_rom_command --align ${write_block_size})
+  endif()
 
-    # Set ih_load_addr to the code partition address using --rom-fixed.
-    # This allows MCUboot to match an update candidate to the primary slot when the
-    # secondary slot is shared, including for encrypted images.
-    if(CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS)
-      dt_chosen(code_partition PROPERTY "zephyr,code-partition")
-      dt_partition_addr(code_partition_address PATH "${code_partition}" ABSOLUTE REQUIRED)
-      set(imgtool_rom_command ${imgtool_rom_command} --rom-fixed ${code_partition_address})
-    endif()
+  # Set ih_load_addr to the code partition address using --rom-fixed.
+  # This allows MCUboot to match an update candidate to the primary slot when the
+  # secondary slot is shared, including for encrypted images.
+  if(CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS)
+    dt_chosen(code_partition PROPERTY "zephyr,code-partition")
+    dt_partition_addr(code_partition_address PATH "${code_partition}" ABSOLUTE REQUIRED)
+    set(imgtool_rom_command ${imgtool_rom_command} --rom-fixed ${code_partition_address})
+  endif()
 
-    # TF-M combined images need --pad-header because the MCUboot header gap is
-    # at the combined slot start (in tfm_s.hex), not at the NS partition start.
-    set(imgtool_pad_header_arg)
-    if(CONFIG_BUILD_WITH_TFM)
-      set(imgtool_pad_header_arg --pad-header)
-    endif()
+  # TF-M combined images need --pad-header because the MCUboot header gap is
+  # at the combined slot start (in tfm_s.hex), not at the NS partition start.
+  set(imgtool_pad_header_arg)
+  if(CONFIG_BUILD_WITH_TFM)
+    set(imgtool_pad_header_arg --pad-header)
+  endif()
 
-    # For TF-M builds the MCUboot header lives at the start of the combined slot
-    # (slot0_s_partition). Use TFM_MCUBOOT_HEADER_SIZE so the correct 0x200 value
-    # is used even when ROM_START_OFFSET is 0 for TF-M NS builds.
-    if(CONFIG_BUILD_WITH_TFM)
-      set(imgtool_header_size ${CONFIG_TFM_MCUBOOT_HEADER_SIZE})
-    else()
-      set(imgtool_header_size ${CONFIG_ROM_START_OFFSET})
-    endif()
-    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
+  # For TF-M builds the MCUboot header lives at the start of the combined slot
+  # (slot0_s_partition). Use TFM_MCUBOOT_HEADER_SIZE so the correct 0x200 value
+  # is used even when ROM_START_OFFSET is 0 for TF-M NS builds.
+  if(CONFIG_BUILD_WITH_TFM)
+    set(imgtool_header_size ${CONFIG_TFM_MCUBOOT_HEADER_SIZE})
+  else()
+    set(imgtool_header_size ${CONFIG_ROM_START_OFFSET})
+  endif()
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
+    ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --slot-size ${slot_size} --header-size
+    ${imgtool_header_size} ${imgtool_pad_header_arg} ${imgtool_rom_command})
+  # In case of RAM load - the second variant is generated automatically by signing logic,
+  # because there is no need to link the code differently.
+  if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
+     CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
+    set(imgtool_alt_slot_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
       ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --slot-size ${slot_size} --header-size
-      ${imgtool_header_size} ${imgtool_pad_header_arg} ${imgtool_rom_command})
-    # In case of RAM load - the second variant is generated automatically by signing logic,
-    # because there is no need to link the code differently.
-    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
-       CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT)
-      set(imgtool_alt_slot_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
-        ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --slot-size ${slot_size} --header-size
-        ${imgtool_header_size} ${imgtool_rom_alt_slot_command})
-    endif()
+      ${imgtool_header_size} ${imgtool_rom_alt_slot_command})
   endif()
 
   # Arguments to imgtool.
@@ -379,9 +360,7 @@ function(zephyr_mcuboot_tasks)
     # provide the merged hex file from sysbuild's scope unless this is a variant image
     # Otherwise run zephyr_runner_file for both images to ensure the signed hex file
     # is used for flashing
-    if((NOT CONFIG_PARTITION_MANAGER_ENABLED) OR CONFIG_NCS_IS_VARIANT_IMAGE)
-      zephyr_runner_file(hex ${output}.hex)
-    endif()
+    zephyr_runner_file(hex ${output}.hex)
 
     set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${output}.hex"
       CACHE FILEPATH "Signed kernel hex file" FORCE
@@ -436,9 +415,7 @@ function(zephyr_mcuboot_tasks)
     # default application will boot after flashing.
     if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
       list(APPEND byproducts ${output}.confirmed.hex)
-      if((NOT CONFIG_PARTITION_MANAGER_ENABLED) OR CONFIG_NCS_IS_VARIANT_IMAGE)
-        zephyr_runner_file(hex ${output}.confirmed.hex)
-      endif()
+      zephyr_runner_file(hex ${output}.confirmed.hex)
       set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME "${output}.confirmed.hex"
         CACHE FILEPATH "Signed and confirmed kernel hex file" FORCE
       )

@@ -4,28 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include <zephyr/ztest.h>
- #include <zephyr/devicetree.h>
- #include <tfm_ns_interface.h>
- #include <tfm_ioctl_api.h>
-#if USE_PARTITION_MANAGER
- #include <pm_config.h>
-#endif
+#include <zephyr/ztest.h>
+#include <zephyr/devicetree.h>
+#include <tfm_ns_interface.h>
+#include <tfm_ioctl_api.h>
 
- #include <hal/nrf_gpio.h>
-
-#if USE_PARTITION_MANAGER
-#define TEST_SRAM_BASE       CONFIG_PM_SRAM_BASE
-#define TEST_SRAM_NS_ADDRESS PM_SRAM_ADDRESS
-#define TEST_SRAM_S_ADDRESS  PM_TFM_SRAM_ADDRESS
-#define TEST_NS_FLASH_ADDR   PM_ADDRESS
-#else
+#include <hal/nrf_gpio.h>
 
 #define TEST_SRAM_BASE       DT_REG_ADDR(DT_NODELABEL(sram0))
 #define TEST_SRAM_NS_ADDRESS DT_REG_ADDR(DT_NODELABEL(sram0_ns))
 #define TEST_SRAM_S_ADDRESS  DT_REG_ADDR(DT_NODELABEL(sram0_s))
 #define TEST_NS_FLASH_ADDR   DT_REG_ADDR(DT_NODELABEL(slot0_ns_partition))
-#endif
 
 ZTEST_SUITE(test_secure_service, NULL, NULL, NULL, NULL, NULL);
 

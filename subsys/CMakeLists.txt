@@ -49,7 +49,6 @@ add_subdirectory(logging)
 add_subdirectory(shell)
 
 add_subdirectory(debug)
-add_subdirectory_ifdef(CONFIG_PARTITION_MANAGER_ENABLED partition_manager)
 
 add_subdirectory_ifdef(CONFIG_NRF_RPC nrf_rpc)
 add_subdirectory_ifdef(CONFIG_NRF_DM dm)

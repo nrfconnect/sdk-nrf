@@ -19,7 +19,6 @@ Here you can find documentation for these scripts.
    ../../scripts/memfault/*
    ../../scripts/nrf_profiler/*
    ../../scripts/nrf_provision/*/*
-   ../../scripts/partition_manager/*
    ../../scripts/shell/*
    ../../scripts/shell/*/*
    ../../scripts/west_commands/sbom/*

@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PARTITION_MANAGER
-	default n
-
 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 
 choice NETCORE

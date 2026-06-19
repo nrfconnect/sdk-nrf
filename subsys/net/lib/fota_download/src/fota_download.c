@@ -15,10 +15,6 @@
 
 #include "fota_download_util.h"
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#endif
-
 #if defined(CONFIG_DFU_TARGET_MCUBOOT)
 #include <fw_info.h>
 #if CONFIG_TRUSTED_EXECUTION_NONSECURE

@@ -582,7 +582,7 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
-  * Added support in build system for devices that do not support the :ref:`partition_manager`.
+  * Added support in build system for devices that do not support the partition_manager.
     The :zephyr:board:`nrf54h20dk` board target is the only example of such a device.
 
 Modem libraries
