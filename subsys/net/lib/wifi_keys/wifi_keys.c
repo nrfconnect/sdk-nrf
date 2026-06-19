@@ -4,14 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdbool.h>
 #include <stdint.h>
 #include "wifi_keys.h"
-
-#include "cracen_psa.h"
-
-static const uint32_t WIFI_KEYS_KMU_SLOT_ID = 181;
-static const uint32_t KMU_PUSH_KEY_ID =
-	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, WIFI_KEYS_KMU_SLOT_ID);
 
 /* Wi-Fi Keys sizes */
 static const uint32_t MIC_KEY_LEN = 0x10;
@@ -95,33 +90,7 @@ uint32_t wifi_keys_get_key_size_in_bytes(wifi_keys_type_t type)
 
 uint32_t wifi_keys_get_key_size_in_bits(wifi_keys_type_t type)
 {
-	return PSA_BYTES_TO_BITS(wifi_keys_get_key_size_in_bytes(type));
-}
-
-psa_key_attributes_t wifi_keys_key_attributes_init(uint32_t key_length_bytes)
-{
-	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
-
-	psa_key_id_t id = KMU_PUSH_KEY_ID;
-
-	psa_set_key_id(&attr, id);
-
-	psa_key_persistence_t persistence = PSA_KEY_PERSISTENCE_DEFAULT;
-
-	psa_key_lifetime_t lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-		persistence, PSA_KEY_LOCATION_KMU_PUSH);
-
-	psa_set_key_lifetime(&attr, lifetime);
-	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(key_length_bytes));
-	psa_set_key_type(&attr, PSA_KEY_TYPE_VENDOR_FLAG);
-
-	return attr;
-
-	/* Note: Usage flags and algorithm are deliberately not set (kept at 0),
-	 * because software has no permission to use this key for any purpose
-	 * (only Wi-Fi Crypto hardware can use it), and because Wi-Fi Crypto
-	 * key locations can be reused for different algorithms).
-	 */
+	return wifi_keys_get_key_size_in_bytes(type) * 8;
 }
 
 int wifi_keys_reverse_byte_order(void *restrict dst, const void *restrict src,

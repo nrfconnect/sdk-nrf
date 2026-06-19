@@ -8,15 +8,11 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/ztest.h>
-#include <zephyr/device.h>
-#include <zephyr/ipc/ipc_service.h>
-#include <zephyr/devicetree.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <errno.h>
 
-#include <psa/crypto.h>
 #include "wifi_keys.h"
 
 LOG_MODULE_REGISTER(wifi_crypto_test, LOG_LEVEL_DBG);
@@ -34,22 +30,9 @@ ZTEST(wifi_crypto, test_main)
 	uint32_t dest_address = wifi_keys_get_key_start_addr(type, db_id, key_index);
 	zassert_not_equal(dest_address, WIFI_KEYS_ADDR_INVALID);
 
-	kmu_push_key_buffer_t kmu_push_buffer = {
-		.usage_mask = KMU_PUSH_USAGE_MASK_PUSH_IMMEDIATELY | KMU_PUSH_USAGE_MASK_DESTROY_AFTER,
-		.dest_address = dest_address,
-		.key_buffer = (uint8_t *)ccmp256_key,
-		.buffer_size = key_length
-	};
-
-	psa_key_attributes_t attr = wifi_keys_key_attributes_init(key_length);
-	psa_key_id_t key_id;
-	psa_status_t status;
-
-	status = psa_crypto_init();
-	zassert_equal(status, PSA_SUCCESS);
-
-	status = psa_import_key(&attr, (const uint8_t *)&kmu_push_buffer, sizeof kmu_push_buffer, &key_id);
-	zassert_equal(status, PSA_SUCCESS);
+	int err = wifi_kmu_write_key(CONFIG_NRF_WIFI_KMU_SLOT_MIN, dest_address,
+				     (uint8_t *)ccmp256_key, key_length);
+	zassert_equal(err, 0);
 
 	*(volatile uint32_t *)0x48086C04 = 1; /* NRF_WIFICORE_RPUSYS->EDCPERIP.EDCGPIO1OUT */
 	while (*(volatile uint32_t *)0x48086C00 !=
