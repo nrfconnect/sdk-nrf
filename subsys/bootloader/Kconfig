@@ -156,4 +156,12 @@ config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
 
+config NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256
+	bool
+	help
+	  Enforce HMAC-SHA256 in image signatures for compatibility with existing MCUboot.
+	  The option allows to override default behaviour for nRF54L series where HMAC-SHA512 is
+	  used. To use the override, add Kconfig entry to your projects Kconfig that sets the
+	  option to true.
+
 endmenu
