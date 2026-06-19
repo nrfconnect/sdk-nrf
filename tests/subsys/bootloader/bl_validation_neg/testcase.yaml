@@ -1,3 +1,18 @@
+      - bl_validation_negative
+      - sysbuild
+      - ci_tests_subsys_bootloader
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Running TESTSUITE test_bl_validation_neg"
+        - "Rebooting. Should fail to validate slot 1."
+kk        - "Firmware info doesn't point to itself."
+        - "Failed to validate, permanently invalidating!"
+        - "Attempting to boot slot 0."
+        - "PASS - test_validation_neg1"
+        - "PROJECT EXECUTION SUCCESSFUL"
 tests:
   bootloader.bl_validation.negative:
     sysbuild: true

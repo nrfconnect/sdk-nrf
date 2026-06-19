@@ -8,11 +8,7 @@
 #define TFM_PLATFORM_USER_MEMORY_RANGES_H__
 
 #include <zephyr/autoconf.h>
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#include <pm_config.h>
-#else
 #include "flash_layout.h"
-#endif
 
 #include <tfm_ioctl_core_api.h>
 
@@ -63,9 +59,7 @@
 
 static const struct tfm_read_service_range ranges[] = {
 /* Allow reads of MCUboot header/pad metadata from the secure slot */
-#if defined(PM_MCUBOOT_ADDRESS) && defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	{.start = PM_MCUBOOT_PAD_ADDRESS, .size = PM_MCUBOOT_PAD_SIZE},
-#elif !defined(CONFIG_PARTITION_MANAGER_ENABLED) && (TFM_MCUBOOT_OFFSET > 0)
+#if (TFM_MCUBOOT_OFFSET > 0)
 #if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot0_s_partition))
 	{.start = TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_s_partition)),
 	 .size  = TFM_MCUBOOT_OFFSET},

@@ -26,15 +26,6 @@
 
 
 #if !defined(LINK_TO_SECONDARY_PARTITION)
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#ifdef NRF_NS_SECONDARY
-#define S_IMAGE_PRIMARY_PARTITION_OFFSET   (PM_MCUBOOT_PRIMARY_ADDRESS)
-#define S_IMAGE_SECONDARY_PARTITION_OFFSET (PM_MCUBOOT_SECONDARY_ADDRESS)
-#else
-#define S_IMAGE_PRIMARY_PARTITION_OFFSET (PM_TFM_SECURE_ADDRESS)
-#endif /* NRF_NS_SECONDARY */
-#define NS_IMAGE_PRIMARY_PARTITION_OFFSET (PM_TFM_NONSECURE_ADDRESS)
-#else
 /* DTS-based partition offsets. */
 #ifdef NRF_NS_SECONDARY
 #define S_IMAGE_PRIMARY_PARTITION_OFFSET   TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
@@ -43,16 +34,12 @@
 #define S_IMAGE_PRIMARY_PARTITION_OFFSET   TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
 #endif /* NRF_NS_SECONDARY */
 #define NS_IMAGE_PRIMARY_PARTITION_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_ns_partition))
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 #else
 #error "Execute from secondary partition is not supported!"
 #endif /* !defined(LINK_TO_SECONDARY_PARTITION) */
 
 /* Secure regions */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#define S_CODE_START (PM_TFM_OFFSET)
-#define S_CODE_SIZE  (PM_TFM_SIZE)
-#elif TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot0_s_partition))
+#if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot0_s_partition))
 /* When slot0_partition is the combined MCUboot slot containing sub-partitions,
  * use slot0_s_partition for the secure-only size and start address.
  * BL2_HEADER_SIZE (= CONFIG_ROM_START_OFFSET, 0x200 with MCUboot) skips the
@@ -70,13 +57,8 @@
 #endif
 #define S_CODE_LIMIT (S_CODE_START + S_CODE_SIZE - 1)
 
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#define S_DATA_START (PM_TFM_SRAM_ADDRESS)
-#define S_DATA_SIZE  (PM_TFM_SRAM_SIZE)
-#else
 #define S_DATA_START TFM_DT_REG_ADDR(TFM_DT_NODELABEL(sram0_s))
 #define S_DATA_SIZE  TFM_DT_REG_SIZE(TFM_DT_NODELABEL(sram0_s))
-#endif
 #define S_DATA_LIMIT (S_DATA_START + S_DATA_SIZE - 1)
 
 #define S_CODE_VECTOR_TABLE_SIZE (CONFIG_TFM_S_CODE_VECTOR_TABLE_SIZE)
@@ -124,22 +106,12 @@
 #endif /* CONFIG_CPU_HAS_NRF_IDAU */
 
 /* Non-secure regions */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#define NS_CODE_START (PM_APP_OFFSET)
-#define NS_CODE_SIZE  (PM_APP_SIZE)
-#else
 #define NS_CODE_START TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_ns_partition))
 #define NS_CODE_SIZE  TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_ns_partition))
-#endif
 #define NS_CODE_LIMIT (NS_CODE_START + NS_CODE_SIZE - 1)
 
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#define NS_DATA_START (PM_SRAM_NONSECURE_ADDRESS)
-#define NS_DATA_SIZE  (PM_SRAM_NONSECURE_SIZE)
-#else
 #define NS_DATA_START TFM_DT_REG_ADDR(TFM_DT_NODELABEL(sram0_ns))
 #define NS_DATA_SIZE  TFM_DT_REG_SIZE(TFM_DT_NODELABEL(sram0_ns))
-#endif
 #define NS_DATA_LIMIT (NS_DATA_START + NS_DATA_SIZE - 1)
 
 /* NS partition information is used for SPU configuration */
@@ -155,27 +127,16 @@
 #endif
 
 /* Non-secure storage region */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#if defined(PM_NONSECURE_STORAGE_ADDRESS)
-#define NRF_NS_STORAGE_PARTITION_START (PM_NONSECURE_STORAGE_ADDRESS)
-#define NRF_NS_STORAGE_PARTITION_SIZE  (PM_NONSECURE_STORAGE_SIZE)
-#endif
-#else
 #if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(storage_partition))
 #define NRF_NS_STORAGE_PARTITION_START TFM_DT_REG_ADDR(TFM_DT_NODELABEL(storage_partition))
 #define NRF_NS_STORAGE_PARTITION_SIZE  TFM_DT_REG_SIZE(TFM_DT_NODELABEL(storage_partition))
 #endif
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 /* Shared data area between bootloader and runtime firmware.
  * Shared data area is allocated at the beginning of the RAM, it is overlapping
  * with TF-M Secure code's MSP stack
  */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#define SHARED_BOOT_MEASUREMENT_BASE PM_TFM_SRAM_ADDRESS
-#else
 #define SHARED_BOOT_MEASUREMENT_BASE TFM_DT_REG_ADDR(TFM_DT_NODELABEL(sram0_s))
-#endif
 
 #ifdef CONFIG_TFM_PROFILE_TYPE_MINIMAL
 #define SHARED_BOOT_MEASUREMENT_SIZE (0x100)
@@ -228,24 +189,6 @@
  * Define them from either Partition Manager (legacy) or devicetree
  * (the post-migration default).
  */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#ifdef PM_MCUBOOT_ADDRESS
-#define REGION_MCUBOOT_ADDRESS	   PM_MCUBOOT_ADDRESS
-#define REGION_MCUBOOT_LIMIT       PM_MCUBOOT_END_ADDRESS - 1
-#endif
-#ifdef PM_B0_ADDRESS
-#define REGION_B0_ADDRESS     PM_B0_ADDRESS
-#define REGION_B0_LIMIT       PM_B0_END_ADDRESS - 1
-#endif
-#ifdef PM_S0_ADDRESS
-#define REGION_S0_ADDRESS     PM_S0_ADDRESS
-#define REGION_S0_LIMIT       PM_S0_END_ADDRESS - 1
-#endif
-#ifdef PM_S1_ADDRESS
-#define REGION_S1_ADDRESS     PM_S1_ADDRESS
-#define REGION_S1_LIMIT       PM_S1_END_ADDRESS - 1
-#endif
-#else /* !CONFIG_PARTITION_MANAGER_ENABLED -- DTS-based layout */
 #if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(boot_partition))
 #define REGION_MCUBOOT_ADDRESS TFM_DT_REG_ADDR(TFM_DT_NODELABEL(boot_partition))
 #define REGION_MCUBOOT_LIMIT   (REGION_MCUBOOT_ADDRESS + \
@@ -266,18 +209,5 @@
 #define REGION_S1_LIMIT        (REGION_S1_ADDRESS + \
 				TFM_DT_REG_SIZE(TFM_DT_NODELABEL(s1_partition)) - 1)
 #endif
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
-
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#ifdef PM_PCD_SRAM_ADDRESS
-#define REGION_PCD_SRAM_ADDRESS	    PM_PCD_SRAM_ADDRESS
-#define REGION_PCD_SRAM_LIMIT       PM_PCD_SRAM_END_ADDRESS - 1
-#endif
-
-#ifdef PM_RPMSG_NRF53_SRAM_ADDRESS
-#define REGION_RPMSG_NRF53_SRAM_ADDRESS     PM_RPMSG_NRF53_SRAM_ADDRESS
-#define REGION_RPMSG_NRF53_SRAM_LIMIT       PM_RPMSG_NRF53_SRAM_END_ADDRESS - 1
-#endif
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 #endif /* __REGION_DEFS_H__ */

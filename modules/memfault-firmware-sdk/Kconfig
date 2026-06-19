@@ -283,9 +283,7 @@ config MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 	help
 	  Use internal flash to store coredump data.
 
-	  Storage location is resolved at build time from one of:
-	  - Partition Manager: a MEMFAULT_STORAGE partition (default size 0x10000)
-	    is generated automatically when CONFIG_PARTITION_MANAGER_ENABLED=y.
+	  Storage location is resolved at build time from::
 	  - Devicetree: a fixed-partition with label "memfault_coredump_partition"
 	    under the internal flash controller. Enable the "memfault-coredump"
 	    snippet (-S memfault-coredump) or supply your own DT overlay.
@@ -295,14 +293,6 @@ if MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 config MEMFAULT_NCS_FLASH_REGION_SIZE
 	hex
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
-
-if PARTITION_MANAGER_ENABLED
-
-partition=MEMFAULT_STORAGE
-partition-size=0x10000
-source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/partition_manager/Kconfig.template.partition_config"
-
-endif # PARTITION_MANAGER_ENABLED
 
 endif # MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 

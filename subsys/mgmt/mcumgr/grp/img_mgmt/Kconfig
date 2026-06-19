@@ -9,7 +9,6 @@ menu "Additional MCUmgr image management group functionality"
 config MCUMGR_GRP_IMG_NRF
 	bool "Use an extended version of the image management implementation"
 	depends on MCUMGR_GRP_IMG
-	default y if PARTITION_MANAGER_ENABLED
 	default y if MCUMGR_GRP_IMG_TOO_LARGE_BOOTLOADER_INFO
 	default y if NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY
 	help

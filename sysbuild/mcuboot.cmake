@@ -14,34 +14,17 @@ if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
       set(image "${primary_image}_secondary_app")
     endif()
 
-    if(SB_CONFIG_PARTITION_MANAGER)
-      ExternalZephyrVariantProject_Add(
-        APPLICATION ${image}
-        SOURCE_APP ${primary_image}
-        SNIPPET slot1-partition
-        BUILD_ONLY TRUE
-      )
-    else()
-      ExternalZephyrVariantProject_Add(
-        APPLICATION ${image}
-        SOURCE_APP ${primary_image}
-        SNIPPET secondary-app-partition
-      )
-    endif()
+    ExternalZephyrVariantProject_Add(
+      APPLICATION ${image}
+      SOURCE_APP ${primary_image}
+      SNIPPET secondary-app-partition
+    )
 
     UpdateableImage_Add(APPLICATION ${image} GROUP "VARIANT")
-
-    if(SB_CONFIG_PARTITION_MANAGER)
-      set_property(GLOBAL APPEND PROPERTY
-          PM_APP_IMAGES
-          "${image}"
-      )
-    endif()
-
   endforeach()
 endif()
 
-if(NOT SB_CONFIG_PARTITION_MANAGER AND SB_CONFIG_BOOTLOADER_MCUBOOT AND SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+if(SB_CONFIG_BOOTLOADER_MCUBOOT AND SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
   # Downgrade prevention in MCUboot requires provisioning UICR with prepared counter structures.
   include(image_flasher.cmake)
   add_image_flasher(NAME app_provision HEX_FILE "${CMAKE_BINARY_DIR}/app_provision.hex" BASE_IMAGE mcuboot)

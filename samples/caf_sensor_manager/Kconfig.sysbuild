@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PARTITION_MANAGER
-	default n
-
 config INCLUDE_REMOTE_IMAGE
 	bool "Include CAF Sensor Manager remote image"
 	default y

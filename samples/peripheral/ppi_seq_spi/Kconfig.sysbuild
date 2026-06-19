@@ -4,22 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PARTITION_MANAGER
-	default n
-
 if SOC_NRF54H20_CPUAPP
-
 choice NETCORE
-	default NETCORE_EMPTY
-
 endchoice
-
 endif # SOC_NRF54H20_CPUAPP
-
 if SUPPORT_PPRCORE
-
 choice PPRCORE
-
 config PPRCORE_REMOTE
 	bool "Remote"
 	help

@@ -5,7 +5,6 @@
 #
 
 if SUPPORT_NETCORE
-
 config SUPPORT_NETCORE_REMOTE
 	bool
 	default y

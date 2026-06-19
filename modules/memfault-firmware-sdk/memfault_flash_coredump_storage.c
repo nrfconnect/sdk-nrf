@@ -21,19 +21,11 @@
  * should be used when the system is in this state.
  */
 
-/* Locate the coredump storage region. Two options are supported:
+/* Locate the coredump storage region
  *
- *   1. Partition Manager (legacy): PARTITION_*(MEMFAULT_STORAGE) macros resolve
- *      via <pm_config.h> when CONFIG_PARTITION_MANAGER_ENABLED=y.
- *   2. Devicetree (NCS 3.4+): set nordic,memfault-coredump-partition in the
+ *   Devicetree (NCS 3.4+): set nordic,memfault-coredump-partition in the
  *      chosen node to point at the coredump storage partition.
  */
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#define MFLT_STORAGE_OFFSET PARTITION_OFFSET(MEMFAULT_STORAGE)
-#define MFLT_STORAGE_SIZE   PARTITION_SIZE(MEMFAULT_STORAGE)
-#define MFLT_STORAGE_FA_ID  PARTITION_ID(MEMFAULT_STORAGE)
-#else
 #define MFLT_STORAGE_NODE DT_CHOSEN(nordic_memfault_coredump_partition)
 BUILD_ASSERT(DT_NODE_EXISTS(MFLT_STORAGE_NODE),
 	     "nordic,memfault-coredump-partition chosen property not set. "
@@ -42,7 +34,6 @@ BUILD_ASSERT(DT_NODE_EXISTS(MFLT_STORAGE_NODE),
 #define MFLT_STORAGE_OFFSET PARTITION_NODE_ADDRESS(MFLT_STORAGE_NODE)
 #define MFLT_STORAGE_SIZE   PARTITION_NODE_SIZE(MFLT_STORAGE_NODE)
 #define MFLT_STORAGE_FA_ID  DT_PARTITION_ID(MFLT_STORAGE_NODE)
-#endif
 
 /* Note: While the system is running, flash writes for the nRF (soc_flash_nrf.c)
  *	 may be asynchronous so we use a static to track when a coredump clear

@@ -4,10 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PARTITION_MANAGER
-	default y if BOARD_THINGY53_NRF5340_CPUAPP
-	default n
-
 config NRF_DEFAULT_IPC_RADIO
 	default y
 

@@ -18,9 +18,6 @@ extern "C" {
 #include <zephyr/sys/__assert.h>
 #include <zephyr/linker/sections.h>
 #include <string.h>
-#if USE_PARTITION_MANAGER
-#include <pm_config.h>
-#endif
 #include <fw_info_bare.h>
 
 /** @defgroup fw_info Firmware information linker helpers and build asserts.
