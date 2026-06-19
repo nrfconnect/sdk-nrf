@@ -12,8 +12,6 @@ common:
     - nrf9251dk/nrf9251/cpuapp
   integration_platforms:
     - nrf54lm20dk/nrf54lm20b/cpuapp
-  extra_args:
-    - SB_CONFIG_PARTITION_MANAGER=n
   harness: pytest
   timeout: 80
 

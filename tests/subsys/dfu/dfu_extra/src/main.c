@@ -1,4 +1,4 @@
-/*
+#/*
  * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -8,12 +8,7 @@
 #include <zephyr/storage/flash_map.h>
 #include <bootutil/bootutil_public.h>
 #include <bootutil/image.h>
-
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#else
 #include <zephyr/storage/flash_map.h>
-#endif
 
 static void print_image_content(const char *name, uint32_t img_id,
 				uint32_t img_address, uint32_t slot_size)
@@ -95,17 +90,6 @@ int main(void)
 {
 	printk("\n*** DFU Extra Images Test ***\n");
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-	print_image_content("Extra Image 1",
-			    PM_MCUBOOT_PRIMARY_1_ID,
-			    PM_MCUBOOT_PRIMARY_1_ADDRESS,
-			    PM_MCUBOOT_PRIMARY_1_SIZE);
-
-	print_image_content("Extra Image 2",
-			    PM_MCUBOOT_PRIMARY_2_ID,
-			    PM_MCUBOOT_PRIMARY_2_ADDRESS,
-			    PM_MCUBOOT_PRIMARY_2_SIZE);
-#else
 	print_image_content("Extra Image 1",
 			    PARTITION_ID(slot2_partition),
 			    PARTITION_ADDRESS(slot2_partition),
@@ -115,7 +99,6 @@ int main(void)
 			    PARTITION_ID(slot4_partition),
 			    PARTITION_ADDRESS(slot4_partition),
 			    PARTITION_SIZE(slot4_partition));
-#endif
 
 	printk("\nDone\n");
 	return 0;

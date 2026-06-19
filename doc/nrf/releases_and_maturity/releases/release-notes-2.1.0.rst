@@ -976,7 +976,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
   * Added a SHA-256 hash of the Fast Pair provisioning data to ensure its integrity.
 
-* :ref:`partition_manager`:
+* partition_manager:
 
   * Added:
 

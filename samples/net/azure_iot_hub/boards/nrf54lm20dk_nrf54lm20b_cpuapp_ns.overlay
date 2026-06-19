@@ -4,13 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	/* Configure partition manager to use mx25r64 as the external flash */
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-};
-
 /delete-node/ &slot0_s_partition;
 /delete-node/ &tfm_ps_partition;
 /delete-node/ &tfm_its_partition;
