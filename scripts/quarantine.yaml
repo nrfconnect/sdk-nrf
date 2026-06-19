@@ -274,3 +274,10 @@
     - nrf54lm20dk/nrf54lm20b/cpuapp
     - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
+
+- scenarios:
+    - bootloader.bl_validation.negative
+  platforms:
+    - nrf9151dk/nrf9151
+    - nrf9161dk@0.9.0/nrf9161
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39943 - PM-DTS migration"
