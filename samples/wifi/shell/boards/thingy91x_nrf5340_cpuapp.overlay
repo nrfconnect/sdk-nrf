@@ -79,7 +79,6 @@
 		zephyr,uart-mcumgr = &cdc_acm_uart0;
 		zephyr,bt-mon-uart = &cdc_acm_uart0;
 		zephyr,bt-c2h-uart = &cdc_acm_uart0;
-		nordic,pm-ext-flash = &flash_ext;
 	};
 };
 

@@ -21,12 +21,10 @@ endif # BUILD_WITH_TFM
 menu "Nordic nRF Connect"
 
 # Override configuration from zephyr which sets this to 0x200 if MCUboot is
-# enabled (CONFIG_BOOTLOADER_MCUBOOT), since NCS uses partition_manager to
-# get this offset instead.
+# enabled (CONFIG_BOOTLOADER_MCUBOOT)
 config ROM_START_OFFSET
-	default 0 if PARTITION_MANAGER_ENABLED
 	default 0 if BUILD_WITH_TFM
-	default SB_IMAGE_BOOT_OFFSET if !PARTITION_MANAGER_ENABLED && MCUBOOT && SECURE_BOOT
+	default SB_IMAGE_BOOT_OFFSET if MCUBOOT && SECURE_BOOT
 
 # nRF Connect SDK default experimental warnings to on.
 config WARN_EXPERIMENTAL
@@ -82,10 +80,6 @@ config INIT_ARCH_HW_AT_BOOT
 	  leave the system in a clean state, so it is necessary to perform
 	  architecture specific hardware initialization.
 
-DT_COMPAT_NORDIC_QSPI_NOR := nordic,qspi-nor
-config NORDIC_QSPI_NOR
-	default y if $(dt_compat_on_bus,$(DT_COMPAT_NORDIC_QSPI_NOR),qspi) && PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY && !SPI_NOR
-
 DT_ZEPHYR_FLASH := zephyr,flash
 DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
 config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
@@ -94,23 +88,6 @@ config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 	  Set the flash layout page size equal to the erase block size of the
 	  chosen Zephyr flash devicetree node to ensure that swapping can be
 	  performed.
-
-# Temporary hack to be able to build samples and tests on the nRF51L15/nRF54L09 Eng A/nRF54LM20A Eng A/nRF7120 FLPR core
-config FLASH_BASE_ADDRESS
-	hex
-	depends on PARTITION_MANAGER_ENABLED
-	depends on SOC_NRF54L15_CPUFLPR || SOC_NRF54LM20A_CPUFLPR || SOC_NRF54LV10A_CPUFLPR|| SOC_NRF7120_ENGA_CPUFLPR
-	default 0x0 if SOC_NRF54L15_CPUFLPR || SOC_NRF54LM20A_CPUFLPR || SOC_NRF54LV10A_CPUFLPR
-	default 0x2C0000 if SOC_NRF7120_ENGA_CPUFLPR
-
-config FLASH_SIZE
-	int
-	depends on PARTITION_MANAGER_ENABLED
-	depends on SOC_NRF54L15_CPUFLPR || SOC_NRF54LM20A_CPUFLPR || SOC_NRF54LV10A_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
-	default 1012 if SOC_NRF54LV10A_CPUFLPR
-	default 1524 if SOC_NRF54L15_CPUFLPR
-	default 2036 if SOC_NRF54LM20A_CPUFLPR
-	default 128 if SOC_NRF7120_ENGA_CPUFLPR
 
 config NRF_SECURITY_ENABLER
 	def_bool y

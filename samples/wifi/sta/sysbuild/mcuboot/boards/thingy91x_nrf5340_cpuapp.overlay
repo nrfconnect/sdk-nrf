@@ -12,9 +12,3 @@
 &spi3 {
 	status = "okay";
 };
-
-/ {
-	chosen {
-		nordic,pm-ext-flash = &flash_ext;
-	};
-};
