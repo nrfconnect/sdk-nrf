@@ -201,6 +201,9 @@ class KconfigDiffDirective(SphinxDirective):
         return None
 
     def run(self) -> list[nodes.Node]:
+        if not self.env.app.config.kconfigdiff_should_build:
+            return []
+
         last_version = self._get_prev_version_num()
         if last_version is None:
             logger.error("Couldn't establish what was the previous build version")

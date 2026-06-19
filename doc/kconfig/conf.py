@@ -58,6 +58,10 @@ external_content_contents = [
 kconfig_generate_db = True
 kconfig_ext_paths = [ZEPHYR_BASE, NRF_BASE]
 
+# Options for kconfigdiff
+
+kconfigdiff_should_build = False
+
 # Adding NCS_ specific entries. Can be removed when the NCSDK-14227 improvement
 # task has been completed.
 os.environ["NCS_MEMFAULT_FIRMWARE_SDK_KCONFIG"] = str(

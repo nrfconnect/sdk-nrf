@@ -29,6 +29,8 @@ def setup(app: Sphinx) -> ExtensionMetadata:
     app.connect("builder-inited", kconfigdiff_install)
     app.add_css_file("kconfigdiff.css")
 
+    app.add_config_value("kconfigdiff_should_build", False, "env", types=bool)
+
     return {
         "version": __version__,
         "env_version": 1,
