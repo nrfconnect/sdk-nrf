@@ -24,6 +24,7 @@ set(SPHINXOPTS "-j auto -W --keep-going -T" CACHE STRING "Default Sphinx Options
 set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
 set(DTS_BINDINGS OFF CACHE BOOL "Generate dts bindings documentation")
 set(HW_FEATURES OFF CACHE BOOL "Generate hardware features")
+set(KCONFDIFF OFF CACHE BOOL "Generate Kconfig diff against the previous release")
 
 separate_arguments(SPHINXOPTS)
 separate_arguments(SPHINXOPTS_EXTRA)
@@ -364,7 +365,11 @@ endif()
 #-------------------------------------------------------------------------------
 # docset: kconfig
 
-add_docset(kconfig "")
+if(KCONFDIFF)
+  set(KCONFIG_SPHINXOPTS -D kconfdiff_should_build=1)
+endif()
+
+add_docset(kconfig "" SPHINXOPTS ${KCONFIG_SPHINXOPTS})
 
 #-------------------------------------------------------------------------------
 # Global targets
