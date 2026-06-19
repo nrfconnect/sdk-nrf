@@ -37,7 +37,6 @@ To use external flash, you also need to enable configuration and devicetree opti
    * :kconfig:option:`CONFIG_SPI`
    * :kconfig:option:`CONFIG_SPI_NOR`
    * :kconfig:option:`CONFIG_SPI_NOR_SFDP_DEVICETREE`
-   * :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK`
 
 #. Specify the board revision parameter when :ref:`building` to automatically include the devicetree overlay with the external flash.
    The board revision is printed on the label of your DK, just below the PCA number.
@@ -46,43 +45,44 @@ To use external flash, you also need to enable configuration and devicetree opti
 
    .. code-block:: devicetree
 
-      /* Enable the external flash device (required) */
       &mx25r64 {
+	   /* Enable the external flash device (required) */
 	   status = "okay";
-      };
 
-      /* Configure partition manager to use mx25r64 as the external flash device */
-      / {
-          chosen {
-              nordic,pm-ext-flash = &mx25r64;
-          };
-      };
+	   /* Enable high performance mode to increase write/erase performance */
+	   mxicy,mx25r-power-mode = "high-performance";
 
-      /* Enable high performance mode to increase write/erase performance */
-      &mx25r64 {
-          mxicy,mx25r-power-mode = "high-performance";
+	   /* Add partitions as required */
+	   partitions {
+	      compatible = "fixed-partitions";
+	      #address-cells = <1>;
+	      #size-cells = <1>;
+
+	      fmfu_storage_partition: partition@0 {
+		   label = "fmfu_storage";
+		   reg = <0x00000000 0x400000>;
+	      };
+
+	      modem_trace: partition@400000 {
+		   label = "modem_trace";
+		   reg = <0x00400000 0x400000>;
+	      };
+
+	      pgps_partition: partition@800000 {
+		   label = "pgps";
+		   reg = <0x00800000 0x14000>;
+	      };
+
+	      settings_storage_partition: partition@814000 {
+		   label = "settings_storage";
+		   reg = <0x00814000 0x2000>;
+	      };
+
+	      external_flash_partition: partition@816000 {
+		   label = "external_flash";
+		   reg = <0x00816000 0x17ea000>;
+	      };
+	   };
       };
 
    For more information about devicetree overlays, see :ref:`zephyr:use-dt-overlays`.
-
-Using Partition Manager
-***********************
-
-.. include:: ../../../includes/pm_deprecation.txt
-
-If your application was built using the |NCS|, you must define partitions using :ref:`partition_manager`.
-The built-in partition definitions can be found in the :file:`nrf/subsys/partition_manager` folder, and the file names start with ``pm.yml``.
-The files that have ``external_flash`` as their region support storing partitions in the external flash.
-You can also find the configuration option required to place the partition in the external flash region in those files.
-For example, the :file:`pm.yml.pgps` file has an option (:kconfig:option:`CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL`) to place the P-GPS partition in external flash:
-
-.. code-block:: c
-
-   #ifdef CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL
-     region: external_flash
-   #else
-     inside: [nonsecure_storage]
-   #endif
-     size: CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE
-
-You can also change the size of the partition with the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE` Kconfig option.
