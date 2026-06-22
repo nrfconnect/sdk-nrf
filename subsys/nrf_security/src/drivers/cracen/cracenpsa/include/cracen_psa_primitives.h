@@ -284,6 +284,9 @@ struct cracen_xof_operation_s {
 
 	/** Number of XOF output bytes already returned to the caller. */
 	size_t prev_squeezed;
+	uint8_t pool[SX_XOF_POOL_BUF_SZ];
+	size_t pool_offset;
+	size_t pool_avail;
 };
 typedef struct cracen_xof_operation_s cracen_xof_operation_t;
 

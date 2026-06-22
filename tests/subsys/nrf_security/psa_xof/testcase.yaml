@@ -18,3 +18,24 @@ tests:
       - crypto
       - ci_crypto
       - ci_tests_crypto
+  psa_xof.cracen.small_pool:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_CRACEN_XOF_OUT_POOL_BUF_SIZE=168
+    tags:
+      - sysbuild
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto

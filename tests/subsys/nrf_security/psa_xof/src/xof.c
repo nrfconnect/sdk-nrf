@@ -10,6 +10,10 @@
 #include <psa/crypto.h>
 #include <string.h>
 
+#define TEST_XOF_SHAKE128_KAT_OUT_LEN		16u
+#define TEST_XOF_SHAKE128_LARGE_KAT_OUT_LEN	140u
+#define TEST_XOF_SHAKE256_KAT_OUT_LEN		32u
+
 static const uint8_t test_context[] = "sample context";
 
 /*
@@ -41,9 +45,39 @@ static const uint8_t shake128_msg_in[3] = {
 	0x1b, 0x3b, 0x6e
 };
 
-static const uint8_t shake128_msg_out[16] = {
+static const uint8_t shake128_msg_out[TEST_XOF_SHAKE128_KAT_OUT_LEN] = {
 	0xd7, 0x33, 0x54, 0x97, 0xe4, 0xcd, 0x36, 0x66,
 	0x88, 0x5e, 0xdb, 0xb0, 0x82, 0x4d, 0x7a, 0x75
+};
+
+/*
+ * SHAKE128(Msg=0xa8ded9..., Outputlen=1120 bits) — CAVP SHAKE128VariableOut.rsp,
+ * COUNT=1116, Outputlen=1120 (140 bytes), 16-byte message.
+ */
+static const uint8_t shake128_large_in[16] = {
+	0xa8, 0xde, 0xd9, 0x81, 0x6d, 0xef, 0xca, 0x83,
+	0x27, 0xc1, 0x94, 0xa4, 0x8a, 0x88, 0xae, 0x4e
+};
+
+static const uint8_t shake128_large_out[TEST_XOF_SHAKE128_LARGE_KAT_OUT_LEN] = {
+	0xed, 0x73, 0x97, 0xb2, 0x21, 0x5c, 0x6c, 0x41,
+	0x2b, 0xf4, 0x44, 0xb1, 0xb9, 0x6f, 0xc5, 0x5c,
+	0x53, 0x1a, 0xef, 0x02, 0x5c, 0x6d, 0xd1, 0x3f,
+	0xb4, 0xab, 0x53, 0xfc, 0xc2, 0x0c, 0x91, 0x91,
+	0x7d, 0x82, 0xc8, 0xd6, 0x71, 0x0a, 0x8d, 0x7b,
+	0x4c, 0x24, 0xd1, 0x8b, 0x54, 0x15, 0x04, 0x90,
+	0xe9, 0x8e, 0xe0, 0x1b, 0x4a, 0x4b, 0x97, 0x90,
+	0xd1, 0x87, 0x88, 0x10, 0xa8, 0x39, 0x2d, 0x3f,
+	0xa2, 0x03, 0xb0, 0x66, 0x32, 0x7c, 0x0c, 0x67,
+	0xca, 0xce, 0x3a, 0x08, 0xc5, 0x7d, 0x0d, 0x30,
+	0xb6, 0x2b, 0xa4, 0x31, 0x21, 0xd8, 0xd7, 0x15,
+	0x63, 0x78, 0x84, 0xf0, 0x55, 0xc5, 0x5a, 0xd6,
+	0x68, 0x96, 0x92, 0x24, 0x98, 0x85, 0xdc, 0xe0,
+	0x1c, 0x96, 0x97, 0x9f, 0x1a, 0x2b, 0x30, 0x99,
+	0x43, 0xe1, 0x4a, 0xbb, 0x0b, 0xa8, 0xe2, 0x27,
+	0xbc, 0xeb, 0x38, 0x16, 0x67, 0x57, 0x9e, 0x10,
+	0x69, 0x4b, 0xd4, 0x42, 0xb9, 0x90, 0x64, 0xaa,
+	0x88, 0x50, 0x14, 0x31
 };
 
 /* SHAKE256(empty, Outputlen=512 bits) — FIPS 202 Appendix B.2 */
@@ -66,7 +100,7 @@ static const uint8_t shake256_msg_in[3] = {
 	0x21, 0xed, 0xa6
 };
 
-static const uint8_t shake256_msg_out[32] = {
+static const uint8_t shake256_msg_out[TEST_XOF_SHAKE256_KAT_OUT_LEN] = {
 	0xf7, 0xd0, 0x2b, 0x45, 0x12, 0xbe, 0x5d, 0xdc,
 	0xc2, 0x5d, 0x14, 0x8c, 0x71, 0x66, 0x4d, 0xfd,
 	0x34, 0xe1, 0x6a, 0xbe, 0xa2, 0x6d, 0x6e, 0x72,
@@ -398,7 +432,7 @@ static void test_xof_known_answer(void)
 		/** CAVP SHAKE128ShortMsg.rsp, Len=24
 		 *  SHAKE128(Msg=0x1b3b6e, Outputlen=128 bits)
 		 */
-		uint8_t output128[16];
+		uint8_t output128[TEST_XOF_SHAKE128_KAT_OUT_LEN];
 
 		operation = psa_xof_operation_init();
 		status = psa_xof_setup(&operation, PSA_ALG_SHAKE128);
@@ -429,7 +463,7 @@ static void test_xof_known_answer(void)
 		/** CAVP SHAKE256ShortMsg.rsp, Len=24
 		 *  SHAKE256(Msg=0x21eda6, Outputlen=256 bits)
 		 */
-		uint8_t output256[32];
+		uint8_t output256[TEST_XOF_SHAKE256_KAT_OUT_LEN];
 
 		operation = psa_xof_operation_init();
 		status = psa_xof_setup(&operation, PSA_ALG_SHAKE256);
@@ -442,6 +476,115 @@ static void test_xof_known_answer(void)
 		zassert_equal(psa_xof_abort(&operation), PSA_SUCCESS, "abort failed");
 		zassert_mem_equal(output256, shake256_msg_out, sizeof(output256),
 				  "SHAKE256(0x21eda6) KAT mismatch");
+	}
+}
+
+/**
+ * @brief Known-Answer Test: verify SHAKE128 is computed correctly when pool size
+ *	  is smaller than the size of the requested output.
+ */
+static void test_xof_large_output_kat(void)
+{
+	if (!IS_ENABLED(CONFIG_PSA_WANT_ALG_SHAKE128)) {
+		ztest_test_skip();
+	}
+
+	psa_xof_operation_t operation = psa_xof_operation_init();
+	uint8_t out[TEST_XOF_SHAKE128_LARGE_KAT_OUT_LEN];
+
+	zassert_equal(psa_xof_setup(&operation, PSA_ALG_SHAKE128), PSA_SUCCESS, "setup failed");
+	zassert_equal(psa_xof_update(&operation, shake128_large_in, sizeof(shake128_large_in)),
+		      PSA_SUCCESS, "update failed");
+
+	/* One-shot pull that internally spans >1 pool refill. */
+	zassert_equal(psa_xof_output(&operation, out, sizeof(out)), PSA_SUCCESS,
+		      "large output failed");
+	zassert_equal(psa_xof_abort(&operation), PSA_SUCCESS, "abort failed");
+
+	zassert_mem_equal(out, shake128_large_out, sizeof(out),
+			  "SHAKE128 large-output KAT mismatch");
+}
+
+/**
+ * @brief Test maximum possible output of CRACEN HW
+ */
+static void test_xof_max_output_length(void)
+{
+	if (!IS_ENABLED(CONFIG_PSA_WANT_ALG_SHAKE128)) {
+		ztest_test_skip();
+	}
+
+	psa_xof_operation_t op = psa_xof_operation_init();
+	uint8_t sink[256];
+	size_t remaining = 65535; /* Maximum possible output for CRACEN HW */
+
+	zassert_equal(psa_xof_setup(&op, PSA_ALG_SHAKE128), PSA_SUCCESS, "setup");
+	while (remaining > 0) {
+		size_t n = MIN(sizeof(sink), remaining);
+
+		zassert_equal(psa_xof_output(&op, sink, n), PSA_SUCCESS,
+			      "output within 65535-byte limit failed at %zu remaining",
+			      remaining);
+		remaining -= n;
+	}
+
+	psa_xof_abort(&op);
+}
+
+static void xof_check_split(psa_algorithm_t alg, size_t total, size_t split)
+{
+	psa_xof_operation_t op = psa_xof_operation_init();
+	static uint8_t ref[4096];
+	static uint8_t got[4096];
+
+	zassert_true(total <= sizeof(ref) && split < total, "bad test params");
+
+	/* Reference: single call. */
+	zassert_equal(psa_xof_setup(&op, alg), PSA_SUCCESS, "setup ref");
+	zassert_equal(psa_xof_output(&op, ref, total), PSA_SUCCESS, "output ref");
+	psa_xof_abort(&op);
+
+	/* Split: two calls, concatenated result must match the reference value. */
+	op = psa_xof_operation_init();
+	zassert_equal(psa_xof_setup(&op, alg), PSA_SUCCESS, "setup split");
+	zassert_equal(psa_xof_output(&op, got, split), PSA_SUCCESS, "output a");
+	zassert_equal(psa_xof_output(&op, got + split, total - split), PSA_SUCCESS,
+			"output b");
+	psa_xof_abort(&op);
+
+	zassert_mem_equal(got, ref, total, "discontinuity: alg=%d total=%zu split=%zu",
+			  alg, total, split);
+}
+
+/**
+ * @brief Test corner cases of squeezing data from pool.
+ */
+static void test_xof_pool_boundary(void)
+{
+	const size_t pool = CONFIG_CRACEN_XOF_OUT_POOL_BUF_SIZE;
+	const size_t splits[] = {
+		1,
+		pool - 1,
+		pool,
+		pool + 1,
+		2 * pool,
+		2 * pool + 1
+	};
+
+	if (IS_ENABLED(CONFIG_PSA_WANT_ALG_SHAKE128)) {
+		for (size_t i = 0; i < ARRAY_SIZE(splits); i++) {
+			if (splits[i] < 3 * pool) {
+				xof_check_split(PSA_ALG_SHAKE128, 3 * pool, splits[i]);
+			}
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_PSA_WANT_ALG_SHAKE256)) {
+		for (size_t i = 0; i < ARRAY_SIZE(splits); i++) {
+			if (splits[i] < 3 * pool) {
+				xof_check_split(PSA_ALG_SHAKE256, 3 * pool, splits[i]);
+			}
+		}
 	}
 }
 
@@ -486,4 +629,19 @@ ZTEST(psa_xof_tests, test_xof_abort_idempotent)
 ZTEST(psa_xof_tests, test_xof_known_answer)
 {
 	test_xof_known_answer();
+}
+
+ZTEST(psa_xof_tests, test_xof_large_output_kat)
+{
+	test_xof_large_output_kat();
+}
+
+ZTEST(psa_xof_tests, test_xof_max_output_length)
+{
+	test_xof_max_output_length();
+}
+
+ZTEST(psa_xof_tests, test_xof_pool_boundary)
+{
+	test_xof_pool_boundary();
 }

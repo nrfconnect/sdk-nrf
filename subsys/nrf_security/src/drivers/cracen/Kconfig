@@ -148,6 +148,20 @@ config CRACEN_USE_INTERRUPTS
 	  If this is turned off CRACEN uses active polling instead,
 	  which may have an impact on performance.
 
+config CRACEN_XOF_OUT_POOL_BUF_SIZE
+	int "CRACEN XOF output pool buffer size in bytes"
+	range 168 8192
+	default 1008
+	depends on PSA_NEED_CRACEN_XOF_DRIVER
+	help
+	  Size of the per-operation output pool used by the CRACEN XOF driver,
+	  needed to decrease the number of calls to hardware when XOF
+	  functions are used for ML-DSA signature verification.
+
+	  Reduce to save RAM, increase to reduce hardware round-trips
+	  per squeeze chain.
+	  The default 1008 = 6 x 168 bytes (six SHAKE-128 rate blocks).
+
 config CRACEN_ECC_COUNTERMEASURES
 	bool "CRACEN ECC countermeasures"
 	default y
