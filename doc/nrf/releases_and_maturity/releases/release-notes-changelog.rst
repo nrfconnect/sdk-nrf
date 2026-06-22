@@ -52,7 +52,8 @@ Bootloaders and DFU
   The option is hidden and requires addition of Kconfig override in your project.
   This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
 
-|no_changes_yet_note|
+* Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
+  See the :ref:`migration_3.5` for details.
 
 Developing with nRF91 Series
 ============================

@@ -21,7 +21,7 @@ Learning resources
 
 In case you do not have experience with bootloaders, read through the following learning resources first:
 
-* `Bootloaders and DFU/FOTA`_ - The page is a part of the `Nordic Developer Academy`_ courses and offers is an introduction to bootloaders, DFU, and various transport features available in the |NCS|.
+* `Bootloaders and DFU/FOTA`_ - The page is a part of the `Nordic Developer Academy`_ courses and offers an introduction to bootloaders, DFU, and various transport features available in the |NCS|.
 * `Adding Device Firmware Update (DFU/FOTA) Support in nRF Connect SDK`_ - The webinar provides an overview of fundamental principles and best practices for adding DFU/FOTA support in an nRF Connect SDK-based firmware.
 
 .. rst-class:: numbered-step
@@ -37,7 +37,6 @@ For more in-depth understanding of bootloader's capabilities, such as upgradable
 
   * :ref:`ug_nrf52_developing`
   * :ref:`ug_nrf5340`
-  * :ref:`nRF70 Series Firmware patch update<ug_nrf70_fw_patch_update>`
   * :ref:`ug_nrf91_config_build`
 
 * Using DFU with cloud providers:

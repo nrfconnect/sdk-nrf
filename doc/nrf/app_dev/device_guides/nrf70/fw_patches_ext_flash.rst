@@ -28,7 +28,7 @@ Prerequisites
 Before using this feature, make sure that the following prerequisites are completed:
 
  * The external memory must be available and configured in the devicetree.
- * The external memory must be large enough to store the firmware patches, taking into consideration also the patch upgrade requirement, for example, Device Firmware Update (DFU).
+ * The external memory must be large enough to store the firmware patches.
    The maximum size of all the firmware patches combined is 128 KB.
 
 Supported platforms
@@ -159,11 +159,3 @@ For example, for nRF Util:
 .. code-block:: console
 
    nrfutil device program --x-family nrf53 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,qspi_erase_mode=ERASE_ALL,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/merged_<board_target>.hex
-
-Updating firmware patches
-=========================
-
-You can update the firmware patches using all available DFU alternatives described in the main :ref:`ug_fw_update` page.
-To do it, you need to use MCUboot bootloader and create proper partitions to allow storing and replacing the firmware patches.
-
-To learn how to prepare your application and perform the firmware patch update, see the :ref:`ug_nrf70_fw_patch_update` page.

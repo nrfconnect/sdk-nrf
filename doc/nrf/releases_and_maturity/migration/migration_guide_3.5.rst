@@ -24,6 +24,24 @@ Required changes
 
 The following changes are mandatory to make your application work in the same way as in previous releases.
 
+Build and configuration system
+==============================
+
+This section describes the changes related to the build and configuration system.
+
+.. toggle::
+
+   * Device Firmware Update (DFU) support for the nRF70 Series firmware patch has been removed, together with the following Kconfig options:
+
+     * ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``
+     * ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``
+     * ``CONFIG_NRF_WIFI_FW_PATCH_DFU``
+
+     If your application enabled any of these options, remove them.
+     The nRF70 Series firmware patch is no longer allocated a separate MCUboot update slot.
+     If you set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option or a static partition layout explicitly for a firmware-patch build, reduce the number of updatable images by one and remove the now-unused update-slot partitions.
+     Storing the nRF70 Series firmware patch in external flash using the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` or :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option is not affected.
+
 Samples and applications
 ========================
 

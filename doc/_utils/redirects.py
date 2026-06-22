@@ -201,8 +201,8 @@ NRF = (
     ("device_guides/nrf70/constrained", "app_dev/device_guides/nrf70/constrained"),
     ("device_guides/working_with_nrf/nrf70/developing/fw_patches_ext_flash", "app_dev/device_guides/nrf70/fw_patches_ext_flash"), # Firmware patches in the external memory
     ("device_guides/nrf70/fw_patches_ext_flash", "app_dev/device_guides/nrf70/fw_patches_ext_flash"),
-    ("device_guides/working_with_nrf/nrf70/developing/nrf70_fw_patch_update", "app_dev/device_guides/nrf70/nrf70_fw_patch_update"), # Firmware patch update
-    ("device_guides/nrf70/nrf70_fw_patch_update", "app_dev/device_guides/nrf70/nrf70_fw_patch_update"),
+    ("device_guides/working_with_nrf/nrf70/developing/nrf70_fw_patch_update", "app_dev/device_guides/nrf70/index"), # Firmware patch update
+    ("device_guides/nrf70/nrf70_fw_patch_update", "app_dev/device_guides/nrf70/index"),
     ("device_guides/working_with_nrf/nrf70/developing/power_profiling", "app_dev/device_guides/nrf70/power_profiling"), # Power profiling of nRF7002 DK
     ("device_guides/nrf70/power_profiling", "app_dev/device_guides/nrf70/power_profiling"),
     ("device_guides/working_with_nrf/nrf70/nrf7002ek_gs", "app_dev/device_guides/nrf70/nrf7002ek_dev_guide"), # Developing with nRF7002 EK

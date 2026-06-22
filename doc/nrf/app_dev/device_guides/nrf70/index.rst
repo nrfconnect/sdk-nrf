@@ -131,7 +131,6 @@ The following subpages cover topics related to developing applications with the 
    stack_partitioning
    constrained
    fw_patches_ext_flash
-   nrf70_fw_patch_update
    power_profiling
    nrf7002ek_dev_guide
    nrf7002eb_dev_guide

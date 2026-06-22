@@ -21,8 +21,6 @@ A value of ``-1`` indicates that the image is not present:
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 | ``NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER`` | :kconfig:option:`CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` | Image number for network core update         | nRF5340 device and :kconfig:option:`SB_CONFIG_NETCORE_APP_UPDATE`                                                                        |
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| ``NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER`` | :kconfig:option:`CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER` | Image number for Wi-Fi-patch update          | nRF7x device used and :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` or :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` |
-+-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 | ``NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER``     | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     | Image number for QSPI XIP split image update | nRF52840 or nRF5340 device and :kconfig:option:`SB_CONFIG_QSPI_XIP_SPLIT_IMAGE`                                                          |
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 | ``NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      | Image number for MCUboot update              | :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE`                                                                                          |
@@ -91,15 +89,13 @@ Image numbers are assigned in ascending order based on the following priority:
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
 | Network core         | 1                      | ``NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER``    | :kconfig:option:`CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| nRF7x Wi-Fi patch    | 2                      | ``NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER``    | :kconfig:option:`CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER` |
+| QSPI XIP split image | 2                      | ``NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER``        | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| QSPI XIP split image | 3                      | ``NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER``        | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     |
+| MCUboot              | 3                      | ``NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| MCUboot              | 4                      | ``NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      |
+| Extra image 1        | 4                      | ``NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER`      |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| Extra image 1        | 5                      | ``NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER`      |
-+----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| Extra image 2        | 6                      | ``NCS_MCUBOOT_EXTRA_2_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER`      |
+| Extra image 2        | 5                      | ``NCS_MCUBOOT_EXTRA_2_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER`      |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
 
 

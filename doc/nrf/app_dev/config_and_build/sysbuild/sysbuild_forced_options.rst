@@ -34,8 +34,6 @@ Trying to change them directly in an image will result in the new value being ov
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_NRF70_SYSTEM_WITH_RAW_MODES`                    + :kconfig:option:`SB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES`              |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU`                          + :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`         |                         |
-+-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_SINGLE_APP`             + :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SINGLE_APP`                       |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_SWAP_SCRATCH`           + :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SWAP_SCRATCH`                     |                         |

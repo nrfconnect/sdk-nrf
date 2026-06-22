@@ -315,8 +315,6 @@ The following Kconfig options are available:
 +-------------------------------------------------------------------+---------------------------------------------------+
 | :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT`       | Include MCUboot update in package                 |
 +-------------------------------------------------------------------+---------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` | Include nRF70 firmware patch update in package    |
-+-------------------------------------------------------------------+---------------------------------------------------+
 
 You must update your application to select the required Kconfig options at the sysbuild level to have this file generated.
 
@@ -336,8 +334,6 @@ The following Kconfig options are available:
 | :kconfig:option:`SB_CONFIG_DFU_ZIP_APP`                     | Include application update in zip archive                                  |
 +-------------------------------------------------------------+----------------------------------------------------------------------------+
 | :kconfig:option:`SB_CONFIG_DFU_ZIP_NET`                     | Include network-core image update in zip archive                           |
-+-------------------------------------------------------------+----------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH`           | Include nRF700x firmware patch update in zip archive                       |
 +-------------------------------------------------------------+----------------------------------------------------------------------------+
 | :kconfig:option:`SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA` | Include Bluetooth mesh metadata in zip archive                             |
 +-------------------------------------------------------------+----------------------------------------------------------------------------+

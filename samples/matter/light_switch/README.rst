@@ -250,7 +250,6 @@ Advanced building options
 
 .. include:: /includes/matter/building_and_running/advanced/intro.txt
 .. include:: /includes/matter/building_and_running/advanced/building_nrf54lm20dk_7002eb2.txt
-.. include:: /includes/matter/building_and_running/advanced/wifi_flash.txt
 
 Testing
 *******

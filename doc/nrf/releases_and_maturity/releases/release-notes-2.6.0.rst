@@ -203,7 +203,7 @@ Working with nRF70 Series
 
 * Added:
 
-  * The :ref:`ug_nrf70_fw_patch_update` section that describes how to perform a DFU for firmware patches using Wi-Fi in the :ref:`ug_nrf70_developing` user guide.
+  * The nRF70 Series firmware patch update section that describes how to perform a DFU for firmware patches using Wi-Fi in the :ref:`ug_nrf70_developing` user guide.
   * The :ref:`ug_nrf70_developing_fw_patch_ext_flash` and :ref:`ug_nrf70_stack partitioning` pages in the :ref:`ug_nrf70_developing` user guide.
 
 * Updated:
@@ -408,7 +408,7 @@ Wi-Fi
 
 * Added:
 
-  * The :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU` Kconfig option that enables DFU support for nRF70 Series devices.
+  * The ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig option that enables DFU support for nRF70 Series devices.
     This allows firmware patches for signed images to be sent to multi-image targets over Wi-Fi.
   * Support for the CSP package.
   * Modification to the application of edge backoff.
