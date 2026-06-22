@@ -22,6 +22,13 @@ K_THREAD_STACK_DEFINE(rrsp_wq_stack_area, RRSP_WQ_STACK_SIZE);
 
 NET_BUF_SIMPLE_DEFINE_STATIC(segment_buf, CONFIG_BT_L2CAP_TX_MTU);
 
+/* If the total size of the received Ranging Data is greater than (ATT_MTU-4), then multiple
+ * segments shall be sent to transfer the entire Ranging Data Body (the data to be transported).
+ * (RAS Specification, Section 3.2.2) This overhead comes from the attribute opcode, attribute
+ * handle and the segmentation header (1 + 2 + 1 = 4 octets).
+ */
+ #define RAS_ATT_OVERHEAD 4
+
 static struct bt_ras_rrsp {
 	struct bt_conn *conn;
 
@@ -327,18 +334,14 @@ static int rd_segment_send(struct bt_ras_rrsp *rrsp)
 
 	__ASSERT_NO_MSG(rrsp->conn);
 
-	/* By spec, up to (ATT_MTU-4) octets of the data to be transported
-	 * shall be used to fill the characteristic message.
-	 * An extra byte is reserved for the segment header
-	 */
 	uint16_t mtu = bt_gatt_get_mtu(rrsp->conn);
 
-	if (mtu <= (4 + sizeof(struct ras_seg_header))) {
+	if (mtu <= RAS_ATT_OVERHEAD) {
 		LOG_WRN("Invalid MTU: %d", mtu);
 		return -ENOTCONN;
 	}
 
-	uint16_t max_data_len = mtu - (4 + sizeof(struct ras_seg_header));
+	uint16_t max_data_len = mtu - RAS_ATT_OVERHEAD;
 
 	/* segment_buf is only accessed by the RRSP WQ, so is safe to reuse. */
 	net_buf_simple_reset(&segment_buf);
