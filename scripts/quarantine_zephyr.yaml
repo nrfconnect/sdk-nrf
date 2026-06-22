@@ -623,3 +623,44 @@
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf54h20dk@0.9.0/nrf54h20/cpurad
   comment: "Not supported in NCS"
+
+- scenarios:
+    - sample.net.capture
+    - sample.net.dns_resolve.llmnr
+    - sample.net.dns_resolve.mdns
+    - sample.net.ftp_client
+    - sample.net.pkt_filter
+    - sample.net.pkt_filter_priorities
+    - sample.net.sockets.dumb_http_server_mt
+    - sample.net.sockets.http_client
+    - sample.net.sockets.http_client.tls
+    - sample.net.virtual
+    - libraries.cmsis_dsp.matrix.binary_q15
+    - libraries.cmsis_dsp.matrix.binary_q15.fpu
+    - libraries.cmsis_dsp.matrix.unary_f32
+    - libraries.cmsis_dsp.matrix.unary_f32.fpu
+    - libraries.cmsis_dsp.matrix.unary_f64
+    - libraries.cmsis_dsp.matrix.unary_f64.fpu
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "FLASH overflowed"
+
+- scenarios:
+    - sample.net.capture
+    - sample.net.ftp_client
+    - sample.net.pkt_filter
+    - sample.net.pkt_filter_priorities
+    - sample.net.sockets.dumb_http_server_mt
+    - sample.net.sockets.echo_server.usbd_cdc_ncm
+    - sample.net.sockets.http_client
+    - sample.net.sockets.http_client.tls
+    - sample.net.virtual
+    - libraries.cmsis_dsp.matrix.binary_q15
+    - libraries.cmsis_dsp.matrix.binary_q15.fpu
+    - libraries.cmsis_dsp.matrix.unary_f32
+    - libraries.cmsis_dsp.matrix.unary_f32.fpu
+    - libraries.cmsis_dsp.matrix.unary_f64
+    - libraries.cmsis_dsp.matrix.unary_f64.fpu
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "FLASH overflowed"

@@ -194,6 +194,7 @@
     - nsib.update.invalid_image
   platforms:
     - nrf5340dk/nrf5340/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
@@ -239,7 +240,13 @@
     - mcuboot.upgrade.hw_downgrade_prevention
     - nsib.mcuboot.upgrade.hw_downgrade_prevention
   platforms:
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
+    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
+    - nrf9160dk@0.14.0/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
@@ -257,6 +264,7 @@
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lm20dk/nrf54lm20b/cpuapp
+    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
@@ -277,7 +285,28 @@
 
 - scenarios:
     - bootloader.bl_validation.negative
+    - bootloader.bl_validation.negative.nrf52
   platforms:
+    - nrf52840dk/nrf52840
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp
     - nrf9151dk/nrf9151
+    - nrf9160dk@0.14.0/nrf9160
     - nrf9161dk@0.9.0/nrf9161
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39943 - PM-DTS migration"
+
+- scenarios:
+    - sample.bluetooth.peripheral_mds
+    - sample.bluetooth.peripheral_nsms
+    - sample.bluetooth.peripheral_nsms_no_security
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - thingy53/nrf5340/cpuapp
+    - thingy53/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39947 - PM-DTS migration"
+
+- scenarios:
+    - dfu.image_util.slot1
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39948"
