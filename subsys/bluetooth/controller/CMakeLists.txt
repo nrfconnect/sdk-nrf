@@ -24,9 +24,4 @@ zephyr_library_sources_ifdef(
 
 zephyr_library_link_libraries(subsys__bluetooth)
 
-zephyr_library_include_directories_ifdef(
-  CONFIG_BT_EXT_ADV
-  ${ZEPHYR_BASE}/drivers/bluetooth/hci
-)
-
 zephyr_include_directories(.)
