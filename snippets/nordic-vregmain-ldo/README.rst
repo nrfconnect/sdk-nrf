@@ -3,6 +3,10 @@
 Nordic Main Voltage Regulator LDO snippet (nordic-vregmain-ldo)
 ###############################################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. code-block:: console
 
    west build -S nordic-vregmain-ldo [...]
