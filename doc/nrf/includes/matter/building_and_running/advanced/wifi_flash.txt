@@ -32,7 +32,6 @@ Flashing the Matter over Wi-Fi sample variant
 
    1. Remove the Wi-Fi firmware patch partition from the partition list.
    #. Set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option to ``n``.
-   #. Set the :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig option to ``n``.
    #. Set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``2``.
 
-   To learn more about the Wi-Fi firmware patch, see the :ref:`nrf70_fw_patch_update_adding_partitions` user guide.
+   To learn more about the Wi-Fi firmware patch, see the :ref:`ug_nrf70_developing_fw_patch_ext_flash` user guide.
