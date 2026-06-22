@@ -1855,6 +1855,17 @@ static void cmd_put(uint8_t *cmd_in, uint8_t * const raw_event_out)
 					  &generate_command_status_event);
 	}
 
+	STRUCT_SECTION_FOREACH(hci_internal_user_extension_handler, handler)
+	{
+		if (handler->hci_handler) {
+			status = handler->hci_handler(cmd_in, raw_event_out, &return_param_length,
+						      &generate_command_status_event);
+			if (status != BT_HCI_ERR_UNKNOWN_CMD) {
+				break;
+			}
+		}
+	}
+
 	if (status == BT_HCI_ERR_UNKNOWN_CMD) {
 
 		switch (BT_OGF(opcode)) {

@@ -30,3 +30,6 @@ zephyr_library_include_directories_ifdef(
 )
 
 zephyr_include_directories(.)
+
+zephyr_iterable_section(NAME hci_internal_user_extension_handler GROUP RODATA_REGION)
+zephyr_linker_sources(SECTIONS hci_internal_user_extension.ld)

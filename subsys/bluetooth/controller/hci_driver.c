@@ -1584,6 +1584,16 @@ static int hci_driver_init(const struct device *dev)
 		return err;
 	}
 
+	STRUCT_SECTION_FOREACH(hci_internal_user_extension_handler, handler)
+	{
+		if (handler->init) {
+			err = handler->init();
+			if (err) {
+				return err;
+			}
+		}
+	}
+
 	configure_supported_features();
 
 	err = configure_memory_usage();
