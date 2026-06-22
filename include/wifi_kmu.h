@@ -53,7 +53,10 @@ int wifi_kmu_erase_keys(void);
 /* Utility functions to prepare keys before passing to KMU */
 
 /** @brief Value to indicate an invalid key address */
-static const uint32_t WIFI_KMU_KEY_ADDR_INVALID = ~0;
+static const uint32_t WIFI_KMU_KEY_ADDR_INVALID = 0xFFFFFFFF;
+
+/** @brief Value to indicate an invalid key length */
+static const uint32_t WIFI_KMU_KEY_LENGTH_INVALID = 0xFFFFFFFE;
 
 /**
  * @brief Different types of keys used by Wi-Fi
@@ -139,6 +142,18 @@ int wifi_kmu_key_reverse_byte_order(void *restrict dst, const void *restrict src
  * @return 0 on success, -1 on failure.
  */
 int wifi_kmu_key_reverse_byte_order_in_place(void *buf, uint32_t key_length_bytes);
+
+/**
+ * @brief Get next KMU slot to use.
+ *
+ * Wi-Fi will be allocated a range of KMU slots.
+ * This function rotates through the slots to ensure uniform usage of each slot.
+ *
+ * @param[in]   key_length_bytes  Key length in bytes.
+ *
+ * @return Slot number to be used next, or WIFI_KMU_KEY_LENGTH_INVALID.
+ */
+uint32_t wifi_kmu_get_next_slot(uint32_t key_length_bytes);
 
 #ifdef __cplusplus
 }

@@ -19,6 +19,37 @@ LOG_MODULE_REGISTER(wifi_crypto_test, LOG_LEVEL_DBG);
 
 ZTEST(wifi_crypto, test_main)
 {
+	/* First, test slot index rotation */
+
+	uint32_t slot = wifi_kmu_get_next_slot(16);
+	zassert_equal(slot, CONFIG_NRF_WIFI_KMU_SLOT_MIN);
+
+	slot = wifi_kmu_get_next_slot(32);
+	zassert_equal(slot, CONFIG_NRF_WIFI_KMU_SLOT_MIN + 1);
+
+	slot = wifi_kmu_get_next_slot(32);
+	zassert_equal(slot, CONFIG_NRF_WIFI_KMU_SLOT_MIN + 3);
+
+	/* Jump ahead to test wrap around behaviour */
+	slot = wifi_kmu_get_next_slot((CONFIG_NRF_WIFI_KMU_NUM_SLOTS - 6) * 16);
+	zassert_equal(slot, CONFIG_NRF_WIFI_KMU_SLOT_MIN + 5);
+
+	/* There should be one slot remaining now */
+	slot = wifi_kmu_get_next_slot(16);
+	zassert_equal(slot, CONFIG_NRF_WIFI_KMU_SLOT_MIN + CONFIG_NRF_WIFI_KMU_NUM_SLOTS - 1);
+	slot = wifi_kmu_get_next_slot(16);
+	zassert_equal(slot, CONFIG_NRF_WIFI_KMU_SLOT_MIN);
+
+	/* Jump ahead again */
+	slot = wifi_kmu_get_next_slot((CONFIG_NRF_WIFI_KMU_NUM_SLOTS - 2) * 16);
+	zassert_equal(slot, CONFIG_NRF_WIFI_KMU_SLOT_MIN + 1);
+
+	/* Try to allocate 2 slots with only one slot remaining */
+	slot = wifi_kmu_get_next_slot(32);
+	zassert_equal(slot, CONFIG_NRF_WIFI_KMU_SLOT_MIN);
+
+	/* Next, test actual encryption */
+
 	uint32_t ccmp256_key[8] = {0x0C0D0E0F, 0x08090A0B, 0x04050607, 0x00010203,
 				   0xF2BDD52F, 0x514A8A19, 0xCE371185, 0xC97C1F67};
 
@@ -30,8 +61,7 @@ ZTEST(wifi_crypto, test_main)
 	uint32_t dest_address = wifi_kmu_get_key_start_addr(type, db_id, key_index);
 	zassert_not_equal(dest_address, WIFI_KMU_KEY_ADDR_INVALID);
 
-	int err = wifi_kmu_write_key(CONFIG_NRF_WIFI_KMU_SLOT_MIN, dest_address,
-				     (uint8_t *)ccmp256_key, key_length);
+	int err = wifi_kmu_write_key(slot, dest_address, (uint8_t *)ccmp256_key, key_length);
 	zassert_equal(err, 0);
 
 	*(volatile uint32_t *)0x48086C04 = 1; /* NRF_WIFICORE_RPUSYS->EDCPERIP.EDCGPIO1OUT */

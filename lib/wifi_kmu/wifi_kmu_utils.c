@@ -6,6 +6,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <nrfx_kmu.h>
 #include "wifi_kmu.h"
 
 /* Wi-Fi Keys sizes */
@@ -135,4 +136,26 @@ int wifi_kmu_key_reverse_byte_order_in_place(void *buf, uint32_t key_length_byte
 	}
 
 	return 0;
+}
+
+uint32_t wifi_kmu_get_next_slot(uint32_t key_length_bytes)
+{
+	static uint32_t next_slot = 0;
+
+	const uint32_t bytes_per_slot = KMU_KEYSLOTBITS / 8;
+
+	if (key_length_bytes % bytes_per_slot != 0) {
+		return WIFI_KMU_KEY_LENGTH_INVALID;
+	}
+
+	uint32_t slot;
+
+	uint32_t req_slots = key_length_bytes / bytes_per_slot;
+	if (next_slot + req_slots > CONFIG_NRF_WIFI_KMU_NUM_SLOTS) {
+		next_slot = 0;
+	}
+
+	slot = next_slot;
+	next_slot += req_slots;
+	return slot + CONFIG_NRF_WIFI_KMU_SLOT_MIN;
 }

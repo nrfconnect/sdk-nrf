@@ -1053,7 +1053,14 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 		return -EINVAL;
 	}
 
-	err = wifi_kmu_write_key(CONFIG_NRF_WIFI_KMU_SLOT_MIN, dest_address, key_buf, max_size);
+	uint32_t slot = wifi_kmu_get_next_slot(max_size);
+
+	if (slot == WIFI_KMU_KEY_LENGTH_INVALID) {
+		LOG_ERR("%s: Invalid key length %u", __func__, max_size);
+		return -EINVAL;
+	}
+
+	err = wifi_kmu_write_key(slot, dest_address, key_buf, max_size);
 
 	if (err) {
 		LOG_ERR("%s: Failed to import key: %d", __func__, err);
