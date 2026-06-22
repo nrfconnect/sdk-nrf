@@ -1101,6 +1101,10 @@ Modem libraries
   * Fixed an issue where the :c:func:`sms_register_listener` function returned a positive value instead of a negative error code when the modem responded with an AT error during SMS client registration.
     The function now returns ``-EFAULT`` in this case.
 
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Fixed RTT channel allocation after warm boot.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
