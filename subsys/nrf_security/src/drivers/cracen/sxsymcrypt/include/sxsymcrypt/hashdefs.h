@@ -102,6 +102,16 @@
 #define SX_HASH_OPERATION_CONTEXT_SZ 1
 #endif
 
+#if defined(CONFIG_CRACEN_XOF_OUT_POOL_BUF_SIZE)
+#define SX_XOF_POOL_BUF_SZ CONFIG_CRACEN_XOF_OUT_POOL_BUF_SIZE
+#else
+/* A default value is needed to avoid building failures when no XOF is
+ * enabled. A small number is used because it will enforce a runtime failure
+ * if the sx_hash APIs are called while no algorithm is enabled.
+ */
+#define SX_XOF_POOL_BUF_SZ 1
+#endif
+
 struct sx_digesttags {
 	uint32_t cfg;
 	uint32_t initialstate;
