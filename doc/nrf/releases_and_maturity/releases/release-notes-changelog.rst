@@ -52,6 +52,11 @@ Bootloaders and DFU
   The option is hidden and requires addition of Kconfig override in your project.
   This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
 
+* Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
+  The feature is no longer used: Matter, its primary user, does not support DFU on the nRF5340, and the nRF54LM20 has sufficient internal flash to keep the firmware patch in the application image without a separate partition.
+  Storing the nRF70 firmware patch in external flash using the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` or :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option is still supported.
+  As a result, the firmware patch is no longer allocated a separate MCUboot update slot, so the number of MCUboot updatable images for these builds is reduced by one.
+
 |no_changes_yet_note|
 
 Developing with nRF91 Series
