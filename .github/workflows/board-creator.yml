@@ -1,0 +1,72 @@
+name: Board creator validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    outputs:
+      run: ${{ steps.decide.outputs.run }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
+        id: filter
+        with:
+          filters: |
+            src:
+              - 'scripts/west_commands/create_board/**'
+      - id: decide
+        run: |
+          if [[ "${{ steps.filter.outputs.src }}" == "true" \
+             || "${{ contains(github.event.pull_request.labels.*.name, 'upmerge') }}" == "true" ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+  run:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          path: ncs/nrf
+
+      - name: Set up Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
+        with:
+          python-version: 3.12
+
+      - name: Update
+        working-directory: ncs/nrf
+        run: |
+          pip3 install west
+          west init -l .
+          west config manifest.project-filter -- "-.*,+zephyr"
+          west update --narrow -o=--depth=1
+          rm -rf ../.west
+
+      - name: Setup toolchains
+        uses: zephyrproject-rtos/action-zephyr-setup@360ff9b36e58499d9eb28015cdcde7ca03a5b04d # v1.0.12
+        with:
+          base-path: ncs/nrf
+          toolchains: arm-zephyr-eabi:riscv64-zephyr-elf
+          sdk-version: 1.0.0
+          west-project-filter: -.*,+cmsis_6,+hal_nordic,+libmetal,+mbedtls,+open-amp,+trusted-firmware-m,+tf-psa-crypto,+zephyr,+nrfxlib,+openthread,+oberon-psa-crypto
+          ccache-max-size: 500MB
+
+      - name: Run test
+        working-directory: ncs/nrf
+        run: |
+          ./scripts/west_commands/create_board/west-ncs-create-board-test.sh
