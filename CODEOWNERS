@@ -440,6 +440,7 @@
 /lib/tone/                                @nrfconnect/ncs-audio
 /lib/uicc_lwm2m/                          @stig-bjorlykke
 /lib/wave_gen/                            @nrfconnect/ncs-si-muffin
+/lib/wifi_kmu/wifi_kmu_utils.c            @adrianiainlam
 
 # Modules
 /modules/azure-sdk-for-c/                 @nrfconnect/ncs-cia

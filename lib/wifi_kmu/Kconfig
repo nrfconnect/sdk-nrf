@@ -6,6 +6,7 @@
 
 config NRF_WIFI_KMU
 	bool "WIFI KMU key support"
+	default y
 	depends on SOC_SERIES_NRF71
 	help
 	  This library handles cryptographic keys for WI-FI security
