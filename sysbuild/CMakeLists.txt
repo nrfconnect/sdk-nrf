@@ -180,10 +180,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set_config_int(mcuboot CONFIG_UPDATEABLE_IMAGE_NUMBER ${mcuboot_total_images})
 
     # Assign image IDs for MCUboot images then set Kconfig in all images with the generated IDs
-    set(dfu_slots_sysbuild_kconfigs SB_CONFIG_BOOTLOADER_MCUBOOT;SB_CONFIG_MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT;SB_CONFIG_MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT;SB_CONFIG_QSPI_XIP_SPLIT_IMAGE;SB_CONFIG_SECURE_BOOT_APPCORE)
-    set(dfu_slots_application_kconfigs CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER;CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER;CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER;CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER;CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER)
-    set(dfu_slots_cache_names NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER;NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER;NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER;NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER;NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER)
-    set(dfu_slots_output_names Application;Network;Wifi\ patches;QSPI\ XIP;MCUboot\ b0\ update)
+    set(dfu_slots_sysbuild_kconfigs SB_CONFIG_BOOTLOADER_MCUBOOT;SB_CONFIG_MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT;SB_CONFIG_QSPI_XIP_SPLIT_IMAGE;SB_CONFIG_SECURE_BOOT_APPCORE)
+    set(dfu_slots_application_kconfigs CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER;CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER;CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER;CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER)
+    set(dfu_slots_cache_names NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER;NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER;NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER;NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER)
+    set(dfu_slots_output_names Application;Network;QSPI\ XIP;MCUboot\ b0\ update)
     set(dfu_slots_output_text "-- Sysbuild assigned MCUboot image IDs:\n")
     set(dfu_image_index -1)
     set(manifest_image_target "none")
@@ -221,7 +221,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
             set(manifest_image_target ${SB_CONFIG_NETCORE_IMAGE_NAME})
           else()
             # Unsupported indexes:
-            # - CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER
             # - CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER
             # - CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER
             message(FATAL_ERROR "MCUboot manifest image can only be assigned to application or network core images")
@@ -877,12 +876,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_${config} ${SB_CONFIG_WIFI_${config}})
       endif()
     endforeach()
-
-    if(NOT DEFINED SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH)
-      set_config_bool(${DEFAULT_IMAGE} CONFIG_NRF_WIFI_FW_PATCH_DFU n)
-    else()
-      set_config_bool(${DEFAULT_IMAGE} CONFIG_NRF_WIFI_FW_PATCH_DFU ${SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH})
-    endif()
   else()
     set_config_bool(${DEFAULT_IMAGE} CONFIG_WIFI_NRF70 n)
   endif()
