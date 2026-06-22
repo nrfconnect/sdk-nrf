@@ -25,3 +25,6 @@ zephyr_library_sources_ifdef(
 zephyr_library_link_libraries(subsys__bluetooth)
 
 zephyr_include_directories(.)
+
+zephyr_iterable_section(NAME hci_internal_user_extension_handler GROUP RODATA_REGION)
+zephyr_linker_sources(SECTIONS hci_internal_user_extension.ld)

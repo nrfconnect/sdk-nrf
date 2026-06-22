@@ -13,6 +13,7 @@
 #include <sdc_hci_cmd_le.h>
 #include <sdc_hci_cmd_info_params.h>
 #include <zephyr/drivers/bluetooth.h>
+#include <zephyr/sys/slist.h>
 
 #ifndef HCI_INTERNAL_H__
 #define HCI_INTERNAL_H__
@@ -23,8 +24,9 @@ struct hci_driver_data {
 
 /** @brief Send an HCI command packet to the SoftDevice Controller.
  *
- * If the application has provided a user handler, this handler get precedence
- * above the default HCI command handlers. See @ref hci_internal_user_cmd_handler_register.
+ * If the application has provided user handlers, these handlers get precedence
+ * above the default HCI command handlers. See @ref hci_internal_user_cmd_handler_register and
+ * @ref hci_internal_user_extension_handler_register.
  *
  * @param[in] cmd_in  HCI Command packet. The first byte in the buffer should correspond to
  *                    OpCode, as specified by the Bluetooth Core Specification.
@@ -67,10 +69,23 @@ typedef uint8_t (*hci_internal_user_cmd_handler_t)(uint8_t const *cmd,
  *
  * @note Only one handler can be registered.
  *
- * @param[in] handler
+ * @param[in] handler A user implementable HCI command handler.
  * @return Zero on success or (negative) error code otherwise
+ *
+ * @deprecated Use @ref hci_internal_user_extension_handler_register instead
  */
 int hci_internal_user_cmd_handler_register(const hci_internal_user_cmd_handler_t handler);
+
+struct hci_internal_user_extension_handler {
+	hci_internal_user_cmd_handler_t hci_handler;
+	int (*init)(void);
+};
+
+#define DEFINE_HCI_USER_EXTENSION_HANDLER(name, cmd_handler, init_handler)                         \
+	STRUCT_SECTION_ITERABLE(hci_internal_user_extension_handler, name) = {                     \
+		.hci_handler = cmd_handler,                                                        \
+		.init = init_handler,                                                              \
+	}
 
 /** @brief Retrieve an HCI packet from the SoftDevice Controller.
  *
