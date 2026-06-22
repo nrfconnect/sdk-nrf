@@ -943,9 +943,6 @@ class NcsCherryPick(WestCommand):
         self.upstream_log = self.repo.get_upstream_log()
         self.downstream_log = self.repo.get_downstream_log()
 
-        self.upstream_log = self._filter_reverted_commits_(self.upstream_log)
-        self.downstream_log = self._filter_reverted_commits_(self.downstream_log)
-
         # Fromlists get merged, dropped, or forgotten upstream after they where merged
         # downstream. We need to synchronize this with upstream.
         self._sync_downstream_fromlists_(self.downstream_log, self.upstream_log)
@@ -1139,25 +1136,6 @@ class NcsCherryPick(WestCommand):
                 index.setdefault(f['file'], []).append(commit)
 
         return index
-
-    def _filter_reverted_commits_(self, commits: list[dict]) -> list[dict]:
-        sha_to_idx = {commit['sha']: i for i, commit in enumerate(commits)}
-
-        revert_pairs = [
-            (commit['sha'], commit['reverts'])
-            for commit in commits
-            if 'reverts' in commit and commit['reverts'] in sha_to_idx
-        ]
-
-        revert_pairs.sort(key=lambda p: sha_to_idx.get(p[1], -1), reverse=True)
-
-        removed = set()
-        for reverter_sha, reverted_sha in revert_pairs:
-            if reverter_sha not in removed and reverted_sha not in removed:
-                removed.add(reverter_sha)
-                removed.add(reverted_sha)
-
-        return [commit for commit in commits if commit['sha'] not in removed]
 
     def _promote_fromlists_to_fromtrees_(
         self, fromlist_log: list[dict], fromtree_log: list[dict], upstream_log: list[dict]
