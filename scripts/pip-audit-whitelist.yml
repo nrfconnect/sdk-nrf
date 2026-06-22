@@ -6,3 +6,4 @@ py:
   - CVE-2026-3219
   - PYSEC-2024-311
   - PYSEC-2026-151
+  - GHSA-537c-gmf6-5ccf

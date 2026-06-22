@@ -4,7 +4,7 @@ click>=8.2.0
 ecdsa
 grpcio-tools
 construct>=2.10.70
-cryptography>=44.0.1
+cryptography>=46.0.1
 imagesize>=1.2.0
 intelhex
 pylint
