@@ -5,4 +5,4 @@
 #
 
 zephyr_library()
-zephyr_library_sources(wifi_kmu.c)
+zephyr_library_sources(wifi_kmu.c wifi_kmu_utils.c)

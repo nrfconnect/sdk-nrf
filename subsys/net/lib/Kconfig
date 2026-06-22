@@ -48,7 +48,6 @@ rsource "nrf_provisioning/Kconfig"
 rsource "mcumgr_smp_client/Kconfig"
 rsource "nrf70_fw_ext/Kconfig"
 rsource "hostap_crypto/Kconfig"
-rsource "wifi_keys/Kconfig"
 rsource "wifi_prov_core/Kconfig"
 
 endmenu

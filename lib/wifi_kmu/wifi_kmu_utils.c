@@ -6,7 +6,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "wifi_keys.h"
+#include "wifi_kmu.h"
 
 /* Wi-Fi Keys sizes */
 static const uint32_t MIC_KEY_LEN = 0x10;
@@ -36,24 +36,24 @@ static const uint32_t PEER_BCST_SIZE_PER_ENTRY =
 static const uint32_t PEER_DB_SIZE_PER_ENTRY = PEER_UCST_SIZE_PER_ENTRY + PEER_BCST_SIZE_PER_ENTRY;
 static const uint32_t NUM_PEER_ENTRIES = 8;
 
-static bool wifi_keys_is_mic(wifi_keys_type_t type)
+static bool key_is_mic(wifi_kmu_key_type_t type)
 {
 	return type == PEER_UCST_MIC || type == PEER_BCST_MIC || type == VIF_MIC;
 }
 
-uint32_t wifi_keys_get_key_start_addr(wifi_keys_type_t type, uint32_t db_id, uint32_t key_index)
+uint32_t wifi_kmu_get_key_start_addr(wifi_kmu_key_type_t type, uint32_t db_id, uint32_t key_index)
 {
 	uint32_t db_base;
 	uint32_t offset;
-	bool mic = wifi_keys_is_mic(type);
+	bool mic = key_is_mic(type);
 
 	if (type == VIF_ENC || type == VIF_MIC) {
 		if (db_id >= NUM_VIF_ENTRIES) {
-			return WIFI_KEYS_ADDR_INVALID;
+			return WIFI_KMU_KEY_ADDR_INVALID;
 		}
 		db_base = VIF_KEY_DB_OFFSET + db_id * VIF_DB_SIZE_PER_ENTRY;
 		if (key_index >= NUM_KEYS_PER_ENTRY) {
-			return WIFI_KEYS_ADDR_INVALID;
+			return WIFI_KMU_KEY_ADDR_INVALID;
 		}
 		if (mic) {
 			offset = key_index * MIC_KEY_LEN;
@@ -62,14 +62,14 @@ uint32_t wifi_keys_get_key_start_addr(wifi_keys_type_t type, uint32_t db_id, uin
 		}
 	} else { /* PEER */
 		if (db_id >= NUM_PEER_ENTRIES) {
-			return WIFI_KEYS_ADDR_INVALID;
+			return WIFI_KMU_KEY_ADDR_INVALID;
 		}
 		db_base = db_id * PEER_DB_SIZE_PER_ENTRY;
 		if (type == PEER_UCST_ENC || type == PEER_UCST_MIC) {
 			offset = mic ? 0x0 : MIC_KEY_LEN;
 		} else { /* PEER_BCST */
 			if (key_index >= NUM_KEYS_PER_ENTRY) {
-				return WIFI_KEYS_ADDR_INVALID;
+				return WIFI_KMU_KEY_ADDR_INVALID;
 			}
 			if (mic) {
 				offset = PEER_UCST_SIZE_PER_ENTRY + key_index * MIC_KEY_LEN;
@@ -83,18 +83,18 @@ uint32_t wifi_keys_get_key_start_addr(wifi_keys_type_t type, uint32_t db_id, uin
 	return RAM_BASE + db_base + offset;
 }
 
-uint32_t wifi_keys_get_key_size_in_bytes(wifi_keys_type_t type)
+uint32_t wifi_kmu_get_key_size_in_bytes(wifi_kmu_key_type_t type)
 {
-	return wifi_keys_is_mic(type) ? MIC_KEY_LEN : ENC_KEY_LEN;
+	return key_is_mic(type) ? MIC_KEY_LEN : ENC_KEY_LEN;
 }
 
-uint32_t wifi_keys_get_key_size_in_bits(wifi_keys_type_t type)
+uint32_t wifi_kmu_get_key_size_in_bits(wifi_kmu_key_type_t type)
 {
-	return wifi_keys_get_key_size_in_bytes(type) * 8;
+	return wifi_kmu_get_key_size_in_bytes(type) * 8;
 }
 
-int wifi_keys_reverse_byte_order(void *restrict dst, const void *restrict src,
-				 uint32_t key_length_bytes)
+int wifi_kmu_key_reverse_byte_order(void *restrict dst, const void *restrict src,
+				    uint32_t key_length_bytes)
 {
 	/* Fix byte order of keys from wpa_supplicant */
 
@@ -115,7 +115,7 @@ int wifi_keys_reverse_byte_order(void *restrict dst, const void *restrict src,
 	return 0;
 }
 
-int wifi_keys_reverse_byte_order_in_place(void *buf, uint32_t key_length_bytes)
+int wifi_kmu_key_reverse_byte_order_in_place(void *buf, uint32_t key_length_bytes)
 {
 	/* Fix byte order of keys from wpa_supplicant - in place version */
 
