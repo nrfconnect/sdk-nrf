@@ -3,6 +3,10 @@
 Shared configurations in Matter samples
 #######################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. _matter_samples_kconfig:
 
 Configuration options

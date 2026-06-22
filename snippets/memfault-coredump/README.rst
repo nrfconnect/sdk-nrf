@@ -3,6 +3,10 @@
 Memfault coredump snippet (memfault-coredump)
 #############################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. code-block:: console
 
    west build -S memfault-coredump [...]

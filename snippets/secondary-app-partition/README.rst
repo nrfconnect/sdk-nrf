@@ -3,6 +3,10 @@
 Secondary app partition snippet (secondary-app-partition)
 #########################################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. code-block:: console
 
    west build -S secondary-app-partition [...]

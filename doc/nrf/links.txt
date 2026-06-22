@@ -8,7 +8,6 @@
 .. _`Zephyr`: https://zephyrproject.org/
 .. _`Zephyr Project documentation`: https://docs.zephyrproject.org/latest/
 .. _`Zephyr Devicetree Overlays`: https://docs.zephyrproject.org/latest/build/dts/howtos.html#set-devicetree-overlays
-.. _`Zephyr Initial Configuration`: https://docs.zephyrproject.org/latest/guides/build/kconfig/setting.html#the-initial-configuration
 .. _`Zephyr Network APIs`: https://docs.zephyrproject.org/latest/connectivity/networking/api/apis.html#network-apis
 .. _`Zephyr Events`: https://docs.zephyrproject.org/latest/kernel/services/synchronization/events.html
 .. _`Zephyr LED API`: https://docs.zephyrproject.org/latest/hardware/peripherals/led.html
@@ -518,8 +517,8 @@
 .. _`Connect and use the nPM2100 EK`: https://docs.nordicsemi.com/bundle/ug_npm2100_ek/page/UG/nPM2100_EK/connect_ek/connect_ek.html
 .. _`Using the nPM2100 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_048/page/APP/nan_048/intro.html
 
-.. _`Zigbee R22`: https://docs.nordicsemi.com/bundle/addon-zigbee-r22-latest/page/index.html
-.. _`Zigbee R23`: https://docs.nordicsemi.com/bundle/addon-zigbee-r23-latest/page/index.html
+.. _`Zigbee R22`: https://nrfconnectdocs.nordicsemi.com/addons/zigbee-r22/latest/index.html
+.. _`Zigbee R23`: https://nrfconnectdocs.nordicsemi.com/addons/zigbee-r23/latest/index.html
 
 .. _`Asset Tracker Template`: https://docs.nordicsemi.com/bundle/asset-tracker-template-latest/page/index.html
 .. _`Serial Modem`: https://docs.nordicsemi.com/bundle/addon-serial_modem-latest/page/index.html
@@ -825,8 +824,8 @@
 
 .. _`nRF pynrfjprog`: https://docs.nordicsemi.com/bundle/ug_pynrfjprog/page/UG/pynrfjprog/pynrfjprog_lpage.html
 
-.. _`Amazon Sidewalk documentation`: https://docs.nordicsemi.com/bundle/addon-sidewalk-latest/page/index.html
-.. _`Setting up the SDK for Amazon Sidewalk`: https://docs.nordicsemi.com/bundle/addon-sidewalk-latest/page/setting_up_sidewalk_environment/setting_up_sdk.html
+.. _`Amazon Sidewalk documentation`: https://nrfconnectdocs.nordicsemi.com/addons/addon-sidewalk/latest/index.html
+.. _`Setting up the SDK for Amazon Sidewalk`: https://nrfconnectdocs.nordicsemi.com/addons/addon-sidewalk/latest/setting_up_sidewalk_environment/setting_up_sdk.html
 
 .. _`nRF9160 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/nRF9160_html5_keyfeatures.html
 .. _`nRF9160 DK GPS`:
@@ -1140,7 +1139,7 @@
 .. _`nRF54LS05A Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54LS05A_EngA/page/ERR/nRF54LS05A/EngineeringA/latest/err_05A_new.html
 .. _`nRF54LS05B Errata`: https://docs.nordicsemi.com/bundle/errata_nRF54LS05B_EngA/page/ERR/nRF54LS05B/EngineeringA/latest/err_05B_new.html
 
-.. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://docs.nordicsemi.com/bundle/SA/resource/SA-2023-234-v1_1.pdf
+.. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://nrfconnectdocs.nordicsemi.com/pdf/SA/SA-2023-234-v1_1.pdf
 
 .. _`latest release notes for nRF Connect for Visual Studio Code`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/rel_notes_overview.html
 .. _`nRF Connect for Visual Studio Code`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/index.html
@@ -1185,8 +1184,8 @@
 .. _`switch to the pre-release version of the extension`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/rel_notes_overview.html#switching-to-a-pre-release-version
 .. _`How to work with sysbuild domains`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_multi_domain.html
 
-.. _`Edge AI Add-on for nRF Connect SDK`: https://docs.nordicsemi.com/bundle/addon-edge-ai_latest/page/index.html
-.. _`nRF Door Lock and Access Control Add-on`: https://docs.nordicsemi.com/bundle/door_lock_and_access_control_latest/page/index.html
+.. _`Edge AI Add-on for nRF Connect SDK`: https://nrfconnectdocs.nordicsemi.com/addons/addon-edge-ai/latest/index.html
+.. _`nRF Door Lock and Access Control Add-on`: https://nrfconnectdocs.nordicsemi.com/addons/door_lock_and_access_control/latest/index.html
 
 .. ### Source: files.nordicsemi.com
 
