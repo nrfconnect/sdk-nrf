@@ -5,7 +5,7 @@
 #
 
 config PARTITION_MANAGER
-	default n
+	default y if BOARD_THINGY53
 
 config MERGED_HEX_FILES
 	default y if !SOC_SERIES_NRF54H

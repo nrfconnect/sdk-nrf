@@ -4,11 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "thingy53_nrf5340_cpuapp_partitions.dtsi"
-
 / {
 	chosen {
-		nordic,nus-uart = &cdc_acm_uart1;
+		zephyr,shell-uart = &cdc_acm_uart1;
 	};
 };
 
