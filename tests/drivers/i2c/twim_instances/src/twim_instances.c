@@ -98,6 +98,7 @@ static void test_scan_instance(const struct device *dev)
 	for (uint8_t addr = first_addr; addr <= last_addr; addr += 1) {
 		if (i2c_transfer(dev, &msg, 1, addr) == 0) {
 			dev_cnt = dev_cnt + 1;
+			TC_PRINT("Found device with address: 0x%x\n", addr);
 		}
 	}
 	zassert_equal(dev_cnt, 0,
