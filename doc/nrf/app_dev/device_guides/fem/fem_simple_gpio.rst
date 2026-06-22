@@ -53,7 +53,7 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
 
 #. On nRF53 Series devices, apply the same devicetree node mentioned in **Step 1** to the network core using sysbuild.
    To apply the overlay to the correct network core image, create an overlay file named :file:`sysbuild/*image_name*/boards/nrf5340dk_nrf5340_cpunet.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
-   For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
+   For more information, see the Migrating to sysbuild page.
 
    The *image_name* value is ``ipc_radio``:
 

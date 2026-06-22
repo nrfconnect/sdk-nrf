@@ -29,4 +29,4 @@ See the following documents, based on the version you are migrating from.
    nRF54H20_migration_2.7/migration_guide_2.6.99-cs2_to_2_7_environment
    nRF54H20_migration_2.7/migration_guide_2.6.99-cs2_to_2.7_application
 
-Consult also the :ref:`child_parent_to_sysbuild_migration` page about *Sysbuild*.
+Consult also the Migrating to sysbuild user guide.
