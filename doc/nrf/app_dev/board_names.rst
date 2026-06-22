@@ -129,6 +129,9 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf54l15dk/nrf54l15/cpuflpr/xip``                                      |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
+| nRF54L15 TAG      |            | zephyr:board:: `nrf54l15tag <nrf54l15tag>`             | ``nrf54l15tag/nrf54l15/cpuapp``                                          |
+|                   |            |                                                        |                                                                          |
++-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF54L10 emulated | PCA10156   | :ref:`nrf54l15dk/nrf54l10 <zephyr:nrf54l15dk_nrf54l10>`| ``nrf54l15dk/nrf54l10/cpuapp``                                           |
 | on the nRF54L15 DK|            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf54l15dk/nrf54l10/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)    |
