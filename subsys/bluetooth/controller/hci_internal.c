@@ -1910,12 +1910,17 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 {
 	uint16_t opcode = sys_get_le16(cmd_in);
 
-	if (cmd_complete_or_status.occurred
-#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
-		|| padv_response_data_cmd_pending
+#if defined(CONFIG_BT_HCI_ACL_FLOW_CONTROL)
+	if (opcode != SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS)
 #endif
-		) {
-		return -NRF_EPERM;
+	{
+		if (cmd_complete_or_status.occurred
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
+			|| padv_response_data_cmd_pending
+#endif
+			) {
+			return -NRF_EPERM;
+		}
 	}
 
 	if ((((struct bt_hci_cmd_hdr *)cmd_in)->param_len + BT_HCI_CMD_HDR_SIZE)
