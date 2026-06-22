@@ -85,7 +85,11 @@ int boot_read_image_header_hook(int img_index, int slot, struct image_header *im
 		img_head->ih_load_addr = DT_REG_ADDR(DT_NODELABEL(slot2_partition));
 		img_head->ih_img_size = PCD_NET_CORE_APP_SIZE;
 #endif
+#ifdef MCUBOOT_CHECK_HEADER_LOAD_ADDRESS
+		img_head->ih_flags = IMAGE_F_ROM_FIXED;
+#else
 		img_head->ih_flags = 0;
+#endif
 		img_head->ih_ver.iv_major = 0;
 		img_head->ih_ver.iv_minor = 0;
 		img_head->ih_ver.iv_revision = 0;
