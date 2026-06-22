@@ -404,24 +404,6 @@ function(dfu_app_zip_package)
     endif()
   endif()
 
-  if(SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH)
-    # nRF7x Wifi patch
-    mcuboot_image_number_to_slot(nrf70_patches_slot_primary ${NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} n)
-    mcuboot_image_number_to_slot(nrf70_patches_slot_secondary ${NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} y)
-    math(EXPR nrf70_patches_slot_primary "${nrf70_patches_slot_primary} + 1")
-    math(EXPR nrf70_patches_slot_secondary "${nrf70_patches_slot_secondary} + 1")
-
-    list(APPEND generate_script_app_params
-         "nrf70.binimage_index=${NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER}"
-         "nrf70.binslot_index_primary=${nrf70_patches_slot_primary}"
-         "nrf70.binslot_index_secondary=${nrf70_patches_slot_secondary}"
-    )
-
-    list(APPEND bin_files "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
-    list(APPEND zip_names "nrf70.bin")
-    list(APPEND signed_targets nrf70_wifi_fw_patch_target)
-  endif()
-
   # Include extra images if enabled
   if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES)
     dfu_extra_get_binaries(

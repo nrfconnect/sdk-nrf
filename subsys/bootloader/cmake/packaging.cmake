@@ -69,17 +69,6 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     list(APPEND dfu_multi_image_targets mcuboot_extra_byproducts mcuboot_signed_kernel_hex_target ${s1_image_name}_extra_byproducts ${s1_image_name}_signed_kernel_hex_target mcuboot_signed_packaged_target ${s1_image_name}_signed_packaged_target)
   endif()
 
-  if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH)
-    if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET)
-      list(APPEND dfu_multi_image_ids 2)
-    else()
-      list(APPEND dfu_multi_image_ids 1)
-    endif()
-
-    list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
-    list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
-  endif()
-
   if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES)
     dfu_extra_get_binaries(
       IDS extra_image_ids
