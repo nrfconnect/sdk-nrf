@@ -129,7 +129,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: ncs-v3.4.0-rc2
+      revision: pull/695/head
       path: bootloader/mcuboot
     - name: qcbor
       repo-path: sdk-qcbor
