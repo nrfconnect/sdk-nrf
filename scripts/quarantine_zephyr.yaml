@@ -637,3 +637,38 @@
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf9160dk@0.14.0/nrf9160
   comment: "Doesn't work out of the box - we have our own crypto tests"
+
+- scenarios:
+    - dfu.image_util.slot1
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39948"
+
+- scenarios:
+    - libraries.cmsis_dsp.matrix.binary_q15
+    - libraries.cmsis_dsp.matrix.binary_q15.fpu
+    - libraries.cmsis_dsp.matrix.unary_f32
+    - libraries.cmsis_dsp.matrix.unary_f32.fpu
+    - libraries.cmsis_dsp.matrix.unary_f64
+    - libraries.cmsis_dsp.matrix.unary_f64.fpu
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "FLASH overflowed"
+
+- scenarios:
+    - sample.net.capture
+    - sample.net.dns_resolve.llmnr
+    - sample.net.dns_resolve.mdns
+    - sample.net.ftp_client
+    - sample.net.pkt_filter
+    - sample.net.pkt_filter_priorities
+    - sample.net.sockets.dumb_http_server_mt
+    - sample.net.sockets.echo_server.usbd_cdc_ncm
+    - sample.net.sockets.http_client
+    - sample.net.sockets.http_client.tls
+    - sample.net.virtual
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "FLASH overflowed"
