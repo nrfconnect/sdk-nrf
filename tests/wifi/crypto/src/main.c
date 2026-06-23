@@ -21,7 +21,12 @@ ZTEST(wifi_crypto, test_main)
 {
 	/* First, test slot index rotation */
 
-	uint32_t slot = wifi_kmu_get_next_slot(16);
+	/* Starting slot is randomised so can't be tested easily.
+	   Immediately request maximum number of slots, to force it to start
+	   at the beginning. */
+	uint32_t slot = wifi_kmu_get_next_slot(CONFIG_NRF_WIFI_KMU_NUM_SLOTS * 16);
+
+	slot = wifi_kmu_get_next_slot(16);
 	zassert_equal(slot, CONFIG_NRF_WIFI_KMU_SLOT_MIN);
 
 	slot = wifi_kmu_get_next_slot(32);

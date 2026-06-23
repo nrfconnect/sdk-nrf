@@ -6,6 +6,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <zephyr/random/random.h>
 #include <nrfx_kmu.h>
 #include "wifi_kmu.h"
 
@@ -140,7 +141,24 @@ int wifi_kmu_key_reverse_byte_order_in_place(void *buf, uint32_t key_length_byte
 
 uint32_t wifi_kmu_get_next_slot(uint32_t key_length_bytes)
 {
+	static bool init = false;
 	static uint32_t next_slot = 0;
+
+	if (!init) {
+		/* Randomise starting slot.
+		   To ensure uniform distribution, find largest multiple of
+		   CONFIG_NRF_WIFI_KMU_NUM_SLOTS smaller than or equal to 255 */
+		uint8_t rand_max =
+			(UINT8_MAX / CONFIG_NRF_WIFI_KMU_NUM_SLOTS) * CONFIG_NRF_WIFI_KMU_NUM_SLOTS;
+		uint8_t rand8;
+
+		do {
+			rand8 = sys_rand8_get();
+		} while (rand8 >= rand_max);
+
+		next_slot = rand8 % CONFIG_NRF_WIFI_KMU_NUM_SLOTS;
+		init = true;
+	}
 
 	const uint32_t bytes_per_slot = KMU_KEYSLOTBITS / 8;
 
