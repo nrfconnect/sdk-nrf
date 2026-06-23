@@ -92,6 +92,15 @@
 		.max_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MAX_125US, \
 	}
 
+/* Required by HID over GATT Profile specification (chapter 7.4.1) */
+BUILD_ASSERT(CONFIG_BT_HIDS_SCI_FAST_INTERVAL_MAX_125US < (7500 / 125),
+	     "HID SCI FAST max conn interval must be less than 7.5 ms");
+
+/* Required by HID over GATT Profile specification (chapter 7.4.1) */
+BUILD_ASSERT(CONFIG_BT_HIDS_SCI_FULL_RANGE_INTERVAL_MIN_125US ==
+	     CONFIG_BT_HIDS_SCI_FAST_INTERVAL_MIN_125US,
+	     "HID SCI FULL_RANGE min conn interval must equal FAST min conn interval");
+
 HIDS_SCI_DEFINE_CONN_RATE_PARAM(hids_sci_conn_rate_default, DEFAULT);
 HIDS_SCI_DEFINE_CONN_RATE_PARAM(hids_sci_conn_rate_fast, FAST);
 #if defined(CONFIG_BT_HIDS_SCI_LOW_POWER_MODE)
