@@ -95,10 +95,60 @@ config NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED
 	select TLS_CREDENTIALS
 endchoice
 
+config NRF_CLOUD_CREDENTIALS_KEYGEN
+	bool "Generate the device private key and CSR on-device using PSA [EXPERIMENTAL]"
+	depends on NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED
+	select EXPERIMENTAL
+	select TLS_CREDENTIALS
+	select MBEDTLS
+	select MBEDTLS_PK_C
+	select MBEDTLS_PK_PARSE_C
+	select MBEDTLS_PK_WRITE_C
+	select MBEDTLS_ASN1_WRITE_C
+	select MBEDTLS_X509_CREATE_C
+	select MBEDTLS_X509_CSR_WRITE_C
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
+	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
+	select PSA_WANT_ALG_ECDSA
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ECC_SECP_R1_256
+	help
+	  Generate the nRF Cloud device private key on-device using the PSA
+	  Crypto API. The key is created as a persistent, non-exportable ECC
+	  P-256 key stored securely through the selected secure storage backend
+	  and is referenced for TLS by its PSA key id
+	  (TLS_CREDENTIAL_PRIVATE_KEY_PSA), so the private key never leaves the
+	  device. A matching Certificate Signing Request (CSR) can be produced
+	  for submission to nRF Cloud. The key is re-registered with the TLS
+	  credentials module on every boot during nrf_cloud initialization.
+
+config NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY
+	bool "Export the on-device public key for verification"
+	depends on NRF_CLOUD_CREDENTIALS_KEYGEN
+	default y
+	help
+	  Provide an API (and shell command) to export the public key of the
+	  on-device key pair. The private key is non-exportable, so this public
+	  key is used by host tooling to verify that the on-device key matches
+	  the installed device certificate. Disable to save a small amount of
+	  code if key verification is not needed.
+
+config NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL
+	bool "Shell commands for on-device key and CSR generation [EXPERIMENTAL]"
+	depends on NRF_CLOUD_CREDENTIALS_KEYGEN
+	depends on SHELL
+	select EXPERIMENTAL
+	select BASE64
+	help
+	  Add 'nrf_cloud_cred' shell commands (keygen, csr, and delete, plus
+	  pubkey when NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY is enabled) that drive
+	  the on-device key generation, CSR creation, and public key export
+	  implemented in the nRF Cloud credentials module.
+
 endif # NRF_CLOUD_MQTT || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
 
 config NRF_CLOUD_JWT_SOURCE_CUSTOM
-	bool "Custom JWT creation and signing"
+	bool "Custom JWT creation and signing [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	select TLS_CREDENTIALS
 	select BASE64

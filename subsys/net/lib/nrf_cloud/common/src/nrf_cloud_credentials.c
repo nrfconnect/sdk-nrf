@@ -11,8 +11,13 @@
 #include <modem/modem_key_mgmt.h>
 #endif
 
+#if defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
+#include "nrf_cloud_credentials_keygen_internal.h"
+#endif
+
 LOG_MODULE_REGISTER(nrf_cloud_credentials, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
+#if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) || defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)
 enum nrf_cloud_cred_type {
 	CA_CERT = 0,
 	CLIENT_CERT = 1,
@@ -28,6 +33,7 @@ static int cred_type[CRED_COUNT] = {
 	TLS_CREDENTIAL_CA_CERTIFICATE, TLS_CREDENTIAL_PUBLIC_CERTIFICATE, TLS_CREDENTIAL_PRIVATE_KEY
 #endif
 };
+#endif /* CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES || CONFIG_NRF_CLOUD_CHECK_CREDENTIALS */
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #include CONFIG_NRF_CLOUD_CERTIFICATES_FILE
@@ -278,6 +284,17 @@ int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs)
 		LOG_ERR("Error checking private key exists");
 		return -EIO;
 	}
+#if defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
+	/* An on-device key is referenced opaquely, not stored as a raw private
+	 * key. Query PSA secure key storage directly (the source of truth) rather
+	 * than the TLS credentials module: the opaque key is only registered there
+	 * during nrf_cloud initialization, so probing it would report a false
+	 * negative for an application that checks credentials before init.
+	 */
+	if (!exists) {
+		exists = nrf_cloud_credentials_keygen_key_exists(cs->sec_tag);
+	}
+#endif
 	cs->prv_key = exists;
 
 	LOG_INF("Sec Tag: %u; CA: %s, Client Cert: %s, Private Key: %s", cs->sec_tag,
