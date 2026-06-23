@@ -87,6 +87,10 @@ zephyr_library_sources_ifdef(
   common/src/nrf_cloud_dns.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS common/src/nrf_cloud_credentials.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES common/src/nrf_cloud_credentials.c)
+zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN
+  common/src/nrf_cloud_credentials_keygen.c)
+zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL
+  common/src/nrf_cloud_credentials_shell.c)
 zephyr_include_directories(include common/include coap/include mqtt/include coap/generated/include)
 if(CONFIG_MCUBOOT_IMG_MANAGER)
   zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
