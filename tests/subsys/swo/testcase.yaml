@@ -3,6 +3,7 @@ tests:
     tags: ci_tests_subsys_swo
     harness: pytest
     harness_config:
+      fixture: swo_enabled
       pytest_dut_scope: session
       pytest_root:
         - "pytest/test_swo.py::test_swo_logging"
