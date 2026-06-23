@@ -1,0 +1,390 @@
+.memory-viz-board-outer,
+.memory-viz-board-outer.docutils.container {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.memory-viz-board {
+  margin: 1.5rem 0 2.5rem;
+  width: 100%;
+  max-width: calc(100% - var(--ncs-right-toc-width, 0px) - 3rem);
+  container-type: inline-size;
+  container-name: memory-viz-board;
+}
+
+.memory-viz-board-inner,
+.memory-viz-samples,
+.memory-viz-chart-header,
+.memory-viz-sample-row {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.memory-viz-chart-header,
+.memory-viz-chart-header.docutils.container,
+.memory-viz-sample-row,
+.memory-viz-sample-row.docutils.container {
+  display: grid;
+  grid-template-columns:
+    14rem
+    minmax(0, var(--memory-viz-nvm-fr, 4fr))
+    minmax(0, var(--memory-viz-ram-fr, 1fr));
+  gap: 0.5rem 0.75rem;
+  align-items: start;
+}
+
+.memory-viz-chart-header,
+.memory-viz-chart-header.docutils.container {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+.memory-viz-samples {
+  display: flex;
+  flex-direction: column;
+}
+
+.memory-viz-header-nvm,
+.memory-viz-header-ram {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.memory-viz-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+}
+
+.memory-viz-legend-nvm,
+.memory-viz-legend-external,
+.memory-viz-legend-ram {
+  margin-top: 0.15rem;
+}
+
+.memory-viz-sample-row {
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+  overflow: visible;
+}
+
+.memory-viz-sample-row:last-child {
+  border-bottom: none;
+}
+
+.memory-viz-sample-label {
+  font-size: 0.875rem;
+  padding-right: 0.25rem;
+  white-space: nowrap;
+}
+
+.memory-viz-sample-label p {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.memory-viz-nvm-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow: visible;
+}
+
+.memory-viz-bar-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.memory-viz-bar-stack-external {
+  width: 100% !important;
+}
+
+.memory-viz-row-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--bs-secondary-color, #6c757d);
+  line-height: 1.2;
+}
+
+.memory-viz-ram-column {
+  align-self: start;
+  min-width: 0;
+  overflow: visible;
+}
+
+.memory-viz-board .docutils.container {
+  width: 100%;
+  max-width: none;
+}
+
+/* Narrow board width: sample name on top, internal NVM + RAM on one row (Zigbee-style). */
+@container memory-viz-board (max-width: 50rem) {
+  .memory-viz-board {
+    max-width: 100%;
+  }
+
+  .memory-viz-chart-header,
+  .memory-viz-chart-header.docutils.container,
+  .memory-viz-sample-row,
+  .memory-viz-sample-row.docutils.container {
+    grid-template-columns:
+      minmax(0, var(--memory-viz-nvm-fr, 4fr))
+      minmax(4.5rem, var(--memory-viz-ram-fr, 1fr));
+    width: 100%;
+  }
+
+  .memory-viz-chart-header,
+  .memory-viz-chart-header.docutils.container {
+    grid-template-areas: "nvm ram";
+    gap: 0.5rem 0.75rem;
+  }
+
+  .memory-viz-chart-header .memory-viz-panel-title-sample {
+    display: none;
+  }
+
+  .memory-viz-chart-header .memory-viz-header-nvm {
+    grid-area: nvm;
+  }
+
+  .memory-viz-chart-header .memory-viz-header-ram {
+    grid-area: ram;
+  }
+
+  .memory-viz-sample-row,
+  .memory-viz-sample-row.docutils.container {
+    grid-template-areas:
+      "sample sample"
+      "nvm ram";
+    gap: 0.5rem 0.75rem;
+  }
+
+  .memory-viz-sample-row > .memory-viz-nvm-column {
+    grid-area: nvm;
+  }
+
+  .memory-viz-sample-row > .memory-viz-ram-column {
+    grid-area: ram;
+  }
+
+  .memory-viz-sample-row > .memory-viz-sample-label {
+    grid-area: sample;
+    margin-bottom: 0.1rem;
+    white-space: normal;
+  }
+
+  .memory-viz-sample-row > .memory-viz-sample-label p {
+    white-space: normal;
+  }
+
+  .memory-viz-legend {
+    gap: 0.25rem 0.5rem;
+  }
+
+  .memory-viz-legend-item {
+    font-size: 0.7rem;
+  }
+}
+
+/* Viewport fallback when container queries are unavailable. */
+@media (max-width: 900px) {
+  .memory-viz-board {
+    max-width: 100%;
+  }
+
+  .memory-viz-chart-header,
+  .memory-viz-chart-header.docutils.container,
+  .memory-viz-sample-row,
+  .memory-viz-sample-row.docutils.container {
+    grid-template-columns:
+      minmax(0, var(--memory-viz-nvm-fr, 4fr))
+      minmax(4.5rem, var(--memory-viz-ram-fr, 1fr));
+    width: 100%;
+  }
+
+  .memory-viz-chart-header,
+  .memory-viz-chart-header.docutils.container {
+    grid-template-areas: "nvm ram";
+    gap: 0.5rem 0.75rem;
+  }
+
+  .memory-viz-chart-header .memory-viz-panel-title-sample {
+    display: none;
+  }
+
+  .memory-viz-chart-header .memory-viz-header-nvm {
+    grid-area: nvm;
+  }
+
+  .memory-viz-chart-header .memory-viz-header-ram {
+    grid-area: ram;
+  }
+
+  .memory-viz-sample-row,
+  .memory-viz-sample-row.docutils.container {
+    grid-template-areas:
+      "sample sample"
+      "nvm ram";
+    gap: 0.5rem 0.75rem;
+  }
+
+  .memory-viz-sample-row > .memory-viz-nvm-column {
+    grid-area: nvm;
+  }
+
+  .memory-viz-sample-row > .memory-viz-ram-column {
+    grid-area: ram;
+  }
+
+  .memory-viz-sample-row > .memory-viz-sample-label {
+    grid-area: sample;
+    margin-bottom: 0.1rem;
+    white-space: normal;
+  }
+
+  .memory-viz-sample-row > .memory-viz-sample-label p {
+    white-space: normal;
+  }
+
+  .memory-viz-legend {
+    gap: 0.25rem 0.5rem;
+  }
+
+  .memory-viz-legend-item {
+    font-size: 0.7rem;
+  }
+}
+
+.memory-viz-panel-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--bs-secondary-color, #6c757d);
+}
+
+.memory-viz-panel-title-sample {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.memory-viz-panel-title-secondary {
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  width: 100% !important;
+}
+
+.memory-viz-bar-wrap {
+  min-width: 0;
+  overflow: visible;
+}
+
+.memory-viz-bar-wrap-external {
+  max-width: 100%;
+}
+
+.memory-viz-bar {
+  display: flex;
+  width: 100%;
+  height: 1.75rem;
+  border: 1px solid var(--bs-border-color, #ced4da);
+  border-radius: 0.25rem;
+  overflow: visible;
+  background: var(--bs-body-bg, #fff);
+}
+
+.memory-viz-segment {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  border-right: 1px solid rgba(255, 255, 255, 0.35);
+  position: relative;
+  cursor: default;
+}
+
+.memory-viz-segment::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.35rem);
+  transform: translateX(-50%);
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.2rem;
+  background: var(--bs-emphasis-color, #212529);
+  color: var(--bs-body-bg, #fff);
+  font-size: 0.875rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 20;
+}
+
+.memory-viz-segment:hover::after,
+.memory-viz-segment:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.memory-viz-segment-tooltip-start::after {
+  left: 0;
+  transform: none;
+}
+
+.memory-viz-segment-tfm_storage,
+.memory-viz-segment-storage,
+.memory-viz-segment-boot,
+.memory-viz-segment-tfm,
+.memory-viz-segment-factory_data {
+  min-width: 3px;
+}
+
+.memory-viz-segment:last-child {
+  border-right: none;
+}
+
+.memory-viz-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.memory-viz-segment:first-child .memory-viz-fill:first-child {
+  border-top-left-radius: 0.2rem;
+  border-bottom-left-radius: 0.2rem;
+}
+
+.memory-viz-segment:last-child .memory-viz-fill:last-child {
+  border-top-right-radius: 0.2rem;
+  border-bottom-right-radius: 0.2rem;
+}
+
+.memory-viz-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--bs-body-color, #212529);
+}
+
+.memory-viz-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.125rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
