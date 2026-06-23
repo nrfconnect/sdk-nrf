@@ -11,10 +11,10 @@
 	pwm_to_gpio_loopback: pwm_to_gpio_loopback {
 		compatible = "test-pwm-to-gpio-loopback";
 		pwms = <&pwm20 0 0 PWM_POLARITY_NORMAL>;
-		gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
 	};
 };
 
-&uart30 {
+&uart21 {
 	/delete-property/ hw-flow-control;
 };
