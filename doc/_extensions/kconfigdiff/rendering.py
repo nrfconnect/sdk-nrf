@@ -195,18 +195,8 @@ class KconfigDiffDirective(SphinxDirective):
     final_argument_whitespace = False
     has_content = False
 
-    def _get_prev_version_num(self) -> str | None:
-        if len(self.env.nrf_versions) >= 2:
-            return self.env.nrf_versions[-2].replace("-", ".")[1:]
-        return None
-
     def run(self) -> list[nodes.Node]:
         if not self.env.app.config.kconfigdiff_should_build:
-            return []
-
-        last_version = self._get_prev_version_num()
-        if last_version is None:
-            logger.error("Couldn't establish what was the previous build version")
             return []
 
         root = nodes.container(classes=["kconfigdiff"])
@@ -216,7 +206,7 @@ class KconfigDiffDirective(SphinxDirective):
 
         outdir = Path(self.env.app.outdir)
         for old, new in sorted(
-            diff_generator(last_version, outdir),
+            diff_generator(outdir),
             key=lambda p: ordering(*p).name,
         ):
             node = ComparisonPair(old, new).render()

@@ -9,7 +9,6 @@ Kconfigdiff extension for displaying changes in kconfig
 files between releases.
 """
 
-from page_filter import read_versions
 from sphinx.application import Sphinx
 from sphinx.util.typing import ExtensionMetadata
 
@@ -21,7 +20,6 @@ __version__ = "0.1.0"
 
 def kconfigdiff_install(app: Sphinx) -> None:
     app.config.html_static_path.append(RESOURCES_DIR.as_posix())
-    read_versions(app)
 
 
 def setup(app: Sphinx) -> ExtensionMetadata:
