@@ -14,7 +14,7 @@ config APP_PLATFORM_DK
 config APP_PLATFORM_REF
 	bool
 	default y
-	depends on BOARD_THINGY53 || BOARD_NRF54L15TAG
+	depends on BOARD_NRF54L15TAG
 
 rsource "Kconfig.battery"
 rsource "Kconfig.dfu"

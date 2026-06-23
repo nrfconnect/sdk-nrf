@@ -79,7 +79,7 @@
     - fast_pair.storage.factory_reset.8keys
     - fast_pair.storage.factory_reset.9keys
   platforms:
-    - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l15/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:

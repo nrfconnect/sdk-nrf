@@ -25,8 +25,6 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm.txt
-
 Overview
 ********
 
@@ -111,114 +109,55 @@ You can control the sample using predefined buttons, while LEDs are used to disp
 Buttons
 =======
 
-.. tabs::
+Button 0:
+   Toggles between three Fast Pair advertising modes:
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   * Fast Pair discoverable advertising.
+   * Fast Pair not discoverable advertising (with the show UI indication).
+   * Fast Pair not discoverable advertising (with the hide UI indication).
 
-      Button 1:
-         Toggles between three Fast Pair advertising modes:
+   The advertising pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`) is enabled only if the Fast Pair discoverable advertising mode is selected.
 
-         * Fast Pair discoverable advertising.
-         * Fast Pair not discoverable advertising (with the show UI indication).
-         * Fast Pair not discoverable advertising (with the hide UI indication).
+   .. note::
+      The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
+      After the connection, you can still switch the advertising modes, but the switch will come into effect only after disconnection.
+      The discoverable advertising is automatically switched to the not discoverable advertising with the show UI indication mode in the following cases:
 
-         The advertising pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`) is enabled only if the Fast Pair discoverable advertising mode is selected.
+      * After 10 minutes of active advertising.
+      * After a Bluetooth Central successfully pairs.
 
-         .. note::
-            The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
-            After the connection, you can still switch the advertising modes, but the switch will come into effect only after disconnection.
-            The discoverable advertising is automatically switched to the not discoverable advertising with the show UI indication mode in the following cases:
+      After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
+      Therefore, the device no longer advertises in the pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`), and the Fast Pair advertising mode is automatically set to the Fast Pair not discoverable advertising with the hide UI indication on every advertising start.
 
-            * After 10 minutes of active advertising.
-            * After a Bluetooth Central successfully pairs.
+Button 1:
+   Increases audio volume of the connected Bluetooth Central.
 
-            After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
-            Therefore, the device no longer advertises in the pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`), and the Fast Pair advertising mode is automatically set to the Fast Pair not discoverable advertising with the hide UI indication on every advertising start.
+Button 2:
+   Removes the Bluetooth bonds.
+   This operation does not clear Fast Pair storage data.
+   The stored Account Keys are not removed.
 
-      Button 2:
-         Increases audio volume of the connected Bluetooth Central.
-
-      Button 3:
-         Removes the Bluetooth bonds.
-         This operation does not clear Fast Pair storage data.
-         The stored Account Keys are not removed.
-
-      Button 4:
-         Decreases audio volume of the connected Bluetooth Central.
-
-   .. group-tab:: nRF54 DKs
-
-      Button 0:
-         Toggles between three Fast Pair advertising modes:
-
-         * Fast Pair discoverable advertising.
-         * Fast Pair not discoverable advertising (with the show UI indication).
-         * Fast Pair not discoverable advertising (with the hide UI indication).
-
-         The advertising pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`) is enabled only if the Fast Pair discoverable advertising mode is selected.
-
-         .. note::
-            The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
-            After the connection, you can still switch the advertising modes, but the switch will come into effect only after disconnection.
-            The discoverable advertising is automatically switched to the not discoverable advertising with the show UI indication mode in the following cases:
-
-            * After 10 minutes of active advertising.
-            * After a Bluetooth Central successfully pairs.
-
-            After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
-            Therefore, the device no longer advertises in the pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`), and the Fast Pair advertising mode is automatically set to the Fast Pair not discoverable advertising with the hide UI indication on every advertising start.
-
-      Button 1:
-         Increases audio volume of the connected Bluetooth Central.
-
-      Button 2:
-         Removes the Bluetooth bonds.
-         This operation does not clear Fast Pair storage data.
-         The stored Account Keys are not removed.
-
-      Button 3:
-         Decreases audio volume of the connected Bluetooth Central.
+Button 3:
+   Decreases audio volume of the connected Bluetooth Central.
 
 LEDs
 ====
 
-.. tabs::
+LED 0:
+   Keeps blinking with constant interval to indicate that firmware is running.
 
-   .. group-tab:: nRF52 and nRF53 DKs
+LED 1:
+   Depending on the Bluetooth Central connection status:
 
-      LED 1:
-         Keeps blinking with constant interval to indicate that firmware is running.
+   * On if the Central is connected over Bluetooth.
+   * Off if there is no Central connected.
 
-      LED 2:
-         Depending on the Bluetooth Central connection status:
+LED 2:
+   Depending on the Fast Pair advertising mode setting:
 
-         * On if the Central is connected over Bluetooth.
-         * Off if there is no Central connected.
-
-      LED 3:
-         Depending on the Fast Pair advertising mode setting:
-
-         * On if the device is Fast Pair discoverable.
-         * Blinks with 0.5 secs interval if the selected mode is the Fast Pair not discoverable advertising with the show UI indication.
-         * Blinks with 1.5 secs interval if the selected mode is the Fast Pair not discoverable advertising with the hide UI indication.
-
-   .. group-tab:: nRF54 DKs
-
-      LED 0:
-         Keeps blinking with constant interval to indicate that firmware is running.
-
-      LED 1:
-         Depending on the Bluetooth Central connection status:
-
-         * On if the Central is connected over Bluetooth.
-         * Off if there is no Central connected.
-
-      LED 2:
-         Depending on the Fast Pair advertising mode setting:
-
-         * On if the device is Fast Pair discoverable.
-         * Blinks with 0.5 secs interval if the selected mode is the Fast Pair not discoverable advertising with the show UI indication.
-         * Blinks with 1.5 secs interval if the selected mode is the Fast Pair not discoverable advertising with the hide UI indication.
+   * On if the device is Fast Pair discoverable.
+   * Blinks with 0.5 secs interval if the selected mode is the Fast Pair not discoverable advertising with the show UI indication.
+   * Blinks with 1.5 secs interval if the selected mode is the Fast Pair not discoverable advertising with the hide UI indication.
 
 
 Configuration
@@ -231,12 +170,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/fast_pair/input_device`
 
-.. include:: /includes/build_and_run_ns.txt
-
-.. |sample_or_app| replace:: sample
-.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
-
-.. include:: /includes/ipc_radio_conf.txt
+.. include:: /includes/build_and_run.txt
 
 When building the sample, you can provide the Fast Pair Model ID (:kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID`) and the Fast Pair Anti-Spoofing Key (:kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`) as sysbuild Kconfig options.
 If the data is not provided, the sample uses the default provisioning data obtained for the *NCS input device* (the input device debug Fast Pair provider).
@@ -251,81 +185,40 @@ Testing
 
 |test_sample|
 
-.. tabs::
+1. |connect_terminal_specific|
+   The sample provides Fast Pair debug logs to inform about state of the Fast Pair procedure.
+#. Reset the kit.
+#. Observe that **LED 0** is blinking (firmware is running) and **LED 2** is lit (device is Fast Pair discoverable).
+   This means that the device is now working as Fast Pair Provider and is advertising.
+#. On the Android device, go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`, depending on your Android device configuration) > :guilabel:`Devices`.
+#. Move the Android device close to the Fast Pair Provider that is advertising.
+#. Wait for Android device's notification about the detected Fast Pair Provider.
+   If you use the Model ID certified by Google, the notification is similar to the following:
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. figure:: /images/bt_fast_pair_discoverable_notification.png
+      :scale: 33 %
+      :alt: Fast Pair discoverable advertising Android notification
 
-      1. |connect_terminal_specific|
-         The sample provides Fast Pair debug logs to inform about state of the Fast Pair procedure.
-      #. Reset the kit.
-      #. Observe that **LED 1** is blinking (firmware is running) and **LED 3** is lit (device is Fast Pair discoverable).
-         This means that the device is now working as Fast Pair Provider and is advertising.
-      #. On the Android device, go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`, depending on your Android device configuration) > :guilabel:`Devices`.
-      #. Move the Android device close to the Fast Pair Provider that is advertising.
-      #. Wait for Android device's notification about the detected Fast Pair Provider.
-         If you use the Model ID certified by Google, the notification is similar to the following:
+   The device model name and displayed logo depend on the data provided during the device model registration.
 
-         .. figure:: /images/bt_fast_pair_discoverable_notification.png
-            :scale: 33 %
-            :alt: Fast Pair discoverable advertising Android notification
+   If you use the debug Model ID (for example, the default is *NCS input device*), the notification is similar to the following:
 
-         The device model name and displayed logo depend on the data provided during the device model registration.
+   .. figure:: /images/bt_fast_pair_discoverable_notification_debug.png
+      :scale: 50 %
+      :alt: Fast Pair discoverable advertising Android notification for debug Model ID.
 
-         If you use the debug Model ID (for example, the default is *NCS input device*), the notification is similar to the following:
+   The device model name is covered by asterisks and the default Fast Pair logo is displayed instead of the one specified during the device model registration.
+#. Tap the :guilabel:`Connect` button to initiate the connection and trigger the Fast Pair procedure.
+   After the procedure has completed, the pop-up is updated to inform about successfully completed Fast Pair procedure.
+   **LED 1** is lit to indicate that the device is connected with the Bluetooth Central.
 
-         .. figure:: /images/bt_fast_pair_discoverable_notification_debug.png
-            :scale: 50 %
-            :alt: Fast Pair discoverable advertising Android notification for debug Model ID.
+   .. note::
+      Some Android devices might disconnect right after the Fast Pair procedure has completed.
+      Go to :guilabel:`Settings` > :guilabel:`Bluetooth` and tap on the bonded Fast Pair Provider to reconnect.
 
-         The device model name is covered by asterisks and the default Fast Pair logo is displayed instead of the one specified during the device model registration.
-      #. Tap the :guilabel:`Connect` button to initiate the connection and trigger the Fast Pair procedure.
-         After the procedure has completed, the pop-up is updated to inform about successfully completed Fast Pair procedure.
-         **LED 2** is lit to indicate that the device is connected with the Bluetooth Central.
-
-         .. note::
-            Some Android devices might disconnect right after the Fast Pair procedure has completed.
-            Go to :guilabel:`Settings` > :guilabel:`Bluetooth` and tap on the bonded Fast Pair Provider to reconnect.
-
-         You can now use the connected Fast Pair Provider to control audio volume of the Bluetooth Central.
-      #. Press **Button 2** to increase the audio volume.
-      #. Press **Button 4** to decrease the audio volume.
-
-   .. group-tab:: nRF54 DKs
-
-      1. |connect_terminal_specific|
-         The sample provides Fast Pair debug logs to inform about state of the Fast Pair procedure.
-      #. Reset the kit.
-      #. Observe that **LED 0** is blinking (firmware is running) and **LED 2** is lit (device is Fast Pair discoverable).
-         This means that the device is now working as Fast Pair Provider and is advertising.
-      #. On the Android device, go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`, depending on your Android device configuration) > :guilabel:`Devices`.
-      #. Move the Android device close to the Fast Pair Provider that is advertising.
-      #. Wait for Android device's notification about the detected Fast Pair Provider.
-         If you use the Model ID certified by Google, the notification is similar to the following:
-
-         .. figure:: /images/bt_fast_pair_discoverable_notification.png
-            :scale: 33 %
-            :alt: Fast Pair discoverable advertising Android notification
-
-         The device model name and displayed logo depend on the data provided during the device model registration.
-
-         If you use the debug Model ID (for example, the default is *NCS input device*), the notification is similar to the following:
-
-         .. figure:: /images/bt_fast_pair_discoverable_notification_debug.png
-            :scale: 50 %
-            :alt: Fast Pair discoverable advertising Android notification for debug Model ID.
-
-         The device model name is covered by asterisks and the default Fast Pair logo is displayed instead of the one specified during the device model registration.
-      #. Tap the :guilabel:`Connect` button to initiate the connection and trigger the Fast Pair procedure.
-         After the procedure has completed, the pop-up is updated to inform about successfully completed Fast Pair procedure.
-         **LED 1** is lit to indicate that the device is connected with the Bluetooth Central.
-
-         .. note::
-            Some Android devices might disconnect right after the Fast Pair procedure has completed.
-            Go to :guilabel:`Settings` > :guilabel:`Bluetooth` and tap on the bonded Fast Pair Provider to reconnect.
-
-         You can now use the connected Fast Pair Provider to control audio volume of the Bluetooth Central.
-      #. Press **Button 1** to increase the audio volume.
-      #. Press **Button 3** to decrease the audio volume.
+   You can now use the connected Fast Pair Provider to control audio volume of the Bluetooth Central.
+#. Press **Button 1** to increase the audio volume.
+#. Press **Button 3** to decrease the audio volume.
 
 Not discoverable advertising
 ----------------------------
@@ -334,133 +227,66 @@ Testing not discoverable advertising requires using a second Android device that
 
 Test not discoverable advertising by completing `Testing`_ and the following additional steps:
 
-.. tabs::
+#. Disconnect the Android device that was used during the default `Testing`_:
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   a. Go to :guilabel:`Settings` > :guilabel:`Bluetooth`.
+   #. Tap on the connected device name to disconnect it.
 
-      #. Disconnect the Android device that was used during the default `Testing`_:
+      .. note::
+         Do not remove Bluetooth bond information related to the Fast Pair Provider.
 
-         a. Go to :guilabel:`Settings` > :guilabel:`Bluetooth`.
-         #. Tap on the connected device name to disconnect it.
+      .. note::
+         On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
+         This is expected behavior for HID over GATT Profile (HOGP) devices.
+         To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
 
-            .. note::
-               Do not remove Bluetooth bond information related to the Fast Pair Provider.
+      After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode.
+      **LED 2** is blinking rapidly.
 
-            .. note::
-               On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
-               This is expected behavior for HID over GATT Profile (HOGP) devices.
-               To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
+#. Make sure that the Fast Pair Provider is added to :guilabel:`Saved devices` on the Android device that was used for `Testing`_:
 
-            After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode.
-            **LED 3** is blinking rapidly.
+   a. Go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`) > :guilabel:`Devices` > :guilabel:`Saved devices`.
+   #. Verify that the paired device is appearing on the list.
 
-      #. Make sure that the Fast Pair Provider is added to :guilabel:`Saved devices` on the Android device that was used for `Testing`_:
+#. If you want to test the Fast Pair not discoverable advertising with the hide UI indication mode, press **Button 0**.
+   **LED 2** starts blinking slowly.
 
-         a. Go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`) > :guilabel:`Devices` > :guilabel:`Saved devices`.
-         #. Verify that the paired device is appearing on the list.
+#. Wait until the Fast Pair Provider is added to :guilabel:`Saved devices` on the second Android device:
 
-      #. If you want to test the Fast Pair not discoverable advertising with the hide UI indication mode, press **Button 1**.
-         **LED 3** starts blinking slowly.
+   a. Go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`) > :guilabel:`Devices` > :guilabel:`Saved devices`.
+      The paired device appears on the list.
+   #. If the device does not appear on the list, wait until the data is synced between phones.
 
-      #. Wait until the Fast Pair Provider is added to :guilabel:`Saved devices` on the second Android device:
+#. Move the second Android device close to the Fast Pair Provider.
+   If you use the Model ID certified by Google and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
 
-         a. Go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`) > :guilabel:`Devices` > :guilabel:`Saved devices`.
-            The paired device appears on the list.
-         #. If the device does not appear on the list, wait until the data is synced between phones.
+   .. figure:: /images/bt_fast_pair_not_discoverable_notification.png
+      :scale: 50 %
+      :alt: Fast Pair not discoverable advertising Android notification
 
-      #. Move the second Android device close to the Fast Pair Provider.
-         If you use the Model ID certified by Google and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
+   If you use the debug Model ID (for example, the default is *NCS input device*) and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
 
-         .. figure:: /images/bt_fast_pair_not_discoverable_notification.png
-            :scale: 50 %
-            :alt: Fast Pair not discoverable advertising Android notification
+   .. figure:: /images/bt_fast_pair_not_discoverable_notification_debug.png
+      :scale: 50 %
+      :alt: Fast Pair not discoverable advertising Android notification for debug Model ID
 
-         If you use the debug Model ID (for example, the default is *NCS input device*) and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
+   The *Nordic* name is replaced by your own Google account name as this is a default name created by the Fast Pair Seeker during the initial pairing.
 
-         .. figure:: /images/bt_fast_pair_not_discoverable_notification_debug.png
-            :scale: 50 %
-            :alt: Fast Pair not discoverable advertising Android notification for debug Model ID
+   If the device is in the hide UI indication advertising mode, no notification appears.
+   This is because the device advertises, but does not want to be paired with.
+   You can verify that the device is advertising using the `nRF Connect for Mobile`_ application.
 
-         The *Nordic* name is replaced by your own Google account name as this is a default name created by the Fast Pair Seeker during the initial pairing.
+#. In the show UI indication mode, when the notification appears, tap on it to trigger the Fast Pair procedure.
+#. Wait for the notification about successful Fast Pair procedure.
+   **LED 1** is lit to inform that the device is connected with the Bluetooth Central.
 
-         If the device is in the hide UI indication advertising mode, no notification appears.
-         This is because the device advertises, but does not want to be paired with.
-         You can verify that the device is advertising using the `nRF Connect for Mobile`_ application.
+   .. note::
+      Some Android devices might disconnect right after Fast Pair procedure is finished.
+      Go to :guilabel:`Settings` > :guilabel:`Bluetooth` and tap on the bonded Fast Pair Provider to reconnect.
 
-      #. In the show UI indication mode, when the notification appears, tap on it to trigger the Fast Pair procedure.
-      #. Wait for the notification about successful Fast Pair procedure.
-         **LED 2** is lit to inform that the device is connected with the Bluetooth Central.
-
-         .. note::
-            Some Android devices might disconnect right after Fast Pair procedure is finished.
-            Go to :guilabel:`Settings` > :guilabel:`Bluetooth` and tap on the bonded Fast Pair Provider to reconnect.
-
-         You can now use the connected Fast Pair Provider to control the audio volume of the Bluetooth Central.
-      #. Press **Button 2** to increase the audio volume.
-      #. Press **Button 4** to decrease the audio volume.
-
-   .. group-tab:: nRF54 DKs
-
-      #. Disconnect the Android device that was used during the default `Testing`_:
-
-         a. Go to :guilabel:`Settings` > :guilabel:`Bluetooth`.
-         #. Tap on the connected device name to disconnect it.
-
-            .. note::
-               Do not remove Bluetooth bond information related to the Fast Pair Provider.
-
-            .. note::
-               On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
-               This is expected behavior for HID over GATT Profile (HOGP) devices.
-               To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
-
-            After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode.
-            **LED 2** is blinking rapidly.
-
-      #. Make sure that the Fast Pair Provider is added to :guilabel:`Saved devices` on the Android device that was used for `Testing`_:
-
-         a. Go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`) > :guilabel:`Devices` > :guilabel:`Saved devices`.
-         #. Verify that the paired device is appearing on the list.
-
-      #. If you want to test the Fast Pair not discoverable advertising with the hide UI indication mode, press **Button 0**.
-         **LED 2** starts blinking slowly.
-
-      #. Wait until the Fast Pair Provider is added to :guilabel:`Saved devices` on the second Android device:
-
-         a. Go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`) > :guilabel:`Devices` > :guilabel:`Saved devices`.
-            The paired device appears on the list.
-         #. If the device does not appear on the list, wait until the data is synced between phones.
-
-      #. Move the second Android device close to the Fast Pair Provider.
-         If you use the Model ID certified by Google and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
-
-         .. figure:: /images/bt_fast_pair_not_discoverable_notification.png
-            :scale: 50 %
-            :alt: Fast Pair not discoverable advertising Android notification
-
-         If you use the debug Model ID (for example, the default is *NCS input device*) and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
-
-         .. figure:: /images/bt_fast_pair_not_discoverable_notification_debug.png
-            :scale: 50 %
-            :alt: Fast Pair not discoverable advertising Android notification for debug Model ID
-
-         The *Nordic* name is replaced by your own Google account name as this is a default name created by the Fast Pair Seeker during the initial pairing.
-
-         If the device is in the hide UI indication advertising mode, no notification appears.
-         This is because the device advertises, but does not want to be paired with.
-         You can verify that the device is advertising using the `nRF Connect for Mobile`_ application.
-
-      #. In the show UI indication mode, when the notification appears, tap on it to trigger the Fast Pair procedure.
-      #. Wait for the notification about successful Fast Pair procedure.
-         **LED 1** is lit to inform that the device is connected with the Bluetooth Central.
-
-         .. note::
-            Some Android devices might disconnect right after Fast Pair procedure is finished.
-            Go to :guilabel:`Settings` > :guilabel:`Bluetooth` and tap on the bonded Fast Pair Provider to reconnect.
-
-         You can now use the connected Fast Pair Provider to control the audio volume of the Bluetooth Central.
-      #. Press **Button 1** to increase the audio volume.
-      #. Press **Button 3** to decrease the audio volume.
+   You can now use the connected Fast Pair Provider to control the audio volume of the Bluetooth Central.
+#. Press **Button 1** to increase the audio volume.
+#. Press **Button 3** to decrease the audio volume.
 
 Personalized Name extension
 ----------------------------
@@ -481,47 +307,23 @@ Battery Notification extension
 
 Complete the following steps to test `Fast Pair Battery Notification extension`_:
 
-.. tabs::
+#. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
+#. Disconnect the Fast Pair Seeker from the Fast Pair Provider.
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. note::
+      On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
+      This is expected behavior for HID over GATT Profile (HOGP) devices.
+      To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
 
-      #. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
-      #. Disconnect the Fast Pair Seeker from the Fast Pair Provider.
+#. After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode and starts advertising sample battery data.
+   **LED 2** is blinking rapidly.
+#. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application:
 
-         .. note::
-            On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
-            This is expected behavior for HID over GATT Profile (HOGP) devices.
-            To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
-
-      #. After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode and starts advertising sample battery data.
-         **LED 3** is blinking rapidly.
-      #. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application:
-
-         a. Open the `nRF Connect for Mobile`_ application.
-         #. Open the :guilabel:`SCANNER` tab.
-         #. Identify your test device that acts as the Fast Pair Provider in the scanning list.
-         #. Tap on it to expand advertising details.
-         #. Verify that the sample battery level and charging status are displayed in the **Fast Pair** section.
-
-   .. group-tab:: nRF54 DKs
-
-      #. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
-      #. Disconnect the Fast Pair Seeker from the Fast Pair Provider.
-
-         .. note::
-            On Android 16 and later, the system automatically reconnects to bonded HID devices that start connectable advertisements.
-            This is expected behavior for HID over GATT Profile (HOGP) devices.
-            To disconnect, disable Bluetooth on the Android device or use the :guilabel:`Input device` toggle in the device's Bluetooth settings and tap :guilabel:`Disconnect`.
-
-      #. After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode and starts advertising sample battery data.
-         **LED 2** is blinking rapidly.
-      #. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application:
-
-         a. Open the `nRF Connect for Mobile`_ application.
-         #. Open the :guilabel:`SCANNER` tab.
-         #. Identify your test device that acts as the Fast Pair Provider in the scanning list.
-         #. Tap on it to expand advertising details.
-         #. Verify that the sample battery level and charging status are displayed in the **Fast Pair** section.
+   a. Open the `nRF Connect for Mobile`_ application.
+   #. Open the :guilabel:`SCANNER` tab.
+   #. Identify your test device that acts as the Fast Pair Provider in the scanning list.
+   #. Tap on it to expand advertising details.
+   #. Verify that the sample battery level and charging status are displayed in the **Fast Pair** section.
 
 .. note::
    Currently, Android phones have trouble with the Battery Notification extension and sometimes do not display battery information as a user indication.
@@ -557,10 +359,3 @@ The sample uses the following providers to generate the scan response data:
 
 * Bluetooth device name provider (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME`)
 * Generic Access Profile (GAP) appearance provider (:kconfig:option:`CONFIG_BT_ADV_PROV_GAP_APPEARANCE`)
-
-Other
-=====
-
-The sample also uses the following secure firmware component:
-
-* :ref:`Trusted Firmware-M <ug_tfm>`

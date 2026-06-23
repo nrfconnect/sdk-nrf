@@ -260,17 +260,7 @@ See the board overlay examples in the :ref:`fast_pair_input_device` and :ref:`fa
 Partition Manager (PM) (deprecated)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. note::
-   The :ref:`partition_manager` script is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
-
-   This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
-   It is recommended that all new designs using Nordic devices are built with DTS instead of Partition Manager.
-   Partition Manager will be removed from the |NCS| by the end of 2026 from the main branch.
-
-   For more information on how to configure partitions using DTS and how to migrate your existing configuration to DTS, see the :ref:`release_notes` page.
-
-   The only exception from these migration guidelines in the context of the Fast Pair sample support is the nRF53 Series DFU configuration with MCUboot in the overwrite mode (for example, the ``nrf5340dk/nrf5340/cpuapp`` board target in the :ref:`fast_pair_locator_tag` sample).
-   This particular configuration is not yet deprecated, as the DTS alternative is not yet available.
+.. include:: /includes/pm_deprecation.txt
 
 For devices that support :ref:`partition_manager`, the system also automatically creates the ``bt_fast_pair`` partition.
 The partition is defined in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file.
@@ -279,12 +269,11 @@ The partition is defined in the :file:`subsys/partition_manager/pm.yml.bt_fast_p
    The dynamic generation of the ``bt_fast_pair`` partition definition is only supported if you enable the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in your application image.
 
 Alternatively, you can define the Fast Pair partition manually in the application's static Partition Manager configuration file.
-See the nRF53 board examples in the :file:`samples/bluetooth/fast_pair/locator_tag/configuration/` directory, which is a part of the :ref:`fast_pair_locator_tag` sample.
+See the board examples in the :file:`tests/subsys/bluetooth/fast_pair/locator_tag_legacy/configuration` directory, which is a part of the test project for the deprecated (legacy) version of the :ref:`fast_pair_locator_tag` project.
 For more information about defining Partition Manager partitions, see the :ref:`Configuration <pm_configuration>` section of the :ref:`partition_manager` page.
 
 .. note::
    The Fast Pair partition can be provisioned by the build system only if it is defined in the main (default) application domain.
-   For example, defining partition in the CPUNET domain for nRF53 targets is not supported.
 
 Sysbuild Kconfig configuration and provisioning data generation
 ---------------------------------------------------------------
@@ -1343,5 +1332,5 @@ The following are the required dependencies for the Fast Pair integration:
 * :ref:`nrfxlib:crypto`
 * :ref:`zephyr:bluetooth`
 * :ref:`zephyr:settings_api`
-* :ref:`partition_manager` (deprecated, only used for nRF53 Series board targets)
+* :ref:`partition_manager` (deprecated)
 * :ref:`dult_readme`

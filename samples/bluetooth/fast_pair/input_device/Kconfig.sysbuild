@@ -15,7 +15,4 @@ config BT_FAST_PAIR_MODEL_ID
 config BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY
 	default "Unoh+nycK/ZJ7k3dHsdcNpiP1SfOy0P/Lx5XixyYois="
 
-config NRF_DEFAULT_IPC_RADIO
-	default y
-
 source "share/sysbuild/Kconfig"
