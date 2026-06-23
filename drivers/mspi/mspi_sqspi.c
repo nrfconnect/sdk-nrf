@@ -244,7 +244,7 @@ static int perform_xfer(const struct device *dev,
 	const struct mspi_sqspi_config *dev_config = dev->config;
 	struct mspi_sqspi_data *dev_data = dev->data;
 	int rc = 0;
-	nrfx_err_t err;
+	nrf_sqspi_error_t err;
 
 	if (dev_data->dev_id->ce.port) {
 		rc = gpio_pin_set_dt(&dev_data->dev_id->ce, 1);
@@ -255,7 +255,7 @@ static int perform_xfer(const struct device *dev,
 	}
 
 	err = nrf_sqspi_xfer(&dev_config->sqspi, sqspi_xfer, 1, 0);
-	if (err != NRFX_SUCCESS) {
+	if (err != NRF_SQSPI_SUCCESS) {
 		LOG_ERR("nrf_sqspi_xfer() failed: %08x", err);
 		return -EIO;
 	}
@@ -351,12 +351,12 @@ static int _api_transceive(const struct device *dev,
 	struct mspi_sqspi_data *dev_data = dev->data;
 	k_timeout_t timeout = K_MSEC(req->timeout);
 	uint32_t done;
-	nrfx_err_t err;
+	nrf_sqspi_error_t err;
 	int rc;
 
 	err = nrf_sqspi_dev_cfg(&dev_config->sqspi, &dev_data->sqspi_dev_cfg,
 				done_callback, dev_data);
-	if (err != NRFX_SUCCESS) {
+	if (err != NRF_SQSPI_SUCCESS) {
 		LOG_ERR("nrf_sqspi_dev_cfg() failed: %08x", err);
 		return -EIO;
 	}
@@ -487,7 +487,7 @@ static int dev_init(const struct device *dev)
 		.data_padding = NRF_SQSPI_DATA_FMT_PAD_RAW,
 	};
 	int rc;
-	nrfx_err_t err;
+	nrf_sqspi_error_t err;
 
 	k_sem_init(&dev_data->finished, 0, 1);
 	k_sem_init(&dev_data->ctx_lock, 1, 1);
@@ -511,13 +511,13 @@ static int dev_init(const struct device *dev)
 		    nrfx_isr, nrf_sqspi_irq_handler, 0);
 
 	err = nrf_sqspi_init(&dev_config->sqspi, &sqspi_cfg);
-	if (err != NRFX_SUCCESS) {
+	if (err != NRF_SQSPI_SUCCESS) {
 		LOG_ERR("nrf_sqspi_init() failed: %08x", err);
 		return -EIO;
 	}
 
 	err = nrf_sqspi_dev_data_fmt_set(&dev_config->sqspi, &sqspi_data_fmt);
-	if (err != NRFX_SUCCESS) {
+	if (err != NRF_SQSPI_SUCCESS) {
 		LOG_ERR("nrf_sqspi_dev_data_fmt_set() failed: %08x", err);
 		return -EIO;
 	}
