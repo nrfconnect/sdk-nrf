@@ -772,14 +772,18 @@ int fota_download_cancel(void)
 		return err;
 	}
 
+	/* Wait for the downloader to stop before closing the DFU session, so an
+	 * in-flight fragment write cannot race dfu_target_done().
+	 */
+	while (atomic_test_bit(&flags, FLAG_DOWNLOADING)) {
+		k_msleep(10);
+	}
+
 	err = dfu_target_done(false);
 	if (err && err != -EACCES) {
 		LOG_ERR("%s failed to clean up: %d", __func__, err);
 	}
 
-	while (atomic_test_bit(&flags, FLAG_DOWNLOADING)) {
-		k_msleep(10);
-	}
 	return err;
 }
 
