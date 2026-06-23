@@ -124,7 +124,7 @@ psa_status_t cracen_rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimi
 	uint8_t msb_mask;
 
 	for (msb_mask = 0xFF; upperlimit[0] & msb_mask; msb_mask <<= 1) {
-		;
+		/* For compliance */
 	}
 	msb_mask = ~msb_mask;
 
