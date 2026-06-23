@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Test requires GPIO loopback between P2.00 and P1.01. */
+/* Test requires GPIO loopback between P2.00 and P0.06. */
 
 / {
 	/* Test requirements:
@@ -16,7 +16,7 @@
 	 */
 	zephyr,user {
 		out-gpios = <&hpf_gpio 0 GPIO_ACTIVE_HIGH>;
-		in-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
 	};
 };
 
@@ -24,6 +24,6 @@
 	status = "okay";
 };
 
-&gpio1 {
+&gpio0 {
 	status = "okay";
 };
