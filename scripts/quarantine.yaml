@@ -213,13 +213,3 @@
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39964"
-
-- scenarios:
-    - sample.bluetooth.peripheral_mds
-    - sample.bluetooth.peripheral_nsms
-    - sample.bluetooth.peripheral_nsms_no_security
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - thingy53/nrf5340/cpuapp
-    - thingy53/nrf5340/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39947 - PM-DTS migration"
