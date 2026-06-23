@@ -14,8 +14,8 @@
 	};
 
 	zephyr,user {
-		gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>,  /* Connect with TDM_MCK */
-			<&gpio1 11 GPIO_ACTIVE_HIGH>;  /* Connect with TDM_FSYNC_M */
+		gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>,  /* Connect with TDM_MCK */
+			<&gpio1 7 GPIO_ACTIVE_HIGH>;  /* Connect with TDM_FSYNC_M */
 	};
 };
 
@@ -33,8 +33,8 @@
 			psels = <NRF_PSEL(TDM_MCK, 1, 14)>,
 				<NRF_PSEL(TDM_SCK_M, 1, 13)>,
 				<NRF_PSEL(TDM_FSYNC_M, 1, 12)>,
-				<NRF_PSEL(TDM_SDOUT, 1, 4)>,  /* TDM_SDOUT shorted to TDM_SDIN */
-				<NRF_PSEL(TDM_SDIN, 1, 5)>;
+				<NRF_PSEL(TDM_SDOUT, 1, 0)>,  /* TDM_SDOUT shorted to TDM_SDIN */
+				<NRF_PSEL(TDM_SDIN, 1, 1)>;
 		};
 	};
 };

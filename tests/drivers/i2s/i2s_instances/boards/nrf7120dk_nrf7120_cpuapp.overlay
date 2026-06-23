@@ -7,10 +7,10 @@
 &pinctrl {
 	tdm_default_test: tdm_default_test {
 		group1 {
-			psels = <NRF_PSEL(TDM_SCK_M, 1, 3)>,
+			psels = <NRF_PSEL(TDM_SCK_M, 1, 4)>,
 				<NRF_PSEL(TDM_FSYNC_M, 1, 6)>,
-				<NRF_PSEL(TDM_SDOUT, 1, 4)>,
-				<NRF_PSEL(TDM_SDIN, 1, 5)>;
+				<NRF_PSEL(TDM_SDOUT, 1, 0)>,
+				<NRF_PSEL(TDM_SDIN, 1, 1)>;
 		};
 	};
 };

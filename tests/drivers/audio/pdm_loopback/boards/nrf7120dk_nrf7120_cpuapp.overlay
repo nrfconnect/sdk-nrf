@@ -3,14 +3,14 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-/* Loopback between P1.0 and P1.14 required */
+/* Loopback between P1.05 and P1.14 required */
 
 / {
 	gpio_test {
 		compatible = "gpio-leds";
 
 		pulse_counter: pulse_counter {
-			gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
 		};
 	};
 };
