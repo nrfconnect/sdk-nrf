@@ -29,7 +29,28 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+.. _bt_fast_pair_migration_3.5:
+
+Bluetooth Fast Pair samples
+---------------------------
+
+.. toggle::
+
+   * The :ref:`fast_pair_locator_tag` and :ref:`fast_pair_input_device` samples no longer support the nRF52 and nRF53 Series devices.
+     The following board targets have been removed from both samples:
+
+     * ``nrf52dk/nrf52832``
+     * ``nrf52840dk/nrf52840``
+     * ``nrf5340dk/nrf5340/cpuapp``
+     * ``nrf5340dk/nrf5340/cpuapp/ns``
+
+     Additionally, the following board targets have been removed from the :ref:`fast_pair_locator_tag` sample:
+
+     * ``nrf52833dk/nrf52833``
+     * ``thingy53/nrf5340/cpuapp``
+     * ``thingy53/nrf5340/cpuapp/ns``
+
+     If your application is based on one of these samples and targets an nRF52 or nRF53 Series device, continue using the |NCS| v3.4.0 release or migrate your design to a supported nRF54L Series device.
 
 Libraries
 =========

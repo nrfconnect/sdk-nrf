@@ -2167,17 +2167,17 @@ The following table indicates the software maturity levels of the support for Go
               - --
               - --
               - --
-              - Experimental
-              - Experimental
-              - Experimental
+              - --
+              - --
+              - --
             * - **Locator tag**
               - :ref:`fast_pair_locator_tag`
               - --
               - --
               - --
-              - Supported
-              - Supported
-              - Supported
+              - --
+              - --
+              - --
 
       .. tab:: nRF53 Series
 
@@ -2190,10 +2190,10 @@ The following table indicates the software maturity levels of the support for Go
               - nRF5340
             * - **Input device**
               - :ref:`fast_pair_input_device`
-              - Experimental
+              - --
             * - **Locator tag**
               - :ref:`fast_pair_locator_tag`
-              - Experimental
+              - --
 
       .. tab:: nRF54H Series
 
@@ -2273,37 +2273,37 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
-              - Supported
-              - Supported
-              - Supported
+              - --
+              - --
+              - --
             * - **Subsequent pairing**
               - --
               - --
               - --
-              - Experimental
-              - Experimental
-              - Experimental
+              - --
+              - --
+              - --
             * - **Battery Notification extension**
               - --
               - --
               - --
-              - Experimental
-              - Experimental
-              - Experimental
+              - --
+              - --
+              - --
             * - **Personalized Name extension**
               - --
               - --
               - --
-              - Experimental
-              - Experimental
-              - Experimental
+              - --
+              - --
+              - --
             * - **Find Hub Network extension**
               - --
               - --
               - --
-              - Supported
-              - Supported
-              - Supported
+              - --
+              - --
+              - --
 
       .. tab:: nRF53 Series
 
@@ -2314,15 +2314,15 @@ The following table indicates the software maturity levels of the support for ea
             * - Feature
               - nRF5340
             * - **Initial pairing**
-              - Experimental
+              - --
             * - **Subsequent pairing**
-              - Experimental
+              - --
             * - **Battery Notification extension**
-              - Experimental
+              - --
             * - **Personalized Name extension**
-              - Experimental
+              - --
             * - **Find Hub Network extension**
-              - Experimental
+              - --
 
       .. tab:: nRF54H Series
 
@@ -2430,9 +2430,9 @@ The following table indicates the software maturity levels of the support for th
               - --
               - --
               - --
-              - Experimental
-              - Experimental
-              - Experimental
+              - --
+              - --
+              - --
             * - **Precision Finding with Bluetooth LE Channel Sounding**
               - --
               - --
@@ -2450,7 +2450,7 @@ The following table indicates the software maturity levels of the support for th
             * - Feature
               - nRF5340
             * - **Precision Finding**
-              - Experimental
+              - --
             * - **Precision Finding with Bluetooth LE Channel Sounding**
               - --
 

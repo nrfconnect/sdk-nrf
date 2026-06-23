@@ -309,6 +309,20 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
+* Removed support for the nRF52 and nRF53 Series devices from the :ref:`fast_pair_locator_tag` and :ref:`fast_pair_input_device` samples.
+  The following board targets have been removed from both samples:
+
+  * ``nrf52dk/nrf52832``
+  * ``nrf52840dk/nrf52840``
+  * ``nrf5340dk/nrf5340/cpuapp``
+  * ``nrf5340dk/nrf5340/cpuapp/ns``
+
+  Additionally, the following board targets have been removed from the :ref:`fast_pair_locator_tag` sample:
+
+  * ``nrf52833dk/nrf52833``
+  * ``thingy53/nrf5340/cpuapp``
+  * ``thingy53/nrf5340/cpuapp/ns``
+
 * :ref:`fast_pair_locator_tag` sample:
 
   * Updated the references to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option with the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
@@ -481,7 +495,9 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`bt_fast_pair_readme` library:
+
+  * Removed the nRF52 and nRF53 Series support.
 
 Common Application Framework
 ----------------------------
@@ -560,7 +576,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+* Removed the nRF53 Series-specific information from the :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide, following the removal of the nRF52 and nRF53 Series support from the Fast Pair samples.
 
 Memfault integration
 --------------------

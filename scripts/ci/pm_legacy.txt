@@ -35,7 +35,3 @@ sample.find_my.switchable_networks.pm_legacy.boot_max_img_sectors
 sample.find_my.switchable_networks.pm_legacy
 sample.bluetooth.fast_pair.input_device.pm_legacy
 test.bluetooth.fast_pair.locator_tag_legacy.fast_pair_api_legacy.pm_legacy
-sample.bluetooth.fast_pair.locator_tag.release/nrf5340dk_nrf5340_cpuapp
-sample.bluetooth.fast_pair.locator_tag.release/nrf5340dk_nrf5340_cpuapp_ns
-sample.bluetooth.fast_pair.locator_tag/nrf5340dk_nrf5340_cpuapp
-sample.bluetooth.fast_pair.locator_tag/nrf5340dk_nrf5340_cpuapp_ns
