@@ -222,7 +222,7 @@ Gazell
 Matter
 ------
 
-|no_changes_yet_note|
+* Replaced the tables on the :ref:`ug_matter_hw_requirements_ram_flash` and :ref:`ug_matter_hw_requirements_layouts` pages with memory layout charts.
 
 Matter fork
 +++++++++++

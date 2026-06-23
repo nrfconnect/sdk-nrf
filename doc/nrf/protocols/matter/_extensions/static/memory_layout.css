@@ -1,0 +1,102 @@
+.memory-layout-board {
+  margin: 1rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: calc(100% - var(--ncs-right-toc-width, 0px) - 3rem);
+}
+
+.memory-layout-region-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.memory-layout-note {
+  font-size: 0.85rem;
+  color: var(--bs-secondary-color, #6c757d);
+  margin: 0 0 0.5rem;
+}
+
+.memory-layout-legend {
+  margin: 0.35rem 0 0.5rem;
+}
+
+.memory-layout-bar {
+  display: flex;
+  width: 100%;
+  min-height: 2rem;
+  border: 1px solid var(--bs-border-color, #ced4da);
+  border-radius: 0.25rem;
+  overflow: visible;
+  background: var(--bs-body-bg, #fff);
+}
+
+.memory-layout-segment {
+  display: flex;
+  min-width: 2px;
+  min-height: 2rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.35);
+  position: relative;
+  cursor: default;
+}
+
+.memory-layout-segment-nested {
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1px;
+}
+
+.memory-layout-segment::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.35rem);
+  transform: translateX(-50%);
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.2rem;
+  background: var(--bs-emphasis-color, #212529);
+  color: var(--bs-body-bg, #fff);
+  font-size: 0.875rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 20;
+}
+
+.memory-layout-segment:hover::after,
+.memory-layout-segment:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.memory-layout-segment-tooltip-start::after {
+  left: 0;
+  transform: none;
+}
+
+.memory-layout-subbar {
+  display: flex;
+  width: 100%;
+  height: 0.85rem;
+  border-radius: 0.15rem;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.memory-layout-subbar .memory-layout-segment {
+  min-height: 0.85rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.memory-layout-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.memory-layout-region {
+  margin-bottom: 1rem;
+}
