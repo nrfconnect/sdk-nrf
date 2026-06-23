@@ -261,6 +261,7 @@
     - boot.b0.mcuboot.kmu_keys_locked
     - nsib.mcuboot.external_flash.upgrade.basic
   platforms:
+    - nrf52840dk/nrf52840
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -304,9 +305,3 @@
     - thingy53/nrf5340/cpuapp
     - thingy53/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39947 - PM-DTS migration"
-
-- scenarios:
-    - dfu.image_util.slot1
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39948"

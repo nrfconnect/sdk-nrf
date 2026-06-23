@@ -664,3 +664,9 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "FLASH overflowed"
+
+- scenarios:
+    - dfu.image_util.slot1
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39948"
