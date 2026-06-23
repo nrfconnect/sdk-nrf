@@ -1,0 +1,65 @@
+.memory-req-table {
+  width: 100%;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+  max-width: calc(100% - var(--ncs-right-toc-width, 0px) - 3rem);
+}
+
+.memory-req-table th,
+.memory-req-table td {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  padding: 0.4rem 0.55rem;
+  vertical-align: middle;
+}
+
+.memory-req-table thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--bs-secondary-color, #6c757d);
+  background: var(--bs-tertiary-bg, #f8f9fa);
+}
+
+.memory-req-table .memory-req-group-nvm {
+  text-align: center;
+}
+
+.memory-req-table .memory-req-group-external {
+  text-align: center;
+}
+
+.memory-req-table .memory-req-group-ram {
+  text-align: center;
+}
+
+.memory-req-table .memory-req-subhead {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+.memory-req-table td.memory-req-sample {
+  min-width: 14rem;
+}
+
+.memory-req-table td.memory-req-value {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.memory-req-table td.memory-req-empty {
+  color: var(--bs-secondary-color, #6c757d);
+  text-align: center;
+}
+
+.memory-req-table p {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .memory-req-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
