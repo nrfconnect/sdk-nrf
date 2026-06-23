@@ -55,3 +55,5 @@ devices:
   status: active
 - soc: nrf9251
   status: pre-release
+- soc: tpm530m
+  status: active
