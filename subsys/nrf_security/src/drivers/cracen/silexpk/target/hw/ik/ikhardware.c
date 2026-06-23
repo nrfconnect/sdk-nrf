@@ -203,6 +203,9 @@ void sx_pk_read_ik_capabilities(struct sx_regs *regs, struct sx_pk_capabilities 
 	case 2:
 		ik_opsz = 66;
 		break;
+	default:
+		/* For compliance */
+		break;
 	}
 	caps->ik_opsz = ik_opsz;
 }

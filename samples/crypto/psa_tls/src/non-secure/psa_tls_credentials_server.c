@@ -35,6 +35,8 @@ static int tls_store_credentials_in_ps(void)
 		LOG_ERR("Failed to store Server certificate to Protected"
 			" Storage. Status: %d", status);
 		return status;
+	} else {
+		/* For compliance */
 	}
 
 	status = psa_ps_set(PSA_PS_CERTIFICATE_KEY_UID,
@@ -48,6 +50,8 @@ static int tls_store_credentials_in_ps(void)
 		LOG_ERR("Failed to store Server key to Protected Storage."
 			" Status: %d", status);
 		return status;
+	} else {
+		/* For compliance */
 	}
 
 	return APP_SUCCESS;
