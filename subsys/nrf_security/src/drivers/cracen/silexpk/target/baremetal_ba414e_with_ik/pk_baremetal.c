@@ -80,7 +80,7 @@ bool is_busy(sx_pk_req *req)
 {
 #if defined(CONFIG_CRACEN_IKG)
 	if (sx_pk_is_ik_cmd(req)) {
-		return ik_is_busy(req);
+		return ik_is_busy(req) || ba414ep_is_busy(req);
 	}
 #endif
 
