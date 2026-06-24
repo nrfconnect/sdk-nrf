@@ -28,7 +28,7 @@ endif
 
 config TFM_MCUBOOT_HEADER_SIZE
 	hex "MCUboot header size for the TF-M combined slot"
-	default 0x800 if BOOTLOADER_MCUBOOT && SOC_SERIES_NRF54L
+	default 0x800 if BOOTLOADER_MCUBOOT && (SOC_SERIES_NRF54L || SOC_SERIES_NRF71)
 	default 0x200 if BOOTLOADER_MCUBOOT
 	default 0
 	help
