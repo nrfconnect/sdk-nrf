@@ -34,12 +34,6 @@ class AudioDevice(str, Enum):
     both = "both"
 
 
-class BuildType(str, Enum):
-    """Release or debug build"""
-    release = "release"
-    debug = "debug"
-
-
 class Location(Enum):
     """Location as bitfield stored in UICR.
     This is the same as the bt_audio_location enum"""
@@ -146,5 +140,4 @@ class BuildConf:
 
     core: Core
     device: AudioDevice
-    build: BuildType
     pristine: bool

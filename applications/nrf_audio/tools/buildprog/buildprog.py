@@ -22,7 +22,6 @@ from colorama import Fore, Style
 from nrf5340_audio_dk_devices import (
     AudioDevice,
     BuildConf,
-    BuildType,
     Core,
     DeviceConf,
     Location,
@@ -49,9 +48,6 @@ UNICAST_SERVER_OVERLAY = NRF_AUDIO_FOLDER / "unicast_server/overlay-unicast_serv
 UNICAST_CLIENT_OVERLAY = NRF_AUDIO_FOLDER / "unicast_client/overlay-unicast_client.conf"
 BROADCAST_SINK_OVERLAY = NRF_AUDIO_FOLDER / "broadcast_sink/overlay-broadcast_sink.conf"
 BROADCAST_SOURCE_OVERLAY = NRF_AUDIO_FOLDER / "broadcast_source/overlay-broadcast_source.conf"
-
-TARGET_RELEASE_FOLDER = "build_release"
-TARGET_DEBUG_FOLDER = "build_debug"
 
 DEFAULT_SIRK = "NRF5340_TWS_DEMO"
 
@@ -119,7 +115,7 @@ def __sirk_is_valid(sirk):
     return True
 
 
-def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
+def __build_cmd_get(core: Core, device: AudioDevice,
                     pristine, options, sirk=""):
 
     build_cmd = (f"west build {TARGET_AUDIO_FOLDER} "
@@ -132,13 +128,6 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
         build_cmd += " --domain ipc_radio"
     else:
         raise Exception("Invalid core!")
-
-    if build == BuildType.debug:
-        release_flag = ""
-    elif build == BuildType.release:
-        release_flag = " -DFILE_SUFFIX=release"
-    else:
-        raise Exception("Invalid build type!")
 
     device_flag = ""
 
@@ -166,21 +155,18 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
         else:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_CLIENT_OVERLAY}"
 
-    if os.name == 'nt':
-        release_flag = release_flag.replace('\\', '/')
     if pristine:
         build_cmd += " --pristine"
 
-    dest_folder = TARGET_AUDIO_BUILD_FOLDER / options.transport / device / core / build
+    dest_folder = TARGET_AUDIO_BUILD_FOLDER / options.transport / device / core
 
-    return build_cmd, dest_folder, device_flag, release_flag, overlay_flag
+    return build_cmd, dest_folder, device_flag, overlay_flag
 
 
 def __build_module(build_config, options, sirk=""):
-    build_cmd, dest_folder, device_flag, release_flag, overlay_flag = __build_cmd_get(
+    build_cmd, dest_folder, device_flag, overlay_flag = __build_cmd_get(
         build_config.core,
         build_config.device,
-        build_config.build,
         build_config.pristine,
         options,
         sirk,
@@ -192,7 +178,7 @@ def __build_module(build_config, options, sirk=""):
 
     # Only add compiler flags if folder doesn't exist already
     if not dest_folder.exists():
-        west_str = west_str + device_flag + release_flag + overlay_flag
+        west_str = west_str + device_flag + overlay_flag
 
     print("Run: " + west_str)
 
@@ -217,10 +203,10 @@ def __find_snr():
 def __populate_hex_paths(dev, options):
     """Poplulate hex paths where relevant"""
 
-    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options, dev.sirk)
+    _, temp_dest_folder, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options.pristine, options, dev.sirk)
     dev.hex_path_app = temp_dest_folder / "nrf_audio/zephyr/zephyr.hex"
 
-    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options, dev.sirk)
+    _, temp_dest_folder, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options.pristine, options, dev.sirk)
     dev.hex_path_net = temp_dest_folder / "ipc_radio/zephyr/zephyr.hex"
 
 
@@ -268,13 +254,6 @@ def __main():
         default=False,
         action="store_true",
         help="Will build cleanly"
-    )
-    parser.add_argument(
-        "-b",
-        "--build",
-        required="-p" in sys.argv or "--program" in sys.argv,
-        choices=[i.name for i in BuildType],
-        help="Select the build type",
     )
     parser.add_argument(
         "-d",
@@ -351,8 +330,6 @@ def __main():
         devices = [AudioDevice.gateway, AudioDevice.headset]
     else:
         devices = [AudioDevice[options.device]]
-
-    options.build = BuildType[options.build] if options.build else None
 
     options.only_reboot = SelectFlags.TBD if options.only_reboot else SelectFlags.NOT
 
@@ -431,33 +408,30 @@ def __main():
     # Reboot step finished
     # Build step start
 
-    if options.build is not None:
-        print("Invoking build step")
-        build_configs = []
+    print("Invoking build step")
+    build_configs = []
 
-        if AudioDevice.headset in devices:
-            for c in cores:
-                build_configs.append(
+    if AudioDevice.headset in devices:
+        for c in cores:
+            build_configs.append(
+                BuildConf(
+                    core=c,
+                    device=AudioDevice.headset,
+                    pristine=options.pristine,
+                )
+            )
+    if AudioDevice.gateway in devices:
+        for c in cores:
+            build_configs.append(
                     BuildConf(
                         core=c,
-                        device=AudioDevice.headset,
+                        device=AudioDevice.gateway,
                         pristine=options.pristine,
-                        build=options.build,
                     )
                 )
-        if AudioDevice.gateway in devices:
-            for c in cores:
-                build_configs.append(
-                        BuildConf(
-                            core=c,
-                            device=AudioDevice.gateway,
-                            pristine=options.pristine,
-                            build=options.build,
-                        )
-                    )
 
-        for build_cfg in build_configs:
-            __build_module(build_cfg, options, sirk)
+    for build_cfg in build_configs:
+        __build_module(build_cfg, options, sirk)
 
     # Build step finished
     # Program step start

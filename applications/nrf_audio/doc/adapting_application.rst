@@ -40,12 +40,10 @@ This is a :file:`.conf` file that modifies the default Kconfig values defined in
 
 Only one :file:`.conf` file is included at a time.
 The :file:`prj.conf` file is the default configuration file and it implements the debug application version.
-For the release application version, you need to include the :file:`prj_release.conf` configuration file.
-In the release application version no debug features should be enabled.
 
 Each nRF Audio application also uses its own :file:`Kconfig.default` file to change configuration defaults automatically.
 
-You need to edit :file:`prj.conf` and :file:`prj_release.conf` if you want to add new functionalities to your application, but editing these files when adding a new board is not required.
+You need to edit :file:`prj.conf` if you want to add new functionalities to your application, but editing this file when adding a new board is not required.
 
 .. _nrf_audio_app_porting_guide_adding_board:
 

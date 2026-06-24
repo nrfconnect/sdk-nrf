@@ -26,10 +26,7 @@ config THREAD_NAME
 config RESET_ON_FATAL_ERROR
 	default n
 
-# Default Config for Debug and Release build
-config BT
-	default y
-
+# Default Configurations for nRF Audio applications
 config ZBUS
 	default y
 

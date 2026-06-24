@@ -175,7 +175,6 @@ To indicate the tasks performed, the application uses the LED behavior described
      |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      |                          | Solid red (debug mode) - Fault in the application core has occurred.                                      | All                                       |
      |                          | See UART log for details and use the **RESET** button to reset the device.                                |                                           |
-     |                          | In the release mode, the device resets automatically with no indication on LED or UART.                   |                                           |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **ERR**                  | PMIC error or a charging error (or both).                                                                 | All                                       |
      |                          | Also turns on when charging the battery exceeds seven hours, since the PMIC has a protection timeout,     |                                           |
@@ -236,7 +235,6 @@ To indicate the tasks performed, the application uses the LED behavior described
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **LED1,2,3 and 4**       | All solid green - Fault in the application core has occurred.                                             | * :ref:`nrf_audio_broadcast_source_app`   |
      |                          | See UART log for details and use the RESET button to reset the device.                                    | * :ref:`nrf_audio_unicast_client_app`     |
-     |                          | In the release mode, the device resets automatically with no indication on LED or UART.                   |                                           |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **LED5**                 | Off - No PC connection available.                                                                         | All                                       |
      |                          +-----------------------------------------------------------------------------------------------------------+                                           |

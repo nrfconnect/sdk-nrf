@@ -92,7 +92,7 @@ See :ref:`nrf_audio_app_dk_testing_out_of_the_box` for more information.
 
 To build the application, complete the following steps:
 
-1. Select the BIS mode by setting the ``CONFIG_TRANSPORT_BIS`` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file for the debug version and in the :file:`applications/nrf_audio/prj_release.conf` file for the release version.
+1. Select the BIS mode by setting the ``CONFIG_TRANSPORT_BIS`` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
 #. Complete the steps for building and programming common to all audio applications using one of the following methods:
 
    * :ref:`nrf_audio_app_building_script`

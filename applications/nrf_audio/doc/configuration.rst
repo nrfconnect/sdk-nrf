@@ -71,7 +71,7 @@ The transport mode selection automatically configures the appropriate Bluetooth 
 Selecting the CIS bidirectional communication
 =============================================
 
-To switch to the bidirectional mode, set the :option:`CONFIG_STREAM_BIDIRECTIONAL` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file (for the debug version) or in the :file:`applications/nrf_audio/prj_release.conf` file (for the release version).
+To switch to the bidirectional mode, set the :option:`CONFIG_STREAM_BIDIRECTIONAL` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
 
 .. _nrf_audio_app_configuration_enable_walkie_talkie:
 
@@ -80,7 +80,7 @@ Enabling the walkie-talkie demo
 
 The walkie-talkie demo uses one or two bidirectional streams from the gateway to one or two headsets.
 The PDM microphone is used as input on both the gateway and headset device.
-To switch to using the walkie-talkie, set the :option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file (for the debug version) or in the :file:`applications/nrf_audio/prj_release.conf` file (for the release version).
+To switch to using the walkie-talkie, set the :option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
 
 Enabling the Auracast™ (broadcast) mode
 =======================================
@@ -95,7 +95,7 @@ Enabling the BIS mode with two gateways
 In addition to the standard BIS mode with one gateway, you can also add a second gateway device.
 The BIS headsets can then switch between the two gateways and receive the audio stream from one of the two gateways.
 
-To configure the second gateway, add both the :option:`CONFIG_TRANSPORT_BIS` and the :option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`applications/nrf_audio/prj.conf` file for the debug version and to the :file:`applications/nrf_audio/prj_release.conf` file for the release version.
+To configure the second gateway, add both the :option:`CONFIG_TRANSPORT_BIS` and the :option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`applications/nrf_audio/prj.conf` file.
 You can provide an alternative name to the second gateway using the :option:`CONFIG_BT_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
 
 You build each BIS gateway separately using the normal procedures from :ref:`nrf_audio_app_building`.
@@ -182,7 +182,7 @@ USB audio source is limited to unidirectional streams due to CPU load considerat
 Selecting the analog jack input using I2S
 =========================================
 
-To switch to using the 3.5 mm jack analog input, set the :option:`CONFIG_AUDIO_SOURCE_I2S` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file for the debug version and in the :file:`applications/nrf_audio/prj_release.conf` file for the release version.
+To switch to using the 3.5-mm jack analog input, set the :option:`CONFIG_AUDIO_SOURCE_I2S` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
 
 When testing the application, an additional audio jack cable is required to use I2S.
 Use this cable to connect the audio source (PC) to the analog **LINE IN** on the development kit.
@@ -233,13 +233,13 @@ See :ref:`nrf_audio_app_config_audio_app_options` for options starting with ``CO
 Configuring power measurements
 ******************************
 
-The power measurements are disabled by default in the :ref:`debug version <nrf_audio_app_overview_files>` of the application.
+The power measurements are disabled by default in the :ref:`main configuration file of the application <nrf_audio_app_building_config_files>` (:file:`applications/nrf_audio/prj.conf`).
 
 .. note::
-   Enabling power measurements in the debug version together with :ref:`debug logging <ug_logging>` increases the power consumption compared with the release version of the application.
+   Enabling power measurements together with :ref:`debug logging <ug_logging>` increases the power consumption.
    For better results, consider using the `Power Profiler Kit II (PPK2)`_ and the `Power Profiler app`_ from nRF Connect for Desktop to measure the power consumption.
 
-To enable power measurements in the debug version, set the :kconfig:option:`CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+To enable power measurements, set the :kconfig:option:`CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`prj.conf` file.
 
 .. _nrf_audio_app_configuration_sd_card_playback:
 
