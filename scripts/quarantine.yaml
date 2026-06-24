@@ -228,7 +228,6 @@
     - boot_chains.secure_boot_and_optimizations_speed
     - boot_chains.secure_boot_minimal
     - mcuboot.external_flash.upgrade.hw_downgrade_prevention
-    - mcuboot.kmu.west_flash_default_provision_with_b0
     - mcuboot.upgrade.hw_downgrade_prevention
     - nsib.mcuboot.upgrade.hw_downgrade_prevention
   platforms:
