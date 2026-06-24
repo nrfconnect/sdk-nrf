@@ -1,0 +1,792 @@
+diff --git a/modules/trusted-firmware-m/Kconfig b/modules/trusted-firmware-m/Kconfig
+index 8f99886143..9a9efda266 100644
+--- a/modules/trusted-firmware-m/Kconfig
++++ b/modules/trusted-firmware-m/Kconfig
+@@ -393,7 +393,7 @@ config TFM_SECURE_UART_SHARE_INSTANCE
+ 
+ choice TFM_SECURE_UART_INSTANCE
+ 	prompt "TF-M logging UART instance"
+-	default TFM_SECURE_UART20 if SOC_NRF54LV10A_CPUAPP
++	default TFM_SECURE_UART20 if SOC_NRF54LV10A_CPUAPP || SOC_NRF54LC10A_CPUAPP
+ 	default TFM_SECURE_UART30 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
+ 	default TFM_SECURE_UART1
+ 
+diff --git a/modules/trusted-firmware-m/Kconfig.tfm.defconfig b/modules/trusted-firmware-m/Kconfig.tfm.defconfig
+index 410893f557..49b3e1ed48 100644
+--- a/modules/trusted-firmware-m/Kconfig.tfm.defconfig
++++ b/modules/trusted-firmware-m/Kconfig.tfm.defconfig
+@@ -13,6 +13,7 @@ config TFM_BOARD
+ 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54l15_cpuapp" if SOC_NRF54L15_CPUAPP
+ 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54l10_cpuapp" if SOC_NRF54L10_CPUAPP
+ 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54lv10a_cpuapp" if SOC_NRF54LV10A_CPUAPP
++	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54lc10a_cpuapp" if SOC_NRF54LC10A_CPUAPP
+ 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54lm20a_cpuapp" if SOC_NRF54LM20A_CPUAPP
+ 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54lm20b_cpuapp" if SOC_NRF54LM20B_CPUAPP
+ 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf7120_cpuapp" if SOC_NRF7120_ENGA_CPUAPP
+diff --git a/modules/trusted-firmware-m/Kconfig.tfm.pm b/modules/trusted-firmware-m/Kconfig.tfm.pm
+index 2fe4b265f8..e1f82ca8e4 100644
+--- a/modules/trusted-firmware-m/Kconfig.tfm.pm
++++ b/modules/trusted-firmware-m/Kconfig.tfm.pm
+@@ -19,6 +19,7 @@ config PM_PARTITION_SIZE_TFM_SRAM
+ 	# has less RAM. The number was selected based on the observed memory
+ 	# usage of TFM in crypto samples and it can be changed later if needed.
+ 	default 0x10000 if SOC_NRF54L10_CPUAPP || SOC_NRF54LV10A_CPUAPP || \
++			   SOC_NRF54LC10A_CPUAPP || \
+ 			   SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP
+ 	default 0x16000 if SOC_SERIES_NRF91
+ 	default 0x30000
+diff --git a/modules/trusted-firmware-m/tfm_boards/CMakeLists.txt b/modules/trusted-firmware-m/tfm_boards/CMakeLists.txt
+index d0e71e486c..524fb255cc 100644
+--- a/modules/trusted-firmware-m/tfm_boards/CMakeLists.txt
++++ b/modules/trusted-firmware-m/tfm_boards/CMakeLists.txt
+@@ -94,6 +94,7 @@ if(${TFM_PARTITION_CRYPTO})
+     # are included before any other PSA-related headers.
+     if((NRF_SOC_VARIANT MATCHES "nrf54l1[05]") OR
+        (NRF_SOC_VARIANT MATCHES "nrf54lv10a") OR
++       (NRF_SOC_VARIANT MATCHES "nrf54lc10a") OR
+        (NRF_SOC_VARIANT MATCHES "nrf54lm20[ab]") OR
+        (NRF_SOC_VARIANT MATCHES "nrf7120"))
+       target_link_libraries(platform_crypto_keys
+@@ -232,6 +233,7 @@ file(COPY ${CMAKE_CURRENT_LIST_DIR}/common
+ 
+ if((NRF_SOC_VARIANT MATCHES "nrf54l1[05]") OR
+    (NRF_SOC_VARIANT MATCHES "nrf54lv10a") OR
++   (NRF_SOC_VARIANT MATCHES "nrf54lc10a") OR
+    (NRF_SOC_VARIANT MATCHES "nrf54lm20[ab]") OR
+    (NRF_SOC_VARIANT MATCHES "nrf7120"))
+   install(FILES ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h
+diff --git a/modules/trusted-firmware-m/tfm_boards/board/device_cfg.h b/modules/trusted-firmware-m/tfm_boards/board/device_cfg.h
+index a59389ddd4..cf9f7446f9 100644
+--- a/modules/trusted-firmware-m/tfm_boards/board/device_cfg.h
++++ b/modules/trusted-firmware-m/tfm_boards/board/device_cfg.h
+@@ -14,7 +14,8 @@
+ #include <zephyr/devicetree.h>
+ 
+ #if defined(NRF54L15_XXAA) || defined(NRF54L10_XXAA) || \
+-	defined(NRF54LV10A_XXAA) || defined(NRF54LM20A_XXAA) || \
++	defined(NRF54LV10A_XXAA) || defined(NRF54LC10A_XXAA) || \
++	defined(NRF54LM20A_XXAA) || \
+ 	defined(NRF54LM20B_XXAA) || defined(NRF7120_ENGA_XXAA)
+ #if defined(CONFIG_TFM_SECURE_UART00) && DOMAIN_NS != 1U
+ #define TFM_UART uart00
+diff --git a/samples/crypto/aes_cbc/sample.yaml b/samples/crypto/aes_cbc/sample.yaml
+index e7635cd2af..582e3586ba 100644
+--- a/samples/crypto/aes_cbc/sample.yaml
++++ b/samples/crypto/aes_cbc/sample.yaml
+@@ -57,6 +57,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -73,6 +74,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.aes_cbc.cracen.crypto_service:
+diff --git a/samples/crypto/aes_ccm/sample.yaml b/samples/crypto/aes_ccm/sample.yaml
+index 63faa35cfc..fb3975ab0d 100644
+--- a/samples/crypto/aes_ccm/sample.yaml
++++ b/samples/crypto/aes_ccm/sample.yaml
+@@ -59,6 +59,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -75,6 +76,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.aes_ccm.cracen.crypto_service:
+diff --git a/samples/crypto/aes_ctr/sample.yaml b/samples/crypto/aes_ctr/sample.yaml
+index 09aaa691b2..687ffe1a72 100644
+--- a/samples/crypto/aes_ctr/sample.yaml
++++ b/samples/crypto/aes_ctr/sample.yaml
+@@ -57,6 +57,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -73,6 +74,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.aes_ctr.cracen.crypto_service:
+diff --git a/samples/crypto/aes_gcm/sample.yaml b/samples/crypto/aes_gcm/sample.yaml
+index 3221a28f0f..829860a38a 100644
+--- a/samples/crypto/aes_gcm/sample.yaml
++++ b/samples/crypto/aes_gcm/sample.yaml
+@@ -70,6 +70,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     harness: console
+@@ -91,6 +92,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.aes_gcm.cracen.crypto_service:
+diff --git a/samples/crypto/aes_kw/README.rst b/samples/crypto/aes_kw/README.rst
+index c626473303..bb5a99d0cf 100644
+--- a/samples/crypto/aes_kw/README.rst
++++ b/samples/crypto/aes_kw/README.rst
+@@ -18,7 +18,7 @@ The sample supports the following development kits:
+ 
+ .. table-from-rows:: /includes/sample_board_rows.txt
+    :header: heading
+-   :rows: nrf54l15dk_nrf54l05_cpuapp, nrf54l15dk_nrf54l10_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp_ns, nrf54lv10dk_nrf54lv10a_cpuapp, nrf54lv10dk_nrf54lv10a_cpuapp_ns
++   :rows: nrf54l15dk_nrf54l05_cpuapp, nrf54l15dk_nrf54l10_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp_ns, nrf54lv10dk_nrf54lv10a_cpuapp, nrf54lv10dk_nrf54lv10a_cpuapp_ns, nrf54lc10dk_nrf54lc10a_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp_ns
+ 
+ .. note::
+    If :kconfig:option:`CONFIG_SAMPLE_AES_KW_KMU_DEMO` is set, ``*/ns`` board targets are not supported by this sample.
+@@ -93,7 +93,7 @@ Once built and run, the sample performs the following operations:
+    a. The sample removes both the Key Encryption Key and the unwrapped plain key from the PSA crypto keystore using :c:func:`psa_destroy_key`.
+ 
+ .. note::
+-   192-bit AES keys are not supported by the CRACEN driver for nRF54LM20 and nRF54LV10A devices.
++   192-bit AES keys are not supported by the CRACEN driver for nRF54LM20, nRF54LV10A, and nRF54LC10A devices.
+    See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
+ 
+    If :kconfig:option:`CONFIG_SAMPLE_AES_KW_KMU_DEMO` is set and the Key Encryption Key is blocked, it cannot be removed from the KMU.
+diff --git a/samples/crypto/aes_kw/sample.yaml b/samples/crypto/aes_kw/sample.yaml
+index 69e3015dec..c400588e45 100644
+--- a/samples/crypto/aes_kw/sample.yaml
++++ b/samples/crypto/aes_kw/sample.yaml
+@@ -33,6 +33,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+     integration_platforms:
+       - nrf54l15dk/nrf54l15/cpuapp
+       - nrf54l15dk/nrf54l15/cpuapp/ns
+@@ -42,6 +43,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+ 
+   sample.aes_kw.cracen.kmu:
+     extra_args:
+@@ -59,6 +62,7 @@ tests:
+       - nrf54lm20dk/nrf54lm20a/cpuapp
+       - nrf54lm20dk/nrf54lm20b/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp
+ 
+   sample.aes_kwp.cracen:
+     extra_args:
+@@ -76,6 +80,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+     integration_platforms:
+       - nrf54l15dk/nrf54l15/cpuapp
+       - nrf54l15dk/nrf54l15/cpuapp/ns
+@@ -85,6 +90,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+ 
+   sample.aes_kwp.cracen.kmu:
+     extra_args:
+@@ -102,3 +109,4 @@ tests:
+       - nrf54lm20dk/nrf54lm20a/cpuapp
+       - nrf54lm20dk/nrf54lm20b/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp
+diff --git a/samples/crypto/chachapoly/sample.yaml b/samples/crypto/chachapoly/sample.yaml
+index 5fab82a408..07dc5f8ebe 100644
+--- a/samples/crypto/chachapoly/sample.yaml
++++ b/samples/crypto/chachapoly/sample.yaml
+@@ -57,6 +57,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -73,6 +74,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.chachapoly.cracen.crypto_service:
+diff --git a/samples/crypto/ecdh/sample.yaml b/samples/crypto/ecdh/sample.yaml
+index 5bb486e6af..b80fbcb895 100644
+--- a/samples/crypto/ecdh/sample.yaml
++++ b/samples/crypto/ecdh/sample.yaml
+@@ -57,6 +57,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -73,6 +74,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.ecdh.cracen.crypto_service:
+diff --git a/samples/crypto/ecdsa/sample.yaml b/samples/crypto/ecdsa/sample.yaml
+index 45aadafebb..c18d9532cd 100644
+--- a/samples/crypto/ecdsa/sample.yaml
++++ b/samples/crypto/ecdsa/sample.yaml
+@@ -64,6 +64,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -80,6 +81,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.ecdsa.cracen.crypto_service:
+diff --git a/samples/crypto/ecjpake/sample.yaml b/samples/crypto/ecjpake/sample.yaml
+index f5d75fe7e8..988d60964d 100644
+--- a/samples/crypto/ecjpake/sample.yaml
++++ b/samples/crypto/ecjpake/sample.yaml
+@@ -61,6 +61,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -77,6 +78,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.ecjpake.cracen.crypto_service:
+diff --git a/samples/crypto/eddsa/sample.yaml b/samples/crypto/eddsa/sample.yaml
+index 1e7c381ecc..3e66f487e4 100644
+--- a/samples/crypto/eddsa/sample.yaml
++++ b/samples/crypto/eddsa/sample.yaml
+@@ -64,6 +64,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -80,6 +81,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.eddsa.cracen.crypto_service:
+diff --git a/samples/crypto/hkdf/sample.yaml b/samples/crypto/hkdf/sample.yaml
+index 6db7bb7edc..81bef0c6fe 100644
+--- a/samples/crypto/hkdf/sample.yaml
++++ b/samples/crypto/hkdf/sample.yaml
+@@ -57,6 +57,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -73,6 +74,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.hkdf.cracen.crypto_service:
+diff --git a/samples/crypto/hmac/sample.yaml b/samples/crypto/hmac/sample.yaml
+index 8b22ce0321..962a4db273 100644
+--- a/samples/crypto/hmac/sample.yaml
++++ b/samples/crypto/hmac/sample.yaml
+@@ -58,6 +58,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -74,6 +75,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.hmac.cracen.crypto_service:
+diff --git a/samples/crypto/kmu_cracen_usage/sample.yaml b/samples/crypto/kmu_cracen_usage/sample.yaml
+index 74e28b42ce..c2d8520169 100644
+--- a/samples/crypto/kmu_cracen_usage/sample.yaml
++++ b/samples/crypto/kmu_cracen_usage/sample.yaml
+@@ -29,6 +29,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54l15dk/nrf54l05/cpuapp
+@@ -41,5 +42,7 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+diff --git a/samples/crypto/pbkdf2/sample.yaml b/samples/crypto/pbkdf2/sample.yaml
+index 0a20a9b4d4..9e12908c33 100644
+--- a/samples/crypto/pbkdf2/sample.yaml
++++ b/samples/crypto/pbkdf2/sample.yaml
+@@ -58,6 +58,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -74,6 +75,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.hmac.pbkdf2.crypto_service:
+diff --git a/samples/crypto/persistent_key_usage/sample.yaml b/samples/crypto/persistent_key_usage/sample.yaml
+index 355e1ba9cf..544b42399d 100644
+--- a/samples/crypto/persistent_key_usage/sample.yaml
++++ b/samples/crypto/persistent_key_usage/sample.yaml
+@@ -28,6 +28,7 @@ tests:
+       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp/ns
+       - nrf9160dk/nrf9160/ns
+       - nrf9161dk/nrf9161/ns
+@@ -38,6 +39,7 @@ tests:
+       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp/ns
+       - nrf9151dk/nrf9151/ns
+   sample.persistent_key_usage.ironside_se:
+@@ -70,6 +72,7 @@ tests:
+       - nrf54lm20dk/nrf54lm20a/cpuapp
+       - nrf54lm20dk/nrf54lm20b/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp
+       - nrf7120dk/nrf7120/cpuapp
+   sample.persistent_key_usage.trusted_storage:
+     extra_args:
+@@ -97,4 +100,5 @@ tests:
+       - nrf54lm20dk/nrf54lm20a/cpuapp
+       - nrf54lm20dk/nrf54lm20b/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp
+       - nrf7120dk/nrf7120/cpuapp
+diff --git a/samples/crypto/psa_tls/README.rst b/samples/crypto/psa_tls/README.rst
+index 8e5223eed2..8da767f3b2 100644
+--- a/samples/crypto/psa_tls/README.rst
++++ b/samples/crypto/psa_tls/README.rst
+@@ -123,6 +123,12 @@ The table mirrors the test setup used for TLS verification.
+            - Yes
+            - RSA not supported
+            - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
++         * - ``nrf54lc10dk/nrf54lc10a/cpuapp``
++           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
++           - No
++           - Yes
++           - RSA not supported
++           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
+          * - ``nrf54ls05dk/nrf54ls05b/cpuapp``
+            - :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
+            - No
+@@ -179,6 +185,12 @@ The table mirrors the test setup used for TLS verification.
+            - Yes
+            - RSA not supported
+            - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
++         * - ``nrf54lc10dk/nrf54lc10a/cpuapp``
++           - :ref:`PSA Crypto CRACEN driver<nrf_security_drivers_cracen>`
++           - No
++           - Yes
++           - RSA not supported
++           - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
+          * - ``nrf54ls05dk/nrf54ls05b/cpuapp``
+            - :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
+            - No
+diff --git a/samples/crypto/psa_tls/boards/nrf54lc10dk_nrf54lc10a_cpuapp.conf b/samples/crypto/psa_tls/boards/nrf54lc10dk_nrf54lc10a_cpuapp.conf
+deleted file mode 100644
+index bc22772649..0000000000
+--- a/samples/crypto/psa_tls/boards/nrf54lc10dk_nrf54lc10a_cpuapp.conf
++++ /dev/null
+@@ -1,15 +0,0 @@
+-#
+-# Copyright (c) 2026 Nordic Semiconductor ASA
+-#
+-# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+-#
+-CONFIG_NRF_ENABLE_ICACHE=n
+-CONFIG_MBEDTLS_PSA_CRYPTO_C=y
+-
+-# The ECDSA CA certificate is stored persistently with Protected Storage,
+-# which internally uses Internal Trusted Storage. Since ITS encryption is
+-# enabled by default for nRF54LC10A, the sample must be configured with a
+-# larger ITS asset size than the default 500 bytes. This is because
+-# encrypted ITS assets must be stored in a single chunk.
+-CONFIG_TFM_ITS_MAX_ASSET_SIZE_OVERRIDE=y
+-CONFIG_TFM_ITS_MAX_ASSET_SIZE=600
+diff --git a/samples/crypto/psa_tls/sample.yaml b/samples/crypto/psa_tls/sample.yaml
+index 57624564f4..d3ca92aafb 100644
+--- a/samples/crypto/psa_tls/sample.yaml
++++ b/samples/crypto/psa_tls/sample.yaml
+@@ -199,6 +199,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -214,6 +215,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -239,6 +242,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -254,6 +258,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -280,6 +286,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -295,6 +302,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -320,6 +329,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -335,6 +345,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -360,6 +372,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54h20dk/nrf54h20/cpuapp
+       - nrf54h20dk/nrf54h20/cpurad
+@@ -374,6 +387,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54h20dk/nrf54h20/cpuapp
+       - nrf54h20dk/nrf54h20/cpurad
+@@ -399,6 +414,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54h20dk/nrf54h20/cpuapp
+       - nrf54h20dk/nrf54h20/cpurad
+@@ -413,6 +429,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54h20dk/nrf54h20/cpuapp
+       - nrf54h20dk/nrf54h20/cpurad
+@@ -439,6 +457,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54h20dk/nrf54h20/cpuapp
+       - nrf54h20dk/nrf54h20/cpurad
+@@ -453,6 +472,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54h20dk/nrf54h20/cpuapp
+       - nrf54h20dk/nrf54h20/cpurad
+@@ -478,6 +499,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54h20dk/nrf54h20/cpuapp
+       - nrf54h20dk/nrf54h20/cpurad
+@@ -492,6 +514,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54h20dk/nrf54h20/cpuapp
+       - nrf54h20dk/nrf54h20/cpurad
+@@ -517,6 +541,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -532,6 +557,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -557,6 +584,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -572,6 +600,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf54h20dk/nrf54h20/cpuapp
+@@ -600,6 +630,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+@@ -613,6 +644,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+@@ -636,6 +669,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+@@ -649,6 +683,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf54l15dk/nrf54l10/cpuapp
+       - nrf54l15dk/nrf54l10/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+diff --git a/samples/crypto/rng/sample.yaml b/samples/crypto/rng/sample.yaml
+index cc44191678..473c4464a7 100644
+--- a/samples/crypto/rng/sample.yaml
++++ b/samples/crypto/rng/sample.yaml
+@@ -57,6 +57,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -73,6 +74,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.rng.cracen.crypto_service:
+diff --git a/samples/crypto/rsa/sample.yaml b/samples/crypto/rsa/sample.yaml
+index 5847cb98e2..d89357e423 100644
+--- a/samples/crypto/rsa/sample.yaml
++++ b/samples/crypto/rsa/sample.yaml
+@@ -59,6 +59,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     harness: console
+@@ -80,5 +81,7 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+diff --git a/samples/crypto/sha256/sample.yaml b/samples/crypto/sha256/sample.yaml
+index e7a7464ef9..720e2caf65 100644
+--- a/samples/crypto/sha256/sample.yaml
++++ b/samples/crypto/sha256/sample.yaml
+@@ -69,6 +69,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -85,6 +86,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   # Build integration regression protection.
+diff --git a/samples/crypto/spake2p/sample.yaml b/samples/crypto/spake2p/sample.yaml
+index 71b7e8d64c..aa58d4a7b0 100644
+--- a/samples/crypto/spake2p/sample.yaml
++++ b/samples/crypto/spake2p/sample.yaml
+@@ -57,6 +57,7 @@ tests:
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+       - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+     integration_platforms:
+@@ -73,6 +74,8 @@ tests:
+       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+       - nrf54lv10dk/nrf54lv10a/cpuapp
+       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
++      - nrf54lc10dk/nrf54lc10a/cpuapp
++      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+       - nrf7120dk/nrf7120/cpuapp
+       - nrf7120dk/nrf7120/cpuapp/ns
+   sample.spake2p.cracen.crypto_service:
