@@ -7,9 +7,9 @@
 
 import argparse
 import os
+import re
 import sys
 from collections.abc import Iterable
-from fnmatch import fnmatch
 from itertools import product
 from pathlib import Path
 
@@ -59,17 +59,27 @@ def get_all_configurations(quarantine_file):
 def expand_configurations(
     configurations: Iterable[tuple[str, str]], scenario_map: Iterable[str]
 ) -> set[tuple[str, str]]:
-    """Expand configurations with scenario patterns to explicit scenario-platform pairs."""
+    """Expand configurations with scenario patterns to explicit scenario-platform pairs.
+
+    Scenario entries are treated as regular expressions, matching Twister's
+    quarantine semantics (re.compile + fullmatch).
+    """
     expanded = set()
+    scenarios = list(scenario_map)
     for scenario_pattern, platform in configurations:
         if scenario_pattern is ALL_SCENARIOS_TOKEN or FIND_MY in scenario_pattern:
             expanded.add((scenario_pattern, platform))
-        else:
-            matched_scenarios = {s for s in scenario_map if fnmatch(s, scenario_pattern)}
-            if not matched_scenarios:
-                print(f"Warning: pattern '{scenario_pattern}' did not match any scenarios.")
-            for s in matched_scenarios:
-                expanded.add((s, platform))
+            continue
+        try:
+            regex = re.compile(scenario_pattern)
+        except re.error as e:
+            print(f"Warning: invalid scenario regex '{scenario_pattern}': {e}")
+            continue
+        matched_scenarios = {s for s in scenarios if regex.fullmatch(s)}
+        if not matched_scenarios:
+            print(f"Warning: pattern '{scenario_pattern}' did not match any scenarios.")
+        for s in matched_scenarios:
+            expanded.add((s, platform))
     return expanded
 
 
