@@ -4,8 +4,26 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &cpurad_slot0_partition;
 /delete-node/ &cpuapp_slot1_partition;
 /delete-node/ &cpurad_slot1_partition;
+
+&mram1x {
+	partitions {
+		cpuapp_slot0_partition: slot0_partition: partition@40000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x40000 DT_SIZE_K(712)>;
+		};
+
+		cpurad_slot0_partition: slot2_partition: partition@f2000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-2";
+			reg = <0xf2000 DT_SIZE_K(712)>;
+		};
+	};
+};
 
 &mx25uw63 {
 	partitions {
@@ -15,12 +33,12 @@
 
 		cpuapp_slot1_partition: slot1_partition: partition@0 {
 			label = "image-1";
-			reg = <0x0 DT_SIZE_K(324)>;
+			reg = <0x0 DT_SIZE_K(712)>;
 		};
 
-		cpurad_slot1_partition: slot3_partition: partition@51000 {
+		cpurad_slot1_partition: slot3_partition: partition@b2000 {
 			label = "image-3";
-			reg = <0x51000 DT_SIZE_K(324)>;
+			reg = <0xb2000 DT_SIZE_K(712)>;
 		};
 	};
 };
