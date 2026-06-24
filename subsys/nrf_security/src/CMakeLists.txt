@@ -58,9 +58,11 @@ target_include_directories(psa_crypto_library_config
     ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/oberon/drivers
 )
 
-add_library(${mbedcrypto_target}
-  STATIC
-)
+if(NOT TARGET ${mbedcrypto_target})
+    add_library(${mbedcrypto_target}
+      STATIC
+    )
+endif()
 
 add_subdirectory(tf-psa-crypto)
 

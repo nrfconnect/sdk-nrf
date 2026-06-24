@@ -94,8 +94,7 @@ if(${TFM_PARTITION_CRYPTO})
     # file, which means that we need to make sure that the nrf_security PSA headers
     # are included before any other PSA-related headers.
     if((NRF_SOC_VARIANT MATCHES "nrf54l1[05]") OR
-       (NRF_SOC_VARIANT MATCHES "nrf54lv10a") OR
-       (NRF_SOC_VARIANT MATCHES "nrf54lc10a") OR
+       (NRF_SOC_VARIANT MATCHES "nrf54l[vc]10a") OR
        (NRF_SOC_VARIANT MATCHES "nrf54lm20[ab]") OR
        (NRF_SOC_VARIANT MATCHES "nrf7120"))
       target_link_libraries(platform_crypto_keys
@@ -239,8 +238,7 @@ file(COPY ${CMAKE_CURRENT_LIST_DIR}/common
 )
 
 if((NRF_SOC_VARIANT MATCHES "nrf54l1[05]") OR
-   (NRF_SOC_VARIANT MATCHES "nrf54lv10a") OR
-   (NRF_SOC_VARIANT MATCHES "nrf54lc10a") OR
+   (NRF_SOC_VARIANT MATCHES "nrf54l[vc]10a") OR
    (NRF_SOC_VARIANT MATCHES "nrf54lm20[ab]") OR
    (NRF_SOC_VARIANT MATCHES "nrf7120"))
   install(FILES ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h

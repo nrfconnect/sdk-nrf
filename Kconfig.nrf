@@ -152,4 +152,6 @@ rsource "drivers/Kconfig"
 rsource "ext/Kconfig"
 rsource "tests/Kconfig"
 
+osource "$(ZEPHYR_TRUSTED_FIRMWARE_M_KCONFIG)"
+
 endmenu

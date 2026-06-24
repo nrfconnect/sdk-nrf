@@ -5,6 +5,7 @@
 #
 
 add_subdirectory_ifdef(CONFIG_BUILD_WITH_TFM trusted-firmware-m)
+add_subdirectory_ifdef(CONFIG_BUILD_WITH_TFM ${ZEPHYR_BASE}/modules/trusted-firmware-m zephyr_tfm)
 add_subdirectory_ifdef(CONFIG_MEMFAULT memfault-firmware-sdk)
 add_subdirectory_ifdef(CONFIG_MCUBOOT mcuboot/hooks)
 add_subdirectory_ifdef(CONFIG_COREMARK coremark)

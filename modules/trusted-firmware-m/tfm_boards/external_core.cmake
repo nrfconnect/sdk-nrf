@@ -68,6 +68,7 @@ if(TARGET psa_crypto_library_config)
             ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
             ${NRF_SECURITY_DIR}/include
             ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
+            ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/oberon/drivers
             ${NRF_DIR}/include/tfm
     )
 
@@ -80,6 +81,10 @@ endif()
 
 if(TARGET tfm_psa_rot_partition_crypto)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_PSA_ROT_PARTITION_CRYPTO True)
+    target_compile_definitions(tfm_psa_rot_partition_crypto
+        PRIVATE
+            PSA_CRYPTO_EXTERNAL_CORE
+    )
     target_link_libraries(tfm_psa_rot_partition_crypto
         PRIVATE
             psa_crypto_library_config
@@ -100,7 +105,6 @@ if(TARGET tfm_sprt)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_SPRT True)
     target_compile_definitions(tfm_sprt
         PRIVATE
-            TF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
             INSIDE_TFM_BUILD
     )
 
@@ -124,4 +128,31 @@ if(TARGET platform_s)
             $<$<BOOL:${CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING}>:ENABLE_AUTHENTICATED_SECUREAPPROTECT> # nRF54L15/nRF54L10
             $<$<BOOL:${CONFIG_NRF91_ANOMALY_36_WORKAROUND}>:NRF91_ERRATA_36_ENABLE_WORKAROUND> #nRF91
     )
+endif()
+
+if(NOT EXTERNAL_CRYPTO_CORE_HANDLED_NRF_SECURITY_TFM)
+    set(EXTERNAL_CRYPTO_CORE_HANDLED_NRF_SECURITY_TFM True CACHE BOOL "" FORCE)
+    if(NOT TF_PSA_CRYPTO_TARGET_PREFIX)
+        set(TF_PSA_CRYPTO_TARGET_PREFIX crypto_service_)
+    endif()
+    add_subdirectory(${NRF_SECURITY_DIR}/tfm ${CMAKE_BINARY_DIR}/nrf_security_tfm)
+
+    if(TARGET ${TF_PSA_CRYPTO_TARGET_PREFIX}tfpsacrypto)
+        set(_tfm_crypto_target ${TF_PSA_CRYPTO_TARGET_PREFIX}tfpsacrypto)
+        target_include_directories(${_tfm_crypto_target}
+            PUBLIC
+                ${CMAKE_SOURCE_DIR}/secure_fw/partitions/crypto
+                ${CMAKE_SOURCE_DIR}/secure_fw/partitions/crypto/psa_driver_api
+                $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/interface/include>
+        )
+        set_target_properties(${_tfm_crypto_target} PROPERTIES LINK_INTERFACE_MULTIPLICITY 3)
+        target_link_libraries(${_tfm_crypto_target}
+            PRIVATE
+                platform_s
+            PUBLIC
+                crypto_service_tfpsacrypto_config
+            INTERFACE
+                platform_common_interface
+        )
+    endif()
 endif()

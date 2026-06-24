@@ -72,6 +72,9 @@
 /* Use stored NV seed to provide entropy */
 #cmakedefine01 CRYPTO_NV_SEED
 
+/* Use external RNG (e.g. CRACEN CTR-DRBG) instead of NV seed */
+#cmakedefine01 CRYPTO_EXT_RNG
+
 /*
  * Only enable multi-part operations in Hash, MAC, AEAD and symmetric ciphers,
  * to optimize memory footprint in resource-constrained devices.

@@ -17,14 +17,15 @@ rsource "Kconfig.tfm.defconfig"
 
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
 
-if BUILD_WITH_TFM
-
 if !TFM_PROFILE_TYPE_MINIMAL
 # When enabling full TFM support, then partitions and crypto modules shall be available.
+# Loaded outside BUILD_WITH_TFM so symbols are not given unsatisfiable parse-time deps.
 rsource "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
 rsource "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.ps"
 rsource "Kconfig.tfm.crypto"
 endif
+
+if BUILD_WITH_TFM
 
 config TFM_MCUBOOT_HEADER_SIZE
 	hex "MCUboot header size for the TF-M combined slot"
@@ -584,3 +585,14 @@ config TFM_NRF_MRAMC_SERVICE
 	  the system to configure MRAMC using a secure service call.
 
 endif # BUILD_WITH_TFM
+
+# Override symbols defined inside conditional blocks that are false at parse
+# time (before BUILD_WITH_TFM is known). Without these, y-selects from
+# PSA_CRYPTO_PROVIDER_TFM and NRF_SECURITY fail Kconfig validation.
+config TFM_PARTITION_CRYPTO
+	bool
+	depends on TFM_PARTITION_INTERNAL_TRUSTED_STORAGE || CRACEN_LIB_KMU
+
+config TFM_BL2_NOT_SUPPORTED
+	bool
+	depends on BUILD_WITH_TFM
