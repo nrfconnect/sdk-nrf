@@ -121,6 +121,15 @@ def test_debug_interface(dut: DeviceAdapter):
             expected,
         )
 
+        ### Check nrfutil device protection-get
+        cmd = f"nrfutil device protection-get --serial-number {SEGGER_ID}"
+        expected = r"access status: Debug access is enabled \(status value: None\)"
+        run_communicate_check(
+            cmd,
+            None,
+            expected,
+        )
+
 
 def test_nrfjprog_recover(dut: DeviceAdapter):
     """
