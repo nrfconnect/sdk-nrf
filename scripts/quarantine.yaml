@@ -162,13 +162,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
-    - nrf_compress.decompression.mcuboot_update
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
-
-- scenarios:
     - nsib.mcuboot.upgrade.basic
   platforms:
     - nrf52840dk/nrf52840
