@@ -44,12 +44,11 @@ nRF Audio configuration files
 *********************************
 
 The applications use the same :ref:`nrf_audio_app_overview_files` and the same :file:`Kconfig.defaults` file in the :file:`nrf_audio` directory.
-You can however select different :file:`*.conf` files to build them as either debug or release.
 Each nRF Audio application also uses its own, application-specific overlay file.
 
 You need the following configuration files to :ref:`build the application <nrf_audio_app_building>`:
 
-* Application version configuration file: :file:`prj.conf` or :file:`prj_release.conf`.
+* Application configuration file: :file:`prj.conf`.
 * Application-specific overlay file (:file:`overlay-<app_name>.conf`) from the application directory.
 
 When building using the command line, you must explicitly specify the :file:`*.conf` files that are going to be included.

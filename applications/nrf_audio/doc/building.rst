@@ -97,10 +97,6 @@ The building command for running the script requires providing the following par
      - Specifies the core type.
      - ``app``, ``net``, ``both``
      - :ref:`nrf_audio_app_overview_architecture`
-   * - Application version (``-b``)
-     - Specifies the application version.
-     - ``release``, ``debug``
-     - | :ref:`nrf_audio_app_configuration_files`
    * - Transport type (``-t``)
      - Specifies the transport type.
      - ``broadcast``, ``unicast``
@@ -114,13 +110,13 @@ For example, the following command builds headset and gateway applications using
 
 .. code-block:: console
 
-   python buildprog.py -c app -b debug -d both -t unicast
+   python buildprog.py -c app -d both -t unicast
 
 The command can be run from any location, as long as the correct path to :file:`buildprog.py` is given.
 
 The build files are saved in separate subdirectories in the :file:`applications/nrf_audio/tools/build` directory.
 The script creates a directory for each transport, device type, core, and version combination.
-For example, when running the command above, the script creates the :file:`unicast/gateway/app/debug`, :file:`unicast/gateway/net/debug`, :file:`unicast/headset/app/debug`, :file:`unicast/headset/net/debug` files and directories.
+For example, when running the command above, the script creates the :file:`unicast/gateway/app`, :file:`unicast/gateway/net`, :file:`unicast/headset/app`, :file:`unicast/headset/net` files and directories.
 
 Script parameters for programming
 ---------------------------------
@@ -139,7 +135,7 @@ The command for programming can look as follows:
 
 .. code-block:: console
 
-   python buildprog.py -c both -b debug -d both -t unicast -p
+   python buildprog.py -c both -d both -t unicast -p
 
 This command builds the unicast headset and the gateway applications with ``debug`` version of both the application core binary and the network core binary - and programs each to its respective core.
 If you want to rebuild from scratch, you can add the ``--pristine`` parameter to the command (west's ``-p`` for cannot be used for a pristine build with the script).
@@ -150,7 +146,7 @@ If you want to rebuild from scratch, you can add the ``--pristine`` parameter to
 
    .. code-block:: console
 
-      python buildprog.py -c both -b debug -d both -t unicast -p --recover_on_fail
+      python buildprog.py -c both -d both -t unicast -p --recover_on_fail
 
 Getting help
 ------------
@@ -226,7 +222,9 @@ Application configuration files
 ===============================
 
 The application uses a :file:`prj.conf` configuration file located in the application root directory for the default configuration.
-It also uses application-specific overlay files and can use additional files for different custom configurations.
+The application is by default built in a debug configuration.
+If you want to create a release version, you must modify the :file:`prj.conf` file to match your project requirements (for example, reduce code size, speed up execution, and avoid sensitive information being exposed over debug interfaces - see :ref:`nrf_audio_app_configuration` for some possible options.)
+Each application also uses its own application-specific overlay file and can use additional files for different custom configurations.
 When you build the application, you can select one of these configurations using the :makevar:`FILE_SUFFIX` variable.
 
 See :ref:`nrf_audio_app_configuration_files`, :ref:`app_build_file_suffixes`, and :ref:`cmake_options` for more information.
@@ -245,10 +243,6 @@ The nRF Audio applications come with the following configuration files:
      - :file:`prj.conf`
      - No suffix
      - Debug version of the application. Provides full logging capabilities and debug optimizations to ease development.
-   * - Release
-     - :file:`prj_release.conf`
-     - ``release``
-     - Release version of the application. Disables logging capabilities and disables development features to create a smaller application binary.
    * - Application-specific overlay file
      - :file:`unicast_server/overlay-unicast_server.conf`
      - ``unicast_server``
@@ -289,10 +283,8 @@ Complete the following steps to build each of the configurations you need:
       #. Complete the steps listed on the `How to set up a build configuration`_ section in the |nRFVSC| documentation to create a build configuration.
          Depending on the configuration and applications you want to build, set the correct combination of :ref:`nrf_audio_app_building_config_files` in the extension UI:
 
-         * :guilabel:`Base configuration files (Kconfig fragments)`:
-
-           * For the debug version: No file selected.
-           * For the release version: :file:`prj_release.conf`
+         * :guilabel:`Base configuration files (Kconfig fragments)`: No file selected.
+           The extension will automatically select :file:`prj.conf`.
 
          * :guilabel:`Extra Kconfig fragments`:
 
@@ -320,17 +312,12 @@ Complete the following steps to build each of the configurations you need:
             * For broadcast headset: ``-DEXTRA_CONF_FILE=".\broadcast_sink\overlay-broadcast_sink.conf"``
             * For broadcast gateway: ``-DEXTRA_CONF_FILE=".\broadcast_source\overlay-broadcast_source.conf"``
 
-         #. Choose the application version (:ref:`nrf_audio_app_building_config_files`) by using one of the following options:
-
-            * For the debug version: No build flag needed.
-            * For the release version: ``-DFILE_SUFFIX=release``
-
       #. Build the application using the standard :ref:`build steps <building>` for the command line.
-         For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command from the :file:`applications/nrf_audio/` directory:
+         For example, if you want to build the unicast firmware for the application core as a headset, you can run the following command from the :file:`applications/nrf_audio/` directory:
 
          .. code-block:: console
 
-            west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -DFILE_SUFFIX=release
+            west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf"
 
          This command creates the build files directly in the :file:`build` directory.
          This means that you cannot create build files for all devices you want to program, because the subsequent commands will overwrite the files in the :file:`build` directory.
