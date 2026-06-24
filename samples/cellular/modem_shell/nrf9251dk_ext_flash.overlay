@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&spi120 {
+	status = "okay";
+};
+
+&gpio5 {
+	status = "okay";
+};
+
+&gd25le255e {
+	status = "okay";
+};
