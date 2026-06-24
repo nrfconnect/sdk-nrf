@@ -121,7 +121,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   string(REPLACE "/" ";" split_board_qualifiers ";${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
 
-  if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF54L)
+  if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF54L OR SB_CONFIG_SOC_SERIES_NRF71)
     list(LENGTH split_board_qualifiers target_length)
 
     if("${target_length}" GREATER "3")
@@ -494,7 +494,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
        # Do not use the upstream mcuboot.cmake on new platforms.
        OR SB_CONFIG_SOC_SERIES_NRF53
        OR SB_CONFIG_SOC_SERIES_NRF54L
-       OR SB_CONFIG_SOC_SERIES_NRF54H OR SB_CONFIG_QSPI_XIP_SPLIT_IMAGE
+       OR SB_CONFIG_SOC_SERIES_NRF54H
+       OR SB_CONFIG_SOC_SERIES_NRF71
+       OR SB_CONFIG_QSPI_XIP_SPLIT_IMAGE
        OR ((SB_CONFIG_SOC_SERIES_NRF52 OR SB_CONFIG_SOC_SERIES_NRF91) AND NOT
        SB_CONFIG_PARTITION_MANAGER)
        # TF-M NS builds require signing tfm_merged.hex, not zephyr.hex.
@@ -620,7 +622,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endforeach()
 
     if(NOT DEFINED mcuboot_BOARD AND DEFINED board_target_secure)
-      # MCUboot must run in secure mode on the nRF9160/nRF5340
+      # MCUboot must run in secure mode
       set_target_properties(mcuboot PROPERTIES BOARD ${board_target_secure})
     endif()
 
