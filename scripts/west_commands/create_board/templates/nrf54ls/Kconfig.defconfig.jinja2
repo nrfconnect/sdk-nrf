@@ -1,0 +1,12 @@
+config SOC_NRF54LX_SKIP_GLITCHDETECTOR_DISABLE
+	default y
+
+config NRF_RRAM_WRITE_BUFFER_SIZE
+	default 8
+	range 0 8
+
+config HAS_BT_CTLR
+	default BT
+
+config HW_STACK_PROTECTION
+	default ARCH_HAS_STACK_PROTECTION
