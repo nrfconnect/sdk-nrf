@@ -105,24 +105,21 @@ function(provision application prefix_name)
       set(provision_address $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>)
     endif()
   else()
-    if(cpunet_target)
-      dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET b0n ABSOLUTE REQUIRED)
-      set(s0_arg --s0-addr ${s0_slot_address})
-      set(s1_arg)
-    else()
-      # We can pick all of these from MCUboot image, as DTS partitions come from common
-      # DTS and image header size is the same for all images for a given platform.
-      dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET ${DEFAULT_IMAGE} ABSOLUTE REQUIRED)
-      dt_partition_addr(s1_slot_address LABEL "s1_partition" TARGET ${DEFAULT_IMAGE} ABSOLUTE REQUIRED)
-      set(s0_arg --s0-addr ${s0_slot_address})
-      set(s1_arg --s1-addr ${s1_slot_address})
-    endif()
-
     if(CONFIG_SECURE_BOOT)
       if(cpunet_target)
+        dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET b0n ABSOLUTE REQUIRED)
+        set(s0_arg --s0-addr ${s0_slot_address})
+        set(s1_arg)
         # B0 is secure bootloader and we pick the address from its configuration.
         set(bl_storage_target b0n)
       else()
+        # We can pick all of these from MCUboot image, as DTS partitions come from common
+        # DTS and image header size is the same for all images for a given platform.
+        dt_partition_addr(s0_slot_address LABEL "s0_partition" TARGET ${DEFAULT_IMAGE} ABSOLUTE REQUIRED)
+        dt_partition_addr(s1_slot_address LABEL "s1_partition" TARGET ${DEFAULT_IMAGE} ABSOLUTE REQUIRED)
+        set(s0_arg --s0-addr ${s0_slot_address})
+        set(s1_arg --s1-addr ${s1_slot_address})
+
         set(bl_storage_target b0)
       endif()
     else(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
@@ -245,7 +242,9 @@ function(provision application prefix_name)
   endif()
 endfunction()
 
-b0_gen_keys()
+if(SB_CONFIG_SECURE_BOOT)
+  b0_gen_keys()
+endif()
 
 # Get the main app of the domain that secure boot should handle.
 if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE)
