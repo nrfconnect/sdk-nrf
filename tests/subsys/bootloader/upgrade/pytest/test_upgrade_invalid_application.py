@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 from intelhex import bin2hex
+from parameters import get_nsib_s0_node
 from twister_harness import DeviceAdapter
 from twister_harness_ext.utils.common import flash_with_nrfutil
 from twister_harness_ext.utils.helpers import reset_board
-from parameters import get_nsib_s0_node
 from twister_harness_ext.utils.required_build import get_required_build
 
 
