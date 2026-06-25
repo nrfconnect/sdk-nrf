@@ -312,14 +312,32 @@ ISR_DIRECT_DECLARE(mpsl_radio_isr_wrapper)
 #endif /* IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 
 #if IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER)
+#ifdef MPSL_ASSERT_ID
+void m_assert_handler(const uint16_t assert_id)
+{
+	mpsl_assert_handle(assert_id);
+}
+#else
 void m_assert_handler(const char *const file, const uint32_t line)
 {
 	mpsl_assert_handle((char *) file, line);
 }
-
+#endif
 #else /* !IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
 
 #if defined(CONFIG_LOG)
+#ifdef MPSL_ASSERT_ID
+const char *mpsl_get_assertion_message(const uint16_t assert_id)
+{
+	for (uint32_t i = 0; i < ARRAY_SIZE(mpsl_assert_messages); i++) {
+		if (mpsl_assert_messages[i].assert_id == assert_id) {
+			return mpsl_assert_messages[i].assert_msg;
+		}
+	}
+
+	return NULL;
+}
+#else
 const char *mpsl_get_assertion_message(const char *const file, const uint32_t line)
 {
 	uint32_t file_id = atoi(file);
@@ -333,8 +351,34 @@ const char *mpsl_get_assertion_message(const char *const file, const uint32_t li
 
 	return NULL;
 }
+#endif
 #endif /* CONFIG_LOG */
 
+#ifdef MPSL_ASSERT_ID
+static void m_assert_handler(const uint16_t id)
+{
+	volatile uint16_t assert_id = id;
+
+#if defined(CONFIG_ASSERT) && defined(CONFIG_ASSERT_VERBOSE) && !defined(CONFIG_ASSERT_NO_MSG_INFO)
+	__ASSERT(false, "MPSL ASSERT: 0x%04x\n", assert_id);
+#elif defined(CONFIG_LOG)
+	LOG_ERR("MPSL ASSERT: 0x%04x", assert_id);
+	const char *failure_reason_msg = mpsl_get_assertion_message(assert_id);
+
+	if (failure_reason_msg) {
+		LOG_ERR("ASSERT REASON: %s", failure_reason_msg);
+	}
+	k_oops();
+#elif defined(CONFIG_PRINTK)
+	printk("MPSL ASSERT: 0x%04x\n", assert_id);
+	printk("\n");
+	k_oops();
+#else
+	(void)assert_id;
+	k_oops();
+#endif
+}
+#else
 static void m_assert_handler(const char *const file, const uint32_t line)
 {
 	volatile char assert_file_id[11] = { 0 };
@@ -361,6 +405,7 @@ static void m_assert_handler(const char *const file, const uint32_t line)
 	k_oops();
 #endif
 }
+#endif
 #endif /* IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
 
 #if !defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
