@@ -171,6 +171,7 @@
 #define NRF_CLOUD_JSON_KEY_CTRL			"control"
 #define NRF_CLOUD_JSON_KEY_LOG			"logLvl"
 #define NRF_CLOUD_JSON_KEY_MEMFAULT		"memfaultEn"
+#define NRF_CLOUD_JSON_KEY_MEMFAULT_MODEM_KEY	"memfaultModemKey"
 #define NRF_CLOUD_JSON_KEY_TOPICS		"topics"
 #define NRF_CLOUD_JSON_KEY_STAGE		"stage"
 #define NRF_CLOUD_JSON_KEY_PAIRING		"pairing"

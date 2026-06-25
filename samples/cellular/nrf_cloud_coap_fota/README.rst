@@ -64,9 +64,9 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. _CONFIG_COAP_FOTA_JOB_CHECK_RATE_MIN:
+.. _CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES:
 
-CONFIG_COAP_FOTA_JOB_CHECK_RATE_MIN - Update check rate
+CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES - Update check rate
    Defines how often the sample checks for FOTA updates.
    You can modify this value at runtime by adding or updating the ``"fotaInterval"`` item in the desired config section of the device's shadow.
    Use the `nRF Cloud`_ portal or the REST API to perform the config update.
@@ -97,9 +97,11 @@ See :ref:`configure_application` on how to configure the parameters.
 
 To create a FOTA test version of this sample, change the ``PATCHLEVEL`` in the :file:`VERSION` file.
 
-To enable delta modem FOTA, add the following parameter to your build command and set the :kconfig:option:`CONFIG_MEMFAULT_FOTA_MODEM_PROJECT_KEY` Kconfig option to your Memfault modem firmware project key:
+To enable delta modem FOTA, add ``-DEXTRA_CONF_FILE=delta_modem_fota.conf`` to your build command and configure the modem firmware project key in one of the following ways:
 
-``-DEXTRA_CONF_FILE=delta_modem_fota.conf``
+* At runtime, by adding the ``"memfaultModemKey"`` string item to the control section of the device's shadow
+  Use the `nRF Cloud`_ portal or the REST API to perform the shadow update.
+* At build time, by setting the :kconfig:option:`CONFIG_MEMFAULT_FOTA_MODEM_PROJECT_KEY` Kconfig option to your Memfault modem firmware project key.
 
 See the `Memfault nRF Modem FOTA`_ documentation for more details on configuring a delta modem FOTA.
 

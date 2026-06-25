@@ -25,6 +25,9 @@
 #if (CONFIG_MEMFAULT)
 #include "memfault/ports/zephyr/periodic_upload.h"
 #endif /* CONFIG_MEMFAULT */
+#if defined(CONFIG_MEMFAULT_FOTA_MODEM_UPDATE)
+#include "memfault/ports/zephyr/fota.h"
+#endif /* CONFIG_MEMFAULT_FOTA_MODEM_UPDATE */
 
 LOG_MODULE_REGISTER(nrf_cloud_codec_internal, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -46,6 +49,11 @@ enum nrf_cloud_ctrl_status {
 
 bool initialized;
 static const char *application_version = "";
+
+#if defined(CONFIG_MEMFAULT_FOTA_MODEM_UPDATE)
+/* Modem project key applied via shadow control. */
+static char applied_modem_project_key[NRF_CLOUD_MEMFAULT_MODEM_PROJECT_KEY_MAX_LEN + 1];
+#endif /* CONFIG_MEMFAULT_FOTA_MODEM_UPDATE */
 
 #if defined(CONFIG_MODEM_INFO)
 static K_MUTEX_DEFINE(modem_inf_mutex);
@@ -280,6 +288,14 @@ int nrf_cloud_device_control_encode_internal(cJSON *const obj,
 			ret = -ENOMEM;
 		}
 #endif /* CONFIG_MEMFAULT */
+#if defined(CONFIG_MEMFAULT_FOTA_MODEM_UPDATE)
+		/* Only report a key once one has been applied  */
+		if (!ret && data->modem_project_key[0] != '\0' &&
+		    !cJSON_AddStringToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_MEMFAULT_MODEM_KEY,
+					       data->modem_project_key)) {
+			ret = -ENOMEM;
+		}
+#endif /* CONFIG_MEMFAULT_FOTA_MODEM_UPDATE */
 	} else {
 		/* If data is NULL, add null to control object */
 #if (CONFIG_MEMFAULT)
@@ -287,6 +303,12 @@ int nrf_cloud_device_control_encode_internal(cJSON *const obj,
 			ret = -ENOMEM;
 		}
 #endif /* CONFIG_MEMFAULT */
+#if defined(CONFIG_MEMFAULT_FOTA_MODEM_UPDATE)
+		if (!ret &&
+		    !cJSON_AddNullToObjectCS(ctrl_obj, NRF_CLOUD_JSON_KEY_MEMFAULT_MODEM_KEY)) {
+			ret = -ENOMEM;
+		}
+#endif /* CONFIG_MEMFAULT_FOTA_MODEM_UPDATE */
 	}
 
 	if (ret == 0) {
@@ -397,6 +419,27 @@ int nrf_cloud_shadow_control_decode(struct nrf_cloud_obj *const ctrl_obj,
 		return -EINVAL;
 	}
 #endif /* CONFIG_MEMFAULT */
+
+#if defined(CONFIG_MEMFAULT_FOTA_MODEM_UPDATE)
+	cJSON *modem_key_obj =
+		cJSON_GetObjectItem(ctrl_obj->json, NRF_CLOUD_JSON_KEY_MEMFAULT_MODEM_KEY);
+
+	if (modem_key_obj == NULL) {
+		LOG_DBG(NRF_CLOUD_JSON_KEY_MEMFAULT_MODEM_KEY " not found");
+	} else if (cJSON_IsString(modem_key_obj)) {
+		const char *modem_key = cJSON_GetStringValue(modem_key_obj);
+
+		if (strlen(modem_key) > NRF_CLOUD_MEMFAULT_MODEM_PROJECT_KEY_MAX_LEN) {
+			LOG_WRN(NRF_CLOUD_JSON_KEY_MEMFAULT_MODEM_KEY " is too long");
+			return -EINVAL;
+		}
+		strncpy(data->modem_project_key, modem_key, sizeof(data->modem_project_key) - 1);
+		data->modem_project_key[sizeof(data->modem_project_key) - 1] = '\0';
+	} else {
+		LOG_WRN(NRF_CLOUD_JSON_KEY_MEMFAULT_MODEM_KEY " is not a string");
+		return -EINVAL;
+	}
+#endif /* CONFIG_MEMFAULT_FOTA_MODEM_UPDATE */
 
 	return 0;
 }
@@ -3086,6 +3129,12 @@ void nrf_cloud_device_control_get(struct nrf_cloud_ctrl_data *const ctrl)
 #else
 	ctrl->memfault_enabled = false;
 #endif /* CONFIG_MEMFAULT */
+
+#if defined(CONFIG_MEMFAULT_FOTA_MODEM_UPDATE)
+	strncpy(ctrl->modem_project_key, applied_modem_project_key,
+		sizeof(ctrl->modem_project_key) - 1);
+	ctrl->modem_project_key[sizeof(ctrl->modem_project_key) - 1] = '\0';
+#endif /* CONFIG_MEMFAULT_FOTA_MODEM_UPDATE */
 }
 
 bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const input)
@@ -3358,6 +3407,20 @@ int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const inp
 			memfault_zephyr_port_periodic_upload_enable(cloud_ctrl.memfault_enabled);
 #endif /* CONFIG_MEMFAULT */
 		}
+
+#if defined(CONFIG_MEMFAULT_FOTA_MODEM_UPDATE)
+		if (strncmp(device_ctrl.modem_project_key, cloud_ctrl.modem_project_key,
+			    sizeof(device_ctrl.modem_project_key)) != 0) {
+			ctrl_status = NRF_CLOUD_CTRL_REPLY;
+			LOG_INF("Setting Memfault modem project key from shadow");
+
+			strncpy(applied_modem_project_key, cloud_ctrl.modem_project_key,
+				sizeof(applied_modem_project_key) - 1);
+			applied_modem_project_key[sizeof(applied_modem_project_key) - 1] = '\0';
+
+			memfault_zephyr_fota_modem_project_key_set(applied_modem_project_key);
+		}
+#endif /* CONFIG_MEMFAULT_FOTA_MODEM_UPDATE */
 	}
 
 	if (ctrl_status == NRF_CLOUD_CTRL_NO_REPLY) {

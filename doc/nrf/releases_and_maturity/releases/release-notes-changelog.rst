@@ -692,7 +692,8 @@ AVSystem integration
 nRF Cloud integration
 ---------------------
 
-|no_changes_yet_note|
+* Added a ``memfaultModemKey`` control key in the Device Shadow, enabling the Memfault modem FOTA project key to be provisioned at runtime through Device Shadow updates.
+  This is applied using the :c:func:`memfault_zephyr_fota_modem_project_key_set()` function and requires the :kconfig:option:`CONFIG_MEMFAULT_FOTA_MODEM_UPDATE` Kconfig option to be enabled.
 
 CoreMark integration
 --------------------
