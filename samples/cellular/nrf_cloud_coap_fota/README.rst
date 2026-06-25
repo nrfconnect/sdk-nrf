@@ -97,9 +97,11 @@ See :ref:`configure_application` on how to configure the parameters.
 
 To create a FOTA test version of this sample, change the ``PATCHLEVEL`` in the :file:`VERSION` file.
 
-To enable delta modem FOTA, add the following parameter to your build command and set the :kconfig:option:`CONFIG_MEMFAULT_FOTA_MODEM_PROJECT_KEY` Kconfig option to your Memfault modem firmware project key:
+To enable delta modem FOTA, add ``-DEXTRA_CONF_FILE=delta_modem_fota.conf`` to your build command and configure the modem firmware project key either:
 
-``-DEXTRA_CONF_FILE=delta_modem_fota.conf``
+* At runtime, by adding the ``"memfaultModemKey"`` string item to the control section of the device's shadow
+  Use the `nRF Cloud`_ portal or the REST API to perform the shadow update.
+* At build time, by setting the :kconfig:option:`CONFIG_MEMFAULT_FOTA_MODEM_PROJECT_KEY` Kconfig option to your Memfault modem firmware project key.
 
 See the `Memfault nRF Modem FOTA`_ documentation for more details on configuring a delta modem FOTA.
 

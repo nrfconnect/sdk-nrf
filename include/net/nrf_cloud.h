@@ -615,6 +615,11 @@ struct nrf_cloud_gnss_data {
 	};
 };
 
+/** @brief Maximum length, excluding the NULL terminator, of the Memfault modem FOTA project
+ *  key that can be provisioned at runtime through the device shadow.
+ */
+#define NRF_CLOUD_MEMFAULT_MODEM_PROJECT_KEY_MAX_LEN 32
+
 /** @brief Data to control behavior of the nrf_cloud library from the
  *  cloud side. This data is stored in the device shadow.
  */
@@ -623,6 +628,14 @@ struct nrf_cloud_ctrl_data {
 	 *  If false, the upload is disabled.
 	 */
 	bool memfault_enabled;
+#if defined(CONFIG_MEMFAULT_FOTA_MODEM_UPDATE)
+	/** Memfault project key used for modem firmware FOTA checks, provisioned at runtime
+	 *  through the device shadow. An empty string means no runtime key is set and the
+	 *  build-time CONFIG_MEMFAULT_FOTA_MODEM_PROJECT_KEY (if any) is used instead. Applied
+	 *  through memfault_zephyr_fota_modem_project_key_set().
+	 */
+	char modem_project_key[NRF_CLOUD_MEMFAULT_MODEM_PROJECT_KEY_MAX_LEN + 1];
+#endif /* CONFIG_MEMFAULT_FOTA_MODEM_UPDATE */
 };
 
 /**
