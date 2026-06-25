@@ -228,5 +228,5 @@ def get_required_images_to_update(
         req_build_dir / req_build.build_info.default_domain / "zephyr" / "zephyr.signed.bin"
     )  # type: ignore
     updated_netcore = req_build_dir / f"signed_by_mcuboot_and_b0_{netcore_name}.bin"
-    s1_image = req_build_dir / "signed_by_mcuboot_and_b0_s1_image.bin"
+    s1_image = req_build_dir / "signed_by_mcuboot_and_b0_mcuboot_s1_variant.bin"
     return updated_app, updated_netcore, s1_image
