@@ -1,0 +1,2 @@
+config BOARD_{{ board | upper }}
+	select SOC_{{ soc | upper }}_CPUAPP if BOARD_{{ board | upper }}_{{ soc | upper }}_CPUAPP
