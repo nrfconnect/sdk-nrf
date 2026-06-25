@@ -397,11 +397,10 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 			     size_t target_key_buffer_size, size_t *target_key_buffer_length)
 {
 	size_t key_bits;
-	int sx_status;
-	int nested_err;
 	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
-	size_t key_size;
+	size_t key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 	psa_key_type_t key_type;
+	uint8_t local_key_buffer[CRACEN_KMU_PUSH_AREA_SIZE];
 
 	/* PSA core only invokes this if source location matches target location.
 	 * Whether copy usage is allowed has been validated at this point.
@@ -413,24 +412,14 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 					 target_key_buffer_length, &key_bits);
 	}
 
-	nrf_security_mutex_lock(cracen_mutex_symmetric);
-	sx_status = cracen_kmu_prepare_key(source_key);
-
-	if (sx_status == SX_OK) {
-		key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
-		psa_status = cracen_import_key(attributes, kmu_push_area, key_size,
-					       target_key_buffer, target_key_buffer_size,
-					       target_key_buffer_length, &key_bits);
+	psa_status = kmu_push_and_get_key(source_key, local_key_buffer, key_size);
+	if (psa_status != PSA_SUCCESS) {
+		return psa_status;
 	}
 
-	nested_err = cracen_kmu_clean_key(source_key);
-
-	nrf_security_mutex_unlock(cracen_mutex_symmetric);
-
-	sx_status = sx_handle_nested_error(nested_err, sx_status);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
+	psa_status = cracen_import_key(attributes, local_key_buffer, key_size, target_key_buffer,
+				       target_key_buffer_size, target_key_buffer_length, &key_bits);
+	safe_memzero(local_key_buffer, key_size);
 
 	return psa_status;
 }
