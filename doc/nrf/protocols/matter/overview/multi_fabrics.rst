@@ -42,3 +42,17 @@ Consequently, those administrators may be hosted by different ecosystem vendors.
 .. note::
    Access Control Lists are based on the Node Operational Certificates.
    Using them alone already allows the commissioner to establish multiple administrators on a single fabric.
+
+Joint Fabric
+************
+
+Joint Fabric lets multiple Matter ecosystems co-administer devices on a shared household fabric without requiring the user to commission each device into every ecosystem separately.
+
+The following Joint Fabric elements are certifiable in Matter 1.6:
+
+* Joint Fabric Administrator device type
+* Joint Fabric Administrator cluster
+* Joint Fabric Datastore cluster
+
+Joint Fabric builds on the multiple-fabrics model described, but adds standardized datastore synchronization and node management between ecosystem administrators.
+Products that implement Joint Fabric can pursue official CSA certification for these features.
