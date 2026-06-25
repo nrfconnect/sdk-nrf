@@ -12,11 +12,9 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 import pytest
-
 from parameters import BuildParameters
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.shell import ShellMCUbootCommandParsed
-from twister_harness.helpers.utils import match_lines, match_no_lines
 from twister_harness_ext.utils.helpers import retry, timer
 from twister_harness_ext.utils.imgtool_wrapper import imgtool_sign
 

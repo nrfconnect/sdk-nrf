@@ -171,9 +171,7 @@ class BuildParameters:
                 slot1_variant_dir = self.app_build_dir.with_name(
                     self.app_build_dir.name + "_slot1_variant"
                 )
-                self.mcuboot_secondary_app_to_sign = (
-                    slot1_variant_dir / "zephyr" / "zephyr.bin"
-                )
+                self.mcuboot_secondary_app_to_sign = slot1_variant_dir / "zephyr" / "zephyr.bin"
         else:
             self.app_to_sign = self.build_dir / "zephyr" / "app_to_sign.bin"
             self.netcore_to_sign = self.build_dir / "zephyr" / "net_core_app_to_sign.bin"
@@ -210,9 +208,7 @@ class BuildParameters:
             )
         else:
             edt_data = self.build_dir / self.net_core_name / "zephyr" / "edt.pickle"
-            self.imgtool_params.slot_size = str(
-                get_edt_node(edt_data, "s0_partition").regs[0].size
-            )
+            self.imgtool_params.slot_size = str(get_edt_node(edt_data, "s0_partition").regs[0].size)
 
     def _update_imgtool_next(self) -> None:
         """Update imgtool parameters for advanced signature and compression options."""
