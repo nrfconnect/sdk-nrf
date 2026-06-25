@@ -889,6 +889,8 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
   Use their PSA Crypto counterparts instead.
 
+* Fixed an issue where UICR was not provisioned with monotonic counter structures, when :kconfig:option`SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION` was enabled, MCUboot was the only bootloader, and Partition Manager was disabled.
+
 Zephyr
 ======
 
