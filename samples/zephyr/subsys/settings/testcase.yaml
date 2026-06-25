@@ -50,6 +50,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf9251dk/nrf9251/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_args:
@@ -58,6 +59,7 @@ tests:
   nrf.extended.sample.subsys.settings.nvs:
     platform_allow:
       - nrf9251dk/nrf9251/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf9251dk/nrf9251/cpuapp
     extra_args:
