@@ -40,3 +40,10 @@ if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
 
   endforeach()
 endif()
+
+if(NOT SB_CONFIG_PARTITION_MANAGER AND SB_CONFIG_BOOTLOADER_MCUBOOT AND SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+  # Downgrade prevention in MCUboot requires provisioning UICR with prepared counter structures.
+  include(image_flasher.cmake)
+  add_image_flasher(NAME app_provision HEX_FILE "${CMAKE_BINARY_DIR}/app_provision.hex" BASE_IMAGE mcuboot)
+  sysbuild_add_dependencies(FLASH mcuboot app_provision)
+endif()
