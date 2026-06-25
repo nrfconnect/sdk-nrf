@@ -19,6 +19,7 @@
 #endif
 
 #include <nrf_security_mutexes.h>
+#include <nrf_security_mem_helpers.h>
 
 /* Enable interrupts showing that an operation finished or aborted.
  * For that, we're interested in :
@@ -44,6 +45,20 @@ static void sx_hw_enable_interrupts(void)
 int sx_hw_reserve(struct sx_dmactl *dma, sx_hw_reserve_flags_t flags)
 {
 	cracen_acquire();
+
+#if defined(CONFIG_PSA_WANT_KEY_TYPE_AES)
+	uint32_t prng_value;
+	int err;
+
+	if (flags & SX_HW_RESERVE_CM_ENABLED) {
+		err = cracen_prng_value_from_pool(&prng_value);
+		if (err != SX_OK) {
+			cracen_release();
+			return err;
+		}
+	}
+#endif
+
 	nrf_security_mutex_lock(cracen_mutex_symmetric);
 
 	if (dma) {
@@ -55,13 +70,8 @@ int sx_hw_reserve(struct sx_dmactl *dma, sx_hw_reserve_flags_t flags)
 
 #if defined(CONFIG_PSA_WANT_KEY_TYPE_AES)
 	if (flags & SX_HW_RESERVE_CM_ENABLED) {
-		int err;
-		uint32_t prng_value;
-
-		err = cracen_prng_value_from_pool(&prng_value);
-		if (err == SX_OK) {
-			err = sx_cm_load_mask(prng_value);
-		}
+		err = sx_cm_load_mask(prng_value);
+		safe_memzero(&prng_value, sizeof(prng_value));
 		if (err != SX_OK) {
 			sx_hw_release(dma);
 			return err;
