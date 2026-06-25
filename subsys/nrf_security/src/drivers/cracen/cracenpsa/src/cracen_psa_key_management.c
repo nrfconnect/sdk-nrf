@@ -329,12 +329,39 @@ psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t
 	return PSA_SUCCESS;
 }
 
+static psa_status_t kmu_push_and_get_key(const uint8_t *kmu_key, uint8_t *pushed_key_buffer,
+					 size_t pushed_key_buffer_size)
+{
+	int nested_err;
+	int sx_status;
+
+	if (pushed_key_buffer_size > CRACEN_KMU_PUSH_AREA_SIZE) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	/* The kmu_push_area is guarded by the symmetric mutex since it is the most common
+	 * use case. Here the decision was to avoid defining another mutex to handle the
+	 * push buffer for the rest of the use cases.
+	 */
+	nrf_security_mutex_lock(cracen_mutex_symmetric);
+	sx_status = cracen_kmu_prepare_key(kmu_key);
+	if (sx_status == SX_OK) {
+		memcpy(pushed_key_buffer, kmu_push_area, pushed_key_buffer_size);
+	}
+
+	nested_err = cracen_kmu_clean_key(kmu_key);
+
+	nrf_security_mutex_unlock(cracen_mutex_symmetric);
+	sx_status = sx_handle_nested_error(nested_err, sx_status);
+
+	return silex_statuscodes_to_psa(sx_status);
+}
+
 psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 			       size_t key_buffer_size, uint8_t *data, size_t data_size,
 			       size_t *data_length)
 {
-	int sx_status;
-	int nested_err;
+	psa_status_t psa_status;
 	size_t key_out_size;
 
 	/* The keys will already be in the key buffer as they got loaded there by a previous
@@ -357,23 +384,12 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	/* The kmu_push_area is guarded by the symmetric mutex since it is the most common
-	 * use case. Here the decision was to avoid defining another mutex to handle the
-	 * push buffer for the rest of the use cases.
-	 */
-	nrf_security_mutex_lock(cracen_mutex_symmetric);
-	sx_status = cracen_kmu_prepare_key(key_buffer);
-	if (sx_status == SX_OK) {
-		memcpy(data, kmu_push_area, key_out_size);
+	psa_status = kmu_push_and_get_key(key_buffer, data, key_out_size);
+	if (psa_status == PSA_SUCCESS) {
 		*data_length = key_out_size;
 	}
 
-	nested_err = cracen_kmu_clean_key(key_buffer);
-
-	nrf_security_mutex_unlock(cracen_mutex_symmetric);
-	sx_status = sx_handle_nested_error(nested_err, sx_status);
-
-	return silex_statuscodes_to_psa(sx_status);
+	return psa_status;
 }
 
 psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *source_key,
