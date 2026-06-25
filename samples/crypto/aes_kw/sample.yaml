@@ -33,6 +33,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -42,6 +43,8 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
 
   sample.aes_kw.cracen.kmu:
     extra_args:
@@ -59,6 +62,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
 
   sample.aes_kwp.cracen:
     extra_args:
@@ -76,6 +80,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -85,6 +90,8 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
 
   sample.aes_kwp.cracen.kmu:
     extra_args:
@@ -102,3 +109,4 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp

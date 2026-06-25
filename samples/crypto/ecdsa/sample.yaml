@@ -64,6 +64,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
@@ -80,6 +81,8 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
   sample.ecdsa.cracen.crypto_service:

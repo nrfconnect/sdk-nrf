@@ -16,7 +16,7 @@
 /delete-node/ &sram0_ns;
 
 /* Rebalance the secure/non-secure SRAM split to 64 kB / 127 kB so the
- * non-secure image (psa_tls needs ~115 kB of RAM) fits. nRF54LV10A has
+ * non-secure image (psa_tls needs ~115 kB of RAM) fits. nRF54LC10A has
  * 192 kB total SRAM; 1 kB at the top is left unused to match the upstream
  * TF-M layout.
  */
