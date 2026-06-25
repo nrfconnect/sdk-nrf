@@ -12,12 +12,12 @@ MCUboot image compression
 The system includes the following features and limitation:
 
 * Allows slot ``1`` to be approximately 70% the size of slot ``0``.
-* Supports a single-image only.
-  It does not support network core updates for the nRF5340 SoC or :ref:`bootloader` updates.
+* Supports single-image mode.
+  It can be used experimentally for network core updates on the nRF5340 SoC or :ref:`bootloader` updates, provided that the active instance of MCUboot uses image matching based on explicit image address (:kconfig:option:`CONFIG_MCUBOOT_CHECK_HEADER_LOAD_ADDRESS=y`) or vendor and class UUID-based matching.
+
 * Does not support reverting to previous versions.
   MCUboot must be configured for upgrade-only mode.
-* Validates the compressed image during the update process before the main image is erased, ensuring the update does not lead to a bricked module due to un-loadable firmware.
-* Does not support image encryption.
+* Validates the compressed image during the update process before the main image is erased, ensuring the update does not lead to a bricked module due to unloadable firmware.
 * Uses LZMA2 compression with ARM thumb filter for compressed images.
 * Must use :ref:`configuration_system_overview_sysbuild`.
 

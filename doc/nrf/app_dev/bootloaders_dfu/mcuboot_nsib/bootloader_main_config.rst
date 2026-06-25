@@ -25,6 +25,44 @@ This configuration allows for more complex update scenarios and greater flexibil
 * ``CONFIG_UPDATEABLE_IMAGE_NUMBER`` - Specifies the number of images that MCUboot can handle.
 * :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` - Configures the number of images supported by MCUboot at the sysbuild level.
 
+Supported image matching modes
+******************************
+
+MCUboot supports various *image matching modes* that determine how it identifies the target partition for a given image candidate.
+
+This feature is particularly useful when MCUboot updates multiple images from a single incoming image slot, as is the case for S0/S1 MCUboot instance updates.
+
+The selected mode determines which bootloader operations are available for the images managed by a given MCUboot instance:
+
+.. list-table:: MCUboot image matching modes
+    :header-rows: 1
+    :widths: auto
+
+    * - **Mode**
+      - **Description**
+      - **Configuration Option**
+      - **Notes**
+    * - Cortex-M reset handler-based (heuristic)
+      - Matches the image by comparing the Cortex-M reset handler address in the image's vector table against the partition address.
+        Because this approach is a heuristic, it is deprecated and cannot be used with encrypted or compressed images.
+      - ``CONFIG_MCUBOOT_VERIFY_IMG_ADDRESS``
+      - Deprecated; not compatible with encryption or compression.
+    * - Explicit image address in header
+      - Matches using an explicit image address encoded in the image header, set by the signing script. All executable slot addresses must be non-overlapping.
+      - ``CONFIG_MCUBOOT_CHECK_HEADER_LOAD_ADDRESS``
+      - Preferred for multi-image and updateable bootloader configurations such as s0/s1.
+    * - Vendor and class UUID-based
+      - Matches images by the vendor and class UUIDs, which are stored in the image header.
+        This approach allows reliable identification of images across devices and variants and is suitable for flexible multi-image systems.
+        The configuration is provided in the devicetree by a node with compatible ``nordic,mcuboot``.
+        This node includes the ``uuid-vid-required`` and ``uuid-cid-required`` properties along with boot chain descriptions.
+      - Devicetree: node with ``nordic,mcuboot`` compatible
+      - Enables advanced matching via devicetree properties for precise control across complex update scenarios.
+    * - None
+      - The system does not perform image matching or verify whether the candidate image is expected to update the given image slot.
+      - No matching option configured
+      - Supports the basic update scheme of a multi-image dual-bank bootloader.
+
 Operational modes of MCUboot
 ****************************
 

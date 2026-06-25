@@ -22,8 +22,11 @@ The current implementation has the following limitations:
   This is the default configuration.
 * Encryption is not supported when using MCUboot in direct-xip mode.
 * Storing the ECIES-X25519 device private key in the Key Management Unit (KMU) is currently not supported.
-* HMAC and HKDF tools currently use the SHA-256 hash algorithm.
-* Encryption is not supported with immutable and upgradable bootloader configuration.
+* Encryption of MCUboot updates is supported with an immutable and upgradable bootloader configuration, with the following limitations:
+
+  * The active instance of MCUboot must use image matching based on explicit image address (:kconfig:option:`CONFIG_MCUBOOT_CHECK_HEADER_LOAD_ADDRESS=y`) or vendor and class UUID-based matching.
+  * You must use the same key encryption for both MCUboot updates and the application image.
+  * You must sign the image manually, since the NCS signing process for s0/s1 images has not yet been updated to support encryption.
 
 HMAC and HKDF impact on TLV and key exchange
 ********************************************
