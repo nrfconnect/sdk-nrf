@@ -184,20 +184,33 @@ config DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE2
 	  Motion detector sampling rate in milliseconds when movement is detected in separated
 	  state.
 
+config DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX
+	int
+	default 4294967
+	help
+	  Maximum value, in seconds, accepted for the separated UT timing periods
+	  (backoff and timeout min/max). Equal to UINT32_MAX / MSEC_PER_SEC: the
+	  periods are converted to milliseconds with K_SECONDS() before being passed
+	  to the work scheduler, so a larger value would overflow the 32-bit
+	  millisecond timeout.
+
 config DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD
-	int "Period in minutes to disable motion detector if accessory is in separated state" if DULT_MOTION_DETECTOR_TEST_MODE
-	default 2 if DULT_MOTION_DETECTOR_TEST_MODE
-	default 360
+	int "Period in seconds to disable motion detector if accessory is in separated state" if DULT_TEST_MOTION_DETECTOR
+	range 0 DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX
+	default 120 if DULT_TEST_MOTION_DETECTOR
+	default 21600
 
 config DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN
-	int "Minimum time span in minutes in separated state before enabling motion detector" if DULT_MOTION_DETECTOR_TEST_MODE
-	default 3 if DULT_MOTION_DETECTOR_TEST_MODE
-	default 480
+	int "Minimum time span in seconds in separated state before enabling motion detector" if DULT_TEST_MOTION_DETECTOR
+	range 0 DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX
+	default 180 if DULT_TEST_MOTION_DETECTOR
+	default 28800
 
 config DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX
-	int "Maximum time span in minutes in separated state before enabling motion detector" if DULT_MOTION_DETECTOR_TEST_MODE
-	default DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN if DULT_MOTION_DETECTOR_TEST_MODE
-	default 1440
+	int "Maximum time span in seconds in separated state before enabling motion detector" if DULT_TEST_MOTION_DETECTOR
+	range 0 DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX
+	default DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN if DULT_TEST_MOTION_DETECTOR
+	default 86400
 
 config DULT_MOTION_DETECTOR_SEPARATED_UT_ACTIVE_POLL_DURATION
 	int

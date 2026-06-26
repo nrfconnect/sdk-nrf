@@ -25,7 +25,7 @@ LOG_MODULE_REGISTER(dult_motion_detector, CONFIG_DULT_LOG_LEVEL);
 #define SEPARATED_UT_SAMPLING_RATE2	\
 	K_MSEC(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE2)
 #define SEPARATED_UT_BACKOFF_PERIOD	\
-	K_MINUTES(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD)
+	K_SECONDS(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD)
 
 #define SEPARATED_UT_TIMEOUT_PERIOD_MIN		\
 	(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN)
@@ -189,37 +189,34 @@ static void motion_poll_work_handle(struct k_work *work)
 	}
 }
 
-static void separated_mode_transition_handle(void)
+static uint32_t randomized_timeout_calculate(void)
 {
+	uint32_t seed;
+	uint64_t pick;
 	int err;
-	int ret;
-	uint16_t separated_ut_timeout_period_seed;
-	uint32_t separated_ut_timeout_period;
 
-	/* Calculate the positive randomized time factor. */
-	err = sys_csrand_get(&separated_ut_timeout_period_seed,
-			     sizeof(separated_ut_timeout_period_seed));
+	err = sys_csrand_get(&seed, sizeof(seed));
 	if (err) {
 		LOG_WRN("DULT: sys_csrand_get failed: %d", err);
-
-		sys_rand_get(&separated_ut_timeout_period_seed,
-			     sizeof(separated_ut_timeout_period_seed));
+		sys_rand_get(&seed, sizeof(seed));
 	}
 
-	BUILD_ASSERT(SEPARATED_UT_TIMEOUT_PERIOD_DIFF < UINT16_MAX);
+	/* uint64_t intermediate prevents overflow in DIFF * seed for any uint32_t DIFF. */
+	pick = ((uint64_t) SEPARATED_UT_TIMEOUT_PERIOD_DIFF * seed) / UINT32_MAX;
 
-	/* Convert the random part range from <0; UINT16_MAX> to
-	 * <SEPARATED_UT_TIMEOUT_PERIOD_MIN; SEPARATED_UT_TIMEOUT_PERIOD_MAX>
-	 */
-	separated_ut_timeout_period = SEPARATED_UT_TIMEOUT_PERIOD_DIFF;
-	separated_ut_timeout_period *= separated_ut_timeout_period_seed;
-	separated_ut_timeout_period /= UINT16_MAX;
-	separated_ut_timeout_period += SEPARATED_UT_TIMEOUT_PERIOD_MIN;
+	/* Uniform sample in [MIN, MAX] seconds, inclusive. */
+	return SEPARATED_UT_TIMEOUT_PERIOD_MIN + (uint32_t) pick;
+}
+
+static void separated_mode_transition_handle(void)
+{
+	uint32_t separated_ut_timeout_period = randomized_timeout_calculate();
+	int ret;
 
 	LOG_DBG("Starting the work for enabling the motion detector. "
-		"Randomized timeout set to: %" PRIu32 " minutes", separated_ut_timeout_period);
+		"Randomized timeout set to: %" PRIu32 " seconds", separated_ut_timeout_period);
 	__ASSERT_NO_MSG(!k_work_delayable_is_pending(&motion_enable_work));
-	ret = k_work_schedule(&motion_enable_work, K_MINUTES(separated_ut_timeout_period));
+	ret = k_work_schedule(&motion_enable_work, K_SECONDS(separated_ut_timeout_period));
 	__ASSERT_NO_MSG(ret == 1);
 }
 
