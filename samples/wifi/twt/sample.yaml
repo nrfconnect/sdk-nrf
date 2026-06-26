@@ -65,3 +65,18 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.7120dk.twt:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SB_CONFIG_WIFI_NRF70=n
+      # Dummy IP address for building the sample
+      - CONFIG_TRAFFIC_GEN_REMOTE_IPV4_ADDR="1.2.3.4"
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
