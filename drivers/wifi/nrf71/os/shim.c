@@ -51,6 +51,18 @@ static struct k_heap * const wifi_data_pool = &wifi_drv_data_mem_pool;
 
 #define WORD_SIZE 4
 
+/*
+ * Tailroom reserved after the payload in every copied TX data buffer.
+ *
+ * The Wi-Fi crypto hardware on nrf71 does not compute the TKIP Michael
+ * MIC, so once a TKIP key is installed UMAC generates the 8-byte MIC in
+ * software and writes it right after the payload. Host and firmware share
+ * the TX buffer and operate on it independently, so the firmware just
+ * needs the room to exist past the payload. CCMP/GCMP MICs are produced
+ * by the HW crypto engine and never land in this buffer.
+ */
+#define NRF71_TX_MIC_TAILROOM 8
+
 struct zep_shim_intr_priv *intr_priv;
 
 static void *zep_shim_mem_alloc(size_t size)
@@ -309,6 +321,16 @@ static unsigned int zep_shim_nbuf_headroom_get(void *nbuf)
 	return ((struct nwb *)nbuf)->headroom;
 }
 
+static void zep_shim_nbuf_tailroom_res(void *nbuf, unsigned int size)
+{
+	struct nwb *nwb = (struct nwb *)nbuf;
+
+	NET_ASSERT(nwb->end - nwb->tail >= (int)size,
+		   "nbuf tailroom reserve (%u) exceeds free space", size);
+
+	nwb->end -= size;
+}
+
 static unsigned int zep_shim_nbuf_data_size(void *nbuf)
 {
 	return ((struct nwb *)nbuf)->len;
@@ -485,13 +507,14 @@ void *net_pkt_to_nbuf(struct net_pkt *pkt)
 
 	len = net_pkt_get_len(pkt);
 
-	nbuff = zep_shim_nbuf_alloc(len + 100);
+	nbuff = zep_shim_nbuf_alloc(len + 100 + NRF71_TX_MIC_TAILROOM);
 
 	if (!nbuff) {
 		return NULL;
 	}
 
 	zep_shim_nbuf_headroom_res(nbuff, 100);
+	zep_shim_nbuf_tailroom_res(nbuff, NRF71_TX_MIC_TAILROOM);
 
 	data = zep_shim_nbuf_data_put(nbuff, len);
 
