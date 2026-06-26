@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "app_common.dtsi"
+#include "memory_map.dtsi"
+
+/* Enable LED 2 and LED 3 for keyboard lock indicators. */
+/ {
+	leds2 {
+		status = "okay";
+		label = "Num Lock LED";
+	};
+
+	leds3 {
+		status = "okay";
+		label = "Caps Lock LED";
+	};
+};
