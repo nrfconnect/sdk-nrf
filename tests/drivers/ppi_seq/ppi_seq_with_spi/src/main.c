@@ -26,7 +26,7 @@
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 LOG_MODULE_REGISTER(test);
 
-#if !defined(CONFIG_SOC_NRF54H20)
+#if !defined(CONFIG_SOC_NRF54H20) && !defined(CONFIG_SOC_NRF9251)
 #define TEST_MULTI_OP 1
 #endif
 
@@ -134,21 +134,36 @@ static void rtc_prepare(void)
 
 static void prepare_buf(uint8_t *buf, size_t cnt, uint32_t init_val)
 {
-	for (int i = 0; i < cnt; i++) {
-		buf[i] = (uint8_t)(init_val + i);
+	uint32_t *buf32 = (uint32_t *)buf;
+
+	for (int i = 0; i < cnt; i += sizeof(uint32_t)) {
+		uint32_t val = ((uint8_t)(init_val + i + 0) << 0) |
+			       ((uint8_t)(init_val + i + 1) << 8) |
+			       ((uint8_t)(init_val + i + 2) << 16) |
+			       ((uint8_t)(init_val + i + 3) << 24);
+
+		buf32[i / sizeof(uint32_t)] = val;
 	}
 }
 
 static bool check_buf(uint8_t *buf, size_t cnt, uint8_t exp_val, int line)
 {
-	for (size_t i = 0; i < cnt; i++) {
-		if (buf[i] != exp_val) {
-			zassert_equal(buf[i], exp_val,
-				      "%d: Unexpected buffer content at %d, exp:%02x got:%02x",
-				      line, i, exp_val, buf[i]);
+	uint32_t *buf32 = (uint32_t *)buf;
+
+	for (size_t i = 0; i < cnt; i += sizeof(uint32_t)) {
+		uint32_t exp_val32 = ((uint8_t)(exp_val + 0) << 0) |
+			       ((uint8_t)(exp_val + 1) << 8) |
+			       ((uint8_t)(exp_val + 2) << 16) |
+			       ((uint8_t)(exp_val + 3) << 24);
+		uint32_t val32 = buf32[i / sizeof(uint32_t)];
+
+		if (val32 != exp_val32) {
+			zassert_equal(val32, exp_val32,
+				      "%d: Unexpected buffer content at %d, exp:%08x got:%08x",
+				      line, i, exp_val32, val32);
 			return false;
 		}
-		exp_val++;
+		exp_val += sizeof(uint32_t);
 	}
 
 	return true;
@@ -509,13 +524,13 @@ static void spis_prepare(enum test_ppi_seq_op op, enum test_ppi_seq_mode mode)
 		spis_data.delta = 10;
 		break;
 	case TEST_MODE_GRTC_TIMER:
-		spis_data.delta = 6;
+		spis_data.delta = 10;
 		break;
 	case TEST_MODE_RTC:
 		spis_data.delta = 10;
 		break;
 	default:
-		spis_data.delta = 6;
+		spis_data.delta = 10;
 		break;
 	}
 
