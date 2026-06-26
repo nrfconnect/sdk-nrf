@@ -299,7 +299,18 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target in the :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples.
+* :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples:
+
+  * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
+
+* :ref:`peripheral_hids_mouse` sample:
+
+  * Added a "release" HID SCI configuration that lowers the minimum connection interval from 875 µs to 750 µs.
+
+* :ref:`bluetooth_central_hids` sample:
+
+  * Updated the minimum supported connection interval from 875 µs to 750 µs in the HID SCI configuration.
+  * Enabled the Frame Space Update feature in the single peripheral HID SCI configuration.
 
 Bluetooth Mesh samples
 ----------------------
