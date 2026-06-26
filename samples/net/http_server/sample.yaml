@@ -6,14 +6,28 @@ tests:
     build_only: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
-      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - http_server_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
+  # nRF7120 uses the integrated nRF71 driver; its tuning lives in the board conf.
+  sample.net.http_server.nrf7120.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
       - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
       - ci_samples_net
+    extra_args:
+      - http_server_EXTRA_CONF_FILE=wifi.conf
   sample.net.http_server.wifi.tls:
     sysbuild: true
     build_only: true
@@ -21,19 +35,20 @@ tests:
       - nrf7002dk/nrf5340/cpuapp/ns
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
-    extra_args: EXTRA_CONF_FILE=tls-nrf7002.conf
+    extra_args: http_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf;nrf70.conf"
     tags:
       - ci_build
       - sysbuild
       - ci_samples_net
-  sample.net.http_server.nrf7120dk.wifi.tls:
+  # nRF7120 uses the integrated nRF71 driver; its tuning lives in the board conf.
+  sample.net.http_server.nrf7120.wifi.tls:
     sysbuild: true
     build_only: true
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp/ns
-    extra_args: EXTRA_CONF_FILE=tls-nrf7120.conf
+    extra_args: http_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
     tags:
       - ci_build
       - sysbuild
@@ -89,7 +104,8 @@ tests:
       - ci_samples_net
     extra_args:
       - http_server_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - http_server_SNIPPET=nrf70-wifi
+      - http_server_SNIPPET="nrf70-wifi;wifi-credentials"
+      - http_server_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
   sample.net.http_server.nrf54lm20_nrf7002eb2.wifi:
     sysbuild: true
     build_only: true
@@ -105,3 +121,5 @@ tests:
       - ci_samples_net
     extra_args:
       - http_server_SHIELD="nrf7002eb2"
+      - http_server_SNIPPET=wifi-credentials
+      - http_server_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
