@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PARTITION_MANAGER
-	default n
-
 config APP_CPUFLPR_RUN
 	bool "Run the CoreMark benchmark on the FLPR core"
 	depends on SUPPORT_FLPRCORE && !SOC_NRF54LV10A && !SOC_NRF54LC10A
