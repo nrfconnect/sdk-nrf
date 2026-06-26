@@ -149,6 +149,21 @@ class BuildParameters:
             mcuboot_config = self.build_dir / "mcuboot" / "zephyr" / ".config"
             key_filename = find_in_config(mcuboot_config, "CONFIG_BOOT_SIGNATURE_KEY_FILE")
             self.imgtool_params.key_file = self.mcuboot_dir / key_filename
+        self._update_rom_fixed()
+
+    def _update_rom_fixed(self) -> None:
+        """Set --rom-fixed for imgtool when the build uses load-address image matching."""
+        if (
+            find_in_config(self.zephyr_config, "CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS")
+            != "y"
+        ):
+            return
+
+        if not self.pm:
+            edt_data = self.app_build_dir / "zephyr" / "edt.pickle"
+            self.imgtool_params.rom_fixed = get_partition_address(
+                edt_data, ["cpuapp_slot0_partition", "slot0_ns_partition", "slot0_partition"]
+            )
 
     def update_params_for_netcore(self) -> None:
         """Update imgtool parameters for netcore image slot size."""
