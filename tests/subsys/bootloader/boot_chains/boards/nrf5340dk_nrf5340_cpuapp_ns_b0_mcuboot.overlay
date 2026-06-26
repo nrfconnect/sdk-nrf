@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &tfm_ps_partition;
+
+#include "../nrf5340_b0_mcuboot_partitions.dtsi"
+
+&slot0_partition {
+	ranges = <0x0 0x28000 0x68000>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	slot0_s_partition: partition@0 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-secure";
+		reg = <0x0 0x40000>;
+	};
+
+	slot0_ns_partition: partition@40000 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-nonsecure";
+		reg = <0x40000 0x28000>;
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &slot0_ns_partition;
+	};
+};
