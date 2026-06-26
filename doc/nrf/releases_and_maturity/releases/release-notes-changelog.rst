@@ -280,6 +280,7 @@ nRF Desktop
 -----------
 
 * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
+* Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` board target.
 
 Thingy:53: Matter weather station
 ---------------------------------
