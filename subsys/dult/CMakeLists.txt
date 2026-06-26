@@ -16,3 +16,12 @@ zephyr_library_sources_ifdef(CONFIG_DULT_MOTION_DETECTOR motion_detector.c)
 zephyr_library_sources_ifdef(CONFIG_DULT_NEAR_OWNER_STATE near_owner_state.c)
 zephyr_library_sources_ifdef(CONFIG_DULT_SOUND sound.c)
 zephyr_library_sources_ifdef(CONFIG_DULT_USER user.c)
+
+if(CONFIG_DULT_TEST)
+  message(WARNING "
+    --------------------------------------------------------------
+    --- WARNING: DULT test mode (CONFIG_DULT_TEST) is enabled. ---
+    --- This mode is not intended for production use.          ---
+    --------------------------------------------------------------
+    ")
+endif()
