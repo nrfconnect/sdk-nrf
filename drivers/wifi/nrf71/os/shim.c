@@ -18,6 +18,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/__assert.h>
+#include <zephyr/net/net_core.h>
 #include "ipc_if.h"
 #include <zephyr/sys/math_extras.h>
 
@@ -230,6 +231,7 @@ static int zep_shim_pr_err(const char *fmt, va_list args)
 struct nwb {
 	unsigned char *data;
 	unsigned char *tail;
+	unsigned char *end;
 	int len;
 	int headroom;
 	void *next;
@@ -269,6 +271,7 @@ static void *zep_shim_nbuf_alloc(unsigned int size)
 
 	nbuff->data = (unsigned char *)nbuff->priv;
 	nbuff->tail = nbuff->data;
+	nbuff->end = (unsigned char *)nbuff->priv + size;
 	nbuff->len = 0;
 	nbuff->headroom = 0;
 	nbuff->next = NULL;
@@ -320,6 +323,9 @@ static void *zep_shim_nbuf_data_put(void *nbuf, unsigned int size)
 {
 	struct nwb *nwb = (struct nwb *)nbuf;
 	unsigned char *data = nwb->tail;
+
+	NET_ASSERT(nwb->tail + size <= nwb->end,
+		   "nbuf data put (%u) overruns reserved tailroom", size);
 
 	nwb->tail += size;
 	nwb->len += size;
@@ -420,7 +426,6 @@ static bool zep_shim_nbuf_is_raw_tx(void *nbuf)
 
 
 #include <zephyr/net/ethernet.h>
-#include <zephyr/net/net_core.h>
 
 #ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
 void *net_pkt_to_nbuf_zc(struct net_pkt *pkt)
