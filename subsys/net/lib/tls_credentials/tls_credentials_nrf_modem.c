@@ -323,6 +323,39 @@ exit:
 	return ret;
 }
 
+int tls_credential_expiry(sec_tag_t tag, enum tls_credential_type type, time_t *expiry)
+{
+	struct tls_credential *credential;
+	int ret = 0;
+
+	if (expiry == NULL) {
+		return -EINVAL;
+	}
+
+	if (type != TLS_CREDENTIAL_CA_CERTIFICATE &&
+	    type != TLS_CREDENTIAL_PUBLIC_CERTIFICATE) {
+		/* Only CA and server certificates have expiry information. */
+		return -EINVAL;
+	}
+
+	credentials_lock();
+
+	credential = credential_get(tag, type);
+
+	if (!credential) {
+		ret = -ENOENT;
+		goto exit;
+	}
+
+	ret = modem_key_mgmt_certexpiry(credential->tag, modem_key_mgmt_type_get(type), expiry);
+
+exit:
+	credentials_unlock();
+
+	return ret;
+}
+
+
 static void credential_entry_init_callback(nrf_sec_tag_t sec_tag,
 					   enum modem_key_mgmt_cred_type cred_type)
 {
