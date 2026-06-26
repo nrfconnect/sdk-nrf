@@ -4,10 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#undef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L /* Required for gmtime_r */
+
 #include <zephyr/ztest.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 
@@ -254,6 +258,79 @@ ZTEST(suite_modem_key_mgmt, test_list_multiple_entries)
 
 	zassert_equal(key_list_cb_fake.arg0_history[4], 16842753);
 	zassert_equal(key_list_cb_fake.arg1_history[4], MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT);
+}
+
+static int nrf_modem_at_cmd_test_expiry_error(void *buf, size_t len, const char *fmt, va_list args)
+{
+	char buffer[256 + 1];
+
+	vsnprintf(buffer, sizeof(buffer), fmt, args);
+
+	switch (nrf_modem_at_cmd_fake.call_count) {
+	case 1:
+		zassert_equal(0, strcmp("AT%CERTEXPIRY=13,0", buffer));
+		return 513; /* CME ERROR: 513 - Not found */
+	default:
+		zassert_true(false);
+	}
+
+	return 0;
+}
+
+ZTEST(suite_modem_key_mgmt, test_expiry_not_exists)
+{
+	time_t expiry;
+	int err;
+
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_cmee_enabled;
+	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_test_expiry_error;
+
+	err = modem_key_mgmt_certexpiry(13, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &expiry);
+	zassert_equal(err, -ENOENT);
+}
+
+static const char *test_data_expiry_valid =
+"%CERTEXPIRY: 15E1A419ADF6FAA5B2E8770C5DED39319F982EF2,20260121100755Z,20310120100755Z\r\n";
+
+
+static int nrf_modem_at_cmd_test_expiry_valid(void *buf, size_t len, const char *fmt, va_list args)
+{
+	char buffer[256 + 1];
+
+	vsnprintf(buffer, sizeof(buffer), fmt, args);
+
+	switch (nrf_modem_at_cmd_fake.call_count) {
+	case 1:
+		zassert_equal(0, strcmp("AT%CERTEXPIRY=3,1", buffer));
+		strncpy(buf, test_data_expiry_valid, len);
+		return 0;
+	default:
+		zassert_true(false);
+	}
+
+	return 0;
+}
+
+ZTEST(suite_modem_key_mgmt, test_expiry_valid)
+{
+	time_t expiry;
+	struct tm tm;
+	int err;
+
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_cmee_enabled;
+	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_test_expiry_valid;
+
+	err = modem_key_mgmt_certexpiry(3, MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT, &expiry);
+	zassert_equal(err, 0);
+
+	gmtime_r(&expiry, &tm);
+
+	zassert_equal(tm.tm_year + 1900, 2031);
+	zassert_equal(tm.tm_mon + 1, 1);
+	zassert_equal(tm.tm_mday, 20);
+	zassert_equal(tm.tm_hour, 10);
+	zassert_equal(tm.tm_min, 07);
+	zassert_equal(tm.tm_sec, 55);
 }
 
 static void _test_setup(void *fixture)
