@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#undef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L /* Required for gmtime_r */
+
 #include <zephyr/ztest.h>
 #include <zephyr/fff.h>
 
@@ -24,6 +27,8 @@ FAKE_VALUE_FUNC(int, modem_key_mgmt_cmp, nrf_sec_tag_t, enum modem_key_mgmt_cred
 					 const void *, size_t);
 FAKE_VALUE_FUNC(int, modem_key_mgmt_digest, nrf_sec_tag_t, enum modem_key_mgmt_cred_type,
 					    void *, size_t);
+FAKE_VALUE_FUNC(int, modem_key_mgmt_certexpiry, nrf_sec_tag_t, enum modem_key_mgmt_cred_type,
+						time_t *);
 FAKE_VALUE_FUNC(int, modem_key_mgmt_exists, nrf_sec_tag_t, enum modem_key_mgmt_cred_type,
 					    bool *);
 FAKE_VALUE_FUNC(int, modem_key_mgmt_list, modem_key_mgmt_list_cb_t);
@@ -225,6 +230,63 @@ ZTEST(tls_credentials, test_tls_credential_add_existing_but_not_existing)
 	zassert_equal(modem_key_mgmt_write_fake.arg3_val, len);
 }
 
+int modem_key_mgmt_certexpiry_custom(nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type,
+				     time_t *expiry)
+{
+	zassert_equal(sec_tag, 100);
+	zassert_equal(cred_type, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN);
+
+	/* Timestamp: 1782486440
+	 * Timestamp in ms: 1782486440000
+	 * UTC: Friday, June 26, 2026 at 3:07:20 PM
+	 */
+	*expiry = 1782486440;
+
+	return 0;
+}
+
+ZTEST(tls_credentials, test_tls_credential_expiry)
+{
+	time_t expiry;
+	struct tm tm;
+	int ret;
+
+	modem_key_mgmt_certexpiry_fake.return_val = 0;
+	modem_key_mgmt_certexpiry_fake.custom_fake = modem_key_mgmt_certexpiry_custom;
+
+	ret = tls_credential_expiry(100, TLS_CREDENTIAL_CA_CERTIFICATE, &expiry);
+	zassert_equal(ret, 0);
+
+	gmtime_r(&expiry, &tm);
+
+	zassert_equal(tm.tm_year + 1900, 2026);
+	zassert_equal(tm.tm_mon + 1, 6);
+	zassert_equal(tm.tm_mday, 26);
+	zassert_equal(tm.tm_hour, 15);
+	zassert_equal(tm.tm_min, 7);
+	zassert_equal(tm.tm_sec, 20);
+}
+
+ZTEST(tls_credentials, test_tls_credential_invalid_type)
+{
+	time_t expiry;
+	int ret;
+
+	modem_key_mgmt_certexpiry_fake.return_val = 0;
+	modem_key_mgmt_certexpiry_fake.custom_fake = modem_key_mgmt_certexpiry_custom;
+
+	ret = tls_credential_expiry(100, TLS_CREDENTIAL_PRIVATE_KEY, &expiry);
+	zassert_equal(ret, -EINVAL);
+}
+
+ZTEST(tls_credentials, test_tls_credential_not_exists)
+{
+	time_t expiry;
+	int ret;
+
+	ret = tls_credential_expiry(109, TLS_CREDENTIAL_PUBLIC_CERTIFICATE, &expiry);
+	zassert_equal(ret, -ENOENT);
+}
 
 static void _reset_fake(const struct ztest_unit_test *test, void *fixture)
 {
@@ -232,6 +294,8 @@ static void _reset_fake(const struct ztest_unit_test *test, void *fixture)
 	RESET_FAKE(modem_key_mgmt_read);
 	RESET_FAKE(modem_key_mgmt_cmp);
 	RESET_FAKE(modem_key_mgmt_exists);
+	RESET_FAKE(modem_key_mgmt_digest);
+	RESET_FAKE(modem_key_mgmt_certexpiry);
 	RESET_FAKE(modem_key_mgmt_delete);
 	RESET_FAKE(modem_key_mgmt_list);
 }
