@@ -164,6 +164,7 @@ Building and running
 .. include:: /includes/ipc_radio_conf.txt
 
 To build the sample with HID SCI support, use ``-DFILE_SUFFIX=hid_sci``.
+For a release-style HID SCI build with a 750 µs minimum connection interval, use ``-DFILE_SUFFIX=hid_sci_release``.
 
 .. _peripheral_hids_mouse_bt_rpc_build:
 
