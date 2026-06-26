@@ -120,4 +120,4 @@ tests:
     tags:
       - ci_build
       - sysbuild
-      - ci_samples_wifi
+      - ci_samples_nrf71_wifi

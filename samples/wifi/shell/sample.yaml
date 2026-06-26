@@ -559,7 +559,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
-      - ci_samples_wifi
+      - ci_samples_nrf71_wifi
   sample.nrf7002.shell.wpa3_psa:
     build_only: true
     extra_args:
