@@ -116,7 +116,7 @@
 /doc/nrf/drivers/uart_nrf_sw_lpuart.rst   @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/vtf_monitoring.rst       @nrfconnect/ncs-wifi-doc
 /doc/nrf/external_comp/avsystem.rst       @nrfconnect/ncs-iot-oulu-tampere-doc
-/doc/nrf/external_comp/bt_fast_pair/      @nrfconnect/ncs-si-bluebagel-doc
+/doc/nrf/external_comp/bt_fast_pair/      @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/external_comp/coremark.rst       @nrfconnect/ncs-blenders-doc
 /doc/nrf/external_comp/dult.rst           @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/external_comp/edgeai.rst         @nrfconnect/ncs-si-muffin-doc
@@ -134,7 +134,7 @@
 /doc/nrf/libraries/bluetooth/mesh.rst     @nrfconnect/ncs-paladin-doc
 /doc/nrf/libraries/bluetooth/services/ams_client.rst @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/bluetooth/services/ancs_client.rst @nrfconnect/ncs-blenders-doc
-/doc/nrf/libraries/bluetooth/fast_pair/ @nrfconnect/ncs-si-bluebagel-doc
+/doc/nrf/libraries/bluetooth/fast_pair/   @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/bluetooth/services/wifi_prov_ble.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/caf/                   @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/debug/cpu_load.rst     @nrfconnect/ncs-doc-leads
@@ -259,7 +259,7 @@
 /doc/nrf/samples/dfu.rst                  @nrfconnect/ncs-eris-doc
 /doc/nrf/samples/edge_impulse.rst         @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/samples/esb.rst                  @nrfconnect/ncs-si-xcake-doc
-/doc/nrf/samples/fast_pair.rst            @nrfconnect/ncs-si-bluebagel-doc
+/doc/nrf/samples/fast_pair.rst            @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/samples/gazell.rst               @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/samples/ironside_se.rst          @nrfconnect/ncs-aurora-doc
 /doc/nrf/samples/keys.rst                 @nrfconnect/ncs-aegir-doc
@@ -340,14 +340,15 @@
 /include/bluetooth/scan.h                 @nrfconnect/ncs-blenders @nrfconnect/ncs-si-muffin
 /include/bluetooth/services/              @nrfconnect/ncs-blenders
 /include/bluetooth/services/dfu_smp.h     @nrfconnect/ncs-eris
-/include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel
+/include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-xcake
 /include/bluetooth/services/hids.h        @nrfconnect/ncs-si-xcake
 /include/bluetooth/services/hogp.h        @nrfconnect/ncs-si-xcake
 /include/bluetooth/services/latency.h     @nrfconnect/ncs-dragoon
 /include/bluetooth/services/latency_client.h @nrfconnect/ncs-dragoon
 /include/bluetooth/services/ras.h         @nrfconnect/ncs-dragoon
 /include/bluetooth/services/wifi_provisioning.h @wentong-li @bama-nordic
-/include/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel
+/include/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-xcake
+/include/bluetooth/fast_pair/fhn/        @nrfconnect/ncs-si-bluebagel
 /include/bl_*.h                           @nrfconnect/ncs-eris
 /include/flash_map_pm.h                   @nrfconnect/ncs-eris
 /include/fprotect.h                       @nrfconnect/ncs-eris
@@ -479,7 +480,8 @@
 /samples/bluetooth/direct_test_mode/      @nrfconnect/ncs-dragoon
 /samples/bluetooth/enocean/               @nrfconnect/ncs-paladin
 /samples/bluetooth/event_trigger/         @nrfconnect/ncs-dragoon
-/samples/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel
+/samples/bluetooth/fast_pair/input_device/ @nrfconnect/ncs-si-xcake
+/samples/bluetooth/fast_pair/locator_tag/ @nrfconnect/ncs-si-bluebagel
 /samples/bluetooth/hci_lpuart/            @nordic-krch
 /samples/bluetooth/iso_combined_bis_and_cis/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/iso_time_sync/         @nrfconnect/ncs-dragoon
@@ -623,7 +625,8 @@
 /samples/bluetooth/direct_test_mode/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/enocean/*.rst          @nrfconnect/ncs-paladin-doc
 /samples/bluetooth/event_trigger/*.rst    @nrfconnect/ncs-dragoon-doc
-/samples/bluetooth/fast_pair/**/*.rst     @nrfconnect/ncs-si-bluebagel-doc
+/samples/bluetooth/fast_pair/input_device/**/*.rst @nrfconnect/ncs-si-xcake-doc
+/samples/bluetooth/fast_pair/locator_tag/**/*.rst @nrfconnect/ncs-si-bluebagel-doc
 /samples/bluetooth/mesh/**/*.rst          @nrfconnect/ncs-paladin-doc
 /samples/bluetooth/hci_lpuart/*.rst       @nrfconnect/ncs-doc-leads
 /samples/bluetooth/iso_combined_bis_and_cis/*.rst @nrfconnect/ncs-dragoon-doc
@@ -802,7 +805,8 @@
 /scripts/hid_configurator/*.rst           @nrfconnect/ncs-si-xcake-doc
 /scripts/memfault/*.rst                   @nrfconnect/ncs-cia-doc
 /scripts/nrf_profiler/*.rst               @nrfconnect/ncs-si-xcake-doc
-/scripts/nrf_provision/fast_pair/*.rst    @nrfconnect/ncs-si-bluebagel-doc
+/scripts/nrf_provision/fast_pair/         @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-xcake
+/scripts/nrf_provision/fast_pair/*.rst    @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/pm_to_dts.py                     @nordicjm @rghaddab
 /scripts/generate_psa_key_attributes/*.rst @nrfconnect/ncs-aegir-doc
@@ -868,7 +872,8 @@
 /subsys/bluetooth/services/latency_client.c @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/ras/           @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
-/subsys/bluetooth/fast_pair/              @nrfconnect/ncs-si-bluebagel
+/subsys/bluetooth/fast_pair/              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-xcake
+/subsys/bluetooth/fast_pair/fhn/          @nrfconnect/ncs-si-bluebagel
 /subsys/bootloader/                       @nrfconnect/ncs-eris
 /subsys/caf/                              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /subsys/debug/                            @nordic-krch
@@ -1008,7 +1013,8 @@
 /tests/subsys/bluetooth/cs_de/            @nrfconnect/ncs-dragoon
 /tests/subsys/bluetooth/gatt_dm/          @nrfconnect/ncs-blenders
 /tests/subsys/bluetooth/enocean/          @nrfconnect/ncs-paladin
-/tests/subsys/bluetooth/fast_pair/        @nrfconnect/ncs-si-bluebagel
+/tests/subsys/bluetooth/fast_pair/        @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-xcake
+/tests/subsys/bluetooth/fast_pair/locator_tag_legacy/ @nrfconnect/ncs-si-bluebagel
 /tests/subsys/bluetooth/mesh/             @nrfconnect/ncs-paladin
 /tests/subsys/bluetooth/rpc_gatt_service/  @nrfconnect/ncs-protocols-serialization
 /tests/subsys/bootloader/                 @nrfconnect/ncs-eris
