@@ -391,7 +391,14 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* Removed support for the ``nrf5340dk/nrf5340/cpuapp/ns`` board target from the following samples:
+
+  * :ref:`mqtt_sample`
+  * :ref:`udp_sample`
+  * :ref:`net_coap_client_sample`
+  * :ref:`https_client`
+  * :ref:`http_server`
+  * :ref:`download_sample`
 
 NFC samples
 -----------
