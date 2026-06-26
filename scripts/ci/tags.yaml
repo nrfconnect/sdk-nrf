@@ -171,6 +171,18 @@ ci_samples_wifi:
     - zephyr/modules/hostap/
     - zephyr/modules/nrf_wifi/
 
+ci_samples_nrf71_wifi:
+  files:
+    - modules/lib/hostap/
+    - nrf/drivers/wifi/nrf71/
+    - nrf/include/drivers/wifi/nrf71/
+    - nrf/samples/wifi/
+    - nrf/subsys/net/lib/hostap_crypto/
+    - nrf/subsys/nrf_security/
+    - zephyr/boards/nordic/nrf7120dk/
+    - zephyr/modules/hostap/
+    - zephyr/soc/nordic/nrf71/
+
 ci_applications_matter: &ci_matter
   files:
     - bootloader/mcuboot/
