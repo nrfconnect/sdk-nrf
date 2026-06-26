@@ -191,7 +191,7 @@ Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp
         The application code is executed from the RAM in this mode to improve the HID report rate over USB.
         For more details on the RAM load mode, see the MCUboot :ref:`nrf_desktop_configuring_mcuboot_bootloader_ram_load` documentation section.
 
-Sample mouse or keyboard (``nrf54ls05dk/nrf54ls05b/cpuapp``)
+Sample mouse or keyboard (``nrf54ls05dk/nrf54ls05a/cpuapp``, ``nrf54ls05dk/nrf54ls05b/cpuapp``)
       * The configuration uses the nRF54LS05 DK.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
