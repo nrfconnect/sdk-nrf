@@ -28,15 +28,30 @@ FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd, void *, size_t, const char *, ...)
 static const char test_cmee_enabled[] = "+CMEE: 1";
 static const char *test_data_empty_list = "OK\r\n";
 
-static int nrf_modem_at_scanf_test_digest_empty(const char *cmd, const char *fmt, va_list args)
+static int nrf_modem_at_scanf_cmee_enabled(const char *cmd, const char *fmt, va_list args)
 {
 	switch (nrf_modem_at_scanf_fake.call_count) {
 	case 1:
-		/* For the purpose of this test, simplify by having the cmee already enabled. */
+		/* For the purpose of these tests, simplify by having the cmee already enabled. */
 		return vsscanf(test_cmee_enabled, fmt, args);
-	case 2:
-		zassert_equal(0, strcmp("AT%CMNG=1,0,0", cmd));
-		return vsscanf(test_data_empty_list, fmt, args);
+	default:
+		zassert_true(false);
+	}
+
+	return 0;
+}
+
+static int nrf_modem_at_cmd_test_digest_empty(void *buf, size_t len, const char *fmt, va_list args)
+{
+	char buffer[256 + 1];
+
+	vsnprintf(buffer, sizeof(buffer), fmt, args);
+
+	switch (nrf_modem_at_cmd_fake.call_count) {
+	case 1:
+		zassert_equal(0, strcmp("AT%CMNG=1,0,0", buffer));
+		strncpy(buf, test_data_empty_list, len);
+		return 0;
 	default:
 		zassert_true(false);
 	}
@@ -49,7 +64,8 @@ ZTEST(suite_modem_key_mgmt, test_digest_no_entry)
 	char digest_buf[32];
 	int err;
 
-	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_test_digest_empty;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_cmee_enabled;
+	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_test_digest_empty;
 
 	err = modem_key_mgmt_digest(0, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 				    digest_buf, sizeof(digest_buf));
@@ -77,15 +93,17 @@ static const uint8_t expected_digest[] = {
 	0x59, 0x77, 0x43, 0x7E,  0xA3, 0x5F, 0x7A, 0x45
 };
 
-static int nrf_modem_at_scanf_test_digest(const char *cmd, const char *fmt, va_list args)
+static int nrf_modem_at_cmd_test_digest(void *buf, size_t len, const char *fmt, va_list args)
 {
-	switch (nrf_modem_at_scanf_fake.call_count) {
+	char buffer[256 + 1];
+
+	vsnprintf(buffer, sizeof(buffer), fmt, args);
+
+	switch (nrf_modem_at_cmd_fake.call_count) {
 	case 1:
-		/* For the purpose of this test, simplify by having the cmee already enabled. */
-		return vsscanf(test_cmee_enabled, fmt, args);
-	case 2:
-		zassert_equal(0, strcmp("AT%CMNG=1,16842753,1", cmd));
-		return vsscanf(test_data_digest, fmt, args);
+		zassert_equal(0, strcmp("AT%CMNG=1,16842753,1", buffer));
+		strncpy(buf, test_data_digest, len);
+		return 0;
 	default:
 		zassert_true(false);
 	}
@@ -98,7 +116,8 @@ ZTEST(suite_modem_key_mgmt, test_digest_public_cert)
 	char digest_buf[32];
 	int err;
 
-	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_test_digest;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_cmee_enabled;
+	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_test_digest;
 
 	err = modem_key_mgmt_digest(16842753, MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
 				    digest_buf, sizeof(digest_buf));
@@ -111,15 +130,18 @@ static const char *test_data_invalid_digest =
 "%CMNG: 16842753,1,\"B9BAC15641653CAE2B5151DCBD0C40DDCDF19125950FA2475977437EA35F7A\"\r\n"
 "OK\r\n";
 
-static int nrf_modem_at_scanf_test_invalid_digest(const char *cmd, const char *fmt, va_list args)
+static int nrf_modem_at_cmd_test_invalid_digest(void *buf, size_t len, const char *fmt,
+						va_list args)
 {
-	switch (nrf_modem_at_scanf_fake.call_count) {
+	char buffer[256 + 1];
+
+	vsnprintf(buffer, sizeof(buffer), fmt, args);
+
+	switch (nrf_modem_at_cmd_fake.call_count) {
 	case 1:
-		/* For the purpose of this test, simplify by having the cmee already enabled. */
-		return vsscanf(test_cmee_enabled, fmt, args);
-	case 2:
-		zassert_equal(0, strcmp("AT%CMNG=1,16842753,1", cmd));
-		return vsscanf(test_data_invalid_digest, fmt, args);
+		zassert_equal(0, strcmp("AT%CMNG=1,16842753,1", buffer));
+		strncpy(buf, test_data_invalid_digest, len);
+		return 0;
 	default:
 		zassert_true(false);
 	}
@@ -132,7 +154,8 @@ ZTEST(suite_modem_key_mgmt, test_digest_invalid_response)
 	char digest_buf[32];
 	int err;
 
-	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_test_invalid_digest;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_cmee_enabled;
+	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_test_invalid_digest;
 
 	err = modem_key_mgmt_digest(16842753, MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
 				    digest_buf, sizeof(digest_buf));

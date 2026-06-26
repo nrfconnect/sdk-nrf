@@ -293,7 +293,8 @@ int modem_key_mgmt_digest(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
 			  void *buf, size_t len)
 {
-	char cmd[sizeof("AT%CMNG=1,##########,##")];
+	/* Use half the scratch buffer for the hex string command output */
+	char *hex_str = scratch_buf + sizeof(scratch_buf) / 2;
 	bool cmee_was_enabled;
 	int ret;
 
@@ -305,49 +306,52 @@ int modem_key_mgmt_digest(nrf_sec_tag_t sec_tag,
 		return -ENOMEM;
 	}
 
-	snprintk(cmd, sizeof(cmd), "AT%%CMNG=1,%u,%u", sec_tag, cred_type);
-
 	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
 
 	cmee_enable(&cmee_was_enabled);
 
-	ret = nrf_modem_at_scanf(
-		cmd,
-		"%%CMNG: "
-		"%*u," /* Ignore tag. */
-		"%*u," /* Ignore type. */
-		"\"%" STRINGIFY(MODEM_KEY_MGMT_DIGEST_STR_SIZE_WITHOUT_NULL_TERM) "s\"",
-		scratch_buf);
+	ret = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf) / 2,
+			       "AT%%CMNG=1,%u,%u", sec_tag, cred_type);
 
 	if (!cmee_was_enabled) {
 		cmee_disable();
 	}
 
-	switch (ret) {
-	case 1:
-		len = hex2bin(scratch_buf, strlen(scratch_buf), buf, len);
-
-		if (len != MODEM_KEY_MGMT_DIGEST_SIZE) {
-			ret = -EINVAL;
-			break;
-		}
-
-		ret = 0;
-		break;
-	case 0:
-		ret = -ENOENT;
-	default:
-		break;
+	if (ret) {
+		ret = translate_error(ret);
+		goto out;
 	}
 
+	if (strcmp(scratch_buf, "OK\r\n") == 0) {
+		ret = -ENOENT;
+		goto out;
+	}
+
+	ret = sscanf(
+		scratch_buf,
+		"%%CMNG: "
+		"%*u,"
+		"%*u,"
+		"\"%" STRINGIFY(MODEM_KEY_MGMT_DIGEST_STR_SIZE_WITHOUT_NULL_TERM) "[^\"]\"",
+		hex_str);
+
+	if (ret != 1) {
+		ret = -EBADMSG;
+		goto out;
+	}
+
+	len = hex2bin(hex_str, strlen(hex_str), buf, len);
+	if (len != MODEM_KEY_MGMT_DIGEST_SIZE) {
+		ret = -EINVAL;
+		goto out;
+	}
+
+	ret = 0;
+
+out:
 	k_mutex_unlock(&key_mgmt_mutex);
 
-	if (ret) {
-		return translate_error(ret);
-	}
-
-	return 0;
-
+	return ret;
 }
 
 int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
