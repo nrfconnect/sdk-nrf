@@ -1761,6 +1761,7 @@ out:
 }
 
 
+#ifndef CONFIG_NRF71_RADIO_TEST
 static int nrf_wifi_radio_set_dpd(const struct shell *shell,
 				  size_t argc,
 				  const char *argv[])
@@ -1949,9 +1950,7 @@ static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
 		goto out;
 	}
 
-#ifndef CONFIG_NRF71_RADIO_TEST
 	ctx->conf_params.rf_params[NRF_WIFI_XO_FREQ_BYTE_OFFSET] = val;
-#endif /* CONFIG_NRF71_RADIO_TEST */
 
 	ret = 0;
 out:
@@ -1960,6 +1959,7 @@ out:
 
 	return ret;
 }
+#endif /* CONFIG_NRF71_RADIO_TEST */
 
 static int nrf_wifi_radio_comp_opt_xo_val(const struct shell *shell,
 					  size_t argc,
@@ -2978,6 +2978,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_tx_tone,
 		      2,
 		      0),
+#ifndef CONFIG_NRF71_RADIO_TEST
 	SHELL_CMD_ARG(dpd,
 		      NULL,
 		      "0 - Bypass DPD\n"
@@ -3009,6 +3010,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_set_xo_val,
 		      2,
 		      0),
+#endif /* CONFIG_NRF71_RADIO_TEST */
 	SHELL_CMD_ARG(compute_optimal_xo_val,
 		      NULL,
 		      "Compute optimal XO trim value",
