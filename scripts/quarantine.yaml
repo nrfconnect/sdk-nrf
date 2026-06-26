@@ -198,3 +198,9 @@
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39964"
+
+- scenarios:
+    - sample.nrf7120.radio_test
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40062"
