@@ -7,20 +7,43 @@ tests:
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - nrf9151dk/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
-      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.https_client.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - https_client_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
+  # nRF7120 uses the integrated nRF71 driver; its tuning lives in the board conf.
+  sample.net.https_client.nrf7120.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
       - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
       - ci_samples_net
+    extra_args:
+      - https_client_EXTRA_CONF_FILE=wifi.conf
   sample.net.https_client.lte.tfm-mbedtls:
     sysbuild: true
     build_only: true
@@ -64,7 +87,8 @@ tests:
       - ci_samples_net
     extra_args:
       - https_client_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - https_client_SNIPPET=nrf70-wifi
+      - https_client_SNIPPET="nrf70-wifi;wifi-credentials"
+      - https_client_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
   sample.net.https_client.nrf54l15_nrf7002eb2.wifi:
     sysbuild: true
     build_only: true
@@ -78,7 +102,8 @@ tests:
       - ci_samples_net
     extra_args:
       - https_client_SHIELD="nrf7002eb2"
-      - https_client_SNIPPET=nrf70-wifi
+      - https_client_SNIPPET="nrf70-wifi;wifi-credentials"
+      - https_client_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
   sample.net.https_client.nrf54lm20_nrf7002eb2.wifi:
     sysbuild: true
     build_only: true
@@ -94,3 +119,5 @@ tests:
       - ci_samples_net
     extra_args:
       - https_client_SHIELD="nrf7002eb2"
+      - https_client_SNIPPET=wifi-credentials
+      - https_client_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"

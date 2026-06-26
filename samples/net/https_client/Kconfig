@@ -19,6 +19,13 @@ config HTTPS_HOSTNAME
 
 endmenu
 
+# Default the TLS credentials backend by build type: NS builds use Protected
+# Storage, secure-only builds fall back to the volatile backend. nRF91 keeps
+# its own NRF_MODEM backend default.
+choice TLS_CREDENTIALS_BACKEND
+	default TLS_CREDENTIALS_BACKEND_PROTECTED_STORAGE if BUILD_WITH_TFM && !NRF_MODEM_LIB
+endchoice
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
