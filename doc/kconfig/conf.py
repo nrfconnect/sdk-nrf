@@ -60,7 +60,7 @@ kconfig_ext_paths = [ZEPHYR_BASE, NRF_BASE]
 
 # Options for kconfdiff
 
-kconfdiff_should_build = False
+kconfdiff_should_build = True
 kconfdiff_is_release = False
 kconfdiff_versions = None
 
