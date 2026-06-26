@@ -10,7 +10,6 @@
 	};
 };
 
-
 &uart20 {
 	/delete-property/ hw-flow-control;
 };
