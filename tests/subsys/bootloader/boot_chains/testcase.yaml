@@ -19,6 +19,7 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
   boot_chains.bootloader_mcuboot:
     extra_args:
+      - FILE_SUFFIX=mcuboot
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -30,6 +31,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
   boot_chains.secure_boot_and_bootloader_mcuboot:
     extra_args:
+      - FILE_SUFFIX=b0_mcuboot
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
     platform_allow:
@@ -39,6 +41,7 @@ tests:
       - nrf9161dk/nrf9161/ns
   boot_chains.bootloader_mcuboot_and_nv_counters:
     extra_args:
+      - FILE_SUFFIX=mcuboot
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
       - SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS=64
@@ -51,6 +54,7 @@ tests:
       - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=64
   boot_chains.secure_boot_and_mcuboot_and_nv_counters:
     extra_args:
+      - FILE_SUFFIX=b0_mcuboot
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
