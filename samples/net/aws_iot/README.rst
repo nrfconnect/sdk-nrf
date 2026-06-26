@@ -147,6 +147,7 @@ Configuration files
 The sample includes pre-configured configuration files for the development kits that are supported:
 
 * :file:`prj.conf` - General configuration file for all devices.
+* :file:`wifi.conf` - Common Wi-Fi and networking configuration shared by all Wi-Fi builds.
 * :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
