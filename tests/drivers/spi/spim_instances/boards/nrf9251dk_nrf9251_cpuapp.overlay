@@ -89,6 +89,18 @@
 	nfct-pins-as-gpios;
 };
 
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpio5 {
+	status = "okay";
+};
+
 &spi120 {
 	status = "okay";
 	pinctrl-0 = <&spi120_default_test>;
