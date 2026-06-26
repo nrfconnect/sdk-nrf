@@ -125,7 +125,7 @@ config CRACEN_IKG_SEED_LOAD
 
 config CRACEN_IKG_SEED_KMU_SLOT
 	int "KMU slot of the CRACEN IKG seed"
-	range 0 183
+	range 0 253
 	default 183
 	help
 	  The CRACEN IKG seed spans over 3 KMU slots:
