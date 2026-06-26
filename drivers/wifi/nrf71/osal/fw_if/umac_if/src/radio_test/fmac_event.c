@@ -54,14 +54,9 @@ static enum nrf_wifi_status umac_event_rt_rf_test_process(
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_event_rftest *rf_test_event = NULL;
-	struct nrf_wifi_temperature_params rf_test_get_temperature;
-	struct nrf_wifi_rf_get_rf_rssi rf_get_rf_rssi;
-	struct nrf_wifi_rf_test_xo_calib xo_calib_params;
 	struct nrf_wifi_rf_get_xo_value rf_get_xo_value_params;
 	struct nrf_wifi_rt_fmac_dev_ctx *def_dev_ctx;
 	struct nrf_wifi_rf_test_capture_params rf_test_capture_params;
-	struct nrf_wifi_bat_volt_params bat_volt_params;
-	unsigned int bat_volt;
 
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
@@ -95,52 +90,8 @@ static enum nrf_wifi_status umac_event_rt_rf_test_process(
 
 		break;
 	case NRF_WIFI_RF_TEST_EVENT_TX_TONE_START:
-	case NRF_WIFI_RF_TEST_EVENT_DPD_ENABLE:
 		break;
 
-	case NRF_WIFI_RF_TEST_GET_TEMPERATURE:
-		nrf_wifi_osal_mem_cpy(&rf_test_get_temperature,
-				(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
-				sizeof(rf_test_get_temperature));
-
-		if (rf_test_get_temperature.readTemperatureStatus) {
-			nrf_wifi_osal_log_err("Temperature reading failed");
-		} else {
-			nrf_wifi_osal_log_info("Temperature = %d deg C",
-						rf_test_get_temperature.temperature);
-		}
-		break;
-	case NRF_WIFI_RF_TEST_EVENT_GET_BAT_VOLT:
-		nrf_wifi_osal_mem_cpy(&bat_volt_params,
-				      (const unsigned char *)
-					  &rf_test_event->rf_test_info.rfevent[0],
-				      sizeof(bat_volt_params));
-		if (bat_volt_params.cmd_status) {
-			nrf_wifi_osal_log_err("Battery Volatge reading failed");
-		} else {
-			bat_volt = (VBAT_OFFSET_MILLIVOLT +
-			(VBAT_SCALING_FACTOR * bat_volt_params.voltage));
-
-			nrf_wifi_osal_log_info("Battery voltage = %d mV",
-						bat_volt);
-		}
-		break;
-	case NRF_WIFI_RF_TEST_EVENT_RF_RSSI:
-		nrf_wifi_osal_mem_cpy(&rf_get_rf_rssi,
-				(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
-				sizeof(rf_get_rf_rssi));
-
-		nrf_wifi_osal_log_info("RF RSSI value is = %d",
-				       rf_get_rf_rssi.agc_status_val);
-		break;
-	case NRF_WIFI_RF_TEST_EVENT_XO_CALIB:
-		nrf_wifi_osal_mem_cpy(&xo_calib_params,
-				(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
-				sizeof(xo_calib_params));
-
-		nrf_wifi_osal_log_info("XO value configured is = %d",
-				       xo_calib_params.xo_val);
-		break;
 	case NRF_WIFI_RF_TEST_XO_TUNE:
 		nrf_wifi_osal_mem_cpy(&rf_get_xo_value_params,
 				(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
