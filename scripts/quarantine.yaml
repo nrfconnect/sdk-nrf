@@ -72,14 +72,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
 
 - scenarios:
-    - sample.dfu.smp_svr.nrf_compress.encryption_ed25519
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54lm20dk/nrf54lm20b/cpuapp
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39892"
-
-- scenarios:
     - drivers.fprotect.negative_and_hw_crypto
   platforms:
     - nrf52840dk/nrf52840
