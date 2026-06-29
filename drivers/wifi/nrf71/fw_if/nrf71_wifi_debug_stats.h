@@ -1103,11 +1103,11 @@ struct rpu_lmac_stats {
 	/** RPU hardware lockup recovery completed count */
 	unsigned int rpu_hw_lockup_recovery_done;
 	/** Number of Signal quality threshold set commands from host  */
-	unsigned int  SQIThresholdCmdsCnt;
+	unsigned int SQIThresholdCmdsCnt;
 	/** Number of Signal quality configuration commands from host  */
-	unsigned int  SQIConfigCmdsCnt;
+	unsigned int SQIConfigCmdsCnt;
 	/** Signal Quality Indication event from lmac   */
-	unsigned int  SQIEventsCnt;
+	unsigned int SQIEventsCnt;
 	/** Configured sleep type. */
 	unsigned int SleepType;
 	/** Number of warm boot /sleep cycles in RPU  */

@@ -606,7 +606,7 @@ struct nrf_wifi_cmd_sys_init {
 	/** 0:umac checksum disable 1: umac checksum enable */
 	unsigned char tcp_ip_checksum_offload;
 	/** @ref nrf_wifi_ftm_loc_params */
-	struct nrf_wifi_ftm_loc_params  ftm_loc_params;
+	struct nrf_wifi_ftm_loc_params ftm_loc_params;
 	/** Bit 0 : LDPC in HT mode. Use NRF_WIFI_LDPC_ENABLE_HT
 	 *  Bit 1 : LDPC in VHT mode. Use NRF_WIFI_LDPC_ENABLE_VHT
 	 */
@@ -1085,7 +1085,7 @@ struct nrf_wifi_cmd_raw_tx {
 	/** Interface index. */
 	unsigned char if_index;
 	/** Raw tx packet information. */
-	struct nrf_wifi_raw_tx_pkt  raw_tx_info;
+	struct nrf_wifi_raw_tx_pkt raw_tx_info;
 } __NRF_WIFI_PKD;
 
 /**
@@ -1135,7 +1135,7 @@ struct nrf_wifi_offload_tx_ctrl {
 	/** HE LTF (NRF_WIFI_HE_LTF_3200NS/NRF_WIFI_HE_LTF_6400NS/NRF_WIFI_HE_LTF_12800NS) */
 	unsigned char he_ltf;
 	/** Payload pointer */
-	unsigned int  pkt_ram_ptr;
+	unsigned int pkt_ram_ptr;
 } __NRF_WIFI_PKD;
 
 /**
@@ -1583,48 +1583,48 @@ struct nrf_wifi_cmd_gi_config {
 #define MAX_RSSI_SAMPLES 10
 struct lmac_prod_stats {
 	/*Structure that holds all the debug information in LMAC*/
-	unsigned int  resetCmdCnt;
-	unsigned int  resetCompleteEventCnt;
-	unsigned int  unableGenEvent;
-	unsigned int  chProgCmdCnt;
-	unsigned int  channelProgDone;
-	unsigned int  txPktCnt;
-	unsigned int  txPktDoneCnt;
-	unsigned int  scanPktCnt;
-	unsigned int  internalPktCnt;
-	unsigned int  internalPktDoneCnt;
-	unsigned int  ackRespCnt;
-	unsigned int  txTimeout;
-	unsigned int  deaggIsr;
-	unsigned int  deaggInptrDescEmpty;
-	unsigned int  deaggCircularBufferFull;
-	unsigned int  lmacRxisrCnt;
-	unsigned int  rxDecryptcnt;
-	unsigned int  processDecryptFail;
-	unsigned int  prepaRxEventFail;
-	unsigned int  rxCorePoolFullCnt;
-	unsigned int  rxMpduCrcSuccessCnt;
-	unsigned int  rxMpduCrcFailCnt;
-	unsigned int  rxOfdmCrcSuccessCnt;
-	unsigned int  rxOfdmCrcFailCnt;
-	unsigned int  rxDSSSCrcSuccessCnt;
-	unsigned int  rxDSSSCrcFailCnt;
-	unsigned int  rxCryptoStartCnt;
-	unsigned int  rxCryptoDoneCnt;
-	unsigned int  rxEventBufFull;
-	unsigned int  rxExtramBufFull;
-	unsigned int  scanReq;
-	unsigned int  scanComplete;
-	unsigned int  scanAbortReq;
-	unsigned int  scanAbortComplete;
-	unsigned int  internalBufPoolNull;
-	unsigned int  rpuLockupCnt;
-	unsigned int  rpuLockupRecoveryDone;
-	unsigned int  SQIThresholdCmdsCnt;
-	unsigned int  SQIConfigCmdsCnt;
-	unsigned int  SQIEventsCnt;
-	unsigned int  SleepType;
-	unsigned int  warmBootCnt;
+	unsigned int resetCmdCnt;
+	unsigned int resetCompleteEventCnt;
+	unsigned int unableGenEvent;
+	unsigned int chProgCmdCnt;
+	unsigned int channelProgDone;
+	unsigned int txPktCnt;
+	unsigned int txPktDoneCnt;
+	unsigned int scanPktCnt;
+	unsigned int internalPktCnt;
+	unsigned int internalPktDoneCnt;
+	unsigned int ackRespCnt;
+	unsigned int txTimeout;
+	unsigned int deaggIsr;
+	unsigned int deaggInptrDescEmpty;
+	unsigned int deaggCircularBufferFull;
+	unsigned int lmacRxisrCnt;
+	unsigned int rxDecryptcnt;
+	unsigned int processDecryptFail;
+	unsigned int prepaRxEventFail;
+	unsigned int rxCorePoolFullCnt;
+	unsigned int rxMpduCrcSuccessCnt;
+	unsigned int rxMpduCrcFailCnt;
+	unsigned int rxOfdmCrcSuccessCnt;
+	unsigned int rxOfdmCrcFailCnt;
+	unsigned int rxDSSSCrcSuccessCnt;
+	unsigned int rxDSSSCrcFailCnt;
+	unsigned int rxCryptoStartCnt;
+	unsigned int rxCryptoDoneCnt;
+	unsigned int rxEventBufFull;
+	unsigned int rxExtramBufFull;
+	unsigned int scanReq;
+	unsigned int scanComplete;
+	unsigned int scanAbortReq;
+	unsigned int scanAbortComplete;
+	unsigned int internalBufPoolNull;
+	unsigned int rpuLockupCnt;
+	unsigned int rpuLockupRecoveryDone;
+	unsigned int SQIThresholdCmdsCnt;
+	unsigned int SQIConfigCmdsCnt;
+	unsigned int SQIEventsCnt;
+	unsigned int SleepType;
+	unsigned int warmBootCnt;
 };
 
 /**
@@ -1642,21 +1642,21 @@ struct phy_prod_stats {
 
 union rpu_stats {
 	struct lmac_prod_stats lmac_stats;
-	struct phy_prod_stats  phy_stats;
+	struct phy_prod_stats phy_stats;
 };
 
 
 struct hpqmQueue {
-	unsigned int  pop_addr;
-	unsigned int  push_addr;
-	unsigned int  idNum;
-	unsigned int  status_addr;
-	unsigned int  status_mask;
+	unsigned int pop_addr;
+	unsigned int push_addr;
+	unsigned int idNum;
+	unsigned int status_addr;
+	unsigned int status_mask;
 } __NRF_WIFI_PKD;
 
 
 struct INT_HPQ {
-	unsigned int  id;
+	unsigned int id;
 	/* The head and tail values are relative
 	 * to the start of the
 	 * HWQM register block.
@@ -2375,17 +2375,17 @@ struct coex_ppw_parameters_t {
 	/** Start or stop priority windows. */
 	enum start_stop_ppw_t start_or_stop_ppw;
 	/** Radio to which first priority window to be allocated. */
-	enum coex_radios_t    first_window_to_wifi_or_sr;
+	enum coex_radios_t first_window_to_wifi_or_sr;
 	/** Wi-Fi priority window duration in milliseconds. */
-	unsigned int         wifi_pti_window_duration;
+	unsigned int wifi_pti_window_duration;
 	/** SR priority window duration in milliseconds. */
-	unsigned int         sr_pti_window_duration;
+	unsigned int sr_pti_window_duration;
 	/** Maximum time (in milliseconds) to wait for a corresponding "stop" command
 	 * after a "start" has been issued. If this timeout expires without receiving
 	 * the "stop" signal, the Coexistence Manager (CM) will automatically terminate
 	 * Priority Window (PPW) generation to prevent indefinite continuation.
 	 */
-	unsigned int        ppws_timeout;
+	unsigned int ppws_timeout;
 };
 
 /**
@@ -2396,9 +2396,9 @@ struct coex_ppw_parameters_t {
  */
 struct cd2cm_genarate_ppw_t {
 	/** Message ID. Set to CD2CM_ALLOCATE_PPW. */
-	enum cd2cm_msg_id_t          message_id;
+	enum cd2cm_msg_id_t message_id;
 	/** Parameters related to PPW generation. */
-	struct coex_ppw_parameters_t   ppw_parameters;
+	struct coex_ppw_parameters_t ppw_parameters;
 };
 
 /**
@@ -2409,17 +2409,17 @@ struct cd2cm_genarate_ppw_t {
  */
 struct coex_wifi_priority_range_t {
 	/** Wi-Fi SW request priority range */
-	unsigned char     sw_request_priority_range[NUM_ELEMENTS_IN_SW_PTI_RANGE];
+	unsigned char sw_request_priority_range[NUM_ELEMENTS_IN_SW_PTI_RANGE];
 	/** Wi-Fi high priority Rx client CCCONF priority range. */
-	unsigned char     client0_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	unsigned char client0_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
 	/** Wi-Fi high priority Tx client CCCONF priority range. */
-	unsigned char     client1_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	unsigned char client1_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
 	/** Wi-Fi low priority Rx client CCCONF priority range. */
-	unsigned char     client2_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	unsigned char client2_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
 	/** Wi-Fi low priority Tx client CCCONF priority range. */
-	unsigned char     client3_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	unsigned char client3_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
 	/** Priority level used to choose the priority value. */
-	unsigned char     hw_client_priority_level;
+	unsigned char hw_client_priority_level;
 } __NRF_WIFI_PKD;
 
 /**
@@ -2430,11 +2430,11 @@ struct coex_wifi_priority_range_t {
  */
 struct coex_sr_priority_range_t {
 	/** SR Rx client CCCONF priority range. */
-	unsigned char     client4_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	unsigned char client4_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
 	/** SR Tx client CCCONF priority range. */
-	unsigned char     client5_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+	unsigned char client5_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
 	/** Priority level used to choose the priority value. */
-	unsigned char     client_priority_level;
+	unsigned char client_priority_level;
 } __NRF_WIFI_PKD;
 
 /**
@@ -2444,9 +2444,9 @@ struct coex_sr_priority_range_t {
  */
 struct cd2cm_enable_coexistence_t {
 	/** Message ID. Set to CD2CM_ENABLE_COEXISTENCE. */
-	enum cd2cm_msg_id_t      message_id;
+	enum cd2cm_msg_id_t message_id;
 	/** Indicates if COEX is enabled or disabled. */
-	enum coex_en_or_dis_t    coex_en_or_dis;
+	enum coex_en_or_dis_t coex_en_or_dis;
 } __NRF_WIFI_PKD;
 
 /**
@@ -2456,11 +2456,11 @@ struct cd2cm_enable_coexistence_t {
  */
 struct cd2cm_set_priority_ranges_t {
 	/** Message ID. Set to CD2CM_SET_PRIORITY_RANGES. */
-	enum cd2cm_msg_id_t             message_id;
+	enum cd2cm_msg_id_t message_id;
 	/** Wi-Fi priority range values. */
 	struct coex_wifi_priority_range_t wifi_pti_range;
 	/** SR priority range values. */
-	struct coex_sr_priority_range_t   sr_pti_range;
+	struct coex_sr_priority_range_t sr_pti_range;
 } __NRF_WIFI_PKD;
 
 /**
@@ -2470,9 +2470,9 @@ struct cd2cm_set_priority_ranges_t {
  */
 struct cd2cm_get_coex_stats_t {
 	/** Message ID. Set to CD2CM_GET_STATS. */
-	enum cd2cm_msg_id_t  message_id;
+	enum cd2cm_msg_id_t message_id;
 	/** Reserved field for future use. */
-	unsigned int        reserved;
+	unsigned int reserved;
 } __NRF_WIFI_PKD;
 
 /**
@@ -2501,7 +2501,7 @@ struct coex_sw_client_params_t {
  */
 struct cd2cm_wifi_sw_client_request_t {
 	/** Message ID. Set to CD2CM_WIFI_SW_CLIENT_REQUEST. */
-	enum cd2cm_msg_id_t  message_id;
+	enum cd2cm_msg_id_t message_id;
 	/** SW client request parameters */
 	struct coex_sw_client_params_t sw_client_parameters;
 } __NRF_WIFI_PKD;
@@ -2515,7 +2515,7 @@ struct cd2cm_wifi_sw_client_request_t {
  */
 struct wifi_scan_puncture_info_t {
 	/** Wi-Fi scan protection probability (0-100%). */
-	unsigned int    wifi_scan_prot_prob;
+	unsigned int wifi_scan_prot_prob;
 } __NRF_WIFI_PKD;
 
 /**
@@ -2525,7 +2525,7 @@ struct wifi_scan_puncture_info_t {
  */
 struct coex_user_params_t {
 	/** Message ID. Set to CD2CM_UPDATE_COEX_USER_PARAMS. */
-	enum cd2cm_msg_id_t  message_id;
+	enum cd2cm_msg_id_t message_id;
 
 	/**
 	 * Percentage probability to protect SR Rx (PS: listen to inactive).
@@ -2533,7 +2533,7 @@ struct coex_user_params_t {
 	 * Wi-Fi enter and exit powersave scenario (active <=> inactive).
 	 * Valid range: 0-100.
 	 */
-	unsigned int    listen2inactive_sr_rx_prot_prob_ps;
+	unsigned int listen2inactive_sr_rx_prot_prob_ps;
 
 	/**
 	 * Percentage probability to protect SR Rx (PS: inactive to listen).
@@ -2541,7 +2541,7 @@ struct coex_user_params_t {
 	 * Wi-Fi enter and exit powersave scenario.
 	 * Valid range: 0-100.
 	 */
-	unsigned int    inactive2listen_sr_rx_prot_prob_ps;
+	unsigned int inactive2listen_sr_rx_prot_prob_ps;
 
 	/**
 	 * Percentage probability to protect SR Rx (calib: inactive to listen).
@@ -2549,7 +2549,7 @@ struct coex_user_params_t {
 	 * Wi-Fi calibrations start and stop scenario.
 	 * Valid range: 0-100.
 	 */
-	unsigned int    inactive2listen_sr_rx_prot_prob_calib;
+	unsigned int inactive2listen_sr_rx_prot_prob_calib;
 
 	/**
 	 * Percentage probability to protect SR Rx (calib: listen to inactive).
@@ -2557,17 +2557,17 @@ struct coex_user_params_t {
 	 * Wi-Fi calibrations start and stop scenario.
 	 * Valid range: 0-100.
 	 */
-	unsigned int    listen2inactive_sr_rx_prot_prob_calib;
+	unsigned int listen2inactive_sr_rx_prot_prob_calib;
 
 	/** Wi-Fi scan puncture information. */
 	struct wifi_scan_puncture_info_t wifi_scan_puncture_info;
 
 	/** Wi-Fi beacon protection percentage probability, Valid range: 0-100. */
-	unsigned int    wifi_beacon_prot_prob;
+	unsigned int wifi_beacon_prot_prob;
 	/** Wi-Fi connection protection percentage probability, Valid range: 0-100. */
-	unsigned int    wifi_conn_prot_prob;
+	unsigned int wifi_conn_prot_prob;
 	/** Wi-Fi calibrations protection percentage probability, Valid range: 0-100. */
-	unsigned int    wifi_calib_prot_prob;
+	unsigned int wifi_calib_prot_prob;
 
 	/** Force shared antenna allocation mode. */
 	enum antenna_allocation_t shared_ant_control;
@@ -2580,9 +2580,9 @@ struct coex_user_params_t {
  */
 struct cd2cm_coex_user_params_t {
 	/** Message ID. Set to CD2CM_UPDATE_COEX_USER_PARAMS. */
-	enum cd2cm_msg_id_t  message_id;
+	enum cd2cm_msg_id_t message_id;
 	/** Coexistence parameters configurable by the user */
-	struct coex_user_params_t   user_params;
+	struct coex_user_params_t user_params;
 } __NRF_WIFI_PKD;
 
 struct lmac_tuning_params {
@@ -2616,10 +2616,10 @@ struct lmac_tuning_params {
 	unsigned int vif_channel_switch_delay;
 	unsigned int vif_window_size_in_usec;
 	unsigned int cts_duration_field;
-	unsigned int  offloadTXChecksum;
+	unsigned int offloadTXChecksum;
 	unsigned int offloadRXChecksum;
-	unsigned int  internal_recovery_enable;
-	unsigned int  ppmError;
+	unsigned int internal_recovery_enable;
+	unsigned int ppmError;
 	unsigned int reSyncTime;
 	unsigned int syncTSF;
 	unsigned int raw_tx_inactivity_timer;
