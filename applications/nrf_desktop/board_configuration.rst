@@ -203,6 +203,7 @@ Sample mouse or keyboard (``nrf54ls05dk/nrf54ls05a/cpuapp``, ``nrf54ls05dk/nrf54
         In the ``debug`` configurations, logs are provided through the UART.
       * The ``release`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
         The application image is verified using a pure ED25519 signature with software cryptography.
+      * The board supports the ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``release_fast_pair`` file suffix).
 
 Sample mouse (``nrf54lc10dk/nrf54lc10a/cpuapp``)
       * The configuration uses the nRF54LC10 DK.
