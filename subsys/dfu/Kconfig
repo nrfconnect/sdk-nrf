@@ -12,4 +12,6 @@ rsource "dfu_target/Kconfig"
 
 rsource "fmfu_fdev/Kconfig"
 
+rsource "fw_loader_settings/Kconfig"
+
 endmenu

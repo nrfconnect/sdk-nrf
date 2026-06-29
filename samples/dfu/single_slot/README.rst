@@ -31,6 +31,9 @@ This sample employs one of alternatives:
 
 This sample can employ the buttonless DFU feature when the application can enter firmware loader mode without the need to hold a button during reset.
 This is achieved by enabling the SMP MCUmgr group reset command with the boot mode parameter, which must be set to ``1`` to enter firmware loader mode.
+For the Bluetooth LE buttonless build, the application stores a firmware loader advertising name in Settings
+for the firmware loader to use after reset.
+See :ref:`lib_fw_loader_settings` for details.
 
 Building and running
 ********************
@@ -38,6 +41,8 @@ Building and running
 .. |sample path| replace:: :file:`samples/dfu/single_slot`
 
 By default, the sample builds with the :ref:`fw_loader_ble_mcumgr` firmware loader image.
+To build the sample with the :ref:`fw_loader_ble_mcumgr` firmware loader image and Bluetooth LE buttonless
+DFU support, append ``FILE_SUFFIX=ble_enter`` to the build command.
 To build with the :ref:`fw_loader_usb_mcumgr` firmware loader image, append ``FILE_SUFFIX=usb`` to the build command.
 To build the sample for the :zephyr:board:`nrf54lm20dk` with the :ref:`fw_loader_usb_mcumgr` firmware loader image and USB buttonless DFU support, append ``FILE_SUFFIX=usb_enter`` to the build command.
 To build the sample for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` target with the :ref:`fw_loader_usb_mcumgr` firmware loader image and USB buttonless DFU support, append ``FILE_SUFFIX=usb_enter_dongle`` to the build command.
@@ -56,15 +61,28 @@ After programming the sample to your development kit, perform the following step
       build time: <BUILD TIME>
 
 #. Build a second version of the sample.
-#. Enter the firmware loader mode by holding the **Button 0** on your development kit while you reset the device, or by sending the reset command with the boot-mode parameter set to '1' through MCUmgr.
+#. Enter the firmware loader mode by holding the **Button 0** on your development kit while you reset the device,
+   or by sending the reset command with the boot-mode parameter set to ``1`` through MCUmgr.
+   When built with ``FILE_SUFFIX=ble_enter``, use the `nRF Connect Device Manager`_ or
+   `nRF Connect for Mobile`_ mobile app to send the reset command.
 
    a. Bluetooth firmware loader:
 
-      Open the `nRF Connect Device Manager`_ mobile app to perform DFU over Bluetooth® LE.
+      Open the `nRF Connect Device Manager`_ or `nRF Connect for Mobile`_ mobile app to perform DFU
+      over Bluetooth® LE.
 
-      * The firmware loader advertises itself as *FW loader* and accepts MCUmgr image upload.
+      * When built with ``FILE_SUFFIX=ble_enter``, the application advertises as *single_slot* until
+        firmware loader mode is entered.
+      * After entering firmware loader mode, the firmware loader advertises using the name written to
+        Settings by the mobile app, or as *FW loader* if firmware loader mode was entered by pressing
+        **Button 0**.
+      * The firmware loader accepts MCUmgr image upload.
       * Send the generated update package for the second version of the sample.
         See :ref:`ug_nrf54l_developing_ble_fota_steps_testing` for details on how to use the mobile app to perform the DFU.
+
+      .. note::
+         When using ``FILE_SUFFIX=ble_enter``, the mobile app writes a unique firmware loader
+         advertising name before reset so the client can reconnect to the same device by name.
 
    b. USB CDC ACM serial firmware loader:
 

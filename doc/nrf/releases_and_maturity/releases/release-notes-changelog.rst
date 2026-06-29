@@ -356,7 +356,11 @@ Debug samples
 DFU samples
 -----------
 
-|no_changes_yet_note|
+* :ref:`single_slot_sample` sample:
+
+  * Added support for buttonless entry into firmware loader mode over Bluetooth LE using the SMP
+    MCUmgr reset command with boot-mode selection.
+    To build with this feature, append ``FILE_SUFFIX=ble_enter`` to the build command.
 
 DECT NR+ samples
 ----------------
@@ -512,7 +516,8 @@ Debug libraries
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`lib_fw_loader_settings` library for passing the firmware loader Bluetooth advertising
+  name from the main application to the firmware loader image using Settings storage.
 
 Gazell libraries
 ----------------

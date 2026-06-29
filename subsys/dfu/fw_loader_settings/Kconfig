@@ -1,0 +1,46 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config FW_LOADER_SETTINGS_ADV_NAME
+	bool "Firmware loader Bluetooth advertising name in Settings [EXPERIMENTAL]"
+	depends on SETTINGS_ZMS
+	select EXPERIMENTAL
+	help
+	  Pass the firmware loader Bluetooth advertising name from the main
+	  application to the firmware loader image. Enable a Settings handler for
+	  the fw_loader/adv_name key and a load API. The main application can
+	  write the name through the MCUmgr settings group; the firmware loader
+	  can read it from the shared settings storage partition using
+	  fw_loader_settings_adv_name_load().
+
+	  Enable this option in the main application and firmware loader image
+	  Kconfig fragments.
+
+if FW_LOADER_SETTINGS_ADV_NAME
+
+config FW_LOADER_SETTINGS_ADV_NAME_LEN
+	int
+	default 16
+	help
+	  Maximum length of the firmware loader Bluetooth advertising name stored
+	  in Settings. This includes the terminating NUL character.
+
+config FW_LOADER_SETTINGS_ADV_NAME_ACCESS_PROTECT
+	bool "Protect firmware loader advertising name settings access"
+	depends on MCUMGR_GRP_SETTINGS
+	default y
+	select MCUMGR_MGMT_NOTIFICATION_HOOKS
+	select MCUMGR_GRP_SETTINGS_ACCESS_HOOK
+	help
+	  Restrict remote MCUmgr Settings access to the firmware loader
+	  advertising name key. Read, write, delete, and save requests for other
+	  Settings keys are rejected.
+
+module=FW_LOADER_SETTINGS
+module-str=Firmware loader settings
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # FW_LOADER_SETTINGS_ADV_NAME
