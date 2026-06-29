@@ -680,4 +680,4 @@ zcbor
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added the :ref:`nrf71_wifi_fw_if` page documenting the nRF71 Series Wi-Fi driver and firmware interface, and restructured the :ref:`wifi_drivers` page into separate nRF70 Series and nRF71 Series sections.
