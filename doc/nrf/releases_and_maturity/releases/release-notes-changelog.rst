@@ -573,6 +573,10 @@ Modem libraries
 
   * Updated the library to always use the chosen ``zephyr,wifi`` node instead of ``ncs,location-wifi`` to find the used Wi-Fi device.
 
+* :ref:`modem_key_mgmt` library:
+
+  * Added the :c:func:`modem_key_mgmt_certexpiry` function that would retrieve the expiry date of a credential from the modem.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
