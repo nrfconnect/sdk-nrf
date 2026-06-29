@@ -112,6 +112,11 @@ jobs:
             SPHINXOPTS_EXTRA="${SPHINXOPTS_EXTRA} -t kapa"
           fi
 
+          VERSION_REGEX="^v([0-9a-zA-Z\.\-]+)$"
+          if [[ ${GITHUB_REF#refs/tags/} =~ $VERSION_REGEX ]]; then
+            SPHINXOPTS_EXTRA="${SPHINXOPTS_EXTRA} -D kconfigdiff_is_release=1"
+          fi
+
           cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="${SPHINXOPTS_EXTRA}" ${BUILD_CONF}
           ninja -C doc/_build
 
