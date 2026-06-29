@@ -61,6 +61,7 @@ kconfig_ext_paths = [ZEPHYR_BASE, NRF_BASE]
 # Options for kconfigdiff
 
 kconfigdiff_should_build = False
+kconfigdiff_is_release = False
 
 # Adding NCS_ specific entries. Can be removed when the NCSDK-14227 improvement
 # task has been completed.
