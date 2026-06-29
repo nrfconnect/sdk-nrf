@@ -2,9 +2,9 @@
 
 .. ### Versions
 
-.. |release| replace:: v3.2.4
-.. |release_tt| replace:: ``v3.2.4``
-.. |release_number_tt| replace:: ``3.2.4``
+.. |release| replace:: v3.2.5
+.. |release_tt| replace:: ``v3.2.5``
+.. |release_number_tt| replace:: ``3.2.5``
 
 .. |jlink_ver| replace:: v9.18
 
