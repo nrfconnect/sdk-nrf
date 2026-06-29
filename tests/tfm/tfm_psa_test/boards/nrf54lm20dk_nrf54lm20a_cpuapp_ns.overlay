@@ -7,7 +7,7 @@
 /* TF-M's bl_storage.c reads the provisioning data address from the
  * `bl_storage` DT nodelabel when neither Partition Manager nor a B0
  * forwarded TFM_BL_STORAGE_ADDR provides it. The nRF54L secure-side DTS
- * defines this node in nrf54l15_cpuapp_partition.dtsi, but the non-secure
+ * defines this node in nrf54lm20a_cpuapp_partition.dtsi, but the non-secure
  * DTS removes UICR (USE_NON_SECURE_ADDRESS_MAP), so expose it here. The NS
  * image never accesses UICR; this node is only used at compile time by the
  * TF-M secure build.
