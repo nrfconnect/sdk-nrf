@@ -593,6 +593,7 @@ Libraries for networking
 
   * Fixed an issue with parsing invalid payloads.
 
+* Added :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` support for TLS credential expiry retrieval when using the modem as TLS credentials storage.
 
 Libraries for NFC
 -----------------
