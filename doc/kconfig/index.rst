@@ -21,5 +21,6 @@ The search results can be navigated page by page if the number of matches exceed
    :maxdepth: 1
    :hidden:
 
+   self
+   kconfig_diff
    regex
-   kconfig_diff.rst
