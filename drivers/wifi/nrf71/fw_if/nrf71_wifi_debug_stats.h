@@ -1243,6 +1243,6 @@ struct nrf_wifi_rpu_debug_stats {
 } __NRF_WIFI_PKD;
 
 /**
- *
+ * @}
  */
 #endif /* __NRF71_WIFI_STATS_H__ */
