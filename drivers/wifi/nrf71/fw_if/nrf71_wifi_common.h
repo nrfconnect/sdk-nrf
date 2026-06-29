@@ -966,7 +966,7 @@ struct nrf_wifi_umac_event_error_stats {
 	struct nrf_wifi_sys_head sys_head;
 	/** Statistics type &enum rpu_stats_type */
 	signed int stats_type;
-	/** @ref enum LMAC_ERROR_ID OR @ref enum UMAC_ERROR_ID*/
+	/** Error code, see &enum LMAC_ERROR_ID or &enum UMAC_ERROR_ID */
 	unsigned int status_code;
 } __NRF_WIFI_PKD;
 
@@ -2182,7 +2182,7 @@ struct nrf_wifi_cmd_xo_tune {
 #define NRF_WIFI_SQI_RSSI_HYST_DEF 4
 
 /**
- * @enum nrf_wifi_sqi_signal_source
+ * @enum nrf_wifi_sqi
  * @brief Enumerates the available signal sources for SQI measurement.
  *
  * This enumeration defines the various signal sources that can be used for
@@ -2647,4 +2647,7 @@ struct nrf_wifi_cmd_lmac_tuning_params {
 	struct lmac_tuning_params params;
 } __NRF_WIFI_PKD;
 
+/**
+ * @}
+ */
 #endif /* __NRF71_WIFI_COMMON_H__ */
