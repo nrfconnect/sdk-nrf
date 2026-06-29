@@ -338,6 +338,10 @@ Bluetooth Fast Pair samples
 
   * Updated the references to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option with the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
 
+* :ref:`fast_pair_input_device` sample:
+
+  * Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
+
 Cellular samples
 ----------------
 
