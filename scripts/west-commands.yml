@@ -49,3 +49,8 @@ west-commands:
       - name: ncs-cherry-pick
         class: NcsCherryPick
         help: NCS cherry-pick utility
+  - file: scripts/west_commands/ncs_contains_commit.py
+    commands:
+      - name: ncs-contains-commit
+        class: NcsContainsCommit
+        help: Show which NCS releases contain given commit(s)
