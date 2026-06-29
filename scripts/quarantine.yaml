@@ -241,8 +241,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
-    - boot.b0.kmu_keys_locked
-    - boot.b0.mcuboot.kmu_keys_locked
     - nsib.mcuboot.external_flash.upgrade.basic
   platforms:
     - nrf52840dk/nrf52840
