@@ -1,7 +1,7 @@
 .. _kconfig_diff:
 
-Kconfig diff
-############
+Kconfig comparison: |kconfigdiff_previous| - |kconfigdiff_current|
+##############################################################
 
 .. contents::
    :local:

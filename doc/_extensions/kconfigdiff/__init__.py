@@ -77,6 +77,19 @@ def kconfigdiff_install(app: Sphinx) -> None:
     versions = get_versions(app)
     app.config.kconfigdiff_versions = versions
 
+    if versions:
+        latest, prev = versions
+
+        app.config.rst_prolog = (
+            (app.config.rst_prolog or "")
+            + "\n"
+            + (
+                f".. |kconfigdiff_current| replace:: {latest}\n"
+                f".. |kconfigdiff_previous| replace:: {prev}\n"
+            )
+        )
+
+
 def setup(app: Sphinx) -> ExtensionMetadata:
     app.add_directive("kconfigdiff", KconfigDiffDirective)
     app.connect("builder-inited", kconfigdiff_install)
