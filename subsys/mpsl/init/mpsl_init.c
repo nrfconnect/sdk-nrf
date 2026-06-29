@@ -343,9 +343,9 @@ static void m_assert_handler(const char *const file, const uint32_t line)
 	strncpy((char *)assert_file_id, file, sizeof(assert_file_id) - 1);
 
 #if defined(CONFIG_ASSERT) && defined(CONFIG_ASSERT_VERBOSE) && !defined(CONFIG_ASSERT_NO_MSG_INFO)
-	__ASSERT(false, "MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
+	__ASSERT(false, "MPSL ASSERT: %s, 0x%04x\n", (char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
-	LOG_ERR("MPSL ASSERT: %s, %d", (char *)assert_file_id, assert_line);
+	LOG_ERR("MPSL ASSERT: %s, 0x%04x", (char *)assert_file_id, assert_line);
 	const char *failure_reason_msg =
 		mpsl_get_assertion_message(file, line);
 	if (failure_reason_msg) {
@@ -353,7 +353,7 @@ static void m_assert_handler(const char *const file, const uint32_t line)
 	}
 	k_oops();
 #elif defined(CONFIG_PRINTK)
-	printk("MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
+	printk("MPSL ASSERT: %s, 0x%04x\n", (char *)assert_file_id, assert_line);
 	printk("\n");
 	k_oops();
 #else
