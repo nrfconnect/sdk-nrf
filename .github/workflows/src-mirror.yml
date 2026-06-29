@@ -35,8 +35,9 @@ jobs:
           git-ref: ${{ github.ref_name }}
           path: 'nrf'
           west-update-args: ''
-          sdk-manager-api-version: '1'
+          sdk-manager-api-version: '3'
           artifactory-base-folder-path: ${{ (github.ref_type == 'tag') && 'ncs-src-mirror/external/' || 'ncs-src-mirror/internal/' }}
           artifactory-user: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
           artifactory-pass: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
           stable: ${{ env.STABLE }}
+          repository-type: 'nrf'
