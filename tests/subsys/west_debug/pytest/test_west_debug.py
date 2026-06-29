@@ -104,7 +104,7 @@ def test_west_debug(dut: DeviceAdapter):
     Start debug session by calling `west debug` command.
     Set brakepoint and check that breakpoint was hit.
     """
-    west_tester(dut, "debug", "b main.c:15\nc\ndisconnect\nq\n", r"15\s+counter\+\+;")
+    west_tester(dut, "debug", "b main.c:15\nc\ndisconnect\nq\n", r"Breakpoint 1, main \(\)")
 
 
 def test_west_attach(dut: DeviceAdapter):
