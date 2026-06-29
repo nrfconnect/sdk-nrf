@@ -147,10 +147,10 @@ enum tfm_platform_err_t tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request,
 		return tfm_platform_hal_read_service(in_vec, out_vec);
 	case TFM_PLATFORM_IOCTL_WRITE32_SERVICE:
 		return tfm_platform_hal_write32_service(in_vec, out_vec);
-#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
+#if NRF_GPIO_HAS_SEL
 	case TFM_PLATFORM_IOCTL_GPIO_SERVICE:
 		return tfm_platform_hal_gpio_service(in_vec, out_vec);
-#endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
+#endif /* NRF_GPIO_HAS_SEL */
 #if TFM_NRF_MRAMC_SERVICE
 	case TFM_PLATFORM_IOCTL_MRAMC_INIT_SERVICE:
 		return tfm_platform_hal_mramc_init_service();
