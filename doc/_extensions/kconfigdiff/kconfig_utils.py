@@ -6,7 +6,6 @@
 
 import argparse
 import io
-import json
 import logging
 import os
 import re
@@ -36,8 +35,6 @@ logger = logging.Logger(__name__)
 RESOURCES_DIR = Path(__file__).parent / "static"
 ZEPHYR_BASE = Path(__file__).parents[4] / "zephyr"
 NRF_BASE = Path(__file__).parents[3]
-
-VERSIONS_FILE = Path(__file__).parents[2] / "versions.json"
 
 KCONFIG_SAVE_FILE = "kconfig.zip"
 KCONFIG_URL = f"https://ncsdoc.z6.web.core.windows.net/ncs/{{version}}/kconfig/{KCONFIG_SAVE_FILE}"
@@ -352,15 +349,8 @@ class KconfigEntryProperties:
         )
 
 
-def get_prev_version() -> str:
-    with open(VERSIONS_FILE, "rb") as f:
-        versions = json.load(f)
-        # return first version that's a release (skip -preview and others)
-        return next(filter(lambda v: re.match(r"^\d+.\d+.\d+$", v), versions[1:]), "")
-
-
-def fetch_prev_kconfig_file() -> tuple[kconfiglib.Kconfig, kconfiglib.Kconfig, kconfiglib]:
-    url = KCONFIG_URL.format(version=get_prev_version())
+def fetch_prev_kconfig_file(version) -> tuple[kconfiglib.Kconfig, kconfiglib.Kconfig, kconfiglib]:
+    url = KCONFIG_URL.format(version=version)
     with progress_message(f"Fetching kconfig from previous build, {url=}"):
         res = requests.get(url)
         res.raise_for_status()
@@ -370,6 +360,7 @@ def fetch_prev_kconfig_file() -> tuple[kconfiglib.Kconfig, kconfiglib.Kconfig, k
 
 
 def diff_generator(
+    prev_version,
     outdir: Path,
 ) -> Generator[tuple[KconfigEntryProperties | None, KconfigEntryProperties | None], None, None]:
     """Yield ``(old, new)`` pairs of :class:`KconfigEntryProperties`.
@@ -385,7 +376,7 @@ def diff_generator(
     )
 
     try:
-        kconfig_old, sysbuild_kconfig_old, old_kconflib = fetch_prev_kconfig_file()
+        kconfig_old, sysbuild_kconfig_old, old_kconfiglib = fetch_prev_kconfig_file(prev_version)
     except requests.exceptions.RequestException:
         logger.error("Failed to fetch old kconfig")
         return
@@ -407,11 +398,11 @@ def diff_generator(
                             to_del = i
                             break
                     else:
-                        yield KconfigEntryProperties(node, sc, old_kconflib), None
+                        yield KconfigEntryProperties(node, sc, old_kconfiglib), None
                         continue
                 new_node, new_sc = new_items.pop(to_del)
                 yield (
-                    KconfigEntryProperties(node, sc, old_kconflib),
+                    KconfigEntryProperties(node, sc, old_kconfiglib),
                     KconfigEntryProperties(new_node, new_sc),
                 )
                 continue
