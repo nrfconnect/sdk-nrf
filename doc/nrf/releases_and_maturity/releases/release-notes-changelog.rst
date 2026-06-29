@@ -401,6 +401,14 @@ Networking samples
   * :ref:`http_server`
   * :ref:`download_sample`
 
+* Removed support for the ``nrf54l15dk/nrf54l15/cpuapp`` board target from the following samples:
+
+  * :ref:`mqtt_sample`
+  * :ref:`net_coap_client_sample`
+  * :ref:`http_server`
+  * :ref:`download_sample`
+  * :ref:`aws_iot`
+
 NFC samples
 -----------
 
