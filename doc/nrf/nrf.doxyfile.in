@@ -957,6 +957,7 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = @DOCSET_SOURCE_BASE@/applications \
+                         @DOCSET_SOURCE_BASE@/drivers/wifi/nrf71/fw_if \
                          @DOCSET_SOURCE_BASE@/lib \
                          @DOCSET_SOURCE_BASE@/include \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_composites.h \
