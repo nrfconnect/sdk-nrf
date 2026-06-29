@@ -360,10 +360,10 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 	strncpy((char *)assert_file_id, file, sizeof(assert_file_id) - 1);
 
 #if defined(CONFIG_ASSERT) && defined(CONFIG_ASSERT_VERBOSE) && !defined(CONFIG_ASSERT_NO_MSG_INFO)
-	__ASSERT(false, "SoftDevice Controller ASSERT: %s, %d\n",
+	__ASSERT(false, "SoftDevice Controller ASSERT: %s, 0x%04x\n",
 		(char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
-	LOG_ERR("SoftDevice Controller ASSERT: %s, %d", (char *)assert_file_id, assert_line);
+	LOG_ERR("SoftDevice Controller ASSERT: %s, 0x%04x", (char *)assert_file_id, assert_line);
 	const char *failure_reason_msg =
 		sdc_get_assertion_message((char *)assert_file_id, assert_line);
 	if (failure_reason_msg) {
@@ -371,7 +371,7 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 	}
 	k_oops();
 #elif defined(CONFIG_PRINTK)
-	printk("SoftDevice Controller ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
+	printk("SoftDevice Controller ASSERT: %s, 0x%04x\n", (char *)assert_file_id, assert_line);
 	printk("\n");
 	k_oops();
 #else
