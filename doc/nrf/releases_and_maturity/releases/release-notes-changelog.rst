@@ -280,8 +280,13 @@ nRF Audio (formerly nRF5340 Audio)
 nRF Desktop
 -----------
 
-* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
-* Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` board target.
+* Added:
+
+  * Support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` and ``nrf54ls05dk/nrf54ls05a/cpuapp`` board targets.
+  * The ``release_fast_pair`` build type for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
+    The configuration acts as a HID mouse with Fast Pair support.
+    It uses MCUboot in direct-xip mode with software-based image signature verification.
+
 
 Thingy:53: Matter weather station
 ---------------------------------
