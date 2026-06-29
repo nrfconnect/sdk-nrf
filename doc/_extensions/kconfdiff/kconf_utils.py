@@ -1,6 +1,5 @@
 import argparse
 import io
-import json
 import logging
 import os
 import re
@@ -30,8 +29,6 @@ logger = logging.Logger(__name__)
 RESOURCES_DIR = Path(__file__).parent / "static"
 ZEPHYR_BASE = Path(__file__).parents[4] / "zephyr"
 NRF_BASE = Path(__file__).parents[3]
-
-VERSIONS_FILE = Path(__file__).parents[2] / "versions.json"
 
 KCONF_SAVE_FILE = "kconf.zip"
 KCONF_URL = f"https://ncsdoc.z6.web.core.windows.net/ncs/{{version}}/kconfig/{KCONF_SAVE_FILE}"
@@ -347,15 +344,8 @@ class KconfigEntryProperties:
         )
 
 
-def get_prev_version() -> str:
-    with open(VERSIONS_FILE, "rb") as f:
-        versions = json.load(f)
-        # return first version that's a release (skip -preview and others)
-        return next(filter(lambda v: re.match(r"^\d+.\d+.\d+$", v), versions[1:]), "")
-
-
-def fetch_prev_kconf_file() -> tuple[kconfiglib.Kconfig, kconfiglib.Kconfig, kconfiglib]:
-    url = KCONF_URL.format(version=get_prev_version())
+def fetch_prev_kconf_file(version) -> tuple[kconfiglib.Kconfig, kconfiglib.Kconfig, kconfiglib]:
+    url = KCONF_URL.format(version=version)
     with progress_message(f"Fetching kconfig from previous build, {url=}"):
         res = requests.get(url)
         res.raise_for_status()
@@ -365,6 +355,7 @@ def fetch_prev_kconf_file() -> tuple[kconfiglib.Kconfig, kconfiglib.Kconfig, kco
 
 
 def diff_generator(
+    prev_version,
     outdir: Path,
 ) -> Generator[tuple[KconfigEntryProperties | None, KconfigEntryProperties | None], None, None]:
     """Yield ``(old, new)`` pairs of :class:`KconfigEntryProperties`.
@@ -380,7 +371,7 @@ def diff_generator(
     )
 
     try:
-        kconf_old, sysbuild_kconf_old, old_kconflib = fetch_prev_kconf_file()
+        kconf_old, sysbuild_kconf_old, old_kconflib = fetch_prev_kconf_file(prev_version)
     except requests.exceptions.RequestException:
         logger.error("Failed to fetch old kconfig")
         return

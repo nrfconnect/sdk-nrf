@@ -192,6 +192,10 @@ class KconfDiffDirective(SphinxDirective):
         if not self.env.app.config.kconfdiff_should_build:
             return []
 
+        if not (versions := self.env.app.config.kconfdiff_versions):
+            return []
+        _, prev = versions
+
         root = nodes.container(classes=["kconfdiff"])
 
         def ordering(old, new):
@@ -199,7 +203,7 @@ class KconfDiffDirective(SphinxDirective):
 
         outdir = Path(self.env.app.outdir)
         for old, new in sorted(
-            diff_generator(outdir),
+            diff_generator(prev, outdir),
             key=lambda p: ordering(*p).name,
         ):
             node = ComparisonPair(old, new).render()
