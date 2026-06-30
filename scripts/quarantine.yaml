@@ -19,18 +19,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9628"
 
 - scenarios:
-    - nrf.extended.sample.boards.nrf.clock_control.audiopll
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9393"
-
-- scenarios:
-    - nrf.extended.drivers.clock.nrf_clock_control
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9455"
-
-- scenarios:
     - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_no_multithreading
     - drivers.grtc.test_mcuboot_grtc_no_uninit
     - drivers.grtc.test_mcuboot_grtc_uninit
