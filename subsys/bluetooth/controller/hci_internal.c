@@ -1829,9 +1829,11 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 		(sdc_hci_cmd_vs_enable_periodic_adv_event_counter_reports_t const *)cmd_params);
 #endif
 #if defined(CONFIG_BT_CTLR_DTM_HCI)
-	case SDC_HCI_OPCODE_CMD_VS_TRANSMITTER_CARRIER_TEST:
-		return sdc_hci_cmd_vs_transmitter_carrier_test(
-		(sdc_hci_cmd_vs_transmitter_carrier_test_t const *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_VS_DTM_COMMAND:
+		return sdc_hci_cmd_vs_dtm_command(
+			(sdc_hci_cmd_vs_dtm_command_t const *)cmd_params,
+			event_out_params,
+			param_length_out);
 #endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
