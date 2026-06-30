@@ -1361,7 +1361,8 @@ static void cache_pgps_header(const struct nrf_cloud_pgps_header *header)
 	index.end_sec = index.start_sec + (int64_t)index.period_sec * index.header.prediction_count;
 }
 
-static size_t get_next_pgps_element(struct nrf_cloud_agnss_element *element, const char *buf)
+static size_t get_next_pgps_element(struct nrf_cloud_agnss_element *element, const char *buf,
+				    size_t buf_len)
 {
 	static uint16_t elements_left_to_process;
 	static enum nrf_cloud_agnss_type element_type;
@@ -1372,6 +1373,17 @@ static size_t get_next_pgps_element(struct nrf_cloud_agnss_element *element, con
 	 * each element.
 	 */
 	if (elements_left_to_process == 0) {
+		element_type = NRF_CLOUD_AGNSS__TYPE_INVALID;
+
+		if (buf_len == 0) {
+			/* No more data to parse. */
+			return 0;
+		}
+
+		/* Check that there's enough data for type and count. */
+		if (buf_len < NRF_CLOUD_AGNSS_BIN_TYPE_SIZE + NRF_CLOUD_AGNSS_BIN_COUNT_SIZE) {
+			goto data_truncated;
+		}
 		element->type = (enum nrf_cloud_agnss_type)buf[NRF_CLOUD_AGNSS_BIN_TYPE_OFFSET];
 		element_type = element->type;
 		elements_left_to_process = *(uint16_t *)&buf[NRF_CLOUD_AGNSS_BIN_COUNT_OFFSET] - 1;
@@ -1383,10 +1395,17 @@ static size_t get_next_pgps_element(struct nrf_cloud_agnss_element *element, con
 
 	switch (element->type) {
 	case NRF_CLOUD_AGNSS_GPS_EPHEMERIDES:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_ephemeris))) {
+			goto data_truncated;
+		}
 		element->ephemeris = (struct nrf_cloud_agnss_ephemeris *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_ephemeris);
 		break;
 	case NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_system_time) -
+			       sizeof(element->time_and_tow->sv_tow) + 4)) {
+			goto data_truncated;
+		}
 		element->time_and_tow = (struct nrf_cloud_agnss_system_time *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_system_time) -
 		       sizeof(element->time_and_tow->sv_tow) + 4;
@@ -1399,7 +1418,14 @@ static size_t get_next_pgps_element(struct nrf_cloud_agnss_element *element, con
 #if PGPS_DEBUG
 	LOG_DBG("  size:%zd, count:%u", len, elements_left_to_process);
 #endif
+
 	return len;
+
+data_truncated:
+	LOG_ERR("Unexpected end of data");
+	elements_left_to_process = 0;
+	element_type = NRF_CLOUD_AGNSS__TYPE_INVALID;
+	return 0;
 }
 
 static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
@@ -1420,7 +1446,9 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 
 	while (parsed_len < buf_len) {
 		bool empty;
-		size_t element_size = get_next_pgps_element(&element, element_ptr);
+		size_t element_size = get_next_pgps_element(
+			&element, element_ptr, buf_len - parsed_len
+		);
 
 		if (element_size == 0) {
 			LOG_DBG("  End of element");

@@ -516,8 +516,7 @@ static size_t get_next_agnss_element(struct nrf_cloud_agnss_element *element, co
 
 		/* Check that there's enough data for type and count. */
 		if (buf_len < NRF_CLOUD_AGNSS_BIN_TYPE_SIZE + NRF_CLOUD_AGNSS_BIN_COUNT_SIZE) {
-			LOG_ERR("Unexpected end of data");
-			return 0;
+			goto data_truncated;
 		}
 
 		element->type = (enum nrf_cloud_agnss_type)buf[NRF_CLOUD_AGNSS_BIN_TYPE_OFFSET];
@@ -531,58 +530,98 @@ static size_t get_next_agnss_element(struct nrf_cloud_agnss_element *element, co
 
 	switch (element->type) {
 	case NRF_CLOUD_AGNSS_GPS_UTC_PARAMETERS:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_utc))) {
+			goto data_truncated;
+		}
 		element->utc = (struct nrf_cloud_agnss_utc *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_utc);
 		break;
 	case NRF_CLOUD_AGNSS_GPS_EPHEMERIDES:
 	case NRF_CLOUD_AGNSS_QZSS_EPHEMERIDES:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_ephemeris))) {
+			goto data_truncated;
+		}
 		element->ephemeris = (struct nrf_cloud_agnss_ephemeris *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_ephemeris);
 		break;
 	case NRF_CLOUD_AGNSS_GPS_ALMANAC:
 	case NRF_CLOUD_AGNSS_QZSS_ALMANAC:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_almanac))) {
+			goto data_truncated;
+		}
 		element->almanac = (struct nrf_cloud_agnss_almanac *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_almanac);
 		break;
 	case NRF_CLOUD_AGNSS_KLOBUCHAR_CORRECTION:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_klobuchar))) {
+			goto data_truncated;
+		}
 		element->ion_correction.klobuchar = (struct nrf_cloud_agnss_klobuchar *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_klobuchar);
 		break;
 	case NRF_CLOUD_AGNSS_NEQUICK_CORRECTION:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_nequick))) {
+			goto data_truncated;
+		}
 		element->ion_correction.nequick = (struct nrf_cloud_agnss_nequick *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_nequick);
 		break;
 	case NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_system_time) -
+			       sizeof(element->time_and_tow->sv_tow) + 4)) {
+			goto data_truncated;
+		}
 		element->time_and_tow = (struct nrf_cloud_agnss_system_time *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_system_time) -
 		       sizeof(element->time_and_tow->sv_tow) + 4;
 		break;
 	case NRF_CLOUD_AGNSS_GPS_TOWS:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_tow_element))) {
+			goto data_truncated;
+		}
 		element->tow = (struct nrf_cloud_agnss_tow_element *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_tow_element);
 		break;
 	case NRF_CLOUD_AGNSS_LOCATION:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_location))) {
+			goto data_truncated;
+		}
 		element->location = (struct nrf_cloud_agnss_location *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_location);
 		break;
 	case NRF_CLOUD_AGNSS_GPS_INTEGRITY:
 	case NRF_CLOUD_AGNSS_QZSS_INTEGRITY:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_integrity))) {
+			goto data_truncated;
+		}
 		element->integrity = (struct nrf_cloud_agnss_integrity *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_integrity);
 		break;
 	case NRF_CLOUD_AGNSS_GAL_INTEGRITY:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_gal_integrity))) {
+			goto data_truncated;
+		}
 		element->gal_integrity = (struct nrf_cloud_agnss_gal_integrity *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_gal_integrity);
 		break;
 	case NRF_CLOUD_AGNSS_GAL_EPHEMERIDES:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_gal_ephemeris))) {
+			goto data_truncated;
+		}
 		element->gal_ephemeris = (struct nrf_cloud_agnss_gal_ephemeris *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_gal_ephemeris);
 		break;
 	case NRF_CLOUD_AGNSS_GAL_ALMANAC:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_gal_almanac))) {
+			goto data_truncated;
+		}
 		element->gal_almanac = (struct nrf_cloud_agnss_gal_almanac *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_gal_almanac);
 		break;
 	case NRF_CLOUD_AGNSS_GGTO:
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_ggto))) {
+			goto data_truncated;
+		}
 		element->ggto = (struct nrf_cloud_agnss_ggto *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_ggto);
 		break;
@@ -593,15 +632,13 @@ static size_t get_next_agnss_element(struct nrf_cloud_agnss_element *element, co
 		return 0;
 	}
 
-	/* Check that there's enough data for the element. */
-	if (buf_len < len) {
-		LOG_ERR("Unexpected end of data");
-		elements_left_to_process = 0;
-		element_type = NRF_CLOUD_AGNSS__TYPE_INVALID;
-		return 0;
-	}
-
 	return len;
+
+data_truncated:
+	LOG_ERR("Unexpected end of data");
+	elements_left_to_process = 0;
+	element_type = NRF_CLOUD_AGNSS__TYPE_INVALID;
+	return 0;
 }
 
 int nrf_cloud_agnss_process(const char *buf, size_t buf_len)

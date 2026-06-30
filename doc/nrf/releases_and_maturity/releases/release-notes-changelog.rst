@@ -582,7 +582,13 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Fixed an issue with parsing invalid payloads.
+
+* :ref:`lib_nrf_cloud_agnss` library:
+
+  * Fixed an issue with parsing invalid payloads.
 
 Libraries for NFC
 -----------------
