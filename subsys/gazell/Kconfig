@@ -6,7 +6,7 @@
 
 menuconfig GAZELL
 	bool "Gazell"
-	depends on GZLL && CLOCK_CONTROL_NRF
+	depends on GZLL && (CLOCK_CONTROL_NRF || CLOCK_CONTROL_NRFX_COMMON)
 	select NRFX_GPPI
 	help
 	  Enable Gazell functionality.
