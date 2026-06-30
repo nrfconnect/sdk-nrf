@@ -238,6 +238,7 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientSetDefaultConfig)
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_SET_DEFAULT_CONFIG,
 				CBOR_DNS_QUERY_CONFIG));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDnsClientSetDefaultConfig_fake.call_count, 1);
 }
@@ -276,10 +277,10 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveAddress)
 	expected_config = &config;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_RESOLVE_ADDRESS, CBOR_DNS_HOSTNAME, 0,
 				CBOR_UINT32(0xdeadbeef), CBOR_DNS_QUERY_CONFIG));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDnsClientResolveAddress_fake.call_count, 1);
 	zassert_equal(otDnsClientResolveAddress_fake.arg2_val, (void *)0xfacecafe);
@@ -287,14 +288,15 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveAddress)
 
 	expected_config = NULL;
 
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_RESOLVE_ADDRESS, CBOR_DNS_HOSTNAME, 0,
 				CBOR_UINT32(0xdeadbeef), CBOR_NULL));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDnsClientResolveAddress_fake.call_count, 2);
 	zassert_equal(otDnsClientResolveAddress_fake.arg2_val, (void *)0xfacecafe);
 	zassert_equal(otDnsClientResolveAddress_fake.arg3_val, (void *)0xdeadbeef);
-
-	mock_nrf_rpc_tr_expect_done();
 }
 
 /**
@@ -320,11 +322,11 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveIp4Address)
 	expected_config = &config;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_RESOLVE_IP4_ADDRESS,
 					CBOR_DNS_HOSTNAME, 0, CBOR_UINT32(0xdeadbeef),
 					CBOR_DNS_QUERY_CONFIG));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDnsClientResolveIp4Address_fake.call_count, 1);
 	zassert_equal(otDnsClientResolveIp4Address_fake.arg2_val, (void *)0xfacecafe);
@@ -332,14 +334,15 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveIp4Address)
 
 	expected_config = NULL;
 
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_RESOLVE_IP4_ADDRESS,
 					CBOR_DNS_HOSTNAME, 0, CBOR_UINT32(0xdeadbeef), CBOR_NULL));
+	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDnsClientResolveIp4Address_fake.call_count, 2);
 	zassert_equal(otDnsClientResolveIp4Address_fake.arg2_val, (void *)0xfacecafe);
 	zassert_equal(otDnsClientResolveIp4Address_fake.arg3_val, (void *)0xdeadbeef);
-
-	mock_nrf_rpc_tr_expect_done();
 }
 
 otError custom_get_host_name(const otDnsAddressResponse *response, char *name, uint16_t size)
@@ -447,16 +450,17 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientBrowse)
 	expected_config = &config;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_BROWSE, CBOR_DNS_SERVICE_NAME, 0,
 				CBOR_UINT32(0xdeadbeef), CBOR_DNS_QUERY_CONFIG));
+	mock_nrf_rpc_tr_expect_done();
 
 	expected_config = NULL;
 
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_BROWSE, CBOR_DNS_SERVICE_NAME, 0,
 				CBOR_UINT32(0xdeadbeef), CBOR_NULL));
-
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDnsClientBrowse_fake.call_count, 2);
@@ -771,18 +775,19 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveService)
 	expected_config = NULL;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_RESOLVE_SERVICE,
 				CBOR_SERVICE_INSTANCE, CBOR_DNS_SERVICE_NAME, 0,
 				CBOR_UINT32(0xdeadbeef), CBOR_NULL));
+	mock_nrf_rpc_tr_expect_done();
 
 	expected_config = &config;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_RESOLVE_SERVICE,
 				CBOR_SERVICE_INSTANCE, CBOR_DNS_SERVICE_NAME, 0,
 				CBOR_UINT32(0xdeadbeef), CBOR_DNS_QUERY_CONFIG));
-
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDnsClientResolveService_fake.call_count, 2);
@@ -815,6 +820,7 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveServiceAndHostAddress)
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_RESOLVE_SERVICE_AND_HOST_ADDRESS,
 				CBOR_SERVICE_INSTANCE, CBOR_DNS_SERVICE_NAME, 0,
 				CBOR_UINT32(0xdeadbeef), CBOR_NULL));
+	mock_nrf_rpc_tr_expect_done();
 
 	expected_config = &config;
 
@@ -822,7 +828,6 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveServiceAndHostAddress)
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DNS_CLIENT_RESOLVE_SERVICE_AND_HOST_ADDRESS,
 				CBOR_SERVICE_INSTANCE, CBOR_DNS_SERVICE_NAME, 0,
 				CBOR_UINT32(0xdeadbeef), CBOR_DNS_QUERY_CONFIG));
-
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDnsClientResolveServiceAndHostAddress_fake.call_count, 2);
