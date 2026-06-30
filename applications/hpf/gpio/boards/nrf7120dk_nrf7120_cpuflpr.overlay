@@ -43,7 +43,7 @@
 	status = "disabled";
 };
 
-&uart30 {
+&uart21 {
 	status = "okay";
 };
 

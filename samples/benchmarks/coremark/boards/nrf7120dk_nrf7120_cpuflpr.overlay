@@ -1,9 +1,9 @@
 / {
 	chosen {
-		zephyr,console = &uart30;
+		zephyr,console = &uart21;
 	};
 };
 
-&uart30 {
+&uart21 {
 	status = "okay";
 };
