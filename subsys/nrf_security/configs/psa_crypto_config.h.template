@@ -366,6 +366,15 @@
 #cmakedefine PSA_NEED_CRACEN_RSA_PSS                            @PSA_NEED_CRACEN_RSA_PSS@
 #cmakedefine PSA_NEED_CRACEN_RSA_OAEP                           @PSA_NEED_CRACEN_RSA_OAEP@
 #cmakedefine PSA_NEED_CRACEN_RSA_PKCS1V15_CRYPT                 @PSA_NEED_CRACEN_RSA_PKCS1V15_CRYPT@
+#cmakedefine PSA_NEED_CRACEN_ML_DSA                             @PSA_NEED_CRACEN_ML_DSA@
+#cmakedefine PSA_NEED_CRACEN_HASH_ML_DSA                        @PSA_NEED_CRACEN_HASH_ML_DSA@
+#cmakedefine PSA_NEED_CRACEN_MESSAGE_ML_DSA                     @PSA_NEED_CRACEN_MESSAGE_ML_DSA@
+#cmakedefine PSA_NEED_CRACEN_ML_DSA_44                          @PSA_NEED_CRACEN_ML_DSA_44@
+#cmakedefine PSA_NEED_CRACEN_ML_DSA_65                          @PSA_NEED_CRACEN_ML_DSA_65@
+#cmakedefine PSA_NEED_CRACEN_ML_DSA_87                          @PSA_NEED_CRACEN_ML_DSA_87@
+#cmakedefine PSA_NEED_CRACEN_ML_DSA_SIGN                        @PSA_NEED_CRACEN_ML_DSA_SIGN@
+#cmakedefine PSA_NEED_CRACEN_ML_DSA_VERIFY                      @PSA_NEED_CRACEN_ML_DSA_VERIFY@
+#cmakedefine PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA    @PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA@
 #cmakedefine PSA_NEED_CRACEN_SHA_1                              @PSA_NEED_CRACEN_SHA_1@
 #cmakedefine PSA_NEED_CRACEN_SHA_224                            @PSA_NEED_CRACEN_SHA_224@
 #cmakedefine PSA_NEED_CRACEN_SHA_256                            @PSA_NEED_CRACEN_SHA_256@
@@ -499,6 +508,10 @@
 #cmakedefine PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_IMPORT                       @PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_IMPORT@
 #cmakedefine PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_EXPORT                       @PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_EXPORT@
 #cmakedefine PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_GENERATE                     @PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_GENERATE@
+
+#cmakedefine PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT                    @PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT@
+#cmakedefine PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT                    @PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT@
+#cmakedefine PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_PUBLIC_KEY                         @PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_PUBLIC_KEY@
 
 #cmakedefine PSA_NEED_CRACEN_HMAC                               @PSA_NEED_CRACEN_HMAC@
 #cmakedefine PSA_NEED_CRACEN_CMAC                               @PSA_NEED_CRACEN_CMAC@

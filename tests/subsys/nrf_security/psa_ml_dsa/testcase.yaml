@@ -1,5 +1,5 @@
 tests:
-  psa_ml_dsa.oberon:
+  psa_ml_dsa.cracen:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
