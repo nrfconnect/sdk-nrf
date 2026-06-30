@@ -112,26 +112,7 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
-    - boot_chains.secure_boot_and_bootloader_mcuboot
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf9151dk/nrf9151/ns
-    - nrf9160dk@0.14.0/nrf9160/ns
-    - nrf9161dk@0.9.0/nrf9161/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
-
-- scenarios:
     - b0.cleanup_ram
-    - boot_chains.bootloader_mcuboot_and_nv_counters
-    - boot_chains.secure_boot
-    - boot_chains.secure_boot_and_hw_crypto_backends
-    - boot_chains.secure_boot_and_mcuboot_and_nv_counters
-    - boot_chains.secure_boot_and_nv_counters
-    - boot_chains.secure_boot_and_optimizations_debug
-    - boot_chains.secure_boot_and_optimizations_size
-    - boot_chains.secure_boot_and_optimizations_speed
-    - boot_chains.secure_boot_minimal
     - mcuboot.external_flash.upgrade.hw_downgrade_prevention
     - mcuboot.upgrade.hw_downgrade_prevention
     - nsib.mcuboot.upgrade.hw_downgrade_prevention
