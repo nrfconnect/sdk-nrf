@@ -7,6 +7,7 @@
 # re-usable outside the Zephyr tree.
 if SOC_FAMILY_NORDIC_NRF
 
+rsource "$(ZEPHYR_BASE)/soc/nordic/Kconfig.defconfig"
 rsource "*/Kconfig.defconfig"
 
 endif # SOC_FAMILY_NORDIC_NRF
