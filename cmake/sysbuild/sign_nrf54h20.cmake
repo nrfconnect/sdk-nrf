@@ -47,7 +47,7 @@ endfunction()
 function(merge_images_nrf54h20 output_artifact images)
   find_program(MERGEHEX mergehex.py HINTS ${ZEPHYR_BASE}/scripts/build/ NAMES
     mergehex NAMES_PER_DIR)
-  if(NOT DEFINED MERGEHEX)
+  if("${MERGEHEX}" STREQUAL "MERGEHEX-NOTFOUND")
     message(FATAL_ERROR "Can't merge images: can't find mergehex.py")
     return()
   endif()
@@ -147,7 +147,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
   endif()
 
   # No imgtool, no signed binaries.
-  if(NOT DEFINED IMGTOOL)
+  if("${IMGTOOL}" STREQUAL "IMGTOOL-NOTFOUND")
     message(FATAL_ERROR "Can't sign images for MCUboot: can't find imgtool. "
                         "To fix, install imgtool with pip3, or add the mcuboot "
                         "repository to the west manifest and ensure it has "
@@ -156,7 +156,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
   endif()
 
   # No hex2bin, no signed bin files.
-  if(SB_CONFIG_BUILD_OUTPUT_BIN AND NOT DEFINED HEX2BIN)
+  if(SB_CONFIG_BUILD_OUTPUT_BIN AND "${HEX2BIN}" STREQUAL "HEX2BIN-NOTFOUND")
     message(FATAL_ERROR "Can't convert HEX files for MCUboot: can't find "
                         "hex2bin. To fix, install hex2bin with pip3.")
     return()
