@@ -112,7 +112,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
-    - b0.cleanup_ram
     - mcuboot.external_flash.upgrade.hw_downgrade_prevention
     - mcuboot.upgrade.hw_downgrade_prevention
     - nsib.mcuboot.upgrade.hw_downgrade_prevention
@@ -127,13 +126,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
-    - b0.w
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
-
-- scenarios:
     - nsib.mcuboot.external_flash.upgrade.basic
   platforms:
     - nrf52840dk/nrf52840
@@ -144,13 +136,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
-    - b0.mcuboot.rwx
-    - b0.mcuboot.rwx.b0_did_not_lock
-    - b0.mcuboot.s1.rwx
-    - b0.mcuboot.s1.rwx.b0_did_not_lock
-    - b0.mcuboot.s1.w
-    - b0.mcuboot.w
-    - b0.rwx
     - nsib.mcuboot.upgrade.kmu.basic
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
