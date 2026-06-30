@@ -519,7 +519,8 @@ psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
 	/* Key import is limited to RSA keys which can't be stored in KMU */
 	if (!UTIL_CONCAT_OR(VERIFY_ALG_RSA_PSS(alg),
 			    VERIFY_ALG_RSA_PKCS1V15(alg),
-			    VERIFY_ALG_RSA_OAEP(alg))) {
+			    VERIFY_ALG_RSA_OAEP(alg),
+			    VERIFY_ALG_CTR(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
