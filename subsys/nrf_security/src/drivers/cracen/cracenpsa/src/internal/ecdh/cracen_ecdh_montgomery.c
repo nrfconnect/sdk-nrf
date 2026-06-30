@@ -59,7 +59,7 @@ psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 
 		/* 448 % 8 = 0, so there is no need to decode pt coordinate. */
 		sx_status = sx_x448_ptmult(&req, &k, (struct sx_x448_op *)publ_key,
-					   (struct sx_x448_op *)output);
+					   (const struct sx_x448_op *)output);
 		if (sx_status != SX_OK) {
 			goto exit;
 		}

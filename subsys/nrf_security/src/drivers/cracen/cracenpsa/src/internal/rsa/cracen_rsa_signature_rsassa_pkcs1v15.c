@@ -186,7 +186,7 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 		return status;
 	}
 
-	uint8_t **outputs = (uint8_t **)sx_pk_get_output_ops(&req);
+	uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
 
 	/* outputs[0] points to the signature, which we assume big endian */
 	sx_rdpkmem(signature->r, outputs[0], CRACEN_RSA_KEY_OPSZ(rsa_key));

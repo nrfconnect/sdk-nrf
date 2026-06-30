@@ -131,7 +131,7 @@ int cracen_signature_asn1_get_operand(const uint8_t **p, const uint8_t *end,
 			break;
 		}
 	}
-	op->bytes = (uint8_t *)(*p + i);
+	op->bytes = (const uint8_t *)(*p + i);
 	op->sz = len - i;
 
 	*p += len;

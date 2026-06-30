@@ -60,7 +60,7 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	struct cracen_crypt_text text = {(uint8_t *)input, input_length};
+	struct cracen_crypt_text text = {(const uint8_t *)input, input_length};
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_RSA_OAEP)) {
 		if (PSA_ALG_IS_RSA_OAEP(alg)) {

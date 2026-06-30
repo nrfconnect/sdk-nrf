@@ -215,7 +215,7 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	if (key_location == PSA_KEY_LOCATION_CRACEN_KMU) {
-		kmu_opaque_key_buffer *key = (kmu_opaque_key_buffer *)key_buffer;
+		kmu_opaque_key_buffer *key = (const kmu_opaque_key_buffer *)key_buffer;
 		enum cracen_kmu_metadata_key_usage_scheme key_usage_scheme = key->key_usage_scheme;
 
 		k->clean_key = cracen_kmu_clean_key;

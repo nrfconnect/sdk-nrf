@@ -224,7 +224,7 @@ static int ed25519_verify_internal(const uint8_t *pub_key, const uint8_t *messag
 	sx_pk_set_cmd(&req, SX_PK_CMD_EDDSA_VER);
 
 	status = sx_ed25519_verify(&req, (struct sx_ed25519_dgst *)digest,
-				   (struct sx_ed25519_pt *)pub_key,
+				   (const struct sx_ed25519_pt *)pub_key,
 				   (const struct sx_ed25519_v *)(signature + SX_ED25519_SZ),
 				   (const struct sx_ed25519_pt *)signature);
 
