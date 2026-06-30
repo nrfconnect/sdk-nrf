@@ -88,6 +88,19 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA)
   )
 endif()
 
+if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_internal.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_params.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_poly.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_rounding.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_sampling.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_packing.c
+  )
+endif()
+
 if(CONFIG_PSA_NEED_CRACEN_HASH_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_hash.c
