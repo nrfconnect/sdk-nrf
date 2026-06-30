@@ -48,6 +48,8 @@ psa_status_t cracen_sign_message(const psa_key_attributes_t *attributes, const u
  * @param[in] alg               Verification algorithm.
  * @param[in] input             Message that was signed.
  * @param[in] input_length      Length of the message in bytes.
+ * @param[in] context           Context string (used by ML-DSA; ignored otherwise).
+ * @param[in] context_length    Length of the context in bytes.
  * @param[in] signature         Signature to verify.
  * @param[in] signature_length  Length of the signature in bytes.
  *
@@ -59,6 +61,7 @@ psa_status_t cracen_sign_message(const psa_key_attributes_t *attributes, const u
 psa_status_t cracen_verify_message(const psa_key_attributes_t *attributes,
 				   const uint8_t *key_buffer, size_t key_buffer_size,
 				   psa_algorithm_t alg, const uint8_t *input, size_t input_length,
+				   const uint8_t *context, size_t context_length,
 				   const uint8_t *signature, size_t signature_length);
 
 /** @brief Sign a hash.
@@ -90,6 +93,8 @@ psa_status_t cracen_sign_hash(const psa_key_attributes_t *attributes, const uint
  * @param[in] alg               Verification algorithm.
  * @param[in] hash              Hash of the message that was signed.
  * @param[in] hash_length       Length of the hash in bytes.
+ * @param[in] context           Context string (used by HashML-DSA; ignored otherwise).
+ * @param[in] context_length    Length of the context in bytes.
  * @param[in] signature         Signature to verify.
  * @param[in] signature_length  Length of the signature in bytes.
  *
@@ -100,8 +105,8 @@ psa_status_t cracen_sign_hash(const psa_key_attributes_t *attributes, const uint
  */
 psa_status_t cracen_verify_hash(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *hash,
-				size_t hash_length, const uint8_t *signature,
-				size_t signature_length);
+				size_t hash_length, const uint8_t *context, size_t context_length,
+				const uint8_t *signature, size_t signature_length);
 
 /** @} */
 
