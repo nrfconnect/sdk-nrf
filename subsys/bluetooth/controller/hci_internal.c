@@ -34,6 +34,10 @@ static struct
 	uint8_t raw_event[BT_BUF_EVT_RX_SIZE];
 } cmd_complete_or_status;
 
+#if defined(CONFIG_BT_HCI_ACL_FLOW_CONTROL)
+static uint8_t num_completed_packet_command_status;
+#endif /* CONFIG_BT_HCI_ACL_FLOW_CONTROL */
+
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
 static bool padv_response_data_cmd_pending;
 #endif
@@ -862,8 +866,6 @@ static uint8_t controller_and_baseband_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_cb_set_controller_to_host_flow_control((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_CB_HOST_BUFFER_SIZE:
 		return sdc_hci_cmd_cb_host_buffer_size_wrapper((void *)cmd_params);
-	case SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS:
-		return sdc_hci_cmd_cb_host_number_of_completed_packets((void *)cmd_params);
 #endif
 
 #if defined(CONFIG_BT_CTLR_LE_ENC) && defined(CONFIG_BT_CTLR_LE_PING)
@@ -1921,6 +1923,23 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 {
 	uint16_t opcode = sys_get_le16(cmd_in);
 
+#if defined(CONFIG_BT_HCI_ACL_FLOW_CONTROL)
+	if (opcode == SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS) {
+		if (num_completed_packet_command_status != 0) {
+			/* Previous command returned error, still
+			 * waiting for command complete to be raised
+			 */
+			return -NRF_EPERM;
+		}
+
+		uint8_t status = sdc_hci_cmd_cb_host_number_of_completed_packets(
+			(void *)&cmd_in[BT_HCI_CMD_HDR_SIZE]);
+
+		num_completed_packet_command_status = status;
+		return 0;
+	}
+#endif /* CONFIG_BT_HCI_ACL_FLOW_CONTROL */
+
 	if (cmd_complete_or_status.occurred
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
 		|| padv_response_data_cmd_pending
@@ -1942,18 +1961,6 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 
 	cmd_complete_or_status.occurred = true;
 
-#if defined(CONFIG_BT_HCI_ACL_FLOW_CONTROL)
-	if (opcode == SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS
-	    &&
-	    cmd_complete_or_status.raw_event[CMD_COMPLETE_MIN_SIZE - 1] == 0) {
-		/* SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS will only generate
-		 *  command complete if it fails.
-		 */
-
-		cmd_complete_or_status.occurred = false;
-	}
-#endif
-
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
 	if (opcode == SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_RESPONSE_DATA
 		&&
@@ -1972,6 +1979,21 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 
 int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out)
 {
+#if defined(CONFIG_BT_HCI_ACL_FLOW_CONTROL)
+	if (num_completed_packet_command_status != 0) {
+		*msg_type_out = SDC_HCI_MSG_TYPE_EVT;
+		uint8_t param_length = sizeof(struct bt_hci_evt_cmd_complete)
+							+ sizeof(struct bt_hci_evt_cc_status);
+		encode_command_complete_header(msg_out,
+			SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS,
+			param_length,
+			num_completed_packet_command_status);
+
+		num_completed_packet_command_status = 0;
+		return 0;
+	}
+#endif /* CONFIG_BT_HCI_ACL_FLOW_CONTROL */
+
 	if (cmd_complete_or_status.occurred) {
 		struct bt_hci_evt_hdr *evt_hdr = (void *)&cmd_complete_or_status.raw_event[0];
 
