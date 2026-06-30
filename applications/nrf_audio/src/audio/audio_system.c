@@ -24,30 +24,30 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
 
-#define FIFO_OUT_BLOCK_COUNT (USB_1MS_BLOCKS_NUM_MAX * CONFIG_FIFO_TX_FRAME_COUNT)
-#define FIFO_IN_BLOCK_COUNT  (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_RX_FRAME_COUNT)
+#define FIFO_TX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_TX_FRAME_COUNT)
+#define FIFO_RX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_RX_FRAME_COUNT)
 
 /* Size these to fit the use case as part of optimization (e.g. increase decoder pool when it is
  * wrapped in a thread).
  */
 #define FIFO_ENC_POOL_BLK_COUNT 2
-#define FIFO_DEC_POOL_BLK_COUNT 2
+#define FIFO_DEC_POOL_BLK_COUNT 1
 
 #define DEBUG_INTERVAL_NUM     1000
 #define TEST_TONE_BASE_FREQ_HZ 1000
 
 K_THREAD_STACK_DEFINE(encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE);
 
-K_MSGQ_DEFINE(audio_q_out, sizeof(struct net_buf *), FIFO_OUT_BLOCK_COUNT, sizeof(void *));
-K_MSGQ_DEFINE(audio_q_in, sizeof(struct net_buf *), FIFO_IN_BLOCK_COUNT, sizeof(void *));
+K_MSGQ_DEFINE(audio_q_tx, sizeof(struct net_buf *), FIFO_TX_BLOCK_COUNT, sizeof(void *));
+K_MSGQ_DEFINE(audio_q_rx, sizeof(struct net_buf *), FIFO_RX_BLOCK_COUNT, sizeof(void *));
 
-NET_BUF_POOL_FIXED_DEFINE(audio_q_in_pool, FIFO_IN_BLOCK_COUNT, FRAME_SIZE_BYTES,
+NET_BUF_POOL_FIXED_DEFINE(audio_q_rx_pool, FIFO_RX_BLOCK_COUNT, FRAME_SIZE_BYTES,
 			  sizeof(struct audio_metadata), NULL);
 NET_BUF_POOL_FIXED_DEFINE(audio_q_enc_pool, FIFO_ENC_POOL_BLK_COUNT, ENC_MULTI_CHAN_MAX_FRAME_SIZE,
 			  sizeof(struct audio_metadata), NULL);
 NET_BUF_POOL_FIXED_DEFINE(audio_q_dec_pool, FIFO_DEC_POOL_BLK_COUNT, PCM_NUM_BYTES_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
-NET_BUF_POOL_FIXED_DEFINE(audio_q_out_pool, FIFO_OUT_BLOCK_COUNT, USB_BLOCK_MULTI_CHAN_1MS_SIZE,
+NET_BUF_POOL_FIXED_DEFINE(audio_q_tx_pool, FIFO_TX_BLOCK_COUNT, USB_BLOCK_SIZE_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
 
 static K_SEM_DEFINE(sem_encoder_start, 0, 1);
@@ -64,8 +64,6 @@ static struct sw_codec_config sw_codec_cfg;
 /* Buffer which can hold max 1 period test tone at 1000 Hz */
 static int16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 1000];
 static size_t test_tone_size;
-
-static struct net_buf *usb_out_spillover;
 
 /* The meta data for the decoder and the expected format of the USB.
  * An improvement would be to have the USB convert incoming data to the format it requires.
@@ -151,8 +149,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		/* Get complete PCM frame from USB */
 		struct net_buf *audio_frame_in;
 
-		ret = k_msgq_get(&audio_q_in, (void *)&audio_frame_in, K_FOREVER);
-		ERR_CHK_MSG(ret, "Failed to get complete audio frame from IN queue");
+		ret = k_msgq_get(&audio_q_rx, (void *)&audio_frame_in, K_FOREVER);
+		ERR_CHK_MSG(ret, "Failed to get complete audio frame from RX queue");
 
 		if (likely(sw_codec_cfg.initialized && sw_codec_cfg.encoder.enabled)) {
 			audio_frame_out = net_buf_alloc(&audio_q_enc_pool, K_NO_WAIT);
@@ -210,8 +208,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 		/* Print block usage - reduced overhead */
 		if (unlikely(++debug_trans_count >= DEBUG_INTERVAL_NUM)) {
-			audio_q_num_used = k_msgq_num_used_get(&audio_q_in);
-			LOG_DBG(COLOR_CYAN "IN filled: %d" COLOR_RESET, audio_q_num_used);
+			audio_q_num_used = k_msgq_num_used_get(&audio_q_rx);
+			LOG_DBG(COLOR_CYAN "RX filled: %d" COLOR_RESET, audio_q_num_used);
 			debug_trans_count = 0;
 		}
 
@@ -333,7 +331,6 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 {
 	int ret;
 	static int debug_trans_count;
-	size_t len;
 
 	if (!sw_codec_cfg.initialized) {
 		/* Throw away data */
@@ -344,13 +341,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 		return -EPERM;
 	}
 
-	if (!audio_usb_headset_in_enabled()) {
-		/* Ensure spillover is released and reset if the headset in is disabled */
-		if (usb_out_spillover != NULL) {
-			net_buf_unref(usb_out_spillover);
-			usb_out_spillover = NULL;
-		}
-
+	if (IS_ENABLED(CONFIG_AUDIO_SOURCE_USB) && !audio_usb_is_mic_enabled()) {
 		LOG_INF_RATELIMIT("Microphone not enabled, dropping data");
 		return 0;
 	}
@@ -385,101 +376,61 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 	}
 
 	/* If not enough space for a full frame, remove oldest samples to make room */
-	while (k_msgq_num_free_get(&audio_q_out) < USB_1MS_BLOCKS_NUM_MAX) {
+	while (k_msgq_num_free_get(&audio_q_tx) < CONFIG_FIFO_FRAME_SPLIT_NUM) {
 		struct net_buf *stale_buf;
 
-		ret = k_msgq_get(&audio_q_out, (void *)&stale_buf, K_NO_WAIT);
+		ret = k_msgq_get(&audio_q_tx, (void *)&stale_buf, K_NO_WAIT);
 		if (ret == -ENOMSG) {
 			/* If there are no more blocks in FIFO, break */
-			LOG_DBG("No more stale buffers");
 			break;
 		}
 
 		net_buf_unref(stale_buf);
 	}
 
-	size_t usb_out_1ms_frame_size =
-		USB_BLOCK_1MS_MONO_SIZE * audio_metadata_num_loc_get(meta_out);
+	/* Split decoded frame into CONFIG_FIFO_FRAME_SPLIT_NUM blocks */
+	for (int i = 0; i < CONFIG_FIFO_FRAME_SPLIT_NUM; i++) {
+		struct net_buf *audio_block = net_buf_alloc(&audio_q_tx_pool, K_NO_WAIT);
 
-	if (usb_out_spillover != NULL) {
-		len = MIN((usb_out_1ms_frame_size - usb_out_spillover->len), audio_frame_out->len);
-
-		/* Add decoded PCM output to spillover buffer */
-		net_buf_add_mem(usb_out_spillover, audio_frame_out->data, len);
-		net_buf_pull_mem(audio_frame_out, len);
-
-		/* If the working spillover buff is not a full 1ms frame then we return and wait for
-		 * the next audio_frame_out
-		 */
-		if (usb_out_spillover->len < usb_out_1ms_frame_size) {
-			/* Release this input buffer as we have consumed it */
-			net_buf_unref(audio_frame_out);
-			return 0;
-		}
-
-		struct audio_metadata *usb_spill_meta = net_buf_user_data(usb_out_spillover);
-
-		*usb_spill_meta = *meta_out;
-		usb_spill_meta->bytes_per_location = USB_BLOCK_1MS_MONO_SIZE;
-
-		ret = k_msgq_put(&audio_q_out, (void *)&usb_out_spillover, K_NO_WAIT);
-		if (ret) {
-			net_buf_unref(audio_frame_out);
-			net_buf_unref(usb_out_spillover);
-			usb_out_spillover = NULL;
-			return ret;
-		}
-	}
-
-	/* Split decoded frame into 1ms blocks */
-	while (audio_frame_out->len >= usb_out_1ms_frame_size) {
-		struct net_buf *usb_block = net_buf_alloc(&audio_q_out_pool, K_NO_WAIT);
-
-		if (unlikely(usb_block == NULL)) {
-			LOG_ERR("Out of USB OUT buffers");
+		if (audio_block == NULL) {
+			LOG_ERR("Out of TX buffers");
 			net_buf_unref(audio_frame_out);
 			return -ENOMEM;
 		}
 
-		struct audio_metadata *usb_block_meta = net_buf_user_data(usb_block);
+		struct audio_metadata *meta_blk = net_buf_user_data(audio_block);
 
-		net_buf_add_mem(usb_block, audio_frame_out->data, usb_out_1ms_frame_size);
-		*usb_block_meta = *meta_out;
-		usb_block_meta->bytes_per_location = USB_BLOCK_1MS_MONO_SIZE;
-		net_buf_pull_mem(audio_frame_out, usb_out_1ms_frame_size);
+		net_buf_add_mem(audio_block,
+				(char *)audio_frame_out->data +
+					(i * (audio_frame_out->len / CONFIG_FIFO_FRAME_SPLIT_NUM)),
+				(audio_frame_out->len / CONFIG_FIFO_FRAME_SPLIT_NUM));
+		net_buf_user_data_copy(audio_block, audio_frame_out);
 
-		ret = k_msgq_put(&audio_q_out, (void *)&usb_block, K_NO_WAIT);
+		meta_blk->data_len_us = meta_out->data_len_us / CONFIG_FIFO_FRAME_SPLIT_NUM;
+		meta_blk->bytes_per_location =
+			(audio_frame_out->len / CONFIG_FIFO_FRAME_SPLIT_NUM) /
+			audio_metadata_num_loc_get(meta_out);
+
+		ret = k_msgq_put(&audio_q_tx, (void *)&audio_block, K_NO_WAIT);
 		if (ret) {
+			LOG_ERR("Failed to put block onto queue");
+			net_buf_unref(audio_block);
 			net_buf_unref(audio_frame_out);
 			return ret;
 		}
 	}
-
-	if (audio_frame_out->len != 0) {
-		struct net_buf *usb_out_spillover = net_buf_alloc(&audio_q_out_pool, K_NO_WAIT);
-
-		if (unlikely(usb_out_spillover == NULL)) {
-			LOG_ERR("Out of USB OUT buffers");
-			net_buf_unref(audio_frame_out);
-			return -ENOMEM;
-		}
-
-		net_buf_add_mem(usb_out_spillover, audio_frame_out->data, audio_frame_out->len);
-	} else {
-		usb_out_spillover = NULL;
-	}
-
-	net_buf_unref(audio_frame_out);
 
 	if (debug_trans_count == DEBUG_INTERVAL_NUM) {
-		uint32_t audio_q_num_used = k_msgq_num_used_get(&audio_q_out);
+		uint32_t audio_q_num_used = k_msgq_num_used_get(&audio_q_tx);
 
-		LOG_DBG(COLOR_MAGENTA "OUT fill grade: %d/%d" COLOR_RESET, audio_q_num_used,
+		LOG_DBG(COLOR_MAGENTA "TX fill grade: %d/%d" COLOR_RESET, audio_q_num_used,
 			CONFIG_FIFO_TX_FRAME_COUNT);
 		debug_trans_count = 0;
 	} else {
 		debug_trans_count++;
 	}
+
+	net_buf_unref(audio_frame_out);
 
 	return 0;
 }
@@ -514,7 +465,7 @@ void audio_system_start(void)
 	}
 
 #if ((CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY))
-	ret = audio_usb_start(&audio_q_out, &audio_q_in);
+	ret = audio_usb_start(&audio_q_tx, &audio_q_rx);
 	ERR_CHK(ret);
 #else
 	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
@@ -522,7 +473,7 @@ void audio_system_start(void)
 		ERR_CHK(ret);
 	}
 
-	ret = audio_datapath_start(&audio_q_in);
+	ret = audio_datapath_start(&audio_q_rx);
 	ERR_CHK(ret);
 #endif /* ((CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY))) */
 }
