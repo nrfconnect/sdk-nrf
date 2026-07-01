@@ -37,35 +37,47 @@ static void clock_started_callback(struct onoff_manager *mgr,
 #if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(fll16m))
 #define NODE_HFCLK      DT_NODELABEL(fll16m)
 #define HFCLK_FREQUENCY DT_PROP_OR(NODE_HFCLK, frequency, 0)
-
-static const struct device *fll16m = DEVICE_DT_GET(NODE_HFCLK);
-static const struct nrf_clock_spec hfclk_spec = {
+static const struct device *clk_dev = DEVICE_DT_GET(NODE_HFCLK);
+static const struct nrf_clock_spec fll16m_spec = {
 	.frequency = HFCLK_FREQUENCY,
 };
+static const struct nrf_clock_spec *clk_spec = &fll16m_spec;
+
 #elif defined(CONFIG_SOC_SERIES_NRF54L)
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 static struct onoff_manager *clk_mgr;
+#else
+static const struct device *clk_dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+								    (nordic_nrf_clock_hfclk),
+								    (nordic_nrf_clock_xo)));
+static const struct nrf_clock_spec *clk_spec;
+#endif
 #endif
 
 static int hf_clock_request(void)
 {
 	sys_notify_init_callback(&clk_cli.notify, clock_started_callback);
-#if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(fll16m))
-	return nrf_clock_control_request(fll16m, &hfclk_spec, &clk_cli);
-#elif defined(CONFIG_SOC_SERIES_NRF54L)
+#if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(fll16m)) || defined(CONFIG_SOC_SERIES_NRF54L)
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	clock_control_subsys_t subsys = CLOCK_CONTROL_NRF_SUBSYS_HF;
 
 	clk_mgr = z_nrf_clock_control_get_onoff(subsys);
 	return onoff_request(clk_mgr, &clk_cli);
+#else
+	return nrf_clock_control_request(clk_dev, clk_spec, &clk_cli);
+#endif
 #endif
 	return -ENOTSUP;
 }
 
 static int hf_clock_release(void)
 {
-#if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(fll16m))
-	return nrf_clock_control_release(fll16m, &hfclk_spec);
-#elif defined(CONFIG_SOC_SERIES_NRF54L)
+#if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(fll16m)) || defined(CONFIG_SOC_SERIES_NRF54L)
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	return onoff_release(clk_mgr);
+#else
+	return nrf_clock_control_release(clk_dev, clk_spec);
+#endif
 #endif
 	return -ENOTSUP;
 }
