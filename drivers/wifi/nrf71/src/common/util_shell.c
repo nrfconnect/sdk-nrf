@@ -11,11 +11,11 @@
 #include <string.h>
 #include <nrf71_wifi_ctrl.h>
 #include <zephyr/sys/sys_heap.h>
-#include "common/fmac_util.h"
-#include "system/fmac_api.h"
-#include "fmac_main.h"
-#include "shim.h"
-#include "wifi_util.h"
+#include <common/fmac_util.h>
+#include <system/fmac_api.h>
+#include <system/main.h>
+#include <shim.h>
+#include <system/wifi_util.h>
 
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;

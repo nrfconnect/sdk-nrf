@@ -12,4 +12,4 @@
 
 SHELL_SUBCMD_SET_CREATE(nrf71_commands, (nrf71));
 
-SHELL_CMD_REGISTER(nrf71, &nrf71_commands, "nRF70 specific commands", NULL);
+SHELL_CMD_REGISTER(nrf71, &nrf71_commands, "nRF71 specific commands", NULL);
