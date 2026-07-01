@@ -560,13 +560,15 @@ static void handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 		(const struct wifi_scan_result *)cb->info;
 	Result scan_result = Result_init_zero;
 	pb_ostream_t ostream;
+	size_t ssid_len = MIN(entry->ssid_length,
+			sizeof(scan_result.scan_record.wifi.ssid.bytes));
 
 	NET_BUF_SIMPLE_DEFINE(scan_result_stream, RESULT_MSG_MAX_LENGTH);
 
 	scan_result.has_scan_record = true;
 	scan_result.scan_record.has_wifi = true;
-	memcpy(scan_result.scan_record.wifi.ssid.bytes, entry->ssid, entry->ssid_length);
-	scan_result.scan_record.wifi.ssid.size = entry->ssid_length;
+	memcpy(scan_result.scan_record.wifi.ssid.bytes, entry->ssid, ssid_len);
+	scan_result.scan_record.wifi.ssid.size = ssid_len;
 	memcpy(scan_result.scan_record.wifi.bssid.bytes, entry->mac,
 		entry->mac_length > 6 ? 6 : entry->mac_length);
 	scan_result.scan_record.wifi.bssid.size =
