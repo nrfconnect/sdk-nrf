@@ -27,9 +27,3 @@
     - thingy53/nrf5340/cpuapp/ns
     - thingy53/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/SHEL-3161"
-
-- scenarios:
-    - sample.cellular.lwm2m_carrier.shell
-  platforms:
-    - nrf9151dk/nrf9151/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39639"
