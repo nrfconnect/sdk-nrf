@@ -25,10 +25,16 @@ LOG_MODULE_REGISTER(nrf_cloud_jwt, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #include <zephyr/sys/base64.h>
 #include <psa/crypto.h>
 #include <app_jwt.h>
+#include "nrf_cloud_credentials_keygen_internal.h"
 
 /* Size of the ES256 private key material */
 #define PRV_KEY_SZ (32)
 
+#if !defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
+/* The raw-key helpers below are only used when the private key is read from the
+ * TLS credentials store. With on-device key generation the key resides in PSA
+ * and is referenced by id, so these are not compiled.
+ */
 #define PRV_KEY_DER_SZ	      (138)
 #define PRV_KEY_PEM_SZ	      (256)
 #define PRV_KEY_DER_START_IDX (36)
@@ -130,12 +136,26 @@ static int get_key_from_cred(const int sec_tag, uint8_t *const der_out)
 
 	return 0;
 }
+#endif /* !CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN */
 
 static int custom_jwt_generate(uint32_t exp_delta_s, char *const jwt_buf, size_t jwt_buf_sz,
 			       const char *subject, int sec_tag)
 {
 	int err = 0;
 	psa_key_id_t kid;
+
+	err = psa_crypto_init();
+	if (err != PSA_SUCCESS) {
+		LOG_ERR("psa_crypto_init failed! (Error: %d)", err);
+		return err;
+	}
+
+#if defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
+	/* The device key was generated on-device and resides in PSA. Use it
+	 * directly by its key id so the private key never leaves PSA.
+	 */
+	kid = (psa_key_id_t)nrf_cloud_credentials_keygen_key_id(sec_tag);
+#else
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 	uint8_t priv_key[PRV_KEY_SZ];
 
@@ -143,12 +163,6 @@ static int custom_jwt_generate(uint32_t exp_delta_s, char *const jwt_buf, size_t
 	err = get_key_from_cred(sec_tag, priv_key);
 	if (err) {
 		LOG_ERR("Failed to get private key, error: %d", err);
-		return err;
-	}
-
-	err = psa_crypto_init();
-	if (err != PSA_SUCCESS) {
-		LOG_ERR("psa_crypto_init failed! (Error: %d)", err);
 		return err;
 	}
 
@@ -165,6 +179,7 @@ static int custom_jwt_generate(uint32_t exp_delta_s, char *const jwt_buf, size_t
 		LOG_ERR("psa_import_key failed! (Error: %d)", err);
 		return err;
 	}
+#endif /* CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN */
 
 	struct app_jwt_data _jwt_internal = {
 		.sec_tag = kid,

@@ -570,7 +570,15 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_nrf_cloud` library:
+
+  * Added:
+
+    * On-device key and CSR generation, enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN` Kconfig option.
+      The device private key is generated in PSA as a persistent, non-exportable key and referenced for TLS by its key ID, so it never leaves the device.
+      The :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL` Kconfig option adds the ``nrf_cloud_cred`` shell commands (``keygen``, ``csr``, ``delete``, and ``pubkey``).
+      The :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY` Kconfig option (enabled by default) exports the on-device public key so that host tooling can verify the key against the device certificate.
+      See :ref:`lib_nrf_cloud_credentials_keygen` for more information.
 
 Libraries for NFC
 -----------------
