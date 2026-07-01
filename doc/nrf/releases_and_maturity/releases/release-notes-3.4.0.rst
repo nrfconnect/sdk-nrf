@@ -807,7 +807,7 @@ For the list of upstream Zephyr commits (not including cherry-picked commits) in
 
 .. code-block:: none
 
-   git log --oneline 684c9e8f32 ^911b3da139
+   git log --oneline 684c9e8f32 ^93b5f19f99
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
