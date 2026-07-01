@@ -295,7 +295,8 @@ static void coap_callback(const struct coap_client_response_data *data, void *us
 				coap_ctx->response_len = 0;
 			}
 
-			if (coap_ctx->response_len + data->payload_len > coap_ctx->rx_buf_len) {
+			if (data->offset > coap_ctx->rx_buf_len ||
+			    data->payload_len > coap_ctx->rx_buf_len - data->offset) {
 				LOG_ERR("RX buffer too small");
 				coap_ctx->code = -ENOMEM;
 				k_sem_give(&coap_response);
@@ -304,7 +305,8 @@ static void coap_callback(const struct coap_client_response_data *data, void *us
 
 			memcpy(coap_ctx->rx_buf + data->offset, data->payload, data->payload_len);
 			coap_ctx->response = coap_ctx->rx_buf;
-			coap_ctx->response_len += data->payload_len;
+			coap_ctx->response_len = MAX(coap_ctx->response_len,
+						     data->offset + data->payload_len);
 		} else {
 			LOG_DBG("Operation successful");
 			coap_ctx->response_len = 0;
