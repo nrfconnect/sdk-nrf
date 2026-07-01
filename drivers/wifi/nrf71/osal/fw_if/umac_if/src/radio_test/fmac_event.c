@@ -92,7 +92,7 @@ static enum nrf_wifi_status umac_event_rt_rf_test_process(
 	case NRF_WIFI_RF_TEST_EVENT_TX_TONE_START:
 		break;
 
-	case NRF_WIFI_RF_TEST_XO_TUNE:
+	case NRF_WIFI_RF_TEST_EVENT_XO_TUNE:
 		nrf_wifi_osal_mem_cpy(&rf_get_xo_value_params,
 				(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 				sizeof(rf_get_xo_value_params));
