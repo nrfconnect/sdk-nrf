@@ -11,13 +11,13 @@
 
 / {
 	aliases {
-		i2c-controller = &i2c21;
+		i2c-controller = &i2c23;
 		i2c-target = &i2c22;
 	};
 };
 
 &pinctrl {
-	i2c21_default_alt: i2c21_default_alt {
+	i2c23_default_alt: i2c23_default_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIM_SDA, 1, 6)>,
 				<NRF_PSEL(TWIM_SCL, 1, 5)>;
@@ -25,7 +25,7 @@
 		};
 	};
 
-	i2c21_sleep_alt: i2c21_sleep_alt {
+	i2c23_sleep_alt: i2c23_sleep_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIM_SDA, 1, 6)>,
 				<NRF_PSEL(TWIM_SCL, 1, 5)>;
@@ -50,10 +50,10 @@
 	};
 };
 
-&i2c21 {
+&i2c23 {
 	compatible = "nordic,nrf-twim";
-	pinctrl-0 = <&i2c21_default_alt>;
-	pinctrl-1 = <&i2c21_sleep_alt>;
+	pinctrl-0 = <&i2c23_default_alt>;
+	pinctrl-1 = <&i2c23_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	zephyr,concat-buf-size = <256>;
 	status = "okay";
