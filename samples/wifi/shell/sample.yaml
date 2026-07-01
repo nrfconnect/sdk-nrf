@@ -246,6 +246,7 @@ tests:
     extra_args:
       - shell_SHIELD=nrf7002eb
       - CONFIG_SOC_NRF53_CPUNET_ENABLE=y
+      - mcuboot_CONFIG_CLOCK_CONTROL_NRFX_HFCLKAUDIO=n
     integration_platforms:
       - thingy53/nrf5340/cpuapp
     platform_allow: thingy53/nrf5340/cpuapp

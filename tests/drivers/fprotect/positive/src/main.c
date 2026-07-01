@@ -30,6 +30,8 @@ static uint8_t read_data_after[sizeof(write_data)];
 
 ZTEST(test_fprotect_positive, test_1_flash_write)
 {
+	flash_erase(flash_dev, VALID_WRITE_ADDR, CONFIG_FPROTECT_BLOCK_SIZE);
+
 	int retval = flash_read(flash_dev, TEST_READ_ADDR, read_data_before,
 				ARRAY_SIZE(read_data_before));
 
