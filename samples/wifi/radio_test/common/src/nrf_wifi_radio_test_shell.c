@@ -9,7 +9,7 @@
  */
 
 #ifdef CONFIG_NRF71_RADIO_TEST
-#include <nrf71_radio_test.h>
+#include <radio_test/main.h>
 #else
 #include <fmac_main.h>
 #include <util.h>
@@ -22,8 +22,11 @@
 
 #ifndef CONFIG_NRF71_RADIO_TEST
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
-#endif
 struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+#else
+struct nrf_wifi_rt_drv_ctx *ctx = &rt_drv_priv.drv_ctx;
+#endif
+
 
 #define NRF_WIFI_RADIO_TEST_INIT_TIMEOUT_MS 5000
 

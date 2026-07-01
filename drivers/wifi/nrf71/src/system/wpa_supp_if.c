@@ -13,17 +13,19 @@
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 
-#include "fmac_main.h"
-#include "common/fmac_util.h"
-#include "wifi_mgmt.h"
-#include "wpa_supp_if.h"
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+
+#include <net_private.h>
+
+#include <system/main.h>
+#include <common/fmac_util.h>
+#include <system/wifi_mgmt.h>
+#include <system/wpa_supp_if.h>
 #include <system/fmac_peer.h>
 
 #ifdef CONFIG_NRF_WIFI_USE_KMU
 #include <wifi_kmu/wifi_kmu.h>
 #endif
-
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 K_SEM_DEFINE(wait_for_event_sem, 0, 1);
 K_SEM_DEFINE(wait_for_scan_resp_sem, 0, 1);
@@ -3241,23 +3243,23 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 
 	if (!net_eth_is_addr_valid((struct net_eth_addr *)&chg_sta.mac_addr)) {
 		LOG_ERR("%s: Invalid peer MAC address: %s", __func__,
-			nrf_wifi_sprint_ll_addr_buf(chg_sta.mac_addr, 6, buf,
-						    sizeof(buf)));
+			net_sprint_ll_addr_buf(chg_sta.mac_addr, NET_ETH_ADDR_LEN, buf,
+					       sizeof(buf)));
 		goto out;
 	}
 
 	peer_id = nrf_wifi_fmac_peer_get_id(rpu_ctx_zep->rpu_ctx, chg_sta.mac_addr);
 	if (peer_id == -1) {
 		LOG_ERR("%s: Unknown PEER: %s", __func__,
-			nrf_wifi_sprint_ll_addr_buf(chg_sta.mac_addr, 6, buf,
-						    sizeof(buf)));
+			net_sprint_ll_addr_buf(chg_sta.mac_addr, NET_ETH_ADDR_LEN, buf,
+					       sizeof(buf)));
 		goto out;
 	}
 
 	if (peer_id == MAX_PEERS) {
 		LOG_ERR("%s: Invalid PEER (group): %s", __func__,
-			nrf_wifi_sprint_ll_addr_buf(chg_sta.mac_addr, 6, buf,
-						    sizeof(buf)));
+			net_sprint_ll_addr_buf(chg_sta.mac_addr, NET_ETH_ADDR_LEN, buf,
+					       sizeof(buf)));
 		goto out;
 	}
 
