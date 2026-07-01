@@ -13,14 +13,8 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/storage/flash_map.h>
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#define S0_SLOT_ADDRESS		PARTITION_ADDRESS(s0_image)
-#define S1_SLOT_ADDRESS		PARTITION_ADDRESS(s1_image)
-#else
 #define S0_SLOT_ADDRESS		PARTITION_ADDRESS(s0_partition)
 #define S1_SLOT_ADDRESS		PARTITION_ADDRESS(s1_partition)
-#endif
 
 ZTEST(bl_validation_test, test_key_looping)
 {
