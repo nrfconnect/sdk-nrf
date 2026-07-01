@@ -18,7 +18,7 @@
 
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 
-#include <fmac_main.h>
+#include <system/main.h>
 #include <common/fmac_api_common.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);

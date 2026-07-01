@@ -16,9 +16,9 @@
 #define __FMAC_API_H__
 
 #include <nrf71_wifi_ctrl.h>
-#include "common/fmac_api_common.h"
-#include "offload_raw_tx/fmac_structs.h"
-#include "util.h"
+#include <common/fmac_api_common.h>
+#include <offload_raw_tx/fmac_structs.h>
+#include <util.h>
 
 
 /**
@@ -81,6 +81,18 @@ nrf_wifi_off_raw_tx_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				  unsigned int vtf_buffer_start_address);
 
 /**
+ * @brief Deinitialize a RPU instance.
+ * @param fmac_dev_ctx Pointer to the context of the RPU instance to be removed.
+ *
+ * This function deinitializes the firmware of an RPU instance.
+ *
+ * @retval NRF_WIFI_STATUS_SUCCESS On Success
+ * @retval NRF_WIFI_STATUS_FAIL On failure to execute command
+ */
+void nrf_wifi_off_raw_tx_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
+
+
+ /**
  * @brief Configure the offloaded raw TX parameters.
  * @param fmac_dev_ctx Pointer to the context of the RPU instance to be removed.
  * @param off_ctrl_params Offloaded raw tx control information.

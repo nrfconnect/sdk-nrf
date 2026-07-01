@@ -15,48 +15,45 @@
 #include <zephyr/kernel.h>
 #ifdef CONFIG_NET_L2_ETHERNET
 #include <zephyr/net/ethernet.h>
-#endif
+#endif /* CONFIG_NET_L2_ETHERNET */
+
 #include <zephyr/logging/log.h>
 #include <zephyr/net/wifi_mgmt.h>
+
+#ifdef CONFIG_NET_CONNECTION_MANAGER_CONNECTIVITY_WIFI_MGMT
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <zephyr/net/conn_mgr_connectivity_impl.h>
 #include <zephyr/net/conn_mgr/connectivity_wifi_mgmt.h>
-
+#endif /* CONFIG_NET_CONNECTION_MANAGER_CONNECTIVITY_WIFI_MGMT */
 
 #include <util.h>
-#include "common/fmac_util.h"
-#include <fmac_main.h>
+#include <common/fmac_util.h>
+#include <system/main.h>
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 
-#ifndef CONFIG_NRF71_RADIO_TEST
 #ifdef CONFIG_NRF71_STA_MODE
 #include <zephyr/net/wifi_nm.h>
-#include <wifi_mgmt_scan.h>
-#include <wifi_mgmt.h>
-#include <wpa_supp_if.h>
-#else
-#include <wifi_mgmt.h>
-#include <wifi_mgmt_scan.h>
-#endif /* CONFIG_NRF71_STA_MODE */
+#include <system/wifi_mgmt_scan.h>
+#include <system/wifi_mgmt.h>
+#include <system/wpa_supp_if.h>
+#else /* CONFIG_NRF71_STA_MODE */
+#include <system/wifi_mgmt_scan.h>
+#include <system/wifi_mgmt.h>
+#endif /* !CONFIG_NRF71_STA_MODE */
 
 #include <system/fmac_api.h>
-#ifndef CONFIG_NRF71_RADIO_TEST
 #include <nrf71_wifi_rf.h>
-#endif /* !CONFIG_NRF71_RADIO_TEST */
-#else
-#include <radio_test/fmac_api.h>
-#endif /* !CONFIG_NRF71_RADIO_TEST */
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
-extern char *net_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len, char *buf, int buflen);
+
 
 /* 3 bytes for addreess, 3 bytes for length */
 #define MAX_PKT_RAM_TX_ALIGN_OVERHEAD 6
-#ifndef CONFIG_NRF71_RADIO_TEST
+
 #ifdef CONFIG_NRF71_DATA_TX
 
 #define MAX_TX_FRAME_SIZE \
@@ -85,7 +82,7 @@ static const unsigned char max_rxampdu_size = MAX_RX_AMPDU_SIZE_64KB;
 static const unsigned char max_tx_aggregation = CONFIG_NRF71_MAX_TX_AGGREGATION;
 
 static const unsigned char rate_protection_type;
-#endif
+#endif /* CONFIG_NRF71_DATA_TX */
 
 BUILD_ASSERT(CONFIG_NRF71_RX_MAX_DATA_SIZE % 4 == 0,
 	"RX buffer size must be a multiple of 4");
@@ -103,50 +100,11 @@ static const unsigned int rx3_buf_sz = CONFIG_NRF71_RX_MAX_DATA_SIZE;
 struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 static K_MUTEX_DEFINE(reg_lock);
 
-/**
- * @brief Format a link layer address to a string buffer.
- *
- * @param ll Pointer to the link layer address bytes.
- * @param ll_len Length of the link layer address (typically 6 for MAC).
- * @param buf Buffer to store the formatted string.
- * @param buflen Size of the buffer.
- *
- * @return Pointer to the buffer on success, NULL on failure.
- */
-char *nrf_wifi_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,
-				   char *buf, int buflen)
-{
-	return net_sprint_ll_addr_buf(ll, NET_ETH_ADDR_LEN, buf, buflen);
-}
 
-const char *nrf_wifi_get_drv_version(void)
-{
-	return NRF71_DRIVER_VERSION;
-}
-
-/* If the interface is not Wi-Fi then errors are expected, so, fail silently */
-struct nrf_wifi_vif_ctx_zep *nrf_wifi_get_vif_ctx(struct net_if *iface)
-{
-	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
-
-	if (!iface || !rpu_ctx || !rpu_ctx->rpu_ctx) {
-		return NULL;
-	}
-
-	for (int i = 0; i < ARRAY_SIZE(rpu_ctx->vif_ctx_zep); i++) {
-		if (rpu_ctx->vif_ctx_zep[i].zep_net_if_ctx == iface) {
-			vif_ctx_zep = &rpu_ctx->vif_ctx_zep[i];
-			break;
-		}
-	}
-
-	return vif_ctx_zep;
-}
-
-void nrf_wifi_event_proc_scan_start_zep(void *if_priv,
-					struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
-					unsigned int event_len)
+static void nrf_wifi_event_proc_scan_start_zep(
+	void *if_priv,
+	struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
+	unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
@@ -215,7 +173,7 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 	status = NRF_WIFI_STATUS_SUCCESS;
 }
 
-void nrf_wifi_scan_timeout_work(struct k_work *work)
+static void nrf_wifi_scan_timeout_work(struct k_work *work)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
@@ -282,7 +240,7 @@ void nrf_wifi_disp_scan_res_work_handler(struct k_work *work)
 
 #ifdef CONFIG_NRF71_STA_MODE
 static void nrf_wifi_process_rssi_from_rx(void *vif_ctx,
-				   signed short signal)
+					    signed short signal)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = vif_ctx;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
@@ -350,6 +308,7 @@ void nrf_wifi_event_get_reg_zep(void *vif_ctx,
 	fmac_dev_ctx->alpha2_valid = true;
 }
 
+
 int nrf_wifi_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_domain)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -403,7 +362,7 @@ int nrf_wifi_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_do
 		ret = 0;
 		goto out;
 	}
-#endif
+#endif /* CONFIG_NRF71_SCAN_ONLY || CONFIG_NRF71_RAW_DATA_RX */
 	if (reg_domain->oper != WIFI_MGMT_GET) {
 		LOG_ERR("%s: Invalid operation: %d", __func__, reg_domain->oper);
 		goto out;
@@ -438,6 +397,8 @@ out:
 	k_mutex_unlock(&reg_lock);
 	return ret;
 }
+
+
 #ifdef CONFIG_NRF71_STA_MODE
 void nrf_wifi_event_proc_cookie_rsp(void *vif_ctx,
 				    struct nrf_wifi_umac_event_cookie_rsp *cookie_rsp_event,
@@ -547,136 +508,16 @@ void nrf_wifi_event_proc_channel_set_done_zep(void *os_vif_ctx,
 	}
 }
 #endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
-#endif /* !CONFIG_NRF71_RADIO_TEST */
 
 
-/**
- * @brief Get operating band bitmap from Kconfig (see NRF_WIFI_OP_BAND_* in
- * nrf71_wifi_ctrl.h / nrf71_wifi_common.h).
- *
- * @return Bitmap of bands (NRF_WIFI_OP_BAND_2GHZ, NRF_WIFI_OP_BAND_5GHZ,
- *         NRF_WIFI_OP_BAND_6GHZ).
- */
-unsigned char get_nrf_wifi_op_band(void)
-{
-	if (IS_ENABLED(CONFIG_NRF_WIFI_2G_BAND)) {
-		return NRF_WIFI_OP_BAND_2GHZ;
-	}
-	if (IS_ENABLED(CONFIG_NRF_WIFI_5G_BAND)) {
-		return NRF_WIFI_OP_BAND_5GHZ;
-	}
-	if (IS_ENABLED(CONFIG_NRF_WIFI_6G_BAND)) {
-		return NRF_WIFI_OP_BAND_6GHZ;
-	}
-	if (IS_ENABLED(CONFIG_NRF_WIFI_DUAL_BAND)) {
-		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
-	}
-	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
-}
-
-struct rf_hex_param {
-	const char *hex_str;
-	uint8_t *bytes;
-	int bytes_len;
-};
-
-static struct rf_hex_param rf_params[NUM_WIFI_PARAMS] = {
-	{NRF_WIFI_PARAMS1, NULL, 0},  {NRF_WIFI_PARAMS2, NULL, 0},  {NRF_WIFI_PARAMS3, NULL, 0},
-	{NRF_WIFI_PARAMS4, NULL, 0},  {NRF_WIFI_PARAMS5, NULL, 0},  {NRF_WIFI_PARAMS6, NULL, 0},
-	{NRF_WIFI_PARAMS7, NULL, 0},  {NRF_WIFI_PARAMS8, NULL, 0},  {NRF_WIFI_PARAMS9, NULL, 0},
-	{NRF_WIFI_PARAMS10, NULL, 0}, {NRF_WIFI_PARAMS11, NULL, 0}, {NRF_WIFI_PARAMS12, NULL, 0},
-	{NRF_WIFI_PARAMS13, NULL, 0}, {NRF_WIFI_PARAMS14, NULL, 0}, {NRF_WIFI_PARAMS15, NULL, 0},
-	{NRF_WIFI_PARAMS16, NULL, 0}, {NRF_WIFI_PARAMS17, NULL, 0}, {NRF_WIFI_PARAMS18, NULL, 0},
-	{NRF_WIFI_PARAMS19, NULL, 0}, {NRF_WIFI_PARAMS20, NULL, 0}, {NRF_WIFI_PARAMS21, NULL, 0},
-	{NRF_WIFI_PARAMS22, NULL, 0},
-};
-
-enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int *rf_params_addr)
-{
-	int index;
-	int cleanup_idx;
-	size_t str_len;
-	int ret;
-
-	for (index = 0; index < NUM_WIFI_PARAMS; index++) {
-		if (!rf_params[index].hex_str) {
-			continue;
-		}
-		str_len = strlen(rf_params[index].hex_str);
-		rf_params[index].bytes = k_malloc(str_len);
-		if (!rf_params[index].bytes) {
-			LOG_ERR("%s: Unable to allocate %zu bytes", __func__, str_len);
-			goto cleanup;
-		}
-
-		ret = nrf_wifi_utils_hex_str_to_val(rf_params[index].bytes, (unsigned int)str_len,
-						    (unsigned char *)rf_params[index].hex_str);
-		if (ret < 0) {
-			LOG_ERR("%s: hex_str_to_val failed", __func__);
-			k_free(rf_params[index].bytes);
-			rf_params[index].bytes = NULL;
-			goto cleanup;
-		}
-
-		rf_params[index].bytes_len = ret;
-		rf_params_addr[index] = (unsigned int)rf_params[index].bytes;
-	}
-	return NRF_WIFI_STATUS_SUCCESS;
-
-cleanup:
-	for (cleanup_idx = 0; cleanup_idx < index; cleanup_idx++) {
-		if (rf_params[cleanup_idx].bytes) {
-			k_free(rf_params[cleanup_idx].bytes);
-			rf_params[cleanup_idx].bytes = NULL;
-		}
-	}
-	return NRF_WIFI_STATUS_FAIL;
-}
-
-struct nrf_wifi_vtf_params_host {
-	unsigned int voltage;
-	unsigned int temp;
-	unsigned int x0_freq;
-};
-
-enum nrf_wifi_status nrf_wifi_fmac_config_vtf_params(struct nrf_wifi_fmac_dev_ctx *dev_ctx,
-						     unsigned int voltage, unsigned int temp,
-						     unsigned int x0,
-						     unsigned int *vtf_buffer_start_address)
-{
-	struct nrf_wifi_vtf_params_host *vtf_buf;
-
-	if (!vtf_buffer_start_address) {
-		return NRF_WIFI_STATUS_FAIL;
-	}
-
-	vtf_buf = k_malloc(sizeof(*vtf_buf));
-	if (!vtf_buf) {
-		LOG_ERR("%s: k_malloc failed for VTF params", __func__);
-		return NRF_WIFI_STATUS_FAIL;
-	}
-
-	vtf_buf->voltage = voltage;
-	vtf_buf->temp = temp;
-	vtf_buf->x0_freq = x0;
-	*vtf_buffer_start_address = (unsigned int)vtf_buf;
-	return NRF_WIFI_STATUS_SUCCESS;
-}
-
-enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
+enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	void *rpu_ctx = NULL;
-	unsigned char op_band = get_nrf_wifi_op_band();
+	unsigned char op_band = nrf_wifi_utils_get_op_band();
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-	int sleep_type = -1;
-
-#ifndef CONFIG_NRF71_RADIO_TEST
-	sleep_type = HW_SLEEP_ENABLE;
-#else
-	sleep_type = SLEEP_DISABLE;
-#endif /* CONFIG_NRF71_RADIO_TEST */
+	int sleep_type = HW_SLEEP_ENABLE;
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
 	struct nrf_wifi_tx_pwr_ceil_params tx_pwr_ceil_params;
@@ -687,11 +528,7 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 
 	rpu_ctx_zep->drv_priv_zep = drv_priv_zep;
 
-#ifdef CONFIG_NRF71_RADIO_TEST
-	rpu_ctx = nrf_wifi_rt_fmac_dev_add(drv_priv_zep->fmac_priv, rpu_ctx_zep);
-#else
 	rpu_ctx = nrf_wifi_sys_fmac_dev_add(drv_priv_zep->fmac_priv, rpu_ctx_zep);
-#endif /* CONFIG_NRF71_RADIO_TEST */
 
 	if (!rpu_ctx) {
 		LOG_ERR("%s: nrf_wifi_fmac_dev_add failed", __func__);
@@ -730,21 +567,6 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 		goto err;
 	}
 
-#ifdef CONFIG_NRF71_RADIO_TEST
-	status = nrf_wifi_rt_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
-					rpu_ctx_zep->phy_rf_params_addr,
-					rpu_ctx_zep->vtf_buffer_start_address,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
-					sleep_type,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
-					NRF_WIFI_DEF_PHY_CALIB,
-					op_band,
-					IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
-					&tx_pwr_ctrl_params,
-					&tx_pwr_ceil_params,
-					&board_params,
-					STRINGIFY(CONFIG_NRF71_REG_DOMAIN));
-#else
 	status = nrf_wifi_sys_fmac_dev_init(
 		rpu_ctx_zep->rpu_ctx,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
@@ -754,8 +576,6 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 		&tx_pwr_ctrl_params, &tx_pwr_ceil_params, &board_params,
 		STRINGIFY(CONFIG_NRF71_REG_DOMAIN), rpu_ctx_zep->phy_rf_params_addr,
 			  rpu_ctx_zep->vtf_buffer_start_address);
-#endif /* CONFIG_NRF71_RADIO_TEST */
-
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_sys_fmac_dev_init failed", __func__);
@@ -771,16 +591,13 @@ err:
 	return status;
 }
 
-enum nrf_wifi_status nrf_wifi_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
+enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
 {
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
 	rpu_ctx_zep = &drv_priv_zep->rpu_ctx_zep;
-#ifdef CONFIG_NRF71_RADIO_TEST
-	nrf_wifi_rt_fmac_dev_deinit(rpu_ctx_zep->rpu_ctx);
-#else
+
 	nrf_wifi_sys_fmac_dev_deinit(rpu_ctx_zep->rpu_ctx);
-#endif /* CONFIG_NRF71_RADIO_TEST */
 
 	nrf_wifi_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
 
@@ -812,9 +629,8 @@ static void nrf_wifi_coex_event_cb(void *os_dev_ctx, void *event, unsigned int l
 }
 #endif /* CONFIG_NRF71_SR_COEX_DRIVER && !CONFIG_NRF71_RADIO_TEST */
 
-static int nrf_wifi_drv_main_zep(const struct device *dev)
+static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 {
-#ifndef CONFIG_NRF71_RADIO_TEST
 	struct nrf_wifi_fmac_callbk_fns callbk_fns = { 0 };
 	struct nrf_wifi_data_config_params data_config = { 0 };
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
@@ -829,14 +645,12 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	/* Setup the linkage between the FMAC and the VIF contexts */
 	vif_ctx_zep->rpu_ctx_zep = &rpu_drv_priv_zep.rpu_ctx_zep;
 	k_mutex_init(&vif_ctx_zep->vif_lock);
-#ifndef CONFIG_NRF71_RADIO_TEST
 	k_work_init_delayable(&vif_ctx_zep->scan_timeout_work,
 			      nrf_wifi_scan_timeout_work);
 	k_work_init(&vif_ctx_zep->disp_scan_res_work,
 		    nrf_wifi_disp_scan_res_work_handler);
 
 	vif_ctx_zep->bss_max_idle_period = USHRT_MAX;
-#endif /* !CONFIG_NRF71_RADIO_TEST */
 
 	if (fixed_vif_cnt++ > 0) {
 		/* FMAC is already initialized for VIF-0 */
@@ -854,7 +668,7 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	data_config.rate_protection_type = rate_protection_type;
 	callbk_fns.if_carr_state_chg_callbk_fn = nrf_wifi_if_carr_state_chg;
 	callbk_fns.rx_frm_callbk_fn = nrf_wifi_if_rx_frm;
-#endif
+#endif /* CONFIG_NRF71_DATA_TX */
 #if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
 	callbk_fns.sniffer_callbk_fn = nrf_wifi_if_sniffer_rx_frm;
 #endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
@@ -875,9 +689,9 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 	callbk_fns.rx_bcn_prb_resp_callbk_fn = nrf_wifi_rx_bcn_prb_resp_frm;
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
-#ifdef CONFIG_NRF71_SYSTEM_MODE
+#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX)
 	callbk_fns.set_if_callbk_fn = nrf_wifi_set_iface_event_handler;
-#endif /* CONFIG_NRF71_SYSTEM_MODE */
+#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_RAW_DATA_RX */
 #ifdef CONFIG_NRF71_STA_MODE
 	callbk_fns.twt_config_callbk_fn = nrf_wifi_event_proc_twt_setup_zep;
 	callbk_fns.twt_teardown_callbk_fn = nrf_wifi_event_proc_twt_teardown_zep;
@@ -902,7 +716,7 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 #endif /* CONFIG_NRF71_STA_MODE */
 #if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
 	callbk_fns.channel_set_done_callbk_fn = nrf_wifi_event_proc_channel_set_done_zep;
-#endif
+#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
 #if defined(CONFIG_NRF71_SR_COEX_DRIVER)
 	callbk_fns.coex_event_callbk_fn = nrf_wifi_coex_event_cb;
 #endif
@@ -915,16 +729,7 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	rpu_drv_priv_zep.fmac_priv = nrf_wifi_sys_fmac_init(&data_config,
 							    rx_buf_pools,
 							    &callbk_fns);
-#else /* !CONFIG_NRF71_RADIO_TEST */
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
-	/* The OSAL layer needs to be initialized before any other initialization
-	 * so that other layers (like FW IF,HW IF etc) have access to OS ops
-	 */
-	nrf_wifi_osal_init(&nrf_wifi_os_zep_ops);
-
-	rpu_drv_priv_zep.fmac_priv = nrf_wifi_rt_fmac_init();
-#endif /* CONFIG_NRF71_RADIO_TEST */
 	if (rpu_drv_priv_zep.fmac_priv == NULL) {
 		LOG_ERR("%s: nrf_wifi_fmac_init failed",
 			__func__);
@@ -946,30 +751,16 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 		(MAX_PKT_RAM_TX_ALIGN_OVERHEAD * max_tx_aggregation);
 #endif /* CONFIG_NRF71_DATA_TX */
 
-#ifdef CONFIG_NRF71_RADIO_TEST
-	status = nrf_wifi_fmac_dev_add_zep(&rpu_drv_priv_zep);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_dev_add_zep failed", __func__);
-		goto fmac_deinit;
-	}
-#endif /* CONFIG_NRF71_RADIO_TEST */
-
 	k_mutex_init(&rpu_drv_priv_zep.rpu_ctx_zep.rpu_lock);
 #if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
 	k_sem_init(&rpu_drv_priv_zep.rpu_ctx_zep.channel_set_done_sem, 0, 1);
-#endif
+#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
 
 	return 0;
-#ifdef CONFIG_NRF71_RADIO_TEST
-fmac_deinit:
-	nrf_wifi_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
-	nrf_wifi_osal_deinit();
-#endif /* CONFIG_NRF71_RADIO_TEST */
 err:
 	return -1;
 }
 
-#ifndef CONFIG_NRF71_RADIO_TEST
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 static const struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 	.scan = nrf_wifi_disp_scan_zep,
@@ -979,7 +770,7 @@ static const struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 #endif /* CONFIG_NET_STATISTICS_WIFI */
 #if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX)
 	.reg_domain = nrf_wifi_reg_domain,
-#endif
+#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_RAW_DATA_RX */
 #ifdef CONFIG_NRF71_STA_MODE
 	.set_power_save = nrf_wifi_set_power_save,
 	.set_twt = nrf_wifi_set_twt,
@@ -987,10 +778,10 @@ static const struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 	.set_rts_threshold = nrf_wifi_set_rts_threshold,
 	.get_rts_threshold = nrf_wifi_get_rts_threshold,
 	.set_bss_max_idle_period = nrf_wifi_set_bss_max_idle_period,
-#endif
+#endif /* CONFIG_NRF71_STA_MODE */
 #ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
 	.mode = nrf_wifi_mode,
-#endif
+#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
 #if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
 	.channel = nrf_wifi_channel,
 #endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
@@ -1039,7 +830,6 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 #endif /* CONFIG_NRF71_AP_MODE */
 };
 #endif /* CONFIG_NRF71_STA_MODE */
-#endif /* !CONFIG_NRF71_RADIO_TEST */
 
 
 #ifdef CONFIG_NET_L2_ETHERNET
@@ -1061,13 +851,9 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.wifi_drv_ops = &wpa_supp_ops,
 #endif /* CONFIG_NRF71_STA_MODE */
 };
-#endif /* CONFIG_NET_L2_ETHERNET */
 
-
-
-#ifdef CONFIG_NET_L2_ETHERNET
 ETH_NET_DEVICE_DT_INST_DEFINE(0,
-		    nrf_wifi_drv_main_zep, /* init_fn */
+		    nrf_wifi_sys_drv_main_zep, /* init_fn */
 		    NULL, /* pm_action_cb */
 		    &rpu_drv_priv_zep.rpu_ctx_zep.vif_ctx_zep[0], /* data */
 		    NULL, /* cfg */
@@ -1077,7 +863,7 @@ ETH_NET_DEVICE_DT_INST_DEFINE(0,
 #ifdef CONFIG_NRF71_ENABLE_DUAL_VIF
 /* Register second interface */
 ETH_NET_DEVICE_DT_INST_DEFINE(1,
-		    nrf_wifi_drv_main_zep, /* init_fn */
+		    nrf_wifi_sys_drv_main_zep, /* init_fn */
 		    NULL, /* pm_action_cb */
 		    &rpu_drv_priv_zep.rpu_ctx_zep.vif_ctx_zep[1], /* data */
 		    NULL, /* cfg */
@@ -1085,19 +871,6 @@ ETH_NET_DEVICE_DT_INST_DEFINE(1,
 		    &wifi_offload_ops, /* api */
 		    CONFIG_NRF_WIFI_IFACE_MTU); /*mtu */
 #endif /* NRF71_ENABLE_DUAL_VIF */
-#else
-DEVICE_DT_INST_DEFINE(0,
-	      nrf_wifi_drv_main_zep, /* init_fn */
-	      NULL, /* pm_action_cb */
-#ifndef CONFIG_NRF71_RADIO_TEST
-	      &rpu_drv_priv_zep, /* data */
-#else /* !CONFIG_NRF71_RADIO_TEST */
-	      NULL,
-#endif /* CONFIG_NRF71_RADIO_TEST */
-	      NULL, /* cfg */
-	      POST_KERNEL,
-	      CONFIG_WIFI_INIT_PRIORITY, /* prio */
-	      NULL); /* api */
 #endif /* CONFIG_NET_L2_ETHERNET */
 
 #ifdef CONFIG_NET_CONNECTION_MANAGER_CONNECTIVITY_WIFI_MGMT

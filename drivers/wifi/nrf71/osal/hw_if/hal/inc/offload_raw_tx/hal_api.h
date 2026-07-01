@@ -13,11 +13,10 @@
 #ifndef __HAL_API_OFF_RAW_TX_H__
 #define __HAL_API_OFF_RAW_TX_H__
 
-#include "osal_api.h"
-#include "common/rpu_if.h"
-#include "bal_api.h"
-#include "common/hal_structs_common.h"
-#include "common/hal_api_common.h"
+#include <osal_api.h>
+#include <bal_api.h>
+#include <common/hal_structs_common.h>
+#include <common/hal_api_common.h>
 
 struct nrf_wifi_hal_dev_ctx *nrf_wifi_off_raw_tx_hal_dev_add(struct nrf_wifi_hal_priv *hpriv,
 							     void *mac_dev_ctx);

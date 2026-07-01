@@ -14,13 +14,13 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#include "util.h"
-#include "system/fmac_api.h"
-#include "system/fmac_tx.h"
-#include "common/fmac_util.h"
-#include "common/fmac_structs_common.h"
-#include "fmac_main.h"
-#include "wifi_mgmt.h"
+#include <util.h>
+#include <system/fmac_api.h>
+#include <system/fmac_tx.h>
+#include <common/fmac_util.h>
+#include <common/fmac_structs_common.h>
+#include <system/main.h>
+#include <system/wifi_mgmt.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -930,7 +930,7 @@ int nrf_wifi_channel(const struct device *dev,
 				goto out;
 			}
 		}
-		if ((band & get_nrf_wifi_op_band()) == 0) {
+		if ((band & nrf_wifi_utils_get_op_band()) == 0) {
 			LOG_ERR("%s: channel %u band not enabled (check SYS_INIT bands)",
 				__func__, channel->channel);
 			ret = -EINVAL;

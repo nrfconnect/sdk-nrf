@@ -5,12 +5,11 @@
  */
 
 /**
- * @brief Header containing FMAC interface specific declarations for the
- * Zephyr OS layer of the Wi-Fi driver.
+ * @brief Header containing system mode specific declarations
  */
 
-#ifndef __ZEPHYR_FMAC_MAIN_H__
-#define __ZEPHYR_FMAC_MAIN_H__
+#ifndef __SYSTEM_MAIN_H__
+#define __SYSTEM_MAIN_H__
 
 #include <stdio.h>
 
@@ -18,32 +17,29 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/net/net_if.h>
-#ifdef CONFIG_NRF71_RADIO_TEST
-#include <nrf71_radio_test.h>
-#else
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/ethernet.h>
+
 #ifdef CONFIG_NETWORKING
-#include <net_if.h>
+#include <system/net_if.h>
 #endif /* CONFIG_NETWORKING */
+
 #ifdef CONFIG_NRF71_STA_MODE
 #include <drivers/driver_zephyr.h>
 #endif /* CONFIG_NRF71_STA_MODE */
+
 #include <system/fmac_api.h>
-#endif /* CONFIG_NRF71_RADIO_TEST */
 #include <nrf71_wifi_ctrl.h>
+#include <common/rf_params.h>
+#include <common/vtf.h>
 
 #define NRF71_DRIVER_VERSION "1."KERNEL_VERSION_STRING
-
-#define NUM_RF_PARAM_ADDRS 22
 
 /* Calculate compile-time maximum for vendor stats */
 #ifdef CONFIG_NET_STATISTICS_ETHERNET_VENDOR
 #define MAX_VENDOR_STATS ((sizeof(struct rpu_sys_fw_stats) / sizeof(uint32_t)) + 1)
 #endif /* CONFIG_NET_STATISTICS_ETHERNET_VENDOR */
 
-#ifndef CONFIG_NRF71_OFFLOADED_RAW_TX
-#ifndef CONFIG_NRF71_RADIO_TEST
 struct nrf_wifi_vif_ctx_zep {
 	const struct device *zep_dev_ctx;
 	struct net_if *zep_net_if_ctx;
@@ -155,40 +151,17 @@ struct nrf_wifi_ctx_zep {
 
 struct nrf_wifi_drv_priv_zep {
 	struct nrf_wifi_fmac_priv *fmac_priv;
-	/* TODO: Replace with a linked list to handle unlimited RPUs */
 	struct nrf_wifi_ctx_zep rpu_ctx_zep;
 };
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
-#endif /* !CONFIG_NRF71_RADIO_TEST */
 
-void nrf_wifi_scan_timeout_work(struct k_work *work);
-
-void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
-				struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params);
-void configure_board_dep_params(struct nrf_wifi_board_params *board_params);
-void set_tx_pwr_ceil_default(struct nrf_wifi_tx_pwr_ceil_params *pwr_ceil_params);
-const char *nrf_wifi_get_drv_version(void);
-char *nrf_wifi_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,
-				   char *buf, int buflen);
-enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
-enum nrf_wifi_status nrf_wifi_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
-struct nrf_wifi_vif_ctx_zep *nrf_wifi_get_vif_ctx(struct net_if *iface);
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
 		void *event_data,
 		unsigned int event_len);
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
-unsigned char get_nrf_wifi_op_band(void);
-#endif
-#endif /* !CONFIG_NRF71_OFFLOADED_RAW_TX */
-enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx,
-						    unsigned int *rf_params_addr);
 
-enum nrf_wifi_status nrf_wifi_fmac_config_vtf_params(struct nrf_wifi_fmac_dev_ctx *dev_ctx,
-						     unsigned int voltage,
-						     unsigned int temp,
-						     unsigned int x0,
-						     unsigned int *vtf_buffer_start_address);
-#endif /* __ZEPHYR_FMAC_MAIN_H__ */
+enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
+enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
+#endif /* __SYSTEM_MAIN_H__ */
