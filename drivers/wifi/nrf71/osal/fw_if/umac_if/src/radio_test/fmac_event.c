@@ -97,9 +97,31 @@ static enum nrf_wifi_status umac_event_rt_rf_test_process(
 				(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 				sizeof(rf_get_xo_value_params));
 
-		nrf_wifi_osal_log_info("Best XO value offset is = %d and status = %d",
-				rf_get_xo_value_params.xo_offset,
-				rf_get_xo_value_params.status);
+		def_dev_ctx->xo_offset = rf_get_xo_value_params.xo_offset;
+		def_dev_ctx->xo_tune_status = rf_get_xo_value_params.status;
+
+		switch (rf_get_xo_value_params.status) {
+		case 0:
+			nrf_wifi_osal_log_info("XO tune successful, optimal XO offset = %d",
+					       rf_get_xo_value_params.xo_offset);
+			break;
+		case 1:
+			nrf_wifi_osal_log_err("XO tune failed: tone not detected");
+			break;
+		case 2:
+			nrf_wifi_osal_log_err("XO tune failed: gain failure (high)");
+			break;
+		case 3:
+			nrf_wifi_osal_log_err("XO tune failed: gain failure (low)");
+			break;
+		case 4:
+			nrf_wifi_osal_log_err("XO tune failed: gain failure (timeout)");
+			break;
+		default:
+			nrf_wifi_osal_log_err("XO tune failed: unknown status (%d)",
+					      rf_get_xo_value_params.status);
+			break;
+		}
 		break;
 	default:
 		break;

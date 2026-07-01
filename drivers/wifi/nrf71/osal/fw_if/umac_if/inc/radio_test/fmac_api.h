@@ -141,12 +141,24 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_tx_tone(struct nrf_wifi_fmac_dev_c
  * @brief Get XO calibrated value.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  *
- * This function is used to send a command to:
- *	- The RPU firmware wherein the RPU firmware estimates and
- *	  returns optimal XO value.
+ * This function is used to send a command to the RPU firmware, which
+ * estimates and returns the optimal XO value.
  *
- * @retval NRF_WIFI_STATUS_SUCCESS On Success
- * @retval NRF_WIFI_STATUS_FAIL On failure to execute command
+ * Once the firmware completes the XO tune, it reports a result status that
+ * indicates the outcome of the tuning procedure:
+ *	- 0: Success.
+ *	- 1: Tone not detected.
+ *	- 2: Gain failure (high).
+ *	- 3: Gain failure (low).
+ *	- 4: Gain failure (timeout).
+ *
+ * The detailed outcome is logged when the XO tune event is processed. Here,
+ * any non-success status (values 1 to 4) is mapped to @ref NRF_WIFI_STATUS_FAIL
+ * so that the caller can detect a failed tune from the return value.
+ *
+ * @retval NRF_WIFI_STATUS_SUCCESS On success (firmware reported status 0).
+ * @retval NRF_WIFI_STATUS_FAIL On failure to execute the command or when the
+ *	firmware reported a non-success XO tune status.
  */
 enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_compute_xo(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
