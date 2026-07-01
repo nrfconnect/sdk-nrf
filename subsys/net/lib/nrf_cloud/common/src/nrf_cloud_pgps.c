@@ -1402,7 +1402,8 @@ static size_t get_next_pgps_element(struct nrf_cloud_agnss_element *element, con
 		len += sizeof(struct nrf_cloud_agnss_ephemeris);
 		break;
 	case NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_system_time))) {
+		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_system_time) -
+			       sizeof(element->time_and_tow->sv_tow) + 4)) {
 			goto data_truncated;
 		}
 		element->time_and_tow = (struct nrf_cloud_agnss_system_time *)(buf + len);
