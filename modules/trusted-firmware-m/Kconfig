@@ -203,7 +203,7 @@ config TFM_ITS_MAX_ASSET_SIZE
 	help
 	  The maximum asset size to be stored in the Internal Trusted Storage. The maximum value
 	  is limited by the memory block size and by the bookkeeping data that may be stored
-	  in the same memory block when PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE is minimal.
+	  in the same memory block when the tfm_its_partition devicetree partition is minimal.
 	  The actual size of the stored asset is not affected by this configuration.
 
 config TFM_ITS_NUM_ASSETS
@@ -212,8 +212,8 @@ config TFM_ITS_NUM_ASSETS
 	help
 	  The maximum number of assets to be stored in the Internal Trusted Storage.
 	  (TF-M does not guarantee that the Internal Trusted Storage is large
-	  enough to store the maximum amount of assets with the maximum size.) Set
-	  PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE according to the needs of the
+	  enough to store the maximum amount of assets with the maximum size.) Size the
+	  tfm_its_partition devicetree partition according to the needs of the
 	  application.
 
 config TFM_ITS_BUF_SIZE
@@ -281,8 +281,8 @@ config TFM_PS_NUM_ASSETS
 	help
 	  The maximum number of assets to be stored in the Protected Storage area.
 	  (TF-M does not guarantee that the Protected Storage area is large
-	  enough to store the maximum amount of assets with the maximum size.) Set
-	  PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE according to the needs of the
+	  enough to store the maximum amount of assets with the maximum size.) Size the
+	  tfm_ps_partition devicetree partition according to the needs of the
 	  application.
 
 config TFM_PS_STACK_SIZE
@@ -318,8 +318,6 @@ config TFM_DOORBELL_API
 	depends on TFM_IPC
 
 endmenu
-
-rsource "Kconfig.tfm.pm"
 
 # Pull in full list of peripherals
 rsource "Kconfig.peripheral_secure"
