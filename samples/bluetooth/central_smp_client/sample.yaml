@@ -24,6 +24,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lc10dk/nrf54lc10a/cpuapp

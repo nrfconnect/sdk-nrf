@@ -24,6 +24,7 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
   sample.bluetooth.fast_pair.locator_tag.release:
     sysbuild: true
@@ -41,5 +42,6 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_args: FILE_SUFFIX=release
