@@ -108,10 +108,14 @@ static bool decode_command(zcbor_state_t *state, struct command *result)
 
 	bool res = ((
 		(zcbor_list_start_decode(state) &&
-		 ((((zcbor_tstr_decode(state, (&(*result).command_correlation_m)))) &&
+		 ((((zcbor_tstr_decode(state, (&(*result).command_correlation_m))) &&
+		    ((((((*result).command_correlation_m.len >= 0) &&
+			((*result).command_correlation_m.len <= 45)) ||
+		       (zcbor_error(state, ZCBOR_ERR_WRONG_RANGE), false))) ||
+		     (zcbor_error(state, ZCBOR_ERR_WRONG_RANGE), false))) &&
 		   ((zcbor_union_start_code(state) &&
-		     (int_res = ((((decode_at_command(state,
-						      (&(*result).command_union_at_command_m)))) &&
+		     (int_res = ((((decode_at_command(
+					  state, (&(*result).command_union_at_command_m)))) &&
 				  (((*result).command_union_choice = command_union_at_command_m_c),
 				   true)) ||
 				 (zcbor_union_elem_code(state) &&

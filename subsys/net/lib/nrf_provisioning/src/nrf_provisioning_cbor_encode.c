@@ -65,7 +65,11 @@ static bool encode_response(zcbor_state_t *state, const struct response *input)
 
 	bool res = ((
 		(zcbor_list_start_encode(state, 4) &&
-		 ((((zcbor_tstr_encode(state, (&(*input).response_correlation_m)))) &&
+		 (((((((((*input).response_correlation_m.len >= 0) &&
+			((*input).response_correlation_m.len <= 45)) ||
+		       (zcbor_error(state, ZCBOR_ERR_WRONG_RANGE), false))) ||
+		     (zcbor_error(state, ZCBOR_ERR_WRONG_RANGE), false)) &&
+		    (zcbor_tstr_encode(state, (&(*input).response_correlation_m)))) &&
 		   ((((*input).response_union_choice == response_union_error_response_m_c)
 			     ? ((encode_error_response(
 				       state, (&(*input).response_union_error_response_m))))
