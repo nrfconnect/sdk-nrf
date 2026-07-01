@@ -138,6 +138,16 @@ void bt_conn_ctx_free_all(struct bt_conn_ctx_lib *ctx_lib);
 void *bt_conn_ctx_get(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn);
 
 /**
+ * @brief Check if a connection context is allocated for a given connection.
+ *
+ * @param ctx_lib	Bluetooth connection context library instance.
+ * @param conn		Bluetooth connection.
+ *
+ * @return True if the connection context is allocated, false otherwise.
+ */
+bool bt_conn_ctx_is_allocated(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn);
+
+/**
  * @brief Get a specific connection context from the memory pool.
  *
  * This function finds the connection context and the associated connection
