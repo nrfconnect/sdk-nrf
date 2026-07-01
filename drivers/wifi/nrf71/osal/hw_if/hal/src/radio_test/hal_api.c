@@ -9,9 +9,9 @@
  * HAL Layer of the Wi-Fi driver in the radio test mode of operation.
  */
 
-#include "queue.h"
-#include "common/hal_structs_common.h"
-#include "radio_test/hal_api.h"
+#include <queue.h>
+#include <common/hal_structs_common.h>
+#include <radio_test/hal_api.h>
 
 static void event_tasklet_fn(unsigned long data)
 {
@@ -45,9 +45,6 @@ out:
 struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *hpriv,
 						     void *mac_dev_ctx)
 {
-#ifdef NRF_WIFI_LOW_POWER
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-#endif /* NRF_WIFI_LOW_POWER */
 	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = NULL;
 
 	hal_dev_ctx = nrf_wifi_osal_mem_zalloc(sizeof(*hal_dev_ctx));
@@ -109,16 +106,6 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *h
 	nrf_wifi_osal_tasklet_init(hal_dev_ctx->event_tasklet,
 				   event_tasklet_fn,
 				   (unsigned long)hal_dev_ctx);
-
-#ifdef NRF_WIFI_LOW_POWER
-	status = hal_rpu_ps_init(hal_dev_ctx);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: hal_rpu_ps_init failed",
-				      __func__);
-		goto event_tasklet_free;
-	}
-#endif /* NRF_WIFI_LOW_POWER */
 
 	hal_dev_ctx->bal_dev_ctx = nrf_wifi_bal_dev_add(hpriv->bpriv,
 							hal_dev_ctx);

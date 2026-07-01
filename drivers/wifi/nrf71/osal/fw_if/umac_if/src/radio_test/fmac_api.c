@@ -10,13 +10,13 @@
  */
 
 #include <nrf71_wifi_ctrl.h>
-#include "radio_test/fmac_api.h"
-#include "radio_test/hal_api.h"
-#include "radio_test/fmac_structs.h"
-#include "common/fmac_util.h"
-#include "radio_test/fmac_cmd.h"
-#include "radio_test/fmac_event.h"
-#include "util.h"
+#include <radio_test/fmac_api.h>
+#include <radio_test/hal_api.h>
+#include <radio_test/fmac_structs.h>
+#include <common/fmac_util.h>
+#include <radio_test/fmac_cmd.h>
+#include <radio_test/fmac_event.h>
+#include <util.h>
 
 #define RADIO_CMD_STATUS_TIMEOUT 5000
 #define RX_CAP_BYTES_PER_SAMPLE 4
@@ -51,7 +51,7 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 				  rf_params_valid,
 #ifdef NRF_WIFI_LOW_POWER
 				  sleep_type,
-#endif /* NRF_WIFI_LOWPOWER */
+#endif /* NRF_WIFI_LOW_POWER */
 				  phy_calib,
 				  op_band,
 				  beamforming,
@@ -86,9 +86,22 @@ out:
 	return status;
 }
 
+
 static void nrf_wifi_rt_fmac_fw_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
+	if (!fmac_dev_ctx) {
+		nrf_wifi_osal_log_err("%s: Invalid device context",
+				      __func__);
+		return;
+	}
+
+	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_RT) {
+		nrf_wifi_osal_log_err("%s: Invalid op mode",
+				      __func__);
+		return;
+	}
 }
+
 
 struct nrf_wifi_fmac_dev_ctx *nrf_wifi_rt_fmac_dev_add(struct nrf_wifi_fmac_priv *fpriv,
 						       void *os_dev_ctx)
@@ -139,8 +152,6 @@ out:
 
 enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-	unsigned int *rf_params_addr,
-	unsigned int vtf_buffer_start_address,
 #ifdef NRF_WIFI_LOW_POWER
 	int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
@@ -150,7 +161,9 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 	struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
 	struct nrf_wifi_board_params *board_params,
-	unsigned char *country_code)
+	unsigned char *country_code,
+	unsigned int *rf_params_addr,
+	unsigned int vtf_buffer_start_address)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 

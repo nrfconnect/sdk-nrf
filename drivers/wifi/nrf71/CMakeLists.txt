@@ -48,6 +48,8 @@ function(nrf71_wifi_setup_include_and_sources)
     ${nrf71_bus_dir}/device.c
     ${nrf71_bus_dir}/ipc_if.c
     ${nrf71_bus_dir}/ipc_service.c
+    src/common/rf_params.c
+    src/common/vtf.c
   )
 
   if(CONFIG_NRF71_RADIO_TEST)
@@ -56,6 +58,8 @@ function(nrf71_wifi_setup_include_and_sources)
       ${nrf71_osal_base}/fw_if/umac_if/src/radio_test/fmac_cmd.c
       ${nrf71_osal_base}/fw_if/umac_if/src/radio_test/fmac_event.c
       ${nrf71_osal_base}/hw_if/hal/src/radio_test/hal_api.c
+      src/radio_test/main.c
+      src/radio_test/api.c
     )
 
     zephyr_library_include_directories(
@@ -82,6 +86,7 @@ function(nrf71_wifi_setup_include_and_sources)
       ${nrf71_osal_base}/fw_if/umac_if/src/offload_raw_tx/fmac_cmd.c
       ${nrf71_osal_base}/fw_if/umac_if/src/offload_raw_tx/fmac_event.c
       ${nrf71_osal_base}/hw_if/hal/src/offload_raw_tx/hal_api.c
+      src/offload_raw_tx/api.c
     )
   endif()
 
@@ -205,9 +210,6 @@ function(nrf71_wifi_setup_include_and_sources)
 
   zephyr_library_compile_definitions(NRF_WIFI_RX_BUFF_PROG_UMAC)
 
-  zephyr_library_include_directories_ifdef(CONFIG_NRF71_OFFLOADED_RAW_TX
-    off_raw_tx/inc
-  )
 
 
   # ---- Sources: driver (Zephyr shim, net_if, mgmt, wpa, etc.) ----
@@ -215,44 +217,32 @@ function(nrf71_wifi_setup_include_and_sources)
   # Coexistence transport used by the standalone nRF71 SR coexistence driver
   # (drivers/nrf71_sr_coex) to reach the Coexistence Manager over FMAC.
   zephyr_library_sources_ifdef(CONFIG_NRF71_SR_COEX_DRIVER
-    src/coex_transport.c
+    src/system/coex_transport.c
   )
-
-  zephyr_library_sources_ifndef(CONFIG_NRF71_OFFLOADED_RAW_TX
-    src/fmac_main.c
-  )
-
-  if(NOT CONFIG_NRF71_RADIO_TEST AND NOT CONFIG_NRF71_OFFLOADED_RAW_TX)
-    zephyr_library_sources(src/net_if.c)
-  endif()
 
   zephyr_library_sources_ifdef(CONFIG_NET_L2_WIFI_MGMT
-    src/wifi_mgmt_scan.c
+    src/system/wifi_mgmt_scan.c
   )
+
+  if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_SCAN_ONLY)
+    zephyr_library_sources(
+      src/system/main.c
+      src/system/net_if.c
+    )
+  endif()
 
   zephyr_library_sources_ifdef(CONFIG_NRF71_SYSTEM_MODE
-    src/wifi_mgmt.c
-  )
-
-  zephyr_library_sources_ifdef(CONFIG_NRF71_OFFLOADED_RAW_TX
-    off_raw_tx/src/off_raw_tx_api.c
+    src/system/wifi_mgmt.c
   )
 
   zephyr_library_sources_ifdef(CONFIG_NRF71_STA_MODE
-    src/wpa_supp_if.c
-    src/wifi_mgmt.c
+    src/system/wpa_supp_if.c
+    src/system/wifi_mgmt.c
   )
 
   zephyr_library_sources_ifdef(CONFIG_NRF71_UTIL
-    src/wifi_util.c
-  )
-
-  if(CONFIG_NRF71_UTIL OR CONFIG_NRF71_DEBUG_SHELL)
-    zephyr_library_sources(src/shell.c)
-  endif()
-
-  zephyr_library_sources_ifdef(CONFIG_NRF71_DEBUG_SHELL
-    src/debug_shell.c
+    src/common/shell.c
+    src/common/util_shell.c
   )
 endfunction()
 
