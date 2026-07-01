@@ -1640,6 +1640,31 @@ static int nrf_wifi_radio_test_set_rx_station_id(const struct shell *shell,
 	return 0;
 }
 
+static int nrf_wifi_radio_test_set_rx_bss_check(const struct shell *shell,
+						size_t argc,
+						const char *argv[])
+{
+	char *ptr = NULL;
+	unsigned long rx_bss_check = 0;
+
+	rx_bss_check = strtoul(argv[1], &ptr, 10);
+
+	if ((rx_bss_check < 0) || (rx_bss_check > 1)) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid rx bss check setting\n");
+		return -ENOEXEC;
+	}
+
+	if (!check_test_in_prog(shell)) {
+		return -ENOEXEC;
+	}
+
+	ctx->conf_params.bss_check_enable = rx_bss_check;
+
+	return 0;
+}
+
 static int nrf_wifi_radio_test_set_tx_dcm(const struct shell *shell,
 					  size_t argc,
 					  const char *argv[])
@@ -2046,6 +2071,11 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "rx_station_id = %d\n",
 		      conf_params->rx_station_id);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "rx_bss_check = %d\n",
+		      conf_params->bss_check_enable);
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
@@ -2522,6 +2552,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "<val> - bss color (1 to 63)",
 		      nrf_wifi_radio_test_set_rx_bss_color,
+		      2,
+		      0),
+	SHELL_CMD_ARG(rx_bss_check,
+		      NULL,
+		      "<val> - BSS check (0=disable, 1=enable)",
+		      nrf_wifi_radio_test_set_rx_bss_check,
 		      2,
 		      0),
 	SHELL_CMD_ARG(rx_station_id,
