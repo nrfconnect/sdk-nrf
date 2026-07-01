@@ -93,6 +93,8 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_prog_rx(struct nrf_wifi_fmac_dev_ctx *fmac
  * @param capture_timeout Capture timeout.
  * @param lna_gain LNA gain value.
  * @param bb_gain Baseband gain value.
+* @param ed_thresh_ofdm OFDM energy detect threshold in dBm (-100..0).
+ * @param ed_thresh_dsss DSSS energy detect threshold in dBm (-100..0).
  * @param timeout_status Timeout status.
  *
  * This function is used to send a command to:
@@ -108,6 +110,8 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 						     unsigned short int capture_timeout,
 						     unsigned char lna_gain,
 						     unsigned char bb_gain,
+						     unsigned char ed_thresh_ofdm,
+						     unsigned char ed_thresh_dsss,
 						     unsigned char *timeout_status);
 
 

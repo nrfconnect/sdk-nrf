@@ -419,6 +419,8 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 						     unsigned short int capture_timeout,
 						     unsigned char lna_gain,
 						     unsigned char bb_gain,
+						     unsigned char ed_thresh_ofdm,
+						     unsigned char ed_thresh_dsss,
 						     unsigned char *capture_status)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -443,6 +445,8 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 	rf_test_cap_params.cap_time = capture_timeout;
 	rf_test_cap_params.lna_gain = lna_gain;
 	rf_test_cap_params.bb_gain = bb_gain;
+	rf_test_cap_params.ed_thresh_ofdm = (signed char)ed_thresh_ofdm;
+	rf_test_cap_params.ed_thresh_dsss = (signed char)ed_thresh_dsss;
 	rf_test_cap_params.capture_addr = (unsigned int *)cap_data;
 
 	rt_dev_ctx->rf_test_type = rf_test_type;
