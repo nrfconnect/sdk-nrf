@@ -14,19 +14,10 @@
 #include <dfu/dfu_target_mcuboot.h>
 #include <zephyr/dfu/mcuboot.h>
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#endif
-
 #define STREAM_BUF_SIZE 256
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#define DFU_TARGET_HELPER_ADDRESS PM_DFU_TARGET_HELPER_ADDRESS
-#define DFU_TARGET_HELPER_SIZE	  PM_DFU_TARGET_HELPER_SIZE
-#else
 #define DFU_TARGET_HELPER_ADDRESS ((uint32_t)DT_REG_ADDR(DT_ALIAS(dfu_target_helper)))
 #define DFU_TARGET_HELPER_SIZE	  DT_REG_SIZE(DT_ALIAS(dfu_target_helper))
-#endif
 
 static uint8_t stream_buf[STREAM_BUF_SIZE];
 

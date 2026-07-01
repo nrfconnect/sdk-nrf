@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PARTITION_MANAGER
-	default y if BOARD_THINGY53
-
 config NRF_RADIO_LOADER
 	default y if SOC_NRF54H20
 

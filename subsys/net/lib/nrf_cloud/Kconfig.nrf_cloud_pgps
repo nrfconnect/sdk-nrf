@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Nordic Semiconductor
+## Copyright (c) 2021 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -145,24 +145,5 @@ config NRF_CLOUD_PGPS_STORAGE_CUSTOM
 	  bytes times NRF_COUND_PGPS_NUM_PREDICTIONS.
 
 endchoice # NRF_CLOUD_PGPS_STORAGE
-
-if NRF_CLOUD_PGPS_STORAGE_PARTITION
-
-config NRF_CLOUD_PGPS_PARTITION_SIZE
-	hex "Size of Partition Manager flash partition for P-GPS data storage"
-	default 0x14000
-	depends on PARTITION_MANAGER_ENABLED
-	help
-	  Size of the PM-managed partition for storing P-GPS predictions.
-	  This must be at least 2048 bytes times NRF_CLOUD_PGPS_NUM_PREDICTIONS.
-	  When using a DTS-defined partition (nordic,pgps-partition chosen node),
-	  this option is not used; the size is taken from the DTS reg property.
-
-config NRF_CLOUD_PGPS_PARTITION_ALIGN
-	hex "Align P-GPS partition to flash block boundary"
-	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
-	depends on PARTITION_MANAGER_ENABLED
-
-endif # NRF_CLOUD_PGPS_STORAGE_PARTITION
 
 endif # NRF_CLOUD_PGPS

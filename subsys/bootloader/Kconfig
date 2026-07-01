@@ -11,14 +11,13 @@ config SECURE_BOOT
 	depends on !IS_SECURE_BOOTLOADER
 	select FW_INFO
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51
-	select USE_DT_CODE_PARTITION if !PARTITION_MANAGER_ENABLED
+	select USE_DT_CODE_PARTITION
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
 
 config SB_IMAGE_BOOT_OFFSET
 	hex
-	depends on !PARTITION_MANAGER_ENABLED
 	default 0x800 if SOC_SERIES_NRF54L
 	default 0x200 if SOC_SERIES_NRF53 || SOC_SERIES_NRF91
 	default 0x200 if SOC_SERIES_NRF52
@@ -44,38 +43,8 @@ config SB_MONOTONIC_COUNTER_IS_ENABLED
 
 endif # SECURE_BOOT
 
-config PM_PARTITION_SIZE_PROVISION
-	hex
-	depends on PARTITION_MANAGER_ENABLED
-	default 0x280 if SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP # Stored in OTP region
-	# Monotonic counter slot takes 4 bytes on nRF54L Series
-	default 0x460 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || \
-			 SOC_NRF54LV10A_CPUAPP || SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP
-	default 0x280 if SOC_NRF5340_CPUNET # Second instance stored in internal flash of NET
-	default FPROTECT_BLOCK_SIZE
-	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP || \
-							 SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || \
-							 SOC_NRF54L10_CPUAPP || SOC_NRF54LV10A_CPUAPP || \
-							 SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP)
-	help
-	  Flash space set aside for the PROVISION partition.
-
 config B0_MIN_PARTITION_SIZE
 	bool "Use minimimum partition size"
-
-config PM_PARTITION_SIZE_B0_IMAGE
-	hex "Flash space reserved for B0_IMAGE"
-	depends on PARTITION_MANAGER_ENABLED
-	default 0x8000 if !B0_MIN_PARTITION_SIZE && (SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP || SOC_NRF52840)
-	default 0x7800 if !B0_MIN_PARTITION_SIZE && (SOC_NRF5340_CPUNET)
-	default FPROTECT_BLOCK_SIZE if SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP
-	default 0x3800 if SOC_NRF5340_CPUNET
-	default 0x7800 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || \
-			  SOC_NRF54LV10A_CPUAPP || SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP
-	default 0x7000 if !B0_MIN_PARTITION_SIZE
-	default 0x4000
-	help
-	  Flash space set aside for the B0_IMAGE partition.
 
 menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
@@ -127,7 +96,6 @@ config SB_DISABLE_SELF_RWX
 config SB_DISABLE_SELF_RWX_SKIP_SIZE
 	hex
 	depends on SB_DISABLE_SELF_RWX
-	depends on !PARTITION_MANAGER_ENABLED
 	default SB_IMAGE_BOOT_OFFSET
 	help
 	  Size of region, at the beginning of the partition, that does not require

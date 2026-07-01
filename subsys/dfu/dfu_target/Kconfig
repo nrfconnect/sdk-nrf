@@ -120,10 +120,8 @@ config DFU_TARGET_FULL_MODEM_EXT_FLASH_SIZE
 DT_CHOSEN_NORDIC_FMFU := nordic,fmfu-storage-partition
 
 config DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION
-	default PM_EXTERNAL_FLASH_ENABLED if PARTITION_MANAGER_ENABLED
 	default $(dt_chosen_enabled,$(DT_CHOSEN_NORDIC_FMFU))
 	depends on DFU_TARGET_FULL_MODEM
-	select PM_PARTITION_REGION_FMFU_STORAGE_EXTERNAL if PARTITION_MANAGER_ENABLED
 	bool "Use a dedicated FMFU partition on the external flash device"
 	help
 	  When Partition Manager is enabled, the ``fmfu_storage`` partition is created

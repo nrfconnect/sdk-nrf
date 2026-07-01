@@ -11,15 +11,8 @@
 #include <zephyr/storage/flash_map.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/devicetree.h>
-#if PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#endif
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#define TEST_PARTITION	s1_image
-#else
 #define TEST_PARTITION	s1_partition
-#endif
 #define TEST_ADDRESS	PARTITION_ADDRESS(TEST_PARTITION)
 #define TEST_SIZE	PARTITION_SIZE(TEST_PARTITION)
 #define TEST_DEV	PARTITION_DEVICE(TEST_PARTITION)

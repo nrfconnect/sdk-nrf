@@ -5,10 +5,10 @@
  */
 
 /*
- * Devicetree-based partition layout for the nrf9160dk_nrf9160_ns target, used
- * when CONFIG_PARTITION_MANAGER_ENABLED=n. Mirrors the layout adopted by the
- * cellular at_client sample (see samples/cellular/at_client/boards/) and
- * carves a 16 kB memfault_coredump_partition out of the storage region.
+ * Devicetree-based partition layout for the nrf9160dk_nrf9160_ns target.
+ * Mirrors the layout adopted by the cellular at_client sample (see
+ * samples/cellular/at_client/boards/) and carves a 16 kB 
+ * memfault_coredump_partition out of the storage region.
  *
  *   0x0000_0000  Reserved / preloaded MCUboot region
  *   0x0000_c000  image-0          (image-0-secure + image-0-nonsecure, 944 kB)

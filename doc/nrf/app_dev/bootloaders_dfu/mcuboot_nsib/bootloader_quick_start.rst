@@ -37,7 +37,6 @@ For more in-depth understanding of bootloader's capabilities, such as upgradable
 
   * :ref:`ug_nrf52_developing`
   * :ref:`ug_nrf5340`
-  * :ref:`nRF70 Series Firmware patch update<ug_nrf70_fw_patch_update>`
   * :ref:`ug_nrf91_config_build`
 
 * Using DFU with cloud providers:

@@ -810,7 +810,6 @@
 /scripts/nrf_profiler/*.rst               @nrfconnect/ncs-si-xcake-doc
 /scripts/nrf_provision/fast_pair/         @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-xcake
 /scripts/nrf_provision/fast_pair/*.rst    @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
-/scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/pm_to_dts.py                     @nordicjm @rghaddab
 /scripts/generate_psa_key_attributes/*.rst @nrfconnect/ncs-aegir-doc
 /scripts/shell/*.rst                      @nrfconnect/ncs-blenders-doc
@@ -924,7 +923,6 @@
 /subsys/nrf_profiler/                     @nrfconnect/ncs-si-xcake
 /subsys/nrf_rpc/                          @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
-/subsys/partition_manager/                @nordicjm @tejlmand
 /subsys/pcd/                              @nrfconnect/ncs-eris
 /subsys/secure_storage/                   @nrfconnect/ncs-aegir
 /subsys/settings/                         @nrfconnect/ncs-eris @rghaddab
@@ -1046,8 +1044,6 @@
 /tests/subsys/nrf_profiler/               @nrfconnect/ncs-si-xcake
 /tests/subsys/nrf_rpc/                    @nrfconnect/ncs-protocols-serialization
 /tests/subsys/nrf_security/psa_core_lite/ @nrfconnect/ncs-aegir
-/tests/subsys/partition_manager/region/   @nordicjm @tejlmand
-/tests/subsys/partition_manager/static_pm_file/ @nordicjm @tejlmand
 /tests/subsys/pcd/                        @nrfconnect/ncs-eris
 /tests/subsys/rtt/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/swo/                        @nrfconnect/ncs-low-level-test

@@ -16,21 +16,6 @@ LOG_MODULE_DECLARE(ab_sample);
 
 #define ACTIVE_IMAGE 0
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-
-#define SLOT_A_FLASH_AREA_ID PM_MCUBOOT_PRIMARY_ID
-#define SLOT_B_FLASH_AREA_ID PM_MCUBOOT_SECONDARY_ID
-
-#ifdef CONFIG_NCS_IS_VARIANT_IMAGE
-#define IS_SLOT_A 0
-#define IS_SLOT_B 1
-#else
-#define IS_SLOT_A 1
-#define IS_SLOT_B 0
-#endif
-
-#else /* CONFIG_PARTITION_MANAGER_ENABLED */
-
 #define CODE_PARTITION DT_CHOSEN(zephyr_code_partition)
 #define CODE_PARTITION_OFFSET PARTITION_NODE_OFFSET(CODE_PARTITION)
 
@@ -51,8 +36,6 @@ LOG_MODULE_DECLARE(ab_sample);
 #define IS_SLOT_B                                                                                  \
 	(CODE_PARTITION_OFFSET >= SLOT_B_OFFSET &&                                                 \
 	 CODE_PARTITION_OFFSET < SLOT_B_OFFSET + SLOT_B_SIZE)
-
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 #define STATUS_LEDS_THREAD_STACK_SIZE 512
 #define STATUS_LEDS_THREAD_PRIORITY (CONFIG_NUM_PREEMPT_PRIORITIES - 1)

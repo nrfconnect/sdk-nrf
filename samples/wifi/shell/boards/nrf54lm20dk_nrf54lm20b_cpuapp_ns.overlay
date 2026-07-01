@@ -7,8 +7,7 @@
  * has enough RAM for the Wi-Fi shell workload.
  *
  * TF-M RAM usage on nRF54LM20A is ~50 kB; 96 kB gives comfortable headroom.
- * The NRF SDK reads S_DATA_SIZE / NS_DATA_SIZE directly from these DTS nodes
- * when PARTITION_MANAGER is disabled (tfm_boards/partition/region_defs.h).
+ * The NRF SDK reads S_DATA_SIZE / NS_DATA_SIZE directly from these DTS nodes.
  *
  * Total usable SRAM: 508 kB (0x7f000).
  *   sram0_s  (TF-M secure): 0x00000 .. 0x17fff  (96 kB)

@@ -18,10 +18,6 @@
 #include "nrf_cloud_pgps_internal.h"
 #include <net/nrf_cloud_codec.h>
 #include <zephyr/logging/log_ctrl.h>
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#include <pm_config.h>
-#include <flash_map_pm.h>
-#endif
 
 #include <zephyr/logging/log.h>
 
@@ -1107,11 +1103,7 @@ static int open_flash(void)
 	int err;
 
 #if defined(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	/* Partition Manager manages the PGPS partition. */
-	prediction_flash_dev = FLASH_AREA_DEVICE(PGPS);
-	flash_area_id = FLASH_AREA_ID(PGPS);
-#elif DT_HAS_CHOSEN(nordic_pgps_partition)
+#if DT_HAS_CHOSEN(nordic_pgps_partition)
 	/* DTS-managed partition via nordic,pgps-partition chosen node. */
 	prediction_flash_dev = DEVICE_DT_GET(PARTITION_NODE_MTD(DT_CHOSEN(nordic_pgps_partition)));
 	flash_area_id = DT_PARTITION_ID(DT_CHOSEN(nordic_pgps_partition));
@@ -1119,13 +1111,8 @@ static int open_flash(void)
 #error "NRF_CLOUD_PGPS_STORAGE_PARTITION requires a DTS nordic,pgps-partition chosen node"
 #endif
 #elif defined(CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY)
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	prediction_flash_dev = FLASH_AREA_DEVICE(MCUBOOT_SECONDARY);
-	flash_area_id = FLASH_AREA_ID(MCUBOOT_SECONDARY);
-#else
 	prediction_flash_dev = DEVICE_DT_GET(PARTITION_NODE_MTD(DT_NODELABEL(slot1_partition)));
 	flash_area_id = DT_PARTITION_ID(DT_NODELABEL(slot1_partition));
-#endif
 #else
 	prediction_flash_dev = FLASH_AREA_DEVICE(APP);
 	flash_area_id = FLASH_AREA_ID(APP);
@@ -1659,17 +1646,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	};
 
 #if defined(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	/* Partition Manager build: addresses come from pm_config.h. */
-	BUILD_ASSERT(CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE >=
-			     (CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS * BLOCK_SIZE),
-		     "P-GPS partition size is too small");
-	if (param->storage_base || param->storage_size) {
-		LOG_WRN("Overriding P-GPS storage with P-GPS partition");
-	}
-	param->storage_base = PM_PGPS_ADDRESS;
-	param->storage_size = PM_PGPS_SIZE;
-#elif DT_HAS_CHOSEN(nordic_pgps_partition)
+#if DT_HAS_CHOSEN(nordic_pgps_partition)
 	/* DTS build: addresses come from the nordic,pgps-partition chosen node. */
 	BUILD_ASSERT(PARTITION_NODE_SIZE(DT_CHOSEN(nordic_pgps_partition)) >=
 			     (CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS * BLOCK_SIZE),
@@ -1686,13 +1663,8 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	if (param->storage_base || param->storage_size) {
 		LOG_WRN("Overriding P-GPS storage with MCUboot secondary partition");
 	}
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	param->storage_base = PM_MCUBOOT_SECONDARY_ADDRESS;
-	param->storage_size = PM_MCUBOOT_SECONDARY_SIZE;
-#else
 	param->storage_base = PARTITION_NODE_OFFSET(DT_NODELABEL(slot1_partition));
 	param->storage_size = PARTITION_NODE_SIZE(DT_NODELABEL(slot1_partition));
-#endif
 #endif
 
 	__ASSERT((param->storage_size >= (NUM_BLOCKS * BLOCK_SIZE)),

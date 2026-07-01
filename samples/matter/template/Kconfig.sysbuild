@@ -72,41 +72,4 @@ config MCUBOOT_COMPRESSED_IMAGE_SUPPORT
 
 endif
 
-# Partition Manager backwards compatibility
-if PARTITION_MANAGER
-
-if SOC_NRF54L10
-
-config PM_MCUBOOT_PAD
-	default 0x1000
-
-endif # SOC_NRF54L10
-
-if BOARD_NRF54L15TAG
-
-config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
-	default y
-
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	default y
-
-endif # BOARD_NRF54L15TAG
-
-if BOARD_NRF54L15DK || BOARD_NRF54LM20DK
-
-# Disable checking the external drivers for nRF54L15 and nRF54LM20 DKs.
-config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
-	default y
-
-endif # BOARD_NRF54L15DK || BOARD_NRF54LM20DK
-
-if BOOTLOADER_MCUBOOT
-
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	default y
-
-endif # BOOTLOADER_MCUBOOT
-
-endif # PARTITION_MANAGER
-
 source "share/sysbuild/Kconfig"

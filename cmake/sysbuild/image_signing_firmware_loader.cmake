@@ -67,17 +67,7 @@ function(zephyr_mcuboot_tasks)
     message(WARNING "zephyr,flash write block size devicetree parameter is missing, assuming write block size is 4")
   endif()
 
-  if(CONFIG_PARTITION_MANAGER_ENABLED)
-    # Split fields, imgtool_sign_sysbuild is stored in cache which will have fields updated by
-    # sysbuild, imgtool_sign must not be stored in cache because it would then prevent those fields
-    # from being updated without a pristine build
-    # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
-    # invalid if a static PM file is updated without pristine build
-    set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_SECONDARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
-    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
-  else()
-    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot1_size} --header-size ${CONFIG_ROM_START_OFFSET})
-  endif()
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot1_size} --header-size ${CONFIG_ROM_START_OFFSET})
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
@@ -203,9 +193,7 @@ function(zephyr_mcuboot_tasks)
 
     # Do not run zephyr_runner_file here as PM will provide the merged hex file from
     # sysbuild's scope unless this is a variant image
-    if((NOT CONFIG_PARTITION_MANAGER_ENABLED) OR CONFIG_NCS_IS_VARIANT_IMAGE)
-      zephyr_runner_file(hex ${output}.hex)
-    endif()
+    zephyr_runner_file(hex ${output}.hex)
 
     set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${output}.hex"
         CACHE FILEPATH "Signed kernel hex file" FORCE

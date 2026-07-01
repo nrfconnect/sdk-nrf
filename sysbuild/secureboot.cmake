@@ -16,50 +16,31 @@ if(SB_CONFIG_SECURE_BOOT)
     set(target_soc)
     set(target_cpucluster)
 
-    if(SB_CONFIG_PARTITION_MANAGER)
-      ExternalZephyrProject_Add(
-        APPLICATION b0n
-        SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/netboot_deprecated_pm
-        BOARD ${board_target_netcore}
-        BOARD_REVISION ${BOARD_REVISION}
-        BUILD_ONLY true
-      )
+    ExternalZephyrProject_Add(
+      APPLICATION b0n
+      SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/netboot
+      BOARD ${board_target_netcore}
+      BOARD_REVISION ${BOARD_REVISION}
+    )
 
-      if(NOT "CPUNET" IN_LIST PM_DOMAINS)
-        list(APPEND PM_DOMAINS CPUNET)
-      endif()
+    add_overlay_dts(${SB_CONFIG_NETCORE_IMAGE_NAME}
+      ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay
+    )
 
-      set_property(GLOBAL APPEND PROPERTY
-        PM_CPUNET_IMAGES
-        "b0n"
-      )
-    else()
-      ExternalZephyrProject_Add(
-        APPLICATION b0n
-        SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/netboot
-        BOARD ${board_target_netcore}
-        BOARD_REVISION ${BOARD_REVISION}
-      )
+    set(b0n_SIGNING_SCRIPT
+      "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/b0n_provision_merge.cmake" CACHE INTERNAL
+      "b0n provision merging script" FORCE
+    )
 
-      add_overlay_dts(${SB_CONFIG_NETCORE_IMAGE_NAME}
-        ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay
-      )
+    if(SB_CONFIG_NETCORE_APP_UPDATE)
+      # PCD requires the offset of the s0 partition which is read from the b0n image, therefore
+      # ensure that the b0n image is configured before the main application (including variant if
+      # in direct-xip mode) and b0n
+      sysbuild_add_dependencies(CONFIGURE ${DEFAULT_IMAGE} b0n)
+      sysbuild_add_dependencies(CONFIGURE mcuboot b0n)
 
-      set(b0n_SIGNING_SCRIPT
-        "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/b0n_provision_merge.cmake" CACHE INTERNAL
-        "b0n provision merging script" FORCE
-      )
-
-      if(SB_CONFIG_NETCORE_APP_UPDATE)
-        # PCD requires the offset of the s0 partition which is read from the b0n image, therefore
-        # ensure that the b0n image is configured before the main application (including variant if
-        # in direct-xip mode) and b0n
-        sysbuild_add_dependencies(CONFIGURE ${DEFAULT_IMAGE} b0n)
-        sysbuild_add_dependencies(CONFIGURE mcuboot b0n)
-
-        if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
-          sysbuild_add_dependencies(CONFIGURE mcuboot_secondary_app b0n)
-        endif()
+      if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+        sysbuild_add_dependencies(CONFIGURE mcuboot_secondary_app b0n)
       endif()
     endif()
 
@@ -75,32 +56,16 @@ if(SB_CONFIG_SECURE_BOOT)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_APPCORE)
-    if(SB_CONFIG_PARTITION_MANAGER)
-      ExternalZephyrProject_Add(
-        APPLICATION b0
-        SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/bootloader_deprecated_pm
-        BUILD_ONLY true
-      )
+    ExternalZephyrProject_Add(
+      APPLICATION b0
+      SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/bootloader
+    )
 
-      if(NOT "APP" IN_LIST PM_DOMAINS)
-        list(APPEND PM_DOMAINS APP)
-      endif()
-      set_property(GLOBAL APPEND PROPERTY
-        PM_APP_IMAGES
-        "b0"
-      )
-    else()
-      ExternalZephyrProject_Add(
-        APPLICATION b0
-        SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/samples/bootloader
-      )
-
-      include(image_flasher.cmake)
-      add_image_flasher(NAME app_provision HEX_FILE "${CMAKE_BINARY_DIR}/app_provision.hex" BASE_IMAGE b0)
-      if(SB_CONFIG_SOC_SERIES_NRF54L)
-        add_image_flasher(NAME bootconf HEX_FILE "${CMAKE_BINARY_DIR}/bootconf.hex" BASE_IMAGE b0)
-        sysbuild_add_dependencies(FLASH bootconf b0)
-      endif()
+    include(image_flasher.cmake)
+    add_image_flasher(NAME app_provision HEX_FILE "${CMAKE_BINARY_DIR}/app_provision.hex" BASE_IMAGE b0)
+    if(SB_CONFIG_SOC_SERIES_NRF54L)
+      add_image_flasher(NAME bootconf HEX_FILE "${CMAKE_BINARY_DIR}/bootconf.hex" BASE_IMAGE b0)
+      sysbuild_add_dependencies(FLASH bootconf b0)
     endif()
 
     set_target_properties(b0 PROPERTIES
@@ -111,53 +76,24 @@ if(SB_CONFIG_SECURE_BOOT)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-    if(SB_CONFIG_PARTITION_MANAGER)
-      set(image s1_image)
-
-      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-        ExternalZephyrVariantProject_Add(
-          APPLICATION ${image}
-          SOURCE_APP mcuboot
-          SNIPPET slot1-partition
-          BUILD_ONLY TRUE
-        )
-      else()
-        ExternalZephyrVariantProject_Add(
-          APPLICATION ${image}
-          SOURCE_APP ${DEFAULT_IMAGE}
-          SNIPPET slot1-partition
-          BUILD_ONLY TRUE
-        )
-      endif()
-
-      set_property(GLOBAL APPEND PROPERTY
-        PM_APP_IMAGES
-        "${image}"
+    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+      ExternalZephyrVariantProject_Add(
+        APPLICATION mcuboot_s1_variant
+        SOURCE_APP mcuboot
+        EXTRA_DTC_OVERLAY_FILE ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s1-partition.overlay
       )
+
+      add_overlay_dts(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay)
     else()
-      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-        ExternalZephyrVariantProject_Add(
-          APPLICATION mcuboot_s1_variant
-          SOURCE_APP mcuboot
-          EXTRA_DTC_OVERLAY_FILE ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s1-partition.overlay
-        )
+      ExternalZephyrVariantProject_Add(
+        APPLICATION ${DEFAULT_IMAGE}_s1_variant
+        SOURCE_APP ${DEFAULT_IMAGE}
+        EXTRA_DTC_OVERLAY_FILE ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s1-partition.overlay
+      )
 
-        add_overlay_dts(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay)
-      else()
-        ExternalZephyrVariantProject_Add(
-          APPLICATION ${DEFAULT_IMAGE}_s1_variant
-          SOURCE_APP ${DEFAULT_IMAGE}
-          EXTRA_DTC_OVERLAY_FILE ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s1-partition.overlay
-        )
-
-        add_overlay_dts(${DEFAULT_IMAGE}
-          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay
-        )
-      endif()
+      add_overlay_dts(${DEFAULT_IMAGE}
+        ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay
+      )
     endif()
   endif()
-endif()
-
-if(SB_CONFIG_PARTITION_MANAGER)
-  set_property(GLOBAL PROPERTY PM_DOMAINS ${PM_DOMAINS})
 endif()

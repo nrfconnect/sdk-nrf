@@ -14,10 +14,6 @@ config MCUBOOT_NETWORK_CORE_IMAGE_NUMBER
 	int "Netcore core image number (informative only, do not change)"
 	default -1
 
-config MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER
-	int "WiFi patches image number (informative only, do not change)"
-	default -1
-
 config MCUBOOT_QSPI_XIP_IMAGE_NUMBER
 	int "QSPI XIP image number (informative only, do not change)"
 	default -1

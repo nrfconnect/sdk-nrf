@@ -19,26 +19,8 @@
 
 LOG_MODULE_REGISTER(pcd, CONFIG_PCD_LOG_LEVEL);
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-/* PCD command block location is configured with Partition Manager. */
-#include <pm_config.h>
-
-#ifdef PM_PCD_SRAM_ADDRESS
-/* PCD command block is in this domain, we are compiling for application core. */
-#define PCD_CMD_ADDRESS PM_PCD_SRAM_ADDRESS
-#else
-/* PCD command block is in a different domain, we are compiling for network core.
- * Extra '_' since its in a different domain.
- */
-#define PCD_CMD_ADDRESS PM__PCD_SRAM_ADDRESS
-#endif /* PM_PCD_SRAM_ADDRESS */
-
-/* Offset which the application should be copied into */
-#define PCD_NET_CORE_APP_OFFSET PM_CPUNET_B0N_CONTAINER_SIZE
-#else
 /* PCD command block location is static. */
 #define PCD_CMD_ADDRESS DT_REG_ADDR(DT_NODELABEL(sram0_dfu_shared))
-#endif
 
 #ifdef CONFIG_PCD_APP
 
@@ -92,11 +74,7 @@ int pcd_find_fw_version(void)
 		return -EFAULT;
 	}
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-	firmware_info = fw_info_find(PM_APP_ADDRESS);
-#else
 	firmware_info = fw_info_find(PARTITION_ADDRESS(s0_partition));
-#endif
 
 	if (firmware_info != NULL) {
 		memcpy((void *)pcd_cmd_p->data, &firmware_info->version, pcd_cmd_p->len);
@@ -118,13 +96,8 @@ int pcd_fw_copy(const struct device *fdev)
 		return -EFAULT;
 	}
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-	rc = stream_flash_init(&stream, fdev, buf, sizeof(buf),
-			       pcd_cmd_p->offset, PM_APP_SIZE, NULL);
-#else
 	rc = stream_flash_init(&stream, fdev, buf, sizeof(buf), pcd_cmd_p->offset,
 			       DT_REG_SIZE(DT_NODELABEL(s0_partition)), NULL);
-#endif
 	if (rc != 0) {
 		LOG_ERR("stream_flash_init failed: %d", rc);
 		return rc;
