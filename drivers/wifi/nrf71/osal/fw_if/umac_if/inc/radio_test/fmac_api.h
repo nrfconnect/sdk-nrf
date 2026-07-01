@@ -117,6 +117,9 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
  * @param enable Enable/Disable TX tone test.
  * @param tone_freq Desired tone frequency in MHz in steps of 1 MHz from -10 MHz to +10 MHz.
  * @param tx_power Desired TX power in the range -16dBm to +24dBm.
+ * @param tone_type Tone type to be transmitted (0=complex, 1=real-only, 2=imag-only).
+ * @param dc_offset_i DC offset for the I channel.
+ * @param dc_offset_q DC offset for the Q channel.
  *
  * This function is used to send a command to:
  *	- The RPU firmware to start the RF TX tone test in radio test mode.
@@ -127,7 +130,10 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_tx_tone(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						      unsigned char enable,
 						      signed char tone_freq,
-						      signed char tx_power);
+						      signed char tx_power,
+						      unsigned char tone_type,
+						      signed short int dc_offset_i,
+						      signed short int dc_offset_q);
 
 
 
