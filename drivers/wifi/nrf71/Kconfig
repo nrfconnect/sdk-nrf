@@ -206,10 +206,6 @@ config NRF71_UTIL
 	bool "Utility shell in nRF71 driver"
 	depends on SHELL
 
-config NRF71_DEBUG_SHELL
-	bool "Debug shell in nRF71 driver"
-	depends on SHELL
-
 config NRF71_PCB_LOSS_2G
 	int "PCB loss for 2.4 GHz band"
 	default 0

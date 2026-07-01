@@ -9,6 +9,7 @@
  * Wi-Fi driver.
  */
 
+#include <zephyr/sys/util.h>
 #include "util.h"
 
 int nrf_wifi_utils_hex_str_to_val(unsigned char *hex_arr,
@@ -125,4 +126,28 @@ int nrf_wifi_utils_chan_to_freq(enum nrf_wifi_band band,
 out:
 	return freq;
 
+}
+
+/**
+ * @brief Get operating band bitmap from Kconfig (see NRF_WIFI_OP_BAND_* in
+ * nrf71_wifi_ctrl.h / nrf71_wifi_common.h).
+ *
+ * @return Bitmap of bands (NRF_WIFI_OP_BAND_2GHZ, NRF_WIFI_OP_BAND_5GHZ,
+ *         NRF_WIFI_OP_BAND_6GHZ).
+ */
+unsigned char nrf_wifi_utils_get_op_band(void)
+{
+	if (IS_ENABLED(CONFIG_NRF_WIFI_2G_BAND)) {
+		return NRF_WIFI_OP_BAND_2GHZ;
+	}
+	if (IS_ENABLED(CONFIG_NRF_WIFI_5G_BAND)) {
+		return NRF_WIFI_OP_BAND_5GHZ;
+	}
+	if (IS_ENABLED(CONFIG_NRF_WIFI_6G_BAND)) {
+		return NRF_WIFI_OP_BAND_6GHZ;
+	}
+	if (IS_ENABLED(CONFIG_NRF_WIFI_DUAL_BAND)) {
+		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
+	}
+	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
 }

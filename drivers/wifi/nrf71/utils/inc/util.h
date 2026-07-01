@@ -30,4 +30,7 @@ bool nrf_wifi_utils_is_mac_addr_valid(const char *mac_addr);
 
 int nrf_wifi_utils_chan_to_freq(enum nrf_wifi_band band,
 				unsigned short chan);
+
+unsigned char nrf_wifi_utils_get_op_band(void);
+
 #endif /* __UTIL_H__ */

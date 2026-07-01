@@ -28,9 +28,9 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include "common/fmac_util.h"
 #include "system/fmac_peer.h"
 #include "shim.h"
-#include "fmac_main.h"
-#include "wpa_supp_if.h"
-#include "net_if.h"
+#include "system/main.h"
+#include "system/wpa_supp_if.h"
+#include "system/net_if.h"
 
 #ifdef CONFIG_NRF71_STA_MODE
 static struct net_if_mcast_monitor mcast_monitor;
@@ -455,8 +455,7 @@ int nrf_wifi_if_send(const struct device *dev,
 			char ra_buf[18] = {0};
 
 			LOG_DBG("%s: Got packet for unknown PEER: %s", __func__,
-				nrf_wifi_sprint_ll_addr_buf(ra, 6, ra_buf,
-							    sizeof(ra_buf)));
+				net_sprint_ll_addr_buf(ra, NET_ETH_ADDR_LEN, ra_buf, sizeof(ra_buf));
 #endif
 			goto drop;
 		}
@@ -513,6 +512,27 @@ out:
 }
 
 #ifdef CONFIG_NRF71_STA_MODE
+/* If the interface is not Wi-Fi then errors are expected, so, fail silently */
+static struct nrf_wifi_vif_ctx_zep *nrf_wifi_get_vif_ctx(struct net_if *iface)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+
+	if (!iface || !rpu_ctx || !rpu_ctx->rpu_ctx) {
+		return NULL;
+	}
+
+	for (int i = 0; i < ARRAY_SIZE(rpu_ctx->vif_ctx_zep); i++) {
+		if (rpu_ctx->vif_ctx_zep[i].zep_net_if_ctx == iface) {
+			vif_ctx_zep = &rpu_ctx->vif_ctx_zep[i];
+			break;
+		}
+	}
+
+	return vif_ctx_zep;
+}
+
+
 static void ip_maddr_event_handler(struct net_if *iface,
 	const struct net_addr *addr, bool is_joined)
 {
@@ -577,13 +597,11 @@ static void ip_maddr_event_handler(struct net_if *iface,
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		char mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
 
-		LOG_ERR("%s: nrf_wifi_fmac_set_multicast failed	for"
+		LOG_ERR("%s: nrf_wifi_fmac_set_multicast failed for"
 			" mac addr=%s",
 			__func__,
-			nrf_wifi_sprint_ll_addr_buf(mac_addr.addr,
-						   WIFI_MAC_ADDR_LEN,
-						   mac_string_buf,
-						   sizeof(mac_string_buf)));
+			net_sprint_ll_addr_buf(mac_addr.addr, WIFI_MAC_ADDR_LEN,
+					       mac_string_buf, sizeof(mac_string_buf)));
 	}
 unlock:
 	nrf_wifi_osal_mem_free(mcast_info);
@@ -860,7 +878,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	locked = true;
 
 	if (!rpu_ctx_zep->rpu_ctx) {
-		status = nrf_wifi_fmac_dev_add_zep(&rpu_drv_priv_zep);
+		status = nrf_wifi_sys_fmac_dev_add_zep(&rpu_drv_priv_zep);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: nrf_wifi_fmac_dev_add_zep failed",
@@ -983,7 +1001,7 @@ del_vif:
 dev_rem:
 	/* Free only if we added above i.e., for 1st VIF */
 	if (fmac_dev_added) {
-		nrf_wifi_fmac_dev_rem_zep(&rpu_drv_priv_zep);
+		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
 	}
 out:
 	if (locked) {
@@ -1072,7 +1090,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	}
 
 	if (nrf_wifi_fmac_get_num_vifs(rpu_ctx_zep->rpu_ctx) == 0) {
-		nrf_wifi_fmac_dev_rem_zep(&rpu_drv_priv_zep);
+		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
 	}
 	ret = 0;
 unlock:

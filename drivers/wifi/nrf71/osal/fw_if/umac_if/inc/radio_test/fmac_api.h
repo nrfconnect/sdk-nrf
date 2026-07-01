@@ -196,6 +196,8 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_rt_fmac_dev_add(
  * @param tx_pwr_ceil_params TX power ceiling parameters to be passed to the RPU.
  * @param board_params Board parameters to be passed to the RPU.
  * @param country_code Country code to be set for regularity domain.
+ * @param rf_params_addr RF parameters address.
+ * @param vtf_buffer_start_address VTF buffer start address.
  *
  * This function initializes the firmware of an RPU instance.
  *
@@ -204,8 +206,6 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_rt_fmac_dev_add(
  */
 enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-	unsigned int *rf_params_addr,
-	unsigned int vtf_buffer_start_address,
 #if defined(NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
 	int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
@@ -215,7 +215,9 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
 	struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
 	struct nrf_wifi_board_params *board_params,
-	unsigned char *country_code);
+	unsigned char *country_code,
+	unsigned int *rf_params_addr,
+	unsigned int vtf_buffer_start_address);
 
 
 /**

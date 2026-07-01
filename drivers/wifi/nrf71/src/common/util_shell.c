@@ -13,7 +13,7 @@
 #include <zephyr/sys/sys_heap.h>
 #include "common/fmac_util.h"
 #include "system/fmac_api.h"
-#include "fmac_main.h"
+#include "system/main.h"
 #include "shim.h"
 #include "wifi_util.h"
 
