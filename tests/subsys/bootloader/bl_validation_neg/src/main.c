@@ -14,16 +14,9 @@
 #include <zephyr/devicetree.h>
 #include <bl_storage.h>
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#define S0_SLOT_ADDRESS PARTITION_ADDRESS(s0_image)
-#define S0_SLOT_SIZE PARTITION_SIZE(s0_image)
-#define S1_SLOT_ADDRESS PARTITION_ADDRESS(s1_image)
-#else
 #define S0_SLOT_ADDRESS PARTITION_ADDRESS(s0_partition)
 #define S0_SLOT_SIZE PARTITION_SIZE(s0_partition)
 #define S1_SLOT_ADDRESS PARTITION_ADDRESS(s1_partition)
-#endif
 
 /* These symbols are defined in linker scripts. */
 extern const uint32_t _ext_apis_size[];
