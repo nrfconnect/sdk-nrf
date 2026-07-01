@@ -23,6 +23,18 @@ tags
 .xxproject
 .envrc
 .vscode
+
+# AI assistant / IDE tool directories
+.cursor
+.claude
+.nordic-skills-library
+.aider*
+.continue
+.windsurf
+.codex
+.cline
+.roo
+
 sanity-out*
 twister-out*
 
