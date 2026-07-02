@@ -391,7 +391,7 @@ DECT NR+ samples
 Enhanced ShockBurst samples
 ---------------------------
 
-* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target in all samples.
+* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` and ``nrf54ls05dk/nrf54ls05a/cpuapp`` board targets in all samples.
 
 Gazell samples
 --------------
