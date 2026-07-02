@@ -455,6 +455,8 @@ Peripheral samples
 
 * Added the :ref:`ppi_seq_spi_sample` sample that demonstrates use of :ref:`ppi_seq_i2c_spi`.
 
+* Added the :ref:`vpr_offloading_sample` sample, that demonstrates how to use VPR core (PPR or FLPR) to offload the application core.
+
 PMIC samples
 ------------
 
