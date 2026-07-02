@@ -1,5 +1,3 @@
-:orphan:
-
 .. _migration_2.7:
 
 Migration notes for |NCS| v2.7.0

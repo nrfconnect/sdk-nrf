@@ -1,5 +1,3 @@
-:orphan:
-
 .. _migration_3.1_54h_suit_ironside:
 
 Migrating applications from |NCS| v3.0.0 (SUIT) to |NCS| v3.1.0 (IronSide SE) on the nRF54H20 SoC
