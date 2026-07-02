@@ -1,0 +1,7 @@
+#include "../../../sysbuild/empty_net_core/boards/nrf5340dk_nrf5340_cpunet.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0n_partition;
+	};
+};
