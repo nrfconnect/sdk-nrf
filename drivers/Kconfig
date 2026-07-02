@@ -12,6 +12,7 @@ rsource "flash/Kconfig"
 rsource "gpio/Kconfig"
 rsource "hw_cc3xx/Kconfig"
 rsource "dect/Kconfig"
+rsource "nrf_pulse_meas/Kconfig"
 
 if CLOCK_CONTROL
 

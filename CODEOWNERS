@@ -319,6 +319,7 @@
 /drivers/wifi/nrf71/                      @krish2718 @sachinthegreen
 /drivers/wifi/nrf92/                      @nrfconnect/ncs-modem-tre
 /include/drivers/wifi/nrf71/              @kapbh @krish2718 @sachinthegreen
+/drivers/nrf_pulse_meas/nrf_pulse_meas.c  @nrfconnect/ncs-ll-izera
 
 # Devicetree
 /dts/                                     @nrfconnect/ncs-co-drivers
@@ -393,6 +394,7 @@
 /include/tfm/                             @nrfconnect/ncs-aegir
 /include/dult.h                           @nrfconnect/ncs-si-bluebagel
 /include/accel_to_angle/                  @nrfconnect/ncs-si-bluebagel
+/include/nrf_pulse_meas.h                 @nrfconnect/ncs-ll-izera
 
 # Libraries
 /lib/accel_to_angle/                      @nrfconnect/ncs-si-bluebagel
@@ -576,6 +578,7 @@
 /samples/peripheral/ppi_seq_spi/          @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
 /samples/pmic/native/                     @nordic-auko
+/samples/pulse_width_measurement/         @nrfconnect/ncs-ll-izera
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/tfm/                             @nrfconnect/ncs-aegir

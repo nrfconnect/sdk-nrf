@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+DT_COMPAT_NORDIC_NRF_PULSE_MEAS := nordic,nrf-nrf_pulse_meas
+
+config NRF_PULSE_MEAS
+	bool "NRF PULSE MEASUREMENT driver"
+	select NRFX_GPIOTE
+	select NRFX_TIMER
+	select NRFX_GPPI
+
