@@ -20,6 +20,7 @@ Currently the following SoCs from Nordic Semiconductor are supported for use wit
 * :ref:`nRF52840 <programming_board_names>` (Matter over Thread)
 * :ref:`nRF54L15 <programming_board_names>` (Matter over Thread)
 * :ref:`nRF54L10 <programming_board_names>` (Matter over Thread)
+* :ref:`nRF54LC10 <programming_board_names>` (Matter over Thread)
 * :ref:`nRF54LM20 <programming_board_names>` (Matter over Thread and Matter over Wi-Fi through the ``nrf7002eb2`` shield)
 
 Front-End Modules
@@ -43,6 +44,11 @@ This is required to perform the DFU operation.
 The development kits for the supported SoCs from Nordic Semiconductor are supplied with the MX25R64 type of external flash that meets these memory requirements.
 However, it is possible to configure the SoCs with different QSPI or SPI memory if it is supported by Zephyr.
 For this purpose, check the reference design for Nordic DKs for information about how to connect the external memory with SoC, specifically whether the pins are designed for the QSPI or the high-speed SPIM operations.
+
+.. note::
+   The nRF54LC10 DK does not come with external memory by default.
+   It cannot fit two slots in its internal memory, which is required for DFU.
+   Connecting and configuring an external flash is required to perform any type of DFU.
 
 .. _ug_matter_hw_requirements_ram_flash:
 

@@ -23,9 +23,18 @@ Device firmware upgrade support
    * nRF52840 DK
    * nRF5340 DK
    * nRF54L10 DK
+   * nRF54LC10A SoC
 
    You can run DFU without external flash memory on the nRF54L15 and nRF54LM20 DKs using the :ref:`mcuboot_image_compression` feature.
    To see if the |matter_type| supports this feature, check whether the ``internal`` build configuration is available in the build configuration table.
+
+   .. note::
+      DFU is not supported on the nRF54LC10 DK.
+      It is supported for the nRF54LC10A SoC, but the nRF54LC10 DK lacks external flash.
+      Without external flash there is not enough space to fit two application images required for any type of DFU.
+      If you want to support DFU on nRF54LC10A SoC, you need to add external flash and configure the additional partitions needed for image swap.
+      For an example of how to configure such partitions, see the nRF54L10 devicetree files (:file:`nrf54l10_cpuapp_partitions.dtsi`), since the nRF54L10 SoC is similar to nRF54LC10A and can be used as a reference design.
+      See :ref:`ug_matter_hw_requirements_external_flash` for more information.
 
    .. tabs::
 
