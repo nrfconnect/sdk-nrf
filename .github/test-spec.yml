@@ -64,6 +64,9 @@
   - "lib/pcm_stream_channel_modifier/**/*"
   - "lib/tone/**/*"
 
+"CI-iot-libraries-test":
+  - "lib/nrf_modem_lib/**/*"
+
 "CI-iot-samples-test":
   - "include/modem/at_monitor.h"
   - "include/modem/lte_lc*.h"

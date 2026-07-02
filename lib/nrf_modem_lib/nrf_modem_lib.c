@@ -34,7 +34,7 @@ static void nrf_modem_lib_dfu_handler(uint32_t dfu_res);
 #define NRF_MODEM_IPC_IRQ DT_IRQ_BY_IDX(DT_NODELABEL(ipc), 0, irq)
 BUILD_ASSERT(IPC_IRQn == NRF_MODEM_IPC_IRQ, "NRF_MODEM_IPC_IRQ mismatch");
 
-/* The heap implementation in `nrf_modem_os.c` require some overhead
+/* The heap implementation in `nrf_modem_os.c` requires some overhead
  * to allow allocating up to `NRF_MODEM_LIB_SHMEM_TX_SIZE` bytes.
  */
 #define NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE 128
