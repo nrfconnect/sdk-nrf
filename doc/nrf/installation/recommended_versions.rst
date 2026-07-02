@@ -273,7 +273,7 @@ They can all be installed using the ``doc/requirements.txt`` file using ``pip``.
    * - sphinx-copybutton
      - :ncs-tool-version:`SPHINX_COPYBUTTON_VERSION`
    * - sphinx-ncs-theme
-     - :ncs-tool-version:`SPHINX_NCS_THEME_VERSION`
+     - <2.1
    * - sphinx-notfound-page
      - :ncs-tool-version:`SPHINX_NOTFOUND_PAGE_VERSION`
    * - sphinx-tabs
