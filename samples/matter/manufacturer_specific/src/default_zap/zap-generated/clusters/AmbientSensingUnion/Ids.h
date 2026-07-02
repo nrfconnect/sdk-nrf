@@ -1,0 +1,9 @@
+// DO NOT EDIT MANUALLY - Generated file
+//
+// Identifier constant values for cluster AmbientSensingUnion (cluster code: 1074/0x0432)
+#pragma once
+
+#include <clusters/AmbientSensingUnion/AttributeIds.h>
+#include <clusters/AmbientSensingUnion/ClusterId.h>
+#include <clusters/AmbientSensingUnion/CommandIds.h>
+#include <clusters/AmbientSensingUnion/EventIds.h>

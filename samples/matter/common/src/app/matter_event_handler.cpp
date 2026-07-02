@@ -51,7 +51,7 @@ void DefaultEventHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
 					chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 			}
 		} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
-			NFCOnboardingPayloadMgr().StopTagEmulation();
+			TEMPORARY_RETURN_IGNORED NFCOnboardingPayloadMgr().StopTagEmulation();
 		}
 #endif
 		break;

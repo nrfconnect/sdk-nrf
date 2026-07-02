@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster DeviceEnergyManagement (cluster code: 152/0x98)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <lib/core/DataModelTypes.h>
@@ -35,6 +34,16 @@ namespace app
 				{
 					inline constexpr EventId Id = 0x00000003;
 				} // namespace Resumed
+
+				namespace PowerRangeAdjustStart
+				{
+					inline constexpr EventId Id = 0x00000004;
+				} // namespace PowerRangeAdjustStart
+
+				namespace PowerRangeAdjustEnd
+				{
+					inline constexpr EventId Id = 0x00000005;
+				} // namespace PowerRangeAdjustEnd
 
 			} // namespace Events
 		} // namespace DeviceEnergyManagement

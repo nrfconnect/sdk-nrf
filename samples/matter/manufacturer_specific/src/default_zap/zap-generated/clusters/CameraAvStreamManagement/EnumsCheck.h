@@ -44,6 +44,7 @@ namespace app
 			using EnumType = CameraAvStreamManagement::ImageCodecEnum;
 			switch (val) {
 			case EnumType::kJpeg:
+			case EnumType::kHeic:
 				return val;
 			default:
 				return EnumType::kUnknownEnumValue;

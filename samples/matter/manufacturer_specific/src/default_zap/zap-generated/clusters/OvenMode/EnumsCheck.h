@@ -51,6 +51,10 @@ namespace app
 			case EnumType::kConvectionRoast:
 			case EnumType::kWarming:
 			case EnumType::kProofing:
+			case EnumType::kSteam:
+			case EnumType::kAirFry:
+			case EnumType::kAirSousVide:
+			case EnumType::kFrozenFood:
 				return val;
 			default:
 				return EnumType::kUnknownEnumValue;

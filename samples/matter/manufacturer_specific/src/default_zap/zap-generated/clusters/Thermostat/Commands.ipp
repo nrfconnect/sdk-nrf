@@ -64,7 +64,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetpointRaiseLower.
+				} // namespace SetpointRaiseLower
 				namespace GetWeeklyScheduleResponse
 				{
 
@@ -110,7 +110,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetWeeklyScheduleResponse.
+				} // namespace GetWeeklyScheduleResponse
 				namespace SetWeeklySchedule
 				{
 
@@ -155,7 +155,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetWeeklySchedule.
+				} // namespace SetWeeklySchedule
 				namespace GetWeeklySchedule
 				{
 
@@ -187,7 +187,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetWeeklySchedule.
+				} // namespace GetWeeklySchedule
 				namespace AddThermostatSuggestionResponse
 				{
 
@@ -216,7 +216,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddThermostatSuggestionResponse.
+				} // namespace AddThermostatSuggestionResponse
 				namespace ClearWeeklySchedule
 				{
 
@@ -239,7 +239,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ClearWeeklySchedule.
+				} // namespace ClearWeeklySchedule
 				namespace SetActiveScheduleRequest
 				{
 
@@ -267,7 +267,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetActiveScheduleRequest.
+				} // namespace SetActiveScheduleRequest
 				namespace SetActivePresetRequest
 				{
 
@@ -295,7 +295,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetActivePresetRequest.
+				} // namespace SetActivePresetRequest
 				namespace AddThermostatSuggestion
 				{
 
@@ -332,7 +332,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddThermostatSuggestion.
+				} // namespace AddThermostatSuggestion
 				namespace RemoveThermostatSuggestion
 				{
 
@@ -360,7 +360,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveThermostatSuggestion.
+				} // namespace RemoveThermostatSuggestion
 				namespace AtomicResponse
 				{
 
@@ -397,7 +397,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AtomicResponse.
+				} // namespace AtomicResponse
 				namespace AtomicRequest
 				{
 
@@ -433,7 +433,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AtomicRequest.
+				} // namespace AtomicRequest
 			} // namespace Commands
 		} // namespace Thermostat
 	} // namespace Clusters

@@ -9,6 +9,8 @@
 #include "ble_connectivity_manager.h"
 #include "bridged_device_data_provider.h"
 
+#include <lib/core/CHIPError.h>
+
 #include <bluetooth/gatt_dm.h>
 #include <zephyr/bluetooth/addr.h>
 #include <zephyr/bluetooth/conn.h>
@@ -35,7 +37,10 @@ public:
 		: BridgedDeviceDataProvider(updateCallback, commandCallback)
 	{
 	}
-	~BLEBridgedDeviceProvider() { BLEConnectivityManager::Instance().RemoveBLEProvider(GetBtAddress()); }
+	~BLEBridgedDeviceProvider()
+	{
+		TEMPORARY_RETURN_IGNORED BLEConnectivityManager::Instance().RemoveBLEProvider(GetBtAddress());
+	}
 
 	virtual const bt_uuid *GetServiceUuid() = 0;
 	virtual int ParseDiscoveredData(bt_gatt_dm *discoveredData) = 0;

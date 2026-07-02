@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpOrOpen.
+				} // namespace UpOrOpen
 				namespace DownOrClose
 				{
 
@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace DownOrClose.
+				} // namespace DownOrClose
 				namespace StopMotion
 				{
 
@@ -102,7 +102,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StopMotion.
+				} // namespace StopMotion
 				namespace GoToLiftValue
 				{
 
@@ -130,7 +130,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GoToLiftValue.
+				} // namespace GoToLiftValue
 				namespace GoToLiftPercentage
 				{
 
@@ -160,7 +160,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GoToLiftPercentage.
+				} // namespace GoToLiftPercentage
 				namespace GoToTiltValue
 				{
 
@@ -188,7 +188,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GoToTiltValue.
+				} // namespace GoToTiltValue
 				namespace GoToTiltPercentage
 				{
 
@@ -218,7 +218,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GoToTiltPercentage.
+				} // namespace GoToTiltPercentage
 			} // namespace Commands
 		} // namespace WindowCovering
 	} // namespace Clusters

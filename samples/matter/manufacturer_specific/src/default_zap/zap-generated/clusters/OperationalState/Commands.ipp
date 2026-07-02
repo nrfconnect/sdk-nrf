@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Pause.
+				} // namespace Pause
 				namespace Stop
 				{
 
@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Stop.
+				} // namespace Stop
 				namespace Start
 				{
 
@@ -102,7 +102,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Start.
+				} // namespace Start
 				namespace Resume
 				{
 
@@ -125,7 +125,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Resume.
+				} // namespace Resume
 				namespace OperationalCommandResponse
 				{
 
@@ -156,7 +156,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OperationalCommandResponse.
+				} // namespace OperationalCommandResponse
 			} // namespace Commands
 		} // namespace OperationalState
 	} // namespace Clusters

@@ -12,7 +12,7 @@
 #include "clusters/identify.h"
 #include "lib/core/CHIPError.h"
 
-#include <app-common/zap-generated/attributes/Accessors.h>
+#include <app/clusters/temperature-measurement-server/CodegenIntegration.h>
 
 #include <zephyr/logging/log.h>
 
@@ -172,19 +172,22 @@ void AppTask::UpdateTemperatureTimeoutCallback(k_timer *timer)
 		return;
 	}
 
-	DeviceLayer::PlatformMgr().ScheduleWork(
+	CHIP_ERROR err = DeviceLayer::PlatformMgr().ScheduleWork(
 		[](intptr_t p) {
 			AppTask::Instance().UpdateTemperatureMeasurement();
 
-			Protocols::InteractionModel::Status status =
-				Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Set(
-					kTemperatureSensorEndpointId, AppTask::Instance().GetCurrentTemperature());
+			CHIP_ERROR setErr = Clusters::TemperatureMeasurement::SetMeasuredValue(
+				kTemperatureSensorEndpointId, AppTask::Instance().GetCurrentTemperature());
 
-			if (status != Protocols::InteractionModel::Status::Success) {
-				LOG_ERR("Updating temperature measurement failed %x", to_underlying(status));
+			if (setErr != CHIP_NO_ERROR) {
+				LOG_ERR("Updating temperature measurement failed %" CHIP_ERROR_FORMAT,
+					setErr.Format());
 			}
 		},
 		reinterpret_cast<intptr_t>(timer->user_data));
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format());
+	}
 }
 
 CHIP_ERROR AppTask::Init()
@@ -216,25 +219,27 @@ CHIP_ERROR AppTask::StartApp()
 {
 	ReturnErrorOnFailure(Init());
 
-	DataModel::Nullable<int16_t> val;
-	Protocols::InteractionModel::Status status =
-		Clusters::TemperatureMeasurement::Attributes::MinMeasuredValue::Get(kTemperatureSensorEndpointId, val);
+	auto *temperatureMeasurement =
+		Clusters::TemperatureMeasurement::FindClusterOnEndpoint(kTemperatureSensorEndpointId);
 
-	if (status != Protocols::InteractionModel::Status::Success || val.IsNull()) {
-		LOG_ERR("Failed to get temperature measurement min value %x", to_underlying(status));
+	if (temperatureMeasurement == nullptr) {
+		LOG_ERR("Failed to find TemperatureMeasurement cluster");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
 
-	mTemperatureSensorMinValue = val.Value();
-
-	status = Clusters::TemperatureMeasurement::Attributes::MaxMeasuredValue::Get(kTemperatureSensorEndpointId, val);
-
-	if (status != Protocols::InteractionModel::Status::Success || val.IsNull()) {
-		LOG_ERR("Failed to get temperature measurement max value %x", to_underlying(status));
+	DataModel::Nullable<int16_t> minVal = temperatureMeasurement->GetMinMeasuredValue();
+	if (minVal.IsNull()) {
+		LOG_ERR("Failed to get temperature measurement min value");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
+	mTemperatureSensorMinValue = minVal.Value();
 
-	mTemperatureSensorMaxValue = val.Value();
+	DataModel::Nullable<int16_t> maxVal = temperatureMeasurement->GetMaxMeasuredValue();
+	if (maxVal.IsNull()) {
+		LOG_ERR("Failed to get temperature measurement max value");
+		return CHIP_ERROR_INCORRECT_STATE;
+	}
+	mTemperatureSensorMaxValue = maxVal.Value();
 
 	k_timer_init(&mTimer, AppTask::UpdateTemperatureTimeoutCallback, nullptr);
 	k_timer_user_data_set(&mTimer, this);

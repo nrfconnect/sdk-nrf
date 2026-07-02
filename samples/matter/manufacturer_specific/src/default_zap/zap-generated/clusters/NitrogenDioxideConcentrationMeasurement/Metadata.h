@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster NitrogenDioxideConcentrationMeasurement (cluster code: 1043/0x413)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace NitrogenDioxideConcentrationMeasurement
 		{
 
-			inline constexpr uint32_t kRevision = 3;
+			inline constexpr uint32_t kRevision = 5;
 
 			namespace Attributes
 			{

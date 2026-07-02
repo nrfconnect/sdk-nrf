@@ -163,6 +163,8 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kEpochKey2), epochKey2);
 						encoder.Encode(to_underlying(Fields::kEpochStartTime2),
 							       epochStartTime2);
+						encoder.Encode(to_underlying(Fields::kGroupKeyMulticastPolicy),
+							       groupKeyMulticastPolicy);
 						return encoder.Finalize();
 					}
 
@@ -196,6 +198,10 @@ namespace app
 							} else if (__context_tag ==
 								   to_underlying(Fields::kEpochStartTime2)) {
 								err = DataModel::Decode(reader, epochStartTime2);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kGroupKeyMulticastPolicy)) {
+								err = DataModel::Decode(reader,
+											groupKeyMulticastPolicy);
 							}
 
 							ReturnErrorOnFailure(err);
@@ -203,6 +209,58 @@ namespace app
 					}
 
 				} // namespace GroupKeySetStruct
+
+				namespace GroupcastAdoptionStruct
+				{
+					CHIP_ERROR Type::EncodeForWrite(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
+					{
+						return DoEncode(aWriter, aTag, NullOptional);
+					}
+
+					CHIP_ERROR Type::EncodeForRead(TLV::TLVWriter &aWriter, TLV::Tag aTag,
+								       FabricIndex aAccessingFabricIndex) const
+					{
+						return DoEncode(aWriter, aTag, MakeOptional(aAccessingFabricIndex));
+					}
+
+					CHIP_ERROR
+					Type::DoEncode(TLV::TLVWriter &aWriter, TLV::Tag aTag,
+						       const Optional<FabricIndex> &aAccessingFabricIndex) const
+					{
+						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
+
+						encoder.Encode(to_underlying(Fields::kGroupcastAdopted),
+							       groupcastAdopted);
+						if (aAccessingFabricIndex.HasValue()) {
+							encoder.Encode(to_underlying(Fields::kFabricIndex),
+								       fabricIndex);
+						}
+
+						return encoder.Finalize();
+					}
+
+					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader)
+					{
+						detail::StructDecodeIterator __iterator(reader);
+						while (true) {
+							uint8_t __context_tag = 0;
+							CHIP_ERROR err = __iterator.Next(__context_tag);
+							VerifyOrReturnError(err != CHIP_ERROR_END_OF_TLV,
+									    CHIP_NO_ERROR);
+							ReturnErrorOnFailure(err);
+
+							if (__context_tag == to_underlying(Fields::kGroupcastAdopted)) {
+								err = DataModel::Decode(reader, groupcastAdopted);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kFabricIndex)) {
+								err = DataModel::Decode(reader, fabricIndex);
+							}
+
+							ReturnErrorOnFailure(err);
+						}
+					}
+
+				} // namespace GroupcastAdoptionStruct
 			} // namespace Structs
 		} // namespace GroupKeyManagement
 	} // namespace Clusters

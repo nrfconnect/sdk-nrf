@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster CameraAvStreamManagement (cluster code: 1361/0x551)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>
@@ -106,6 +105,8 @@ namespace app
 					return StatusLightEnabled::kMetadataEntry;
 				case StatusLightBrightness::Id:
 					return StatusLightBrightness::kMetadataEntry;
+				case ImageRotationDiscreteAngles::Id:
+					return ImageRotationDiscreteAngles::kMetadataEntry;
 				default:
 					return std::nullopt;
 				}

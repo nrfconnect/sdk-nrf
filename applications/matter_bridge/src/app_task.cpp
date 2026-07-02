@@ -146,12 +146,19 @@ CHIP_ERROR AppTask::RestoreBridgedDevices()
 		LOG_INF("Loaded bridged device on endpoint id %d from the storage", device.mEndpointId);
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-		BleBridgedDeviceFactory::CreateDevice(device.mDeviceType, btAddr, device.mUniqueID, device.mNodeLabel,
-						      indexes[i], device.mEndpointId);
+		CHIP_ERROR createErr = BleBridgedDeviceFactory::CreateDevice(
+			device.mDeviceType, btAddr, device.mUniqueID, device.mNodeLabel, indexes[i],
+			device.mEndpointId);
+		if (createErr != CHIP_NO_ERROR) {
+			return createErr;
+		}
 #else
-		SimulatedBridgedDeviceFactory::CreateDevice(device.mDeviceType, device.mUniqueID, device.mNodeLabel,
-							    chip::Optional<uint8_t>(indexes[i]),
-							    chip::Optional<uint16_t>(device.mEndpointId));
+		CHIP_ERROR createErr = SimulatedBridgedDeviceFactory::CreateDevice(
+			device.mDeviceType, device.mUniqueID, device.mNodeLabel,
+			chip::Optional<uint8_t>(indexes[i]), chip::Optional<uint16_t>(device.mEndpointId));
+		if (createErr != CHIP_NO_ERROR) {
+			return createErr;
+		}
 #endif
 	}
 	return CHIP_NO_ERROR;

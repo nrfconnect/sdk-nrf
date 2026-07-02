@@ -66,7 +66,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StartUp.
+				} // namespace StartUp
 				namespace ShutDown
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -90,7 +90,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ShutDown.
+				} // namespace ShutDown
 				namespace Leave
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -114,7 +114,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Leave.
+				} // namespace Leave
 				namespace ReachableChanged
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -147,7 +147,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ReachableChanged.
+				} // namespace ReachableChanged
 				namespace ActiveChanged
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -180,7 +180,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ActiveChanged.
+				} // namespace ActiveChanged
 			} // namespace Events
 		} // namespace BridgedDeviceBasicInformation
 	} // namespace Clusters

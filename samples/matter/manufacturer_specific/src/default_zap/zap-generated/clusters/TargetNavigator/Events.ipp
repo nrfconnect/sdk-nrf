@@ -75,7 +75,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TargetUpdated.
+				} // namespace TargetUpdated
 			} // namespace Events
 		} // namespace TargetNavigator
 	} // namespace Clusters

@@ -77,7 +77,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Notify.
+				} // namespace Notify
 			} // namespace Events
 		} // namespace RefrigeratorAlarm
 	} // namespace Clusters

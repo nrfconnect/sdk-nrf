@@ -74,7 +74,8 @@ void SimulatedOnOffLightDataProvider::TimerTimeoutCallback(k_timer *timer)
 
 	LOG_INF("SimulatedOnOffLightDataProvider: Updated light state to %d", provider->mOnOff);
 
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange, reinterpret_cast<intptr_t>(provider));
+	TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange,
+								      reinterpret_cast<intptr_t>(provider));
 }
 #endif
 

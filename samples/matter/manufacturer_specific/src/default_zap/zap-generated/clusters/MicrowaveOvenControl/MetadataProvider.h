@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster MicrowaveOvenControl (cluster code: 95/0x5F)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

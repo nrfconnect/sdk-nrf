@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster GeneralCommissioning (cluster code: 48/0x30)
-// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>

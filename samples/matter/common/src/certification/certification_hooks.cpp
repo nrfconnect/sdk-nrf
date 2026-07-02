@@ -9,9 +9,9 @@
 #include "clusters/identify.h"
 
 #include <app-common/zap-generated/attributes/Accessors.h>
-#include <app/DefaultTimerDelegate.h>
 #include <app/server/Server.h>
 #include <platform/CHIPDeviceLayer.h>
+#include <platform/DefaultTimerDelegate.h>
 
 #include <zephyr/logging/log.h>
 
@@ -63,7 +63,7 @@ namespace Certification
 
 	void Init()
 	{
-		sIdentifyCluster.Init();
+		TEMPORARY_RETURN_IGNORED sIdentifyCluster.Init();
 	}
 
 	void ButtonHandler(ButtonState state, ButtonMask hasChanged)

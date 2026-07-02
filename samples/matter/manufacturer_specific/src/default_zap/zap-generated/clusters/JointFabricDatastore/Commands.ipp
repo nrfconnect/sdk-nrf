@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddKeySet.
+				} // namespace AddKeySet
 				namespace UpdateKeySet
 				{
 
@@ -89,7 +89,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdateKeySet.
+				} // namespace UpdateKeySet
 				namespace RemoveKeySet
 				{
 
@@ -117,7 +117,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveKeySet.
+				} // namespace RemoveKeySet
 				namespace AddGroup
 				{
 
@@ -166,7 +166,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddGroup.
+				} // namespace AddGroup
 				namespace UpdateGroup
 				{
 
@@ -215,7 +215,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdateGroup.
+				} // namespace UpdateGroup
 				namespace RemoveGroup
 				{
 
@@ -243,7 +243,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveGroup.
+				} // namespace RemoveGroup
 				namespace AddAdmin
 				{
 
@@ -281,7 +281,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddAdmin.
+				} // namespace AddAdmin
 				namespace UpdateAdmin
 				{
 
@@ -316,7 +316,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdateAdmin.
+				} // namespace UpdateAdmin
 				namespace RemoveAdmin
 				{
 
@@ -344,7 +344,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveAdmin.
+				} // namespace RemoveAdmin
 				namespace AddPendingNode
 				{
 
@@ -376,7 +376,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddPendingNode.
+				} // namespace AddPendingNode
 				namespace RefreshNode
 				{
 
@@ -404,7 +404,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RefreshNode.
+				} // namespace RefreshNode
 				namespace UpdateNode
 				{
 
@@ -436,7 +436,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdateNode.
+				} // namespace UpdateNode
 				namespace RemoveNode
 				{
 
@@ -464,7 +464,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveNode.
+				} // namespace RemoveNode
 				namespace UpdateEndpointForNode
 				{
 
@@ -499,7 +499,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace UpdateEndpointForNode.
+				} // namespace UpdateEndpointForNode
 				namespace AddGroupIDToEndpointForNode
 				{
 
@@ -534,7 +534,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddGroupIDToEndpointForNode.
+				} // namespace AddGroupIDToEndpointForNode
 				namespace RemoveGroupIDFromEndpointForNode
 				{
 
@@ -569,7 +569,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveGroupIDFromEndpointForNode.
+				} // namespace RemoveGroupIDFromEndpointForNode
 				namespace AddBindingToEndpointForNode
 				{
 
@@ -604,7 +604,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddBindingToEndpointForNode.
+				} // namespace AddBindingToEndpointForNode
 				namespace RemoveBindingFromEndpointForNode
 				{
 
@@ -639,7 +639,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveBindingFromEndpointForNode.
+				} // namespace RemoveBindingFromEndpointForNode
 				namespace AddACLToNode
 				{
 
@@ -670,7 +670,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddACLToNode.
+				} // namespace AddACLToNode
 				namespace RemoveACLFromNode
 				{
 
@@ -701,7 +701,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RemoveACLFromNode.
+				} // namespace RemoveACLFromNode
 			} // namespace Commands
 		} // namespace JointFabricDatastore
 	} // namespace Clusters

@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster DeviceEnergyManagement (cluster code: 152/0x98)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>
@@ -40,6 +39,8 @@ namespace app
 					return Forecast::kMetadataEntry;
 				case OptOutState::Id:
 					return OptOutState::kMetadataEntry;
+				case PowerRangeAdjustment::Id:
+					return PowerRangeAdjustment::kMetadataEntry;
 				default:
 					return std::nullopt;
 				}
@@ -68,6 +69,10 @@ namespace app
 					return RequestConstraintBasedForecast::kMetadataEntry;
 				case CancelRequest::Id:
 					return CancelRequest::kMetadataEntry;
+				case PowerRangeAdjustRequest::Id:
+					return PowerRangeAdjustRequest::kMetadataEntry;
+				case CancelPowerRangeAdjustRequest::Id:
+					return CancelPowerRangeAdjustRequest::kMetadataEntry;
 
 				default:
 					return std::nullopt;

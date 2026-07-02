@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ICACCSRRequest.
+				} // namespace ICACCSRRequest
 				namespace ICACCSRResponse
 				{
 
@@ -64,6 +64,7 @@ namespace app
 								TLV::Tag aTag) const
 					{
 						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
+						encoder.Encode(to_underlying(Fields::kStatusCode), statusCode);
 						encoder.Encode(to_underlying(Fields::kIcaccsr), icaccsr);
 						return encoder.Finalize();
 					}
@@ -78,14 +79,16 @@ namespace app
 									    CHIP_NO_ERROR);
 							ReturnErrorOnFailure(err);
 
-							if (__context_tag == to_underlying(Fields::kIcaccsr)) {
+							if (__context_tag == to_underlying(Fields::kStatusCode)) {
+								err = DataModel::Decode(reader, statusCode);
+							} else if (__context_tag == to_underlying(Fields::kIcaccsr)) {
 								err = DataModel::Decode(reader, icaccsr);
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ICACCSRResponse.
+				} // namespace ICACCSRResponse
 				namespace AddICAC
 				{
 
@@ -113,7 +116,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AddICAC.
+				} // namespace AddICAC
 				namespace ICACResponse
 				{
 
@@ -142,7 +145,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ICACResponse.
+				} // namespace ICACResponse
 				namespace OpenJointCommissioningWindow
 				{
 
@@ -188,7 +191,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace OpenJointCommissioningWindow.
+				} // namespace OpenJointCommissioningWindow
 				namespace TransferAnchorRequest
 				{
 
@@ -211,7 +214,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TransferAnchorRequest.
+				} // namespace TransferAnchorRequest
 				namespace TransferAnchorResponse
 				{
 
@@ -240,7 +243,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TransferAnchorResponse.
+				} // namespace TransferAnchorResponse
 				namespace TransferAnchorComplete
 				{
 
@@ -263,7 +266,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TransferAnchorComplete.
+				} // namespace TransferAnchorComplete
 				namespace AnnounceJointFabricAdministrator
 				{
 
@@ -291,7 +294,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace AnnounceJointFabricAdministrator.
+				} // namespace AnnounceJointFabricAdministrator
 			} // namespace Commands
 		} // namespace JointFabricAdministrator
 	} // namespace Clusters

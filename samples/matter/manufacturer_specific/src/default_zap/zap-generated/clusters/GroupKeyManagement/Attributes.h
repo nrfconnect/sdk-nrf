@@ -132,6 +132,30 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace MaxGroupKeysPerFabric
+				namespace GroupcastAdoption
+				{
+					struct TypeInfo {
+						using Type = chip::app::DataModel::List<
+							const chip::app::Clusters::GroupKeyManagement::Structs::
+								GroupcastAdoptionStruct::Type>;
+						using DecodableType = chip::app::DataModel::DecodableList<
+							chip::app::Clusters::GroupKeyManagement::Structs::
+								GroupcastAdoptionStruct::DecodableType>;
+						using DecodableArgType = const chip::app::DataModel::DecodableList<
+							chip::app::Clusters::GroupKeyManagement::Structs::
+								GroupcastAdoptionStruct::DecodableType> &;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::GroupKeyManagement::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::GroupcastAdoption::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace GroupcastAdoption
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -198,6 +222,7 @@ namespace app
 							maxGroupsPerFabric = static_cast<uint16_t>(0);
 						Attributes::MaxGroupKeysPerFabric::TypeInfo::DecodableType
 							maxGroupKeysPerFabric = static_cast<uint16_t>(0);
+						Attributes::GroupcastAdoption::TypeInfo::DecodableType groupcastAdoption;
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType

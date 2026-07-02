@@ -302,15 +302,15 @@ CHIP_ERROR DiagnosticLogProvider::Init()
 void DiagnosticLogProvider::ClearAllLogs()
 {
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-	DiagnosticLogsCrash::Clear();
+	TEMPORARY_RETURN_IGNORED DiagnosticLogsCrash::Clear();
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS
-	mEndUserLogs.Clear();
+	TEMPORARY_RETURN_IGNORED mEndUserLogs.Clear();
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
-	mNetworkLogs.Clear();
+	TEMPORARY_RETURN_IGNORED mNetworkLogs.Clear();
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
 }
 
@@ -319,17 +319,17 @@ void DiagnosticLogProvider::ClearLogs(IntentEnum intent)
 	switch (intent) {
 	case IntentEnum::kEndUserSupport:
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS
-		mEndUserLogs.Clear();
+		TEMPORARY_RETURN_IGNORED mEndUserLogs.Clear();
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
 		break;
 	case IntentEnum::kNetworkDiag:
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
-		mNetworkLogs.Clear();
+		TEMPORARY_RETURN_IGNORED mNetworkLogs.Clear();
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
 		break;
 	case IntentEnum::kCrashLogs:
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-		DiagnosticLogsCrash::Clear();
+		TEMPORARY_RETURN_IGNORED DiagnosticLogsCrash::Clear();
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
 		break;
 	default:

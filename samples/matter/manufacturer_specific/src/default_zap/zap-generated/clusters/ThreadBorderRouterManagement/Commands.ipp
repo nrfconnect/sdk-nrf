@@ -56,7 +56,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetActiveDatasetRequest.
+				} // namespace GetActiveDatasetRequest
 				namespace GetPendingDatasetRequest
 				{
 
@@ -79,7 +79,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetPendingDatasetRequest.
+				} // namespace GetPendingDatasetRequest
 				namespace DatasetResponse
 				{
 
@@ -108,7 +108,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace DatasetResponse.
+				} // namespace DatasetResponse
 				namespace SetActiveDatasetRequest
 				{
 
@@ -140,7 +140,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetActiveDatasetRequest.
+				} // namespace SetActiveDatasetRequest
 				namespace SetPendingDatasetRequest
 				{
 
@@ -168,7 +168,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetPendingDatasetRequest.
+				} // namespace SetPendingDatasetRequest
 			} // namespace Commands
 		} // namespace ThreadBorderRouterManagement
 	} // namespace Clusters

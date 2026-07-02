@@ -65,7 +65,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SwitchLatched.
+				} // namespace SwitchLatched
 				namespace InitialPress
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -96,7 +96,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace InitialPress.
+				} // namespace InitialPress
 				namespace LongPress
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -127,7 +127,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LongPress.
+				} // namespace LongPress
 				namespace ShortRelease
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -159,7 +159,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ShortRelease.
+				} // namespace ShortRelease
 				namespace LongRelease
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -191,7 +191,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace LongRelease.
+				} // namespace LongRelease
 				namespace MultiPressOngoing
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -231,7 +231,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MultiPressOngoing.
+				} // namespace MultiPressOngoing
 				namespace MultiPressComplete
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -271,7 +271,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MultiPressComplete.
+				} // namespace MultiPressComplete
 			} // namespace Events
 		} // namespace Switch
 	} // namespace Clusters

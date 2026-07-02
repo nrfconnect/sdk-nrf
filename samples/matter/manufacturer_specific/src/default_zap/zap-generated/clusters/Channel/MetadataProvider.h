@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster Channel (cluster code: 1284/0x504)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

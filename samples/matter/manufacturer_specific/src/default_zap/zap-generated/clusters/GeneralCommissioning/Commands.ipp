@@ -67,7 +67,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ArmFailSafe.
+				} // namespace ArmFailSafe
 				namespace ArmFailSafeResponse
 				{
 
@@ -99,7 +99,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ArmFailSafeResponse.
+				} // namespace ArmFailSafeResponse
 				namespace SetRegulatoryConfig
 				{
 
@@ -137,7 +137,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetRegulatoryConfig.
+				} // namespace SetRegulatoryConfig
 				namespace SetRegulatoryConfigResponse
 				{
 
@@ -169,7 +169,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetRegulatoryConfigResponse.
+				} // namespace SetRegulatoryConfigResponse
 				namespace CommissioningComplete
 				{
 
@@ -193,7 +193,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CommissioningComplete.
+				} // namespace CommissioningComplete
 				namespace CommissioningCompleteResponse
 				{
 
@@ -225,7 +225,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CommissioningCompleteResponse.
+				} // namespace CommissioningCompleteResponse
 				namespace SetTCAcknowledgements
 				{
 
@@ -257,7 +257,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTCAcknowledgements.
+				} // namespace SetTCAcknowledgements
 				namespace SetTCAcknowledgementsResponse
 				{
 
@@ -286,7 +286,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTCAcknowledgementsResponse.
+				} // namespace SetTCAcknowledgementsResponse
 			} // namespace Commands
 		} // namespace GeneralCommissioning
 	} // namespace Clusters

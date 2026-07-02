@@ -238,6 +238,11 @@ namespace app
 				.deviceTypeRevision = kLaundryDryerDeviceTypeRevision,
 			};
 
+			constexpr DataModel::DeviceTypeEntry kHumidifierDehumidifier = {
+				.deviceTypeId = kHumidifierDehumidifierDeviceTypeId,
+				.deviceTypeRevision = kHumidifierDehumidifierDeviceTypeRevision,
+			};
+
 			constexpr DataModel::DeviceTypeEntry kNetworkInfrastructureManager = {
 				.deviceTypeId = kNetworkInfrastructureManagerDeviceTypeId,
 				.deviceTypeRevision = kNetworkInfrastructureManagerDeviceTypeRevision,
@@ -363,6 +368,16 @@ namespace app
 				.deviceTypeRevision = kDoorbellDeviceTypeRevision,
 			};
 
+			constexpr DataModel::DeviceTypeEntry kAmbientContextSensor = {
+				.deviceTypeId = kAmbientContextSensorDeviceTypeId,
+				.deviceTypeRevision = kAmbientContextSensorDeviceTypeRevision,
+			};
+
+			constexpr DataModel::DeviceTypeEntry kProximityRanger = {
+				.deviceTypeId = kProximityRangerDeviceTypeId,
+				.deviceTypeRevision = kProximityRangerDeviceTypeRevision,
+			};
+
 			constexpr DataModel::DeviceTypeEntry kWindowCovering = {
 				.deviceTypeId = kWindowCoveringDeviceTypeId,
 				.deviceTypeRevision = kWindowCoveringDeviceTypeRevision,
@@ -471,6 +486,16 @@ namespace app
 			constexpr DataModel::DeviceTypeEntry kElectricalMeter = {
 				.deviceTypeId = kElectricalMeterDeviceTypeId,
 				.deviceTypeRevision = kElectricalMeterDeviceTypeRevision,
+			};
+
+			constexpr DataModel::DeviceTypeEntry kElectricalCircuitBreaker = {
+				.deviceTypeId = kElectricalCircuitBreakerDeviceTypeId,
+				.deviceTypeRevision = kElectricalCircuitBreakerDeviceTypeRevision,
+			};
+
+			constexpr DataModel::DeviceTypeEntry kElectricalDistributionEnclosure = {
+				.deviceTypeId = kElectricalDistributionEnclosureDeviceTypeId,
+				.deviceTypeRevision = kElectricalDistributionEnclosureDeviceTypeRevision,
 			};
 
 			constexpr DataModel::DeviceTypeEntry kControlBridge = {

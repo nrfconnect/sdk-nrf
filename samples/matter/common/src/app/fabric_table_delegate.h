@@ -33,7 +33,8 @@ public:
 	{
 #ifndef CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE
 		static AppFabricTableDelegate sAppFabricDelegate;
-		chip::Server::GetInstance().GetFabricTable().AddFabricDelegate(&sAppFabricDelegate);
+		TEMPORARY_RETURN_IGNORED chip::Server::GetInstance().GetFabricTable().AddFabricDelegate(
+			&sAppFabricDelegate);
 		k_timer_init(&sFabricRemovedTimer, &OnFabricRemovedTimerCallback, nullptr);
 #endif // CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE
 	}
@@ -59,35 +60,37 @@ private:
 	{
 #ifndef CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE
 		if (chip::Server::GetInstance().GetFabricTable().FabricCount() == 0) {
-			chip::DeviceLayer::PlatformMgr().ScheduleWork([](intptr_t) {
+			if (CHIP_NO_ERROR == chip::DeviceLayer::PlatformMgr().ScheduleWork([](intptr_t) {
 #ifdef CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT
-				chip::Server::GetInstance().ScheduleFactoryReset();
+				    chip::Server::GetInstance().ScheduleFactoryReset();
 #elif defined(CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY) ||                                                           \
 	defined(CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START)
 #if CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
-				chip::DeviceLayer::ThreadStackMgr().ClearAllSrpHostAndServices();
+				    chip::DeviceLayer::ThreadStackMgr().ClearAllSrpHostAndServices();
 #endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
-				/* Erase Matter data */
-				chip::DeviceLayer::PersistedStorage::KeyValueStoreMgrImpl().DoFactoryReset();
-				/* Erase Network credentials and disconnect */
-				chip::DeviceLayer::ConnectivityMgr().ErasePersistentInfo();
+				    /* Erase Matter data */
+				    chip::DeviceLayer::PersistedStorage::KeyValueStoreMgrImpl().DoFactoryReset();
+				    /* Erase Network credentials and disconnect */
+				    chip::DeviceLayer::ConnectivityMgr().ErasePersistentInfo();
 #ifdef CONFIG_CHIP_WIFI
-				chip::DeviceLayer::WiFiManager::Instance().Disconnect();
-				chip::DeviceLayer::ConnectivityMgr().ClearWiFiStationProvision();
+				    chip::DeviceLayer::WiFiManager::Instance().Disconnect();
+				    chip::DeviceLayer::ConnectivityMgr().ClearWiFiStationProvision();
 #endif
 #ifdef CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START
-				/* Start the New BLE advertising */
-				if (!chip::DeviceLayer::ConnectivityMgr().IsBLEAdvertisingEnabled()) {
-					if (CHIP_NO_ERROR == chip::Server::GetInstance()
-								     .GetCommissioningWindowManager()
-								     .OpenBasicCommissioningWindow()) {
-						return;
-					}
-				}
-				ChipLogError(FabricProvisioning, "Could not start Bluetooth LE advertising");
+				    /* Start the New BLE advertising */
+				    if (!chip::DeviceLayer::ConnectivityMgr().IsBLEAdvertisingEnabled()) {
+					    if (CHIP_NO_ERROR == chip::Server::GetInstance()
+									 .GetCommissioningWindowManager()
+									 .OpenBasicCommissioningWindow()) {
+						    return;
+					    }
+				    }
+				    ChipLogError(FabricProvisioning, "Could not start Bluetooth LE advertising");
 #endif // CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START
 #endif // CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT
-			});
+			    })) {
+				ChipLogError(FabricProvisioning, "Could not schedule factory reset");
+			}
 		}
 #endif // CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE
 	}

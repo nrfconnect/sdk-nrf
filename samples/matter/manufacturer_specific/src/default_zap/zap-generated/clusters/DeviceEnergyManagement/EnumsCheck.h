@@ -49,6 +49,7 @@ namespace app
 			case EnumType::kFault:
 			case EnumType::kUserOptOut:
 			case EnumType::kCancelled:
+			case EnumType::kInvalid:
 				return val;
 			default:
 				return EnumType::kUnknownEnumValue;

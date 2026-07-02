@@ -25,7 +25,6 @@ using namespace chip::app::Clusters::ClosureControl;
 using Status = chip::Protocols::InteractionModel::Status;
 using TargetPositionEnum = chip::app::Clusters::ClosureControl::TargetPositionEnum;
 using ThreeLevelAutoEnum = chip::app::Clusters::Globals::ThreeLevelAutoEnum;
-using OptionalAttributeEnum = chip::app::Clusters::ClosureControl::OptionalAttributeEnum;
 namespace
 {
 
@@ -100,12 +99,12 @@ CHIP_ERROR ClosureControlEndpoint::Init()
 {
 	ClusterConformance conformance;
 	conformance.FeatureMap().Set(Feature::kPositioning).Set(Feature::kSpeed).Set(Feature::kVentilation);
-	conformance.OptionalAttributes().Set(OptionalAttributeEnum::kCountdownTime);
+	conformance.OptionalAttributes().Set<Attributes::CountdownTime::Id>();
 
 	ClusterInitParameters initParams;
 
-	ReturnErrorOnFailure(mLogic.Init(conformance, initParams));
-	ReturnErrorOnFailure(mInterface.Init());
+	ReturnErrorOnFailure(mInterface.Init(conformance, initParams));
+	mDelegate.SetCluster(&mInterface.Cluster());
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
 	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTriggerHandler(&mDelegate));
@@ -119,13 +118,14 @@ ClosureControlEndpoint::WriteAllAttributes(const MainStateEnum &mainState,
 					   const GenericOverallCurrentState &currentState,
 					   const chip::app::DataModel::Nullable<GenericOverallTargetState> &targetState)
 {
+	auto &cluster = mInterface.Cluster();
 	chip::DeviceLayer::StackLock lock;
-	ReturnErrorOnFailure(mLogic.SetMainState(mainState));
-	ReturnErrorOnFailure(mLogic.SetOverallCurrentState(currentState));
-	ReturnErrorOnFailure(mLogic.SetCountdownTimeFromDelegate(mDelegate.GetMovingCountdownTime()));
+	ReturnErrorOnFailure(cluster.SetMainState(mainState));
+	ReturnErrorOnFailure(cluster.SetOverallCurrentState(chip::app::DataModel::MakeNullable(currentState)));
+	ReturnErrorOnFailure(cluster.SetCountdownTimeFromDelegate(mDelegate.GetMovingCountdownTime()));
 
 	if (!targetState.IsNull()) {
-		ReturnErrorOnFailure(mLogic.SetOverallTargetState(targetState.Value()));
+		ReturnErrorOnFailure(cluster.SetOverallTargetState(targetState));
 	}
 
 	return CHIP_NO_ERROR;
@@ -153,25 +153,26 @@ CHIP_ERROR ClosureControlDelegate::HandleEventTrigger(uint64_t eventTrigger)
 	eventTrigger = clearEndpointInEventTrigger(eventTrigger);
 
 	auto trigger = static_cast<ClosureControlTestEventTrigger>(eventTrigger);
-	auto logic = GetLogic();
+	auto *cluster = GetCluster();
+	VerifyOrReturnError(cluster != nullptr, CHIP_ERROR_INCORRECT_STATE);
 
 	switch (trigger) {
 	case ClosureControlTestEventTrigger::kMainStateIsError:
-		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kError));
-		ReturnErrorOnFailure(logic->AddErrorToCurrentErrorList(ClosureErrorEnum::kBlockedBySensor));
+		ReturnErrorOnFailure(cluster->SetMainState(MainStateEnum::kError));
+		ReturnErrorOnFailure(cluster->AddErrorToCurrentErrorList(ClosureErrorEnum::kBlockedBySensor));
 		break;
 	case ClosureControlTestEventTrigger::kMainStateIsProtected:
-		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kProtected));
+		ReturnErrorOnFailure(cluster->SetMainState(MainStateEnum::kProtected));
 		break;
 	case ClosureControlTestEventTrigger::kMainStateIsDisengaged:
-		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kDisengaged));
+		ReturnErrorOnFailure(cluster->SetMainState(MainStateEnum::kDisengaged));
 		break;
 	case ClosureControlTestEventTrigger::kMainStateIsSetupRequired:
-		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kSetupRequired));
+		ReturnErrorOnFailure(cluster->SetMainState(MainStateEnum::kSetupRequired));
 		break;
 	case ClosureControlTestEventTrigger::kClearEvent:
-		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kStopped));
-		logic->ClearCurrentErrorList();
+		ReturnErrorOnFailure(cluster->SetMainState(MainStateEnum::kStopped));
+		cluster->ClearCurrentErrorList();
 		break;
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;

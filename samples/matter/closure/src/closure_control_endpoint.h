@@ -6,11 +6,10 @@
 
 #pragma once
 
-#include <app/clusters/closure-control-server/closure-control-cluster-delegate.h>
-#include <app/clusters/closure-control-server/closure-control-cluster-logic.h>
-#include <app/clusters/closure-control-server/closure-control-cluster-matter-context.h>
-#include <app/clusters/closure-control-server/closure-control-cluster-objects.h>
-#include <app/clusters/closure-control-server/closure-control-server.h>
+#include <app/clusters/closure-control-server/ClosureControlClusterDelegate.h>
+#include <app/clusters/closure-control-server/ClosureControlClusterObjects.h>
+#include <app/clusters/closure-control-server/ClosureControlCluster.h>
+#include <app/clusters/closure-control-server/CodegenIntegration.h>
 
 #include "pwm/pwm_device.h"
 #include <app-common/zap-generated/cluster-objects.h>
@@ -32,26 +31,24 @@ class ClosureManager;
  * GetWaitingForMotionCountdownTime That are called by Matter stack when it requires to know this information It mostly
  * forwards the callbacks, and receives data from ClosureManager
  * @param mManager Pointer to the ClosureManager
- * @param mLogic Pointer to the ClusterLogic (Matter stack implementation of ClosureControl)
+ * @param mCluster Pointer to the ClosureControlCluster (Matter stack implementation of ClosureControl)
  */
-class ClosureControlDelegate : public chip::app::Clusters::ClosureControl::DelegateBase,
+class ClosureControlDelegate : public chip::app::Clusters::ClosureControl::ClosureControlClusterDelegate,
 			       public chip::TestEventTriggerHandler {
 	using MainStateEnum = chip::app::Clusters::ClosureControl::MainStateEnum;
 	using ThreeLevelAutoEnum = chip::app::Clusters::Globals::ThreeLevelAutoEnum;
 	using GenericOverallCurrentState = chip::app::Clusters::ClosureControl::GenericOverallCurrentState;
 	using GenericOverallTargetState = chip::app::Clusters::ClosureControl::GenericOverallTargetState;
 	using TargetPositionEnum = chip::app::Clusters::ClosureControl::TargetPositionEnum;
-	using ClusterLogic = chip::app::Clusters::ClosureControl::ClusterLogic;
-	using MatterContext = chip::app::Clusters::ClosureControl::MatterContext;
+	using ClosureControlCluster = chip::app::Clusters::ClosureControl::ClosureControlCluster;
 	using ElapsedS = chip::ElapsedS;
 	using EndpointId = chip::EndpointId;
-	using Interface = chip::app::Clusters::ClosureControl::Interface;
 	using Status = chip::Protocols::InteractionModel::Status;
 
 public:
 	ClosureControlDelegate() {}
 
-	/* DelegateBase overrides */
+	/* ClosureControlClusterDelegate overrides */
 	Status HandleStopCommand() override;
 	Status HandleMoveToCommand(const chip::Optional<TargetPositionEnum> &position,
 				   const chip::Optional<bool> &latch,
@@ -67,12 +64,12 @@ public:
 	CHIP_ERROR HandleEventTrigger(uint64_t eventTrigger) override;
 
 	/* Delegate specific functions */
-	void SetLogic(ClusterLogic *logic) { mLogic = logic; }
-	ClusterLogic *GetLogic() const { return mLogic; }
+	void SetCluster(ClosureControlCluster *cluster) { mCluster = cluster; }
+	ClosureControlCluster *GetCluster() const { return mCluster; }
 
 private:
 	ClosureManager *mManager = nullptr;
-	ClusterLogic *mLogic;
+	ClosureControlCluster *mCluster = nullptr;
 };
 
 /**
@@ -80,13 +77,10 @@ private:
  * @brief Represents a Closure Control cluster endpoint.
  *
  * This class encapsulates the logic and interfaces required to manage a Closure Control cluster
- * endpoint. It integrates the delegate, context, logic, and interface components for the
- * endpoint.
+ * endpoint. It integrates the delegate and interface components for the endpoint.
  *
  * @param mEndpoint The endpoint ID associated with this Closure Control endpoint.
- * @param mContext The Matter context for the endpoint.
  * @param mDelegate The delegate instance for handling commands.
- * @param mLogic The cluster logic associated with the endpoint.
  * @param mInterface The interface for interacting with the cluster.
  */
 class ClosureControlEndpoint {
@@ -96,17 +90,11 @@ public:
 	using GenericOverallCurrentState = chip::app::Clusters::ClosureControl::GenericOverallCurrentState;
 	using GenericOverallTargetState = chip::app::Clusters::ClosureControl::GenericOverallTargetState;
 	using TargetPositionEnum = chip::app::Clusters::ClosureControl::TargetPositionEnum;
-	using ClusterLogic = chip::app::Clusters::ClosureControl::ClusterLogic;
-	using MatterContext = chip::app::Clusters::ClosureControl::MatterContext;
+	using ClosureControlCluster = chip::app::Clusters::ClosureControl::ClosureControlCluster;
+	using Interface = chip::app::Clusters::ClosureControl::Interface;
 	using ElapsedS = chip::ElapsedS;
 	using EndpointId = chip::EndpointId;
-	using Interface = chip::app::Clusters::ClosureControl::Interface;
-	ClosureControlEndpoint(EndpointId endpoint)
-		: mEndpoint(endpoint), mContext(mEndpoint), mDelegate(), mLogic(mDelegate, mContext),
-		  mInterface(mEndpoint, mLogic)
-	{
-		mDelegate.SetLogic(&mLogic);
-	}
+	ClosureControlEndpoint(EndpointId endpoint) : mEndpoint(endpoint), mDelegate(), mInterface(mEndpoint, mDelegate) {}
 	/**
 	 * @brief Updates all the attributes in the Matter Stack
 	 *
@@ -134,11 +122,11 @@ public:
 	ClosureControlDelegate &GetDelegate() { return mDelegate; }
 
 	/**
-	 * @brief Returns a reference to the ClusterLogic instance associated with this object.
+	 * @brief Returns a reference to the ClosureControlCluster instance associated with this object.
 	 *
-	 * @return ClusterLogic& Reference to the internal ClusterLogic object.
+	 * @return ClosureControlCluster& Reference to the underlying cluster object.
 	 */
-	ClusterLogic &GetLogic() { return mLogic; }
+	ClosureControlCluster &GetLogic() { return mInterface.Cluster(); }
 
 	CHIP_ERROR OnMovementStopped(const MainStateEnum &mainState, const GenericOverallCurrentState &currentState,
 				     const chip::app::DataModel::Nullable<GenericOverallTargetState> &targetState);
@@ -148,8 +136,6 @@ public:
 
 private:
 	EndpointId mEndpoint = chip::kInvalidEndpointId;
-	MatterContext mContext;
 	ClosureControlDelegate mDelegate;
-	ClusterLogic mLogic;
 	Interface mInterface;
 };

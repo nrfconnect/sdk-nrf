@@ -90,6 +90,60 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace MaxMembershipCount
+				namespace MaxMcastAddrCount
+				{
+					struct TypeInfo {
+						using Type = uint16_t;
+						using DecodableType = uint16_t;
+						using DecodableArgType = uint16_t;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::Groupcast::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::MaxMcastAddrCount::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace MaxMcastAddrCount
+				namespace UsedMcastAddrCount
+				{
+					struct TypeInfo {
+						using Type = uint16_t;
+						using DecodableType = uint16_t;
+						using DecodableArgType = uint16_t;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::Groupcast::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::UsedMcastAddrCount::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace UsedMcastAddrCount
+				namespace FabricUnderTest
+				{
+					struct TypeInfo {
+						using Type = chip::FabricIndex;
+						using DecodableType = chip::FabricIndex;
+						using DecodableArgType = chip::FabricIndex;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::Groupcast::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::FabricUnderTest::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace FabricUnderTest
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -153,6 +207,12 @@ namespace app
 						Attributes::Membership::TypeInfo::DecodableType membership;
 						Attributes::MaxMembershipCount::TypeInfo::DecodableType
 							maxMembershipCount = static_cast<uint16_t>(0);
+						Attributes::MaxMcastAddrCount::TypeInfo::DecodableType
+							maxMcastAddrCount = static_cast<uint16_t>(0);
+						Attributes::UsedMcastAddrCount::TypeInfo::DecodableType
+							usedMcastAddrCount = static_cast<uint16_t>(0);
+						Attributes::FabricUnderTest::TypeInfo::DecodableType fabricUnderTest =
+							static_cast<chip::FabricIndex>(0);
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType

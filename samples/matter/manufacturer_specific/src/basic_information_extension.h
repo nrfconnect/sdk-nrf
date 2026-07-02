@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include <app/clusters/basic-information/BasicInformationCluster.h>
 #include <app/server-cluster/ServerClusterContext.h>
 #include <app/server-cluster/ServerClusterInterface.h>
@@ -14,7 +16,11 @@
 
 class BasicInformationExtension : public chip::app::Clusters::BasicInformationCluster {
 public:
-	BasicInformationExtension() : mRandomNumber(sys_rand16_get()) {}
+	template <typename... Args>
+	BasicInformationExtension(Args &&... args) :
+		chip::app::Clusters::BasicInformationCluster(std::forward<Args>(args)...), mRandomNumber(sys_rand16_get())
+	{
+	}
 
 	chip::app::DataModel::ActionReturnStatus SetRandomNumber(int16_t newRandomNumber);
 

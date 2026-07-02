@@ -116,11 +116,8 @@ CHIP_ERROR MatterBridgedDevice::HandleWriteIdentify(chip::AttributeId attributeI
 
 			AttributeValueDecoder decoder(reader, subjectDescriptor);
 
-			DataModel::WriteAttributeRequest request;
-			request.path.mEndpointId = mEndpointId;
-			request.path.mClusterId = Clusters::Identify::Id;
-			request.path.mAttributeId = attributeId;
-			request.subjectDescriptor = &subjectDescriptor;
+			ConcreteDataAttributePath path(mEndpointId, Clusters::Identify::Id, attributeId);
+			DataModel::WriteAttributeRequest request(path, subjectDescriptor);
 
 			DataModel::ActionReturnStatus status = mIdentifyCluster.Cluster().WriteAttribute(request, decoder);
 			if (!status.IsSuccess()) {

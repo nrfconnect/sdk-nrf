@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster Groupcast (cluster code: 101/0x65)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>
@@ -19,7 +18,7 @@ namespace app
 			{
 
 				// Total number of attributes supported by the cluster, including global attributes
-				inline constexpr uint32_t kAttributesCount = 7;
+				inline constexpr uint32_t kAttributesCount = 10;
 
 				namespace Membership
 				{
@@ -30,6 +29,21 @@ namespace app
 				{
 					inline constexpr AttributeId Id = 0x00000001;
 				} // namespace MaxMembershipCount
+
+				namespace MaxMcastAddrCount
+				{
+					inline constexpr AttributeId Id = 0x00000002;
+				} // namespace MaxMcastAddrCount
+
+				namespace UsedMcastAddrCount
+				{
+					inline constexpr AttributeId Id = 0x00000003;
+				} // namespace UsedMcastAddrCount
+
+				namespace FabricUnderTest
+				{
+					inline constexpr AttributeId Id = 0x00000004;
+				} // namespace FabricUnderTest
 
 				namespace GeneratedCommandList
 				{

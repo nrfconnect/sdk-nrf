@@ -74,7 +74,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveToLevel.
+				} // namespace MoveToLevel
 				namespace Move
 				{
 
@@ -114,7 +114,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Move.
+				} // namespace Move
 				namespace Step
 				{
 
@@ -158,7 +158,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Step.
+				} // namespace Step
 				namespace Stop
 				{
 
@@ -191,7 +191,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Stop.
+				} // namespace Stop
 				namespace MoveToLevelWithOnOff
 				{
 
@@ -232,7 +232,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveToLevelWithOnOff.
+				} // namespace MoveToLevelWithOnOff
 				namespace MoveWithOnOff
 				{
 
@@ -272,7 +272,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveWithOnOff.
+				} // namespace MoveWithOnOff
 				namespace StepWithOnOff
 				{
 
@@ -316,7 +316,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StepWithOnOff.
+				} // namespace StepWithOnOff
 				namespace StopWithOnOff
 				{
 
@@ -349,7 +349,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace StopWithOnOff.
+				} // namespace StopWithOnOff
 				namespace MoveToClosestFrequency
 				{
 
@@ -377,7 +377,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace MoveToClosestFrequency.
+				} // namespace MoveToClosestFrequency
 			} // namespace Commands
 		} // namespace LevelControl
 	} // namespace Clusters

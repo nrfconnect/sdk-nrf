@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster FanControl (cluster code: 514/0x202)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

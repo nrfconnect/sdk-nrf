@@ -104,7 +104,11 @@ chip::Protocols::InteractionModel::Status ClosureManager::OnCalibrateCommand()
 
 chip::Protocols::InteractionModel::Status ClosureManager::OnStopCommand()
 {
-	mPhysicalDevice.Stop();
+	CHIP_ERROR stopErr = mPhysicalDevice.Stop();
+	if (stopErr != CHIP_NO_ERROR) {
+		LOG_ERR("Unable to stop movement, error code: %lx", static_cast<long>(stopErr.AsInteger()));
+		return chip::Protocols::InteractionModel::Status::Failure;
+	}
 	return chip::Protocols::InteractionModel::Status::Success;
 }
 
@@ -113,7 +117,7 @@ ClosureManager::OnMoveToCommand(const chip::Optional<TargetPositionEnum> positio
 				const chip::Optional<ThreeLevelAutoEnum> speed)
 {
 	/* Currently we do not support latching. */
-	if (mClosureControlEndpoint.GetLogic().GetConformance().HasFeature(ClosureControl::Feature::kMotionLatching) &&
+	if (mClosureControlEndpoint.GetLogic().GetFeatureMap().Has(ClosureControl::Feature::kMotionLatching) &&
 	    latch.HasValue()) {
 		return chip::Protocols::InteractionModel::Status::UnsupportedCommand;
 	}
@@ -143,7 +147,11 @@ ClosureManager::OnMoveToCommand(const chip::Optional<TargetPositionEnum> positio
 			return chip::Protocols::InteractionModel::Status::ConstraintError;
 		}
 
-		mPhysicalDevice.MoveTo(pos.value(), spd.value());
+		CHIP_ERROR moveErr = mPhysicalDevice.MoveTo(pos.value(), spd.value());
+		if (moveErr != CHIP_NO_ERROR) {
+			LOG_ERR("Unable to move to position, error code: %lx", static_cast<long>(moveErr.AsInteger()));
+			return chip::Protocols::InteractionModel::Status::Failure;
+		}
 
 		mMainState = MainStateEnum::kMoving;
 		mTargetState.SetNonNull(GenericOverallTargetState(

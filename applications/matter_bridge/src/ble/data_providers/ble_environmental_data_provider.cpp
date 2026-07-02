@@ -47,7 +47,9 @@ uint8_t BleEnvironmentalDataProvider::GattTemperatureNotifyCallback(bt_conn *con
 
 	/* Save data received in notification. */
 	memcpy(&provider->mTemperatureValue, data, length);
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyTemperatureAttributeChange, reinterpret_cast<intptr_t>(provider));
+	TEMPORARY_RETURN_IGNORED
+		DeviceLayer::PlatformMgr().ScheduleWork(NotifyTemperatureAttributeChange,
+							reinterpret_cast<intptr_t>(provider));
 
 exit:
 
@@ -64,7 +66,9 @@ uint8_t BleEnvironmentalDataProvider::GattHumidityNotifyCallback(bt_conn *conn, 
 
 	/* Save data received in notification. */
 	memcpy(&provider->mHumidityValue, data, length);
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyHumidityAttributeChange, reinterpret_cast<intptr_t>(provider));
+	TEMPORARY_RETURN_IGNORED
+		DeviceLayer::PlatformMgr().ScheduleWork(NotifyHumidityAttributeChange,
+							reinterpret_cast<intptr_t>(provider));
 
 exit:
 
@@ -265,7 +269,8 @@ void BleEnvironmentalDataProvider::HumidityTimerTimeoutCallback(k_timer *timer)
 	VerifyOrReturn(provider, LOG_ERR("Invalid provider  object"));
 	VerifyOrReturn(provider->mDevice.mConn, LOG_ERR("Invalid connection object"));
 
-	DeviceLayer::PlatformMgr().ScheduleWork(ReadGATTHumidity, reinterpret_cast<intptr_t>(provider));
+	TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(ReadGATTHumidity,
+								      reinterpret_cast<intptr_t>(provider));
 }
 
 void BleEnvironmentalDataProvider::ReadGATTHumidity(intptr_t context)
@@ -290,8 +295,8 @@ uint8_t BleEnvironmentalDataProvider::HumidityGATTReadCallback(bt_conn *conn, ui
 		memcpy(&newValue, data, sizeof(newValue));
 		if (newValue != provider->mHumidityValue) {
 			provider->mHumidityValue = newValue;
-			DeviceLayer::PlatformMgr().ScheduleWork(NotifyHumidityAttributeChange,
-								reinterpret_cast<intptr_t>(provider));
+			TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(
+				NotifyHumidityAttributeChange, reinterpret_cast<intptr_t>(provider));
 		}
 	} else {
 		LOG_ERR("Unsuccessful GATT read operation (err %d)", att_err);

@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ChangeToMode.
+				} // namespace ChangeToMode
 			} // namespace Commands
 		} // namespace ModeSelect
 	} // namespace Clusters

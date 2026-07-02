@@ -56,6 +56,8 @@ namespace app
 						kConnectionID = 0,
 						kTriggerType = 1,
 						kActivationReason = 2,
+						kContainerType = 3,
+						kCMAFSessionNumber = 4,
 					};
 
 					struct Type {
@@ -78,6 +80,8 @@ namespace app
 						TransportTriggerTypeEnum triggerType =
 							static_cast<TransportTriggerTypeEnum>(0);
 						Optional<TriggerActivationReasonEnum> activationReason;
+						Optional<ContainerFormatEnum> containerType;
+						Optional<uint64_t> CMAFSessionNumber;
 
 						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
 					};
@@ -101,6 +105,8 @@ namespace app
 						TransportTriggerTypeEnum triggerType =
 							static_cast<TransportTriggerTypeEnum>(0);
 						Optional<TriggerActivationReasonEnum> activationReason;
+						Optional<ContainerFormatEnum> containerType;
+						Optional<uint64_t> CMAFSessionNumber;
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 					};
@@ -111,6 +117,8 @@ namespace app
 
 					enum class Fields : uint8_t {
 						kConnectionID = 0,
+						kContainerType = 1,
+						kCMAFSessionNumber = 2,
 					};
 
 					struct Type {
@@ -130,6 +138,8 @@ namespace app
 						static constexpr bool kIsFabricScoped = false;
 
 						uint16_t connectionID = static_cast<uint16_t>(0);
+						Optional<ContainerFormatEnum> containerType;
+						Optional<uint64_t> CMAFSessionNumber;
 
 						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
 					};
@@ -150,6 +160,8 @@ namespace app
 						}
 
 						uint16_t connectionID = static_cast<uint16_t>(0);
+						Optional<ContainerFormatEnum> containerType;
+						Optional<uint64_t> CMAFSessionNumber;
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 					};

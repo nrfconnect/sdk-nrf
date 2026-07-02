@@ -18,7 +18,7 @@ static uint8_t sLogBuffer[256];
 
 static int RedirectNetworkLog(uint8_t *data, size_t length, void *context)
 {
-	Nrf::Matter::DiagnosticLogProvider::GetInstance().PushLog(
+	TEMPORARY_RETURN_IGNORED Nrf::Matter::DiagnosticLogProvider::GetInstance().PushLog(
 		chip::app::Clusters::DiagnosticLogs::IntentEnum::kNetworkDiag, data, length);
 
 	return length;
@@ -26,7 +26,7 @@ static int RedirectNetworkLog(uint8_t *data, size_t length, void *context)
 
 static int RedirectEndUserLog(uint8_t *data, size_t length, void *context)
 {
-	Nrf::Matter::DiagnosticLogProvider::GetInstance().PushLog(
+	TEMPORARY_RETURN_IGNORED Nrf::Matter::DiagnosticLogProvider::GetInstance().PushLog(
 		chip::app::Clusters::DiagnosticLogs::IntentEnum::kEndUserSupport, data, length);
 
 	return length;

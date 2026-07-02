@@ -71,6 +71,9 @@ Base Configuration
 Zephyr configuration options (inherited by nRF Connect)
 =======================================================
 
+.. options-from-kconfig:: /../../../../../modules/lib/matter/config/zephyr/Kconfig
+   :show-type:
+
 .. options-from-kconfig:: /../../../../../modules/lib/matter/config/zephyr/chip-module/Kconfig
    :show-type:
 

@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster ZoneManagement (cluster code: 1360/0x550)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

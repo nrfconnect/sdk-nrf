@@ -10,6 +10,7 @@
 #include <dk_buttons_and_leds.h>
 
 #include <app-common/zap-generated/attributes/Accessors.h>
+#include <lib/support/logging/CHIPLogging.h>
 #include <platform/CHIPDeviceLayer.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -122,9 +123,15 @@ void WindowCovering::MoveTimerTimeoutCallback(chip::System::Layer *systemLayer, 
 	VerifyOrReturn(moveType != nullptr);
 
 	if (*moveType == MoveType::LIFT) {
-		chip::DeviceLayer::PlatformMgr().ScheduleWork(WindowCovering::DriveCurrentLiftPosition);
+		CHIP_ERROR err = chip::DeviceLayer::PlatformMgr().ScheduleWork(WindowCovering::DriveCurrentLiftPosition);
+		if (err != CHIP_NO_ERROR) {
+			ChipLogError(NotSpecified, "ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format());
+		}
 	} else if (*moveType == MoveType::TILT) {
-		chip::DeviceLayer::PlatformMgr().ScheduleWork(WindowCovering::DriveCurrentTiltPosition);
+		CHIP_ERROR err = chip::DeviceLayer::PlatformMgr().ScheduleWork(WindowCovering::DriveCurrentTiltPosition);
+		if (err != CHIP_NO_ERROR) {
+			ChipLogError(NotSpecified, "ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format());
+		}
 	}
 
 	chip::Platform::Delete(moveType);
@@ -278,7 +285,12 @@ void WindowCovering::SchedulePostAttributeChange(chip::EndpointId aEndpoint, chi
 	data->mEndpoint = aEndpoint;
 	data->mAttributeId = aAttributeId;
 
-	chip::DeviceLayer::PlatformMgr().ScheduleWork(DoPostAttributeChange, reinterpret_cast<intptr_t>(data));
+	CHIP_ERROR err =
+		chip::DeviceLayer::PlatformMgr().ScheduleWork(DoPostAttributeChange, reinterpret_cast<intptr_t>(data));
+	if (err != CHIP_NO_ERROR) {
+		chip::Platform::Delete(data);
+		ChipLogError(NotSpecified, "ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format());
+	}
 }
 
 void WindowCovering::DoPostAttributeChange(intptr_t aArg)

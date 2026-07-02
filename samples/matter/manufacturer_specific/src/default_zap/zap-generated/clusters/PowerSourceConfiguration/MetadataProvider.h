@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster PowerSourceConfiguration (cluster code: 46/0x2E)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

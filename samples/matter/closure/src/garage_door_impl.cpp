@@ -63,7 +63,7 @@ CHIP_ERROR GarageDoorImpl::Stop()
 	SystemLayer().CancelTimer(TimerTimeoutCallback, this);
 	LOG_DBG("Movement stopped");
 	mObserver->OnMovementStopped(mCurrentPosition.Get());
-	mCurrentPosition.Set(mCurrentPosition.Get(), true);
+	ReturnErrorOnFailure(mCurrentPosition.Set(mCurrentPosition.Get(), true));
 	return CHIP_NO_ERROR;
 }
 
@@ -71,10 +71,13 @@ void GarageDoorImpl::TimerTimeoutCallback(System::Layer *systemLayer, void *appS
 {
 	auto *self = static_cast<GarageDoorImpl *>(appState);
 	VerifyOrReturn(self != nullptr);
-	self->HandleTimer();
+	CHIP_ERROR err = self->HandleTimer();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("HandleTimer failed, chip error code: %lx", static_cast<long>(err.AsInteger()));
+	}
 }
 
-void GarageDoorImpl::HandleTimer()
+CHIP_ERROR GarageDoorImpl::HandleTimer()
 {
 	bool finished = false;
 	uint32_t movePerTick32 = (static_cast<uint32_t>(mSpeed) * kMoveIntervalMs) / 1000U;
@@ -85,17 +88,17 @@ void GarageDoorImpl::HandleTimer()
 		distanceLeft = mTargetPosition - mCurrentPosition.Get();
 		if (movePerTick >= distanceLeft) {
 			finished = true;
-			mCurrentPosition.Set(mTargetPosition);
+			ReturnErrorOnFailure(mCurrentPosition.Set(mTargetPosition));
 		} else {
-			mCurrentPosition.Set(mCurrentPosition.Get() + movePerTick);
+			ReturnErrorOnFailure(mCurrentPosition.Set(mCurrentPosition.Get() + movePerTick));
 		}
 	} else {
 		distanceLeft = mCurrentPosition.Get() - mTargetPosition;
 		if (movePerTick >= distanceLeft) {
 			finished = true;
-			mCurrentPosition.Set(mTargetPosition);
+			ReturnErrorOnFailure(mCurrentPosition.Set(mTargetPosition));
 		} else {
-			mCurrentPosition.Set(mCurrentPosition.Get() - movePerTick);
+			ReturnErrorOnFailure(mCurrentPosition.Set(mCurrentPosition.Get() - movePerTick));
 		}
 	}
 	uint8_t brightness =
@@ -104,16 +107,17 @@ void GarageDoorImpl::HandleTimer()
 	mPhysicalIndicator.InitiateAction(Nrf::PWMDevice::LEVEL_ACTION, 0, &brightness);
 
 	if (finished) {
-		Stop();
+		ReturnErrorOnFailure(Stop());
 	} else {
 		uint32_t timeLeftMs = (static_cast<uint32_t>(distanceLeft) * kMoveIntervalMs) / movePerTick;
 		uint16_t timeLeftS = static_cast<uint16_t>((timeLeftMs + 999) / 1000); /*ceil*/
 		mObserver->OnMovementUpdate(mCurrentPosition.Get(), timeLeftS, mJustStarted);
 		mJustStarted = false;
-		auto err = SystemLayer().StartTimer(System::Clock::Milliseconds32(kMoveIntervalMs),
-						    TimerTimeoutCallback, this);
-		if (err != CHIP_NO_ERROR) {
-			LOG_ERR("Timer failed to restart, chip error code: %lx", static_cast<long>(err.AsInteger()));
-		}
+		SystemLayer().StartTimer(System::Clock::Milliseconds32(kMoveIntervalMs), TimerTimeoutCallback, this)
+			.Handle([&](CHIP_ERROR err) {
+				LOG_ERR("Timer failed to restart, chip error code: %lx",
+					static_cast<long>(err.AsInteger()));
+			});
 	}
+	return CHIP_NO_ERROR;
 }

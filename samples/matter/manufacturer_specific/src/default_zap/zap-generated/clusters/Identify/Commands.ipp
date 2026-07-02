@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace Identify.
+				} // namespace Identify
 				namespace TriggerEffect
 				{
 
@@ -94,7 +94,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TriggerEffect.
+				} // namespace TriggerEffect
 			} // namespace Commands
 		} // namespace Identify
 	} // namespace Clusters

@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster GroupKeyManagement (cluster code: 63/0x3F)
-// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>
@@ -19,7 +18,7 @@ namespace app
 			{
 
 				// Total number of attributes supported by the cluster, including global attributes
-				inline constexpr uint32_t kAttributesCount = 9;
+				inline constexpr uint32_t kAttributesCount = 10;
 
 				namespace GroupKeyMap
 				{
@@ -40,6 +39,11 @@ namespace app
 				{
 					inline constexpr AttributeId Id = 0x00000003;
 				} // namespace MaxGroupKeysPerFabric
+
+				namespace GroupcastAdoption
+				{
+					inline constexpr AttributeId Id = 0x00000004;
+				} // namespace GroupcastAdoption
 
 				namespace GeneratedCommandList
 				{

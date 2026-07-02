@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster BasicInformation (cluster code: 40/0x28)
-// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace BasicInformation
 		{
 
-			inline constexpr uint32_t kRevision = 5;
+			inline constexpr uint32_t kRevision = 6;
 
 			namespace Attributes
 			{
@@ -186,13 +185,12 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace MaxPathsPerInvoke
-				namespace RandomNumber
+				namespace DeviceLocation
 				{
-					inline constexpr DataModel::AttributeEntry
-						kMetadataEntry(RandomNumber::Id,
-							       BitFlags<DataModel::AttributeQualityFlags>(),
-							       Access::Privilege::kView, Access::Privilege::kOperate);
-				} // namespace RandomNumber
+					inline constexpr DataModel::AttributeEntry kMetadataEntry(
+						DeviceLocation::Id, BitFlags<DataModel::AttributeQualityFlags>(),
+						Access::Privilege::kView, Access::Privilege::kAdminister);
+				} // namespace DeviceLocation
 				namespace ConfigurationVersion
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -200,7 +198,7 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace ConfigurationVersion
-				constexpr std::array<DataModel::AttributeEntry, 17> kMandatoryMetadata = {
+				constexpr std::array<DataModel::AttributeEntry, 12> kMandatoryMetadata = {
 					DataModelRevision::kMetadataEntry,
 					VendorName::kMetadataEntry,
 					VendorID::kMetadataEntry,
@@ -212,12 +210,7 @@ namespace app
 					HardwareVersionString::kMetadataEntry,
 					SoftwareVersion::kMetadataEntry,
 					SoftwareVersionString::kMetadataEntry,
-					UniqueID::kMetadataEntry,
 					CapabilityMinima::kMetadataEntry,
-					SpecificationVersion::kMetadataEntry,
-					MaxPathsPerInvoke::kMetadataEntry,
-					RandomNumber::kMetadataEntry,
-					ConfigurationVersion::kMetadataEntry,
 
 				};
 

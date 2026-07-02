@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster Timer (cluster code: 71/0x47)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <optional>

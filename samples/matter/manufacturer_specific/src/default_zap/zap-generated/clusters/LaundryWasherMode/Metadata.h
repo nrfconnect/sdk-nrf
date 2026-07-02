@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster LaundryWasherMode (cluster code: 81/0x51)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace LaundryWasherMode
 		{
 
-			inline constexpr uint32_t kRevision = 2;
+			inline constexpr uint32_t kRevision = 3;
 
 			namespace Attributes
 			{

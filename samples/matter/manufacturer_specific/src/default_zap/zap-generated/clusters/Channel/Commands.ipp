@@ -61,7 +61,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ChangeChannel.
+				} // namespace ChangeChannel
 				namespace ChangeChannelResponse
 				{
 
@@ -93,7 +93,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ChangeChannelResponse.
+				} // namespace ChangeChannelResponse
 				namespace ChangeChannelByNumber
 				{
 
@@ -125,7 +125,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ChangeChannelByNumber.
+				} // namespace ChangeChannelByNumber
 				namespace SkipChannel
 				{
 
@@ -153,7 +153,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SkipChannel.
+				} // namespace SkipChannel
 				namespace GetProgramGuide
 				{
 
@@ -202,7 +202,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace GetProgramGuide.
+				} // namespace GetProgramGuide
 				namespace ProgramGuideResponse
 				{
 
@@ -235,7 +235,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace ProgramGuideResponse.
+				} // namespace ProgramGuideResponse
 				namespace RecordProgram
 				{
 
@@ -277,7 +277,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace RecordProgram.
+				} // namespace RecordProgram
 				namespace CancelRecordProgram
 				{
 
@@ -319,7 +319,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace CancelRecordProgram.
+				} // namespace CancelRecordProgram
 			} // namespace Commands
 		} // namespace Channel
 	} // namespace Clusters

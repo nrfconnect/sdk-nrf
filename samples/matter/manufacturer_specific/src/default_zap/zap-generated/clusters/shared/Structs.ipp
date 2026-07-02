@@ -807,6 +807,8 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kAudioStreamID), audioStreamID);
 						encoder.Encode(to_underlying(Fields::kMetadataEnabled),
 							       metadataEnabled);
+						encoder.Encode(to_underlying(Fields::kVideoStreams), videoStreams);
+						encoder.Encode(to_underlying(Fields::kAudioStreams), audioStreams);
 						if (aAccessingFabricIndex.HasValue()) {
 							encoder.Encode(to_underlying(Fields::kFabricIndex),
 								       fabricIndex);
@@ -845,6 +847,12 @@ namespace app
 							} else if (__context_tag ==
 								   to_underlying(Fields::kMetadataEnabled)) {
 								err = DataModel::Decode(reader, metadataEnabled);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kVideoStreams)) {
+								err = DataModel::Decode(reader, videoStreams);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kAudioStreams)) {
+								err = DataModel::Decode(reader, audioStreams);
 							} else if (__context_tag ==
 								   to_underlying(Fields::kFabricIndex)) {
 								err = DataModel::Decode(reader, fabricIndex);

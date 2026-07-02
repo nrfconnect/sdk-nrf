@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster ColorControl (cluster code: 768/0x300)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
@@ -21,7 +20,7 @@ namespace app
 		namespace ColorControl
 		{
 
-			inline constexpr uint32_t kRevision = 7;
+			inline constexpr uint32_t kRevision = 9;
 
 			namespace Attributes
 			{

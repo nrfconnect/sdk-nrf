@@ -183,8 +183,7 @@ CHIP_ERROR AppTask::Init()
 	/* Initialize Matter stack */
 	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = []() {
 		app::SetAttributePersistenceProvider(&gDeferredAttributePersister);
-		gSimpleAttributePersistence.Init(Nrf::Matter::GetPersistentStorageDelegate());
-		return CHIP_NO_ERROR;
+		return gSimpleAttributePersistence.Init(Nrf::Matter::GetPersistentStorageDelegate());
 	} }));
 
 	if (!Nrf::GetBoard().Init(ButtonEventHandler)) {

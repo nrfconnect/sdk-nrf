@@ -64,7 +64,7 @@ namespace app
 							return Attributes::AnchorRootCA::Id;
 						}
 						static constexpr bool MustUseTimedWrite() { return false; }
-						static constexpr size_t MaxLength() { return 254; }
+						static constexpr size_t MaxLength() { return 400; }
 					};
 				} // namespace AnchorRootCA
 				namespace AnchorNodeID

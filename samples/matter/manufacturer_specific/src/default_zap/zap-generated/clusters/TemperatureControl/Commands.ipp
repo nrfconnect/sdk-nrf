@@ -68,7 +68,7 @@ namespace app
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace SetTemperature.
+				} // namespace SetTemperature
 			} // namespace Commands
 		} // namespace TemperatureControl
 	} // namespace Clusters

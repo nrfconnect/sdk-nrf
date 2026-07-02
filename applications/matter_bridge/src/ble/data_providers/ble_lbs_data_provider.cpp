@@ -85,8 +85,8 @@ uint8_t BleLBSDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_
 
 	/* Save data received in the notification. */
 	memcpy(&provider->mCurrentSwitchPosition, data, length);
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifySwitchCurrentPositionAttributeChange,
-						reinterpret_cast<intptr_t>(provider));
+	TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(NotifySwitchCurrentPositionAttributeChange,
+								      reinterpret_cast<intptr_t>(provider));
 #endif
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
@@ -118,8 +118,9 @@ void BleLBSDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chip::Attr
 	    sizeof(bool) == dataSize) {
 		/* Set the LED state only if the reachable status is true */
 		if (*reinterpret_cast<bool *>(data)) {
-			UpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id,
-				    reinterpret_cast<uint8_t *>(&mOnOff));
+			TEMPORARY_RETURN_IGNORED
+				UpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id,
+					    reinterpret_cast<uint8_t *>(&mOnOff));
 		}
 	}
 }
@@ -144,7 +145,8 @@ void BleLBSDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt_gatt_w
 	/* Save data received in GATT write response. */
 	memcpy(&provider->mOnOff, params->data, params->length);
 
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyOnOffAttributeChange, reinterpret_cast<intptr_t>(provider));
+	TEMPORARY_RETURN_IGNORED DeviceLayer::PlatformMgr().ScheduleWork(NotifyOnOffAttributeChange,
+								      reinterpret_cast<intptr_t>(provider));
 }
 
 CHIP_ERROR BleLBSDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer)

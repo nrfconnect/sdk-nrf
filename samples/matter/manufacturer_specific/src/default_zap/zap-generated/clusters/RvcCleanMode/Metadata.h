@@ -1,7 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster RvcCleanMode (cluster code: 85/0x55)
-// based on src/controller/data_model/controller-clusters.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
