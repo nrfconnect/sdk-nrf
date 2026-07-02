@@ -19,6 +19,7 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -27,6 +28,7 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
   sample.matter.template.nrf7002eb2.debug:
     sysbuild: true
     build_only: true
@@ -53,6 +55,7 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -61,6 +64,7 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
   sample.matter.template.nrf7002eb2.release:
     sysbuild: true
     build_only: true

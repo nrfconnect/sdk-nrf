@@ -1,3 +1,6 @@
 NFC port with antenna attached:
     Optionally used for obtaining the onboarding information from the Matter accessory device to start the commissioning the device procedure while using a commercial ecosystem.
     See the `Testing with commercial ecosystem`_ section.
+
+    .. note::
+       The nRF54LC10A SoC does not have an NFC peripheral, thus this feature is not supported on the nRF54LC10 DK.

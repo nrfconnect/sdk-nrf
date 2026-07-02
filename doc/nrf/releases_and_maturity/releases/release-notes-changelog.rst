@@ -303,7 +303,13 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target for the following samples:
+
+  * :ref:`matter_template_sample`
+  * :ref:`matter_temperature_sensor_sample`
+
+  DFU is not supported on this board target, as the nRF54LC10 DK is not equipped with external flash.
+  See :ref:`ug_matter_hw_requirements_external_flash` for more information.
 
 Networking samples
 ------------------
