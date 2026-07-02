@@ -55,6 +55,10 @@
 #include "../clock_ctrl/mpsl_clock_ctrl.h"
 #endif /* CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
 
+#if !defined(CONFIG_CLOCK_CONTROL_NRF)
+#define CLOCK_NODE_LFCLK DT_COMPAT_GET_ANY_STATUS_OKAY(nordic_nrf_clock_lfclk)
+#endif /* !defined(CONFIG_CLOCK_CONTROL_NRF) */
+
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
@@ -364,6 +368,7 @@ static void m_assert_handler(const char *const file, const uint32_t line)
 #endif /* IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
 
 #if !defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 static uint8_t m_config_clock_source_get(void)
 {
 #ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
@@ -381,6 +386,25 @@ static uint8_t m_config_clock_source_get(void)
 	return 0;
 #endif
 }
+#else
+static uint8_t m_config_clock_source_get(void)
+{
+#if DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, rc)
+	return MPSL_CLOCK_LF_SRC_RC;
+#elif DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, xtal)
+	return MPSL_CLOCK_LF_SRC_XTAL;
+#elif DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, synth)
+	return MPSL_CLOCK_LF_SRC_SYNTH;
+#elif DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, ext_low_swing)
+	return MPSL_CLOCK_LF_SRC_EXT_LOW_SWING;
+#elif DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, ext_full_swing)
+	return MPSL_CLOCK_LF_SRC_EXT_FULL_SWING;
+#else
+	#error "Clock source is not supported or not defined"
+	return 0;
+#endif
+}
+#endif /* CONFIG_CLOCK_CONTROL_NRF */
 #endif /* !CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
 
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
@@ -419,7 +443,11 @@ static int32_t mpsl_lib_init_internal(void)
 	/* TODO: Clock config should be adapted in the future to new architecture. */
 #if !defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
 	clock_cfg.source = m_config_clock_source_get();
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	clock_cfg.accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
+#else
+	clock_cfg.accuracy_ppm = DT_PROP(CLOCK_NODE_LFCLK, k32src_accuracy_ppm);
+#endif /* CONFIG_CLOCK_CONTROL_NRF */
 	clock_cfg.skip_wait_lfclk_started =
 		IS_ENABLED(CONFIG_SYSTEM_CLOCK_NO_WAIT);
 
