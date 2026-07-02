@@ -322,7 +322,7 @@ static void remote_capabilities_cb(struct bt_conn *conn, uint8_t status,
 			"Remote CS capabilities:\n"
 			" - num_config_supported: %u\n"
 			" - max_consecutive_procedures_supported: %u\n"
-			" - num_antennas_supported: %u\n"
+			" - num_antennae_supported: %u\n"
 			" - max_antenna_paths_supported: %u\n"
 			" - initiator_supported: %s\n"
 			" - reflector_supported: %s\n"
@@ -332,7 +332,7 @@ static void remote_capabilities_cb(struct bt_conn *conn, uint8_t status,
 			" - rtt_random_payload_precision: %s (%u)\n"
 			" - rtt_aa_only_n: %u\n"
 			" - rtt_sounding_n: %u\n"
-			" - rtt_random_payload_n: %u\n"
+			" - rtt_random_sequence_n: %u\n"
 			" - phase_based_nadm_sounding_supported: %s\n"
 			" - phase_based_nadm_random_supported: %s\n"
 			" - cs_sync_2m_phy_supported: %s\n"
@@ -347,16 +347,26 @@ static void remote_capabilities_cb(struct bt_conn *conn, uint8_t status,
 			" - t_sw_time: %u us\n"
 			" - tx_snr_capability: 0x%02x\n"
 			" - t_ip2_ipt_times_supported: 0x%04x\n"
-			" - t_sw_ipt_time_supported: %u us\n",
+			" - t_sw_ipt_times_supported: %u us\n",
 			params->num_config_supported, params->max_consecutive_procedures_supported,
-			params->num_antennas_supported, params->max_antenna_paths_supported,
+#if defined(BT_CS_USE_SPEC_6_3_FIELD_NAMES)
+			params->num_antennae_supported,
+#else
+			params->num_antennas_supported,
+#endif
+			params->max_antenna_paths_supported,
 			params->initiator_supported ? "yes" : "no",
 			params->reflector_supported ? "yes" : "no",
 			params->mode_3_supported ? "yes" : "no", rtt_precision_str[aa_idx],
 			(uint8_t)params->rtt_aa_only_precision, rtt_precision_str[snd_idx],
 			(uint8_t)params->rtt_sounding_precision, rtt_precision_str[rand_idx],
 			(uint8_t)params->rtt_random_payload_precision, params->rtt_aa_only_n,
-			params->rtt_sounding_n, params->rtt_random_payload_n,
+			params->rtt_sounding_n,
+#if defined(BT_CS_USE_SPEC_6_3_FIELD_NAMES)
+			params->rtt_random_sequence_n,
+#else
+			params->rtt_random_payload_n,
+#endif
 			params->phase_based_nadm_sounding_supported ? "yes" : "no",
 			params->phase_based_nadm_random_supported ? "yes" : "no",
 			params->cs_sync_2m_phy_supported ? "yes" : "no",
@@ -367,7 +377,13 @@ static void remote_capabilities_cb(struct bt_conn *conn, uint8_t status,
 			params->t_ip1_times_supported, params->t_ip2_times_supported,
 			params->t_fcs_times_supported, params->t_pm_times_supported,
 			params->t_sw_time, params->tx_snr_capability,
-			params->t_ip2_ipt_times_supported, params->t_sw_ipt_time_supported);
+			params->t_ip2_ipt_times_supported,
+#if defined(BT_CS_USE_SPEC_6_3_FIELD_NAMES)
+			params->t_sw_ipt_times_supported
+#else
+			params->t_sw_ipt_time_supported
+#endif
+			);
 
 		k_sem_give(&sem_remote_capabilities_obtained);
 	} else {
