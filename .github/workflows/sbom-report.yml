@@ -1,0 +1,346 @@
+name: Generate SBOM for entire NCS
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_repo:
+        description: Manifest URL (sdk-nrf fork or upstream).
+        required: false
+        default: https://github.com/nrfconnect/sdk-nrf
+        type: string
+      release:
+        description: NCS revision, tag or branch to scan.
+        required: false
+        default: main
+        type: string
+      toolchain_version:
+        description: NCS toolchain version. Used when `release` is not a vX.Y.Z tag.
+        required: false
+        default: v3.3.0
+        type: string
+      shards:
+        description: Number of scan shards to create.
+        required: false
+        default: 18
+        type: number
+      max_parallel:
+        description: Maximum number of shard jobs to run at once.
+        required: false
+        default: 18
+        type: number
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: full-ncs-sbom-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: '3.12'
+  WORKFLOW_REPO_PATH: workflow-src
+  SBOM_HELPER: workflow-src/scripts/west_commands/sbom/helpers/ci_sbom_helpers.py
+  NRFUTIL_URL: https://developer.nordicsemi.com/.pc-tools/nrfutil/x64-linux/nrfutil
+  NCS_RELEASE: ${{ github.event.inputs.release || github.ref_name }}
+  NCS_MANIFEST: ${{ github.event.inputs.manifest_repo || format('https://github.com/{0}', github.repository) }}
+  NCS_WORKSPACE: ncs
+  SBOM_SHARDS: ${{ github.event.inputs.shards || '18' }}
+  TOOLCHAIN_FALLBACK: ${{ github.event.inputs.toolchain_version || 'v3.3.0' }}
+
+jobs:
+  prepare:
+    name: Prepare SBOM workers matrix
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      pinned_sha: ${{ steps.pin.outputs.pinned_sha }}
+      toolchain_version: ${{ steps.pin.outputs.toolchain_version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+        with:
+          path: ${{ env.WORKFLOW_REPO_PATH }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v6.3.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Build matrix
+        id: matrix
+        shell: bash
+        run: |
+          matrix_json="$(python "${SBOM_HELPER}" matrix --shards "${SBOM_SHARDS}")"
+          echo "matrix=${matrix_json}" >> "${GITHUB_OUTPUT}"
+
+      - name: Pin release to commit SHA and select toolchain
+        id: pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Resolve the manifest revision to a concrete commit SHA so every later
+          # job (scan + finalize) checks out the exact same tree. Without this, a
+          # moving branch like `main` makes scan and finalize disagree on file
+          # contents, breaking the cache-database SHA1 check and emitting
+          # NOASSERTION for any file that changed in the gap.
+          pinned_sha="$(git ls-remote --exit-code "${NCS_MANIFEST}" "${NCS_RELEASE}" \
+            | head -n1 | awk '{print $1}' || true)"
+          if [[ -z "${pinned_sha}" ]]; then
+            if [[ "${NCS_RELEASE}" =~ ^[0-9a-fA-F]{7,40}$ ]]; then
+              pinned_sha="${NCS_RELEASE}"
+            else
+              echo "::error::Cannot resolve '${NCS_RELEASE}' on '${NCS_MANIFEST}'"
+              exit 1
+            fi
+          fi
+          echo "pinned_sha=${pinned_sha}" >> "${GITHUB_OUTPUT}"
+          echo "Pinned ${NCS_RELEASE} -> ${pinned_sha}"
+
+          if [[ "${NCS_RELEASE}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            toolchain_version="${NCS_RELEASE}"
+          else
+            toolchain_version="${TOOLCHAIN_FALLBACK}"
+          fi
+          echo "toolchain_version=${toolchain_version}" >> "${GITHUB_OUTPUT}"
+          echo "Toolchain version: ${toolchain_version}"
+
+  scan:
+    name: Scan shard ${{ matrix.shard_index }}
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(github.event.inputs.max_parallel || '18') }}
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    env:
+      PINNED_SHA: ${{ needs.prepare.outputs.pinned_sha }}
+      TOOLCHAIN_VERSION: ${{ needs.prepare.outputs.toolchain_version }}
+    steps:
+      - name: Checkout workflow repository
+        uses: actions/checkout@v7.0.0
+        with:
+          path: ${{ env.WORKFLOW_REPO_PATH }}
+
+      # --- Toolchain + workspace setup ---
+      - name: Install nrfutil and sdk-manager
+        shell: bash
+        run: |
+          set -euo pipefail
+          wget -qO /tmp/nrfutil "${NRFUTIL_URL}"
+          sudo install -m 0755 /tmp/nrfutil /usr/local/bin/nrfutil
+          nrfutil install sdk-manager
+
+      - name: Install NCS toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          nrfutil sdk-manager toolchain install --ncs-version "${TOOLCHAIN_VERSION}"
+
+      - name: Export toolchain environment
+        shell: bash
+        run: |
+          set -eo pipefail
+          nrfutil sdk-manager toolchain env \
+            --as-script --ncs-version "${TOOLCHAIN_VERSION}" > /tmp/ncs_env.sh
+          # The script appends to vars like LD_LIBRARY_PATH that may be unset on a
+          # fresh runner, so do NOT enable `set -u` while sourcing it. Diff the
+          # environment before/after and forward only what changed to GITHUB_ENV.
+          printenv | sort > /tmp/env_before
+          # shellcheck disable=SC1091
+          source /tmp/ncs_env.sh
+          printenv | sort > /tmp/env_after
+          comm -13 /tmp/env_before /tmp/env_after >> "${GITHUB_ENV}"
+
+      - name: Initialize workspace at pinned SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          # `west init --mr <REV>` passes <REV> to `git clone --branch`, which only
+          # accepts branch/tag names. To pin to a commit SHA we fetch it ourselves
+          # into the manifest path west.yml declares (`nrf` for sdk-nrf), then run
+          # `west init -l` against it.
+          mkdir -p "${NCS_WORKSPACE}/nrf"
+          (
+            cd "${NCS_WORKSPACE}/nrf"
+            git init -q
+            git remote add origin "${NCS_MANIFEST}"
+            git fetch --depth=1 origin "${PINNED_SHA}"
+            git checkout --detach "${PINNED_SHA}"
+          )
+          west init -l "${NCS_WORKSPACE}/nrf"
+          (
+            cd "${NCS_WORKSPACE}"
+            west update --narrow -o=--depth=1
+          )
+
+      - name: Install SBOM Python dependencies (PyPI only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Deliberately skip requirements-fixed.txt: it pins via Nordic artifactory
+          # and older tags reference packages no longer hosted there.
+          # requirements-west-ncs-sbom.txt is small and resolves from PyPI.
+          python -m pip install --no-cache-dir \
+            -r "${NCS_WORKSPACE}/nrf/scripts/requirements-west-ncs-sbom.txt"
+      # --- end setup ---
+
+      - name: Build shard input list
+        shell: bash
+        run: |
+          python "${SBOM_HELPER}" list-files \
+            --workspace "${NCS_WORKSPACE}" \
+            --shards "${SBOM_SHARDS}" \
+            --shard-index "${{ matrix.shard_index }}" \
+            --output "${NCS_WORKSPACE}/.sbom-shard-${{ matrix.shard_index }}.txt"
+
+      - name: Run SBOM for shard
+        shell: bash
+        working-directory: ${{ env.NCS_WORKSPACE }}
+        run: |
+          mkdir -p .sbom-output
+          cp .sbom-shard-${{ matrix.shard_index }}.txt \
+             .sbom-output/sbom-shard-${{ matrix.shard_index }}.txt
+          if [[ ! -s .sbom-shard-${{ matrix.shard_index }}.txt ]]; then
+            printf '{"files":{}}\n' > .sbom-output/cache-${{ matrix.shard_index }}.json
+            exit 0
+          fi
+          west ncs-sbom \
+            --input-list-file .sbom-shard-${{ matrix.shard_index }}.txt \
+            --license-detectors spdx-tag,full-text,external-file,scancode-toolkit \
+            --output-cache-database .sbom-output/cache-${{ matrix.shard_index }}.json
+
+      - name: Upload shard cache
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: sbom-cache-${{ matrix.shard_index }}
+          path: |
+            ${{ env.NCS_WORKSPACE }}/.sbom-output/cache-${{ matrix.shard_index }}.json
+            ${{ env.NCS_WORKSPACE }}/.sbom-output/sbom-shard-${{ matrix.shard_index }}.txt
+          retention-days: 3
+          include-hidden-files: true
+
+  finalize:
+    name: Finalize full repository SBOM
+    needs:
+      - prepare
+      - scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      PINNED_SHA: ${{ needs.prepare.outputs.pinned_sha }}
+      TOOLCHAIN_VERSION: ${{ needs.prepare.outputs.toolchain_version }}
+    steps:
+      - name: Checkout workflow repository
+        uses: actions/checkout@v7.0.0
+        with:
+          path: ${{ env.WORKFLOW_REPO_PATH }}
+
+      # --- Toolchain + workspace setup ---
+      - name: Install nrfutil and sdk-manager
+        shell: bash
+        run: |
+          set -euo pipefail
+          wget -qO /tmp/nrfutil "${NRFUTIL_URL}"
+          sudo install -m 0755 /tmp/nrfutil /usr/local/bin/nrfutil
+          nrfutil install sdk-manager
+
+      - name: Install NCS toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          nrfutil sdk-manager toolchain install --ncs-version "${TOOLCHAIN_VERSION}"
+
+      - name: Export toolchain environment
+        shell: bash
+        run: |
+          set -eo pipefail
+          nrfutil sdk-manager toolchain env \
+            --as-script --ncs-version "${TOOLCHAIN_VERSION}" > /tmp/ncs_env.sh
+          # The script appends to vars like LD_LIBRARY_PATH that may be unset on a
+          # fresh runner, so do NOT enable `set -u` while sourcing it. Diff the
+          # environment before/after and forward only what changed to GITHUB_ENV.
+          printenv | sort > /tmp/env_before
+          # shellcheck disable=SC1091
+          source /tmp/ncs_env.sh
+          printenv | sort > /tmp/env_after
+          comm -13 /tmp/env_before /tmp/env_after >> "${GITHUB_ENV}"
+
+      - name: Initialize workspace at pinned SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          # `west init --mr <REV>` passes <REV> to `git clone --branch`, which only
+          # accepts branch/tag names. To pin to a commit SHA we fetch it ourselves
+          # into the manifest path west.yml declares (`nrf` for sdk-nrf), then run
+          # `west init -l` against it.
+          mkdir -p "${NCS_WORKSPACE}/nrf"
+          (
+            cd "${NCS_WORKSPACE}/nrf"
+            git init -q
+            git remote add origin "${NCS_MANIFEST}"
+            git fetch --depth=1 origin "${PINNED_SHA}"
+            git checkout --detach "${PINNED_SHA}"
+          )
+          west init -l "${NCS_WORKSPACE}/nrf"
+          (
+            cd "${NCS_WORKSPACE}"
+            west update --narrow -o=--depth=1
+          )
+
+      - name: Install SBOM Python dependencies (PyPI only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Deliberately skip requirements-fixed.txt: it pins via Nordic artifactory
+          # and older tags reference packages no longer hosted there.
+          # requirements-west-ncs-sbom.txt is small and resolves from PyPI.
+          python -m pip install --no-cache-dir \
+            -r "${NCS_WORKSPACE}/nrf/scripts/requirements-west-ncs-sbom.txt"
+      # --- end setup ---
+
+      - name: Download shard caches
+        uses: actions/download-artifact@v8.0.1
+        with:
+          pattern: sbom-cache-*
+          path: ${{ env.NCS_WORKSPACE }}/.sbom-cache-shards
+          merge-multiple: true
+
+      - name: Merge cache databases
+        shell: bash
+        run: |
+          mkdir -p "${NCS_WORKSPACE}/.sbom-output"
+          python "${SBOM_HELPER}" list-files \
+            --workspace "${NCS_WORKSPACE}" \
+            --output "${NCS_WORKSPACE}/.sbom-all-files.txt"
+          python "${SBOM_HELPER}" merge-cache \
+            --output "${NCS_WORKSPACE}/.sbom-output/sbom-full-repo-cache.json" \
+            "${NCS_WORKSPACE}"/.sbom-cache-shards/*.json
+          if compgen -G "${NCS_WORKSPACE}/.sbom-cache-shards/sbom-shard-*.txt" > /dev/null; then
+            cp "${NCS_WORKSPACE}"/.sbom-cache-shards/sbom-shard-*.txt \
+               "${NCS_WORKSPACE}/.sbom-output/"
+          fi
+
+      - name: Generate merged SBOM reports
+        shell: bash
+        working-directory: ${{ env.NCS_WORKSPACE }}
+        run: |
+          west ncs-sbom \
+            --input-list-file .sbom-all-files.txt \
+            --input-cache-database .sbom-output/sbom-full-repo-cache.json \
+            --license-detectors cache-database,git-info \
+            --optional-license-detectors "" \
+            --output-html .sbom-output/sbom-full-repo.html \
+            --output-spdx .sbom-output/sbom-full-repo.spdx
+
+      - name: Upload final SBOM artifacts
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: sbom-full-repo
+          path: ${{ env.NCS_WORKSPACE }}/.sbom-output
+          retention-days: 7
+          include-hidden-files: true
