@@ -581,10 +581,12 @@ int audio_system_init(void)
 {
 	int ret;
 
-	ret = audio_clock_init();
-	if (ret) {
-		LOG_ERR("Failed to initialize audio clock: %d", ret);
-		return ret;
+	if (NRF_CLOCK_HAS_HFCLKAUDIO) {
+		ret = audio_clock_init();
+		if (ret) {
+			LOG_ERR("Failed to initialize audio clock: %d", ret);
+			return ret;
+		}
 	}
 
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))

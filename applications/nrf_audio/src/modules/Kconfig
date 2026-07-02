@@ -13,8 +13,7 @@ config BUTTON_DEBOUNCE_MS
 	default 50
 
 config AUDIO_SYNC_TIMER_USES_RTC
-	bool
-	default y
+	bool "Use RTC for audio sync timer"
 	select NRFX_RTC
 
 config USBD_PID

@@ -274,6 +274,9 @@ Matter bridge
 nRF Audio (formerly nRF5340 Audio)
 ----------------------------------
 
+* Added a generalized audio time module that provides a unified interface for retrieving the current audio time in microseconds.
+  The module uses the GRTC timer on nRF54L Series devices and the audio sync timer on other devices.
+
 * Removed :file:`prj_release.conf` files from all nRF Audio applications, and the buildprog tool.
   Users must specify themselves which configurations are desired in a release build.
   See :ref:`nrf_audio_app_configuration_select_build` for more information.

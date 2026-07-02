@@ -6,4 +6,4 @@
 
 #include "application.h"
 
-DEFINE_FAKE_VALUE_FUNC(uint32_t, audio_sync_timer_capture);
+DEFINE_FAKE_VALUE_FUNC(uint32_t, audio_time_us_get);

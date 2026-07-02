@@ -74,5 +74,9 @@ config BT_TX_PROCESSOR_THREAD_PRIO
 	int
 	default -1
 
+config AUDIO_SYNC_TIMER_USES_RTC
+	bool
+	default y
+
 # Include Zephyr's Kconfig.
 source "Kconfig"

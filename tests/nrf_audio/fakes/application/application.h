@@ -10,6 +10,6 @@
 #include <zephyr/fff.h>
 #include <zephyr/zbus/zbus.h>
 
-DECLARE_FAKE_VALUE_FUNC(uint32_t, audio_sync_timer_capture);
+DECLARE_FAKE_VALUE_FUNC(uint32_t, audio_time_us_get);
 
 #endif /* _APPLICATION_FAKES_H_ */
