@@ -96,10 +96,6 @@ if(CONFIG_PCD_APP)
   ncs_add_partition_manager_config(pm.yml.pcd)
 endif()
 
-if(CONFIG_BUILD_WITH_TFM)
-  ncs_add_partition_manager_config(pm.yml.tfm)
-endif()
-
 if(CONFIG_TRUSTED_EXECUTION_NONSECURE OR CONFIG_TRUSTED_EXECUTION_SECURE)
   ncs_add_partition_manager_config(pm.yml.trustzone)
   if(CONFIG_BOOTLOADER_MCUBOOT)

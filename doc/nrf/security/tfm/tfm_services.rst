@@ -119,8 +119,6 @@ Sizing the Internal Trusted Storage
 The RAM and flash usage of the ITS service are included in the ``tfm_secure`` partition.
 The storage itself is a separate ``tfm_its`` partition.
 
-When using the :ref:`partition_manager`, you can configure the size of the ``tfm_its`` with the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE` Kconfig option.
-
 .. include:: /includes/pm_deprecation.txt
 
 The resulting partition is visible in the :file:`partitions.yml` file in the build directory:
@@ -204,9 +202,6 @@ The RAM and flash usage of the PS service are included in the ``tfm_secure`` par
 The storage itself is a separate ``tfm_ps`` partition.
 Additionally, the PS partition requires non-volatile counters for rollback protection.
 Those are stored in the ``tfm_otp_nv_counters`` partition.
-
-When using the :ref:`partition_manager`, the size of the ``tfm_ps`` is configured with the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE` Kconfig option.
-The size of the ``tfm_otp_nv_counters`` is configured with the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS` Kconfig option.
 
 Resulting partitions are visible in the :file:`partitions.yml` file in the build directory:
 

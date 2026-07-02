@@ -395,9 +395,6 @@ Otherwise, the build can still succeed but the security boundary that TF-M progr
 To change the size allocated to TF-M, edit the ``reg = <address size>`` property of the node that corresponds to the partition you want to change in the board's :file:`*_ns.dts` file or in a devicetree overlay.
 The default sizes vary between device families and are not optimized for any specific use case.
 
-.. note::
-   If you use the deprecated :ref:`partition_manager` (for example, on the nRF91 Series), the reserved sizes are configured by the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` and :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` Kconfig options.
-
 To optimize the TF-M size, find the minimal set of features to satisfy the application needs and then minimize the allocated partition sizes while still conforming to the alignment and granularity requirements of given hardware (see :ref:`ug_tfm_partition_alignment_requirements`).
 
 Guidelines for defining a non-secure region
@@ -447,9 +444,6 @@ The example above is from a configurable TF-M build for the ``nrf54l15dk/nrf54l1
 It shows that the secure image flash partition (``slot0_partition`` in devicetree, or ``slot0_s_partition`` when MCUboot is used) is set to 512 kB and the TF-M binary uses around 79 kB of the available space.
 Similarly, the secure RAM partition (``sram0_s``) is set to 128 kB and the TF-M binary uses around 48 kB of the available space.
 You can use this information to optimize the size of TF-M by adjusting the ``reg`` properties of these devicetree nodes, as long as the result stays within the alignment requirements explained in the previous section.
-
-.. note::
-   When the deprecated :ref:`partition_manager` is used, these sizes are controlled by the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` and :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` Kconfig options instead.
 
 Tools for analyzing the secure image size
 =========================================
