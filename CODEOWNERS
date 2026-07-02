@@ -444,6 +444,7 @@
 /lib/tone/                                @nrfconnect/ncs-audio
 /lib/uicc_lwm2m/                          @stig-bjorlykke
 /lib/wave_gen/                            @nrfconnect/ncs-si-muffin
+/lib/wifi_kmu/wifi_kmu_utils.c            @adrianiainlam
 
 # Modules
 /modules/azure-sdk-for-c/                 @nrfconnect/ncs-cia
@@ -1056,6 +1057,7 @@
 /tests/subsys/west_flash/                 @nrfconnect/ncs-low-level-test
 /tests/tfm/                               @nrfconnect/ncs-aegir @magnev
 /tests/unity/                             @nordic-krch
+/tests/wifi/crypto/                       @adrianiainlam @krish2718
 /tests/zephyr/arch/arm/                   @nrfconnect/ncs-low-level-test
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
