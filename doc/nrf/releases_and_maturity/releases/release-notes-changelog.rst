@@ -510,7 +510,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
   * The :ref:`ppi_seq` driver for triggering periodic hardware tasks using PPI.
   * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
-  * The :ref:`vtf_monitoring` for battery voltage, temperature, and frequency monitoring.
+  * The :ref:`wifi_recal_monitor` for battery voltage and temperature monitoring.
 
 SPI drivers
 -----------

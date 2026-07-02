@@ -8,7 +8,7 @@
  * Demonstrates the tier-1 devicetree override for the die-temperature
  * provider. This DK has no second temperature sensor, so this points
  * back at the SoC's own `temp` node just to prove the override is
- * picked up; on a custom board, point `nordic,vtf-die-temp-sensor` at
+ * picked up; on a custom board, point `nordic,wifi-recal-die-temp-sensor` at
  * your own sensor node instead.
  *
  * Pass with: -DEXTRA_DTC_OVERLAY_FILE=chosen_override.overlay
@@ -16,6 +16,6 @@
 
 / {
 	chosen {
-		nordic,vtf-die-temp-sensor = &temp;
+		nordic,wifi-recal-die-temp-sensor = &temp;
 	};
 };

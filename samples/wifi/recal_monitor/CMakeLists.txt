@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(vtf_monitoring_sample)
+project(wifi_recal_monitor_sample)
 
 target_sources(app PRIVATE src/main.c)
-target_sources_ifdef(CONFIG_VTF_BATTERY_VOLTAGE_MONITOR app PRIVATE src/mock_battery_provider.c)
+target_sources_ifdef(CONFIG_WIFI_RECAL_BATTERY_VOLTAGE_MONITOR app PRIVATE src/mock_battery_provider.c)
