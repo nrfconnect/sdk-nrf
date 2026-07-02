@@ -10,19 +10,31 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
 
-#include "temperature_monitor.h"
+#include <drivers/wifi_recal_monitor/wifi_recal_monitor.h>
 
-LOG_MODULE_REGISTER(die_temp_monitor, CONFIG_VTF_LOG_LEVEL);
+LOG_MODULE_REGISTER(die_temp_monitor, CONFIG_WIFI_RECAL_LOG_LEVEL);
 
-static const struct device *const temp_dev = DEVICE_DT_GET(DT_NODELABEL(temp));
+/* Board devicetree can override which sensor feeds WIFI_RECAL_CH_DIE_TEMP via
+ * the `nordic,wifi-recal-die-temp-sensor` chosen node (e.g. a customer's own
+ * ambient temperature sensor). Falls back to the SoC's own die
+ * temperature sensor when no override is present, so the DK keeps
+ * working with zero devicetree changes.
+ */
+#if DT_HAS_CHOSEN(nordic_wifi_recal_die_temp_sensor)
+#define WIFI_RECAL_DIE_TEMP_SENSOR_NODE DT_CHOSEN(nordic_wifi_recal_die_temp_sensor)
+#else
+#define WIFI_RECAL_DIE_TEMP_SENSOR_NODE DT_NODELABEL(temp)
+#endif
+
+static const struct device *const temp_dev = DEVICE_DT_GET(WIFI_RECAL_DIE_TEMP_SENSOR_NODE);
 
 static K_SEM_DEFINE(sensor_state_lock, 1, 1);
 
-static struct vtf_sample sensor_state = {
-	.type = VTF_SAMPLE_TYPE_INT,
+static struct wifi_recal_sample sensor_state = {
+	.type = WIFI_RECAL_SAMPLE_TYPE_INT,
 	.value.i32 = 0,
 	.timestamp_ms = 0,
-	.status = VTF_STATUS_UNINITIALISED,
+	.status = WIFI_RECAL_STATUS_UNINITIALISED,
 };
 
 static void die_temp_work_handler(struct k_work *work);
@@ -32,7 +44,7 @@ static K_WORK_DELAYABLE_DEFINE(die_temp_work, die_temp_work_handler);
 
 static void reschedule_die_temp_work(void)
 {
-	k_work_schedule(&die_temp_work, K_MSEC(CONFIG_VTF_DIE_TEMP_MONITOR_INTERVAL_MS));
+	k_work_schedule(&die_temp_work, K_MSEC(CONFIG_WIFI_RECAL_DIE_TEMP_MONITOR_INTERVAL_MS));
 }
 
 static void die_temp_work_handler(struct k_work *work)
@@ -57,11 +69,11 @@ static void die_temp_work_handler(struct k_work *work)
 	k_sem_take(&sensor_state_lock, K_FOREVER);
 	if (err < 0) {
 		LOG_ERR("Failed to read DIE_TEMP: %d", err);
-		sensor_state.status = VTF_STATUS_ERROR;
+		sensor_state.status = WIFI_RECAL_STATUS_ERROR;
 	} else {
 		sensor_state.value.i32 = (int32_t)sensor_value_to_centi(&val);
 		sensor_state.timestamp_ms = k_uptime_get();
-		sensor_state.status = VTF_STATUS_OK;
+		sensor_state.status = WIFI_RECAL_STATUS_OK;
 	}
 
 	k_sem_give(&sensor_state_lock);
@@ -69,7 +81,7 @@ static void die_temp_work_handler(struct k_work *work)
 	reschedule_die_temp_work();
 }
 
-__weak int die_temp_init(void)
+static int die_temp_init(void)
 {
 	if (!device_is_ready(temp_dev)) {
 		LOG_ERR("%s is not ready", temp_dev->name);
@@ -80,7 +92,7 @@ __weak int die_temp_init(void)
 	return 0;
 }
 
-__weak int die_temp_sample(struct vtf_sample *out)
+static int die_temp_sample(struct wifi_recal_sample *out)
 {
 	if (out == NULL) {
 		return -EINVAL;
@@ -91,3 +103,6 @@ __weak int die_temp_sample(struct vtf_sample *out)
 	k_sem_give(&sensor_state_lock);
 	return 0;
 }
+
+WIFI_RECAL_CHANNEL_DEFINE(wifi_recal_channel_die_temp, WIFI_RECAL_CH_DIE_TEMP, die_temp_sample, die_temp_init,
+		   WIFI_RECAL_SAMPLE_TYPE_INT, i32, CONFIG_WIFI_RECAL_DIE_TEMP_DEFAULT_VALUE);

@@ -1,0 +1,67 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig WIFI_RECAL_MONITOR
+	bool "Subsystem to monitor Wi-Fi recalibration triggers"
+	help
+	  Enable monitoring of operating conditions (battery voltage, die
+	  temperature) that the Wi-Fi driver uses to trigger recalibration
+	  or reconfiguration. Each enabled channel collects live data
+	  through its own work item.
+
+if WIFI_RECAL_MONITOR
+
+menuconfig WIFI_RECAL_DIE_TEMP_MONITOR
+	bool "Monitor die temperature"
+	select SENSOR
+	help
+	  Reads via the Zephyr sensor API from the device pointed to by the
+	  `nordic,wifi-recal-die-temp-sensor` devicetree chosen node. Falls back to
+	  the SoC's own die temperature sensor (nodelabel `temp`) when no
+	  chosen override is present, so this works out of the box on the
+	  DK. Boards with their own ambient temperature sensor can override
+	  the chosen node instead of touching this driver.
+
+if WIFI_RECAL_DIE_TEMP_MONITOR
+
+config WIFI_RECAL_DIE_TEMP_MONITOR_INTERVAL_MS
+	int "Die temperature measurement interval (ms)"
+	default 10000
+	help
+	  Interval between die temperature measurements in milliseconds.
+
+endif # WIFI_RECAL_DIE_TEMP_MONITOR
+
+config WIFI_RECAL_BATTERY_VOLTAGE_MONITOR
+	bool "Monitor battery voltage"
+
+config WIFI_RECAL_LOG_LEVEL
+	int "Logging level in the Wi-Fi recalibration monitor"
+	default LOG_DEFAULT_LEVEL
+	depends on LOG
+	help
+	  Sets the logging level for the Wi-Fi recalibration monitor.
+
+config WIFI_RECAL_DIE_TEMP_DEFAULT_VALUE
+	int "Die temperature default value (centi-degC)"
+	default 2500
+	help
+	  Default value when WIFI_RECAL_DIE_TEMP_MONITOR=n. 2500 = 25.00 C.
+
+config WIFI_RECAL_BATTERY_VOLTAGE_DEFAULT_VALUE
+	int "Battery voltage default value (mV)"
+	default 3300
+	help
+	  Default value when WIFI_RECAL_BATTERY_VOLTAGE_MONITOR=n. 3300 = 3.3 V.
+
+config WIFI_RECAL_SNAPSHOT_INTERVAL_MS
+	int "Snapshot interval (ms)"
+	default 10000
+	help
+	  How often a snapshot is captured from every
+	  enabled channel.
+
+endif # WIFI_RECAL_MONITOR

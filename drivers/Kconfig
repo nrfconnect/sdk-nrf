@@ -32,7 +32,7 @@ rsource "regulator/Kconfig"
 rsource "sdhc/Kconfig"
 rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
-rsource "vtf_monitoring/Kconfig"
+rsource "wifi_recal_monitor/Kconfig"
 rsource "wifi/Kconfig"
 
 config HPF
