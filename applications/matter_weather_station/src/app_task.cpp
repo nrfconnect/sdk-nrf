@@ -24,6 +24,7 @@
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-objects.h>
 #include <app/DefaultTimerDelegate.h>
+#include <app/cluster-building-blocks/QuieterReporting.h>
 #include <app/server/Server.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
@@ -289,12 +290,30 @@ void AppTask::UpdatePowerSourceClusterState()
 		LOG_ERR("Updating battery voltage failed %x", to_underlying(status));
 	}
 
-	status = Clusters::PowerSource::Attributes::BatPercentRemaining::Set(kPowerSourceEndpointId, batteryPercentage);
+	/* Battery attributes have a Q quality, it shouldn't be reported every time a new measurement comes (3s).
+	 * update it only once every Xs(chose 10) or less frequent.
+	 */
+	static QuieterReportingAttribute<uint8_t> batPercentRemainingQuiet{ DataModel::NullNullable };
+	static QuieterReportingAttribute<uint32_t> batTimeRemainingQuiet{ DataModel::NullNullable };
+	constexpr System::Clock::Milliseconds64 kBatteryReportInterval{ 10000 };
+	const System::Clock::Timestamp now = System::SystemClock().GetMonotonicTimestamp();
+
+	const AttributeDirtyState batPercentDirty = batPercentRemainingQuiet.SetValue(
+		DataModel::MakeNullable(batteryPercentage), now,
+		QuieterReportingAttribute<uint8_t>::GetPredicateForSufficientTimeSinceLastDirty(kBatteryReportInterval));
+	status = Clusters::PowerSource::Attributes::BatPercentRemaining::Set(
+		kPowerSourceEndpointId, batteryPercentage,
+		batPercentDirty == AttributeDirtyState::kMustReport ? MarkAttributeDirty::kYes : MarkAttributeDirty::kNo);
 	if (status != Protocols::InteractionModel::Status::Success) {
 		LOG_ERR("Updating battery percentage failed %x", to_underlying(status));
 	}
 
-	status = Clusters::PowerSource::Attributes::BatTimeRemaining::Set(kPowerSourceEndpointId, batteryTimeRemaining);
+	const AttributeDirtyState batTimeDirty = batTimeRemainingQuiet.SetValue(
+		DataModel::MakeNullable(batteryTimeRemaining), now,
+		QuieterReportingAttribute<uint32_t>::GetPredicateForSufficientTimeSinceLastDirty(kBatteryReportInterval));
+	status = Clusters::PowerSource::Attributes::BatTimeRemaining::Set(
+		kPowerSourceEndpointId, batteryTimeRemaining,
+		batTimeDirty == AttributeDirtyState::kMustReport ? MarkAttributeDirty::kYes : MarkAttributeDirty::kNo);
 	if (status != Protocols::InteractionModel::Status::Success) {
 		LOG_ERR("Updating battery time remaining failed %x", to_underlying(status));
 	}
