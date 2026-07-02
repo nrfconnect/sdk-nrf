@@ -51,10 +51,12 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   sample.event_manager_proxy.nrf9251dk_cpuapp_cpuppr:
     platform_allow:
       - nrf9251dk/nrf9251/cpuapp
