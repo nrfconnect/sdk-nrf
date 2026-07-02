@@ -7,35 +7,38 @@ tests:
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - native_sim
-      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
-      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
       - ci_samples_net
-  sample.net.azure_iot_hub.dps:
+  sample.net.azure_iot_hub.wifi:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf9161dk/nrf9161/ns
-      - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    extra_args:
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;nrf70.conf"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  # The nRF7120 DK has no external flash, so it builds without the FOTA configuration.
+  sample.net.azure_iot_hub.nrf7120.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
       - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
-      - nrf9151dk/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
-    extra_args: EXTRA_CONF_FILE=dps.conf
-    extra_configs:
-      - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
+    extra_args:
+      - azure_iot_hub_EXTRA_CONF_FILE=wifi.conf
     tags:
       - ci_build
       - sysbuild
@@ -52,6 +55,55 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     extra_args:
       - azure_iot_hub_SHIELD="nrf7002eb2"
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;nrf70.conf"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.azure_iot_hub.dps:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+    platform_allow:
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+    extra_args: EXTRA_CONF_FILE=dps.conf
+    extra_configs:
+      - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.azure_iot_hub.dps.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    extra_args:
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;dps.conf;nrf70.conf"
+    extra_configs:
+      - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  # The nRF7120 DK has no external flash, so it builds without the FOTA configuration.
+  sample.net.azure_iot_hub.dps.nrf7120.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    extra_args:
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;dps.conf"
+    extra_configs:
+      - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:
       - ci_build
       - sysbuild
@@ -68,7 +120,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     extra_args:
       - azure_iot_hub_SHIELD="nrf7002eb2"
-      - EXTRA_CONF_FILE=dps.conf
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;dps.conf;nrf70.conf"
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:

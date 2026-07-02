@@ -9,22 +9,47 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9151dk/nrf9151/ns
       - thingy91x/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
-      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.mqtt.wifi:
+    sysbuild: true
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - mqtt_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
+  # nRF7120 uses the integrated nRF71 driver; its tuning lives in the board conf.
+  sample.net.mqtt.nrf7120.wifi:
+    sysbuild: true
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
       - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
       - ci_samples_net
+    extra_args:
+      - mqtt_EXTRA_CONF_FILE=wifi.conf
   sample.net.mqtt.nrf70.tls:
     sysbuild: true
     build_only: true
@@ -36,7 +61,8 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_net
-    extra_args: EXTRA_CONF_FILE=tls-nrf7002.conf
+    extra_args:
+      - mqtt_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf;nrf70.conf"
   sample.net.mqtt.nrf54h20.wifi:
     sysbuild: true
     build_only: true
@@ -47,7 +73,8 @@ tests:
       - ci_samples_net
     extra_args:
       - mqtt_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - mqtt_SNIPPET=nrf70-wifi
+      - mqtt_SNIPPET="nrf70-wifi;wifi-credentials"
+      - mqtt_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
   sample.net.mqtt.nrf54lm20_nrf7002eb2.wifi:
     sysbuild: true
     build_only: true
@@ -60,6 +87,8 @@ tests:
       - ci_samples_net
     extra_args:
       - mqtt_SHIELD="nrf7002eb2"
+      - mqtt_SNIPPET=wifi-credentials
+      - mqtt_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
   sample.net.mqtt.nrf54lm20_nrf7002eb2.wifi.tls:
     sysbuild: true
     build_only: true
@@ -72,7 +101,8 @@ tests:
       - ci_samples_net
     extra_args:
       - mqtt_SHIELD="nrf7002eb2"
-      - EXTRA_CONF_FILE=tls-nrf54l-nrf70.conf
+      - mqtt_SNIPPET=wifi-credentials
+      - mqtt_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf;nrf70.conf"
   sample.net.mqtt.nrf91.tls:
     sysbuild: true
     build_only: true
@@ -117,4 +147,4 @@ tests:
       - sysbuild
       - ci_samples_net
     extra_args:
-      - EXTRA_CONF_FILE=tls-nrf7120.conf
+      - mqtt_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"

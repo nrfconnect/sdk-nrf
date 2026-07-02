@@ -14,19 +14,45 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - thingy91x/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
-      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
+  sample.net.aws_iot.wifi:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    extra_args:
+      - aws_iot_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
+  # nRF7120 uses the integrated nRF71 driver; its tuning lives in the board conf,
+  # so it builds without nrf70.conf.
+  sample.net.aws_iot.nrf7120.wifi:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    build_on_all: true
+    integration_platforms:
       - nrf7120dk/nrf7120/cpuapp/ns
-  sample.net.aws_iot.nrf54lm20_nrf7002eb2.wifi:
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    extra_args:
+      - aws_iot_EXTRA_CONF_FILE="wifi.conf"
+  sample.net.aws_iot.nrf7002eb2.wifi:
     sysbuild: true
     tags:
       - ci_build
@@ -42,3 +68,5 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
       - aws_iot_SHIELD="nrf7002eb2"
+      - aws_iot_SNIPPET="nrf70-wifi;wifi-credentials"
+      - aws_iot_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
