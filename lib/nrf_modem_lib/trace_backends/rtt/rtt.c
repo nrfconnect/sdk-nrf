@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <zephyr/init.h>
 #include <zephyr/logging/log.h>
 #include <modem/trace_backend.h>
@@ -12,6 +13,8 @@
 #include <zephyr/kernel.h>
 
 LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
+
+#define MODEM_TRACE_RTT_NAME "modem_trace"
 
 static int trace_rtt_channel;
 static char rtt_buffer[CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT_BUF_SIZE];
@@ -89,8 +92,27 @@ int nrf_modem_lib_trace_rtt_channel_alloc(void)
 {
 	const int segger_rtt_mode = SEGGER_RTT_MODE_NO_BLOCK_TRIM;
 
-	trace_rtt_channel = SEGGER_RTT_AllocUpBuffer("modem_trace", rtt_buffer, sizeof(rtt_buffer),
-						     segger_rtt_mode);
+	/* On a warm reboot the RTT control block is retained in RAM. Calling
+	 * SEGGER_RTT_AllocUpBuffer() again would register a duplicate
+	 * "modem_trace" up-channel on every boot, and the modem would start
+	 * writing to the newest channel while host tooling keeps listening on
+	 * the original one. Reuse an existing "modem_trace" up-channel if one is
+	 * already present so the channel index stays stable across reboots.
+	 */
+	for (int i = 0; i < _SEGGER_RTT.MaxNumUpBuffers; i++) {
+		const char *name = _SEGGER_RTT.aUp[i].sName;
+
+		if (name != NULL && strcmp(name, MODEM_TRACE_RTT_NAME) == 0) {
+			trace_rtt_channel = i;
+			SEGGER_RTT_ConfigUpBuffer(i, MODEM_TRACE_RTT_NAME, rtt_buffer,
+						  sizeof(rtt_buffer), segger_rtt_mode);
+
+			return 0;
+		}
+	}
+
+	trace_rtt_channel = SEGGER_RTT_AllocUpBuffer(MODEM_TRACE_RTT_NAME, rtt_buffer,
+						     sizeof(rtt_buffer), segger_rtt_mode);
 
 	return trace_rtt_channel < 0 ? -EBUSY : 0;
 }
