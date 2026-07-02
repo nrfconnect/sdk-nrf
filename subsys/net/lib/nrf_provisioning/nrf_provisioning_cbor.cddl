@@ -29,7 +29,7 @@ command_with_nonce = [at_command / config / finished, nonce]
 
 ;============================;
 
-correlation = (correlation_id: tstr)
+correlation = (correlation_id: tstr .size (0..45))
 
 command = [correlation, at_command / config / finished]
 

@@ -527,11 +527,18 @@ int nrf_provisioning_codec_process_commands(void)
 		}
 
 		/* Mark as the latest successful provisioning command */
+		size_t corr_id_len = CDC_IFMT_CMD_I_GET(cctx, i)->command_correlation_m.len;
+
+		if (corr_id_len >= sizeof(nrf_provisioning_latest_corr_id)) {
+			LOG_ERR("Correlation ID too long: %d bytes", corr_id_len);
+			ret = -ENOMEM;
+			goto stop_provisioning;
+		}
+
 		memcpy(nrf_provisioning_latest_corr_id,
 			CDC_IFMT_CMD_I_GET(cctx, i)->command_correlation_m.value,
-			CDC_IFMT_CMD_I_GET(cctx, i)->command_correlation_m.len);
-		nrf_provisioning_latest_corr_id[
-			CDC_IFMT_CMD_I_GET(cctx, i)->command_correlation_m.len] = '\0';
+			corr_id_len);
+		nrf_provisioning_latest_corr_id[corr_id_len] = '\0';
 	}
 
 stop_provisioning:
