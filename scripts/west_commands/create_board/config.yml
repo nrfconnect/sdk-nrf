@@ -132,6 +132,24 @@ products:
                 arch: riscv
                 ram: 64
                 flash: 64
+  - series: nrf54ls
+    socs:
+      - name: nrf54ls05a
+        variants:
+          - name: qfaa
+            cores:
+              - name: cpuapp
+                arch: arm
+                ram: 64
+                flash: 204
+      - name: nrf54ls05b
+        variants:
+          - name: qfaa
+            cores:
+              - name: cpuapp
+                arch: arm
+                ram: 96
+                flash: 204
   - series: nrf91
     socs:
       - name: nrf9131
