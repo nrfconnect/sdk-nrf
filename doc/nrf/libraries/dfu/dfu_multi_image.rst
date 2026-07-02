@@ -8,7 +8,7 @@ DFU multi-image
    :depth: 2
 
 The DFU multi-image library provides an API for writing a DFU multi-image package that can be downloaded in chunks of arbitrary size.
-The DFU multi-image package is a simple archive file that consists of a CBOR-based header that describes contents of the package, followed by a number of updates images, such as firmware images for different MCU cores.
+The DFU multi-image package is a simple archive file that consists of a CBOR-based header that describes contents of the package, followed by a number of update images, such as firmware images for different MCU cores.
 
 Images included in a DFU multi-image package are identified by numeric identifiers assigned by the user.
 The library provides a way for the user to register custom functions for writing a single image with a given identifier.
@@ -34,8 +34,6 @@ The following options control which images are included:
 | :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET`           | Include network core image update.      |
 +-------------------------------------------------------------------+-----------------------------------------+
 | :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT`       | Include MCUboot update.                 |
-+-------------------------------------------------------------------+-----------------------------------------+
-| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` | Include nRF700x Wi-Fi® firmware patches.|
 +-------------------------------------------------------------------+-----------------------------------------+
 
 In addition to the built-in set of images, you can also register the extra images that will be included in the multi-image DFU package.
