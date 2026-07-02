@@ -179,6 +179,14 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf7002dk/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)      |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
+| nRF93M1 DK        |            | :zephyr:board:`nrf93m1dk <nrf93m1dk>`                  | ``nrf93m1dk/nrf54l15/cpuapp``                                            |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf93m1dk/nrf54l15/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)     |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf93m1dk/nrf54l15/cpuflpr``                                           |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf93m1dk/nrf54l15/cpuflpr/xip``                                       |
++-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 
 .. note::
    In |NCS| releases before v1.6.1:
