@@ -75,30 +75,57 @@ For the default values, see the following Kconfig options:
 * :kconfig:option:`CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE`
 * :kconfig:option:`CONFIG_VTF_FREQ_OFFSET_DEFAULT_VALUE`
 
-Custom channel backends
-=======================
+Providers
+=========
 
-Each channel has a reference implementation, for example, :file:`temperature_monitor.c`.
-If the application needs to use one of these channels beyond the requirements for Wi-Fi, applications can replace any channel backend by supplying their own stronger ``init()`` and ``sample()`` functions.
+A channel's live data comes from a *provider*: a pair of ``init()``/``sample()`` functions registered with :c:macro:`VTF_CHANNEL_DEFINE`.
+A board registers at most one provider per channel; :c:macro:`VTF_CHANNEL_DEFINE` emits a unique symbol per channel ID, so registering two providers for the same channel fails the build with a linker "multiple definition" error rather than silently racing at runtime.
+There are two ways to provide one:
+
+Devicetree-selected sensor provider
+------------------------------------
+
+For components that already have a Zephyr sensor driver, no custom C is needed.
+The die temperature channel's built-in provider (:file:`temperature_monitor.c`) reads via the standard sensor API (``sensor_sample_fetch()``/``sensor_channel_get()``) from whichever device a devicetree ``chosen`` node points to:
+
+.. code-block:: devicetree
+
+   chosen {
+       nordic,vtf-die-temp-sensor = &my_ambient_temp_sensor;
+   };
+
+If no ``nordic,vtf-die-temp-sensor`` chosen node is present, the provider falls back to the SoC's own die temperature sensor (nodelabel ``temp``), which is why this works out of the box on the DK with no devicetree changes.
+Enable it with :kconfig:option:`CONFIG_VTF_DIE_TEMP_MONITOR`.
+
+Custom registered provider
+---------------------------
+
+For anything that is not sensor-API-shaped (a proprietary fuel-gauge library, a raw register read, a vendor SDK call, and so on), write a plain provider file and register it directly.
+The provider's internals owe nothing to the sensor subsystem; only the ``init()``/``sample()`` signatures matter to VTF:
 
 .. code-block:: c
 
-   #include "temperature_monitor.h"
+   #include <drivers/vtf_monitoring/vtf_monitoring.h>
 
-   int die_temp_init(void)
+   static int my_provider_init(void)
    {
-       /* Configure sensor and fetch data regularly */
+       /* Bring up whatever HW/library this needs. */
        return 0;
    }
 
-   int die_temp_sample(struct vtf_sample *out)
+   static int my_provider_sample(struct vtf_sample *out)
    {
        out->type = VTF_SAMPLE_TYPE_INT;
-       out->value.i32 = /* centi-degC */;
+       out->value.i32 = /* reading, in the channel's canonical unit */;
        out->timestamp_ms = k_uptime_get();
        out->status = VTF_STATUS_OK;
        return 0;
    }
+
+   VTF_CHANNEL_DEFINE(my_channel_provider, VTF_CH_BATTERY_VOLTAGE, my_provider_sample,
+                      my_provider_init, VTF_SAMPLE_TYPE_INT, i32, 3300);
+
+Gate the registration behind your own Kconfig option, and make sure any built-in provider for the same channel (for example :kconfig:option:`CONFIG_VTF_DIE_TEMP_MONITOR`) stays disabled.
 
 API documentation
 *****************
