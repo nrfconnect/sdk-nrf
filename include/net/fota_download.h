@@ -205,7 +205,7 @@ int fota_download_with_host_cfg(const char *host, const char *file,
  *              download, both paths will be treated as upgradable bootloader slot 0
  *              and slot 1 binaries respectively, and only the binary corresponding to
  *              the currently inactive bootloader slot will be selected and downloaded.
- *              See <a href="https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/config_and_build/bootloaders/bootloader.html">
+ *              See <a href="https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/config_and_build/bootloaders/bootloader.html">
  *              Secure Bootloader Chain Docs</a> for details regarding the upgradable
  *              bootloader slots.
  * @param sec_tag_list Security tags that you want to use with HTTPS. Pass NULL to disable TLS.

@@ -24,7 +24,7 @@
  *   - CRACEN (hardware acceleration for nRF54L and nRF71 Series)
  *
  * For detailed documentation on these drivers, see the nRF Connect SDK documentation:
- * https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/libraries/security/nrf_security.html
+ * https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/libraries/security/nrf_security.html
  *
  * The Nordic-specific implementation also uses files located at:
  * - https://github.com/nrfconnect/sdk-nrf/blob/main/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_primitives.h
