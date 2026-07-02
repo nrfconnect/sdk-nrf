@@ -785,6 +785,7 @@
 /scripts/west_commands/sbom/              @nrfconnect/ncs-co-scripts
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
 /scripts/west_commands/ncs_cherry_pick.py @nrfconnect/ncs-co-scripts
+/scripts/west_commands/ncs_contains_commit.py @nrfconnect/ncs-co-scripts
 /scripts/west_commands/ncs_ironside_se_update.py @nrfconnect/ncs-aurora
 /scripts/west_commands/ncs_provision.py   @nrfconnect/ncs-eris
 /scripts/west_commands/tests/test_ncs_cherry_pick.py @nrfconnect/ncs-co-scripts
