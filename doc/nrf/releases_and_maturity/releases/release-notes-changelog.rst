@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ncs_release_notes_changelog:
 
 Changelog for |NCS| v3.4.99
@@ -9,7 +7,10 @@ Changelog for |NCS| v3.4.99
    :local:
    :depth: 2
 
-This changelog reflects the most relevant changes from the latest official release.
+The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
+
+.. note::
+   This file is a work in progress and might not cover all relevant changes.
 
 .. HOWTO
 
@@ -202,7 +203,7 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-|no_changes_yet_note|
+* Added the :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
 
 DECT NR+
 --------
@@ -383,12 +384,6 @@ DFU samples
 
 DECT NR+ samples
 ----------------
-
-|no_changes_yet_note|
-
-
-Edge Impulse samples
---------------------
 
 |no_changes_yet_note|
 
@@ -646,12 +641,6 @@ Google Fast Pair integration
 ----------------------------
 
 * Removed the nRF53 Series-specific information from the :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide, following the removal of the nRF52 and nRF53 Series support from the Fast Pair samples.
-
-Edge Impulse integration
-------------------------
-
-|no_changes_yet_note|
-
 
 Memfault integration
 --------------------

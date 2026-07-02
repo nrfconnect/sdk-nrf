@@ -12,7 +12,7 @@ Migration notes are also provided for major functionality updates.
 .. toctree::
    :maxdepth: 1
    :glob:
-   :caption: Version-specific migration notes
+   :caption: nRF Connect SDK version migration notes
 
    migration/migration_guide_3.5
    migration/migration_guide_3.4

@@ -400,7 +400,7 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
     For example, to enable a specific cluster or its attribute, the new model requires calling a dedicated delegate and registering the cluster in a source code.
     The code-driven approach is not yet fully implemented for all the available clusters, but the coverage will be increasing and it is used for the newly created clusters.
     The new model is meant to be backward compatible with the previous configuration based on the ZAP files and the ZAP-generated code, until the code-driven approach is fully implemented for all the available clusters.
-    See the `Migration notes <Migration notes for nRF Connect SDK v3.2.0_>`_ for more information.
+    See the `migration notes <Migration notes for nRF Connect SDK v3.2.0_>`_ for more information.
   * The :ref:`ug_matter_gs_tools_matter_west_commands_sync` to synchronize the ZAP and :file:`zcl.json` files after updating the ZAP tool version.
   * The check to all :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool` that verify whether ZAP tool sandbox permissions are correctly set.
     In case of detecting incorrect permissions, the command prompts the user to accept automatically updating the permissions to required ones.
@@ -447,7 +447,6 @@ Matter bridge
     This change breaks the DFU between the previous |NCS| versions and the upcoming release.
     To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
     See the `migration notes <Migration notes for nRF Connect SDK v3.2.0_>`_ for more information.
-
   * By moving code from :file:`samples/matter/common/src/bridge` to :file:`applications/matter_bridge/src/core` and :file:`applications/matter_bridge/src/ble` directories.
   * The Identify cluster implementation in the application to use the code-driven approach instead of the zap-driven approach.
   * The default number of Bluetooth Low Energy connections that can be selected using the Kconfig configuration from ``10`` to ``8`` for the Matter bridge over Thread configuration.
