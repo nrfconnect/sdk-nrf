@@ -10,11 +10,23 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
 
-#include "temperature_monitor.h"
+#include <drivers/vtf_monitoring/vtf_monitoring.h>
 
 LOG_MODULE_REGISTER(die_temp_monitor, CONFIG_VTF_LOG_LEVEL);
 
-static const struct device *const temp_dev = DEVICE_DT_GET(DT_NODELABEL(temp));
+/* Board devicetree can override which sensor feeds VTF_CH_DIE_TEMP via
+ * the `nordic,vtf-die-temp-sensor` chosen node (e.g. a customer's own
+ * ambient temperature sensor). Falls back to the SoC's own die
+ * temperature sensor when no override is present, so the DK keeps
+ * working with zero devicetree changes.
+ */
+#if DT_HAS_CHOSEN(nordic_vtf_die_temp_sensor)
+#define VTF_DIE_TEMP_SENSOR_NODE DT_CHOSEN(nordic_vtf_die_temp_sensor)
+#else
+#define VTF_DIE_TEMP_SENSOR_NODE DT_NODELABEL(temp)
+#endif
+
+static const struct device *const temp_dev = DEVICE_DT_GET(VTF_DIE_TEMP_SENSOR_NODE);
 
 static K_SEM_DEFINE(sensor_state_lock, 1, 1);
 
@@ -69,7 +81,7 @@ static void die_temp_work_handler(struct k_work *work)
 	reschedule_die_temp_work();
 }
 
-__weak int die_temp_init(void)
+static int die_temp_init(void)
 {
 	if (!device_is_ready(temp_dev)) {
 		LOG_ERR("%s is not ready", temp_dev->name);
@@ -80,7 +92,7 @@ __weak int die_temp_init(void)
 	return 0;
 }
 
-__weak int die_temp_sample(struct vtf_sample *out)
+static int die_temp_sample(struct vtf_sample *out)
 {
 	if (out == NULL) {
 		return -EINVAL;
@@ -91,3 +103,6 @@ __weak int die_temp_sample(struct vtf_sample *out)
 	k_sem_give(&sensor_state_lock);
 	return 0;
 }
+
+VTF_CHANNEL_DEFINE(vtf_channel_die_temp, VTF_CH_DIE_TEMP, die_temp_sample, die_temp_init,
+		   VTF_SAMPLE_TYPE_INT, i32, CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE);

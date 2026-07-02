@@ -81,10 +81,15 @@ struct vtf_channel {
 };
 
 /**
- * Register a channel with the VTF subsystem.
+ * Register a provider for a channel with the VTF subsystem.
  *
  * Expands to a ``static const struct vtf_channel`` placed in the
- * ``vtf_channel`` iterable section.
+ * ``vtf_channel`` iterable section. This is the sole registration
+ * contract for providers, built-in or customer-supplied: a board
+ * registers at most one provider per channel. The ``unique_id_##_id``
+ * symbol below has external linkage on purpose, so a second provider
+ * registered for the same ``_id`` fails the link with "multiple
+ * definition" instead of silently overwriting or racing at runtime.
  *
  * @param _sym         C symbol name for the descriptor.
  * @param _id          ``enum vtf_channel_id`` this channel handles.
