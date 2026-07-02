@@ -904,6 +904,13 @@ ci_tests_subsys_bluetooth_gatt_dm:
     - nrf/subsys/bluetooth/gatt_dm.c
     - nrf/tests/subsys/bluetooth/gatt_dm/
 
+ci_tests_subsys_bluetooth_sap:
+  files:
+    - nrf/include/bluetooth/services/sap.h
+    - nrf/include/bluetooth/services/sap_protocol.h
+    - nrf/subsys/bluetooth/services/sap/
+    - nrf/tests/subsys/bluetooth/services/sap/
+
 ci_tests_subsys_bluetooth_mesh:
   files:
     - nrf/include/bluetooth/mesh/
