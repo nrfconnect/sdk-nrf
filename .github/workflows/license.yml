@@ -7,7 +7,64 @@ permissions:
   pull-requests: read
 
 jobs:
-  call-workflow:
-    uses: ./.github/workflows/license-reusable.yml
-    with:
-      path: nrf
+  manifest_license_job:
+    runs-on: ubuntu-24.04
+    name: Check licenses of new files in manifest updated modules
+    if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
+    steps:
+    - name: Checkout sources
+      uses: nrfconnect/action-checkout-west-update@main
+      with:
+        git-fetch-depth: 0
+        path: ncs/nrf
+        west-update-args: '-n'
+
+    - name: cache-pip
+      uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-doc-pip
+
+    - name: Install python dependencies
+      run: |
+        pip3 install -U pip
+        pip3 install -U setuptools
+        export PATH="$HOME/.local/bin:$PATH"
+        pip3 install -U wheel
+        pip3 install --user -U west
+        pip3 show -f west
+
+    - name: West zephyr-export
+      working-directory: ncs
+      run: |
+        export PATH="$HOME/.local/bin:$PATH"
+        export PATH="$HOME/bin:$PATH"
+        west zephyr-export
+        echo "ZEPHYR_BASE=$(pwd)/zephyr" >> $GITHUB_ENV
+
+    - name: Install license check script dependencies
+      run: |
+        pip3 install -U -r ncs/nrf/scripts/ci/requirements.txt
+
+    - name: Run manifest license checks
+      id: manifest_license_checks
+      env:
+        BASE_REF: ${{ github.base_ref }}
+        ZEPHYR_BASE: ${{ env.ZEPHYR_BASE }}
+      working-directory: ncs/nrf
+      run: |
+        export PATH="$HOME/.local/bin:$PATH"
+        export PATH="$HOME/bin:$PATH"
+        python3 ./scripts/ci/check_license.py \
+            --github \
+            -l ./scripts/ci/license_allow_list.yaml \
+            -c origin/${BASE_REF}..
+
+    - name: Upload results
+      uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
+      continue-on-error: true
+      if: always()
+      with:
+        name: manifest-licenses.xml
+        path: ncs/nrf/licenses.xml
+        overwrite: true
