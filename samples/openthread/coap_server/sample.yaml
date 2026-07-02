@@ -17,6 +17,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
@@ -24,6 +25,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
   sample.openthread.coap_server.ftd:
     sysbuild: true
     build_only: true
@@ -38,6 +40,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args: >
       coap_server_SNIPPET="ot-ci;ot-logging"
     integration_platforms:
@@ -47,3 +50,4 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp

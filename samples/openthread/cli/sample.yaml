@@ -20,6 +20,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52840dongle/nrf52840
@@ -30,6 +31,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
   sample.openthread.cli.multiprotocol:
     sysbuild: true
     build_only: true
@@ -47,6 +49,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - cli_SNIPPET="ot-ci;ot-logging"
       - EXTRA_CONF_FILE="extra_conf/multiprotocol.conf;extra_conf/tcp.conf"
@@ -62,6 +65,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
   sample.openthread.cli.singleprotocol:
     sysbuild: true
     build_only: true
@@ -78,6 +82,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - cli_SNIPPET="ot-ci;ot-logging"
       - EXTRA_CONF_FILE=extra_conf/tcp.conf
@@ -91,6 +96,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
   sample.openthread.cli.usb:
     sysbuild: true
     build_only: true
@@ -123,6 +129,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - cli_SNIPPET="ot-ci"
       - EXTRA_CONF_FILE=extra_conf/low_power.conf
@@ -133,6 +140,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
   # Build integration regression protection.
   sample.nrf_security.openthread.integration:
     sysbuild: true
@@ -210,6 +218,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - cli_SNIPPET="ot-ci;ot-zephyr-l2"
     integration_platforms:
@@ -220,6 +229,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
   sample.openthread.cli.multiprotocol.l2:
     sysbuild: true
     build_only: true
@@ -235,6 +245,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     extra_args:
       - cli_SNIPPET="ot-ci;ot-logging;ot-zephyr-l2;zperf"
       - EXTRA_CONF_FILE="extra_conf/l2_logging.conf;extra_conf/multiprotocol.conf"
@@ -247,3 +258,4 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp

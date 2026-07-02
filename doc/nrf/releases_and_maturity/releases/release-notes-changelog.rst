@@ -483,7 +483,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Added experimental support for the nRF54LC10A SoC to all Thread samples.
 
 Wi-Fi samples
 -------------
