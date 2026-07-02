@@ -30,7 +30,7 @@ version = "&nbsp;"
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
-extensions = ["zephyr.kconfig", "zephyr.external_content"]
+extensions = ["zephyr.kconfig", "zephyr.external_content", "kconfdiff"]
 
 # Options for HTML output ------------------------------------------------------
 
@@ -57,6 +57,12 @@ external_content_contents = [
 
 kconfig_generate_db = True
 kconfig_ext_paths = [ZEPHYR_BASE, NRF_BASE]
+
+# Options for kconfdiff
+
+kconfdiff_should_build = True
+kconfdiff_is_release = False
+kconfdiff_versions = None
 
 # Adding NCS_ specific entries. Can be removed when the NCSDK-14227 improvement
 # task has been completed.
