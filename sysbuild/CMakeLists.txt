@@ -121,7 +121,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   string(REPLACE "/" ";" split_board_qualifiers ";${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
 
-  if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF54L)
+  if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF54L OR SB_CONFIG_SOC_SERIES_NRF71)
     list(LENGTH split_board_qualifiers target_length)
 
     if("${target_length}" GREATER "3")
@@ -495,7 +495,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
        # Do not use the upstream mcuboot.cmake on new platforms.
        OR SB_CONFIG_SOC_SERIES_NRF53
        OR SB_CONFIG_SOC_SERIES_NRF54L
-       OR SB_CONFIG_SOC_SERIES_NRF54H OR SB_CONFIG_QSPI_XIP_SPLIT_IMAGE
+       OR SB_CONFIG_SOC_SERIES_NRF54H
+       OR SB_CONFIG_SOC_SERIES_NRF71 OR SB_CONFIG_QSPI_XIP_SPLIT_IMAGE
        # TF-M NS builds require signing tfm_merged.hex, not zephyr.hex.
        OR SB_CONFIG_BOARD_IS_NON_SECURE)
       if(SB_CONFIG_BOARD_IS_NON_SECURE)
@@ -591,6 +592,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endif()
 
+    # Alternative solution for nRF71 series, as the boot partition is not applied when building with partition manager.
+    if(NOT SB_CONFIG_PARTITION_MANAGER AND SB_CONFIG_SOC_SERIES_NRF71)
+      add_overlay_dts(mcuboot ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/app.overlay)
+    endif()
+
     if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
       set_config_bool(mcuboot CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION y)
 
@@ -619,7 +625,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endforeach()
 
     if(NOT DEFINED mcuboot_BOARD AND DEFINED board_target_secure)
-      # MCUboot must run in secure mode on the nRF9160/nRF5340
+      # MCUboot must run in secure mode on the nRF9160/nRF5340/nRF7120
       set_target_properties(mcuboot PROPERTIES BOARD ${board_target_secure})
     endif()
 
