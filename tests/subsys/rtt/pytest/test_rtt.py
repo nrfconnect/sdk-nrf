@@ -166,8 +166,12 @@ def test_rtt_logging(dut: DeviceAdapter):
         logger.info(f"{outs=}\n{errs=}")
 
     # read logs
-    with open(f"{log_filename}", errors="ignore") as log_file:
-        log_file_content = log_file.read()
+    try:
+        with open(f"{log_filename}", errors="ignore") as log_file:
+            log_file_content = log_file.read()
+    except FileNotFoundError as exc:
+        dut.readlines(print_output=True)
+        raise exc
 
     # if nothing in log_file, stop test
     assert(
