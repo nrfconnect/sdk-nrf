@@ -70,7 +70,7 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	uint8_t pnt_r[SX_ED448_DGST_SZ];
 	uint8_t *area_1 = workmem;
 	uint8_t *area_2 = workmem + AREA2_MEM_OFFSET;
-	uint8_t *area_4 = workmem + AREA4_MEM_OFFSET;
+	const uint8_t *area_4 = workmem + AREA4_MEM_OFFSET;
 	sx_pk_req req;
 	struct sxhash ctx;
 

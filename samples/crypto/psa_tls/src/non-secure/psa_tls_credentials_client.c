@@ -33,6 +33,8 @@ static int tls_store_credentials_in_ps(void)
 		LOG_ERR("Failed to store CA certificate to"
 			" Protected Storage. Status: %d", status);
 		return status;
+	} else {
+		/* For compliance */
 	}
 
 	return APP_SUCCESS;

@@ -144,7 +144,8 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz)
 	 * Use UNALIGNED_GET to read from src since it may be unaligned.
 	 */
 	for (size_t i = 0; i != sz / 4; ++i) {
-		((uint32_t *)dst)[i] = UNALIGNED_GET((uint32_t *)((const uint8_t *)src + i * 4));
+		((uint32_t *)dst)[i] =
+		UNALIGNED_GET((const uint32_t *)((const uint8_t *)src + i * 4));
 	}
 
 	if (sz % 4) {
