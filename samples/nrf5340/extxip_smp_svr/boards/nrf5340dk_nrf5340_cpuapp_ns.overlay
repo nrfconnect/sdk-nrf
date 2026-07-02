@@ -1,5 +1,1 @@
-/ {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-};
+#include "../dts/nrf5340_extxip_memory_map_netcore_ns.dtsi"
