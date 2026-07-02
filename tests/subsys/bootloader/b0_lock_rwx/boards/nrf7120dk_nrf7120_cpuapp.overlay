@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * No Partition Manager: alias b0_partition onto boot_partition (the test uses
+ * PARTITION_SIZE/OFFSET(b0_partition)) and size it to 30K to match NSIB.
+ */
+b0_partition: &boot_partition {
+	reg = <0x0 0x7800>;
+};

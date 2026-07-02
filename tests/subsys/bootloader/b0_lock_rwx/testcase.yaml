@@ -10,9 +10,11 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   b0.rwx:
     extra_args:
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
@@ -22,11 +24,13 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   b0.mcuboot.w:
     extra_args:
       - FILE_SUFFIX=b0_mcuboot
@@ -39,11 +43,14 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+
   mcuboot.rwx:
     extra_args:
       - FILE_SUFFIX=mcuboot
@@ -78,11 +85,13 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   b0.mcuboot.s1.w:
     extra_args:
       - FILE_SUFFIX=b0_mcuboot
@@ -97,11 +106,13 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   b0.mcuboot.s1.rwx:
     extra_args:
       - FILE_SUFFIX=b0_mcuboot
@@ -118,11 +129,13 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   b0.mcuboot.rwx.b0_did_not_lock:
     extra_args:
       - FILE_SUFFIX=b0_mcuboot
@@ -135,11 +148,13 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   b0.mcuboot.s1.rwx.b0_did_not_lock:
     extra_args:
       - FILE_SUFFIX=b0_mcuboot
@@ -154,8 +169,10 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp

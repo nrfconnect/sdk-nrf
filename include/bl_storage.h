@@ -15,6 +15,8 @@
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
+#elif defined(CONFIG_NRFX_MRAMC)
+#include <nrfx_mramc.h>
 #else
 #error "No NRFX storage technology supported backend selected"
 #endif
@@ -28,8 +30,8 @@ extern "C" {
 typedef uint16_t counter_t;
 typedef uint16_t lcs_data_t;
 typedef uint16_t lcs_reserved_t;
-#elif defined(CONFIG_NRFX_RRAMC)
-/* nRF54L15 only supports word writes */
+#elif defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_NRFX_MRAMC)
+/* RRAM and MRAM UICR OTP only support word writes. */
 typedef uint32_t counter_t;
 typedef uint32_t lcs_data_t;
 typedef uint32_t lcs_reserved_t;
