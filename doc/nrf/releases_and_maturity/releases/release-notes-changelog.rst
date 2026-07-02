@@ -126,6 +126,7 @@ Security
   * The :kconfig:option:`CONFIG_TFM_LOG_NS_MEMORY_LAYOUT` Kconfig option, which allows printing the configuration of the Secure Attribution Unit (SAU) and the Memory Protection Controller (MPC) during the initialization of TF-M on the nRF54L Series devices.
     See also :ref:`ug_tfm_logging` for more information.
   * Support for the SHAKE-128 and SHAKE-256 eXtendable Output Functions (XOF) in the CRACEN driver.
+  * Support for the signature verification with ML-DSA-44, ML-DSA-65 and ML-DSA-87 using the CRACEN driver.
 
 * Updated:
 
