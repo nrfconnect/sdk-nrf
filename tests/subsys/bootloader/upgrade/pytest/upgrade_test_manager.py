@@ -11,10 +11,10 @@ import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+import pytest
 from parameters import BuildParameters
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.shell import ShellMCUbootCommandParsed
-from twister_harness.helpers.utils import match_lines, match_no_lines
 from twister_harness_ext.utils.helpers import retry, timer
 from twister_harness_ext.utils.imgtool_wrapper import imgtool_sign
 
@@ -177,13 +177,21 @@ class UpgradeTestManager(ABC):
     def verify_after_reset(
         self, lines: list[str] | None = None, no_lines: list[str] | None = None
     ) -> None:
-        """Verify device output after reset."""
+        """Verify device output after reset.
+
+        Read the device output until the welcome string or a failure marker is
+        found. Entries in ``lines`` and ``no_lines`` are matched against the output
+        with :func:`fnmatch` (wrapped in ``*``).
+        """
         regex = f"{self.welcome_str}|Unable to find bootable image"
         output = self.dut.readlines_until(regex=regex, timeout=120)
         no_lines = no_lines or []
-        match_no_lines(output, no_lines + ["Unable to find bootable image"])
+        no_lines.append("Unable to find bootable image")
+        matcher = pytest.LineMatcher(output)
+        for line in no_lines:
+            matcher.no_fnmatch_line(f"*{line}*")
         if lines:
-            match_lines(output, lines)
+            matcher.fnmatch_lines([f"*{line}*" for line in lines])
 
     def verify_swap_in_boot_log(self, swap_type: str = "none", version: str | None = None):
         """Verify swap type and version in boot log after reset."""

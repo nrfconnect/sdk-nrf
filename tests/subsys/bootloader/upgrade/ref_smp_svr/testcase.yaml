@@ -47,7 +47,6 @@ tests:
         - "../pytest/test_invalid_image.py::test_invalid_signature"
     extra_args:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
-      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xf800
 
   mcuboot.upgrade.serial_recovery_no_bootable_app:
     tags:
@@ -118,7 +117,6 @@ tests:
         - "../pytest/test_upgrade.py"
     extra_args:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
-      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xf800
 
   nsib.mcuboot.upgrade.basic:
     tags:
@@ -136,6 +134,7 @@ tests:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - FILE_SUFFIX=nsib
 
   mcuboot.direct_xip.basic:
     timeout: 900
@@ -200,6 +199,7 @@ tests:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - mcuboot_CONFIG_MCUBOOT_CLEANUP_UNUSABLE_SECONDARY=y
+      - FILE_SUFFIX=nsib
 
   # Encryption test cases
   mcuboot.upgrade.encryption.rsa:
@@ -354,7 +354,6 @@ tests:
     extra_args:
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
-      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xf800
 
   nsib.mcuboot.upgrade.kmu.basic:
     platform_allow:
@@ -373,6 +372,7 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - FILE_SUFFIX=nsib
 
   mcuboot.upgrade.kmu.revocation:
     platform_allow:
@@ -528,3 +528,4 @@ tests:
       - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
       - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
       - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=2
+      - FILE_SUFFIX=nsib

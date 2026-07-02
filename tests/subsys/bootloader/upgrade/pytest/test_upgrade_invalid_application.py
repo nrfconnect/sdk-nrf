@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 from intelhex import bin2hex
+from parameters import get_nsib_s0_node
 from twister_harness import DeviceAdapter
 from twister_harness_ext.utils.common import flash_with_nrfutil
 from twister_harness_ext.utils.helpers import reset_board
@@ -51,7 +52,12 @@ def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, config_reader, tm
     pytest.LineMatcher(lines).fnmatch_lines(["*Attempting to boot slot 1*", "*Firmware version 2*"])
 
     # create an invalid binary file
-    s0_offset = config_reader(dut.device_config.build_dir / "pm.config").read_int("PM_S0_OFFSET")
+    pm_config = dut.device_config.build_dir / "pm.config"
+    if pm_config.exists():
+        s0_offset = config_reader(pm_config).read_int("PM_S0_OFFSET")
+    else:
+        edt_data = dut.device_config.app_build_dir / "zephyr" / "edt.pickle"
+        s0_offset = get_nsib_s0_node(edt_data).regs[0].addr
     invalid_bin_file = tmp_path / "blob.bin"
     invalid_hex_file = tmp_path / "blob.hex"
     create_dummy_file(invalid_bin_file, 30 * 1024)

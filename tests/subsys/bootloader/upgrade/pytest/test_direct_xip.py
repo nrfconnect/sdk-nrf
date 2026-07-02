@@ -10,6 +10,7 @@ import logging
 from pathlib import Path
 
 import pytest
+from parameters import get_partition_address
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
 from twister_harness_ext.utils.required_build import RequiredBuild
@@ -23,17 +24,29 @@ class UpgradeTestDirectXipUseMCUmgr(UpgradeTestWithMCUmgr):
 
     def generate_image_for_direct_xip_secondary_slot(self) -> Path:
         """Generate image for direct XIP secondary slot."""
-        self.build_params.imgtool_params.rom_fixed = find_in_config(
-            self.build_params.pm_config, "PM_MCUBOOT_SECONDARY_ADDRESS"
-        )
+        edt_data = self.build_params.app_build_dir / "zephyr" / "edt.pickle"
+        if self.build_params.pm_config.exists():
+            self.build_params.imgtool_params.rom_fixed = find_in_config(
+                self.build_params.pm_config, "PM_MCUBOOT_SECONDARY_ADDRESS"
+            )
+        else:
+            self.build_params.imgtool_params.rom_fixed = get_partition_address(
+                edt_data, ["cpuapp_slot1_partition", "slot1_partition"]
+            )
         logger.info("Generate image for direct xip secondary slot")
         return self.generate_image(app_to_sign=self.build_params.mcuboot_secondary_app_to_sign)
 
     def generate_image_for_direct_xip_primary_slot(self) -> Path:
         """Generate image for direct XIP primary slot."""
-        self.build_params.imgtool_params.rom_fixed = find_in_config(
-            self.build_params.pm_config, "PM_MCUBOOT_PRIMARY_ADDRESS"
-        )
+        edt_data = self.build_params.app_build_dir / "zephyr" / "edt.pickle"
+        if self.build_params.pm_config.exists():
+            self.build_params.imgtool_params.rom_fixed = find_in_config(
+                self.build_params.pm_config, "PM_MCUBOOT_PRIMARY_ADDRESS"
+            )
+        else:
+            self.build_params.imgtool_params.rom_fixed = get_partition_address(
+                edt_data, ["cpuapp_slot0_partition", "slot0_ns_partition", "slot0_partition"]
+            )
         logger.info("Generate image for direct xip primary slot")
         return self.generate_image(app_to_sign=self.build_params.app_to_sign)
 
@@ -56,7 +69,7 @@ class UpgradeTestDirectXipUseMCUmgr(UpgradeTestWithMCUmgr):
         self.verify_after_reset(
             lines=[
                 "Starting Direct-XIP bootloader",
-                f"Primary   slot: version={version}",
+                f"Primary*slot: version={version}",
                 "Image 0 loaded from the primary slot",
             ]
         )
@@ -73,6 +86,7 @@ def get_required_build_for_direct_xip_nRF54H(dut: DeviceAdapter, sign_version: s
         dut=dut,
         suffix="_" + sign_version.replace(".", "_").replace("+", "_"),
         extra_args=extra_args,
+        timeout=600,
     )
     return req_build.get_ready_build()
 
@@ -248,12 +262,10 @@ class TestDirectXip:
         if "nrf54h" in dut.device_config.platform:
             tm.image_upload(dut.device_config.build_dir / "zephyr_secondary_app.signed.bin")
         else:
-            tm.image_upload(
-                dut.device_config.build_dir
-                / "mcuboot_secondary_app"
-                / "zephyr"
-                / "zephyr.signed.bin"
+            signed_bin = Path(
+                str(tm.build_params.mcuboot_secondary_app_to_sign).replace(".bin", ".signed.bin")
             )
+            tm.image_upload(signed_bin)
         tm.reset_device_from_shell()
         tm.verify_direct_xip_primary_slot_loaded()
         logger.info("Not downgraded from secondary slot")

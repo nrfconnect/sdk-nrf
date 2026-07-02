@@ -49,6 +49,42 @@ def get_edt_node(edt_data: Path, node_label: str) -> edtlib.EDTNode:  # type: ig
         raise KeyError(f"Node label '{node_label}' not found in EDT data") from None
 
 
+def get_first_edt_node(edt_data: Path, node_labels: list[str]) -> edtlib.EDTNode:  # type: ignore
+    """Return the first EDT node matching any of the given labels."""
+    for node_label in node_labels:
+        try:
+            return get_edt_node(edt_data, node_label)
+        except KeyError:
+            continue
+    raise KeyError(f"None of the node labels {node_labels} found in EDT data")
+
+
+def get_app_slot0_node(edt_data: Path) -> edtlib.EDTNode:  # type: ignore
+    """Return the application primary slot partition node from EDT."""
+    return get_first_edt_node(
+        edt_data,
+        ["cpuapp_slot0_partition", "slot0_ns_partition", "slot0_partition"],
+    )
+
+
+def get_app_slot1_node(edt_data: Path) -> edtlib.EDTNode:  # type: ignore
+    """Return the application secondary slot partition node from EDT."""
+    return get_first_edt_node(
+        edt_data,
+        ["cpuapp_slot1_partition", "slot1_ns_partition", "slot1_partition"],
+    )
+
+
+def get_nsib_s0_node(edt_data: Path) -> edtlib.EDTNode:  # type: ignore
+    """Return the NSIB s0 partition node from EDT."""
+    return get_first_edt_node(edt_data, ["s0_partition", "slot0_partition"])
+
+
+def get_partition_address(edt_data: Path, node_labels: list[str]) -> str:
+    """Return the absolute address of a partition as a hex string."""
+    return str(get_first_edt_node(edt_data, node_labels).regs[0].addr)
+
+
 @dataclass
 class BuildParameters:
     """Class for extracting and managing build parameters from build directories."""
@@ -58,6 +94,7 @@ class BuildParameters:
     zephyr_base: Path
     zephyr_config: Path
     pm_config: Path
+    pm: bool
     sysbuild: bool
     tfm: bool
     imgtool_params: ImgtoolParams
@@ -85,16 +122,17 @@ class BuildParameters:
             header_size = find_in_config(pm_config, "PM_MCUBOOT_PAD_SIZE")
             slot_size = find_in_config(pm_config, "PM_MCUBOOT_PRIMARY_SIZE")
         else:
-            # No PM used, thus take header size from app config and slot size from DTS
-            # (EDT representation)
-            header_size = find_in_config(zephyr_config, "CONFIG_ROM_START_OFFSET")
-            slot_size = str(get_edt_node(edt_data, "cpuapp_slot0_partition").regs[0].size)
+            if tfm:
+                header_size = find_in_config(zephyr_config, "CONFIG_TFM_MCUBOOT_HEADER_SIZE")
+            else:
+                header_size = find_in_config(zephyr_config, "CONFIG_ROM_START_OFFSET")
+            slot_size = str(get_app_slot0_node(edt_data).regs[0].size)
         imgtool_params = ImgtoolParams(
             align=find_in_config(zephyr_config, "CONFIG_MCUBOOT_FLASH_WRITE_BLOCK_SIZE"),
             header_size=header_size,
             slot_size=slot_size,
             version=find_in_config(zephyr_config, "CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION"),
-            pad_header=pm,  # Pad header if PM is used
+            pad_header=pm or tfm,
         )
 
         return cls(
@@ -105,6 +143,7 @@ class BuildParameters:
             pm_config=pm_config,
             sysbuild=sysbuild,
             tfm=tfm,
+            pm=pm,
             imgtool_params=imgtool_params,
         )
 
@@ -124,9 +163,15 @@ class BuildParameters:
             sysbuild_config = self.build_dir / "zephyr" / ".config"
             self.net_core_name = find_in_config(sysbuild_config, "SB_CONFIG_NETCORE_IMAGE_NAME")
             self.netcore_to_sign = self.build_dir / f"signed_by_b0_{self.net_core_name}.bin"
-            self.mcuboot_secondary_app_to_sign = (
-                self.build_dir / "mcuboot_secondary_app" / "zephyr" / "zephyr.bin"
-            )
+            if self.pm:
+                self.mcuboot_secondary_app_to_sign = (
+                    self.build_dir / "mcuboot_secondary_app" / "zephyr" / "zephyr.bin"
+                )
+            else:
+                slot1_variant_dir = self.app_build_dir.with_name(
+                    self.app_build_dir.name + "_slot1_variant"
+                )
+                self.mcuboot_secondary_app_to_sign = slot1_variant_dir / "zephyr" / "zephyr.bin"
         else:
             self.app_to_sign = self.build_dir / "zephyr" / "app_to_sign.bin"
             self.netcore_to_sign = self.build_dir / "zephyr" / "net_core_app_to_sign.bin"
@@ -149,6 +194,21 @@ class BuildParameters:
             mcuboot_config = self.build_dir / "mcuboot" / "zephyr" / ".config"
             key_filename = find_in_config(mcuboot_config, "CONFIG_BOOT_SIGNATURE_KEY_FILE")
             self.imgtool_params.key_file = self.mcuboot_dir / key_filename
+        self._update_rom_fixed()
+
+    def _update_rom_fixed(self) -> None:
+        """Set --rom-fixed for imgtool when the build uses load-address image matching."""
+        if (
+            find_in_config(self.zephyr_config, "CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS")
+            != "y"
+        ):
+            return
+
+        if not self.pm:
+            edt_data = self.app_build_dir / "zephyr" / "edt.pickle"
+            self.imgtool_params.rom_fixed = get_partition_address(
+                edt_data, ["cpuapp_slot0_partition", "slot0_ns_partition", "slot0_partition"]
+            )
 
     def update_params_for_netcore(self) -> None:
         """Update imgtool parameters for netcore image slot size."""
@@ -156,11 +216,14 @@ class BuildParameters:
             self.imgtool_params.slot_size = find_in_config(
                 self.pm_config, "PM_MCUBOOT_SECONDARY_1_SIZE"
             )
-        else:
+        elif self.pm_config.exists():
             cpunet_pm_config = self.build_dir / "pm_CPUNET.config"
             self.imgtool_params.slot_size = find_in_config(
                 cpunet_pm_config, f"PM_{self.net_core_name.upper()}_SIZE"
             )
+        else:
+            edt_data = self.build_dir / self.net_core_name / "zephyr" / "edt.pickle"
+            self.imgtool_params.slot_size = str(get_edt_node(edt_data, "s0_partition").regs[0].size)
 
     def _update_imgtool_next(self) -> None:
         """Update imgtool parameters for advanced signature and compression options."""
