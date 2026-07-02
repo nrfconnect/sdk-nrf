@@ -31,6 +31,13 @@ def sync_peripheral_ts(ts_peripheral, sync_ts_peripheral, sync_ts_central):
                          sync_ts_peripheral, sync_ts_central,
                          left=INTERP_OUT_OF_RANGE_VAL, right=INTERP_OUT_OF_RANGE_VAL)
 
+def apply_peripheral_sync_offset(sync_ts, offset_us):
+    if offset_us == 0:
+        return sync_ts
+    # µs -> s (timestamps from CSV - seconds)
+    offset_s = offset_us * 1e-6
+    print(f'Applied peripheral sync offset: {offset_us} us')
+    return [t + offset_s for t in sync_ts]
 
 def main():
     descr = "Merge data from Peripheral and Central. Synchronization events" \
@@ -44,6 +51,16 @@ def main():
     parser.add_argument("central_sync_event",
                         help="Event used for synchronization - Central")
     parser.add_argument("result_dataset", help="Name for result dataset")
+    parser.add_argument(
+        '-o', '--offset',
+        type=float,
+        default=0.0,
+        help=(
+            "Floating-point peripheral sync-event time offset in microseconds (optional)"
+            "A positive value shifts peripheral sync timestamps forward before clock alignment."
+        )
+    )
+
     args = parser.parse_args()
 
     evt_peripheral = ProcessedEvents()
@@ -87,6 +104,8 @@ def main():
         sync_ts_peripheral = sync_ts_peripheral[:len(sync_ts_central)]
     elif len(sync_ts_peripheral) < len(sync_ts_central):
         sync_ts_central = sync_ts_central[:len(sync_ts_peripheral)]
+
+    sync_ts_peripheral = apply_peripheral_sync_offset(sync_ts_peripheral, args.offset)
 
     new_ts_peripheral = ts_peripheral.copy()
     new_ts_peripheral[list(list(elem is not None for elem in row) for row in new_ts_peripheral)] = \
