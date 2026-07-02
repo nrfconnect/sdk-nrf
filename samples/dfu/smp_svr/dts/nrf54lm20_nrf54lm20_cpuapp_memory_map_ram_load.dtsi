@@ -145,3 +145,9 @@
 		};
 	};
 };
+
+/ {
+	chosen {
+		mcuboot,ram-load-dev = &cpuapp_sram_app_rxm_region;
+	};
+};
