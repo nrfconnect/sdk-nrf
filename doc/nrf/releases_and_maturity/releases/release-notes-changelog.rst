@@ -281,6 +281,8 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
+* Added the :ref:`secure_application_pairing_sample` sample for certificate-backed Bluetooth LE application peer authentication and protected application payload transport.
+
 * :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples:
 
   * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.

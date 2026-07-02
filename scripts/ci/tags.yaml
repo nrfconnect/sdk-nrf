@@ -972,6 +972,7 @@ ci_tests_subsys_bluetooth_sap:
     - nrf/include/bluetooth/services/sap_protocol.h
     - nrf/subsys/bluetooth/services/sap/
     - nrf/tests/subsys/bluetooth/services/sap/
+    - nrf/samples/bluetooth/sap_demo/
 
 ci_tests_subsys_bluetooth_mesh:
   files:
