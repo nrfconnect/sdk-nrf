@@ -324,6 +324,8 @@ Bluetooth samples
 
   * Fixed an issue on nRF52 and nRF53 Series devices where timed LED toggling did not work due to incorrect GPPI group setup after the nrfx 4.0 API migration.
 
+* Added the :ref:`secure_application_pairing_sample` sample for certificate-backed Bluetooth LE application peer authentication and protected application payload transport.
+
 * :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples:
 
   * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
