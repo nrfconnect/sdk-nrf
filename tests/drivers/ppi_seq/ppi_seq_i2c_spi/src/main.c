@@ -397,11 +397,20 @@ static void test_single_run(void)
 
 	/* If TIMER is used for triggering then enable HFXO to ensure clock accuracy. */
 #if DT_NODE_HAS_PROP(DUT_NODE, timer)
-#ifdef CONFIG_CLOCK_CONTROL_NRF
+#if defined(CONFIG_CLOCK_CONTROL_NRF) || NRF_CLOCK_HAS_HFCLK || NRF_CLOCK_HAS_XO
 	struct onoff_client cli;
 
 	sys_notify_init_spinwait(&cli.notify);
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	rv = onoff_request(z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF), &cli);
+#else
+	const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+								(nordic_nrf_clock_hfclk),
+								(nordic_nrf_clock_xo)));
+
+	rv = nrf_clock_control_request(dev, NULL, &cli);
+#endif
+
 	zassert_ok(rv);
 
 	while (sys_notify_fetch_result(&cli.notify, &rv)) {
@@ -477,7 +486,8 @@ static void test_single_run(void)
 	rv = onoff_release(z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF));
 #elif CONFIG_CLOCK_CONTROL_NRF54H_HFXO
 	rv = nrf_clock_control_release(hfxo, NULL);
-
+#else
+	rv = nrf_clock_control_release(dev, NULL);
 #endif /* CONFIG_CLOCK_CONTROL_NRF / CONFIG_CLOCK_CONTROL_NRF54H_HFXO */
 #endif /* DT_NODE_HAS_PROP(DUT_NODE, timer) */
 }

@@ -17,6 +17,7 @@
 #include <../subsys/bluetooth/audio/bap_iso.h>
 #include <../subsys/bluetooth/host/conn_internal.h>
 #include <../subsys/bluetooth/audio/cap_internal.h>
+#include "le_audio.h"
 #include "server_store.h"
 
 #define TEST_UNICAST_GROUP(name)                                                                   \
@@ -45,6 +46,11 @@
 		.state = BT_CONN_STATE_CONNECTED,                                                  \
 		.le = {.dst = {.type = BT_ADDR_LE_PUBLIC,                                          \
 			       .a = {{val, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA}}}}};
+
+#define TEST_LC3_FRAME_LEN_MIN                                                                    \
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, CONFIG_AUDIO_FRAME_DURATION_US)
+#define TEST_LC3_FRAME_LEN_MAX                                                                    \
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, CONFIG_AUDIO_FRAME_DURATION_US)
 
 static struct bt_bap_lc3_preset lc3_preset_48_4_1 = BT_BAP_LC3_UNICAST_PRESET_48_4_1(
 	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
@@ -966,17 +972,20 @@ ZTEST(suite_server_store, test_cap_check)
 	static struct bt_audio_codec_cap codec_cap_1 = BT_AUDIO_CODEC_CAP_LC3(
 		BT_AUDIO_CODEC_CAP_FREQ_384KHZ,
 		(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
-		BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), 20, 180, 1u, BT_AUDIO_CONTEXT_TYPE_ANY);
+		BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), TEST_LC3_FRAME_LEN_MIN, TEST_LC3_FRAME_LEN_MAX,
+		1u, BT_AUDIO_CONTEXT_TYPE_ANY);
 
 	static struct bt_audio_codec_cap codec_cap_2 = BT_AUDIO_CODEC_CAP_LC3(
 		BT_AUDIO_CODEC_CAP_FREQ_48KHZ,
 		(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
-		BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), 20, 180, 1u, BT_AUDIO_CONTEXT_TYPE_ANY);
+		BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), TEST_LC3_FRAME_LEN_MIN, TEST_LC3_FRAME_LEN_MAX,
+		1u, BT_AUDIO_CONTEXT_TYPE_ANY);
 
 	static struct bt_audio_codec_cap codec_cap_3 = BT_AUDIO_CODEC_CAP_LC3(
 		BT_AUDIO_CODEC_CAP_FREQ_24KHZ,
 		(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
-		BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), 20, 180, 1u, BT_AUDIO_CONTEXT_TYPE_ANY);
+		BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), TEST_LC3_FRAME_LEN_MIN, TEST_LC3_FRAME_LEN_MAX,
+		1u, BT_AUDIO_CONTEXT_TYPE_ANY);
 
 	ret = srv_store_codec_cap_set(&test_1_conn, BT_AUDIO_DIR_SINK, &codec_cap_1);
 	zassert_equal(ret, 0, "Setting codec capabilities did not return zero %d", ret);
