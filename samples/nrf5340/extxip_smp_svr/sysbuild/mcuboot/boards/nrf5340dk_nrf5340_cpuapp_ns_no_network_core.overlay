@@ -1,0 +1,7 @@
+#include "../../../dts/nrf5340_extxip_memory_map_no_network_core.dtsi"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};

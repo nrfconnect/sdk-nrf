@@ -1,3 +1,5 @@
+#include "../../../dts/nrf5340_extxip_memory_map_netcore.dtsi"
+
 / {
 	chosen {
 		zephyr,code-partition = &boot_partition;

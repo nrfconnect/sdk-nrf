@@ -23,12 +23,9 @@
 PROVIDE(z_arm_platform_init = SystemInit);
 
 /*
- * QSPI NOR is memory-mapped at 0x10000000 on nRF5340.
  * Select the MCUboot slot for the QSPI XIP image based on the assigned image
  * number and whether this is a variant (secondary slot) build.
  */
-#define QSPI_XIP_MM_BASE 0x10000000
-
 #if CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER == 1
 #if CONFIG_NCS_IS_VARIANT_IMAGE
 #define QSPI_XIP_SLOT_NODE DT_NODELABEL(slot3_partition)
@@ -44,6 +41,8 @@ PROVIDE(z_arm_platform_init = SystemInit);
 #else
 #error "Unsupported CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER for linker_arm_extxip.ld"
 #endif
+
+#define QSPI_XIP_MM_BASE DT_REG_ADDR_BY_NAME(DT_NODELABEL(qspi), qspi_mm)
 
 #define EXTFLASH_ADDR (QSPI_XIP_MM_BASE + DT_REG_ADDR(QSPI_XIP_SLOT_NODE) + CONFIG_ROM_START_OFFSET)
 #define EXTFLASH_SIZE (DT_REG_SIZE(QSPI_XIP_SLOT_NODE) - CONFIG_ROM_START_OFFSET)

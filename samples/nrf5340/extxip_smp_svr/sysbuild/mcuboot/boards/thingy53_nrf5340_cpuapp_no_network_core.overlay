@@ -1,0 +1,7 @@
+#include "../../../boards/thingy53_nrf5340_cpuapp_no_network_core.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};

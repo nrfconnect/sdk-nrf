@@ -1,1 +1,1 @@
-/* Application board overlay - memory map is applied via sysbuild.cmake */
+#include "../dts/nrf5340_extxip_memory_map_netcore_ns.dtsi"
