@@ -15,6 +15,7 @@ jobs:
   gate:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
+    name: Board creator validation gate
     outputs:
       run: ${{ steps.decide.outputs.run }}
     steps:
@@ -35,6 +36,7 @@ jobs:
           fi
   run:
     needs: gate
+    name: Board creator validation run
     if: needs.gate.outputs.run == 'true'
     runs-on: ubuntu-24.04
     steps:
