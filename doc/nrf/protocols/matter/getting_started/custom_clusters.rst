@@ -723,8 +723,7 @@ Align the configuration with the new cluster
 
 Generating the :file:`.zap` files with the ``--full`` option creates new source files under :file:`zap-generated/app-common`.
 They need to override the default files located in the Matter SDK in the :file:`zzz_generated/app-common` directory.
-To override the path, set the :kconfig:option:`CONFIG_CHIP_APP_ZAP_DIR` option in the :file:`prj.conf` file to the ``"${APPLICATION_CONFIG_DIR}/src/default_zap/zap-generated"`` value, pointing to the parent of the generated :file:`app-common` directory, and set the ``CHIP_APP_ZAP_DIR`` variable in the :file:`CMakeLists.txt` file.
-
+To override the path, set the :kconfig:option:`CONFIG_CHIP_APP_ZAP_DIR` Kconfig option in the :file:`prj.conf` file to the ``"${APPLICATION_CONFIG_DIR}/src/default_zap/zap-generated"`` value, pointing to the parent of the generated :file:`app-common` directory.
 As custom clusters are not part of the default Matter SDK, you need to additionally pass a list of all new cluster names in an ``EXTERNAL_CLUSTERS`` argument when calling ``ncs_configure_data_model``.
 
 The following code snippet shows how to modify the Matter template :file:`CMakeLists.txt` file with the new cluster:
@@ -733,13 +732,7 @@ The following code snippet shows how to modify the Matter template :file:`CMakeL
 
       project(matter-template)
 
-      # Override zap-generated directory.
-      include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/zap_helpers.cmake)
-      ncs_get_zap_parent_dir(ZAP_PARENT_DIR)
-
-      get_filename_component(CHIP_APP_ZAP_DIR ${ZAP_PARENT_DIR}/zap-generated REALPATH CACHE)
-
-      # Existing code in CMakeList.txt
+      # Existing code in CMakeLists.txt
 
       ncs_configure_data_model(
          EXTERNAL_CLUSTERS "MY_NEW_CLUSTER" # Add EXTERNAL_CLUSTERS flag

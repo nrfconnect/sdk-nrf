@@ -17,6 +17,11 @@ function(ncs_configure_data_model)
     ${zap_parent_dir}
   )
 
+  if(CONFIG_CHIP_APP_ZAP_DIR)
+    string(CONFIGURE "${CONFIG_CHIP_APP_ZAP_DIR}" app_zap_dir)
+    get_filename_component(CHIP_APP_ZAP_DIR ${app_zap_dir} REALPATH)
+  endif()
+
   chip_configure_data_model(matter-data-model
     BYPASS_IDL
     GEN_DIR ${zap_parent_dir}/zap-generated
