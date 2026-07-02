@@ -25,28 +25,29 @@ LOG_MODULE_REGISTER(audio_usb, CONFIG_MODULE_AUDIO_USB_LOG_LEVEL);
 #define TERMINAL_ID_HEADPHONES_OUT UAC2_ENTITY_ID(DT_NODELABEL(hp_out_terminal))
 #define TERMINAL_ID_HEADSET_IN	  UAC2_ENTITY_ID(DT_NODELABEL(in_terminal))
 
-/* Absolute minimum is 2 TX buffers but add 2 additional buffers to prevent out of memory
+/* Absolute minimum is 2 OUT buffers but add 2 additional buffers to prevent out of memory
  * errors when USB host decides to perform rapid terminal enable/disable cycles.
  */
 #define USB_BLOCKS 4
 
 /* See udc_buf.h for more information about UDC_BUF_GRANULARITY and UDC_BUF_ALIGN */
-K_MEM_SLAB_DEFINE_STATIC(usb_tx_slab, ROUND_UP(USB_BLOCK_SIZE_MULTI_CHAN, UDC_BUF_GRANULARITY),
+K_MEM_SLAB_DEFINE_STATIC(usb_out_slab, ROUND_UP(USB_BLOCK_MULTI_CHAN_1MS_SIZE, UDC_BUF_GRANULARITY),
 			 USB_BLOCKS, UDC_BUF_ALIGN);
-K_MEM_SLAB_DEFINE_STATIC(usb_rx_slab, ROUND_UP(USB_BLOCK_SIZE_MULTI_CHAN, UDC_BUF_GRANULARITY),
+K_MEM_SLAB_DEFINE_STATIC(usb_in_slab, ROUND_UP(USB_BLOCK_MULTI_CHAN_1MS_SIZE, UDC_BUF_GRANULARITY),
 			 USB_BLOCKS, UDC_BUF_ALIGN);
 
-static struct k_msgq *audio_q_tx;
-static struct k_msgq *audio_q_rx;
+static struct k_msgq *audio_q_in;
+static struct k_msgq *audio_q_out;
 
 /* USB blocks are 1 ms each, but we split them into 0.5 ms blocks for processing,
  * hence the dividing by two
  */
 NET_BUF_POOL_FIXED_DEFINE(pool_in, USB_BLOCKS,
-			  (USB_BLOCK_SIZE_MULTI_CHAN * CONFIG_FIFO_FRAME_SPLIT_NUM / 2),
+			  (USB_BLOCK_MULTI_CHAN_1MS_SIZE * CONFIG_FIFO_FRAME_SPLIT_NUM / 2),
 			  sizeof(struct audio_metadata), NULL);
 
-static uint32_t rx_num_overruns;
+static uint32_t in_num_overruns;
+static uint32_t out_num_underruns;
 static bool terminal_headset_out_enabled;
 static bool terminal_headphones_out_enabled;
 static bool terminal_headset_in_enabled;
@@ -62,13 +63,11 @@ struct audio_metadata usb_in_meta = {.data_coding = PCM,
 				     .sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ,
 				     .bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
 				     .carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
-				     .bytes_per_location = USB_BLOCK_SIZE_MULTI_CHAN / 2,
+				     .bytes_per_location = USB_BLOCK_MULTI_CHAN_1MS_SIZE / 2,
 				     .interleaved = true,
 				     .locations = BT_AUDIO_LOCATION_FRONT_LEFT |
 						  BT_AUDIO_LOCATION_FRONT_RIGHT,
 				     .bad_data = 0};
-
-static uint32_t tx_num_underruns;
 
 static void terminal_update_cb(const struct device *dev, uint8_t terminal, bool enabled,
 			       bool microframes, void *user_data)
@@ -83,6 +82,7 @@ static void terminal_update_cb(const struct device *dev, uint8_t terminal, bool 
 		terminal_headphones_out_enabled = enabled;
 	} else if (terminal == TERMINAL_ID_HEADSET_IN) {
 		terminal_headset_in_enabled = enabled;
+		out_num_underruns = 0;
 	} else {
 		LOG_WRN("Unknown terminal ID: %d", terminal);
 		return;
@@ -95,52 +95,59 @@ static void usb_send_cb(const struct device *dev, void *user_data)
 {
 	int ret;
 	void *pcm_buf;
-	struct net_buf *data_out;
+	struct net_buf *usb_data_out;
 
 	/* Fast path exit - cache combined condition */
-	bool tx_ready = (audio_q_tx != NULL && terminal_headset_in_enabled && playing_state &&
-			 local_host_in);
+	bool out_ready = (audio_q_in != NULL && terminal_headset_in_enabled && playing_state &&
+			  local_host_in);
 
-	if (unlikely(!tx_ready)) {
+	if (unlikely(!out_ready)) {
 		return;
 	}
 
-	ret = k_mem_slab_alloc(&usb_tx_slab, &pcm_buf, K_NO_WAIT);
+	ret = k_mem_slab_alloc(&usb_out_slab, &pcm_buf, K_NO_WAIT);
 	if (unlikely(ret != 0)) {
 		LOG_WRN("Could not allocate pcm_buf, ret: %d", ret);
 		return;
 	}
 
-	ret = k_msgq_get(audio_q_tx, &data_out, K_NO_WAIT);
+	ret = k_msgq_get(audio_q_in, &usb_data_out, K_NO_WAIT);
 	if (unlikely(ret)) {
 		/* Reduce logging overhead */
-		if (unlikely((++tx_num_underruns % 100) == 1)) {
-			LOG_WRN("USB TX underrun. Num: %d", tx_num_underruns);
+		if (unlikely((++out_num_underruns % 100) == 1)) {
+			LOG_WRN("USB OUT underrun. Num: %d", out_num_underruns);
 		}
-		k_mem_slab_free(&usb_tx_slab, pcm_buf);
+
+		k_mem_slab_free(&usb_out_slab, pcm_buf);
 		return;
 	}
 
-	struct audio_metadata *usb_out_meta = net_buf_user_data(data_out);
+	struct audio_metadata *usb_data_out_meta = net_buf_user_data(usb_data_out);
 	size_t pcm_size = 0;
 
-	if (audio_metadata_num_loc_get(usb_out_meta) == 1) {
+	if (audio_metadata_num_loc_get(usb_data_out_meta) == 1) {
 		/* Mono to stereo copy */
-		pscm_copy_pad((char *)data_out->data, data_out->len, CONFIG_AUDIO_BIT_DEPTH_BITS,
-			      (char *)pcm_buf, &pcm_size);
+		ret = pscm_copy_pad((char *)usb_data_out->data, usb_data_out->len,
+				    usb_data_out_meta->carried_bits_per_sample, (char *)pcm_buf,
+				    &pcm_size);
+		if (ret) {
+			k_mem_slab_free(&usb_out_slab, pcm_buf);
+			net_buf_unref(usb_data_out);
+			return;
+		}
 	} else {
 		/* Direct copy for stereo */
-		memcpy(pcm_buf, data_out->data, data_out->len);
-		pcm_size = data_out->len;
+		memcpy(pcm_buf, usb_data_out->data, usb_data_out->len);
+		pcm_size = usb_data_out->len;
 	}
 
 	ret = usbd_uac2_send(dev, TERMINAL_ID_HEADSET_IN, pcm_buf, pcm_size);
 	if (ret) {
-		LOG_WRN("USB TX failed, ret: %d", ret);
-		k_mem_slab_free(&usb_tx_slab, pcm_buf);
+		LOG_WRN("USB OUT failed, ret: %d", ret);
+		k_mem_slab_free(&usb_out_slab, pcm_buf);
 	}
 
-	net_buf_unref(data_out);
+	net_buf_unref(usb_data_out);
 }
 
 static void send_buf_release_cb(const struct device *dev, uint8_t terminal, void *buf,
@@ -154,7 +161,7 @@ static void send_buf_release_cb(const struct device *dev, uint8_t terminal, void
 		return;
 	}
 
-	k_mem_slab_free(&usb_tx_slab, buf);
+	k_mem_slab_free(&usb_out_slab, buf);
 }
 
 static void *get_recv_buf_cb(const struct device *dev, uint8_t terminal, uint16_t size,
@@ -168,7 +175,7 @@ static void *get_recv_buf_cb(const struct device *dev, uint8_t terminal, uint16_
 	void *buf = NULL;
 
 	if (terminal == TERMINAL_ID_HEADSET_OUT || terminal == TERMINAL_ID_HEADPHONES_OUT) {
-		ret = k_mem_slab_alloc(&usb_rx_slab, &buf, K_NO_WAIT);
+		ret = k_mem_slab_alloc(&usb_in_slab, &buf, K_NO_WAIT);
 	}
 
 	return buf;
@@ -211,14 +218,14 @@ static void data_recv_cb(const struct device *dev, uint8_t terminal, void *buf, 
 	/* Fast exit conditions */
 	if (unlikely(size == 0 || !playing_state) ||
 	    !(terminal_headset_out_enabled || terminal_headphones_out_enabled)) {
-		k_mem_slab_free(&usb_rx_slab, buf);
+		k_mem_slab_free(&usb_in_slab, buf);
 		return;
 	}
 
 	/* Size validation */
-	if (unlikely(size != USB_BLOCK_SIZE_MULTI_CHAN)) {
-		LOG_WRN("Incorrect buffer size: %d (%u)", size, USB_BLOCK_SIZE_MULTI_CHAN);
-		k_mem_slab_free(&usb_rx_slab, buf);
+	if (unlikely(size != USB_BLOCK_MULTI_CHAN_1MS_SIZE)) {
+		LOG_WRN("Incorrect buffer size: %d (%u)", size, USB_BLOCK_MULTI_CHAN_1MS_SIZE);
+		k_mem_slab_free(&usb_in_slab, buf);
 		return;
 	}
 
@@ -231,14 +238,14 @@ static void data_recv_cb(const struct device *dev, uint8_t terminal, void *buf, 
 			blocks_in_frame_spillover = 0;
 		} else {
 			/* Check space availability */
-			if (unlikely(k_msgq_num_free_get(audio_q_rx) == 0 ||
+			if (unlikely(k_msgq_num_free_get(audio_q_out) == 0 ||
 				     pool_in.avail_count == 0)) {
 				goto overrun_cleanup;
 			}
 
 			frame_current = net_buf_alloc(&pool_in, K_NO_WAIT);
 			if (unlikely(frame_current == NULL)) {
-				LOG_WRN("Out of RX buffers for frame");
+				LOG_WRN("Out of IN buffers for frame");
 				goto overrun_cleanup;
 			}
 
@@ -271,7 +278,7 @@ static void data_recv_cb(const struct device *dev, uint8_t terminal, void *buf, 
 		 */
 		frame_spillover = net_buf_alloc(&pool_in, K_NO_WAIT);
 		if (unlikely(frame_spillover == NULL)) {
-			LOG_WRN("Out of RX buffers for spill over frame");
+			LOG_WRN("Out of IN buffers for spill over frame");
 			goto overrun_cleanup;
 		}
 
@@ -299,12 +306,12 @@ static void data_recv_cb(const struct device *dev, uint8_t terminal, void *buf, 
 	}
 
 	/* Release USB buffer */
-	k_mem_slab_free(&usb_rx_slab, buf);
+	k_mem_slab_free(&usb_in_slab, buf);
 
 	/* Check if we have a complete frame */
 	if (blocks_in_frame_current >= CONFIG_FIFO_FRAME_SPLIT_NUM) {
-		/* Put complete frame into RX queue */
-		ret = k_msgq_put(audio_q_rx, (void *)&frame_current, K_NO_WAIT);
+		/* Put complete frame into IN queue */
+		ret = k_msgq_put(audio_q_out, (void *)&frame_current, K_NO_WAIT);
 		if (ret) {
 			LOG_ERR("Failed to store complete frame");
 			net_buf_unref(frame_current);
@@ -318,11 +325,11 @@ static void data_recv_cb(const struct device *dev, uint8_t terminal, void *buf, 
 	return;
 
 overrun_cleanup:
-	if (unlikely((++rx_num_overruns % 100) == 1)) {
-		LOG_WRN("USB RX overrun. Num: %d", rx_num_overruns);
+	if (unlikely((++in_num_overruns % 100) == 1)) {
+		LOG_WRN("USB IN overrun. Num: %d", in_num_overruns);
 	}
 
-	k_mem_slab_free(&usb_rx_slab, buf);
+	k_mem_slab_free(&usb_in_slab, buf);
 }
 
 static struct uac2_ops ops = {
@@ -335,38 +342,50 @@ static struct uac2_ops ops = {
 
 static struct usbd_context *audio_usbd;
 
-bool audio_usb_is_mic_enabled(void)
+bool audio_usb_headphones_out_enabled(void)
+{
+	return terminal_headphones_out_enabled;
+}
+
+bool audio_usb_headset_out_enabled(void)
+{
+	return terminal_headset_out_enabled;
+}
+
+bool audio_usb_headset_in_enabled(void)
 {
 	return terminal_headset_in_enabled;
 }
 
-int audio_usb_start(struct k_msgq *audio_q_tx_in, struct k_msgq *audio_q_rx_in)
+int audio_usb_start(struct k_msgq *audio_q_out_ptr, struct k_msgq *audio_q_in_ptr)
 {
 	if (audio_usbd == NULL) {
 		LOG_ERR("USB device not initialized");
 		return -ENOTCONN;
 	}
 
-	if (audio_q_tx_in == NULL || audio_q_rx_in == NULL) {
+	if (audio_q_out_ptr == NULL || audio_q_in_ptr == NULL) {
 		return -EINVAL;
 	}
 
-	audio_q_tx = audio_q_tx_in;
-	audio_q_rx = audio_q_rx_in;
+	audio_q_in = audio_q_out_ptr;
+	audio_q_out = audio_q_in_ptr;
 
 	playing_state = true;
 
 	return 0;
 }
 
-void audio_usb_stop(void)
+int audio_usb_stop(void)
 {
 	if (audio_usbd == NULL) {
 		LOG_ERR("USB device not initialized");
-		return;
+		return -ENOTCONN;
 	}
 
 	playing_state = false;
+
+	return 0;
 }
 
 int audio_usb_disable(void)
@@ -384,9 +403,9 @@ int audio_usb_disable(void)
 		return ret;
 	}
 
-	audio_usb_stop();
+	ret = audio_usb_stop();
 
-	return 0;
+	return ret;
 }
 
 int audio_usb_init(bool host_in, bool host_out)
