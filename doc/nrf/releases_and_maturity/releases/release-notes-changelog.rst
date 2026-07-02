@@ -494,7 +494,29 @@ Thread samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* Removed support from the following Zephyr samples:
+
+  * :zephyr:code-sample:`dns-resolve`
+  * :zephyr:code-sample:`ipv4-autoconf`
+  * :zephyr:code-sample:`mdns-responder`
+  * :zephyr:code-sample:`mqtt-publisher`
+  * :zephyr:code-sample:`async-sockets-echo`
+  * :zephyr:code-sample:`sockets-echo-client`
+  * :zephyr:code-sample:`sockets-echo-server`
+  * :zephyr:code-sample:`sockets-http-get`
+  * :zephyr:code-sample:`sntp-client`
+  * :zephyr:code-sample:`syslog-net`
+  * :zephyr:code-sample:`telnet-console`
+
+* Removed support for the ``nrf5340dk/nrf5340/cpuapp`` board target with the nRF7002 EK shield from the following Zephyr samples:
+
+  * :zephyr:code-sample:`mqtt-sn-publisher`
+  * :zephyr:code-sample:`coap-server`
+
+* Added support for the ``nrf7120dk/nrf7120/cpuapp`` board target in the following Zephyr samples:
+
+  * :zephyr:code-sample:`mqtt-sn-publisher`
+  * :zephyr:code-sample:`coap-server`
 
 Other samples
 -------------
