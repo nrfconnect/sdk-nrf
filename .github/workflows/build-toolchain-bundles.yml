@@ -1,0 +1,403 @@
+name: Build Toolchain Bundles
+
+on:
+  push:
+    branches:
+      - main
+      - 'v*-branch'
+      - 'build-bundles'
+    paths:
+      - 'scripts/requirements-fixed.txt'
+      - 'scripts/tools-versions-*'
+      - '.github/workflows/build-toolchain-bundles.yml'
+  pull_request_target:
+    branches:
+      - main
+      - 'v*-branch'
+      - 'build-bundles'
+    paths:
+      - 'scripts/requirements-fixed.txt'
+      - 'scripts/tools-versions-*'
+
+jobs:
+  Prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      BUILD_LINUX: ${{ steps.set_flags.outputs.BUILD_LINUX }}
+      BUILD_WIN: ${{ steps.set_flags.outputs.BUILD_WIN }}
+      BUILD_MAC_INTEL: ${{ steps.set_flags.outputs.BUILD_MAC_INTEL }}
+      BUILD_MAC_ARM: ${{ steps.set_flags.outputs.BUILD_MAC_ARM }}
+      CMAKE_TOOLCHAIN_VERSION: ${{ steps.set_version.outputs.CMAKE_TOOLCHAIN_VERSION }}
+      BRANCH_NAME: ${{ steps.set_branch_name.outputs.BRANCH_NAME }}
+    steps:
+      - name: Check PR author permissions
+        if: github.event_name == 'pull_request_target'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the PR author
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          REPO="${{ github.repository }}"
+
+          echo "Checking permissions for user: $PR_AUTHOR"
+
+          # Get user's permission level using GitHub CLI
+          PERMISSION=$(gh api repos/$REPO/collaborators/$PR_AUTHOR/permission --jq '.permission' 2>/dev/null || echo "none")
+
+          echo "Permission level: $PERMISSION"
+
+          # Check if user has write, maintain, or admin access
+          if [[ "$PERMISSION" == "write" || "$PERMISSION" == "maintain" || "$PERMISSION" == "admin" ]]; then
+            echo "✓ User $PR_AUTHOR has sufficient permissions ($PERMISSION)"
+          else
+            echo "::error::Security check failed: User $PR_AUTHOR does not have write access to this repository (permission: $PERMISSION)"
+            echo "::error::Pull requests from users without write access cannot trigger this workflow due to security restrictions."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          path: nrf
+          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.ref_name }}
+
+      - name: Set branch name
+        id: set_branch_name
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request_target" ]]; then
+            echo "BRANCH_NAME=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_OUTPUT
+          else
+            echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set build flags
+        id: set_flags
+        run: |
+          apt-get update && apt-get install -y jq
+          BASEDIR="nrf/scripts"
+          # Platform definitions: OS_TYPE, ARCH, output variable
+          PLATFORMS=(
+            "linux|x86_64|BUILD_LINUX"
+            "windows|x86_64|BUILD_WIN"
+            "macos|x86_64|BUILD_MAC_INTEL"
+            "macos|aarch64|BUILD_MAC_ARM"
+          )
+          for entry in "${PLATFORMS[@]}"; do
+            OS_TYPE=$(echo "$entry" | cut -d'|' -f1)
+            ARCH=$(echo "$entry" | cut -d'|' -f2)
+            OUT_VAR=$(echo "$entry" | cut -d'|' -f3)
+            CHECKSUM=$(bash "$BASEDIR/print_toolchain_checksum.sh" "$OS_TYPE")
+            printf "Checking for existing bundle: OS=%s, ARCH=%s, CHECKSUM=%s\n" "$OS_TYPE" "$ARCH" "$CHECKSUM"
+            curl -sSL -o index.json "https://files.nordicsemi.com/artifactory/NCS/external/bundles/v3/index-$OS_TYPE-$ARCH.json"
+            if jq -e --arg key "$CHECKSUM" '.[] | select(.key == $key)' index.json > /dev/null; then
+              echo "$OUT_VAR=false" >> $GITHUB_OUTPUT
+              echo "$OUT_VAR=false"
+            else
+              echo "$OUT_VAR=true" >> $GITHUB_OUTPUT
+              echo "$OUT_VAR=true"
+            fi
+            rm -f index.json
+          done
+      - name: Calculate cmake-toolchain-version
+        id: set_version
+        run: |
+          # Extract <MAJOR>.<MINOR> from VERSION file
+          VERSION=$(head -n 1 nrf/VERSION | grep -oE '^[0-9]+\.[0-9]+')
+          # Get date in yyyyMMdd format
+          DATE=$(date +%Y%m%d)
+          # Use a dummy bundle id for now (replace with actual logic if needed)
+          BUNDLE_ID_HEX=$(bash "nrf/scripts/print_toolchain_checksum.sh" "linux")
+          BUNDLE_ID_DEC=$((16#$BUNDLE_ID_HEX))
+          CMAKE_TOOLCHAIN_VERSION="${VERSION}.${DATE}.${BUNDLE_ID_DEC}"
+          echo "CMAKE_TOOLCHAIN_VERSION=${CMAKE_TOOLCHAIN_VERSION}"
+          echo "CMAKE_TOOLCHAIN_VERSION=$CMAKE_TOOLCHAIN_VERSION" >> $GITHUB_OUTPUT
+
+  build-linux:
+    needs: Prepare
+    if: ${{ needs.Prepare.outputs.BUILD_LINUX == 'true' }}
+    runs-on: ubuntu-24.04
+    container:
+      image: ubuntu:20.04
+    env:
+      CI_FILES_NORDICSEMI_TOKEN: ${{ secrets.COM_FILES_NORDICSEMI_TEST_TOKEN }}
+      CMAKE_TOOLCHAIN_VERSION: ${{ needs.Prepare.outputs.CMAKE_TOOLCHAIN_VERSION }}
+      BRANCH_NAME: ${{ needs.Prepare.outputs.BRANCH_NAME }}
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y git ca-certificates coreutils curl debootstrap fakechroot fakeroot
+      - name: Checkout
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          path: nrf
+          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.ref_name }}
+
+      - name: Create branch for PR
+        if: github.event_name == 'pull_request_target'
+        run: |
+          cd nrf
+          git checkout -b $BRANCH_NAME
+
+      - name: Download nrfutil
+        run: |
+          curl https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/x86_64-unknown-linux-gnu/nrfutil -o nrfutil
+          chmod +x nrfutil
+          ./nrfutil self-upgrade
+          ./nrfutil config package-index add internal-production https://files.nordicsemi.com/artifactory/swtools/internal/nrfutil/index/init.json --environment-variable-name CI_FILES_NORDICSEMI_TOKEN
+          ./nrfutil install --force --package-index-name internal-production toolchain-bundler=0.18.1
+          ./nrfutil list
+      - name: Build toolchain bundle
+        run: |
+          ./nrfutil toolchain-bundler build --cmake-toolchain-version $CMAKE_TOOLCHAIN_VERSION --output-dir output --ncs-repository file://$GITHUB_WORKSPACE/nrf $BRANCH_NAME
+      - name: Archive bundle
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: linux-bundle
+          path: output/**/*.tar.gz
+          retention-days: 14
+          if-no-files-found: 'error'
+      - name: Pip audit
+        run: |
+          ./nrfutil install toolchain-manager
+          ./nrfutil toolchain-manager install --toolchain-bundle output/ncs-toolchain-x86_64-linux-*.tar.gz
+          ./nrfutil toolchain-manager launch -- pip install -i https://pypi.org/simple pip-audit
+
+          # Install yq for YAML parsing
+          wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+
+          # Build ignore-vuln arguments from whitelist file
+          IGNORE_ARGS=""
+          if [ -f "nrf/scripts/pip-audit-whitelist.yml" ]; then
+            # Extract vulnerability IDs from the YAML file using yq
+            VULN_IDS=$(yq '.py[]' nrf/scripts/pip-audit-whitelist.yml)
+            for VULN_ID in $VULN_IDS; do
+              IGNORE_ARGS="$IGNORE_ARGS --ignore-vuln $VULN_ID"
+            done
+          fi
+
+          ./nrfutil toolchain-manager launch -- pip-audit $IGNORE_ARGS -o pip-audit.log
+      - name: Archive pip audit log
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: pip-audit-log
+          path: pip-audit.log
+          retention-days: 14
+          if-no-files-found: 'error'
+
+  build-win:
+    needs: Prepare
+    if: ${{ needs.Prepare.outputs.BUILD_WIN == 'true' }}
+    runs-on: windows-2025
+    env:
+      CI_FILES_NORDICSEMI_TOKEN: ${{ secrets.COM_FILES_NORDICSEMI_TEST_TOKEN }}
+      CMAKE_TOOLCHAIN_VERSION: ${{ needs.Prepare.outputs.CMAKE_TOOLCHAIN_VERSION }}
+      BRANCH_NAME: ${{ needs.Prepare.outputs.BRANCH_NAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          path: nrf
+          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.ref_name }}
+
+      - name: Create branch for PR
+        if: github.event_name == 'pull_request_target'
+        run: |
+          cd nrf
+          git checkout -b $env:BRANCH_NAME
+
+      - name: Download nrfutil
+        run: |
+          curl https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/x86_64-pc-windows-msvc/nrfutil.exe -o nrfutil.exe
+          ./nrfutil.exe self-upgrade
+          ./nrfutil.exe config package-index add internal-production https://files.nordicsemi.com/artifactory/swtools/internal/nrfutil/index/init.json --environment-variable-name CI_FILES_NORDICSEMI_TOKEN
+          ./nrfutil.exe install --force --package-index-name internal-production toolchain-bundler=0.19.0
+          ./nrfutil.exe list
+      - name: Build toolchain bundle
+        run: |
+          $ErrorActionPreference = "Stop"
+          for ($i=0; $i -lt 3; $i++) {
+            try {
+              ./nrfutil.exe toolchain-bundler build --cmake-toolchain-version $env:CMAKE_TOOLCHAIN_VERSION --allow-changes-to-host --output-dir output --ncs-repository file://${{ github.workspace }}/nrf $env:BRANCH_NAME
+              break
+            } catch {
+              if ($i -eq 2) { throw }
+            }
+          }
+      - name: Archive bundle
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: win-bundle
+          path: output/**/*.tar.gz
+          retention-days: 14
+          if-no-files-found: 'error'
+
+  build-mac-intel:
+    needs: Prepare
+    if: ${{ needs.Prepare.outputs.BUILD_MAC_INTEL == 'true' }}
+    runs-on: macos-15-intel
+    env:
+      CI_FILES_NORDICSEMI_TOKEN: ${{ secrets.COM_FILES_NORDICSEMI_TEST_TOKEN }}
+      CMAKE_TOOLCHAIN_VERSION: ${{ needs.Prepare.outputs.CMAKE_TOOLCHAIN_VERSION }}
+      BRANCH_NAME: ${{ needs.Prepare.outputs.BRANCH_NAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          path: nrf
+          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.ref_name }}
+      - name: Create branch for PR
+        if: github.event_name == 'pull_request_target'
+        run: |
+          cd nrf
+          git checkout -b $BRANCH_NAME
+      - name: Download nrfutil
+        run: |
+          curl https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/universal-apple-darwin/nrfutil -o nrfutil
+          chmod +x nrfutil
+          ./nrfutil self-upgrade
+          ./nrfutil config package-index add internal-production https://files.nordicsemi.com/artifactory/swtools/internal/nrfutil/index/init.json --environment-variable-name CI_FILES_NORDICSEMI_TOKEN
+          ./nrfutil install --force --package-index-name internal-production toolchain-bundler=0.20.0
+          ./nrfutil list
+      - name: Build toolchain bundle
+        run: |
+          sudo mkdir -p /opt/nordic/ncs && sudo chown -R $(whoami) "/opt/nordic/ncs"
+          ./nrfutil toolchain-bundler build --cmake-toolchain-version $CMAKE_TOOLCHAIN_VERSION --output-dir output --ncs-repository file://${{ github.workspace }}/nrf $BRANCH_NAME
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: mac-intel-bundle
+          path: output/**/*.tar.gz
+          retention-days: 14
+          if-no-files-found: 'error'
+
+  build-mac-arm:
+    needs: Prepare
+    if: ${{ needs.Prepare.outputs.BUILD_MAC_ARM == 'true' }}
+    runs-on: macos-15
+    env:
+      CI_FILES_NORDICSEMI_TOKEN: ${{ secrets.COM_FILES_NORDICSEMI_TEST_TOKEN }}
+      CMAKE_TOOLCHAIN_VERSION: ${{ needs.Prepare.outputs.CMAKE_TOOLCHAIN_VERSION }}
+      BRANCH_NAME: ${{ needs.Prepare.outputs.BRANCH_NAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          path: nrf
+          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.ref_name }}
+      - name: Create branch for PR
+        if: github.event_name == 'pull_request_target'
+        run: |
+          cd nrf
+          git checkout -b $BRANCH_NAME
+      - name: Download nrfutil
+        run: |
+          curl https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/universal-apple-darwin/nrfutil -o nrfutil
+          chmod +x nrfutil
+          ./nrfutil self-upgrade
+          ./nrfutil config package-index add internal-production https://files.nordicsemi.com/artifactory/swtools/internal/nrfutil/index/init.json --environment-variable-name CI_FILES_NORDICSEMI_TOKEN
+          ./nrfutil install --force --package-index-name internal-production toolchain-bundler=0.20.0
+          ./nrfutil list
+      - name: Build toolchain bundle
+        run: |
+          sudo mkdir -p /opt/nordic/ncs && sudo chown -R $(whoami) "/opt/nordic/ncs"
+          ./nrfutil toolchain-bundler build --cmake-toolchain-version $CMAKE_TOOLCHAIN_VERSION --output-dir output --ncs-repository file://${{ github.workspace }}/nrf $BRANCH_NAME
+      - name: Archive bundle
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: mac-arm-bundle
+          path: output/**/*.tar.gz
+          retention-days: 14
+          if-no-files-found: 'error'
+
+  publish:
+    needs: [build-linux, build-win, build-mac-intel, build-mac-arm]
+    if: |
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
+    runs-on: ubuntu-latest
+    env:
+      COM_FILES_NORDICSEMI_WRITE_BUNDLE_TOKEN: ${{ secrets.COM_FILES_NORDICSEMI_WRITE_BUNDLE_TOKEN }}
+    steps:
+      - name: Download all bundles
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          path: ./output
+      - name: Publish to Artifactory
+        run: |
+          echo "Publishing bundles to Artifactory..."
+          ls -lh ./output
+          OUTPUT_DIR="output"
+
+          find "$OUTPUT_DIR" -type f -name 'ncs-toolchain-*-*-*.tar.gz' | while read -r file; do
+              filename=$(basename "$file")
+              # Extract ARCH, OS, TOOLCHAIN_ID using regex
+              if [[ $filename =~ ncs-toolchain-([^-]+)-([^-]+)-([^.]+)\.tar\.gz ]]; then
+                  ARCH="${BASH_REMATCH[1]}"
+                  OS="${BASH_REMATCH[2]}"
+                  TOOLCHAIN_ID="${BASH_REMATCH[3]}"
+                  INDEX_URL="https://files.nordicsemi.com/artifactory/NCS/internal/bundles/v3/index-${OS}-${ARCH}.json"
+                  INDEX_PATH="index-${OS}-${ARCH}.json"
+                  echo "Downloading $INDEX_URL for $filename"
+                  curl -sSfL -H "Authorization: Bearer $COM_FILES_NORDICSEMI_WRITE_BUNDLE_TOKEN" "$INDEX_URL" -o "$INDEX_PATH"
+
+                  # Backup index file
+                  cp "$INDEX_PATH" "${INDEX_PATH}.bak"
+
+                  # Check if entry with TOOLCHAIN_ID already exists
+                  if jq -e --arg key "$TOOLCHAIN_ID" '.[] | select(.key == $key)' "$INDEX_PATH" > /dev/null; then
+                    echo "Entry with key $TOOLCHAIN_ID already exists in $INDEX_PATH, skipping."
+                    continue
+                  fi
+
+                  # Calculate sha512 checksum
+                  SHA512=$(sha512sum "$file" | awk '{print $1}')
+                  TIMESTAMP=$(date +%s)
+
+                  # Add new entry to index file using jq (in-place)
+                  jq --arg key "$TOOLCHAIN_ID" \
+                     --arg version "$TOOLCHAIN_ID" \
+                     --arg filename "$filename" \
+                     --arg sha512 "$SHA512" \
+                     --argjson timestamp "$TIMESTAMP" \
+                     '
+                     . += [{
+                       "json_api_version": 2,
+                       "key": $key,
+                       "metadata": {
+                         "version": $version,
+                         "filename": $filename,
+                         "sha512": $sha512,
+                         "timestamp": $timestamp
+                       }
+                     }]
+                     ' "$INDEX_PATH" > "$INDEX_PATH.tmp" && mv "$INDEX_PATH.tmp" "$INDEX_PATH"
+
+                  # Upload updated index file with error handling
+                  echo "Uploading $INDEX_PATH to $INDEX_URL"
+                  if ! curl -sSfL -X PUT -H "Authorization: Bearer $COM_FILES_NORDICSEMI_WRITE_BUNDLE_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    --upload-file "$INDEX_PATH" "$INDEX_URL"; then
+                    echo "::error::Failed to upload index file to $INDEX_URL"
+                    exit 1
+                  fi
+
+                  echo "Successfully published $filename"
+              else
+                  echo "Filename $filename does not match expected pattern, skipping."
+              fi
+          done
+
+      - name: Archive index files
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: index-files
+          path: |
+            index-*.json
+            index-*.json.bak
+          retention-days: 14
+          if-no-files-found: 'error'
