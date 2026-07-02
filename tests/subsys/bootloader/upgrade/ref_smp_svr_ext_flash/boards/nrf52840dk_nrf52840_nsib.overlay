@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&cpuapp_rram {
+&flash0 {
 	/delete-node/ partitions;
 
 	partitions {
@@ -12,14 +12,29 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		boot_partition: partition@0 {
+		b0_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x0 DT_SIZE_K(68)>;
+			reg = <0x0 DT_SIZE_K(32)>;
 		};
 
-		slot0_partition: partition@11000 {
+		bl_storage: provision: partition@8000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x11000 DT_SIZE_K(1456)>;
+			reg = <0x8000 DT_SIZE_K(4)>;
+		};
+
+		s0_partition: boot_partition: partition@9000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x9000 DT_SIZE_K(80)>;
+		};
+
+		s1_partition: partition@1d000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x1d000 DT_SIZE_K(80)>;
+		};
+
+		slot0_partition: partition@31000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x31000 DT_SIZE_K(828)>;
 		};
 	};
 };
@@ -33,7 +48,7 @@
 		#size-cells = <1>;
 
 		slot1_partition: partition@0 {
-			reg = <0x0 DT_SIZE_K(1456)>;
+			reg = <0x0 DT_SIZE_K(828)>;
 		};
 	};
 };
