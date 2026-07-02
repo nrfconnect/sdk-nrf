@@ -111,6 +111,22 @@ struct vtf_channel {
 	}
 
 /**
+ * Fetch the latest snapshot value for a channel.
+ *
+ * Returns the most recent value captured by the aggregator (or the
+ * channel's default value when the channel has no live update). The
+ * value is returned untyped; the caller is expected to know the channel's
+ * ``enum vtf_sample_type`` and read the matching union member.
+ *
+ * @param id   Channel to read.
+ * @param out  Destination for the snapshot value. Must be non-NULL.
+ *
+ * @retval 0        On success.
+ * @retval -EINVAL  If @p out is NULL or @p id is out of range.
+ */
+int vtf_monitoring_sample_get(enum vtf_channel_id id, union vtf_sample_value *out);
+
+/**
  * @}
  */
 

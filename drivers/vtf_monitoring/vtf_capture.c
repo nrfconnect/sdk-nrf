@@ -25,8 +25,18 @@ static const union vtf_sample_value vtf_channel_defaults[VTF_CH_COUNT] = {
 	[VTF_CH_FREQ_OFFSET] = {.i32 = CONFIG_VTF_FREQ_OFFSET_DEFAULT_VALUE},
 };
 
-union vtf_sample_value vtf_snapshots[VTF_CH_COUNT];
+static union vtf_sample_value vtf_snapshots[VTF_CH_COUNT];
 static bool ch_live_update[VTF_CH_COUNT];
+
+int vtf_monitoring_sample_get(enum vtf_channel_id id, union vtf_sample_value *out)
+{
+	if (out == NULL || id >= VTF_CH_COUNT) {
+		return -EINVAL;
+	}
+
+	*out = vtf_snapshots[id];
+	return 0;
+}
 
 static void vtf_capture_work_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(vtf_capture_work, vtf_capture_work_handler);
