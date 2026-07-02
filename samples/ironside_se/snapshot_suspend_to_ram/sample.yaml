@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+sample:
+  name: IronSide SE snapshot and suspend-to-RAM
+  description: |
+    Demonstrates IronSide SE snapshot capture and recovery, followed by a
+    suspend-to-RAM low-power idle loop.
+
+common:
+  sysbuild: true
+
+tests:
+  samples.ironside_se.snapshot_suspend_to_ram:
+    build_only: true
+    tags:
+      - sysbuild
+      - ironside_se
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    timeout: 30

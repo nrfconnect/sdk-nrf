@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Build the local remote/ image as the network (radio) core image through the
+# standard sysbuild network-core infrastructure. A dedicated image is used
+# instead of SB_CONFIG_NETCORE_EMPTY so the radio core wakes periodically as a
+# liveness signal; see remote/src/main.c.
+
+choice NETCORE
+	default NETCORE_REMOTE
+
+config NETCORE_REMOTE
+	bool "Remote radio idle image"
+	help
+	  Use the local remote/ idle image as the network core image.
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "remote" if NETCORE_REMOTE
+
+config NETCORE_IMAGE_PATH
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/ironside_se/snapshot_suspend_to_ram/remote" if NETCORE_REMOTE
+
+source "share/sysbuild/Kconfig"
