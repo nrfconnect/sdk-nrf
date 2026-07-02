@@ -419,6 +419,8 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 						     unsigned short int capture_timeout,
 						     unsigned char lna_gain,
 						     unsigned char bb_gain,
+						     unsigned char ed_thresh_ofdm,
+						     unsigned char ed_thresh_dsss,
 						     unsigned char *capture_status)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -443,6 +445,8 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 	rf_test_cap_params.cap_time = capture_timeout;
 	rf_test_cap_params.lna_gain = lna_gain;
 	rf_test_cap_params.bb_gain = bb_gain;
+	rf_test_cap_params.ed_thresh_ofdm = (signed char)ed_thresh_ofdm;
+	rf_test_cap_params.ed_thresh_dsss = (signed char)ed_thresh_dsss;
 	rf_test_cap_params.capture_addr = (unsigned int *)cap_data;
 
 	rt_dev_ctx->rf_test_type = rf_test_type;
@@ -485,7 +489,10 @@ out:
 enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_tx_tone(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						      unsigned char enable,
 						      signed char tone_freq,
-						      signed char tx_power)
+						      signed char tx_power,
+						      unsigned char tone_type,
+						      signed short int dc_offset_i,
+						      signed short int dc_offset_q)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_rf_test_tx_params rf_test_tx_params;
@@ -508,6 +515,9 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_tx_tone(struct nrf_wifi_fmac_dev_c
 	rf_test_tx_params.tone_freq = tone_freq;
 	rf_test_tx_params.tx_pow = tx_power;
 	rf_test_tx_params.enabled = enable;
+	rf_test_tx_params.tone_type = tone_type;
+	rf_test_tx_params.dc_offset_i = dc_offset_i;
+	rf_test_tx_params.dc_offset_q = dc_offset_q;
 
 	rt_dev_ctx->rf_test_type = NRF_WIFI_RF_TEST_TX_TONE;
 	rt_dev_ctx->rf_test_cap_data = NULL;
@@ -591,6 +601,14 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_compute_xo(struct nrf_wifi_fmac_de
 				      __func__);
 		rt_dev_ctx->rf_test_type = NRF_WIFI_RF_TEST_MAX;
 		rt_dev_ctx->rf_test_cap_data = NULL;
+		status = NRF_WIFI_STATUS_FAIL;
+		goto out;
+	}
+
+	if (rt_dev_ctx->xo_tune_status != 0) {
+		nrf_wifi_osal_log_err("%s: XO tune failed with status %d",
+				      __func__,
+				      rt_dev_ctx->xo_tune_status);
 		status = NRF_WIFI_STATUS_FAIL;
 		goto out;
 	}

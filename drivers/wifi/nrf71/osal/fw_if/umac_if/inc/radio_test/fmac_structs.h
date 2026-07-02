@@ -27,11 +27,6 @@
 #define MAX_TX_PWR_SYS_TEST 30
 #define MAX_TX_PWR_RADIO_TEST 24
 
-#define MAX_CAPTURE_LEN 16383
-#define MIN_CAPTURE_LEN 0
-#define RX_CAPTURE_TIMEOUT_CONST 11
-#define CAPTURE_DURATION_IN_SEC 600
-
 /**
  * @brief  Structure to hold per device context information for the UMAC IF layer.
  *
@@ -51,6 +46,12 @@ struct nrf_wifi_rt_fmac_dev_ctx {
 	enum nrf_wifi_cmd_status radio_cmd_status;
 	/** Firmware RF test RX capture event status */
 	unsigned char capture_status;
+	/** Firmware XO tune computed offset */
+	signed int xo_offset;
+	/** Firmware XO tune status (0=success, 1=tone not detected,
+	 *  2=gain fail (high), 3=gain fail (low), 4=gain fail (timeout))
+	 */
+	unsigned char xo_tune_status;
 };
 
 

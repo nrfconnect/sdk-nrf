@@ -23,11 +23,15 @@ target_sources(app PRIVATE
   ${perip_rt_dir}/src/main.c
   ${perip_rt_dir}/src/radio_test.c
   ${perip_rt_dir}/src/radio_cmd.c
-  ${common_rt_dir}/src/nrf_wifi_radio_test_shell.c
 )
 
-if(NOT CONFIG_NRF71_RADIO_TEST)
+if(CONFIG_NRF71_RADIO_TEST)
   target_sources(app PRIVATE
+    ${common_rt_dir}/src/nrf_wifi_radio_test_shell_nrf71.c
+  )
+else()
+  target_sources(app PRIVATE
+    ${common_rt_dir}/src/nrf_wifi_radio_test_shell.c
     ${common_rt_dir}/src/nrf_wifi_radio_ficr_shell.c
     ${common_rt_dir}/src/ficr_prog.c
   )

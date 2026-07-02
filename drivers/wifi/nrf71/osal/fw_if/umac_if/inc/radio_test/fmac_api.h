@@ -93,6 +93,8 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_prog_rx(struct nrf_wifi_fmac_dev_ctx *fmac
  * @param capture_timeout Capture timeout.
  * @param lna_gain LNA gain value.
  * @param bb_gain Baseband gain value.
+* @param ed_thresh_ofdm OFDM energy detect threshold in dBm (-100..0).
+ * @param ed_thresh_dsss DSSS energy detect threshold in dBm (-100..0).
  * @param timeout_status Timeout status.
  *
  * This function is used to send a command to:
@@ -108,6 +110,8 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 						     unsigned short int capture_timeout,
 						     unsigned char lna_gain,
 						     unsigned char bb_gain,
+						     unsigned char ed_thresh_ofdm,
+						     unsigned char ed_thresh_dsss,
 						     unsigned char *timeout_status);
 
 
@@ -117,6 +121,9 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
  * @param enable Enable/Disable TX tone test.
  * @param tone_freq Desired tone frequency in MHz in steps of 1 MHz from -10 MHz to +10 MHz.
  * @param tx_power Desired TX power in the range -16dBm to +24dBm.
+ * @param tone_type Tone type to be transmitted (0=complex, 1=real-only, 2=imag-only).
+ * @param dc_offset_i DC offset for the I channel.
+ * @param dc_offset_q DC offset for the Q channel.
  *
  * This function is used to send a command to:
  *	- The RPU firmware to start the RF TX tone test in radio test mode.
@@ -127,7 +134,10 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_tx_tone(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						      unsigned char enable,
 						      signed char tone_freq,
-						      signed char tx_power);
+						      signed char tx_power,
+						      unsigned char tone_type,
+						      signed short int dc_offset_i,
+						      signed short int dc_offset_q);
 
 
 
@@ -135,12 +145,24 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_tx_tone(struct nrf_wifi_fmac_dev_c
  * @brief Get XO calibrated value.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  *
- * This function is used to send a command to:
- *	- The RPU firmware wherein the RPU firmware estimates and
- *	  returns optimal XO value.
+ * This function is used to send a command to the RPU firmware, which
+ * estimates and returns the optimal XO value.
  *
- * @retval NRF_WIFI_STATUS_SUCCESS On Success
- * @retval NRF_WIFI_STATUS_FAIL On failure to execute command
+ * Once the firmware completes the XO tune, it reports a result status that
+ * indicates the outcome of the tuning procedure:
+ *	- 0: Success.
+ *	- 1: Tone not detected.
+ *	- 2: Gain failure (high).
+ *	- 3: Gain failure (low).
+ *	- 4: Gain failure (timeout).
+ *
+ * The detailed outcome is logged when the XO tune event is processed. Here,
+ * any non-success status (values 1 to 4) is mapped to @ref NRF_WIFI_STATUS_FAIL
+ * so that the caller can detect a failed tune from the return value.
+ *
+ * @retval NRF_WIFI_STATUS_SUCCESS On success (firmware reported status 0).
+ * @retval NRF_WIFI_STATUS_FAIL On failure to execute the command or when the
+ *	firmware reported a non-success XO tune status.
  */
 enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_compute_xo(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
