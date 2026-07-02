@@ -718,6 +718,7 @@
 /samples/peripheral/ppi_seq_spi/*.rst     @nrfconnect/ncs-ll-izera @nrfconnect/ncs-lowlevel-doc
 /samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-dragoon-doc
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
+/samples/rt_framework/                    @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
 /samples/wifi/**/*.rst                    @nrfconnect/ncs-wifi-doc

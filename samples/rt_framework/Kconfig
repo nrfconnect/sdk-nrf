@@ -1,0 +1,98 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "App-domain RT framework"
+
+config RT_FW_MIN_PERIOD_US
+	int "Minimum accepted RT toggle period (us)"
+	default 10
+	help
+	  Lower bound for rt_fw_set_period_us(). Periods below this are rejected
+	  rather than clamped. Guards against configuring an extremely high RT
+	  tick rate that would saturate the CPU (and, on SoCs where MPSL shares
+	  the application core, interfere with radio timing).
+
+config RT_FW_MAX_PERIOD_US
+	int "Maximum accepted RT toggle period (us)"
+	default 1000000
+	help
+	  Upper bound for rt_fw_set_period_us(). The RT period is also the
+	  control-plane polling interval, so this bounds the worst-case latency
+	  of a subsequent stop/reconfigure command to one period.
+
+config RT_FW_EGU_IRQ_PRIO
+	int "EGU (data-plane) interrupt priority"
+	depends on RT_FW_DATA_PLANE
+	default 5
+	help
+	  Zephyr (non-ZLI) interrupt priority for the EGU interrupt that drains
+	  the RT -> Zephyr event ring. Must stay below the ZLI level and is
+	  SoC/board dependent. Override it per target if needed.
+
+config RT_FW_DATA_PLANE
+	bool "Enable RT -> Zephyr data plane (EGU + event ring)"
+	default n
+	help
+	  When enabled, the RT component pushes events into a single-producer /
+	  single-consumer ring in shared RAM and triggers EGU. The EGU interrupt
+	  runs at a normal (non-ZLI) Zephyr priority and schedules a work item
+	  that drains the ring. Demonstrates the RT -> Zephyr notification path
+	  without using Zephyr primitives in the timing-critical path.
+
+config RT_FW_SHARED_DMA_VISIBLE
+	bool "Keep the RT event buffer cache-coherent for a DMA/other-master observer"
+	depends on RT_FW_DATA_PLANE
+	default n
+	help
+	  Opt-in for the case where the unidirectional RT->Zephyr event payload is
+	  also observed by another bus master (a DMA engine or another core),
+	  rather than only by the Zephyr threads on the application core.
+
+	  When enabled, the event entries are aligned and padded to whole data
+	  cache line(s) and rt_shared.h performs explicit cache maintenance:
+	  sys_cache_data_flush_range() after the producer writes an entry and
+	  sys_cache_data_invd_range() before the consumer reads it. This is the
+	  same cache-maintenance pattern Zephyr's DMM uses for DMA buffers and
+	  keeps the buffer coherent without placing it in non-cacheable memory.
+
+	  This option only handles cache coherency. Exposing the buffer to a real
+	  external master additionally requires mapping/placing it into that
+	  master's address view, e.g. via a devicetree "zephyr,memory-region" with
+	  ATTR_MPU_RAM_NOCACHE (board-specific). See the sample README.
+
+	  Leave this disabled for the default app-core ISR <-> thread model: the
+	  shared data cache is self-coherent there and ordering barriers alone are
+	  sufficient, even on cached SoCs such as nRF54H20. Note that the cache
+	  maintenance runs inside the ZLI, so it adds to the RT ISR time budget and
+	  is not part of the minimal BLE-coexistence fast path.
+
+config RT_FW_ISR_TEST_LOAD
+	bool "Inject an artificial busy-loop load into the RT ZLI ISR"
+	default n
+	help
+	  Adds a controlled busy-loop to the RT zero-latency ISR. Used to study
+	  how a longer RT ISR affects BLE timing and to establish the RT ISR time
+	  budget. This matters most on SoCs where MPSL/radio ISRs share the
+	  application core (e.g. nRF54L), where the ZLI runs at the same NVIC
+	  priority as the radio ISRs.
+
+config RT_FW_ISR_TEST_LOAD_CYCLES
+	int "Number of NOP iterations for the RT ISR test load"
+	depends on RT_FW_ISR_TEST_LOAD
+	default 100
+	help
+	  Number of NOP iterations executed inside the RT ZLI ISR when
+	  RT_FW_ISR_TEST_LOAD is enabled.
+
+config RT_FW_DEBUG_PIN
+	bool "Drive a debug GPIO high for the duration of the RT ISR"
+	default n
+	help
+	  Drives a second RT-owned GPIO high on ISR entry and low on ISR exit,
+	  so the RT ISR execution time can be measured directly with a logic
+	  analyzer or oscilloscope.
+
+source "Kconfig.zephyr"
