@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../../boards/nrf54lm20dk_nrf54lm20b_cpuapp.overlay"
+#include "../../../boards/nrf52840dk_nrf52840_nsib.overlay"
 
 / {
 	chosen {
-		zephyr,code-partition = &boot_partition;
+		zephyr,code-partition = &b0_partition;
 	};
 };

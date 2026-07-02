@@ -12,14 +12,24 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		boot_partition: partition@0 {
+		b0_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x0 DT_SIZE_K(68)>;
+			reg = <0x0 DT_SIZE_K(30)>;
 		};
 
-		slot0_partition: partition@11000 {
+		s0_partition: partition@8000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x11000 DT_SIZE_K(1456)>;
+			reg = <0x8000 DT_SIZE_K(68)>;
+		};
+
+		s1_partition: partition@19000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x19000 DT_SIZE_K(68)>;
+		};
+
+		slot0_partition: partition@2a000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x2a000 DT_SIZE_K(1356)>;
 		};
 	};
 };
@@ -33,7 +43,7 @@
 		#size-cells = <1>;
 
 		slot1_partition: partition@0 {
-			reg = <0x0 DT_SIZE_K(1456)>;
+			reg = <0x0 DT_SIZE_K(1356)>;
 		};
 	};
 };
