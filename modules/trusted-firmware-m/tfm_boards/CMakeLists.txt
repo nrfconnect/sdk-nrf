@@ -115,6 +115,19 @@ if(${TFM_PARTITION_CRYPTO})
     endif()
   endif()
 
+  if(${CONFIG_WIFI_KMU})
+    target_compile_definition(platform_s PUBLIC
+      CONFIG_WIFI_KMU=1
+      CONFIG_NRF_WIFI_KMU_SLOT_MIN=${CONFIG_NRF_WIFI_KMU_SLOT_MIN}
+      CONFIG_NRF_WIFI_KMU_NUM_SLOTS=${CONFIG_NRF_WIFI_KMU_NUM_SLOTS}
+    )
+
+    target_sources(platform_s
+      PRIVATE
+      ${ZEPHYR_NRF_MODULE_DIR}/lib/wifi_kmu/wifi_kmu.c
+    )
+  endif()
+
   target_link_libraries(platform_crypto_keys
     PUBLIC
     platform_s

@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NRF_WIFI_KMU
+	bool "WIFI KMU key support"
+	depends on SOC_SERIES_NRF71
+	help
+	  This library handles cryptographic keys for WI-FI security
+	  using KMU (Key Management Unit) slots on nRF71 series devices.
+	  The keys are pushed to the memory of an external core which is only
+	  accessible via KMU.
+
+if NRF_WIFI_KMU
+
+config NRF_WIFI_KMU_SLOT_MIN
+	int "Lowest KMU slot for WI-FI keys in nRF71 series devices"
+	default 178
+	help
+	  This is the lowest KMU key slot of pushed WI-FI keys.
+	  The default is set to the highest number of unreserved keys.
+
+
+config NRF_WIFI_KMU_NUM_SLOTS
+	int "Number of KMU slots for WIFI keys in nRF71 series devices"
+	default 2
+	help
+	  This is the number of KMU slots for WI-FI keys.
+	  The value of NRF_WIFI_KMU_SLOT_MIN + this Kconfig must not overlap
+	  with any reserved KMU slots.
+
+endif # NRF_WIFI_KMU
