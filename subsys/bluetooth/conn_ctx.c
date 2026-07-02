@@ -130,6 +130,28 @@ void *bt_conn_ctx_get(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn)
 	return NULL;
 }
 
+bool bt_conn_ctx_is_allocated(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn)
+{
+	__ASSERT_NO_MSG(conn != NULL);
+	__ASSERT_NO_MSG(ctx_lib != NULL);
+
+	k_mutex_lock(ctx_lib->mutex, K_FOREVER);
+
+	for (size_t i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+		struct bt_conn_ctx *ctx = &ctx_lib->ctx[i];
+
+		if (ctx->conn == conn) {
+			k_mutex_unlock(ctx_lib->mutex);
+
+			return true;
+		}
+	}
+
+	k_mutex_unlock(ctx_lib->mutex);
+
+	return false;
+}
+
 const struct bt_conn_ctx *bt_conn_ctx_get_by_id(struct bt_conn_ctx_lib *ctx_lib, uint8_t id)
 {
 	__ASSERT_NO_MSG(ctx_lib != NULL);
