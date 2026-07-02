@@ -52,6 +52,7 @@ Varied reference designs
    applications
    samples
    drivers
+   peripherals_drivers
    libraries/index
    scripts
    integrations
