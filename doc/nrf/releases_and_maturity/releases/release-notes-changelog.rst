@@ -151,7 +151,7 @@ Security
 Security libraries
 ------------------
 
-|no_changes_yet_note|
+* Added the :ref:`bt_sap_readme` library for certificate-backed Bluetooth LE application peer authentication and protected application payload transport.
 
 * :ref:`trusted_storage_readme` library:
 
