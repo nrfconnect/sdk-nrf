@@ -15,9 +15,19 @@ foreach(i RANGE ${device_length})
   if(soc STREQUAL SOC_NAME)
     yaml_get(status NAME device_support KEY devices ${i} status)
     if(status STREQUAL "pre-release")
+      message(WARNING "SoC ${soc} is pre-release: not suitable for production.")
     elseif(status STREQUAL "maintenance")
+      yaml_get(release NAME device_support KEY devices ${i} release)
+      message(STATUS
+        "SoC ${soc} is in maintenance mode. Consider using the latest tag in the v${release} "
+        "release series instead."
+      )
     elseif(status STREQUAL "community")
+      message(WARNING
+        "SoC ${soc} is maintained by the Zephyr community and not tested for this release."
+      )
     elseif(status STREQUAL "unsupported")
+      message(WARNING "SoC ${soc} is not supported by this release.")
     endif()
     break()
   endif()
