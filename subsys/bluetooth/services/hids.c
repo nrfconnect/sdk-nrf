@@ -1523,7 +1523,7 @@ static int inp_rep_notify_all(struct bt_hids *hids_obj,
 {
 	struct bt_hids_conn_data *conn_data;
 	uint8_t *rep_data = NULL;
-	struct bt_gatt_attr *rep_attr =
+	const struct bt_gatt_attr *rep_attr =
 		&hids_obj->gp.svc.attrs[hids_inp_rep->att_ind];
 
 	const size_t contexts =
@@ -1572,7 +1572,7 @@ int bt_hids_inp_rep_send_userdata(struct bt_hids *hids_obj,
 {
 	struct bt_hids_inp_rep *hids_inp_rep =
 	    &hids_obj->inp_rep_group.reports[rep_index];
-	struct bt_gatt_attr *rep_attr =
+	const struct bt_gatt_attr *rep_attr =
 	    &hids_obj->gp.svc.attrs[hids_inp_rep->att_ind];
 	uint8_t *rep_data;
 
@@ -1602,7 +1602,7 @@ int bt_hids_inp_rep_send_userdata(struct bt_hids *hids_obj,
 
 	struct bt_gatt_notify_params params = {0};
 
-	params.attr = &hids_obj->gp.svc.attrs[hids_inp_rep->att_ind];
+	params.attr = rep_attr;
 	params.data = rep;
 	params.len = hids_inp_rep->size;
 	params.func = cb;
@@ -1622,7 +1622,7 @@ static int boot_mouse_inp_report_notify_all(
 {
 	struct bt_hids_conn_data *conn_data;
 	uint8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
-	struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
+	const struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
 	uint8_t *rep_data = NULL;
 	uint8_t rep_buff[BT_HIDS_BOOT_MOUSE_REP_LEN] = {0};
 
@@ -1682,7 +1682,7 @@ int bt_hids_boot_mouse_inp_rep_send(struct bt_hids *hids_obj,
 	uint8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
 	struct bt_hids_boot_mouse_inp_rep *boot_mouse_inp_rep =
 	    &hids_obj->boot_mouse_inp_rep;
-	struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
+	const struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
 	uint8_t *rep_data;
 
 	if (!conn) {
@@ -1717,7 +1717,7 @@ int bt_hids_boot_mouse_inp_rep_send(struct bt_hids *hids_obj,
 
 	struct bt_gatt_notify_params params = {0};
 
-	params.attr = &hids_obj->gp.svc.attrs[rep_ind];
+	params.attr = rep_attr;
 	params.data = rep_data;
 	params.len = sizeof(conn_data->hids_boot_mouse_inp_rep_ctx);
 	params.func = cb;
@@ -1740,7 +1740,7 @@ boot_kb_inp_notify_all(struct bt_hids *hids_obj, uint8_t const *rep,
 {
 	struct bt_hids_conn_data *conn_data;
 	uint8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
-	struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
+	const struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
 	uint8_t *rep_data = NULL;
 
 	const size_t contexts = bt_conn_ctx_count(hids_obj->conn_ctx);
@@ -1788,7 +1788,7 @@ int bt_hids_boot_kb_inp_rep_send(struct bt_hids *hids_obj,
 	uint8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
 	struct bt_hids_boot_kb_inp_rep *boot_kb_input_report =
 		&hids_obj->boot_kb_inp_rep;
-	struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
+	const struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
 	uint8_t *rep_data = NULL;
 
 	if (!conn) {
