@@ -105,7 +105,7 @@ struct nrf_wifi_fmac_fw_chunk_info {
  * of channels are enabled in different bands or
  * different bands are supported in hardware.
  */
-#define MAX_NUM_REG_CHANELS 42
+#define MAX_NUM_REG_CHANELS 67
 
 /**
  * @brief Structure to hold Regulatory parameter data.
