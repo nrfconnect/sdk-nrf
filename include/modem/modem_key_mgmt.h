@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include <nrf_socket.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -164,6 +165,22 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 int modem_key_mgmt_digest(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
 			  void *buf, size_t len);
+
+/**
+ * @brief Read the expiry time of a certificate from persistent storage.
+ *
+ * @param[in]           sec_tag         The security tag of the credential.
+ * @param[in]           cred_type       The credential type.
+ * @param[out]          expiry          Pointer to store the expiry time.
+ *
+ * @retval 0            On success.
+ * @retval -EINVAL      Invalid parameters.
+ * @retval -ENOENT      No credential associated with the given
+ *                      @p sec_tag and @p cred_type.
+ */
+int modem_key_mgmt_certexpiry(nrf_sec_tag_t sec_tag,
+			      enum modem_key_mgmt_cred_type cred_type,
+			      time_t *expiry);
 
 /**
  * @brief Check if a credential exists in persistent storage.

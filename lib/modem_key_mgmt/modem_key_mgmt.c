@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/timeutil.h>
 #include <nrf_modem_at.h>
 #include <modem/modem_key_mgmt.h>
 #include <zephyr/logging/log.h>
@@ -293,7 +294,8 @@ int modem_key_mgmt_digest(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
 			  void *buf, size_t len)
 {
-	char cmd[sizeof("AT%CMNG=1,##########,##")];
+	/* Use half the scratch buffer for the hex string command output */
+	char *hex_str = scratch_buf + sizeof(scratch_buf) / 2;
 	bool cmee_was_enabled;
 	int ret;
 
@@ -305,49 +307,118 @@ int modem_key_mgmt_digest(nrf_sec_tag_t sec_tag,
 		return -ENOMEM;
 	}
 
-	snprintk(cmd, sizeof(cmd), "AT%%CMNG=1,%u,%u", sec_tag, cred_type);
-
 	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
 
 	cmee_enable(&cmee_was_enabled);
 
-	ret = nrf_modem_at_scanf(
-		cmd,
-		"%%CMNG: "
-		"%*u," /* Ignore tag. */
-		"%*u," /* Ignore type. */
-		"\"%" STRINGIFY(MODEM_KEY_MGMT_DIGEST_STR_SIZE_WITHOUT_NULL_TERM) "s\"",
-		scratch_buf);
+	ret = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf) / 2,
+			       "AT%%CMNG=1,%u,%u", sec_tag, cred_type);
 
 	if (!cmee_was_enabled) {
 		cmee_disable();
 	}
 
-	switch (ret) {
-	case 1:
-		len = hex2bin(scratch_buf, strlen(scratch_buf), buf, len);
-
-		if (len != MODEM_KEY_MGMT_DIGEST_SIZE) {
-			ret = -EINVAL;
-			break;
-		}
-
-		ret = 0;
-		break;
-	case 0:
-		ret = -ENOENT;
-	default:
-		break;
+	if (ret) {
+		ret = translate_error(ret);
+		goto out;
 	}
 
+	if (strcmp(scratch_buf, "OK\r\n") == 0) {
+		ret = -ENOENT;
+		goto out;
+	}
+
+	ret = sscanf(
+		scratch_buf,
+		"%%CMNG: "
+		"%*u,"
+		"%*u,"
+		"\"%" STRINGIFY(MODEM_KEY_MGMT_DIGEST_STR_SIZE_WITHOUT_NULL_TERM) "[^\"]\"",
+		hex_str);
+
+	if (ret != 1) {
+		ret = -EBADMSG;
+		goto out;
+	}
+
+	len = hex2bin(hex_str, strlen(hex_str), buf, len);
+	if (len != MODEM_KEY_MGMT_DIGEST_SIZE) {
+		ret = -EINVAL;
+		goto out;
+	}
+
+	ret = 0;
+
+out:
 	k_mutex_unlock(&key_mgmt_mutex);
 
-	if (ret) {
-		return translate_error(ret);
+	return ret;
+}
+
+int modem_key_mgmt_certexpiry(nrf_sec_tag_t sec_tag,
+			    enum modem_key_mgmt_cred_type cred_type,
+			    time_t *expiry)
+{
+	bool cmee_was_enabled;
+	struct tm not_after;
+	time_t expiry_time;
+	int ret;
+
+	if (expiry == NULL) {
+		return -EINVAL;
 	}
 
-	return 0;
+	if (cred_type != MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN &&
+	    cred_type != MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT) {
+		return -EINVAL;
+	}
 
+	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
+	cmee_enable(&cmee_was_enabled);
+
+	ret = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf),
+			       "AT%%CERTEXPIRY=%d,%d", sec_tag, cred_type);
+
+	if (!cmee_was_enabled) {
+		cmee_disable();
+	}
+
+	if (ret) {
+		ret = translate_error(ret);
+		goto out;
+	}
+
+	ret = sscanf(scratch_buf,
+		"%%CERTEXPIRY: "
+		"%*[^,],"
+		"%*[^,],"
+		"%4u%2u%2u%2u%2u%2uZ", /* YYYYMMDDHHMMSSZ */
+		&not_after.tm_year, &not_after.tm_mon, &not_after.tm_mday,
+		&not_after.tm_hour, &not_after.tm_min, &not_after.tm_sec);
+
+	if (ret != 6) {
+		ret = -EBADMSG;
+		goto out;
+	}
+
+	not_after.tm_year -= 1900; /* Adjust year to be years since 1900 */
+	not_after.tm_mon -= 1;     /* Adjust month to be 0-11 */
+
+	errno = 0;
+	expiry_time = timeutil_timegm(&not_after);
+	if (expiry_time == -1 && errno != 0) {
+		ret = -errno;
+		goto out;
+	}
+
+	*expiry = expiry_time;
+	ret = 0;
+
+out:
+	k_mutex_unlock(&key_mgmt_mutex);
+
+	return ret;
 }
 
 int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
