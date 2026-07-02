@@ -66,3 +66,16 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.7120dk.monitor:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SB_CONFIG_WIFI_NRF70=n
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
