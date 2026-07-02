@@ -14,7 +14,7 @@
 #include <sdc_hci.h>
 
 #include "zbus_common.h"
-#include "audio_sync_timer.h"
+#include "audio_time.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_le_audio_tx, CONFIG_BT_LE_AUDIO_TX_LOG_LEVEL);
@@ -553,7 +553,7 @@ static int tx_publish_sdu_ref_and_finalize(struct bt_le_audio_tx_ctx *ctx, uint3
 
 	msg.tx_sync_ts_us = ctx->ts_ctlr_esti_us;
 	msg.tx_sync_ts_us_valid = ctx->ts_ctlr_esti_us_valid;
-	msg.curr_ts_us = audio_sync_timer_capture();
+	msg.curr_ts_us = audio_time_us_get();
 	msg.adjust = true;
 	msg.status = ctx->last_data_status;
 
@@ -636,7 +636,7 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 		return -EINVAL;
 	}
 
-	uint32_t ts_now_us = audio_sync_timer_capture();
+	uint32_t ts_now_us = audio_time_us_get();
 
 	if (num_streaming_state == 0U) {
 		LOG_DBG("No streams are in streaming state");

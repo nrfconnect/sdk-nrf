@@ -22,6 +22,7 @@ zephyr_library_include_directories(app PRIVATE
 
 add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/bluetooth bluetooth_build)
 
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/modules/audio_time.c)
 target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/modules/audio_sync_timer.c)
 target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf_audio/src/modules/led.c)
 

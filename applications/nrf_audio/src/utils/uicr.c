@@ -8,7 +8,11 @@
 
 #include <stdint.h>
 #include <errno.h>
+#if defined(CONFIG_NRFX_NVMC)
 #include <nrfx_nvmc.h>
+#elif defined(CONFIG_NRFX_RRAMC)
+#include <nrfx_rramc.h>
+#endif /* CONFIG_NRFX_NVMC */
 
 /* Memory address to store segger number of the board */
 #define MEM_ADDR_UICR_SNR UICR_APP_BASE_ADDR
@@ -28,7 +32,15 @@ int uicr_location_set(uint32_t location)
 		return -EROFS;
 	}
 
+#if defined(CONFIG_NRFX_NVMC)
 	nrfx_nvmc_word_write(MEM_ADDR_UICR_LOC, location);
+	while (!nrfx_nvmc_write_done_check()) {
+	}
+#elif defined(CONFIG_NRFX_RRAMC)
+	nrfx_rramc_word_write(MEM_ADDR_UICR_LOC, location);
+#else
+	return -ENOTSUP;
+#endif /* CONFIG_NRFX_NVMC */
 
 	if (location == *(uint32_t *)MEM_ADDR_UICR_LOC) {
 		return 0;
@@ -36,8 +48,6 @@ int uicr_location_set(uint32_t location)
 		return -EIO;
 	}
 
-	while (!nrfx_nvmc_write_done_check()) {
-	}
 }
 
 uint64_t uicr_snr_get(void)

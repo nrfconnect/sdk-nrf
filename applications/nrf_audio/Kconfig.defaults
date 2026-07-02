@@ -54,10 +54,6 @@ config PCM_MIX
 config PSCM
 	default y
 
-# Enable NRFX_CLOCK for ACLK control
-config NRFX_CLOCK
-	default y
-
 config I2C
 	default y
 
@@ -69,13 +65,6 @@ config FPU
 	default y
 
 config FPU_SHARING
-	default y
-
-# Enable SDHC interface
-config DISK_DRIVERS
-	default y
-
-config DISK_DRIVER_SDMMC
 	default y
 
 # Enable SPI interface
@@ -90,21 +79,3 @@ config ADC
 # from Flash to SPI
 config SPI_NRFX_RAM_BUFFER_SIZE
 	default 8
-
-# Config the file system
-config FILE_SYSTEM
-	default y
-
-config FAT_FILESYSTEM_ELM
-	default y
-
-config FS_FATFS_LFN
-	default y
-choice FS_FATFS_LFN_MODE
-	# Using stack for LFN work queue
-	default FS_FATFS_LFN_MODE_STACK
-endchoice
-
-# exFAT enabled to support longer file names and higher transfer speed
-config FS_FATFS_EXFAT
-	default y

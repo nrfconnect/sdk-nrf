@@ -140,7 +140,7 @@ ZTEST(audio_tx, test_tx_send_basic_1_stream)
 
 	TEST_SETUP_1_STREAM;
 
-	audio_sync_timer_capture_fake.return_val = 10000U;
+	audio_time_us_get_fake.return_val = 10000U;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -164,7 +164,7 @@ ZTEST(audio_tx, test_tx_send_basic_2_streams)
 
 	TEST_SETUP_2_STREAMS;
 
-	audio_sync_timer_capture_fake.return_val = 10000U;
+	audio_time_us_get_fake.return_val = 10000U;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -188,7 +188,7 @@ ZTEST(audio_tx, test_tx_send_basic_3_streams)
 
 	TEST_SETUP_3_STREAMS;
 
-	audio_sync_timer_capture_fake.return_val = 10000U;
+	audio_time_us_get_fake.return_val = 10000U;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -254,7 +254,7 @@ ZTEST(audio_tx, test_tx_send_many)
 			read_tx_ts_calls++;
 		}
 
-		audio_sync_timer_capture_fake.return_val = i * 10000U;
+		audio_time_us_get_fake.return_val = i * 10000U;
 		hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = (i + 1U) * 10000U;
 
 		ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -291,7 +291,7 @@ ZTEST(audio_tx, test_tx_test_api_call_too_slow)
 	TEST_SETUP_2_STREAMS;
 
 	/* One standard/uneventful send */
-	audio_sync_timer_capture_fake.return_val = 0;
+	audio_time_us_get_fake.return_val = 0;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -305,7 +305,7 @@ ZTEST(audio_tx, test_tx_test_api_call_too_slow)
 	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
 	/* Simulate that we called too late */
-	audio_sync_timer_capture_fake.return_val = 13000U;
+	audio_time_us_get_fake.return_val = 13000U;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 20000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -328,7 +328,7 @@ ZTEST(audio_tx, test_tx_test_api_call_too_fast)
 	TEST_SETUP_2_STREAMS;
 
 	/* One standard/uneventful send */
-	audio_sync_timer_capture_fake.return_val = 0;
+	audio_time_us_get_fake.return_val = 0;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -342,7 +342,7 @@ ZTEST(audio_tx, test_tx_test_api_call_too_fast)
 	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
 	/* Simulate that we called too fast */
-	audio_sync_timer_capture_fake.return_val = 7000U;
+	audio_time_us_get_fake.return_val = 7000U;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 20000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -368,7 +368,7 @@ ZTEST(audio_tx, test_tx_send_send_too_fast)
 
 	TEST_SETUP_2_STREAMS;
 
-	audio_sync_timer_capture_fake.return_val = 10000U;
+	audio_time_us_get_fake.return_val = 10000U;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -382,7 +382,7 @@ ZTEST(audio_tx, test_tx_send_send_too_fast)
 	call_tx_sent(tx, chan_to_send);
 	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
-	audio_sync_timer_capture_fake.return_val = 20000U;
+	audio_time_us_get_fake.return_val = 20000U;
 	/* Inject that the controller timestamp estimate is ahead */
 	audio_tx_ctx->ts_ctlr_esti_us = 25500;
 
@@ -407,7 +407,7 @@ ZTEST(audio_tx, test_tx_send_too_slow)
 
 	TEST_SETUP_2_STREAMS;
 
-	audio_sync_timer_capture_fake.return_val = 10000U;
+	audio_time_us_get_fake.return_val = 10000U;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -421,7 +421,7 @@ ZTEST(audio_tx, test_tx_send_too_slow)
 	call_tx_sent(tx, chan_to_send);
 	internals_verify(0, true, 10000U, STATUS_SENT_WITHOUT_TS);
 
-	audio_sync_timer_capture_fake.return_val = 20000U;
+	audio_time_us_get_fake.return_val = 20000U;
 	/* Inject that the controller timestamp estimate is ahead */
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 11000U;
 	audio_tx_ctx->ts_ctlr_esti_us = 11000;
@@ -449,7 +449,7 @@ ZTEST(audio_tx, test_tx_send_send_uncommon_channels)
 	TEST_SETUP_2_STREAMS;
 	meta->locations = BT_AUDIO_LOCATION_TOP_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT_WIDE;
 
-	audio_sync_timer_capture_fake.return_val = 10000U;
+	audio_time_us_get_fake.return_val = 10000U;
 	hci_vs_sdc_iso_read_tx_timestamp_fake.return_val = 10000U;
 
 	ret = bt_le_audio_tx_send(audio_tx_ctx, dummy_audio_frame, tx, chan_to_send);
@@ -547,7 +547,7 @@ static void before_fn(void *f)
 	RESET_FAKE(bt_cap_stream_send_ts);
 	bt_cap_stream_send_ts_fake.custom_fake = bt_cap_stream_send_ts_custom_fake;
 	RESET_FAKE(zbus_chan_pub);
-	RESET_FAKE(audio_sync_timer_capture);
+	RESET_FAKE(audio_time_us_get);
 	RESET_FAKE(bt_audio_codec_cfg_get_frame_dur);
 	RESET_FAKE(bt_audio_codec_cfg_frame_dur_to_frame_dur_us);
 	RESET_FAKE(bt_audio_codec_cfg_get_octets_per_frame);
@@ -563,7 +563,7 @@ static void before_fn(void *f)
 	bt_cap_stream_send_fake.return_val = 0;
 	bt_cap_stream_send_ts_fake.return_val = 0;
 	zbus_chan_pub_fake.return_val = 0;
-	audio_sync_timer_capture_fake.return_val = 0;
+	audio_time_us_get_fake.return_val = 0;
 
 	FFF_RESET_HISTORY();
 	/* Initialize the TX context as a Bluetooth central device

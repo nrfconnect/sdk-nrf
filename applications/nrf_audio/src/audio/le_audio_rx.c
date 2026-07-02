@@ -14,7 +14,7 @@
 #include "audio_datapath.h"
 #include "macros_common.h"
 #include "audio_system.h"
-#include "audio_sync_timer.h"
+#include "audio_time.h"
 #include "audio_defines.h"
 #include "le_audio.h"
 
@@ -227,7 +227,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 	}
 
 	/* Capture timestamp of when audio frame is received */
-	meta->data_rx_ts_us = audio_sync_timer_capture();
+	meta->data_rx_ts_us = audio_time_us_get();
 
 	audio_frame = net_buf_alloc(&ble_rx_pool, K_NO_WAIT);
 	if (audio_frame == NULL) {

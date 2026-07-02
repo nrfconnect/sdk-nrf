@@ -26,9 +26,9 @@ int audio_clock_set(uint16_t freq_value)
 
 int audio_clock_init(void)
 {
+#if NRF_CLOCK_HAS_HFCLKAUDIO
 	int ret;
 
-#if NRF_CLOCK_HAS_HFCLKAUDIO
 	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
 	if (ret) {
 		return ret;
