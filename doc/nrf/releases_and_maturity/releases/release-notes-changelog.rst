@@ -227,7 +227,14 @@ Matter
 Matter fork
 +++++++++++
 
-|no_changes_yet_note|
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.6.0`` tag.
+
+* Integration of `Matter 1.6.0 <CSA press release for Matter 1.6_>`_:
+
+  * NFC-based commissioning - Allowing the full commissioning exchange over bi-directional NFC communication, even before the device is fully powered on.
+  * Joint Fabric - Enabling multiple user-authorized controllers to co-administer a single shared Matter network, with devices accessible to all participating controllers.
+  * Thermostat suggestions - Providing a standardized way for ecosystems to submit time-bound recommended changes that thermostats evaluate against user-defined preferences and current context before acting.
+  * Core enhancements - Device capability and limits communication, security sensor event history, unmounted state for smoke and CO alarms, and partitioned certificate revocation lists.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------

@@ -41,6 +41,22 @@ The table also lists the release date for that Matter specification version, and
 |                 |                                                                                                          | Specification         | |NCS| version    |
 | Matter version  | Overview of changes                                                                                      | release date          |                  |
 +=================+==========================================================================================================+=======================+==================+
+| 1.6.0           | - Joint Fabric support graduated from provisional to certifiable   | June 17, 2026                       | TODO                  | v3.4.99          |
+|                 | - Added three new provisional clusters: Groupcast (group messaging), Ambient Context Sensing, and        |                       |                  |
+|                 |   Temperature Alarm.                                                                                     |                       |                  |
+|                 | - Energy Preference cluster graduated from provisional to certifiable.                                   |                       |                  |
+|                 | - Updated Thermostat cluster with Thermostat Suggestions that replaces legacy schedule                   |                       |                  |
+|                 |   configuration with controller-driven heating/cooling suggestions and related events.                   |                       |                  |
+|                 | - Updated Occupancy Sensing cluster with Occupancy Event reporting.                                      |                       |                  |
+|                 | - Updated Group Key Management cluster with Groupcast adoption support for multicast group               |                       |                  |
+|                 |   messaging.                                                                                             |                       |                  |
+|                 | - Updated Boolean State cluster with Change Event feature for state-transition notifications.            |                       |                  |
+|                 | - Updated Access Control cluster with Auxiliary ACL support for extended access-control lists.           |                       |                  |
+|                 | - Enhanced Camera AV Stream Management with configurable image rotation angles.                          |                       |                  |
+|                 | - Measurement clusters harmonized (Flow, Illuminance, Pressure, Temperature, Water Content,              |                       |                  |
+|                 |   Concentration Measurement) with aligned revisions and attribute sets.                                  |                       |                  |
+|                 | - Added support for certifiable NFC Commissioning.                                                       |                       |                  |
++-----------------+----------------------------------------------------------------------------------------------------------+-----------------------+------------------+
 | 1.5.0           | - Added support for Cameras that can be certified and interop with Matter-enabled ecosystems.            | November 10, 2025     | v3.2.0           |
 |                 | - Enhanced support for Closures by introducing unified approach and a broad range of devices             |                       |                  |
 |                 |   such as window shades, drapes, awnings, gates, and garage doors.                                       |                       |                  |

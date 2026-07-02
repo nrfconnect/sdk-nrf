@@ -72,6 +72,22 @@ The following are the key functions of a Group Key Management Cluster:
   The distribution must be secure to prevent interception and unauthorized access.
 * Key Storage and Handling - Secure storage and handling of keys within devices are managed to prevent unauthorized access and ensure that keys are available when needed for encryption and decryption processes.
 
+The Group Key Management cluster adds the Groupcast (GCAST) feature and the ``GroupcastAdoption`` attribute.
+This attribute indicates whether a device has adopted the Groupcast cluster for multicast group messaging.
+
+Groupcast cluster
+=================
+
+Groupcast cluster integrates with the Group Key Management cluster and the existing Groups cluster to provide a standardized way to send commands to multiple group members.
+
+The Groupcast cluster is disabled by default in the Matter SDK.
+Products that need Groupcast must explicitly opt in through Kconfig.
+
+.. note::
+
+   Groupcast extends the existing group messaging model described.
+   Until you enable and certify Groupcast support, continue to use the Groups and Group Key Management clusters as documented in the earlier sections.
+
 Example use cases
 *****************
 

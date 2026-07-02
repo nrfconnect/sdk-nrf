@@ -240,6 +240,9 @@ Switches and Controls device types
 |                   | A controller can use a generic switch to control any other device            |                     |                                       |
 |                   | by subscribing to or polling changes of the current switch position.         |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Mode Select       | A Mode Select device exposes operating modes through the Mode Select cluster.| Certifiable         |                                       |
+|                   | Controllers can read the supported modes and set the current mode.           |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_sensors:
 
@@ -350,7 +353,7 @@ HVAC device types
 |                   | (for example, an indoor air handler) or is capable of including a mechanism  |                     |                                       |
 |                   | to control a heating or cooling unit directly.                               |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Fan               | A Fan device capable of controlling a fan in a heating or cooling system.    | Provisional         |                                       |
+| Fan               | A Fan device capable of controlling a fan in a heating or cooling system.    | Certifiable         |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 | Air Purifier      | An Air Purifier is a standalone device that is designed to clean the air in  | Certifiable         |                                       |
 |                   | a room. It has a fan to control the air speed while it is operating.         |                     |                                       |
@@ -435,6 +438,12 @@ Energy device types
 | Supply Equipment   | (Electric Vehicle) to be connected to the mains electricity supply to allow  |                     |                                       |
 |                    | it to be charged                                                             |                     |                                       |
 +--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Device Energy      | A Device Energy Management device reports and manages how a device           | Certifiable         |                                       |
+| Management         | consumes, generates, or stores energy.                                       |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Electrical Sensor  | An Electrical Sensor device measures electrical power and energy and         | Certifiable         |                                       |
+|                    | reports power topology information.                                          |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 | Water Heater       | A Water Heater is a device that is installed to heat water for showers,      | Certifiable         |                                       |
 |                    | baths etc.                                                                   |                     |                                       |
 +--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
@@ -512,6 +521,9 @@ Network Infrastructure device types
 | Thread Border     | A Thread Border Router device type provides interfaces for querying          | Certifiable         |                                       |
 | Router            | and configuring the associated Thread network.                               |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Secondary Network | A Secondary Network Interface device provides an additional network          | Certifiable         |                                       |
+| Interface         | interface with network commissioning and network diagnostics clusters.       |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_camera:
 
@@ -551,6 +563,19 @@ Camera device types
 | Doorbell          | A Doorbell device is a switch which when pressed usually causes a Chime      | Certifiable         |                                       |
 |                   | device to activate.                                                          |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+
+.. _ug_matter_device_types_joint_fabric:
+
+Joint Fabric device types
+=========================
+
++---------------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Device type               | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
++===========================+==============================================================================+=====================+=======================================+
+| Joint Fabric Administrator| A Joint Fabric Administrator device type provides interfaces for managing    | Certifiable         |                                       |
+|                           | Joint Fabric membership, datastore synchronization, and node management      |                     |                                       |
+|                           | across cooperating Matter ecosystems.                                        |                     |                                       |
++---------------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_utility:
 

@@ -34,6 +34,7 @@ Step 4 requires ZCL callback functions that must be provided to interact with th
 These callbacks are specific to the particular configuration of the Data Model (in other words, the supported clusters) and therefore cannot be generalized or abstracted in a more user-friendly form.
 
 .. note::
+
    Before the interaction between the application and the Matter Data Model is possible, the source files of the Data Model must be first generated with the `ZCL Advanced Platform`_ (ZAP tool).
    Please refer to the :ref:`ug_matter_gs_adding_cluster` for detailed description on how to configure and generate the Matter Data model for your application.
 

@@ -1708,6 +1708,7 @@
 .. _`Matter 1.3 CSA blog post`: https://csa-iot.org/newsroom/matter-1-3-specification-released/
 .. _`CSA press release for Matter 1.4`: https://csa-iot.org/newsroom/matter-1-4-enables-more-capable-smart-homes/
 .. _`CSA press release for Matter 1.5`: https://csa-iot.org/newsroom/matter-1-5-introduces-cameras-closures-and-enhanced-energy-management-capabilities/
+.. _`CSA press release for Matter 1.6`: https://csa-iot.org/newsroom/matter-1-6-enables-more-intuitive-setup-multi-ecosystem-experiences-and-context-driven-control/
 
 .. ### Source: Chocolatey
 
