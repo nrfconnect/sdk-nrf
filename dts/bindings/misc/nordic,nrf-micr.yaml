@@ -1,0 +1,12 @@
+# Copyright (c) 2026 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: Nordic MICR (Module Information Configuration Registers)
+
+compatible: "nordic,nrf-micr"
+
+include: base.yaml
+
+properties:
+  reg:
+    required: true
