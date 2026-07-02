@@ -7,6 +7,57 @@
 #include "cracen_ml_dsa_internal.h"
 #include "cracen_ml_dsa_poly.h"
 
+#include <zephyr/sys/byteorder.h>
+
+/* q^(-1) mod 2^32, used by the Montgomery reduction */
+#define ML_DSA_QINV	58728449
+
+/* 2^64 mod q, used to correct the extra R^(-1) factor left by a single
+ * Montgomery reduction of two plain (non-Montgomery) operands.
+ */
+#define ML_DSA_R2	2365951
+
+/* zeta[k] * R mod q (Montgomery form of the bit-reversed powers of the primitive
+ * root, R = 2^32). Pre-scaling by R lets cracen_ml_dsa_ntt() and
+ * cracen_ml_dsa_ntt_inversed() multiply by a zeta with a single
+ * montgomery_reduce() call instead of the double reduction mul_mod() needs for
+ * two arbitrary (non-Montgomery) operands.
+ */
+static int32_t zetas[] = {
+	0, 25847, 5771523, 7861508, 237124, 7602457, 7504169, 466468,
+	1826347, 2353451, 8021166, 6288512, 3119733, 5495562, 3111497, 2680103,
+	2725464, 1024112, 7300517, 3585928, 7830929, 7260833, 2619752, 6271868,
+	6262231, 4520680, 6980856, 5102745, 1757237, 8360995, 4010497, 280005,
+	2706023, 95776, 3077325, 3530437, 6718724, 4788269, 5842901, 3915439,
+	4519302, 5336701, 3574422, 5512770, 3539968, 8079950, 2348700, 7841118,
+	6681150, 6736599, 3505694, 4558682, 3507263, 6239768, 6779997, 3699596,
+	811944, 531354, 954230, 3881043, 3900724, 5823537, 2071892, 5582638,
+	4450022, 6851714, 4702672, 5339162, 6927966, 3475950, 2176455, 6795196,
+	7122806, 1939314, 4296819, 7380215, 5190273, 5223087, 4747489, 126922,
+	3412210, 7396998, 2147896, 2715295, 5412772, 4686924, 7969390, 5903370,
+	7709315, 7151892, 8357436, 7072248, 7998430, 1349076, 1852771, 6949987,
+	5037034, 264944, 508951, 3097992, 44288, 7280319, 904516, 3958618,
+	4656075, 8371839, 1653064, 5130689, 2389356, 8169440, 759969, 7063561,
+	189548, 4827145, 3159746, 6529015, 5971092, 8202977, 1315589, 1341330,
+	1285669, 6795489, 7567685, 6940675, 5361315, 4499357, 4751448, 3839961,
+	2091667, 3407706, 2316500, 3817976, 5037939, 2244091, 5933984, 4817955,
+	266997, 2434439, 7144689, 3513181, 4860065, 4621053, 7183191, 5187039,
+	900702, 1859098, 909542, 819034, 495491, 6767243, 8337157, 7857917,
+	7725090, 5257975, 2031748, 3207046, 4823422, 7855319, 7611795, 4784579,
+	342297, 286988, 5942594, 4108315, 3437287, 5038140, 1735879, 203044,
+	2842341, 2691481, 5790267, 1265009, 4055324, 1247620, 2486353, 1595974,
+	4613401, 1250494, 2635921, 4832145, 5386378, 1869119, 1903435, 7329447,
+	7047359, 1237275, 5062207, 6950192, 7929317, 1312455, 3306115, 6417775,
+	7100756, 1917081, 5834105, 7005614, 1500165, 777191, 2235880, 3406031,
+	7838005, 5548557, 6709241, 6533464, 5796124, 4656147, 594136, 4603424,
+	6366809, 2432395, 2454455, 8215696, 1957272, 3369112, 185531, 7173032,
+	5196991, 162844, 1616392, 3014001, 810149, 1652634, 4686184, 6581310,
+	5341501, 3523897, 3866901, 269760, 2213111, 7404533, 1717735, 472078,
+	7953734, 1723600, 6577327, 1910376, 6712985, 7276084, 8119771, 4546524,
+	5441381, 6144432, 7959518, 6094090, 183443, 7403526, 1612842, 4834730,
+	7826001, 3919660, 8332111, 7018208, 3937738, 1400424, 7534263, 1976782
+};
+
 /* Reduce an arbitrary signed value into [0, q). */
 static int32_t reduce_mod_q(int64_t a)
 {
@@ -17,40 +68,22 @@ static int32_t reduce_mod_q(int64_t a)
 	return (int32_t)a;
 }
 
+/* Compute a * R^(-1) mod q for R = 2^32. Result lies in (-q, q). */
+static int32_t montgomery_reduce(int64_t a)
+{
+	int32_t t = (int32_t)((uint32_t)(int32_t)a * ML_DSA_QINV);
+
+	return (int32_t)((a - (int64_t)t * ML_DSA_PRIME_NUM) >> 32);
+}
+
 /* Multiply two coefficients in [0, q); result in [0, q). */
 static int32_t mul_mod(int32_t a, int32_t b)
 {
-	return (int32_t)(((int64_t)a * (int64_t)b) % ML_DSA_PRIME_NUM);
-}
+	int32_t t = montgomery_reduce((int64_t)a * (int64_t)b);
 
-/* Modular exponentiation base^exp mod q, with base in [0, q). */
-static int32_t pow_mod(int32_t base, uint32_t exp)
-{
-	int64_t result = 1;
-	int64_t b = base;
+	t = montgomery_reduce((int64_t)t * ML_DSA_R2);
 
-	while (exp > 0) {
-		if (exp & 1u) {
-			result = (result * b) % ML_DSA_PRIME_NUM;
-		}
-		b = (b * b) % ML_DSA_PRIME_NUM;
-		exp >>= 1;
-	}
-
-	return (int32_t)result;
-}
-
-/* Reverse the low 8 bits of m (the brv function from FIPS 204, Section 7.5). */
-static uint8_t bit_reverse_8(uint8_t m)
-{
-	uint8_t r = 0;
-
-	for (uint32_t i = 0; i < 8; i++) {
-		r = (r << 1) | (m & 1u);
-		m >>= 1;
-	}
-
-	return r;
+	return t < 0 ? t + ML_DSA_PRIME_NUM : t;
 }
 
 void cracen_ml_dsa_ntt(ml_dsa_poly_vector_t *vec)
@@ -60,10 +93,10 @@ void cracen_ml_dsa_ntt(ml_dsa_poly_vector_t *vec)
 
 	for (uint32_t len = 128; len >= 1; len >>= 1) {
 		for (uint32_t start = 0; start < ML_DSA_POLY_COEFFS_COUNT; start += 2 * len) {
-			int32_t zeta = pow_mod(ML_DSA_ROOT_OF_UNITY, bit_reverse_8(k++));
+			int32_t zeta = zetas[k++];
 
 			for (uint32_t j = start; j < start + len; j++) {
-				int32_t t = mul_mod(zeta, w[j + len]);
+				int32_t t = montgomery_reduce((int64_t)zeta * w[j + len]);
 
 				w[j + len] = reduce_mod_q((int64_t)w[j] - t);
 				w[j] = reduce_mod_q((int64_t)w[j] + t);
@@ -76,26 +109,30 @@ void cracen_ml_dsa_ntt_inversed(ml_dsa_poly_vector_t *vec)
 {
 	int32_t *w = vec->coeffs;
 	uint8_t k = ML_DSA_POLY_COEFFS_COUNT - 1;
-	const int32_t inv_256_mod_q = 8347681; /* 256^(-1) mod q */
+	/* (256^(-1) mod q) * R mod q, so the final scaling below can use a single
+	 * montgomery_reduce() instead of mul_mod().
+	 */
+	const int32_t inv_256_mont = 16382;
 	int32_t zeta;
 
 	for (uint32_t len = 1; len < ML_DSA_POLY_COEFFS_COUNT; len <<= 1) {
 		for (uint32_t start = 0; start < ML_DSA_POLY_COEFFS_COUNT; start += 2 * len) {
-			zeta = reduce_mod_q(-(int64_t)pow_mod(ML_DSA_ROOT_OF_UNITY,
-							      bit_reverse_8(k--)));
+			zeta = reduce_mod_q(-zetas[k--]);
 
 			for (uint32_t j = start; j < start + len; j++) {
 				int32_t t = w[j];
 
 				w[j] = reduce_mod_q((int64_t)t + w[j + len]);
 				w[j + len] = reduce_mod_q((int64_t)t - w[j + len]);
-				w[j + len] = mul_mod(zeta, w[j + len]);
+				w[j + len] = montgomery_reduce((int64_t)zeta * w[j + len]);
 			}
 		}
 	}
 
 	for (uint32_t j = 0; j < ML_DSA_POLY_COEFFS_COUNT; j++) {
-		w[j] = mul_mod(inv_256_mod_q, w[j]);
+		int32_t t = montgomery_reduce((int64_t)inv_256_mont * w[j]);
+
+		w[j] = t < 0 ? t + ML_DSA_PRIME_NUM : t;
 	}
 }
 
