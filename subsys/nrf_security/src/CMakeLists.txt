@@ -58,13 +58,13 @@ target_include_directories(psa_crypto_library_config
     ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/oberon/drivers
 )
 
-add_library(${mbedcrypto_target}
+add_library(${tfpsacrypto_target}
   STATIC
 )
 
 add_subdirectory(tf-psa-crypto)
 
-target_link_libraries(${mbedcrypto_target}
+target_link_libraries(${tfpsacrypto_target}
   PUBLIC
     psa_crypto_config_chosen
     psa_interface
@@ -77,7 +77,7 @@ if(CONFIG_PSA_SSF_CRYPTO_CLIENT)
   add_subdirectory(ssf_secdom)
 endif()
 
-nrf_security_add_zephyr_options(${mbedcrypto_target})
+nrf_security_add_zephyr_options(${tfpsacrypto_target})
 
 # Add threading support for PSA core (if enabled)
 include(${CMAKE_CURRENT_LIST_DIR}/threading/threading.cmake)
@@ -121,7 +121,7 @@ add_subdirectory(drivers)
 
 # NEWLIB requires linking with the C library
 if(CONFIG_NEWLIB_LIBC)
-  target_link_libraries(${mbedcrypto_target} PRIVATE -lc)
+  target_link_libraries(${tfpsacrypto_target} PRIVATE -lc)
 endif()
 
 if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)

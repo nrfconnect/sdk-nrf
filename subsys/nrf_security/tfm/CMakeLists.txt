@@ -8,7 +8,7 @@ include(${TFM_EXTRA_CONFIG_PATH})
 include(${NRF_SECURITY_DIR}/cmake/extensions.cmake)
 
 # Prefix targets as expected from TF-M
-set(mbedcrypto_target ${TF_PSA_CRYPTO_TARGET_PREFIX}tfpsacrypto)
+set(tfpsacrypto_target ${TF_PSA_CRYPTO_TARGET_PREFIX}tfpsacrypto)
 
 # Set BUILD_INSIDE_TFM to use only for legacy added files
 set(BUILD_INSIDE_TFM True)

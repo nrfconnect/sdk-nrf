@@ -43,7 +43,7 @@ target_include_directories(psa_core
 
 nrf_security_add_zephyr_options_library(psa_core)
 
-target_link_libraries(${mbedcrypto_target}
+target_link_libraries(${tfpsacrypto_target}
   PRIVATE
     psa_core
 )

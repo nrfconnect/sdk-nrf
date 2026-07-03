@@ -11,7 +11,7 @@ set(CONFIG_MBEDTLS_PSA_CRYPTO_SPM False)
 # Include generic macros
 include(cmake/extensions.cmake)
 
-set(mbedcrypto_target mbedcrypto)
+set(tfpsacrypto_target mbedcrypto)
 
 # Generate the file containing all static paths and configurations used both in
 # TF-M and non TF-M builds

@@ -50,7 +50,7 @@ if(DEFINED src_zephyr)
   zephyr_library_sources(${src_zephyr})
 
   zephyr_library_compile_definitions(
-    $<TARGET_PROPERTY:${mbedcrypto_target},INTERFACE_COMPILE_DEFINITIONS>
+    $<TARGET_PROPERTY:${tfpsacrypto_target},INTERFACE_COMPILE_DEFINITIONS>
   )
 
   # We need the k_mbedtls_partition when userspace is
@@ -88,6 +88,6 @@ if(TARGET mbedcrypto_legacy_includes)
 endif()
 
 # Link with mbedcrypto library (in NS build or by default)
-target_link_libraries(mbedtls_external INTERFACE ${mbedcrypto_target})
+target_link_libraries(mbedtls_external INTERFACE ${tfpsacrypto_target})
 
 target_link_libraries(zephyr PRIVATE mbedtls_external)

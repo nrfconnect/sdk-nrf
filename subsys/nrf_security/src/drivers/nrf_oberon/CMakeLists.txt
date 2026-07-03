@@ -80,7 +80,7 @@ target_link_libraries(oberon_psa_driver
   PRIVATE
     mbedcrypto_oberon_imported
     psa_crypto_config_chosen
-    ${mbedcrypto_target}
+    ${tfpsacrypto_target}
 )
 
 # Link psa_core with this driver
