@@ -1093,6 +1093,7 @@
 /tests/subsys/dfu/                        @nrfconnect/ncs-eris
 /tests/subsys/dfu/dfu_multi_image/        @Damian-Nordic
 /tests/subsys/emds/                       @nrfconnect/ncs-paladin
+/tests/subsys/esb/                        @nrfconnect/ncs-si-xcake
 /tests/subsys/event_manager_proxy/        @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/fw_info/                    @nrfconnect/ncs-eris
 /tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test @anangl

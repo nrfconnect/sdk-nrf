@@ -1,0 +1,76 @@
+common:
+  tags:
+    - esb
+    - ci_tests_subsys_esb
+  harness: pytest
+  build: false
+
+tests:
+  test.sample.esb.same_boards_connected:
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    platform_allow: &platform_allow_basic
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54h20dk/nrf54h20/cpurad
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    required_applications:
+      - application: sample.esb.prx.build
+        path: $ZEPHYR_NRF_MODULE_DIR/samples/esb/esb_prx
+    harness_config:
+      required_devices:
+        - application: sample.esb.ptx.build
+          path: $ZEPHYR_NRF_MODULE_DIR/samples/esb/esb_ptx
+
+  test.sample.esb.nrf54h20_with_other_board:
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow: *platform_allow_basic
+    platform_exclude:
+      - nrf54h20dk/nrf54h20/cpurad
+    required_applications:
+      - application: sample.esb.prx.build
+        path: $ZEPHYR_NRF_MODULE_DIR/samples/esb/esb_prx
+    harness_config:
+      required_devices:
+        - application: sample.esb.ptx.build
+          path: $ZEPHYR_NRF_MODULE_DIR/samples/esb/esb_ptx
+          platform: nrf54h20dk/nrf54h20/cpurad
+
+  test.sample.esb.dynamic_irq:
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54h20dk/nrf54h20/cpurad
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    required_applications:
+      - application: sample.esb.prx.dynamic_irq
+        path: $ZEPHYR_NRF_MODULE_DIR/samples/esb/esb_prx
+    harness_config:
+      required_devices:
+        - application: sample.esb.ptx.dynamic_irq
+          path: $ZEPHYR_NRF_MODULE_DIR/samples/esb/esb_ptx
+
+  test.sample.esb.fast_switching:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpurad
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpurad
+    required_applications:
+      - application: sample.esb.prx.fast_switching
+        path: $ZEPHYR_NRF_MODULE_DIR/samples/esb/esb_prx
+    harness_config:
+      required_devices:
+        - application: sample.esb.ptx.fast_switching
+          path: $ZEPHYR_NRF_MODULE_DIR/samples/esb/esb_ptx
