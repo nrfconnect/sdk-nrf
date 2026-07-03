@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Backward compatibility: pin the released NCS v3.2 slot geometry (previously
+ * provided by Partition Manager / pm_static_nrf52840dk_nrf52840.yml). The v3.2
+ * mcuboot_pad (0x200) is folded into the start of slot0 so slot0 spans the
+ * whole v3.2 mcuboot_primary region (0xc000..0x83000) and stays erase-block
+ * aligned. Because the MCUboot image trailer lives at the end of slot0,
+ * keeping the v3.2 layout lets the v3.2 MCUboot on the device accept and
+ * confirm the update image.
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0xc000 DT_SIZE_K(476)>;
+		};
+
+		slot1_partition: partition@83000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x83000 DT_SIZE_K(476)>;
+		};
+
+		storage_partition: partition@fa000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0xfa000 DT_SIZE_K(24)>;
+		};
+	};
+};

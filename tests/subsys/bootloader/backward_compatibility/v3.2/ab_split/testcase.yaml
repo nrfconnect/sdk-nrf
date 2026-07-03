@@ -2,17 +2,14 @@ common:
   sysbuild: true
   build_only: true
   tags:
-    - mcumgr
+    - mcuboot
     - ci_tests_subsys_bootloader
 
-# Power management had to be disabled (CONFIG_PM=n)
-# Incompatibility introduced in commit 928502252c
-
 tests:
+  # BC-aware configuration for the ab_split sample on nRF54H20.
+  # Power management had to be disabled (CONFIG_PM=n) for compatibility.
   mcuboot.backward_compatibility.ab_split:
     extra_configs:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp

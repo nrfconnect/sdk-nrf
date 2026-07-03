@@ -1,0 +1,16 @@
+common:
+  sysbuild: true
+  build_only: true
+  tags:
+    - mcuboot
+    - ci_tests_subsys_bootloader
+
+tests:
+  # BC-aware configuration for the single_slot firmware-updater sample
+  # on nRF54L15. boards/nrf54l15dk_nrf54l15_cpuapp.overlay pins the flash map
+  # (via DTS, no Partition Manager) to the released NCS v3.2.0 layout, since
+  # current NCS uses a larger application slot that an NCS v3.2 MCUboot would
+  # reject.
+  mcuboot.backward_compatibility.single_slot:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp

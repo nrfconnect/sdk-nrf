@@ -2,37 +2,27 @@ common:
   sysbuild: true
   build_only: true
   tags:
-    - mcumgr
+    - mcuboot
     - ci_tests_subsys_bootloader
 
-# Backward compatibility test for the smp_svr_mini_boot sample on nRF54L15.
-#
-# Keeping the Partition Manager enabled here (no `config PARTITION_MANAGER
-# default n`) restores the legacy "mcuboot_secondary_app" Direct-XIP variant
-# name expected by the BC system test (the current sample disables PM, which
-# renames it to "smp_svr_mini_boot_slot1_variant").
-#
-# pm_static_nrf54l15dk_nrf54l15_cpuapp.yml pins the released NCS v3.2.0 flash map
-# (from samples/zephyr/smp_svr_mini_boot/pm_static.yml at tag v3.2.0), NOT the
-# current-dev overlay whose DTS migration re-aligned the slots to 0x1000 — those
-# migrated offsets would shift the primary-slot trailer and break confirmation.
-
 tests:
-  # Direct-XIP update image (second-slot variant "mcuboot_secondary_app").
+  # BC-aware configuration for the smp_svr_mini_boot sample on nRF54L15,
+  # Direct-XIP update image (second-slot variant). The board overlays pin the
+  # released NCS v3.2.0 flash map (slots 0x8000/0x68800, size 0x60800) via an
+  # RRAM erase-block-size override, since current-dev's DTS migration would
+  # shift the primary-slot trailer and break confirmation.
   mcuboot.backward_compatibility.smp_svr_mini_boot:
     extra_args:
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-  # Swap-using-move update image (single application image, no variant).
+
+  # BC-aware configuration for the smp_svr_mini_boot sample on nRF54L15,
+  # swap-using-move update image (single application image, no variant).
   mcuboot.backward_compatibility.smp_svr_mini_boot.swap_move:
     extra_args:
       - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
     extra_configs:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp

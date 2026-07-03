@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Backward compatibility: pin the released NCS v3.2 slot geometry. The current
+ * NCS sample enlarged slot0 (its end moved past 0xb8000); because the MCUboot
+ * image trailer lives at the end of slot0, keeping the v3.2 layout lets the
+ * v3.2 MCUboot on the device accept and confirm the update image.
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(68)>;
+		};
+
+		slot0_partition: partition@11000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x11000 DT_SIZE_K(668)>;
+		};
+
+		slot1_partition: partition@b8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0xb8000 DT_SIZE_K(668)>;
+		};
+
+		storage_partition: partition@15f000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x15f000 DT_SIZE_K(24)>;
+		};
+	};
+};

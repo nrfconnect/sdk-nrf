@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Backward compatibility: pin the released NCS v3.2 flash map (previously
+ * provided by Partition Manager / pm_static_nrf54l15dk_nrf54l15_cpuapp.yml).
+ * The v3.2 slots are 0x60800 bytes and start at 0x8000 / 0x68800, which are not
+ * multiples of the RRAM default erase-block-size (0x1000). RRAM is byte
+ * writable (write-block-size = 16), so the erase-block-size is a soft value;
+ * lower it to 0x800 so the pinned offsets/sizes are expressible as mapped
+ * partitions. The mcuboot_pad is folded into the start of slot0/slot1 so each
+ * slot spans the whole v3.2 mcuboot_primary / mcuboot_secondary region and the
+ * MCUboot image trailer stays where the v3.2 MCUboot on the device expects it.
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	erase-block-size = <0x800>;
+
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 0x8000>;
+		};
+
+		slot0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x8000 0x60800>;
+		};
+
+		slot1_partition: partition@68800 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x68800 0x60800>;
+		};
+
+		storage_partition: partition@c9000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0xc9000 0x4000>;
+		};
+	};
+};

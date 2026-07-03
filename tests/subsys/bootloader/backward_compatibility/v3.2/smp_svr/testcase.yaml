@@ -2,41 +2,13 @@ common:
   sysbuild: true
   build_only: true
   tags:
-    - mcumgr
+    - mcuboot
     - ci_tests_subsys_bootloader
 
-# nrf54h20dk direct_xip_withrevert:
-#   In v3.3 the merged-slot Direct XIP bootchain assigns a different UUID-CID
-#   per slot (nRF54H20_sample_merged_slot_0 / _1). v3.2 MCUboot expects the
-#   same CID "nRF54H20_sample_app" on both slots, so the v3.2-aligned values
-#   are restored in dts/nrf54h20dk_nrf54h20_bootchain_merged.dtsi.
-#   On main, the paired merged-slot memory-map DTS must also keep the current
-#   `zephyr,mapped-partition` node shape so sysbuild packaging and signing
-#   helpers accept the partition nodes.
-#
-# nrf54h20dk serial_recovery (FILE_SUFFIX=larger_mcuboot):
-#   v3.2 MCUboot already on the device uses a 64K boot partition with slot0
-#   at 0x40000, while v3.3 defaults to a 72K boot partition with slot0 at
-#   0x42000. The application overlay
-#   (boards/nrf54h20dk_nrf54h20_cpuapp_larger_mcuboot.overlay) pins slot0 to
-#   the v3.2 address so the signed image lands where v3.2 MCUboot will boot
-#   it.
-#
-# nrf54l15dk serial_recovery (FILE_SUFFIX=larger_mcuboot):
-#   v3.2 MCUboot uses an 80K boot partition (slot0 starts at 0x14800), but
-#   the v3.3 default larger_mcuboot conf bumped CONFIG_PM_PARTITION_SIZE_MCUBOOT
-#   to 0x16000 (88K) which shifts slot0 to 0x16800.
-#   nrf54l15dk_nrf54l15_cpuapp_larger_mcuboot.conf restores the v3.2-aligned
-#   value 0x14000. The v3.3 MCUboot binary (~68K) still fits in 80K.
-#
-# nrf54h20dk ext_flash (FILE_SUFFIX=ext_flash):
-#   Two-image build (cpuapp smp_svr + cpurad ipc_radio) with update slots in
-#   external flash. Current dev grew the per-image slots 328K -> 712K, moving
-#   the partitions v3.2 MCUboot scans. dts/nrf54h20dk_nrf54h20_memory_map_ext_flash.dtsi
-#   (with bootchain in dts/nrf54h20dk_nrf54h20_bootchain_bt.dtsi) re-pins the v3.2
-#   328K geometry so the v3.4 image lands where v3.2 MCUboot expects.
-
 tests:
+  # BC-aware configuration for the smp_svr sample on nRF54H20 (Direct-XIP
+  # with revert). Restores the v3.2 merged-slot CID values and partition node
+  # shape expected by the v3.2 bootchain.
   mcuboot.backward_compatibility.smp_svr.bt.nrf54h20dk.direct_xip_withrevert:
     extra_args:
       - FILE_SUFFIX="merged_slot"
@@ -46,6 +18,11 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
 
+  # BC-aware configuration for the smp_svr sample (serial recovery) on
+  # nRF52840, nRF5340, nRF54L15 and nRF54H20. The larger_mcuboot overlays pin
+  # each platform's released v3.2 flash map (boot region + slot0 offset) via
+  # devicetree so the signed application lands where the v3.2 MCUboot on the
+  # device boots it.
   mcuboot.backward_compatibility.smp_svr.serial_recovery:
     extra_args:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
@@ -60,6 +37,10 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk@0.9.0/nrf54h20/cpuapp
 
+  # BC-aware configuration for the smp_svr sample on nRF54H20 (ext_flash,
+  # two-image build). The memory-map/bootchain overlays re-pin the v3.2 update
+  # slot geometry in external flash so the image lands where v3.2 MCUboot
+  # expects.
   mcuboot.backward_compatibility.smp_svr.bt.nrf54h20dk.ext_flash:
     extra_args:
       - FILE_SUFFIX="ext_flash"
@@ -74,3 +55,39 @@ tests:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+
+  # BC-aware configuration for the smp_svr sample on nRF54L15 (swap-using
+  # -move). boards/nrf54l15dk_nrf54l15_cpuapp_bt.overlay re-pins the v3.2 slot0
+  # layout so the primary-slot trailer stays where the v3.2 MCUboot expects it.
+  mcuboot.backward_compatibility.smp_svr.bt.nrf54l15:
+    extra_args:
+      - FILE_SUFFIX=bt
+      - EXTRA_CONF_FILE="extra-bt.conf"
+      - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  # BC-aware configuration for the smp_svr sample on nRF54L15 (swap-using
+  # -move, secondary slot in external flash). Same primary-slot trailer-offset
+  # issue as the internal-flash config; the ext_flash overlay re-pins the v3.2
+  # geometry.
+  mcuboot.backward_compatibility.smp_svr.bt.nrf54l15dk.ext_flash:
+    extra_args:
+      - FILE_SUFFIX=ext_flash
+      - EXTRA_CONF_FILE="extra-bt.conf"
+      - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+
+  # BC-aware configuration for the smp_svr sample on nRF52840dk (swap
+  # -using-move). boards/nrf52840dk_nrf52840_bt.overlay re-pins the v3.2 slot0
+  # layout (folding the mcuboot_pad into the start of slot0) so the primary-
+  # slot trailer stays where the v3.2 MCUboot expects it.
+  mcuboot.backward_compatibility.smp_svr.bt.nrf52840dk:
+    extra_args:
+      - FILE_SUFFIX=bt
+      - EXTRA_CONF_FILE="extra-bt.conf"
+      - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+    platform_allow:
+      - nrf52840dk/nrf52840

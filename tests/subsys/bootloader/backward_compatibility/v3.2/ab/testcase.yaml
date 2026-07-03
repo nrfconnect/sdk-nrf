@@ -2,23 +2,14 @@ common:
   sysbuild: true
   build_only: true
   tags:
-    - mcumgr
+    - mcuboot
     - ci_tests_subsys_bootloader
 
-# Backward compatibility test for the AB Direct-XIP sample on nRF54L15.
-# pm_static_nrf54l15dk_nrf54l15_cpuapp.yml pins the partition layout to the
-# NCS v3.2 flash map so the update image produced here is accepted by an
-# NCS v3.2 MCUboot.
-#
-# In NCS v3.2 the primary slot starts at 0x11000 with size 0xa7000, placing
-# the secondary slot at 0xb8000. NCS v3.4 expanded both slots, moving the
-# secondary slot to 0xc4000. Without the pm_static override MCUboot would
-# reject the image with:
-#   W: Image in secondary slot at 0xb8000 has been built for offset 0xc4000, skipping
-
 tests:
+  # BC-aware configuration for the AB Direct-XIP sample on nRF54L15.
+  # nrf54l15dk_nrf54l15_cpuapp_common.dtsi pins the partition layout (no
+  # Partition Manager) to the NCS v3.2 flash map so the update image is
+  # accepted by an NCS v3.2 MCUboot.
   mcuboot.backward_compatibility.ab:
     platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-    integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp

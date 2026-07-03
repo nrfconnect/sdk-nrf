@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Backward compatibility (serial recovery): pin the released NCS v3.2 flash map
+ * (previously provided by Partition Manager, CONFIG_PM_PARTITION_SIZE_MCUBOOT).
+ * v3.2 MCUboot on the device occupies the first 0x14000 and boots the primary
+ * application from 0x14000, so slot0 must start there. The mcuboot_pad is
+ * folded into the start of slot0 so slot0 spans the whole v3.2 mcuboot_primary
+ * region. The MCUboot image built here is never flashed (serial recovery only
+ * uploads the application to slot0), it only needs to link.
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 0x14000>;
+		};
+
+		slot0_partition: partition@14000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x14000 0x76000>;
+		};
+
+		slot1_partition: partition@8a000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x8a000 0x76000>;
+		};
+	};
+};

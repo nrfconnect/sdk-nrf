@@ -1,0 +1,14 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../../boards/nrf54l15dk_nrf54l15_cpuapp.overlay"
+
+/* GPIO is disabled in this image; suppress the led0 DTS node so the
+ * smp_svr boot-timing LED code is not compiled in.
+ */
+&led0 {
+	status = "disabled";
+};
