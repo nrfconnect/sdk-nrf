@@ -25,8 +25,7 @@ tests:
       - sysbuild
       - ci_samples_net
     extra_args:
-      - download_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
-  # nRF7120 uses the integrated nRF71 driver; its tuning lives in the board conf.
+      - download_EXTRA_CONF_FILE="wifi.conf"
   sample.net.downloader.nrf7120.wifi:
     sysbuild: true
     build_only: true
@@ -56,4 +55,4 @@ tests:
     extra_args:
       - download_SHIELD="nrf7002eb2"
       - download_SNIPPET=wifi-credentials
-      - download_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
+      - download_EXTRA_CONF_FILE="wifi.conf"

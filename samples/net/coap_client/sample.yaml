@@ -32,8 +32,7 @@ tests:
       - sysbuild
       - ci_samples_net
     extra_args:
-      - coap_client_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
-  # nRF7120 uses the integrated nRF71 driver; its tuning lives in the board conf.
+      - coap_client_EXTRA_CONF_FILE="wifi.conf"
   sample.net.coap_client.nrf7120.wifi:
     sysbuild: true
     build_only: true
@@ -62,7 +61,7 @@ tests:
     extra_args:
       - coap_client_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
       - coap_client_SNIPPET="nrf70-wifi;wifi-credentials"
-      - coap_client_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
+      - coap_client_EXTRA_CONF_FILE="wifi.conf"
   sample.net.coap_client.nrf54lm20_nrf7002eb2.wifi:
     sysbuild: true
     build_only: true
@@ -79,4 +78,4 @@ tests:
     extra_args:
       - coap_client_SHIELD="nrf7002eb2"
       - coap_client_SNIPPET=wifi-credentials
-      - coap_client_EXTRA_CONF_FILE="wifi.conf;nrf70.conf"
+      - coap_client_EXTRA_CONF_FILE="wifi.conf"

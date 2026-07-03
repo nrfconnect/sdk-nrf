@@ -24,7 +24,7 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
     extra_args:
-      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;nrf70.conf"
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf"
     tags:
       - ci_build
       - sysbuild
@@ -55,7 +55,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     extra_args:
       - azure_iot_hub_SHIELD="nrf7002eb2"
-      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;nrf70.conf"
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf"
     tags:
       - ci_build
       - sysbuild
@@ -85,7 +85,7 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
     extra_args:
-      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;dps.conf;nrf70.conf"
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;dps.conf"
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:
@@ -120,7 +120,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     extra_args:
       - azure_iot_hub_SHIELD="nrf7002eb2"
-      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;dps.conf;nrf70.conf"
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;dps.conf"
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:
