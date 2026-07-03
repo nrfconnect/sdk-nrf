@@ -128,6 +128,21 @@ After programming the sample to your development kit, test it together with a de
       - maximum procedure length: 12
 
 
+Building for testing with iOS 27 Beta 2 devices
+===============================================
+
+In order to enable Bluetooth configurations required to test Channel sounding with iOS 27 Beta 2 phones with Channel sounding support,
+the ios_ranging.conf fragment can be applied. For example, using the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -bnrf54l15dk/nrf54l15/cpuapp -- -DEXTRA_CONF_FILE="ios_ranging.conf"
+
+.. Note::
+    When `ios_ranging.conf` is applied, the sample may not work with the :ref:`channel_sounding_ipt_initiator` sample.
+
+
 Dependencies
 ************
 
