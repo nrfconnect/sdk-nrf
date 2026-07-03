@@ -218,4 +218,4 @@ class KconfigDiffDirective(SphinxDirective):
                 root += node
 
         self.env.app.config.html_extra_path.append(outdir / KCONFIG_SAVE_FILE)
-        return [root]
+        return [nodes.transition(), root]

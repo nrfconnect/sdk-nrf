@@ -18,6 +18,7 @@ from sphinx.application import Sphinx
 from sphinx.util.typing import ExtensionMetadata
 
 from .kconfig_utils import RESOURCES_DIR
+from .legend import KconfigDiffLegendDirective
 from .rendering import KconfigDiffDirective
 
 VERSIONS_FILE = Path(__file__).parents[2] / "versions.json"
@@ -84,14 +85,15 @@ def kconfigdiff_install(app: Sphinx) -> None:
             (app.config.rst_prolog or "")
             + "\n"
             + (
-                f".. |kconfigdiff_current| replace:: {latest}\n"
-                f".. |kconfigdiff_previous| replace:: {prev}\n"
+                f".. |kconfigdiff_current| replace:: **nRF Connect SDK {latest}**\n"
+                f".. |kconfigdiff_previous| replace:: **nRF Connect SDK {prev}**\n"
             )
         )
 
 
 def setup(app: Sphinx) -> ExtensionMetadata:
     app.add_directive("kconfigdiff", KconfigDiffDirective)
+    app.add_directive("kconfigdiff-legend", KconfigDiffLegendDirective)
     app.connect("builder-inited", kconfigdiff_install)
     app.add_css_file("kconfigdiff.css")
 

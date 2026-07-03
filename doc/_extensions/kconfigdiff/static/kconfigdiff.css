@@ -76,3 +76,9 @@
     background-color: #ffebe9;
     border-left-color: #cf222e;
 }
+
+/* Used only in legend */
+.kconfigdiff-changed {
+    background-color: #fff8c5;
+    border-left-color: #d4a72c;
+}
