@@ -27,35 +27,26 @@ tests:
     build_on_all: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
       - ci_samples_net
     extra_args:
       - mqtt_EXTRA_CONF_FILE="wifi.conf"
-  sample.net.mqtt.nrf7120.wifi:
-    sysbuild: true
-    build_only: true
-    build_on_all: true
-    integration_platforms:
-      - nrf7120dk/nrf7120/cpuapp/ns
-    platform_allow:
-      - nrf7120dk/nrf7120/cpuapp/ns
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_net
-    extra_args:
-      - mqtt_EXTRA_CONF_FILE=wifi.conf
-  sample.net.mqtt.nrf70.tls:
+  sample.net.mqtt.tls:
     sysbuild: true
     build_only: true
     build_on_all: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
-    platform_allow: nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -133,17 +124,3 @@ tests:
       - sysbuild
       - ci_samples_net
     extra_args: EXTRA_CONF_FILE=overlay-tls-native_sim.conf
-  sample.net.mqtt.nrf7120.wifi.tls:
-    sysbuild: true
-    build_only: true
-    build_on_all: true
-    integration_platforms:
-      - nrf7120dk/nrf7120/cpuapp/ns
-    platform_allow:
-      - nrf7120dk/nrf7120/cpuapp/ns
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_net
-    extra_args:
-      - mqtt_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"

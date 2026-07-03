@@ -6,45 +6,24 @@ tests:
     build_only: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
       - ci_samples_net
     extra_args:
       - http_server_EXTRA_CONF_FILE="wifi.conf"
-  sample.net.http_server.nrf7120.wifi:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
-      - nrf7120dk/nrf7120/cpuapp/ns
-    platform_allow:
-      - nrf7120dk/nrf7120/cpuapp/ns
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_net
-    extra_args:
-      - http_server_EXTRA_CONF_FILE=wifi.conf
   sample.net.http_server.wifi.tls:
     sysbuild: true
     build_only: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
-    platform_allow:
-      - nrf7002dk/nrf5340/cpuapp/ns
-    extra_args: http_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_net
-  sample.net.http_server.nrf7120.wifi.tls:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
       - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
     extra_args: http_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
     tags:
