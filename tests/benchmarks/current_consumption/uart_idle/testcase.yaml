@@ -40,6 +40,8 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+    required_snippets:
+      - nordic-vregmain-ldo
 
   benchmarks.current_consumption.uart_idle_uart30:
     platform_allow:

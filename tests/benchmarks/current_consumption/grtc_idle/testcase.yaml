@@ -36,6 +36,8 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    required_snippets:
+      - nordic-vregmain-ldo
     harness_config:
       fixture: ppk_power_measure
       pytest_root:
