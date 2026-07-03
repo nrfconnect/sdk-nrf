@@ -61,18 +61,21 @@ def test_rtt_logging(dut: DeviceAdapter):
         },
         'nrf54l15dk/nrf54l15/cpuapp/ns': {
             'device': 'nRF54L15_M33',
+            'RTTSearchRanges': '0x20020000 0x20000',
         },
         'nrf54lm20dk/nrf54lm20a/cpuapp': {
             'device': 'NRF54LM20A_M33',
         },
         'nrf54lm20dk/nrf54lm20a/cpuapp/ns': {
             'device': 'NRF54LM20A_M33',
+            'RTTSearchRanges': '0x20040000 0x3F000',
         },
         'nrf54lm20dk/nrf54lm20b/cpuapp': {
             'device': 'NRF54LM20A_M33',
         },
         'nrf54lm20dk/nrf54lm20b/cpuapp/ns': {
             'device': 'NRF54LM20A_M33',
+            'RTTSearchRanges': '0x20040000 0x3F000',
         },
         # Using nRF54L15_M33 as the device because its RAM region closely matches LS05.
         # This enables automatic SEGGER RTT symbol detection by JLinkRTTLogger.
@@ -101,13 +104,14 @@ def test_rtt_logging(dut: DeviceAdapter):
         },
         'nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns': {
             'device': 'NRF54LV10A_M33',
+            'RTTSearchRanges': '0x20018000 0x17000',
         },
         'nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
         },
         'nrf54h20dk@0.9.0/nrf54h20/cpuapp': {
             'device': 'Cortex-M33',
-            'RTTSearchRanges': '0x22000000 32768',
+            'RTTSearchRanges': '0x22000000 0x8000',
         },
         # Using nRF54L15_M33 as the device because its RAM region closely matches nRF7120.
         # This enables automatic SEGGER RTT symbol detection by JLinkRTTLogger.
