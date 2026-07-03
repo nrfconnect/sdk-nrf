@@ -6,7 +6,7 @@
 
 if BUILD_WITH_TFM
 
-menu "Peripheral Secure mapping"
+menu "Peripheral secure mapping"
 
 peripheral=UARTE00
 peripheral_depends=$(dt_nodelabel_has_compat,uart00,$(DT_COMPAT_NORDIC_NRF_UARTE))
@@ -220,7 +220,7 @@ config NRF_DPPI_SECURE
 	bool "DPPI configured as secure peripheral"
 	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_DPPIC))
 	help
-	  DPPI is implemented with security mapping selected by the user (split security).
+	  DPPI is implemented with security mapping selected by the user (security by separation).
 	  If it has been configured as a secure peripheral, only the secure
 	  processing environment is able to access the peripheral.
 
@@ -360,14 +360,14 @@ config NRF_GPIOTE0_SECURE
 	bool "GPIOTE0 configured as secure peripheral"
 	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
 	help
-	  GPIOTE0 is implemented without split security. It has secure-only access.
+	  GPIOTE0 is implemented without security by separation. It has secure-only access.
 	  This option enables it to be used in the secure image.
 
 config NRF_GPIOTE20_SECURE
 	bool "GPIOTE20 configured as secure peripheral"
 	depends on $(dt_nodelabel_has_compat,gpiote20,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
 	help
-	  GPIOTE20 supports split security. Individual channels can be assigned to different security domains.
+	  GPIOTE20 supports security by separation. Individual channels can be assigned to different security domains.
 	  The mask NRF_GPIOTE20_SECURE_CHANNELS_MASK can be set to configure specific channels as secure.
 	  When the peripheral is configured as non-secure, both secure and non-secure code can access the peripheral.
 	  Secure code can access all channels. Non-secure code can only access channels not marked as secure in the mask.
@@ -385,7 +385,7 @@ config NRF_GPIOTE30_SECURE
 	bool "GPIOTE30 configured as secure peripheral"
 	depends on $(dt_nodelabel_has_compat,gpiote30,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
 	help
-	 GPIOTE30 supports split security. Individual channels can be assigned to different security domains.
+	 GPIOTE30 supports security by separation. Individual channels can be assigned to different security domains.
 	 The mask NRF_GPIOTE30_SECURE_CHANNELS_MASK can be set to configure specific channels as secure.
 	 When the peripheral is configured as non-secure, both secure and non-secure code can access the peripheral.
 	 Secure code can access all channels. Non-secure code can only access channels not marked as secure in the mask.
@@ -410,57 +410,59 @@ config NRF_GPIO0_PIN_MASK_SECURE
 	  to prevent non-secure from accessing these pins. Secure accesses can be
 	  made to GPIO pins configured as non-secure.
 
-	  TF-M automatically derives additional secure pin bits from the selected devicetree pinctrl definitions for secure UART and SPIM. It then sets the final masking value to the derived value using bitmask OR. During this process, TF-M can also consider the manually set masking value (NRF_GPIOX_PIN_MASK_SECURE) if you configured it.
+	  TF-M automatically derives additional secure pin bits from the selected devicetree pinctrl definitions for secure UART and SPIM.
+	  It then sets the final masking value to the derived value using bitmask OR. During this process, TF-M can also consider the manually
+	  set masking value (NRF_GPIOX_PIN_MASK_SECURE) if you configured it.
 	  This approach means that you do not need to set these values manually when remapping UART and SPIM pins in an overlay file.
 
 	  When you set this configuration option, it additionally locks GPIO0 pins that are not covered by the
 	  auto-derived UART and SPIM mask.
 
 config NRF_GPIO1_PIN_MASK_SECURE
-	hex "Set GPIO1 PERM mask for Secure channels"
+	hex "Set GPIO1 PERM mask for secure channels"
 	default 0x00000000
 	depends on $(dt_nodelabel_has_compat,gpio1,$(DT_COMPAT_NORDIC_NRF_GPIO)) && !NRF_GPIO1_SECURE
 	help
-	  GPIO is implemented with split security. If it has been configured as
-	  non-secure it can be accessed by both secure and non-secure accesses.
+	  GPIO is implemented with security by separation. If it has been configured as
+	  non-secure, it can be accessed by both secure and non-secure accesses.
 	  A bitmask can be set to configure a subset of the GPIO pins as secure
 	  to prevent non-secure from accessing these pins. Secure accesses can be
 	  made to GPIO pins configured as non-secure.
 
-	  TF-M automatically derives additional secure pin bits from the selected secure
-	  UART's and SPI's devicetree pinctrl definition, and ORs them with this value.
-	  This means you do not need to set this manually when remapping UART and SPIM pins
-	  in a board or application overlay.
+	  TF-M automatically derives additional secure pin bits from the selected devicetree pinctrl definitions for secure UART and SPIM.
+	  It then sets the final masking value to the derived value using bitmask OR. During this process, TF-M can also consider the manually
+	  set masking value (NRF_GPIOX_PIN_MASK_SECURE) if you configured it.
+	  This approach means that you do not need to set these values manually when remapping UART and SPIM pins in an overlay file.
 
-	  Set this to additionally lock GPIO1 pins that are not covered by the
+	  When you set this configuration option, it additionally locks GPIO1 pins that are not covered by the
 	  auto-derived UART and SPIM mask.
 
 config NRF_GPIO2_PIN_MASK_SECURE
-	hex "Set GPIO2 PERM mask for Secure channels"
+	hex "Set GPIO2 PERM mask for secure channels"
 	default 0x00000000
 	depends on $(dt_nodelabel_has_compat,gpio2,$(DT_COMPAT_NORDIC_NRF_GPIO)) && !NRF_GPIO2_SECURE
 	help
-	  GPIO is implemented with split security. If it has been configured as
-	  non-secure it can be accessed by both secure and non-secure accesses.
+	  GPIO is implemented with security by separation. If it has been configured as
+	  non-secure, it can be accessed by both secure and non-secure accesses.
 	  A bitmask can be set to configure a subset of the GPIO pins as secure
 	  to prevent non-secure from accessing these pins. Secure accesses can be
 	  made to GPIO pins configured as non-secure.
 
-	  TF-M automatically derives additional secure pin bits from the selected secure
-	  UART's and SPI's devicetree pinctrl definition, and ORs them with this value.
-	  This means you do not need to set this manually when remapping UART and SPIM pins
-	  in a board or application overlay.
+	  TF-M automatically derives additional secure pin bits from the selected devicetree pinctrl definitions for secure UART and SPIM.
+	  It then sets the final masking value to the derived value using bitmask OR. During this process, TF-M can also consider the manually
+	  set masking value (NRF_GPIOX_PIN_MASK_SECURE) if you configured it.
+	  This approach means that you do not need to set these values manually when remapping UART and SPIM pins in an overlay file.
 
-	  Set this to additionally lock GPIO2 pins that are not covered by the
+	  When you set this configuration option, it additionally locks GPIO2 pins that are not covered by the
 	  auto-derived UART and SPIM mask.
 
 config NRF_DPPI_CHANNEL_MASK_SECURE
-	hex "Set DPPI PERM mask for Secure"
+	hex "Set DPPI PERM mask for secure access"
 	default 0x00000000
 	depends on HAS_HW_NRF_DPPIC && !NRF_DPPI_SECURE
 	help
-	  DPPI is implemented with split securety. If it has been configured as
-	  non-secure it can be accessed by both secure and non-secure accesses.
+	  DPPI is implemented with security by separation. If it has been configured as
+	  non-secure, it can be accessed by both secure and non-secure accesses.
 	  A bitmask can be set to configure a subset of the DPPI channels as
 	  secure to prevent non-secure from accessing these channels. Secure
 	  accesses can be made to the DPPI pins configured as non-secure.
@@ -474,6 +476,6 @@ config NRF_VMC_SECURE
 	  not be able to turn off the RAM block of TF-M.
 	  Therefore, the VMC peripheral needs to be configured as secure.
 
-endmenu # Peripheral Secure mapping
+endmenu # Peripheral secure mapping
 
 endif # BUILD_WITH_TFM
