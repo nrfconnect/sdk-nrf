@@ -792,7 +792,7 @@ static void le_read_supported_states(uint8_t *buf)
 #endif
 #if defined(CONFIG_BT_CENTRAL)
 	states1 |= ST_MAS;
-	states2 |= ST_MAS;
+	states2 |= ST_MAS2;
 #else
 	states1 &= ~ST_MAS;
 	states2 &= ~ST_MAS2;
@@ -803,9 +803,8 @@ static void le_read_supported_states(uint8_t *buf)
 #else
 	states1 &= ~ST_SCA_INI;
 #endif
-
-	*buf = states1;
-	*(buf + 4) = states2;
+	sys_put_le32(states1, &buf[0]);
+	sys_put_le32(states2, &buf[4]);
 }
 
 int hci_internal_user_cmd_handler_register(const hci_internal_user_cmd_handler_t handler)
