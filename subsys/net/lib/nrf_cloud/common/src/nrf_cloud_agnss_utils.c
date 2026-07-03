@@ -7,7 +7,68 @@
 #include <zephyr/kernel.h>
 
 #include <net/nrf_cloud_agnss.h>
+#include "nrf_cloud_agnss_schema_v1.h"
+#include "nrf_cloud_agnss_internal.h"
 #include <nrf_modem_gnss.h>
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_REGISTER(nrf_cloud_agnss_utils, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
+
+size_t agnss_element_sizes[] = {SIZE_MAX, /* NRF_CLOUD_AGNSS__TYPE_INVALID */
+				sizeof(struct nrf_cloud_agnss_utc),
+				sizeof(struct nrf_cloud_agnss_ephemeris),
+				sizeof(struct nrf_cloud_agnss_almanac),
+				sizeof(struct nrf_cloud_agnss_klobuchar),
+				sizeof(struct nrf_cloud_agnss_nequick),
+				sizeof(struct nrf_cloud_agnss_tow_element),
+				sizeof(struct nrf_cloud_agnss_system_clock),
+				sizeof(struct nrf_cloud_agnss_location),
+				sizeof(struct nrf_cloud_agnss_integrity),
+				SIZE_MAX, /* NRF_CLOUD_AGNSS__RSVD_PREDICTION_DATA */
+				sizeof(struct nrf_cloud_agnss_almanac),
+				sizeof(struct nrf_cloud_agnss_ephemeris),
+				sizeof(struct nrf_cloud_agnss_integrity),
+				sizeof(struct nrf_cloud_agnss_gal_almanac),
+				sizeof(struct nrf_cloud_agnss_gal_ephemeris),
+				sizeof(struct nrf_cloud_agnss_ggto),
+				sizeof(struct nrf_cloud_agnss_gal_integrity)};
+
+int parse_agnss_block(const char *buf, size_t buf_len, agnss_block_cb_t cb)
+{
+	struct nrf_cloud_agnss_element element = {0};
+	size_t element_len = 0;
+	uint16_t element_count = 0;
+
+	while (buf_len != 0) {
+		/* Check that there's enough data for type and count. */
+		if (buf_len < NRF_CLOUD_AGNSS_BIN_TYPE_SIZE + NRF_CLOUD_AGNSS_BIN_COUNT_SIZE) {
+			return -ENOENT;
+		}
+
+		element.type = (enum nrf_cloud_agnss_type)buf[NRF_CLOUD_AGNSS_BIN_TYPE_OFFSET];
+		element_count = (uint16_t)(uint8_t)buf[NRF_CLOUD_AGNSS_BIN_COUNT_OFFSET] |
+				((uint16_t)(uint8_t)buf[NRF_CLOUD_AGNSS_BIN_COUNT_OFFSET + 1] << 8);
+		buf += NRF_CLOUD_AGNSS_BIN_TYPE_SIZE + NRF_CLOUD_AGNSS_BIN_COUNT_SIZE;
+		buf_len -= NRF_CLOUD_AGNSS_BIN_TYPE_SIZE + NRF_CLOUD_AGNSS_BIN_COUNT_SIZE;
+		if (element.type >= ARRAY_SIZE(agnss_element_sizes)) {
+			return -ERANGE;
+		}
+
+		for (size_t i = 0; i < element_count; ++i) {
+			element_len = agnss_element_sizes[element.type];
+			element.raw = (void *)buf;
+			if (buf_len < element_len) {
+				return -ENOENT;
+			}
+			buf += element_len;
+			buf_len -= element_len;
+			if (cb(&element)) {
+				return -EIO;
+			}
+		}
+	}
+	return 0;
+}
 
 static void print_utc(struct nrf_modem_gnss_agnss_gps_data_utc *data)
 {

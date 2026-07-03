@@ -589,11 +589,11 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
-  * Fixed an issue with parsing invalid payloads.
+  * Updated to use a new parser for assistance data.
 
 * :ref:`lib_nrf_cloud_agnss` library:
 
-  * Fixed an issue with parsing invalid payloads.
+  * Updated to use a new parser for assistance data.
 
 * Added :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` support for TLS credential expiry retrieval when using the modem as TLS credentials storage.
 

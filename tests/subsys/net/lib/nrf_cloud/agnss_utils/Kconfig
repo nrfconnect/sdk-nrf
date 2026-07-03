@@ -1,0 +1,4 @@
+config NRF_CLOUD_GPS_LOG_LEVEL
+	default 4
+
+source "Kconfig.zephyr"

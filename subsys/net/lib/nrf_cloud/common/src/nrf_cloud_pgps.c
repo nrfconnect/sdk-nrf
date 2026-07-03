@@ -29,6 +29,7 @@ LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_transport.h"
+#include "nrf_cloud_agnss_internal.h"
 
 #include "nrf_cloud_pgps_schema_v1.h"
 #include "nrf_cloud_pgps_utils.h"
@@ -1361,127 +1362,55 @@ static void cache_pgps_header(const struct nrf_cloud_pgps_header *header)
 	index.end_sec = index.start_sec + (int64_t)index.period_sec * index.header.prediction_count;
 }
 
-static size_t get_next_pgps_element(struct nrf_cloud_agnss_element *element, const char *buf,
-				    size_t buf_len)
+static int64_t parsed_prediction_gps_sec;
+
+static int pgps_process_element(const struct nrf_cloud_agnss_element *element)
 {
-	static uint16_t elements_left_to_process;
-	static enum nrf_cloud_agnss_type element_type;
-	size_t len = 0;
-
-	/* Check if there are more elements left in the array to process.
-	 * The element type is only given once before the array, and not for
-	 * each element.
-	 */
-	if (elements_left_to_process == 0) {
-		element_type = NRF_CLOUD_AGNSS__TYPE_INVALID;
-
-		if (buf_len == 0) {
-			/* No more data to parse. */
-			return 0;
-		}
-
-		/* Check that there's enough data for type and count. */
-		if (buf_len < NRF_CLOUD_AGNSS_BIN_TYPE_SIZE + NRF_CLOUD_AGNSS_BIN_COUNT_SIZE) {
-			goto data_truncated;
-		}
-		element->type = (enum nrf_cloud_agnss_type)buf[NRF_CLOUD_AGNSS_BIN_TYPE_OFFSET];
-		element_type = element->type;
-		elements_left_to_process = *(uint16_t *)&buf[NRF_CLOUD_AGNSS_BIN_COUNT_OFFSET] - 1;
-		len += NRF_CLOUD_AGNSS_BIN_TYPE_SIZE + NRF_CLOUD_AGNSS_BIN_COUNT_SIZE;
-	} else {
-		element->type = element_type;
-		elements_left_to_process -= 1;
-	}
-
-	switch (element->type) {
-	case NRF_CLOUD_AGNSS_GPS_EPHEMERIDES:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_ephemeris))) {
-			goto data_truncated;
-		}
-		element->ephemeris = (struct nrf_cloud_agnss_ephemeris *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_ephemeris);
-		break;
-	case NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_system_time) -
-			       sizeof(element->time_and_tow->sv_tow) + 4)) {
-			goto data_truncated;
-		}
-		element->time_and_tow = (struct nrf_cloud_agnss_system_time *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_system_time) -
-		       sizeof(element->time_and_tow->sv_tow) + 4;
-		break;
-	default:
-		LOG_DBG("Unhandled P-GPS data type:%d", element->type);
+	if (element->type == NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK) {
+		parsed_prediction_gps_sec =
+			npgps_gps_day_time_to_sec(element->system_clock->date_day,
+					      element->system_clock->time_full_s);
 		return 0;
 	}
 
-#if PGPS_DEBUG
-	LOG_DBG("  size:%zd, count:%u", len, elements_left_to_process);
-#endif
+	if (element->type == NRF_CLOUD_AGNSS_GPS_EPHEMERIDES) {
+		bool empty = true;
+		const uint8_t *ephemeris = (const uint8_t *)element->ephemeris;
 
-	return len;
+		/* Check for all zeros except first byte (sv_id). */
+		for (int i = 1; i < sizeof(struct nrf_cloud_agnss_ephemeris); i++) {
+			if (ephemeris[i] != 0) {
+				empty = false;
+				break;
+			}
+		}
 
-data_truncated:
-	LOG_ERR("Unexpected end of data");
-	elements_left_to_process = 0;
-	element_type = NRF_CLOUD_AGNSS__TYPE_INVALID;
+		if (empty) {
+			LOG_DBG("Marking ephemeris:%u as empty", element->ephemeris->sv_id);
+			((struct nrf_cloud_agnss_ephemeris *)element->ephemeris)->health =
+				NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH;
+		}
+	}
+
 	return 0;
 }
 
 static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 {
-	struct nrf_cloud_agnss_element element = {};
 	uint8_t *prediction_ptr = (uint8_t *)buf;
-	uint8_t *element_ptr = prediction_ptr;
-	struct agnss_header *elem = (struct agnss_header *)element_ptr;
-	size_t parsed_len = 0;
-	int64_t gps_sec;
+	struct agnss_header *elem = (struct agnss_header *)prediction_ptr;
+	int64_t gps_sec = 0;
 	bool finished = false;
 	int err = 0;
-
-	gps_sec = 0;
 
 	LOG_DBG("Parsing prediction num:%u, idx:%u, type:%u, count:%u, buf len:%u", pnum,
 		index.loading_count, elem->type, elem->count, buf_len);
 
-	while (parsed_len < buf_len) {
-		bool empty;
-		size_t element_size = get_next_pgps_element(
-			&element, element_ptr, buf_len - parsed_len
-		);
+	parsed_prediction_gps_sec = 0;
+	err = parse_agnss_block((const char *)prediction_ptr, buf_len, pgps_process_element);
+	gps_sec = parsed_prediction_gps_sec;
 
-		if (element_size == 0) {
-			LOG_DBG("  End of element");
-			break;
-		}
-		switch (element.type) {
-		case NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK:
-			gps_sec = npgps_gps_day_time_to_sec(element.time_and_tow->date_day,
-							    element.time_and_tow->time_full_s);
-			break;
-		case NRF_CLOUD_AGNSS_GPS_EPHEMERIDES:
-			/* check for all zeros except first byte (sv_id) */
-			empty = true;
-			for (int i = 1; i < sizeof(struct nrf_cloud_agnss_ephemeris); i++) {
-				if (element_ptr[i] != 0) {
-					empty = false;
-					break;
-				}
-			}
-			if (empty) {
-				LOG_DBG("Marking ephemeris:%u as empty", element.ephemeris->sv_id);
-				element.ephemeris->health = NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH;
-			}
-			break;
-		default: /* just store */
-			break;
-		}
-
-		parsed_len += element_size;
-		element_ptr += element_size;
-	}
-
-	if (parsed_len == buf_len) {
+	if (!err) {
 		LOG_DBG("Parsing finished");
 
 		if (index.predictions[pnum]) {

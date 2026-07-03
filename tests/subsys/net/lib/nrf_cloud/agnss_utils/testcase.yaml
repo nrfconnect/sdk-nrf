@@ -1,0 +1,15 @@
+tests:
+  net.lib.nrf_cloud.agnss_utils:
+    platform_allow:
+      - native_sim
+      - native_sim/native/64
+      - qemu_cortex_m3
+    integration_platforms:
+      - native_sim
+      - native_sim/native/64
+      - qemu_cortex_m3
+    tags:
+      - nrf_cloud_test
+      - nrf_cloud_lib
+      - ci_tests_subsys_net
+    timeout: 60
