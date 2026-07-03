@@ -1,13 +1,15 @@
 .. _kconfig_diff:
 
-Kconfig comparison: |kconfigdiff_previous| - |kconfigdiff_current|
-##############################################################
+Kconfig diff
+############
 
 .. contents::
    :local:
    :depth: 2
 
-This page shows changes in available Kconfig options between two versions of
-nRF Connect SDK.
+This page shows comparison between |kconfigdiff_previous| and |kconfigdiff_current|.
+The comparison is displayed using a format inspired by `git diff`:
+
+.. kconfigdiff-legend::
 
 .. kconfigdiff::
