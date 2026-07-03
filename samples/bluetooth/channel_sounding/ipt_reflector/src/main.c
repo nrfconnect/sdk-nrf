@@ -16,6 +16,7 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/cs.h>
+#include <zephyr/settings/settings.h>
 #include <dk_buttons_and_leds.h>
 
 #include <zephyr/logging/log.h>
@@ -23,12 +24,18 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 
 #define CON_STATUS_LED DK_LED1
 
+#define BT_UUID_RAS_WORKAROUND (0x185B)
+
 static K_SEM_DEFINE(sem_connected, 0, 1);
 
 static struct bt_conn *connection;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+	/* Note: RAS is disabled in IPT sample but it seems some devices require
+	 * RAS UUID to be presented in adv data to be able to connect.
+	 */
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_RAS_WORKAROUND)),
 	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
@@ -199,6 +206,10 @@ int main(void)
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return 0;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		settings_load();
 	}
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), NULL, 0);
