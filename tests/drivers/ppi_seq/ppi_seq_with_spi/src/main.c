@@ -239,7 +239,6 @@ static void spim_init(bool use_hw_ss)
 #endif
 		nrf_gpio_pin_set(ss_pin);
 		nrf_gpio_cfg_output(ss_pin);
-		nrf_spim_csn_configure(spim_data.spim.p_reg, ss_pin, NRF_SPIM_CSN_POL_LOW, 32);
 		spim_data.ss_task = 0;
 	} else {
 		const struct device *cs_port = DEVICE_DT_GET(DT_GPIO_CTLR(SPIM_NODE, cs_gpios));
@@ -276,6 +275,12 @@ static void spim_init(bool use_hw_ss)
 
 	rv = nrfx_spim_init(&spim_data.spim, &config, spim_event_handler, NULL);
 	zassert_ok(rv, "Unexpected error:%d", rv);
+
+	if (use_hw_ss) {
+		nrf_spim_csn_configure(spim_data.spim.p_reg, ss_pin, NRF_SPIM_CSN_POL_LOW, 32);
+	} else {
+		nrf_spim_csn_pin_set(spim_data.spim.p_reg, NRF_SPIM_PIN_NOT_CONNECTED);
+	}
 }
 
 static void test_timer_init(void)
