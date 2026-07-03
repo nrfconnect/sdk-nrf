@@ -17,6 +17,7 @@ kconfig_check_and_set_base_int(MBEDTLS_PSA_KEY_SLOT_COUNT)
 # Platform _ALT
 kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_PRINTF_ALT)
 kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_SNPRINTF_ALT)
+kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_NO_STD_FUNCTIONS)
 
 # TF-M
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_SPM)
