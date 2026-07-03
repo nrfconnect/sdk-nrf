@@ -21,7 +21,6 @@
     - net.lwm2m.content_plain_text
     - net.lwm2m.content_raw_cbor
     - net.lwm2m.content_senml_cbor
-    - net.lwm2m.engine
     - net.lwm2m.lwm2m_engine
     - net.lwm2m.lwm2m_registry
     - net.lwm2m.block_transfer
@@ -53,26 +52,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - crypto.rand32
-    - crypto.rand32.random_ctr_drbg
-    - crypto.rand32.random_hw_xoshiro
-    - crypto.rand32.random_sw_systimer
-    - drivers.rand32.random_psa_crypto
-    - crypto.mbedtls
-  platforms:
-    - mps2_an521
-    - native_sim/native
-    - nrf52840dk/nrf52840
-    - nrf52dk/nrf52832
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf5340dk/nrf5340/cpunet
-    - nrf9160dk@0.14.0/nrf9160
-    - nrf9160dk@0.14.0/nrf9160/ns
-    - qemu_cortex_m3
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - crypto.hash
   platforms:
     - native_sim/native
@@ -87,7 +66,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.net.lwm2m_client.bt
     - sample.net.lwm2m_client.wnc_m14a2a
   platforms:
     - nrf52840dk/nrf52840
@@ -104,7 +82,6 @@
 
 - scenarios:
     - sample.tfm.protected_storage
-    - sample.tfm.secure_partition
     - sample.tfm_ipc
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
@@ -154,7 +131,6 @@
     - libraries.spsc_pbuf.*
     - libraries.sys_util
     - libraries.timespec_utils.*
-    - math.interpolation
     - sample.basic.button
     - sample.boards.magic_addr
     - sample.boards.renesas.elc
@@ -228,13 +204,6 @@
     - nrf9160dk@0.14.0/nrf9160
     - nrf9160dk@0.14.0/nrf9160/ns
     - qemu_cortex_m3
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.usb.dfu
-    - sample.usb.dfu.permanent.download
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:

@@ -28,8 +28,6 @@
     - sample.matter.light_bulb.nrf7002eb2.release
     - sample.matter.light_switch.nrf7002eb2.debug
     - sample.matter.light_switch.nrf7002eb2.release
-    - sample.matter.lock.nrf7002eb2.debug
-    - sample.matter.lock.nrf7002eb2.release
     - sample.matter.manufacturer_specific.nrf7002eb2.debug
     - sample.matter.thermostat.nrf7002eb2.debug
     - sample.matter.thermostat.nrf7002eb2.release
