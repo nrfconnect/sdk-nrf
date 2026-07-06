@@ -12,16 +12,10 @@
 /* q^(-1) mod 2^32, used by the Montgomery reduction */
 #define ML_DSA_QINV	58728449
 
-/* 2^64 mod q, used to correct the extra R^(-1) factor left by a single
- * Montgomery reduction of two plain (non-Montgomery) operands.
- */
-#define ML_DSA_R2	2365951
-
 /* zeta[k] * R mod q (Montgomery form of the bit-reversed powers of the primitive
- * root, R = 2^32). Pre-scaling by R lets cracen_ml_dsa_ntt() and
- * cracen_ml_dsa_ntt_inversed() multiply by a zeta with a single
- * montgomery_reduce() call instead of the double reduction mul_mod() needs for
- * two arbitrary (non-Montgomery) operands.
+ * root, R = 2^32), i.e. zetas[k] = 1753^brv(k) * 2^32 mod q. Pre-scaling by R
+ * lets cracen_ml_dsa_ntt() and cracen_ml_dsa_ntt_inversed() multiply by a zeta
+ * with a single montgomery_reduce() call.
  */
 static const int32_t zetas[] = {
 	0x000000, 0x0064F7, 0x581103, 0x77F504, 0x039E44, 0x740119, 0x728129, 0x071E24,
@@ -58,32 +52,25 @@ static const int32_t zetas[] = {
 	0x776A51, 0x3BCF2C, 0x7F234F, 0x6B16E0, 0x3C15CA, 0x155E68, 0x72F6B7, 0x1E29CE
 };
 
-/* Reduce an arbitrary signed value into [0, q). */
-static int32_t reduce_mod_q(int64_t a)
+/* Reduce a value with |a| <= 2^31 - 2^22 - 1 to r == a (mod q) with
+ * |r| <= 6283008 < q. Costs one shift and one multiplication, unlike the
+ * 64-bit division library call the % operator needs on Cortex-M.
+ */
+static int32_t reduce32(int32_t a)
 {
-	a %= ML_DSA_PRIME_NUM;
-	if (a < 0) {
-		a += ML_DSA_PRIME_NUM;
-	}
-	return (int32_t)a;
+	int32_t t = (a + (1 << 22)) >> 23;
+
+	return a - t * ML_DSA_PRIME_NUM;
 }
 
-/* Compute a * R^(-1) mod q for R = 2^32. Result lies in (-q, q). */
+/* Compute a * R^(-1) mod q for R = 2^32, given |a| < 2^31 * q.
+ * Result lies in (-q, q).
+ */
 static int32_t montgomery_reduce(int64_t a)
 {
 	int32_t t = (int32_t)((uint32_t)(int32_t)a * ML_DSA_QINV);
 
 	return (int32_t)((a - (int64_t)t * ML_DSA_PRIME_NUM) >> 32);
-}
-
-/* Multiply two coefficients in [0, q); result in [0, q). */
-static int32_t mul_mod(int32_t a, int32_t b)
-{
-	int32_t t = montgomery_reduce((int64_t)a * (int64_t)b);
-
-	t = montgomery_reduce((int64_t)t * ML_DSA_R2);
-
-	return t < 0 ? t + ML_DSA_PRIME_NUM : t;
 }
 
 void cracen_ml_dsa_ntt(ml_dsa_poly_vector_t *vec)
@@ -98,8 +85,12 @@ void cracen_ml_dsa_ntt(ml_dsa_poly_vector_t *vec)
 			for (uint32_t j = start; j < start + len; j++) {
 				int32_t t = montgomery_reduce((int64_t)zeta * w[j + len]);
 
-				w[j + len] = reduce_mod_q((int64_t)w[j] - t);
-				w[j] = reduce_mod_q((int64_t)w[j] + t);
+				/** Lazy reduction: |t| < q, so each of the 8 stages grows
+				 *  the coefficient bound by at most q. With |input| < q the
+				 *  output stays below 9q, well within int32.
+				 */
+				w[j + len] = w[j] - t;
+				w[j] = w[j] + t;
 			}
 		}
 	}
@@ -109,28 +100,36 @@ void cracen_ml_dsa_ntt_inversed(ml_dsa_poly_vector_t *vec)
 {
 	int32_t *w = vec->coeffs;
 	uint8_t k = ML_DSA_POLY_COEFFS_COUNT - 1;
-	/* (256^(-1) mod q) * R mod q, so the final scaling below can use a single
-	 * montgomery_reduce() instead of mul_mod().
+	/* (256^(-1) * R^2) mod q. The final Montgomery multiplication by this factor
+	 * both applies the 1/256 scaling of the inverse NTT and cancels the R^(-1)
+	 * factor that cracen_ml_dsa_multiply_ntt() leaves on every coefficient.
 	 */
-	const int32_t inv_256_mont = 16382;
-	int32_t zeta;
+	const int32_t inv_256_r2_mont = 41978;
+
+	/** The butterflies below skip modular reduction, which doubles the coefficient
+	 *  bound per stage (256x overall), so bring the lazily-reduced input into
+	 *  (-q, q) first: 256 * q still fits int32.
+	 */
+	for (uint32_t j = 0; j < ML_DSA_POLY_COEFFS_COUNT; j++) {
+		w[j] = reduce32(w[j]);
+	}
 
 	for (uint32_t len = 1; len < ML_DSA_POLY_COEFFS_COUNT; len <<= 1) {
 		for (uint32_t start = 0; start < ML_DSA_POLY_COEFFS_COUNT; start += 2 * len) {
-			zeta = reduce_mod_q(-zetas[k--]);
+			int32_t zeta = -zetas[k--];
 
 			for (uint32_t j = start; j < start + len; j++) {
 				int32_t t = w[j];
 
-				w[j] = reduce_mod_q((int64_t)t + w[j + len]);
-				w[j + len] = reduce_mod_q((int64_t)t - w[j + len]);
+				w[j] = t + w[j + len];
+				w[j + len] = t - w[j + len];
 				w[j + len] = montgomery_reduce((int64_t)zeta * w[j + len]);
 			}
 		}
 	}
 
 	for (uint32_t j = 0; j < ML_DSA_POLY_COEFFS_COUNT; j++) {
-		int32_t t = montgomery_reduce((int64_t)inv_256_mont * w[j]);
+		int32_t t = montgomery_reduce((int64_t)inv_256_r2_mont * w[j]);
 
 		w[j] = t < 0 ? t + ML_DSA_PRIME_NUM : t;
 	}
@@ -141,7 +140,12 @@ void cracen_ml_dsa_multiply_ntt(ml_dsa_poly_vector_t *out_vec,
 				const ml_dsa_poly_vector_t *b)
 {
 	for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
-		out_vec->coeffs[i] = mul_mod(a->coeffs[i], b->coeffs[i]);
+		/** Single Montgomery reduction: the result carries an extra R^(-1)
+		 *  factor, which cracen_ml_dsa_ntt_inversed() cancels in its final
+		 *  scaling. Valid while |a * b| < 2^31 * q, which the 9q output bound
+		 *  of cracen_ml_dsa_ntt() satisfies (81q^2 < 2^31 * q).
+		 */
+		out_vec->coeffs[i] = montgomery_reduce((int64_t)a->coeffs[i] * b->coeffs[i]);
 	}
 }
 
@@ -150,7 +154,7 @@ void cracen_ml_dsa_add_ntt(ml_dsa_poly_vector_t *out_vec,
 			   const ml_dsa_poly_vector_t *b)
 {
 	for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
-		out_vec->coeffs[i] = reduce_mod_q((int64_t)a->coeffs[i] + b->coeffs[i]);
+		out_vec->coeffs[i] = a->coeffs[i] + b->coeffs[i];
 	}
 }
 
@@ -159,6 +163,6 @@ void cracen_ml_dsa_subtract_ntt(ml_dsa_poly_vector_t *out_vec,
 				const ml_dsa_poly_vector_t *b)
 {
 	for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
-		out_vec->coeffs[i] = reduce_mod_q((int64_t)a->coeffs[i] - b->coeffs[i]);
+		out_vec->coeffs[i] = a->coeffs[i] - b->coeffs[i];
 	}
 }

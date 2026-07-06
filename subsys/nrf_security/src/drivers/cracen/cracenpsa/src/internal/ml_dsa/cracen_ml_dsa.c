@@ -461,17 +461,11 @@ static psa_status_t ml_dsa_verify_internal(const ml_dsa_params_t *alg_params, co
 		goto exit;
 	}
 
-	/** sig_decode() returns signer's response (z) in centered representation, so converting it
-	 *  to the standard representation here.
-	 *  It means that coefficients must be in range [0; q).
+	/** sig_decode() returns signer's response (z) in centered representation
+	 *  (coefficients in (-gamma1, gamma1]). cracen_ml_dsa_ntt() accepts any signed
+	 *  representation with |coefficient| < q, so z is transformed directly.
 	 */
 	for (uint32_t j = 0; j < alg_params->columns_l; j++) {
-		for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
-			if (signers_response[j].coeffs[i] < 0) {
-				signers_response[j].coeffs[i] += ML_DSA_PRIME_NUM;
-			}
-		}
-		/* Computing NTT(z) for the next step */
 		cracen_ml_dsa_ntt(&signers_response[j]);
 	}
 
