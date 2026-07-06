@@ -1,0 +1,62 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Two-stage (NSIB -> MCUboot -> application) partition layout for nRF7120.
+ *
+ * Mirrors the nRF54L nsib reference, adapted for nRF7120: MRAM instead of RRAM,
+ * and the Wi-Fi ROM-patch partitions (wifi_lmac_patch_partition /
+ * wifi_umac_patch_partition, referenced by phandle from &wicr) plus the storage
+ * partition are left untouched (they sit above 0x2e0000, outside the re-carved
+ * region). Only boot/slot0/slot1 are re-carved:
+ *
+ *   b0_partition     0x000000   30K     NSIB
+ *   s0_partition     0x008000   64K     MCUboot copy 0 (also boot_partition)
+ *   s1_partition     0x018000   64K     MCUboot copy 1
+ *   slot0_partition  0x028000   1392K   application image-0 (MCUboot primary)
+ *   slot1_partition  0x184000   1392K   application image-1 (MCUboot secondary)
+ *
+ * The 64K MCUboot copy size matches the single-stage nRF7120 MCUboot partition
+ * (boards/nrf7120dk_nrf7120_cpuapp.overlay).
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+
+&cpuapp_mram {
+	partitions {
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "nsib";
+			reg = <0x0 DT_SIZE_K(30)>;
+		};
+
+		s0_partition: boot_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x8000 DT_SIZE_K(64)>;
+		};
+
+		s1_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot_s1";
+			reg = <0x18000 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@28000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x28000 DT_SIZE_K(1392)>;
+		};
+
+		slot1_partition: partition@184000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x184000 DT_SIZE_K(1392)>;
+		};
+	};
+};
