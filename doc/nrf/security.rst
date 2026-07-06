@@ -156,7 +156,7 @@ Some of them are documented in detail in other parts of this documentation, whil
   * - Secure storage
     - Secure storage enables you to provide features like integrity, confidentiality and authenticity of the stored data, with or without TF-M.
     - See :ref:`secure_storage_in_ncs`.
-    - | - :ref:`trusted_storage_readme` library
+    - | - Zephyr's :ref:`Secure storage subsystem <secure_storage>`
       | - TF-M's :ref:`ug_tfm_services_its`
       | - TF-M's :ref:`tfm_partition_ps`
   * - Hardware unique key (HUK)

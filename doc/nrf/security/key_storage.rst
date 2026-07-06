@@ -106,7 +106,7 @@ Usage
 You cannot use HUKs directly.
 You can however use the :ref:`lib_hw_unique_key` library to derive keys from HUKs using known labels.
 
-You can use HUKs indirectly through PSA Secure Storage without TF-M, for example through the :ref:`trusted_storage_readme` library.
+You can use HUKs indirectly through PSA Secure Storage without TF-M, for example through Zephyr's :ref:`Secure storage <zephyr:secure_storage>` subsystem.
 In such case, the HUK library will be used to derive keys that are then used to encrypt storage entries.
 This is done to prevent the application from accessing the HUK directly.
 

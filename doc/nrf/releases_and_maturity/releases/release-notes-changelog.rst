@@ -158,6 +158,11 @@ Security libraries
   * Removed the configuration page for the deprecated legacy crypto backend (:file:`libraries/security/nrf_security/doc/backend_config`).
     Configure cryptographic features using :ref:`psa_crypto_support` and :ref:`ug_crypto_supported_features` instead.
 
+* :ref:`trusted_storage_readme` library:
+
+  * Added the deprecation note in the library documentation.
+    The library has been replaced by Zephyr's :ref:`Secure storage subsystem <secure_storage>` (:kconfig:option:`CONFIG_SECURE_STORAGE`).
+
 Mbed TLS
 --------
 

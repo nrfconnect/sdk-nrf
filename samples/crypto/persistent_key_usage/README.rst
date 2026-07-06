@@ -11,7 +11,7 @@ The persistent key sample demonstrates how to use the :ref:`PSA Crypto API <ug_p
 The implementation of the PSA ITS API is provided in one of the following ways, depending on your configuration:
 
 * Through TF-M using Internal Trusted Storage and Protected Storage services.
-* When building without TF-M: using either Zephyr's :ref:`secure_storage` subsystem or the :ref:`trusted_storage_readme` library.
+* When building without TF-M: using Zephyr's :ref:`secure_storage` subsystem.
 
 A persistent key becomes unusable when the ``psa_destroy_key`` function is called.
 
