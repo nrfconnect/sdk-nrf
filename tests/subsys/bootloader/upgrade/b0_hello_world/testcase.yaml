@@ -15,3 +15,19 @@ tests:
         - "../pytest/test_upgrade_invalid_application.py"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
+
+  nsib.security.tampered_app:
+    harness: pytest
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9160dk/nrf9160
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_security_tampered_app.py"

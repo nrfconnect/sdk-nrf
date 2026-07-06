@@ -17,7 +17,7 @@ from twister_harness.helpers.utils import find_in_config
 from twister_harness_ext.utils.imgtool_wrapper import ImgtoolParams
 
 # This is needed to load edt.pickle files.
-ZEPHYR_BASE = os.getenv("ZEPHYR_BASE")
+ZEPHYR_BASE = os.getenv("ZEPHYR_BASE", "")
 sys.path.insert(0, os.path.join(ZEPHYR_BASE, "scripts", "dts", "python-devicetree", "src"))
 from devicetree import edtlib  # type: ignore  # noqa: E402
 

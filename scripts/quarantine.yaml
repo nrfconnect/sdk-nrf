@@ -176,7 +176,6 @@
     - dfu.pcd.sysbuild
     - mcuboot.external_flash.upgrade.netcore
     - nsib.mcuboot.external_flash.upgrade.netcore_and_mcuboot
-    - nsib.update.invalid_image
   platforms:
     - nrf5340dk/nrf5340/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp

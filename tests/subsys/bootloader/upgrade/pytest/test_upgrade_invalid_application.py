@@ -9,6 +9,7 @@ import pytest
 from intelhex import bin2hex
 from twister_harness import DeviceAdapter
 from twister_harness_ext.utils.common import flash_with_nrfutil
+from twister_harness_ext.utils.dts_helper import get_partition_address
 from twister_harness_ext.utils.helpers import reset_board
 from twister_harness_ext.utils.required_build import get_required_build
 
@@ -19,7 +20,7 @@ def create_dummy_file(path: str | Path, size: int):
         file.write(random_data)
 
 
-def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, config_reader, tmp_path: Path):
+def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, tmp_path: Path):
     """Verify if upload of an invalid image is rejected.
 
     - Build application with NSIB bootloader, without the MCUboot
@@ -41,7 +42,7 @@ def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, config_reader, tm
     )
 
     flash_with_nrfutil(
-        build_dir / "signed_by_b0_s1_image.hex",
+        build_dir / f"signed_by_b0_{dut.device_config.app_build_dir.name}_s1_variant.hex",
         dut.device_config.id,
         erase_mode="ERASE_RANGES_TOUCHED_BY_FIRMWARE",
     )
@@ -51,7 +52,11 @@ def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, config_reader, tm
     pytest.LineMatcher(lines).fnmatch_lines(["*Attempting to boot slot 1*", "*Firmware version 2*"])
 
     # create an invalid binary file
-    s0_offset = config_reader(dut.device_config.build_dir / "pm.config").read_int("PM_S0_OFFSET")
+    s0_offset = get_partition_address(
+        dut.device_config.app_build_dir / "zephyr/edt.pickle",  # type: ignore
+        "s0_partition",
+        absolute=True,
+    )
     invalid_bin_file = tmp_path / "blob.bin"
     invalid_hex_file = tmp_path / "blob.hex"
     create_dummy_file(invalid_bin_file, 30 * 1024)

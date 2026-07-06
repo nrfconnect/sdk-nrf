@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SOC_SERIES_NRF54L
+
+config MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE
+	default y if BOOTLOADER_MCUBOOT && MCUBOOT_SIGNATURE_USING_KMU
+
+config SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE
+	default y if SECURE_BOOT_APPCORE
+
+endif
+
+config SECURE_BOOT_SIGNING_KEY_FILE
+	default "$(ZEPHYR_MCUBOOT_MODULE_DIR)/root-ed25519.pem" if SECURE_BOOT_SIGNATURE_TYPE_ED25519
+	default "$(ZEPHYR_MCUBOOT_MODULE_DIR)/root-ec-p256.pem" if SECURE_BOOT_SIGNATURE_TYPE_ECDSA
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
