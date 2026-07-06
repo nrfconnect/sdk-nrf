@@ -43,7 +43,7 @@ static const struct ram_bank banks[] = {
 	 * the same bank.
 	 */
 	{ .start = 0x20000000UL, .section_count = 8, .section_size = 0x8000 },
-#elif defined(CONFIG_SOC_NRF54L10_CPUAPP)
+#elif defined(CONFIG_SOC_NRF54L10_CPUAPP) || defined(CONFIG_SOC_NRF54LC10A_CPUAPP)
 	/* Section numbers for RAM00 are 0-3 and for RAM01 are 4-5 within
 	 * the same bank.
 	 */
