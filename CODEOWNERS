@@ -7,10 +7,10 @@
 # The default entry with `*` only applies to GitHub adding reviewers.
 # The compliance workflow verifies that all new files are covered by an
 # entry in the CODEOWNERS file, but skips this `*` entry altogether.
-*					  @nrfconnect/ncs-code-owners
+*                                         @nrfconnect/ncs-code-owners
 
 # Root folder
-/.*					  @nrfconnect/ncs-code-owners
+/.*                                       @nrfconnect/ncs-code-owners
 /.sonarcloud.properties                   @nrfconnect/ncs-ci
 /CMakeLists.txt                           @nrfconnect/ncs-co-build-system
 /CODEOWNERS                               @nrfconnect/ncs-code-owners
@@ -65,6 +65,7 @@
 /cmake/                                   @nrfconnect/ncs-co-build-system
 
 # All doc related files
+/doc/versions.json                        @nrfconnect/ncs-co-doc
 /doc/_static/                             @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /doc/_doxygen/                            @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /doc/_extensions/                         @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
@@ -123,6 +124,13 @@
 /doc/nrf/external_comp/memfault.rst       @nrfconnect/ncs-cia-doc
 /doc/nrf/external_comp/nrf_cloud.rst      @nrfconnect/ncs-nrf-cloud-doc
 /doc/nrf/gsg_guides.rst                   @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/ncs-wayland-doc
+/doc/nrf/images/aws_mqtt_test_client.PNG   @nrfconnect/ncs-cia
+/doc/nrf/images/chiptool_relative_humidity.gif @nrfconnect/ncs-thread
+/doc/nrf/images/chiptool_sensor_cluster.gif @nrfconnect/ncs-thread
+/doc/nrf/images/chiptool_temperature_read.gif @nrfconnect/ncs-thread
+/doc/nrf/images/chiptool_temperature_watch.gif @nrfconnect/ncs-thread
+/doc/nrf/images/switcher_docset_snipped.gif @nrfconnect/ncs-wayland-doc
+/doc/nrf/images/switcher_version_snipped.gif @nrfconnect/ncs-wayland-doc
 /doc/nrf/includes/                        @nrfconnect/ncs-doc-leads
 /doc/nrf/includes/boardname_tables/sample_boardnames.txt @nrfconnect/ncs-co-doc
 /doc/nrf/installation/                    @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/ncs-wayland-doc
@@ -215,7 +223,7 @@
 /doc/nrf/libraries/others/pcm_stream_channel_modifier.rst @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/qos.rst         @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/ram_pwrdn.rst   @nrfconnect/ncs-terahertz-doc
-/doc/nrf/libraries/others/sfloat.rst      @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/libraries/others/sfloat.rst      @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/others/st25r3911b_nfc.rst @nrfconnect/ncs-radio-sw
 /doc/nrf/libraries/others/supl_os_client.rst @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/others/tone.rst        @nrfconnect/ncs-audio-doc
@@ -282,6 +290,7 @@
 /doc/nrf/samples/wifi_radiotest.rst       @nrfconnect/ncs-wifi-doc
 /doc/nrf/samples/wifi_provisioning.rst    @nrfconnect/ncs-wifi-doc
 /doc/nrf/samples/wifi_zephyr.rst          @nrfconnect/ncs-wifi-doc
+/doc/nrf/samples/zigbee.rst               @nrfconnect/ncs-terahertz-doc
 /doc/nrf/security/                        @nrfconnect/ncs-aegir-doc
 /doc/nrf/templates/                       @nrfconnect/ncs-doc-leads
 /doc/nrf/test_and_optimize/               @nrfconnect/ncs-doc-leads
@@ -328,7 +337,14 @@
 /ext/iperf3/                              @nrfconnect/ncs-code-owners @nrfconnect/ncs-modem-tre
 
 # Include
+/include/adp536x.h                        @nrfconnect/ncs-iot-oulu
+/include/app_event_manager.h              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
+/include/app_event_manager_profiler_tracer.h @nrfconnect/ncs-si-xcake
 /include/app_jwt.h                        @nrfconnect/ncs-modem @ayla-nordicsemi
+/include/audio_defines.h                  @nrfconnect/ncs-audio
+/include/contin_array.h                   @nrfconnect/ncs-audio
+/include/data_fifo.h                      @nrfconnect/ncs-audio
+/include/date_time.h                      @nrfconnect/ncs-lr-slm
 /include/audio/                           @nrfconnect/ncs-audio
 /include/audio_module/                    @nrfconnect/ncs-audio
 /include/bluetooth/                       @nrfconnect/ncs-dragoon
@@ -349,8 +365,11 @@
 /include/bluetooth/services/ras.h         @nrfconnect/ncs-dragoon
 /include/bluetooth/services/wifi_provisioning.h @wentong-li @bama-nordic
 /include/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-xcake
-/include/bluetooth/fast_pair/fhn/        @nrfconnect/ncs-si-bluebagel
+/include/bluetooth/fast_pair/fhn/         @nrfconnect/ncs-si-bluebagel
 /include/bl_*.h                           @nrfconnect/ncs-eris
+/include/dk_buttons_and_leds.h            @nrfconnect/ncs-si-muffin
+/include/dm.h                             @nrfconnect/ncs-blenders
+/include/esb.h                            @nrfconnect/ncs-si-xcake
 /include/flash_map_pm.h                   @nrfconnect/ncs-eris
 /include/fprotect.h                       @nrfconnect/ncs-eris
 /include/fw_info.h                        @nrfconnect/ncs-eris
@@ -373,12 +392,21 @@
 /include/dt-bindings/misc/nordic-nrf-ficr-nrf9220.h @tervonenja
 /include/dt-bindings/misc/nordic-owner-id-nrf9220.h @tervonenja
 /include/emds/                            @nrfconnect/ncs-paladin
+/include/event_manager_proxy.h            @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /include/fem_al/                          @nrfconnect/ncs-dragoon
+/include/gzll_glue.h                      @leewkb4567
+/include/gzp.h                            @leewkb4567
+/include/gzp_config.h                     @leewkb4567
 /include/hpf/                             @nrfconnect/ncs-ll-ursus
+/include/hw_id.h                          @nrfconnect/ncs-memfault
+/include/hw_unique_key.h                  @nrfconnect/ncs-cc3xx
+/include/identity_key.h                   @nrfconnect/ncs-cc3xx
 /include/logging/                         @nrfconnect/ncs-protocols-serialization
+/include/memfault_ncs.h                   @nrfconnect/ncs-memfault
 /include/mgmt/                            @nrfconnect/ncs-eris
 /include/modem/                           @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /include/mpsl/                            @nrfconnect/ncs-dragoon
+/include/net_core_monitor.h               @nrfconnect/ncs-si-muffin
 /include/net/                             @nrfconnect/ncs-co-networking
 /include/net/azure_*                      @nrfconnect/ncs-cia
 /include/net/dect/                        @nrfconnect/ncs-dect-nr-plus
@@ -386,13 +414,27 @@
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-radio-sw
 /include/nrf_compress/                    @nrfconnect/ncs-eris
+/include/nrf_profiler.h                   @nrfconnect/ncs-si-xcake
 /include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
+/include/pcm_mix.h                        @nrfconnect/ncs-audio
+/include/pcm_stream_channel_modifier.h    @nrfconnect/ncs-audio
 /include/power/                           @nrfconnect/ncs-co-drivers
+/include/qos.h                            @nrfconnect/ncs-cia
+/include/ram_pwrdn.h                      @nrfconnect/ncs-protocols-serialization
+/include/sample_rate_converter.h          @nrfconnect/ncs-audio
+/include/sfloat.h                         @nrfconnect/ncs-blenders
+/include/st25r3911b_nfca.h                @nrfconnect/ncs-radio-sw
+/include/supl_os_client.h                 @nrfconnect/ncs-modem
+/include/sensor/paw3212.h                 @nrfconnect/ncs-si-xcake
+/include/sensor/pmw3360.h                 @nrfconnect/ncs-si-xcake
 /include/shell/                           @nordic-krch
+/include/tone.h                           @nrfconnect/ncs-audio
+/include/uart_async_adapter.h             @nrfconnect/ncs-si-muffin
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
 /include/tfm/                             @nrfconnect/ncs-aegir
 /include/dult.h                           @nrfconnect/ncs-si-bluebagel
 /include/accel_to_angle/                  @nrfconnect/ncs-si-bluebagel
+/include/wave_gen.h                       @nrfconnect/ncs-si-muffin
 
 # Libraries
 /lib/accel_to_angle/                      @nrfconnect/ncs-si-bluebagel
@@ -437,9 +479,9 @@
 /lib/qos/                                 @nrfconnect/ncs-cia
 /lib/ram_pwrdn/                           @MarekPorwisz
 /lib/sample_rate_converter/               @nrfconnect/ncs-audio
-/lib/sfloat/                              @nrfconnect/ncs-si-muffin
+/lib/sfloat/                              @nrfconnect/ncs-blenders
 /lib/sms/                                 @nrfconnect/ncs-modem-tre
-/lib/st25r3911b/                          @nrfconnect/ncs-si-muffin
+/lib/st25r3911b/                          @nrfconnect/ncs-radio-sw
 /lib/supl/                                @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem-tre
 /lib/tone/                                @nrfconnect/ncs-audio
 /lib/uicc_lwm2m/                          @stig-bjorlykke
@@ -702,7 +744,7 @@
 /samples/mpsl/**/*.rst                    @nrfconnect/ncs-dragoon-doc
 /samples/net/**/*.rst                     @nrfconnect/ncs-cia-doc
 /samples/net/coap_client/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
-/samples/nrf93m1dk/**/*.rst 		  @nrfconnect/ncs-iot-oulu-tampere-doc
+/samples/nrf93m1dk/**/*.rst               @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/nfc/**/*.rst                     @nrfconnect/ncs-radio-sw
 /samples/nrf54h20/idle_relocated_tcm/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/empty_app_core/*.rst     @nrfconnect/ncs-si-muffin-doc
@@ -752,6 +794,9 @@
 # Scripts
 /scripts/compare_quarantine.py            @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/docker/                          @nrfconnect/ncs-ci
+/scripts/bluetooth/mesh/mesh_dfu_metadata.py @nrfconnect/ncs-paladin
+/scripts/cert_tool.py                     @nrfconnect/ncs-libmodem
+/scripts/checkpatch/typedefsfile          @nrfconnect/ncs-code-owners
 /scripts/ci/do_not_merge.py               @carlescufi
 /scripts/ci/pm_legacy.txt                 @rghaddab
 /scripts/ci/quarantine_notifier.py        @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
@@ -767,6 +812,13 @@
 /scripts/ci/license_allow_list.yaml       @carlescufi
 /scripts/ci/requirements.txt              @carlescufi
 /scripts/get_pulls_in_range.py            @carlescufi
+/scripts/manifest-userdata-schema.yml     @nrfconnect/ncs-co-build-system
+/scripts/memfault/mds_ble_gateway.py      @nrfconnect/ncs-memfault
+/scripts/memfault/requirements.txt        @nrfconnect/ncs-memfault
+/scripts/memory-threshold-list.yaml       @nrfconnect/ncs-co-verification
+/scripts/partition_manager.py             @nrfconnect/ncs-co-build-system
+/scripts/partition_manager_output.py      @nrfconnect/ncs-co-build-system
+/scripts/partition_manager_report.py      @nrfconnect/ncs-co-build-system
 /scripts/requirements.txt                 @carlescufi
 /scripts/tag_west_repos.sh                @nrfconnect/ncs-code-owners
 /scripts/tools-versions-darwin.yml        @jangalda-nsc @thst-nordic
@@ -780,6 +832,17 @@
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/schemas/                         @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
+/scripts/shell/ble_console/               @nrfconnect/ncs-ll-izera
+/scripts/shell/bt_nus_shell.py            @nrfconnect/ncs-ll-izera
+/scripts/shell/requirements.txt           @nrfconnect/ncs-ll-izera
+/scripts/traffic_gen_server.py            @sachinthegreen @krish2718
+/scripts/unity/func_name_list.py          @nrfconnect/ncs-ll-izera
+/scripts/unity/header_prepare.py          @nrfconnect/ncs-ll-izera
+/scripts/west-commands.yml                @nrfconnect/ncs-co-scripts
+/scripts/west_commands/mypy.ini           @nrfconnect/ncs-co-scripts
+/scripts/west_commands/ncs_commands.py    @nrfconnect/ncs-co-scripts
+/scripts/west_commands/ncs_west_helpers.py @nrfconnect/ncs-co-scripts
+/scripts/west_commands/pygit2_helpers.py  @nrfconnect/ncs-co-scripts
 /scripts/west_commands/utils/             @gmarull
 /scripts/west_commands/create_board/      @nordicjm
 /scripts/west_commands/sbom/              @nrfconnect/ncs-co-scripts
@@ -974,6 +1037,8 @@
 /tests/drivers/watchdog/                  @nrfconnect/ncs-low-level-test
 /tests/drivers/adc/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/flash/multicore_soc_flash/ @nrfconnect/ncs-low-level-test
+/tests/include/mock_nrf_modem_at.h        @nrfconnect/ncs-modem-tre
+/tests/include/mock_nrf_rpc_transport.h   @nrfconnect/ncs-blenders
 /tests/lib/at_cmd_custom/                 @nrfconnect/ncs-modem
 /tests/lib/at_parser/                     @nrfconnect/ncs-modem
 /tests/lib/contin_array/                  @nrfconnect/ncs-audio
@@ -1004,6 +1069,7 @@
 /tests/lib/tone/                          @nrfconnect/ncs-audio
 /tests/lib/uicc_lwm2m/                    @stig-bjorlykke
 /tests/lib/app_jwt/                       @nrfconnect/ncs-modem
+/tests/mocks/nrf_modem_at/mock_nrf_modem_at.c @nrfconnect/ncs-modem-tre
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/                   @nrfconnect/ncs-eris
@@ -1037,6 +1103,7 @@
 /tests/subsys/net/lib/downloader/         @nrfconnect/ncs-modem
 /tests/subsys/net/lib/fota_download/      @nrfconnect/ncs-eris
 /tests/subsys/net/lib/lwm2m_*/            @nrfconnect/ncs-iot-oulu
+/tests/subsys/net/lib/mcumgr_smp_client/  @nrfconnect/ncs-cia
 /tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-cia
 /tests/subsys/net/lib/nrf_cloud/          @nrfconnect/ncs-nrf-cloud
 /tests/subsys/net/lib/nrf_provisioning/   @nrfconnect/ncs-iot-oulu
@@ -1080,7 +1147,7 @@
 /tests/zephyr/drivers/timer/              @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/uart/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/watchdog/           @nrfconnect/ncs-low-level-test
-/tests/zephyr/kernel/sleep/				  @nrfconnect/ncs-low-level-test
+/tests/zephyr/kernel/sleep/                               @nrfconnect/ncs-low-level-test
 /tests/zephyr/kernel/timer/timer_behavior/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/modules/tf-m/regression/    @nrfconnect/ncs-aegir
 /tests/zephyr/subsys/sd/                  @nrfconnect/ncs-low-level-test
@@ -1110,4 +1177,4 @@
 /boards/**/*.dtsi                         @nrfconnect/ncs-co-boards
 Kconfig*                                  @nrfconnect/ncs-co-build-system
 CMakeLists*                               @nrfconnect/ncs-co-build-system
-*.cmake	                                  @nrfconnect/ncs-co-build-system
+*.cmake                                   @nrfconnect/ncs-co-build-system
