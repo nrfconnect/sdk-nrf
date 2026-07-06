@@ -10,7 +10,7 @@
 
 .. |54H_nrfutil_device_ver| replace:: 2.17.2
 .. |54H_nrfutil_trace_ver| replace:: 4.4.0
-.. |ironside_se_ver| replace:: v23.7.0+30
+.. |ironside_se_ver| replace:: v23.8.0+33
 
 .. |mbed_tls_ver| replace:: 4.1.0
 .. |tf-m_ver| replace:: v2.3.0

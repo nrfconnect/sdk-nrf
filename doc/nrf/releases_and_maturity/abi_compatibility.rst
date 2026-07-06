@@ -48,6 +48,22 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Enclave (IronSide SE) v23.8.0+33
+================================================
+
+Added
+-----
+
+* Support for the Nordic nRF Global Software Watchdog Timer (GSWDT).
+  You can enable this feature through the Zephyr driver using the ``cpuapp_gswdt`` devicetree node.
+
+Fixed
+-----
+
+* An issue where using the LFRC would break the System Controller's monitoring of stalled MRAM transactions.
+* Decoupled the TEMPERATURE and MRAM handlers to prevent the MRAM monitor from timing out and skipping MRAM checks.
+  The MRAM monitor now triggers every 11 s.
+
 IronSide Secure Enclave (IronSide SE) v23.7.0+30
 ================================================
 
