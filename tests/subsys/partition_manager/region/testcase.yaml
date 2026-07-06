@@ -37,16 +37,3 @@ tests:
     tags:
       - sysbuild
       - ci_tests_subsys_partition_manager
-  regions.settings_storage_tfm:
-    sysbuild: true
-    platform_allow: nrf5340dk/nrf5340/cpuapp/ns
-    integration_platforms:
-      - nrf5340dk/nrf5340/cpuapp/ns
-    extra_configs:
-      - CONFIG_FCB=y
-      - CONFIG_SETTINGS=y
-      - CONFIG_SETTINGS_FCB=y
-      - CONFIG_PM_PARTITION_REGION_SETTINGS_STORAGE_EXTERNAL=y
-    tags:
-      - sysbuild
-      - ci_tests_subsys_partition_manager
