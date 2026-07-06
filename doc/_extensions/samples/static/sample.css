@@ -1,0 +1,27 @@
+
+.vscode-button {
+  width: var(--ncs-right-toc-width);
+  max-width: var(--ncs-right-toc-width);
+  background-color: #252526 !important;
+  color: #F3F3F3;
+  /* Align with toc */
+  margin-right: -26px !important;
+  padding: 0 !important;
+}
+
+.vscode-button p {
+  max-width: 100% !important;
+}
+.vscode-button img {
+  width: 2em;
+  max-width: 2em !important;
+  margin-right: .5em !important;
+  display: inline-block !important;
+}
+
+.vscode-button a {
+  color: #F3F3F3 !important;
+  text-decoration: none !imortant;
+  display: block;
+  margin: 24px;
+}
