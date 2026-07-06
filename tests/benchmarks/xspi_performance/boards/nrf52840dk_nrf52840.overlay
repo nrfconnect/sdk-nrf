@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		dut-flash = &mx25r64;
+	};
+};
+
+&led0 {
+	/* Logic is inverted to adapt to measurement methods */
+	gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+};
+
+&mx25r64 {
+	status = "okay";
+};
+
+tst_timer: &timer2 {
+	status = "okay";
+};
+
+&uart0 {
+	zephyr,pm-device-runtime-auto;
+	disable-rx;
+};

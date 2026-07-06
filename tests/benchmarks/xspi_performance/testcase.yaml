@@ -1,0 +1,142 @@
+common:
+  tags:
+    - drivers
+    - spi
+    - ci_tests_benchmarks_spi_performance
+    - ppk_power_measure
+
+tests:
+  benchmarks.xspi_performance.single.manual:
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=spi_single
+    platform_allow: &spi_single_platform_allow
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  benchmarks.xspi_performance.hpf_single.manual:
+    build_only: true
+    extra_args:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - EXTRA_DTC_OVERLAY_FILE='boards/nrf54l_hpf_single.overlay'
+    platform_allow: &spi_hpf_single_platform_allow
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  benchmarks.xspi_performance.quad.manual:
+    build_only: true
+    platform_allow: &spi_quad_platform_allow
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+
+  benchmarks.xspi_performance.sqspi.manual:
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=sqspi
+    platform_allow: &spi_sqspi_platform_allow
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  benchmarks.xspi_performance.hpf_quad.manual:
+    build_only: true
+    extra_args:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
+      - SB_CONFIG_VPR_LAUNCHER=n
+    platform_allow: &spi_hpf_quad_platform_allow
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  benchmarks.xspi_performance.octal.manual:
+    build_only: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  benchmarks.xspi_performance.single:
+    extra_args:
+      - FILE_SUFFIX=spi_single
+      - CONFIG_TEST_FIXED_OPERATION_SIZE=y
+    platform_allow: *spi_single_platform_allow
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness: pytest
+    harness_config: &spi_perf_harness_cfg
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_xspi_performance"
+
+  benchmarks.xspi_performance.hpf_single:
+    extra_args:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - EXTRA_DTC_OVERLAY_FILE='boards/nrf54l_hpf_single.overlay'
+      - CONFIG_TEST_FIXED_OPERATION_SIZE=y
+    platform_allow: *spi_hpf_single_platform_allow
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness: pytest
+    harness_config: *spi_perf_harness_cfg
+
+  benchmarks.xspi_performance.quad:
+    extra_args:
+      - CONFIG_TEST_FIXED_OPERATION_SIZE=y
+    platform_allow: *spi_quad_platform_allow
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    harness: pytest
+    harness_config: *spi_perf_harness_cfg
+
+  benchmarks.xspi_performance.sqspi:
+    extra_args:
+      - FILE_SUFFIX=sqspi
+      - CONFIG_TEST_FIXED_OPERATION_SIZE=y
+    platform_allow: *spi_sqspi_platform_allow
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness: pytest
+    harness_config: *spi_perf_harness_cfg
+
+  benchmarks.xspi_performance.hpf_quad:
+    extra_args:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - CONFIG_TEST_FIXED_OPERATION_SIZE=y
+    platform_allow: *spi_hpf_quad_platform_allow
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness: pytest
+    harness_config: *spi_perf_harness_cfg
+
+  benchmarks.xspi_performance.octal:
+    extra_args:
+      - CONFIG_TEST_FIXED_OPERATION_SIZE=y
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    harness: pytest
+    harness_config: *spi_perf_harness_cfg
