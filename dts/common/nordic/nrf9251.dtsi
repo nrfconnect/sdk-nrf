@@ -7,7 +7,7 @@
 #include <mem.h>
 #include <nordic/nrf_common.dtsi>
 #include <zephyr/dt-bindings/adc/nrf-saadc.h>
-#include <zephyr/dt-bindings/clock/nrfs-audiopll.h>
+#include <zephyr/dt-bindings/clock/nrf-auxpll.h>
 #include <dt-bindings/misc/nordic-nrf-ficr-nrf9220.h>
 #include <dt-bindings/misc/nordic-domain-id-nrf9220.h>
 #include <dt-bindings/misc/nordic-owner-id-nrf9220.h>
@@ -158,12 +158,6 @@
 			lflprc-startup-time-us = <200>; /* To be measured */
 			clocks = <&hfxo>, <&lfxo>;
 			clock-names = "hfxo", "lfxo";
-		};
-
-		audiopll: audiopll {
-			compatible = "nordic,nrfs-audiopll";
-			frequency = <NRFS_AUDIOPLL_FREQ_AUDIO_44K1>;
-			status = "disabled";
 		};
 	};
 
@@ -383,6 +377,26 @@
 			#size-cells = <1>;
 			ranges = <0x0 0x5f000000 0x1000000>;
 			reg = <0x5f000000 0x1000000>;
+
+			audiopll: audiopll@957000 {
+				compatible = "nordic,nrf-auxpll";
+				reg = <0x957000 0x1000>;
+				interrupts = <343 NRF_DEFAULT_IRQ_PRIORITY>;
+				clocks = <&hfxo>;
+				#clock-cells = <0>;
+				/*
+				 * Temporarily reading FICR addr 0 as FICR offsets
+				 * are not defined yet.
+				 */
+				nordic,ficrs = <&ficr 0>;
+				nordic,frequency = <NRF_AUXPLL_FREQ_DIV_AUDIO_44K1>;
+				nordic,out-div = <12>;
+				nordic,out-drive = <0>;
+				nordic,current-tune = <9>;
+				nordic,sdm-disable;
+				nordic,range = "mid";
+				status = "disabled";
+			};
 
 			axon: axon@8a000 {
 				compatible = "nordic,axon";
