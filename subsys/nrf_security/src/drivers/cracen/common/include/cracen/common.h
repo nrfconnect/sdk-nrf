@@ -152,6 +152,54 @@ int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry);
 void cracen_be_xor(uint8_t *buf, size_t buf_sz, size_t xor_val);
 
 /**
+ *  @brief Put a 16-bit integer as little-endian to arbitrary location.
+ *
+ *  @param val 16-bit integer.
+ *  @param dst Destination memory address to store the result.
+ */
+static inline void cracen_put_le16(uint16_t val, uint8_t *dst)
+{
+	dst[0] = val;
+	dst[1] = val >> 8;
+}
+
+/**
+ *  @brief Get a 16-bit integer stored in little-endian format.
+ *
+ *  @param src Location of the little-endian 16-bit integer to get.
+ *
+ *  @return 16-bit integer in little endian.
+ */
+static inline uint16_t cracen_get_le16(const uint8_t *src)
+{
+	return ((uint16_t)src[1] << 8) | src[0];
+}
+
+/**
+ *  @brief Put a 32-bit integer as little-endian to arbitrary location.
+ *
+ *  @param val 32-bit integer.
+ *  @param dst Destination memory address to store the result.
+ */
+static inline void cracen_put_le32(uint32_t val, uint8_t *dst)
+{
+	cracen_put_le16(val, dst);
+	cracen_put_le16(val >> 16, &dst[2]);
+}
+
+/**
+ *  @brief Get a 32-bit integer stored in little-endian format.
+ *
+ *  @param src Location of the little-endian 32-bit integer to get.
+ *
+ *  @return 32-bit integer in little endian.
+ */
+static inline uint32_t cracen_get_le32(const uint8_t src[4])
+{
+	return ((uint32_t)cracen_get_le16(&src[2]) << 16) | cracen_get_le16(&src[0]);
+}
+
+/**
  * @brief Hash several elements at different locations in memory with a previously created hash
  * context(sxhash)
  *
