@@ -545,7 +545,8 @@ SPI drivers
 Wi-Fi drivers
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`nRF71 Series Wi-Fi driver <nrf71_wifi_fw_if>` page documenting its firmware interface.
+* Updated the :ref:`wifi_drivers` page by restructuring it into separate nRF70 Series and nRF71 Series sections.
 
 Flash drivers
 -------------
