@@ -445,7 +445,9 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`lib_ram_pwrdn` library:
+
+  * Added support for the nRF54LC10A SoC.
 
 Shell libraries
 ---------------
