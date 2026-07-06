@@ -16,6 +16,7 @@
 #cmakedefine MBEDTLS_BASE64_C
 #cmakedefine MBEDTLS_MD_C
 #cmakedefine MBEDTLS_MEMORY_BUFFER_ALLOC_C
+#cmakedefine MBEDTLS_MEMORY_DEBUG
 #cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@
 #cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@
 #cmakedefine MBEDTLS_PEM_PARSE_C
