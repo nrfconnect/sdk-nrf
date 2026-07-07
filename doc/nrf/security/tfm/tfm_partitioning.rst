@@ -145,7 +145,9 @@ The attribution is enforced in hardware by the following peripherals, depending 
    * - nRF53 and nRF91 Series
      - System Protection Unit (SPU)
    * - nRF54L Series
-     - Memory Protection Controller (MPC) and Security Attribution Unit (SAU)
+     - | Memory Protection Controller (MPC) and Security Attribution Unit (SAU)
+       |
+       | See also :ref:`ug_tfm_partitioning_limitations`.
 
 These peripherals can only switch the security attribute at fixed region boundaries, whose size is given by :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` (flash) and :kconfig:option:`CONFIG_NRF_TRUSTZONE_RAM_REGION_SIZE` (RAM).
 As a result, every boundary between a secure and a non-secure region must fall on a multiple of the region size.
@@ -337,6 +339,18 @@ The build system does not catch every misaligned layout, and how a misaligned bo
      - Misaligned devicetree layout is not reported (assertions are compiled out), which silently breaks the isolation.
 
 To enable the debug build type with assertions, use the :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` Kconfig option (for example, by building with :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS`.)
+
+.. _ug_tfm_partitioning_limitations:
+
+TF-M partitioning limitations
+=============================
+
+The following limitations apply to the TF-M partitioning on nRF54L Series devices that limit the number of switches between secure and non-secure regions:
+
+* The number of :ref:`SAU regions <ug_tfm_partition_secure_non_secure>` is limited to four.
+* The number of :ref:`MPC regions <ug_tfm_partition_secure_non_secure>` is limited among the nRF54L Series devices, and especially on nRF54L15 and nRF54L10.
+
+These are hardware limitations and cannot be worked around.
 
 Custom and renamed partitions
 *****************************
