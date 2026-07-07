@@ -59,22 +59,6 @@ def get_first_edt_node(edt_data: Path, node_labels: list[str]) -> edtlib.EDTNode
     raise KeyError(f"None of the node labels {node_labels} found in EDT data")
 
 
-def get_app_slot0_node(edt_data: Path) -> edtlib.EDTNode:  # type: ignore
-    """Return the application primary slot partition node from EDT."""
-    return get_first_edt_node(
-        edt_data,
-        ["cpuapp_slot0_partition", "slot0_ns_partition", "slot0_partition"],
-    )
-
-
-def get_app_slot1_node(edt_data: Path) -> edtlib.EDTNode:  # type: ignore
-    """Return the application secondary slot partition node from EDT."""
-    return get_first_edt_node(
-        edt_data,
-        ["cpuapp_slot1_partition", "slot1_ns_partition", "slot1_partition"],
-    )
-
-
 def get_nsib_s0_node(edt_data: Path) -> edtlib.EDTNode:  # type: ignore
     """Return the NSIB s0 partition node from EDT."""
     return get_first_edt_node(edt_data, ["s0_partition", "slot0_partition"])
@@ -83,6 +67,31 @@ def get_nsib_s0_node(edt_data: Path) -> edtlib.EDTNode:  # type: ignore
 def get_partition_address(edt_data: Path, node_labels: list[str]) -> str:
     """Return the absolute address of a partition as a hex string."""
     return str(get_first_edt_node(edt_data, node_labels).regs[0].addr)
+
+
+def get_edt_chosen_node(edt_data: Path, chosen_property: str) -> edtlib.EDTNode:  # type: ignore
+    """Parse the EDT pickle file and return a node by its /chosen property name.
+
+    Args:
+        edt_data (Path): Path to the EDT pickle file.
+        chosen_property (str): The /chosen node property name (e.g. 'zephyr,code-partition').
+
+    Returns:
+        devicetree.edtlib.EDTNode: The node pointed to by the given /chosen property.
+
+    Raises:
+        RuntimeError: If the loaded data does not have the expected structure.
+        KeyError: If the chosen property is not found in the EDT data.
+
+    """
+    with open(edt_data, "rb") as file:
+        data = pickle.load(file)
+    try:
+        return data.chosen_nodes[chosen_property]
+    except AttributeError as e:
+        raise RuntimeError("Unexpected structure in loaded EDT data") from e
+    except KeyError:
+        raise KeyError(f"Chosen property '{chosen_property}' not found in EDT data") from None
 
 
 @dataclass
@@ -126,7 +135,7 @@ class BuildParameters:
                 header_size = find_in_config(zephyr_config, "CONFIG_TFM_MCUBOOT_HEADER_SIZE")
             else:
                 header_size = find_in_config(zephyr_config, "CONFIG_ROM_START_OFFSET")
-            slot_size = str(get_app_slot0_node(edt_data).regs[0].size)
+            slot_size = str(get_edt_chosen_node(edt_data, "zephyr,code-partition").regs[0].size)
         imgtool_params = ImgtoolParams(
             align=find_in_config(zephyr_config, "CONFIG_MCUBOOT_FLASH_WRITE_BLOCK_SIZE"),
             header_size=header_size,

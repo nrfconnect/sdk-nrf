@@ -12,9 +12,10 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 import pytest
-from parameters import BuildParameters
+from parameters import BuildParameters, get_edt_chosen_node
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.shell import ShellMCUbootCommandParsed
+from twister_harness.helpers.utils import match_lines, match_no_lines, find_in_config
 from twister_harness_ext.utils.helpers import retry, timer
 from twister_harness_ext.utils.imgtool_wrapper import imgtool_sign
 
@@ -148,15 +149,25 @@ class UpgradeTestManager(ABC):
         self.build_params.imgtool_params.security_counter = value
         logger.debug(f"Hardware counter value set to {value}")
 
-    def generate_image(self, app_to_sign: Path | None = None, confirmed: bool = False) -> Path:
+    def generate_image(self, app_to_sign: Path | None = None, confirmed: bool = False, rom_fixed: str | None = None) -> Path:
         """Sign application image with current version."""
         logger.info(f"Sign app with version {self.get_current_sign_version()}")
+
+        if rom_fixed:
+            extra_args = ["--rom-fixed", rom_fixed]
+        elif find_in_config(self.build_params.zephyr_config, "CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS") == "y":
+            edt_data = self.build_params.app_build_dir / "zephyr" / "edt.pickle"
+            rom_fixed_addr = str(get_edt_chosen_node(edt_data, "zephyr,code-partition").regs[0].addr)
+            extra_args = ["--rom-fixed", rom_fixed_addr]
+        else:
+            extra_args = None
+
         if not app_to_sign:
             app_to_sign = self.build_params.app_to_sign
         updated_app = imgtool_sign(
             app_to_sign,
             self.build_params.imgtool_params,
-            extra_args=["--confirm"] if confirmed else None,
+            extra_args=extra_args + ["--confirm"] if confirmed else extra_args,
         )
         assert updated_app.is_file()
         return updated_app
