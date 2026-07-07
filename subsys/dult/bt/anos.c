@@ -422,11 +422,28 @@ static int command_response_send(struct bt_conn *conn, const struct bt_gatt_attr
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
+static bool capability_verify(const struct dult_user *dult_user,
+			      enum dult_accessory_capability capability)
+{
+	return (dult_user->accessory_capabilities & BIT(capability));
+}
+
+static void capability_assert(const struct dult_user *dult_user,
+			      enum dult_accessory_capability capability)
+{
+	__ASSERT_NO_MSG(dult_user->accessory_capabilities & BIT(capability));
+}
+
 static enum anos_chrc_cmd_response_status verify_get_id(struct bt_conn *conn,
 							const struct dult_user *dult_user)
 {
 	ARG_UNUSED(conn);
-	ARG_UNUSED(dult_user);
+
+	if (!capability_verify(dult_user, DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_BLE_BIT_POS)) {
+		LOG_WRN("Identifier lookup (BLE) capability not supported - "
+			"identifier read blocked");
+		return ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND;
+	}
 
 	if (!dult_id_is_in_read_state()) {
 		LOG_WRN("Accessory not in identifier read state - identifier read blocked");
@@ -462,11 +479,6 @@ static int process_get_id(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static void capability_assert(enum dult_accessory_capability capability)
-{
-	__ASSERT_NO_MSG(dult_user_get()->accessory_capabilities & BIT(capability));
-}
-
 static int sound_command_response_send(struct bt_conn *conn,
 				       const struct bt_gatt_attr *attr,
 				       bool sound_start,
@@ -498,9 +510,15 @@ static enum anos_chrc_cmd_response_status verify_sound_start(struct bt_conn *con
 							     const struct dult_user *dult_user)
 {
 	ARG_UNUSED(conn);
-	ARG_UNUSED(dult_user);
 
-	capability_assert(DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS);
+	if (IS_ENABLED(CONFIG_DULT_ACCESSORY_TYPE_SMALL)) {
+		capability_assert(dult_user, DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS);
+	} else {
+		if (!capability_verify(dult_user, DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS)) {
+			LOG_WRN("Sound capability not supported - sound start blocked");
+			return ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND;
+		}
+	}
 
 	return (anos_sound_state != ANOS_SOUND_STATE_IDLE) ?
 		ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_STATE :
@@ -530,9 +548,14 @@ static int process_sound_start(struct bt_conn *conn, const struct bt_gatt_attr *
 static enum anos_chrc_cmd_response_status verify_sound_stop(struct bt_conn *conn,
 							    const struct dult_user *dult_user)
 {
-	ARG_UNUSED(dult_user);
-
-	capability_assert(DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS);
+	if (IS_ENABLED(CONFIG_DULT_ACCESSORY_TYPE_SMALL)) {
+		capability_assert(dult_user, DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS);
+	} else {
+		if (!capability_verify(dult_user, DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS)) {
+			LOG_WRN("Sound capability not supported - sound stop blocked");
+			return ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND;
+		}
+	}
 
 	return ((anos_sound_state != ANOS_SOUND_STATE_START_ACK) || (sound_conn != conn)) ?
 		ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_STATE :
