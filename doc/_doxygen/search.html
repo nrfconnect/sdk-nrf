@@ -1,0 +1,15 @@
+{% extends "sphinx_rtd_theme/search.html" %}
+{% block body %}
+  <div id="fallback" class="admonition tip">
+    <p class="admonition-title">Tip</p>
+    <p>
+      Search results include entries for all documentation sets. Each search
+      result entry is prefixed with the name of the documentation set in      
+      which the result is found. For example, the search result      
+      "nRF Connect SDK » Getting started" refers to the Getting Started
+      page from the "nRF Connect SDK" documentation set.
+    </p>
+  </div>
+  {{ super() }}
+{% endblock %}
+
