@@ -12,6 +12,13 @@
 
 #include <nrf_security_mem_helpers.h>
 
+/** Upper bound on the number of 3-byte candidates RejNTTPoly needs to fill all
+ *  256 coefficients: with rejection probability below 2^-128
+ *  (FIPS 204, Appendix C loop bound).
+ */
+#define ML_DSA_MAX_CANDIDATES_COUNT	298u
+#define ML_DSA_CANDIDATE_SIZE_BYTES	3u
+
 /** FIPS 204, Algorithm 14 (CoeffFromThreeBytes). Returns the coefficient, or a
  *  negative value when the three bytes must be rejected.
  */
@@ -30,6 +37,10 @@ psa_status_t cracen_ml_dsa_rej_ntt_poly(const uint8_t *seed, ml_dsa_poly_vector_
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	cracen_xof_operation_t operation;
+
+	uint8_t bytes[ML_DSA_CANDIDATE_SIZE_BYTES * ML_DSA_MAX_CANDIDATES_COUNT];
+	size_t bytes_to_squeeze = sizeof(bytes);
+	size_t pos = 0;
 	uint32_t j = 0;
 
 	status = cracen_xof_setup(&operation, PSA_ALG_SHAKE128);
@@ -42,16 +53,28 @@ psa_status_t cracen_ml_dsa_rej_ntt_poly(const uint8_t *seed, ml_dsa_poly_vector_
 		goto exit;
 	}
 
+	status = cracen_xof_output(&operation, bytes, bytes_to_squeeze);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+
 	while (j < ML_DSA_POLY_COEFFS_COUNT) {
-		uint8_t bytes[3];
 		int32_t coeff;
 
-		status = cracen_xof_output(&operation, bytes, sizeof(bytes));
-		if (status != PSA_SUCCESS) {
-			goto exit;
+		if (pos == bytes_to_squeeze) {
+			/* Rejections exhausted the buffer: fetch just what is missing. */
+			bytes_to_squeeze =
+				ML_DSA_CANDIDATE_SIZE_BYTES * (ML_DSA_MAX_CANDIDATES_COUNT - j);
+
+			status = cracen_xof_output(&operation, bytes, bytes_to_squeeze);
+			if (status != PSA_SUCCESS) {
+				goto exit;
+			}
+			pos = 0;
 		}
 
-		coeff = coeff_from_three_bytes(bytes[0], bytes[1], bytes[2]);
+		coeff = coeff_from_three_bytes(bytes[pos], bytes[pos + 1], bytes[pos + 2]);
+		pos += 3;
 		if (coeff >= 0) {
 			out->coeffs[j] = coeff;
 			j++;
@@ -59,6 +82,7 @@ psa_status_t cracen_ml_dsa_rej_ntt_poly(const uint8_t *seed, ml_dsa_poly_vector_
 	}
 
 exit:
+	safe_memzero(bytes, sizeof(bytes));
 	(void)cracen_xof_abort(&operation);
 	return status;
 }
