@@ -13,6 +13,7 @@ rsource "gpio/Kconfig"
 rsource "hw_cc3xx/Kconfig"
 rsource "dect/Kconfig"
 rsource "pulse_meas/Kconfig"
+rsource "saadct/Kconfig"
 
 if CLOCK_CONTROL
 
