@@ -389,6 +389,7 @@
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/ppi_seq/                 @nrfconnect/ncs-ll-izera
+/include/drivers/saadct.h                 @nrfconnect/ncs-ll-izera
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/dt-bindings/misc/nordic-domain-id-nrf9220.h @tervonenja
