@@ -13,6 +13,30 @@ menuconfig DULT
 
 if DULT
 
+choice DULT_ACCESSORY_TYPE
+	prompt "DULT accessory type"
+	default DULT_ACCESSORY_TYPE_SMALL
+	help
+	  Depending on the accessory size and discoverability, the DULT specification best practices
+	  are required or recommended. For more details see
+	  https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-applicability.
+
+config DULT_ACCESSORY_TYPE_SMALL
+	bool "Small accessory"
+	help
+	  This option marks the accessory as small accessory.
+	  The DULT specification best practices are required for location-enabled accessories
+	  that are small and not easily discoverable.
+
+config DULT_ACCESSORY_TYPE_LARGE
+	bool "Large accessory"
+	help
+	  This option marks the accessory as large accessory.
+	  The DULT specification best practices are recommended for location-enabled accessories
+	  that are large and easily discoverable.
+
+endchoice
+
 config DULT_BATTERY
 	bool "DULT battery information"
 	help
