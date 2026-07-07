@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 #define CON_STATUS_LED	 DK_LED1
 #define CS_CONFIG_ID	 0
 #define NUM_MODE_0_STEPS 3
-#define REFLECTOR_NAME	 "Nordic CS IPT Reflector"
+#define REFLECTOR_NAME	 "CS IPT Reflector"
 
 #define CHANNEL_INDEX_OFFSET   (2)
 #define MEDIAN_FILTER_SIZE (9)

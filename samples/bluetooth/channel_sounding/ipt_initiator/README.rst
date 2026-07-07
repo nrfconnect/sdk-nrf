@@ -27,7 +27,7 @@ Overview
 The sample acts as a Bluetooth Low Energy Central and Channel Sounding initiator.
 After startup, the sample performs the following steps:
 
-1. Scans for a reflector advertising the name ``Nordic CS IPT Reflector``.
+1. Scans for a reflector advertising the name ``CS IPT Reflector``.
 #. Connects to the reflector.
 #. Encrypts the ACL link.
 #. Reads the remote supported features.
@@ -113,7 +113,7 @@ To keep the sample minimal, it has the following limitations:
 User interface
 **************
 
-The sample does not require user input and scans for a device advertising with the name ``Nordic CS IPT Reflector``.
+The sample does not require user input and scans for a device advertising with the name ``CS IPT Reflector``.
 The first LED on the development kit will be lit when a connection has been established.
 
 Building and running

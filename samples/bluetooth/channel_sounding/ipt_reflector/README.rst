@@ -24,7 +24,7 @@ Overview
 The sample acts as a Bluetooth Low Energy Peripheral and Channel Sounding reflector.
 After startup, it performs the following steps:
 
-1. Starts connectable advertising using its name (``Nordic CS IPT Reflector``), which the :ref:`channel_sounding_ipt_initiator` sample scans for.
+1. Starts connectable advertising using its name (``CS IPT Reflector``), which the :ref:`channel_sounding_ipt_initiator` sample scans for.
 #. Waits for a central device to connect.
 #. Configures the CS default settings to enable the reflector role.
 #. The connected central device performs the rest of the CS setup.
@@ -75,7 +75,7 @@ After programming the sample to your development kit, test it together with a de
 
 1. |connect_terminal_specific|
 #. Reset both kits.
-#. The reflector starts advertising and the initiator scans for ``Nordic CS IPT Reflector``.
+#. The reflector starts advertising and the initiator scans for ``CS IPT Reflector``.
    Once the initiator connects, check the reflector terminal for information similar to the following::
 
       *** Booting nRF Connect SDK v3.2.99-09f8a95ee5b4 ***
