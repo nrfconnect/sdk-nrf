@@ -2069,3 +2069,10 @@ ci_tests_subsys_rtfw:
     - nrf/tests/subsys/rtfw/
     - nrf/include/rtfw/rtfw.h
     - nrf/subsys/rtfw/
+
+ci_samples_nrf_saadct:
+  files:
+    - nrf/samples/saadct/
+    - nrf/drivers/saadct/
+    - nrf/include/drivers/saadct.h
+    - nrf/dts/bindings/saadct/
