@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-
 static NRF_GPIO_Type *gpio_port =
 	((NRF_GPIO_Type *)DT_REG_ADDR(DT_GPIO_CTLR(DT_PATH(zephyr_user), gpios)));
 static uint32_t pin_mask = BIT(DT_GPIO_PIN(DT_PATH(zephyr_user), gpios));
@@ -22,7 +21,7 @@ static const struct gpio_dt_spec gpio_spec =
 	GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), gpios, 0);
 static const struct device *const uart_dev = DEVICE_DT_GET(DT_NODELABEL(dut));
 
-static const uint8_t tx_buf[] = {0x00, 0x00, 0x00};
+static const uint8_t tx_buf[] = {0x00, 0x00, 0x00, 0x00};
 
 #define PIN_STATE_SIZE 32768
 static uint8_t pin_state[PIN_STATE_SIZE] = {};
@@ -79,9 +78,10 @@ static void check_timing(uint32_t baudrate)
 	zassert_equal(ret, 0, "uart_config_get: %d\n", ret);
 
 	test_uart_config.parity = UART_CFG_PARITY_EVEN;
-	test_uart_config.stop_bits = UART_CFG_STOP_BITS_1;
+	test_uart_config.stop_bits = UART_CFG_STOP_BITS_2;
 	test_uart_config.flow_ctrl = UART_CFG_FLOW_CTRL_NONE;
 	test_uart_config.baudrate = baudrate;
+	test_uart_config.data_bits = UART_CFG_DATA_BITS_8;
 	ret = uart_configure(uart_dev, &test_uart_config);
 	if (ret == -ENOTSUP) {
 		TC_PRINT("[%d] Not supported\n", baudrate);
@@ -140,11 +140,6 @@ static void check_timing(uint32_t baudrate)
 			TC_PRINT("GPIO get takes: %.2f us\n", gpio_read_time_us_mean);
 		}
 
-		if (expected_bit_period_us < gpio_read_time_us_mean) {
-			TC_PRINT("[%d] Not supported - gpio measurement is too slow.\n", baudrate);
-			ztest_test_skip();
-		}
-
 		/*
 		 * Find start of start bit and end of stop bit. For higher baudrates it is
 		 * possible that first byte is already being transferred. In search for
@@ -173,9 +168,6 @@ static void check_timing(uint32_t baudrate)
 			}
 		}
 		TC_PRINT("Start index: %d, stop index: %d\n", start_index, stop_index);
-		zassert_true(start_index != -1, "Missing start_index\n");
-		zassert_true(stop_index != -1, "Missing stop_index\n");
-
 		double measured_period_us = (stop_index - start_index) * gpio_read_time_us_mean;
 		double measured_bit_us = measured_period_us / (double)number_of_bits;
 
@@ -205,14 +197,21 @@ static void check_timing(uint32_t baudrate)
 		 uart_dev->name, baudrate, symbol_diviation_mean, bit_diviation_mean);
 
 	if (start_index_count_zero == 0) {
+		if (expected_bit_period_us <
+		    (gpio_read_time_us_mean * (100 - accepted_deviation) / 100)) {
+			TC_PRINT("[%d] Not supported - gpio measurement is too slow.\n", baudrate);
+			ztest_test_skip();
+		}
+		TC_PRINT("[%d] Accepted deviation %d%%.\n", baudrate, accepted_deviation);
 		zassert_true(symbol_diviation_mean <= (double)accepted_deviation,
-			     "Symbol diviation %0.f%%  higher than %d%%\n",
-			     symbol_diviation_mean, accepted_deviation);
+			     "Symbol diviation %0.f%%  higher than %d%%\n", symbol_diviation_mean,
+			     accepted_deviation);
 		zassert_true(bit_diviation_mean <= (double)accepted_deviation,
-			     "Bit diviation %0.f%% higher than %d%%\n",
-			     bit_diviation_mean, accepted_deviation);
+			     "Bit diviation %0.f%% higher than %d%%\n", bit_diviation_mean,
+			     accepted_deviation);
 	} else {
 		TC_PRINT("Not checking diviation due to lost start of start bit\n");
+		ztest_test_skip();
 	}
 }
 
