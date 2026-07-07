@@ -2047,3 +2047,10 @@ ci_samples_zephyr_tfm_integration:
 ci_samples_nrf93m1dk:
   files:
     - nrf/samples/nrf93m1dk/
+
+ci_samples_nrf_saadct:
+  files:
+    - nrf/samples/saadct/
+    - nrf/drivers/saadct/
+    - nrf/include/saadct.h
+    - nrf/dts/bindings/saadct/
