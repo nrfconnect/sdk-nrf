@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&timer20 {
+	status = "okay";
+};
+
+&adc {
+	compatible = "nordic,nrf-saadct";
+	status = "okay";
+	timer-instance = <&timer20>;
+	/* Reserve SAADC to ensure that it is assigned to cpuapp and can be used by nrfx_saadc. */
+	#address-cells = <1>;
+	#size-cells = <0>;
+};

@@ -1,0 +1,18 @@
+sample:
+  name: saadct
+  description: SAADC + TIMER (SAADCT) sample application
+common:
+  tags: ci_samples_nrf_saadct
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
+  harness: console
+  harness_config:
+    type: one_line
+    regex:
+      - "Measurement finished (.*)"
+tests:
+  sample.saadct: {}
