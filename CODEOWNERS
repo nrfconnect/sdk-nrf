@@ -622,6 +622,7 @@
 /samples/peripheral/ppi_seq_spi/          @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
 /samples/pmic/native/                     @nordic-auko
+/samples/saadct/                          @nrfconnect/ncs-ll-izera
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/tfm/                             @nrfconnect/ncs-aegir
