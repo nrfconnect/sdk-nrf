@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -24,6 +24,24 @@ LOG_MODULE_REGISTER(dult_user, CONFIG_DULT_LOG_LEVEL);
 static atomic_ptr_t cur_user;
 static atomic_t is_enabled;
 
+static bool small_accessory_capabilities_verify(const struct dult_user *user)
+{
+	if (!(user->accessory_capabilities & BIT(DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS))) {
+		LOG_ERR("DULT play sound capability not supported");
+		return false;
+	}
+
+	if (!(user->accessory_capabilities &
+	      BIT(DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_NFC_BIT_POS)) &&
+	    !(user->accessory_capabilities &
+	      BIT(DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_BLE_BIT_POS))) {
+		LOG_ERR("DULT ID lookup (BLE or NFC) capability not supported");
+		return false;
+	}
+
+	return true;
+}
+
 int dult_user_register(const struct dult_user *user)
 {
 	if (!user) {
@@ -40,14 +58,8 @@ int dult_user_register(const struct dult_user *user)
 		__ASSERT_NO_MSG((name_len > 0) && (name_len <= DULT_USER_STR_PARAM_LEN_MAX));
 	}
 
-	if (!(user->accessory_capabilities & BIT(DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS))) {
-		return -EINVAL;
-	}
-
-	if (!(user->accessory_capabilities &
-	      BIT(DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_NFC_BIT_POS)) &&
-	    !(user->accessory_capabilities &
-	      BIT(DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_BLE_BIT_POS))) {
+	if (IS_ENABLED(CONFIG_DULT_ACCESSORY_TYPE_SMALL) &&
+	    !small_accessory_capabilities_verify(user)) {
 		return -EINVAL;
 	}
 
@@ -112,16 +124,20 @@ int dult_enable(const struct dult_user *user)
 		return err;
 	}
 
-	err = dult_sound_enable();
-	if (err) {
-		LOG_ERR("dult_sound_enable returned an error: %d", err);
-		return err;
+	if (user->accessory_capabilities & BIT(DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS)) {
+		err = dult_sound_enable();
+		if (err) {
+			LOG_ERR("dult_sound_enable returned an error: %d", err);
+			return err;
+		}
 	}
 
-	err = dult_id_enable();
-	if (err) {
-		LOG_ERR("dult_id_enable returned an error: %d", err);
-		return err;
+	if (user->accessory_capabilities & BIT(DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_BLE_BIT_POS)) {
+		err = dult_id_enable();
+		if (err) {
+			LOG_ERR("dult_id_enable returned an error: %d", err);
+			return err;
+		}
 	}
 
 	atomic_set(&is_enabled, true);
@@ -144,16 +160,20 @@ int dult_reset(const struct dult_user *user)
 
 	dult_near_owner_state_reset();
 
-	err = dult_id_reset();
-	if (err) {
-		LOG_ERR("dult_id_reset returned an error: %d", err);
-		return err;
+	if (user->accessory_capabilities & BIT(DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_BLE_BIT_POS)) {
+		err = dult_id_reset();
+		if (err) {
+			LOG_ERR("dult_id_reset returned an error: %d", err);
+			return err;
+		}
 	}
 
-	err = dult_sound_reset();
-	if (err) {
-		LOG_ERR("dult_sound_reset returned an error: %d", err);
-		return err;
+	if (user->accessory_capabilities & BIT(DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS)) {
+		err = dult_sound_reset();
+		if (err) {
+			LOG_ERR("dult_sound_reset returned an error: %d", err);
+			return err;
+		}
 	}
 
 	err = dult_bt_anos_reset();
