@@ -154,3 +154,10 @@
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39964"
+
+- scenarios:
+    - modules.lib.zcbor.decode
+    - modules.lib.zcbor.encode
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40216"
