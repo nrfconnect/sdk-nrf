@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: b8e6b9b3ed1f2c00a32e03975d189b5050e10c31
+      revision: bc35f6fe0b34aabaa64caaedd6c287b5c6f81a50
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
