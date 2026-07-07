@@ -955,52 +955,52 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
               * - ML-DSA-44
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
               * - ML-DSA-65
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
               * - ML-DSA-87
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
               * - ML-DSA Key Pair Import
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
               * - ML-DSA Key Pair Export
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
               * - ML-DSA Key Pair Generate
@@ -1025,12 +1025,12 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
               * - ML-DSA Public Key
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
               * - ML-KEM-512
@@ -2157,6 +2157,9 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
 
          .. tab:: nrf_oberon
 
@@ -5704,12 +5707,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                  - --
                  - --
                * - XMSS
@@ -5732,6 +5735,40 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+               * - Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HASH_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - Deterministic ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - Deterministic Hash ML-DSA
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+
+            .. note::
+
+               For ML-DSA algorithms, CRACEN only supports signature verification.
 
          .. tab:: nrf_oberon
 
@@ -6241,6 +6278,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
 
          .. tab:: nrf_oberon
 
@@ -9325,6 +9363,68 @@ The options are grouped by Series and drivers available for the device Series, a
 
       .. tabs::
 
+         .. tab:: CRACEN
+
+            .. list-table:: XOF algorithm support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - XOF algorithm
+                 - Configuration option
+                 - nRF54L05
+                 - nRF54L10
+                 - nRF54L15
+                 - nRF54LM20A
+                 - nRF54LM20B
+                 - nRF54LV10A
+                 - nRF54LS05A
+                 - nRF54LS05B
+               * - SHAKE128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - SHAKE256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - ASCON XOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+               * - ASCON CXOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+
+            .. note::
+
+               - The output of SHAKE128 and SHAKE256 is limited to 65535 bytes.
+               - XOF algorithms are optimized to be used by the CRACEN driver for ML-DSA algorithms rather than generic XOFs.
+
          .. tab:: nrf_oberon
 
             .. list-table:: XOF algorithm support (nrf_oberon driver) - nRF54L Series
@@ -9478,6 +9578,18 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
       The following table lists the XOF driver support for nRF54L Series devices.
 
       .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: XOF driver support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Kconfig option
+                 - Supported XOF algorithms
+               * - :kconfig:option:`CONFIG_PSA_USE_CRACEN_XOF_DRIVER`
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
 
          .. tab:: nrf_oberon
 
