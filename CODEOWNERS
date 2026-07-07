@@ -628,6 +628,7 @@
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
 /samples/pmic/native/                     @nordic-auko
 /samples/pulse_meas/                      @nrfconnect/ncs-ll-izera
+/samples/saadct/                          @nrfconnect/ncs-ll-izera
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/subsys/rtfw/                     @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
