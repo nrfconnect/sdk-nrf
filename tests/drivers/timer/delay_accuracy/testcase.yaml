@@ -7,7 +7,7 @@ common:
 
 tests:
   drivers.timer.delay_accuracy:
-    platform_allow:
+    platform_allow: &platform_allow
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuflpr
       - nrf54h20dk/nrf54h20/cpuppr
@@ -28,5 +28,12 @@ tests:
       - nrf9251dk/nrf9251/cpuapp
       - nrf9251dk/nrf9251/cpuflpr
       - nrf9251dk/nrf9251/cpuppr
-    integration_platforms:
+    integration_platforms: &integration_platforms
       - nrf54l15dk/nrf54l15/cpuapp
+
+  drivers.timer.delay_accuracy.hfxo:
+    platform_allow: *platform_allow
+    integration_platforms: *integration_platforms
+    extra_args:
+      - CONFIG_TEST_START_HFXO=y
+      - CONFIG_TEST_TOLERANCE_PERCENT=1
