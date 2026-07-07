@@ -20,9 +20,9 @@ The |NCS| |release| allows you to develop applications with the following versio
        - IronSide Secure Enclave version
        - Mbed TLS version
      * - v3.4.0
-       - |tf-m_ver|
+       - v2.3.0
        - |ironside_se_ver|
-       - 4.1.0
+       - v4.1.0
      * - ``main`` branch of `sdk-nrf`_
        - |tf-m_ver|
        - |ironside_se_ver|
@@ -55,14 +55,14 @@ Expand the following section to see the table listing versions of different secu
        - |ironside_se_ver|
        - |mbed_tls_ver|
      * - v3.4.0
-       - |tf-m_ver|
+       - v2.3.0
        - |ironside_se_ver|
-       - 4.1.0
+       - v4.1.0
      * - v3.3.0
        - v2.2.2
        - |ironside_se_ver|
        - 3.6.6
-     * - v3.2.0 (up to v3.2.4)
+     * - v3.2.0 (incl. patch versions)
        - v2.2.0
        - |ironside_se_ver|
        - 3.6.5
@@ -70,11 +70,11 @@ Expand the following section to see the table listing versions of different secu
        - v2.1.2
        - n/a
        - 3.6.4
-     * - v3.0.0 (up to v3.0.2)
+     * - v3.0.0 (incl. patch versions)
        - v2.1.1
        - n/a
        - 3.6.3
-     * - v2.9.0 (up to v2.9.2)
+     * - v2.9.0 (incl. patch versions)
        - v2.1.1
        - n/a
        - 3.6.2
@@ -86,15 +86,15 @@ Expand the following section to see the table listing versions of different secu
        - v2.0.0
        - n/a
        - 3.5.2
-     * - v2.6.0 (up to v2.6.4)
+     * - v2.6.0 (incl. patch versions)
        - v2.0.0
        - n/a
        - 3.5.2
-     * - v2.5.0 (up to v2.5.3)
+     * - v2.5.0 (incl. patch versions)
        - v1.8.0
        - n/a
        - 3.3.0
-     * - v2.4.0 (up to v2.4.4)
+     * - v2.4.0 (incl. patch versions)
        - v1.7.0
        - n/a
        - 3.3.0
@@ -106,7 +106,7 @@ Expand the following section to see the table listing versions of different secu
        - v1.6.0
        - n/a
        - 3.1.0
-     * - v2.1.0 (up to v2.1.4)
+     * - v2.1.0 (incl. patch versions)
        - v1.6.0
        - n/a
        - 3.1.0
