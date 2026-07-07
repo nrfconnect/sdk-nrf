@@ -179,6 +179,8 @@
   - "subsys/partition_manager/**/*"
   - "cmake/**/*"
   - "sysbuild/**/*"
+  - "scripts/requirements*.txt"
+  - "scripts/tools-versions-linux.yml"
 
 "CI-tfm-test":
   - "include/tfm/**/*"
