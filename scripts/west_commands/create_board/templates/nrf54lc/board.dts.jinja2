@@ -1,0 +1,140 @@
+{% if target['core'] == 'cpuapp' %}
+/dts-v1/;
+
+#include <nordic/{{ soc }}_{{ target['core'] }}.dtsi>
+#include "{{ board }}-pinctrl.dtsi"
+
+/ {
+	model = "{{ board_desc }}";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-cpuapp";
+
+	chosen {
+		zephyr,code-partition = &slot0_partition;
+		zephyr,sram = &cpuapp_sram;
+		zephyr,flash = &cpuapp_rram;
+		zephyr,flash-controller = &rram_controller;
+		zephyr,ieee802154 = &ieee802154;
+	};
+
+	nrf_mpc: memory@50041000 {
+		compatible = "nordic,nrf-mpc";
+		reg = <0x50041000 0x1000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		override-num = <5>;
+		override-granularity = <4096>;
+	};
+};
+
+&grtc {
+	owned-channels = <0 1 2 3 4 5 6 7 8 9 10 11>;
+	/* Channels 7-11 reserved for Zero Latency IRQs, 3-4 for FLPR */
+	child-owned-channels = <3 4 7 8 9 10 11>;
+	status = "okay";
+};
+
+&cpuapp_sram {
+	status = "okay";
+};
+
+&radio {
+	status = "okay";
+};
+
+&temp {
+	status = "okay";
+};
+
+&clock {
+	status = "okay";
+};
+
+&bt_hci_controller {
+	status = "disabled";
+};
+
+&ieee802154 {
+	status = "okay";
+};
+
+/* These partition sizes assume no FLPR area in RRAM */
+&cpuapp_rram {
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			/*
+			 * MCUBoot partition is set to 62k to allow FPROTECT to be enabled by
+			 * default.
+			 */
+			reg = <0x0 DT_SIZE_K(62)>;
+		};
+
+		slot0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x10000 DT_SIZE_K(456)>;
+		};
+
+		slot1_partition: partition@82000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x82000 DT_SIZE_K(456)>;
+		};
+
+		storage_partition: partition@f4000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0xf4000 DT_SIZE_K(36)>;
+		};
+	};
+};
+{% else %}
+/dts-v1/;
+
+#include <nordic/{{ soc }}_{{ target['core'] }}.dtsi>
+#include "{{ board }}-pinctrl.dtsi"
+
+/ {
+	model = "{{ board_desc }}";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-cpuflpr";
+
+	chosen {
+		zephyr,code-partition = &cpuflpr_code_partition;
+		zephyr,flash = &cpuflpr_rram;
+		zephyr,sram = &cpuflpr_sram;
+	};
+
+	nrf_mpc: memory@50041000 {
+		compatible = "nordic,nrf-mpc";
+		reg = <0x50041000 0x1000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		override-num = <5>;
+		override-granularity = <4096>;
+	};
+};
+
+&cpuflpr_rram {
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		cpuflpr_code_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x0 DT_SIZE_K(64)>;
+		};
+	};
+};
+
+&grtc {
+	owned-channels = <3 4>;
+	status = "okay";
+};
+{% endif %}

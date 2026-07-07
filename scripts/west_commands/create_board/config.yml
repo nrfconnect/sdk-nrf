@@ -150,6 +150,20 @@ products:
                 arch: arm
                 ram: 96
                 flash: 204
+  - series: nrf54lc
+    socs:
+      - name: nrf54lc10a
+        variants:
+          - name: qfaa
+            cores:
+              - name: cpuapp
+                arch: arm
+                ram: 191
+                flash: 456
+              - name: cpuflpr
+                arch: riscv
+                ram: 64
+                flash: 0
   - series: nrf91
     socs:
       - name: nrf9131
