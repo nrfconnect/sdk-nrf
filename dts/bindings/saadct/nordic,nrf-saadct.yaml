@@ -1,0 +1,15 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: Nordic Semiconductor nRF SAADC sampled by TIMER (SAADCT)
+
+compatible: "nordic,nrf-saadct"
+
+include: nordic,nrf-saadc.yaml
+
+properties:
+  timer-instance:
+    required: true
+    type: phandle
+    description: |
+      Timer instance used to trigger SAADC sampling through GPPI.
