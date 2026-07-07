@@ -2048,3 +2048,7 @@ ci_samples_zephyr_tfm_integration:
   files:
     - nrf/samples/zephyr/tfm_integration/
     - zephyr/samples/tfm_integration/
+
+ci_samples_nrf93m1dk:
+  files:
+    - nrf/samples/nrf93m1dk/
