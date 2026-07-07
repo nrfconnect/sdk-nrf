@@ -20,4 +20,9 @@ config TEST_TIMER_FREQUENCY_MHZ
 	  Calculations are int32_t based and may overflow on devices
 	  with low accuracy or high frequency of the timer.
 
+config TEST_START_HFXO
+	bool "Start HFXO to increase clock accuracy"
+	help
+	  When set to 'y', clock source is switched to external crystal oscillator.
+
 source "Kconfig.zephyr"

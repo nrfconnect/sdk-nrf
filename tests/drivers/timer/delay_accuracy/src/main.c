@@ -8,8 +8,59 @@
 #include <zephyr/ztest.h>
 #include <nrfx_timer.h>
 #include <stdlib.h>
-
 #include <zephyr/logging/log.h>
+#if defined(CONFIG_TEST_START_HFXO)
+#include <zephyr/drivers/clock_control.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#if NRF54L_ERRATA_20_PRESENT
+#include <nrf_sys_event.h>
+#endif /* NRF54L_ERRATA_20_PRESENT */
+
+static void clock_init(void)
+{
+	int err;
+	int res;
+	struct onoff_manager *clk_mgr;
+	struct onoff_client clk_cli;
+
+	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+	if (!clk_mgr) {
+		TC_PRINT("Unable to get the Clock manager\n");
+		return;
+	}
+
+	sys_notify_init_spinwait(&clk_cli.notify);
+
+	err = onoff_request(clk_mgr, &clk_cli);
+	if (err < 0) {
+		TC_PRINT("Clock request failed: %d\n", err);
+		return;
+	}
+
+	do {
+		err = sys_notify_fetch_result(&clk_cli.notify, &res);
+		if (!err && res) {
+			TC_PRINT("Clock could not be started: %d\n", res);
+			return;
+		}
+	} while (err);
+
+#if NRF54L_ERRATA_20_PRESENT
+	if (nrf54l_errata_20()) {
+		nrf_sys_event_request_global_constlat();
+	}
+#endif /* NRF54L_ERRATA_20_PRESENT */
+
+#if NRF54L_ERRATA_39_PRESENT
+	if (nrf54l_errata_39()) {
+		nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+	}
+#endif /* NRF54L_ERRATA_39_PRESENT */
+
+	TC_PRINT("Clock has started\n");
+}
+#endif /* CONFIG_TEST_START_HFXO */
+
 LOG_MODULE_REGISTER(delay_accuracy, LOG_LEVEL_INF);
 
 nrfx_timer_t test_timer = NRFX_TIMER_INSTANCE(DT_REG_ADDR(DT_NODELABEL(tst_timer)));
@@ -17,6 +68,10 @@ nrfx_timer_t test_timer = NRFX_TIMER_INSTANCE(DT_REG_ADDR(DT_NODELABEL(tst_timer
 static void *suite_setup(void)
 {
 	int ret;
+
+#if defined(CONFIG_TEST_START_HFXO)
+	clock_init();
+#endif
 
 	/* Configure Timer. */
 	uint32_t base_frequency = NRFX_TIMER_BASE_FREQUENCY_GET(&test_timer);
