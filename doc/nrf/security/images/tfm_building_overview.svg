@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="610px" height="300px" viewBox="0 0 610 300" xml:space="preserve">
+	<style type="text/css">
+	<![CDATA[
+		.zone-dev  { fill: #f8f9fa; stroke: #d9e1e2; stroke-width: 1; }
+		.zone-hdr  { fill: #333f48; }
+		.hdr-txt   { fill: #ffffff; font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; }
+		.step      { fill: #d9e1e2; stroke: #768692; stroke-width: 1; }
+		.step-ncs  { fill: #c1e8ff; stroke: #2149c2; stroke-width: 1; }
+		.ncs-outer { fill: #f8f9fa; stroke: #0033a0; stroke-width: 2; }
+		.ncs-hdr   { fill: #0033a0; }
+		.txt       { fill: #333f48; font-family: Arial, sans-serif; font-size: 12px; }
+		.txt-file  { fill: #333f48; font-family: Consolas, monospace; font-size: 11px; }
+		.txt-w-h   { fill: #ffffff; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; }
+		.arr       { stroke: #333f48; stroke-width: 1.5; fill: none; }
+		.arr-muted { stroke: #768692; stroke-width: 1.2; fill: none; stroke-dasharray: 4,3; }
+		.arr-head  { fill: #333f48; }
+		.arr-head-muted { fill: #768692; }
+	]]>
+	</style>
+	<defs>
+		<marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+			<path d="M0,0 L8,4 L0,8 Z" class="arr-head"/>
+		</marker>
+		<marker id="arr-muted" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+			<path d="M0,0 L8,4 L0,8 Z" class="arr-head-muted"/>
+		</marker>
+	</defs>
+
+	<!-- Developer zone -->
+	<rect class="zone-dev" x="10" y="28" width="175" height="256" rx="6"/>
+	<rect class="zone-hdr" x="10" y="28" width="175" height="24" rx="6"/>
+	<rect class="zone-hdr" x="10" y="40" width="175" height="12"/>
+	<text class="hdr-txt" x="97" y="45" text-anchor="middle">Developer</text>
+
+	<rect class="step" x="22" y="66" width="151" height="34" rx="4"/>
+	<text class="txt" x="97" y="88" text-anchor="middle">Select */ns board target</text>
+
+	<rect class="step" x="22" y="114" width="151" height="38" rx="4"/>
+	<text class="txt" x="97" y="130" text-anchor="middle">Configure build to minimal</text>
+	<text class="txt" x="97" y="144" text-anchor="middle">or configurable</text>
+
+	<rect class="step" x="22" y="166" width="151" height="54" rx="4"/>
+	<text class="txt" x="97" y="184" text-anchor="middle">Configure memory regions</text>
+	<text class="txt" x="97" y="198" text-anchor="middle">in devicetree for custom</text>
+	<text class="txt" x="97" y="212" text-anchor="middle">partitions</text>
+
+	<rect class="step" x="22" y="234" width="151" height="34" rx="4"/>
+	<text class="txt" x="97" y="256" text-anchor="middle">Build your configuration</text>
+
+	<!-- Developer step arrows (centered in gaps) -->
+	<line class="arr-muted" x1="97" y1="103" x2="97" y2="111" marker-end="url(#arr-muted)"/>
+	<line class="arr-muted" x1="97" y1="155" x2="97" y2="163" marker-end="url(#arr-muted)"/>
+	<line class="arr-muted" x1="97" y1="223" x2="97" y2="231" marker-end="url(#arr-muted)"/>
+
+	<!-- nRF Connect SDK zone -->
+	<rect class="ncs-outer" x="210" y="28" width="185" height="256" rx="8"/>
+	<rect class="ncs-hdr" x="210" y="28" width="185" height="38" rx="8"/>
+	<rect class="ncs-hdr" x="210" y="54" width="185" height="12"/>
+	<text class="txt-w-h" x="302" y="47" text-anchor="middle">nRF Connect SDK</text>
+	<text class="txt-w-h" x="302" y="60" text-anchor="middle">build system</text>
+
+	<rect class="step-ncs" x="220" y="90" width="165" height="68" rx="4"/>
+	<text class="txt" x="302" y="112" text-anchor="middle">Calls Zephyr's DTS</text>
+	<text class="txt" x="302" y="128" text-anchor="middle">partitioning to define</text>
+	<text class="txt" x="302" y="144" text-anchor="middle">memory regions</text>
+
+	<rect class="step-ncs" x="220" y="172" width="165" height="88" rx="4"/>
+	<text class="txt" x="302" y="196" text-anchor="middle">Calls TF-M build system</text>
+	<text class="txt" x="302" y="211" text-anchor="middle">to set the secure and</text>
+	<text class="txt" x="302" y="226" text-anchor="middle">non-secure boundaries and</text>
+	<text class="txt" x="302" y="241" text-anchor="middle">the TF-M partitions</text>
+
+	<!-- NCS step arrow -->
+	<line class="arr-muted" x1="302" y1="161" x2="302" y2="169" marker-end="url(#arr-muted)"/>
+
+	<!-- Build output zone -->
+	<rect class="ncs-outer" x="420" y="28" width="175" height="256" rx="8"/>
+	<rect class="ncs-hdr" x="420" y="28" width="175" height="38" rx="8"/>
+	<rect class="ncs-hdr" x="420" y="54" width="175" height="12"/>
+	<text class="txt-w-h" x="507" y="47" text-anchor="middle">Build</text>
+	<text class="txt-w-h" x="507" y="60" text-anchor="middle">output</text>
+
+	<rect class="step-ncs" x="432" y="78" width="151" height="52" rx="4"/>
+	<text class="txt" x="507" y="98" text-anchor="middle">TF-M secure image</text>
+	<text class="txt-file" x="507" y="116" text-anchor="middle">tfm_s.hex</text>
+
+	<rect class="step-ncs" x="432" y="142" width="151" height="56" rx="4"/>
+	<text class="txt" x="507" y="161" text-anchor="middle">Non-secure application</text>
+	<text class="txt" x="507" y="175" text-anchor="middle">image</text>
+	<text class="txt-file" x="507" y="191" text-anchor="middle">zephyr.hex</text>
+
+	<rect class="step-ncs" x="432" y="210" width="151" height="48" rx="4"/>
+	<text class="txt" x="507" y="228" text-anchor="middle">Other images</text>
+	<text class="txt" x="507" y="242" text-anchor="middle">depending on configuration</text>
+
+	<!-- Main flow arrows -->
+	<line class="arr" x1="185" y1="156" x2="207" y2="156" marker-end="url(#arr)"/>
+	<line class="arr" x1="395" y1="156" x2="417" y2="156" marker-end="url(#arr)"/>
+</svg>
