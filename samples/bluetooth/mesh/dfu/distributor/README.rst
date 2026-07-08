@@ -8,7 +8,8 @@ Bluetooth Mesh: Device Firmware Update (DFU) distributor
    :depth: 2
 
 The Bluetooth® Mesh DFU distributor sample demonstrates how device firmware can be distributed over a Bluetooth Mesh network.
-The sample implements the Firmware Distribution role of the :ref:`Bluetooth Mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
+The sample implements the Distributor role of the Bluetooth Mesh DFU architecture.
+Refer to :ref:`dfu_over_bt_mesh` for an introduction to the feature and links to the Zephyr :ref:`Bluetooth Mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
 
 Requirements
 ************
@@ -141,39 +142,56 @@ Configure the Firmware Update Server and BLOB Transfer Server models on the seco
 Performing a Device Firmware Update
 -----------------------------------
 
-The Bluetooth Mesh defines the Firmware update Initiator role to control the firmware distribution.
-This sample supports, but does not require an external Initiator to control the DFU procedure.
+The end-to-end procedure for performing a Device Firmware Update over Bluetooth Mesh (uploading the image to the Distributor, populating the receivers list, initiating the distribution, and applying the image on the Target nodes) is described in :ref:`dfu_over_bt_mesh`.
+Follow the steps in the guide to run a DFU with this sample.
 
-To activate the new firmware image on the Target node, the new image to be distributed must satisfy acceptance crieria for the target (for example: see Target sample requirements stated in :ref:`ble_mesh_dfu_target_upgrade`).
+The Bluetooth Mesh DFU Model specification defines the Firmware Update Initiator's role of controlling the firmware distribution.
+This sample supports, but does not require, an external Initiator to control the DFU procedure.
+You can drive the procedure in the following ways:
 
-There are two ways to perform a Device Firmware Update on a mesh network using the Distributor sample:
+* Using the nRF Mesh mobile app as an Initiator (recommended, and covered step-by-step in :ref:`dfu_over_bt_mesh`).
+* Using the shell commands provided by the Bluetooth Mesh DFU subsystem in Zephyr instead of an Initiator.
+  You can execute the shell commands using either the shell management subsystem of the MCU manager (for example, using the `nRF Connect Device Manager`_ application, or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`), or the :ref:`zephyr:shell_api` module over RTT.
 
-* Through the shell management subsystem of MCU manager.
-* Through the nRF Mesh mobile application.
+To activate the new firmware image on the Target node, the image must satisfy the acceptance criteria for the target (for example, see the Target sample requirements described in :ref:`ble_mesh_dfu_target_upgrade`).
 
-.. tabs::
+Expected distribution duration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. group-tab:: nRF Mesh app (iOS)
+The time required to distribute a firmware image to the Target nodes depends on the following factors:
 
-      .. note::
-         If you plan to use the nRF Mesh app, the Mesh DFU feature is currently supported only in the nRF Mesh app for iOS.
+* The number of Target nodes
+* The distribution addressing (multicast group address versus per-target unicast address)
+* The image size
+* The network topology
+* The network quality
 
-      Obtain the firmware image archive for the target node from the build directory and copy it to your mobile device.
-      Then follow the steps in the :ref:`dfu_over_bt_mesh` guide to perform the firmware distribution.
+The following figures are indicative reference numbers observed with the |NCS| Bluetooth Mesh DFU samples (target sample build: 324.40 KB) and are provided as an order-of-magnitude estimate only.
 
-   .. group-tab:: Shell
+.. table::
+   :align: left
 
-      The Bluetooth Mesh DFU subsystem also provides a set of shell commands that you can use instead of the Initiator.
-      Follow the instructions in the :ref:`dfu_over_bt_mesh` guide on how to perform the firmware distribution without the Initiator.
-      You can execute the commands in the following two ways:
+   +----------------+---------------------+-----------------------+
+   | Distribution   | Small deployment    | Large deployment      |
+   | addressing     |                     |                       |
+   +================+=====================+=======================+
+   | Multicast      | ~2 hours (2 nodes)  | ~2 h 15 min           |
+   |                |                     | (~135 min, 100 nodes) |
+   +----------------+---------------------+-----------------------+
+   | Unicast        | ~34 minutes         | ~3400 minutes         |
+   |                | (1 node)            | (~57 h, 100 nodes)    |
+   +----------------+---------------------+-----------------------+
 
-      * Through the shell management subsystem of MCU manager (for example, using the `nRF Connect Device Manager`_ application for Android, or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`).
-      * Using the :ref:`zephyr:shell_api` module over RTT.
+With multicast addressing, the Distributor sends the image once and all receivers pick it up in parallel, so the total duration grows only moderately with the number of Target nodes.
+With per-target unicast addressing, the Distributor sends the image sequentially to each Target node, so the total duration grows roughly linearly with the number of Target nodes.
 
 .. _ble_mesh_dfu_distributor_fw_image_upload:
 
-Uploading a firmware image
---------------------------
+Alternative ways of uploading a firmware image
+----------------------------------------------
+
+The main procedure for uploading a firmware image to the Distributor is the phone-based flow described in :ref:`dfu_over_bt_mesh`.
+You can use the alternatives documented in this section when the phone-based flow is not applicable, for example, in automated setups or when the image is provided by another Initiator device on the mesh network.
 
 A firmware image can be uploaded to the device in two ways:
 
