@@ -3057,6 +3057,13 @@ Thingy:53: weather station
 
 The issues in this section are related to the :ref:`matter_weather_station_app` application.
 
+.. rst-class:: v3-4-0 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
+
+KRKNWK-22015: Matter Weather Station application does not support the Q quality on the ``BatPercentRemaining`` and ``BatTimeRemaining`` attributes
+  This causes the values to be reported too frequently.
+
+  **Workaround:** Cherry-pick the commit ``7d8cf7d0c72aead891d38dc8089a08f6671e3b20`` from the `sdk-nrf`_ repository.
+
 .. rst-class:: v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
 
 KRKNWK-21190: Identify trigger effect enabled in weather station application's endpoints
