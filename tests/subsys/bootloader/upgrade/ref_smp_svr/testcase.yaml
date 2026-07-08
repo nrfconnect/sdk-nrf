@@ -245,6 +245,7 @@ tests:
     extra_args:
       - SB_CONFIG_BOOT_ENCRYPTION=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
+      - mcuboot_CONFIG_BOOT_ECDSA_TINYCRYPT=y
       - FILE_SUFFIX=larger_mcuboot
 
   mcuboot.upgrade.encryption.ed25519:
