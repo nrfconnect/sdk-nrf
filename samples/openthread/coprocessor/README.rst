@@ -159,6 +159,38 @@ To enable HCI support, complete the following steps:
 
          west build -b *board_target* -p -- -DEXTRA_CONF_FILE=extra_conf/rcp_hci.conf -DEXTRA_DTC_OVERLAY_FILE=extra_conf/rcp_hci.overlay
 
+To attach Bluetooth HCI on your host machine, run the command for your operating system, replacing ``serial_port`` with the serial port of the device you want to connect to:
+
+.. tabs::
+
+   .. tab:: Linux
+
+      .. parsed-literal::
+         :class: highlight
+
+         sudo btattach -B *serial_port* -S 1000000 -P h4 -N
+
+      For example:
+
+      .. parsed-literal::
+         :class: highlight
+
+         sudo btattach -B /dev/ttyACM0 -S 1000000 -P h4 -N
+
+   .. tab:: Windows
+
+      .. parsed-literal::
+         :class: highlight
+
+         gatt_counter.exe -u *serial_port* --baud 1000000
+
+      For example:
+
+      .. parsed-literal::
+         :class: highlight
+
+         gatt_counter.exe -u COM1 --baud 1000000
+
 Vendor hooks
 ============
 

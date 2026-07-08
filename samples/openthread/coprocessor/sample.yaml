@@ -93,8 +93,12 @@ tests:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.openthread.coprocessor.hci.nrf54l_05_10_15:
     sysbuild: true
     build_only: true

@@ -14,6 +14,7 @@
 #include <zephyr/sys/util.h>
 
 #include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/init.h>
 #include <zephyr/drivers/uart.h>
 
@@ -213,16 +214,18 @@ static void bt_uart_isr(const struct device *unused, void *user_data)
 	ARG_UNUSED(unused);
 	ARG_UNUSED(user_data);
 
-	if (!(uart_irq_rx_ready(hci_uart_dev) || uart_irq_tx_ready(hci_uart_dev))) {
-		LOG_DBG("spurious interrupt");
-	}
+	while (uart_irq_update(hci_uart_dev) && uart_irq_is_pending(hci_uart_dev)) {
+		if (!(uart_irq_rx_ready(hci_uart_dev) || uart_irq_tx_ready(hci_uart_dev))) {
+			LOG_DBG("spurious interrupt");
+		}
 
-	if (uart_irq_tx_ready(hci_uart_dev)) {
-		tx_isr();
-	}
+		if (uart_irq_tx_ready(hci_uart_dev)) {
+			tx_isr();
+		}
 
-	if (uart_irq_rx_ready(hci_uart_dev)) {
-		rx_isr();
+		if (uart_irq_rx_ready(hci_uart_dev)) {
+			rx_isr();
+		}
 	}
 }
 
@@ -318,6 +321,11 @@ static int hci_uart_init(void)
 	uart_irq_tx_disable(hci_uart_dev);
 
 	uart_irq_callback_set(hci_uart_dev, bt_uart_isr);
+
+	if (DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_bt_c2h_uart), zephyr_cdc_acm_uart)) {
+		(void)uart_line_ctrl_set(hci_uart_dev, UART_LINE_CTRL_DCD, 1);
+		(void)uart_line_ctrl_set(hci_uart_dev, UART_LINE_CTRL_DSR, 1);
+	}
 
 	uart_irq_rx_enable(hci_uart_dev);
 

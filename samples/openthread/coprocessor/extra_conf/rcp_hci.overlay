@@ -8,15 +8,19 @@
 	chosen {
 		zephyr,ot-uart = &cdc_acm_uart_rcp;
 		zephyr,bt-c2h-uart = &cdc_acm_uart_hci;
+		zephyr,console = &cdc_acm_uart_hci;
+		zephyr,shell-uart = &cdc_acm_uart_rcp;
 	};
 };
 
 &zephyr_udc0 {
 	cdc_acm_uart_hci: cdc_acm_uart_hci {
 		compatible = "zephyr,cdc-acm-uart";
+		label = "Bluetooth HCI";
 	};
 
 	cdc_acm_uart_rcp: cdc_acm_uart_rcp {
 		compatible = "zephyr,cdc-acm-uart";
+		label = "Thread Co-Processor";
 	};
 };
