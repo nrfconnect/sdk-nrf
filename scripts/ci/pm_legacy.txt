@@ -30,8 +30,6 @@ applications.nrf_desktop.zdebug_partition_manager_mcuboot_direct_xip.uart
 applications.nrf_desktop.zdebug_partition_manager_mcuboot_single_app
 applications.nrf_desktop.zdebug_partition_manager_single_image.uart
 sample.find_my.locator_tag.pm_legacy.boot_max_img_sectors
-sample.find_my.locator_tag.pm_legacy
 sample.find_my.switchable_networks.pm_legacy.boot_max_img_sectors
-sample.find_my.switchable_networks.pm_legacy
 sample.bluetooth.fast_pair.input_device.pm_legacy
 test.bluetooth.fast_pair.locator_tag_legacy.fast_pair_api_legacy.pm_legacy
