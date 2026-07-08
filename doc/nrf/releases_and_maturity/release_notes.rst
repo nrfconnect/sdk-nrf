@@ -29,6 +29,7 @@ This page is included only in the latest documentation, because it might contain
    releases/release-notes-3.3.0-preview3
    releases/release-notes-3.3.0-preview2
    releases/release-notes-3.3.0-preview1
+   releases/release-notes-3.2.5
    releases/release-notes-3.2.4
    releases/release-notes-3.2.3
    releases/release-notes-3.2.2
