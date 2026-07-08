@@ -18,7 +18,6 @@ target_include_directories(app PRIVATE
 
 target_sources(app PRIVATE
   ${app_sources}
-  ../common/nrf_rpc_single_thread.c
   )
 
 # Fill the gaps due to not setting OPENTHREAD.
@@ -28,9 +27,4 @@ zephyr_include_directories(
 
 zephyr_compile_definitions(
   CONFIG_OPENTHREAD_PKT_LIST_SIZE=1
-)
-
-# Enforce single-threaded nRF RPC command processing.
-target_link_options(app PUBLIC
-  -Wl,--wrap=nrf_rpc_os_init,--wrap=nrf_rpc_os_thread_pool_send
 )

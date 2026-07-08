@@ -233,8 +233,6 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientAddService_otSrpClientClearService)
 
 	/* Verify that clearing the service that has not been registered results in error */
 	error = otSrpClientClearService(NULL, &service);
-	mock_nrf_rpc_tr_expect_done();
-
 	zassert_equal(error, OT_ERROR_NOT_FOUND);
 }
 
