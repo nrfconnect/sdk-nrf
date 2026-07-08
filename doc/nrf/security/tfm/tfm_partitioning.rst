@@ -9,119 +9,103 @@ TF-M memory partitioning
 
 As the Secure Processing Environment (SPE), TF-M is the first image to run after the bootloader.
 It is therefore responsible for setting up the hardware-enforced isolation between the secure and non-secure worlds before it hands over execution to the non-secure application.
-This page explains where the partition boundaries come from and how they are turned into a security policy in hardware.
+This page explains where the partition boundaries come from, how they are organized, and how they are turned into a security policy in hardware.
 
 .. _ug_tfm_partitioning_overview:
 
-TF-M devicetree partitioning overview
-*************************************
+TF-M and devicetree partitioning overview
+*****************************************
 
-The partitions used by TF-M are secure flash and RAM partitions within the Trusted Firmware-M architecture:
+TF-M partitioning involves two related concepts: a devicetree memory region (also called a devicetree partition) is an address range declared in devicetree, and a TF-M partition is a secure-image component placed inside one of those regions.
 
-* The partitions in the non-secure image and in the storage areas are used to set the security attributes of the flash and RAM regions.
-* The secure partitions in the secure image (TF-M partitions) are used to implement the secure services.
-  These partitions are isolated from the non-secure application code.
+* Devicetree memory regions in the non-secure image and in storage areas set the security attributes of flash and RAM.
+* TF-M partitions in the secure image (also known as secure partitions) implement secure services and store secure data.
+  They are isolated from the non-secure application code.
 
-When you :ref:`build TF-M <ug_tfm_building>`, the |NCS| build system defines these partitions using Zephyr's :ref:`devicetree-based partitioning <zephyr:dt-guide>`.
+When you :ref:`build TF-M <ug_tfm_building>`, the |NCS| build system defines the devicetree memory regions using Zephyr's :ref:`devicetree-based partitioning <zephyr:dt-guide>`.
+It then calls the :ref:`tfm_build_system` to create TF-M partitions within the secure devicetree memory regions.
+In TF-M, this second step is performed by :ref:`Secure Partition Manager (SPM) <ug_tfm_partitioning_role_of_spm>`.
 
-The following diagram shows a generalized overview of the TF-M partitions:
+The following diagram shows a simplified view of the partitioning process:
 
 .. uml::
 
    @startuml
    top to bottom direction
 
-   package "Build time\n(nRF Connect SDK)" as build {
-     component "Devicetree\n(*_ns.dts or overlay)" as DT
-     component #C1E8FF "slot0_partition (slot0_s_partition)\nslot0_ns_partition" as CODE
-     component #C1E8FF "sram0_s\nsram0_ns" as RAM
-     component #C1E8FF "tfm_its_partition\ntfm_ps_partition\ntfm_otp_partition" as TFM_FLASH
-     component #C1E8FF "storage_partition" as NS_STORE
+   package "nRF Connect SDK build system" as build {
+     package "Devicetree\n(Creates devicetree partitions used by TF-M)" as zephyr_build {
+       component "Devicetree\n(*_ns.dts or overlay)" as DT
+       component #C1E8FF "slot0_partition (slot0_s_partition)\nslot0_ns_partition" as CODE
+       component #C1E8FF "sram0_s\nsram0_ns" as RAM
+       component #C1E8FF "tfm_its_partition\ntfm_ps_partition\ntfm_otp_partition" as TFM_FLASH
+       component #C1E8FF "storage_partition" as NS_STORE
 
-     DT -down-> CODE
-     DT -down-> RAM
-     DT -down-> TFM_FLASH
-     DT -down-> NS_STORE
+       DT -down-> CODE
+       DT -down-> RAM
+       DT -down-> TFM_FLASH
+       DT -down-> NS_STORE
+     }
+
+     package "TF-M build system\n(Creates TF-M partitions inside secure devicetree memory regions)" as tfm_build {
+       component #C1E8FF "tfm_its_partition\ntfm_ps_partition\ntfm_otp_partition" as TFM_FLASH_SOURCE
+       component #2149C2 "tfm_its" as TFM_ITS
+       component #2149C2 "tfm_ps\ntfm_otp" as TFM_PS
+     }
+
+     zephyr_build -down-> tfm_build : Addresses & sizes
+     TFM_FLASH -- TFM_FLASH_SOURCE
+     TFM_FLASH_SOURCE -down-> TFM_ITS
+     TFM_FLASH_SOURCE -down-> TFM_PS
    }
-
-   package "Runtime (device)" as runtime {
-     component "Non-secure image (NSPE)" as NSPE
-     component "Secure image (SPE)" as SPE
-     component "TF-M Secure Partition Manager" as SPM
-     component "Protected Storage" as PS
-     component "Internal Trusted Storage" as ITS
-     component "Crypto" as CR
-     component #C1E8FF "tfm_its_partition" as F_ITS
-     component #C1E8FF "tfm_ps_partition\ntfm_otp_partition" as F_PS
-     component "(Hardware)\nSPU or MPC" as HW
-
-     NSPE -right-> SPE : PSA API (IPC)
-     SPE -down-> SPM
-     SPM -down-> PS
-     SPM -down-> ITS
-     SPM -down-> CR
-     PS -down-> ITS : Uses ITS internally
-     CR -down-> ITS : Stores keys
-     ITS -down-> F_ITS
-     PS -down-> F_PS
-     SPM -right-> HW : Security attributes
-   }
-
-   build -down-> runtime : Addresses & sizes
-
-   component #DE823B "TF-M partition nodes" as nodes
-
-   nodes -[#DE823B]up-> CODE
-   nodes -[#DE823B]up-> RAM
-   nodes -[#DE823B]up-> TFM_FLASH
-   nodes -[#DE823B]up-> NS_STORE
-   nodes -[#DE823B]down-> F_ITS
-   nodes -[#DE823B]down-> F_PS
    @enduml
 
 See the following sections for more information.
 
-Devicetree nodes that define TF-M partitions
-============================================
+Devicetree memory regions and TF-M partitions
+=============================================
 
-With devicetree-based partitioning, the partition nodes in the board's :file:`*_ns.dts` file (or in a devicetree overlay) are the single source of truth for the memory map.
-At build time, TF-M reads the addresses and sizes of these nodes and uses them to place the images and to program the memory protection hardware.
+With devicetree-based partitioning, the memory region nodes in the board's :file:`*_ns.dts` files (or in a devicetree overlay) are the single source of truth for the memory map.
+At build time, the TF-M build system reads the addresses and sizes of these nodes and uses them to place the images and to program the memory protection hardware.
 
-The following table lists the devicetree nodes that define the TF-M partitions:
+Devicetree memory regions used for TF-M
+---------------------------------------
 
-.. list-table:: Devicetree nodes that define TF-M partitions
+The following table lists the devicetree memory regions used for TF-M partitions:
+
+.. list-table:: Devicetree memory regions for TF-M partitions
    :header-rows: 1
 
-   * - Devicetree node
-     - Description
+   * - Devicetree memory region (node)
+     - Purpose
+     - Additional information
    * - ``slot0_partition`` or ``slot0_s_partition``
-     - | Node for the secure image (SPE). It defines the secure code start address and size.
-       | This is ``slot0_s_partition`` when the secure image is a sub-partition of a combined MCUboot slot.
+     - Memory region for the secure image (SPE); defines the secure code start address and size.
+     - This is ``slot0_s_partition`` when the secure image is a sub-partition of a combined MCUboot slot.
    * - ``slot0_ns_partition``
-     - | Node for the non-secure image (NSPE).
-       | Its start address is the boundary between the secure and non-secure worlds in non-volatile memory. The ``zephyr,code-partition`` chosen node of the non-secure image points to it.
-   * - ``sram0_s`` and ``sram0_ns``
-     - Nodes for the secure and non-secure RAM regions, respectively.
-   * - | ``tfm_ps_partition``
-       | ``tfm_its_partition``
-       | ``tfm_otp_partition``
-     - Nodes for the storage areas owned by TF-M (Protected Storage, Internal Trusted Storage, and OTP/NV counters.)
+     - Memory region for the non-secure image (NSPE).
+     - Its start address is the boundary between the secure and non-secure worlds in non-volatile memory. The ``zephyr,code-partition`` chosen node of the non-secure image points to it.
+   * - ``sram0_s``
+     - Memory region for the secure RAM.
+     -
+   * - ``sram0_ns``
+     - Memory region for the non-secure RAM.
+     -
    * - ``storage_partition``
-     - Node for the non-secure storage area (used when non-secure storage is enabled.)
-
-TF-M consumes the values of these nodes through generated devicetree macros, so changing a ``reg`` property in devicetree directly changes where TF-M places the corresponding region and how it configures the hardware.
+     - Memory region for the non-secure storage area.
+     - Used when non-secure storage is enabled.
 
 .. _ug_tfm_partition_secure_non_secure:
 
 What marks a region as secure or non-secure
 ===========================================
 
-During its startup, TF-M uses the partition addresses from devicetree to give each flash and RAM region a Secure or Non-secure attribute:
+During its startup, TF-M uses the memory region addresses from devicetree to give each flash and RAM region a Secure or Non-secure attribute:
 
-.. list-table:: Security attributes by partition
+.. list-table:: Security attributes by devicetree memory region
    :header-rows: 1
 
-   * - Devicetree node
+   * - Devicetree memory region (node)
      - Security attribute at startup
    * - | ``slot0_partition`` or ``slot0_s_partition``
        | ``sram0_s``
@@ -153,10 +137,35 @@ These peripherals can only switch the security attribute at fixed region boundar
 As a result, every boundary between a secure and a non-secure region must fall on a multiple of the region size.
 See the following section for more information.
 
+.. _ug_tfm_partition_secure_memory_regions:
+
+TF-M partitions in the secure memory regions
+--------------------------------------------
+
+The memory regions in ``slot0_partition`` or ``slot0_s_partition`` define the size and placement of the following TF-M partitions:
+
+.. list-table:: TF-M partitions in the secure memory regions
+   :header-rows: 1
+
+   * - Devicetree memory region (node)
+     - TF-M build system name
+     - Description
+   * - ``tfm_ps_partition``
+     - ``tfm_ps``
+     - TF-M partition for Protected Storage.
+   * - ``tfm_its_partition``
+     - ``tfm_its``
+     - TF-M partition for Internal Trusted Storage.
+   * - ``tfm_otp_partition``
+     - ``tfm_otp``
+     - TF-M partition for OTP/NV counters.
+
+The TF-M build system consumes the values of these nodes through generated devicetree macros, so changing a ``reg`` property in devicetree directly changes where TF-M places the corresponding region and how it configures the hardware.
+
 Size of the TF-M partitions
 ===========================
 
-The required size of the TF-M partitions is affected by multiple configuration options and hardware-related options.
+The required size of the TF-M partitions in devicetree-based partitioning is affected by multiple configuration options and hardware-related options.
 The code and memory size of TF-M increases when more services are enabled, but the selected hardware also places limitations on how the separation of secure and non-secure is made.
 
 TF-M is linked as a separate image that occupies its own flash and RAM partitions in the final binary.
@@ -170,12 +179,12 @@ With devicetree-based partitioning, the reserved sizes of these partitions are t
 
 .. _ug_tfm_partition_alignment_requirements:
 
-TF-M partition alignment requirements
-*************************************
+TF-M memory region alignment requirements
+*****************************************
 
-TF-M requires that secure and non-secure partition addresses and sizes are aligned to the flash region size specified by the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` Kconfig option.
-The default board devicetree partition layouts already comply with this requirement.
-If you change the partition layout in devicetree, you are responsible for keeping the partitions aligned.
+TF-M requires that secure and non-secure region addresses and sizes are aligned to the flash region size specified by the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` Kconfig option.
+The default board devicetree memory region layouts already comply with this requirement.
+If you change the memory region layout in devicetree, you are responsible for keeping these region boundaries aligned.
 
 Alignment requirements per device family
 ========================================
@@ -224,7 +233,7 @@ The imaginary example above shows a worst-case scenario in the nRF91 Series wher
 This leaves a significant amount of unused space in the flash region.
 In a real-world scenario, the size of the TF-M binary and secure storage is usually much larger.
 
-When you define partitions in devicetree, you solely are responsible for following the alignment requirements.
+When you define memory regions in devicetree-based partitioning, you solely are responsible for following the alignment requirements.
 
 .. figure:: /images/secure-flash-regions.svg
    :alt: Example of aligning partitions with flash regions
@@ -233,27 +242,23 @@ When you define partitions in devicetree, you solely are responsible for followi
 
    Example of aligning partitions with flash regions
 
-The :ref:`partition_manager`, when enabled, takes the alignment requirements into consideration automatically.
+Alignment requirements for devicetree partition sets
+====================================================
 
-.. include:: ../../includes/pm_deprecation.txt
-
-Alignment requirements for partition sets
-=========================================
-
-You need to align the following partitions:
+You need to align the following devicetree memory regions:
 
 * Secure image (``slot0_partition`` or ``slot0_s_partition``)
 * Non-secure image (``slot0_ns_partition``)
 * Secondary slot (``slot1_partition``, when MCUboot DFU is configured)
-* Storage partitions (``tfm_ps_partition``, ``tfm_its_partition``, and ``tfm_otp_partition``)
-* Non-secure storage partition (``storage_partition``)
+* Storage memory regions (``tfm_ps_partition``, ``tfm_its_partition``, and ``tfm_otp_partition``)
+* Non-secure storage memory region (``storage_partition``)
 
-Both the start address and the size of these partitions need to be aligned with the TrustZone flash region size through the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` Kconfig option.
+Both the start address and the size of these memory regions need to be aligned with the TrustZone flash region size through the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` Kconfig option.
 
-You do not necessarily need to align each partition separately.
-What actually has to be aligned is each boundary where the security attribute changes, not every partition in isolation.
-If there is a set of multiple consecutive partitions and these partitions share the same security attribute, you need to align only the start address and the end address of the entire set.
-For example, the secure TF-M storage partitions ``tfm_ps_partition``, ``tfm_its_partition``, and ``tfm_otp_partition`` are a set of consecutive partitions that are placed back-to-back inside the secure region, so only the start address of the first partition and the end address of the last partition in the contiguous block need to be aligned to the region size.
+You do not necessarily need to align each of the regions separately.
+What actually has to be aligned is each boundary where the security attribute changes, not every region in isolation.
+If there is a set of multiple consecutive regions and these regions share the same security attribute, you need to align only the start address and the end address of the entire set.
+For example, the secure storage regions ``tfm_ps_partition``, ``tfm_its_partition``, and ``tfm_otp_partition`` are a set of consecutive devicetree partitions that are placed back-to-back inside the secure region, so only the start address of the first partition and the end address of the last partition in the contiguous block need to be aligned to the region size.
 
 .. note::
    The ``slot0_ns_partition`` is placed directly after the secure image, so the end address of the secure image is the same as the start address of ``slot0_ns_partition``.
@@ -282,7 +287,7 @@ The following devicetree snippet shows a non-aligned configuration for the nRF54
         };
     };
 
-In the above example, the ``slot0_ns_partition`` partition starts at address 0x7f800, which is not aligned with the requirement of 0x1000.
+In the above example, the ``slot0_ns_partition`` starts at address 0x7f800, which is not aligned with the requirement of 0x1000.
 Because ``slot0_ns_partition`` is placed directly after the secure image, you can fix the alignment by increasing the size of the secure image to the next multiple of the region size (0x80000).
 This shifts the start address of ``slot0_ns_partition`` to an aligned address and reduces its size by the same amount, keeping the end address unchanged:
 
@@ -308,7 +313,7 @@ This shifts the start address of ``slot0_ns_partition`` to an aligned address an
 What happens if the devicetree layout is not aligned
 ====================================================
 
-Because the hardware attributes whole regions, a partition boundary that is not aligned to the region size cannot be represented exactly.
+Because the hardware attributes whole regions, a memory region boundary that is not aligned to the region size cannot be represented exactly.
 The hardware can only place the boundary on a multiple of the region size, so a misaligned secure-to-non-secure boundary is rounded *down* to the start of the region that contains it, and that whole region is marked Non-secure.
 
 .. caution::
@@ -316,16 +321,16 @@ The hardware can only place the boundary on a multiple of the region size, so a 
     This silently breaks the isolation that TF-M is meant to provide, rather than producing an obvious error.
 
 Sharing a region also collides on access permissions, not only on the security attributes.
-On nRF53 and nRF91 Series devices, TF-M configures the non-secure image as readable, writable, and executable, but configures the non-secure storage partition as readable and writable only (not executable), and it applies the storage configuration last.
-If the non-secure image and a storage partition share an SPU region, that region ends up non-executable, so non-secure code located in it fails to execute.
-For this reason, you must keep all partitions that border a security change aligned to the region size.
+On nRF53 and nRF91 Series devices, TF-M configures the non-secure image as readable, writable, and executable, but configures the non-secure storage region as readable and writable only (not executable), and it applies the storage configuration last.
+If the non-secure image and a storage region share an SPU region, that region ends up non-executable, so non-secure code located in it fails to execute.
+For this reason, you must keep all memory regions that border a security change aligned to the region size.
 
 How to catch misaligned layouts at build time
 ---------------------------------------------
 
 The build system does not catch every misaligned layout, and how a misaligned boundary is reported depends on the device family and the build type:
 
-.. list-table:: Programming a misaligned partition by device family
+.. list-table:: Programming a misaligned devicetree partition by device family
    :header-rows: 1
 
    * - Device family
@@ -352,16 +357,84 @@ The following limitations apply to the TF-M partitioning on nRF54L Series device
 
 These are hardware limitations and cannot be worked around.
 
+.. _ug_tfm_partitioning_role_of_spm:
+
+Role of Secure Partition Manager
+********************************
+
+TF-M's Secure Partition Manager (SPM) is a core module of TF-M that is responsible for configuring the secure and non-secure regions and their attributes.
+It is used by :ref:`TF-M Core <ug_tfm_architecture_tfm_core>` to configure the secure and non-secure memory regions and their attributes and initialize the secure and non-secure hardware peripherals.
+
+For more information, see `Secure Partition Manager (SPM) <TF-M Secure Partition Manager_>`_ in the TF-M documentation.
+
+The |NCS| lets you configure the SPM backend to use when you are :ref:`configuring TF-M <ug_tfm_building_configuring_tfm>`.
+The following table lists the available SPM backends and the isolation levels they support:
+
+.. include:: tfm_building.rst
+   :start-after: configuring_spm_backend_start
+   :end-before: configuring_spm_backend_end
+
+Configuring TF-M partitions for TF-M services
+*********************************************
+
+When you are :ref:`configuring TF-M <ug_tfm_building_configuring_tfm>`, you can configure the TF-M partitions for the :ref:`TF-M services <ug_tfm_services>`.
+
+.. include:: tfm_building.rst
+   :start-after: tfm_partitions_configuration_start
+   :end-before: tfm_partitions_configuration_end
+
+.. _ug_tfm_partitioning_its_sizing:
+
+Sizing the Internal Trusted Storage
+===================================
+
+The storage for the :ref:`ug_tfm_services_its` is a separate ``tfm_its`` partition.
+
+The devicetree partitioning mechanism can only align the start address of the ``tfm_its`` partition with the flash region size (see :ref:`ug_tfm_partition_alignment_requirements`).
+
+TF-M does not guarantee in build time that the ``tfm_its`` partition can hold the assets configured with the :kconfig:option:`CONFIG_TFM_ITS_NUM_ASSETS` and :kconfig:option:`CONFIG_TFM_ITS_MAX_ASSET_SIZE` options.
+Depending on the available flash size, the ITS can use one or two flash pages (4 KB) for ensuring power failure safe operations.
+In addition, ITS stores the bookkeeping information for the assets in the flash memory and the bookkeeping size scales with the configured number of assets.
+This can leave a very small amount of space for the actual assets.
+
+It is recommended to test the ITS with the intended assets to ensure they fit in the available space.
+
+.. _ug_tfm_partitioning_ps_sizing:
+
+Sizing the Protected Storage partition
+======================================
+
+The storage for the :ref:`tfm_partition_ps` is a separate ``tfm_ps`` partition.
+Additionally, the PS partition requires non-volatile counters for rollback protection.
+Those are stored in the ``tfm_otp_nv_counters`` partition.
+
+Similarly to :ref:`ug_tfm_partitioning_its_sizing`, the devicetree partitioning mechanism can only align the start addresses of the partitions with the flash region size.
+
+TF-M does not guarantee in build time that the ``tfm_ps`` partition can hold the assets configured with the :kconfig:option:`CONFIG_TFM_PS_NUM_ASSETS` and :kconfig:option:`CONFIG_TFM_PS_MAX_ASSET_SIZE` options.
+The PS partition uses the ITS internally to store the assets in ``tfm_ps``.
+This means that some of the flash space is reserved for the ITS functionality.
+Additionally, the PS service stores the file metadata in object tables, which also consumes flash space.
+The size of the object table scales with the number of configured assets and two object tables (old and new) are required when performing PS operations.
+This might leave a very small amount of space for the actual assets.
+
+It is highly recommended to test the PS with the intended assets to ensure they fit in the available space.
+
 Custom and renamed partitions
 *****************************
 
+You can add custom devicetree partitions and custom TF-M partitions to your application.
+The way they are recognized and handled by TF-M depends on whether they are correctly configured for use with TF-M.
+
+Partitioning of custom and renamed devicetree partitions
+========================================================
+
 TF-M resolves a fixed set of devicetree node labels (the ``name:`` in ``name: partition@...``).
-What happens to a custom or renamed partition depends on whether it is one of these labels known to TF-M.
+What happens to a custom or renamed devicetree partition depends on whether it is one of these labels known to TF-M.
 
 Required node labels
-====================
+--------------------
 
-The following node labels are required.
+The following node labels are required for a devicetree memory region to be recognized by TF-M.
 Renaming or removing them makes the secure image fail to build:
 
 * ``slot0_partition`` (or ``slot0_s_partition`` when the secure image is a sub-partition of a combined MCUboot slot) - Secure code.
@@ -369,7 +442,7 @@ Renaming or removing them makes the secure image fail to build:
 * ``sram0_s`` and ``sram0_ns`` - Secure and non-secure RAM.
 
 Optional node labels
-====================
+--------------------
 
 The following node labels are optional and are only used when present:
 
@@ -381,13 +454,13 @@ If you rename one of the optional labels, the build still succeeds, but TF-M sil
 For example, a non-secure storage area that is not labeled ``storage_partition`` is not recognized as non-secure storage.
 
 Unknown node labels
-===================
+-------------------
 
-Partitions with labels that TF-M does not know (for example, an application data or settings partition) are ignored by TF-M.
+Devicetree partitions with labels that TF-M does not know (for example, an application data or settings partition) are ignored by TF-M.
 They are regular Zephyr partitions that the non-secure application can access through the flash map, but their accessibility is decided solely by which region the hardware attributes them to:
 
 Placement of custom partitions
-==============================
+------------------------------
 
 TF-M marks everything Secure by default and marks as Non-secure only the regions it recognizes (the non-secure image and RAM, ``storage_partition``, ``slot1_partition``, and the secure-gateway region.)
 This has the following consequences for custom partitions:
@@ -397,33 +470,117 @@ This has the following consequences for custom partitions:
 
 A custom partition does not create a security boundary of its own, because TF-M only changes the attribution at the partitions it recognizes.
 
-Make sure to place a custom partition that the non-secure application is supposed to access entirely within the non-secure region.
+Make sure to place a custom devicetree partition that the non-secure application is supposed to access entirely within the non-secure region.
 If making room for it requires moving a recognized boundary (for example, shrinking ``slot0_ns_partition``), that boundary must remain aligned to the region size.
+
+Adding a custom devicetree partition for TF-M
+=============================================
+
+To add a custom devicetree partition to your TF-M application, complete the following steps:
+
+1. Choose a node label for the partition:
+
+   * Use ``storage_partition`` for non-secure application storage, and subdivide it if you need several logical areas.
+   * Use a custom label for other data; TF-M ignores `Unknown node labels`_, so accessibility depends on partition placement (see `Placement of custom partitions`_ above).
+
+#. Define the partition in the board's :file:`*_ns.dts` file or in a :ref:`devicetree overlay <zephyr:set-devicetree-overlays>`.
+   Add a child node under the NVM memory node with the following properties:
+
+   * ``compatible = "zephyr,mapped-partition"``
+   * ``label``
+   * ``reg = <address size>``
+
+   See Zephyr's :ref:`devicetree guide <zephyr:dt-guide>` and :ref:`flash map <zephyr:flash_map_api>` documentation for the partition model.
+
+#. Place the partition in the correct security region.
+   Non-secure application data must be stored entirely within a region TF-M marks as non-secure (for example, inside ``slot0_ns_partition`` or ``storage_partition``).
+
+#. Align the partition start address, size, and any moved security boundary to :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE`.
+   See :ref:`ug_tfm_partition_alignment_requirements`.
+
+#. If you resize any partitions to make room for the new partition, update adjacent ``reg`` properties so partitions stay contiguous and security boundaries remain aligned.
+
+#. Build the application for a :ref:`board target supported by TF-M <ug_tfm_building_board_targets>`.
+
+#. Verify that the secure image still fits within the allocated devicetree memory regions.
+   You can analyze the size of TF-M's secure image and its partitions from the build output.
+   See :ref:`ug_tfm_partitioning_analyzing_secure_image_size` below for more information.
+
+.. _ug_tfm_partitioning_adding_tfm_partition:
+
+Adding a custom TF-M partition
+==============================
+
+The following procedure describes general steps for adding a custom TF-M partition.
+For the full manifest schema, build-system integration rules, and service implementation details, see `TF-M secure partition integration guide`_ in the TF-M documentation.
+
+To add a custom TF-M partition to your application, complete the following steps:
+
+1. Create a partition directory that contains the partition sources, manifest files, and TF-M build configuration.
+   Keep the partition sources separate from the non-secure application code.
+
+#. Write a partition manifest (for example, :file:`tfm_my_partition.yaml.in`) that describes the partition to the Secure Partition Manager (SPM).
+   The manifest must declare the partition name, type, SPM backend (IPC or SFN), entry point, stack size, and the RoT services it implements.
+   Each service needs a unique RoT Service ID (SID), and you must set whether non-secure clients can call it.
+   If the partition needs MMIO regions, secure interrupts, or services from other TF-M partitions, declare them in the ``mmio_regions``, ``irqs``, and ``dependencies`` sections of the manifest.
+
+#. Register the partition in a manifest list file (for example, :file:`tfm_manifest_list.yaml.in`).
+   This file tells the TF-M manifest tool where to find the partition manifest and how to link the partition library.
+
+#. Add a :file:`CMakeLists.txt` file in the partition directory that builds the partition as a static library named according to TF-M conventions (``tfm_app_rot_partition_*`` for Application RoT partitions).
+   The CMake file must link the partition into ``tfm_spm`` and ``tfm_partitions``, include the manifest-generated sources, and set a ``TFM_PARTITION_*`` compile definition.
+
+#. Connect the partition to your application build in the application's :file:`CMakeLists.txt` file:
+
+   * Use ``configure_file()`` to generate the partition manifest and manifest list files from their templates.
+   * Pass the generated manifest list and partition directory to TF-M through ``TFM_CMAKE_OPTIONS`` on the ``zephyr_property_target`` target, using ``-DTFM_EXTRA_MANIFEST_LIST_FILES`` and ``-DTFM_EXTRA_PARTITION_PATHS``.
+
+#. Implement the partition in the SPE:
+
+   * Provide the entry point function declared in the manifest.
+     For IPC-model partitions, this function runs a loop that waits on signals with ``psa_wait()`` and dispatches service requests and interrupt signals.
+   * Implement service handlers using the PSA Partition API (``psa_get()``, ``psa_read()``, ``psa_write()``, ``psa_reply()``).
+   * If the manifest declares secure interrupts, implement the required FLIH or SLIH handlers and signal-clearing logic.
+
+#. If the partition accesses secure peripherals, enable the peripherals for SPE use in :file:`prj.conf` file (for example, with ``CONFIG_NRF_*_SECURE`` options) and declare the peripheral MMIO regions and IRQs in the partition manifest.
+   If the peripheral uses GPIO pins, also configure GPIO pin security as described in :ref:`ug_tfm_building_secure_peripheral_gpio`.
+   See `TF-M Secure Interrupt Integration`_ in the TF-M documentation for details on MMIO regions and secure interrupts.
+
+#. Implement the non-secure client in the application firmware:
+
+   * Include the generated PSA interface headers from the TF-M build output (under ``TFM_BINARY_DIR``).
+   * Call the partition services through the PSA client API (``psa_connect()`` and ``psa_call()`` for connection-based services, or stateless handles for stateless services).
+
+#. Build the application for a :ref:`board target supported by TF-M <ug_tfm_building_board_targets>`.
+   Verify that the secure image still fits within the allocated devicetree memory regions.
+
+Examples of custom TF-M partitions
+==================================
+
+The :ref:`tfm_secure_peripheral_partition` sample demonstrates a complete custom partition with services, secure peripherals, and interrupts.
+For a minimal starting point, see Zephyr's :zephyr:code-sample:`tfm_secure_partition` sample.
 
 Changing the size of a TF-M partition
 *************************************
 
-Before you change a partition's address or size, make sure that the new values satisfy the hardware alignment rules described in :ref:`ug_tfm_partition_alignment_requirements`.
+Before you change a TF-M partition's address or size, make sure that the new devicetree memory range values satisfy the hardware alignment rules described in :ref:`ug_tfm_partition_alignment_requirements`.
 Otherwise, the build can still succeed but the security boundary that TF-M programs in hardware no longer matches the devicetree layout, which silently breaks the isolation between the secure and non-secure worlds.
 
-To change the size allocated to TF-M, edit the ``reg = <address size>`` property of the node that corresponds to the partition you want to change in the board's :file:`*_ns.dts` file or in a devicetree overlay.
+To change the size allocated to TF-M, edit the ``reg = <address size>`` property of the devicetree memory region node that corresponds to the TF-M partition you want to change in the board's :file:`*_ns.dts` file or in a devicetree overlay.
 The default sizes vary between device families and are not optimized for any specific use case.
 
-.. note::
-   If you use the deprecated :ref:`partition_manager` (for example, on the nRF91 Series), the reserved sizes are configured by the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` and :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` Kconfig options.
+To optimize the TF-M size, find the minimal set of features to satisfy the application needs and then minimize the allocated partition sizes while still conforming to the alignment and granularity requirements of given hardware.
 
-To optimize the TF-M size, find the minimal set of features to satisfy the application needs and then minimize the allocated partition sizes while still conforming to the alignment and granularity requirements of given hardware (see :ref:`ug_tfm_partition_alignment_requirements`).
+Guidelines for defining a non-secure memory region
+**************************************************
 
-Guidelines for defining a non-secure region
-*******************************************
-
-If your non-secure application needs its own non-volatile region, use the ``storage_partition`` node.
+If your non-secure application needs its own non-volatile memory region, use the ``storage_partition`` devicetree memory region node.
 This is the dedicated non-secure storage region.
 It is also the only flash region that TF-M attributes as Non-secure (besides the non-secure application image), so the non-secure application can access it through the standard Zephyr flash map and flash driver without any further configuration.
 
 Follow these guidelines:
 
-* Define the region as the ``storage_partition`` node.
+* Define the memory region as the ``storage_partition`` devicetree memory region node.
 * Keep both its start address and its size aligned to the TrustZone flash region size through the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` Kconfig option.
 * If you need several logical areas, subdivide ``storage_partition`` into sub-partitions rather than adding separate top-level partitions.
   All sub-partitions are within the same non-secure region and are therefore accessible to the non-secure application.
@@ -443,12 +600,14 @@ Follow these guidelines:
 
 Defining an additional, separately-located non-secure flash region is not possible through devicetree alone, because TF-M's set of non-secure regions is fixed.
 It would require extending the Nordic TF-M platform code to apply the non-secure attribution to the extra region, which is a platform-level customization.
-In most cases, consolidating the data into ``storage_partition`` is the recommended approach.
+In most cases, consolidating the data into ``storage_partition`` devicetree memory region node is the recommended approach.
+
+.. _ug_tfm_partitioning_analyzing_secure_image_size:
 
 How to analyze the secure image size
 ************************************
 
-You can analyze the size of the secure image from the build output:
+You can analyze the size of TF-M's secure image and its partitions from the build output:
 
 .. code-block:: console
 
@@ -462,14 +621,11 @@ It shows that the secure image flash partition (``slot0_partition`` in devicetre
 Similarly, the secure RAM partition (``sram0_s``) is set to 128 kB and the TF-M binary uses around 48 kB of the available space.
 You can use this information to optimize the size of TF-M by adjusting the ``reg`` properties of these devicetree nodes, as long as the result stays within the alignment requirements explained in the previous section.
 
-.. note::
-   When the deprecated :ref:`partition_manager` is used, these sizes are controlled by the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` and :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` Kconfig options instead.
-
 Tools for analyzing the secure image size
 =========================================
 
 The TF-M build system is compatible with Zephyr's :ref:`zephyr:footprint_tools` tools that let you generate RAM and ROM usage reports (using :ref:`zephyr:sysbuild_dedicated_image_build_targets`).
-You can use the reports to analyze the memory usage of the different TF-M partitions and see how changing the Kconfig options or the devicetree partition sizes affects the memory usage.
+You can use the reports to analyze the memory usage of the different memory regions and TF-M partitions and see how changing the Kconfig options or the region or partition sizes affects the memory usage.
 
 Depending on your development environment, you can generate memory reports for TF-M in the following ways:
 

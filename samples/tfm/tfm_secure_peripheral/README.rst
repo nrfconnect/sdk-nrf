@@ -1,13 +1,13 @@
 .. _tfm_secure_peripheral_partition:
 
-TF-M secure peripheral partition
-################################
+TF-M secure peripheral
+######################
 
 .. contents::
    :local:
    :depth: 2
 
-The TF-M secure peripheral partition sample demonstrates the configuration and usage of secure peripherals in a :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` partition.
+The TF-M secure peripheral sample demonstrates the configuration and usage of secure peripherals in a Trusted Firmware-M (TF-M) partition.
 
 Requirements
 ************
@@ -21,36 +21,48 @@ Optionally, you can also use a logic analyzer.
 Overview
 ********
 
-A secure partition is an isolated module that resides in TF-M.
+A TF-M partition is a partition in the TF-M secure image.
+It is used to implement the secure services and store secure data, and is isolated from the non-secure application code.
 It exposes a number of functions or secure services to other partitions or to the firmware in the :ref:`Non-Secure Processing Environment (NSPE) <app_boards_spe_nspe>` (or both).
-TF-M already contains standard partitions such as crypto, protected storage and firmware update, but you can also create your own partitions.
+For more information on TF-M partitions, see :ref:`ug_tfm_partitioning`.
 
-The sample demonstrates how to configure peripherals as secure peripherals and use them in the secure partition.
-In this way, the peripheral is only accessible from the :ref:`Secure Processing Environment (SPE) <app_boards_spe_nspe>`, or from the secure partition with isolation level 2 or higher.
+The sample demonstrates how to configure peripherals as secure peripherals and use them in a TF-M partition.
+In this way, the peripheral is only accessible from the :ref:`Secure Processing Environment (SPE) <app_boards_spe_nspe>`, or from a TF-M partition with :ref:`isolation level 2 or higher<ug_tfm_architecture_isolation_lvls>`.
 
-The secure partition is located in the ``secure_peripheral_partition`` directory.
+The TF-M partition used in this sample is located in the :file:`secure_peripheral_partition` directory at the sample root.
 It contains the partition sources, build files and build configuration files.
-The partition is built by the TF-M build system.
-See :ref:`tfm_build_system` for more details.
-
-For more information on how to add custom secure partitions, see `TF-M secure partition integration guide`_.
+The partition is built by the :ref:`TF-M build system <tfm_build_system>`, which is called by the |NCS| build system.
 
 Configuration
 *************
 
 |config|
 
+Configuration files
+===================
+
+The partition configuration and source files are in the :file:`secure_peripheral_partition` directory.
+
+The following files are available:
+
+* :file:`tfm_secure_peripheral_partition.yaml.in` - Partition manifest template for services, MMIO regions, IRQs, and dependencies.
+* :file:`tfm_manifest_list.yaml.in` - Registers the partition with the TF-M manifest list.
+* :file:`CMakeLists.txt` - TF-M partition build configuration.
+* :file:`secure_peripheral_partition.c` - Partition implementation and IRQ handlers.
+* :file:`util.c` and :file:`util.h` - Hex-encoding helpers for SPI output.
+
+Configuring a secure peripheral
+===============================
+
 To configure a peripheral as secure:
 
-* Enable and assign the peripheral to the partition.
+* Enable and assign the peripheral to the TF-M partition.
 * Define interrupt signals.
-
-Additionally, you can configure the secure partition to get access to other TF-M partitions.
 
 See the following sections for more details.
 
 Enabling secure peripheral
-==========================
+--------------------------
 
 To start using a peripheral as a secure peripheral, complete the following steps:
 
@@ -60,7 +72,7 @@ To start using a peripheral as a secure peripheral, complete the following steps
 
       CONFIG_NRF_TIMER1_SECURE=y
 
-#. If you want to use GPIO pins or DPPI channels with secure peripherals, assign them as secure pins or channels.
+#. If you want to use GPIO pins or DPPI channels with secure peripherals and override the automatic setting by devicetree, assign them as secure pins or channels.
    You can do this with a bitmask.
    For example, the following setting assigns GPIO pin 23 as secure:
 
@@ -68,12 +80,18 @@ To start using a peripheral as a secure peripheral, complete the following steps
 
       CONFIG_NRF_GPIO0_PIN_MASK_SECURE=0x00800000
 
-#. Assign the peripheral to the specific partition in the partition manifest YAML file `tfm_secure_peripheral_partition.yaml`_, located in the :file:`secure_peripheral_partition` directory.
+   .. note::
+      If the secure peripheral uses GPIO pins, explicitly mark those pins as secure in the :file:`prj.conf` file.
+      The GPIO controller is used to implement security by separation on Nordic devices: each pin is non-secure by default.
+      Assigning a peripheral to the SPE (for example, with ``CONFIG_NRF_TIMER1_SECURE=y``) does not automatically secure its GPIO pins.
+      TF-M only derives secure GPIO pins from devicetree for secure UART and SPIM instances.
+      See :ref:`ug_tfm_building_secure_peripheral_gpio` for more details.
+
+#. Assign the peripheral to the specific partition in the partition manifest YAML file :file:`tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
    This step is required when the peripheral has security attributes that can be set by the user (such as split security attributes).
    Assigning the peripheral makes sure that the TF-M configures this peripheral as secure.
 
    For example, the following MMIO definition configures the TIMER1 peripheral as secure:
-
 
    .. code-block:: yaml
 
@@ -84,14 +102,14 @@ To start using a peripheral as a secure peripheral, complete the following steps
               },
       ]
 
-   See `TF-M Secure Interrupt Integration`_  for more details on the MMIO regions.
+   See `TF-M Secure Interrupt Integration`_ in the TF-M documentation for more details on the MMIO regions.
 
 Integrating secure interrupt
-============================
+----------------------------
 
 If the secure peripheral generates interrupts, complete the following steps to integrate the interrupt with the TF-M interrupt mechanism:
 
-1. Define the interrupt source and handling type in the partition manifest YAML file `tfm_secure_peripheral_partition.yaml`_, located in the :file:`secure_peripheral_partition` directory.
+1. Define the interrupt source and handling type in the partition manifest YAML file :file:`tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
 
    For example, the following IRQ definition configures the TIMER1 peripheral as secure:
 
@@ -151,10 +169,12 @@ If the secure peripheral generates interrupts, complete the following steps to i
    In cases where the interrupt signal is preempting the non-secure execution, the interrupt signal is not processed until the next time the partition is scheduled to run.
    The sample demonstrates a workaround for this limitation by triggering an ``EGU`` interrupt in the firmware in the NSPE, which calls the secure partition to process the interrupt signals.
 
-Accessing other TF-M partitions
-===============================
+Configuring access to other TF-M partitions
+===========================================
 
-For a secure peripheral partition to access services from other TF-M partitions (such as Crypto or Protected Storage), you must explicitly list these dependencies in the partition manifest YAML file `tfm_secure_peripheral_partition.yaml`_, located in the :file:`secure_peripheral_partition` directory.
+You can configure the secure peripheral partition to access services from other TF-M partitions (such as Crypto or Protected Storage).
+
+For this, you must explicitly list these dependencies in the partition manifest YAML file :file:`tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
 For example, to allow access to the Protected Storage partition, add it to the ``dependencies`` section:
 
 .. code-block:: yaml

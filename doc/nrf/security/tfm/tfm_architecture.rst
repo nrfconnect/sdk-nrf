@@ -136,6 +136,8 @@ For example, in the `nRF9160 Product Specification <nRF9160 System Protection Un
    The representation of the NSPE in the TF-M architecture figure at the top of this page serves only to visualize that there are multiple modules inside the Non-Secure image that makes use of PSA Certified APIs.
    TF-M provides only a single entry-point for reaching the Non-Secure Callable interface.
 
+.. _ug_tfm_architecture_tfm_core:
+
 TF-M Core
 *********
 
@@ -144,7 +146,7 @@ The user application does not need to directly interface with TF-M Core, because
 For completeness sake, TF-M Core has the following functionalities:
 
 * Uses TF-M's `Secure Partition Manager (SPM) <TF-M Secure Partition Manager_>`_ to configure Secure/Non-Secure flash and memory.
-* Uses TF-M's Secure Partition Manager (SPM) to initialize Secure/Non-Secure hardware peripherals
+* Uses TF-M's Secure Partition Manager (SPM) to initialize Secure/Non-Secure hardware peripherals.
 * Uses TF-M's `Inter-Process Communication (IPC) <TF-M Inter-Process Communication_>`_ to allow communication between the Secure and Non-Secure images.
 * Uses TF-M's Inter-Process Communication (IPC) to allow communication between services inside the Secure images.
 * Handles interrupts in a secure way.

@@ -23,7 +23,7 @@ Enabling PSA Crypto API
 To use the PSA Crypto API in your application, enable the following Kconfig options depending on your chosen implementation:
 
 * For the :ref:`Oberon PSA Crypto implementation <ug_crypto_architecture_implementation_standards_oberon>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option.
-* For the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` Kconfig options.
+* For the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option and build your application for a :ref:`board target that is supported by TF-M <ug_tfm_building_board_targets>`.
   For more information, see :ref:`ug_tfm_building_secure_services`.
 * For the :ref:`IronSide Secure Enclave implementation <ug_crypto_architecture_implementation_standards_ironside>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option on the nRF54H20's :ref:`ug_nrf54h20_architecture_cpu_appcore`.
 
