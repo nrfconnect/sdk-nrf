@@ -2337,7 +2337,7 @@ static int nrf_wifi_radio_test_set_tx_num_he_ltf(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	ctx->conf_params.he_ltf =
+	ctx->conf_params.tx_num_he_ltf =
 		(unsigned char)tx_num_he_ltf;
 
 	return 0;
@@ -2740,6 +2740,11 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "tx_fec_padd_factor = %d\n",
 		      conf_params->tx_fec_padd_factor);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "tx_num_he_ltf = %d\n",
+		      conf_params->tx_num_he_ltf);
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
