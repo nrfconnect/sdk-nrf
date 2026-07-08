@@ -107,6 +107,26 @@ config NCS_SAMPLE_MATTER_ZAP_FILE_PATH
 	  Absolute path to location under which ZAP file is located.
 	  It shall contain the file name and .zap extension.
 
+choice NCS_SAMPLE_MATTER_ZAP_GENERATION
+	prompt "Matter data model (ZAP) files source"
+	default NCS_SAMPLE_MATTER_ZAP_GENERATION_STATIC
+	help
+	  Selects how the Matter data model C++ files are provided to the build.
+
+config NCS_SAMPLE_MATTER_ZAP_GENERATION_STATIC
+	bool "Use pre-generated (static) ZAP files"
+	help
+	  Use the pre-generated files.
+
+config NCS_SAMPLE_MATTER_ZAP_GENERATION_BUILD_TIME
+	bool "Generate ZAP files at build time"
+	help
+	  Generate the Matter data model C++ files from the .zap file at build
+	  time using the ZAP tool. Requires the ZAP tool to be available in the build environment through
+	  the ZAP_INSTALL_PATH environment variable.
+
+endchoice
+
 config NCS_SAMPLE_MATTER_CERTIFICATION
 	bool "Patches for Matter platform certification"
 	help
