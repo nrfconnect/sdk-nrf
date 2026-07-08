@@ -1,0 +1,18 @@
+common:
+  tags:
+    - drivers
+    - saadct
+    - ci_tests_drivers_nrf_saadct
+  harness: ztest
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+
+tests:
+  # Continuous mode: the driver keeps sampling series until stopped.
+  drivers.saadct.api.continuous: {}
+  # One-shot mode: the driver produces a single series and stops itself.
+  drivers.saadct.api.one_shot:
+    extra_configs:
+      - CONFIG_SAADCT_TEST_ONE_SHOT=y

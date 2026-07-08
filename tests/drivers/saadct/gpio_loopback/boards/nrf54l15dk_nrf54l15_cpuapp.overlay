@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Test requires loopback between P1.10 and P1.11
+ */
+
+/ {
+	zephyr,user {
+		test-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		test-saadc-input = <NRF_SAADC_AIN4>; /* P1.11 */
+	};
+};
+
+&adc {
+	compatible = "nordic,nrf-saadct";
+	status = "okay";
+	timer-instance = <&timer20>;
+	/* Reserve SAADC to ensure that it is assigned to cpuapp and can be used by nrfx_saadc. */
+	#address-cells = <1>;
+	#size-cells = <0>;
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&timer20 {
+	prescaler = <1>;
+	status = "okay";
+	clocks = <&hfxo>;
+};

@@ -1033,6 +1033,7 @@
 /tests/drivers/ppi_seq/                   @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /tests/drivers/pwm/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/qdec/                      @nrfconnect/ncs-low-level-test
+/tests/drivers/saadct/                    @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /tests/drivers/sensor/multicore_temp/     @nrfconnect/ncs-low-level-test
 /tests/drivers/spi/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/timer/                     @nrfconnect/ncs-low-level-test

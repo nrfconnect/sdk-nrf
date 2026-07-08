@@ -1481,6 +1481,11 @@ ci_tests_drivers_sensor:
     - zephyr/soc/nordic/
     - zephyr/tests/drivers/sensor/
 
+ci_tests_drivers_nrf_saadct:
+  files:
+    - nrf/drivers/saadct/
+    - nrf/tests/drivers/saadct/
+
 ci_tests_drivers_nrf_wifi:
   files:
     - modules/lib/hostap/
