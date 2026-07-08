@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "app_aliases_common.dtsi"
+
+&button0 {
+	label = "Push button 0";
+};
+
+&gpiote130 {
+	/* Select the only free channel. */
+	owned-channels = <7>;
+	status = "okay";
+};
+
+/* Disable the UART instance used by the PPR core for its own logging to avoid
+ * two cores accessing the same peripheral. The application core logs over uart133.
+ */
+&uart132 {
+	status = "disabled";
+};
+
+/* DTS node required to run the cpuppr target. */
+&cpuppr_vpr {
+	status = "okay";
+};

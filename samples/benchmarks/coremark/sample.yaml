@@ -31,6 +31,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms: *coremark_platforms
 
   sample.benchmark.coremark.flash_and_run:

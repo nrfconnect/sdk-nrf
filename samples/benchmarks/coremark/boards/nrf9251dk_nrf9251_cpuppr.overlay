@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &cpuapp_cpuppr_ipc;
+/delete-node/ &cpuapp_cpuppr_ipc_shm;
+/delete-node/ &cpuppr_cpuapp_ipc_shm;
+/delete-node/ &cpuapp_dma_region;
+
+&cpuppr_tcm_sram {
+	reg = <0x2fc00000 DT_SIZE_K(79)>;
+	ranges = <0x0 0x2fc00000 0x13c00>;
+};
