@@ -69,6 +69,11 @@ static inline int nrf_rpc_os_event_wait(struct nrf_rpc_os_event *event, int time
 	return 0;
 }
 
+static inline void nrf_rpc_os_event_reset(struct nrf_rpc_os_event *event)
+{
+	k_sem_reset(&event->sem);
+}
+
 static inline int nrf_rpc_os_mutex_init(struct nrf_rpc_os_mutex *mutex)
 {
 	return k_mutex_init(&mutex->mutex);
