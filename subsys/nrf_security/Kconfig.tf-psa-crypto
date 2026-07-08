@@ -29,16 +29,21 @@ config MBEDTLS_THREADING_ALT
 
 endif # MBEDTLS_THREADING_C
 
-config MBEDTLS_PLATFORM_MEMORY
-	bool
-	default y
-
 config MBEDTLS_PLATFORM_C
 	bool
 	default y
 
+config MBEDTLS_ENABLE_HEAP
+	select MBEDTLS_PLATFORM_MEMORY
+
+config MBEDTLS_PLATFORM_MEMORY
+	bool "Memory allocation layer"
+	depends on MBEDTLS_PLATFORM_C
+	default y
+
 config MBEDTLS_MEMORY_BUFFER_ALLOC_C
 	bool
+	depends on MBEDTLS_PLATFORM_MEMORY
 	default y
 
 config MBEDTLS_ASN1_WRITE_C

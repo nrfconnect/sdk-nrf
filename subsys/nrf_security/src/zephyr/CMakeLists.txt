@@ -19,7 +19,6 @@ if(CONFIG_MBEDTLS_DEBUG)
   zephyr_library_sources(debug_init.c)
 endif()
 
-# Add mbed TLS heap library - Not for TF-M build
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
   list(APPEND src_zephyr
     mbedtls_heap.c
