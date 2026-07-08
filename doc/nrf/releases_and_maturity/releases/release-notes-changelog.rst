@@ -556,4 +556,5 @@ zcbor
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added the :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
+  To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
