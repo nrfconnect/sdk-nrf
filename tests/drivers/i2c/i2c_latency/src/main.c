@@ -232,8 +232,8 @@ static void test_i2c_read_latency(size_t buffer_size, uint8_t i2c_speed_setting)
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
 		average_timer_value_us += timer_value_us[repeat_counter];
 
-		zassert_ok(ret);
-		zassert_mem_equal(fixture.master_buffer, fixture.slave_buffer, buffer_size);
+		zexpect_ok(ret, "i2c_read() ret %d", ret);
+		zexpect_mem_equal(fixture.master_buffer, fixture.slave_buffer, buffer_size);
 	}
 
 	average_timer_value_us /= MEASUREMENT_REPEATS;
@@ -278,8 +278,8 @@ static void test_i2c_write_latency(size_t buffer_size, uint8_t i2c_speed_setting
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
 		average_timer_value_us += timer_value_us[repeat_counter];
 
-		zassert_ok(ret);
-		zassert_mem_equal(fixture.slave_buffer, fixture.slave_buffer, buffer_size);
+		zexpect_ok(ret, "i2c_write() ret %d", ret);
+		zexpect_mem_equal(fixture.master_buffer, fixture.slave_buffer, buffer_size);
 	}
 
 	average_timer_value_us /= MEASUREMENT_REPEATS;
