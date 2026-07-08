@@ -90,8 +90,35 @@ ZTEST(ml_dsa_verify, test_reject_bad_key_size)
 	zassert_equal(key_id, PSA_KEY_ID_NULL, "import of an undersized public key succeeded");
 }
 
-/** Positive known-answer test against a NIST ACVP sigVer vector. */
-ZTEST(ml_dsa_verify, test_kat_valid_signature)
+/** Positive known-answer test against a NIST ACVP sigVer vector for ML-DSA-44. */
+ZTEST(ml_dsa_verify, test_kat_valid_signature_44)
+{
+	psa_key_id_t key_id;
+	psa_status_t status;
+	uint8_t tampered[sizeof(ml_dsa44_kat_sig)];
+
+	key_id = import_public_key(ml_dsa44_kat_pk, sizeof(ml_dsa44_kat_pk), PSA_ALG_ML_DSA);
+	zassert_not_equal(key_id, PSA_KEY_ID_NULL, "ML-DSA-44 KAT public key import failed");
+
+	status = psa_verify_message(key_id, PSA_ALG_ML_DSA, ml_dsa44_kat_msg,
+				    sizeof(ml_dsa44_kat_msg), ml_dsa44_kat_sig,
+				    sizeof(ml_dsa44_kat_sig));
+	zassert_equal(status, PSA_SUCCESS, "valid ML-DSA-44 signature was rejected, got %d",
+		      status);
+
+	/* Flipping a single bit must invalidate the signature. */
+	memcpy(tampered, ml_dsa44_kat_sig, sizeof(tampered));
+	tampered[0] ^= 0x01;
+	status = psa_verify_message(key_id, PSA_ALG_ML_DSA, ml_dsa44_kat_msg,
+				    sizeof(ml_dsa44_kat_msg), tampered, sizeof(tampered));
+	zassert_equal(status, PSA_ERROR_INVALID_SIGNATURE,
+		      "tampered ML-DSA-44 signature was accepted");
+
+	psa_destroy_key(key_id);
+}
+
+/** Positive known-answer test against a NIST ACVP sigVer vector for ML-DSA-65. */
+ZTEST(ml_dsa_verify, test_kat_valid_signature_65)
 {
 	psa_key_id_t key_id;
 	psa_status_t status;
@@ -110,6 +137,34 @@ ZTEST(ml_dsa_verify, test_kat_valid_signature)
 	status = psa_verify_message(key_id, PSA_ALG_ML_DSA, ml_dsa_kat_msg, sizeof(ml_dsa_kat_msg),
 				    tampered, sizeof(tampered));
 	zassert_equal(status, PSA_ERROR_INVALID_SIGNATURE, "tampered signature was accepted");
+
+	psa_destroy_key(key_id);
+}
+
+/** Positive known-answer test against a NIST ACVP sigVer vector for ML-DSA-87. */
+ZTEST(ml_dsa_verify, test_kat_valid_signature_87)
+{
+	psa_key_id_t key_id;
+	psa_status_t status;
+	uint8_t tampered[sizeof(ml_dsa87_kat_sig)];
+
+	key_id = import_public_key(ml_dsa87_kat_pk, sizeof(ml_dsa87_kat_pk), PSA_ALG_ML_DSA);
+	zassert_not_equal(key_id, PSA_KEY_ID_NULL, "ML-DSA-87 KAT public key import failed");
+
+	status = psa_verify_message(key_id, PSA_ALG_ML_DSA, ml_dsa87_kat_msg,
+				    sizeof(ml_dsa87_kat_msg), ml_dsa87_kat_sig,
+				    sizeof(ml_dsa87_kat_sig));
+	zassert_equal(status, PSA_SUCCESS, "valid ML-DSA-87 signature was rejected, got %d",
+		      status);
+
+	/* Flipping a single bit must invalidate the signature. */
+	memcpy(tampered, ml_dsa87_kat_sig, sizeof(tampered));
+	tampered[0] ^= 0x01;
+	status = psa_verify_message(key_id, PSA_ALG_ML_DSA,
+				    ml_dsa87_kat_msg, sizeof(ml_dsa87_kat_msg),
+				    tampered, sizeof(tampered));
+	zassert_equal(status, PSA_ERROR_INVALID_SIGNATURE,
+		      "tampered ML-DSA-87 signature was accepted");
 
 	psa_destroy_key(key_id);
 }
