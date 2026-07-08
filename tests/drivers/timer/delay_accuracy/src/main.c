@@ -12,50 +12,29 @@
 #if defined(CONFIG_TEST_START_HFXO)
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#if NRF54L_ERRATA_20_PRESENT
-#include <nrf_sys_event.h>
-#endif /* NRF54L_ERRATA_20_PRESENT */
 
 static void clock_init(void)
 {
-	int err;
-	int res;
-	struct onoff_manager *clk_mgr;
-	struct onoff_client clk_cli;
+	int rv;
+#ifdef CONFIG_CLOCK_CONTROL_NRF
+	struct onoff_client cli;
 
-	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
-	if (!clk_mgr) {
-		TC_PRINT("Unable to get the Clock manager\n");
-		return;
+	sys_notify_init_spinwait(&cli.notify);
+	rv = onoff_request(z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF), &cli);
+	zassert_ok(rv);
+
+	while (sys_notify_fetch_result(&cli.notify, &rv)) {
+		/* pend until clock is up and running */
 	}
+	zassert_ok(rv);
+#elif CONFIG_CLOCK_CONTROL_NRF54H_HFXO
+	const struct device *hfxo = DEVICE_DT_GET(DT_NODELABEL(hfxo));
 
-	sys_notify_init_spinwait(&clk_cli.notify);
-
-	err = onoff_request(clk_mgr, &clk_cli);
-	if (err < 0) {
-		TC_PRINT("Clock request failed: %d\n", err);
-		return;
-	}
-
-	do {
-		err = sys_notify_fetch_result(&clk_cli.notify, &res);
-		if (!err && res) {
-			TC_PRINT("Clock could not be started: %d\n", res);
-			return;
-		}
-	} while (err);
-
-#if NRF54L_ERRATA_20_PRESENT
-	if (nrf54l_errata_20()) {
-		nrf_sys_event_request_global_constlat();
-	}
-#endif /* NRF54L_ERRATA_20_PRESENT */
-
-#if NRF54L_ERRATA_39_PRESENT
-	if (nrf54l_errata_39()) {
-		nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-	}
-#endif /* NRF54L_ERRATA_39_PRESENT */
+	rv = nrf_clock_control_request_sync(hfxo, NULL, K_MSEC(1000));
+	zassert_ok(rv);
+#else
+	zassert_ok(false, "Should not get here.");
+#endif /* CONFIG_CLOCK_CONTROL_NRF / CONFIG_CLOCK_CONTROL_NRF54H_HFXO */
 
 	TC_PRINT("Clock has started\n");
 }
