@@ -27,6 +27,55 @@ You can use either the nRF Mesh app or the shell commands to configure and contr
 .. note::
    The Mesh DFU feature in the nRF Mesh app is currently supported only on iOS.
 
+.. _dfu_over_bt_mesh_roles_and_transport:
+
+DFU roles and image transport
+*****************************
+
+The Bluetooth Mesh DFU Model specification defines four DFU roles:
+
+* **Target** - A node that receives a firmware image and applies it.
+  A Target instantiates the Firmware Update Server and BLOB Transfer Server models.
+* **Initiator** - An entity that selects the firmware image to distribute and drives the distribution on the Distributor.
+  An Initiator instantiates the Firmware Distribution Client, Firmware Update Client and BLOB Transfer Client models.
+* **Distributor** - An intermediary node that stores the firmware image and delivers it to the Target nodes over the mesh network.
+  A Distributor instantiates the Firmware Distribution Server, Firmware Update Client, BLOB Transfer Client and BLOB Transfer Server models.
+* **Standalone Updater** - An entity that delivers firmware images to Target nodes directly, without an intermediary Distributor.
+
+Roles of the nRF Mesh mobile app
+================================
+
+When used with the samples provided by the |NCS|, the nRF Mesh mobile app has the following roles:
+
+* Provisioner and Configuration Client, used to provision the devices and to bind the application key to the mesh models involved in the DFU procedure.
+* Initiator, used to select the firmware image, register it on the Distributor, and start the distribution to the Target nodes.
+
+The mobile app is not a Distributor or a Standalone Updater.
+The :ref:`ble_mesh_dfu_distributor` sample (or an equivalent device on the mesh network) always has the intermediary Distributor role.
+
+How the firmware image reaches the Distributor
+==============================================
+
+The Bluetooth Mesh DFU Model specification defines two Upload Types on the Firmware Distribution Server:
+
+* In-band upload - The Initiator pushes the firmware image to the Distributor over the mesh network using the BLOB Transfer models.
+* Out-of-band upload - The firmware image reaches the Distributor through a channel outside the mesh network.
+
+For out-of-band upload, the specification describes one concrete mechanism, the Store Firmware OOB procedure on the Firmware Distribution Server, driven by an Upload Firmware OOB procedure on a Firmware Distribution Client.
+This procedure carries an Upload OOB URI that the Distributor uses to retrieve (pull) the image itself, for example over HTTPS.
+
+The |NCS| supports a different out-of-band mechanism in the :ref:`ble_mesh_dfu_distributor` sample.
+The nRF Mesh mobile app uploads (pushes) the image to the Distributor's storage slot over the Simple Management Protocol (SMP) provided by the :ref:`zephyr:mcu_mgr` (mcumgr Image Management over a GATT connection), then registers the resulting firmware in a DFU slot and starts the distribution using the Firmware Distribution Client model.
+Unlike the Store Firmware OOB procedure described in the specification, the SMP-based upload is not driven through the Firmware Distribution Server's Upload procedures, so it does not update the server's Upload Type or Upload Phase states.
+From the Firmware Distribution Server's point of view, the subsequent distribution to the Target nodes runs identically to a distribution triggered after a spec-defined upload.
+
+For alternatives (in-band BLOB Transfer upload from another Initiator, or out-of-band SMP upload driven from a workstation), see :ref:`ble_mesh_dfu_distributor_fw_image_upload` in the :ref:`ble_mesh_dfu_distributor` sample documentation.
+
+The transfer from the Distributor to the Target nodes always uses in-band BLOB Transfer over the mesh network, regardless of how the image was loaded onto the Distributor.
+
+Connecting to the Distributor
+=============================
+
 .. tabs::
 
    .. group-tab:: nRF Mesh app (iOS)
