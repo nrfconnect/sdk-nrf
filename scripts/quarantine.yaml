@@ -54,6 +54,13 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9630"
 
 - scenarios:
+    - drivers.timer.delay_accuracy
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr
+    - nrf9251dk@0.1.0/nrf9251/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9630"
+
+- scenarios:
     - drivers.timer.grtc_timer_lfrc.nrf54h
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
