@@ -1,0 +1,11 @@
+tests:
+  nrf_audio.rate_control_test:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - rate_control
+      - sysbuild
+      - ci_tests_nrf_audio
+    timeout: 20
