@@ -303,7 +303,7 @@ config TFM_PS_SUPPORT_FORMAT_TRANSITION
 endmenu
 
 # Copied from secure_fw/spm/Kconfig, removed CONFIG prefix
-menu "TF-M SPM component configs"
+menu "TF-M SPM component options"
 
 config TFM_CONN_HANDLE_MAX_NUM
 	int "Maximal number of handling secure services"
@@ -382,71 +382,71 @@ config TFM_LOG_NS_MEMORY_LAYOUT
 	  The rest of the memory is secure by default.
 
 config TFM_SECURE_UART
-	bool "TF-M configure UART instance as secure peripheral"
+	bool "UART instance for TF-M logging"
 	default y if !TFM_LOG_LEVEL_SILENCE
 	help
-	  Configure the UART instance as a secure peripheral for TF-M logging.
-	  This makes the UART instance unavailable to the non-secure unless
+	  Set the UART instance as a secure peripheral for TF-M logging.
+	  This makes the UART instance unavailable to the non-secure application unless
 	  TFM_SECURE_UART_SHARE_INSTANCE is enabled.
-	  When this option is selected the device tree node for
-	  the UART instance needs to be disabled for the non-secure application.
+	  When this option is enabled, the devicetree node for
+	  the UART instance must be disabled for the non-secure application.
 
 if TFM_SECURE_UART
 
 config TFM_SECURE_UART_SHARE_INSTANCE
 	bool
-	prompt "Share TF-M's UART instance with the non-secure application"
+	prompt "Share UART instance with the non-secure application"
 	help
-	  Configure the UART instance in TF-M to be shared between TF-M secure
-	  firmware and the non-secure application.
-	  When enabled, TF-M's logging will be reduced to logging when booting
-	  up, and when handling a fatal error.
-	  Note that this option always configures the UART pins as non secure.
+	  Allow for the UART instance in TF-M to be shared between secure
+	  and non-secure firmware.
+	  When enabled, TF-M's logging is reduced to logging when booting
+	  up and when handling a fatal error.
+	  This option always configures the UART pins as non-secure.
 
 choice TFM_SECURE_UART_INSTANCE
-	prompt "TF-M logging UART instance"
+	prompt "UART instance to use"
 	default TFM_SECURE_UART20 if SOC_NRF54LV10A_CPUAPP
 	default TFM_SECURE_UART30 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	default TFM_SECURE_UART1
 
 config TFM_SECURE_UART0
-	bool "TF-M logging will use UART0 instance"
+	bool "TF-M logging uses UART0 instance"
 	depends on $(dt_nodelabel_has_prop,uart0,pinctrl-names)
 	select NRF_UARTE0_SECURE
 	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE0
 
 config TFM_SECURE_UART1
-	bool "TF-M logging will use UART1 instance"
+	bool "TF-M logging uses UART1 instance"
 	depends on $(dt_nodelabel_has_prop,uart1,pinctrl-names)
 	select NRF_UARTE1_SECURE
 	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE1
 
 config TFM_SECURE_UART00
-	bool "TF-M logging will use UART00 instance"
+	bool "TF-M logging uses UART00 instance"
 	depends on $(dt_nodelabel_has_prop,uart00,pinctrl-names)
 	select NRF_UARTE00_SECURE
 	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE00
 
 config TFM_SECURE_UART20
-	bool "TF-M logging will use UART20 instance"
+	bool "TF-M logging uses UART20 instance"
 	depends on $(dt_nodelabel_has_prop,uart20,pinctrl-names)
 	select NRF_UARTE20_SECURE
 	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE20
 
 config TFM_SECURE_UART21
-	bool "TF-M logging will use UART21 instance"
+	bool "TF-M logging uses UART21 instance"
 	depends on $(dt_nodelabel_has_prop,uart21,pinctrl-names)
 	select NRF_UARTE21_SECURE
 	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE21
 
 config TFM_SECURE_UART22
-	bool "TF-M logging will use UART22 instance"
+	bool "TF-M logging uses UART22 instance"
 	depends on $(dt_nodelabel_has_prop,uart22,pinctrl-names)
 	select NRF_UARTE22_SECURE
 	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE22
 
 config TFM_SECURE_UART30
-	bool "TF-M logging will use UART30 instance"
+	bool "TF-M logging uses UART30 instance"
 	depends on $(dt_nodelabel_has_prop,uart30,pinctrl-names)
 	select NRF_UARTE30_SECURE
 	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE30
