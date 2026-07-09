@@ -1,0 +1,11 @@
+tests:
+  nrf_audio.regulator_test:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - regulator
+      - sysbuild
+      - ci_tests_nrf_audio
+    timeout: 20
