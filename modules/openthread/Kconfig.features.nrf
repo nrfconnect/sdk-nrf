@@ -55,3 +55,54 @@ config OPENTHREAD_KMU_SLOT_START
 	  the OpenThread stack.
 
 endif # OPENTHREAD_PSA_NVM_BACKEND_KMU
+
+config OPENTHREAD_ALTERNATE_PHY
+	bool "Alternate PHY (HDR) capability advertisement [EXPERIMENTAL]"
+	depends on OPENTHREAD_SOURCES
+	select EXPERIMENTAL
+	help
+	  Advertise and discover Alternate PHY (High Data Rate) capabilities during MLE.
+	  When enabled, the device includes the Alternate PHY Capability TLV in
+	  Child ID Request/Response and Link Request/Accept messages, and sets the APS flag in
+	  the Connectivity TLV. The set of advertised PHYs is reported by the platform.
+
+	  This only covers capability discovery (the TLVs). It does not perform any actual radio
+	  switching. This maps to OPENTHREAD_CONFIG_ALTERNATE_PHY_ENABLE in the OpenThread build.
+
+if OPENTHREAD_ALTERNATE_PHY
+
+config OPENTHREAD_ALTERNATE_PHY_GFSK
+	bool "TL3 2 Mbps GFSK radio (PHY ID 0) available"
+	default y
+	help
+	  Advertise support for the TL3 2 Mbps GFSK Alternate PHY (PHY ID 0).
+
+config OPENTHREAD_ALTERNATE_PHY_SETTLING_DELAY
+	int "TL3 settling delay (microseconds)"
+	default 192
+	depends on OPENTHREAD_ALTERNATE_PHY_GFSK
+	range 0 255
+	help
+	  The PHY retuning guard time, in microseconds, that this device requires as a receiver
+	  before it is ready to receive on the TL3 GFSK PHY. Advertised as TL3_SETTLING_DELAY in
+	  the PHY ID 0 Alternate PHY Sub-TLV.
+
+config OPENTHREAD_ALTERNATE_PHY_AIFS
+	int "TL3 Acknowledgment Inter-Frame Space (microseconds)"
+	default 192
+	depends on OPENTHREAD_ALTERNATE_PHY_GFSK
+	range 0 255
+	help
+	  The Acknowledgment Inter-Frame Space, in microseconds, this device uses when
+	  transmitting its acknowledgment on the TL3 GFSK PHY. Advertised as TL3_AIFS in the
+	  PHY ID 0 Alternate PHY Sub-TLV.
+
+config OPENTHREAD_ALTERNATE_PHY_CONCURRENT_LISTENING
+	bool "TL3 concurrent listening supported"
+	depends on OPENTHREAD_ALTERNATE_PHY_GFSK
+	help
+	  Advertise that this device can receive on the primary PHY and the TL3 GFSK PHY
+	  concurrently. Sets the Concurrent Listening (CL) flag in the PHY ID 0 Alternate PHY
+	  Sub-TLV, allowing peers to transmit on TL3 without a preceding DAPS frame.
+
+endif # OPENTHREAD_ALTERNATE_PHY

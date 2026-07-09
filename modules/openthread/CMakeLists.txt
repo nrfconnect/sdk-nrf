@@ -4,6 +4,7 @@ if(CONFIG_OPENTHREAD)
   include(${CMAKE_CURRENT_LIST_DIR}/openthread_kconfig_check.cmake)
 
   # Register all OpenThread Kconfig options that affect the stack.
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_ALTERNATE_PHY OT_ALTERNATE_PHY "Enable Alternate PHY (HDR) capability advertisement" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_ANYCAST_LOCATOR OT_ANYCAST_LOCATOR "Enable anycast locator" BOOL)
   kconfig_to_ot_option(CONFIG_ASSERT OT_ASSERT "Enable assert function OT_ASSERT()" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_BACKBONE_ROUTER OT_BACKBONE_ROUTER "Enable backbone router functionality" BOOL)

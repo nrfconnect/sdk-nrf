@@ -4,6 +4,7 @@ zephyr_library_named(openthread_platform)
 
 # Source nrf-specific files from sdk-nrf
 zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_CRYPTO_PSA crypto_psa.c)
+zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_ALTERNATE_PHY alternate_phy.c)
 
 # Source platform files from Zephyr
 zephyr_library_sources(
