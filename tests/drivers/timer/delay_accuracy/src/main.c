@@ -15,8 +15,8 @@
 
 static void clock_init(void)
 {
-	int rv;
 #ifdef CONFIG_CLOCK_CONTROL_NRF
+	int rv;
 	struct onoff_client cli;
 
 	sys_notify_init_spinwait(&cli.notify);
@@ -28,6 +28,7 @@ static void clock_init(void)
 	}
 	zassert_ok(rv);
 #elif CONFIG_CLOCK_CONTROL_NRF54H_HFXO
+	int rv;
 	const struct device *hfxo = DEVICE_DT_GET(DT_NODELABEL(hfxo));
 
 	rv = nrf_clock_control_request_sync(hfxo, NULL, K_MSEC(1000));
