@@ -4,11 +4,6 @@
 # Order is important; the last matching pattern takes the most
 # precedence.
 
-# The default entry with `*` only applies to GitHub adding reviewers.
-# The compliance workflow verifies that all new files are covered by an
-# entry in the CODEOWNERS file, but skips this `*` entry altogether.
-*                                         @nrfconnect/ncs-code-owners
-
 # Root folder
 /.*                                       @nrfconnect/ncs-code-owners
 /.sonarcloud.properties                   @nrfconnect/ncs-ci
