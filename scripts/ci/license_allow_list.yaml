@@ -41,10 +41,10 @@ none: |
   !\.cpp$
   !\.a$
   !\.py$
-  !\.hpp
-  !\.cxx
-  !\.hxx
-  !\.rs
+  !\.hpp$
+  !\.cxx$
+  !\.hxx$
+  !\.rs$
 
 # Any license information is allowed in Python scripts, but it will generate a warning.
 -any: |
