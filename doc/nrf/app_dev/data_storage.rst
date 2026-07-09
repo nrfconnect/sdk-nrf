@@ -98,10 +98,9 @@ See the following sections for descriptions of the storage features from the tab
 Partitioning
 ------------
 
-.. include:: ../includes/pm_deprecation.txt
-
 Partitioning prevents storage subsystems from overwriting each other's data by giving them ownership over different non-volatile memory regions.
-In the |NCS|, you can use either :ref:`Devicetree fixed flash partitions <zephyr:flash_map_api>` or the :ref:`Partition Manager <partition_manager>` to manage non-volatile memory partitions.
+The |NCS| uses devicetree-based memory partitioning from Zephyr to manage non-volatile memory partitions.
+See Zephyr's :ref:`devicetree documentation <zephyr:dt-guide>` and :ref:`Flash map <zephyr:flash_map_api>` documentation for how to define non-volatile memory partitions in devicetree.
 
 Integrity
 ---------
@@ -526,6 +525,7 @@ PSA Protected Storage and TF-M
 PSA Protected Storage is provided by :ref:`TF-M <ug_tfm>` when TF-M is used.
 When using TF-M, PSA Protected Storage is an :ref:`Application RoT Service <ug_tfm_architecture_rot_services_application>` that runs in the :ref:`Secure Processing Environment (SPE) <app_boards_spe_nspe>`.
 It is available to both NSPE and SPE, but data stored from one environment is not accessible from the other.
+See also :ref:`ug_tfm_partitioning` for more information about how TF-M partitions are organized in the |NCS|.
 
 When to use PSA Protected Storage
 ---------------------------------
