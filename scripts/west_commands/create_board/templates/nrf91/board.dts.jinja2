@@ -6,6 +6,9 @@
 #include "{{ board }}-partitioning.dtsi"
 
 / {
+	model = "{{ board_desc }} (non-secure)";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-ns";
+
 	chosen {
 		zephyr,flash = &flash0;
 		zephyr,sram = &sram0_ns_app;
@@ -20,6 +23,9 @@
 #include "{{ board }}-partitioning.dtsi"
 
 / {
+	model = "{{ board_desc }}";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}";
+
 	chosen {
 		zephyr,sram = &sram0_s;
 		zephyr,flash = &flash0;
