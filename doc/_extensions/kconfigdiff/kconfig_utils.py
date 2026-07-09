@@ -179,6 +179,17 @@ def kconfig_load(
         return kconfiglib.Kconfig(ZEPHYR_BASE / "Kconfig"), sysbuild_output, module_paths
 
 
+def is_path_in_workspace(zephyr_dir: str, path) -> bool:
+    path = os.path.normpath(path)
+    zephyr_dir = os.path.normpath(Path(zephyr_dir).parent)
+    return os.path.commonpath([path, zephyr_dir]) == zephyr_dir
+
+
+def get_path_rel2node(node: SC, path) -> str:
+    orig_zephyr_base = node.kconfig.srctree
+    return path if not os.path.isabs(path) else os.path.relpath(path, orig_zephyr_base)
+
+
 def kconfig_node_generator(
     kconfigs: list[kconfiglib.Kconfig],
 ) -> Generator[tuple[kconfiglib.MenuNode, SC], None, None]:
@@ -251,12 +262,20 @@ class KconfigEntryProperties:
         if isinstance(sc, self._kconfiglib.Symbol):
             if sc.nodes:
                 return f'{prefix}{sc.name}'
-        elif isinstance(sc, self._kconfiglib.Choice):
-            if not sc.name:
-                return "&ltchoice&gt"
-            return f'&ltchoice {prefix}{sc.name}&gt'
 
-        return self._kconfiglib.standard_sc_expr_str(sc)
+            if sc.is_constant and sc.name not in self._kconfiglib.STR_TO_TRI:
+                formatted = self._kconfiglib.escape(sc.name)
+                if os.path.isabs(formatted) and is_path_in_workspace(
+                    self._node.kconfig.srctree, formatted
+                ):
+                    formatted = get_path_rel2node(self._node, formatted)
+                return f'"{formatted}"'
+
+            return sc.name
+
+        if not sc.name:
+            return "&ltchoice&gt"
+        return f'&ltchoice {prefix}{sc.name}&gt'
 
     def _init_deps(self) -> list[str]:
         deps = []
@@ -369,7 +388,7 @@ def diff_generator(
     """
 
     def node_uid(node: kconfiglib.MenuNode, sc: SC) -> str:
-        return f"{entry_name(sc)}/{node.filename}"
+        return f"{entry_name(sc)}/{get_path_rel2node(node, node.filename)}"
 
     new_map: dict[str, list[tuple[kconfiglib.MenuNode, kconfiglib.Symbol | kconfiglib.Choice]]] = (
         defaultdict(list)
