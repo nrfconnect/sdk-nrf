@@ -24,6 +24,9 @@ def main() -> None:
     os.environ['ZEPHYR_NRF_KCONFIG'] = str(NRF_BASE / 'Kconfig.nrf')
     os.environ['SYSBUILD_NRF_KCONFIG'] = str(NRF_BASE / 'sysbuild/Kconfig.sysbuild')
 
+    # Unset toolchain variant to match docbuild.yml environment
+    os.environ['ZEPHYR_TOOLCHAIN_VARIANT'] = ""
+
     kconfig, sysbuild_kconfig, _ = kconfig_load([ZEPHYR_BASE, NRF_BASE])
 
     pickler.save_kconfig("kconfig.zip", kconfig, sysbuild_kconfig)
