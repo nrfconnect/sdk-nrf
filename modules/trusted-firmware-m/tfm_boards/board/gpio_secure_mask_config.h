@@ -63,6 +63,7 @@
 #define TFM_SPIM_GPIO_MASK(idx, port)                                                              \
 	TFM_NODE_PINCTRL_GPIO_MASK(DT_NODELABEL(UTIL_CAT(spi, idx)), port)
 
+#if !defined(CONFIG_TFM_SECURE_UART_SHARE_INSTANCE)
 #if defined(CONFIG_TFM_SECURE_UART0)
 #define TFM_SECURE_UART_IDX 0
 #elif defined(CONFIG_TFM_SECURE_UART1)
@@ -78,6 +79,7 @@
 #elif defined(CONFIG_TFM_SECURE_UART30)
 #define TFM_SECURE_UART_IDX 30
 #endif
+#endif /* !defined(CONFIG_TFM_SECURE_UART_SHARE_INSTANCE) */
 
 #if defined(CONFIG_NRF_SPIM0_SECURE)
 #define TFM_SECURE_SPIM_IDX 0

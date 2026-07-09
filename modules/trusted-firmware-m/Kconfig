@@ -401,6 +401,7 @@ config TFM_SECURE_UART_SHARE_INSTANCE
 	  firmware and the non-secure application.
 	  When enabled, TF-M's logging will be reduced to logging when booting
 	  up, and when handling a fatal error.
+	  Note that this option always configures the UART pins as non secure.
 
 choice TFM_SECURE_UART_INSTANCE
 	prompt "TF-M logging UART instance"
