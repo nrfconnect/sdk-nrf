@@ -124,6 +124,14 @@ module = MODULE_NRF5340_AUDIO_DK
 module-str = module-nrf5340-audio_dk
 source "subsys/logging/Kconfig.template.log_config"
 
+module = MODULE_RATE_CONTROL
+module-str = module-rate-control
+source "subsys/logging/Kconfig.template.log_config"
+
+module = MODULE_REGULATOR
+module-str = module-regulator
+source "subsys/logging/Kconfig.template.log_config"
+
 endmenu # Log levels
 
 #----------------------------------------------------------------------------#

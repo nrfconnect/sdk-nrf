@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = MODULE_RATE_CONTROL
+module-str = module-rate-control
+source "subsys/logging/Kconfig.template.log_config"
+
+source "Kconfig.zephyr"
