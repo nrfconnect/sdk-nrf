@@ -8,6 +8,7 @@
 
 if SOC_FAMILY_NORDIC_NRF
 
+rsource "$(ZEPHYR_BASE)/soc/nordic/Kconfig"
 rsource "*/Kconfig"
 
 endif # SOC_FAMILY_NORDIC_NRF
