@@ -246,6 +246,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_start_service, BT_RPC_GATT_STAR
 
 struct bt_normal_attr_read_res {
 	uint8_t *buf;
+	size_t buf_size;
 	int read_len;
 };
 
@@ -255,7 +256,14 @@ static void bt_normal_attr_read_rsp(const struct nrf_rpc_group *group, struct nr
 	struct bt_normal_attr_read_res *res = (struct bt_normal_attr_read_res *)handler_data;
 
 	res->read_len = nrf_rpc_decode_int(ctx);
-	nrf_rpc_decode_buffer(ctx, res->buf, (res->read_len > 0) ? res->read_len : 0);
+
+	if (res->read_len > (int)res->buf_size) {
+		res->read_len = -EINVAL;
+		nrf_rpc_decoder_invalid(ctx, ZCBOR_ERR_UNKNOWN);
+		return;
+	}
+
+	nrf_rpc_decode_buffer(ctx, res->buf, res->buf_size);
 }
 
 static ssize_t bt_rpc_normal_attr_read(struct bt_conn *conn, const struct bt_gatt_attr *attr,
@@ -278,6 +286,7 @@ static ssize_t bt_rpc_normal_attr_read(struct bt_conn *conn, const struct bt_gat
 	nrf_rpc_encode_uint(&ctx, offset);
 
 	result.buf = read_buf;
+	result.buf_size = len;
 	result.read_len = 0;
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_CB_ATTR_READ_RPC_CMD, &ctx,
