@@ -5,6 +5,6 @@
 #
 
 config PARTITION_MANAGER
-	default n if (!BOARD_THINGY53 && !BOARD_NRF54LM20DK && !BOARD_THINGY91X_NRF5340_CPUAPP)
+	default n if (!BOARD_NRF54LM20DK && !BOARD_THINGY91X_NRF5340_CPUAPP)
 
 source "share/sysbuild/Kconfig"

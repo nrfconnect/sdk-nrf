@@ -5,6 +5,6 @@
 #
 
 config PARTITION_MANAGER
-	default n if !BOARD_THINGY53
+	default n
 
 source "share/sysbuild/Kconfig"

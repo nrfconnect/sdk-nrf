@@ -8,7 +8,7 @@ Application guide for Thingy:53
    :depth: 2
 
 The Nordic Thingy:53 does not have a built-in J-Link debug IC.
-Because of that, the Thingy:53 board enables MCUboot bootloader with serial recovery support and predefined static Partition Manager memory map by default.
+Because of that, the Thingy:53 board enables MCUboot bootloader with serial recovery support and a fixed devicetree-based memory map by default.
 You can also enable FOTA updates manually.
 See the following sections for details of what is configured by default and what you can configure by yourself.
 
@@ -26,21 +26,37 @@ For more information, see :ref:`thingy53_app_usb`.
 
 .. _thingy53_app_partition_manager_config:
 
-Partition manager configuration
-*******************************
+Memory partitioning
+*******************
 
 .. include:: ../../../includes/pm_deprecation.txt
 
-The samples and applications for Nordic Thingy:53 use the :ref:`partition_manager` by default to define memory partitions.
-The memory layout must stay consistent, so that MCUboot can perform proper image updates and clean up the settings storage partition.
-To ensure that the partition layout does not change between builds, the sample must use a static partition layout that is consistent between all samples in the |NCS|.
-The memory partitions are defined in the :file:`pm_static_thingy53_nrf5340_cpuapp.yml` and :file:`pm_static_thingy53_nrf5340_cpuapp_ns.yml` files in the :file:`zephyr/boards/arm/thingy53_nrf5340` directory.
+Thingy:53 uses devicetree-based memory partitioning.
+Partition Manager is disabled by default for this board, and the flash layout is defined in the board devicetree files.
+The layout must stay consistent between builds so that MCUboot can perform proper image updates and clean up the settings storage partition.
 
-The PCD SRAM partition is locked by the MCUboot bootloader to prevent the application from modifying the network core firmware.
-Trying to access data on this partition results in an ARM fault.
+Application core (``thingy53/nrf5340/cpuapp``) partitions are defined in :file:`zephyr/boards/nordic/thingy53/thingy53_nrf5340_cpuapp.dts`:
 
-The MCUboot bootloader needs a flash controller overlay for the network core image update.
-The overlay is applied automatically.
+* **mcuboot** — 64 kB at the start of internal flash (``boot_partition``).
+* **image-0** — 896 kB primary application slot (``slot0_partition``).
+* **storage** — 64 kB settings partition at the end of internal flash (``storage_partition``).
+* **image-1** — 896 kB secondary application slot on external flash (``slot1_partition`` on ``mx25r64``).
+* **image-3** — 256 kB network-core image staging slot on external flash (``slot3_partition`` on ``mx25r64``).
+
+The non-secure build target (``thingy53/nrf5340/cpuapp/ns``) uses :file:`zephyr/boards/nordic/thingy53/thingy53_nrf5340_cpuapp_ns.dts`, which splits the primary slot into secure and non-secure sub-partitions and defines a dedicated non-secure storage partition.
+
+Network core (``thingy53/nrf5340/cpunet``) partitions are defined in :file:`zephyr/boards/nordic/thingy53/thingy53_nrf5340_cpunet.dts`:
+
+* **b0n** — network-core bootloader (``b0n_partition``).
+* **b0-provision-data** — secure boot provisioning data (``bl_storage`` / ``provision_partition``).
+* **image-0** — network-core application slot (``s0_partition``).
+
+SRAM layout for inter-core communication and network-core firmware update is provided by :file:`nrf5340_sram_partition.dtsi` and :file:`nrf5340_shared_sram_partition.dtsi`, included from the application core board devicetree.
+The shared SRAM region at the start of application SRAM (``sram0_dfu_shared``) is used by MCUboot for the network-core firmware update path and must not be accessed by the application.
+Trying to access this region results in an ARM fault.
+
+Some samples and applications use devicetree overlay files to override the default partition layout for a specific use case (for example, Matter factory data).
+Do not change the default board layout unless you also update the bootloader and any deployed images accordingly.
 
 .. _thingy53_app_mcuboot_bootloader:
 
@@ -70,10 +86,10 @@ These samples can share a common USB product name, vendor ID, and product ID.
 If a sample supports additional USB classes or more than one instance of USB CDC ACM, it must use a dedicated product name, vendor ID, and product ID.
 This sample must also enable USB composite device configuration (:kconfig:option:`CONFIG_USB_COMPOSITE_DEVICE`).
 
-The :kconfig:option:`CONFIG_BOARD_SERIAL_BACKEND_CDC_ACM` Kconfig option (defined in the :file:`zephyr/boards/arm/thingy53_nrf5340/Kconfig.defconfig` file) automatically sets the default values of USB product name, vendor ID and product ID of Thingy:53.
+The :kconfig:option:`CONFIG_BOARD_SERIAL_BACKEND_CDC_ACM` Kconfig option (defined in the :file:`zephyr/boards/nordic/thingy53/Kconfig.defconfig` file) automatically sets the default values of USB product name, vendor ID and product ID of Thingy:53.
 It also enables the USB device stack and initializes the USB device at boot.
 The remote wakeup feature of a USB device is disabled by default as it requires extra action from the application side.
-A single USB CDC ACM instance is automatically included in the default board's DTS configuration file (:file:`zephyr/boards/arm/thingy53_nrf5340/thingy53_nrf5340_common.dts`).
+A single USB CDC ACM instance is automatically included in the default board's DTS configuration file (:file:`zephyr/boards/nordic/thingy53/thingy53_nrf5340_common.dtsi`).
 The USB CDC instance is used to forward application logs.
 
 If you do not want to use the USB CDC ACM as a backend for logging out of the box, you can disable it as follows:
