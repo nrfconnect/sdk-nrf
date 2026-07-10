@@ -379,6 +379,8 @@ Cellular samples
 Cryptography samples
 --------------------
 
+* Added the :ref:`crypto_ml_dsa` sample.
+
 * :ref:`crypto_tls` sample:
 
   * Updated the TLS version support section after the Mbed TLS v4.1.0 update.
