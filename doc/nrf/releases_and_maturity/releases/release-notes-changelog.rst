@@ -47,11 +47,7 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-* Fixed sequential updates on the nRF5340 SoC.
-  The address-based detection of the update candidate type allows placing the network core update candidate in the same partition as used for as the application update candidate.
-  The build system no longer requires dedicated slots for the network core update candidate.
-  You can enable software-based downgrade prevention for network core updates.
-  MCUboot now erases the secondary slot after the network core is updated.
+|no_changes_yet_note|
 
 Developing with nRF91 Series
 ============================
@@ -116,18 +112,12 @@ Developing with custom boards
 Security
 ========
 
-* Updated:
-
-  * Oberon PSA Crypto from v2.0.0 to v2.1.0.
-    The new version has minor updates in internal APIs, restructures the directory hierarchy, and improves native support for built-in keys.
-  * nrf_cc3xx_platform and nrf_cc3xx_mbedcrypto libraries to version v0.9.23.
-    Improved PSA driver error reporting and fixed an issue that caused incorrect authentication tag generation in GCM when multiple calls to :c:func:`psa_aead_update_ad` were made.
+|no_changes_yet_note|
 
 Mbed TLS
 --------
 
-* Updated Mbed TLS to v4.1.1 (from v4.1.0) and TF-PSA-Crypto to v1.1.1 (from v1.1.0).
-  For more information, see the upstream `Mbed TLS 4.1.1 release notes`_ and `TF-PSA-Crypto 1.1.1 release notes`_.
+|no_changes_yet_note|
 
 Trusted Firmware-M (TF-M)
 -------------------------
@@ -168,7 +158,7 @@ Gazell
 Matter
 ------
 
-* Replaced the tables on the :ref:`ug_matter_hw_requirements_ram_flash` and :ref:`ug_matter_hw_requirements_layouts` pages with memory layout charts.
+|no_changes_yet_note|
 
 Matter fork
 +++++++++++
@@ -236,7 +226,7 @@ Thingy:53: Matter weather station
 |no_changes_yet_note|
 
 Installer (MCUboot Firmware Loader installer)
------------------------------------------------
+---------------------------------------------
 
 |no_changes_yet_note|
 
@@ -260,10 +250,6 @@ Bluetooth Fast Pair samples
 
 |no_changes_yet_note|
 
-* :ref:`fast_pair_input_device` sample:
-
-  * Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
-
 Cellular samples
 ----------------
 
@@ -272,7 +258,7 @@ Cellular samples
 Cryptography samples
 --------------------
 
-* Added support for the nRF54LC10A SoC (with and without TF-M) in the crypto samples.
+|no_changes_yet_note|
 
 Debug samples
 -------------
@@ -317,13 +303,7 @@ Keys samples
 Matter samples
 --------------
 
-* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target for the following samples:
-
-  * :ref:`matter_template_sample`
-  * :ref:`matter_temperature_sensor_sample`
-
-  DFU is not supported on this board target, as the nRF54LC10 DK is not equipped with external flash.
-  See :ref:`ug_matter_hw_requirements_external_flash` for more information.
+|no_changes_yet_note|
 
 Networking samples
 ------------------
@@ -373,12 +353,12 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-* Added support for the nRF54LC10A SoC in the TF-M samples.
+|no_changes_yet_note|
 
 Thread samples
 --------------
 
-* Added experimental support for the nRF54LC10A SoC to all Thread samples.
+|no_changes_yet_note|
 
 Wi-Fi samples
 -------------
@@ -470,9 +450,7 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-* :ref:`lib_ram_pwrdn` library:
-
-  * Added support for the nRF54LC10A SoC.
+|no_changes_yet_note|
 
 Shell libraries
 ---------------
@@ -540,15 +518,7 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* Added support for the nRF54LC10A SoC.
-
-* Fixed an issue where UICR was not provisioned with monotonic counter structures, when :kconfig:option`SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION` was enabled, MCUboot was the only bootloader, and Partition Manager was disabled.
-
-* Added support for multiple image verification keys compiled into MCUboot.
-  The :kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option accepts a comma-separated list of PEM files.
-  Only public key material is embedded in the bootloader image.
-  This enables a production or development signing custody model in which, for example, an updatable development bootloader can boot images signed with either key while a production bootloader embeds only the production verification key.
-  MCUboot ``imgtool`` adds the ``keyinfo`` subcommand and ``--name-suffix`` for ``getpub`` and ``getpubhash``, which support the multiple keys embedded in the bootloader image.
+|no_changes_yet_note|
 
 Zephyr
 ======
@@ -587,5 +557,4 @@ zcbor
 Documentation
 =============
 
-* Added the :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
-  To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
+|no_changes_yet_note|
