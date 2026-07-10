@@ -86,3 +86,17 @@ You want to have the following configuration in your application:
     SB_CONFIG_BOOTLOADER_MCUBOOT=y
     SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
     SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
+
+RAM usage with TF-M
+*******************
+
+Avoiding memory leaks is important for security.
+Reuse MCUboot SRAM for the secure application to reduce the risk of memory leaks.
+
+Compressed image updates with standard LZMA parameters are RAM-intensive.
+Allocating the same amount of RAM for the secure application leaves very little memory for the non-secure application.
+To improve viability, the sample configuration reduces the dictionary size.
+
+Use ``RAM_CLEANUP`` to prevent potential leaks of sensitive data.
+
+The :ref:`mcuboot_with_decompression` sample uses both secure RAM reuse and RAM cleanup for its TF-M board targets.
