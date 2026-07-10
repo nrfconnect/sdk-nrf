@@ -87,7 +87,7 @@
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lm20dk/nrf54lm20b/cpuapp
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
@@ -133,7 +133,7 @@
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lm20dk/nrf54lm20b/cpuapp
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
     - nrf9160dk@0.14.0/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
@@ -144,7 +144,7 @@
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lm20dk/nrf54lm20b/cpuapp
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
@@ -153,7 +153,7 @@
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lm20dk/nrf54lm20b/cpuapp
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
