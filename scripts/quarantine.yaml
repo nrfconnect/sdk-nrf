@@ -55,6 +55,7 @@
 
 - scenarios:
     - drivers.timer.delay_accuracy
+    - drivers.timer.delay_accuracy.hfxo
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuflpr
     - nrf9251dk@0.1.0/nrf9251/cpuppr
