@@ -169,7 +169,6 @@
   - "subsys/nrf_compress/**/*"
   - "tests/subsys/bootloader/**/*"
   - "tests/subsys/dfu/**/*"
-  - "tests/subsys/pcd/**/*"
   - "tests/subsys/kmu/**/*"
   - "tests/subsys/nrf_compress/**/*"
   - "tests/modules/mcuboot/**/*"

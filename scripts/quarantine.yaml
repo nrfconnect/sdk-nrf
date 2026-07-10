@@ -93,7 +93,6 @@
 
 - scenarios:
     - bootloader.ppi_config_leftovers.nsib
-    - dfu.pcd.sysbuild
     - mcuboot.external_flash.upgrade.netcore
     - nsib.mcuboot.external_flash.upgrade.netcore_and_mcuboot
   platforms:
