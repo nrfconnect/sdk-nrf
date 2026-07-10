@@ -70,8 +70,8 @@ Each LTS branch receives updates for the following changes:
 * Bugs in the |NCS| that can make your products unusable, provided the fix does not break the contract with out-of-tree code and data.
 * Selected bug fixes and security updates inherited from open source projects, such as Zephyr, Trusted Firmware-M, and Mbed TLS.
 
-The ``nrfutil toolchain-manager`` command provides the toolchain for an LTS major release.
-Tools that handle the lifecycle state of devices, such as ``nrfutil-device``, receive security and bug fixes throughout the LTS support period.
+The ``nrfutil sdk-manager`` command provides the toolchain for an LTS major release.
+Tools that handle the lifecycle state of devices, such as ``nrfutil device``, receive security and bug fixes throughout the LTS support period.
 
 The following items are outside the scope of LTS maintenance:
 
