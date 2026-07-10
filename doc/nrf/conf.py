@@ -60,6 +60,7 @@ extensions = [
     "sphinxcontrib.jquery",
     "samples",
     "sphinx_sitemap",
+    "external_sw_versions",
 ]
 
 linkcheck_ignore = [
