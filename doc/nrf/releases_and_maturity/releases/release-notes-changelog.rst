@@ -116,8 +116,7 @@ Security
 Mbed TLS
 --------
 
-* Updated Mbed TLS to v4.1.1 (from v4.1.0) and TF-PSA-Crypto to v1.1.1 (from v1.1.0).
-  For more information, see the upstream `Mbed TLS 4.1.1 release notes`_ and `TF-PSA-Crypto 1.1.1 release notes`_.
+|no_changes_yet_note|
 
 Trusted Firmware-M (TF-M)
 -------------------------
@@ -226,7 +225,7 @@ Thingy:53: Matter weather station
 |no_changes_yet_note|
 
 Installer (MCUboot Firmware Loader installer)
------------------------------------------------
+---------------------------------------------
 
 |no_changes_yet_note|
 
@@ -450,9 +449,7 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-* :ref:`lib_ram_pwrdn` library:
-
-  * Added support for the nRF54LC10A SoC.
+|no_changes_yet_note|
 
 Shell libraries
 ---------------
@@ -522,8 +519,6 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
 |no_changes_yet_note|
 
-* Fixed an issue where UICR was not provisioned with monotonic counter structures, when :kconfig:option`SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION` was enabled, MCUboot was the only bootloader, and Partition Manager was disabled.
-
 Zephyr
 ======
 
@@ -561,5 +556,4 @@ zcbor
 Documentation
 =============
 
-* Added the :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
-  To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
+|no_changes_yet_note|
