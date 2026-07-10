@@ -41,3 +41,4 @@ jobs:
           artifactory-pass: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
           stable: ${{ env.STABLE }}
           repository-type: 'nrf'
+          tags: 'LTS'
