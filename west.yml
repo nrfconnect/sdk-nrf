@@ -224,7 +224,7 @@ manifest:
       groups:
         - doc-internal
     - name: nrf_wifi
-      revision: 5046744cb4c9640eb8b11cb92f1ea0b9554c20cf
+      revision: 7c26fb42f2b4265790ff2b401017a33dd046df29
       path: modules/lib/nrf_wifi
 
     # Other third-party repositories.
