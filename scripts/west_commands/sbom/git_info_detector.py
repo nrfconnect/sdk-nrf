@@ -135,7 +135,7 @@ def get_toplevel(absolute_path: Path) -> 'Path|None':
     '''Returns the resolved git toplevel directory at `absolute_path`.'''
     output, error_code = command_execute(args.git, 'rev-parse', '--show-toplevel',
                                          cwd=absolute_path, return_error_code=True,
-                                         allow_stderr=True)
+                                         allow_stderr=True, log_stderr=False)
     if error_code != 0:
         return None
     line = output.strip()
@@ -216,9 +216,15 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
     untracked_files = set()
     absolute_path = Path(files_to_assign[0].file_path).parent
     relative_path = Path(files_to_assign[0].file_rel_path).parent
-    git_sha = get_sha(absolute_path)
-    git_origin = get_origin(absolute_path, relative_path)
     repo = get_toplevel(absolute_path)
+    if repo is None:
+        log.wrn(f'Directory "{relative_path}" is not a git repository. '
+                'Files will be included without git-info detector information.')
+        git_sha = None
+        git_origin = None
+    else:
+        git_sha = get_sha(absolute_path)
+        git_origin = get_origin(absolute_path, relative_path)
     project = _manifest_projects.get(repo) if repo is not None else None
     if project is not None:
         git_origin = project.url
