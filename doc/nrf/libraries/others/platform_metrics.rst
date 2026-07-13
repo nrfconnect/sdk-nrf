@@ -90,7 +90,7 @@ Devicetree-selected sensor provider
 -----------------------------------
 
 For components that already have a Zephyr sensor driver, no custom C code is required.
-The die temperature channel's built-in provider (:file:`temperature_monitor.c`) reads data through the standard sensor API (``sensor_sample_fetch()`` and ``sensor_channel_get()``) from the device referenced by a devicetree chosen node:
+The die temperature channel's built-in provider (:file:`temperature_monitor.c`) reads data through the RTIO-based sensor API (``sensor_read()`` and :kconfig:option:`CONFIG_SENSOR_ASYNC_API`) from the device referenced by a devicetree chosen node. This also works with sensor drivers that only implement the RTIO ``submit()`` path and not the legacy ``sensor_sample_fetch()``/``sensor_channel_get()`` API, since Zephyr's sensor subsystem falls back to the legacy API internally for drivers that only implement it, and to the native RTIO path otherwise:
 
 .. code-block:: devicetree
 

@@ -8,6 +8,7 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/sensor.h>
+#include <zephyr/rtio/rtio.h>
 #include <zephyr/logging/log.h>
 
 #include <platform_metrics.h>
@@ -27,6 +28,19 @@ LOG_MODULE_REGISTER(die_temp_monitor, CONFIG_PLATFORM_METRICS_LOG_LEVEL);
 #endif
 
 static const struct device *const temp_dev = DEVICE_DT_GET(PLATFORM_METRICS_DIE_TEMP_SENSOR_NODE);
+
+/*
+ * Read via the RTIO-based sensor API rather than sensor_sample_fetch()/
+ * sensor_channel_get(): when the bound device has no native RTIO submit
+ * (like temp_nrf5), Zephyr's sensor subsystem falls back to calling
+ * fetch/get internally, so this keeps working on the DK. It also means
+ * a board that overrides the chosen node to a sensor driver which *only*
+ * implements the RTIO path (no fetch/get) still works, unlike a direct
+ * fetch/get call would.
+ */
+SENSOR_DT_READ_IODEV(die_temp_iodev, PLATFORM_METRICS_DIE_TEMP_SENSOR_NODE,
+		      {SENSOR_CHAN_DIE_TEMP, 0});
+RTIO_DEFINE(die_temp_rtio_ctx, 1, 1);
 
 static K_SEM_DEFINE(sensor_state_lock, 1, 1);
 
@@ -48,31 +62,56 @@ static void reschedule_die_temp_work(void)
 			K_MSEC(CONFIG_PLATFORM_METRICS_DIE_TEMP_MONITOR_INTERVAL_MS));
 }
 
+/*
+ * A decoded q31 sample represents value = q / 2^(31 - shift) in the
+ * channel's SI unit (here, degC). Scale by 100 before the shift so the
+ * result lands directly in centi-degC, the unit the rest of this driver
+ * stores die temperature in.
+ */
+static int32_t q31_to_centi(q31_t q, int8_t shift)
+{
+	return (int32_t)(((int64_t)q * 100) >> (31 - shift));
+}
+
 static void die_temp_work_handler(struct k_work *work)
 {
-	struct sensor_value val;
+	uint8_t buf[128];
+	int32_t temp_centi = 0;
 	int err;
 
 	ARG_UNUSED(work);
 
-	err = sensor_sample_fetch(temp_dev);
+	err = sensor_read(&die_temp_iodev, &die_temp_rtio_ctx, buf, sizeof(buf));
 
 	if (!err) {
-		err = sensor_channel_get(temp_dev, SENSOR_CHAN_DIE_TEMP, &val);
+		const struct sensor_decoder_api *decoder;
+
+		err = sensor_get_decoder(temp_dev, &decoder);
+		if (!err) {
+			struct sensor_chan_spec chan = {SENSOR_CHAN_DIE_TEMP, 0};
+			struct sensor_q31_data data = {0};
+			uint32_t fit = 0;
+			int decoded;
+
+			decoded = decoder->decode(buf, chan, &fit, 1, &data);
+			err = (decoded == 1) ? 0 : -EIO;
+			if (!err) {
+				temp_centi = q31_to_centi(data.readings[0].value, data.shift);
+			}
+		}
 	}
 
 	if (err < 0) {
 		LOG_ERR("Die temperature read failed: %d", err);
 	} else {
-		LOG_DBG("DIE_TEMP is %d.%02d", val.val1, abs(val.val2 / 10000));
+		LOG_DBG("DIE_TEMP is %d.%02d", temp_centi / 100, abs(temp_centi % 100));
 	}
 
 	k_sem_take(&sensor_state_lock, K_FOREVER);
 	if (err < 0) {
-		LOG_ERR("Failed to read DIE_TEMP: %d", err);
 		sensor_state.status = PLATFORM_METRICS_STATUS_ERROR;
 	} else {
-		sensor_state.value.i32 = (int32_t)sensor_value_to_centi(&val);
+		sensor_state.value.i32 = temp_centi;
 		sensor_state.timestamp_ms = k_uptime_get();
 		sensor_state.status = PLATFORM_METRICS_STATUS_OK;
 	}
