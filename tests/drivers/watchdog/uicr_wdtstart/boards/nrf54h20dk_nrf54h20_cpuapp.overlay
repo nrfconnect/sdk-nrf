@@ -5,12 +5,6 @@
  */
 
 /* It must match with CONFIG_GEN_UICR_WDTSTART_INSTANCE_WDTx in sysbuild/uicr.conf */
-/ {
-	aliases {
-		wdt = &wdt011;
-	};
-};
-
 &wdt011 {
 	status = "okay";
 };
