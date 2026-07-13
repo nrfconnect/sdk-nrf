@@ -184,6 +184,27 @@ struct ble_peer_conn_params_event {
 	bool updated;
 };
 
+/** @brief Bluetooth LE peer SCI connection rate event.
+ *
+ * The Bluetooth LE peer SCI connection rate event is submitted to inform that connection rate
+ * parameters (including both connection interval and subrating) have changed or that a
+ * connection rate change request failed.
+ * The params field is valid only if status is BT_HCI_ERR_SUCCESS and must be ignored otherwise.
+ */
+struct ble_peer_sci_conn_rate_event {
+	/** Event header. */
+	struct app_event_header header;
+
+	/** ID used to identify Bluetooth connection - pointer to the bt_conn. */
+	void *id;
+
+	/** HCI Status from LE Connection Rate Change event. */
+	uint8_t status;
+
+	/** New connection rate parameters. Valid only if status is BT_HCI_ERR_SUCCESS. */
+	struct bt_conn_le_conn_rate_changed params;
+};
+
 /** @brief Bluetooth LE peer search event.
  *
  * The Bluetooth LE peer search event is submitted to inform if application is currently looking for
@@ -222,6 +243,7 @@ extern "C" {
 APP_EVENT_TYPE_DECLARE(ble_peer_event);
 APP_EVENT_TYPE_DECLARE(ble_peer_operation_event);
 APP_EVENT_TYPE_DECLARE(ble_peer_conn_params_event);
+APP_EVENT_TYPE_DECLARE(ble_peer_sci_conn_rate_event);
 APP_EVENT_TYPE_DECLARE(ble_peer_search_event);
 APP_EVENT_TYPE_DECLARE(ble_adv_data_update_event);
 

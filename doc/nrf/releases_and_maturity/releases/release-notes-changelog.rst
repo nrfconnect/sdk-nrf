@@ -583,7 +583,9 @@ Bluetooth libraries and services
 Common Application Framework
 ----------------------------
 
-|no_changes_yet_note|
+* :ref:`caf_ble_state`:
+
+  * Added the :c:struct:`ble_peer_sci_conn_rate_event` event to report connection rate changes or failed connection rate change requests when shorter connection intervals are enabled.
 
 Debug libraries
 ---------------

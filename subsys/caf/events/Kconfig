@@ -35,6 +35,14 @@ config CAF_BLE_COMMON_EVENTS
 	help
 	  Enable support for BLE common events.
 
+config CAF_BLE_SCI_CONN_RATE_EVENTS
+	bool "BLE SCI connection rate events"
+	depends on CAF_BLE_COMMON_EVENTS
+	depends on BT_SHORTER_CONNECTION_INTERVALS
+	default y
+	help
+	  Enable support for BLE connection rate events.
+
 config CAF_INIT_LOG_BLE_PEER_EVENTS
 	bool "Log BLE peer events"
 	depends on CAF_BLE_COMMON_EVENTS
@@ -62,6 +70,12 @@ config CAF_INIT_LOG_BLE_PEER_OPERATION_EVENTS
 config CAF_INIT_LOG_BLE_PEER_CONN_PARAMS_EVENTS
 	bool "Log BLE peer connection parameters events"
 	depends on CAF_BLE_COMMON_EVENTS
+	depends on LOG
+	default y
+
+config CAF_INIT_LOG_BLE_SCI_CONN_RATE_EVENTS
+	bool "Log BLE peer connection rate events"
+	depends on CAF_BLE_SCI_CONN_RATE_EVENTS
 	depends on LOG
 	default y
 

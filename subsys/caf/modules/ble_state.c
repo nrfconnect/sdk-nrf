@@ -269,6 +269,26 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval,
 	APP_EVENT_SUBMIT(event);
 }
 
+#if CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS
+static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
+			      const struct bt_conn_le_conn_rate_changed *params)
+{
+	struct ble_peer_sci_conn_rate_event *event = new_ble_peer_sci_conn_rate_event();
+
+	event->id = conn;
+	event->status = status;
+
+	if (status == BT_HCI_ERR_SUCCESS) {
+		__ASSERT(params != NULL,
+			 "params pointer is NULL for successful conn rate change");
+
+		event->params = *params;
+	}
+
+	APP_EVENT_SUBMIT(event);
+}
+#endif /* CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS */
+
 static void bt_ready(int err)
 {
 	if (err) {
@@ -302,6 +322,9 @@ static int ble_state_init(void)
 		.security_changed = security_changed,
 		.le_param_req = le_param_req,
 		.le_param_updated = le_param_updated,
+#if CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS
+		.conn_rate_changed = conn_rate_changed,
+#endif /* CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS */
 	};
 	bt_conn_cb_register(&conn_callbacks);
 

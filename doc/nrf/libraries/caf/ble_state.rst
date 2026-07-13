@@ -64,10 +64,33 @@ The application module can submit a :c:struct:`ble_peer_event` with :c:member:`b
 Connection parameter change
 ===========================
 
+Connection parameter changes are handled differently depending on whether Shorter Connection Intervals (SCI) are used for a given Bluetooth LE connection.
+SCI support is controlled by the :kconfig:option:`CONFIG_BT_SHORTER_CONNECTION_INTERVALS` Kconfig option.
+The peer must also support SCI for it to be used on a connection.
+
+Shorter Connection Intervals unused
+-----------------------------------
+
 The module submits a :c:struct:`ble_peer_conn_params_event` to inform other application modules about connection parameter update requests and connection parameter updates.
 
 The |ble_state| rejects the connection parameter update request in Zephyr's callback.
 An application module can handle the :c:struct:`ble_peer_conn_params_event` and update the connection parameters.
+
+Shorter Connection Intervals used
+---------------------------------
+
+If you are using SCI, update the connection parameters with the connection *rate* API (:c:func:`bt_conn_le_conn_rate_request`).
+The module submits a :c:struct:`ble_peer_sci_conn_rate_event` to inform other application modules about connection rate changes.
+The event is also emitted when a connection rate update request fails.
+In this case, it contains the status code of the failed request.
+No event is emitted when a connection rate update request is made, because the Bluetooth stack does not provide a callback for this when SCI is enabled.
+
+A Bluetooth LE Central can use the :c:func:`bt_conn_le_conn_rate_set_defaults` API to limit the accepted connection rate range.
+
+.. note::
+   When the :kconfig:option:`CONFIG_BT_SHORTER_CONNECTION_INTERVALS` Kconfig option is enabled, the non-SCI callbacks remain available.
+   They are called if you use the non-SCI (connection parameter update) API to update the connection parameters.
+   However, do not use the non-SCI API if both the device and peer support the SCI.
 
 Connection references
 =====================
