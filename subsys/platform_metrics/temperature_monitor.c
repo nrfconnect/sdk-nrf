@@ -10,31 +10,31 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
 
-#include <drivers/vtf_monitoring/vtf_monitoring.h>
+#include <platform_metrics.h>
 
-LOG_MODULE_REGISTER(die_temp_monitor, CONFIG_VTF_LOG_LEVEL);
+LOG_MODULE_REGISTER(die_temp_monitor, CONFIG_PLATFORM_METRICS_LOG_LEVEL);
 
-/* Board devicetree can override which sensor feeds VTF_CH_DIE_TEMP via
- * the `nordic,vtf-die-temp-sensor` chosen node (e.g. a customer's own
+/* Board devicetree can override which sensor feeds PLATFORM_METRICS_CH_DIE_TEMP via
+ * the `nordic,platform-metrics-die-temp-sensor` chosen node (e.g. a customer's own
  * ambient temperature sensor). Falls back to the SoC's own die
  * temperature sensor when no override is present, so the DK keeps
  * working with zero devicetree changes.
  */
-#if DT_HAS_CHOSEN(nordic_vtf_die_temp_sensor)
-#define VTF_DIE_TEMP_SENSOR_NODE DT_CHOSEN(nordic_vtf_die_temp_sensor)
+#if DT_HAS_CHOSEN(nordic_platform_metrics_die_temp_sensor)
+#define PLATFORM_METRICS_DIE_TEMP_SENSOR_NODE DT_CHOSEN(nordic_platform_metrics_die_temp_sensor)
 #else
-#define VTF_DIE_TEMP_SENSOR_NODE DT_NODELABEL(temp)
+#define PLATFORM_METRICS_DIE_TEMP_SENSOR_NODE DT_NODELABEL(temp)
 #endif
 
-static const struct device *const temp_dev = DEVICE_DT_GET(VTF_DIE_TEMP_SENSOR_NODE);
+static const struct device *const temp_dev = DEVICE_DT_GET(PLATFORM_METRICS_DIE_TEMP_SENSOR_NODE);
 
 static K_SEM_DEFINE(sensor_state_lock, 1, 1);
 
-static struct vtf_sample sensor_state = {
-	.type = VTF_SAMPLE_TYPE_INT,
+static struct platform_metrics_sample sensor_state = {
+	.type = PLATFORM_METRICS_SAMPLE_TYPE_INT,
 	.value.i32 = 0,
 	.timestamp_ms = 0,
-	.status = VTF_STATUS_UNINITIALISED,
+	.status = PLATFORM_METRICS_STATUS_UNINITIALISED,
 };
 
 static void die_temp_work_handler(struct k_work *work);
@@ -44,7 +44,8 @@ static K_WORK_DELAYABLE_DEFINE(die_temp_work, die_temp_work_handler);
 
 static void reschedule_die_temp_work(void)
 {
-	k_work_schedule(&die_temp_work, K_MSEC(CONFIG_VTF_DIE_TEMP_MONITOR_INTERVAL_MS));
+	k_work_schedule(&die_temp_work,
+			K_MSEC(CONFIG_PLATFORM_METRICS_DIE_TEMP_MONITOR_INTERVAL_MS));
 }
 
 static void die_temp_work_handler(struct k_work *work)
@@ -69,11 +70,11 @@ static void die_temp_work_handler(struct k_work *work)
 	k_sem_take(&sensor_state_lock, K_FOREVER);
 	if (err < 0) {
 		LOG_ERR("Failed to read DIE_TEMP: %d", err);
-		sensor_state.status = VTF_STATUS_ERROR;
+		sensor_state.status = PLATFORM_METRICS_STATUS_ERROR;
 	} else {
 		sensor_state.value.i32 = (int32_t)sensor_value_to_centi(&val);
 		sensor_state.timestamp_ms = k_uptime_get();
-		sensor_state.status = VTF_STATUS_OK;
+		sensor_state.status = PLATFORM_METRICS_STATUS_OK;
 	}
 
 	k_sem_give(&sensor_state_lock);
@@ -92,7 +93,7 @@ static int die_temp_init(void)
 	return 0;
 }
 
-static int die_temp_sample(struct vtf_sample *out)
+static int die_temp_sample(struct platform_metrics_sample *out)
 {
 	if (out == NULL) {
 		return -EINVAL;
@@ -104,5 +105,6 @@ static int die_temp_sample(struct vtf_sample *out)
 	return 0;
 }
 
-VTF_CHANNEL_DEFINE(vtf_channel_die_temp, VTF_CH_DIE_TEMP, die_temp_sample, die_temp_init,
-		   VTF_SAMPLE_TYPE_INT, i32, CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE);
+PLATFORM_METRICS_CHANNEL_DEFINE(platform_metrics_channel_die_temp, PLATFORM_METRICS_CH_DIE_TEMP,
+			   die_temp_sample, die_temp_init, PLATFORM_METRICS_SAMPLE_TYPE_INT, i32,
+			   CONFIG_PLATFORM_METRICS_DIE_TEMP_DEFAULT_VALUE);

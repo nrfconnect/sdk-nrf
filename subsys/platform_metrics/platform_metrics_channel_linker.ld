@@ -1,0 +1,1 @@
+ITERABLE_SECTION_ROM(platform_metrics_channel, Z_LINK_ITERABLE_SUBALIGN)

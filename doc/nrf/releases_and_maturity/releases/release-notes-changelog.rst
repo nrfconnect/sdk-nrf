@@ -520,6 +520,8 @@ Wi-Fi samples
   * :zephyr:code-sample:`mqtt-sn-publisher`
   * :zephyr:code-sample:`coap-server`
 
+* Added the :ref:`wifi_recal_monitor_sample` sample that demonstrates the :ref:`platform_metrics` library's provider framework for a Wi-Fi recalibration use case.
+
 Other samples
 -------------
 
@@ -534,7 +536,6 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
   * The :ref:`ppi_seq` driver for triggering periodic hardware tasks using PPI.
   * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
-  * The :ref:`vtf_monitoring` for battery voltage, temperature, and frequency monitoring.
 
 SPI drivers
 -----------
@@ -634,6 +635,7 @@ nRF RPC libraries
 Other libraries
 ---------------
 
+* Added the :ref:`platform_metrics` library for battery voltage and temperature monitoring.
 * :ref:`lib_ram_pwrdn` library:
 
   * Added support for the nRF54LC10A SoC.
