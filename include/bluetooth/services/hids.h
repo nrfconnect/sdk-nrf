@@ -725,6 +725,16 @@ int bt_hids_boot_kb_inp_rep_send(struct bt_hids *hids_obj, struct bt_conn *conn,
  */
 int bt_hids_sci_mode_get(struct bt_conn *conn, enum bt_hids_sci_mode_value *mode);
 
+/** @brief Get connection rate parameters for the given SCI mode.
+ *         The parameters are configured by using Kconfig options.
+ *
+ *  @param mode SCI mode.
+ *
+ *  @return Pointer to the connection rate parameters for @p mode, or NULL if @p mode is invalid.
+ */
+const struct bt_conn_le_conn_rate_param *bt_hids_sci_mode_conn_rate_param_get(
+	enum bt_hids_sci_mode_value mode);
+
 /** @brief Request a new HID SCI mode.
  *         This function will request connection parameters for the mode.
  *         To actually change the mode @ref bt_hids_sci_mode_updated needs to be called

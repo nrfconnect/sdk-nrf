@@ -88,7 +88,14 @@ This starts the SCI mode change process, which consists of the following steps:
    The library invokes this callback with the matching :c:enum:`bt_hids_cp_evt` event and the connection object when the HID host writes an SCI mode request to the Control Point characteristic.
    The deprecated :c:member:`bt_hids_init_param.cp_evt_handler` callback is not invoked for SCI mode requests.
 #. Inside the callback, the application can perform any additional necessary actions, such as performing Frame Space Update.
-#. Call the :c:func:`bt_hids_sci_mode_change_request` function to request connection parameters for the target :c:enum:`bt_hids_sci_mode_value`.
+#. Request connection parameters for the target :c:enum:`bt_hids_sci_mode_value` using one of the following approaches:
+
+   * Call the :c:func:`bt_hids_sci_mode_change_request` function to automatically request the parameter values specified by the Kconfig options.
+   * Call the :c:func:`bt_hids_sci_mode_conn_rate_param_get` function to obtain the parameters for the mode.
+     Optionally adjust them to select a subset of the allowed values for the mode.
+     You can use the :c:func:`bt_hids_sci_mode_validate` API to check if the updated parameters are still valid for the selected HID SCI mode.
+     Then call :c:func:`bt_conn_le_conn_rate_request` manually.
+
    The application should track the pending mode (for example, in per-connection context data) until the connection rate change completes.
 #. In the :c:member:`bt_conn_cb.conn_rate_changed` callback, call the :c:func:`bt_hids_sci_mode_validate` function with the pending mode and the new connection parameters.
    If the validation succeeds, call the :c:func:`bt_hids_sci_mode_updated` function to update the cached SCI mode and notify the subscribed HID hosts.
