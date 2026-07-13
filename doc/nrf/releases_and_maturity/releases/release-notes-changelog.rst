@@ -582,6 +582,10 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* :ref:`hids_readme` library:
+
+  * Added support for runtime customization of connection parameters for a given HID SCI mode through the newly added :c:func:`bt_hids_sci_mode_conn_rate_param_get` API.
+
 * :ref:`bt_fast_pair_readme` library:
 
   * Removed the nRF52 and nRF53 Series support.

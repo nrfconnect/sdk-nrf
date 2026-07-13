@@ -887,26 +887,6 @@ static void hids_sci_mode_ccc_changed(struct bt_gatt_attr const *attr, uint16_t 
 	}
 }
 
-static const struct bt_conn_le_conn_rate_param *get_sci_conn_rate_param_for_mode(
-	enum bt_hids_sci_mode_value mode)
-{
-	switch (mode) {
-	case BT_HIDS_SCI_MODE_DEFAULT:
-		return &hids_sci_conn_rate_default;
-	case BT_HIDS_SCI_MODE_FAST:
-		return &hids_sci_conn_rate_fast;
-#if defined(CONFIG_BT_HIDS_SCI_LOW_POWER_MODE)
-	case BT_HIDS_SCI_MODE_LOW_POWER:
-		return &hids_sci_conn_rate_low_power;
-#endif
-	case BT_HIDS_SCI_MODE_FULL_RANGE:
-		return &hids_sci_conn_rate_full_range;
-	default:
-		LOG_ERR("Invalid SCI mode: %d", mode);
-		return NULL;
-	}
-}
-
 int bt_hids_sci_mode_get(struct bt_conn *conn, enum bt_hids_sci_mode_value *mode)
 {
 	if (conn == NULL || mode == NULL) {
@@ -932,6 +912,26 @@ int bt_hids_sci_mode_get(struct bt_conn *conn, enum bt_hids_sci_mode_value *mode
 	return 0;
 }
 
+const struct bt_conn_le_conn_rate_param *bt_hids_sci_mode_conn_rate_param_get(
+	enum bt_hids_sci_mode_value mode)
+{
+	switch (mode) {
+	case BT_HIDS_SCI_MODE_DEFAULT:
+		return &hids_sci_conn_rate_default;
+	case BT_HIDS_SCI_MODE_FAST:
+		return &hids_sci_conn_rate_fast;
+#if defined(CONFIG_BT_HIDS_SCI_LOW_POWER_MODE)
+	case BT_HIDS_SCI_MODE_LOW_POWER:
+		return &hids_sci_conn_rate_low_power;
+#endif
+	case BT_HIDS_SCI_MODE_FULL_RANGE:
+		return &hids_sci_conn_rate_full_range;
+	default:
+		LOG_ERR("Invalid SCI mode: %d", mode);
+		return NULL;
+	}
+}
+
 int bt_hids_sci_mode_change_request(struct bt_conn *conn,
 				 enum bt_hids_sci_mode_value mode)
 {
@@ -954,7 +954,7 @@ int bt_hids_sci_mode_change_request(struct bt_conn *conn,
 		return -ENOENT;
 	}
 
-	params = get_sci_conn_rate_param_for_mode(mode);
+	params = bt_hids_sci_mode_conn_rate_param_get(mode);
 	if (params == NULL) {
 		bt_conn_ctx_release(sci_mode_hids_obj->conn_ctx, (void *)conn_data);
 		return -EINVAL;
@@ -975,7 +975,7 @@ bool bt_hids_sci_mode_validate(enum bt_hids_sci_mode_value mode,
 			       const struct bt_conn_le_conn_rate_changed *params)
 {
 	const struct bt_conn_le_conn_rate_param *mode_params =
-		get_sci_conn_rate_param_for_mode(mode);
+		bt_hids_sci_mode_conn_rate_param_get(mode);
 
 	if (params == NULL || mode_params == NULL) {
 		return false;
