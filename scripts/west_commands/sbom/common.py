@@ -23,7 +23,8 @@ from sbom_exceptions import SbomException
 
 def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
                     return_path: bool = False, allow_stderr: bool = False,
-                    return_error_code: bool = False, shell: bool = False) -> 'Path|str':
+                    return_error_code: bool = False, shell: bool = False,
+                    log_stderr: bool = True) -> 'Path|str':
     '''Execute subprocess wrapper that handles errors and output redirections.'''
     cmd_args = tuple(str(x) for x in cmd_args)
     if cwd is not None:
@@ -47,7 +48,8 @@ def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
 
         if len(err.strip()) > 0:
             if allow_stderr:
-                log.wrn(f'Command "{cmd_args[0]}" reported errors:\n{err}')
+                if log_stderr:
+                    log.wrn(f'Command "{cmd_args[0]}" reported errors:\n{err}')
             else:
                 log.err(f'Command "{cmd_args[0]}" reported errors:\n{err}')
                 if (cp.returncode == 0) or return_error_code:
