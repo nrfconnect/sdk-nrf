@@ -21,6 +21,7 @@ exclude:
   # - nrf/tests
   # - nrfxlib/blocked_dir
   # - modules/crypto/mbedtls
+  - modules/lib/matter
   files:
   # - modules/crypto/oberon-psa-crypto/a_new_file.h
   patterns:
