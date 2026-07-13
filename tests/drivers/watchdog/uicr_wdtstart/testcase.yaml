@@ -14,6 +14,7 @@ common:
       - "WATCHDOG was reconfigured"
       - "3: Watchdog was feed"
       - "WATCHDOG was disabled"
+      - "Test is completed"
 
 tests:
   drivers.watchdog.uicr_wdtstart:

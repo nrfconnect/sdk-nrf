@@ -14,6 +14,7 @@ LOG_MODULE_REGISTER(uicr_wdtstart, LOG_LEVEL_INF);
 
 static const struct device *const wdt_dev = DEVICE_DT_GET_OR_NULL(DT_NODELABEL(wdt011));
 static int wdt_channel_id = -1;
+static uint32_t watchdog_window = 5000U;
 
 
 /* First call of configure_watchdog will:
@@ -29,7 +30,6 @@ static void configure_watchdog(void)
 	/* After reconfiguration, watchdog window will be
 	 * larger than the one set by the Ironside.
 	 */
-	uint32_t watchdog_window = 5000U;
 
 	if (!device_is_ready(wdt_dev)) {
 		LOG_ERR("WDT device %s is not ready", wdt_dev->name);
@@ -123,6 +123,7 @@ int main(void)
 	} else {
 		LOG_INF("FAIL: wdt_disable() returned %d", ret);
 	}
+	k_msleep(watchdog_window + 100);
 
 	print_bar();
 	LOG_INF("Test is completed");
