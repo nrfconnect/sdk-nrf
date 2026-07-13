@@ -4,7 +4,7 @@ import common_pb2
 import requests
 
 
-def get_available_networks(verify_ssl=False):
+def get_available_networks(verify_ssl=True):
     url = 'https://wifiprov.local/prov/networks'
     try:
         response = requests.get(url, verify=verify_ssl)
@@ -54,7 +54,7 @@ def select_network(scan_results, input_ssid=None):
     choice = int(input("Select the network (number): "))
     return scan_results.results[choice]
 
-def configure_device(selected_record, passphrase, verify_ssl=False):
+def configure_device(selected_record, passphrase, verify_ssl=True):
     if not selected_record or not passphrase:
         print("No network selected or passphrase provided.")
         return
