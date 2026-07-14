@@ -114,7 +114,7 @@ jobs:
 
           VERSION_REGEX="^v([0-9a-zA-Z\.\-]+)$"
           if [[ ${GITHUB_REF#refs/tags/} =~ $VERSION_REGEX ]]; then
-            SPHINXOPTS_EXTRA="${SPHINXOPTS_EXTRA} -D kconfigdiff_is_release=1"
+            BUILD_CONF="${BUILD_CONF} -DNCS_RELEASE=YES"
           fi
 
           cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="${SPHINXOPTS_EXTRA}" ${BUILD_CONF}
