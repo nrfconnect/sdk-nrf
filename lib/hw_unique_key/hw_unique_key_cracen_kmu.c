@@ -32,7 +32,7 @@ int hw_unique_key_derive_key(enum hw_unique_key_slot key_slot, const uint8_t *co
 
 	cracen_key_derivation_operation_t op = {};
 
-	status = cracen_key_derivation_setup(&op, PSA_ALG_SP800_108_COUNTER_CMAC);
+	status = cracen_key_derivation_setup(&op, NULL, PSA_ALG_SP800_108_COUNTER_CMAC);
 	if (status != PSA_SUCCESS) {
 		if (status == PSA_ERROR_DOES_NOT_EXIST) {
 			return -HW_UNIQUE_KEY_ERR_MISSING;
