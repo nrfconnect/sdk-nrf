@@ -121,7 +121,7 @@ config MPSL_INIT_PRIORITY
 
 config MPSL_FORCE_RRAM_ON_ALL_THE_TIME
 	bool "Force RRAM to stay on"
-	depends on TRUSTED_EXECUTION_NONSECURE
+	depends on TRUSTED_EXECUTION_NONSECURE && DT_HAS_NORDIC_RRAM_CONTROLLER_ENABLED
 	default y
 	help
 	  This option forces RRAM to stay on.
