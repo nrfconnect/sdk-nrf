@@ -857,10 +857,10 @@
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
-/scripts/twister_harness_ext/             @nrfconnect/ncs-eris @gchwier @nrfconnect/ncs-test-leads
+/scripts/twister_harness_ext/             @nrfconnect/ncs-eris @nrfconnect/ncs-eris-test @nrfconnect/ncs-test-framework
 /scripts/hpf/                             @nrfconnect/ncs-ll-ursus
 /scripts/generate_psa_key_attributes.py   @nrfconnect/ncs-aegir
-/scripts/tests/                           @nrfconnect/ncs-eris @fundakol
+/scripts/tests/                           @nrfconnect/ncs-eris @nrfconnect/ncs-eris-test
 /scripts/vale/                            @francescoser
 /scripts/esb_sniffer/                     @nrfconnect/ncs-si-xcake
 /scripts/matter/                          @nrfconnect/ncs-matter
@@ -1087,7 +1087,7 @@
 /tests/subsys/bluetooth/fast_pair/locator_tag_legacy/ @nrfconnect/ncs-si-bluebagel
 /tests/subsys/bluetooth/mesh/             @nrfconnect/ncs-paladin
 /tests/subsys/bluetooth/rpc_gatt_service/  @nrfconnect/ncs-protocols-serialization
-/tests/subsys/bootloader/                 @nrfconnect/ncs-eris
+/tests/subsys/bootloader/                 @nrfconnect/ncs-eris @nrfconnect/ncs-eris-test
 /tests/subsys/caf/                        @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/debug/cpu_load/             @nordic-krch
 /tests/subsys/dfu/                        @nrfconnect/ncs-eris
@@ -1097,7 +1097,7 @@
 /tests/subsys/event_manager_proxy/        @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/fw_info/                    @nrfconnect/ncs-eris
 /tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test @anangl
-/tests/subsys/kmu/                        @nrfconnect/ncs-eris
+/tests/subsys/kmu/                        @nrfconnect/ncs-eris @nrfconnect/ncs-eris-test
 /tests/subsys/mpsl/                       @nrfconnect/ncs-dragoon
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
 /tests/subsys/net/lib/azure_iot_hub/      @nrfconnect/ncs-cia
