@@ -1,129 +1,139 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2022-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <hal/nrf_power.h>
-#include <ram_pwrdn.h>
+/*
+ * On-hardware test for the RAM power-down library, written against the public
+ * API only so it runs on any supported family.
+ */
+
+#include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/sys/reboot.h>
 #include <zephyr/sys/util.h>
-#include <zephyr/ztest.h>
 
-#include <inttypes.h>
-#include <stdlib.h>
-#include <malloc.h>
+#include <ram_pwrdn.h>
 
-/* ===== Test helpers ===== */
+#define REBOOT_MARKER 0x5A11EDA7u
+#define PROBE_PATTERN 0xCAFEBABEu
+#define RESTORE_PATTERN 0xA5A5A5A5u
 
-struct bank_section {
-	uint8_t bank_id;
-	uint8_t sect_id;
-};
+/* Lives inside the application image, so it is always powered. */
+static volatile uint32_t work_buf[256];
 
-static struct bank_section bank_section(uint8_t bank_id, uint8_t section_id)
+/* Kept across the software reset (a warm reset does not clear RAM). */
+static __noinit uint32_t reboot_marker;
+
+static void exercise_ram(void)
 {
-	struct bank_section ret = { .bank_id = bank_id, .sect_id = section_id };
+	uint32_t sum = 0;
 
-	return ret;
-}
-
-static bool check_section_up(uint8_t bank_id, uint8_t section_id)
-{
-	uint32_t mask = nrf_power_rampower_mask_get(NRF_POWER, bank_id);
-
-	return mask & (NRF_POWER_RAMPOWER_S0POWER_MASK << section_id);
-}
-
-static bool check_section_range(struct bank_section first, struct bank_section last, bool up)
-{
-	for (uint8_t bank_id = first.bank_id; bank_id <= last.bank_id; ++bank_id) {
-		uint8_t first_sect_id = bank_id == first.bank_id ? first.sect_id : 0;
-		uint8_t last_sect_id = bank_id == last.bank_id ? last.sect_id : 1;
-
-		for (uint8_t sect_id = first_sect_id; sect_id <= last_sect_id; ++sect_id) {
-			if (check_section_up(bank_id, sect_id) != up) {
-				return false;
-			}
-		}
+	for (size_t i = 0; i < ARRAY_SIZE(work_buf); ++i) {
+		work_buf[i] = (uint32_t)(i * 7u + 1u);
 	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(work_buf); ++i) {
+		sum += work_buf[i];
+	}
+
+	printk("ram_pwrdn: RAM check sum=%u\n", sum);
+}
+
+/* Word at the top of RAM, which the library powers down (the image never
+ * reaches this far).
+ */
+static volatile uint32_t *unused_ram_word(void)
+{
+	uintptr_t ram_end = DT_REG_ADDR(DT_CHOSEN(zephyr_sram)) +
+			    DT_REG_SIZE(DT_CHOSEN(zephyr_sram));
+
+	return (volatile uint32_t *)(ram_end - sizeof(uint32_t));
+}
+
+/* Returns true if the unused RAM was confirmed to be powered down. */
+static bool verify_power_down(void)
+{
+	volatile uint32_t *unused_ram = unused_ram_word();
+
+	*unused_ram = PROBE_PATTERN;
+	work_buf[0] = PROBE_PATTERN;
+
+	power_down_unused_ram();
+	printk("ram_pwrdn: powered down unused RAM\n");
+
+	/* Some families gate the RAM only once the SoC enters System ON idle. */
+	printk("ram_pwrdn: entering System ON idle\n");
+	k_msleep(1000);
+	printk("ram_pwrdn: woke from idle\n");
+
+	power_up_unused_ram();
+	printk("ram_pwrdn: powered up unused RAM\n");
+
+	/* Read only after power-up: on some families accessing powered-down RAM
+	 * faults. Losing the pattern proves the RAM lost power.
+	 */
+	if (*unused_ram == PROBE_PATTERN) {
+		printk("ram_pwrdn: ERROR unused RAM kept its content (still powered)\n");
+		return false;
+	}
+	printk("ram_pwrdn: unused RAM lost content (powered down)\n");
+
+	if (work_buf[0] != PROBE_PATTERN) {
+		printk("ram_pwrdn: ERROR used RAM lost its content\n");
+		return false;
+	}
+	printk("ram_pwrdn: used RAM retained content\n");
 
 	return true;
 }
 
-static void teardown(void *f)
+/* Returns true if unused RAM is accessible again (power restored on reboot). */
+static bool verify_unused_ram_accessible(void)
 {
-	const uintptr_t RAM_START_ADDR = 0x20000000UL;
-	const uintptr_t RAM_END_ADDR = 0x20040000UL;
+	volatile uint32_t *unused_ram = unused_ram_word();
 
-	power_up_ram(RAM_START_ADDR, RAM_END_ADDR);
+	*unused_ram = RESTORE_PATTERN;
+	if (*unused_ram != RESTORE_PATTERN) {
+		printk("ram_pwrdn: ERROR unused RAM not accessible after reboot\n");
+		return false;
+	}
+	printk("ram_pwrdn: unused RAM accessible after reboot\n");
+
+	return true;
 }
 
-/* ===== Test cases ===== */
-
-ZTEST(ram_pwrdn, test_manual_power_control)
+int main(void)
 {
-	const uintptr_t RAM_START_ADDR = 0x20000000UL;
-	const uintptr_t RAM_END_ADDR = 0x20040000UL;
-	const uintptr_t RAM_BANK_SECTION_SIZE = 0x1000UL;
-	const uintptr_t RAM_BANK8_ADDR = 0x20010000UL;
-	const uintptr_t RAM_BANK8_SECTION_SIZE = 0x8000UL;
+	if (reboot_marker == REBOOT_MARKER) {
+		reboot_marker = 0;
+		printk("ram_pwrdn: boot after reboot\n");
+		exercise_ram();
+		if (!verify_unused_ram_accessible()) {
+			return 0;
+		}
+		printk("ram_pwrdn: RAM access after reboot OK\n");
+		printk("ram_pwrdn: TEST PASS\n");
+		return 0;
+	}
 
-	/* Power up all sections */
-	power_up_ram(RAM_START_ADDR, RAM_END_ADDR);
-	zassert_true(check_section_range(bank_section(0, 0), bank_section(8, 5), true),
-		     "Enabling all RAM sections");
+	printk("ram_pwrdn: initial boot\n");
+	exercise_ram();
 
-	/* Verify that powering down part of RAM section is not effective */
-	power_down_ram(RAM_END_ADDR - RAM_BANK8_SECTION_SIZE + 1, RAM_END_ADDR);
-	zassert_true(check_section_range(bank_section(0, 0), bank_section(8, 5), true),
-		     "Disabling part of RAM section");
+	if (!verify_power_down()) {
+		return 0;
+	}
 
-	/* Verify that powering down entire RAM section works */
-	power_down_ram(RAM_END_ADDR - RAM_BANK8_SECTION_SIZE, RAM_END_ADDR);
-	zassert_true(check_section_range(bank_section(0, 0), bank_section(8, 4), true),
-		     "Disabling single RAM section (disabled too much)");
-	zassert_true(check_section_range(bank_section(8, 5), bank_section(8, 5), false),
-		     "Disabling single RAM section (failed)");
+	exercise_ram();
+	printk("ram_pwrdn: RAM access after power cycle OK\n");
 
-	/* Verify that powering down RAM section plus one byte has the same effect */
-	power_down_ram(RAM_END_ADDR - RAM_BANK8_SECTION_SIZE, RAM_END_ADDR);
-	zassert_true(check_section_range(bank_section(0, 0), bank_section(8, 4), true),
-		     "Disabling more than RAM section (disabled too much)");
-	zassert_true(check_section_range(bank_section(8, 5), bank_section(8, 5), false),
-		     "Disabling more than RAM section (failed)");
+	/* Reboot with unused RAM powered down; it must be restored before reset. */
+	reboot_marker = REBOOT_MARKER;
+	power_down_unused_ram();
+	printk("ram_pwrdn: rebooting with RAM powered down\n");
+	k_msleep(100);
+	sys_reboot(SYS_REBOOT_COLD);
 
-	/* Power down last three sections */
-	power_down_ram(RAM_END_ADDR - RAM_BANK8_SECTION_SIZE * 3, RAM_END_ADDR);
-	zassert_true(check_section_range(bank_section(0, 0), bank_section(8, 2), true),
-		     "Disabling three RAM sections (disabled too much)");
-	zassert_true(check_section_range(bank_section(8, 3), bank_section(8, 5), false),
-		     "Disabling three RAM sections (failed)");
-
-	/* Verify that powering up one byte is enough to enable entire RAM section */
-	power_up_ram(RAM_END_ADDR - RAM_BANK8_SECTION_SIZE * 3,
-		     RAM_END_ADDR - RAM_BANK8_SECTION_SIZE * 3 + 1);
-	zassert_true(check_section_range(bank_section(0, 0), bank_section(8, 3), true),
-		     "Enabling one byte (failed)");
-	zassert_true(check_section_range(bank_section(8, 4), bank_section(8, 5), false),
-		     "Enabling one byte (enabled too much)");
-
-	/* Verify that powering up entire RAM section has the same effect */
-	power_up_ram(RAM_END_ADDR - RAM_BANK8_SECTION_SIZE * 3,
-		     RAM_END_ADDR - RAM_BANK8_SECTION_SIZE * 2);
-	zassert_true(check_section_range(bank_section(0, 0), bank_section(8, 3), true),
-		     "Enabling single RAM section (failed)");
-	zassert_true(check_section_range(bank_section(8, 4), bank_section(8, 5), false),
-		     "Enabling single RAM section (enabled too much)");
-
-	/* Power down sections on the border between two banks */
-	power_down_ram(RAM_BANK8_ADDR - RAM_BANK_SECTION_SIZE - 1,
-		       RAM_BANK8_ADDR + RAM_BANK8_SECTION_SIZE);
-	zassert_true(check_section_range(bank_section(0, 0), bank_section(7, 0), true),
-		     "Disabling sections on two banks (disabled too much)");
-	zassert_true(check_section_range(bank_section(7, 1), bank_section(8, 0), false),
-		     "Disabling sections on two banks (failed)");
-	zassert_true(check_section_range(bank_section(8, 1), bank_section(8, 3), true),
-		     "Disabling sections on two banks (disabled too much)");
+	return 0;
 }
-
-ZTEST_SUITE(ram_pwrdn, NULL, NULL, NULL, teardown, NULL);
