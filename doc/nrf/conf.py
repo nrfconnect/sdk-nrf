@@ -237,6 +237,7 @@ gh_link_prefixes = {
     "samples/.*": "",
     "scripts/.*": "",
     "tests/.*": "",
+    "boards/.*": "",
     ".*": "doc/nrf",
 }
 
