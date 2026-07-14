@@ -5,7 +5,7 @@
 #
 
 # Build Oberon PSA crypto driver
-set(drivers_path ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/oberon/drivers)
+set(drivers_path ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/drivers/oberon)
 
 target_include_directories(psa_crypto_library_config
   INTERFACE

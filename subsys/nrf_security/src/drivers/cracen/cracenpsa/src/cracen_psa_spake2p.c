@@ -240,7 +240,7 @@ static psa_status_t cracen_get_confirmation_keys(cracen_spake2p_operation_t *ope
 		memcpy(operation->shared, V + operation->shared_len, operation->shared_len);
 	} else {
 		operation->shared_len = hash_len;
-		status = psa_driver_wrapper_key_derivation_setup(&kdf_op,
+		status = psa_driver_wrapper_key_derivation_setup(&kdf_op, NULL,
 								 PSA_ALG_HKDF(PSA_ALG_SHA_256));
 		if (status != SX_OK) {
 			goto exit;
@@ -267,7 +267,8 @@ static psa_status_t cracen_get_confirmation_keys(cracen_spake2p_operation_t *ope
 		(void)psa_driver_wrapper_key_derivation_abort(&kdf_op);
 	}
 
-	status = psa_driver_wrapper_key_derivation_setup(&kdf_op, PSA_ALG_HKDF(PSA_ALG_SHA_256));
+	status = psa_driver_wrapper_key_derivation_setup(&kdf_op, NULL,
+							 PSA_ALG_HKDF(PSA_ALG_SHA_256));
 	if (status != SX_OK) {
 		goto exit;
 	}

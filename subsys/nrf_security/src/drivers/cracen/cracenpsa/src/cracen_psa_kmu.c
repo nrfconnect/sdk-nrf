@@ -137,7 +137,7 @@ static psa_status_t get_encryption_key(const uint8_t *context, uint8_t *key)
 
 	cracen_key_derivation_operation_t op = {};
 
-	psa_status = cracen_key_derivation_setup(&op, PSA_ALG_SP800_108_COUNTER_CMAC);
+	psa_status = cracen_key_derivation_setup(&op, NULL, PSA_ALG_SP800_108_COUNTER_CMAC);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
@@ -555,7 +555,7 @@ psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes)
 		}
 
 		/* If the slot we attempt to destroy is blocked we will get a hardware failure, and
-		 * there is no way in hardware to distingush between an actual failure and the slot
+		 * there is no way in hardware to distinguish between an actual failure and the slot
 		 * being blocked. Therefore we attempt to push the key here to verify if the key is
 		 * blocked or not.
 		 */

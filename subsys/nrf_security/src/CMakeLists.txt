@@ -55,7 +55,7 @@ target_include_directories(psa_crypto_library_config
     ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
     ${NRF_SECURITY_DIR}/include
     # This is needed for the oberon_check_unsupported.h
-    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/oberon/drivers
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/drivers/oberon
 )
 
 add_library(${mbedcrypto_target}

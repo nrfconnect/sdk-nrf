@@ -38,8 +38,10 @@ static psa_status_t ecc_key_agreement_check_alg(psa_algorithm_t alg)
 }
 
 psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *operation,
+					 const psa_key_attributes_t *key_attributes,
 					 psa_algorithm_t alg)
 {
+	(void)key_attributes;
 	operation->alg = alg;
 
 #if defined(PSA_NEED_CRACEN_HKDF)
