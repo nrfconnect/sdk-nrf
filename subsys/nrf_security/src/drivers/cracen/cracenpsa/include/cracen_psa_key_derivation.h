@@ -43,13 +43,15 @@ psa_status_t cracen_key_agreement(const psa_key_attributes_t *attributes, const 
 
 /** @brief Set up a key derivation operation.
  *
- * @param[in,out] operation Key derivation operation context.
- * @param[in] alg           Key derivation algorithm.
+ * @param[in,out] operation      Key derivation operation context.
+ * @param[in]     key_attributes Attributes of the key used for the derivation.
+ * @param[in]     alg            Key derivation algorithm.
  *
  * @retval PSA_SUCCESS             The operation completed successfully.
  * @retval PSA_ERROR_NOT_SUPPORTED The algorithm is not supported.
  */
 psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *operation,
+					 const psa_key_attributes_t *key_attributes,
 					 psa_algorithm_t alg);
 
 /** @brief Set the capacity for a key derivation operation.
