@@ -81,4 +81,12 @@
 	chosen {
 		zephyr,code-partition = &slot0_ns_partition;
 	};
+
+	/*
+	 * This layout drops the partitions that the upstream
+	 * nordic-tz-secure/-nonsecure descriptors reference. Remove the
+	 * descriptors so they do not hold dangling phandles.
+	 */
+	/delete-node/ nordic-tz-secure;
+	/delete-node/ nordic-tz-nonsecure;
 };

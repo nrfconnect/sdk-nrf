@@ -72,3 +72,14 @@
 		};
 	};
 };
+
+/*
+ * This layout redefines the flash partition map, dropping partitions that the
+ * upstream nordic-tz-secure/-nonsecure descriptors reference. Remove the
+ * descriptors so they do not hold dangling phandles (restores the behaviour
+ * from before the descriptors were introduced).
+ */
+/ {
+	/delete-node/ nordic-tz-secure;
+	/delete-node/ nordic-tz-nonsecure;
+};
