@@ -10,12 +10,12 @@
 		#size-cells = <1>;
 		ranges;
 
-		sram_rx: memory@20018000 {
-			reg = <0x20018000 0x8000>;
+		sram_rx: memory@20026c00 {
+			reg = <0x20026c00 DT_SIZE_K(2)>;
 		};
 
-		sram_tx: memory@20020000 {
-			reg = <0x20020000 0x8000>;
+		sram_tx: memory@20027400 {
+			reg = <0x20027400 DT_SIZE_K(2)>;
 		};
 	};
 
