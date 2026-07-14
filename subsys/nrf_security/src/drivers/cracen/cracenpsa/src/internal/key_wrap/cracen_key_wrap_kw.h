@@ -46,7 +46,9 @@ psa_status_t cracen_key_wrap_kw_wrap(const psa_key_attributes_t *wrapping_key_at
  * @param[out] key_data               Key material of the unwrapped key.
  * @param[in] key_data_size           Size of the buffer containing the unwrapped key.
  * @param[out] key_data_length        On success, the number of bytes that make up
- *                                    the unwrapped key data
+ *                                    the unwrapped key data.
+ * @param[out] bits                   On success, the number of bits that make up
+ *                                    the unwrapped key data.
  *
  * @retval PSA_SUCCESS                The operation completed successfully.
  * @retval PSA_ERROR_INVALID_ARGUMENT
@@ -56,8 +58,7 @@ psa_status_t cracen_key_wrap_kw_wrap(const psa_key_attributes_t *wrapping_key_at
  */
 psa_status_t cracen_key_wrap_kw_unwrap(const psa_key_attributes_t *wrapping_key_attributes,
 				       const uint8_t *wrapping_key_data, size_t wrapping_key_size,
-				       const uint8_t *data, size_t data_size,
-				       uint8_t *key_data, size_t key_data_size,
-				       size_t *key_data_length);
+				       const uint8_t *data, size_t data_size, uint8_t *key_data,
+				       size_t key_data_size, size_t *key_data_length, size_t *bits);
 
 #endif /* CRACEN_KEY_WRAP_KW_H */
