@@ -39,6 +39,17 @@ void cracen_ml_dsa_simple_bit_unpack(const uint8_t *v, uint32_t b,
 	}
 }
 
+void cracen_ml_dsa_bit_pack(const ml_dsa_poly_vector_t *w, uint32_t a, uint32_t b,
+			    uint8_t *out)
+{
+	uint32_t c = cracen_pqc_bit_length(a + b);
+	struct pqc_bit_writer wr = {.next = out, .acc = 0, .acc_bits = 0};
+
+	for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
+		cracen_pqc_write_bits(&wr, (uint32_t)((int32_t)b - w->coeffs[i]), c);
+	}
+}
+
 void cracen_ml_dsa_bit_unpack(const uint8_t *v, uint32_t a, uint32_t b,
 			      ml_dsa_poly_vector_t *out_vec)
 {
@@ -47,6 +58,23 @@ void cracen_ml_dsa_bit_unpack(const uint8_t *v, uint32_t a, uint32_t b,
 
 	for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
 		out_vec->coeffs[i] = (int32_t)b - (int32_t)cracen_pqc_read_bits(&r, c);
+	}
+}
+
+void cracen_ml_dsa_hint_bit_pack(const ml_dsa_params_t *alg_params, const uint8_t *h, uint8_t *y)
+{
+	uint32_t index = 0;
+
+	safe_memzero(y, alg_params->omega + alg_params->rows_k);
+
+	for (uint32_t i = 0; i < alg_params->rows_k; i++) {
+		for (uint32_t j = 0; j < ML_DSA_POLY_COEFFS_COUNT; j++) {
+			if (h[i * ML_DSA_POLY_COEFFS_COUNT + j] != 0) {
+				y[index] = (uint8_t)j;
+				index++;
+			}
+		}
+		y[alg_params->omega + i] = (uint8_t)index;
 	}
 }
 
