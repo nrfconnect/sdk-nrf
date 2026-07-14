@@ -5585,6 +5585,12 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v3-4-0 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0
+
+DRGN-29227: Incorrect return parameters from the HCI LE Read Supported States command
+   Byte 0 and byte 4 are set correctly; however, the other bits may contain undefined values.
+   When the :kconfig:option:`CONFIG_BT_SCAN_AND_INITIATE_IN_PARALLEL` Kconfig option is enabled, the controller may incorrectly report scan-and-initiate-in-parallel as unsupported.
+
 .. rst-class:: v3-3-0 v3-2-0 v3-1-0 v3-0-0 v2-9-0 v2-8-0 v2-7-0 v2-6-0 v2-5-0
 
 DRGN-28765: An assert can occur when a BIG broadcaster is terminated
