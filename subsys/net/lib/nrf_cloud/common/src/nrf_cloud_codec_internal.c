@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include <version.h>
+#include <zephyr/version.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/logging/log.h>

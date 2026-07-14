@@ -30,7 +30,7 @@
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_coap.h>
 #include <cJSON.h>
-#include <version.h>
+#include <zephyr/version.h>
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_dns.h"
 #include "nrfc_dtls.h"
