@@ -5,6 +5,7 @@
  */
 
 #include <internal/ml_dsa/cracen_ml_dsa_key_management.h>
+#include "cracen_ml_dsa.h"
 #include "cracen_ml_dsa_internal.h"
 
 #include <psa/crypto_types.h>
@@ -98,4 +99,44 @@ psa_status_t cracen_export_ml_dsa_public_key(const uint8_t *key_buffer, size_t k
 	memcpy(data, key_buffer, key_buffer_size);
 	*data_length = key_buffer_size;
 	return PSA_SUCCESS;
+}
+
+psa_status_t cracen_import_ml_dsa_key_pair(const psa_key_attributes_t *attributes,
+					   const uint8_t *data, size_t data_length,
+					   uint8_t *key_buffer, size_t key_buffer_size,
+					   size_t *key_buffer_length, size_t *key_bits)
+{
+	size_t bits = psa_get_key_bits(attributes);
+
+	/* The import/export format of an ML-DSA key pair is the 32-byte seed (xi). The
+	 * seed does not encode the parameter set, so the key bits must be supplied through
+	 * the attributes and must select a supported parameter set.
+	 */
+	if (data_length != ML_DSA_KEY_PAIR_SEED_SZ_BYTES) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (cracen_ml_dsa_params_get(bits) == NULL) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	if (data_length > key_buffer_size) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	memcpy(key_buffer, data, data_length);
+	*key_bits = bits;
+	*key_buffer_length = data_length;
+
+	return PSA_SUCCESS;
+}
+
+psa_status_t cracen_export_ml_dsa_public_key_from_keypair(const psa_key_attributes_t *attributes,
+							  const uint8_t *key_buffer,
+							  size_t key_buffer_size,
+							  uint8_t *data, size_t data_size,
+							  size_t *data_length)
+{
+	return cracen_ml_dsa_export_public_key_from_seed(attributes, key_buffer, key_buffer_size,
+							 data, data_size, data_length);
 }

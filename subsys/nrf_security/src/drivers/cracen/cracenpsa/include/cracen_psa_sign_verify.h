@@ -27,6 +27,8 @@
  * @param[in] alg             Signing algorithm.
  * @param[in] input           Message to sign.
  * @param[in] input_length    Length of the message in bytes.
+ * @param[in] context         Context string (used by ML-DSA; ignored otherwise).
+ * @param[in] context_length  Length of the context in bytes.
  * @param[out] signature      Buffer to store the signature.
  * @param[in] signature_size  Size of the signature buffer in bytes.
  * @param[out] signature_length Length of the generated signature in bytes.
@@ -35,9 +37,11 @@
  * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
  * @retval PSA_ERROR_NOT_SUPPORTED  The algorithm is not supported.
  */
-psa_status_t cracen_sign_message(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
-				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *input,
-				 size_t input_length, uint8_t *signature, size_t signature_size,
+psa_status_t cracen_sign_message(const psa_key_attributes_t *attributes,
+				 const uint8_t *key_buffer, size_t key_buffer_size,
+				 psa_algorithm_t alg, const uint8_t *input, size_t input_length,
+				 const uint8_t *context, size_t context_length,
+				 uint8_t *signature, size_t signature_size,
 				 size_t *signature_length);
 
 /** @brief Verify a message signature.
@@ -72,6 +76,8 @@ psa_status_t cracen_verify_message(const psa_key_attributes_t *attributes,
  * @param[in] alg             Signing algorithm.
  * @param[in] hash            Hash of a message to sign.
  * @param[in] hash_length     Length of the hash in bytes.
+ * @param[in] context         Context string (used by HashML-DSA; ignored otherwise).
+ * @param[in] context_length  Length of the context in bytes.
  * @param[out] signature      Buffer to store the signature.
  * @param[in] signature_size  Size of the signature buffer in bytes.
  * @param[out] signature_length Length of the generated signature in bytes.
@@ -82,8 +88,8 @@ psa_status_t cracen_verify_message(const psa_key_attributes_t *attributes,
  */
 psa_status_t cracen_sign_hash(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 			      size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *hash,
-			      size_t hash_length, uint8_t *signature, size_t signature_size,
-			      size_t *signature_length);
+			      size_t hash_length, const uint8_t *context, size_t context_length,
+			      uint8_t *signature, size_t signature_size, size_t *signature_length);
 
 /** @brief Verify the signature of a hash.
  *
