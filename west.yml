@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 59969b286a150f5d9c5e467a6b69eb122eb67c96
+      revision: pull/4285/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -162,7 +162,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 6add52db053a9050f91604acc356b9dfba0ffbce
+      revision: pull/728/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -202,7 +202,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: eb24c84ef336ffab6e1b97fde804ddea6a64fa1b
+      revision: pull/427/head
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -243,7 +243,7 @@ manifest:
       groups:
         - doc-internal
     - name: nrf_wifi
-      revision: 5046744cb4c9640eb8b11cb92f1ea0b9554c20cf
+      revision: pull/6/head
       path: modules/lib/nrf_wifi
 
     # Other third-party repositories.
@@ -254,7 +254,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.42.0
+      revision: pull/121/head
       remote: memfault
     - name: bsim
       repo-path: bsim_west
@@ -285,7 +285,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: dc22e8cf8dd03c8ff2bdde68002a4496525f6eb2
+      revision: pull/188/head
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.
