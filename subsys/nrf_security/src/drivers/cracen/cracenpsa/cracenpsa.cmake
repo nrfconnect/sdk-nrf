@@ -91,6 +91,9 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_verify.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_sign.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_keygen.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_internal.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_params.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_poly.c

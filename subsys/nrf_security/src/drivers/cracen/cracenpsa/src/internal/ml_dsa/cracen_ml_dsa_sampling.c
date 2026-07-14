@@ -5,12 +5,15 @@
  */
 
 #include "cracen_ml_dsa_internal.h"
+#include "cracen_ml_dsa_packing.h"
 #include "cracen_ml_dsa_sampling.h"
 
 #include <cracen_psa_xof.h>
 #include <cracen_psa_primitives.h>
 
 #include <nrf_security_mem_helpers.h>
+#include <zephyr/sys/byteorder.h>
+#include <string.h>
 
 /** Upper bound on the number of 3-byte candidates RejNTTPoly needs to fill all
  *  256 coefficients: with rejection probability below 2^-128
@@ -133,5 +136,134 @@ psa_status_t cracen_ml_dsa_sample_in_ball(const uint8_t *seed, size_t seed_len,
 exit:
 	(void)cracen_xof_abort(&operation);
 	signs = 0;
+	return status;
+}
+
+/** FIPS 204, Algorithm 15 (CoeffFromHalfByte).
+ *  Maps a half-byte b in [0, 15] to a coefficient in [-eta, eta],
+ *  or returns the INT32_MIN value on rejection.
+ */
+static int32_t coeff_from_half_byte(uint8_t b, uint8_t eta)
+{
+	if (eta == 2 && b < 15) {
+		return 2 - (int32_t)(b % 5);
+	}
+
+	if (eta == 4 && b < 9) {
+		return 4 - (int32_t)b;
+	}
+
+	return INT32_MIN;
+}
+
+/** FIPS 204, Algorithm 31 (RejBoundedPoly).
+ *  Samples one polynomial with coefficients in [-eta, eta]
+ *  from a 66-byte seed (rho' || 2-byte nonce).
+ */
+static psa_status_t rej_bounded_poly(const uint8_t *seed, uint8_t eta, ml_dsa_poly_vector_t *out)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	cracen_xof_operation_t operation;
+	uint32_t j = 0;
+
+	status = cracen_xof_setup(&operation, PSA_ALG_SHAKE256);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	status = cracen_xof_update(&operation, seed, ML_DSA_REJ_BOUNDED_SEED_BYTES);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+
+	while (j < ML_DSA_POLY_COEFFS_COUNT) {
+		uint8_t z;
+		int32_t z0;
+		int32_t z1;
+
+		status = cracen_xof_output(&operation, &z, 1);
+		if (status != PSA_SUCCESS) {
+			goto exit;
+		}
+
+		z0 = coeff_from_half_byte(z & 0x0Fu, eta);
+		z1 = coeff_from_half_byte(z >> 4, eta);
+
+		if (z0 != INT32_MIN) {
+			out->coeffs[j++] = z0;
+		}
+
+		if (z1 != INT32_MIN && j < ML_DSA_POLY_COEFFS_COUNT) {
+			out->coeffs[j++] = z1;
+		}
+	}
+
+exit:
+	cracen_xof_abort(&operation);
+	return status;
+}
+
+psa_status_t cracen_ml_dsa_expand_s(const ml_dsa_params_t *alg_params, const uint8_t *rho_prime,
+				    ml_dsa_poly_vector_t *s1, ml_dsa_poly_vector_t *s2)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	/* rho' || IntegerToBytes(nonce, 2) */
+	uint8_t seed[ML_DSA_REJ_BOUNDED_SEED_BYTES];
+	uint16_t nonce = 0;
+
+	memcpy(seed, rho_prime, ML_DSA_RHO_PRIME_SZ_BYTES);
+
+	for (uint32_t r = 0; r < alg_params->columns_l; r++) {
+		sys_put_le16(nonce, &seed[ML_DSA_RHO_PRIME_SZ_BYTES]);
+		status = rej_bounded_poly(seed, alg_params->eta, &s1[r]);
+		if (status != PSA_SUCCESS) {
+			goto exit;
+		}
+		nonce++;
+	}
+
+	for (uint32_t r = 0; r < alg_params->rows_k; r++) {
+		sys_put_le16(nonce, &seed[ML_DSA_RHO_PRIME_SZ_BYTES]);
+		status = rej_bounded_poly(seed, alg_params->eta, &s2[r]);
+		if (status != PSA_SUCCESS) {
+			goto exit;
+		}
+		nonce++;
+	}
+
+exit:
+	safe_memzero(seed, sizeof(seed));
+	return status;
+}
+
+psa_status_t cracen_ml_dsa_expand_mask(const ml_dsa_params_t *alg_params,
+				       const uint8_t *rho, uint16_t mu,
+				       ml_dsa_poly_vector_t *y)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	uint8_t seed[ML_DSA_EXPAND_MASK_SEED_BYTES];
+	uint8_t v[ML_DSA_EXPAND_MASK_MAX_BYTES];
+
+	/** c = 1 + bitlen(gamma1 - 1);
+	 *  each polynomial is packed with 32 * c bytes.
+	 */
+	size_t v_len = 32u * (1u + cracen_ml_dsa_bit_length(alg_params->gamma1 - 1u));
+
+	/* rho || IntegerToBytes(mu + r, 2) */
+	memcpy(seed, rho, ML_DSA_RHO_PRIME_SZ_BYTES);
+
+	for (uint32_t r = 0; r < alg_params->columns_l; r++) {
+		sys_put_le16((uint16_t)(mu + r), &seed[ML_DSA_RHO_PRIME_SZ_BYTES]);
+
+		status = cracen_ml_dsa_shake256_digest(seed, sizeof(seed), v, v_len);
+		if (status != PSA_SUCCESS) {
+			goto exit;
+		}
+		cracen_ml_dsa_bit_unpack(v, alg_params->gamma1 - 1u, alg_params->gamma1, &y[r]);
+	}
+
+exit:
+	safe_memzero(seed, sizeof(seed));
+	safe_memzero(v, sizeof(v));
 	return status;
 }

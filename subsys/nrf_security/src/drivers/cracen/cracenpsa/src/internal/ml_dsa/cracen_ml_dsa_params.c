@@ -6,8 +6,6 @@
 
 #include "cracen_ml_dsa_internal.h"
 
-/* gamma2 = (q - 1) / val */
-#define GAMMA2(val)	((ML_DSA_PRIME_NUM - 1) / val)
 /* w1_max = (q - 1) / (2 * gamma2) - 1 */
 #define W1_MAX(gamma2)	((uint8_t)((ML_DSA_PRIME_NUM - 1) / (uint32_t)(2 * gamma2) - 1))
 
@@ -22,12 +20,13 @@ static const ml_dsa_params_t ml_dsa_44_params = {
 	.rows_k = 4,
 	.columns_l = 4,
 	.tau = 39,
+	.eta = 2,
 	.lambda = 128,
 	.beta = 78,
 	.gamma1 = (1 << 17),
-	.gamma2 = GAMMA2(88),
+	.gamma2 = ML_DSA_GAMMA2(88),
 	.omega = 80,
-	.w1_max = W1_MAX(GAMMA2(88)),
+	.w1_max = W1_MAX(ML_DSA_GAMMA2(88)),
 	.priv_key_size = 2560,
 	.pk_size = 1312,
 	.sig_size = 2420,
@@ -39,12 +38,13 @@ static const ml_dsa_params_t ml_dsa_65_params = {
 	.rows_k = 6,
 	.columns_l = 5,
 	.tau = 49,
+	.eta = 4,
 	.lambda = 192,
 	.beta = 196,
 	.gamma1 = (1 << 19),
-	.gamma2 = GAMMA2(32),
+	.gamma2 = ML_DSA_GAMMA2(32),
 	.omega = 55,
-	.w1_max = W1_MAX(GAMMA2(32)),
+	.w1_max = W1_MAX(ML_DSA_GAMMA2(32)),
 	.priv_key_size = 4032,
 	.pk_size = 1952,
 	.sig_size = 3309,
@@ -56,12 +56,13 @@ static const ml_dsa_params_t ml_dsa_87_params = {
 	.rows_k = 8,
 	.columns_l = 7,
 	.tau = 60,
+	.eta = 2,
 	.lambda = 256,
 	.beta = 120,
 	.gamma1 = (1 << 19),
-	.gamma2 = GAMMA2(32),
+	.gamma2 = ML_DSA_GAMMA2(32),
 	.omega = 75,
-	.w1_max = W1_MAX(GAMMA2(32)),
+	.w1_max = W1_MAX(ML_DSA_GAMMA2(32)),
 	.priv_key_size = 4896,
 	.pk_size = 2592,
 	.sig_size = 4627,
