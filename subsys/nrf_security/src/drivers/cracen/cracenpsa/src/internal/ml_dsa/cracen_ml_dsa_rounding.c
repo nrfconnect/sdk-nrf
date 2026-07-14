@@ -7,6 +7,11 @@
 #include "cracen_ml_dsa_internal.h"
 #include "cracen_ml_dsa_rounding.h"
 
+/* Number of dropped low bits kept in t0 (2^(d-1)): the ExpandMask/BitPack bound
+ * for t0 coefficients, which lie in [-(2^(d-1) - 1), 2^(d-1)].
+ */
+#define ML_DSA_T0_COEFF_BOUND	(1 << (ML_DSA_DROPPED_BITS_COUNT - 1))
+
 /** FIPS 204, Algorithm 36 (Decompose).
  *  Splits r (in [0, q)) into high bits r1 and the centered low bits r0
  *  in range (-gamma2, gamma2].
@@ -51,4 +56,59 @@ int32_t cracen_ml_dsa_use_hint(int32_t hint_bit, int32_t r, uint32_t gamma2)
 	}
 
 	return r1;
+}
+
+/* Bring a coefficient in the range (-q, 2q) back into [0, q), as required by
+ * decompose(). Signing forms these coefficients as sums and differences of
+ * inverse-NTT outputs (each already in [0, q)).
+ */
+static int32_t center_to_zq(int32_t r)
+{
+	if (r < 0) {
+		r += ML_DSA_PRIME_NUM;
+	} else if (r >= ML_DSA_PRIME_NUM) {
+		r -= ML_DSA_PRIME_NUM;
+	}
+
+	return r;
+}
+
+void cracen_ml_dsa_power2round(const ml_dsa_poly_vector_t *in, ml_dsa_poly_vector_t *t1,
+			       ml_dsa_poly_vector_t *t0)
+{
+	for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
+		int32_t r = in->coeffs[i];
+		/* r0 = r mod+- 2^d, centered into (-2^(d-1), 2^(d-1)]. */
+		int32_t r0 = r & ((1 << ML_DSA_DROPPED_BITS_COUNT) - 1);
+
+		if (r0 > ML_DSA_T0_COEFF_BOUND) {
+			r0 -= (1 << ML_DSA_DROPPED_BITS_COUNT);
+		}
+
+		t0->coeffs[i] = r0;
+		t1->coeffs[i] = (r - r0) >> ML_DSA_DROPPED_BITS_COUNT;
+	}
+}
+
+int32_t cracen_ml_dsa_high_bits(int32_t r, uint32_t gamma2)
+{
+	int32_t r0;
+	int32_t r1;
+
+	decompose(center_to_zq(r), gamma2, &r0, &r1);
+	return r1;
+}
+
+int32_t cracen_ml_dsa_low_bits(int32_t r, uint32_t gamma2)
+{
+	int32_t r0;
+	int32_t r1;
+
+	decompose(center_to_zq(r), gamma2, &r0, &r1);
+	return r0;
+}
+
+int32_t cracen_ml_dsa_make_hint(int32_t z, int32_t r, uint32_t gamma2)
+{
+	return cracen_ml_dsa_high_bits(r, gamma2) != cracen_ml_dsa_high_bits(r + z, gamma2);
 }

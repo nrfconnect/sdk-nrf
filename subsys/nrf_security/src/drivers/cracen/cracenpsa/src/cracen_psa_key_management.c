@@ -79,10 +79,17 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		/* For compliance */
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_PUBLIC_KEY) &&
-	    key_type == PSA_KEY_TYPE_ML_DSA_PUBLIC_KEY) {
-		return cracen_export_ml_dsa_public_key(key_buffer, key_buffer_size, data, data_size,
-						       data_length);
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT) &&
+	    key_type == PSA_KEY_TYPE_ML_DSA_KEY_PAIR) {
+		return cracen_export_ml_dsa_public_key_from_keypair(attributes,
+								    key_buffer, key_buffer_size,
+								    data, data_size, data_length);
+	} else if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_PUBLIC_KEY) &&
+		   key_type == PSA_KEY_TYPE_ML_DSA_PUBLIC_KEY) {
+		return cracen_export_ml_dsa_public_key(key_buffer, key_buffer_size,
+						       data, data_size, data_length);
+	} else {
+		/* For compliance */
 	}
 
 	if (key_type == PSA_KEY_TYPE_ML_KEM_KEY_PAIR &&
@@ -205,6 +212,12 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return cracen_import_ml_dsa_public_key(attributes, data, data_length,
 						       key_buffer, key_buffer_size,
 						       key_buffer_length, key_bits);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT) &&
+	    key_type == PSA_KEY_TYPE_ML_DSA_KEY_PAIR) {
+		return cracen_import_ml_dsa_key_pair(attributes, data, data_length, key_buffer,
+						     key_buffer_size, key_buffer_length, key_bits);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT) &&
