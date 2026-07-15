@@ -12,7 +12,7 @@
 .. |54H_nrfutil_trace_ver| replace:: 4.4.0
 .. |ironside_se_ver| replace:: v23.8.0+33
 
-.. |mbed_tls_ver| replace:: 4.1.0
+.. |mbed_tls_ver| replace:: 4.1.1
 .. |tf-m_ver| replace:: v2.3.0
 
 .. ### Config shortcuts
