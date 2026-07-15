@@ -308,7 +308,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Connectivity bridge
 -------------------
 
-* Updated to use devicetree (DTS) for defining NVM partitions instead of the deprecated partition_manager.
+* Updated to use devicetree (DTS) for defining NVM partitions instead of the deprecated Partition Manager.
 
 High-Performance Framework (HPF)
 --------------------------------
@@ -347,7 +347,7 @@ nRF Desktop
 
 * Updated:
 
-  * The application configurations to use devicetree (DTS) for defining non-volatile memory partitions instead of the deprecated partition_manager.
+  * The application configurations to use devicetree (DTS) for defining non-volatile memory partitions instead of the deprecated Partition Manager.
     This includes configuration of main application image and other sysbuild images built together with it (for example bootloader).
   * The application configurations to change the non-volatile memory self-protection mechanism in the MCUboot image on the nRF54L board targets (:kconfig:option:`CONFIG_SOC_SERIES_NRF54L`).
     The :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` Kconfig option is used instead of the :kconfig:option:`CONFIG_FPROTECT` to disable read, write, and execute from the memory area that holds the MCUboot bootloader.

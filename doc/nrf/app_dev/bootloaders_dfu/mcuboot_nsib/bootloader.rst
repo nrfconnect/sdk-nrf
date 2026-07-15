@@ -67,8 +67,6 @@ The |NCS| currently supports two implementations:
   .. figure:: ../images/bootloader_memory_layout.svg
      :alt: Memory layout
 
-.. include:: ../../../includes/pm_deprecation.txt
-
 Building an application with any bootloader configuration uses :ref:`sysbuild` to build multiple images, by default.
 Flash partitions, for the boot and DFU chain, are defined in devicetree (board description, overlays, and included ``*.dtsi`` files).
 Each sysbuild image defines its own devicetree specification based on |NCS| device descriptions, with sysbuild-specific and image-specific overlays applied on top; therefore, overlays for each image within the sysbuild project must impose exactly the same layout of partitions to ensure correct read/write access to these regions.

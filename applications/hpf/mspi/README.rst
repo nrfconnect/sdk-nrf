@@ -335,7 +335,6 @@ The process involves building a test or user application that is using MSPI driv
       #. Disable the following Kconfig options:
 
          * :kconfig:option:`SB_CONFIG_VPR_LAUNCHER` - Disables the default VPR launcher image for the application core.
-         * :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` - Disables the :ref:`Partition Manager <partition_manager>`.
 
       #. Implement the business logic using the MSPI API with the HPF application.
 

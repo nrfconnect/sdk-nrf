@@ -11,8 +11,6 @@ Partitioning device memory is a crucial aspect of managing how a device's storag
 |NCS| follows Zephyr's devicetree-based (DTS) flash partitioning: partition layout is defined in devicetree and resolved at build time using Flash Map API macros and a run-time accessible flash map of partitions that bootloaders and applications use for flash device access.
 For scenarios involving DFU, read the following sections.
 
-.. include:: ../../../includes/pm_deprecation.txt
-
 .. _bootloader_partitioning_partitions_file:
 
 Partition map

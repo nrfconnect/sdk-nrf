@@ -28,9 +28,7 @@ Note that the DTS file for the CPUAPP application must reserve a required area f
 Using Partition Manager
 =======================
 
-.. include:: ../../../includes/pm_deprecation.txt
-
-For :ref:`partition_manager`, applications can only use static definitions.
+For ``deprecated_partition_manager``, applications can only use static definitions.
 In the current version of the |NCS|, the CPUAPP application and the FLPR application use different partitioning definitions.
 The CPUAPP application follows the Partition Manager's scheme, while FLPR relies on DTS partitioning and disregards the Partition Manager scheme.
 For this reason, partitions defined for FLPR in DTS must also be reserved in the Partition Manager to ensure consistency.

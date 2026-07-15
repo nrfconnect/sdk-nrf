@@ -245,7 +245,7 @@ When you define memory regions in devicetree-based partitioning, you solely are 
 Alignment requirements for devicetree partition sets
 ====================================================
 
-You need to align the following devicetree memory regions:
+You need to align the following partitions:
 
 * Secure image (``slot0_partition`` or ``slot0_s_partition``)
 * Non-secure image (``slot0_ns_partition``)

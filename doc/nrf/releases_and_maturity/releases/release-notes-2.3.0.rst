@@ -971,7 +971,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
   * Updated the output contents.
     The output now contains source repository and version information for each file.
 
-* partition_manager:
+* Partition Manager:
 
   * Added:
 

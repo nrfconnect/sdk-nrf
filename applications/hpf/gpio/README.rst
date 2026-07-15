@@ -54,7 +54,7 @@ For example, to build with icmsg backend, run the following commands (replace ``
 
 .. code-block:: console
 
-   west build -b <build_target> -- -DSB_CONFIG_PARTITION_MANAGER=n -DSB_CONFIG_HPF=y -DSB_CONFIG_HPF_GPIO=y -DSB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y -DEXTRA_DTC_OVERLAY_FILE="./boards/<build_target> _hpf_gpio.overlay"
+   west build -b <build_target> -- -DSB_CONFIG_HPF=y -DSB_CONFIG_HPF_GPIO=y -DSB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y -DEXTRA_DTC_OVERLAY_FILE="./boards/<build_target> _hpf_gpio.overlay"
    west flash
 
 Upon successful execution, **LED0** will start flashing.

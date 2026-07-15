@@ -98,7 +98,7 @@ If the image selection is mandatory, the :file:`Kconfig.sysbuild` file can be om
           ExternalZephyrProject_Add(
             APPLICATION ABC
             SOURCE_DIR "<path_to_application>"
-            BUILD_ONLY true   # This will build the application and not flash it, this **must** be used when building additional images to a core (not the primary image) when using Partition Manager, as the main application for each core will flash a merged hex file instead
+            BUILD_ONLY true   # This will build the application and not flash it
           )
         endif()
 
@@ -253,7 +253,7 @@ sysbuild.cmake:
       ExternalZephyrProject_Add(
         APPLICATION ABC
         SOURCE_DIR "<path_to_application>"
-        BUILD_ONLY true   # This will build the application and not flash it, this **must** be used when building additional images to a core (not the primary image) when using Partition Manager, as the main application for each core will flash a merged hex file instead
+        BUILD_ONLY true   # This will build the application and not flash it
       )
     endif()
 

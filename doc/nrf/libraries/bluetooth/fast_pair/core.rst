@@ -160,13 +160,6 @@ Security re-establishment
 By default, the Fast Pair service disables the automatic security re-establishment request as a peripheral (:kconfig:option:`CONFIG_BT_GATT_AUTO_SEC_REQ`).
 This allows a Fast Pair Seeker to control the security re-establishment.
 
-Partition Manager (deprecated)
-------------------------------
-
-.. include:: /includes/pm_deprecation.txt
-
-The Fast Pair provisioning data is preprogrammed to a dedicated flash memory partition.
-
 Settings
 --------
 

@@ -68,7 +68,7 @@ Developing with nRF91 Series
 Developing with nRF70 Series
 ============================
 
-* Removed support for storing the nRF70 firmware patches in external flash without the partition_manager, as mentioned in :ref:`ug_nrf70_developing_fw_patch_ext_flash`.
+* Removed support for storing the nRF70 firmware patches in external flash without the Partition Manager, as mentioned in :ref:`ug_nrf70_developing_fw_patch_ext_flash`.
 
 Developing with nRF54L Series
 =============================
@@ -714,7 +714,7 @@ Wi-Fi samples
 
 * :ref:`wifi_shell_sample` sample:
 
-  * Updated by modifying support for storing the nRF70 firmware patches in external flash using the partition_manager.
+  * Updated by modifying support for storing the nRF70 firmware patches in external flash using the Partition Manager.
 
 Other samples
 -------------
@@ -1007,7 +1007,7 @@ Google Fast Pair integration
 
 * Added:
 
-  * Instructions on how to provision the Fast Pair data onto devices without the partition_manager support, specifically for the :zephyr:board:`nrf54h20dk`.
+  * Instructions on how to provision the Fast Pair data onto devices without the Partition Manager support, specifically for the :zephyr:board:`nrf54h20dk`.
   * Information on how to support the firmware update intent feature on the Android platform.
     Expanded the documentation for the Fast Pair devices with the FMDN extension, which requires additional steps to support this feature.
 

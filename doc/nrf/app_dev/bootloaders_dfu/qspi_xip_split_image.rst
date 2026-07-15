@@ -52,8 +52,6 @@ The QSPI XIP split image feature supports network core image updates on nRF5340 
 Create the memory layout with devicetree files
 **********************************************
 
-.. include:: ../../includes/pm_deprecation.txt
-
 Create the following files:
 
 * A project ``cpuapp`` board devicetree overlay that defines the partition nodes used on the device (``boot_partition``, ``slot0_partition``, external ``slot1_partition`` through ``slot5_partition``, and related nodes).
