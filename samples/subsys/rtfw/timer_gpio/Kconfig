@@ -1,0 +1,69 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "RTFW timer/GPIO backend"
+
+config SAMPLE_RTFW_IRQ_PRIORITY
+	int "TIMER zero-latency IRQ priority"
+	default 1 if SOC_SERIES_NRF54L
+	default 0
+	range 0 7
+	help
+	  Select the priority of the sample-owned TIMER source interrupt.
+	  nRF54L uses priority 1 so MPSL priority 0 can preempt it, while
+	  nRF54H20 uses priority 0 because the radio runs on another core.
+
+config SAMPLE_RTFW_TIMER_MIN_PERIOD_US
+	int "Minimum accepted timer period (us)"
+	default 10
+	range 2 2147483647
+	help
+	  Set the shortest period accepted by the sample API. The TIMER runs at
+	  1 MHz and requires at least two counter ticks. Values below this
+	  limit are rejected instead of being silently rounded by the
+	  zero-latency command handler.
+
+config SAMPLE_RTFW_TIMER_MAX_PERIOD_US
+	int "Maximum accepted timer period (us)"
+	default 1000000
+	range 2 2147483647
+	help
+	  Set the longest period accepted by the sample API. This value must be
+	  greater than or equal to the configured minimum period. The default
+	  sample period must remain within the resulting accepted range or the
+	  build is rejected.
+
+config SAMPLE_RTFW_TIMER_TELEMETRY_DECIMATION
+	int "Emit one tick event every N timer events (0 disables)"
+	default 0
+	range 0 1000000
+	help
+	  Tick telemetry is disabled by default. Configuration changes remain
+	  event-on-change and are not affected by this setting.
+
+config SAMPLE_RTFW_ISR_TEST_LOAD
+	bool "Inject a controlled busy loop into the TIMER fast path"
+	help
+	  Add a bounded NOP loop to the source ISR for stress and
+	  coexistence measurements. The configured iteration count is
+	  executed after the registered fast-path callback. Keep this
+	  option disabled for baseline latency measurements.
+
+config SAMPLE_RTFW_ISR_TEST_LOAD_CYCLES
+	int "NOP iterations in the injected ISR load"
+	depends on SAMPLE_RTFW_ISR_TEST_LOAD
+	default 100
+	range 1 1000000
+
+config SAMPLE_RTFW_DEBUG_PIN
+	bool "Expose TIMER ISR execution time on a debug pin"
+	help
+	  Drive the board-specific debug pin while the direct source ISR
+	  executes so its latency and duration can be measured with a
+	  logic analyzer. The output includes framework command handling
+	  and the registered sample fast-path callback.
+
+source "Kconfig.zephyr"
