@@ -41,6 +41,7 @@ rsource "logging/Kconfig"
 rsource "dult/Kconfig"
 rsource "nrf_compress/Kconfig"
 rsource "vtf_monitoring/Kconfig"
+rsource "rtfw/Kconfig"
 rsource "mcuboot_ids/Kconfig"
 rsource "settings/Kconfig"
 endmenu
