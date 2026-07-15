@@ -55,7 +55,7 @@ def test_upgrade_with_netcore(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
             "Image 0 copying the secondary slot",
             "Image 1 copying the secondary slot",
         ],
-        no_lines=["Swap type: none", "insufficient version in secondary slot"],
+        no_lines=["Swap type: none", "Insufficient version in secondary slot"],
     )
     tm.check_with_shell_command()
     logger.info("APP and NETCORE upgraded successfully")
@@ -90,7 +90,7 @@ def test_sw_downgrade_prevention_with_netcore(dut: DeviceAdapter, shell: Shell, 
         lines=[
             "Image index: 0, Swap type: perm",
             "Image index: 1, Swap type: perm",
-            "insufficient version in secondary slot",
+            "Insufficient version in secondary slot",
         ],
         no_lines=["copying the secondary slot"],
     )
@@ -134,7 +134,7 @@ def test_upgrade_netcore_only(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
             "Image 1 copying the secondary slot to the primary slot:",
             "Image version: v1.1.1",
         ],
-        no_lines=["insufficient version in secondary slot"],
+        no_lines=["Insufficient version in secondary slot"],
     )
     logger.info("NETCORE upgraded successfully")
 
@@ -167,7 +167,7 @@ def test_sw_downgrade_prevention_with_netcore_only(
         lines=[
             "Image index: 0, Swap type: none",
             "Image index: 1, Swap type: perm",
-            "insufficient version in secondary slot",
+            "Insufficient version in secondary slot",
         ],
         no_lines=["copying the secondary slot"],
     )

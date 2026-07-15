@@ -63,7 +63,7 @@ def test_upgrade_of_mcuboot_with_nsib(dut: DeviceAdapter, shell: Shell, mcumgr: 
         lines=[
             f"Image index: {tm.image_index}, Swap type: perm",
         ],
-        no_lines=["insufficient version in secondary slot"],
+        no_lines=["Insufficient version in secondary slot"],
     )
     assert shell.wait_for_prompt(timeout=10.0), "No shell prompt after upgrade"
     logger.info(
