@@ -594,12 +594,6 @@
   comment: "Doesn't work out of the box - we have our own crypto tests"
 
 - scenarios:
-    - dfu.image_util.slot1
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39948"
-
-- scenarios:
     - libraries.cmsis_dsp.matrix.binary_q15
     - libraries.cmsis_dsp.matrix.binary_q15.fpu
     - libraries.cmsis_dsp.matrix.unary_f32

@@ -34,7 +34,7 @@ function(dfu_app_zip_package)
       if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         set(secondary_app_internal_update_name mcuboot_secondary_app.internal.bin)
         set(secondary_app_external_update_name mcuboot_secondary_app.external.bin)
-      else()
+      elseif(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
         set(secondary_app_internal_update_name ${DEFAULT_IMAGE}_slot1_variant.internal.bin)
         set(secondary_app_external_update_name ${DEFAULT_IMAGE}_slot1_variant.external.bin)
       endif()
@@ -164,7 +164,7 @@ function(dfu_app_zip_package)
             "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin"
             "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin"
           )
-        else()
+        elseif(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
           list(APPEND bin_files
             "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin"
             "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin"
@@ -186,17 +186,28 @@ function(dfu_app_zip_package)
             ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
           )
         else()
-          list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts ${DEFAULT_IMAGE}_slot1_variant_extra_byproducts)
-          set(exclude_files EXCLUDE
-            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
-            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
-            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
-            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
-          )
-          set(include_files INCLUDE
-            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
-            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
-          )
+          list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts)
+          if(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
+            list(APPEND signed_targets ${DEFAULT_IMAGE}_slot1_variant_extra_byproducts)
+            set(exclude_files EXCLUDE
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
+            )
+            set(include_files INCLUDE
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+            )
+          else()
+            set(exclude_files EXCLUDE
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
+            )
+            set(include_files INCLUDE
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+            )
+          endif()
         endif()
       endif()
     else()
@@ -206,7 +217,7 @@ function(dfu_app_zip_package)
         set(app_update_name "${DEFAULT_IMAGE}.signed.bin")
         if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
           set(secondary_app_update_name mcuboot_secondary_app.signed.bin)
-        else()
+        elseif(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
           set(secondary_app_update_name ${DEFAULT_IMAGE}_slot1_variant.signed.bin)
         endif()
       endif()
@@ -289,18 +300,30 @@ function(dfu_app_zip_package)
           list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts)
         else()
           if(NOT SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY)
-            list(APPEND bin_files
-              "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
-              "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
-            )
-            set(exclude_files EXCLUDE
-              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
-              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
-            )
-            set(include_files INCLUDE
-              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
-              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
-            )
+            if(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
+              list(APPEND bin_files
+                "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+                "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+              )
+              set(exclude_files EXCLUDE
+                ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+                ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+              )
+              set(include_files INCLUDE
+                ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+                ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+              )
+            else()
+              list(APPEND bin_files
+                "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+              )
+              set(exclude_files EXCLUDE
+                ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+              )
+              set(include_files INCLUDE
+                ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+              )
+            endif()
           else()
             list(APPEND bin_files
               "${CMAKE_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
@@ -308,7 +331,10 @@ function(dfu_app_zip_package)
             )
           endif()
 
-          list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts ${DEFAULT_IMAGE}_slot1_variant_extra_byproducts)
+          list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts)
+          if(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
+            list(APPEND signed_targets ${DEFAULT_IMAGE}_slot1_variant_extra_byproducts)
+          endif()
         endif()
 
         list(APPEND zip_names "${app_update_name};${secondary_app_update_name}")
