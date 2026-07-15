@@ -1,0 +1,73 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig RTFW
+	bool "App-domain event-driven real-time framework"
+	depends on ATOMIC_OPERATIONS_BUILTIN || ATOMIC_OPERATIONS_ARCH
+	depends on !SMP
+	depends on SOC_FAMILY_NORDIC_NRF || ZTEST
+	help
+	  Enable the same-core, event-driven framework for a small backend-owned
+	  zero-latency fast path. The framework provides a latest-wins command
+	  mailbox, coherent applied status and bounded RT-to-Zephyr delivery.
+
+if RTFW
+
+config RTFW_COMMAND_DATA_SIZE
+	int "Opaque command payload size"
+	default 16
+	range 4 64
+	help
+	  Maximum backend-specific command payload size in bytes.
+
+config RTFW_EVENT_QUEUE_SIZE
+	int "RT-to-Zephyr event queue size"
+	default 16
+	range 2 256
+	help
+	  Number of fixed-size entries in the public Zephyr SPSC queue. The value
+	  must be a power of two.
+
+config RTFW_QUEUE_USAGE_STATS
+	bool "Track maximum event queue depth"
+	default y
+	help
+	  Track the maximum number of queued events observed since
+	  initialization. Disable this option to remove queue-depth calculation
+	  and its atomic update from the zero-latency producer path. Overflow
+	  counters and fault reporting remain enabled.
+
+config RTFW_DRAIN_BUDGET
+	int "Maximum events handled per work item"
+	default 8
+	range 1 256
+	help
+	  Bounds one invocation of the dedicated delivery work item. If events
+	  remain, the work item resubmits itself.
+
+config RTFW_WORKQ_STACK_SIZE
+	int "Dedicated delivery workqueue stack size"
+	default 1536
+
+config RTFW_WORKQ_PRIORITY
+	int "Dedicated delivery workqueue priority"
+	default 5
+
+config RTFW_EGU_IRQ_PRIORITY
+	int "Normal-priority EGU doorbell IRQ priority"
+	default 1
+
+config RTFW_NRF_EGU
+	bool
+	depends on SOC_FAMILY_NORDIC_NRF
+	depends on !RTFW_TEST
+	default y
+
+config RTFW_TEST
+	bool
+	depends on ZTEST
+
+endif # RTFW
