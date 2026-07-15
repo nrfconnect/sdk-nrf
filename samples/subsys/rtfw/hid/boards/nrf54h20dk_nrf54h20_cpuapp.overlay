@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	aliases {
+		rt-gpiote = &gpiote130;
+		rt-egu = &egu130;
+	};
+
+	zephyr,user {
+		rt-input-gpios = <&gpio0 8 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+		rt-debug-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpiote130 {
+	status = "reserved";
+};
+
+&egu130 {
+	status = "reserved";
+};
+
+&gpio0 {
+	status = "okay";
+};
