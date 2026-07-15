@@ -124,67 +124,19 @@ Security
 
 * Added:
 
-  * Support for the X25519 key pair storage in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_supported_key_types>`.
   * The :kconfig:option:`CONFIG_TFM_LOG_NS_MEMORY_LAYOUT` Kconfig option, which allows printing the configuration of the Secure Attribution Unit (SAU) and the Memory Protection Controller (MPC) during the initialization of TF-M on the nRF54L Series devices.
     See also :ref:`ug_tfm_logging` for more information.
   * Support for the SHAKE-128 and SHAKE-256 eXtendable Output Functions (XOF) in the CRACEN driver.
 
-* Updated:
-
-  * Oberon PSA Crypto from v1.5.4 to v2.0.0.
-    The new version aligns with TF-PSA-Crypto v1.1.0.
-  * How the :kconfig:option:`CONFIG_NRF_SECURITY` and :kconfig:option:`CONFIG_PSA_CRYPTO` interact with each other.
-    :kconfig:option:`CONFIG_NRF_SECURITY` is now promptless and auto-enabled indirectly by :kconfig:option:`CONFIG_PSA_CRYPTO`.
-  * Approach to store keys in the KMU so that AEAD algorithms with non-default (shortened) tag lengths are supported.
-
-* Fixed issues with incorrect support status on the :ref:`ug_crypto_supported_features` page:
-
-  * The :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` Kconfig option is now correctly listed as unsupported for SoCs with Arm CryptoCell CC310.
-  * The tables for supported AES key wrapping algorithms for nRF54L Series devices now list the nRF54LS05 device (not supported in the CRACEN driver; experimental in the nrf_oberon driver).
-  * The post-quantum cryptography algorithms for nrf_oberon under Key types and key management are now correctly listed as experimental instead of supported.
-  * The SPAKE2+ for Matter is now correctly listed as supported instead of experimental.
-  * The WPA3-SAE hash-to-element algorithm is now correctly listed as a KDF algorithm, not a PAKE algorithm.
-  * The SHA-256/192 and SHAKE hashing algorithms are now correctly listed as not supported in the CRACEN driver and Experimental in the nrf_oberon driver.
-    The only exception is the SHAKE256 512 bits algorithm, which is supported in both the CRACEN and nrf_oberon drivers.
-
-* Removed the ``CONFIG_NRF_SECURITY_ADVANCED`` Kconfig option.
-
 Security libraries
 ------------------
 
-* :ref:`nrf_security_readme` library:
-
-  * Updated the documentation to one library page with sections for PSA Crypto, TLS and X.509, dependencies, and API documentation.
-    The page includes information about how :kconfig:option:`CONFIG_PSA_CRYPTO` and :kconfig:option:`CONFIG_MBEDTLS` are used after the Mbed TLS v4.1 update.
-  * Removed the configuration page for the deprecated legacy crypto backend (:file:`libraries/security/nrf_security/doc/backend_config`).
-    Configure cryptographic features using :ref:`psa_crypto_support` and :ref:`ug_crypto_supported_features` instead.
+|no_changes_yet_note|
 
 Mbed TLS
 --------
 
-* Updated Mbed TLS to v4.1.0 (from v3.6.6).
-  For an overview of the changes brought by this update in Mbed TLS and Zephyr, see the following pages:
-
-  * The Mbed TLS sections of the Zephyr v4.4 :ref:`release notes <zephyr_4.4>` and :ref:`migration guide <migration_4.4>`.
-
-  * The release notes from upstream Mbed TLS:
-
-    * https://github.com/Mbed-TLS/mbedtls/releases/tag/mbedtls-4.0.0
-    * https://github.com/Mbed-TLS/TF-PSA-Crypto/releases/tag/tf-psa-crypto-1.0.0
-    * https://github.com/Mbed-TLS/mbedtls/releases/tag/mbedtls-4.1.0
-    * https://github.com/Mbed-TLS/TF-PSA-Crypto/releases/tag/tf-psa-crypto-1.1.0
-
-  As part of this update, the following changes were made:
-
-  * Removed support for legacy, deprecated Mbed TLS Crypto APIs and related tests.
-  * Rearranged Kconfig options related to Mbed TLS in various files under :ref:`nrf_security`.
-  * Removed outdated Kconfig options related to Mbed TLS in various files under :ref:`nrf_security`.
-  * :ref:`nrf_security` now uses the Mbed TLS integration from Zephyr as-is (:kconfig:option:`CONFIG_MBEDTLS_BUILTIN`) while replacing upstream TF-PSA-Crypto with Oberon PSA Crypto (:kconfig:option:`CONFIG_TF_PSA_CRYPTO_CUSTOM`).
-
-  From this update onwards:
-
-  * Enable :kconfig:option:`CONFIG_MBEDTLS` only if you use TLS or X.509.
-  * For cryptographic operations, enable only :kconfig:option:`CONFIG_PSA_CRYPTO`.
+|no_changes_yet_note|
 
 Trusted Firmware-M (TF-M)
 -------------------------
