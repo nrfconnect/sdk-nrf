@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "RTFW tests"
+
+source "Kconfig.zephyr"
+
+config RTFW_TEST
+	default y
+
+config RTFW_TEST_PREINIT
+	bool "Test the RTFW API before initialization"
+	depends on ZTEST
+	help
+	  Build only the tests which exercise public APIs before the
+	  singleton framework is initialized. Twister runs this variant in
+	  a separate native_sim process so it does not depend on test order
+	  or require stopping the framework workqueue.
+
+config RTFW_TEST_NO_EVENT_HANDLER
+	bool "Test delivery without an event handler"
+	depends on ZTEST && !RTFW_TEST_PREINIT
+	help
+	  Initialize RTFW without an application event callback and verify
+	  that bounded delivery still releases every queued event. Twister
+	  runs this variant separately because the singleton callback
+	  configuration is immutable after initialization.
