@@ -1111,6 +1111,7 @@
 /tests/subsys/nrf_profiler/               @nrfconnect/ncs-si-xcake
 /tests/subsys/nrf_rpc/                    @nrfconnect/ncs-protocols-serialization
 /tests/subsys/nrf_security/               @nrfconnect/ncs-aegir
+/tests/subsys/rtfw/                       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera
 /tests/subsys/rtt/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/swo/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/usb/negotiated_speed/       @nrfconnect/ncs-low-level-test
