@@ -424,6 +424,7 @@
 /include/power/                           @nrfconnect/ncs-co-drivers
 /include/qos.h                            @nrfconnect/ncs-cia
 /include/ram_pwrdn.h                      @nrfconnect/ncs-protocols-serialization
+/include/rtfw/rtfw.h                      @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera
 /include/sample_rate_converter.h          @nrfconnect/ncs-audio
 /include/sfloat.h                         @nrfconnect/ncs-blenders
 /include/st25r3911b_nfca.h                @nrfconnect/ncs-radio-sw
@@ -979,6 +980,7 @@
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
 /subsys/partition_manager/                @nordicjm @tejlmand
 /subsys/pcd/                              @nrfconnect/ncs-eris
+/subsys/rtfw/                             @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera
 /subsys/secure_storage/                   @nrfconnect/ncs-aegir
 /subsys/settings/                         @nrfconnect/ncs-eris @rghaddab
 /subsys/shell/                            @nordic-krch
