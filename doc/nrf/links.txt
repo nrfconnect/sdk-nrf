@@ -82,6 +82,8 @@
 .. _`TF-PSA-Crypto 1.0.0 release notes`: https://github.com/Mbed-TLS/TF-PSA-Crypto/releases/tag/tf-psa-crypto-1.0.0
 .. _`Mbed TLS 4.1.0 release notes`: https://github.com/Mbed-TLS/mbedtls/releases/tag/mbedtls-4.1.0
 .. _`TF-PSA-Crypto 1.1.0 release notes`: https://github.com/Mbed-TLS/TF-PSA-Crypto/releases/tag/tf-psa-crypto-1.1.0
+.. _`Mbed TLS 4.1.1 release notes`: https://github.com/Mbed-TLS/mbedtls/releases/tag/mbedtls-4.1.1
+.. _`TF-PSA-Crypto 1.1.1 release notes`: https://github.com/Mbed-TLS/TF-PSA-Crypto/releases/tag/tf-psa-crypto-1.1.1
 .. _`Migrating from Mbed TLS 3.x to TF-PSA-Crypto 1.0`: https://github.com/Mbed-TLS/TF-PSA-Crypto/blob/development/docs/1.0-migration-guide.md
 .. _`Transitioning to the PSA API`: https://github.com/Mbed-TLS/TF-PSA-Crypto/blob/development/docs/psa-transition.md
 
