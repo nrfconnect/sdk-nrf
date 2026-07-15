@@ -215,6 +215,12 @@ function(nrf71_wifi_setup_include_and_sources)
     src/coex.c
   )
 
+  # Coexistence transport used by the standalone nRF71 SR coexistence driver
+  # (drivers/nrf71_sr_coex) to reach the Coexistence Manager over FMAC.
+  zephyr_library_sources_ifdef(CONFIG_NRF71_SR_COEX_DRIVER
+    src/coex_transport.c
+  )
+
   zephyr_library_sources_ifndef(CONFIG_NRF71_OFFLOADED_RAW_TX
     src/fmac_main.c
   )
