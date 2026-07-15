@@ -15,14 +15,11 @@
 extern "C" {
 #endif
 
-#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
-	defined(CONFIG_SOC_NRF54LM20B)
-#define HPF_MSPI_PIN_COUNT	 11
-#elif defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
-#define HPF_MSPI_PIN_COUNT	 10
-#else
-#error "Unsupported SoC for HPF MSPI"
+#if !defined(FLPR_VIO_PIN_INDICES) || !defined(FLPR_VIO_PIN_OFFSET) || !defined(FLPR_VIO_PORT)
+#error "Unsupported SoC"
 #endif
+
+#define HPF_MSPI_PIN_COUNT NUM_VA_ARGS_LESS_1(FLPR_VIO_PIN_INDICES)
 
 /** @brief eMSPI opcodes. */
 typedef enum {

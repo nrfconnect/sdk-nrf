@@ -25,81 +25,32 @@
 #define VEVIF_IRQN(vevif) VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LM20B)
-static const uint8_t pin_to_vio_map[] = {
-	4,  /* Physical pin 0 */
-	0,  /* Physical pin 1 */
-	1,  /* Physical pin 2 */
-	3,  /* Physical pin 3 */
-	2,  /* Physical pin 4 */
-	5,  /* Physical pin 5 */
-	6,  /* Physical pin 6 */
-	7,  /* Physical pin 7 */
-	8,  /* Physical pin 8 */
-	9,  /* Physical pin 9 */
-	10, /* Physical pin 10 */
-};
-
-#define VIO_PORT 2
-#define VIO_PIN_OFFSET 0
-
-#elif defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
-static const uint8_t pin_to_vio_map[] = {
-	4,  /* Physical pin 15 */
-	0,  /* Physical pin 16 */
-	1,  /* Physical pin 17 */
-	3,  /* Physical pin 18 */
-	2,  /* Physical pin 19 */
-	5,  /* Physical pin 20 */
-	6,  /* Physical pin 21 */
-	7,  /* Physical pin 22 */
-	8,  /* Physical pin 23 */
-	9,  /* Physical pin 24 */
-};
-
-#define VIO_PORT 1
-#define VIO_PIN_OFFSET 15
-
-#elif defined(CONFIG_SOC_NRF7120)
-static const uint8_t pin_to_vio_map[] = {
-	6,  /* Physical pin 0 */
-	7,  /* Physical pin 1 */
-	8,  /* Physical pin 2 */
-	9,  /* Physical pin 3 */
-	10, /* Physical pin 4 */
-	11, /* Physical pin 5 */
-	0,  /* Physical pin 6 */
-	1,  /* Physical pin 7 */
-	2,  /* Physical pin 8 */
-	3,  /* Physical pin 9 */
-	4,  /* Physical pin 10 */
-	5,  /* Physical pin 11 */
-};
-
-#define VIO_PORT 2
-#define VIO_PIN_OFFSET 0
-
-#else
-#error "Unsupported target"
+#if !defined(FLPR_VIO_PIN_INDICES) || !defined(FLPR_VIO_PIN_OFFSET) || !defined(FLPR_VIO_PORT)
+#error "Unsupported SoC"
 #endif
+
+static const uint8_t pin_to_vio_map[] = {
+	FLPR_VIO_PIN_INDICES
+};
 
 #define VIO_INDEX_INVALID UINT8_MAX
 #define VIO_PIN_MASK_INVALID UINT16_MAX
 
 #define VIO_PIN_COUNT ARRAY_SIZE(pin_to_vio_map)
-#define VIO_VALID_PIN_MASK ((BIT(VIO_PIN_COUNT) - 1) << VIO_PIN_OFFSET)
+#define VIO_VALID_PIN_MASK ((BIT(VIO_PIN_COUNT) - 1) << FLPR_VIO_PIN_OFFSET)
 
 volatile uint16_t irq_arg;
 volatile uint16_t irq_arg2;
 
 static uint8_t gpio_pin_port_to_vio_index(uint8_t port, uint16_t pin)
 {
+	size_t map_index = pin - FLPR_VIO_PIN_OFFSET;
+
 	/* Check if the pin and the port can be accessed by VIO. */
-	if ((port != VIO_PORT) || (pin < VIO_PIN_OFFSET) ||
-	    (pin >= (VIO_PIN_OFFSET + VIO_PIN_COUNT))) {
+	if ((port != FLPR_VIO_PORT) || (map_index >= VIO_PIN_COUNT)) {
 		return VIO_INDEX_INVALID;
 	}
-	return pin_to_vio_map[pin - VIO_PIN_OFFSET];
+	return pin_to_vio_map[map_index];
 }
 
 static uint16_t gpio_pin_mask_to_vio_mask(uint32_t gpio_pin_mask)
@@ -111,7 +62,7 @@ static uint16_t gpio_pin_mask_to_vio_mask(uint32_t gpio_pin_mask)
 	uint16_t vio_mask = 0;
 
 	for (int i = 0; i < VIO_PIN_COUNT; i++) {
-		if (gpio_pin_mask & BIT(i + VIO_PIN_OFFSET)) {
+		if (gpio_pin_mask & BIT(i + FLPR_VIO_PIN_OFFSET)) {
 			vio_mask |= BIT(pin_to_vio_map[i]);
 		}
 	}

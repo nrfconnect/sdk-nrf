@@ -48,42 +48,13 @@
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
-	defined(CONFIG_SOC_NRF54LM20B)
-
-static const uint8_t pin_to_vio_map[HPF_MSPI_PIN_COUNT] = {
-	4,  /* Physical pin 0 */
-	0,  /* Physical pin 1 */
-	1,  /* Physical pin 2 */
-	3,  /* Physical pin 3 */
-	2,  /* Physical pin 4 */
-	5,  /* Physical pin 5 */
-	6,  /* Physical pin 6 */
-	7,  /* Physical pin 7 */
-	8,  /* Physical pin 8 */
-	9,  /* Physical pin 9 */
-	10, /* Physical pin 10 */
-};
-#define VIO_PIN_OFFSET 0
-
-#elif defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
-static const uint8_t pin_to_vio_map[HPF_MSPI_PIN_COUNT] = {
-	4,  /* Physical pin 15 */
-	0,  /* Physical pin 16 */
-	1,  /* Physical pin 17 */
-	3,  /* Physical pin 18 */
-	2,  /* Physical pin 19 */
-	5,  /* Physical pin 20 */
-	6,  /* Physical pin 21 */
-	7,  /* Physical pin 22 */
-	8,  /* Physical pin 23 */
-	9,  /* Physical pin 24 */
-};
-#define VIO_PIN_OFFSET 15
-
-#else
-#error "Unsupported SoC for HPF MSPI"
+#if !defined(FLPR_VIO_PIN_INDICES) || !defined(FLPR_VIO_PIN_OFFSET) || !defined(FLPR_VIO_PORT)
+#error "Unsupported SoC"
 #endif
+
+static const uint8_t pin_to_vio_map[] = {
+	FLPR_VIO_PIN_INDICES
+};
 
 #define DATA_LINE_INDEX(pinctr_fun) (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 
@@ -93,9 +64,11 @@ BUILD_ASSERT(CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be
 
 static uint8_t gpio_pin_to_vio_index(uint16_t pin)
 {
+	size_t map_index = pin - FLPR_VIO_PIN_OFFSET;
+
 	/* Check if the pin and the port can be accessed by VIO. */
-	if ((pin >= VIO_PIN_OFFSET) && (pin < (VIO_PIN_OFFSET + HPF_MSPI_PIN_COUNT))) {
-		return pin_to_vio_map[pin - VIO_PIN_OFFSET];
+	if (map_index < HPF_MSPI_PIN_COUNT) {
+		return pin_to_vio_map[map_index];
 	}
 	return INVALID_VIO;
 }
