@@ -39,7 +39,9 @@
 #include "iperf_auth.h"
 #endif /* HAVE_SSL */
 
+#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 #include "version.h"
+#endif
 
 #include "units.h"
 
