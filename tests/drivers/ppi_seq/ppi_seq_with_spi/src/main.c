@@ -86,6 +86,7 @@ struct spim_test_data {
 
 	nrfx_gpiote_t *gpiote;
 	uint8_t gpiote_task_ch;
+	nrfx_gppi_handle_t gpiote_cs_handle;
 	uint32_t ss_pin;
 	uint32_t ss_task;
 
@@ -208,8 +209,10 @@ static void spis_check_time(void)
 static void spis_event_handler(nrfx_spis_event_t const *event, void *context)
 {
 	if ((event->evt_type == NRFX_SPIS_XFER_DONE) && (spis_data.stop == false)) {
-		zassert_equal(spis_data.exp_len, event->rx_amount);
-		zassert_equal(spis_data.exp_len, event->tx_amount);
+		zassert_equal(spis_data.exp_len, event->rx_amount, "Expected:%d got:%d",
+				spis_data.exp_len, event->rx_amount);
+		zassert_equal(spis_data.exp_len, event->tx_amount, "Expected:%d got:%d",
+				spis_data.exp_len, event->tx_amount);
 
 		spis_check_time();
 
@@ -256,6 +259,8 @@ static void spim_init(bool use_hw_ss)
 		nrf_gpio_cfg_output(ss_pin);
 		spim_data.ss_task = 0;
 	} else {
+		uint32_t cs_task;
+		uint32_t spim_end_event;
 		const struct device *cs_port = DEVICE_DT_GET(DT_GPIO_CTLR(SPIM_NODE, cs_gpios));
 		nrfx_gpiote_t *gpiote = gpio_nrf_gpiote_by_port_get(cs_port);
 		nrfx_gpiote_output_config_t out_config = {.drive = NRF_GPIO_PIN_S0S1,
@@ -274,9 +279,18 @@ static void spim_init(bool use_hw_ss)
 		zassert_ok(rv, "Unexpected error:%d", rv);
 		nrfx_gpiote_out_task_enable(gpiote, ss_pin);
 
-		spim_data.ss_task = nrfx_gpiote_out_task_address_get(gpiote, ss_pin);
+		spim_data.ss_task = nrfx_gpiote_clr_task_address_get(gpiote, ss_pin);
 		spim_data.ss_pin = ss_pin;
 		spim_data.gpiote = gpiote;
+
+		spim_end_event = nrf_spim_event_address_get(spim_data.spim.p_reg,
+							    NRF_SPIM_EVENT_END);
+		cs_task = nrfx_gpiote_set_task_address_get(gpiote, ss_pin);
+
+		rv = nrfx_gppi_conn_alloc(spim_end_event, cs_task, &spim_data.gpiote_cs_handle);
+		zassert_ok(rv, "Unexpected error:%d", rv);
+
+		nrfx_gppi_conn_enable(spim_data.gpiote_cs_handle);
 	}
 
 	config.ss_pin = NRF_SPIM_PIN_NOT_CONNECTED;
@@ -443,11 +457,10 @@ static void seq_spim_init(enum test_ppi_seq_mode mode, enum test_ppi_seq_op op,
 	memset(&config, 0, sizeof(config));
 	if (op == TEST_OP_SINGLE_GPIOTE_SS) {
 		config.task = spim_data.ss_task;
-		ops[0].task = task, ops[0].offset = 2;
-		ops[1].task = spim_data.ss_task;
-		ops[1].offset = 14;
+		ops[0].task = task;
+		ops[0].offset = 2;
 		config.extra_ops = ops;
-		config.extra_ops_count = 2;
+		config.extra_ops_count = 1;
 	} else if (op == TEST_OP_DOUBLE) {
 		ops[0].task = task;
 		ops[0].offset = SEQ_OFFSET;
@@ -490,6 +503,7 @@ static void seq_spim_init(enum test_ppi_seq_mode mode, enum test_ppi_seq_op op,
 		notifier.nrfx_timer.end_seq_event =
 			nrfx_spim_end_event_address_get(&spim_data.spim);
 		notifier.nrfx_timer.extra_main_ops = (op == TEST_OP_DOUBLE) ? 1 : 0;
+		notifier.nrfx_timer.attached = false;
 	}
 	config.notifier = &notifier;
 	config.callback = ppi_seq_cb;
@@ -872,6 +886,20 @@ static void after(void *not_used)
 	spis_uninit();
 	if (spim_data.init_done) {
 		if (spim_data.ss_task) {
+			uint32_t cs_task;
+			uint32_t spim_end_event;
+			const struct device *cs_port;
+			nrfx_gpiote_t *gpiote;
+
+			cs_port = DEVICE_DT_GET(DT_GPIO_CTLR(SPIM_NODE, cs_gpios));
+			gpiote = gpio_nrf_gpiote_by_port_get(cs_port);
+
+			cs_task = nrfx_gpiote_set_task_address_get(gpiote, spim_data.ss_pin);
+			spim_end_event = nrf_spim_event_address_get(spim_data.spim.p_reg,
+								    NRF_SPIM_EVENT_END);
+			nrfx_gppi_conn_disable(spim_data.gpiote_cs_handle);
+			nrfx_gppi_conn_free(spim_end_event, cs_task, spim_data.gpiote_cs_handle);
+
 			nrfx_gpiote_pin_uninit(spim_data.gpiote, spim_data.ss_pin);
 			nrfx_gpiote_channel_free(spim_data.gpiote, spim_data.gpiote_task_ch);
 		}
