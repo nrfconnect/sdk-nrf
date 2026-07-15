@@ -33,11 +33,9 @@ struct nrf_wifi_rt_drv_ctx *ctx = &rt_drv_priv.drv_ctx;
 #ifdef CONFIG_NRF71_RADIO_TEST
 #define rt_mem_alloc(size) k_malloc(size)
 #define rt_mem_free(ptr) k_free(ptr)
-#define RX_CAP_BYTES_PER_SAMPLE 4
 #else
 #define rt_mem_alloc(size) nrf_wifi_osal_mem_zalloc(size)
 #define rt_mem_free(ptr) nrf_wifi_osal_mem_free(ptr)
-#define RX_CAP_BYTES_PER_SAMPLE 3
 #endif
 
 static bool check_test_in_prog(const struct shell *shell)
@@ -1425,6 +1423,18 @@ static int nrf_wifi_radio_test_config_pta(const struct shell *shell,
 }
 #endif /* CONFIG_NRF70_SR_COEX */
 
+static void rx_cap_print_iq_sample(const struct shell *shell,
+				   const struct rx_cap_iq_sample *sample)
+{
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "%02X%02X%02X ",
+		      sample->bytes[2],
+		      sample->bytes[1],
+		      sample->bytes[0]);
+}
+
+
 static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 				      size_t argc,
 				      const char *argv[])
@@ -1511,19 +1521,26 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 	}
 
 	if (capture_status == 0) {
+		const struct rx_cap_iq_sample *samples =
+			(const struct rx_cap_iq_sample *)rx_cap_buf;
+		unsigned int num_samples = ctx->conf_params.capture_length;
+		unsigned int num_lines = (num_samples + SAMPLES_PER_LINE - 1) /
+					 SAMPLES_PER_LINE;
+
 		shell_fprintf(shell,
 			      SHELL_INFO,
 			      "\n************* RX capture data ***********\n");
 
-		for (i = 0; i < (ctx->conf_params.capture_length/SAMPLES_PER_LINE); i++) {
-			for (int j = 0; j < SAMPLES_PER_LINE; j++) {
-				shell_fprintf(shell,
-					      SHELL_INFO,
-					      "%02X%02X%02X ",
-					      rx_cap_buf[i*BYTES_PER_LINE + 2 + j*BYTES_PER_SAMPLE],
-					      rx_cap_buf[i*BYTES_PER_LINE + 1 + j*BYTES_PER_SAMPLE],
-					      rx_cap_buf[i*BYTES_PER_LINE + 0 +
-								j*BYTES_PER_SAMPLE]);
+		for (i = 0; i < num_lines; i++) {
+			unsigned int line_start = i * SAMPLES_PER_LINE;
+			unsigned int line_count = SAMPLES_PER_LINE;
+
+			if (line_start + line_count > num_samples) {
+				line_count = num_samples - line_start;
+			}
+
+			for (unsigned int j = 0; j < line_count; j++) {
+				rx_cap_print_iq_sample(shell, &samples[line_start + j]);
 			}
 
 			shell_fprintf(shell,
