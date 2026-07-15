@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	aliases {
+		rt-gpiote = &gpiote20;
+		rt-egu = &egu20;
+	};
+
+	zephyr,user {
+		rt-input-gpios = <&gpio1 26 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+		rt-debug-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+/* Exclusively owned by the RTFW HID backend. */
+&gpiote20 {
+	status = "disabled";
+};
+
+&egu20 {
+	status = "disabled";
+};
