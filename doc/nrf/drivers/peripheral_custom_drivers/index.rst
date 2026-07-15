@@ -14,3 +14,4 @@ The following pages describe the peripheral custom drivers available in the |NCS
    pulse_meas
    ppi_seq
    ppi_seq_i2c_spi
+   saadct
