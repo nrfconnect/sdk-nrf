@@ -110,12 +110,25 @@ The |GATT_HID| uses registered handlers to send the following information to the
 * Enabling or disabling a HID input report notification.
 * Incoming HID output or feature reports.
 * Switching between the boot mode and the report mode.
+* Writes to the HID control point characteristic.
 
 HID notifications
 =================
 
 The :c:struct:`hid_notification_event` is used to synchronize the information about enabling or disabling the HID notifications for the HID input report.
 The event is submitted when the |GATT_HID| calls a callback related to enabling or disabling the notifications and the event is received only by the HID Service application module.
+
+HID control point
+=================
+
+The connected Bluetooth host can write to the HID control point characteristic to inform about host suspend or exit suspend, or to request a HID SCI (Shorter Connection Intervals) mode change.
+The HID Service application module translates these writes into dedicated application events:
+
+* :c:struct:`hid_host_suspend_event` - Submitted when the host enters or exits suspend.
+  The :c:member:`hid_host_suspend_event.suspended` field indicates whether the host entered or exited suspend.
+* :c:struct:`hid_sci_mode_request_event` - Submitted when the host requests an SCI mode update.
+  The :c:member:`hid_sci_mode_request_event.mode` field contains the requested :c:enum:`bt_hids_sci_mode_value`.
+  This event is submitted only if the :kconfig:option:`CONFIG_BT_HIDS_SCI` Kconfig option is enabled.
 
 Transport for configuration channel
 ===================================

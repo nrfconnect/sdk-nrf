@@ -38,6 +38,25 @@ struct hid_notification_event {
 
 APP_EVENT_TYPE_DECLARE(hid_notification_event);
 
+/** @brief HID SCI mode request event. */
+struct hid_sci_mode_request_event {
+	struct app_event_header header; /**< Event header. */
+
+	const void *subscriber; /**< Id of the report subscriber. */
+	enum bt_hids_sci_mode_value mode; /**< Requested SCI mode. */
+};
+
+APP_EVENT_TYPE_DECLARE(hid_sci_mode_request_event);
+
+/** @brief HID host suspend event. */
+struct hid_host_suspend_event {
+	struct app_event_header header; /**< Event header. */
+
+	const void *subscriber; /**< Id of the report subscriber. */
+	bool suspended; /**< True if host entered suspend. */
+};
+
+APP_EVENT_TYPE_DECLARE(hid_host_suspend_event);
 
 #ifdef __cplusplus
 }

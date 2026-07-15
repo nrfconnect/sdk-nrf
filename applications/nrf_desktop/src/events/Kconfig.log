@@ -123,6 +123,21 @@ config DESKTOP_INIT_LOG_HID_NOTIFICATION_EVENT
 	help
 	  Log HID notification events in nRF Desktop application.
 
+config DESKTOP_INIT_LOG_HID_SCI_MODE_REQUEST_EVENT
+	bool "Log HID SCI mode request events"
+	depends on DESKTOP_HIDS_ENABLE
+	depends on BT_HIDS_SCI
+	default y
+	help
+	  Log HID SCI mode request events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_HID_HOST_SUSPEND_EVENT
+	bool "Log HID host suspend events"
+	depends on DESKTOP_HIDS_ENABLE
+	default y
+	help
+	  Log HID host suspend enter/exit events in nRF Desktop application.
+
 endmenu
 
 endif # LOG
