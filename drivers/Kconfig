@@ -26,6 +26,7 @@ rsource "mpsl/Kconfig"
 endif
 
 rsource "mspi/Kconfig"
+rsource "nrf71_sr_coex/Kconfig"
 rsource "net/Kconfig"
 rsource "ppi_seq/Kconfig"
 rsource "regulator/Kconfig"
