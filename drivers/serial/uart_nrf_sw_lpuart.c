@@ -1037,9 +1037,9 @@ static int api_irq_is_pending(const struct device *dev)
 	return api_irq_rx_ready(dev) || api_irq_tx_ready(dev);
 }
 
-static int api_irq_update(const struct device *dev)
+static void api_irq_update(const struct device *dev)
 {
-	return 1;
+	ARG_UNUSED(dev);
 }
 
 #endif /* CONFIG_NRF_SW_LPUART_INT_DRIVEN */
@@ -1160,7 +1160,7 @@ static const struct lpuart_config lpuart_config = {
 
 static struct lpuart_data lpuart_data;
 
-static const struct uart_driver_api lpuart_api = {
+static DEVICE_API(uart, lpuart_api) = {
 	.callback_set = api_callback_set,
 	.tx = api_tx,
 	.tx_abort = api_tx_abort,
