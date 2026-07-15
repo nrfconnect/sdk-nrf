@@ -26,10 +26,17 @@ enum nrf_wifi_frequency_bands {
 	NRF_WIFI_FREQ_BAND_6_GHZ,
 };
 
-/* RX capture display constants */
+/* RX capture sample and display constants */
+#define RX_CAP_BYTES_PER_SAMPLE 3
 #define SAMPLES_PER_LINE 16
-#define BYTES_PER_SAMPLE 3
-#define BYTES_PER_LINE 48
+#define BYTES_PER_SAMPLE RX_CAP_BYTES_PER_SAMPLE
+#define BYTES_PER_LINE (SAMPLES_PER_LINE * BYTES_PER_SAMPLE)
+
+/* 24-bit IQ sample: 12-bit Q (imag), 12-bit I (real). */
+struct rx_cap_iq_sample {
+	uint16_t q : 12;
+	uint16_t i : 12;
+} __packed;
 
 struct nrf_wifi_ctx_zep_rt {
 	struct nrf_wifi_fmac_priv *fmac_priv;
