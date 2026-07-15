@@ -4,10 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/delete-node/ &slot0_partition;
-/delete-node/ &storage_partition;
-
 &cpuapp_rram {
+	/*
+	 * Drop the SoC default partition map wholesale (its labels differ
+	 * between the secure and non-secure variants) and define the layout
+	 * this sample needs. Deleting the whole node keeps this include
+	 * idempotent when it is pulled in more than once.
+	 */
+	/delete-node/ partitions;
+
 	partitions {
 		ranges;
 		#address-cells = <1>;

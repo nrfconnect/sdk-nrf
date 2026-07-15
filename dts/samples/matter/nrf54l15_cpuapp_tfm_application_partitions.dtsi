@@ -27,12 +27,9 @@
 	};
 };
 
-/* Cleanup the default partitioning for Application and TF-M */
-
-/delete-node/ &slot0_ns_partition;
-/delete-node/ &tfm_its_partition;
-/delete-node/ &tfm_otp_partition;
-/delete-node/ &tfm_ps_partition;
+/* The default partitioning is already dropped in the tfm_base_partitions file
+ * (it deletes the whole partitions node), so there is nothing to clean up here.
+ */
 
 /* Specify secure and nonsecure partitions within the slot0_partition which is
  * defined in the tfm_base_partitions file.
