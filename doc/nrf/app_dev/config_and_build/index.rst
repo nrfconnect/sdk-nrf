@@ -19,8 +19,7 @@ All of them have a role in the creation of an application, from configuring the 
 
 * Devicetree describes the hardware.
 * Kconfig generates definitions that configure the software.
-* Partition Manager describes the memory layout.
-* CMake generates build files based on the provided :file:`CMakeLists.txt` files, which use information from devicetree files, Kconfig, and Partition Manager.
+* CMake generates build files based on the provided :file:`CMakeLists.txt` files, which use information from devicetree files and Kconfig.
 * Ninja (comparable to Make) uses the build files to build the program.
 * The compiler (for example, GCC) creates the executables.
 
