@@ -108,8 +108,6 @@ Add the following to the DTS overlay for your board:
 Setting up static partition manager
 ***********************************
 
-.. include:: ../../../includes/pm_deprecation.txt
-
 You need to complete the setup in order to use a static partitioning in your project.
 The configuration must have 3 images with 2 slots each:
 
@@ -132,11 +130,6 @@ Additionally, ensure that:
 * The ``mcuboot_primary_2`` address is expressed as the QSPI flash physical address.
 * The ``device`` field is the QSPI device name.
 * The ``region`` field is set as ``external_flash``.
-
-See the following snippet for an example of the static configuration for partition manager:
-
-.. literalinclude:: ../../../../../samples/nrf5340/extxip_smp_svr/pm_static.yml
-    :language: yaml
 
 Configuring linker script
 *************************

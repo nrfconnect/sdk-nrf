@@ -40,17 +40,12 @@ The build and configuration system in Zephyr and the |NCS| uses the following bu
      - `Kconfig GUI <Configuring with nRF Kconfig_>`_, :ref:`menuconfig and guiconfig <zephyr:menuconfig>`
      - | Kconfig GUI is part of |nRFVSC|.
        | The :ref:`Kconfig Reference <configuration_options>` provides the documentation for each configuration option.
-   * - :ref:`partition_manager`
-     - :file:`pm.yml`, :file:`pm_static.yml`
-     - Memory layout configuration system.
-     - :ref:`partition_manager` script
-     - Partition Manager is an |NCS| configuration system that is not available in Zephyr.
 
 Each of these systems comes with a specialized syntax and purpose.
 See the following sections for more information.
 To read more about Zephyr's configuration system and its role in the application development, see :ref:`zephyr:build_overview` and :ref:`zephyr:application` in the Zephyr documentation.
 
-When you :ref:`create an application <create_application>`, the configuration files for each of these systems are created in the :ref:`application directory <create_application_structure>`: :file:`CMakeLists.txt` for CMake, :file:`app.overlay` for devicetree, :file:`prj.conf` for Kconfig, and :file:`partitions.yml` for Partition Manager (if enabled).
+When you :ref:`create an application <create_application>`, the configuration files for each of these systems are created in the :ref:`application directory <create_application_structure>`: :file:`CMakeLists.txt` for CMake, :file:`app.overlay` for devicetree, and :file:`prj.conf` for Kconfig.
 You can then edit them according to your needs (see :ref:`building`).
 
 When you start building, a CMake build is executed in two stages: configuration phase and building phase.
@@ -268,20 +263,14 @@ In the |NCS|, the build type is controlled using the configuration files, whose 
 When you select a build type for the :ref:`configuration phase <configuration_system_overview_config>`, the compiler will use a specific set of files to create a specific build configuration for the application.
 
 The :file:`prj.conf` file is the application-specific default, but many applications and samples include source files for generating the build configuration differently, for example :file:`prj_release.conf` or :file:`prj_debug.conf`.
-Similarly, the build type can be included in file names for board configuration, Partition Manager's static configuration, other image Kconfig configuration, and others.
+Similarly, the build type can be included in file names for board configuration, other image Kconfig configuration, and others.
 In this way, these files are made dependent on the build type and will only be used when the corresponding build type is invoked.
-For example, if an application uses :file:`pm_static_release.yml` to define Partition Manager's static configuration, this file will only be used when the application's :file:`prj_release.conf` file is used to select the release build type.
 
 Many applications and samples in the |NCS| use build types to define more detailed build configurations.
 The most common build types are ``release`` and ``debug``, which correspond to CMake defaults, but other names can be defined as well.
 For example, nRF Desktop features a ``wwcb`` build type.
 
 See the application's Configuration section for information if it includes any build types.
-
-The following software components can be made dependent on the build type:
-
-* The Partition Manager's :ref:`static configuration <ug_pm_static>`.
-  When the build type has been inferred, the file :file:`pm_static_<buildtype>.yml` will have precedence over :file:`pm_static.yml`.
 
 The devicetree configuration is not affected by the build type.
 
@@ -299,11 +288,6 @@ The |NCS| provides an additional :file:`boilerplate.cmake` file that is automati
    find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 This file checks if the selected board is supported and, when available, if the selected :ref:`file suffix <app_build_file_suffixes>` or :ref:`build type <app_build_additions_build_types>` is supported.
-
-Partition Manager
-=================
-
-The |NCS| adds the :ref:`partition_manager` script, responsible for partitioning the available flash memory and creating the `Memory layout configuration`_.
 
 Binaries and images for nRF Cloud FOTA
 ======================================

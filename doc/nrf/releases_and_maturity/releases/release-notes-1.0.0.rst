@@ -193,7 +193,7 @@ Partition Manager
 -----------------
 
 * Partition Manager now handles all HEX file merging.
-* :ref:`ug_pm_static` of upgradable images is now supported.
+* ``deprecated_ug_pm_static`` of upgradable images is now supported.
 
 
 nRF Desktop

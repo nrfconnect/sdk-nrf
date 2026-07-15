@@ -31,7 +31,7 @@ To use this feature, meet the following requirements:
 * External QSPI flash chip with supported commands connected to QSPI pins
 * QSPI flash chip in always-on mode (meaning, no DPM or low-power modes)
 * :doc:`MCUboot configuration <mcuboot:design>` in the Swap using move mode (``MCUBOOT_SWAP_USING_MOVE``), the Upgrade only mode (``MCUBOOT_OVERWRITE_ONLY``), or in the direct-XIP mode
-* :ref:`Static partition manager file <ug_pm_static>`
+* ``deprecated_ug_pm_static``
 * Linker file with QSPI XIP flash offset and size
 * :ref:`configuration_system_overview_sysbuild`
 
@@ -52,28 +52,9 @@ The QSPI XIP split image feature supports network core image updates on nRF5340 
 Create the Partition Manager static files
 *****************************************
 
-.. include:: ../../includes/pm_deprecation.txt
-
 Create the following files:
 
-* A static :ref:`partition_manager` file to set up the partitions that will be used on the device.
-  The following three files from the :ref:`SMP Server with external XIP <smp_svr_ext_xip>` sample provide an example of the Partition Manager layouts for nRF5340:
-
-  .. tabs::
-
-      .. group-tab:: Swap using move with network core support
-          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/pm_static.yml
-              :language: yaml
-
-      .. group-tab:: Swap using move without network core support
-
-          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/pm_static_no_network_core.yml
-              :language: yaml
-
-      .. group-tab:: Direct-XIP without network core support
-
-          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/pm_static_no_network_core_directxip.yml
-              :language: yaml
+* A static ``deprecated_partition_manager`` file to set up the partitions that will be used on the device.
 
 * A board overlay file to set the chosen Partition Manager external flash device:
 

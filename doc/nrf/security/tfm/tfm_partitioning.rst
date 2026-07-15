@@ -247,6 +247,8 @@ Alignment requirements for devicetree partition sets
 
 You need to align the following devicetree memory regions:
 
+You need to align the following partitions:
+
 * Secure image (``slot0_partition`` or ``slot0_s_partition``)
 * Non-secure image (``slot0_ns_partition``)
 * Secondary slot (``slot1_partition``, when MCUboot DFU is configured)
