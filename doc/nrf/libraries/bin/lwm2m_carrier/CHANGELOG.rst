@@ -607,7 +607,7 @@ Changes
   * Even when the ``LWM2M_CARRIER_EVENT_LTE_READY`` event was sent to the application, the carrier library could still disconnect the link to write keys to the modem after a while in some cases.
   * Any application must handle untimely disconnects anyway, because of factors such as signal coverage, making the ``LWM2M_CARRIER_EVENT_LTE_READY`` event redundant.
 
-* NVS records are no longer statically defined by a devicetree partition. Instead, the :ref:`partition_manager` is used to define flash partition dynamically.
+* NVS records are no longer statically defined by a devicetree partition. Instead, the ``deprecated_partition_manager`` is used to define flash partition dynamically.
 
   * To use the legacy NVS partition, you can add a ``pm_static.yml`` file to your project with the following content:
 

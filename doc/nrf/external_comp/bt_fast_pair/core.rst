@@ -244,15 +244,9 @@ For further details on how to configure the automatic Fast Pair provisioning in 
 Partition definition
 --------------------
 
-The Fast Pair provisioning data is stored on the dedicated Fast Pair partition.
-To properly define this partition, you must rely on the partitioning tool that is supported by your target device.
-The specific description for each partitioning tool is provided in the following subsections.
-
-Devicetree (DTS)
-~~~~~~~~~~~~~~~~
-
-The recommended approach for defining the Fast Pair partition is to declare the ``bt_fast_pair_partition`` partition manually in the devicetree overlay file.
-See the board overlay examples in the :ref:`fast_pair_input_device` and :ref:`fast_pair_locator_tag` samples.
+The Fast Pair provisioning data is stored in a dedicated flash partition that you must define in the devicetree.
+Declare the ``bt_fast_pair_partition`` node in the devicetree overlay of your main (default) application image.
+For reference, see the board overlay examples in the :ref:`fast_pair_input_device` and :ref:`fast_pair_locator_tag` samples.
 
 .. note::
    The Fast Pair partition can be provisioned by the build system only if it is defined in the DTS configuration of the main (default) application image.
@@ -273,7 +267,7 @@ See :ref:`zephyr:sysbuild` for detailed information on how to configure the sysb
 
 If the provisioning data generation is triggered successfully, the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_PROV_DATA` Kconfig option is set in the project sysbuild configuration.
 
-The build system automatically places the Fast Pair provisioning data onto the partition defined by the supported partitioning tool (DTS or the deprecated Partition Manager).
+The build system automatically places the Fast Pair provisioning data onto the partition defined in the DTS configuration.
 
 The provisioning hex file is automatically merged with the final hexadecimal output from the build command (:file:`merged.hex`) and is uploaded on your target device with the ``west flash`` command.
 
@@ -1314,5 +1308,4 @@ The following are the required dependencies for the Fast Pair integration:
 * :ref:`nrfxlib:crypto`
 * :ref:`zephyr:bluetooth`
 * :ref:`zephyr:settings_api`
-* :ref:`partition_manager` (deprecated)
 * :ref:`dult_readme`

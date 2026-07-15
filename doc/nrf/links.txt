@@ -1196,7 +1196,6 @@
 .. _`CONFIG_BT_CTLR_TX_PWR_MINUS`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_MINUS
 .. _`CONFIG_BT_CTLR_TX_PWR_PLUS`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_PLUS
 .. _`CONFIG_PSA_SSF_CRYPTO_CLIENT`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_PSA_SSF_CRYPTO_CLIENT
-.. _`Kconfig search results`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_PM_PARTITION_SIZE
 .. _`CONFIG_PSA_WANT_*`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_PSA_WANT_*
 .. _`CONFIG_PSA_USE_*`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_PSA_USE_*
 .. _`CONFIG_FPROTECT_*`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_FPROTECT_*

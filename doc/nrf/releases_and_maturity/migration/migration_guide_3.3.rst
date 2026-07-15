@@ -29,7 +29,7 @@ Partition Manager deprecation
 
 .. toggle::
 
-   The :ref:`partition_manager` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
+   The ``deprecated_partition_manager`` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
 
    This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
    It is recommended that all new designs using Nordic devices, excluding the nRF91 Series devices, are built with DTS instead of Partition Manager.

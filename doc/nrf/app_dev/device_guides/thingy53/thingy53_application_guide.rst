@@ -8,7 +8,7 @@ Application guide for Thingy:53
    :depth: 2
 
 The Nordic Thingy:53 does not have a built-in J-Link debug IC.
-Because of that, the Thingy:53 board enables MCUboot bootloader with serial recovery support and predefined static Partition Manager memory map by default.
+Because of that, the Thingy:53 board enables MCUboot bootloader with serial recovery support by default.
 You can also enable FOTA updates manually.
 See the following sections for details of what is configured by default and what you can configure by yourself.
 
@@ -23,24 +23,6 @@ The serial port is visible right after the Thingy:53 is connected to the host us
 The CDC ACM baudrate is ignored, and transfer goes with USB speed.
 
 For more information, see :ref:`thingy53_app_usb`.
-
-.. _thingy53_app_partition_manager_config:
-
-Partition manager configuration
-*******************************
-
-.. include:: ../../../includes/pm_deprecation.txt
-
-The samples and applications for Nordic Thingy:53 use the :ref:`partition_manager` by default to define memory partitions.
-The memory layout must stay consistent, so that MCUboot can perform proper image updates and clean up the settings storage partition.
-To ensure that the partition layout does not change between builds, the sample must use a static partition layout that is consistent between all samples in the |NCS|.
-The memory partitions are defined in the :file:`pm_static_thingy53_nrf5340_cpuapp.yml` and :file:`pm_static_thingy53_nrf5340_cpuapp_ns.yml` files in the :file:`zephyr/boards/arm/thingy53_nrf5340` directory.
-
-The PCD SRAM partition is locked by the MCUboot bootloader to prevent the application from modifying the network core firmware.
-Trying to access data on this partition results in an ARM fault.
-
-The MCUboot bootloader needs a flash controller overlay for the network core image update.
-The overlay is applied automatically.
 
 .. _thingy53_app_mcuboot_bootloader:
 

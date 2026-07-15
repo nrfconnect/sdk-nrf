@@ -368,7 +368,7 @@ Sysbuild configuration
 Matter samples in the add-on use a :file:`sysbuild_internal.conf` file at the sample root to hold sysbuild image options that were previously embedded in sample-specific sysbuild configuration.
 If your custom project relied on the same sysbuild defaults (for example, MCUboot overwrite-only mode with compressed image support), copy the relevant options from the corresponding add-on sample's :file:`sysbuild_internal.conf` file.
 
-The add-on sysbuild Kconfig (:file:`ncs-matter/sysbuild/Kconfig.sysbuild`) disables the :ref:`partition_manager` globally for Matter builds, consistent with the devicetree-based partitioning introduced in |NCS| v3.4.0.
+The add-on sysbuild Kconfig (:file:`ncs-matter/sysbuild/Kconfig.sysbuild`) disables the partition_manager globally for Matter builds, consistent with the devicetree-based partitioning introduced in |NCS| v3.4.0.
 See also :ref:`matter_migration_3.4` for partition migration details that still apply after moving to the add-on.
 
 Documentation and tooling
