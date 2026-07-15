@@ -3,12 +3,6 @@
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 
 - scenarios:
-    - mcuboot.upgrade.encryption.ecdsa_p256
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29460"
-
-- scenarios:
     - nrf.extended.drivers.uart.async_dual
     - nrf.extended.drivers.uart.async_dual.busy_sim
     - nrf.extended.drivers.uart.async_dual.pm_runtime
@@ -66,13 +60,6 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
-
-- scenarios:
-    - drivers.fprotect.negative_and_hw_crypto
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf52dk/nrf52832
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
     - bootloader.ppi_config_leftovers.nsib
