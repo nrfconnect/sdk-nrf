@@ -103,6 +103,7 @@
 /doc/nrf/drivers/ppi_seq.rst              @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/ppi_seq_i2c_spi.rst      @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/pmw3360.rst              @nrfconnect/ncs-si-xcake-doc
+/doc/nrf/drivers/saadct.rst               @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/sensor_stub.rst          @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/uart_ipc.rst             @nrfconnect/ncs-doc-leads
