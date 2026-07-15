@@ -756,6 +756,7 @@
 /samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-dragoon-doc
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
 /samples/pulse_meas/README.rst            @nrfconnect/ncs-lowlevel-doc
+/samples/saadct/*.rst                     @nrfconnect/ncs-lowlevel-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/subsys/rtfw/**/*.rst             @nrfconnect/ncs-lowlevel-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
