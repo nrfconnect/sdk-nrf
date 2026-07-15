@@ -59,7 +59,6 @@ Example of use:
   :container: dl/dt
 """
 
-import json
 import re
 from pathlib import Path
 
@@ -68,6 +67,7 @@ from docutils.parsers.rst import directives
 from sphinx.application import Sphinx
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
+from versions import get_versions
 
 __version__ = "0.1.0"
 
@@ -75,9 +75,6 @@ logger = logging.getLogger(__name__)
 
 RESOURCES_DIR = Path(__file__).parent / "static"
 """Static resources"""
-
-VERSIONS_FILE = Path(__file__).parents[1] / "versions.json"
-"""Contains all versions to date"""
 
 
 class PageFilter(SphinxDirective):
@@ -106,16 +103,18 @@ class VersionFilter(PageFilter):
 
     has_content = False
 
-    def run(self):
+    def run(self) -> list[nodes.Node]:
         name = self.options.get("name", "versions")
         default = self.options.get("default", "all")
         container_element = self.options.get("container", None)
         tags = self.options.get("tags", [])
         tags = {classname: displayname for classname, displayname in tags}
         tags["versions"] = ""
-        def create_tuple(v):
-            return v, v.replace("-", ".")
-        versions = list(map(create_tuple, reversed(self.env.nrf_versions)))
+
+        def create_tuple(v: str) -> tuple[str, str]:
+            return f"v{v.replace('.', '-')}", f"v{v}"
+
+        versions = get_versions(self.env.app).matching(re.compile(r"\d+\.\d+\.\d+(?:-(?!preview\d+|rc\d+|dev\d+).*)?$")).all(create_tuple)
         return [FilterDropdown(name, versions, default, container_element, tags)]
 
 
@@ -214,34 +213,6 @@ def page_filter_install(
 
 def add_filter_resources(app: Sphinx):
     app.config.html_static_path.append(RESOURCES_DIR.as_posix())
-    read_versions(app)
-
-
-def read_versions(app: Sphinx) -> None:
-    """Get all NRF versions to date"""
-
-    if hasattr(app.env, "nrf_versions") and app.env.nrf_versions:
-        return
-
-    try:
-        with open(VERSIONS_FILE) as version_file:
-            nrf_versions = json.loads(version_file.read())
-            # Updated regex to match versions with optional segments
-            nrf_versions = list(
-                filter(
-                    lambda v: re.match(
-                        r"\d+\.\d+\.\d+(?:-(?!preview\d+|rc\d+|dev\d+).*)?$", v
-                    ),
-                    nrf_versions,
-                )
-            )
-            # Convert versions to a format suitable for class names
-            app.env.nrf_versions = [
-                f"v{version.replace('.', '-')}" for version in reversed(nrf_versions)
-            ]
-    except FileNotFoundError:
-        logger.error("Could not load version file")
-        app.env.nrf_versions = []
 
 
 def setup(app: Sphinx):
