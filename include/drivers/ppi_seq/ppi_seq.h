@@ -99,6 +99,9 @@ struct ppi_seq_notifier_nrfx_timer {
 	 * are 2 SPI transfers in each cycle then it should be set to 1.
 	 */
 	uint16_t extra_main_ops;
+
+	/** If set, it indicates that event is already used and channel is just attached. */
+	bool attached;
 };
 
 /** @brief Notifier structure. */

@@ -271,6 +271,18 @@ static int ppi_seq_notifier_init(struct ppi_seq *seq)
 		return rv;
 	}
 
+	if (IS_ENABLED(CONFIG_NRFX_GPPI)) {
+		rv = nrfx_gppi_ep_channel_get(notifier->nrfx_timer.end_seq_event);
+		if ((rv >= 0) &&
+		    (nrfx_gppi_domain_id_get(notifier->nrfx_timer.end_seq_event) ==
+		     nrfx_gppi_domain_id_get(cnt_task))) {
+			/* Channel is already in use */
+			nrfx_gppi_ep_to_ch_attach(cnt_task, rv);
+			notifier->nrfx_timer.attached = true;
+			return 0;
+		}
+	}
+
 	rv = ppi_alloc(seq, notifier->nrfx_timer.end_seq_event, cnt_task, true);
 	if (rv < 0) {
 		return rv;
@@ -291,7 +303,9 @@ static void ppi_seq_notifier_uninit(struct ppi_seq *seq)
 
 	cnt_task = nrfx_timer_task_address_get(&notifier->nrfx_timer.timer, NRF_TIMER_TASK_COUNT);
 	nrfx_timer_uninit(&notifier->nrfx_timer.timer);
-	nrfx_gppi_ep_clear(notifier->nrfx_timer.end_seq_event);
+	if (IS_ENABLED(CONFIG_NRFX_GPPI) && !notifier->nrfx_timer.attached) {
+		nrfx_gppi_ep_clear(notifier->nrfx_timer.end_seq_event);
+	}
 	nrfx_gppi_ep_clear(cnt_task);
 }
 
