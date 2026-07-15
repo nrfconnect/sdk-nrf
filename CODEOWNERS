@@ -104,6 +104,7 @@
 /doc/nrf/drivers/ppi_seq.rst              @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/ppi_seq_i2c_spi.rst      @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/pmw3360.rst              @nrfconnect/ncs-si-xcake-doc
+/doc/nrf/drivers/saadct.rst               @nrfconnect/ncs-ll-izera @nrfconnect/ncs-lowlevel-doc
 /doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/sensor_stub.rst          @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/uart_ipc.rst             @nrfconnect/ncs-doc-leads
@@ -753,6 +754,7 @@
 /samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-dragoon-doc
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
 /samples/pulse_meas/README.rst            @nrfconnect/ncs-lowlevel-doc
+/samples/saadct/*.rst                     @nrfconnect/ncs-lowlevel-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
 /samples/vtf_monitoring/*.rst             @nrfconnect/ncs-wifi-doc
