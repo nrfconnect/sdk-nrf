@@ -185,10 +185,15 @@ static void req_pin_set(struct lpuart_data *data)
  */
 static void req_pin_arm(struct lpuart_data *data)
 {
+	const nrf_gpio_pin_dir_t dir = NRF_GPIO_PIN_DIR_INPUT;
+	const nrf_gpio_pin_input_t input = NRF_GPIO_PIN_INPUT_CONNECT;
 	const nrf_gpio_pin_pull_t pull = NRF_GPIO_PIN_PULLUP;
 
-	/* Add pull up before reconfiguring to input. */
-	nrf_gpio_reconfigure(data->req_pin, NULL, NULL, &pull, NULL, NULL);
+	/* Reconfigure to input with pull up so that low state detection (SENSE)
+	 * used by GPIOTE can work. The input buffer must be connected, otherwise
+	 * on some SoCs SENSE never triggers.
+	 */
+	nrf_gpio_reconfigure(data->req_pin, &dir, &input, &pull, NULL, NULL);
 
 	nrfx_gpiote_trigger_enable(get_gpiote(data->req_pin), data->req_pin, true);
 }
