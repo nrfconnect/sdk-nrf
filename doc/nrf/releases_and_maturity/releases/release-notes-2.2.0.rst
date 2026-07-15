@@ -883,7 +883,7 @@ Scripts
 
   * Updated the SPDX License List database to version 3.18.
 
-* partition_manager:
+* Partition Manager:
 
   * Added:
 
@@ -892,7 +892,7 @@ Scripts
       This option must be selected by drivers providing support for external flash.
       It is automatically selected by :kconfig:option:`CONFIG_NORDIC_QSPI_NOR` and :kconfig:option:`CONFIG_SPI_NOR`.
       MCUboot might fail to boot when the external flash memory is used for non-primary application images and when the driver for the external flash memory is not enabled.
-      See :ref:`ug_bootloader_external_flash` and :ref:`pm_external_flash` for details.
+      See :ref:`ug_bootloader_external_flash` and External flash memory partitions for details.
     * P-GPS partition section to the :file:`ncs/nrf/subsys/partition_manager/Kconfig` file.
     * Board-specific static Partition Manager configuration shared among build types.
       The configuration can be defined in the board's directory.

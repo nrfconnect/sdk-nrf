@@ -193,7 +193,7 @@ Partition Manager
 -----------------
 
 * Partition Manager now handles all HEX file merging.
-* :ref:`ug_pm_static` of upgradable images is now supported.
+* ``deprecated_ug_pm_static`` of upgradable images is now supported.
 
 
 nRF Desktop
@@ -250,7 +250,7 @@ Documentation
 
   * nRF BLE Controller (experimental)
   * Multi-image build
-  * partition_manager
+  * Partition Manager
   * :ref:`nrf_desktop`
   * :ref:`shell_bt_nus_readme`
 

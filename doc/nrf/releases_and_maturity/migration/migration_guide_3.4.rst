@@ -29,7 +29,7 @@ Partition Manager deprecation
 
 .. toggle::
 
-   The :ref:`partition_manager` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
+   The ``deprecated_partition_manager`` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
 
    This functionality has been deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
    It is recommended that all new designs using Nordic devices are built with DTS instead of Partition Manager.
@@ -154,7 +154,7 @@ Matter
 
 .. toggle::
 
-   * The :ref:`partition_manager` has been deprecated, removed from the Matter samples and applications and replaced by Zephyr's default devicetree-based memory partitioning.
+   * The ``deprecated_partition_manager`` has been deprecated, removed from the Matter samples and applications and replaced by Zephyr's default devicetree-based memory partitioning.
      The base :file:`.dtsi` files for all supported SoCs have been created in the :file:`nrf/dts/samples/matter` directory.
      The files from the :file:`nrf/dts/samples/matter` directory are used by default in all Matter samples and applications.
      You can also reuse them as a base for your own custom partitioning.

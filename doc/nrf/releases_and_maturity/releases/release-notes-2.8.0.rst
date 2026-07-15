@@ -227,7 +227,7 @@ Build and configuration system
     * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_USER_HANDLING` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
     * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_USE_UICR` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
 
-  * CMake warning when the static partition_manager file has been changed but changes will not be read until a pristine build is performed.
+  * CMake warning when the static Partition Manager file has been changed but changes will not be read until a pristine build is performed.
   * Encrypted firmware update to :file:`dfu_application.zip` instead of the unencrypted firmware update when encrypted image support is enabled in sysbuild.
     See :ref:`app_build_mcuboot_output` for details.
   * Sysbuild-assigned MCUboot image IDs feature, which deals with MCUboot image IDs for different components in a project.

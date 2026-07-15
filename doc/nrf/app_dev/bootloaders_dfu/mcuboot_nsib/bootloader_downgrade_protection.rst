@@ -74,7 +74,7 @@ You can implement hardware-based downgrade protection using a non-volatile monot
 
 Counter updates are written to slots in the *Provision* area, with each new counter update occupying a new slot.
 For this reason, the number of counter updates, and therefore firmware version updates, is limited.
-The *Provision* is a partition in non-volatile memory, and its location can be found using :ref:`pm_generated_output_and_usage_pm_report`.
+The *Provision* is a partition in non-volatile memory.
 
 Using a counter is optional and can be configured for the application using configuration options.
 You can also configure the supported number of updates, but the number is limited by the size of the *Provision* area and how much of that area is taken up by other features, like public key hashes.
