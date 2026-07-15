@@ -457,9 +457,11 @@
   comment: "not compatible with NCS (Frank Audun Kvamtro)"
 
 - scenarios:
-    - drivers.wifi.build.spi
+    - drivers.net.wifi.build.spi
   platforms:
+    - native_sim
     - native_sim/native
+    - native_sim/native/64
   comment: "requires pulling in hal_atmel but is actually not very useful"
 
 - scenarios:
