@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "RTFW HID/GPIOTE backend"
+
+config SAMPLE_RTFW_IRQ_PRIORITY
+	int "GPIOTE zero-latency IRQ priority"
+	default 1 if SOC_SERIES_NRF54L
+	default 0
+	range 0 7
+	help
+	  Select the priority of the sample-owned GPIOTE source interrupt.
+	  nRF54L uses priority 1 so MPSL priority 0 can preempt it, while
+	  nRF54H20 uses priority 0 because the radio runs on another core.
+
+config SAMPLE_RTFW_ISR_TEST_LOAD
+	bool "Inject a controlled busy loop into the GPIOTE fast path"
+	help
+	  Add a bounded NOP loop to the source ISR for stress and
+	  coexistence measurements. The configured iteration count is
+	  executed after the registered fast-path callback. Keep this
+	  option disabled for baseline latency measurements.
+
+config SAMPLE_RTFW_ISR_TEST_LOAD_CYCLES
+	int "NOP iterations in the injected ISR load"
+	depends on SAMPLE_RTFW_ISR_TEST_LOAD
+	default 100
+	range 1 1000000
+
+config SAMPLE_RTFW_DEBUG_PIN
+	bool "Expose GPIOTE ISR execution time on a debug pin"
+	help
+	  Drive the board-specific debug pin while the direct source ISR
+	  executes so its latency and duration can be measured with a
+	  logic analyzer. The output includes framework command handling
+	  and the registered sample fast-path callback.
+
+source "Kconfig.zephyr"
