@@ -427,12 +427,6 @@ int dult_enable(const struct dult_user *user)
 		}
 	}
 
-	err = dult_bt_anos_enable();
-	if (err) {
-		LOG_ERR("dult_bt_anos_enable returned an error: %d", err);
-		return err;
-	}
-
 	if (user->accessory_capabilities & BIT(DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS)) {
 		err = dult_sound_enable();
 		if (err) {
