@@ -305,7 +305,7 @@ The ``ncs-sbom`` command includes the following detectors:
 
   The database is part of the ``ncs-sbom`` command. Enabled by default.
 
-* ``scancode-toolkit`` - License detection by the `Scancode-Toolkit`_. Enabled and optional by default.
+* ``scancode-toolkit`` - License and copyright detection by the `Scancode-Toolkit`_. Enabled and optional by default.
 
   If the ``scancode`` command is not on your ``PATH``, you can use the ``--scancode`` option to provide it, for example:
 
@@ -350,8 +350,12 @@ The ``ncs-sbom`` command includes the following detectors:
 
      --input-cache-database *cache-database.json*
 
-  Each database entry has a path relative to the west workspace directory, a hash, and a list of detected licenses.
-  If the file under detection has the same path and hash, the list of licenses from the database is used.
+  Each version 2 database entry has a path relative to the west workspace directory, a hash,
+  concluded license evidence, license information detected in the file, and copyright notices.
+  If the file under detection has the same path and hash, the cached information is merged with
+  results from earlier detectors.
+
+  Version 1 databases containing only the merged license list remain supported.
 
   .. note::
      To generate the database based on, for example the ``scancode-toolkit`` detector, run the following command:

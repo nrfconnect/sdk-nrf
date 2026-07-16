@@ -78,9 +78,18 @@ FileChecksum: SHA1: {{file.sha1}}
 FileComment: <text>This file is modified locally.</text>
 {% endif -%}
 LicenseConcluded: {{ file.license_expr_friendly if file.license_expr_friendly != '' else 'NOASSERTION' }}
+{% if file.infile_lics -%}
+{% for license in file.infile_lics -%}
+LicenseInfoInFile: {{ license }}
+{% endfor -%}
+{% else -%}
 LicenseInfoInFile: NOASSERTION
+{% endif -%}
+{% if file.copyright_texts -%}
+FileCopyrightText: <text>{{ file.copyright_texts | sort(case_sensitive=true) | join('\n') | sanitize_tagvalue_text }}</text>
+{% else -%}
 FileCopyrightText: NOASSERTION
-
+{% endif %}
 {% endfor -%}
 
 {% endfor -%}
