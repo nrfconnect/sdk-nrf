@@ -1165,7 +1165,7 @@ static const struct lpuart_config lpuart_config = {
 
 static struct lpuart_data lpuart_data;
 
-static const struct uart_driver_api lpuart_api = {
+static DEVICE_API(uart, lpuart_driver_api) = {
 	.callback_set = api_callback_set,
 	.tx = api_tx,
 	.tx_abort = api_tx_abort,
@@ -1232,4 +1232,4 @@ DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, CHECK_GPIOTE_AVAILABLE)
 DEVICE_DT_DEFINE(DT_NODELABEL(lpuart), lpuart_init, NULL,
 	      &lpuart_data, &lpuart_config,
 	      POST_KERNEL, CONFIG_NRF_SW_LPUART_INIT_PRIORITY,
-	      &lpuart_api);
+	      &lpuart_driver_api);
