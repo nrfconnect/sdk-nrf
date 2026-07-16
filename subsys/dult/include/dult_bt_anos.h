@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -51,12 +51,6 @@ void dult_bt_anos_sound_cb_register(const struct dult_bt_anos_sound_cb *cb);
  *                False: otherwise.
  */
 void dult_bt_anos_sound_state_change_notify(bool active, bool native);
-
-/** @brief Enable DULT Bluetooth ANOS.
- *
- *  @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
- */
-int dult_bt_anos_enable(void);
 
 /** @brief Reset DULT Bluetooth ANOS.
  *
