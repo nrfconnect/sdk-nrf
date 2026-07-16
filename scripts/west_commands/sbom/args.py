@@ -30,11 +30,11 @@ full-text
   Compare the contents of the license with the references that are stored in the database.
 
 scancode-toolkit
-  License detection by scancode-toolkit.
+  License and copyright detection by scancode-toolkit.
   For more details see: https://scancode-toolkit.readthedocs.io/en/stable/
 
 cache-databese
-  License detection is based on a predefined database.
+  License and copyright information is obtained from a predefined database.
   The license type is obtained from the database.
 
 git-info
@@ -120,7 +120,7 @@ def add_arguments(parser: argparse.ArgumentParser):
     parser.add_argument('--output-spdx', default=None,
                         help='Generate output SPDX report.')
     parser.add_argument('--output-cache-database', default=None,
-                        help='Generate a license database for the files using scancode-toolkit')
+                        help='Generate a license and copyright database for the files.')
     parser.add_argument('--input-cache-database', default=None,
                         help='Input license database. The database is passed to the "cache-databe" '
                              'detector')

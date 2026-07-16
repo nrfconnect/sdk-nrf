@@ -28,18 +28,24 @@ class FileInfo(DataBaseClass):
         file_path           File path
         file_rel_path       Path relative to west workspace
         licenses            Set of detected SPDX license IDs and expressions
+        licenses_in_file    Subset of licenses detected in the file itself
         license_expr        Contains SPDX license expression that covers all detected licesens
+        infile_lics         Friendly SPDX entries for licenses detected in the file itself
+        copyright_texts     Copyright notices detected in the file
         package             Package ID of this file
         local_modifications The file was modified and does not match version of this package
         sha1                SHA-1 of the file
-        detectors           Set of detectors that contributed to the list of licenses
-                             for the file
+        detectors           Set of detectors that contributed license or copyright
+                            information for the file
     '''
     file_path: Path
     file_rel_path: Path
     licenses: 'set[str]' = set()
+    licenses_in_file: 'set[str]' = set()
     license_expr: str
     license_expr_friendly: str = ''
+    infile_lics: 'list[str]' = list()
+    copyright_texts: 'set[str]' = set()
     package: 'str' = ''
     local_modifications: bool = False
     sha1: str
