@@ -1,6 +1,12 @@
+common:
+  sysbuild: true
+  tags:
+    - b0
+    - fw_info
+    - sysbuild
+    - ci_tests_subsys_fw_info
 tests:
   fw_info.core:
-    sysbuild: true
     platform_allow:
       - nrf9160dk/nrf9160
       - nrf52840dk/nrf52840
@@ -8,8 +14,8 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
-    tags:
-      - b0
-      - fw_info
-      - sysbuild
-      - ci_tests_subsys_fw_info
+  fw_info.code.kmu:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
