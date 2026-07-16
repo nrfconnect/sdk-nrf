@@ -48,8 +48,16 @@ enum test_ppi_seq_mode {
 };
 
 enum test_ppi_seq_op {
+	/* PPI sequencer is starting a single SPI transfer per period. HW SS is used. */
 	TEST_OP_SINGLE_HW_SS,
+
+	/* PPI sequencer is starting a single SPI transfer per period but GPIOTE is used
+	 * to assert SS pin, SS pin is deasserted by PPI connection between SPI END event
+	 * and GPIOTE.
+	 */
 	TEST_OP_SINGLE_GPIOTE_SS,
+
+	/* Two SPI transfers per PPI sequencer period. HW SS is used. */
 	TEST_OP_DOUBLE,
 };
 
@@ -760,34 +768,30 @@ ZTEST(ppi_seq_spi, test_single_run_with_grtc_interval_and_cnt_timer)
 
 ZTEST(ppi_seq_spi, test_single_run_with_cnt_timer_gpiote_ss)
 {
-	if (!IS_ENABLED(TEST_MULTI_OP)) {
-		ztest_test_skip();
-	}
+	Z_TEST_SKIP_IFNDEF(TEST_MULTI_OP);
+
 	test_single_run(TEST_MODE_GRTC_TIMER, TEST_OP_SINGLE_GPIOTE_SS,
 			PPI_SEQ_NOTIFIER_NRFX_TIMER);
 }
 
 ZTEST(ppi_seq_spi, test_single_run_with_sys_timer_gpiote_ss)
 {
-	if (!IS_ENABLED(TEST_MULTI_OP)) {
-		ztest_test_skip();
-	}
+	Z_TEST_SKIP_IFNDEF(TEST_MULTI_OP);
+
 	test_single_run(TEST_MODE_GRTC_TIMER, TEST_OP_SINGLE_GPIOTE_SS, PPI_SEQ_NOTIFIER_SYS_TIMER);
 }
 
 ZTEST(ppi_seq_spi, test_single_run_with_trig_timer_and_sys_timer_two_ops)
 {
-	if (!IS_ENABLED(TEST_MULTI_OP)) {
-		ztest_test_skip();
-	}
+	Z_TEST_SKIP_IFNDEF(TEST_MULTI_OP);
+
 	test_single_run(TEST_MODE_GRTC_TIMER, TEST_OP_DOUBLE, PPI_SEQ_NOTIFIER_SYS_TIMER);
 }
 
 ZTEST(ppi_seq_spi, test_single_run_with_trig_timer_and_cnt_timer_two_ops)
 {
-	if (!IS_ENABLED(TEST_MULTI_OP)) {
-		ztest_test_skip();
-	}
+	Z_TEST_SKIP_IFNDEF(TEST_MULTI_OP);
+
 	test_single_run(TEST_MODE_GRTC_TIMER, TEST_OP_DOUBLE, PPI_SEQ_NOTIFIER_NRFX_TIMER);
 }
 
@@ -803,17 +807,14 @@ ZTEST(ppi_seq_spi, test_multi_run_with_trig_timer_and_cnt_timer)
 
 ZTEST(ppi_seq_spi, test_multi_run_with_trig_timer_and_cnt_timer_two_ops)
 {
-	if (!IS_ENABLED(TEST_MULTI_OP)) {
-		ztest_test_skip();
-	}
+	Z_TEST_SKIP_IFNDEF(TEST_MULTI_OP);
+
 	test_multi_run(TEST_MODE_GRTC_TIMER, TEST_OP_DOUBLE, PPI_SEQ_NOTIFIER_NRFX_TIMER);
 }
 
 ZTEST(ppi_seq_spi, test_multi_run_with_trig_timer_and_sys_timer_two_ops)
 {
-	if (!IS_ENABLED(TEST_MULTI_OP)) {
-		ztest_test_skip();
-	}
+	Z_TEST_SKIP_IFNDEF(TEST_MULTI_OP);
 
 	test_multi_run(TEST_MODE_GRTC_TIMER, TEST_OP_DOUBLE, PPI_SEQ_NOTIFIER_SYS_TIMER);
 }
