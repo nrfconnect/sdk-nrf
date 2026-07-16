@@ -22,6 +22,7 @@
 #include <memfault/config.h>
 #include <memfault/core/platform/device_info.h>
 #include <memfault/core/data_packetizer.h>
+#include <memfault/http/http_client.h>
 
 LOG_MODULE_REGISTER(mds, CONFIG_BT_MDS_LOG_LEVEL);
 
@@ -51,8 +52,6 @@ LOG_MODULE_REGISTER(mds, CONFIG_BT_MDS_LOG_LEVEL);
 
 #define MDS_URI_BASE \
 	MEMFAULT_HTTP_APIS_DEFAULT_SCHEME "://" MEMFAULT_HTTP_CHUNKS_API_HOST "/api/v0/chunks/"
-
-#define MDS_AUTH_KEY "Memfault-Project-Key:" CONFIG_MEMFAULT_NCS_PROJECT_KEY
 
 #define DATA_POLL_INTERVAL CONFIG_BT_MDS_DATA_POLL_INTERVAL
 
@@ -177,7 +176,11 @@ static ssize_t data_uri_read(struct bt_conn *conn, const struct bt_gatt_attr *at
 static ssize_t authorization_read(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 				  void *buf, uint16_t len, uint16_t offset)
 {
-	static const char *auth_key = MDS_AUTH_KEY;
+	static char
+		auth_key[sizeof(MEMFAULT_HTTP_PROJECT_KEY_HEADER ":") + MEMFAULT_PROJECT_KEY_LEN];
+
+	snprintf(auth_key, sizeof(auth_key), MEMFAULT_HTTP_PROJECT_KEY_HEADER ":%s",
+		 g_mflt_http_client_config.api_key ? g_mflt_http_client_config.api_key : "");
 	size_t auth_key_len = strlen(auth_key);
 
 	LOG_DBG("MDS Authorization characteristic read, handle: %u, conn: %p",

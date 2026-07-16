@@ -648,12 +648,16 @@ Google Fast Pair integration
 Memfault integration
 --------------------
 
+* Added support for setting the Memfault project key at runtime using the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY_SETTINGS` Kconfig option.
+
 * Updated Memfault to version 1.42.0.
   See the `Memfault firmware SDK changelog`_ for details.
 
 * Removed the ``CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`` Kconfig option from nRF91x targets.
   Certificate provisioning for nRF91x targets is now handled automatically by the `Memfault firmware SDK`_.
   The option remains available for nRF7002 targets, which do not have automatic certificate provisioning.
+
+* Deprecated the ``CONFIG_MEMFAULT_NCS_PROJECT_KEY`` Kconfig option in favor of the Memfault SDK-native ``CONFIG_MEMFAULT_PROJECT_KEY`` option.
 
 AVSystem integration
 --------------------

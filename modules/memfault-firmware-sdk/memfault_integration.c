@@ -16,6 +16,9 @@
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
 #endif
+#if defined(CONFIG_MEMFAULT_PROJECT_KEY_SETTINGS)
+#include <zephyr/settings/settings.h>
+#endif
 
 #if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
 #include <zephyr/net/net_if.h>
@@ -44,22 +47,7 @@ LOG_MODULE_REGISTER(memfault_ncs, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 #define MEMFAULT_URL "https://goto.memfault.com/create-key/nrf"
 #endif
 
-#if defined(CONFIG_BT_MDS) || defined(CONFIG_MEMFAULT_HTTP_ENABLE)
-/* Project key check */
-BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_PROJECT_KEY) > 1,
-	     "Memfault Project Key not configured. Please visit " MEMFAULT_URL " ");
-#endif
-
 extern void memfault_ncs_metrics_init(void);
-
-/* Memfault HTTP client configuration
- *
- * This symbol has public scope- it's used by the Memfault SDK when executing
- * HTTP requests
- */
-sMfltHttpClientConfig g_mflt_http_client_config = {
-	.api_key = CONFIG_MEMFAULT_NCS_PROJECT_KEY,
-};
 
 #if defined(CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN)
 /* Firmware type check */
@@ -277,6 +265,18 @@ static int init(void)
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS)) {
 		memfault_ncs_metrics_init();
 	}
+
+#if defined(CONFIG_MEMFAULT_PROJECT_KEY_SETTINGS)
+	settings_subsys_init();
+	err = settings_load_subtree("memfault");
+	if (err) {
+		LOG_ERR("Failed to load Memfault settings subtree, error: %d", err);
+	}
+	err = settings_get_val_len("memfault/project_key");
+	if (err <= 0) {
+		LOG_ERR("Memfault project key not found in settings");
+	}
+#endif /* CONFIG_MEMFAULT_PROJECT_KEY_SETTINGS */
 
 	return err;
 }

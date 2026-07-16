@@ -7,9 +7,23 @@
 if MEMFAULT
 
 config MEMFAULT_NCS_PROJECT_KEY
-	string "Memfault API key"
+	string "Memfault API key [DEPRECATED]"
 	help
-	  Memfault project key
+	  Deprecated. Use CONFIG_MEMFAULT_PROJECT_KEY instead.
+	  To load the project key at runtime from the Zephyr settings subsystem,
+	  enable CONFIG_MEMFAULT_PROJECT_KEY_SETTINGS.
+
+config MEMFAULT_NCS_PROJECT_KEY_DEPRECATION
+	bool
+	default y if MEMFAULT_NCS_PROJECT_KEY != ""
+	select DEPRECATED
+	help
+	  This indicates that the deprecated Kconfig CONFIG_MEMFAULT_NCS_PROJECT_KEY has been set
+
+config MEMFAULT_NCS_HTTP_CLIENT_CONFIG_CUSTOM
+	bool
+	default y
+	select MEMFAULT_HTTP_CLIENT_CONFIG_BUILTIN
 
 choice
 	prompt "Choose built-in Memfault Device Info or custom implementation"
