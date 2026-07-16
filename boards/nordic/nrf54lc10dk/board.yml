@@ -3,12 +3,43 @@ board:
   full_name: nRF54LC10 DK
   vendor: nordic
   socs:
-  - name: nrf54lc10a
-    variants:
-    - name: ns
-      cpucluster: cpuapp
+    - name: nrf54lc10a
+      variants:
+        - name: ns
+          cpucluster: cpuapp
   revision:
     format: major.minor.patch
     default: "0.8.0"
     revisions:
-    - name: "0.8.0"
+      - name: "0.8.0"
+runners:
+  run_once:
+    '--recover':
+      - runners:
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp
+              - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
+              - nrf54lc10dk@0.8.0/nrf54lc10a/cpuflpr
+    '--erase':
+      - runners:
+          - jlink
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp
+              - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
+              - nrf54lc10dk@0.8.0/nrf54lc10a/cpuflpr
+    '--reset':
+      - runners:
+          - jlink
+          - nrfutil
+        run: last
+        groups:
+          - boards:
+              - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp
+              - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
+              - nrf54lc10dk@0.8.0/nrf54lc10a/cpuflpr
