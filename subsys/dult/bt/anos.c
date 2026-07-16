@@ -981,6 +981,9 @@ static void sound_start_notify(bool native)
 	 */
 	__ASSERT_NO_MSG(conn);
 
+	/* Cached by the sound-start write that drives this notification. */
+	__ASSERT_NO_MSG(anos_chrc_indicate_attr);
+
 	(void) sound_command_response_send(conn, anos_chrc_indicate_attr, true, response_status);
 }
 
@@ -1016,6 +1019,9 @@ static void sound_stop_notify(void)
 	 * beginning of this function.
 	 */
 	__ASSERT_NO_MSG(sound_conn);
+
+	/* Cached by the sound-start write that drives this notification. */
+	__ASSERT_NO_MSG(anos_chrc_indicate_attr);
 
 	sound_completed_indicate(sound_conn, anos_chrc_indicate_attr);
 
@@ -1084,22 +1090,6 @@ int dult_bt_anos_cb_register(const struct dult_user *user, const struct dult_bt_
 	return anos_cb_set(user, cb);
 }
 
-int dult_bt_anos_enable(void)
-{
-	if (!anos_chrc_indicate_attr) {
-		const struct bt_uuid *anos_chrc_uuid =
-			BT_UUID_ACCESSORY_NON_OWNER_CHARACTERISTIC;
-
-		anos_chrc_indicate_attr = bt_gatt_find_by_uuid(NULL, 0, anos_chrc_uuid);
-		if (!anos_chrc_indicate_attr) {
-			LOG_ERR("DULT ANOS: cannot find the ANOS characteristic handle");
-			return -ENOENT;
-		}
-	}
-
-	return 0;
-}
-
 int dult_bt_anos_reset(void)
 {
 	if (anos_sound_state != ANOS_SOUND_STATE_IDLE) {
@@ -1107,6 +1097,7 @@ int dult_bt_anos_reset(void)
 		 * beginning of this function.
 		 */
 		__ASSERT_NO_MSG(sound_conn);
+		__ASSERT_NO_MSG(anos_chrc_indicate_attr);
 
 		if (anos_sound_state == ANOS_SOUND_STATE_START_REQUEST) {
 			(void) sound_command_response_send(
