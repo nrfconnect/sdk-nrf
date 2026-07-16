@@ -40,8 +40,14 @@ def adjust_identifier(license: str) -> str:
     return license.replace('LICENSEREF', 'LicenseRef')
 
 
+def sanitize_tagvalue_text(value: str) -> str:
+    '''Prevent copyright text from terminating an SPDX tag-value text block.'''
+    return str(value).replace('</text>', '&lt;/text&gt;')
+
+
 filters.FILTERS['verification_code'] = verification_code
 filters.FILTERS['adjust_identifier'] = adjust_identifier
+filters.FILTERS['sanitize_tagvalue_text'] = sanitize_tagvalue_text
 
 
 def group_by(files: 'list[FileInfo]', attr_name: str) -> 'dict[list[FileInfo]]':
