@@ -57,6 +57,16 @@ enum unicast_discover_dir {
 #endif /* CONFIG_BT_BAP_UNICAST_16_2_1 */
 
 /**
+ * @brief Check if the unicast client is currently streaming.
+ *
+ * @param[out]	is_streaming	Pointer to a boolean that will be set to true if streaming, false
+ *				otherwise.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int unicast_client_is_streaming(bool *is_streaming);
+
+/**
  * @brief	Get configuration for the audio stream.
  *
  * @param[in]	stream			Pointer to the stream to get the configuration for.

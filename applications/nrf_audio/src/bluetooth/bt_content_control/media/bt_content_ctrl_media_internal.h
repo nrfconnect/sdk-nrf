@@ -17,6 +17,17 @@
 typedef void (*bt_content_ctrl_media_play_pause_cb)(bool play);
 
 /**
+ * @brief	Override the current state of the media player.
+ *
+ * @note	This is needed if the media player state is not in sync with the actual state of
+ *		stream. This can happen if a device disconnects at the same time as a play/pause
+ *		command is sent.
+ *
+ * @param[in]	playing	Indicate whether the media player should be in the playing state.
+ */
+void bt_content_ctrl_media_state_override(bool playing);
+
+/**
  * @brief	Discover Media Control Service and the included services.
  *
  * @note	Only valid for client.
