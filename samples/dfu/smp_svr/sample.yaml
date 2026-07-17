@@ -56,6 +56,14 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+
+  sample.dfu.smp_svr.serial.tfm_mcuboot:
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    sysbuild: true
+    extra_args:
+      - FILE_SUFFIX=tfm_mcuboot
+
   sample.dfu.smp_svr.mcuboot_flags.direct_xip_withrevert:
     extra_args:
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
