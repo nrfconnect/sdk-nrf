@@ -11,13 +11,17 @@
 
 #include <helpers/nrfx_ram_ctrl.h>
 
+#if defined(CONFIG_SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE)
+#include "tfm_ioctl_core_api.h"
+#endif
+
 #if !defined(NRF_MEMORY_RAM_BASE) && defined(NRF_MEMORY_RAM0_BASE)
 #define NRF_MEMORY_RAM_BASE NRF_MEMORY_RAM0_BASE
 #endif
 
 #define RAM_IMAGE_END_ADDR ((uintptr_t)_image_ram_end)
 
-#define RAM_UNIFORM_REGION_SIZE \
+#define RAM_UNIFORM_REGION_SIZE                                                                    \
 	((uintptr_t)RAM_UNIFORM_SECTIONS_TOTAL * (uintptr_t)RAM_SECTION_UNIT_SIZE)
 
 LOG_MODULE_REGISTER(ram_pwrdn, CONFIG_RAM_POWERDOWN_LOG_LEVEL);
@@ -78,8 +82,18 @@ static void ram_sections_power_set(uintptr_t start_address, uintptr_t end_addres
 			LOG_DBG("%s RAM 0x%08lx-0x%08lx",
 				power_up ? "Powering up" : "Powering down",
 				(unsigned long)section_start, (unsigned long)section_end);
+#if defined(CONFIG_SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE)
+			if (tfm_platform_ram_ctrl_power_set((uint32_t)section_start,
+							    (uint32_t)(section_end - section_start),
+							    power_up) != TFM_PLATFORM_ERR_SUCCESS) {
+				LOG_ERR("TF-M rejected RAM power-%s range 0x%08lx-0x%08lx",
+					power_up ? "up" : "down", (unsigned long)section_start,
+					(unsigned long)section_end);
+			}
+#else
 			nrfx_ram_ctrl_power_enable_set((void const *)section_start,
 						       section_end - section_start, power_up);
+#endif
 		}
 	}
 }
