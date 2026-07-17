@@ -18,6 +18,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
 #include <sample_usbd.h>
+#include <zephyr/drivers/hwinfo.h>
 #if defined(CONFIG_TEST_USB_AND_SYSTEMOFF)
 #include <zephyr/sys/poweroff.h>
 #endif
@@ -168,8 +169,18 @@ static void interrupt_handler(const struct device *dev, void *user_data)
 int main(void)
 {
 	int ret;
+	uint8_t device_id[16];
+	ssize_t device_id_len;
+	char dev_id_hex_str[sizeof(device_id) * 2 + 1];
+
+	device_id_len = hwinfo_get_device_id(device_id, sizeof(device_id));
+
+	for (ssize_t i = 0; i < device_id_len; i++) {
+		snprintf(&dev_id_hex_str[i * 2], 3, "%02x", device_id[i]);
+	}
 
 	LOG_INF("Hello World! %s", CONFIG_BOARD_TARGET);
+	LOG_INF("Device ID: %s", dev_id_hex_str);
 
 	ret = gpio_is_ready_dt(&led);
 	__ASSERT(ret, "Error: GPIO Device not ready");
