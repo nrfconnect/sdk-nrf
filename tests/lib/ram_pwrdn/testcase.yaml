@@ -19,8 +19,12 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf52840dk/nrf52840
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ram_pwrdn
       - ci_tests_lib_ram_pwrdn
