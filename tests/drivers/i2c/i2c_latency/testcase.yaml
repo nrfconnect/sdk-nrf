@@ -14,6 +14,8 @@ common:
     - nrf54h20dk/nrf54h20/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lc10dk/nrf54lc10a/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
     - nrf9251dk/nrf9251/cpuapp
   integration_platforms:
     - nrf54h20dk/nrf54h20/cpuapp

@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_TWI_1MBPS_SUPPORT
+	bool "Test with 1Mbps rate - DUT HW dependent"
+	default y if SOC_NRF5340
+	default y if SOC_NRF54H20
+	default y if SOC_NRF9251
+
+source "Kconfig.zephyr"

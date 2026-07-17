@@ -313,8 +313,7 @@ ZTEST(i2c_transmission_latency, test_i2c_read_call_latency_fast_speed)
 
 ZTEST(i2c_transmission_latency, test_i2c_read_call_latency_fast_plus_speed)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_SOC_NRF54L15_CPUAPP);
-	Z_TEST_SKIP_IFDEF(CONFIG_SOC_NRF52840);
+	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_TWI_1MBPS_SUPPORT);
 
 	test_i2c_read_latency(1, I2C_SPEED_FAST_PLUS);
 	test_i2c_read_latency(10, I2C_SPEED_FAST_PLUS);
@@ -340,8 +339,7 @@ ZTEST(i2c_transmission_latency, test_i2c_write_call_latency_fast_speed)
 
 ZTEST(i2c_transmission_latency, test_i2c_write_call_latency_fast_plus_speed)
 {
-	Z_TEST_SKIP_IFDEF(CONFIG_SOC_NRF54L15_CPUAPP);
-	Z_TEST_SKIP_IFDEF(CONFIG_SOC_NRF52840);
+	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_TWI_1MBPS_SUPPORT);
 
 	test_i2c_write_latency(1, I2C_SPEED_FAST_PLUS);
 	test_i2c_write_latency(10, I2C_SPEED_FAST_PLUS);
