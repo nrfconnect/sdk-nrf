@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <hal/nrf_power.h>
+#include <stdint.h>
+
 #include <ram_pwrdn.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/ztest.h>
@@ -13,6 +14,17 @@
 #include <stdlib.h>
 #include <malloc.h>
 
+#if defined(CONFIG_SOC_NRF52840)
+#include <hal/nrf_power.h>
+#elif defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
+#if defined(CONFIG_SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE)
+#include "tfm_ioctl_core_api.h"
+#else
+#include <hal/nrf_memconf.h>
+#endif
+#endif
+
+#if defined(CONFIG_SOC_NRF52840)
 /* ===== Test helpers ===== */
 
 struct bank_section {
@@ -22,7 +34,7 @@ struct bank_section {
 
 static struct bank_section bank_section(uint8_t bank_id, uint8_t section_id)
 {
-	struct bank_section ret = { .bank_id = bank_id, .sect_id = section_id };
+	struct bank_section ret = {.bank_id = bank_id, .sect_id = section_id};
 
 	return ret;
 }
@@ -127,3 +139,63 @@ ZTEST(ram_pwrdn, test_manual_power_control)
 }
 
 ZTEST_SUITE(ram_pwrdn, NULL, NULL, NULL, teardown, NULL);
+#elif defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
+
+#define RAM_SECTION_SIZE  0x8000UL
+#define TEST_SECTION_ID	  30U
+#define TEST_SECTION_ADDR (0x20000000UL + TEST_SECTION_ID * RAM_SECTION_SIZE)
+
+static uint32_t control_get(void)
+{
+#if defined(CONFIG_SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE)
+	uint32_t control;
+	enum tfm_platform_err_t err;
+
+	err = tfm_platform_ram_ctrl_read_status(&control, NULL, NULL);
+	zassert_equal(err, TFM_PLATFORM_ERR_SUCCESS, "Reading MEMCONF CONTROL through TF-M");
+
+	return control;
+#else
+	return NRF_MEMCONF->POWER[0].CONTROL;
+#endif
+}
+
+static void teardown(void *fixture)
+{
+	ARG_UNUSED(fixture);
+
+	power_up_ram(TEST_SECTION_ADDR, TEST_SECTION_ADDR + RAM_SECTION_SIZE);
+}
+
+ZTEST(ram_pwrdn, test_nrf7120_power_control)
+{
+	uint32_t control;
+	uint32_t section31_before;
+
+	power_up_ram(TEST_SECTION_ADDR, TEST_SECTION_ADDR + RAM_SECTION_SIZE);
+	control = control_get();
+	zassert_true(control & BIT(TEST_SECTION_ID), "Test section is not powered up");
+	section31_before = control & BIT(31);
+
+	/* A section is powered down only when the complete section is requested. */
+	power_down_ram(TEST_SECTION_ADDR + 1U, TEST_SECTION_ADDR + RAM_SECTION_SIZE);
+	control = control_get();
+	zassert_true(control & BIT(TEST_SECTION_ID), "A partial section was powered down");
+	zassert_equal(control & BIT(31), section31_before, "Section 31 changed");
+
+	power_down_ram(TEST_SECTION_ADDR, TEST_SECTION_ADDR + RAM_SECTION_SIZE);
+	control = control_get();
+	zassert_false(control & BIT(TEST_SECTION_ID), "A complete section was not powered down");
+	zassert_equal(control & BIT(31), section31_before, "Section 31 changed");
+
+	/* Any overlap powers the complete section back up. */
+	power_up_ram(TEST_SECTION_ADDR, TEST_SECTION_ADDR + 1U);
+	control = control_get();
+	zassert_true(control & BIT(TEST_SECTION_ID), "The section was not powered up");
+	zassert_equal(control & BIT(31), section31_before, "Section 31 changed");
+}
+
+ZTEST_SUITE(ram_pwrdn, NULL, NULL, NULL, teardown, NULL);
+#else
+#error "RAM power-down test is not supported on the current platform"
+#endif
