@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,8 +7,11 @@
 #ifndef _DULT_BATTERY_H_
 #define _DULT_BATTERY_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+
+#include <dult/dult.h>
 
 /**
  * @defgroup dult_battery Detecting Unwanted Location Trackers battery
@@ -27,12 +30,22 @@ extern "C" {
  */
 uint8_t dult_battery_type_encode(void);
 
-/** Encode the battery level configuration.
+/** Encode the battery level configuration of @p user.
  *  The configuration is encoded as required by the DULT specification.
+ *
+ * @param user User whose battery level should be encoded.
  *
  * @return Byte with an encoded information about the battery level.
  */
-uint8_t dult_battery_level_encode(void);
+uint8_t dult_battery_level_encode(const struct dult_user *user);
+
+/** @brief Check whether the battery level was set for @p user.
+ *
+ * @param user User to look up.
+ *
+ * @return true when the battery level is set, false otherwise.
+ */
+bool dult_battery_level_is_set(const struct dult_user *user);
 
 /** @brief Enable DULT battery.
  *
