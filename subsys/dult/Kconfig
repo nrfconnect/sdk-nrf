@@ -37,6 +37,25 @@ config DULT_ACCESSORY_TYPE_LARGE
 
 endchoice
 
+config DULT_MULTI_USER
+	bool "Multi-user coexistence support"
+	help
+	  Allow multiple locator networks (DULT users) to be registered at the
+	  same time and arbitrate which one is the associated user. When disabled
+	  (default), DULT supports a single user. See the DULT API documentation
+	  for the resulting lifecycle contract.
+
+config DULT_MULTI_USER_MAX
+	int "Maximum number of registered DULT users"
+	range 1 8 if DULT_MULTI_USER
+	range 1 1
+	default 1
+	help
+	  Number of locator networks that can register with DULT at the same
+	  time. 1 keeps a single slot (no coexistence callbacks needed); 2 or
+	  more require them so the associated user can be arbitrated. Once a
+	  network calls dult_enable(), the others are evicted.
+
 config DULT_BATTERY
 	bool "DULT battery information"
 	help

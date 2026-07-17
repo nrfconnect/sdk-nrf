@@ -13,9 +13,11 @@
 
 #include <dult/dult.h>
 #include <dult/bt.h>
+#include <dult/multi_user.h>
 #include "dult_battery.h"
 #include "dult_bt_anos.h"
 #include "dult_user.h"
+#include "dult_user_slot.h"
 #include "dult_near_owner_state.h"
 #include "dult_id.h"
 
@@ -146,7 +148,87 @@ static const struct bt_gatt_attr *anos_chrc_indicate_attr;
 static enum anos_sound_state anos_sound_state;
 static struct bt_conn *sound_conn;
 static const struct dult_bt_anos_sound_cb *anos_sound_cb;
-static const struct dult_bt_anos_cb *anos_cb;
+
+/* Per-user memory reference holding the user's ANOS access callback.  */
+static size_t anos_cb_id = DULT_USER_SLOT_MEM_REF_ID_UNSET;
+
+static const struct dult_bt_anos_cb *anos_cb_get(const struct dult_user *user)
+{
+	void *ref = NULL;
+
+	if (anos_cb_id == DULT_USER_SLOT_MEM_REF_ID_UNSET) {
+		return NULL;
+	}
+
+	(void) dult_user_slot_mem_ref_get(user, anos_cb_id, &ref);
+
+	return ref;
+}
+
+static int anos_cb_set(const struct dult_user *user, const struct dult_bt_anos_cb *cb)
+{
+	return dult_user_slot_mem_ref_set(user, anos_cb_id, (void *)cb);
+}
+
+/* Connection ownership table used to route ANOS operations to the right user
+ * during the multi-user pre-association window. Indexed by bt_conn_index(), it
+ * stores the user that claimed each connection. Each DULT user claims the
+ * connections it owns from its Bluetooth connected callback with
+ * dult_multi_user_conn_claim(); the claim is dropped by this layer's own
+ * Bluetooth disconnected callback (see disconnected()), so users never release
+ * connections explicitly. This keeps the DULT core free of any Bluetooth
+ * connection dependency. The table is only exercised in multi-user builds; in
+ * single-user builds the accessors are reached exclusively from
+ * IS_ENABLED(CONFIG_DULT_MULTI_USER) guarded paths.
+ */
+static const struct dult_user *conn_claims[CONFIG_BT_MAX_CONN];
+
+static const struct dult_user *conn_user_lookup(struct bt_conn *conn)
+{
+	return conn_claims[bt_conn_index(conn)];
+}
+
+int dult_multi_user_conn_claim(const struct dult_user *user, struct bt_conn *conn)
+{
+	int err;
+	uint8_t idx;
+	struct bt_conn_info conn_info;
+
+	if (!IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+		return -ENOTSUP;
+	}
+
+	if (!user || !conn) {
+		return -EINVAL;
+	}
+
+	if (!dult_user_is_registered(user)) {
+		return -EACCES;
+	}
+
+	err = bt_conn_get_info(conn, &conn_info);
+	if (err) {
+		LOG_ERR("Failed to get conn info %d", err);
+		return err;
+	}
+
+	if (conn_info.state != BT_CONN_STATE_CONNECTED) {
+		return -ENOTCONN;
+	}
+
+	idx = bt_conn_index(conn);
+
+	/* Re-claiming by the same user is a no-op; a different user cannot steal
+	 * an already claimed connection.
+	 */
+	if (conn_claims[idx] && (conn_claims[idx] != user)) {
+		return -EACCES;
+	}
+
+	conn_claims[idx] = user;
+
+	return 0;
+}
 
 static bool is_mtu_sufficient(struct bt_conn *conn, uint16_t data_len)
 {
@@ -367,6 +449,18 @@ static int process_get_battery_type(struct bt_conn *conn, const struct bt_gatt_a
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
+static enum anos_chrc_cmd_response_status verify_get_battery_level(
+	struct bt_conn *conn, const struct dult_user *dult_user)
+{
+	ARG_UNUSED(conn);
+
+	if (!dult_battery_level_is_set(dult_user)) {
+		return ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND;
+	}
+
+	return ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS;
+}
+
 static int process_get_battery_level(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 				     const struct dult_user *dult_user)
 {
@@ -375,10 +469,8 @@ static int process_get_battery_level(struct bt_conn *conn, const struct bt_gatt_
 					ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_LEVEL);
 	NET_BUF_SIMPLE_DEFINE(buf, ANOS_CHRC_INDICATION_LEN(sizeof(uint8_t)));
 
-	ARG_UNUSED(dult_user);
-
 	net_buf_simple_add_le16(&buf, indication_opcode);
-	net_buf_simple_add_u8(&buf, dult_battery_level_encode());
+	net_buf_simple_add_u8(&buf, dult_battery_level_encode(dult_user));
 
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
@@ -619,7 +711,7 @@ static const struct anos_opcode_entry anos_opcode_map[] = {
 	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_BATTERY_TYPE,
 					 NULL, process_get_battery_type),
 	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_BATTERY_LEVEL,
-					 NULL, process_get_battery_level),
+					 verify_get_battery_level, process_get_battery_level),
 #endif /* defined(CONFIG_DULT_BATTERY) */
 	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_NETWORK_VERSION,
 					 verify_get_network_version, process_get_network_version),
@@ -677,18 +769,24 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 	uint16_t opcode_write;
 	const struct anos_opcode_entry *entry;
 	const struct dult_user *dult_user;
-	bool anos_access_verify_cb_present = anos_cb && anos_cb->access_verify;
+	const struct dult_bt_anos_cb *anos_cb;
+	bool anos_access_verify_cb_present;
 
-	if (!dult_user_is_ready()) {
+	/* Lazily cache the ANOS attribute so writes arriving during the
+	 * multi-user pre-association window can be handled. In single-user
+	 * builds the not-enabled guard below rejects pre-enable writes anyway.
+	 */
+	if (!anos_chrc_indicate_attr) {
+		anos_chrc_indicate_attr = attr;
+	}
+
+	if (!IS_ENABLED(CONFIG_DULT_MULTI_USER) && !dult_is_any_associated()) {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 		LOG_INF("Accessory non-owner write: res=%d conn=%p, "
 			"Return error because DULT is not enabled", res, (void *)conn);
 		return res;
 	}
 
-	/* The Accessory Non-owner characteristic should be used to handle the GATT Write
-	 * operations and to send GATT indications.
-	 */
 	__ASSERT_NO_MSG(attr == anos_chrc_indicate_attr);
 
 	if (offset != 0) {
@@ -705,8 +803,28 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 		return res;
 	}
 
-	dult_user = dult_user_get();
-	__ASSERT_NO_MSG(dult_user);
+	/* Resolve the user: the associated user first, then (multi-user only) the
+	 * connection lookup for the pre-association window. Single-user always has
+	 * an associated user here thanks to the not-enabled guard above.
+	 */
+	dult_user = dult_user_get_associated();
+	if (!dult_user && IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+		dult_user = conn_user_lookup(conn);
+	}
+
+	if (!dult_user) {
+		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		LOG_WRN("Accessory non-owner write: res=%d conn=%p, "
+			"Return error because DULT user cannot be resolved",
+			res, (void *)conn);
+		return res;
+	}
+
+	/* The ANOS access callback is per-user: consult the callback bound to
+	 * the resolved user. NULL means the built-in fallback policy applies.
+	 */
+	anos_cb = anos_cb_get(dult_user);
+	anos_access_verify_cb_present = anos_cb && anos_cb->access_verify;
 
 	opcode_write = sys_get_le16(buf);
 	LOG_DBG("Received following opcode: %#05X (Accessory non-owner write)", opcode_write);
@@ -803,6 +921,15 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	if (conn == sound_conn) {
 		sound_state_reset();
+	}
+
+	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+		/* Drop any per-connection user claim recorded for ANOS routing so
+		 * the connection index can be safely reused. This is the single
+		 * cleanup point for the conn_claims table; DULT users only claim
+		 * connections and never release them explicitly.
+		 */
+		conn_claims[bt_conn_index(conn)] = NULL;
 	}
 }
 
@@ -916,27 +1043,45 @@ void dult_bt_anos_sound_cb_register(const struct dult_bt_anos_sound_cb *cb)
 
 int dult_bt_anos_cb_register(const struct dult_user *user, const struct dult_bt_anos_cb *cb)
 {
-	if (!user || !cb || !cb->access_verify) {
+	int err;
+
+	if (!user) {
 		return -EINVAL;
 	}
 
-	if (dult_user_is_ready()) {
-		LOG_ERR("DULT ANOS: module must be disabled to register callbacks");
-		return -EACCES;
+	if (!cb || !cb->access_verify) {
+		return -EINVAL;
 	}
 
 	if (!dult_user_is_registered(user)) {
 		return -EACCES;
 	}
 
-	if (anos_cb) {
+	if (!IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+		/* Single-user: callbacks may only be registered while DULT is disabled. */
+		if (dult_is_any_associated()) {
+			LOG_ERR("DULT ANOS: module must be disabled to register callbacks");
+			return -EACCES;
+		}
+	}
+
+	if (anos_cb_get(user)) {
 		LOG_ERR("DULT ANOS: callback already registered");
 		return -EALREADY;
 	}
 
-	anos_cb = cb;
+	if (anos_cb_id == DULT_USER_SLOT_MEM_REF_ID_UNSET) {
+		err = dult_user_slot_mem_ref_register(&anos_cb_id);
+		if (err) {
+			return err;
+		}
+	}
 
-	return 0;
+	/* Stored in the user's slot and consulted for both phases. In multi-user
+	 * builds it persists across dult_reset() and is cleared by
+	 * dult_user_unregister().
+	 */
+	return anos_cb_set(user, cb);
 }
 
 int dult_bt_anos_enable(void)
@@ -975,8 +1120,6 @@ int dult_bt_anos_reset(void)
 
 		sound_state_reset();
 	}
-
-	anos_cb = NULL;
 
 	return 0;
 }

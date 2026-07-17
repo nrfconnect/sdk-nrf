@@ -13,6 +13,7 @@
 #include <dult/dult.h>
 #include <dult/test.h>
 #include "dult_user.h"
+#include "dult_user_slot.h"
 #include "dult_motion_detector.h"
 #include "dult_near_owner_state.h"
 
@@ -56,8 +57,24 @@ static uint32_t ut_timeout_period_max =
 	SEPARATED_UT_MIN_TO_SEC(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX);
 
 static bool is_enabled;
-static const struct dult_motion_detector_cb *motion_detector_cb;
 static const struct dult_motion_detector_sound_cb *sound_cb;
+
+/* Per-user memory reference holding the user's motion detector callback. */
+static size_t motion_detector_cb_id = DULT_USER_SLOT_MEM_REF_ID_UNSET;
+
+/* Resolve the motion detector callback of the currently associated user. */
+static const struct dult_motion_detector_cb *motion_detector_cb_get(void)
+{
+	void *ref = NULL;
+
+	if (motion_detector_cb_id == DULT_USER_SLOT_MEM_REF_ID_UNSET) {
+		return NULL;
+	}
+
+	(void) dult_user_slot_mem_ref_get(dult_user_get_associated(), motion_detector_cb_id, &ref);
+
+	return ref;
+}
 
 static void motion_enable_work_handle(struct k_work *work);
 static void motion_poll_work_handle(struct k_work *work);
@@ -80,6 +97,7 @@ static uint8_t sound_count;
 
 static void motion_enable_work_handle(struct k_work *work)
 {
+	const struct dult_motion_detector_cb *motion_detector_cb = motion_detector_cb_get();
 	int ret;
 
 	LOG_DBG("Enabling the motion detector");
@@ -131,6 +149,8 @@ static void backoff_setup(void)
 
 static void motion_detector_stop(void)
 {
+	const struct dult_motion_detector_cb *motion_detector_cb = motion_detector_cb_get();
+
 	__ASSERT(motion_detector_cb, "Motion detector callback structure is not registered");
 	__ASSERT(motion_detector_cb->stop, "Motion detector stop callback is not populated");
 
@@ -143,6 +163,7 @@ static void motion_detector_stop(void)
 
 static void motion_poll_handle(void)
 {
+	const struct dult_motion_detector_cb *motion_detector_cb = motion_detector_cb_get();
 	bool motion_detected;
 
 	__ASSERT(motion_detector_cb, "Motion detector callback structure is not registered");
@@ -323,10 +344,8 @@ void dult_motion_detector_sound_cb_register(const struct dult_motion_detector_so
 int dult_motion_detector_cb_register(const struct dult_user *user,
 				     const struct dult_motion_detector_cb *cb)
 {
-	if (dult_user_is_ready()) {
-		LOG_ERR("DULT Motion Detector: module must be disabled to register callbacks");
-		return -EACCES;
-	}
+	int err;
+	void *ref = NULL;
 
 	if (!dult_user_is_registered(user)) {
 		return -EACCES;
@@ -339,18 +358,28 @@ int dult_motion_detector_cb_register(const struct dult_user *user,
 		return -EINVAL;
 	}
 
-	if (motion_detector_cb) {
-		LOG_ERR("DULT Motion Detector: motion detector callbacks already registered");
-		return -EALREADY;
-	}
-
 	if (!cb || !cb->start || !cb->period_expired || !cb->stop) {
 		return -EINVAL;
 	}
 
-	motion_detector_cb = cb;
+	if (motion_detector_cb_id == DULT_USER_SLOT_MEM_REF_ID_UNSET) {
+		err = dult_user_slot_mem_ref_register(&motion_detector_cb_id);
+		if (err) {
+			return err;
+		}
+	}
 
-	return 0;
+	/* Stored per user, persists across dult_reset(); cleared by
+	 * dult_user_unregister(). Registering twice for the same user is rejected.
+	 */
+
+	(void) dult_user_slot_mem_ref_get(user, motion_detector_cb_id, &ref);
+	if (ref) {
+		LOG_ERR("DULT Motion Detector: motion detector callbacks already registered");
+		return -EALREADY;
+	}
+
+	return dult_user_slot_mem_ref_set(user, motion_detector_cb_id, (void *)cb);
 }
 
 int dult_motion_detector_enable(void)
@@ -362,7 +391,7 @@ int dult_motion_detector_enable(void)
 		return -EALREADY;
 	}
 
-	if (!motion_detector_cb) {
+	if (!motion_detector_cb_get()) {
 		LOG_ERR("DULT Motion Detector: callbacks must be registered at this point");
 		return -EINVAL;
 	}
@@ -392,8 +421,6 @@ int dult_motion_detector_reset(void)
 		motion_detector_stop();
 	}
 	state_reset();
-
-	motion_detector_cb = NULL;
 
 	return 0;
 }
