@@ -670,7 +670,7 @@ static void hids_boot_kb_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 		}
 	} else {
 		LOG_DBG("Notification for Boot Keyboard has been turned "
-			"on.");
+			"off.");
 		if (boot_kb_inp_rep->handler != NULL) {
 			boot_kb_inp_rep->handler(
 				BT_HIDS_CCCD_EVT_NOTIFY_DISABLED);
@@ -1108,6 +1108,7 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 		if (cp->conn_evt_handler) {
 			cp->conn_evt_handler(*new_cp, conn);
 		}
+		break;
 #endif
 
 	default:
@@ -1803,27 +1804,27 @@ int bt_hids_boot_kb_inp_rep_send(struct bt_hids *hids_obj,
 	struct bt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids_obj->conn_ctx, conn);
 
-	if (len > sizeof(conn_data->hids_boot_kb_inp_rep_ctx)) {
+	if (!conn_data) {
+		LOG_WRN("The context was not found");
 		return -EINVAL;
 	}
 
-	if (!conn_data) {
-		LOG_WRN("The context was not found");
+	if (len > BT_HIDS_BOOT_KB_INPUT_REP_LEN) {
 		return -EINVAL;
 	}
 
 	rep_data = conn_data->hids_boot_kb_inp_rep_ctx;
 
 	memcpy(rep_data, rep, len);
-	if (len < sizeof(conn_data->hids_boot_kb_inp_rep_ctx)) {
-		memset(&rep_data[len], 0, (sizeof(conn_data->hids_boot_kb_inp_rep_ctx) - len));
+	if (len < BT_HIDS_BOOT_KB_INPUT_REP_LEN) {
+		memset(&rep_data[len], 0, (BT_HIDS_BOOT_KB_INPUT_REP_LEN - len));
 	}
 
 	struct bt_gatt_notify_params params = {0};
 
 	params.attr = rep_attr;
 	params.data = rep_data;
-	params.len = sizeof(conn_data->hids_boot_kb_inp_rep_ctx);
+	params.len = BT_HIDS_BOOT_KB_INPUT_REP_LEN;
 	params.func = cb;
 
 	int err = bt_gatt_notify_cb(conn, &params);

@@ -645,7 +645,7 @@ int bt_hids_disconnected(struct bt_hids *hids_obj, struct bt_conn *conn);
  *  @param rep Pointer to the report data.
  *  @param len Length of report data.
  *  @param cb Notification complete callback (can be NULL).
- *  @param userdata Argument passed to notificaion complete callback.
+ *  @param userdata Argument passed to notification complete callback.
  *
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.

@@ -36,7 +36,7 @@ static void bond_check_cb(const struct bt_bond_info *info, void *user_data)
 	struct bond_find_data *data = user_data;
 
 	data->bond_cnt++;
-	if (!bt_addr_le_cmp(&info->addr, data->peer_address)) {
+	if (bt_addr_le_eq(&info->addr, data->peer_address)) {
 		data->peer_bonded = true;
 	}
 
@@ -186,8 +186,6 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	APP_EVENT_SUBMIT(event);
 }
 
-static struct bt_gatt_exchange_params exchange_params;
-
 static void exchange_func(struct bt_conn *conn, uint8_t err,
 			  struct bt_gatt_exchange_params *params)
 {
@@ -228,8 +226,11 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	APP_EVENT_SUBMIT(event);
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_STATE_EXCHANGE_MTU)) {
-		exchange_params.func = exchange_func;
-		err = bt_gatt_exchange_mtu(conn, &exchange_params);
+		struct bt_gatt_exchange_params exchange_params_local = {
+			.func = exchange_func,
+		};
+
+		err = bt_gatt_exchange_mtu(conn, &exchange_params_local);
 		if (err) {
 			LOG_ERR("MTU exchange failed");
 		}

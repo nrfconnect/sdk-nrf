@@ -728,7 +728,7 @@ static void hid_init(void)
 		0x85, 0x01,       /* Report Id 1 */
 		0x09, 0x01,       /* Usage (Pointer) */
 		0xA1, 0x00,       /* Collection (Physical) */
-		0x95, 0x05,       /* Report Count (3) */
+		0x95, 0x05,       /* Report Count (5) */
 		0x75, 0x01,       /* Report Size (1) */
 		0x05, 0x09,       /* Usage Page (Buttons) */
 		0x19, 0x01,       /* Usage Minimum (01) */
@@ -761,8 +761,8 @@ static void hid_init(void)
 		0x05, 0x01,       /* Usage Page (Generic Desktop) */
 		0x09, 0x30,       /* Usage (X) */
 		0x09, 0x31,       /* Usage (Y) */
-		0x16, 0x01, 0xF8, /* Logical maximum (2047) */
-		0x26, 0xFF, 0x07, /* Logical minimum (-2047) */
+		0x16, 0x01, 0xF8, /* Logical minimum (-2047) */
+		0x26, 0xFF, 0x07, /* Logical maximum (2047) */
 		0x81, 0x06,       /* Input (Data, Variable, Relative) */
 		0xC0,             /* End Collection (Physical) */
 		0xC0,             /* End Collection (Application) */
