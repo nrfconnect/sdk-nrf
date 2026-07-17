@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -47,13 +47,6 @@ struct dult_near_owner_state_cb {
  *  @param cb Near owner state callback structure.
  */
 void dult_near_owner_state_cb_register(struct dult_near_owner_state_cb *cb);
-
-/** @brief Reset DULT near owner state.
- *
- *  Resets DULT near owner state to boot value which is equal to
- *  the @ref DULT_NEAR_OWNER_STATE_MODE_NEAR_OWNER.
- */
-void dult_near_owner_state_reset(void);
 
 #ifdef __cplusplus
 }
