@@ -10,14 +10,14 @@
 LOG_MODULE_REGISTER(fp_fhn_dult_integration, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 #include <dult/dult.h>
+#include <dult/multi_user.h>
 
 #include "fp_fhn_dult_integration.h"
+#include "fp_fhn_callbacks.h"
 #include "fp_activation.h"
 #include "fp_registration_data.h"
 
 BUILD_ASSERT(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION_INIT_PRIORITY <
-	     FP_ACTIVATION_INIT_PRIORITY_DEFAULT);
-BUILD_ASSERT(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION_INIT_PRIORITY_LATE >
 	     FP_ACTIVATION_INIT_PRIORITY_DEFAULT);
 BUILD_ASSERT(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION_INIT_PRIORITY >
 	     CONFIG_BT_FAST_PAIR_REGISTRATION_DATA_INIT_PRIORITY);
@@ -59,6 +59,30 @@ const struct dult_user *fp_fhn_dult_integration_user_get(void)
 	return &dult_user;
 }
 
+/* DULT delivers these from the system workqueue, so forwarding straight to the application
+ * callback is safe: the application may drive the FHN/DULT lifecycle from within it.
+ */
+static void fhn_ownership_claimed(const struct dult_user *user, bool is_owner)
+{
+	ARG_UNUSED(user);
+
+	fp_fhn_callbacks_dult_ownership_state_changed_notify(true, is_owner);
+}
+
+static void fhn_ownership_released(const struct dult_user *user, bool was_owner)
+{
+	ARG_UNUSED(user);
+
+	fp_fhn_callbacks_dult_ownership_state_changed_notify(false, was_owner);
+}
+
+static const struct dult_multi_user_cb fhn_multi_user_cb = {
+	.ownership_claimed = fhn_ownership_claimed,
+	.ownership_released = fhn_ownership_released,
+};
+
+/* The runtime DULT association is done next to EIK commit operations. */
+
 static int dult_init(void)
 {
 	static const size_t model_id_offset = sizeof(product_data) - FP_REG_DATA_MODEL_ID_LEN;
@@ -77,6 +101,19 @@ static int dult_init(void)
 		return err;
 	}
 
+	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+		err = dult_multi_user_cb_register(&dult_user, &fhn_multi_user_cb);
+		if (err) {
+			LOG_ERR("FHN: dult_multi_user_cb_register returned error: %d", err);
+			return err;
+		}
+	}
+
+	/* FHN does not install a dult_bt_anos_cb. The DULT built-in fallback
+	 * applies: every ANOS write is rejected while FHN is not the associated
+	 * user, and SEPARATED-only access is granted once FHN is associated.
+	 */
+
 	return 0;
 }
 
@@ -84,31 +121,15 @@ static int dult_uninit(void)
 {
 	int err;
 
-	err = dult_reset(&dult_user);
-	if (err) {
-		LOG_ERR("FHN: dult_reset returned error: %d", err);
-		return err;
+	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+		/* Full teardown so the next bring-up re-establishes state. */
+		err = dult_user_unregister(&dult_user);
+		if (err) {
+			LOG_ERR("FHN: dult_user_unregister returned error: %d", err);
+			return err;
+		}
 	}
 
-	return 0;
-}
-
-static int dult_init_late(void)
-{
-	int err;
-
-	err = dult_enable(&dult_user);
-	if (err) {
-		LOG_ERR("FHN: dult_enable returned error: %d", err);
-		return err;
-	}
-
-	return 0;
-}
-
-static int dult_uninit_early(void)
-{
-	/* Intentionally left empty. */
 	return 0;
 }
 
@@ -116,8 +137,3 @@ FP_ACTIVATION_MODULE_REGISTER(fp_fhn_dult_integration,
 			      CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION_INIT_PRIORITY,
 			      dult_init,
 			      dult_uninit);
-
-FP_ACTIVATION_MODULE_REGISTER(fp_fhn_dult_integration_late,
-			      CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION_INIT_PRIORITY_LATE,
-			      dult_init_late,
-			      dult_uninit_early);

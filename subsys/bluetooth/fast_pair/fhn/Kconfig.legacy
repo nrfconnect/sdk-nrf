@@ -273,15 +273,16 @@ config BT_FAST_PAIR_FMDN_DULT_INTEGRATION_INIT_PRIORITY
 	  Fast Pair FMDN DULT integration module initialization priority.
 	  Used when registering initialization function to Fast Pair activation module.
 
-config BT_FAST_PAIR_FMDN_DULT_INTEGRATION_INIT_PRIORITY_LATE
-	int
-	range 0 9
-	default 6
-	help
-	  Fast Pair FMDN DULT integration module initialization late priority.
-	  Used when registering late initialization function to Fast Pair activation module.
-
 endif # BT_FAST_PAIR_FMDN_DULT_INTEGRATION
+
+config BT_FAST_PAIR_FMDN_STATE_INIT_PRIORITY_DULT
+	int
+	depends on BT_FAST_PAIR_FMDN_DULT_INTEGRATION
+	range 0 9
+	default 7
+	help
+	  Fast Pair FMDN State module DULT integration initialization priority.
+	  Used when registering initialization function to Fast Pair activation module.
 
 config BT_FAST_PAIR_FMDN_DULT_MANUFACTURER_NAME
 	string "Manufacturer name"

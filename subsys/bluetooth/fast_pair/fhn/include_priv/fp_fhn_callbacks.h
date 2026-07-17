@@ -43,6 +43,15 @@ void fp_fhn_callbacks_conn_authenticated_notify(struct bt_conn *conn);
  */
 void fp_fhn_callbacks_provisioning_state_changed_notify(bool provisioned);
 
+/** Notify the callback layer about a DULT ownership state change. Only fires in
+ *  multi-user builds (see @kconfig{CONFIG_DULT_MULTI_USER_MAX}).
+ *
+ *  @param state    true if ownership was claimed, false if released.
+ *  @param is_owner When @p state is true, true if the FHN stack became the owner.
+ *                  When @p state is false, true if the FHN stack was the owner.
+ */
+void fp_fhn_callbacks_dult_ownership_state_changed_notify(bool state, bool is_owner);
+
 /** Register the information callbacks internally. The internally registered
  *  callbacks have higher priority than the callbacks registered with the public
  *  Fast Pair API. You can call this function only in the disabled state of the

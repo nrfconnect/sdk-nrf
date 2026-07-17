@@ -780,7 +780,8 @@ static void fhn_utp_mode_state_reset(void)
 	utp_rotations = 0;
 	utp_mode_control_flags = 0;
 
-	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT)) {
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT) &&
+	    dult_user_is_associated(fp_fhn_dult_integration_user_get())) {
 		int err;
 
 		err = dult_near_owner_state_set(fp_fhn_dult_integration_user_get(),
@@ -826,6 +827,7 @@ static int fhn_utp_mode_state_set(bool activated, uint8_t *control_flags)
 	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT)) {
 		int err;
 
+		/* Reachable only when provisioned => associated. */
 		err = dult_near_owner_state_set(fp_fhn_dult_integration_user_get(),
 						fhn_utp_to_dult_near_owner_map(utp_mode));
 		__ASSERT_NO_MSG(!err);
@@ -950,19 +952,23 @@ int8_t fp_fhn_state_tx_power_encode(void)
 	return calibrated_tx_power;
 }
 
+static bool is_provisioned(void)
+{
+	int ret = fp_storage_eik_is_provisioned();
+
+	__ASSERT_NO_MSG(ret >= 0);
+
+	return (ret > 0);
+}
+
 bool bt_fast_pair_fhn_is_provisioned(void)
 {
-	int ret;
-
 	if (!bt_fast_pair_is_ready()) {
 		LOG_WRN("FHN State: checking provisioning state with disabled Fast Pair");
 		return false;
 	}
 
-	ret = fp_storage_eik_is_provisioned();
-	__ASSERT_NO_MSG(ret >= 0);
-
-	return (ret > 0);
+	return is_provisioned();
 }
 
 static void fhn_conn_uninit_iterator(struct bt_conn *conn, void *user_data)
@@ -1035,6 +1041,19 @@ static int fhn_unprovision(void)
 	}
 
 	fp_fhn_callbacks_provisioning_state_changed_notify(false);
+
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION) &&
+	    IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+		/* Release the DULT association when leaving the provisioned state.
+		 * The association is acquired before the EIK is committed to the
+		 * storage, so release it here for symmetry.
+		 */
+		err = dult_reset(fp_fhn_dult_integration_user_get());
+		if (err) {
+			LOG_ERR("FHN State: DULT association release failed: %d", err);
+			return err;
+		}
+	}
 
 	LOG_DBG("FHN State: Successful unprovisioning of the EIK");
 
@@ -1119,10 +1138,40 @@ static int fhn_provision(const uint8_t *eik)
 
 	__ASSERT_NO_MSG(eik);
 
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION) &&
+	    IS_ENABLED(CONFIG_DULT_MULTI_USER) &&
+	    !was_provisioned) {
+		/* Acquire the DULT association before committing the EIK: the FHN stack
+		 * must not enter the provisioned state without it, and the provisioning
+		 * state callback is a one-way notification that cannot reject the
+		 * operation.
+		 */
+		err = dult_enable(fp_fhn_dult_integration_user_get());
+		if (err == -EALREADY) {
+			/* FHN is already the associated DULT user. */
+			err = 0;
+		} else if (err) {
+			LOG_ERR("FHN State: DULT association unavailable: %d", err);
+			if (err == -EACCES) {
+				LOG_ERR("FHN State: another locator network is associated with "
+					"DULT; the application must not keep two locator networks "
+					"paired at the same time");
+			}
+			return err;
+		}
+	}
+
 	/* Refresh the existing EIK or store the new one. */
 	err = fhn_storage_provision(eik);
 	if (err) {
 		LOG_ERR("FHN State: fhn_storage_provision failed: %d", err);
+
+		if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION) &&
+		    IS_ENABLED(CONFIG_DULT_MULTI_USER) &&
+		    !was_provisioned) {
+			(void) dult_reset(fp_fhn_dult_integration_user_get());
+		}
+
 		return err;
 	}
 
@@ -1323,7 +1372,7 @@ int fp_fhn_state_uninit(void)
 	/* Reset the connection state. */
 	fhn_conn_state_reset();
 
-	/* Cancel the work for the provisioning_state_changed callback. */
+	/* Cancel the work that starts advertising for a provisioned accessory. */
 	(void) k_work_cancel(&fhn_post_init_work);
 
 	LOG_DBG("FHN State: disabled");
@@ -1331,10 +1380,91 @@ int fp_fhn_state_uninit(void)
 	return 0;
 }
 
+static int fp_fhn_state_dult_init(void)
+{
+	int err;
+
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION)) {
+		return 0;
+	}
+
+	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+		/* The initial DULT association on stack enable based on the provisioning state. */
+		if (is_provisioned()) {
+			err = dult_enable(fp_fhn_dult_integration_user_get());
+			if (err == -EALREADY) {
+				/* FHN is already the associated DULT user. */
+				err = 0;
+			} else if (err) {
+				LOG_ERR("FHN: dult_enable returned error: %d", err);
+
+				if (err == -EACCES) {
+					LOG_ERR("FHN: another locator network is associated "
+						"with DULT while FHN is provisioned; the "
+						"application must not keep two locator networks "
+						"paired at the same time");
+				}
+
+				return err;
+			}
+		} else {
+			__ASSERT_NO_MSG(
+				!dult_user_is_associated(fp_fhn_dult_integration_user_get()));
+		}
+	} else {
+		/* Enable DULT once for the whole Fast Pair lifetime. */
+		err = dult_enable(fp_fhn_dult_integration_user_get());
+		if (err) {
+			LOG_ERR("FHN: dult_enable returned error: %d", err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+static int fp_fhn_state_dult_uninit(void)
+{
+	int err;
+
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION)) {
+		return 0;
+	}
+
+	err = dult_reset(fp_fhn_dult_integration_user_get());
+	if (err) {
+		if (IS_ENABLED(CONFIG_DULT_MULTI_USER) && (err == -EACCES)) {
+			/* The DULT association is already released. */
+			err = 0;
+		} else {
+			LOG_ERR("FHN: dult_reset returned error: %d", err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+/* State module default init priority. */
+#define FP_FHN_STATE_INIT_PRIORITY_DEFAULT	FP_ACTIVATION_INIT_PRIORITY_DEFAULT
+
 /* The state module requires EIK storage module for initialization. */
 BUILD_ASSERT(CONFIG_BT_FAST_PAIR_STORAGE_INTEGRATION_INIT_PRIORITY <
-	     FP_ACTIVATION_INIT_PRIORITY_DEFAULT);
+	     FP_FHN_STATE_INIT_PRIORITY_DEFAULT);
 FP_ACTIVATION_MODULE_REGISTER(fp_fhn_state,
-			      FP_ACTIVATION_INIT_PRIORITY_DEFAULT,
+			      FP_FHN_STATE_INIT_PRIORITY_DEFAULT,
 			      fp_fhn_state_init,
 			      fp_fhn_state_uninit);
+
+#if CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION
+/* State module DULT integration init priority. */
+#define FP_FHN_STATE_INIT_PRIORITY_DULT		CONFIG_BT_FAST_PAIR_FHN_STATE_INIT_PRIORITY_DULT
+
+BUILD_ASSERT(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION_INIT_PRIORITY <
+	     FP_FHN_STATE_INIT_PRIORITY_DULT);
+BUILD_ASSERT(FP_FHN_STATE_INIT_PRIORITY_DEFAULT < FP_FHN_STATE_INIT_PRIORITY_DULT);
+FP_ACTIVATION_MODULE_REGISTER(fp_fhn_state_dult,
+			      FP_FHN_STATE_INIT_PRIORITY_DULT,
+			      fp_fhn_state_dult_init,
+			      fp_fhn_state_dult_uninit);
+#endif
