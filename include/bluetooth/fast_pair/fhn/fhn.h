@@ -556,6 +556,55 @@ struct bt_fast_pair_fhn_info_cb {
 	 */
 	void (*provisioning_state_changed)(bool provisioned);
 
+	/** @brief Indicate a DULT ownership state change.
+	 *
+	 *  It is used to notify the application about DULT ownership arbitration
+	 *  between the locator networks registered with the DULT subsystem.
+	 *
+	 *  @p state reports the transition:
+	 *  - true when a user claimed ownership (became the associated DULT user).
+	 *  - false when ownership was released and DULT returned to the
+	 *    pre-association phase.
+	 *
+	 *  @p owner reports whether the FHN stack is the user this transition
+	 *  pertains to:
+	 *  - when @p state is true, true if FHN is the user that just became the
+	 *    associated DULT user (it won arbitration), false if another network
+	 *    won and FHN was evicted.
+	 *  - when @p state is false, true if FHN was the associated user whose
+	 *    association just ended, false if FHN was an uninvolved bystander
+	 *    that can now re-arbitrate.
+	 *
+	 *  This callback relates to the DULT v2 API (@kconfig{CONFIG_DULT_API_VARIANT_V2}).
+	 *  Its role depends on the configuration:
+	 *  - v2 with more than one DULT user (@kconfig{CONFIG_DULT_USER_MAX} greater than
+	 *    one): mandatory; it is the only way to learn about eviction and re-arbitration.
+	 *  - v2 with a single DULT user: optional; it still fires on every ownership
+	 *    transition (claimed on enable, released on reset).
+	 *  - v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}): unused; DULT emits no ownership
+	 *    transitions, so the callback is never invoked even if registered.
+	 *
+	 *  When @p state is true and @p owner is false, another network won the
+	 *  association and the callback signals the application to disable the FHN
+	 *  stack so that the winning network can operate exclusively. Application
+	 *  orchestration around the actual teardown is the application's
+	 *  responsibility.
+	 *
+	 *  This callback is delivered from the system workqueue context, so the application may
+	 *  drive the FHN and DULT lifecycle (for example disable the FHN stack) directly from
+	 *  within it.
+	 *
+	 *  Transitions are reported in order. Under rapid association changes some
+	 *  intermediate, cancelling transitions may be collapsed and not reported
+	 *  individually, but the end association state is always reported consistently.
+	 *  This follows the delivery guarantees of the underlying DULT arbitration API; see the
+	 *  @ref dult_enable / @ref dult_reset documentation for details.
+	 *
+	 *  @param state true if ownership was claimed, false if released.
+	 *  @param owner true if FHN is the user @p state refers to (see above).
+	 */
+	void (*dult_ownership_state_changed)(bool state, bool owner);
+
 	/** Internally used field for list handling. */
 	sys_snode_t node;
 };
