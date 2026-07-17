@@ -92,6 +92,11 @@ int check_timing(void)
 	printk("Minimal interval [us]: %llu\n", min_interval);
 	printk("Maximal interval [us]: %llu\n", max_interval);
 
+	if (total_intervals == 0) {
+		printk("No intervals measured !\n");
+		status = -2;
+	}
+
 	return status;
 }
 
