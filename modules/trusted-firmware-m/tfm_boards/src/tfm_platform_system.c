@@ -12,6 +12,7 @@
 #include <arm_cmse.h>
 
 #include "tfm_ioctl_api.h"
+#include "tfm_ioctl_core_api.h"
 #include "tfm_platform_hal_ioctl.h"
 #include <tfm_hal_isolation.h>
 
@@ -156,6 +157,10 @@ enum tfm_platform_err_t tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request,
 		return tfm_platform_hal_mramc_init_service();
 	case TFM_PLATFORM_IOCTL_MRAMC_SET_WEN_SERVICE:
 		return tfm_platform_hal_mramc_set_wen_service(in_vec);
+#endif
+#if defined(TFM_NRF_RAM_CTRL_SERVICE)
+	case TFM_PLATFORM_IOCTL_RAM_CTRL_SERVICE:
+		return tfm_platform_hal_ram_ctrl_service(in_vec, out_vec);
 #endif
 
 		/* Board specific IOCTL services */
