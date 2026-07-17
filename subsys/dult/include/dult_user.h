@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -33,18 +33,16 @@ extern "C" {
  */
 bool dult_user_is_registered(const struct dult_user *user);
 
-/** @brief Get current registered DULT user structure.
+/** @brief Get the currently associated DULT user.
  *
- *  @return Pointer to currently registered DULT user structure. If no user is registered,
- *	    NULL is returned.
- */
-const struct dult_user *dult_user_get(void);
-
-/** @brief Check if DULT is ready.
+ *  This is the associated user, that is the user that called
+ *  @ref dult_enable. It returns NULL while there is no associated user (before
+ *  @ref dult_enable, after @ref dult_reset, and during the multi-user
+ *  pre-association window).
  *
- *  @return True if the DULT is ready. Otherwise, False is returned.
+ *  @return Pointer to the currently associated DULT user, or NULL if there is none.
  */
-bool dult_user_is_ready(void);
+const struct dult_user *dult_user_get_associated(void);
 
 #ifdef __cplusplus
 }
