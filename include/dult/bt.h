@@ -186,7 +186,13 @@ struct dult_bt_anos_cb {
  *  Registering this callback structure is OPTIONAL.
  *
  *  This function must be called after registering the DULT user with @ref dult_user_register
- *  and before enabling DULT with @ref dult_enable function.
+ *  and before enabling DULT with @ref dult_enable.
+ *
+ *  With the v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}) the callback is cleared
+ *  by @ref dult_reset, which is the terminal teardown for that variant; it must be
+ *  registered again after a subsequent @ref dult_user_register. With the v2 API
+ *  (@kconfig{CONFIG_DULT_API_VARIANT_V2}) the callback is preserved across @ref dult_reset calls
+ *  and cleared only by @ref dult_user_unregister.
  *
  *  @param[in] user	User structure used to authenticate the user.
  *  @param[in] cb	DULT Bluetooth ANOS callback structure.
