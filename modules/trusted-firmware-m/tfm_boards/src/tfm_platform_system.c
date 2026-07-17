@@ -37,7 +37,9 @@ enum tfm_platform_err_t tfm_platform_hal_system_off(void)
 {
 	__disable_irq();
 
+#if !defined(TFM_NRF_RAM_CTRL_SERVICE)
 	nrfx_ram_ctrl_retention_enable_all_set(false);
+#endif
 
 	nrf_regulators_system_off(NRF_REGULATORS);
 
