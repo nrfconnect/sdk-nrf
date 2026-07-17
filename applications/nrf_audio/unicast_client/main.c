@@ -33,6 +33,9 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_TX_STREAMS_MAX <= CONFIG_AUDIO_ENCODE_CH
 
 static enum stream_state strm_state = STATE_PAUSED;
 
+#define CONTENT_CTRL_STATE_PLAYING true
+#define CONTENT_CTRL_STATE_PAUSED  false
+
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 ZBUS_SUBSCRIBER_DEFINE(content_control_evt_sub, CONFIG_CONTENT_CONTROL_MSG_SUB_QUEUE_SIZE);
 
@@ -136,27 +139,40 @@ static void button_msg_sub_thread(void)
 				break;
 			}
 
-			if (strm_state == STATE_STREAMING) {
+			if (unicast_client_is_streaming()) {
 				ret = bt_content_ctrl_stop(NULL);
-				if (ret) {
+				if (ret == -EAGAIN) {
+					/* Override and try again  [flesh out]*/
+					bt_content_ctrl_state_override(CONTENT_CTRL_STATE_PLAYING);
+
+					ret = bt_content_ctrl_stop(NULL);
+					if (ret != 0) {
+						LOG_ERR("Could not stop: %d", ret);
+					}
+				} else if (ret != 0) {
 					LOG_WRN("Could not stop: %d", ret);
 				}
 
-			} else if (strm_state == STATE_PAUSED) {
+			} else {
 				ret = bt_content_ctrl_start(NULL);
-				if (ret) {
+				if (ret == -EAGAIN) {
+					/* Override and try again */
+					bt_content_ctrl_state_override(CONTENT_CTRL_STATE_PAUSED);
+
+					ret = bt_content_ctrl_start(NULL);
+					if (ret != 0) {
+						LOG_ERR("Could not start: %d", ret);
+					}
+				} else if (ret != 0) {
 					LOG_WRN("Could not start: %d", ret);
 				}
-
-			} else {
-				LOG_WRN("In invalid state: %d", strm_state);
 			}
 
 			break;
 
 		case BUTTON_VOLUME_UP:
 			ret = bt_r_and_c_volume_up();
-			if (ret) {
+			if (ret != 0) {
 				LOG_WRN("Failed to increase volume: %d", ret);
 			}
 
@@ -164,7 +180,7 @@ static void button_msg_sub_thread(void)
 
 		case BUTTON_VOLUME_DOWN:
 			ret = bt_r_and_c_volume_down();
-			if (ret) {
+			if (ret != 0) {
 				LOG_WRN("Failed to decrease volume: %d", ret);
 			}
 
@@ -177,13 +193,13 @@ static void button_msg_sub_thread(void)
 					break;
 				}
 
-				if (strm_state != STATE_STREAMING) {
+				if (!unicast_client_is_streaming()) {
 					LOG_WRN("Not in streaming state");
 					break;
 				}
 
 				ret = audio_system_encode_test_tone_step();
-				if (ret) {
+				if (ret != 0) {
 					LOG_WRN("Failed to play test tone, ret: %d", ret);
 				}
 
@@ -195,7 +211,7 @@ static void button_msg_sub_thread(void)
 		case BUTTON_5:
 			if (IS_ENABLED(CONFIG_AUDIO_MUTE)) {
 				ret = bt_r_and_c_volume_mute(false);
-				if (ret) {
+				if (ret != 0) {
 					LOG_WRN("Failed to mute, ret: %d", ret);
 				}
 
@@ -274,7 +290,7 @@ static void le_audio_msg_sub_thread(void)
 				"disconnect");
 
 			ret = bt_mgmt_conn_disconnect(msg.conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-			if (ret) {
+			if (ret != 0) {
 				LOG_ERR("Failed to disconnect: %d", ret);
 			}
 
@@ -285,7 +301,7 @@ static void le_audio_msg_sub_thread(void)
 
 			ret = unicast_client_config_get(msg.stream, &bitrate_bps,
 							&sampling_rate_hz);
-			if (ret) {
+			if (ret != 0) {
 				LOG_WRN("Failed to get config: %d", ret);
 				break;
 			}
@@ -339,7 +355,7 @@ static void le_audio_msg_sub_thread(void)
 				/* Room for more connections, start scanning again */
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
 							 BRDCAST_ID_NOT_USED);
-				if (ret) {
+				if (ret != 0) {
 					LOG_ERR("Failed to resume scanning: %d", ret);
 				}
 			}
@@ -358,7 +374,7 @@ static void le_audio_msg_sub_thread(void)
 			uint16_t interval = 0;
 
 			ret = bt_conn_get_info(msg.conn, &conn_info);
-			if (ret) {
+			if (ret != 0) {
 				LOG_ERR("Failed to get conn info");
 			} else {
 				interval = BT_GAP_US_TO_CONN_INTERVAL(conn_info.le.interval_us);
@@ -376,7 +392,7 @@ static void le_audio_msg_sub_thread(void)
 				param.timeout = CONFIG_BLE_ACL_SUP_TIMEOUT;
 
 				ret = bt_conn_le_param_update(msg.conn, &param);
-				if (ret) {
+				if (ret != 0) {
 					LOG_WRN("Failed to update conn parameters: %d", ret);
 				}
 
@@ -400,7 +416,7 @@ static void discovery_process_start(struct bt_conn *conn)
 	int ret;
 
 	ret = bt_r_and_c_discover(conn);
-	if (ret) {
+	if (ret != 0) {
 		LOG_WRN("Failed to discover rendering services");
 	}
 
@@ -410,7 +426,7 @@ static void discovery_process_start(struct bt_conn *conn)
 		ret = unicast_client_discover(conn, UNICAST_SERVER_SINK);
 	}
 
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to handle unicast client discover: %d", ret);
 	}
 }
@@ -451,7 +467,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 			 */
 
 			ret = srv_store_conn_update(msg->conn, &msg->addr);
-			if (ret) {
+			if (ret != 0) {
 				LOG_ERR("Failed to update conn in store: %d", ret);
 				srv_store_unlock();
 				return;
@@ -472,7 +488,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		ERR_CHK_MSG(ret, "Failed to lock server store");
 
 		ret = srv_store_add_by_conn(msg->conn);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Failed to add server to store: %d", ret);
 			srv_store_unlock();
 			return;
@@ -516,7 +532,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		ERR_CHK_MSG(ret, "Failed to lock server store");
 
 		ret = srv_store_remove_by_addr(&msg->addr);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Failed to remove server from store: %d", ret);
 		}
 
@@ -548,7 +564,7 @@ static int zbus_subscribers_create(void)
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 
 	ret = k_thread_name_set(button_msg_sub_thread_id, "Msg_sub_btn");
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to create button_msg thread");
 		return ret;
 	}
@@ -559,7 +575,7 @@ static int zbus_subscribers_create(void)
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 
 	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "Msg_sub_LE_Audio");
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to create le_audio_msg thread");
 		return ret;
 	}
@@ -571,12 +587,12 @@ static int zbus_subscribers_create(void)
 		K_PRIO_PREEMPT(CONFIG_CONTENT_CONTROL_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 
 	ret = k_thread_name_set(content_control_thread_id, "Msg_sub_content_ctrl");
-	if (ret) {
+	if (ret != 0) {
 		return ret;
 	}
 
 	ret = zbus_chan_add_obs(&sdu_ref_chan, &sdu_ref_msg_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to add timestamp listener");
 		return ret;
 	}
@@ -598,19 +614,19 @@ static int zbus_link_producers_observers(void)
 	}
 
 	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to add button sub");
 		return ret;
 	}
 
 	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to add le_audio sub");
 		return ret;
 	}
 
 	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to add bt_mgmt listener");
 		return ret;
 	}
@@ -705,7 +721,7 @@ int main(void)
 
 	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, CONFIG_BT_DEVICE_NAME,
 				 BRDCAST_ID_NOT_USED);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to start scanning");
 		return ret;
 	}
