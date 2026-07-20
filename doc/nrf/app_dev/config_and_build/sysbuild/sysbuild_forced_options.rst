@@ -54,12 +54,6 @@ Trying to change them directly in an image will result in the new value being ov
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER`                        + :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` if                  |                         |
 |                                                                         + :kconfig:option:`SB_CONFIG_MCUBOOT_APP_SYNC_UPDATEABLE_IMAGES` is enabled |                         |
-+-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_CHIP`                                           + :kconfig:option:`SB_CONFIG_MATTER`                                        |                         |
-+-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR`                             + :kconfig:option:`SB_CONFIG_MATTER_OTA`                                    |                         |
-+-------------------------------------------------------------------------+                                                                           |                         |
-| :kconfig:option:`CONFIG_CHIP_OTA_IMAGE_BUILD`                           +                                                                           |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
 | :kconfig:option:`CONFIG_SINGLE_APPLICATION_SLOT`                        + :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SINGLE_APP`                       | MCUboot                 |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |

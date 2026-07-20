@@ -166,25 +166,6 @@
    It supports connection over Bluetooth® LE, USB, or both.
    For details, see the :ref:`nrf_desktop` documentation.
 
-.. ### Matter shortcuts
-
-.. |matter_intro| replace:: `Matter`_ (formerly Project Connected Home over IP or Project CHIP) is an open-source application layer that aims at creating a unified communication standard across smart home devices, mobile applications, and cloud services.
-   It supports a wide range of existing technologies, including Wi-Fi, Thread, and Bluetooth® LE, and uses IPv6-based transport protocols like TCP and UDP to ensure connectivity between different kinds of networks.
-.. |matter_gn_required_note| replace:: Matter requires the GN tool.
-   If you are updating from the |NCS| version earlier than v1.5.0, see the :ref:`GN installation instructions <manual_installation_gn>`.
-.. |matter_controller_def| replace:: The Matter controller is a node in the Matter network and a role within the :ref:`Matter development environment <ug_matter_gs_testing>`.
-   The controller device is used to pair and control the Matter accessory device remotely over a network, interacting with it using Bluetooth® LE and the regular IPv6 communication.
-.. |matter_controller_def_nolink| replace:: The Matter controller is a node in the Matter network and a role within the Matter development environment.
-   The controller device is used to pair and control the Matter accessory device remotely over a network, interacting with it using Bluetooth® LE and the regular IPv6 communication.
-.. |matter_chip_tool_pc_default_line| replace:: CHIP Tool for Linux or macOS is the default implementation of the :ref:`ug_matter_configuring_controller` role, recommended for the nRF Connect platform.
-.. |matter_cd_definition| replace:: a cryptographic document created by the CSA for each device type, used to confirm that a given type of device was certified
-.. |matter_cd_info_note_for_samples| replace:: This data payload also includes test Device Attestation, with test Certification Declaration, Product ID, and Vendor ID.
-   These are used for :ref:`ug_matter_device_attestation_commissioning_info`, and you can generate your own test Certification Declaration when you :ref:`work on Matter end product <ug_matter_device_attestation_testing_da>`.
-.. |matter_unique_discriminator_note| replace:: If you are working with multiple devices, set a unique discriminator for each one, or commission them one at a time.
-   See :ref:`ug_matter_configuring_device_identification` for more information.
-.. |Bluetoothsc| replace:: Bluetooth®
-.. |WiFi| replace:: Wi-Fi
-
 .. ### Other shortcuts
 
 .. |ncs_oot_sample_note| replace:: Some samples in the |NCS| are currently not designed to work out-of-tree.

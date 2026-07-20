@@ -17,7 +17,6 @@ They introduce you to concepts that are important to work with the protocol and 
    protocols/dect/index
    protocols/esb/index
    protocols/gazell/index
-   protocols/matter/index
    protocols/multiprotocol/index
    protocols/nfc/index
    protocols/thread/index
