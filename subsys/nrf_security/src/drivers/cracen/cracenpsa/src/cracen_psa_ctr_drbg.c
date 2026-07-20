@@ -302,6 +302,11 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 psa_status_t cracen_free_random(cracen_prng_context_t *context)
 {
 	(void)context;
+
+	nrf_security_mutex_lock(cracen_prng_trng_mutex);
+	safe_memset(&prng, sizeof(prng), 0, sizeof(prng));
+	nrf_security_mutex_unlock(cracen_prng_trng_mutex);
+
 	return PSA_SUCCESS;
 }
 
