@@ -47,6 +47,10 @@ BUILD_ASSERT(HIDS_SUBSCRIBER_REPORT_MAX >= HIDS_SUBSCRIBER_PIPELINE_SIZE,
 BUILD_ASSERT(CONFIG_BT_ATT_TX_COUNT > HIDS_SUBSCRIBER_REPORT_MAX,
 	     "Too small number of ATT buffers");
 
+BUILD_ASSERT(IS_ENABLED(CONFIG_DESKTOP_HIDS_SCI_ENABLE) == IS_ENABLED(CONFIG_BT_HIDS_SCI),
+	     "CONFIG_BT_HIDS_SCI must be enabled through CONFIG_DESKTOP_HIDS_SCI_ENABLE"
+	     " in the nRF Desktop application");
+
 BT_HIDS_DEF(hids_obj,
 	IF_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT,
 		   (REPORT_SIZE_MOUSE,))
@@ -193,7 +197,7 @@ static void conn_cp_evt_handler(enum bt_hids_cp_evt evt, struct bt_conn *conn)
 	case BT_HIDS_CP_EVT_HOST_SCI_FAST_REQ:
 	case BT_HIDS_CP_EVT_HOST_SCI_LOW_POWER_REQ:
 	case BT_HIDS_CP_EVT_HOST_SCI_FULL_RANGE_REQ:
-		if (IS_ENABLED(CONFIG_BT_HIDS_SCI)) {
+		if (IS_ENABLED(CONFIG_DESKTOP_HIDS_SCI_ENABLE)) {
 			submit_sci_mode_request_event(conn, cp_evt_to_sci_mode(evt));
 			break;
 		}

@@ -134,34 +134,71 @@ config BT_ATT_SENT_CB_AFTER_TX
 
 config BT_GATT_CHRC_POOL_SIZE
 	default 7 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
-		      !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
 	default 8 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
-		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
 	default 11 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
-		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
 	default 12 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
-		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
+	default 9 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
+	default 10 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
+	default 13 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
+	default 14 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
 	help
 	  The maximum number of GATT characteristic descriptors in GATT pool is
 	  set assuming that nRF Desktop peripheral uses default configuration
-	  specified for the selected peripheral type.
+	  specified for the selected peripheral type. When HID SCI
+	  (CONFIG_DESKTOP_HIDS_SCI_ENABLE) is enabled, two additional
+	  characteristic descriptors are reserved for the SCI Information and
+	  SCI Mode characteristics.
 
 	  By default, the GATT pool is used only by GATT HID Service. Make sure
 	  to update the pool size if your configuration uses more descriptors.
 
 config BT_GATT_UUID16_POOL_SIZE
 	default 10 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
-		      !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
 	default 12 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
-		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
 	default 17 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
-		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
 	default 19 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
-		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
+	default 12 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
+	default 14 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
+	default 19 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
+	default 21 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
 	help
 	  The maximum number of GATT 16-bit UUID descriptors in GATT pool is set
 	  assuming that nRF Desktop peripheral uses default configuration
-	  specified for the selected peripheral type.
+	  specified for the selected peripheral type. When HID SCI
+	  (CONFIG_DESKTOP_HIDS_SCI_ENABLE) is enabled, two additional
+	  16-bit UUID descriptors are reserved for the SCI characteristics.
 
 	  By default, the GATT pool is used only by GATT HID Service. Make sure
 	  to update the pool size if your configuration uses more descriptors.
