@@ -768,6 +768,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - nRF54L05
                 - nRF54L10
                 - nRF54L15
+                - nRF54LC10A
                 - nRF54LM20A
                 - nRF54LM20B
                 - nRF54LV10A
@@ -778,6 +779,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -788,6 +790,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -798,6 +801,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -808,6 +812,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -818,6 +823,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -828,6 +834,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -838,6 +845,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -848,6 +856,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -858,6 +867,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -868,6 +878,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -878,6 +889,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -888,6 +900,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -903,11 +916,13 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - HMAC
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
                 - Supported
                 - Supported
                 - Supported
+                - Experimental
                 - Supported
                 - Supported
                 - Supported
@@ -915,6 +930,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
               * - HSS Public Key
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
+                - --
                 - --
                 - --
                 - --
@@ -933,8 +949,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - XMSS Public Key
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
+                - --
                 - --
                 - --
                 - --
@@ -953,8 +971,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - ML-DSA-44
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                - --
                 - --
                 - --
                 - --
@@ -973,8 +993,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - ML-DSA-87
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                - --
                 - --
                 - --
                 - --
@@ -993,8 +1015,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - ML-DSA Key Pair Export
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
+                - --
                 - --
                 - --
                 - --
@@ -1013,8 +1037,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - ML-DSA Key Pair Derive
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
+                - --
                 - --
                 - --
                 - --
@@ -1033,8 +1059,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - ML-KEM-512
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                - --
                 - --
                 - --
                 - --
@@ -1053,8 +1081,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - ML-KEM-1024
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                - --
                 - --
                 - --
                 - --
@@ -1073,8 +1103,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - ML-KEM Key Pair Export
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
+                - --
                 - --
                 - --
                 - --
@@ -1093,8 +1125,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - ML-KEM Key Pair Derive
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
+                - --
                 - --
                 - --
                 - --
@@ -1113,8 +1147,10 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+                - --
               * - WPA3-SAE key
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
+                - Experimental
                 - Experimental
                 - Experimental
                 - Experimental
@@ -1125,6 +1161,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
               * - ASCON
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
+                - --
                 - --
                 - --
                 - --
@@ -1145,6 +1182,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -1155,6 +1193,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1165,6 +1204,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1175,6 +1215,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1185,6 +1226,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1195,6 +1237,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1205,6 +1248,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1215,6 +1259,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1225,6 +1270,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1235,6 +1281,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1245,6 +1292,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1255,6 +1303,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1265,6 +1314,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1275,6 +1325,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1285,6 +1336,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -1292,6 +1344,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1310,8 +1363,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - XMSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1330,8 +1385,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ML-DSA-44
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1350,8 +1407,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ML-DSA-87
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1370,8 +1429,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1390,8 +1451,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ML-DSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1410,8 +1473,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ML-KEM-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1430,8 +1495,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ML-KEM-1024
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1450,8 +1517,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1470,8 +1539,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ML-KEM Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -1490,6 +1561,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - WPA3-SAE PT key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
                  - Experimental
@@ -1500,8 +1572,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ASCON
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -2488,6 +2562,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -2498,6 +2573,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2508,6 +2584,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2518,6 +2595,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2528,6 +2606,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2543,11 +2622,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - Stream cipher
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2572,6 +2653,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -2582,6 +2664,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2592,6 +2675,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2602,6 +2686,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2612,6 +2697,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2622,6 +2708,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -2632,6 +2719,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3022,6 +3110,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -3032,6 +3121,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3049,6 +3139,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -3059,6 +3150,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3620,6 +3712,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -3630,6 +3723,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3640,6 +3734,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3650,6 +3745,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3660,6 +3756,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3670,6 +3767,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3680,6 +3778,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3690,6 +3789,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3700,6 +3800,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3710,6 +3811,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3720,6 +3822,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3727,6 +3830,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - WPA3-SAE hash-to-element
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -3747,6 +3851,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -3757,6 +3862,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3767,6 +3873,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3777,6 +3884,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3787,6 +3895,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3797,6 +3906,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3807,6 +3917,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3817,6 +3928,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3827,6 +3939,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3837,6 +3950,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3847,6 +3961,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -3854,6 +3969,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - WPA3-SAE hash-to-element
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -4158,6 +4274,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -4168,6 +4285,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
@@ -4175,6 +4293,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - AES Key wrap with Padding (AES-KWP)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -4202,6 +4321,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -4217,8 +4337,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - AES Key wrap with Padding (AES-KWP)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -4415,6 +4537,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -4425,6 +4548,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
@@ -4435,6 +4559,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -4459,6 +4584,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -4469,6 +4595,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -4479,6 +4606,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -4871,6 +4999,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -4881,6 +5010,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -4891,6 +5021,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
@@ -4901,6 +5032,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -4916,8 +5048,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - ASCON AEAD128
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
+                 - --
                  - --
                  - --
                  - --
@@ -4946,6 +5080,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -4956,6 +5091,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -4966,6 +5102,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -4976,6 +5113,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -4991,8 +5129,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ASCON AEAD128
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -5597,6 +5737,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -5607,6 +5748,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5617,6 +5759,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5627,6 +5770,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5637,6 +5781,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5647,6 +5792,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5657,6 +5803,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5667,6 +5814,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5677,6 +5825,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5684,6 +5833,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - HSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
+                 - --
                  - --
                  - --
                  - --
@@ -5702,8 +5852,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
+                 - --
                  - --
                  - --
                  - --
@@ -5722,8 +5874,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - XMSS-MT
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS_MT`
+                 - --
                  - --
                  - --
                  - --
@@ -5744,6 +5898,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -5754,6 +5909,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5764,6 +5920,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5774,6 +5931,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5784,6 +5942,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5791,6 +5950,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
+                 - --
                  - --
                  - --
                  - --
@@ -5809,11 +5969,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5824,6 +5986,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -5831,6 +5994,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -5849,8 +6013,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -5869,8 +6035,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - XMSS-MT
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS_MT`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -5889,6 +6057,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - Deterministic ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ML_DSA`
                  - Experimental
@@ -5899,8 +6068,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - Deterministic Hash ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -6430,6 +6601,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -6440,6 +6612,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -6450,6 +6623,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -6467,6 +6641,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -6477,6 +6652,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -6487,6 +6663,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7031,6 +7208,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -7041,6 +7219,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7051,6 +7230,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7061,6 +7241,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7071,6 +7252,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7081,6 +7263,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7091,6 +7274,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7101,6 +7285,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7111,6 +7296,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7121,6 +7307,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7131,6 +7318,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7141,6 +7329,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7151,6 +7340,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7161,6 +7351,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7171,6 +7362,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7188,6 +7380,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -7195,6 +7388,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54LS05B
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
+                 - --
                  - --
                  - --
                  - --
@@ -7213,8 +7407,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - BrainpoolP320r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_320`
+                 - --
                  - --
                  - --
                  - --
@@ -7233,8 +7429,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - BrainpoolP512r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_512`
+                 - --
                  - --
                  - --
                  - --
@@ -7248,6 +7446,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7258,6 +7457,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7268,6 +7468,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7278,6 +7479,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7293,11 +7495,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7308,6 +7512,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7318,6 +7523,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7325,6 +7531,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - secp521r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`
+                 - --
                  - --
                  - --
                  - --
@@ -7884,6 +8091,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -7894,6 +8102,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7904,6 +8113,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7911,6 +8121,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - HMAC-DRBG
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG`
+                 - --
                  - --
                  - --
                  - --
@@ -7931,6 +8142,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -7941,6 +8153,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7951,6 +8164,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -7961,6 +8175,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8531,6 +8746,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -8541,6 +8757,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8551,6 +8768,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8561,6 +8779,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8571,6 +8790,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8581,6 +8801,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8591,6 +8812,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8601,6 +8823,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8611,6 +8834,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8621,6 +8845,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8628,6 +8853,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
+                 - --
                  - --
                  - --
                  - --
@@ -8646,8 +8872,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - SHAKE256 192 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
+                 - --
                  - --
                  - --
                  - --
@@ -8666,11 +8894,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8678,6 +8908,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - ASCON HASH256
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
+                 - --
                  - --
                  - --
                  - --
@@ -8698,6 +8929,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -8708,6 +8940,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8718,6 +8951,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8728,6 +8962,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8738,6 +8973,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8748,6 +8984,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8755,6 +8992,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - SHA3-224
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_224`
+                 - --
                  - --
                  - --
                  - --
@@ -8773,8 +9011,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - SHA3-384
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
+                 - --
                  - --
                  - --
                  - --
@@ -8793,8 +9033,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -8813,8 +9055,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - SHAKE256 192 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -8833,11 +9077,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -8845,6 +9091,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - ASCON HASH256
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -9669,6 +9916,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -9679,6 +9927,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -9689,6 +9938,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -9699,6 +9949,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -9709,6 +9960,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -9719,6 +9971,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                  - --
                  - --
                  - Experimental
@@ -9726,6 +9979,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SRP password hashing
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -9742,10 +9996,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                  - --
                  - --
                * - WPA3-SAE GDH
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -9766,6 +10022,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -9775,6 +10032,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -9784,6 +10042,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -9793,6 +10052,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -9802,12 +10062,14 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
                  - Supported
                * - SRP-6
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -9824,6 +10086,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - WPA3-SAE
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED`
                  - Experimental
@@ -9833,8 +10096,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - WPA3-SAE GDH
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -10161,6 +10426,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -10171,6 +10437,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10181,6 +10448,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10191,6 +10459,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10201,6 +10470,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10218,6 +10488,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -10228,6 +10499,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10238,6 +10510,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10253,11 +10526,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10437,6 +10712,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -10447,6 +10723,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - --
                  - --
                  - --
@@ -10457,9 +10734,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - --
-                 - --
                  - Experimental
+                 - --
+                 - --
+                 - Supported
                  - --
                  - --
                * - Generate
@@ -10467,9 +10745,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - --
-                 - --
                  - Experimental
+                 - --
+                 - --
+                 - Supported
                  - --
                  - --
                * - Derive
@@ -10477,9 +10756,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - --
-                 - --
                  - Experimental
+                 - --
+                 - --
+                 - Supported
                  - --
                  - --
 
@@ -10494,6 +10774,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -10504,6 +10785,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10514,6 +10796,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10529,11 +10812,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE`
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10711,6 +10996,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -10721,6 +11007,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10731,6 +11018,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10741,6 +11029,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10751,6 +11040,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10768,6 +11058,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -10778,6 +11069,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10788,6 +11080,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10798,6 +11091,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -10808,6 +11102,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11029,6 +11324,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -11039,6 +11335,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11049,6 +11346,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11059,6 +11357,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11069,6 +11368,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11086,6 +11386,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -11096,6 +11397,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11106,6 +11408,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11116,6 +11419,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11126,6 +11430,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11375,6 +11680,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -11385,6 +11691,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11395,6 +11702,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - --
                  - --
                  - --
@@ -11405,6 +11713,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11422,6 +11731,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -11432,6 +11742,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11442,6 +11753,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11452,6 +11764,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11707,6 +12020,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -11714,6 +12028,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54LS05B
                * - 1024 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_1024`
+                 - --
                  - --
                  - --
                  - --
@@ -11732,14 +12047,16 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - 2048 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048`
                  - Supported
                  - Supported
                  - Supported
-                 - Supported
-                 - Supported
                  - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
                  - --
                  - --
                * - 3072 bits
@@ -11747,9 +12064,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Supported
-                 - Supported
                  - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
                  - --
                  - --
                * - 4096 bits
@@ -11757,9 +12075,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Supported
-                 - Supported
                  - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
                  - --
                  - --
                * - 6144 bits
@@ -11772,8 +12091,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - 8192 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_8192`
+                 - --
                  - --
                  - --
                  - --
@@ -11794,6 +12115,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -11804,6 +12126,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11814,6 +12137,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11824,6 +12148,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11834,6 +12159,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11844,6 +12170,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11854,6 +12181,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11864,6 +12192,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
@@ -11999,84 +12328,6 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
 
 .. tabs::
 
-   .. tab:: nRF54L Series
-
-      The following table lists the supported side-channel countermeasures for nRF54L Series devices.
-
-      .. tabs::
-
-         .. tab:: CRACEN
-
-            .. note::
-               :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED` does not support scalar blinding for Montgomery curve multiplication (X25519, X448).
-
-               nRF54L15, nRF54L10, and nRF54L05 do not support countermeasures for Montgomery curve multiplication (X25519, X448), EdDSA base point multiplication, and Edwards point multiplication.
-
-            .. list-table:: Side-channel countermeasures support (CRACEN driver) - nRF54L Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Countermeasure
-                 - Configuration option
-                 - nRF54L15
-                 - nRF54L10
-                 - nRF54L05
-                 - nRF54LM20A
-                 - nRF54LM20B
-                 - nRF54LV10A
-                 - nRF54LS05A
-                 - nRF54LS05B
-               * - ECC scalar randomization
-                 - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - --
-                 - --
-               * - ECC projective coordinate randomization
-                 - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - --
-                 - --
-               * - ECC extended (Montgomery/Edwards)
-                 - :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED` (see note above)
-                 - --
-                 - --
-                 - --
-                 - Supported
-                 - Supported
-                 - Supported
-                 - --
-                 - --
-               * - RSA exponent randomization
-                 - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - --
-                 - --
-               * - RSA modulus randomization
-                 - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - --
-                 - --
-
    .. tab:: nRF54H Series
 
       The following table lists the supported side-channel countermeasures for nRF54H Series devices.
@@ -12109,4 +12360,88 @@ The countermeasures are available only on the :ref:`CRACEN driver <crypto_driver
                  - --
                * - RSA modulus randomization
                  - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
+                 - --
+
+   .. tab:: nRF54L Series
+
+      The following table lists the supported side-channel countermeasures for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. note::
+               :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED` does not support scalar blinding for Montgomery curve multiplication (X25519, X448).
+
+               nRF54L15, nRF54L10, and nRF54L05 do not support countermeasures for Montgomery curve multiplication (X25519, X448), EdDSA base point multiplication, and Edwards point multiplication.
+
+            .. list-table:: Side-channel countermeasures support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Countermeasure
+                 - Configuration option
+                 - nRF54L15
+                 - nRF54L10
+                 - nRF54L05
+                 - nRF54LC10A
+                 - nRF54LM20A
+                 - nRF54LM20B
+                 - nRF54LV10A
+                 - nRF54LS05A
+                 - nRF54LS05B
+               * - ECC scalar randomization
+                 - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - --
+                 - --
+               * - ECC projective coordinate randomization
+                 - :kconfig:option:`CONFIG_CRACEN_ECC_COUNTERMEASURES`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - --
+                 - --
+               * - ECC extended (Montgomery/Edwards)
+                 - :kconfig:option:`CONFIG_CRACEN_LITE_ECC_COUNTERMEASURES_EXTENDED` (see note above)
+                 - --
+                 - --
+                 - --
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - --
+                 - --
+               * - RSA exponent randomization
+                 - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - --
+                 - --
+               * - RSA modulus randomization
+                 - :kconfig:option:`CONFIG_CRACEN_RSA_COUNTERMEASURES`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - --
                  - --
