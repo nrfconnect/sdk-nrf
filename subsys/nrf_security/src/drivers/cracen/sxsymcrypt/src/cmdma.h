@@ -163,6 +163,15 @@ void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint
 /** Start input/fetcher DMA at indescs and output/pusher DMA at outdescs */
 void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs);
 
+#ifdef CONFIG_DCACHE
+/** Invalidate the D-cache lines backing the output descriptor buffers.
+ *
+ * Call after the DMA has completed so the CPU reads the freshly written
+ * output (e.g. a hash digest or MAC) instead of stale cached data.
+ */
+void sx_cmdma_invalidate_output(struct sx_dmactl *dma);
+#endif
+
 /** Return how the DMA is doing.
  *
  * Possible return values are:
