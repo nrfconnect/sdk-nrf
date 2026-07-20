@@ -62,7 +62,7 @@ static int sensor_stub_init(const struct device *dev)
 	extern int _CONCAT(DT_STRING_TOKEN(DT_DRV_INST(_idx), generator), _init)(                  \
 		const struct device *dev);                                                         \
 												   \
-	static const struct sensor_driver_api sensor_stub_api_funcs_##_idx = {                     \
+	static DEVICE_API(sensor, sensor_stub_api_funcs_##_idx) = {                                \
 		.sample_fetch = _CONCAT(DT_STRING_TOKEN(DT_DRV_INST(_idx), generator), _fetch),    \
 		.channel_get  = _CONCAT(DT_STRING_TOKEN(DT_DRV_INST(_idx), generator), _get)       \
 	};                                                                                         \
