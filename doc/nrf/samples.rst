@@ -56,7 +56,6 @@ General information about samples in the |NCS|
    samples/esb
    samples/gazell
    samples/keys
-   samples/matter
    samples/net
    samples/nfc
    samples/nrf5340

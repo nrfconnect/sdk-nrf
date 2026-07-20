@@ -166,24 +166,6 @@ The configuration options default to disabling optional features, such as:
 
 To reduce the logging level, set the :kconfig:option:`CONFIG_GAZELL_LOG_LEVEL_CHOICE` Kconfig option.
 
-.. _app_memory_matter:
-
-Matter
-******
-
-Besides applying `General recommendations`_, you can also complete the following actions to optimize the :ref:`Matter <ug_matter>` part of your application:
-
-* Make sure Zephyr's :ref:`zephyr:shell_api` is disabled for your application.
-  Related configuration options are listed in a dedicated section in each Matter sample's :file:`prj.conf` file.
-* Use :file:`prj_release.conf` for building the application.
-  The release configuration has a smaller memory footprint than the default, debug-enabled :file:`prj.conf`.
-* If the logs in your application do not use the default log level, you can change the default log level of Zephyr modules from ``info`` to ``warning`` by setting :kconfig:option:`CONFIG_LOG_DEFAULT_LEVEL` to ``2``.
-* Change the log level of the Matter logs from ``debug`` to ``info`` by setting :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_INF` to ``y``.
-* Reduce the verbosity of assert messages by setting :kconfig:option:`CONFIG_ASSERT_VERBOSE` to ``n``.
-* Check `Thread`_ memory footprint optimization actions, as the Matter application layer uses OpenThread.
-
-Additionally, you can turn off logging for single Matter modules on the Matter SDK side, as described in :ref:`ug_matter_device_optimizing_memory_logs`.
-
 .. _app_memory_nfc:
 
 NFC

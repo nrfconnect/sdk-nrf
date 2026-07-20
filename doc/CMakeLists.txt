@@ -340,11 +340,6 @@ add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
 add_docset(tfm "2.3.0")
 
 #-------------------------------------------------------------------------------
-# docset: matter
-
-add_docset(matter "1.5.0")
-
-#-------------------------------------------------------------------------------
 # docset: nrfxlib
 
 add_docset(nrfxlib ${NRF_VERSION})
@@ -418,7 +413,7 @@ endfunction()
 add_dependencies(nrfxlib-inventory-all kconfig-all zephyr-all)
 add_doc_dependencies(zephyr kconfig-all)
 add_doc_dependencies(mcuboot kconfig-all)
-add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all matter-all tfm-all kconfig-all wifi)
+add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all tfm-all kconfig-all wifi)
 add_doc_dependencies(nrfxlib nrf-all)
 
 add_custom_target(build-all ALL)
@@ -431,7 +426,6 @@ add_dependencies(build-all
     zephyr-all
     mcuboot-all
     tfm-all
-    matter-all
     kconfig-all
     wifi
 )

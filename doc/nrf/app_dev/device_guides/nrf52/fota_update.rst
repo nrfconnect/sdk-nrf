@@ -236,26 +236,6 @@ For more information about both methods, see :ref:`ug_bt_mesh_fota`.
 
 .. fota_upgrades_bt_mesh_end
 
-FOTA in Matter
-**************
-
-.. fota_upgrades_matter_start
-
-To perform a FOTA upgrade when working with the Matter protocol, use one of the following methods:
-
-* DFU over Bluetooth LE using either smartphone or PC command-line tool.
-  Both options are similar to `FOTA over Bluetooth Low Energy`_.
-
-  .. note::
-     This protocol is not part of the Matter specification.
-
-* DFU over Matter using Matter-compliant BDX protocol and Matter OTA Provider device.
-  This option requires an OpenThread Border Router (OTBR) set up either in Docker or on a Raspberry Pi.
-
-For more information about both methods, read the :doc:`matter:nrfconnect_examples_software_update` page in the Matter documentation.
-
-.. fota_upgrades_matter_end
-
 FOTA over Thread
 ****************
 

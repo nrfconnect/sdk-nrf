@@ -1,6 +1,0 @@
-FEM support
------------
-
-.. toggle::
-
-   .. include:: /includes/sample_fem_support.txt
