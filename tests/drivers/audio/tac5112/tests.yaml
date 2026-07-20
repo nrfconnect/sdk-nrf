@@ -1,0 +1,23 @@
+common:
+  tags:
+    - drivers
+    - audio
+    - ci_tests_drivers_audio
+  harness: ztest
+  timeout: 300
+
+tests:
+  drivers.audio.tac5112:
+    platform_allow:
+      - native_sim
+      - native_sim/native/64
+      - qemu_cortex_m3
+    integration_platforms:
+      - native_sim
+      - qemu_cortex_m3
+  drivers.audio.tac5112.nrf5x:
+    build_only: true
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
