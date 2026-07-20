@@ -25,7 +25,7 @@ APP_EVENT_TYPE_DEFINE(hid_notification_event,
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_NOTIFICATION_EVENT,
 				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
-#if CONFIG_BT_HIDS_SCI
+#if CONFIG_DESKTOP_HIDS_SCI_ENABLE
 static void log_hid_sci_mode_request_event(const struct app_event_header *aeh)
 {
 	const struct hid_sci_mode_request_event *event =
@@ -41,7 +41,7 @@ APP_EVENT_TYPE_DEFINE(hid_sci_mode_request_event,
 		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_SCI_MODE_REQUEST_EVENT,
 				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
-#endif /* CONFIG_BT_HIDS_SCI */
+#endif /* CONFIG_DESKTOP_HIDS_SCI_ENABLE */
 
 static void log_hid_host_suspend_event(const struct app_event_header *aeh)
 {
