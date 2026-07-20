@@ -317,6 +317,7 @@ psa_status_t cracen_import_ecc_private_key(const psa_key_attributes_t *attribute
 					   size_t *key_buffer_length, size_t *key_bits)
 {
 	size_t key_bits_attr = psa_get_key_bits(attributes);
+	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes));
 	psa_status_t psa_status;
 
 	if (data_length > key_buffer_size) {
@@ -328,11 +329,24 @@ psa_status_t cracen_import_ecc_private_key(const psa_key_attributes_t *attribute
 		return psa_status;
 	}
 
-	/* TODO: NCSDK-24516: Here we don't check if key < n.
-	 * We don't consider this a security issue since it should return an
-	 * error when tried to be used. Remove the comment when more testing is
-	 * done and we can verify that this is not needed.
+	/* A valid private scalar d must satisfy 1 <= d < n. The lower bound is
+	 * covered by the non-zero check below. The upper bound applies to the
+	 * Weierstrass curves; Montgomery and Edwards scalars are clamped and are
+	 * not compared against the group order.
 	 */
+	if (cracen_ecc_curve_is_weierstrass(psa_curve)) {
+		const struct sx_pk_ecurve *sx_curve;
+
+		psa_status = cracen_ecc_get_ecurve_from_psa(psa_curve, key_bits_attr, &sx_curve);
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
+
+		if (cracen_be_cmp(data, sx_pk_curve_order(sx_curve), data_length, 0) >= 0) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+	}
+
 	if (memcpy_check_non_zero(key_buffer, key_buffer_size, data, data_length)) {
 		*key_bits = key_bits_attr;
 		*key_buffer_length = data_length;
