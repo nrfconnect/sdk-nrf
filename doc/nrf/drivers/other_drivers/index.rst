@@ -24,3 +24,4 @@ The following pages describe additional drivers provided by the |NCS|, including
    wifi
    nrf71_sr_coex
    can_nrf_scan
+   tac5112
