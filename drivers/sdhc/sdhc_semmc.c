@@ -14,6 +14,7 @@
 #include <zephyr/sys/util.h>
 
 #include <nrf_semmc.h>
+#include <softperipheral_regif.h>
 #if defined(CONFIG_SOC_SERIES_NRF54L)
 #include <hal/nrf_memconf.h>
 #include <hal/nrf_spu.h>
@@ -146,6 +147,12 @@ static int _api_request(const struct device *dev,
 	case SD_RSP_TYPE_R5:
 		semmc_cmd.resp_type = NRF_SEMMC_RESP_R5;
 		break;
+	case SD_RSP_TYPE_R6:
+		semmc_cmd.resp_type = NRF_SEMMC_RESP_R6;
+		break;
+	case SD_RSP_TYPE_R7:
+		semmc_cmd.resp_type = NRF_SEMMC_RESP_R7;
+		break;
 	default:
 		LOG_ERR("Unsupported response type: 0x%02X",
 			cmd->response_type);
@@ -234,14 +241,6 @@ static int api_request(const struct device *dev,
 	struct sdhc_semmc_data *dev_data = dev->data;
 	int rc, rc2;
 
-	/* During common SD initialization, CMD8 (SEND_IF_COND) is requested
-	 * with expected response R7. Since this driver only supports the MMC
-	 * protocol, indicate that such command in not supported.
-	 */
-	if ((cmd->response_type & SDHC_NATIVE_RESPONSE_MASK) == SD_RSP_TYPE_R7) {
-		return -ENOTSUP;
-	}
-
 	rc = pm_device_runtime_get(dev);
 	if (rc < 0) {
 		LOG_ERR("pm_device_runtime_get() failed: %d", rc);
@@ -280,12 +279,31 @@ static int api_set_io(const struct device *dev, struct sdhc_io *ios)
 	nrf_semmc_config_t new_config = dev_data->semmc_config;
 
 	if (ios->clock) {
+		uint32_t clkdiv;
+
 		if (ios->clock < FREQUENCY_MIN ||
 		    ios->clock > FREQUENCY_MAX) {
 			return -EINVAL;
 		}
 
-		new_config.clk_freq_hz = ios->clock;
+		/* The soft peripheral generates the card clock as
+		 * SP_VPR_BASE_FREQ_HZ / clkdiv, where clkdiv must be an even
+		 * number >= 4 (enforced by nrf_semmc_cmd()). Snap the requested
+		 * frequency down to the nearest realizable one so the next command
+		 * is not rejected with NRF_SEMMC_ERROR_INVALID_PARAM. For example,
+		 * the SD subsystem's 25 MHz default-speed clock is not realizable
+		 * from a 128 MHz base (128/25 = 5.12 -> odd 5) and is snapped to
+		 * 128/6 = 21.33 MHz.
+		 */
+		clkdiv = DIV_ROUND_UP(SP_VPR_BASE_FREQ_HZ, ios->clock);
+		if (clkdiv < 4U) {
+			clkdiv = 4U;
+		}
+		if (clkdiv & 1U) {
+			clkdiv++;
+		}
+
+		new_config.clk_freq_hz = SP_VPR_BASE_FREQ_HZ / clkdiv;
 	}
 
 	if (ios->bus_width) {

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Logging"
+
+module = TAC5112_DRIVER
+module-str = tac5112-driver
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+
+source "Kconfig.zephyr"

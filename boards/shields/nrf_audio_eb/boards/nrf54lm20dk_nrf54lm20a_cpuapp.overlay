@@ -1,0 +1,256 @@
+/*
+ * nRF-Audio-EB shield overlay for the nRF54LM20.
+ *
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/i2c/i2c.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
+
+#define CAT_(A,B) A ## B
+#define CAT(A,B) CAT_(A, B)
+
+#define CODEC_PWM_GPIO_NUM 0
+#define PWM_GPIO CAT(gpio, CODEC_PWM_GPIO_NUM)
+#define CODEC_PDM_CLK_PIN 3
+#define CODEC_PDM_DIN_PIN 4
+
+#define CODEC_TDM_GPIO_NUM 1
+#define TDM_GPIO CAT(gpio, CODEC_TDM_GPIO_NUM)
+#define CODEC_TDM_FSYNC_PIN 0
+#define CODEC_TDM_SDOUT_PIN 13
+#define CODEC_TDM_SCK_PIN 3
+#define CODEC_TDM_MCK_PIN 4
+#define CODEC_TDM_SDIN_PIN 5
+
+#define CODEC_I2C_GPIO_NUM 1
+#define I2C_GPIO CAT(gpio, CODEC_I2C_GPIO_NUM)
+#define CODEC_I2C_GPIO_SCL_PIN 7
+#define CODEC_I2C_GPIO_SDA_PIN 6
+
+#define CODEC_INT_GPIO_NUM 3
+#define CODEC_INT_GPIO CAT(gpio, CODEC_INT_GPIO_NUM)
+#define CODEC_INT_PIN 5
+
+#define LINE_IN_DETECT_GPIO_NUM 3
+#define LINE_IN_DETECT_GPIO CAT(gpio, LINE_IN_DETECT_GPIO_NUM)
+#define LINE_IN_DETECT_GPIO_PIN 6
+
+#define LED_GPIO_NUM 3
+#define LED_GPIO CAT(gpio, LED_GPIO_NUM)
+#define LED_GPIO_RED_PIN 1
+#define LED_GPIO_GREEN_PIN 3
+#define LED_GPIO_BLUE_PIN 0
+
+#define SEMMC_GPIO_NUM 2
+#define SEMMC_GPIO CAT(gpio, SEMMC_GPIO_NUM)
+#define SEMMC_GPIO_SCK 1
+#define SEMMC_GPIO_DQ0 2
+#define SEMMC_GPIO_DQ1 4
+#define SEMMC_GPIO_DQ2 3
+#define SEMMC_GPIO_DQ3 0
+#define SEMMC_GPIO_CS0 5
+
+#define EN_IN_CH1_BIT  BIT(0)
+#define EN_IN_CH2_BIT  BIT(1)
+#define EN_IN_CH3_BIT  BIT(2)
+#define EN_IN_CH4_BIT  BIT(3)
+
+#define EN_OUT_CH1_BIT BIT(0)
+#define EN_OUT_CH2_BIT BIT(1)
+#define EN_OUT_CH3_BIT BIT(2)
+#define EN_OUT_CH4_BIT BIT(3)
+
+/ {
+	aliases {
+		dmic0 = &pdm20;
+		tac5112-i2s = &tdm;
+		sdhc0 = &semmc;
+	};
+
+	nrf_audio_eb_inputs: gpio-keys {
+		compatible = "gpio-keys";
+
+		line_in_detect: line_in_detect {
+			gpios = <&LINE_IN_DETECT_GPIO LINE_IN_DETECT_GPIO_PIN
+			(GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			label = "nRF-Audio-EB line-in detect";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+
+	nrf_audio_eb_leds: leds {
+		compatible = "gpio-leds";
+
+		led_rgb_red: led_0 {
+			gpios = <&LED_GPIO LED_GPIO_RED_PIN GPIO_ACTIVE_HIGH>;
+			label = "nRF-Audio-EB RGB red";
+		};
+
+		led_rgb_green: led_1 {
+			gpios = <&LED_GPIO LED_GPIO_GREEN_PIN GPIO_ACTIVE_HIGH>;
+			label = "nRF-Audio-EB RGB green";
+		};
+
+		led_rgb_blue: led_2 {
+			gpios = <&LED_GPIO LED_GPIO_BLUE_PIN GPIO_ACTIVE_HIGH>;
+			label = "nRF-Audio-EB RGB blue";
+		};
+	};
+};
+
+&pinctrl {
+	tdm_tac5112_default: tdm_tac5112_default {
+		group1 {
+			psels = <NRF_PSEL(TDM_MCK, CODEC_TDM_GPIO_NUM, CODEC_TDM_MCK_PIN)>;
+			nordic,drive-mode = <NRF_DRIVE_H0H1>;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(TDM_SCK_M, CODEC_TDM_GPIO_NUM, CODEC_TDM_SCK_PIN)>,
+				<NRF_PSEL(TDM_FSYNC_M, CODEC_TDM_GPIO_NUM, CODEC_TDM_FSYNC_PIN)>,
+				<NRF_PSEL(TDM_SDOUT, CODEC_TDM_GPIO_NUM, CODEC_TDM_SDOUT_PIN)>,
+				<NRF_PSEL(TDM_SDIN, CODEC_TDM_GPIO_NUM, CODEC_TDM_SDIN_PIN)>;
+		};
+
+	};
+
+	tdm_tac5112_sleep: tdm_tac5112_sleep {
+		group1 {
+			psels =<NRF_PSEL(TDM_SCK_M, CODEC_TDM_GPIO_NUM, CODEC_TDM_SCK_PIN)>,
+				<NRF_PSEL(TDM_FSYNC_M, CODEC_TDM_GPIO_NUM, CODEC_TDM_FSYNC_PIN)>,
+				<NRF_PSEL(TDM_SDOUT, CODEC_TDM_GPIO_NUM, CODEC_TDM_SDOUT_PIN)>,
+				<NRF_PSEL(TDM_SDIN, CODEC_TDM_GPIO_NUM, CODEC_TDM_SDIN_PIN)>;
+			low-power-enable;
+		};
+	};
+
+	i2c_tac5112_default: i2c_tac5112_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SCL, CODEC_I2C_GPIO_NUM, CODEC_I2C_GPIO_SCL_PIN)>,
+				<NRF_PSEL(TWIM_SDA, CODEC_I2C_GPIO_NUM, CODEC_I2C_GPIO_SDA_PIN)>;
+		};
+	};
+
+	i2c_tac5112_sleep: i2c_tac5112_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SCL, CODEC_I2C_GPIO_NUM, CODEC_I2C_GPIO_SCL_PIN)>,
+				<NRF_PSEL(TWIM_SDA, CODEC_I2C_GPIO_NUM, CODEC_I2C_GPIO_SDA_PIN)>;
+			low-power-enable;
+		};
+	};
+
+	pdm_default: pdm_default {
+		group1 {
+			psels = <NRF_PSEL(PDM_CLK, CODEC_PWM_GPIO_NUM, CODEC_PDM_CLK_PIN)>,
+				<NRF_PSEL(PDM_DIN, CODEC_PWM_GPIO_NUM, CODEC_PDM_DIN_PIN)>;
+		};
+	};
+
+	semmc_default: semmc_default {
+		group1 {
+			psels = <NRF_PSEL(SDP_MSPI_SCK, SEMMC_GPIO_NUM, SEMMC_GPIO_SCK)>;
+			nordic,drive-mode = <NRF_DRIVE_E0E1>;
+			bias-pull-down;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(SDP_MSPI_DQ0, SEMMC_GPIO_NUM, SEMMC_GPIO_DQ0)>,
+				<NRF_PSEL(SDP_MSPI_DQ1, SEMMC_GPIO_NUM, SEMMC_GPIO_DQ1)>,
+				<NRF_PSEL(SDP_MSPI_DQ2, SEMMC_GPIO_NUM, SEMMC_GPIO_DQ2)>,
+				<NRF_PSEL(SDP_MSPI_DQ3, SEMMC_GPIO_NUM, SEMMC_GPIO_DQ3)>,
+				<NRF_PSEL(SDP_MSPI_CS0, SEMMC_GPIO_NUM, SEMMC_GPIO_CS0)>;
+			nordic,drive-mode = <NRF_DRIVE_E0E1>;
+			bias-pull-up;
+		};
+	};
+
+	semmc_sleep: semmc_sleep {
+		group1 {
+			low-power-enable;
+			psels = <NRF_PSEL(SDP_MSPI_SCK, SEMMC_GPIO_NUM, SEMMC_GPIO_SCK)>,
+				<NRF_PSEL(SDP_MSPI_DQ0, SEMMC_GPIO_NUM, SEMMC_GPIO_DQ0)>,
+				<NRF_PSEL(SDP_MSPI_DQ1, SEMMC_GPIO_NUM, SEMMC_GPIO_DQ1)>,
+				<NRF_PSEL(SDP_MSPI_DQ2, SEMMC_GPIO_NUM, SEMMC_GPIO_DQ2)>,
+				<NRF_PSEL(SDP_MSPI_DQ3, SEMMC_GPIO_NUM, SEMMC_GPIO_DQ3)>,
+				<NRF_PSEL(SDP_MSPI_CS0, SEMMC_GPIO_NUM, SEMMC_GPIO_CS0)>;
+		};
+	};
+};
+
+&tdm {
+	status = "okay";
+	pinctrl-0 = <&tdm_tac5112_default>;
+	pinctrl-1 = <&tdm_tac5112_sleep>;
+	pinctrl-names = "default", "sleep";
+	sck-clock-source = "PCLK";
+};
+
+&i2c22 {
+	status = "okay";
+	pinctrl-0 = <&i2c_tac5112_default>;
+	pinctrl-1 = <&i2c_tac5112_sleep>;
+	pinctrl-names = "default", "sleep";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+
+	tac5112: audio-codec@50 {
+		compatible = "ti,tac5112";
+		reg = <0x50>;
+		fault-gpios = <&CODEC_INT_GPIO CODEC_INT_PIN (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+		input-channels = <(EN_IN_CH1_BIT | EN_IN_CH2_BIT)>;
+		output-channels = <(EN_OUT_CH1_BIT | EN_OUT_CH2_BIT)>;
+	};
+};
+
+&pdm20 {
+	status = "okay";
+	pinctrl-0 = <&pdm_default>;
+	pinctrl-names = "default";
+	clock-source = "PCLK32M";
+};
+
+&spi00 {
+	status = "disabled";
+};
+
+&cpuflpr_vpr {
+	pinctrl-0 = <&semmc_default>;
+	pinctrl-1 = <&semmc_sleep>;
+	pinctrl-names = "default", "sleep";
+	interrupts = <76 NRF_DEFAULT_IRQ_PRIORITY>;
+	status = "okay";
+	/delete-property/ execution-memory;
+};
+
+/ {
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		softperiph_ram: memory@2007b000 {
+			reg = <0x2007b000 0x4c00>;
+			ranges = <0 0x2007b000 0x4c00>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			semmc: semmc@4200 {
+				compatible = "nordic,nrf-semmc";
+				#address-cells = <1>;
+				#size-cells = <0>;
+				reg = <0x4200 0x200>;
+				zephyr,pm-device-runtime-auto;
+
+				sdmmc {
+					compatible = "zephyr,sdmmc-disk";
+					disk-name = "SD";
+					status = "okay";
+				};
+			};
+		};
+	};
+};
