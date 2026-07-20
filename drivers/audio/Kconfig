@@ -1,0 +1,46 @@
+# Audio Codec configuration options
+
+# Copyright (c) 2018 Intel Corporation
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menuconfig AUDIO
+	bool "Audio drivers"
+	help
+	  Enable support for Audio
+
+if AUDIO
+#
+# Audio Codec options
+#
+menuconfig AUDIO_CODEC
+	bool "Audio Codec Drivers"
+	help
+	  Enable Audio Codec Driver Configuration
+
+if AUDIO_CODEC
+
+config AUDIO_CODEC_INIT_PRIORITY
+	int "Init priority"
+	default 60
+	help
+	  Audio codec device driver initialization priority.
+
+config AUDIO_CODEC_SHELL
+	bool "Audio Codec shell"
+	depends on SHELL
+	help
+	  Enable the Audio Codec shell with Audio Codec related commands.
+
+module = AUDIO_CODEC
+module-str = audio codec
+source "subsys/logging/Kconfig.template.log_config"
+
+# zephyr-keep-sorted-start
+rsource "Kconfig.tac5112"
+# zephyr-keep-sorted-stop
+
+endif # AUDIO_CODEC
+
+endif # AUDIO

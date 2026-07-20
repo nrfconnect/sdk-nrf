@@ -1,0 +1,48 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+description: |
+  Texas Instruments TAC5112 low-power stereo audio codec.
+
+  The TAC5112 is controlled over I2C (this binding) or SPI (not supported
+  by this driver) and carries PCM audio over a TDM/I2S/LJ audio serial
+  interface (ASI) wired separately (e.g. to an nRF5-series I2S peripheral).
+  This driver only supports the codec operating as the ASI bus target
+  (peripheral): the host must generate BCLK and FSYNC.
+
+  Example:
+
+      &i2c0 {
+              tac5112: audio-codec@50 {
+                      compatible = "ti,tac5112";
+                      reg = <0x50>;
+                      reset-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
+                      fault-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+              };
+      };
+
+compatible: "ti,tac5112"
+
+include: i2c-device.yaml
+
+properties:
+  reset-gpios:
+    type: phandle-array
+    description: |
+      Optional hardware reset line. If present, it is driven inactive
+      during driver init to release the codec from reset; software reset
+      (SW_RESET register) is used for all subsequent resets regardless of
+      whether this property is present.
+
+  fault-gpios:
+    type: phandle-array
+    description: |
+      Optional GPIO wired to a TAC5112 GPIO/GPO/DOUT pin configured (in
+      the analog front end / board design) as the chip interrupt (IRQ)
+      output. When present, the driver services it from system workqueue
+      context and invokes any callback registered via
+      audio_codec_register_error_callback(). When absent, applications
+      must poll audio_codec_clear_errors() or the DEV_STS0/DEV_STS1
+      registers themselves.

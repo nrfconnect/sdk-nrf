@@ -1,0 +1,35 @@
+common:
+  tags:
+    - drivers
+    - audio
+    - ci_tests_drivers_audio
+  harness: ztest
+  # QEMU console throughput can be very slow (notably qemu_cortex_m3 on a
+  # Windows host: ~1 s of wall-clock per output line), so the 26-case suite
+  # can exceed twister's default 60 s wall-clock limit even though every
+  # test itself runs in milliseconds. Raise the ceiling so the run finishes
+  # instead of being killed as a false "Timeout" failure. native_sim runs
+  # the same suite in a fraction of a second and is unaffected.
+  timeout: 300
+  # No `depends_on: [i2c, gpio]` here on purpose: this suite supplies its
+  # own emulated I2C bus (zephyr,i2c-emul-controller) via the per-board
+  # overlays, so it must not be filtered out on platforms -- such as
+  # qemu_cortex_m3 -- whose board manifest does not advertise I2C/GPIO as
+  # supported hardware peripherals.
+tests:
+  drivers.audio.tac5112:
+    platform_allow:
+      - native_sim
+      - native_sim/native/64
+      - qemu_cortex_m3
+    integration_platforms:
+      - native_sim
+      - qemu_cortex_m3
+  drivers.audio.tac5112.nrf5x:
+    build_only: true
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf5340dk/nrf5340/cpuapp

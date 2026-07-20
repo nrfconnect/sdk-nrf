@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Devicetree overlay for running the TAC5112 driver + I2C-mock ztest suite
+ * on the qemu_cortex_m3 platform.
+ *
+ * Unlike native_sim (whose board devicetree already ships an emulated I2C
+ * bus at &i2c0), qemu_cortex_m3 models the TI LM3S6965 SoC and provides no
+ * usable I2C controller under QEMU. This overlay therefore instantiates a
+ * software "zephyr,i2c-emul-controller" bus at the root of the tree and
+ * hangs the TAC5112 node off it. Both the real driver device and the I2C
+ * emulator (drivers/audio/tac5112_emul.c) bind to that same node, so the
+ * whole stack -- codec driver, Zephyr I2C API, and the mock -- is exercised
+ * exactly as it is on native_sim, just running on an emulated Cortex-M3.
+ *
+ * CONFIG_I2C_EMUL is selected automatically once this compatible is present
+ * (its Kconfig defaults y on DT_HAS_ZEPHYR_I2C_EMUL_CONTROLLER_ENABLED).
+ */
+
+#include <zephyr/dt-bindings/i2c/i2c.h>
+
+/ {
+	aliases {
+		tac5112-0 = &tac5112_0;
+	};
+
+	tac5112_i2c: i2c@100 {
+		status = "okay";
+		compatible = "zephyr,i2c-emul-controller";
+		/* This binding marks reg as required. The node is not real
+		 * MMIO -- reg is only an identifier for an emulated bus -- but
+		 * it must be present and match the @unit-address above.
+		 */
+		reg = <0x100 4>;
+		clock-frequency = <I2C_BITRATE_STANDARD>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		tac5112_0: audio-codec@50 {
+			compatible = "ti,tac5112";
+			reg = <0x50>;
+		};
+	};
+};
