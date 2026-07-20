@@ -160,6 +160,7 @@ int sx_mac_status(struct sxmac *mac_ctx)
 
 #if CONFIG_DCACHE
 	sys_cache_data_invd_range((void *)&mac_ctx->extramem, sizeof(mac_ctx->extramem));
+	sx_cmdma_invalidate_output(&mac_ctx->dma);
 #endif
 
 	return sx_handle_nested_error(sx_mac_free(mac_ctx), status);
