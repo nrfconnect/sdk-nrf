@@ -248,12 +248,13 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 			k->key = kmu_push_area;
 
 			return PSA_SUCCESS;
+#if defined(CONFIG_CRACEN_KMU_PROTECTED_RAM)
 		case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
 			k->sz = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 			k->key = (const uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
 
 			return PSA_SUCCESS;
-
+#endif
 		default:
 			return PSA_ERROR_NOT_PERMITTED;
 		}
@@ -275,24 +276,24 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 		k->prepare_key = NULL;
 		k->clean_key = NULL;
 
-		switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
-		case CRACEN_PROTECTED_RAM_AES_KEY0_ID:
+#if defined(CONFIG_CRACEN_KMU_PROTECTED_RAM)
+		uint32_t key_id = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes));
+
+		if (key_id == CRACEN_PROTECTED_RAM_AES_KEY0_ID) {
 			k->sz = 32;
 			k->key = (const uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
-			break;
-		default:
-			if (key_buffer_size == 0) {
-				return PSA_ERROR_CORRUPTION_DETECTED;
-			}
 
-			/* Normal transparent key. */
-			k->key = key_buffer;
-			k->sz = key_buffer_size;
+			return PSA_SUCCESS;
 		}
-	} else {
-		k->key = key_buffer;
-		k->sz = key_buffer_size;
+#endif
+
+		if (key_buffer_size == 0) {
+			return PSA_ERROR_CORRUPTION_DETECTED;
+		}
 	}
+
+	k->key = key_buffer;
+	k->sz = key_buffer_size;
 
 	return PSA_SUCCESS;
 }

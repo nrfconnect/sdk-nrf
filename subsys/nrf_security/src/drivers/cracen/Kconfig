@@ -72,6 +72,17 @@ config CRACEN_KMU
 	help
 	  Activate CRACEN Key Management Unit (KMU) functionality for the PSA layer.
 
+config CRACEN_KMU_PROTECTED_RAM
+	bool "KMU protected RAM key usage scheme"
+	depends on CRACEN_KMU
+	default y
+	help
+	  Enable driver support for the KMU Protected RAM key usage scheme. This
+	  scheme relies on two reserved KMU slots (248 and 249) holding invalidation data
+	  that is pushed to protected RAM after use.
+
+if CRACEN_KMU_PROTECTED_RAM
+
 config CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS
 	bool "Provision protected RAM invalidation slots with nrfutil (informative only, do not change)"
 	help
@@ -86,7 +97,6 @@ if !CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS
 
 config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 	bool "Provision protected RAM invalidation slots on boot"
-	depends on CRACEN_KMU
 	default y
 	help
 	  Provision the protected RAM invalidation data in the KMU. This will generate random
@@ -97,7 +107,6 @@ config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 
 config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
 	bool "Provision protected RAM invalidation slots using psa_import_key"
-	depends on CRACEN_KMU
 	help
 	  Provision the protected RAM invalidation KMU slots (248,249) in the KMU using a
 	  psa_import_key call. The application is required to call psa_import_key with the
@@ -107,6 +116,8 @@ config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
 	  image is flashed. This is not meant to be used by user applications.
 
 endif # CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS
+
+endif # CRACEN_KMU_PROTECTED_RAM
 
 config CRACEN_IKG
 	bool "CRACEN IKG"
