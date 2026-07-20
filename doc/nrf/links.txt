@@ -2014,6 +2014,8 @@
 
 .. _`ST25R3911B chip documentation`: https://www.st.com/resource/en/datasheet/st25r3911b.pdf
 
+.. _`TAC5112 product page`: https://www.ti.com/product/TAC5112
+
 .. _`ZBOSS Open Initiative (ZOI)`: https://dsr-zoi.com/
 
 .. _`Git`: https://git-scm.com/
