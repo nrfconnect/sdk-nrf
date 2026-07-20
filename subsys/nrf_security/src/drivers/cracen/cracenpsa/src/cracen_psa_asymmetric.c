@@ -73,10 +73,12 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 
 			if (dir == CRACEN_ENCRYPT) {
 				sx_status = cracen_rsa_oaep_encrypt(hashalg, &pubkey, &text, &label,
-								    output, output_length);
+								    output, output_size,
+								    output_length);
 			} else {
 				sx_status = cracen_rsa_oaep_decrypt(hashalg, &pubkey, &text, &label,
-								    output, output_length);
+								    output, output_size,
+								    output_length);
 			}
 		}
 	}
@@ -85,10 +87,10 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 		if (alg == PSA_ALG_RSA_PKCS1V15_CRYPT) {
 			if (dir == CRACEN_ENCRYPT) {
 				sx_status = cracen_rsa_pkcs1v15_encrypt(&pubkey, &text, output,
-									output_length);
+									output_size, output_length);
 			} else {
 				sx_status = cracen_rsa_pkcs1v15_decrypt(&pubkey, &text, output,
-									output_length);
+									output_size, output_length);
 			}
 		}
 	}
