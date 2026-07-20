@@ -381,6 +381,9 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 	    ecc_fam == PSA_ECC_FAMILY_MONTGOMERY ||
 	    ecc_fam == PSA_ECC_FAMILY_SECP_R1 ||
 	    key_type == PSA_KEY_TYPE_HMAC) {
+		if (key_buffer_size > data_size) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		}
 		memcpy(data, key_buffer, key_buffer_size);
 		*data_length = key_buffer_size;
 		return PSA_SUCCESS;
