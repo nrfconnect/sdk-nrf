@@ -32,7 +32,7 @@
 /applications/serial_modem/README.rst     @nrfconnect/ncs-modem-doc
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
 /applications/ipc_radio/                  @nrfconnect/ncs-si-muffin
-/applications/nrf_audio/              @nrfconnect/ncs-audio
+/applications/nrf_audio/                  @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-xcake
 /applications/installer/                  @nrfconnect/ncs-eris
 /applications/installer/**/*.rst          @nrfconnect/ncs-eris-doc
@@ -40,7 +40,7 @@
 /applications/hpf/**/*.rst                @nrfconnect/ncs-lowlevel-doc
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
 /applications/ipc_radio/*.rst             @nrfconnect/ncs-si-muffin-doc
-/applications/nrf_audio/**/*.rst      @nrfconnect/ncs-audio-doc
+/applications/nrf_audio/**/*.rst          @nrfconnect/ncs-audio-doc
 /applications/nrf_desktop/**/*.rst        @nrfconnect/ncs-si-xcake-doc
 
 # Boards
@@ -106,6 +106,7 @@
 /doc/nrf/drivers/other_drivers/pmw3360.rst                     @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/drivers/other_drivers/sensor_sim.rst                  @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/other_drivers/sensor_stub.rst                 @nrfconnect/ncs-cia-doc
+/doc/nrf/drivers/other_drivers/tac5112.rst                     @nrfconnect/ncs-audio-doc
 /doc/nrf/drivers/other_drivers/uart_ipc.rst                    @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/other_drivers/uart_nrf_sw_lpuart.rst          @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/other_drivers/wifi/*.rst                      @nrfconnect/ncs-wifi-doc
@@ -307,6 +308,7 @@
 /doc/**/*.txt                             @nrfconnect/ncs-doc-leads
 
 # Drivers
+/drivers/audio/                           @nrfconnect/ncs-co-drivers @nrfconnect/ncs-audio
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/can/                             @nrfconnect/ncs-co-drivers
 /drivers/clock_control/clock_control_nrf92* @nrfconnect/ncs-co-drivers @tervonenja
@@ -400,6 +402,7 @@
 /include/drivers/saadct.h                 @nrfconnect/ncs-ll-izera
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
+/include/drivers/tac5112.h                @nrfconnect/ncs-audio
 /include/dt-bindings/misc/nordic-domain-id-nrf9220.h @tervonenja
 /include/dt-bindings/misc/nordic-nrf-ficr-nrf9220.h @tervonenja
 /include/dt-bindings/misc/nordic-owner-id-nrf9220.h @tervonenja
@@ -1030,6 +1033,7 @@
 /tests/bluetooth/bsim/custom_ltk/         @nrfconnect/ncs-paladin
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
+/tests/drivers/audio/tac5112/             @nrfconnect/ncs-audio
 /tests/drivers/can/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/dect/dect_mdm/integration/ @nrfconnect/ncs-dect-nr-plus
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-eris
@@ -1097,7 +1101,7 @@
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/                   @nrfconnect/ncs-eris
-/tests/nrf_audio/                     @nrfconnect/ncs-audio
+/tests/nrf_audio/                         @nrfconnect/ncs-audio
 /tests/psa_crypto/                        @nrfconnect/ncs-aegir
 /tests/subsys/app_event_manager/          @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/app_protect/                @nrfconnect/ncs-low-level-test
