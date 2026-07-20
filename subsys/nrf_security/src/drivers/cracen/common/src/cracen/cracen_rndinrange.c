@@ -13,6 +13,9 @@
 #include <cracen_psa_ctr_drbg.h>
 #include <cracen/common.h>
 
+/* Maximum number of rejection-sampling retries after the initial attempt. */
+#define CRACEN_RND_IN_RANGE_MAX_RETRIES 128
+
 /* Return 1 if the given byte string contains only zeros, 0 otherwise. */
 static int is_zero_bytestring(const uint8_t *a, size_t sz)
 {
@@ -52,6 +55,7 @@ static int rnd_in_range_get_rnd(uint8_t *out, size_t rndsz, const uint8_t *upper
 	 */
 	int sx_status;
 	psa_status_t psa_status;
+	size_t attempts_left = CRACEN_RND_IN_RANGE_MAX_RETRIES + 1;
 
 	do {
 		psa_status = cracen_get_random(NULL, out, rndsz);
@@ -61,7 +65,11 @@ static int rnd_in_range_get_rnd(uint8_t *out, size_t rndsz, const uint8_t *upper
 		}
 		sx_status = rnd_in_range_continue(out, rndsz, upper_limit, msb_mask);
 
-	} while (sx_status == SX_ERR_HW_PROCESSING);
+	} while (sx_status == SX_ERR_HW_PROCESSING && --attempts_left);
+
+	if (sx_status == SX_ERR_HW_PROCESSING) {
+		return SX_ERR_TOO_MANY_ATTEMPTS;
+	}
 
 	return SX_OK;
 }
@@ -77,7 +85,7 @@ int cracen_get_rnd_in_range(const uint8_t *upper_limit, size_t upper_limit_sz, u
 	}
 
 	/* Get index of most significant non-zero byte in n */
-	for (index = 0; (upper_limit[index] == 0) && (index < upper_limit_sz); index++) {
+	for (index = 0; (index < upper_limit_sz) && (upper_limit[index] == 0); index++) {
 		/* Do nothing; just increment 'index' */
 	}
 
