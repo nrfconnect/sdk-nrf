@@ -7,7 +7,6 @@
 #include <string.h>
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
-#include <nrf_modem.h>
 #include <nrf_modem_os.h>
 #include <nrfx.h>
 #include <nrf_errno.h>
@@ -166,10 +165,6 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 	struct sleeping_thread thread;
 	int64_t start, remaining;
 
-	if (!nrf_modem_is_initialized()) {
-		return -NRF_ESHUTDOWN;
-	}
-
 	start = k_uptime_get();
 
 	if (*timeout == 0) {
@@ -202,10 +197,6 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 	(void)k_sem_take(&thread.sem, SYS_TIMEOUT_MS(*timeout));
 
 	sleeping_thread_remove(&thread);
-
-	if (!nrf_modem_is_initialized()) {
-		return -NRF_ESHUTDOWN;
-	}
 
 	if (*timeout == SYS_FOREVER_MS) {
 		return 0;
