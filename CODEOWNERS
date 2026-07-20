@@ -31,8 +31,6 @@
 /applications/serial_modem/README.rst     @nrfconnect/ncs-modem-doc
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
 /applications/ipc_radio/                  @nrfconnect/ncs-si-muffin
-/applications/matter_bridge/              @nrfconnect/ncs-matter
-/applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-xcake
 /applications/installer/                  @nrfconnect/ncs-eris
@@ -41,8 +39,6 @@
 /applications/hpf/**/*.rst                @nrfconnect/ncs-lowlevel-doc
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
 /applications/ipc_radio/*.rst             @nrfconnect/ncs-si-muffin-doc
-/applications/matter_bridge/**/*.rst      @nrfconnect/ncs-matter-doc
-/applications/matter_weather_station/*.rst @nrfconnect/ncs-matter-doc
 /applications/nrf_audio/**/*.rst      @nrfconnect/ncs-audio-doc
 /applications/nrf_desktop/**/*.rst        @nrfconnect/ncs-si-xcake-doc
 
@@ -272,8 +268,6 @@
 /doc/nrf/samples/gazell.rst               @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/samples/ironside_se.rst          @nrfconnect/ncs-aurora-doc
 /doc/nrf/samples/keys.rst                 @nrfconnect/ncs-aegir-doc
-/doc/nrf/samples/matter.rst               @nrfconnect/ncs-matter-doc
-/doc/nrf/samples/matter/*.rst             @nrfconnect/ncs-matter-doc
 /doc/nrf/samples/mesh.rst                 @nrfconnect/ncs-paladin-doc
 /doc/nrf/samples/net.rst                  @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/nfc.rst                  @nrfconnect/ncs-radio-sw
@@ -595,7 +589,6 @@
 /samples/hw_id/                           @nrfconnect/ncs-cia
 /samples/ipc/ipc_service/                 @anangl
 /samples/keys/                            @nrfconnect/ncs-aegir
-/samples/matter/                          @nrfconnect/ncs-matter
 /samples/mcuboot/                         @nrfconnect/ncs-eris
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
 /samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-bifrost
@@ -744,7 +737,6 @@
 /samples/ironside_se/**/*.rst             @nrfconnect/ncs-aurora-doc
 /samples/ipc/ipc_service/*.rst            @nrfconnect/ncs-vestavind-doc
 /samples/keys/**/*.rst                    @nrfconnect/ncs-aegir-doc
-/samples/matter/**/*.rst                  @nrfconnect/ncs-matter-doc
 /samples/mpsl/**/*.rst                    @nrfconnect/ncs-dragoon-doc
 /samples/net/**/*.rst                     @nrfconnect/ncs-cia-doc
 /samples/net/coap_client/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
@@ -867,7 +859,6 @@
 /scripts/tests/                           @nrfconnect/ncs-eris @nrfconnect/ncs-eris-test
 /scripts/vale/                            @francescoser
 /scripts/esb_sniffer/                     @nrfconnect/ncs-si-xcake
-/scripts/matter/                          @nrfconnect/ncs-matter
 /scripts/runners/nrf_common_next.py       @nrfconnect/ncs-ci
 /scripts/runners/nrfutil_next.py          @nrfconnect/ncs-ci
 /scripts/ci/nrf_undef_kconfig_allowlist.txt @nrfconnect/ncs-co-build-system
@@ -895,7 +886,6 @@
 /snippets/coverage_support/               @nrfconnect/ncs-low-level-test
 /snippets/hpf/                            @nrfconnect/ncs-ll-ursus
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
-/snippets/matter/                         @nrfconnect/ncs-matter
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
 /snippets/nrf70-driver-debug/             @krish2718 @sachinthegreen
 /snippets/nrf70-driver-verbose-debug/     @krish2718 @sachinthegreen
