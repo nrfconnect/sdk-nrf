@@ -519,7 +519,7 @@ static int sensor_sim_channel_get(const struct device *dev,
 	return 0;
 }
 
-static const struct sensor_driver_api sensor_sim_api_funcs = {
+static DEVICE_API(sensor, sensor_sim_api_funcs) = {
 	.sample_fetch = sensor_sim_sample_fetch,
 	.channel_get = sensor_sim_channel_get,
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
