@@ -16,6 +16,23 @@ config DESKTOP_HIDS_ENABLE
 
 if DESKTOP_HIDS_ENABLE
 
+config DESKTOP_HIDS_SCI_ENABLE
+	bool "HID SCI support"
+	depends on !CAF_BLE_USE_LLPM
+	depends on !HAS_BT_CTLR || BT_CTLR_SHORTER_CONNECTION_INTERVALS_SUPPORT
+	select BT_LE_EXTENDED_FEAT_SET
+	select BT_SUBRATING
+	select BT_SHORTER_CONNECTION_INTERVALS
+	select BT_HIDS_SCI
+	select BT_HIDS_SCI_LOW_POWER_MODE
+	select CAF_BLE_SCI_CONN_RATE_EVENTS
+	imply BT_FRAME_SPACE_UPDATE
+	help
+	  This option enables handling of HID Shorter Connection Intervals (SCI) mode change requests
+	  in the HIDS module.
+	  Enabling this option also selects the Bluetooth LE features required
+	  for shorter connection intervals support in the Host and Controller.
+
 config DESKTOP_HIDS_FIRST_REPORT_DELAY
 	int "First HID report delay [ms]"
 	default 1000 if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
@@ -65,19 +82,37 @@ endchoice
 
 config BT_HIDS_ATTR_MAX
 	default 19 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
-		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
 	default 22 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
-		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
 	default 32 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
-		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
 	default 35 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
-		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		!DESKTOP_HIDS_SCI_ENABLE)
+	default 24 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
+	default 27 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
+	default 37 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		!DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
+	default 40 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		DESKTOP_HIDS_SCI_ENABLE)
 	help
 	  The maximum number of GATT attribute descriptors for HIDS is set
 	  assuming that nRF Desktop peripheral supports all of the HID input
 	  and output reports defined in default configuration for the selected
 	  peripheral type, boot protocol and HID feature report used by the
-	  configuration channel.
+	  configuration channel. When HID SCI is enabled,
+	  five additional attributes are reserved for the SCI
+	  Information and SCI Mode characteristics (including CCC).
 
 	  Make sure to update the value if you enable additional HID reports.
 

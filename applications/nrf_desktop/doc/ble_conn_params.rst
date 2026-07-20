@@ -52,7 +52,9 @@ The module updates only the connection latency.
 The connection interval and supervision timeout are not changed according to the peripheral's request.
 
 .. note::
-   On the peripheral side, the Bluetooth connection latency is controlled by :ref:`nrf_desktop_ble_latency`.
+   On the peripheral side, the Bluetooth connection parameters are controlled by :ref:`nrf_desktop_ble_latency`.
+   When HID SCI is enabled and the peripheral has switched to SCI-based connection parameter handling, latency updates use the connection rate API instead of the standard connection parameter update API.
+   In that case, the module no longer updates its latency state based on :c:struct:`ble_peer_conn_params_event`.
 
 .. _nrf_desktop_ble_conn_params_hid_sci:
 
