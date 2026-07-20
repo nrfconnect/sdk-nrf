@@ -177,7 +177,7 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 #if defined(CONFIG_CRACEN_IKG)
 	return sx_pk_ik_derive_keys(&cfg);
 #else
-	return PSA_ERROR_NOT_SUPPORTED;
+	return SX_ERR_INCOMPATIBLE_HW;
 #endif
 }
 
