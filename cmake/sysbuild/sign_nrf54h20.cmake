@@ -4,6 +4,7 @@
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/ironside_se_tlv.cmake)
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_imgtool_args.cmake)
 
 function(check_merged_slot_boundaries merged_partition images)
   # Predefine the MCUboot header size.
@@ -180,6 +181,11 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
   else()
     set(imgtool_args)
   endif()
+
+  set(CONFIG_NCS_MCUBOOT_IMGTOOL_PAD_VALUE)
+  sysbuild_get(CONFIG_NCS_MCUBOOT_IMGTOOL_PAD_VALUE IMAGE ${main_image} VAR
+    CONFIG_NCS_MCUBOOT_IMGTOOL_PAD_VALUE KCONFIG)
+  ncs_mcuboot_imgtool_append_pad_value_args(imgtool_args)
 
   # Fetch VID and CID values from the main image Kconfig.
   set(CONFIG_MCUBOOT_IMGTOOL_UUID_VID)
