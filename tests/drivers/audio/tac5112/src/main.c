@@ -1,0 +1,724 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * ztest suite for the TAC5112 audio codec driver. Runs on native_sim
+ * against the I2C emulator in drivers/audio/tac5112_emul.c (see
+ * boards/native_sim.overlay and prj.conf wiring), so the *real* driver
+ * code and *real* I2C stack are exercised end to end.
+ *
+ * A note on testing NULL `dev` pointers: the convenience wrappers in
+ * <zephyr/audio/codec.h> (audio_codec_configure(), audio_codec_set_property(),
+ * ...) fetch the driver API table (DEVICE_API_GET()) *before* calling into
+ * the driver, so passing dev == NULL to those wrappers directly is a crash,
+ * not a testable error path -- by design, matching every other Zephyr device
+ * subsystem. To still exercise this driver's own NULL-`dev` guards, the
+ * tests below fetch the API table for a valid (non-NULL) dev once and
+ * then invoke the driver's callback function pointers directly, which is
+ * safe because no further NULL dereference happens before the callback's
+ * own tac5112_dev_valid() check runs.
+ */
+
+#include <zephyr/ztest.h>
+#include <errno.h>
+#include <zephyr/device.h>
+#include <zephyr/audio/codec.h>
+#include <zephyr/drivers/i2s.h>
+#include <drivers/tac5112.h>
+
+#include "tac5112_private.h"
+
+#define TEST_TA5112_CHANNELS_1 (1)
+#define TEST_TA5112_CHANNELS_2 (2)
+#define TEST_TA5112_CHANNELS_3 (3)
+#define TEST_TA5112_CHANNELS_4 (4)
+
+#define TEST_TA5112_SAMPLE_FREQ_HZ (48000)
+
+/* Just outside the driver's supported sample-rate range on each side, derived
+ * from the driver limits so they cannot drift out of sync with it.
+ */
+#define TEST_TA5112_FRAME_CLK_HZ_FLOOR_BELOW   (TAC5112_FS_MIN_HZ - 1U)
+#define TEST_TA5112_FRAME_CLK_HZ_CEILING_ABOVE (TAC5112_FS_MAX_HZ + 1U)
+
+#define TEST_TAC5112_REG_CLK_CFG15 (0x07U)
+
+#define TEST_TAC5112_DVOL		(0xAAU)
+#define TEST_TAC5112_DVOL_CEILING_ABOVE (TAC5112_DAC_VOL_HALF_DB_MAX + 10)
+
+#define TEST_TAC5112_DVOL_DB (10) /* +5.0 dB */
+
+#define TEST_AUDIO_PROPERTY_NOT_SUPPORTED (AUDIO_PROPERTY_INPUT_MUTE + 1)
+
+#define TEST_TAC5112_REG_CH_EN_RESET_VAL     (0xCCU)
+#define TEST_TAC5112_REG_INT_MASK0_RESET_VAL (0xFFU)
+#define TEST_TAC5112_REG_CLK_CFG15_RESET_VAL (0x01U)
+
+static struct tac5112_fixture fixture;
+
+struct tac5112_fixture {
+	const struct device *dev;
+};
+
+static struct audio_codec_cfg valid_codec_cfg(void)
+{
+	struct audio_codec_cfg cfg = {0};
+
+	cfg.mclk_freq = 0U;
+	cfg.dai_type = AUDIO_DAI_TYPE_I2S;
+	cfg.dai_route = AUDIO_ROUTE_PLAYBACK_CAPTURE;
+	cfg.dai_cfg.i2s.word_size = AUDIO_PCM_WIDTH_16_BITS;
+	cfg.dai_cfg.i2s.channels = TEST_TA5112_CHANNELS_2;
+	cfg.dai_cfg.i2s.format = I2S_FMT_DATA_FORMAT_I2S;
+	cfg.dai_cfg.i2s.options = I2S_OPT_BIT_CLK_TARGET | I2S_OPT_FRAME_CLK_TARGET;
+	cfg.dai_cfg.i2s.frame_clk_freq = TEST_TA5112_SAMPLE_FREQ_HZ;
+
+	return cfg;
+}
+
+static void configure_dut(const struct device *dev)
+{
+	struct audio_codec_cfg cfg = valid_codec_cfg();
+
+	zassert_ok(audio_codec_configure(dev, &cfg), "baseline configure() failed");
+}
+
+static void *tac5112_suite_setup(void)
+{
+	fixture.dev = DEVICE_DT_GET(DT_ALIAS(tac5112_0));
+	zassert_true(device_is_ready(fixture.dev), "TAC5112 emulated device is not ready");
+
+	return &fixture;
+}
+
+static void tac5112_suite_reset(void *f)
+{
+	ARG_UNUSED(f);
+
+	zassert_equal(tac5112_reg_write(fixture.dev, TAC5112_REG_SW_RESET, 1), 0,
+		      "Failed to reset the TAC5112");
+}
+
+ZTEST_SUITE(tac5112, NULL, tac5112_suite_setup, tac5112_suite_reset, NULL, NULL);
+
+ZTEST_F(tac5112, test_configure_accepts_valid_i2s_target_config)
+{
+	struct audio_codec_cfg cfg = valid_codec_cfg();
+	uint8_t val;
+
+	zassert_ok(audio_codec_configure(fixture->dev, &cfg));
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PASI_CFG0, &val));
+	zassert_equal((val & TAC5112_PASI_FORMAT_MASK) >> TAC5112_PASI_FORMAT_SHIFT,
+		      TAC5112_PASI_FORMAT_I2S, "I2S format not programmed, got 0x%02x", val);
+	zassert_equal((val & TAC5112_PASI_WLEN_MASK) >> TAC5112_PASI_WLEN_SHIFT,
+		      TAC5112_PASI_WLEN_16, "16-bit word length not programmed, got 0x%02x", val);
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CH_EN, &val));
+	zassert_equal(val, TAC5112_CH_EN_IN_CH1_BIT | TAC5112_CH_EN_IN_CH2_BIT |
+				   TAC5112_CH_EN_OUT_CH1_BIT | TAC5112_CH_EN_OUT_CH2_BIT);
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PWR_CFG, &val));
+	zassert_equal(val, TAC5112_PWR_CFG_ADC_PDZ_BIT | TAC5112_PWR_CFG_MICBIAS_PDZ_BIT);
+}
+
+ZTEST_F(tac5112, test_configure_rejects_null_cfg)
+{
+	const struct audio_codec_driver_api *api = DEVICE_API_GET(audio_codec, fixture->dev);
+
+	zassert_equal(audio_codec_configure(fixture->dev, NULL), -EINVAL);
+
+	struct audio_codec_cfg cfg = valid_codec_cfg();
+
+	zassert_equal(api->configure(NULL, &cfg), -EINVAL);
+}
+
+ZTEST_F(tac5112, test_configure_rejects_wrong_channel_count)
+{
+	struct audio_codec_cfg cfg = valid_codec_cfg();
+
+	cfg.dai_cfg.i2s.channels = TEST_TA5112_CHANNELS_1;
+	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
+
+	cfg.dai_cfg.i2s.channels = TEST_TA5112_CHANNELS_4;
+	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
+}
+
+ZTEST_F(tac5112, test_configure_rejects_out_of_range_sample_rate)
+{
+	struct audio_codec_cfg cfg = valid_codec_cfg();
+
+	cfg.dai_cfg.i2s.frame_clk_freq = TEST_TA5112_FRAME_CLK_HZ_FLOOR_BELOW;
+	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
+
+	cfg.dai_cfg.i2s.frame_clk_freq = TEST_TA5112_FRAME_CLK_HZ_CEILING_ABOVE;
+	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
+}
+
+ZTEST_F(tac5112, test_configure_controller_mode_sets_internal_clk_bits)
+{
+	struct audio_codec_cfg cfg = valid_codec_cfg();
+	uint8_t val;
+
+	zassert_ok(audio_codec_configure(fixture->dev, &cfg));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PASI_TX_CFG0, &val));
+	zassert_equal(val & (TAC5112_PASI_TX_USE_INT_BCLK_BIT | TAC5112_PASI_TX_USE_INT_FSYNC_BIT),
+		      0U, "target mode must leave both USE_INT bits clear");
+
+	cfg = valid_codec_cfg();
+	cfg.dai_cfg.i2s.options = 0U;
+	zassert_ok(audio_codec_configure(fixture->dev, &cfg));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PASI_TX_CFG0, &val));
+	zassert_equal(val & (TAC5112_PASI_TX_USE_INT_BCLK_BIT | TAC5112_PASI_TX_USE_INT_FSYNC_BIT),
+		      TAC5112_PASI_TX_USE_INT_BCLK_BIT | TAC5112_PASI_TX_USE_INT_FSYNC_BIT,
+		      "controller mode must set both USE_INT bits");
+
+	cfg = valid_codec_cfg();
+	cfg.dai_cfg.i2s.options = I2S_OPT_FRAME_CLK_TARGET;
+	zassert_ok(audio_codec_configure(fixture->dev, &cfg));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PASI_TX_CFG0, &val));
+	zassert_equal(val & (TAC5112_PASI_TX_USE_INT_BCLK_BIT | TAC5112_PASI_TX_USE_INT_FSYNC_BIT),
+		      TAC5112_PASI_TX_USE_INT_BCLK_BIT, "only BCLK should be internally generated");
+}
+
+ZTEST_F(tac5112, test_configure_rejects_unsupported_word_size)
+{
+	struct audio_codec_cfg cfg = valid_codec_cfg();
+
+	cfg.dai_cfg.i2s.word_size = 0U;
+	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
+}
+
+ZTEST_F(tac5112, test_start_stop_output_toggles_dac_pdz_only)
+{
+	uint8_t before;
+	uint8_t after;
+
+	configure_dut(fixture->dev);
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PWR_CFG, &before));
+	zassert_equal(before & TAC5112_PWR_CFG_DAC_PDZ_BIT, 0, "DAC should start powered down");
+
+	audio_codec_start_output(fixture->dev);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PWR_CFG, &after));
+	zassert_equal(after, before | TAC5112_PWR_CFG_DAC_PDZ_BIT);
+
+	audio_codec_stop_output(fixture->dev);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PWR_CFG, &after));
+	zassert_equal(after, before);
+}
+
+ZTEST_F(tac5112, test_start_stop_direction_bitmap_validation)
+{
+	configure_dut(fixture->dev);
+
+	zassert_ok(audio_codec_start(fixture->dev, AUDIO_DAI_DIR_RX));
+	zassert_ok(audio_codec_stop(fixture->dev, AUDIO_DAI_DIR_TXRX));
+
+	/* 0 and any bit above AUDIO_DAI_DIR_TXRX (0x3) must be rejected. */
+	zassert_equal(audio_codec_start(fixture->dev, 0U), -EINVAL);
+	zassert_equal(audio_codec_start(fixture->dev, 0x04U), -EINVAL);
+	zassert_equal(audio_codec_stop(fixture->dev, 0x80U), -EINVAL);
+}
+
+ZTEST_F(tac5112, test_output_volume_bounds_checking)
+{
+	audio_property_value_t val;
+	uint8_t before;
+	uint8_t after;
+
+	configure_dut(fixture->dev);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &before));
+
+	val.vol = TAC5112_DAC_VOL_HALF_DB_MIN - 1;
+	zassert_equal(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
+					       AUDIO_CHANNEL_FRONT_LEFT, val),
+		      -EINVAL);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &after));
+	zassert_equal(before, after, "rejected volume write must not touch hardware");
+
+	val.vol = TAC5112_DAC_VOL_HALF_DB_MAX + 1;
+	zassert_equal(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
+					       AUDIO_CHANNEL_FRONT_LEFT, val),
+		      -EINVAL);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &after));
+	zassert_equal(before, after, "rejected volume write must not touch hardware");
+
+	/* 0 dB (val.vol == 0) must land exactly on the documented 0 dB code. */
+	val.vol = 0;
+	zassert_ok(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
+					    AUDIO_CHANNEL_FRONT_LEFT, val));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &after));
+	zassert_equal(after, TAC5112_DAC_DVOL_0DB);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1B_CFG0, &after));
+	zassert_equal(after, TAC5112_DAC_DVOL_0DB);
+
+	/* The extreme ends of the range must be accepted. */
+	val.vol = (int)TAC5112_DAC_VOL_HALF_DB_MIN;
+	zassert_ok(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
+					    AUDIO_CHANNEL_FRONT_LEFT, val));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &after));
+	zassert_equal(after, TAC5112_DAC_DVOL_MIN);
+
+	val.vol = (int)TAC5112_DAC_VOL_HALF_DB_MAX;
+	zassert_ok(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
+					    AUDIO_CHANNEL_FRONT_LEFT, val));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &after));
+	zassert_equal(after, TAC5112_DAC_DVOL_MAX);
+}
+
+ZTEST_F(tac5112, test_mute_then_unmute_restores_previous_volume)
+{
+	audio_property_value_t val;
+	uint8_t reg;
+
+	configure_dut(fixture->dev);
+
+	val.vol = TEST_TAC5112_DVOL_DB;
+	zassert_ok(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
+					    AUDIO_CHANNEL_FRONT_RIGHT, val));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH2A_CFG0, &reg));
+	zassert_equal(reg, TAC5112_DAC_DVOL_0DB + TEST_TAC5112_DVOL_DB);
+
+	val.mute = true;
+	zassert_ok(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_MUTE,
+					    AUDIO_CHANNEL_FRONT_RIGHT, val));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH2A_CFG0, &reg));
+	zassert_equal(reg, TAC5112_DVOL_MUTE);
+
+	val.mute = false;
+	zassert_ok(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_MUTE,
+					    AUDIO_CHANNEL_FRONT_RIGHT, val));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH2A_CFG0, &reg));
+	zassert_equal(reg, TAC5112_DAC_DVOL_0DB + TEST_TAC5112_DVOL_DB,
+		      "unmute must restore the cached volume");
+}
+
+ZTEST_F(tac5112, test_input_volume_uses_adc_range)
+{
+	audio_property_value_t val;
+	uint8_t reg;
+
+	configure_dut(fixture->dev);
+
+	val.vol = (int)TAC5112_ADC_VOL_HALF_DB_MAX + 1;
+	zassert_equal(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_INPUT_VOLUME,
+					       AUDIO_CHANNEL_ALL, val),
+		      -EINVAL);
+
+	val.vol = 0;
+	zassert_ok(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_INPUT_VOLUME,
+					    AUDIO_CHANNEL_ALL, val));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_ADC_CH1_CFG2, &reg));
+	zassert_equal(reg, TAC5112_ADC_DVOL_0DB);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_ADC_CH2_CFG2, &reg));
+	zassert_equal(reg, TAC5112_ADC_DVOL_0DB);
+}
+
+ZTEST_F(tac5112, test_set_property_rejects_unsupported_channel_and_property)
+{
+	audio_property_value_t val = {.vol = 0};
+
+	configure_dut(fixture->dev);
+
+	zassert_equal(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
+					       AUDIO_CHANNEL_LFE, val),
+		      -ENOTSUP);
+	zassert_equal(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
+					       (audio_channel_t)(AUDIO_CHANNEL_PRIV_START + 5),
+					       val),
+		      -ENOTSUP);
+	zassert_equal(audio_codec_set_property(fixture->dev, TEST_AUDIO_PROPERTY_NOT_SUPPORTED,
+					       AUDIO_CHANNEL_ALL, val),
+		      -ENOTSUP);
+}
+
+ZTEST_F(tac5112, test_set_property_rejects_null_dev)
+{
+	const struct audio_codec_driver_api *api = DEVICE_API_GET(audio_codec, fixture->dev);
+	audio_property_value_t val = {.vol = 0};
+
+	zassert_equal(api->set_property(NULL, AUDIO_PROPERTY_OUTPUT_VOLUME, AUDIO_CHANNEL_ALL, val),
+		      -EINVAL);
+}
+
+ZTEST_F(tac5112, test_apply_properties_is_a_no_op_success)
+{
+	zassert_ok(audio_codec_apply_properties(fixture->dev));
+}
+
+ZTEST_F(tac5112, test_pll_auto_mode_programs_clk_src_and_clears_custom_bit)
+{
+	struct tac5112_pll_config pll = {
+		.auto_config = true,
+		.fractional_allowed = false,
+		.clk_src = TAC5112_PLL_CLK_SRC_SASI_BCLK,
+	};
+	uint8_t val;
+
+	configure_dut(fixture->dev);
+	zassert_ok(tac5112_configure_pll(fixture->dev, &pll));
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG2, &val));
+	zassert_equal((val & TAC5112_CLK_SRC_SEL_MASK) >> TAC5112_CLK_SRC_SEL_SHIFT,
+		      TAC5112_PLL_CLK_SRC_SASI_BCLK);
+	zassert_equal(val & TAC5112_AUTO_PLL_FR_ALLOW_BIT, 0);
+	zassert_equal(val & TAC5112_PLL_DIS_BIT, 0, "auto mode must leave the PLL enabled");
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG0, &val));
+	zassert_equal(val & TAC5112_CUSTOM_CLK_CFG_BIT, 0);
+}
+
+ZTEST_F(tac5112, test_pll_custom_mode_writes_all_dividers)
+{
+	struct tac5112_pll_config pll = {
+		.auto_config = false,
+		.clk_src = TAC5112_PLL_CLK_SRC_PASI_BCLK,
+		.pdiv = 2U,
+		.jmul = 384U, /* > 255, exercises the JMUL MSB bit */
+		.dmul = 5000U,
+		.ndiv = 3U,
+		.mdiv = 15U,
+		.pdm_div_sel = 2U,
+		.adc_modclk_div_sel = 1U,
+	};
+	uint8_t val;
+
+	configure_dut(fixture->dev);
+	zassert_ok(tac5112_configure_pll(fixture->dev, &pll));
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG0, &val));
+	zassert_equal(val & TAC5112_CUSTOM_CLK_CFG_BIT, TAC5112_CUSTOM_CLK_CFG_BIT);
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG15, &val));
+	zassert_equal(val, 2U);
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG18, &val));
+	zassert_equal(val, (uint8_t)(384U & 0xFFU));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG16, &val));
+	zassert_equal(val & TAC5112_PLL_JMUL_MSB_BIT, TAC5112_PLL_JMUL_MSB_BIT,
+		      "JMUL=384 requires the MSB bit set");
+	zassert_equal(val & TAC5112_PLL_DMUL_MSB_MASK, (5000U >> 8) & TAC5112_PLL_DMUL_MSB_MASK);
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG17, &val));
+	zassert_equal(val, (uint8_t)(5000U & 0xFFU));
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG19, &val));
+	zassert_equal(val, (uint8_t)((3U << TAC5112_NDIV_SHIFT) | (2U << TAC5112_PDM_DIV_SHIFT)));
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG20, &val));
+	zassert_equal(val, (uint8_t)((15U << TAC5112_MDIV_SHIFT) | 1U));
+}
+
+ZTEST_F(tac5112, test_pll_rejects_out_of_range_fields_without_side_effects)
+{
+	struct tac5112_pll_config base = {
+		.auto_config = false,
+		.clk_src = TAC5112_PLL_CLK_SRC_PASI_BCLK,
+		.pdiv = 1U,
+		.jmul = 8U,
+		.dmul = 0U,
+		.ndiv = 1U,
+		.mdiv = 1U,
+	};
+	struct tac5112_pll_config bad;
+	uint8_t before;
+	uint8_t after;
+
+	configure_dut(fixture->dev);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG15, &before));
+
+	bad = base;
+	bad.jmul = 0U; /* below TAC5112_PLL_JMUL_MIN */
+	zassert_equal(tac5112_configure_pll(fixture->dev, &bad), -EINVAL);
+
+	bad = base;
+	bad.jmul = 512U; /* above TAC5112_PLL_JMUL_MAX */
+	zassert_equal(tac5112_configure_pll(fixture->dev, &bad), -EINVAL);
+
+	bad = base;
+	bad.dmul = 10000U; /* above TAC5112_PLL_DMUL_MAX */
+	zassert_equal(tac5112_configure_pll(fixture->dev, &bad), -EINVAL);
+
+	bad = base;
+	bad.ndiv = 8U; /* above TAC5112_PLL_NDIV_MAX (3-bit field) */
+	zassert_equal(tac5112_configure_pll(fixture->dev, &bad), -EINVAL);
+
+	bad = base;
+	bad.mdiv = 64U; /* above TAC5112_PLL_MDIV_MAX (6-bit field) */
+	zassert_equal(tac5112_configure_pll(fixture->dev, &bad), -EINVAL);
+
+	bad = base;
+	bad.pdm_div_sel = 5U; /* above TAC5112_PLL_PDM_DIV_SEL_MAX */
+	zassert_equal(tac5112_configure_pll(fixture->dev, &bad), -EINVAL);
+
+	bad = base;
+	bad.adc_modclk_div_sel = 3U; /* above TAC5112_ADC_MODCLK_DIV_SEL_MAX */
+	zassert_equal(tac5112_configure_pll(fixture->dev, &bad), -EINVAL);
+
+	bad = base;
+	bad.clk_src = (enum tac5112_pll_clk_src)6; /* above TAC5112_CLK_SRC_SEL_MAX */
+	zassert_equal(tac5112_configure_pll(fixture->dev, &bad), -EINVAL);
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG15, &after));
+	zassert_equal(before, after);
+}
+
+ZTEST_F(tac5112, test_pll_rejects_null_pointers)
+{
+	struct tac5112_pll_config pll = {.auto_config = true};
+
+	zassert_equal(tac5112_configure_pll(NULL, &pll), -EINVAL);
+	zassert_equal(tac5112_configure_pll(fixture->dev, NULL), -EINVAL);
+}
+
+ZTEST(tac5112, test_dmul_trim)
+{
+	/* Zero offset leaves the baseline DMUL unchanged. */
+	zassert_equal(tac5112_dmul_trim(8U, 5000U, 0), 5000U);
+
+	/* +100 ppm at JMUL=8: dDMUL = 85000 * 1e5 / 1e9 = 8.5, rounds to 9. */
+	zassert_equal(tac5112_dmul_trim(8U, 5000U, 100000), 5009U);
+	/* Symmetric in the negative direction. */
+	zassert_equal(tac5112_dmul_trim(8U, 5000U, -100000), 4991U);
+
+	/* Corrections beyond the DMUL register span saturate, not wrap. */
+	zassert_equal(tac5112_dmul_trim(8U, 9990U, 1000000), TAC5112_PLL_DMUL_MAX);
+	zassert_equal(tac5112_dmul_trim(8U, 5U, -1000000), 0U);
+
+	zassert_equal(tac5112_dmul_trim(8U, 5000U, 1), 5000U);
+}
+
+ZTEST_F(tac5112, test_trim_pll_runtime)
+{
+	struct tac5112_pll_config pll = {
+		.auto_config = false,
+		.clk_src = TAC5112_PLL_CLK_SRC_PASI_BCLK,
+		.pdiv = 1U,
+		.jmul = 384U, /* > 255, so CLK_CFG16 also carries the JMUL MSB */
+		.dmul = 5000U,
+		.ndiv = 1U,
+		.mdiv = 1U,
+	};
+	struct tac5112_pll_config auto_pll = {
+		.auto_config = true,
+		.clk_src = TAC5112_PLL_CLK_SRC_PASI_BCLK,
+	};
+	uint8_t cfg16_before;
+	uint8_t cfg16_after;
+	uint8_t val;
+	uint16_t expect;
+
+	configure_dut(fixture->dev);
+
+	/* NULL dev is rejected before the custom-mode check. */
+	zassert_equal(tac5112_trim_pll(NULL, 0), -EINVAL);
+
+	/* A custom PLL records the baseline and enables trimming. */
+	zassert_ok(tac5112_configure_pll(fixture->dev, &pll));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG16, &cfg16_before));
+
+	/* Trim up: the DMUL numerator becomes tac5112_dmul_trim(384, 5000, +100000). */
+	expect = tac5112_dmul_trim(384U, 5000U, 100000);
+	zassert_ok(tac5112_trim_pll(fixture->dev, 100000));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG17, &val));
+	zassert_equal(val, (uint8_t)(expect & 0xFFU));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG16, &cfg16_after));
+	zassert_equal(cfg16_after & TAC5112_PLL_DMUL_MSB_MASK,
+		      (expect >> 8) & TAC5112_PLL_DMUL_MSB_MASK);
+	zassert_equal(cfg16_after & TAC5112_PLL_JMUL_MSB_BIT,
+		      cfg16_before & TAC5112_PLL_JMUL_MSB_BIT,
+		      "trim must not disturb the JMUL MSB bit");
+
+	zassert_ok(tac5112_trim_pll(fixture->dev, 0));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG17, &val));
+	zassert_equal(val, (uint8_t)(5000U & 0xFFU));
+
+	zassert_ok(tac5112_configure_pll(fixture->dev, &auto_pll));
+}
+
+ZTEST_F(tac5112, test_clear_errors_and_register_callback)
+{
+	configure_dut(fixture->dev);
+
+	zassert_ok(audio_codec_clear_errors(fixture->dev));
+
+	/* NULL is a legal "unregister" callback value. */
+	zassert_ok(audio_codec_register_error_callback(fixture->dev, NULL));
+}
+
+ZTEST_F(tac5112, test_configure_enables_fault_interrupts)
+{
+	uint8_t val;
+
+	configure_dut(fixture->dev);
+
+	/* INT_CFG programmed to active-low, assert-on-latched-event. */
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_INT_CFG, &val));
+	zassert_equal(val, TAC5112_INT_CFG_FAULT_IRQ, "INT_CFG not set for fault IRQ");
+
+	/* Output short-circuit and virtual-ground faults unmasked (bit clear). */
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_INT_MASK4, &val));
+	zassert_equal(val & (TAC5112_INT_MASK4_OUT_SC_BIT | TAC5112_INT_MASK4_DRVR_VG_BIT), 0,
+		      "OUT SC / virtual-ground fault interrupts must be unmasked");
+
+	/* Clock-error / PLL-lock (INT_MASK0) are intentionally left masked. */
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_INT_MASK0, &val));
+	zassert_equal(val & TAC5112_INT_MASK0_CLK_ERR_BIT, TAC5112_INT_MASK0_CLK_ERR_BIT,
+		      "clock-error interrupt should remain masked for now");
+}
+
+ZTEST_F(tac5112, test_reg_helpers_reject_null_pointers)
+{
+	uint8_t val;
+
+	zassert_equal(tac5112_reg_write(NULL, TAC5112_REG_SW_RESET, 0), -EINVAL);
+	zassert_equal(tac5112_reg_read(NULL, TAC5112_REG_SW_RESET, &val), -EINVAL);
+	zassert_equal(tac5112_reg_read(fixture->dev, TAC5112_REG_SW_RESET, NULL), -EINVAL);
+}
+
+ZTEST_F(tac5112, test_reg_update_preserves_untouched_bits)
+{
+	uint8_t before;
+	uint8_t after;
+
+	configure_dut(fixture->dev);
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG2, &before));
+	zassert_ok(tac5112_reg_update(fixture->dev, TAC5112_REG_CLK_CFG2,
+				      TAC5112_AUTO_PLL_FR_ALLOW_BIT, 0));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG2, &after));
+
+	zassert_equal(after, (uint8_t)(before & (uint8_t)~TAC5112_AUTO_PLL_FR_ALLOW_BIT));
+}
+
+ZTEST_F(tac5112, test_page_select_cache_survives_cross_page_access)
+{
+	uint8_t page0_val;
+	uint8_t page1_val;
+	uint8_t page3_val;
+
+	configure_dut(fixture->dev);
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CH_EN, &page0_val));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_INT_MASK0, &page1_val));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG15, &page3_val));
+	zassert_equal(page0_val, TEST_TAC5112_REG_CH_EN_RESET_VAL, "CH_EN reset default");
+	zassert_equal(page1_val, TEST_TAC5112_REG_INT_MASK0_RESET_VAL, "INT_MASK0 reset default");
+	zassert_equal(page3_val, TEST_TAC5112_REG_CLK_CFG15_RESET_VAL,
+		      "CLK_CFG15 (PDIV) reset default");
+
+	zassert_ok(
+		tac5112_reg_write(fixture->dev, TAC5112_REG_CLK_CFG15, TEST_TAC5112_REG_CLK_CFG15));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CH_EN, &page0_val));
+	zassert_equal(page0_val,
+		      TAC5112_CH_EN_IN_CH1_BIT | TAC5112_CH_EN_IN_CH2_BIT |
+			      TAC5112_CH_EN_OUT_CH1_BIT | TAC5112_CH_EN_OUT_CH2_BIT,
+		      "page 0 register must be unaffected by a page 3 write");
+
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG15, &page3_val));
+	zassert_equal(page3_val, TEST_TAC5112_REG_CLK_CFG15);
+}
+
+ZTEST(tac5112, test_dvol_conversion_dac_range)
+{
+	uint8_t dvol;
+
+	zassert_ok(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_HALF_DB_MIN, &dvol));
+	zassert_equal(dvol, TAC5112_DAC_DVOL_MIN);
+
+	zassert_ok(tac5112_dvol_from_half_db(true, 0, &dvol));
+	zassert_equal(dvol, TAC5112_DAC_DVOL_0DB);
+
+	zassert_ok(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_HALF_DB_MAX, &dvol));
+	zassert_equal(dvol, TAC5112_DAC_DVOL_MAX);
+
+	zassert_equal(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_HALF_DB_MIN - 1, &dvol),
+		      -EINVAL);
+	zassert_equal(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_HALF_DB_MAX + 1, &dvol),
+		      -EINVAL);
+}
+
+ZTEST(tac5112, test_dvol_conversion_adc_range)
+{
+	uint8_t dvol;
+
+	zassert_ok(tac5112_dvol_from_half_db(false, TAC5112_ADC_VOL_HALF_DB_MIN, &dvol));
+	zassert_equal(dvol, TAC5112_ADC_DVOL_MIN);
+
+	zassert_ok(tac5112_dvol_from_half_db(false, TAC5112_ADC_VOL_HALF_DB_MAX, &dvol));
+	zassert_equal(dvol, TAC5112_ADC_DVOL_MAX);
+
+	zassert_equal(tac5112_dvol_from_half_db(false, TAC5112_ADC_VOL_HALF_DB_MAX + 1, &dvol),
+		      -EINVAL);
+}
+
+ZTEST(tac5112, test_dvol_conversion_rejects_null_output)
+{
+	zassert_equal(tac5112_dvol_from_half_db(true, 0, NULL), -EINVAL);
+}
+
+ZTEST(tac5112, test_dvol_conversion_does_not_truncate_before_bounds_check)
+{
+	uint8_t dvol = TEST_TAC5112_DVOL;
+
+	zassert_equal(tac5112_dvol_from_half_db(true, TEST_TAC5112_DVOL_CEILING_ABOVE, &dvol),
+		      -EINVAL);
+	zassert_equal(dvol, TEST_TAC5112_DVOL,
+		      "rejected conversion must not touch "
+		      "the output parameter");
+}
+
+ZTEST(tac5112, test_ch_en_from_masks)
+{
+	/* Stereo record + playback (the default) maps to CH1/CH2 in each nibble. */
+	zassert_equal(tac5112_ch_en_from_masks(0x3U, 0x3U),
+		      TAC5112_CH_EN_IN_CH1_BIT | TAC5112_CH_EN_IN_CH2_BIT |
+			      TAC5112_CH_EN_OUT_CH1_BIT | TAC5112_CH_EN_OUT_CH2_BIT);
+
+	/* Individual channels map to their documented bit positions. */
+	zassert_equal(tac5112_ch_en_from_masks(0x1U, 0x0U), TAC5112_CH_EN_IN_CH1_BIT);
+	zassert_equal(tac5112_ch_en_from_masks(0x8U, 0x0U), TAC5112_CH_EN_IN_CH4_BIT);
+	zassert_equal(tac5112_ch_en_from_masks(0x0U, 0x1U), TAC5112_CH_EN_OUT_CH1_BIT);
+	zassert_equal(tac5112_ch_en_from_masks(0x0U, 0x8U), TAC5112_CH_EN_OUT_CH4_BIT);
+
+	/* All four record and playback channels, and none. */
+	zassert_equal(tac5112_ch_en_from_masks(0xFU, 0xFU), 0xFFU);
+	zassert_equal(tac5112_ch_en_from_masks(0x0U, 0x0U), 0x00U);
+}
+
+ZTEST_F(tac5112, test_set_channels_runtime)
+{
+	struct audio_codec_cfg cfg = valid_codec_cfg();
+	uint8_t val;
+
+	zassert_ok(audio_codec_configure(fixture->dev, &cfg));
+
+	/* Re-select all four record channels and no playback channels. */
+	zassert_ok(tac5112_set_channels(fixture->dev, 0xFU, 0x0U));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CH_EN, &val));
+	zassert_equal(val, TAC5112_CH_EN_IN_CH1_BIT | TAC5112_CH_EN_IN_CH2_BIT |
+				   TAC5112_CH_EN_IN_CH3_BIT | TAC5112_CH_EN_IN_CH4_BIT);
+	/* Inputs enabled -> ADC and MICBIAS powered. */
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PWR_CFG, &val));
+	zassert_equal(val & (TAC5112_PWR_CFG_ADC_PDZ_BIT | TAC5112_PWR_CFG_MICBIAS_PDZ_BIT),
+		      TAC5112_PWR_CFG_ADC_PDZ_BIT | TAC5112_PWR_CFG_MICBIAS_PDZ_BIT);
+
+	/* Switch to playback-only: outputs enabled, record path powered down. */
+	zassert_ok(tac5112_set_channels(fixture->dev, 0x0U, 0x3U));
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CH_EN, &val));
+	zassert_equal(val, TAC5112_CH_EN_OUT_CH1_BIT | TAC5112_CH_EN_OUT_CH2_BIT);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_PWR_CFG, &val));
+	zassert_equal(val & (TAC5112_PWR_CFG_ADC_PDZ_BIT | TAC5112_PWR_CFG_MICBIAS_PDZ_BIT), 0U);
+
+	/* Out-of-range masks are rejected without changing CH_EN. */
+	zassert_equal(tac5112_set_channels(fixture->dev, 0x10U, 0x0U), -EINVAL);
+	zassert_equal(tac5112_set_channels(fixture->dev, 0x0U, 0xFFU), -EINVAL);
+	zassert_equal(tac5112_set_channels(NULL, 0x1U, 0x1U), -EINVAL);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CH_EN, &val));
+	zassert_equal(val, TAC5112_CH_EN_OUT_CH1_BIT | TAC5112_CH_EN_OUT_CH2_BIT,
+		      "rejected set_channels must not change CH_EN");
+}

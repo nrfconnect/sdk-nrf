@@ -1,0 +1,121 @@
+.. _lib_tac5112:
+
+TAC5112 audio codec driver
+##########################
+
+.. contents::
+   :local:
+   :depth: 2
+
+The TAC5112 driver lets you configure and operate the Texas Instruments TAC5112 low-power stereo audio codec.
+The TAC5112 provides a 105 dB dynamic-range stereo ADC and a 114 dB dynamic-range stereo DAC, with a programmable low-jitter PLL, digital volume control, and battery and thermal fault protection.
+See `TAC5112 product page`_ for more information about the device.
+
+The driver controls the codec over I2C and conforms to the :ref:`Zephyr audio codec API <zephyr:audio_codec_api>`.
+Audio sample data is carried separately over the codec's audio serial interface (I2S, left-justified, or TDM).
+
+Supported features
+******************
+
+The driver implements the following members of the Zephyr audio codec API:
+
+* Codec configuration (``audio_codec_configure``): software reset, sleep exit, audio serial interface format (I2S, LJ, or TDM) and word length (16, 20, 24, or 32 bits), and automatic PLL and clock configuration.
+* Output enable and disable (``audio_codec_start_output`` / ``audio_codec_stop_output``) and direction-selectable power control (``audio_codec_start`` / ``audio_codec_stop``).
+* Per-channel output and input digital volume in 0.5 dB steps, and mute (``audio_codec_set_property`` / ``audio_codec_apply_properties``).
+* Fault reporting (``audio_codec_clear_errors`` / ``audio_codec_register_error_callback``): output short-circuit and virtual-ground faults are delivered to a registered callback through the optional codec interrupt line.
+* Record and playback channel selection: the enabled ADC input and DAC output channels are chosen with the ``input-channels`` and ``output-channels`` devicetree properties and can be re-selected at runtime with ``tac5112_set_channels()`` (for example, when switching to a TDM configuration that drives or captures up to four channels).
+* Clock configuration: automatic PLL and clock setup for standard audio rates, explicit PLL and divider programming for ratios outside the auto-detection table, and fine runtime trimming of the PLL sample rate for clock recovery.
+
+In addition, the driver exposes helpers for explicit PLL and clock-divider configuration (``tac5112_configure_pll()``) and fine PLL sample-rate trimming (``tac5112_trim_pll()``); see `Clock configuration and recovery`_.
+
+Configuration
+*************
+
+To enable the driver, set the :kconfig:option:`CONFIG_AUDIO_TAC5112` Kconfig option.
+This option depends on :kconfig:option:`CONFIG_AUDIO` and :kconfig:option:`CONFIG_AUDIO_CODEC`, and selects :kconfig:option:`CONFIG_I2C`.
+
+The following Kconfig options are available:
+
+* :kconfig:option:`CONFIG_AUDIO_TAC5112` - Enables the TAC5112 codec driver.
+* :kconfig:option:`CONFIG_AUDIO_TAC5112_EMUL` - Enables the I2C emulator used to run the driver's tests without hardware. Intended for test builds only.
+
+Devicetree
+==========
+
+The codec node must be a child of an I2C controller node and use the ``ti,tac5112`` compatible (:dtcompatible:`ti,tac5112`).
+Set the ``reg`` property to the 7-bit I2C address selected by the codec ``ADDR`` pin (``0x50`` to ``0x53``).
+
+The following optional properties are supported:
+
+* ``reset-gpios`` - Hardware reset line, driven inactive during initialization to release the codec from reset.
+* ``fault-gpios`` - GPIO connected to the codec interrupt output. When present, the driver services the interrupt from the system workqueue and invokes the callback registered with ``audio_codec_register_error_callback``.
+* ``input-channels`` - Bitmask of ADC record channels enabled at configure time, where bit 0 is channel 1 up to bit 3 for channel 4 (valid range ``0x0`` to ``0xf``). The only supported setting at present is ``0x3`` enables the two stereo channels. When any input channel is enabled the driver also powers the ADC and MICBIAS.
+* ``output-channels`` - Bitmask of DAC playback channels enabled at configure time, with the same encoding and default ``0x3``. The DAC itself is powered on ``audio_codec_start_output()``.
+
+The following snippet shows an example configuration:
+
+.. code-block:: devicetree
+   &i2c1 {
+           status = "okay";
+           tac5112: audio-codec@50 {
+                   compatible = "ti,tac5112";
+                   reg = <0x50>;
+                   reset-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+                   fault-gpios = <&gpio0 19 GPIO_ACTIVE_LOW>;
+                   input-channels = <0x3>;
+                   output-channels = <0x3>;
+           };
+   };
+Clock configuration and recovery
+********************************
+
+By default the driver runs the codec's automatic clock configuration: ``audio_codec_configure()`` observes the incoming BCLK/FSYNC ratio and derives the PLL and clock dividers for the requested sample rate.
+This suits the common setup where the codec is the audio-serial-interface target and the host (for example, the nRF TDM/I2S peripheral) generates BCLK and FSYNC.
+
+.. note::
+   ``audio_codec_configure()`` always reprograms automatic PLL mode.
+   This resets any custom PLL configuration applied earlier with ``tac5112_configure_pll()`` and disables runtime trimming until a new custom PLL is programmed.
+   Apply a custom PLL, or set up clock recovery, after calling ``audio_codec_configure()``.
+
+For clock ratios outside the auto-detection table, ``tac5112_configure_pll()`` programs the raw PLL and divider registers (custom mode), including the fractional multiplier ``JMUL.DMUL``.
+
+Clock recovery
+==============
+
+When the codec is the audio-serial-interface controller, its PLL sets the true audio sample rate for the system.
+An application that has both a target render time and the actual render time for a block of samples can null the accumulating error by steering the codec clock, using ``tac5112_trim_pll()`` as the actuator of a software clock-recovery loop:
+
+* Program a custom-mode PLL with ``tac5112_configure_pll()``.
+  Choose a nominal ``DMUL`` near mid-range so the clock can be trimmed in both directions.
+* Each control period, compute the fractional offset needed to drive the render-time error toward zero (typically with a slow proportional-integral loop, well below the audio bandwidth), and pass it to ``tac5112_trim_pll()`` in parts-per-billion.
+  The correction is applied against the configured baseline every call, so pass the total offset from nominal, not an increment.
+* ``tac5112_trim_pll()`` rewrites only the PLL fractional numerator ``DMUL`` (leaving ``PLL_DIS``, ``PDIV``, ``JMUL`` and the ``N``/``M`` dividers untouched), so the running clock is re-tuned without a re-lock.
+  One ``DMUL`` step is approximately ``100 / JMUL`` ppm, so a larger ``JMUL`` gives finer resolution; dither between adjacent steps for finer average resolution.
+
+To place the codec in controller mode, clear ``I2S_OPT_BIT_CLK_TARGET`` and/or ``I2S_OPT_FRAME_CLK_TARGET`` in the ``audio_codec_configure()`` I2S options.
+The driver then sets the codec to drive the corresponding clock (each is switched independently).
+
+.. note::
+   In controller mode the driver programs the PLL and the audio-serial-interface clock-direction bits, but it does not compute the ``CNT_CLK_CFG`` dividers that set the generated BCLK/FSYNC ratio.
+   Supply a custom PLL configuration that yields the intended rate and verify the generated clocks.
+
+Limitations
+***********
+
+The driver has the following limitations:
+
+* Only I2C control is supported.
+  The codec's SPI control interface is not implemented.
+* Audio-serial-interface controller mode drives BCLK/FSYNC from the PLL but does not program the ``CNT_CLK_CFG`` clock-generation dividers.
+  Controller mode therefore relies on a custom PLL configuration to set the generated rate (see `Clock configuration and recovery`_); target mode, where the host generates BCLK and FSYNC, needs no such setup.
+* The digital volume and mute property API addresses the two stereo channels (left and right).
+  Channel enable (``input-channels`` / ``output-channels`` / ``tac5112_set_channels()``) supports up to four channels for TDM configurations, but the PDM extensions of the wider TAx5x1x family are out of scope.
+* Only the output short-circuit and virtual-ground fault interrupts are enabled.
+  The clock-error interrupt is left masked.
+
+API documentation
+*****************
+
+| Header file: :file:`drivers/audio/tac5112.h`
+| Source file: :file:`drivers/audio/tac5112.c`
+.. _TAC5112 product page: https://www.ti.com/product/TAC5112

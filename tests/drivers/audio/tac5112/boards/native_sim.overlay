@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		tac5112-0 = &tac5112_0;
+	};
+};
+
+&i2c0 {
+	tac5112_0: audio-codec@50 {
+		compatible = "ti,tac5112";
+		reg = <0x50>;
+	};
+};

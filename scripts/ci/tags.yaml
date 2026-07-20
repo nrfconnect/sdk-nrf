@@ -1404,6 +1404,7 @@ ci_tests_drivers_watchdog:
 ci_tests_drivers_audio:
   files:
     - nrf/tests/drivers/audio/pdm_loopback/
+    - nrf/tests/drivers/audio/tac5112/
     - zephyr/drivers/audio/
 
 ci_tests_drivers_fprotect:
