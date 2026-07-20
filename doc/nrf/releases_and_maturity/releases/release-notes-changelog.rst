@@ -273,6 +273,10 @@ nRF Desktop
   * Optional support for dongles with HID SCI, configurable through the :option:`CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE` Kconfig option.
     The :ref:`nrf_desktop_hid_forward` module now uses :c:macro:`APP_EVENT_SUBSCRIBE_FIRST` to subscribe to the :c:struct:`ble_discovery_complete_event` event.
     The module updates event data to ensure all other modules are notified about the SCI support.
+  * HID Shorter Connection Intervals (SCI) support on the peripheral side.
+    The :ref:`nrf_desktop_hids` module enables support for the feature in the underlying HID GATT Service.
+    The :ref:`nrf_desktop_ble_latency` module handles HID SCI mode change requests and the related connection parameter updates.
+    Enable the feature with the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option.
 
 Thingy:53: Matter weather station
 ---------------------------------

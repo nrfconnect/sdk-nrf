@@ -10,6 +10,7 @@
 #include <caf/events/ble_common_event.h>
 #include <caf/events/ble_smp_event.h>
 #include "config_event.h"
+#include "hids_event.h"
 #include <caf/events/power_event.h>
 
 #define MODULE ble_latency
@@ -38,11 +39,17 @@ enum {
 	CONN_LOW_LATENCY_REQUIRED	= BIT(1),
 	CONN_LOW_LATENCY_LOCKED		= BIT(2),
 	CONN_IS_LLPM			= BIT(3),
-	CONN_IS_SECURED			= BIT(4),
+	CONN_IS_SCI			= BIT(4),
+	CONN_IS_SECURED			= BIT(5),
+	CONN_IS_SCI_PARAM_UPDATE_PENDING = BIT(6),
+	CONN_IS_SCI_OUT_OF_SPEC	= BIT(7),
 };
 
 static uint8_t latency_state;
 
+static enum bt_hids_sci_mode_value processed_sci_mode = BT_HIDS_SCI_MODE_NONE;
+static enum bt_hids_sci_mode_value last_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
+static bool last_requested_latency_is_low;
 
 static void security_timeout_fn(struct k_work *w)
 {
@@ -72,6 +79,8 @@ static void set_init_conn_params(void)
 		.timeout = DEFAULT_TIMEOUT
 	};
 
+	last_requested_latency_is_low = true;
+
 	int err = bt_conn_le_param_update(active_conn, &param);
 
 	if (!err || (err == -EALREADY)) {
@@ -81,7 +90,7 @@ static void set_init_conn_params(void)
 	}
 }
 
-static void set_conn_latency(bool low_latency)
+static void set_conn_latency_non_sci(bool low_latency)
 {
 	struct bt_conn_info info;
 
@@ -127,6 +136,91 @@ static void set_conn_latency(bool low_latency)
 	}
 }
 
+static int hid_sci_conn_rate_request(bool low_latency, enum bt_hids_sci_mode_value mode)
+{
+	int err = 0;
+
+	__ASSERT_NO_MSG(active_conn);
+
+	const struct bt_conn_le_conn_rate_param *mode_params =
+		bt_hids_sci_mode_conn_rate_param_get(mode);
+	struct bt_conn_le_conn_rate_param params;
+
+	__ASSERT_NO_MSG(mode_params);
+
+	params = *mode_params;
+
+	if (low_latency) {
+		params.max_latency = 0;
+	}
+
+	err = bt_conn_le_conn_rate_request(active_conn, &params);
+
+	if (!err) {
+		processed_sci_mode = mode;
+	} else {
+		LOG_ERR("HID SCI connection rate request failed (%d)", err);
+	}
+
+	return err;
+}
+
+static void set_conn_latency_sci(bool low_latency)
+{
+	enum bt_hids_sci_mode_value current_mode;
+	int err = bt_hids_sci_mode_get(active_conn, &current_mode);
+
+	if (err) {
+		LOG_ERR("Failed to get current SCI mode (%d)", err);
+		return;
+	}
+
+	if ((latency_state & CONN_LOW_LATENCY_LOCKED) ||
+		(latency_state & CONN_IS_SCI_OUT_OF_SPEC)) {
+		return;
+	}
+
+	if (current_mode == BT_HIDS_SCI_MODE_NONE) {
+		LOG_WRN("Skipping latency update for an SCI connection with parameters "
+			"that do not fit any HID SCI mode");
+		return;
+	}
+
+	if (processed_sci_mode != BT_HIDS_SCI_MODE_NONE) {
+		/* A connection rate update is already in progress */
+		latency_state |= CONN_IS_SCI_PARAM_UPDATE_PENDING;
+		return;
+	}
+
+	err = hid_sci_conn_rate_request(low_latency, current_mode);
+
+	if (!err) {
+		LOG_INF("BLE latency %screased", low_latency ? "de" : "in");
+
+		if (low_latency) {
+			latency_state |= CONN_LOW_LATENCY_ENABLED;
+		} else {
+			latency_state &= ~CONN_LOW_LATENCY_ENABLED;
+		}
+	}
+}
+
+static void set_conn_latency(bool low_latency)
+{
+	if (!active_conn) {
+		return;
+	}
+
+	last_requested_latency_is_low = low_latency;
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
+	    (latency_state & CONN_IS_SCI)) {
+		set_conn_latency_sci(low_latency);
+	} else {
+		set_conn_latency_non_sci(low_latency);
+	}
+}
+
 static void update_llpm_conn_latency_lock(void)
 {
 	if (!IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) ||
@@ -169,10 +263,54 @@ static void low_latency_check_fn(struct k_work *w)
 	}
 }
 
+static bool is_high_latency_supported_for_mode(enum bt_hids_sci_mode_value mode)
+{
+	const struct bt_conn_le_conn_rate_param *mode_params = NULL;
+
+	/* HID SCI mode NONE could only happen if we are in an "out-of-spec" state.
+	 * No latency updates are supported in this state.
+	 */
+	if (mode != BT_HIDS_SCI_MODE_NONE) {
+		mode_params = bt_hids_sci_mode_conn_rate_param_get(mode);
+	}
+
+	return (mode_params && (mode_params->max_latency > 0));
+}
+
+static void latency_updated(bool low_latency)
+{
+	if (low_latency) {
+		latency_state |= CONN_LOW_LATENCY_ENABLED;
+		latency_state &= ~CONN_LOW_LATENCY_REQUIRED;
+		if (!(latency_state & CONN_LOW_LATENCY_LOCKED)
+			&& !(latency_state & CONN_IS_SCI_OUT_OF_SPEC)) {
+			(void)k_work_reschedule(&low_latency_check,
+						LOW_LATENCY_CHECK_PERIOD_MS);
+		} else {
+			(void)k_work_cancel_delayable(&low_latency_check);
+		}
+	} else {
+		latency_state &= ~CONN_LOW_LATENCY_ENABLED;
+		/* Cancel cannot fail if executed from another work's context. */
+		(void)k_work_cancel_delayable(&low_latency_check);
+	}
+}
+
 static void conn_params_updated(const struct ble_peer_conn_params_event *event)
 {
 	if (!event->updated) {
 		/* Ignore the connection parameters update request. */
+		return;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
+	    (latency_state & CONN_IS_SCI)) {
+		LOG_WRN("Unexpected non-SCI connection parameters update while SCI is active");
+
+		latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
+		latency_state |= CONN_IS_SCI_OUT_OF_SPEC;
+		(void)k_work_cancel_delayable(&low_latency_check);
+
 		return;
 	}
 
@@ -184,18 +322,294 @@ static void conn_params_updated(const struct ble_peer_conn_params_event *event)
 		latency_state &= ~CONN_IS_LLPM;
 	}
 
-	if (event->latency == 0) {
-		latency_state |= CONN_LOW_LATENCY_ENABLED;
-		latency_state &= ~CONN_LOW_LATENCY_REQUIRED;
-		k_work_reschedule(&low_latency_check,
-				      LOW_LATENCY_CHECK_PERIOD_MS);
-	} else {
-		latency_state &= ~CONN_LOW_LATENCY_ENABLED;
-		/* Cancel cannot fail if executed from another work's context. */
-		(void)k_work_cancel_delayable(&low_latency_check);
-	}
+	latency_updated(event->latency == 0);
 
 	update_llpm_conn_latency_lock();
+}
+
+static const char *sci_mode_to_string(enum bt_hids_sci_mode_value mode)
+{
+	switch (mode) {
+	case BT_HIDS_SCI_MODE_NONE:
+		return "NONE";
+	case BT_HIDS_SCI_MODE_DEFAULT:
+		return "DEFAULT";
+	case BT_HIDS_SCI_MODE_FAST:
+		return "FAST";
+	case BT_HIDS_SCI_MODE_LOW_POWER:
+		return "LOW_POWER";
+	case BT_HIDS_SCI_MODE_FULL_RANGE:
+		return "FULL_RANGE";
+	default:
+		break;
+	}
+
+	return "UNKNOWN";
+}
+
+static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
+{
+	if (!active_conn) {
+		return;
+	}
+
+	__ASSERT_NO_MSG(mode != BT_HIDS_SCI_MODE_NONE);
+
+	last_requested_sci_mode = mode;
+	/* Once the host issues a HID SCI mode request or uses the connection
+	 * rate API to set the connection parameters, the peripheral switches
+	 * to using the SCI API for this connection.
+	 * After that point, the non-SCI connection parameters API is no longer used.
+	 */
+	latency_state |= CONN_IS_SCI;
+
+	if (processed_sci_mode != BT_HIDS_SCI_MODE_NONE) {
+		/* A connection rate update is already in progress */
+		latency_state |= CONN_IS_SCI_PARAM_UPDATE_PENDING;
+		return;
+	}
+
+	enum bt_hids_sci_mode_value current_mode;
+	int err = bt_hids_sci_mode_get(active_conn, &current_mode);
+
+	if (err) {
+		LOG_ERR("Failed to get current SCI mode (%d)", err);
+		return;
+	}
+
+	if (current_mode != mode) {
+		(void)hid_sci_conn_rate_request(last_requested_latency_is_low, mode);
+	} else if (latency_state & CONN_IS_SCI_OUT_OF_SPEC) {
+		struct bt_conn_info info;
+
+		/* Mode update properly requested after out-of-spec behavior,
+		 * but the requested mode matches the current mode (no connection
+		 * rate update is performed).
+		 */
+		latency_state &= ~CONN_IS_SCI_OUT_OF_SPEC;
+		err = bt_conn_get_info(active_conn, &info);
+
+		if (!err) {
+			latency_updated(info.le.latency == 0);
+		} else {
+			LOG_ERR("Failed to get connection info: %d", err);
+		}
+	} else {
+		/* Do nothing. */
+	}
+}
+
+static enum bt_hids_sci_mode_value
+find_valid_sci_mode(const struct bt_conn_le_conn_rate_changed *params)
+{
+	static const enum bt_hids_sci_mode_value modes_to_try[] = {
+		BT_HIDS_SCI_MODE_FAST,
+		BT_HIDS_SCI_MODE_DEFAULT,
+		BT_HIDS_SCI_MODE_LOW_POWER,
+		BT_HIDS_SCI_MODE_FULL_RANGE,
+	};
+	enum bt_hids_sci_mode_value valid_mode = BT_HIDS_SCI_MODE_NONE;
+
+	LOG_DBG("Attempting to find a valid SCI mode...");
+
+	for (size_t i = 0; i < ARRAY_SIZE(modes_to_try); i++) {
+		if (bt_hids_sci_mode_validate(modes_to_try[i], params)) {
+			valid_mode = modes_to_try[i];
+			LOG_INF("Found valid SCI mode: %s", sci_mode_to_string(valid_mode));
+			break;
+		}
+	}
+
+	if (valid_mode == BT_HIDS_SCI_MODE_NONE) {
+		LOG_WRN("No valid SCI mode found. Defaulting to NONE");
+	}
+
+	return valid_mode;
+}
+
+static enum bt_hids_sci_mode_value
+get_new_sci_mode(const struct bt_conn_le_conn_rate_changed *params,
+		 enum bt_hids_sci_mode_value preferred_sci_mode,
+		 enum bt_hids_sci_mode_value current_sci_mode)
+{
+	bool mode_ok = false;
+	enum bt_hids_sci_mode_value mode = preferred_sci_mode;
+
+	/* In case a connection rate change is received without a prior HID SCI mode change request,
+	 * or if a HID SCI mode change was requested but the new connection rate parameters
+	 * are not valid for the requested mode, this application first checks if the new parameters
+	 * are valid for the current SCI mode.
+	 * If not, it attempts to find a valid SCI mode by cycling through the available SCI modes
+	 * from the most restrictive (FAST) to the least restrictive (FULL_RANGE) mode.
+	 * If no valid SCI mode is found, the application defaults to the NONE mode.
+	 *
+	 * This is an application-specific behavior, not enforced by the specification.
+	 */
+	if (mode != BT_HIDS_SCI_MODE_NONE) {
+		mode_ok = bt_hids_sci_mode_validate(mode, params);
+	}
+
+	if (!mode_ok && (current_sci_mode != BT_HIDS_SCI_MODE_NONE)) {
+		LOG_INF("Validating parameters for the current mode %s",
+			sci_mode_to_string(current_sci_mode));
+
+		mode_ok = bt_hids_sci_mode_validate(current_sci_mode, params);
+
+		if (mode_ok) {
+			LOG_DBG("Parameters are valid for the current mode. "
+				"No action needed.");
+			mode = current_sci_mode;
+		} else {
+			LOG_DBG("Invalid SCI mode parameters for current mode.");
+		}
+	}
+
+	if (!mode_ok) {
+		mode = find_valid_sci_mode(params);
+	}
+
+	return mode;
+}
+
+static void pending_sci_conn_rate_update_handle(bool is_low_latency)
+{
+	bool latency_request_pending = (last_requested_latency_is_low != is_low_latency);
+	enum bt_hids_sci_mode_value current_mode = BT_HIDS_SCI_MODE_NONE;
+	int err = bt_hids_sci_mode_get(active_conn, &current_mode);
+
+	if (err) {
+		LOG_ERR("Failed to get current SCI mode: %d", err);
+		return;
+	}
+
+	bool mode_update_pending = (last_requested_sci_mode != current_mode);
+
+	if (!last_requested_latency_is_low
+	    && !is_high_latency_supported_for_mode(last_requested_sci_mode)) {
+		latency_request_pending = false;
+		last_requested_latency_is_low = true;
+	}
+
+	if ((last_requested_sci_mode != BT_HIDS_SCI_MODE_NONE) &&
+	    (mode_update_pending || latency_request_pending)) {
+		if (mode_update_pending) {
+			LOG_DBG("Pending HID SCI mode update detected");
+		}
+		if (latency_request_pending) {
+			LOG_DBG("Pending latency request detected");
+		}
+		LOG_DBG("Pending mode: %s", sci_mode_to_string(last_requested_sci_mode));
+		LOG_DBG("Pending latency: %s", last_requested_latency_is_low ? "low" : "high");
+
+		(void)hid_sci_conn_rate_request(last_requested_latency_is_low,
+						last_requested_sci_mode);
+	}
+
+	/* Avoid cyclic requests for a pending parameters update if the previous
+	 * request failed or did not take effect.
+	 */
+	latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
+}
+
+static void conn_rate_update_success_handle(const struct ble_peer_sci_conn_rate_event *event)
+{
+	enum bt_hids_sci_mode_value mode;
+	int err = 0;
+	enum bt_hids_sci_mode_value current_sci_mode = BT_HIDS_SCI_MODE_NONE;
+
+	LOG_DBG("Connection rate changed:");
+	LOG_DBG(" interval: %" PRIu32 " us", event->params.interval_us);
+	LOG_DBG(" subrate: %" PRIu16, event->params.subrate_factor);
+	LOG_DBG(" peripheral latency: %" PRIu16, event->params.peripheral_latency);
+	LOG_DBG(" continuation number: %" PRIu16, event->params.continuation_number);
+	LOG_DBG(" supervision timeout: %" PRIu16 " (10ms)",
+		event->params.supervision_timeout_10ms);
+
+	err = bt_hids_sci_mode_get(active_conn, &current_sci_mode);
+	if (err) {
+		LOG_ERR("Failed to get current SCI mode: %d", err);
+		current_sci_mode = BT_HIDS_SCI_MODE_NONE;
+	}
+
+	mode = get_new_sci_mode(&event->params, processed_sci_mode, current_sci_mode);
+
+	if (mode != current_sci_mode) {
+		err = bt_hids_sci_mode_updated(active_conn, mode);
+		if (!err) {
+			LOG_INF("Updated to the SCI mode: %s", sci_mode_to_string(mode));
+		} else {
+			LOG_ERR("Failed to notify about new HID SCI mode: %d", err);
+		}
+	}
+
+	if (is_high_latency_supported_for_mode(mode)) {
+		latency_state &= ~CONN_LOW_LATENCY_LOCKED;
+	} else {
+		latency_state |= CONN_LOW_LATENCY_LOCKED;
+	}
+
+	/* Parameters update initiated directly by the host (not via SCI
+	 * mode API) is out-of-spec behavior.
+	 * We assume that if the host forces the parameters, it expects the peripheral
+	 * to keep them.
+	 * Thus, lock the possibility of autonomously changing connection latency.
+	 * Also, drop any pending parameters update request.
+	 * If these actions are not taken, repeated failed connection rate updates
+	 * could be triggered by the peripheral.
+	 */
+	if (processed_sci_mode == BT_HIDS_SCI_MODE_NONE) {
+		LOG_WRN("Direct SCI connection parameters update from the central");
+		LOG_WRN("(not through HID SCI control point characteristic).");
+		LOG_WRN("This is out-of-spec behavior.");
+		LOG_WRN("No latency update requests will be performed by the peripheral "
+			"until a SCI mode request is received.");
+		latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
+		latency_state |= CONN_IS_SCI_OUT_OF_SPEC;
+		(void)k_work_cancel_delayable(&low_latency_check);
+	} else if (mode == processed_sci_mode) {
+		/* A properly requested SCI mode update has been successfully performed. */
+		latency_state &= ~CONN_IS_SCI_OUT_OF_SPEC;
+	} else {
+		/* Do nothing, remain in the in-spec/out-of-spec state. */
+	}
+}
+
+static void conn_rate_updated(const struct ble_peer_sci_conn_rate_event *event)
+{
+	if (event->id != active_conn) {
+		LOG_WRN("Conn rate updated event for a non-active connection");
+		return;
+	}
+
+	if (!(latency_state & CONN_IS_SCI)) {
+		LOG_WRN("Connection rate API used without a prior SCI mode request");
+		LOG_WRN("Peripheral will start using SCI and attempt to find a valid SCI mode");
+		latency_state |= CONN_IS_SCI;
+	}
+
+	if (event->status == BT_HCI_ERR_SUCCESS) {
+		conn_rate_update_success_handle(event);
+	} else {
+		LOG_WRN("Connection rate change failed (status: 0x%02x)", event->status);
+	}
+
+	processed_sci_mode = BT_HIDS_SCI_MODE_NONE;
+
+	struct bt_conn_info info;
+
+	int err = bt_conn_get_info(active_conn, &info);
+
+	if (!err) {
+		bool is_low_latency = (info.le.latency == 0);
+
+		latency_updated(is_low_latency);
+
+		if (latency_state & CONN_IS_SCI_PARAM_UPDATE_PENDING) {
+			pending_sci_conn_rate_update_handle(is_low_latency);
+		}
+	} else {
+		LOG_ERR("Failed to get connection info: %d", err);
+	}
 }
 
 static void init(void)
@@ -254,6 +668,13 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 			/* Clear BLE latency state. */
 			latency_state = 0;
+			last_requested_latency_is_low = false;
+
+			if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE)) {
+				processed_sci_mode = BT_HIDS_SCI_MODE_NONE;
+				last_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
+			}
+
 			/* Cancel cannot fail if executed from another work's context. */
 			(void)k_work_cancel_delayable(&low_latency_check);
 			(void)k_work_cancel_delayable(&security_timeout);
@@ -293,6 +714,28 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
+	    is_hid_sci_mode_request_event(aeh)) {
+		const struct hid_sci_mode_request_event *event =
+			cast_hid_sci_mode_request_event(aeh);
+
+		if (event->subscriber != active_conn) {
+			LOG_WRN("HID SCI mode request event for a non-active connection");
+			return true;
+		}
+
+		hid_sci_mode_request(event->mode);
+
+		return false;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
+	    is_ble_peer_sci_conn_rate_event(aeh)) {
+		conn_rate_updated(cast_ble_peer_sci_conn_rate_event(aeh));
+
+		return false;
+	}
+
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
 	    IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS) &&
 	    is_power_down_event(aeh)) {
@@ -326,6 +769,10 @@ APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
+#if CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, hid_sci_mode_request_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_sci_conn_rate_event);
+#endif
 #if CONFIG_CAF_BLE_SMP_TRANSFER_EVENTS
 APP_EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
 #endif
