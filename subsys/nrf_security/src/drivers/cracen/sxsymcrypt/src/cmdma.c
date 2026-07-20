@@ -73,6 +73,21 @@ void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs
 	sx_wrreg(REG_START, REG_START_ALL);
 }
 
+#ifdef CONFIG_DCACHE
+void sx_cmdma_invalidate_output(struct sx_dmactl *dma)
+{
+	struct sxdesc *desc =
+		(struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
+
+	for (; desc != DMA_LAST_DESCRIPTOR; desc = desc->next) {
+		if ((desc->sz & DMA_DISCARD) || desc->addr == NULL) {
+			continue;
+		}
+		sys_cache_data_invd_range(desc->addr, desc->sz & DMA_SZ_MASK);
+	}
+}
+#endif
+
 bool cmdma_is_busy(void)
 {
 	return (bool)(sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK);
