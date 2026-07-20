@@ -10,7 +10,7 @@ anytree                         # |     |         |        |         |         |
 azure-storage-blob              # |  X  |         |        |         |         |      |        |
 beautifulsoup4                  # |     |         |        |         |         |      |        |
 doxmlparser                     # |     |         |        |         |         |      |   X    |
-m2r2                            # |     |         |        |         |         |      |        |
+myst-parser>=4,<5               # |     |         |        |         |         |  X   |        |
 natsort                         # |     |         |        |         |         |      |   x    |
 PyYAML                          # |  X  |         |        |         |         |      |   X    |
 pykwalify                       # |     |         |        |         |         |      |   X    |

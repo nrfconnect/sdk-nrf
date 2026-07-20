@@ -33,7 +33,8 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-|no_changes_yet_note|
+* Updated documentation build requirements to replace ``m2r2`` with ``myst-parser``.
+  See the :ref:`gs_recommended_versions` page for the updated tool list.
 
 Board support
 =============

@@ -31,7 +31,7 @@ sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
-    "m2r2",
+    "myst_parser",
     "warnings_filter",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.intersphinx",

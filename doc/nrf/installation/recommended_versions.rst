@@ -260,8 +260,8 @@ They can all be installed using the ``doc/requirements.txt`` file using ``pip``.
      - Version
    * - azure-storage-blob
      - :ncs-tool-version:`AZURE_STORAGE_BLOB_VERSION`
-   * - m2r2
-     - :ncs-tool-version:`M2R2_VERSION`
+   * - myst-parser
+     - :ncs-tool-version:`MYST_PARSER_VERSION`
    * - PyYAML
      - :ncs-tool-version:`PYYAML_VERSION`
    * - pykwalify
