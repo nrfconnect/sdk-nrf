@@ -159,25 +159,6 @@ manifest:
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
       revision: 2deff6bec6560a250c62c2def6531fe6937356d3
-    - name: matter
-      repo-path: sdk-connectedhomeip
-      path: modules/lib/matter
-      revision: 6add52db053a9050f91604acc356b9dfba0ffbce
-      west-commands: scripts/west/west-commands.yml
-      submodules:
-        - name: nlio
-          path: third_party/nlio/repo
-        - name: nlassert
-          path: third_party/nlassert/repo
-        - name: pigweed
-          path: third_party/pigweed/repo
-        - name: jsoncpp
-          path: third_party/jsoncpp/repo
-      userdata:
-        ncs:
-          upstream-url: https://github.com/project-chip/connectedhomeip
-          upstream-sha: 181b0cb14ff007ec912f2ba6627e05dfb066c008
-          compare-by-default: false
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
