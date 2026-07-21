@@ -6,6 +6,22 @@
 
 #include "../../../boards/nrf9251dk_nrf9251_cpuapp.overlay"
 
+&cpuapp_cpuppr_ipc {
+	status = "okay";
+};
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&cpuppr_vpr {
+	status = "okay";
+};
+
 &dut {
 	status = "reserved";
 	interrupt-parent = <&cpuppr_clic>;

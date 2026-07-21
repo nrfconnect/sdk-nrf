@@ -626,22 +626,15 @@ void ppi_seq_uninit(struct ppi_seq *seq)
 		nrfx_timer_uninit(&seq->timer);
 	}
 
-	if (!IS_ENABLED(CONFIG_NRFX_GPPI_V1)) {
-		nrfx_gppi_ep_clear(periodic_evt);
-		nrfx_gppi_ep_clear(seq->config->task);
-	}
+	nrfx_gppi_ep_clear(periodic_evt);
+	nrfx_gppi_ep_clear(seq->config->task);
 
 	ppi_seq_notifier_uninit(seq);
 
 	if (seq->config->skip_gppi == false) {
 		for (uint8_t i = 0; i < seq->ppi_cnt; i++) {
 			nrfx_gppi_conn_disable(seq->ppi_pool[i]);
-			if (IS_ENABLED(CONFIG_NRFX_GPPI_V1) && (i == 0)) {
-				nrfx_gppi_conn_free(periodic_evt, seq->config->task,
-						    seq->ppi_pool[i]);
-			} else {
-				nrfx_gppi_domain_conn_free(seq->ppi_pool[i]);
-			}
+			nrfx_gppi_domain_conn_free(seq->ppi_pool[i]);
 		}
 	}
 	seq->ppi_cnt = 0;
