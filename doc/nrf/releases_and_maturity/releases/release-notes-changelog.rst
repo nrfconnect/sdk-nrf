@@ -666,6 +666,10 @@ Other libraries
 
   * Added support for the nRF54LC10A SoC.
 
+* :ref:`lib_hw_id` library:
+
+  * Added UUID support for the nRF54L Series and the nRF5340 SoC.
+
 Shell libraries
 ---------------
 

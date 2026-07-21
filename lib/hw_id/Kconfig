@@ -22,9 +22,9 @@ config HW_ID_LIBRARY_SOURCE_IMEI
 
 config HW_ID_LIBRARY_SOURCE_UUID
 	bool "UUID"
-	depends on MODEM_JWT
+	depends on (MODEM_JWT || !SOC_SERIES_NRF91)
 	help
-	  This option requires modem firmware v1.3.0 or higher.
+	  On nRF9160, this option requires modem firmware v1.3.0 or higher.
 
 config HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS
 	bool "Bluetooth Device Address"

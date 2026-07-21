@@ -20,7 +20,7 @@ To enable the library, set the :kconfig:option:`CONFIG_HW_ID_LIBRARY` Kconfig op
 You can configure one of the following Kconfig options to choose the hardware ID:
 
 * :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_IMEI` - This option specifies the :term:`International Mobile (Station) Equipment Identity (IMEI)` of the modem.
-* :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_UUID` - This option specifies the UUID of the modem.
+* :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_UUID` - This option specifies the UUID of the modem on nRF91 Series devices and read from FICR otherwise.
 * :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS` - This option specifies the Bluetooth® Device Address.
 * :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_NET_MAC` - This option specifies the MAC address of the default network interface.
 * :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_DEVICE_ID` - This option specifies a serial number provided by Zephyr's HW Info API.
