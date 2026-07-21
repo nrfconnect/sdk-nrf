@@ -135,7 +135,7 @@ int setup_lfclk_accuracy_test(void)
 	}
 
 	tst_timers_control.grtc_compare_event_address =
-		nrf_grtc_event_address_get(grtc_reg, NRF_GRTC_EVENT_COMPARE_0);
+		nrfx_grtc_event_compare_address_get(tst_timers_control.grtc_channel);
 	tst_timers_control.timer_capture_task_address =
 		configure_test_timer(&test_timer, TEST_TIMER_FREQUENCY_HZ);
 
