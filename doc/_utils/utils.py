@@ -15,7 +15,7 @@ from west.manifest import Manifest
 _NRF_BASE = Path(__file__).parents[2]
 """NCS Repository root"""
 
-_MANIFEST = Manifest.from_file(_NRF_BASE / "west.yml")
+MANIFEST = Manifest.from_file(_NRF_BASE / "west.yml")
 """Manifest instance"""
 
 _DOCS_BASEURL = "https://nrfconnectdocs.nordicsemi.com/ncs/{version}/{docset}/"
@@ -40,7 +40,7 @@ OPTIONAL_DOCSETS = {
 
 # append optional docsets if they exist
 for docset, props in OPTIONAL_DOCSETS.items():
-    for p in _MANIFEST.projects:
+    for p in MANIFEST.projects:
         if p.name != props[2] or not (Path(p.topdir) / Path(p.path)).exists():
             continue
 
@@ -61,7 +61,7 @@ def get_projdir(docset: str) -> Path:
     if not name:
         raise ValueError("Given docset has no associated project")
 
-    p = next((p for p in _MANIFEST.projects if p.name == name), None)
+    p = next((p for p in MANIFEST.projects if p.name == name), None)
     assert p, f"Project {name} not in manifest"
 
     return Path(p.topdir) / Path(p.path)
