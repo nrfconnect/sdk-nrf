@@ -331,6 +331,30 @@ tests:
         - "smp_sample: build time"
         - "smp_bt_sample: Advertising successfully started"
 
+  sample.dfu.smp_svr.bt.nrf5340dk.shared_slot:
+    sysbuild: true
+    extra_args:
+      - OVERLAY_CONFIG="overlay-bt.conf"
+      - FILE_SUFFIX=nrf5340_shared_slot
+      - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    harness_config: *bt_harness_config
+
+  sample.dfu.smp_svr.bt.nrf5340dk.shared_slot.swap_move:
+    sysbuild: true
+    extra_args:
+      - OVERLAY_CONFIG="overlay-bt.conf"
+      - FILE_SUFFIX=nrf5340_shared_slot
+      - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    harness_config: *bt_harness_config
+
   sample.dfu.smp_svr.bt.nrf54l15:
     tags: bluetooth
     extra_args: EXTRA_CONF_FILE="overlay-bt.conf"
