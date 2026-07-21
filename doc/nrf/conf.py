@@ -59,6 +59,7 @@ extensions = [
     "sphinxcontrib.programoutput",
     "sphinxcontrib.jquery",
     "samples",
+    "ncs_file",
 ]
 
 linkcheck_ignore = [
