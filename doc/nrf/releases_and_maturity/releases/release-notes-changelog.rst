@@ -523,6 +523,13 @@ Wi-Fi drivers
 
 * Added the :ref:`nRF71 Series Wi-Fi driver <nrf71_wifi_fw_if>` page documenting its firmware interface.
 * Updated the :ref:`wifi_drivers` page by restructuring it into separate nRF70 Series and nRF71 Series sections.
+* Updated the default values of the following Kconfig options to reduce the default RAM footprint of the Wi-Fi drivers for the nRF70 and nRF71 Series:
+
+  * :kconfig:option:`CONFIG_NRF70_RX_NUM_BUFS` (or :kconfig:option:`CONFIG_NRF71_RX_NUM_BUFS`) from ``48`` to ``16``.
+  * :kconfig:option:`CONFIG_NRF70_MAX_TX_AGGREGATION` (or :kconfig:option:`CONFIG_NRF71_MAX_TX_AGGREGATION`) from ``12`` to ``4``.
+  * :kconfig:option:`CONFIG_NRF_WIFI_DATA_HEAP_SIZE` from ``130000`` to ``65536``.
+
+  See :ref:`migration_3.5` for more information.
 
 Flash drivers
 -------------

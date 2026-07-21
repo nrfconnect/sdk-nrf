@@ -93,7 +93,17 @@ Drivers
 
 This section describes the changes related to drivers.
 
-|no_changes_yet_note|
+.. toggle::
+
+   * Wi-Fi drivers for the nRF70 and nRF71 Series:
+
+     * Updated the default values of the following Kconfig options to reduce the default RAM footprint of the Wi-Fi drivers:
+
+       * :kconfig:option:`CONFIG_NRF70_RX_NUM_BUFS` (or :kconfig:option:`CONFIG_NRF71_RX_NUM_BUFS`) from ``48`` to ``16``.
+       * :kconfig:option:`CONFIG_NRF70_MAX_TX_AGGREGATION` (or :kconfig:option:`CONFIG_NRF71_MAX_TX_AGGREGATION`) from ``12`` to ``4``.
+       * :kconfig:option:`CONFIG_NRF_WIFI_DATA_HEAP_SIZE` from ``130000`` to ``65536``.
+
+     * If your application relies on the previous default values, set these Kconfig options to their earlier values.
 
 .. _migration_3.5_recommended:
 
