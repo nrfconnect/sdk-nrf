@@ -3791,6 +3791,15 @@ NCSDK-20967: The :ref:`nrf_rpc_entropy_nrf53` sample does not work on the networ
 
   **Affected platforms:** nRF5340
 
+.. rst-class:: wontfix v3-4-0 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0
+
+NCSDK-34106: DFU malfunction if the application core is activated before network core
+  If you activate the application core image before the network core image when performing a firmware update using MCUmgr, MCUboot skips the network core update.
+
+  **Affected platforms:** nRF5340
+
+  **Workaround:** Maintain the correct order in which the boot flags are applied.
+
 Peripheral samples
 ==================
 
