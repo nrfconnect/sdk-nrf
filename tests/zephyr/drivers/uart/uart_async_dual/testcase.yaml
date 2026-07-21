@@ -9,7 +9,6 @@ common:
     fixture: uart_loopback
   platform_allow:
     - nrf9251dk/nrf9251/cpuapp
-    - nrf9251dk/nrf9251/cpuppr
 tests:
   nrf.extended.drivers.uart.async_dual: {}
   nrf.extended.drivers.uart.async_dual.busy_sim:
@@ -29,6 +28,77 @@ tests:
       - CONFIG_PM_RUNTIME_IN_TEST=y
   nrf.extended.drivers.uart.async_dual.no_tx_chopped:
     extra_configs:
+      - CONFIG_TEST_CHOPPED_TX=n
+      - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER=n
+      - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER_LEGACY=n
+      - CONFIG_UART_1_NRF_HW_ASYNC=n
+  nrf.extended.drivers.uart.async_dual.ppr.9251:
+    sysbuild: true
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuppr
+    extra_configs:
+      - CONFIG_IPC_SERVICE=y
+      - CONFIG_MBOX=y
+      - CONFIG_GPPI_EXT_ALLOCATOR_CLI=y
+  nrf.extended.drivers.uart.async_dual.busy_sim.ppr.9251:
+    sysbuild: true
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuppr
+    extra_configs:
+      - CONFIG_IPC_SERVICE=y
+      - CONFIG_MBOX=y
+      - CONFIG_GPPI_EXT_ALLOCATOR_CLI=y
+      - CONFIG_TEST_BUSY_SIM=y
+  nrf.extended.drivers.uart.async_dual.pm_runtime.ppr.9251:
+    sysbuild: true
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuppr
+    extra_configs:
+      - CONFIG_IPC_SERVICE=y
+      - CONFIG_MBOX=y
+      - CONFIG_GPPI_EXT_ALLOCATOR_CLI=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
+      - CONFIG_PM_DEVICE=y
+  nrf.extended.drivers.uart.async_dual.pm_runtime.busy_sim.ppr.9251:
+    sysbuild: true
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuppr
+    extra_configs:
+      - CONFIG_IPC_SERVICE=y
+      - CONFIG_MBOX=y
+      - CONFIG_GPPI_EXT_ALLOCATOR_CLI=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_TEST_BUSY_SIM=y
+  nrf.extended.drivers.uart.async_dual.pm_runtime.explicit.ppr.9251:
+    sysbuild: true
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuppr
+    extra_configs:
+      - CONFIG_IPC_SERVICE=y
+      - CONFIG_MBOX=y
+      - CONFIG_GPPI_EXT_ALLOCATOR_CLI=y
+      - CONFIG_PM_RUNTIME_IN_TEST=y
+  nrf.extended.drivers.uart.async_dual.no_tx_chopped.ppr.9251:
+    sysbuild: true
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuppr
+    extra_configs:
+      - CONFIG_IPC_SERVICE=y
+      - CONFIG_MBOX=y
+      - CONFIG_GPPI_EXT_ALLOCATOR_CLI=y
       - CONFIG_TEST_CHOPPED_TX=n
       - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER=n
       - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER_LEGACY=n
