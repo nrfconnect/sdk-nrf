@@ -648,7 +648,7 @@ NCSDK-20092: ESB does not send packet longer than 63 bytes
 Matter
 ======
 
-The issues in this section are related to the :ref:`ug_matter` protocol.
+The issues in this section are related to the ``ug_matter`` protocol.
 
 .. rst-class:: v3-1-1 v3-1-0
 
@@ -679,7 +679,7 @@ KRKNWK-20979: The Matter NUS service does not function correctly after the devic
 
 .. rst-class:: v3-1-1 v3-0-2 v3-0-1 v3-0-0
 
-KRKNWK-20948: The Matter west :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool_generate` might not work properly on Windows
+KRKNWK-20948: The Matter west ``ug_matter_gs_tools_matter_west_commands_zap_tool_generate`` might not work properly on Windows
   The matter west ``zap-generate`` command might return several errors when using it on Windows with the ``--full`` option.
   You might encounter the following errors:
 
@@ -715,7 +715,7 @@ KRKNWK-20774: Fatal error on the nRF54LM20 SoC after enabling the :kconfig:optio
 .. rst-class:: v3-1-0 v3-0-2 v3-0-1 v3-0-0
 
 KRKNWK-20815: The NordicDevKit cluster does not work with the 0.1.0 version of the `Matter Cluster Editor app`_
-  The ``NordicDevKit`` cluster from the :ref:`matter_manufacturer_specific_sample` is not supported in the version 0.1.0 of the `Matter Cluster Editor app`_.
+  The ``NordicDevKit`` cluster from the ``matter_manufacturer_specific_sample`` is not supported in the version 0.1.0 of the `Matter Cluster Editor app`_.
   When the cluster XML file is loaded in the tool, saving the file might result in some fields not being saved correctly, causing them to become unavailable.
 
   **Workaround:** Upgrade to the latest version of the `Matter Cluster Editor app`_.
@@ -730,14 +730,14 @@ KRKNWK-20445: PSA crypto implementation does not properly revert NOC keys when f
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``fe650a3ee4948ef1a2edd55a7fe4f6eb561c9e64``).
                   This fix can be applied only to the |NCS| release v3.1.0.
-                  The workaround cannot be applied if the experimental :kconfig:option:`CONFIG_CHIP_STORE_KEYS_IN_KMU` Kconfig option is set to ``y``.
+                  The workaround cannot be applied if the experimental ``CONFIG_CHIP_STORE_KEYS_IN_KMU`` Kconfig option is set to ``y``.
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
 KRKNWK-19277: Invalid testing steps in the Light Switch README file
-  The testing steps for groupcast binding are invalid in the :ref:`matter_light_switch_sample` sample documentation.
+  The testing steps for groupcast binding are invalid in the ``matter_light_switch_sample`` sample documentation.
 
-  **Workaround:** For groupcast binding, refer to the :ref:`ug_matter_group_communication` user guide instead of the sample documentation.
+  **Workaround:** For groupcast binding, refer to the ``ug_matter_group_communication`` user guide instead of the sample documentation.
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
@@ -758,7 +758,7 @@ KRKNWK-20562: The memory layout for the nRF54L10 target is invalid
 
 .. rst-class:: v3-0-1 v3-0-0
 
-KRKNWK-20308: The :file`MyCluster.xml` file example in the :ref:`ug_matter_creating_custom_cluster` user guide does not contain the ``ExtendedCommandResponse`` command
+KRKNWK-20308: The :file`MyCluster.xml` file example in the ``ug_matter_creating_custom_cluster`` user guide does not contain the ``ExtendedCommandResponse`` command
   You cannot use the file properly without this command.
 
   **Workaround:** Manually add the following entry to the local copy of the ``MyCluster.xml`` file inside the ``<clusterExtension code="0x0028">`` element:
@@ -787,7 +787,7 @@ KRKNWK-20035: Door Lock Attributes do not persist after reboot or reset
 .. rst-class:: v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0
 
 KRKNWK-19915: Certification test case TC-DGGEN-2.1 fails on test step 10d when Total Operational Hours feature is enabled
-  Total operational hours are saved to NVM with interval defined by :kconfig:option:`CONFIG_CHIP_OPERATIONAL_TIME_SAVE_INTERVAL` Kconfig option.
+  Total operational hours are saved to NVM with interval defined by ``CONFIG_CHIP_OPERATIONAL_TIME_SAVE_INTERVAL`` Kconfig option.
   The test case requires checking the value after one hour, restarting the DUT, and verifying if the value has not changed, causing failures if given option is greater than 1.
 
   **Workaround:** There are two alternative solutions to fix this issue:
@@ -827,7 +827,7 @@ NCSDK-28567: Swap time after DFU takes a very long time
 
 .. rst-class:: v2-9-0
 
-KRKNWK-19846: Wrong command for the internal configuration build in the :ref:`matter_template_sample` sample documentation
+KRKNWK-19846: Wrong command for the internal configuration build in the ``matter_template_sample`` sample documentation
   There is an obsolete and wrong command for building the sample for the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only.
 
   **Affected platforms:** nRF54L15
@@ -844,10 +844,10 @@ KRKNWK-19826: The Device Firmware Upgrade (DFU) fails for nRF5340 DK with RAM po
   The DFU fails for nRF5340 DK, if the application enables the :kconfig:option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option.
   This option is enabled by default for the ``release`` configuration of the following samples:
 
-    * :ref:`matter_lock_sample`
-    * :ref:`matter_light_switch_sample`
-    * :ref:`matter_smoke_co_alarm_sample`
-    * :ref:`matter_window_covering_sample`
+    * ``matter_lock_sample``
+    * ``matter_light_switch_sample``
+    * ``matter_smoke_co_alarm_sample``
+    * ``matter_window_covering_sample``
 
   **Workaround:** Set the :kconfig:option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option to ``n`` in the :file:`prj_release.conf` file of the application.
 
@@ -886,8 +886,8 @@ NCSDK-29228: DFU over Bluetooth LE SMP can lead to an application crash
 
 .. rst-class:: v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
 
-KRKNWK-19300: The Matter weather station application has NVS size inconsistent with the settings partition size
-  The settings partition size for Matter weather station is configured to the value of 64 kB.
+KRKNWK-19300: The `Matter Weather Station`_ application has NVS size inconsistent with the settings partition size
+  The settings partition size for `Matter Weather Station`_ is configured to the value of 64 kB.
   However, the application cannot use all 64 kB of the settings space, because it depends on the NVS size that is limited by the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option to 32 kB.
 
   **Affected platforms:** Thingy53
@@ -902,12 +902,12 @@ KRKNWK-19300: The Matter weather station application has NVS size inconsistent w
 .. rst-class:: v2-7-0
 
 KRKNWK-19199: Matter Lock and Matter Template samples cannot be built in the release configuration for the nRF54H20 platform
-  In the DTS overlay file for the ``nrf54h20dk/nrf54h20/cpuapp`` target, the watchdog configuration is missing, whereas in the release configuration, the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` Kconfig option is set to ``y``.
+  In the DTS overlay file for the ``nrf54h20dk/nrf54h20/cpuapp`` target, the watchdog configuration is missing, whereas in the release configuration, the ``CONFIG_NCS_SAMPLE_MATTER_WATCHDOG`` Kconfig option is set to ``y``.
   Building samples with :makevar:`FILE_SUFFIX` variable set to ``release`` will fail for the ``nrf54h20dk/nrf54h20/cpuapp`` target.
 
   **Affected platforms:** nRF54H20
 
-  **Workaround:** While building the Matter Lock or Matter Template sample with the :makevar:`FILE_SUFFIX` variable set to ``release``, set the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` Kconfig option to ``n``.
+  **Workaround:** While building the Matter Lock or Matter Template sample with the :makevar:`FILE_SUFFIX` variable set to ``release``, set the ``CONFIG_NCS_SAMPLE_MATTER_WATCHDOG`` Kconfig option to ``n``.
 
 .. rst-class:: v2-7-0
 
@@ -938,7 +938,7 @@ KRKNWK-18966: Malformed messages might cause crash of device
 
 .. rst-class:: v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
-KRKNWK-18916: Issues related to the  :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START` Kconfig option
+KRKNWK-18916: Issues related to the  ``CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START`` Kconfig option
   When the Kconfig option is selected, there are two issues:
 
   * An assert might occur after removing the last fabric because the OpenThread interface is still active despite the Thread stack being disabled.
@@ -975,7 +975,7 @@ KRKNWK-18673: Bridged Light Bulb device type reports a failure when reading or w
 
 .. rst-class:: v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0
 
-KRKNWK-18769: :ref:`matter_bridge_app` application does not print the hyperlink for displaying the setup QR code in the log
+KRKNWK-18769: ``matter_bridge_app`` application does not print the hyperlink for displaying the setup QR code in the log
   This happens because the log module that displays this log entry has been disabled.
 
   **Workaround:** Remove the following line from the :file:`src/chip_project_config.h` header file:
@@ -1000,7 +1000,7 @@ KRKNWK-18316: When the :kconfig:option:`CONFIG_PRINTK_SYNC` Kconfig option is en
 .. rst-class:: v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
 
 KRKNWK-18495: The Color Control server's ``RemainingTime`` attribute change might be reported every 100 ms, even though the color temperature value handled by the Color Control server is not modified
-  This can result in the Thread network being spammed with unnecessary network traffic when controlling the brightness or color of the :ref:`matter_light_bulb_sample` sample.
+  This can result in the Thread network being spammed with unnecessary network traffic when controlling the brightness or color of the ``matter_light_bulb_sample`` sample.
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``3da44025b18d17adacf0a4abf0456c5735399dbd``).
 
@@ -1017,7 +1017,7 @@ KRKNWK-18371: The GlobalSceneControl attribute from the OnOff cluster does not c
 KRKNWK-18315: SPAKE2+ Verifier is not regenerated when using non-default passcode
   When building factory data with a non-default passcode, the SPAKE2+ Verifier is not generated based on the selected passcode value, but uses the default passcode value (``20202021``).
 
-  **Workaround:** Enable the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_GENERATE_SPAKE2_VERIFIER` Kconfig option to generate the SPAKE2+ Verifier based on the provided passcode.
+  **Workaround:** Enable the ``CONFIG_CHIP_FACTORY_DATA_GENERATE_SPAKE2_VERIFIER`` Kconfig option to generate the SPAKE2+ Verifier based on the provided passcode.
 
 .. rst-class:: v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0
 
@@ -1059,8 +1059,8 @@ KRKNWK-17864: When using Wi-Fi low power mode, the communication with the device
 
 .. rst-class:: v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
-KRKNWK-17925: The nRF Toolbox application for iOS devices cannot control :ref:`matter_lock_sample` using NUS
-  The nRF Toolbox application sends one additional character in all NUS commands, so they are not correctly parsed by the :ref:`matter_lock_sample`.
+KRKNWK-17925: The nRF Toolbox application for iOS devices cannot control ``matter_lock_sample`` using NUS
+  The nRF Toolbox application sends one additional character in all NUS commands, so they are not correctly parsed by the ``matter_lock_sample``.
   The issue was observed only on the nRF Toolbox 5.0.9 version of the iOS system.
 
   **Workaround:** Use nRF Toolbox for iOS versions other than 5.0.9 or any version of nRF Toolbox for Android.
@@ -1202,7 +1202,7 @@ KRKNWK-16728: Sleepy device might consume much power when commissioned to a comm
 .. rst-class:: v2-3-0 v2-2-0
 
 KRKNWK-16575: Applications with factory data support do not boot up properly on nRF5340
-  When the Matter sample is built for ``nrf5340dk_nrf5340_cpuapp`` board target with the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option set to ``y``, the application returns prematurely the error code ``200016`` because the factory data partition is not aligned with the ``CONFIG_FPROTECT_BLOCK_SIZE`` Kconfig option.
+  When the Matter sample is built for ``nrf5340dk_nrf5340_cpuapp`` board target with the ``CONFIG_CHIP_FACTORY_DATA`` Kconfig option set to ``y``, the application returns prematurely the error code ``200016`` because the factory data partition is not aligned with the ``CONFIG_FPROTECT_BLOCK_SIZE`` Kconfig option.
 
   **Affected platforms:** nRF5340
 
@@ -1223,7 +1223,7 @@ KRKNWK-15846: Android CHIP Tool crashes when subscribing in the :guilabel:`LIGHT
   This affects the Android CHIP Tool revision used for the |NCS| v2.2.0, v2.1.1, and v2.1.2 releases.
 
   .. note::
-      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in :ref:`ug_matter_gs_testing`.
+      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in ``ug_matter_gs_testing``.
 
 .. rst-class:: v2-2-0 v2-1-2 v2-1-1
 
@@ -1249,7 +1249,7 @@ KRKNWK-15749: Invalid ZAP Tool revision used
 .. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
 
 KRKNWK-14473: Unreliable communication with the window covering sample
-  The :ref:`window covering sample <matter_window_covering_sample>` might rarely become unresponsive for a couple of seconds after commissioning to the Matter network.
+  The ``matter_window_covering_sample`` might rarely become unresponsive for a couple of seconds after commissioning to the Matter network.
 
   **Workaround:** Switch from SSED to SED role.
 
@@ -1261,7 +1261,7 @@ KRKNWK-15088: Android CHIP Tool shuts down on changing the sensor type
   **Workaround:** Restart the application and select the desired sensor type again.
 
   .. note::
-      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in :ref:`ug_matter_gs_testing`.
+      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in ``ug_matter_gs_testing``.
 
 .. rst-class:: v2-0-2
 
@@ -1294,7 +1294,7 @@ KRKNWK-11225: CHIP Tool for Android cannot communicate with a Matter device afte
   **Workaround:** Do not reboot the device after commissioning it with CHIP Tool for Android.
 
   .. note::
-      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in :ref:`ug_matter_gs_testing`.
+      The support for the Android CHIP Tool is removed as of the |NCS| v2.3.0 for Matter in the |NCS|. Use CHIP Tool for Linux or macOS instead, as described in ``ug_matter_gs_testing``.
 
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
@@ -2281,7 +2281,7 @@ NCSDK-24135: Serial LTE modem (SLM) attempts to use UART hardware flow control e
   **Affected platforms:** Thingy:91
 
   **Workaround:** Set the ``CONFIG_SLM_UART_RX_BUF_SIZE`` Kconfig option to ``2048`` to ensure that there is adequate buffer space to receive traffic from the Connectivity bridge and disable the ``hw-flow-control`` from :file:`boards\thingy91_nrf9160_ns.overlay`.
-  If even larger buffer spaces are required, set the :kconfig:option:`CONFIG_BRIDGE_BUF_SIZE` Kconfig option for Connectivity bridge and the ``CONFIG_SLM_UART_RX_BUF_SIZE`` Kconfig option for SLM, must be set accordingly.
+  If even larger buffer spaces are required, set the ``CONFIG_BRIDGE_BUF_SIZE`` Kconfig option for Connectivity bridge and the ``CONFIG_SLM_UART_RX_BUF_SIZE`` Kconfig option for SLM, must be set accordingly.
 
 .. rst-class:: v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
@@ -3055,18 +3055,18 @@ NCSDK-16644: nRF Machine Learning does not go to sleep and does not wake up on T
 Thingy:53: weather station
 ==========================
 
-The issues in this section are related to the :ref:`matter_weather_station_app` application.
+The issues in this section are related to the ``matter_weather_station_app`` application.
 
 .. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
 
-KRKNWK-22015: Matter Weather Station application does not support the Q quality on the ``BatPercentRemaining`` and ``BatTimeRemaining`` attributes
+KRKNWK-22015: `Matter Weather Station`_ application does not support the Q quality on the ``BatPercentRemaining`` and ``BatTimeRemaining`` attributes
   This causes the values to be reported too frequently.
 
   **Workaround:** Cherry-pick the commit ``7d8cf7d0c72aead891d38dc8089a08f6671e3b20`` from the `sdk-nrf`_ repository.
 
 .. rst-class:: v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
 
-KRKNWK-21190: Identify trigger effect enabled in weather station application's endpoints
+KRKNWK-21190: Identify trigger effect enabled in `Matter Weather Station`_ application's endpoints
   The weather station application incorrectly enables the ``Trigger Effect`` command (command ID 64) in the Identify cluster on endpoints 1, 2, and 3, although the device library description indicates that these device types should not support this command.
 
   **Affected platforms:** Thingy:53
@@ -3609,24 +3609,24 @@ NCSDK-11033: Dial-up usage not working
 Matter samples
 ==============
 
-The issues in this section are related to :ref:`matter_samples`.
+The issues in this section are related to ``matter_samples``.
 
 .. rst-class:: v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0
 
-KRKNWK-21213: :ref:`matter_bridge_app` over Thread does not work properly with commercial Matter ecosystem controllers
+KRKNWK-21213: ``matter_bridge_app`` over Thread does not work properly with commercial Matter ecosystem controllers
   While adding a dynamic endpoint to the Matter Bridge over Thread application, it does not appear in commercial Matter ecosystem applications.
   This issue occurs because the Matter stack thread is not locked during the addition or removal of a dynamic endpoint.
-  As a result, a race condition can happen when the :kconfig:option:`CONFIG_CHIP_USE_ZEPHYR_NETWORKING` Kconfig option is set to ``n``.
+  As a result, a race condition can happen when the ``CONFIG_CHIP_USE_ZEPHYR_NETWORKING`` Kconfig option is set to ``n``.
 
   **Workaround:** Do one of the following:
 
-  * Set the :kconfig:option:`CONFIG_CHIP_USE_ZEPHYR_NETWORKING` and :kconfig:option:`CONFIG_NET_L2_OPENTHREAD` Kconfig options to ``y``.
+  * Set the ``CONFIG_CHIP_USE_ZEPHYR_NETWORKING`` and :kconfig:option:`CONFIG_NET_L2_OPENTHREAD` Kconfig options to ``y``.
   * Manually cherry-pick and apply the following commit to ``sdk-nrf`` (commit hash: ``7db48dc8c42a12aeb3913034b27f7ef59a9656d7``).
 
 .. rst-class:: v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
 
-KRKNWK-21238: Certification test cases fail on the :ref:`matter_closure_sample` sample
-  The certification test cases ``TC-CLCTRL-4.3``, ``TC-CLCTRL-2.1``, ``TC-CLCTRL-4.1``, ``TC-CLCTRL-4.4`` and ``TC-CLCTRL-5.1`` fail on the :ref:`matter_closure_sample` sample.
+KRKNWK-21238: Certification test cases fail on the ``matter_closure_sample`` sample
+  The certification test cases ``TC-CLCTRL-4.3``, ``TC-CLCTRL-2.1``, ``TC-CLCTRL-4.1``, ``TC-CLCTRL-4.4`` and ``TC-CLCTRL-5.1`` fail on the ``matter_closure_sample`` sample.
   There are multiple reasons for the failures:
 
   * Speed feature configuration was broken in the closure manager and falls into the null pointer dereference.
@@ -3640,11 +3640,11 @@ KRKNWK-21238: Certification test cases fail on the :ref:`matter_closure_sample` 
 
 .. rst-class:: v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
-KRKNWK-21228: The ``Jammed lock state`` event trigger does not work with the :ref:`matter_lock_sample` sample
+KRKNWK-21228: The ``Jammed lock state`` event trigger does not work with the ``matter_lock_sample`` sample
   The ``Jammed lock state`` event trigger ID is not correctly set in the sample.
 
-  **Workaround:** Set the ``Jammed lock state`` event trigger ID to ``0xFFFF'FFF3'2774'0000`` in the :ref:`matter_lock_sample` in the :file:`app_task.h` file.
-  Then use the new event trigger ID while executing the operations described in the :ref:`matter_test_event_triggers_usage` section of the :ref:`ug_matter_test_event_triggers` user guide.
+  **Workaround:** Set the ``Jammed lock state`` event trigger ID to ``0xFFFF'FFF3'2774'0000`` in the ``matter_lock_sample`` in the :file:`app_task.h` file.
+  Then use the new event trigger ID while executing the operations described in the ``matter_test_event_triggers_usage`` section of the ``ug_matter_test_event_triggers`` user guide.
 
   For example, replace the following line in the :file:`app_task.h` file:
 
@@ -3660,8 +3660,8 @@ KRKNWK-21228: The ``Jammed lock state`` event trigger does not work with the :re
 
 .. rst-class:: v3-1-1 v3-1-0
 
-KRKNWK-20915: The :ref:`matter_lock_sample` sample does not work with the nRF54L Series and Nordic UART Service (NUS)
-  Using the Nordic UART Service (NUS) with the :ref:`matter_lock_sample` sample on the nRF54L Series devices results in a crash.
+KRKNWK-20915: The ``matter_lock_sample`` sample does not work with the nRF54L Series and Nordic UART Service (NUS)
+  Using the Nordic UART Service (NUS) with the ``matter_lock_sample`` sample on the nRF54L Series devices results in a crash.
   The root cause is that the NUS requires increased BT RX stack size for the nRF54L Series devices.
 
   **Affected platforms:** nRF54L15, nRF54L10, nRF54LM20
@@ -3670,7 +3670,7 @@ KRKNWK-20915: The :ref:`matter_lock_sample` sample does not work with the nRF54L
 
 .. rst-class:: v3-1-1 v3-1-0
 
-KRKNWK-20691: The :ref:`matter_lock_sample` sample does not update LED state on auto-relock
+KRKNWK-20691: The ``matter_lock_sample`` sample does not update LED state on auto-relock
   The sample does not update the LED state to on after auto-relock timeout.
   The attribute value after auto-relock timeout is correct (locked), but the sample does not handle this change correctly, so the state of LED visualizing the lock state is wrong.
 
@@ -3685,8 +3685,8 @@ KRKNWK-19806: RPU recovery fails on the nRF5340 DK with nRF7002 EK shield
 
 .. rst-class:: v2-9-0-nRF54H20-1 v2-9-0
 
-KRKNWK-19861: ICD DSLS does not work with the :ref:`matter_smoke_co_alarm_sample` sample
-  According to the sample's documentation the ICD DSLS can be enabled by setting the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option to ``y``.
+KRKNWK-19861: ICD DSLS does not work with the ``matter_smoke_co_alarm_sample`` sample
+  According to the sample's documentation the ICD DSLS can be enabled by setting the ``CONFIG_CHIP_ICD_DSLS_SUPPORT`` Kconfig option to ``y``.
   Additionally, the ICD Management cluster's feature map has to be set to ``0xf`` in the sample's ``.zap`` file.
   This piece of information is missing from the documentation.
   It will be added in the next version.
@@ -5537,7 +5537,7 @@ KRKNWK-18545: The device might enter a livelock state if AES encryption is done 
 
 .. rst-class:: v2-4-0
 
-KRKNWK-16976: multiprotocol_rpmsg application on nRF5340 network core occasionally crashes when Matter weather station application is stress tested
+KRKNWK-16976: multiprotocol_rpmsg application on nRF5340 network core occasionally crashes when `Matter Weather Station`_ application is stress tested
   The root cause of this issue is not known.
   When nRF5340 network core crashes it can hang or silently reset (see :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR`).
   The |NCS| does not provide a feature to allow the nRF5340 application core to detect a reset or failure of the nRF5340 network core and react properly (possibly resetting whole nRF5340 SoC).

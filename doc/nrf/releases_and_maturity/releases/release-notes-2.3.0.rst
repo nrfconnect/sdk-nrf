@@ -45,7 +45,7 @@ Sign up for the `nRF Connect SDK v2.3.0 webinar`_ to learn more about the new fe
 
 * Improved:
 
-  * The :ref:`matter_lock_sample` sample has been extended to support switching between Matter over Thread and Matter over Wi-Fi during application operation.
+  * The ``matter_lock_sample`` sample has been extended to support switching between Matter over Thread and Matter over Wi-Fi during application operation.
   * The :ref:`wifi_shell_sample` sample by adding the Power Save feature.
 
 See :ref:`ncs_release_notes_230_changelog` for the complete list of changes.
@@ -189,33 +189,33 @@ Matter
 * Added:
 
   * Support for switching between Matter over Thread and Matter over Wi-Fi.
-    This feature is available for the :ref:`matter_lock_sample` sample programmed on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached, using the ``thread_wifi_switched`` build type.
+    This feature is available for the ``matter_lock_sample`` sample programmed on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached, using the ``thread_wifi_switched`` build type.
     See the Thread and Wi-Fi switching section in the sample documentation for more information.
   * Support for Wi-Fi Network Diagnostic Cluster (which counts the number of packets received and transmitted on the Wi-Fi interface).
   * Default support for nRF7002 revision B.
-  * Specific QR code and onboarding information in the documentation for each :ref:`Matter sample <matter_samples>` and the :ref:`Matter weather station <matter_weather_station_app>`.
+  * Specific QR code and onboarding information in the documentation for each ``matter_samples`` and the ``matter_weather_station_app``.
   * The Bluetooth LE advertising arbiter class that enables easier coexistence of application components that want to advertise their Bluetooth LE services.
   * Support for erasing settings partition during DFU over Bluetooth LE SMP for the Nordic nRF52 Series SoCs.
   * Mechanism to retry a failed Wi-Fi connection.
   * Support for ZAP tool under Windows.
-  * Documentation about :ref:`switchable Matter over Thread and Matter over Wi-Fi <ug_matter_overview_architecture_integration_designs>` platform design.
-  * Documentation about :ref:`ug_matter_gs_ecosystem_compatibility_testing`.
-  * Documentation about :ref:`ug_matter_device_low_power_configuration`.
-  * Documentation about :ref:`ug_matter_gs_transmission_power`.
+  * Documentation about ``ug_matter_overview_architecture_integration_designs`` platform design.
+  * Documentation about ``ug_matter_gs_ecosystem_compatibility_testing``.
+  * Documentation about ``ug_matter_device_low_power_configuration``.
+  * Documentation about ``ug_matter_gs_transmission_power``.
 
 * Updated:
 
-  * The default heap implementation to use Zephyr's ``sys_heap`` (:kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP`) to better control the RAM usage of Matter applications.
-  * :ref:`ug_matter_device_certification` page with a section about certification document templates.
-  * :ref:`ug_matter_overview_commissioning` page with information about :ref:`ug_matter_network_topologies_commissioning_onboarding_formats`.
-  * :ref:`ug_matter_hw_requirements` page with a section about :ref:`ug_matter_hw_requirements_layouts`.
+  * The default heap implementation to use Zephyr's ``sys_heap`` (``CONFIG_CHIP_MALLOC_SYS_HEAP``) to better control the RAM usage of Matter applications.
+  * ``ug_matter_device_certification`` page with a section about certification document templates.
+  * ``ug_matter_overview_commissioning`` page with information about ``ug_matter_network_topologies_commissioning_onboarding_formats``.
+  * ``ug_matter_hw_requirements`` page with a section about ``ug_matter_hw_requirements_layouts``.
   * Default retry intervals used by Matter Reliability Protocol for Matter over Thread to account for longer round-trip times in Thread networks with multiple intermediate nodes.
   * The Bluetooth LE connection timeout parameters and the update timeout parameters to make communication over Bluetooth LE more reliable.
   * Default transmission output power for Matter over Thread devices to the maximum available one for all targets:
     8 dBm for nRF52840, 3 dBm for nRF5340, 20 dBm for all devices with FEM enabled, and 0 dBm for sleepy devices.
-  * :ref:`ug_matter_gs_adding_cluster` page with instructions on how to use ZAP tool binaries.
+  * ``ug_matter_gs_adding_cluster`` page with instructions on how to use ZAP tool binaries.
     Before this release, the ZAP tool had to be built from sources.
-  * :ref:`ug_matter_hw_requirements` with updated memory requirement values valid for the |NCS| v2.3.0.
+  * ``ug_matter_hw_requirements`` with updated memory requirement values valid for the |NCS| v2.3.0.
 
 * Fixed:
 
@@ -587,7 +587,7 @@ Matter samples
 * Removed FEM-related Kconfig options from all samples.
   Now, the transmission output power for Matter over Thread can be set using the :kconfig:option:`OPENTHREAD_DEFAULT_TX_POWER` Kconfig option.
 
-* :ref:`matter_lock_sample` sample:
+* ``matter_lock_sample`` sample:
 
   * Added:
 
@@ -597,11 +597,11 @@ Matter samples
 
   * The sample is now positively verified against "Works with Google" certification tests.
 
-* :ref:`matter_light_switch_sample`:
+* ``matter_light_switch_sample``:
 
   * Added Wi-Fi low power configuration using Wi-Fi's :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
 
-* :ref:`matter_light_bulb_sample`:
+* ``matter_light_bulb_sample``:
 
   * The sample is now positively verified against "Works with Google" certification tests.
   * Tested compatibility with the following ecosystems:
@@ -1015,7 +1015,7 @@ Documentation
 
 * Added:
 
-  * A page about :ref:`ug_matter_device_security` in the Matter protocol section.
+  * A page about ``ug_matter_device_security`` in the Matter protocol section.
   * Template for the :ref:`Integration <integration_template>` user guides.
   * A page on :ref:`ug_avsystem`.
   * The :ref:`ug_nrf70_developing` user guide.

@@ -183,7 +183,7 @@ Matter
 ------
 
 * Added documentation for leveraging Matter Compliant Platform certification through the Derived Matter Product (DMP) process.
-  See :ref:`ug_matter_platform_and_dmp`.
+  See ``ug_matter_platform_and_dmp``.
 * Updated to using the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option as the C library instead of :kconfig:option:`CONFIG_NEWLIB_LIBC`, in compliance with Zephyr requirements.
 * Removed the ``CONFIG_CHIP_SPI_NOR`` and ``CONFIG_CHIP_QSPI_NOR`` Kconfig options.
 
@@ -526,8 +526,8 @@ Matter samples
 
 * Added:
 
-  * The :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
-  * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
+  * The ``matter_temperature_sensor_sample`` sample that demonstrates how to implement and test a Matter temperature sensor device.
+  * The ``matter_contact_sensor_sample`` sample that demonstrates how to implement and test a Matter contact sensor device.
   * The ``matter_custom_board`` toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
 
 * Updated:
@@ -539,7 +539,7 @@ Matter samples
   * All Matter samples that support low-power mode to use the :ref:`lib_ram_pwrdn` feature with the nRF54LM20 DK.
     This change resulted in decreasing the sleep current consumption by more than two uA.
 
-* :ref:`matter_lock_sample` sample:
+* ``matter_lock_sample`` sample:
 
    * Added a callback for the auto-relock feature.
      This resolves the :ref:`known issue <known_issues>` KRKNWK-20691.

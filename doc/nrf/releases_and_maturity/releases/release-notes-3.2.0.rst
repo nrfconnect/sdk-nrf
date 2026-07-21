@@ -356,7 +356,7 @@ Matter
 
   * The `Matter Quick Start app`_ v1.0.0 as part of nRF Connect for Desktop.
   * Documentation for leveraging Matter Compliant Platform certification through the Derived Matter Product (DMP) process.
-    See :ref:`ug_matter_platform_and_dmp`.
+    See ``ug_matter_platform_and_dmp``.
 
 * Updated to use the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option as the C library instead of :kconfig:option:`CONFIG_NEWLIB_LIBC`, in compliance with Zephyr requirements.
 
@@ -401,11 +401,11 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
     The code-driven approach is not yet fully implemented for all the available clusters, but the coverage will be increasing and it is used for the newly created clusters.
     The new model is meant to be backward compatible with the previous configuration based on the ZAP files and the ZAP-generated code, until the code-driven approach is fully implemented for all the available clusters.
     See the `migration notes <Migration notes for nRF Connect SDK v3.2.0_>`_ for more information.
-  * The :ref:`ug_matter_gs_tools_matter_west_commands_sync` to synchronize the ZAP and :file:`zcl.json` files after updating the ZAP tool version.
-  * The check to all :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool` that verify whether ZAP tool sandbox permissions are correctly set.
+  * The ``ug_matter_gs_tools_matter_west_commands_sync`` to synchronize the ZAP and :file:`zcl.json` files after updating the ZAP tool version.
+  * The check to all ``ug_matter_gs_tools_matter_west_commands_zap_tool`` that verify whether ZAP tool sandbox permissions are correctly set.
     In case of detecting incorrect permissions, the command prompts the user to accept automatically updating the permissions to required ones.
 
-* Updated the :ref:`ug_matter_gs_tools_matter_west_commands_append` to accept ``--clusters`` argument instead of ``new_clusters`` argument.
+* Updated the ``ug_matter_gs_tools_matter_west_commands_append`` to accept ``--clusters`` argument instead of ``new_clusters`` argument.
 
 * Removed dependencies on Nordic DK-specific configurations in Matter configurations.
   See the `Migration notes for nRF Connect SDK v3.2.0`_ for more information.
@@ -879,9 +879,9 @@ Matter samples
 
 * Added:
 
-  * The :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
-  * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
-  * The :ref:`matter_closure_sample` sample that demonstrates how to implement and test a Matter closure device.
+  * The ``matter_temperature_sensor_sample`` sample that demonstrates how to implement and test a Matter temperature sensor device.
+  * The ``matter_contact_sensor_sample`` sample that demonstrates how to implement and test a Matter contact sensor device.
+  * The ``matter_closure_sample`` sample that demonstrates how to implement and test a Matter closure device.
   * The ``matter_custom_board`` toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
   * Support for the Matter over Wi-Fi on the nRF54LM20 DK with the nRF7002-EB II shield attached to all Matter over Wi-Fi samples.
   * Enabled deprecated warnings for all Matter over Wi-Fi samples that are using nRF5340 SoC.
@@ -896,7 +896,7 @@ Matter samples
     This change resulted in decreasing the sleep current consumption by more than 2 µA.
   * All Matter samples to use the code-driven approach for the Identify cluster implementation instead of the zap-driven approach.
 
-* :ref:`matter_lock_sample` sample:
+* ``matter_lock_sample`` sample:
 
    * Added a callback for the auto-relock feature.
      This resolves the `known issue <known issues for nRF Connect SDK v3.2.0_>`_ KRKNWK-20691.

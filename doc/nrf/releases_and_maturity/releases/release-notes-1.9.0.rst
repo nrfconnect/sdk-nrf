@@ -111,9 +111,9 @@ Matter
 
 * Updated:
 
-  * :ref:`ug_matter_configuring` by embedding the Matter tutorial video.
-  * :ref:`ug_matter_configuring_protocol` by adding information about setting Matter log levels and available device identification optional features. See sections :ref:`ug_matter_configuring_optional_log` and :ref:`ug_matter_configuring_device_identification` for details.
-  * :ref:`ug_matter_creating_accessory` by updating the described procedure to match the current Matter API.
+  * ``ug_matter_configuring`` by embedding the Matter tutorial video.
+  * ``ug_matter_configuring_protocol`` by adding information about setting Matter log levels and available device identification optional features. See sections ``ug_matter_configuring_optional_log`` and ``ug_matter_configuring_device_identification`` for details.
+  * ``ug_matter_creating_accessory`` by updating the described procedure to match the current Matter API.
 
 
 Thread
@@ -326,9 +326,9 @@ Matter samples
 
 * Updated:
 
-  * :ref:`matter_lock_sample` and :ref:`matter_light_bulb_sample` samples:
+  * ``matter_lock_sample`` and ``matter_light_bulb_sample`` samples:
 
-    * Added initial support for the Matter-compliant over-the-air (OTA) device firmware upgrade (DFU) method. See Device Firmware Upgrade support (Configuration section) in :ref:`matter_lock_sample` sample documentation.
+    * Added initial support for the Matter-compliant over-the-air (OTA) device firmware upgrade (DFU) method. See Device Firmware Upgrade support (Configuration section) in ``matter_lock_sample`` sample documentation.
 
 nRF9160 samples
 ---------------

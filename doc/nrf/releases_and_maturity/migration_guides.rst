@@ -45,5 +45,6 @@ Migration notes are also provided for major functionality updates.
    :glob:
    :caption: General migration notes
 
+   migration/migration_ncs_matter
    migration/migration_sysbuild
    migration/migration_partitions

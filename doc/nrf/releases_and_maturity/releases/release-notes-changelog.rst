@@ -191,7 +191,11 @@ Gazell
 Matter
 ------
 
-* Replaced the tables on the :ref:`ug_matter_hw_requirements_ram_flash` and :ref:`ug_matter_hw_requirements_layouts` pages with memory layout charts.
+* Moved all Matter samples, shared sample infrastructure, devicetree partition files, and Matter-specific snippets from ``sdk-nrf`` to the separate `Matter add-on <ncs-matter add-on repository_>`_ repository (``ncs-matter``).
+  The Matter bridge and Thingy:53 weather station reference applications are also relocated into the add-on.
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for the migration guide.
+* Renamed all ``CONFIG_NCS_SAMPLE_MATTER_*`` Kconfig options to ``CONFIG_MATTER_*`` in the add-on.
+* Replaced the tables on the ``ug_matter_hw_requirements_ram_flash`` and ``ug_matter_hw_requirements_layouts`` pages with memory layout charts.
 
 Matter fork
 +++++++++++
@@ -237,7 +241,8 @@ IPC radio firmware
 Matter bridge
 -------------
 
-|no_changes_yet_note|
+* Moved the Matter bridge reference application from :file:`nrf/applications/matter_bridge` to :file:`ncs-matter/samples/matter_bridge` in the `Matter add-on <ncs-matter add-on repository_>`_.
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for migration instructions.
 
 nRF Audio (formerly nRF5340 Audio)
 ----------------------------------
@@ -271,7 +276,8 @@ nRF Desktop
 Thingy:53: Matter weather station
 ---------------------------------
 
-|no_changes_yet_note|
+* Moved the Thingy:53 `Matter Weather Station`_ reference application from :file:`nrf/applications/matter_weather_station` to :file:`ncs-matter/samples/matter_weather_station` in the `Matter add-on <ncs-matter add-on repository_>`_.
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for migration instructions.
 
 Installer (MCUboot Firmware Loader installer)
 -----------------------------------------------
@@ -398,13 +404,29 @@ Keys samples
 Matter samples
 --------------
 
+* Moved all Matter samples from :file:`nrf/samples/matter/` to the `Matter add-on <ncs-matter add-on repository_>`_ repository under :file:`ncs-matter/samples/`.
+  Sample paths no longer use the ``samples/matter/`` prefix (for example, :file:`ncs-matter/samples/template` replaces :file:`nrf/samples/matter/template`).
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for the full list of path changes, Kconfig renames, and build instructions.
+
+* Renamed Matter-specific Zephyr snippets in the add-on:
+
+  * ``matter-debug`` → ``debug``
+  * ``matter-diagnostic-logs`` → ``diagnostic-logs``
+
+* Updated Matter sample CMake integration to use :file:`ncs-matter/cmake/sample.cmake` and the ``ZEPHYR_NCS_MATTER_MODULE_DIR`` variable instead of :file:`nrf/samples/matter/common/cmake/` helpers and ``ZEPHYR_NRF_MODULE_DIR``.
+
+* Moved shared Matter sample code from :file:`nrf/samples/matter/common/` to :file:`ncs-matter/subsys/`.
+
+* Moved Matter partition devicetree include files from :file:`nrf/dts/samples/matter/` to :file:`ncs-matter/dts/`.
+  Board overlays must use ``#include <nrf52840_partitions.dtsi>`` instead of ``#include <samples/matter/nrf52840_partitions.dtsi>``.
+
 * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target for the following samples:
 
-  * :ref:`matter_template_sample`
-  * :ref:`matter_temperature_sensor_sample`
+  * ``matter_template_sample``
+  * ``matter_temperature_sensor_sample``
 
   DFU is not supported on this board target, as the nRF54LC10 DK is not equipped with external flash.
-  See :ref:`ug_matter_hw_requirements_external_flash` for more information.
+  See ``ug_matter_hw_requirements_external_flash`` for more information.
 
 Networking samples
 ------------------

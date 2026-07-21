@@ -233,11 +233,11 @@ Matter
 
 * Added:
 
-  * :ref:`Thingy:53 weather station <matter_weather_station_app>` application.
-  * :ref:`Template <matter_template_sample>` sample with a guide about :ref:`ug_matter_creating_accessory`.
-  * :ref:`ug_matter_tools` page with information about building options for Matter controllers.
+  * ``matter_weather_station_app`` application.
+  * ``matter_template_sample`` sample with a guide about ``ug_matter_creating_accessory``.
+  * ``ug_matter_tools`` page with information about building options for Matter controllers.
   * PA/LNA GPIO interface support for RF front-end modules (FEM) in Matter.
-  * :doc:`Matter documentation set <matter:index>` based on the documentation from the Matter submodule.
+  * ``Matter documentation set`` based on the documentation from the Matter submodule.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
@@ -477,7 +477,7 @@ In addition to documentation related to the changes listed above, the following 
     For example, results from the :ref:`nrfxlib:nrfxlib` documentation set will be listed with ``nrfxlib >>`` before the page title.
   * Updated the pages in the :ref:`getting_started` section with information about the support for the new Visual Studio Code extension.
   * Updated the style and formatting of all figures across all documentation pages.
-  * Added new documentation sets for `Trusted Firmare-M <TF-M documentation_>`_ and :doc:`Matter <matter:index>`.
+  * Added new documentation sets for `Trusted Firmware-M <TF-M documentation_>`_ and ``Matter documentation set``.
   * Split the "Applications and samples" section into :ref:`applications` and :ref:`samples`.
   * Renamed nRF Connect for Cloud to nRF Cloud.
   * Updated the FEM support section for the samples that offer this feature.
@@ -494,7 +494,7 @@ In addition to documentation related to the changes listed above, the following 
     * Socket AT commands page
     * GNSS AT command page
 
-  * Added the :ref:`matter_weather_station_app` application page.
+  * Added the ``matter_weather_station_app`` application page.
   * Added the :ref:`crypto_tls` sample page.
   * Added the :ref:`gatt_pool_readme` library page.
   * Added the :ref:`rscs_readme` library page.
@@ -522,10 +522,10 @@ In addition to documentation related to the changes listed above, the following 
   * :ref:`ug_nrf5340` user guide - Reworked with major updates.
   * :ref:`protocols` section pages:
 
-    * :ref:`ug_matter` pages:
+    * ``ug_matter`` pages:
 
-      * :ref:`ug_matter_tools` - New page.
-      * :ref:`ug_matter_creating_accessory` - New page.
+      * ``ug_matter_tools`` - New page.
+      * ``ug_matter_creating_accessory`` - New page.
 
     * :ref:`ug_thread` pages:
 
@@ -559,7 +559,7 @@ In addition to documentation related to the changes listed above, the following 
         Replaces Central DFU SMP sample.
       * :ref:`direction_finding_connectionless_rx` - Updated with the section about Constant Tone Extension transmit and receive parameters.
 
-    * :ref:`matter_samples`:
+    * ``matter_samples``:
 
       * Removed the weather station sample page for Matter.
         The sample has been upgraded to application.

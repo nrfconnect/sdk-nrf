@@ -171,7 +171,6 @@ IEEE 802.15.4 (Thread and Zigbee)
    * - :zephyr:code-sample:`nrf_ieee802154_rpmsg`
      - | :ref:`Thread samples <openthread_samples>`
        | :ref:`Zigbee samples <zigbee_samples>`
-       | :ref:`Matter samples <matter_samples>`
 
 When using IEEE 802.15.4 on the nRF5340, run the IEEE 802.15.4 radio driver on the network core and the high-level radio stack (the host part of the Thread and Zigbee stacks) and the application logic on the application core.
 

@@ -55,29 +55,29 @@ Matter
        Because of this, the Kconfig options used to manage this configuration have been aligned as well.
        If your application uses the following Kconfig options, they require name changes:
 
-         * The ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT`.
-         * The ``CONFIG_CHIP_SED_IDLE_INTERVAL`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL`.
-         * The ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
-         * The ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
+         * The ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` Kconfig option was renamed to ``CONFIG_CHIP_ENABLE_ICD_SUPPORT``.
+         * The ``CONFIG_CHIP_SED_IDLE_INTERVAL`` Kconfig option was renamed to ``CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL``.
+         * The ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` Kconfig option was renamed to ``CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL``.
+         * The ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` Kconfig option was renamed to ``CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD``.
 
    * For Matter over Thread samples, starting from this release, the cryptography backend enabled by default is PSA Crypto API instead of Mbed TLS.
      Be aware of the change and consider the following when migrating to |NCS| v2.6.0:
 
      * You can keep using Mbed TLS API as the cryptography backend by disabling PSA Crypto API.
-       You can disable it by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``.
+       You can disable it by setting the ``CONFIG_CHIP_CRYPTO_PSA`` Kconfig option to ``n``.
      * Thread libraries will be built with PSA Crypto API enabled without Mbed TLS support.
-       This means that if you set the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``, you must also build the Thread libraries from sources.
+       This means that if you set the ``CONFIG_CHIP_CRYPTO_PSA`` Kconfig option to ``n``, you must also build the Thread libraries from sources.
 
-       To :ref:`inherit Thread certification <ug_matter_device_certification_reqs_dependent>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
+       To get Matter certification from Nordic Semiconductor, you must use the PSA Crypto API backend.
      * The device can automatically migrate all operational keys from the Matter's generic persistent storage to the PSA ITS secure storage.
        This means that all keys needed to establish the secure connection between Matter nodes will be moved to the PSA ITS secure storage.
-       To enable operational keys migration, set the :option:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS` Kconfig option to ``y``.
+       To enable operational keys migration, set the ``CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS`` Kconfig option to ``y``.
 
        The default reaction to migration failure in |NCS| Matter samples is a factory reset of the device.
-       To change the default reaction, set the :option:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE` Kconfig option to ``n`` and implement the reaction in your Matter event handler.
+       To change the default reaction, set the ``CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE`` Kconfig option to ``n`` and implement the reaction in your Matter event handler.
      * When the Device Attestation Certificate (DAC) private key exists in the factory data set, it can migrate to the PSA ITS secure storage.
 
-       You can also have the DAC private key replaced by zeros in the factory data partition by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY` Kconfig option to ``y``.
+       You can also have the DAC private key replaced by zeros in the factory data partition by setting the ``CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY`` Kconfig option to ``y``.
        This functionality is experimental.
 
    * For the Matter samples and applications using the :file:`samples/matter/common` directory:
@@ -250,7 +250,7 @@ Matter
        This will significantly reduce the size of the code required to be implemented in the application.
        You can also choose to keep using the previous approach, but due to the structural differences, it may be harder to use Matter samples and applications as a reference for an application using the older approach.
 
-       The following steps use the :ref:`matter_template_sample` sample as an example.
+       The following steps use the ``matter_template_sample`` sample as an example.
        To migrate the application from |NCS| v2.5.0 and start using the common software modules used in |NCS| v2.6.0:
 
        * Replace the code used for initialization and handling of the board's components, like LEDs or buttons, with the common ``board`` module.

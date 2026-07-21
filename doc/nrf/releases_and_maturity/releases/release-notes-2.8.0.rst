@@ -424,31 +424,31 @@ Matter
 
   * The following Kconfig options to configure parameters impacting persistent subscriptions re-establishment:
 
-    * :kconfig:option:`CONFIG_CHIP_MAX_ACTIVE_CASE_CLIENTS`
-    * :kconfig:option:`CONFIG_CHIP_MAX_ACTIVE_DEVICES`
-    * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_MIN_RETRY_INTERVAL`
-    * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_RETRY_MULTIPLIER`
+    * ``CONFIG_CHIP_MAX_ACTIVE_CASE_CLIENTS``
+    * ``CONFIG_CHIP_MAX_ACTIVE_DEVICES``
+    * ``CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_MIN_RETRY_INTERVAL``
+    * ``CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_RETRY_MULTIPLIER``
 
-  * The :ref:`ug_matter_device_memory_profiling` section to the :ref:`ug_matter_device_optimizing_memory` page.
+  * The ``ug_matter_device_memory_profiling`` section to the ``ug_matter_device_optimizing_memory`` page.
     The section contains useful commands for measuring memory and troubleshooting tips.
   * The ZMS file subsystem to all devices that contain RRAM, such as the nRF54L Series devices.
   * Migration of the Device Attestation Certificates private key to Key Management Unit (KMU) for the nRF54L Series SoCs.
-    See :ref:`matter_platforms_security_dac_priv_key_kmu` to learn how to enable it in your sample.
+    See ``matter_platforms_security_dac_priv_key_kmu`` to learn how to enable it in your sample.
   * Support for the Device Firmware Upgrade over Bluetooth LE SMP and Matter Over-the-air Software Update (OTA) on nRF54H20 SoC.
 
 * Updated:
 
   * The default Trusted Storage AEAD key to Hardware Unique Key (HUK) for supported nRF54L Series devices.
-  * Renamed the ``CONFIG_CHIP_FACTORY_RESET_ERASE_NVS`` Kconfig option to :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS`.
+  * Renamed the ``CONFIG_CHIP_FACTORY_RESET_ERASE_NVS`` Kconfig option to ``CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS``.
     The new Kconfig option now works for both NVS and ZMS file system backends.
   * The firmware version format used for informational purposes when using the :file:`VERSION` file.
     The format now includes the optional ``EXTRAVERSION`` component.
   * Storing the Device Attestation Certificates private key in the Trusted Storage library to be enabled for all platforms that support the PSA crypto API.
-    See :ref:`matter_platforms_security_dac_priv_key_its` for more information.
+    See ``matter_platforms_security_dac_priv_key_its`` for more information.
   * The stack sizes for OpenThread and CHIP (Matter) threads to increase them for the targets using the CRACEN crypto backend.
   * The IPv6 multicast subscription mechanism for Wi-Fi to enable the MLDv2 join procedure and improve reliability in multicast communication.
   * Storing the Device Attestation Certificates private key in the Key Management Unit (KMU) to be enabled for nRF54L Series devices.
-    See :ref:`matter_platforms_security_dac_priv_key_kmu` for more information.
+    See ``matter_platforms_security_dac_priv_key_kmu`` for more information.
 
 Matter fork
 +++++++++++
@@ -516,7 +516,7 @@ Matter bridge
 
 * Added:
 
-  * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option that specifies ZAP files location for the application.
+  * The ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH`` Kconfig option that specifies ZAP files location for the application.
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to application's location that contains the ZAP file and :file:`zap-generated` directory.
   * Experimental support for the :zephyr:board:`nrf54h20dk` board.
   * Optional smart plug device functionality.
@@ -639,7 +639,7 @@ Serial LTE modem
 Thingy:53: Matter weather station
 ---------------------------------
 
-* Added the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the application.
+* Added the ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH`` Kconfig option, which specifies ZAP files location for the application.
   By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to application's location that contains the ZAP file and :file:`zap-generated` directory.
 
 Samples
@@ -850,36 +850,36 @@ Matter samples
 
 * Added:
 
-  * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the sample.
+  * The ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH`` Kconfig option, which specifies ZAP files location for the sample.
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to sample's location that contains the ZAP file and :file:`zap-generated` directory.
   * Support for the :zephyr:board:`nrf54l15dk`, replacing the nRF54L15 PDK.
   * Support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 SoC.
-  * The :ref:`matter_smoke_co_alarm_sample` sample that demonstrates implementation of Matter Smoke CO alarm device type.
-  * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_LEDS` Kconfig option, which can be used to disable the LEDs in the Matter sample or application.
+  * The ``matter_smoke_co_alarm_sample`` sample that demonstrates implementation of Matter Smoke CO alarm device type.
+  * The ``CONFIG_NCS_SAMPLE_MATTER_LEDS`` Kconfig option, which can be used to disable the LEDs in the Matter sample or application.
 
 * Updated:
 
   * All samples to enable the :ref:`ug_thread_build_report` generation.
   * Enabled Matter OTA on the nRF54H20 DK.
 
-* :ref:`matter_lock_sample` sample:
+* ``matter_lock_sample`` sample:
 
-  * Added :ref:`Matter Lock schedule snippet <matter_lock_snippets>` and updated the documentation to use the snippet.
+  * Added ``matter_lock_snippets`` and updated the documentation to use the snippet.
 
   * Updated:
 
     * The low power configuration to be enabled for the nRF54L15 DK target.
     * The Link-Time Optimization (LTO) to be enabled for the nRF7002 DK target.
 
-* :ref:`matter_smoke_co_alarm_sample` sample:
+* ``matter_smoke_co_alarm_sample`` sample:
 
   * Updated the low power configuration to be enabled for the nRF54L15 DK target.
 
-* :ref:`matter_template_sample` sample:
+* ``matter_template_sample`` sample:
 
   * Updated the DAC private key migration from factory data to KMU to be enabled for the nRF54L Series SoCs by default.
 
-* :ref:`matter_window_covering_sample` sample:
+* ``matter_window_covering_sample`` sample:
 
   * Updated the low power configuration to be enabled for the nRF54L15 DK target.
 

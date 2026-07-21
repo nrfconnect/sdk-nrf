@@ -40,7 +40,7 @@ Added the following features as supported:
 * Matter 1.4 enhancements:
 
   * Long Idle Time (LIT) protocol extending battery life for Matter over Thread devices.
-    This feature is showcased in the new :ref:`matter_smoke_co_alarm_sample` sample.
+    This feature is showcased in the new ``matter_smoke_co_alarm_sample`` sample.
   * Check-in protocol ensuring reliable communication for low-power devices requiring LIT.
   * Energy management - Support for new device types, such as solar panels, batteries, heat pumps, and water heaters, as well as improvements to Electric Vehicle Supply Equipment (EVSE) and thermostats.
   * Occupancy sensing - Sensing features, such as radar vision and ambient sensing technologies.
@@ -213,7 +213,7 @@ Matter
   * Implementation of the ``Spake2pVerifier`` class for the PSA crypto backend.
     You can use this class to generate the Spake2+ verifier at runtime.
     To use this class, enable the Kconfig options :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC` and :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`.
-  * The :ref:`ug_matter_device_watchdog_pause_mode` to the :ref:`ug_matter_device_watchdog` feature.
+  * The ``ug_matter_device_watchdog_pause_mode`` to the ``ug_matter_device_watchdog`` feature.
 
 Matter fork
 +++++++++++
@@ -230,8 +230,8 @@ The following list summarizes the most important changes inherited from the upst
     This term includes several different features and in this release only Fabric Synchronization was fully delivered.
     The Fabric Synchronization enables commissioning of devices from one fabric to another without requiring manual user actions, only user consent.
   * Dynamic SIT LIT switching support that allows the application to switch between these modes, as long as the requirements for these modes are met.
-    You can enable this using the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option.
-  * The Kconfig option :kconfig:option:`CONFIG_CHIP_ICD_SIT_SLOW_POLL_LIMIT` to limit the slow polling interval value for the device while it is in the SIT mode.
+    You can enable this using the ``CONFIG_CHIP_ICD_DSLS_SUPPORT`` Kconfig option.
+  * The Kconfig option ``CONFIG_CHIP_ICD_SIT_SLOW_POLL_LIMIT`` to limit the slow polling interval value for the device while it is in the SIT mode.
     You can use this to limit the slow poll interval for the ICD LIT device while it is temporarily working in the SIT mode.
   * New device types:
 
@@ -293,7 +293,7 @@ Matter bridge
 
   * Support for the ``UniqueID`` attribute in the Bridged Device Basic Information cluster.
   * Version 2 of the bridged device data scheme containing ``UniqueID``.
-  * Kconfig options :option:`CONFIG_BRIDGE_MIGRATE_PRE_2_7_0` and :option:`CONFIG_BRIDGE_MIGRATE_VERSION_1` to enable migration from older data schemes.
+  * Kconfig options ``CONFIG_BRIDGE_MIGRATE_PRE_2_7_0`` and ``CONFIG_BRIDGE_MIGRATE_VERSION_1`` to enable migration from older data schemes.
 
 nRF5340 Audio
 -------------
@@ -484,22 +484,22 @@ Matter samples
   * All Matter samples that support low-power mode to enable the :ref:`lib_ram_pwrdn` feature.
     It is enabled by default for the release configuration of the following samples:
 
-    * :ref:`matter_lock_sample`
-    * :ref:`matter_light_switch_sample`
-    * :ref:`matter_smoke_co_alarm_sample`
-    * :ref:`matter_window_covering_sample`
+    * ``matter_lock_sample``
+    * ``matter_light_switch_sample``
+    * ``matter_smoke_co_alarm_sample``
+    * ``matter_window_covering_sample``
 
   * All Matter samples to enable the ZMS file subsystem in all devices that contain MRAM, such as the nRF54H Series devices.
 
 * Disabled pausing Matter watchdog while CPU is in idle state in all Matter samples.
-  To enable it, set the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP` Kconfig option to ``y``.
+  To enable it, set the ``CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP`` Kconfig option to ``y``.
 
-* :ref:`matter_template_sample` sample:
+* ``matter_template_sample`` sample:
 
   * Added support for the ``nrf54l15dk/nrf54l10/cpuapp`` board target.
   * Updated the internal configuration for the :zephyr:board:`nrf54l15dk` target to use the DFU image compression and provide more memory space for the application.
 
-* :ref:`matter_smoke_co_alarm_sample` sample:
+* ``matter_smoke_co_alarm_sample`` sample:
 
   * Added:
 
@@ -654,7 +654,7 @@ Documentation
 
 * Added:
 
-  * The :ref:`matter_samples_config` page that documents Kconfig options and snippets shared by Matter samples and applications.
+  * The ``matter_samples_config`` page that documents Kconfig options and snippets shared by Matter samples and applications.
   * A page about :ref:`add_new_driver`.
   * A page for the :ref:`sdp_gpio` application.
 

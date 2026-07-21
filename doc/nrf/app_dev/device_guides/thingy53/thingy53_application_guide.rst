@@ -142,7 +142,7 @@ The following samples and applications in the |NCS| enable FOTA for Thingy:53 by
 
 * Applications:
 
-  * :ref:`matter_weather_station_app`
+  * Matter weather station
 
 * Samples:
 
