@@ -88,9 +88,9 @@ Matter
 * Added:
 
   * Feature-complete :ref:`production support <software_maturity>` for Matter over Thread.
-  * Documentation about :ref:`ug_matter_device_types`.
+  * Documentation about ``ug_matter_device_types``.
 
-* Updated documentation about Data Model and Interaction Model by moving it to separate pages: :ref:`ug_matter_overview_data_model` and :ref:`ug_matter_overview_int_model`, respectively.
+* Updated documentation about Data Model and Interaction Model by moving it to separate pages: ``ug_matter_overview_data_model`` and ``ug_matter_overview_int_model``, respectively.
 
 Matter fork
 +++++++++++

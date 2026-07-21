@@ -290,19 +290,19 @@ Matter
 
   * Support for merging the generated factory data HEX file with the firmware HEX file by using the devicetree configuration, when Partition Manager is not enabled in the project.
   * Support for the unified Persistent Storage API, including the implementation of the PSA Persistent Storage.
-  * Watchdog timer implementation for creating multiple :ref:`ug_matter_device_watchdog` sources and monitoring the time of executing specific parts of the code.
+  * Watchdog timer implementation for creating multiple ``ug_matter_device_watchdog`` sources and monitoring the time of executing specific parts of the code.
   * Clearing SRP host services on factory reset.
-    This resolves the known issue related to the :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START` (KRKNWK-18916).
+    This resolves the known issue related to the ``CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START`` (KRKNWK-18916).
   * Diagnostic logs provider that collects the diagnostic logs and sends them to the Matter controller.
-    To learn more about the diagnostic logs module, see :ref:`ug_matter_configuration_diagnostic_logs`.
-  * :ref:`ug_matter_diagnostic_logs_snippet` to add support for all features of the diagnostic log provider.
-  * :ref:`ug_matter_gs_tools_matter_west_commands` to simplify the process of editing the ZAP files and generated the C++ Matter data model files.
+    To learn more about the diagnostic logs module, see ``ug_matter_configuration_diagnostic_logs``.
+  * ``ug_matter_diagnostic_logs_snippet`` to add support for all features of the diagnostic log provider.
+  * ``ug_matter_gs_tools_matter_west_commands`` to simplify the process of editing the ZAP files and generated the C++ Matter data model files.
 
 * Updated:
 
   * Default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
   * The number of available packet buffers in the Matter stack has been increased to avoid packet allocation issues.
-  * The :ref:`ug_matter_gs_adding_cluster` user guide to use west commands.
+  * The ``ug_matter_gs_adding_cluster`` user guide to use west commands.
 
 * Removed the :file:`Kconfig.mcuboot.defaults`, :file:`Kconfig.hci_ipc.defaults`, and :file:`Kconfig.multiprotocol_rpmsg.defaults` Kconfig files that stored the default configuration for the child images.
   This was done because of the :ref:`configuration_system_overview_sysbuild` integration and the child images deprecation.
@@ -323,8 +323,8 @@ The following list summarizes the most important changes inherited from the upst
    * Support for command batching.
      This allows a controller to batch multiple commands into a single message, which minimizes the delay between execution of the subsequent commands.
    * Extended beaconing feature that allows an accessory device to advertise Matter service over Bluetooth LE for a period longer than maximum time of 15 minutes.
-     This can be enabled using the :kconfig:option:`CONFIG_CHIP_BLE_EXT_ADVERTISING` Kconfig option.
-   * The Kconfig options :kconfig:option:`CONFIG_CHIP_ICD_LIT_SUPPORT`, :kconfig:option:`CONFIG_CHIP_ICD_CHECK_IN_SUPPORT`, and :kconfig:option:`CONFIG_CHIP_ICD_UAT_SUPPORT` to manage ICD configuration.
+     This can be enabled using the ``CONFIG_CHIP_BLE_EXT_ADVERTISING`` Kconfig option.
+   * The Kconfig options ``CONFIG_CHIP_ICD_LIT_SUPPORT``, ``CONFIG_CHIP_ICD_CHECK_IN_SUPPORT``, and ``CONFIG_CHIP_ICD_UAT_SUPPORT`` to manage ICD configuration.
    * New device types:
 
      * Device energy management
@@ -545,17 +545,17 @@ Thingy:53: Matter weather station
 
 * Updated:
 
-  * The :ref:`diagnostic log module<ug_matter_configuration_diagnostic_logs>` is now enabled by default.
+  * The ``ug_matter_configuration_diagnostic_logs`` is now enabled by default.
   * The :makevar:`OVERLAY_CONFIG` variable has been deprecated in the context of supporting factory data.
-    See the :ref:`matter_weather_station_app_build_configuration_overlays` section for information on how to configure factory data support.
+    See the ``matter_weather_station_app_build_configuration_overlays`` section for information on how to configure factory data support.
 
 Matter Bridge
 -------------
 
 * Added:
 
-  * The :option:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
-  * The :option:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS` Kconfig option to set the scan timeout.
+  * The ``CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES`` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
+  * The ``CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS`` Kconfig option to set the scan timeout.
 
 * Updated the implementation of the persistent storage to leverage ``NonSecure``-prefixed methods from the common Persistent Storage module.
 * Changed data structure of information stored in the persistent storage to use fewer settings keys.
@@ -785,27 +785,27 @@ Matter samples
 
   * Test event triggers to all Matter samples and enabled them by default.
     By utilizing the test event triggers, you can simulate various operational conditions and responses in your Matter device without the need for external setup.
-    To get started with using test event triggers in your Matter samples and to understand the capabilities of this feature, refer to the :ref:`ug_matter_test_event_triggers` page.
+    To get started with using test event triggers in your Matter samples and to understand the capabilities of this feature, refer to the ``ug_matter_test_event_triggers`` page.
 
   * Support for the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target to the following Matter samples:
 
-    * :ref:`matter_template_sample` sample.
-    * :ref:`matter_light_bulb_sample` sample.
-    * :ref:`matter_light_switch_sample` sample.
-    * :ref:`matter_thermostat_sample` sample.
-    * :ref:`matter_window_covering_sample` sample.
-    * :ref:`matter_lock_sample` sample.
+    * ``matter_template_sample`` sample.
+    * ``matter_light_bulb_sample`` sample.
+    * ``matter_light_switch_sample`` sample.
+    * ``matter_thermostat_sample`` sample.
+    * ``matter_window_covering_sample`` sample.
+    * ``matter_lock_sample`` sample.
 
     DFU over Matter OTA and Bluetooth LE SMP are supported in all samples but require an external flash.
 
   * Support for Matter over Thread on the :zephyr:board:`nrf54h20dk` with the ``nrf54h20dk/nrf54h20/cpuapp`` board target to the following Matter samples:
 
-    * :ref:`matter_lock_sample` sample.
-    * :ref:`matter_template_sample` sample.
+    * ``matter_lock_sample`` sample.
+    * ``matter_template_sample`` sample.
 
     DFU, factory data, and PSA Crypto API are not currently supported for the nRF54H20 DK.
 
-  * Default support of :ref:`ug_matter_device_watchdog` for ``release`` build type of all samples.
+  * Default support of ``ug_matter_device_watchdog`` for ``release`` build type of all samples.
     The default watchdog timeout value is set to 10 minutes.
     The watchdog feeding interval time is set to 5 minutes.
 
@@ -821,7 +821,7 @@ Matter samples
   * The :file:`prj_no_dfu.conf` file.
   * Support for the ``no_dfu`` build type for the nRF5340 DK, the nRF52840 DK, and the nRF7002 DK.
 
-* :ref:`matter_lock_sample` sample:
+* ``matter_lock_sample`` sample:
 
   * Added:
 
@@ -830,7 +830,7 @@ Matter samples
       The module is used to implement support for refined handling and persistent storage of PIN codes.
     * The Scheduled timed access feature.
 
-* :ref:`matter_template_sample` sample:
+* ``matter_template_sample`` sample:
 
   * Added experimental support for DFU using the internal ROM only.
     This option support requires the :file:`pm_static_nrf54l15pdk_nrf54l15_cpuapp_internal.yml` pm static file and currently works with the ``release`` build type only.

@@ -195,13 +195,13 @@ Matter
 
 * Added:
 
-  * A new documentation page :ref:`ug_matter_group_communication` in the :ref:`ug_matter_intro_overview`.
-  * A new page on :ref:`ug_matter_creating_custom_cluster`.
-  * A description for the new :ref:`ug_matter_gs_tools_matter_west_commands_append` within the :ref:`ug_matter_gs_tools_matter_west_commands` page.
-  * New arguments to the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool_gui` to provide a custom cache directory and add new clusters to Matter Data Model.
-  * :ref:`ug_matter_debug_snippet`.
-  * Storing Matter key materials in the :ref:`matter_platforms_security_kmu`.
-  * A new section :ref:`ug_matter_device_low_power_calibration_period` in the :ref:`ug_matter_device_low_power_configuration` page.
+  * A new documentation page ``ug_matter_group_communication`` in the ``ug_matter_intro_overview``.
+  * A new page on ``ug_matter_creating_custom_cluster``.
+  * A description for the new ``ug_matter_gs_tools_matter_west_commands_append`` within the ``ug_matter_gs_tools_matter_west_commands`` page.
+  * New arguments to the ``ug_matter_gs_tools_matter_west_commands_zap_tool_gui`` to provide a custom cache directory and add new clusters to Matter Data Model.
+  * ``ug_matter_debug_snippet``.
+  * Storing Matter key materials in the ``matter_platforms_security_kmu``.
+  * A new section ``ug_matter_device_low_power_calibration_period`` in the ``ug_matter_device_low_power_configuration`` page.
 
 * Updated by disabling the :ref:`mpsl` before performing factory reset to speed up the process.
 
@@ -589,9 +589,9 @@ Keys samples
 Matter samples
 --------------
 
-* Added :ref:`matter_manufacturer_specific_sample` sample that demonstrates an implementation of custom manufacturer-specific clusters used by the application layer.
+* Added ``matter_manufacturer_specific_sample`` sample that demonstrates an implementation of custom manufacturer-specific clusters used by the application layer.
 
-* :ref:`matter_template_sample` sample:
+* ``matter_template_sample`` sample:
 
   * Updated:
 
@@ -600,7 +600,7 @@ Matter samples
 
   * Removed support for nRF54H20 devices.
 
-* :ref:`matter_lock_sample` sample:
+* ``matter_lock_sample`` sample:
 
   * Removed support for nRF54H20 devices.
   * Updated the API of ``AppTask``, ``BoltLockManager``, and ``AccessManager`` to provide additional information for the ``LockOperation`` event.

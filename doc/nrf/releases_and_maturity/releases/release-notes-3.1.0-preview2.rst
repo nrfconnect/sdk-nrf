@@ -161,7 +161,7 @@ Matter
 
   * The ``west zap-generate`` command to remove previously generated ZAP files before generating new files.
     To skip removing the files, use the ``--keep-previous`` argument.
-  * The :ref:`ug_matter_creating_custom_cluster` user guide by adding information about implementing custom commands.
+  * The ``ug_matter_creating_custom_cluster`` user guide by adding information about implementing custom commands.
 
 Matter fork
 +++++++++++

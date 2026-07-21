@@ -244,19 +244,19 @@ Matter
 Sysbuild now directly controls Matter configuration for generating factory data and over-the-air firmware update images.
 The following Kconfig options are available:
 
-+---------------------------------------------------------------------+---------------------------------------------------+
-| Kconfig option                                                      | Description                                       |
-+=====================================================================+===================================================+
-| :kconfig:option:`SB_CONFIG_MATTER`                                  | Enable matter support                             |
-+---------------------------------------------------------------------+---------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`            | Generate factory data                             |
-+---------------------------------------------------------------------+---------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE` | Merge factory data with main application firmware |
-+---------------------------------------------------------------------+---------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_MATTER_OTA`                              | Generate over-the-air firmware update image       |
-+---------------------------------------------------------------------+---------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME`              | Filename for over-the-air firmware update image   |
-+---------------------------------------------------------------------+---------------------------------------------------+
++---------------------------------------------------------+---------------------------------------------------+
+| Kconfig option                                          | Description                                       |
++=========================================================+===================================================+
+| ``SB_CONFIG_MATTER``                                    | Enable matter support                             |
++---------------------------------------------------------+---------------------------------------------------+
+| ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE``              | Generate factory data                             |
++---------------------------------------------------------+---------------------------------------------------+
+| ``SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE``   | Merge factory data with main application firmware |
++---------------------------------------------------------+---------------------------------------------------+
+| ``SB_CONFIG_MATTER_OTA``                                | Generate over-the-air firmware update image       |
++---------------------------------------------------------+---------------------------------------------------+
+| ``SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME``                | Filename for over-the-air firmware update image   |
++---------------------------------------------------------+---------------------------------------------------+
 
 Applications must enable these options if they generate factory data or need an over-the-air firmware update.
 
@@ -443,7 +443,7 @@ The changes to final output files (ignoring artifacts and intermediary files) ar
 +---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | :file:`zephyr/mcuboot_secondary_app_signed.hex`         | :file:`mcuboot_secondary_app/zephyr/<kernel_name>.signed.hex` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value |
 +---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| :file:`zephyr/matter.ota`                               | :file:`<matter_ota_name>.ota` where ``<matter_ota_name>`` is the value of Kconfig :kconfig:option:`SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME`                          |
+| :file:`zephyr/matter.ota`                               | :file:`<matter_ota_name>.ota` where ``<matter_ota_name>`` is the value of Kconfig ``SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME``                                        |
 +---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | :file:`zephyr/signed_by_b0_s0_image.hex`                | :file:`signed_by_b0_<app_name>.hex` where ``<app_name>`` is the name of the application                                                                           |
 +---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+

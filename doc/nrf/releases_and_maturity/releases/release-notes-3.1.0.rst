@@ -320,19 +320,19 @@ Matter
 
 * Added:
 
-  * :ref:`FastTrack Recertification <ug_matter_device_recertification_process>` and :ref:`Portfolio Certification <ug_matter_device_portfolio_certification>` programs.
-  * The :ref:`ug_matter_networking_selection` section on the :ref:`ug_matter_device_advanced_kconfigs` page.
+  * ``ug_matter_device_recertification_process`` and ``ug_matter_device_portfolio_certification`` programs.
+  * The ``ug_matter_networking_selection`` section on the ``ug_matter_device_advanced_kconfigs`` page.
     The section describes how to select the networking layer for Matter applications.
 
 * Updated:
 
   * The ``west zap-generate`` command to remove previously generated ZAP files before generating new files.
     To skip removing the files, use the ``--keep-previous`` argument.
-  * The :ref:`ug_matter_creating_custom_cluster` user guide by adding information about implementing custom commands.
+  * The ``ug_matter_creating_custom_cluster`` user guide by adding information about implementing custom commands.
   * Matter-over-Thread apps can now use the OpenThread API directly, instead of using intermediate Zephyr L2 layer.
     This change significantly reduces memory usage in Matter applications.
     On the :zephyr:board:`nrf54l15dk`, it saves approximately 15 kB of RAM and 40 kB of flash.
-    To learn more about the new architecture option, see the :ref:`ug_matter_networking_selection` user guide.
+    To learn more about the new architecture option, see the ``ug_matter_networking_selection`` user guide.
 
 * Removed:
 
@@ -709,20 +709,20 @@ Matter samples
 
   * The Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
   * The API of the ``ncs_configure_data_model()`` CMake method.
-    It does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
-  * By renaming the ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH`` Kconfig option to :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` and changed its purpose to configure the absolute path under which the ZAP file is located.
+    It does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH`` Kconfig option.
+  * By renaming the ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH`` Kconfig option to ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH`` and changed its purpose to configure the absolute path under which the ZAP file is located.
   * By enabling Matter persistent subscriptions by default for all Matter samples.
   * By changing the default values of the following ICD parameters:
 
-    * :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` from ``1000`` to ``2500`` ms for SIT devices.
-    * :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD` from ``300`` to ``0`` ms for SIT devices.
-    * :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` from ``200`` to ``500`` ms.
+    * ``CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL`` from ``1000`` to ``2500`` ms for SIT devices.
+    * ``CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`` from ``300`` to ``0`` ms for SIT devices.
+    * ``CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`` from ``200`` to ``500`` ms.
 
   * The memory layout for the ``nrf54l15dk/nrf54l10/cpuapp`` board target, as the previous one was invalid and allowed to access memory area out of bounds.
     The maximum size of the non-volatile area was changed from 1022 kB to 1012 kB, the application partition size was decreased by 8 kB, and the reserved partition was removed.
   * Disabled usage of Zephyr L2 networking layer in favor of using the OpenThread API directly in the Matter over Thread applications.
 
-* :ref:`matter_light_switch_sample`:
+* ``matter_light_switch_sample``:
 
   * Updated the testing steps to use the proper commands for groupcast binding.
     This resolves the :ref:`known issue <known_issues>` KRKNWK-19277.

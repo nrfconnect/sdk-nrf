@@ -105,7 +105,7 @@ Simply put, you can work with the following versions of the |NCS|:
 
 For each version of the |NCS|, Nordic Semiconductor provides a dedicated toolchain.
 The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds tools and modules required to build |NCS| samples and applications on top of it.
-These include the :ref:`required SDK tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
+These include the :ref:`required SDK tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the `GN tool`_ for creating :ref:`ug_matter` applications.
 You can check the versions of the required tools and Python dependencies on the :ref:`Requirements reference page <requirements_toolchain>`.
 
 .. note::
@@ -700,4 +700,4 @@ To install the |NCS| system-wide, complete the following steps:
 
 #. If you want to build `Matter`_ applications, additionally install the `GN`_ meta-build system.
    This system generates the Ninja files that the |NCS| uses for Matter.
-   See :ref:`manual_installation_gn` for more information.
+   See the `GN tool`_ page for more information.

@@ -70,6 +70,19 @@ Bluetooth Fast Pair samples
 
      If your application is based on one of these samples and targets an nRF52 or nRF53 Series device, continue using the |NCS| v3.4.0 release or migrate your design to a supported nRF54L Series device.
 
+.. _matter_migration_3.5:
+
+Matter
+------
+
+.. toggle::
+
+   * All Matter samples, shared sample code, devicetree partition files, and Matter-specific snippets have been moved from ``sdk-nrf`` to the separate `Matter add-on <ncs-matter add-on repository_>`_ repository (``ncs-matter``).
+     The Matter bridge and Thingy:53 weather station reference applications are also relocated into the add-on under :file:`ncs-matter/samples/`.
+
+     If your project is based on a Matter sample or application from ``sdk-nrf`` v3.4.0 or earlier, you must migrate to the add-on structure to continue receiving sample updates.
+     See :ref:`migration_sdk_nrf_to_ncs_matter` for the full migration guide, including path mapping tables, Kconfig symbol renames, devicetree include updates, snippet name changes, and workspace setup instructions.
+
 Libraries
 =========
 

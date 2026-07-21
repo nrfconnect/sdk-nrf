@@ -347,15 +347,15 @@ Matter
 * Added support for nRF54LM20B SoC in Matter samples and applications.
 * Updated:
 
-  * The :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
+  * The ``matter_test_event_triggers_default_test_event_triggers`` section with the new Closure Control cluster test event triggers.
   * Decreased Matter OTA image transfer time by around 15%.
   * By enabling PSA Crypto support by default, even when Wi-Fi is enabled.
-  * The :ref:`ug_matter_platform_and_dmp` page with the certification ID granted for Nordic Matter Compliant Platform working with the Matter 1.5.0 version.
+  * The ``ug_matter_platform_and_dmp`` page with the certification ID granted for Nordic Matter Compliant Platform working with the Matter 1.5.0 version.
   * The `Matter over Thread power consumption and battery measurements <nWP049 - Matter over Thread: Power consumption and battery life_>`_ and `Online Power Profiler for Matter over Thread`_ to include data for the nRF54LM20A and nRF54LM20B SoC.
   * The `Matter Quick Start app`_ to version v1.1.0 with nRF54LM20 DK (Matter Light Bulb, Matter Lock, Matter Temperature Sensor, and Matter Contact Sensor) support.
   * The `Matter Cluster Editor app` to version v1.0.1 providing fixes for some issues.
 
-* Deprecated the secure persistent storage backend enabled with the :option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option.
+* Deprecated the secure persistent storage backend enabled with the ``CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND`` Kconfig option.
 
 Thread
 ------
@@ -652,7 +652,7 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Added an experimental application ranging module (:ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>`) that uses the :ref:`ug_bt_fast_pair_fhn_pf` feature of the :ref:`bt_fast_pair_readme` library with Bluetooth Low Energy Channel Sounding as the ranging technology.
+  * Added an experimental application ranging module (``CONFIG_APP_RANGING``) that uses the :ref:`ug_bt_fast_pair_fhn_pf` feature of the :ref:`bt_fast_pair_readme` library with Bluetooth Low Energy Channel Sounding as the ranging technology.
     The module is enabled by default on board targets with Channel Sounding hardware support.
     The experimental status is inherited due to its experimental dependencies.
 
@@ -799,26 +799,26 @@ Matter samples
   * Partitions mapping for the nRF7002 DK in all Matter samples.
     See the `migration notes <Migration notes for nRF Connect SDK v3.3.0_>`_ for more information.
 
-* :ref:`matter_light_switch_sample` sample:
+* ``matter_light_switch_sample`` sample:
 
   * Removed the ``lit_icd`` snippet from the sample and enabled LIT ICD configuration by default.
 
-* :ref:`matter_manufacturer_specific_sample` sample:
+* ``matter_manufacturer_specific_sample`` sample:
 
   * Added support for the ``NRF_MATTER_CLUSTER_INIT`` macro.
 
-* :ref:`matter_closure_sample` sample:
+* ``matter_closure_sample`` sample:
 
   * Added support for the Closure Control cluster test event triggers.
 
-* :ref:`matter_lock_sample` sample:
+* ``matter_lock_sample`` sample:
 
   * Added:
 
     * Support for the Thread and Wi-Fi switching section in the nRF54LM20 DK with the nRF7002-EB II shield attached.
     * Lock data storage implementation based on the ARM PSA Protected Storage API, enabled with the :kconfig:option:`CONFIG_LOCK_ACCESS_STORAGE_PROTECTED_STORAGE` Kconfig option.
 
-* :ref:`matter_light_bulb_sample` sample:
+* ``matter_light_bulb_sample`` sample:
 
   * Added support for the AWS IoT integration in the nRF54LM20 DK with the nRF7002-EB II shield attached.
 
@@ -1115,7 +1115,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * Added:
 
-  * The :ref:`matter_sample_checker` script to check the consistency of Matter samples in the |NCS|.
+  * The ``matter_sample_checker`` script to check the consistency of Matter samples in the |NCS|.
   * The :ref:`bt_nus_shell_script` that forwards data between TCP clients and a Bluetooth LE device using the Nordic UART Service.
 
 * :ref:`west_sbom` script:

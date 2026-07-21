@@ -112,12 +112,12 @@ Matter
 
    * For the Matter samples and applications:
 
-      * The :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option has been introduced.
+      * The ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH`` Kconfig option has been introduced.
         Previously, the path to the ZAP file was deduced based on hardcoded locations.
-        Now, the location is configured using the :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
-        This change requires you to update your application :file:`prj.conf` file by setting the :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` option to point to the location of you ZAP file.
+        Now, the location is configured using the ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH`` Kconfig option.
+        This change requires you to update your application :file:`prj.conf` file by setting the ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH`` option to point to the location of you ZAP file.
 
-   * For the :ref:`Matter light bulb <matter_light_bulb_sample>` sample:
+   * For the ``matter_light_bulb_sample`` sample:
 
       * The deferred attribute persistence implementation has changed in the latest Matter version and you must align it as follows:
 
