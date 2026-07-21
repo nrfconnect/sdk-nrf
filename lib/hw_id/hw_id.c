@@ -7,6 +7,10 @@
 #include <hw_id.h>
 #include <zephyr/kernel.h>
 
+#if !defined(CONFIG_BOARD_NATIVE_SIM)
+#include <nrfx.h>
+#endif
+
 /* includes for the different HW ID sources */
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS)
 #include <zephyr/bluetooth/bluetooth.h>
@@ -15,7 +19,9 @@
 #include <zephyr/drivers/hwinfo.h>
 #endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_DEVICE_ID) */
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_UUID)
+#if defined(CONFIG_SOC_SERIES_NRF91)
 #include <modem/modem_jwt.h>
+#endif /* defined(CONFIG_SOC_SERIES_NRF91) */
 #endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_UUID) */
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_IMEI)
 #include <nrf_modem_at.h>
@@ -87,6 +93,7 @@ int hw_id_get(char *buf, size_t buf_len)
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_UUID)
 /* Request a UUID from the modem */
 
+#if defined(CONFIG_SOC_SERIES_NRF91)
 int hw_id_get(char *buf, size_t buf_len)
 {
 	if (buf == NULL || buf_len < HW_ID_LEN) {
@@ -104,6 +111,35 @@ int hw_id_get(char *buf, size_t buf_len)
 	snprintk(buf, buf_len, "%s", dev.str);
 	return 0;
 }
+#else
+int hw_id_get(char *buf, size_t buf_len)
+{
+	uint32_t uuid_words[4] = { 0 };
+	uint8_t *uuid_bytes = (uint8_t *)uuid_words;
+
+	if (buf == NULL || buf_len < HW_ID_LEN) {
+		return -EINVAL;
+	}
+#if defined(CONFIG_SOC_SERIES_NRF53)
+	uuid_words[0] = NRF_FICR_NS->INFO.PART;
+	uuid_words[1] = NRF_FICR_NS->INFO.VARIANT;
+	uuid_words[2] = NRF_FICR_NS->INFO.DEVICEID[0];
+	uuid_words[3] = NRF_FICR_NS->INFO.DEVICEID[1];
+#else
+	for (int i = 0; i < 4; i++) {
+		uuid_words[i] = NRF_FICR_NS->INFO.UUID[i];
+	}
+#endif /* defined(CONFIG_SOC_SERIES_NRF53) */
+
+	snprintk(buf, buf_len,
+		"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		uuid_bytes[0], uuid_bytes[1], uuid_bytes[2], uuid_bytes[3],
+		uuid_bytes[4], uuid_bytes[5], uuid_bytes[6], uuid_bytes[7],
+		uuid_bytes[8], uuid_bytes[9], uuid_bytes[10], uuid_bytes[11],
+		uuid_bytes[12], uuid_bytes[13], uuid_bytes[14], uuid_bytes[15]);
+	return 0;
+}
+#endif /* defined(CONFIG_SOC_SERIES_NRF91) */
 #endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_UUID) */
 
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_IMEI)

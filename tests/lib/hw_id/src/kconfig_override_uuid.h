@@ -5,3 +5,4 @@
  */
 
 #define CONFIG_HW_ID_LIBRARY_SOURCE_UUID y
+#define CONFIG_SOC_SERIES_NRF91 y
