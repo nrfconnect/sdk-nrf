@@ -28,7 +28,7 @@ zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF9251_CPUPPR NRF_PPR)
 zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF9251_CPUFLPR NRF_FLPR)
 
 zephyr_library_sources_ifdef(CONFIG_SOC_NRF7120_ENGA
-                             ${MDK_DIR}/nrf71/nrf7120_enga/system_nrf7120_enga.c)
+                             ${MDK_DIR}/nrf71/system_nrf71.c)
 
 mdk_svd_ifdef(CONFIG_SOC_NRF54LC10A_CPUAPP nrf54l/nrf54lc10a/nrf54lc10a_application.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF54LC10A_CPUFLPR nrf54l/nrf54lc10a/nrf54lc10a_flpr.svd)
