@@ -144,7 +144,6 @@
 - scenarios:
     - drivers.fprotect.negative_and_hw_crypto
   platforms:
-    - nrf52840dk/nrf52840
     - nrf52dk/nrf52832
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
