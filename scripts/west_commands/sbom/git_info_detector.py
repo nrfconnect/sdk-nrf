@@ -159,22 +159,29 @@ def upstream_url(project) -> 'str|None':
     return url.strip() if isinstance(url, str) and url.strip() else None
 
 
-def read_version(version_file: Path) -> 'str|None':
-    '''Returns "MAJOR.MINOR.PATCH" from `version_file` when PATCH != 99.
+def read_version(version_file: Path, include_dev: bool = False) -> 'str|None':
+    '''Returns the NCS version from `version_file` when PATCHLEVEL != 99.
 
-    Expects the single-line "X.Y.Z" form used by sdk-nrf / sdk-nrf-bm.
-    Returns None on missing file, unparseable content, or PATCH == 99
-    (development snapshot — caller should fall back to the git SHA).
+    Accepts both historical single-line and common-format VERSION files.
+    PATCHLEVEL == 99 returns None unless `include_dev` is set.
     '''
     try:
         text = version_file.read_text(encoding='utf-8').strip()
     except OSError:
         return None
-    match = re.match(r'^(\d+)\.(\d+)\.(\d+)$', text)
+    match = re.match(r'^(\d+)\.(\d+)\.(\d+)(?:-([A-Za-z0-9.\-]+))?$', text)
+    if not match:
+        match = re.fullmatch(
+            r'VERSION_MAJOR\s*=\s*(\d+)\s+VERSION_MINOR\s*=\s*(\d+)\s+'
+            r'PATCHLEVEL\s*=\s*(\d+)\s+VERSION_TWEAK\s*=\s*\d+\s+'
+            r'EXTRAVERSION\s*=\s*([A-Za-z0-9.\-]*)'
+            r'(?:\s+VERSION_METADATA\s*=\s*[A-Za-z0-9.\-]*)?', text)
     if not match:
         return None
-    major, minor, patch = (int(x) for x in match.groups())
-    return None if patch == 99 else f'{major}.{minor}.{patch}'
+    major, minor, patch = (int(x) for x in match.groups()[:3])
+    extra = match.group(4)
+    version = f'{major}.{minor}.{patch}' + (f'-{extra}' if extra else '')
+    return None if patch == 99 and not include_dev else version
 
 
 def load_manifest():
