@@ -11,7 +11,7 @@ Nordic Matter samples leverage :ref:`security` features supported in the |NCS| t
 
 * Cryptography
 * Secure processing environment
-* Trusted storage
+* Secure storage
 * Securing production devices
 
 In the following sections you will learn more details about each listed category.
@@ -57,15 +57,8 @@ Secure storage
 **************
 
 :ref:`secure_storage_in_ncs` lets you securely store and manage sensitive data.
-Currently, all :ref:`matter_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the PSA Secure Storage API implementation for all supported platforms.
+Currently, all :ref:`matter_samples` in the |NCS| use the :ref:`secure_storage` subsystem as the PSA Secure Storage API implementation for all supported platforms when building without TF-M.
 You can find an overview of the PSA Secure Storage configuration supported for each |NCS| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
-
-.. note::
-   For the nRF52840 devices, in regards to :ref:`matter_samples` in |NCS|, AEAD keys are derived using hashes of entry UIDs (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
-   This approach is less secure than using the :ref:`lib_hw_unique_key` library for key derivation as it only provides integrity of sensitive material.
-   It is also possible to implement a custom AEAD key generation method when the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM` Kconfig option is selected.
-
-For more details about AEAD key generation and backend configuration, see the :ref:`trusted_storage_readme` readme.
 
 .. _matter_platforms_security_support:
 
@@ -73,7 +66,7 @@ Matter platforms security support
 *********************************
 
 The following table summarizes the current security configuration and features supported for Matter-enabled hardware platforms in the |NCS|.
-This is a reference configuration that can be modified in the production firmware by using proper Kconfig settings or implementing custom cryptographic backends.
+This is a reference configuration that can be modified in the production firmware by using proper Kconfig settings or implementing custom backends.
 
 .. list-table:: Matter platforms security support
    :widths: auto
@@ -90,19 +83,19 @@ This is a reference configuration that can be modified in the production firmwar
      - PSA Crypto API
      - Oberon + CryptoCell [1]_
      - No
-     - Trusted Storage library + SHA-256 hash
+     - Secure Storage subsystem
    * - nRF5340 SoC
      - Thread
      - PSA Crypto API
      - Oberon + CryptoCell [1]_
      - Yes
-     - Trusted Storage library + Hardware Unique Key (HUK)
+     - Secure Storage subsystem
    * - nRF54L15 SoC
      - Thread
      - PSA Crypto API
      - CRACEN [2]_
      - Yes
-     - Trusted Storage library + Hardware Unique Key (HUK) + Key Management Unit (KMU)
+     - Secure Storage subsystem + Key Management Unit (KMU)
    * - nRF54L15 SoC + Trusted Firmware-M (TF-M)
      - Thread
      - PSA Crypto API
@@ -114,13 +107,13 @@ This is a reference configuration that can be modified in the production firmwar
      - PSA Crypto API
      - CRACEN [2]_
      - Yes
-     - Hardware Unique Key (HUK) + Key Management Unit (KMU)
+     - Secure Storage subsystem + Key Management Unit (KMU)
    * - nRF54LM20A and nRF54LM20B SoCs
      - Thread
      - PSA Crypto API
      - CRACEN [2]_
      - Yes
-     - Trusted Storage library + Hardware Unique Key (HUK) + Key Management Unit (KMU)
+     - Secure Storage subsystem + Key Management Unit (KMU)
 
 .. [1] The CryptoCell backend is used in parallel with the Oberon backend.
        By default, the CryptoCell backend is used only for Random Number Generation (RNG) and the AEAD key derivation driver.
@@ -282,26 +275,23 @@ See the following table to learn about the default secure storage backends for t
      - Default secure storage backend for DAC private key
      - Available secure storage backends
    * - nRF52840 SoC
-     - Trusted Storage library + SHA-256 hash (Zephyr Settings)
-     - Trusted Storage library + SHA-256 hash (Zephyr Settings)
+     - Secure Storage subsystem
+     - Secure Storage subsystem
    * - nRF5340 SoC
-     - Trusted Storage library + Hardware Unique Key (Zephyr Settings)
-     - | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
-       | Trusted Storage library + SHA-256 hash (Zephyr Settings)
+     - Secure Storage subsystem
+     - Secure Storage subsystem
    * - nRF54L15 SoC
      - Key Management Unit (KMU)
      - | Key Management Unit (KMU),
-       | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
-       | Trusted Storage library + SHA-256 hash (Zephyr Settings)
+       | Secure Storage subsystem
    * - nRF54L15 SoC + Trusted Firmware-M (TF-M)
      - Key Management Unit (KMU)
      - | Key Management Unit (KMU),
-       | Trusted Firmware-M Storage (TF-M)
+       | Trusted Firmware-M (TF-M)
    * - nRF54L10 SoC
      - Key Management Unit (KMU)
      - | Key Management Unit (KMU),
-       | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
-       | Trusted Storage library + SHA-256 hash (Zephyr Settings)
+       | Secure Storage subsystem
 
 If you migrate the DAC private key to storage based on Zephyr Settings storage, you cannot use the :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS` Kconfig option.
 This is because the factory reset feature will erase the secure storage, including the DAC private key, which has been removed from the factory data.
@@ -311,20 +301,14 @@ You can use the :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS` Kconf
 
 .. _matter_platforms_security_dac_priv_key_its:
 
-DAC in Trusted Storage library
-==============================
+DAC in Secure Storage subsystem
+===============================
 
-The Device Attestation Certificates private key can be stored in the Trusted Storage library.
-The key is encrypted with the AEAD key derived from the Hardware Unique Key (HUK) or a SHA-256 hash.
-This storage backend is selected by default for all platforms that support the PSA Crypto API, except for the nRF54L Series devices that use Key Management Unit (KMU).
+The Device Attestation Certificates private key can be stored in the Secure Storage subsystem.
+The key is encrypted with the AEAD key derived from the Hardware Unique Key (HUK), the device ID, or a SHA-256 hash.
+This storage backend is selected by default for all platforms that support the PSA Crypto API, except for the nRF54L Series devices that use the Key Management Unit (KMU).
 
-To enable storing the DAC private key in the Trusted Storage library, set the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_ITS` Kconfig option to ``y``.
-To select which encryption to use, set one of the following Kconfig options:
-
-- To use key derivation from HUK, set :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK` to ``y``.
-- To use key derivation from a SHA-256 hash, set :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID` to ``y``.
-
-Encryption with the AEAD key derived from the Hardware Unique Key (HUK) is available only on the nRF5340 and nRF54L platforms.
+To enable storing the DAC private key in the Secure Storage subsystem, set the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_ITS` Kconfig option to ``y``.
 
 .. _matter_platforms_security_dac_priv_key_kmu:
 

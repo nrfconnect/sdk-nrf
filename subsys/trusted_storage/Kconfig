@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# Secure storage subsystem configuration options
+# Trusted storage library configuration options
 
 menuconfig TRUSTED_STORAGE
 	bool "Trusted Storage [DEPRECATED]"
@@ -62,7 +62,7 @@ config PSA_INTERNAL_TRUSTED_STORAGE_PREFIX
 endif # PSA_INTERNAL_TRUSTED_STORAGE
 
 choice TRUSTED_STORAGE_BACKEND
-	prompt "Secure storage backend"
+	prompt "Trusted storage backend"
 	default TRUSTED_STORAGE_BACKEND_AEAD
 	help
 	  The backend that handles encryption, authentication or other means of

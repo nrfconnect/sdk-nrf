@@ -3055,10 +3055,10 @@ Hardware Unique Key
 
 .. _software_maturity_security_features_ts:
 
-Trusted storage
-===============
+Secure Storage
+==============
 
-Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
+The Secure Storage subsystem implements the PSA Certified Secure Storage API without TF-M.
 
 .. toggle::
 
@@ -3066,7 +3066,7 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
 
       .. tab:: nRF52 Series
 
-         .. list-table:: Trusted storage support
+         .. list-table:: Secure Storage support
             :header-rows: 1
             :widths: auto
 
@@ -3077,39 +3077,39 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
               - nRF52832
               - nRF52833
               - nRF52840
-            * - **Trusted storage**
-              - --
-              - --
-              - --
-              - --
-              - --
+            * - **Secure Storage**
+              - Supported
+              - Supported
+              - Supported
+              - Supported
+              - Supported
               - Supported
 
       .. tab:: nRF53 Series
 
-         .. list-table:: Trusted storage support
+         .. list-table:: Secure Storage support
             :header-rows: 1
             :widths: auto
 
             * - Feature
               - nRF5340
-            * - **Trusted storage**
+            * - **Secure Storage**
               - Supported
 
       .. tab:: nRF54H Series
 
-         .. list-table:: Trusted storage support
+         .. list-table:: Secure Storage support
             :header-rows: 1
             :widths: auto
 
             * - Feature
               - nRF54H20
-            * - **Trusted storage**
+            * - **Secure Storage**
               - Experimental
 
       .. tab:: nRF54L Series
 
-         .. list-table:: Trusted storage support
+         .. list-table:: Secure Storage support
             :header-rows: 1
             :widths: auto
 
@@ -3122,19 +3122,19 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
               - nRF54LV10A
               - nRF54LS05A
               - nRF54LS05B
-            * - **Trusted storage**
+            * - **Secure Storage**
               - Supported
               - Supported
               - Supported
               - Supported
               - Supported
               - Supported
-              - --
-              - --
+              - Supported
+              - Supported
 
       .. tab:: nRF91 Series
 
-         .. list-table:: Trusted storage support
+         .. list-table:: Secure Storage support
             :header-rows: 1
             :widths: auto
 
@@ -3143,8 +3143,8 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
               - nRF9151
               - nRF9160
               - nRF9161
-            * - **Trusted storage**
-              - --
+            * - **Secure Storage**
+              - Supported
               - Supported
               - Supported
               - Supported
