@@ -312,7 +312,11 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Updated the references to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option with the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
+  * Updated:
+
+    * The references to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option to use the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
+    * The TX power calibration for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
+      The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options were changed from ``-13`` dBm to ``-11`` dBm to meet the Fast Pair distance certification requirements.
 
 * :ref:`fast_pair_input_device` sample:
 
