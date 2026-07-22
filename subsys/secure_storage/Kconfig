@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Nordic Semiconductor
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-# Secure storage subsystem integration into the nRF Connect SDK
+# Secure Storage subsystem integration into the nRF Connect SDK
 
 if SECURE_STORAGE
 

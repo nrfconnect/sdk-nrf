@@ -10,8 +10,8 @@ Crypto: Persistent key usage
 The persistent key sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to generate and use persistent keys that are stored in the Internal Trusted Storage (ITS) of the device and retain their value between resets.
 The implementation of the PSA ITS API is provided in one of the following ways, depending on your configuration:
 
-* Through TF-M using Internal Trusted Storage and Protected Storage services.
-* When building without TF-M: using either Zephyr's :ref:`secure_storage` subsystem or the :ref:`trusted_storage_readme` library.
+* Through TF-M using the Internal Trusted Storage and Protected Storage services.
+* When building without TF-M: using the :ref:`secure_storage` subsystem.
 
 A persistent key becomes unusable when the ``psa_destroy_key`` function is called.
 

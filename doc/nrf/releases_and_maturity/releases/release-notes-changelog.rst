@@ -134,6 +134,11 @@ Security libraries
 
 |no_changes_yet_note|
 
+* :ref:`trusted_storage_readme` library:
+
+  * Added the deprecation note in the library documentation.
+    The library is replaced by the :ref:`Secure Storage subsystem <secure_storage>` (:kconfig:option:`CONFIG_SECURE_STORAGE`).
+
 Mbed TLS
 --------
 

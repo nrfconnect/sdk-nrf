@@ -110,11 +110,7 @@ For more information about the driver selection, see :ref:`crypto_drivers`.
 Storage integration for the Oberon PSA Crypto implementation
 ------------------------------------------------------------
 
-When using the Oberon PSA Crypto implementation, persistent keys from the PSA Crypto API can be stored in the |NCS| using one of the following storage mechanisms:
-
-* Zephyr's :ref:`Secure storage <zephyr:secure_storage>` subsystem - Zephyr-specific implementation of the functions defined in the `PSA Certified Secure Storage API`_.
-* |NCS|'s :ref:`trusted_storage_readme` library - which provides features like integrity, confidentiality, and authenticity of the stored data without using the TF-M Platform Root of Trust (PRoT).
-
+When using the Oberon PSA Crypto implementation, persistent keys from the PSA Crypto API can be stored in the |NCS| using the :ref:`secure_storage` subsystem, which is a Zephyr-specific implementation of the functions defined in the `PSA Certified Secure Storage API`_, valid and integrated also in the |NCS|.
 For more information, see :ref:`secure_storage_in_ncs`.
 
 .. _ug_crypto_architecture_implementation_standards_tfm:

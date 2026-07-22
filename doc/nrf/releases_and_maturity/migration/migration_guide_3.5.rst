@@ -88,6 +88,12 @@ This section describes the changes related to libraries.
                   zephyr,wifi = &mywifi;
           };
 
+   * :ref:`trusted_storage_readme` library:
+
+     * The library has been deprecated and will be removed in a future release.
+       Use the :ref:`Secure Storage subsystem <secure_storage>` instead (:kconfig:option:`CONFIG_SECURE_STORAGE`).
+       If you have an existing installation that uses the Trusted Storage library with entries stored in non-volatile memory, you can switch to using Secure Storage without losing any data by enabling the :kconfig:option:`CONFIG_SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY` Kconfig option.
+
 Drivers
 =======
 

@@ -12,9 +12,9 @@ config SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY
 	select SECURE_STORAGE_ITS_STORE_SETTINGS_NAME_CUSTOM \
 		if SECURE_STORAGE_ITS_STORE_IMPLEMENTATION_SETTINGS
 	help
-	  Enable to make the Secure storage subsystem compatible with
+	  Enable to make the Secure Storage subsystem compatible with
 	  an existing installation that was previously using the Trusted storage library.
-	  This allows the Secure storage subsystem to operate and store entries
+	  This allows the Secure Storage subsystem to operate and store entries
 	  like the Trusted storage library would.
 
 # Replace the upstream AEAD implementation by a Trusted Storage Backward Compatible (TSBC) one.

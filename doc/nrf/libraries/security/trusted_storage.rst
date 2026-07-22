@@ -10,6 +10,11 @@ Trusted storage
 The trusted storage library enables its users to provide integrity, confidentiality and authenticity of stored data using Authenticated Encryption with Associated Data (AEAD) algorithms or cryptographic hash, without the use of TF-M Platform Root of Trust (PRoT).
 The library implements the :ref:`PSA Certified Secure Storage API <ug_psa_certified_api_overview_secstorage>` for use on builds without TF-M (no :ref:`security by separation <ug_tfm_security_by_separation>`).
 
+.. note::
+   The trusted storage library is deprecated and will be removed in a future release.
+   Use the :ref:`Secure Storage subsystem <secure_storage>` instead (:kconfig:option:`CONFIG_SECURE_STORAGE`).
+   If you have an existing installation that uses the Trusted Storage library with entries stored in non-volatile memory, you can switch to using Secure Storage without losing any data by enabling the :kconfig:option:`CONFIG_SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY` Kconfig option.
+
 See also :ref:`secure_storage_in_ncs` for an overview of the PSA Secure Storage API implementation in the |NCS|.
 
 Overview
@@ -196,18 +201,4 @@ This library has dependencies to the following libraries:
 API documentation
 *****************
 
-Protected storage
-=================
-
-| Header file: :file:`subsys/trusted_storage/include/psa/protected_storage.h`
-| Source files: :file:`subsys/secure_storage/src/protected_storage/backend_interface.c`
-
-.. doxygengroup:: protected_storage
-
-Internal trusted storage
-========================
-
-| Header file: :file:`subsys/trusted_storage/include/psa/internal_trusted_storage.h`
-| Source files: :file:`subsys/secure_storage/src/internal_trusted_storage/backend_interface.c`
-
-.. doxygengroup:: internal_trusted_storage
+.. doxygengroup:: psa_secure_storage
