@@ -116,6 +116,7 @@
 /doc/nrf/drivers/uart.rst                 @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/uart_nrf_sw_lpuart.rst   @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/vtf_monitoring.rst       @nrfconnect/ncs-wifi-doc
+/doc/nrf/drivers/nrf71_sr_coex.rst        @nrfconnect/ncs-wifi-doc
 /doc/nrf/external_comp/avsystem.rst       @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/external_comp/bt_fast_pair/      @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/external_comp/coremark.rst       @nrfconnect/ncs-blenders-doc
@@ -314,6 +315,7 @@
 /drivers/mpsl/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/mspi/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/net/                             @nrfconnect/ncs-co-drivers @doki-nordic
+/drivers/nrf71_sr_coex/                   @nrfconnect/ncs-wcg-coex
 /drivers/ppi_seq/                             @nrfconnect/ncs-ll-izera
 /drivers/regulator/                       @nrfconnect/ncs-co-drivers
 /drivers/sdhc/                            @nrfconnect/ncs-co-drivers
@@ -1022,6 +1024,7 @@
 /tests/drivers/grtc/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/i2c/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/i2s/                       @nrfconnect/ncs-low-level-test
+/tests/drivers/nrf71_sr_coex/             @nrfconnect/ncs-wcg-coex
 /tests/drivers/lpuart/                    @nordic-krch @nrfconnect/ncs-low-level-test
 /tests/drivers/mspi/app_fault_timer/      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/mspi/error_cases/          @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
