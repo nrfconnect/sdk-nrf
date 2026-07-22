@@ -382,6 +382,19 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 		status = NRF_WIFI_STATUS_SUCCESS;
 		break;
 	}
+	case NRF_WIFI_EVENT_COEX_CONFIG: {
+		struct nrf_wifi_event_coex_config *coex_event =
+			(struct nrf_wifi_event_coex_config *)sys_head;
+		struct nrf_wifi_sys_fmac_priv *sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
+
+		if (sys_fpriv->callbk_fns.coex_event_callbk_fn) {
+			sys_fpriv->callbk_fns.coex_event_callbk_fn(
+				fmac_dev_ctx->os_dev_ctx, coex_event->coex_config_info.coex_event,
+				coex_event->coex_config_info.len);
+		}
+		status = NRF_WIFI_STATUS_SUCCESS;
+		break;
+	}
 	default:
 		nrf_wifi_osal_log_err("%s: Unknown event recd: %d",
 				      __func__,
