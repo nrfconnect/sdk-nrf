@@ -27,7 +27,22 @@ tests:
       - sysbuild
       - ci_samples_net
     extra_args:
-      - download_EXTRA_CONF_FILE="wifi.conf"
+      - download_EXTRA_CONF_FILE=wifi.conf
+  sample.net.downloader.wifi.dtls_cert:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - download_EXTRA_CONF_FILE="wifi.conf;wifi-mutual-dtls.conf"
   sample.net.downloader.nrf54lm20_nrf7002eb2.wifi:
     sysbuild: true
     tags:
@@ -45,3 +60,20 @@ tests:
       - download_SHIELD="nrf7002eb2"
       - download_SNIPPET=wifi-credentials
       - download_EXTRA_CONF_FILE="wifi.conf"
+  sample.net.downloader.nrf54lm20_nrf7002eb2.wifi.dtls_cert:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_args:
+      - download_SHIELD="nrf7002eb2"
+      - download_SNIPPET=wifi-credentials
+      - download_EXTRA_CONF_FILE="wifi.conf;wifi-mutual-dtls.conf"

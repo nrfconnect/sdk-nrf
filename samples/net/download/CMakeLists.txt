@@ -20,6 +20,20 @@ if(CONFIG_SAMPLE_PROVISION_CERT)
   )
 endif()
 
+if(CONFIG_SAMPLE_PROVISION_CLIENT_CERT)
+  generate_inc_file_for_target(
+    app
+    ${CONFIG_SAMPLE_CLIENT_CERT_FILE}
+    "${gen_dir}/sample_client_cert.inc"
+  )
+
+  generate_inc_file_for_target(
+    app
+    ${CONFIG_SAMPLE_CLIENT_KEY_FILE}
+    "${gen_dir}/sample_client_key.inc"
+  )
+endif()
+
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
