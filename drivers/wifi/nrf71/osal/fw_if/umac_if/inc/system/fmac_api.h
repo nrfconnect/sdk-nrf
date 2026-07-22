@@ -928,25 +928,6 @@ nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
  */
 void nrf_wifi_sys_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
-#ifdef NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL
-/**
- * @brief Configure Sleep control GPIO control for coexistence.
- * @param fmac_dev_ctx Pointer to the context of the RPU instance.
- * @param alt_swctrl1_function_bt_coex_status1 SWCTRL1 alternative function selection.
- * @param invert_bt_coex_grant_output BT coexistence grant polarity selection.
- *
- * This function configures the GPIO control register fields for coex.
- *		- Configures the SWCTRL1 alternative function selection
- *		- Configures BT coexistence grant polarity selection
- * @retval	NRF_WIFI_STATUS_SUCCESS On success
- * @retval	NRF_WIFI_STATUS_FAIL On failure to execute command
- */
-enum nrf_wifi_status nrf_wifi_coex_config_sleep_ctrl_gpio_ctrl(
-		struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-		unsigned int alt_swctrl1_function_bt_coex_status1,
-		unsigned int invert_bt_coex_grant_output);
-#endif /* NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL */
-
 /**
  * @brief Configure WLAN listen interval.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.

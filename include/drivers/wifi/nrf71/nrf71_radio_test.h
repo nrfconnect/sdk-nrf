@@ -20,7 +20,6 @@
 
 #include <radio_test/fmac_api.h>
 #include <nrf71_wifi_ctrl.h>
-#include <coex.h>
 
 #define NRF71_NUM_RF_PARAM_ADDRS 22
 

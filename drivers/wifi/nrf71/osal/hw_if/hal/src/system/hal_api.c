@@ -137,49 +137,6 @@ err:
 	return NULL;
 }
 
-#ifdef NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL
-enum nrf_wifi_status nrf_wifi_hal_coex_config_sleep_ctrl_gpio_ctrl(
-	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-	unsigned int alt_swctrl1_function_bt_coex_status1,
-	unsigned int invert_bt_coex_grant_output)
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-
-	unsigned int abs_sys_sleep_ctrl_gpio_ctrl = 0xA4002DC8;
-	unsigned int sleep_ctrl_gpio_ctrl_read = 0;
-	unsigned int sleep_ctrl_gpio_ctrl_write = 0;
-	unsigned int alt_swctrl1_function_bt_coex_status1_mask = 0x00000040;
-	unsigned int alt_swctrl1_function_bt_coex_status1_shift = 6;
-	unsigned int invert_bt_coex_grant_output_mask = 0x00000200;
-	unsigned int invert_bt_coex_grant_output_shift = 9;
-
-
-	status = hal_rpu_reg_read(hal_dev_ctx,
-				  &sleep_ctrl_gpio_ctrl_read,
-				  abs_sys_sleep_ctrl_gpio_ctrl);
-	sleep_ctrl_gpio_ctrl_write = sleep_ctrl_gpio_ctrl_read &
-		(~(alt_swctrl1_function_bt_coex_status1_mask |
-		  invert_bt_coex_grant_output_mask));
-	sleep_ctrl_gpio_ctrl_write |=
-		((alt_swctrl1_function_bt_coex_status1 <<
-		  alt_swctrl1_function_bt_coex_status1_shift) |
-		 (invert_bt_coex_grant_output << invert_bt_coex_grant_output_shift));
-
-	hal_rpu_reg_write(hal_dev_ctx,
-			  abs_sys_sleep_ctrl_gpio_ctrl,
-			  sleep_ctrl_gpio_ctrl_write);
-
-	status = hal_rpu_reg_read(hal_dev_ctx,
-				  &sleep_ctrl_gpio_ctrl_read,
-				  abs_sys_sleep_ctrl_gpio_ctrl);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Failed to configure sleep control GPIO control registe",
-					  __func__);
-	}
-	return status;
-}
-#endif /* NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL */
-
 void nrf_wifi_sys_hal_lock_rx(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 {
 	unsigned long flags = 0;

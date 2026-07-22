@@ -1327,7 +1327,7 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 	return 0;
 }
 
-#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH) || defined(CONFIG_NRF71_SR_COEX_RF_SWITCH)
+#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH)
 static int nrf_wifi_radio_test_sr_ant_switch_ctrl(const struct shell *shell,
 					     size_t argc,
 					     const char *argv[])
@@ -1345,7 +1345,7 @@ static int nrf_wifi_radio_test_sr_ant_switch_ctrl(const struct shell *shell,
 
 	return sr_ant_switch(val);
 }
-#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH || CONFIG_NRF71_SR_COEX_RF_SWITCH */
+#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
 
 #if defined(CONFIG_NRF70_SR_COEX)
 static int nrf_wifi_radio_test_config_pta(const struct shell *shell,
@@ -3048,7 +3048,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rx,
 		      2,
 		      0),
-#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH) || defined(CONFIG_NRF71_SR_COEX_RF_SWITCH)
+#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH)
 	SHELL_CMD_ARG(sr_ant_switch_ctrl,
 		      NULL,
 		      "0 - Switch set to use the BLE antenna\n"
@@ -3056,7 +3056,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_sr_ant_switch_ctrl,
 		      2,
 		      0),
-#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH || CONFIG_NRF71_SR_COEX_RF_SWITCH */
+#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
 
 #if defined(CONFIG_NRF70_SR_COEX)
 	SHELL_CMD_ARG(config_pta,

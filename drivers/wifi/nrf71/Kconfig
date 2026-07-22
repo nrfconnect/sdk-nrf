@@ -190,34 +190,6 @@ config WIFI_NRF71_LOG_LEVEL
 	# Enable error by default
 	default 1
 
-# Wi-Fi and SR Coexistence Hardware configuration.
-config NRF71_SR_COEX
-	bool "Wi-Fi and SR coexistence support"
-
-if NRF71_SR_COEX
-
-config NRF71_SR_COEX_RF_SWITCH
-	bool "GPIO configuration to control SR side RF switch position"
-	depends on $(dt_nodelabel_has_prop,nrf70,srrf-switch-gpios)
-	help
-	  Select this option to enable GPIO configuration to control SR side RF switch position.
-	  If this GPIO is asserted (1), the SR side RF switch is connected to the Wi-Fi side (shared antenna).
-	  If this GPIO is de-asserted (0), the SR side RF switch is connected to the SR side (separate antenna).
-
-config NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL
-	bool "Configuration of GPIO control for coexistence"
-	default y
-
-config NRF71_SR_COEX_SWCTRL1_OUTPUT
-	int "Configure SWCTRIL1 as output"
-	default 0
-
-config NRF71_SR_COEX_BT_GRANT_ACTIVE_LOW
-	int "Configure BT grant active low"
-	default 1
-
-endif # NRF71_SR_COEX
-
 config NRF71_WORKQ_STACK_SIZE
 	int "Stack size for workqueue"
 	default 4096
