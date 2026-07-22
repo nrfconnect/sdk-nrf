@@ -432,26 +432,6 @@ out:
 	return status;
 }
 
-#ifdef NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL
-enum nrf_wifi_status nrf_wifi_coex_config_sleep_ctrl_gpio_ctrl(
-		struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-		unsigned int alt_swctrl1_function_bt_coex_status1,
-		unsigned int invert_bt_coex_grant_output)
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-
-	status = nrf_wifi_hal_coex_config_sleep_ctrl_gpio_ctrl(fmac_dev_ctx->hal_dev_ctx,
-				   alt_swctrl1_function_bt_coex_status1,
-				   invert_bt_coex_grant_output);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Failed to configure sleep control GPIO control register",
-					  __func__);
-	}
-	return status;
-}
-#endif /* NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL */
-
 void nrf_wifi_sys_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
 	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
