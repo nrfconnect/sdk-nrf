@@ -123,20 +123,22 @@ jobs:
         run: |
           RE='.. _`(.*)`: (.*)'
           LINKS=$(git diff --unified=0 "${{ github.event.pull_request.base.sha }}..HEAD" -- "doc/nrf/links.txt" | \
-                  grep "^+" || true | \
-                  grep -Ev "^(---|\+\+\+)" || true)
+                  grep "^+" | grep -Ev "^\+\+\+" || true)
 
           while IFS= read -r link; do
+            link="${link#+}"
             if [[ $link =~ $RE ]]; then
               NAME=${BASH_REMATCH[1]}
               URL=${BASH_REMATCH[2]}
 
               echo -n "Checking URL for '$NAME' ($URL)... "
-              if [[ "$URL" == *"files.nordicsemi.com"* ]]; then
-                # files.nordicsemi.com server does not allow downloading only headers
-                status=$(curl --write-out "%{http_code}" --output /dev/null --silent "$URL" || true)
+              if [[ "$URL" == *"nordicsemi.com"* ]]; then
+                # Nordic hosts often reject HEAD from CI; /bundle/ URLs redirect to /r/
+                status=$(curl --write-out "%{http_code}" --output /dev/null --silent --location \
+                  --user-agent "NCS-compliance-link-check" "$URL" || true)
               else
-                status=$(curl --write-out "%{http_code}" --output /dev/null --silent --head "$URL" || true)
+                status=$(curl --write-out "%{http_code}" --output /dev/null --silent --location --head \
+                  "$URL" || true)
               fi
 
               if [[ "$status" -ne 200 ]]; then
