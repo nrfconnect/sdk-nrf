@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -11,7 +11,8 @@
 #include <zephyr/bluetooth/l2cap.h>
 #include <zephyr/bluetooth/gatt.h>
 
-#include <dult.h>
+#include <dult/dult.h>
+#include <dult/bt.h>
 #include "dult_battery.h"
 #include "dult_bt_anos.h"
 #include "dult_user.h"
@@ -27,6 +28,12 @@ LOG_MODULE_REGISTER(dult_bt_anos, CONFIG_DULT_LOG_LEVEL);
 #define BT_UUID_ACCESSORY_NON_OWNER_CHARACTERISTIC \
 	BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0x8E0C0001, 0x1D68, 0xFB92, 0xBF61, 0x48377421680E))
 
+/* DULT Accessory Non-Owner Service (ANOS) opcode groups. */
+enum dult_bt_anos_opcode_group {
+	DULT_BT_ANOS_OPCODE_GROUP_ACCESSORY_INFO,
+	DULT_BT_ANOS_OPCODE_GROUP_NON_OWNER_CONTROL,
+};
+
 /* DULT opcodes for Accessory Information writes. */
 enum anos_chrc_accessory_info_write_opcode {
 	ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_PRODUCT_DATA				= 0x003,
@@ -39,6 +46,7 @@ enum anos_chrc_accessory_info_write_opcode {
 	ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_FIRMWARE_VERSION			= 0x00A,
 	ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_TYPE				= 0x00B,
 	ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_LEVEL				= 0x00C,
+	ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_NETWORK_VERSION			= 0x00D,
 };
 
 /* DULT opcodes for Non-owner control writes. */
@@ -77,6 +85,50 @@ enum anos_sound_state {
 	ANOS_SOUND_STATE_EXTERNAL_TAKEOVER,
 };
 
+/* ANOS opcode descriptor. */
+struct anos_opcode_entry {
+	/* ANOS opcode. */
+	uint16_t opcode;
+
+	/* ANOS opcode group. */
+	enum dult_bt_anos_opcode_group group;
+
+	/* Optional precondition check for an ANOS opcode.
+	 *
+	 * Returns ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS when the opcode may be
+	 * processed, or a non-success status that the dispatcher reports back to the
+	 * peer via a Command Response indication. A NULL verify handler means the
+	 * opcode has no precondition and is always processed.
+	 */
+	enum anos_chrc_cmd_response_status (*verify)(struct bt_conn *conn,
+						     const struct dult_user *dult_user);
+
+	/* Build and send the indication payload for an ANOS opcode.
+	 *
+	 * Return error value is only used to forward the error from the GATT indication
+	 * sending API to the dispatcher.
+	 */
+	int (*process)(struct bt_conn *conn,
+		       const struct bt_gatt_attr *attr,
+		       const struct dult_user *dult_user);
+};
+
+#define ANOS_ACCESSORY_INFO_OPCODE_ENTRY(_name, _verify, _process)		\
+	{									\
+		.opcode = ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_##_name,	\
+		.group = DULT_BT_ANOS_OPCODE_GROUP_ACCESSORY_INFO,		\
+		.verify = (_verify),						\
+		.process = (_process),						\
+	}
+
+#define ANOS_NON_OWNER_CONTROL_OPCODE_ENTRY(_name, _verify, _process)		\
+	{									\
+		.opcode = ANOS_CHRC_NON_OWNER_CONTROL_WRITE_OPCODE_##_name,	\
+		.group = DULT_BT_ANOS_OPCODE_GROUP_NON_OWNER_CONTROL,		\
+		.verify = (_verify),						\
+		.process = (_process),						\
+	}
+
 #define ANOS_CHRC_OPCODE_LEN	sizeof(uint16_t)
 #define ANOS_CHRC_OPERAND_LEN_MAX	\
 	MAX(DULT_USER_STR_PARAM_LEN_MAX, CONFIG_DULT_BT_ANOS_ID_PAYLOAD_LEN_MAX)
@@ -94,6 +146,7 @@ static const struct bt_gatt_attr *anos_chrc_indicate_attr;
 static enum anos_sound_state anos_sound_state;
 static struct bt_conn *sound_conn;
 static const struct dult_bt_anos_sound_cb *anos_sound_cb;
+static const struct dult_bt_anos_cb *anos_cb;
 
 static bool is_mtu_sufficient(struct bt_conn *conn, uint16_t data_len)
 {
@@ -152,8 +205,8 @@ static int gatt_indicate(struct bt_conn *conn,
 	return 0;
 }
 
-static int handle_get_product_data(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-				   const struct dult_user *dult_user)
+static int process_get_product_data(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+				    const struct dult_user *dult_user)
 {
 	static const uint16_t indication_opcode =
 		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
@@ -166,8 +219,8 @@ static int handle_get_product_data(struct bt_conn *conn, const struct bt_gatt_at
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static int handle_get_manufacturer_name(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-					const struct dult_user *dult_user)
+static int process_get_manufacturer_name(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+					 const struct dult_user *dult_user)
 {
 	static const uint16_t indication_opcode =
 		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
@@ -185,8 +238,8 @@ static int handle_get_manufacturer_name(struct bt_conn *conn, const struct bt_ga
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static int handle_get_model_name(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-				 const struct dult_user *dult_user)
+static int process_get_model_name(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+				  const struct dult_user *dult_user)
 {
 	static const uint16_t indication_opcode =
 		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
@@ -204,8 +257,8 @@ static int handle_get_model_name(struct bt_conn *conn, const struct bt_gatt_attr
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static int handle_get_accessory_category(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-					 const struct dult_user *dult_user)
+static int process_get_accessory_category(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+					  const struct dult_user *dult_user)
 {
 	static const size_t accessory_category_len = 8;
 	static const uint16_t indication_opcode =
@@ -223,9 +276,9 @@ static int handle_get_accessory_category(struct bt_conn *conn, const struct bt_g
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static int handle_get_protocol_implementation_version(struct bt_conn *conn,
-						      const struct bt_gatt_attr *attr,
-						      const struct dult_user *dult_user)
+static int process_get_protocol_implementation_version(struct bt_conn *conn,
+						       const struct bt_gatt_attr *attr,
+						       const struct dult_user *dult_user)
 {
 	static const uint16_t indication_opcode =
 		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
@@ -240,8 +293,8 @@ static int handle_get_protocol_implementation_version(struct bt_conn *conn,
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static int handle_get_accessory_capabilities(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-					     const struct dult_user *dult_user)
+static int process_get_accessory_capabilities(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+					      const struct dult_user *dult_user)
 {
 	static const uint16_t indication_opcode =
 		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
@@ -254,8 +307,8 @@ static int handle_get_accessory_capabilities(struct bt_conn *conn, const struct 
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static int handle_get_network_id(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-				 const struct dult_user *dult_user)
+static int process_get_network_id(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+				  const struct dult_user *dult_user)
 {
 	static const uint16_t indication_opcode =
 		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
@@ -268,37 +321,45 @@ static int handle_get_network_id(struct bt_conn *conn, const struct bt_gatt_attr
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static inline uint32_t firmware_version_encode(struct dult_firmware_version version)
+static inline uint32_t version_encode(struct dult_version version)
 {
 	return ((((uint32_t)(version.major) & 0xFFFF) << 16) |
 		(((uint32_t)(version.minor) & 0xFF) << 8) |
 		((uint32_t)(version.revision) & 0xFF));
 }
 
-static int handle_get_firmware_version(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-				       const struct dult_user *dult_user)
+static int handle_get_version(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+			      enum anos_chrc_accessory_info_write_opcode write_opcode,
+			      const struct dult_version version)
 {
-	static const uint16_t indication_opcode =
-		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
-					ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_FIRMWARE_VERSION);
+	const uint16_t indication_opcode =
+		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(write_opcode);
 	NET_BUF_SIMPLE_DEFINE(buf, ANOS_CHRC_INDICATION_LEN(sizeof(uint32_t)));
 
 	net_buf_simple_add_le16(&buf, indication_opcode);
-	net_buf_simple_add_le32(&buf, firmware_version_encode(dult_user->firmware_version));
+	net_buf_simple_add_le32(&buf, version_encode(version));
 
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static int handle_get_battery_type(struct bt_conn *conn, const struct bt_gatt_attr *attr)
+static int process_get_firmware_version(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+					const struct dult_user *dult_user)
+{
+	return handle_get_version(conn, attr,
+				  ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_FIRMWARE_VERSION,
+				  dult_user->firmware_version);
+}
+
+#if defined(CONFIG_DULT_BATTERY)
+static int process_get_battery_type(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+				    const struct dult_user *dult_user)
 {
 	static const uint16_t indication_opcode =
 		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
 					ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_TYPE);
 	NET_BUF_SIMPLE_DEFINE(buf, ANOS_CHRC_INDICATION_LEN(sizeof(uint8_t)));
 
-	if (!IS_ENABLED(CONFIG_DULT_BATTERY)) {
-		return -ENOTSUP;
-	}
+	ARG_UNUSED(dult_user);
 
 	net_buf_simple_add_le16(&buf, indication_opcode);
 	net_buf_simple_add_u8(&buf, dult_battery_type_encode());
@@ -306,21 +367,43 @@ static int handle_get_battery_type(struct bt_conn *conn, const struct bt_gatt_at
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static int handle_get_battery_level(struct bt_conn *conn, const struct bt_gatt_attr *attr)
+static int process_get_battery_level(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+				     const struct dult_user *dult_user)
 {
 	static const uint16_t indication_opcode =
 		ANOS_CHRC_ACCESSORY_INFO_INDICATION_OPCODE(
 					ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_LEVEL);
 	NET_BUF_SIMPLE_DEFINE(buf, ANOS_CHRC_INDICATION_LEN(sizeof(uint8_t)));
 
-	if (!IS_ENABLED(CONFIG_DULT_BATTERY)) {
-		return -ENOTSUP;
-	}
+	ARG_UNUSED(dult_user);
 
 	net_buf_simple_add_le16(&buf, indication_opcode);
 	net_buf_simple_add_u8(&buf, dult_battery_level_encode());
 
 	return gatt_indicate(conn, attr, buf.data, buf.len);
+}
+#endif /* defined(CONFIG_DULT_BATTERY) */
+
+static enum anos_chrc_cmd_response_status verify_get_network_version(
+	struct bt_conn *conn, const struct dult_user *dult_user)
+{
+	ARG_UNUSED(conn);
+
+	/* Get_Network_Version is OPTIONAL per the DULT specification. */
+	if (!dult_user->network_version) {
+		return ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND;
+	}
+
+	return ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS;
+}
+
+static int process_get_network_version(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+				       const struct dult_user *dult_user)
+{
+	/* verify_get_network_version() guarantees network_version is non-NULL. */
+	return handle_get_version(conn, attr,
+				  ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_NETWORK_VERSION,
+				  *dult_user->network_version);
 }
 
 static int command_response_send(struct bt_conn *conn, const struct bt_gatt_attr *attr,
@@ -339,8 +422,39 @@ static int command_response_send(struct bt_conn *conn, const struct bt_gatt_attr
 	return gatt_indicate(conn, attr, buf.data, buf.len);
 }
 
-static int handle_get_id(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-			 const struct dult_user *dult_user)
+static bool capability_verify(const struct dult_user *dult_user,
+			      enum dult_accessory_capability capability)
+{
+	return (dult_user->accessory_capabilities & BIT(capability));
+}
+
+static void capability_assert(const struct dult_user *dult_user,
+			      enum dult_accessory_capability capability)
+{
+	__ASSERT_NO_MSG(dult_user->accessory_capabilities & BIT(capability));
+}
+
+static enum anos_chrc_cmd_response_status verify_get_id(struct bt_conn *conn,
+							const struct dult_user *dult_user)
+{
+	ARG_UNUSED(conn);
+
+	if (!capability_verify(dult_user, DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_BLE_BIT_POS)) {
+		LOG_WRN("Identifier lookup (BLE) capability not supported - "
+			"identifier read blocked");
+		return ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND;
+	}
+
+	if (!dult_id_is_in_read_state()) {
+		LOG_WRN("Accessory not in identifier read state - identifier read blocked");
+		return ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND;
+	}
+
+	return ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS;
+}
+
+static int process_get_id(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+			  const struct dult_user *dult_user)
 {
 	static const size_t payload_len_max = CONFIG_DULT_BT_ANOS_ID_PAYLOAD_LEN_MAX;
 	size_t payload_len = payload_len_max;
@@ -348,13 +462,7 @@ static int handle_get_id(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 
 	NET_BUF_SIMPLE_DEFINE(buf, ANOS_CHRC_INDICATION_LEN(payload_len_max));
 
-	if (!dult_id_is_in_read_state()) {
-		LOG_WRN("Accessory not in identifier read state - identifier read blocked");
-		return command_response_send(conn,
-					     attr,
-					     ANOS_CHRC_NON_OWNER_CONTROL_WRITE_OPCODE_GET_ID,
-					     ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND);
-	}
+	ARG_UNUSED(dult_user);
 
 	net_buf_simple_add_le16(&buf,
 				ANOS_CHRC_NON_OWNER_CONTROL_INDICATION_OPCODE_GET_ID_RESPONSE);
@@ -369,11 +477,6 @@ static int handle_get_id(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 	net_buf_simple_remove_mem(&buf, payload_len_max - payload_len);
 
 	return gatt_indicate(conn, attr, buf.data, buf.len);
-}
-
-static void capability_assert(enum dult_accessory_capability capability)
-{
-	__ASSERT_NO_MSG(dult_user_get()->accessory_capabilities & BIT(capability));
 }
 
 static int sound_command_response_send(struct bt_conn *conn,
@@ -403,24 +506,34 @@ static int sound_command_response_send(struct bt_conn *conn,
 	return 0;
 }
 
-static int handle_sound_start(struct bt_conn *conn,
-			      const struct bt_gatt_attr *attr,
-			      const struct dult_user *dult_user)
+static enum anos_chrc_cmd_response_status verify_sound_start(struct bt_conn *conn,
+							     const struct dult_user *dult_user)
 {
-	enum anos_chrc_cmd_response_status response_status;
+	ARG_UNUSED(conn);
 
-	capability_assert(DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS);
-
-	if (anos_sound_state != ANOS_SOUND_STATE_IDLE) {
-		response_status = ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_STATE;
+	if (IS_ENABLED(CONFIG_DULT_ACCESSORY_TYPE_SMALL)) {
+		capability_assert(dult_user, DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS);
 	} else {
-		response_status = ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS;
+		if (!capability_verify(dult_user, DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS)) {
+			LOG_WRN("Sound capability not supported - sound start blocked");
+			return ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND;
+		}
 	}
 
-	if (response_status != ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS) {
-		return sound_command_response_send(conn, attr, true, response_status);
-	}
+	return (anos_sound_state != ANOS_SOUND_STATE_IDLE) ?
+		ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_STATE :
+		ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS;
+}
 
+static int process_sound_start(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+			       const struct dult_user *dult_user)
+{
+	ARG_UNUSED(attr);
+	ARG_UNUSED(dult_user);
+
+	/* State is validated in verify_sound_start(). The ANOS GATT write runs to
+	 * completion in a single context, so no re-check is needed here.
+	 */
 	anos_sound_state = ANOS_SOUND_STATE_START_REQUEST;
 	sound_conn = conn;
 
@@ -432,24 +545,33 @@ static int handle_sound_start(struct bt_conn *conn,
 	return 0;
 }
 
-static int handle_sound_stop(struct bt_conn *conn,
-			     const struct bt_gatt_attr *attr,
-			     const struct dult_user *dult_user)
+static enum anos_chrc_cmd_response_status verify_sound_stop(struct bt_conn *conn,
+							    const struct dult_user *dult_user)
 {
-	enum anos_chrc_cmd_response_status response_status;
-
-	capability_assert(DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS);
-
-	if ((anos_sound_state != ANOS_SOUND_STATE_START_ACK) || (sound_conn != conn)) {
-		response_status = ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_STATE;
+	if (IS_ENABLED(CONFIG_DULT_ACCESSORY_TYPE_SMALL)) {
+		capability_assert(dult_user, DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS);
 	} else {
-		response_status = ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS;
+		if (!capability_verify(dult_user, DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS)) {
+			LOG_WRN("Sound capability not supported - sound stop blocked");
+			return ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND;
+		}
 	}
 
-	if (response_status != ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS) {
-		return sound_command_response_send(conn, attr, false, response_status);
-	}
+	return ((anos_sound_state != ANOS_SOUND_STATE_START_ACK) || (sound_conn != conn)) ?
+		ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_STATE :
+		ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS;
+}
 
+static int process_sound_stop(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+			      const struct dult_user *dult_user)
+{
+	ARG_UNUSED(conn);
+	ARG_UNUSED(attr);
+	ARG_UNUSED(dult_user);
+
+	/* State is validated in verify_sound_stop(). The ANOS GATT write runs to
+	 * completion in a single context, so no re-check is needed here.
+	 */
 	anos_sound_state = ANOS_SOUND_STATE_STOP_REQUEST;
 
 	__ASSERT(anos_sound_cb && anos_sound_cb->sound_stop,
@@ -476,34 +598,71 @@ static ssize_t write_accessory_non_owner_err_to_att_err_map(int err)
 	}
 }
 
-static ssize_t write_accessory_non_owner_err_handle(struct bt_conn *conn,
-						    const struct bt_gatt_attr *attr,
-						    uint16_t opcode_write,
-						    uint16_t write_len,
-						    int err)
-{
-	ssize_t res = write_len;
+static const struct anos_opcode_entry anos_opcode_map[] = {
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_PRODUCT_DATA,
+					 NULL, process_get_product_data),
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_MANUFACTURER_NAME,
+					 NULL, process_get_manufacturer_name),
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_MODEL_NAME,
+					 NULL, process_get_model_name),
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_ACCESSORY_CATEGORY,
+					 NULL, process_get_accessory_category),
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_PROTOCOL_IMPLEMENTATION_VERSION,
+					 NULL, process_get_protocol_implementation_version),
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_ACCESSORY_CAPABILITIES,
+					 NULL, process_get_accessory_capabilities),
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_NETWORK_ID,
+					 NULL, process_get_network_id),
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_FIRMWARE_VERSION,
+					 NULL, process_get_firmware_version),
+#if defined(CONFIG_DULT_BATTERY)
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_BATTERY_TYPE,
+					 NULL, process_get_battery_type),
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_BATTERY_LEVEL,
+					 NULL, process_get_battery_level),
+#endif /* defined(CONFIG_DULT_BATTERY) */
+	ANOS_ACCESSORY_INFO_OPCODE_ENTRY(GET_NETWORK_VERSION,
+					 verify_get_network_version, process_get_network_version),
+	ANOS_NON_OWNER_CONTROL_OPCODE_ENTRY(SOUND_START,
+					    verify_sound_start, process_sound_start),
+	ANOS_NON_OWNER_CONTROL_OPCODE_ENTRY(SOUND_STOP,
+					    verify_sound_stop, process_sound_stop),
+	ANOS_NON_OWNER_CONTROL_OPCODE_ENTRY(GET_ID,
+					    verify_get_id, process_get_id),
+};
 
-	if (err) {
-		LOG_WRN("Handling command failed: err=%d (Accessory non-owner write)", err);
-		if (err == -ENOMEM) {
-			LOG_WRN("No more indication buffers available "
-				"(Accessory non-owner write)");
-			/* Not sending Command Response to not overload indication buffer. */
-		} else if (err == -ENOTSUP) {
-			LOG_INF("Opcode not supported on accessory side: opcode=%#05X "
-				"(Accessory non-owner write)", opcode_write);
-			err = command_response_send(conn, attr, opcode_write,
-						    ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND);
+static const struct anos_opcode_entry *opcode_entry_get(uint16_t opcode)
+{
+	ARRAY_FOR_EACH(anos_opcode_map, i) {
+		if (anos_opcode_map[i].opcode == opcode) {
+			return &anos_opcode_map[i];
 		}
 	}
 
+	return NULL;
+}
+
+static ssize_t write_accessory_non_owner_reject(struct bt_conn *conn,
+						const struct bt_gatt_attr *attr,
+						uint16_t opcode_write,
+						uint16_t write_len,
+						enum anos_chrc_cmd_response_status status)
+{
+	ssize_t res = write_len;
+	int err;
+
+	err = command_response_send(conn, attr, opcode_write, status);
 	if (err) {
 		res = write_accessory_non_owner_err_to_att_err_map(err);
 	}
 
 	write_accessory_non_owner_exit_log(res, conn);
 	return res;
+}
+
+static bool near_owner_state_is_separated(void)
+{
+	return dult_near_owner_state_get() == DULT_NEAR_OWNER_STATE_MODE_SEPARATED;
 }
 
 static ssize_t write_accessory_non_owner(struct bt_conn *conn,
@@ -516,8 +675,9 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 	int err = 0;
 	ssize_t res = len;
 	uint16_t opcode_write;
+	const struct anos_opcode_entry *entry;
 	const struct dult_user *dult_user;
-	enum dult_near_owner_state_mode mode;
+	bool anos_access_verify_cb_present = anos_cb && anos_cb->access_verify;
 
 	if (!dult_user_is_ready()) {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
@@ -551,77 +711,77 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 	opcode_write = sys_get_le16(buf);
 	LOG_DBG("Received following opcode: %#05X (Accessory non-owner write)", opcode_write);
 
-	mode = dult_near_owner_state_get();
-	if (mode != DULT_NEAR_OWNER_STATE_MODE_SEPARATED) {
-		LOG_WRN("Invalid near-owner state mode: mode=%d (Accessory non-owner write)", mode);
-		err = command_response_send(conn, attr, opcode_write,
-					    ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND);
-		if (err) {
-			res = write_accessory_non_owner_err_to_att_err_map(err);
+	/* Reject opcodes that are not defined by the DULT specification early,
+	 * without consulting the access_verify callback. The DULT specification
+	 * mandates the Invalid_command status for any opcode outside the
+	 * defined set.
+	 */
+	entry = opcode_entry_get(opcode_write);
+	if (!entry) {
+		LOG_INF("Unknown opcode: %#05X (Accessory non-owner write)", opcode_write);
+		return write_accessory_non_owner_reject(
+			conn, attr, opcode_write, len,
+			ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND);
+	}
+
+	if (anos_access_verify_cb_present) {
+		/* The Non-owner Control opcodes always remain gated on the separated near-owner
+		 * state.
+		 */
+		if ((entry->group == DULT_BT_ANOS_OPCODE_GROUP_NON_OWNER_CONTROL) &&
+		    !near_owner_state_is_separated()) {
+			LOG_WRN("Non-owner control blocked outside separated state: opcode=%#05X "
+				"(Accessory non-owner write)",
+				opcode_write);
+			return write_accessory_non_owner_reject(
+				conn, attr, opcode_write, len,
+				ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND);
 		}
-		write_accessory_non_owner_exit_log(res, conn);
-		return res;
+	} else if (!near_owner_state_is_separated()) {
+		/* Reject every opcode outside the separated state. */
+		LOG_WRN("Invalid near-owner state mode: opcode=%#05X (Accessory non-owner write)",
+			opcode_write);
+		return write_accessory_non_owner_reject(
+			conn, attr, opcode_write, len,
+			ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_COMMAND);
 	}
 
-	switch (opcode_write) {
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_PRODUCT_DATA:
-		err = handle_get_product_data(conn, attr, dult_user);
-		break;
+	/* Opcode-specific precondition check. On failure the peer is informed with
+	 * a Command Response indication carrying the reported status.
+	 */
+	if (entry->verify) {
+		enum anos_chrc_cmd_response_status status = entry->verify(conn, dult_user);
 
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_MANUFACTURER_NAME:
-		err = handle_get_manufacturer_name(conn, attr, dult_user);
-		break;
-
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_MODEL_NAME:
-		err = handle_get_model_name(conn, attr, dult_user);
-		break;
-
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_ACCESSORY_CATEGORY:
-		err = handle_get_accessory_category(conn, attr, dult_user);
-		break;
-
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_PROTOCOL_IMPLEMENTATION_VERSION:
-		err = handle_get_protocol_implementation_version(conn, attr, dult_user);
-		break;
-
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_ACCESSORY_CAPABILITIES:
-		err = handle_get_accessory_capabilities(conn, attr, dult_user);
-		break;
-
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_NETWORK_ID:
-		err = handle_get_network_id(conn, attr, dult_user);
-		break;
-
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_FIRMWARE_VERSION:
-		err = handle_get_firmware_version(conn, attr, dult_user);
-		break;
-
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_TYPE:
-		err = handle_get_battery_type(conn, attr);
-		break;
-
-	case ANOS_CHRC_ACCESSORY_INFO_WRITE_OPCODE_GET_BATTERY_LEVEL:
-		err = handle_get_battery_level(conn, attr);
-		break;
-
-	case ANOS_CHRC_NON_OWNER_CONTROL_WRITE_OPCODE_SOUND_START:
-		err = handle_sound_start(conn, attr, dult_user);
-		break;
-
-	case ANOS_CHRC_NON_OWNER_CONTROL_WRITE_OPCODE_SOUND_STOP:
-		err = handle_sound_stop(conn, attr, dult_user);
-		break;
-
-	case ANOS_CHRC_NON_OWNER_CONTROL_WRITE_OPCODE_GET_ID:
-		err = handle_get_id(conn, attr, dult_user);
-		break;
-
-	default:
-		err = -ENOTSUP;
-		break;
+		if (status != ANOS_CHRC_CMD_RESPONSE_STATUS_SUCCESS) {
+			return write_accessory_non_owner_reject(conn, attr, opcode_write, len,
+								status);
+		}
 	}
 
-	return write_accessory_non_owner_err_handle(conn, attr, opcode_write, len, err);
+	/* The OPTIONAL access_verify callback is the last gate before the opcode is processed. */
+	if (anos_access_verify_cb_present && !anos_cb->access_verify(conn)) {
+		LOG_WRN("ANOS access denied by access_verify callback: opcode=%#05X "
+			"(Accessory non-owner write)",
+			opcode_write);
+		return write_accessory_non_owner_reject(
+			conn, attr, opcode_write, len,
+			ANOS_CHRC_CMD_RESPONSE_STATUS_INVALID_STATE);
+	}
+
+	err = entry->process(conn, attr, dult_user);
+	if (err == -ENOMEM) {
+		/* Do not send a Command Response to avoid overloading the indication buffer. */
+		LOG_WRN("No more indication buffers available (Accessory non-owner write)");
+	} else if (err) {
+		LOG_WRN("Sending indication failed: err=%d (Accessory non-owner write)", err);
+	}
+
+	if (err) {
+		res = write_accessory_non_owner_err_to_att_err_map(err);
+	}
+
+	write_accessory_non_owner_exit_log(res, conn);
+	return res;
 }
 
 BT_GATT_SERVICE_DEFINE(dult_accessory_non_owner_svc,
@@ -754,6 +914,31 @@ void dult_bt_anos_sound_cb_register(const struct dult_bt_anos_sound_cb *cb)
 	anos_sound_cb = cb;
 }
 
+int dult_bt_anos_cb_register(const struct dult_user *user, const struct dult_bt_anos_cb *cb)
+{
+	if (!user || !cb || !cb->access_verify) {
+		return -EINVAL;
+	}
+
+	if (dult_user_is_ready()) {
+		LOG_ERR("DULT ANOS: module must be disabled to register callbacks");
+		return -EACCES;
+	}
+
+	if (!dult_user_is_registered(user)) {
+		return -EACCES;
+	}
+
+	if (anos_cb) {
+		LOG_ERR("DULT ANOS: callback already registered");
+		return -EALREADY;
+	}
+
+	anos_cb = cb;
+
+	return 0;
+}
+
 int dult_bt_anos_enable(void)
 {
 	if (!anos_chrc_indicate_attr) {
@@ -790,6 +975,8 @@ int dult_bt_anos_reset(void)
 
 		sound_state_reset();
 	}
+
+	anos_cb = NULL;
 
 	return 0;
 }

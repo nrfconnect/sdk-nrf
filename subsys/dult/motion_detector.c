@@ -10,7 +10,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/random/random.h>
 
-#include "dult.h"
+#include <dult/dult.h>
+#include <dult/test.h>
 #include "dult_user.h"
 #include "dult_motion_detector.h"
 #include "dult_near_owner_state.h"
@@ -24,22 +25,24 @@ LOG_MODULE_REGISTER(dult_motion_detector, CONFIG_DULT_LOG_LEVEL);
 /* Sampling rate in MOTION_POLL_STATE_ACTIVE state. */
 #define SEPARATED_UT_SAMPLING_RATE2	\
 	K_MSEC(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE2)
-#define SEPARATED_UT_BACKOFF_PERIOD	\
-	K_MINUTES(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD)
-
-#define SEPARATED_UT_TIMEOUT_PERIOD_MIN		\
-	(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN)
-#define SEPARATED_UT_TIMEOUT_PERIOD_MAX		\
-	(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX)
-#define SEPARATED_UT_TIMEOUT_PERIOD_DIFF	\
-	(SEPARATED_UT_TIMEOUT_PERIOD_MAX - SEPARATED_UT_TIMEOUT_PERIOD_MIN)
 
 #define SEPARATED_UT_ACTIVE_POLL_DURATION	\
 	K_SECONDS(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_ACTIVE_POLL_DURATION)
 #define SEPARATED_UT_MAX_SOUND_COUNT		\
 	CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_MAX_SOUND_COUNT
 
-BUILD_ASSERT(SEPARATED_UT_TIMEOUT_PERIOD_DIFF >= 0);
+/* The Kconfig range ceiling must fit the K_SECONDS() millisecond conversion. */
+BUILD_ASSERT(DULT_TEST_MOTION_DETECTOR_PERIOD_MAX <= (UINT32_MAX / MSEC_PER_SEC));
+
+BUILD_ASSERT(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX >=
+	     CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN);
+
+static uint32_t ut_backoff_period =
+	CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD;
+static uint32_t ut_timeout_period_min =
+	CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN;
+static uint32_t ut_timeout_period_max =
+	CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX;
 
 static bool is_enabled;
 static const struct dult_motion_detector_cb *motion_detector_cb;
@@ -111,7 +114,7 @@ static void backoff_setup(void)
 
 	state_reset();
 	__ASSERT_NO_MSG(!k_work_delayable_is_pending(&motion_enable_work));
-	ret = k_work_schedule(&motion_enable_work, SEPARATED_UT_BACKOFF_PERIOD);
+	ret = k_work_schedule(&motion_enable_work, K_SECONDS(ut_backoff_period));
 	__ASSERT_NO_MSG(ret == 1);
 }
 
@@ -189,37 +192,42 @@ static void motion_poll_work_handle(struct k_work *work)
 	}
 }
 
-static void separated_mode_transition_handle(void)
+static uint32_t randomized_timeout_calculate(void)
 {
+	uint32_t seed;
+	uint32_t diff;
+	uint64_t pick;
 	int err;
-	int ret;
-	uint16_t separated_ut_timeout_period_seed;
-	uint32_t separated_ut_timeout_period;
 
-	/* Calculate the positive randomized time factor. */
-	err = sys_csrand_get(&separated_ut_timeout_period_seed,
-			     sizeof(separated_ut_timeout_period_seed));
+	err = sys_csrand_get(&seed, sizeof(seed));
 	if (err) {
 		LOG_WRN("DULT: sys_csrand_get failed: %d", err);
-
-		sys_rand_get(&separated_ut_timeout_period_seed,
-			     sizeof(separated_ut_timeout_period_seed));
+		sys_rand_get(&seed, sizeof(seed));
 	}
 
-	BUILD_ASSERT(SEPARATED_UT_TIMEOUT_PERIOD_DIFF < UINT16_MAX);
+	__ASSERT_NO_MSG(ut_timeout_period_max >= ut_timeout_period_min);
+	diff = ut_timeout_period_max - ut_timeout_period_min;
 
-	/* Convert the random part range from <0; UINT16_MAX> to
-	 * <SEPARATED_UT_TIMEOUT_PERIOD_MIN; SEPARATED_UT_TIMEOUT_PERIOD_MAX>
+	/* Map the random seed onto the timeout window: scale the seed from its full
+	 * [0, UINT32_MAX] range down to [0, diff], then offset by the minimum, to
+	 * obtain a uniform sample in [ut_timeout_period_min, ut_timeout_period_max]
+	 * seconds, inclusive. The uint64_t intermediate prevents overflow in
+	 * diff * seed for any uint32_t diff.
 	 */
-	separated_ut_timeout_period = SEPARATED_UT_TIMEOUT_PERIOD_DIFF;
-	separated_ut_timeout_period *= separated_ut_timeout_period_seed;
-	separated_ut_timeout_period /= UINT16_MAX;
-	separated_ut_timeout_period += SEPARATED_UT_TIMEOUT_PERIOD_MIN;
+	pick = ((uint64_t) diff * seed) / UINT32_MAX;
+
+	return ut_timeout_period_min + (uint32_t) pick;
+}
+
+static void separated_mode_transition_handle(void)
+{
+	uint32_t separated_ut_timeout_period = randomized_timeout_calculate();
+	int ret;
 
 	LOG_DBG("Starting the work for enabling the motion detector. "
-		"Randomized timeout set to: %" PRIu32 " minutes", separated_ut_timeout_period);
+		"Randomized timeout set to: %" PRIu32 " seconds", separated_ut_timeout_period);
 	__ASSERT_NO_MSG(!k_work_delayable_is_pending(&motion_enable_work));
-	ret = k_work_schedule(&motion_enable_work, K_MINUTES(separated_ut_timeout_period));
+	ret = k_work_schedule(&motion_enable_work, K_SECONDS(separated_ut_timeout_period));
 	__ASSERT_NO_MSG(ret == 1);
 }
 
@@ -375,6 +383,47 @@ int dult_motion_detector_reset(void)
 	state_reset();
 
 	motion_detector_cb = NULL;
+
+	return 0;
+}
+
+int dult_test_motion_detector_separated_ut_period_set(
+	const struct dult_test_motion_detector_separated_ut_period *data)
+{
+	if (!IS_ENABLED(CONFIG_DULT_TEST_MOTION_DETECTOR)) {
+		LOG_ERR("DULT Motion Detector: separated UT period can only be set in test mode");
+		return -ENOTSUP;
+	}
+
+	if (!data) {
+		return -EINVAL;
+	}
+
+	if ((data->backoff > DULT_TEST_MOTION_DETECTOR_PERIOD_MAX) ||
+	    (data->timeout_min > DULT_TEST_MOTION_DETECTOR_PERIOD_MAX) ||
+	    (data->timeout_max > DULT_TEST_MOTION_DETECTOR_PERIOD_MAX)) {
+		LOG_ERR("DULT Motion Detector: separated UT period: "
+			"value exceeds %" PRIu32 " s cap (backoff=%" PRIu32 ", "
+			"timeout_min=%" PRIu32 ", timeout_max=%" PRIu32 ")",
+			(uint32_t) DULT_TEST_MOTION_DETECTOR_PERIOD_MAX, data->backoff,
+			data->timeout_min, data->timeout_max);
+		return -EINVAL;
+	}
+
+	if (data->timeout_max < data->timeout_min) {
+		LOG_ERR("DULT Motion Detector: separated UT period: "
+			"timeout_max (%" PRIu32 ") must be >= timeout_min (%" PRIu32 ")",
+			data->timeout_max, data->timeout_min);
+		return -EINVAL;
+	}
+
+	ut_backoff_period = data->backoff;
+	ut_timeout_period_min = data->timeout_min;
+	ut_timeout_period_max = data->timeout_max;
+
+	LOG_DBG("DULT Motion Detector: setting separated UT period: backoff=%" PRIu32 " s, "
+		"timeout=[%" PRIu32 ", %" PRIu32 "] s",
+		data->backoff, data->timeout_min, data->timeout_max);
 
 	return 0;
 }
