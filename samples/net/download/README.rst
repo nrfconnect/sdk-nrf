@@ -26,22 +26,24 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample first initializes the :ref:`nrfxlib:nrf_modem` and AT communications.
-Next, if the :ref:`CONFIG_SAMPLE_PROVISION_CERT <CONFIG_SAMPLE_PROVISION_CERT>` is set, it provisions a certificate to the modem using the :ref:`modem_key_mgmt` library if the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` option is set.
+The sample first initializes the device (:ref:`nrfxlib:nrf_modem` and AT communications for cellular devices).
+Next, if the :option:`CONFIG_SAMPLE_PROVISION_CERT` is set, it provisions a certificate to the device if the :option:`CONFIG_SAMPLE_SECURE_SOCKET` option is set.
 When using an nRF91 Series device, the provisioning of the certificates must be done before connecting to the LTE network since the certificates can only be provisioned when the device is not connected.
-The certificate file name and security tag can be configured using the :ref:`CONFIG_SAMPLE_SEC_TAG <CONFIG_SAMPLE_SEC_TAG>` and the :ref:`CONFIG_SAMPLE_CERT_FILE <CONFIG_SAMPLE_CERT_FILE>` options, respectively.
+The certificate file name and security tag can be configured using the :option:`CONFIG_SAMPLE_SEC_TAG` and the :option:`CONFIG_SAMPLE_CERT_FILE` options, respectively.
 
 The sample then performs the following actions:
 
 1. Establishes a connection to the network
 #. Optionally sets up the secure socket options
-#. Uses the :ref:`lib_downloader` library to download a file from an HTTP server.
+#. Uses the :ref:`lib_downloader` library to download a file.
 
+Selecting the HTTP(S) or CoAP(S) transport
+===========================================
 
-Downloading from a CoAP server
-==============================
-
-To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoAP stack <zephyr:coap_sock_interface>` using the :kconfig:option:`CONFIG_COAP` option.
+The :ref:`lib_downloader` library supports both HTTP(S) and CoAP(S), and this sample builds in support for both (:kconfig:option:`CONFIG_DOWNLOADER_TRANSPORT_HTTP` and :kconfig:option:`CONFIG_DOWNLOADER_TRANSPORT_COAP`, together with :kconfig:option:`CONFIG_COAP`).
+No separate build-time choice is needed to pick between them.
+The transport is selected automatically at runtime from the scheme of the URL being downloaded (``http://`` or ``https://`` for HTTP(S), ``coap://`` or ``coaps://`` for CoAP(S)).
+Set :option:`CONFIG_SAMPLE_FILE_URL` (with :option:`CONFIG_SAMPLE_FILE_CUSTOM` selected) to a URL with the appropriate scheme to exercise either transport or security level.
 
 Selecting the HTTP(S) or CoAP(S) transport
 ===========================================
@@ -54,14 +56,42 @@ Set :option:`CONFIG_SAMPLE_FILE_URL` (with :option:`CONFIG_SAMPLE_FILE_CUSTOM` s
 Using TLS and DTLS
 ==================
 
-By default, the :ref:`CONFIG_SAMPLE_PROVISION_CERT <CONFIG_SAMPLE_PROVISION_CERT>` option is set, which means that the sample provisions the certificate found in the :file:`samples/net/download/cert` folder.
-The certificate file name is indicated by the :ref:`CONFIG_SAMPLE_CERT_FILE <CONFIG_SAMPLE_CERT_FILE>` option.
+By default, the :option:`CONFIG_SAMPLE_PROVISION_CERT` option is set, which means that the sample provisions the certificate found in the :file:`samples/net/download/cert` folder.
+The :option:`CONFIG_SAMPLE_CERT_FILE` option indicates the certificate file name.
 This certificate will work for the default test files.
 If you are using a custom download test file, you must provision the correct certificate for the servers from which the certificates will be downloaded.
 
 |hex_format|
 
 See :ref:`cert_dwload` for more information.
+
+.. _download_sample_mtls:
+
+Mutual TLS (client certificate authentication)
+----------------------------------------------
+
+The sample can optionally use mutual TLS (client certificate authentication), for both HTTP(S) and CoAP(S).
+
+.. note::
+   This functionality is only supported on Wi-Fi boards and not on cellular boards.
+
+Enable the :option:`CONFIG_SAMPLE_PROVISION_CLIENT_CERT` option to provision a client certificate and private key, in addition to the CA certificate, under the same security tag.
+Set :option:`CONFIG_SAMPLE_CLIENT_CERT_FILE` and :option:`CONFIG_SAMPLE_CLIENT_KEY_FILE` to the client certificate and private key to provision.
+This must match what the server you connect to expects.
+
+The sample includes an example client certificate and private key, together with a matching CA trust store, under :file:`cert/`, for use against the `Eclipse Californium`_ CoAP interop server:
+
+* :file:`cert/cf-ca.pem` - CA trust store (root + intermediate)
+* :file:`cert/cf-client.pem` - Client leaf certificate
+* :file:`cert/cf-client-key.pem` - Client private key (EC P-256)
+
+The :file:`wifi-mutual-dtls.conf` extra-conf file configures the sample to use these to perform a mutual TLS DTLS download from the Californium interop server.
+
+Wi-Fi
+=====
+
+On Wi-Fi boards, networking and TLS/DTLS support are not part of the default configuration and must be added with the :file:`wifi.conf` extra-conf file, using the ``download_EXTRA_CONF_FILE`` sysbuild variable.
+To perform a mutual DTLS download from the Californium interop server (see :ref:`Mutual TLS (client certificate authentication) <download_sample_mtls>`), add the :file:`wifi-mutual-dtls.conf` extra-conf file on top of :file:`wifi.conf`.
 
 Configuration
 *************
@@ -71,42 +101,10 @@ Configuration
 Configuration options
 =====================
 
-Check and configure the following configuration options for the sample:
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/net/download/Kconfig`):
 
-.. _CONFIG_SAMPLE_SECURE_SOCKET:
-
-CONFIG_SAMPLE_SECURE_SOCKET - Secure socket configuration
-   If enabled, downloading is done using a secure socket over TLS or DTLS.
-
-.. _CONFIG_SAMPLE_SEC_TAG:
-
-CONFIG_SAMPLE_SEC_TAG - Security tag configuration
-   This option configures the security tag.
-
-.. _CONFIG_SAMPLE_PROVISION_CERT:
-
-CONFIG_SAMPLE_PROVISION_CERT - Root CA Certificate provision
-   If enabled, this option provisions the certificate to the modem.
-
-.. _CONFIG_SAMPLE_CERT_FILE:
-
-CONFIG_SAMPLE_CERT_FILE - Certificate file name configuration
-   This option sets the certificate file name.
-
-.. _CONFIG_SAMPLE_COMPUTE_HASH:
-
-CONFIG_SAMPLE_COMPUTE_HASH - Hash compute configuration
-   If enabled, this option computes the SHA256 hash of the downloaded file.
-
-.. _CONFIG_SAMPLE_COMPARE_HASH:
-
-CONFIG_SAMPLE_COMPARE_HASH - Hash compare configuration
-   If enabled, this option compares the hash against the SHA256 hash set by :ref:`CONFIG_SAMPLE_SHA256_HASH <CONFIG_SAMPLE_SHA256_HASH>` for a match.
-
-.. _CONFIG_SAMPLE_SHA256_HASH:
-
-CONFIG_SAMPLE_SHA256_HASH - Hash configuration
-   This option sets the SHA256 hash to be compared with :ref:`CONFIG_SAMPLE_COMPUTE_HASH <CONFIG_SAMPLE_COMPUTE_HASH>`.
+.. options-from-kconfig::
+   :show-type:
 
 .. include:: /includes/wifi_credentials_shell.txt
 

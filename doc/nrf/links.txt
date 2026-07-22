@@ -1925,6 +1925,8 @@
 
 .. ### Source: other (2 links or less from the same URL)
 
+.. _`Eclipse Californium`: https://github.com/eclipse-californium/californium
+
 .. _`Open VSX Registry`: https://open-vsx.org/
 
 .. _`pyca/cryptography`: https://cryptography.io/en/latest/

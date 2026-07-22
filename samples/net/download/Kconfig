@@ -14,15 +14,35 @@ config SAMPLE_PROVISION_CERT
 	bool "Provision root CA certificate"
 	default y
 	help
-	  Provision the root CA certificate for the server to the modem. This is needed for secure
+	  Provision the root CA certificate for the server to the device. This is needed for secure
 	  connections.
 	  Disable this option to avoid overwriting an existing root CA certificate already stored in
-	  the modem.
+	  the device.
 
 config SAMPLE_CERT_FILE
 	string "Certificate file name"
 	default "cert/file-example.pem"
 	depends on SAMPLE_PROVISION_CERT
+
+config SAMPLE_PROVISION_CLIENT_CERT
+	bool "Provision client certificate and key for mutual TLS"
+	depends on SAMPLE_PROVISION_CERT
+	depends on !MODEM_KEY_MGMT
+	help
+	  Provision a client certificate and private key in addition to the CA certificate.
+	  Required for DTLS/TLS mutual authentication (e.g. with the Californium interop server).
+	  Only supported when using the Zephyr TLS credentials store. Not available together with
+	  CONFIG_MODEM_KEY_MGMT yet.
+
+config SAMPLE_CLIENT_CERT_FILE
+	string "Client certificate file"
+	default "cert/cf-client.pem"
+	depends on SAMPLE_PROVISION_CLIENT_CERT
+
+config SAMPLE_CLIENT_KEY_FILE
+	string "Client private key file"
+	default "cert/cf-client-key.pem"
+	depends on SAMPLE_PROVISION_CLIENT_CERT
 
 endif
 
