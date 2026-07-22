@@ -16,6 +16,7 @@ from urllib.parse import quote
 from args import args
 from common import is_sha
 from data_structure import Data, FileInfo, Package  # pylint: disable=unused-import
+from git_info_detector import read_version
 from jinja2 import Template, filters
 from west import log
 
@@ -99,9 +100,7 @@ def get_ncs_version() -> 'str|None':
     try:
         version_file = Path(__file__).resolve().parents[3] / 'VERSION'
         if version_file.is_file():
-            value = version_file.read_text(encoding='utf-8').strip()
-            if value:
-                return value
+            return read_version(version_file, include_dev=True)
     except Exception:
         pass
     return None
